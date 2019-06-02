@@ -76,15 +76,15 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeOutputDimensionTest)
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
-    testSize);
+      testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
+      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 }
 
 /**
@@ -119,15 +119,15 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeCategoricalOutputDimensionTest)
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>
-    ("predictions").n_cols, testSize);
+      ("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
-    testSize);
+      testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
+      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 }
 
 /**
@@ -173,9 +173,9 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
+      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
@@ -200,21 +200,21 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
+      CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
+      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 
   // Check that initial and current predictions are same.
   CheckMatrices(
-    predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+      predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(
-    probabilities, CLI::GetParam<arma::mat>("probabilities"));
+      probabilities, CLI::GetParam<arma::mat>("probabilities"));
 }
 
 /**
@@ -262,26 +262,26 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(std::make_tuple(info, testData)));
   SetInputParam("input_model",
-    CLI::GetParam<HoeffdingTreeModel*>("output_model"));
+      CLI::GetParam<HoeffdingTreeModel*>("output_model"));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
+      CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 
   // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(
-    predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+      predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(
-    probabilities, CLI::GetParam<arma::mat>("probabilities"));
+      probabilities, CLI::GetParam<arma::mat>("probabilities"));
 }
 
 /**
@@ -329,27 +329,27 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelCategoricalReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(std::make_tuple(info, testData)));
   SetInputParam("input_model",
-    CLI::GetParam<HoeffdingTreeModel*>("output_model"));
+      CLI::GetParam<HoeffdingTreeModel*>("output_model"));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
+      CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
+      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 
   // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(
-    predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+      predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(
-    probabilities, CLI::GetParam<arma::mat>("probabilities"));
+      probabilities, CLI::GetParam<arma::mat>("probabilities"));
 }
 
 /**
@@ -417,8 +417,8 @@ BOOST_AUTO_TEST_CASE(HoeffdingMinSamplesTest)
 
   // Check that small min_samples creates larger model.
   BOOST_REQUIRE_LT(
-    (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(),
-    nodes);
+      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(),
+      nodes);
 }
 
 /**
@@ -486,7 +486,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingMaxSamplesTest)
 
   // Check that large max_samples creates smaller model.
   BOOST_REQUIRE_LT(nodes,
-    (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
+      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
 /**
@@ -552,7 +552,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingConfidenceTest)
   mlpackMain();
   // Check that higher confidence creates smaller tree.
   BOOST_REQUIRE_LT(nodes,
-    (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
+      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
 /**
@@ -619,7 +619,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingPassesTest)
 
   // Check that model with larger number of passes has greater number of nodes.
   BOOST_REQUIRE_LT(nodes,
-    (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
+      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
 /**
@@ -656,7 +656,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingBinarySplittingStrategyTest)
 
   // Check that number of children is 2.
   BOOST_REQUIRE_EQUAL(
-    (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes()-1, 2);
+      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes()-1, 2);
 }
 
 /**
@@ -728,7 +728,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingDomingosSplittingStrategyTest)
 
   // Check that both models have different number of nodes.
   BOOST_CHECK_NE(
-    (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), nodes);
+      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), nodes);
 }
 
 /**
@@ -773,7 +773,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingBinningTest)
 
   // Check that no splitting has happened.
   BOOST_REQUIRE_EQUAL(
-    (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), 1);
+      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
