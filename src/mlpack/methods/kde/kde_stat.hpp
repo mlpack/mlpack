@@ -25,7 +25,7 @@ class KDEStat
 {
  public:
   //! Initialize the statistic.
-  KDEStat() : validCentroid(false) { }
+  KDEStat() : validCentroid(false), depth(0) { }
 
   //! Initialization for a fully initialized node.
   template<typename TreeType>
@@ -41,6 +41,12 @@ class KDEStat
     {
       validCentroid = false;
     }
+
+    // Calculate depth.
+    if (node.Parent() != NULL)
+      depth = node.Parent()->Stat().Depth() + 1;
+    else
+      depth = 0;
   }
 
   //! Get the centroid of the node.
@@ -51,6 +57,9 @@ class KDEStat
     throw std::logic_error("Centroid must be assigned before requesting its "
                            "value");
   }
+
+  //! Get depth of the node.
+  inline size_t Depth() const { return depth; }
 
   //! Modify the centroid of the node.
   void SetCentroid(arma::vec newCentroid)
@@ -68,6 +77,7 @@ class KDEStat
   {
     ar & BOOST_SERIALIZATION_NVP(centroid);
     ar & BOOST_SERIALIZATION_NVP(validCentroid);
+    ar & BOOST_SERIALIZATION_NVP(depth);
   }
 
  private:
@@ -76,6 +86,9 @@ class KDEStat
 
   //! Whether the centroid is updated or is junk.
   bool validCentroid;
+
+  //! Depth of the current node.
+  size_t depth;
 };
 
 } // namespace kde
