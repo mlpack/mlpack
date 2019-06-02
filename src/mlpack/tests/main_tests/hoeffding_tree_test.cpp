@@ -166,9 +166,9 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-    CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
-    testSize);
+      testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
