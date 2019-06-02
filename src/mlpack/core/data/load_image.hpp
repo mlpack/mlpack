@@ -13,14 +13,15 @@
 #ifndef MLPACK_CORE_DATA_LOAD_IMAGE_HPP
 #define MLPACK_CORE_DATA_LOAD_IMAGE_HPP
 
-#include <string>
-#include <iostream>
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/prereqs.hpp>
 
-#ifdef HAS_FILESYSTEM
-#include <experimental/filesystem>
+#if defined(__cplusplus) && __cplusplus >= 201703L && defined(__has_include)
+    && __has_include(<filesystem>)
+#include <filesystem>
+#define HAS_FILESYSTEM 1
+namespace fs = std::filesystem;
 #endif
 
 #include "extension.hpp"
@@ -62,13 +63,13 @@ class LoadImage
   LoadImage();
 
   /**
-   * Instantiate the LoadImage object with the image width, height, channels..
+   * Instantiate the LoadImage object with the image width, height, channels.
    *
    * @param width Matrix width for the output matrix.
    * @param height Matrix height for the output matrix.
    * @param channels Matrix channels for the output matrix.
    */
-  LoadImage(int width, int height, int channels);
+  LoadImage(size_t width, size_t height, size_t channels);
 
   /**
    * Checks if the given image filename is supported.
@@ -76,51 +77,61 @@ class LoadImage
    * @param filename Name of the image file.
    * @return Boolean value indicating success if it is an image.
    */
-  bool IsImageFile(std::string& fileName);
+  bool ImageFormatSupported(const std::string& fileName);
 
   /**
    * Load the image file into the given matrix.
    *
    * @param fileName Name of the image file.
+   * @param flipVertical Flip the image vertical upon loading.
    * @param outputMatrix Matrix to load into.
    * @return Boolean value indicating success or failure of load.
    */
-  bool Load(std::string& fileName, arma::Mat<unsigned char>&& outputMatrix);
+  bool Load(const std::string& fileName,
+            bool flipVertical,
+            arma::Mat<unsigned char>&& outputMatrix);
 
   /**
    * Load the image file into the given matrix.
    *
    * @param fileName Name of the image file.
+   * @param flipVertical Flip the image vertical upon loading.
    * @param width Width of the image file.
    * @param height Height of the image file.
    * @param channels Channels of the image file.
    * @param outputMatrix Matrix to load into.
    * @return Boolean value indicating success or failure of load.
    */
-  bool Load(std::string& fileName,
-          arma::Mat<unsigned char>&& outputMatrix,
-          int *width,
-          int *height,
-          int *channels);
+  bool Load(const std::string& fileName,
+            bool flipVertical,
+            arma::Mat<unsigned char>&& outputMatrix,
+            size_t *width,
+            size_t *height,
+            size_t *channels);
 
   /**
    * Load the image file into the given matrix.
    *
    * @param files A vector containing names of the image file to be loaded.
+   * @param flipVertical Flip the image vertical upon loading.
    * @param outputMatrix Matrix to load into.
    * @return Boolean value indicating success or failure of load.
    */
-  bool Load(std::vector<std::string>& files,
-    arma::Mat<unsigned char>&& outputMatrix);
+  bool Load(const std::vector<std::string>& files,
+            bool flipVertical,
+            arma::Mat<unsigned char>&& outputMatrix);
 
   /**
    * Load the image file into the given matrix.
    *
    * @param dirPath Path containing the image files.
+   * @param flipVertical Flip the image vertical upon loading.
    * @param outputMatrix Matrix to load into.
    * @return Boolean value indicating success or failure of load.
    */
-  bool LoadDIR(std::string& dirPath, arma::Mat<unsigned char>&& outputMatrix);
+  bool LoadDIR(const std::string& dirPath,
+               bool flipVertical,
+               arma::Mat<unsigned char>&& outputMatrix);
 
   /**
    * LoadImage default destructor.
@@ -132,13 +143,13 @@ class LoadImage
   std::vector<std::string> fileTypes;
 
   // To store matrixWidth.
-  int matrixWidth;
+  size_t matrixWidth;
 
   // To store matrixHeight.
-  int matrixHeight;
+  size_t matrixHeight;
 
   // To store channels.
-  int channels;
+  size_t channels;
 };
 
 } // namespace data

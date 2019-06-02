@@ -20,8 +20,8 @@ namespace mlpack {
 namespace data {
 
 LoadImage::LoadImage():
-        matrixWidth(-1),
-        matrixHeight(-1),
+        matrixWidth(0),
+        matrixHeight(0),
         channels(3)
 {
   fileTypes.clear();
@@ -31,9 +31,9 @@ LoadImage::LoadImage():
     {"jpg", "png", "tga", "bmp", "psd", "gif", "hdr", "pic", "pnm"});
 }
 
-LoadImage::LoadImage(int width,
-          int height,
-          int channels):
+LoadImage::LoadImage(size_t width,
+          size_t height,
+          size_t channels):
           matrixWidth(width),
           matrixHeight(height),
           channels(channels)
@@ -50,27 +50,25 @@ LoadImage::~LoadImage()
   // Do nothing.
 }
 
-bool LoadImage::IsImageFile(std::string& fileName)
+bool LoadImage::ImageFormatSupported(const std::string& fileName)
 {
   // Iterate over all supported file types.
-  for (auto extension : fileTypes){
-    std::transform(extension.begin(), extension.end(), extension.begin(),
-                    ::tolower);
+  for (auto extension : fileTypes)
     if (extension == Extension(fileName))
       return true;
-  }
   return false;
 }
 
-bool LoadImage::Load(std::string& fileName,
+bool LoadImage::Load(const std::string& fileName,
+                      bool flipVertical,
                       arma::Mat<unsigned char>&& outputMatrix,
-                      int *width,
-                      int *height,
-                      int *channels)
+                      size_t *width,
+                      size_t *height,
+                      size_t *channels)
 {
   unsigned char *image;
 
-  if (!IsImageFile(fileName))
+  if (!ImageFormatSupported(fileName))
   {
     std::ostringstream oss;
     oss << "File type " << Extension(fileName) << " not supported.\n";
@@ -79,55 +77,63 @@ bool LoadImage::Load(std::string& fileName,
       oss << " " << extension;
     oss << std::endl;
     throw std::runtime_error(oss.str());
+    return false;
   }
 
-  stbi_set_flip_vertically_on_load(true);
+  stbi_set_flip_vertically_on_load(flipVertical);
+
+  // Temporary variablesneeded as stb_image.h supports int parameters.
+  int tempWidth, tempHeight, tempChannels;
 
   // For grayscale images
   if (*channels == 1)
   {
     image = stbi_load(fileName.c_str(),
-             width,
-             height,
-             channels,
+             &tempWidth,
+             &tempHeight,
+             &tempChannels,
              STBI_grey);
   }
   else
   {
     image = stbi_load(fileName.c_str(),
-             width,
-             height,
-             channels,
+             &tempWidth,
+             &tempHeight,
+             &tempChannels,
              STBI_rgb);
   }
 
-  if (*width <= 0 || *height <=0)
+  if (tempWidth <= 0 || tempHeight <= 0)
   {
     std::ostringstream oss;
     oss << "Image '" << fileName << "' not found." << std::endl;
     free(image);
-    // throw std::runtime_error(oss.str());
+    throw std::runtime_error(oss.str());
     return false;
   }
-
-  int size = (*width)*(*height)*(*channels);
+  *width = tempWidth;
+  *height = tempHeight;
+  *channels = tempChannels;
+  size_t size = (*width)*(*height)*(*channels);
 
   // Copy memory location into armadillo Mat.
   outputMatrix = arma::Mat<unsigned char>(image, 1, size, false, true);
   return true;
 }
 
-bool LoadImage::Load(std::string& fileName,
+bool LoadImage::Load(const std::string& fileName,
+                    bool flipVertical,
                     arma::Mat<unsigned char>&& outputMatrix)
 {
-  int width, height;
+  size_t width, height;
   bool status = Load(fileName,
+      flipVertical,
       std::move(outputMatrix),
       &width, &height, &channels);
   if (!status)
     return status;
 
-  Log::Info << width <<" "<< height <<" "<< channels << "\n" << std::flush;
+  Log::Info << width <<" "<< height <<" "<< channels << std::endl;
 
   // Throw error if the image is incompatible with the matrix.
   if (matrixWidth > 0 && matrixHeight > 0 &&
@@ -145,10 +151,11 @@ bool LoadImage::Load(std::string& fileName,
   return status;
 }
 
-bool LoadImage::Load(std::vector<std::string>& files,
+bool LoadImage::Load(const std::vector<std::string>& files,
+                     bool flipVertical,
                      arma::Mat<unsigned char>&& outputMatrix)
 {
-  if (files.size() < 1)
+  if (files.size() == 0)
   {
     std::ostringstream oss;
     oss << "File vector is empty." << std::endl;
@@ -156,9 +163,12 @@ bool LoadImage::Load(std::vector<std::string>& files,
   }
 
   arma::Mat<unsigned char> img;
-  int width, height;
-  bool status = Load(files[0], std::move(img), &width, &height, &channels);
-  Log::Info << "Loaded " << files[0] << std::endl << std::flush;
+  size_t width, height;
+  bool status = Load(files[0],
+                     flipVertical,
+                     std::move(img),
+                     &width, &height, &channels);
+  Log::Info << "Loaded " << files[0] << std::endl;
 
   // Decide matrix dimension using the image height and width.
   matrixWidth = std::max(matrixWidth, width);
@@ -169,29 +179,36 @@ bool LoadImage::Load(std::vector<std::string>& files,
 
   for (size_t i = 1; i < files.size() ; i++)
   {
-    status &= Load(files[i], std::move(outputMatrix.row(i)));
-    Log::Info << "Loaded " << files[i] << std::endl << std::flush;
+    status &= Load(files[i],
+                   flipVertical,
+                   std::move(outputMatrix.row(i)));
+    Log::Info << "Loaded " << files[i] << std::endl;
   }
   return status;
 }
 
-bool LoadImage::LoadDIR(std::string& dirPath,
+bool LoadImage::LoadDIR(const std::string& dirPath,
+                        bool flipVertical,
                         arma::Mat<unsigned char>&& outputMatrix)
 {
   std::vector<std::string> files;
 #ifdef HAS_FILESYSTEM
   // cycle through the directory
-  for (auto& file : std::experimental::filesystem::directory_iterator(dirPath))
+  for (std::string& file : fs::filesystem::directory_iterator(dirPath))
   {
     // If it's not a directory, list it.
-    if (std::experimental::filesystem::is_regular_file(file)) {
+    if (fs::filesystem::is_regular_file(file)) {
       // Load only image files in the directory.
-      if (IsImageFile(currentFile))
-        files.push_back(currentFile);
+      if (ImageFormatSupported(file))
+        files.push_back(file);
     }
   }
-  return Load(files, std::move(outputMatrix));
+  return Load(files, flipVertical, std::move(outputMatrix));
 #else
+  std::ostringstream oss;
+  oss << "Filesystem not supported" << std::endl;
+  oss << "Failed to include <filesystem> " << std::endl;
+  throw std::runtime_error(oss.str());
   return false;
 #endif
 }
