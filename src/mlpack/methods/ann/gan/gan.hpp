@@ -19,6 +19,7 @@
 #include <mlpack/methods/ann/visitor/reset_visitor.hpp>
 #include <mlpack/methods/ann/visitor/weight_size_visitor.hpp>
 #include <mlpack/methods/ann/visitor/weight_set_visitor.hpp>
+#include "metrics/inception_score.hpp"
 
 
 namespace mlpack {
