@@ -246,6 +246,12 @@ class KDE
   //! Mode of the KDE algorithm.
   KDEMode mode;
 
+  //! If true Monte Carlo approximations will be used when possible.
+  bool monteCarlo;
+
+  //! Probability of error being bounded by relError when Monte Carlo is used.
+  double MCProb;
+
   //! Check whether absolute and relative error values are compatible.
   static void CheckErrorValues(const double relError, const double absError);
 

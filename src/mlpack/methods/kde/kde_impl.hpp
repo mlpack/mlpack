@@ -65,7 +65,9 @@ KDE(const double relError,
     absError(absError),
     ownsReferenceTree(false),
     trained(false),
-    mode(mode)
+    mode(mode),
+    monteCarlo(true),
+    MCProb(0.95) // TODO Just for testing purposes.
 {
   CheckErrorValues(relError, absError);
 }
@@ -91,7 +93,9 @@ KDE(const KDE& other) :
     absError(other.absError),
     ownsReferenceTree(other.ownsReferenceTree),
     trained(other.trained),
-    mode(other.mode)
+    mode(other.mode),
+    monteCarlo(other.monteCarlo),
+    MCProb(other.MCProb)
 {
   if (trained)
   {
@@ -132,7 +136,9 @@ KDE(KDE&& other) :
     absError(other.absError),
     ownsReferenceTree(other.ownsReferenceTree),
     trained(other.trained),
-    mode(other.mode)
+    mode(other.mode),
+    monteCarlo(other.monteCarlo),
+    MCProb(other.MCProb)
 {
   other.kernel = std::move(KernelType());
   other.metric = std::move(MetricType());
@@ -181,6 +187,8 @@ operator=(KDE other)
   this->ownsReferenceTree = other.ownsReferenceTree;
   this->trained = other.trained;
   this->mode = other.mode;
+  this->monteCarlo = other.monteCarlo;
+  this->MCProb = other.MCProb;
 
   return *this;
 }
@@ -344,8 +352,10 @@ Evaluate(MatType querySet, arma::vec& estimations)
                               estimations,
                               relError,
                               absError,
+                              MCProb,
                               metric,
                               kernel,
+                              monteCarlo,
                               false);
 
     // Create traverser.
@@ -427,8 +437,10 @@ Evaluate(Tree* queryTree,
                             estimations,
                             relError,
                             absError,
+                            MCProb,
                             metric,
                             kernel,
+                            monteCarlo,
                             false);
 
   // Create traverser.
@@ -481,8 +493,10 @@ Evaluate(arma::vec& estimations)
                             estimations,
                             relError,
                             absError,
+                            MCProb,
                             metric,
                             kernel,
+                            monteCarlo,
                             true);
 
   if (mode == DUAL_TREE_MODE)
@@ -569,6 +583,8 @@ serialize(Archive& ar, const unsigned int /* version */)
   ar & BOOST_SERIALIZATION_NVP(absError);
   ar & BOOST_SERIALIZATION_NVP(trained);
   ar & BOOST_SERIALIZATION_NVP(mode);
+  ar & BOOST_SERIALIZATION_NVP(monteCarlo);
+  ar & BOOST_SERIALIZATION_NVP(MCProb);
 
   // If we are loading, clean up memory if necessary.
   if (Archive::is_loading::value)
