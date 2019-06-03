@@ -86,7 +86,7 @@ static void mlpackMain()
   fin.close();
   if (CLI::GetParam<int>("lowercase"))
   {
-    data::string_cleaning obj
+    data::string_cleaning obj;
     obj.LowerCase(input);
   }
   if (CLI::GetParam<int>("stopwords"))
@@ -96,7 +96,7 @@ static void mlpackMain()
   }
   if (CLI::GetParam<int>("punctuation"))
   {
-    data::string_cleaning obj
+    data::string_cleaning obj;
     obj.RemovePunctuation(input);
   }
   const std::string filename2 = CLI::GetParam<std::string>("preprocess"

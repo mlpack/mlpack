@@ -32,7 +32,8 @@ class string_cleaning
     std::string punctuation = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
     for (auto& str : input)
     {
-      str.erase(boost::remove_if(str, boost::is_any_of(punctuation)), str.end());
+      str.erase(boost::remove_if(str, boost::is_any_of(punctuation)),
+          str.end());
     }
   }
   /**
@@ -99,7 +100,6 @@ class string_cleaning
       str = copy;
     }
   }
-  
 }; // Class string_cleaning
 
 } // namespace data
