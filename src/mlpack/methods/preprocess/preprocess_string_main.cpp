@@ -49,6 +49,8 @@ PARAM_STRING_IN_REQ("actual_dataset", "File containing the reference dataset.",
     "t");
 PARAM_STRING_IN_REQ("preprocess_dataset", "File containing the preprocess "
     "dataset.", "o");
+PARAM_STRING_IN_REQ("delimeter", "delimeter used to seperate Column in files"
+    "example '\\t' for '.tsv' and ',' for '.csv'.", "d");
 
 PARAM_INT_IN("lowercase", "convert to lowercase(1 to convert).", "l", 1);
 PARAM_INT_IN("punctuation", "Remove punctuation (1 to remove).", "p", 1);
@@ -66,6 +68,7 @@ static void mlpackMain()
   // Parse command line options.
   // Ectracting the filename
   const std::string filename = CLI::GetParam<std::string>("actual_dataset");
+  const std::string delimeter = CLI::GetParam<std::string>("delimeter");
   // Extracting the Contents of file
   // File pointer
   fstream fin;
@@ -78,7 +81,7 @@ static void mlpackMain()
   const size_t Column = CLI::GetParam<int>("dimension");
   while (std::getline(fin, line))
   {
-    boost::split(temp, line, boost::is_any_of(std::string(1, ',')));
+    boost::split(temp, line, boost::is_any_of(std::string(1, delimeter[0])));
     input.push_back(temp[Column]);
     dataset.push_back(temp);
     temp.clear();
@@ -109,11 +112,11 @@ static void mlpackMain()
     {
       if (j == Column)
       {
-        fout<<input[i]<<",";
+        fout<<input[i]<<delimeter;
       }
       else
       {
-        fout<<dataset[i][j]<<",";
+        fout<<dataset[i][j]<<delimeter;
       }
     }
     fout<<"\n";
