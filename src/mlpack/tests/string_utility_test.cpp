@@ -30,7 +30,11 @@ BOOST_AUTO_TEST_CASE(StopWordsTest)
   std::vector<string> arr(2);
   arr[0] = "isn't mlpack great?";
   arr[1] = "2019 gsoc is great.";
-  mlpack::data::RemoveStopWords(arr, data::Strtok(" "));
+  mlpack::data::string_cleaning obj;
+  std::unordered_set<std::string>stopword;
+  stopword.insert("isn't");
+  stopword.insert("is");
+  obj.RemoveStopWords(arr, stopword, data::Strtok(" "));
   BOOST_CHECK_EQUAL(arr[0], "mlpack great?");
   BOOST_CHECK_EQUAL(arr[1], "2019 gsoc great.");
 }
@@ -43,7 +47,8 @@ BOOST_AUTO_TEST_CASE(PunctuationTest)
   std::vector<string> arr(2);
   arr[0] = "isn't mlpack great?";
   arr[1] = "2019 gsoc is great.";
-  mlpack::data::RemovePunctuation(arr);
+  mlpack::data::string_cleaning obj;
+  obj.RemovePunctuation(arr);
   BOOST_CHECK_EQUAL(arr[0], "isnt mlpack great");
   BOOST_CHECK_EQUAL(arr[1], "2019 gsoc is great");
 }
@@ -56,9 +61,24 @@ BOOST_AUTO_TEST_CASE(LowerCaseTest)
   std::vector<string> arr(2);
   arr[0] = "IsN'T MlPaCk GrEaT?";
   arr[1] = "2019 gSoC iS grEat.";
-  mlpack::data::LowerCase(arr);
+  mlpack::data::string_cleaning obj;
+  obj.LowerCase(arr);
   BOOST_CHECK_EQUAL(arr[0], "isn't mlpack great?");
   BOOST_CHECK_EQUAL(arr[1], "2019 gsoc is great.");
+}
+
+/**
+ * Test for converting to Upper case.
+ */
+BOOST_AUTO_TEST_CASE(UpperCaseTest)
+{
+  std::vector<string> arr(2);
+  arr[0] = "IsN'T MlPaCk GrEaT?";
+  arr[1] = "2019 gSoC iS grEat.";
+  mlpack::data::string_cleaning obj;
+  obj.UpperCase(arr);
+  BOOST_CHECK_EQUAL(arr[0], "ISN'T MLPACK GREAT?");
+  BOOST_CHECK_EQUAL(arr[1], "2019 GSOC IS GREAT.");
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -88,13 +88,6 @@ foreach(incl_file ${INCLUDE_FILES})
       BYPRODUCTS ${CMAKE_BINARY_DIR}/include/mlpack/${incl_file})
 endforeach()
 
-add_custom_command(TARGET mlpack_headers POST_BUILD
-  COMMENT "HI"
-  COMMAND ${CMAKE_COMMAND} ARGS -E
-  copy ${CMAKE_CURRENT_SOURCE_DIR}/core/data/stopwords.txt
-       ${CMAKE_BINARY_DIR}/include/mlpack/core/data/
-)
-
 # At install time, we simply install that directory of header files we
 # collected to include/.
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/mlpack DESTINATION

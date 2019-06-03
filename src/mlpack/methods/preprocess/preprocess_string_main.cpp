@@ -64,44 +64,6 @@ using namespace std;
 static void mlpackMain()
 {
   // Parse command line options.
-  // Check on label parameters.
-  // Check for punctuation.
-  RequireParamValue<int>("punctuation",
-      [](double x) { return x == 0 || x <= 1; }, true,
-      "value for punctuation may be either 0 to not\
-       remove punctuation or 1 to remove punctuation 1");
-  RequireParamValue<int>("lowercase",
-      [](double x) { return x == 0 || x <= 1; }, true,
-      "value for lowercase may be either 0 to not\
-       remove punctuation or 1 to remove punctuation 1");
-  RequireParamValue<int>("stopwords",
-      [](double x) { return x == 0 || x <= 1; }, true,
-      "value for stopwords may be either 0 to not\
-       remove punctuation or 1 to remove punctuation 1");
-  // If puntucation is not set, warn the user.
-  if (!CLI::HasParam("punctuation"))
-  {
-    Log::Warn << "You did not specify " << PRINT_PARAM_STRING("punctuation")
-        << ", so it will be automatically set to 1." << endl;
-  }
-  // If lowercase is not set, warn the user.
-  if (!CLI::HasParam("lowercase"))
-  {
-    Log::Warn << "You did not specify " << PRINT_PARAM_STRING("lowercase")
-        << ", so it will be automatically set to 1." << endl;
-  }
-  // If stopwords is not set, warn the user.
-  if (!CLI::HasParam("stopwords"))
-  {
-    Log::Warn << "You did not specify " << PRINT_PARAM_STRING("stopwords")
-        << ", so it will be automatically set to 1." << endl;
-  }
-  // If dimension is not set, warn the user.
-  if (!CLI::HasParam("dimension"))
-  {
-    Log::Warn << "You did not specify " << PRINT_PARAM_STRING("dimension")
-        << ", so it will be automatically set to 1." << endl;
-  }
   // Ectracting the filename
   const std::string filename = CLI::GetParam<std::string>("actual_dataset");
   // Extracting the Contents of file
@@ -124,7 +86,8 @@ static void mlpackMain()
   fin.close();
   if (CLI::GetParam<int>("lowercase"))
   {
-    data::LowerCase(input);
+    data::string_cleaning obj
+    obj.LowerCase(input);
   }
   if (CLI::GetParam<int>("stopwords"))
   {
@@ -133,7 +96,8 @@ static void mlpackMain()
   }
   if (CLI::GetParam<int>("punctuation"))
   {
-    data::RemovePunctuation(input);
+    data::string_cleaning obj
+    obj.RemovePunctuation(input);
   }
   const std::string filename2 = CLI::GetParam<std::string>("preprocess"
       "_dataset");
