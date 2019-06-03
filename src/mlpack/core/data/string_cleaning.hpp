@@ -88,9 +88,9 @@ class string_cleaning
       token = tokenizer(strView);
       while (!token.empty())
       {
+        tokenStr = std::string(token);
         if (stopwords.find(tokenStr) == stopwords.end())
         {
-          tokenStr = std::string(token);
           // token is not a stop word add it;
           copy = copy + " " + tokenStr;
         }
