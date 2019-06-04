@@ -1,5 +1,6 @@
 ### mlpack 3.1.2
 ###### ????-??-??
+  * Add Multiple Pole Balancing Environment (#1901).
 
 ### mlpack 3.1.1
 ###### 2019-05-26
