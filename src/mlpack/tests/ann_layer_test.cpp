@@ -2339,7 +2339,7 @@ BOOST_AUTO_TEST_CASE(SimpleResidualLayerTest)
 }
 
 /**
- * Simple highway module test.
+ * Simple Highway module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleHighwayLayerTest)
 {

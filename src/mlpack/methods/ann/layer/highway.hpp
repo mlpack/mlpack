@@ -3,7 +3,7 @@
  * @author Konstantin Sidorov
  * @author Saksham Bansal
  *
- * Definition of the highway layer.
+ * Definition of the Highway layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -30,7 +30,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the Highway layer. The highway class can vary its behavior
+ * Implementation of the Highway layer. The Highway class can vary its behavior
  * between that of feed-forward fully connected network container and that
  * of a layer which simply passes its inputs through depending on the transform
  * gate. Note that the size of the input and output matrices of this class
@@ -73,7 +73,7 @@ class Highway
   //! Destroy the Highway object.
   ~Highway();
 
-  /*
+  /**
    * Destroy all the modules added to the Highway object.
    */
   void DeleteModules();
@@ -84,7 +84,7 @@ class Highway
   void Reset();
 
   /**
-   * Ordinary feed forward pass of a neural network, evaluating the function
+   * Ordinary feed-forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
    * @param input Input data used for evaluating the specified function.
@@ -94,9 +94,9 @@ class Highway
   void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /**
-   * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards through f. Using the results from the feed
-   * forward pass.
+   * Ordinary feed-backward pass of a neural network, calculating the function
+   * f(x) by propagating x backwards through f. Using the results from the
+   * feed-forward pass.
    *
    * @param input The propagated input activation.
    * @param gy The backpropagated error.
@@ -107,7 +107,7 @@ class Highway
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
 
-  /*
+  /**
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The input parameter used for calculating the gradient.
@@ -119,7 +119,7 @@ class Highway
                 arma::Mat<eT>&& error,
                 arma::Mat<eT>&& gradient);
 
-  /*
+  /**
    * Add a new module to the model.
    *
    * @param args The layer parameter.
@@ -127,14 +127,14 @@ class Highway
   template <class LayerType, class... Args>
   void Add(Args... args) { network.push_back(new LayerType(args...)); }
 
-  /*
+  /**
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
   void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
 
-  //! Return the model modules.
+  //! Return the modules of the model.
   std::vector<LayerTypes<CustomLayers...> >& Model()
   {
     if (model)

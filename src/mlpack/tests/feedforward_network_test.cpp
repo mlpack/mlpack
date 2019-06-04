@@ -114,10 +114,9 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   model.Add<LogSoftMax<> >();
 
   // Vanilla neural net with logistic activation function.
-  // Because 92 percent of the patients are not hyperthyroid the neural
+  // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork<>
-      (model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
@@ -136,8 +135,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   model1.Add<Linear<> >(10, 2);
   model1.Add<LogSoftMax<> >();
   // Vanilla neural net with logistic activation function.
-  TestNetwork<>
-      (model1, dataset, labels, dataset, labels, 10, 0.2);
+  TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
 }
 
 BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
@@ -264,7 +262,7 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
   model.Add<LogSoftMax<> >();
 
   // Vanilla neural net with logistic activation function.
-  // Because 92 percent of the patients are not hyperthyroid the neural
+  // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
   TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
   arma::mat dataset;
@@ -272,7 +270,9 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
+  {
     dataset.col(i) /= norm(dataset.col(i), 2);
+  }
 
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
@@ -285,8 +285,7 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
   model1.Add<Linear<> >(10, 2);
   model1.Add<LogSoftMax<> >();
   // Vanilla neural net with logistic activation function.
-  TestNetwork<>
-      (model1, dataset, labels, dataset, labels, 10, 0.2);
+  TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
 }
 
 /**
@@ -313,12 +312,11 @@ BOOST_AUTO_TEST_CASE(HighwayNetworkTest)
   model.Add(highway);
   model.Add<Linear<> >(10, 2);
   model.Add<LogSoftMax<> >();
-  TestNetwork<>
-      (model, dataset, labels, dataset, labels, 10, 0.2);
+  TestNetwork<>(model, dataset, labels, dataset, labels, 10, 0.2);
 }
 
 /**
- * Train the dropconnect network on a larger dataset.
+ * Train the DropConnect network on a larger dataset.
  */
 BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
 {
@@ -366,10 +364,9 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
   model.Add<LogSoftMax<> >();
 
   // Vanilla neural net with logistic activation function.
-  // Because 92 percent of the patients are not hyperthyroid the neural
+  // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork<>
-      (model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
@@ -388,8 +385,7 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
   model1.Add<DropConnect<> >(10, 2);
   model1.Add<LogSoftMax<> >();
   // Vanilla neural net with logistic activation function.
-  TestNetwork<>
-      (model1, dataset, labels, dataset, labels, 10, 0.2);
+  TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
 }
 
 /**
@@ -427,7 +423,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   testData.shed_row(testData.n_rows - 1);
 
   // Vanilla neural net with logistic activation function.
-  // Because 92 percent of the patients are not hyperthyroid the neural
+  // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
   FFN<NegativeLogLikelihood<> > model;
   model.Add<Linear<> >(trainData.n_rows, 8);
@@ -555,7 +551,7 @@ BOOST_AUTO_TEST_CASE(FFNTrainReturnObjective)
   testData.shed_row(testData.n_rows - 1);
 
   // Vanilla neural net with logistic activation function.
-  // Because 92 percent of the patients are not hyperthyroid the neural
+  // Because 92% of the patients are not hyperthyroid the neural
   // network must be significantly better than 92%.
   FFN<NegativeLogLikelihood<> > model;
   model.Add<Linear<> >(trainData.n_rows, 8);

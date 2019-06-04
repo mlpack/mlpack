@@ -3,7 +3,7 @@
  * @author Konstantin Sidorov
  * @author Saksham Bansal
  *
- * Implementation of highway layer.
+ * Implementation of Highway layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -58,7 +58,9 @@ Highway<InputDataType, OutputDataType, CustomLayers...>::~Highway()
   if (!model)
   {
     for (LayerTypes<CustomLayers...>& layer : network)
+    {
       boost::apply_visitor(deleteVisitor, layer);
+    }
   }
 }
 
@@ -67,7 +69,7 @@ template<typename InputDataType, typename OutputDataType,
 void Highway<
     InputDataType, OutputDataType, CustomLayers...>::DeleteModules()
 {
-  if (model == true)
+  if (model)
   {
     for (LayerTypes<CustomLayers...>& layer : network)
     {
@@ -146,7 +148,8 @@ void Highway<InputDataType, OutputDataType, CustomLayers...>::Forward(
 
   output = boost::apply_visitor(outputParameterVisitor, network.back());
 
-  if (arma::size(output) != arma::size(input)){
+  if (arma::size(output) != arma::size(input))
+  {
     Log::Fatal << "The sizes of the output and input matrices of the Highway"
         << " network should be equal. Please examine the network layers.";
   }
