@@ -52,9 +52,9 @@ PARAM_STRING_IN_REQ("preprocess_dataset", "File containing the preprocess "
 PARAM_STRING_IN_REQ("delimeter", "delimeter used to seperate Column in files"
     "example '\\t' for '.tsv' and ',' for '.csv'.", "d");
 
-PARAM_INT_IN("lowercase", "convert to lowercase(1 to convert).", "l", 1);
-PARAM_INT_IN("punctuation", "Remove punctuation (1 to remove).", "p", 1);
-PARAM_INT_IN("stopwords", "Remove stopwords (1 to remove).", "s", 1);
+PARAM_FLAG("lowercase", "convert to lowercase.", "l");
+PARAM_FLAG("punctuation", "Remove punctuation.", "p");
+PARAM_FLAG("stopwords", "Remove stopwords.", "s");
 PARAM_INT_IN("dimension", "Column which contains the string data.(1 by "
     "default)", "c", 1);
 
@@ -87,17 +87,17 @@ static void mlpackMain()
     temp.clear();
   }
   fin.close();
-  if (CLI::GetParam<int>("lowercase"))
+  if (CLI::HasParam("lowercase"))
   {
     data::string_cleaning obj;
     obj.LowerCase(input);
   }
-  if (CLI::GetParam<int>("stopwords"))
+  if (CLI::HasParam("stopwords"))
   {
     // Not sure how to take input for tokenizer from cli.
     // data::RemoveStopWords(input);
   }
-  if (CLI::GetParam<int>("punctuation"))
+  if (CLI::HasParam("punctuation"))
   {
     data::string_cleaning obj;
     obj.RemovePunctuation(input);
