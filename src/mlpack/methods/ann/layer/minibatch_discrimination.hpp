@@ -2,7 +2,7 @@
  * @file minibatch_discrimination.hpp
  * @author Saksham Bansal
  *
- * Definition of the MinibatchDiscrimination layer class.
+ * Definition of the MiniBatchDiscrimination layer class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,10 +20,10 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the MinibatchDiscrimination layer class. The
- * MinibatchDiscrimination class is a layer of the discriminator that allows
- * the discriminator to look at multiple data examples in combination and
- * perform what is called as minibatch discrimination.
+ * Implementation of the MiniBatchDiscrimination layer. MinibatchDiscrimination
+ * is a layer of the discriminator that allows the discriminator to look at
+ * multiple data examples in combination and perform what is called as
+ * mini-batch discrimination.
  * This helps prevent the collapse of the generator parameters to a setting
  * where it emits the same point. This happens because normally a
  * discriminator will process each example independently and there will be
@@ -50,31 +50,31 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class MinibatchDiscrimination
+class MiniBatchDiscrimination
 {
  public:
-  //! Create the MinibatchDiscrimination object.
-  MinibatchDiscrimination();
+  //! Create the MiniBatchDiscrimination object.
+  MiniBatchDiscrimination();
 
   /**
-   * Create the MinibatchDiscrimination layer object using the specified
+   * Create the MiniBatchDiscrimination layer object using the specified
    * number of units.
    *
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    * @param features The number of features to compute for each dimension.
    */
-  MinibatchDiscrimination(const size_t inSize,
+  MiniBatchDiscrimination(const size_t inSize,
                           const size_t outSize,
                           const size_t features);
 
-  /*
+  /**
    * Reset the layer parameter.
    */
   void Reset();
 
   /**
-   * Ordinary feed forward pass of a neural network, evaluating the function
+   * Ordinary feed-forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
    * @param input Input data used for evaluating the specified function.
@@ -84,9 +84,9 @@ class MinibatchDiscrimination
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /**
-   * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards trough f. Using the results from the feed
-   * forward pass.
+   * Ordinary feed-backward pass of a neural network, calculating the function
+   * f(x) by propagating x backwards through f. Using the results from the
+   * feed-forward pass.
    *
    * @param input The propagated input activation.
    * @param gy The backpropagated error.
@@ -97,7 +97,7 @@ class MinibatchDiscrimination
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
 
-  /*
+  /**
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The input parameter used for calculating the gradient.
@@ -179,7 +179,7 @@ class MinibatchDiscrimination
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class MinibatchDiscrimination
+}; // class MiniBatchDiscrimination
 
 } // namespace ann
 } // namespace mlpack

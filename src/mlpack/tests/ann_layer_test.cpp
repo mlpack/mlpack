@@ -1657,9 +1657,9 @@ BOOST_AUTO_TEST_CASE(GradientVirtualBatchNormTest)
 }
 
 /**
- * MinibatchDiscrimination layer numerical gradient test.
+ * MiniBatchDiscrimination layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(MinibatchDiscriminationTest)
+BOOST_AUTO_TEST_CASE(MiniBatchDiscriminationTest)
 {
   // Add function gradient instantiation.
   struct GradientFunction
@@ -1675,7 +1675,7 @@ BOOST_AUTO_TEST_CASE(MinibatchDiscriminationTest)
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(5, 5);
-      model->Add<MinibatchDiscrimination<> >(5, 10, 16);
+      model->Add<MiniBatchDiscrimination<> >(5, 10, 16);
       model->Add<Linear<> >(10, 2);
       model->Add<LogSoftMax<> >();
     }

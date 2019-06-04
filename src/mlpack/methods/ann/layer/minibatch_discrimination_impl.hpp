@@ -2,7 +2,7 @@
  * @file minibatch_discrimination_impl.hpp
  * @author Saksham Bansal
  *
- * Implementation of the MinibatchDiscrimination layer class.
+ * Implementation of the MiniBatchDiscrimination layer class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,8 +19,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-MinibatchDiscrimination<InputDataType, OutputDataType
->::MinibatchDiscrimination() :
+MiniBatchDiscrimination<InputDataType, OutputDataType
+>::MiniBatchDiscrimination() :
   A(0),
   B(0),
   C(0),
@@ -30,8 +30,8 @@ MinibatchDiscrimination<InputDataType, OutputDataType
 }
 
 template <typename InputDataType, typename OutputDataType>
-MinibatchDiscrimination<InputDataType, OutputDataType
->::MinibatchDiscrimination(
+MiniBatchDiscrimination<InputDataType, OutputDataType
+>::MiniBatchDiscrimination(
     const size_t inSize,
     const size_t outSize,
     const size_t features) :
@@ -44,14 +44,14 @@ MinibatchDiscrimination<InputDataType, OutputDataType
 }
 
 template<typename InputDataType, typename OutputDataType>
-void MinibatchDiscrimination<InputDataType, OutputDataType>::Reset()
+void MiniBatchDiscrimination<InputDataType, OutputDataType>::Reset()
 {
   weight = arma::mat(weights.memptr(), B * C, A, false, false);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void MinibatchDiscrimination<InputDataType, OutputDataType>::Forward(
+void MiniBatchDiscrimination<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
   batchSize = input.n_cols;
@@ -75,7 +75,7 @@ void MinibatchDiscrimination<InputDataType, OutputDataType>::Forward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void MinibatchDiscrimination<InputDataType, OutputDataType>::Backward(
+void MiniBatchDiscrimination<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   g = gy.head_rows(A);
@@ -98,7 +98,7 @@ void MinibatchDiscrimination<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void MinibatchDiscrimination<InputDataType, OutputDataType>::Gradient(
+void MiniBatchDiscrimination<InputDataType, OutputDataType>::Gradient(
     const arma::Mat<eT>&& input,
     arma::Mat<eT>&& /* error */,
     arma::Mat<eT>&& gradient)
@@ -108,7 +108,7 @@ void MinibatchDiscrimination<InputDataType, OutputDataType>::Gradient(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void MinibatchDiscrimination<InputDataType, OutputDataType>::serialize(
+void MiniBatchDiscrimination<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(A);
@@ -118,7 +118,9 @@ void MinibatchDiscrimination<InputDataType, OutputDataType>::serialize(
   // This is inefficient, but we have to allocate this memory so that
   // WeightSetVisitor gets the right size.
   if (Archive::is_loading::value)
+  {
     weights.set_size(A * B * C, 1);
+  }
 }
 
 } // namespace ann
