@@ -61,12 +61,23 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Forward(
   output.set_size(B, batchSize);
   for (size_t i =0; i < M.n_slices; i++)
   {
-    arma::colvec c(B, arma::fill::zeros);
+    arma::colvec c(B, arma::fill::ones);
     for (size_t j = 0; j < M.n_slices; j++)
     {
-      distances.slice(i).col(j) =
+      if (j < i)
+      {
+        c += distances.slice(j).col(i);
+      }
+      else if (i == j)
+      {
+        continue;
+      }
+      else
+      {
+        distances.slice(i).col(j) =
           arma::exp(-arma::sum(abs(M.slice(i) - M.slice(j)), 1));
-      c += distances.slice(i).col(j);
+        c += distances.slice(i).col(j);
+      }
     }
     output.col(i) = c;
   }
@@ -85,9 +96,13 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Backward(
   {
     for (size_t j = 0; j < M.n_slices; j++)
     {
+      if (i == j)
+      {
+        continue;
+      }
       arma::mat t = arma::sign(M.slice(i) - M.slice(j));
-      t.each_col() %= distances.slice(i).col(j);
-      t.each_col() %= gM.col(i);
+      t.each_col() %=
+          distances.slice(std::min(i, j)).col(std::max(i, j)) % gM.col(i);
       deltaM.slice(i) -= t;
       deltaM.slice(j) += t;
     }
