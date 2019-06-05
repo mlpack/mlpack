@@ -2,6 +2,7 @@
  * @file surrogate_loss.hpp
  * @author Xiaohong Ji
  *
+ * Definition of surrogate loss function proximal policy optimization.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -34,8 +35,32 @@ class SurrogateLoss
  public:
   /**
    * Create the SurrogateLoss object.
+   *
+   * @param epsilon The clipping parameter.
    */
-  SurrogateLoss();
+  SurrogateLoss(const double epsilon);
+
+  /**
+   * Computes the surrogate loss function.
+   *
+   * @param input Input data used for evaluating the specified function.
+   * @param target The target vector.
+   */
+  template<typename InputType, typename TargetType>
+  double Forward(const InputType&& input, const TargetType&& target);
+
+  /**
+   * Ordinary feed backward pass of a neural network.
+   *
+   * @param input The propagated input activation.
+   * @param target The target vector.
+   * @param output The calculated error.
+   */
+  template<typename InputType, typename TargetType, typename OutputType>
+  void Backward(const InputType&& input,
+                const TargetType&& target,
+                OutputType&& output);
+
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }

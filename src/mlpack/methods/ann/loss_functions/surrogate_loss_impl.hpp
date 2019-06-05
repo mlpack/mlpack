@@ -2,6 +2,8 @@
  * @file surrogate_loss.hpp
  * @author Xiaohong Ji
  *
+ * This file is an implementation of surrogate loss function proximal policy
+ * optimization.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -21,6 +23,13 @@ template<typename InputDataType, typename OutputDataType>
 SurrogateLoss<InputDataType, OutputDataType>::SurrogateLoss()
 {
   // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename TargetType>
+double DiceLoss<InputDataType, OutputDataType>::Forward(
+  const InputType&& input, const TargetType&& target)
+{
 }
 
 template<typename InputDataType, typename OutputDataType>
