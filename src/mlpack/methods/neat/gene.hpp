@@ -2,7 +2,7 @@
  * @file gene.hpp
  * @author Rahul Ganesh Prabhu
  *
- * Definition of the Gene classes.
+ * Definition of the ConnectionGene class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

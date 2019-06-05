@@ -22,7 +22,7 @@ ConnectionGene::ConnectionGene(const size_t globalInnovationID,
                                const double weight,
                                const size_t source,
                                const size_t target,
-                               const bool enabled = true):
+                               const bool enabled):
     globalInnovationID(globalInnovationID),
     weight(weight),
     source(source),

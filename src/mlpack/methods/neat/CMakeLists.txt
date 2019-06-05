@@ -3,6 +3,10 @@
 set(SOURCES
   gene.hpp
   gene_impl.hpp
+  genome.hpp
+  genome_impl.hpp
+  acyclic_net.hpp
+  acyclic_net_impl.hpp
 )
 
 # Add directory name to sources.
