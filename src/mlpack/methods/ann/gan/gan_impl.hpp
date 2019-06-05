@@ -134,34 +134,29 @@ template<
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
   arma::mat predictors)
 {
-  this->predictors = std::move(predictors);
-
-  counter = 0;
   currentBatch = 0;
 
-  numFunctions = this->predictors.n_cols;
+  numFunctions = predictors.n_cols;
   noise.set_size(noiseDim, batchSize);
 
   deterministic = true;
   ResetDeterministic();
 
-  responses.set_size(1, numFunctions);
-  responses.ones();
+  this->predictors.set_size(predictors.n_rows, numFunctions + batchSize);
+  this->predictors.cols(0, numFunctions - 1) = std::move(predictors);
+  this->discriminator.predictors = arma::mat(this->predictors.memptr(),
+      this->predictors.n_rows, this->predictors.n_cols, false, false);
 
-  this->discriminator.predictors.set_size(this->predictors.n_rows,
-      numFunctions + batchSize);
-  this->discriminator.predictors.cols(0, numFunctions - 1) =
-      this->predictors;
-
-  this->discriminator.responses.set_size(1, numFunctions + batchSize);
-  this->discriminator.responses.ones();
-  this->discriminator.responses.cols(numFunctions,
-      numFunctions + batchSize - 1) = arma::zeros(1, batchSize);
+  responses.ones(1, numFunctions + batchSize);
+  responses.cols(numFunctions, numFunctions + batchSize - 1) =
+      arma::zeros(1, batchSize);
+  this->discriminator.responses = arma::mat(this->responses.memptr(),
+      this->responses.n_rows, this->responses.n_cols, false, false);
 
   this->generator.predictors.set_size(noiseDim, batchSize);
-  this->generator.responses.set_size(this->predictors.n_rows, batchSize);
+  this->generator.responses.set_size(predictors.n_rows, batchSize);
 
-  if (!reset)
+  if ((!reset))
     Reset();
 }
 
