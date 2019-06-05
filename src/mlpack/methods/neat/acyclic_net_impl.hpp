@@ -25,7 +25,7 @@ namespace neat /** NeuroEvolution of Augmenting Topologies */{
                                              ActivationFunction& actFn,
                                              const size_t inputNodeCount,
                                              const size_t outputNodeCount,
-                                             const double bias): 
+                                             const double bias):
       NodeGeneList(NodeGeneList),
       DirectedGraph(DirectedGraph),
       actFn(actFn),
@@ -42,7 +42,7 @@ namespace neat /** NeuroEvolution of Augmenting Topologies */{
     // Populate the layers
     for (auto it = nodeDepths.begin(); it != nodeDepths.end(); it++)
     {
-      while(layers.size() < it->second + 1)
+      while (layers.size() < it->second + 1)
         layers.emplace_back(std::vector<int>());
       layers[it->second].push_back(it->first);
     }
@@ -50,7 +50,7 @@ namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
   template <class ActivationFunction>
   void AcyclicNet<ActivationFunction>::TraverseNode(size_t nodeID, size_t depth)
-  { 
+  {
     if (nodeDepths.find(nodeID) != nodeDepths.end())
     {
       // Check if it has been traversed by a longer path.
@@ -83,7 +83,7 @@ namespace neat /** NeuroEvolution of Augmenting Topologies */{
       for (size_t j =0; j < layers[i].size(); j++)
       {
         int nodeID = layers[i][j];
-        if(nodeID == 0)
+        if (nodeID == 0)
         {
           for (auto const& x : DirectedGraph)
             NodeValues[x.first] += bias;
@@ -99,13 +99,13 @@ namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
     // Find the output.
     arma::vec output(outputNodeCount);
-    for(int i = 0; i < output.n_elem; i++)
+    for (int i = 0; i < output.n_elem; i++)
       output[i] = NodeValues[i+inputNodeCount+1];
-    
+
     return output;
   }
 
-}
-}
+} // namespace neat
+} // namespace mlpack
 
 #endif

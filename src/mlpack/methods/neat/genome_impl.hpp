@@ -106,7 +106,7 @@ void Genome<ActivationFunction>::Mutate()
   }
 }
 
-}
-}
+} // namespace neat
+} // namespace mlpack
 
 #endif

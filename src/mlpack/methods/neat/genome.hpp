@@ -51,7 +51,7 @@ class Genome
          const double biasMutationSize,
          const double connMutationRate,
          const bool isAcyclic = false);
-  
+
   /**
    * Loads the input values into the genome.
    */
@@ -84,7 +84,7 @@ class Genome
    * secondary sorted by target ID.
    */
   std::map<int, std::map<int, ConnectionGene>> DirectedGraph;
-  
+
   //! Input node count.
   size_t inputNodeCount;
 
@@ -128,8 +128,8 @@ class Genome
   arma::vec input;
 };
 
-}
-}
+} // namespace neat
+} // namespace mlpack
 
 // Include implementation.
 #include "genome_impl.hpp"

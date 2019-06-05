@@ -63,11 +63,10 @@ class AcyclicNet
   std::vector<std::vector<size_t>> layers;
 
   void TraverseNode(size_t nodeID, size_t depth);
-
 };
 
-}
-}
+} // namespace neat
+} // namespace mlpack
 
 // Include implementation.
 #include "acyclic_net_impl.hpp"
