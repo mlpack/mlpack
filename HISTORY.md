@@ -1,5 +1,9 @@
-### mlpack 3.1.1
+### mlpack 3.1.2
 ###### ????-??-??
+  * Add Multiple Pole Balancing Environment (#1901).
+
+### mlpack 3.1.1
+###### 2019-05-26
   * Fix random forest bug for numerical-only data (#1887).
 
   * Significant speedups for random forest (#1887).

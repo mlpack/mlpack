@@ -4,6 +4,8 @@ set(SOURCES
   mountain_car.hpp
   cart_pole.hpp
   continuous_mountain_car.hpp
+  multiple_pole_cart.hpp
+  continuous_multiple_pole_cart.hpp
   acrobot.hpp
   pendulum.hpp
   reward_clipping.hpp
