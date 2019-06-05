@@ -46,7 +46,7 @@ QLearning<
     environment(std::move(environment)),
     totalSteps(0),
     deterministic(false),
-    prioritized_replay(false)
+    prioritizedReplay(false)
 {
   // Set up q-learning network.
   if (learningNetwork.Parameters().is_empty())
@@ -85,12 +85,12 @@ QLearning<
   environment(std::move(environment)),
   totalSteps(0),
   deterministic(false),
-  prioritized_replay(true)
+  prioritizedReplay(true)
 {
   if (learningNetwork.Parameters().is_empty())
     learningNetwork.ResetParameters();
   this->updater.Initialize(learningNetwork.Parameters().n_rows,
-                           learningNetwork.Parameters().n_cols);
+      learningNetwork.Parameters().n_cols);
   targetNetwork = learningNetwork;
 }
 
@@ -151,7 +151,7 @@ double QLearning<
   double reward = environment.Sample(state, action, nextState);
 
   // Store the transition for replay.
-  if (prioritized_replay)
+  if (prioritizedReplay)
   {
     prioritizedReplayMethod.Store(state, action, reward,
         nextState, environment.IsTerminal(nextState));
@@ -177,7 +177,7 @@ double QLearning<
   arma::mat sampledNextStates;
   arma::icolvec isTerminal;
 
-  if (!prioritized_replay)
+  if (!prioritizedReplay)
   {
     replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
         sampledNextStates, isTerminal);
@@ -226,15 +226,15 @@ double QLearning<
   arma::mat gradients;
   learningNetwork.Backward(target, gradients);
 
-  if (prioritized_replay)
+  if (prioritizedReplay)
   {
     prioritizedReplayMethod.Update(target, sampledActions,
-                                   nextActionValues, gradients);
+        nextActionValues, gradients);
   }
   else
   {
     replayMethod.Update(target, sampledActions,
-                        nextActionValues, gradients);
+        nextActionValues, gradients);
   }
 
   updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);

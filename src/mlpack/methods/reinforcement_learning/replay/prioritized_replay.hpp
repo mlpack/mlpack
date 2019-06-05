@@ -154,7 +154,7 @@ class PrioritizedReplay
               arma::mat& sampledNextStates,
               arma::icolvec& isTerminal)
   {
-    size_t upperBound = full ? capacity : position;
+//    size_t upperBound = full ? capacity : position;
 
     sampledIndices = SampleProportional();
     BetaAnneal();
