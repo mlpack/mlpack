@@ -68,9 +68,9 @@ class GAN
    *
    * @param generator Generator network.
    * @param discriminator Discriminator network.
-   * @param initializeRule Intialization to use for intializing parameters.
+   * @param initializeRule Initialization to use for initializing parameters.
    * @param noiseFunction Function to be used for generating noise.
-   * @param noiseDim Dimension of noise to be created.
+   * @param noiseDim Dimension of noise vector to be created.
    * @param batchSize Batch size to be used for training.
    * @param generatorUpdateStep Number of steps to train Discriminator
    *                            before updating Generator.
@@ -98,9 +98,8 @@ class GAN
   GAN(GAN&&);
 
   /**
-   * Intialize the generator, discriminator and weights of the model for
-   * training.
-   * This function won't actually trigger training process.
+   * Initialize the generator, discriminator and weights of the model for
+   * training. This function won't actually trigger training process.
    *
    * @param trainData The data points of real distribution.
    */
@@ -349,8 +348,6 @@ class GAN
   size_t numFunctions;
   //! Locally stored batch size parameter.
   size_t batchSize;
-  //! Locally stored number of iterations that have been completed.
-  size_t counter;
   //! Locally stored batch number which is being processed.
   size_t currentBatch;
   //! Locally stored number of training step before Generator is trained.

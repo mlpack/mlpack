@@ -35,7 +35,7 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
     const size_t i,
     const size_t /* batchSize */)
 {
-  if (parameter.is_empty())
+  if ((parameter.is_empty()))
     Reset();
 
   if (!deterministic)
@@ -102,7 +102,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
                      GradType& gradient,
                      const size_t /* batchSize */)
 {
-  if (parameter.is_empty())
+  if ((parameter.is_empty()))
     Reset();
 
   if (gradient.is_empty())
@@ -185,14 +185,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     gradientGenerator *= multiplier;
   }
 
-  counter++;
   currentBatch++;
-
-  // Revert the counter to zero, if the total dataset get's covered.
-  if (counter * batchSize >= numFunctions)
-  {
-    counter = 0;
-  }
 
   if (preTrainSize > 0)
   {

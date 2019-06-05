@@ -48,7 +48,6 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     noiseDim(noiseDim),
     numFunctions(0),
     batchSize(batchSize),
-    counter(0),
     currentBatch(0),
     generatorUpdateStep(generatorUpdateStep),
     preTrainSize(preTrainSize),
@@ -88,7 +87,6 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     clippingParameter(network.clippingParameter),
     lambda(network.lambda),
     reset(network.reset),
-    counter(network.counter),
     currentBatch(network.currentBatch),
     parameter(network.parameter),
     numFunctions(network.numFunctions),
@@ -122,7 +120,6 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     clippingParameter(network.clippingParameter),
     lambda(network.lambda),
     reset(network.reset),
-    counter(network.counter),
     currentBatch(network.currentBatch),
     parameter(std::move(network.parameter)),
     numFunctions(network.numFunctions),
@@ -143,7 +140,6 @@ template<
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
     arma::mat trainData)
 {
-  counter = 0;
   currentBatch = 0;
 
   numFunctions = trainData.n_cols;
@@ -166,7 +162,7 @@ void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
   this->generator.predictors.set_size(noiseDim, batchSize);
   this->generator.responses.set_size(predictors.n_rows, batchSize);
 
-  if (!reset)
+  if ((!reset))
     Reset();
 }
 
@@ -238,7 +234,7 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
     const size_t i,
     const size_t /* batchSize */)
 {
-  if (parameter.is_empty())
+  if ((parameter.is_empty()))
     Reset();
 
   if (!deterministic)
@@ -293,7 +289,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
                      GradType& gradient,
                      const size_t /* batchSize */)
 {
-  if (parameter.is_empty())
+  if ((parameter.is_empty()))
     Reset();
 
   if (gradient.is_empty())
@@ -364,14 +360,8 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     gradientGenerator *= multiplier;
   }
 
-  counter++;
   currentBatch++;
 
-  // Revert the counter to zero, if the total dataset get's covered.
-  if (counter * batchSize >= numFunctions)
-  {
-    counter = 0;
-  }
 
   if (preTrainSize > 0)
   {
@@ -421,7 +411,7 @@ template<
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::Forward(
     arma::mat&& input)
 {
-  if (parameter.is_empty())
+  if ((parameter.is_empty()))
     Reset();
 
   generator.Forward(std::move(input));
@@ -440,7 +430,7 @@ template<
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::
 Predict(arma::mat input, arma::mat& output)
 {
-  if (parameter.is_empty())
+  if ((parameter.is_empty()))
     Reset();
 
   if (!deterministic)
