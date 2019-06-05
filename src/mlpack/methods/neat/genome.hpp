@@ -38,7 +38,7 @@ class Genome
    * @param weightMutationSize The degree to which the weight will mutate.
    * @param biasMutationRate The probability of a bias mutating.
    * @param biasMutationSize The degree to which the bias will mutate.
-   * @param connMutationRate The probability of a connection mutating.
+   * @param nodeAdditionRate The probability of a new node being added.
    * @param isAcyclic Denotes whether or not the generated network is acyclic.
    */
   Genome(const size_t inputNodeCount,
@@ -49,7 +49,8 @@ class Genome
          const double weightMutationSize,
          const double biasMutationRate,
          const double biasMutationSize,
-         const double connMutationRate,
+         const double nodeAdditionRate,
+         const double connAdditionRate,
          const bool isAcyclic = false);
 
   /**
@@ -115,8 +116,11 @@ class Genome
   //! The degree to which bias will mutate.
   double biasMutationSize;
 
-  //! The probability that connections will mutate.
-  double connMutationRate;
+  //! The probability that a new node will be added.
+  double nodeAdditionRate;
+
+  //! The probability that a new connection will be added.
+  double connAdditionRate;
 
   //! The next innovation ID to be allotted.
   size_t nextInnovID = 0;

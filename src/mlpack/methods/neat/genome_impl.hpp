@@ -29,7 +29,8 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
                                    const double weightMutationSize,
                                    const double biasMutationRate,
                                    const double biasMutationSize,
-                                   const double connMutationRate,
+                                   const double nodeAdditionRate,
+                                   const double connAdditionRate,
                                    const bool isAcyclic):
     inputNodeCount(inputNodeCount),
     outputNodeCount(outputNodeCount),
@@ -39,7 +40,8 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
     weightMutationSize(weightMutationSize),
     biasMutationRate(biasMutationRate),
     biasMutationSize(biasMutationSize),
-    connMutationRate(connMutationRate),
+    nodeAdditionRate(nodeAdditionRate),
+    connAdditionRate(connAdditionRate),
     isAcyclic(isAcyclic)
 {
   // Create the node gene list
@@ -57,11 +59,11 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
       if (DirectedGraph.find(i) == DirectedGraph.end())
       {
         DirectedGraph.emplace(std::piecewise_construct, std::forward_as_tuple(i),
-            std::initializer_list<std::pair<int, ConnectionGene>>{{i,
+            std::initializer_list<std::pair<int, ConnectionGene>>{{j,
             ConnectionGene(nextInnovID++, 1, i, j)}});
       }
       else
-        DirectedGraph[i].emplace(ConnectionGene(nextInnovID++, 1, i, j));
+        DirectedGraph[i].emplace(j, ConnectionGene(nextInnovID++, 1, i, j));
     }
   }
 }
@@ -87,21 +89,43 @@ arma::vec Genome<ActivationFunction>::Output()
 template <class ActivationFunction>
 void Genome<ActivationFunction>::Mutate()
 {
-  for (int i = 0; i < ConnectionGeneList.size(); i++)
+  for (size_t i = 0; i < ConnectionGeneList.size(); i++)
   {
+    // Mutate weight.
     if (arma::randu<double>() < weightMutationRate)
       ConnectionGeneList[i].Mutate(weightMutationSize);
-    if (arma::randu<double>() < connMutationRate)
+    
+    // Add new node.
+    if (arma::randu<double>() < nodeAdditionRate)
     {
-      ConnectionGene temp1(nextInnovID++, 1, ConnectionGeneList[i].source,
-          nextNodeID++);
-      ConnectionGene temp2(nextInnovID++, 1, nextNodeID++,
-          ConnectionGeneList[i].target);
-      DirectedGraph[ConnectionGeneList[i].source].erase(ConnectionGeneList[i].target);
+      size_t sourceID = ConnectionGeneList[i].source;
+      size_t targetID = ConnectionGeneList[i].target;
+      size_t newNodeID = nextNodeID++;
+      DirectedGraph[sourceID].emplace(newNodeID, ConnectionGene(nextInnovID++, 1, sourceID, newNodeID));
+      DirectedGraph.emplace(std::piecewise_construct, std::forward_as_tuple(newNodeID),
+            std::initializer_list<std::pair<int, ConnectionGene>>{{targetID,
+            ConnectionGene(nextInnovID++, 1, newNodeID, targetID)}});
+      DirectedGraph[sourceID].erase(targetID);
+      ConnectionGeneList[i].enabled = false;
     }
+
+    // Mutate bias.
     if (arma::randu<double>() < biasMutationRate)
-    {
       bias += biasMutationSize * arma::randn<double>();
+  }
+
+  // Add new connection.
+  for(size_t i = 0; i < NodeGeneList.size(); i++)
+  {
+    if (arma::randu<double>() < connAdditionRate)
+    {
+      size_t sourceID = ConnectionGeneList[i].source;
+      size_t newTarget = arma::randi<int>(arma::distr_param(0, NodeGeneList.size()));
+      if (i != newTarget)
+      {
+        ConnectionGeneList.emplace_back(ConnectionGene(nextInnovID++, 1, i, newTarget));
+        DirectedGraph[sourceID].emplace(newTarget, ConnectionGene(nextInnovID - 1, 1, i, newTarget));
+      }
     }
   }
 }
