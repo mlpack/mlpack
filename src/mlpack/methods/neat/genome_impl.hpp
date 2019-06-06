@@ -90,32 +90,48 @@ void Genome<ActivationFunction>::Mutate()
 {
   for (size_t i = 0; i < connectionGeneList.size(); i++)
   {
+    // Don't mutate the gene if it is not enabled.
+    if (!connectionGeneList.enabled)
+      continue;
+
     // Mutate weight.
     if (arma::randu<double>() < weightMutationProb)
+    {
       connectionGeneList[i].Mutate(weightMutationSize);
-    
+      
+      // Change the weight of the gene in the directed graph as well.
+      directedGraph[connectionGeneList[i].source][connectionGeneList[i].target]
+          .setWeight(connectionGeneList[i].getWeight())
+    }
+
     // Add new node.
-    if (arma::randu<double>() < nodeAdditionProb)
+    else if (arma::randu<double>() < nodeAdditionProb)
     {
       size_t sourceID = connectionGeneList[i].source;
       size_t targetID = connectionGeneList[i].target;
       size_t newNodeID = nextNodeID++;
       
-      // Add the new connections to the Directed graph.
-      directedGraph[sourceID].emplace(newNodeID, ConnectionGene(nextInnovID++, 1, sourceID, newNodeID));
+      // Add the first connection to the containers.
+      directedGraph[sourceID].emplace(newNodeID, ConnectionGene(nextInnovID, 1, sourceID, newNodeID));
+      connectionGeneList.emplace_back(ConnectionGene(nextInnovID++, 1,
+          sourceID, newNodeID));
+
+      // Add the second connection to the containers.
+      connectionGeneList.emplace_back(ConnectionGene(nextInnovID, 1,
+          newNodeID, targetID));
       directedGraph.emplace(std::piecewise_construct, std::forward_as_tuple(newNodeID),
             std::initializer_list<std::pair<int, ConnectionGene>>{{targetID,
             ConnectionGene(nextInnovID++, 1, newNodeID, targetID)}});
 
-      // Add
+      // Remove the lost connection.
       directedGraph[sourceID].erase(targetID);
       connectionGeneList[i].enabled = false;
     }
-
-    // Mutate bias.
-    if (arma::randu<double>() < biasMutationProb)
-      bias += biasMutationSize * arma::randn<double>();
   }
+    
+  // Mutate bias.
+  if (arma::randu<double>() < biasMutationProb)
+    bias += biasMutationSize * arma::randn<double>();
 
   // Add new connection.
   for(size_t i = 0; i < nodeGeneList.size(); i++)
@@ -126,8 +142,8 @@ void Genome<ActivationFunction>::Mutate()
       size_t newTarget = arma::randi<int>(arma::distr_param(0, nodeGeneList.size()));
       if (i != newTarget)
       {
-        connectionGeneList.emplace_back(ConnectionGene(nextInnovID++, 1, i, newTarget));
-        directedGraph[sourceID].emplace(newTarget, ConnectionGene(nextInnovID - 1, 1, i, newTarget));
+        connectionGeneList.emplace_back(ConnectionGene(nextInnovID, 1, i, newTarget));
+        directedGraph[sourceID].emplace(newTarget, ConnectionGene(nextInnovID++, 1, i, newTarget));
       }
     }
   }
