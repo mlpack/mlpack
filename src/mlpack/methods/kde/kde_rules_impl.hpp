@@ -139,9 +139,10 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   {
     // Monte Carlo probabilistic estimation.
     const double currentAlpha =
-        MCProb / std::pow(2, referenceNode.Stat().Depth());
-    const boost::math::normal normalDist;
-    const double z = boost::math::quantile(normalDist, currentAlpha / 2);
+        MCProb / std::pow(2, referenceNode.Stat().Depth() + 1);
+    const boost::math::normal normalDist(0.0, GetKernelBandwidth());
+    const double z =
+        std::abs(boost::math::quantile(normalDist, currentAlpha / 2));
     const size_t numDesc = referenceNode.NumDescendants();
     arma::vec sample;
     size_t m = initialSamples;
