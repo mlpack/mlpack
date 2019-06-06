@@ -67,7 +67,7 @@ KDE(const double relError,
     trained(false),
     mode(mode),
     monteCarlo(true),
-    MCProb(0.95) // TODO Just for testing purposes.
+    MCProb(0.05) // TODO Just for testing purposes.
 {
   CheckErrorValues(relError, absError);
 }

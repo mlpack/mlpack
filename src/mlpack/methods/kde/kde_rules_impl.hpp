@@ -108,8 +108,8 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   }
 
   // TODO Just for testing purposes.
-  const size_t initialSamples = 30;
-  const size_t t = 5;
+  const size_t initialSamples = 1000;
+  const size_t t = 50;
 
   if (newCalculations &&
       bound <= (absError + relError * minKernel) / referenceSet.n_cols)
@@ -147,6 +147,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     arma::vec sample;
     size_t m = initialSamples;
     double meanSample;
+    bool useMonteCarloPredictions = true;
     while (m > 0)
     {
       const size_t oldSize = sample.size();
@@ -160,6 +161,20 @@ Score(const size_t queryIndex, TreeType& referenceNode)
       }
       meanSample = arma::mean(sample);
       const double stddev = arma::stddev(sample);
+      // --------------
+      // It seems to work when using the left > right condition.
+      // This doesn't allow m to grow over its initial value :(
+      const double left = z * stddev / std::sqrt(m);
+      const double right =
+          relError *
+          (minKernel + numDesc * (meanSample - z * stddev / std::sqrt(m))) /
+          numDesc;
+      if (sample.size() >= numDesc || left > right)
+      {
+        useMonteCarloPredictions = false;
+        break;
+      }
+      // --------------
       minKernel +=
           numDesc * (meanSample - (z * stddev) / (std::sqrt(sample.size())));
       const double numerator = numDesc + relError * numDesc;
@@ -173,11 +188,16 @@ Score(const size_t queryIndex, TreeType& referenceNode)
         m = 0;
     }
 
-    // Update density.
-    densities(queryIndex) += numDesc * meanSample;
-
-    // Don't explore this tree branch.
-    score = DBL_MAX;
+    if (useMonteCarloPredictions)
+    {
+      // Use Monte Carlo estimation.
+      score = DBL_MAX;
+      densities(queryIndex) += numDesc * meanSample;
+    }
+    else
+    {
+      score = minDistance;
+    }
   }
   else
   {
