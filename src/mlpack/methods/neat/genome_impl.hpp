@@ -112,7 +112,8 @@ void Genome<ActivationFunction>::Mutate()
       size_t newNodeID = nextNodeID++;
       
       // Add the first connection to the containers.
-      directedGraph[sourceID].emplace(newNodeID, ConnectionGene(nextInnovID, 1, sourceID, newNodeID));
+      directedGraph[sourceID].emplace(newNodeID, ConnectionGene(nextInnovID, 1,
+          sourceID, newNodeID));
       connectionGeneList.emplace_back(ConnectionGene(nextInnovID++, 1,
           sourceID, newNodeID));
 
@@ -134,13 +135,14 @@ void Genome<ActivationFunction>::Mutate()
     bias += biasMutationSize * arma::randn<double>();
 
   // Add new connection.
-  for(size_t i = 0; i < nodeGeneList.size(); i++)
+  for (size_t i = 0; i < nodeGeneList.size(); i++)
   {
     if (arma::randu<double>() < connAdditionProb)
     {
       size_t sourceID = connectionGeneList[i].source;
-      size_t newTarget = arma::randi<int>(arma::distr_param(0, nodeGeneList.size()));
-      if (i != newTarget)
+      size_t newTargetIdx = arma::randi<int>(arma::distr_param(0, nodeGeneList.size()));
+      size_t newTarget = nodeGeneList[newTarget];
+      if (i != newTargetIdx)
       {
         connectionGeneList.emplace_back(ConnectionGene(nextInnovID, 1, i, newTarget));
         directedGraph[sourceID].emplace(newTarget, ConnectionGene(nextInnovID++, 1, i, newTarget));
