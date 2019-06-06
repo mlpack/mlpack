@@ -45,11 +45,11 @@ class Genome
          const size_t outputNodeCount,
          ActivationFunction& actFn,
          const double bias,
-         const double weightMutationRate,
+         const double weightMutationProb,
          const double weightMutationSize,
-         const double biasMutationRate,
+         const double biasMutationProb,
          const double biasMutationSize,
-         const double nodeAdditionRate,
+         const double nodeAdditionProb,
          const double connAdditionRate,
          const bool isAcyclic = false);
 

@@ -24,23 +24,23 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
                                    const size_t outputNodeCount,
                                    ActivationFunction& actFn,
                                    const double bias,
-                                   const double weightMutationRate,
+                                   const double weightMutationProb,
                                    const double weightMutationSize,
-                                   const double biasMutationRate,
+                                   const double biasMutationProb,
                                    const double biasMutationSize,
-                                   const double nodeAdditionRate,
-                                   const double connAdditionRate,
+                                   const double nodeAdditionProb,
+                                   const double connAdditionProb,
                                    const bool isAcyclic):
     inputNodeCount(inputNodeCount),
     outputNodeCount(outputNodeCount),
     actFn(actFn),
     bias(bias),
-    weightMutationRate(weightMutationRate),
+    weightMutationProb(weightMutationProb),
     weightMutationSize(weightMutationSize),
-    biasMutationRate(biasMutationRate),
+    biasMutationProb(biasMutationProb),
     biasMutationSize(biasMutationSize),
-    nodeAdditionRate(nodeAdditionRate),
-    connAdditionRate(connAdditionRate),
+    nodeAdditionProb(nodeAdditionProb),
+    connAdditionProb(connAdditionProb),
     isAcyclic(isAcyclic)
 {
   // Create the node gene list
@@ -90,11 +90,11 @@ void Genome<ActivationFunction>::Mutate()
   for (size_t i = 0; i < connectionGeneList.size(); i++)
   {
     // Mutate weight.
-    if (arma::randu<double>() < weightMutationRate)
+    if (arma::randu<double>() < weightMutationProb)
       connectionGeneList[i].Mutate(weightMutationSize);
     
     // Add new node.
-    if (arma::randu<double>() < nodeAdditionRate)
+    if (arma::randu<double>() < nodeAdditionProb)
     {
       size_t sourceID = connectionGeneList[i].source;
       size_t targetID = connectionGeneList[i].target;
@@ -112,14 +112,14 @@ void Genome<ActivationFunction>::Mutate()
     }
 
     // Mutate bias.
-    if (arma::randu<double>() < biasMutationRate)
+    if (arma::randu<double>() < biasMutationProb)
       bias += biasMutationSize * arma::randn<double>();
   }
 
   // Add new connection.
   for(size_t i = 0; i < nodeGeneList.size(); i++)
   {
-    if (arma::randu<double>() < connAdditionRate)
+    if (arma::randu<double>() < connAdditionProb)
     {
       size_t sourceID = connectionGeneList[i].source;
       size_t newTarget = arma::randi<int>(arma::distr_param(0, nodeGeneList.size()));
