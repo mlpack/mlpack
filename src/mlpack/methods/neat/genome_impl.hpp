@@ -127,7 +127,7 @@ void Genome<ActivationFunction>::Mutate()
           newNodeID, targetID));
       directedGraph.emplace(std::piecewise_construct, std::forward_as_tuple(
             newNodeID), std::initializer_list<std::pair<int, ConnectionGene>>{{
-            targetID,ConnectionGene(nextInnovID++, 1, newNodeID, targetID)}});
+            targetID, ConnectionGene(nextInnovID++, 1, newNodeID, targetID)}});
 
       // Remove the lost connection.
       directedGraph[sourceID].erase(targetID);
@@ -152,8 +152,8 @@ void Genome<ActivationFunction>::Mutate()
       {
         connectionGeneList.emplace_back(ConnectionGene(nextInnovID, 1, i,
             newTarget));
-        directedGraph[sourceID].emplace(newTarget, ConnectionGene(nextInnovID++
-            ,1, i, newTarget));
+        directedGraph[sourceID].emplace(newTarget, ConnectionGene(nextInnovID++,
+            1, i, newTarget));
       }
     }
   }
