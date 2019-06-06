@@ -74,13 +74,15 @@ void AcyclicNet<ActivationFunction>::TraverseNode(size_t nodeID, size_t depth)
 template <class ActivationFunction>
 arma::vec AcyclicNet<ActivationFunction>::Evaluate(arma::vec input)
 {
-  std::map<size_t, double> nodeValues;
+  std::vector<double> nodeValues;
   // Add all the nodes to the map.
   for (size_t i = 0; i < nodeGeneList.size(); i++)
+  {
     if (nodeGeneList[i] <= inputNodeCount && i != 0)
-      nodeValues[nodeGeneList[i]] = input[i-1];
+      nodeValues.push_back(input[i-1]);
     else
-      nodeValues[nodeGeneList[i]] = 0;
+      nodeValues.push_back(0);
+  }
 
   // Activate the layers one by one.
   for (size_t i = 0; i < layers.size(); i++)
