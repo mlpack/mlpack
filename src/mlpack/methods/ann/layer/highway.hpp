@@ -44,6 +44,7 @@ namespace ann /** Artificial Neural Network. */ {
  *   title   = {Training Very Deep Networks},
  *   journal = {Advances in Neural Information Processing Systems},
  *   year    = {2015},
+ *   url     = {https://arxiv.org/abs/1507.06228},
  * }
  * @endcode
  *
