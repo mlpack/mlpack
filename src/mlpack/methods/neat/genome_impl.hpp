@@ -44,15 +44,15 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
     isAcyclic(isAcyclic)
 {
   // Create the node gene list
-  for (int i = 0; i <= inputNodeCount + outputNodeCount; i++)
+  for (size_t i = 0; i <= inputNodeCount + outputNodeCount; i++)
   {
     NodeGeneList.push_back(i);
   }
 
   // Create connections and add them to the lists.
-  for (int i = 0; i <= inputNodeCount; i++)
+  for (size_t i = 0; i <= inputNodeCount; i++)
   {
-    for (int j = inputNodeCount+1; j <= outputNodeCount + inputNodeCount; j++)
+    for (size_t j = inputNodeCount+1; j <= outputNodeCount + inputNodeCount; j++)
     {
       ConnectionGeneList.emplace_back(ConnectionGene(nextInnovID++, 1, i, j));
       if (DirectedGraph.find(i) == DirectedGraph.end())
@@ -100,10 +100,14 @@ void Genome<ActivationFunction>::Mutate()
       size_t sourceID = ConnectionGeneList[i].source;
       size_t targetID = ConnectionGeneList[i].target;
       size_t newNodeID = nextNodeID++;
+      
+      // Add the new connections to the Directed graph.
       DirectedGraph[sourceID].emplace(newNodeID, ConnectionGene(nextInnovID++, 1, sourceID, newNodeID));
       DirectedGraph.emplace(std::piecewise_construct, std::forward_as_tuple(newNodeID),
             std::initializer_list<std::pair<int, ConnectionGene>>{{targetID,
             ConnectionGene(nextInnovID++, 1, newNodeID, targetID)}});
+
+      // Add
       DirectedGraph[sourceID].erase(targetID);
       ConnectionGeneList[i].enabled = false;
     }

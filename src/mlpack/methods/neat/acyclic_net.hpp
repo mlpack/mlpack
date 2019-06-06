@@ -33,8 +33,8 @@ class AcyclicNet
    * @param outputNodeCount The number of output nodes.
    * @param bias The bias.s
    */
-  AcyclicNet(std::vector<int>& NodeGeneList,
-             std::map<int, std::map<int, ConnectionGene>>& DirectedGraph,
+  AcyclicNet(std::vector<size_t>& NodeGeneList,
+             std::map<size_t, std::map<size_t, ConnectionGene>>& DirectedGraph,
              ActivationFunction& actFn,
              const size_t inputNodeCount,
              const size_t outputNodeCount,
@@ -46,9 +46,9 @@ class AcyclicNet
   arma::vec Evaluate(arma::vec input);
 
  private:
-  std::vector<int> NodeGeneList;
+  std::vector<size_t> NodeGeneList;
 
-  std::map<int, std::map<int, ConnectionGene>> DirectedGraph;
+  std::map<size_t, std::map<size_t, ConnectionGene>> DirectedGraph;
 
   ActivationFunction& actFn;
 
