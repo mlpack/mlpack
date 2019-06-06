@@ -73,18 +73,18 @@ class Genome
    * A data structure containing IDs for the node genes. It is maintained in the order
    * [bias node, input nodes, output nodes, hidden nodes].
    */
-  std::vector<size_t> NodeGeneList;
+  std::vector<size_t> nodeGeneList;
 
   /*
-   * A data structure containing the connection genes sorted by global innovation ID.
+   * A data structure contaning the connection genes sorted by global innovation ID.
    */
-  std::vector<ConnectionGene> ConnectionGeneList;
+  std::vector<ConnectionGene> connectionGeneList;
 
   /*
    * A digraph containing connection genes sorted by source ID, and then
    * secondary sorted by target ID.
    */
-  std::map<size_t, std::map<size_t, ConnectionGene>> DirectedGraph;
+  std::map<size_t, std::map<size_t, ConnectionGene>> directedGraph;
 
   //! Input node count.
   size_t inputNodeCount;

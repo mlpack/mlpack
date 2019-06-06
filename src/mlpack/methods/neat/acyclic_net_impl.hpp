@@ -20,15 +20,15 @@ namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
 template <class ActivationFunction>
-AcyclicNet<ActivationFunction>::AcyclicNet(std::vector<size_t>& NodeGeneList,
+AcyclicNet<ActivationFunction>::AcyclicNet(std::vector<size_t>& nodeGeneList,
                                            std::map<size_t, std::map<size_t,
-                                              ConnectionGene>>& DirectedGraph,
+                                              ConnectionGene>>& directedGraph,
                                            ActivationFunction& actFn,
                                            const size_t inputNodeCount,
                                            const size_t outputNodeCount,
                                            const double bias):
-    NodeGeneList(NodeGeneList),
-    DirectedGraph(DirectedGraph),
+    nodeGeneList(nodeGeneList),
+    directedGraph(directedGraph),
     actFn(actFn),
     inputNodeCount(inputNodeCount),
     outputNodeCount(outputNodeCount),
@@ -65,35 +65,35 @@ void AcyclicNet<ActivationFunction>::TraverseNode(size_t nodeID, size_t depth)
     nodeDepths.insert(nodeID, depth);
   }
 
-  for (auto const& x : DirectedGraph)
+  for (auto const& x : directedGraph)
     TraverseNode(x.first, depth + 1);
 }
 
 template <class ActivationFunction>
 arma::vec AcyclicNet<ActivationFunction>::Evaluate(arma::vec input)
 {
-  std::map<size_t, double> NodeValues;
-  for (size_t i = 0; i < NodeGeneList.size(); i++)
-    if (NodeGeneList[i] <= inputNodeCount)
-      NodeValues.insert(NodeGeneList[i], input[NodeGeneList[i]-1])
+  std::map<size_t, double> nodeValues;
+  for (size_t i = 0; i < nodeGeneList.size(); i++)
+    if (nodeGeneList[i] <= inputNodeCount)
+      nodeValues.insert(nodeGeneList[i], input[nodeGeneList[i]-1])
     else
-      NodeValues.insert(NodeGeneList[i], 0);
+      nodeValues.insert(nodeGeneList[i], 0);
 
   for (size_t i = 0; i < layers.size(); i++)
   {
-    for (size_t j =0; j < layers[i].size(); j++)
+    for (size_t j = 0; j < layers[i].size(); j++)
     {
       int nodeID = layers[i][j];
       if (nodeID == 0)
       {
-        for (auto const& x : DirectedGraph)
-          NodeValues[x.first] += bias;
+        for (auto const& x : directedGraph)
+          nodeValues[x.first] += bias;
       }
       else
       {
-        double result = actFn.Fn(NodeValues[nodeID]);
-        for (auto const& x : DirectedGraph)
-          NodeValues[x.first] += result;
+        double result = actFn.Fn(nodeValues[nodeID]);
+        for (auto const& x : directedGraph)
+          nodeValues[x.first] += result;
       }
     }
   }
@@ -101,7 +101,7 @@ arma::vec AcyclicNet<ActivationFunction>::Evaluate(arma::vec input)
   // Find the output.
   arma::vec output(outputNodeCount);
   for (size_t i = 0; i < output.n_elem; i++)
-    output[i] = NodeValues[i+inputNodeCount+1];
+    output[i] = nodeValues[i + inputNodeCount + 1];
 
   return output;
 }
