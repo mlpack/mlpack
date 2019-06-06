@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
-  PrioritizedReplay<CartPole> prioritizedReplayMethod(10, 10000, 0.6);
+  PrioritizedReplay<CartPole> replayMethod(10, 10000, 0.6);
 
   TrainingConfig config;
   config.StepSize() = 0.01;
@@ -127,9 +127,10 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
   config.StepLimit() = 200;
 
   // Set up DQN agent.
-  QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy)>
+  QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy),
+      decltype(replayMethod)>
     agent(std::move(config), std::move(model), std::move(policy),
-          std::move(prioritizedReplayMethod));
+          std::move(replayMethod));
 
   arma::running_stat<double> averageReturn;
   size_t episodes = 0;

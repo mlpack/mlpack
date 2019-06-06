@@ -164,7 +164,7 @@ class SumTree
    * */
   size_t FindPrefixSum(T mass)
   {
-    int idx = 1;
+    size_t idx = 1;
     while (idx < capacity)
     {
       if (element[2 * idx] > mass)

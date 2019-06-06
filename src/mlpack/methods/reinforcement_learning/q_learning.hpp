@@ -53,8 +53,7 @@ template <
   typename NetworkType,
   typename UpdaterType,
   typename PolicyType,
-  typename ReplayType = RandomReplay<EnvironmentType>,
-  typename PrioritizedReplayType = PrioritizedReplay<EnvironmentType>
+  typename ReplayType = RandomReplay<EnvironmentType>
 >
 class QLearning
 {
@@ -82,13 +81,6 @@ class QLearning
             NetworkType network,
             PolicyType policy,
             ReplayType replayMethod,
-            UpdaterType updater = UpdaterType(),
-            EnvironmentType environment = EnvironmentType());
-
-  QLearning(TrainingConfig config,
-            NetworkType network,
-            PolicyType policy,
-            PrioritizedReplayType prioritizedReplayMethod,
             UpdaterType updater = UpdaterType(),
             EnvironmentType environment = EnvironmentType());
 
@@ -154,9 +146,6 @@ class QLearning
 
   //! Locally-stored experience method.
   ReplayType replayMethod;
-
-  //! Locally-stored experience method.
-  PrioritizedReplayType prioritizedReplayMethod;
 
   //! Locally-stored reinforcement learning task.
   EnvironmentType environment;

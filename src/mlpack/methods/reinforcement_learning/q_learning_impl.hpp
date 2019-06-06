@@ -22,16 +22,14 @@ template <
   typename NetworkType,
   typename UpdaterType,
   typename PolicyType,
-  typename ReplayType,
-  typename PrioritizedReplayType
+  typename ReplayType
 >
 QLearning<
   EnvironmentType,
   NetworkType,
   UpdaterType,
   PolicyType,
-  ReplayType,
-  PrioritizedReplayType
+  ReplayType
 >::QLearning(TrainingConfig config,
              NetworkType network,
              PolicyType policy,
@@ -61,54 +59,14 @@ template <
   typename NetworkType,
   typename UpdaterType,
   typename PolicyType,
-  typename ReplayType,
-  typename PrioritizedReplayType
->
-QLearning<
-  EnvironmentType,
-  NetworkType,
-  UpdaterType,
-  PolicyType,
-  ReplayType,
-  PrioritizedReplayType
->::QLearning(TrainingConfig config,
-             NetworkType network,
-             PolicyType policy,
-             PrioritizedReplayType prioritizedReplayMethod,
-             UpdaterType updater,
-             EnvironmentType environment):
-  config(std::move(config)),
-  learningNetwork(std::move(network)),
-  updater(std::move(updater)),
-  policy(std::move(policy)),
-  prioritizedReplayMethod(std::move(prioritizedReplayMethod)),
-  environment(std::move(environment)),
-  totalSteps(0),
-  deterministic(false),
-  prioritizedReplay(true)
-{
-  if (learningNetwork.Parameters().is_empty())
-    learningNetwork.ResetParameters();
-  this->updater.Initialize(learningNetwork.Parameters().n_rows,
-      learningNetwork.Parameters().n_cols);
-  targetNetwork = learningNetwork;
-}
-
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType,
-  typename ReplayType,
-  typename PrioritizedReplayType
+  typename ReplayType
 >
 arma::Col<size_t> QLearning<
   EnvironmentType,
   NetworkType,
   UpdaterType,
   PolicyType,
-  ReplayType,
-  PrioritizedReplayType
+  ReplayType
 >::BestAction(const arma::mat& actionValues)
 {
   // Take best possible action at a particular instance.
@@ -127,16 +85,14 @@ template <
   typename NetworkType,
   typename UpdaterType,
   typename BehaviorPolicyType,
-  typename ReplayType,
-  typename PrioritizedReplayType
+  typename ReplayType
 >
 double QLearning<
   EnvironmentType,
   NetworkType,
   UpdaterType,
   BehaviorPolicyType,
-  ReplayType,
-  PrioritizedReplayType
+  ReplayType
 >::Step()
 {
   // Get the action value for each action at current state.
@@ -151,16 +107,8 @@ double QLearning<
   double reward = environment.Sample(state, action, nextState);
 
   // Store the transition for replay.
-  if (prioritizedReplay)
-  {
-    prioritizedReplayMethod.Store(state, action, reward,
-        nextState, environment.IsTerminal(nextState));
-  }
-  else
-  {
-    replayMethod.Store(state, action, reward,
-        nextState, environment.IsTerminal(nextState));
-  }
+  replayMethod.Store(state, action, reward,
+      nextState, environment.IsTerminal(nextState));
 
   // Update current state.
   state = nextState;
@@ -177,16 +125,8 @@ double QLearning<
   arma::mat sampledNextStates;
   arma::icolvec isTerminal;
 
-  if (!prioritizedReplay)
-  {
-    replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
-        sampledNextStates, isTerminal);
-  }
-  else
-  {
-    prioritizedReplayMethod.Sample(sampledStates, sampledActions,
-        sampledRewards, sampledNextStates, isTerminal);
-  }
+  replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
+      sampledNextStates, isTerminal);
 
   // Compute action value for next state with target network.
   arma::mat nextActionValues;
@@ -226,16 +166,8 @@ double QLearning<
   arma::mat gradients;
   learningNetwork.Backward(target, gradients);
 
-  if (prioritizedReplay)
-  {
-    prioritizedReplayMethod.Update(target, sampledActions,
-        nextActionValues, gradients);
-  }
-  else
-  {
-    replayMethod.Update(target, sampledActions,
-        nextActionValues, gradients);
-  }
+  replayMethod.Update(target, sampledActions,
+      nextActionValues, gradients);
 
   updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
 
@@ -247,16 +179,14 @@ template <
   typename NetworkType,
   typename UpdaterType,
   typename BehaviorPolicyType,
-  typename ReplayType,
-  typename PrioritizedReplayType
+  typename ReplayType
 >
 double QLearning<
   EnvironmentType,
   NetworkType,
   UpdaterType,
   BehaviorPolicyType,
-  ReplayType,
-  PrioritizedReplayType
+  ReplayType
 >::Episode()
 {
   // Get the initial state from environment.
