@@ -31,7 +31,7 @@ class AcyclicNet
    * @param actFn The activation function.
    * @param inputNodeCount The number of input nodes.
    * @param outputNodeCount The number of output nodes.
-   * @param bias The bias.s
+   * @param bias The bias.
    */
   AcyclicNet(std::vector<size_t>& nodeGeneList,
              std::map<size_t, std::map<size_t, ConnectionGene>>& directedGraph,

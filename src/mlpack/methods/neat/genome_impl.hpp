@@ -45,9 +45,7 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
 {
   // Create the node gene list
   for (size_t i = 0; i <= inputNodeCount + outputNodeCount; i++)
-  {
     nodeGeneList.push_back(i);
-  }
 
   // Create connections and add them to the lists.
   for (size_t i = 0; i <= inputNodeCount; i++)
@@ -81,7 +79,8 @@ void Genome<ActivationFunction>::Input(const arma::vec& input)
 template <class ActivationFunction>
 arma::vec Genome<ActivationFunction>::Output()
 {
-  AcyclicNet<ActivationFunction> net(this, actFn);
+  AcyclicNet<ActivationFunction> net(nodeGeneList, directedGraph, actFn,
+      inputNodeCount, outputNodeCount, bias);
   return net.Evaluate(input);
 }
 
