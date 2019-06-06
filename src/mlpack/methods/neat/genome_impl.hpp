@@ -2,7 +2,8 @@
  * @file genome.hpp
  * @author Rahul Ganesh Prabhu
  *
- * Definition of the Genome classes.
+ * Implementation of the Genome class which represents a genome in the 
+ * population.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

@@ -2,7 +2,7 @@
  * @file genome.hpp
  * @author Rahul Ganesh Prabhu
  *
- * Definition of the Genome class.
+ * Definition of the Genome class which represents a genome in the population.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,7 +19,19 @@ namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */ {
 
 /**
- * Genome class
+ * A class representation of a genome in the population. The genome is a
+ * collection of connection genes which can be decoded into a neural
+ * network and be used to evaluate an input.
+ * 
+ * It also stores the nodes in the form of IDs:
+ * Bias node : ID = 0
+ * Input nodes : ID = 1 - inputNodeCount
+ * Output nodes : ID = inputNodeCount+1 - inputNodeCount+outputNodeCount
+ * Hidden nodes : ID > inputNodeCount+outputNodeCount
+ * 
+ * The genome can undergo two types of structural mutations:
+ * 1. A connection can be split into two, creating a new node.
+ * 2. A new connection can be created between two nodes.
  * 
  * @tparam ActivationFunction The activation function to be used.
  */
@@ -34,11 +46,11 @@ class Genome
    * @param outputNodeCount The number of output nodes.
    * @param actFn The activation function.
    * @param bias The bias of the genome.
-   * @param weightMutationRate The probability of a weight mutating.
+   * @param weightMutationProb The probability of a weight mutating.
    * @param weightMutationSize The degree to which the weight will mutate.
-   * @param biasMutationRate The probability of a bias mutating.
+   * @param biasMutationProb The probability of a bias mutating.
    * @param biasMutationSize The degree to which the bias will mutate.
-   * @param nodeAdditionRate The probability of a new node being added.
+   * @param nodeAdditionProb The probability of a new node being added.
    * @param isAcyclic Denotes whether or not the generated network is acyclic.
    */
   Genome(const size_t inputNodeCount,
@@ -50,7 +62,7 @@ class Genome
          const double biasMutationProb,
          const double biasMutationSize,
          const double nodeAdditionProb,
-         const double connAdditionRate,
+         const double connAdditionProb,
          const bool isAcyclic = false);
 
   /**
@@ -92,9 +104,6 @@ class Genome
   //! Output node count.
   size_t outputNodeCount;
 
-  //! Hidden node count.
-  size_t hiddenNodeCount;
-
   //! Activation function.
   ActivationFunction actFn;
 
@@ -105,22 +114,22 @@ class Genome
   double bias;
 
   //! The probability that weight mutation will occur.
-  double weightMutationRate;
+  double weightMutationProb;
 
   //! The degree to which the weight will mutate.
   double weightMutationSize;
 
   //! The probability that bias mutation will occur.
-  double biasMutationRate;
+  double biasMutationProb;
 
   //! The degree to which bias will mutate.
   double biasMutationSize;
 
   //! The probability that a new node will be added.
-  double nodeAdditionRate;
+  double nodeAdditionProb;
 
   //! The probability that a new connection will be added.
-  double connAdditionRate;
+  double connAdditionProb;
 
   //! The next innovation ID to be allotted.
   size_t nextInnovID = 0;

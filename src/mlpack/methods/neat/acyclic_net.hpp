@@ -2,7 +2,8 @@
  * @file acyclic_net.hpp
  * @author Rahul Ganesh Prabhu
  *
- * Definition of the Acyclic net classes.
+ * Definition of the AcyclicNet class, which represents an acyclic neural
+ * network.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -17,7 +18,21 @@
 
 namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */{
-
+/**
+ * A class representation of an acyclic neural network. Genomes are decoded
+ * into this class if the `isAcyclic` parameter is set to `true`. It is used
+ * to evaluate an input to the genome.
+ * 
+ * The steps of the decoding and activating are as follows:
+ * 1. The nodes are each assigned a "depth" depending on the number of "jumps"
+ *    it takes to reach it from an input node. If there are two paths to the
+ *    node, the longer path is used to find the depth.
+ * 2. Based on the depth, the nodes are divided into layers.
+ * 3. Starting from layer zero, the layers are activated one by one.
+ * 4. The output is taken from the last layer, i.e. the output nodes.
+ * 
+ * @tparam ActivationFunction The activation function. 
+ */
 template <class ActivationFunction>
 class AcyclicNet
 {
@@ -46,22 +61,37 @@ class AcyclicNet
   arma::vec Evaluate(arma::vec input);
 
  private:
+  /*
+   * A data structure containing IDs for the node genes. It is maintained in the order
+   * [bias node, input nodes, output nodes, hidden nodes].
+   */
   std::vector<size_t> nodeGeneList;
 
+  /*
+   * A digraph containing connection genes sorted by source ID, and then
+   * secondary sorted by target ID.
+   */
   std::map<size_t, std::map<size_t, ConnectionGene>> directedGraph;
 
+  //! Activation function.
   ActivationFunction& actFn;
 
+  //! Input node count.
   size_t inputNodeCount;
 
+  //! Output node count.
   size_t outputNodeCount;
 
+  //! Bias.
   double bias;
 
+  //! A map mapping the node ID to its depth in the neural network.
   std::map<size_t, size_t> nodeDepths;
 
+  //! A data structure storing the nodes by layer.
   std::vector<std::vector<size_t>> layers;
 
+  // A recursive function that assigns depth to nodes.
   void TraverseNode(size_t nodeID, size_t depth);
 };
 
