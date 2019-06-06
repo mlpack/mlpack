@@ -56,21 +56,6 @@ BOOST_AUTO_TEST_CASE(GmmGenerateSamplesTest)
   Log::Fatal.ignoreInput = false;
 }
 
-// Making sure samples are provided.
-BOOST_AUTO_TEST_CASE(GmmGenerateSamples)
-{
-  arma::mat inputData(5, 10, arma::fill::randu);
-
-  GMM gmm(1, 5);
-  gmm.Train(inputData, 5);
-
-  SetInputParam("input_model", &gmm);
-
-  Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
-}
-
 // Checking dimensionality of output.
 BOOST_AUTO_TEST_CASE(GmmGenerateDimensionality)
 {
