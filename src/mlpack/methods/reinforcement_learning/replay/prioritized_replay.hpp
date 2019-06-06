@@ -64,7 +64,6 @@ class PrioritizedReplay
                const size_t dimension = StateType::dimension) :
       batchSize(batchSize),
       capacity(capacity),
-      alpha(alpha),
       position(0),
       states(dimension, capacity),
       actions(capacity),
@@ -72,6 +71,7 @@ class PrioritizedReplay
       nextStates(dimension, capacity),
       isTerminal(capacity),
       full(false),
+      alpha(alpha),
       maxPriority(1.0),
       initialBeta(0.6),
       replayBetaIters(10000)
@@ -237,24 +237,6 @@ class PrioritizedReplay
 
 
  private:
-  //! How much prioritization is used.
-  //! (0 - no prioritization, 1 - full prioritization)
-  double alpha;
-
-  double maxPriority;
-
-  //! Initial value of beta for prioritized replay buffer.
-  double initialBeta;
-
-  //! The value of beta for current sample.
-  double beta;
-
-  //! How many iteration for replay beta to decay.
-  size_t replayBetaIters;
-
-  //! Locally-stored the prefix sum of prioritization.
-  SumTree<double> idxSum;
-
   //! Locally-stored number of examples of each sample.
   size_t batchSize;
 
@@ -281,6 +263,25 @@ class PrioritizedReplay
 
   //! Locally-stored indicator that whether the memory is full or not.
   bool full;
+
+  //! How much prioritization is used.
+  //! (0 - no prioritization, 1 - full prioritization)
+  double alpha;
+
+  //! Locally-stored the max priority.
+  double maxPriority;
+
+  //! Initial value of beta for prioritized replay buffer.
+  double initialBeta;
+
+  //! The value of beta for current sample.
+  double beta;
+
+  //! How many iteration for replay beta to decay.
+  size_t replayBetaIters;
+
+  //! Locally-stored the prefix sum of prioritization.
+  SumTree<double> idxSum;
 
   //! Locally-stored the indices of sampled transitions.
   arma::ucolvec sampledIndices;
