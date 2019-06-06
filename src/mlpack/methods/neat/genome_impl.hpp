@@ -91,7 +91,7 @@ void Genome<ActivationFunction>::Mutate()
   for (size_t i = 0; i < connectionGeneList.size(); i++)
   {
     // Don't mutate the gene if it is not enabled.
-    if (!connectionGeneList.enabled)
+    if (!connectionGeneList[i].isEnabled())
       continue;
 
     // Mutate weight.
@@ -101,7 +101,7 @@ void Genome<ActivationFunction>::Mutate()
       
       // Change the weight of the gene in the directed graph as well.
       directedGraph[connectionGeneList[i].source][connectionGeneList[i].target]
-          .setWeight(connectionGeneList[i].getWeight())
+          .setWeight() = connectionGeneList[i].getWeight();
     }
 
     // Add new node.
@@ -140,7 +140,7 @@ void Genome<ActivationFunction>::Mutate()
     if (arma::randu<double>() < connAdditionProb)
     {
       size_t sourceID = connectionGeneList[i].source;
-      size_t newTargetIdx = arma::randi<int>(arma::distr_param(0, nodeGeneList.size()));
+      size_t newTargetIdx = arma::randi<arma::vec>(1, arma::distr_param(0, nodeGeneList.size()))[0];
       size_t newTarget = nodeGeneList[newTarget];
       if (i != newTargetIdx)
       {

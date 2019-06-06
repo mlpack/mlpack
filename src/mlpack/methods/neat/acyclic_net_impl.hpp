@@ -45,7 +45,7 @@ AcyclicNet<ActivationFunction>::AcyclicNet(std::vector<size_t>& nodeGeneList,
   {
     while (layers.size() < x.second + 1)
       layers.emplace_back(std::vector<size_t>());
-    layers[it->second].push_back(x.first);
+    layers[x.second].push_back(x.first);
   }
 }
 
@@ -75,9 +75,9 @@ arma::vec AcyclicNet<ActivationFunction>::Evaluate(arma::vec input)
   std::map<size_t, double> nodeValues;
   for (size_t i = 0; i < nodeGeneList.size(); i++)
     if (nodeGeneList[i] <= inputNodeCount)
-      nodeValues.insert(nodeGeneList[i], input[nodeGeneList[i]-1])
+      nodeValues[nodeGeneList[i]] = input[nodeGeneList[i]-1];
     else
-      nodeValues.insert(nodeGeneList[i], 0);
+      nodeValues[nodeGeneList[i]] = 0;
 
   for (size_t i = 0; i < layers.size(); i++)
   {
