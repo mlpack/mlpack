@@ -96,7 +96,7 @@ arma::vec AcyclicNet<ActivationFunction>::Evaluate(arma::vec input)
       else
       {
         double result = actFn.Fn(nodeValues[nodeID]);
-        for (auto const& x : directedGraph)
+        for (auto const& x : directedGraph[nodeID])
           nodeValues[x.first] += result * x.second.getWeight();
       }
     }
