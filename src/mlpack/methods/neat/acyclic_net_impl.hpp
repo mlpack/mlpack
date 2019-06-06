@@ -20,14 +20,14 @@ namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
 template <class ActivationFunction>
-AcyclicNet<ActivationFunction>::AcyclicNet(std::vector<size_t>& nodeGeneList,
+AcyclicNet<ActivationFunction>::AcyclicNet(const size_t nodeCount,
                                            std::map<size_t, std::map<size_t,
                                               ConnectionGene>>& directedGraph,
                                            ActivationFunction& actFn,
                                            const size_t inputNodeCount,
                                            const size_t outputNodeCount,
                                            const double bias):
-    nodeGeneList(nodeGeneList),
+    nodeCount(nodeCount),
     directedGraph(directedGraph),
     actFn(actFn),
     inputNodeCount(inputNodeCount),
@@ -76,9 +76,9 @@ arma::vec AcyclicNet<ActivationFunction>::Evaluate(arma::vec input)
 {
   std::vector<double> nodeValues;
   // Add all the nodes to the map.
-  for (size_t i = 0; i < nodeGeneList.size(); i++)
+  for (size_t i = 0; i < maxNodeID; i++)
   {
-    if (nodeGeneList[i] <= inputNodeCount && i != 0)
+    if (i <= inputNodeCount && i != 0)
       nodeValues.push_back(input[i-1]);
     else
       nodeValues.push_back(0);

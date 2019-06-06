@@ -40,7 +40,7 @@ class AcyclicNet
   /**
    * Creates an AcyclicNet object.
    * 
-   * @param NodeGeneList A vector storing all the node IDs.
+   * @param nodeCount The number of nodes.
    * @param DirectedGraph A map of maps storing connection genes, whose first
    *    key is the source ID, and second key is the target ID.
    * @param actFn The activation function.
@@ -48,7 +48,7 @@ class AcyclicNet
    * @param outputNodeCount The number of output nodes.
    * @param bias The bias.
    */
-  AcyclicNet(std::vector<size_t>& nodeGeneList,
+  AcyclicNet(const size_t nodeCount,
              std::map<size_t, std::map<size_t, ConnectionGene>>& directedGraph,
              ActivationFunction& actFn,
              const size_t inputNodeCount,
@@ -61,11 +61,8 @@ class AcyclicNet
   arma::vec Evaluate(arma::vec input);
 
  private:
-  /*
-   * A data structure containing IDs for the node genes. It is maintained in the order
-   * [bias node, input nodes, output nodes, hidden nodes].
-   */
-  std::vector<size_t> nodeGeneList;
+  //! The number of nodes.
+  size_t nodeCount;
 
   /*
    * A digraph containing connection genes sorted by source ID, and then
