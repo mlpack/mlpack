@@ -82,13 +82,14 @@ class Genome
 
  private:
   /*
-   * A data structure containing IDs for the node genes. It is maintained in the order
-   * [bias node, input nodes, output nodes, hidden nodes].
+   * A data structure containing IDs for the node genes. It is maintained in
+   * the order [bias node, input nodes, output nodes, hidden nodes].
    */
   std::vector<size_t> nodeGeneList;
 
   /*
-   * A data structure contaning the connection genes sorted by global innovation ID.
+   * A data structure contaning the connection genes sorted by global
+   * innovation ID.
    */
   std::vector<ConnectionGene> connectionGeneList;
 

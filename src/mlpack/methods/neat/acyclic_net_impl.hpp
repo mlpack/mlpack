@@ -34,13 +34,13 @@ AcyclicNet<ActivationFunction>::AcyclicNet(std::vector<size_t>& nodeGeneList,
     outputNodeCount(outputNodeCount),
     bias(bias)
 {
-  // Find the depth of the nodes
+  // Find the depth of the nodes.
   for (size_t i = 0; i <= inputNodeCount; i++)
   {
     TraverseNode(i, 0);
   }
 
-  // Populate the layers
+  // Populate the layers.
   for (auto const& x : nodeDepths)
   {
     while (layers.size() < x.second + 1)
@@ -49,6 +49,7 @@ AcyclicNet<ActivationFunction>::AcyclicNet(std::vector<size_t>& nodeGeneList,
   }
 }
 
+// Recursively traverse neighbours and assign depths.
 template <class ActivationFunction>
 void AcyclicNet<ActivationFunction>::TraverseNode(size_t nodeID, size_t depth)
 {
@@ -69,16 +70,19 @@ void AcyclicNet<ActivationFunction>::TraverseNode(size_t nodeID, size_t depth)
     TraverseNode(x.first, depth + 1);
 }
 
+// Evaluate a given input.
 template <class ActivationFunction>
 arma::vec AcyclicNet<ActivationFunction>::Evaluate(arma::vec input)
 {
   std::map<size_t, double> nodeValues;
+  // Add all the nodes to the map.
   for (size_t i = 0; i < nodeGeneList.size(); i++)
     if (nodeGeneList[i] <= inputNodeCount)
       nodeValues[nodeGeneList[i]] = input[nodeGeneList[i]-1];
     else
       nodeValues[nodeGeneList[i]] = 0;
 
+  // Activate the layers one by one.
   for (size_t i = 0; i < layers.size(); i++)
   {
     for (size_t j = 0; j < layers[i].size(); j++)

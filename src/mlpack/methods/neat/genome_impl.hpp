@@ -20,6 +20,7 @@
 namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
+// Creates object.
 template <class ActivationFunction>
 Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
                                    const size_t outputNodeCount,
@@ -44,7 +45,7 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
     connAdditionProb(connAdditionProb),
     isAcyclic(isAcyclic)
 {
-  // Create the node gene list
+  // Create the node gene list.
   for (size_t i = 0; i <= inputNodeCount + outputNodeCount; i++)
     nodeGeneList.push_back(i);
 
@@ -56,8 +57,8 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
       connectionGeneList.emplace_back(ConnectionGene(nextInnovID++, 1, i, j));
       if (directedGraph.find(i) == directedGraph.end())
       {
-        directedGraph.emplace(std::piecewise_construct, std::forward_as_tuple(i),
-            std::initializer_list<std::pair<int, ConnectionGene>>{{j,
+        directedGraph.emplace(std::piecewise_construct, std::forward_as_tuple
+            (i), std::initializer_list<std::pair<int, ConnectionGene>>{{j,
             ConnectionGene(nextInnovID++, 1, i, j)}});
       }
       else
@@ -66,6 +67,7 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
   }
 }
 
+// Loads input.
 template <class ActivationFunction>
 void Genome<ActivationFunction>::Input(const arma::vec& input)
 {
@@ -77,6 +79,7 @@ void Genome<ActivationFunction>::Input(const arma::vec& input)
   input = input;
 }
 
+// Evaluates output based on input.
 template <class ActivationFunction>
 arma::vec Genome<ActivationFunction>::Output()
 {
@@ -85,6 +88,7 @@ arma::vec Genome<ActivationFunction>::Output()
   return net.Evaluate(input);
 }
 
+// Mutate genome.
 template <class ActivationFunction>
 void Genome<ActivationFunction>::Mutate()
 {
