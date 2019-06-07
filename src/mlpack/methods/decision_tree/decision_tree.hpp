@@ -74,7 +74,7 @@ class DecisionTree :
                const size_t numClasses,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 20,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -100,7 +100,7 @@ class DecisionTree :
                const size_t numClasses,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 20,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -131,7 +131,7 @@ class DecisionTree :
                WeightsType weights,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 20,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
                const std::enable_if_t<arma::is_arma_type<
@@ -163,7 +163,7 @@ class DecisionTree :
                WeightsType weights,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 20,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
                const std::enable_if_t<arma::is_arma_type<
@@ -241,7 +241,7 @@ class DecisionTree :
                const size_t numClasses,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 20,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -269,7 +269,7 @@ class DecisionTree :
                const size_t numClasses,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 20,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -302,7 +302,7 @@ class DecisionTree :
                WeightsType weights,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 20,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
                const std::enable_if_t<arma::is_arma_type<typename
@@ -334,7 +334,7 @@ class DecisionTree :
                WeightsType weights,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 20,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
                const std::enable_if_t<arma::is_arma_type<typename

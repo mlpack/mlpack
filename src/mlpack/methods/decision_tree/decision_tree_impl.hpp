@@ -610,7 +610,6 @@ double DecisionTree<FitnessFunction,
       UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   size_t bestDim = datasetInfo.Dimensionality(); // This means "no split".
   const size_t end = dimensionSelector.End();
-  size_t maximum = maximumDepth;
 
   for (size_t i = dimensionSelector.Begin(); i != end;
        i = dimensionSelector.Next())
@@ -626,7 +625,7 @@ double DecisionTree<FitnessFunction,
           UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
           minimumLeafSize,
           minimumGainSplit,
-          maximum--,
+          maximumDepth,
           classProbabilities,
           *this);
     }
@@ -639,7 +638,7 @@ double DecisionTree<FitnessFunction,
           UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
           minimumLeafSize,
           minimumGainSplit,
-          maximum--,
+          maximumDepth,
           classProbabilities,
           *this);
     }
@@ -719,19 +718,19 @@ double DecisionTree<FitnessFunction,
 
       // Now build the child recursively.
       DecisionTree* child = new DecisionTree();
-      if (NoRecursion)
+      if (NoRecursion || maximumDepth == 1)
       {
         child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, datasetInfo, labels, numClasses,
             weights, currentCol - currentChildBegin, minimumGainSplit,
-            maximumDepth, dimensionSelector);
+            maximumDepth - 1, dimensionSelector);
       }
       else
       {
         // During recursion entropy of child node may change.
         double childGain = child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, datasetInfo, labels, numClasses,
-            weights, minimumLeafSize, minimumGainSplit, maximumDepth,
+            weights, minimumLeafSize, minimumGainSplit, maximumDepth - 1,
             dimensionSelector);
         bestGain += double(childCounts[i]) / double(count) * (-childGain);
       }
@@ -796,7 +795,7 @@ double DecisionTree<FitnessFunction,
       numClasses,
       UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   size_t bestDim = data.n_rows; // This means "no split".
-  size_t maximum = maximumDepth;
+
   for (size_t i = dimensionSelector.Begin(); i != dimensionSelector.End();
        i = dimensionSelector.Next())
   {
@@ -810,7 +809,7 @@ double DecisionTree<FitnessFunction,
                                       weights,
                                   minimumLeafSize,
                                   minimumGainSplit,
-                                  maximum--,
+                                  maximumDepth,
                                   classProbabilities,
                                   *this);
 
@@ -875,11 +874,11 @@ double DecisionTree<FitnessFunction,
 
       // Now build the child recursively.
       DecisionTree* child = new DecisionTree();
-      if (NoRecursion)
+      if (NoRecursion || maximumDepth == 1)
       {
         child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, labels, numClasses, weights,
-            currentCol - currentChildBegin, minimumGainSplit, maximumDepth,
+            currentCol - currentChildBegin, minimumGainSplit, maximumDepth - 1,
             dimensionSelector);
       }
       else
@@ -887,7 +886,8 @@ double DecisionTree<FitnessFunction,
         // During recursion entropy of child node may change.
         double childGain = child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, labels, numClasses, weights,
-            minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
+            minimumLeafSize, minimumGainSplit, maximumDepth - 1,
+            dimensionSelector);
         bestGain += double(childCounts[i]) / double(count) * (-childGain);
       }
       children.push_back(child);

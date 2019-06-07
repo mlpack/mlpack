@@ -103,7 +103,7 @@ PARAM_INT_IN("minimum_leaf_size", "Minimum number of points in a leaf.", "n",
 PARAM_DOUBLE_IN("minimum_gain_split", "Minimum gain for node splitting.", "g",
     1e-7);
 PARAM_INT_IN("maximum_depth", "Maximum Depth of the tree.", "D",
-    20);
+    0);
 // This is deprecated and should be removed in mlpack 4.0.0.
 PARAM_FLAG("print_training_error", "Print the training error (deprecated; will "
       "be removed in mlpack 4.0.0).", "e");
@@ -161,8 +161,8 @@ static void mlpackMain()
   RequireParamValue<int>("minimum_leaf_size", [](int x) { return x > 0; }, true,
       "leaf size must be positive");
 
-  RequireParamValue<int>("maximum_depth", [](int x) { return x > 0; }, true,
-      "depth must be positive");
+  RequireParamValue<int>("maximum_depth", [](int x) { return x >= 0; }, true,
+      "depth must not be negative");
 
   RequireParamValue<double>("minimum_gain_split", [](double x)
                          { return (x > 0.0 && x < 1.0); }, true,

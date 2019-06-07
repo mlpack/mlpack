@@ -60,7 +60,7 @@ class RandomForest
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 20,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -90,7 +90,7 @@ class RandomForest
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 20,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -117,7 +117,7 @@ class RandomForest
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 20,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -149,7 +149,7 @@ class RandomForest
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 20,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -177,7 +177,7 @@ class RandomForest
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 20,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -209,7 +209,7 @@ class RandomForest
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 20,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -239,7 +239,7 @@ class RandomForest
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 20,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -272,7 +272,7 @@ class RandomForest
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
-               const size_t maximumDepth = 20,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
