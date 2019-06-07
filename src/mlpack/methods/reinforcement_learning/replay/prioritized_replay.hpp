@@ -2,7 +2,7 @@
  * @file prioritized_experience_replay.hpp
  * @author Xiaohong
  *
- * This file is an implementation of prioritized experience repla y.
+ * This file is an implementation of prioritized experience replay.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,7 +20,8 @@ namespace rl {
 
 /**
  * Implementation of prioritized experience replay.
- *
+ * PER can replay important transitions more frequently by prioritizing
+ * transitions, and make agent learn more efficiently.
  *
  * @code
  * @article{schaul2015prioritized,
@@ -58,10 +59,10 @@ class PrioritizedReplay
    * @param dimension The dimension of an encoded state.
    */
   PrioritizedReplay(const size_t batchSize,
-               const size_t capacity,
-               const double alpha,
-               int seed = 1024,
-               const size_t dimension = StateType::dimension) :
+                    const size_t capacity,
+                    const double alpha,
+                    int seed = 1024,
+                    const size_t dimension = StateType::dimension) :
       batchSize(batchSize),
       capacity(capacity),
       position(0),
@@ -154,8 +155,6 @@ class PrioritizedReplay
               arma::mat& sampledNextStates,
               arma::icolvec& isTerminal)
   {
-//    size_t upperBound = full ? capacity : position;
-
     sampledIndices = SampleProportional();
     BetaAnneal();
 

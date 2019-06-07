@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
   BOOST_REQUIRE(converged);
 }
 
-//! Test DQN in Cart Pole task with Prioritized Replay
+//! Test DQN in Cart Pole task with Prioritized Replay.
 BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
   {
   // Set up the network.
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
   // Set up DQN agent.
   QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy),
       decltype(replayMethod)>
-    agent(std::move(config), std::move(model), std::move(policy),
+      agent(std::move(config), std::move(model), std::move(policy),
           std::move(replayMethod));
 
   arma::running_stat<double> averageReturn;

@@ -158,9 +158,6 @@ class QLearning
 
   //! Locally-stored flag indicating training mode or test mode.
   bool deterministic;
-
-  //! Locally-stored flag indicating whether prioritized replay buffer or not.
-  bool prioritizedReplay;
 };
 
 } // namespace rl

@@ -43,8 +43,7 @@ QLearning<
     replayMethod(std::move(replayMethod)),
     environment(std::move(environment)),
     totalSteps(0),
-    deterministic(false),
-    prioritizedReplay(false)
+    deterministic(false)
 {
   // Set up q-learning network.
   if (learningNetwork.Parameters().is_empty())

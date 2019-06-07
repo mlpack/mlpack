@@ -28,8 +28,8 @@ namespace rl {
  *
  * Used to maintain prefix-sum of an array.
  *
+ * @tparam T The array's element type.
  */
-
 template<typename T>
 class SumTree
 {
@@ -83,7 +83,7 @@ class SumTree
     {
       element[indices[i] + capacity] = data[i];
     }
-    // update the total tree with bottom-up technique
+    // update the total tree with bottom-up technique.
     for (size_t i = capacity-1; i > 0; i--)
     {
       element[i] = element[2 * i] + element[2 * i + 1];
@@ -107,8 +107,8 @@ class SumTree
    * @param start The starting position of subsequence.
    * @param end The end position of subsequence.
    * @param node Reference position
-   * @param node_start Starting position of reference segment.
-   * @param node_end End position of reference segment.
+   * @param nodeStart Starting position of reference segment.
+   * @param nodeEnd End position of reference segment.
    */
   T SumHelper(size_t start, size_t end, size_t node,
               size_t nodeStart, size_t nodeEnd)
@@ -140,7 +140,7 @@ class SumTree
    * Calculate the sum of contiguous subsequence of the array.
    *
    * @param start The starting position of subsequence.
-   * @param _end The end position of subsequence.
+   * @param end The end position of subsequence.
    */
   T Sum(size_t start, size_t end)
   {
@@ -160,7 +160,7 @@ class SumTree
    * Find the highest index `idx` in the array such that
    * sum(arr[0] + arr[1] + ... + arr[idx]) <= mass.
    *
-   * @param mass
+   * @param mass The upper bound of segment array sum.
    * */
   size_t FindPrefixSum(T mass)
   {
@@ -184,7 +184,7 @@ class SumTree
   //! The capacity of the data array.
   size_t capacity;
 
-  //! double size of capacity, maintain the segment sum of data.
+  //! Double size of capacity, maintain the segment sum of data.
   std::vector<T> element;
 };
 
