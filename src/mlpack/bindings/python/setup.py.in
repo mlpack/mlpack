@@ -30,10 +30,13 @@ else:
   extra_link_args=['${OpenMP_CXX_FLAGS}']
 
 # Get list of library dirs.
-library_dirs = filter(None, ['${MLPACK_LIBDIR}'] +
-    '${BOOST_LIBDIRS}'.split(' '))
-if library_dirs == []:
-  library_dirs = None
+#library_dirs = filter(None, ['${MLPACK_LIBDIR}'] +
+#    '${BOOST_LIBDIRS}'.split(' '))
+#if library_dirs == []:
+#  library_dirs = None
+
+# Specific to the debugging for #1872.
+library_dirs = ['${MLPACK_LIBDIR}', '${BOOST_LIBDIRS}']
 
 # Only build the extensions if we are asked to.
 if os.getenv('NO_BUILD') == '1':
