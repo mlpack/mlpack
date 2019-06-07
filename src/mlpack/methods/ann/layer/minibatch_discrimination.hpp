@@ -20,7 +20,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the MiniBatchDiscrimination layer. MinibatchDiscrimination
+ * Implementation of the MiniBatchDiscrimination layer. MiniBatchDiscrimination
  * is a layer of the discriminator that allows the discriminator to look at
  * multiple data examples in combination and perform what is called as
  * mini-batch discrimination.
@@ -135,7 +135,7 @@ class MiniBatchDiscrimination
   OutputDataType& Gradient() { return gradient; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
