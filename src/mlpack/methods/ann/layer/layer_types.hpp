@@ -198,6 +198,8 @@ using LayerTypes = boost::variant<
     NegativeLogLikelihood<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
     Recurrent<arma::mat, arma::mat>*,
+    // TODO find workaround to support more than 50 types
+    // as boost::variant can only be used for up to 50 types.
     // RecurrentAttention<arma::mat, arma::mat>*,
     ReinforceNormal<arma::mat, arma::mat>*,
     Reparametrization<arma::mat, arma::mat>*,
