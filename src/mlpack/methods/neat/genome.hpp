@@ -66,14 +66,9 @@ class Genome
          const bool isAcyclic = false);
 
   /**
-   * Loads the input values into the genome.
+   * Calculates the output of the genome based on the input.
    */
-  void Input(const arma::vec& input);
-
-  /**
-   * Calculates the output of the genome.
-   */
-  arma::vec Output();
+  arma::vec Evaluate(arma::vec& input);
 
   /**
    * Mutates the genome.
@@ -137,9 +132,6 @@ class Genome
 
   //! The next node ID to be allotted
   size_t nextNodeID = 0;
-
-  //! The input to the genome.
-  arma::vec input;
 };
 
 } // namespace neat

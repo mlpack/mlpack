@@ -68,22 +68,16 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
   }
 }
 
-// Loads input.
+// Evaluates output based on input.
 template <class ActivationFunction>
-void Genome<ActivationFunction>::Input(const arma::vec& input)
+arma::vec Genome<ActivationFunction>::Evaluate(arma::vec& input)
 {
   if (input.n_elem != inputNodeCount)
   {
     Log::Fatal << "The input should have the same length as the number of"
         "input nodes" << std::endl;
   }
-  input = input;
-}
 
-// Evaluates output based on input.
-template <class ActivationFunction>
-arma::vec Genome<ActivationFunction>::Output()
-{
   AcyclicNet<ActivationFunction> net(directedGraph, actFn, nextNodeID,
       inputNodeCount, outputNodeCount, bias);
   return net.Evaluate(input);
