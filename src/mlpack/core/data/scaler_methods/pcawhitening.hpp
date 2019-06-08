@@ -32,8 +32,11 @@ namespace data {
  * Load("train.csv", input);
  * arma::mat output;
  *
- * // Scale the features.
+ * // Fit the features.
  * PcaWhitening scale;
+ * scale.Fit(input)
+ *
+ * // Scale the features.
  * scale.Transform(input, output);
  *
  * // Retransform the input.
@@ -54,6 +57,22 @@ class PcaWhitening
   }
 
   /**
+  * Function to fit features, to find out the min max and scale.
+  *
+  * @param input Dataset to fit.
+  */
+  template<typename MatType>
+  void Fit(const MatType& input)
+  {
+    itemMean = arma::mean(input, 1);
+    // Get eigenvectors and eigenvalues of covariance of input matrix.
+    eig_sym(eigenValues, eigenVectors, mlpack::math::ColumnCovariance(
+        input.each_col() - itemMean));
+    for (size_t i = 0; i < eigenValues.n_elem; i++)
+        eigenValues(i) = eigenValues(i) + epsilon;
+  }
+
+  /**
   * Function for PCA whitening.
   *
   * @param input Dataset to scale features.
@@ -63,12 +82,7 @@ class PcaWhitening
   void Transform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
-    itemMean = arma::mean(input, 1);
     output = (input.each_col() - itemMean);
-    // Get eigenvectors and eigenvalues of covariance of input matrix.
-    eig_sym(eigenValues, eigenVectors, mlpack::math::ColumnCovariance(output));
-    for (size_t i = 0; i < eigenValues.n_elem; i++)
-        eigenValues(i) = eigenValues(i) + epsilon;
     output = arma::diagmat(1.0 / (arma::sqrt(eigenValues))) * eigenVectors.t()
         * output;
   }
@@ -95,6 +109,15 @@ class PcaWhitening
   const arma::mat& EigenVectors() const { return eigenVectors; }
   //! Get the Regularisation Parameter.
   const double& Epsilon() const { return epsilon; }
+
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & BOOST_SERIALIZATION_NVP(eigenValues);
+    ar & BOOST_SERIALIZATION_NVP(eigenVectors);
+    ar & BOOST_SERIALIZATION_NVP(itemMean);
+    ar & BOOST_SERIALIZATION_NVP(epsilon);
+  }
 
  private:
   // Vector which holds mean of each feature.

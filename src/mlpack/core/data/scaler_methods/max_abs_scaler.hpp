@@ -32,8 +32,11 @@ namespace data {
  * Load("train.csv", input);
  * arma::mat output;
  *
- * // Scale the features.
+ * // Fit the features.
  * MaxAbsScaler scale;
+ * scale.Fit(input)
+ *
+ * // Scale the features.
  * scale.Transform(input, output);
  *
  * // Retransform the input.
@@ -44,6 +47,22 @@ class MaxAbsScaler
 {
  public:
   /**
+  * Function to fit features, to find out the min max and scale.
+  *
+  * @param input Dataset to fit.
+  */
+  template<typename MatType>
+  void Fit(const MatType& input)
+  {
+    itemMin = arma::min(input, 1);
+    itemMax = arma::max(input, 1);
+    scale = arma::max(arma::abs(itemMin), arma::abs(itemMax));
+    // Handling zeros in scale vector.
+    scale.for_each([](arma::vec::elem_type& val) { val =
+        (val == 0) ? 1 : val; });
+  }
+
+  /**
   * Function to scale features.
   *
   * @param input Dataset to scale features.
@@ -53,12 +72,6 @@ class MaxAbsScaler
   void Transform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
-    itemMin = arma::min(input, 1);
-    itemMax = arma::max(input, 1);
-    scale = arma::max(arma::abs(itemMin), arma::abs(itemMax));
-    // Handling zeros in scale vector.
-    scale.for_each([](arma::vec::elem_type& val) { val =
-        (val == 0) ? 1 : val; });
     output = input.each_col() / scale;
   }
 
@@ -82,6 +95,13 @@ class MaxAbsScaler
   //! Get the Scale row vector.
   const arma::vec& Scale() const { return scale; }
 
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & BOOST_SERIALIZATION_NVP(itemMin);
+    ar & BOOST_SERIALIZATION_NVP(itemMax);
+    ar & BOOST_SERIALIZATION_NVP(scale);
+  }
  private:
   // Vector which holds minimum of each feature.
   arma::vec itemMin;

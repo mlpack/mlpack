@@ -38,6 +38,7 @@ BOOST_AUTO_TEST_CASE(MinMaxScalerTest)
   arma::mat scaled = "0 0.2500 0.5000 1.000;"
                      "0 0.2500 0.5000 1.000;";
   data::MinMaxScaler scale;
+  scale.Fit(dataset);
   scale.Transform(dataset, scaleddataset);
   scale.InverseTransform(scaleddataset, temp);
   CheckMatrices(scaleddataset, scaled);
@@ -52,6 +53,7 @@ BOOST_AUTO_TEST_CASE(MaxAbsScalerTest)
   arma::mat scaled = "-1 -0.5 0 1;"
                      "0.1111111111 0.3333333333 0.55555556 1.0000;";
   data::MaxAbsScaler scale;
+  scale.Fit(dataset);
   scale.Transform(dataset, scaleddataset);
   scale.InverseTransform(scaleddataset, temp);
   CheckMatrices(scaleddataset, scaled);
@@ -66,6 +68,7 @@ BOOST_AUTO_TEST_CASE(StandardScalerTest)
   arma::mat scaled = "-1.18321596 -0.50709255  0.16903085 1.52127766;"
                      "-1.18321596 -0.50709255  0.16903085 1.52127766;";
   data::StandardScaler scale;
+  scale.Fit(dataset);
   scale.Transform(dataset, scaleddataset);
   scale.InverseTransform(scaleddataset, temp);
   CheckMatrices(scaleddataset, scaled);
@@ -80,6 +83,7 @@ BOOST_AUTO_TEST_CASE(MeanNormalizationTest)
   arma::mat scaled = "-0.43750000000 -0.187500000 0.062500000 0.562500000;"
                      "-0.43750000000 -0.187500000 0.062500000 0.562500000;";
   data::MeanNormalization scale;
+  scale.Fit(dataset);
   scale.Transform(dataset, scaleddataset);
   scale.InverseTransform(scaleddataset, temp);
   CheckMatrices(scaleddataset, scaled);
@@ -95,6 +99,7 @@ BOOST_AUTO_TEST_CASE(SameInputOutputTest)
   arma::mat scaled = "-0.43750000000 -0.187500000 0.062500000 0.562500000;"
                      "-0.43750000000 -0.187500000 0.062500000 0.562500000;";
   data::MeanNormalization scale;
+  scale.Fit(temp);
   scale.Transform(temp, temp);
   CheckMatrices(scaled, temp);
   scale.InverseTransform(temp, temp);
@@ -108,6 +113,7 @@ BOOST_AUTO_TEST_CASE(ZeroMatrixTest)
 {
   arma::mat input(2, 4, arma::fill::zeros);
   data::MeanNormalization scale;
+  scale.Fit(input);
   scale.Transform(input, temp);
   CheckMatrices(input, temp);
   scale.InverseTransform(input, temp);
@@ -124,6 +130,7 @@ BOOST_AUTO_TEST_CASE(ZeroScaleTest)
   arma::mat scaled = "0 0 0 0;"
                      "0 0.2500 0.5000 1.000;";
   data::MinMaxScaler scale;
+  scale.Fit(dataset);
   scale.Transform(dataset, scaleddataset);
   scale.InverseTransform(scaleddataset, temp);
   CheckMatrices(scaleddataset, scaled);
@@ -137,6 +144,7 @@ BOOST_AUTO_TEST_CASE(PCAWhiteningTest)
 {
   data::PcaWhitening scale;
   arma::mat output;
+  scale.Fit(dataset);
   scale.Transform(dataset, output);
   arma::vec diagonals = (mlpack::math::ColumnCovariance(output)).diag();
   // Checking covarience is close to 1.0
@@ -155,6 +163,7 @@ BOOST_AUTO_TEST_CASE(ZCAWhiteningTest)
 {
   data::ZcaWhitening scale;
   arma::mat output;
+  scale.Fit(dataset);
   scale.Transform(dataset, output);
   arma::vec diagonals = (mlpack::math::ColumnCovariance(output)).diag();
   // Checking covarience is close to 1.0

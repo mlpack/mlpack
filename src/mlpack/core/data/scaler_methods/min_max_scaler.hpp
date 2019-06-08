@@ -34,8 +34,11 @@ namespace data {
  * Load("train.csv", input);
  * arma::mat output;
  *
- * // Scale the features.
+ * // Fit the features.
  * MinMaxScaler scale;
+ * scale.Fit(input)
+ *
+ * // Scale the features.
  * scale.Transform(input, output);
  *
  * // Retransform the input.
@@ -58,15 +61,13 @@ class MinMaxScaler
   }
 
   /**
-  * Function to scale features.
+  * Function to fit features, to find out the min max and scale.
   *
-  * @param input Dataset to scale features.
-  * @param output Output matrix with scaled features.
+  * @param input Dataset to fit.
   */
   template<typename MatType>
-  void Transform(const MatType& input, MatType& output)
+  void Fit(const MatType& input)
   {
-    output.copy_size(input);
     itemMin = arma::min(input, 1);
     itemMax = arma::max(input, 1);
     scale = itemMax - itemMin;
@@ -77,6 +78,18 @@ class MinMaxScaler
     scalerowmin.copy_size(itemMin);
     scalerowmin.fill(scaleMin);
     scalerowmin = scalerowmin - itemMin % scale;
+  }
+
+  /**
+  * Function to scale features.
+  *
+  * @param input Dataset to scale features.
+  * @param output Output matrix with scaled features.
+  */
+  template<typename MatType>
+  void Transform(const MatType& input, MatType& output)
+  {
+    output.copy_size(input);
     output = (input.each_col() % scale).each_col() + scalerowmin;
   }
 
@@ -103,6 +116,17 @@ class MinMaxScaler
   const double ScaleMax() const { return scaleMax; }
   //! Get the lower range parameter.
   const double ScaleMin() const { return scaleMin; }
+
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & BOOST_SERIALIZATION_NVP(itemMin);
+    ar & BOOST_SERIALIZATION_NVP(itemMax);
+    ar & BOOST_SERIALIZATION_NVP(scale);
+    ar & BOOST_SERIALIZATION_NVP(scaleMin);
+    ar & BOOST_SERIALIZATION_NVP(scaleMax);
+    ar & BOOST_SERIALIZATION_NVP(scalerowmin);
+  }
 
  private:
   // Vector which holds minimum of each feature.

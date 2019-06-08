@@ -33,8 +33,11 @@ namespace data {
  * Load("train.csv", input);
  * arma::mat output;
  *
- * // Scale the features.
+ * // Fit the features.
  * ZcaWhitening scale;
+ * scale.Fit(input)
+ *
+ * // Scale the features.
  * scale.Transform(input, output);
  *
  * // Retransform the input.
@@ -53,6 +56,21 @@ class ZcaWhitening
   {
     epsilon = eps;
   }
+  /**
+  * Function to fit features, to find out the min max and scale.
+  *
+  * @param input Dataset to fit.
+  */
+  template<typename MatType>
+  void Fit(const MatType& input)
+  {
+    data::PcaWhitening scale(epsilon);
+    scale.Fit(input);
+    // Important to store results, so that i can use in InverseTranform().
+    eigenVectors = scale.EigenVectors();
+    itemMean = scale.ItemMean();
+    eigenValues = scale.EigenValues();
+  }
 
   /**
   * Function for ZCA whitening.
@@ -63,12 +81,10 @@ class ZcaWhitening
   template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
-    data::PcaWhitening scale(epsilon);
-    scale.Transform(input, output);
-    // Important to store results, so that i can use in InverseTranform().
-    eigenVectors = scale.EigenVectors();
-    itemMean = scale.ItemMean();
-    eigenValues = scale.EigenValues();
+    output.copy_size(input);
+    output = (input.each_col() - itemMean);
+    output = arma::diagmat(1.0 / (arma::sqrt(eigenValues))) * eigenVectors.t()
+        * output;
     output = eigenVectors * output;
   }
 
@@ -94,6 +110,15 @@ class ZcaWhitening
   const arma::mat& EigenVectors() const { return eigenVectors; }
   //! Get the Regularisation Parameter.
   const double& Epsilon() const { return epsilon; }
+
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & BOOST_SERIALIZATION_NVP(eigenValues);
+    ar & BOOST_SERIALIZATION_NVP(eigenVectors);
+    ar & BOOST_SERIALIZATION_NVP(itemMean);
+    ar & BOOST_SERIALIZATION_NVP(epsilon);
+  }
 
  private:
   // Vector which holds mean of each feature.

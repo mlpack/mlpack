@@ -7,6 +7,8 @@ set(SOURCES
   mean_normalization.hpp
   pcawhitening.hpp
   zcawhitening.hpp
+  scaling_model.hpp
+  scaling_model_impl.hpp
 )
 
 # Add directory name to sources.

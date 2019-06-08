@@ -1,5 +1,7 @@
 ### mlpack 3.1.2
 ###### ????-??-??
+  * Add Multiple Pole Balancing Environment (#1901).
+
   * Added functionality for scaling of data (#1876).
 
 ### mlpack 3.1.1
