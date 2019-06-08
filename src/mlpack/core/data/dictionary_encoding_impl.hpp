@@ -139,8 +139,26 @@ template<typename Archive>
 void DicitonaryEncoding::serialize(Archive& ar, const unsigned int
     /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(mappings);
-  ar & BOOST_SERIALIZATION_NVP(stringq);
+  std::unordered_map<std::string, size_t> temp;
+  if (Archive::is_saving::value)
+  {
+    for (auto ele : stringq)
+    {
+      temp[ele] = mappings.at(ele);
+    }
+  }
+  ar & BOOST_SERIALIZATION_NVP(temp);
+
+  if (Archive::is_loading::value)
+  {
+    this->mappings.clear();
+    this->stringq.clear();
+    for (auto it = temp.begin(); it != temp.end(); it++)
+    {
+      this->stringq.push_back(it->first);
+      this->mappings[stringq.back()] = it->second;
+    }
+  }
 }
 
 } // namespace data
