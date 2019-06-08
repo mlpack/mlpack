@@ -25,7 +25,7 @@ template <
   typename NetworkType,
   typename UpdaterType,
   typename PolicyType,
-  typename ReplayType = RandomReplay<EnvironmentType>
+  typename ReplayType
 >
 PPO<
   EnvironmentType,
@@ -34,11 +34,12 @@ PPO<
   PolicyType,
   ReplayType
 >::PPO(TrainingConfig config,
-       NetworkType network,
+       NetworkType actor,
+       NetworkType critic,
        PolicyType policy,
        ReplayType replayMethod,
        UpdaterType updater,
-       EnvironmentType environment):
+       EnvironmentType environment)
 {
 
 }

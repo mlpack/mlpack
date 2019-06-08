@@ -20,16 +20,18 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-SurrogateLoss<InputDataType, OutputDataType>::SurrogateLoss()
+SurrogateLoss<InputDataType, OutputDataType>::SurrogateLoss(
+    const double epsilon) : epsilon(epsilon)
 {
   // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double DiceLoss<InputDataType, OutputDataType>::Forward(
+double SurrogateLoss<InputDataType, OutputDataType>::Forward(
   const InputType&& input, const TargetType&& target)
 {
+    return arma::clamp(input, 1-epsilon, 1+epsilon) * target;
 }
 
 template<typename InputDataType, typename OutputDataType>

@@ -76,6 +76,9 @@ class SurrogateLoss
  private:
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! The parameter to for clipping.
+  double epsilon;
 }; // class SurrogateLoss
 
 } // namespace ann

@@ -17,7 +17,10 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/surrogate_loss.hpp>
+#include <mlpack/methods/reinforcement_learning/ppo.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
+#include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
+#include <mlpack/methods/reinforcement_learning/training_config.hpp>
 
 #include <ensmallen.hpp>
 
@@ -42,11 +45,26 @@ BOOST_AUTO_TEST_CASE(PENDULUMWITHPPO)
   critic.Add<ReLULayer<>>();
   critic.Add<Linear<>>(128, 1);
 
-  FFN<SurrogateLoss<>, GaussianInitialization> actor(SurrogateLoss<>(),
+  FFN<SurrogateLoss<>, GaussianInitialization> actor(SurrogateLoss<>(0.2),
       GaussianInitialization(0, 0.001));
   actor.Add<Linear<>>(4, 128);
   actor.Add<ReLULayer<>>();
   actor.Add<Linear<>>(128, 2);
+
+  // Set up the policy and replay method.
+  GreedyPolicy<Pendulum> policy(1.0, 1000, 0.1, 0.99);
+  RandomReplay<Pendulum> replayMethod(10, 10000);
+
+  TrainingConfig config;
+  config.Discount() = 0.9;
+
+  PPO<Pendulum, decltype(actor), AdamUpdate, decltype(policy)>
+      agent(std::move(config), std::move(actor), std::move(critic),
+          std::move(policy), std::move(replayMethod));
+
+  bool converged = true;
+
+  BOOST_REQUIRE(converged);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
