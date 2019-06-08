@@ -34,6 +34,9 @@ AcyclicNet<ActivationFunction>::AcyclicNet(std::map<size_t, std::map<size_t,
     outputNodeCount(outputNodeCount),
     bias(bias)
 {
+  for (size_t i = 0; i < nodeCount; i++)
+    nodeDepths.push_back(0);
+
   // Find the depth of the nodes.
   for (size_t i = 0; i <= inputNodeCount; i++)
   {
@@ -41,11 +44,11 @@ AcyclicNet<ActivationFunction>::AcyclicNet(std::map<size_t, std::map<size_t,
   }
 
   // Populate the layers.
-  for (auto const& x : nodeDepths)
+  for (size_t i = 0; i < nodeCount; i++)
   {
-    while (layers.size() < x.second + 1)
+    while (layers.size() < nodeDepths[i] + 1)
       layers.emplace_back(std::vector<size_t>());
-    layers[x.second].push_back(x.first);
+    layers[nodeDepths[i]].push_back(i);
   }
 }
 
@@ -53,18 +56,11 @@ AcyclicNet<ActivationFunction>::AcyclicNet(std::map<size_t, std::map<size_t,
 template <class ActivationFunction>
 void AcyclicNet<ActivationFunction>::TraverseNode(size_t nodeID, size_t depth)
 {
-  if (nodeDepths.find(nodeID) != nodeDepths.end())
-  {
-    // Check if it has been traversed by a longer path.
-    if (nodeDepths[nodeID] >= depth)
-      return;
-    else
-      nodeDepths[nodeID] = depth;
-  }
+  // Check if it has been traversed by a longer path.
+  if (nodeDepths[nodeID] >= depth)
+    return;
   else
-  {
-    nodeDepths.insert(nodeID, depth);
-  }
+    nodeDepths[nodeID] = depth;
 
   for (auto const& x : directedGraph)
     TraverseNode(x.first, depth + 1);

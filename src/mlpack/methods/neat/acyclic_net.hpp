@@ -61,7 +61,7 @@ class AcyclicNet
   arma::vec Evaluate(arma::vec input);
 
  private:
-  /*
+  /**
    * A digraph containing connection genes sorted by source ID, and then
    * secondary sorted by target ID.
    */
@@ -83,7 +83,7 @@ class AcyclicNet
   double bias;
 
   //! A map mapping the node ID to its depth in the neural network.
-  std::map<size_t, size_t> nodeDepths;
+  std::vector<size_t> nodeDepths;
 
   //! A data structure storing the nodes by layer.
   std::vector<std::vector<size_t>> layers;
