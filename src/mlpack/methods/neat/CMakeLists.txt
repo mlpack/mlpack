@@ -7,6 +7,8 @@ set(SOURCES
   genome_impl.hpp
   acyclic_net.hpp
   acyclic_net_impl.hpp
+  cyclic_net.hpp
+  cyclic_net_impl.hpp
 )
 
 # Add directory name to sources.
