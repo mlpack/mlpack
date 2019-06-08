@@ -164,6 +164,12 @@ template<typename InputDataType,
 >
 class MultiplyMerge;
 
+template <typename InputDataType,
+          typename OutputDataType,
+          typename... CustomLayers
+>
+class WeightNorm;
+
 using MoreTypes = boost::variant<
         Recurrent<arma::mat, arma::mat>*,
         RecurrentAttention<arma::mat, arma::mat>*,
@@ -174,7 +180,8 @@ using MoreTypes = boost::variant<
         Sequential<arma::mat, arma::mat, true>*,
         Subview<arma::mat, arma::mat>*,
         VRClassReward<arma::mat, arma::mat>*,
-        VirtualBatchNorm<arma::mat, arma::mat>*
+        VirtualBatchNorm<arma::mat, arma::mat>*,
+        WeightNorm<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
