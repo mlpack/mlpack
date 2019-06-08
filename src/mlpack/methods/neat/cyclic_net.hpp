@@ -82,7 +82,8 @@ class CyclicNet
   //! Bias.
   double bias;
 
-  std::vector<double> nodeValues;
+  //! The values stored by the nodes.
+  std::vector<double> outputNodeValues;
 };
 
 } // namespace neat

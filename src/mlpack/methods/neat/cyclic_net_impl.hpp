@@ -37,7 +37,7 @@ CyclicNet<ActivationFunction>::CyclicNet(std::map<size_t, std::map<size_t,
     bias(bias)
 {
   for (size_t i = 0; i < nodeCount; i++)
-    nodeValues.push_back(0);
+    outputNodeValues.push_back(0);
 }
 
 template <class ActivationFunction>
@@ -46,11 +46,11 @@ arma::vec CyclicNet<ActivationFunction>::Evaluate(arma::vec input)
   std::vector<double> inputNodeValues(nodeCount, 0);
 
   // Load the bias.
-  nodeValues[0] = bias;
+  outputNodeValues[0] = bias;
 
   // Load the input.
   for (size_t i = 1; i <= inputNodeCount; i++)
-    nodeValues[i] = input[i - 1];
+    outputNodeValues[i] = input[i - 1];
   
   for (size_t i = 0; i < timeStepsPerActivation; i++)
   {
@@ -71,7 +71,7 @@ arma::vec CyclicNet<ActivationFunction>::Evaluate(arma::vec input)
 
   arma::vec output(outputNodeCount);
   for (size_t i = 0; i < output.n_elem; i++)
-    output[i] = nodeValues[i + inputNodeCount + 1];
+    output[i] = putputNodeValues[i + inputNodeCount + 1];
 
   return output;
 }

@@ -84,7 +84,7 @@ void Genome<ActivationFunction>::Input(const arma::vec& input)
 template <class ActivationFunction>
 arma::vec Genome<ActivationFunction>::Output()
 {
-  AcyclicNet<ActivationFunction> net(nextNodeID, directedGraph, actFn,
+  AcyclicNet<ActivationFunction> net(directedGraph, actFn, nextNodeID,
       inputNodeCount, outputNodeCount, bias);
   return net.Evaluate(input);
 }
