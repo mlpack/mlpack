@@ -61,7 +61,6 @@ class PrioritizedReplay
   PrioritizedReplay(const size_t batchSize,
                     const size_t capacity,
                     const double alpha,
-                    int seed = 1024,
                     const size_t dimension = StateType::dimension) :
       batchSize(batchSize),
       capacity(capacity),
@@ -77,9 +76,9 @@ class PrioritizedReplay
       initialBeta(0.6),
       replayBetaIters(10000)
   {
-    arma::arma_rng::set_seed(seed);
     size_t size = 1;
-    while (size < capacity) {
+    while (size < capacity)
+    {
       size *= 2;
     }
 
@@ -129,7 +128,8 @@ class PrioritizedReplay
     arma::ucolvec idxes(batchSize);
     double totalSum = idxSum.Sum(0, (full ? capacity : position));
     double sumPerRange = totalSum / batchSize;
-    for (size_t bt = 0; bt < batchSize; bt++) {
+    for (size_t bt = 0; bt < batchSize; bt++)
+    {
       double mass = arma::randu() * sumPerRange + bt * sumPerRange;
       size_t idx = idxSum.FindPrefixSum(mass);
       idxes(bt) = idx;
