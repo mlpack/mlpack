@@ -30,6 +30,7 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     const double relError,
     const double absError,
     const double MCProb,
+    const size_t initialSampleSize,
     MetricType& metric,
     KernelType& kernel,
     const bool monteCarlo,
@@ -39,7 +40,8 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     densities(densities),
     absError(absError),
     relError(relError),
-    MCProb(MCProb),
+    MCProb(1 - MCProb),
+    initialSampleSize(initialSampleSize),
     metric(metric),
     kernel(kernel),
     monteCarlo(monteCarlo),
@@ -108,7 +110,6 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   }
 
   // TODO Just for testing purposes.
-  const size_t initialSamples = 1000;
   const size_t t = 50;
 
   if (newCalculations &&
@@ -134,7 +135,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     score = DBL_MAX;
   }
   else if (monteCarlo &&
-           referenceNode.NumDescendants() >= t * initialSamples &&
+           referenceNode.NumDescendants() >= t * initialSampleSize &&
            std::is_same<KernelType, kernel::GaussianKernel>::value)
   {
     // Monte Carlo probabilistic estimation.
@@ -145,7 +146,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
         std::abs(boost::math::quantile(normalDist, currentAlpha / 2));
     const size_t numDesc = referenceNode.NumDescendants();
     arma::vec sample;
-    size_t m = initialSamples;
+    size_t m = initialSampleSize;
     double meanSample;
     bool useMonteCarloPredictions = true;
     while (m > 0)

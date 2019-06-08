@@ -252,6 +252,9 @@ class KDE
   //! Probability of error being bounded by relError when Monte Carlo is used.
   double MCProb;
 
+  //! Size of the initial sample for Monte Carlo approximations.
+  size_t initialSampleSize;
+
   //! Check whether absolute and relative error values are compatible.
   static void CheckErrorValues(const double relError, const double absError);
 

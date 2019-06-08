@@ -67,7 +67,8 @@ KDE(const double relError,
     trained(false),
     mode(mode),
     monteCarlo(true),
-    MCProb(0.05) // TODO Just for testing purposes.
+    MCProb(0.95), // TODO Just for testing purposes.
+    initialSampleSize(1000)
 {
   CheckErrorValues(relError, absError);
 }
@@ -95,7 +96,8 @@ KDE(const KDE& other) :
     trained(other.trained),
     mode(other.mode),
     monteCarlo(other.monteCarlo),
-    MCProb(other.MCProb)
+    MCProb(other.MCProb),
+    initialSampleSize(other.initialSampleSize)
 {
   if (trained)
   {
@@ -138,7 +140,8 @@ KDE(KDE&& other) :
     trained(other.trained),
     mode(other.mode),
     monteCarlo(other.monteCarlo),
-    MCProb(other.MCProb)
+    MCProb(other.MCProb),
+    initialSampleSize(other.initialSampleSize)
 {
   other.kernel = std::move(KernelType());
   other.metric = std::move(MetricType());
@@ -189,6 +192,7 @@ operator=(KDE other)
   this->mode = other.mode;
   this->monteCarlo = other.monteCarlo;
   this->MCProb = other.MCProb;
+  this->initialSampleSize = other.initialSampleSize;
 
   return *this;
 }
@@ -353,6 +357,7 @@ Evaluate(MatType querySet, arma::vec& estimations)
                               relError,
                               absError,
                               MCProb,
+                              initialSampleSize,
                               metric,
                               kernel,
                               monteCarlo,
@@ -438,6 +443,7 @@ Evaluate(Tree* queryTree,
                             relError,
                             absError,
                             MCProb,
+                            initialSampleSize,
                             metric,
                             kernel,
                             monteCarlo,
@@ -494,6 +500,7 @@ Evaluate(arma::vec& estimations)
                             relError,
                             absError,
                             MCProb,
+                            initialSampleSize,
                             metric,
                             kernel,
                             monteCarlo,
@@ -585,6 +592,7 @@ serialize(Archive& ar, const unsigned int /* version */)
   ar & BOOST_SERIALIZATION_NVP(mode);
   ar & BOOST_SERIALIZATION_NVP(monteCarlo);
   ar & BOOST_SERIALIZATION_NVP(MCProb);
+  ar & BOOST_SERIALIZATION_NVP(initialSampleSize);
 
   // If we are loading, clean up memory if necessary.
   if (Archive::is_loading::value)

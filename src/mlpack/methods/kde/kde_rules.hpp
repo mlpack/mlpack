@@ -39,7 +39,8 @@ class KDERules
    * @param relError Relative error tolerance.
    * @param absError Absolute error tolerance.
    * @param MCProb Probability of relative error compliance for Monte Carlo
-                   estimations.
+   *               estimations.
+   * @param initialSampleSize Initial size of the Monte Carlo samples.
    * @param metric Instantiated metric.
    * @param kernel Instantiated kernel.
    * @param monteCarlo If true Monte Carlo estimations will be applied when
@@ -53,6 +54,7 @@ class KDERules
            const double relError,
            const double absError,
            const double MCProb,
+           const size_t initialSampleSize,
            MetricType& metric,
            KernelType& kernel,
            const bool monteCarlo,
@@ -131,6 +133,9 @@ class KDERules
 
   //! Probability of relative error compliance for Monte Carlo estimations.
   const double MCProb;
+
+  //! Initial sample size for Monte Carlo estimations.
+  const size_t initialSampleSize;
 
   //! Instantiated metric.
   MetricType& metric;
