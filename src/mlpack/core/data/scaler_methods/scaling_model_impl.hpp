@@ -85,6 +85,10 @@ ScalingModel::ScalingModel(ScalingModel&& other) :
 //! Copy assignment operator.
 ScalingModel& ScalingModel::operator= (const ScalingModel& other)
 {
+  if (this == &other)
+  {
+    return *this;
+  }
   scalerType = other.scalerType;
 
   delete minmaxscale;

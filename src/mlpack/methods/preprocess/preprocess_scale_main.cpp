@@ -23,6 +23,7 @@
 
 using namespace mlpack;
 using namespace mlpack::util;
+using namespace mlpack::data;
 using namespace arma;
 using namespace std;
 
@@ -66,7 +67,7 @@ PROGRAM_INFO("Scale Data",
     + "using the saved model " + PRINT_PARAM_STRING("input_model") + " is:"
     "\n\n" +
     PRINT_CALL("preprocess_scale", "input", "X_scaled", "output", "X",
-    "scaler_method", "standard_scaler", "function", 1, "input_model", "saved")+
+    "function", 1, "input_model", "saved")+
     "\n\n"
     "Another simple example where we want to scale the dataset " +
     PRINT_DATASET("X") + " into " + PRINT_DATASET("X_scaled") + " with "
@@ -95,9 +96,8 @@ PARAM_INT_IN("max_value", "Ending value of range for min_max_scaler.",
 PARAM_INT_IN("function", "function to apply,either 0:Transform or 1:Inverse"
   "Transform", "f", 0)
 // Loading/saving of a model.
-PARAM_MODEL_IN(data::ScalingModel, "input_model", "Input Scaling model.", "m");
-PARAM_MODEL_OUT(data::ScalingModel, "output_model", "Output scaling model.",
-    "M");
+PARAM_MODEL_IN(ScalingModel, "input_model", "Input Scaling model.", "m");
+PARAM_MODEL_OUT(ScalingModel, "output_model", "Output scaling model.", "M");
 
 static void mlpackMain()
 {
@@ -122,38 +122,38 @@ static void mlpackMain()
   // Load the data.
   arma::mat& input = CLI::GetParam<arma::mat>("input");
   arma::mat output;
-  data::ScalingModel* m;
+  ScalingModel* m;
   if (CLI::HasParam("input_model"))
   {
-    m = CLI::GetParam<data::ScalingModel*>("input_model");
+    m = CLI::GetParam<ScalingModel*>("input_model");
   }
   else
   {
-    m = new data::ScalingModel(CLI::GetParam<int>("min_value"),
+    m = new ScalingModel(CLI::GetParam<int>("min_value"),
         CLI::GetParam<int>("max_value"), CLI::GetParam<double>("epsilon"));
     if (scalerMethod == "standard_scaler")
     {
-      m->ScalerType() = data::ScalingModel::ScalerTypes::STANDARD_SCALER;
+      m->ScalerType() = ScalingModel::ScalerTypes::STANDARD_SCALER;
     }
     else if (scalerMethod == "min_max_scaler")
     {
-      m->ScalerType() = data::ScalingModel::ScalerTypes::MIN_MAX_SCALER;
+      m->ScalerType() = ScalingModel::ScalerTypes::MIN_MAX_SCALER;
     }
     else if (scalerMethod == "max_abs_scaler")
     {
-      m->ScalerType() = data::ScalingModel::ScalerTypes::MAX_ABS_SCALER;
+      m->ScalerType() = ScalingModel::ScalerTypes::MAX_ABS_SCALER;
     }
     else if (scalerMethod == "mean_normalization")
     {
-      m->ScalerType() = data::ScalingModel::ScalerTypes::MEAN_NORMALIZATION;
+      m->ScalerType() = ScalingModel::ScalerTypes::MEAN_NORMALIZATION;
     }
     else if (scalerMethod == "zcawhitening")
     {
-      m->ScalerType() = data::ScalingModel::ScalerTypes::ZCAWHITENING;
+      m->ScalerType() = ScalingModel::ScalerTypes::ZCAWHITENING;
     }
     else if (scalerMethod == "pcawhitening")
     {
-      m->ScalerType() = data::ScalingModel::ScalerTypes::PCAWHITENING;
+      m->ScalerType() = ScalingModel::ScalerTypes::PCAWHITENING;
     }
     m->Fit(input);
   }
@@ -170,5 +170,5 @@ static void mlpackMain()
   if (CLI::HasParam("output"))
     CLI::GetParam<arma::mat>("output") = std::move(output);
 
-  CLI::GetParam<data::ScalingModel*>("output_model") = m;
+  CLI::GetParam<ScalingModel*>("output_model") = m;
 }
