@@ -25,8 +25,9 @@
   #include <boost/utility/string_view.hpp>
 #endif
 
-namespace boost
-{
+#if BOOST_VERSION < 106800
+  namespace boost
+  {
     template<>
     struct hash<boost::string_view>
     {
@@ -35,6 +36,7 @@ namespace boost
         return boost::hash_range<const char*>(str.begin(), str.end());
       }
     };
-}
+  }
+#endif
 
 #endif // MLPACK_CORE_BOOST_BACKPORT_STRING_VIEW_HPP
