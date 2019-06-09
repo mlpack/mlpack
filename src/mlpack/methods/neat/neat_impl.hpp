@@ -49,7 +49,10 @@ NEAT<TaskType, ActivationFunction>::NEAT(TaskType& task,
     isAcyclic(isAcyclic)
 { /* Nothing to do here yet */ }
 
-
+Genome Crossover(Genome& gen1, Genome& gen2)
+{
+  
+}
 
 } // namespace neat
 } // namespace mlpack

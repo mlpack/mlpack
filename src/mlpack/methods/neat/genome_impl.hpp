@@ -47,23 +47,26 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
 {
   nextNodeID = inputNodeCount + outputNodeCount + 1;
 
+  size_t counter = 0;
   // Create connections and add them to the lists.
   for (size_t i = 0; i <= inputNodeCount; i++)
   {
     for (size_t j = inputNodeCount + 1; j <= outputNodeCount + inputNodeCount;
         j++)
     {
-      connectionGeneList.emplace_back(ConnectionGene(nextInnovID++, 1, i, j));
+      connectionGeneList.emplace_back(ConnectionGene(counter++, 1, i, j));
       if (directedGraph.find(i) == directedGraph.end())
       {
         directedGraph.emplace(std::piecewise_construct, std::forward_as_tuple
             (i), std::initializer_list<std::pair<int, ConnectionGene>>{{j,
-            ConnectionGene(nextInnovID++, 1, i, j)}});
+            ConnectionGene(counter++, 1, i, j)}});
       }
       else
-        directedGraph[i].emplace(j, ConnectionGene(nextInnovID++, 1, i, j));
+        directedGraph[i].emplace(j, ConnectionGene(counter++, 1, i, j));
     }
   }
+
+  nextInnovID = counter;
 
   if (isAcyclic)
   {
@@ -111,11 +114,21 @@ void Genome<ActivationFunction>::Mutate()
     {
       size_t sourceID = connectionGeneList[i].source;
       size_t newTarget = i;
+      size_t innovID = -1;
       while (newTarget == i)
       {
         newTarget = arma::randi<arma::vec>(1 + inputNodeCount,
             arma::distr_param(0, nextNodeID - 1))[0];
       }
+
+      std::pair<size_t, size_t> key = std::make_pair(sourceID, newTarget);
+      if (mutationBuffer.find(key) == mutationBuffer.end())
+      {
+        innovID = nextInnovID++;
+        mutationBuffer[key] = innovID;
+      }
+      else
+        innovID = mutationBuffer[key];
 
       if (isAcyclic)
       {
@@ -125,9 +138,9 @@ void Genome<ActivationFunction>::Mutate()
       }
 
       // Add the new connection to the containers.
-      connectionGeneList.emplace_back(ConnectionGene(nextInnovID, 1, i,
+      connectionGeneList.emplace_back(ConnectionGene(innovID, 1, i,
           newTarget));
-      directedGraph[sourceID].emplace(newTarget, ConnectionGene(nextInnovID++,
+      directedGraph[sourceID].emplace(newTarget, ConnectionGene(innovID++,
           1, i, newTarget));
     }
   }
@@ -154,19 +167,39 @@ void Genome<ActivationFunction>::Mutate()
       size_t sourceID = connectionGeneList[i].source;
       size_t targetID = connectionGeneList[i].target;
       size_t newNodeID = nextNodeID++;
+      size_t innovID1 = -1, innovId2 = -1;
+
+      std::pair<size_t, size_t> key1 = std::make_pair(sourceID, newNodeID);
+      std::pair<size_t, size_t> key2 = std::make_pair(newNodeID, targetID);    
+      
+      if (mutationBuffer.find(key1) == mutationBuffer.end())
+      {
+        innovID1 = nextInnovID++;
+        mutationBuffer[key1] = innovID;
+      }
+      else
+        innovID1 = mutationBuffer[key1];
+      
+      if (mutationBuffer.find(key2) == mutationBuffer.end())
+      {
+        innovID1 = nextInnovID++;
+        mutationBuffer[key2] = innovID;
+      }
+      else
+        innovID1 = mutationBuffer[key2];  
 
       // Add the first connection to the containers.
-      directedGraph[sourceID].emplace(newNodeID, ConnectionGene(nextInnovID, 1,
+      directedGraph[sourceID].emplace(newNodeID, ConnectionGene(innovID1, 1,
           sourceID, newNodeID));
-      connectionGeneList.emplace_back(ConnectionGene(nextInnovID++, 1,
+      connectionGeneList.emplace_back(ConnectionGene(innovID1, 1,
           sourceID, newNodeID));
 
       // Add the second connection to the containers.
-      connectionGeneList.emplace_back(ConnectionGene(nextInnovID, 1,
+      connectionGeneList.emplace_back(ConnectionGene(innovId2, 1,
           newNodeID, targetID));
       directedGraph.emplace(std::piecewise_construct, std::forward_as_tuple(
             newNodeID), std::initializer_list<std::pair<int, ConnectionGene>>{{
-            targetID, ConnectionGene(nextInnovID++, 1, newNodeID, targetID)}});
+            targetID, ConnectionGene(innovId2, 1, newNodeID, targetID)}});
 
       // Remove the lost connection.
       directedGraph[sourceID].erase(targetID);

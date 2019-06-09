@@ -123,6 +123,11 @@ class Genome
    */
   void TraverseNode(size_t nodeID, size_t depth);
 
+  /**
+   * The buffer of added connections in this generation.
+   */
+  static std::map<std::pair<size_t, size_t>, size_t> mutationBuffer;
+
   //! Input node count.
   size_t inputNodeCount;
 
@@ -157,9 +162,9 @@ class Genome
   double connAdditionProb;
 
   //! The next innovation ID to be allotted.
-  size_t nextInnovID = 0;
+  static size_t nextInnovID;
 
-  //! The next node ID to be allotted
+  //! The next node ID to be allotted.
   size_t nextNodeID;
 
   //! The fitness.
