@@ -75,24 +75,54 @@ class Genome
    */
   void Mutate();
 
- private:
-  /*
-   * A data structure containing IDs for the node genes. It is maintained in
-   * the order [bias node, input nodes, output nodes, hidden nodes].
+  /**
+   * Returns the parameters of the genome in the form of an adjacency matrix,
+   * where the row numbers denote the IDs of the source neurons and the column
+   * numbers denote the IDs of the target neurons, and the values are the
+   * weights of the connections.
    */
-  std::vector<size_t> nodeGeneList;
+  arma::mat Parameters();
 
-  /*
+  //! Get fitness.
+  double getFitness() const { return fitness; }
+
+  //! Get input node count.
+  size_t getInputNodeCount() const { return inputNodeCount; }
+
+  //! Get output node count.
+  size_t getOutputNodeCount() const { return outputNodeCount; }
+
+  //! Get bias.
+  double getBias() const { return bias; }
+  //! Set bias.
+  double& setBias() { return bias; }
+
+
+ private:
+  /**
    * A data structure contaning the connection genes sorted by global
    * innovation ID.
    */
   std::vector<ConnectionGene> connectionGeneList;
 
-  /*
+  /**
    * A digraph containing connection genes sorted by source ID, and then
    * secondary sorted by target ID.
    */
   std::map<size_t, std::map<size_t, ConnectionGene>> directedGraph;
+
+  /**
+   * A vector of node depths, where the depth is the maximum number of "jumps"
+   * it takes to get to a node from an input node. This is only used in acyclic
+   * cases.
+   */
+  std::vector<size_t> nodeDepths;
+
+  /**
+   * A recursive function that assigns depth to nodes. Only used in acyclic
+   * cases.
+   */
+  void TraverseNode(size_t nodeID, size_t depth);
 
   //! Input node count.
   size_t inputNodeCount;
@@ -131,7 +161,10 @@ class Genome
   size_t nextInnovID = 0;
 
   //! The next node ID to be allotted
-  size_t nextNodeID = 0;
+  size_t nextNodeID;
+
+  //! The fitness.
+  double fitness;
 };
 
 } // namespace neat

@@ -43,7 +43,7 @@ class ConnectionGene
    */
   ~ConnectionGene();
 
-  /*
+  /**
    * Mutate the weights of the gene.
    *
    * @param mutationSize The strength of mutation noise to be added.

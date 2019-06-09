@@ -45,14 +45,12 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
     connAdditionProb(connAdditionProb),
     isAcyclic(isAcyclic)
 {
-  // Create the node gene list.
-  for (size_t i = 0; i <= inputNodeCount + outputNodeCount; i++)
-    nodeGeneList.push_back(i);
+  nextNodeID = inputNodeCount + outputNodeCount + 1;
 
   // Create connections and add them to the lists.
   for (size_t i = 0; i <= inputNodeCount; i++)
   {
-    for (size_t j = inputNodeCount+1; j <= outputNodeCount + inputNodeCount;
+    for (size_t j = inputNodeCount + 1; j <= outputNodeCount + inputNodeCount;
         j++)
     {
       connectionGeneList.emplace_back(ConnectionGene(nextInnovID++, 1, i, j));
@@ -66,6 +64,14 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
         directedGraph[i].emplace(j, ConnectionGene(nextInnovID++, 1, i, j));
     }
   }
+
+  if (isAcyclic)
+  {
+    for (size_t i = 0; i <= inputNodeCount; i++)
+      nodeDepths.push_back(0);
+    for (size_t i = inputNodeCount + 1; i <= outputNodeCount; i++)
+      nodeDepths.push_back(1);
+  }
 }
 
 // Evaluates output based on input.
@@ -78,15 +84,54 @@ arma::vec Genome<ActivationFunction>::Evaluate(arma::vec& input)
         "input nodes" << std::endl;
   }
 
-  AcyclicNet<ActivationFunction> net(directedGraph, actFn, nextNodeID,
-      inputNodeCount, outputNodeCount, bias);
-  return net.Evaluate(input);
+  if (isAcyclic)
+  {
+    AcyclicNet<ActivationFunction> net(directedGraph, nodeDepths, actFn,
+        nextNodeID, inputNodeCount, outputNodeCount, bias);
+    fitness = net.Evaluate(input);
+    return fitness;
+  }
+  else
+  {
+    CyclicNet<ActivationFunction> net(directedGraph, actFn, nextNodeID,
+        inputNodeCount, outputNodeCount, 100 /* Placeholder */, bias);
+    fitness = net.Evaluate(input);
+    return fitness;
+  }
 }
 
 // Mutate genome.
 template <class ActivationFunction>
 void Genome<ActivationFunction>::Mutate()
 {
+  // Add new connection.
+  for (size_t i = 0; i < nextNodeID; i++)
+  {
+    if (arma::randu<double>() < connAdditionProb)
+    {
+      size_t sourceID = connectionGeneList[i].source;
+      size_t newTarget = i;
+      while (newTarget == i)
+      {
+        newTarget = arma::randi<arma::vec>(1 + inputNodeCount,
+            arma::distr_param(0, nextNodeID - 1))[0];
+      }
+      
+      if (isAcyclic)
+      {
+        // Only create connections where the target has a higher depth.
+        if (nodeDepths[i] >= nodeDepths[newTarget])
+          continue;
+      }
+
+      // Add the new connection to the containers.
+      connectionGeneList.emplace_back(ConnectionGene(nextInnovID, 1, i,
+          newTarget));
+      directedGraph[sourceID].emplace(newTarget, ConnectionGene(nextInnovID++,
+          1, i, newTarget));
+    }
+  }
+
   for (size_t i = 0; i < connectionGeneList.size(); i++)
   {
     // Don't mutate the gene if it is not enabled.
@@ -104,7 +149,7 @@ void Genome<ActivationFunction>::Mutate()
     }
 
     // Add new node.
-    else if (arma::randu<double>() < nodeAdditionProb)
+    if (arma::randu<double>() < nodeAdditionProb)
     {
       size_t sourceID = connectionGeneList[i].source;
       size_t targetID = connectionGeneList[i].target;
@@ -133,24 +178,34 @@ void Genome<ActivationFunction>::Mutate()
   if (arma::randu<double>() < biasMutationProb)
     bias += biasMutationSize * arma::randn<double>();
 
-  // Add new connection.
-  for (size_t i = 0; i < nodeGeneList.size(); i++)
+}
+
+// Recursively traverse neighbours and assign depths.
+template <class ActivationFunction>
+void Genome<ActivationFunction>::TraverseNode(size_t nodeID, size_t depth)
+{
+  // Check if it has been traversed by a longer path.
+  if (nodeDepths[nodeID] >= depth)
+    return;
+  else
+    nodeDepths[nodeID] = depth;
+
+  for (auto const& x : directedGraph)
+    TraverseNode(x.first, depth + 1);
+}
+
+template <class ActivationFunction>
+arma::mat Genome<ActivationFunction>::Parameters()
+{
+  arma::mat param(nextNodeID, nextNodeID);
+  for (auto const& x : directedGraph)
   {
-    if (arma::randu<double>() < connAdditionProb)
+    for (auto const& y : x.second)
     {
-      size_t sourceID = connectionGeneList[i].source;
-      size_t newTargetIdx = arma::randi<arma::vec>(1, arma::distr_param(0,
-          nodeGeneList.size()))[0];
-      size_t newTarget = nodeGeneList[newTarget];
-      if (i != newTargetIdx)
-      {
-        connectionGeneList.emplace_back(ConnectionGene(nextInnovID, 1, i,
-            newTarget));
-        directedGraph[sourceID].emplace(newTarget, ConnectionGene(nextInnovID++,
-            1, i, newTarget));
-      }
+      param[x.first][y.first] = y.second.getWeight();
     }
   }
+  return param;
 }
 
 } // namespace neat

@@ -19,30 +19,24 @@
 namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
+// Creates an AcyclicNet object.
 template <class ActivationFunction>
 AcyclicNet<ActivationFunction>::AcyclicNet(std::map<size_t, std::map<size_t,
                                               ConnectionGene>>& directedGraph,
+                                           std::vector<size_t nodeDepths,
                                            ActivationFunction& actFn,
                                            const size_t nodeCount,
                                            const size_t inputNodeCount,
                                            const size_t outputNodeCount,
                                            const double bias):
     directedGraph(directedGraph),
+    nodeDepths(nodeDepths),
     actFn(actFn),
     nodeCount(nodeCount),
     inputNodeCount(inputNodeCount),
     outputNodeCount(outputNodeCount),
     bias(bias)
 {
-  for (size_t i = 0; i < nodeCount; i++)
-    nodeDepths.push_back(0);
-
-  // Find the depth of the nodes.
-  for (size_t i = 0; i <= inputNodeCount; i++)
-  {
-    TraverseNode(i, 0);
-  }
-
   // Populate the layers.
   for (size_t i = 0; i < nodeCount; i++)
   {
@@ -50,20 +44,6 @@ AcyclicNet<ActivationFunction>::AcyclicNet(std::map<size_t, std::map<size_t,
       layers.emplace_back(std::vector<size_t>());
     layers[nodeDepths[i]].push_back(i);
   }
-}
-
-// Recursively traverse neighbours and assign depths.
-template <class ActivationFunction>
-void AcyclicNet<ActivationFunction>::TraverseNode(size_t nodeID, size_t depth)
-{
-  // Check if it has been traversed by a longer path.
-  if (nodeDepths[nodeID] >= depth)
-    return;
-  else
-    nodeDepths[nodeID] = depth;
-
-  for (auto const& x : directedGraph)
-    TraverseNode(x.first, depth + 1);
 }
 
 // Evaluate a given input.

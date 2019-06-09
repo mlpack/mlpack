@@ -42,13 +42,15 @@ class AcyclicNet
    * 
    * @param DirectedGraph A map of maps storing connection genes, whose first
    *    key is the source ID, and second key is the target ID.
-   * @param nodeCount The number of nodes.
+   * @param nodeDepths A vector storing the depths of each node.
    * @param actFn The activation function.
+   * @param nodeCount The number of nodes.
    * @param inputNodeCount The number of input nodes.
    * @param outputNodeCount The number of output nodes.
    * @param bias The bias.
    */
   AcyclicNet(std::map<size_t, std::map<size_t, ConnectionGene>>& directedGraph,
+             std::vector<size_t> nodeDepths,
              ActivationFunction& actFn,
              const size_t nodeCount,
              const size_t inputNodeCount,
@@ -67,6 +69,9 @@ class AcyclicNet
    */
   std::map<size_t, std::map<size_t, ConnectionGene>> directedGraph;
 
+  //! A map mapping the node ID to its depth in the neural network.
+  std::vector<size_t> nodeDepths;
+
   //! Activation function.
   ActivationFunction& actFn;
 
@@ -81,9 +86,6 @@ class AcyclicNet
 
   //! Bias.
   double bias;
-
-  //! A map mapping the node ID to its depth in the neural network.
-  std::vector<size_t> nodeDepths;
 
   //! A data structure storing the nodes by layer.
   std::vector<std::vector<size_t>> layers;

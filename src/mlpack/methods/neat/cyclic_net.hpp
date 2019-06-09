@@ -56,9 +56,8 @@ class CyclicNet
   arma::vec Evaluate(arma::vec input);
 
  private:
-  size_t nodeCount;
 
-  /*
+  /**
    * A digraph containing connection genes sorted by source ID, and then
    * secondary sorted by target ID.
    */
@@ -67,14 +66,14 @@ class CyclicNet
   //! Activation function.
   ActivationFunction& actFn;
 
+  //! Node count.
+  size_t nodeCount;
+
   //! Input node count.
   size_t inputNodeCount;
 
   //! Output node count.
   size_t outputNodeCount;
-
-  //! Node count.
-  size_t nodeCount;
 
   //! The number of time steps per activation.
   const size_t timeStepsPerActivation;
