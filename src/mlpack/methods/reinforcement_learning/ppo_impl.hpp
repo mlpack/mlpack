@@ -20,7 +20,7 @@
 namespace mlpack {
 namespace rl {
 
-template <
+template<
   typename EnvironmentType,
   typename NetworkType,
   typename UpdaterType,
@@ -39,9 +39,9 @@ PPO<
        PolicyType policy,
        ReplayType replayMethod,
        UpdaterType updater,
-       EnvironmentType environment)
-{
-
+       EnvironmentType environment) {
 }
 
+} // namespace rl
+} // namespace mlpack
 #endif

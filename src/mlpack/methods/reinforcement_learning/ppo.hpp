@@ -95,7 +95,6 @@ class PPO
 
   //! Locally-stored critic network.
   NetworkType CriticNetwork;
-
 };
 
 } // namespace rl

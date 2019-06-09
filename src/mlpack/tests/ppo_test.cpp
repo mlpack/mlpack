@@ -45,8 +45,12 @@ BOOST_AUTO_TEST_CASE(PENDULUMWITHPPO)
   critic.Add<ReLULayer<>>();
   critic.Add<Linear<>>(128, 1);
 
-  FFN<SurrogateLoss<>, GaussianInitialization> actor(SurrogateLoss<>(0.2),
+//  FFN<SurrogateLoss<>, GaussianInitialization> actor(SurrogateLoss<>(0.2),
+//      GaussianInitialization(0, 0.001));
+
+  FFN<MeanSquaredError<>, GaussianInitialization> actor(MeanSquaredError<>(),
       GaussianInitialization(0, 0.001));
+
   actor.Add<Linear<>>(4, 128);
   actor.Add<ReLULayer<>>();
   actor.Add<Linear<>>(128, 2);
