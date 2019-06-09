@@ -89,9 +89,6 @@ class AcyclicNet
 
   //! A data structure storing the nodes by layer.
   std::vector<std::vector<size_t>> layers;
-
-  // A recursive function that assigns depth to nodes.
-  void TraverseNode(size_t nodeID, size_t depth);
 };
 
 } // namespace neat

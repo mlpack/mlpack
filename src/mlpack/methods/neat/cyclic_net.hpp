@@ -33,7 +33,7 @@ class CyclicNet
   /**
    * Creates a CyclicNet object.
    * 
-   * @param DirectedGraph A map of maps storing connection genes, whose first
+   * @param directedGraph A map of maps storing connection genes, whose first
    *    key is the source ID, and second key is the target ID.
    * @param actFn The activation function.
    * @param nodeCount The number of nodes.
@@ -56,7 +56,6 @@ class CyclicNet
   arma::vec Evaluate(arma::vec input);
 
  private:
-
   /**
    * A digraph containing connection genes sorted by source ID, and then
    * secondary sorted by target ID.

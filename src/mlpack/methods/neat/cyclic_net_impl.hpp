@@ -2,7 +2,8 @@
  * @file cyclic_net_impl.hpp
  * @author Rahul Ganesh Prabhu
  *
- * Implementation of the cyclic net class.
+ * Implementation of the CyclicNet class, which represents a cyclic neural
+ * network.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -51,18 +52,18 @@ arma::vec CyclicNet<ActivationFunction>::Evaluate(arma::vec input)
   // Load the input.
   for (size_t i = 1; i <= inputNodeCount; i++)
     outputNodeValues[i] = input[i - 1];
-  
+
   for (size_t i = 0; i < timeStepsPerActivation; i++)
   {
     for (size_t j = 0; j < nodeCount; j++)
     {
       for (auto const &x : directedGraph[j])
       {
-        double weight =x.second.getWeight();
+        double weight = x.second.getWeight();
         inputNodeValues[x.first] += nodeValues[j] * weight;
       }
     }
-    
+
     for (size_t i = inputNodeCount; i < nodeCount; i++)
     {
       nodeValues[i] = actFn.Fn(inputNodeValues[i]);
@@ -76,7 +77,7 @@ arma::vec CyclicNet<ActivationFunction>::Evaluate(arma::vec input)
   return output;
 }
 
-}
-}
+} // namespace neat
+} // namespace mlpack
 
 #endif

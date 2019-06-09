@@ -2,7 +2,8 @@
  * @file acyclic_net_impl.hpp
  * @author Rahul Ganesh Prabhu
  *
- * Implementation of the acyclic net class.
+ * Implementation of the AcyclicNet class, which representa an acyclic neural
+ * network.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -51,8 +52,9 @@ template <class ActivationFunction>
 arma::vec AcyclicNet<ActivationFunction>::Evaluate(arma::vec input)
 {
   std::vector<double> nodeValues;
+
   // Add all the nodes to the map.
-  for (size_t i = 0; i < maxNodeID; i++)
+  for (size_t i = 0; i < nodeCount; i++)
   {
     if (i <= inputNodeCount && i != 0)
       nodeValues.push_back(input[i-1]);

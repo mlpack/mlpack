@@ -26,8 +26,8 @@ namespace neat /** NeuroEvolution of Augmenting Topologies */ {
  * It also stores the nodes in the form of IDs:
  * Bias node : ID = 0
  * Input nodes : ID = 1 - inputNodeCount
- * Output nodes : ID = inputNodeCount+1 - inputNodeCount+outputNodeCount
- * Hidden nodes : ID > inputNodeCount+outputNodeCount
+ * Output nodes : ID = inputNodeCount + 1 - inputNodeCount+outputNodeCount
+ * Hidden nodes : ID > inputNodeCount + outputNodeCount
  * 
  * The genome can undergo two types of structural mutations:
  * 1. A connection can be split into two, creating a new node.
@@ -96,7 +96,6 @@ class Genome
   double getBias() const { return bias; }
   //! Set bias.
   double& setBias() { return bias; }
-
 
  private:
   /**

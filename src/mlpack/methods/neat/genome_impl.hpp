@@ -20,7 +20,7 @@
 namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
-// Creates object.
+// Creates genome object.
 template <class ActivationFunction>
 Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
                                    const size_t outputNodeCount,
@@ -116,7 +116,7 @@ void Genome<ActivationFunction>::Mutate()
         newTarget = arma::randi<arma::vec>(1 + inputNodeCount,
             arma::distr_param(0, nextNodeID - 1))[0];
       }
-      
+
       if (isAcyclic)
       {
         // Only create connections where the target has a higher depth.
@@ -171,13 +171,23 @@ void Genome<ActivationFunction>::Mutate()
       // Remove the lost connection.
       directedGraph[sourceID].erase(targetID);
       connectionGeneList[i].enabled = false;
+
+      // If the genome is acyclic, change the depths.
+      if (isAcyclic)
+      {
+        nodeDepths.push_back(nodeDepths[sourceID] + 1);
+
+        // If this is the case, the connection we are splitting is part of the
+        // longest path.
+        if (nodeDepths[targetID] == nodeDepths[sourceID] + 1)
+          nodeDepths[targetID] += 1;
+      }
     }
   }
 
   // Mutate bias.
   if (arma::randu<double>() < biasMutationProb)
     bias += biasMutationSize * arma::randn<double>();
-
 }
 
 // Recursively traverse neighbours and assign depths.
