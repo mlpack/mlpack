@@ -19,7 +19,19 @@ namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 
 /**
-* Function that computes Inception Score for
+* Function that computes Inception Score for a set of images produced by a GAN.
+*
+* For more information, see the following.
+*
+* @code
+* @article{Goodfellow2016,
+*   author  = {Tim Salimans, Ian Goodfellow, Wojciech Zaremba, Vicki Cheung,
+*              Alec Radford, Xi Chen},
+*   title   = {Improved Techniques for Training GANs},
+*   year    = {2016},
+*   url     = {https://arxiv.org/abs/1606.03498},
+* }
+* @endcode
 *
 * @param trueOutputs Ground truth sequences.
 * @param predOutputs Sequences predicted by model.
