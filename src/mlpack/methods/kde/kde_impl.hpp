@@ -68,7 +68,7 @@ KDE(const double relError,
     mode(mode),
     monteCarlo(true),
     MCProb(0.95), // TODO Just for testing purposes.
-    initialSampleSize(1000)
+    initialSampleSize(100)
 {
   CheckErrorValues(relError, absError);
 }

@@ -115,7 +115,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   }
 
   // TODO Just for testing purposes.
-  const size_t t = 50;
+  const size_t t = 2;
 
   if (newCalculations &&
       bound <= (absError + relError * minKernel) / referenceSet.n_cols)
@@ -152,7 +152,17 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     while (m > 0)
     {
       const size_t oldSize = sample.size();
-      sample.resize(oldSize + m);
+      const size_t newSize = oldSize + m;
+
+      // Don't use probabilistic estimation if this is gonna take a close
+      // amount of computation to the exact calculation.
+      if (newSize >= 0.7 * numDesc)
+      {
+        useMonteCarloPredictions = false;
+        break;
+      }
+
+      sample.resize(newSize);
       for (size_t i = 0; i < m; ++i)
       {
         // Sample and evaluate random points from the reference node.
@@ -162,20 +172,6 @@ Score(const size_t queryIndex, TreeType& referenceNode)
       }
       meanSample = arma::mean(sample);
       const double stddev = arma::stddev(sample);
-      // --------------
-      // It seems to work when using the left > right condition.
-      // This doesn't allow m to grow over its initial value :(
-      const double left = z * stddev / std::sqrt(m);
-      const double right =
-          relError *
-          (minKernel + numDesc * (meanSample - z * stddev / std::sqrt(m))) /
-          numDesc;
-      if (sample.size() >= numDesc || left > right)
-      {
-        useMonteCarloPredictions = false;
-        break;
-      }
-      // --------------
       minKernel +=
           numDesc * (meanSample - (z * stddev) / (std::sqrt(sample.size())));
       const double numerator = numDesc + relError * numDesc;
