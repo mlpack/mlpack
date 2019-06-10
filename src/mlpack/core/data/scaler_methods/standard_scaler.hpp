@@ -56,9 +56,9 @@ class StandardScaler
   void Fit(const MatType& input)
   {
     itemMean = arma::mean(input, 1);
-    itemStdev = arma::stddev(input, 1, 1);
+    itemStdDev = arma::stddev(input, 1, 1);
     // Handling zeros in scale vector.
-    itemStdev.for_each([](arma::vec::elem_type& val) { val =
+    itemStdDev.for_each([](arma::vec::elem_type& val) { val =
         (val == 0) ? 1 : val; });
   }
 
@@ -72,7 +72,7 @@ class StandardScaler
   void Transform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
-    output = (input.each_col() - itemMean).each_col() / itemStdev;
+    output = (input.each_col() - itemMean).each_col() / itemStdDev;
   }
 
   /**
@@ -85,26 +85,26 @@ class StandardScaler
   void InverseTransform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
-    output = (input.each_col() % itemStdev).each_col() + itemMean;
+    output = (input.each_col() % itemStdDev).each_col() + itemMean;
   }
 
   //! Get the Mean row vector.
   const arma::vec& ItemMean() const { return itemMean; }
   //! Get the Standard Devation row vector.
-  const arma::vec& ItemStdev() const { return itemStdev; }
+  const arma::vec& ItemStdDev() const { return itemStdDev; }
 
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & BOOST_SERIALIZATION_NVP(itemMean);
-    ar & BOOST_SERIALIZATION_NVP(itemStdev);
+    ar & BOOST_SERIALIZATION_NVP(itemStdDev);
   }
 
  private:
   // Vector which holds mean of each feature
   arma::vec itemMean;
   // Vector which holds standard devation of each feature
-  arma::vec itemStdev;
+  arma::vec itemStdDev;
 }; // class StandardScaler
 
 } // namespace data

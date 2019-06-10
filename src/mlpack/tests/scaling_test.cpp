@@ -9,8 +9,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/data/scaler_methods/pcawhitening.hpp>
-#include <mlpack/core/data/scaler_methods/zcawhitening.hpp>
+#include <mlpack/core/data/scaler_methods/pca_whitening.hpp>
+#include <mlpack/core/data/scaler_methods/zca_whitening.hpp>
 #include <mlpack/core/data/scaler_methods/min_max_scaler.hpp>
 #include <mlpack/core/data/scaler_methods/max_abs_scaler.hpp>
 #include <mlpack/core/data/scaler_methods/standard_scaler.hpp>

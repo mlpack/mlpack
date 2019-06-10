@@ -1,5 +1,5 @@
 /**
- * @file pcawhitening.hpp
+ * @file pca_whitening.hpp
  * @author Jeffin Sam
  *
  * Whitening scaling to scale features, Using PCA Whitening.
@@ -47,13 +47,18 @@ class PcaWhitening
 {
  public:
   /**
-  * A constructor to set the regulatization parameter.
+  * A constructor to set the regularization parameter.
   *
   * @param eps Regularization parameter.
   */
   PcaWhitening(double eps = 0.00005)
   {
     epsilon = eps;
+    // Ensure scaleMin is smaller than scaleMax
+    if (epsilon < 0)
+    {
+      throw std::runtime_error("Regularization parameter is not correct");
+    }
   }
 
   /**
@@ -68,8 +73,7 @@ class PcaWhitening
     // Get eigenvectors and eigenvalues of covariance of input matrix.
     eig_sym(eigenValues, eigenVectors, mlpack::math::ColumnCovariance(
         input.each_col() - itemMean));
-    for (size_t i = 0; i < eigenValues.n_elem; i++)
-        eigenValues(i) = eigenValues(i) + epsilon;
+    eigenValues += epsilon;
   }
 
   /**

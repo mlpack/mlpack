@@ -16,10 +16,10 @@
 #include <mlpack/core/data/scaler_methods/max_abs_scaler.hpp>
 #include <mlpack/core/data/scaler_methods/mean_normalization.hpp>
 #include <mlpack/core/data/scaler_methods/min_max_scaler.hpp>
-#include <mlpack/core/data/scaler_methods/pcawhitening.hpp>
-#include <mlpack/core/data/scaler_methods/zcawhitening.hpp>
+#include <mlpack/core/data/scaler_methods/pca_whitening.hpp>
+#include <mlpack/core/data/scaler_methods/zca_whitening.hpp>
 #include <mlpack/core/data/scaler_methods/standard_scaler.hpp>
-#include "mlpack/core/data/scaler_methods/scaling_model.hpp"
+#include "mlpack/methods/preprocess/scaling_model.hpp"
 
 using namespace mlpack;
 using namespace mlpack::util;
@@ -29,17 +29,19 @@ using namespace std;
 
 PROGRAM_INFO("Scale Data",
     // Short description.
-    "A utility to perform feature scaling.",
+    "A utility to perform feature scaling on datasets using one of six"
+    "techniques.  Both scaling and inverse scaling are supported, and"
+    "scalers can be saved and then applied to other datasets.",
     // Long description.
     "This utility takes a dataset and performs feature scaling using one of "
     "the six scaler methods namely: 'max_abs_scaler', 'mean_normalization', "
-    "'min_max_scaler' ,'standard_scaler', 'pcawhitening' and 'zcawhitening'."
-    " The function takes a matrice as " + PRINT_PARAM_STRING("input") +
+    "'min_max_scaler' ,'standard_scaler', 'pca_whitening' and 'zca_whitening'."
+    " The function takes a matrix as " + PRINT_PARAM_STRING("input") +
     " and a scaling method type which you can specify using " +
     PRINT_PARAM_STRING("scaler_method") + " parameter; the default is "
-    "standard scaler, and outputs a matrice with scaled feature."
+    "standard scaler, and outputs a matrix with scaled feature."
     "\n\n"
-    "The output scaled feature matrices may be saved with the " +
+    "The output scaled feature matrix may be saved with the " +
     PRINT_PARAM_STRING("output") + " output parameters."
     "\n\n"
     "The model to scale features can be saved using " +
@@ -59,15 +61,15 @@ PROGRAM_INFO("Scale Data",
     "we coud run "
     "\n\n" +
     PRINT_CALL("preprocess_scale", "input", "X", "output", "X_scaled",
-    "scaler_method", "pcawhitening", "epsilon", 0.01) +
+    "scaler_method", "pca_whitening", "epsilon", 0.01) +
     "\n\n"
     "You can also retransform the scaled dataset back using" +
-    PRINT_PARAM_STRING("function") + ". An example to rescale : " +
+    PRINT_PARAM_STRING("inverse_scaling") + ". An example to rescale : " +
     PRINT_DATASET("X_scaled") + " into " + PRINT_DATASET("X")
     + "using the saved model " + PRINT_PARAM_STRING("input_model") + " is:"
     "\n\n" +
     PRINT_CALL("preprocess_scale", "input", "X_scaled", "output", "X",
-    "function", 1, "input_model", "saved")+
+    "inverse_scaling", true, "input_model", "saved") +
     "\n\n"
     "Another simple example where we want to scale the dataset " +
     PRINT_DATASET("X") + " into " + PRINT_DATASET("X_scaled") + " with "
@@ -93,8 +95,7 @@ PARAM_INT_IN("min_value", "Starting value of range for min_max_scaler.",
     "b", 0);
 PARAM_INT_IN("max_value", "Ending value of range for min_max_scaler.",
     "e", 1);
-PARAM_INT_IN("function", "function to apply,either 0:Transform or 1:Inverse"
-  "Transform", "f", 0)
+PARAM_FLAG("inverse_scaling", "Inverse Scaling to get original dataset", "f");
 // Loading/saving of a model.
 PARAM_MODEL_IN(ScalingModel, "input_model", "Input Scaling model.", "m");
 PARAM_MODEL_OUT(ScalingModel, "output_model", "Output scaling model.", "M");
@@ -112,17 +113,14 @@ static void mlpackMain()
   RequireAtLeastOnePassed({ "output", "output_model"}, false,
       "no output will be saved");
   // Check scaler method.
-  RequireParamValue<std::string>("scaler_method",
-      [](std::string x) { return x == "standard_scaler" || x ==
-      "min_max_scaler" || x == "mean_normalization" || x == "max_abs_scaler" ||
-      x == "whitening";}, true, "scaler_method must be one among min_max_"
-      "scaler, max_abs_scaler, pcawhitening, standard_scaler, zcawhitening"
-      " or mean_normalization.");
-
+  RequireParamInSet<std::string>("scaler_method",{ "min_max_scaler",
+    "standard_scaler", "max_abs_scaler", "mean_normalization", "pca_whitening",
+    "zca_whitening" }, true, "unknown scaler type");
   // Load the data.
   arma::mat& input = CLI::GetParam<arma::mat>("input");
   arma::mat output;
   ScalingModel* m;
+  Timer::Start("feature_scaling");
   if (CLI::HasParam("input_model"))
   {
     m = CLI::GetParam<ScalingModel*>("input_model");
@@ -147,28 +145,31 @@ static void mlpackMain()
     {
       m->ScalerType() = ScalingModel::ScalerTypes::MEAN_NORMALIZATION;
     }
-    else if (scalerMethod == "zcawhitening")
+    else if (scalerMethod == "zca_whitening")
     {
       m->ScalerType() = ScalingModel::ScalerTypes::ZCAWHITENING;
     }
-    else if (scalerMethod == "pcawhitening")
+    else if (scalerMethod == "pca_whitening")
     {
       m->ScalerType() = ScalingModel::ScalerTypes::PCAWHITENING;
     }
     m->Fit(input);
   }
-  if (!CLI::GetParam<int>("function"))
+  if (!CLI::HasParam("inverse_scaling"))
   {
     m->Transform(input, output);
   }
   else
   {
+    if (!CLI::HasParam("input_model"))
+      throw std::runtime_error("Please provide a saved model");
     m->InverseTransform(input, output);
   }
 
   // save the output
   if (CLI::HasParam("output"))
     CLI::GetParam<arma::mat>("output") = std::move(output);
-
-  CLI::GetParam<ScalingModel*>("output_model") = m;
+  Timer::Stop("feature_scaling");
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<ScalingModel*>("output_model") = m;
 }

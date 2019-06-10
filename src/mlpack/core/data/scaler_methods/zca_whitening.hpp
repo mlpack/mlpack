@@ -1,5 +1,5 @@
 /**
- * @file zcawhitening.hpp
+ * @file zca_whitening.hpp
  * @author Jeffin Sam
  *
  * Whitening scaling to scale features, Using ZCA Whitening.
@@ -14,7 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/lin_alg.hpp>
-#include <mlpack/core/data/scaler_methods/pcawhitening.hpp>
+#include <mlpack/core/data/scaler_methods/pca_whitening.hpp>
 
 namespace mlpack {
 namespace data {
@@ -48,13 +48,13 @@ class ZcaWhitening
 {
  public:
   /**
-  * A constructor to set the regulatization parameter.
+  * A constructor to set the regularization parameter.
   *
   * @param eps Regularization parameter.
   */
   ZcaWhitening(double eps = 0.00005)
   {
-    epsilon = eps;
+    zca = new data::PcaWhitening(eps); 
   }
   /**
   * Function to fit features, to find out the min max and scale.
@@ -64,12 +64,7 @@ class ZcaWhitening
   template<typename MatType>
   void Fit(const MatType& input)
   {
-    data::PcaWhitening scale(epsilon);
-    scale.Fit(input);
-    // Important to store results, so that i can use in InverseTranform().
-    eigenVectors = scale.EigenVectors();
-    itemMean = scale.ItemMean();
-    eigenValues = scale.EigenValues();
+    zca->Fit(input);
   }
 
   /**
@@ -81,11 +76,8 @@ class ZcaWhitening
   template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
-    output.copy_size(input);
-    output = (input.each_col() - itemMean);
-    output = arma::diagmat(1.0 / (arma::sqrt(eigenValues))) * eigenVectors.t()
-        * output;
-    output = eigenVectors * output;
+    zca->Transform(input, output);
+    output = zca->EigenVectors() * output;
   }
 
   /**
@@ -97,38 +89,29 @@ class ZcaWhitening
   template<typename MatType>
   void InverseTransform(const MatType& input, MatType& output)
   {
-    output = inv(eigenVectors) * arma::diagmat(arma::sqrt(eigenValues))
-        * inv(eigenVectors.t()) * input;
-    output = (output.each_col() + itemMean);
+    output = inv(zca->EigenVectors()) * arma::diagmat(arma::sqrt(
+        zca->EigenValues())) * inv(zca->EigenVectors().t()) * input;
+    output = (output.each_col() + zca->ItemMean());
   }
 
   //! Get the Mean row vector.
-  const arma::vec& ItemMean() const { return itemMean; }
+  const arma::vec& ItemMean() const { return zca->ItemMean(); }
   //! Get the eigenvalues vector.
-  const arma::vec& EigenValues() const { return eigenValues; }
+  const arma::vec& EigenValues() const { return zca->EigenValues(); }
   //! Get the eigenvector.
-  const arma::mat& EigenVectors() const { return eigenVectors; }
+  const arma::mat& EigenVectors() const { return zca->EigenVectors(); }
   //! Get the Regularisation Parameter.
-  const double& Epsilon() const { return epsilon; }
+  const double& Epsilon() const { return zca->Epsilon(); }
 
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & BOOST_SERIALIZATION_NVP(eigenValues);
-    ar & BOOST_SERIALIZATION_NVP(eigenVectors);
-    ar & BOOST_SERIALIZATION_NVP(itemMean);
-    ar & BOOST_SERIALIZATION_NVP(epsilon);
+  { 
+    ar & BOOST_SERIALIZATION_NVP(zca);
   }
 
  private:
-  // Vector which holds mean of each feature.
-  arma::vec itemMean;
-  // Mat which hold the eigenvectors.
-  arma::mat eigenVectors;
-  // Regularization Paramter.
-  double epsilon;
-  // Vector which hold the eigenvalues.
-  arma::vec eigenValues;
+  // A pointer to PcaWhitening Class.
+  PcaWhitening* zca;
 }; // class ZcaWhitening
 
 } // namespace data

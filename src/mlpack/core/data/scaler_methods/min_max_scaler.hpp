@@ -58,6 +58,11 @@ class MinMaxScaler
   {
     scaleMin = min;
     scaleMax = max;
+    // Ensure scaleMin is smaller than scaleMax
+    if (scaleMin > scaleMax)
+    {
+      throw std::runtime_error("Range is not appropriate");
+    }
   }
 
   /**

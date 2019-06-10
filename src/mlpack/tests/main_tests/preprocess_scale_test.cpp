@@ -21,8 +21,6 @@ static const std::string testName = "PreprocessScale";
 #include <boost/test/unit_test.hpp>
 #include "../test_tools.hpp"
 
-#include <cmath>
-
 using namespace mlpack;
 
 struct PreprocessScaleTestFixture
@@ -52,10 +50,10 @@ arma::mat dataset = "-1 -0.5 0 1;"
  */
 BOOST_AUTO_TEST_CASE(TwoScalerTest)
 {
-  std::string method = "max_abs_scaler";
   // Input custom data points.
+  std::string method = "max_abs_scaler";
   SetInputParam("input", dataset);
-  SetInputParam("scaler_method", std::move(method));
+  SetInputParam("scaler_method", method);
 
   mlpackMain();
   arma::mat max_abs_scaler_output = CLI::GetParam<arma::mat>("output");
@@ -103,15 +101,135 @@ BOOST_AUTO_TEST_CASE(UnrelatedOptionTest)
   std::string method = "standard_scaler";
   // Input custom data points.
   SetInputParam("input", dataset);
+  SetInputParam("scaler_method", method);
+
+  mlpackMain();
+  arma::mat scaled = CLI::GetParam<arma::mat>("output");
+
+  SetInputParam("input", dataset);
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("min_value", 2);
   SetInputParam("max_value", 4);
   SetInputParam("epsilon", 0.005);
+
   mlpackMain();
   arma::mat output = CLI::GetParam<arma::mat>("output");
-  arma::mat scaled = "-1.18321596 -0.50709255  0.16903085 1.52127766;"
-                   "-1.18321596 -0.50709255  0.16903085 1.52127766;";
+
   CheckMatrices(scaled, output);
+}
+
+/**
+ * Check Inverse Scaling is working.
+ */
+BOOST_AUTO_TEST_CASE(InverseScalingTest)
+{
+  std::string method = "zca_whitening";
+  // Input custom data points.
+  SetInputParam("input", dataset);
+  SetInputParam("scaler_method", std::move(method));
+
+  mlpackMain();
+  arma::mat scaled = CLI::GetParam<arma::mat>("output");
+
+  SetInputParam("input", scaled);
+  SetInputParam("input_model",
+                CLI::GetParam<ScalingModel*>("output_model"));
+  SetInputParam("inverse_scaling", true);
+
+  mlpackMain();
+  arma::mat output = CLI::GetParam<arma::mat>("output");
+  CheckMatrices(dataset, output);
+}
+
+/**
+ * Check Saved model is working.
+ */
+BOOST_AUTO_TEST_CASE(SavedModelTest)
+{
+  std::string method = "pca_whitening";
+  // Input custom data points.
+  SetInputParam("input", dataset);
+  SetInputParam("scaler_method", std::move(method));
+
+  mlpackMain();
+  arma::mat scaled = CLI::GetParam<arma::mat>("output");
+
+  SetInputParam("input", dataset);
+  SetInputParam("input_model",
+                CLI::GetParam<ScalingModel*>("output_model"));
+
+  mlpackMain();
+  arma::mat output = CLI::GetParam<arma::mat>("output");
+  CheckMatrices(scaled, output);
+}
+
+/**
+ * Check different epsilon for PCA give two different output.
+ */
+BOOST_AUTO_TEST_CASE(EpsilonTest)
+{
+  std::string method = "pca_whitening";
+  // Input custom data points.
+  SetInputParam("input", dataset);
+  SetInputParam("scaler_method", method);
+
+  mlpackMain();
+  arma::mat scaled = CLI::GetParam<arma::mat>("output");
+
+  SetInputParam("scaler_method", std::move(method));
+  SetInputParam("input", dataset);
+  SetInputParam("epsilon", 1.0);
+
+  mlpackMain();
+  arma::mat output = CLI::GetParam<arma::mat>("output");
+
+  CheckMatricesNotEqual(scaled, output);
+}
+
+/**
+ * Check for invalid epsilon.
+ */
+BOOST_AUTO_TEST_CASE(InvalidEpsilonTest)
+{
+  std::string method = "pca_whitening";
+  // Input custom data points.
+  SetInputParam("input", dataset);
+  SetInputParam("scaler_method", std::move(method));
+  SetInputParam("epsilon", -1.0);
+
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+}
+
+/**
+ * Check for invalid range in min_max_scaler.
+ */
+BOOST_AUTO_TEST_CASE(InvalidRangeTest)
+{
+  std::string method = "min_max_scaler";
+  // Input custom data points.
+  SetInputParam("input", dataset);
+  SetInputParam("scaler_method", std::move(method));
+  SetInputParam("min_value", 4);
+  SetInputParam("max_value", 2);
+
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+}
+
+/**
+ * Check for invalid scaler type.
+ */
+BOOST_AUTO_TEST_CASE(InvalidScalerTest)
+{
+  std::string method = "invalid_scaler";
+  // Input custom data points.
+  SetInputParam("input", dataset);
+  SetInputParam("scaler_method", std::move(method));
+  SetInputParam("min_value", 4);
+  SetInputParam("max_value", 2);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 }
 
 BOOST_AUTO_TEST_SUITE_END();

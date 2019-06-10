@@ -5,10 +5,8 @@ set(SOURCES
   max_abs_scaler.hpp
   standard_scaler.hpp
   mean_normalization.hpp
-  pcawhitening.hpp
-  zcawhitening.hpp
-  scaling_model.hpp
-  scaling_model_impl.hpp
+  pca_whitening.hpp
+  zca_whitening.hpp
 )
 
 # Add directory name to sources.
