@@ -162,7 +162,10 @@ static void mlpackMain()
   else
   {
     if (!CLI::HasParam("input_model"))
+    {
+      delete(m);
       throw std::runtime_error("Please provide a saved model");
+    }
     m->InverseTransform(input, output);
   }
 
