@@ -29,7 +29,8 @@ class KDEStat
 
   //! Initialization for a fully initialized node.
   template<typename TreeType>
-  KDEStat(TreeType& node)
+  KDEStat(TreeType& node) :
+      depth(0)
   {
     // Calculate centroid if necessary.
     if (!tree::TreeTraits<TreeType>::FirstPointIsCentroid)
@@ -41,12 +42,6 @@ class KDEStat
     {
       validCentroid = false;
     }
-
-    // Calculate depth.
-    if (node.Parent() != NULL)
-      depth = node.Parent()->Stat().Depth() + 1;
-    else
-      depth = 0;
   }
 
   //! Get the centroid of the node.
@@ -60,6 +55,9 @@ class KDEStat
 
   //! Get depth of the node.
   inline size_t Depth() const { return depth; }
+
+  //! Modify depth of the node.
+  inline size_t& Depth() { return depth; }
 
   //! Modify the centroid of the node.
   void SetCentroid(arma::vec newCentroid)

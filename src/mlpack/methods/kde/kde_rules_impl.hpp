@@ -86,6 +86,11 @@ template<typename MetricType, typename KernelType, typename TreeType>
 inline double KDERules<MetricType, KernelType, TreeType>::
 Score(const size_t queryIndex, TreeType& referenceNode)
 {
+  // Set reference node depth.
+  kde::KDEStat& referenceStat = referenceNode.Stat();
+  if (referenceStat.Depth() == 0 && referenceNode.Parent() != NULL)
+    referenceStat.Depth() = referenceNode.Parent()->Stat().Depth() + 1;
+
   double score, maxKernel, minKernel, bound;
   const arma::vec& queryPoint = querySet.unsafe_col(queryIndex);
   const double minDistance = referenceNode.MinDistance(queryPoint);
@@ -120,14 +125,9 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 
     // Calculate kernel value based on reference node centroid.
     if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
-    {
       kernelValue = EvaluateKernel(queryIndex, referenceNode.Point(0));
-    }
     else
-    {
-      kde::KDEStat& referenceStat = referenceNode.Stat();
       kernelValue = EvaluateKernel(queryPoint, referenceStat.Centroid());
-    }
 
     densities(queryIndex) += referenceNode.NumDescendants() * kernelValue;
 
