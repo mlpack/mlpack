@@ -111,14 +111,16 @@ class DicitonaryEncoding
   //! Modify the stringq.
   std::deque<std::string>& Stringq() { return stringq; }
 
+  //! Return the stringq.
+  const std::deque<std::string>& Stringq() const { return stringq; }
+
   //! Return the Mappings
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>>& Mappings() const { return mappings; }
 
   //! Modify the Mappings.
-  std::tuple<std::unordered_map<boost::string_view, size_t,
-      boost::hash<boost::string_view>>&, std::deque<std::string>&>
-      Mapping() { return std::tie(mappings, stringq); }
+  std::unordered_map<boost::string_view, size_t,
+      boost::hash<boost::string_view>>& Mappings() { return mappings; }
 
   /**
    * Serialize the class to the given archive.

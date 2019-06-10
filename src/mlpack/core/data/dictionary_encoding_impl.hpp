@@ -26,12 +26,12 @@ void DicitonaryEncoding::Reset()
 
 DicitonaryEncoding::DicitonaryEncoding(const DicitonaryEncoding &old_obj)
 {
-  this->mappings.clear();
-  this->stringq.clear();
+  this->stringq = old_obj.stringq;
+  std::deque<std::string>::iterator jt = stringq.begin();
   for (auto it = old_obj.mappings.begin(); it != old_obj.mappings.end(); it++)
   {
-    this->stringq.push_back(std::string(it->first));
-    this->mappings[stringq.back()] = it->second;
+    this->mappings[*jt] = it->second;
+    *jt++;
   }
 }
 
@@ -42,16 +42,13 @@ void DicitonaryEncoding::operator= (const
   {
     this->mappings.clear();
     this->stringq.clear();
+    this->stringq = old_obj.stringq;
+    std::deque<std::string>::iterator jt = stringq.begin();
     for (auto it = old_obj.mappings.begin(); it != old_obj.mappings.end(); it++)
     {
-      this->stringq.push_back(std::string(it->first));
-      this->mappings[stringq.back()] = it->second;
+      this->mappings[*jt] = it->second;
+      *jt++;
     }
-  }
-  else
-  {
-    this->mappings = old_obj.mappings;
-    this->stringq = old_obj.stringq;
   }
 }
 
