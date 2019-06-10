@@ -54,7 +54,7 @@ class ZcaWhitening
   */
   ZcaWhitening(double eps = 0.00005)
   {
-    zca = new data::PcaWhitening(eps); 
+    zca = new data::PcaWhitening(eps);
   }
   /**
   * Function to fit features, to find out the min max and scale.
@@ -105,7 +105,7 @@ class ZcaWhitening
 
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
-  { 
+  {
     ar & BOOST_SERIALIZATION_NVP(zca);
   }
 

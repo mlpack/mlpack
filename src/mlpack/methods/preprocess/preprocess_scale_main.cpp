@@ -113,7 +113,7 @@ static void mlpackMain()
   RequireAtLeastOnePassed({ "output", "output_model"}, false,
       "no output will be saved");
   // Check scaler method.
-  RequireParamInSet<std::string>("scaler_method",{ "min_max_scaler",
+  RequireParamInSet<std::string>("scaler_method", { "min_max_scaler",
     "standard_scaler", "max_abs_scaler", "mean_normalization", "pca_whitening",
     "zca_whitening" }, true, "unknown scaler type");
   // Load the data.
