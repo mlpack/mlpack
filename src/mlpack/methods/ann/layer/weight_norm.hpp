@@ -14,9 +14,13 @@
 
 #include <mlpack/prereqs.hpp>
 #include "layer_types.hpp"
+
 #include "../visitor/delete_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
+#include "../visitor/reset_visitor.hpp"
+#include "../visitor/weight_size_visitor.hpp"
+#include "../visitor/weight_set_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -77,7 +81,7 @@ class WeightNorm
    * @param output Resulting output activations.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /**
    * Backward pass through the layer. This function will call the
@@ -101,7 +105,7 @@ class WeightNorm
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& input,
+  void Gradient(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& error,
                 arma::Mat<eT>&& gradient);
 
@@ -115,10 +119,10 @@ class WeightNorm
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
-  //! Get the input parameter.
+  /*//! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
+  InputDataType& InputParameter() { return inputParameter; }*/
 
   //! Return the model modules.
   std::vector<LayerTypes<CustomLayers...> >& Model()
@@ -147,14 +151,14 @@ class WeightNorm
    * @param args The layer parameter.
    */
   template <class LayerType, class... Args>
-  void Add(Args... args) { network.push_back(new LayerType(args...)); }
+  void Add(Args... args);
 
   /*
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
+  void Add(LayerTypes<CustomLayers...> layer);
 
   /**
    * Serialize the layer.
@@ -187,20 +191,32 @@ class WeightNorm
   //! Locally-stored network modules.
   std::vector<LayerTypes<CustomLayers...> > network;
 
+  //! Locally stored number of elements in the weights of wrapped layer.
+  size_t networkWeightSize;
+
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
   //! Locally-stored output parameter visitor module object.
   OutputParameterVisitor outputParameterVisitor;
 
+  // Reset the gradient for all modules that implement the Gradient function.
+  void ResetGradients(arma::mat& gradient);
+
+  //! Locally-stored reset visitor.
+  ResetVisitor resetVisitor;
+
   //! Locally-stored scalar parameter.
-  size_t scalarParameter;
+  OutputDataType scalarParameter;
 
   //! Locally-stored parameter vector.
   OutputDataType vectorParameter;
 
   //! Locally-stored parameters.
   OutputDataType weights;
+
+  //! Locally-stored weight size visitor.
+  WeightSizeVisitor weightSizeVisitor;
 }; // class BatchNorm
 
 } // namespace ann
