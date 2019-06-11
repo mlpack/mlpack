@@ -31,7 +31,7 @@ DicitonaryEncoding::DicitonaryEncoding(const DicitonaryEncoding &old_obj)
   for (auto it = old_obj.mappings.begin(); it != old_obj.mappings.end(); it++)
   {
     this->mappings[*jt] = it->second;
-    *jt++;
+    jt++;
   }
 }
 
@@ -47,7 +47,7 @@ void DicitonaryEncoding::operator= (const
     for (auto it = old_obj.mappings.begin(); it != old_obj.mappings.end(); it++)
     {
       this->mappings[*jt] = it->second;
-      *jt++;
+      jt++;
     }
   }
 }
@@ -153,7 +153,7 @@ void DicitonaryEncoding::serialize(Archive& ar, const unsigned int
     {
       ar & BOOST_SERIALIZATION_NVP(stringq[i]);
       ar & BOOST_SERIALIZATION_NVP(mappings[stringq[i]]);
-    }    
+    }
   }
 }
 
