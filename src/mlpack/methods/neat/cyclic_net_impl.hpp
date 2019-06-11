@@ -21,15 +21,12 @@ namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
 template <class ActivationFunction>
-CyclicNet<ActivationFunction>::CyclicNet(std::map<size_t, std::map<size_t,
-                                            ConnectionGene>>& directedGraph,
-                                         ActivationFunction& actFn,
+CyclicNet<ActivationFunction>::CyclicNet(ActivationFunction& actFn,
                                          const size_t nodeCount,
                                          const size_t inputNodeCount,
                                          const size_t outputNodeCount,
                                          const size_t timeStepsPerActivation,
                                          const double bias):
-    directedGraph(directedGraph),
     actFn(actFn),
     nodeCount(nodeCount),
     inputNodeCount(inputNodeCount),
@@ -42,7 +39,9 @@ CyclicNet<ActivationFunction>::CyclicNet(std::map<size_t, std::map<size_t,
 }
 
 template <class ActivationFunction>
-arma::vec CyclicNet<ActivationFunction>::Evaluate(arma::vec input)
+arma::vec CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
+                                                  std::map<size_t, std::map<size_t,
+                                                      ConnectionGene>>& directedGraph)
 {
   std::vector<double> inputNodeValues(nodeCount, 0);
 
@@ -60,7 +59,7 @@ arma::vec CyclicNet<ActivationFunction>::Evaluate(arma::vec input)
       for (auto const &x : directedGraph[j])
       {
         double weight = x.second.getWeight();
-        inputNodeValues[x.first] += nodeValues[j] * weight;
+        inputNodeValues[x.first] += outputNodeValues[j] * weight;
       }
     }
 
@@ -72,7 +71,7 @@ arma::vec CyclicNet<ActivationFunction>::Evaluate(arma::vec input)
 
   arma::vec output(outputNodeCount);
   for (size_t i = 0; i < output.n_elem; i++)
-    output[i] = putputNodeValues[i + inputNodeCount + 1];
+    output[i] = outputNodeValues[i + inputNodeCount + 1];
 
   return output;
 }

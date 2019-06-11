@@ -33,8 +33,6 @@ class CyclicNet
   /**
    * Creates a CyclicNet object.
    * 
-   * @param directedGraph A map of maps storing connection genes, whose first
-   *    key is the source ID, and second key is the target ID.
    * @param actFn The activation function.
    * @param nodeCount The number of nodes.
    * @param inputNodeCount The number of input nodes.
@@ -42,8 +40,7 @@ class CyclicNet
    * @param timeStepsPerActivation The number of time steps per activation.
    * @param bias The bias.
    */
-  CyclicNet(std::map<size_t, std::map<size_t, ConnectionGene>>& directedGraph,
-            ActivationFunction& actFn,
+  CyclicNet(ActivationFunction& actFn,
             const size_t nodeCount,
             const size_t inputNodeCount,
             const size_t outputNodeCount,
@@ -53,15 +50,10 @@ class CyclicNet
   /**
    * Finds the output of the network from the given input.
    */
-  arma::vec Evaluate(arma::vec input);
+  arma::vec Evaluate(arma::vec& input,
+                     std::map<size_t, std::map<size_t, ConnectionGene>>& directedGraph);
 
  private:
-  /**
-   * A digraph containing connection genes sorted by source ID, and then
-   * secondary sorted by target ID.
-   */
-  std::map<size_t, std::map<size_t, ConnectionGene>> directedGraph;
-
   //! Activation function.
   ActivationFunction& actFn;
 

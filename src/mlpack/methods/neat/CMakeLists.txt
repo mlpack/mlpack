@@ -9,6 +9,8 @@ set(SOURCES
   acyclic_net_impl.hpp
   cyclic_net.hpp
   cyclic_net_impl.hpp
+  neat.hpp
+  neat_impl.hpp
 )
 
 # Add directory name to sources.

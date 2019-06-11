@@ -28,6 +28,7 @@ class NEAT
        const size_t inputNodeCount,
        const size_t outputNodeCount,
        const size_t popSize,
+       const size_t maxGen,
        const double bias,
        const double weightMutationProb,
        const double weightMutationSize,
@@ -66,6 +67,9 @@ class NEAT
 
   //! The size of the population.
   size_t popSize;
+
+  //! The maximum number of generations.
+  size_t maxGen;
 
   //! The bias of the networks.
   double bias;

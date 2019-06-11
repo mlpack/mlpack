@@ -40,7 +40,7 @@ class Genome
 {
  public:
   /**
-   * Creates a genome.
+   * Creates a genome. Used during initialization.
    * 
    * @param inputNodeCount The number of input nodes.
    * @param outputNodeCount The number of output nodes.
@@ -55,6 +55,37 @@ class Genome
    */
   Genome(const size_t inputNodeCount,
          const size_t outputNodeCount,
+         ActivationFunction& actFn,
+         const double bias,
+         const double weightMutationProb,
+         const double weightMutationSize,
+         const double biasMutationProb,
+         const double biasMutationSize,
+         const double nodeAdditionProb,
+         const double connAdditionProb,
+         const bool isAcyclic = false);
+
+  /**
+   * Creates a genome. Used during reproduction.
+   * 
+   * @param inputNodeCount The number of input nodes.
+   * @param outputNodeCount The number of output nodes.
+   * @param connectionGeneList A vector of connection genes sorted by
+   *     innovation ID.
+   * @param nextNodeID The number of nodes in the system.
+   * @param actFn The activation function.
+   * @param bias The bias of the genome.
+   * @param weightMutationProb The probability of a weight mutating.
+   * @param weightMutationSize The degree to which the weight will mutate.
+   * @param biasMutationProb The probability of a bias mutating.
+   * @param biasMutationSize The degree to which the bias will mutate.
+   * @param nodeAdditionProb The probability of a new node being added.
+   * @param isAcyclic Denotes whether or not the generated network is acyclic.
+   */
+  Genome(const size_t inputNodeCount,
+         const size_t outputNodeCount,
+         std::vector<ConnectionGene>& connectionGeneList,
+         const size_t nextNodeID,
          ActivationFunction& actFn,
          const double bias,
          const double weightMutationProb,
@@ -83,6 +114,12 @@ class Genome
    */
   arma::mat Parameters();
 
+  /**
+   * A data structure containing the connection genes sorted by global
+   * innovation ID.
+   */
+  std::vector<ConnectionGene> connectionGeneList;
+
   //! Get fitness.
   double getFitness() const { return fitness; }
 
@@ -98,11 +135,6 @@ class Genome
   double& setBias() { return bias; }
 
  private:
-  /**
-   * A data structure contaning the connection genes sorted by global
-   * innovation ID.
-   */
-  std::vector<ConnectionGene> connectionGeneList;
 
   /**
    * A digraph containing connection genes sorted by source ID, and then

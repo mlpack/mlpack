@@ -39,19 +39,14 @@ class AcyclicNet
  public:
   /**
    * Creates an AcyclicNet object.
-   * 
-   * @param DirectedGraph A map of maps storing connection genes, whose first
-   *    key is the source ID, and second key is the target ID.
-   * @param nodeDepths A vector storing the depths of each node.
+   *
    * @param actFn The activation function.
    * @param nodeCount The number of nodes.
    * @param inputNodeCount The number of input nodes.
    * @param outputNodeCount The number of output nodes.
    * @param bias The bias.
    */
-  AcyclicNet(std::map<size_t, std::map<size_t, ConnectionGene>>& directedGraph,
-             std::vector<size_t> nodeDepths,
-             ActivationFunction& actFn,
+  AcyclicNet(ActivationFunction& actFn,
              const size_t nodeCount,
              const size_t inputNodeCount,
              const size_t outputNodeCount,
@@ -60,18 +55,11 @@ class AcyclicNet
   /**
    * Finds the output of the network from the given input.
    */
-  arma::vec Evaluate(arma::vec input);
+  arma::vec Evaluate(arma::vec& input,
+                     std::map<size_t, std::map<size_t, ConnectionGene>>& directedGraph,
+                     std::vector<size_t>& nodeDepths);
 
  private:
-  /**
-   * A digraph containing connection genes sorted by source ID, and then
-   * secondary sorted by target ID.
-   */
-  std::map<size_t, std::map<size_t, ConnectionGene>> directedGraph;
-
-  //! A map mapping the node ID to its depth in the neural network.
-  std::vector<size_t> nodeDepths;
-
   //! Activation function.
   ActivationFunction& actFn;
 

@@ -22,22 +22,29 @@ namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
 // Creates an AcyclicNet object.
 template <class ActivationFunction>
-AcyclicNet<ActivationFunction>::AcyclicNet(std::map<size_t, std::map<size_t,
-                                              ConnectionGene>>& directedGraph,
-                                           std::vector<size_t nodeDepths,
-                                           ActivationFunction& actFn,
+AcyclicNet<ActivationFunction>::AcyclicNet(ActivationFunction& actFn,
                                            const size_t nodeCount,
                                            const size_t inputNodeCount,
                                            const size_t outputNodeCount,
                                            const double bias):
-    directedGraph(directedGraph),
-    nodeDepths(nodeDepths),
     actFn(actFn),
     nodeCount(nodeCount),
     inputNodeCount(inputNodeCount),
     outputNodeCount(outputNodeCount),
     bias(bias)
 {
+
+}
+
+// Evaluate a given input.
+template <class ActivationFunction>
+arma::vec AcyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
+                                                   std::map<size_t, std::map<size_t,
+                                                      ConnectionGene>>& directedGraph,
+                                                   std::vector<size_t>& nodeDepths)
+{
+  std::vector<double> nodeValues;
+
   // Populate the layers.
   for (size_t i = 0; i < nodeCount; i++)
   {
@@ -45,13 +52,6 @@ AcyclicNet<ActivationFunction>::AcyclicNet(std::map<size_t, std::map<size_t,
       layers.emplace_back(std::vector<size_t>());
     layers[nodeDepths[i]].push_back(i);
   }
-}
-
-// Evaluate a given input.
-template <class ActivationFunction>
-arma::vec AcyclicNet<ActivationFunction>::Evaluate(arma::vec input)
-{
-  std::vector<double> nodeValues;
 
   // Add all the nodes to the map.
   for (size_t i = 0; i < nodeCount; i++)

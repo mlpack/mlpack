@@ -45,6 +45,7 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
     connAdditionProb(connAdditionProb),
     isAcyclic(isAcyclic)
 {
+  // Sets the number of IDs.
   nextNodeID = inputNodeCount + outputNodeCount + 1;
 
   size_t counter = 0;
@@ -66,14 +67,69 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
     }
   }
 
+  // Set innovation ID.
   nextInnovID = counter;
 
+  // If the genome is meant to be acyclic, we must maintain nodeDepths.
   if (isAcyclic)
   {
     for (size_t i = 0; i <= inputNodeCount; i++)
       nodeDepths.push_back(0);
     for (size_t i = inputNodeCount + 1; i <= outputNodeCount; i++)
       nodeDepths.push_back(1);
+  }
+}
+
+template <class ActivationFunction>
+Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
+                                   const size_t outputNodeCount,
+                                   std::vector<ConnectionGene>& connectionGeneList,
+                                   const size_t nextNodeID,
+                                   ActivationFunction& actFn,
+                                   const double bias,
+                                   const double weightMutationProb,
+                                   const double weightMutationSize,
+                                   const double biasMutationProb,
+                                   const double biasMutationSize,
+                                   const double nodeAdditionProb,
+                                   const double connAdditionProb,
+                                   const bool isAcyclic):
+    inputNodeCount(inputNodeCount),
+    outputNodeCount(outputNodeCount),
+    connectionGeneList(connectionGeneList),
+    nextNodeID(nextNodeID),
+    actFn(actFn),
+    bias(bias),
+    weightMutationProb(weightMutationProb),
+    weightMutationSize(weightMutationSize),
+    biasMutationProb(biasMutationProb),
+    biasMutationSize(biasMutationSize),
+    nodeAdditionProb(nodeAdditionProb),
+    connAdditionProb(connAdditionProb),
+    isAcyclic(isAcyclic)
+{
+  // TODO: Decide whether using map::find() to check which nodes to include in
+  // digraph is better, or preparing like this.
+  for (size_t i = 0; i < nextNodeID; i++)
+  {
+    directedGraph.emplace(std::piecewise_construct,
+                          std::make_tuple(i),
+                          std::make_tuple());
+  }
+
+  for (size_t i = 0; i < connectionGeneList.size(); i++)
+  {
+    size_t sourceID = connectionGeneList[i].getSource();
+    size_t targetID = connectionGeneList[i].getTarget();
+    directedGraph[sourceID][targetID] = connectionGeneList[i];
+  }
+
+  if (isAcyclic)
+  {
+    for (size_t i = 0; i < nextNodeID; i++)
+      nodeDepths.push_back(0);
+    for (size_t i = 0; i <= inputNodeCount; i++)
+      TraverseNode(i, 0);
   }
 }
 
@@ -89,16 +145,16 @@ arma::vec Genome<ActivationFunction>::Evaluate(arma::vec& input)
 
   if (isAcyclic)
   {
-    AcyclicNet<ActivationFunction> net(directedGraph, nodeDepths, actFn,
-        nextNodeID, inputNodeCount, outputNodeCount, bias);
-    fitness = net.Evaluate(input);
+    AcyclicNet<ActivationFunction> net(actFn, nextNodeID, inputNodeCount,
+        outputNodeCount, bias);
+    fitness = net.Evaluate(input, directedGraph, nodeDepths);
     return fitness;
   }
   else
   {
-    CyclicNet<ActivationFunction> net(directedGraph, actFn, nextNodeID,
-        inputNodeCount, outputNodeCount, 100 /* Placeholder */, bias);
-    fitness = net.Evaluate(input);
+    CyclicNet<ActivationFunction> net(actFn, nextNodeID, inputNodeCount,
+        outputNodeCount, 100 /* Placeholder */, bias);
+    fitness = net.Evaluate(input, directedGraph);
     return fitness;
   }
 }
