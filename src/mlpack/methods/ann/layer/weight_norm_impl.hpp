@@ -121,7 +121,7 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Add(
     Args... args)
 {
   // Only one layer will be wrapped.
-  if(network.size() > 0)
+  if (network.size() > 0)
   {
     std::for_each(network.begin(), network.end(),
         boost::apply_visitor(deleteVisitor));
@@ -143,7 +143,7 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Add(
     LayerTypes<CustomLayers...> layer)
 {
   // Only one layer will be wrapped.
-  if(network.size() > 0)
+  if (network.size() > 0)
   {
     std::for_each(network.begin(), network.end(),
         boost::apply_visitor(deleteVisitor));
