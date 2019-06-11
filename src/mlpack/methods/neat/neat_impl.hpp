@@ -34,6 +34,7 @@ NEAT<TaskType, ActivationFunction>::NEAT(TaskType& task,
                                          const double biasMutationSize,
                                          const double nodeAdditionProb,
                                          const double connAdditionProb,
+                                         const double disableProb,
                                          const bool isAcyclic):
     task(task),
     actFn(actFn),
@@ -48,6 +49,7 @@ NEAT<TaskType, ActivationFunction>::NEAT(TaskType& task,
     biasMutationSize(biasMutationSize),
     nodeAdditionProb(nodeAdditionProb),
     connAdditionProb(connAdditionProb),
+    disableProb(disableProb),
     isAcyclic(isAcyclic)
 { /* Nothing to do here yet */ }
 
@@ -121,7 +123,16 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction>
 
     if (equalFitness)
     {
-      lessFitGenome = arma::randu<double>() < 0.5 ? gen1 : gen2;
+      if (arma::randu<double>() < 0.5)
+      {
+        newConnGeneList = gen1.connectionGeneList;
+        lessFitGenome = gen2;
+      }
+      else
+      {
+        newConnGeneList = gen2.connectionGeneList;
+        lessFitGenome = gen1; 
+      }
     }
     else if (gen1.getFitness() >= gen2.getFitness())
     {
@@ -148,7 +159,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction>
           if (!newConnGeneList[j].isEnabled() || !lessFitGenome.
                   connectionGeneList[i].isEnabled())
           {
-            if (arma::randu<double>() < 0.1)// Placeholder)
+            if (arma::randu<double>() < disableProb)
               newConnGeneList[j].setEnabled() = false;
             else
               newConnGeneList[j].setEnabled() = true;
@@ -175,7 +186,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction>
     while (j < minSize)
     {
       size_t innovID1 = maxGenome.connectionGeneList[i].getGlobalInnovationID();
-      size_t innovID2 = minGenome.connectionGeneList[i].getGlobalInnovationID();
+      size_t innovID2 = minGenome.connectionGeneList[j].getGlobalInnovationID();
       if (innovID2 < innovID1)
       {
         if (arma::randu<double>() < 0.5)

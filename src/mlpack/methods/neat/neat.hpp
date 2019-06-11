@@ -36,6 +36,7 @@ class NEAT
        const double biasMutationSize,
        const double nodeAdditionProb,
        const double connAdditionProb,
+       const double disableProb,
        const bool isAcyclic = false);
 
   /**
@@ -92,6 +93,12 @@ class NEAT
 
   //! The probability of a new connection being added.
   double connAdditionProb;
+
+  /**
+   * The probability that an inherited gene is disabled if either of it's
+   * parents are disabled.
+   */
+  double disableProb;
 
   //! Denotes whether or not the genome is meant to be cyclic.
   bool isAcyclic;
