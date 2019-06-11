@@ -171,6 +171,7 @@ void Genome<ActivationFunction>::Mutate()
     {
       size_t sourceID = connectionGeneList[i].source;
       size_t newTarget = i;
+      size_t innovID = -1;
       while (newTarget == i)
       {
         newTarget = arma::randi<arma::vec>(1 + inputNodeCount,
@@ -178,7 +179,6 @@ void Genome<ActivationFunction>::Mutate()
       }
 
       std::pair<size_t, size_t> key = std::make_pair(sourceID, newTarget);
-      size_t innovID = -1;
       if (mutationBuffer.find(key) == mutationBuffer.end())
       {
         innovID = nextInnovID++;
@@ -224,7 +224,7 @@ void Genome<ActivationFunction>::Mutate()
       size_t sourceID = connectionGeneList[i].source;
       size_t targetID = connectionGeneList[i].target;
       size_t newNodeID = nextNodeID++;
-      size_t innovID1 = -1, innovId2 = -1;
+      size_t innovID1 = -1, innovID2 = -1;
 
       std::pair<size_t, size_t> key1 = std::make_pair(sourceID, newNodeID);
       std::pair<size_t, size_t> key2 = std::make_pair(newNodeID, targetID);    
@@ -232,18 +232,18 @@ void Genome<ActivationFunction>::Mutate()
       if (mutationBuffer.find(key1) == mutationBuffer.end())
       {
         innovID1 = nextInnovID++;
-        mutationBuffer[key1] = innovID;
+        mutationBuffer[key1] = innovID1;
       }
       else
         innovID1 = mutationBuffer[key1];
       
       if (mutationBuffer.find(key2) == mutationBuffer.end())
       {
-        innovID1 = nextInnovID++;
-        mutationBuffer[key2] = innovID;
+        innovID2 = nextInnovID++;
+        mutationBuffer[key2] = innovID2;
       }
       else
-        innovID1 = mutationBuffer[key2];  
+        innovID2 = mutationBuffer[key2];  
 
       // Add the first connection to the containers.
       directedGraph[sourceID].emplace(newNodeID, ConnectionGene(innovID1, 1,
@@ -252,11 +252,11 @@ void Genome<ActivationFunction>::Mutate()
           sourceID, newNodeID));
 
       // Add the second connection to the containers.
-      connectionGeneList.emplace_back(ConnectionGene(innovId2, 1,
+      connectionGeneList.emplace_back(ConnectionGene(innovID2, 1,
           newNodeID, targetID));
       directedGraph.emplace(std::piecewise_construct, std::forward_as_tuple(
             newNodeID), std::initializer_list<std::pair<int, ConnectionGene>>{{
-            targetID, ConnectionGene(innovId2, 1, newNodeID, targetID)}});
+            targetID, ConnectionGene(innovID2, 1, newNodeID, targetID)}});
 
       // Remove the lost connection.
       directedGraph[sourceID].erase(targetID);
