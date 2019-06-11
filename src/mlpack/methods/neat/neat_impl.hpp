@@ -115,11 +115,15 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction>
   std::vector<ConnectionGene> newConnGeneList;
   bool equalFitness = std::abs(gen1.getFitness() - gen2.getFitness()) < 0.01;
 
-  if (!equalFitness)
+  if (!equalFitness || isAcyclic)
   {
     Genome<ActivationFunction>& lessFitGenome;
 
-    if (gen1.getFitness() >= gen2.getFitness())
+    if (equalFitness)
+    {
+      lessFitGenome = arma::randu<double>() < 0.5 ? gen1 : gen2;
+    }
+    else if (gen1.getFitness() >= gen2.getFitness())
     {
       newConnGeneList = gen1.connectionGeneList;
       lessFitGenome = gen2;
