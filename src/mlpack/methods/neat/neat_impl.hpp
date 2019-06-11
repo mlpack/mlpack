@@ -55,20 +55,21 @@ template <class TaskType,
           class ActivationFunction>
 Genome<ActivationFunction> NEAT<TaskType, ActivationFunction>::Train()
 {
-  Genome::nextInnovID = 0;
+  Genome<ActivationFunction>::nextInnovID = 0;
 
   // Initialize.
   for (size_t i = 0; i < popSize; i++)
   {
-    genomeList.emplace_back(Genome(inputNodeCount, outputNodeCount, actFn, bias,
-        weightMutationProb, weightMutationSize, biasMutationProb, biasMutationSize,
+    genomeList.emplace_back(Genome<ActivationFunction>(inputNodeCount,
+        outputNodeCount, actFn, bias, weightMutationProb,
+        weightMutationSize, biasMutationProb, biasMutationSize,
         nodeAdditionProb, connAdditionProb, isAcyclic));
   }
 
   // Main loop.
   for (size_t gen = 0; gen < maxGen; gen++)
   {
-    Genome::mutationBuffer.clear();
+    Genome<ActivationFunction>::mutationBuffer.clear();
     for (size_t i = 0; i < popSize; i++)
       task.Evaluate(genomeList[i]);
     Speciate();
@@ -106,8 +107,9 @@ void NEAT<TaskType, ActivationFunction>::Speciate()
 
 template <class TaskType,
           class ActivationFunction>
-Genome<ActivationFunction> NEAT<TaskType, ActivationFunction>::Crossover(Genome<ActivationFunction>& gen1,
-                                                                         Genome<ActivationFunction>& gen2)
+Genome<ActivationFunction> NEAT<TaskType, ActivationFunction>
+    ::Crossover(Genome<ActivationFunction>& gen1,
+                Genome<ActivationFunction>& gen2)
 {
   // New genome's genes.
   std::vector<ConnectionGene> newConnGeneList;
@@ -132,13 +134,25 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction>::Crossover(Genome<
     size_t k = 0;
     for (size_t i = 0; i < lessFitGenome.connectionGeneList.size(); i++)
     {
-      size_t innovID = lessFitGenome.connectionGeneList[i].getGlobalInnovationID();
-      for (size_t j = k; j < newConnectionGeneList.size(); j++)
+      size_t innovID = lessFitGenome.connectionGeneList[i]
+          .getGlobalInnovationID();
+      for (size_t j = k; j < newConnGeneList.size(); j++)
       {
         if (innovID == newConnGeneList[j].getGlobalInnovationID())
         {
-          newConnGeneList[j].setWeight() = lessFitGenome.connectionGeneList[i]
-              .getWeight();
+          // If either parent is disabled, preset chance that the inherited gene is disabled.
+          if (!newConnGeneList[j].isEnabled() || !lessFitGenome.
+                  connectionGeneList[i].isEnabled())
+          {
+            if (arma::randu<double>() < 0.1)// Placeholder)
+              newConnGeneList[j].setEnabled() = false;
+            else
+              newConnGeneList[j].setEnabled() = true;
+          }
+          // Weights will be assigned randomly in matching genes.
+          if (arma::randu<double>() < 0.5)
+            newConnGeneList[j].setWeight() = lessFitGenome.connectionGeneList[i]
+                .getWeight();
           k = j;
           break;
         }
@@ -152,8 +166,8 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction>::Crossover(Genome<
     size_t gen2size = gen2.connectionGeneList.size();
     size_t maxSize = gen1size > gen2size ? gen1size : gen2size;
     size_t minSize = gen1size < gen2size ? gen1size : gen2size;
-    Genome& maxGenome = gen1size > gen2size ? gen1 : gen2;
-    Genome& minGenome = gen1size < gen2size ? gen1 : gen2;
+    Genome<ActivationFunction>& maxGenome = gen1size > gen2size ? gen1 : gen2;
+    Genome<ActivationFunction>& minGenome = gen1size < gen2size ? gen1 : gen2;
     while (j < minSize)
     {
       size_t innovID1 = maxGenome.connectionGeneList[i].getGlobalInnovationID();
@@ -187,9 +201,10 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction>::Crossover(Genome<
 
   size_t nextNodeID = gen1.nextNodeID > gen2.nextNodeID ? gen1.nextNodeID : gen2.nextNodeID;
 
-  return Genome(inputNodeCount, outputNodeCount, newConnGeneList, nextNodeID,
-        actFn, bias, weightMutationProb, weightMutationSize, biasMutationProb,
-        biasMutationSize, nodeAdditionProb, connAdditionProb, isAcyclic);
+  return Genome<ActivationFunction>(inputNodeCount, outputNodeCount,
+        newConnGeneList, nextNodeID, actFn, bias, weightMutationProb,
+        weightMutationSize, biasMutationProb, biasMutationSize, 
+        nodeAdditionProb, connAdditionProb, isAcyclic);
 }
 
 } // namespace neat

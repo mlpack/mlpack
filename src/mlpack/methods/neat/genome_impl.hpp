@@ -16,6 +16,7 @@
 // In case it hasn't been included already.
 #include "genome.hpp"
 #include "acyclic_net.hpp"
+#include "cyclic_net.hpp"
 
 namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */{
@@ -170,7 +171,6 @@ void Genome<ActivationFunction>::Mutate()
     {
       size_t sourceID = connectionGeneList[i].source;
       size_t newTarget = i;
-      size_t innovID = -1;
       while (newTarget == i)
       {
         newTarget = arma::randi<arma::vec>(1 + inputNodeCount,
@@ -178,6 +178,7 @@ void Genome<ActivationFunction>::Mutate()
       }
 
       std::pair<size_t, size_t> key = std::make_pair(sourceID, newTarget);
+      size_t innovID = -1;
       if (mutationBuffer.find(key) == mutationBuffer.end())
       {
         innovID = nextInnovID++;

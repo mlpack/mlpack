@@ -65,7 +65,7 @@ arma::vec CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
 
     for (size_t i = inputNodeCount; i < nodeCount; i++)
     {
-      nodeValues[i] = actFn.Fn(inputNodeValues[i]);
+      outputNodeValues[i] = actFn.Fn(inputNodeValues[i]);
     }
   }
 

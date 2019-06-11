@@ -41,17 +41,18 @@ class NEAT
   /**
    * Trains the model on the task and returns the best Genome.
    */
-  Genome Train();
+  Genome<ActivationFunction> Train();
 
  private:
 
-  Genome Crossover(Genome& gen1, Genome& gen2);
+  Genome<ActivationFunction> Crossover(Genome<ActivationFunction>& gen1, 
+                                       Genome<ActivationFunction>& gen2);
 
   void Reproduce();
 
   void Speciate();
 
-  std::vector<Genome> genomeList;
+  std::vector<Genome<ActivationFunction>> genomeList;
 
   //! The provided TaskType class that evaluates fitness of the genome.
   TaskType task;
