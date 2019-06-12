@@ -2556,6 +2556,99 @@ BOOST_AUTO_TEST_CASE(GradientSequentialLayerTest)
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
+/**
+ * WeightNorm layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientWeightNormLayerTest)
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+
+      weightNorm = new WeightNorm<>;
+      Linear<>* linear = new Linear<>(10, 2);
+      weightNorm->Add(linear);
+
+      model->Add(weightNorm);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    WeightNorm<>* weightNorm;
+    arma::mat input, target;
+  } function;
+
+  /*
+   * The following is the code similar to CheckGradient() function in
+   * ann_test_tools.hpp.
+   * For weightNorm the weights of wrapped layer are always calculated w.r.t
+   * the scalar and vector parameter before forwarding. Hence, it's gradient
+   * checking only depends on gradients of scalar and vector parameters. Thus,
+   * an offset is required for checking.
+   */
+
+  const double eps = 1e-9;
+  arma::mat orgGradient, gradient, estGradient;
+  function.Gradient(orgGradient);
+
+  estGradient = arma::zeros(orgGradient.n_rows, orgGradient.n_cols);
+
+  size_t offset = (orgGradient.n_elem - 1) / 2;
+
+  for (size_t i = offset; i < orgGradient.n_elem; ++i)
+  {
+    double tmp = function.Parameters()(i);
+
+    // Perturb parameter with a positive constant and get costs.
+    function.Parameters()(i) += eps;
+    double costPlus = function.Gradient(gradient);
+
+    // Perturb parameter with a negative constant and get costs.
+    function.Parameters()(i) -= (2 * eps);
+    double costMinus = function.Gradient(gradient);
+
+    // Restore the parameter value.
+    function.Parameters()(i) = tmp;
+
+    // Compute numerical gradients using the costs calculated above.
+    estGradient(i) = (costPlus - costMinus) / (2 * eps);
+  }
+
+  for (size_t i = 0; i < offset; ++i)
+  {
+    estGradient(i) = orgGradient(i);
+  }
+
+  // Estimate error of gradient.
+  double error = arma::norm(orgGradient - estGradient) /
+      arma::norm(orgGradient + estGradient);
+
+  BOOST_REQUIRE_LE(error, 1e-4);
+}
+
 // General ANN serialization test.
 template<typename LayerType>
 void ANNLayerSerializationTest(LayerType& layer)

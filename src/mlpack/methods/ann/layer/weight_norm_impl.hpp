@@ -61,8 +61,10 @@ template<typename eT>
 void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  weights.rows(0, networkWeightSize) = scalarParameter * vectorParameter /
-      std::sqrt(arma::accu(arma::square(vectorParameter)));
+  // Intialize wrapped layer weights.
+  double normVectorParameter = arma::norm(vectorParameter, 2);
+  weights.rows(0, networkWeightSize - 1) = scalarParameter(0) * vectorParameter
+      / normVectorParameter;
 
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
       boost::apply_visitor(outputParameterVisitor, network[0]))),
@@ -102,17 +104,17 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Gradient(
       std::move(error)), network[0]);
 
   // Store the norm of vectorParameter temporarily.
-  size_t normVectorParameter = std::sqrt(arma::accu(arma::square(
-      vectorParameter)));
+  double normVectorParameter = arma::norm(vectorParameter, 2);
 
   // Calculate gradients of the scalar parameter.
-  gradient[gradient.n_rows - 1] = arma::accu(gradient.rows(0, networkWeightSize)
-      % vectorParameter) / normVectorParameter;
+  gradient[gradient.n_rows - 1] = arma::accu(gradient.rows(0, networkWeightSize
+      - 1) % vectorParameter) / normVectorParameter;
 
   // Calculate gradients of the vector parameter.
-  gradient.rows(networkWeightSize, 2 * networkWeightSize) = scalarParameter /
-      normVectorParameter * (gradient.rows(0, networkWeightSize) -
-      gradient[gradient.n_rows - 1] / normVectorParameter * vectorParameter);
+  gradient.rows(networkWeightSize, 2 * networkWeightSize - 1) =
+      scalarParameter(0) / normVectorParameter * (gradient.rows(0,
+      networkWeightSize - 1) - gradient[gradient.n_rows - 1] /
+      normVectorParameter * vectorParameter);
 }
 
 template<typename InputDataType, typename OutputDataType,
