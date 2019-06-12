@@ -84,8 +84,8 @@ class WeightNorm
   void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /**
-   * Backward pass through the layer. This function will call the
-   * Backward() function of the wrapped layer.
+   * Backward pass through the layer. This function calls the Backward()
+   * function of the wrapped layer.
    *
    * @param input The input activations.
    * @param gy The backpropagated error.
@@ -200,7 +200,7 @@ class WeightNorm
   //! Locally-stored output parameter visitor module object.
   OutputParameterVisitor outputParameterVisitor;
 
-  // Reset the gradient for all modules that implement the Gradient function.
+  //! Reset the gradient for all modules that implement the Gradient function.
   void ResetGradients(arma::mat& gradient);
 
   //! Locally-stored reset visitor.

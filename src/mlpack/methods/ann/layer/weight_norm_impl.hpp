@@ -61,7 +61,7 @@ template<typename eT>
 void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  // Intialize wrapped layer weights.
+  // Intialize the weights of wrapped layer.
   double normVectorParameter = arma::norm(vectorParameter, 2);
   weights.rows(0, networkWeightSize - 1) = scalarParameter(0) * vectorParameter
       / normVectorParameter;
@@ -103,14 +103,14 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Gradient(
   boost::apply_visitor(GradientVisitor(std::move(input),
       std::move(error)), network[0]);
 
-  // Store the norm of vectorParameter temporarily.
+  // Store the norm of vector parameter temporarily.
   double normVectorParameter = arma::norm(vectorParameter, 2);
 
-  // Calculate gradients of the scalar parameter.
+  // Calculate the gradients of the scalar parameter.
   gradient[gradient.n_rows - 1] = arma::accu(gradient.rows(0, networkWeightSize
       - 1) % vectorParameter) / normVectorParameter;
 
-  // Calculate gradients of the vector parameter.
+  // Calculate the gradients of the vector parameter.
   gradient.rows(networkWeightSize, 2 * networkWeightSize - 1) =
       scalarParameter(0) / normVectorParameter * (gradient.rows(0,
       networkWeightSize - 1) - gradient[gradient.n_rows - 1] /
@@ -191,8 +191,6 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::serialize(
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)
   {
-    // The behavior in earlier versions was to always assume the weights needed
-    // to be reset.
     weights.set_size(2 * networkWeightSize + 1, 1);
   }
 }
