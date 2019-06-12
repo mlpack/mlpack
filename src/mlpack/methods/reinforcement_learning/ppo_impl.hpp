@@ -22,24 +22,102 @@ namespace rl {
 
 template<
   typename EnvironmentType,
-  typename NetworkType,
+  typename ActorNetworkType,
+  typename CriticNetworkType,
   typename UpdaterType,
   typename PolicyType,
   typename ReplayType
 >
 PPO<
   EnvironmentType,
-  NetworkType,
+  ActorNetworkType,
+  CriticNetworkType,
   UpdaterType,
   PolicyType,
   ReplayType
 >::PPO(TrainingConfig config,
-       NetworkType actor,
-       NetworkType critic,
+       ActorNetworkType ActorNetwork,
+       CriticNetworkType CriticNetwork,
        PolicyType policy,
        ReplayType replayMethod,
        UpdaterType updater,
-       EnvironmentType environment) {
+       EnvironmentType environment):
+  config(std::move(config)),
+  ActorNetwork(std::move(ActorNetwork)),
+  CriticNetwork(std::move(CriticNetwork)),
+  updater(std::move(updater)),
+  policy(std::move(policy)),
+  replayMethod(std::move(replayMethod)),
+  environment(std::move(environment))
+{
+  if (ActorNetwork.Parameters().is_empty())
+    ActorNetwork.ResetParameters();
+  if (CriticNetwork.Parameters().is_empty())
+    CriticNetwork.ResetParameters();
+
+  this->updater.Initialize(ActorNetwork.Parameters().n_rows,
+                           ActorNetwork.Parameters().n_cols);
+  this->OldActorNetwork = ActorNetwork;
+}
+
+template<
+  typename EnvironmentType,
+  typename ActorNetworkType,
+  typename CriticNetworkType,
+  typename UpdaterType,
+  typename PolicyType,
+  typename ReplayType
+>
+double PPO<
+  EnvironmentType,
+  ActorNetworkType,
+  CriticNetworkType,
+  UpdaterType,
+  PolicyType,
+  ReplayType
+>::Step()
+{
+}
+
+template<
+  typename EnvironmentType,
+  typename ActorNetworkType,
+  typename CriticNetworkType,
+  typename UpdaterType,
+  typename PolicyType,
+  typename ReplayType
+>
+double PPO<
+  EnvironmentType,
+  ActorNetworkType,
+  CriticNetworkType,
+  UpdaterType,
+  PolicyType,
+  ReplayType
+>::Episode()
+{
+  // Get the initial state from environment.
+  state = environment.InitialSample();
+
+  // Track the steps in this episode.
+  size_t steps = 0;
+
+  // Track the return of this episode.
+  double totalReturn = 0.0;
+
+  // Running until get to the terminal state.
+  while (!environment.IsTerminal(state))
+  {
+    if (config.StepLimit() && steps >= config.StepLimit())
+      break;
+
+    totalReturn += Step();
+    steps++;
+
+    totalSteps++;
+
+  }
+  return totalReturn;
 }
 
 } // namespace rl

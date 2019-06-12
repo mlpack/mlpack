@@ -38,7 +38,7 @@ class SurrogateLoss
    *
    * @param epsilon The clipping parameter.
    */
-  SurrogateLoss(const double epsilon);
+  SurrogateLoss(const double epsilon = 0.2);
 
   /**
    * Computes the surrogate loss function.

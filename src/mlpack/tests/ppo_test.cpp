@@ -45,10 +45,7 @@ BOOST_AUTO_TEST_CASE(PENDULUMWITHPPO)
   critic.Add<ReLULayer<>>();
   critic.Add<Linear<>>(128, 1);
 
-//  FFN<SurrogateLoss<>, GaussianInitialization> actor(SurrogateLoss<>(0.2),
-//      GaussianInitialization(0, 0.001));
-
-  FFN<MeanSquaredError<>, GaussianInitialization> actor(MeanSquaredError<>(),
+  FFN<SurrogateLoss<>, GaussianInitialization> actor(SurrogateLoss<>(0.2),
       GaussianInitialization(0, 0.001));
 
   actor.Add<Linear<>>(4, 128);
@@ -62,7 +59,8 @@ BOOST_AUTO_TEST_CASE(PENDULUMWITHPPO)
   TrainingConfig config;
   config.Discount() = 0.9;
 
-  PPO<Pendulum, decltype(actor), AdamUpdate, decltype(policy)>
+  PPO<Pendulum, decltype(actor), decltype(critic), AdamUpdate,
+      decltype(policy)>
       agent(std::move(config), std::move(actor), std::move(critic),
           std::move(policy), std::move(replayMethod));
 

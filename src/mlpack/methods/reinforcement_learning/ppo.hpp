@@ -50,7 +50,8 @@ namespace rl {
  */
 template <
   typename EnvironmentType,
-  typename NetworkType,
+  typename ActorNetworkType,
+  typename CriticNetworkType,
   typename UpdaterType,
   typename PolicyType,
   typename ReplayType = RandomReplay<EnvironmentType>
@@ -78,12 +79,24 @@ class PPO
    * @param environment Reinforcement learning task.
    */
   PPO(TrainingConfig config,
-      NetworkType actor,
-      NetworkType critic,
+      ActorNetworkType ActorNetwork,
+      CriticNetworkType CriticNetwork,
       PolicyType policy,
       ReplayType replayMethod,
       UpdaterType updater = UpdaterType(),
       EnvironmentType environment = EnvironmentType());
+
+  /**
+    * Execute a step in an episode.
+    * @return Reward for the step.
+    */
+  double Step();
+
+  /**
+    * Execute an episode.
+    * @return Return of the episode.
+    */
+  double Episode();
 
 
  private:
@@ -91,10 +104,31 @@ class PPO
   TrainingConfig config;
 
   //! Locally-stored actor network.
-  NetworkType ActorNetwork;
+  ActorNetworkType ActorNetwork;
+
+  //! Locally-stored old actor network.
+  ActorNetworkType OldActorNetwork;
 
   //! Locally-stored critic network.
-  NetworkType CriticNetwork;
+  CriticNetworkType CriticNetwork;
+
+  //! Locally-stored updater.
+  UpdaterType updater;
+
+  //! Locally-stored behavior policy.
+  PolicyType policy;
+
+  //! Locally-stored experience method.
+  ReplayType replayMethod;
+
+  //! Locally-stored reinforcement learning task.
+  EnvironmentType environment;
+
+  //! Total steps from the beginning of the task.
+  size_t totalSteps;
+
+  //! Locally-stored current state of the agent.
+  StateType state;
 };
 
 } // namespace rl
