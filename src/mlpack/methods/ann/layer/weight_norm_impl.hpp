@@ -26,7 +26,8 @@ namespace ann { /** Artificial Neural Network. */
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 WeightNorm<InputDataType, OutputDataType, CustomLayers...>::WeightNorm() :
-    model(false)
+    model(false),
+    networkWeightSize(0)
 {
   // Nothing to do here.
 }
