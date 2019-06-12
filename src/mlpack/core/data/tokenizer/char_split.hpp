@@ -1,5 +1,5 @@
 /**
- * @file strtok.hpp
+ * @file char_split.hpp
  * @author Jeffin Sam
  *
  * Implementation of Strtok class which tokenizes using single character.
@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_STRTOK_HPP
-#define MLPACK_CORE_DATA_STRTOK_HPP
+#ifndef MLPACK_CORE_DATA_CHAR_SPLIT_HPP
+#define MLPACK_CORE_DATA_CHAR_SPLIT_HPP
 
 #include <mlpack/prereqs.hpp>
 #include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
@@ -18,16 +18,16 @@
 namespace mlpack {
 namespace data {
 /**
- * A simple Strtok class
+ * A simple CharSplit class
  */
-class Strtok
+class CharSplit
 {
  public:
   /**
   * A constructor to set deimiter.
-  * @param Delimiter A string which you want to use as delimiter
+  * @param Delimiter A set of characters which you want to use as delimiter.
   */
-  Strtok(std::string delimiter)
+  CharSplit(const std::string& delimiter)
   {
     this->delimiter = delimiter;
   }
@@ -56,7 +56,7 @@ class Strtok
   }
 
  private:
-  // Delimiter by which the string is tokenized.
+  // A set of characters by which the string is tokenized.
   std::string delimiter;
 }; // Strtok class
 

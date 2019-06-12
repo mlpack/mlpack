@@ -12,7 +12,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/dictionary_encoding.hpp>
 #include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
-#include <mlpack/core/data/tokenizer/strtok.hpp>
+#include <mlpack/core/data/tokenizer/char_split.hpp>
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
@@ -63,9 +63,9 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
 }
 
 /**
-* Test for Strtok class.
+* Test for CharSplit class.
 */
-BOOST_AUTO_TEST_CASE(StrtokTest)
+BOOST_AUTO_TEST_CASE(CharSplitTest)
 {
   std::vector<string>arr(3);
   arr[0] = "hello how are you";
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(StrtokTest)
   arr[2] = "Good how are you";
   arma::sp_mat output;
   data::DicitonaryEncoding en;
-  en.Encode(arr, output, Strtok(" "));
+  en.Encode(arr, output, CharSplit(" "));
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>> maps = en.Mappings();
   // Checking that everything is mapped to different numbers.

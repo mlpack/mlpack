@@ -2,15 +2,15 @@
  * @file dictionary_encoding.hpp
  * @author Jeffin Sam
  *
- * Implementation of dictionary encoding functions.
+ * Definition of dictionary encoding functions.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_DICT_ENCODING_HPP
-#define MLPACK_CORE_DATA_DICT_ENCODING_HPP
+#ifndef MLPACK_CORE_DATA_DICTIONARY_ENCODING_HPP
+#define MLPACK_CORE_DATA_DICTIONARY_ENCODING_HPP
 
 #include <mlpack/prereqs.hpp>
 #include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
@@ -28,7 +28,7 @@ class DicitonaryEncoding
   /**
   * A function to create mapping from a given corpus.
   * 
-  * @param strings Corpus of text to encode.
+  * @param input Corpus of text to encode.
   * @param tokenizer A function that accepts a boost::string_view as
   *                  an argument and returns a token.
   * This can either be a function pointer or function object or a lamda
@@ -39,19 +39,28 @@ class DicitonaryEncoding
   *
   */
   template<typename TokenizerType>
-  void CreateMap(std::string& strings, TokenizerType tokenizer);
+  void CreateMap(std::string& input, TokenizerType tokenizer);
   /*
   * Default Constructor
   */
   DicitonaryEncoding() {}
   /*
-  * Copy Constructor
+  * Copy Constructor.
   */
-  DicitonaryEncoding(const DicitonaryEncoding &old_obj);
+  DicitonaryEncoding(const DicitonaryEncoding& oldObject);
   /*
-  * Assignment Operators
+  * Move Constructor.
   */
-  void operator= (const DicitonaryEncoding &old_obj);
+  
+  DicitonaryEncoding(DicitonaryEncoding&& oldObject) = default;
+  /*
+  * Move Assignment Operator.
+  */  
+  DicitonaryEncoding& operator= (DicitonaryEncoding&& oldObject) = default;
+  /*
+  * Assignment Operator.
+  */
+  void operator= (const DicitonaryEncoding& oldObject);
   /**
   * A function to reset the mapping that is clear all the encodings
   */
@@ -68,7 +77,7 @@ class DicitonaryEncoding
   * The function paddes 0 to maintain same sizes across all the rows
   * User may also provide their custom tokenization rule.
   *
-  * @param strings Vector of strings.
+  * @param input Vector of strings.
   * @param output Output Matrix to store encoded results (sp_mat or mat).
   * @param tokenizer A function that accepts a boost::string_view as
   *                  an argument and returns a token.
@@ -80,12 +89,12 @@ class DicitonaryEncoding
   *
   */
   template<typename MatType, typename TokenizerType>
-  void Encode(const std::vector<std::string>& strings,
-                  MatType& output, TokenizerType tokenizer);
+  void Encode(const std::vector<std::string>& input,
+              MatType& output, TokenizerType tokenizer);
 
   /**
   * A function to encode given array of strings using a particular delimiter,
-  * with custome tokenization.
+  * with custom tokenization.
   *
   * For example 
   * Vector is :
@@ -93,7 +102,7 @@ class DicitonaryEncoding
   * [1 2 , 2 1 3] 
   * The function does not paddes 0 in this case.
   *
-  * @param strings Vector of strings.
+  * @param input Vector of strings.
   * @param output Vector of vectors to store encoded results.
   * @param tokenizer A function that accepts a boost::string_view as
   *                  an argument and returns a token.
@@ -105,14 +114,16 @@ class DicitonaryEncoding
   *
   */
   template<typename TokenizerType>
-  void Encode(const std::vector<std::string>& strings,
-            std::vector<std::vector<size_t>>& output, TokenizerType tokenizer);
+  void Encode(const std::vector<std::string>& input,
+              std::vector<std::vector<size_t>>& output,
+              TokenizerType tokenizer);
 
-  //! Modify the stringq.
-  std::deque<std::string>& Stringq() { return stringq; }
+  //! Modify the originalStrings.
+  std::deque<std::string>& OriginalStrings() { return originalStrings; }
 
-  //! Return the stringq.
-  const std::deque<std::string>& Stringq() const { return stringq; }
+  //! Return the originalStrings.
+  const std::deque<std::string>& OriginalStrings() const
+      { return originalStrings; }
 
   //! Return the Mappings
   const std::unordered_map<boost::string_view, size_t,
@@ -131,8 +142,8 @@ class DicitonaryEncoding
   //! A map which stores information about mapping.
   std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>> mappings;
-  // Vector which hold the string for map's string_view.
-  std::deque<std::string> stringq;
+  //! A deque which holds the original string for map's string_view.
+  std::deque<std::string> originalStrings;
 }; // class DicitonaryEncoding
 
 } // namespace data

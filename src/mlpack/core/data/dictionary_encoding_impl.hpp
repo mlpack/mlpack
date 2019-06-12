@@ -21,67 +21,69 @@ namespace data {
 void DicitonaryEncoding::Reset()
 {
   mappings.clear();
-  stringq.clear();
+  originalStrings.clear();
 }
 
-DicitonaryEncoding::DicitonaryEncoding(const DicitonaryEncoding &old_obj)
+DicitonaryEncoding::DicitonaryEncoding(const DicitonaryEncoding& oldObject)
 {
-  this->stringq = old_obj.stringq;
-  std::deque<std::string>::iterator jt = stringq.begin();
-  for (auto it = old_obj.mappings.begin(); it != old_obj.mappings.end(); it++)
+  originalStrings = oldObject.originalStrings;
+  std::deque<std::string>::iterator jt = originalStrings.begin();
+  for (auto it = oldObject.originalStrings.begin(); it !=
+      oldObject.originalStrings.end(); it++)
   {
-    this->mappings[*jt] = it->second;
+    mappings[*jt] = oldObject.mappings.at(*it);
     jt++;
   }
 }
 
 void DicitonaryEncoding::operator= (const
-    DicitonaryEncoding &old_obj)
+    DicitonaryEncoding &oldObject)
 {
-  if (this != &old_obj)
+  if (this != &oldObject)
   {
-    this->mappings.clear();
-    this->stringq.clear();
-    this->stringq = old_obj.stringq;
-    std::deque<std::string>::iterator jt = stringq.begin();
-    for (auto it = old_obj.mappings.begin(); it != old_obj.mappings.end(); it++)
+    mappings.clear();
+    originalStrings.clear();
+    originalStrings = oldObject.originalStrings;
+    std::deque<std::string>::iterator jt = originalStrings.begin();
+    for (auto it = oldObject.originalStrings.begin(); it !=
+        oldObject.originalStrings.end(); it++)
     {
-      this->mappings[*jt] = it->second;
+      mappings[*jt] = oldObject.mappings.at(*it);
       jt++;
     }
   }
 }
 
 template<typename TokenizerType>
-void DicitonaryEncoding::CreateMap(std::string& strings,
+void DicitonaryEncoding::CreateMap(std::string& input,
     TokenizerType tokenizer)
 {
-  boost::string_view strView(strings);
+  boost::string_view strView(input);
   boost::string_view token;
   token = tokenizer(strView);
-  std::size_t curLabels = mappings.size() + 1;
+  std::size_t curLabel = mappings.size() + 1;
   while (!token.empty())
   {
     if (mappings.find(token) == mappings.end())
     {
-        stringq.push_back(std::string(token));
-        mappings[stringq.back()] = curLabels++;
+        originalStrings.push_back(std::string(token));
+        mappings[originalStrings.back()] = curLabel++;
     }
     token = tokenizer(strView);
   }
 }
 
 template<typename MatType, typename TokenizerType>
-void DicitonaryEncoding::Encode(const std::vector<std::string>& strings,
-                MatType& output, TokenizerType tokenizer)
+void DicitonaryEncoding::Encode(const std::vector<std::string>& input,
+                                MatType& output, TokenizerType tokenizer)
 {
   boost::string_view strView;
   boost::string_view token;
   std::vector< std::vector<boost::string_view> > dataset;
   size_t colSize = 0;
-  for (size_t i = 0; i < strings.size(); i++)
+  for (size_t i = 0; i < input.size(); i++)
   {
-    strView = strings[i];
+    strView = input[i];
     token = tokenizer(strView);
     dataset.push_back(std::vector<boost::string_view>() );
     while (!token.empty())
@@ -99,8 +101,8 @@ void DicitonaryEncoding::Encode(const std::vector<std::string>& strings,
     {
       if (mappings.find(dataset[i][j]) == mappings.end())
       {
-        stringq.push_back(std::string(dataset[i][j]));
-        mappings[stringq.back()] = curLabel++;
+        originalStrings.push_back(std::string(dataset[i][j]));
+        mappings[originalStrings.back()] = curLabel++;
       }
       output.at(i, j) = mappings.at(dataset[i][j]);
     }
@@ -108,26 +110,27 @@ void DicitonaryEncoding::Encode(const std::vector<std::string>& strings,
 }
 
 template<typename TokenizerType>
-void DicitonaryEncoding::Encode(const std::vector<std::string>& strings,
-            std::vector<std::vector<size_t> >& output, TokenizerType tokenizer)
+void DicitonaryEncoding::Encode(const std::vector<std::string>& input,
+                                std::vector<std::vector<size_t> >& output,
+                                TokenizerType tokenizer)
 {
   boost::string_view strView;
   boost::string_view token;
   size_t curLabel = mappings.size() + 1;
-  for (size_t i = 0; i < strings.size(); ++i)
+  for (size_t i = 0; i < input.size(); ++i)
   {
     output.push_back(std::vector<size_t>() );
-    strView = strings[i];
+    strView = input[i];
     token = tokenizer(strView);
     while (!token.empty())
     {
       if (mappings.count(token) == 0)
       {
-        stringq.push_back(std::string(token));
-        mappings[stringq.back()] = curLabel++;
+        originalStrings.push_back(std::string(token));
+        mappings[originalStrings.back()] = curLabel++;
       }
-    output[i].push_back(mappings.at(token));
-    token = tokenizer(strView);
+      output[i].push_back(mappings.at(token));
+      token = tokenizer(strView);
     }
   }
 }
@@ -136,23 +139,23 @@ template<typename Archive>
 void DicitonaryEncoding::serialize(Archive& ar, const unsigned int
     /* version */)
 {
-  size_t count = stringq.size();
+  size_t count = originalStrings.size();
   ar & BOOST_SERIALIZATION_NVP(count);
   if (Archive::is_saving::value)
   {
     for (size_t i = 0; i < count; i++)
     {
-      ar & BOOST_SERIALIZATION_NVP(stringq[i]);
-      ar & BOOST_SERIALIZATION_NVP(mappings.at(stringq[i]));
+      ar & BOOST_SERIALIZATION_NVP(originalStrings[i]);
+      ar & BOOST_SERIALIZATION_NVP(mappings.at(originalStrings[i]));
     }
   }
   if (Archive::is_loading::value)
   {
-    stringq.resize(count);
+    originalStrings.resize(count);
     for (size_t i = 0; i < count; i++)
     {
-      ar & BOOST_SERIALIZATION_NVP(stringq[i]);
-      ar & BOOST_SERIALIZATION_NVP(mappings[stringq[i]]);
+      ar & BOOST_SERIALIZATION_NVP(originalStrings[i]);
+      ar & BOOST_SERIALIZATION_NVP(mappings[originalStrings[i]]);
     }
   }
 }

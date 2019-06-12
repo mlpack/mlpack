@@ -6,10 +6,11 @@
  * following boost functionality here:
  *
  *  * string_view support (added in boost 1.61.0)
+ *  * hash function support (added in boost 1.69.0)
  *
- * If the detected boost version is greater than 1.61.0, we include the normal
- * serialization functions (not the backported ones).  For all older versions we
- * include the backported headers.
+ * If the detected boost version is greater or equal to 1.61.0, we include the
+ * normal serialization functions (not the backported ones).  For all older
+ *  versions we include the backported headers.
  */
 #ifndef MLPACK_CORE_BOOST_BACKPORT_STRING_VIEW_HPP
 #define MLPACK_CORE_BOOST_BACKPORT_STRING_VIEW_HPP
@@ -25,7 +26,7 @@
   #include <boost/utility/string_view.hpp>
 #endif
 
-#if BOOST_VERSION < 106800
+#if BOOST_VERSION < 106900
   namespace boost
   {
     template<>
