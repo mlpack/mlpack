@@ -98,6 +98,11 @@ class PPO
     */
   double Episode();
 
+  //! Modify the training mode / test mode indicator.
+  bool& Deterministic() { return deterministic; }
+  //! Get the indicator of training mode / test mode.
+  const bool& Deterministic() const { return deterministic; }
+
 
  private:
   //! Locally-stored hyper-parameters.
@@ -129,6 +134,9 @@ class PPO
 
   //! Locally-stored current state of the agent.
   StateType state;
+
+  //! Locally-stored flag indicating training mode or test mode.
+  bool deterministic;
 };
 
 } // namespace rl

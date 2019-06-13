@@ -77,6 +77,7 @@ double PPO<
   ReplayType
 >::Step()
 {
+  return 0.0;
 }
 
 template<
@@ -106,16 +107,12 @@ double PPO<
   double totalReturn = 0.0;
 
   // Running until get to the terminal state.
-  while (!environment.IsTerminal(state))
+  while (config.StepLimit() && steps >= config.StepLimit())
   {
-    if (config.StepLimit() && steps >= config.StepLimit())
-      break;
-
     totalReturn += Step();
     steps++;
 
     totalSteps++;
-
   }
   return totalReturn;
 }

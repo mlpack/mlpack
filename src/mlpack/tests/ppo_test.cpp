@@ -37,34 +37,64 @@ BOOST_AUTO_TEST_SUITE(PPOTEST);
 //! Test PPO in Pendulum task.
 BOOST_AUTO_TEST_CASE(PENDULUMWITHPPO)
 {
-  // Set up the network.
-  FFN<MeanSquaredError<>, GaussianInitialization> critic(MeanSquaredError<>(),
-      GaussianInitialization(0, 0.001));
+  size_t episodes = 0;
+  bool converged = false;
+  for (size_t trial = 0; trial < 4; ++trial) {
+    // Set up the network.
+    FFN<MeanSquaredError<>, GaussianInitialization> critic(
+        MeanSquaredError<>(), GaussianInitialization(0, 0.001));
 
-  critic.Add<Linear<>>(4, 128);
-  critic.Add<ReLULayer<>>();
-  critic.Add<Linear<>>(128, 1);
+    critic.Add<Linear<>>(4, 128);
+    critic.Add<ReLULayer<>>();
+    critic.Add<Linear<>>(128, 1);
 
-  FFN<SurrogateLoss<>, GaussianInitialization> actor(SurrogateLoss<>(0.2),
-      GaussianInitialization(0, 0.001));
+    FFN<SurrogateLoss<>, GaussianInitialization> actor(
+        SurrogateLoss<>(0.2), GaussianInitialization(0, 0.001));
 
-  actor.Add<Linear<>>(4, 128);
-  actor.Add<ReLULayer<>>();
-  actor.Add<Linear<>>(128, 2);
+    actor.Add<Linear<>>(4, 128);
+    actor.Add<ReLULayer<>>();
+    actor.Add<Linear<>>(128, 2);
 
-  // Set up the policy and replay method.
-  GreedyPolicy<Pendulum> policy(1.0, 1000, 0.1, 0.99);
-  RandomReplay<Pendulum> replayMethod(10, 10000);
+    // Set up the policy and replay method.
+    GreedyPolicy<Pendulum> policy(1.0, 1000, 0.1, 0.99);
+    RandomReplay<Pendulum> replayMethod(10, 10000);
 
-  TrainingConfig config;
-  config.Discount() = 0.9;
+    TrainingConfig config;
+    config.Discount() = 0.9;
 
-  PPO<Pendulum, decltype(actor), decltype(critic), AdamUpdate,
-      decltype(policy)>
-      agent(std::move(config), std::move(actor), std::move(critic),
-          std::move(policy), std::move(replayMethod));
+    // Set up the PPO agent.
+    PPO<Pendulum, decltype(actor), decltype(critic), AdamUpdate,
+        decltype(policy)>
+        agent(std::move(config), std::move(actor), std::move(critic),
+        std::move(policy), std::move(replayMethod));
 
-  bool converged = true;
+    arma::running_stat<double> averageReturn;
+
+    for (episodes = 0; episodes <= 1000; ++episodes) {
+      double episodeReturn = agent.Episode();
+      averageReturn(episodeReturn);
+
+      /**
+       * I am using a threshold of -136.16 to check convergence.
+       */
+      Log::Debug << "Average return: " << averageReturn.mean()
+                 << " Episode return: " << episodeReturn << std::endl;
+      if (averageReturn.mean() > -136.16) {
+        agent.Deterministic() = true;
+        arma::running_stat<double> testReturn;
+        for (size_t i = 0; i < 10; ++i)
+          testReturn(agent.Episode());
+        Log::Debug << "Average return in deterministic test: "
+                   << testReturn.mean() << std::endl;
+        break;
+      }
+    }
+
+    if (episodes < 1000) {
+      converged = true;
+      break;
+    }
+  }
 
   BOOST_REQUIRE(converged);
 }
