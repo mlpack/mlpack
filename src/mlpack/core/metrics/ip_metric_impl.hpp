@@ -13,7 +13,7 @@
 #define MLPACK_METHODS_FASTMKS_IP_METRIC_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "ip_metric_impl.hpp"
+#include "ip_metric.hpp"
 
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
@@ -45,6 +45,28 @@ IPMetric<KernelType>::~IPMetric()
 {
   if (kernelOwner)
     delete kernel;
+}
+
+template<typename KernelType>
+IPMetric<KernelType>::IPMetric(const IPMetric& other) :
+  kernel(other.kernel),
+  kernelOwner(other.kernelOwner)
+{
+  // Nothing to do.
+}
+
+template<typename KernelType>
+IPMetric<KernelType>& IPMetric<KernelType>::operator=(const IPMetric& other)
+{
+  if (this == &other)
+    return *this;
+
+  if (kernelOwner)
+    delete kernel;
+
+  kernel = new KernelType(*other.kernel);
+  kernelOwner = true;
+  return *this;
 }
 
 template<typename KernelType>

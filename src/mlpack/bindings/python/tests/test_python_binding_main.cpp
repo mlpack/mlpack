@@ -27,6 +27,10 @@ PROGRAM_INFO("Python binding test",
 PARAM_STRING_IN_REQ("string_in", "Input string, must be 'hello'.", "s");
 PARAM_INT_IN_REQ("int_in", "Input int, must be 12.", "i");
 PARAM_DOUBLE_IN_REQ("double_in", "Input double, must be 4.0.", "d");
+PARAM_MATRIX_IN_REQ("mat_req_in", "Input matrix, must be 1x1 and contain '1'.",
+    "");
+PARAM_COL_IN_REQ("col_req_in", "Input column, must have '1' as the only "
+    "element.", "");
 PARAM_FLAG("flag1", "Input flag, must be specified.", "f");
 PARAM_FLAG("flag2", "Input flag, must not be specified.", "F");
 PARAM_MATRIX_IN("matrix_in", "Input matrix.", "m");
@@ -84,6 +88,20 @@ static void mlpackMain()
 
     if (d == 4.0)
       CLI::GetParam<double>("double_out") = 5.0;
+  }
+
+  const arma::mat& matReqIn = CLI::GetParam<arma::mat>("mat_req_in");
+  const arma::vec& colReqIn = CLI::GetParam<arma::vec>("col_req_in");
+  if (matReqIn.n_rows != 1 || matReqIn.n_cols != 1 || matReqIn(0, 0) != 1.0)
+  {
+    throw std::invalid_argument("mat_req_in must be 1x1 and contain only "
+        "'1.0'!");
+  }
+
+  if (colReqIn.n_elem != 1 || colReqIn(0) != 1.0)
+  {
+    throw std::invalid_argument("col_req_in must have '1.0' as its only "
+        "single element!");
   }
 
   // Input matrices should be at least 5 rows; the 5th row will be dropped and
