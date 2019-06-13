@@ -337,7 +337,7 @@ arma::mat Genome<ActivationFunction>::Parameters()
     for (auto const& y : x.second)
     {
       if (y.second.isEnabled())
-        param[x.first][y.first] = y.second.getWeight();
+        param(x.first, y.first) = y.second.getWeight();
     }
   }
   return param;

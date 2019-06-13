@@ -14,6 +14,11 @@
 
 #include <mlpack/prereqs.hpp>
 #include "genome.hpp"
+#include <mlpack/methods/kmeans/kmeans.hpp>
+#include <mlpack/methods/kmeans/dual_tree_kmeans.hpp>
+#include "selection_strategies/rank_selection.hpp"
+#include "selection_strategies/roulette_selection.hpp"
+#include "selection_strategies/tournament_selection.hpp"
 
 namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */ {
@@ -47,17 +52,27 @@ class NEAT
   Genome<ActivationFunction> Train();
 
  private:
+  // Crosses over two genomes.
   Genome<ActivationFunction> Crossover(Genome<ActivationFunction>& gen1, 
                                        Genome<ActivationFunction>& gen2);
 
+  // Creates the next generation through reproduction.
   void Reproduce();
 
+  // Speciates the population. If init is true, it performs the first
+  // speciation without knowledge of centroids.
   void Speciate(bool init);
 
+  bool compareGenome(Genome<ActivationFunction> gen1,
+                     Genome<ActivationFunction> gen2);
+
+  // The list of genomes in the population.
   std::vector<Genome<ActivationFunction>> genomeList;
 
-  std::vector<std::vector<Genome<ActivationFunction>> speciesList;
+  // The list of species, each containing a list of genomes.
+  std::vector<std::vector<Genome<ActivationFunction>>> speciesList;
 
+  // The centroids of the genome clusters.
   arma::mat centroids;
 
   //! The provided TaskType class that evaluates fitness of the genome.

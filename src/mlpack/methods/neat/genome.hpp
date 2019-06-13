@@ -44,7 +44,6 @@ class Genome
    * 
    * @param inputNodeCount The number of input nodes.
    * @param outputNodeCount The number of output nodes.
-   * @param actFn The activation function.
    * @param bias The bias of the genome.
    * @param weightMutationProb The probability of a weight mutating.
    * @param weightMutationSize The degree to which the weight will mutate.
@@ -55,7 +54,6 @@ class Genome
    */
   Genome(const size_t inputNodeCount,
          const size_t outputNodeCount,
-         ActivationFunction& actFn,
          const double bias,
          const double weightMutationProb,
          const double weightMutationSize,
@@ -152,6 +150,9 @@ class Genome
 
   //! Get fitness.
   double getFitness() const { return fitness; }
+
+  //! Get node count.
+  size_t getNodeCount() const { return nextNodeID; }
 
   //! Get input node count.
   size_t getInputNodeCount() const { return inputNodeCount; }

@@ -15,10 +15,6 @@
 
 // In case it hasn't been included.
 #include "neat.hpp"
-#include <mlpack/methods/kmeans/kmeans.hpp>
-#include "selection_strategies/rank_selection.hpp"
-#include "selection_strategies/roulette_selection.hpp"
-#include "selection_strategies/tournament_selection.hpp"
 
 namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */ {
@@ -26,25 +22,24 @@ namespace neat /** NeuroEvolution of Augmenting Topologies */ {
 template <class TaskType,
           class ActivationFunction,
           class SelectionPolicy>
-NEAT<TaskType, ActivationFunction, SelectionPolicy>::NEAT(TaskType& task,
-                                                          ActivationFunction& actFn,
-                                                          const size_t inputNodeCount,
-                                                          const size_t outputNodeCount,
-                                                          const size_t popSize,
-                                                          const size_t maxGen,
-                                                          const size_t numSpecies,
-                                                          const double bias,
-                                                          const double weightMutationProb,
-                                                          const double weightMutationSize,
-                                                          const double biasMutationProb,
-                                                          const double biasMutationSize,
-                                                          const double nodeAdditionProb,
-                                                          const double connAdditionProb,
-                                                          const double disableProb,
-                                                          const double elitismProp,
-                                                          const bool isAcyclic):
+NEAT<TaskType, ActivationFunction, SelectionPolicy>::
+    NEAT(TaskType& task,
+         const size_t inputNodeCount,
+         const size_t outputNodeCount,
+         const size_t popSize,
+         const size_t maxGen,
+         const size_t numSpecies,
+         const double bias,
+         const double weightMutationProb,
+         const double weightMutationSize,
+         const double biasMutationProb,
+         const double biasMutationSize,
+         const double nodeAdditionProb,
+         const double connAdditionProb,
+         const double disableProb,
+         const double elitismProp,
+         const bool isAcyclic):
     task(task),
-    actFn(actFn),
     inputNodeCount(inputNodeCount),
     outputNodeCount(outputNodeCount),
     popSize(popSize),
@@ -61,9 +56,12 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::NEAT(TaskType& task,
     isAcyclic(isAcyclic)
 { /* Nothing to do here yet */ }
 
+// The main loop of the NEAT algorithm. Returns the best genome.
 template <class TaskType,
-          class ActivationFunction>
-Genome<ActivationFunction> NEAT<TaskType, ActivationFunction>::Train()
+          class ActivationFunction,
+          class SelectionPolicy>
+Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
+    ::Train()
 {
   Genome<ActivationFunction>::nextInnovID = 0;
 
@@ -71,11 +69,11 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction>::Train()
   for (size_t i = 0; i < popSize; i++)
   {
     genomeList.emplace_back(Genome<ActivationFunction>(inputNodeCount,
-        outputNodeCount, actFn, bias, weightMutationProb,
+        outputNodeCount, bias, weightMutationProb,
         weightMutationSize, biasMutationProb, biasMutationSize,
         nodeAdditionProb, connAdditionProb, isAcyclic));
   }
-  speciesList = std::vector<std::vector<Genome<ActivationFunction>>(numSpecies);
+  speciesList = std::vector<std::vector<Genome<ActivationFunction>>>(numSpecies);
   Speciate(true);
 
   // Main loop.
@@ -103,6 +101,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction>::Train()
   return genomeList[maxIdx];
 }
 
+// Creates the next generation through reproduction.
 template <class TaskType,
           class ActivationFunction,
           class SelectionPolicy>
@@ -136,7 +135,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
     while (delta > 0)
     {
       speciesSize[i++]++;
-      delta--
+      delta--;
     }
   }
   // If the total allotted size is more than the population, remove the excess.
@@ -154,18 +153,18 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
   for (size_t i = 0; i < numSpecies; i++)
   {
     numElite[i] = std::round(elitismProp * speciesSize[i]);
-    // This ensures that the best genome from a species will be saved.
+    // This ensures that the best genome from every species will be saved.
     if (numElite[i] == 0)
       numElite[i] = 1;
   }
 
-  // CRossover and add the new genomes.
+  // Crossover and add the new genomes.
   genomeList.clear();
   for (size_t i = 0; i < numSpecies; i++)
   {
     size_t currentSize = genomeList.size();
     std::sort(speciesList[i].begin(), speciesList[i].begin(), compareGenome);
-    arma::vec fitnesses(speciesList[i].size())
+    arma::vec fitnesses(speciesList[i].size());
     for (size_t j = 0; j < numElite[i]; j++)
       genomeList.push_back(speciesList[i][j]);
     for (size_t j = 0; j < fitnesses.n_elem; j++)
@@ -173,12 +172,14 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
     while(genomeList.size() - currentSize < speciesSize[i])
     {
       std::pair<size_t, size_t> selection = SelectionPolicy::Select(fitnesses);
-      genomeList.push_back(Crossover(speciesList[selection.first], speciesList[selection.second]));
+      genomeList.push_back(Crossover(speciesList[selection.first],
+          speciesList[selection.second]));
       genomeList[genomeList.size() - 1].Mutate();
     }
   }
 }
 
+// Speciates the genomes.
 template <class TaskType,
           class ActivationFunction,
           class SelectionPolicy>
@@ -191,22 +192,28 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Speciate(bool init)
     for (size_t j = 0; j < genomeList[i].connectionGeneList.size(); j++)
     {
       size_t innovID = genomeList[i].connectionGeneList[j].getInnovationID();
-      data[innovID][i] = genomeList[i].connectionGeneList[j].getWeight();
+      data(innovID, i) = genomeList[i].connectionGeneList[j].getWeight();
     }
   }
 
   arma::Row<size_t> assignments;
   kmeans::KMeans<metric::EuclideanDistance, kmeans::SampleInitialization,
-      kmeans::MaxVarianceNewCluster, kmeans::DualTreeKmeans> k;
+      kmeans::MaxVarianceNewCluster, kmeans::CoverTreeDualTreeKMeans> k;
   if (init)
     k.cluster(data, numSpecies, assignments, centroids);
   else
     k.cluster(data, numSpecies, assignments, centroids, false, true);
 
+  // Clear the old species list to make space for a new one.
+  for (size_t i = 0; i < numSpecies; i++)
+    speciesList[i].clear();
+  
+  // Assign the genomes to their species.
   for (size_t i = 0; i < assignments.n_elem; i++)
     speciesList[assignments[i]].push_back(genomeList[i]);
 }
 
+// Crosses over two genomes and creates a child.
 template <class TaskType,
           class ActivationFunction,
           class SelectionPolicy>
@@ -216,33 +223,43 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
 {
   // New genome's genes.
   std::vector<ConnectionGene> newConnGeneList;
-  bool equalFitness = std::abs(gen1.getFitness() - gen2.getFitness()) < 0.01;
+  bool equalFitness = std::abs(gen1.getFitness() - gen2.getFitness()) < 0.001;
 
   if (!equalFitness || isAcyclic)
   {
     Genome<ActivationFunction>& lessFitGenome;
+    std::vector<size_t>& nodeDepths;
+    size_t nextNodeID;
 
     if (equalFitness)
     {
       if (arma::randu<double>() < 0.5)
       {
         newConnGeneList = gen1.connectionGeneList;
+        nextNodeID = gen1.getNodeCount();
+        nodeDepths = gen1.nodeDepths;
         lessFitGenome = gen2;
       }
       else
       {
         newConnGeneList = gen2.connectionGeneList;
+        nextNodeID = gen2.getNodeCount();
+        nodeDepths = gen2.nodeDepths;
         lessFitGenome = gen1; 
       }
     }
-    else if (gen1.getFitness() >= gen2.getFitness())
+    else if (gen1.getFitness() > gen2.getFitness())
     {
       newConnGeneList = gen1.connectionGeneList;
+      nextNodeID = gen1.getNodeCount();
+      nodeDepths = gen1.nodeDepths;
       lessFitGenome = gen2;
     }
     else
     {
       newConnGeneList = gen2.connectionGeneList;
+      nextNodeID = gen2.getNodeCount();   
+      nodeDepths = gen2.nodeDepths;   
       lessFitGenome = gen1;
     }
 
@@ -273,6 +290,21 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
           break;
         }
       }
+    }
+
+    if (isAcyclic)
+    {
+      return Genome<ActivationFunction>(inputNodeCount, outputNodeCount,
+        newConnGeneList, nodeDepths, nextNodeID, bias, weightMutationProb,
+        weightMutationSize, biasMutationProb, biasMutationSize, 
+        nodeAdditionProb, connAdditionProb, isAcyclic);
+    }
+    else
+    {
+      return Genome<ActivationFunction>(inputNodeCount, outputNodeCount,
+        newConnGeneList, nextNodeID, bias, weightMutationProb,
+        weightMutationSize, biasMutationProb, biasMutationSize, 
+        nodeAdditionProb, connAdditionProb, isAcyclic);
     }
   }
   else
@@ -313,20 +345,20 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
       if (arma::randu<double>() < 0.5)
         newConnGeneList.push_back(maxGenome.connectionGeneList[i++]);
     }
+
+    size_t nextNodeID = gen1.nextNodeID > gen2.nextNodeID ? gen1.nextNodeID : gen2.nextNodeID;
+
+    return Genome<ActivationFunction>(inputNodeCount, outputNodeCount,
+          newConnGeneList, nextNodeID, bias, weightMutationProb,
+          weightMutationSize, biasMutationProb, biasMutationSize, 
+          nodeAdditionProb, connAdditionProb, isAcyclic);
   }
-
-  size_t nextNodeID = gen1.nextNodeID > gen2.nextNodeID ? gen1.nextNodeID : gen2.nextNodeID;
-
-  return Genome<ActivationFunction>(inputNodeCount, outputNodeCount,
-        newConnGeneList, nextNodeID, actFn, bias, weightMutationProb,
-        weightMutationSize, biasMutationProb, biasMutationSize, 
-        nodeAdditionProb, connAdditionProb, isAcyclic);
 }
 
 template <class TaskType,
           class ActivationFunction,
           class SelectionPolicy>
-void NEAT<TaskType, ActivationFunction, SelectionPolicy>::
+bool NEAT<TaskType, ActivationFunction, SelectionPolicy>::
     compareGenome(Genome<ActivationFunction> gen1,
                   Genome<ActivationFunction> gen2)
 {
