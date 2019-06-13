@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(LoadImageIntoMatrixFromDir)
 
   // Matrix to load contents of dir into.
   arma::Mat<unsigned char> img;
-  BOOST_REQUIRE(loader.LoadDIR(".", true, std::move(img)) == true);
+  BOOST_REQUIRE(loader.LoadDir(".", true, std::move(img)) == true);
   BOOST_REQUIRE_EQUAL(img.n_cols, 50 * 50 * 3); // width * height * channels.
   BOOST_REQUIRE_EQUAL(img.n_rows, 1);
 }
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(GetImageHeightWidthChannels)
   size_t height, width, channels;
 
   BOOST_REQUIRE(loader.Load("test_image.png", true, std::move(img),
-      &width, &height, &channels) == true);
+      width, height, channels) == true);
   BOOST_REQUIRE_EQUAL(img.n_cols, 50 * 50 * 3); // width * height * channels.
   BOOST_REQUIRE_EQUAL(img.n_rows, 1);
   BOOST_REQUIRE_EQUAL(width, 50);
@@ -91,7 +91,6 @@ BOOST_AUTO_TEST_CASE(LoadImagesInVector)
 
   // Matrix to load contents of dir into.
   arma::Mat<unsigned char> img;
-
   std::vector<std:: string> files{"test_image.png",
                                   "test_image.png",
                                   "test_image.png"};

@@ -19,30 +19,25 @@
 namespace mlpack {
 namespace data {
 
+const std::vector<std::string> LoadImage::fileTypes({"jpg", "png", "tga",
+    "bmp", "psd", "gif", "hdr", "pic", "pnm"});
+
 LoadImage::LoadImage():
         matrixWidth(0),
         matrixHeight(0),
         channels(3)
 {
-  fileTypes.clear();
 
-  // Declare supported file types.
-  fileTypes.insert(fileTypes.end(),
-    {"jpg", "png", "tga", "bmp", "psd", "gif", "hdr", "pic", "pnm"});
 }
 
-LoadImage::LoadImage(size_t width,
-          size_t height,
-          size_t channels):
+LoadImage::LoadImage(const size_t width,
+          const size_t height,
+          const size_t channels):
           matrixWidth(width),
           matrixHeight(height),
           channels(channels)
 {
-  fileTypes.clear();
 
-  // Declare supported file types.
-  fileTypes.insert(fileTypes.end(),
-    {"jpg", "png", "tga", "bmp", "psd", "gif", "hdr", "pic", "pnm"});
 }
 
 LoadImage::~LoadImage()
@@ -62,9 +57,9 @@ bool LoadImage::ImageFormatSupported(const std::string& fileName)
 bool LoadImage::Load(const std::string& fileName,
                       bool flipVertical,
                       arma::Mat<unsigned char>&& outputMatrix,
-                      size_t *width,
-                      size_t *height,
-                      size_t *channels)
+                      size_t &width,
+                      size_t &height,
+                      size_t &channels)
 {
   unsigned char *image;
 
@@ -86,7 +81,7 @@ bool LoadImage::Load(const std::string& fileName,
   int tempWidth, tempHeight, tempChannels;
 
   // For grayscale images
-  if (*channels == 1)
+  if (channels == 1)
   {
     image = stbi_load(fileName.c_str(),
              &tempWidth,
@@ -111,13 +106,16 @@ bool LoadImage::Load(const std::string& fileName,
     throw std::runtime_error(oss.str());
     return false;
   }
-  *width = tempWidth;
-  *height = tempHeight;
-  *channels = tempChannels;
-  size_t size = (*width)*(*height)*(*channels);
+  width = tempWidth;
+  height = tempHeight;
+  channels = tempChannels;
+  size_t size = width * height * channels;
 
-  // Copy memory location into armadillo Mat.
-  outputMatrix = arma::Mat<unsigned char>(image, 1, size, false, true);
+  // Copy image into armadillo Mat.
+  outputMatrix = arma::Mat<unsigned char>(image, 1, size, true, true);
+
+  // Free the image pointer.
+  free(image);
   return true;
 }
 
@@ -129,7 +127,7 @@ bool LoadImage::Load(const std::string& fileName,
   bool status = Load(fileName,
       flipVertical,
       std::move(outputMatrix),
-      &width, &height, &channels);
+      width, height, channels);
   if (!status)
     return status;
 
@@ -167,7 +165,7 @@ bool LoadImage::Load(const std::vector<std::string>& files,
   bool status = Load(files[0],
                      flipVertical,
                      std::move(img),
-                     &width, &height, &channels);
+                     width, height, channels);
   Log::Info << "Loaded " << files[0] << std::endl;
 
   // Decide matrix dimension using the image height and width.
@@ -187,7 +185,7 @@ bool LoadImage::Load(const std::vector<std::string>& files,
   return status;
 }
 
-bool LoadImage::LoadDIR(const std::string& dirPath,
+bool LoadImage::LoadDir(const std::string& dirPath,
                         bool flipVertical,
                         arma::Mat<unsigned char>&& outputMatrix)
 {
@@ -206,8 +204,8 @@ bool LoadImage::LoadDIR(const std::string& dirPath,
   return Load(files, flipVertical, std::move(outputMatrix));
 #else
   std::ostringstream oss;
-  oss << "Filesystem not supported" << std::endl;
-  oss << "Failed to include <filesystem> " << std::endl;
+  oss << "C++17 filesystem library not available." << std::endl;
+  oss << "Failed to include <filesystem> header!" << std::endl;
   throw std::runtime_error(oss.str());
   return false;
 #endif

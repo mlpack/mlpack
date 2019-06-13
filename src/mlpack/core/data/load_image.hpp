@@ -69,7 +69,7 @@ class LoadImage
    * @param height Matrix height for the output matrix.
    * @param channels Matrix channels for the output matrix.
    */
-  LoadImage(size_t width, size_t height, size_t channels);
+  LoadImage(const size_t width, const size_t height, const size_t channels);
 
   /**
    * Checks if the given image filename is supported.
@@ -105,9 +105,9 @@ class LoadImage
   bool Load(const std::string& fileName,
             bool flipVertical,
             arma::Mat<unsigned char>&& outputMatrix,
-            size_t *width,
-            size_t *height,
-            size_t *channels);
+            size_t &width,
+            size_t &height,
+            size_t &channels);
 
   /**
    * Load the image file into the given matrix.
@@ -129,7 +129,7 @@ class LoadImage
    * @param outputMatrix Matrix to load into.
    * @return Boolean value indicating success or failure of load.
    */
-  bool LoadDIR(const std::string& dirPath,
+  bool LoadDir(const std::string& dirPath,
                bool flipVertical,
                arma::Mat<unsigned char>&& outputMatrix);
 
@@ -140,7 +140,7 @@ class LoadImage
 
  private:
   // To store supported image types.
-  std::vector<std::string> fileTypes;
+  static const std::vector<std::string> fileTypes;
 
   // To store matrixWidth.
   size_t matrixWidth;
