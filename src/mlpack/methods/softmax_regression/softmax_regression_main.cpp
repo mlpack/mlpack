@@ -202,7 +202,7 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
 
   // Save predictions, if desired.
   if (CLI::HasParam("predictions"))
-    CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictLabels);
+    CLI::GetParam<arma::Row<size_t>>("predictions") = predictLabels;
 
   // Calculate accuracy, if desired.
   if (CLI::HasParam("test_labels"))
