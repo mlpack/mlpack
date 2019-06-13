@@ -118,6 +118,34 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingCharTest)
 }
 
 /**
+* Testing the functionality of copy constructor.
+*/
+BOOST_AUTO_TEST_CASE(CopyConstructorCharTest)
+{
+  std::vector<string>arr(3);
+  arr[0] = "hello how are you";
+  arr[1] = "i am good";
+  arr[2] = "Good how are you";
+  arma::sp_mat output;
+  data::DicitonaryEncoding en;
+  en.Encode(arr, output, CharSplit(" "));
+  const std::unordered_map<boost::string_view, size_t,
+      boost::hash<boost::string_view>> maps = en.Mappings();
+  const std::deque<std::string>& original = en.OriginalStrings();
+  data::DicitonaryEncoding en2 = en;
+  const std::unordered_map<boost::string_view, size_t,
+      boost::hash<boost::string_view>> maps2 = en2.Mappings();
+  const std::deque<std::string>& original2 = en2.OriginalStrings();
+  // Comparing both of them.
+  std::deque<std::string>::const_iterator jt = original2.begin();
+  for (auto it = original.begin(); it != original.end(); it++)
+  {
+    BOOST_REQUIRE_EQUAL(maps2.at(*jt), maps.at(*it));
+    jt++;
+  }
+}
+
+/**
 * Test Dictionary encoding for output with no padding.
 */
 BOOST_AUTO_TEST_CASE(DictionaryEncodingNoPaddingTest)

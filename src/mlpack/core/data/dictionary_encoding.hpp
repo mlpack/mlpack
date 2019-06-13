@@ -51,7 +51,6 @@ class DicitonaryEncoding
   /*
   * Move Constructor.
   */
-  
   DicitonaryEncoding(DicitonaryEncoding&& oldObject) = default;
   /*
   * Move Assignment Operator.

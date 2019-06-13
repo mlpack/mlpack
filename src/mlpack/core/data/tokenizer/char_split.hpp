@@ -18,7 +18,11 @@
 namespace mlpack {
 namespace data {
 /**
- * A simple CharSplit class
+ * A simple CharSplit class.
+ *
+ * The class is used to split the documents using a set of characters, that
+ * is used as delimiter. The function returns a token, and successive calls,
+ * would return many such tokens.
  */
 class CharSplit
 {
