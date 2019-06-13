@@ -19,7 +19,8 @@ namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */ {
 
 template <class TaskType,
-          class ActivationFunction>
+          class ActivationFunction,
+          class SelectionPolicy>
 class NEAT
 {
  public:
@@ -29,6 +30,7 @@ class NEAT
        const size_t outputNodeCount,
        const size_t popSize,
        const size_t maxGen,
+       const size_t numSpecies,
        const double bias,
        const double weightMutationProb,
        const double weightMutationSize,
@@ -37,6 +39,7 @@ class NEAT
        const double nodeAdditionProb,
        const double connAdditionProb,
        const double disableProb,
+       const double elitismProp,
        const bool isAcyclic = false);
 
   /**
@@ -45,15 +48,18 @@ class NEAT
   Genome<ActivationFunction> Train();
 
  private:
-
   Genome<ActivationFunction> Crossover(Genome<ActivationFunction>& gen1, 
                                        Genome<ActivationFunction>& gen2);
 
   void Reproduce();
 
-  void Speciate();
+  void Speciate(bool init);
 
   std::vector<Genome<ActivationFunction>> genomeList;
+
+  std::vector<std::vector<Genome<ActivationFunction>> speciesList;
+
+  arma::mat centroids;
 
   //! The provided TaskType class that evaluates fitness of the genome.
   TaskType task;
@@ -72,6 +78,9 @@ class NEAT
 
   //! The maximum number of generations.
   size_t maxGen;
+
+  //! The number of species.
+  size_t numSpecies;
 
   //! The bias of the networks.
   double bias;
@@ -99,6 +108,9 @@ class NEAT
    * parents are disabled.
    */
   double disableProb;
+
+  //! The proportion of a species that is considered elite.
+  double elitismProp;
 
   //! Denotes whether or not the genome is meant to be cyclic.
   bool isAcyclic;
