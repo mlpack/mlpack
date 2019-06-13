@@ -33,15 +33,13 @@ class CyclicNet
   /**
    * Creates a CyclicNet object.
    * 
-   * @param actFn The activation function.
    * @param nodeCount The number of nodes.
    * @param inputNodeCount The number of input nodes.
    * @param outputNodeCount The number of output nodes.
    * @param timeStepsPerActivation The number of time steps per activation.
    * @param bias The bias.
    */
-  CyclicNet(ActivationFunction& actFn,
-            const size_t nodeCount,
+  CyclicNet(const size_t nodeCount,
             const size_t inputNodeCount,
             const size_t outputNodeCount,
             const size_t timeStepsPerActivation,
@@ -54,9 +52,6 @@ class CyclicNet
                      std::map<size_t, std::map<size_t, ConnectionGene>>& directedGraph);
 
  private:
-  //! Activation function.
-  ActivationFunction& actFn;
-
   //! Node count.
   size_t nodeCount;
 

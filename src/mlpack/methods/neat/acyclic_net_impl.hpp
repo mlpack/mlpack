@@ -22,19 +22,15 @@ namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
 // Creates an AcyclicNet object.
 template <class ActivationFunction>
-AcyclicNet<ActivationFunction>::AcyclicNet(ActivationFunction& actFn,
-                                           const size_t nodeCount,
+AcyclicNet<ActivationFunction>::AcyclicNet(const size_t nodeCount,
                                            const size_t inputNodeCount,
                                            const size_t outputNodeCount,
                                            const double bias):
-    actFn(actFn),
     nodeCount(nodeCount),
     inputNodeCount(inputNodeCount),
     outputNodeCount(outputNodeCount),
     bias(bias)
-{
-
-}
+{ /* Nothing to do here */ }
 
 // Evaluate a given input.
 template <class ActivationFunction>
@@ -75,7 +71,7 @@ arma::vec AcyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
       }
       else
       {
-        double result = actFn.Fn(nodeValues[nodeID]);
+        double result = ActivationFunction::Fn(nodeValues[nodeID]);
         for (auto const& x : directedGraph[nodeID])
           nodeValues[x.first] += result * x.second.getWeight();
       }

@@ -21,11 +21,10 @@
 namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
-// Creates genome object.
+// Creates genome object during initialization.
 template <class ActivationFunction>
 Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
                                    const size_t outputNodeCount,
-                                   ActivationFunction& actFn,
                                    const double bias,
                                    const double weightMutationProb,
                                    const double weightMutationSize,
@@ -36,7 +35,6 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
                                    const bool isAcyclic):
     inputNodeCount(inputNodeCount),
     outputNodeCount(outputNodeCount),
-    actFn(actFn),
     bias(bias),
     weightMutationProb(weightMutationProb),
     weightMutationSize(weightMutationSize),
@@ -81,12 +79,12 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
   }
 }
 
+// Creates genome object during cyclic reproduction.
 template <class ActivationFunction>
 Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
                                    const size_t outputNodeCount,
                                    std::vector<ConnectionGene>& connectionGeneList,
                                    const size_t nextNodeID,
-                                   ActivationFunction& actFn,
                                    const double bias,
                                    const double weightMutationProb,
                                    const double weightMutationSize,
@@ -99,7 +97,6 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
     outputNodeCount(outputNodeCount),
     connectionGeneList(connectionGeneList),
     nextNodeID(nextNodeID),
-    actFn(actFn),
     bias(bias),
     weightMutationProb(weightMutationProb),
     weightMutationSize(weightMutationSize),
@@ -124,13 +121,49 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
     size_t targetID = connectionGeneList[i].getTarget();
     directedGraph[sourceID][targetID] = connectionGeneList[i];
   }
+}
 
-  if (isAcyclic)
+// Creates genome object during acyclic reproduction. 
+template <class ActivationFunction>
+Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
+                                   const size_t outputNodeCount,
+                                   std::vector<ConnectionGene>& connectionGeneList,
+                                   std::vector<size_t>& nodeDepths,
+                                   const size_t nextNodeID,
+                                   const double bias,
+                                   const double weightMutationProb,
+                                   const double weightMutationSize,
+                                   const double biasMutationProb,
+                                   const double biasMutationSize,
+                                   const double nodeAdditionProb,
+                                   const double connAdditionProb,
+                                   const bool isAcyclic):
+    inputNodeCount(inputNodeCount),
+    outputNodeCount(outputNodeCount),
+    connectionGeneList(connectionGeneList),
+    nodeDepths(nodeDepths),
+    nextNodeID(nextNodeID),
+    bias(bias),
+    weightMutationProb(weightMutationProb),
+    weightMutationSize(weightMutationSize),
+    biasMutationProb(biasMutationProb),
+    biasMutationSize(biasMutationSize),
+    nodeAdditionProb(nodeAdditionProb),
+    connAdditionProb(connAdditionProb),
+    isAcyclic(isAcyclic)
+{
+  for (size_t i = 0; i < nextNodeID; i++)
   {
-    for (size_t i = 0; i < nextNodeID; i++)
-      nodeDepths.push_back(0);
-    for (size_t i = 0; i <= inputNodeCount; i++)
-      TraverseNode(i, 0);
+    directedGraph.emplace(std::piecewise_construct,
+                          std::make_tuple(i),
+                          std::make_tuple());
+  }
+
+  for (size_t i = 0; i < connectionGeneList.size(); i++)
+  {
+    size_t sourceID = connectionGeneList[i].getSource();
+    size_t targetID = connectionGeneList[i].getTarget();
+    directedGraph[sourceID][targetID] = connectionGeneList[i];
   }
 }
 
@@ -146,14 +179,14 @@ arma::vec Genome<ActivationFunction>::Evaluate(arma::vec& input)
 
   if (isAcyclic)
   {
-    AcyclicNet<ActivationFunction> net(actFn, nextNodeID, inputNodeCount,
+    AcyclicNet<ActivationFunction> net(nextNodeID, inputNodeCount,
         outputNodeCount, bias);
     fitness = net.Evaluate(input, directedGraph, nodeDepths);
     return fitness;
   }
   else
   {
-    CyclicNet<ActivationFunction> net(actFn, nextNodeID, inputNodeCount,
+    CyclicNet<ActivationFunction> net(nextNodeID, inputNodeCount,
         outputNodeCount, 100 /* Placeholder */, bias);
     fitness = net.Evaluate(input, directedGraph);
     return fitness;
@@ -169,13 +202,20 @@ void Genome<ActivationFunction>::Mutate()
   {
     if (arma::randu<double>() < connAdditionProb)
     {
-      size_t sourceID = connectionGeneList[i].source;
+      size_t sourceID = i;
       size_t newTarget = i;
-      size_t innovID = -1;
+      size_t innovID;
       while (newTarget == i)
       {
-        newTarget = arma::randi<arma::vec>(1 + inputNodeCount,
-            arma::distr_param(0, nextNodeID - 1))[0];
+        newTarget = arma::randi<arma::uvec>(1, arma::distr_param(2 +
+            inputNodeCount, nextNodeID - 1))[0];
+      }
+
+      if (isAcyclic)
+      {
+        // Only create connections where the target has a higher depth.
+        if (nodeDepths[i] >= nodeDepths[newTarget])
+          continue;
       }
 
       std::pair<size_t, size_t> key = std::make_pair(sourceID, newTarget);
@@ -186,13 +226,6 @@ void Genome<ActivationFunction>::Mutate()
       }
       else
         innovID = mutationBuffer[key];
-
-      if (isAcyclic)
-      {
-        // Only create connections where the target has a higher depth.
-        if (nodeDepths[i] >= nodeDepths[newTarget])
-          continue;
-      }
 
       // Add the new connection to the containers.
       connectionGeneList.emplace_back(ConnectionGene(innovID, 1, i,
@@ -226,6 +259,7 @@ void Genome<ActivationFunction>::Mutate()
       size_t newNodeID = nextNodeID++;
       size_t innovID1 = -1, innovID2 = -1;
 
+      // Check if these mutations have been made. Else, add them to the buffer.
       std::pair<size_t, size_t> key1 = std::make_pair(sourceID, newNodeID);
       std::pair<size_t, size_t> key2 = std::make_pair(newNodeID, targetID);    
       
@@ -270,7 +304,7 @@ void Genome<ActivationFunction>::Mutate()
         // If this is the case, the connection we are splitting is part of the
         // longest path.
         if (nodeDepths[targetID] == nodeDepths[sourceID] + 1)
-          nodeDepths[targetID] += 1;
+          nodeDepths[targetID]++;
       }
     }
   }
@@ -280,7 +314,7 @@ void Genome<ActivationFunction>::Mutate()
     bias += biasMutationSize * arma::randn<double>();
 }
 
-// Recursively traverse neighbours and assign depths.
+// Recursively traverse neighbours and assign depths. [Will be removed]
 template <class ActivationFunction>
 void Genome<ActivationFunction>::TraverseNode(size_t nodeID, size_t depth)
 {

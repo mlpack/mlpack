@@ -66,14 +66,13 @@ class Genome
          const bool isAcyclic = false);
 
   /**
-   * Creates a genome. Used during reproduction.
+   * Creates a genome. Used during cyclic reproduction.
    * 
    * @param inputNodeCount The number of input nodes.
    * @param outputNodeCount The number of output nodes.
    * @param connectionGeneList A vector of connection genes sorted by
    *     innovation ID.
    * @param nextNodeID The number of nodes in the system.
-   * @param actFn The activation function.
    * @param bias The bias of the genome.
    * @param weightMutationProb The probability of a weight mutating.
    * @param weightMutationSize The degree to which the weight will mutate.
@@ -86,7 +85,38 @@ class Genome
          const size_t outputNodeCount,
          std::vector<ConnectionGene>& connectionGeneList,
          const size_t nextNodeID,
-         ActivationFunction& actFn,
+         const double bias,
+         const double weightMutationProb,
+         const double weightMutationSize,
+         const double biasMutationProb,
+         const double biasMutationSize,
+         const double nodeAdditionProb,
+         const double connAdditionProb,
+         const bool isAcyclic = false);
+
+  /**
+   * Creates a genome. Used during acyclic reproduction.
+   * 
+   * @param inputNodeCount The number of input nodes.
+   * @param outputNodeCount The number of output nodes.
+   * @param connectionGeneList A vector of connection genes sorted by
+   *     innovation ID.
+   * @param nodeDepths A vector of node depths, where the depth is the maximum
+   *     number of "jumps" it takes to get to a node from an input node.
+   * @param nextNodeID The number of nodes in the system.
+   * @param bias The bias of the genome.
+   * @param weightMutationProb The probability of a weight mutating.
+   * @param weightMutationSize The degree to which the weight will mutate.
+   * @param biasMutationProb The probability of a bias mutating.
+   * @param biasMutationSize The degree to which the bias will mutate.
+   * @param nodeAdditionProb The probability of a new node being added.
+   * @param isAcyclic Denotes whether or not the generated network is acyclic.
+   */
+  Genome(const size_t inputNodeCount,
+         const size_t outputNodeCount,
+         std::vector<ConnectionGene>& connectionGeneList,
+         std::vector<size_t>& nodeDepths,
+         const size_t nextNodeID,
          const double bias,
          const double weightMutationProb,
          const double weightMutationSize,
@@ -110,7 +140,7 @@ class Genome
    * Returns the parameters of the genome in the form of an adjacency matrix,
    * where the row numbers denote the IDs of the source neurons and the column
    * numbers denote the IDs of the target neurons, and the values are the
-   * weights of the connections.
+   * weights of the enabled connections.
    */
   arma::mat Parameters();
 
@@ -151,7 +181,7 @@ class Genome
 
   /**
    * A recursive function that assigns depth to nodes. Only used in acyclic
-   * cases.
+   * cases. [Will be removed]
    */
   void TraverseNode(size_t nodeID, size_t depth);
 
@@ -165,9 +195,6 @@ class Genome
 
   //! Output node count.
   size_t outputNodeCount;
-
-  //! Activation function.
-  ActivationFunction actFn;
 
   //! Boolean indicating if the phenome is acyclic.
   bool isAcyclic;

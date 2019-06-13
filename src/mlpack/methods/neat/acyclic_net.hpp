@@ -40,14 +40,12 @@ class AcyclicNet
   /**
    * Creates an AcyclicNet object.
    *
-   * @param actFn The activation function.
    * @param nodeCount The number of nodes.
    * @param inputNodeCount The number of input nodes.
    * @param outputNodeCount The number of output nodes.
    * @param bias The bias.
    */
-  AcyclicNet(ActivationFunction& actFn,
-             const size_t nodeCount,
+  AcyclicNet(const size_t nodeCount,
              const size_t inputNodeCount,
              const size_t outputNodeCount,
              const double bias);
@@ -60,9 +58,6 @@ class AcyclicNet
                      std::vector<size_t>& nodeDepths);
 
  private:
-  //! Activation function.
-  ActivationFunction& actFn;
-
   //! The number of nodes.
   size_t nodeCount;
 

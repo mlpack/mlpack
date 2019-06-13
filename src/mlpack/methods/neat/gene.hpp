@@ -18,7 +18,7 @@ namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */ {
 
 /**
- * Connection gene class.
+ * A class that represents a connection gene in a genome.
  */
 class ConnectionGene
 {
@@ -51,9 +51,9 @@ class ConnectionGene
   void Mutate(const double mutationSize);
 
   //! Get global innovation ID.
-  size_t getGlobalInnovationID() const { return globalInnovationID; }
+  size_t getInnovationID() const { return globalInnovationID; }
   //! Set global innovation ID.
-  size_t& setGlobalInnovationID() { return globalInnovationID; }
+  size_t& setInnovationID() { return globalInnovationID; }
 
   //! Get connection weight.
   double getWeight() const { return weight; }

@@ -158,7 +158,8 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
     if (numElite[i] == 0)
       numElite[i] = 1;
   }
-  
+
+  // CRossover and add the new genomes.
   genomeList.clear();
   for (size_t i = 0; i < numSpecies; i++)
   {
@@ -189,7 +190,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Speciate(bool init)
   {
     for (size_t j = 0; j < genomeList[i].connectionGeneList.size(); j++)
     {
-      size_t innovID = genomeList[i].connectionGeneList[j].getGlobalInnovationID();
+      size_t innovID = genomeList[i].connectionGeneList[j].getInnovationID();
       data[innovID][i] = genomeList[i].connectionGeneList[j].getWeight();
     }
   }
@@ -250,10 +251,10 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     for (size_t i = 0; i < lessFitGenome.connectionGeneList.size(); i++)
     {
       size_t innovID = lessFitGenome.connectionGeneList[i]
-          .getGlobalInnovationID();
+          .getInnovationID();
       for (size_t j = k; j < newConnGeneList.size(); j++)
       {
-        if (innovID == newConnGeneList[j].getGlobalInnovationID())
+        if (innovID == newConnGeneList[j].getInnovationID())
         {
           // If either parent is disabled, preset chance that the inherited gene is disabled.
           if (!newConnGeneList[j].isEnabled() || !lessFitGenome.
@@ -285,8 +286,8 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     Genome<ActivationFunction>& minGenome = gen1size < gen2size ? gen1 : gen2;
     while (j < minSize)
     {
-      size_t innovID1 = maxGenome.connectionGeneList[i].getGlobalInnovationID();
-      size_t innovID2 = minGenome.connectionGeneList[j].getGlobalInnovationID();
+      size_t innovID1 = maxGenome.connectionGeneList[i].getInnovationID();
+      size_t innovID2 = minGenome.connectionGeneList[j].getInnovationID();
       if (innovID2 < innovID1)
       {
         if (arma::randu<double>() < 0.5)

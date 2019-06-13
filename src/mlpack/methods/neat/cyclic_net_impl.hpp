@@ -21,13 +21,11 @@ namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
 template <class ActivationFunction>
-CyclicNet<ActivationFunction>::CyclicNet(ActivationFunction& actFn,
-                                         const size_t nodeCount,
+CyclicNet<ActivationFunction>::CyclicNet(const size_t nodeCount,
                                          const size_t inputNodeCount,
                                          const size_t outputNodeCount,
                                          const size_t timeStepsPerActivation,
                                          const double bias):
-    actFn(actFn),
     nodeCount(nodeCount),
     inputNodeCount(inputNodeCount),
     outputNodeCount(outputNodeCount),
@@ -65,7 +63,7 @@ arma::vec CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
 
     for (size_t i = inputNodeCount; i < nodeCount; i++)
     {
-      outputNodeValues[i] = actFn.Fn(inputNodeValues[i]);
+      outputNodeValues[i] = ActivationFunction::Fn(inputNodeValues[i]);
     }
   }
 

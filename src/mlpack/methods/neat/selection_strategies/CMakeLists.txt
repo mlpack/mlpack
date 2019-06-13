@@ -1,19 +1,10 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  gene.hpp
-  gene_impl.hpp
-  genome.hpp
-  genome_impl.hpp
-  acyclic_net.hpp
-  acyclic_net_impl.hpp
-  cyclic_net.hpp
-  cyclic_net_impl.hpp
-  neat.hpp
-  neat_impl.hpp
+  rank_selection.hpp
+  roulette_selection.hpp
+  tournament_selection.hpp
 )
-
-add_subdirectory(selection_strategies)
 
 # Add directory name to sources.
 set(DIR_SRCS)

@@ -25,7 +25,6 @@ class NEAT
 {
  public:
   NEAT(TaskType& task,
-       ActivationFunction& actFn,
        const size_t inputNodeCount,
        const size_t outputNodeCount,
        const size_t popSize,
@@ -63,9 +62,6 @@ class NEAT
 
   //! The provided TaskType class that evaluates fitness of the genome.
   TaskType task;
-
-  //! The activation function.
-  ActivationFunction actFn;
 
   //! The number of input nodes.
   size_t inputNodeCount;
