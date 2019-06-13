@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
   arr[1] = "i am good";
   arr[2] = "Good how are you";
   arma::sp_mat output;
-  data::DicitonaryEncoding en;
+  data::DictionaryEncoding en;
   en.Encode(arr, output, tokenizer);
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>> maps = en.Mappings();
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(CharSplitTest)
   arr[1] = "i am good";
   arr[2] = "Good how are you";
   arma::sp_mat output;
-  data::DicitonaryEncoding en;
+  data::DictionaryEncoding en;
   en.Encode(arr, output, CharSplit(" "));
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>> maps = en.Mappings();
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingCharTest)
   arr[1] = "ABCABCD";
   arr[2] = "GAB";
   arma::sp_mat output;
-  data::DicitonaryEncoding en;
+  data::DictionaryEncoding en;
   // Passing a empty string to encode characters
   en.Encode(arr, output, [](boost::string_view& str) {
       if (str.empty())
@@ -127,12 +127,12 @@ BOOST_AUTO_TEST_CASE(CopyConstructorCharTest)
   arr[1] = "i am good";
   arr[2] = "Good how are you";
   arma::sp_mat output;
-  data::DicitonaryEncoding en;
+  data::DictionaryEncoding en;
   en.Encode(arr, output, CharSplit(" "));
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>> maps = en.Mappings();
   const std::deque<std::string>& original = en.OriginalStrings();
-  data::DicitonaryEncoding en2 = en;
+  data::DictionaryEncoding en2 = en;
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>> maps2 = en2.Mappings();
   const std::deque<std::string>& original2 = en2.OriginalStrings();
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingNoPaddingTest)
   arr[0] = "GACCA";
   arr[1] = "ABCABCD";
   arr[2] = "GAB";
-  data::DicitonaryEncoding en;
+  data::DictionaryEncoding en;
   std::vector<std::vector<size_t> > output;
   en.Encode(arr, output, [](boost::string_view& str) {
       if (str.empty())

@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_DICT_ENCODING_IMPL_HPP
-#define MLPACK_CORE_DATA_DICT_ENCODING_IMPL_HPP
+#ifndef MLPACK_CORE_DATA_DICTIONARY_ENCODING_IMPL_HPP
+#define MLPACK_CORE_DATA_DICTIONARY_ENCODING_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "dictionary_encoding.hpp"
@@ -18,13 +18,13 @@
 namespace mlpack {
 namespace data {
 
-void DicitonaryEncoding::Reset()
+void DictionaryEncoding::Reset()
 {
   mappings.clear();
   originalStrings.clear();
 }
 
-DicitonaryEncoding::DicitonaryEncoding(const DicitonaryEncoding& oldObject)
+DictionaryEncoding::DictionaryEncoding(const DictionaryEncoding& oldObject)
 {
   originalStrings = oldObject.originalStrings;
   std::deque<std::string>::iterator jt = originalStrings.begin();
@@ -36,8 +36,8 @@ DicitonaryEncoding::DicitonaryEncoding(const DicitonaryEncoding& oldObject)
   }
 }
 
-void DicitonaryEncoding::operator= (const
-    DicitonaryEncoding &oldObject)
+void DictionaryEncoding::operator= (const
+    DictionaryEncoding &oldObject)
 {
   if (this != &oldObject)
   {
@@ -55,7 +55,7 @@ void DicitonaryEncoding::operator= (const
 }
 
 template<typename TokenizerType>
-void DicitonaryEncoding::CreateMap(std::string& input,
+void DictionaryEncoding::CreateMap(std::string& input,
     TokenizerType tokenizer)
 {
   boost::string_view strView(input);
@@ -74,7 +74,7 @@ void DicitonaryEncoding::CreateMap(std::string& input,
 }
 
 template<typename MatType, typename TokenizerType>
-void DicitonaryEncoding::Encode(const std::vector<std::string>& input,
+void DictionaryEncoding::Encode(const std::vector<std::string>& input,
                                 MatType& output, TokenizerType tokenizer)
 {
   boost::string_view strView;
@@ -110,7 +110,7 @@ void DicitonaryEncoding::Encode(const std::vector<std::string>& input,
 }
 
 template<typename TokenizerType>
-void DicitonaryEncoding::Encode(const std::vector<std::string>& input,
+void DictionaryEncoding::Encode(const std::vector<std::string>& input,
                                 std::vector<std::vector<size_t> >& output,
                                 TokenizerType tokenizer)
 {
@@ -136,7 +136,7 @@ void DicitonaryEncoding::Encode(const std::vector<std::string>& input,
 }
 
 template<typename Archive>
-void DicitonaryEncoding::serialize(Archive& ar, const unsigned int
+void DictionaryEncoding::serialize(Archive& ar, const unsigned int
     /* version */)
 {
   size_t count = originalStrings.size();

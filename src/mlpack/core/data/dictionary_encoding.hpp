@@ -22,7 +22,7 @@ namespace data {
 /**
  * A simple Dictionary Enocding class
  */
-class DicitonaryEncoding
+class DictionaryEncoding
 {
  public:
   /**
@@ -43,23 +43,23 @@ class DicitonaryEncoding
   /*
   * Default Constructor
   */
-  DicitonaryEncoding() {}
+  DictionaryEncoding() {}
   /*
   * Copy Constructor.
   */
-  DicitonaryEncoding(const DicitonaryEncoding& oldObject);
+  DictionaryEncoding(const DictionaryEncoding& oldObject);
   /*
   * Move Constructor.
   */
-  DicitonaryEncoding(DicitonaryEncoding&& oldObject) = default;
+  DictionaryEncoding(DictionaryEncoding&& oldObject) = default;
   /*
   * Move Assignment Operator.
   */  
-  DicitonaryEncoding& operator= (DicitonaryEncoding&& oldObject) = default;
+  DictionaryEncoding& operator= (DictionaryEncoding&& oldObject) = default;
   /*
   * Assignment Operator.
   */
-  void operator= (const DicitonaryEncoding& oldObject);
+  void operator= (const DictionaryEncoding& oldObject);
   /**
   * A function to reset the mapping that is clear all the encodings
   */
@@ -143,7 +143,7 @@ class DicitonaryEncoding
       boost::hash<boost::string_view>> mappings;
   //! A deque which holds the original string for map's string_view.
   std::deque<std::string> originalStrings;
-}; // class DicitonaryEncoding
+}; // class DictionaryEncoding
 
 } // namespace data
 } // namespace mlpack
