@@ -123,7 +123,7 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
   }
 }
 
-// Creates genome object during acyclic reproduction. 
+// Creates genome object during acyclic reproduction.
 template <class ActivationFunction>
 Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
                                    const size_t outputNodeCount,
@@ -261,8 +261,8 @@ void Genome<ActivationFunction>::Mutate()
 
       // Check if these mutations have been made. Else, add them to the buffer.
       std::pair<size_t, size_t> key1 = std::make_pair(sourceID, newNodeID);
-      std::pair<size_t, size_t> key2 = std::make_pair(newNodeID, targetID);    
-      
+      std::pair<size_t, size_t> key2 = std::make_pair(newNodeID, targetID);
+
       if (mutationBuffer.find(key1) == mutationBuffer.end())
       {
         innovID1 = nextInnovID++;
@@ -270,14 +270,14 @@ void Genome<ActivationFunction>::Mutate()
       }
       else
         innovID1 = mutationBuffer[key1];
-      
+
       if (mutationBuffer.find(key2) == mutationBuffer.end())
       {
         innovID2 = nextInnovID++;
         mutationBuffer[key2] = innovID2;
       }
       else
-        innovID2 = mutationBuffer[key2];  
+        innovID2 = mutationBuffer[key2];
 
       // Add the first connection to the containers.
       directedGraph[sourceID].emplace(newNodeID, ConnectionGene(innovID1, 1,

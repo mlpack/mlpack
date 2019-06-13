@@ -142,10 +142,10 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
   else if (delta < 0)
   {
     size_t i = 0;
-    while (delta < 0);
+    while (delta < 0)
     {
       speciesSize[i++]--;
-      delta--;      
+      delta--;
     }
   }
 
@@ -169,7 +169,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
       genomeList.push_back(speciesList[i][j]);
     for (size_t j = 0; j < fitnesses.n_elem; j++)
       fitnesses[j] = speciesList[i][j].getFitness();
-    while(genomeList.size() - currentSize < speciesSize[i])
+    while (genomeList.size() - currentSize < speciesSize[i])
     {
       std::pair<size_t, size_t> selection = SelectionPolicy::Select(fitnesses);
       genomeList.push_back(Crossover(speciesList[selection.first],
@@ -207,7 +207,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Speciate(bool init)
   // Clear the old species list to make space for a new one.
   for (size_t i = 0; i < numSpecies; i++)
     speciesList[i].clear();
-  
+
   // Assign the genomes to their species.
   for (size_t i = 0; i < assignments.n_elem; i++)
     speciesList[assignments[i]].push_back(genomeList[i]);
@@ -245,7 +245,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
         newConnGeneList = gen2.connectionGeneList;
         nextNodeID = gen2.getNodeCount();
         nodeDepths = gen2.nodeDepths;
-        lessFitGenome = gen1; 
+        lessFitGenome = gen1;
       }
     }
     else if (gen1.getFitness() > gen2.getFitness())
@@ -258,8 +258,8 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     else
     {
       newConnGeneList = gen2.connectionGeneList;
-      nextNodeID = gen2.getNodeCount();   
-      nodeDepths = gen2.nodeDepths;   
+      nextNodeID = gen2.getNodeCount();
+      nodeDepths = gen2.nodeDepths;
       lessFitGenome = gen1;
     }
 
@@ -296,14 +296,14 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     {
       return Genome<ActivationFunction>(inputNodeCount, outputNodeCount,
         newConnGeneList, nodeDepths, nextNodeID, bias, weightMutationProb,
-        weightMutationSize, biasMutationProb, biasMutationSize, 
+        weightMutationSize, biasMutationProb, biasMutationSize,
         nodeAdditionProb, connAdditionProb, isAcyclic);
     }
     else
     {
       return Genome<ActivationFunction>(inputNodeCount, outputNodeCount,
         newConnGeneList, nextNodeID, bias, weightMutationProb,
-        weightMutationSize, biasMutationProb, biasMutationSize, 
+        weightMutationSize, biasMutationProb, biasMutationSize,
         nodeAdditionProb, connAdditionProb, isAcyclic);
     }
   }
@@ -350,7 +350,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
 
     return Genome<ActivationFunction>(inputNodeCount, outputNodeCount,
           newConnGeneList, nextNodeID, bias, weightMutationProb,
-          weightMutationSize, biasMutationProb, biasMutationSize, 
+          weightMutationSize, biasMutationProb, biasMutationSize,
           nodeAdditionProb, connAdditionProb, isAcyclic);
   }
 }

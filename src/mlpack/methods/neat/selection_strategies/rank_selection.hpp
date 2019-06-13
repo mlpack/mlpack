@@ -47,7 +47,7 @@ class RankSelection
 
     // Choose second genome.
     pos = 0;
-    while(parent2 == fitnesses.n_elem && parent1 != parent2)
+    while (parent2 == fitnesses.n_elem && parent1 != parent2)
     {
       if (pos >= size)
         pos = 0;

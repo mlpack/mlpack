@@ -53,7 +53,7 @@ class NEAT
 
  private:
   // Crosses over two genomes.
-  Genome<ActivationFunction> Crossover(Genome<ActivationFunction>& gen1, 
+  Genome<ActivationFunction> Crossover(Genome<ActivationFunction>& gen1,
                                        Genome<ActivationFunction>& gen2);
 
   // Creates the next generation through reproduction.
@@ -126,7 +126,6 @@ class NEAT
   //! Denotes whether or not the genome is meant to be cyclic.
   bool isAcyclic;
 };
-
 
 } // namespace neat
 } // namespace mlpack

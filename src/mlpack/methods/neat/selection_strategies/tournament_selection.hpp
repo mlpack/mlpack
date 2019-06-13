@@ -40,7 +40,7 @@ class TournamentSelection
     for (size_t k = 0; k < contenderNum; k++)
     {
       double contenderProb = prob * std::pow(1 - prob, k);
-      if(arma::randu<double>() < contenderProb)
+      if (arma::randu<double>() < contenderProb)
       {
         if (parent1 == fitnesses.n_elem)
           parent1 = contenders[k];

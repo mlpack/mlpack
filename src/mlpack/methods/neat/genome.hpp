@@ -166,7 +166,6 @@ class Genome
   double& setBias() { return bias; }
 
  private:
-
   /**
    * A digraph containing connection genes sorted by source ID, and then
    * secondary sorted by target ID.
