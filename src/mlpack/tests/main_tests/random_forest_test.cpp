@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
 
   bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 5; ++trial)
   {
     // Input training data.
     SetInputParam("training", inputData);
@@ -354,8 +354,8 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
     // Train for num_trees 10.
 
     // Input training data.
-    SetInputParam("training", std::move(inputData));
-    SetInputParam("labels", std::move(labels));
+    SetInputParam("training", inputData);
+    SetInputParam("labels", labels);
     SetInputParam("num_trees", (int) 10);
     SetInputParam("minimum_leaf_size", (int) 1);
 
