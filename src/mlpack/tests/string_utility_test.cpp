@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
   data::DictionaryEncoding en;
   en.Encode(arr, output, tokenizer);
   const std::unordered_map<boost::string_view, size_t,
-      boost::hash<boost::string_view>> maps = en.Mappings();
+      boost::hash<boost::string_view>>& maps = en.Mappings();
   // Checking that everything is mapped to different numbers
   std::unordered_map<size_t, size_t>cnt;
   for (auto it = maps.begin(); it != maps.end(); it++)
@@ -67,23 +67,20 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
 */
 BOOST_AUTO_TEST_CASE(CharSplitTest)
 {
-  std::vector<string>arr(3);
-  arr[0] = "hello how are you";
-  arr[1] = "i am good";
-  arr[2] = "Good how are you";
-  arma::sp_mat output;
-  data::DictionaryEncoding en;
-  en.Encode(arr, output, CharSplit(" "));
-  const std::unordered_map<boost::string_view, size_t,
-      boost::hash<boost::string_view>> maps = en.Mappings();
-  // Checking that everything is mapped to different numbers.
-  std::unordered_map<size_t, size_t>cnt;
-  for (auto it = maps.begin(); it != maps.end(); it++)
+  std::vector<boost::string_view> tokens;
+  boost::string_view strview = "hello how are you" ;
+  CharSplit obj(" ");
+  boost::string_view token;
+  token = obj(strview);
+  while (!token.empty())
   {
-    cnt[it->second]++;
-    // Every token should be mappend only once.
-    BOOST_REQUIRE_EQUAL(cnt[it->second], 1);
+    tokens.push_back(token);
+    token = obj(strview);
   }
+  BOOST_REQUIRE_EQUAL(tokens[0], "hello");
+  BOOST_REQUIRE_EQUAL(tokens[1], "how");
+  BOOST_REQUIRE_EQUAL(tokens[2], "are");
+  BOOST_REQUIRE_EQUAL(tokens[3], "you");
 }
 
 /**
@@ -106,7 +103,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingCharTest)
       return retval;
   });
   const std::unordered_map<boost::string_view, size_t,
-      boost::hash<boost::string_view>> maps = en.Mappings();
+      boost::hash<boost::string_view>>& maps = en.Mappings();
   // Checking that everything is mapped to different numbers.
   std::unordered_map<size_t, size_t>cnt;
   for (auto it = maps.begin(); it != maps.end(); it++)
@@ -130,19 +127,12 @@ BOOST_AUTO_TEST_CASE(CopyConstructorCharTest)
   data::DictionaryEncoding en;
   en.Encode(arr, output, CharSplit(" "));
   const std::unordered_map<boost::string_view, size_t,
-      boost::hash<boost::string_view>> maps = en.Mappings();
-  const std::deque<std::string>& original = en.OriginalStrings();
+      boost::hash<boost::string_view>>& maps = en.Mappings();
   data::DictionaryEncoding en2 = en;
   const std::unordered_map<boost::string_view, size_t,
-      boost::hash<boost::string_view>> maps2 = en2.Mappings();
-  const std::deque<std::string>& original2 = en2.OriginalStrings();
+      boost::hash<boost::string_view>>& maps2 = en2.Mappings();
   // Comparing both of them.
-  std::deque<std::string>::const_iterator jt = original2.begin();
-  for (auto it = original.begin(); it != original.end(); it++)
-  {
-    BOOST_REQUIRE_EQUAL(maps2.at(*jt), maps.at(*it));
-    jt++;
-  }
+  BOOST_REQUIRE_EQUAL(maps2 == maps, true);
 }
 
 /**
@@ -150,10 +140,9 @@ BOOST_AUTO_TEST_CASE(CopyConstructorCharTest)
 */
 BOOST_AUTO_TEST_CASE(DictionaryEncodingNoPaddingTest)
 {
-  std::vector<string>arr(3);
+  std::vector<string>arr(2);
   arr[0] = "GACCA";
-  arr[1] = "ABCABCD";
-  arr[2] = "GAB";
+  arr[1] = "GAB";
   data::DictionaryEncoding en;
   std::vector<std::vector<size_t> > output;
   en.Encode(arr, output, [](boost::string_view& str) {
@@ -163,15 +152,23 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingNoPaddingTest)
       str.remove_prefix(1);
       return retval;
   });
-  const std::unordered_map<boost::string_view, size_t,
-      boost::hash<boost::string_view>> maps = en.Mappings();
-  // Checking that everything is mapped to different numbers.
-  std::unordered_map<size_t, size_t>cnt;
-  for (auto it = maps.begin(); it != maps.end(); it++)
+  std::vector<std::vector<size_t>> req_output;
+  std::vector<size_t> temp(5);
+  temp[0] = 1;
+  temp[2] = temp[3] = 3;
+  temp[1] = temp[4] = 2;
+  req_output.push_back(temp);
+  temp.clear();
+  temp.push_back(1);
+  temp.push_back(2);
+  temp.push_back(4);
+  req_output.push_back(temp);
+  for (size_t i = 0; i < 2; i++)
   {
-    cnt[it->second]++;
-    // Every token should be mappend only once.
-    BOOST_REQUIRE_EQUAL(cnt[it->second], 1);
+    for (size_t j = 0; j < req_output[i].size(); j++)
+    {
+      BOOST_REQUIRE_EQUAL(req_output[i][j], output[i][j]);
+    }
   }
 }
 
