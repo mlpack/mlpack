@@ -255,6 +255,15 @@ class KDE
   //! Size of the initial sample for Monte Carlo approximations.
   size_t initialSampleSize;
 
+  //! Coefficient to control how much larger does the amount of node descendants
+  //! has to be compared to the initial sample size in order to be a candidate
+  //! for Monte Carlo estimations.
+  double MCAccessCoef;
+
+  //! Coefficient to control what fraction of the amount of node's descendants
+  //! is the limit before Monte Carlo estimation recurses.
+  double MCBreakCoef;
+
   //! Check whether absolute and relative error values are compatible.
   static void CheckErrorValues(const double relError, const double absError);
 

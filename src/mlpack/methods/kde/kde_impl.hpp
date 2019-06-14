@@ -68,7 +68,9 @@ KDE(const double relError,
     mode(mode),
     monteCarlo(true),
     MCProb(0.95), // TODO Just for testing purposes.
-    initialSampleSize(100)
+    initialSampleSize(100),
+    MCAccessCoef(2),
+    MCBreakCoef(0.7)
 {
   CheckErrorValues(relError, absError);
 }
@@ -97,7 +99,9 @@ KDE(const KDE& other) :
     mode(other.mode),
     monteCarlo(other.monteCarlo),
     MCProb(other.MCProb),
-    initialSampleSize(other.initialSampleSize)
+    initialSampleSize(other.initialSampleSize),
+    MCAccessCoef(other.MCAccessCoef),
+    MCBreakCoef(other.MCBreakCoef)
 {
   if (trained)
   {
@@ -141,7 +145,9 @@ KDE(KDE&& other) :
     mode(other.mode),
     monteCarlo(other.monteCarlo),
     MCProb(other.MCProb),
-    initialSampleSize(other.initialSampleSize)
+    initialSampleSize(other.initialSampleSize),
+    MCAccessCoef(other.MCAccessCoef),
+    MCBreakCoef(other.MCBreakCoef)
 {
   other.kernel = std::move(KernelType());
   other.metric = std::move(MetricType());
@@ -193,6 +199,8 @@ operator=(KDE other)
   this->monteCarlo = other.monteCarlo;
   this->MCProb = other.MCProb;
   this->initialSampleSize = other.initialSampleSize;
+  this->MCAccessCoef = other.MCAccessCoef;
+  this->MCBreakCoef = other.MCBreakCoef;
 
   return *this;
 }
@@ -358,6 +366,8 @@ Evaluate(MatType querySet, arma::vec& estimations)
                               absError,
                               MCProb,
                               initialSampleSize,
+                              MCAccessCoef,
+                              MCBreakCoef,
                               metric,
                               kernel,
                               monteCarlo,
@@ -444,6 +454,8 @@ Evaluate(Tree* queryTree,
                             absError,
                             MCProb,
                             initialSampleSize,
+                            MCAccessCoef,
+                            MCBreakCoef,
                             metric,
                             kernel,
                             monteCarlo,
@@ -501,6 +513,8 @@ Evaluate(arma::vec& estimations)
                             absError,
                             MCProb,
                             initialSampleSize,
+                            MCAccessCoef,
+                            MCBreakCoef,
                             metric,
                             kernel,
                             monteCarlo,
@@ -593,6 +607,8 @@ serialize(Archive& ar, const unsigned int /* version */)
   ar & BOOST_SERIALIZATION_NVP(monteCarlo);
   ar & BOOST_SERIALIZATION_NVP(MCProb);
   ar & BOOST_SERIALIZATION_NVP(initialSampleSize);
+  ar & BOOST_SERIALIZATION_NVP(MCAccessCoef);
+  ar & BOOST_SERIALIZATION_NVP(MCBreakCoef);
 
   // If we are loading, clean up memory if necessary.
   if (Archive::is_loading::value)

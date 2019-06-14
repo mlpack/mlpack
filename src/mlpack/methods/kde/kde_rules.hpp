@@ -55,6 +55,8 @@ class KDERules
            const double absError,
            const double MCProb,
            const size_t initialSampleSize,
+           const double MCAccessCoef,
+           const double MCBreakCoef,
            MetricType& metric,
            KernelType& kernel,
            const bool monteCarlo,
@@ -131,11 +133,21 @@ class KDERules
   //! Relatve error tolerance.
   const double relError;
 
-  //! Probability of relative error compliance for Monte Carlo estimations.
-  const double MCProb;
+  //! Significance level for relative error compliance for Monte Carlo
+  //! estimations.
+  const double MCBeta;
 
   //! Initial sample size for Monte Carlo estimations.
   const size_t initialSampleSize;
+
+  //! Coefficient to control how much larger does the amount of node descendants
+  //! has to be compared to the initial sample size in order to be a candidate
+  //! for Monte Carlo estimations.
+  const double MCAccessCoef;
+
+  //! Coefficient to control what fraction of the amount of node's descendants
+  //! is the limit before Monte Carlo estimation recurses.
+  const double MCBreakCoef;
 
   //! Instantiated metric.
   MetricType& metric;

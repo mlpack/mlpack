@@ -31,6 +31,8 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     const double absError,
     const double MCProb,
     const size_t initialSampleSize,
+    const double MCAccessCoef,
+    const double MCBreakCoef,
     MetricType& metric,
     KernelType& kernel,
     const bool monteCarlo,
@@ -40,8 +42,10 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     densities(densities),
     absError(absError),
     relError(relError),
-    MCProb(1 - MCProb),
+    MCBeta(1 - MCProb),
     initialSampleSize(initialSampleSize),
+    MCAccessCoef(MCAccessCoef),
+    MCBreakCoef(MCBreakCoef),
     metric(metric),
     kernel(kernel),
     monteCarlo(monteCarlo),
@@ -114,9 +118,6 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     bound = maxKernel - minKernel;
   }
 
-  // TODO Just for testing purposes.
-  const size_t t = 2;
-
   if (newCalculations &&
       bound <= (absError + relError * minKernel) / referenceSet.n_cols)
   {
@@ -135,13 +136,13 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     score = DBL_MAX;
   }
   else if (monteCarlo &&
-           referenceNode.NumDescendants() >= t * initialSampleSize &&
+           referenceNode.NumDescendants() >= MCAccessCoef * initialSampleSize &&
            std::is_same<KernelType, kernel::GaussianKernel>::value)
   {
     // Monte Carlo probabilistic estimation.
     const double currentAlpha =
-        MCProb / std::pow(2, referenceNode.Stat().Depth() + 1);
-    const boost::math::normal normalDist(0.0, GetKernelBandwidth());
+        MCBeta / std::pow(2, referenceNode.Stat().Depth() + 1);
+    const boost::math::normal normalDist;
     const double z =
         std::abs(boost::math::quantile(normalDist, currentAlpha / 2));
     const size_t numDesc = referenceNode.NumDescendants();
@@ -156,12 +157,13 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 
       // Don't use probabilistic estimation if this is gonna take a close
       // amount of computation to the exact calculation.
-      if (newSize >= 0.7 * numDesc)
+      if (newSize >= MCBreakCoef * numDesc)
       {
         useMonteCarloPredictions = false;
         break;
       }
 
+      // Increase the sample size.
       sample.resize(newSize);
       for (size_t i = 0; i < m; ++i)
       {
@@ -193,6 +195,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     }
     else
     {
+      // Recurse.
       score = minDistance;
     }
   }
