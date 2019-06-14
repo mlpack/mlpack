@@ -214,6 +214,37 @@ class KDE
   //! Modify the mode of KDE.
   KDEMode& Mode() { return mode; }
 
+  //! Get whether Monte Carlo estimations are being used or not.
+  bool MonteCarlo() const { return monteCarlo; }
+
+  //! Modify whether Monte Carlo estimations are being used or not.
+  bool& MonteCarlo() { return monteCarlo; }
+
+  //! Get Monte Carlo probability of error being bounded by relative error.
+  double MCProbability() const { return MCProb; }
+
+  //! Modify Monte Carlo probability of error being bounded by relative error.
+  //! (0 <= newProb < 1).
+  void MCProbability(const double newProb);
+
+  //! Get Monte Carlo initial sample size.
+  size_t MCInitialSampleSize() const { return initialSampleSize; }
+
+  //! Modify Monte Carlo initial sample size.
+  size_t& MCInitialSampleSize() { return initialSampleSize; }
+
+  //! Get Monte Carlo entry coefficient.
+  double MCEntryCoefficient() const { return MCEntryCoef; }
+
+  //! Modify Monte Carlo entry coefficient. (newCoef >= 1).
+  void MCEntryCoefficient(const double newCoef);
+
+  //! Get Monte Carlo break coefficient.
+  double MCBreakCoefficient() const { return MCBreakCoef; }
+
+  //! Modify Monte Carlo break coefficient. (0 < newCoef <= 1).
+  void MCBreakCoefficient(const double newCoef);
+
   //! Serialize the model.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -257,8 +288,9 @@ class KDE
 
   //! Coefficient to control how much larger does the amount of node descendants
   //! has to be compared to the initial sample size in order to be a candidate
-  //! for Monte Carlo estimations.
-  double MCAccessCoef;
+  //! for Monte Carlo estimations. If the evaluation results in a non-natural
+  //! number, then the floor function will be applied.
+  double MCEntryCoef;
 
   //! Coefficient to control what fraction of the amount of node's descendants
   //! is the limit before Monte Carlo estimation recurses.
