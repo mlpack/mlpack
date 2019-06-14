@@ -90,10 +90,17 @@ template<typename MetricType, typename KernelType, typename TreeType>
 inline double KDERules<MetricType, KernelType, TreeType>::
 Score(const size_t queryIndex, TreeType& referenceNode)
 {
-  // Set reference node depth.
+  // Calculate reference node depth.
   kde::KDEStat& referenceStat = referenceNode.Stat();
-  if (referenceStat.Depth() == 0 && referenceNode.Parent() != NULL)
-    referenceStat.Depth() = referenceNode.Parent()->Stat().Depth() + 1;
+  if (referenceStat.Depth() == 0)
+  {
+    TreeType* node = &referenceNode;
+    while (node != NULL)
+    {
+      ++referenceStat.Depth();
+      node = node->Parent();
+    }
+  }
 
   double score, maxKernel, minKernel, bound;
   const arma::vec& queryPoint = querySet.unsafe_col(queryIndex);
