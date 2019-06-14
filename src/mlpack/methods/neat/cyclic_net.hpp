@@ -48,8 +48,9 @@ class CyclicNet
   /**
    * Finds the output of the network from the given input.
    */
-  arma::vec Evaluate(arma::vec& input,
-                     std::map<size_t, std::map<size_t, ConnectionGene>>& directedGraph);
+  void Evaluate(arma::vec& input,
+                arma::vec& output,
+                std::map<size_t, std::map<size_t, ConnectionGene>>& directedGraph);
 
  private:
   //! Node count.

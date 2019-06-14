@@ -31,28 +31,29 @@ class TournamentSelection
    * @param contenderNum The number of contenders.
    * @param prob The probability of the fittest candidate being chosen.
    */
-  static std::pair<size_t, size_t> Select(arma::vec& fitnesses,
-                                          const size_t contenderNum,
-                                          const double prob)
+  static void Select(arma::vec& fitnesses,
+                     arma::vec& selection,
+                     const size_t contenderNum,
+                     const double prob)
   {
-    size_t parent1 = fitnesses.n_elem, parent2 = fitnesses.n_elem;
+    selection[0] = fitnesses.n_elem;
+    selection[1] = fitnesses.n_elem;
     arma::uvec contenders = arma::randi<arma::uvec>(contenderNum);
     for (size_t k = 0; k < contenderNum; k++)
     {
       double contenderProb = prob * std::pow(1 - prob, k);
       if (arma::randu<double>() < contenderProb)
       {
-        if (parent1 == fitnesses.n_elem)
-          parent1 = contenders[k];
-        else if (parent2 == fitnesses.n_elem && parent2 != parent1)
-          parent2 = contenders[k];
-        else if (parent1 != fitnesses.n_elem && parent2 != fitnesses.n_elem)
+        if (selection[0] == fitnesses.n_elem)
+          selection[0] = contenders[k];
+        else if (selection[1] == fitnesses.n_elem && selection[1] != selection[0])
+          selection[1] = contenders[k];
+        else if (selection[0] != fitnesses.n_elem && selection[1] != fitnesses.n_elem)
           break;
       }
       if (k == contenderNum - 1)
         k = 0;
     }
-    return std::make_pair(parent1, parent2);
   }
 };
 

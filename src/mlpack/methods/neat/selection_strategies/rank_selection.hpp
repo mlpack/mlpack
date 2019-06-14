@@ -30,33 +30,33 @@ class RankSelection
    * @param fitnesses A sorted Armadillo vector of fitnesses in ascending
    *    order.
    */
-  static std::pair<size_t, size_t> Select(arma::vec& fitnesses)
+  static void Select(arma::vec& fitnesses, arma::vec& selection)
   {
-    size_t parent1 = fitnesses.n_elem, parent2 = fitnesses.n_elem;
+    selection[0] = fitnesses.n_elem;
+    selection[1] = fitnesses.n_elem;
     size_t pos = 0, size = fitnesses.n_elem;
     // Choose first genome.
-    while (parent1 == fitnesses.n_elem)
+    while (selection[0] == fitnesses.n_elem)
     {
       if (pos >= size)
         pos = 0;
       double prob = (size - pos) * 2 / (size * (size + 1));
       if (arma::randu<double>() < prob)
-        parent1 = pos;
+        selection[0] = pos;
       pos++;
     }
 
     // Choose second genome.
     pos = 0;
-    while (parent2 == fitnesses.n_elem && parent1 != parent2)
+    while (selection[1] == fitnesses.n_elem && selection[0] != selection[1])
     {
       if (pos >= size)
         pos = 0;
       double prob = (size - pos) * 2 / (size * (size + 1));
       if (arma::randu<double>() < prob)
-        parent2 = pos;
+        selection[1] = pos;
       pos++;
     }
-    return std::make_pair(parent1, parent2);
   }
 };
 

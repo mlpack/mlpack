@@ -54,12 +54,13 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
     for (size_t j = inputNodeCount + 1; j <= outputNodeCount + inputNodeCount;
         j++)
     {
-      connectionGeneList.emplace_back(ConnectionGene(counter++, 1, i, j));
+      connectionGeneList.emplace_back(ConnectionGene(counter, 1, i, j));
       if (directedGraph.find(i) == directedGraph.end())
       {
-        directedGraph.emplace(std::piecewise_construct, std::forward_as_tuple
-            (i), std::initializer_list<std::pair<int, ConnectionGene>>{{j,
-            ConnectionGene(counter++, 1, i, j)}});
+        directedGraph.emplace(std::piecewise_construct,
+                              std::make_tuple(i),
+                              std::make_tuple());
+        directedGraph[i].emplace(j, ConnectionGene(counter++, 1, i, j));
       }
       else
         directedGraph[i].emplace(j, ConnectionGene(counter++, 1, i, j));
@@ -81,9 +82,9 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
 
 // Creates genome object during cyclic reproduction.
 template <class ActivationFunction>
-Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
+Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>& connectionGeneList,
+                                   const size_t inputNodeCount,
                                    const size_t outputNodeCount,
-                                   std::vector<ConnectionGene>& connectionGeneList,
                                    const size_t nextNodeID,
                                    const double bias,
                                    const double weightMutationProb,
@@ -93,9 +94,9 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
                                    const double nodeAdditionProb,
                                    const double connAdditionProb,
                                    const bool isAcyclic):
+    connectionGeneList(connectionGeneList),
     inputNodeCount(inputNodeCount),
     outputNodeCount(outputNodeCount),
-    connectionGeneList(connectionGeneList),
     nextNodeID(nextNodeID),
     bias(bias),
     weightMutationProb(weightMutationProb),
@@ -117,18 +118,18 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
 
   for (size_t i = 0; i < connectionGeneList.size(); i++)
   {
-    size_t sourceID = connectionGeneList[i].getSource();
-    size_t targetID = connectionGeneList[i].getTarget();
+    size_t sourceID = connectionGeneList[i].Source();
+    size_t targetID = connectionGeneList[i].Target();
     directedGraph[sourceID][targetID] = connectionGeneList[i];
   }
 }
 
 // Creates genome object during acyclic reproduction.
 template <class ActivationFunction>
-Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
-                                   const size_t outputNodeCount,
-                                   std::vector<ConnectionGene>& connectionGeneList,
+Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>& connectionGeneList,
                                    std::vector<size_t>& nodeDepths,
+                                   const size_t inputNodeCount,
+                                   const size_t outputNodeCount,
                                    const size_t nextNodeID,
                                    const double bias,
                                    const double weightMutationProb,
@@ -138,10 +139,10 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
                                    const double nodeAdditionProb,
                                    const double connAdditionProb,
                                    const bool isAcyclic):
-    inputNodeCount(inputNodeCount),
-    outputNodeCount(outputNodeCount),
     connectionGeneList(connectionGeneList),
     nodeDepths(nodeDepths),
+    inputNodeCount(inputNodeCount),
+    outputNodeCount(outputNodeCount),
     nextNodeID(nextNodeID),
     bias(bias),
     weightMutationProb(weightMutationProb),
@@ -161,8 +162,8 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
 
   for (size_t i = 0; i < connectionGeneList.size(); i++)
   {
-    size_t sourceID = connectionGeneList[i].getSource();
-    size_t targetID = connectionGeneList[i].getTarget();
+    size_t sourceID = connectionGeneList[i].Source();
+    size_t targetID = connectionGeneList[i].Target();
     directedGraph[sourceID][targetID] = connectionGeneList[i];
   }
 }
@@ -181,15 +182,17 @@ arma::vec Genome<ActivationFunction>::Evaluate(arma::vec& input)
   {
     AcyclicNet<ActivationFunction> net(nextNodeID, inputNodeCount,
         outputNodeCount, bias);
-    fitness = net.Evaluate(input, directedGraph, nodeDepths);
-    return fitness;
+    arma::vec output(outputNodeCount, arma::fill::zeros);
+    net.Evaluate(input, output, directedGraph, nodeDepths);
+    return output;
   }
   else
   {
     CyclicNet<ActivationFunction> net(nextNodeID, inputNodeCount,
         outputNodeCount, 100 /* Placeholder */, bias);
-    fitness = net.Evaluate(input, directedGraph);
-    return fitness;
+    arma::vec output(outputNodeCount, arma::fill::zeros);
+    net.Evaluate(input, output, directedGraph);
+    return output;
   }
 }
 
@@ -208,7 +211,7 @@ void Genome<ActivationFunction>::Mutate()
       while (newTarget == i)
       {
         newTarget = arma::randi<arma::uvec>(1, arma::distr_param(2 +
-            inputNodeCount, nextNodeID - 1))[0];
+            static_cast<int>(inputNodeCount), static_cast<int>(nextNodeID) - 1))[0];
       }
 
       if (isAcyclic)
@@ -238,7 +241,7 @@ void Genome<ActivationFunction>::Mutate()
   for (size_t i = 0; i < connectionGeneList.size(); i++)
   {
     // Don't mutate the gene if it is not enabled.
-    if (!connectionGeneList[i].isEnabled())
+    if (!connectionGeneList[i].Enabled())
       continue;
 
     // Mutate weight.
@@ -247,15 +250,14 @@ void Genome<ActivationFunction>::Mutate()
       connectionGeneList[i].Mutate(weightMutationSize);
 
       // Change the weight of the gene in the directed graph as well.
-      directedGraph[connectionGeneList[i].source][connectionGeneList[i].target]
-          .setWeight() = connectionGeneList[i].getWeight();
+      directedGraph[connectionGeneList[i].Source()][connectionGeneList[i].Target()].Weight() = connectionGeneList[i].Weight();
     }
 
     // Add new node.
     if (arma::randu<double>() < nodeAdditionProb)
     {
-      size_t sourceID = connectionGeneList[i].source;
-      size_t targetID = connectionGeneList[i].target;
+      size_t sourceID = connectionGeneList[i].Source();
+      size_t targetID = connectionGeneList[i].Target();
       size_t newNodeID = nextNodeID++;
       size_t innovID1 = -1, innovID2 = -1;
 
@@ -288,13 +290,14 @@ void Genome<ActivationFunction>::Mutate()
       // Add the second connection to the containers.
       connectionGeneList.emplace_back(ConnectionGene(innovID2, 1,
           newNodeID, targetID));
-      directedGraph.emplace(std::piecewise_construct, std::forward_as_tuple(
-            newNodeID), std::initializer_list<std::pair<int, ConnectionGene>>{{
-            targetID, ConnectionGene(innovID2, 1, newNodeID, targetID)}});
+      directedGraph.emplace(std::piecewise_construct,
+                              std::make_tuple(newNodeID),
+                              std::make_tuple());
+      directedGraph[newNodeID].emplace(targetID, ConnectionGene(innovID2, 1, newNodeID, targetID));
 
       // Remove the lost connection.
       directedGraph[sourceID].erase(targetID);
-      connectionGeneList[i].enabled = false;
+      connectionGeneList[i].Enabled() = false;
 
       // If the genome is acyclic, change the depths.
       if (isAcyclic)
@@ -336,8 +339,8 @@ arma::mat Genome<ActivationFunction>::Parameters()
   {
     for (auto const& y : x.second)
     {
-      if (y.second.isEnabled())
-        param(x.first, y.first) = y.second.getWeight();
+      if (y.second.Enabled())
+        param(x.first, y.first) = y.second.Weight();
     }
   }
   return param;

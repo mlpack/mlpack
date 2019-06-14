@@ -51,29 +51,29 @@ class ConnectionGene
   void Mutate(const double mutationSize);
 
   //! Get global innovation ID.
-  size_t getInnovationID() const { return globalInnovationID; }
+  size_t InnovationID() const { return globalInnovationID; }
   //! Set global innovation ID.
-  size_t& setInnovationID() { return globalInnovationID; }
+  size_t& InnovationID() { return globalInnovationID; }
 
   //! Get connection weight.
-  double getWeight() const { return weight; }
+  double Weight() const { return weight; }
   //! Set connection weight.
-  double& setWeight() { return weight; }
+  double& Weight() { return weight; }
 
   //! Get Source gene.
-  size_t getSource() const { return source; }
+  size_t Source() const { return source; }
   //! Set Source gene.
-  size_t& setSource() { return source; }
+  size_t& Source() { return source; }
 
   //! Get target gene.
-  size_t getTarget() const { return target; }
+  size_t Target() const { return target; }
   //! Set target gene.
-  size_t& setTarget() { return target; }
+  size_t& Target() { return target; }
 
   //! Check if the connection is enabled.
-  bool isEnabled() const { return enabled; }
+  bool Enabled() const { return enabled; }
   //! Enable or disable the connection.
-  bool& setEnabled() { return enabled; }
+  bool& Enabled() { return enabled; }
 
  private:
   //! Global Innovation ID.

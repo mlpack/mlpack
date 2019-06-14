@@ -63,8 +63,8 @@ class NEAT
   // speciation without knowledge of centroids.
   void Speciate(bool init);
 
-  bool compareGenome(Genome<ActivationFunction> gen1,
-                     Genome<ActivationFunction> gen2);
+  static bool compareGenome(Genome<ActivationFunction>& gen1,
+                            Genome<ActivationFunction>& gen2);
 
   // The list of genomes in the population.
   std::vector<Genome<ActivationFunction>> genomeList;

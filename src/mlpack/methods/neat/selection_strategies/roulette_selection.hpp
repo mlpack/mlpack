@@ -24,9 +24,10 @@ class RouletteSelection
    * @param fitnesses A sorted Armadillo vector of fitnesses in descending
    *    order.
    */
-  static std::pair<size_t, size_t> Select(arma::vec& fitnesses)
+  static void Select(arma::vec& fitnesses, arma::vec& selection)
   {
-    size_t i = fitnesses.n_elem, j = fitnesses.n_elem;
+    selection[0] = fitnesses.n_elem;
+    selection[1] = fitnesses.n_elem;
     double totalFitness = arma::accu(fitnesses);
     double prob = 0;
     for (size_t k = 0; k < fitnesses.n_elem; k++)
@@ -34,11 +35,11 @@ class RouletteSelection
       prob += fitnesses[k] / totalFitness;
       if (arma::randu<double>() < prob)
       {
-        if (i == fitnesses.n_elem)
-          i = k;
-        else if (j == fitnesses.n_elem && i != fitnesses.n_elem)
-          j = k;
-        else if (i != fitnesses.n_elem && j != fitnesses.n_elem)
+        if (selection[0] == fitnesses.n_elem)
+          selection[0] = k;
+        else if (selection[1] == fitnesses.n_elem && selection[0] != selection[1])
+          selection[1] = k;
+        else if (selection[1] != fitnesses.n_elem && selection[0] != fitnesses.n_elem)
           break;
       }
       if (k == fitnesses.n_elem - 1)
@@ -47,7 +48,6 @@ class RouletteSelection
         prob = 0;
       }
     }
-    return std::make_pair(i, j);
   }
 };
 

@@ -37,9 +37,10 @@ CyclicNet<ActivationFunction>::CyclicNet(const size_t nodeCount,
 }
 
 template <class ActivationFunction>
-arma::vec CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
-                                                  std::map<size_t, std::map<size_t,
-                                                      ConnectionGene>>& directedGraph)
+void CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
+                                             arma::vec& output,
+                                             std::map<size_t, std::map<size_t,
+                                                 ConnectionGene>>& directedGraph)
 {
   std::vector<double> inputNodeValues(nodeCount, 0);
 
@@ -56,7 +57,7 @@ arma::vec CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
     {
       for (auto const &x : directedGraph[j])
       {
-        double weight = x.second.getWeight();
+        double weight = x.second.Weight();
         inputNodeValues[x.first] += outputNodeValues[j] * weight;
       }
     }
@@ -67,11 +68,8 @@ arma::vec CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
     }
   }
 
-  arma::vec output(outputNodeCount);
   for (size_t i = 0; i < output.n_elem; i++)
     output[i] = outputNodeValues[i + inputNodeCount + 1];
-
-  return output;
 }
 
 } // namespace neat

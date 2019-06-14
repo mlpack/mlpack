@@ -79,9 +79,9 @@ class Genome
    * @param nodeAdditionProb The probability of a new node being added.
    * @param isAcyclic Denotes whether or not the generated network is acyclic.
    */
-  Genome(const size_t inputNodeCount,
+  Genome(std::vector<ConnectionGene>& connectionGeneList,
+         const size_t inputNodeCount,
          const size_t outputNodeCount,
-         std::vector<ConnectionGene>& connectionGeneList,
          const size_t nextNodeID,
          const double bias,
          const double weightMutationProb,
@@ -110,10 +110,10 @@ class Genome
    * @param nodeAdditionProb The probability of a new node being added.
    * @param isAcyclic Denotes whether or not the generated network is acyclic.
    */
-  Genome(const size_t inputNodeCount,
-         const size_t outputNodeCount,
-         std::vector<ConnectionGene>& connectionGeneList,
+  Genome(std::vector<ConnectionGene>& connectionGeneList,
          std::vector<size_t>& nodeDepths,
+         const size_t inputNodeCount,
+         const size_t outputNodeCount,
          const size_t nextNodeID,
          const double bias,
          const double weightMutationProb,
@@ -148,8 +148,17 @@ class Genome
    */
   std::vector<ConnectionGene> connectionGeneList;
 
+  /**
+   * A vector of node depths, where the depth is the maximum number of "jumps"
+   * it takes to get to a node from an input node. This is only used in acyclic
+   * cases.
+   */
+  std::vector<size_t> nodeDepths;
+
   //! Get fitness.
-  double getFitness() const { return fitness; }
+  double Fitness() const { return fitness; }
+  //! Set fitness.
+  double& Fitness() { return fitness; }
 
   //! Get node count.
   size_t getNodeCount() const { return nextNodeID; }
@@ -161,9 +170,17 @@ class Genome
   size_t getOutputNodeCount() const { return outputNodeCount; }
 
   //! Get bias.
-  double getBias() const { return bias; }
+  double Bias() const { return bias; }
   //! Set bias.
-  double& setBias() { return bias; }
+  double& Bias() { return bias; }
+
+  //! The next innovation ID to be allotted.
+  static size_t nextInnovID;
+
+  /**
+   * The buffer of added connections in this generation.
+   */
+  static std::map<std::pair<size_t, size_t>, size_t> mutationBuffer;
 
  private:
   /**
@@ -173,22 +190,10 @@ class Genome
   std::map<size_t, std::map<size_t, ConnectionGene>> directedGraph;
 
   /**
-   * A vector of node depths, where the depth is the maximum number of "jumps"
-   * it takes to get to a node from an input node. This is only used in acyclic
-   * cases.
-   */
-  std::vector<size_t> nodeDepths;
-
-  /**
    * A recursive function that assigns depth to nodes. Only used in acyclic
    * cases. [Will be removed]
    */
   void TraverseNode(size_t nodeID, size_t depth);
-
-  /**
-   * The buffer of added connections in this generation.
-   */
-  static std::map<std::pair<size_t, size_t>, size_t> mutationBuffer;
 
   //! Input node count.
   size_t inputNodeCount;
@@ -196,8 +201,8 @@ class Genome
   //! Output node count.
   size_t outputNodeCount;
 
-  //! Boolean indicating if the phenome is acyclic.
-  bool isAcyclic;
+  //! The next node ID to be allotted.
+  size_t nextNodeID;
 
   //! Bias.
   double bias;
@@ -220,14 +225,11 @@ class Genome
   //! The probability that a new connection will be added.
   double connAdditionProb;
 
-  //! The next innovation ID to be allotted.
-  static size_t nextInnovID;
-
-  //! The next node ID to be allotted.
-  size_t nextNodeID;
-
   //! The fitness.
   double fitness;
+
+  //! Boolean indicating if the phenome is acyclic.
+  bool isAcyclic;
 };
 
 } // namespace neat

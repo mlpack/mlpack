@@ -34,10 +34,11 @@ AcyclicNet<ActivationFunction>::AcyclicNet(const size_t nodeCount,
 
 // Evaluate a given input.
 template <class ActivationFunction>
-arma::vec AcyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
-                                                   std::map<size_t, std::map<size_t,
-                                                      ConnectionGene>>& directedGraph,
-                                                   std::vector<size_t>& nodeDepths)
+void AcyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
+                                              arma::vec& output,
+                                              std::map<size_t, std::map<size_t,
+                                                 ConnectionGene>>& directedGraph,
+                                              std::vector<size_t>& nodeDepths)
 {
   std::vector<double> nodeValues;
 
@@ -67,23 +68,19 @@ arma::vec AcyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
       if (nodeID == 0)
       {
         for (auto const& x : directedGraph[nodeID])
-          nodeValues[x.first] += bias * x.second.getWeight();
+          nodeValues[x.first] += bias * x.second.Weight();
       }
       else
       {
         double result = ActivationFunction::Fn(nodeValues[nodeID]);
         for (auto const& x : directedGraph[nodeID])
-          nodeValues[x.first] += result * x.second.getWeight();
+          nodeValues[x.first] += result * x.second.Weight();
       }
     }
   }
 
-  // Find the output.
-  arma::vec output(outputNodeCount);
   for (size_t i = 0; i < output.n_elem; i++)
     output[i] = nodeValues[i + inputNodeCount + 1];
-
-  return output;
 }
 
 } // namespace neat
