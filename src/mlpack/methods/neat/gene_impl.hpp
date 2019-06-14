@@ -30,6 +30,14 @@ ConnectionGene::ConnectionGene(const size_t globalInnovationID,
     enabled(enabled)
 { /* Nothing to do here */ }
 
+ConnectionGene::ConnectionGene():
+    globalInnovationID(0),
+    weight(0),
+    source(0),
+    target(0),
+    enabled(false)
+{/* Nothing to do here */}
+
 ConnectionGene::~ConnectionGene()
 { /* Nothing to do here */ }
 

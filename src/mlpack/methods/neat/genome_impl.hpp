@@ -21,6 +21,12 @@
 namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
+template <class ActivationFunction>
+size_t Genome<ActivationFunction>::nextInnovID;
+
+template <class ActivationFunction>
+std::map<std::pair<size_t, size_t>, size_t> Genome<ActivationFunction>::mutationBuffer;
+
 // Creates genome object during initialization.
 template <class ActivationFunction>
 Genome<ActivationFunction>::Genome(const size_t inputNodeCount,

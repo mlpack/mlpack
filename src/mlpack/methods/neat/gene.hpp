@@ -39,6 +39,11 @@ class ConnectionGene
                  const bool enabled = true);
 
   /**
+   * Default constructor.
+   */
+  ConnectionGene();
+  
+  /**
    * Destroys the connection gene.
    */
   ~ConnectionGene();
