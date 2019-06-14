@@ -127,8 +127,12 @@ end
 
 function CLISetParam(paramName::String,
                      vector::Vector{Int})
-  ccall((:CLI_SetParamVectorInt, library), Nothing, (Cstring, Ptr{Int},
-      Int), paramName, Base.pointer(vector), size(vector, 1));
+  vecInt = Array{Int64, 1}()
+  for i = 1:size(vector, 1)
+    push!(vecInt, Int64(vector[i]))
+  end
+  ccall((:CLI_SetParamVectorInt, library), Nothing, (Cstring, Ptr{Clonglong},
+      Int), paramName, Base.pointer(vecInt), size(vector, 1));
 end
 
 function CLISetParam(paramName::String,
@@ -225,7 +229,7 @@ function CLIGetParamVectorInt(paramName::String)
   # pointer.
   size = ccall((:CLI_GetParamVectorIntLen, library), Csize_t, (Cstring,),
       paramName);
-  ptr = ccall((:CLI_GetParamVectorIntPtr, library), Ptr{Int}, (Cstring,),
+  ptr = ccall((:CLI_GetParamVectorIntPtr, library), Ptr{Clonglong}, (Cstring,),
       paramName);
 
   return Base.unsafe_wrap(Array{Int, 1}, ptr, (size), own=true)

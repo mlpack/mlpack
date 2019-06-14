@@ -83,13 +83,12 @@ void CLI_SetParamVectorStrStr(const char* paramName,
  * Call CLI::SetParam<std::vector<int>>().
  */
 void CLI_SetParamVectorInt(const char* paramName,
-                           int* ints,
+                           long long* ints,
                            const size_t length)
 {
   // Create a std::vector<int> object; unfortunately this requires copying the
   // vector elements.
-  std::vector<int> vec;
-  vec.resize(length);
+  std::vector<int> vec(length);
   for (size_t i = 0; i < length; ++i)
     vec[i] = ints[i];
 
@@ -264,10 +263,10 @@ size_t CLI_GetParamVectorIntLen(const char* paramName)
  * The vector will be created in-place and it is expected that the calling
  * function will take ownership.
  */
-int* CLI_GetParamVectorIntPtr(const char* paramName)
+long long* CLI_GetParamVectorIntPtr(const char* paramName)
 {
   const size_t size = CLI::GetParam<std::vector<int>>(paramName).size();
-  int* ints = new int[size];
+  long long* ints = new long long[size];
 
   for (size_t i = 0; i < size; ++i)
     ints[i] = CLI::GetParam<std::vector<int>>(paramName)[i];
