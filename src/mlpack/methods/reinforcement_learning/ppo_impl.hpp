@@ -68,6 +68,25 @@ template<
   typename PolicyType,
   typename ReplayType
 >
+void PPO<
+  EnvironmentType,
+  ActorNetworkType,
+  CriticNetworkType,
+  UpdaterType,
+  PolicyType,
+  ReplayType
+>::Update()
+{
+}
+
+template<
+  typename EnvironmentType,
+  typename ActorNetworkType,
+  typename CriticNetworkType,
+  typename UpdaterType,
+  typename PolicyType,
+  typename ReplayType
+>
 double PPO<
   EnvironmentType,
   ActorNetworkType,
@@ -77,6 +96,27 @@ double PPO<
   ReplayType
 >::Step()
 {
+//  // Get the action value for each action at current state.
+//  arma::colvec actionValue;
+//  ActorNetwork.Predict(state.Encode(), actionValue);
+//
+//  // Select an action according to the behavior policy.
+//  ActionType action = policy.Sample(actionValue, deterministic);
+//
+//  // Interact with the environment to advance to next state.
+//  StateType nextState;
+//  double reward = environment.Sample(state, action, nextState);
+//
+//  // Store the transition for replay.
+//  replayMethod.Store(state, action, reward,
+//                     nextState, 0);
+//
+//  // Update current state.
+//  state = nextState;
+
+//  if (deterministic)
+//    return reward;
+
   return 0.0;
 }
 
@@ -111,6 +151,11 @@ double PPO<
   {
     totalReturn += Step();
     steps++;
+
+    if (totalSteps % config.UpdateInterval() == 0)
+    {
+      Update();
+    }
 
     totalSteps++;
   }

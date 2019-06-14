@@ -98,6 +98,11 @@ class PPO
     */
   double Episode();
 
+  /*
+   * Update the actor and critic model
+   * */
+  void Update();
+
   //! Modify the training mode / test mode indicator.
   bool& Deterministic() { return deterministic; }
   //! Get the indicator of training mode / test mode.
