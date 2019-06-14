@@ -181,11 +181,8 @@ Score(const size_t queryIndex, TreeType& referenceNode)
       }
       meanSample = arma::mean(sample);
       const double stddev = arma::stddev(sample);
-      minKernel +=
-          numDesc * (meanSample - (z * stddev) / (std::sqrt(sample.size())));
-      const double numerator = numDesc + relError * numDesc;
-      const double denominator = relError * (minKernel + numDesc * meanSample);
-      size_t mThresh = z * stddev * (numerator / denominator);
+      size_t mThresh =
+          std::ceil(z * stddev * (1 + relError) / (relError * meanSample));
       mThresh *= mThresh;
 
       if (sample.size() < mThresh)
