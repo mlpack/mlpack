@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
      * For the speed of the test case, I didn't set high criterion.
      */
     Log::Debug << "Average return: " << averageReturn.mean()
-               << " Episode return: " << episodeReturn << std::endl;
+        << " Episode return: " << episodeReturn << std::endl;
     if (averageReturn.mean() > 35)
     {
       agent.Deterministic() = true;
@@ -162,10 +162,11 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
         testReturn(agent.Episode());
 
       Log::Debug << "Average return in deterministic test: "
-                 << testReturn.mean() << std::endl;
+          << testReturn.mean() << std::endl;
       break;
     }
   }
+
   BOOST_REQUIRE(converged);
 }
 

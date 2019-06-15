@@ -19,16 +19,17 @@ namespace mlpack {
 namespace rl {
 
 /**
- * Implementation of prioritized experience replay.
- * PER can replay important transitions more frequently by prioritizing
+ * Implementation of prioritized experience replay. Prioritized experience
+ * replay can replay important transitions more frequently by prioritizing
  * transitions, and make agent learn more efficiently.
  *
  * @code
  * @article{schaul2015prioritized,
- *  title={Prioritized experience replay},
- *  author={Schaul, Tom and Quan, John and Antonoglou, Ioannis and Silver, David},
- *  journal={arXiv preprint arXiv:1511.05952},
- *  year={2015}
+ *  title   = {Prioritized experience replay},
+ *  author  = {Schaul, Tom and Quan, John and Antonoglou,
+ *             Ioannis and Silver, David},
+ *  journal = {arXiv preprint arXiv:1511.05952},
+ *  year    = {2015}
  *  }
  * @endcode
  *
@@ -87,15 +88,14 @@ class PrioritizedReplay
   }
 
   /**
-   * Store the given experience.
-   * Set priorities for the given experience.
+   * Store the given experience and set the priorities for the given experience.
    *
    * @param state Given state.
    * @param action Given action.
    * @param reward Given reward.
    * @param nextState Given next state.
    * @param isEnd Whether next state is terminal state.
- */
+   */
   void Store(const StateType& state,
              ActionType action,
              double reward,
@@ -130,9 +130,8 @@ class PrioritizedReplay
     double sumPerRange = totalSum / batchSize;
     for (size_t bt = 0; bt < batchSize; bt++)
     {
-      double mass = arma::randu() * sumPerRange + bt * sumPerRange;
-      size_t idx = idxSum.FindPrefixSum(mass);
-      idxes(bt) = idx;
+      const double mass = arma::randu() * sumPerRange + bt * sumPerRange;
+      idxes(bt) = idxSum.FindPrefixSum(mass);
     }
     return idxes;
   }
@@ -146,8 +145,6 @@ class PrioritizedReplay
    * @param sampledNextStates Sampled encoded next states.
    * @param isTerminal Indicate whether corresponding next state is terminal
    *        state.
-   * @param sampledIndices Sampled indices.
-   * @param weights Corresponding weight for updating the loss.
    */
   void Sample(arma::mat& sampledStates,
               arma::icolvec& sampledActions,
@@ -201,7 +198,7 @@ class PrioritizedReplay
   }
 
   /**
-   *  Annealing the beta.
+   * Annealing the beta.
    */
   void BetaAnneal()
   {
@@ -209,13 +206,13 @@ class PrioritizedReplay
   }
 
   /**
-    *  Update the priorities of transitions and Update the gradients.
-    *
-    *  @param target The learned value
-    *  @param sampledActions Agent's sampled action
-    *  @param nextActionValues Agent's next action
-    *  @param gradients The model's gradients
-    */
+   * Update the priorities of transitions and Update the gradients.
+   *
+   * @param target The learned value.
+   * @param sampledActions Agent's sampled action.
+   * @param nextActionValues Agent's next action.
+   * @param gradients The model's gradients.
+   */
   void Update(arma::mat target,
               arma::icolvec sampledActions,
               arma::mat nextActionValues,

@@ -2,10 +2,8 @@
  * @file sumtree.hpp
  * @author Xiaohong
  *
- * This file is an implementation of sumtree.
- *
- * reference:
- * [1] https://github.com/openai/baselines/blob/master/baselines/common/segment_tree.py
+ * This file is an implementation of sumtree. Based on:
+ * https://github.com/openai/baselines/blob/master/baselines/common/segment_tree.py
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -37,8 +35,7 @@ class SumTree
   /**
    * Default constructor.
    */
-  SumTree():
-      capacity(0)
+  SumTree() : capacity(0)
   { /* Nothing to do here. */ }
 
   /**
@@ -46,10 +43,9 @@ class SumTree
    *
    * @param capacity Size of data.
    */
-  SumTree(size_t capacity):
-      capacity(capacity)
+  SumTree(const size_t capacity) : capacity(capacity)
   {
-    element = std::vector<T> (2 * capacity);
+    element = std::vector<T>(2 * capacity);
   }
 
   /**
@@ -58,7 +54,7 @@ class SumTree
    * @param idx The array idx to be changed.
    * @param value The data that array with idx to be.
    */
-  void Set(size_t idx, T value)
+  void Set(size_t idx, const T value)
   {
     idx += capacity;
     element[idx] = value;
@@ -70,21 +66,20 @@ class SumTree
     }
   }
 
-
   /**
    * Update the data with batch rather loop over the indices with set method.
    *
    * @param indices The indices of data to be changed.
-   * @param data  The data that array with indices to be.
+   * @param data The data that array with indices to be.
    */
-  void BatchUpdate(arma::ucolvec indices, arma::Col<T> data)
+  void BatchUpdate(const arma::ucolvec& indices, const arma::Col<T>& data)
   {
     for (size_t i = 0; i < indices.n_rows; i++)
     {
       element[indices[i] + capacity] = data[i];
     }
     // update the total tree with bottom-up technique.
-    for (size_t i = capacity-1; i > 0; i--)
+    for (size_t i = capacity - 1; i > 0; i--)
     {
       element[i] = element[2 * i] + element[2 * i + 1];
     }
@@ -106,12 +101,15 @@ class SumTree
    *
    * @param start The starting position of subsequence.
    * @param end The end position of subsequence.
-   * @param node Reference position
+   * @param node Reference position.
    * @param nodeStart Starting position of reference segment.
    * @param nodeEnd End position of reference segment.
    */
-  T SumHelper(size_t start, size_t end, size_t node,
-              size_t nodeStart, size_t nodeEnd)
+  T SumHelper(const size_t start,
+              const size_t end,
+              const size_t node,
+              const size_t nodeStart,
+              const size_t nodeEnd)
   {
     if (start == nodeStart && end == nodeEnd)
     {
@@ -131,7 +129,7 @@ class SumTree
       else
       {
         return SumHelper(start, mid, 2 * node, nodeStart, mid) +
-          SumHelper(mid+1, end, 2 * node + 1, mid + 1 , nodeEnd);
+            SumHelper(mid + 1, end, 2 * node + 1, mid + 1 , nodeEnd);
       }
     }
   }
@@ -142,10 +140,10 @@ class SumTree
    * @param start The starting position of subsequence.
    * @param end The end position of subsequence.
    */
-  T Sum(size_t start, size_t end)
+  T Sum(const size_t start, size_t end)
   {
     end -= 1;
-    return SumHelper(start, end, 1, 0, capacity-1);
+    return SumHelper(start, end, 1, 0, capacity - 1);
   }
 
   /**
@@ -161,7 +159,7 @@ class SumTree
    * sum(arr[0] + arr[1] + ... + arr[idx]) <= mass.
    *
    * @param mass The upper bound of segment array sum.
-   * */
+   */
   size_t FindPrefixSum(T mass)
   {
     size_t idx = 1;

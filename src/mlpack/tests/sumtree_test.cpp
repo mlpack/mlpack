@@ -2,15 +2,13 @@
  * @file sumtree_test.hpp
  * @author Xiaohong
  *
- * Test for Sumtree implementation
+ * Test for Sumtree implementation.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
-
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/reinforcement_learning/replay/sumtree.hpp>
@@ -43,7 +41,6 @@ BOOST_AUTO_TEST_CASE(SetElement)
 /**
  * Test that we get the element.
  */
-
 BOOST_AUTO_TEST_CASE(GetElement)
 {
   SumTree<double> sumtree(4);
@@ -60,9 +57,8 @@ BOOST_AUTO_TEST_CASE(GetElement)
 
 /**
  * Test that we find the highest index in the array such that
- * Sum(arr[0] + arr[1] + arr[2] ... + arr[i]) <= mass .
+ * Sum(arr[0] + arr[1] + arr[2] ... + arr[i]) <= mass.
  */
-
 BOOST_AUTO_TEST_CASE(FindPrefixSum)
 {
   SumTree<double> sumtree(4);
@@ -79,9 +75,8 @@ BOOST_AUTO_TEST_CASE(FindPrefixSum)
 
 /**
  * Test that we find the highest index in the array such that
- * sum(arr[0] + arr[1] + arr[2] ... + arr[i]) <= mass .
+ * sum(arr[0] + arr[1] + arr[2] ... + arr[i]) <= mass.
  */
-
 BOOST_AUTO_TEST_CASE(BatchUpdate)
 {
   SumTree<double> sumtree(4);
