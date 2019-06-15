@@ -49,6 +49,13 @@ class RandomReplay
   //! Convenient typedef for state.
   using StateType = typename EnvironmentType::State;
 
+  RandomReplay():
+      batchSize(0),
+      capacity(0),
+      position(0),
+      full(false)
+  { /* Nothing to do here. */ }
+
   /**
    * Construct an instance of random experience replay class.
    *
@@ -133,6 +140,22 @@ class RandomReplay
   const size_t& Size()
   {
     return full ? capacity : position;
+  }
+
+  /**
+    *  Update the priorities of transitions and Update the gradients.
+    *
+    *  @param target The learned value
+    *  @param sampledActions Agent's sampled action
+    *  @param nextActionValues Agent's next action
+    *  @param gradients The model's gradients
+    */
+  void Update(arma::mat /* target */,
+              arma::icolvec /* sampledActions */,
+              arma::mat /* nextActionValues */,
+              arma::mat& /* gradients */)
+  {
+    /* do nothing for random replay*/
   }
 
  private:
