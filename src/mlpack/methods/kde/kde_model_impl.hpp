@@ -25,12 +25,22 @@ inline KDEModel::KDEModel(const double bandwidth,
                           const double relError,
                           const double absError,
                           const KernelTypes kernelType,
-                          const TreeTypes treeType) :
+                          const TreeTypes treeType,
+                          const bool monteCarlo,
+                          const double MCProb,
+                          const size_t initialSampleSize,
+                          const double MCEntryCoef,
+                          const double MCBreakCoef) :
   bandwidth(bandwidth),
   relError(relError),
   absError(absError),
   kernelType(kernelType),
-  treeType(treeType)
+  treeType(treeType),
+  monteCarlo(monteCarlo),
+  MCProb(MCProb),
+  initialSampleSize(initialSampleSize),
+  MCEntryCoef(MCEntryCoef),
+  MCBreakCoef(MCBreakCoef)
 {
   // Nothing to do.
 }
