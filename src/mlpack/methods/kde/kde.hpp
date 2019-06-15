@@ -75,7 +75,12 @@ class KDE
       const double absError = 0,
       KernelType kernel = KernelType(),
       const KDEMode mode = DUAL_TREE_MODE,
-      MetricType metric = MetricType());
+      MetricType metric = MetricType(),
+      const bool monteCarlo = false,
+      const double MCProb = 0.95,
+      const size_t initialSampleSize = 100,
+      const double MCEntryCoef = 3,
+      const double MCBreakCoef = 0.7);
 
   /**
    * Construct KDE object as a copy of the given model. This may be

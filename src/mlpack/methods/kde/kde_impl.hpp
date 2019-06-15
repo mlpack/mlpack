@@ -56,7 +56,12 @@ KDE(const double relError,
     const double absError,
     KernelType kernel,
     const KDEMode mode,
-    MetricType metric) :
+    MetricType metric,
+    const bool monteCarlo,
+    const double MCProb,
+    const size_t initialSampleSize,
+    const double MCEntryCoef,
+    const double MCBreakCoef) :
     kernel(kernel),
     metric(metric),
     referenceTree(nullptr),
@@ -66,13 +71,13 @@ KDE(const double relError,
     ownsReferenceTree(false),
     trained(false),
     mode(mode),
-    monteCarlo(true),
-    MCProb(0.95), // TODO Just for testing purposes.
-    initialSampleSize(100),
-    MCEntryCoef(2),
-    MCBreakCoef(0.7)
+    monteCarlo(monteCarlo),
+    initialSampleSize(initialSampleSize)
 {
   CheckErrorValues(relError, absError);
+  MCProbability(MCProb);
+  MCEntryCoefficient(MCEntryCoef);
+  MCBreakCoefficient(MCBreakCoef);
 }
 
 template<typename KernelType,
