@@ -172,6 +172,112 @@ class TrainVisitor : public boost::static_visitor<void>
 };
 
 /**
+ * MonteCarloVisitor activates or deactivates Monte Carlo for a given KDEType.
+ */
+class MonteCarloVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Whether to use Monte Carlo estimations or not.
+  const bool monteCarlo;
+
+ public:
+  //! DefaultMonteCarloVisitor on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
+
+  //! MonteCarloVisitor constructor.
+  MonteCarloVisitor(const bool monteCarlo);
+};
+
+/**
+ * MCProbabilityVisitor sets the Monte Carlo probability for a given KDEType.
+ */
+class MCProbabilityVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Monte Carlo probability.
+  const double probability;
+
+ public:
+  //! Default MCProbabilityVisitor on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
+
+  //! MCProbabilityVisitor constructor.
+  MCProbabilityVisitor(const double probability);
+};
+
+/**
+ * MCSampleSizeVisitor sets the Monte Carlo intial sample size for a given
+ * KDEType.
+ */
+class MCSampleSizeVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Monte Carlo sample size.
+  const size_t sampleSize;
+
+ public:
+  //! Default MCSampleSizeVisitor on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
+
+  //! MCSampleSizeVisitor constructor.
+  MCSampleSizeVisitor(const size_t sampleSize);
+};
+
+/**
+ * MCEntryCoefVisitor sets the Monte Carlo entry coefficient.
+ */
+class MCEntryCoefVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Monte Carlo entry coefficient.
+  const double entryCoef;
+
+ public:
+  //! Default MCEntryCoefVisitor on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
+
+  //! MCEntryCoefVisitor constructor.
+  MCEntryCoefVisitor(const double entryCoef);
+};
+
+/**
+ * MCBreakCoefVisitor sets the Monte Carlo break coefficient.
+ */
+class MCBreakCoefVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Monte Carlo break coefficient.
+  const double breakCoef;
+
+ public:
+  //! Default MCBreakCoefVisitor on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
+
+  //! MCBreakCoefVisitor constructor.
+  MCBreakCoefVisitor(const double breakCoef);
+};
+
+/**
  * ModeVisitor exposes the Mode() method of the KDEType.
  */
 class ModeVisitor : public boost::static_visitor<KDEMode&>

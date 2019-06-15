@@ -224,6 +224,26 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
         (relError, absError, kernel::TriangularKernel(bandwidth));
   }
 
+  // Set whether to use Monte Carlo estimations or not.
+  MonteCarloVisitor MCVisitor(monteCarlo);
+  boost::apply_visitor(MCVisitor, kdeModel);
+
+  // Set Monte Carlo probability.
+  MCProbabilityVisitor probabilityVisitor(MCProb);
+  boost::apply_visitor(probabilityVisitor, kdeModel);
+
+  // Set Monte Carlo initial sample size.
+  MCSampleSizeVisitor sampleSizeVisitor(initialSampleSize);
+  boost::apply_visitor(sampleSizeVisitor, kdeModel);
+
+  // Set Monte Carlo entry coefficient.
+  MCEntryCoefVisitor entryCoefficientVisitor(MCEntryCoef);
+  boost::apply_visitor(entryCoefficientVisitor, kdeModel);
+
+  // Set Monte Carlo break coefficient.
+  MCBreakCoefVisitor breakCoefficientVisitor(MCBreakCoef);
+  boost::apply_visitor(breakCoefficientVisitor, kdeModel);
+
   // Train the model.
   TrainVisitor train(std::move(referenceSet));
   boost::apply_visitor(train, kdeModel);
@@ -319,6 +339,96 @@ void TrainVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
   Log::Info << "Training KDE model..." << std::endl;
   if (kde)
     kde->Train(std::move(referenceSet));
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Activate or deactivate Monte Carlo.
+MonteCarloVisitor::MonteCarloVisitor(const bool monteCarlo) :
+    monteCarlo(monteCarlo)
+{}
+
+// Default activate or deactivate Monte Carlo.
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void MonteCarloVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->MonteCarlo() = monteCarlo;
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Set Monte Carlo probability.
+MCProbabilityVisitor::MCProbabilityVisitor(const double probability) :
+    probability(probability)
+{}
+
+// Default probability for Monte Carlo.
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void MCProbabilityVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->MCProbability(probability);
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Set Monte Carlo sample size.
+MCSampleSizeVisitor::MCSampleSizeVisitor(const size_t sampleSize) :
+    sampleSize(sampleSize)
+{}
+
+// Default sample size for Monte Carlo.
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void MCSampleSizeVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->MCInitialSampleSize() = sampleSize;
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Set Monte Carlo entry coefficient.
+MCEntryCoefVisitor::MCEntryCoefVisitor(const double entryCoef) :
+    entryCoef(entryCoef)
+{}
+
+// Default entry coefficient for Monte Carlo.
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void MCEntryCoefVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->MCEntryCoefficient(entryCoef);
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Set Monte Carlo break coefficient.
+MCBreakCoefVisitor::MCBreakCoefVisitor(const double breakCoef) :
+    breakCoef(breakCoef)
+{}
+
+// Default break coefficient for Monte Carlo.
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void MCBreakCoefVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->MCBreakCoefficient(breakCoef);
   else
     throw std::runtime_error("no KDE model initialized");
 }
