@@ -126,6 +126,7 @@ if (BUILDING_PYTHON_BINDINGS)
           -D SETUP_PY_OUT="${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py"
           -D PACKAGE_VERSION="${PACKAGE_VERSION}"
           -D Boost_SERIALIZATION_LIBRARY="${Boost_SERIALIZATION_LIBRARY}"
+          -D ARMADILLO_LIBRARIES="${ARMADILLO_LIBRARIES}"
           -D MLPACK_LIBRARY="$<TARGET_FILE_NAME:mlpack>"
           -D MLPACK_PYXS="${MLPACK_PYXS}"
           -D OpenMP_CXX_FLAGS="${OpenMP_CXX_FLAGS}"

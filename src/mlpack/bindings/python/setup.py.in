@@ -36,7 +36,8 @@ else:
 #  library_dirs = None
 
 # Specific to the debugging for #1872.
-library_dirs = ['${MLPACK_LIBDIR}', '${BOOST_LIBDIRS}']
+library_dirs = ['${MLPACK_LIBDIR}', '${BOOST_LIBDIRS}'] + \
+    '${ARMADILLO_LIBDIRS}'.split(' ')
 
 # Only build the extensions if we are asked to.
 if os.getenv('NO_BUILD') == '1':
@@ -64,7 +65,8 @@ else:
                       '${OUTPUT_DIR}/src/mlpack/bindings/python/'] +
                       '${CYTHON_INCLUDE_DIRECTORIES}'.split(' '),
                   libraries=['${MLPACK_LIB_NAME}',
-                             '${Boost_SERIALIZATION_LIB_NAME}'],
+                             '${Boost_SERIALIZATION_LIB_NAME}'] +
+                             '${ARMADILLO_LIBRARIES}'.split(' '),
                   library_dirs=library_dirs,
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
@@ -82,7 +84,8 @@ else:
                       '${OUTPUT_DIR}/src/mlpack/bindings/python/'] +
                       '${CYTHON_INCLUDE_DIRECTORIES}'.split(' '),
                   libraries=['${MLPACK_LIB_NAME}',
-                             '${Boost_SERIALIZATION_LIB_NAME}'],
+                             '${Boost_SERIALIZATION_LIB_NAME}'] +
+                             '${ARMADILLO_LIBRARIES}'.split(' '),
                   library_dirs=library_dirs,
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
