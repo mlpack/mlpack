@@ -16,6 +16,8 @@
 #include <mlpack/prereqs.hpp>
 
 #include "replay/random_replay.hpp"
+#include "mlpack/methods/ann/activation_functions/tanh_function.hpp"
+#include "mlpack/core/dists/gaussian_distribution.hpp"
 #include "training_config.hpp"
 
 namespace mlpack {

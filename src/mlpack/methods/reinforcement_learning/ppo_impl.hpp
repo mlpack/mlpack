@@ -96,9 +96,31 @@ double PPO<
   ReplayType
 >::Step()
 {
-//  // Get the action value for each action at current state.
-//  arma::colvec actionValue;
-//  ActorNetwork.Predict(state.Encode(), actionValue);
+  // Get the action value for each action at current state.
+  arma::colvec actionValue;
+  ActorNetwork.Predict(state.Encode(), actionValue);
+
+  ann::TanhFunction tanh;
+  ann::SoftplusFunction softp;
+
+  arma::colvec sigma, mu;
+  tanh.Fn(actionValue, sigma);
+  softp.Fn(actionValue, mu);
+
+  distribution::GaussianDistribution normalDist =
+    distribution::GaussianDistribution(sigma, mu);
+
+  // Get the action value for each action at current state.
+  ActorNetwork.Predict(state.Encode(), actionValue);
+
+  OldActorNetwork.Predict(state.Encode(), actionValue);
+  tanh.Fn(actionValue, sigma);
+  softp.Fn(actionValue, mu);
+
+  distribution::GaussianDistribution oldnormalDist =
+    distribution::GaussianDistribution(sigma, mu);
+
+
 //
 //  // Select an action according to the behavior policy.
 //  ActionType action = policy.Sample(actionValue, deterministic);
