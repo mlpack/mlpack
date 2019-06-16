@@ -2649,6 +2649,35 @@ BOOST_AUTO_TEST_CASE(GradientWeightNormLayerTest)
   BOOST_REQUIRE_LE(error, 1e-4);
 }
 
+/**
+ * Test if the WeightNorm layer is able to forward the
+ * Forward/Backward/Gradient calls.
+ */
+BOOST_AUTO_TEST_CASE(WeightNormRunTest)
+{
+  arma::mat output, input, delta, error;
+
+  WeightNorm<> module;
+
+  Linear<>* linear = new Linear<>(10, 10);
+  module.Add(linear);
+
+  module.Parameters().randu();
+  module.Reset();
+
+  input = arma::zeros(10, 1);
+  module.Forward(std::move(input), std::move(output));
+
+  double parameterSum = arma::accu(linear->Parameters().submat(
+      100, 0, linear->Parameters().n_elem - 1, 0));
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(input), std::move(delta));
+
+  BOOST_REQUIRE_CLOSE(parameterSum, arma::accu(output), 1e-3);
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+}
+
 // General ANN serialization test.
 template<typename LayerType>
 void ANNLayerSerializationTest(LayerType& layer)
