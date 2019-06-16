@@ -13,6 +13,7 @@
 #include <mlpack/core/data/dictionary_encoding.hpp>
 #include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
 #include <mlpack/core/data/tokenizer/char_split.hpp>
+#include <mlpack/core/data/tokenizer/split_by_char.hpp>
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
@@ -63,13 +64,13 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
 }
 
 /**
-* Test for CharSplit class.
+* Test for SplitByChar class.
 */
-BOOST_AUTO_TEST_CASE(CharSplitTest)
+BOOST_AUTO_TEST_CASE(SplitByCharTest)
 {
   std::vector<boost::string_view> tokens;
   boost::string_view strview = "hello how are you" ;
-  CharSplit obj(" ");
+  SplitByChar obj(" ");
   boost::string_view token;
   token = obj(strview);
   while (!token.empty())
@@ -125,7 +126,7 @@ BOOST_AUTO_TEST_CASE(CopyConstructorCharTest)
   arr[2] = "Good how are you";
   arma::sp_mat output;
   data::DictionaryEncoding en;
-  en.Encode(arr, output, CharSplit(" "));
+  en.Encode(arr, output, SplitByChar(" "));
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>>& maps = en.Mappings();
   data::DictionaryEncoding en2 = en;

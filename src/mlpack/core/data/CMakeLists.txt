@@ -30,6 +30,7 @@ set(SOURCES
   one_hot_encoding.hpp
   one_hot_encoding_impl.hpp
   tokenizer/char_split.hpp
+  tokenizer/split_by_char.hpp
 )
 
 # add directory name to sources
