@@ -81,10 +81,14 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   for (size_t gen = 0; gen < maxGen; gen++)
   {
     Genome<ActivationFunction>::mutationBuffer.clear();
+    // #pragma omp parallel for
     for (size_t i = 0; i < popSize; i++)
+    {
+      std::cout << i << std::endl;
       genomeList[i].Fitness() = task.Evaluate(genomeList[i]);
+    }
     Reproduce();
-    Speciate(false);
+    Speciate(false); 
   }
 
   // Find best genome.
@@ -199,11 +203,15 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Speciate(bool init)
     }
   }
 
-  arma::Row<size_t> assignments;
+  std::cout << speciesList.size() << std::endl;
+  arma::Row<size_t> assignments(popSize, arma::fill::zeros);
   kmeans::KMeans<metric::EuclideanDistance, kmeans::SampleInitialization,
-      kmeans::MaxVarianceNewCluster, kmeans::CoverTreeDualTreeKMeans> k;
+      kmeans::MaxVarianceNewCluster, kmeans::NaiveKMeans> k;
   if (init)
+  {
+    centroids = arma::mat(data.n_rows, numSpecies, arma::fill::zeros);
     k.Cluster(data, numSpecies, assignments, centroids);
+  }
   else
     k.Cluster(data, numSpecies, assignments, centroids, false, true);
 
