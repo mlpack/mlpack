@@ -53,6 +53,19 @@ LinearSVM<MatType>::LinearSVM(
 }
 
 template <typename MatType>
+LinearSVM<MatType>::LinearSVM(
+    const size_t numClasses,
+    const double lambda,
+    const double delta,
+    const bool fitIntercept) :
+    numClasses(numClasses),
+    lambda(lambda),
+    delta(delta),
+    fitIntercept(fitIntercept)
+{
+}
+
+template <typename MatType>
 template <typename OptimizerType>
 double LinearSVM<MatType>::Train(
     const MatType& data,
