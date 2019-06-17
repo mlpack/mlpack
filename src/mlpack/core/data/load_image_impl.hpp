@@ -27,7 +27,7 @@ LoadImage::LoadImage():
         matrixHeight(0),
         channels(3)
 {
-
+ //Do nothing.
 }
 
 LoadImage::LoadImage(const size_t width,
@@ -37,7 +37,7 @@ LoadImage::LoadImage(const size_t width,
           matrixHeight(height),
           channels(channels)
 {
-
+ // Do nothing.
 }
 
 LoadImage::~LoadImage()
@@ -57,11 +57,11 @@ bool LoadImage::ImageFormatSupported(const std::string& fileName)
 bool LoadImage::Load(const std::string& fileName,
                       bool flipVertical,
                       arma::Mat<unsigned char>&& outputMatrix,
-                      size_t &width,
-                      size_t &height,
-                      size_t &channels)
+                      size_t& width,
+                      size_t& height,
+                      size_t& channels)
 {
-  unsigned char *image;
+  unsigned char* image;
 
   if (!ImageFormatSupported(fileName))
   {
@@ -77,10 +77,10 @@ bool LoadImage::Load(const std::string& fileName,
 
   stbi_set_flip_vertically_on_load(flipVertical);
 
-  // Temporary variablesneeded as stb_image.h supports int parameters.
+  // Temporary variables needed as stb_image.h supports int parameters.
   int tempWidth, tempHeight, tempChannels;
 
-  // For grayscale images
+  // For grayscale images.
   if (channels == 1)
   {
     image = stbi_load(fileName.c_str(),
@@ -120,18 +120,17 @@ bool LoadImage::Load(const std::string& fileName,
 }
 
 bool LoadImage::Load(const std::string& fileName,
-                    bool flipVertical,
-                    arma::Mat<unsigned char>&& outputMatrix)
+                     bool flipVertical,
+                     arma::Mat<unsigned char>&& outputMatrix)
 {
   size_t width, height;
-  bool status = Load(fileName,
-      flipVertical,
-      std::move(outputMatrix),
+  bool status = Load(fileName, flipVertical, std::move(outputMatrix),
       width, height, channels);
   if (!status)
     return status;
 
-  Log::Info << width <<" "<< height <<" "<< channels << std::endl;
+  Log::Info << "Image width: " << width <<"  height: "<< height <<" channels: "
+      << channels << std::endl;
 
   // Throw error if the image is incompatible with the matrix.
   if (matrixWidth > 0 && matrixHeight > 0 &&
@@ -162,9 +161,7 @@ bool LoadImage::Load(const std::vector<std::string>& files,
 
   arma::Mat<unsigned char> img;
   size_t width, height;
-  bool status = Load(files[0],
-                     flipVertical,
-                     std::move(img),
+  bool status = Load(files[0], flipVertical, std::move(img),
                      width, height, channels);
   Log::Info << "Loaded " << files[0] << std::endl;
 

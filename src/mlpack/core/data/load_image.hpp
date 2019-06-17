@@ -105,9 +105,9 @@ class LoadImage
   bool Load(const std::string& fileName,
             bool flipVertical,
             arma::Mat<unsigned char>&& outputMatrix,
-            size_t &width,
-            size_t &height,
-            size_t &channels);
+            size_t& width,
+            size_t& height,
+            size_t& channels);
 
   /**
    * Load the image file into the given matrix.
