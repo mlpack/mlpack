@@ -27,7 +27,7 @@ LoadImage::LoadImage():
         matrixHeight(0),
         channels(3)
 {
- //Do nothing.
+  // Do nothing.
 }
 
 LoadImage::LoadImage(const size_t width,
@@ -37,7 +37,7 @@ LoadImage::LoadImage(const size_t width,
           matrixHeight(height),
           channels(channels)
 {
- // Do nothing.
+  // Do nothing.
 }
 
 LoadImage::~LoadImage()
