@@ -311,26 +311,41 @@ endif ()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
+# Find stb_image.h and stb_image_write.h.
+find_package(StbImage)
 # Download stb_image for image loading.
-if (DOWNLOAD_STB_IMAGE)
-  set(STB_DIR "stb")
-  install(DIRECTORY DESTINATION ${CMAKE_BINARY_DIR}/deps/${STB_DIR})
-  file(DOWNLOAD https://raw.githubusercontent.com/nothings/stb/master/stb_image.h
-      "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h"
-      STATUS STB_DOWNLOAD_STATUS_LIST LOG STB_DOWNLOAD_LOG
-      SHOW_PROGRESS)
-  list(GET STB_DOWNLOAD_STATUS_LIST 0 STB_DOWNLOAD_STATUS)
-  if (STB_DOWNLOAD_STATUS EQUAL 0)
-      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-          "${CMAKE_BINARY_DIR}/deps/${STB_DIR}")
-      message(STATUS
-          "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
-      # Now we have to also ensure these header files get installed.
-      install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+if (NOT STB_IMAGE_FOUND)
+  if (DOWNLOAD_STB_IMAGE)
+    set(STB_DIR "stb")
+    install(DIRECTORY DESTINATION ${CMAKE_BINARY_DIR}/deps/${STB_DIR})
+    file(DOWNLOAD http://mlpack.org/files/stb/stb_image.h
+        "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h"
+        STATUS STB_IMAGE_DOWNLOAD_STATUS_LIST LOG STB_IMAGE_DOWNLOAD_LOG
+        SHOW_PROGRESS)
+    list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 0 STB_IMAGE_DOWNLOAD_STATUS)
+    file(DOWNLOAD http://mlpack.org/files/stb/stb_image_write.h
+        "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h"
+        STATUS STB_IMAGE_WRITE_DOWNLOAD_STATUS_LIST
+        LOG STB_IMAGE_WRITE_DOWNLOAD_LOG
+        SHOW_PROGRESS)
+    list(GET STB_IMAGE_WRITE_DOWNLOAD_STATUS_LIST 0
+        STB_IMAGE_WRITE_DOWNLOAD_STATUS)
+    if (STB_IMAGE_DOWNLOAD_STATUS EQUAL 0 AND
+        STB_IMAGE_WRITE_DOWNLOAD_STATUS EQUAL 0)
+        set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+            "${CMAKE_BINARY_DIR}/deps/${STB_DIR}")
+        message(STATUS
+            "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+        # Now we have to also ensure these header files get installed.
+        install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    else ()
+      list(GET STB_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
+      message(FATAL_ERROR
+          "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
+    endif ()
   else ()
-    list(GET STB_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
-    message(FATAL_ERROR
-        "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
+    message(SEND_ERROR
+        "stb/stb_image.h not installed. Image utilites will not be available!")
   endif ()
 endif ()
 
