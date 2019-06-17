@@ -284,9 +284,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
 // Ensure that Percentage affects the final result when refined_start is true.
 BOOST_AUTO_TEST_CASE(GmmTrainPercentageTest)
 {
-  arma::mat inputData;
-  if (!data::Load("data_3d_mixed.txt", inputData))
-    BOOST_FAIL("Unable to load train dataset data_3d_mixed.txt!");
+  arma::mat inputData(50, 100, arma::fill::randu);
 
   SetInputParam("input", inputData);
   SetInputParam("gaussians", (int) 2);
@@ -308,7 +306,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainPercentageTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("gaussians", (int) 2);
   SetInputParam("refined_start", true);
-  SetInputParam("percentage", (double) 0.20);
+  SetInputParam("percentage", (double) 0.35);
   SetInputParam("samplings", (int) 1000);
 
   mlpack::math::randGen.seed((uint32_t) seed);
