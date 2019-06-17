@@ -338,8 +338,9 @@ if (NOT STB_IMAGE_FOUND)
             "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
         # Now we have to also ensure these header files get installed.
         install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
     else ()
-      list(GET STB_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
+      list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
       message(FATAL_ERROR
           "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
     endif ()
