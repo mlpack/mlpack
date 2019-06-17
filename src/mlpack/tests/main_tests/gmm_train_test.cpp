@@ -306,7 +306,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainPercentageTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("gaussians", (int) 2);
   SetInputParam("refined_start", true);
-  SetInputParam("percentage", (double) 0.35);
+  SetInputParam("percentage", (double) 0.20);
   SetInputParam("samplings", (int) 1000);
 
   mlpack::math::randGen.seed((uint32_t) seed);
