@@ -49,21 +49,6 @@ void ResetGmmProbabilitySetting()
 
 BOOST_FIXTURE_TEST_SUITE(GmmProbabilityMainTest, GmmProbabilityTestFixture);
 
-// Making sure input_file are provided.
-BOOST_AUTO_TEST_CASE(GmmProbabilityInputTest)
-{
-  arma::mat inputData(5, 10, arma::fill::randu);
-
-  GMM gmm(1, 5);
-  gmm.Train(inputData, 5);
-
-  SetInputParam("input_model", &gmm);
-
-  Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
-}
-
 // Checking the input and output dimensionality.
 BOOST_AUTO_TEST_CASE(GmmProbabilityDimensionality)
 {
@@ -72,7 +57,7 @@ BOOST_AUTO_TEST_CASE(GmmProbabilityDimensionality)
   GMM gmm(1, 5);
   gmm.Train(std::move(inputData), 5);
 
-  arma::mat inputPoints(1, 5, arma::fill::randu);
+  arma::mat inputPoints(5, 5, arma::fill::randu);
 
   SetInputParam("input", std::move(inputPoints));
   SetInputParam("input_model", &gmm);
