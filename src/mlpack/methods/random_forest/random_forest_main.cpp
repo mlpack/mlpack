@@ -107,7 +107,8 @@ PARAM_FLAG("print_training_accuracy", "If set, then the accuracy of the model "
 PARAM_INT_IN("num_trees", "Number of trees in the random forest.", "N", 10);
 PARAM_INT_IN("minimum_leaf_size", "Minimum number of points in each leaf "
     "node.", "n", 1);
-PARAM_INT_IN("maximum_depth", "Maximum depth of the tree.", "D", 0);
+PARAM_INT_IN("maximum_depth", "Maximum depth of the tree.(0 means no limit)",
+    "D", 0);
 PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each "
     "point in the test set.", "P");
 PARAM_UROW_OUT("predictions", "Predicted classes for each point in the test "

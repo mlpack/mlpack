@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(RandomForestMaximumDepthTest)
   if (!data::Load("vc2_labels.txt", labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
 
-  SetInputParam("maximum_depth", (int) 0); // Invalid.
+  SetInputParam("maximum_depth", (int) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);

@@ -102,8 +102,8 @@ PARAM_INT_IN("minimum_leaf_size", "Minimum number of points in a leaf.", "n",
     20);
 PARAM_DOUBLE_IN("minimum_gain_split", "Minimum gain for node splitting.", "g",
     1e-7);
-PARAM_INT_IN("maximum_depth", "Maximum Depth of the tree.", "D",
-    0);
+PARAM_INT_IN("maximum_depth", "Maximum Depth of the tree.(0 means no limit)",
+    "D", 0);
 // This is deprecated and should be removed in mlpack 4.0.0.
 PARAM_FLAG("print_training_error", "Print the training error (deprecated; will "
       "be removed in mlpack 4.0.0).", "e");
