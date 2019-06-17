@@ -91,7 +91,7 @@ PROGRAM_INFO("Kernel Principal Components Analysis",
     PRINT_PARAM_STRING("offset") + ", or " + PRINT_PARAM_STRING("degree") +
     " (or a combination of those parameters)."
     "\n\n"
-    "Optionally, the Nystr\u00F6m method (\"Using the Nystroem method to speed "
+    "Optionally, the Nystroem method (\"Using the Nystroem method to speed "
     "up kernel machines\", 2001) can be used to calculate the kernel matrix by "
     "specifying the " + PRINT_PARAM_STRING("nystroem_method") + " parameter. "
     "This approach works by using a subset of the data as basis to reconstruct "
