@@ -81,7 +81,7 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
   {
     for (size_t i = 0; i <= inputNodeCount; i++)
       nodeDepths.push_back(0);
-    for (size_t i = inputNodeCount + 1; i <= outputNodeCount; i++)
+    for (size_t i = inputNodeCount + 1; i <= outputNodeCount + inputNodeCount; i++)
       nodeDepths.push_back(1);
   }
 }

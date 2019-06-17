@@ -83,10 +83,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     Genome<ActivationFunction>::mutationBuffer.clear();
     // #pragma omp parallel for
     for (size_t i = 0; i < popSize; i++)
-    {
-      std::cout << i << std::endl;
       genomeList[i].Fitness() = task.Evaluate(genomeList[i]);
-    }
     Reproduce();
     Speciate(false); 
   }
@@ -203,7 +200,6 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Speciate(bool init)
     }
   }
 
-  std::cout << speciesList.size() << std::endl;
   arma::Row<size_t> assignments(popSize, arma::fill::zeros);
   kmeans::KMeans<metric::EuclideanDistance, kmeans::SampleInitialization,
       kmeans::MaxVarianceNewCluster, kmeans::NaiveKMeans> k;
