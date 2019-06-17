@@ -95,6 +95,7 @@ BOOST_AUTO_TEST_CASE(GradientAddLayerTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 10);
       model->Add<Add<> >(10);
       model->Add<LogSoftMax<> >();
     }
@@ -400,6 +401,7 @@ BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 10);
       model->Add<Linear<> >(10, 2);
       model->Add<LogSoftMax<> >();
     }
@@ -483,6 +485,7 @@ BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 10);
       model->Add<LinearNoBias<> >(10, 2);
       model->Add<LogSoftMax<> >();
     }
@@ -585,6 +588,7 @@ BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
 
       model->Predictors() = input;
       model->Responses() = target;
+      model->Add<Linear<> >(2, 2);
       model->Add<LinearNoBias<> >(2, 5);
       model->Add<FlexibleReLU<> >(0.05);
       model->Add<LogSoftMax<> >();
@@ -1307,6 +1311,7 @@ BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 10);
 
       concat = new Concat<>(true);
       concat->Add<Linear<> >(10, 2);
@@ -1578,6 +1583,7 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 10);
       model->Add<BatchNorm<> >(10);
       model->Add<Linear<> >(10, 2);
       model->Add<LogSoftMax<> >();
@@ -1751,6 +1757,7 @@ BOOST_AUTO_TEST_CASE(GradientTransposedConvolutionLayerTest)
         model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
         model->Predictors() = input;
         model->Responses() = target;
+        model->Add<Linear<> >(36, 36);
         model->Add<TransposedConvolution<> >(1, 1, 3, 3, 2, 2, 1, 1, 6, 6);
         model->Add<LogSoftMax<> >();
       }
@@ -1868,6 +1875,7 @@ BOOST_AUTO_TEST_CASE(GradientAtrousConvolutionLayerTest)
       model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
+      model->Add<Linear<> >(36, 36);
       model->Add<AtrousConvolution<> >(1, 1, 3, 3, 1, 1, 0, 0, 6, 6, 2, 2);
       model->Add<LogSoftMax<> >();
     }
@@ -1947,6 +1955,7 @@ BOOST_AUTO_TEST_CASE(GradientLayerNormTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 10);
       model->Add<LayerNorm<> >(10);
       model->Add<Linear<> >(10, 2);
       model->Add<LogSoftMax<> >();
@@ -2355,7 +2364,7 @@ BOOST_AUTO_TEST_CASE(GradientSequentialLayerTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
-
+      model->Add<Linear<> >(10, 10);
       sequential = new Sequential<>();
       sequential->Add<Linear<> >(10, 10);
       sequential->Add<ReLULayer<> >();

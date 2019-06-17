@@ -195,6 +195,9 @@ class BatchNorm
 
   //! Locally-stored normalized input.
   OutputDataType normalized;
+
+  //! Locally-stored 0 mean input.
+  OutputDataType inputMean;
 }; // class BatchNorm
 
 } // namespace ann
