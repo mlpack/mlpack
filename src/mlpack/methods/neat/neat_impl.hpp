@@ -77,14 +77,24 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   speciesList = std::vector<std::vector<Genome<ActivationFunction>>>(numSpecies);
   Speciate(true);
 
+  arma::vec fitnesses(popSize);
+
   // Main loop.
   for (size_t gen = 0; gen < maxGen; gen++)
   {
     Genome<ActivationFunction>::mutationBuffer.clear();
-    // #pragma omp parallel for
+    std::cout << "Evaluating" << std::endl;
+    #pragma omp parallel for
     for (size_t i = 0; i < popSize; i++)
+    {
       genomeList[i].Fitness() = task.Evaluate(genomeList[i]);
+      fitnesses[i] = genomeList[i].Fitness();
+    }
+    std::cout << arma::max(fitnesses) << std::endl;
+    if (gen == maxGen - 1) break;
+    std::cout << "Reproducing" << std::endl;
     Reproduce();
+    std::cout << "Speciating" << std::endl;
     Speciate(false); 
   }
 
@@ -119,6 +129,8 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
   // Find the mean fitnesses.
   for (size_t i = 0; i < numSpecies; i++)
   {
+    if (speciesList.size() == 0)
+      continue;
     for (size_t j = 0; j < speciesList[i].size(); j++)
       meanFitnesses[i] += speciesList[i][j].Fitness();
     meanFitnesses[i] /= speciesList[i].size();
@@ -127,10 +139,15 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
 
   // Allot the sizes of the species.
   for (size_t i = 0; i < numSpecies; i++)
+  {
     speciesSize[i] = std::round(meanFitnesses[i] / totalMeanFitness * popSize);
+    // Handle special case where fitnesses are negative.
+    if (speciesSize[i] < 0)
+      speciesSize[i] = 0;
+  }
 
   // If the total allotted size is less than the population, fill it.
-  int delta = popSize - accu(speciesSize);
+  int delta = (int)popSize - (int)arma::accu(speciesSize);
   if (delta > 0)
   {
     size_t i = 0;
@@ -138,6 +155,8 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
     {
       speciesSize[i++]++;
       delta--;
+      if(i >= numSpecies)
+        i = 0;
     }
   }
   // If the total allotted size is more than the population, remove the excess.
@@ -147,7 +166,9 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
     while (delta < 0)
     {
       speciesSize[i++]--;
-      delta--;
+      delta++;
+      if(i >= numSpecies)
+        i = 0;
     }
   }
 
@@ -164,19 +185,29 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
   genomeList.clear();
   for (size_t i = 0; i < numSpecies; i++)
   {
+    // Handle the case where the species is empty.
+    if (speciesSize[i] == 0)
+      continue;
+    // Handle the case where the species has only one member.
+    else if (speciesList[i].size() == 1)
+    {
+      genomeList.push_back(speciesList[i][0]);
+      continue;
+    }
     size_t currentSize = genomeList.size();
     std::sort(speciesList[i].begin(), speciesList[i].begin(), compareGenome);
     arma::vec fitnesses(speciesList[i].size());
+    
     for (size_t j = 0; j < numElite[i]; j++)
       genomeList.push_back(speciesList[i][j]);
     for (size_t j = 0; j < fitnesses.n_elem; j++)
       fitnesses[j] = speciesList[i][j].Fitness();
     while (genomeList.size() - currentSize < speciesSize[i])
     {
-      arma::vec selection(2);
+      arma::uvec selection(2);
       SelectionPolicy::Select(fitnesses, selection);
       Genome<ActivationFunction> child = Crossover(speciesList[i][selection[0]],
-          speciesList[i][selection[2]]);
+          speciesList[i][selection[1]]);
       genomeList.push_back(child);
       genomeList[genomeList.size() - 1].Mutate();
     }
@@ -202,14 +233,17 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Speciate(bool init)
 
   arma::Row<size_t> assignments(popSize, arma::fill::zeros);
   kmeans::KMeans<metric::EuclideanDistance, kmeans::SampleInitialization,
-      kmeans::MaxVarianceNewCluster, kmeans::NaiveKMeans> k;
+      kmeans::MaxVarianceNewCluster, kmeans::CoverTreeDualTreeKMeans> k;
   if (init)
   {
     centroids = arma::mat(data.n_rows, numSpecies, arma::fill::zeros);
     k.Cluster(data, numSpecies, assignments, centroids);
   }
   else
+  {
+    centroids.resize(data.n_rows, centroids.n_cols);
     k.Cluster(data, numSpecies, assignments, centroids, false, true);
+  }
 
   // Clear the old species list to make space for a new one.
   for (size_t i = 0; i < numSpecies; i++)
@@ -231,7 +265,6 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   // New genome's genes.
   std::vector<ConnectionGene> newConnGeneList;
   bool equalFitness = std::abs(gen1.Fitness() - gen2.Fitness()) < 0.001;
-
   if (!equalFitness || isAcyclic)
   {
     Genome<ActivationFunction> lessFitGenome = gen1;
@@ -271,12 +304,11 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     }
 
     // Find matching genes.
-    size_t k = 0;
     for (size_t i = 0; i < lessFitGenome.connectionGeneList.size(); i++)
     {
       size_t innovID = lessFitGenome.connectionGeneList[i]
           .InnovationID();
-      for (size_t j = k; j < newConnGeneList.size(); j++)
+      for (size_t j = 0; j < newConnGeneList.size(); j++)
       {
         if (innovID == newConnGeneList[j].InnovationID())
         {
@@ -293,7 +325,6 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
           if (arma::randu<double>() < 0.5)
             newConnGeneList[j].Weight() = lessFitGenome.connectionGeneList[i]
                 .Weight();
-          k = j;
           break;
         }
       }

@@ -64,7 +64,7 @@ void AcyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
   {
     for (size_t j = 0; j < layers[i].size(); j++)
     {
-      int nodeID = layers[i][j];
+      size_t nodeID = layers[i][j];
       if (nodeID == 0)
       {
         for (auto const& x : directedGraph[nodeID])

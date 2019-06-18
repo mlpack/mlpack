@@ -29,18 +29,19 @@ class RankSelection
    * 
    * @param fitnesses A sorted Armadillo vector of fitnesses in ascending
    *    order.
+   * @param selection The selected indices.
    */
-  static void Select(arma::vec& fitnesses, arma::vec& selection)
+  static void Select(arma::vec& fitnesses, arma::uvec& selection)
   {
     selection[0] = fitnesses.n_elem;
     selection[1] = fitnesses.n_elem;
-    size_t pos = 0, size = fitnesses.n_elem;
+    arma::uword pos = 0, size = fitnesses.n_elem;
     // Choose first genome.
     while (selection[0] == fitnesses.n_elem)
     {
       if (pos >= size)
         pos = 0;
-      double prob = (size - pos) * 2 / (size * (size + 1));
+      double prob = (double)(size - pos) / std::pow(size, 2);
       if (arma::randu<double>() < prob)
         selection[0] = pos;
       pos++;
@@ -48,11 +49,11 @@ class RankSelection
 
     // Choose second genome.
     pos = 0;
-    while (selection[1] == fitnesses.n_elem && selection[0] != selection[1])
+    while (selection[1] == fitnesses.n_elem || selection[0] == selection[1])
     {
       if (pos >= size)
         pos = 0;
-      double prob = (size - pos) * 2 / (size * (size + 1));
+      double prob = (double)(size - pos) / std::pow(size, 2);   
       if (arma::randu<double>() < prob)
         selection[1] = pos;
       pos++;

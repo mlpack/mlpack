@@ -26,15 +26,33 @@ class XORTask
  public:
   double Evaluate(Genome<LogisticFunction>& genome)
   {
-    // Create a random input of 0s and 1s.
-    arma::vec input = arma::randi<arma::vec>(2, arma::distr_param(0, 1));
+    // // Create a random input of 0s and 1s.
+    // arma::vec input = arma::randi<arma::vec>(2, arma::distr_param(0, 1));
+    // arma::vec output = genome.Evaluate(input);
+
+    // // The expected output of the XOR gate.
+    // arma::vec answer = {(input[0] + input[1]) * (!input[0] + !input[1])};
+
+    // // The fitness of the genome.
+    // return 4 - std::pow(answer[0] - output[0], 2);
+
+    arma::vec input1 = {0, 0};
+    arma::vec input2 = {0, 1};
+    arma::vec input3 = {1, 0};
+    arma::vec input4 = {1, 1};
+    double error = 0;
+    error += findError(input1, genome); 
+    error += findError(input2, genome); 
+    error += findError(input3, genome); 
+    error += findError(input4, genome);
+    return 4 - error;
+  }
+
+  double findError(arma::vec& input, Genome<LogisticFunction>& genome)
+  {
     arma::vec output = genome.Evaluate(input);
-
-    // The expected output of the XOR gate.
     arma::vec answer = {(input[0] + input[1]) * (!input[0] + !input[1])};
-
-    // The fitness of the genome.
-    return 4 - std::pow(answer[0] - output[0], 2);
+    return std::pow(answer[0] - output[0], 2);
   }
 };
 

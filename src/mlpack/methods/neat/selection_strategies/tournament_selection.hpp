@@ -32,7 +32,7 @@ class TournamentSelection
    * @param prob The probability of the fittest candidate being chosen.
    */
   static void Select(arma::vec& fitnesses,
-                     arma::vec& selection,
+                     arma::uvec& selection,
                      const size_t contenderNum,
                      const double prob)
   {

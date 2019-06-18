@@ -43,7 +43,7 @@ ConnectionGene::~ConnectionGene()
 
 void ConnectionGene::Mutate(const double mutationSize)
 {
-  weight += mutationSize * arma::randu<double>();
+  weight += mutationSize * arma::randn<double>();
 }
 
 } // namespace neat

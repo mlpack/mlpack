@@ -44,17 +44,18 @@ BOOST_AUTO_TEST_SUITE(NEATTest)
  */
 BOOST_AUTO_TEST_CASE(NEATXORTest)
 {
+  arma::arma_rng::set_seed_random();
   XORTask task;
-  NEAT<XORTask, LogisticFunction, RankSelection> model(task, 2, 1, 50, 50, 5, 1, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.2, 0.1, true);
+  NEAT<XORTask, LogisticFunction, RankSelection> model(task, 2, 1, 100, 100, 10, 1, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.2, 0.3, true);
 
   // Find the best genome and it's fitness.
   Genome<LogisticFunction> bestGenome = model.Train();
   std::cout << bestGenome.Fitness() << std::endl;
   bestGenome.Parameters().print();
-  double finalFitness = task.Evaluate(bestGenome);
+  double finalFitness = bestGenome.Fitness();
 
   // Check if the final fitness is acceptable.
-  BOOST_REQUIRE(finalFitness >= 3.9);
+  BOOST_REQUIRE(finalFitness >= 3.6);
 }
 
 // /**

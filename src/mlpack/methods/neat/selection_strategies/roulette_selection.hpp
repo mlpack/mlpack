@@ -24,7 +24,7 @@ class RouletteSelection
    * @param fitnesses A sorted Armadillo vector of fitnesses in descending
    *    order.
    */
-  static void Select(arma::vec& fitnesses, arma::vec& selection)
+  static void Select(arma::vec& fitnesses, arma::uvec& selection)
   {
     selection[0] = fitnesses.n_elem;
     selection[1] = fitnesses.n_elem;
