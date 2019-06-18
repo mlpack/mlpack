@@ -97,15 +97,15 @@ double PPO<
 >::Step()
 {
   // Get the action value for each action at current state.
-  arma::colvec actionValue;
+  arma::mat actionValue;
   ActorNetwork.Predict(state.Encode(), actionValue);
 
   ann::TanhFunction tanh;
   ann::SoftplusFunction softp;
 
-  arma::colvec sigma, mu;
-  tanh.Fn(actionValue, sigma);
-  softp.Fn(actionValue, mu);
+  arma::mat sigma, mu;
+  tanh.Fn(actionValue.col(0), sigma);
+  softp.Fn(actionValue.col(0), mu);
 
   distribution::GaussianDistribution normalDist =
     distribution::GaussianDistribution(sigma, mu);
@@ -114,12 +114,14 @@ double PPO<
   ActorNetwork.Predict(state.Encode(), actionValue);
 
   OldActorNetwork.Predict(state.Encode(), actionValue);
-  tanh.Fn(actionValue, sigma);
-  softp.Fn(actionValue, mu);
+  tanh.Fn(actionValue.col(0), sigma);
+  softp.Fn(actionValue.col(0), mu);
 
   distribution::GaussianDistribution oldnormalDist =
     distribution::GaussianDistribution(sigma, mu);
 
+  ActionType action;
+  action.action = normalDist.Random()[0];
 
 //
 //  // Select an action according to the behavior policy.
