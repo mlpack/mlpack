@@ -1,0 +1,172 @@
+/*!
+@file image.txt
+@author Mehul Kumar Nirala
+@brief Tutorial for how to load and save images in mlpack.
+
+@page imagetutorial Image Utilities tutorial
+
+@section intro_imagetut Introduction
+
+Image dataset are becoming increasingly popular in deep learning.
+
+mlpack currently implements saving and loading of image. It uses [stb/](https://github.com/nothings/stb) to achieve this.
+
+@section toc_imagetut Table of Contents
+
+This tutorial is split into the following sections:
+
+ - \ref intro_imagetut
+ - \ref toc_imagetut
+ - \ref model_api_imagetut
+ - \ref load_api_imagetut
+ - \ref save_api_imagetut
+
+@section model_api_imagetut Model API
+
+Image utilities supports loading and saving of image. Images can also be loaded from a directory if CXX version >= 17 as it requires <filesystem> header to navigate a directory.
+
+It supports filetypes "jpg", "png", "tga","bmp", "psd", "gif", "hdr", "pic", "pnm" for loading and "jpg", "png", "tga", "bmp", "hdr" for saving.
+
+The datatype associated is unsigned char to support RGB values in the range 1-255. To feed data into the network typecast of `arma::Mat` may be required. Images are stored in matrix as (width * height * channels, n_images). Therefore imageMatrix.col(0) would be first image if images are loaded in imageMatrix.
+
+@section load_api_imagetut Load
+
+Image can be loaded standalone or from a directory.
+
+Standalone loading of images.
+@code
+  /**
+   * Load the image file into the given matrix.
+   *
+   * @param fileName Name of the image file.
+   * @param flipVertical Flip the image vertical upon loading.
+   * @param width Width of the image file.
+   * @param height Height of the image file.
+   * @param channels Channels of the image file.
+   * @param outputMatrix Matrix to load into.
+   * @return Boolean value indicating success or failure of load.
+   */
+  bool Load(const std::string& fileName,
+            bool flipVertical,
+            arma::Mat<unsigned char>&& outputMatrix,
+            size_t& width,
+            size_t& height,
+            size_t& channels);
+@endcode
+
+@code
+#include <mlpack/core/data/load_image.hpp>
+data::Image loader;
+// Matrix to load contents of file into.
+arma::Mat<unsigned char> img;
+loader.Load("test_image.png", true,  std::move(img));
+@endcode
+
+If the size of image is known beforehand, it can be passed into the constructor to set the size of outputMatrix(the matrix into which the image is loaded).
+
+@code
+size_t height = 64, width = 64, channels = 1;
+data::Image loader(width, height, channels);
+@endcode
+
+If the size of image is not known beforehand it can be retrieved when loading the image as:
+@code
+size_t height, width, channels;
+// values of height, width, channels are stored upon loading.
+loader.Load("test_image.png", true, std::move(img),
+    width, height, channels); 
+@endcode
+
+Loading images from a directory is possible if C++ version >= 17.
+
+@code
+  /**
+   * Load the image file into the given matrix.
+   *
+   * @param dirPath Path containing the image files.
+   * @param flipVertical Flip the image vertical upon loading.
+   * @param outputMatrix Matrix to load into.
+   * @return Boolean value indicating success or failure of load.
+   */
+  bool LoadDir(const std::string& dirPath,
+               bool flipVertical,
+               arma::Mat<unsigned char>&& outputMatrix);
+@endcode
+
+@code
+data::Image loader;
+// Matrix to load contents of dir into.
+arma::Mat<unsigned char> img;
+loader.LoadDir("images/", true, std::move(img));
+@endcode
+
+@section save_api_imagetut Save
+
+Save images expects a matrix of type unsigned char in the form (width * height * channels, n_images).
+Just like load it can be used to save one image or multiple images. Besides image data it also expects the shape of the image as input (width, height, channels).
+
+Saving one image:
+
+@code
+  /**
+   * Saves the image file present in the given matrix.
+   *
+   * @param fileName Name of the image file.
+   * @param width Width of the image that is being saved.
+   * @param height Width of the image that is being saved.
+   * @param channels Number of channels in the image that is being saved.
+   * @param flipVertical Flip the image vertical before saving.
+   * @param inputMatrix Matrix to save images from.
+   * @return Boolean value indicating success or failure.
+   */
+  bool Save(const std::string& fileName,
+            size_t width,
+            size_t height,
+            size_t channels,
+            bool flipVertical,
+            arma::Mat<unsigned char>&& outputMatrix);
+@endcode
+
+@code
+data::Image saver;
+arma::Mat<unsigned char> img; /* contains image/(s) */
+saver.Load("saved_image.png", true, std::move(img),
+      width, height, channels);
+@endcode
+
+If the matrix contains more than one image, only the first one is saved.
+
+Saving multiple images:
+
+@code
+  /**
+   * Saves the image file present in the given matrix.
+   *
+   * @param files A vector containing names of the image file to be saved.
+   * @param width Width of the image that is being saved.
+   * @param height Width of the image that is being saved.
+   * @param channels Number of channels in the image that is being saved.
+   * @param flipVertical Flip the image vertical before saving.
+   * @param inputMatrix Matrix to save images from.
+   * @return Boolean value indicating success or failure.
+   */
+  bool Save(const std::vector<std::string>& files,
+            size_t width,
+            size_t height,
+            size_t channels,
+            bool flipVertical,
+            arma::Mat<unsigned char>&& inputMatrix);
+@endcode
+
+@code
+data::Image saver;
+arma::Mat<unsigned char> img; /* contains image/(s) */
+saver.Load({"saved_image1.png", "saved_image2.png", "saved_image2.png"},
+            true, std::move(img),
+      width, height, channels);
+@endcode
+
+Multiple images are saved according to the vector of file name specified.
+
+*/
+
