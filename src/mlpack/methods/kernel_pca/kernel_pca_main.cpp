@@ -97,7 +97,7 @@ PROGRAM_INFO("Kernel Principal Components Analysis",
     "This approach works by using a subset of the data as basis to reconstruct "
     "the kernel matrix; to specify the sampling scheme, the " +
     PRINT_PARAM_STRING("sampling") + " parameter is used.  The "
-    "sampling scheme for the Nystr\u00F6m method can be chosen from the "
+    "sampling scheme for the Nystroem method can be chosen from the "
     "following list: 'kmeans', 'random', 'ordered'.",
     SEE_ALSO("Kernel principal component analysis on Wikipedia",
         "https://en.wikipedia.org/wiki/Kernel_principal_component_analysis"),
