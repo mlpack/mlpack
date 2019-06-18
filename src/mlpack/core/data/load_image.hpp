@@ -26,8 +26,15 @@ namespace fs = std::filesystem;
 
 #include "extension.hpp"
 
+#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#endif
+
+#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
+#endif
 
 namespace mlpack {
 namespace data {
@@ -37,7 +44,7 @@ namespace data {
  * an entire directory.
  * @code
  * arma::Mat<unsigned char> img;
- * data::LoadImage loader;
+ * data::Image loader;
  * loader.Load("test_image.png", std::move(img));
  * @endcode
  *
@@ -54,22 +61,22 @@ namespace data {
  * - PIC (Softimage PIC)
  * - PNM (PPM and PGM binary only).
  */
-class LoadImage
+class Image
 {
  public:
   /**
-   * LoadImage default constructor.
+   * Image default constructor.
    */
-  LoadImage();
+  Image();
 
   /**
-   * Instantiate the LoadImage object with the image width, height, channels.
+   * Instantiate the Image object with the image width, height, channels.
    *
    * @param width Matrix width for the output matrix.
    * @param height Matrix height for the output matrix.
    * @param channels Matrix channels for the output matrix.
    */
-  LoadImage(const size_t width, const size_t height, const size_t channels);
+  Image(const size_t width, const size_t height, const size_t channels);
 
   /**
    * Checks if the given image filename is supported.
@@ -77,7 +84,7 @@ class LoadImage
    * @param filename Name of the image file.
    * @return Boolean value indicating success if it is an image.
    */
-  bool ImageFormatSupported(const std::string& fileName);
+  bool ImageFormatSupported(const std::string& fileName, bool save = false);
 
   /**
    * Load the image file into the given matrix.
@@ -122,6 +129,42 @@ class LoadImage
             arma::Mat<unsigned char>&& outputMatrix);
 
   /**
+   * Saves the image file present in the given matrix.
+   *
+   * @param fileName Name of the image file.
+   * @param width Width of the image that is being saved.
+   * @param height Width of the image that is being saved.
+   * @param channels Number of channels in the image that is being saved.
+   * @param flipVertical Flip the image vertical before saving.
+   * @param inputMatrix Matrix to save images from.
+   * @return Boolean value indicating success or failure.
+   */
+  bool Save(const std::string& fileName,
+            size_t width,
+            size_t height,
+            size_t channels,
+            bool flipVertical,
+            arma::Mat<unsigned char>&& outputMatrix);
+
+  /**
+   * Saves the image file present in the given matrix.
+   *
+   * @param files A vector containing names of the image file to be saved.
+   * @param width Width of the image that is being saved.
+   * @param height Width of the image that is being saved.
+   * @param channels Number of channels in the image that is being saved.
+   * @param flipVertical Flip the image vertical before saving.
+   * @param inputMatrix Matrix to save images from.
+   * @return Boolean value indicating success or failure.
+   */
+  bool Save(const std::vector<std::string>& files,
+            size_t width,
+            size_t height,
+            size_t channels,
+            bool flipVertical,
+            arma::Mat<unsigned char>&& inputMatrix);
+
+  /**
    * Load the image file into the given matrix.
    *
    * @param dirPath Path containing the image files.
@@ -134,19 +177,22 @@ class LoadImage
                arma::Mat<unsigned char>&& outputMatrix);
 
   /**
-   * LoadImage default destructor.
+   * Image default destructor.
    */
-  ~LoadImage();
+  ~Image();
 
  private:
-  // To store supported image types.
-  static const std::vector<std::string> fileTypes;
+  // To store supported image types that can be loaded.
+  static const std::vector<std::string> loadFileTypes;
 
-  // To store matrixWidth.
-  size_t matrixWidth;
+  // To store supported image types that can be saved.
+  static const std::vector<std::string> saveFileTypes;
 
-  // To store matrixHeight.
-  size_t matrixHeight;
+  // To store maxWidth.
+  size_t maxWidth;
+
+  // To store maxHeight.
+  size_t maxHeight;
 
   // To store channels.
   size_t channels;
@@ -155,7 +201,7 @@ class LoadImage
 } // namespace data
 } // namespace mlpack
 
-// Include implementation of LoadImage.
+// Include implementation of Image.
 #include "load_image_impl.hpp"
 
 #endif
