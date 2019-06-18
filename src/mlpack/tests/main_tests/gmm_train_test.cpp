@@ -244,8 +244,9 @@ BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
   arma::mat inputData(5, 100, arma::fill::randu);
 
   SetInputParam("input", inputData);
-  SetInputParam("gaussians", (int) 2);
+  SetInputParam("gaussians", (int) 3);
   SetInputParam("trials", (int) 1);
+  SetInputParam("max_iterations", (int) 500);
 
   size_t seed = std::time(NULL);
   mlpack::math::randGen.seed((uint32_t) seed);
@@ -259,7 +260,8 @@ BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
   ResetGmmTrainSetting();
 
   SetInputParam("input", std::move(inputData));
-  SetInputParam("gaussians", (int) 2);
+  SetInputParam("gaussians", (int) 3);
+  SetInputParam("max_iterations", (int) 500);
   SetInputParam("trials", (int) 500);
 
   mlpack::math::randGen.seed((uint32_t) seed);
@@ -308,7 +310,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainPercentageTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("gaussians", (int) 2);
   SetInputParam("refined_start", true);
-  SetInputParam("percentage", (double) 0.35);
+  SetInputParam("percentage", (double) 0.45);
   SetInputParam("samplings", (int) 1000);
 
   mlpack::math::randGen.seed((uint32_t) seed);
@@ -338,9 +340,8 @@ BOOST_AUTO_TEST_CASE(GmmTrainSamplingsTest)
     BOOST_FAIL("Unable to load train dataset data_3d_mixed.txt!");
 
   SetInputParam("input", inputData);
-  SetInputParam("gaussians", (int) 2);
+  SetInputParam("gaussians", (int) 3);
   SetInputParam("refined_start", true);
-  SetInputParam("percentage", (double) 0.2);
   SetInputParam("samplings", (int) 10);
 
   size_t seed = std::time(NULL);
@@ -355,10 +356,9 @@ BOOST_AUTO_TEST_CASE(GmmTrainSamplingsTest)
   ResetGmmTrainSetting();
 
   SetInputParam("input", std::move(inputData));
-  SetInputParam("gaussians", (int) 2);
+  SetInputParam("gaussians", (int) 3);
   SetInputParam("refined_start", true);
-  SetInputParam("percentage", (double) 0.2);
-  SetInputParam("samplings", (int) 10000);
+  SetInputParam("samplings", (int) 25000);
 
   mlpack::math::randGen.seed((uint32_t) seed);
   srand((unsigned int) seed);
@@ -485,4 +485,3 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiagCovariance)
 }
 
 BOOST_AUTO_TEST_SUITE_END();
-
