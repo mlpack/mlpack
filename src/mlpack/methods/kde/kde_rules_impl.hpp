@@ -282,6 +282,92 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     }
     score = DBL_MAX;
   }
+  else if (monteCarlo &&
+           referenceNode.NumDescendants() >= MCAccessCoef * initialSampleSize &&
+           std::is_same<KernelType, kernel::GaussianKernel>::value)
+  {
+    // Calculate reference node depth.
+    kde::KDEStat& referenceStat = referenceNode.Stat();
+    if (referenceStat.Depth() == 0)
+    {
+      TreeType* node = &referenceNode;
+      while (node != NULL)
+      {
+        ++referenceStat.Depth();
+        node = node->Parent();
+      }
+    }
+
+    // Monte Carlo probabilistic estimation.
+    const double currentAlpha =
+        MCBeta / std::pow(2, referenceNode.Stat().Depth() + 1);
+    const boost::math::normal normalDist;
+    const double z =
+        std::abs(boost::math::quantile(normalDist, currentAlpha / 2));
+    const size_t numDesc = referenceNode.NumDescendants();
+    arma::vec sample;
+    arma::vec means = arma::zeros(queryNode.NumDescendants());
+    size_t m;
+    double meanSample;
+    bool useMonteCarloPredictions = true;
+    for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
+    {
+      const size_t queryIndex = queryNode.Descendant(i);
+      sample.clear();
+      m = initialSampleSize;
+      while (m > 0)
+      {
+        const size_t oldSize = sample.size();
+        const size_t newSize = oldSize + m;
+
+        // Don't use probabilistic estimation if this is gonna take a close
+        // amount of computation to the exact calculation.
+        if (newSize >= MCBreakCoef * numDesc)
+        {
+          useMonteCarloPredictions = false;
+          break;
+        }
+
+        // Increase the sample size.
+        sample.resize(newSize);
+        for (size_t i = 0; i < m; ++i)
+        {
+          // Sample and evaluate random points from the reference node.
+          const size_t randomPoint = math::RandInt(0, numDesc);
+          sample(oldSize + i) =
+              EvaluateKernel(queryIndex, referenceNode.Descendant(randomPoint));
+        }
+        meanSample = arma::mean(sample);
+        const double stddev = arma::stddev(sample);
+        size_t mThresh =
+            std::ceil(z * stddev * (1 + relError) / (relError * meanSample));
+        mThresh *= mThresh;
+
+        if (sample.size() < mThresh)
+          m = mThresh - sample.size();
+        else
+          m = 0;
+      }
+
+      if (useMonteCarloPredictions)
+        means(i) = meanSample;
+      else
+        break;
+    }
+
+    if (useMonteCarloPredictions)
+    {
+      // Use Monte Carlo estimation.
+      score = DBL_MAX;
+      for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
+        densities(queryNode.Descendant(i)) += numDesc * means(i);
+    }
+    else
+    {
+      // Recurse.
+      score = minDistance;
+    }
+  }
   else
   {
     score = minDistance;
