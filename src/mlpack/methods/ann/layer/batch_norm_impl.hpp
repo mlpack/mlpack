@@ -25,7 +25,8 @@ BatchNorm<InputDataType, OutputDataType>::BatchNorm() :
     eps(1e-8),
     loading(false),
     deterministic(false),
-    count(0)
+    count(0),
+    size(0)
 {
   // Nothing to do here.
 }

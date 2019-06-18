@@ -23,7 +23,8 @@ namespace ann { /** Artificial Neural Network. */
 template<typename InputDataType, typename OutputDataType>
 LayerNorm<InputDataType, OutputDataType>::LayerNorm() :
     eps(1e-8),
-    loading(false)
+    loading(false),
+    size(0)
 {
   // Nothing to do here.
 }
