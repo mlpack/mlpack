@@ -36,8 +36,7 @@ Bow::Bow(const Bow& oldObject)
   }
 }
 
-void Bow::operator= (const
-    Bow &oldObject)
+Bow& Bow::operator= (const Bow &oldObject)
 {
   if (this != &oldObject)
   {
@@ -55,7 +54,7 @@ void Bow::operator= (const
 }
 
 template<typename TokenizerType>
-void Bow::CreateMap(std::string& input,
+void Bow::CreateMap(const std::string& input,
     TokenizerType tokenizer)
 {
   boost::string_view strView(input);

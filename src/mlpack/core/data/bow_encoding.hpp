@@ -39,7 +39,7 @@ class Bow
   *
   */
   template<typename TokenizerType>
-  void CreateMap(std::string& input, TokenizerType tokenizer);
+  void CreateMap(const std::string& input, TokenizerType tokenizer);
   /*
   * Default Constructor
   */
@@ -59,7 +59,7 @@ class Bow
   /*
   * Assignment Operator.
   */
-  void operator= (const Bow& oldObject);
+  Bow& operator= (const Bow& oldObject);
   /**
   * A function to reset the mapping that is clear all the encodings
   */
