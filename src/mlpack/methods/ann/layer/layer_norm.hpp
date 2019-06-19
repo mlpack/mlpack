@@ -185,7 +185,7 @@ class LayerNorm
   //! Locally-stored normalized input.
   OutputDataType normalized;
 
-  //! Locally-stored input with 0 mean.
+  //! Locally-stored zero mean input.
   OutputDataType inputMean;
 }; // class LayerNorm
 
