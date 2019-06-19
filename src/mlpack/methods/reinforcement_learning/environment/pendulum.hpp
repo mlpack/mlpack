@@ -82,7 +82,7 @@ class Pendulum
    */
   struct Action
   {
-    double action;
+    double action = 0.0;
     // Storing degree of freedom
     const int size = 1;
   };
