@@ -35,9 +35,16 @@ else:
 #if library_dirs == []:
 #  library_dirs = None
 
-# Specific to the debugging for #1872.
-library_dirs = ['${MLPACK_LIBDIR}', '${BOOST_LIBDIRS}'] + \
-    '${ARMADILLO_LIBDIRS}'.split(' ')
+# We'll link with the exact paths to each library using extra_objects, instead
+# of linking with 'libraries' and 'library_dirs', because of differences in
+# Windows and Linux linking behavior.
+libraries = ['${MLPACK_LIBRARY}',
+             '${Boost_SERIALIZATION_LIBRARY}'] + \
+             '${ARMADILLO_LIBRARIES}'.split(' ')
+
+# Potentially faulty assumption: we can always link against libraries directly
+# by just specifying the full path to them on the command line.
+extra_link_args += libraries
 
 # Only build the extensions if we are asked to.
 if os.getenv('NO_BUILD') == '1':
@@ -64,10 +71,6 @@ else:
                       np.get_include(), \
                       '${OUTPUT_DIR}/src/mlpack/bindings/python/'] +
                       '${CYTHON_INCLUDE_DIRECTORIES}'.split(' '),
-                  libraries=['${MLPACK_LIB_NAME}',
-                             '${Boost_SERIALIZATION_LIB_NAME}'] +
-                             '${ARMADILLO_LIBRARIES}'.split(' '),
-                  library_dirs=library_dirs,
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
                   extra_link_args=extra_link_args,
@@ -83,10 +86,6 @@ else:
                       np.get_include(), \
                       '${OUTPUT_DIR}/src/mlpack/bindings/python/'] +
                       '${CYTHON_INCLUDE_DIRECTORIES}'.split(' '),
-                  libraries=['${MLPACK_LIB_NAME}',
-                             '${Boost_SERIALIZATION_LIB_NAME}'] +
-                             '${ARMADILLO_LIBRARIES}'.split(' '),
-                  library_dirs=library_dirs,
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
                   extra_link_args=extra_link_args,
