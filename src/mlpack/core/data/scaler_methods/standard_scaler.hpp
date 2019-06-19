@@ -71,6 +71,11 @@ class StandardScaler
   template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
+    if (itemMean.is_empty() || itemStdDev.is_empty())
+    {
+      throw std::runtime_error("Call Fit() before Transform(), please"
+        " refer documentation.");
+    }
     output.copy_size(input);
     output = (input.each_col() - itemMean).each_col() / itemStdDev;
   }

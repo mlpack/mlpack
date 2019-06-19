@@ -54,7 +54,7 @@ class ZcaWhitening
   */
   ZcaWhitening(double eps = 0.00005)
   {
-    zca = new data::PcaWhitening(eps);
+    pca = new data::PcaWhitening(eps);
   }
   /**
   * Function to fit features, to find out the min max and scale.
@@ -64,7 +64,7 @@ class ZcaWhitening
   template<typename MatType>
   void Fit(const MatType& input)
   {
-    zca->Fit(input);
+    pca->Fit(input);
   }
 
   /**
@@ -76,8 +76,8 @@ class ZcaWhitening
   template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
-    zca->Transform(input, output);
-    output = zca->EigenVectors() * output;
+    pca->Transform(input, output);
+    output = pca->EigenVectors() * output;
   }
 
   /**
@@ -89,29 +89,29 @@ class ZcaWhitening
   template<typename MatType>
   void InverseTransform(const MatType& input, MatType& output)
   {
-    output = inv(zca->EigenVectors()) * arma::diagmat(arma::sqrt(
-        zca->EigenValues())) * inv(zca->EigenVectors().t()) * input;
-    output = (output.each_col() + zca->ItemMean());
+    output = inv(pca->EigenVectors()) * arma::diagmat(arma::sqrt(
+        pca->EigenValues())) * inv(pca->EigenVectors().t()) * input;
+    output = (output.each_col() + pca->ItemMean());
   }
 
   //! Get the Mean row vector.
-  const arma::vec& ItemMean() const { return zca->ItemMean(); }
+  const arma::vec& ItemMean() const { return pca->ItemMean(); }
   //! Get the eigenvalues vector.
-  const arma::vec& EigenValues() const { return zca->EigenValues(); }
+  const arma::vec& EigenValues() const { return pca->EigenValues(); }
   //! Get the eigenvector.
-  const arma::mat& EigenVectors() const { return zca->EigenVectors(); }
+  const arma::mat& EigenVectors() const { return pca->EigenVectors(); }
   //! Get the Regularisation Parameter.
-  const double& Epsilon() const { return zca->Epsilon(); }
+  const double& Epsilon() const { return pca->Epsilon(); }
 
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(zca);
+    ar & BOOST_SERIALIZATION_NVP(pca);
   }
 
  private:
   // A pointer to PcaWhitening Class.
-  PcaWhitening* zca;
+  PcaWhitening* pca;
 }; // class ZcaWhitening
 
 } // namespace data

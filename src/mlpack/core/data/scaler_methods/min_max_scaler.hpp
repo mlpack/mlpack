@@ -94,6 +94,11 @@ class MinMaxScaler
   template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
+    if (scalerowmin.is_empty() || scale.is_empty())
+    {
+      throw std::runtime_error("Call Fit() before Transform(), please"
+        " refer documentation.");
+    }
     output.copy_size(input);
     output = (input.each_col() % scale).each_col() + scalerowmin;
   }

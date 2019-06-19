@@ -232,4 +232,116 @@ BOOST_AUTO_TEST_CASE(InvalidScalerTest)
   Log::Fatal.ignoreInput = false;
 }
 
+/**
+ * Check for Standard scaler type.
+ */
+BOOST_AUTO_TEST_CASE(StandardScalerTest)
+{
+  std::string method = "standard_scaler";
+  // Input custom data points.
+  SetInputParam("input", dataset);
+  SetInputParam("scaler_method", method);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  SetInputParam("scaler_method", std::move(method));
+  SetInputParam("input", dataset);
+  SetInputParam("input_model",
+                CLI::GetParam<ScalingModel*>("output_model"));
+  SetInputParam("inverse_scaling", true);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+}
+
+/**
+ * Check for MaxAbs scaler type.
+ */
+BOOST_AUTO_TEST_CASE(MaxAbsScalerTest)
+{
+  std::string method = "max_abs_scaler";
+  // Input custom data points.
+  SetInputParam("input", dataset);
+  SetInputParam("scaler_method", method);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  SetInputParam("scaler_method", std::move(method));
+  SetInputParam("input", dataset);
+  SetInputParam("input_model",
+                CLI::GetParam<ScalingModel*>("output_model"));
+  SetInputParam("inverse_scaling", true);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+}
+
+/**
+ * Check for MinMax scaler type.
+ */
+BOOST_AUTO_TEST_CASE(MinMaxScalerTest)
+{
+  std::string method = "min_max_scaler";
+  // Input custom data points.
+  SetInputParam("input", dataset);
+  SetInputParam("scaler_method", method);
+  SetInputParam("min_value", 2);
+  SetInputParam("max_value", 4);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  SetInputParam("scaler_method", std::move(method));
+  SetInputParam("input", dataset);
+  SetInputParam("input_model",
+                CLI::GetParam<ScalingModel*>("output_model"));
+  SetInputParam("inverse_scaling", true);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+}
+
+/**
+ * Check for PCA scaler type.
+ */
+BOOST_AUTO_TEST_CASE(PcaScalerTest)
+{
+  std::string method = "pca_whitening";
+  // Input custom data points.
+  SetInputParam("input", dataset);
+  SetInputParam("scaler_method", method);
+  SetInputParam("epsilon", 1.0);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  SetInputParam("scaler_method", std::move(method));
+  SetInputParam("input", dataset);
+  SetInputParam("input_model",
+                CLI::GetParam<ScalingModel*>("output_model"));
+  SetInputParam("inverse_scaling", true);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+}
+
+/**
+ * Check for ZCA scaler type.
+ */
+BOOST_AUTO_TEST_CASE(ZcaScalerTest)
+{
+  std::string method = "zca_whitening";
+  // Input custom data points.
+  SetInputParam("input", dataset);
+  SetInputParam("scaler_method", method);
+  SetInputParam("epsilon", 1.0);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  SetInputParam("scaler_method", std::move(method));
+  SetInputParam("input", dataset);
+  SetInputParam("input_model",
+                CLI::GetParam<ScalingModel*>("output_model"));
+  SetInputParam("inverse_scaling", true);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+}
+
+/**
+ * Check for Mean Normalization scaler type.
+ */
+BOOST_AUTO_TEST_CASE(MeanNormalizationTest)
+{
+  std::string method = "mean_normalization";
+  // Input custom data points.
+  SetInputParam("input", dataset);
+  SetInputParam("scaler_method", method);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  SetInputParam("scaler_method", std::move(method));
+  SetInputParam("input", dataset);
+  SetInputParam("input_model",
+                CLI::GetParam<ScalingModel*>("output_model"));
+  SetInputParam("inverse_scaling", true);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+}
+
 BOOST_AUTO_TEST_SUITE_END();

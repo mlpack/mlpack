@@ -85,6 +85,11 @@ class PcaWhitening
   template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
+    if (eigenValues.is_empty() || eigenVectors.is_empty())
+    {
+      throw std::runtime_error("Call Fit() before Transform(), please"
+        " refer documentation.");
+    }
     output.copy_size(input);
     output = (input.each_col() - itemMean);
     output = arma::diagmat(1.0 / (arma::sqrt(eigenValues))) * eigenVectors.t()
