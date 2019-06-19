@@ -123,23 +123,19 @@ double PPO<
   ActionType action;
   action.action = normalDist.Random()[0];
 
-//
-//  // Select an action according to the behavior policy.
-//  ActionType action = policy.Sample(actionValue, deterministic);
-//
-//  // Interact with the environment to advance to next state.
-//  StateType nextState;
-//  double reward = environment.Sample(state, action, nextState);
-//
-//  // Store the transition for replay.
+  // Interact with the environment to advance to next state.
+  StateType nextState;
+  double reward = environment.Sample(state, action, nextState);
+
+  // Store the transition for replay.
 //  replayMethod.Store(state, action, reward,
 //                     nextState, 0);
-//
-//  // Update current state.
-//  state = nextState;
 
-//  if (deterministic)
-//    return reward;
+  // Update current state.
+  state = nextState;
+
+  if (deterministic)
+    return reward;
 
   return 0.0;
 }
