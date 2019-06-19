@@ -204,7 +204,6 @@ bool Image::Save(const std::string& fileName,
                  bool flipVertical,
                  arma::Mat<unsigned char>&& inputMatrix)
 {
-
   if (!ImageFormatSupported(fileName, true))
   {
     std::ostringstream oss;

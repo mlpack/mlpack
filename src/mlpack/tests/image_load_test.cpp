@@ -149,7 +149,8 @@ BOOST_AUTO_TEST_CASE(SaveMultipleImageTest)
   std::vector<std:: string> sfiles{"saved_image1.png",
                                    "saved_image2.png"};
 
-  BOOST_REQUIRE(loadAndSave.Save(sfiles, 50, 50, 3, true, std::move(img)) == true);
+  BOOST_REQUIRE(loadAndSave.Save(sfiles, 50, 50, 3, true,
+      std::move(img)) == true);
 
   // Retrieve the images saved and cross-check the dimensions.
   img.clear();
