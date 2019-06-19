@@ -339,15 +339,19 @@ if (NOT STB_IMAGE_FOUND)
         # Now we have to also ensure these header files get installed.
         install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
         install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        add_definitions(-DHAS_STB)
     else ()
       list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
-      message(FATAL_ERROR
+      message(WARNING
           "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
     endif ()
   else ()
-    message(SEND_ERROR
-        "stb/stb_image.h not installed. Image utilites will not be available!")
+    message(WARNING
+        "stb/stb_image.h is not installed. Image utilites will not be available!")
   endif ()
+else ()
+  # Already has STB installed.
+  add_definitions(-DHAS_STB)
 endif ()
 
 # Find ensmallen.

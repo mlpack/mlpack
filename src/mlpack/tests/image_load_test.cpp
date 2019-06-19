@@ -17,6 +17,8 @@
 using namespace mlpack;
 using namespace std;
 
+#ifdef HAS_STB // Compile this only if stb is present.
+
 BOOST_AUTO_TEST_SUITE(ImageLoadTest);
 
 /**
@@ -160,3 +162,5 @@ BOOST_AUTO_TEST_CASE(SaveMultipleImageTest)
 }
 
 BOOST_AUTO_TEST_SUITE_END();
+
+#endif // HAS_STB.

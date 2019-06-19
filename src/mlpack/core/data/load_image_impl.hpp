@@ -13,6 +13,8 @@
 #ifndef MLPACK_CORE_DATA_LOAD_IMAGE_IMPL_HPP
 #define MLPACK_CORE_DATA_LOAD_IMAGE_IMPL_HPP
 
+#ifdef HAS_STB // Compile this only if stb is present.
+
 // In case it hasn't been included yet.
 #include "load_image.hpp"
 
@@ -301,5 +303,7 @@ bool Image::LoadDir(const std::string& dirPath,
 
 } // namespace data
 } // namespace mlpack
+
+#endif // HAS_STB.
 
 #endif

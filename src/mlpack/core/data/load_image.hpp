@@ -13,6 +13,8 @@
 #ifndef MLPACK_CORE_DATA_LOAD_IMAGE_HPP
 #define MLPACK_CORE_DATA_LOAD_IMAGE_HPP
 
+#ifdef HAS_STB // Compile this only if stb is present.
+
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/prereqs.hpp>
@@ -204,4 +206,6 @@ class Image
 // Include implementation of Image.
 #include "load_image_impl.hpp"
 
-#endif
+#endif // HAS_STB.
+
+#endif 
