@@ -48,7 +48,21 @@ PROGRAM_INFO("Kernel Density Estimation",
     "type of tree to use for the dual-tree algorithm with " +
     PRINT_PARAM_STRING("tree") + ". It is also possible to select whether to "
     "use dual-tree algorithm or single-tree algorithm using the " +
-    PRINT_PARAM_STRING("algorithm") + " option."
+    PRINT_PARAM_STRING("algorithm") + " option. This implementation makes "
+    "possible to use probabilistic Monte Carlo relative error tolerance "
+    "(only for the Gaussian kernel) using the flag " +
+    PRINT_PARAM_STRING("monte_carlo") + " and setting a probability with the " +
+    PRINT_PARAM_STRING("mc_probability") + " option. It is possible to set the "
+    "initial sample size for the Monte Carlo estimation using " +
+    PRINT_PARAM_STRING("initial_sample_size") + ". This implementation will "
+    "only consider a node, as a candidate for the Monte Carlo estimation, if "
+    "its number of descendant nodes is bigger than the initial sample size. "
+    "This can be controlled using a coefficient that will multiply the initial "
+    "sample size and can be set using " + PRINT_PARAM_STRING("mc_entry_coef") +
+    ". To avoid using the same amount of computations an exact approach would "
+    "take, this program recurses the tree whenever a fraction of the amount of "
+    "the node's descendant points have already been computed. This fraction "
+    "is set using " + PRINT_PARAM_STRING("mc_break_coef") + "."
     "\n\n"
     "For example, the following will run KDE using the data in " +
     PRINT_DATASET("ref_data") + " for training and the data in " +
@@ -68,7 +82,23 @@ PROGRAM_INFO("Kernel Density Estimation",
     "computed on the " + PRINT_PARAM_STRING("reference") + " dataset."
     "\n"
     "It is possible to select either a reference dataset or an input model "
-    "but not both at the same time.",
+    "but not both at the same time."
+    "\n"
+    "In addition to the last program call, it is also possible to activate "
+    "Monte Carlo estimations if a Gaussian kernel is used. The following will "
+    "run KDE using a Monte Carlo estimation when possible. The results will be "
+    "within a 5% of the real KDE value with a 95% probability. Initial sample "
+    "size for the Monte Carlo estimation will be 200 points and a node will be "
+    "a candidate for the estimation only when it contains 700 (i.e. 3.5*200) "
+    "points. If a node contains 700 points and 420 (i.e. 0.6*700) have already "
+    "been sampled, then the algorithm will recurse instead of keep sampling."
+    "\n\n"+
+    PRINT_CALL("kde", "reference", "ref_data", "query", "qu_data", "bandwidth",
+        0.2, "kernel", "gaussian", "tree", "kd-tree", "rel_error",
+        0.05, "predictions", "out_data", "monte_carlo", "", "mc_probability",
+        0.95, "initial_sample_size", 200, "mc_entry_coef", 3.5, "mc_break_coef",
+        0.6) +
+    "\n\n",
     SEE_ALSO("@knn", "#knn"),
     SEE_ALSO("Kernel density estimation on Wikipedia",
         "https://en.wikipedia.org/wiki/Kernel_density_estimation"),
@@ -108,6 +138,30 @@ PARAM_DOUBLE_IN("abs_error",
                 "Relative error tolerance for the prediction.",
                 "E",
                 0.0);
+PARAM_FLAG("monte_carlo",
+           "Whether to use Monte Carlo estimations when possible.",
+           "S");
+PARAM_DOUBLE_IN("mc_probability",
+                "Probability of the estimation being bounded by relative error "
+                "when using Monte Carlo estimations.",
+                "P",
+                0.95);
+PARAM_INT_IN("initial_sample_size",
+             "Initial sample size for Monte Carlo estimations.",
+             "s",
+             100);
+PARAM_DOUBLE_IN("mc_entry_coef",
+                "Controls how much larger does the amount of node descendants "
+                "has to be compared to the " +
+                PRINT_PARAM_STRING("initial_sample_size")+ " in order to be "
+                "a candidate for Monte Carlo estimations.",
+                "C",
+                3.0);
+PARAM_DOUBLE_IN("mc_break_coef",
+                "Controls what fraction of the amount of node's descendants is "
+                "the limit for the sample size before it recurses.",
+                "c",
+                0.7);
 
 // Output predictions options.
 PARAM_COL_OUT("predictions", "Vector to store density predictions.",
@@ -124,6 +178,11 @@ static void mlpackMain()
   const std::string modeStr = CLI::GetParam<std::string>("algorithm");
   const double relError = CLI::GetParam<double>("rel_error");
   const double absError = CLI::GetParam<double>("abs_error");
+  const bool monteCarlo = CLI::GetParam<bool>("monte_carlo");
+  const double MCProbability = CLI::GetParam<double>("mc_probability");
+  const int initialSampleSize = CLI::GetParam<int>("initial_sample_size");
+  const double MCEntryCoef = CLI::GetParam<double>("mc_entry_coef");
+  const double MCBreakCoef = CLI::GetParam<double>("mc_break_coef");
 
   // Initialize results vector.
   arma::vec estimations;
@@ -134,6 +193,22 @@ static void mlpackMain()
   ReportIgnoredParam({{ "input_model", true }}, "kernel");
   ReportIgnoredParam({{ "input_model", true }}, "rel_error");
   ReportIgnoredParam({{ "input_model", true }}, "abs_error");
+  ReportIgnoredParam({{ "input_model", true }}, "monte_carlo");
+  ReportIgnoredParam({{ "input_model", true }}, "mc_probability");
+  ReportIgnoredParam({{ "input_model", true }}, "initial_sample_size");
+  ReportIgnoredParam({{ "input_model", true }}, "mc_entry_coef");
+  ReportIgnoredParam({{ "input_model", true }}, "mc_break_coef");
+
+  // Monte Carlo parameters only make sense if it is activated.
+  ReportIgnoredParam({{ "monte_carlo", false }}, "mc_probability");
+  ReportIgnoredParam({{ "monte_carlo", false }}, "initial_sample_size");
+  ReportIgnoredParam({{ "monte_carlo", false }}, "mc_entry_coef");
+  ReportIgnoredParam({{ "monte_carlo", false }}, "mc_break_coef");
+  if (monteCarlo && kernelStr != "gaussian")
+  {
+    ReportIgnoredParam("monte_carlo",
+                       "Monte Carlo only works with Gaussian kernel");
+  }
 
   // Requirements for parameter values.
   RequireParamInSet<string>("kernel", { "gaussian", "epanechnikov",
@@ -146,6 +221,17 @@ static void mlpackMain()
       true, "relative error must be between 0 and 1");
   RequireParamValue<double>("abs_error", [](double x){return x >= 0;},
       true, "absolute error must be equal or greater than 0");
+  RequireParamValue<double>("mc_probability",
+      [](double x){return x >= 0 && x < 1;}, true,
+      "Monte Carlo probability must be bigger or equal to 0 or less than 1");
+  RequireParamValue<int>("initial_sample_size", [](int x){return x > 0;},
+      true, "initial sample size must be bigger than 0");
+  RequireParamValue<double>("mc_entry_coef", [](double x){return x >= 1;},
+      true, "Monte Carlo entry coefficient must be greater or equal to 1");
+  RequireParamValue<double>("mc_break_coef",
+      [](double x){return x > 0 && x <= 1;}, true,
+      "Monte Carlo break coefficient must be greater than 0 and smaller or "
+      "equal to 1");
 
   KDEModel* kde;
 
@@ -158,6 +244,11 @@ static void mlpackMain()
     kde->Bandwidth() = bandwidth;
     kde->RelativeError() = relError;
     kde->AbsoluteError() = absError;
+    kde->MonteCarlo() = monteCarlo;
+    kde->MCProbability() = MCProbability;
+    kde->MCInitialSampleSize() = initialSampleSize;
+    kde->MCEntryCoefficient() = MCEntryCoef;
+    kde->MCBreakCoefficient() = MCBreakCoef;
 
     // Set KernelType.
     if (kernelStr == "gaussian")
