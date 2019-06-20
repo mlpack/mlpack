@@ -18,15 +18,15 @@
 namespace mlpack {
 namespace data {
 
-void Bow::Reset()
+void BagOfWords::Reset()
 {
   mappings.clear();
   originalStrings.clear();
 }
 
-Bow::Bow(const Bow& oldObject)
+BagOfWords::BagOfWords(const BagOfWords& oldObject) : 
+    originalStrings(oldObject.originalStrings)
 {
-  originalStrings = oldObject.originalStrings;
   std::deque<std::string>::iterator jt = originalStrings.begin();
   for (auto it = oldObject.originalStrings.begin(); it !=
       oldObject.originalStrings.end(); it++)
@@ -36,7 +36,7 @@ Bow::Bow(const Bow& oldObject)
   }
 }
 
-Bow& Bow::operator= (const Bow &oldObject)
+BagOfWords& BagOfWords::operator= (const BagOfWords& oldObject)
 {
   if (this != &oldObject)
   {
@@ -54,7 +54,7 @@ Bow& Bow::operator= (const Bow &oldObject)
 }
 
 template<typename TokenizerType>
-void Bow::CreateMap(const std::string& input,
+void BagOfWords::CreateMap(const std::string& input,
     TokenizerType tokenizer)
 {
   boost::string_view strView(input);
@@ -73,7 +73,7 @@ void Bow::CreateMap(const std::string& input,
 }
 
 template<typename MatType, typename TokenizerType>
-void Bow::Encode(const std::vector<std::string>& input,
+void BagOfWords::Encode(const std::vector<std::string>& input,
                                 MatType& output, TokenizerType tokenizer)
 {
   boost::string_view strView;
@@ -107,7 +107,7 @@ void Bow::Encode(const std::vector<std::string>& input,
 }
 
 template<typename Archive>
-void Bow::serialize(Archive& ar, const unsigned int
+void BagOfWords::serialize(Archive& ar, const unsigned int
     /* version */)
 {
   size_t count = originalStrings.size();

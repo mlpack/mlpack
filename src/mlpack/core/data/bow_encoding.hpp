@@ -22,7 +22,7 @@ namespace data {
 /**
  * A simple Bow Enocding class
  */
-class Bow
+class BagOfWords
 {
  public:
   /**
@@ -43,23 +43,23 @@ class Bow
   /*
   * Default Constructor
   */
-  Bow() {}
+  BagOfWords() {}
   /*
   * Copy Constructor.
   */
-  Bow(const Bow& oldObject);
+  BagOfWords(const BagOfWords& oldObject);
   /*
   * Move Constructor.
   */
-  Bow(Bow&& oldObject) = default;
+  BagOfWords(BagOfWords&& oldObject) = default;
   /*
   * Move Assignment Operator.
   */  
-  Bow& operator= (Bow&& oldObject) = default;
+  BagOfWords& operator= (BagOfWords&& oldObject) = default;
   /*
   * Assignment Operator.
   */
-  Bow& operator= (const Bow& oldObject);
+  BagOfWords& operator= (const BagOfWords& oldObject);
   /**
   * A function to reset the mapping that is clear all the encodings
   */
@@ -117,7 +117,7 @@ class Bow
       boost::hash<boost::string_view>> mappings;
   //! A deque which holds the original string for map's string_view.
   std::deque<std::string> originalStrings;
-}; // class Bow
+}; // class BagOfWords
 
 } // namespace data
 } // namespace mlpack

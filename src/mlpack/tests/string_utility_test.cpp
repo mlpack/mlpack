@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(BowEncodingTest)
   arr[1] = "i am good";
   arr[2] = "Good how are you";
   arma::sp_mat output;
-  data::Bow en;
+  data::BagOfWords en;
   en.Encode(arr, output, tokenizer);
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>> maps = en.Mappings();
