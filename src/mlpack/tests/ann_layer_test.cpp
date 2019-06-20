@@ -2574,9 +2574,8 @@ BOOST_AUTO_TEST_CASE(GradientWeightNormLayerTest)
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
 
-      weightNorm = new WeightNorm<>;
       Linear<>* linear = new Linear<>(10, 2);
-      weightNorm->Add(linear);
+      weightNorm = new WeightNorm<>(linear);
 
       model->Add(weightNorm);
       model->Add<LogSoftMax<> >();
@@ -2657,10 +2656,9 @@ BOOST_AUTO_TEST_CASE(WeightNormRunTest)
 {
   arma::mat output, input, delta, error;
 
-  WeightNorm<> module;
-
   Linear<>* linear = new Linear<>(10, 10);
-  module.Add(linear);
+
+  WeightNorm<> module(linear);
 
   module.Parameters().randu();
   module.Reset();

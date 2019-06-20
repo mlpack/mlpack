@@ -60,8 +60,12 @@ template <
 class WeightNorm
 {
  public:
-  //! Create the WeightNorm layer object.
-  WeightNorm();
+  /**
+   * Create the WeightNorm layer object.
+   *
+   * @param layer The layer of whoose weights are needed to be normalize.
+   */
+  WeightNorm(LayerTypes<CustomLayers...> layer = LayerTypes<CustomLayers...>());
 
   //! Destructor to release allocated memory.
   ~WeightNorm();
@@ -119,22 +123,6 @@ class WeightNorm
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
-  /*//! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }*/
-
-  //! Return the model modules.
-  std::vector<LayerTypes<CustomLayers...> >& Model()
-  {
-    if (model)
-    {
-      return network;
-    }
-
-    return empty;
-  }
-
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -145,20 +133,8 @@ class WeightNorm
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
-  /*
-   * Add a new module to the model.
-   *
-   * @param args The layer parameter.
-   */
-  template <class LayerType, class... Args>
-  void Add(Args... args);
-
-  /*
-   * Add a new module to the model.
-   *
-   * @param layer The Layer to be added to the model.
-   */
-  void Add(LayerTypes<CustomLayers...> layer);
+  //! Modify the wrapped layer.
+  LayerTypes<CustomLayers...>& Layer() { return wrappedLayer; }
 
   /**
    * Serialize the layer.
@@ -176,23 +152,14 @@ class WeightNorm
   //! Locally-stored delta visitor module object.
   DeltaVisitor deltaVisitor;
 
-  //! Locally-stored empty list of modules.
-  std::vector<LayerTypes<CustomLayers...> > empty;
-
   //! Locally-stored gradient object.
   OutputDataType gradient;
 
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
-
-  //! Parameter which indicates if the modules should be exposed.
-  bool model;
-
-  //! Locally-stored network modules.
-  std::vector<LayerTypes<CustomLayers...> > network;
+  //! Locally-stored wrapped layer.
+  LayerTypes<CustomLayers...> wrappedLayer;
 
   //! Locally stored number of elements in the weights of wrapped layer.
-  size_t networkWeightSize;
+  size_t layerWeightSize;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;

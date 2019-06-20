@@ -25,19 +25,19 @@ namespace ann { /** Artificial Neural Network. */
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
-WeightNorm<InputDataType, OutputDataType, CustomLayers...>::WeightNorm() :
-    model(false),
-    networkWeightSize(0)
+WeightNorm<InputDataType, OutputDataType, CustomLayers...>::WeightNorm(
+    LayerTypes<CustomLayers...> layer) :
+    wrappedLayer(layer)
 {
-  // Nothing to do here.
+  layerWeightSize = boost::apply_visitor(weightSizeVisitor, wrappedLayer);
+  weights.set_size(2 * layerWeightSize + 1, 1);
 }
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 WeightNorm<InputDataType, OutputDataType, CustomLayers...>::~WeightNorm()
 {
-  std::for_each(network.begin(), network.end(),
-      boost::apply_visitor(deleteVisitor));
+  boost::apply_visitor(deleteVisitor, wrappedLayer);
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -45,8 +45,8 @@ template<typename InputDataType, typename OutputDataType,
 void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Reset()
 {
   size_t offset = boost::apply_visitor(WeightSetVisitor(std::move(weights),
-      0), network[0]);
-  boost::apply_visitor(resetVisitor, network[0]);
+      0), wrappedLayer);
+  boost::apply_visitor(resetVisitor, wrappedLayer);
 
   vectorParameter = arma::mat(weights.memptr() + offset, offset, 1, false,
       false);
@@ -63,14 +63,14 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Forward(
 {
   // Intialize the weights of wrapped layer.
   double normVectorParameter = arma::norm(vectorParameter, 2);
-  weights.rows(0, networkWeightSize - 1) = scalarParameter(0) * vectorParameter
+  weights.rows(0, layerWeightSize - 1) = scalarParameter(0) * vectorParameter
       / normVectorParameter;
 
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
-      boost::apply_visitor(outputParameterVisitor, network[0]))),
-      network[0]);
+      boost::apply_visitor(outputParameterVisitor, wrappedLayer))),
+      wrappedLayer);
 
-  output = boost::apply_visitor(outputParameterVisitor, network[0]);
+  output = boost::apply_visitor(outputParameterVisitor, wrappedLayer);
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -80,10 +80,10 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, network[0])), std::move(gy), std::move(
-      boost::apply_visitor(deltaVisitor, network[0]))), network[0]);
+      outputParameterVisitor, wrappedLayer)), std::move(gy), std::move(
+      boost::apply_visitor(deltaVisitor, wrappedLayer))), wrappedLayer);
 
-  g = boost::apply_visitor(deltaVisitor, network[0]);
+  g = boost::apply_visitor(deltaVisitor, wrappedLayer);
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -94,72 +94,24 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Gradient(
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
-  if (!model)
-  {
-    ResetGradients(gradient);
-  }
+  ResetGradients(gradient);
 
   // Calculate the gradients of the wrapped layer.
   boost::apply_visitor(GradientVisitor(std::move(input),
-      std::move(error)), network[0]);
+      std::move(error)), wrappedLayer);
 
   // Store the norm of vector parameter temporarily.
   double normVectorParameter = arma::norm(vectorParameter, 2);
 
   // Calculate the gradients of the scalar parameter.
-  gradient[gradient.n_rows - 1] = arma::accu(gradient.rows(0, networkWeightSize
+  gradient[gradient.n_rows - 1] = arma::accu(gradient.rows(0, layerWeightSize
       - 1) % vectorParameter) / normVectorParameter;
 
   // Calculate the gradients of the vector parameter.
-  gradient.rows(networkWeightSize, 2 * networkWeightSize - 1) =
+  gradient.rows(layerWeightSize, 2 * layerWeightSize - 1) =
       scalarParameter(0) / normVectorParameter * (gradient.rows(0,
-      networkWeightSize - 1) - gradient[gradient.n_rows - 1] /
+      layerWeightSize - 1) - gradient[gradient.n_rows - 1] /
       normVectorParameter * vectorParameter);
-}
-
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-template <class LayerType, class... Args>
-void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Add(
-    Args... args)
-{
-  // Only one layer will be wrapped.
-  if (network.size() > 0)
-  {
-    std::for_each(network.begin(), network.end(),
-        boost::apply_visitor(deleteVisitor));
-    network.clear();
-  }
-
-  network.push_back(new LayerType(args...));
-
-  // Now set the weights of the weight norm layer.
-  networkWeightSize = boost::apply_visitor(weightSizeVisitor, network[0]);
-  weights.set_size(2 * networkWeightSize + 1, 1);
-
-  Reset();
-}
-
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Add(
-    LayerTypes<CustomLayers...> layer)
-{
-  // Only one layer will be wrapped.
-  if (network.size() > 0)
-  {
-    std::for_each(network.begin(), network.end(),
-        boost::apply_visitor(deleteVisitor));
-    network.clear();
-  }
-
-  network.push_back(layer);
-
-  // Now set the weights of the weight norm layer.
-  networkWeightSize = boost::apply_visitor(weightSizeVisitor, network[0]);
-  weights.set_size(2 * networkWeightSize + 1, 1);
-
-  Reset();
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -168,7 +120,7 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::ResetGradients(
     arma::mat& gradient)
 {
     boost::apply_visitor(GradientSetVisitor(std::move(gradient), 0),
-        network[0]);
+        wrappedLayer);
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -179,19 +131,16 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::serialize(
 {
   if (Archive::is_loading::value)
   {
-    std::for_each(network.begin(), network.end(),
-        boost::apply_visitor(deleteVisitor));
-    network.clear();
+    boost::apply_visitor(deleteVisitor, wrappedLayer);
   }
 
-  ar & BOOST_SERIALIZATION_NVP(network);
-  ar & BOOST_SERIALIZATION_NVP(model);
-  ar & BOOST_SERIALIZATION_NVP(networkWeightSize);
+  ar & BOOST_SERIALIZATION_NVP(wrappedLayer);
+  ar & BOOST_SERIALIZATION_NVP(layerWeightSize);
 
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)
   {
-    weights.set_size(2 * networkWeightSize + 1, 1);
+    weights.set_size(2 * layerWeightSize + 1, 1);
   }
 }
 
