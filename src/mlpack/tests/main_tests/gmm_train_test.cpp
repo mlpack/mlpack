@@ -244,7 +244,9 @@ BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
   arma::mat inputData(5, 100, arma::fill::randu);
 
   SetInputParam("input", inputData);
-  SetInputParam("gaussians", (int) 4);
+  SetInputParam("gaussians", (int) 3);
+  SetInputParam("refined_start", true);
+  SetInputParam("samplings", (int) 1000);
   SetInputParam("trials", (int) 1);
   SetInputParam("max_iterations", (int) 500);
 
@@ -260,7 +262,9 @@ BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
   ResetGmmTrainSetting();
 
   SetInputParam("input", std::move(inputData));
-  SetInputParam("gaussians", (int) 4);
+  SetInputParam("gaussians", (int) 3);
+  SetInputParam("refined_start", true);
+  SetInputParam("samplings", (int) 1000);
   SetInputParam("max_iterations", (int) 500);
   SetInputParam("trials", (int) 500);
 
