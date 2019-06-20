@@ -104,19 +104,6 @@ class KDERules
   double EvaluateKernel(const arma::vec& query,
                         const arma::vec& reference) const;
 
-  //! Get the bandwidth of a kernel that has bandwidth.
-  template <typename T = KernelType>
-  double GetKernelBandwidth(const typename std::enable_if<
-          HasBandwidth<T, double(T::*)() const>::value>::
-          type* = 0)
-  { return kernel.Bandwidth(); }
-
-  //! Get the bandwidth of a kernel that doesn't have bandwidth.
-  template <typename T = KernelType>
-  double GetKernelBandwidth(const typename std::enable_if<
-          !HasBandwidth<T, double(T::*)() const>::value>::
-          type* = 0)
-  { throw std::invalid_argument("cannot get bandwidth from kernel"); }
 
   //! The reference set.
   const arma::mat& referenceSet;
