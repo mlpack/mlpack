@@ -435,4 +435,34 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidMCProbability)
   Log::Fatal.ignoreInput = false;
 }
 
+/**
+  * Ensure we get an exception when an invalid Monte Carlo initial sample size
+  * is specified.
+ **/
+BOOST_AUTO_TEST_CASE(KDEMainInvalidMCInitialSampleSize)
+{
+  arma::mat reference = arma::randu<arma::mat>(1, 10);
+  arma::mat query = arma::randu<arma::mat>(1, 5);
+
+  // Main params.
+  SetInputParam("reference", reference);
+  SetInputParam("query", query);
+  SetInputParam("kernel", std::string("gaussian"));
+  SetInputParam("monte_carlo", true);
+
+  Log::Fatal.ignoreInput = true;
+  // Invalid under 0.
+  SetInputParam("initial_sample_size", -1);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+
+  // Invalid 0.
+  SetInputParam("initial_sample_size", 0);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+
+  // Valid value.
+  SetInputParam("initial_sample_size", 20);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  Log::Fatal.ignoreInput = false;
+}
+
 BOOST_AUTO_TEST_SUITE_END();
