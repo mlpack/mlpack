@@ -472,6 +472,11 @@ void KDEModel::serialize(Archive& ar, const unsigned int /* version */)
   ar & BOOST_SERIALIZATION_NVP(absError);
   ar & BOOST_SERIALIZATION_NVP(kernelType);
   ar & BOOST_SERIALIZATION_NVP(treeType);
+  ar & BOOST_SERIALIZATION_NVP(monteCarlo);
+  ar & BOOST_SERIALIZATION_NVP(MCProb);
+  ar & BOOST_SERIALIZATION_NVP(initialSampleSize);
+  ar & BOOST_SERIALIZATION_NVP(MCEntryCoef);
+  ar & BOOST_SERIALIZATION_NVP(MCBreakCoef);
 
   if (Archive::is_loading::value)
     boost::apply_visitor(DeleteVisitor(), kdeModel);
