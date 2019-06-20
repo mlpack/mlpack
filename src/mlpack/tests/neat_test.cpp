@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(NEATXORTest)
 {
   arma::arma_rng::set_seed_random();
   XORTask task;
-  NEAT<XORTask, LogisticFunction, RankSelection> model(task, 2, 1, 100, 100, 10, 1, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.2, 0.3, true);
+  NEAT<XORTask, LogisticFunction, RankSelection> model(task, 2, 1, 100, 100, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.5, true);
 
   // Find the best genome and it's fitness.
   Genome<LogisticFunction> bestGenome = model.Train();

@@ -36,6 +36,7 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::
          const double biasMutationSize,
          const double nodeAdditionProb,
          const double connAdditionProb,
+         const double connDeletionProb,
          const double disableProb,
          const double elitismProp,
          const bool isAcyclic):
@@ -52,6 +53,7 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::
     biasMutationSize(biasMutationSize),
     nodeAdditionProb(nodeAdditionProb),
     connAdditionProb(connAdditionProb),
+    connDeletionProb(connDeletionProb),
     disableProb(disableProb),
     elitismProp(elitismProp),
     isAcyclic(isAcyclic)
@@ -72,7 +74,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     genomeList.emplace_back(Genome<ActivationFunction>(inputNodeCount,
         outputNodeCount, bias, weightMutationProb,
         weightMutationSize, biasMutationProb, biasMutationSize,
-        nodeAdditionProb, connAdditionProb, isAcyclic));
+        nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic));
   }
   speciesList = std::vector<std::vector<Genome<ActivationFunction>>>(numSpecies);
   Speciate(true);
@@ -86,11 +88,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     std::cout << "Evaluating" << std::endl;
     #pragma omp parallel for
     for (size_t i = 0; i < popSize; i++)
-    {
       genomeList[i].Fitness() = task.Evaluate(genomeList[i]);
-      fitnesses[i] = genomeList[i].Fitness();
-    }
-    std::cout << arma::max(fitnesses) << std::endl;
     if (gen == maxGen - 1) break;
     std::cout << "Reproducing" << std::endl;
     Reproduce();
@@ -129,7 +127,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
   // Find the mean fitnesses.
   for (size_t i = 0; i < numSpecies; i++)
   {
-    if (speciesList.size() == 0)
+    if (speciesList[i].size() == 0)
       continue;
     for (size_t j = 0; j < speciesList[i].size(); j++)
       meanFitnesses[i] += speciesList[i][j].Fitness();
@@ -179,30 +177,69 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
     // This ensures that the best genome from every species will be saved.
     if (numElite[i] == 0)
       numElite[i] = 1;
+    if (numElite[i] > speciesList[i].size())
+      numElite[i] = speciesList[i].size();
   }
+
+  // Prepare the centroids matrix for recalculation.
+  centroids.fill(0);
 
   // Crossover and add the new genomes.
   genomeList.clear();
   for (size_t i = 0; i < numSpecies; i++)
   {
-    // Handle the case where the species is empty.
+    // Handle the case where the species should be empty.
     if (speciesSize[i] == 0)
       continue;
-    // Handle the case where the species has only one member.
-    else if (speciesList[i].size() == 1)
-    {
-      genomeList.push_back(speciesList[i][0]);
-      continue;
-    }
+
     size_t currentSize = genomeList.size();
     std::sort(speciesList[i].begin(), speciesList[i].begin(), compareGenome);
     arma::vec fitnesses(speciesList[i].size());
+
+    // Let us update the species' centroids.
+    if (speciesSize[i] == 1)
+    {
+      for (size_t j = 0; j < speciesList[i][0].connectionGeneList.size(); j++)
+      {
+        size_t innovID = speciesList[i][0].connectionGeneList[j].InnovationID();
+        centroids(innovID, i) = speciesList[i][0].connectionGeneList[j].Weight();
+      }
+    }
+    else
+    {
+      for (size_t k = 0; k < numElite[i]; k++)
+      {
+        for (size_t j = 0; j < speciesList[i][k].connectionGeneList.size(); j++)
+        {
+          size_t innovID = speciesList[i][k].connectionGeneList[j].InnovationID();
+          centroids(innovID, i) += (speciesList[i][k].connectionGeneList[j].Weight()) / numElite[i];
+        }
+      }
+    }
+
+    // Handle the case where the species has only one member.
+    if (speciesList[i].size() == 1)
+    {
+      genomeList.push_back(speciesList[i][0]);
+
+      // Fill the species with mutated members of the population.
+      while (genomeList.size() - currentSize < speciesSize[i])
+      {
+        genomeList.push_back(speciesList[i][0]);
+        genomeList[genomeList.size() - 1].Mutate();
+      }
+      continue;
+    }
     
+    // Fill the elite members.
     for (size_t j = 0; j < numElite[i]; j++)
       genomeList.push_back(speciesList[i][j]);
+
+    // Fill the fitnesses.
     for (size_t j = 0; j < fitnesses.n_elem; j++)
       fitnesses[j] = speciesList[i][j].Fitness();
-    while (genomeList.size() - currentSize < speciesSize[i])
+
+    while (genomeList.size() < speciesSize[i] + currentSize)
     {
       arma::uvec selection(2);
       SelectionPolicy::Select(fitnesses, selection);
@@ -222,7 +259,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Speciate(bool init)
 {
   // Translate the genome into points in space.
   arma::mat data(Genome<ActivationFunction>::nextInnovID, popSize, arma::fill::zeros);
-  for (size_t i = 0; i < genomeList.size(); i++)
+  for (size_t i = 0; i < popSize; i++)
   {
     for (size_t j = 0; j < genomeList[i].connectionGeneList.size(); j++)
     {
@@ -241,7 +278,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Speciate(bool init)
   }
   else
   {
-    centroids.resize(data.n_rows, centroids.n_cols);
+    centroids.resize(data.n_rows, numSpecies);
     k.Cluster(data, numSpecies, assignments, centroids, false, true);
   }
 
@@ -335,14 +372,14 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
       return Genome<ActivationFunction>(newConnGeneList, nodeDepths, 
         inputNodeCount, outputNodeCount, nextNodeID, bias, weightMutationProb,
         weightMutationSize, biasMutationProb, biasMutationSize,
-        nodeAdditionProb, connAdditionProb, isAcyclic);
+        nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic);
     }
     else
     {
       return Genome<ActivationFunction>(newConnGeneList, inputNodeCount,
         outputNodeCount, nextNodeID, bias, weightMutationProb,
         weightMutationSize, biasMutationProb, biasMutationSize,
-        nodeAdditionProb, connAdditionProb, isAcyclic);
+        nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic);
     }
   }
   else
@@ -389,7 +426,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     return Genome<ActivationFunction>(newConnGeneList, inputNodeCount,
           outputNodeCount, nextNodeID, bias, weightMutationProb,
           weightMutationSize, biasMutationProb, biasMutationSize,
-          nodeAdditionProb, connAdditionProb, isAcyclic);
+          nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic);
   }
 }
 

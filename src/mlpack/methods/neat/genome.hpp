@@ -61,6 +61,7 @@ class Genome
          const double biasMutationSize,
          const double nodeAdditionProb,
          const double connAdditionProb,
+         const double connDeletionProb,
          const bool isAcyclic = false);
 
   /**
@@ -90,6 +91,7 @@ class Genome
          const double biasMutationSize,
          const double nodeAdditionProb,
          const double connAdditionProb,
+         const double connDeletionProb,
          const bool isAcyclic = false);
 
   /**
@@ -122,6 +124,7 @@ class Genome
          const double biasMutationSize,
          const double nodeAdditionProb,
          const double connAdditionProb,
+         const double connDeletionProb,
          const bool isAcyclic = false);
 
   /**
@@ -224,6 +227,9 @@ class Genome
 
   //! The probability that a new connection will be added.
   double connAdditionProb;
+
+  //! The probability that a connection will be deleted.
+  double connDeletionProb;
 
   //! The fitness.
   double fitness;

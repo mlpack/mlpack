@@ -68,13 +68,19 @@ void AcyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
       if (nodeID == 0)
       {
         for (auto const& x : directedGraph[nodeID])
-          nodeValues[x.first] += bias * x.second.Weight();
+        {
+          if (x.second.Enabled())
+            nodeValues[x.first] += bias * x.second.Weight();
+        }
       }
       else
       {
         double result = ActivationFunction::Fn(nodeValues[nodeID]);
         for (auto const& x : directedGraph[nodeID])
-          nodeValues[x.first] += result * x.second.Weight();
+        {
+          if (x.second.Enabled())
+            nodeValues[x.first] += result * x.second.Weight();
+        }
       }
     }
   }

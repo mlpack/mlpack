@@ -42,6 +42,7 @@ class NEAT
        const double biasMutationSize,
        const double nodeAdditionProb,
        const double connAdditionProb,
+       const double connDeletionProb,
        const double disableProb,
        const double elitismProp,
        const bool isAcyclic = false);
@@ -113,6 +114,8 @@ class NEAT
 
   //! The probability of a new connection being added.
   double connAdditionProb;
+
+  double connDeletionProb;
 
   /**
    * The probability that an inherited gene is disabled if either of it's
