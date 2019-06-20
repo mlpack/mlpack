@@ -105,7 +105,8 @@ BOOST_AUTO_TEST_CASE(LoadImagesInVector)
  */
 BOOST_AUTO_TEST_CASE(SaveAndLoadImageTest)
 {
-  arma::Mat<unsigned char> img1 = arma::randi<arma::Mat<unsigned char>>(25*3,1);
+  arma::Mat<unsigned char> img1;
+  img1 = arma::randi<arma::Mat<unsigned char>>(25*3, 1);
   data::Image loadAndSave;
   BOOST_REQUIRE(loadAndSave.Save("test.bmp", 5, 5,
       3, true, std::move(img1)) == true);

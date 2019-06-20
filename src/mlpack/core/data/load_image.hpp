@@ -209,4 +209,4 @@ class Image
 
 #endif // HAS_STB.
 
-#endif 
+#endif
