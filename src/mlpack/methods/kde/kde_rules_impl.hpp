@@ -90,18 +90,7 @@ template<typename MetricType, typename KernelType, typename TreeType>
 inline double KDERules<MetricType, KernelType, TreeType>::
 Score(const size_t queryIndex, TreeType& referenceNode)
 {
-  // Calculate reference node depth.
   kde::KDEStat& referenceStat = referenceNode.Stat();
-  if (referenceStat.Depth() == 0)
-  {
-    TreeType* node = &referenceNode;
-    while (node != NULL)
-    {
-      ++referenceStat.Depth();
-      node = node->Parent();
-    }
-  }
-
   double score, maxKernel, minKernel, bound;
   const arma::vec& queryPoint = querySet.unsafe_col(queryIndex);
   const double minDistance = referenceNode.MinDistance(queryPoint);
@@ -146,6 +135,10 @@ Score(const size_t queryIndex, TreeType& referenceNode)
            referenceNode.NumDescendants() >= MCAccessCoef * initialSampleSize &&
            std::is_same<KernelType, kernel::GaussianKernel>::value)
   {
+    // Calculate reference node depth.
+    if (referenceStat.Depth() == 0)
+      referenceStat.Depth() = CalculateDepth(referenceNode);
+
     // Monte Carlo probabilistic estimation.
     const double currentAlpha =
         MCBeta / std::pow(2, referenceNode.Stat().Depth() + 1);
@@ -289,14 +282,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     // Calculate reference node depth.
     kde::KDEStat& referenceStat = referenceNode.Stat();
     if (referenceStat.Depth() == 0)
-    {
-      TreeType* node = &referenceNode;
-      while (node != NULL)
-      {
-        ++referenceStat.Depth();
-        node = node->Parent();
-      }
-    }
+      referenceStat.Depth() = CalculateDepth(referenceNode);
 
     // Monte Carlo probabilistic estimation.
     const double currentAlpha =
@@ -405,6 +391,20 @@ inline force_inline double KDERules<MetricType, KernelType, TreeType>::
 EvaluateKernel(const arma::vec& query, const arma::vec& reference) const
 {
   return kernel.Evaluate(metric.Evaluate(query, reference));
+}
+
+template<typename MetricType, typename KernelType, typename TreeType>
+inline force_inline size_t KDERules<MetricType, KernelType, TreeType>::
+CalculateDepth(const TreeType& node) const
+{
+  size_t depth = 0;
+  const TreeType* currentNode = &node;
+  while (currentNode != NULL)
+  {
+    ++depth;
+    currentNode = currentNode->Parent();
+  }
+  return depth;
 }
 
 } // namespace kde

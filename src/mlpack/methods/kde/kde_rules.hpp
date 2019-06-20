@@ -104,6 +104,8 @@ class KDERules
   double EvaluateKernel(const arma::vec& query,
                         const arma::vec& reference) const;
 
+  //! Calculate the depth of a node.
+  size_t CalculateDepth(const TreeType& node) const;
 
   //! The reference set.
   const arma::mat& referenceSet;
