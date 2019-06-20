@@ -671,15 +671,29 @@ BOOST_AUTO_TEST_CASE(EmptyQuerySetTest)
  */
 BOOST_AUTO_TEST_CASE(SerializationTest)
 {
-  // Initial KDE model to me serialized.
+  // Initial KDE model to be serialized.
   const double relError = 0.25;
   const double absError = 0.0;
+  const bool monteCarlo = false;
+  const double MCProb = 0.8;
+  const size_t initialSampleSize = 35;
+  const double entryCoef = 5;
+  const double breakCoef = 0.6;
   arma::mat reference = arma::randu(4, 800);
   KDE<GaussianKernel,
       metric::EuclideanDistance,
       arma::mat,
       tree::KDTree>
-      kde(relError, absError, GaussianKernel(0.25));
+    kde(relError,
+        absError,
+        GaussianKernel(0.25),
+        KDEMode::DUAL_TREE_MODE,
+        metric::EuclideanDistance(),
+        monteCarlo,
+        MCProb,
+        initialSampleSize,
+        entryCoef,
+        breakCoef);
   kde.Train(reference);
 
   // Get estimations to compare.
@@ -715,6 +729,31 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   BOOST_REQUIRE_EQUAL(kdeXml.Mode(), mode);
   BOOST_REQUIRE_EQUAL(kdeText.Mode(), mode);
   BOOST_REQUIRE_EQUAL(kdeBinary.Mode(), mode);
+
+  BOOST_REQUIRE_EQUAL(kde.MonteCarlo(), monteCarlo);
+  BOOST_REQUIRE_EQUAL(kdeXml.MonteCarlo(), monteCarlo);
+  BOOST_REQUIRE_EQUAL(kdeText.MonteCarlo(), monteCarlo);
+  BOOST_REQUIRE_EQUAL(kdeBinary.MonteCarlo(), monteCarlo);
+
+  BOOST_REQUIRE_CLOSE(kde.MCProbability(), MCProb, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeXml.MCProbability(), MCProb, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeText.MCProbability(), MCProb, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeBinary.MCProbability(), MCProb, 1e-8);
+
+  BOOST_REQUIRE_EQUAL(kde.MCInitialSampleSize(), initialSampleSize);
+  BOOST_REQUIRE_EQUAL(kdeXml.MCInitialSampleSize(), initialSampleSize);
+  BOOST_REQUIRE_EQUAL(kdeText.MCInitialSampleSize(), initialSampleSize);
+  BOOST_REQUIRE_EQUAL(kdeBinary.MCInitialSampleSize(), initialSampleSize);
+
+  BOOST_REQUIRE_CLOSE(kde.MCEntryCoefficient(), entryCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeXml.MCEntryCoefficient(), entryCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeText.MCEntryCoefficient(), entryCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeBinary.MCEntryCoefficient(), entryCoef, 1e-8);
+
+  BOOST_REQUIRE_CLOSE(kde.MCBreakCoefficient(), breakCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeXml.MCBreakCoefficient(), breakCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeText.MCBreakCoefficient(), breakCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeBinary.MCBreakCoefficient(), breakCoef, 1e-8);
 
   // Test if execution gives the same result.
   arma::vec xmlEstimations = arma::vec(query.n_cols, arma::fill::zeros);
