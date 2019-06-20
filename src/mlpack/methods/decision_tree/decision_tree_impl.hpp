@@ -656,98 +656,85 @@ double DecisionTree<FitnessFunction,
       if (bestGain >= 0.0)
         break;
     }
+  }
+  // Did we split or not?  If so, then split the data and create the children.
+  if (bestDim != datasetInfo.Dimensionality())
+  {
+    dimensionTypeOrMajorityClass = (size_t) datasetInfo.Type(bestDim);
+    splitDimension = bestDim;
 
-    // Did we split or not?  If so, then split the data and create the children.
-    if (bestDim != datasetInfo.Dimensionality())
+    // Get the number of children we will have.
+    size_t numChildren = 0;
+    if (datasetInfo.Type(bestDim) == data::Datatype::categorical)
+      numChildren = CategoricalSplit::NumChildren(classProbabilities, *this);
+    else
+      numChildren = NumericSplit::NumChildren(classProbabilities, *this);
+
+    // Calculate all child assignments.
+    arma::Row<size_t> childAssignments(count);
+    if (datasetInfo.Type(bestDim) == data::Datatype::categorical)
     {
-      dimensionTypeOrMajorityClass = (size_t) datasetInfo.Type(bestDim);
-      splitDimension = bestDim;
-
-      // Get the number of children we will have.
-      size_t numChildren = 0;
-      if (datasetInfo.Type(bestDim) == data::Datatype::categorical)
-        numChildren = CategoricalSplit::NumChildren(classProbabilities, *this);
-      else
-        numChildren = NumericSplit::NumChildren(classProbabilities, *this);
-
-      // Calculate all child assignments.
-      arma::Row<size_t> childAssignments(count);
-      if (datasetInfo.Type(bestDim) == data::Datatype::categorical)
-      {
-        for (size_t j = begin; j < begin + count; ++j)
-          childAssignments[j - begin] = CategoricalSplit::CalculateDirection(
-              data(bestDim, j), classProbabilities, *this);
-      }
-      else
-      {
-        for (size_t j = begin; j < begin + count; ++j)
-        {
-          childAssignments[j - begin] = NumericSplit::CalculateDirection(
-              data(bestDim, j), classProbabilities, *this);
-        }
-      }
-
-      // Figure out counts of children.
-      arma::Row<size_t> childCounts(numChildren, arma::fill::zeros);
-      for (size_t i = begin; i < begin + count; ++i)
-        childCounts[childAssignments[i - begin]]++;
-
-      // Initialize bestGain if recursive split is allowed.
-      if (!NoRecursion)
-      {
-        bestGain = 0.0;
-      }
-
-      // Split into children.
-      size_t currentCol = begin;
-      for (size_t i = 0; i < numChildren; ++i)
-      {
-        size_t currentChildBegin = currentCol;
-        for (size_t j = currentChildBegin; j < begin + count; ++j)
-        {
-          if (childAssignments[j - begin] == i)
-          {
-            childAssignments.swap_cols(currentCol - begin, j - begin);
-            data.swap_cols(currentCol, j);
-            labels.swap_cols(currentCol, j);
-            if (UseWeights)
-              weights.swap_cols(currentCol, j);
-            ++currentCol;
-          }
-        }
-
-        // Now build the child recursively.
-        DecisionTree* child = new DecisionTree();
-        if (NoRecursion)
-        {
-          child->Train<UseWeights>(data, currentChildBegin,
-              currentCol - currentChildBegin, datasetInfo, labels, numClasses,
-              weights, currentCol - currentChildBegin, minimumGainSplit,
-              maximumDepth - 1, dimensionSelector);
-        }
-        else
-        {
-          // During recursion entropy of child node may change.
-          double childGain = child->Train<UseWeights>(data, currentChildBegin,
-              currentCol - currentChildBegin, datasetInfo, labels, numClasses,
-              weights, minimumLeafSize, minimumGainSplit, maximumDepth - 1,
-              dimensionSelector);
-          bestGain += double(childCounts[i]) / double(count) * (-childGain);
-        }
-        children.push_back(child);
-      }
+      for (size_t j = begin; j < begin + count; ++j)
+        childAssignments[j - begin] = CategoricalSplit::CalculateDirection(
+            data(bestDim, j), classProbabilities, *this);
     }
     else
     {
-      // Clear auxiliary info objects.
-      NumericAuxiliarySplitInfo::operator=(NumericAuxiliarySplitInfo());
-      CategoricalAuxiliarySplitInfo::operator=(CategoricalAuxiliarySplitInfo());
+      for (size_t j = begin; j < begin + count; ++j)
+      {
+        childAssignments[j - begin] = NumericSplit::CalculateDirection(
+            data(bestDim, j), classProbabilities, *this);
+      }
+    }
 
-      // Calculate class probabilities because we are a leaf.
-      CalculateClassProbabilities<UseWeights>(
-          labels.subvec(begin, begin + count - 1),
-          numClasses,
-          UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
+    // Figure out counts of children.
+    arma::Row<size_t> childCounts(numChildren, arma::fill::zeros);
+    for (size_t i = begin; i < begin + count; ++i)
+      childCounts[childAssignments[i - begin]]++;
+
+    // Initialize bestGain if recursive split is allowed.
+    if (!NoRecursion)
+    {
+      bestGain = 0.0;
+    }
+
+    // Split into children.
+    size_t currentCol = begin;
+    for (size_t i = 0; i < numChildren; ++i)
+    {
+      size_t currentChildBegin = currentCol;
+      for (size_t j = currentChildBegin; j < begin + count; ++j)
+      {
+        if (childAssignments[j - begin] == i)
+        {
+          childAssignments.swap_cols(currentCol - begin, j - begin);
+          data.swap_cols(currentCol, j);
+          labels.swap_cols(currentCol, j);
+          if (UseWeights)
+            weights.swap_cols(currentCol, j);
+          ++currentCol;
+        }
+      }
+
+      // Now build the child recursively.
+      DecisionTree* child = new DecisionTree();
+      if (NoRecursion)
+      {
+        child->Train<UseWeights>(data, currentChildBegin,
+            currentCol - currentChildBegin, datasetInfo, labels, numClasses,
+            weights, currentCol - currentChildBegin, minimumGainSplit,
+            maximumDepth - 1, dimensionSelector);
+      }
+      else
+      {
+        // During recursion entropy of child node may change.
+        double childGain = child->Train<UseWeights>(data, currentChildBegin,
+            currentCol - currentChildBegin, datasetInfo, labels, numClasses,
+            weights, minimumLeafSize, minimumGainSplit, maximumDepth - 1,
+            dimensionSelector);
+        bestGain += double(childCounts[i]) / double(count) * (-childGain);
+      }
+      children.push_back(child);
     }
   }
   else
@@ -840,84 +827,72 @@ double DecisionTree<FitnessFunction,
       if (bestGain >= 0.0)
         break;
     }
+  }
+  // Did we split or not?  If so, then split the data and create the children.
+  if (bestDim != data.n_rows)
+  {
+    // We know that the split is numeric.
+    size_t numChildren = NumericSplit::NumChildren(classProbabilities, *this);
+    splitDimension = bestDim;
+    dimensionTypeOrMajorityClass = (size_t) data::Datatype::numeric;
 
-    // Did we split or not?  If so, then split the data and create the children.
-    if (bestDim != data.n_rows)
+    // Calculate all child assignments.
+    arma::Row<size_t> childAssignments(count);
+
+    for (size_t j = begin; j < begin + count; ++j)
     {
-      // We know that the split is numeric.
-      size_t numChildren = NumericSplit::NumChildren(classProbabilities, *this);
-      splitDimension = bestDim;
-      dimensionTypeOrMajorityClass = (size_t) data::Datatype::numeric;
-
-      // Calculate all child assignments.
-      arma::Row<size_t> childAssignments(count);
-
-      for (size_t j = begin; j < begin + count; ++j)
-      {
-        childAssignments[j - begin] = NumericSplit::CalculateDirection(
-            data(bestDim, j), classProbabilities, *this);
-      }
-
-      // Calculate counts of children in each node.
-      arma::Row<size_t> childCounts(numChildren);
-      childCounts.zeros();
-      for (size_t j = begin; j < begin + count; ++j)
-        childCounts[childAssignments[j - begin]]++;
-
-      // Initialize bestGain if recursive split is allowed.
-      if (!NoRecursion)
-      {
-        bestGain = 0.0;
-      }
-
-      size_t currentCol = begin;
-      for (size_t i = 0; i < numChildren; ++i)
-      {
-        size_t currentChildBegin = currentCol;
-        for (size_t j = currentChildBegin; j < begin + count; ++j)
-        {
-          if (childAssignments[j - begin] == i)
-          {
-            childAssignments.swap_cols(currentCol - begin, j - begin);
-            data.swap_cols(currentCol, j);
-            labels.swap_cols(currentCol, j);
-            if (UseWeights)
-              weights.swap_cols(currentCol, j);
-            ++currentCol;
-          }
-        }
-
-        // Now build the child recursively.
-        DecisionTree* child = new DecisionTree();
-        if (NoRecursion)
-        {
-          child->Train<UseWeights>(data, currentChildBegin,
-              currentCol - currentChildBegin, labels, numClasses, weights,
-              currentCol - currentChildBegin, minimumGainSplit, maximumDepth - 1,
-              dimensionSelector);
-        }
-        else
-        {
-          // During recursion entropy of child node may change.
-          double childGain = child->Train<UseWeights>(data, currentChildBegin,
-              currentCol - currentChildBegin, labels, numClasses, weights,
-              minimumLeafSize, minimumGainSplit, maximumDepth - 1,
-              dimensionSelector);
-          bestGain += double(childCounts[i]) / double(count) * (-childGain);
-        }
-        children.push_back(child);
-      }
+      childAssignments[j - begin] = NumericSplit::CalculateDirection(
+          data(bestDim, j), classProbabilities, *this);
     }
-    else
-    {
-      // We won't be needing these members, so reset them.
-      NumericAuxiliarySplitInfo::operator=(NumericAuxiliarySplitInfo());
 
-      // Calculate class probabilities because we are a leaf.
-      CalculateClassProbabilities<UseWeights>(
-          labels.subvec(begin, begin + count - 1),
-          numClasses,
-          UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
+    // Calculate counts of children in each node.
+    arma::Row<size_t> childCounts(numChildren);
+    childCounts.zeros();
+    for (size_t j = begin; j < begin + count; ++j)
+      childCounts[childAssignments[j - begin]]++;
+
+    // Initialize bestGain if recursive split is allowed.
+    if (!NoRecursion)
+    {
+      bestGain = 0.0;
+    }
+
+    size_t currentCol = begin;
+    for (size_t i = 0; i < numChildren; ++i)
+    {
+      size_t currentChildBegin = currentCol;
+      for (size_t j = currentChildBegin; j < begin + count; ++j)
+      {
+        if (childAssignments[j - begin] == i)
+        {
+          childAssignments.swap_cols(currentCol - begin, j - begin);
+          data.swap_cols(currentCol, j);
+          labels.swap_cols(currentCol, j);
+          if (UseWeights)
+            weights.swap_cols(currentCol, j);
+          ++currentCol;
+        }
+      }
+
+      // Now build the child recursively.
+      DecisionTree* child = new DecisionTree();
+      if (NoRecursion)
+      {
+        child->Train<UseWeights>(data, currentChildBegin,
+            currentCol - currentChildBegin, labels, numClasses, weights,
+            currentCol - currentChildBegin, minimumGainSplit, maximumDepth - 1,
+            dimensionSelector);
+      }
+      else
+      {
+        // During recursion entropy of child node may change.
+        double childGain = child->Train<UseWeights>(data, currentChildBegin,
+            currentCol - currentChildBegin, labels, numClasses, weights,
+            minimumLeafSize, minimumGainSplit, maximumDepth - 1,
+            dimensionSelector);
+        bestGain += double(childCounts[i]) / double(count) * (-childGain);
+      }
+      children.push_back(child);
     }
   }
   else

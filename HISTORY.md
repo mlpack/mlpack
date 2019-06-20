@@ -2,6 +2,8 @@
 ###### ????-??-??
   * Add Multiple Pole Balancing Environment (#1901).
 
+  * Add New paramter Maximum_depth to Decision Tree And Random Forest (#1916).
+
 ### mlpack 3.1.1
 ###### 2019-05-26
   * Fix random forest bug for numerical-only data (#1887).
