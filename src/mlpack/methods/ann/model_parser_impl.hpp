@@ -1,5 +1,5 @@
 /**
- * @file modelParser.cpp
+ * @file model_parser_impl.hpp
  * @author Sreenik Seal
  *
  * Implementation of a parser to parse json files containing 
@@ -11,90 +11,82 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
+#ifndef MLPACK_METHODS_ANN_MODEL_PARSER_IMPL_HPP
+#define MLPACK_METHODS_ANN_MODEL_PARSER_IMPL_HPP
+
 #include "model_parser.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
-//using namespace mlpack::optimization;
-using namespace arma;
-using namespace std;
-using namespace boost::property_tree;
+using namespace ann;
 
 bool error = false;
 
-class Dataset
+Dataset::Dataset(){}
+
+Dataset::Dataset(arma::mat& trainX, arma::mat& trainY)
 {
- private:
-   arma::mat trainX, trainY, validX, validY;
- public:
-   Dataset(){}
-   
-   Dataset(arma::mat& trainX, arma::mat& trainY)
-   {
-     this->trainX = trainX;
-     this->trainY = trainY;
-   }
-   
-   Dataset(arma::mat& trainX, arma::mat& trainY,
-           arma::mat& validX, arma::mat& validY)
-   {
-     this->trainX = trainX;
-     this->trainY = trainY;
-     this->validX = validX;
-     this->validY = validY;
-   }
-   
-   void setTrainSet(arma::mat& trainX, arma::mat& trainY)
-   {
-     this->trainX = trainX;
-     this->trainY = trainY;
-   }
-   
-   void setValidSet(arma::mat& validX, arma::mat& validY)
-   {
-     this->validX = validX;
-     this->validY = validY;
-   }
-   
-   arma::mat getTrainX()
-   {
-     return trainX;
-   }
-   
-   arma::mat getTrainY()
-   {
-     return trainY;
-   }
-   
-   arma::mat getValidX()
-   {
-     return validX;
-   }
-   
-   arma::mat getValidY()
-   {
-     return validY;
-   }
+  this->trainX = trainX;
+  this->trainY = trainY;
 }
 
-
-void printMap(map<string, double> params)
+Dataset::Dataset(arma::mat& trainX, arma::mat& trainY,
+        arma::mat& validX, arma::mat& validY)
 {
-  map<string, double>::iterator itr;
+  this->trainX = trainX;
+  this->trainY = trainY;
+  this->validX = validX;
+  this->validY = validY;
+}
+
+void Dataset::setTrainSet(arma::mat& trainX, arma::mat& trainY)
+{
+  this->trainX = trainX;
+  this->trainY = trainY;
+}
+
+void Dataset::setValidSet(arma::mat& validX, arma::mat& validY)
+{
+  this->validX = validX;
+  this->validY = validY;
+}
+
+arma::mat Dataset::getTrainX()
+{
+  return trainX;
+}
+
+arma::mat Dataset::getTrainY()
+{
+  return trainY;
+}
+
+arma::mat Dataset::getValidX()
+{
+  return validX;
+}
+
+arma::mat Dataset::getValidY()
+{
+  return validY;
+}
+
+void printMap(std::map<std::string, double> params)
+{
+  std::map<std::string, double>::iterator itr;
   for (itr = params.begin(); itr != params.end(); ++itr)
   {
-    cout << itr->first << " : " << itr->second << endl;
+    std::cout << itr->first << " : " << itr->second << "\n";
   }
 }
 
-
-void updateParams(map<string, double> &origParams, map<string, double> &newParams)
+void updateParams(std::map<std::string, double> &origParams,
+                  std::map<std::string, double> &newParams)
 {
-  map<string, double>::iterator itr;
+  std::map<std::string, double>::iterator itr;
   for (itr = origParams.begin(); itr != origParams.end(); ++itr)
   {
-    map<string, double>::iterator itr2 = newParams.find(itr->first);
-    //if(itr->first == "initval") cout<< "\n\nInitval is: " << itr->second << "\n";
+    std::map<std::string, double>::iterator itr2 = newParams.find(itr->first);
+    
     if (itr2 == newParams.end() && isnan(itr->second))
     {
       std::cout << "Required parameter: " << itr->first << "\n";
@@ -103,7 +95,7 @@ void updateParams(map<string, double> &origParams, map<string, double> &newParam
     else if (itr2 != newParams.end())
       itr->second = newParams.at(itr->first);
   }
-  if(error)
+  if (error)
     exit(1);
 }
 
@@ -127,7 +119,7 @@ double accuracy(arma::Row<size_t> predLabels, const arma::mat& realY)
 {
   // Calculating how many predicted classes are coincide with real labels.
   size_t success = 0;
-  for (size_t j = 0; j < realY.n_cols; j++) 
+  for (size_t j = 0; j < realY.n_cols; j++)
     success += predLabels(j) == std::round(realY(j));
 
   // Calculating percentage of correctly classified data points.
@@ -142,9 +134,9 @@ void trainModel(OptimizerType optimizer, FFN<LossType, InitType> model,
   arma::mat trainY = dataset.getTrainY();
   arma::mat validX = dataset.getValidX();
   arma::mat validY = dataset.getValidY();
-  for(int i = 1; i <= cycles; i++)
+  for (int i = 1; i <= cycles; i++)
   {
-    //Uncomment and modify this part for solving a regression problem
+    // Uncomment and modify this part for solving a regression problem
 
     // model.Train(trainX, trainY, optimizer);
     // arma::mat predOut;
@@ -164,19 +156,19 @@ void trainModel(OptimizerType optimizer, FFN<LossType, InitType> model,
     //     validAccuracy += ( (int) predOut[j] == (int) validY[j]);
     // }
     // validAccuracy /= (double) validY.n_cols;
-    // cout << "Cycle: " << i << " Training accuracy: " << trainAccuracy <<
-    //     " Validation accuracy: " << validAccuracy << endl;
+    // std::cout << "Cycle: " << i << " Training accuracy: " << trainAccuracy <<
+    //     " Validation accuracy: " << validAccuracy << "\n";
 
     // Train neural network. If this is the first iteration, weights are
     // random, using current values as starting point otherwise.
 
     // The following is for a classification problem
     model.Train(trainX, trainY, optimizer);
-    mat predOut;
+    arma::mat predOut;
     // Getting predictions on training data points.
     model.Predict(trainX, predOut);
     // Calculating accuracy on training data points.
-    Row<size_t> predLabels = getLabels(predOut);
+    arma::Row<size_t> predLabels = getLabels(predOut);
     double trainAccuracy = accuracy(predLabels, trainY);
     // Getting predictions on validating data points.
     model.Predict(validX, predOut);
@@ -184,17 +176,17 @@ void trainModel(OptimizerType optimizer, FFN<LossType, InitType> model,
     predLabels = getLabels(predOut);
     double validAccuracy = accuracy(predLabels, validY);
 
-    cout << i << " - accuracy: train = "<< trainAccuracy << "%," <<
-      " valid = "<< validAccuracy << "%" <<  endl;
+    std::cout << i << " - accuracy: train = "<< trainAccuracy << "%," <<
+      " valid = "<< validAccuracy << "%" <<  "\n";
   }
 }
 
 template <typename LossType, typename InitType>
 void createModel(LossType& loss,
                  InitType& init,
-                 string& optimizerType,
-                 map<string, double>& optimizerParams,
-                 queue<LayerTypes<> >& layers,
+                 std::string& optimizerType,
+                 std::map<std::string, double>& optimizerParams,
+                 std::queue<LayerTypes<> >& layers,
                  Dataset& dataset)
 {
   FFN<LossType, InitType> model(loss, init);
@@ -203,15 +195,15 @@ void createModel(LossType& loss,
     model.Add(layers.front());
     layers.pop();
   }
-  map<string, double> origParams;
+  std::map<std::string, double> origParams;
   origParams["cycles"] = 1;
-  string optimizerGroup1[] = {"adadelta", "adagrad", "adam",
+  std::string optimizerGroup1[] = {"adadelta", "adagrad", "adam",
       "adamax", "amsgrad", "bigbatchsgd", "momentumsgd",
       "nadam", "nadamax", "nesterovmomentumsgd",
       "optimisticadam", "rmsprop", "sarah", "sgd", "sgdr",
       "snapshotsgdr", "smorms3", "svrg", "spalerasgd"};
 
-  for (string& itr : optimizerGroup1)
+  for (std::string& itr : optimizerGroup1)
   {
     if (itr == optimizerType)
     {
@@ -250,7 +242,7 @@ void createModel(LossType& loss,
     trainModel<ens::AdaGrad, LossType, InitType>(optimizer, model,
         origParams["cycles"], dataset);
   }
-  else if (optimizerType == "adam" || optimizerType == "adamax" || 
+  else if (optimizerType == "adam" || optimizerType == "adamax" ||
       optimizerType == "amsgrad" || optimizerType == "optimisticadam" ||
       optimizerType == "nadamax" || optimizerType == "nadam")
   {
@@ -405,7 +397,7 @@ void createModel(LossType& loss,
     origParams["resetpolicy"] = true;
     updateParams(origParams, optimizerParams);
     ens::SGDR<> optimizer(origParams["epochrestart"], origParams["multfactor"],
-        origParams["batchsize"], origParams["stepsize"], 
+        origParams["batchsize"], origParams["stepsize"],
         origParams["maxiterations"], origParams["tolerance"],
         origParams["shuffle"], ens::MomentumUpdate(0.5),
         origParams["resetpolicy"]);
@@ -436,7 +428,7 @@ void createModel(LossType& loss,
     origParams["epsilon"] = 1e-16;
     origParams["resetpolicy"] = true;
     updateParams(origParams, optimizerParams);
-    ens::SMORMS3 optimizer(origParams["stepsize"], origParams["batchsize"], 
+    ens::SMORMS3 optimizer(origParams["stepsize"], origParams["batchsize"],
         origParams["epsilon"], origParams["maxiterations"],
         origParams["tolerance"], origParams["shuffle"],
         origParams["resetpolicy"]);
@@ -474,21 +466,20 @@ void createModel(LossType& loss,
   }
   else
   {
-    cout << "Invalid optimizer type";
+    std::cout << "Invalid optimizer type";
     exit(1);
   }
-  
 }
 
 template <typename InitType>
 void getLossType(InitType& init,
-                 string& lossType, string& optimizerType,
-                 map<string, double>& lossParams,
-                 map<string, double>& optimizerParams,
-                 queue<LayerTypes<> >& layers,
+                 std::string& lossType, std::string& optimizerType,
+                 std::map<std::string, double>& lossParams,
+                 std::map<std::string, double>& optimizerParams,
+                 std::queue<LayerTypes<> >& layers,
                  Dataset& dataset)
 {
-  map<string, double> origParams;
+  std::map<std::string, double> origParams;
   if (lossType == "crossentropyerror")
   {
     origParams["eps"] = 1e-10;
@@ -503,7 +494,13 @@ void getLossType(InitType& init,
   }
   else if (lossType == "earthmoverdistance")
   {
-    //createModel(EarthMoverDistance<>, InitType>();
+    EarthMoverDistance<> loss;
+    createModel<EarthMoverDistance<>, InitType>(loss,
+                                              init,
+                                              optimizerType,
+                                              optimizerParams,
+                                              layers,
+                                              dataset);
   }
   else if (lossType == "kldivergence")
   {
@@ -539,33 +536,40 @@ void getLossType(InitType& init,
   }
   else if (lossType == "reconstructionloss")
   {
-    //createModel<ReconstructionLoss<>, InitType>(optimizerType,
-    //                                            optimizerParams);
+    ReconstructionLoss<> loss;
+    createModel<ReconstructionLoss<>, InitType>(loss,
+                                                init,
+                                                optimizerType,
+                                                optimizerParams,
+                                                layers,
+                                                dataset);
   }
   else if (lossType == "sigmoidcrossentropyerror")
   {
-    // createModel<SigmoidCrossEntropyError<>, InitType>(optimizerType,
-    //                                                   optimizerParams,
-    //                                                   layers,
-    //                                                   trainX,
-    //                                                   trainY);
+    SigmoidCrossEntropyError<> loss;
+    createModel<SigmoidCrossEntropyError<>, InitType>(loss,
+                                                      init,
+                                                      optimizerType,
+                                                      optimizerParams,
+                                                      layers,
+                                                      dataset);
   }
   else
   {
-    cout << "Invalid loss type\n";
+    std::cout << "Invalid loss type\n";
     exit(1);
   }
 }
 
-void getInitType(string& initType, string& lossType,
-                 map<string, double>& initParams,
-                 map<string, double>& lossParams,
-                 string& optimizerType, map<string,
+void getInitType(std::string& initType, std::string& lossType,
+                 std::map<std::string, double>& initParams,
+                 std::map<std::string, double>& lossParams,
+                 std::string& optimizerType, std::map<std::string,
                  double>& optimizerParams,
-                 queue<LayerTypes<> >& layers,
+                 std::queue<LayerTypes<> >& layers,
                  Dataset& dataset)
 {
-  map<string, double> origParams;
+  std::map<std::string, double> origParams;
   if (initType == "const")
   {
     origParams["initval"] = NAN;
@@ -625,7 +629,15 @@ void getInitType(string& initType, string& lossType,
   }
   else if (initType == "oivs")
   {
-  //getLossType<OivsInitialization>(lossType, optimizerType, optimizerParams);
+    origParams["epsilon"] = 0.1;
+    origParams["k"] = 5;
+    origParams["gamma"] = 0.9;
+    updateParams(origParams, initParams);
+    OivsInitialization<> init(origParams["epsilon"], origParams["k"],
+                              origParams["gamma"]);
+    getLossType<OivsInitialization<>>(init, lossType, optimizerType,
+                                      lossParams, optimizerParams,
+                                      layers, dataset);
   }
   else if (initType == "orthogonal")
   {
@@ -649,14 +661,15 @@ void getInitType(string& initType, string& lossType,
   }
   else
   {
-    cout << "Invalid initialization type";
+    std::cout << "Invalid initialization type";
     exit(1);
   }
 }
 
-LayerTypes<> getNetworkReference(string& layerType, map<string, double>& layerParams)
+LayerTypes<> getNetworkReference(std::string& layerType,
+                                 std::map<std::string, double>& layerParams)
 {
-  map<string, double> origParams;
+  std::map<std::string, double> origParams;
   LayerTypes<> layer;
 
   if (layerType == "atrousconvolution")
@@ -691,8 +704,9 @@ LayerTypes<> getNetworkReference(string& layerType, map<string, double>& layerPa
   }
   else if (layerType == "batchnorm")
   {
-    layer = new BatchNorm<>(); // needs to be updated to accommodate epsilon and size
-  }  
+    // needs to be updated to accommodate epsilon and size
+    layer = new BatchNorm<>();
+  }
   else if (layerType == "constant")
   {
     origParams["outsize"] = NAN;
@@ -713,7 +727,7 @@ LayerTypes<> getNetworkReference(string& layerType, map<string, double>& layerPa
     origParams["inputheight"] = 0;
     updateParams(origParams, layerParams);
     layer = new Convolution<>(origParams["insize"], origParams["outsize"],
-        origParams["kw"], origParams["kh"], origParams["dw"], 
+        origParams["kw"], origParams["kh"], origParams["dw"],
         origParams["dh"], origParams["padw"], origParams["padh"],
         origParams["inputwidth"], origParams["inputheight"]);
   }
@@ -733,7 +747,7 @@ LayerTypes<> getNetworkReference(string& layerType, map<string, double>& layerPa
   }
   else if (layerType == "fastlstm")
   {
-    //origParams = {{""}}
+    // origParams = {{""}}
   }
   else if (layerType == "gru")
   {
@@ -802,7 +816,7 @@ LayerTypes<> getNetworkReference(string& layerType, map<string, double>& layerPa
     origParams["inputheight"] = 0;
     updateParams(origParams, layerParams);
     layer = new TransposedConvolution<>(origParams["insize"],
-        origParams["outsize"], origParams["kw"],origParams["kh"],
+        origParams["outsize"], origParams["kw"], origParams["kh"],
         origParams["dw"], origParams["dh"], origParams["padw"],
         origParams["padh"], origParams["inputwidth"],
         origParams["inputheight"]);
@@ -873,86 +887,89 @@ LayerTypes<> getNetworkReference(string& layerType, map<string, double>& layerPa
   }
   else
   {
-    cout << "Invalid layer type : " << layerType;
+    std::cout << "Invalid layer type : " << layerType;
     exit(1);
   }
   return layer;
 }
 
-void traverseModel(const ptree& tree, Dataset& dataset, double& inSize)
+void traverseModel(const boost::property_tree::ptree& tree,
+                   Dataset& dataset, double& inSize)
 {
-  const ptree &loss = tree.get_child("loss");
-  const ptree &init = tree.get_child("init");
-  const ptree &optimizer = tree.get_child("optimizer");
-  const ptree &network = tree.get_child("network");
-  queue<LayerTypes<> > layers;
+  const boost::property_tree::ptree &loss = tree.get_child("loss");
+  const boost::property_tree::ptree &init = tree.get_child("init");
+  const boost::property_tree::ptree &optimizer = tree.get_child("optimizer");
+  const boost::property_tree::ptree &network = tree.get_child("network");
+  std::queue<LayerTypes<> > layers;
 
-  map<string, double> lossParams;
-  string lossType;
-  BOOST_FOREACH (ptree::value_type const &v, loss.get_child(""))
+  std::map<std::string, double> lossParams;
+  std::string lossType;
+  BOOST_FOREACH(boost::property_tree::ptree::value_type const &v,
+                loss.get_child(""))
   {
-    const ptree &attributes = v.second;
+    const boost::property_tree::ptree &attributes = v.second;
     if (v.first == "type")
     {
-      lossType = attributes.get_value<string>();
+      lossType = attributes.get_value<std::string>();
     }
     else
     {
       lossParams[v.first] = attributes.get_value<double>();
     }
   }
-  cout << "Loss details:\ntype : " << lossType << endl;
+  std::cout << "Loss details:\ntype : " << lossType << "\n";
   printMap(lossParams);
 
-  map<string, double> initParams;
-  string initType;
-  BOOST_FOREACH (ptree::value_type const &v, init.get_child(""))
+  std::map<std::string, double> initParams;
+  std::string initType;
+  BOOST_FOREACH(boost::property_tree::ptree::value_type const &v,
+                init.get_child(""))
   {
-    const ptree &attributes = v.second;
+    const boost::property_tree::ptree &attributes = v.second;
     if (v.first == "type")
     {
-      initType = attributes.get_value<string>();
+      initType = attributes.get_value<std::string>();
     }
     else
     {
       initParams[v.first] = attributes.get_value<double>();
     }
   }
-  cout << "\nInit details:\ntype : " << initType << endl;
-  printMap(initParams);
-  
-  map<string, double> optimizerDetails;
-  string optimizerType;
-  BOOST_FOREACH (ptree::value_type const &v, optimizer.get_child(""))
+  std::cout << "\nInit details:\ntype : " << initType << "\n";
+  printMap(initParams);  
+  std::map<std::string, double> optimizerDetails;
+  std::string optimizerType;
+  BOOST_FOREACH(boost::property_tree::ptree::value_type const &v,
+                optimizer.get_child(""))
   {
-    const ptree &attributes = v.second;
+    const boost::property_tree::ptree &attributes = v.second;
     if (v.first == "type")
     {
-      optimizerType = attributes.get_value<string>();
+      optimizerType = attributes.get_value<std::string>();
     }
     else
     {
       optimizerDetails[v.first] = attributes.get_value<double>();
     }
   }
-  cout << "\nOptimizer details:\ntype : " << optimizerType << endl;
+  std::cout << "\nOptimizer details:\ntype : " << optimizerType << "\n";
   printMap(optimizerDetails);
-  cout << "\nNetwork details:\n\n";
-  BOOST_FOREACH (ptree::value_type const &v, network.get_child(""))
+  std::cout << "\nNetwork details:\n\n";
+  BOOST_FOREACH(boost::property_tree::ptree::value_type const &v,
+                network.get_child(""))
   {
-    const ptree &layerWhole = v.second;
-    map<string, double> params;
-    string layerType;
-    BOOST_FOREACH (ptree::value_type const &v2, layerWhole.get_child(""))
+    const boost::property_tree::ptree &layerWhole = v.second;
+    std::map<std::string, double> params;
+    std::string layerType;
+    BOOST_FOREACH(boost::property_tree::ptree::value_type const &v2,
+                  layerWhole.get_child(""))
     {
-      const ptree &layerInner = v2.second;
-      //cout << v2.first << "\t";
-      //cout << layerInner.get_value<string>() << endl;
-      string key = boost::erase_all_copy(v2.first, "_");
+      const boost::property_tree::ptree &layerInner = v2.second;
+      std::string key = boost::erase_all_copy(v2.first, "_");
       boost::to_lower(key);
       if (key == "type")
       {
-        layerType = layerInner.get_value<string>();
+        layerType = layerInner.get_value<std::string>();
       }
       else if (key == "units")
       {
@@ -961,24 +978,24 @@ void traverseModel(const ptree& tree, Dataset& dataset, double& inSize)
       }
       else
       {
-        if(key == "outsize")
+        if (key == "outsize")
           inSize = layerInner.get_value<double>();
         params[key] = layerInner.get_value<double>();
       }
     }
-    cout << "type : " << layerType << endl;
+    std::cout << "type : " << layerType << "\n";
     printMap(params);
     layers.push(getNetworkReference(layerType, params));
-    cout << endl;
+    std::cout << "\n";
   }
   getInitType(initType, lossType, initParams, lossParams,
       optimizerType, optimizerDetails, layers, dataset);
 }
 
-boost::property_tree::ptree loadProperties(string& fileName, Dataset& dataset,
+boost::property_tree::ptree loadProperties(std::string& fileName, Dataset& dataset,
                                            double inSize)
 {
-  ptree pt;
+  boost::property_tree::ptree pt;
   read_json(fileName, pt);
   traverseModel(pt, dataset, inSize);
   return pt;
@@ -986,18 +1003,22 @@ boost::property_tree::ptree loadProperties(string& fileName, Dataset& dataset,
 
 int testParser()
 {
-  string fileName = "network3.json";
+  std::string fileName = "network3.json";
   arma::mat dataset2;
   data::Load("train.csv", dataset2, true);
-  cout << "Data loaded" << "\n\n";
+  std::cout << "Data loaded" << "\n\n";
   dataset2 = dataset2.submat(0, 1, dataset2.n_rows - 1, dataset2.n_cols - 1);
   arma::mat train, valid;
   data::Split(dataset2, train, valid, 0.1);
-  arma::mat trainX = normalise(train.submat(1, 0, train.n_rows-1, train.n_cols-1));
+  arma::mat trainX = normalise(train.submat(1, 0, train.n_rows-1,
+                               train.n_cols-1));
   arma::mat trainY = train.row(0) + 1;
-  arma::mat validX = normalise(valid.submat(1, 0, valid.n_rows-1, valid.n_cols-1));
+  arma::mat validX = normalise(valid.submat(1, 0, valid.n_rows-1,
+                               valid.n_cols-1));
   arma::mat validY = valid.row(0) + 1;
   Dataset dataset(trainX, trainY, validX, validY);
   loadProperties(fileName, dataset, trainX.n_rows);
   return 0;
 }
+
+#endif
