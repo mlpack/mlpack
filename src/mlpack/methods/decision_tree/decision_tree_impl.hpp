@@ -611,7 +611,7 @@ double DecisionTree<FitnessFunction,
   size_t bestDim = datasetInfo.Dimensionality(); // This means "no split".
   const size_t end = dimensionSelector.End();
 
-  if(maximumDepth != 1)
+  if (maximumDepth != 1)
   {
     for (size_t i = dimensionSelector.Begin(); i != end;
          i = dimensionSelector.Next())
