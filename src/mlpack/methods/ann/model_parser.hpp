@@ -11,10 +11,9 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <iterator>
+#ifndef MLPACK_METHODS_ANN_MODEL_PARSER_HPP
+#define MLPACK_METHODS_ANN_MODEL_PARSER_HPP
+
 #include <queue>
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
@@ -27,37 +26,24 @@
 #include <mlpack/methods/ann/init_rules/oivs_init.hpp>
 #include <mlpack/methods/ann/init_rules/orthogonal_init.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/loss_functions/earth_mover_distance.hpp>
 #include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
-//#include <mlpack/methods/ann/loss_functions/earth_mover_distance.hpp>
 #include <mlpack/methods/ann/loss_functions/kl_divergence.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
+#include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
-//#include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
 #include <mlpack/methods/ann/activation_functions/softsign_function.hpp>
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <ensmallen.hpp>
-#include <boost/serialization/serialization.hpp>
-#include <boost/algorithm/string/trim.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/tokenizer.hpp>
-#include <boost/algorithm/string.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/foreach.hpp>
-#include <boost/algorithm/string.hpp>
 
 using namespace mlpack;
-using namespace mlpack::ann;
-//using namespace mlpack::optimization;
-using namespace arma;
-using namespace std;
-using namespace boost::property_tree;
+using namespace ann;
 
-bool error = false;
 /**
  * Implementation of the entire dataset consisting of the training data
  * and validation data
@@ -65,68 +51,68 @@ bool error = false;
 class Dataset
 {
  private:
-   arma::mat trainX, trainY, validX, validY;
+    arma::mat trainX, trainY, validX, validY;
  public:
-   /**
-    * Create the Dataset object
-    */
-   Dataset();
-   /**
-    * Create the Dataset object
-    * 
-    * Pass the training input dataset and its corresponding output dataset
-    * 
-    * @param trainX Training input
-    * @param trainY Correct output/labels for the training input data
-    */
-   Dataset(arma::mat& trainX, arma::mat& trainY);
-   /**
-    * Create the Dataset object
-    * 
-    * Pass the training input dataset, validation input dataset and their
-    * respective output datasets
-    * 
-    * @param trainX Training input
-    * @param trainY Correct ouput/labels for the training input data
-    * @param validX Validation input
-    * @param validY Correct output/labels for the validation input data
-    */
-   Dataset(arma::mat& trainX, arma::mat& trainY,
-           arma::mat& validX, arma::mat& validY);
-   /**
-    * Set the values of the training dataset and its corresponding output
-    * 
-    * Pass the training input dataset and its corresponding output dataset
-    * 
-    * @param trainX Training input
-    * @param trainY Correct output/labels for the training input data
-    */
-   void setTrainSet(arma::mat& trainX, arma::mat& trainY);
-   /**
-    * Set the values of the validation dataset and its corresponding output
-    * 
-    * Pass the validation input dataset and its corresponding output dataset
-    * 
-    * @param validX Validation input
-    * @param validY Correct output/labels for the validation input data
-    */
-   void setValidSet(arma::mat& validX, arma::mat& validY);
-   /**
-    * Return the values of the training input dataset
-    */
-   arma::mat getTrainX();
-   /**
-    * Return the values of the training output dataset
-    */
-   arma::mat getTrainY();
-   /**
-    * Return the values of the validation input dataset
-    */
-   arma::mat getValidX();
-   /**
-    * Return the values of the validation output dataset
-    */
-   arma::mat getValidY();
+    /**
+      * Create the Dataset object
+      */
+    Dataset();
+    /**
+      * Create the Dataset object
+      * 
+      * Pass the training input dataset and its corresponding output dataset
+      * 
+      * @param trainX Training input
+      * @param trainY Correct output/labels for the training input data
+      */
+    Dataset(arma::mat& trainX, arma::mat& trainY);
+    /**
+      * Create the Dataset object
+      * 
+      * Pass the training input dataset, validation input dataset and their
+      * respective output datasets
+      * 
+      * @param trainX Training input
+      * @param trainY Correct ouput/labels for the training input data
+      * @param validX Validation input
+      * @param validY Correct output/labels for the validation input data
+      */
+    Dataset(arma::mat& trainX, arma::mat& trainY,
+            arma::mat& validX, arma::mat& validY);
+    /**
+      * Set the values of the training dataset and its corresponding output
+      * 
+      * Pass the training input dataset and its corresponding output dataset
+      * 
+      * @param trainX Training input
+      * @param trainY Correct output/labels for the training input data
+      */
+    void setTrainSet(arma::mat& trainX, arma::mat& trainY);
+    /**
+      * Set the values of the validation dataset and its corresponding output
+      * 
+      * Pass the validation input dataset and its corresponding output dataset
+      * 
+      * @param validX Validation input
+      * @param validY Correct output/labels for the validation input data
+      */
+    void setValidSet(arma::mat& validX, arma::mat& validY);
+    /**
+      * Return the values of the training input dataset
+      */
+    arma::mat getTrainX();
+    /**
+      * Return the values of the training output dataset
+      */
+    arma::mat getTrainY();
+    /**
+      * Return the values of the validation input dataset
+      */
+    arma::mat getValidX();
+    /**
+      * Return the values of the validation output dataset
+      */
+    arma::mat getValidY();
 };
 
 /**
@@ -135,7 +121,7 @@ class Dataset
  * 
  * @param params The map to be printed
  */
-void printMap(map<string, double> params);
+void printMap(std::map<std::string, double> params);
 
 /**
  * Update the values of a given stl map with that of another map 
@@ -146,7 +132,8 @@ void printMap(map<string, double> params);
  * @param origParams The map whose values will be updated
  * @param newParams The map whose values will be used to update origParams
  */
-void updateParams(map<string, double> &origParams, map<string, double> &newParams);
+void updateParams(std::map<std::string, double> &origParams,
+                  std::map<std::string, double> &newParams);
 
 /**
  * @author Eugene Freyman
@@ -207,9 +194,9 @@ void trainModel(OptimizerType optimizer, FFN<LossType, InitType> model,
 template <typename LossType, typename InitType>
 void createModel(LossType& loss,
                  InitType& init,
-                 string& optimizerType,
-                 map<string, double>& optimizerParams,
-                 queue<LayerTypes<> >& layers,
+                 std::string& optimizerType,
+                 std::map<std::string, double>& optimizerParams,
+                 std::queue<LayerTypes<> >& layers,
                  Dataset& dataset);
 
 /**
@@ -229,10 +216,10 @@ void createModel(LossType& loss,
  */
 template <typename InitType>
 void getLossType(InitType& init,
-                 string& lossType, string& optimizerType,
-                 map<string, double>& lossParams,
-                 map<string, double>& optimizerParams,
-                 queue<LayerTypes<> >& layers,
+                 std::string& lossType, std::string& optimizerType,
+                 std::map<std::string, double>& lossParams,
+                 std::map<std::string, double>& optimizerParams,
+                 std::queue<LayerTypes<> >& layers,
                  Dataset& dataset);
 
 /**
@@ -250,12 +237,12 @@ void getLossType(InitType& init,
  * @param dataset The Dataset object that contains the training and validation
  * data
  */
-void getInitType(string& initType, string& lossType,
-                 map<string, double>& initParams,
-                 map<string, double>& lossParams,
-                 string& optimizerType, map<string,
+void getInitType(std::string& initType, std::string& lossType,
+                 std::map<std::string, double>& initParams,
+                 std::map<std::string, double>& lossParams,
+                 std::string& optimizerType, std::map<std::string,
                  double>& optimizerParams,
-                 queue<LayerTypes<> >& layers,
+                 std::queue<LayerTypes<> >& layers,
                  Dataset& dataset);
 
 /**
@@ -267,7 +254,8 @@ void getInitType(string& initType, string& lossType,
  * @return A LayerTypes<> object that is of the given type and is 
  * initialized by the given parameters
  */
-LayerTypes<> getNetworkReference(string& layerType, map<string, double>& layerParams);
+LayerTypes<> getNetworkReference(std::string& layerType, std::map<std::string,
+                                 double>& layerParams);
 
 /**
  * Traverse the given property tree and determine the loss function, 
@@ -278,7 +266,8 @@ LayerTypes<> getNetworkReference(string& layerType, map<string, double>& layerPa
  * data
  * @param inSize The input size of the first layer
  */ 
-void traverseModel(const ptree& tree, Dataset& dataset, double& inSize);
+void traverseModel(const boost::property_tree::ptree& tree,
+                   Dataset& dataset, double& inSize);
 
 /**
  * Create a property tree from the given json file
@@ -289,7 +278,7 @@ void traverseModel(const ptree& tree, Dataset& dataset, double& inSize);
  * data
  * @param inSize The input size of the first layer
  */
-boost::property_tree::ptree loadProperties(string& fileName, Dataset& dataset,
+boost::property_tree::ptree loadProperties(std::string& fileName, Dataset& dataset,
                                            double inSize);
 
 /** The final implementation of this file would not have a main method. This is 
@@ -300,3 +289,6 @@ boost::property_tree::ptree loadProperties(string& fileName, Dataset& dataset,
 
 #include <mlpack/core/data/split_data.hpp>
 int testParser();
+#include "model_parser_impl.hpp"
+
+#endif
