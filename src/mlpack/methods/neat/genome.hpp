@@ -185,12 +185,12 @@ class Genome
    */
   static std::map<std::pair<size_t, size_t>, size_t> mutationBuffer;
 
- private:
   /**
    * A digraph containing connection genes sorted by source ID, and then
    * secondary sorted by target ID.
    */
   std::map<size_t, std::map<size_t, ConnectionGene>> directedGraph;
+ private:
 
   /**
    * A recursive function that assigns depth to nodes. Only used in acyclic

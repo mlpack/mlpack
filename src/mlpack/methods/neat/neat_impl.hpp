@@ -86,9 +86,14 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   {
     Genome<ActivationFunction>::mutationBuffer.clear();
     std::cout << "Evaluating" << std::endl;
+    arma::vec fitnesses(popSize);
     #pragma omp parallel for
     for (size_t i = 0; i < popSize; i++)
+    {
       genomeList[i].Fitness() = task.Evaluate(genomeList[i]);
+      fitnesses[i] = genomeList[i].Fitness();
+    }
+    std::cout << "Max fitness in generation " << gen << "is " << arma::max(fitnesses) << std::endl;
     if (gen == maxGen - 1) break;
     std::cout << "Reproducing" << std::endl;
     Reproduce();
@@ -259,6 +264,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Speciate(bool init)
 {
   // Translate the genome into points in space.
   arma::mat data(Genome<ActivationFunction>::nextInnovID, popSize, arma::fill::zeros);
+  std::cout << Genome<ActivationFunction>::nextInnovID << std::endl;
   for (size_t i = 0; i < popSize; i++)
   {
     for (size_t j = 0; j < genomeList[i].connectionGeneList.size(); j++)

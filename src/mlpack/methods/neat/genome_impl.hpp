@@ -62,7 +62,7 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
     for (size_t j = inputNodeCount + 1; j <= outputNodeCount + inputNodeCount;
         j++)
     {
-      double weight = 1 + arma::randn<double>();
+      double weight = arma::randn<double>();
       connectionGeneList.emplace_back(ConnectionGene(counter, weight, i, j));
       if (directedGraph.find(i) == directedGraph.end())
       {
@@ -223,7 +223,6 @@ void Genome<ActivationFunction>::Mutate()
     size_t newTarget = sourceID;
     size_t innovID;
 
-
     if (isAcyclic)
     {
       // Only create connections where the target has a higher depth.
@@ -241,7 +240,6 @@ void Genome<ActivationFunction>::Mutate()
             (int)(inputNodeCount), (int)(nextNodeID) - 1))[0];
       }
     }
-
 
     if (directedGraph[sourceID].find(newTarget) == directedGraph[sourceID].end())
     {
@@ -379,10 +377,10 @@ void Genome<ActivationFunction>::Mutate()
 template <class ActivationFunction>
 arma::mat Genome<ActivationFunction>::Parameters()
 {
-  arma::mat param(nextNodeID, nextNodeID);
+  arma::mat param(nextNodeID, nextNodeID, arma::fill::zeros);
   for (auto const& x : directedGraph)
   {
-    for (auto const& y : x.second)
+    for (auto const& y : directedGraph[x.first])
     {
       if (y.second.Enabled())
         param(x.first, y.first) = y.second.Weight();

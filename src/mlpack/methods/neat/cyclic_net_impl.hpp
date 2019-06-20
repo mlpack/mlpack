@@ -51,7 +51,7 @@ void CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
   for (size_t i = 1; i <= inputNodeCount; i++)
     outputNodeValues[i] = input[i - 1];
 
-  for (size_t i = 0; i < timeStepsPerActivation; i++)
+  for (size_t k = 0; k < timeStepsPerActivation; k++)
   {
     for (size_t j = 0; j < nodeCount; j++)
     {
