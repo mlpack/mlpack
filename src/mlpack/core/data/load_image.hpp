@@ -146,7 +146,8 @@ class Image
             size_t height,
             size_t channels,
             bool flipVertical,
-            arma::Mat<unsigned char>&& outputMatrix);
+            arma::Mat<unsigned char>&& outputMatrix,
+            size_t quality = 95);
 
   /**
    * Saves the image file present in the given matrix.

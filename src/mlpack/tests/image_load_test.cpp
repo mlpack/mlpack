@@ -101,35 +101,25 @@ BOOST_AUTO_TEST_CASE(LoadImagesInVector)
 }
 
 /**
- * Test if the image is saved correctly.
+ * Test if the image is saved and loaded correctly.
  */
-BOOST_AUTO_TEST_CASE(SaveImageTest)
+BOOST_AUTO_TEST_CASE(SaveAndLoadImageTest)
 {
+  arma::Mat<unsigned char> img1 = arma::randi<arma::Mat<unsigned char>>(25*3,1);
   data::Image loadAndSave;
+  BOOST_REQUIRE(loadAndSave.Save("test.bmp", 5, 5,
+      3, true, std::move(img1)) == true);
 
-  arma::Mat<unsigned char> img;
-  size_t height, width, channels;
-
-  BOOST_REQUIRE(loadAndSave.Load("test_image.png", true, std::move(img),
+  arma::Mat<unsigned char> img2;
+  size_t height, width, channels = 3;
+  BOOST_REQUIRE(loadAndSave.Load("test.bmp", true, std::move(img2),
       width, height, channels) == true);
-  BOOST_REQUIRE_EQUAL(img.n_rows, 50 * 50 * 3); // width * height * channels.
-  BOOST_REQUIRE_EQUAL(img.n_cols, 1);
-  BOOST_REQUIRE_EQUAL(width, 50);
-  BOOST_REQUIRE_EQUAL(height, 50);
-  BOOST_REQUIRE_EQUAL(channels, 3);
 
-  BOOST_REQUIRE(loadAndSave.Save("saved_image.png", width, height,
-      channels, true, std::move(img)) == true);
+  BOOST_REQUIRE_EQUAL(img1.n_cols, img2.n_cols);
+  BOOST_REQUIRE_EQUAL(img1.n_rows, img2.n_rows);
 
-  // Retrieve the image saved and cross-check the dimensions.
-  img.clear();
-  BOOST_REQUIRE(loadAndSave.Load("saved_image.png", true, std::move(img),
-      width, height, channels) == true);
-  BOOST_REQUIRE_EQUAL(img.n_rows, 50 * 50 * 3); // width * height * channels.
-  BOOST_REQUIRE_EQUAL(img.n_cols, 1);
-  BOOST_REQUIRE_EQUAL(width, 50);
-  BOOST_REQUIRE_EQUAL(height, 50);
-  BOOST_REQUIRE_EQUAL(channels, 3);
+  for (size_t i = 0; i < img1.n_elem; ++i)
+    BOOST_REQUIRE_EQUAL(img1[i], img2[i]);
 }
 
 /**
@@ -158,7 +148,7 @@ BOOST_AUTO_TEST_CASE(SaveMultipleImageTest)
   img.clear();
   BOOST_REQUIRE(loadAndSave.Load(sfiles, true, std::move(img)) == true);
   BOOST_REQUIRE_EQUAL(img.n_rows, 50 * 50 * 3); // width * height * channels.
-  BOOST_REQUIRE_EQUAL(img.n_cols, files.size());
+  BOOST_REQUIRE_EQUAL(img.n_cols, sfiles.size());
 }
 
 BOOST_AUTO_TEST_SUITE_END();

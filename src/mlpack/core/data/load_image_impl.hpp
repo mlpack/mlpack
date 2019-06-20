@@ -204,7 +204,8 @@ bool Image::Save(const std::string& fileName,
                  size_t height,
                  size_t channels,
                  bool flipVertical,
-                 arma::Mat<unsigned char>&& inputMatrix)
+                 arma::Mat<unsigned char>&& inputMatrix,
+                 size_t quality)
 {
   if (!ImageFormatSupported(fileName, true))
   {
@@ -222,10 +223,10 @@ bool Image::Save(const std::string& fileName,
     std::cout << "Input Matrix contains more than 1 image." << std::endl;
     std::cout << "Only the firstimage will be saved!" << std::endl;
   }
-  unsigned char *image = inputMatrix.memptr();
+  unsigned char* image = inputMatrix.memptr();
   stbi_flip_vertically_on_write(flipVertical);
 
-  bool status;
+  bool status = false;
   int tempWidth = width, tempHeight = height, tempChannels = channels;
   if ("png" == Extension(fileName))
   {
@@ -250,7 +251,7 @@ bool Image::Save(const std::string& fileName,
   else if ("jpg" == Extension(fileName))
   {
     status = stbi_write_jpg(fileName.c_str(), tempWidth, tempHeight,
-        tempChannels, image, 95);
+        tempChannels, image, quality);
   }
   return status;
 }
