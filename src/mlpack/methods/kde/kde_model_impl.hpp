@@ -51,7 +51,12 @@ inline KDEModel::KDEModel(const KDEModel& other) :
   relError(other.relError),
   absError(other.absError),
   kernelType(other.kernelType),
-  treeType(other.treeType)
+  treeType(other.treeType),
+  monteCarlo(other.monteCarlo),
+  MCProb(other.MCProb),
+  initialSampleSize(other.initialSampleSize),
+  MCEntryCoef(other.MCEntryCoef),
+  MCBreakCoef(other.MCBreakCoef)
 {
   // Nothing to do.
 }
@@ -63,6 +68,11 @@ inline KDEModel::KDEModel(KDEModel&& other) :
   absError(other.absError),
   kernelType(other.kernelType),
   treeType(other.treeType),
+  monteCarlo(other.monteCarlo),
+  MCProb(other.MCProb),
+  initialSampleSize(other.initialSampleSize),
+  MCEntryCoef(other.MCEntryCoef),
+  MCBreakCoef(other.MCBreakCoef),
   kdeModel(std::move(other.kdeModel))
 {
   // Reset other model.
@@ -71,6 +81,11 @@ inline KDEModel::KDEModel(KDEModel&& other) :
   other.absError = 0;
   other.kernelType = KernelTypes::GAUSSIAN_KERNEL;
   other.treeType = TreeTypes::KD_TREE;
+  other.monteCarlo = false;
+  other.MCProb = 0.95;
+  other.initialSampleSize = 300;
+  other.MCEntryCoef = 3;
+  other.MCBreakCoef = 0.7;
   other.kdeModel = decltype(other.kdeModel)();
 }
 
@@ -82,6 +97,11 @@ inline KDEModel& KDEModel::operator=(KDEModel other)
   absError = other.absError;
   kernelType = other.kernelType;
   treeType = other.treeType;
+  monteCarlo = other.monteCarlo;
+  MCProb = other.MCProb;
+  initialSampleSize = other.initialSampleSize;
+  MCEntryCoef = other.MCEntryCoef;
+  MCBreakCoef = other.MCBreakCoef;
   kdeModel = std::move(other.kdeModel);
   return *this;
 }
