@@ -44,9 +44,8 @@ namespace data {
  * @param output Output matrix with lesser number of features.
  */
 template<typename T>
-void VarianceSelection(const arma::Mat<T>& input,
-              const double threshold,
-              arma::Mat<T>& output);
+void VarianceSelection(const arma::Mat<T>& input, const double threshold,
+                       arma::Mat<T>& output);
 
 } // namespace data
 } // namespace mlpack
