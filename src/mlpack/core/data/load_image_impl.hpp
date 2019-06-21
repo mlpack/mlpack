@@ -71,11 +71,11 @@ bool Image::ImageFormatSupported(const std::string& fileName, bool save)
 }
 
 bool Image::Load(const std::string& fileName,
-                 bool flipVertical,
                  arma::Mat<unsigned char>&& outputMatrix,
                  size_t& width,
                  size_t& height,
-                 size_t& channels)
+                 size_t& channels,
+                 bool flipVertical)
 {
   unsigned char* image;
 
@@ -136,12 +136,12 @@ bool Image::Load(const std::string& fileName,
 }
 
 bool Image::Load(const std::string& fileName,
-                 bool flipVertical,
-                 arma::Mat<unsigned char>&& outputMatrix)
+                 arma::Mat<unsigned char>&& outputMatrix,
+                 bool flipVertical)
 {
   size_t width, height;
-  bool status = Load(fileName, flipVertical, std::move(outputMatrix),
-      width, height, channels);
+  bool status = Load(fileName, std::move(outputMatrix),
+      width, height, channels, flipVertical);
   if (!status)
     return status;
 
@@ -165,8 +165,8 @@ bool Image::Load(const std::string& fileName,
 }
 
 bool Image::Load(const std::vector<std::string>& files,
-                 bool flipVertical,
-                 arma::Mat<unsigned char>&& outputMatrix)
+                 arma::Mat<unsigned char>&& outputMatrix,
+                 bool flipVertical)
 {
   if (files.size() == 0)
   {
@@ -177,8 +177,8 @@ bool Image::Load(const std::vector<std::string>& files,
 
   arma::Mat<unsigned char> img;
   size_t width, height;
-  bool status = Load(files[0], flipVertical, std::move(img),
-                     width, height, channels);
+  bool status = Load(files[0], std::move(img), width,
+      height, channels, flipVertical);
   Log::Info << "Loaded " << files[0] << std::endl;
 
   // Decide matrix dimension using the image height and width.
@@ -191,8 +191,8 @@ bool Image::Load(const std::vector<std::string>& files,
   for (size_t i = 1; i < files.size() ; i++)
   {
     status &= Load(files[i],
-                   flipVertical,
-                   std::move(outputMatrix.col(i)));
+                   std::move(outputMatrix.col(i)),
+                   flipVertical);
     Log::Info << "Loaded " << files[i] << std::endl;
   }
   return status;
@@ -203,8 +203,8 @@ bool Image::Save(const std::string& fileName,
                  size_t width,
                  size_t height,
                  size_t channels,
-                 bool flipVertical,
                  arma::Mat<unsigned char>&& inputMatrix,
+                 bool flipVertical,
                  size_t quality)
 {
   if (!ImageFormatSupported(fileName, true))
@@ -260,14 +260,15 @@ bool Image::Save(const std::vector<std::string>& files,
                  size_t width,
                  size_t height,
                  size_t channels,
+                 arma::Mat<unsigned char>&& inputMatrix,
                  bool flipVertical,
-                 arma::Mat<unsigned char>&& inputMatrix)
+                 size_t quality)
 {
   bool status = true;
   for (size_t i = 0; i < files.size(); i++)
   {
-    if (!Save(files[i], width, height, channels, flipVertical,
-        std::move(inputMatrix.col(i))))
+    if (!Save(files[i], width, height, channels,
+        std::move(inputMatrix.col(i)), flipVertical, quality))
     {
       std::cout << "Unable to save '" << files[i] << "'." << std::endl;
       status = false;
@@ -277,8 +278,8 @@ bool Image::Save(const std::vector<std::string>& files,
 }
 
 bool Image::LoadDir(const std::string& dirPath,
-                    bool flipVertical,
-                    arma::Mat<unsigned char>&& outputMatrix)
+                    arma::Mat<unsigned char>&& outputMatrix,
+                    bool flipVertical)
 {
   std::vector<std::string> files;
 #ifdef HAS_FILESYSTEM
@@ -292,7 +293,7 @@ bool Image::LoadDir(const std::string& dirPath,
         files.push_back(file);
     }
   }
-  return Load(files, flipVertical, std::move(outputMatrix));
+  return Load(files, std::move(outputMatrix), flipVertical);
 #else
   std::ostringstream oss;
   oss << "C++17 filesystem library not available." << std::endl;

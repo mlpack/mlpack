@@ -92,43 +92,43 @@ class Image
    * Load the image file into the given matrix.
    *
    * @param fileName Name of the image file.
-   * @param flipVertical Flip the image vertical upon loading.
    * @param outputMatrix Matrix to load into.
+   * @param flipVertical Flip the image vertical upon loading.
    * @return Boolean value indicating success or failure of load.
    */
   bool Load(const std::string& fileName,
-            bool flipVertical,
-            arma::Mat<unsigned char>&& outputMatrix);
+            arma::Mat<unsigned char>&& outputMatrix,
+            bool flipVertical = true);
 
   /**
    * Load the image file into the given matrix.
    *
    * @param fileName Name of the image file.
-   * @param flipVertical Flip the image vertical upon loading.
+   * @param outputMatrix Matrix to load into.
    * @param width Width of the image file.
    * @param height Height of the image file.
    * @param channels Channels of the image file.
-   * @param outputMatrix Matrix to load into.
+   * @param flipVertical Flip the image vertical upon loading.
    * @return Boolean value indicating success or failure of load.
    */
   bool Load(const std::string& fileName,
-            bool flipVertical,
             arma::Mat<unsigned char>&& outputMatrix,
             size_t& width,
             size_t& height,
-            size_t& channels);
+            size_t& channels,
+            bool flipVertical = true);
 
   /**
    * Load the image file into the given matrix.
    *
    * @param files A vector containing names of the image file to be loaded.
-   * @param flipVertical Flip the image vertical upon loading.
    * @param outputMatrix Matrix to load into.
+   * @param flipVertical Flip the image vertical upon loading.
    * @return Boolean value indicating success or failure of load.
    */
   bool Load(const std::vector<std::string>& files,
-            bool flipVertical,
-            arma::Mat<unsigned char>&& outputMatrix);
+            arma::Mat<unsigned char>&& outputMatrix,
+            bool flipVertical = true);
 
   /**
    * Saves the image file present in the given matrix.
@@ -137,17 +137,18 @@ class Image
    * @param width Width of the image that is being saved.
    * @param height Width of the image that is being saved.
    * @param channels Number of channels in the image that is being saved.
-   * @param flipVertical Flip the image vertical before saving.
    * @param inputMatrix Matrix to save images from.
+   * @param flipVertical Flip the image vertical before saving.
+   * @param quality Compression of the image if saved as jpg (0-100).
    * @return Boolean value indicating success or failure.
    */
   bool Save(const std::string& fileName,
             size_t width,
             size_t height,
             size_t channels,
-            bool flipVertical,
-            arma::Mat<unsigned char>&& outputMatrix,
-            size_t quality = 95);
+            arma::Mat<unsigned char>&& inputMatrix,
+            bool flipVertical = true,
+            size_t quality = 90);
 
   /**
    * Saves the image file present in the given matrix.
@@ -156,28 +157,30 @@ class Image
    * @param width Width of the image that is being saved.
    * @param height Width of the image that is being saved.
    * @param channels Number of channels in the image that is being saved.
-   * @param flipVertical Flip the image vertical before saving.
    * @param inputMatrix Matrix to save images from.
+   * @param flipVertical Flip the image vertical before saving.
+   * @param quality Compression of the image if saved as jpg (0-100).
    * @return Boolean value indicating success or failure.
    */
   bool Save(const std::vector<std::string>& files,
             size_t width,
             size_t height,
             size_t channels,
-            bool flipVertical,
-            arma::Mat<unsigned char>&& inputMatrix);
+            arma::Mat<unsigned char>&& inputMatrix,
+            bool flipVertical = true,
+            size_t quality = 90);
 
   /**
    * Load the image file into the given matrix.
    *
    * @param dirPath Path containing the image files.
-   * @param flipVertical Flip the image vertical upon loading.
    * @param outputMatrix Matrix to load into.
+   * @param flipVertical Flip the image vertical upon loading.
    * @return Boolean value indicating success or failure of load.
    */
   bool LoadDir(const std::string& dirPath,
-               bool flipVertical,
-               arma::Mat<unsigned char>&& outputMatrix);
+               arma::Mat<unsigned char>&& outputMatrix,
+               bool flipVertical = true);
 
   /**
    * Image default destructor.
