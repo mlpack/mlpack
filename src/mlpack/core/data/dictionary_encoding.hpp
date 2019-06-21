@@ -59,7 +59,7 @@ class DictionaryEncoding
   /*
   * Assignment Operator.
   */
-  void operator= (const DictionaryEncoding& oldObject);
+  DictionaryEncoding operator= (const DictionaryEncoding& oldObject);
   /**
   * A function to reset the mapping that is clear all the encodings
   */

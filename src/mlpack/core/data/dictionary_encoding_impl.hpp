@@ -24,9 +24,9 @@ void DictionaryEncoding::Reset()
   originalStrings.clear();
 }
 
-DictionaryEncoding::DictionaryEncoding(const DictionaryEncoding& oldObject)
+DictionaryEncoding::DictionaryEncoding(const DictionaryEncoding& oldObject) :
+    originalStrings(oldObject.originalStrings)
 {
-  originalStrings = oldObject.originalStrings;
   std::deque<std::string>::iterator jt = originalStrings.begin();
   for (auto it = oldObject.originalStrings.begin(); it !=
       oldObject.originalStrings.end(); it++)
@@ -36,7 +36,7 @@ DictionaryEncoding::DictionaryEncoding(const DictionaryEncoding& oldObject)
   }
 }
 
-void DictionaryEncoding::operator= (const
+DictionaryEncoding DictionaryEncoding::operator= (const
     DictionaryEncoding &oldObject)
 {
   if (this != &oldObject)
