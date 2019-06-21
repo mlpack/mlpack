@@ -22,6 +22,7 @@ namespace ann { /** Artificial Neural Network. */
 
 template<typename InputDataType, typename OutputDataType>
 LayerNorm<InputDataType, OutputDataType>::LayerNorm() :
+    size(0),
     eps(1e-8),
     loading(false)
 {
@@ -63,7 +64,7 @@ void LayerNorm<InputDataType, OutputDataType>::Forward(
 
   // Normalize the input.
   output = input.each_row() - mean;
-
+  inputMean = output;
   output.each_row() /= arma::sqrt(variance + eps);
 
   // Reused in the backward and gradient step.
@@ -79,7 +80,6 @@ template<typename eT>
 void LayerNorm<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  const arma::mat inputMean = input.each_row() - mean;
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
   // dl / dxhat
