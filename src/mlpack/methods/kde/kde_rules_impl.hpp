@@ -174,9 +174,9 @@ Score(const size_t queryIndex, TreeType& referenceNode)
       }
       meanSample = arma::mean(sample);
       const double stddev = arma::stddev(sample);
-      size_t mThresh =
-          std::ceil(z * stddev * (1 + relError) / (relError * meanSample));
-      mThresh *= mThresh;
+      const double mThreshBase =
+          z * stddev * (1 + relError) / (relError * meanSample);
+      const size_t mThresh = std::ceil(mThreshBase * mThreshBase);
 
       if (sample.size() < mThresh)
         m = mThresh - sample.size();
@@ -325,9 +325,9 @@ Score(TreeType& queryNode, TreeType& referenceNode)
         }
         meanSample = arma::mean(sample);
         const double stddev = arma::stddev(sample);
-        size_t mThresh =
-            std::ceil(z * stddev * (1 + relError) / (relError * meanSample));
-        mThresh *= mThresh;
+        const double mThreshBase =
+            z * stddev * (1 + relError) / (relError * meanSample);
+        const size_t mThresh = std::ceil(mThreshBase * mThreshBase);
 
         if (sample.size() < mThresh)
           m = mThresh - sample.size();
