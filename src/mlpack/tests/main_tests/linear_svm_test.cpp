@@ -211,7 +211,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMModelReuseTest)
 
   // Both solutions should be equal.
   CheckMatrices(testLabels1, testLabels2);
-
 }
 
 /**
@@ -562,7 +561,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffShuffleTest)
   SetInputParam("labels", trainLabels);
   SetInputParam("lambda", double(0.00001));
   SetInputParam("optimizer", std::string("psgd"));
-  SetInputParam("shuffle", bool (false));
+  SetInputParam("shuffle", bool(false));
 
   // First solution.
   mlpackMain();
@@ -581,7 +580,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffShuffleTest)
   SetInputParam("labels", std::move(trainLabels));
   SetInputParam("lambda", double(0.00001));
   SetInputParam("optimizer", std::string("psgd"));
-  SetInputParam("shuffle", bool (true));
+  SetInputParam("shuffle", bool(true));
 
   // Second solution.
   mlpackMain();
@@ -609,7 +608,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTest)
 
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
-  SetInputParam("no_intercept", bool (false));
+  SetInputParam("no_intercept", bool(false));
 
   // First solution.
   mlpackMain();
@@ -626,7 +625,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTest)
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
-  SetInputParam("no_intercept", bool (true));
+  SetInputParam("no_intercept", bool(true));
 
   // Second solution.
   mlpackMain();
@@ -748,9 +747,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
 
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
-  SetInputParam("lambda", double (0.00001));
+  SetInputParam("lambda", double(0.00001));
   SetInputParam("optimizer", std::string("psgd"));
-  SetInputParam("tolerance", double (1e-1));
+  SetInputParam("tolerance", double(1e-1));
 
   // First solution.
   mlpackMain();
@@ -767,9 +766,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
-  SetInputParam("lambda", double (0.00001));
+  SetInputParam("lambda", double(0.00001));
   SetInputParam("optimizer", std::string("psgd"));
-  SetInputParam("tolerance", double (1e-10));
+  SetInputParam("tolerance", double(1e-10));
 
   // Second solution.
   mlpackMain();
