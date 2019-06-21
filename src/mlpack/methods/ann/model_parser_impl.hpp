@@ -19,8 +19,6 @@
 using namespace mlpack;
 using namespace ann;
 
-bool error = false;
-
 Dataset::Dataset(){}
 
 Dataset::Dataset(arma::mat& trainX, arma::mat& trainY)
@@ -75,7 +73,7 @@ void printMap(std::map<std::string, double> params)
   std::map<std::string, double>::iterator itr;
   for (itr = params.begin(); itr != params.end(); ++itr)
   {
-    std::cout << itr->first << " : " << itr->second << "\n";
+    Log::Info << itr->first << " : " << itr->second << "\n";
   }
 }
 
@@ -83,20 +81,20 @@ void updateParams(std::map<std::string, double> &origParams,
                   std::map<std::string, double> &newParams)
 {
   std::map<std::string, double>::iterator itr;
+  bool error = false;
   for (itr = origParams.begin(); itr != origParams.end(); ++itr)
   {
     std::map<std::string, double>::iterator itr2 = newParams.find(itr->first);
-    
     if (itr2 == newParams.end() && isnan(itr->second))
     {
-      std::cout << "Required parameter: " << itr->first << "\n";
+      Log::Info << "Required parameter: " << itr->first << "\n";
       error = true;
     }
     else if (itr2 != newParams.end())
       itr->second = newParams.at(itr->first);
   }
   if (error)
-    exit(1);
+    Log::Fatal << "Required parameters missing" << "\n";
 }
 
 
@@ -156,7 +154,7 @@ void trainModel(OptimizerType optimizer, FFN<LossType, InitType> model,
     //     validAccuracy += ( (int) predOut[j] == (int) validY[j]);
     // }
     // validAccuracy /= (double) validY.n_cols;
-    // std::cout << "Cycle: " << i << " Training accuracy: " << trainAccuracy <<
+    // Log::Info << "Cycle: " << i << " Training accuracy: " << trainAccuracy <<
     //     " Validation accuracy: " << validAccuracy << "\n";
 
     // Train neural network. If this is the first iteration, weights are
@@ -176,7 +174,7 @@ void trainModel(OptimizerType optimizer, FFN<LossType, InitType> model,
     predLabels = getLabels(predOut);
     double validAccuracy = accuracy(predLabels, validY);
 
-    std::cout << i << " - accuracy: train = "<< trainAccuracy << "%," <<
+    Log::Info << i << " - accuracy: train = "<< trainAccuracy << "%," <<
       " valid = "<< validAccuracy << "%" <<  "\n";
   }
 }
@@ -466,8 +464,7 @@ void createModel(LossType& loss,
   }
   else
   {
-    std::cout << "Invalid optimizer type";
-    exit(1);
+    Log::Fatal << "Invalid optimizer type";
   }
 }
 
@@ -556,8 +553,7 @@ void getLossType(InitType& init,
   }
   else
   {
-    std::cout << "Invalid loss type\n";
-    exit(1);
+    Log::Fatal << "Invalid loss type\n";
   }
 }
 
@@ -603,12 +599,12 @@ void getInitType(std::string& initType, std::string& lossType,
                                   lossParams, optimizerParams, layers,
                                   dataset);
   }
-  else if (initType == "kathirvalavakumar_subavathi")
-  {
-    //getLossType<KathirvalavakumarSubavathiInitialization>(lossType,
-    //                                                      optimizerType,
-    //                                                      optimizerParams);
-  }
+  // else if (initType == "kathirvalavakumar_subavathi")
+  // {
+  //   getLossType<KathirvalavakumarSubavathiInitialization>(lossType,
+  //                                                        optimizerType,
+  //                                                        optimizerParams);
+  // }
   else if (initType == "lecun_normal")
   {
     LecunNormalInitialization init;
@@ -661,8 +657,7 @@ void getInitType(std::string& initType, std::string& lossType,
   }
   else
   {
-    std::cout << "Invalid initialization type";
-    exit(1);
+    Log::Fatal << "Invalid initialization type";
   }
 }
 
@@ -704,8 +699,10 @@ LayerTypes<> getNetworkReference(std::string& layerType,
   }
   else if (layerType == "batchnorm")
   {
-    // needs to be updated to accommodate epsilon and size
-    layer = new BatchNorm<>();
+    origParams["size"] = NAN;
+    origParams["eps"] = 1e-8;;
+    updateParams(origParams, layerParams);
+    layer = new BatchNorm<>(origParams["size"], origParams["eps"]);
   }
   else if (layerType == "constant")
   {
@@ -733,24 +730,18 @@ LayerTypes<> getNetworkReference(std::string& layerType,
   }
   else if (layerType == "dropconnect")
   {
-    // origParams["insize"];
-    // origParams["outsize"];
-    // origParams["ratio"] = 0.5;
-    // updateParams(origParams, layerParams);
-    // layer = new DropConnect<>();
+    origParams["insize"];
+    origParams["outsize"];
+    origParams["ratio"] = 0.5;
+    updateParams(origParams, layerParams);
+    layer = new DropConnect<>(origParams["insize"], origParams["outsize"],
+                              origParams["ratio"]);
   }
   else if (layerType == "dropout")
   {
     origParams["ratio"] = 0.5;
     updateParams(origParams, layerParams);
     layer = new Dropout<>(origParams["ratio"]);
-  }
-  else if (layerType == "fastlstm")
-  {
-    // origParams = {{""}}
-  }
-  else if (layerType == "gru")
-  {
   }
   else if (layerType == "layernorm")
   {
@@ -798,10 +789,6 @@ LayerTypes<> getNetworkReference(std::string& layerType,
     updateParams(origParams, layerParams);
     layer = new MultiplyConstant<>(origParams["scalar"]);
   }
-  else if (layerType == "recurrent")
-  {
-
-  }
   else if (layerType == "transposedconvolution")
   {
     origParams["insize"] = NAN;
@@ -825,26 +812,21 @@ LayerTypes<> getNetworkReference(std::string& layerType,
   {
     layer = new IdentityLayer<>();
   }
-  else if (layerType == "logistic")
-  {
-    //layer = LogisticFunction();
-  }
   else if (layerType == "rectifier" || layerType == "relu")
   {
     layer = new ReLULayer<>();
   }
-  else if (layerType == "softplus")
-  {
-
-  }
-  else if (layerType == "softsign")
-  {
-    //layer = SoftsignFunction;
-  }
-  else if (layerType == "swish")
-  {
-    //layer = new Swish
-  }
+  // else if (layerType == "softplus")
+  // {
+  // }
+  // else if (layerType == "softsign")
+  // {
+  //   // layer = SoftsignFunction;
+  // }
+  // else if (layerType == "swish")
+  // {
+  //   // layer = new Swish
+  // }
   else if (layerType == "tanh")
   {
     layer = new TanHLayer<>();
@@ -887,8 +869,7 @@ LayerTypes<> getNetworkReference(std::string& layerType,
   }
   else
   {
-    std::cout << "Invalid layer type : " << layerType;
-    exit(1);
+    Log::Fatal << "Invalid layer type : " << layerType;
   }
   return layer;
 }
@@ -917,7 +898,7 @@ void traverseModel(const boost::property_tree::ptree& tree,
       lossParams[v.first] = attributes.get_value<double>();
     }
   }
-  std::cout << "Loss details:\ntype : " << lossType << "\n";
+  Log::Info << "Loss details:\ntype : " << lossType << "\n";
   printMap(lossParams);
 
   std::map<std::string, double> initParams;
@@ -935,8 +916,8 @@ void traverseModel(const boost::property_tree::ptree& tree,
       initParams[v.first] = attributes.get_value<double>();
     }
   }
-  std::cout << "\nInit details:\ntype : " << initType << "\n";
-  printMap(initParams);  
+  Log::Info << "\nInit details:\ntype : " << initType << "\n";
+  printMap(initParams);
   std::map<std::string, double> optimizerDetails;
   std::string optimizerType;
   BOOST_FOREACH(boost::property_tree::ptree::value_type const &v,
@@ -952,9 +933,9 @@ void traverseModel(const boost::property_tree::ptree& tree,
       optimizerDetails[v.first] = attributes.get_value<double>();
     }
   }
-  std::cout << "\nOptimizer details:\ntype : " << optimizerType << "\n";
+  Log::Info << "\nOptimizer details:\ntype : " << optimizerType << "\n";
   printMap(optimizerDetails);
-  std::cout << "\nNetwork details:\n\n";
+  Log::Info << "\nNetwork details:\n\n";
   BOOST_FOREACH(boost::property_tree::ptree::value_type const &v,
                 network.get_child(""))
   {
@@ -983,17 +964,17 @@ void traverseModel(const boost::property_tree::ptree& tree,
         params[key] = layerInner.get_value<double>();
       }
     }
-    std::cout << "type : " << layerType << "\n";
+    Log::Info << "type : " << layerType << "\n";
     printMap(params);
     layers.push(getNetworkReference(layerType, params));
-    std::cout << "\n";
+    Log::Info << "\n";
   }
   getInitType(initType, lossType, initParams, lossParams,
       optimizerType, optimizerDetails, layers, dataset);
 }
 
-boost::property_tree::ptree loadProperties(std::string& fileName, Dataset& dataset,
-                                           double inSize)
+boost::property_tree::ptree loadProperties(std::string& fileName,
+                                           Dataset& dataset, double inSize)
 {
   boost::property_tree::ptree pt;
   read_json(fileName, pt);
@@ -1006,7 +987,7 @@ int testParser()
   std::string fileName = "network3.json";
   arma::mat dataset2;
   data::Load("train.csv", dataset2, true);
-  std::cout << "Data loaded" << "\n\n";
+  Log::Info << "Data loaded" << "\n\n";
   dataset2 = dataset2.submat(0, 1, dataset2.n_rows - 1, dataset2.n_cols - 1);
   arma::mat train, valid;
   data::Split(dataset2, train, valid, 0.1);
