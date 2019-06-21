@@ -58,7 +58,7 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     PRINT_PARAM_STRING("no_intercept") + " parameter can be specified.  "
     "Margin of difference between correct class and other classes can "
     "be specified with the" + PRINT_PARAM_STRING("delta") + "option.  "
-    "The optimizer used to train the model can be specified with the " + 
+    "The optimizer used to train the model can be specified with the " +
     PRINT_PARAM_STRING("optimizer") + " parameter.  Available options are "
     "'psgd' (stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  "
     "There are also various parameters for the optimizer; the " +
@@ -133,7 +133,7 @@ PARAM_DOUBLE_IN("tolerance", "Convergence tolerance for optimizer.", "e",
     1e-10);
 PARAM_INT_IN("max_iterations", "Maximum iterations for optimizer (0 indicates "
     "no limit).", "n", 10000);
-PARAM_DOUBLE_IN("step_size", "Step size for ParallelSGD optimizer.","s", 0.01);
+PARAM_DOUBLE_IN("step_size", "Step size for ParallelSGD optimizer.", "s", 0.01);
 PARAM_FLAG("shuffle", "Don't shuffle the order in which data points are "
     "visited for ParallelSGD.", "S");
 // Model loading/saving.
@@ -335,7 +335,7 @@ static void mlpackMain()
       {
         Log::Fatal << "Test data given with " << PRINT_PARAM_STRING("test")
             << " has " << testSet.n_cols << " points, but labels in "
-            << PRINT_PARAM_STRING("test_labels") << " have " 
+            << PRINT_PARAM_STRING("test_labels") << " have "
             << testLabels.n_elem << " labels!" << endl;
       }
 
