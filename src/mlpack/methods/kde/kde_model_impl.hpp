@@ -394,7 +394,7 @@ template<typename KernelType,
 void MCProbabilityVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
 {
   if (kde)
-    kde->MCProbability(probability);
+    kde->MCProb(probability);
   else
     throw std::runtime_error("no KDE model initialized");
 }
@@ -430,7 +430,7 @@ template<typename KernelType,
 void MCEntryCoefVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
 {
   if (kde)
-    kde->MCEntryCoefficient(entryCoef);
+    kde->MCEntryCoef(entryCoef);
   else
     throw std::runtime_error("no KDE model initialized");
 }
@@ -448,7 +448,7 @@ template<typename KernelType,
 void MCBreakCoefVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
 {
   if (kde)
-    kde->MCBreakCoefficient(breakCoef);
+    kde->MCBreakCoef(breakCoef);
   else
     throw std::runtime_error("no KDE model initialized");
 }

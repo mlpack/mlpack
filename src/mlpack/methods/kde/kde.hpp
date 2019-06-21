@@ -70,6 +70,17 @@ class KDE
    * @param kernel Instantiated kernel object.
    * @param mode Mode for the algorithm.
    * @param metric Instantiated metric object.
+   * @param monteCarlo Whether to use Monte Carlo estimations when possible.
+   * @param mcProb Probability of a Monte Carlo estimation to be bounded by
+   *               relative error tolerance.
+   * @param initialSampleSize Initial sample size for Monte Carlo estimations.
+   * @param mcEntryCoef Coefficient to control how much larger does the amount
+   *                    of node descendants has to be compared to the initial
+   *                    sample size in order for it to be a candidate for Monte
+   *                    Carlo estimations.
+   * @param mcBreakCoef Coefficient to control what fraction of the node's
+   *                    descendants evaluated is the limit before Monte Carlo
+   *                    estimation recurses.
    */
   KDE(const double relError = 0.05,
       const double absError = 0,
@@ -77,10 +88,10 @@ class KDE
       const KDEMode mode = DUAL_TREE_MODE,
       MetricType metric = MetricType(),
       const bool monteCarlo = false,
-      const double MCProb = 0.95,
+      const double mcProb = 0.95,
       const size_t initialSampleSize = 100,
-      const double MCEntryCoef = 3,
-      const double MCBreakCoef = 0.7);
+      const double mcEntryCoef = 3,
+      const double mcBreakCoef = 0.7);
 
   /**
    * Construct KDE object as a copy of the given model. This may be
@@ -226,11 +237,11 @@ class KDE
   bool& MonteCarlo() { return monteCarlo; }
 
   //! Get Monte Carlo probability of error being bounded by relative error.
-  double MCProbability() const { return MCProb; }
+  double MCProb() const { return mcProb; }
 
   //! Modify Monte Carlo probability of error being bounded by relative error.
   //! (0 <= newProb < 1).
-  void MCProbability(const double newProb);
+  void MCProb(const double newProb);
 
   //! Get Monte Carlo initial sample size.
   size_t MCInitialSampleSize() const { return initialSampleSize; }
@@ -239,16 +250,16 @@ class KDE
   size_t& MCInitialSampleSize() { return initialSampleSize; }
 
   //! Get Monte Carlo entry coefficient.
-  double MCEntryCoefficient() const { return MCEntryCoef; }
+  double MCEntryCoef() const { return mcEntryCoef; }
 
   //! Modify Monte Carlo entry coefficient. (newCoef >= 1).
-  void MCEntryCoefficient(const double newCoef);
+  void MCEntryCoef(const double newCoef);
 
   //! Get Monte Carlo break coefficient.
-  double MCBreakCoefficient() const { return MCBreakCoef; }
+  double MCBreakCoef() const { return mcBreakCoef; }
 
   //! Modify Monte Carlo break coefficient. (0 < newCoef <= 1).
-  void MCBreakCoefficient(const double newCoef);
+  void MCBreakCoef(const double newCoef);
 
   //! Serialize the model.
   template<typename Archive>
@@ -286,7 +297,7 @@ class KDE
   bool monteCarlo;
 
   //! Probability of error being bounded by relError when Monte Carlo is used.
-  double MCProb;
+  double mcProb;
 
   //! Size of the initial sample for Monte Carlo approximations.
   size_t initialSampleSize;
@@ -295,11 +306,11 @@ class KDE
   //! has to be compared to the initial sample size in order to be a candidate
   //! for Monte Carlo estimations. If the evaluation results in a non-natural
   //! number, then the floor function will be applied.
-  double MCEntryCoef;
+  double mcEntryCoef;
 
   //! Coefficient to control what fraction of the amount of node's descendants
   //! is the limit before Monte Carlo estimation recurses.
-  double MCBreakCoef;
+  double mcBreakCoef;
 
   //! Check whether absolute and relative error values are compatible.
   static void CheckErrorValues(const double relError, const double absError);

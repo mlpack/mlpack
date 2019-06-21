@@ -735,25 +735,25 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   BOOST_REQUIRE_EQUAL(kdeText.MonteCarlo(), monteCarlo);
   BOOST_REQUIRE_EQUAL(kdeBinary.MonteCarlo(), monteCarlo);
 
-  BOOST_REQUIRE_CLOSE(kde.MCProbability(), MCProb, 1e-8);
-  BOOST_REQUIRE_CLOSE(kdeXml.MCProbability(), MCProb, 1e-8);
-  BOOST_REQUIRE_CLOSE(kdeText.MCProbability(), MCProb, 1e-8);
-  BOOST_REQUIRE_CLOSE(kdeBinary.MCProbability(), MCProb, 1e-8);
+  BOOST_REQUIRE_CLOSE(kde.MCProb(), MCProb, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeXml.MCProb(), MCProb, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeText.MCProb(), MCProb, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeBinary.MCProb(), MCProb, 1e-8);
 
   BOOST_REQUIRE_EQUAL(kde.MCInitialSampleSize(), initialSampleSize);
   BOOST_REQUIRE_EQUAL(kdeXml.MCInitialSampleSize(), initialSampleSize);
   BOOST_REQUIRE_EQUAL(kdeText.MCInitialSampleSize(), initialSampleSize);
   BOOST_REQUIRE_EQUAL(kdeBinary.MCInitialSampleSize(), initialSampleSize);
 
-  BOOST_REQUIRE_CLOSE(kde.MCEntryCoefficient(), entryCoef, 1e-8);
-  BOOST_REQUIRE_CLOSE(kdeXml.MCEntryCoefficient(), entryCoef, 1e-8);
-  BOOST_REQUIRE_CLOSE(kdeText.MCEntryCoefficient(), entryCoef, 1e-8);
-  BOOST_REQUIRE_CLOSE(kdeBinary.MCEntryCoefficient(), entryCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kde.MCEntryCoef(), entryCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeXml.MCEntryCoef(), entryCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeText.MCEntryCoef(), entryCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeBinary.MCEntryCoef(), entryCoef, 1e-8);
 
-  BOOST_REQUIRE_CLOSE(kde.MCBreakCoefficient(), breakCoef, 1e-8);
-  BOOST_REQUIRE_CLOSE(kdeXml.MCBreakCoefficient(), breakCoef, 1e-8);
-  BOOST_REQUIRE_CLOSE(kdeText.MCBreakCoefficient(), breakCoef, 1e-8);
-  BOOST_REQUIRE_CLOSE(kdeBinary.MCBreakCoefficient(), breakCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kde.MCBreakCoef(), breakCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeXml.MCBreakCoef(), breakCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeText.MCBreakCoef(), breakCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeBinary.MCBreakCoef(), breakCoef, 1e-8);
 
   // Test if execution gives the same result.
   arma::vec xmlEstimations = arma::vec(query.n_cols, arma::fill::zeros);

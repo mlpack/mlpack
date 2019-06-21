@@ -58,10 +58,10 @@ KDE(const double relError,
     const KDEMode mode,
     MetricType metric,
     const bool monteCarlo,
-    const double MCProb,
+    const double mcProb,
     const size_t initialSampleSize,
-    const double MCEntryCoef,
-    const double MCBreakCoef) :
+    const double mcEntryCoef,
+    const double mcBreakCoef) :
     kernel(kernel),
     metric(metric),
     referenceTree(nullptr),
@@ -75,9 +75,9 @@ KDE(const double relError,
     initialSampleSize(initialSampleSize)
 {
   CheckErrorValues(relError, absError);
-  MCProbability(MCProb);
-  MCEntryCoefficient(MCEntryCoef);
-  MCBreakCoefficient(MCBreakCoef);
+  MCProb(mcProb);
+  MCEntryCoef(mcEntryCoef);
+  MCBreakCoef(mcBreakCoef);
 }
 
 template<typename KernelType,
@@ -103,10 +103,10 @@ KDE(const KDE& other) :
     trained(other.trained),
     mode(other.mode),
     monteCarlo(other.monteCarlo),
-    MCProb(other.MCProb),
+    mcProb(other.mcProb),
     initialSampleSize(other.initialSampleSize),
-    MCEntryCoef(other.MCEntryCoef),
-    MCBreakCoef(other.MCBreakCoef)
+    mcEntryCoef(other.mcEntryCoef),
+    mcBreakCoef(other.mcBreakCoef)
 {
   if (trained)
   {
@@ -149,10 +149,10 @@ KDE(KDE&& other) :
     trained(other.trained),
     mode(other.mode),
     monteCarlo(other.monteCarlo),
-    MCProb(other.MCProb),
+    mcProb(other.mcProb),
     initialSampleSize(other.initialSampleSize),
-    MCEntryCoef(other.MCEntryCoef),
-    MCBreakCoef(other.MCBreakCoef)
+    mcEntryCoef(other.mcEntryCoef),
+    mcBreakCoef(other.mcBreakCoef)
 {
   other.kernel = std::move(KernelType());
   other.metric = std::move(MetricType());
@@ -202,10 +202,10 @@ operator=(KDE other)
   this->trained = other.trained;
   this->mode = other.mode;
   this->monteCarlo = other.monteCarlo;
-  this->MCProb = other.MCProb;
+  this->mcProb = other.mcProb;
   this->initialSampleSize = other.initialSampleSize;
-  this->MCEntryCoef = other.MCEntryCoef;
-  this->MCBreakCoef = other.MCBreakCoef;
+  this->mcEntryCoef = other.mcEntryCoef;
+  this->mcBreakCoef = other.mcBreakCoef;
 
   return *this;
 }
@@ -369,10 +369,10 @@ Evaluate(MatType querySet, arma::vec& estimations)
                               estimations,
                               relError,
                               absError,
-                              MCProb,
+                              mcProb,
                               initialSampleSize,
-                              MCEntryCoef,
-                              MCBreakCoef,
+                              mcEntryCoef,
+                              mcBreakCoef,
                               metric,
                               kernel,
                               monteCarlo,
@@ -457,10 +457,10 @@ Evaluate(Tree* queryTree,
                             estimations,
                             relError,
                             absError,
-                            MCProb,
+                            mcProb,
                             initialSampleSize,
-                            MCEntryCoef,
-                            MCBreakCoef,
+                            mcEntryCoef,
+                            mcBreakCoef,
                             metric,
                             kernel,
                             monteCarlo,
@@ -516,10 +516,10 @@ Evaluate(arma::vec& estimations)
                             estimations,
                             relError,
                             absError,
-                            MCProb,
+                            mcProb,
                             initialSampleSize,
-                            MCEntryCoef,
-                            MCBreakCoef,
+                            mcEntryCoef,
+                            mcBreakCoef,
                             metric,
                             kernel,
                             monteCarlo,
@@ -601,14 +601,14 @@ void KDE<KernelType,
          TreeType,
          DualTreeTraversalType,
          SingleTreeTraversalType>::
-MCProbability(const double newProb)
+MCProb(const double newProb)
 {
   if (newProb < 0 || newProb >= 1)
   {
     throw std::invalid_argument("Monte Carlo probability must be a value "
                                 "greater or equal to 0 and smaller than 1");
   }
-  MCProb = newProb;
+  mcProb = newProb;
 }
 
 template<typename KernelType,
@@ -625,14 +625,14 @@ void KDE<KernelType,
          TreeType,
          DualTreeTraversalType,
          SingleTreeTraversalType>::
-MCEntryCoefficient(const double newCoef)
+MCEntryCoef(const double newCoef)
 {
   if (newCoef < 1)
   {
     throw std::invalid_argument("Monte Carlo entry coefficient must be a value "
                                 "greater or equal to 1");
   }
-  MCEntryCoef = newCoef;
+  mcEntryCoef = newCoef;
 }
 
 template<typename KernelType,
@@ -649,14 +649,14 @@ void KDE<KernelType,
          TreeType,
          DualTreeTraversalType,
          SingleTreeTraversalType>::
-MCBreakCoefficient(const double newCoef)
+MCBreakCoef(const double newCoef)
 {
   if (newCoef <= 0 || newCoef > 1)
   {
     throw std::invalid_argument("Monte Carlo break coefficient must be a value "
                                 "greater than 0 and less or equal to 1");
   }
-  MCBreakCoef = newCoef;
+  mcBreakCoef = newCoef;
 }
 
 template<typename KernelType,
@@ -682,10 +682,10 @@ serialize(Archive& ar, const unsigned int /* version */)
   ar & BOOST_SERIALIZATION_NVP(trained);
   ar & BOOST_SERIALIZATION_NVP(mode);
   ar & BOOST_SERIALIZATION_NVP(monteCarlo);
-  ar & BOOST_SERIALIZATION_NVP(MCProb);
+  ar & BOOST_SERIALIZATION_NVP(mcProb);
   ar & BOOST_SERIALIZATION_NVP(initialSampleSize);
-  ar & BOOST_SERIALIZATION_NVP(MCEntryCoef);
-  ar & BOOST_SERIALIZATION_NVP(MCBreakCoef);
+  ar & BOOST_SERIALIZATION_NVP(mcEntryCoef);
+  ar & BOOST_SERIALIZATION_NVP(mcBreakCoef);
 
   // If we are loading, clean up memory if necessary.
   if (Archive::is_loading::value)
