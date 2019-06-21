@@ -657,6 +657,7 @@ double DecisionTree<FitnessFunction,
         break;
     }
   }
+
   // Did we split or not?  If so, then split the data and create the children.
   if (bestDim != datasetInfo.Dimensionality())
   {
@@ -828,6 +829,7 @@ double DecisionTree<FitnessFunction,
         break;
     }
   }
+
   // Did we split or not?  If so, then split the data and create the children.
   if (bestDim != data.n_rows)
   {

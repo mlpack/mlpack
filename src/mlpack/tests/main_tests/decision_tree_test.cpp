@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeMinimumLeafSizeTest)
 }
 
 /**
- * Make sure maximum depth size is always a non-negative number.
+ * Make sure maximum depth is always a non-negative number.
  */
 BOOST_AUTO_TEST_CASE(DecisionTreeNonNegativeMaximumDepthTest)
 {
@@ -201,6 +201,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeNonNegativeMaximumDepthTest)
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
+
 /**
  * Make sure minimum gain split is always a fraction in range [0,1].
  */
@@ -454,8 +455,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
 }
 
 /**
- * Check that different maximum depth gives
- * different results.
+ * Check that different maximum depths give different results.
  */
 BOOST_AUTO_TEST_CASE(DecisionTreeMaximumDepthTest)
 {

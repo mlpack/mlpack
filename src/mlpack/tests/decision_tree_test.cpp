@@ -1217,7 +1217,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeCategoricalTrainReturnEntropy)
 }
 
 /**
- * Make sure different Maximum Depth gives different number of children.
+ * Make sure different maximum depth values give different numbers of children.
  */
 BOOST_AUTO_TEST_CASE(DifferentMaximumDepthTest)
 {

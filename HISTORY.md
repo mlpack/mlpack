@@ -2,7 +2,8 @@
 ###### ????-??-??
   * Add Multiple Pole Balancing Environment (#1901).
 
-  * Add New paramter Maximum_depth to Decision Tree And Random Forest (#1916).
+  * Add new parameter `maximum_depth` to decision tree and random forest
+    bindings (#1916).
 
   * Fix prediction output of softmax regression when test set accuracy is
     calculated (#1922).
