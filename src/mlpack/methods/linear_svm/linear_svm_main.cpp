@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
@@ -151,7 +152,7 @@ PARAM_MATRIX_OUT("score", "If test data is specified, this "
     "matrix is where the class score for the test set will be saved.",
     "p");
 
-size_t CalculateNumberOfClasses(const size_t numClasses,
+size_t NumberOfClasses(const size_t numClasses,
                                 const arma::Row<size_t>& labels);
 
 static void mlpackMain()
@@ -273,7 +274,7 @@ static void mlpackMain()
     trainingSet.shed_row(trainingSet.n_rows - 1);
   }
 
-  const size_t numClasses = CalculateNumberOfClasses(
+  const size_t numClasses = NumberOfClasses(
        (size_t) CLI::GetParam<int>("number_of_classes"), labels);
 
 
@@ -313,7 +314,19 @@ static void mlpackMain()
     // Get the test dataset, and get predictions.
     testSet = std::move(CLI::GetParam<arma::mat>("test"));
     arma::Row<size_t> predictions;
-    model->Classify(testSet, predictions);
+
+    // Checking the dimensionality of the test data.
+    if (testSet.n_rows != model->Parameters().n_rows - 1)
+    {
+      // Clean memory if needed.
+      const size_t trainingDimensionality = model->Parameters().n_rows - 1;
+      if (!CLI::HasParam("input_model"))
+        delete model;
+
+      Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must "
+          << "be the same as the dimensionality of the training data ("
+          << trainingDimensionality << ")!" << endl;
+    }
 
     // Save class score, if desired.
     if (CLI::HasParam("score"))
@@ -324,6 +337,8 @@ static void mlpackMain()
       model->Classify(testSet, score);
       CLI::GetParam<arma::mat>("score") = std::move(score);
     }
+
+    model->Classify(testSet, predictions);
 
     // Calculate accuracy, if desired.
     if (CLI::HasParam("test_labels"))
@@ -376,7 +391,7 @@ static void mlpackMain()
   CLI::GetParam<LinearSVM<>*>("output_model") = model;
 }
 
-size_t CalculateNumberOfClasses(const size_t numClasses,
+size_t NumberOfClasses(const size_t numClasses,
                                 const arma::Row<size_t>& labels)
 {
   if (numClasses == 0)
