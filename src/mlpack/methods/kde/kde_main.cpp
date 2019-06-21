@@ -48,9 +48,10 @@ PROGRAM_INFO("Kernel Density Estimation",
     "type of tree to use for the dual-tree algorithm with " +
     PRINT_PARAM_STRING("tree") + ". It is also possible to select whether to "
     "use dual-tree algorithm or single-tree algorithm using the " +
-    PRINT_PARAM_STRING("algorithm") + " option. This implementation makes "
-    "possible to use probabilistic Monte Carlo relative error tolerance "
-    "(only for the Gaussian kernel) using the flag " +
+    PRINT_PARAM_STRING("algorithm") + " option."
+    "\n\n"
+    "This implementation makes possible to use probabilistic Monte Carlo "
+    "relative error tolerance (only for the Gaussian kernel) using the flag " +
     PRINT_PARAM_STRING("monte_carlo") + " and setting a probability with the " +
     PRINT_PARAM_STRING("mc_probability") + " option. It is possible to set the "
     "initial sample size for the Monte Carlo estimation using " +
@@ -92,7 +93,7 @@ PROGRAM_INFO("Kernel Density Estimation",
     "a candidate for the estimation only when it contains 700 (i.e. 3.5*200) "
     "points. If a node contains 700 points and 420 (i.e. 0.6*700) have already "
     "been sampled, then the algorithm will recurse instead of keep sampling."
-    "\n\n"+
+    "\n\n" +
     PRINT_CALL("kde", "reference", "ref_data", "query", "qu_data", "bandwidth",
         0.2, "kernel", "gaussian", "tree", "kd-tree", "rel_error",
         0.05, "predictions", "out_data", "monte_carlo", "", "mc_probability",
@@ -102,6 +103,10 @@ PROGRAM_INFO("Kernel Density Estimation",
     SEE_ALSO("@knn", "#knn"),
     SEE_ALSO("Kernel density estimation on Wikipedia",
         "https://en.wikipedia.org/wiki/Kernel_density_estimation"),
+    SEE_ALSO("Fast High-dimensional Kernel Summations Using the Monte Carlo "
+        "Multipole Method", "http://papers.nips.cc/paper/3539-fast-high-"
+        "dimensional-kernel-summations-using-the-monte-carlo-multipole-method."
+        "pdf"),
     SEE_ALSO("mlpack::kde::KDE C++ class documentation",
         "@doxygen/classmlpack_1_1kde_1_1KDE.html"));
 
@@ -153,7 +158,7 @@ PARAM_INT_IN("initial_sample_size",
 PARAM_DOUBLE_IN("mc_entry_coef",
                 "Controls how much larger does the amount of node descendants "
                 "has to be compared to the " +
-                PRINT_PARAM_STRING("initial_sample_size")+ " in order to be "
+                PRINT_PARAM_STRING("initial_sample_size") + " in order to be "
                 "a candidate for Monte Carlo estimations.",
                 "C",
                 3.0);

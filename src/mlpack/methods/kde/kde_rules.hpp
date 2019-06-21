@@ -25,10 +25,6 @@ namespace kde {
 template<typename MetricType, typename KernelType, typename TreeType>
 class KDERules
 {
- private:
-  // SFINAE Check if kernel has bandwidth function.
-  HAS_MEM_FUNC(Bandwidth, HasBandwidth);
-
  public:
   /**
    * Construct KDERules.
