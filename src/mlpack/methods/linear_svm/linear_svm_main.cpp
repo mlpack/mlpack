@@ -10,16 +10,13 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core.hpp>
+#include <omp.h>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "linear_svm.hpp"
 
 #include <ensmallen.hpp>
-
-#include <memory>
-#include <set>
 
 using namespace std;
 using namespace mlpack;
@@ -247,10 +244,6 @@ static void mlpackMain()
     labels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
     if (trainingSet.n_cols != labels.n_cols)
     {
-      // Clean memory if needed.
-      if (!CLI::HasParam("input_model"))
-        delete model;
-
       Log::Fatal << "The labels must have the same number of points as the "
           << "training dataset." << endl;
     }
@@ -260,10 +253,6 @@ static void mlpackMain()
     // Checking the size of training data if no labels are passed.
     if (trainingSet.n_rows < 2)
     {
-      // Clean memory if needed.
-      if (!CLI::HasParam("input_model"))
-        delete model;
-
       Log::Fatal << "Can't get labels from training data since it has less "
           << "than 2 rows." << endl;
     }
@@ -320,8 +309,6 @@ static void mlpackMain()
     {
       // Clean memory if needed.
       const size_t trainingDimensionality = model->Parameters().n_rows - 1;
-      if (!CLI::HasParam("input_model"))
-        delete model;
 
       Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must "
           << "be the same as the dimensionality of the training data ("

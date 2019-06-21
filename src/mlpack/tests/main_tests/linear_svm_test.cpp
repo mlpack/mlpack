@@ -559,7 +559,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffShuffleTest)
 
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
-  SetInputParam("lambda", double(0.00001));
   SetInputParam("optimizer", std::string("psgd"));
   SetInputParam("shuffle", bool(false));
 
@@ -578,7 +577,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffShuffleTest)
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
-  SetInputParam("lambda", double(0.00001));
   SetInputParam("optimizer", std::string("psgd"));
   SetInputParam("shuffle", bool(true));
 
@@ -698,7 +696,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
 
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
-  SetInputParam("lambda", double(0.00001));
   SetInputParam("optimizer", std::string("psgd"));
   SetInputParam("step_size", double(0.02));
 
@@ -717,7 +714,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
-  SetInputParam("lambda", double(0.00001));
   SetInputParam("optimizer", std::string("psgd"));
   SetInputParam("step_size", double(1.02));
 
@@ -747,7 +743,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
 
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
-  SetInputParam("lambda", double(0.00001));
   SetInputParam("optimizer", std::string("psgd"));
   SetInputParam("tolerance", double(1e-1));
 
@@ -766,7 +761,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
-  SetInputParam("lambda", double(0.00001));
   SetInputParam("optimizer", std::string("psgd"));
   SetInputParam("tolerance", double(1e-10));
 
@@ -796,7 +790,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffOptimizerTest)
 
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
-  SetInputParam("lambda", double(0.00001));
   SetInputParam("optimizer", std::string("lbfgs"));
   SetInputParam("max_iterations", int(1000));
 
@@ -815,7 +808,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffOptimizerTest)
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
-  SetInputParam("lambda", double(0.00001));
   SetInputParam("optimizer", std::string("psgd"));
   SetInputParam("max_iterations", int(1000));
 
