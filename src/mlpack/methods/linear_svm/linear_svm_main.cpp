@@ -1,6 +1,6 @@
 /**
  * @file linear_svm_main.cpp
- * @author Yashwant Singh
+ * @author Yashwant Singh Parihar
  *
  * Main executable for linear svm.
  *
@@ -32,8 +32,8 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     "future use; or, a pre-trained model can be used to classify new points.",
     // Long description.
     "An implementation of LinearSVM using either the "
-    "L-BFGS optimizer or ParallelSGD (stochastic gradient descent).  This solves the "
-    "classification problem."
+    "L-BFGS optimizer or ParallelSGD (stochastic gradient descent)."
+    "  This solves the classification problem."
     "\n\n"
     "This program allows loading a LinearSVM model (via the " +
     PRINT_PARAM_STRING("input_model") + " parameter) "
@@ -42,7 +42,7 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     "those things at once.  In addition, this program allows classification on "
     "a test dataset (specified with the " + PRINT_PARAM_STRING("test") + " "
     "parameter) and the classification results may be saved with the " +
-    PRINT_PARAM_STRING("predictions") + " output parameter."
+    PRINT_PARAM_STRING("predictions") + " output parameter. "
     " The trained LinearSVM model may be saved using the " +
     PRINT_PARAM_STRING("output_model") + " output parameter."
     "\n\n"
@@ -55,9 +55,9 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     PRINT_PARAM_STRING("lambda") + " option, and The number of classes can be "
     "manually specified with the " + PRINT_PARAM_STRING("number_of_classes") +
     "and if an intercept term is not desired in the model, the " +
-    PRINT_PARAM_STRING("no_intercept") + " parameter can be specified."
+    PRINT_PARAM_STRING("no_intercept") + " parameter can be specified.  "
     "Margin of difference between correct class and other classes can "
-    "be specified with the" + PRINT_PARAM_STRING("delta") + "option."
+    "be specified with the" + PRINT_PARAM_STRING("delta") + "option.  "
     "The optimizer used to train the model can be specified with the " + 
     PRINT_PARAM_STRING("optimizer") + " parameter.  Available options are "
     "'psgd' (stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  "
@@ -72,8 +72,8 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     "step size is probably too large.  There are more parameters for the "
     "optimizers, but the C++ interface must be used to access these."
     "\n\n"
-    "For ParallelSGD, an iteration refers to a single point. So to take a single"
-    " pass over the dataset with ParallelSGD, " +
+    "For ParallelSGD, an iteration refers to a single point.  So to take a"
+    " single pass over the dataset with ParallelSGD, " +
     PRINT_PARAM_STRING("max_iterations") +
     " should be set to the number of points in the dataset."
     "\n\n"
@@ -84,7 +84,11 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     "so long as an existing LinearSVM model is given with the " +
     PRINT_PARAM_STRING("input_model") + " parameter.  The output predictions "
     "from the LinearSVM model may be saved with the " +
-    PRINT_PARAM_STRING("predictions") + " parameter." +
+    PRINT_PARAM_STRING("predictions") + " parameter.  If labels are "
+    "specified for the test data with the " +
+    PRINT_PARAM_STRING("test_labels") + " parameter, then the program will "
+    "print the accuracy of the predictions on the given test set and its "
+    "corresponding labels."
     "\n\n"
     "As an example, to train a LinaerSVM model on the data '" +
     PRINT_DATASET("data") + "' with labels '" + PRINT_DATASET("labels") + "' "
@@ -131,7 +135,7 @@ PARAM_INT_IN("max_iterations", "Maximum iterations for optimizer (0 indicates "
     "no limit).", "n", 10000);
 PARAM_DOUBLE_IN("step_size", "Step size for ParallelSGD optimizer.","s", 0.01);
 PARAM_FLAG("shuffle", "Don't shuffle the order in which data points are "
-    "visited for ParallelSGD .", "S");
+    "visited for ParallelSGD.", "S");
 // Model loading/saving.
 PARAM_MODEL_IN(LinearSVM<>, "input_model", "Existing model "
     "(parameters).", "m");
@@ -165,13 +169,14 @@ static void mlpackMain()
   // One of training and input_model must be specified.
   RequireAtLeastOnePassed({ "training", "input_model" }, true);
 
+  // If no output file is given, the user should know that the model will not be
+  // saved, but only if a model is being trained.
   RequireAtLeastOnePassed({ "output_model", "predictions", "score"},
       false, "no output will be saved");
 
   ReportIgnoredParam({{ "test", false }}, "predictions");
   ReportIgnoredParam({{ "test", false }}, "score");
   ReportIgnoredParam({{ "test", false }}, "test_labels");
-
 
   // Max Iterations needs to be positive.
   RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },
@@ -198,6 +203,7 @@ static void mlpackMain()
   RequireParamValue<double>("delta", [](double x) { return x >= 0.0; }, true,
       "Margin of difference between correct class and other classes");
 
+  // Step Size must be positive.
   RequireParamValue<double>("step_size", [](double x) { return x >= 0.0; },
       true, "step size must be positive");
 
@@ -220,11 +226,10 @@ static void mlpackMain()
   arma::Row<size_t> labels;
   arma::mat testSet;
   arma::Row<size_t> predictions;
-  trainingSet = std::move(CLI::GetParam<arma::mat>("training"));
-  labels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
-  const size_t numClasses = CalculateNumberOfClasses(
-       (size_t) CLI::GetParam<int>("number_of_classes"), labels);
 
+  // Load data matrix.
+  if (CLI::HasParam("training"))
+    trainingSet = std::move(CLI::GetParam<arma::mat>("training"));
 
   // Load the model, if necessary.
   LinearSVM<>* model;
@@ -234,6 +239,44 @@ static void mlpackMain()
   {
     model = new LinearSVM<>;
   }
+
+  // Check if the labels are in a separate file.
+  if (CLI::HasParam("training") && CLI::HasParam("labels"))
+  {
+    labels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+    if (trainingSet.n_cols != labels.n_cols)
+    {
+      // Clean memory if needed.
+      if (!CLI::HasParam("input_model"))
+        delete model;
+
+      Log::Fatal << "The labels must have the same number of points as the "
+          << "training dataset." << endl;
+    }
+  }
+  else if (CLI::HasParam("training"))
+  {
+    // Checking the size of training data if no labels are passed.
+    if (trainingSet.n_rows < 2)
+    {
+      // Clean memory if needed.
+      if (!CLI::HasParam("input_model"))
+        delete model;
+
+      Log::Fatal << "Can't get labels from training data since it has less "
+          << "than 2 rows." << endl;
+    }
+
+    // The initial predictors for y, Nx1.
+    labels = arma::conv_to<arma::Row<size_t>>::from(
+        trainingSet.row(trainingSet.n_rows - 1));
+    trainingSet.shed_row(trainingSet.n_rows - 1);
+  }
+
+  const size_t numClasses = CalculateNumberOfClasses(
+       (size_t) CLI::GetParam<int>("number_of_classes"), labels);
+
+
   // Now, do the training.
   if (CLI::HasParam("training"))
   {
@@ -267,16 +310,12 @@ static void mlpackMain()
 
   if (CLI::HasParam("test"))
   {
-    testSet = std::move(CLI::GetParam<arma::mat>("test"));  
-    // Save predictions, if desired.
-    if (CLI::HasParam("predictions"))
-    {
-      Log::Info << "Predicting classes of points in '"
-          << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
-      arma::Row<size_t> predictions;
-      model->Classify(testSet, predictions);
-      CLI::GetParam<arma::Row<size_t>>("predictions") = predictions;
-    }
+    // Get the test dataset, and get predictions.
+    testSet = std::move(CLI::GetParam<arma::mat>("test"));
+    arma::Row<size_t> predictions;
+    model->Classify(testSet, predictions);
+
+    // Save class score, if desired.
     if (CLI::HasParam("score"))
     {
       Log::Info << "Calculating class score of points in '"
@@ -285,6 +324,7 @@ static void mlpackMain()
       model->Classify(testSet, score);
       CLI::GetParam<arma::mat>("score") = std::move(score);
     }
+
     // Calculate accuracy, if desired.
     if (CLI::HasParam("test_labels"))
     {
@@ -297,11 +337,6 @@ static void mlpackMain()
             << " has " << testSet.n_cols << " points, but labels in "
             << PRINT_PARAM_STRING("test_labels") << " have " 
             << testLabels.n_elem << " labels!" << endl;
-      }
-      if(!CLI::HasParam("predictions"))
-      {
-        model->Classify(testSet, predictions);
-        CLI::GetParam<arma::Row<size_t>>("predictions") = predictions;
       }
 
       vector<size_t> bingoLabels(numClasses, 0);
@@ -327,6 +362,14 @@ static void mlpackMain()
       Log::Info << "Total accuracy for all points is "
           << (totalBingo) / static_cast<double>(predictions.n_elem) << " ("
           << totalBingo << " of " << predictions.n_elem << ")." << endl;
+    }
+
+    // Save predictions, if desired.
+    if (CLI::HasParam("predictions"))
+    {
+      Log::Info << "Predicting classes of points in '"
+          << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
+      CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
     }
   }
 
