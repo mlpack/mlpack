@@ -278,8 +278,8 @@ void traverseModel(const boost::property_tree::ptree& tree,
  * data
  * @param inSize The input size of the first layer
  */
-boost::property_tree::ptree loadProperties(std::string& fileName, Dataset& dataset,
-                                           double inSize);
+boost::property_tree::ptree loadProperties(std::string& fileName,
+                                           Dataset& dataset, double inSize);
 
 /** The final implementation of this file would not have a main method. This is 
  * merely to ease testing. The following include statement can hence be 
