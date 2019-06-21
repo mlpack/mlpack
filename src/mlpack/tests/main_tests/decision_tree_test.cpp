@@ -41,6 +41,12 @@ struct DecisionTreeTestFixture
   }
 };
 
+void ResetDTSettings()
+{
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
+}
+
 BOOST_FIXTURE_TEST_SUITE(DecisionTreeMainTest,
                          DecisionTreeTestFixture);
 
@@ -167,6 +173,34 @@ BOOST_AUTO_TEST_CASE(DecisionTreeMinimumLeafSizeTest)
   Log::Fatal.ignoreInput = false;
 }
 
+/**
+ * Make sure maximum depth size is always a non-negative number.
+ */
+BOOST_AUTO_TEST_CASE(DecisionTreeNonNegativeMaximumDepthTest)
+{
+  arma::mat inputData;
+  DatasetInfo info;
+  if (!data::Load("braziltourism.arff", inputData, info))
+    BOOST_FAIL("Cannot load train dataset braziltourism.arff!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("braziltourism_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for braziltourism_labels.txt");
+
+  // Initialize an all-ones weight matrix.
+  arma::mat weights(1, labels.n_cols, arma::fill::ones);
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("weights", std::move(weights));
+
+  SetInputParam("maximum_depth", (int) -1); // Invalid.
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
 /**
  * Make sure minimum gain split is always a fraction in range [0,1].
  */
@@ -417,6 +451,58 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
   // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(probabilities, CLI::GetParam<arma::mat>("probabilities"));
+}
+
+/**
+ * Check that different maximum depth gives
+ * different results.
+ */
+BOOST_AUTO_TEST_CASE(DecisionTreeMaximumDepthTest)
+{
+  arma::mat inputData;
+  DatasetInfo info;
+  if (!data::Load("vc2.csv", inputData, info))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  // Initialize an all-ones weight matrix.
+  arma::mat weights(1, labels.n_cols, arma::fill::ones);
+
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData, info))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  // Input training data.
+  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("labels", labels);
+  SetInputParam("weights", weights);
+  SetInputParam("maximum_depth", (int) 0);
+
+  // Input test data.
+  SetInputParam("test", std::make_tuple(info, testData));
+
+  mlpackMain();
+
+  // Check that number of output points are equal to number of input points.
+  arma::Row<size_t> predictions;
+  predictions = CLI::GetParam<arma::Row<size_t>>("predictions");
+
+  ResetDTSettings();
+
+  // Input training data.
+  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("weights", std::move(weights));
+  SetInputParam("maximum_depth", (int) 4);
+
+  // Input test data.
+  SetInputParam("test", std::make_tuple(info, testData));
+
+  CheckMatricesNotEqual(predictions,
+                        CLI::GetParam<arma::Row<size_t>>("predictions"));
 }
 
 BOOST_AUTO_TEST_SUITE_END();
