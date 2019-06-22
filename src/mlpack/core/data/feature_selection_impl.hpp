@@ -40,29 +40,13 @@ void VarianceSelection(const arma::Mat<T>& input, const double threshold,
 {
   // Calculate variance of each scaled feature.
   arma::mat value = arma::var(arma::normalise(input, 2, 1), 0, 1);
-  // Count the dimension of new matrix
-  size_t count = 0;
+  std::vector<long long unsigned int> indices;
   for (size_t i = 0; i < value.n_rows; i++)
   {
     if (value(i, 0) > threshold)
-    {
-      count++;
-    }
+      indices.push_back(i);
   }
-  // Now selecting features with high variance.
-  output.resize(count, input.n_cols);
-  count = 0;
-  for (size_t i = 0; i < value.n_rows; i++)
-  {
-    if (value(i, 0) > threshold)
-    {
-      for (size_t j = 0; j < input.n_cols; j++)
-      {
-        output(count, j) = input(i, j);
-      }
-      count++;
-    }
-  }
+  output = input.rows(arma::uvec(indices));
 }
 
 } // namespace data
