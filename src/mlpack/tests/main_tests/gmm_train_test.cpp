@@ -9,6 +9,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+
 #include<string>
 
 #define BINDING_TYPE BINDING_TYPE_TEST
@@ -241,14 +242,12 @@ BOOST_AUTO_TEST_CASE(GmmTrainNoiseTest)
 // Ensure that Trials affects the final result.
 BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
 {
-  arma::mat inputData(5, 100, arma::fill::randu);
+  arma::mat inputData(10000, 50, arma::fill::randu);
 
   SetInputParam("input", inputData);
-  SetInputParam("gaussians", (int) 3);
-  SetInputParam("refined_start", true);
-  SetInputParam("samplings", (int) 1000);
-  SetInputParam("trials", (int) 1);
+  SetInputParam("gaussians", (int) 5);
   SetInputParam("max_iterations", (int) 500);
+  SetInputParam("trials", (int) 1);
 
   size_t seed = std::time(NULL);
   mlpack::math::randGen.seed((uint32_t) seed);
@@ -262,9 +261,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
   ResetGmmTrainSetting();
 
   SetInputParam("input", std::move(inputData));
-  SetInputParam("gaussians", (int) 3);
-  SetInputParam("refined_start", true);
-  SetInputParam("samplings", (int) 1000);
+  SetInputParam("gaussians", (int) 5);
   SetInputParam("max_iterations", (int) 500);
   SetInputParam("trials", (int) 500);
 
@@ -491,4 +488,3 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiagCovariance)
 }
 
 BOOST_AUTO_TEST_SUITE_END();
-
