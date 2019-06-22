@@ -188,7 +188,7 @@ set(parallel_tests
   "SVDIncrementalTest;SVDBatchTest;"
   "LocalCoordinateCodingTest;FeedForwardNetworkTest;SparseAutoencoderTest;"
   "GMMTest;CFTest;ConvolutionalNetworkTest;HMMTest;LARSTest;"
-  "LogisticRegressionTest;"
+  "LogisticRegressionTest;GmmTrainMainTest;"
   "LinearSVMTest")
 
 # Add tests to the testing framework
