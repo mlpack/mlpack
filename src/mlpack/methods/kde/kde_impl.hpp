@@ -674,18 +674,24 @@ void KDE<KernelType,
          TreeType,
          DualTreeTraversalType,
          SingleTreeTraversalType>::
-serialize(Archive& ar, const unsigned int /* version */)
+serialize(Archive& ar, const unsigned int version)
 {
   // Serialize preferences.
   ar & BOOST_SERIALIZATION_NVP(relError);
   ar & BOOST_SERIALIZATION_NVP(absError);
   ar & BOOST_SERIALIZATION_NVP(trained);
   ar & BOOST_SERIALIZATION_NVP(mode);
-  ar & BOOST_SERIALIZATION_NVP(monteCarlo);
-  ar & BOOST_SERIALIZATION_NVP(mcProb);
-  ar & BOOST_SERIALIZATION_NVP(initialSampleSize);
-  ar & BOOST_SERIALIZATION_NVP(mcEntryCoef);
-  ar & BOOST_SERIALIZATION_NVP(mcBreakCoef);
+
+  // Backward compatibility: Old versions of KDE did not need to handle Monte
+  // Carlo parameters.
+  if (version > 0)
+  {
+    ar & BOOST_SERIALIZATION_NVP(monteCarlo);
+    ar & BOOST_SERIALIZATION_NVP(mcProb);
+    ar & BOOST_SERIALIZATION_NVP(initialSampleSize);
+    ar & BOOST_SERIALIZATION_NVP(mcEntryCoef);
+    ar & BOOST_SERIALIZATION_NVP(mcBreakCoef);
+  }
 
   // If we are loading, clean up memory if necessary.
   if (Archive::is_loading::value)

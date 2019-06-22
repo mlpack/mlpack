@@ -71,11 +71,15 @@ class KDEStat
 
   //! Serialize the statistic to/from an archive.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int version)
   {
     ar & BOOST_SERIALIZATION_NVP(centroid);
     ar & BOOST_SERIALIZATION_NVP(validCentroid);
-    ar & BOOST_SERIALIZATION_NVP(depth);
+
+    // Backward compatibility: Old versions of KDEStat did not need to handle
+    // depth.
+    if (version > 0)
+      ar & BOOST_SERIALIZATION_NVP(depth);
   }
 
  private:
@@ -91,5 +95,8 @@ class KDEStat
 
 } // namespace kde
 } // namespace mlpack
+
+//! Set the serialization version of the KDEStat class.
+BOOST_TEMPLATE_CLASS_VERSION(template<>, mlpack::kde::KDEStat, 1);
 
 #endif
