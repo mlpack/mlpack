@@ -39,11 +39,11 @@ void VarianceSelection(const arma::Mat<T>& input, const double threshold,
                        arma::Mat<T>& output)
 {
   // Calculate variance of each scaled feature.
-  arma::mat value = arma::var(arma::normalise(input, 2, 1), 0, 1);
+  arma::rowvec value = arma::var(arma::normalise(input, 2, 1), 0, 1);
   std::vector<long long unsigned int> indices;
-  for (size_t i = 0; i < value.n_rows; i++)
+  for (size_t i = 0; i < value.n_elem; i++)
   {
-    if (value(i, 0) > threshold)
+    if (value(i) > threshold)
       indices.push_back(i);
   }
   output = input.rows(arma::uvec(indices));
