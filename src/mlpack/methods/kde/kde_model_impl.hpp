@@ -503,6 +503,14 @@ void KDEModel::serialize(Archive& ar, const unsigned int version)
     ar & BOOST_SERIALIZATION_NVP(mcEntryCoef);
     ar & BOOST_SERIALIZATION_NVP(mcBreakCoef);
   }
+  else if (Archive::is_loading::value)
+  {
+    monteCarlo = false;
+    mcProb = 0.95;
+    initialSampleSize = 100;
+    mcEntryCoef = 3;
+    mcBreakCoef = 0.7;
+  }
 
   if (Archive::is_loading::value)
     boost::apply_visitor(DeleteVisitor(), kdeModel);

@@ -79,7 +79,13 @@ class KDEStat
     // Backward compatibility: Old versions of KDEStat did not need to handle
     // depth.
     if (version > 0)
+    {
       ar & BOOST_SERIALIZATION_NVP(depth);
+    }
+    else if (Archive::is_loading::value)
+    {
+      depth = 0;
+    }
   }
 
  private:
