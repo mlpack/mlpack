@@ -338,16 +338,16 @@ class KDEModel
 
   //! Probability of estimation being bounded by relative error when using
   //! Monte Carlo estimations.
-  double MCProb;
+  double mcProb;
 
   //! Size of the initial sample for Monte Carlo estimations.
   size_t initialSampleSize;
 
   //! Entry coefficient for Monte Carlo estimations.
-  double MCEntryCoef;
+  double mcEntryCoef;
 
   //! Break coefficient for Monte Carlo estimations.
-  double MCBreakCoef;
+  double mcBreakCoef;
 
   /**
    * kdeModel holds an instance of each possible combination of KernelType and
@@ -399,10 +399,10 @@ class KDEModel
            const KernelTypes kernelType = KernelTypes::GAUSSIAN_KERNEL,
            const TreeTypes treeType = TreeTypes::KD_TREE,
            const bool monteCarlo = false,
-           const double MCProb = 0.95,
+           const double mcProb = 0.95,
            const size_t initialSampleSize = 100,
-           const double MCEntryCoef = 3,
-           const double MCBreakCoef = 0.7);
+           const double mcEntryCoef = 3,
+           const double mcBreakCoef = 0.7);
 
   //! Copy constructor of the given model.
   KDEModel(const KDEModel& other);
@@ -463,10 +463,10 @@ class KDEModel
   bool& MonteCarlo() { return monteCarlo; }
 
   //! Get Monte Carlo probability of error being bounded by relative error.
-  double MCProbability() const { return MCProb; }
+  double MCProbability() const { return mcProb; }
 
   //! Modify Monte Carlo probability of error being bounded by relative error.
-  double& MCProbability() { return MCProb; }
+  double& MCProbability() { return mcProb; }
 
   //! Get the initial sample size for Monte Carlo estimations.
   size_t MCInitialSampleSize() const { return initialSampleSize; }
@@ -475,16 +475,16 @@ class KDEModel
   size_t& MCInitialSampleSize() { return initialSampleSize; }
 
   //! Get Monte Carlo entry coefficient.
-  double MCEntryCoefficient() const { return MCEntryCoef; }
+  double MCEntryCoefficient() const { return mcEntryCoef; }
 
   //! Modify Monte Carlo entry coefficient.
-  double& MCEntryCoefficient() { return MCEntryCoef; }
+  double& MCEntryCoefficient() { return mcEntryCoef; }
 
   //! Get Monte Carlo break coefficient.
-  double MCBreakCoefficient() const { return MCBreakCoef; }
+  double MCBreakCoefficient() const { return mcBreakCoef; }
 
   //! Modify Monte Carlo break coefficient.
-  double& MCBreakCoefficient() { return MCBreakCoef; }
+  double& MCBreakCoefficient() { return mcBreakCoef; }
 
   //! Get the mode of the model.
   KDEMode Mode() const;

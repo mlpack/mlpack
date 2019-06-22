@@ -27,20 +27,20 @@ inline KDEModel::KDEModel(const double bandwidth,
                           const KernelTypes kernelType,
                           const TreeTypes treeType,
                           const bool monteCarlo,
-                          const double MCProb,
+                          const double mcProb,
                           const size_t initialSampleSize,
-                          const double MCEntryCoef,
-                          const double MCBreakCoef) :
+                          const double mcEntryCoef,
+                          const double mcBreakCoef) :
   bandwidth(bandwidth),
   relError(relError),
   absError(absError),
   kernelType(kernelType),
   treeType(treeType),
   monteCarlo(monteCarlo),
-  MCProb(MCProb),
+  mcProb(mcProb),
   initialSampleSize(initialSampleSize),
-  MCEntryCoef(MCEntryCoef),
-  MCBreakCoef(MCBreakCoef)
+  mcEntryCoef(mcEntryCoef),
+  mcBreakCoef(mcBreakCoef)
 {
   // Nothing to do.
 }
@@ -53,10 +53,10 @@ inline KDEModel::KDEModel(const KDEModel& other) :
   kernelType(other.kernelType),
   treeType(other.treeType),
   monteCarlo(other.monteCarlo),
-  MCProb(other.MCProb),
+  mcProb(other.mcProb),
   initialSampleSize(other.initialSampleSize),
-  MCEntryCoef(other.MCEntryCoef),
-  MCBreakCoef(other.MCBreakCoef)
+  mcEntryCoef(other.mcEntryCoef),
+  mcBreakCoef(other.mcBreakCoef)
 {
   // Nothing to do.
 }
@@ -69,10 +69,10 @@ inline KDEModel::KDEModel(KDEModel&& other) :
   kernelType(other.kernelType),
   treeType(other.treeType),
   monteCarlo(other.monteCarlo),
-  MCProb(other.MCProb),
+  mcProb(other.mcProb),
   initialSampleSize(other.initialSampleSize),
-  MCEntryCoef(other.MCEntryCoef),
-  MCBreakCoef(other.MCBreakCoef),
+  mcEntryCoef(other.mcEntryCoef),
+  mcBreakCoef(other.mcBreakCoef),
   kdeModel(std::move(other.kdeModel))
 {
   // Reset other model.
@@ -82,10 +82,10 @@ inline KDEModel::KDEModel(KDEModel&& other) :
   other.kernelType = KernelTypes::GAUSSIAN_KERNEL;
   other.treeType = TreeTypes::KD_TREE;
   other.monteCarlo = false;
-  other.MCProb = 0.95;
+  other.mcProb = 0.95;
   other.initialSampleSize = 300;
-  other.MCEntryCoef = 3;
-  other.MCBreakCoef = 0.7;
+  other.mcEntryCoef = 3;
+  other.mcBreakCoef = 0.7;
   other.kdeModel = decltype(other.kdeModel)();
 }
 
@@ -98,10 +98,10 @@ inline KDEModel& KDEModel::operator=(KDEModel other)
   kernelType = other.kernelType;
   treeType = other.treeType;
   monteCarlo = other.monteCarlo;
-  MCProb = other.MCProb;
+  mcProb = other.mcProb;
   initialSampleSize = other.initialSampleSize;
-  MCEntryCoef = other.MCEntryCoef;
-  MCBreakCoef = other.MCBreakCoef;
+  mcEntryCoef = other.mcEntryCoef;
+  mcBreakCoef = other.mcBreakCoef;
   kdeModel = std::move(other.kdeModel);
   return *this;
 }
@@ -249,7 +249,7 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
   boost::apply_visitor(MCVisitor, kdeModel);
 
   // Set Monte Carlo probability.
-  MCProbabilityVisitor probabilityVisitor(MCProb);
+  MCProbabilityVisitor probabilityVisitor(mcProb);
   boost::apply_visitor(probabilityVisitor, kdeModel);
 
   // Set Monte Carlo initial sample size.
@@ -257,11 +257,11 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
   boost::apply_visitor(sampleSizeVisitor, kdeModel);
 
   // Set Monte Carlo entry coefficient.
-  MCEntryCoefVisitor entryCoefficientVisitor(MCEntryCoef);
+  MCEntryCoefVisitor entryCoefficientVisitor(mcEntryCoef);
   boost::apply_visitor(entryCoefficientVisitor, kdeModel);
 
   // Set Monte Carlo break coefficient.
-  MCBreakCoefVisitor breakCoefficientVisitor(MCBreakCoef);
+  MCBreakCoefVisitor breakCoefficientVisitor(mcBreakCoef);
   boost::apply_visitor(breakCoefficientVisitor, kdeModel);
 
   // Train the model.
@@ -498,10 +498,10 @@ void KDEModel::serialize(Archive& ar, const unsigned int version)
   if (version > 0)
   {
     ar & BOOST_SERIALIZATION_NVP(monteCarlo);
-    ar & BOOST_SERIALIZATION_NVP(MCProb);
+    ar & BOOST_SERIALIZATION_NVP(mcProb);
     ar & BOOST_SERIALIZATION_NVP(initialSampleSize);
-    ar & BOOST_SERIALIZATION_NVP(MCEntryCoef);
-    ar & BOOST_SERIALIZATION_NVP(MCBreakCoef);
+    ar & BOOST_SERIALIZATION_NVP(mcEntryCoef);
+    ar & BOOST_SERIALIZATION_NVP(mcBreakCoef);
   }
 
   if (Archive::is_loading::value)
