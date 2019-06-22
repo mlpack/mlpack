@@ -392,6 +392,17 @@ class KDEModel
    *                 value can have a maximum error of 0.1 units.
    * @param kernelType Type of kernel to use.
    * @param treeType Type of tree to use.
+   * @param monteCarlo Whether to use Monte Carlo estimations when possible.
+   * @param Probability of a Monte Carlo estimation to be bounded by relative
+   *        error tolerance.
+   * @param initialSampleSize Initial sample size for Monte Carlo estimations.
+   * @param mcEntryCoef Coefficient to control how much larger does the amount
+   *                    of node descendants has to be compared to the initial
+   *                    sample size in order for it to be a candidate for Monte
+   *                    Carlo estimations.
+   * @param mcBreakCoef Coefficient to control what fraction of the node's
+   *                    descendants evaluated is the limit before Monte Carlo
+   *                    estimation recurses.
    */
   KDEModel(const double bandwidth = 1.0,
            const double relError = 0.05,
