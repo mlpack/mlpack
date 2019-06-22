@@ -216,7 +216,7 @@ void Genome<ActivationFunction>::Mutate()
   // Add new connection.
   if (arma::randu<double>() < connAdditionProb)
   {
-    size_t sourceID = inputNodeCount;
+    size_t sourceID = inputNodeCount + outputNodeCount;
     while (sourceID > inputNodeCount && sourceID <= inputNodeCount + outputNodeCount)
       sourceID = arma::randi<arma::uvec>(1, arma::distr_param(0, (int)(nextNodeID - 1)))[0];
 
@@ -261,7 +261,17 @@ void Genome<ActivationFunction>::Mutate()
     else
     {
       if (!directedGraph[sourceID][newTarget].Enabled())
+      {
         directedGraph[sourceID][newTarget].Enabled() = true;
+        for (size_t j  = 0; j < connectionGeneList.size(); j++)
+        {
+          if (connectionGeneList[j].Source() == sourceID && connectionGeneList[j].Target() == newTarget)
+          {
+            connectionGeneList[j].Enabled() = false;
+            break;
+          }
+        }
+      }
     }
   }
 
@@ -284,7 +294,12 @@ void Genome<ActivationFunction>::Mutate()
   // Add new node.
   if (arma::randu<double>() < nodeAdditionProb)
   {
-    size_t i = arma::randi<arma::uvec>(1, arma::distr_param(0, (int)(connectionGeneList.size() - 1)))[0];
+    size_t i = 0;
+    do
+    {
+      i = arma::randi<arma::uvec>(1, arma::distr_param(0, (int)(connectionGeneList.size() - 1)))[0];
+    }
+    while(connectionGeneList[i].Source() == 0);
     size_t sourceID = connectionGeneList[i].Source();
     size_t targetID = connectionGeneList[i].Target();
     size_t newNodeID = nextNodeID++;
@@ -336,42 +351,54 @@ void Genome<ActivationFunction>::Mutate()
       // If this is the case, the connection we are splitting is part of the
       // longest path.
       if (nodeDepths[targetID] == nodeDepths[sourceID] + 1)
-        nodeDepths[targetID]++;
-    }
-  }
-
-  // Deletes connection.
-  if (arma::randu() < connDeletionProb && connectionGeneList.size() > 1)
-  {
-    size_t i = arma::randi<arma::uvec>(1, arma::distr_param(0, (int)(connectionGeneList.size() - 1)))[0];
-    size_t sourceID = connectionGeneList[i].Source();
-    size_t targetID = connectionGeneList[i].Target();
-    connectionGeneList[i].Enabled() = false;
-    directedGraph[sourceID][targetID].Enabled() = false;
-
-    // If the genome is acyclic, change the depths.
-    if (isAcyclic)
-    {
-      size_t depth = 0;
-      // TODO: Think of a better way to do this?
-      for (auto const& x : directedGraph)
       {
-        for (auto const& y : x.second)
-        {
-          if (y.first == targetID && y.second.Enabled())
-          {
-            if (depth < nodeDepths[x.first] + 1)
-              depth = nodeDepths[x.first] + 1;
-          }
-        }
+        nodeDepths[targetID]++;
+        Traverse(targetID);
       }
-      nodeDepths[targetID] = depth;
     }
   }
 
   // Mutate bias.
   if (arma::randu<double>() < biasMutationProb)
     bias += biasMutationSize * arma::randn<double>();  
+
+  // Deletes connection.
+  if (arma::randu() < connDeletionProb && connectionGeneList.size() > 1)
+  {
+    size_t i = 0;
+    do
+    {
+      i = arma::randi<arma::uvec>(1, arma::distr_param(0, (int)(connectionGeneList.size() - 1)))[0];
+    } while (!connectionGeneList[i].Enabled());
+    
+    size_t sourceID = connectionGeneList[i].Source();
+    size_t targetID = connectionGeneList[i].Target();
+    size_t outCount = 0, inCount = 0;
+    for (size_t j = 0; j < connectionGeneList.size(); j++)
+    {
+      if (!connectionGeneList[j].Enabled())
+        continue;
+      if (connectionGeneList[j].Source() == sourceID)
+        outCount++;
+      if (connectionGeneList[j].Target() == targetID)
+        inCount++;
+    }
+
+    if (outCount == 1 || inCount == 1)
+      return;
+
+    connectionGeneList[i].Enabled() = false;
+    directedGraph[sourceID][targetID].Enabled() = false;
+
+    // If the genome is acyclic, change the depths.
+    // Think of a better way to do this.
+    if (isAcyclic)
+    {
+      std::fill(nodeDepths.begin(), nodeDepths.end(), 0);
+      for (size_t i = 0; i <= inputNodeCount; i++)
+        Traverse(i);
+    }
+  }
 }
 
 template <class ActivationFunction>
@@ -387,6 +414,24 @@ arma::mat Genome<ActivationFunction>::Parameters()
     }
   }
   return param;
+}
+
+
+template <class ActivationFunction>
+void Genome<ActivationFunction>::Traverse(size_t startID)
+{
+  if (directedGraph[startID].size() == 0)
+    return;
+  for (auto const& x : directedGraph[startID])
+  {
+    if (!x.second.Enabled())
+      continue;
+    if (nodeDepths[x.first] < nodeDepths[startID] + 1)
+    {
+      nodeDepths[x.first] = nodeDepths[startID] + 1;
+      Traverse(x.first);
+    }
+  }
 }
 
 } // namespace neat

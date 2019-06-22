@@ -264,7 +264,6 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Speciate(bool init)
 {
   // Translate the genome into points in space.
   arma::mat data(Genome<ActivationFunction>::nextInnovID, popSize, arma::fill::zeros);
-  std::cout << Genome<ActivationFunction>::nextInnovID << std::endl;
   for (size_t i = 0; i < popSize; i++)
   {
     for (size_t j = 0; j < genomeList[i].connectionGeneList.size(); j++)

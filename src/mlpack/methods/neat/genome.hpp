@@ -196,7 +196,9 @@ class Genome
    * A recursive function that assigns depth to nodes. Only used in acyclic
    * cases. [Will be removed]
    */
-  void TraverseNode(size_t nodeID, size_t depth);
+  void RecurseAddNode(size_t startID);
+
+  void Traverse(size_t startID);  
 
   //! Input node count.
   size_t inputNodeCount;
