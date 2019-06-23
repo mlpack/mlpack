@@ -355,12 +355,12 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
         if (innovID == newConnGeneList[j].InnovationID())
         {
           // If either parent is disabled, preset chance that the inherited gene is disabled.
-          if (!newConnGeneList[j].Enabled())
+          if (!isAcyclic && !newConnGeneList[j].Enabled())
           {
             if (arma::randu<double>() < disableProb)
-              newConnGeneList[j].Enabled() = false;
-            else
               newConnGeneList[j].Enabled() = true;
+            else
+              newConnGeneList[j].Enabled() = false;
           }
           // Weights will be assigned randomly in matching genes.
           if (arma::randu<double>() < 0.5)

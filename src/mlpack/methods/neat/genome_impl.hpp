@@ -393,7 +393,7 @@ void Genome<ActivationFunction>::Mutate()
     // If the genome is acyclic, change the depths.
     // Think of a better way to do this.
     if (isAcyclic)
-    {   
+    {
       std::fill(nodeDepths.begin(), nodeDepths.end(), 0);
       for (size_t j = 0; j <= inputNodeCount; j++)
         Traverse(j);
