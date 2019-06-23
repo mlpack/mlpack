@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainNoiseTest)
 // Ensure that Trials affects the final result.
 BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
 {
-  arma::mat inputData(5, 1000, arma::fill::randu);
+  arma::mat inputData(5, 250, arma::fill::randu);
 
   SetInputParam("input", inputData);
   SetInputParam("gaussians", (int) 3);
