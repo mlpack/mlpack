@@ -145,6 +145,12 @@ class Genome
    */
   arma::mat Parameters();
 
+
+  /**
+   * Prints genome.
+   */
+  void Print();
+
   /**
    * A data structure containing the connection genes sorted by global
    * innovation ID.
@@ -238,6 +244,10 @@ class Genome
 
   //! Boolean indicating if the phenome is acyclic.
   bool isAcyclic;
+
+  // Included temporarily for debugging purposes.
+  arma::vec output;
+  arma::vec inputt;
 };
 
 } // namespace neat

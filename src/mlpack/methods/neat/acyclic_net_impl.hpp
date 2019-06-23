@@ -94,7 +94,7 @@ void AcyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
   }
 
   for (size_t i = 0; i < output.n_elem; i++)
-    output[i] = nodeValues[i + inputNodeCount + 1];
+    output[i] =  ActivationFunction::Fn(nodeValues[i + inputNodeCount + 1]);
 }
 
 } // namespace neat

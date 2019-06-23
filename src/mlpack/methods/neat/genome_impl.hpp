@@ -191,11 +191,13 @@ arma::vec Genome<ActivationFunction>::Evaluate(arma::vec& input)
         "input nodes" << std::endl;
   }
 
+  inputt = input;
+
   if (isAcyclic)
   {
     AcyclicNet<ActivationFunction> net(nextNodeID, inputNodeCount,
         outputNodeCount, bias);
-    arma::vec output(outputNodeCount, arma::fill::zeros);
+    output = arma::vec(outputNodeCount, arma::fill::zeros);
     net.Evaluate(input, output, directedGraph, nodeDepths);
     return output;
   }
@@ -203,7 +205,7 @@ arma::vec Genome<ActivationFunction>::Evaluate(arma::vec& input)
   {
     CyclicNet<ActivationFunction> net(nextNodeID, inputNodeCount,
         outputNodeCount, 100 /* Placeholder */, bias);
-    arma::vec output(outputNodeCount, arma::fill::zeros);
+    output = arma::vec(outputNodeCount, arma::fill::zeros);
     net.Evaluate(input, output, directedGraph);
     return output;
   }
@@ -414,6 +416,22 @@ arma::mat Genome<ActivationFunction>::Parameters()
     }
   }
   return param;
+}
+
+template <class ActivationFunction>
+void Genome<ActivationFunction>::Print()
+{
+  inputt.print();
+  output.print();
+  for (size_t i = 0; i < connectionGeneList.size(); i++)
+  {
+    std::cout << connectionGeneList[i].Source() << "->" << connectionGeneList[i].Target();
+    if (connectionGeneList[i].Enabled())
+      std::cout << " (enabled) ";
+    else
+      std::cout << " (disabled) ";
+    std::cout << "Weight: " << connectionGeneList[i].Weight() << std::endl;
+  }
 }
 
 
