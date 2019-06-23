@@ -355,8 +355,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
         if (innovID == newConnGeneList[j].InnovationID())
         {
           // If either parent is disabled, preset chance that the inherited gene is disabled.
-          if (!newConnGeneList[j].Enabled() || !lessFitGenome.
-                  connectionGeneList[i].Enabled())
+          if (!newConnGeneList[j].Enabled())
           {
             if (arma::randu<double>() < disableProb)
               newConnGeneList[j].Enabled() = false;
