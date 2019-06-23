@@ -216,7 +216,6 @@ void Genome<ActivationFunction>::Mutate()
   // Add new connection.
   if (arma::randu<double>() < connAdditionProb)
   {
-    std::cout << "Add new connection." << std::endl;
     size_t sourceID = inputNodeCount + outputNodeCount;
     while (sourceID > inputNodeCount && sourceID <= inputNodeCount + outputNodeCount)
       sourceID = arma::randi<arma::uvec>(1, arma::distr_param(0, (int)(nextNodeID - 1)))[0];
@@ -226,8 +225,6 @@ void Genome<ActivationFunction>::Mutate()
 
     if (isAcyclic)
     {
-      for (size_t i = 0; i < nodeDepths.size(); i++)
-        std::cout << nodeDepths[i] << std::endl;
       // Only create connections where the target has a higher depth.
       while (nodeDepths[sourceID] >= nodeDepths[newTarget])
       {
@@ -243,8 +240,6 @@ void Genome<ActivationFunction>::Mutate()
             (int)(inputNodeCount), (int)(nextNodeID) - 1))[0];
       }
     }
-
-    std::cout << "Adding " << sourceID << "->" << newTarget << std::endl;
 
     if (directedGraph[sourceID].find(newTarget) == directedGraph[sourceID].end())
     {
@@ -299,7 +294,6 @@ void Genome<ActivationFunction>::Mutate()
   // Add new node.
   if (arma::randu<double>() < nodeAdditionProb)
   {
-    std::cout << "Add new node." << std::endl;
     size_t i = 0;
     do
     {
@@ -352,20 +346,6 @@ void Genome<ActivationFunction>::Mutate()
     // If the genome is acyclic, change the depths.
     if (isAcyclic)
     {
-      std::cout << "Changed " << sourceID << "->" << targetID << std::endl;
-      for (size_t j = 0; j < nodeDepths.size(); j++)
-        std::cout << nodeDepths[j] << std::endl;
-      std:: cout << "----------------" << std::endl;
-      std::cout << "Connectivity Info:" << std::endl;
-      for (auto const& x : directedGraph)
-      {
-        for (auto const& y : directedGraph[x.first])
-        {
-          if (y.second.Enabled())
-            std::cout << y.second.Source() << "->" << y.second.Target() << std::endl;
-        }
-      }
-      std:: cout << "----------------" << std::endl;
       nodeDepths.push_back(nodeDepths[sourceID] + 1);
 
       // If this is the case, the connection we are splitting is part of the
@@ -375,9 +355,6 @@ void Genome<ActivationFunction>::Mutate()
         nodeDepths[targetID]++;
         Traverse(targetID);
       }
-      std::cout << "------------------" << std::endl;
-      for (size_t j = 0; j < nodeDepths.size(); j++)
-        std::cout << nodeDepths[j] << std::endl;
     }
   }
 
@@ -388,7 +365,6 @@ void Genome<ActivationFunction>::Mutate()
   // Deletes connection.
   if (arma::randu() < connDeletionProb && connectionGeneList.size() > 1)
   {
-    std::cout << "Delete old connection." << std::endl;
     size_t i = 0;
     do
     {
@@ -408,12 +384,8 @@ void Genome<ActivationFunction>::Mutate()
         inCount++;
     }
 
-    std::cout << "Deleting connection " << sourceID << "->" << targetID << std::endl;
     if (outCount == 1 || inCount == 1)
-    {
-      std::cout << "Stopped because we can't delete it." << std::endl;
       return;
-    }
 
     connectionGeneList[i].Enabled() = false;
     directedGraph[sourceID][targetID].Enabled() = false;
@@ -421,26 +393,10 @@ void Genome<ActivationFunction>::Mutate()
     // If the genome is acyclic, change the depths.
     // Think of a better way to do this.
     if (isAcyclic)
-    {
-      for (size_t j = 0; j < nodeDepths.size(); j++)
-        std::cout << nodeDepths[j] << std::endl;
-      std::cout << "------------------" << std::endl;
-      std::cout << "Connectivity Info:" << std::endl;
-      for (auto const& x : directedGraph)
-      {
-        for (auto const& y : directedGraph[x.first])
-        {
-          if (y.second.Enabled())
-            std::cout << y.second.Source() << "->" << y.second.Target() << std::endl;
-        }
-      }
-      std:: cout << "----------------" << std::endl;    
+    {   
       std::fill(nodeDepths.begin(), nodeDepths.end(), 0);
       for (size_t j = 0; j <= inputNodeCount; j++)
         Traverse(j);
-      std::cout << "------------------" << std::endl;
-      for (size_t j = 0; j < nodeDepths.size(); j++)
-        std::cout << nodeDepths[j] << std::endl;
     }
   }
 }
@@ -468,7 +424,6 @@ void Genome<ActivationFunction>::Traverse(size_t startID)
   {
     if (!x.second.Enabled())
       continue;
-    std::cout << startID << "->" << x.first << std::endl;
     if (nodeDepths[x.first] < nodeDepths[startID] + 1)
     {
       nodeDepths[x.first] = nodeDepths[startID] + 1;
