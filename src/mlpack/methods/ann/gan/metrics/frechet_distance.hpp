@@ -43,7 +43,6 @@ namespace ann /* Artificial Neural Network */ {
 class FrechetDistance
 {
  public:
-
   /**
   * Function to calculate Frechet Distance for the given distribution.
   *
