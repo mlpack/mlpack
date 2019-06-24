@@ -190,8 +190,6 @@ arma::vec Genome<ActivationFunction>::Evaluate(arma::vec& input)
     Log::Fatal << "The input should have the same length as the number of"
         "input nodes" << std::endl;
   }
-  
-
 
   inputt = input;
 
@@ -201,6 +199,7 @@ arma::vec Genome<ActivationFunction>::Evaluate(arma::vec& input)
         outputNodeCount, bias);
     output = arma::vec(outputNodeCount, arma::fill::zeros);
     net.Evaluate(input, output, directedGraph, nodeDepths);
+    nodeValues = net.nodeValues;
     return output;
   }
   else
@@ -423,7 +422,9 @@ arma::mat Genome<ActivationFunction>::Parameters()
 template <class ActivationFunction>
 void Genome<ActivationFunction>::Print()
 {
+  std::cout << "Input:" << std::endl;
   inputt.print();
+  std::cout << "Output" << std::endl;
   output.print();
   for (auto const& x: directedGraph)
   {
@@ -437,6 +438,9 @@ void Genome<ActivationFunction>::Print()
       std::cout << "Weight: " << y.second.Weight() << std::endl;
     }
   }
+
+  for (size_t i = 0; i < nodeValues.size(); i++)
+    std::cout << "Value in node " << i << "is " << nodeValues[i] << std::endl;
 }
 
 

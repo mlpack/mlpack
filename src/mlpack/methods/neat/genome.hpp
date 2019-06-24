@@ -248,6 +248,7 @@ class Genome
   // Included temporarily for debugging purposes.
   arma::vec output;
   arma::vec inputt;
+  std::vector<double> nodeValues;
 };
 
 } // namespace neat
