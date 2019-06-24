@@ -1,14 +1,8 @@
-# Define the files we need to compile
+# Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  gan.hpp
-  gan_impl.hpp
-  gan_policies.hpp
-  wgan_impl.hpp
-  wgangp_impl.hpp
+  frechet_distance.hpp
 )
-
-add_subdirectory(metrics)
 
 # Add directory name to sources.
 set(DIR_SRCS)
