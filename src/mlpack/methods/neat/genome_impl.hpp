@@ -190,6 +190,8 @@ arma::vec Genome<ActivationFunction>::Evaluate(arma::vec& input)
     Log::Fatal << "The input should have the same length as the number of"
         "input nodes" << std::endl;
   }
+  
+
 
   inputt = input;
 
@@ -423,14 +425,17 @@ void Genome<ActivationFunction>::Print()
 {
   inputt.print();
   output.print();
-  for (size_t i = 0; i < connectionGeneList.size(); i++)
+  for (auto const& x: directedGraph)
   {
-    std::cout << connectionGeneList[i].Source() << "->" << connectionGeneList[i].Target();
-    if (connectionGeneList[i].Enabled())
-      std::cout << " (enabled) ";
-    else
-      std::cout << " (disabled) ";
-    std::cout << "Weight: " << connectionGeneList[i].Weight() << std::endl;
+    for (auto const& y : directedGraph[x.first])
+    {
+      std::cout << x.first << "->" << y.first;
+      if (y.second.Enabled())
+        std::cout << " (enabled) ";
+      else
+        std::cout << " (disabled) ";
+      std::cout << "Weight: " << y.second.Weight() << std::endl;
+    }
   }
 }
 
