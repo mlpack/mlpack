@@ -340,30 +340,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeNumberOfClassesTest)
 }
 
 /**
-  * Ensuring that step size for optimizer is non negative.
- **/ 
-BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeStepSizeTest)
-{
-  arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
-
-  arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
-
-  SetInputParam("training", std::move(trainData));
-  SetInputParam("labels", std::move(trainLabels));
-  SetInputParam("optimizer", std::string("psgd"));
-  SetInputParam("step_size", double(-0.01));
-
-  // Step size for optimizer is negative. It should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
-}
-
-/**
   * Ensuring that tolerance is non negative.
  **/
 BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeToleranceTest)
@@ -545,53 +521,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffDeltaTest)
 }
 
 /**
-  * Ensuring that shuffle has some effects on the output.
- **/
-BOOST_AUTO_TEST_CASE(LinearSVMDiffShuffleTest)
-{
-  arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
-
-  arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
-
-  SetInputParam("training", trainData);
-  SetInputParam("labels", trainLabels);
-  SetInputParam("optimizer", std::string("psgd"));
-  SetInputParam("shuffle", bool(false));
-
-  // First solution.
-  mlpackMain();
-
-  // Get the parameters of the output model obtained after first training.
-  const arma::mat parameters1 =
-      std::move(CLI::GetParam<LinearSVM<>*>("output_model")
-                ->Parameters());
-
-  // Reset the settings.
-  bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
-
-  SetInputParam("training", std::move(trainData));
-  SetInputParam("labels", std::move(trainLabels));
-  SetInputParam("optimizer", std::string("psgd"));
-  SetInputParam("shuffle", bool(true));
-
-  // Second solution.
-  mlpackMain();
-
-  // Get the parameters of the output model obtained after second training.
-  const arma::mat &parameters2 =
-      CLI::GetParam<LinearSVM<>*>("output_model")->Parameters();
-
-  // Both solutions should be not equal.
-  CheckMatricesNotEqual(parameters1, parameters2);
-}
-
-/**
   * Ensuring that no_intercept has some effects on the output.
  **/
 BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTest)
@@ -682,9 +611,14 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffNumberOfClassesTest)
 }
 
 /**
-  * Ensuring that Step size has some effects on the output.
+ * The test is only compiled if the user has specified OpenMP to be
+ * used.
+ */
+#ifdef HAS_OPENMP
+/**
+  * Ensuring that step size for optimizer is non negative.
  **/
-BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
+BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeStepSizeTest)
 {
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
@@ -693,6 +627,77 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
   arma::Row<size_t> trainLabels;
   if (!data::Load("iris_labels.txt", trainLabels))
     BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+
+  SetInputParam("training", std::move(trainData));
+  SetInputParam("labels", std::move(trainLabels));
+  SetInputParam("optimizer", std::string("psgd"));
+  SetInputParam("step_size", double(-0.01));
+
+  // Step size for optimizer is negative. It should throw a runtime error.
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+  * Ensuring that shuffle has some effects on the output.
+ **/
+BOOST_AUTO_TEST_CASE(LinearSVMDiffShuffleTest)
+{
+  arma::mat trainData = "2 0 0;"
+                        "0 0 0;"
+                        "0 2 1;"
+                        "1 0 2;"
+                        "0 1 0";
+
+  arma::Row<size_t> trainLabels = "1 0 1";
+
+  SetInputParam("training", trainData);
+  SetInputParam("labels", trainLabels);
+  SetInputParam("optimizer", std::string("psgd"));
+  SetInputParam("shuffle", bool(false));
+
+  // First solution.
+  mlpackMain();
+
+  // Get the parameters of the output model obtained after first training.
+  const arma::mat parameters1 =
+      std::move(CLI::GetParam<LinearSVM<>*>("output_model")
+                ->Parameters());
+
+  // Reset the settings.
+  bindings::tests::CleanMemory();
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
+
+  SetInputParam("training", std::move(trainData));
+  SetInputParam("labels", std::move(trainLabels));
+  SetInputParam("optimizer", std::string("psgd"));
+  SetInputParam("shuffle", bool(true));
+
+  // Second solution.
+  mlpackMain();
+
+  // Get the parameters of the output model obtained after second training.
+  const arma::mat &parameters2 =
+      CLI::GetParam<LinearSVM<>*>("output_model")->Parameters();
+
+  // Both solutions should be not equal.
+  CheckMatricesNotEqual(parameters1, parameters2);
+}
+
+/**
+  * Ensuring that Step size has some effects on the output.
+ **/
+BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
+{
+  arma::mat trainData = "2 0 0;"
+                        "0 0 0;"
+                        "0 2 1;"
+                        "1 0 2;"
+                        "0 1 0";
+
+  arma::Row<size_t> trainLabels = "1 0 1";
 
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
@@ -733,13 +738,13 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
  **/
 BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
 {
-  arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+  arma::mat trainData = "2 0 0;"
+                        "0 0 0;"
+                        "0 2 1;"
+                        "1 0 2;"
+                        "0 1 0";
 
-  arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+  arma::Row<size_t> trainLabels = "1 0 1";
 
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
@@ -780,13 +785,13 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
  **/
 BOOST_AUTO_TEST_CASE(LinearSVMDiffOptimizerTest)
 {
-  arma::mat trainData;
-  if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+  arma::mat trainData = "2 0 0;"
+                        "0 0 0;"
+                        "0 2 1;"
+                        "1 0 2;"
+                        "0 1 0";
 
-  arma::Row<size_t> trainLabels;
-  if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+  arma::Row<size_t> trainLabels = "1 0 1";
 
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
@@ -821,6 +826,37 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffOptimizerTest)
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
 }
+#endif
+
+/**
+ * The test is only compiled if the user has not specified OpenMP to be
+ * used.
+ */
+#ifndef HAS_OPENMP
+/**
+  * Ensuring that we cannot use 'psgd' optimizer when OPENMP has not
+  * specified.
+ **/
+BOOST_AUTO_TEST_CASE(LinearSVMNoUSE_OPENMP)
+{
+  arma::mat trainData;
+  if (!data::Load("iris.csv", trainData))
+    BOOST_FAIL("Cannot load test dataset iris.csv!");
+
+  arma::Row<size_t> trainLabels;
+  if (!data::Load("iris_labels.txt", trainLabels))
+    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+
+  SetInputParam("training", std::move(trainData));
+  SetInputParam("labels", std::move(trainLabels));
+  SetInputParam("optimizer", std::string("psgd"));
+
+  // Step size for optimizer is negative. It should throw a runtime error.
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+#endif
 
 BOOST_AUTO_TEST_SUITE_END();
 

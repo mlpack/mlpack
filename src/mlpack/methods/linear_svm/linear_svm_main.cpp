@@ -10,7 +10,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <omp.h>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
@@ -160,8 +159,6 @@ static void mlpackMain()
   const bool intercept = CLI::HasParam("no_intercept") ? false : true;
   const string optimizerType = CLI::GetParam<string>("optimizer");
   const double tolerance = CLI::GetParam<double>("tolerance");
-  const double step_size = CLI::GetParam<double>("step_size");
-  const bool shuffle = !CLI::HasParam("shuffle");
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
 
   // One of training and input_model must be specified.
@@ -275,18 +272,7 @@ static void mlpackMain()
     model->FitIntercept() = intercept;
     model->NumClasses() = numClasses;
 
-    if (optimizerType == "psgd")
-    {
-      ens::ConstantStep decayPolicy(step_size);
-      ens::ParallelSGD<ens::ConstantStep> psgdOpt(maxIterations, std::ceil(
-        (float)trainingSet.n_cols / omp_get_max_threads()), tolerance, shuffle,
-        decayPolicy);
-      Log::Info << "Training model with ParallelSGD optimizer." << endl;
-
-      // This will train the model.
-      model->Train(trainingSet, labels, numClasses, psgdOpt);
-    }
-    else if (optimizerType == "lbfgs")
+    if (optimizerType == "lbfgs")
     {
       ens::L_BFGS lbfgsOpt;
       lbfgsOpt.MaxIterations() = maxIterations;
@@ -296,8 +282,31 @@ static void mlpackMain()
       // This will train the model.
       model->Train(trainingSet, labels, numClasses, lbfgsOpt);
     }
-  }
+    // This optimizer is only compiled if OpenMP is used.
+    #ifdef HAS_OPENMP
+    else if (optimizerType == "psgd")
+    {
+      const double step_size = CLI::GetParam<double>("step_size");
+      const bool shuffle = !CLI::HasParam("shuffle");
+      ens::ConstantStep decayPolicy(step_size);
+      ens::ParallelSGD<ens::ConstantStep> psgdOpt(maxIterations, std::ceil(
+        (float)trainingSet.n_cols / omp_get_max_threads()), tolerance, shuffle,
+        decayPolicy);
+      Log::Info << "Training model with ParallelSGD optimizer." << endl;
 
+      // This will train the model.
+      model->Train(trainingSet, labels, numClasses, psgdOpt);
+    }
+    #endif
+
+    //If OpenMP is not specified but optimizer is psgd.
+    #ifndef HAS_OPENMP
+    else
+    {
+      Log::Fatal << "OpenMP is not specified cannot use ParallelSGD" << endl;
+    }
+    #endif
+  }
   if (CLI::HasParam("test"))
   {
     // Get the test dataset, and get predictions.
