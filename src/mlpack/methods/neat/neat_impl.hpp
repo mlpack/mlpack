@@ -75,6 +75,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
         outputNodeCount, bias, weightMutationProb,
         weightMutationSize, biasMutationProb, biasMutationSize,
         nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic));
+    genomeList[i].Fitness() = task.Evaluate(genomeList[i]);
   }
   speciesList = std::vector<std::vector<Genome<ActivationFunction>>>(numSpecies);
   Speciate(true);
@@ -85,20 +86,12 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   for (size_t gen = 0; gen < maxGen; gen++)
   {
     Genome<ActivationFunction>::mutationBuffer.clear();
-    std::cout << "Evaluating" << std::endl;
-    arma::vec fitnesses(popSize);
     #pragma omp parallel for
     for (size_t i = 0; i < popSize; i++)
-    {
       genomeList[i].Fitness() = task.Evaluate(genomeList[i]);
-      fitnesses[i] = genomeList[i].Fitness();
-    }
-    std::cout << "Max fitness in generation " << gen << "is " << arma::max(fitnesses) << std::endl;
     if (gen == maxGen - 1) break;
-    std::cout << "Reproducing" << std::endl;
-    Reproduce();
-    std::cout << "Speciating" << std::endl;
     Speciate(false); 
+    Reproduce();
   }
 
   // Find best genome.
@@ -114,6 +107,46 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   }
 
   return genomeList[maxIdx];
+}
+
+// Speciates the genomes.
+template <class TaskType,
+          class ActivationFunction,
+          class SelectionPolicy>
+void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Speciate(bool init)
+{
+  // Translate the genome into points in space.
+  arma::mat data(Genome<ActivationFunction>::nextInnovID, popSize, arma::fill::zeros);
+  for (size_t i = 0; i < popSize; i++)
+  {
+    for (size_t j = 0; j < genomeList[i].connectionGeneList.size(); j++)
+    {
+      size_t innovID = genomeList[i].connectionGeneList[j].InnovationID();
+      data(innovID, i) = genomeList[i].connectionGeneList[j].Weight();
+    }
+  }
+
+  arma::Row<size_t> assignments(popSize, arma::fill::zeros);
+  kmeans::KMeans<metric::EuclideanDistance, kmeans::SampleInitialization,
+      kmeans::MaxVarianceNewCluster, kmeans::CoverTreeDualTreeKMeans> k;
+  if (init)
+  {
+    centroids = arma::mat(data.n_rows, numSpecies, arma::fill::zeros);
+    k.Cluster(data, numSpecies, assignments, centroids);
+  }
+  else
+  {
+    centroids.resize(data.n_rows, numSpecies);
+    k.Cluster(data, numSpecies, assignments, centroids, false, true);
+  }
+
+  // Clear the old species list to make space for a new one.
+  for (size_t i = 0; i < numSpecies; i++)
+    speciesList[i].clear();
+
+  // Assign the genomes to their species.
+  for (size_t i = 0; i < assignments.n_elem; i++)
+    speciesList[assignments[i]].push_back(genomeList[i]);
 }
 
 // Creates the next generation through reproduction.
@@ -198,8 +231,8 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
       continue;
 
     size_t currentSize = genomeList.size();
-    std::sort(speciesList[i].begin(), speciesList[i].begin(), compareGenome);
     arma::vec fitnesses(speciesList[i].size());
+    std::sort(speciesList[i].begin(), speciesList[i].end(),  compareGenome);
 
     // Let us update the species' centroids.
     if (speciesSize[i] == 1)
@@ -244,6 +277,9 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
     for (size_t j = 0; j < fitnesses.n_elem; j++)
       fitnesses[j] = speciesList[i][j].Fitness();
 
+    // std::cout << "Fitnesses:" << std::endl;
+    // fitnesses.print();
+
     while (genomeList.size() < speciesSize[i] + currentSize)
     {
       arma::uvec selection(2);
@@ -256,45 +292,6 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
   }
 }
 
-// Speciates the genomes.
-template <class TaskType,
-          class ActivationFunction,
-          class SelectionPolicy>
-void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Speciate(bool init)
-{
-  // Translate the genome into points in space.
-  arma::mat data(Genome<ActivationFunction>::nextInnovID, popSize, arma::fill::zeros);
-  for (size_t i = 0; i < popSize; i++)
-  {
-    for (size_t j = 0; j < genomeList[i].connectionGeneList.size(); j++)
-    {
-      size_t innovID = genomeList[i].connectionGeneList[j].InnovationID();
-      data(innovID, i) = genomeList[i].connectionGeneList[j].Weight();
-    }
-  }
-
-  arma::Row<size_t> assignments(popSize, arma::fill::zeros);
-  kmeans::KMeans<metric::EuclideanDistance, kmeans::SampleInitialization,
-      kmeans::MaxVarianceNewCluster, kmeans::CoverTreeDualTreeKMeans> k;
-  if (init)
-  {
-    centroids = arma::mat(data.n_rows, numSpecies, arma::fill::zeros);
-    k.Cluster(data, numSpecies, assignments, centroids);
-  }
-  else
-  {
-    centroids.resize(data.n_rows, numSpecies);
-    k.Cluster(data, numSpecies, assignments, centroids, false, true);
-  }
-
-  // Clear the old species list to make space for a new one.
-  for (size_t i = 0; i < numSpecies; i++)
-    speciesList[i].clear();
-
-  // Assign the genomes to their species.
-  for (size_t i = 0; i < assignments.n_elem; i++)
-    speciesList[assignments[i]].push_back(genomeList[i]);
-}
 
 // Crosses over two genomes and creates a child.
 template <class TaskType,
