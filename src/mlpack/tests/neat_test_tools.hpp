@@ -14,7 +14,7 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/continuous_multiple_pole_cart.hpp>
-#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
+#include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 
 using namespace mlpack;
 using namespace mlpack::neat;
@@ -24,7 +24,7 @@ using namespace mlpack::ann;
 class XORTask
 {
  public:
-  double Evaluate(Genome<LogisticFunction>& genome)
+  double Evaluate(Genome<HardSigmoidFunction>& genome)
   {
     // // Create a random input of 0s and 1s.
     // arma::vec input = arma::randi<arma::vec>(2, arma::distr_param(0, 1));
@@ -48,11 +48,19 @@ class XORTask
     return 4 - error;
   }
 
-  double findError(arma::vec& input, Genome<LogisticFunction>& genome)
+  double findError(arma::vec& input, Genome<HardSigmoidFunction>& genome)
   {
     arma::vec output = genome.Evaluate(input);
     arma::vec answer = {(input[0] + input[1]) * (!input[0] + !input[1])};
     return std::pow(answer[0] - output[0], 2);
+  }
+
+  void findOutput(arma::vec& input, Genome<HardSigmoidFunction>& genome)
+  {
+    arma::vec output = genome.Evaluate(input);
+    input.print();
+    std::cout << "=>" << std::endl;
+    output.print();
   }
 };
 
