@@ -299,7 +299,7 @@ static void mlpackMain()
     }
     #endif
 
-    //If OpenMP is not specified but optimizer is psgd.
+    // If OpenMP is not specified but optimizer is psgd.
     #ifndef HAS_OPENMP
     else
     {
