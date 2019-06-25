@@ -386,6 +386,29 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeDeltaTest)
 }
 
 /**
+  * Ensuring that Optimizer must be correct.
+ **/
+BOOST_AUTO_TEST_CASE(LinearSVMOptimizerTest)
+{
+  arma::mat trainData;
+  if (!data::Load("iris.csv", trainData))
+    BOOST_FAIL("Cannot load test dataset iris.csv!");
+
+  arma::Row<size_t> trainLabels;
+  if (!data::Load("iris_labels.txt", trainLabels))
+    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+
+  SetInputParam("training", std::move(trainData));
+  SetInputParam("labels", std::move(trainLabels));
+  SetInputParam("optimizer", std::string("hello"));
+
+  // Tolerance is negative. It should throw a runtime error.
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
   * Ensuring changing Maximum number of iterations s the output model.
  **/
 BOOST_AUTO_TEST_CASE(LinearSVMDiffMaxIterationsTest)
@@ -655,6 +678,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffShuffleTest)
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
   SetInputParam("optimizer", std::string("psgd"));
+  SetInputParam("number_of_classes", int(2));
   SetInputParam("shuffle", bool(false));
 
   // First solution.
@@ -673,6 +697,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffShuffleTest)
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
   SetInputParam("optimizer", std::string("psgd"));
+  SetInputParam("number_of_classes", int(2));
   SetInputParam("shuffle", bool(true));
 
   // Second solution.
@@ -702,6 +727,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
   SetInputParam("optimizer", std::string("psgd"));
+  SetInputParam("number_of_classes", int(2));
   SetInputParam("step_size", double(0.02));
 
   // First solution.
@@ -720,6 +746,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
   SetInputParam("optimizer", std::string("psgd"));
+  SetInputParam("number_of_classes", int(2));
   SetInputParam("step_size", double(1.02));
 
   // Second solution.
@@ -749,6 +776,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
   SetInputParam("optimizer", std::string("psgd"));
+  SetInputParam("number_of_classes", int(2));
   SetInputParam("tolerance", double(1e-1));
 
   // First solution.
@@ -767,6 +795,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
   SetInputParam("optimizer", std::string("psgd"));
+  SetInputParam("number_of_classes", int(2));
   SetInputParam("tolerance", double(1e-10));
 
   // Second solution.
@@ -796,6 +825,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffOptimizerTest)
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
   SetInputParam("optimizer", std::string("lbfgs"));
+  SetInputParam("number_of_classes", int(2));
   SetInputParam("max_iterations", int(1000));
 
   // First solution.
@@ -814,6 +844,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffOptimizerTest)
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
   SetInputParam("optimizer", std::string("psgd"));
+  SetInputParam("number_of_classes", int(2));
   SetInputParam("max_iterations", int(1000));
 
   // Second solution.

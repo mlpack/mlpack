@@ -63,6 +63,7 @@ LinearSVM<MatType>::LinearSVM(
     delta(delta),
     fitIntercept(fitIntercept)
 {
+  // No training to do here.
 }
 
 template <typename MatType>

@@ -28,9 +28,11 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     "Given labeled data, a model can be trained and saved for "
     "future use; or, a pre-trained model can be used to classify new points.",
     // Long description.
-    "An implementation of LinearSVM using either the "
-    "L-BFGS optimizer or ParallelSGD (stochastic gradient descent)."
-    "  This solves the classification problem."
+    "An implementation of LinearSVM using the L-BFGS optimizer"
+    #ifdef HAS_OPENMP
+    " or ParallelSGD (stochastic gradient descent)"
+    #endif
+    ".  This solves the classification problem."
     "\n\n"
     "This program allows loading a LinearSVM model (via the " +
     PRINT_PARAM_STRING("input_model") + " parameter) "
@@ -56,15 +58,20 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     "Margin of difference between correct class and other classes can "
     "be specified with the" + PRINT_PARAM_STRING("delta") + "option.  "
     "The optimizer used to train the model can be specified with the " +
-    PRINT_PARAM_STRING("optimizer") + " parameter.  Available options are "
+    PRINT_PARAM_STRING("optimizer") + " parameter."
+    #ifdef HAS_OPENMP
+    "  Available options are "
     "'psgd' (stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  "
+    #endif
     "There are also various parameters for the optimizer; the " +
     PRINT_PARAM_STRING("max_iterations") + " parameter specifies the maximum "
     "number of allowed iterations, and the " +
     PRINT_PARAM_STRING("tolerance") + " parameter specifies the tolerance for "
-    "convergence.  For the ParallelSGD optimizer, the " +
+    "convergence."
+    #ifdef HAS_OPENMP
+    "  For the ParallelSGD optimizer, the " +
     PRINT_PARAM_STRING("step_size") + " parameter controls the step size taken "
-    "at each iteration by the optimizer. If the "
+    "at each iteration by the optimizer.  If the "
     "objective function for your data is oscillating between Inf and 0, the "
     "step size is probably too large.  There are more parameters for the "
     "optimizers, but the C++ interface must be used to access these."
@@ -73,6 +80,7 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     " single pass over the dataset with ParallelSGD, " +
     PRINT_PARAM_STRING("max_iterations") +
     " should be set to the number of points in the dataset."
+    #endif
     "\n\n"
     "Optionally, the model can be used to predict the labels for another "
     "matrix of data points, if " + PRINT_PARAM_STRING("test") + " is "
@@ -130,9 +138,11 @@ PARAM_DOUBLE_IN("tolerance", "Convergence tolerance for optimizer.", "e",
     1e-10);
 PARAM_INT_IN("max_iterations", "Maximum iterations for optimizer (0 indicates "
     "no limit).", "n", 10000);
+#ifdef HAS_OPENMP
 PARAM_DOUBLE_IN("step_size", "Step size for ParallelSGD optimizer.", "s", 0.01);
 PARAM_FLAG("shuffle", "Don't shuffle the order in which data points are "
     "visited for ParallelSGD.", "S");
+#endif
 // Model loading/saving.
 PARAM_MODEL_IN(LinearSVM<>, "input_model", "Existing model "
     "(parameters).", "m");
@@ -182,25 +192,9 @@ static void mlpackMain()
       true, "tolerance must be positive or zero");
 
   // Optimizer has to be L-BFGS or ParallelSGD.
+  #ifdef HAS_OPENMP
   RequireParamInSet<string>("optimizer", { "lbfgs", "psgd" },
       true, "unknown optimizer");
-
-  // Lambda must be positive.
-  RequireParamValue<double>("lambda", [](double x) { return x >= 0.0; },
-      true, "lambda must be positive or zero");
-
-  // Number of Classes must be Non-Negative
-  RequireParamValue<int>("number_of_classes", [](int x) { return x >= 0; },
-                         true, "number of classes must be greater than or "
-                         "equal to 0 (equal to 0 in case of unspecified.)");
-
-  // Delta must be positive.
-  RequireParamValue<double>("delta", [](double x) { return x >= 0.0; }, true,
-      "Margin of difference between correct class and other classes");
-
-  // Step Size must be positive.
-  RequireParamValue<double>("step_size", [](double x) { return x >= 0.0; },
-      true, "step size must be positive");
 
   if (optimizerType != "psgd")
   {
@@ -216,6 +210,25 @@ static void mlpackMain()
     }
   }
 
+  // Step Size must be positive.
+  RequireParamValue<double>("step_size", [](double x) { return x >= 0.0; },
+      true, "step size must be positive");
+
+  #endif
+
+  // Lambda must be positive.
+  RequireParamValue<double>("lambda", [](double x) { return x >= 0.0; },
+      true, "lambda must be positive or zero");
+
+  // Number of Classes must be Non-Negative
+  RequireParamValue<int>("number_of_classes", [](int x) { return x >= 0; },
+                         true, "number of classes must be greater than or "
+                         "equal to 0 (equal to 0 in case of unspecified.)");
+
+  // Delta must be positive.
+  RequireParamValue<double>("delta", [](double x) { return x >= 0.0; }, true,
+      "Margin of difference between correct class and other classes");
+
   // These are the matrices we might use.
   arma::mat trainingSet;
   arma::Row<size_t> labels;
@@ -225,15 +238,6 @@ static void mlpackMain()
   // Load data matrix.
   if (CLI::HasParam("training"))
     trainingSet = std::move(CLI::GetParam<arma::mat>("training"));
-
-  // Load the model, if necessary.
-  LinearSVM<>* model;
-  if (CLI::HasParam("input_model"))
-    model = CLI::GetParam<LinearSVM<>*>("input_model");
-  else
-  {
-    model = new LinearSVM<>;
-  }
 
   // Check if the labels are in a separate file.
   if (CLI::HasParam("training") && CLI::HasParam("labels"))
@@ -263,6 +267,14 @@ static void mlpackMain()
   const size_t numClasses = NumberOfClasses(
        (size_t) CLI::GetParam<int>("number_of_classes"), labels);
 
+  // Load the model, if necessary.
+  LinearSVM<>* model;
+  if (CLI::HasParam("input_model"))
+    model = CLI::GetParam<LinearSVM<>*>("input_model");
+  else
+  {
+    model = new LinearSVM<>(trainingSet.n_rows + 1, numClasses, 0.001, 1, false);
+  }
 
   // Now, do the training.
   if (CLI::HasParam("training"))
@@ -301,10 +313,13 @@ static void mlpackMain()
 
     // If OpenMP is not specified but optimizer is psgd.
     #ifndef HAS_OPENMP
-    else
+    else if (optimizerType == "psgd")
     {
       Log::Fatal << "OpenMP is not specified cannot use ParallelSGD" << endl;
     }
+
+    RequireParamInSet<string>("optimizer", { "lbfgs" },
+        true, "unknown optimizer");
     #endif
   }
   if (CLI::HasParam("test"))
