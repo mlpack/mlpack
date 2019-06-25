@@ -263,7 +263,7 @@ BOOST_AUTO_TEST_CASE(GANMemorySharingTest)
   double multiplier = 1;
   double eps = 1e-8;
   double stepSize = 0.0003;
-  size_t numIterations = 2;
+  size_t numIterations = 8;
   double tolerance = 1e-5;
   bool shuffle = true;
 
