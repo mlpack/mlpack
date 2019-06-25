@@ -99,7 +99,7 @@ class Pendulum
   Pendulum(const double maxAngularVelocity = 8,
            const double maxTorque = 2.0,
            const double dt = 0.05,
-           const double angleThreshold = M_PI/6) :
+           const double angleThreshold = M_PI / 12) :
       maxAngularVelocity(maxAngularVelocity),
       maxTorque(maxTorque),
       dt(dt),
@@ -193,7 +193,7 @@ class Pendulum
    * @param state desired state.
    * @return true if state is a terminal state, otherwise false.
    */
-  bool isTerminal(const State& state) const
+  bool IsTerminal(const State& state) const
   {
     return state.Theta() > M_PI - angleThreshold ||
         state.Theta() < -M_PI + angleThreshold;
