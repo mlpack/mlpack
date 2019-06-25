@@ -31,8 +31,8 @@ set(DIRS
   mean_shift
   naive_bayes
   nca
-  neighbor_search
   neat
+  neighbor_search
   nmf
   nystroem_method
   pca
