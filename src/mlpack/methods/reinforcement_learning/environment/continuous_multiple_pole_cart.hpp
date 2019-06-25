@@ -91,7 +91,7 @@ class ContinuousMultiplePoleCart
    */
   struct Action
   {
-    double action[1];
+    double action = 0.0;
     // Track the size of the action space.
     const int size = 1;
   };
@@ -155,7 +155,7 @@ class ContinuousMultiplePoleCart
                 State& nextState) const
   {
     // Calculate acceleration.
-    double totalForce = action.action[0];
+    double totalForce = action.action;
     double totalMass = massCart;
     for (size_t i = 0; i < poleNum; i++)
     {

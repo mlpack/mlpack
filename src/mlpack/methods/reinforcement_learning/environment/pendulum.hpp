@@ -93,13 +93,17 @@ class Pendulum
    * @param maxAngularVelocity Maximum angular velocity.
    * @param maxTorque Maximum torque.
    * @param dt The differential value.
+   * @param angleThreshold The region about the upright position where the
+   *    state is considered terminal.
    */
   Pendulum(const double maxAngularVelocity = 8,
            const double maxTorque = 2.0,
-           const double dt = 0.05) :
+           const double dt = 0.05,
+           const double angleThreshold = M_PI/6) :
       maxAngularVelocity(maxAngularVelocity),
       maxTorque(maxTorque),
-      dt(dt)
+      dt(dt),
+      angleThreshold(angleThreshold)
   { /* Nothing to do here */ }
 
   /**
@@ -183,6 +187,18 @@ class Pendulum
     return double(fmod(theta + M_PI, 2 * M_PI) - M_PI);
   }
 
+  /**
+   * Whether given state is a terminal state.
+   * 
+   * @param state desired state.
+   * @return true if state is a terminal state, otherwise false.
+   */
+  bool isTerminal(const State& state) const
+  {
+    return state.Theta() > M_PI - angleThreshold &&
+        state.Theta() < M_PI + angleThreshold;
+  }
+
  private:
   //! Locally-stored maximum legal angular velocity.
   double maxAngularVelocity;
@@ -192,6 +208,9 @@ class Pendulum
 
   //! Locally-stored dt.
   double dt;
+
+  //! Locally-stored angle threshold.
+  double angleThreshold;
 };
 
 } // namespace rl

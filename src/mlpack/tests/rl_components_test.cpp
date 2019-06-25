@@ -47,6 +47,8 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
   // The reward is always negative. Check if not lower than lowest possible.
   BOOST_REQUIRE(reward >= -(pow(M_PI, 2) + 6.404));
 
+  BOOST_REQUIRE(!task.isTerminal(state));
+
   // The action is simply the torque. Check if dimension is 1.
   BOOST_REQUIRE_EQUAL(1, action.size);
 }
@@ -61,7 +63,7 @@ BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
 
   ContinuousMountainCar::State state = task.InitialSample();
   ContinuousMountainCar::Action action;
-  action.action[0] = math::Random(-1.0, 1.0);
+  action.action = math::Random(-1.0, 1.0);
   double reward = task.Sample(state, action);
   // Maximum reward possible is 100.
   BOOST_REQUIRE(reward <= 100.0);
@@ -152,7 +154,7 @@ BOOST_AUTO_TEST_CASE(ContinuousMultiplePoleCartTest)
 
   ContinuousMultiplePoleCart::State state = task.InitialSample();
   ContinuousMultiplePoleCart::Action action;
-  action.action[0] = math::Random(-1.0, 1.0);
+  action.action = math::Random(-1.0, 1.0);
   double reward = task.Sample(state, action);
 
   BOOST_REQUIRE_EQUAL(reward, 1.0);
