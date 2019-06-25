@@ -93,7 +93,7 @@ class RandomReplay
              bool isEnd)
   {
     states.col(position) = state.Encode();
-    actions(position) = action;
+    actions[position] = action;
     rewards(position) = reward;
     nextStates.col(position) = nextState.Encode();
     isTerminal(position) = isEnd;
@@ -126,7 +126,10 @@ class RandomReplay
         batchSize, arma::distr_param(0, upperBound - 1));
 
     sampledStates = states.cols(sampledIndices);
-    sampledActions = actions.elem(sampledIndices);
+    for (size_t i = 0; i < sampledIndices.n_rows; i ++)
+    {
+      sampledActions[i] = actions[i];
+    }
     sampledRewards = rewards.elem(sampledIndices);
     sampledNextStates = nextStates.cols(sampledIndices);
     isTerminal = this->isTerminal.elem(sampledIndices);
@@ -172,7 +175,7 @@ class RandomReplay
   arma::mat states;
 
   //! Locally-stored previous actions.
-  arma::icolvec actions;
+  std::vector<ActionType> actions;
 
   //! Locally-stored previous rewards.
   arma::colvec rewards;

@@ -128,8 +128,7 @@ double PPO<
   double reward = environment.Sample(state, action, nextState);
 
   // Store the transition for replay.
-//  replayMethod.Store(state, action, reward,
-//                     nextState, 0);
+  replayMethod.Store(state, action, reward, nextState, 0);
 
   // Update current state.
   state = nextState;
