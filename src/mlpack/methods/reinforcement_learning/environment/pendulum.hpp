@@ -171,7 +171,7 @@ class Pendulum
   State InitialSample() const
   {
     State state;
-    state.Theta() = math::Random(-M_PI, M_PI);
+    state.Theta() = math::Random(-M_PI + angleThreshold, M_PI - angleThreshold);
     state.AngularVelocity() = math::Random(-1.0, 1.0);
     return state;
   }
@@ -195,8 +195,8 @@ class Pendulum
    */
   bool isTerminal(const State& state) const
   {
-    return state.Theta() > M_PI - angleThreshold &&
-        state.Theta() < M_PI + angleThreshold;
+    return state.Theta() > M_PI - angleThreshold ||
+        state.Theta() < -M_PI + angleThreshold;
   }
 
  private:
