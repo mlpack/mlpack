@@ -10,7 +10,7 @@
   
   * Add `IsTerminal()` method to the pendulum environment. Action struct in
     continuous RL environments now stores the action as a `double` instead
-    of `double[1]` (#1941, #1931).
+    of `double[1]` (#1941, #1931)
 
 ### mlpack 3.1.1
 ###### 2019-05-26
