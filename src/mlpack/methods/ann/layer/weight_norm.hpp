@@ -2,7 +2,7 @@
  * @file weight_norm.hpp
  * @author Toshal Agrawal
  *
- * Definition of the Weight Normalization layer class.
+ * Definition of the WeightNorm layer class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -26,10 +26,10 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Declaration of the Weight Normalization layer class. The layer reparametrize
- * the weight vectors in a neural network decoupling the length of those weight
- * vectors from their direction. This reparametrization does not introduce any
- * dependencies between the examples in a minibatch.
+ * Declaration of the WeightNorm layer class. The layer reparameterizes
+ * the weight vectors in a neural network, decoupling the length of those weight
+ * vectors from their direction. This reparameterization does not introduce any
+ * dependencies between the examples in a mini-batch.
  *
  * This class will be a wrapper around existing layers. It will just modify the
  * calculation and updation of weights of the layer.
@@ -63,7 +63,7 @@ class WeightNorm
   /**
    * Create the WeightNorm layer object.
    *
-   * @param layer The layer of whoose weights are needed to be normalize.
+   * @param layer The layer whose weights are needed to be normalized.
    */
   WeightNorm(LayerTypes<CustomLayers...> layer = LayerTypes<CustomLayers...>());
 
@@ -76,8 +76,8 @@ class WeightNorm
   void Reset();
 
   /**
-   * Forward pass of the Weight Normalization layer. Calculates the weights of
-   * the wrapped layer from the parameter vector v and the scalar parameter g.
+   * Forward pass of the WeightNorm layer. Calculates the weights of the
+   * wrapped layer from the parameter vector v and the scalar parameter g.
    * It then calulates the output of the wrapped layer from the calculated
    * weights.
    *

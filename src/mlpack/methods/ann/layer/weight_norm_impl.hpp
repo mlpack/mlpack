@@ -2,7 +2,7 @@
  * @file weight_norm_impl.hpp
  * @author Toshal Agrawal
  *
- * Implementation of the Weight Normalization Layer.
+ * Implementation of the WeightNorm Layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
