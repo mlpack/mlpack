@@ -23,16 +23,16 @@ class RouletteSelection
    * 
    * @param fitnesses A sorted Armadillo vector of fitnesses in descending
    *    order.
+   * @param selection The selected indices.
    */
   static void Select(arma::vec& fitnesses, arma::uvec& selection)
   {
     selection[0] = fitnesses.n_elem;
     selection[1] = fitnesses.n_elem;
     double totalFitness = arma::accu(fitnesses);
-    double prob = 0;
     for (size_t k = 0; k < fitnesses.n_elem; k++)
     {
-      prob += fitnesses[k] / totalFitness;
+      double prob = fitnesses[k] / totalFitness;
       if (arma::randu<double>() < prob)
       {
         if (selection[0] == fitnesses.n_elem)
@@ -43,10 +43,7 @@ class RouletteSelection
           break;
       }
       if (k == fitnesses.n_elem - 1)
-      {
         k = 0;
-        prob = 0;
-      }
     }
   }
 };

@@ -145,7 +145,6 @@ class Genome
    */
   arma::mat Parameters();
 
-
   /**
    * Prints genome.
    */
@@ -200,10 +199,8 @@ class Genome
 
   /**
    * A recursive function that assigns depth to nodes. Only used in acyclic
-   * cases. [Will be removed]
+   * cases.
    */
-  void RecurseAddNode(size_t startID);
-
   void Traverse(size_t startID);  
 
   //! Input node count.
