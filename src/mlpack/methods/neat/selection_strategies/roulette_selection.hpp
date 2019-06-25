@@ -30,21 +30,37 @@ class RouletteSelection
     selection[0] = fitnesses.n_elem;
     selection[1] = fitnesses.n_elem;
     double totalFitness = arma::accu(fitnesses);
-    for (size_t k = 0; k < fitnesses.n_elem; k++)
+    double prob = 0;
+    double randNum = arma::randu<double>();
+    size_t k = fitnesses.n_elem - 1;
+    while (k != 0)
     {
-      double prob = fitnesses[k] / totalFitness;
-      if (arma::randu<double>() < prob)
+      prob += fitnesses[k] / totalFitness;
+      if (randNum < prob)
       {
-        if (selection[0] == fitnesses.n_elem)
-          selection[0] = k;
-        else if (selection[1] == fitnesses.n_elem && selection[0] != selection[1])
-          selection[1] = k;
-        else if (selection[1] != fitnesses.n_elem && selection[0] != fitnesses.n_elem)
+        selection[0] = k;
+        prob = 0;
+        break;
+      }
+      k--;
+    }
+    if (k == 0)
+      selection[0] = k;
+    randNum = arma::randu<double>();
+    k = fitnesses.n_elem - 1;
+    while (k != 0)
+    {
+      prob += fitnesses[k] / totalFitness;
+      if (randNum < prob)
+      {
+        selection[1] = k;
+        if (selection[0] != selection[1])
           break;
       }
-      if (k == fitnesses.n_elem - 1)
-        k = 0;
+      k--;
     }
+    if (k == 0)
+      selection[1] = k;
   }
 };
 
