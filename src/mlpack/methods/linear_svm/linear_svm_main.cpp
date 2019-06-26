@@ -11,6 +11,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "linear_svm.hpp"
@@ -166,7 +167,7 @@ static void mlpackMain()
   // Collect command-line options.
   const double lambda = CLI::GetParam<double>("lambda");
   const double delta = CLI::GetParam<double>("delta");
-  const bool intercept = CLI::HasParam("no_intercept") ? false : true;
+  const bool intercept = CLI::HasParam("no_intercept") ? true : false;
   const string optimizerType = CLI::GetParam<string>("optimizer");
   const double tolerance = CLI::GetParam<double>("tolerance");
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
@@ -273,7 +274,7 @@ static void mlpackMain()
     model = CLI::GetParam<LinearSVM<>*>("input_model");
   else
   {
-    model = new LinearSVM<>(trainingSet.n_rows + 1, numClasses, 0.001, 1, false);
+    model = new LinearSVM<>;
   }
 
   // Now, do the training.
@@ -281,14 +282,16 @@ static void mlpackMain()
   {
     model->Lambda() = lambda;
     model->Delta() = delta;
-    model->FitIntercept() = intercept;
     model->NumClasses() = numClasses;
 
     if (optimizerType == "lbfgs")
     {
+      model->FitIntercept() = intercept;
+
       ens::L_BFGS lbfgsOpt;
       lbfgsOpt.MaxIterations() = maxIterations;
       lbfgsOpt.MinGradientNorm() = tolerance;
+
       Log::Info << "Training model with L-BFGS optimizer." << endl;
 
       // This will train the model.
@@ -300,10 +303,13 @@ static void mlpackMain()
     {
       const double step_size = CLI::GetParam<double>("step_size");
       const bool shuffle = !CLI::HasParam("shuffle");
+
       ens::ConstantStep decayPolicy(step_size);
+
       ens::ParallelSGD<ens::ConstantStep> psgdOpt(maxIterations, std::ceil(
         (float)trainingSet.n_cols / omp_get_max_threads()), tolerance, shuffle,
         decayPolicy);
+
       Log::Info << "Training model with ParallelSGD optimizer." << endl;
 
       // This will train the model.
@@ -327,13 +333,17 @@ static void mlpackMain()
     // Get the test dataset, and get predictions.
     testSet = std::move(CLI::GetParam<arma::mat>("test"));
     arma::Row<size_t> predictions;
+    size_t trainingDimensionality;
+
+    // Set the dimensionality according to fitintercept
+    if (intercept && optimizerType == "lbfgs")
+      trainingDimensionality = model->Parameters().n_rows - 1;
+    else
+      trainingDimensionality = model->Parameters().n_rows;
 
     // Checking the dimensionality of the test data.
-    if (testSet.n_rows != model->Parameters().n_rows - 1)
+    if (testSet.n_rows != trainingDimensionality)
     {
-      // Clean memory if needed.
-      const size_t trainingDimensionality = model->Parameters().n_rows - 1;
-
       Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must "
           << "be the same as the dimensionality of the training data ("
           << trainingDimensionality << ")!" << endl;
