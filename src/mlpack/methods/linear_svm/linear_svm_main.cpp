@@ -29,11 +29,9 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     "Given labeled data, a model can be trained and saved for "
     "future use; or, a pre-trained model can be used to classify new points.",
     // Long description.
-    "An implementation of LinearSVM using the L-BFGS optimizer"
-    #ifdef HAS_OPENMP
-    " or ParallelSGD (stochastic gradient descent)"
-    #endif
-    ".  This solves the classification problem."
+    "An implementation of LinearSVM using either the "
+    "L-BFGS optimizer or ParallelSGD (stochastic gradient descent).  This solves the "
+    "classification problem."
     "\n\n"
     "This program allows loading a LinearSVM model (via the " +
     PRINT_PARAM_STRING("input_model") + " parameter) "
@@ -42,7 +40,7 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     "those things at once.  In addition, this program allows classification on "
     "a test dataset (specified with the " + PRINT_PARAM_STRING("test") + " "
     "parameter) and the classification results may be saved with the " +
-    PRINT_PARAM_STRING("predictions") + " output parameter. "
+    PRINT_PARAM_STRING("predictions") + " output parameter."
     " The trained LinearSVM model may be saved using the " +
     PRINT_PARAM_STRING("output_model") + " output parameter."
     "\n\n"
@@ -55,33 +53,28 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     PRINT_PARAM_STRING("lambda") + " option, and The number of classes can be "
     "manually specified with the " + PRINT_PARAM_STRING("number_of_classes") +
     "and if an intercept term is not desired in the model, the " +
-    PRINT_PARAM_STRING("no_intercept") + " parameter can be specified.  "
+    PRINT_PARAM_STRING("no_intercept") + " parameter can be specified."
     "Margin of difference between correct class and other classes can "
-    "be specified with the" + PRINT_PARAM_STRING("delta") + "option.  "
+    "be specified with the" + PRINT_PARAM_STRING("delta") + "option."
     "The optimizer used to train the model can be specified with the " +
-    PRINT_PARAM_STRING("optimizer") + " parameter."
-    #ifdef HAS_OPENMP
-    "  Available options are "
+    PRINT_PARAM_STRING("optimizer") + " parameter.  Available options are "
     "'psgd' (stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  "
-    #endif
     "There are also various parameters for the optimizer; the " +
     PRINT_PARAM_STRING("max_iterations") + " parameter specifies the maximum "
     "number of allowed iterations, and the " +
     PRINT_PARAM_STRING("tolerance") + " parameter specifies the tolerance for "
-    "convergence."
-    #ifdef HAS_OPENMP
-    "  For the ParallelSGD optimizer, the " +
+    "convergence.  For the ParallelSGD optimizer, the " +
     PRINT_PARAM_STRING("step_size") + " parameter controls the step size taken "
-    "at each iteration by the optimizer.  If the "
+    "at each iteration by the optimizer. If the "
     "objective function for your data is oscillating between Inf and 0, the "
     "step size is probably too large.  There are more parameters for the "
     "optimizers, but the C++ interface must be used to access these."
     "\n\n"
-    "For ParallelSGD, an iteration refers to a single point.  So to take a"
-    " single pass over the dataset with ParallelSGD, " +
+    "We can only use ParallelSGD when OPENMP is specified.  "
+    "For ParallelSGD, an iteration refers to a single point. So to take a single"
+    " pass over the dataset with ParallelSGD, " +
     PRINT_PARAM_STRING("max_iterations") +
     " should be set to the number of points in the dataset."
-    #endif
     "\n\n"
     "Optionally, the model can be used to predict the labels for another "
     "matrix of data points, if " + PRINT_PARAM_STRING("test") + " is "
@@ -90,11 +83,7 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     "so long as an existing LinearSVM model is given with the " +
     PRINT_PARAM_STRING("input_model") + " parameter.  The output predictions "
     "from the LinearSVM model may be saved with the " +
-    PRINT_PARAM_STRING("predictions") + " parameter.  If labels are "
-    "specified for the test data with the " +
-    PRINT_PARAM_STRING("test_labels") + " parameter, then the program will "
-    "print the accuracy of the predictions on the given test set and its "
-    "corresponding labels."
+    PRINT_PARAM_STRING("predictions") + " parameter." +
     "\n\n"
     "As an example, to train a LinaerSVM model on the data '" +
     PRINT_DATASET("data") + "' with labels '" + PRINT_DATASET("labels") + "' "
