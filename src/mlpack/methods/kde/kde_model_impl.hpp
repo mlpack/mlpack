@@ -381,6 +381,24 @@ void BandwidthVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
     throw std::runtime_error("no KDE model initialized");
 }
 
+// Modify relative error tolerance.
+RelErrorVisitor::RelErrorVisitor(const double relError) :
+    relError(relError)
+{}
+
+// Default modify relative error tolerance.
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void RelErrorVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->RelativeError(relError);
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
 // Activate or deactivate Monte Carlo.
 MonteCarloVisitor::MonteCarloVisitor(const bool monteCarlo) :
     monteCarlo(monteCarlo)

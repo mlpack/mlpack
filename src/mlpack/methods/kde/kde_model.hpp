@@ -193,6 +193,27 @@ class BandwidthVisitor : public boost::static_visitor<void>
 };
 
 /**
+ * RelErrorVisitor modifies relative error tolerance for a KDEType.
+ */
+class RelErrorVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Relative error tolerance.
+  const double relError;
+
+ public:
+  //! Default RelErrorVisitor on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
+
+  //! RelErrorVisitor constructor.
+  RelErrorVisitor(const double relError);
+};
+
+/**
  * MonteCarloVisitor activates or deactivates Monte Carlo for a given KDEType.
  */
 class MonteCarloVisitor : public boost::static_visitor<void>
