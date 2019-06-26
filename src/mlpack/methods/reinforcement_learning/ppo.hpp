@@ -116,13 +116,13 @@ class PPO
   TrainingConfig config;
 
   //! Locally-stored actor network.
-  ActorNetworkType ActorNetwork;
+  ActorNetworkType actorNetwork;
 
   //! Locally-stored old actor network.
-  ActorNetworkType OldActorNetwork;
+  ActorNetworkType oldActorNetwork;
 
   //! Locally-stored critic network.
-  CriticNetworkType CriticNetwork;
+  CriticNetworkType criticNetwork;
 
   //! Locally-stored updater.
   UpdaterType updater;

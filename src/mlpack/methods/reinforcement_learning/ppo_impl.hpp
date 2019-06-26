@@ -36,28 +36,28 @@ PPO<
   PolicyType,
   ReplayType
 >::PPO(TrainingConfig config,
-       ActorNetworkType ActorNetwork,
-       CriticNetworkType CriticNetwork,
+       ActorNetworkType actorNetwork,
+       CriticNetworkType criticNetwork,
        PolicyType policy,
        ReplayType replayMethod,
        UpdaterType updater,
        EnvironmentType environment):
   config(std::move(config)),
-  ActorNetwork(std::move(ActorNetwork)),
-  CriticNetwork(std::move(CriticNetwork)),
+  actorNetwork(std::move(actorNetwork)),
+  criticNetwork(std::move(criticNetwork)),
   updater(std::move(updater)),
   policy(std::move(policy)),
   replayMethod(std::move(replayMethod)),
   environment(std::move(environment))
 {
-  if (ActorNetwork.Parameters().is_empty())
-    ActorNetwork.ResetParameters();
-  if (CriticNetwork.Parameters().is_empty())
-    CriticNetwork.ResetParameters();
+  if (actorNetwork.Parameters().is_empty())
+    actorNetwork.ResetParameters();
+  if (criticNetwork.Parameters().is_empty())
+    criticNetwork.ResetParameters();
 
-  this->updater.Initialize(ActorNetwork.Parameters().n_rows,
-                           ActorNetwork.Parameters().n_cols);
-  this->OldActorNetwork = ActorNetwork;
+  this->updater.Initialize(actorNetwork.Parameters().n_rows,
+                           actorNetwork.Parameters().n_cols);
+  this->oldActorNetwork = actorNetwork;
 }
 
 template<
@@ -98,7 +98,7 @@ double PPO<
 {
   // Get the action value for each action at current state.
   arma::mat actionValue;
-  ActorNetwork.Predict(state.Encode(), actionValue);
+  actorNetwork.Predict(state.Encode(), actionValue);
 
   ann::TanhFunction tanh;
   ann::SoftplusFunction softp;
@@ -111,9 +111,9 @@ double PPO<
     distribution::GaussianDistribution(sigma, mu);
 
   // Get the action value for each action at current state.
-  ActorNetwork.Predict(state.Encode(), actionValue);
+  actorNetwork.Predict(state.Encode(), actionValue);
 
-  OldActorNetwork.Predict(state.Encode(), actionValue);
+  oldActorNetwork.Predict(state.Encode(), actionValue);
   tanh.Fn(actionValue.col(0), sigma);
   softp.Fn(actionValue.col(0), mu);
 
