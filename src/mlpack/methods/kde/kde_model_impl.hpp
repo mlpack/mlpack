@@ -572,6 +572,70 @@ void KDEModel::serialize(Archive& ar, const unsigned int version)
   ar & BOOST_SERIALIZATION_NVP(kdeModel);
 }
 
+// Modify model kernel bandwidth.
+void KDEModel::Bandwidth(const double newBandwidth)
+{
+  bandwidth = newBandwidth;
+  BandwidthVisitor bandwidthVisitor(newBandwidth);
+  boost::apply_visitor(bandwidthVisitor, kdeModel);
+}
+
+// Modify model relative error tolerance.
+void KDEModel::RelativeError(const double newRelError)
+{
+  relError = newRelError;
+  RelErrorVisitor relErrorVisitor(newRelError);
+  boost::apply_visitor(relErrorVisitor, kdeModel);
+}
+
+// Modify model absolute error tolerance.
+void KDEModel::AbsoluteError(const double newAbsError)
+{
+  absError = newAbsError;
+  AbsErrorVisitor absErrorVisitor(newAbsError);
+  boost::apply_visitor(absErrorVisitor, kdeModel);
+}
+
+// Modify whether Monte Carlo estimations will be used.
+void KDEModel::MonteCarlo(const bool newMonteCarlo)
+{
+  monteCarlo = newMonteCarlo;
+  MonteCarloVisitor monteCarloVisitor(newMonteCarlo);
+  boost::apply_visitor(monteCarloVisitor, kdeModel);
+}
+
+// Modify model Monte Carlo probability.
+void KDEModel::MCProbability(const double newMCProb)
+{
+  mcProb = newMCProb;
+  MCProbabilityVisitor mcProbVisitor(newMCProb);
+  boost::apply_visitor(mcProbVisitor, kdeModel);
+}
+
+// Modify model Monte Carlo initial sample size.
+void KDEModel::MCInitialSampleSize(const size_t newSampleSize)
+{
+  initialSampleSize = newSampleSize;
+  MCSampleSizeVisitor mcSampleSizeVisitor(newSampleSize);
+  boost::apply_visitor(mcSampleSizeVisitor, kdeModel);
+}
+
+// Modify model Monte Carlo entry coefficient.
+void KDEModel::MCEntryCoefficient(const double newEntryCoef)
+{
+  mcEntryCoef = newEntryCoef;
+  MCEntryCoefVisitor mcEntryCoefVisitor(newEntryCoef);
+  boost::apply_visitor(mcEntryCoefVisitor, kdeModel);
+}
+
+// Modify model Monte Carlo break coefficient.
+void KDEModel::MCBreakCoefficient(const double newBreakCoef)
+{
+  mcBreakCoef = newBreakCoef;
+  MCBreakCoefVisitor mcBreakCoefVisitor(newBreakCoef);
+  boost::apply_visitor(mcBreakCoefVisitor, kdeModel);
+}
+
 } // namespace kde
 } // namespace mlpack
 

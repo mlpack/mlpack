@@ -510,13 +510,13 @@ class KDEModel
   double RelativeError() const { return relError; }
 
   //! Modify the relative error tolerance.
-  double& RelativeError() { return relError; }
+  void RelativeError(const double newRelError);
 
   //! Get the absolute error tolerance.
   double AbsoluteError() const { return absError; }
 
   //! Modify the absolute error tolerance.
-  double& AbsoluteError() { return absError; }
+  void AbsoluteError(const double newAbsError);
 
   //! Get the tree type of the model.
   TreeTypes TreeType() const { return treeType; }
@@ -534,31 +534,31 @@ class KDEModel
   bool MonteCarlo() const { return monteCarlo; }
 
   //! Modify whether the model is using Monte Carlo estimations or not.
-  bool& MonteCarlo() { return monteCarlo; }
+  void MonteCarlo(const bool newMonteCarlo);
 
   //! Get Monte Carlo probability of error being bounded by relative error.
   double MCProbability() const { return mcProb; }
 
   //! Modify Monte Carlo probability of error being bounded by relative error.
-  double& MCProbability() { return mcProb; }
+  void MCProbability(const double newMCProb);
 
   //! Get the initial sample size for Monte Carlo estimations.
   size_t MCInitialSampleSize() const { return initialSampleSize; }
 
   //! Modify the initial sample size for Monte Carlo estimations.
-  size_t& MCInitialSampleSize() { return initialSampleSize; }
+  void MCInitialSampleSize(const size_t newSampleSize);
 
   //! Get Monte Carlo entry coefficient.
   double MCEntryCoefficient() const { return mcEntryCoef; }
 
   //! Modify Monte Carlo entry coefficient.
-  double& MCEntryCoefficient() { return mcEntryCoef; }
+  void MCEntryCoefficient(const double newEntryCoef);
 
   //! Get Monte Carlo break coefficient.
   double MCBreakCoefficient() const { return mcBreakCoef; }
 
   //! Modify Monte Carlo break coefficient.
-  double& MCBreakCoefficient() { return mcBreakCoef; }
+  void MCBreakCoefficient(const double newBreakCoef);
 
   //! Get the mode of the model.
   KDEMode Mode() const;
