@@ -31,18 +31,19 @@ CyclicNet<ActivationFunction>::CyclicNet(const size_t nodeCount,
     outputNodeCount(outputNodeCount),
     timeStepsPerActivation(timeStepsPerActivation),
     bias(bias)
-{
-  for (size_t i = 0; i < nodeCount; i++)
-    outputNodeValues.push_back(0);
-}
+{ /* Nothing to do here */}
 
 template <class ActivationFunction>
 void CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
                                              arma::vec& output,
+                                             std::vector<double>& outputNodeValues,
                                              std::map<size_t, std::map<size_t,
                                                  ConnectionGene>>& directedGraph)
 {
-  std::vector<double> inputNodeValues(nodeCount, 0);
+  arma::vec inputNodeValues(nodeCount, arma::fill::zeros);
+
+  while (outputNodeValues.size() < nodeCount)
+    outputNodeValues.push_back(0);
 
   // Load the bias.
   outputNodeValues[0] = bias;
@@ -51,25 +52,16 @@ void CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
   for (size_t i = 1; i <= inputNodeCount; i++)
     outputNodeValues[i] = input[i - 1];
 
-  for (size_t k = 0; k < timeStepsPerActivation; k++)
+  for (size_t i = 0; i < nodeCount; i++)
   {
-    for (size_t j = 0; j < nodeCount; j++)
-    {
-      for (auto const &x : directedGraph[j])
-      {
-        double weight = x.second.Weight();
-        inputNodeValues[x.first] += outputNodeValues[j] * weight;
-      }
-    }
-
-    for (size_t i = inputNodeCount; i < nodeCount; i++)
-    {
+    if (i <= inputNodeCount)
       outputNodeValues[i] = ActivationFunction::Fn(inputNodeValues[i]);
-    }
+    for (auto const& x : directedGraph[i])
+      inputNodeValues[x.first] += outputNodeValues[i] * x.second.Weight();
   }
 
   for (size_t i = 0; i < output.n_elem; i++)
-    output[i] = outputNodeValues[i + inputNodeCount + 1];
+    output[i] = ActivationFunction::Fn(outputNodeValues[i + inputNodeCount + 1]);
 }
 
 } // namespace neat

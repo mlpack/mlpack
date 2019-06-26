@@ -196,6 +196,10 @@ class Genome
    */
   std::map<size_t, std::map<size_t, ConnectionGene>> directedGraph;
  private:
+  /**
+   * Stores the activation of the nodes. Only used if isAcyclic is set to false.
+   */
+  std::vector<double> outputNodeValues;
 
   /**
    * A recursive function that assigns depth to nodes. Only used in acyclic

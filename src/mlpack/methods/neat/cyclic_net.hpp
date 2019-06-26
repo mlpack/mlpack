@@ -50,6 +50,7 @@ class CyclicNet
    */
   void Evaluate(arma::vec& input,
                 arma::vec& output,
+                std::vector<double>& outputNodeValues,
                 std::map<size_t, std::map<size_t, ConnectionGene>>& directedGraph);
 
  private:
@@ -67,9 +68,6 @@ class CyclicNet
 
   //! Bias.
   double bias;
-
-  //! The values stored by the nodes.
-  std::vector<double> outputNodeValues;
 };
 
 } // namespace neat

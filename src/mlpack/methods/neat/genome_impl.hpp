@@ -87,6 +87,8 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
     for (size_t i = inputNodeCount + 1; i <= outputNodeCount + inputNodeCount; i++)
       nodeDepths.push_back(1);
   }
+  else
+    outputNodeValues = std::vector<double>(nextNodeID, 0);
 }
 
 // Creates genome object during cyclic reproduction.
@@ -207,7 +209,7 @@ arma::vec Genome<ActivationFunction>::Evaluate(arma::vec& input)
     CyclicNet<ActivationFunction> net(nextNodeID, inputNodeCount,
         outputNodeCount, 100 /* Placeholder */, bias);
     output = arma::vec(outputNodeCount, arma::fill::zeros);
-    net.Evaluate(input, output, directedGraph);
+    net.Evaluate(input, output, outputNodeValues, directedGraph);
     return output;
   }
 }

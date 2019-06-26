@@ -86,78 +86,78 @@ BOOST_AUTO_TEST_CASE(NEATXORTest)
 /**
  * Test NEAT on the ContinuousMountainCar environment.
  */
-BOOST_AUTO_TEST_CASE(NEATContinuousMountainCarTest)
-{
-  const ContinuousMountainCar env = ContinuousMountainCar();
-  ContinuousRLTask<ContinuousMountainCar> task(env);
-  NEAT<ContinuousRLTask<ContinuousMountainCar>, HardSigmoidFunction, RankSelection> model
-      (task, 2, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, true);
+// BOOST_AUTO_TEST_CASE(NEATContinuousMountainCarTest)
+// {
+//   const ContinuousMountainCar env = ContinuousMountainCar();
+//   ContinuousRLTask<ContinuousMountainCar> task(env);
+//   NEAT<ContinuousRLTask<ContinuousMountainCar>, HardSigmoidFunction, RankSelection> model
+//       (task, 2, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, true);
 
-  // Find the best genome and it's fitness.
-  Genome<HardSigmoidFunction> bestGenome = model.Train();
-  double finalFitness = bestGenome.Fitness();
-  std::cout << finalFitness << std::endl;
+//   // Find the best genome and it's fitness.
+//   Genome<HardSigmoidFunction> bestGenome = model.Train();
+//   double finalFitness = bestGenome.Fitness();
+//   std::cout << finalFitness << std::endl;
 
-  // Check if the final fitness is acceptable (Placeholder).
-  BOOST_REQUIRE(finalFitness >= 90);
-}
+//   // Check if the final fitness is acceptable (Placeholder).
+//   BOOST_REQUIRE(finalFitness >= 90);
+// }
 
-/**
- * Test NEAT on the MountainCar environment.
- */
-BOOST_AUTO_TEST_CASE(NEATMountainCarTest)
-{
-  const MountainCar env = MountainCar();
-  DiscreteRLTask<MountainCar> task(env);
-  NEAT<DiscreteRLTask<MountainCar>, HardSigmoidFunction, RankSelection> model
-      (task, 2, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, true);
+// /**
+//  * Test NEAT on the MountainCar environment.
+//  */
+// BOOST_AUTO_TEST_CASE(NEATMountainCarTest)
+// {
+//   const MountainCar env = MountainCar();
+//   DiscreteRLTask<MountainCar> task(env);
+//   NEAT<DiscreteRLTask<MountainCar>, HardSigmoidFunction, RankSelection> model
+//       (task, 2, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, true);
 
-  // Find the best genome and it's fitness.
-  Genome<HardSigmoidFunction> bestGenome = model.Train();
-  double finalFitness = task.Evaluate(bestGenome);
-  std::cout << finalFitness << std::endl;
+//   // Find the best genome and it's fitness.
+//   Genome<HardSigmoidFunction> bestGenome = model.Train();
+//   double finalFitness = task.Evaluate(bestGenome);
+//   std::cout << finalFitness << std::endl;
 
-  // Check if the final fitness is acceptable (Placeholder).
-  BOOST_REQUIRE(finalFitness >= 90);
-}
+//   // Check if the final fitness is acceptable (Placeholder).
+//   BOOST_REQUIRE(finalFitness >= 90);
+// }
 
-/**
- * Test NEAT on the Acrobot environment.
- */
-BOOST_AUTO_TEST_CASE(NEATAcrobotTest)
-{
-  const Acrobot env = Acrobot();
-  DiscreteRLTask<Acrobot> task(env);
-  NEAT<DiscreteRLTask<Acrobot>, HardSigmoidFunction, RankSelection> model
-      (task, 2, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, true);
+// /**
+//  * Test NEAT on the Acrobot environment.
+//  */
+// BOOST_AUTO_TEST_CASE(NEATAcrobotTest)
+// {
+//   const Acrobot env = Acrobot();
+//   DiscreteRLTask<Acrobot> task(env);
+//   NEAT<DiscreteRLTask<Acrobot>, HardSigmoidFunction, RankSelection> model
+//       (task, 2, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, true);
 
-  // Find the best genome and it's fitness.
-  Genome<HardSigmoidFunction> bestGenome = model.Train();
-  double finalFitness = task.Evaluate(bestGenome);
-  std::cout << finalFitness << std::endl;
+//   // Find the best genome and it's fitness.
+//   Genome<HardSigmoidFunction> bestGenome = model.Train();
+//   double finalFitness = task.Evaluate(bestGenome);
+//   std::cout << finalFitness << std::endl;
 
-  // Check if the final fitness is acceptable (Placeholder).
-  BOOST_REQUIRE(finalFitness >= 90);
-}
+//   // Check if the final fitness is acceptable (Placeholder).
+//   BOOST_REQUIRE(finalFitness >= 90);
+// }
 
-/**
- * Test NEAT on the CartPole environment.
- */
-BOOST_AUTO_TEST_CASE(NEATCartPoleTest)
-{
-  const CartPole env = CartPole();
-  DiscreteRLTask<CartPole> task(env);
-  NEAT<DiscreteRLTask<CartPole>, HardSigmoidFunction, RankSelection> model
-       (task, 2, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, true);
+// /**
+//  * Test NEAT on the CartPole environment.
+//  */
+// BOOST_AUTO_TEST_CASE(NEATCartPoleTest)
+// {
+//   const CartPole env = CartPole();
+//   DiscreteRLTask<CartPole> task(env);
+//   NEAT<DiscreteRLTask<CartPole>, HardSigmoidFunction, RankSelection> model
+//        (task, 2, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, true);
 
-  // Find the best genome and it's fitness.
-  Genome<HardSigmoidFunction> bestGenome = model.Train();
-  double finalFitness = task.Evaluate(bestGenome);
-  std::cout << finalFitness << std::endl;
+//   // Find the best genome and it's fitness.
+//   Genome<HardSigmoidFunction> bestGenome = model.Train();
+//   double finalFitness = task.Evaluate(bestGenome);
+//   std::cout << finalFitness << std::endl;
 
-  // Check if the final fitness is acceptable (Placeholder).
-  BOOST_REQUIRE(finalFitness >= 90);
-}
+//   // Check if the final fitness is acceptable (Placeholder).
+//   BOOST_REQUIRE(finalFitness >= 90);
+// }
 
 // /**
 //  * Test NEAT on the Double Pole Cart Balancing environment.

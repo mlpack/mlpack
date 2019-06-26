@@ -85,7 +85,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   // Main loop.
   for (size_t gen = 0; gen < maxGen; gen++)
   {
-    Genome<ActivationFunction>::mutationBuffer.clear();
+    // Genome<ActivationFunction>::mutationBuffer.clear();
     #pragma omp parallel for
     for (size_t i = 0; i < popSize; i++)
       genomeList[i].Fitness() = task.Evaluate(genomeList[i]);

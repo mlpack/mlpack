@@ -112,7 +112,8 @@ class DiscreteRLTask
     {
       // Choose the action to perform.
       const int size = EnvironmentType::Action::size;
-      int actionInt = std::round(arma::clamp(output, 0, size - 1)[0]);
+      output = arma::clamp(output, 0, size - 1);
+      int actionInt = std::round(output[0]);
       typename EnvironmentType::Action action = static_cast<typename
           EnvironmentType::Action>(actionInt);
 
