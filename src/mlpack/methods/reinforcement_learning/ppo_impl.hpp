@@ -114,7 +114,7 @@ double PPO<
   ann::TanhFunction::Fn(actionValue.col(0), sigma);
   ann::SoftplusFunction::Fn(actionValue.col(0), mu);
 
-  distribution::GaussianDistribution oldnormalDist =
+  distribution::GaussianDistribution oldNormalDist =
     distribution::GaussianDistribution(sigma, mu);
 
   ActionType action;
