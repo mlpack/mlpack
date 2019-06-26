@@ -521,4 +521,41 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidMCBreakCoef)
   Log::Fatal.ignoreInput = false;
 }
 
+/**
+  * Ensure when --monte_carlo flag is true, then KDEMain actually uses Monte
+  * Carlo estimations. Since this test has a random component, it might fail
+  * (although it's unlikely).
+ **/
+BOOST_AUTO_TEST_CASE(KDEMainMonteCarloFlag)
+{
+  // Datasets.
+  arma::mat reference = arma::randu(1, 5000);
+  arma::mat query = arma::randu(1, 300);
+  arma::vec estimations1, estimations2, differences;
+  double kernelBandwidth = 0.2;
+
+  // Parameters for estimations.
+  SetInputParam("reference", arma::mat(reference));
+  SetInputParam("query", arma::mat(query));
+  SetInputParam("kernel", std::string("gaussian"));
+  SetInputParam("tree", std::string("kd-tree"));
+  SetInputParam("bandwidth", kernelBandwidth);
+  SetInputParam("monte_carlo", true);
+
+  // Compute estimations 1.
+  mlpackMain();
+  estimations1 = std::move(CLI::GetParam<arma::vec>("predictions"));
+
+  // Compute estimations 2.
+  SetInputParam("reference", reference);
+  SetInputParam("query", query);
+  mlpackMain();
+  estimations2 = std::move(CLI::GetParam<arma::vec>("predictions"));
+
+  // Check whether results are equal.
+  differences = arma::abs(estimations1 - estimations2);
+  const double sumDifferences = arma::accu(differences);
+  BOOST_REQUIRE_GT(sumDifferences, 0);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
