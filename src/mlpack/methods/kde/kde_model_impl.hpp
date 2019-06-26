@@ -363,6 +363,24 @@ void TrainVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
     throw std::runtime_error("no KDE model initialized");
 }
 
+// Modify kernel bandwidth.
+BandwidthVisitor::BandwidthVisitor(const double bandwidth) :
+    bandwidth(bandwidth)
+{}
+
+// Default modify kernel bandwidth.
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void BandwidthVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->Kernel() = KernelType(bandwidth);
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
 // Activate or deactivate Monte Carlo.
 MonteCarloVisitor::MonteCarloVisitor(const bool monteCarlo) :
     monteCarlo(monteCarlo)

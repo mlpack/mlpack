@@ -172,6 +172,27 @@ class TrainVisitor : public boost::static_visitor<void>
 };
 
 /**
+ * BandwidthVisitor modifies the bandwidth of a KDEType kernel.
+ */
+class BandwidthVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Relative error tolerance.
+  const double bandwidth;
+
+ public:
+  //! Default BandwidthVisitor on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
+
+  //! BandwidthVisitor constructor.
+  BandwidthVisitor(const double bandwidth);
+};
+
+/**
  * MonteCarloVisitor activates or deactivates Monte Carlo for a given KDEType.
  */
 class MonteCarloVisitor : public boost::static_visitor<void>
@@ -181,7 +202,7 @@ class MonteCarloVisitor : public boost::static_visitor<void>
   const bool monteCarlo;
 
  public:
-  //! DefaultMonteCarloVisitor on some KDEType.
+  //! Default MonteCarloVisitor on some KDEType.
   template<typename KernelType,
            template<typename TreeMetricType,
                     typename TreeStatType,
@@ -441,7 +462,7 @@ class KDEModel
   double Bandwidth() const { return bandwidth; }
 
   //! Modify the bandwidth of the kernel.
-  double& Bandwidth() { return bandwidth; }
+  void Bandwidth(const double newBandwidth);
 
   //! Get the relative error tolerance.
   double RelativeError() const { return relError; }
