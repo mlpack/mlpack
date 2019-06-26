@@ -44,25 +44,25 @@ BOOST_AUTO_TEST_SUITE(NEATTest)
 /**
  * Test NEAT on the XOR Test.
  */
-BOOST_AUTO_TEST_CASE(NEATXORTest)
-{
-  arma::arma_rng::set_seed_random();
-  auto t1 = std::chrono::high_resolution_clock::now();
-  XORTask task;
-  NEAT<XORTask, HardSigmoidFunction, RankSelection> model(task, 2, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, true);
+// BOOST_AUTO_TEST_CASE(NEATXORTest)
+// {
+//   arma::arma_rng::set_seed_random();
+//   auto t1 = std::chrono::high_resolution_clock::now();
+//   XORTask task;
+//   NEAT<XORTask, HardSigmoidFunction, RankSelection> model(task, 2, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, false);
 
-  // Find the best genome and it's fitness.
-  Genome<HardSigmoidFunction> bestGenome = model.Train();
-  auto t2 = std::chrono::high_resolution_clock::now();
-  std::cout << "NEAT took "
-              << std::chrono::duration_cast<std::chrono::seconds>(t2-t1).count()
-              << " seconds\n";
-  bestGenome.Parameters().print();
-  double finalFitness = bestGenome.Fitness();
-  std::cout << finalFitness << std::endl;
-  // Check if the final fitness is acceptable.
-  BOOST_REQUIRE(finalFitness >= 3.5);
-}
+//   // Find the best genome and it's fitness.
+//   Genome<HardSigmoidFunction> bestGenome = model.Train();
+//   auto t2 = std::chrono::high_resolution_clock::now();
+//   std::cout << "NEAT took "
+//               << std::chrono::duration_cast<std::chrono::seconds>(t2-t1).count()
+//               << " seconds\n";
+//   bestGenome.Parameters().print();
+//   double finalFitness = bestGenome.Fitness();
+//   std::cout << finalFitness << std::endl;
+//   // Check if the final fitness is acceptable.
+//   BOOST_REQUIRE(finalFitness >= 3.5);
+// }
 
 /**
  * Test NEAT on the Pendulum environment.
@@ -83,15 +83,15 @@ BOOST_AUTO_TEST_CASE(NEATXORTest)
 //   BOOST_REQUIRE(finalFitness >= 90);
 // }
 
-/**
- * Test NEAT on the ContinuousMountainCar environment.
- */
+// /**
+//  * Test NEAT on the ContinuousMountainCar environment.
+//  */
 // BOOST_AUTO_TEST_CASE(NEATContinuousMountainCarTest)
 // {
 //   const ContinuousMountainCar env = ContinuousMountainCar();
 //   ContinuousRLTask<ContinuousMountainCar> task(env);
 //   NEAT<ContinuousRLTask<ContinuousMountainCar>, HardSigmoidFunction, RankSelection> model
-//       (task, 2, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, true);
+//       (task, 2, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, false);
 
 //   // Find the best genome and it's fitness.
 //   Genome<HardSigmoidFunction> bestGenome = model.Train();
@@ -179,24 +179,25 @@ BOOST_AUTO_TEST_CASE(NEATXORTest)
 //   BOOST_REQUIRE(finalFitness >= 90);
 // }
 
-// /**
-//  * Test NEAT on the Double Pole Cart Balancing environment without velocities.
-//  */
-// BOOST_AUTO_TEST_CASE(NEATDoublePoleCartNoVelocitiesTest)
-// {
-//   arma::vec poleLengths = {1, 0.1};
-//   arma::vec poleMasses = {1, 0.1};
-//   const ContinuousMultiplePoleCart env = ContinuousMultiplePoleCart(2,
-//       poleLengths, poleMasses);
-//   DPNVTask task(env);
-//   NEAT<DPNVTask> model(task, 3 /* Input nodes */, 1 /* Output nodes */);
+/**
+ * Test NEAT on the Double Pole Cart Balancing environment without velocities.
+ */
+BOOST_AUTO_TEST_CASE(NEATDoublePoleCartNoVelocitiesTest)
+{
+  arma::vec poleLengths = {1, 0.1};
+  arma::vec poleMasses = {1, 0.1};
+  const ContinuousMultiplePoleCart env = ContinuousMultiplePoleCart(2,
+      poleLengths, poleMasses);
+  DPNVTask task(env);
+  NEAT<DPNVTask, HardSigmoidFunction, RankSelection> model
+        (task, 2, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, true);
 
-//   // Find the best genome and it's fitness.
-//   Genome bestGenome = model.Train();
-//   double finalFitness = task.Evaluate(bestGenome);
+  // Find the best genome and it's fitness.
+  Genome<HardSigmoidFunction> bestGenome = model.Train();
+  double finalFitness = task.Evaluate(bestGenome);
 
-//   // Check if the final fitness is acceptable (Placeholder).
-//   BOOST_REQUIRE(finalFitness >= 90);
-// }
+  // Check if the final fitness is acceptable (Placeholder).
+  BOOST_REQUIRE(finalFitness >= 90);
+}
 
 BOOST_AUTO_TEST_SUITE_END()

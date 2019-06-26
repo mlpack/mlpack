@@ -54,14 +54,14 @@ void CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
 
   for (size_t i = 0; i < nodeCount; i++)
   {
-    if (i <= inputNodeCount)
+    if (i > inputNodeCount + outputNodeCount)
       outputNodeValues[i] = ActivationFunction::Fn(inputNodeValues[i]);
     for (auto const& x : directedGraph[i])
       inputNodeValues[x.first] += outputNodeValues[i] * x.second.Weight();
   }
 
   for (size_t i = 0; i < output.n_elem; i++)
-    output[i] = ActivationFunction::Fn(outputNodeValues[i + inputNodeCount + 1]);
+    output[i] = ActivationFunction::Fn(inputNodeValues[i + inputNodeCount + 1]);
 }
 
 } // namespace neat

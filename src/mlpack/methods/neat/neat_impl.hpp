@@ -85,24 +85,33 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   // Main loop.
   for (size_t gen = 0; gen < maxGen; gen++)
   {
+    std::cout << "Generation: " << gen << std::endl;
     // Genome<ActivationFunction>::mutationBuffer.clear();
+    std::cout << "Evaluating." << std::endl;
+    arma::vec fitnesses(popSize);
     #pragma omp parallel for
     for (size_t i = 0; i < popSize; i++)
+    {
       genomeList[i].Fitness() = task.Evaluate(genomeList[i]);
+      fitnesses[i] = genomeList[i].Fitness();
+    }
+    std::cout << fitnesses.max() << std::endl; 
     if (gen == maxGen - 1) break;
-    Speciate(false); 
+    std::cout << "Speciating" << std::endl;
+    Speciate(false);
+    std::cout << "Reproducing" << std::endl;
     Reproduce();
   }
 
   // Find best genome.
-  size_t maxIdx = -1;
-  double max = -DBL_MAX;
-  for (size_t i = 0; i < popSize; i++)
+  size_t maxIdx = 0;
+  double maxFitness = genomeList[0].Fitness();
+  for (size_t i = 1; i < popSize; i++)
   {
-    if (genomeList[i].Fitness() > max)
+    if (genomeList[i].Fitness() > maxFitness)
     {
       maxIdx = i;
-      max = genomeList[i].Fitness();
+      maxFitness = genomeList[i].Fitness();
     }
   }
 

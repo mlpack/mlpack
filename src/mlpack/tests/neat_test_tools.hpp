@@ -14,6 +14,7 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/continuous_multiple_pole_cart.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/multiple_pole_cart.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 #include <mlpack/methods/neat/neat.hpp>
 
@@ -72,11 +73,13 @@ class ContinuousRLTask
     arma::vec output = genome.Evaluate(state.Data());
 
     double fitness = 0;
-    while (!environment.IsTerminal(state))
+    size_t k = 0;
+    while (!environment.IsTerminal(state) && k < 1000)
     {
+      k++;
       // Choose the action to perform.
       typename EnvironmentType::Action action;
-      action.action = output[0];
+      action.action[0] = output[0];
 
       // Use the current action to get the next state.
       fitness += environment.Sample(state, action, state);
@@ -84,7 +87,7 @@ class ContinuousRLTask
       // Update the state of the genome for the next step.
       output = genome.Evaluate(state.Data());
     }
-    return fitness;
+    return 10 + fitness;
   }
 
  private:
@@ -133,6 +136,7 @@ class DiscreteRLTask
 // // A class that defines the Double Pole Balancing Task with velocities.
 // class DPVTask
 // {
+//  public:
 //   DPVTask(const ContinuousMultiplePoleCart env)::environment(env)
 //   { /* Nothing to do here */ }
 
@@ -186,58 +190,59 @@ class DiscreteRLTask
 //   ContinuousMultiplePoleCart environment;
 // };
 
-// // A class that defines the Double Pole Balancing Task without velocities.
-// class DPNVTask
-// {
-//   DPNVTask(const ContinuousMultiplePoleCart env)::environment(env)
-//   { /* Nothing to do here */ }
+// A class that defines the Double Pole Balancing Task without velocities.
+class DPNVTask
+{
+ public:
+  DPNVTask(const ContinuousMultiplePoleCart& env)::environment(env)
+  { /* Nothing to do here */ }
 
-//   double Evaluate(Genome<HardSigmoidFunction>& genome)
-//   {
-//     ContinuousMultiplePoleCart::State state = environment.InitialSample();
-//     arma::mat inputMatrix = state.Data();
-//     arma::vec input = inputMatrix.row(0);
-//     arma::vec output = genome.Evaluate(input);
+  double Evaluate(Genome<HardSigmoidFunction>& genome)
+  {
+    ContinuousMultiplePoleCart::State state = environment.InitialSample();
+    arma::mat inputMatrix = state.Data();
+    arma::vec input = inputMatrix.row(0);
+    arma::vec output = genome.Evaluate(input);
 
-//     double fitnessDenom = 0;
-//     int timeStep = 0;
-//     while (!environment.IsTerminal())
-//     {
-//       timeStep++;
+    double fitnessDenom = 0;
+    int timeStep = 0;
+    while (!environment.IsTerminal())
+    {
+      timeStep++;
 
-//       // Choose an action.
-//       ContinuousMultiplePoleCart::Action action;
-//       action.action[0] = output[0];
+      // Choose an action.
+      ContinuousMultiplePoleCart::Action action;
+      action.action[0] = output[0];
 
-//       // Use the current action to get the next state.
-//       environment.Sample(state, action, state);
+      // Use the current action to get the next state.
+      environment.Sample(state, action, state);
 
-//       // Update the state of the genome for the next step.
-//       inputMatrix = state.Data();
-//       input = inputMatrix.row(0);
+      // Update the state of the genome for the next step.
+      inputMatrix = state.Data();
+      input = inputMatrix.row(0);
 
-//       // Scale the input between -1 and 1.
-//       input[0] /= 2.4;
-//       input[1] /= 12 * 2 * 3.1416 / 360;
-//       input[2] /= 12 * 2 * 3.1416 / 360;
-//       output = genome.Evaluate(input);
+      // Scale the input between -1 and 1.
+      input[0] /= 2.4;
+      input[1] /= 12 * 2 * 3.1416 / 360;
+      input[2] /= 12 * 2 * 3.1416 / 360;
+      output = genome.Evaluate(input);
 
-//       if (timeStep >= 1000)
-//         continue;
+      if (timeStep >= 1000)
+        continue;
 
-//       if (timeStep >= 100)
-//       {
-//         int pow = timeStep - 100;
-//         arma::vec temp = {inputMatrix[0, 0], inputMatrix[1, 0],
-//             inputMatrix[0, 1], inputMatrix[1, 1]};
-//         fitnessDenom += arma::accu(arma::pow(temp, pow));
-//       }
-//     }
-//     return timeStep / 10000 + 0.675 / fitnessDenom;
-//   }
+      if (timeStep >= 100)
+      {
+        int pow = timeStep - 100;
+        arma::vec temp = {inputMatrix[0, 0], inputMatrix[1, 0],
+            inputMatrix[0, 1], inputMatrix[1, 1]};
+        fitnessDenom += arma::accu(arma::pow(temp, pow));
+      }
+    }
+    return timeStep / 10000 + 0.675 / fitnessDenom;
+  }
 
-//  private:
-//   ContinuousMultiplePoleCart environment;
-// };
+ private:
+  ContinuousMultiplePoleCart environment;
+};
 
 #endif
