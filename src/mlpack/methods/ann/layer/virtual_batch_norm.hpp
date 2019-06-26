@@ -2,7 +2,7 @@
  * @file virtual_batch_norm.hpp
  * @author Saksham Bansal
  *
- * Definition of the Virtual Batch Normalization layer class.
+ * Definition of the VirtualBatchNorm layer class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,8 +18,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Declaration of the Virtual Batch Normalization layer class. Instead of using the
- * batch statistics for normalizing on a minibatch, it uses a reference subset of
+ * Declaration of the VirtualBatchNorm layer class. Instead of using the
+ * batch statistics for normalizing on a mini-batch, it uses a reference subset of
  * the data for calculating the normalization statistics.
  *
  * For more information, refer to the following paper,
@@ -52,7 +52,7 @@ class VirtualBatchNorm
   /**
    * Create the VirtualBatchNorm layer object for a specified number of input units.
    *
-   * @param referenceBatch the data from which the normalization
+   * @param referenceBatch The data from which the normalization
    *        statistics are computed.
    * @param size The number of input units.
    * @param eps The epsilon added to variance to ensure numerical stability.
@@ -63,7 +63,7 @@ class VirtualBatchNorm
                    const double eps = 1e-8);
 
   /**
-   * Reset the layer parameters
+   * Reset the layer parameters.
    */
   void Reset();
 
@@ -72,7 +72,7 @@ class VirtualBatchNorm
    * into zero mean and unit variance, scales the data by a factor gamma and
    * shifts it by beta.
    *
-   * @param input Input data for the layer
+   * @param input Input data for the layer.
    * @param output Resulting output activations.
    */
   template<typename eT>
@@ -81,7 +81,7 @@ class VirtualBatchNorm
   /**
    * Backward pass through the layer.
    *
-   * @param input The input activations
+   * @param input The input activations.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -93,8 +93,8 @@ class VirtualBatchNorm
   /**
    * Calculate the gradient using the output delta and the input activations.
    *
-   * @param input The input activations
-   * @param error The calculated error
+   * @param input The input activations.
+   * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
   template<typename eT>
@@ -122,9 +122,8 @@ class VirtualBatchNorm
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
-
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -136,7 +135,7 @@ class VirtualBatchNorm
   //! Locally-stored epsilon value.
   double eps;
 
-  //! Whether we are in loading or saving mode.
+  //! Variable to keep track of whether we are in loading or saving mode.
   bool loading;
 
   //! Locally-stored scale parameter.
@@ -181,7 +180,7 @@ class VirtualBatchNorm
   //! Locally-stored normalized input.
   OutputDataType normalized;
 
-  //! Locally-stored 0 mean input.
+  //! Locally-stored zero mean input.
   OutputDataType temp;
 }; // class VirtualBatchNorm
 

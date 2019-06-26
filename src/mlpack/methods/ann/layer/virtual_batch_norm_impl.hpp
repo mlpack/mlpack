@@ -2,7 +2,7 @@
  * @file virtual_batch_norm_impl.hpp
  * @author Saksham Bansal
  *
- * Implementation of the Virtual Batch Normalization Layer.
+ * Implementation of the Virtual Batch Normalization layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -43,7 +43,7 @@ VirtualBatchNorm<InputDataType, OutputDataType>::VirtualBatchNorm(
 
   referenceBatchMean = arma::mean(referenceBatch, 1);
   referenceBatchMeanSquared = arma::mean(arma::square(referenceBatch), 1);
-  newCoefficient = 1.0/(referenceBatch.n_cols + 1);
+  newCoefficient = 1.0 / (referenceBatch.n_cols + 1);
   oldCoefficient = 1 - newCoefficient;
 }
 
@@ -93,20 +93,16 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::Backward(
 {
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
-  // Step 1: dl / dxhat
+  // Step 1: dl / dxhat.
   const arma::mat norm = gy.each_col() % gamma;
 
   // Step 2: sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
   const arma::mat var = arma::sum(norm % temp, 1) %
       arma::pow(stdInv, 3.0) * -0.5;
 
-  // Step 4: dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
-  // dl / dmu * 1 / m.
   g = (norm.each_col() % stdInv) + ((inputParameter.each_col() %
       var) * 2 * newCoefficient / inputParameter.n_cols);
 
-  // Step 3: sum (dl / dxhat * -1 / stdInv) + variance *
-  // (sum -2 * (x - mu)) / m.
   g.each_col() += (arma::sum(norm.each_col() % -stdInv, 1) + (var %
       mean * -2)) * newCoefficient / inputParameter.n_cols;
 }
