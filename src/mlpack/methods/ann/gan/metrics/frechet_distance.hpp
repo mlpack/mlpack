@@ -24,8 +24,6 @@ namespace ann /* Artificial Neural Network */ {
 *
 * For more information, see the following.
 *
-* For more information, see the following paper:
-*
 * @code
 * @article{
 *   author    = {Martin Heusel, Hubert Ramsauer, Thomas Unterthiner, Bernhard
@@ -47,21 +45,17 @@ class FrechetDistance
   * @param p The generating model data.
   * @param pw The real world data.
   */
-  double Evaluate(arma::mat p, arma::mat pw)
+  double Evaluate(const arma::mat& p, const arma::mat& pw)
   {
     // Calculate norm of mean.
     double firstTerm = arma::norm(arma::mean(p, 1) - arma::mean(pw, 1), 2);
 
     // p and pw will be nDims * nPoints matrix. Hence taking transpose to find
     // covariance.
-    arma::mat transP = trans(p);
-    arma::mat transPW = trans(pw);
-    arma::mat c = arma::cov(transP);
-    arma::mat cW = arma::cov(transPW);
+    const arma::mat c = arma::cov(p.t());
+    const arma::mat cW = arma::cov(pw.t());
 
-    double secondTerm = arma::trace(c + cW - 2 * arma::sqrt(c * trans(cW)));
-
-    return firstTerm + secondTerm;
+    return firstTerm + arma::trace(c + cW - 2 * arma::sqrt(c * trans(cW)));
   }
 };
 
