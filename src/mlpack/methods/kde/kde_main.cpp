@@ -83,8 +83,10 @@ PROGRAM_INFO("Kernel Density Estimation",
     "computed on the " + PRINT_PARAM_STRING("reference") + " dataset."
     "\n"
     "It is possible to select either a reference dataset or an input model "
-    "but not both at the same time."
-    "\n"
+    "but not both at the same time. If an input model is selected and "
+    "parameter values are not set (e.g. " + PRINT_PARAM_STRING("bandwidth") +
+    ") then default parameter values will be used."
+    "\n\n"
     "In addition to the last program call, it is also possible to activate "
     "Monte Carlo estimations if a Gaussian kernel is used. The following will "
     "run KDE using a Monte Carlo estimation when possible. The results will be "
@@ -196,13 +198,6 @@ static void mlpackMain()
   RequireOnlyOnePassed({ "reference", "input_model" }, true);
   ReportIgnoredParam({{ "input_model", true }}, "tree");
   ReportIgnoredParam({{ "input_model", true }}, "kernel");
-  ReportIgnoredParam({{ "input_model", true }}, "rel_error");
-  ReportIgnoredParam({{ "input_model", true }}, "abs_error");
-  ReportIgnoredParam({{ "input_model", true }}, "monte_carlo");
-  ReportIgnoredParam({{ "input_model", true }}, "mc_probability");
-  ReportIgnoredParam({{ "input_model", true }}, "initial_sample_size");
-  ReportIgnoredParam({{ "input_model", true }}, "mc_entry_coef");
-  ReportIgnoredParam({{ "input_model", true }}, "mc_break_coef");
 
   // Monte Carlo parameters only make sense if it is activated.
   ReportIgnoredParam({{ "monte_carlo", false }}, "mc_probability");
@@ -245,15 +240,6 @@ static void mlpackMain()
     arma::mat reference = std::move(CLI::GetParam<arma::mat>("reference"));
 
     kde = new KDEModel();
-    // Set parameters.
-    kde->Bandwidth() = bandwidth;
-    kde->RelativeError() = relError;
-    kde->AbsoluteError() = absError;
-    kde->MonteCarlo() = monteCarlo;
-    kde->MCProbability() = MCProbability;
-    kde->MCInitialSampleSize() = initialSampleSize;
-    kde->MCEntryCoefficient() = MCEntryCoef;
-    kde->MCBreakCoefficient() = MCBreakCoef;
 
     // Set KernelType.
     if (kernelStr == "gaussian")
@@ -293,6 +279,16 @@ static void mlpackMain()
     // Load model.
     kde = CLI::GetParam<KDEModel*>("input_model");
   }
+
+  // Set model parameters.
+  kde->Bandwidth(bandwidth);
+  kde->RelativeError(relError);
+  kde->AbsoluteError(absError);
+  kde->MonteCarlo(monteCarlo);
+  kde->MCProbability(MCProbability);
+  kde->MCInitialSampleSize(initialSampleSize);
+  kde->MCEntryCoefficient(MCEntryCoef);
+  kde->MCBreakCoefficient(MCBreakCoef);
 
   // Evaluation.
   if (CLI::HasParam("query"))

@@ -225,7 +225,6 @@ BOOST_AUTO_TEST_CASE(KDEModelReuse)
 
   // Change parameters and load model.
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  SetInputParam("bandwidth", 0.5);
   SetInputParam("query", query);
   SetInputParam("input_model",
       std::move(CLI::GetParam<KDEModel*>("output_model")));
