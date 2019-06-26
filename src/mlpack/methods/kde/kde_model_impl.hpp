@@ -399,6 +399,24 @@ void RelErrorVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
     throw std::runtime_error("no KDE model initialized");
 }
 
+// Modify absolute error tolerance.
+AbsErrorVisitor::AbsErrorVisitor(const double absError) :
+    absError(absError)
+{}
+
+// Default modify absolute error tolerance.
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void AbsErrorVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->AbsoluteError(absError);
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
 // Activate or deactivate Monte Carlo.
 MonteCarloVisitor::MonteCarloVisitor(const bool monteCarlo) :
     monteCarlo(monteCarlo)

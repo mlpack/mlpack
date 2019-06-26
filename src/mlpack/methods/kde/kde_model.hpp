@@ -214,6 +214,27 @@ class RelErrorVisitor : public boost::static_visitor<void>
 };
 
 /**
+ * AbsErrorVisitor modifies absolute error tolerance for a KDEType.
+ */
+class AbsErrorVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Absolute error tolerance.
+  const double absError;
+
+ public:
+  //! Default AbsErrorVisitor on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
+
+  //! AbsErrorVisitor constructor.
+  AbsErrorVisitor(const double absError);
+};
+
+/**
  * MonteCarloVisitor activates or deactivates Monte Carlo for a given KDEType.
  */
 class MonteCarloVisitor : public boost::static_visitor<void>
