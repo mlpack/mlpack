@@ -100,12 +100,9 @@ double PPO<
   arma::mat actionValue;
   actorNetwork.Predict(state.Encode(), actionValue);
 
-  ann::TanhFunction tanh;
-  ann::SoftplusFunction softp;
-
   arma::mat sigma, mu;
-  tanh.Fn(actionValue.col(0), sigma);
-  softp.Fn(actionValue.col(0), mu);
+  ann::TanhFunction::Fn(actionValue.col(0), sigma);
+  ann::SoftplusFunction::Fn(actionValue.col(0), mu);
 
   distribution::GaussianDistribution normalDist =
     distribution::GaussianDistribution(sigma, mu);
@@ -114,8 +111,8 @@ double PPO<
   actorNetwork.Predict(state.Encode(), actionValue);
 
   oldActorNetwork.Predict(state.Encode(), actionValue);
-  tanh.Fn(actionValue.col(0), sigma);
-  softp.Fn(actionValue.col(0), mu);
+  ann::TanhFunction::Fn(actionValue.col(0), sigma);
+  ann::SoftplusFunction::Fn(actionValue.col(0), mu);
 
   distribution::GaussianDistribution oldnormalDist =
     distribution::GaussianDistribution(sigma, mu);
