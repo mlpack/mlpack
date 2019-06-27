@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_SUITE(RLComponentsTest)
  */
 BOOST_AUTO_TEST_CASE(SimplePendulumTest)
 {
-  const Pendulum task = Pendulum();
+  Pendulum task = Pendulum();
 
   Pendulum::State state = task.InitialSample();
   Pendulum::Action action;

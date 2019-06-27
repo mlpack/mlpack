@@ -95,15 +95,22 @@ class Pendulum
    * @param dt The differential value.
    * @param angleThreshold The region about the upright position where the
    *    state is considered terminal.
+   * @param maxTimeSteps The number of time steps after which the episode
+   *    terminates. If the value is 0, there is no limit.
    */
   Pendulum(const double maxAngularVelocity = 8,
            const double maxTorque = 2.0,
            const double dt = 0.05,
-           const double angleThreshold = M_PI / 12) :
+           const double angleThreshold = M_PI / 12,
+           const double doneReward = 0.0,
+           const size_t maxTimeSteps = 0) :
       maxAngularVelocity(maxAngularVelocity),
       maxTorque(maxTorque),
       dt(dt),
-      angleThreshold(angleThreshold)
+      angleThreshold(angleThreshold),
+      doneReward(doneReward),
+      maxTimeSteps(maxTimeSteps),
+      timeStepsPerformed(0)
   { /* Nothing to do here */ }
 
   /**
@@ -117,8 +124,11 @@ class Pendulum
    */
   double Sample(const State& state,
                 const Action& action,
-                State& nextState) const
+                State& nextState)
   {
+    // Update the number of time steps performed.
+    timeStepsPerformed++;
+
     // Get current state.
     double theta = state.Theta();
     double angularVelocity = state.AngularVelocity();
@@ -144,6 +154,15 @@ class Pendulum
         -maxAngularVelocity), maxAngularVelocity);
     nextState.Theta() = theta + newAngularVelocity * dt;
 
+    // Check if the episode has terminated
+    bool done = IsTerminal(nextState);
+
+    // Do not reward the agent if time ran out.
+    if (done && maxTimeSteps != 0 && timeStepsPerformed >= maxTimeSteps)
+      return 0;
+    else if (done)
+      return doneReward;
+
     // Return the reward of taking the action in current state.
     // The reward is simply the negative of cost incurred for the action.
     return -costs;
@@ -156,7 +175,7 @@ class Pendulum
    * @param action The current action.
    * @return reward, The reward.
    */
-  double Sample(const State& state, const Action& action) const
+  double Sample(const State& state, const Action& action)
   {
     State nextState;
     return Sample(state, action, nextState);
@@ -168,11 +187,12 @@ class Pendulum
    *
    * @return Initial state for each episode.
    */
-  State InitialSample() const
+  State InitialSample()
   {
     State state;
     state.Theta() = math::Random(-M_PI + angleThreshold, M_PI - angleThreshold);
     state.AngularVelocity() = math::Random(-1.0, 1.0);
+    timeStepsPerformed = 0;
     return state;
   }
 
@@ -195,8 +215,19 @@ class Pendulum
    */
   bool IsTerminal(const State& state) const
   {
-    return state.Theta() > M_PI - angleThreshold ||
-        state.Theta() < -M_PI + angleThreshold;
+    if (maxTimeSteps != 0 && timeStepsPerformed >= maxTimeSteps)
+    {
+      Log::Info << "Episode terminated due to the maximum number of time steps"
+          "being taken.";
+      return true;
+    }
+    else if (state.Theta() > M_PI - angleThreshold ||
+        state.Theta() < -M_PI + angleThreshold)
+    {
+      Log::Info << "Episode terminated due to agent succeeding.";
+      return true;
+    }
+    return false;
   }
 
  private:
@@ -211,6 +242,15 @@ class Pendulum
 
   //! Locally-stored angle threshold.
   double angleThreshold;
+
+  //! Locally-stored done reward.
+  double doneReward;
+
+  //! Locally-stored maximum number of time steps.
+  size_t maxTimeSteps;
+
+  //! Locally-stored number of time steps performed.
+  size_t timeStepsPerformed;
 };
 
 } // namespace rl
