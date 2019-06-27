@@ -213,17 +213,17 @@ bool Load(const std::vector<std::string>& files,
 
 template<typename eT>
 bool Save(const std::string& filename,
-          const arma::Mat<eT>& matrix,
+          arma::Mat<eT>& matrix,
           ImageInfo& info,
           const bool fatal = false,
-          bool transpose = true);
+          const bool transpose = true);
 
 template<typename eT>
 bool Save(const std::vector<std::string>& files,
-          const arma::Mat<eT>& matrix,
+          arma::Mat<eT>& matrix,
           ImageInfo& info,
           const bool fatal = false,
-          bool transpose = true);
+          const bool transpose = true);
 
 } // namespace data
 } // namespace mlpack

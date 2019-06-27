@@ -333,10 +333,10 @@ bool Load(const std::vector<std::string>& files,
 // Image saving API.
 template<typename eT>
 bool Save(const std::string& filename,
-          const arma::Mat<eT>& matrix,
+          arma::Mat<eT>& matrix,
           ImageInfo& info,
           const bool fatal,
-          bool transpose)
+          const bool transpose)
 {
   std::vector<std::string> files{filename};
   return Save(files, matrix, info, fatal, transpose);
@@ -345,10 +345,10 @@ bool Save(const std::string& filename,
 // Image saving API for multiple files.
 template<typename eT>
 bool Save(const std::vector<std::string>& files,
-          const arma::Mat<eT>& matrix,
+          arma::Mat<eT>& matrix,
           ImageInfo& info,
           const bool fatal,
-          bool transpose)
+          const bool transpose)
 {
   Timer::Start("saving_image");
   bool status;

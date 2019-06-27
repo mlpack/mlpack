@@ -159,36 +159,35 @@ BOOST_AUTO_TEST_CASE(LoadImageAPITest)
   arma::Mat<unsigned char> matrix;
   data::ImageInfo info;
   BOOST_REQUIRE(data::Load("test_image.png", matrix, info, false) == true);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, 50 * 50 * 3); // width * height * channels.
+  BOOST_REQUIRE_EQUAL(matrix.n_rows, 50 * 50 * 3);// width * height * channels.
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 1);
 }
 
-// /**
-//  * Test if the image is saved correctly using API.
-//  */
-// BOOST_AUTO_TEST_CASE(SaveImageAPITest)
-// {
-//   arma::Mat<unsigned char> matrix;
+/**
+ * Test if the image is saved correctly using API.
+ */
+BOOST_AUTO_TEST_CASE(SaveImageAPITest)
+{
+  arma::Mat<unsigned char> matrix;
 
-//   data::ImageInfo info;
-//   info.width = info.height = 50;
-//   info.channels = 3;
-//   info.quality = 90;
+  data::ImageInfo info;
+  info.width = info.height = 5;
+  info.channels = 3;
+  info.quality = 90;
 
-//   arma::Mat<unsigned char> im1;
-//   im1 = arma::randi<arma::Mat<unsigned char>>(25 * 3, 1);
-//   BOOST_REQUIRE(data::Save("APITest.bmp", im1, info, false) == true);
+  arma::Mat<unsigned char> im1;
+  im1 = arma::randi<arma::Mat<unsigned char>>(5 * 5 * 3, 1);
+  BOOST_REQUIRE(data::Save("APITest.bmp", im1, info, false) == true);
 
-//   arma::Mat<unsigned char> im2;
-//   BOOST_REQUIRE(data::Load("APITest.bmp", im2, info, false) == true);
+  arma::Mat<unsigned char> im2;
+  BOOST_REQUIRE(data::Load("APITest.bmp", im2, info, false) == true);
 
-//   BOOST_REQUIRE_EQUAL(im1.n_cols, im2.n_cols);
-//   BOOST_REQUIRE_EQUAL(im1.n_rows, im2.n_rows);
+  BOOST_REQUIRE_EQUAL(im1.n_cols, im2.n_cols);
+  BOOST_REQUIRE_EQUAL(im1.n_rows, im2.n_rows);
 
-//   for (size_t i = 0; i < im1.n_elem; ++i)
-//     BOOST_REQUIRE_EQUAL(im1[i], im2[i]);
-
-// }
+  for (size_t i = 0; i < im1.n_elem; ++i)
+    BOOST_REQUIRE_EQUAL(im1[i], im2[i]);
+}
 
 BOOST_AUTO_TEST_SUITE_END();
 
