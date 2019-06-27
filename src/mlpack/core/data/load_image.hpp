@@ -2,7 +2,7 @@
  * @file load_image.hpp
  * @author Mehul Kumar Nirala
  *
- * An image loading utillity
+ * An image loading utility
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -26,8 +26,6 @@
 namespace fs = std::filesystem;
 #endif
 
-#include "extension.hpp"
-
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -37,6 +35,8 @@ namespace fs = std::filesystem;
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 #endif
+
+#include "image_info.hpp"
 
 namespace mlpack {
 namespace data {
@@ -81,14 +81,6 @@ class Image
   Image(const size_t width, const size_t height, const size_t channels);
 
   /**
-   * Checks if the given image filename is supported.
-   *
-   * @param filename Name of the image file.
-   * @return Boolean value indicating success if it is an image.
-   */
-  bool ImageFormatSupported(const std::string& fileName, bool save = false);
-
-  /**
    * Load the image file into the given matrix.
    *
    * @param fileName Name of the image file.
@@ -97,7 +89,7 @@ class Image
    * @return Boolean value indicating success or failure of load.
    */
   bool Load(const std::string& fileName,
-            arma::Mat<unsigned char>&& outputMatrix,
+            arma::Mat<unsigned char>& outputMatrix,
             bool flipVertical = true);
 
   /**
@@ -112,7 +104,7 @@ class Image
    * @return Boolean value indicating success or failure of load.
    */
   bool Load(const std::string& fileName,
-            arma::Mat<unsigned char>&& outputMatrix,
+            arma::Mat<unsigned char>& outputMatrix,
             size_t& width,
             size_t& height,
             size_t& channels,
@@ -127,7 +119,7 @@ class Image
    * @return Boolean value indicating success or failure of load.
    */
   bool Load(const std::vector<std::string>& files,
-            arma::Mat<unsigned char>&& outputMatrix,
+            arma::Mat<unsigned char>& outputMatrix,
             bool flipVertical = true);
 
   /**
@@ -146,7 +138,7 @@ class Image
             size_t width,
             size_t height,
             size_t channels,
-            arma::Mat<unsigned char>&& inputMatrix,
+            arma::Mat<unsigned char>& inputMatrix,
             bool flipVertical = true,
             size_t quality = 90);
 
@@ -166,7 +158,7 @@ class Image
             size_t width,
             size_t height,
             size_t channels,
-            arma::Mat<unsigned char>&& inputMatrix,
+            arma::Mat<unsigned char>& inputMatrix,
             bool flipVertical = true,
             size_t quality = 90);
 
@@ -179,7 +171,7 @@ class Image
    * @return Boolean value indicating success or failure of load.
    */
   bool LoadDir(const std::string& dirPath,
-               arma::Mat<unsigned char>&& outputMatrix,
+               arma::Mat<unsigned char>& outputMatrix,
                bool flipVertical = true);
 
   /**
@@ -188,11 +180,6 @@ class Image
   ~Image();
 
  private:
-  // To store supported image types that can be loaded.
-  static const std::vector<std::string> loadFileTypes;
-
-  // To store supported image types that can be saved.
-  static const std::vector<std::string> saveFileTypes;
 
   // To store maxWidth.
   size_t maxWidth;

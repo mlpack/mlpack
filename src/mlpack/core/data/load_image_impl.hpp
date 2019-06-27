@@ -2,7 +2,7 @@
  * @file load_image_impl.hpp
  * @author Mehul Kumar Nirala
  *
- * An image loading utillity
+ * An image loading utility implementation.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,12 +20,6 @@
 
 namespace mlpack {
 namespace data {
-
-const std::vector<std::string> Image::loadFileTypes({"jpg", "png", "tga",
-    "bmp", "psd", "gif", "hdr", "pic", "pnm"});
-
-const std::vector<std::string> Image::saveFileTypes({"jpg", "png", "tga",
-    "bmp", "hdr"});
 
 Image::Image():
         maxWidth(0),
@@ -50,28 +44,8 @@ Image::~Image()
   // Do nothing.
 }
 
-bool Image::ImageFormatSupported(const std::string& fileName, bool save)
-{
-  if (save)
-  {
-    // Iterate over all supported file types that can be saved.
-    for (auto extension : saveFileTypes)
-      if (extension == Extension(fileName))
-        return true;
-    return false;
-  }
-  else
-  {
-    // Iterate over all supported file types that can be loaded.
-    for (auto extension : loadFileTypes)
-      if (extension == Extension(fileName))
-        return true;
-    return false;
-  }
-}
-
 bool Image::Load(const std::string& fileName,
-                 arma::Mat<unsigned char>&& outputMatrix,
+                 arma::Mat<unsigned char>& outputMatrix,
                  size_t& width,
                  size_t& height,
                  size_t& channels,
@@ -136,11 +110,11 @@ bool Image::Load(const std::string& fileName,
 }
 
 bool Image::Load(const std::string& fileName,
-                 arma::Mat<unsigned char>&& outputMatrix,
+                 arma::Mat<unsigned char>& outputMatrix,
                  bool flipVertical)
 {
   size_t width, height;
-  bool status = Load(fileName, std::move(outputMatrix),
+  bool status = Load(fileName, outputMatrix,
       width, height, channels, flipVertical);
   if (!status)
     return status;
@@ -165,7 +139,7 @@ bool Image::Load(const std::string& fileName,
 }
 
 bool Image::Load(const std::vector<std::string>& files,
-                 arma::Mat<unsigned char>&& outputMatrix,
+                 arma::Mat<unsigned char>& outputMatrix,
                  bool flipVertical)
 {
   if (files.size() == 0)
@@ -177,7 +151,7 @@ bool Image::Load(const std::vector<std::string>& files,
 
   arma::Mat<unsigned char> img;
   size_t width, height;
-  bool status = Load(files[0], std::move(img), width,
+  bool status = Load(files[0], img, width,
       height, channels, flipVertical);
   Log::Info << "Loaded " << files[0] << std::endl;
 
@@ -185,25 +159,26 @@ bool Image::Load(const std::vector<std::string>& files,
   maxWidth = std::max(maxWidth, width);
   maxHeight = std::max(maxHeight, height);
 
-  outputMatrix.set_size(maxWidth*maxHeight*channels, files.size());
+  outputMatrix.set_size(maxWidth * maxHeight * channels, files.size());
   outputMatrix.col(0) = img;
 
   for (size_t i = 1; i < files.size() ; i++)
   {
+    arma::Mat<unsigned char> colImg(outputMatrix.colptr(i), outputMatrix.n_rows,
+        1, false, true);
     status &= Load(files[i],
-                   std::move(outputMatrix.col(i)),
+                   colImg,
                    flipVertical);
     Log::Info << "Loaded " << files[i] << std::endl;
   }
   return status;
 }
 
-
 bool Image::Save(const std::string& fileName,
                  size_t width,
                  size_t height,
                  size_t channels,
-                 arma::Mat<unsigned char>&& inputMatrix,
+                 arma::Mat<unsigned char>& inputMatrix,
                  bool flipVertical,
                  size_t quality)
 {
@@ -231,7 +206,7 @@ bool Image::Save(const std::string& fileName,
   if ("png" == Extension(fileName))
   {
     status = stbi_write_png(fileName.c_str(), tempWidth, tempHeight,
-        tempChannels, image, width*channels);
+        tempChannels, image, width * channels);
   }
   else if ("bmp" == Extension(fileName))
   {
@@ -260,15 +235,17 @@ bool Image::Save(const std::vector<std::string>& files,
                  size_t width,
                  size_t height,
                  size_t channels,
-                 arma::Mat<unsigned char>&& inputMatrix,
+                 arma::Mat<unsigned char>& inputMatrix,
                  bool flipVertical,
                  size_t quality)
 {
   bool status = true;
   for (size_t i = 0; i < files.size(); i++)
   {
+    arma::Mat<unsigned char> colImg(inputMatrix.colptr(i), inputMatrix.n_rows,
+        1, false, true);
     if (!Save(files[i], width, height, channels,
-        std::move(inputMatrix.col(i)), flipVertical, quality))
+        colImg, flipVertical, quality))
     {
       std::cout << "Unable to save '" << files[i] << "'." << std::endl;
       status = false;
@@ -278,7 +255,7 @@ bool Image::Save(const std::vector<std::string>& files,
 }
 
 bool Image::LoadDir(const std::string& dirPath,
-                    arma::Mat<unsigned char>&& outputMatrix,
+                    arma::Mat<unsigned char>& outputMatrix,
                     bool flipVertical)
 {
   std::vector<std::string> files;
@@ -293,7 +270,7 @@ bool Image::LoadDir(const std::string& dirPath,
         files.push_back(file);
     }
   }
-  return Load(files, std::move(outputMatrix), flipVertical);
+  return Load(files, outputMatrix, flipVertical);
 #else
   std::ostringstream oss;
   oss << "C++17 filesystem library not available." << std::endl;
