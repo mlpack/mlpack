@@ -115,30 +115,36 @@ class Image
    *
    * @param files A vector containing names of the image file to be loaded.
    * @param outputMatrix Matrix to load into.
+   * @param width Width of the image file.
+   * @param height Height of the image file.
+   * @param channels Channels of the image file.
    * @param flipVertical Flip the image vertical upon loading.
    * @return Boolean value indicating success or failure of load.
    */
   bool Load(const std::vector<std::string>& files,
-            arma::Mat<unsigned char>& outputMatrix,
-            bool flipVertical = true);
+                   arma::Mat<unsigned char>& outputMatrix,
+                   size_t& width,
+                   size_t& height,
+                   size_t& channels,
+                   bool flipVertical = true);
 
   /**
    * Saves the image file present in the given matrix.
    *
    * @param fileName Name of the image file.
+   * @param inputMatrix Matrix to save images from.
    * @param width Width of the image that is being saved.
    * @param height Width of the image that is being saved.
    * @param channels Number of channels in the image that is being saved.
-   * @param inputMatrix Matrix to save images from.
    * @param flipVertical Flip the image vertical before saving.
    * @param quality Compression of the image if saved as jpg (0-100).
    * @return Boolean value indicating success or failure.
    */
   bool Save(const std::string& fileName,
+            arma::Mat<unsigned char>& inputMatrix,
             size_t width,
             size_t height,
             size_t channels,
-            arma::Mat<unsigned char>& inputMatrix,
             bool flipVertical = true,
             size_t quality = 90);
 
@@ -146,19 +152,19 @@ class Image
    * Saves the image file present in the given matrix.
    *
    * @param files A vector containing names of the image file to be saved.
+   * @param inputMatrix Matrix to save images from.
    * @param width Width of the image that is being saved.
    * @param height Width of the image that is being saved.
    * @param channels Number of channels in the image that is being saved.
-   * @param inputMatrix Matrix to save images from.
    * @param flipVertical Flip the image vertical before saving.
    * @param quality Compression of the image if saved as jpg (0-100).
    * @return Boolean value indicating success or failure.
    */
   bool Save(const std::vector<std::string>& files,
+            arma::Mat<unsigned char>& inputMatrix,
             size_t width,
             size_t height,
             size_t channels,
-            arma::Mat<unsigned char>& inputMatrix,
             bool flipVertical = true,
             size_t quality = 90);
 
@@ -190,6 +196,34 @@ class Image
   // To store channels.
   size_t channels;
 };
+
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false,
+          const bool transpose = true);
+
+template<typename eT>
+bool Load(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false,
+          const bool transpose = true);
+
+template<typename eT>
+bool Save(const std::string& filename,
+          const arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal,
+          bool transpose = true);
+
+template<typename eT>
+bool Save(const std::vector<std::string>& files,
+          const arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal,
+          bool transpose = true);
 
 } // namespace data
 } // namespace mlpack

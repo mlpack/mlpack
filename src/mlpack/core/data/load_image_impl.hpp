@@ -140,6 +140,9 @@ bool Image::Load(const std::string& fileName,
 
 bool Image::Load(const std::vector<std::string>& files,
                  arma::Mat<unsigned char>& outputMatrix,
+                 size_t& width,
+                 size_t& height,
+                 size_t& channels,
                  bool flipVertical)
 {
   if (files.size() == 0)
@@ -150,7 +153,7 @@ bool Image::Load(const std::vector<std::string>& files,
   }
 
   arma::Mat<unsigned char> img;
-  size_t width, height;
+
   bool status = Load(files[0], img, width,
       height, channels, flipVertical);
   Log::Info << "Loaded " << files[0] << std::endl;
@@ -175,10 +178,10 @@ bool Image::Load(const std::vector<std::string>& files,
 }
 
 bool Image::Save(const std::string& fileName,
+                 arma::Mat<unsigned char>& inputMatrix,
                  size_t width,
                  size_t height,
                  size_t channels,
-                 arma::Mat<unsigned char>& inputMatrix,
                  bool flipVertical,
                  size_t quality)
 {
@@ -232,10 +235,10 @@ bool Image::Save(const std::string& fileName,
 }
 
 bool Image::Save(const std::vector<std::string>& files,
+                 arma::Mat<unsigned char>& inputMatrix,
                  size_t width,
                  size_t height,
                  size_t channels,
-                 arma::Mat<unsigned char>& inputMatrix,
                  bool flipVertical,
                  size_t quality)
 {
@@ -244,8 +247,8 @@ bool Image::Save(const std::vector<std::string>& files,
   {
     arma::Mat<unsigned char> colImg(inputMatrix.colptr(i), inputMatrix.n_rows,
         1, false, true);
-    if (!Save(files[i], width, height, channels,
-        colImg, flipVertical, quality))
+    if (!Save(files[i], colImg, width, height, channels,
+        flipVertical, quality))
     {
       std::cout << "Unable to save '" << files[i] << "'." << std::endl;
       status = false;
@@ -278,6 +281,98 @@ bool Image::LoadDir(const std::string& dirPath,
   throw std::runtime_error(oss.str());
   return false;
 #endif
+}
+
+// Image loading API.
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false,
+          const bool transpose = true)
+{
+  return Load({filename}, matrix, info, fatal, transpose);
+}
+
+// Image loading API for multiple files.
+template<typename eT>
+bool Load(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal,
+          const bool transpose)
+{
+  Timer::Start("loading_image");
+
+  try
+  {
+    Image loader;
+    bool status = Load(files, matrix, info.width, info.height, info.channels,
+        info.flipVertical);
+
+    // We transpose by default. So, un-transpose if necessary.
+    if (!transpose)
+      inplace_transpose(matrix);
+  }
+  catch (std::exception& e)
+  {
+    Timer::Stop("loading_image");
+    if (fatal)
+      Log::Fatal << e.what() << std::endl;
+    else
+      Log::Warn << e.what() << std::endl;
+
+    return false;
+  }
+  
+  Timer::Start("loading_image");
+  return true;
+}
+
+// Image saving API.
+template<typename eT>
+bool Save(const std::string& filename,
+          const arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal,
+          bool transpose = true)
+{
+  return Save({filename}, matrix, info, fatal, transpose);
+}
+
+// Image saving API for multiple files.
+template<typename eT>
+bool Save(const std::vector<std::string>& files,
+          const arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal,
+          bool transpose)
+{
+  Timer::Start("saving_image");
+
+  // We transpose by default. So, un-transpose if necessary.
+  if (!transpose)
+    inplace_transpose(matrix);
+
+  try
+  {
+    Image saver;
+    bool status = Save(files, matrix, info.width, info.height, info.channels,
+        info.flipVertical, info.quality);
+  }
+  catch (std::exception& e)
+  {
+    Timer::Stop("saving_image");
+    if (fatal)
+      Log::Fatal << e.what() << std::endl;
+    else
+      Log::Warn << e.what() << std::endl;
+
+    return false;
+  }
+  
+  Timer::Start("saving_image");
+  return true;
 }
 
 } // namespace data

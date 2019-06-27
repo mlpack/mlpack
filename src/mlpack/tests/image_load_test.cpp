@@ -27,9 +27,9 @@ BOOST_AUTO_TEST_SUITE(ImageLoadTest);
 BOOST_AUTO_TEST_CASE(LoadInvalidExtensionFile)
 {
   data::Image loader;
-  arma::Mat<unsigned char> img;
+  arma::Mat<unsigned char> im;
   BOOST_REQUIRE_THROW(loader.Load("invalidExtendion.p4ng",
-      img, true),  std::runtime_error);
+      im, true),  std::runtime_error);
 }
 
 /**
@@ -40,10 +40,10 @@ BOOST_AUTO_TEST_CASE(LoadImageIntoMatrixFromFile)
   data::Image loader;
 
   // Matrix to load contents of file into.
-  arma::Mat<unsigned char> img;
-  BOOST_REQUIRE(loader.Load("test_image.png", img, true) == true);
-  BOOST_REQUIRE_EQUAL(img.n_rows, 50 * 50 * 3); // width * height * channels
-  BOOST_REQUIRE_EQUAL(img.n_cols, 1);
+  arma::Mat<unsigned char> im;
+  BOOST_REQUIRE(loader.Load("test_image.png", im, true) == true);
+  BOOST_REQUIRE_EQUAL(im.n_rows, 50 * 50 * 3); // width * height * channels
+  BOOST_REQUIRE_EQUAL(im.n_cols, 1);
 }
 
 #if defined(__cplusplus) && __cplusplus >= 201703L && defined(__has_include)
@@ -56,10 +56,10 @@ BOOST_AUTO_TEST_CASE(LoadImageIntoMatrixFromDir)
   data::Image loader;
 
   // Matrix to load contents of dir into.
-  arma::Mat<unsigned char> img;
-  BOOST_REQUIRE(loader.LoadDir(".", img, true) == true);
-  BOOST_REQUIRE_EQUAL(img.n_rows, 50 * 50 * 3); // width * height * channels.
-  BOOST_REQUIRE_EQUAL(img.n_cols, 1);
+  arma::Mat<unsigned char> im;
+  BOOST_REQUIRE(loader.LoadDir(".", im, true) == true);
+  BOOST_REQUIRE_EQUAL(im.n_rows, 50 * 50 * 3); // width * height * channels.
+  BOOST_REQUIRE_EQUAL(im.n_cols, 1);
 }
 #endif
 
@@ -71,13 +71,13 @@ BOOST_AUTO_TEST_CASE(GetImageHeightWidthChannels)
   data::Image loader;
 
   // Matrix to load the image.
-  arma::Mat<unsigned char> img;
+  arma::Mat<unsigned char> im;
   size_t height, width, channels;
 
-  BOOST_REQUIRE(loader.Load("test_image.png", img,
+  BOOST_REQUIRE(loader.Load("test_image.png", im,
       width, height, channels, true) == true);
-  BOOST_REQUIRE_EQUAL(img.n_rows, 50 * 50 * 3); // width * height * channels.
-  BOOST_REQUIRE_EQUAL(img.n_cols, 1);
+  BOOST_REQUIRE_EQUAL(im.n_rows, 50 * 50 * 3); // width * height * channels.
+  BOOST_REQUIRE_EQUAL(im.n_cols, 1);
   BOOST_REQUIRE_EQUAL(width, 50);
   BOOST_REQUIRE_EQUAL(height, 50);
   BOOST_REQUIRE_EQUAL(channels, 3);
@@ -91,13 +91,14 @@ BOOST_AUTO_TEST_CASE(LoadImagesInVector)
   data::Image loader;
 
   // Matrix to load contents of dir into.
-  arma::Mat<unsigned char> img;
+  arma::Mat<unsigned char> im;
   std::vector<std:: string> files{"test_image.png",
                                   "test_image.png",
                                   "test_image.png"};
-  BOOST_REQUIRE(loader.Load(files, img, true) == true);
-  BOOST_REQUIRE_EQUAL(img.n_rows, 50 * 50 * 3); // width * height * channels.
-  BOOST_REQUIRE_EQUAL(img.n_cols, files.size());
+  size_t height, width, channels = 3;
+  BOOST_REQUIRE(loader.Load(files, im, height, width, channels, true) == true);
+  BOOST_REQUIRE_EQUAL(im.n_rows, 50 * 50 * 3); // width * height * channels.
+  BOOST_REQUIRE_EQUAL(im.n_cols, files.size());
 }
 
 /**
@@ -105,22 +106,21 @@ BOOST_AUTO_TEST_CASE(LoadImagesInVector)
  */
 BOOST_AUTO_TEST_CASE(SaveAndLoadImageTest)
 {
-  arma::Mat<unsigned char> img1;
-  img1 = arma::randi<arma::Mat<unsigned char>>(25 * 3, 1);
+  arma::Mat<unsigned char> im1;
+  im1 = arma::randi<arma::Mat<unsigned char>>(25 * 3, 1);
   data::Image loadAndSave;
-  BOOST_REQUIRE(loadAndSave.Save("test.bmp", 5, 5,
-      3, img1) == true);
+  BOOST_REQUIRE(loadAndSave.Save("test.bmp", im1, 5, 5, 3) == true);
 
-  arma::Mat<unsigned char> img2;
+  arma::Mat<unsigned char> im2;
   size_t height, width, channels = 3;
-  BOOST_REQUIRE(loadAndSave.Load("test.bmp", img2,
+  BOOST_REQUIRE(loadAndSave.Load("test.bmp", im2,
       width, height, channels) == true);
 
-  BOOST_REQUIRE_EQUAL(img1.n_cols, img2.n_cols);
-  BOOST_REQUIRE_EQUAL(img1.n_rows, img2.n_rows);
+  BOOST_REQUIRE_EQUAL(im1.n_cols, im2.n_cols);
+  BOOST_REQUIRE_EQUAL(im1.n_rows, im2.n_rows);
 
-  for (size_t i = 0; i < img1.n_elem; ++i)
-    BOOST_REQUIRE_EQUAL(img1[i], img2[i]);
+  for (size_t i = 0; i < im1.n_elem; ++i)
+    BOOST_REQUIRE_EQUAL(im1[i], im2[i]);
 }
 
 /**
@@ -130,26 +130,25 @@ BOOST_AUTO_TEST_CASE(SaveMultipleImageTest)
 {
   data::Image loadAndSave;
 
-  arma::Mat<unsigned char> img;
+  arma::Mat<unsigned char> im;
   size_t height, width, channels;
   std::vector<std:: string> files{"test_image.png",
                                   "test_image.png"};
 
-  BOOST_REQUIRE(loadAndSave.Load(files, img) == true);
-  BOOST_REQUIRE_EQUAL(img.n_rows, 50 * 50 * 3); // width * height * channels.
-  BOOST_REQUIRE_EQUAL(img.n_cols, files.size());
+  BOOST_REQUIRE(loadAndSave.Load(files, im, height, width, channels) == true);
+  BOOST_REQUIRE_EQUAL(im.n_rows, 50 * 50 * 3); // width * height * channels.
+  BOOST_REQUIRE_EQUAL(im.n_cols, files.size());
 
   std::vector<std:: string> sfiles{"saved_image1.png",
                                    "saved_image2.png"};
 
-  BOOST_REQUIRE(loadAndSave.Save(sfiles, 50, 50, 3,
-      img) == true);
+  BOOST_REQUIRE(loadAndSave.Save(sfiles, im, 50, 50, 3) == true);
 
   // Retrieve the images saved and cross-check the dimensions.
-  img.clear();
-  BOOST_REQUIRE(loadAndSave.Load(sfiles, img) == true);
-  BOOST_REQUIRE_EQUAL(img.n_rows, 50 * 50 * 3); // width * height * channels.
-  BOOST_REQUIRE_EQUAL(img.n_cols, sfiles.size());
+  im.clear();
+  BOOST_REQUIRE(loadAndSave.Load(sfiles, im, height, width, channels) == true);
+  BOOST_REQUIRE_EQUAL(im.n_rows, 50 * 50 * 3); // width * height * channels.
+  BOOST_REQUIRE_EQUAL(im.n_cols, sfiles.size());
 }
 
 BOOST_AUTO_TEST_SUITE_END();
