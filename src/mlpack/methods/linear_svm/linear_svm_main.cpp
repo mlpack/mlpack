@@ -30,8 +30,8 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     "future use; or, a pre-trained model can be used to classify new points.",
     // Long description.
     "An implementation of LinearSVM using either the "
-    "L-BFGS optimizer or ParallelSGD (stochastic gradient descent).  This solves the "
-    "classification problem."
+    "L-BFGS optimizer or ParallelSGD (stochastic gradient descent)."
+    "  This solves the classification problem."
     "\n\n"
     "This program allows loading a LinearSVM model (via the " +
     PRINT_PARAM_STRING("input_model") + " parameter) "
@@ -71,8 +71,8 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     "optimizers, but the C++ interface must be used to access these."
     "\n\n"
     "We can only use ParallelSGD when OPENMP is specified.  "
-    "For ParallelSGD, an iteration refers to a single point. So to take a single"
-    " pass over the dataset with ParallelSGD, " +
+    "For ParallelSGD, an iteration refers to a single point. So to take"
+    " a single pass over the dataset with ParallelSGD, " +
     PRINT_PARAM_STRING("max_iterations") +
     " should be set to the number of points in the dataset."
     "\n\n"
