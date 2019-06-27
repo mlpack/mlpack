@@ -288,10 +288,11 @@ template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true)
+          const bool fatal,
+          const bool transpose)
 {
-  return Load({filename}, matrix, info, fatal, transpose);
+  std::vector<std::string> files{filename};
+  return Load(files, matrix, info, fatal, transpose);
 }
 
 // Image loading API for multiple files.
@@ -303,16 +304,16 @@ bool Load(const std::vector<std::string>& files,
           const bool transpose)
 {
   Timer::Start("loading_image");
-
+  bool status;
   try
   {
     Image loader;
-    bool status = Load(files, matrix, info.width, info.height, info.channels,
-        info.flipVertical);
+    status = loader.Load(files, matrix, info.width, info.height,
+        info.channels, info.flipVertical);
 
     // We transpose by default. So, un-transpose if necessary.
     if (!transpose)
-      inplace_transpose(matrix);
+      matrix = arma::trans(matrix);
   }
   catch (std::exception& e)
   {
@@ -326,7 +327,7 @@ bool Load(const std::vector<std::string>& files,
   }
   
   Timer::Start("loading_image");
-  return true;
+  return status;
 }
 
 // Image saving API.
@@ -335,9 +336,10 @@ bool Save(const std::string& filename,
           const arma::Mat<eT>& matrix,
           ImageInfo& info,
           const bool fatal,
-          bool transpose = true)
+          bool transpose)
 {
-  return Save({filename}, matrix, info, fatal, transpose);
+  std::vector<std::string> files{filename};
+  return Save(files, matrix, info, fatal, transpose);
 }
 
 // Image saving API for multiple files.
@@ -349,16 +351,17 @@ bool Save(const std::vector<std::string>& files,
           bool transpose)
 {
   Timer::Start("saving_image");
+  bool status;
 
   // We transpose by default. So, un-transpose if necessary.
   if (!transpose)
-    inplace_transpose(matrix);
+    matrix = arma::trans(matrix);
 
   try
   {
     Image saver;
-    bool status = Save(files, matrix, info.width, info.height, info.channels,
-        info.flipVertical, info.quality);
+    status = saver.Save(files, matrix, info.width, info.height,
+        info.channels, info.flipVertical, info.quality);
   }
   catch (std::exception& e)
   {
@@ -372,7 +375,7 @@ bool Save(const std::vector<std::string>& files,
   }
   
   Timer::Start("saving_image");
-  return true;
+  return status;
 }
 
 } // namespace data

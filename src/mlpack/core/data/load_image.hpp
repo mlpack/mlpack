@@ -215,14 +215,14 @@ template<typename eT>
 bool Save(const std::string& filename,
           const arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal,
+          const bool fatal = false,
           bool transpose = true);
 
 template<typename eT>
 bool Save(const std::vector<std::string>& files,
           const arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal,
+          const bool fatal = false,
           bool transpose = true);
 
 } // namespace data
