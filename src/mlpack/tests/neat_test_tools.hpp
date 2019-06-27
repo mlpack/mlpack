@@ -21,6 +21,7 @@
 using namespace mlpack;
 using namespace mlpack::neat;
 using namespace mlpack::ann;
+using namespace mlpack::rl;
 
 // A class that defines the XOR task.
 class XORTask
@@ -137,7 +138,7 @@ class DiscreteRLTask
 // class DPVTask
 // {
 //  public:
-//   DPVTask(const ContinuousMultiplePoleCart env)::environment(env)
+//   DPVTask(const ContinuousMultiplePoleCart env) : environment(env)
 //   { /* Nothing to do here */ }
 
 //   double Evaluate(Genome<HardSigmoidFunction>& genome)
@@ -154,7 +155,7 @@ class DiscreteRLTask
 
 //     double fitnessDenom = 0;
 //     int timeStep = 0;
-//     while (!environment.IsTerminal())
+//     while (!environment.IsTerminal(state))
 //     {
 //       timeStep++;
 
@@ -167,7 +168,7 @@ class DiscreteRLTask
 
 //       // Update the state of the genome for the next step.
 //       inputMatrix = state.Data();
-//       arma::vec input = {inputMatrix[0, 0] / 2.4, inputMatrix[1, 0] / 100,
+//       arma::vec input = {inputMatrix[0][0] / 2.4, inputMatrix[1 0] / 100,
 //           inputMatrix[0, 1] / angleThreshold, inputMatrix[1, 1] / 100,
 //           inputMatrix[0, 2] / angleThreshold, inputMatrix[1, 2] / 100};
 //       output = genome.Evaluate(input);
@@ -178,8 +179,8 @@ class DiscreteRLTask
 //       if (timeStep >= 100)
 //       {
 //         int pow = timeStep - 100;
-//         arma::vec temp = {inputMatrix[0, 0], inputMatrix[1, 0],
-//             inputMatrix[0, 1], inputMatrix[1, 1]};
+//         arma::vec temp = {inputMatrix[0][0], inputMatrix[1][0],
+//             inputMatrix[0][1], inputMatrix[1][1]};
 //         fitnessDenom += arma::accu(arma::pow(temp, pow));
 //       }
 //     }
@@ -194,19 +195,19 @@ class DiscreteRLTask
 class DPNVTask
 {
  public:
-  DPNVTask(const ContinuousMultiplePoleCart& env)::environment(env)
+  DPNVTask(const ContinuousMultiplePoleCart& env) : environment(env)
   { /* Nothing to do here */ }
 
   double Evaluate(Genome<HardSigmoidFunction>& genome)
   {
     ContinuousMultiplePoleCart::State state = environment.InitialSample();
     arma::mat inputMatrix = state.Data();
-    arma::vec input = inputMatrix.row(0);
+    arma::vec input = {inputMatrix(0, 0), inputMatrix(0, 1), inputMatrix(0, 2)};
     arma::vec output = genome.Evaluate(input);
 
     double fitnessDenom = 0;
     int timeStep = 0;
-    while (!environment.IsTerminal())
+    while (!environment.IsTerminal(state))
     {
       timeStep++;
 
@@ -219,7 +220,7 @@ class DPNVTask
 
       // Update the state of the genome for the next step.
       inputMatrix = state.Data();
-      input = inputMatrix.row(0);
+      input = {inputMatrix(0, 0), inputMatrix(0, 1), inputMatrix(0, 2)};
 
       // Scale the input between -1 and 1.
       input[0] /= 2.4;
@@ -233,11 +234,13 @@ class DPNVTask
       if (timeStep >= 100)
       {
         int pow = timeStep - 100;
-        arma::vec temp = {inputMatrix[0, 0], inputMatrix[1, 0],
-            inputMatrix[0, 1], inputMatrix[1, 1]};
+        arma::vec temp = {inputMatrix(0, 0), inputMatrix(1, 0),
+            inputMatrix(0, 1), inputMatrix(1, 1)};
         fitnessDenom += arma::accu(arma::pow(temp, pow));
       }
     }
+    if (fitnessDenom == 0)
+      fitnessDenom = 0.675;
     return timeStep / 10000 + 0.675 / fitnessDenom;
   }
 

@@ -190,7 +190,7 @@ BOOST_AUTO_TEST_CASE(NEATDoublePoleCartNoVelocitiesTest)
       poleLengths, poleMasses);
   DPNVTask task(env);
   NEAT<DPNVTask, HardSigmoidFunction, RankSelection> model
-        (task, 2, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, true);
+        (task, 3, 1, 100, 100, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2);
 
   // Find the best genome and it's fitness.
   Genome<HardSigmoidFunction> bestGenome = model.Train();
