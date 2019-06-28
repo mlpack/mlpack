@@ -143,7 +143,8 @@ BOOST_AUTO_TEST_CASE(SimpleMountainCarTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
 {
-  CartPole task = CartPole();
+  CartPole task = CartPole(9.8, 1, 0.1, 0.5, 10, 0.02, 12 * 2 * 3.1416 / 360,
+      2.4, 0, 5);
 
   CartPole::State state = task.InitialSample();
   CartPole::Action action = CartPole::Action::backward;
@@ -151,6 +152,13 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
 
   BOOST_REQUIRE_EQUAL(reward, 1.0);
   BOOST_REQUIRE(!task.IsTerminal(state));
+
+  while (!task.IsTerminal(state))
+    task.Sample(state, action, state);
+
+  // Check if the number of steps performed is the same as the maximum allowed.
+  BOOST_REQUIRE_EQUAL(task.TimeStepsPerformed(), 5);
+
   BOOST_REQUIRE_EQUAL(2, CartPole::Action::size);
 }
 
@@ -162,7 +170,8 @@ BOOST_AUTO_TEST_CASE(MultiplePoleCartTest)
 {
   arma::vec poleLengths = {1, 0.5};
   arma::vec poleMasses = {1, 1};
-  MultiplePoleCart task = MultiplePoleCart(2, poleLengths, poleMasses);
+  MultiplePoleCart task = MultiplePoleCart(2, poleLengths, poleMasses, 9.8, 1,
+      10, 0.02, 12 * 2 * 3.1416 / 360, 2.4, 0, 5);
 
   MultiplePoleCart::State state = task.InitialSample();
   MultiplePoleCart::Action action = MultiplePoleCart::Action::backward;
@@ -170,6 +179,12 @@ BOOST_AUTO_TEST_CASE(MultiplePoleCartTest)
 
   BOOST_REQUIRE_EQUAL(reward, 1.0);
   BOOST_REQUIRE(!task.IsTerminal(state));
+
+  while (!task.IsTerminal(state))
+    task.Sample(state, action, state);
+
+  // Check if the number of steps performed is the same as the maximum allowed.
+  BOOST_REQUIRE_EQUAL(task.TimeStepsPerformed(), 5);
   BOOST_REQUIRE_EQUAL(2, MultiplePoleCart::Action::size);
 }
 
@@ -179,10 +194,12 @@ BOOST_AUTO_TEST_CASE(MultiplePoleCartTest)
  */
 BOOST_AUTO_TEST_CASE(ContinuousMultiplePoleCartTest)
 {
+  arma::arma_rng::set_seed_random();
+
   arma::vec poleLengths = {1, 0.5};
   arma::vec poleMasses = {1, 1};
-  ContinuousMultiplePoleCart task = ContinuousMultiplePoleCart(2,
-      poleLengths, poleMasses);
+  ContinuousMultiplePoleCart task = ContinuousMultiplePoleCart(2, poleLengths,
+      poleMasses, 9.8, 1, 0.02, 12 * 2 * 3.1416 / 360, 2.4, 0, 5);
 
   ContinuousMultiplePoleCart::State state = task.InitialSample();
   ContinuousMultiplePoleCart::Action action;
@@ -191,6 +208,12 @@ BOOST_AUTO_TEST_CASE(ContinuousMultiplePoleCartTest)
 
   BOOST_REQUIRE_EQUAL(reward, 1.0);
   BOOST_REQUIRE(!task.IsTerminal(state));
+
+  while (!task.IsTerminal(state))
+    task.Sample(state, action, state);
+
+  // Check if the number of steps performed is the same as the maximum allowed.
+  BOOST_REQUIRE_EQUAL(task.TimeStepsPerformed(), 5);
   BOOST_REQUIRE_EQUAL(1, action.size);
 }
 

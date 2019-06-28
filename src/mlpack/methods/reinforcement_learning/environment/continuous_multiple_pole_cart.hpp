@@ -159,6 +159,9 @@ class ContinuousMultiplePoleCart
                 const Action& action,
                 State& nextState)
   {
+    // Update the number of time steps performed.
+    timeStepsPerformed++;
+
     // Calculate acceleration.
     double totalForce = action.action;
     double totalMass = massCart;
