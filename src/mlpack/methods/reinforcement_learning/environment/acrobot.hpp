@@ -105,7 +105,7 @@ class Acrobot
    * @param linkMass2 The mass of link 2.
    * @param linkCom1 The position of the center of mass of link 1.
    * @param linkCom2 The position of the center of mass of link 2.
-   * @param linkMoi The moments of inertia for both link.
+   * @param linkMoi The moments of inertia for both links.
    * @param maxVel1 The max angular velocity of link1.
    * @param maxVel2 The max angular velocity of link2.
    * @param dt The differential value.
@@ -382,12 +382,7 @@ class Acrobot
 
   //! Locally-stored number of time steps performed.
   size_t timeStepsPerformed;
-}; // class Acrobot
-
-/**
- * Add an alias for backward compatibility.
- */
-typedef Acrobot Acrobat;
+};
 
 } // namespace rl
 } // namespace mlpack
