@@ -124,8 +124,7 @@ void BatchNorm<InputDataType, OutputDataType>::Backward(
 
   // Step 3: sum (dl / dxhat * -1 / stdInv) + variance *
   // (sum -2 * (x - mu)) / m.
-  g.each_col() += (arma::sum(norm.each_col() % -stdInv, 1) + (var %
-      arma::mean(-2 * inputMean, 1))) / input.n_cols;
+  g.each_col() += arma::sum(norm.each_col() % -stdInv, 1) / input.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>
