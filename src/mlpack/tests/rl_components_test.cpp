@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
 
   BOOST_REQUIRE(!task.IsTerminal(state));
 
-  while(!task.IsTerminal(state))
+  while (!task.IsTerminal(state))
     task.Sample(state, action, state);
 
   // Check if the number of steps performed is the same as the maximum allowed.
