@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
   BOOST_REQUIRE(reward <= 100.0);
   BOOST_REQUIRE(!task.IsTerminal(state));
 
-  while(!task.IsTerminal(state))
+  while (!task.IsTerminal(state))
     task.Sample(state, action, state);
 
   // Check if the number of steps performed is the same as the maximum allowed.
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(SimpleAcrobotTest)
   BOOST_REQUIRE_EQUAL(reward, -1.0);
   BOOST_REQUIRE(!task.IsTerminal(state));
 
-  while(!task.IsTerminal(state))
+  while (!task.IsTerminal(state))
     task.Sample(state, action, state);
 
   // Check if the number of steps performed is the same as the maximum allowed.
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(SimpleMountainCarTest)
   BOOST_REQUIRE_EQUAL(reward, -1.0);
   BOOST_REQUIRE(!task.IsTerminal(state));
 
-  while(!task.IsTerminal(state))
+  while (!task.IsTerminal(state))
     task.Sample(state, action, state);
 
   // Check if the number of steps performed is the same as the maximum allowed.
