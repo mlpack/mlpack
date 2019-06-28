@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_SUITE(RLComponentsTest)
  */
 BOOST_AUTO_TEST_CASE(SimplePendulumTest)
 {
-  Pendulum task = Pendulum();
+  Pendulum task = Pendulum(8, 2, 0.05, M_PI/12, 0, 5);
 
   Pendulum::State state = task.InitialSample();
   Pendulum::Action action;
@@ -49,6 +49,12 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
 
   BOOST_REQUIRE(!task.IsTerminal(state));
 
+  while(!task.IsTerminal(state))
+    task.Sample(state, action, state);
+
+  // Check if the number of steps performed is the same as the maximum allowed.
+  BOOST_REQUIRE_EQUAL(task.TimeStepsPerformed(), 5);
+
   // The action is simply the torque. Check if dimension is 1.
   BOOST_REQUIRE_EQUAL(1, action.size);
 }
@@ -59,7 +65,8 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
 {
-  ContinuousMountainCar task = ContinuousMountainCar();
+  ContinuousMountainCar task = ContinuousMountainCar(-1.2, 0.6, 0.45, -0.07,
+      0.07, 0.0015, 100, 5);
 
   ContinuousMountainCar::State state = task.InitialSample();
   ContinuousMountainCar::Action action;
@@ -68,6 +75,14 @@ BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
   // Maximum reward possible is 100.
   BOOST_REQUIRE(reward <= 100.0);
   BOOST_REQUIRE(!task.IsTerminal(state));
+
+  while(!task.IsTerminal(state))
+    task.Sample(state, action, state);
+
+  // Check if the number of steps performed is the same as the maximum allowed.
+  BOOST_REQUIRE_EQUAL(task.TimeStepsPerformed(), 5);
+
+  // Check if the size of the action space is 1.
   BOOST_REQUIRE_EQUAL(1, action.size);
 }
 
@@ -77,7 +92,8 @@ BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleAcrobotTest)
 {
-  Acrobot task = Acrobot();
+  Acrobot task = Acrobot(9.81, 1, 1, 1, 1, 0.5, 0.5, 1, 4 * M_PI, 9 * M_PI,
+      0.2, 0, 5);
 
   Acrobot::State state = task.InitialSample();
   Acrobot::Action action = Acrobot::Action::negativeTorque;
@@ -85,6 +101,14 @@ BOOST_AUTO_TEST_CASE(SimpleAcrobotTest)
 
   BOOST_REQUIRE_EQUAL(reward, -1.0);
   BOOST_REQUIRE(!task.IsTerminal(state));
+
+  while(!task.IsTerminal(state))
+    task.Sample(state, action, state);
+
+  // Check if the number of steps performed is the same as the maximum allowed.
+  BOOST_REQUIRE_EQUAL(task.TimeStepsPerformed(), 5);
+
+  // Check if the size of the action space is 3.
   BOOST_REQUIRE_EQUAL(3, Acrobot::Action::size);
 }
 
@@ -94,7 +118,7 @@ BOOST_AUTO_TEST_CASE(SimpleAcrobotTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleMountainCarTest)
 {
-  MountainCar task = MountainCar();
+  MountainCar task = MountainCar(-1.2, 0.6, 0.5, -0.07, 0.07, 0, 5);
 
   MountainCar::State state = task.InitialSample();
   MountainCar::Action action = MountainCar::Action::backward;
@@ -102,6 +126,14 @@ BOOST_AUTO_TEST_CASE(SimpleMountainCarTest)
 
   BOOST_REQUIRE_EQUAL(reward, -1.0);
   BOOST_REQUIRE(!task.IsTerminal(state));
+
+  while(!task.IsTerminal(state))
+    task.Sample(state, action, state);
+
+  // Check if the number of steps performed is the same as the maximum allowed.
+  BOOST_REQUIRE_EQUAL(task.TimeStepsPerformed(), 5);
+
+  // Check if the size of the action space is 3.
   BOOST_REQUIRE_EQUAL(3, MountainCar::Action::size);
 }
 
