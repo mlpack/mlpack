@@ -312,7 +312,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
 {
   // New genome's genes.
   std::vector<ConnectionGene> newConnGeneList;
-  bool equalFitness = std::abs(gen1.Fitness() - gen2.Fitness()) < 0.001;
+  bool equalFitness = std::abs(gen1.Fitness() - gen2.Fitness()) < 0;
   if (!equalFitness || isAcyclic)
   {
     Genome<ActivationFunction> lessFitGenome = gen1;

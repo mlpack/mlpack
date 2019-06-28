@@ -40,7 +40,7 @@ class MultiplePoleCart
      */
     State(const size_t numPoles)
     {
-      data = arma::zeros<arma::mat>(dimension, numPoles);
+      data = arma::zeros<arma::mat>(dimension, numPoles + 1);
     }
 
     /**
@@ -118,7 +118,7 @@ class MultiplePoleCart
                    const double massCart = 1.0,
                    const double forceMag = 10.0,
                    const double tau = 0.02,
-                   const double thetaThresholdRadians = 12 * 2 * 3.1416 / 360,
+                   const double thetaThresholdRadians = 36 * 2 * 3.1416 / 360,
                    const double xThreshold = 2.4,
                    const double doneReward = 0.0) :
       poleNum(poleNum),
@@ -162,23 +162,23 @@ class MultiplePoleCart
     double totalMass = massCart;
     for (size_t i = 0; i < poleNum; i++)
     {
-      double poleOmega = state.AngularVelocity(i);
-      double sinTheta = sin(state.Angle(i));
+      double poleOmega = state.AngularVelocity(i + 1);
+      double sinTheta = sin(state.Angle(i + 1));
       totalForce += (poleMasses[i] * poleLengths[i] * poleOmega * poleOmega *
-          sinTheta) + 0.75 * poleMasses[i] * gravity * sin(2 * state.Angle(i))
+          sinTheta) + 0.75 * poleMasses[i] * gravity * sin(2 * state.Angle(i + 1))
           / 2;
       totalMass += poleMasses[i] * (0.25 + 0.75 * sinTheta * sinTheta);
     }
     double xAcc = totalForce / totalMass;
 
     // Update states of the poles.
-    for (size_t i = 0; i < poleNum; i++)
+    for (size_t i = 1; i <= poleNum; i++)
     {
       double sinTheta = sin(state.Angle(i));
       double cosTheta = cos(state.Angle(i));
       nextState.Angle(i) = state.Angle(i) + tau * state.AngularVelocity(i);
       nextState.AngularVelocity(i) = state.AngularVelocity(i) - tau * 0.75 *
-          (xAcc * cosTheta + gravity * sinTheta) / poleLengths[i];
+          (xAcc * cosTheta + gravity * sinTheta) / poleLengths[i - 1];
     }
 
     // Update state of the cart.
@@ -220,7 +220,7 @@ class MultiplePoleCart
    */
   State InitialSample() const
   {
-    return State((arma::randu<arma::mat>(2, poleNum) - 0.5) / 10.0);
+    return State((arma::randu<arma::mat>(2, poleNum + 1) - 0.5) / 10.0);
   }
 
   /**
@@ -231,7 +231,7 @@ class MultiplePoleCart
    */
   bool IsTerminal(const State& state) const
   {
-    for (size_t i = 0; i < poleNum; i++)
+    for (size_t i = 1; i <= poleNum; i++)
       if (std::abs(state.Angle(i)) > thetaThresholdRadians)
         return true;
     return std::abs(state.Position()) > xThreshold;

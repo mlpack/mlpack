@@ -195,12 +195,12 @@ class DiscreteRLTask
 class DPNVTask
 {
  public:
-  DPNVTask(const ContinuousMultiplePoleCart& env) : environment(env)
+  DPNVTask(const MultiplePoleCart& env) : environment(env)
   { /* Nothing to do here */ }
 
   double Evaluate(Genome<HardSigmoidFunction>& genome)
   {
-    ContinuousMultiplePoleCart::State state = environment.InitialSample();
+    MultiplePoleCart::State state = environment.InitialSample();
     arma::mat inputMatrix = state.Data();
     arma::vec input = {inputMatrix(0, 0), inputMatrix(0, 1), inputMatrix(0, 2)};
     arma::vec output = genome.Evaluate(input);
@@ -212,8 +212,12 @@ class DPNVTask
       timeStep++;
 
       // Choose an action.
-      ContinuousMultiplePoleCart::Action action;
-      action.action[0] = output[0];
+      // MultiplePoleCart::Action action;
+      // action.action[0] = output[0];
+      const int size = MultiplePoleCart::Action::size;
+      output = arma::clamp(output, 0, size - 1);
+      int actionInt = std::round(output[0]);
+      MultiplePoleCart::Action action = static_cast<MultiplePoleCart::Action>(actionInt);
 
       // Use the current action to get the next state.
       environment.Sample(state, action, state);
@@ -221,31 +225,36 @@ class DPNVTask
       // Update the state of the genome for the next step.
       inputMatrix = state.Data();
       input = {inputMatrix(0, 0), inputMatrix(0, 1), inputMatrix(0, 2)};
-
       // Scale the input between -1 and 1.
       input[0] /= 2.4;
-      input[1] /= 12 * 2 * 3.1416 / 360;
-      input[2] /= 12 * 2 * 3.1416 / 360;
+      input[1] /= 36 * 2 * 3.1416 / 360;
+      input[2] /= 36 * 2 * 3.1416 / 360;
       output = genome.Evaluate(input);
 
-      if (timeStep >= 1000)
-        continue;
+      // if (timeStep >= 1000)
+      //   continue;
 
-      if (timeStep >= 100)
-      {
-        int pow = timeStep - 100;
-        arma::vec temp = {inputMatrix(0, 0), inputMatrix(1, 0),
-            inputMatrix(0, 1), inputMatrix(1, 1)};
-        fitnessDenom += arma::accu(arma::pow(temp, pow));
-      }
+      // if (timeStep >= 100)
+      // {
+      //   int pow = timeStep - 100;
+      //   arma::vec temp = {inputMatrix(0, 0), inputMatrix(1, 0),
+      //       inputMatrix(0, 1), inputMatrix(1, 1)};
+      //   fitnessDenom += arma::accu(arma::pow(temp, pow));
+      // }
     }
+    double fitness = 0;
     if (fitnessDenom == 0)
-      fitnessDenom = 0.675;
-    return timeStep / 10000 + 0.675 / fitnessDenom;
+      fitness = (double)timeStep;
+    else
+    {
+      fitness = (double)timeStep + 0.675 / fitnessDenom;
+    }
+    std::cout << "Timesteps: " << timeStep << " Fitness: " << fitness << std::endl;
+    return fitness;
   }
 
  private:
-  ContinuousMultiplePoleCart environment;
+  MultiplePoleCart environment;
 };
 
 #endif
