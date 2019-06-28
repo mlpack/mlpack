@@ -95,6 +95,7 @@ class Pendulum
    * @param dt The differential value.
    * @param angleThreshold The region about the upright position where the
    *    state is considered terminal.
+   * @param doneReward The reward recieved by the agent on success.
    * @param maxTimeSteps The number of time steps after which the episode
    *    terminates. If the value is 0, there is no limit.
    */
@@ -103,13 +104,13 @@ class Pendulum
            const double dt = 0.05,
            const double angleThreshold = M_PI / 12,
            const double doneReward = 0.0,
-           const size_t maxTimeSteps = 0) :
+           const size_t maxSteps = 0) :
       maxAngularVelocity(maxAngularVelocity),
       maxTorque(maxTorque),
       dt(dt),
       angleThreshold(angleThreshold),
       doneReward(doneReward),
-      maxTimeSteps(maxTimeSteps),
+      maxSteps(maxSteps),
       timeStepsPerformed(0)
   { /* Nothing to do here */ }
 
@@ -158,7 +159,7 @@ class Pendulum
     bool done = IsTerminal(nextState);
 
     // Do not reward the agent if time ran out.
-    if (done && maxTimeSteps != 0 && timeStepsPerformed >= maxTimeSteps)
+    if (done && maxSteps != 0 && timeStepsPerformed >= maxSteps)
       return 0;
     else if (done)
       return doneReward;
@@ -197,7 +198,7 @@ class Pendulum
   }
 
   /**
-   * This function calculates the normalized anlge for a particular theta.
+   * This function calculates the normalized angle for a particular theta.
    *
    * @param theta The un-normalized angle.
    */
@@ -208,14 +209,14 @@ class Pendulum
   }
 
   /**
-   * Whether given state is a terminal state.
+   * This function checks if the pendulum has reaches a terminal state
    * 
    * @param state desired state.
    * @return true if state is a terminal state, otherwise false.
    */
   bool IsTerminal(const State& state) const
   {
-    if (maxTimeSteps != 0 && timeStepsPerformed >= maxTimeSteps)
+    if (maxSteps != 0 && timeStepsPerformed >= maxSteps)
     {
       Log::Info << "Episode terminated due to the maximum number of time steps"
           "being taken.";
@@ -229,6 +230,9 @@ class Pendulum
     }
     return false;
   }
+
+  //! Get the number of time steps performed
+  size_t TimeStepsPerformed() const { return timeStepsPerformed; }
 
  private:
   //! Locally-stored maximum legal angular velocity.
@@ -247,7 +251,7 @@ class Pendulum
   double doneReward;
 
   //! Locally-stored maximum number of time steps.
-  size_t maxTimeSteps;
+  size_t maxSteps;
 
   //! Locally-stored number of time steps performed.
   size_t timeStepsPerformed;

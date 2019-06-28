@@ -28,10 +28,10 @@ namespace rl{
 class Acrobot
 {
  public:
-   /*
-    * Implementation of Acrobot State. Each State is a tuple vector
-    * (theta1, thetha2, angular velocity 1, angular velocity 2).
-    */
+  /*
+   * Implementation of Acrobot State. Each State is a tuple vector
+   * (theta1, thetha2, angular velocity 1, angular velocity 2).
+   */
   class State
   {
    public:
@@ -95,21 +95,24 @@ class Acrobot
     size
   };
 
-   /**
-    * Construct a Acrobot instance using the given constants.
-    *
-    * @param gravity The gravity parameter.
-    * @param linkLength1 The length of link 1.
-    * @param linkLength2 The length of link 2.
-    * @param linkMass1 The mass of link 1.
-    * @param linkMass2 The mass of link 2.
-    * @param linkCom1 The position of the center of mass of link 1.
-    * @param linkCom2 The position of the center of mass of link 2.
-    * @param linkMoi The moments of inertia for both link.
-    * @param maxVel1 The max angular velocity of link1.
-    * @param maxVel2 The max angular velocity of link2.
-    * @param dt The differential value.
-    */
+  /**
+   * Construct a Acrobot instance using the given constants.
+   *
+   * @param gravity The gravity parameter.
+   * @param linkLength1 The length of link 1.
+   * @param linkLength2 The length of link 2.
+   * @param linkMass1 The mass of link 1.
+   * @param linkMass2 The mass of link 2.
+   * @param linkCom1 The position of the center of mass of link 1.
+   * @param linkCom2 The position of the center of mass of link 2.
+   * @param linkMoi The moments of inertia for both link.
+   * @param maxVel1 The max angular velocity of link1.
+   * @param maxVel2 The max angular velocity of link2.
+   * @param dt The differential value.
+   * @param doneReward The reward recieved by the agent on success.
+   * @param maxTimeSteps The number of time steps after which the episode
+   *    terminates. If the value is 0, there is no limit.
+   */
   Acrobot(const double gravity = 9.81,
           const double linkLength1 = 1.0,
           const double linkLength2 = 1.0,
@@ -121,7 +124,8 @@ class Acrobot
           const double maxVel1 = 4 * M_PI,
           const double maxVel2 = 9 * M_PI,
           const double dt = 0.2,
-          const double doneReward = 0) :
+          const double doneReward = 0,
+          const size_t maxSteps = 0) :
       gravity(gravity),
       linkLength1(linkLength1),
       linkLength2(linkLength2),
@@ -133,7 +137,9 @@ class Acrobot
       maxVel1(maxVel1),
       maxVel2(maxVel2),
       dt(dt),
-      doneReward(doneReward)
+      doneReward(doneReward),
+      maxSteps(maxSteps),
+      timeStepsPerformed(0)
   { /* Nothing to do here */ }
 
   /**
@@ -147,8 +153,11 @@ class Acrobot
    */
   double Sample(const State& state,
                 const Action& action,
-                State& nextState) const
+                State& nextState)
   {
+    // Update the number of time steps performed.
+    timeStepsPerformed++;
+
     // Make a vector to estimate nextstate.
     arma::colvec currentState = {state.Theta1(), state.Theta2(),
         state.AngularVelocity1(), state.AngularVelocity2()};
@@ -158,19 +167,22 @@ class Acrobot
     nextState.Theta1() = Wrap(currentNextState[0], -M_PI, M_PI);
 
     nextState.Theta2() = Wrap(currentNextState[1], -M_PI, M_PI);
-    //! The value of angular velocity is bounded in min and max value.
 
+    //! The value of angular velocity is bounded in min and max value.
     nextState.AngularVelocity1() = std::min(
         std::max(currentNextState[2], -maxVel1), maxVel1);
     nextState.AngularVelocity2() = std::min(
         std::max(currentNextState[3], -maxVel2), maxVel2);
-    /**
-     * If the acrobot reaches a terminal state, it should be given a positive
-     * reward. This will ensure that the agent learns the goal of the game.
-     */
+
+    // Check if the episode has terminated.
     bool done = IsTerminal(nextState);
-    if (done)
+
+    // Do not reward the agent if time ran out.
+    if (done && maxSteps != 0 && timeStepsPerformed >= maxSteps)
+      return 0;
+    else if (done)
       return doneReward;
+
     return -1;
   };
 
@@ -183,7 +195,7 @@ class Acrobot
    * @param action The action taken.
    * @param nextState The next state.
    */
-  double Sample(const State& state, const Action& action) const
+  double Sample(const State& state, const Action& action)
   {
     State nextState;
     return Sample(state, action, nextState);
@@ -192,8 +204,9 @@ class Acrobot
   /**
    * This function does random initialization of state space.
    */
-  State InitialSample() const
+  State InitialSample()
   {
+    timeStepsPerformed = 0;
     return State((arma::randu<arma::colvec>(4) - 0.5) / 5.0);
   }
 
@@ -201,11 +214,23 @@ class Acrobot
    * This function checks if the acrobot has reached the terminal state.
    *
    * @param state The current State.
+   * @return true if state is a terminal state, otherwise false.   * 
    */
   bool IsTerminal(const State& state) const
   {
-    return bool (-std::cos(state.Theta1())-std::cos(state.Theta1() +
-        state.Theta2()) > 1.0);
+    if (maxSteps != 0 && timeStepsPerformed >= maxSteps)
+    {
+      Log::Info << "Episode terminated due to the maximum number of time steps"
+          "being taken.";
+      return true;
+    }
+    else if (bool (-std::cos(state.Theta1())-std::cos(state.Theta1() +
+        state.Theta2()) > 1.0))
+    {
+      Log::Info << "Episode terminated due to agent succeeding.";
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -295,7 +320,6 @@ class Acrobot
   }
 
   /**
-   *
    * This function calls the RK4 iterative method to estimate the next state
    * based on given ordinary differential equation.
    *
@@ -312,6 +336,9 @@ class Acrobot
 
     return nextState;
   };
+
+  //! Get the number of time steps performed
+  size_t TimeStepsPerformed() const { return timeStepsPerformed; }
 
  private:
   //! Locally-stored gravity.
@@ -349,6 +376,12 @@ class Acrobot
 
   //! Locally-stored done reward.
   double doneReward;
+
+  //! Locally-stored maximum number of time steps.
+  size_t maxSteps;
+
+  //! Locally-stored number of time steps performed.
+  size_t timeStepsPerformed;
 }; // class Acrobot
 
 /**

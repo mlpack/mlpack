@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
 {
-  const ContinuousMountainCar task = ContinuousMountainCar();
+  ContinuousMountainCar task = ContinuousMountainCar();
 
   ContinuousMountainCar::State state = task.InitialSample();
   ContinuousMountainCar::Action action;
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleAcrobotTest)
 {
-  const Acrobot task = Acrobot();
+  Acrobot task = Acrobot();
 
   Acrobot::State state = task.InitialSample();
   Acrobot::Action action = Acrobot::Action::negativeTorque;
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(SimpleAcrobotTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleMountainCarTest)
 {
-  const MountainCar task = MountainCar();
+  MountainCar task = MountainCar();
 
   MountainCar::State state = task.InitialSample();
   MountainCar::Action action = MountainCar::Action::backward;
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(SimpleMountainCarTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
 {
-  const CartPole task = CartPole();
+  CartPole task = CartPole();
 
   CartPole::State state = task.InitialSample();
   CartPole::Action action = CartPole::Action::backward;
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(MultiplePoleCartTest)
 {
   arma::vec poleLengths = {1, 0.5};
   arma::vec poleMasses = {1, 1};
-  const MultiplePoleCart task = MultiplePoleCart(2, poleLengths, poleMasses);
+  MultiplePoleCart task = MultiplePoleCart(2, poleLengths, poleMasses);
 
   MultiplePoleCart::State state = task.InitialSample();
   MultiplePoleCart::Action action = MultiplePoleCart::Action::backward;
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(ContinuousMultiplePoleCartTest)
 {
   arma::vec poleLengths = {1, 0.5};
   arma::vec poleMasses = {1, 1};
-  const ContinuousMultiplePoleCart task = ContinuousMultiplePoleCart(2,
+  ContinuousMultiplePoleCart task = ContinuousMultiplePoleCart(2,
       poleLengths, poleMasses);
 
   ContinuousMultiplePoleCart::State state = task.InitialSample();

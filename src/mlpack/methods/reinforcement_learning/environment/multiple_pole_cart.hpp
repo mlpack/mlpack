@@ -109,7 +109,9 @@ class MultiplePoleCart
    * @param tau The time interval.
    * @param thetaThresholdRadians The maximum angle.
    * @param xThreshold The maximum position.
-   * @param doneReward The reward recieved on termination.
+   * @param doneReward Reward recieved by agent on success.
+   * @param maxTimeSteps The number of time steps after which the episode
+   *    terminates. If the value is 0, there is no limit.
    */
   MultiplePoleCart(const size_t poleNum,
                    const arma::vec& poleLengths,
@@ -120,7 +122,8 @@ class MultiplePoleCart
                    const double tau = 0.02,
                    const double thetaThresholdRadians = 12 * 2 * 3.1416 / 360,
                    const double xThreshold = 2.4,
-                   const double doneReward = 0.0) :
+                   const double doneReward = 0.0,
+                   const size_t maxSteps = 0) :
       poleNum(poleNum),
       poleLengths(poleLengths),
       poleMasses(poleMasses),
@@ -130,7 +133,9 @@ class MultiplePoleCart
       tau(tau),
       thetaThresholdRadians(thetaThresholdRadians),
       xThreshold(xThreshold),
-      doneReward(doneReward)
+      doneReward(doneReward),
+      maxSteps(maxSteps),
+      timeStepsPerformed(0)
   {
     if (poleNum != poleLengths.n_elem)
     {
@@ -155,8 +160,11 @@ class MultiplePoleCart
    */
   double Sample(const State& state,
                 const Action& action,
-                State& nextState) const
+                State& nextState)
   {
+    // Update the number of time steps performed.
+    timeStepsPerformed++;
+
     // Calculate acceleration.
     double totalForce = action ? forceMag : -forceMag;
     double totalMass = massCart;
@@ -185,13 +193,15 @@ class MultiplePoleCart
     nextState.Position() = state.Position() + tau * state.Velocity();
     nextState.Velocity() = state.Velocity() + tau * xAcc;
 
-    /**
-     * It is important to note that if the cartpole is falling down, it should
-     * be penalized.
-     */
+    // Check if the episode has terminated.
     bool done = IsTerminal(nextState);
-    if (done)
+
+    // Do not reward agent if it failed.
+    if (done && maxSteps != 0 && timeStepsPerformed >= maxSteps)
       return doneReward;
+    else if (done)
+      return 0;
+
     /**
      * When done is false, it means that the cartpole has fallen down.
      * For this case the reward is 1.0.
@@ -207,7 +217,7 @@ class MultiplePoleCart
    * @param action The current action.
    * @return reward, it's always 1.0.
    */
-  double Sample(const State& state, const Action& action) const
+  double Sample(const State& state, const Action& action)
   {
     State nextState(poleNum);
     return Sample(state, action, nextState);
@@ -218,24 +228,44 @@ class MultiplePoleCart
    *
    * @return Initial state for each episode.
    */
-  State InitialSample() const
+  State InitialSample()
   {
+    timeStepsPerformed = 0;
     return State((arma::randu<arma::mat>(2, poleNum + 1) - 0.5) / 10.0);
   }
 
   /**
-   * Whether given state is a terminal state.
+   * This function checks if the car has reached the terminal state.
    *
    * @param state The desired state.
    * @return true if state is a terminal state, otherwise false.
    */
   bool IsTerminal(const State& state) const
   {
+    if (maxSteps != 0 && timeStepsPerformed >= maxSteps)
+    {
+      Log::Info << "Episode terminated due to the maximum number of time steps"
+          "being taken.";
+      return true;
+    }
+    if (std::abs(state.Position()) > xThreshold)
+    {
+      Log::Info << "Episode terminated due to cart crossing threshold";
+      return true;
+    }
     for (size_t i = 1; i <= poleNum; i++)
+    {
       if (std::abs(state.Angle(i)) > thetaThresholdRadians)
+      {
+        Log::Info << "Episode terminated due to pole falling";
         return true;
-    return std::abs(state.Position()) > xThreshold;
+      }
+    }
+    return false;
   }
+
+  //! Get the number of time steps performed
+  size_t TimeStepsPerformed() const { return timeStepsPerformed; }
 
  private:
   //! Locally-stored number of poles.
@@ -267,6 +297,12 @@ class MultiplePoleCart
 
   //! Locally-stored done reward.
   double doneReward;
+
+  //! Locally-stored maximum number of time steps.
+  size_t maxSteps;
+
+  //! Locally-stored number of time steps performed.
+  size_t timeStepsPerformed;
 };
 
 } // namespace rl
