@@ -12,7 +12,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
+#include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/gan/gan.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   Log::Info << trainData.n_rows << "--------" << trainData.n_cols << std::endl;
 
   // Create the Discriminator network
-  FFN<CrossEntropyError<> > discriminator;
+  FFN<SigmoidCrossEntropyError<> > discriminator;
   discriminator.Add<Convolution<> >(1, dNumKernels, 4, 4, 2, 2, 1, 1, 28, 28);
   discriminator.Add<LeakyReLU<> >(0.2);
   discriminator.Add<Convolution<> >(dNumKernels, 2 * dNumKernels, 4, 4, 2, 2,
@@ -90,10 +90,9 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   discriminator.Add<LeakyReLU<> >(0.2);
   discriminator.Add<Convolution<> >(8 * dNumKernels, 1, 4, 4, 1, 1,
       1, 1, 2, 2);
-  discriminator.Add<SigmoidLayer<> >();
 
   // Create the Generator network
-  FFN<CrossEntropyError<> > generator;
+  FFN<SigmoidCrossEntropyError<> > generator;
   generator.Add<TransposedConvolution<> >(noiseDim, 8 * dNumKernels, 2, 2,
       1, 1, 1, 1, 1, 1);
   generator.Add<BatchNorm<> >(1024);
@@ -120,7 +119,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
       tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};
-  GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
+  GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
       std::function<double()>, DCGAN> dcgan(trainData, generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
@@ -205,7 +204,7 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
   Log::Info << trainData.n_rows << "--------" << trainData.n_cols << std::endl;
 
   // Create the Discriminator network
-  FFN<CrossEntropyError<> > discriminator;
+  FFN<SigmoidCrossEntropyError<> > discriminator;
   discriminator.Add<Convolution<> >(3, dNumKernels, 4, 4, 2, 2, 1, 1, 64, 64);
   discriminator.Add<LeakyReLU<> >(0.2);
   discriminator.Add<Convolution<> >(dNumKernels, 2 * dNumKernels, 4, 4, 2, 2,
@@ -219,10 +218,9 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
   discriminator.Add<LeakyReLU<> >(0.2);
   discriminator.Add<Convolution<> >(8 * dNumKernels, 1, 4, 4, 1, 1,
       0, 0, 4, 4);
-  discriminator.Add<SigmoidLayer<> >();
 
   // Create the Generator network
-  FFN<CrossEntropyError<> > generator;
+  FFN<SigmoidCrossEntropyError<> > generator;
   generator.Add<TransposedConvolution<> >(noiseDim, 8 * dNumKernels, 4, 4,
       1, 1, 2, 2, 1, 1);
   generator.Add<BatchNorm<> >(4096);
@@ -249,7 +247,7 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
       tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};
-  GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
+  GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
       std::function<double()>, DCGAN> dcgan(trainData, generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);

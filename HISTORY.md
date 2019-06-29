@@ -1,5 +1,15 @@
-### mlpack 3.1.1
+### mlpack 3.1.2
 ###### ????-??-??
+  * Add Multiple Pole Balancing Environment (#1901).
+
+  * Add new parameter `maximum_depth` to decision tree and random forest
+    bindings (#1916).
+
+  * Fix prediction output of softmax regression when test set accuracy is
+    calculated (#1922).
+
+### mlpack 3.1.1
+###### 2019-05-26
   * Fix random forest bug for numerical-only data (#1887).
 
   * Significant speedups for random forest (#1887).
