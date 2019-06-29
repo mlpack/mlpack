@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
 BOOST_AUTO_TEST_CASE(SplitByCharTest)
 {
   std::vector<boost::string_view> tokens;
-  boost::string_view strview = "hello how are you" ;
+  boost::string_view strview = "hello how are you";
   SplitByChar obj(" ");
   boost::string_view token;
   token = obj(strview);
