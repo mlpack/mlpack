@@ -85,6 +85,16 @@ class Pendulum
     double action = 0.0;
     // Storing degree of freedom
     int size = 1;
+
+    //! Dimension of the encoded state.
+    static constexpr size_t dimension = 2;
+
+    const arma::colvec& Encode()
+    {
+      arma::colvec data;
+      data << size << action << arma::endr;
+      return data;
+    }
   };
 
   /**

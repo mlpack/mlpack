@@ -93,6 +93,7 @@ class RandomReplay
              bool isEnd)
   {
     states.col(position) = state.Encode();
+//    actions.col(position) = action.Encode();
     actions[position] = action;
     rewards(position) = reward;
     nextStates.col(position) = nextState.Encode();
@@ -116,7 +117,7 @@ class RandomReplay
    *        state.
    */
   void Sample(arma::mat& sampledStates,
-              arma::icolvec& sampledActions,
+              std::vector<ActionType>& sampledActions,
               arma::colvec& sampledRewards,
               arma::mat& sampledNextStates,
               arma::icolvec& isTerminal)
@@ -126,9 +127,10 @@ class RandomReplay
         batchSize, arma::distr_param(0, upperBound - 1));
 
     sampledStates = states.cols(sampledIndices);
-    for (size_t i = 0; i < sampledIndices.n_rows; i ++)
+//    sampledActions = actions.col(sampledIndices);
+    for (size_t t = 0; t < sampledIndices.n_rows; t ++)
     {
-      sampledActions[i] = actions[i];
+      sampledActions.push_back(actions[sampledIndices[t]]);
     }
     sampledRewards = rewards.elem(sampledIndices);
     sampledNextStates = nextStates.cols(sampledIndices);
@@ -154,7 +156,7 @@ class RandomReplay
    * @param gradients The model's gradients
    */
   void Update(arma::mat /* target */,
-              arma::icolvec /* sampledActions */,
+              std::vector<ActionType> /* sampledActions */,
               arma::mat /* nextActionValues */,
               arma::mat& /* gradients */)
   {
@@ -175,6 +177,7 @@ class RandomReplay
   arma::mat states;
 
   //! Locally-stored previous actions.
+//  arma::mat actions;
   std::vector<ActionType> actions;
 
   //! Locally-stored previous rewards.
