@@ -99,6 +99,7 @@ add_executable(mlpack_test
   sparse_coding_test.cpp
   spill_tree_test.cpp
   split_data_test.cpp
+  sumtree_test.cpp
   svd_batch_test.cpp
   svd_incremental_test.cpp
   svdplusplus_test.cpp
@@ -121,6 +122,7 @@ add_executable(mlpack_test
   main_tests/det_test.cpp
   main_tests/decision_tree_test.cpp
   main_tests/decision_stump_test.cpp
+  main_tests/fastmks_test.cpp
   main_tests/kde_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/logistic_regression_test.cpp

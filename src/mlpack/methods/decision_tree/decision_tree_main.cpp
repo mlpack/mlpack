@@ -47,7 +47,9 @@ PROGRAM_INFO("Decision tree",
     " parameter specifies the minimum number of training points that must fall"
     " into each leaf for it to be split.  The " +
     PRINT_PARAM_STRING("minimum_gain_split") + " parameter specifies "
-    "the minimum gain that is needed for the node to split. If " +
+    "the minimum gain that is needed for the node to split.  The " +
+    PRINT_PARAM_STRING("maximum_depth") + " parameter specifies "
+    "the maximum depth of the tree.  If " +
     PRINT_PARAM_STRING("print_training_error") + " is specified, the training "
     "error will be printed."
     "\n\n"
@@ -67,7 +69,7 @@ PROGRAM_INFO("Decision tree",
     "\n\n" +
     PRINT_CALL("decision_tree", "training", "data", "labels", "labels",
         "output_model", "tree", "minimum_leaf_size", 20, "minimum_gain_split",
-        1e-3, "print_training_error", true) +
+        1e-3, "print_training_accuracy", true) +
     "\n\n"
     "Then, to use that model to classify points in " +
     PRINT_DATASET("test_set") + " and print the test error given the "
@@ -92,7 +94,7 @@ PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",
 PARAM_UROW_IN("labels", "Training labels.", "l");
 PARAM_MATRIX_AND_INFO_IN("test", "Testing dataset (may be categorical).", "T");
 PARAM_MATRIX_IN("weights", "The weight of labels", "w");
-PARAM_UMATRIX_IN("test_labels", "Test point labels, if accuracy calculation "
+PARAM_UROW_IN("test_labels", "Test point labels, if accuracy calculation "
     "is desired.", "L");
 
 // Training parameters.
@@ -100,7 +102,12 @@ PARAM_INT_IN("minimum_leaf_size", "Minimum number of points in a leaf.", "n",
     20);
 PARAM_DOUBLE_IN("minimum_gain_split", "Minimum gain for node splitting.", "g",
     1e-7);
-PARAM_FLAG("print_training_error", "Print the training error.", "e");
+PARAM_INT_IN("maximum_depth", "Maximum depth of the tree (0 means no limit).",
+    "D", 0);
+// This is deprecated and should be removed in mlpack 4.0.0.
+PARAM_FLAG("print_training_error", "Print the training error (deprecated; will "
+      "be removed in mlpack 4.0.0).", "e");
+PARAM_FLAG("print_training_accuracy", "Print the training accuracy.", "a");
 
 // Output parameters.
 PARAM_MATRIX_OUT("probabilities", "Class probabilities for each test point.",
@@ -146,7 +153,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "test", false }}, "test_labels");
   RequireAtLeastOnePassed({ "output_model", "probabilities", "predictions" },
       false, "no output will be saved");
-  ReportIgnoredParam({{ "training", false }}, "print_training_error");
+  ReportIgnoredParam({{ "training", false }}, "print_training_accuracy");
 
   ReportIgnoredParam({{ "test", false }}, "predictions");
   ReportIgnoredParam({{ "test", false }}, "predictions");
@@ -154,9 +161,18 @@ static void mlpackMain()
   RequireParamValue<int>("minimum_leaf_size", [](int x) { return x > 0; }, true,
       "leaf size must be positive");
 
+  RequireParamValue<int>("maximum_depth", [](int x) { return x >= 0; }, true,
+      "maximum depth must not be negative");
+
   RequireParamValue<double>("minimum_gain_split", [](double x)
                          { return (x > 0.0 && x < 1.0); }, true,
                          "gain split must be a fraction in range [0,1]");
+
+  if (CLI::HasParam("print_training_error"))
+  {
+    Log::Warn << "The option " << PRINT_PARAM_STRING("print_training_error")
+        << " is deprecated and will be removed in mlpack 4.0.0." << std::endl;
+  }
 
   // Load the model or build the tree.
   DecisionTreeModel* model;
@@ -186,6 +202,7 @@ static void mlpackMain()
 
     // Now build the tree.
     const size_t minLeafSize = (size_t) CLI::GetParam<int>("minimum_leaf_size");
+    const size_t maxDepth = (size_t) CLI::GetParam<int>("maximum_depth");
     const double minimumGainSplit =
                            (double) CLI::GetParam<double>("minimum_gain_split");
 
@@ -194,16 +211,18 @@ static void mlpackMain()
     {
       arma::Row<double> weights =
           std::move(CLI::GetParam<arma::Mat<double>>("weights"));
-      if (CLI::HasParam("print_training_error"))
+      if (CLI::HasParam("print_training_error") ||
+          CLI::HasParam("print_training_accuracy"))
       {
         model->tree = DecisionTree<>(trainingSet, model->info, labels,
-            numClasses, std::move(weights), minLeafSize, minimumGainSplit);
+            numClasses, std::move(weights), minLeafSize, minimumGainSplit,
+            maxDepth);
       }
       else
       {
         model->tree = DecisionTree<>(std::move(trainingSet), model->info,
             std::move(labels), numClasses, std::move(weights), minLeafSize,
-            minimumGainSplit);
+            minimumGainSplit, maxDepth);
       }
     }
     else
@@ -211,12 +230,13 @@ static void mlpackMain()
       if (CLI::HasParam("print_training_error"))
       {
         model->tree = DecisionTree<>(trainingSet, model->info, labels,
-            numClasses, minLeafSize, minimumGainSplit);
+            numClasses, minLeafSize, minimumGainSplit, maxDepth);
       }
       else
       {
         model->tree = DecisionTree<>(std::move(trainingSet), model->info,
-            std::move(labels), numClasses, minLeafSize, minimumGainSplit);
+            std::move(labels), numClasses, minLeafSize, minimumGainSplit,
+            maxDepth);
       }
     }
 
@@ -234,7 +254,7 @@ static void mlpackMain()
           ++correct;
 
       // Print number of correct points.
-      Log::Info << double(correct) / double(trainingSet.n_cols) * 100 << "%% "
+      Log::Info << double(correct) / double(trainingSet.n_cols) * 100 << "% "
           << "correct on training set (" << correct << " / "
           << trainingSet.n_cols << ")." << endl;
     }
@@ -267,7 +287,7 @@ static void mlpackMain()
           ++correct;
 
       // Print number of correct points.
-      Log::Info << double(correct) / double(testPoints.n_cols) * 100 << "%% "
+      Log::Info << double(correct) / double(testPoints.n_cols) * 100 << "% "
           << "correct on test set (" << correct << " / " << testPoints.n_cols
           << ")." << endl;
     }

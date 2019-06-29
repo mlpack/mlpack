@@ -288,7 +288,8 @@ BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitSimpleSplitTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
   const double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities, aux);
+      bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities,
+      aux);
   const double weightedGain =
       BestBinaryNumericSplit<GiniGain>::SplitIfBetter<true>(bestGain, values,
       labels, 2, weights, 3, 1e-7, classProbabilities, aux);
@@ -296,7 +297,7 @@ BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitSimpleSplitTest)
   // Make sure that a split was made.
   BOOST_REQUIRE_GT(gain, bestGain);
 
-  // Make sure weight works and make no different with no weighted one
+  // Make sure weight works and is not different than the unweighted one.
   BOOST_REQUIRE_EQUAL(gain, weightedGain);
 
   // The split is perfect, so we should be able to accomplish a gain of 0.
@@ -325,14 +326,15 @@ BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitMinSamplesTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
   const double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, labels, 2, weights, 8, 1e-7, classProbabilities, aux);
+      bestGain, values, labels, 2, weights, 8, 1e-7, classProbabilities,
+      aux);
   // This should make no difference because it won't split at all.
   const double weightedGain =
       BestBinaryNumericSplit<GiniGain>::SplitIfBetter<true>(bestGain, values,
       labels, 2, weights, 8, 1e-7, classProbabilities, aux);
 
   // Make sure that no split was made.
-  BOOST_REQUIRE_EQUAL(gain, bestGain);
+  BOOST_REQUIRE_EQUAL(gain, DBL_MAX);
   BOOST_REQUIRE_EQUAL(gain, weightedGain);
   BOOST_REQUIRE_EQUAL(classProbabilities.n_elem, 0);
 }
@@ -360,10 +362,11 @@ BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitNoGainTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
   const double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, labels, 2, weights, 10, 1e-7, classProbabilities, aux);
+      bestGain, values, labels, 2, weights, 10, 1e-7, classProbabilities,
+      aux);
 
   // Make sure there was no split.
-  BOOST_REQUIRE_EQUAL(gain, bestGain);
+  BOOST_REQUIRE_EQUAL(gain, DBL_MAX);
   BOOST_REQUIRE_EQUAL(classProbabilities.n_elem, 0);
 }
 
@@ -424,7 +427,7 @@ BOOST_AUTO_TEST_CASE(AllCategoricalSplitMinSamplesTest)
       aux);
 
   // Make sure it's not split.
-  BOOST_REQUIRE_EQUAL(gain, bestGain);
+  BOOST_REQUIRE_EQUAL(gain, DBL_MAX);
   BOOST_REQUIRE_EQUAL(classProbabilities.n_elem, 0);
 }
 
@@ -453,14 +456,14 @@ BOOST_AUTO_TEST_CASE(AllCategoricalSplitNoGainTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, 10, labels, 3, weights, 10, 1e-7, classProbabilities,
-      aux);
+      bestGain, values, 10, labels, 3, weights, 10, 1e-7,
+      classProbabilities, aux);
   const double weightedGain =
       AllCategoricalSplit<GiniGain>::SplitIfBetter<true>(bestGain, values, 10,
       labels, 3, weights, 10, 1e-7, classProbabilities, aux);
 
   // Make sure that there was no split.
-  BOOST_REQUIRE_EQUAL(gain, bestGain);
+  BOOST_REQUIRE_EQUAL(gain, DBL_MAX);
   BOOST_REQUIRE_EQUAL(gain, weightedGain);
   BOOST_REQUIRE_EQUAL(classProbabilities.n_elem, 0);
 }
@@ -471,14 +474,21 @@ BOOST_AUTO_TEST_CASE(AllCategoricalSplitNoGainTest)
  */
 BOOST_AUTO_TEST_CASE(BasicConstructionTest)
 {
-  arma::mat dataset(10, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000);
-
-  for (size_t i = 0; i < 1000; ++i)
-    labels[i] = i % 3; // 3 classes.
+  arma::mat dataset(10, 100, arma::fill::randu);
+  arma::Row<size_t> labels(100);
+  for (size_t i = 0; i < 50; ++i)
+  {
+    dataset(3, i) = 0.0;
+    labels[i] = 0;
+  }
+  for (size_t i = 50; i < 100; ++i)
+  {
+    dataset(3, i) = 1.0;
+    labels[i] = 1;
+  }
 
   // Use default parameters.
-  DecisionTree<> d(dataset, labels, 3, 50);
+  DecisionTree<> d(dataset, labels, 2, 10);
 
   // Now require that we have some children.
   BOOST_REQUIRE_GT(d.NumChildren(), 0);
@@ -489,17 +499,24 @@ BOOST_AUTO_TEST_CASE(BasicConstructionTest)
  */
 BOOST_AUTO_TEST_CASE(BasicConstructionTestWithWeight)
 {
-  arma::mat dataset(10, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000);
+  arma::mat dataset(10, 100, arma::fill::randu);
+  arma::Row<size_t> labels(100);
+  for (size_t i = 0; i < 50; ++i)
+  {
+    dataset(3, i) = 0.0;
+    labels[i] = 0;
+  }
+  for (size_t i = 50; i < 100; ++i)
+  {
+    dataset(3, i) = 1.0;
+    labels[i] = 1;
+  }
   arma::rowvec weights(labels.n_elem);
   weights.ones();
 
-  for (size_t i = 0; i < 1000; ++i)
-    labels[i] = i % 3; // 3 classes.
-
   // Use default parameters.
-  DecisionTree<> wd(dataset, labels, 3, weights, 50);
-  DecisionTree<> d(dataset, labels, 3, 50);
+  DecisionTree<> wd(dataset, labels, 2, weights, 10);
+  DecisionTree<> d(dataset, labels, 2, 10);
 
   // Now require that we have some children.
   BOOST_REQUIRE_GT(wd.NumChildren(), 0);
@@ -512,25 +529,30 @@ BOOST_AUTO_TEST_CASE(BasicConstructionTestWithWeight)
  */
 BOOST_AUTO_TEST_CASE(PerfectTrainingSet)
 {
-  // Completely random dataset with no structure.
-  arma::mat dataset(10, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000);
-  for (size_t i = 0; i < 1000; ++i)
-    labels[i] = i % 3; // 3 classes.
-  arma::rowvec weights(labels.n_elem);
-  weights.ones();
+  arma::mat dataset(10, 100, arma::fill::randu);
+  arma::Row<size_t> labels(100);
+  for (size_t i = 0; i < 50; ++i)
+  {
+    dataset(3, i) = 0.0;
+    labels[i] = 0;
+  }
+  for (size_t i = 50; i < 100; ++i)
+  {
+    dataset(3, i) = 1.0;
+    labels[i] = 1;
+  }
 
-  DecisionTree<> d(dataset, labels, 3, 1); // Minimum leaf size of 1.
+  DecisionTree<> d(dataset, labels, 2, 1, 0.0); // Minimum leaf size of 1.
 
   // Make sure that we can get perfect accuracy on the training set.
-  for (size_t i = 0; i < 1000; ++i)
+  for (size_t i = 0; i < 100; ++i)
   {
     size_t prediction;
     arma::vec probabilities;
     d.Classify(dataset.col(i), prediction, probabilities);
 
     BOOST_REQUIRE_EQUAL(prediction, labels[i]);
-    BOOST_REQUIRE_EQUAL(probabilities.n_elem, 3);
+    BOOST_REQUIRE_EQUAL(probabilities.n_elem, 2);
     for (size_t j = 0; j < 3; ++j)
     {
       if (labels[i] == j)
@@ -547,24 +569,33 @@ BOOST_AUTO_TEST_CASE(PerfectTrainingSet)
 BOOST_AUTO_TEST_CASE(PerfectTrainingSetWithWeight)
 {
   // Completely random dataset with no structure.
-  arma::mat dataset(10, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000);
-  for (size_t i = 0; i < 1000; ++i)
-    labels[i] = i % 3; // 3 classes.
+  arma::mat dataset(10, 100, arma::fill::randu);
+  arma::Row<size_t> labels(100);
+  for (size_t i = 0; i < 50; ++i)
+  {
+    dataset(3, i) = 0.0;
+    labels[i] = 0;
+  }
+  for (size_t i = 50; i < 100; ++i)
+  {
+    dataset(3, i) = 1.0;
+    labels[i] = 1;
+  }
   arma::rowvec weights(labels.n_elem);
   weights.ones();
 
-  DecisionTree<> d(dataset, labels, 3, weights, 1); // Minimum leaf size of 1.
+  // Minimum leaf size of 1.
+  DecisionTree<> d(dataset, labels, 2, weights, 1, 0.0);
 
   // This part of code is dupliacte with no weighted one.
-  for (size_t i = 0; i < 1000; ++i)
+  for (size_t i = 0; i < 100; ++i)
   {
     size_t prediction;
     arma::vec probabilities;
     d.Classify(dataset.col(i), prediction, probabilities);
 
     BOOST_REQUIRE_EQUAL(prediction, labels[i]);
-    BOOST_REQUIRE_EQUAL(probabilities.n_elem, 3);
+    BOOST_REQUIRE_EQUAL(probabilities.n_elem, 2);
     for (size_t j = 0; j < 3; ++j)
     {
       if (labels[i] == j)
@@ -981,7 +1012,8 @@ BOOST_AUTO_TEST_CASE(CategoricalInformationGainWeightedBuildTest)
  */
 BOOST_AUTO_TEST_CASE(RandomDimensionSelectTest)
 {
-  RandomDimensionSelect r(10);
+  RandomDimensionSelect r;
+  r.Dimensions() = 10;
 
   BOOST_REQUIRE_LT(r.Begin(), 10);
   BOOST_REQUIRE_EQUAL(r.Next(), r.End());
@@ -995,7 +1027,11 @@ BOOST_AUTO_TEST_CASE(RandomDimensionSelectTest)
 BOOST_AUTO_TEST_CASE(RandomDimensionSelectRandomTest)
 {
   // We'll check that 4 values are not all the same.
-  RandomDimensionSelect r1(100000), r2(100000), r3(100000), r4(100000);
+  RandomDimensionSelect r1, r2, r3, r4;
+  r1.Dimensions() = 100000;
+  r2.Dimensions() = 100000;
+  r3.Dimensions() = 100000;
+  r4.Dimensions() = 100000;
 
   BOOST_REQUIRE((r1.Begin() != r2.Begin()) ||
                 (r1.Begin() != r3.Begin()) ||
@@ -1008,7 +1044,8 @@ BOOST_AUTO_TEST_CASE(RandomDimensionSelectRandomTest)
  */
 BOOST_AUTO_TEST_CASE(MultipleRandomDimensionSelectTest)
 {
-  MultipleRandomDimensionSelect<5> r(10);
+  MultipleRandomDimensionSelect r(5);
+  r.Dimensions() = 10;
 
   // Make sure we get five elements.
   BOOST_REQUIRE_LT(r.Begin(), 10);
@@ -1024,7 +1061,8 @@ BOOST_AUTO_TEST_CASE(MultipleRandomDimensionSelectTest)
  */
 BOOST_AUTO_TEST_CASE(MultipleRandomDimensionAllSelectTest)
 {
-  MultipleRandomDimensionSelect<3> r(3);
+  MultipleRandomDimensionSelect r(3);
+  r.Dimensions() = 3;
 
   bool found[3];
   found[0] = found[1] = found[2] = false;
@@ -1176,6 +1214,36 @@ BOOST_AUTO_TEST_CASE(DecisionTreeCategoricalTrainReturnEntropy)
   entropy = wdtree.Train(d, di, l, 5, weights, 10);
 
   BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
+}
+
+/**
+ * Make sure different maximum depth values give different numbers of children.
+ */
+BOOST_AUTO_TEST_CASE(DifferentMaximumDepthTest)
+{
+  arma::mat dataset;
+  arma::Row<size_t> labels;
+  data::Load("vc2.csv", dataset);
+  data::Load("vc2_labels.txt", labels);
+
+  DecisionTree<> d(dataset, labels, 3, 10, 1e-7, 1);
+
+  DecisionTree<> d1(dataset, labels, 3, 10, 1e-7, 2);
+
+  DecisionTree<> d2(dataset, labels, 3, 10, 1e-7);
+
+  // Now require that we have zero children.
+  BOOST_REQUIRE_EQUAL(d.NumChildren(), 0);
+
+  // Now require that we have two children.
+  BOOST_REQUIRE_EQUAL(d1.NumChildren(), 2);
+  BOOST_REQUIRE_EQUAL(d1.Child(0).NumChildren(), 0);
+  BOOST_REQUIRE_EQUAL(d1.Child(1).NumChildren(), 0);
+
+  // Now require that we have two children.
+  BOOST_REQUIRE_EQUAL(d2.NumChildren(), 2);
+  BOOST_REQUIRE_EQUAL(d2.Child(0).NumChildren(), 2);
+  BOOST_REQUIRE_EQUAL(d2.Child(1).NumChildren(), 2);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
