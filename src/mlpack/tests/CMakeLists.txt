@@ -100,6 +100,7 @@ add_executable(mlpack_test
   spill_tree_test.cpp
   split_data_test.cpp
   string_utility_test.cpp
+  sumtree_test.cpp
   svd_batch_test.cpp
   svd_incremental_test.cpp
   svdplusplus_test.cpp

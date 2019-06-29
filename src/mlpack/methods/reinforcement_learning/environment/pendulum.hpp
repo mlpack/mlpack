@@ -82,7 +82,7 @@ class Pendulum
    */
   struct Action
   {
-    double action[1];
+    double action = 0.0;
     // Storing degree of freedom
     const int size = 1;
   };
@@ -126,7 +126,7 @@ class Pendulum
 
     // Get action and clip the values between max and min limits.
     double torque = std::min(
-        std::max(action.action[0], -maxTorque), maxTorque);
+        std::max(action.action, -maxTorque), maxTorque);
 
     // Calculate costs of taking this action in the current state.
     double costs = std::pow(AngleNormalize(theta), 2) + 0.1 *
