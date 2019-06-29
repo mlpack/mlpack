@@ -1,6 +1,6 @@
 /**
  * @file boost_backport_string_view.hpp
- * @author Jeffin sam
+ * @author Jeffin Sam
  *
  * Centralized control of what boost files to include. We have backported the
  * following boost functionality here:
@@ -34,7 +34,7 @@
     {
       std::size_t operator()(boost::string_view str) const
       {
-        return boost::hash_range<const char*>(str.begin(), str.end());
+        return boost::hash_range(str.begin(), str.end());
       }
     };
   }

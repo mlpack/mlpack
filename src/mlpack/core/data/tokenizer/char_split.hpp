@@ -2,7 +2,7 @@
  * @file char_split.hpp
  * @author Jeffin Sam
  *
- * Implementation of CharSplit class which tokenizes using single character.
+ * Implementation of CharSplit class which tokenizes string into character.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,9 +20,8 @@ namespace data {
 /**
  * A simple CharSplit class.
  *
- * The class is used to split the documents using a set of characters, that
- * is used as delimiter. The function returns a token, and successive calls,
- * would return many such tokens.
+ * The class is used to split the documents into characters.The function
+ * returns a char token, and successive calls, would return many such tokens.
  */
 class CharSplit
 {

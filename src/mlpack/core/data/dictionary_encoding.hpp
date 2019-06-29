@@ -34,17 +34,17 @@ class DictionaryEncoding
   * This can either be a function pointer or function object or a lamda
   * function. Its return value should be a boost::string_view, a token.
   *
-  * Definiation of function should be of type
-  * boost::string_view fn()(boost::string_view& str)
+  * Definition of function should be of type
+  * boost::string_view fn(boost::string_view& str)
   *
   */
   template<typename TokenizerType>
   void CreateMap(std::string& input, TokenizerType tokenizer);
-  /*
+  /**
   * Default Constructor
   */
   DictionaryEncoding() {}
-  /*
+  /**
   * Copy Constructor.
   */
   DictionaryEncoding(const DictionaryEncoding& oldObject);
@@ -59,7 +59,7 @@ class DictionaryEncoding
   /*
   * Assignment Operator.
   */
-  DictionaryEncoding operator= (const DictionaryEncoding& oldObject);
+  DictionaryEncoding& operator= (const DictionaryEncoding& oldObject);
   /**
   * A function to reset the mapping that is clear all the encodings
   */
@@ -83,8 +83,8 @@ class DictionaryEncoding
   * This can either be a function pointer or function object or a lamda
   * function. Its return value should be a boost::string_view, a token.
   *
-  * Definiation of function should be of type
-  * boost::string_view fn()(boost::string_view& str)
+  * Definition of function should be of type
+  * boost::string_view fn(boost::string_view& str)
   *
   */
   template<typename MatType, typename TokenizerType>
@@ -108,8 +108,8 @@ class DictionaryEncoding
   * This can either be a function pointer or function object or a lamda
   * function. Its return value should be a boost::string_view, a token.
   *
-  * Definiation of function should be of type
-  * boost::string_view fn()(boost::string_view& str)
+  * Definition of function should be of type
+  * boost::string_view fn(boost::string_view& str)
   *
   */
   template<typename TokenizerType>
@@ -124,11 +124,11 @@ class DictionaryEncoding
   const std::deque<std::string>& OriginalStrings() const
       { return originalStrings; }
 
-  //! Return the Mappings
+  //! Return the mappings
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>>& Mappings() const { return mappings; }
 
-  //! Modify the Mappings.
+  //! Modify the mapappings.
   std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>>& Mappings() { return mappings; }
 

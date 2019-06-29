@@ -28,15 +28,15 @@ DictionaryEncoding::DictionaryEncoding(const DictionaryEncoding& oldObject) :
     originalStrings(oldObject.originalStrings)
 {
   std::deque<std::string>::iterator jt = originalStrings.begin();
-  for (auto it = oldObject.originalStrings.begin(); it !=
-      oldObject.originalStrings.end(); it++)
+  for (auto it = oldObject.originalStrings.begin();
+      it != oldObject.originalStrings.end(); it++)
   {
     mappings[*jt] = oldObject.mappings.at(*it);
     jt++;
   }
 }
 
-DictionaryEncoding DictionaryEncoding::operator= (const
+DictionaryEncoding& DictionaryEncoding::operator= (const
     DictionaryEncoding &oldObject)
 {
   if (this != &oldObject)
@@ -52,6 +52,7 @@ DictionaryEncoding DictionaryEncoding::operator= (const
       jt++;
     }
   }
+  return *this;
 }
 
 template<typename TokenizerType>

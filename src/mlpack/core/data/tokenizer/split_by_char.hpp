@@ -1,8 +1,8 @@
 /**
- * @file split_by_car.hpp
+ * @file split_by_char.hpp
  * @author Jeffin Sam
  *
- * Implementation of Strtok class which tokenizes using single character.
+ * Implementation of SplitByChar class which tokenizes using single character.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -62,7 +62,7 @@ class SplitByChar
  private:
   // A set of characters by which the string is tokenized.
   std::string delimiter;
-}; // Strtok class
+}; // SplitByChar
 
 } // namespace data
 } // namespace mlpack

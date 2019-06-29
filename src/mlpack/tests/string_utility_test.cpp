@@ -1,6 +1,6 @@
 /**
  * @file string_utility_test.cpp
- * @author Ryan Curtin
+ * @author Jeffin Sam
  *
  * Tests for String Utility Class.
  *
