@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
 BOOST_AUTO_TEST_CASE(SimpleAcrobotTest)
 {
   Acrobot task = Acrobot();
-  task.MaxSteps() = 5;    
+  task.MaxSteps() = 5;
 
   Acrobot::State state = task.InitialSample();
   Acrobot::Action action = Acrobot::Action::negativeTorque;
