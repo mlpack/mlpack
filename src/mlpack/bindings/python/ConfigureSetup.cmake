@@ -17,4 +17,25 @@
 # - BOOST_LIBDIRS: paths to Boost libraries
 # - OUTPUT_DIR: binary output directory for CMake
 
+# It's possible that the FindBoost CMake script may have returned a Boost
+# library with "lib" improperly prepended to it.  So we need to see if the file
+# exists, and if it doesn't, but it has a "lib" in it, then we will try
+# stripping the "lib" off the front.
+if (NOT EXISTS "$(Boost_SERIALIZATION_LIBRARY}")
+  # Split the filename to see if it starts with lib.
+  set(Boost_SERIALIZATION_LIBRARY_ORIG "${Boost_SERIALIZATION_LIBRARY}")
+  get_filename_component(SER_LIB_DIRECTORY "${Boost_SERIALIZATION_LIBRARY}"
+      DIRECTORY)
+  get_filename_component(SER_LIB_FILENAME "${Boost_SERIALIZATION_LIBRARY}" NAME)
+
+  # Strip any preceding "lib/".
+  string(REGEX REPLACE "^lib" "" STRIPPED_FILENAME "${SER_LIB_FILENAME}")
+  set(Boost_SERIALIZATION_LIBRARY "${SER_LIB_DIRECTORY}/${STRIPPED_FILENAME}")
+
+  if (NOT EXISTS "${Boost_SERIALIZATION_LIBRARY}")
+    # We didn't find it, so for ease of debugging just revert to the original.
+    set (Boost_SERIALIZATION_LIBRARY "${Boost_SERIALIZATION_LIBRARY_ORIG}")
+  endif ()
+endif ()
+
 configure_file(${SETUP_PY_IN} ${SETUP_PY_OUT})
