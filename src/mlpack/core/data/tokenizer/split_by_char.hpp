@@ -2,7 +2,8 @@
  * @file split_by_char.hpp
  * @author Jeffin Sam
  *
- * Implementation of SplitByChar class which tokenizes using single character.
+ * Implementation of SplitByChar class which tokenizes string using a set of
+ * characters.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -28,7 +29,7 @@ class SplitByChar
 {
  public:
   /**
-  * A constructor to set deimiter.
+  * A constructor to set delimiter.
   * @param Delimiter A set of characters which you want to use as delimiter.
   */
   SplitByChar(const std::string& delimiter)
@@ -38,7 +39,7 @@ class SplitByChar
   /**
   * A function object which take boost::string_view as input and
   * return a boost::string_view (token).
-  * @param str A string to retieve token from.
+  * @param str A string to retriev token from.
   */
   boost::string_view operator()(boost::string_view& str) const
   {

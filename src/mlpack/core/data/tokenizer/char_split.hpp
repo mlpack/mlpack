@@ -29,7 +29,7 @@ class CharSplit
   /**
   * A function object which take boost::string_view as input and
   * return a boost::string_view (token).
-  * @param str A string to retieve token from.
+  * @param str A string to retriev token from.
   */
   boost::string_view operator()(boost::string_view& str) const
   {
