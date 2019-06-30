@@ -23,8 +23,7 @@ template <class TaskType,
           class ActivationFunction,
           class SelectionPolicy>
 NEAT<TaskType, ActivationFunction, SelectionPolicy>::
-    NEAT(TaskType& task,
-         const size_t inputNodeCount,
+    NEAT(const size_t inputNodeCount,
          const size_t outputNodeCount,
          const size_t popSize,
          const size_t maxGen,
@@ -40,7 +39,6 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::
          const double disableProb,
          const double elitismProp,
          const bool isAcyclic):
-    task(task),
     inputNodeCount(inputNodeCount),
     outputNodeCount(outputNodeCount),
     popSize(popSize),
@@ -75,7 +73,6 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
         outputNodeCount, bias, weightMutationProb,
         weightMutationSize, biasMutationProb, biasMutationSize,
         nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic));
-    genomeList[i].Fitness() = task.Evaluate(genomeList[i]);
   }
   speciesList = std::vector<std::vector<Genome<ActivationFunction>>>(numSpecies);
   Speciate(true);
@@ -87,7 +84,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     std::cout << "Evaluating." << std::endl;
     #pragma omp parallel for
     for (size_t i = 0; i < popSize; i++)
-      genomeList[i].Fitness() = task.Evaluate(genomeList[i]); 
+      genomeList[i].Fitness() = TaskType::Evaluate(genomeList[i]); 
     if (gen == maxGen - 1) break;
     std::cout << "Speciating." << std::endl;
     Speciate(false);
@@ -116,7 +113,39 @@ template <class TaskType,
 Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>::
     Step()
 {
-  
+  // If this is true, the population has not been initialized.
+  if (genomeList.size() == 0)
+  {
+    for (size_t i = 0; i < popSize; i++)
+    {
+      genomeList.emplace_back(Genome<ActivationFunction>(inputNodeCount,
+          outputNodeCount, bias, weightMutationProb,
+          weightMutationSize, biasMutationProb, biasMutationSize,
+          nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic));
+    }
+    speciesList = std::vector<std::vector<Genome<ActivationFunction>>>(numSpecies);
+    Speciate(true);
+  }
+
+  #pragma omp parallel for
+  for (size_t i = 0; i < popSize; i++)
+    genomeList[i].Fitness() = TaskType::Evaluate(genomeList[i]); 
+  Speciate(false);
+  Reproduce();
+
+  // Find best genome.
+  size_t maxIdx = 0;
+  double maxFitness = genomeList[0].Fitness();
+  for (size_t i = 1; i < popSize; i++)
+  {
+    if (genomeList[i].Fitness() > maxFitness)
+    {
+      maxIdx = i;
+      maxFitness = genomeList[i].Fitness();
+    }
+  }
+
+  return genomeList[maxIdx];
 }
 
 // Speciates the genomes.
@@ -293,21 +322,14 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
       arma::uvec selection(2);
       SelectionPolicy::Select(fitnesses, selection);
       if (selection[0] == selection[1])
-      {
-        std::cout << "God willing I do not fail here." << std::endl;
         genomeList.push_back(speciesList[i][selection[0]]);
-      }
       else
       {
-        std::cout << "This is guess, makes sense." << std::endl;
-        std::cout << "0: " << selection[0] << "1:" << selection[1] << "max " << speciesList[i].size() << std::endl;
         Genome<ActivationFunction> child = Crossover(speciesList[i][selection[0]],
             speciesList[i][selection[1]]);
         genomeList.push_back(child);
       }
-      std::cout << "Finna mutate" << std::endl;
       genomeList[genomeList.size() - 1].Mutate();
-      std::cout << "Phew" << std::endl;
     }
   }
 }
@@ -321,18 +343,12 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     ::Crossover(Genome<ActivationFunction>& gen1,
                 Genome<ActivationFunction>& gen2)
 {
-  std::cout << "Oh so we not even entering this are we" << std::endl;
   // New genome's genes.
   std::vector<ConnectionGene> newConnGeneList;
   bool equalFitness = std::abs(gen1.Fitness() - gen2.Fitness()) < 0.001;
-  std::cout << "Finding equal fitness." << std::endl;
   Genome<ActivationFunction> lessFitGenome = gen1;
-  std::cout << "Found the least fit genome" << std::endl;
   std::vector<size_t> nodeDepths;
-  std::cout << "Node depths?" << std::endl;
   size_t nextNodeID;
-
-  std::cout << "Finding which genome to do the do." << std::endl;
 
   if (equalFitness)
   {
@@ -366,7 +382,6 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     lessFitGenome = gen1;
   }
 
-  std::cout << "Finding matching genes" << std::endl;
   // Find matching genes.
   for (size_t i = 0; i < lessFitGenome.connectionGeneList.size(); i++)
   {

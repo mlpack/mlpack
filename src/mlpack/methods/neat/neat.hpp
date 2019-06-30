@@ -29,8 +29,7 @@ template <class TaskType,
 class NEAT
 {
  public:
-  NEAT(TaskType& task,
-       const size_t inputNodeCount,
+  NEAT(const size_t inputNodeCount,
        const size_t outputNodeCount,
        const size_t popSize,
        const size_t maxGen,
@@ -80,9 +79,6 @@ class NEAT
 
   // The centroids of the genome clusters.
   arma::mat centroids;
-
-  //! The provided TaskType class that evaluates fitness of the genome.
-  TaskType task;
 
   //! The number of input nodes.
   size_t inputNodeCount;

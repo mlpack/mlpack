@@ -27,7 +27,7 @@ using namespace mlpack::rl;
 class XORTask
 {
  public:
-  double Evaluate(Genome<HardSigmoidFunction>& genome)
+  static double Evaluate(Genome<HardSigmoidFunction>& genome)
   {
     arma::vec input1 = {0, 0};
     arma::vec input2 = {0, 1};
@@ -41,7 +41,7 @@ class XORTask
     return 4 - error;
   }
 
-  double findError(arma::vec& input, Genome<HardSigmoidFunction>& genome)
+  static double findError(arma::vec& input, Genome<HardSigmoidFunction>& genome)
   {
     arma::vec output = genome.Evaluate(input);
     arma::vec answer = {(input[0] + input[1]) * (!input[0] + !input[1])};
