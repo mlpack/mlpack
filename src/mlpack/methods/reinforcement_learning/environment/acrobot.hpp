@@ -224,7 +224,7 @@ class Acrobot
           "being taken.";
       return true;
     }
-    else if (-std::cos(state.Theta1())-std::cos(state.Theta1() +
+    else if (-std::cos(state.Theta1()) - std::cos(state.Theta1() +
         state.Theta2()) > 1.0)
     {
       Log::Info << "Episode terminated due to agent succeeding.";
