@@ -1,8 +1,8 @@
 /**
- * @file string_utility_test.cpp
+ * @file dictionary_encoding_test.cpp
  * @author Jeffin Sam
  *
- * Tests for String Utility Class.
+ * Tests for Dictionary Encoding Class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -21,7 +21,7 @@ using namespace mlpack;
 using namespace mlpack::data;
 using namespace std;
 
-BOOST_AUTO_TEST_SUITE(StringUtilityTest);
+BOOST_AUTO_TEST_SUITE(DictionaryEncodingTest);
 
 boost::string_view tokenizer(boost::string_view& str)
 {
@@ -154,10 +154,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingNoPaddingTest)
       return retval;
   });
   std::vector<std::vector<size_t>> req_output;
-  std::vector<size_t> temp(5);
-  temp[0] = 1;
-  temp[2] = temp[3] = 3;
-  temp[1] = temp[4] = 2;
+  std::vector<size_t> temp={1,2,3,3,2};
   req_output.push_back(temp);
   temp.clear();
   temp = {1,2,4};
