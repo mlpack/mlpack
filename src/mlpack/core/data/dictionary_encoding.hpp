@@ -16,6 +16,9 @@
 #include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
 #include <utility>
 
+using MapType =   std::unordered_map<boost::string_view, size_t,
+    boost::hash<boost::string_view>>;
+
 namespace mlpack {
 namespace data {
 
@@ -125,12 +128,10 @@ class DictionaryEncoding
       { return originalStrings; }
 
   //! Return the mappings
-  const std::unordered_map<boost::string_view, size_t,
-      boost::hash<boost::string_view>>& Mappings() const { return mappings; }
+  const MapType& Mappings() const { return mappings; }
 
   //! Modify the mapappings.
-  std::unordered_map<boost::string_view, size_t,
-      boost::hash<boost::string_view>>& Mappings() { return mappings; }
+  MapType& Mappings() { return mappings; }
 
   /**
    * Serialize the class to the given archive.
@@ -139,8 +140,7 @@ class DictionaryEncoding
   void serialize(Archive& ar, const unsigned int /* version */);
  private:
   //! A map which stores information about mapping.
-  std::unordered_map<boost::string_view, size_t,
-      boost::hash<boost::string_view>> mappings;
+  MapType mappings;
   //! A deque which holds the original string for map's string_view.
   std::deque<std::string> originalStrings;
 }; // class DictionaryEncoding

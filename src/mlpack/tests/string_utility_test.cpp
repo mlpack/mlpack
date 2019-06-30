@@ -160,11 +160,9 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingNoPaddingTest)
   temp[1] = temp[4] = 2;
   req_output.push_back(temp);
   temp.clear();
-  temp.push_back(1);
-  temp.push_back(2);
-  temp.push_back(4);
+  temp = {1,2,4};
   req_output.push_back(temp);
-  for (size_t i = 0; i < 2; i++)
+  for (size_t i = 0; i < arr.size(); i++)
   {
     for (size_t j = 0; j < req_output[i].size(); j++)
     {
