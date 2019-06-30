@@ -24,12 +24,10 @@ template <class ActivationFunction>
 CyclicNet<ActivationFunction>::CyclicNet(const size_t nodeCount,
                                          const size_t inputNodeCount,
                                          const size_t outputNodeCount,
-                                         const size_t timeStepsPerActivation,
                                          const double bias):
     nodeCount(nodeCount),
     inputNodeCount(inputNodeCount),
     outputNodeCount(outputNodeCount),
-    timeStepsPerActivation(timeStepsPerActivation),
     bias(bias)
 { /* Nothing to do here */}
 

@@ -2,7 +2,7 @@
  * @file gene_impl.hpp
  * @author Rahul Ganesh Prabhu
  *
- * Implementation of the Gene classes.
+ * Implementation of the ConnectionGene class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,6 +18,7 @@
 namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
+// Creates a connection gene object.
 ConnectionGene::ConnectionGene(const size_t globalInnovationID,
                                const double weight,
                                const size_t source,
@@ -30,6 +31,10 @@ ConnectionGene::ConnectionGene(const size_t globalInnovationID,
     enabled(enabled)
 { /* Nothing to do here */ }
 
+ConnectionGene::~ConnectionGene()
+{}
+
+// Default constructor for a connection gene.
 ConnectionGene::ConnectionGene():
     globalInnovationID(0),
     weight(0),
@@ -37,9 +42,6 @@ ConnectionGene::ConnectionGene():
     target(0),
     enabled(false)
 {/* Nothing to do here */}
-
-ConnectionGene::~ConnectionGene()
-{ /* Nothing to do here */ }
 
 void ConnectionGene::Mutate(const double mutationSize)
 {

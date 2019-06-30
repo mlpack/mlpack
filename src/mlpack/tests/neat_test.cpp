@@ -159,21 +159,23 @@ BOOST_AUTO_TEST_SUITE(NEATTest)
 //   BOOST_REQUIRE(finalFitness >= 90);
 // }
 
-// /**
-//  * Test NEAT on the Double Pole Cart Balancing environment.
-//  */
+/**
+ * Test NEAT on the Double Pole Cart Balancing environment.
+ */
 // BOOST_AUTO_TEST_CASE(NEATDoublePoleCartTest)
 // {
 //   arma::vec poleLengths = {1, 0.1};
 //   arma::vec poleMasses = {1, 0.1};
-//   const ContinuousMultiplePoleCart env = ContinuousMultiplePoleCart(2,
-//       poleLengths, poleMasses);
+//   const MultiplePoleCart env = MultiplePoleCart(2, poleLengths, poleMasses);
 //   DPVTask task(env);
-//   NEAT<DPVTask> model(task, 6 /* Input nodes */, 1 /* Output nodes */);
+//   NEAT<DPVTask, HardSigmoidFunction, RankSelection> model
+//          (task, 6, 1, 150, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.3, 0.2, 0.5, false);
 
 //   // Find the best genome and it's fitness.
-//   Genome bestGenome = model.Train();
-//   double finalFitness = task.Evaluate(bestGenome);
+//   Genome<HardSigmoidFunction> bestGenome = model.Train();
+//   double finalFitness = bestGenome.Fitness();
+
+//   std::cout << finalFitness << std::endl;
 
 //   // Check if the final fitness is acceptable (Placeholder).
 //   BOOST_REQUIRE(finalFitness >= 90);
@@ -190,7 +192,7 @@ BOOST_AUTO_TEST_CASE(NEATDoublePoleCartNoVelocitiesTest)
   const MultiplePoleCart env = MultiplePoleCart(2, poleLengths, poleMasses, 9.8, 1, 0.01);
   DPNVTask task(env);
   NEAT<DPNVTask, HardSigmoidFunction, RankSelection> model
-        (task, 3, 1, 150, 30000, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.3, 0.2, 0.5, false);
+        (task, 3, 1, 1000, 100, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.3, 0.2, 0.2, false);
 
   // Find the best genome and it's fitness.
   Genome<HardSigmoidFunction> bestGenome = model.Train();

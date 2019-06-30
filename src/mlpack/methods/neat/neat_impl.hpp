@@ -80,26 +80,18 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   speciesList = std::vector<std::vector<Genome<ActivationFunction>>>(numSpecies);
   Speciate(true);
 
-  arma::vec fitnesses(popSize);
-
   // Main loop.
   for (size_t gen = 0; gen < maxGen; gen++)
   {
     std::cout << "Generation: " << gen << std::endl;
-    // Genome<ActivationFunction>::mutationBuffer.clear();
     std::cout << "Evaluating." << std::endl;
-    arma::vec fitnesses(popSize);
     #pragma omp parallel for
     for (size_t i = 0; i < popSize; i++)
-    {
-      genomeList[i].Fitness() = task.Evaluate(genomeList[i]);
-      fitnesses[i] = genomeList[i].Fitness();
-    }
-    std::cout << fitnesses.max() << std::endl; 
+      genomeList[i].Fitness() = task.Evaluate(genomeList[i]); 
     if (gen == maxGen - 1) break;
-    std::cout << "Speciating" << std::endl;
+    std::cout << "Speciating." << std::endl;
     Speciate(false);
-    std::cout << "Reproducing" << std::endl;
+    std::cout << "Reproducing." << std::endl;
     Reproduce();
   }
 
@@ -118,6 +110,15 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   return genomeList[maxIdx];
 }
 
+template <class TaskType,
+          class ActivationFunction,
+          class SelectionPolicy>
+Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>::
+    Step()
+{
+  
+}
+
 // Speciates the genomes.
 template <class TaskType,
           class ActivationFunction,
@@ -125,7 +126,8 @@ template <class TaskType,
 void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Speciate(bool init)
 {
   // Translate the genome into points in space.
-  arma::mat data(Genome<ActivationFunction>::nextInnovID, popSize, arma::fill::zeros);
+  arma::mat data(Genome<ActivationFunction>::nextInnovID, popSize,
+      arma::fill::zeros);
   for (size_t i = 0; i < popSize; i++)
   {
     for (size_t j = 0; j < genomeList[i].connectionGeneList.size(); j++)
@@ -137,7 +139,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Speciate(bool init)
 
   arma::Row<size_t> assignments(popSize, arma::fill::zeros);
   kmeans::KMeans<metric::EuclideanDistance, kmeans::SampleInitialization,
-      kmeans::MaxVarianceNewCluster, kmeans::CoverTreeDualTreeKMeans> k;
+      kmeans::MaxVarianceNewCluster, kmeans::CoverTreeDualTreeKMeans> k; 
   if (init)
   {
     centroids = arma::mat(data.n_rows, numSpecies, arma::fill::zeros);
@@ -286,17 +288,26 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
     for (size_t j = 0; j < fitnesses.n_elem; j++)
       fitnesses[j] = speciesList[i][j].Fitness();
 
-    // std::cout << "Fitnesses:" << std::endl;
-    // fitnesses.print();
-
     while (genomeList.size() < speciesSize[i] + currentSize)
     {
       arma::uvec selection(2);
       SelectionPolicy::Select(fitnesses, selection);
-      Genome<ActivationFunction> child = Crossover(speciesList[i][selection[0]],
-          speciesList[i][selection[1]]);
-      genomeList.push_back(child);
+      if (selection[0] == selection[1])
+      {
+        std::cout << "God willing I do not fail here." << std::endl;
+        genomeList.push_back(speciesList[i][selection[0]]);
+      }
+      else
+      {
+        std::cout << "This is guess, makes sense." << std::endl;
+        std::cout << "0: " << selection[0] << "1:" << selection[1] << "max " << speciesList[i].size() << std::endl;
+        Genome<ActivationFunction> child = Crossover(speciesList[i][selection[0]],
+            speciesList[i][selection[1]]);
+        genomeList.push_back(child);
+      }
+      std::cout << "Finna mutate" << std::endl;
       genomeList[genomeList.size() - 1].Mutate();
+      std::cout << "Phew" << std::endl;
     }
   }
 }
@@ -310,33 +321,22 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     ::Crossover(Genome<ActivationFunction>& gen1,
                 Genome<ActivationFunction>& gen2)
 {
+  std::cout << "Oh so we not even entering this are we" << std::endl;
   // New genome's genes.
   std::vector<ConnectionGene> newConnGeneList;
-  bool equalFitness = std::abs(gen1.Fitness() - gen2.Fitness()) < 0;
-  if (!equalFitness || isAcyclic)
-  {
-    Genome<ActivationFunction> lessFitGenome = gen1;
-    std::vector<size_t> nodeDepths;
-    size_t nextNodeID;
+  bool equalFitness = std::abs(gen1.Fitness() - gen2.Fitness()) < 0.001;
+  std::cout << "Finding equal fitness." << std::endl;
+  Genome<ActivationFunction> lessFitGenome = gen1;
+  std::cout << "Found the least fit genome" << std::endl;
+  std::vector<size_t> nodeDepths;
+  std::cout << "Node depths?" << std::endl;
+  size_t nextNodeID;
 
-    if (equalFitness)
-    {
-      if (arma::randu<double>() < 0.5)
-      {
-        newConnGeneList = gen1.connectionGeneList;
-        nextNodeID = gen1.getNodeCount();
-        nodeDepths = gen1.nodeDepths;
-        lessFitGenome = gen2;
-      }
-      else
-      {
-        newConnGeneList = gen2.connectionGeneList;
-        nextNodeID = gen2.getNodeCount();
-        nodeDepths = gen2.nodeDepths;
-        lessFitGenome = gen1;
-      }
-    }
-    else if (gen1.Fitness() > gen2.Fitness())
+  std::cout << "Finding which genome to do the do." << std::endl;
+
+  if (equalFitness)
+  {
+    if (arma::randu<double>() < 0.5)
     {
       newConnGeneList = gen1.connectionGeneList;
       nextNodeID = gen1.getNodeCount();
@@ -350,93 +350,63 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
       nodeDepths = gen2.nodeDepths;
       lessFitGenome = gen1;
     }
-
-    // Find matching genes.
-    for (size_t i = 0; i < lessFitGenome.connectionGeneList.size(); i++)
-    {
-      size_t innovID = lessFitGenome.connectionGeneList[i]
-          .InnovationID();
-      for (size_t j = 0; j < newConnGeneList.size(); j++)
-      {
-        if (innovID == newConnGeneList[j].InnovationID())
-        {
-          // If either parent is disabled, preset chance that the inherited gene is disabled.
-          if (!isAcyclic && !newConnGeneList[j].Enabled())
-          {
-            if (arma::randu<double>() < disableProb)
-              newConnGeneList[j].Enabled() = true;
-            else
-              newConnGeneList[j].Enabled() = false;
-          }
-          // Weights will be assigned randomly in matching genes.
-          if (arma::randu<double>() < 0.5)
-            newConnGeneList[j].Weight() = lessFitGenome.connectionGeneList[i]
-                .Weight();
-          break;
-        }
-      }
-    }
-
-    if (isAcyclic)
-    {
-      return Genome<ActivationFunction>(newConnGeneList, nodeDepths, 
-        inputNodeCount, outputNodeCount, nextNodeID, bias, weightMutationProb,
-        weightMutationSize, biasMutationProb, biasMutationSize,
-        nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic);
-    }
-    else
-    {
-      return Genome<ActivationFunction>(newConnGeneList, inputNodeCount,
-        outputNodeCount, nextNodeID, bias, weightMutationProb,
-        weightMutationSize, biasMutationProb, biasMutationSize,
-        nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic);
-    }
+  }
+  else if (gen1.Fitness() > gen2.Fitness())
+  {
+    newConnGeneList = gen1.connectionGeneList;
+    nextNodeID = gen1.getNodeCount();
+    nodeDepths = gen1.nodeDepths;
+    lessFitGenome = gen2;
   }
   else
   {
-    size_t i = 0, j = 0;
-    size_t gen1size = gen1.connectionGeneList.size();
-    size_t gen2size = gen2.connectionGeneList.size();
-    size_t maxSize = gen1size > gen2size ? gen1size : gen2size;
-    size_t minSize = gen1size < gen2size ? gen1size : gen2size;
-    Genome<ActivationFunction>& maxGenome = gen1size > gen2size ? gen1 : gen2;
-    Genome<ActivationFunction>& minGenome = gen1size < gen2size ? gen1 : gen2;
-    while (j < minSize)
+    newConnGeneList = gen2.connectionGeneList;
+    nextNodeID = gen2.getNodeCount();
+    nodeDepths = gen2.nodeDepths;
+    lessFitGenome = gen1;
+  }
+
+  std::cout << "Finding matching genes" << std::endl;
+  // Find matching genes.
+  for (size_t i = 0; i < lessFitGenome.connectionGeneList.size(); i++)
+  {
+    size_t innovID = lessFitGenome.connectionGeneList[i]
+        .InnovationID();
+    for (size_t j = 0; j < newConnGeneList.size(); j++)
     {
-      size_t innovID1 = maxGenome.connectionGeneList[i].InnovationID();
-      size_t innovID2 = minGenome.connectionGeneList[j].InnovationID();
-      if (innovID2 < innovID1)
+      if (innovID == newConnGeneList[j].InnovationID())
       {
+        // If either parent is disabled, preset chance that the inherited gene is disabled.
+        if (!isAcyclic && !newConnGeneList[j].Enabled())
+        {
+          if (arma::randu<double>() < disableProb)
+            newConnGeneList[j].Enabled() = true;
+          else
+            newConnGeneList[j].Enabled() = false;
+        }
+
+        // Weights will be assigned randomly in matching genes.
         if (arma::randu<double>() < 0.5)
-          newConnGeneList.push_back(minGenome.connectionGeneList[j++]);
-      }
-      else if (innovID2 == innovID1)
-      {
-        if (arma::randu<double>() < 0.5)
-          newConnGeneList.push_back(minGenome.connectionGeneList[j]);
-        else
-          newConnGeneList.push_back(maxGenome.connectionGeneList[i]);
-        i++;
-        j++;
-      }
-      else
-      {
-        if (arma::randu<double>() < 0.5)
-          newConnGeneList.push_back(maxGenome.connectionGeneList[i++]);
+          newConnGeneList[j].Weight() = lessFitGenome.connectionGeneList[i]
+              .Weight();
+        break;
       }
     }
-    while (i < maxSize)
-    {
-      if (arma::randu<double>() < 0.5)
-        newConnGeneList.push_back(maxGenome.connectionGeneList[i++]);
-    }
+  }
 
-    size_t nextNodeID = gen1.getNodeCount() > gen2.getNodeCount() ? gen1.getNodeCount() : gen2.getNodeCount();
-
+  if (isAcyclic)
+  {
+    return Genome<ActivationFunction>(newConnGeneList, nodeDepths, 
+      inputNodeCount, outputNodeCount, nextNodeID, bias, weightMutationProb,
+      weightMutationSize, biasMutationProb, biasMutationSize,
+      nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic);
+  }
+  else
+  {
     return Genome<ActivationFunction>(newConnGeneList, inputNodeCount,
-          outputNodeCount, nextNodeID, bias, weightMutationProb,
-          weightMutationSize, biasMutationProb, biasMutationSize,
-          nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic);
+      outputNodeCount, nextNodeID, bias, weightMutationProb,
+      weightMutationSize, biasMutationProb, biasMutationSize,
+      nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic);
   }
 }
 

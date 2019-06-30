@@ -146,7 +146,7 @@ class Genome
   arma::mat Parameters();
 
   /**
-   * Prints genome.
+   * Prints genome (Used for debugging purposes).
    */
   void Print();
 
@@ -162,6 +162,17 @@ class Genome
    * cases.
    */
   std::vector<size_t> nodeDepths;
+
+  /**
+   * The buffer of added connections in this generation.
+   */
+  static std::map<std::pair<size_t, size_t>, size_t> mutationBuffer;
+
+  /**
+   * A digraph containing connection genes sorted by source ID, and then
+   * secondary sorted by target ID.
+   */
+  std::map<size_t, std::map<size_t, ConnectionGene>> directedGraph;
 
   //! Get fitness.
   double Fitness() const { return fitness; }
@@ -184,17 +195,6 @@ class Genome
 
   //! The next innovation ID to be allotted.
   static size_t nextInnovID;
-
-  /**
-   * The buffer of added connections in this generation.
-   */
-  static std::map<std::pair<size_t, size_t>, size_t> mutationBuffer;
-
-  /**
-   * A digraph containing connection genes sorted by source ID, and then
-   * secondary sorted by target ID.
-   */
-  std::map<size_t, std::map<size_t, ConnectionGene>> directedGraph;
  private:
   /**
    * Stores the activation of the nodes. Only used if isAcyclic is set to false.
@@ -245,11 +245,6 @@ class Genome
 
   //! Boolean indicating if the phenome is acyclic.
   bool isAcyclic;
-
-  // Included temporarily for debugging purposes.
-  arma::vec output;
-  arma::vec inputt;
-  std::vector<double> nodeValues;
 };
 
 } // namespace neat

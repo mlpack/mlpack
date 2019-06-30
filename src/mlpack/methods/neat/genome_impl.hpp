@@ -193,22 +193,19 @@ arma::vec Genome<ActivationFunction>::Evaluate(arma::vec& input)
         "input nodes" << std::endl;
   }
 
-  inputt = input;
-
   if (isAcyclic)
   {
     AcyclicNet<ActivationFunction> net(nextNodeID, inputNodeCount,
         outputNodeCount, bias);
-    output = arma::vec(outputNodeCount, arma::fill::zeros);
+    arma::vec output(outputNodeCount, arma::fill::zeros);
     net.Evaluate(input, output, directedGraph, nodeDepths);
-    nodeValues = net.nodeValues;
     return output;
   }
   else
   {
     CyclicNet<ActivationFunction> net(nextNodeID, inputNodeCount,
-        outputNodeCount, 100 /* Placeholder */, bias);
-    output = arma::vec(outputNodeCount, arma::fill::zeros);
+        outputNodeCount, bias);
+    arma::vec output(outputNodeCount, arma::fill::zeros);
     net.Evaluate(input, output, outputNodeValues, directedGraph);
     return output;
   }
@@ -420,31 +417,6 @@ arma::mat Genome<ActivationFunction>::Parameters()
   }
   return param;
 }
-
-template <class ActivationFunction>
-void Genome<ActivationFunction>::Print()
-{
-  std::cout << "Input:" << std::endl;
-  inputt.print();
-  std::cout << "Output" << std::endl;
-  output.print();
-  for (auto const& x: directedGraph)
-  {
-    for (auto const& y : directedGraph[x.first])
-    {
-      std::cout << x.first << "->" << y.first;
-      if (y.second.Enabled())
-        std::cout << " (enabled) ";
-      else
-        std::cout << " (disabled) ";
-      std::cout << "Weight: " << y.second.Weight() << std::endl;
-    }
-  }
-
-  for (size_t i = 0; i < nodeValues.size(); i++)
-    std::cout << "Value in node " << i << "is " << nodeValues[i] << std::endl;
-}
-
 
 template <class ActivationFunction>
 void Genome<ActivationFunction>::Traverse(size_t startID)

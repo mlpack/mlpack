@@ -54,8 +54,7 @@ class RouletteSelection
       if (randNum < prob)
       {
         selection[1] = k;
-        if (selection[0] != selection[1])
-          break;
+        break;
       }
       k--;
     }

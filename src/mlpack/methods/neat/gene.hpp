@@ -42,10 +42,7 @@ class ConnectionGene
    * Default constructor.
    */
   ConnectionGene();
-  
-  /**
-   * Destroys the connection gene.
-   */
+
   ~ConnectionGene();
 
   /**

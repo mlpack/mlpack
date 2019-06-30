@@ -40,7 +40,10 @@ class RankSelection
     while (selection[0] == fitnesses.n_elem)
     {
       if (pos >= size)
-        pos = 0;
+      {
+        selection[0] = 0;
+        break;
+      }
       double prob = (double)(size - pos) / std::pow(size, 2);
       if (arma::randu<double>() < prob)
         selection[0] = pos;
@@ -49,10 +52,13 @@ class RankSelection
 
     // Choose second genome.
     pos = 0;
-    while (selection[1] == fitnesses.n_elem || selection[0] == selection[1])
+    while (selection[1] == fitnesses.n_elem)
     {
       if (pos >= size)
-        pos = 0;
+      {
+        selection[1] = 0;
+        break;
+      }
       double prob = (double)(size - pos) / std::pow(size, 2);   
       if (arma::randu<double>() < prob)
         selection[1] = pos;

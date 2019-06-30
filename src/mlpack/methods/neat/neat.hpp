@@ -52,6 +52,11 @@ class NEAT
    */
   Genome<ActivationFunction> Train();
 
+  /**
+   * Performs a single generation of NEAT.
+   */
+  Genome<ActivationFunction> Step();
+
  private:
   // Crosses over two genomes.
   Genome<ActivationFunction> Crossover(Genome<ActivationFunction>& gen1,

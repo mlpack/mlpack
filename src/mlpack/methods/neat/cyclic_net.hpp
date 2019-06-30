@@ -36,13 +36,11 @@ class CyclicNet
    * @param nodeCount The number of nodes.
    * @param inputNodeCount The number of input nodes.
    * @param outputNodeCount The number of output nodes.
-   * @param timeStepsPerActivation The number of time steps per activation.
    * @param bias The bias.
    */
   CyclicNet(const size_t nodeCount,
             const size_t inputNodeCount,
             const size_t outputNodeCount,
-            const size_t timeStepsPerActivation,
             const double bias);
 
   /**
@@ -62,9 +60,6 @@ class CyclicNet
 
   //! Output node count.
   size_t outputNodeCount;
-
-  //! The number of time steps per activation.
-  const size_t timeStepsPerActivation;
 
   //! Bias.
   double bias;
