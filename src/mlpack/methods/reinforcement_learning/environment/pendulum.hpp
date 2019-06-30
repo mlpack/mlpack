@@ -218,7 +218,7 @@ class Pendulum
   {
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
-      Log::Info << "Episode terminated due to the maximum number of time steps"
+      Log::Info << "Episode terminated due to the maximum number of steps"
           "being taken.";
       return true;
     }
