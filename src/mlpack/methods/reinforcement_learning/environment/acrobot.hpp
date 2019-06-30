@@ -110,7 +110,7 @@ class Acrobot
    * @param maxVel2 The max angular velocity of link2.
    * @param dt The differential value.
    * @param doneReward The reward recieved by the agent on success.
-   * @param maxTimeSteps The number of time steps after which the episode
+   * @param maxSteps The number of steps after which the episode
    *    terminates. If the value is 0, there is no limit.
    */
   Acrobot(const double gravity = 9.81,
@@ -139,7 +139,7 @@ class Acrobot
       dt(dt),
       doneReward(doneReward),
       maxSteps(maxSteps),
-      timeStepsPerformed(0)
+      stepsPerformed(0)
   { /* Nothing to do here */ }
 
   /**
@@ -155,8 +155,8 @@ class Acrobot
                 const Action& action,
                 State& nextState)
   {
-    // Update the number of time steps performed.
-    timeStepsPerformed++;
+    // Update the number of steps performed.
+    stepsPerformed++;
 
     // Make a vector to estimate nextstate.
     arma::colvec currentState = {state.Theta1(), state.Theta2(),
@@ -178,7 +178,7 @@ class Acrobot
     bool done = IsTerminal(nextState);
 
     // Do not reward the agent if time ran out.
-    if (done && maxSteps != 0 && timeStepsPerformed >= maxSteps)
+    if (done && maxSteps != 0 && stepsPerformed >= maxSteps)
       return 0;
     else if (done)
       return doneReward;
@@ -206,7 +206,7 @@ class Acrobot
    */
   State InitialSample()
   {
-    timeStepsPerformed = 0;
+    stepsPerformed = 0;
     return State((arma::randu<arma::colvec>(4) - 0.5) / 5.0);
   }
 
@@ -214,18 +214,18 @@ class Acrobot
    * This function checks if the acrobot has reached the terminal state.
    *
    * @param state The current State.
-   * @return true if state is a terminal state, otherwise false.   * 
+   * @return true if state is a terminal state, otherwise false.
    */
   bool IsTerminal(const State& state) const
   {
-    if (maxSteps != 0 && timeStepsPerformed >= maxSteps)
+    if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
-      Log::Info << "Episode terminated due to the maximum number of time steps"
+      Log::Info << "Episode terminated due to the maximum number of steps"
           "being taken.";
       return true;
     }
-    else if (bool (-std::cos(state.Theta1())-std::cos(state.Theta1() +
-        state.Theta2()) > 1.0))
+    else if (-std::cos(state.Theta1())-std::cos(state.Theta1() +
+        state.Theta2()) > 1.0)
     {
       Log::Info << "Episode terminated due to agent succeeding.";
       return true;
@@ -337,8 +337,13 @@ class Acrobot
     return nextState;
   };
 
-  //! Get the number of time steps performed
-  size_t TimeStepsPerformed() const { return timeStepsPerformed; }
+  //! Get the number of steps performed.
+  size_t StepsPerformed() const { return stepsPerformed; }
+
+  //! Get the maximum number of steps allowed.
+  size_t MaxSteps() const { return maxSteps; }
+  //! Set the maximum number of steps allowed.
+  size_t& MaxSteps() { return maxSteps; }
 
  private:
   //! Locally-stored gravity.
@@ -377,11 +382,11 @@ class Acrobot
   //! Locally-stored done reward.
   double doneReward;
 
-  //! Locally-stored maximum number of time steps.
+  //! Locally-stored maximum number of steps.
   size_t maxSteps;
 
-  //! Locally-stored number of time steps performed.
-  size_t timeStepsPerformed;
+  //! Locally-stored number of steps performed.
+  size_t stepsPerformed;
 };
 
 } // namespace rl

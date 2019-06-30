@@ -105,7 +105,7 @@ class CartPole
    * @param thetaThresholdRadians The maximum angle.
    * @param xThreshold The maximum position.
    * @param doneReward Reward recieved by agent on success.
-   * @param maxTimeSteps The number of time steps after which the episode
+   * @param maxSteps The number of steps after which the episode
    *    terminates. If the value is 0, there is no limit.
    */
   CartPole(const double gravity = 9.8,
@@ -130,7 +130,7 @@ class CartPole
       xThreshold(xThreshold),
       doneReward(doneReward),
       maxSteps(maxSteps),
-      timeStepsPerformed(0)
+      stepsPerformed(0)
   { /* Nothing to do here */ }
 
   /**
@@ -146,8 +146,8 @@ class CartPole
                 const Action& action,
                 State& nextState)
   {
-    // Update the number of time steps performed.
-    timeStepsPerformed++;
+    // Update the number of steps performed.
+    stepsPerformed++;
 
     // Calculate acceleration.
     double force = action ? forceMag : -forceMag;
@@ -169,7 +169,7 @@ class CartPole
     bool done = IsTerminal(nextState);
 
     // Do not reward agent if it failed.
-    if (done && maxSteps != 0 && timeStepsPerformed >= maxSteps)
+    if (done && maxSteps != 0 && stepsPerformed >= maxSteps)
       return doneReward;
     else if (done)
       return 0;
@@ -202,7 +202,7 @@ class CartPole
    */
   State InitialSample()
   {
-    timeStepsPerformed = 0;
+    stepsPerformed = 0;
     return State((arma::randu<arma::colvec>(4) - 0.5) / 10.0);
   }
 
@@ -214,9 +214,9 @@ class CartPole
    */
   bool IsTerminal(const State& state) const
   {
-    if (maxSteps != 0 && timeStepsPerformed >= maxSteps)
+    if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
-      Log::Info << "Episode terminated due to the maximum number of time steps"
+      Log::Info << "Episode terminated due to the maximum number of steps"
           "being taken.";
       return true;
     }
@@ -229,8 +229,13 @@ class CartPole
     return false;
   }
 
-  //! Get the number of time steps performed
-  size_t TimeStepsPerformed() const { return timeStepsPerformed; }
+  //! Get the number of steps performed.
+  size_t StepsPerformed() const { return stepsPerformed; }
+
+  //! Get the maximum number of steps allowed.
+  size_t MaxSteps() const { return maxSteps; }
+  //! Set the maximum number of steps allowed.
+  size_t& MaxSteps() { return maxSteps; }
 
  private:
   //! Locally-stored gravity.
@@ -266,11 +271,11 @@ class CartPole
   //! Locally-stored done reward.
   double doneReward;
 
-  //! Locally-stored maximum number of time steps.
+  //! Locally-stored maximum number of steps.
   size_t maxSteps;
 
-  //! Locally-stored number of time steps performed.
-  size_t timeStepsPerformed;
+  //! Locally-stored number of steps performed.
+  size_t stepsPerformed;
 };
 
 } // namespace rl

@@ -94,7 +94,7 @@ class MountainCar
    * @param velocityMin Minimum legal velocity.
    * @param velocityMax Maximum legal velocity.
    * @param doneReward The reward recieved by the agent on success.
-   * @param maxTimeSteps The number of time steps after which the episode
+   * @param maxSteps The number of steps after which the episode
    *    terminates. If the value is 0, there is no limit.
    */
   MountainCar(const double positionMin = -1.2,
@@ -111,7 +111,7 @@ class MountainCar
       velocityMax(velocityMax),
       doneReward(doneReward),
       maxSteps(maxSteps),
-      timeStepsPerformed(0)
+      stepsPerformed(0)
   { /* Nothing to do here */ }
 
   /**
@@ -127,8 +127,8 @@ class MountainCar
                 const Action& action,
                 State& nextState)
   {
-    // Update the number of time steps performed.
-    timeStepsPerformed++;
+    // Update the number of steps performed.
+    stepsPerformed++;
 
     // Calculate acceleration.
     int direction = action - 1;
@@ -149,7 +149,7 @@ class MountainCar
     bool done = IsTerminal(nextState);
 
     // Do not reward the agent if time ran out.
-    if (done && maxSteps != 0 && timeStepsPerformed >= maxSteps)
+    if (done && maxSteps != 0 && stepsPerformed >= maxSteps)
       return 0;
     else if (done)
       return doneReward;
@@ -180,7 +180,7 @@ class MountainCar
   State InitialSample()
   {
     State state;
-    timeStepsPerformed = 0;
+    stepsPerformed = 0;
     state.Velocity() = 0.0;
     state.Position() = arma::as_scalar(arma::randu(1)) * 0.2 - 0.6;
     return state;
@@ -194,9 +194,9 @@ class MountainCar
    */
   bool IsTerminal(const State& state) const
   {
-    if (maxSteps != 0 && timeStepsPerformed >= maxSteps)
+    if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
-      Log::Info << "Episode terminated due to the maximum number of time steps"
+      Log::Info << "Episode terminated due to the maximum number of steps"
           "being taken.";
       return true;
     }
@@ -208,8 +208,13 @@ class MountainCar
     return false;
   }
 
-  //! Get the number of time steps performed
-  size_t TimeStepsPerformed() const { return timeStepsPerformed; }
+  //! Get the number of steps performed.
+  size_t StepsPerformed() const { return stepsPerformed; }
+
+  //! Get the maximum number of steps allowed.
+  size_t MaxSteps() const { return maxSteps; }
+  //! Set the maximum number of steps allowed.
+  size_t& MaxSteps() { return maxSteps; }
 
  private:
   //! Locally-stored minimum legal position.
@@ -230,11 +235,11 @@ class MountainCar
   //! Locally-stored done reward.
   double doneReward;
 
-  //! Locally-stored maximum number of time steps.
+  //! Locally-stored maximum number of steps.
   size_t maxSteps;
 
-  //! Locally-stored number of time steps performed.
-  size_t timeStepsPerformed;
+  //! Locally-stored number of steps performed.
+  size_t stepsPerformed;
 };
 
 } // namespace rl
