@@ -186,10 +186,10 @@ static void mlpackMain()
   const double relError = CLI::GetParam<double>("rel_error");
   const double absError = CLI::GetParam<double>("abs_error");
   const bool monteCarlo = CLI::GetParam<bool>("monte_carlo");
-  const double MCProbability = CLI::GetParam<double>("mc_probability");
+  const double mcProb = CLI::GetParam<double>("mc_probability");
   const int initialSampleSize = CLI::GetParam<int>("initial_sample_size");
-  const double MCEntryCoef = CLI::GetParam<double>("mc_entry_coef");
-  const double MCBreakCoef = CLI::GetParam<double>("mc_break_coef");
+  const double mcEntryCoef = CLI::GetParam<double>("mc_entry_coef");
+  const double mcBreakCoef = CLI::GetParam<double>("mc_break_coef");
 
   // Initialize results vector.
   arma::vec estimations;
@@ -285,10 +285,10 @@ static void mlpackMain()
   kde->RelativeError(relError);
   kde->AbsoluteError(absError);
   kde->MonteCarlo(monteCarlo);
-  kde->MCProbability(MCProbability);
+  kde->MCProbability(mcProb);
   kde->MCInitialSampleSize(initialSampleSize);
-  kde->MCEntryCoefficient(MCEntryCoef);
-  kde->MCBreakCoefficient(MCBreakCoef);
+  kde->MCEntryCoefficient(mcEntryCoef);
+  kde->MCBreakCoefficient(mcBreakCoef);
 
   // Evaluation.
   if (CLI::HasParam("query"))

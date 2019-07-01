@@ -29,10 +29,10 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     arma::vec& densities,
     const double relError,
     const double absError,
-    const double MCProb,
+    const double mcProb,
     const size_t initialSampleSize,
-    const double MCAccessCoef,
-    const double MCBreakCoef,
+    const double mcAccessCoef,
+    const double mcBreakCoef,
     MetricType& metric,
     KernelType& kernel,
     const bool monteCarlo,
@@ -42,10 +42,10 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     densities(densities),
     absError(absError),
     relError(relError),
-    MCBeta(1 - MCProb),
+    mcBeta(1 - mcProb),
     initialSampleSize(initialSampleSize),
-    MCAccessCoef(MCAccessCoef),
-    MCBreakCoef(MCBreakCoef),
+    mcAccessCoef(mcAccessCoef),
+    mcBreakCoef(mcBreakCoef),
     metric(metric),
     kernel(kernel),
     monteCarlo(monteCarlo),
@@ -132,7 +132,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     score = DBL_MAX;
   }
   else if (monteCarlo &&
-           referenceNode.NumDescendants() >= MCAccessCoef * initialSampleSize &&
+           referenceNode.NumDescendants() >= mcAccessCoef * initialSampleSize &&
            std::is_same<KernelType, kernel::GaussianKernel>::value)
   {
     // Calculate reference node depth.
@@ -141,7 +141,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 
     // Monte Carlo probabilistic estimation.
     const double currentAlpha =
-        MCBeta / std::pow(2, referenceNode.Stat().Depth() + 1);
+        mcBeta / std::pow(2, referenceNode.Stat().Depth() + 1);
     const boost::math::normal normalDist;
     const double z =
         std::abs(boost::math::quantile(normalDist, currentAlpha / 2));
@@ -157,7 +157,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 
       // Don't use probabilistic estimation if this is gonna take a close
       // amount of computation to the exact calculation.
-      if (newSize >= MCBreakCoef * numDesc)
+      if (newSize >= mcBreakCoef * numDesc)
       {
         useMonteCarloPredictions = false;
         break;
@@ -276,7 +276,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     score = DBL_MAX;
   }
   else if (monteCarlo &&
-           referenceNode.NumDescendants() >= MCAccessCoef * initialSampleSize &&
+           referenceNode.NumDescendants() >= mcAccessCoef * initialSampleSize &&
            std::is_same<KernelType, kernel::GaussianKernel>::value)
   {
     // Calculate reference node depth.
@@ -286,7 +286,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
     // Monte Carlo probabilistic estimation.
     const double currentAlpha =
-        MCBeta / std::pow(2, referenceNode.Stat().Depth() + 1);
+        mcBeta / std::pow(2, referenceNode.Stat().Depth() + 1);
     const boost::math::normal normalDist;
     const double z =
         std::abs(boost::math::quantile(normalDist, currentAlpha / 2));
@@ -308,7 +308,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
         // Don't use probabilistic estimation if this is gonna take a close
         // amount of computation to the exact calculation.
-        if (newSize >= MCBreakCoef * numDesc)
+        if (newSize >= mcBreakCoef * numDesc)
         {
           useMonteCarloPredictions = false;
           break;
