@@ -73,9 +73,7 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
   discriminator.Forward(std::move(predictors.cols(numFunctions,
       numFunctions + batchSize - 1)));
 
-  arma::mat fakeResponses(1, batchSize);
-  fakeResponses.fill(fakeLabel);
-  responses.cols(numFunctions, numFunctions + batchSize - 1) = fakeResponses;
+  responses.cols(numFunctions, numFunctions + batchSize - 1).fill(fakeLabel);
 
   currentTarget = arma::mat(responses.memptr() + numFunctions,
       1, batchSize, false, false);
@@ -88,8 +86,7 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
   double epsilon = math::Random();
   predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       (epsilon * currentInput) + ((1.0 - epsilon) * generatedData);
-  responses.cols(numFunctions, numFunctions + batchSize - 1) =
-      -arma::ones(1, batchSize);
+  responses.cols(numFunctions, numFunctions + batchSize - 1).fill(1);
   discriminator.Gradient(discriminator.parameter, numFunctions,
       normGradientDiscriminator, batchSize);
   res += lambda * std::pow(arma::norm(normGradientDiscriminator, 2) - 1, 2);
@@ -166,9 +163,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       (epsilon * currentInput) + ((1.0 - epsilon) * generatedData);
 
-  arma::mat fakeResponses(1, batchSize);
-  fakeResponses.fill(fakeLabel);
-  responses.cols(numFunctions, numFunctions + batchSize - 1) = fakeResponses;
+  responses.cols(numFunctions, numFunctions + batchSize - 1).fill(fakeLabel);
 
   discriminator.Gradient(discriminator.parameter, numFunctions,
       normGradientDiscriminator, batchSize);
@@ -184,9 +179,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   {
     // Minimize -D(G(noise)).
     // Pass the error from Discriminator to Generator.
-    arma::mat fakeResponses(1, batchSize);
-    fakeResponses.fill(realLabel);
-    responses.cols(numFunctions, numFunctions + batchSize - 1) = fakeResponses;
+    responses.cols(numFunctions, numFunctions + batchSize - 1).fill(fakeLabel);
     discriminator.Gradient(discriminator.parameter, numFunctions,
         noiseGradientDiscriminator, batchSize);
     generator.error = boost::apply_visitor(deltaVisitor,

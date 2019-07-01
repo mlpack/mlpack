@@ -107,8 +107,8 @@ class GAN
    * @param fakeLabel The label for data points which are generated.
    */
   void ResetData(arma::mat trainData,
-                 double realLabel = 1.0,
-                 double fakeLabel = 0.0);
+                 const double realLabel = 1.0,
+                 const double fakeLabel = 0.0);
 
   // Reset function.
   void Reset();
