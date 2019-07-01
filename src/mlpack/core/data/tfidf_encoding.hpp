@@ -112,6 +112,10 @@ class TfIdf
   //! Modify the mapappings.
   MapType& Mappings() { return mappings; }
 
+  //! Return the Idf Values.
+  const std::unordered_map<boost::string_view, double,
+      boost::hash<boost::string_view>>& IdfValues() const { return idfdict; }
+
   /**
    * Serialize the class to the given archive.
    */
@@ -120,7 +124,7 @@ class TfIdf
  private:
   //! A map which stores information about mapping.
   MapType mappings;
-  //! A map which stores informaton about IDF.
+  //! A map which stores informaton about IDF values.
   std::unordered_map<boost::string_view, double,
       boost::hash<boost::string_view>> idfdict;
   //! A deque which holds the original string for map's string_view.

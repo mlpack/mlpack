@@ -106,6 +106,7 @@ add_executable(mlpack_test
   termination_policy_test.cpp
   test_function_tools.hpp
   test_tools.hpp
+  tfidf_encoding_test.cpp
   timer_test.cpp
   tree_test.cpp
   tree_traits_test.cpp

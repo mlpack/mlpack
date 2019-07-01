@@ -113,9 +113,9 @@ void TfIdf::Encode(const std::vector<std::string>& input,
     {
       output.at(i, mappings.at(dataset[i][j]))++;
     }
-    for(size_t j = 0; j < mappings.size(); ++j)
+    for (size_t j = 0; j < mappings.size(); ++j)
     {
-      if(output.at(i, j))
+      if (output.at(i, j))
         idfdict.at(originalStrings.at(j))++;
     }
     for (size_t j = 0; j < dataset[i].size(); ++j)
@@ -124,9 +124,9 @@ void TfIdf::Encode(const std::vector<std::string>& input,
           output.at(i, mappings.at(dataset[i][j])) / dataset[i].size();
     }
   }
-  for(auto it = idfdict.begin(); it != idfdict.end();it++)
+  for (auto it = idfdict.begin(); it != idfdict.end();it++)
   {
-    it->second = std::log10(dataset.size()/it->second);
+    it->second = std::log10(dataset.size() / it->second);
   }
   for (size_t i = 0; i < dataset.size(); ++i)
   {
