@@ -27,6 +27,8 @@ set(SOURCES
   confusion_matrix.hpp
   one_hot_encoding.hpp
   one_hot_encoding_impl.hpp
+  tfidf_encoding.hpp
+  tfidf_encoding_impl.hpp
   tokenizer/char_split.hpp
   tokenizer/split_by_char.hpp
 )
