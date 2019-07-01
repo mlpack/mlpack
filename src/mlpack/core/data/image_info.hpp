@@ -34,7 +34,7 @@ bool ImageFormatSupported(const std::string& fileName, bool save = false);
 
 class ImageInfo
 {
-public:
+ public:
   /**
    * ImageInfo default constructor.
    */

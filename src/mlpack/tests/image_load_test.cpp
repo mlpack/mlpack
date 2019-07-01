@@ -159,7 +159,7 @@ BOOST_AUTO_TEST_CASE(LoadImageAPITest)
   arma::Mat<unsigned char> matrix;
   data::ImageInfo info;
   BOOST_REQUIRE(data::Load("test_image.png", matrix, info, false) == true);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, 50 * 50 * 3);// width * height * channels.
+  BOOST_REQUIRE_EQUAL(matrix.n_rows, 50 * 50 * 3); // width * height * channels.
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 1);
 }
 

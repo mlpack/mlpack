@@ -186,7 +186,6 @@ class Image
   ~Image();
 
  private:
-
   // To store maxWidth.
   size_t maxWidth;
 

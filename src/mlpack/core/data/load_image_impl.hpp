@@ -325,7 +325,7 @@ bool Load(const std::vector<std::string>& files,
 
     return false;
   }
-  
+
   Timer::Start("loading_image");
   return status;
 }
@@ -373,7 +373,7 @@ bool Save(const std::vector<std::string>& files,
 
     return false;
   }
-  
+
   Timer::Start("saving_image");
   return status;
 }
