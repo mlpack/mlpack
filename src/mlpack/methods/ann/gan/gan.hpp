@@ -98,9 +98,13 @@ class GAN
   // Reset function.
   void Reset();
 
-  // Train function.
+  /**
+   * Train function.
+   *
+   * @return The final objective of the trained model (NaN or Inf on error).
+   */
   template<typename OptimizerType>
-  void Train(OptimizerType& Optimizer);
+  double Train(OptimizerType& Optimizer);
 
   /**
    * Evaluate function for the Standard GAN and DCGAN.
@@ -206,7 +210,7 @@ class GAN
    * Gradient function for Standard GAN and DCGAN.
    * This function passes the gradient based on which network is being
    * trained, i.e., Generator or Discriminator.
-   * 
+   *
    * @param parameters present parameters of the network.
    * @param i Index of the predictors.
    * @param gradient Variable to store the present gradient.
@@ -224,7 +228,7 @@ class GAN
    * Gradient function for WGAN.
    * This function passes the gradient based on which network is being
    * trained, i.e., Generator or Discriminator.
-   * 
+   *
    * @param parameters present parameters of the network.
    * @param i Index of the predictors.
    * @param gradient Variable to store the present gradient.
@@ -241,7 +245,7 @@ class GAN
    * Gradient function for WGAN-GP.
    * This function passes the gradient based on which network is being
    * trained, i.e., Generator or Discriminator.
-   * 
+   *
    * @param parameters present parameters of the network.
    * @param i Index of the predictors.
    * @param gradient Variable to store the present gradient.
@@ -293,6 +297,16 @@ class GAN
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
+
+  //! Get the matrix of responses to the input data points.
+  const arma::mat& Responses() const { return responses; }
+  //! Modify the matrix of responses to the input data points.
+  arma::mat& Responses() { return responses; }
+
+  //! Get the matrix of data points (predictors).
+  const arma::mat& Predictors() const { return predictors; }
+  //! Modify the matrix of data points (predictors).
+  arma::mat& Predictors() { return predictors; }
 
   //! Serialize the model.
   template<typename Archive>

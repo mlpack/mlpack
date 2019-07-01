@@ -109,7 +109,12 @@ Copyright:
   Copyright 2018, Tommi Laivamaa <tommi.laivamaa@protonmail.com>
   Copyright 2019, Kim SangYeon <sy0814k@gmail.com>
   Copyright 2019, Niteya Shah <niteya.56@gmail.com>
-  
+  Copyright 2019, Toshal Agrawal <tagrawal1339@gmail.com>
+  Copyright 2019, Dan Timson
+  Copyright 2019, Miguel Canteras <mcanteras@gmail.com>
+  Copyright 2019, Bishwa Karki <karkeebishwa1@gmail.com>
+  Copyright 2019, Yashwant Singh Parihar <yashwantsingh.sngh@gmail.com>
+
 License: BSD-3-clause
   All rights reserved.
   .

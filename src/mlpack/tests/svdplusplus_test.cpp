@@ -119,7 +119,8 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionRegularizationEvaluate)
   // Make three SVDPlusPlusFunction objects with different amounts of
   // regularization.
   SVDPlusPlusFunction<arma::mat> svdPPFuncNoReg(data, implicitData, rank, 0);
-  SVDPlusPlusFunction<arma::mat> svdPPFuncSmallReg(data, implicitData, rank, 0.5);
+  SVDPlusPlusFunction<arma::mat> svdPPFuncSmallReg(data, implicitData, rank,
+      0.5);
   SVDPlusPlusFunction<arma::mat> svdPPFuncBigReg(data, implicitData, rank, 20);
 
   for (size_t i = 0; i < numTrials; i++)
@@ -149,7 +150,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionRegularizationEvaluate)
       for (; it != it_end; ++it)
       {
         if (implicitVecsNormSquare(it.row()) < 0)
-        { 
+        {
           implicitVecsNormSquare(it.row()) = arma::dot(
             parameters.col(implicitStart + it.row()).subvec(0, rank - 1),
             parameters.col(implicitStart + it.row()).subvec(0, rank - 1));
@@ -272,7 +273,8 @@ BOOST_AUTO_TEST_CASE(SVDplusPlusOutputSizeTest)
 
   // Apply SVD++.
   SVDPlusPlus<> svdPP(iterations);
-  svdPP.Apply(data, rank, itemLatent, userLatent, itemBias, userBias, itemImplicit);
+  svdPP.Apply(data, rank, itemLatent, userLatent, itemBias, userBias,
+      itemImplicit);
 
   // Check the size of outputs.
   BOOST_REQUIRE_EQUAL(itemLatent.n_rows, numItems);

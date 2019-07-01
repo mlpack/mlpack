@@ -1,12 +1,73 @@
-### mlpack 3.1.0
+### mlpack 3.1.2
 ###### ????-??-??
+  * Add Multiple Pole Balancing Environment (#1901).
+
+  * Add new parameter `maximum_depth` to decision tree and random forest
+    bindings (#1916).
+
+  * Fix prediction output of softmax regression when test set accuracy is
+    calculated (#1922).
+
+### mlpack 3.1.1
+###### 2019-05-26
+  * Fix random forest bug for numerical-only data (#1887).
+
+  * Significant speedups for random forest (#1887).
+
+  * Random forest now has `minimum_gain_split` and `subspace_dim` parameters
+    (#1887).
+
+  * Decision tree parameter `print_training_error` deprecated in favor of
+    `print_training_accuracy`.
+
+  * `output` option changed to `predictions` for adaboost and perceptron
+    binding. Old options are now deprecated and will be preserved until mlpack
+    4.0.0 (#1882).
+
+  * Concatenated ReLU layer (#1843).
+
+  * Accelerate NormalizeLabels function using hashing instead of linear search
+    (see `src/mlpack/core/data/normalize_labels_impl.hpp`) (#1780).
+
+  * Add `ConfusionMatrix()` function for checking performance of classifiers
+    (#1798).
+
+  * Install ensmallen headers when it is downloaded during build (#1900).
+
+### mlpack 3.1.0
+###### 2019-04-25
+  * Add DiagonalGaussianDistribution and DiagonalGMM classes to speed up the
+    diagonal covariance computation and deprecate DiagonalConstraint (#1666).
+
   * Add kernel density estimation (KDE) implementation with bindings to other
     languages (#1301).
 
-### mlpack 3.0.5
-###### ????-??-??
+  * Where relevant, all models with a `Train()` method now return a `double`
+    value representing the goodness of fit (i.e. final objective value, error,
+    etc.) (#1678).
+
+  * Add implementation for linear support vector machine (see
+    `src/mlpack/methods/linear_svm`).
+
   * Change DBSCAN to use PointSelectionPolicy and add OrderedPointSelection (#1625).
-  
+
+  * Residual block support (#1594).
+
+  * Bidirectional RNN (#1626).
+
+  * Dice loss layer (#1674, #1714) and hard sigmoid layer (#1776).
+
+  * `output` option changed to `predictions` and `output_probabilities` to
+    `probabilities` for Naive Bayes binding (`mlpack_nbc`/`nbc()`).  Old options
+    are now deprecated and will be preserved until mlpack 4.0.0 (#1616).
+
+  * Add support for Diagonal GMMs to HMM code (#1658, #1666).  This can provide
+    large speedup when a diagonal GMM is acceptable as an emission probability
+    distribution.
+
+  * Python binding improvements: check parameter type (#1717), avoid copying
+    Pandas dataframes (#1711), handle Pandas Series objects (#1700).
+
 ### mlpack 3.0.4
 ###### 2018-11-13
   * Bump minimum CMake version to 3.3.2.

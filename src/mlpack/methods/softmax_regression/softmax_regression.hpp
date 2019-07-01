@@ -35,28 +35,25 @@ namespace regression {
  * An example on how to use the interface is shown below:
  *
  * @code
- * arma::mat train_data; // Training data matrix.
- * arma::vec labels; // Labels associated with the data.
- * const size_t inputSize = 784; // Size of input feature vector.
+ * arma::mat trainData; // Training data matrix.
+ * arma::Row<size_t> labels; // Labels associated with the data.
+ * const size_t inputSize = 1000; // Size of input feature vector.
  * const size_t numClasses = 10; // Number of classes.
- *
- * // Train the model using default options.
- * SoftmaxRegression<> regressor1(train_data, labels, inputSize, numClasses);
+ * const double lambda = 0.0001; // L2-Regularization parameter.
  *
  * const size_t numBasis = 5; // Parameter required for L-BFGS algorithm.
  * const size_t numIterations = 100; // Maximum number of iterations.
  *
- * // Use an instantiated optimizer for the training.
- * SoftmaxRegressionFunction srf(train_data, labels, inputSize, numClasses);
- * L_BFGS<SoftmaxRegressionFunction> optimizer(srf, numBasis, numIterations);
- * SoftmaxRegression<L_BFGS> regressor2(optimizer);
+ * // Train the model using an instantiated optimizer for the training.
+ * SoftmaxRegression regressor(trainData.n_rows, numClasses);
+ * ens::L_BFGS optimizer(numBasis, numIterations);
+ * regressor.Train(trainData, labels, numClasses, std::move(optimizer));
  *
- * arma::mat test_data; // Test data matrix.
- * arma::vec predictions1, predictions2; // Vectors to store predictions in.
+ * arma::mat testData; // Test data matrix.
+ * arma::Row<size_t> predictions; // Vectors to store predictions in.
  *
  * // Obtain predictions from both the learned models.
- * regressor1.Classify(test_data, predictions1);
- * regressor2.Classify(test_data, predictions2);
+ * regressor.Classify(testData, predictions);
  * @endcode
  */
 class SoftmaxRegression

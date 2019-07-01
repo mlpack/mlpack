@@ -184,6 +184,9 @@ class LayerNorm
 
   //! Locally-stored normalized input.
   OutputDataType normalized;
+
+  //! Locally-stored zero mean input.
+  OutputDataType inputMean;
 }; // class LayerNorm
 
 } // namespace ann

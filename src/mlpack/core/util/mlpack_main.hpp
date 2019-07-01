@@ -106,7 +106,8 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 #include <mlpack/core/util/param.hpp>
 
 #undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) static mlpack::util::ProgramDoc \
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
+    static mlpack::util::ProgramDoc \
     cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
     []() { return DESC; }, { __VA_ARGS__ })
 
@@ -138,7 +139,8 @@ static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
 #undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) static mlpack::util::ProgramDoc \
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
+    static mlpack::util::ProgramDoc \
     cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
     []() { return DESC; }, { __VA_ARGS__ }); \
     namespace mlpack { \
@@ -174,6 +176,9 @@ PARAM_FLAG("copy_all_inputs", "If specified, all input parameters will be deep"
 #define PRINT_MODEL mlpack::bindings::markdown::PrintModel
 #define PRINT_CALL mlpack::bindings::markdown::ProgramCall
 #define BINDING_IGNORE_CHECK mlpack::bindings::markdown::IgnoreCheck
+
+// This doesn't actually matter for this binding type.
+#define BINDING_MATRIX_TRANSPOSED true
 
 namespace mlpack {
 namespace util {

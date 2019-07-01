@@ -24,7 +24,6 @@ using namespace mlpack;
 struct RangeSearchTestFixture
 {
  public:
-
   RangeSearchTestFixture()
   {
     // Cache in the options for this program.
@@ -373,7 +372,7 @@ BOOST_AUTO_TEST_CASE(TreeTypeTesting)
   vector<vector<size_t>> neighbors, neighborsTemp;
   vector<vector<double>> distances, distancestemp;
   vector<string> trees = {"kd", "cover", "r", "r-star", "ball", "x",
-                          "hilbert-r", "r-plus", "r-plus-plus", "vp","rp",
+                          "hilbert-r", "r-plus", "r-plus-plus", "vp", "rp",
                           "max-rp", "ub", "oct"};
 
   if (!data::Load("iris.csv", inputData))
@@ -394,9 +393,9 @@ BOOST_AUTO_TEST_CASE(TreeTypeTesting)
 
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
-  RSModel* outputModel1=CLI::GetParam<RSModel*>("output_model");
+  RSModel* outputModel1 = CLI::GetParam<RSModel*>("output_model");
 
-  for (size_t i = 1;i < trees.size(); i++)
+  for (size_t i = 1; i < trees.size(); i++)
   {
     if (!data::Load("iris.csv", inputData))
       BOOST_FAIL("Unable to load dataset iris.csv!");
@@ -457,7 +456,7 @@ BOOST_AUTO_TEST_CASE(RandomBasisTesting)
   SetInputParam("distances_file", distanceFile);
   SetInputParam("neighbors_file", neighborsFile);
   SetInputParam("reference", inputData);
-  SetInputParam("random_basis",true);
+  SetInputParam("random_basis", true);
 
   mlpackMain();
 

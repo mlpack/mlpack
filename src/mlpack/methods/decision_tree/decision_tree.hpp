@@ -64,6 +64,8 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
    */
   template<typename MatType, typename LabelsType>
   DecisionTree(MatType data,
@@ -71,7 +73,10 @@ class DecisionTree :
                LabelsType labels,
                const size_t numClasses,
                const size_t minimumLeafSize = 10,
-               const double minimumGainSplit = 1e-7);
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType());
 
   /**
    * Construct the decision tree on the given data and labels, assuming that the
@@ -86,13 +91,18 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
    */
   template<typename MatType, typename LabelsType>
   DecisionTree(MatType data,
                LabelsType labels,
                const size_t numClasses,
                const size_t minimumLeafSize = 10,
-               const double minimumGainSplit = 1e-7);
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType());
 
   /**
    * Construct the decision tree on the given data and labels with weights,
@@ -110,6 +120,8 @@ class DecisionTree :
    * @param weights The weight list of given label.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
   DecisionTree(MatType data,
@@ -119,6 +131,9 @@ class DecisionTree :
                WeightsType weights,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType(),
                const std::enable_if_t<arma::is_arma_type<
                    typename std::remove_reference<WeightsType>::type>::value>*
                     = 0);
@@ -138,6 +153,8 @@ class DecisionTree :
    * @param weights The Weight list of given labels.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
   DecisionTree(MatType data,
@@ -146,6 +163,9 @@ class DecisionTree :
                WeightsType weights,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType(),
                const std::enable_if_t<arma::is_arma_type<
                    typename std::remove_reference<WeightsType>::type>::value>*
                     = 0);
@@ -210,14 +230,20 @@ class DecisionTree :
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
+   * @return The final entropy of decision tree.
    */
   template<typename MatType, typename LabelsType>
-  void Train(MatType data,
-             const data::DatasetInfo& datasetInfo,
-             LabelsType labels,
-             const size_t numClasses,
-             const size_t minimumLeafSize = 10,
-             const double minimumGainSplit = 1e-7);
+  double Train(MatType data,
+               const data::DatasetInfo& datasetInfo,
+               LabelsType labels,
+               const size_t numClasses,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType());
 
   /**
    * Train the decision tree on the given data, assuming that all dimensions are
@@ -233,13 +259,19 @@ class DecisionTree :
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
+   * @return The final entropy of decision tree.
    */
   template<typename MatType, typename LabelsType>
-  void Train(MatType data,
-             LabelsType labels,
-             const size_t numClasses,
-             const size_t minimumLeafSize = 10,
-             const double minimumGainSplit = 1e-7);
+  double Train(MatType data,
+               LabelsType labels,
+               const size_t numClasses,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType());
 
   /**
    * Train the decision tree on the given weighted data.  This will overwrite
@@ -258,17 +290,23 @@ class DecisionTree :
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
+   * @return The final entropy of decision tree.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
-  void Train(MatType data,
-             const data::DatasetInfo& datasetInfo,
-             LabelsType labels,
-             const size_t numClasses,
-             WeightsType weights,
-             const size_t minimumLeafSize = 10,
-             const double minimumGainSplit = 1e-7,
-             const std::enable_if_t<arma::is_arma_type<typename
-                 std::remove_reference<WeightsType>::type>::value>* = 0);
+  double Train(MatType data,
+               const data::DatasetInfo& datasetInfo,
+               LabelsType labels,
+               const size_t numClasses,
+               WeightsType weights,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType(),
+               const std::enable_if_t<arma::is_arma_type<typename
+                   std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
    * Train the decision tree on the given weighted data, assuming that all
@@ -285,16 +323,22 @@ class DecisionTree :
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
+   * @return The final entropy of decision tree.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
-  void Train(MatType data,
-             LabelsType labels,
-             const size_t numClasses,
-             WeightsType weights,
-             const size_t minimumLeafSize = 10,
-             const double minimumGainSplit = 1e-7,
-             const std::enable_if_t<arma::is_arma_type<typename
-                 std::remove_reference<WeightsType>::type>::value>* = 0);
+  double Train(MatType data,
+               LabelsType labels,
+               const size_t numClasses,
+               WeightsType weights,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType(),
+               const std::enable_if_t<arma::is_arma_type<typename
+                   std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
    * Classify the given point, using the entire tree.  The predicted label is
@@ -359,6 +403,10 @@ class DecisionTree :
   //! Modify the child of the given index (be careful!).
   DecisionTree& Child(const size_t i) { return *children[i]; }
 
+  //! Get the split dimension (only meaningful if this is a non-leaf in a
+  //! trained tree).
+  size_t SplitDimension() const { return splitDimension; }
+
   /**
    * Given a point and that this node is not a leaf, calculate the index of the
    * child node this point would go towards.  This method is primarily used by
@@ -421,17 +469,21 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @return The final entropy of decision tree.
    */
   template<bool UseWeights, typename MatType>
-  void Train(MatType& data,
-             const size_t begin,
-             const size_t count,
-             const data::DatasetInfo& datasetInfo,
-             arma::Row<size_t>& labels,
-             const size_t numClasses,
-             arma::rowvec& weights,
-             const size_t minimumLeafSize = 10,
-             const double minimumGainSplit = 1e-7);
+  double Train(MatType& data,
+               const size_t begin,
+               const size_t count,
+               const data::DatasetInfo& datasetInfo,
+               arma::Row<size_t>& labels,
+               const size_t numClasses,
+               arma::rowvec& weights,
+               const size_t minimumLeafSize,
+               const double minimumGainSplit,
+               const size_t maximumDepth,
+               DimensionSelectionType& dimensionSelector);
 
   /**
    * Corresponding to the public Train() method, this method is designed for
@@ -446,16 +498,20 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @return The final entropy of decision tree.
    */
   template<bool UseWeights, typename MatType>
-  void Train(MatType& data,
-             const size_t begin,
-             const size_t count,
-             arma::Row<size_t>& labels,
-             const size_t numClasses,
-             arma::rowvec& weights,
-             const size_t minimumLeafSize = 10,
-             const double minimumGainSplit = 1e-7);
+  double Train(MatType& data,
+               const size_t begin,
+               const size_t count,
+               arma::Row<size_t>& labels,
+               const size_t numClasses,
+               arma::rowvec& weights,
+               const size_t minimumLeafSize,
+               const double minimumGainSplit,
+               const size_t maximumDepth,
+               DimensionSelectionType& dimensionSelector);
 };
 
 /**

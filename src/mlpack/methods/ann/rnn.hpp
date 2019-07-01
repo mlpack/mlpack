@@ -94,11 +94,12 @@ class RNN
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
+   * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType>
-  void Train(arma::cube predictors,
-             arma::cube responses,
-             OptimizerType& optimizer);
+  double Train(arma::cube predictors,
+               arma::cube responses,
+               OptimizerType& optimizer);
 
   /**
    * Train the recurrent neural network on the given input data. By default, the
@@ -122,9 +123,10 @@ class RNN
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
+   * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType = ens::StandardSGD>
-  void Train(arma::cube predictors, arma::cube responses);
+  double Train(arma::cube predictors, arma::cube responses);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -381,6 +383,16 @@ class RNN
 
   //! The current gradient for the gradient pass.
   arma::mat currentGradient;
+
+  // The BRN class should have access to internal members.
+  template<
+    typename OutputLayerType1,
+    typename MergeLayerType1,
+    typename MergeOutputType1,
+    typename InitializationRuleType1,
+    typename... CustomLayers1
+  >
+  friend class BRNN;
 }; // class RNN
 
 } // namespace ann

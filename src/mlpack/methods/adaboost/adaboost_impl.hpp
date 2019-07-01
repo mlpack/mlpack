@@ -55,6 +55,7 @@ AdaBoost<WeakLearnerType, MatType>::AdaBoost(
 // Empty constructor.
 template<typename WeakLearnerType, typename MatType>
 AdaBoost<WeakLearnerType, MatType>::AdaBoost(const double tolerance) :
+    numClasses(0),
     tolerance(tolerance)
 {
   // Nothing to do.
@@ -62,7 +63,7 @@ AdaBoost<WeakLearnerType, MatType>::AdaBoost(const double tolerance) :
 
 // Train AdaBoost.
 template<typename WeakLearnerType, typename MatType>
-void AdaBoost<WeakLearnerType, MatType>::Train(
+double AdaBoost<WeakLearnerType, MatType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
@@ -81,7 +82,7 @@ void AdaBoost<WeakLearnerType, MatType>::Train(
   // changing by less than the tolerance.
   double rt, crt = 0.0, alphat = 0.0, zt;
 
-  ztProduct = 1.0;
+  double ztProduct = 1.0;
 
   // To be used for prediction by the weak learner.
   arma::Row<size_t> predictedLabels(labels.n_cols);
@@ -198,6 +199,7 @@ void AdaBoost<WeakLearnerType, MatType>::Train(
     // Accumulate the value of zt for the Hamming loss bound.
     ztProduct *= zt;
   }
+  return ztProduct;
 }
 
 /**
@@ -239,11 +241,16 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
 template<typename WeakLearnerType, typename MatType>
 template<typename Archive>
 void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
-                                               const unsigned int /* version */)
+                                                   const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_NVP(numClasses);
   ar & BOOST_SERIALIZATION_NVP(tolerance);
-  ar & BOOST_SERIALIZATION_NVP(ztProduct);
+  if (version == 0 && Archive::is_loading::value)
+  {
+    // Load unused ztProduct double and forget it.
+    double tmpZtProduct = 0.0;
+    ar & BOOST_SERIALIZATION_NVP(tmpZtProduct);
+  }
   ar & BOOST_SERIALIZATION_NVP(alpha);
 
   // Now serialize each weak learner.
