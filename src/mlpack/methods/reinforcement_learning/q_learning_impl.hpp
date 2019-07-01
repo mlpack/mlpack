@@ -120,7 +120,6 @@ double QLearning<
 
   // Sample from previous experience.
   arma::mat sampledStates;
-//  arma::icolvec sampledActions;
   std::vector<ActionType> sampledActions;
   arma::colvec sampledRewards;
   arma::mat sampledNextStates;

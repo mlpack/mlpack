@@ -156,7 +156,6 @@ class PrioritizedReplay
     BetaAnneal();
 
     sampledStates = states.cols(sampledIndices);
-//    sampledActions = actions.elem(sampledIndices);
     for (size_t t = 0; t < sampledIndices.n_rows; t ++)
     {
       sampledActions.push_back(actions[sampledIndices[t]]);
@@ -250,7 +249,6 @@ class PrioritizedReplay
   arma::mat states;
 
   //! Locally-stored previous actions.
-//  arma::icolvec actions;
   std::vector<ActionType> actions;
 
   //! Locally-stored previous rewards.
