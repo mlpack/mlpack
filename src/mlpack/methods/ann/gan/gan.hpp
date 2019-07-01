@@ -106,8 +106,8 @@ class GAN
    * @param fakeLabel The label for data points which are generated.
    */
   void ResetData(arma::mat trainData,
-                 double realLabel = 1.0,
-                 double fakeLabel = 0.0);
+                 const double realLabel = 1.0,
+                 const double fakeLabel = 0.0);
 
   // Reset function.
   void Reset();
@@ -126,8 +126,8 @@ class GAN
                           std::is_same<Policy, DCGAN>::value, double>::type
   Train(arma::mat trainData,
         OptimizerType& Optimizer,
-        double realLabel = 1.0,
-        double fakeLabel = 0.0);
+        const double realLabel = 1.0,
+        const double fakeLabel = 0.0);
 
   /**
    * Train function for WGAN and WGANGP.
@@ -143,8 +143,8 @@ class GAN
                           std::is_same<Policy, WGANGP>::value, double>::type
   Train(arma::mat trainData,
         OptimizerType& Optimizer,
-        double realLabel = 1.0,
-        double fakeLabel = -1.0);
+        const double realLabel = 1.0,
+        const double fakeLabel = -1.0);
 
   /**
    * Evaluate function for the Standard GAN and DCGAN.

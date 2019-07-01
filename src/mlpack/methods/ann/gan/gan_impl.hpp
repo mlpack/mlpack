@@ -148,8 +148,8 @@ template<
 >
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
     arma::mat trainData,
-    double realLabel,
-    double fakeLabel)
+    const double realLabel,
+    const double fakeLabel)
 {
   counter = 0;
   currentBatch = 0;
@@ -236,8 +236,8 @@ typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
 GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
     arma::mat trainData,
     OptimizerType& Optimizer,
-    double realLabel,
-    double fakeLabel)
+    const double realLabel,
+    const double fakeLabel)
 {
   ResetData(std::move(trainData), realLabel, fakeLabel);
 
@@ -256,8 +256,8 @@ typename std::enable_if<std::is_same<Policy, WGAN>::value ||
 GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
     arma::mat trainData,
     OptimizerType& Optimizer,
-    double realLabel,
-    double fakeLabel)
+    const double realLabel,
+    const double fakeLabel)
 {
   ResetData(std::move(trainData), realLabel, fakeLabel);
 
@@ -306,9 +306,7 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
   discriminator.Forward(std::move(predictors.cols(numFunctions,
       numFunctions + batchSize - 1)));
 
-  arma::mat fakeResponses(1, batchSize);
-  fakeResponses.fill(fakeLabel);
-  responses.cols(numFunctions, numFunctions + batchSize - 1) = fakeResponses;
+  responses.cols(numFunctions, numFunctions + batchSize - 1).fill(fakeLabel);
 
   currentTarget = arma::mat(responses.memptr() + numFunctions,
       1, batchSize, false, false);
@@ -379,9 +377,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       boost::apply_visitor(outputParameterVisitor, generator.network.back());
 
-  arma::mat fakeResponses(1, batchSize);
-  fakeResponses.fill(fakeLabel);
-  responses.cols(numFunctions, numFunctions + batchSize - 1) = fakeResponses;
+  responses.cols(numFunctions, numFunctions + batchSize - 1).fill(fakeLabel);
 
   // Get the gradients of the Generator.
   res += discriminator.EvaluateWithGradient(discriminator.parameter,
@@ -392,9 +388,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   {
     // Minimize -log(D(G(noise))).
     // Pass the error from Discriminator to Generator.
-    arma::mat fakeResponses(1, batchSize);
-    fakeResponses.fill(realLabel);
-    responses.cols(numFunctions, numFunctions + batchSize - 1) = fakeResponses;
+    responses.cols(numFunctions, numFunctions + batchSize - 1).fill(realLabel);
     discriminator.Gradient(discriminator.parameter, numFunctions,
         noiseGradientDiscriminator, batchSize);
     generator.error = boost::apply_visitor(deltaVisitor,
