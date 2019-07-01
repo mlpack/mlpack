@@ -77,6 +77,33 @@ void PPO<
   ReplayType
 >::Update()
 {
+  // Sample from previous experience.
+  arma::mat sampledStates;
+  std::vector<ActionType> sampledActions;
+  arma::colvec sampledRewards;
+  arma::mat sampledNextStates;
+  arma::icolvec isTerminal;
+  arma::colvec discountedRewards;
+
+  replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
+      sampledNextStates, isTerminal);
+
+  arma::mat nextActionValues;
+  double values;
+  criticNetwork.Predict(sampledNextStates, nextActionValues);
+  for (size_t i = sampledRewards.n_cols; i > 0; --i)
+  {
+    values = sampledRewards[i-1] + values * config.Discount();
+    discountedRewards.insert_rows(discountedRewards.n_cols, values);
+  }
+
+  arma::mat actionValues, advantages;
+  criticNetwork.Predict(sampledStates, actionValues);
+
+  // update the actor
+
+  // update the critic
+  criticNetwork.Backward(actionValues, sampledRewards);
 }
 
 template<
@@ -133,7 +160,7 @@ double PPO<
   if (deterministic)
     return reward;
 
-  return 0.0;
+  return reward;
 }
 
 template<
