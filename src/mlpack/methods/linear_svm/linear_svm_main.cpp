@@ -149,7 +149,7 @@ PARAM_MATRIX_OUT("score", "If test data is specified, this "
     "p");
 
 size_t NumberOfClasses(const size_t numClasses,
-                                const arma::Row<size_t>& labels);
+                       const arma::Row<size_t>& labels);
 
 static void mlpackMain()
 {
@@ -324,7 +324,7 @@ static void mlpackMain()
     arma::Row<size_t> predictions;
     size_t trainingDimensionality;
 
-    // Set the dimensionality according to fitintercept
+    // Set the dimensionality according to fitintercept.
     if (intercept && optimizerType == "lbfgs")
       trainingDimensionality = model->Parameters().n_rows - 1;
     else
@@ -402,7 +402,7 @@ static void mlpackMain()
 }
 
 size_t NumberOfClasses(const size_t numClasses,
-                                const arma::Row<size_t>& labels)
+                       const arma::Row<size_t>& labels)
 {
   if (numClasses == 0)
   {
