@@ -16,7 +16,7 @@
 #include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
 #include <utility>
 
-using MapType =   std::unordered_map<boost::string_view, size_t,
+using MapType = std::unordered_map<boost::string_view, size_t,
     boost::hash<boost::string_view>>;
 
 namespace mlpack {
