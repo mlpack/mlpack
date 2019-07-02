@@ -47,19 +47,13 @@ BOOST_AUTO_TEST_SUITE(NEATTest)
 BOOST_AUTO_TEST_CASE(NEATXORTest)
 {
   arma::arma_rng::set_seed_random();
-  auto t1 = std::chrono::high_resolution_clock::now();
   XORTask task;
-  NEAT<XORTask, HardSigmoidFunction, RankSelection> model(2, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, false);
+  NEAT<XORTask, HardSigmoidFunction, RankSelection> model(task, 2, 1, 100, 150, 10);
+  model.FinalFitness() = 3.6;
 
   // Find the best genome and it's fitness.
   Genome<HardSigmoidFunction> bestGenome = model.Train();
-  auto t2 = std::chrono::high_resolution_clock::now();
-  std::cout << "NEAT took "
-              << std::chrono::duration_cast<std::chrono::seconds>(t2-t1).count()
-              << " seconds\n";
-  bestGenome.Parameters().print();
   double finalFitness = bestGenome.Fitness();
-  std::cout << finalFitness << std::endl;
   // Check if the final fitness is acceptable.
   BOOST_REQUIRE(finalFitness >= 3.5);
 }
@@ -148,7 +142,7 @@ BOOST_AUTO_TEST_CASE(NEATXORTest)
 //   const CartPole env = CartPole();
 //   DiscreteRLTask<CartPole> task(env);
 //   NEAT<DiscreteRLTask<CartPole>, HardSigmoidFunction, RankSelection> model
-//        (task, 2, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, true);
+//        (task, 4, 1, 100, 150, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2, 0.2, false);
 
 //   // Find the best genome and it's fitness.
 //   Genome<HardSigmoidFunction> bestGenome = model.Train();
@@ -192,7 +186,7 @@ BOOST_AUTO_TEST_CASE(NEATXORTest)
 //   const MultiplePoleCart env = MultiplePoleCart(2, poleLengths, poleMasses, 9.8, 1, 0.01);
 //   DPNVTask task(env);
 //   NEAT<DPNVTask, HardSigmoidFunction, RankSelection> model
-//         (task, 3, 1, 1000, 100, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.3, 0.2, 0.2, false);
+//         (task, 3, 1, 1000, 500, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.3, 0.2, 0.2, false);
 
 //   // Find the best genome and it's fitness.
 //   Genome<HardSigmoidFunction> bestGenome = model.Train();

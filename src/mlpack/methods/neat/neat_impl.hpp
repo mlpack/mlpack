@@ -23,12 +23,14 @@ template <class TaskType,
           class ActivationFunction,
           class SelectionPolicy>
 NEAT<TaskType, ActivationFunction, SelectionPolicy>::
-    NEAT(const size_t inputNodeCount,
+    NEAT(TaskType& task,
+         const size_t inputNodeCount,
          const size_t outputNodeCount,
          const size_t popSize,
          const size_t maxGen,
          const size_t numSpecies,
-         const double bias,
+         const double initialBias,
+         const double initialWeight,
          const double weightMutationProb,
          const double weightMutationSize,
          const double biasMutationProb,
@@ -38,13 +40,16 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::
          const double connDeletionProb,
          const double disableProb,
          const double elitismProp,
+         const double finalFitness,
          const bool isAcyclic):
+    task(task),
     inputNodeCount(inputNodeCount),
     outputNodeCount(outputNodeCount),
     popSize(popSize),
     maxGen(maxGen),
     numSpecies(numSpecies),
-    bias(bias),
+    initialBias(initialBias),
+    initialWeight(initialWeight),
     weightMutationProb(weightMutationProb),
     weightMutationSize(weightMutationSize),
     biasMutationProb(biasMutationProb),
@@ -54,6 +59,7 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::
     connDeletionProb(connDeletionProb),
     disableProb(disableProb),
     elitismProp(elitismProp),
+    finalFitness(finalFitness),
     isAcyclic(isAcyclic)
 { /* Nothing to do here yet */ }
 
@@ -69,14 +75,17 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   // Initialize.
   for (size_t i = 0; i < popSize; i++)
   {
+    double bias = initialBias + arma::randu<double>();
     genomeList.emplace_back(Genome<ActivationFunction>(inputNodeCount,
-        outputNodeCount, bias, weightMutationProb,
+        outputNodeCount, bias, initialWeight, weightMutationProb,
         weightMutationSize, biasMutationProb, biasMutationSize,
         nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic));
   }
   speciesList = std::vector<std::vector<Genome<ActivationFunction>>>(numSpecies);
   Speciate(true);
 
+  arma::vec fitnesses(popSize);
+  
   // Main loop.
   for (size_t gen = 0; gen < maxGen; gen++)
   {
@@ -84,8 +93,14 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     std::cout << "Evaluating." << std::endl;
     #pragma omp parallel for
     for (size_t i = 0; i < popSize; i++)
-      genomeList[i].Fitness() = TaskType::Evaluate(genomeList[i]); 
-    if (gen == maxGen - 1) break;
+    {
+      genomeList[i].Fitness() = task.Evaluate(genomeList[i]); 
+      fitnesses[i] = genomeList[i].Fitness();
+    }
+    if (finalFitness != 0 && fitnesses.max() >= finalFitness)
+      break;
+    if (gen == maxGen - 1)
+      break;
     std::cout << "Speciating." << std::endl;
     Speciate(false);
     std::cout << "Reproducing." << std::endl;
@@ -118,8 +133,9 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>::
   {
     for (size_t i = 0; i < popSize; i++)
     {
+      double bias = initialBias + arma::randu<double>();
       genomeList.emplace_back(Genome<ActivationFunction>(inputNodeCount,
-          outputNodeCount, bias, weightMutationProb,
+          outputNodeCount, bias, initialWeight, weightMutationProb,
           weightMutationSize, biasMutationProb, biasMutationSize,
           nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic));
     }
@@ -129,7 +145,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>::
 
   #pragma omp parallel for
   for (size_t i = 0; i < popSize; i++)
-    genomeList[i].Fitness() = TaskType::Evaluate(genomeList[i]); 
+    genomeList[i].Fitness() = task.Evaluate(genomeList[i]); 
   Speciate(false);
   Reproduce();
 
@@ -349,6 +365,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   Genome<ActivationFunction> lessFitGenome = gen1;
   std::vector<size_t> nodeDepths;
   size_t nextNodeID;
+  double bias;
 
   if (equalFitness)
   {
@@ -357,6 +374,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
       newConnGeneList = gen1.connectionGeneList;
       nextNodeID = gen1.getNodeCount();
       nodeDepths = gen1.nodeDepths;
+      bias = gen1.Bias();
       lessFitGenome = gen2;
     }
     else
@@ -364,6 +382,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
       newConnGeneList = gen2.connectionGeneList;
       nextNodeID = gen2.getNodeCount();
       nodeDepths = gen2.nodeDepths;
+      bias = gen2.Bias();
       lessFitGenome = gen1;
     }
   }
@@ -372,6 +391,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     newConnGeneList = gen1.connectionGeneList;
     nextNodeID = gen1.getNodeCount();
     nodeDepths = gen1.nodeDepths;
+    bias = gen1.Bias();
     lessFitGenome = gen2;
   }
   else
@@ -379,6 +399,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     newConnGeneList = gen2.connectionGeneList;
     nextNodeID = gen2.getNodeCount();
     nodeDepths = gen2.nodeDepths;
+    bias = gen2.Bias();
     lessFitGenome = gen1;
   }
 
@@ -433,6 +454,42 @@ bool NEAT<TaskType, ActivationFunction, SelectionPolicy>::
                   Genome<ActivationFunction>& gen2)
 {
   return gen1.Fitness() > gen2.Fitness();
+}
+
+template <class TaskType,
+          class ActivationFunction,
+          class SelectionPolicy>
+template <typename Archive>
+void NEAT<TaskType, ActivationFunction, SelectionPolicy>::
+    serialize(Archive& ar,
+              const unsigned int /* version */)
+{
+  ar & BOOST_SERIALIZATION_NVP(task);
+  ar & BOOST_SERIALIZATION_NVP(inputNodeCount);
+  ar & BOOST_SERIALIZATION_NVP(outputNodeCount);
+  ar & BOOST_SERIALIZATION_NVP(popSize);
+  ar & BOOST_SERIALIZATION_NVP(maxGen);
+  ar & BOOST_SERIALIZATION_NVP(numSpecies);
+  ar & BOOST_SERIALIZATION_NVP(initialBias);
+  ar & BOOST_SERIALIZATION_NVP(initialWeight);
+  ar & BOOST_SERIALIZATION_NVP(weightMutationProb);
+  ar & BOOST_SERIALIZATION_NVP(weightMutationSize);
+  ar & BOOST_SERIALIZATION_NVP(biasMutationProb);
+  ar & BOOST_SERIALIZATION_NVP(biasMutationSize);
+  ar & BOOST_SERIALIZATION_NVP(nodeAdditionProb);
+  ar & BOOST_SERIALIZATION_NVP(connAdditionProb);
+  ar & BOOST_SERIALIZATION_NVP(connDeletionProb);
+  ar & BOOST_SERIALIZATION_NVP(disableProb);
+  ar & BOOST_SERIALIZATION_NVP(elitismProp);
+  ar & BOOST_SERIALIZATION_NVP(finalFitness);
+  ar & BOOST_SERIALIZATION_NVP(isAcyclic);
+
+  if(genomeList.size() != 0)
+  {
+    ar & BOOST_SERIALIZATION_NVP(genomeList);
+    ar & BOOST_SERIALIZATION_NVP(speciesList); 
+    ar & BOOST_SERIALIZATION_NVP(centroids);
+  }
 }
 
 } // namespace neat

@@ -43,6 +43,9 @@ class ConnectionGene
    */
   ConnectionGene();
 
+  /**
+   * Default destructor.
+   */ 
   ~ConnectionGene();
 
   /**
@@ -51,6 +54,10 @@ class ConnectionGene
    * @param mutationSize The strength of mutation noise to be added.
    */
   void Mutate(const double mutationSize);
+
+  //! Serialize the model.
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */);
 
   //! Get global innovation ID.
   size_t InnovationID() const { return globalInnovationID; }

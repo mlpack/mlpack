@@ -27,34 +27,26 @@ using namespace mlpack::rl;
 class XORTask
 {
  public:
-  static double Evaluate(Genome<HardSigmoidFunction>& genome)
+  double Evaluate(Genome<HardSigmoidFunction>& genome)
   {
-    arma::vec input1 = {0, 0};
-    arma::vec input2 = {0, 1};
-    arma::vec input3 = {1, 0};
-    arma::vec input4 = {1, 1};
+    arma::mat input = {{0, 0, 1, 1},
+                       {0, 1, 0, 1}};
+
     double error = 0;
-    error += findError(input1, genome); 
-    error += findError(input2, genome); 
-    error += findError(input3, genome); 
-    error += findError(input4, genome);
+    for (size_t i = 0; i < input.n_cols; i++)
+    {
+      arma::vec inputVec = input.col(i);
+      arma::vec output = genome.Evaluate(inputVec);
+      arma::vec answer = {(input(0, i) + input(1, i)) * (!input(0, i) +
+          !input(1, i))};
+      error += std::pow(answer[0] - output[0], 2);
+    }
     return 4 - error;
   }
 
-  static double findError(arma::vec& input, Genome<HardSigmoidFunction>& genome)
-  {
-    arma::vec output = genome.Evaluate(input);
-    arma::vec answer = {(input[0] + input[1]) * (!input[0] + !input[1])};
-    return std::pow(answer[0] - output[0], 2);
-  }
-
-  void findOutput(arma::vec& input, Genome<HardSigmoidFunction>& genome)
-  {
-    arma::vec output = genome.Evaluate(input);
-    input.print();
-    std::cout << "=>" << std::endl;
-    output.print();
-  }
+  template <typename Archive>
+  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  { /* Nothing to do here */}
 };
 
 /**
@@ -69,26 +61,40 @@ class ContinuousRLTask
 
   double Evaluate(Genome<HardSigmoidFunction>& genome)
   {
-    // Set the initial state.
-    typename EnvironmentType::State state = environment.InitialSample();
-    arma::vec output = genome.Evaluate(state.Data());
 
-    double fitness = 0;
-    size_t k = 0;
-    while (!environment.IsTerminal(state) && k < 1000)
+    double total = 0;
+    for (size_t i = 0; i < 5; i++)
     {
-      k++;
-      // Choose the action to perform.
-      typename EnvironmentType::Action action;
-      action.action[0] = output[0];
+      // Set the initial state.
+      typename EnvironmentType::State state = environment.InitialSample();
+      arma::vec output = genome.Evaluate(state.Data());
+      double fitness = 0;
+      size_t k = 0;
+      while (!environment.IsTerminal(state))
+      {
+        // std::cout << "Timestep: " << k << std::endl;
+        k++;
+        // Choose the action to perform.
+        typename EnvironmentType::Action action;
+        action.action[0] = output[0];
 
-      // Use the current action to get the next state.
-      fitness += environment.Sample(state, action, state);
+        // Use the current action to get the next state.
+        // std::cout << "Getting next state" << std::endl;
+        fitness += environment.Sample(state, action, state);
 
-      // Update the state of the genome for the next step.
-      output = genome.Evaluate(state.Data());
+        // Update the state of the genome for the next step.
+        // std::cout << "Finding output" << std::endl;
+        output = genome.Evaluate(state.Data());
+
+        if (k >= 10000)
+          break;
+      }
+      fitness += 500;
+      total += fitness;
     }
-    return 10 + fitness;
+
+    std::cout << "Fitness: " << total / 5 << std::endl;
+    return total / 5;
   }
 
  private:
@@ -112,22 +118,32 @@ class DiscreteRLTask
     arma::vec output = genome.Evaluate(state.Data());
 
     double fitness = 0;
-    while (!environment.IsTerminal(state))
+    double total = 0;
+    for (size_t i = 0; i < 5; i++)
     {
-      // Choose the action to perform.
-      const int size = EnvironmentType::Action::size;
-      output = arma::clamp(output, 0, size - 1);
-      int actionInt = std::round(output[0]);
-      typename EnvironmentType::Action action = static_cast<typename
-          EnvironmentType::Action>(actionInt);
+      while (!environment.IsTerminal(state))
+      {
+        // Choose the action to perform.
+        const int size = EnvironmentType::Action::size;
+        output = arma::clamp(output, 0, size - 1);
+        int actionInt = std::round(output[0]);
+        typename EnvironmentType::Action action = static_cast<typename
+            EnvironmentType::Action>(actionInt);
 
-      // Use the current action to get the next state.
-      fitness += environment.Sample(state, action, state);
+        // Use the current action to get the next state.
+        fitness += environment.Sample(state, action, state);
 
-      // Update the state of the genome for the next step.
-      output = genome.Evaluate(state.Data());
+        // Update the state of the genome for the next step.
+        output = genome.Evaluate(state.Data());
+
+        if (fitness > 10000)
+          break;
+      }
+      total += fitness;
+      fitness = 0;
     }
-    return fitness;
+    std::cout << "Fitness: " << total/5 << std::endl;
+    return total / 5;
   }
 
  private:
@@ -197,79 +213,80 @@ class DPNVTask
   double Evaluate(Genome<HardSigmoidFunction>& genome)
   {
     double fitness = 0;
-    for (size_t j = 0; j < 20; j++)
+    double fourDegrees = 4 * M_PI / 180;
+    arma::mat data(2, 3, arma::fill::zeros);
+    data(0, 1) = fourDegrees;
+    data.print();
+    MultiplePoleCart::State state(data);
+    arma::mat inputMatrix = state.Data();
+    arma::vec input = {inputMatrix(0, 0), inputMatrix(0, 1), inputMatrix(0, 2)};
+    arma::vec output = genome.Evaluate(input);
+    std::deque<double> wiggleBuffer1;
+    std::deque<double> wiggleBuffer2;
+    int timeStep = 0;
+    while (!environment.IsTerminal(state))
     {
-      MultiplePoleCart::State state = environment.InitialSample();
-      arma::mat inputMatrix = state.Data();
-      arma::vec input = {inputMatrix(0, 0), inputMatrix(0, 1), inputMatrix(0, 2)};
-      arma::vec output = genome.Evaluate(input);
-      std::deque<double> wiggleBuffer1;
-      std::deque<double> wiggleBuffer2;
-      int timeStep = 0;
-      while (!environment.IsTerminal(state))
+      timeStep++;
+
+      const int size = MultiplePoleCart::Action::size;
+      output = arma::clamp(output, 0, size - 1);
+      int actionInt = std::round(output[0]);
+      MultiplePoleCart::Action action = static_cast<MultiplePoleCart::Action>(actionInt);
+
+      // Use the current action to get the next state.
+      environment.Sample(state, action, state);
+
+      // Update the state of the genome for the next step.
+      inputMatrix = state.Data();
+      input = {inputMatrix(0, 0), inputMatrix(0, 1), inputMatrix(0, 2)};
+
+      // Scale the input between -1 and 1.
+      input[0] /= 2.4;
+      input[1] /= 36 * 2 * 3.1416 / 360;
+      input[2] /= 36 * 2 * 3.1416 / 360;
+      
+      wiggleBuffer1.push_back(std::abs(inputMatrix(0,0)) + std::abs(inputMatrix(0,1)) +
+          std::abs(inputMatrix(1,0)) + std::abs(inputMatrix(1,1)));
+      
+      if (wiggleBuffer1.size() == 100)
       {
-        timeStep++;
-
-        const int size = MultiplePoleCart::Action::size;
-        output = arma::clamp(output, 0, size - 1);
-        int actionInt = std::round(output[0]);
-        MultiplePoleCart::Action action = static_cast<MultiplePoleCart::Action>(actionInt);
-
-        // Use the current action to get the next state.
-        environment.Sample(state, action, state);
-
-        // Update the state of the genome for the next step.
-        inputMatrix = state.Data();
-        input = {inputMatrix(0, 0), inputMatrix(0, 1), inputMatrix(0, 2)};
-
-        // Scale the input between -1 and 1.
-        input[0] /= 2.4;
-        input[1] /= 36 * 2 * 3.1416 / 360;
-        input[2] /= 36 * 2 * 3.1416 / 360;
-        
-        wiggleBuffer1.push_back(std::abs(inputMatrix(0,0)) + std::abs(inputMatrix(0,1)) +
-            std::abs(inputMatrix(1,0)) + std::abs(inputMatrix(1,1)));
-        
-        if (wiggleBuffer1.size() == 100)
-        {
-          wiggleBuffer2.push_back(wiggleBuffer1.front());
-          wiggleBuffer1.pop_front();
-        }
-        if (wiggleBuffer2.size() == 100)
-          wiggleBuffer2.pop_front();
-
-        output = genome.Evaluate(input);
-
-        if (timeStep > 499)
-        {
-          double sum = 0;
-          for (auto it = wiggleBuffer2.begin(); it != wiggleBuffer2.end(); it++)
-            sum += *it;
-          if (sum > 30)
-            break;
-        }
+        wiggleBuffer2.push_back(wiggleBuffer1.front());
+        wiggleBuffer1.pop_front();
       }
+      if (wiggleBuffer2.size() == 100)
+        wiggleBuffer2.pop_front();
 
-      if(timeStep > 499 && timeStep < 600)
-      {
-        double sum = 0;
-        for (auto it = wiggleBuffer1.begin(); it != wiggleBuffer1.end(); it++)
-          sum += *it;
-        fitness += timeStep + (10.0 / std::max(1.0, sum));
-      }
-      else if(timeStep > 599)
+      output = genome.Evaluate(input);
+
+      if (timeStep > 499)
       {
         double sum = 0;
         for (auto it = wiggleBuffer2.begin(); it != wiggleBuffer2.end(); it++)
           sum += *it;
-        fitness += timeStep + (10.0 / std::max(1.0, sum));
+        if (sum > 30)
+          break;
       }
-      else
-        fitness += timeStep;
     }
 
-    std::cout <<" Fitness: " << fitness/20 << std::endl;
-    return fitness / 20;
+    if(timeStep > 499 && timeStep < 600)
+    {
+      double sum = 0;
+      for (auto it = wiggleBuffer1.begin(); it != wiggleBuffer1.end(); it++)
+        sum += *it;
+      fitness += timeStep + (10.0 / std::max(1.0, sum));
+    }
+    else if(timeStep > 599)
+    {
+      double sum = 0;
+      for (auto it = wiggleBuffer2.begin(); it != wiggleBuffer2.end(); it++)
+        sum += *it;
+      fitness += timeStep + (10.0 / std::max(1.0, sum));
+    }
+    else
+      fitness += timeStep;
+
+    std::cout <<" Fitness: " << fitness << std::endl;
+    return fitness;
   }
 
  private:

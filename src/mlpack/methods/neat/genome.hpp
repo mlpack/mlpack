@@ -55,6 +55,7 @@ class Genome
   Genome(const size_t inputNodeCount,
          const size_t outputNodeCount,
          const double bias,
+         const double initialWeight,
          const double weightMutationProb,
          const double weightMutationSize,
          const double biasMutationProb,
@@ -174,6 +175,10 @@ class Genome
    */
   std::map<size_t, std::map<size_t, ConnectionGene>> directedGraph;
 
+  //! Serialize the model.
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */);
+
   //! Get fitness.
   double Fitness() const { return fitness; }
   //! Set fitness.
@@ -218,6 +223,9 @@ class Genome
 
   //! Bias.
   double bias;
+
+  //! Initial Weight.
+  double initialWeight;
 
   //! The probability that weight mutation will occur.
   double weightMutationProb;

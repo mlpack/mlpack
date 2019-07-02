@@ -32,6 +32,7 @@ template <class ActivationFunction>
 Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
                                    const size_t outputNodeCount,
                                    const double bias,
+                                   const double initialWeight,
                                    const double weightMutationProb,
                                    const double weightMutationSize,
                                    const double biasMutationProb,
@@ -43,6 +44,7 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
     inputNodeCount(inputNodeCount),
     outputNodeCount(outputNodeCount),
     bias(bias),
+    initialWeight(initialWeight),
     weightMutationProb(weightMutationProb),
     weightMutationSize(weightMutationSize),
     biasMutationProb(biasMutationProb),
@@ -62,7 +64,7 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
     for (size_t j = inputNodeCount + 1; j <= outputNodeCount + inputNodeCount;
         j++)
     {
-      double weight = arma::randn<double>();
+      double weight = initialWeight + arma::randn<double>();
       connectionGeneList.emplace_back(ConnectionGene(counter, weight, i, j));
       if (directedGraph.find(i) == directedGraph.end())
       {
@@ -431,6 +433,35 @@ void Genome<ActivationFunction>::Traverse(size_t startID)
       Traverse(x.first);
     }
   }
+}
+
+template <class ActivationFunction>
+template <typename Archive>
+void Genome<ActivationFunction>::serialize(Archive& ar,
+                                           const unsigned int /* version */)
+{
+  ar & BOOST_SERIALIZATION_NVP(inputNodeCount);
+  ar & BOOST_SERIALIZATION_NVP(outputNodeCount);
+  ar & BOOST_SERIALIZATION_NVP(nextNodeID);
+  ar & BOOST_SERIALIZATION_NVP(bias);
+  ar & BOOST_SERIALIZATION_NVP(initialWeight);
+  ar & BOOST_SERIALIZATION_NVP(weightMutationProb);
+  ar & BOOST_SERIALIZATION_NVP(weightMutationSize);
+  ar & BOOST_SERIALIZATION_NVP(biasMutationProb);
+  ar & BOOST_SERIALIZATION_NVP(biasMutationSize);
+  ar & BOOST_SERIALIZATION_NVP(nodeAdditionProb);
+  ar & BOOST_SERIALIZATION_NVP(connAdditionProb);
+  ar & BOOST_SERIALIZATION_NVP(connDeletionProb);
+  ar & BOOST_SERIALIZATION_NVP(fitness);
+  ar & BOOST_SERIALIZATION_NVP(isAcyclic);
+  ar & BOOST_SERIALIZATION_NVP(connectionGeneList);
+  ar & BOOST_SERIALIZATION_NVP(directedGraph);
+  ar & BOOST_SERIALIZATION_NVP(nextInnovID);
+  ar & BOOST_SERIALIZATION_NVP(mutationBuffer);
+  if (isAcyclic)
+    ar & BOOST_SERIALIZATION_NVP(nodeDepths);
+  else
+    ar & BOOST_SERIALIZATION_NVP(outputNodeValues);
 }
 
 } // namespace neat

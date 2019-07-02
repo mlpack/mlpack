@@ -48,6 +48,17 @@ void ConnectionGene::Mutate(const double mutationSize)
   weight += mutationSize * arma::randn<double>();
 }
 
+template <typename Archive>
+void ConnectionGene::serialize(Archive& ar,
+                                const unsigned int /* version */)
+{
+  ar & BOOST_SERIALIZATION_NVP(globalInnovationID);
+  ar & BOOST_SERIALIZATION_NVP(weight);
+  ar & BOOST_SERIALIZATION_NVP(source);
+  ar & BOOST_SERIALIZATION_NVP(target);
+  ar & BOOST_SERIALIZATION_NVP(enabled);
+}
+
 } // namespace neat
 } // namespace mlpack
 

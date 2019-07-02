@@ -13,37 +13,72 @@
 #define MLPACK_METHODS_NEAT_NEAT_HPP
 
 #include <mlpack/prereqs.hpp>
-#include "genome.hpp"
 #include <mlpack/methods/kmeans/kmeans.hpp>
 #include <mlpack/methods/kmeans/dual_tree_kmeans.hpp>
+#include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
+#include "genome.hpp"
 #include "selection_strategies/rank_selection.hpp"
-#include "selection_strategies/roulette_selection.hpp"
-#include "selection_strategies/tournament_selection.hpp"
+
 
 namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */ {
 
+/**
+ * The main class for NeuroEvolution of Augmenting Topologies.
+ *
+ * @tparam TaskType The task NEAT is to be trained on.
+ * @tparam ActivationFunction The activation function used.
+ * @tparam SelectionPolicy The policy used to select genomes.
+ */
 template <class TaskType,
-          class ActivationFunction,
-          class SelectionPolicy>
+          class ActivationFunction = ann::HardSigmoidFunction,
+          class SelectionPolicy = RankSelection>
 class NEAT
 {
  public:
-  NEAT(const size_t inputNodeCount,
+  /**
+   * Creates a NEAT class instance.
+   *
+   * @param task An instance of the task NEAT is to be trained on.
+   * @param inputNodeCount The number of input nodes of the genomes.
+   * @param outputNodeCount The number of output nodes of the genomes.
+   * @param popSize The size of the population.
+   * @param maxGen The maximum number of generations for which NEAT should run.
+   * @param initialBias The bias with which genomes are initialized.
+   * @param initialWeight The weight of connections with which genomes are 
+   *    initialized.
+   * @param weightMutationProb The probability of a weight being mutated.
+   * @param weightMutationSize The degree of mutation of a weight.
+   * @param biasMutationProb The probability of the bias being mutated.
+   * @param biasMutationSize The degree of mutation of bias.
+   * @param nodeAdditionProb The probability of a new node being added.
+   * @param connAdditionProb The probability of a connection being added.
+   * @param connDeletionProb The probability of a connection being deleted.
+   * @param disableProb The probability of a disabled gene becoming enabled
+   *    during crossover.
+   * @param elitismProp The proportion of a species that is considered elite.
+   * @param finalFitness The desired fitness of the genomes. If it is 0, no
+   *    no limit on the fitness is considered.
+   * @param isAcyclic Denotes whether or not the genome is meant to be acyclic.
+   */
+  NEAT(TaskType& task,
+       const size_t inputNodeCount,
        const size_t outputNodeCount,
        const size_t popSize,
        const size_t maxGen,
        const size_t numSpecies,
-       const double bias,
-       const double weightMutationProb,
-       const double weightMutationSize,
-       const double biasMutationProb,
-       const double biasMutationSize,
-       const double nodeAdditionProb,
-       const double connAdditionProb,
-       const double connDeletionProb,
-       const double disableProb,
-       const double elitismProp,
+       const double initialBias = 1,
+       const double initialWeight = 0,
+       const double weightMutationProb = 0.8,
+       const double weightMutationSize = 0.5,
+       const double biasMutationProb = 0.7,
+       const double biasMutationSize = 0.5,
+       const double nodeAdditionProb = 0.2,
+       const double connAdditionProb = 0.5,
+       const double connDeletionProb = 0.5,
+       const double disableProb = 0.2,
+       const double elitismProp = 0.1,
+       const double finalFitness = 0,
        const bool isAcyclic = false);
 
   /**
@@ -55,6 +90,70 @@ class NEAT
    * Performs a single generation of NEAT.
    */
   Genome<ActivationFunction> Step();
+
+  //! Serialize the model.
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */);
+
+  //! Get initial bias.
+  double InitialBias() const { return initialBias; }
+  //! Set initial bias.
+  double& InitialBias() { return initialBias; }
+
+  //! Get initial weight.
+  double InitialWeight() const { return initialWeight; }
+  //! Set initial weight.
+  double& InitialWeight() { return initialWeight; }
+
+  //! Get probability of weight mutation.
+  double WeightMutationProb() const { return weightMutationProb; }
+  //! Set probability of weight mutation.
+  double& WeightMutationProb() { return weightMutationProb; }
+
+  //! Get degree of weight mutation.
+  double WeightMutationSize() const { return weightMutationSize; }
+  //! Set degree of weight mutation.
+  double& WeightMutationSize() { return weightMutationSize; }
+
+  //! Get probability of bias mutation.
+  double BiasMutationProb() const { return biasMutationProb; }
+  //! Set probability of bias mutation.
+  double& BiasMutationProb() { return biasMutationProb; }
+
+  //! Get degree of bias mutation.
+  double BiasMutationSize() const { return biasMutationSize; }
+  //! Set probability of bias mutation.
+  double& BiasMutationSize() { return biasMutationSize; }
+
+  //! Get probability of node addition.
+  double NodeAdditionProb() const { return nodeAdditionProb; }
+  //! Set probability of node addition.
+  double& NodeAdditionProb() { return nodeAdditionProb; }
+
+  //! Get probability of connection addition.
+  double ConnAdditionProb() const { return connAdditionProb; }
+  //! Set probability of connection addition.
+  double& ConnAdditionProb() { return connAdditionProb; }
+
+  //! Get probability that a disabled connection is enabled during crossover.
+  double DisableProb() const { return disableProb; }
+  //! Set probability that a disabled connection is enabled during crossover.
+  double& DisableProb() { return disableProb; }
+
+  //! Get the proportion of a species considered elite.
+  double ElitismProp() const { return elitismProp; }
+  //! Set the proportion of a species considered elite.
+  double& ElitismProp() { return elitismProp; }
+
+  //! Get the desired final fitness.
+  double FinalFitness() const { return finalFitness; }
+  //! Set the desired final fitness.
+  double& FinalFitness() { return finalFitness; }
+
+  //! Get the boolean denoting if the genome is acyclic or not.
+  bool IsAcyclic() const { return isAcyclic; }
+  //! Set the boolean denoting if the genome is acyclic or not.
+  bool& IsAcyclic() { return isAcyclic; }
 
  private:
   // Crosses over two genomes.
@@ -70,6 +169,9 @@ class NEAT
 
   static bool compareGenome(Genome<ActivationFunction>& gen1,
                             Genome<ActivationFunction>& gen2);
+
+  // The task that the model is trained on.
+  TaskType task;
 
   // The list of genomes in the population.
   std::vector<Genome<ActivationFunction>> genomeList;
@@ -96,7 +198,10 @@ class NEAT
   size_t numSpecies;
 
   //! The bias of the networks.
-  double bias;
+  double initialBias;
+
+  //! The initial weights of the connections.
+  double initialWeight;
 
   //! The probability of a connection weight mutating.
   double weightMutationProb;
@@ -116,6 +221,7 @@ class NEAT
   //! The probability of a new connection being added.
   double connAdditionProb;
 
+  //! The probability of a connection being deleted.
   double connDeletionProb;
 
   /**
@@ -126,6 +232,9 @@ class NEAT
 
   //! The proportion of a species that is considered elite.
   double elitismProp;
+
+  //! The desired final fitness
+  double finalFitness;
 
   //! Denotes whether or not the genome is meant to be cyclic.
   bool isAcyclic;
