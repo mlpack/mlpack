@@ -25,7 +25,8 @@ set(SOURCES
   imputer.hpp
   binarize.hpp
   string_cleaning.hpp
-  tokenizer/strtok.hpp
+  tokenizer/char_split.hpp
+  tokenizer/split_by_char.hpp
   confusion_matrix.hpp
   one_hot_encoding.hpp
   one_hot_encoding_impl.hpp

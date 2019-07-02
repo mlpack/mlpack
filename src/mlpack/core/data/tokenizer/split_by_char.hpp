@@ -1,16 +1,17 @@
 /**
- * @file strtok.hpp
+ * @file split_by_char.hpp
  * @author Jeffin Sam
  *
- * Implementation of Strtok class which tokenizes using single character.
+ * Implementation of SplitByChar class which tokenizes string using a set of
+ * characters.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_STRTOK_HPP
-#define MLPACK_CORE_DATA_STRTOK_HPP
+#ifndef MLPACK_CORE_DATA_SPLIT_BY_CHAR_HPP
+#define MLPACK_CORE_DATA_SPLIT_BY_CHAR_HPP
 
 #include <mlpack/prereqs.hpp>
 #include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
@@ -18,23 +19,27 @@
 namespace mlpack {
 namespace data {
 /**
- * A simple Strtok class
+ * A simple SplitByChar class.
+ *
+ * The class is used to split the documents using a set of characters, that
+ * is used as delimiter. The function returns a token, and successive calls,
+ * would return many such tokens.
  */
-class Strtok
+class SplitByChar
 {
  public:
   /**
-  * A constructor to set deimiter.
-  * @param Delimiter A string which you want to use as delimiter
+  * A constructor to set delimiter.
+  * @param Delimiter A set of characters which you want to use as delimiter.
   */
-  Strtok(std::string Delimiter)
+  SplitByChar(const std::string& delimiter)
   {
-    delimiter = Delimiter;
+    this->delimiter = delimiter;
   }
   /**
   * A function object which take boost::string_view as input and
   * return a boost::string_view (token).
-  * @param str A string to retieve token from.
+  * @param str A string to retriev token from.
   */
   boost::string_view operator()(boost::string_view& str) const
   {
@@ -55,10 +60,15 @@ class Strtok
     return retval;
   }
 
+  //! Return the Delimiter.
+  const std::string& Delimiter() const { return delimiter; }
+  //! Modify the Delimiter.
+  std::string& Delimiter() { return delimiter; }
+
  private:
-  // Delimiter by which the string is tokenized.
+  // A set of characters by which the string is tokenized.
   std::string delimiter;
-}; // Strtok class
+}; // SplitByChar
 
 } // namespace data
 } // namespace mlpack

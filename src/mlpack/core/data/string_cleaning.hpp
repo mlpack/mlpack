@@ -19,7 +19,7 @@
 namespace mlpack {
 namespace data {
 
-class string_cleaning
+class StringCleaning
 {
  public:
   /**
@@ -27,15 +27,40 @@ class string_cleaning
   *
   * @param input Vector of strings
   */
-  void RemovePunctuation(std::vector<std::string>& input)
-  {
-    std::string punctuation = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+  void RemovePunctuation(std::vector<std::string>& input,
+                         const std::string& punctuation = "!\"#$%&'()*+"
+                         ",-./:;<=>?@[\\]^_`{|}~")
+  { 
     for (auto& str : input)
     {
       str.erase(boost::remove_if(str, boost::is_any_of(punctuation)),
           str.end());
     }
   }
+
+  /**
+  * Function to remove a set of chars from a given vector of strings.
+  * A function which accepts a function as an argument and removes the
+  * character if the funtion returns true.
+  * 
+  * @param input Vector of strings.
+  * @param fun A function which takes const char& c as input and returns bool;
+  *
+  * This can either be a function pointer or function object or a lamda
+  * function. Its return value should be of bool type.
+  *
+  * Definiation of function should be of type
+  * bool fn(const char& c)
+  */
+  template<typename ReturnType>
+  void RemoveChar(std::vector<std::string>& input,const ReturnType fun)
+  { 
+    for (auto& str : input)
+    {
+      str.erase(boost::remove_if(str, fun), str.end());
+    }
+  }
+
   /**
   * Function to convert given vector of strings to lower case.
   *
@@ -74,25 +99,24 @@ class string_cleaning
   */
   template<typename TokenizerType>
   void RemoveStopWords(std::vector<std::string>& input,
-                       std::unordered_set<std::string>stopwords,
+                       std::unordered_set<boost::string_view,
+                       boost::hash<boost::string_view>>stopwords,
                        const TokenizerType tokenizer)
   {
     std::string copy;
-    std::string tokenStr;
     boost::string_view token;
     boost::string_view strView;
     for (auto& str : input)
     {
-      copy = "";
+      copy.clear();
       strView = str;
       token = tokenizer(strView);
       while (!token.empty())
       {
-        tokenStr = std::string(token);
-        if (stopwords.find(tokenStr) == stopwords.end())
+        if (stopwords.find(token) == stopwords.end())
         {
           // token is not a stop word add it;
-          copy = copy + " " + tokenStr;
+          copy += " " + std::string(token);
         }
         token = tokenizer(strView);
       }
@@ -100,7 +124,7 @@ class string_cleaning
       str = copy;
     }
   }
-}; // Class string_cleaning
+}; // Class StringCleaning
 
 } // namespace data
 } // namespace mlpack
