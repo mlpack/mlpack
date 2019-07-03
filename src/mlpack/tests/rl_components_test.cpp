@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
 
   Pendulum::State state = task.InitialSample();
   Pendulum::Action action;
-  action.action[0] = math::Random(-2.0, 2.0);
+  action.action = math::Random(-2.0, 2.0);
   double reward = task.Sample(state, action);
 
   // The reward is always negative. Check if not lower than lowest possible.
