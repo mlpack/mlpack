@@ -55,7 +55,9 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     baseCases(0),
     scores(0)
 {
-  // Nothing to do.
+  // Initialize accumMCAlpha only if Monte Carlo estimations are available.
+  if (monteCarlo && kernelIsGaussian)
+    accumMCAlpha = std::move(arma::vec(querySet.n_cols, arma::fill::zeros));
 }
 
 //! The base case.
@@ -130,21 +132,29 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 
     // Don't explore this tree branch.
     score = DBL_MAX;
+
+    // Store not used alpha for Monte Carlo.
+    if (kernelIsGaussian && monteCarlo)
+      accumMCAlpha(queryIndex) += CalculateAlpha(referenceNode.Stat().Depth());
   }
   else if (monteCarlo &&
            referenceNode.NumDescendants() >= mcAccessCoef * initialSampleSize &&
-           std::is_same<KernelType, kernel::GaussianKernel>::value)
+           kernelIsGaussian)
   {
     // Calculate reference node depth.
     if (referenceStat.Depth() == 0)
       referenceStat.Depth() = CalculateDepth(referenceNode);
 
     // Monte Carlo probabilistic estimation.
-    const double currentAlpha =
-        mcBeta / std::pow(2, referenceNode.Stat().Depth() + 1);
+    // Calculate alpha.
+    const double depthAlpha = CalculateAlpha(referenceNode.Stat().Depth());
+    double alpha = depthAlpha + accumMCAlpha(queryIndex);
+    if (alpha > 1)
+      alpha = 1;
+
     const boost::math::normal normalDist;
     const double z =
-        std::abs(boost::math::quantile(normalDist, currentAlpha / 2));
+        std::abs(boost::math::quantile(normalDist, alpha / 2));
     const size_t numDesc = referenceNode.NumDescendants();
     arma::vec sample;
     size_t m = initialSampleSize;
@@ -187,11 +197,18 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     if (useMonteCarloPredictions)
     {
       // Use Monte Carlo estimation.
+      accumMCAlpha(queryIndex) = 0;
       score = DBL_MAX;
       densities(queryIndex) += numDesc * meanSample;
     }
     else
     {
+      if (referenceNode.IsLeaf())
+      {
+        // Reclaim not used alpha since the node will be exactly computed.
+        accumMCAlpha(queryIndex) +=
+            CalculateAlpha(referenceNode.Stat().Depth());
+      }
       // Recurse.
       score = minDistance;
     }
@@ -199,6 +216,13 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   else
   {
     score = minDistance;
+
+    // If node is going to be exactly computed, reclaim not used alpha.
+    if (kernelIsGaussian && monteCarlo && referenceNode.IsLeaf())
+    {
+        accumMCAlpha(queryIndex) +=
+            CalculateAlpha(referenceNode.Stat().Depth());
+    }
   }
 
   ++scores;
@@ -277,7 +301,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   }
   else if (monteCarlo &&
            referenceNode.NumDescendants() >= mcAccessCoef * initialSampleSize &&
-           std::is_same<KernelType, kernel::GaussianKernel>::value)
+           kernelIsGaussian)
   {
     // Calculate reference node depth.
     kde::KDEStat& referenceStat = referenceNode.Stat();
@@ -405,6 +429,13 @@ CalculateDepth(const TreeType& node) const
     currentNode = currentNode->Parent();
   }
   return depth;
+}
+
+template<typename MetricType, typename KernelType, typename TreeType>
+inline force_inline double KDERules<MetricType, KernelType, TreeType>::
+CalculateAlpha(const size_t depth) const
+{
+  return mcBeta / std::pow(2, depth + 1);
 }
 
 } // namespace kde

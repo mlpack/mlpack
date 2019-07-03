@@ -105,6 +105,9 @@ class KDERules
   //! Calculate the depth of a node.
   size_t CalculateDepth(const TreeType& node) const;
 
+  //! Calculate alpha for some depth.
+  double CalculateAlpha(const size_t depth) const;
+
   //! The reference set.
   const arma::mat& referenceSet;
 
@@ -145,8 +148,15 @@ class KDERules
   //! Whether Monte Carlo estimations are going to be applied.
   const bool monteCarlo;
 
+  //! Accumulated not used MC alpha values for each query point.
+  arma::vec accumMCAlpha;
+
   //! Whether reference and query sets are the same.
   const bool sameSet;
+
+  //! Whether the kernel used for the rule is the Gaussian Kernel.
+  constexpr static bool kernelIsGaussian =
+      std::is_same<KernelType, kernel::GaussianKernel>::value;
 
   //! The last query index.
   size_t lastQueryIndex;
