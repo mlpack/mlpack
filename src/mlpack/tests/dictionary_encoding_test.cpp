@@ -161,12 +161,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingNoPaddingTest)
       str.remove_prefix(1);
       return retval;
   });
-  std::vector<std::vector<size_t>> req_output;
-  std::vector<size_t> temp = {1, 2, 3, 3, 2};
-  req_output.push_back(temp);
-  temp.clear();
-  temp = {1, 2, 4};
-  req_output.push_back(temp);
+  std::vector<std::vector<size_t>> req_output = {{1, 2, 3, 3, 2}, {1, 2, 4}};
   for (size_t i = 0; i < arr.size(); i++)
   {
     for (size_t j = 0; j < req_output[i].size(); j++)
