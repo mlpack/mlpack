@@ -159,7 +159,7 @@ class MiniBatchDiscrimination
   //! Locally-stored features of input.
   arma::cube M;
 
-  //! Locally-stored features delta object.
+  //! Locally-stored delta for features object.
   arma::cube deltaM;
 
   //! Locally-stored L1 distances between features.
