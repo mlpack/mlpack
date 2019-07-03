@@ -50,7 +50,10 @@ bool ImageFormatSupported(const std::string& fileName, bool save)
 ImageInfo::ImageInfo():
               width(0),
               height(0),
-              channels(3)
+              channels(3),
+              quality(90),
+              format(""),
+              flipVertical(true)
 {
   // Do nothing.
 }
@@ -60,7 +63,10 @@ ImageInfo::ImageInfo(const size_t width,
                      const size_t channels):
                      width(width),
                      height(height),
-                     channels(channels)
+                     channels(channels),
+                     quality(90),
+                     format(""),
+                     flipVertical(true)
 {
   // Do nothing.
 }

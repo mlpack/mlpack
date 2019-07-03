@@ -18,6 +18,7 @@ This tutorial is split into the following sections:
  - \ref intro_imagetut
  - \ref toc_imagetut
  - \ref model_api_imagetut
+ - \ref imageinfo_api_imagetut
  - \ref load_api_imagetut
  - \ref save_api_imagetut
 
@@ -29,6 +30,25 @@ It supports filetypes "jpg", "png", "tga","bmp", "psd", "gif", "hdr", "pic", "pn
 
 The datatype associated is unsigned char to support RGB values in the range 1-255. To feed data into the network typecast of `arma::Mat` may be required. Images are stored in matrix as (width * height * channels, n_images). Therefore imageMatrix.col(0) would be first image if images are loaded in imageMatrix.
 
+@section imageinfo_api_imagetut ImageInfo
+
+ImageInfo class contains the metadata of the images.
+@code
+  /**
+   * Instantiate the ImageInfo object with the image width, height, channels.
+   *
+   * @param width Image width.
+   * @param height Image height.
+   * @param channels number of channels in the image.
+   */
+  ImageInfo(const size_t width,
+            const size_t height,
+            const size_t channels);
+@endcode
+Other public memebers include:
+  - flipVertical Flip the image vertical upon loading.
+  - quality Compression of the image if saved as jpg (0-100).
+
 @section load_api_imagetut Load
 
 Image can be loaded standalone or from a directory.
@@ -38,44 +58,63 @@ Standalone loading of images.
   /**
    * Load the image file into the given matrix.
    *
-   * @param fileName Name of the image file.
-   * @param flipVertical Flip the image vertical upon loading.
-   * @param width Width of the image file.
-   * @param height Height of the image file.
-   * @param channels Channels of the image file.
-   * @param outputMatrix Matrix to load into.
+   * @param filename Name of the image file.
+   * @param matrix Matrix to load the image into.
+   * @param info An object of ImageInfo class.
+   * @param fatal If an error should be reported as fatal (default false).
+   * @param transpose If true, transpose the matrix after loading.
    * @return Boolean value indicating success or failure of load.
    */
-  bool Load(const std::string& fileName,
-            bool flipVertical,
-            arma::Mat<unsigned char>&& outputMatrix,
-            size_t& width,
-            size_t& height,
-            size_t& channels);
+   template<typename eT>
+   bool Load(const std::string& filename,
+             arma::Mat<eT>& matrix,
+             ImageInfo& info,
+             const bool fatal,
+             const bool transpose);
 @endcode
 
+Loading a test image. It also fills up the ImageInfo class object.
 @code
-#include <mlpack/core/data/load_image.hpp>
-data::Image loader;
-// Matrix to load contents of file into.
-arma::Mat<unsigned char> img;
-loader.Load("test_image.png", true,  std::move(img));
+data::ImageInfo info;
+data::Load("test_image.png", matrix, info, false);
 @endcode
 
-If the size of image is known beforehand, it can be passed into the constructor to set the size of outputMatrix(the matrix into which the image is loaded).
+If the size of image is known beforehand, it can be passed into the constructor of ImageInfo to set the size of outputMatrix(the matrix into which the image is loaded).
 
 @code
 size_t height = 64, width = 64, channels = 1;
-data::Image loader(width, height, channels);
+data::ImageInfo info(width, height, channels);
 @endcode
 
-If the size of image is not known beforehand it can be retrieved when loading the image as:
+More than one image can be loaded into the same matrix.
+
+Loading multiple images:
+
 @code
-size_t height, width, channels;
-// values of height, width, channels are stored upon loading.
-loader.Load("test_image.png", true, std::move(img),
-    width, height, channels); 
+  /**
+   * Load the image file into the given matrix.
+   *
+   * @param files A vector consisting of filenames.
+   * @param matrix Matrix to save the image from.
+   * @param info An object of ImageInfo class.
+   * @param fatal If an error should be reported as fatal (default false).
+   * @param transpose If true, transpose the matrix after loading.
+   * @return Boolean value indicating success or failure of load.
+   */
+   template<typename eT>
+   bool Load(const std::vector<std::string>& files,
+             arma::Mat<eT>& matrix,
+             ImageInfo& info,
+             const bool fatal,
+             const bool transpose);
 @endcode
+
+@code
+  data::ImageInfo info;
+  std::vector<std::string>> files{"test_image1.bmp","test_image2.bmp"};
+  data::load(files, matrix, info, false, true);
+@endcode
+
 
 Loading images from a directory is possible if C++ version >= 17.
 
@@ -97,7 +136,7 @@ Loading images from a directory is possible if C++ version >= 17.
 data::Image loader;
 // Matrix to load contents of dir into.
 arma::Mat<unsigned char> img;
-loader.LoadDir("images/", true, std::move(img));
+loader.LoadDir("images/", true, img);
 @endcode
 
 @section save_api_imagetut Save
@@ -109,29 +148,29 @@ Saving one image:
 
 @code
   /**
-   * Saves the image file present in the given matrix.
+   * Save the image file from the given matrix.
    *
-   * @param fileName Name of the image file.
-   * @param width Width of the image that is being saved.
-   * @param height Width of the image that is being saved.
-   * @param channels Number of channels in the image that is being saved.
-   * @param flipVertical Flip the image vertical before saving.
-   * @param inputMatrix Matrix to save images from.
-   * @return Boolean value indicating success or failure.
+   * @param filename Name of the image file.
+   * @param matrix Matrix to save the image from.
+   * @param info An object of ImageInfo class.
+   * @param fatal If an error should be reported as fatal (default false).
+   * @param transpose If true, transpose the matrix after loading.
+   * @return Boolean value indicating success or failure of load.
    */
-  bool Save(const std::string& fileName,
-            size_t width,
-            size_t height,
-            size_t channels,
-            bool flipVertical,
-            arma::Mat<unsigned char>&& outputMatrix);
+   template<typename eT>
+   bool Save(const std::string& filename,
+             arma::Mat<eT>& matrix,
+             ImageInfo& info,
+             const bool fatal,
+             const bool transpose);
 @endcode
 
 @code
-data::Image saver;
-arma::Mat<unsigned char> img; /* contains image/(s) */
-saver.Load("saved_image.png", true, std::move(img),
-      width, height, channels);
+  data::ImageInfo info;
+  info.width = info.height = 25;
+  info.channels = 3;
+  info.quality = 90;
+  data::Save("test_image.bmp", matrix, info, false, true);
 @endcode
 
 If the matrix contains more than one image, only the first one is saved.
@@ -140,33 +179,32 @@ Saving multiple images:
 
 @code
   /**
-   * Saves the image file present in the given matrix.
+   * Save the image file from the given matrix.
    *
-   * @param files A vector containing names of the image file to be saved.
-   * @param width Width of the image that is being saved.
-   * @param height Width of the image that is being saved.
-   * @param channels Number of channels in the image that is being saved.
-   * @param flipVertical Flip the image vertical before saving.
-   * @param inputMatrix Matrix to save images from.
-   * @return Boolean value indicating success or failure.
+   * @param files A vector consisting of filenames.
+   * @param matrix Matrix to save the image from.
+   * @param info An object of ImageInfo class.
+   * @param fatal If an error should be reported as fatal (default false).
+   * @param transpose If true, transpose the matrix after loading.
+   * @return Boolean value indicating success or failure of load.
    */
-  bool Save(const std::vector<std::string>& files,
-            size_t width,
-            size_t height,
-            size_t channels,
-            bool flipVertical,
-            arma::Mat<unsigned char>&& inputMatrix);
+   template<typename eT>
+   bool Save(const std::vector<std::string>& files,
+             arma::Mat<eT>& matrix,
+             ImageInfo& info,
+             const bool fatal,
+             const bool transpose);
 @endcode
 
 @code
-data::Image saver;
-arma::Mat<unsigned char> img; /* contains image/(s) */
-saver.Load({"saved_image1.png", "saved_image2.png", "saved_image2.png"},
-            true, std::move(img),
-      width, height, channels);
+  data::ImageInfo info;
+  info.width = info.height = 25;
+  info.channels = 3;
+  info.quality = 90;
+  std::vector<std::string>> files{"test_image1.bmp", "test_image2.bmp"};
+  data::Save(files, matrix, info, false, true);
 @endcode
 
 Multiple images are saved according to the vector of file name specified.
 
 */
-
