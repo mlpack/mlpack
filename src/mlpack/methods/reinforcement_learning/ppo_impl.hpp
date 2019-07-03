@@ -97,13 +97,19 @@ void PPO<
     discountedRewards.insert_rows(discountedRewards.n_cols, values);
   }
 
-  arma::mat actionValues, advantages;
+  arma::mat actionValues, advantages, gradients;
   criticNetwork.Predict(sampledStates, actionValues);
 
-  // update the actor
+  advantages = discountedRewards - actionValues;
+
+  criticNetwork.Backward(advantages, gradients);
+
+  updater.Update(criticNetwork.Parameters(), config.StepSize(), gradients);
 
   // update the critic
   criticNetwork.Backward(actionValues, sampledRewards);
+
+  // update the actor
 }
 
 template<
