@@ -1,4 +1,4 @@
-### mlpack 3.1.2
+### mlpack 4.0.0
 ###### ????-??-??
   * Add Multiple Pole Balancing Environment (#1901).
 
@@ -7,6 +7,13 @@
 
   * Fix prediction output of softmax regression when test set accuracy is
     calculated (#1922).
+  
+  * Action struct in continuous RL environments now stores the action as a 
+    `double` instead of `double[1]` (#1941, #1931).
+  
+  * Pendulum environment now checks for termination. All RL environments now
+    have an option to terminate after a set number of time steps (no limit
+    by default) (#1941).
 
 ### mlpack 3.1.1
 ###### 2019-05-26
