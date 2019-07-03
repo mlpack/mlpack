@@ -43,7 +43,6 @@ endforeach()
 add_subdirectory(imputation_methods)
 add_subdirectory(map_policies)
 
-
 # Append sources (with directory name) to list of all mlpack sources (used at
 # parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
