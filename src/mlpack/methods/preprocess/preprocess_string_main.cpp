@@ -14,6 +14,7 @@
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/string_cleaning.hpp>
+#include <mlpack/core/data/extension.hpp>
 #include <mlpack/core/data/tokenizer/split_by_char.hpp>
 
 PROGRAM_INFO("preprocess_string",
@@ -50,8 +51,8 @@ PARAM_STRING_IN_REQ("actual_dataset", "File containing the reference dataset.",
     "t");
 PARAM_STRING_IN_REQ("preprocess_dataset", "File containing the preprocess "
     "dataset.", "o");
-PARAM_STRING_IN_REQ("delimeter", "delimeter used to seperate Column in files"
-    "example '\\t' for '.tsv' and ',' for '.csv'.", "d");
+PARAM_STRING_IN("delimiter", "delimeter used to seperate Column in files"
+    "example '\\t' for '.tsv' and ',' for '.csv'.", "d", "\t");
 PARAM_STRING_IN("strDelimeter", "A set of chars that is used as delimeter to"
     "tokenize the string dataset ", "D", " ");
 PARAM_STRING_IN("stopwordsfile", "File containing stopwords", "S", "");
@@ -59,7 +60,7 @@ PARAM_STRING_IN("stopwordsfile", "File containing stopwords", "S", "");
 PARAM_FLAG("lowercase", "convert to lowercase.", "l");
 PARAM_FLAG("punctuation", "Remove punctuation.", "p");
 PARAM_FLAG("stopwords", "Remove stopwords.", "s");
-PARAM_VECTOR_IN_REQ(int, "dimension", "Column which contains the string data."
+PARAM_VECTOR_IN_REQ(size_t, "dimension", "Column which contains the string data."
     "(1 by default)", "c");
 
 using namespace mlpack;
@@ -73,8 +74,35 @@ static void mlpackMain()
   // Extracting the filename
   const std::string filename = CLI::GetParam<std::string>("actual_dataset");
   // This is very dangerous, Let's add a check tommorrow.
-  const std::string delimiter = CLI::GetParam<std::string>("delimeter");
-  std::vector<int> dimension = CLI::GetParam<std::vector<int>>("dimension");
+  std::string delimiter;
+  if (CLI::HasParam("delimiter"))
+  {
+    delimiter = CLI::GetParam<std::string>("delimiter");
+    // Allow only 3 delimeter.
+    RequireParamValue<std::string>("delimiter", [](std::string del)
+        { return del == "\t" || del == "," || del == " "; }, true,
+        "Delimiter should be either \\t (tab) or , (comma) or ' ' (space) ");
+  }
+  else
+  {
+      if (data::Extension(filename) == "csv")
+      {
+        delimiter = ",";
+        Log::Warn << "Found csv Extension, taking , as delimiter. \n";
+      }
+      else if (data::Extension(filename) == "tsv" ||
+          data::Extension(filename) == "txt")
+      {
+        std::cout<<"fdsf \n";
+        delimiter = "\t";
+        Log::Warn << "Found tsv or txt Extension, taking \\t as delimiter. \n";
+      }
+      else
+      {
+        Log::Warn << "Delimiter not specified, taking default value \n";
+      }
+  }
+  std::vector<size_t> dimension = CLI::GetParam<std::vector<size_t>>("dimension");
   // Sorting neccessary
   std::sort(dimension.begin(), dimension.end());
   // Extracting the Contents of file
@@ -83,26 +111,25 @@ static void mlpackMain()
   // Open an existing file
   fin.open(filename, ios::in);
   std::string line;
-  std::vector<std::string> temp;
   std::vector<std::vector<std::string>> dataset;
-  // const size_t Column = CLI::GetParam<int>("dimension");
   data::SplitByChar sobj(delimiter);
   boost::string_view token, copy;
+  size_t row = 0;
   while (std::getline(fin, line))
   {
     copy = line;
     token = sobj(copy);
+    dataset.push_back(std::vector<std::string>());
     while (!token.empty())
     {
-      temp.push_back(std::string(token));
+      dataset[row].push_back(std::string(token));
       token = sobj(copy);
     }
-    dataset.push_back(temp);
-    temp.clear();
+    row++;
   }
   fin.close();
+  row = 0;
   // Preparing the input dataset on which string manipulation has to be done.
-  size_t row = 0;
   std::vector<std::vector<std::string>> input(dimension.size());
   for (size_t i = 0; i < dataset.size(); i++)
   {
@@ -168,7 +195,6 @@ static void mlpackMain()
   fstream fout;
   fout.open(filename2, ios::out | ios::trunc);
   row = 0;
-  // const std::string deli = obj.Delimiter();
   for (size_t i = 0 ; i < dataset.size(); i++)
   {
     row = 0;
@@ -187,3 +213,4 @@ static void mlpackMain()
     fout<<"\n";
   }
 }
+                                        
