@@ -24,6 +24,9 @@ namespace data {
 
 /**
  * A simple Dictionary Enocding class
+ *
+ * The encoding here simply assigns a word (or a character) to a numeric
+ * index and treat the dataset as categorical.
  */
 class DictionaryEncoding
 {

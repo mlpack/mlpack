@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
   arr[0] = "hello how are you";
   arr[1] = "i am good";
   arr[2] = "Good how are you";
-  arma::sp_mat output;
+  arma::mat output;
   data::DictionaryEncoding en;
   en.Encode(arr, output, tokenizer);
   const std::unordered_map<boost::string_view, size_t,
@@ -61,6 +61,10 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
     // Every token should be mapped only once
     BOOST_REQUIRE_EQUAL(cnt[it->second], 1);
   }
+  arma::mat target = "1 2 3 4;"
+                     "5 6 7 0;"
+                     "8 2 3 4;";
+  CheckMatrices(output, target);
 }
 
 /**
@@ -93,7 +97,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingCharTest)
   arr[0] = "GACCA";
   arr[1] = "ABCABCD";
   arr[2] = "GAB";
-  arma::sp_mat output;
+  arma::mat output;
   data::DictionaryEncoding en;
   // Passing a empty string to encode characters
   en.Encode(arr, output, [](boost::string_view& str) {
@@ -113,6 +117,10 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingCharTest)
     // Every token should be mappend only once.
     BOOST_REQUIRE_EQUAL(cnt[it->second], 1);
   }
+  arma::mat target = "1 2 3 3 2 0 0;"
+                     "2 4 3 2 4 3 5;"
+                     "1 2 4 0 0 0 0;";
+  CheckMatrices(output, target);
 }
 
 /**
