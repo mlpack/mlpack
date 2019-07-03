@@ -32,10 +32,7 @@ class SplitByChar
   * A constructor to set delimiter.
   * @param Delimiter A set of characters which you want to use as delimiter.
   */
-  SplitByChar(const std::string& delimiter)
-  {
-    this->delimiter = delimiter;
-  }
+  SplitByChar(const std::string& delim): delimiter(delim) {}
   /**
   * A function object which take boost::string_view as input and
   * return a boost::string_view (token).
@@ -59,6 +56,11 @@ class SplitByChar
     }
     return retval;
   }
+
+  //! Return the Delimiter.
+  const std::string& Delimiter() const { return delimiter; }
+  //! Modify the Delimiter.
+  std::string& Delimiter() { return delimiter; }
 
  private:
   // A set of characters by which the string is tokenized.
