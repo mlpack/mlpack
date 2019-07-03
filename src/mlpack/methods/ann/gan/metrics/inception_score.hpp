@@ -20,7 +20,6 @@ namespace ann /* Artificial Neural Network */ {
 
 /**
 * Function that computes Inception Score for a set of images produced by a GAN.
-*
 * For more information, see the following.
 *
 * @code
@@ -38,7 +37,8 @@ namespace ann /* Artificial Neural Network */ {
 */
 template<typename ModelType>
 double InceptionScore(ModelType Model,
-                      arma::mat images);
+                      arma::mat images,
+                      size_t splits = 1);
 
 
 } // namespace ann

@@ -15,22 +15,43 @@
 // In case it hasn't been included yet.
 #include "inception_score.hpp"
 
-namespace mlpack {
-namespace ann /* Artificial Neural Network */ {
-
-template<typename ModelType>
-double InceptionScore(ModelType model,
-                      arma::mat images)
+namespace mlpack
 {
+namespace ann /* Artificial Neural Network */
+{
+
+template <typename ModelType>
+double InceptionScore(ModelType model,
+                      arma::mat images,
+                      size_t splits)
+{
+  size_t samples = images.n_cols;
+  size_t splitSize = samples / splits;
+  size_t remainder = samples % splits;
   arma::mat preds;
   model.Predict(images, preds);
-  arma::colvec c = arma::log(arma::mean(preds, 1));
-  arma::mat temp = arma::log(preds);
-  temp.each_col() -= c;
-  preds %= temp;
 
-  double score  = arma::as_scalar(arma::mean(arma::sum(preds, 0)));
-  return exp(score);
+  size_t index = 0;
+  arma::vec scores = arma::vec(splits);
+
+  for (int i = 0; i < splits; i++)
+  {
+    size_t curSize = splitSize;
+    if (remainder)
+    {
+      curSize++;
+      remainder--;
+    }
+    arma::mat curPreds =
+        arma::mat(preds.colptr(index), preds.n_rows, curSize, false, true);
+    arma::colvec c = arma::log(arma::mean(curPreds, 1));
+    arma::mat temp = arma::log(curPreds);
+    temp.each_col() -= c;
+    curPreds %= temp;
+    scores(i) = exp(arma::as_scalar(arma::mean(arma::sum(curPreds, 0))));
+    index += curSize;
+  }
+  return arma::mean(scores);
 }
 
 } // namespace ann
