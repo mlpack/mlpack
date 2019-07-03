@@ -177,6 +177,7 @@ static void mlpackMain()
       if (row < dimension.size() && dimension[row] == j)
       {
         fout<<input[row][i]<<sobj.Delimiter();
+        row++;
       }
       else
       {
