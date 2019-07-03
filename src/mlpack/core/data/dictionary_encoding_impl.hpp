@@ -45,8 +45,8 @@ DictionaryEncoding& DictionaryEncoding::operator= (const
     originalStrings.clear();
     originalStrings = oldObject.originalStrings;
     std::deque<std::string>::iterator jt = originalStrings.begin();
-    for (auto it = oldObject.originalStrings.begin(); it !=
-        oldObject.originalStrings.end(); it++)
+    for (auto it = oldObject.originalStrings.begin();
+        it != oldObject.originalStrings.end(); it++)
     {
       mappings[*jt] = oldObject.mappings.at(*it);
       jt++;

@@ -83,7 +83,7 @@ class DictionaryEncoding
   * User may also provide their custom tokenization rule.
   *
   * @param input Vector of strings.
-  * @param output Output Matrix to store encoded results (sp_mat or mat).
+  * @param output Output matrix to store encoded results (sp_mat or mat).
   * @param tokenizer A function that accepts a boost::string_view as
   *                  an argument and returns a token.
   * This can either be a function pointer or function object or a lamda
@@ -133,7 +133,7 @@ class DictionaryEncoding
   //! Return the mappings
   const MapType& Mappings() const { return mappings; }
 
-  //! Modify the mapappings.
+  //! Modify the mappings.
   MapType& Mappings() { return mappings; }
 
   /**

@@ -2,7 +2,7 @@
  * @file char_split.hpp
  * @author Jeffin Sam
  *
- * Implementation of CharSplit class which tokenizes string into character.
+ * Implementation of CharSplit class which tokenizes string into characters.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -27,9 +27,9 @@ class CharSplit
 {
  public:
   /**
-  * A function object which take boost::string_view as input and
-  * return a boost::string_view (token).
-  * @param str A string to retriev token from.
+  * A function object which takes boost::string_view as input and
+  * returns a boost::string_view (token).
+  * @param str A string to retrieve token from.
   */
   boost::string_view operator()(boost::string_view& str) const
   {
