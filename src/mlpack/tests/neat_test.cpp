@@ -44,19 +44,19 @@ BOOST_AUTO_TEST_SUITE(NEATTest)
 /**
  * Test NEAT on the XOR Test.
  */
-BOOST_AUTO_TEST_CASE(NEATXORTest)
-{
-  arma::arma_rng::set_seed_random();
-  XORTask task;
-  NEAT<XORTask, HardSigmoidFunction, RankSelection> model(task, 2, 1, 100, 150, 10);
-  model.FinalFitness() = 3.6;
+// BOOST_AUTO_TEST_CASE(NEATXORTest)
+// {
+//   arma::arma_rng::set_seed_random();
+//   XORTask task;
+//   NEAT<XORTask, HardSigmoidFunction, RankSelection> model(task, 2, 1, 100, 150, 10);
+//   model.FinalFitness() = 3.6;
 
-  // Find the best genome and it's fitness.
-  Genome<HardSigmoidFunction> bestGenome = model.Train();
-  double finalFitness = bestGenome.Fitness();
-  // Check if the final fitness is acceptable.
-  BOOST_REQUIRE(finalFitness >= 3.5);
-}
+//   // Find the best genome and it's fitness.
+//   Genome<HardSigmoidFunction> bestGenome = model.Train();
+//   double finalFitness = bestGenome.Fitness();
+//   // Check if the final fitness is acceptable.
+//   BOOST_REQUIRE(finalFitness >= 3.5);
+// }
 
 /**
  * Test NEAT on the Pendulum environment.
@@ -178,23 +178,24 @@ BOOST_AUTO_TEST_CASE(NEATXORTest)
 /**
  * Test NEAT on the Double Pole Cart Balancing environment without velocities.
  */
-// BOOST_AUTO_TEST_CASE(NEATDoublePoleCartNoVelocitiesTest)
-// {
-//   arma::arma_rng::set_seed_random();
-//   arma::vec poleLengths = {0.5, 0.05};
-//   arma::vec poleMasses = {0.1, 0.01};
-//   const MultiplePoleCart env = MultiplePoleCart(2, poleLengths, poleMasses, 9.8, 1, 0.01);
-//   DPNVTask task(env);
-//   NEAT<DPNVTask, HardSigmoidFunction, RankSelection> model
-//         (task, 3, 1, 1000, 500, 10, 0.5, 0.8, 0.5, 0.8, 0.5, 0.2, 0.5, 0.3, 0.2, 0.2, false);
+BOOST_AUTO_TEST_CASE(NEATDoublePoleCartNoVelocitiesTest)
+{
+  arma::arma_rng::set_seed_random();
+  arma::vec poleLengths = {0.5, 0.05};
+  arma::vec poleMasses = {0.1, 0.01};
+  const MultiplePoleCart env = MultiplePoleCart(2, poleLengths, poleMasses, 9.8, 1, 0.01);
+  DPNVTask task(env);
+  NEAT<DPNVTask, HardSigmoidFunction, RankSelection> model
+        (task, 3, 1, 100, 500, 10);
+  model.InitialWeight() = 1;
 
-//   // Find the best genome and it's fitness.
-//   Genome<HardSigmoidFunction> bestGenome = model.Train();
-//   double finalFitness = bestGenome.Fitness();
-//   std::cout << finalFitness << std::endl;
+  // Find the best genome and it's fitness.
+  Genome<HardSigmoidFunction> bestGenome = model.Train();
+  double finalFitness = bestGenome.Fitness();
+  std::cout << finalFitness << std::endl;
 
-//   // Check if the final fitness is acceptable (Placeholder).
-//   BOOST_REQUIRE(finalFitness >= 90);
-// }
+  // Check if the final fitness is acceptable (Placeholder).
+  BOOST_REQUIRE(finalFitness >= 90);
+}
 
 BOOST_AUTO_TEST_SUITE_END()

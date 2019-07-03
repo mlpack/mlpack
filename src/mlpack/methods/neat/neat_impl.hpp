@@ -91,7 +91,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   {
     std::cout << "Generation: " << gen << std::endl;
     std::cout << "Evaluating." << std::endl;
-    #pragma omp parallel for
+    // #pragma omp parallel for
     for (size_t i = 0; i < popSize; i++)
     {
       genomeList[i].Fitness() = task.Evaluate(genomeList[i]); 

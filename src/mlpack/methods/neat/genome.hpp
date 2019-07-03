@@ -35,7 +35,7 @@ namespace neat /** NeuroEvolution of Augmenting Topologies */ {
  * 
  * @tparam ActivationFunction The activation function to be used.
  */
-template <class ActivationFunction>
+template <class ActivationFunction = ann::HardSigmoidFunction>
 class Genome
 {
  public:

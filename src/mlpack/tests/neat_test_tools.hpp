@@ -169,7 +169,6 @@ class DPVTask
           inputMatrix(0, 2) / angleThreshold, inputMatrix(1, 2)};
     arma::vec output = genome.Evaluate(input);
 
-    double fitnessDenom = 0;
     int timeStep = 0;
     while (!environment.IsTerminal(state))
     {
@@ -216,7 +215,6 @@ class DPNVTask
     double fourDegrees = 4 * M_PI / 180;
     arma::mat data(2, 3, arma::fill::zeros);
     data(0, 1) = fourDegrees;
-    data.print();
     MultiplePoleCart::State state(data);
     arma::mat inputMatrix = state.Data();
     arma::vec input = {inputMatrix(0, 0), inputMatrix(0, 1), inputMatrix(0, 2)};
@@ -232,6 +230,7 @@ class DPNVTask
       output = arma::clamp(output, 0, size - 1);
       int actionInt = std::round(output[0]);
       MultiplePoleCart::Action action = static_cast<MultiplePoleCart::Action>(actionInt);
+      std::cout << "Chosen action: " << action << std::endl;
 
       // Use the current action to get the next state.
       environment.Sample(state, action, state);
