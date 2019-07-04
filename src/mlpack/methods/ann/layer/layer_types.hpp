@@ -47,7 +47,7 @@
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
 
 // Regularizers.
-#include <mlpack/methods/ann/regularizer/lregularizer.hpp>
+#include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
 
 // Loss function modules.
 #include <mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp>
@@ -184,7 +184,7 @@ using LayerTypes = boost::variant<
     LayerNorm<arma::mat, arma::mat>*,
     LeakyReLU<arma::mat, arma::mat>*,
     CReLU<arma::mat, arma::mat>*,
-    Linear<arma::mat, arma::mat, L2Regularizer>*,
+    Linear<arma::mat, arma::mat, NoRegularizer>*,
     LinearNoBias<arma::mat, arma::mat>*,
     LogSoftMax<arma::mat, arma::mat>*,
     Lookup<arma::mat, arma::mat>*,

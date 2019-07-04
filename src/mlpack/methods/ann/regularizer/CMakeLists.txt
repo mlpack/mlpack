@@ -3,6 +3,9 @@
 set(SOURCES
   lregularizer.hpp
   lregularizer_impl.hpp
+  orthogonal_regularizer.hpp
+  orthogonal_regularizer_impl.hpp
+  no_regularizer.hpp
 )
 
 # Add directory name to sources.

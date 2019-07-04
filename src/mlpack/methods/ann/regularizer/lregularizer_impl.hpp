@@ -29,25 +29,25 @@ LRegularizer<Power>::LRegularizer(double factor) :
 // Unspecialized implementation. This should almost never be used...
 template<int Power>
 template<typename MatType>
-MatType LRegularizer<Power>::Evaluate(const MatType& a)
+void LRegularizer<Power>::Evaluate(const MatType& weight, MatType& gradient)
 {
-  return arma::pow(a, Power - 1) * Power;
+  gradient = arma::vectorise(arma::pow(weight, Power - 1) * Power);
 }
 
 // L1-Regularizer specializations.
 template<>
 template<typename MatType>
-MatType LRegularizer<1>::Evaluate(const MatType& a)
+void LRegularizer<1>::Evaluate(const MatType& weight, MatType& gradient)
 {
-  return  factor * a/arma::abs(a);
+  gradient += arma::vectorise(factor * weight / arma::abs(weight));
 }
 
 // L2-Regularizer specializations.
 template<>
 template<typename MatType>
-MatType LRegularizer<2>::Evaluate(const MatType& a)
+void LRegularizer<2>::Evaluate(const MatType& weight, MatType& gradient)
 {
-  return  2 * factor * a;
+  gradient = arma::vectorise(2 * factor * weight);
 }
 
 template<int Power>

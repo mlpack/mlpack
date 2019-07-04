@@ -14,7 +14,8 @@
 #define MLPACK_METHODS_ANN_LAYER_LINEAR_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/ann/regularizer/lregularizer.hpp>
+#include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
+#include <mlpack/methods/ann/regularizer/regularizer.hpp>
 
 #include "layer_types.hpp"
 
@@ -33,7 +34,7 @@ namespace ann /** Artificial Neural Network. */ {
 template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat,
-    typename RegularizerType = L2Regularizer
+    typename RegularizerType = NoRegularizer
 >
 class Linear
 {
@@ -47,8 +48,9 @@ class Linear
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  Linear(const size_t inSize, const size_t outSize,
-         RegularizerType regularizer = RegularizerType(0));
+  Linear(const size_t inSize,
+         const size_t outSize,
+         RegularizerType regularizer = RegularizerType());
 
   /*
    * Reset the layer parameter.

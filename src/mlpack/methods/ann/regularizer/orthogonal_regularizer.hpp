@@ -1,8 +1,8 @@
 /**
- * @file lregularizer.hpp
+ * @file orthogonal_regularizer.hpp
  * @author Saksham Bansal
  *
- * Generalized L-regularizer, allowing both l1 and l2 regularization methods.
+ * Definition of the OrthogonalRegularizer class.
  *
  * This also gives several convenience typedefs for commonly used L-regularizers.
  *
@@ -20,12 +20,24 @@ namespace mlpack {
 namespace ann {
 
 /**
- * The L_p regularizer for arbitrary integer p.
+ * Implementation of the OrthogonalRegularizer. Orthogonality of weights is a
+ * desirable property because multiplication by an orthogonal matrix leaves
+ * the norm of the matrix unchanged. The orthogonal regularization technique
+ * encourages weights to be orthogonal.
  *
- * @tparam Power Power of regularizer; i.e. Power = 1 gives the L1-regularization.
+ * For more information, see the following.
+ *
+ * @code
+ * @inproceedings{WanICML2013,
+ *   title={Neural Photo Editing with Introspective Adversarial Networks},
+ *   booktitle = {5th International Conference on Learning Representations
+ *                (ICLR - 17)},
+ *   author = {Andrew Brock and Theodore Lim and J.M. Ritchie and Nick Weston},
+ *   year = {2017}
+ * }
+ * @endcode
  */
-template<int TPower>
-class LRegularizer
+class OrthogonalRegularizer
 {
  public:
   /**
@@ -33,7 +45,7 @@ class LRegularizer
    *
    * @param factor The factor for regularization.
    */
-  LRegularizer(double factor = 1.0);
+  OrthogonalRegularizer(double factor = 1.0);
 
   /**
    * Calculate the gradient for regularization.
@@ -49,30 +61,14 @@ class LRegularizer
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
 
-  //! The power of the regularizer.
-  static const int Power = TPower;
-
   //! The constant for the regularization
   const int factor;
 };
-
-// Convenience typedefs.
-
-/**
- * The L1 Regularizer.
- */
-typedef LRegularizer<1> L1Regularizer;
-
-/**
- * The L2 Regularizer.
- */
-typedef LRegularizer<2> L2Regularizer;
-
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "lregularizer_impl.hpp"
+#include "orthogonal_regularizer_impl.hpp"
 
 #endif
