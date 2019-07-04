@@ -25,12 +25,13 @@ class KDEStat
 {
  public:
   //! Initialize the statistic.
-  KDEStat() : validCentroid(false), depth(0) { }
+  KDEStat() : validCentroid(false), depth(0), accumAlpha(0) { }
 
   //! Initialization for a fully initialized node.
   template<typename TreeType>
   KDEStat(TreeType& node) :
-      depth(0)
+      depth(0),
+      accumAlpha(0)
   {
     // Calculate centroid if necessary.
     if (!tree::TreeTraits<TreeType>::FirstPointIsCentroid)
@@ -58,6 +59,12 @@ class KDEStat
 
   //! Modify depth of the node.
   inline size_t& Depth() { return depth; }
+
+  //! Get accumulated Monte Carlo alpha of the node.
+  inline double AccumAlpha() const { return accumAlpha; }
+
+  //! Modify accumulated Monte Carlo alpha of the node.
+  inline double& AccumAlpha() { return accumAlpha; }
 
   //! Modify the centroid of the node.
   void SetCentroid(arma::vec newCentroid)
@@ -97,6 +104,9 @@ class KDEStat
 
   //! Depth of the current node.
   size_t depth;
+
+  //! Accumulated Monte Carlo alpha in the current node.
+  double accumAlpha;
 };
 
 } // namespace kde
