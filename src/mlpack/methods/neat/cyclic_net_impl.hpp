@@ -60,9 +60,6 @@ void CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
 
   for (size_t i = 0; i < output.n_elem; i++)
     output[i] = ActivationFunction::Fn(inputNodeValues[i + inputNodeCount + 1]);
-
-  std::cout << "output from net" << std::endl;
-  output.print();
 }
 
 } // namespace neat

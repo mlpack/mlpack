@@ -50,7 +50,7 @@ void ConnectionGene::Mutate(const double mutationSize)
 
 template <typename Archive>
 void ConnectionGene::serialize(Archive& ar,
-                                const unsigned int /* version */)
+                              const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(globalInnovationID);
   ar & BOOST_SERIALIZATION_NVP(weight);

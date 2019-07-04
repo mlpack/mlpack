@@ -25,7 +25,7 @@
 #include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
 
 // Activation functions.
-#include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
+#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 
 #include <mlpack/tests/neat_test_tools.hpp>
 
@@ -185,12 +185,11 @@ BOOST_AUTO_TEST_CASE(NEATDoublePoleCartNoVelocitiesTest)
   arma::vec poleMasses = {0.1, 0.01};
   const MultiplePoleCart env = MultiplePoleCart(2, poleLengths, poleMasses, 9.8, 1, 0.01);
   DPNVTask task(env);
-  NEAT<DPNVTask, HardSigmoidFunction, RankSelection> model
-        (task, 3, 1, 100, 500, 10);
-  model.InitialWeight() = 1;
+  NEAT<DPNVTask, LogisticFunction, RankSelection> model
+        (task, 3, 1, 1000, 300, 10, 0, 1, 0.8, 1.8, 0.5, 0.01, 0.3, 0.2, 0.05, 0);
 
   // Find the best genome and it's fitness.
-  Genome<HardSigmoidFunction> bestGenome = model.Train();
+  Genome<LogisticFunction> bestGenome = model.Train();
   double finalFitness = bestGenome.Fitness();
   std::cout << finalFitness << std::endl;
 

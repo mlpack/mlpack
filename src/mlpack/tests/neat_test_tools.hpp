@@ -209,7 +209,7 @@ class DPNVTask
   DPNVTask(const MultiplePoleCart& env) : environment(env)
   { /* Nothing to do here */ }
 
-  double Evaluate(Genome<HardSigmoidFunction>& genome)
+  double Evaluate(Genome<LogisticFunction>& genome)
   {
     double fitness = 0;
     double fourDegrees = 4 * M_PI / 180;
@@ -217,7 +217,8 @@ class DPNVTask
     data(0, 1) = fourDegrees;
     MultiplePoleCart::State state(data);
     arma::mat inputMatrix = state.Data();
-    arma::vec input = {inputMatrix(0, 0), inputMatrix(0, 1), inputMatrix(0, 2)};
+    arma::vec input = {inputMatrix(0, 0) / 2.4, inputMatrix(0, 1) / 0.62832,
+        inputMatrix(0, 2) / 0.62832};
     arma::vec output = genome.Evaluate(input);
     std::deque<double> wiggleBuffer1;
     std::deque<double> wiggleBuffer2;
@@ -230,7 +231,6 @@ class DPNVTask
       output = arma::clamp(output, 0, size - 1);
       int actionInt = std::round(output[0]);
       MultiplePoleCart::Action action = static_cast<MultiplePoleCart::Action>(actionInt);
-      std::cout << "Chosen action: " << action << std::endl;
 
       // Use the current action to get the next state.
       environment.Sample(state, action, state);
@@ -241,8 +241,8 @@ class DPNVTask
 
       // Scale the input between -1 and 1.
       input[0] /= 2.4;
-      input[1] /= 36 * 2 * 3.1416 / 360;
-      input[2] /= 36 * 2 * 3.1416 / 360;
+      input[1] /= 0.62832;
+      input[2] /= 0.62832;
       
       wiggleBuffer1.push_back(std::abs(inputMatrix(0,0)) + std::abs(inputMatrix(0,1)) +
           std::abs(inputMatrix(1,0)) + std::abs(inputMatrix(1,1)));
@@ -284,7 +284,8 @@ class DPNVTask
     else
       fitness += timeStep;
 
-    std::cout <<" Fitness: " << fitness << std::endl;
+    std::cout << "Fitness: " << fitness << std::endl;
+
     return fitness;
   }
 
