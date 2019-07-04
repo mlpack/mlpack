@@ -246,6 +246,8 @@ template<typename MetricType, typename KernelType, typename TreeType>
 inline double KDERules<MetricType, KernelType, TreeType>::
 Score(TreeType& queryNode, TreeType& referenceNode)
 {
+  kde::KDEStat& referenceStat = referenceNode.Stat();
+  kde::KDEStat& queryStat = queryNode.Stat();
   double score, maxKernel, minKernel, bound;
   const double minDistance = queryNode.MinDistance(referenceNode);
   // Calculations are not duplicated.
@@ -276,8 +278,6 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   {
     // Auxiliary variables.
     double kernelValue;
-    kde::KDEStat& referenceStat = referenceNode.Stat();
-    kde::KDEStat& queryStat = queryNode.Stat();
 
     // If calculating a center is not required.
     if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
@@ -298,22 +298,29 @@ Score(TreeType& queryNode, TreeType& referenceNode)
           referenceNode.NumDescendants() * kernelValue;
     }
     score = DBL_MAX;
+
+    // Store not used alpha for Monte Carlo.
+    if (kernelIsGaussian && monteCarlo)
+      queryStat.AccumAlpha() += CalculateAlpha(referenceNode.Stat().Depth());
   }
   else if (monteCarlo &&
            referenceNode.NumDescendants() >= mcAccessCoef * initialSampleSize &&
            kernelIsGaussian)
   {
     // Calculate reference node depth.
-    kde::KDEStat& referenceStat = referenceNode.Stat();
     if (referenceStat.Depth() == 0)
       referenceStat.Depth() = CalculateDepth(referenceNode);
 
     // Monte Carlo probabilistic estimation.
-    const double currentAlpha =
-        mcBeta / std::pow(2, referenceNode.Stat().Depth() + 1);
+    // Calculate alpha.
+    const double depthAlpha = CalculateAlpha(referenceNode.Stat().Depth());
+    double alpha = depthAlpha + queryStat.AccumAlpha();
+    if (alpha > 1)
+      alpha = 1;
+
     const boost::math::normal normalDist;
     const double z =
-        std::abs(boost::math::quantile(normalDist, currentAlpha / 2));
+        std::abs(boost::math::quantile(normalDist, alpha / 2));
     const size_t numDesc = referenceNode.NumDescendants();
     arma::vec sample;
     arma::vec means = arma::zeros(queryNode.NumDescendants());
@@ -368,12 +375,15 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     if (useMonteCarloPredictions)
     {
       // Use Monte Carlo estimation.
+      queryStat.AccumAlpha() = 0;
       score = DBL_MAX;
       for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
         densities(queryNode.Descendant(i)) += numDesc * means(i);
     }
     else
     {
+      // Reclaim not used alpha for Monte Carlo.
+      queryStat.AccumAlpha() += CalculateAlpha(referenceNode.Stat().Depth());
       // Recurse.
       score = minDistance;
     }
@@ -381,6 +391,10 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   else
   {
     score = minDistance;
+
+    // Reclaim not used alpha for Monte Carlo.
+    if (kernelIsGaussian && monteCarlo)
+      queryStat.AccumAlpha() += CalculateAlpha(referenceNode.Stat().Depth());
   }
 
   ++scores;
