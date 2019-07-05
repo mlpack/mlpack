@@ -18,7 +18,7 @@ class RouletteSelection
 {
  public:
   /**
-   * The method that selects two parents out of the population. It returns a
+   * The method that selects parents out of the population. It returns a
    * pair of indices of the parents.
    * 
    * @param fitnesses A sorted Armadillo vector of fitnesses in descending
@@ -27,39 +27,26 @@ class RouletteSelection
    */
   static void Select(arma::vec& fitnesses, arma::uvec& selection)
   {
-    selection[0] = fitnesses.n_elem;
-    selection[1] = fitnesses.n_elem;
+    selection.fill(fitnesses.n_elem);
     double totalFitness = arma::accu(fitnesses);
-    double prob = 0;
-    double randNum = arma::randu<double>();
-    size_t k = fitnesses.n_elem - 1;
-    while (k != 0)
+    for (size_t i = 0; i < selection.n_elem; i++)
     {
-      prob += fitnesses[k] / totalFitness;
-      if (randNum < prob)
+      size_t k = fitnesses.n_elem - 1;
+      double prob = 0, randNum = arma::randu<double>();
+      while (k != 0)
       {
-        selection[0] = k;
-        prob = 0;
-        break;
+        prob += fitnesses[k] / totalFitness;
+        if (randNum < prob)
+        {
+          selection[i] = k;
+          prob = 0;
+          break;
+        }
+        k--;
       }
-      k--;
+      if (k == 0)
+        selection[i] = k;
     }
-    if (k == 0)
-      selection[0] = k;
-    randNum = arma::randu<double>();
-    k = fitnesses.n_elem - 1;
-    while (k != 0)
-    {
-      prob += fitnesses[k] / totalFitness;
-      if (randNum < prob)
-      {
-        selection[1] = k;
-        break;
-      }
-      k--;
-    }
-    if (k == 0)
-      selection[1] = k;
   }
 };
 

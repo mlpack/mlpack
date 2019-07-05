@@ -41,6 +41,7 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::
          const double disableProb,
          const double elitismProp,
          const double finalFitness,
+         const size_t complexityThreshold,
          const bool isAcyclic):
     task(task),
     inputNodeCount(inputNodeCount),
@@ -60,6 +61,9 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::
     disableProb(disableProb),
     elitismProp(elitismProp),
     finalFitness(finalFitness),
+    complexityThreshold(complexityThreshold),
+    meanComplexity(0),
+    searchMode(0),
     isAcyclic(isAcyclic)
 { /* Nothing to do here yet */ }
 
@@ -79,29 +83,43 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     genomeList.emplace_back(Genome<ActivationFunction>(inputNodeCount,
         outputNodeCount, bias, initialWeight, weightMutationProb,
         weightMutationSize, biasMutationProb, biasMutationSize,
-        nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic));
+        nodeAdditionProb, connAdditionProb, connDeletionProb, 0, isAcyclic));
   }
   speciesList = std::vector<std::vector<Genome<ActivationFunction>>>(numSpecies);
   Speciate(true);
-
-  arma::vec fitnesses(popSize);
   
   // Main loop.
   for (size_t gen = 0; gen < maxGen; gen++)
   {
+    meanComplexity = 0;
     std::cout << "Generation: " << gen << std::endl;
     std::cout << "Evaluating." << std::endl;
-    // #pragma omp parallel for
+
+    arma::vec fitnesses(popSize);
+
+    #pragma omp parallel for
     for (size_t i = 0; i < popSize; i++)
     {
-      std::cout << "Genome: " << i << std::endl;
+      if (complexityThreshold != 0)
+        meanComplexity += (double)genomeList[i].Complexity() / popSize;
       genomeList[i].Fitness() = task.Evaluate(genomeList[i]); 
       fitnesses[i] = genomeList[i].Fitness();
     }
+
+    // Check termination criteria.
     if (finalFitness != 0 && fitnesses.max() >= finalFitness)
       break;
     if (gen == maxGen - 1)
       break;
+
+    // Set search mode.
+    if (meanComplexity > (double)complexityThreshold)
+      searchMode = 1;
+    else
+      searchMode = 0;
+
+    std::cout << "Maximum fitness " << fitnesses.max() << std::endl;
+
     std::cout << "Speciating." << std::endl;
     Speciate(false);
     std::cout << "Reproducing." << std::endl;
@@ -336,17 +354,42 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
 
     while (genomeList.size() < speciesSize[i] + currentSize)
     {
-      arma::uvec selection(2);
-      SelectionPolicy::Select(fitnesses, selection);
-      if (selection[0] == selection[1])
-        genomeList.push_back(speciesList[i][selection[0]]);
+      // Complexifying
+      if (searchMode == 0)
+      {  
+        arma::uvec selection(2);
+        SelectionPolicy::Select(fitnesses, selection);
+        if (selection[0] == selection[1])
+        {
+          genomeList.push_back(speciesList[i][selection[0]]);
+          genomeList[genomeList.size() - 1].NodeAdditionProb() = nodeAdditionProb;
+          genomeList[genomeList.size() - 1].ConnAdditionProb() = connAdditionProb;
+          genomeList[genomeList.size() - 1].ConnDeletionProb() = connDeletionProb;
+          genomeList[genomeList.size() - 1].NodeDeletionProb() = 0;
+        }
+        else
+        {
+          Genome<ActivationFunction> child = Crossover(speciesList[i][selection[0]],
+              speciesList[i][selection[1]]);
+          genomeList.push_back(child);
+        }
+        genomeList[genomeList.size() - 1].Mutate();
+      }
+      // Simplifying
       else
       {
-        Genome<ActivationFunction> child = Crossover(speciesList[i][selection[0]],
-            speciesList[i][selection[1]]);
-        genomeList.push_back(child);
+        arma::uvec selection(1);
+        SelectionPolicy::Select(fitnesses, selection);
+        genomeList.push_back(speciesList[i][selection[0]]);
+
+        // Change mutation parameters for simplification.
+        genomeList[genomeList.size() - 1].NodeAdditionProb() = 0;
+        genomeList[genomeList.size() - 1].ConnAdditionProb() = 0;
+        genomeList[genomeList.size() - 1].ConnDeletionProb() = 0.4;
+        genomeList[genomeList.size() - 1].NodeDeletionProb() = 0.2;
+        
+        genomeList[genomeList.size() - 1].Mutate();
       }
-      genomeList[genomeList.size() - 1].Mutate();
     }
   }
 }
@@ -436,14 +479,14 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     return Genome<ActivationFunction>(newConnGeneList, nodeDepths, 
       inputNodeCount, outputNodeCount, nextNodeID, bias, weightMutationProb,
       weightMutationSize, biasMutationProb, biasMutationSize,
-      nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic);
+      nodeAdditionProb, connAdditionProb, connDeletionProb, 0, isAcyclic);
   }
   else
   {
     return Genome<ActivationFunction>(newConnGeneList, inputNodeCount,
       outputNodeCount, nextNodeID, bias, weightMutationProb,
       weightMutationSize, biasMutationProb, biasMutationSize,
-      nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic);
+      nodeAdditionProb, connAdditionProb, connDeletionProb, 0, isAcyclic);
   }
 }
 

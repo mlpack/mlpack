@@ -63,6 +63,7 @@ class Genome
          const double nodeAdditionProb,
          const double connAdditionProb,
          const double connDeletionProb,
+         const double nodeDeletionProb = 0,
          const bool isAcyclic = false);
 
   /**
@@ -93,6 +94,7 @@ class Genome
          const double nodeAdditionProb,
          const double connAdditionProb,
          const double connDeletionProb,
+         const double nodeDeletionProb = 0,
          const bool isAcyclic = false);
 
   /**
@@ -126,6 +128,7 @@ class Genome
          const double nodeAdditionProb,
          const double connAdditionProb,
          const double connDeletionProb,
+         const double nodeDeletionProb = 0,
          const bool isAcyclic = false);
 
   /**
@@ -150,6 +153,11 @@ class Genome
    * Prints genome (Used for debugging purposes).
    */
   void Print();
+
+  /**
+   * Calculates complexity
+   */
+  size_t Complexity();
 
   /**
    * A data structure containing the connection genes sorted by global
@@ -193,6 +201,26 @@ class Genome
   //! Get output node count.
   size_t getOutputNodeCount() const { return outputNodeCount; }
 
+  //! Get node addition probability.
+  double NodeAdditionProb() const { return nodeAdditionProb; }
+  //! Set node addition probability.
+  double& NodeAdditionProb() { return nodeAdditionProb; }
+
+  //! Get connection addition probability.
+  double ConnAdditionProb() const { return connAdditionProb; }
+  //! Set connection addition probability.
+  double& ConnAdditionProb() { return connAdditionProb; }
+
+  //! Get connection deletion probability.
+  double ConnDeletionProb() const { return connDeletionProb; }
+  //! Set connection deletion probability.
+  double& ConnDeletionProb() { return connDeletionProb; }
+
+  //! Get node deletion probability.
+  double NodeDeletionProb() const { return nodeDeletionProb; }
+  //! Set node deletion probability,
+  double& NodeDeletionProb() { return nodeDeletionProb; }
+
   //! Get bias.
   double Bias() const { return bias; }
   //! Set bias.
@@ -210,7 +238,15 @@ class Genome
    * A recursive function that assigns depth to nodes. Only used in acyclic
    * cases.
    */
-  void Traverse(size_t startID);  
+  void Traverse(size_t startID);
+
+  void AddConnMutation();
+
+  void AddNodeMutation();
+
+  void DelConnMutation();
+
+  void DelNodeMutation();
 
   //! Input node count.
   size_t inputNodeCount;
@@ -248,11 +284,18 @@ class Genome
   //! The probability that a connection will be deleted.
   double connDeletionProb;
 
+  //! The probability that a node will be deleted.
+  double nodeDeletionProb;
+
   //! The fitness.
   double fitness;
 
   //! Boolean indicating if the phenome is acyclic.
   bool isAcyclic;
+
+  //! Stuff for debugging.
+  arma::vec inputt;
+  arma::vec output;
 };
 
 } // namespace neat

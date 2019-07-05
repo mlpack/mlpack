@@ -79,6 +79,7 @@ class NEAT
        const double disableProb = 0.2,
        const double elitismProp = 0.1,
        const double finalFitness = 0,
+       const size_t complexityThreshold = 0,
        const bool isAcyclic = false);
 
   /**
@@ -149,6 +150,11 @@ class NEAT
   double FinalFitness() const { return finalFitness; }
   //! Set the desired final fitness.
   double& FinalFitness() { return finalFitness; }
+
+  //! Get the complexity threshold.
+  size_t ComplexityThreshold() const { return complexityThreshold; }
+  //! Set the complexity threshold.
+  size_t& ComplexityThreshold() { return complexityThreshold; }
 
   //! Get the boolean denoting if the genome is acyclic or not.
   bool IsAcyclic() const { return isAcyclic; }
@@ -233,8 +239,18 @@ class NEAT
   //! The proportion of a species that is considered elite.
   double elitismProp;
 
-  //! The desired final fitness
+  //! The desired final fitness.
   double finalFitness;
+
+  //! The maximum complexity after which NEAT performes simplification.
+  size_t complexityThreshold;
+
+  // The mean population complexity.
+  double meanComplexity;
+
+  // The search mode. If it is 1, NEAT is simplifying. If it is 0, NEAT is
+  // complexifying.
+  size_t searchMode;
 
   //! Denotes whether or not the genome is meant to be cyclic.
   bool isAcyclic;

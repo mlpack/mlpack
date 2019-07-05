@@ -49,11 +49,14 @@ BOOST_AUTO_TEST_SUITE(NEATTest)
 //   arma::arma_rng::set_seed_random();
 //   XORTask task;
 //   NEAT<XORTask, HardSigmoidFunction, RankSelection> model(task, 2, 1, 100, 150, 10);
-//   model.FinalFitness() = 3.6;
+//   model.FinalFitness() = 3.8;
 
 //   // Find the best genome and it's fitness.
 //   Genome<HardSigmoidFunction> bestGenome = model.Train();
 //   double finalFitness = bestGenome.Fitness();
+//   bestGenome.Print();
+//   std::cout << finalFitness << std::endl;
+
 //   // Check if the final fitness is acceptable.
 //   BOOST_REQUIRE(finalFitness >= 3.5);
 // }

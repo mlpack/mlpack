@@ -24,7 +24,7 @@ class RankSelection
 {
  public:
   /**
-   * The method that selects two parents out of the population. It returns a
+   * The method that selects parents out of the population. It returns a
    * pair of indices of the parents.
    * 
    * @param fitnesses A sorted Armadillo vector of fitnesses in ascending
@@ -33,36 +33,26 @@ class RankSelection
    */
   static void Select(arma::vec& fitnesses, arma::uvec& selection)
   {
+    selection.fill(fitnesses.n_elem);
     selection[0] = fitnesses.n_elem;
     selection[1] = fitnesses.n_elem;
-    arma::uword pos = 0, size = fitnesses.n_elem;
-    // Choose first genome.
-    while (selection[0] == fitnesses.n_elem)
+    arma::uword size = fitnesses.n_elem;
+    double denom = std::pow(size, 2);
+    for (size_t i = 0; i < selection.n_elem; i++)
     {
-      if (pos >= size)
+      arma::uword pos = 0;
+      while (selection[i] == fitnesses.n_elem)
       {
-        selection[0] = 0;
-        break;
+        if (pos >= size)
+        {
+          selection[i] = 0;
+          break;
+        }
+        double prob = (double)(size - pos) / denom;
+        if (arma::randu<double>() < prob)
+          selection[i] = pos;
+        pos++;
       }
-      double prob = (double)(size - pos) / std::pow(size, 2);
-      if (arma::randu<double>() < prob)
-        selection[0] = pos;
-      pos++;
-    }
-
-    // Choose second genome.
-    pos = 0;
-    while (selection[1] == fitnesses.n_elem)
-    {
-      if (pos >= size)
-      {
-        selection[1] = 0;
-        break;
-      }
-      double prob = (double)(size - pos) / std::pow(size, 2);   
-      if (arma::randu<double>() < prob)
-        selection[1] = pos;
-      pos++;
     }
   }
 };

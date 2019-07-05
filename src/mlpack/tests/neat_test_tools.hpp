@@ -212,9 +212,9 @@ class DPNVTask
   double Evaluate(Genome<LogisticFunction>& genome)
   {
     double fitness = 0;
-    double fourDegrees = 4 * M_PI / 180;
+    double oneDegrees = 1 * M_PI / 180;
     arma::mat data(2, 3, arma::fill::zeros);
-    data(0, 1) = fourDegrees;
+    data(0, 1) = oneDegrees;
     MultiplePoleCart::State state(data);
     arma::mat inputMatrix = state.Data();
     arma::vec input = {inputMatrix(0, 0) / 2.4, inputMatrix(0, 1) / 0.62832,
@@ -284,7 +284,7 @@ class DPNVTask
     else
       fitness += timeStep;
 
-    std::cout << "Fitness: " << fitness << std::endl;
+    // std::cout << "Fitness: " << fitness << std::endl;
 
     return fitness;
   }
