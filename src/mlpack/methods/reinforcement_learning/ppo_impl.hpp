@@ -138,7 +138,7 @@ double PPO<
   ann::SoftplusFunction::Fn(actionValue.col(1), mu);
 
   distribution::GaussianDistribution normalDist =
-    distribution::GaussianDistribution(sigma, mu);
+      distribution::GaussianDistribution(sigma, mu);
 
   // Get the action value for each action at current state.
   actorNetwork.Predict(state.Encode(), actionValue);
@@ -148,7 +148,7 @@ double PPO<
   ann::SoftplusFunction::Fn(actionValue.col(1), mu);
 
   distribution::GaussianDistribution oldNormalDist =
-    distribution::GaussianDistribution(sigma, mu);
+      distribution::GaussianDistribution(sigma, mu);
 
   ActionType action;
   action.action = normalDist.Random()[0];
