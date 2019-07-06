@@ -40,7 +40,6 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
                                    const double nodeAdditionProb,
                                    const double connAdditionProb,
                                    const double connDeletionProb,
-                                   const double nodeDeletionProb,
                                    const bool isAcyclic):
     inputNodeCount(inputNodeCount),
     outputNodeCount(outputNodeCount),
@@ -53,7 +52,6 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
     nodeAdditionProb(nodeAdditionProb),
     connAdditionProb(connAdditionProb),
     connDeletionProb(connDeletionProb),
-    nodeDeletionProb(nodeDeletionProb),
     isAcyclic(isAcyclic)
 {
   // Sets the number of IDs.
@@ -66,7 +64,7 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
     for (size_t j = inputNodeCount + 1; j <= outputNodeCount + inputNodeCount;
         j++)
     {
-      double weight = initialWeight + arma::randn<double>();
+      double weight = initialWeight + arma::randn();
       connectionGeneList.emplace_back(ConnectionGene(counter, weight, i, j));
       if (directedGraph.find(i) == directedGraph.end())
       {
@@ -109,7 +107,6 @@ Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>& connectionGeneLi
                                    const double nodeAdditionProb,
                                    const double connAdditionProb,
                                    const double connDeletionProb,
-                                   const double nodeDeletionProb,
                                    const bool isAcyclic):
     connectionGeneList(connectionGeneList),
     inputNodeCount(inputNodeCount),
@@ -123,7 +120,6 @@ Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>& connectionGeneLi
     nodeAdditionProb(nodeAdditionProb),
     connAdditionProb(connAdditionProb),
     connDeletionProb(connDeletionProb),
-    nodeDeletionProb(nodeDeletionProb),
     isAcyclic(isAcyclic)
 {
   // TODO: Decide whether using map::find() to check which nodes to include in
@@ -158,7 +154,6 @@ Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>& connectionGeneLi
                                    const double nodeAdditionProb,
                                    const double connAdditionProb,
                                    const double connDeletionProb,
-                                   const double nodeDeletionProb,
                                    const bool isAcyclic):
     connectionGeneList(connectionGeneList),
     nodeDepths(nodeDepths),
@@ -173,7 +168,6 @@ Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>& connectionGeneLi
     nodeAdditionProb(nodeAdditionProb),
     connAdditionProb(connAdditionProb),
     connDeletionProb(connDeletionProb),
-    nodeDeletionProb(nodeDeletionProb),
     isAcyclic(isAcyclic)
 {
   for (size_t i = 0; i < nextNodeID; i++)
@@ -233,7 +227,7 @@ void Genome<ActivationFunction>::Mutate()
       continue;
 
     // Mutate weight.
-    if (arma::randu<double>() < weightMutationProb)
+    if (arma::randu() < weightMutationProb)
     {
       connectionGeneList[i].Mutate(weightMutationSize);
       size_t source = connectionGeneList[i].Source();
@@ -243,24 +237,20 @@ void Genome<ActivationFunction>::Mutate()
   }
 
   // Mutate bias.
-  if (arma::randu<double>() < biasMutationProb)
-    bias += biasMutationSize * arma::randn<double>();  
+  if (arma::randu() < biasMutationProb)
+    bias += biasMutationSize * arma::randn();  
 
   // Add new connection.
-  if (arma::randu<double>() < connAdditionProb)
+  if (arma::randu() < connAdditionProb)
     AddConnMutation();
 
   // Add new node.
-  if (arma::randu<double>() < nodeAdditionProb)
+  if (arma::randu() < nodeAdditionProb)
     AddNodeMutation();
 
   // Deletes connection.
-  if (arma::randu<double>() < connDeletionProb)
+  if (arma::randu() < connDeletionProb)
     DelConnMutation();
-
-  // Deletes node.
-  if (arma::randu<double>() < nodeDeletionProb)
-    DelNodeMutation();
 }
 
 template <class ActivationFunction>
@@ -448,26 +438,13 @@ template <class ActivationFunction>
 void Genome<ActivationFunction>::DelConnMutation()
 {
   size_t i = 0;
-  do
-  {
-    i = arma::randi<arma::uvec>(1, arma::distr_param(0, (int)(connectionGeneList.size() - 1)))[0];
-  } while (!connectionGeneList[i].Enabled());
+  i = arma::randi<arma::uvec>(1, arma::distr_param(0, (int)(connectionGeneList.size() - 1)))[0];
   
+  if (connectionGeneList[i].Enabled())
+    return;
+
   size_t sourceID = connectionGeneList[i].Source();
   size_t targetID = connectionGeneList[i].Target();
-  size_t outCount = 0, inCount = 0;
-  for (size_t j = 0; j < connectionGeneList.size(); j++)
-  {
-    if (!connectionGeneList[j].Enabled())
-      continue;
-    if (connectionGeneList[j].Source() == sourceID)
-      outCount++;
-    if (connectionGeneList[j].Target() == targetID)
-      inCount++;
-  }
-
-  if (outCount == 1 || inCount == 1)
-    return;
 
   connectionGeneList[i].Enabled() = false;
   directedGraph[sourceID][targetID].Enabled() = false;
@@ -483,50 +460,6 @@ void Genome<ActivationFunction>::DelConnMutation()
 }
 
 template <class ActivationFunction>
-void Genome<ActivationFunction>::DelNodeMutation()
-{
-  if (inputNodeCount + outputNodeCount + 1 == nextNodeID)
-    return;
-  size_t i = arma::randi<arma::uvec>(1, arma::distr_param(inputNodeCount +
-      outputNodeCount + 1, (int)(nextNodeID - 1)))[0];
-  size_t outCount = 0, inCount = 0;
-  size_t sourceID = 0, targetID = 0, conn1Idx = 0, conn2Idx = 0;
-  for (size_t j = 0; j < connectionGeneList.size(); j++)
-  {
-    if (!connectionGeneList[j].Enabled())
-      continue;
-    if (connectionGeneList[j].Source() == i)
-    {
-      conn1Idx = j;
-      targetID = connectionGeneList[j].Target();
-      outCount++;
-    }
-    if (connectionGeneList[j].Target() == i)
-    {
-      conn2Idx = j;
-      sourceID = connectionGeneList[j].Source();
-      inCount++;
-    }
-  }
-
-  if (outCount == 1 && inCount == 1)
-  {
-    connectionGeneList.emplace_back(ConnectionGene(nextInnovID, 1, sourceID,
-        targetID));
-    directedGraph[sourceID].emplace(targetID,ConnectionGene(nextInnovID++, 1, sourceID, targetID));
-
-    // We should disable the deleted connections
-    connectionGeneList[conn1Idx].Enabled() = false;
-    connectionGeneList[conn2Idx].Enabled() = false;
-    directedGraph[sourceID][i].Enabled() = false;
-    directedGraph[i][targetID].Enabled() = false;
-
-    if (isAcyclic)
-      Traverse(sourceID);
-  }
-}
-
-template <class ActivationFunction>
 size_t Genome<ActivationFunction>::Complexity()
 {
   size_t connCount = 0;
@@ -535,7 +468,7 @@ size_t Genome<ActivationFunction>::Complexity()
     if (connectionGeneList[i].Enabled())
       connCount++;
   }
-  return connCount + nextNodeID;
+  return connCount;
 }
 
 template <class ActivationFunction>

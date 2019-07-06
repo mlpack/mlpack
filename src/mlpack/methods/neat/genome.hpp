@@ -50,6 +50,8 @@ class Genome
    * @param biasMutationProb The probability of a bias mutating.
    * @param biasMutationSize The degree to which the bias will mutate.
    * @param nodeAdditionProb The probability of a new node being added.
+   * @param connAdditionProb The probability of a new connection being added.
+   * @param connDeletionProb The probability of a connection being deleted.
    * @param isAcyclic Denotes whether or not the generated network is acyclic.
    */
   Genome(const size_t inputNodeCount,
@@ -63,7 +65,6 @@ class Genome
          const double nodeAdditionProb,
          const double connAdditionProb,
          const double connDeletionProb,
-         const double nodeDeletionProb = 0,
          const bool isAcyclic = false);
 
   /**
@@ -80,6 +81,8 @@ class Genome
    * @param biasMutationProb The probability of a bias mutating.
    * @param biasMutationSize The degree to which the bias will mutate.
    * @param nodeAdditionProb The probability of a new node being added.
+   * @param connAdditionProb The probability of a new connection being added.
+   * @param connDeletionProb The probability of a connection being deleted.
    * @param isAcyclic Denotes whether or not the generated network is acyclic.
    */
   Genome(std::vector<ConnectionGene>& connectionGeneList,
@@ -94,7 +97,6 @@ class Genome
          const double nodeAdditionProb,
          const double connAdditionProb,
          const double connDeletionProb,
-         const double nodeDeletionProb = 0,
          const bool isAcyclic = false);
 
   /**
@@ -113,6 +115,8 @@ class Genome
    * @param biasMutationProb The probability of a bias mutating.
    * @param biasMutationSize The degree to which the bias will mutate.
    * @param nodeAdditionProb The probability of a new node being added.
+   * @param connAdditionProb The probability of a new connection being added.
+   * @param connDeletionProb The probability of a connection being deleted.
    * @param isAcyclic Denotes whether or not the generated network is acyclic.
    */
   Genome(std::vector<ConnectionGene>& connectionGeneList,
@@ -128,7 +132,6 @@ class Genome
          const double nodeAdditionProb,
          const double connAdditionProb,
          const double connDeletionProb,
-         const double nodeDeletionProb = 0,
          const bool isAcyclic = false);
 
   /**
@@ -193,13 +196,13 @@ class Genome
   double& Fitness() { return fitness; }
 
   //! Get node count.
-  size_t getNodeCount() const { return nextNodeID; }
+  size_t NodeCount() const { return nextNodeID; }
 
   //! Get input node count.
-  size_t getInputNodeCount() const { return inputNodeCount; }
+  size_t InputNodeCount() const { return inputNodeCount; }
 
   //! Get output node count.
-  size_t getOutputNodeCount() const { return outputNodeCount; }
+  size_t OutputNodeCount() const { return outputNodeCount; }
 
   //! Get node addition probability.
   double NodeAdditionProb() const { return nodeAdditionProb; }
@@ -215,11 +218,6 @@ class Genome
   double ConnDeletionProb() const { return connDeletionProb; }
   //! Set connection deletion probability.
   double& ConnDeletionProb() { return connDeletionProb; }
-
-  //! Get node deletion probability.
-  double NodeDeletionProb() const { return nodeDeletionProb; }
-  //! Set node deletion probability,
-  double& NodeDeletionProb() { return nodeDeletionProb; }
 
   //! Get bias.
   double Bias() const { return bias; }
@@ -240,12 +238,16 @@ class Genome
    */
   void Traverse(size_t startID);
 
+  // Adds connection.
   void AddConnMutation();
 
+  // Adds node.
   void AddNodeMutation();
 
+  // Deletes connection.
   void DelConnMutation();
 
+  // Deletes nodes.
   void DelNodeMutation();
 
   //! Input node count.

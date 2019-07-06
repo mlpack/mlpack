@@ -45,7 +45,7 @@ ConnectionGene::ConnectionGene():
 
 void ConnectionGene::Mutate(const double mutationSize)
 {
-  weight += mutationSize * arma::randn<double>();
+  weight += mutationSize * arma::randn();
 }
 
 template <typename Archive>

@@ -79,11 +79,11 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   // Initialize.
   for (size_t i = 0; i < popSize; i++)
   {
-    double bias = initialBias + arma::randu<double>();
+    double bias = initialBias + arma::randn();
     genomeList.emplace_back(Genome<ActivationFunction>(inputNodeCount,
         outputNodeCount, bias, initialWeight, weightMutationProb,
         weightMutationSize, biasMutationProb, biasMutationSize,
-        nodeAdditionProb, connAdditionProb, connDeletionProb, 0, isAcyclic));
+        nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic));
   }
   speciesList = std::vector<std::vector<Genome<ActivationFunction>>>(numSpecies);
   Speciate(true);
@@ -152,7 +152,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>::
   {
     for (size_t i = 0; i < popSize; i++)
     {
-      double bias = initialBias + arma::randu<double>();
+      double bias = initialBias + arma::randn();
       genomeList.emplace_back(Genome<ActivationFunction>(inputNodeCount,
           outputNodeCount, bias, initialWeight, weightMutationProb,
           weightMutationSize, biasMutationProb, biasMutationSize,
@@ -365,7 +365,6 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
           genomeList[genomeList.size() - 1].NodeAdditionProb() = nodeAdditionProb;
           genomeList[genomeList.size() - 1].ConnAdditionProb() = connAdditionProb;
           genomeList[genomeList.size() - 1].ConnDeletionProb() = connDeletionProb;
-          genomeList[genomeList.size() - 1].NodeDeletionProb() = 0;
         }
         else
         {
@@ -386,7 +385,6 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
         genomeList[genomeList.size() - 1].NodeAdditionProb() = 0;
         genomeList[genomeList.size() - 1].ConnAdditionProb() = 0;
         genomeList[genomeList.size() - 1].ConnDeletionProb() = 0.4;
-        genomeList[genomeList.size() - 1].NodeDeletionProb() = 0.2;
         
         genomeList[genomeList.size() - 1].Mutate();
       }
@@ -413,10 +411,10 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
 
   if (equalFitness)
   {
-    if (arma::randu<double>() < 0.5)
+    if (arma::randu() < 0.5)
     {
       newConnGeneList = gen1.connectionGeneList;
-      nextNodeID = gen1.getNodeCount();
+      nextNodeID = gen1.NodeCount();
       nodeDepths = gen1.nodeDepths;
       bias = gen1.Bias();
       lessFitGenome = gen2;
@@ -424,7 +422,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     else
     {
       newConnGeneList = gen2.connectionGeneList;
-      nextNodeID = gen2.getNodeCount();
+      nextNodeID = gen2.NodeCount();
       nodeDepths = gen2.nodeDepths;
       bias = gen2.Bias();
       lessFitGenome = gen1;
@@ -433,7 +431,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   else if (gen1.Fitness() > gen2.Fitness())
   {
     newConnGeneList = gen1.connectionGeneList;
-    nextNodeID = gen1.getNodeCount();
+    nextNodeID = gen1.NodeCount();
     nodeDepths = gen1.nodeDepths;
     bias = gen1.Bias();
     lessFitGenome = gen2;
@@ -441,7 +439,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   else
   {
     newConnGeneList = gen2.connectionGeneList;
-    nextNodeID = gen2.getNodeCount();
+    nextNodeID = gen2.NodeCount();
     nodeDepths = gen2.nodeDepths;
     bias = gen2.Bias();
     lessFitGenome = gen1;
@@ -459,14 +457,14 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
         // If either parent is disabled, preset chance that the inherited gene is disabled.
         if (!isAcyclic && !newConnGeneList[j].Enabled())
         {
-          if (arma::randu<double>() < disableProb)
+          if (arma::randu() < disableProb)
             newConnGeneList[j].Enabled() = true;
           else
             newConnGeneList[j].Enabled() = false;
         }
 
         // Weights will be assigned randomly in matching genes.
-        if (arma::randu<double>() < 0.5)
+        if (arma::randu() < 0.5)
           newConnGeneList[j].Weight() = lessFitGenome.connectionGeneList[i]
               .Weight();
         break;
@@ -479,14 +477,14 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     return Genome<ActivationFunction>(newConnGeneList, nodeDepths, 
       inputNodeCount, outputNodeCount, nextNodeID, bias, weightMutationProb,
       weightMutationSize, biasMutationProb, biasMutationSize,
-      nodeAdditionProb, connAdditionProb, connDeletionProb, 0, isAcyclic);
+      nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic);
   }
   else
   {
     return Genome<ActivationFunction>(newConnGeneList, inputNodeCount,
       outputNodeCount, nextNodeID, bias, weightMutationProb,
       weightMutationSize, biasMutationProb, biasMutationSize,
-      nodeAdditionProb, connAdditionProb, connDeletionProb, 0, isAcyclic);
+      nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic);
   }
 }
 

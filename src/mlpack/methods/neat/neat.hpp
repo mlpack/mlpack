@@ -59,6 +59,7 @@ class NEAT
    * @param elitismProp The proportion of a species that is considered elite.
    * @param finalFitness The desired fitness of the genomes. If it is 0, no
    *    no limit on the fitness is considered.
+   * @param complexityThreshold The maximum complexity allowed.
    * @param isAcyclic Denotes whether or not the genome is meant to be acyclic.
    */
   NEAT(TaskType& task,

@@ -49,7 +49,7 @@ class RankSelection
           break;
         }
         double prob = (double)(size - pos) / denom;
-        if (arma::randu<double>() < prob)
+        if (arma::randu() < prob)
           selection[i] = pos;
         pos++;
       }

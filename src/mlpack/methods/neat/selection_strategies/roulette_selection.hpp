@@ -32,7 +32,7 @@ class RouletteSelection
     for (size_t i = 0; i < selection.n_elem; i++)
     {
       size_t k = fitnesses.n_elem - 1;
-      double prob = 0, randNum = arma::randu<double>();
+      double prob = 0, randNum = arma::randu();
       while (k != 0)
       {
         prob += fitnesses[k] / totalFitness;
