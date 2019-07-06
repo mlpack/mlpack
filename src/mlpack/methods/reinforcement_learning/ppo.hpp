@@ -148,7 +148,7 @@ class PPO
   //! Locally-stored distribution for sampling action.
   distribution::GaussianDistribution normalDist;
 
-  //! Locally-stored distribution for oldActorNetwork sample action.
+  //! Locally-stored distribution for oldActorNetwork sampling action.
   distribution::GaussianDistribution oldNormalDist;
 };
 
