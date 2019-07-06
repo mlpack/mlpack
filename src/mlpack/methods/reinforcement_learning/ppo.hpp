@@ -144,6 +144,12 @@ class PPO
 
   //! Locally-stored flag indicating training mode or test mode.
   bool deterministic;
+
+  //! Locally-stored distribution for sampling action.
+  distribution::GaussianDistribution normalDist;
+
+  //! Locally-stored distribution for oldActorNetwork sample action.
+  distribution::GaussianDistribution oldNormalDist;
 };
 
 } // namespace rl

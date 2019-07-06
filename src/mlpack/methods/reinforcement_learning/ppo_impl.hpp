@@ -97,19 +97,26 @@ void PPO<
     discountedRewards.insert_rows(discountedRewards.n_cols, values);
   }
 
-  arma::mat actionValues, advantages, gradients;
+  arma::mat actionValues, advantages, criticGradients, actorGradients;
   criticNetwork.Predict(sampledStates, actionValues);
 
   advantages = discountedRewards - actionValues;
 
-  criticNetwork.Backward(advantages, gradients);
-
-  updater.Update(criticNetwork.Parameters(), config.StepSize(), gradients);
+  criticNetwork.Backward(advantages, criticGradients);
+  updater.Update(criticNetwork.Parameters(), config.StepSize(), criticGradients);
 
   // update the critic
   criticNetwork.Backward(actionValues, sampledRewards);
 
   // update the actor
+  arma::ratio = normalDist.Probability(actionValues) /
+      oldNormalDist.Probability(actionValues);
+  arma::loss = ratio * advantages;
+
+  // todo: calculate the surrogate loss
+
+  actorNetwork.Backward(loss, actorGradients);
+  updater.Update(actorNetwork.Paramelters(), config.StepSize(), actorGradients);
 }
 
 template<
@@ -137,8 +144,7 @@ double PPO<
   ann::TanhFunction::Fn(actionValue.col(0), sigma);
   ann::SoftplusFunction::Fn(actionValue.col(1), mu);
 
-  distribution::GaussianDistribution normalDist =
-      distribution::GaussianDistribution(sigma, mu);
+  normalDist = distribution::GaussianDistribution(sigma, mu);
 
   // Get the action value for each action at current state.
   actorNetwork.Predict(state.Encode(), actionValue);
@@ -147,8 +153,7 @@ double PPO<
   ann::TanhFunction::Fn(actionValue.col(0), sigma);
   ann::SoftplusFunction::Fn(actionValue.col(1), mu);
 
-  distribution::GaussianDistribution oldNormalDist =
-      distribution::GaussianDistribution(sigma, mu);
+  oldNormalDist = distribution::GaussianDistribution(sigma, mu);
 
   ActionType action;
   action.action = normalDist.Random()[0];
