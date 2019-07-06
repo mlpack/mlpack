@@ -109,14 +109,17 @@ void PPO<
   criticNetwork.Backward(actionValues, sampledRewards);
 
   // update the actor
-  arma::ratio = normalDist.Probability(actionValues) /
-      oldNormalDist.Probability(actionValues);
-  arma::loss = ratio * advantages;
+  arma::vec prob, oldProb;
+  normalDist.Probability(actionValues, prob);
+  oldNormalDist.Probability(actionValues, oldProb);
+  arma::mat ratio =  prob / oldProb;
+
+  arma::mat loss = ratio * advantages;
 
   // todo: calculate the surrogate loss
 
   actorNetwork.Backward(loss, actorGradients);
-  updater.Update(actorNetwork.Paramelters(), config.StepSize(), actorGradients);
+  updater.Update(actorNetwork.Parameters(), config.StepSize(), actorGradients);
 }
 
 template<
