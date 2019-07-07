@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/data/dictionary_encoding.hpp>
+#include <mlpack/core/data/string_encoding.hpp>
 #include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
 #include <mlpack/core/data/tokenizer/char_split.hpp>
 #include <mlpack/core/data/tokenizer/split_by_char.hpp>
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
   arr[1] = "i am good";
   arr[2] = "Good how are you";
   arma::mat output;
-  data::DictionaryEncoding en;
+  data::StringEncoding<DictionaryEncoding> en;
   en.Encode(arr, output, tokenizer);
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>>& maps = en.Mappings();
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingCharTest)
   arr[1] = "ABCABCD";
   arr[2] = "GAB";
   arma::mat output;
-  data::DictionaryEncoding en;
+  data::StringEncoding<DictionaryEncoding> en;
   // Passing a empty string to encode characters
   en.Encode(arr, output, [](boost::string_view& str) {
       if (str.empty())
@@ -133,11 +133,11 @@ BOOST_AUTO_TEST_CASE(CopyConstructorCharTest)
   arr[1] = "i am good";
   arr[2] = "Good how are you";
   arma::sp_mat output;
-  data::DictionaryEncoding en;
+  data::StringEncoding<DictionaryEncoding> en;
   en.Encode(arr, output, SplitByChar(" "));
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>>& maps = en.Mappings();
-  data::DictionaryEncoding en2 = en;
+    data::StringEncoding<DictionaryEncoding> en2 = en;
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>>& maps2 = en2.Mappings();
   // Comparing both of them.
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingNoPaddingTest)
   std::vector<string>arr(2);
   arr[0] = "GACCA";
   arr[1] = "GAB";
-  data::DictionaryEncoding en;
+  data::StringEncoding<DictionaryEncoding> en;
   std::vector<std::vector<size_t> > output;
   en.Encode(arr, output, [](boost::string_view& str) {
       if (str.empty())

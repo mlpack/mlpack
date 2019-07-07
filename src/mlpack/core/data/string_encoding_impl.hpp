@@ -1,31 +1,33 @@
 /**
- * @file dictionary_encoding_impl.hpp
+ * @file string_encoding_impl.hpp
  * @author Jeffin Sam
  *
- * Implementation of dictionary encoding functions.
+ * Implementation of string encoding functions.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_DICTIONARY_ENCODING_IMPL_HPP
-#define MLPACK_CORE_DATA_DICTIONARY_ENCODING_IMPL_HPP
+#ifndef MLPACK_CORE_DATA_STRING_ENCODING_IMPL_HPP
+#define MLPACK_CORE_DATA_STRING_ENCODING_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "dictionary_encoding.hpp"
+#include "string_encoding.hpp"
 
 namespace mlpack {
 namespace data {
 
-void DictionaryEncoding::Reset()
+template<typename EncodingPolicy>
+void StringEncoding<EncodingPolicy>::Reset()
 {
   mappings.clear();
   originalStrings.clear();
 }
 
-DictionaryEncoding::DictionaryEncoding(const DictionaryEncoding& oldObject) :
-    originalStrings(oldObject.originalStrings)
+template<typename EncodingPolicy>
+StringEncoding<EncodingPolicy>::StringEncoding(const 
+    StringEncoding& oldObject) : originalStrings(oldObject.originalStrings)
 {
   std::deque<std::string>::iterator jt = originalStrings.begin();
   for (auto it = oldObject.originalStrings.begin();
@@ -36,8 +38,9 @@ DictionaryEncoding::DictionaryEncoding(const DictionaryEncoding& oldObject) :
   }
 }
 
-DictionaryEncoding& DictionaryEncoding::operator= (const
-    DictionaryEncoding &oldObject)
+template<typename EncodingPolicy>
+StringEncoding<EncodingPolicy>& StringEncoding<EncodingPolicy>::operator= (
+    const StringEncoding &oldObject)
 {
   if (this != &oldObject)
   {
@@ -55,8 +58,9 @@ DictionaryEncoding& DictionaryEncoding::operator= (const
   return *this;
 }
 
+template<typename EncodingPolicy>
 template<typename TokenizerType>
-void DictionaryEncoding::CreateMap(std::string& input,
+void StringEncoding<EncodingPolicy>::CreateMap(std::string& input,
     TokenizerType tokenizer)
 {
   boost::string_view strView(input);
@@ -74,9 +78,11 @@ void DictionaryEncoding::CreateMap(std::string& input,
   }
 }
 
+template<typename EncodingPolicy>
 template<typename MatType, typename TokenizerType>
-void DictionaryEncoding::Encode(const std::vector<std::string>& input,
-                                MatType& output, TokenizerType tokenizer)
+void StringEncoding<EncodingPolicy>::Encode(
+    const std::vector<std::string>& input,
+    MatType& output, TokenizerType tokenizer)
 {
   boost::string_view strView;
   boost::string_view token;
@@ -95,7 +101,6 @@ void DictionaryEncoding::Encode(const std::vector<std::string>& input,
     colSize = std::max(colSize, dataset[i].size());
   }
   size_t curLabel = mappings.size() + 1;
-  output.zeros(dataset.size(), colSize);
   for (size_t i = 0; i < dataset.size(); ++i)
   {
     for (size_t j = 0; j < dataset[i].size(); ++j)
@@ -105,39 +110,41 @@ void DictionaryEncoding::Encode(const std::vector<std::string>& input,
         originalStrings.push_back(std::string(dataset[i][j]));
         mappings[originalStrings.back()] = curLabel++;
       }
-      output.at(i, j) = mappings.at(dataset[i][j]);
     }
   }
-}
-
-template<typename TokenizerType>
-void DictionaryEncoding::Encode(const std::vector<std::string>& input,
-                                std::vector<std::vector<size_t> >& output,
-                                TokenizerType tokenizer)
-{
-  boost::string_view strView;
-  boost::string_view token;
-  size_t curLabel = mappings.size() + 1;
-  for (size_t i = 0; i < input.size(); ++i)
+  if (std::is_same<EncodingPolicy, data::DictionaryEncoding>::value)
   {
-    output.push_back(std::vector<size_t>() );
-    strView = input[i];
-    token = tokenizer(strView);
-    while (!token.empty())
+    EncodingPolicy::creatmat(output, dataset.size(), colSize);
+    for (size_t i = 0; i < dataset.size(); ++i)
     {
-      if (mappings.count(token) == 0)
-      {
-        originalStrings.push_back(std::string(token));
-        mappings[originalStrings.back()] = curLabel++;
-      }
-      output[i].push_back(mappings.at(token));
-      token = tokenizer(strView);
+      for (size_t j = 0; j < dataset[i].size(); ++j)
+        data::DictionaryEncoding::Encode(mappings.at(dataset[i][j]),
+            output, i, j);
     }
+  }
+  else
+  {
+    // Will Come in Next PR;    
   }
 }
 
+template<typename EncodingPolicy>
+template<typename TokenizerType>
+void StringEncoding<EncodingPolicy>::Encode(
+    const std::vector<std::string>& input,
+    std::vector<std::vector<size_t> >& output,
+    TokenizerType tokenizer)
+{
+  if (std::is_same<EncodingPolicy, data::DictionaryEncoding>::value)
+  {
+    data::DictionaryEncoding::EncodeWithoutPad(input, output, tokenizer,
+        mappings, originalStrings);
+  }
+}
+
+template<typename EncodingPolicy>
 template<typename Archive>
-void DictionaryEncoding::serialize(Archive& ar, const unsigned int
+void StringEncoding<EncodingPolicy>::serialize(Archive& ar, const unsigned int
     /* version */)
 {
   size_t count = originalStrings.size();

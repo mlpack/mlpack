@@ -1,19 +1,20 @@
 /**
- * @file dictionary_encoding.hpp
+ * @file string_encoding.hpp
  * @author Jeffin Sam
  *
- * Definition of dictionary encoding functions.
+ * Definition of string encoding functions.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_DICTIONARY_ENCODING_HPP
-#define MLPACK_CORE_DATA_DICTIONARY_ENCODING_HPP
+#ifndef MLPACK_CORE_DATA_STRING_ENCODING_HPP
+#define MLPACK_CORE_DATA_STRING_ENCODING_HPP
 
 #include <mlpack/prereqs.hpp>
 #include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
+#include <mlpack/core/data/encoding_policies/dictionary_encoding.hpp>
 #include <utility>
 
 using MapType =   std::unordered_map<boost::string_view, size_t,
@@ -23,12 +24,14 @@ namespace mlpack {
 namespace data {
 
 /**
- * A simple Dictionary Enocding class
+ * A simple String Enocding class
  *
  * The encoding here simply assigns a word (or a character) to a numeric
- * index and treat the dataset as categorical.
+ * index and treat the dataset as categorical.The assignement of numeric index
+ * is based on the EncodingPolicy.
  */
-class DictionaryEncoding
+template<typename EncodingPolicy>
+class StringEncoding
 {
  public:
   /**
@@ -49,23 +52,23 @@ class DictionaryEncoding
   /**
   * Default Constructor
   */
-  DictionaryEncoding() {}
+  StringEncoding() {}
   /**
   * Copy Constructor.
   */
-  DictionaryEncoding(const DictionaryEncoding& oldObject);
+  StringEncoding(const StringEncoding& oldObject);
   /*
   * Move Constructor.
   */
-  DictionaryEncoding(DictionaryEncoding&& oldObject) = default;
+  StringEncoding(StringEncoding&& oldObject) = default;
   /*
   * Move Assignment Operator.
   */  
-  DictionaryEncoding& operator= (DictionaryEncoding&& oldObject) = default;
+  StringEncoding& operator= (StringEncoding&& oldObject) = default;
   /*
   * Assignment Operator.
   */
-  DictionaryEncoding& operator= (const DictionaryEncoding& oldObject);
+  StringEncoding& operator= (const StringEncoding& oldObject);
   /**
   * A function to reset the mapping that is clear all the encodings
   */
@@ -76,7 +79,7 @@ class DictionaryEncoding
   * providing custom rule for tokenization.
   *
   * For example 
-  * Vector is :
+  * If using DicitonaryEncoding Policy and Vector is :
   * [hello@wow, wow@hello@good] would be encoded using '@' as delimiter as 
   * [1 2 0, 2 1 3] 
   * The function paddes 0 to maintain same sizes across all the rows
@@ -146,12 +149,12 @@ class DictionaryEncoding
   MapType mappings;
   //! A deque which holds the original string for map's string_view.
   std::deque<std::string> originalStrings;
-}; // class DictionaryEncoding
+}; // class StringEncoding
 
 } // namespace data
 } // namespace mlpack
 
 // Include implementation.
-#include "dictionary_encoding_impl.hpp"
+#include "string_encoding_impl.hpp"
 
 #endif
