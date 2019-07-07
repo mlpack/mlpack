@@ -468,15 +468,15 @@ class KDEModel
    *                    estimation recurses.
    */
   KDEModel(const double bandwidth = 1.0,
-           const double relError = 0.05,
-           const double absError = 0,
+           const double relError = KDEDefaultParams::relError,
+           const double absError = KDEDefaultParams::absError,
            const KernelTypes kernelType = KernelTypes::GAUSSIAN_KERNEL,
            const TreeTypes treeType = TreeTypes::KD_TREE,
-           const bool monteCarlo = false,
-           const double mcProb = 0.95,
-           const size_t initialSampleSize = 100,
-           const double mcEntryCoef = 3,
-           const double mcBreakCoef = 0.7);
+           const bool monteCarlo = KDEDefaultParams::mode,
+           const double mcProb = KDEDefaultParams::mcProb,
+           const size_t initialSampleSize = KDEDefaultParams::initialSampleSize,
+           const double mcEntryCoef = KDEDefaultParams::mcEntryCoef,
+           const double mcBreakCoef = KDEDefaultParams::mcBreakCoef);
 
   //! Copy constructor of the given model.
   KDEModel(const KDEModel& other);

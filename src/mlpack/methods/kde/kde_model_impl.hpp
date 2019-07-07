@@ -77,15 +77,15 @@ inline KDEModel::KDEModel(KDEModel&& other) :
 {
   // Reset other model.
   other.bandwidth = 1.0;
-  other.relError = 0.05;
-  other.absError = 0;
+  other.relError = KDEDefaultParams::relError;
+  other.absError = KDEDefaultParams::absError;
   other.kernelType = KernelTypes::GAUSSIAN_KERNEL;
   other.treeType = TreeTypes::KD_TREE;
-  other.monteCarlo = false;
-  other.mcProb = 0.95;
-  other.initialSampleSize = 300;
-  other.mcEntryCoef = 3;
-  other.mcBreakCoef = 0.7;
+  other.monteCarlo = KDEDefaultParams::monteCarlo;
+  other.mcProb = KDEDefaultParams::mcProb;
+  other.initialSampleSize = KDEDefaultParams::initialSampleSize;
+  other.mcEntryCoef = KDEDefaultParams::mcEntryCoef;
+  other.mcBreakCoef = KDEDefaultParams::mcBreakCoef;
   other.kdeModel = decltype(other.kdeModel)();
 }
 

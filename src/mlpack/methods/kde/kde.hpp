@@ -28,6 +28,35 @@ enum KDEMode
   SINGLE_TREE_MODE
 };
 
+//! KDEDefaultParams contains the default input parameter values for KDE.
+struct KDEDefaultParams
+{
+  //! Relative error tolerance.
+  static constexpr double relError = 0.05;
+
+  //! Absolute error tolerance.
+  static constexpr double absError = 0;
+
+  //! KDE algorithm mode.
+  static constexpr KDEMode mode = KDEMode::DUAL_TREE_MODE;
+
+  //! Whether to use Monte Carlo estimations when possible.
+  static constexpr bool monteCarlo = false;
+
+  //! Probability of a Monte Carlo estimation to be bounded by the relative
+  //! error tolerance.
+  static constexpr double mcProb = 0.95;
+
+  //! Initial sample size for Monte Carlo estimations.
+  static constexpr size_t initialSampleSize = 100;
+
+  //! Monte Carlo entry coefficient.
+  static constexpr double mcEntryCoef = 3;
+
+  //! Monte Carlo break coefficient.
+  static constexpr double mcBreakCoef = 0.7;
+};
+
 /**
  * The KDE class is a template class for performing Kernel Density Estimations.
  * In statistics, kernel density estimation is a way to estimate the
@@ -82,16 +111,16 @@ class KDE
    *                    descendants evaluated is the limit before Monte Carlo
    *                    estimation recurses.
    */
-  KDE(const double relError = 0.05,
-      const double absError = 0,
+  KDE(const double relError = KDEDefaultParams::relError,
+      const double absError = KDEDefaultParams::absError,
       KernelType kernel = KernelType(),
-      const KDEMode mode = DUAL_TREE_MODE,
+      const KDEMode mode = KDEDefaultParams::mode,
       MetricType metric = MetricType(),
-      const bool monteCarlo = false,
-      const double mcProb = 0.95,
-      const size_t initialSampleSize = 100,
-      const double mcEntryCoef = 3,
-      const double mcBreakCoef = 0.7);
+      const bool monteCarlo = KDEDefaultParams::monteCarlo,
+      const double mcProb = KDEDefaultParams::mcProb,
+      const size_t initialSampleSize = KDEDefaultParams::initialSampleSize,
+      const double mcEntryCoef = KDEDefaultParams::mcEntryCoef,
+      const double mcBreakCoef = KDEDefaultParams::mcBreakCoef);
 
   /**
    * Construct KDE object as a copy of the given model. This may be

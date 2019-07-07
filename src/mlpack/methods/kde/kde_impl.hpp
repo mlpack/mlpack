@@ -158,8 +158,16 @@ KDE(KDE&& other) :
   other.metric = std::move(MetricType());
   other.referenceTree = nullptr;
   other.oldFromNewReferences = nullptr;
+  other.relError = KDEDefaultParams::relError;
+  other.absError = KDEDefaultParams::absError;
   other.ownsReferenceTree = false;
   other.trained = false;
+  other.mode = KDEDefaultParams::mode;
+  other.monteCarlo = KDEDefaultParams::monteCarlo;
+  other.mcProb = KDEDefaultParams::mcProb;
+  other.initialSampleSize = KDEDefaultParams::initialSampleSize;
+  other.mcEntryCoef = KDEDefaultParams::mcEntryCoef;
+  other.mcBreakCoef = KDEDefaultParams::mcBreakCoef;
 }
 
 template<typename KernelType,
