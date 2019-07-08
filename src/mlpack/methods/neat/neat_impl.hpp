@@ -113,6 +113,10 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
 
     std::cout << "Maximum fitness " << fitnesses.max() << std::endl;
 
+    double mean = arma::mean(fitnesses);
+
+    std::printf("%f\n", mean);
+
     std::cout << "Speciating." << std::endl;
     Speciate(false);
     std::cout << "Reproducing." << std::endl;
@@ -489,7 +493,7 @@ template <class TaskType,
           class SelectionPolicy>
 template <typename Task>
 typename std::enable_if<
-    HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value, size_t>::type
+    HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value, void>::type
 NEAT<TaskType, ActivationFunction, SelectionPolicy>::Initialize()
 {
   startingGenome = task.StartingGenome();
@@ -529,7 +533,7 @@ template <class TaskType,
           class SelectionPolicy>
 template <typename Task>
 typename std::enable_if<
-    !HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value, size_t>::type
+    !HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value, void>::type
 NEAT<TaskType, ActivationFunction, SelectionPolicy>::Initialize()
 {
   if (startingGenome.connectionGeneList.size() == 0)
@@ -546,8 +550,11 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::Initialize()
   }
   else
   {
-    genomeList.push_back(startingGenome);
-    genomeList[i].MutateWeights();
+    for (size_t i = 0; i < popSize; i++)
+    {
+      genomeList.push_back(startingGenome);
+      genomeList[i].MutateWeights();
+    }
   }
 }
 

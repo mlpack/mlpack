@@ -229,6 +229,9 @@ class Genome
   //! Set bias.
   double& Bias() { return bias; }
 
+  // Mutates weights.
+  void MutateWeights();
+
   //! The next innovation ID to be allotted.
   static size_t nextInnovID;
  private:
@@ -243,8 +246,6 @@ class Genome
    */
   void Traverse(size_t startID);
 
-  // Mutates weights.
-  void MutateWeights();
 
   // Adds connection.
   void AddConnMutation();

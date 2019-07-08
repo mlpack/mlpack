@@ -190,12 +190,12 @@ class NEAT
 
   template <typename Task = TaskType>
   typename std::enable_if<
-      HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value, size_t>::type
+      HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value, void>::type
   Initialize();
 
   template <typename Task = TaskType>
   typename std::enable_if<
-      !HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value, size_t>::type
+      !HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value, void>::type
   Initialize();
 
   // The task that the model is trained on.
