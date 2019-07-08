@@ -44,22 +44,27 @@ BOOST_AUTO_TEST_SUITE(NEATTest)
 /**
  * Test NEAT on the XOR Test.
  */
-// BOOST_AUTO_TEST_CASE(NEATXORTest)
-// {
-//   arma::arma_rng::set_seed_random();
-//   XORTask task;
-//   NEAT<XORTask, HardSigmoidFunction, RankSelection> model(task, 2, 1, 100, 150, 10);
-//   model.FinalFitness() = 3.8;
+BOOST_AUTO_TEST_CASE(NEATXORTest)
+{
+  arma::arma_rng::set_seed_random();
+  XORTask task;
+  NEAT<XORTask, HardSigmoidFunction, RankSelection> model(task, 2, 1, 100, 150, 10);
+  model.FinalFitness() = 3.8;
 
-//   // Find the best genome and it's fitness.
-//   Genome<HardSigmoidFunction> bestGenome = model.Train();
-//   double finalFitness = bestGenome.Fitness();
-//   bestGenome.Print();
-//   std::cout << finalFitness << std::endl;
+  // Find the best genome and it's fitness.
+  Genome<HardSigmoidFunction> bestGenome = model.Train();
+  double finalFitness = bestGenome.Fitness();
+  bestGenome.Print();
+  std::cout << finalFitness << std::endl;
 
-//   // Check if the final fitness is acceptable.
-//   BOOST_REQUIRE(finalFitness >= 3.5);
-// }
+  data::Save("bestGen.xml", "genomeTemplate", bestGenome);
+  data::Load("bestGen.xml", "genomeTemplate", bestGenome);
+
+  finalFitness = task.Evaluate(bestGenome);
+  std::cout << finalFitness << std::endl;
+  // Check if the final fitness is acceptable.
+  BOOST_REQUIRE(finalFitness >= 3.5);
+}
 
 /**
  * Test NEAT on the Pendulum environment.
@@ -181,23 +186,23 @@ BOOST_AUTO_TEST_SUITE(NEATTest)
 /**
  * Test NEAT on the Double Pole Cart Balancing environment without velocities.
  */
-BOOST_AUTO_TEST_CASE(NEATDoublePoleCartNoVelocitiesTest)
-{
-  arma::arma_rng::set_seed_random();
-  arma::vec poleLengths = {0.5, 0.05};
-  arma::vec poleMasses = {0.1, 0.01};
-  const MultiplePoleCart env = MultiplePoleCart(2, poleLengths, poleMasses, 9.8, 1, 0.01);
-  DPNVTask task(env);
-  NEAT<DPNVTask, LogisticFunction, RankSelection> model
-        (task, 3, 1, 1000, 300, 10, 0, 1, 0.8, 1.8, 0.5, 0.01, 0.3, 0.2, 0.05, 0);
+// BOOST_AUTO_TEST_CASE(NEATDoublePoleCartNoVelocitiesTest)
+// {
+//   arma::arma_rng::set_seed_random();
+//   arma::vec poleLengths = {0.5, 0.05};
+//   arma::vec poleMasses = {0.1, 0.01};
+//   const MultiplePoleCart env = MultiplePoleCart(2, poleLengths, poleMasses, 9.8, 1, 0.01);
+//   DPNVTask task(env);
+//   NEAT<DPNVTask, LogisticFunction, RankSelection> model
+//         (task, 3, 1, 1000, 300, 10, 0, 1, 0.8, 1.8, 0.5, 0.01, 0.3, 0.2, 0.05, 0);
 
-  // Find the best genome and it's fitness.
-  Genome<LogisticFunction> bestGenome = model.Train();
-  double finalFitness = bestGenome.Fitness();
-  std::cout << finalFitness << std::endl;
+//   // Find the best genome and it's fitness.
+//   Genome<LogisticFunction> bestGenome = model.Train();
+//   double finalFitness = bestGenome.Fitness();
+//   std::cout << finalFitness << std::endl;
 
-  // Check if the final fitness is acceptable (Placeholder).
-  BOOST_REQUIRE(finalFitness >= 90);
-}
+//   // Check if the final fitness is acceptable (Placeholder).
+//   BOOST_REQUIRE(finalFitness >= 90);
+// }
 
 BOOST_AUTO_TEST_SUITE_END()

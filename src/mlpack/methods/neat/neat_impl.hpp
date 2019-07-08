@@ -77,14 +77,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   Genome<ActivationFunction>::nextInnovID = 0;
 
   // Initialize.
-  for (size_t i = 0; i < popSize; i++)
-  {
-    double bias = initialBias + arma::randn();
-    genomeList.emplace_back(Genome<ActivationFunction>(inputNodeCount,
-        outputNodeCount, bias, initialWeight, weightMutationProb,
-        weightMutationSize, biasMutationProb, biasMutationSize,
-        nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic));
-  }
+  Initialize();
   speciesList = std::vector<std::vector<Genome<ActivationFunction>>>(numSpecies);
   Speciate(true);
   
@@ -109,7 +102,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     // Check termination criteria.
     if (finalFitness != 0 && fitnesses.max() >= finalFitness)
       break;
-    if (gen == maxGen - 1)
+    else if (gen == maxGen - 1)
       break;
 
     // Set search mode.
@@ -150,14 +143,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>::
   // If this is true, the population has not been initialized.
   if (genomeList.size() == 0)
   {
-    for (size_t i = 0; i < popSize; i++)
-    {
-      double bias = initialBias + arma::randn();
-      genomeList.emplace_back(Genome<ActivationFunction>(inputNodeCount,
-          outputNodeCount, bias, initialWeight, weightMutationProb,
-          weightMutationSize, biasMutationProb, biasMutationSize,
-          nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic));
-    }
+    Initialize();
     speciesList = std::vector<std::vector<Genome<ActivationFunction>>>(numSpecies);
     Speciate(true);
   }
@@ -496,6 +482,73 @@ bool NEAT<TaskType, ActivationFunction, SelectionPolicy>::
                   Genome<ActivationFunction>& gen2)
 {
   return gen1.Fitness() > gen2.Fitness();
+}
+
+template <class TaskType,
+          class ActivationFunction,
+          class SelectionPolicy>
+template <typename Task>
+typename std::enable_if<
+    HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value, size_t>::type
+NEAT<TaskType, ActivationFunction, SelectionPolicy>::Initialize()
+{
+  startingGenome = task.StartingGenome();
+
+  for (size_t i = 0; i < popSize; i++)
+  {
+    if (isAcyclic)
+    {
+      double bias = startingGenome.Bias() + arma::randn();
+      genomeList.emplace_back(Genome<ActivationFunction>(startingGenome.connectionGeneList,
+      inputNodeCount, outputNodeCount, startingGenome.NodeCount(), bias, weightMutationProb,
+      weightMutationSize, biasMutationProb, biasMutationSize, nodeAdditionProb,
+      connAdditionProb, connDeletionProb, isAcyclic));
+
+      // Let's find the node depths.
+      genomeList[i].nodeDepths.resize(genomeList[i].nextNodeID, 0);
+      for (size_t j = 0; j <= inputNodeCount; j++)
+        genomeList[i].Traverse(j);
+
+      genomeList[i].MutateWeights();
+    }
+    else
+    {
+      double bias = startingGenome.Bias() + arma::randn();
+      genomeList.emplace_back(Genome<ActivationFunction>(startingGenome.connectionGeneList,
+      inputNodeCount, outputNodeCount, startingGenome.NodeCount(), bias, weightMutationProb,
+      weightMutationSize, biasMutationProb, biasMutationSize, nodeAdditionProb,
+      connAdditionProb, connDeletionProb, isAcyclic));
+      
+      genomeList[i].MutateWeights();
+    }
+  }
+}
+
+template <class TaskType,
+          class ActivationFunction,
+          class SelectionPolicy>
+template <typename Task>
+typename std::enable_if<
+    !HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value, size_t>::type
+NEAT<TaskType, ActivationFunction, SelectionPolicy>::Initialize()
+{
+  if (startingGenome.connectionGeneList.size() == 0)
+  {  
+    for (size_t i = 0; i < popSize; i++)
+    {
+      double bias = initialBias + arma::randn();
+      genomeList.emplace_back(Genome<ActivationFunction>(inputNodeCount,
+          outputNodeCount, bias, initialWeight, weightMutationProb,
+          weightMutationSize, biasMutationProb, biasMutationSize,
+          nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic));
+      genomeList[i].MutateWeights();
+    }
+  }
+  else
+  {
+    genomeList.push_back(startingGenome);
+    genomeList[i].MutateWeights();
+  }
 }
 
 template <class TaskType,

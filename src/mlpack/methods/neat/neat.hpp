@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_NEAT_NEAT_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/sfinae_utility.hpp>
 #include <mlpack/methods/kmeans/kmeans.hpp>
 #include <mlpack/methods/kmeans/dual_tree_kmeans.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
@@ -22,6 +23,11 @@
 
 namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */ {
+
+// This gives us a HasStartingGenome<T, U> type (where U is a function pointer)
+// we can use with SFINAE to catch when a type has a StartingGenome(...)
+// function.
+HAS_MEM_FUNC(StartingGenome, HasStartingGenome);
 
 /**
  * The main class for NeuroEvolution of Augmenting Topologies.
@@ -162,6 +168,11 @@ class NEAT
   //! Set the boolean denoting if the genome is acyclic or not.
   bool& IsAcyclic() { return isAcyclic; }
 
+  //! Get the starting genome.
+  Genome<ActivationFunction> StartingGenome() const { return startingGenome; }
+  //! Set the starting genome.
+  Genome<ActivationFunction>& StartingGenome() { return startingGenome; }
+
  private:
   // Crosses over two genomes.
   Genome<ActivationFunction> Crossover(Genome<ActivationFunction>& gen1,
@@ -176,6 +187,16 @@ class NEAT
 
   static bool compareGenome(Genome<ActivationFunction>& gen1,
                             Genome<ActivationFunction>& gen2);
+
+  template <typename Task = TaskType>
+  typename std::enable_if<
+      HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value, size_t>::type
+  Initialize();
+
+  template <typename Task = TaskType>
+  typename std::enable_if<
+      !HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value, size_t>::type
+  Initialize();
 
   // The task that the model is trained on.
   TaskType task;
@@ -255,6 +276,9 @@ class NEAT
 
   //! Denotes whether or not the genome is meant to be cyclic.
   bool isAcyclic;
+
+  //! The starting genome.
+  Genome<ActivationFunction> startingGenome;
 };
 
 } // namespace neat

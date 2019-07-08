@@ -40,6 +40,11 @@ class Genome
 {
  public:
   /**
+   * Default constructor.
+   */
+  Genome();
+
+  /**
    * Creates a genome. Used during initialization.
    * 
    * @param inputNodeCount The number of input nodes.
@@ -238,6 +243,9 @@ class Genome
    */
   void Traverse(size_t startID);
 
+  // Mutates weights.
+  void MutateWeights();
+
   // Adds connection.
   void AddConnMutation();
 
@@ -246,9 +254,6 @@ class Genome
 
   // Deletes connection.
   void DelConnMutation();
-
-  // Deletes nodes.
-  void DelNodeMutation();
 
   //! Input node count.
   size_t inputNodeCount;

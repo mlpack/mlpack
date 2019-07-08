@@ -27,6 +27,10 @@ size_t Genome<ActivationFunction>::nextInnovID;
 template <class ActivationFunction>
 std::map<std::pair<size_t, size_t>, size_t> Genome<ActivationFunction>::mutationBuffer;
 
+template <class ActivationFunction>
+Genome<ActivationFunction>::Genome()
+{ /* Nothing to do here */ }
+
 // Creates genome object during initialization.
 template <class ActivationFunction>
 Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
@@ -220,21 +224,7 @@ template <class ActivationFunction>
 void Genome<ActivationFunction>::Mutate()
 {
   // Mutates weights.
-  for (size_t i = 0; i < connectionGeneList.size(); i++)
-  {
-    // Don't mutate the gene if it is not enabled.
-    if (!connectionGeneList[i].Enabled())
-      continue;
-
-    // Mutate weight.
-    if (arma::randu() < weightMutationProb)
-    {
-      connectionGeneList[i].Mutate(weightMutationSize);
-      size_t source = connectionGeneList[i].Source();
-      size_t target = connectionGeneList[i].Target();
-      directedGraph[source][target].Weight() = connectionGeneList[i].Weight();
-    }
-  }
+  MutateWeights();
 
   // Mutate bias.
   if (arma::randu() < biasMutationProb)
@@ -301,6 +291,26 @@ void Genome<ActivationFunction>::Traverse(size_t startID)
     {
       nodeDepths[x.first] = nodeDepths[startID] + 1;
       Traverse(x.first);
+    }
+  }
+}
+
+template <class ActivationFunction>
+void Genome<ActivationFunction>::MutateWeights()
+{
+  for (size_t i = 0; i < connectionGeneList.size(); i++)
+  {
+    // Don't mutate the gene if it is not enabled.
+    if (!connectionGeneList[i].Enabled())
+      continue;
+
+    // Mutate weight.
+    if (arma::randu() < weightMutationProb)
+    {
+      connectionGeneList[i].Mutate(weightMutationSize);
+      size_t source = connectionGeneList[i].Source();
+      size_t target = connectionGeneList[i].Target();
+      directedGraph[source][target].Weight() = connectionGeneList[i].Weight();
     }
   }
 }
@@ -476,6 +486,24 @@ template <typename Archive>
 void Genome<ActivationFunction>::serialize(Archive& ar,
                                            const unsigned int /* version */)
 {
+  if (Archive::is_loading::value)
+  {
+    for (size_t i = 0; i < nextNodeID; i++)
+    {
+      directedGraph.emplace(std::piecewise_construct,
+                            std::make_tuple(i),
+                            std::make_tuple());
+    }
+
+    for (size_t i = 0; i < connectionGeneList.size(); i++)
+    {
+      size_t sourceID = connectionGeneList[i].Source();
+      size_t targetID = connectionGeneList[i].Target();
+      directedGraph[sourceID][targetID] = connectionGeneList[i];
+    }
+  }
+
+
   ar & BOOST_SERIALIZATION_NVP(inputNodeCount);
   ar & BOOST_SERIALIZATION_NVP(outputNodeCount);
   ar & BOOST_SERIALIZATION_NVP(nextNodeID);
@@ -491,7 +519,6 @@ void Genome<ActivationFunction>::serialize(Archive& ar,
   ar & BOOST_SERIALIZATION_NVP(fitness);
   ar & BOOST_SERIALIZATION_NVP(isAcyclic);
   ar & BOOST_SERIALIZATION_NVP(connectionGeneList);
-  ar & BOOST_SERIALIZATION_NVP(directedGraph);
   ar & BOOST_SERIALIZATION_NVP(nextInnovID);
   ar & BOOST_SERIALIZATION_NVP(mutationBuffer);
   if (isAcyclic)
