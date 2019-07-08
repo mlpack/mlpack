@@ -83,18 +83,18 @@ void PPO<
   arma::colvec sampledRewards;
   arma::mat sampledNextStates;
   arma::icolvec isTerminal;
-  arma::colvec discountedRewards;
 
   replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
       sampledNextStates, isTerminal);
 
+  arma::colvec discountedRewards(sampledRewards.n_cols);
   arma::mat nextActionValues;
   double values = 0.0;
   criticNetwork.Predict(sampledNextStates, nextActionValues);
   for (size_t i = sampledRewards.n_cols; i > 0; --i)
   {
-    values = sampledRewards[i-1] + values * config.Discount();
-    discountedRewards.insert_rows(discountedRewards.n_cols, values);
+    values = sampledRewards[i - 1] + values * config.Discount();
+    discountedRewards[sampledRewards.n_cols - i] = values;
   }
 
   arma::mat actionValues, advantages, criticGradients, actorGradients;
