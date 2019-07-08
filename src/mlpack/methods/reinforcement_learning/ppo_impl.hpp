@@ -103,7 +103,8 @@ void PPO<
   advantages = discountedRewards - actionValues;
 
   criticNetwork.Backward(advantages, criticGradients);
-  updater.Update(criticNetwork.Parameters(), config.StepSize(), criticGradients);
+  updater.Update(criticNetwork.Parameters(), config.StepSize(),
+      criticGradients);
 
   // update the critic
   criticNetwork.Backward(actionValues, sampledRewards);
