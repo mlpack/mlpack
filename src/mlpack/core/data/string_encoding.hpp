@@ -20,6 +20,7 @@
 using MapType =   std::unordered_map<boost::string_view, size_t,
     boost::hash<boost::string_view>>;
 
+
 namespace mlpack {
 namespace data {
 
@@ -122,9 +123,11 @@ class StringEncoding
   *
   */
   template<typename TokenizerType>
-  void Encode(const std::vector<std::string>& input,
-              std::vector<std::vector<size_t>>& output,
-              TokenizerType tokenizer);
+  typename std::enable_if<std::is_same< EncodingPolicy,
+      data::DictionaryEncoding>::value, void>::type Encode(const
+      std::vector<std::string>& input,
+      std::vector<std::vector<size_t>>& output,
+      TokenizerType tokenizer);
 
   //! Modify the originalStrings.
   std::deque<std::string>& OriginalStrings() { return originalStrings; }

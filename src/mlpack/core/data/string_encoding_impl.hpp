@@ -26,7 +26,7 @@ void StringEncoding<EncodingPolicy>::Reset()
 }
 
 template<typename EncodingPolicy>
-StringEncoding<EncodingPolicy>::StringEncoding(const 
+StringEncoding<EncodingPolicy>::StringEncoding(const
     StringEncoding& oldObject) : originalStrings(oldObject.originalStrings)
 {
   std::deque<std::string>::iterator jt = originalStrings.begin();
@@ -112,33 +112,37 @@ void StringEncoding<EncodingPolicy>::Encode(
       }
     }
   }
-  if (std::is_same<EncodingPolicy, data::DictionaryEncoding>::value)
-  {
-    EncodingPolicy::creatmat(output, dataset.size(), colSize);
-    for (size_t i = 0; i < dataset.size(); ++i)
-    {
-      for (size_t j = 0; j < dataset[i].size(); ++j)
-        data::DictionaryEncoding::Encode(mappings.at(dataset[i][j]),
-            output, i, j);
-    }
-  }
-  else
-  {
-    // Will Come in Next PR;    
-  }
+  EncodingPolicy::InitMatrix(output, dataset.size(), colSize, mappings.size());
+  EncodingPolicy::Encode(mappings, originalStrings, dataset, output);
 }
 
 template<typename EncodingPolicy>
 template<typename TokenizerType>
-void StringEncoding<EncodingPolicy>::Encode(
+typename std::enable_if<std::is_same<EncodingPolicy,
+    data::DictionaryEncoding>::value, void>::type
+    StringEncoding<EncodingPolicy>::Encode(
     const std::vector<std::string>& input,
-    std::vector<std::vector<size_t> >& output,
+    std::vector<std::vector<size_t>>& output,
     TokenizerType tokenizer)
 {
-  if (std::is_same<EncodingPolicy, data::DictionaryEncoding>::value)
+  boost::string_view strView;
+  boost::string_view token;
+  size_t curLabel = mappings.size() + 1;
+  for (size_t i = 0; i < input.size(); ++i)
   {
-    data::DictionaryEncoding::EncodeWithoutPad(input, output, tokenizer,
-        mappings, originalStrings);
+    output.push_back(std::vector<size_t>() );
+    strView = input[i];
+    token = tokenizer(strView);
+    while (!token.empty())
+    {
+      if (mappings.count(token) == 0)
+      {
+        originalStrings.push_back(std::string(token));
+        mappings[originalStrings.back()] = curLabel++;
+      }
+      output[i].push_back(mappings.at(token));
+      token = tokenizer(strView);
+    }
   }
 }
 

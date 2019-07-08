@@ -30,7 +30,6 @@ namespace data {
 class DictionaryEncoding
 {
  public:
-
   /**
   * A function used to create the matrix depending upon the size.
   *
@@ -39,9 +38,10 @@ class DictionaryEncoding
   * colSize Number of Columns of matrix 
   */
   template<typename MatType>
-  static void creatmat(MatType& output, size_t rowSize, size_t colSize)
+  static void InitMatrix(MatType& output, size_t datasetSize, size_t colSize,
+                         size_t /*mappingsSize*/)
   {
-      output.zeros(rowSize, colSize);
+      output.zeros(datasetSize, colSize);
   }
 
   /** 
@@ -53,59 +53,15 @@ class DictionaryEncoding
   * @param col The column at which the encoding belongs to.
   */
   template<typename MatType>
-  static void Encode(size_t ele, MatType& output, size_t row, size_t col)
+  static void Encode(std::unordered_map<boost::string_view, size_t,
+                     boost::hash<boost::string_view>>& mappings,
+                     std::deque<std::string>& /*originalStrings*/,
+                     std::vector< std::vector<boost::string_view> >& dataset,
+                     MatType& output)
   {
-    output.at(row, col) = ele;
-  }
-
-  /**
-  * A function to encode given array of strings using a particular delimiter,
-  * with custom tokenization.
-  * The function does not paddes 0 in this case.
-  *
-  * @param input Vector of strings.
-  * @param output Vector of vectors to store encoded results.
-  * @param mappings Data structure carriying the information about the word
-  *     and their mapping.
-  * @param originalString Data structure carrying the original String of the 
-  *     view created in mappings. 
-  * @param tokenizer A function that accepts a boost::string_view as
-  *                  an argument and returns a token.
-  * This can either be a function pointer or function object or a lamda.
-  * function. Its return value should be a boost::string_view, a token.
-  *
-  * Definition of function should be of type
-  * boost::string_view fn(boost::string_view& str)
-  *
- 
-  */
-  template<typename TokenizerType>
-  static void EncodeWithoutPad(const std::vector<std::string>& input,
-                    std::vector<std::vector<size_t> >& output,
-                    TokenizerType tokenizer,
-                    std::unordered_map<boost::string_view, size_t,
-                    boost::hash<boost::string_view>>& mappings,
-                    std::deque<std::string>& originalStrings)
-  {
-    boost::string_view strView;
-    boost::string_view token;
-    size_t curLabel = mappings.size() + 1;
-    for (size_t i = 0; i < input.size(); ++i)
-    {
-      output.push_back(std::vector<size_t>() );
-      strView = input[i];
-      token = tokenizer(strView);
-      while (!token.empty())
-      {
-        if (mappings.count(token) == 0)
-        {
-          originalStrings.push_back(std::string(token));
-          mappings[originalStrings.back()] = curLabel++;
-        }
-        output[i].push_back(mappings.at(token));
-        token = tokenizer(strView);
-      }
-    }
+    for (size_t i = 0; i < dataset.size(); ++i)
+      for (size_t j = 0; j < dataset[i].size(); ++j)
+        output.at(i, j) = mappings.at(dataset[i][j]);
   }
 }; // class DicitonaryEncoding
 
