@@ -89,7 +89,7 @@ void PPO<
       sampledNextStates, isTerminal);
 
   arma::mat nextActionValues;
-  double values;
+  double values = 0.0;
   criticNetwork.Predict(sampledNextStates, nextActionValues);
   for (size_t i = sampledRewards.n_cols; i > 0; --i)
   {
