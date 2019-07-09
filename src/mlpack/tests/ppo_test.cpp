@@ -62,6 +62,7 @@ BOOST_AUTO_TEST_CASE(PENDULUMWITHPPO)
 
     TrainingConfig config;
     config.Discount() = 0.9;
+    config.Epsilon() = 0.2;
 
     // Set up the PPO agent.
     PPO<Pendulum, decltype(actor), decltype(critic), AdamUpdate,

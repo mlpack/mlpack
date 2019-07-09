@@ -115,7 +115,10 @@ void PPO<
   oldNormalDist.Probability(actionValues, oldProb);
   arma::mat ratio =  prob / oldProb;
 
-  arma::mat loss = ratio * advantages;
+  arma::mat surrogateLoss1 = ratio * advantages;
+  arma::mat surrogateLoss2 = arma::clamp(ratio, 1 - config.Epsilon(),
+      1 + config.Epsilon()) * advantages;
+  arma::mat loss = - arma::min(surrogateLoss1, surrogateLoss2);
 
   // todo: calculate the surrogate loss
 

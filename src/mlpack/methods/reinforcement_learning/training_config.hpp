@@ -98,6 +98,11 @@ class TrainingConfig
   //! Modify the indicator of double q-learning.
   bool& DoubleQLearning() { return doubleQLearning; }
 
+  //! Get the discount rate for future reward.
+  double Epsilon() const { return epsilon; }
+  //! Modify the discount rate for future reward.
+  double& Epsilon() { return epsilon; }
+
  private:
   /**
    * Locally-stored number of workers.
@@ -155,6 +160,8 @@ class TrainingConfig
    * This is valid only for q-learning agent.
    */
   bool doubleQLearning;
+
+  double epsilon;
 };
 
 } // namespace rl
