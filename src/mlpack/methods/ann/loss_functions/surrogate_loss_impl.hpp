@@ -31,7 +31,7 @@ template<typename InputType, typename TargetType>
 double SurrogateLoss<InputDataType, OutputDataType>::Forward(
   const InputType&& input, const TargetType&& target)
 {
-    return arma::clamp(input, 1-epsilon, 1+epsilon) * target;
+    return arma::clamp(input, 1 - epsilon, 1 + epsilon) * target;
 }
 
 template<typename InputDataType, typename OutputDataType>
