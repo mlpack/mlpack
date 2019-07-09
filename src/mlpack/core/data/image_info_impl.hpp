@@ -21,57 +21,46 @@
 namespace mlpack {
 namespace data {
 
-const std::vector<std::string> loadFileTypes({"jpg", "png", "tga",
+static const std::vector<std::string> loadFileTypes({"jpg", "png", "tga",
     "bmp", "psd", "gif", "hdr", "pic", "pnm"});
 
-const std::vector<std::string> saveFileTypes({"jpg", "png", "tga",
+static const std::vector<std::string> saveFileTypes({"jpg", "png", "tga",
     "bmp", "hdr"});
 
-bool ImageFormatSupported(const std::string& fileName, bool save)
+inline bool ImageFormatSupported(const std::string& fileName, bool save)
 {
   if (save)
   {
     // Iterate over all supported file types that can be saved.
     for (auto extension : saveFileTypes)
+    {
       if (extension == Extension(fileName))
         return true;
-    return false;
+    }
   }
   else
   {
     // Iterate over all supported file types that can be loaded.
     for (auto extension : loadFileTypes)
+    {
       if (extension == Extension(fileName))
         return true;
-    return false;
+    }
   }
+
+  return false;
 }
 
-ImageInfo::ImageInfo():
-              width(0),
-              height(0),
-              channels(3),
-              quality(90),
-              format(""),
-              flipVertical(true)
-{
-  // Do nothing.
-}
-
-ImageInfo::ImageInfo(const size_t width,
-                     const size_t height,
-                     const size_t channels):
-                     width(width),
-                     height(height),
-                     channels(channels),
-                     quality(90),
-                     format(""),
-                     flipVertical(true)
-{
-  // Do nothing.
-}
-
-ImageInfo::~ImageInfo()
+inline ImageInfo::ImageInfo(const size_t width,
+                            const size_t height,
+                            const size_t channels,
+                            const size_t quality) :
+    width(width),
+    height(height),
+    channels(channels),
+    quality(quality),
+    format(""),
+    flipVertical(true)
 {
   // Do nothing.
 }

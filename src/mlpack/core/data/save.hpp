@@ -19,6 +19,7 @@
 #include <string>
 
 #include "format.hpp"
+#include "image_info.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices. */ {
@@ -89,6 +90,22 @@ bool Save(const std::string& filename,
           T& t,
           const bool fatal = false,
           format f = format::autodetect);
+
+#ifdef HAS_STB
+template<typename eT>
+bool Save(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false,
+          const bool transpose = true);
+
+template<typename eT>
+bool Save(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false,
+          const bool transpose = true);
+#endif // HAS_STB.
 
 } // namespace data
 } // namespace mlpack

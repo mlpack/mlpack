@@ -15,11 +15,17 @@
 
 #ifdef HAS_STB // Compile this only if stb is present.
 
-#include <mlpack/core.hpp>
-#include <mlpack/core/util/log.hpp>
 #include <mlpack/prereqs.hpp>
 
 #include "extension.hpp"
+
+#define STB_IMAGE_STATIC
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
+#define STB_IMAGE_WRITE_STATIC
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
 
 namespace mlpack {
 namespace data {
@@ -30,30 +36,46 @@ namespace data {
  * @param filename Name of the image file.
  * @return Boolean value indicating success if it is an image.
  */
-bool ImageFormatSupported(const std::string& fileName, bool save = false);
+inline bool ImageFormatSupported(const std::string& fileName,
+                                 bool save = false);
 
 class ImageInfo
 {
  public:
   /**
-   * ImageInfo default constructor.
-   */
-  ImageInfo();
-
-  /**
-   * Instantiate the ImageInfo object with the image width, height, channels.
+   * Instantiate the ImageInfo object with the given image width, height,
+   * channels parameter.
    *
    * @param width Image width.
    * @param height Image height.
    * @param channels number of channels in the image.
    */
-  ImageInfo(const size_t width, const size_t height, const size_t channels);
+  ImageInfo(const size_t width = 0,
+            const size_t height = 0,
+            const size_t channels = 3,
+            const size_t quality = 90);
 
-  /**
-   * ImageInfo default destructor.
-   */
-  ~ImageInfo();
+  //! Get the image height.
+  const size_t& Height() const { return height; }
+  //! Modify the image height.
+  size_t& Height() { return height; }
 
+  //! Get the image width.
+  const size_t& Width() const { return width; }
+  //! Modify the image width.
+  size_t& Width() { return width; }
+
+  //! Get the image channels.
+  const size_t& Channels() const { return channels; }
+  //! Modify the image channels.
+  size_t& Channels() { return channels; }
+
+  //! Get the image quality.
+  const size_t& Quality() const { return quality; }
+  //! Modify the image quality.
+  size_t& Quality() { return quality; }
+
+ private:
   // To store the image height.
   size_t height;
 
@@ -63,7 +85,7 @@ class ImageInfo
   // To store the number of channels in the image.
   size_t channels;
 
-  // Compression of the image if saved as jpg (0-100).
+  // Compression of the image if saved as jpg (0 - 100).
   size_t quality;
 
   // Image format.

@@ -20,6 +20,7 @@
 
 #include "format.hpp"
 #include "dataset_mapper.hpp"
+#include "image_info.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
@@ -286,6 +287,25 @@ bool Load(const std::string& filename,
           T& t,
           const bool fatal = false,
           format f = format::autodetect);
+
+/**
+ * Image load/save interfaces.
+ */
+#ifdef HAS_STB
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false,
+          const bool transpose = true);
+
+template<typename eT>
+bool Load(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false,
+          const bool transpose = true);
+#endif // HAS_STB.
 
 } // namespace data
 } // namespace mlpack
