@@ -153,9 +153,9 @@ class RandomReplay
    * @param nextActionValues Agent's next action
    * @param gradients The model's gradients
    */
-  void Update(arma::mat /* target */,
-              std::vector<ActionType> /* sampledActions */,
-              arma::mat /* nextActionValues */,
+  void Update(const arma::mat& /* target */,
+              const std::vector<ActionType>& /* sampledActions */,
+              const arma::mat& /* nextActionValues */,
               arma::mat& /* gradients */)
   {
     /* Do nothing for random replay. */
