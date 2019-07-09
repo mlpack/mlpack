@@ -124,6 +124,9 @@ add_executable(mlpack_test
   main_tests/det_test.cpp
   main_tests/decision_tree_test.cpp
   main_tests/decision_stump_test.cpp
+  main_tests/gmm_generate_test.cpp
+  main_tests/gmm_probability_test.cpp
+  main_tests/gmm_train_test.cpp
   main_tests/fastmks_test.cpp
   main_tests/kde_test.cpp
   main_tests/linear_regression_test.cpp
@@ -188,7 +191,7 @@ set(parallel_tests
   "SVDIncrementalTest;SVDBatchTest;"
   "LocalCoordinateCodingTest;FeedForwardNetworkTest;SparseAutoencoderTest;"
   "GMMTest;CFTest;ConvolutionalNetworkTest;HMMTest;LARSTest;"
-  "LogisticRegressionTest;"
+  "LogisticRegressionTest;GmmTrainMainTest;"
   "LinearSVMTest")
 
 # Add tests to the testing framework
