@@ -14,11 +14,11 @@
 
 #include <mlpack/prereqs.hpp>
 #include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
+#include <mlpack/core/data/encoding_policies/policy_traits.hpp>
 #include <utility>
 
 namespace mlpack {
 namespace data {
-
 /**
  * A simple Dicitonary Enocding class.
  *
@@ -53,21 +53,19 @@ class DictionaryEncoding
   * @param col The column at which the encoding belongs to.
   */
   template<typename MatType>
-  static void Encode(std::unordered_map<boost::string_view, size_t,
-                     boost::hash<boost::string_view>>& mappings,
-                     std::deque<std::string>& /*originalStrings*/,
-                     std::vector< std::vector<boost::string_view> >& dataset,
-                     MatType& output)
+  static void Encode(size_t ele, MatType& output, size_t row, size_t col)
   {
-    for (size_t i = 0; i < dataset.size(); ++i)
-      for (size_t j = 0; j < dataset[i].size(); ++j)
-        output.at(i, j) = mappings.at(dataset[i][j]);
+    output.at(row, col) = ele;
   }
 }; // class DicitonaryEncoding
 
+template<>
+struct PolicyTraits<DictionaryEncoding> {
+
+  static const bool outputWithNoPadding = true;
+};
+
 } // namespace data
 } // namespace mlpack
-
-
 
 #endif

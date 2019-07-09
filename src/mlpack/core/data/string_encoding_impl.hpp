@@ -113,17 +113,19 @@ void StringEncoding<EncodingPolicy>::Encode(
     }
   }
   EncodingPolicy::InitMatrix(output, dataset.size(), colSize, mappings.size());
-  EncodingPolicy::Encode(mappings, originalStrings, dataset, output);
-}
+  for (size_t i = 0; i < dataset.size(); ++i)
+    for (size_t j = 0; j < dataset[i].size(); ++j)
+        EncodingPolicy::Encode(mappings.at(dataset[i][j]), output, i, j);
+  }
 
 template<typename EncodingPolicy>
 template<typename TokenizerType>
-typename std::enable_if<std::is_same<EncodingPolicy,
-    data::DictionaryEncoding>::value, void>::type
-    StringEncoding<EncodingPolicy>::Encode(
+void StringEncoding<EncodingPolicy>::Encode(
     const std::vector<std::string>& input,
     std::vector<std::vector<size_t>>& output,
-    TokenizerType tokenizer)
+    TokenizerType tokenizer,
+    typename std::enable_if<PolicyTraits<EncodingPolicy>::
+    outputWithNoPadding>::type*)
 {
   boost::string_view strView;
   boost::string_view token;

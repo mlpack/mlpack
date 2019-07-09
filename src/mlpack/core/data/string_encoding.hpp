@@ -15,6 +15,7 @@
 #include <mlpack/prereqs.hpp>
 #include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
 #include <mlpack/core/data/encoding_policies/dictionary_encoding.hpp>
+#include <mlpack/core/data/encoding_policies/policy_traits.hpp>
 #include <utility>
 
 using MapType =   std::unordered_map<boost::string_view, size_t,
@@ -123,11 +124,12 @@ class StringEncoding
   *
   */
   template<typename TokenizerType>
-  typename std::enable_if<std::is_same< EncodingPolicy,
-      data::DictionaryEncoding>::value, void>::type Encode(const
+  void Encode(const
       std::vector<std::string>& input,
       std::vector<std::vector<size_t>>& output,
-      TokenizerType tokenizer);
+      TokenizerType tokenizer,
+      typename std::enable_if<PolicyTraits<EncodingPolicy>::
+      outputWithNoPadding>::type* = 0);
 
   //! Modify the originalStrings.
   std::deque<std::string>& OriginalStrings() { return originalStrings; }

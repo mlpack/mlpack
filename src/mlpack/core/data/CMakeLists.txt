@@ -32,6 +32,7 @@ set(SOURCES
   tokenizer/char_split.hpp
   tokenizer/split_by_char.hpp
   encoding_policies/dictionary_encoding.hpp
+  encoding_policies/policy_traits.hpp
 )
 
 # add directory name to sources
