@@ -50,20 +50,23 @@ PROGRAM_INFO("Kernel Density Estimation",
     "use dual-tree algorithm or single-tree algorithm using the " +
     PRINT_PARAM_STRING("algorithm") + " option."
     "\n\n"
-    "This implementation makes possible to use probabilistic Monte Carlo "
-    "relative error tolerance (only for the Gaussian kernel) using the flag " +
-    PRINT_PARAM_STRING("monte_carlo") + " and setting a probability with the " +
-    PRINT_PARAM_STRING("mc_probability") + " option. It is possible to set the "
-    "initial sample size for the Monte Carlo estimation using " +
-    PRINT_PARAM_STRING("initial_sample_size") + ". This implementation will "
-    "only consider a node, as a candidate for the Monte Carlo estimation, if "
-    "its number of descendant nodes is bigger than the initial sample size. "
-    "This can be controlled using a coefficient that will multiply the initial "
-    "sample size and can be set using " + PRINT_PARAM_STRING("mc_entry_coef") +
-    ". To avoid using the same amount of computations an exact approach would "
-    "take, this program recurses the tree whenever a fraction of the amount of "
-    "the node's descendant points have already been computed. This fraction "
-    "is set using " + PRINT_PARAM_STRING("mc_break_coef") + "."
+    "Monte Carlo estimations can be used to accelerate the KDE estimate when "
+    "the Gaussian Kernel is used. This provides a probabilistic guarantee on "
+    "the the error of the resulting KDE instead of an absolute guarantee."
+    "To enable Monte Carlo estimations, the " +
+    PRINT_PARAM_STRING("monte_carlo") + " flag can be used, and success "
+    "probability can be set with the " + PRINT_PARAM_STRING("mc_probability") +
+    " option. It is possible to set the initial sample size for the Monte "
+    "Carlo estimation using " + PRINT_PARAM_STRING("initial_sample_size") +
+    ". This implementation will only consider a node, as a candidate for the "
+    "Monte Carlo estimation, if its number of descendant nodes is bigger than "
+    "the initial sample size. This can be controlled using a coefficient that "
+    "will multiply the initial sample size and can be set using " +
+    PRINT_PARAM_STRING("mc_entry_coef") + ". To avoid using the same amount of "
+    "computations an exact approach would take, this program recurses the tree "
+    "whenever a fraction of the amount of the node's descendant points have "
+    "already been computed. This fraction is set using " +
+    PRINT_PARAM_STRING("mc_break_coef") + "."
     "\n\n"
     "For example, the following will run KDE using the data in " +
     PRINT_DATASET("ref_data") + " for training and the data in " +
@@ -88,13 +91,16 @@ PROGRAM_INFO("Kernel Density Estimation",
     ") then default parameter values will be used."
     "\n\n"
     "In addition to the last program call, it is also possible to activate "
-    "Monte Carlo estimations if a Gaussian kernel is used. The following will "
-    "run KDE using a Monte Carlo estimation when possible. The results will be "
-    "within a 5% of the real KDE value with a 95% probability. Initial sample "
-    "size for the Monte Carlo estimation will be 200 points and a node will be "
-    "a candidate for the estimation only when it contains 700 (i.e. 3.5*200) "
-    "points. If a node contains 700 points and 420 (i.e. 0.6*700) have already "
-    "been sampled, then the algorithm will recurse instead of keep sampling."
+    "Monte Carlo estimations if a Gaussian kernel is used. This can provide "
+    "faster results, but the KDE will only have a probabilistic guarantee of "
+    "meeting the desired error bound (instead of an absolute guarantee). The "
+    "following example will run KDE using a Monte Carlo estimation when "
+    "possible. The results will be within a 5% of the real KDE value with a "
+    "95% probability. Initial sample size for the Monte Carlo estimation will "
+    "be 200 points and a node will be a candidate for the estimation only when "
+    "it contains 700 (i.e. 3.5*200) points. If a node contains 700 points and "
+    "420 (i.e. 0.6*700) have already been sampled, then the algorithm will "
+    "recurse instead of keep sampling."
     "\n\n" +
     PRINT_CALL("kde", "reference", "ref_data", "query", "qu_data", "bandwidth",
         0.2, "kernel", "gaussian", "tree", "kd-tree", "rel_error",
