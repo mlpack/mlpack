@@ -80,6 +80,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   Initialize();
   speciesList = std::vector<std::vector<Genome<ActivationFunction>>>(numSpecies);
   Speciate(true);
+
   
   // Main loop.
   for (size_t gen = 0; gen < maxGen; gen++)
@@ -509,7 +510,7 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::Initialize()
       connAdditionProb, connDeletionProb, isAcyclic));
 
       // Let's find the node depths.
-      genomeList[i].nodeDepths.resize(genomeList[i].nextNodeID, 0);
+      genomeList[i].nodeDepths.resize(genomeList[i].NodeCount(), 0);
       for (size_t j = 0; j <= inputNodeCount; j++)
         genomeList[i].Traverse(j);
 

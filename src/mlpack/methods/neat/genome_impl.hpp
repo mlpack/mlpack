@@ -336,11 +336,8 @@ void Genome<ActivationFunction>::AddConnMutation()
   }
   else
   {
-    while (newTarget == sourceID)
-    {
-      newTarget = arma::randi<arma::uvec>(1, arma::distr_param(1 +
-          (int)(inputNodeCount), (int)(nextNodeID) - 1))[0];
-    }
+    newTarget = arma::randi<arma::uvec>(1, arma::distr_param(1 +
+        (int)(inputNodeCount), (int)(nextNodeID) - 1))[0];
   }
 
   if (directedGraph[sourceID].find(newTarget) == directedGraph[sourceID].end())

@@ -232,6 +232,12 @@ class Genome
   // Mutates weights.
   void MutateWeights();
 
+  /**
+   * A recursive function that assigns depth to nodes. Only used in acyclic
+   * cases.
+   */
+  void Traverse(size_t startID);
+
   //! The next innovation ID to be allotted.
   static size_t nextInnovID;
  private:
@@ -239,13 +245,6 @@ class Genome
    * Stores the activation of the nodes. Only used if isAcyclic is set to false.
    */
   std::vector<double> outputNodeValues;
-
-  /**
-   * A recursive function that assigns depth to nodes. Only used in acyclic
-   * cases.
-   */
-  void Traverse(size_t startID);
-
 
   // Adds connection.
   void AddConnMutation();
