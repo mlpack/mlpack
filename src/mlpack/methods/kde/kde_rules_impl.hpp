@@ -148,9 +148,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     // Monte Carlo probabilistic estimation.
     // Calculate alpha.
     const double depthAlpha = CalculateAlpha(referenceNode.Stat().Depth());
-    double alpha = depthAlpha + accumMCAlpha(queryIndex);
-    if (alpha > 1)
-      alpha = 1;
+    const double alpha = depthAlpha + accumMCAlpha(queryIndex);
 
     const boost::math::normal normalDist;
     const double z =
@@ -220,8 +218,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     // If node is going to be exactly computed, reclaim not used alpha.
     if (kernelIsGaussian && monteCarlo && referenceNode.IsLeaf())
     {
-        accumMCAlpha(queryIndex) +=
-            CalculateAlpha(referenceNode.Stat().Depth());
+      accumMCAlpha(queryIndex) += CalculateAlpha(referenceNode.Stat().Depth());
     }
   }
 
