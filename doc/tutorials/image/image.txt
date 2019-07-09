@@ -7,9 +7,9 @@
 
 @section intro_imagetut Introduction
 
-Image dataset are becoming increasingly popular in deep learning.
+Image datasets are becoming increasingly popular in deep learning.
 
-mlpack currently implements saving and loading of image. It uses [stb/](https://github.com/nothings/stb) to achieve this.
+mlpack's image saving/loading functionality is based on [stb/](https://github.com/nothings/stb).
 
 @section toc_imagetut Table of Contents
 
@@ -24,11 +24,11 @@ This tutorial is split into the following sections:
 
 @section model_api_imagetut Model API
 
-Image utilities supports loading and saving of image. Images can also be loaded from a directory if CXX version >= 17 as it requires <filesystem> header to navigate a directory.
+Image utilities supports loading and saving of image.
 
 It supports filetypes "jpg", "png", "tga","bmp", "psd", "gif", "hdr", "pic", "pnm" for loading and "jpg", "png", "tga", "bmp", "hdr" for saving.
 
-The datatype associated is unsigned char to support RGB values in the range 1-255. To feed data into the network typecast of `arma::Mat` may be required. Images are stored in matrix as (width * height * channels, n_images). Therefore imageMatrix.col(0) would be first image if images are loaded in imageMatrix.
+The datatype associated is unsigned char to support RGB values in the range 1-255. To feed data into the network typecast of `arma::Mat` may be required. Images are stored in matrix as (width * height * channels, n_images). Therefore imageMatrix.col(0) would be the first image if images are loaded in imageMatrix.
 
 @section imageinfo_api_imagetut ImageInfo
 
@@ -51,7 +51,6 @@ Other public memebers include:
 
 @section load_api_imagetut Load
 
-Image can be loaded standalone or from a directory.
 
 Standalone loading of images.
 @code
@@ -76,7 +75,7 @@ Standalone loading of images.
 Loading a test image. It also fills up the ImageInfo class object.
 @code
 data::ImageInfo info;
-data::Load("test_image.png", matrix, info, false);
+data::Load("test_image.png", matrix, info, false, true);
 @endcode
 
 If the size of image is known beforehand, it can be passed into the constructor of ImageInfo to set the size of outputMatrix(the matrix into which the image is loaded).
@@ -113,30 +112,6 @@ Loading multiple images:
   data::ImageInfo info;
   std::vector<std::string>> files{"test_image1.bmp","test_image2.bmp"};
   data::load(files, matrix, info, false, true);
-@endcode
-
-
-Loading images from a directory is possible if C++ version >= 17.
-
-@code
-  /**
-   * Load the image file into the given matrix.
-   *
-   * @param dirPath Path containing the image files.
-   * @param flipVertical Flip the image vertical upon loading.
-   * @param outputMatrix Matrix to load into.
-   * @return Boolean value indicating success or failure of load.
-   */
-  bool LoadDir(const std::string& dirPath,
-               bool flipVertical,
-               arma::Mat<unsigned char>&& outputMatrix);
-@endcode
-
-@code
-data::Image loader;
-// Matrix to load contents of dir into.
-arma::Mat<unsigned char> img;
-loader.LoadDir("images/", true, img);
 @endcode
 
 @section save_api_imagetut Save
