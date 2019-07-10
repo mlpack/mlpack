@@ -10,8 +10,7 @@
 
 using namespace mlpack;
 
-extern "C"
-{
+extern "C" {
 
 /**
  * Call CLI::RestoreSettings() for a given program name.
@@ -482,4 +481,4 @@ void CLI_SetPassed(const char* paramName)
   CLI::SetPassed(paramName);
 }
 
-}
+} // extern "C"

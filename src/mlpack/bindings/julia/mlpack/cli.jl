@@ -64,7 +64,7 @@ function CLISetParamUMat(paramName::String,
                          pointsAsRows::Bool)
   # Sanity check.
   if minimum(paramValue) <= 0
-    throw(DomainError("Input $(paramName)::Array{Int64, 2} cannot have 0 or " \
+    throw(DomainError("Input $(paramName)::Array{Int64, 2} cannot have 0 or " *
         "negative values!  Must be 1 or greater."))
   end
 
@@ -119,7 +119,7 @@ function CLISetParamURow(paramName::String,
                          paramValue::Array{Int64, 1})
   # Sanity check.
   if minimum(paramValue) <= 0
-    throw(DomainError("Input $(paramName)::Array{Int64, 1} cannot have 0 or " \
+    throw(DomainError("Input $(paramName)::Array{Int64, 1} cannot have 0 or " *
         "negative values!  Must be 1 or greater."))
   end
   m = convert(Array{UInt64, 1}, paramValue .- 1)
@@ -132,7 +132,7 @@ function CLISetParamUCol(paramName::String,
                          paramValue::Array{Int64, 1})
   # Sanity check.
   if minimum(paramValue) <= 0
-    throw(DomainError("Input $(paramName)::Array{Int64, 1} cannot have 0 or " \
+    throw(DomainError("Input $(paramName)::Array{Int64, 1} cannot have 0 or " *
         "negative values!  Must be 1 or greater."))
   end
   m = convert(Array{UInt64, 1}, paramValue .- 1)

@@ -111,7 +111,7 @@ class JuliaOption
   }
 };
 
-} // namespace python
+} // namespace julia
 } // namespace bindings
 } // namespace mlpack
 
