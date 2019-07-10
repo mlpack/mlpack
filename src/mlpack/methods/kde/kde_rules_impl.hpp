@@ -421,20 +421,6 @@ EvaluateKernel(const arma::vec& query, const arma::vec& reference) const
 }
 
 template<typename MetricType, typename KernelType, typename TreeType>
-inline force_inline size_t KDERules<MetricType, KernelType, TreeType>::
-CalculateDepth(const TreeType& node) const
-{
-  size_t depth = 0;
-  const TreeType* currentNode = &node;
-  while (currentNode != NULL)
-  {
-    ++depth;
-    currentNode = currentNode->Parent();
-  }
-  return depth;
-}
-
-template<typename MetricType, typename KernelType, typename TreeType>
 inline force_inline double KDERules<MetricType, KernelType, TreeType>::
 CalculateAlpha(const size_t depth) const
 {
