@@ -20,6 +20,7 @@
 
 #include <mlpack/bindings/cli/print_doc_functions.hpp>
 #include <mlpack/bindings/python/print_doc_functions.hpp>
+#include <mlpack/bindings/julia/print_doc_functions.hpp>
 
 namespace mlpack {
 namespace bindings {

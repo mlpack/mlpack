@@ -92,16 +92,16 @@ inline std::string PrintDefault(const std::string& paramName)
 }
 
 // Recursion base case.
-std::string CreateInputArguments() { return ""; }
+inline std::string CreateInputArguments() { return ""; }
 
 /**
  * This prints anything that is required to create an input value.  We only need
  * to create input values for matrices.
  */
 template<typename T, typename... Args>
-std::string CreateInputArguments(const std::string& paramName,
-                                 const T& value,
-                                 Args... args)
+inline std::string CreateInputArguments(const std::string& paramName,
+                                        const T& value,
+                                        Args... args)
 {
   // We only need to do anything if it is an input option.
   if (CLI::Parameters().count(paramName) > 0)
@@ -135,26 +135,35 @@ std::string CreateInputArguments(const std::string& paramName,
 }
 
 // Recursion base case.
-std::string PrintInputOptions() { return ""; }
+inline std::string PrintInputOptions() { return ""; }
 
 /**
  * This prints an argument, assuming that it is already known whether or not it
  * is required.
  */
 template<typename T>
-std::string PrintInputOption(const std::string& paramName,
-                             const T& value,
-                             const bool required)
+inline std::string PrintInputOption(const std::string& paramName,
+                                    const T& value,
+                                    const bool required,
+                                    const bool quotes)
 {
   std::ostringstream oss;
   if (!required)
     oss << paramName << "=";
+
+  if (quotes)
+    oss << "\"";
+
   oss << value;
+
+  if (quotes)
+    oss << "\"";
+
   return oss.str();
 }
 
 // Base case: no modification needed.
-void GetOptions(
+inline void GetOptions(
     std::vector<std::tuple<std::string, std::string>>& /* results */,
     bool /* input */)
 {
@@ -167,7 +176,7 @@ void GetOptions(
  * value.)
  */
 template<typename T, typename... Args>
-void GetOptions(
+inline void GetOptions(
     std::vector<std::tuple<std::string, std::string>>& results,
     bool input,
     const std::string& paramName,
@@ -183,7 +192,8 @@ void GetOptions(
     {
       // Print and add to results.
       results.push_back(std::make_tuple(paramName,
-          PrintInputOption(paramName, value, d.required)));
+          PrintInputOption(paramName, value, d.required,
+                           d.tname == TYPENAME(std::string))));
     }
     else
     {
@@ -209,7 +219,7 @@ void GetOptions(
  * the parameter is required.
  */
 template<typename... Args>
-std::string PrintInputOptions(Args... args)
+inline std::string PrintInputOptions(Args... args)
 {
   // Gather list of required and non-required options.
   std::vector<std::string> inputOptions;
@@ -298,7 +308,7 @@ std::string PrintInputOptions(Args... args)
 inline std::string PrintOutputOptions() { return ""; }
 
 template<typename... Args>
-std::string PrintOutputOptions(Args... args)
+inline std::string PrintOutputOptions(Args... args)
 {
   // Get the list of output options for the binding.
   std::vector<std::string> outputOptions;
@@ -354,7 +364,7 @@ std::string PrintOutputOptions(Args... args)
  * contents), print the corresponding function call.
  */
 template<typename... Args>
-std::string ProgramCall(const std::string& programName, Args... args)
+inline std::string ProgramCall(const std::string& programName, Args... args)
 {
   std::ostringstream oss;
   oss << "```jldoctest" << std::endl;
