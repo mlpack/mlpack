@@ -81,7 +81,10 @@ void PrintJL(const util::ProgramDoc& programInfo,
   // If we have any model types, we need to define functions to set and get
   // their values from the CLI object.  We do this with the PrintParamDefn()
   // function.  We'll gather all names of classes we've done this with, so that
-  // we don't print any duplicates.
+  // we don't print any duplicates.  This should all be done inside of an
+  // internal module.
+  cout << "module " << functionName << "_internal" << endl;
+
   set<string> classNames;
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
@@ -95,6 +98,10 @@ void PrintJL(const util::ProgramDoc& programInfo,
       classNames.insert(d.cppType);
     }
   }
+
+  // End the module.
+  cout << "end" << endl;
+  cout << endl;
 
   // Print the documentation.
   cout << "\"\"\"" << endl;
@@ -229,8 +236,8 @@ void PrintJL(const util::ProgramDoc& programInfo,
     if (opt != "verbose")
     {
       const util::ParamData& d = parameters.at(opt);
-      CLI::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d, NULL,
-          NULL);
+      CLI::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
+          &functionName, NULL);
     }
   }
 

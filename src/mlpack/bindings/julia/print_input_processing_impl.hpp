@@ -21,6 +21,7 @@ namespace julia {
 template<typename T>
 void PrintInputProcessing(
     const util::ParamData& d,
+    const std::string& /* functionName */,
     const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
@@ -58,6 +59,7 @@ void PrintInputProcessing(
 template<typename T>
 void PrintInputProcessing(
     const util::ParamData& d,
+    const std::string& /* functionName */,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type*,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
@@ -111,6 +113,7 @@ void PrintInputProcessing(
 template<typename T>
 void PrintInputProcessing(
     const util::ParamData& d,
+    const std::string& functionName,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
     const typename std::enable_if<data::HasSerialize<T>::value>::type*,
     const typename std::enable_if<!std::is_same<T,
@@ -129,9 +132,10 @@ void PrintInputProcessing(
 
   std::string indent(extraIndent + 2, ' ');
   std::string type = StripType(d.cppType);
-  std::cout << indent << "CLISetParam" << type << "Ptr(\"" << d.name
-      << "\", convert(" << GetJuliaType<typename std::remove_pointer<T>::type>()
-      << ", " << juliaName << "))" << std::endl;
+  std::cout << indent << functionName << "_internal.CLISetParam" << type
+      << "Ptr(\"" << d.name << "\", convert("
+      << GetJuliaType<typename std::remove_pointer<T>::type>() << ", "
+      << juliaName << "))" << std::endl;
 
   if (!d.required)
   {
@@ -146,6 +150,7 @@ void PrintInputProcessing(
 template<typename T>
 void PrintInputProcessing(
     const util::ParamData& d,
+    const std::string& /* functionName */,
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
