@@ -83,7 +83,10 @@ void PrintJL(const util::ProgramDoc& programInfo,
   // function.  We'll gather all names of classes we've done this with, so that
   // we don't print any duplicates.  This should all be done inside of an
   // internal module.
+  cout << "\" Internal module to hold utility functions. \"" << endl;
   cout << "module " << functionName << "_internal" << endl;
+  cout << "  import .." << functionName << "Library" << endl;
+  cout << endl;
 
   set<string> classNames;
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
@@ -114,24 +117,15 @@ void PrintJL(const util::ProgramDoc& programInfo,
     const string& opt = inputOptions[i];
     const util::ParamData& d = parameters.at(opt);
 
-    if (i > 0)
-    {
-      if (!defaults && !d.required)
-      {
-        // Open the bracket.
-        cout << " [; ";
-        defaults = true;
-      }
-      else
-      {
-        cout << ", ";
-      }
-    }
-    else if (!defaults && !d.required)
+    if (!defaults && !d.required)
     {
       // Open the bracket.
-      cout << "[";
+      cout << "; [";
       defaults = true;
+    }
+    else if (i > 0)
+    {
+      cout << ", ";
     }
 
     cout << d.name;
@@ -194,17 +188,14 @@ void PrintJL(const util::ProgramDoc& programInfo,
     const string& opt = inputOptions[i];
     const util::ParamData& d = parameters.at(opt);
 
-    if (i > 0)
+    if (!defaults && !d.required)
     {
-      if (!defaults && !d.required)
-      {
-        cout << ";" << endl << string(indent, ' ');
-        defaults = true;
-      }
-      else
-      {
-        cout << "," << endl << string(indent, ' ');
-      }
+      cout << ";" << endl << string(indent, ' ');
+      defaults = true;
+    }
+    else if (i > 0)
+    {
+      cout << "," << endl << string(indent, ' ');
     }
 
     CLI::GetSingleton().functionMap[d.tname]["PrintInputParam"](d, NULL,
@@ -267,8 +258,8 @@ void PrintJL(const util::ProgramDoc& programInfo,
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     const util::ParamData& d = parameters.at(outputOptions[i]);
-    CLI::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d, NULL,
-        NULL);
+    CLI::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
+        &functionName, NULL);
 
     // Print newlines if we are returning multiple output options.
     if (i + 1 < outputOptions.size())

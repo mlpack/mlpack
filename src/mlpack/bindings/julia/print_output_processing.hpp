@@ -20,6 +20,7 @@ namespace julia {
 template<typename T>
 void PrintOutputProcessing(
     const util::ParamData& d,
+    const std::string& functionName,
     const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
@@ -30,6 +31,7 @@ void PrintOutputProcessing(
 template<typename T>
 void PrintOutputProcessing(
     const util::ParamData& d,
+    const std::string& functionName,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
@@ -40,6 +42,7 @@ void PrintOutputProcessing(
 template<typename T>
 void PrintOutputProcessing(
     const util::ParamData& d,
+    const std::string& functionName,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0,
     const typename std::enable_if<!std::is_same<T,
@@ -51,6 +54,7 @@ void PrintOutputProcessing(
 template<typename T>
 void PrintOutputProcessing(
     const util::ParamData& d,
+    const std::string& functionName,
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
 
@@ -59,11 +63,12 @@ void PrintOutputProcessing(
  */
 template<typename T>
 void PrintOutputProcessing(const util::ParamData& d,
-                           const void* /* input */,
+                           const void* input,
                            void* /* output */)
 {
   // Call out to the right overload.
-  PrintOutputProcessing<typename std::remove_pointer<T>::type>(d);
+  PrintOutputProcessing<typename std::remove_pointer<T>::type>(d,
+      *((std::string*) input));
 }
 
 } // namespace julia

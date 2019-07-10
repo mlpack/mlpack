@@ -23,6 +23,7 @@ namespace julia {
 template<typename T>
 void PrintOutputProcessing(
     const util::ParamData& d,
+    const std::string& /* functionName */,
     const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
@@ -59,6 +60,7 @@ void PrintOutputProcessing(
 template<typename T>
 void PrintOutputProcessing(
     const util::ParamData& d,
+    const std::string& /* functionName */,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type*,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
@@ -91,13 +93,14 @@ void PrintOutputProcessing(
 template<typename T>
 void PrintOutputProcessing(
     const util::ParamData& d,
+    const std::string& functionName,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
     const typename std::enable_if<data::HasSerialize<T>::value>::type*,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
-  std::cout << "CLIGetParam" << StripType(d.cppType) << "Ptr(\"" << d.name
-      << "\")";
+  std::cout << functionName << "_internal.CLIGetParam" << StripType(d.cppType)
+      << "Ptr(\"" << d.name << "\")";
 }
 
 /**
@@ -106,6 +109,7 @@ void PrintOutputProcessing(
 template<typename T>
 void PrintOutputProcessing(
     const util::ParamData& d,
+    const std::string& /* functionName */,
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
