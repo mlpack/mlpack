@@ -542,6 +542,13 @@ class RectangleTree
    */
   void SplitNode(std::vector<bool>& relevels);
 
+  /**
+   * Builds statistics for a node and all its descendants in a bottom-up way.
+   *
+   * @param node Node for which statistics will be built.
+   */
+  void BuildStatistics(RectangleTree* node);
+
  protected:
   /**
    * A default constructor.  This is meant to only be used with

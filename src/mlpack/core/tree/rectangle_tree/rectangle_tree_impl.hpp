@@ -21,6 +21,25 @@
 namespace mlpack {
 namespace tree {
 
+// Build the statistics, bottom-up.
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
+BuildStatistics(RectangleTree* node)
+{
+  // Recurse first.
+  for (size_t i = 0; i < node->NumChildren(); ++i)
+    BuildStatistics(&node->Child(i));
+
+  // Now build the statistic.
+  node->Stat() = StatisticType(*node);
+}
+
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -52,13 +71,14 @@ RectangleTree(const MatType& data,
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
     auxiliaryInfo(this)
 {
-  stat = StatisticType(*this);
-
   // For now, just insert the points in order.
   RectangleTree* root = this;
 
   for (size_t i = firstDataIndex; i < data.n_cols; i++)
     root->InsertPoint(i);
+
+  // Initialize statistic recursively after tree construction is complete.
+  BuildStatistics(this);
 }
 
 template<typename MetricType,
@@ -92,13 +112,14 @@ RectangleTree(MatType&& data,
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
     auxiliaryInfo(this)
 {
-  stat = StatisticType(*this);
-
   // For now, just insert the points in order.
   RectangleTree* root = this;
 
   for (size_t i = firstDataIndex; i < dataset->n_cols; i++)
     root->InsertPoint(i);
+
+  // Initialize statistic recursively after tree construction is complete.
+  BuildStatistics(this);
 }
 
 template<typename MetricType,
@@ -131,7 +152,8 @@ RectangleTree(
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
     auxiliaryInfo(this)
 {
-  stat = StatisticType(*this);
+  // Initialize statistic.
+  BuildStatistics(this);
 }
 
 /**
