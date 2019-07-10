@@ -471,7 +471,8 @@ inline std::string ProgramCall(const std::string& programName)
 
   result << ")";
 
-  return util::HyphenateString(result.str(), 8);
+  // 7 characters is the length of 'julia> '.
+  return util::HyphenateString(result.str(), 7);
 }
 
 /**
