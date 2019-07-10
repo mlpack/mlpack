@@ -499,9 +499,9 @@ inline std::string ProgramCall(const std::string& programName)
   else if (BindingInfo::Language() == "julia")
   {
     s += "julia\n";
-    std::string import = PrintImport(GetBindingName(programName));
+    std::string import = PrintImport(programName);
     if (import.size() > 0)
-      s += ">>> " + import + "\n";
+      s += "julia> " + import + "\n";
     s += julia::ProgramCall(programName);
   }
   else

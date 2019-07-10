@@ -411,7 +411,67 @@ inline std::string PrintDataset(const std::string& datasetName)
  */
 inline std::string ProgramCall(const std::string& programName)
 {
-  return "julia> " + programName + "(";
+  std::ostringstream result;
+  result << "julia> ";
+
+  // First, print all output options.
+  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+  size_t outputs = 0;
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (!it->second.input)
+    {
+      if (outputs > 0)
+        result << ", ";
+      result << it->second.name;
+      ++outputs;
+    }
+  }
+
+  if (outputs > 0)
+    result << " = ";
+
+  result << programName << "(";
+
+  // Now, print all required input options.
+  size_t inputs = 0;
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (it->second.input && it->second.required)
+    {
+      if (inputs > 0)
+        result << ", ";
+      result << it->second.name;
+      ++inputs;
+    }
+  }
+
+  // Lastly, print all non-required input options.
+  size_t nonreqInputs = 0;
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (it->second.input && !it->second.required)
+    {
+      if (inputs == 0 && nonreqInputs == 0)
+        result << " ; ";
+      else if (nonreqInputs == 0)
+        result << "; ";
+      else
+        result << ", ";
+
+      result << it->second.name;
+      result << "=";
+      std::string value;
+      CLI::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
+          it->second, NULL, (void*) &value);
+      result << value;
+      ++nonreqInputs;
+    }
+  }
+
+  result << ")";
+
+  return util::HyphenateString(result.str(), 8);
 }
 
 /**

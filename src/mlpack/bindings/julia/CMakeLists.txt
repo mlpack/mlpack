@@ -114,6 +114,10 @@ if (BUILD_JULIA_BINDINGS)
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_output_processing.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_output_processing_impl.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_param_defn.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_type_doc.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_type_doc_impl.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param_impl.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/strip_type.hpp)
   target_link_libraries(generate_jl_${name} mlpack ${MLPACK_LIBRARIES})
   set_target_properties(generate_jl_${name} PROPERTIES

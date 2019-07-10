@@ -20,6 +20,7 @@
 #include "print_input_processing.hpp"
 #include "print_output_processing.hpp"
 #include "print_doc.hpp"
+#include "default_param.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -85,7 +86,7 @@ class JuliaOption
     CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
         &GetPrintableParam<T>;
 
-    // These are used by the pyx generator.
+    // These are used by the jl generator.
     CLI::GetSingleton().functionMap[data.tname]["PrintParamDefn"] =
         &PrintParamDefn<T>;
     CLI::GetSingleton().functionMap[data.tname]["PrintInputParam"] =
@@ -95,6 +96,10 @@ class JuliaOption
     CLI::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
         &PrintInputProcessing<T>;
     CLI::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
+
+    // This is needed for the Markdown binding output.
+    CLI::GetSingleton().functionMap[data.tname]["DefaultParam"] =
+        &DefaultParam<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
     // import more than one .so that uses CLI, so we have to keep the options
