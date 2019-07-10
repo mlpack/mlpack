@@ -314,5 +314,7 @@ bool Load(const std::vector<std::string>& files,
 #include "load_model_impl.hpp"
 // Include implementation of Load() for vectors.
 #include "load_vec_impl.hpp"
+// Include implementation of Load() for images.
+#include "load_image_impl.hpp"
 
 #endif

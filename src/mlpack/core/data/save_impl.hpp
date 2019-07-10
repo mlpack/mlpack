@@ -352,7 +352,6 @@ bool Save(const std::string& filename,
       status = stbi_write_jpg(filename.c_str(), tempWidth, tempHeight,
           tempChannels, image, tempQuality);
     }
-    free(image);
   }
   catch (std::exception& e)
   {

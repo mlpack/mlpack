@@ -10,6 +10,7 @@ set(SOURCES
   load_csv.hpp
   load_csv.cpp
   load.hpp
+  load_image_impl.hpp
   load_model_impl.hpp
   load_vec_impl.hpp
   load_impl.hpp
