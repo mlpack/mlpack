@@ -39,6 +39,10 @@ inline std::string GetBindingName(const std::string& bindingName)
   {
     return python::GetBindingName(bindingName);
   }
+  else if (BindingInfo::Language() == "julia")
+  {
+    return julia::GetBindingName(bindingName);
+  }
   else
   {
     throw std::invalid_argument("PrintValue(): unknown "
@@ -58,6 +62,10 @@ inline std::string PrintLanguage(const std::string& language)
   else if (language == "python")
   {
     return "Python";
+  }
+  else if (language == "julia")
+  {
+    return "Julia";
   }
   else
   {
@@ -79,6 +87,10 @@ inline std::string PrintImport(const std::string& bindingName)
   {
     return python::PrintImport(bindingName);
   }
+  else if (BindingInfo::Language() == "julia")
+  {
+    return julia::PrintImport(bindingName);
+  }
   else
   {
     throw std::invalid_argument("PrintImport(): unknown "
@@ -98,6 +110,10 @@ inline std::string PrintOutputOptionInfo()
   else if (BindingInfo::Language() == "python")
   {
     return python::PrintOutputOptionInfo();
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    return julia::PrintOutputOptionInfo();
   }
   else
   {
@@ -318,6 +334,10 @@ inline std::string PrintValue(const T& value, bool quotes)
   {
     result = python::PrintValue(value, quotes);
   }
+  else if (BindingInfo::Language() == "julia")
+  {
+    result = julia::PrintValue(value, quotes);
+  }
   else
   {
     throw std::invalid_argument("PrintValue(): unknown "
@@ -353,6 +373,10 @@ inline std::string PrintDefault(const std::string& paramName)
     {
       oss << python::PrintDefault(paramName);
     }
+    else if (BindingInfo::Language() == "julia")
+    {
+      oss << julia::PrintDefault(paramName);
+    }
     else
     {
       throw std::invalid_argument("PrintDefault: unknown "
@@ -377,6 +401,10 @@ inline std::string PrintDataset(const std::string& dataset)
   {
     result = python::PrintDataset(dataset);
   }
+  else if (BindingInfo::Language() == "julia")
+  {
+    result = julia::PrintDataset(dataset);
+  }
   else
   {
     throw std::invalid_argument("PrintDataset(): unknown "
@@ -399,6 +427,10 @@ inline std::string PrintModel(const std::string& model)
   else if (BindingInfo::Language() == "python")
   {
     result = python::PrintModel(model);
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    result = julia::PrintModel(model);
   }
   else
   {
@@ -426,6 +458,11 @@ std::string ProgramCall(const std::string& programName, Args... args)
   {
     s += "python\n";
     s += python::ProgramCall(programName, args...);
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    s += "julia\n";
+    s += julia::ProgramCall(programName, args...);
   }
   else
   {
@@ -458,6 +495,14 @@ inline std::string ProgramCall(const std::string& programName)
       s += ">>> " + import + "\n";
     s += python::ProgramCall(programName);
   }
+  else if (BindingInfo::Language() == "julia")
+  {
+    s += "julia\n";
+    std::string import = PrintImport(GetBindingName(programName));
+    if (import.size() > 0)
+      s += ">>> " + import + "\n";
+    s += julia::ProgramCall(programName);
+  }
   else
   {
     throw std::invalid_argument("ProgramCall(): unknown "
@@ -486,6 +531,10 @@ inline std::string ParamString(const std::string& paramName)
   else if (BindingInfo::Language() == "python")
   {
     s = python::ParamString(paramName);
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    s = julia::ParamString(paramName);
   }
   else
   {
@@ -525,6 +574,10 @@ inline bool IgnoreCheck(const T& t)
   else if (BindingInfo::Language() == "python")
   {
     return python::IgnoreCheck(t);
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    return julia::IgnoreCheck(t);
   }
   else
   {

@@ -20,6 +20,32 @@ namespace bindings {
 namespace julia {
 
 /**
+ * Given the name of a binding, print its Julia name.
+ */
+inline std::string GetBindingName(const std::string& bindingName)
+{
+  return bindingName + "()";
+}
+
+/**
+ * Print any imports for CLI (there are none, so this returns an empty string).
+ */
+inline std::string PrintImport(const std::string& bindingName)
+{
+  return "using mlpack: " + bindingName;
+}
+
+/**
+ * Print any special information about output options.
+ */
+inline std::string PrintOutputOptionInfo()
+{
+  return "Results are returned as a tuple, and can be unpacked directly into "
+      "return values or stored directly as a tuple; undesired results can be "
+      "ignored with the _ keyword.";
+}
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>
@@ -46,6 +72,23 @@ inline std::string PrintValue(const bool& value, bool quotes)
     return "true";
   else
     return "false";
+}
+
+/**
+ * Given a parameter name, print its corresponding default value.
+ */
+inline std::string PrintDefault(const std::string& paramName)
+{
+  if (CLI::Parameters().count(paramName) == 0)
+    throw std::invalid_argument("unknown parameter " + paramName + "!");
+
+  const util::ParamData& d = CLI::Parameters()[paramName];
+
+  std::string defaultValue;
+  CLI::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL, (void*)
+      &defaultValue);
+
+  return defaultValue;
 }
 
 // Recursion base case.

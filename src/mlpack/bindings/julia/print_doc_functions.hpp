@@ -20,6 +20,27 @@ namespace bindings {
 namespace julia {
 
 /**
+ * Given the name of a binding, print its Julia name (this just returns the
+ * binding name).
+ */
+inline std::string GetBindingName(const std::string& bindingName);
+
+/**
+ * Print any imports for Julia.
+ */
+inline std::string PrintImport(const std::string& bindingName);
+
+/**
+ * Print any special information about output options.
+ */
+inline std::string PrintOutputOptionInfo();
+
+/**
+ * Print documentation for each of the types.
+ */
+inline std::string PrintTypeDocs();
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>
@@ -28,6 +49,26 @@ inline std::string PrintValue(const T& value, bool quotes);
 // Special overload for booleans.
 template<>
 inline std::string PrintValue(const bool& value, bool quotes);
+
+/**
+ * Given a parameter name, print its corresponding default value.
+ */
+inline std::string PrintDefault(const std::string& paramName);
+
+/**
+ * Print a dataset type parameter.
+ */
+inline std::string PrintDataset(const std::string& dataset);
+
+/**
+ * Print a model type parameter.
+ */
+inline std::string PrintModel(const std::string& model);
+
+/**
+ * Print the type of a parameter that a user would specify from Julia.
+ */
+inline std::string PrintType(const util::ParamData& param);
 
 // Recursion base case.
 inline std::string PrintInputOptions();
@@ -56,17 +97,6 @@ std::string PrintOutputOptions(const std::string& paramName,
  */
 template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args);
-
-/**
- * Given the name of a model, print it.  Here we do not need to modify anything.
- */
-inline std::string PrintModel(const std::string& modelName);
-
-/**
- * Given the name of a matrix, print it.  Here we do not need to modify
- * anything.
- */
-inline std::string PrintDataset(const std::string& datasetName);
 
 /**
  * Given the parameter name, determine what it would actually be when passed to
