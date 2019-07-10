@@ -113,20 +113,21 @@ class DiscreteRLTask
 
   double Evaluate(Genome<HardSigmoidFunction>& genome)
   {
-    // Set the initial state.
-    typename EnvironmentType::State state = environment.InitialSample();
-    arma::vec output = genome.Evaluate(state.Data());
-
-    double fitness = 0;
     double total = 0;
     for (size_t i = 0; i < 5; i++)
     {
+      double fitness = 0;
+      // Set the initial state.
+      typename EnvironmentType::State state = environment.InitialSample();
+      arma::vec output = genome.Evaluate(state.Data());
       while (!environment.IsTerminal(state))
       {
         // Choose the action to perform.
         const int size = EnvironmentType::Action::size;
+
         output = arma::clamp(output, 0, size - 1);
         int actionInt = std::round(output[0]);
+        std::cout << actionInt << std::endl;
         typename EnvironmentType::Action action = static_cast<typename
             EnvironmentType::Action>(actionInt);
 
