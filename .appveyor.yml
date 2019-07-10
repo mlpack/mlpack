@@ -145,7 +145,7 @@ build_script:
       C:\projects\mlpack\dist\win-installer\staging -recurse
   - ps: >
       cp C:\projects\mlpack\src\mlpack\tests\data\german.csv
-      C:\projects\mlpack\dist\win-installer\staging\sample-ml-app\sample-ml-app\data\
+      C:\projects\mlpack\dist\win-installer\staging\examples\sample-ml-app\sample-ml-app\data\
   
   # Checking current gitversion or mlpack version.
   - ps: >
