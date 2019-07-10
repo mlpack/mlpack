@@ -57,7 +57,7 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
 {
   // Initialize accumMCAlpha only if Monte Carlo estimations are available.
   if (monteCarlo && kernelIsGaussian)
-    accumMCAlpha = std::move(arma::vec(querySet.n_cols, arma::fill::zeros));
+    accumMCAlpha = arma::vec(querySet.n_cols, arma::fill::zeros);
 }
 
 //! The base case.
@@ -141,10 +141,6 @@ Score(const size_t queryIndex, TreeType& referenceNode)
            referenceNode.NumDescendants() >= mcAccessCoef * initialSampleSize &&
            kernelIsGaussian)
   {
-    // Calculate reference node depth.
-    if (referenceStat.Depth() == 0)
-      referenceStat.Depth() = CalculateDepth(referenceNode);
-
     // Monte Carlo probabilistic estimation.
     // Calculate alpha.
     const double depthAlpha = CalculateAlpha(referenceNode.Stat().Depth());
@@ -304,10 +300,6 @@ Score(TreeType& queryNode, TreeType& referenceNode)
            referenceNode.NumDescendants() >= mcAccessCoef * initialSampleSize &&
            kernelIsGaussian)
   {
-    // Calculate reference node depth.
-    if (referenceStat.Depth() == 0)
-      referenceStat.Depth() = CalculateDepth(referenceNode);
-
     // Monte Carlo probabilistic estimation.
     // Calculate alpha.
     const double depthAlpha = CalculateAlpha(referenceNode.Stat().Depth());

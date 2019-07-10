@@ -25,12 +25,13 @@ class KDEStat
 {
  public:
   //! Initialize the statistic.
-  KDEStat() : validCentroid(false), depth(0), accumAlpha(0) { }
+  KDEStat() : validCentroid(false), depth(0), mcAlpha(0), accumAlpha(0) { }
 
   //! Initialization for a fully initialized node.
   template<typename TreeType>
   KDEStat(TreeType& node) :
       depth(0),
+      mcAlpha(0),
       accumAlpha(0)
   {
     // Calculate centroid if necessary.
@@ -42,6 +43,14 @@ class KDEStat
     else
     {
       validCentroid = false;
+    }
+
+    // Calculate depth of the node.
+    const TreeType* currentNode = &node;
+    while (currentNode != NULL)
+    {
+      ++depth;
+      currentNode = currentNode->Parent();
     }
   }
 
@@ -56,9 +65,6 @@ class KDEStat
 
   //! Get depth of the node.
   inline size_t Depth() const { return depth; }
-
-  //! Modify depth of the node.
-  inline size_t& Depth() { return depth; }
 
   //! Get accumulated Monte Carlo alpha of the node.
   inline double AccumAlpha() const { return accumAlpha; }
@@ -105,7 +111,10 @@ class KDEStat
   //! Depth of the current node.
   size_t depth;
 
-  //! Accumulated Monte Carlo alpha in the current node.
+  //! Monte Carlo alpha for this node.
+  double mcAlpha;
+
+  //! Accumulated not used Monte Carlo alpha in the current node.
   double accumAlpha;
 };
 
