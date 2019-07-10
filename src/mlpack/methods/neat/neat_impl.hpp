@@ -187,8 +187,11 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Speciate(bool init)
   {
     for (size_t j = 0; j < genomeList[i].connectionGeneList.size(); j++)
     {
-      size_t innovID = genomeList[i].connectionGeneList[j].InnovationID();
-      data(innovID, i) = genomeList[i].connectionGeneList[j].Weight();
+      if (genomeList[i].connectionGeneList[j].Enabled())
+      {
+        size_t innovID = genomeList[i].connectionGeneList[j].InnovationID();
+        data(innovID, i) = genomeList[i].connectionGeneList[j].Weight();
+      }
     }
   }
 
@@ -281,7 +284,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
     // This ensures that the best genome from every species will be saved.
     if (numElite[i] == 0)
       numElite[i] = 1;
-    if (numElite[i] > speciesList[i].size())
+    else if (numElite[i] > speciesList[i].size())
       numElite[i] = speciesList[i].size();
   }
 
