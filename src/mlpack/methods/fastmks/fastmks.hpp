@@ -105,6 +105,37 @@ class FastMKS
           const bool naive = false);
 
   /**
+   * Create the FastMKS object with the given reference set (this is the set
+   * that is searched), taking ownership of the reference set.  Optionally,
+   * specify whether or not single-tree search or naive (brute-force) search
+   * should be used.
+   *
+   * @param referenceSet Set of reference data.
+   * @param singleMode Whether or not to run single-tree search.
+   * @param naive Whether or not to run brute-force (naive) search.
+   */
+  FastMKS(MatType&& referenceSet,
+          const bool singleMode = false,
+          const bool naive = false);
+
+  /**
+   * Create the FastMKS object using the reference set (this is the set that is
+   * searched) with an initialized kernel, taking ownership of the reference
+   * set.  This is useful for when the kernel stores state.  Optionally, specify
+   * whether or not single-tree search or naive (brute-force) search should be
+   * used.
+   *
+   * @param referenceSet Reference set of data for FastMKS.
+   * @param kernel Initialized kernel.
+   * @param single Whether or not to run single-tree search.
+   * @param naive Whether or not to run brute-force (naive) search.
+   */
+  FastMKS(MatType&& referenceSet,
+          KernelType& kernel,
+          const bool singleMode = false,
+          const bool naive = false);
+
+  /**
    * Create the FastMKS object with an already-initialized tree built on the
    * reference points.  Be sure that the tree is built with the metric type
    * IPMetric<KernelType>.  Optionally, whether or not to run single-tree search
@@ -153,6 +184,25 @@ class FastMKS
    * @param kernel Kernel to use for search.
    */
   void Train(const MatType& referenceSet, KernelType& kernel);
+
+  /**
+   * "Train" the FastMKS model on the given reference set (this will just build
+   * a tree, if the current search mode is not naive mode).  This takes
+   * ownership of the reference set.
+   *
+   * @param referenceSet Set of reference points.
+   */
+  void Train(MatType&& referenceSet);
+
+  /**
+   * "Train" the FastMKS model on the given reference set and use the given
+   * kernel.  This will just build a tree and replace the metric, if the current
+   * search mode is not naive mode.  This takes ownership of the reference set.
+   *
+   * @param referenceSet Set of reference points.
+   * @param kernel Kernel to use for search.
+   */
+  void Train(MatType&& referenceSet, KernelType& kernel);
 
   /**
    * Train the FastMKS model on the given reference tree.  This takes ownership

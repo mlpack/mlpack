@@ -47,7 +47,14 @@ PROGRAM_INFO("Random forests",
     " parameter specifies the minimum number of training points that must fall "
     "into each leaf for it to be split.  The " +
     PRINT_PARAM_STRING("num_trees") +
-    " controls the number of trees in the random forest. If " +
+    " controls the number of trees in the random forest.  The " +
+    PRINT_PARAM_STRING("minimum_gain_split") + " parameter controls the minimum"
+    " required gain for a decision tree node to split.  Larger values will "
+    "force higher-confidence splits.  The " +
+    PRINT_PARAM_STRING("maximum_depth") + " parameter specifies "
+    "the maximum depth of the tree.  The " +
+    PRINT_PARAM_STRING("subspace_dim") + " parameter is used to control the "
+    "number of random dimensions chosen for an individual node's split.  If " +
     PRINT_PARAM_STRING("print_training_accuracy") + " is specified, the "
     "calculated accuracy on the training set will be printed."
     "\n\n"
@@ -99,12 +106,21 @@ PARAM_FLAG("print_training_accuracy", "If set, then the accuracy of the model "
 
 PARAM_INT_IN("num_trees", "Number of trees in the random forest.", "N", 10);
 PARAM_INT_IN("minimum_leaf_size", "Minimum number of points in each leaf "
-    "node.", "n", 20);
-
+    "node.", "n", 1);
+PARAM_INT_IN("maximum_depth", "Maximum depth of the tree (0 means no limit).",
+    "D", 0);
 PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each "
     "point in the test set.", "P");
 PARAM_UROW_OUT("predictions", "Predicted classes for each point in the test "
     "set.", "p");
+
+PARAM_DOUBLE_IN("minimum_gain_split", "Minimum gain needed to make a split "
+    "when building a tree.", "g", 0);
+PARAM_INT_IN("subspace_dim", "Dimensionality of random subspace to use for "
+    "each split.  '0' will autoselect the square root of data dimensionality.",
+    "d", 0);
+
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 /**
  * This is the class that we will serialize.  It is a pretty simple wrapper
@@ -135,21 +151,20 @@ PARAM_MODEL_OUT(RandomForestModel, "output_model", "Model to save trained "
 
 static void mlpackMain()
 {
+  // Initialize random seed if needed.
+  if (CLI::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  else
+    math::RandomSeed((size_t) std::time(NULL));
+
   // Check for incompatible input parameters.
   RequireOnlyOnePassed({ "training", "input_model" }, true);
 
   ReportIgnoredParam({{ "training", false }}, "print_training_accuracy");
-
-  if (CLI::HasParam("test"))
-  {
-    RequireAtLeastOnePassed({ "probabilities", "predictions" }, "no test output"
-        " will be saved");
-  }
-
   ReportIgnoredParam({{ "test", false }}, "test_labels");
 
   RequireAtLeastOnePassed({ "test", "output_model", "print_training_accuracy" },
-      "the trained forest model will not be used or saved");
+      false, "the trained forest model will not be used or saved");
 
   if (CLI::HasParam("training"))
   {
@@ -165,6 +180,13 @@ static void mlpackMain()
 
   RequireParamValue<int>("minimum_leaf_size", [](int x) { return x > 0; }, true,
       "minimum leaf size must be greater than 0");
+  RequireParamValue<int>("maximum_depth", [](int x) { return x >= 0; }, true,
+      "maximum depth must not be negative");
+  RequireParamValue<int>("subspace_dim", [](int x) { return x >= 0; }, true,
+      "subspace dimensionality must be nonnegative");
+  RequireParamValue<double>("minimum_gain_split",
+      [](double x) { return x >= 0.0; }, true,
+      "minimum gain for splitting must be nonnegative");
 
   ReportIgnoredParam({{ "training", false }}, "num_trees");
   ReportIgnoredParam({{ "training", false }}, "minimum_leaf_size");
@@ -172,15 +194,28 @@ static void mlpackMain()
   RandomForestModel* rfModel;
   if (CLI::HasParam("training"))
   {
+    Timer::Start("rf_training");
     rfModel = new RandomForestModel();
 
     // Train the model on the given input data.
     arma::mat data = std::move(CLI::GetParam<arma::mat>("training"));
     arma::Row<size_t> labels =
         std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+
+    // Make sure the subspace dimensionality is valid.
+    RequireParamValue<int>("subspace_dim",
+        [data](int x) { return (size_t) x <= data.n_rows; }, true, "subspace "
+        "dimensionality must not be greater than data dimensionality");
+
     const size_t numTrees = (size_t) CLI::GetParam<int>("num_trees");
     const size_t minimumLeafSize =
         (size_t) CLI::GetParam<int>("minimum_leaf_size");
+    const size_t maxDepth = (size_t) CLI::GetParam<int>("maximum_depth");
+    const double minimumGainSplit = CLI::GetParam<double>("minimum_gain_split");
+    const size_t randomDims = (CLI::GetParam<int>("subspace_dim") == 0) ?
+        (size_t) std::sqrt(data.n_rows) :
+        (size_t) CLI::GetParam<int>("subspace_dim");
+    MultipleRandomDimensionSelect mrds(randomDims);
 
     Log::Info << "Training random forest with " << numTrees << " trees..."
         << endl;
@@ -188,11 +223,14 @@ static void mlpackMain()
     const size_t numClasses = arma::max(labels) + 1;
 
     // Train the model.
-    rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize);
+    rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize,
+        minimumGainSplit, maxDepth, mrds);
+    Timer::Stop("rf_training");
 
     // Did we want training accuracy?
     if (CLI::HasParam("print_training_accuracy"))
     {
+      Timer::Start("rf_prediction");
       arma::Row<size_t> predictions;
       rfModel->rf.Classify(data, predictions);
 
@@ -201,6 +239,7 @@ static void mlpackMain()
       Log::Info << correct << " of " << labels.n_elem << " correct on training"
           << " set (" << (double(correct) / double(labels.n_elem) * 100) << ")."
           << endl;
+      Timer::Stop("rf_prediction");
     }
   }
   else
@@ -212,6 +251,7 @@ static void mlpackMain()
   if (CLI::HasParam("test"))
   {
     arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
+    Timer::Start("rf_prediction");
 
     // Get predictions and probabilities.
     arma::Row<size_t> predictions;
@@ -229,6 +269,7 @@ static void mlpackMain()
       Log::Info << correct << " of " << testLabels.n_elem << " correct on test"
           << " set (" << (double(correct) / double(testLabels.n_elem) * 100)
           << ")." << endl;
+      Timer::Stop("rf_prediction");
     }
 
     // Save the outputs.

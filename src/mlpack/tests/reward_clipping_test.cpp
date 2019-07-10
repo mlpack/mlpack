@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(ClippedRewardTest)
 
   RewardClipping<Pendulum>::State state = rewardClipping.InitialSample();
   RewardClipping<Pendulum>::Action action;
-  action.action[0] = mlpack::math::Random(-1.0, 1.0);
+  action.action = mlpack::math::Random(-1.0, 1.0);
   double reward = rewardClipping.Sample(state, action);
 
   BOOST_REQUIRE(reward <= 2.0);
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(RewardClippedAcrobotWithDQN)
   model.Add<Linear<>>(32, 3);
 
   // Set up the policy and replay method.
-  GreedyPolicy<RewardClipping<Acrobot>> policy(1.0, 1000, 0.1);
+  GreedyPolicy<RewardClipping<Acrobot>> policy(1.0, 1000, 0.1, 0.99);
   RandomReplay<RewardClipping<Acrobot>> replayMethod(20, 10000);
 
   // Set up Acrobot task and reward clipping wrapper

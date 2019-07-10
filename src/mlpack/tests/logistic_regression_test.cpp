@@ -962,4 +962,44 @@ BOOST_AUTO_TEST_CASE(ClassifyProbabilitiesTest)
   }
 }
 
+/**
+ * Test that LogisticRegression::Train() returns finite final objective
+ * value.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionTrainReturnObjective)
+{
+  // Very simple fake dataset.
+  arma::mat data("1 2 3;"
+                 "1 2 3");
+  arma::Row<size_t> responses("1 1 0");
+
+  // Check with L_BFGS optimizer.
+  LogisticRegression<> lr1(data.n_rows, 0.5);
+  double objVal = lr1.Train<ens::L_BFGS>(data, responses);
+
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+
+  // Check with a pre-defined L_BFGS optimizer.
+  LogisticRegression<> lr2(data.n_rows, 0.5);
+  ens::L_BFGS lbfgsOpt;
+  objVal = lr2.Train(data, responses, lbfgsOpt);
+
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+
+  // Check with SGD optimizer.
+  LogisticRegression<> lr3(data.n_rows, 0.5);
+  objVal = lr3.Train<ens::StandardSGD>(data, responses);
+
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+
+  // Check with pre-defined SGD optimizer.
+  LogisticRegression<> lr4(data.n_rows, 0.0005);
+  ens::StandardSGD sgdOpt;
+  sgdOpt.StepSize() = 0.15;
+  sgdOpt.Tolerance() = 1e-75;
+  objVal = lr4.Train(data, responses, sgdOpt);
+
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

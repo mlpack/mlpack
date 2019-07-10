@@ -17,7 +17,7 @@ Installing the mlpack bindings for Python is straightforward.  It's easy to use
 conda or pip to do this:
 
 @code{.sh}
-pip install mlpack/mlpack3
+pip install mlpack3
 @endcode
 
 @code{.sh}
@@ -31,9 +31,9 @@ build and install mlpack.  You can copy-paste the commands into your shell.
 @code{.sh}
 sudo apt-get install libboost-all-dev g++ cmake libarmadillo-dev python-pip wget
 sudo pip install cython setuptools distutils numpy pandas
-wget https://www.mlpack.org/files/mlpack-3.0.4.tar.gz
-tar -xvzpf mlpack-3.0.4.tar.gz
-mkdir -p mlpack-3.0.4/build/ && cd mlpack-3.0.4/build/
+wget https://www.mlpack.org/files/mlpack-3.1.1.tar.gz
+tar -xvzpf mlpack-3.1.1.tar.gz
+mkdir -p mlpack-3.1.1/build/ && cd mlpack-3.1.1/build/
 cmake ../ && make -j4 && sudo make install
 @endcode
 
@@ -99,7 +99,8 @@ output = mlpack.random_forest(input_model=random_forest,
 
 # Now print the accuracy.  The 'probabilities' output could also be used
 # to generate an ROC curve.
-correct = np.sum(output['predictions'] == test_labels)
+correct = np.sum(
+    output['predictions'] == np.reshape(test_labels, (test_labels.shape[0],)))
 print(str(correct) + ' correct out of ' + str(len(test_labels)) + ' (' +
     str(100 * float(correct) / float(len(test_labels))) + '%).')
 @endcode

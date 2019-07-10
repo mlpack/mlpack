@@ -51,6 +51,7 @@ add_executable(mlpack_test
   lars_test.cpp
   lin_alg_test.cpp
   linear_regression_test.cpp
+  linear_svm_test.cpp
   lmnn_test.cpp
   load_save_test.cpp
   local_coordinate_coding_test.cpp
@@ -98,6 +99,7 @@ add_executable(mlpack_test
   sparse_coding_test.cpp
   spill_tree_test.cpp
   split_data_test.cpp
+  sumtree_test.cpp
   svd_batch_test.cpp
   svd_incremental_test.cpp
   svdplusplus_test.cpp
@@ -120,6 +122,10 @@ add_executable(mlpack_test
   main_tests/det_test.cpp
   main_tests/decision_tree_test.cpp
   main_tests/decision_stump_test.cpp
+  main_tests/gmm_generate_test.cpp
+  main_tests/gmm_probability_test.cpp
+  main_tests/gmm_train_test.cpp
+  main_tests/fastmks_test.cpp
   main_tests/kde_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/logistic_regression_test.cpp
@@ -179,11 +185,12 @@ add_custom_command(TARGET mlpack_test
 
 # The list of long running parallel tests
 set(parallel_tests
-  "AsyncLearningTest"
+  "AsyncLearningTest;"
   "SVDIncrementalTest;SVDBatchTest;"
   "LocalCoordinateCodingTest;FeedForwardNetworkTest;SparseAutoencoderTest;"
   "GMMTest;CFTest;ConvolutionalNetworkTest;HMMTest;LARSTest;"
-  "LogisticRegressionTest")
+  "LogisticRegressionTest;GmmTrainMainTest;"
+  "LinearSVMTest")
 
 # Add tests to the testing framework
 # Get the list of sources from the test target

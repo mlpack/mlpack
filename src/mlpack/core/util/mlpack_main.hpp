@@ -224,6 +224,9 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 #define PRINT_CALL mlpack::bindings::markdown::ProgramCall
 #define BINDING_IGNORE_CHECK mlpack::bindings::markdown::IgnoreCheck
 
+// This doesn't actually matter for this binding type.
+#define BINDING_MATRIX_TRANSPOSED true
+
 namespace mlpack {
 namespace util {
 
