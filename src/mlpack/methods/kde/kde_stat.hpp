@@ -25,12 +25,16 @@ class KDEStat
 {
  public:
   //! Initialize the statistic.
-  KDEStat() : validCentroid(false), depth(0), mcAlpha(0), accumAlpha(0) { }
+  KDEStat() :
+      validCentroid(false),
+      mcBeta(0),
+      mcAlpha(0),
+      accumAlpha(0) { }
 
   //! Initialization for a fully initialized node.
   template<typename TreeType>
   KDEStat(TreeType& node) :
-      depth(0),
+      mcBeta(0),
       mcAlpha(0),
       accumAlpha(0)
   {
@@ -44,14 +48,6 @@ class KDEStat
     {
       validCentroid = false;
     }
-
-    // Calculate depth of the node.
-    const TreeType* currentNode = &node;
-    while (currentNode != NULL)
-    {
-      ++depth;
-      currentNode = currentNode->Parent();
-    }
   }
 
   //! Get the centroid of the node.
@@ -63,14 +59,23 @@ class KDEStat
                            "value");
   }
 
-  //! Get depth of the node.
-  inline size_t Depth() const { return depth; }
+  //! Get accumulated Monte Carlo alpha of the node.
+  inline double MCBeta() const { return mcBeta; }
+
+  //! Modify accumulated Monte Carlo alpha of the node.
+  inline double& MCBeta() { return mcBeta; }
 
   //! Get accumulated Monte Carlo alpha of the node.
   inline double AccumAlpha() const { return accumAlpha; }
 
   //! Modify accumulated Monte Carlo alpha of the node.
   inline double& AccumAlpha() { return accumAlpha; }
+
+  //! Get Monte Carlo alpha of the node.
+  inline double MCAlpha() const { return mcAlpha; }
+
+  //! Modify Monte Carlo alpha of the node.
+  inline double& MCAlpha() { return mcAlpha; }
 
   //! Modify the centroid of the node.
   void SetCentroid(arma::vec newCentroid)
@@ -90,14 +95,18 @@ class KDEStat
     ar & BOOST_SERIALIZATION_NVP(validCentroid);
 
     // Backward compatibility: Old versions of KDEStat did not need to handle
-    // depth.
+    // alpha values.
     if (version > 0)
     {
-      ar & BOOST_SERIALIZATION_NVP(depth);
+      ar & BOOST_SERIALIZATION_NVP(mcBeta);
+      ar & BOOST_SERIALIZATION_NVP(mcAlpha);
+      ar & BOOST_SERIALIZATION_NVP(accumAlpha);
     }
     else if (Archive::is_loading::value)
     {
-      depth = 0;
+      mcBeta = -1;
+      mcAlpha = -1;
+      accumAlpha = -1;
     }
   }
 
@@ -108,8 +117,8 @@ class KDEStat
   //! Whether the centroid is updated or is junk.
   bool validCentroid;
 
-  //! Depth of the current node.
-  size_t depth;
+  //! Beta value for which mcAlpha is valid.
+  double mcBeta;
 
   //! Monte Carlo alpha for this node.
   double mcAlpha;

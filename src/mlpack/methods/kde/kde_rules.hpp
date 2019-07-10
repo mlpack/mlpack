@@ -102,8 +102,8 @@ class KDERules
   double EvaluateKernel(const arma::vec& query,
                         const arma::vec& reference) const;
 
-  //! Calculate alpha for some depth.
-  double CalculateAlpha(const size_t depth) const;
+  //! Calculate depthAlpha for some node and its parents in a recursive way.
+  double CalculateAlpha(TreeType* node);
 
   //! The reference set.
   const arma::mat& referenceSet;

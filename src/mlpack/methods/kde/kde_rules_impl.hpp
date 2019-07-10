@@ -93,10 +93,16 @@ inline double KDERules<MetricType, KernelType, TreeType>::
 Score(const size_t queryIndex, TreeType& referenceNode)
 {
   kde::KDEStat& referenceStat = referenceNode.Stat();
-  double score, maxKernel, minKernel, bound;
+  double score, maxKernel, minKernel, bound, depthAlpha;
   const arma::vec& queryPoint = querySet.unsafe_col(queryIndex);
   const double minDistance = referenceNode.MinDistance(queryPoint);
   bool newCalculations = true;
+
+  // Calculate alpha if Monte Carlo is available.
+  if (monteCarlo && kernelIsGaussian)
+    depthAlpha = CalculateAlpha(&referenceNode);
+  else
+    depthAlpha = -1;
 
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
       lastQueryIndex == queryIndex &&
@@ -135,15 +141,13 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 
     // Store not used alpha for Monte Carlo.
     if (kernelIsGaussian && monteCarlo)
-      accumMCAlpha(queryIndex) += CalculateAlpha(referenceNode.Stat().Depth());
+      accumMCAlpha(queryIndex) += depthAlpha;
   }
   else if (monteCarlo &&
            referenceNode.NumDescendants() >= mcAccessCoef * initialSampleSize &&
            kernelIsGaussian)
   {
     // Monte Carlo probabilistic estimation.
-    // Calculate alpha.
-    const double depthAlpha = CalculateAlpha(referenceNode.Stat().Depth());
     const double alpha = depthAlpha + accumMCAlpha(queryIndex);
 
     const boost::math::normal normalDist;
@@ -200,8 +204,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
       if (referenceNode.IsLeaf())
       {
         // Reclaim not used alpha since the node will be exactly computed.
-        accumMCAlpha(queryIndex) +=
-            CalculateAlpha(referenceNode.Stat().Depth());
+        accumMCAlpha(queryIndex) += depthAlpha;
       }
       // Recurse.
       score = minDistance;
@@ -214,7 +217,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     // If node is going to be exactly computed, reclaim not used alpha.
     if (kernelIsGaussian && monteCarlo && referenceNode.IsLeaf())
     {
-      accumMCAlpha(queryIndex) += CalculateAlpha(referenceNode.Stat().Depth());
+      accumMCAlpha(queryIndex) += depthAlpha;
     }
   }
 
@@ -241,10 +244,16 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 {
   kde::KDEStat& referenceStat = referenceNode.Stat();
   kde::KDEStat& queryStat = queryNode.Stat();
-  double score, maxKernel, minKernel, bound;
+  double score, maxKernel, minKernel, bound, depthAlpha;
   const double minDistance = queryNode.MinDistance(referenceNode);
   // Calculations are not duplicated.
   bool newCalculations = true;
+
+  // Calculate alpha if Monte Carlo is available.
+  if (monteCarlo && kernelIsGaussian)
+    depthAlpha = CalculateAlpha(&referenceNode);
+  else
+    depthAlpha = -1;
 
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
       (traversalInfo.LastQueryNode() != NULL) &&
@@ -294,7 +303,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
     // Store not used alpha for Monte Carlo.
     if (kernelIsGaussian && monteCarlo)
-      queryStat.AccumAlpha() += CalculateAlpha(referenceNode.Stat().Depth());
+      queryStat.AccumAlpha() += depthAlpha;
   }
   else if (monteCarlo &&
            referenceNode.NumDescendants() >= mcAccessCoef * initialSampleSize &&
@@ -302,7 +311,6 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   {
     // Monte Carlo probabilistic estimation.
     // Calculate alpha.
-    const double depthAlpha = CalculateAlpha(referenceNode.Stat().Depth());
     double alpha = depthAlpha + queryStat.AccumAlpha();
     if (alpha > 1)
       alpha = 1;
@@ -372,7 +380,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     else
     {
       // Reclaim not used alpha for Monte Carlo.
-      queryStat.AccumAlpha() += CalculateAlpha(referenceNode.Stat().Depth());
+      queryStat.AccumAlpha() += depthAlpha;
       // Recurse.
       score = minDistance;
     }
@@ -383,7 +391,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
     // Reclaim not used alpha for Monte Carlo.
     if (kernelIsGaussian && monteCarlo)
-      queryStat.AccumAlpha() += CalculateAlpha(referenceNode.Stat().Depth());
+      queryStat.AccumAlpha() += depthAlpha;
   }
 
   ++scores;
@@ -421,10 +429,29 @@ EvaluateKernel(const arma::vec& query, const arma::vec& reference) const
 }
 
 template<typename MetricType, typename KernelType, typename TreeType>
-inline force_inline double KDERules<MetricType, KernelType, TreeType>::
-CalculateAlpha(const size_t depth) const
+double KDERules<MetricType, KernelType, TreeType>::
+CalculateAlpha(TreeType* node)
 {
-  return mcBeta / std::pow(2, depth + 1);
+  KDEStat& stat = node->Stat();
+  if (std::abs(stat.MCBeta() - mcBeta) > DBL_EPSILON)
+  {
+    TreeType* parent = node->Parent();
+    if (parent == NULL)
+    {
+      // Base case.
+      stat.MCAlpha() = mcBeta;
+    }
+    else
+    {
+      // Recurse.
+      stat.MCAlpha() = CalculateAlpha(parent) / parent->NumChildren();
+    }
+
+    // Set beta value for which this alpha is valid.
+    stat.MCBeta() = mcBeta;
+  }
+
+  return node->Stat().MCAlpha();
 }
 
 } // namespace kde
