@@ -23,25 +23,24 @@ using namespace mlpack;
 using namespace mlpack::svm;
 using namespace mlpack::util;
 
-PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
+PROGRAM_INFO("Linear SVM is an L2-regularized support vector machine",
     // Short description.
-    "An implementation of LinearSVM for multiclass classification. "
+    "An implementation of linear SVM for multiclass classification. "
     "Given labeled data, a model can be trained and saved for "
     "future use; or, a pre-trained model can be used to classify new points.",
     // Long description.
-    "An implementation of LinearSVM using either the "
-    "L-BFGS optimizer or ParallelSGD (stochastic gradient descent)."
-    "  This solves the classification problem."
+    "An implementation of linear SVMs that uses either L-BFGS or parallel SGD"
+    " (stochastic gradient descent) to train the model."
     "\n\n"
-    "This program allows loading a LinearSVM model (via the " +
+    "This program allows loading a linear SVM model (via the " +
     PRINT_PARAM_STRING("input_model") + " parameter) "
-    "or training a LinearSVM model given training data (specified "
+    "or training a linear SVM model given training data (specified "
     "with the " + PRINT_PARAM_STRING("training") + " parameter), or both "
     "those things at once.  In addition, this program allows classification on "
     "a test dataset (specified with the " + PRINT_PARAM_STRING("test") + " "
     "parameter) and the classification results may be saved with the " +
     PRINT_PARAM_STRING("predictions") + " output parameter."
-    " The trained LinearSVM model may be saved using the " +
+    " The trained linear SVM model may be saved using the " +
     PRINT_PARAM_STRING("output_model") + " output parameter."
     "\n\n"
     "The training data, if specified, may have class labels as its last "
@@ -50,7 +49,7 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     "\n\n"
     "When a model is being trained, there are many options.  L2 regularization "
     "(to prevent overfitting) can be specified with the " +
-    PRINT_PARAM_STRING("lambda") + " option, and The number of classes can be "
+    PRINT_PARAM_STRING("lambda") + " option, and the number of classes can be "
     "manually specified with the " + PRINT_PARAM_STRING("number_of_classes") +
     "and if an intercept term is not desired in the model, the " +
     PRINT_PARAM_STRING("no_intercept") + " parameter can be specified."
@@ -58,31 +57,26 @@ PROGRAM_INFO("LinearSVM is an L2-regularized support vector machine model",
     "be specified with the" + PRINT_PARAM_STRING("delta") + "option."
     "The optimizer used to train the model can be specified with the " +
     PRINT_PARAM_STRING("optimizer") + " parameter.  Available options are "
-    "'psgd' (stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  "
-    "There are also various parameters for the optimizer; the " +
+    "'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS"
+    " optimizer).  There are also various parameters for the optimizer; the " +
     PRINT_PARAM_STRING("max_iterations") + " parameter specifies the maximum "
     "number of allowed iterations, and the " +
     PRINT_PARAM_STRING("tolerance") + " parameter specifies the tolerance for "
-    "convergence.  For the ParallelSGD optimizer, the " +
+    "convergence.  For the parallel SGD optimizer, the " +
     PRINT_PARAM_STRING("step_size") + " parameter controls the step size taken "
-    "at each iteration by the optimizer. If the "
+    "at each iteration by the optimizer and the maximum number of epochs "
+    "(specified with " + PRINT_PARAM_STRING("epochs") + "). If the "
     "objective function for your data is oscillating between Inf and 0, the "
     "step size is probably too large.  There are more parameters for the "
     "optimizers, but the C++ interface must be used to access these."
-    "\n\n"
-    "We can only use ParallelSGD when OPENMP is specified.  "
-    "For ParallelSGD, an iteration refers to a single point. So to take"
-    " a single pass over the dataset with ParallelSGD, " +
-    PRINT_PARAM_STRING("max_iterations") +
-    " should be set to the number of points in the dataset."
     "\n\n"
     "Optionally, the model can be used to predict the labels for another "
     "matrix of data points, if " + PRINT_PARAM_STRING("test") + " is "
     "specified.  The " + PRINT_PARAM_STRING("test") + " parameter can be "
     "specified without the " + PRINT_PARAM_STRING("training") + " parameter, "
-    "so long as an existing LinearSVM model is given with the " +
+    "so long as an existing linear SVM model is given with the " +
     PRINT_PARAM_STRING("input_model") + " parameter.  The output predictions "
-    "from the LinearSVM model may be saved with the " +
+    "from the linear SVM model may be saved with the " +
     PRINT_PARAM_STRING("predictions") + " parameter." +
     "\n\n"
     "As an example, to train a LinaerSVM model on the data '" +
@@ -128,11 +122,14 @@ PARAM_DOUBLE_IN("tolerance", "Convergence tolerance for optimizer.", "e",
     1e-10);
 PARAM_INT_IN("max_iterations", "Maximum iterations for optimizer (0 indicates "
     "no limit).", "n", 10000);
-#ifdef HAS_OPENMP
-PARAM_DOUBLE_IN("step_size", "Step size for ParallelSGD optimizer.", "s", 0.01);
+PARAM_DOUBLE_IN("step_size", "Step size for parallel SGD optimizer.",
+    "s", 0.01);
 PARAM_FLAG("shuffle", "Don't shuffle the order in which data points are "
-    "visited for ParallelSGD.", "S");
-#endif
+    "visited for parallel SGD.", "S");
+PARAM_INT_IN("epochs", "Maximum number of full epochs over dataset for "
+    "psgd", "E", 50);
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "r", 0);
+
 // Model loading/saving.
 PARAM_MODEL_IN(LinearSVM<>, "input_model", "Existing model "
     "(parameters).", "m");
@@ -148,17 +145,20 @@ PARAM_MATRIX_OUT("score", "If test data is specified, this "
     "matrix is where the class score for the test set will be saved.",
     "p");
 
-size_t NumberOfClasses(const size_t numClasses,
-                       const arma::Row<size_t>& labels);
-
 static void mlpackMain()
 {
+  if (CLI::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  else
+    math::RandomSeed((size_t) std::time(NULL));
+
   // Collect command-line options.
   const double lambda = CLI::GetParam<double>("lambda");
   const double delta = CLI::GetParam<double>("delta");
-  const bool intercept = CLI::HasParam("no_intercept") ? true : false;
   const string optimizerType = CLI::GetParam<string>("optimizer");
   const double tolerance = CLI::GetParam<double>("tolerance");
+  const bool intercept = CLI::HasParam("no_intercept");
+  const size_t epochs = (size_t) CLI::GetParam<int>("epochs");
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
 
   // One of training and input_model must be specified.
@@ -181,10 +181,13 @@ static void mlpackMain()
   RequireParamValue<double>("tolerance", [](double x) { return x >= 0.0; },
       true, "tolerance must be positive or zero");
 
-  // Optimizer has to be L-BFGS or ParallelSGD.
-  #ifdef HAS_OPENMP
+  // Optimizer has to be L-BFGS or parallel SGD.
   RequireParamInSet<string>("optimizer", { "lbfgs", "psgd" },
       true, "unknown optimizer");
+
+  // Epochs needs to be non-negative.
+  RequireParamValue<int>("epochs", [](int x) { return x >= 0; }, true,
+      "maximum number of epochs must be non-negative");
 
   if (optimizerType != "psgd")
   {
@@ -198,13 +201,16 @@ static void mlpackMain()
       Log::Warn << PRINT_PARAM_STRING("shuffle") << " ignored because "
           << "optimizer type is not 'psgd'." << std::endl;
     }
+    if (CLI::HasParam("epochs"))
+    {
+      Log::Warn << PRINT_PARAM_STRING("epochs") << " ignored because "
+          << "optimizer type is not 'psgd'." << std::endl;
+    }
   }
 
   // Step Size must be positive.
   RequireParamValue<double>("step_size", [](double x) { return x >= 0.0; },
       true, "step size must be positive");
-
-  #endif
 
   // Lambda must be positive.
   RequireParamValue<double>("lambda", [](double x) { return x >= 0.0; },
@@ -217,13 +223,20 @@ static void mlpackMain()
 
   // Delta must be positive.
   RequireParamValue<double>("delta", [](double x) { return x >= 0.0; }, true,
-      "Margin of difference between correct class and other classes");
+      "delta must be non-negative");
+
+  // Delta must be positive.
+  RequireParamValue<int>("epochs", [](int x) { return x > 0; }, true,
+      "epochs must be non-negative");
 
   // These are the matrices we might use.
   arma::mat trainingSet;
   arma::Row<size_t> labels;
+  arma::Row<size_t> rawLabels;
   arma::mat testSet;
   arma::Row<size_t> predictions;
+  arma::Col<size_t> mappings;
+  size_t numClasses;
 
   // Load data matrix.
   if (CLI::HasParam("training"))
@@ -232,8 +245,8 @@ static void mlpackMain()
   // Check if the labels are in a separate file.
   if (CLI::HasParam("training") && CLI::HasParam("labels"))
   {
-    labels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
-    if (trainingSet.n_cols != labels.n_cols)
+    rawLabels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+    if (trainingSet.n_cols != rawLabels.n_cols)
     {
       Log::Fatal << "The labels must have the same number of points as the "
           << "training dataset." << endl;
@@ -249,21 +262,24 @@ static void mlpackMain()
     }
 
     // The initial predictors for y, Nx1.
-    labels = arma::conv_to<arma::Row<size_t>>::from(
+    rawLabels = arma::conv_to<arma::Row<size_t>>::from(
         trainingSet.row(trainingSet.n_rows - 1));
     trainingSet.shed_row(trainingSet.n_rows - 1);
   }
 
-  const size_t numClasses = NumberOfClasses(
-       (size_t) CLI::GetParam<int>("number_of_classes"), labels);
+  data::NormalizeLabels(rawLabels, labels, mappings);
 
   // Load the model, if necessary.
   LinearSVM<>* model;
   if (CLI::HasParam("input_model"))
+  {
     model = CLI::GetParam<LinearSVM<>*>("input_model");
+  }
   else
   {
-    model = new LinearSVM<>;
+    numClasses = CLI::GetParam<int>("number_of_classes") == 0 ?
+        arma::max(labels) + 1 : CLI::GetParam<int>("number_of_classes");
+    model = new LinearSVM<>(0, numClasses);
   }
 
   // Now, do the training.
@@ -286,39 +302,38 @@ static void mlpackMain()
       // This will train the model.
       model->Train(trainingSet, labels, numClasses, lbfgsOpt);
     }
-    // This optimizer is only compiled if OpenMP is used.
-    #ifdef HAS_OPENMP
     else if (optimizerType == "psgd")
     {
       const double step_size = CLI::GetParam<double>("step_size");
       const bool shuffle = !CLI::HasParam("shuffle");
+      const size_t maxIt = epochs * trainingSet.n_cols;
 
       ens::ConstantStep decayPolicy(step_size);
 
-      ens::ParallelSGD<ens::ConstantStep> psgdOpt(maxIterations, std::ceil(
+      #ifndef HAS_OPENMP
+      ens::ParallelSGD<ens::ConstantStep> psgdOpt(maxIt, trainingSet.n_cols,
+        tolerance, shuffle, decayPolicy);
+      #endif
+
+      // This optimizer is only compiled if OpenMP is used.
+      #ifdef HAS_OPENMP
+      ens::ParallelSGD<ens::ConstantStep> psgdOpt(maxIt, std::ceil(
         (float)trainingSet.n_cols / omp_get_max_threads()), tolerance, shuffle,
         decayPolicy);
+      #endif
 
       Log::Info << "Training model with ParallelSGD optimizer." << endl;
 
       // This will train the model.
       model->Train(trainingSet, labels, numClasses, psgdOpt);
     }
-    #endif
-
-    // If OpenMP is not specified but optimizer is psgd.
-    #ifndef HAS_OPENMP
-    else if (optimizerType == "psgd")
-    {
-      Log::Fatal << "OpenMP is not specified cannot use ParallelSGD" << endl;
-    }
-
-    RequireParamInSet<string>("optimizer", { "lbfgs" },
-        true, "unknown optimizer");
-    #endif
   }
   if (CLI::HasParam("test"))
   {
+    if (!CLI::HasParam("training"))
+    {
+      numClasses = model->NumClasses();
+    }
     // Get the test dataset, and get predictions.
     testSet = std::move(CLI::GetParam<arma::mat>("test"));
     arma::Row<size_t> predictions;
@@ -354,7 +369,7 @@ static void mlpackMain()
     if (CLI::HasParam("test_labels"))
     {
       arma::Row<size_t> testLabels =
-        std::move(CLI::GetParam<arma::Row<size_t>>("test_labels"));
+          std::move(CLI::GetParam<arma::Row<size_t>>("test_labels"));
 
       if (testSet.n_cols != testLabels.n_elem)
       {
@@ -364,29 +379,31 @@ static void mlpackMain()
             << testLabels.n_elem << " labels!" << endl;
       }
 
-      vector<size_t> bingoLabels(numClasses, 0);
+      vector<size_t> correctClassCounts(numClasses, 0);
       vector<size_t> labelSize(numClasses, 0);
       for (arma::uword i = 0; i != predictions.n_elem; ++i)
       {
         if (predictions(i) == testLabels(i))
         {
-          ++bingoLabels[testLabels(i)];
+          ++correctClassCounts[testLabels(i)];
         }
         ++labelSize[testLabels(i)];
       }
 
-      size_t totalBingo = 0;
-      for (size_t i = 0; i != bingoLabels.size(); ++i)
+      size_t totalCorrectClass = 0;
+      for (size_t i = 0; i != correctClassCounts.size(); ++i)
       {
         Log::Info << "Accuracy for points with label " << i << " is "
-            << (bingoLabels[i] / static_cast<double>(labelSize[i])) << " ("
-            << bingoLabels[i] << " of " << labelSize[i] << ")." << endl;
-        totalBingo += bingoLabels[i];
+            << (correctClassCounts[i] / static_cast<double>(labelSize[i]))
+            << " (" << correctClassCounts[i] << " of " << labelSize[i] << ")."
+            << endl;
+        totalCorrectClass += correctClassCounts[i];
       }
 
       Log::Info << "Total accuracy for all points is "
-          << (totalBingo) / static_cast<double>(predictions.n_elem) << " ("
-          << totalBingo << " of " << predictions.n_elem << ")." << endl;
+          << (totalCorrectClass) / static_cast<double>(predictions.n_elem)
+          << " (" << totalCorrectClass << " of " << predictions.n_elem << ")."
+          << endl;
     }
 
     // Save predictions, if desired.
@@ -399,19 +416,4 @@ static void mlpackMain()
   }
 
   CLI::GetParam<LinearSVM<>*>("output_model") = model;
-}
-
-size_t NumberOfClasses(const size_t numClasses,
-                       const arma::Row<size_t>& labels)
-{
-  if (numClasses == 0)
-  {
-    const set<size_t> unique_labels(begin(labels),
-                                    end(labels));
-    return unique_labels.size();
-  }
-  else
-  {
-    return numClasses;
-  }
 }
