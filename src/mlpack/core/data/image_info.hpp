@@ -48,7 +48,8 @@ class ImageInfo
    *
    * @param width Image width.
    * @param height Image height.
-   * @param channels number of channels in the image.
+   * @param channels Number of channels in the image.
+   * @param quality Compression of the image if saved as jpg (0 - 100).
    */
   ImageInfo(const size_t width = 0,
             const size_t height = 0,

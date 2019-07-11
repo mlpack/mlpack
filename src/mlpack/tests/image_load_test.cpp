@@ -11,8 +11,6 @@
  */
 
 #include <mlpack/core.hpp>
-#include <ctime>    // For time().
-#include <cstdlib>  // For srand().
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack;
@@ -52,12 +50,7 @@ BOOST_AUTO_TEST_CASE(LoadImageAPITest)
  */
 BOOST_AUTO_TEST_CASE(SaveImageAPITest)
 {
-  data::ImageInfo info;
-  info.Width() = info.Height() = 5;
-  info.Channels() = 3;
-  info.Quality() = 90;
-
-  srand(time(0));
+  data::ImageInfo info(5, 5, 3, 90);
 
   arma::Mat<unsigned char> im1;
   size_t dimension = info.Width() * info.Height() * info.Channels();
