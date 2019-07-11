@@ -40,6 +40,8 @@ set(SOURCES
   gru_impl.hpp
   hard_tanh.hpp
   hard_tanh_impl.hpp
+  highway.hpp
+  highway_impl.hpp
   join.hpp
   join_impl.hpp
   layer.hpp
