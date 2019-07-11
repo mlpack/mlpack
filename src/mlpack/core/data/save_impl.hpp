@@ -296,7 +296,7 @@ bool Save(const std::string& filename,
   // We transpose by default. So, un-transpose if necessary.
   if (!transpose)
     matrix = arma::trans(matrix);
-  
+
   int tempWidth, tempHeight, tempChannels, tempQuality;
 
   tempWidth = info.Width();
