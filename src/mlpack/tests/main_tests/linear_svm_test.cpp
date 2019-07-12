@@ -218,7 +218,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMModelReuseTest)
  **/
 BOOST_AUTO_TEST_CASE(LinearSVMCheckDimOfTestData)
 {
-
   // Dimensionality of trainingSet is trainData.n_rows - 1 because labels are
   // not provided.
   arma::mat trainData;
