@@ -128,14 +128,14 @@ class DPNVTask
       }
     }
 
-    if(timeStep > 499 && timeStep < 600)
+    if (timeStep > 499 && timeStep < 600)
     {
       double sum = 0;
       for (auto it = wiggleBuffer1.begin(); it != wiggleBuffer1.end(); it++)
         sum += *it;
       fitness += timeStep + (10.0 / std::max(1.0, sum));
     }
-    else if(timeStep > 599)
+    else if (timeStep > 599)
     {
       double sum = 0;
       for (auto it = wiggleBuffer2.begin(); it != wiggleBuffer2.end(); it++)
