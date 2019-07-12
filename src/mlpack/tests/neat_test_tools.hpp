@@ -16,6 +16,7 @@
 #include <mlpack/methods/reinforcement_learning/environment/continuous_multiple_pole_cart.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/multiple_pole_cart.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
+#include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 #include <mlpack/methods/neat/neat.hpp>
 
 using namespace mlpack;
@@ -57,11 +58,11 @@ class DPNVTask
   DPNVTask(const MultiplePoleCart& env) : environment(env)
   { /* Nothing to do here */ }
 
-  double Evaluate(Genome<LogisticFunction>& genome)
+  double Evaluate(Genome<>& genome)
   {
     double fitness = 0;
 
-    // The starting point is always the same. 
+    // The starting point is always the same.
     double oneDegrees = 1 * M_PI / 180;
     arma::mat data(2, 3, arma::fill::zeros);
     data(0, 1) = oneDegrees;
@@ -88,7 +89,8 @@ class DPNVTask
       const int size = MultiplePoleCart::Action::size;
       output = arma::clamp(output, 0, size - 1);
       int actionInt = std::round(output[0]);
-      MultiplePoleCart::Action action = static_cast<MultiplePoleCart::Action>(actionInt);
+      MultiplePoleCart::Action action = static_cast<MultiplePoleCart::Action>
+          (actionInt);
 
       // Use the current action to get the next state.
       environment.Sample(state, action, state);
@@ -102,9 +104,10 @@ class DPNVTask
       input[1] /= 0.62832;
       input[2] /= 0.62832;
 
-      wiggleBuffer1.push_back(std::abs(inputMatrix(0,0)) + std::abs(inputMatrix(0,1)) +
-          std::abs(inputMatrix(1,0)) + std::abs(inputMatrix(1,1)));
-      
+      wiggleBuffer1.push_back(std::abs(inputMatrix(0, 0)) +
+          std::abs(inputMatrix(0, 1)) + std::abs(inputMatrix(1, 0)) +
+          std::abs(inputMatrix(1, 1)));
+
       if (wiggleBuffer1.size() == 100)
       {
         wiggleBuffer2.push_back(wiggleBuffer1.front());

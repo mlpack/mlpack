@@ -231,7 +231,7 @@ void Genome<ActivationFunction>::Mutate()
 
   // Mutate bias.
   if (arma::randu() < biasMutationProb)
-    bias += biasMutationSize * arma::randn();  
+    bias += biasMutationSize * arma::randn();
 
   // Add new connection.
   if (arma::randu() < connAdditionProb)
@@ -276,7 +276,7 @@ void Genome<ActivationFunction>::Print()
   std::cout << "Input: " << inputt << std::endl;
   std::cout << "Output: " << output << std::endl;
 
-  if(!isAcyclic)
+  if (!isAcyclic)
   {
     for (size_t i = 0; i < outputNodeValues.size(); i++)
       std::cout << "Value stored in node " << i << " is " << outputNodeValues[i] << std::endl;
@@ -371,7 +371,7 @@ void Genome<ActivationFunction>::AddConnMutation()
       directedGraph[sourceID][newTarget].Enabled() = true;
       for (size_t j  = 0; j < connectionGeneList.size(); j++)
       {
-        if (connectionGeneList[j].Source() == sourceID && 
+        if (connectionGeneList[j].Source() == sourceID &&
             connectionGeneList[j].Target() == newTarget)
         {
           connectionGeneList[j].Enabled() = false;
@@ -457,7 +457,7 @@ void Genome<ActivationFunction>::DelConnMutation()
   size_t i = 0;
   i = arma::randi<arma::uvec>(1, arma::distr_param(0,
       (int)(connectionGeneList.size() - 1)))[0];
-  
+
   if (connectionGeneList[i].Enabled())
     return;
 

@@ -96,7 +96,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     {
       if (complexityThreshold != 0)
         meanComplexity += (double)genomeList[i].Complexity() / popSize;
-      genomeList[i].Fitness() = task.Evaluate(genomeList[i]); 
+      genomeList[i].Fitness() = task.Evaluate(genomeList[i]);
       fitnesses[i] = genomeList[i].Fitness();
     }
 
@@ -156,7 +156,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>::
 
   #pragma omp parallel for
   for (size_t i = 0; i < popSize; i++)
-    genomeList[i].Fitness() = task.Evaluate(genomeList[i]); 
+    genomeList[i].Fitness() = task.Evaluate(genomeList[i]);
   Speciate(false);
   Reproduce();
 
@@ -198,7 +198,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Speciate(bool init)
 
   arma::Row<size_t> assignments(popSize, arma::fill::zeros);
   kmeans::KMeans<metric::EuclideanDistance, kmeans::SampleInitialization,
-      kmeans::MaxVarianceNewCluster, kmeans::CoverTreeDualTreeKMeans> k; 
+      kmeans::MaxVarianceNewCluster, kmeans::CoverTreeDualTreeKMeans> k;
   if (init)
   {
     centroids = arma::mat(data.n_rows, numSpecies, arma::fill::zeros);
@@ -261,7 +261,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
     {
       speciesSize[i++]++;
       delta--;
-      if(i >= numSpecies)
+      if (i >= numSpecies)
         i = 0;
     }
   }
@@ -273,7 +273,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
     {
       speciesSize[i++]--;
       delta++;
-      if(i >= numSpecies)
+      if (i >= numSpecies)
         i = 0;
     }
   }
@@ -339,7 +339,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
       }
       continue;
     }
-    
+
     // Fill the elite members.
     for (size_t j = 0; j < numElite[i]; j++)
       genomeList.push_back(speciesList[i][j]);
@@ -352,7 +352,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
     {
       // Complexifying.
       if (searchMode == 0)
-      {  
+      {
         arma::uvec selection(2);
         SelectionPolicy::Select(fitnesses, selection);
         if (selection[0] == selection[1])
@@ -381,13 +381,12 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
         genomeList[genomeList.size() - 1].NodeAdditionProb() = 0;
         genomeList[genomeList.size() - 1].ConnAdditionProb() = 0;
         genomeList[genomeList.size() - 1].ConnDeletionProb() = 0.4;
-        
+
         genomeList[genomeList.size() - 1].Mutate();
       }
     }
   }
 }
-
 
 // Crosses over two genomes and creates a child.
 template <class TaskType,
@@ -469,7 +468,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
 
   if (isAcyclic)
   {
-    return Genome<ActivationFunction>(newConnGeneList, nodeDepths, 
+    return Genome<ActivationFunction>(newConnGeneList, nodeDepths,
       inputNodeCount, outputNodeCount, nextNodeID, bias, weightMutationProb,
       weightMutationSize, biasMutationProb, biasMutationSize,
       nodeAdditionProb, connAdditionProb, connDeletionProb, isAcyclic);
@@ -530,7 +529,7 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::Initialize()
       NodeCount(), bias, weightMutationProb, weightMutationSize,
       biasMutationProb, biasMutationSize, nodeAdditionProb, connAdditionProb,
       connDeletionProb, isAcyclic));
-      
+
       genomeList[i].MutateWeights();
     }
   }
@@ -546,7 +545,7 @@ typename std::enable_if<
 NEAT<TaskType, ActivationFunction, SelectionPolicy>::Initialize()
 {
   if (startingGenome.connectionGeneList.size() == 0)
-  {  
+  {
     for (size_t i = 0; i < popSize; i++)
     {
       double bias = initialBias + arma::randn();
@@ -595,10 +594,10 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::
   ar & BOOST_SERIALIZATION_NVP(finalFitness);
   ar & BOOST_SERIALIZATION_NVP(isAcyclic);
 
-  if(genomeList.size() != 0)
+  if (genomeList.size() != 0)
   {
     ar & BOOST_SERIALIZATION_NVP(genomeList);
-    ar & BOOST_SERIALIZATION_NVP(speciesList); 
+    ar & BOOST_SERIALIZATION_NVP(speciesList);
     ar & BOOST_SERIALIZATION_NVP(centroids);
   }
 }
