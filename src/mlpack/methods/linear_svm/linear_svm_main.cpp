@@ -287,7 +287,6 @@ static void mlpackMain()
   {
     model->Lambda() = lambda;
     model->Delta() = delta;
-    model->NumClasses() = numClasses;
 
     if (optimizerType == "lbfgs")
     {

@@ -218,6 +218,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMModelReuseTest)
  **/
 BOOST_AUTO_TEST_CASE(LinearSVMCheckDimOfTestData)
 {
+
+  // Dimensionality of trainingSet is trainData.n_rows - 1 because labels are
+  // not provided.
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
     BOOST_FAIL("Cannot load test dataset iris.csv!");
@@ -240,6 +243,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMCheckDimOfTestData)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMCheckDimOfTestData2)
 {
+  // Dimensionality of trainingSet is trainData.n_rows - 1 because labels are
+  // not provided.
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
     BOOST_FAIL("Cannot load test dataset iris.csv!");
@@ -603,7 +608,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTest)
 
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
-  SetInputParam("no_intercept", bool(false));
 
   // First solution.
   mlpackMain();
