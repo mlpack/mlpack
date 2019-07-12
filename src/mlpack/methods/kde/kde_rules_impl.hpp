@@ -145,6 +145,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   }
   else if (monteCarlo &&
            referenceNode.NumDescendants() >= mcAccessCoef * initialSampleSize &&
+           newCalculations &&
            kernelIsGaussian)
   {
     // Monte Carlo probabilistic estimation.
@@ -195,19 +196,22 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     if (useMonteCarloPredictions)
     {
       // Use Monte Carlo estimation.
-      accumMCAlpha(queryIndex) = 0;
-      score = DBL_MAX;
       densities(queryIndex) += numDesc * meanSample;
+      score = DBL_MAX;
+
+      // Accumulated alpha has been used.
+      accumMCAlpha(queryIndex) = 0;
     }
     else
     {
-      if (referenceNode.IsLeaf())
+      // Recurse.
+      score = minDistance;
+
+      if (referenceNode.IsLeaf() || tree::TreeTraits<TreeType>::HasSelfChildren)
       {
         // Reclaim not used alpha since the node will be exactly computed.
         accumMCAlpha(queryIndex) += depthAlpha;
       }
-      // Recurse.
-      score = minDistance;
     }
   }
   else
@@ -215,7 +219,10 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     score = minDistance;
 
     // If node is going to be exactly computed, reclaim not used alpha.
-    if (kernelIsGaussian && monteCarlo && referenceNode.IsLeaf())
+    if (kernelIsGaussian &&
+        monteCarlo &&
+        newCalculations &&
+        (referenceNode.IsLeaf() || tree::TreeTraits<TreeType>::HasSelfChildren))
     {
       accumMCAlpha(queryIndex) += depthAlpha;
     }
