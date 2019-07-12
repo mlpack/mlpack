@@ -37,7 +37,7 @@ template <class ActivationFunction>
 void AcyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
                                               arma::vec& output,
                                               std::map<size_t, std::map<size_t,
-                                                 ConnectionGene>>& directedGraph,
+                                                ConnectionGene>>& directedGraph,
                                               std::vector<size_t>& nodeDepths)
 {
   // Populate the layers.
@@ -93,7 +93,8 @@ void AcyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
 
   for (size_t i = 0; i < output.n_elem; i++)
   {
-    nodeValues[i + inputNodeCount + 1] = ActivationFunction::Fn(nodeValues[i + inputNodeCount + 1]);
+    nodeValues[i + inputNodeCount + 1] = ActivationFunction::Fn(nodeValues[i +
+        inputNodeCount + 1]);
     output[i] = nodeValues[i + inputNodeCount + 1];
   }
 }

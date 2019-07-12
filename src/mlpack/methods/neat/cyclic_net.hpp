@@ -49,7 +49,8 @@ class CyclicNet
   void Evaluate(arma::vec& input,
                 arma::vec& output,
                 std::vector<double>& outputNodeValues,
-                std::map<size_t, std::map<size_t, ConnectionGene>>& directedGraph);
+                std::map<size_t, std::map<size_t, ConnectionGene>>&
+                    directedGraph);
 
  private:
   //! Node count.

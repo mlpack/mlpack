@@ -26,7 +26,7 @@ namespace neat /** NeuroEvolution of Augmenting Topologies */ {
  * It also stores the nodes in the form of IDs:
  * Bias node : ID = 0
  * Input nodes : ID = 1 - inputNodeCount
- * Output nodes : ID = inputNodeCount + 1 - inputNodeCount+outputNodeCount
+ * Output nodes : ID = inputNodeCount + 1 - inputNodeCount + outputNodeCount
  * Hidden nodes : ID > inputNodeCount + outputNodeCount
  * 
  * The genome can undergo two types of structural mutations:
@@ -40,7 +40,7 @@ class Genome
 {
  public:
   /**
-   * Default constructor.
+   * Default constructor for the Genome class.
    */
   Genome();
 
@@ -158,18 +158,18 @@ class Genome
   arma::mat Parameters();
 
   /**
-   * Prints genome (Used for debugging purposes).
+   * Prints genome (Used for debugging purposes). [To be removed before merge]
    */
   void Print();
 
   /**
-   * Calculates complexity
+   * Calculates complexity of the genome, defined as the number of enabled
+   * connection genes.
    */
   size_t Complexity();
 
   /**
-   * A data structure containing the connection genes sorted by global
-   * innovation ID.
+   * A vector containing the connection genes.
    */
   std::vector<ConnectionGene> connectionGeneList;
 
@@ -181,7 +181,7 @@ class Genome
   std::vector<size_t> nodeDepths;
 
   /**
-   * The buffer of added connections in this generation.
+   * The buffer of added connections along with their innovation IDs.
    */
   static std::map<std::pair<size_t, size_t>, size_t> mutationBuffer;
 
@@ -242,17 +242,18 @@ class Genome
   static size_t nextInnovID;
  private:
   /**
-   * Stores the activation of the nodes. Only used if isAcyclic is set to false.
+   * Stores the activation of the nodes. Only used if isAcyclic is set to
+   * false.
    */
   std::vector<double> outputNodeValues;
 
-  // Adds connection.
+  // Adds a new connection.
   void AddConnMutation();
 
-  // Adds node.
+  // Adds a new node.
   void AddNodeMutation();
 
-  // Deletes connection.
+  // Deletes a connection.
   void DelConnMutation();
 
   //! Input node count.
@@ -300,7 +301,7 @@ class Genome
   //! Boolean indicating if the phenome is acyclic.
   bool isAcyclic;
 
-  //! Stuff for debugging.
+  //! Stuff for debugging. [To be removed before merge]
   arma::vec inputt;
   arma::vec output;
 };

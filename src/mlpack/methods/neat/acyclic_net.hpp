@@ -55,7 +55,8 @@ class AcyclicNet
    */
   void Evaluate(arma::vec& input,
                 arma::vec& output,
-                std::map<size_t, std::map<size_t, ConnectionGene>>& directedGraph,
+                std::map<size_t, std::map<size_t, ConnectionGene>>&
+                    directedGraph,
                 std::vector<size_t>& nodeDepths);
 
   //! Exists temporarily for debugging purposes. Stores activation values.

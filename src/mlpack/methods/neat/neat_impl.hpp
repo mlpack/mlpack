@@ -78,10 +78,10 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
 
   // Initialize.
   Initialize();
-  speciesList = std::vector<std::vector<Genome<ActivationFunction>>>(numSpecies);
+  speciesList = std::vector<std::vector<Genome<ActivationFunction>>>
+      (numSpecies);
   Speciate(true);
 
-  
   // Main loop.
   for (size_t gen = 0; gen < maxGen; gen++)
   {
@@ -91,15 +91,13 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
 
     arma::vec fitnesses(popSize);
 
-    // #pragma omp parallel for
+    #pragma omp parallel for
     for (size_t i = 0; i < popSize; i++)
     {
-      // std::cout << "Genome " << i << std::endl;
       if (complexityThreshold != 0)
         meanComplexity += (double)genomeList[i].Complexity() / popSize;
       genomeList[i].Fitness() = task.Evaluate(genomeList[i]); 
       fitnesses[i] = genomeList[i].Fitness();
-      // std::cout << "x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x" << std::endl;
     }
 
     // Check termination criteria.
@@ -113,10 +111,6 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
       searchMode = 1;
     else
       searchMode = 0;
-
-    std::cout << meanComplexity << std::endl;
-
-    std::cout << searchMode << std::endl;
 
     std::cout << "Maximum fitness " << fitnesses.max() << std::endl;
 
@@ -155,7 +149,8 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>::
   if (genomeList.size() == 0)
   {
     Initialize();
-    speciesList = std::vector<std::vector<Genome<ActivationFunction>>>(numSpecies);
+    speciesList = std::vector<std::vector<Genome<ActivationFunction>>>
+        (numSpecies);
     Speciate(true);
   }
 
@@ -325,7 +320,8 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
         for (size_t j = 0; j < speciesList[i][k].connectionGeneList.size(); j++)
         {
           size_t innovID = speciesList[i][k].connectionGeneList[j].InnovationID();
-          centroids(innovID, i) += (speciesList[i][k].connectionGeneList[j].Weight()) / numElite[i];
+          centroids(innovID, i) += (speciesList[i][k].connectionGeneList[j].Weight())
+              / numElite[i];
         }
       }
     }
@@ -354,7 +350,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
 
     while (genomeList.size() < speciesSize[i] + currentSize)
     {
-      // Complexifying
+      // Complexifying.
       if (searchMode == 0)
       {  
         arma::uvec selection(2);
@@ -374,7 +370,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
         }
         genomeList[genomeList.size() - 1].Mutate();
       }
-      // Simplifying
+      // Simplifying.
       else
       {
         arma::uvec selection(1);
@@ -454,7 +450,6 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     {
       if (innovID == newConnGeneList[j].InnovationID())
       {
-        // If either parent is disabled, preset chance that the inherited gene is disabled.
         if (!isAcyclic && !newConnGeneList[j].Enabled())
         {
           if (arma::randu() < disableProb)
@@ -503,7 +498,8 @@ template <class TaskType,
           class SelectionPolicy>
 template <typename Task>
 typename std::enable_if<
-    HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value, void>::type
+    HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value,
+    void>::type
 NEAT<TaskType, ActivationFunction, SelectionPolicy>::Initialize()
 {
   startingGenome = task.StartingGenome();
@@ -513,10 +509,11 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::Initialize()
     if (isAcyclic)
     {
       double bias = startingGenome.Bias() + arma::randn();
-      genomeList.emplace_back(Genome<ActivationFunction>(startingGenome.connectionGeneList,
-      inputNodeCount, outputNodeCount, startingGenome.NodeCount(), bias, weightMutationProb,
-      weightMutationSize, biasMutationProb, biasMutationSize, nodeAdditionProb,
-      connAdditionProb, connDeletionProb, isAcyclic));
+      genomeList.emplace_back(Genome<ActivationFunction>(startingGenome.
+      connectionGeneList, inputNodeCount, outputNodeCount, startingGenome.
+      NodeCount(), bias, weightMutationProb, weightMutationSize,
+      biasMutationProb, biasMutationSize, nodeAdditionProb, connAdditionProb,
+      connDeletionProb, isAcyclic));
 
       // Let's find the node depths.
       genomeList[i].nodeDepths.resize(genomeList[i].NodeCount(), 0);
@@ -528,10 +525,11 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::Initialize()
     else
     {
       double bias = startingGenome.Bias() + arma::randn();
-      genomeList.emplace_back(Genome<ActivationFunction>(startingGenome.connectionGeneList,
-      inputNodeCount, outputNodeCount, startingGenome.NodeCount(), bias, weightMutationProb,
-      weightMutationSize, biasMutationProb, biasMutationSize, nodeAdditionProb,
-      connAdditionProb, connDeletionProb, isAcyclic));
+      genomeList.emplace_back(Genome<ActivationFunction>(startingGenome.
+      connectionGeneList, inputNodeCount, outputNodeCount, startingGenome.
+      NodeCount(), bias, weightMutationProb, weightMutationSize,
+      biasMutationProb, biasMutationSize, nodeAdditionProb, connAdditionProb,
+      connDeletionProb, isAcyclic));
       
       genomeList[i].MutateWeights();
     }
@@ -543,7 +541,8 @@ template <class TaskType,
           class SelectionPolicy>
 template <typename Task>
 typename std::enable_if<
-    !HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value, void>::type
+    !HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value,
+    void>::type
 NEAT<TaskType, ActivationFunction, SelectionPolicy>::Initialize()
 {
   if (startingGenome.connectionGeneList.size() == 0)

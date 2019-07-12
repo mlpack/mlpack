@@ -34,12 +34,11 @@ CyclicNet<ActivationFunction>::CyclicNet(const size_t nodeCount,
 template <class ActivationFunction>
 void CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
                                              arma::vec& output,
-                                             std::vector<double>& outputNodeValues,
+                                             std::vector<double>&
+                                                outputNodeValues,
                                              std::map<size_t, std::map<size_t,
-                                                 ConnectionGene>>& directedGraph)
+                                                ConnectionGene>>& directedGraph)
 {
-
-  // Old activation scheme.
   arma::vec inputNodeValues(nodeCount, arma::fill::zeros);
 
   while (outputNodeValues.size() < nodeCount)

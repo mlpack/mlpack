@@ -181,33 +181,46 @@ class NEAT
   // Creates the next generation through reproduction.
   void Reproduce();
 
-  // Speciates the population. If init is true, it performs the first
-  // speciation without knowledge of centroids.
+  /**
+   * Speciates the population. If init is true, it performs the first
+   * speciation without knowledge of centroids.
+   */
   void Speciate(bool init);
 
+  // Compares genome based on fitness.
   static bool compareGenome(Genome<ActivationFunction>& gen1,
                             Genome<ActivationFunction>& gen2);
 
+  /**
+   * Creates the initial genome population. This function is called if the
+   * StartingGenome() function exists.
+   */
   template <typename Task = TaskType>
   typename std::enable_if<
-      HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value, void>::type
+      HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value,
+      void>::type
   Initialize();
 
+  /**
+   * Creates the initial genome population. This function is called if the
+   * StartingGenome() function does not exist.
+   */
   template <typename Task = TaskType>
   typename std::enable_if<
-      !HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value, void>::type
+      !HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value,
+      void>::type
   Initialize();
 
-  // The task that the model is trained on.
+  //! The task that the model is trained on.
   TaskType task;
 
-  // The list of genomes in the population.
+  //! The list of genomes in the population.
   std::vector<Genome<ActivationFunction>> genomeList;
 
-  // The list of species, each containing a list of genomes.
+  //! The list of species, each containing a list of genomes.
   std::vector<std::vector<Genome<ActivationFunction>>> speciesList;
 
-  // The centroids of the genome clusters.
+  //! The centroids of the genome clusters.
   arma::mat centroids;
 
   //! The number of input nodes.
@@ -267,11 +280,13 @@ class NEAT
   //! The maximum complexity after which NEAT performes simplification.
   size_t complexityThreshold;
 
-  // The mean population complexity.
+  //! The mean population complexity.
   double meanComplexity;
 
-  // The search mode. If it is 1, NEAT is simplifying. If it is 0, NEAT is
-  // complexifying.
+  /**
+   * The search mode. If it is 1, NEAT is simplifying. If it is 0, NEAT is
+   * complexifying.
+   */   
   size_t searchMode;
 
   //! Denotes whether or not the genome is meant to be cyclic.

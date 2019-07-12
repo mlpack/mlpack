@@ -31,8 +31,9 @@ ConnectionGene::ConnectionGene(const size_t globalInnovationID,
     enabled(enabled)
 { /* Nothing to do here */ }
 
+// Default destructor for a connection gene.
 ConnectionGene::~ConnectionGene()
-{}
+{ /* Nothing to do here */ }
 
 // Default constructor for a connection gene.
 ConnectionGene::ConnectionGene():
@@ -41,7 +42,7 @@ ConnectionGene::ConnectionGene():
     source(0),
     target(0),
     enabled(false)
-{/* Nothing to do here */}
+{ /* Nothing to do here */ }
 
 void ConnectionGene::Mutate(const double mutationSize)
 {

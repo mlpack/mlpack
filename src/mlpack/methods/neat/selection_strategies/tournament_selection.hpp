@@ -47,9 +47,11 @@ class TournamentSelection
       {
         if (selection[0] == fitnesses.n_elem)
           selection[0] = contenders[k];
-        else if (selection[1] == fitnesses.n_elem && selection[1] != selection[0])
+        else if (selection[1] == fitnesses.n_elem && selection[1] !=
+            selection[0])
           selection[1] = contenders[k];
-        else if (selection[0] != fitnesses.n_elem && selection[1] != fitnesses.n_elem)
+        else if (selection[0] != fitnesses.n_elem && selection[1] !=
+            fitnesses.n_elem)
           break;
       }
       if (k == contenderNum - 1)

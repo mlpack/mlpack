@@ -25,8 +25,10 @@ template <class ActivationFunction>
 size_t Genome<ActivationFunction>::nextInnovID;
 
 template <class ActivationFunction>
-std::map<std::pair<size_t, size_t>, size_t> Genome<ActivationFunction>::mutationBuffer;
+std::map<std::pair<size_t, size_t>, size_t> Genome<ActivationFunction>::
+    mutationBuffer;
 
+// Default constructor for the Genome object.
 template <class ActivationFunction>
 Genome<ActivationFunction>::Genome()
 { /* Nothing to do here */ }
@@ -90,16 +92,16 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
   {
     for (size_t i = 0; i <= inputNodeCount; i++)
       nodeDepths.push_back(0);
-    for (size_t i = inputNodeCount + 1; i <= outputNodeCount + inputNodeCount; i++)
+    size_t inputAndOutputNodeCount = outputNodeCount + inputNodeCount;
+    for (size_t i = inputNodeCount + 1; i <= inputAndOutputNodeCount; i++)
       nodeDepths.push_back(1);
   }
-  else
-    outputNodeValues = std::vector<double>(nextNodeID, 0);
 }
 
 // Creates genome object during cyclic reproduction.
 template <class ActivationFunction>
-Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>& connectionGeneList,
+Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>&
+                                       connectionGeneList,
                                    const size_t inputNodeCount,
                                    const size_t outputNodeCount,
                                    const size_t nextNodeID,
@@ -145,7 +147,8 @@ Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>& connectionGeneLi
 
 // Creates genome object during acyclic reproduction.
 template <class ActivationFunction>
-Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>& connectionGeneList,
+Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>&
+                                       connectionGeneList,
                                    std::vector<size_t>& nodeDepths,
                                    const size_t inputNodeCount,
                                    const size_t outputNodeCount,
@@ -318,9 +321,13 @@ void Genome<ActivationFunction>::MutateWeights()
 template <class ActivationFunction>
 void Genome<ActivationFunction>::AddConnMutation()
 {
-  size_t sourceID = inputNodeCount + outputNodeCount;
-  while (sourceID > inputNodeCount && sourceID <= inputNodeCount + outputNodeCount)
-    sourceID = arma::randi<arma::uvec>(1, arma::distr_param(0, (int)(nextNodeID - 1)))[0];
+  size_t inputAndOutputNodeCount = outputNodeCount + inputNodeCount;
+  size_t sourceID = inputAndOutputNodeCount;
+  while (sourceID > inputNodeCount && sourceID <= inputAndOutputNodeCount)
+  {
+    sourceID = arma::randi<arma::uvec>(1, arma::distr_param(0,
+        (int)(nextNodeID - 1)))[0];
+  }
 
   size_t newTarget = sourceID;
   size_t innovID;
@@ -364,7 +371,8 @@ void Genome<ActivationFunction>::AddConnMutation()
       directedGraph[sourceID][newTarget].Enabled() = true;
       for (size_t j  = 0; j < connectionGeneList.size(); j++)
       {
-        if (connectionGeneList[j].Source() == sourceID && connectionGeneList[j].Target() == newTarget)
+        if (connectionGeneList[j].Source() == sourceID && 
+            connectionGeneList[j].Target() == newTarget)
         {
           connectionGeneList[j].Enabled() = false;
           break;
@@ -380,9 +388,10 @@ void Genome<ActivationFunction>::AddNodeMutation()
   size_t i = 0;
   do
   {
-    i = arma::randi<arma::uvec>(1, arma::distr_param(0, (int)(connectionGeneList.size() - 1)))[0];
+    i = arma::randi<arma::uvec>(1, arma::distr_param(0, (int)
+        (connectionGeneList.size() - 1)))[0];
   }
-  while(connectionGeneList[i].Source() == 0);
+  while (connectionGeneList[i].Source() == 0);
   size_t sourceID = connectionGeneList[i].Source();
   size_t targetID = connectionGeneList[i].Target();
   size_t newNodeID = nextNodeID++;
@@ -420,7 +429,8 @@ void Genome<ActivationFunction>::AddNodeMutation()
   directedGraph.emplace(std::piecewise_construct,
                           std::make_tuple(newNodeID),
                           std::make_tuple());
-  directedGraph[newNodeID].emplace(targetID, ConnectionGene(innovID2, 1, newNodeID, targetID));
+  directedGraph[newNodeID].emplace(targetID, ConnectionGene(innovID2, 1,
+      newNodeID, targetID));
 
   // Remove the lost connection.
   directedGraph[sourceID][targetID].Enabled() = false;
@@ -445,7 +455,8 @@ template <class ActivationFunction>
 void Genome<ActivationFunction>::DelConnMutation()
 {
   size_t i = 0;
-  i = arma::randi<arma::uvec>(1, arma::distr_param(0, (int)(connectionGeneList.size() - 1)))[0];
+  i = arma::randi<arma::uvec>(1, arma::distr_param(0,
+      (int)(connectionGeneList.size() - 1)))[0];
   
   if (connectionGeneList[i].Enabled())
     return;
