@@ -269,7 +269,7 @@ void Genome<ActivationFunction>::Print()
   {
     for (auto const& y : directedGraph[x.first])
     {
-      std::cout << x.first << "->" << y.first << " Weight: " << 
+      std::cout << x.first << "->" << y.first << " Weight: " <<
           y.second.Weight() << " Enabled "<< y.second.Enabled() << std::endl;
     }
   }
@@ -280,7 +280,7 @@ void Genome<ActivationFunction>::Print()
   {
     for (size_t i = 0; i < outputNodeValues.size(); i++)
     {
-      std::cout << "Value stored in node " << i << " is " << 
+      std::cout << "Value stored in node " << i << " is " <<
           outputNodeValues[i] << std::endl;
     }
   }
