@@ -103,7 +103,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   }
 
   // End the module.
-  cout << "end" << endl;
+  cout << "end # module" << endl;
   cout << endl;
 
   // Print the documentation.
