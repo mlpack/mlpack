@@ -18,15 +18,13 @@
 namespace mlpack {
 namespace data {
 
-template<typename EncodingPolicy>
-void StringEncoding<EncodingPolicy>::Reset()
+void StringEncoding::Reset()
 {
   mappings.clear();
   originalStrings.clear();
 }
 
-template<typename EncodingPolicy>
-StringEncoding<EncodingPolicy>::StringEncoding(const
+StringEncoding::StringEncoding(const
     StringEncoding& oldObject) : originalStrings(oldObject.originalStrings)
 {
   std::deque<std::string>::iterator jt = originalStrings.begin();
@@ -38,8 +36,7 @@ StringEncoding<EncodingPolicy>::StringEncoding(const
   }
 }
 
-template<typename EncodingPolicy>
-StringEncoding<EncodingPolicy>& StringEncoding<EncodingPolicy>::operator= (
+StringEncoding& StringEncoding::operator= (
     const StringEncoding &oldObject)
 {
   if (this != &oldObject)
@@ -58,9 +55,8 @@ StringEncoding<EncodingPolicy>& StringEncoding<EncodingPolicy>::operator= (
   return *this;
 }
 
-template<typename EncodingPolicy>
 template<typename TokenizerType>
-void StringEncoding<EncodingPolicy>::CreateMap(std::string& input,
+void StringEncoding::CreateMap(std::string& input,
     TokenizerType tokenizer)
 {
   boost::string_view strView(input);
@@ -78,11 +74,11 @@ void StringEncoding<EncodingPolicy>::CreateMap(std::string& input,
   }
 }
 
-template<typename EncodingPolicy>
-template<typename MatType, typename TokenizerType>
-void StringEncoding<EncodingPolicy>::Encode(
+template<typename MatType, typename TokenizerType, typename EncodingPolicy>
+void StringEncoding::Encode(
     const std::vector<std::string>& input,
-    MatType& output, TokenizerType tokenizer)
+    MatType& output, TokenizerType tokenizer,
+    EncodingPolicy policy)
 {
   boost::string_view strView;
   boost::string_view token;
@@ -118,12 +114,12 @@ void StringEncoding<EncodingPolicy>::Encode(
         EncodingPolicy::Encode(mappings.at(dataset[i][j]), output, i, j);
   }
 
-template<typename EncodingPolicy>
-template<typename TokenizerType>
-void StringEncoding<EncodingPolicy>::Encode(
+template<typename TokenizerType,typename EncodingPolicy>
+void StringEncoding::Encode(
     const std::vector<std::string>& input,
     std::vector<std::vector<size_t>>& output,
     TokenizerType tokenizer,
+    EncodingPolicy policy,
     typename std::enable_if<PolicyTraits<EncodingPolicy>::
     outputWithNoPadding>::type*)
 {
@@ -148,9 +144,8 @@ void StringEncoding<EncodingPolicy>::Encode(
   }
 }
 
-template<typename EncodingPolicy>
 template<typename Archive>
-void StringEncoding<EncodingPolicy>::serialize(Archive& ar, const unsigned int
+void StringEncoding::serialize(Archive& ar, const unsigned int
     /* version */)
 {
   size_t count = originalStrings.size();

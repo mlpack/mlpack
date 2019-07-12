@@ -62,7 +62,11 @@ class DictionaryEncoding
 template<>
 struct PolicyTraits<DictionaryEncoding> {
 
+  static const bool isSinglePass = true;
+
   static const bool outputWithNoPadding = true;
+
+  static const bool isMultiPass = false;
 };
 
 } // namespace data

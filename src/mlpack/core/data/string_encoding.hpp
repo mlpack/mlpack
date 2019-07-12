@@ -32,7 +32,6 @@ namespace data {
  * index and treat the dataset as categorical.The assignement of numeric index
  * is based on the EncodingPolicy.
  */
-template<typename EncodingPolicy>
 class StringEncoding
 {
  public:
@@ -98,9 +97,10 @@ class StringEncoding
   * boost::string_view fn(boost::string_view& str)
   *
   */
-  template<typename MatType, typename TokenizerType>
+  template<typename MatType, typename TokenizerType, typename EncodingPolicy>
   void Encode(const std::vector<std::string>& input,
-              MatType& output, TokenizerType tokenizer);
+              MatType& output, TokenizerType tokenizer,
+              EncodingPolicy Policy);
 
   /**
   * A function to encode given array of strings using a particular delimiter,
@@ -123,11 +123,12 @@ class StringEncoding
   * boost::string_view fn(boost::string_view& str)
   *
   */
-  template<typename TokenizerType>
+  template<typename TokenizerType, typename EncodingPolicy>
   void Encode(const
       std::vector<std::string>& input,
       std::vector<std::vector<size_t>>& output,
       TokenizerType tokenizer,
+      EncodingPolicy Policy,
       typename std::enable_if<PolicyTraits<EncodingPolicy>::
       outputWithNoPadding>::type* = 0);
 

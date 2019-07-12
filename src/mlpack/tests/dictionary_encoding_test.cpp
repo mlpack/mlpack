@@ -49,8 +49,8 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
   arr[1] = "i am good";
   arr[2] = "Good how are you";
   arma::mat output;
-  data::StringEncoding<DictionaryEncoding> en;
-  en.Encode(arr, output, tokenizer);
+  data::StringEncoding en;
+  en.Encode(arr, output, tokenizer, data::DictionaryEncoding());
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>>& maps = en.Mappings();
   // Checking that everything is mapped to different numbers
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingCharTest)
   arr[1] = "ABCABCD";
   arr[2] = "GAB";
   arma::mat output;
-  data::StringEncoding<DictionaryEncoding> en;
+  data::StringEncoding en;
   // Passing a empty string to encode characters
   en.Encode(arr, output, [](boost::string_view& str) {
       if (str.empty())
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingCharTest)
       boost::string_view retval = str.substr(0, 1);
       str.remove_prefix(1);
       return retval;
-  });
+  }, data::DictionaryEncoding());
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>>& maps = en.Mappings();
   // Checking that everything is mapped to different numbers.
@@ -133,11 +133,11 @@ BOOST_AUTO_TEST_CASE(CopyConstructorCharTest)
   arr[1] = "i am good";
   arr[2] = "Good how are you";
   arma::sp_mat output;
-  data::StringEncoding<DictionaryEncoding> en;
-  en.Encode(arr, output, SplitByChar(" "));
+  data::StringEncoding en;
+  en.Encode(arr, output, SplitByChar(" "), data::DictionaryEncoding());
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>>& maps = en.Mappings();
-    data::StringEncoding<DictionaryEncoding> en2 = en;
+    data::StringEncoding en2 = en;
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>>& maps2 = en2.Mappings();
   // Comparing both of them.
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingNoPaddingTest)
   std::vector<string>arr(2);
   arr[0] = "GACCA";
   arr[1] = "GAB";
-  data::StringEncoding<DictionaryEncoding> en;
+  data::StringEncoding en;
   std::vector<std::vector<size_t> > output;
   en.Encode(arr, output, [](boost::string_view& str) {
       if (str.empty())
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingNoPaddingTest)
       boost::string_view retval = str.substr(0, 1);
       str.remove_prefix(1);
       return retval;
-  });
+  }, data::DictionaryEncoding());
   std::vector<std::vector<size_t>> req_output = {{1, 2, 3, 3, 2}, {1, 2, 4}};
   for (size_t i = 0; i < arr.size(); i++)
   {
