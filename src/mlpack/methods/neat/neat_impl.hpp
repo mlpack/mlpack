@@ -91,13 +91,15 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
 
     arma::vec fitnesses(popSize);
 
-    #pragma omp parallel for
+    // #pragma omp parallel for
     for (size_t i = 0; i < popSize; i++)
     {
+      // std::cout << "Genome " << i << std::endl;
       if (complexityThreshold != 0)
         meanComplexity += (double)genomeList[i].Complexity() / popSize;
       genomeList[i].Fitness() = task.Evaluate(genomeList[i]); 
       fitnesses[i] = genomeList[i].Fitness();
+      // std::cout << "x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x" << std::endl;
     }
 
     // Check termination criteria.
@@ -111,6 +113,10 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
       searchMode = 1;
     else
       searchMode = 0;
+
+    std::cout << meanComplexity << std::endl;
+
+    std::cout << searchMode << std::endl;
 
     std::cout << "Maximum fitness " << fitnesses.max() << std::endl;
 

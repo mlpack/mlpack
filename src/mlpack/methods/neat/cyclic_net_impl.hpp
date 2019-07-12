@@ -38,6 +38,8 @@ void CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
                                              std::map<size_t, std::map<size_t,
                                                  ConnectionGene>>& directedGraph)
 {
+
+  // Old activation scheme.
   arma::vec inputNodeValues(nodeCount, arma::fill::zeros);
 
   while (outputNodeValues.size() < nodeCount)
@@ -47,8 +49,13 @@ void CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
   outputNodeValues[0] = bias;
 
   // Load the input.
-  for (size_t i = 1; i <= inputNodeCount; i++)
-    outputNodeValues[i] = input[i - 1];
+  for (size_t i = 1; i < nodeCount; i++)
+  {
+    if (i <= inputNodeCount)
+      outputNodeValues[i] = input[i - 1];
+    else
+      inputNodeValues[i] = outputNodeValues[i];
+  }
 
   for (size_t i = 0; i < nodeCount; i++)
   {
