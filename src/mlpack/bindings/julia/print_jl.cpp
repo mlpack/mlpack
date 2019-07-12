@@ -61,7 +61,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   cout << endl;
 
   // We need to include utility functions.
-  cout << "using mlpack.cli" << endl;
+  cout << "using mlpack.util.cli" << endl;
   cout << endl;
 
   // Make sure the libraries we need are accessible.

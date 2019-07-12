@@ -129,7 +129,7 @@ endif ()
 if (BUILD_JULIA_BINDINGS)
   file(APPEND
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
-      "\nend\n")
+      "\nend\ninclude(\"functions.jl\")\nend\n")
 endif ()
 
 # If we are building Markdown documentation, we have to run some setup after we

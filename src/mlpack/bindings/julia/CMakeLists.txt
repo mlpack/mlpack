@@ -56,7 +56,13 @@ if (BUILD_JULIA_BINDINGS)
   file(WRITE
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
       "module mlpack\n\n"
+      "module util\n\n"
       "include(\"cli.jl\")\n")
+
+  file(WRITE
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/functions.jl"
+      "# This file imports all of the mlpack functions into the mlpack module."
+      "\n\n")
 endif ()
 
 macro (add_julia_binding name)
@@ -139,6 +145,11 @@ if (BUILD_JULIA_BINDINGS)
   file(APPEND
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
       "include(\"${name}.jl\")\n")
+
+  # Append the code to define the function in the module.
+  file(APPEND
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/functions.jl"
+      "${name} = util.${name}\n")
 endif ()
 endmacro ()
 
