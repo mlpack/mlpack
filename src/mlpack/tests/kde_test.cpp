@@ -920,7 +920,7 @@ BOOST_AUTO_TEST_CASE(GaussianSingleCoverTreeMonteCarloKDE)
   arma::mat query = arma::randu(2, 100);
   arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  const double kernelBandwidth = 0.4;
+  const double kernelBandwidth = 0.35;
   const double relError = 0.05;
 
   // Brute force KDE.
@@ -1079,7 +1079,7 @@ BOOST_AUTO_TEST_CASE(GaussianDualCoverTreeMonteCarloKDE)
   arma::mat query = arma::randu(2, 200);
   arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  const double kernelBandwidth = 0.7;
+  const double kernelBandwidth = 0.5;
   const double relError = 0.025;
 
   // Brute force KDE.

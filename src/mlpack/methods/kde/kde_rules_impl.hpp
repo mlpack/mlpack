@@ -262,6 +262,14 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   else
     depthAlpha = -1;
 
+  // Check if not used alpha can be reclaimed for this combination of nodes.
+  const bool canReclaimAlpha =
+      kernelIsGaussian &&
+      monteCarlo &&
+      newCalculations &&
+      ((queryNode.IsLeaf() && referenceNode.IsLeaf()) ||
+       (tree::TreeTraits<TreeType>::HasSelfChildren));
+
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
       (traversalInfo.LastQueryNode() != NULL) &&
       (traversalInfo.LastReferenceNode() != NULL) &&
@@ -314,13 +322,11 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   }
   else if (monteCarlo &&
            referenceNode.NumDescendants() >= mcAccessCoef * initialSampleSize &&
+           newCalculations &&
            kernelIsGaussian)
   {
     // Monte Carlo probabilistic estimation.
-    // Calculate alpha.
-    double alpha = depthAlpha + queryStat.AccumAlpha();
-    if (alpha > 1)
-      alpha = 1;
+    const double alpha = depthAlpha + queryStat.AccumAlpha();
 
     const boost::math::normal normalDist;
     const double z =
@@ -386,18 +392,24 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     }
     else
     {
-      // Reclaim not used alpha for Monte Carlo.
-      queryStat.AccumAlpha() += depthAlpha;
       // Recurse.
       score = minDistance;
+
+      if (canReclaimAlpha)
+      {
+        // Reclaim not used alpha for Monte Carlo since the nodes will be
+        // exactly computed.
+        queryStat.AccumAlpha() += depthAlpha;
+      }
     }
   }
   else
   {
     score = minDistance;
 
-    // Reclaim not used alpha for Monte Carlo.
-    if (kernelIsGaussian && monteCarlo)
+    // The node will be exactly computed, so we reclaim not used Monte Carlo
+    // alpha.
+    if (canReclaimAlpha)
       queryStat.AccumAlpha() += depthAlpha;
   }
 
