@@ -269,8 +269,8 @@ void Genome<ActivationFunction>::Print()
   {
     for (auto const& y : directedGraph[x.first])
     {
-      std::cout << x.first << "->" << y.first << " Weight: " << y.second.Weight()
-          << " Enabled "<< y.second.Enabled() << std::endl;
+      std::cout << x.first << "->" << y.first << " Weight: " << 
+          y.second.Weight() << " Enabled "<< y.second.Enabled() << std::endl;
     }
   }
   std::cout << "Input: " << inputt << std::endl;
@@ -279,7 +279,10 @@ void Genome<ActivationFunction>::Print()
   if (!isAcyclic)
   {
     for (size_t i = 0; i < outputNodeValues.size(); i++)
-      std::cout << "Value stored in node " << i << " is " << outputNodeValues[i] << std::endl;
+    {
+      std::cout << "Value stored in node " << i << " is " << 
+          outputNodeValues[i] << std::endl;
+    }
   }
 }
 
@@ -386,12 +389,11 @@ template <class ActivationFunction>
 void Genome<ActivationFunction>::AddNodeMutation()
 {
   size_t i = 0;
-  do
+  while (connectionGeneList[i].Source() == 0)
   {
     i = arma::randi<arma::uvec>(1, arma::distr_param(0, (int)
         (connectionGeneList.size() - 1)))[0];
   }
-  while (connectionGeneList[i].Source() == 0);
   size_t sourceID = connectionGeneList[i].Source();
   size_t targetID = connectionGeneList[i].Target();
   size_t newNodeID = nextNodeID++;

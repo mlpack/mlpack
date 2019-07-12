@@ -310,7 +310,8 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
       for (size_t j = 0; j < speciesList[i][0].connectionGeneList.size(); j++)
       {
         size_t innovID = speciesList[i][0].connectionGeneList[j].InnovationID();
-        centroids(innovID, i) = speciesList[i][0].connectionGeneList[j].Weight();
+        centroids(innovID, i) = speciesList[i][0].connectionGeneList[j]
+            .Weight();
       }
     }
     else
@@ -319,9 +320,10 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
       {
         for (size_t j = 0; j < speciesList[i][k].connectionGeneList.size(); j++)
         {
-          size_t innovID = speciesList[i][k].connectionGeneList[j].InnovationID();
-          centroids(innovID, i) += (speciesList[i][k].connectionGeneList[j].Weight())
-              / numElite[i];
+          size_t innovID = speciesList[i][k].connectionGeneList[j].
+              InnovationID();
+          centroids(innovID, i) += (speciesList[i][k].connectionGeneList[j]
+              .Weight()) / numElite[i];
         }
       }
     }
@@ -358,14 +360,17 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
         if (selection[0] == selection[1])
         {
           genomeList.push_back(speciesList[i][selection[0]]);
-          genomeList[genomeList.size() - 1].NodeAdditionProb() = nodeAdditionProb;
-          genomeList[genomeList.size() - 1].ConnAdditionProb() = connAdditionProb;
-          genomeList[genomeList.size() - 1].ConnDeletionProb() = connDeletionProb;
+          genomeList[genomeList.size() - 1].NodeAdditionProb() =
+              nodeAdditionProb;
+          genomeList[genomeList.size() - 1].ConnAdditionProb() =
+              connAdditionProb;
+          genomeList[genomeList.size() - 1].ConnDeletionProb() =
+              connDeletionProb;
         }
         else
         {
-          Genome<ActivationFunction> child = Crossover(speciesList[i][selection[0]],
-              speciesList[i][selection[1]]);
+          Genome<ActivationFunction> child = Crossover(speciesList[i]
+              [selection[0]], speciesList[i][selection[1]]);
           genomeList.push_back(child);
         }
         genomeList[genomeList.size() - 1].Mutate();
