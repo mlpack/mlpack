@@ -12,8 +12,8 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/string_encoding.hpp>
 #include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
-#include <mlpack/core/data/tokenizer/char_split.hpp>
-#include <mlpack/core/data/tokenizer/split_by_char.hpp>
+#include <mlpack/core/data/tokenizers/char_split.hpp>
+#include <mlpack/core/data/tokenizers/split_by_char.hpp>
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
