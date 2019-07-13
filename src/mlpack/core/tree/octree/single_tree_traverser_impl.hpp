@@ -42,6 +42,18 @@ void Octree<MetricType, StatisticType, MatType>::SingleTreeTraverser<RuleType>::
   }
   else
   {
+    // If it's the root node, just score it.
+    if (referenceNode.Parent() == NULL)
+    {
+      const double rootScore = rule.Score(queryIndex, referenceNode);
+      // If root score is DBL_MAX, don't recurse into that node.
+      if (rootScore == DBL_MAX)
+      {
+        ++numPrunes;
+        return;
+      }
+    }
+
     // Do a prioritized recursion, by scoring all candidates and then sorting
     // them.
     arma::vec scores(referenceNode.NumChildren());
