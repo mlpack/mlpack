@@ -65,6 +65,7 @@ template<typename InputDataType, typename OutputDataType> class GRU;
 template<typename InputDataType, typename OutputDataType> class FastLSTM;
 template<typename InputDataType, typename OutputDataType> class VRClassReward;
 template<typename InputDataType, typename OutputDataType> class Concatenate;
+template<typename InputDataType, typename OutputDataType> class Padding;
 
 template<typename InputDataType,
          typename OutputDataType,
@@ -226,6 +227,7 @@ using LayerTypes = boost::variant<
     MultiplyConstant<arma::mat, arma::mat>*,
     MultiplyMerge<arma::mat, arma::mat>*,
     NegativeLogLikelihood<arma::mat, arma::mat>*,
+    Padding<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
     MoreTypes,
     CustomLayers*...

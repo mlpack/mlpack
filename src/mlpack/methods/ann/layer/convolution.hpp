@@ -20,6 +20,7 @@
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
 
 #include "layer_types.hpp"
+#include "padding.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -217,53 +218,6 @@ class Convolution
     output = arma::fliplr(arma::flipud(input));
   }
 
-  /*
-   * Pad the given input data.
-   *
-   * @param input The input to be padded.
-   * @param wPad Padding width of the input.
-   * @param hPad Padding height of the input.
-   * @param output The padded output data.
-   */
-  template<typename eT>
-  void Pad(const arma::Mat<eT>& input,
-           size_t wPad,
-           size_t hPad,
-           arma::Mat<eT>& output)
-  {
-    if (output.n_rows != input.n_rows + wPad * 2 ||
-        output.n_cols != input.n_cols + hPad * 2)
-    {
-      output = arma::zeros(input.n_rows + wPad * 2, input.n_cols + hPad * 2);
-    }
-
-    output.submat(wPad, hPad, wPad + input.n_rows - 1,
-        hPad + input.n_cols - 1) = input;
-  }
-
-  /*
-   * Pad the given input data.
-   *
-   * @param input The input to be padded.
-   * @param wPad Padding width of the input.
-   * @param hPad Padding height of the input.
-   * @param output The padded output data.
-   */
-  template<typename eT>
-  void Pad(const arma::Cube<eT>& input,
-           size_t wPad,
-           size_t hPad,
-           arma::Cube<eT>& output)
-  {
-    output = arma::zeros(input.n_rows + wPad * 2,
-        input.n_cols + hPad * 2, input.n_slices);
-
-    for (size_t i = 0; i < input.n_slices; ++i)
-    {
-      Pad<eT>(input.slice(i), wPad, hPad, output.slice(i));
-    }
-  }
-
   //! Locally-stored number of input channels.
   size_t inSize;
 
@@ -326,6 +280,9 @@ class Convolution
 
   //! Locally-stored transformed gradient parameter.
   arma::cube gradientTemp;
+
+  //! Locally-stored padding layer.
+  LayerTypes<> padding;
 
   //! Locally-stored delta object.
   OutputDataType delta;
