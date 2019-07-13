@@ -18,7 +18,7 @@
 #include <mlpack/core/data/encoding_policies/policy_traits.hpp>
 #include <utility>
 
-using MapType =   std::unordered_map<boost::string_view, size_t,
+using MapType = std::unordered_map<boost::string_view, size_t,
     boost::hash<boost::string_view>>;
 
 
@@ -26,7 +26,7 @@ namespace mlpack {
 namespace data {
 
 /**
- * A simple String Enocding class
+ * A simple String Enocding class.
  *
  * The encoding here simply assigns a word (or a character) to a numeric
  * index and treat the dataset as categorical.The assignement of numeric index
@@ -51,7 +51,7 @@ class StringEncoding
   template<typename TokenizerType>
   void CreateMap(std::string& input, TokenizerType tokenizer);
   /**
-  * Default Constructor
+  * Default Constructor.
   */
   StringEncoding() {}
   /**
@@ -71,7 +71,7 @@ class StringEncoding
   */
   StringEncoding& operator= (const StringEncoding& oldObject);
   /**
-  * A function to reset the mapping that is clear all the encodings
+  * A function to reset the mapping that is clear all the encodings.
   */
   void Reset();
 

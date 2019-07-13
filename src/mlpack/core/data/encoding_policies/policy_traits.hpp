@@ -22,11 +22,11 @@ namespace data {
 template<class Policy>
 struct PolicyTraits
 {
-  static const bool isSinglePass = true;
-
+  /**
+  * This is used to indicate whether a policy has a function which can
+  * have output without any padding of zroes.
+  */
   static const bool outputWithNoPadding = false;
-
-  static const bool isMultiPass = false;
 };
 
 } // namespace data

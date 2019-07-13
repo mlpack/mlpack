@@ -114,7 +114,7 @@ void StringEncoding::Encode(
         EncodingPolicy::Encode(mappings.at(dataset[i][j]), output, i, j);
   }
 
-template<typename TokenizerType,typename EncodingPolicy>
+template<typename TokenizerType, typename EncodingPolicy>
 void StringEncoding::Encode(
     const std::vector<std::string>& input,
     std::vector<std::vector<size_t>>& output,
@@ -138,7 +138,7 @@ void StringEncoding::Encode(
         originalStrings.push_back(std::string(token));
         mappings[originalStrings.back()] = curLabel++;
       }
-      output[i].push_back(mappings.at(token));
+      EncodingPolicy::Encode(output[i], mappings.at(token));
       token = tokenizer(strView);
     }
   }

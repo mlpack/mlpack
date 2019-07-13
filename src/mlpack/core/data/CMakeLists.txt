@@ -29,8 +29,8 @@ set(SOURCES
   confusion_matrix.hpp
   one_hot_encoding.hpp
   one_hot_encoding_impl.hpp
-  tokenizer/char_split.hpp
-  tokenizer/split_by_char.hpp
+  tokenizers/char_split.hpp
+  tokenizers/split_by_char.hpp
   encoding_policies/dictionary_encoding.hpp
   encoding_policies/policy_traits.hpp
 )

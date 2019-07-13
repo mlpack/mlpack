@@ -34,8 +34,8 @@ class DictionaryEncoding
   * A function used to create the matrix depending upon the size.
   *
   * @param output Output matrix to store encoded results (sp_mat or mat).
-  * rowSize Number of rows of matrix
-  * colSize Number of Columns of matrix 
+  * @param datasetSize Number of rows of output matrix.
+  * @param colSize Number of Columns of output matrix.
   */
   template<typename MatType>
   static void InitMatrix(MatType& output, size_t datasetSize, size_t colSize,
@@ -47,26 +47,35 @@ class DictionaryEncoding
   /** 
   * A function to store the encoded word at exact index.
   *
-  * @param ele The encoded word
+  * @param elem The encoded word
   * @param output Output matrix to store encoded results (sp_mat or mat).
   * @param row The row at which the encoding belongs to.
   * @param col The column at which the encoding belongs to.
   */
   template<typename MatType>
-  static void Encode(size_t ele, MatType& output, size_t row, size_t col)
+  static void Encode(size_t elem, MatType& output, size_t row, size_t col)
   {
-    output.at(row, col) = ele;
+    output.at(row, col) = elem;
+  }
+
+  /** 
+  * A function to store the encoded word at exact index.
+  * This is an overload function which stores the result in a vector
+  * to avoid padding.
+  *
+  * @param output Output vector to store encoded results.
+  * @param elem The encoded word
+  */
+  static void Encode(std::vector<size_t>& output, size_t elem)
+  {
+    output.push_back(elem);
   }
 }; // class DicitonaryEncoding
 
 template<>
-struct PolicyTraits<DictionaryEncoding> {
-
-  static const bool isSinglePass = true;
-
+struct PolicyTraits<DictionaryEncoding>
+{
   static const bool outputWithNoPadding = true;
-
-  static const bool isMultiPass = false;
 };
 
 } // namespace data
