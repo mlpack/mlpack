@@ -448,29 +448,32 @@ EvaluateKernel(const arma::vec& query, const arma::vec& reference) const
 }
 
 template<typename MetricType, typename KernelType, typename TreeType>
-double KDERules<MetricType, KernelType, TreeType>::
+inline force_inline double KDERules<MetricType, KernelType, TreeType>::
 CalculateAlpha(TreeType* node)
 {
   KDEStat& stat = node->Stat();
+
+  // If new mcBeta is different from previously computed mcBeta, then alpha for
+  // the node is recomputed.
   if (std::abs(stat.MCBeta() - mcBeta) > DBL_EPSILON)
   {
     TreeType* parent = node->Parent();
     if (parent == NULL)
     {
-      // Base case.
+      // If it's the root node then assign mcBeta.
       stat.MCAlpha() = mcBeta;
     }
     else
     {
-      // Recurse.
-      stat.MCAlpha() = CalculateAlpha(parent) / parent->NumChildren();
+      // Distribute it's parent alpha between children.
+      stat.MCAlpha() = parent->Stat().MCAlpha() / parent->NumChildren();
     }
 
     // Set beta value for which this alpha is valid.
     stat.MCBeta() = mcBeta;
   }
 
-  return node->Stat().MCAlpha();
+  return stat.MCAlpha();
 }
 
 } // namespace kde
