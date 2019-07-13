@@ -36,5 +36,6 @@
 #include "concat.hpp"
 #include "vr_class_reward.hpp"
 #include "transposed_convolution.hpp"
+#include "inception_layer.hpp"
 
 #endif
