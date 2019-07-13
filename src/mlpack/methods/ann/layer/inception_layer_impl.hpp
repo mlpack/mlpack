@@ -24,7 +24,7 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 InceptionLayer<InputDataType, OutputDataType, CustomLayers...>::InceptionLayer()
 {
-  //Nothing to do here.
+  // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType,
