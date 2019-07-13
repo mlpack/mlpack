@@ -15,10 +15,8 @@
 // In case it hasn't been included yet.
 #include "inception_score.hpp"
 
-namespace mlpack
-{
-namespace ann /* Artificial Neural Network */
-{
+namespace mlpack {
+namespace ann /* Artificial Neural Network */ {
 
 template <typename ModelType>
 double InceptionScore(ModelType model,

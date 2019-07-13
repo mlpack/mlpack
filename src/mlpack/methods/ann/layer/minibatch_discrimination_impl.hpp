@@ -59,6 +59,7 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Forward(
   M = arma::cube(tempM.memptr(), B, C, batchSize, false, false);
   distances.set_size(B, batchSize, batchSize);
   output.set_size(B, batchSize);
+
   for (size_t i = 0; i < M.n_slices; i++)
   {
     output.col(i).ones();
@@ -80,6 +81,7 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Forward(
       }
     }
   }
+
   output = join_cols(input, output); // (A + B) x batchSize
 }
 
@@ -91,6 +93,7 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Backward(
   g = gy.head_rows(A);
   arma::Mat<eT> gM = gy.tail_rows(B);
   deltaM.zeros(B, C, batchSize);
+
   for (size_t i = 0; i < M.n_slices; i++)
   {
     for (size_t j = 0; j < M.n_slices; j++)
@@ -106,6 +109,7 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Backward(
       deltaM.slice(j) += t;
     }
   }
+
   deltaTemp = arma::mat(deltaM.memptr(), B * C, batchSize, false, false);
   g += weight.t() * deltaTemp;
 }
