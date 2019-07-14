@@ -102,7 +102,7 @@ class KDERules
   double EvaluateKernel(const arma::vec& query,
                         const arma::vec& reference) const;
 
-  //! Calculate depthAlpha for some node and its parents in a recursive way.
+  //! Calculate depth alpha for some node.
   double CalculateAlpha(TreeType* node);
 
   //! The reference set.
@@ -169,6 +169,49 @@ class KDERules
 
   //! The number of scores.
   size_t scores;
+};
+
+/**
+ * A dual-tree traversal Rules class for cleaning used trees before performing
+ * kernel density estimation.
+ */
+template<typename TreeType>
+class KDECleanRules
+{
+ public:
+  //! Construct KDECleanRules.
+  KDECleanRules() { /* Nothing to do. */ }
+
+  //! Base Case.
+  double BaseCase(const size_t /* queryIndex */, const size_t /* refIndex */);
+
+  //! SingleTree Score.
+  double Score(const size_t /* queryIndex */, TreeType& referenceNode);
+
+  //! SingleTree Rescore.
+  double Rescore(const size_t /* queryIndex */,
+                 TreeType& /* referenceNode */,
+                 const double oldScore) const { return oldScore; }
+
+  //! DoubleTree Score.
+  double Score(TreeType& queryNode, TreeType& referenceNode);
+
+  //! DoubleTree Rescore.
+  double Rescore(TreeType& /* queryNode */,
+                 TreeType& /* referenceNode*/ ,
+                 const double oldScore) const { return oldScore; };
+
+  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
+
+  //! Get traversal information.
+  const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
+
+  //! Modify traversal information.
+  TraversalInfoType& TraversalInfo() { return traversalInfo; }
+
+ private:
+  //! Traversal information.
+  TraversalInfoType traversalInfo;
 };
 
 } // namespace kde

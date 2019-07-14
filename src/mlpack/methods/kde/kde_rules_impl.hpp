@@ -476,6 +476,36 @@ CalculateAlpha(TreeType* node)
   return stat.MCAlpha();
 }
 
+//! Clean rules base case.
+template<typename TreeType>
+inline force_inline
+double KDECleanRules<TreeType>::BaseCase(const size_t /* queryIndex */,
+                                         const size_t /* refIndex */)
+{
+  return 0;
+}
+
+//! Clean rules single-tree score.
+template<typename TreeType>
+inline force_inline
+double KDECleanRules<TreeType>::Score(const size_t /* queryIndex */,
+                                      TreeType& referenceNode)
+{
+  referenceNode.Stat().AccumAlpha() = 0;
+  return 0;
+}
+
+//! Clean rules double-tree score.
+template<typename TreeType>
+inline force_inline
+double KDECleanRules<TreeType>::Score(TreeType& queryNode,
+                                      TreeType& referenceNode)
+{
+  queryNode.Stat().AccumAlpha() = 0;
+  referenceNode.Stat().AccumAlpha() = 0;
+  return 0;
+}
+
 } // namespace kde
 } // namespace mlpack
 
