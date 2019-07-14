@@ -456,6 +456,16 @@ Evaluate(Tree* queryTree,
                                 "dual-tree");
   }
 
+  // Clean accumulated alpha if Monte Carlo estimations are available.
+  if (monteCarlo && std::is_same<KernelType, kernel::GaussianKernel>::value)
+  {
+    Timer::Start("cleaning_query_tree");
+    KDECleanRules<Tree> cleanRules;
+    DualTreeTraversalType<KDECleanRules<Tree>> cleanTraverser(cleanRules);
+    cleanTraverser.Traverse(*queryTree, *referenceTree);
+    Timer::Stop("cleaning_query_tree");
+  }
+
   Timer::Start("computing_kde");
 
   // Evaluate.
@@ -514,6 +524,16 @@ Evaluate(arma::vec& estimations)
   estimations.clear();
   estimations.set_size(referenceTree->Dataset().n_cols);
   estimations.fill(arma::fill::zeros);
+
+  // Clean accumulated alpha if Monte Carlo estimations are available.
+  if (monteCarlo && std::is_same<KernelType, kernel::GaussianKernel>::value)
+  {
+    Timer::Start("cleaning_query_tree");
+    KDECleanRules<Tree> cleanRules;
+    SingleTreeTraversalType<KDECleanRules<Tree>> cleanTraverser(cleanRules);
+    cleanTraverser.Traverse(0, *referenceTree);
+    Timer::Stop("cleaning_query_tree");
+  }
 
   Timer::Start("computing_kde");
 
