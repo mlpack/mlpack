@@ -199,7 +199,7 @@ class KDECleanRules
   //! DoubleTree Rescore.
   double Rescore(TreeType& /* queryNode */,
                  TreeType& /* referenceNode*/ ,
-                 const double oldScore) const { return oldScore; };
+                 const double oldScore) const { return oldScore; }
 
   typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
 
