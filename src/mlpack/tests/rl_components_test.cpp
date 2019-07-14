@@ -170,9 +170,7 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
  */
 BOOST_AUTO_TEST_CASE(MultiplePoleCartTest)
 {
-  arma::vec poleLengths = {1, 0.5};
-  arma::vec poleMasses = {1, 1};
-  MultiplePoleCart task = MultiplePoleCart(2, poleLengths, poleMasses);
+  MultiplePoleCart task = MultiplePoleCart();
   task.MaxSteps() = 5;
 
   MultiplePoleCart::State state = task.InitialSample();
@@ -196,12 +194,7 @@ BOOST_AUTO_TEST_CASE(MultiplePoleCartTest)
  */
 BOOST_AUTO_TEST_CASE(ContinuousMultiplePoleCartTest)
 {
-  arma::arma_rng::set_seed_random();
-
-  arma::vec poleLengths = {1, 0.5};
-  arma::vec poleMasses = {1, 1};
-  ContinuousMultiplePoleCart task = ContinuousMultiplePoleCart(2, poleLengths,
-      poleMasses);
+  ContinuousMultiplePoleCart task = ContinuousMultiplePoleCart();
   task.MaxSteps() = 5;
 
   ContinuousMultiplePoleCart::State state = task.InitialSample();
