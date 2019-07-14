@@ -1,0 +1,162 @@
+/*!
+
+@file neat.txt
+@author Rahul Ganesh Prabhu
+@brief Tutorial for how to use neat in mlpack.
+
+@page neattutorial NeuroEvolution of Augmenting Topologies
+
+@section intro_neattut Introduction
+
+NeuroEvolution of Augmenting Topologies (NEAT) is a genetic algorithm proposed by Kenneth Stanley that can evolve networks of unbound complexity from simple networks and "complexifying" through different genetic operators. It has been used to create "genetic art" and an agent that can complete the first level in Super Mario World.
+
+This implementation of NEAT also has support for Phased Searching, which is a searching scheme proposed by Colin Green, involving alternating between complexification and simplification, based on the mean complexity of the population. Here, complexity is defined as the number of connections in the genome.
+
+@section neat_neattut The NEAT class
+
+@subsection neat_genome The Genome class
+
+The Genome class is the representation of a genome in the population. It contains a list of connection genes that represent it's network. The parameters of this network are easily accessed by calling the \c Parameters() function, which returns a kind of adjacency matrix, where the element at (i, j) represents the weight of a connection from node ID i to node ID j.
+
+It is important to know the scheme by which these node IDs are allotted:
+
+  - The bias node always has ID 0.
+  - The input nodes are given the IDs from 1 to inputNodeCount
+  - The output nodes are given the IDs from inputNodeCount + 1 to inputNodeCount + outputNodeCount.
+  - The hidden nodes are given IDs greater than inputNodeCount + outputNodeCount.
+
+The bias of the genome can also be gound using the Bias() method.
+
+The genome is also what is used to evaluate an input based on the network it represents. This is done by using the genome's Evaluate() function:
+
+@code
+#include <mlpack/methods/neat/neat.hpp>
+
+arma::vec input = arma::randn<arma::vec>(inputNodeCount);
+
+// Assuming a Genome object called genome has already been instantiated.
+arma::vec output = genome.Evaluate(input);
+@endcode
+
+@subsection neat_user Using the NEAT class
+
+The NEAT class is what we use to find the best genome for a task. This is done by using the \c Train() function, which returns the best genome at the task. Below is an example using the XOR task given in the tests:
+
+@code
+#include <mlpack/methods/neat/neat.hpp>
+#include <mlpack/tests/neat_test_tools.hpp>
+
+using namespace mlpack::neat;
+
+// Instantiate a task class instance.
+XORTask task;
+
+// Instantiate a NEAT class instance.
+NEAT<XORTask> model(task, 2, 1, 100, 150, 10);
+
+// Train NEAT on the task and find the best genome.
+Genome<> bestGenome = model.Train();
+@endcode
+
+@section neat_template_neattut Template parameters for the 'NEAT' class
+
+The NEAT class has three template parameters:
+
+	- \b TaskType: The task that NEAT is to be trained on.
+	- \b ActivationFunction: The activation function to be used by NEAT. It 	is ann::HardSigmoidFunction by default.
+	- \b SelectionType: The selection algorithm used to select genomes for 		crossover. It is RankSelection by default.
+
+@subsection neat_tasktype_neattut The 'TaskType' template parameter
+
+The TaskType is the class defining the task that we wish to train NEAT on. Every TaskType function must contain an \c Evaluate(Genome<ActivationFunction> genome) function which returns the fitness of the genome as a \c double value. The example below is a TaskType class that is used to train NEAT to create an XOR gate:
+
+@code
+#include <mlpack/methods/neat/neat.hpp>
+
+using namespace mlpack::neat;
+
+class XORTask
+{
+ public:
+  double Evaluate(Genome<>& genome)
+  {
+  	// Describes the input we will use for the XOR test.
+    arma::mat input = {{0, 0, 1, 1},
+                       {0, 1, 0, 1}};
+
+    double error = 0;
+    for (size_t i = 0; i < input.n_cols; i++)
+    {
+    	// Choose input.
+      arma::vec inputVec = input.col(i);
+
+      // The genome evaluates the input provided, and returns the output of the // neural net.
+      arma::vec output = genome.Evaluate(inputVec);
+
+      // Find the error in the expected output.
+      arma::vec answer = {(input(0, i) + input(1, i)) * (!input(0, i) +
+          !input(1, i))};
+      error += std::pow(answer[0] - output[0], 2);
+    }
+
+    // Return the fitness of the genome based on the error.
+    return 4 - error;
+  }
+};
+@endcode
+
+TaskType can also optionally have a StartingGenome() method, which returns a starting point for training. In this case NEAT begins it's training with the initial population having the same structure as this genome, but with mutated weights. If this is not specified, NEAT starts from the simplest fully connected structure, with no hidden nodes. An example for this function is given below.
+
+@code
+#include <mlpack/methods/neat/neat.hpp>
+
+using namespace mlpack::neat;
+
+class XORTask
+{
+ public:
+  Genome<> StartingGenome()
+  {
+    // The list of all connection genes.
+    std::vector<ConnectionGene> connGeneList;
+
+    // Emplace the connection genes in the starting genome. It is important to 
+    // provide the innovation IDs for the connection genes, starting with zero.
+    connGeneList.emplace_back(ConnectionGene(0, 1, 0, 3));
+    connGeneList.emplace_back(ConnectionGene(1, 1, 1, 3));
+    connGeneList.emplace_back(ConnectionGene(2, 1, 2, 4));
+    connGeneList.emplace_back(ConnectionGene(3, 1, 4, 3));
+
+    // Return the genome 
+    return Genome(connGeneList, 3, 1, 5, 1, 0.5, 1)
+  }
+};
+@endcode
+
+@sub_section neat_selection_neattut The 'SelectionType' template parameter
+
+The SelectionType is the class which defines the selection algorithm for choosing genomes for crossover or mutation. \b mlpack implements several existing classes that satisfy the SelectionType policy:
+
+ - mlpack::neat::RankSelection
+ - mlpack::neat::RouletteSelection
+ - mlpack::neat::TournamentSelection
+
+Any \c SelectionType policy must implement a static Select() function:
+
+@code
+/**
+   * The method that selects parents out of the population. It returns 
+   * indices of the parents.
+   * 
+   * @param fitnesses A sorted Armadillo vector of fitnesses in ascending
+   *    order.
+   * @param selection The selected indices.
+   */
+  static void Select(arma::vec& fitnesses, arma::uvec& selection)
+  { ... }
+@endcode
+
+It is important to note that any user-implemented policy should be general enough to work with selecting one or two parents, since during phased searching, a single parent is chosen for simplification.
+
+
+*/

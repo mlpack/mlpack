@@ -24,8 +24,8 @@ class RankSelection
 {
  public:
   /**
-   * The method that selects parents out of the population. It returns a
-   * pair of indices of the parents.
+   * The method that selects parents out of the population. It returns 
+   * indices of the parents.
    * 
    * @param fitnesses A sorted Armadillo vector of fitnesses in ascending
    *    order.
@@ -34,8 +34,6 @@ class RankSelection
   static void Select(arma::vec& fitnesses, arma::uvec& selection)
   {
     selection.fill(fitnesses.n_elem);
-    selection[0] = fitnesses.n_elem;
-    selection[1] = fitnesses.n_elem;
     arma::uword size = fitnesses.n_elem;
     double denom = std::pow(size, 2);
     for (size_t i = 0; i < selection.n_elem; i++)

@@ -63,15 +63,14 @@ class DPNVTask
     double fitness = 0;
 
     // The starting point is always the same.
-    double oneDegrees = 1 * M_PI / 180;
-    arma::mat data(2, 3, arma::fill::zeros);
-    data(0, 1) = oneDegrees;
+    double oneDegree = 1 * M_PI / 180;
+    arma::vec data(6, arma::fill::zeros);
+    data[2] = oneDegrees;
     MultiplePoleCart::State state(data);
-    arma::mat inputMatrix = state.Data();
 
     // Create a normalized vector input.
-    arma::vec input = {inputMatrix(0, 0) / 2.4, inputMatrix(0, 1) / 0.62832,
-        inputMatrix(0, 2) / 0.62832};
+    arma::vec input = {state.Position() / 2.4, state.Angle(1) / 0.62832,
+        state.Angle(2) / 0.62832};
     arma::vec output = genome.Evaluate(input);
 
     // Helper variables to evaluate fitness.
@@ -96,17 +95,12 @@ class DPNVTask
       environment.Sample(state, action, state);
 
       // Update the state of the genome for the next step.
-      inputMatrix = state.Data();
-      input = {inputMatrix(0, 0), inputMatrix(0, 1), inputMatrix(0, 2)};
+      input = {state.Position() / 2.4, state.Angle(1) / 0.62832,
+          state.Angle(2) / 0.62832};
 
-      // Scale the input between -1 and 1.
-      input[0] /= 2.4;
-      input[1] /= 0.62832;
-      input[2] /= 0.62832;
-
-      wiggleBuffer1.push_back(std::abs(inputMatrix(0, 0)) +
-          std::abs(inputMatrix(0, 1)) + std::abs(inputMatrix(1, 0)) +
-          std::abs(inputMatrix(1, 1)));
+      wiggleBuffer1.push_back(std::abs(state.Position()) +
+          std::abs(state.Velocity()) + std::abs(state.Angle(1)) +
+          std::abs(state.AngularVelocity(1)));
 
       if (wiggleBuffer1.size() == 100)
       {
@@ -118,7 +112,11 @@ class DPNVTask
 
       output = genome.Evaluate(input);
 
-      if (timeStep > 499)
+      if (timeStep > 10000)
+      {
+        break;
+      }
+      else if (timeStep > 499)
       {
         double sum = 0;
         for (auto it = wiggleBuffer2.begin(); it != wiggleBuffer2.end(); it++)

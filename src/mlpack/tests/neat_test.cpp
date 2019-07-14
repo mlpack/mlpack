@@ -55,8 +55,7 @@ BOOST_AUTO_TEST_CASE(NEATDoublePoleCartNoVelocitiesTest)
 {
   arma::vec poleLengths = {0.5, 0.05};
   arma::vec poleMasses = {0.1, 0.01};
-  const MultiplePoleCart env = MultiplePoleCart(2, poleLengths, poleMasses,
-      9.8, 1, 0.01);
+  const MultiplePoleCart env = MultiplePoleCart();
   DPNVTask task(env);
   NEAT<DPNVTask> model(task, 3, 1, 1000, 200, 50, 0, 1, 0.8, 1.8, 0.5, 0.01,
       0.3, 0.2, 0.05, 0);

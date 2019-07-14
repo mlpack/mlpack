@@ -38,51 +38,51 @@ class MultiplePoleCart
      * 
      * @param numPoles The number of poles.
      */
-    State(const size_t numPoles)
-    {
-      data = arma::zeros<arma::mat>(dimension, numPoles + 1);
-    }
+    State() : data(dimension)
+    { /* Nothing to do here. */ }
 
     /**
      * Construct a state instance from given data.
      *
      * @param data Data for the position, velocity, angle and angular velocity.
      */
-    State(const arma::mat& data) : data(data)
+    State(const arma::colvec& data) : data(data)
     { /* Nothing to do here */ }
 
+    //! Get the internal representation of the state
+    arma::colvec Data() const { return data; }
     //! Modify the internal representation of the state.
-    arma::mat& Data() { return data; }
+    arma::colvec& Data() { return data; }
 
     //! Get the position of the cart.
-    double Position() const { return data(0, 0); }
+    double Position() const { return data[0]; }
     //! Modify the position of the cart.
-    double& Position() { return data(0, 0); }
+    double& Position() { return data[0]; }
 
     //! Get the velocity of the cart.
-    double Velocity() const { return data(1, 0); }
+    double Velocity() const { return data[1]; }
     //! Modify the velocity of the cart.
-    double& Velocity() { return data(1, 0); }
+    double& Velocity() { return data[1]; }
 
     //! Get the angle of the $i^{th}$ pole with the vertical.
-    double Angle(const size_t i) const { return data(0, i); }
+    double Angle(const size_t i) const { return data[2 * i]; }
     //! Modify the angle of the $i^{th}$ pole with the vertical.
-    double& Angle(const size_t i) { return data(0, i); }
+    double& Angle(const size_t i) { return data[2 * i]; }
 
     //! Get the angular velocity of the $i^{th}$ pole.
-    double AngularVelocity(const size_t i) const { return data(1, i); }
+    double AngularVelocity(const size_t i) const { return data[2 * i + 1]; }
     //! Modify the angular velocity of the $i^{th}$ pole.
-    double& AngularVelocity(const size_t i) { return data(1, i); }
+    double& AngularVelocity(const size_t i) { return data[2 * i + 1]; }
 
     //! Encode the state to a matrix.
-    const arma::mat& Encode() const { return data; }
+    const arma::colvec& Encode() const { return data; }
 
     //! Dimension of the encoded state.
-    const size_t dimension = 2;
+    static constexpr size_t dimension = 6;
 
    private:
     //! Locally-stored state data.
-    arma::mat data;
+    arma::colvec data;
   };
 
   /**
@@ -113,9 +113,10 @@ class MultiplePoleCart
    * @param maxSteps The number of steps after which the episode
    *    terminates. If the value is 0, there is no limit.
    */
-  MultiplePoleCart(const size_t poleNum,
-                   const arma::vec& poleLengths,
-                   const arma::vec& poleMasses,
+  MultiplePoleCart(const double m1 = 0.1,
+                   const double m2 = 0.01,
+                   const double l1 = 0.5,
+                   const double l2 = 0.05,
                    const double gravity = 9.8,
                    const double massCart = 1.0,
                    const double forceMag = 10.0,
@@ -124,9 +125,10 @@ class MultiplePoleCart
                    const double xThreshold = 2.4,
                    const double doneReward = 0.0,
                    const size_t maxSteps = 0) :
-      poleNum(poleNum),
-      poleLengths(poleLengths),
-      poleMasses(poleMasses),
+      m1(m1),
+      m2(m2),
+      l1(l1),
+      l2(l2),
       gravity(gravity),
       massCart(massCart),
       forceMag(forceMag),
@@ -136,18 +138,7 @@ class MultiplePoleCart
       doneReward(doneReward),
       maxSteps(maxSteps),
       stepsPerformed(0)
-  {
-    if (poleNum != poleLengths.n_elem)
-    {
-      Log::Fatal << "The number of lengths should be the same as the number of"
-          "poles." << std::endl;
-    }
-    if (poleNum != poleMasses.n_elem)
-    {
-      Log::Fatal << "The number of masses should be the same as the number of"
-          "poles." << std::endl;
-    }
-  }
+  { /* Nothing to do here */ }
 
   /**
    * Dynamics of Multiple Pole Cart instance. Get reward and next state based on current
@@ -165,33 +156,16 @@ class MultiplePoleCart
     // Update the number of steps performed.
     stepsPerformed++;
 
-    // Calculate acceleration.
-    double totalForce = action ? forceMag : -forceMag;
-    double totalMass = massCart;
-    for (size_t i = 0; i < poleNum; i++)
+    arma::vec dydx(6, arma::fill::zeros);
+    for (size_t i = 0; i < 2; i++)
     {
-      double poleOmega = state.AngularVelocity(i + 1);
-      double sinTheta = sin(state.Angle(i + 1));
-      totalForce += (poleMasses[i] * poleLengths[i] * poleOmega * poleOmega *
-          sinTheta) + 0.75 * poleMasses[i] * gravity * sin(2 * state.Angle(i +
-          1)) / 2;
-      totalMass += poleMasses[i] * (0.25 + 0.75 * sinTheta * sinTheta);
+      dydx[0] = state.Velocity();
+      dydx[2] = state.AngularVelocity(1);
+      dydx[4] = state.AngularVelocity(2);
     }
-    double xAcc = totalForce / totalMass;
+    Step(state, action, dydx);
+    RK4(state, action, dydx, nextState);
 
-    // Update states of the poles.
-    for (size_t i = 1; i <= poleNum; i++)
-    {
-      double sinTheta = sin(state.Angle(i));
-      double cosTheta = cos(state.Angle(i));
-      nextState.Angle(i) = state.Angle(i) + tau * state.AngularVelocity(i);
-      nextState.AngularVelocity(i) = state.AngularVelocity(i) - tau * 0.75 *
-          (xAcc * cosTheta + gravity * sinTheta) / poleLengths[i - 1];
-    }
-
-    // Update state of the cart.
-    nextState.Position() = state.Position() + tau * state.Velocity();
-    nextState.Velocity() = state.Velocity() + tau * xAcc;
 
     // Check if the episode has terminated.
     bool done = IsTerminal(nextState);
@@ -209,6 +183,73 @@ class MultiplePoleCart
     return 1.0;
   }
 
+  void Step(const State& state,
+            const Action& action,
+            arma::vec& dydx)
+  {
+    double totalForce = action ? forceMag : -forceMag;
+    double totalMass = massCart;
+    double omega1 = state.AngularVelocity(1);
+    double omega2 = state.AngularVelocity(2);
+    double sinTheta1 = std::sin(state.Angle(1));
+    double sinTheta2 = std::sin(state.Angle(2));
+    double cosTheta1 = std::cos(state.Angle(1));
+    double cosTheta2 = std::cos(state.Angle(2));
+
+    // Calculate total effective force.
+    totalForce += m1 * l1 * omega1 * omega1 * sinTheta1 + 0.375 * m1 * gravity *
+        std::sin(2 * state.Angle(1));
+    totalForce += m2 * l2 * omega2 * omega2 * sinTheta1 + 0.375 * m2 * gravity *
+        std::sin(2 * state.Angle(2));
+
+    // Calculate total effective mass.
+    totalMass += m1 * (0.25 + 0.75 * sinTheta1 * sinTheta1);
+    totalMass += m2 * (0.25 + 0.75 * sinTheta2 * sinTheta2);
+
+    // Calculate acceleration.
+    double xAcc = totalForce / totalMass;
+
+    // Calculate angular acceleration.
+    double angAcc1 = -0.75 * (xAcc * cosTheta1 + gravity * sinTheta1) / l1;
+    double angAcc2 = -0.75 * (xAcc * cosTheta2 + gravity * sinTheta2) / l2;
+
+    dydx[1] = xAcc;
+    dydx[3] = angAcc1;
+    dydx[5] = angAcc2;
+  }
+
+  void RK4(const State& state,
+           const Action& action,
+           arma::vec& dydx,
+           State& nextState)
+  {
+    double hh = tau * 0.5;
+    double h6 = tau / 6;
+    arma::vec yt(6);
+    arma::vec dyt(6);
+    arma::vec dym(6);
+
+    yt = state.Data() + (hh * dydx);
+    Step(State(yt), action, dyt);
+    dyt[0] = yt[1];
+    dyt[2] = yt[3];
+    dyt[4] = yt[5];
+    yt = state.Data() + (hh * dyt);
+
+    Step(State(yt), action, dym);
+    dym[0] = yt[1];
+    dym[2] = yt[3];
+    dym[4] = yt[5];
+    yt = state.Data() + (tau * dym);
+    dym += dyt;
+
+    Step(State(yt), action, dyt);
+    dyt[0] = yt[1];
+    dyt[2] = yt[3];
+    dyt[4] = yt[5];
+    nextState.Data() = state.Data() + h6 * (dydx + dyt + 2 * dym);
+  }
+
   /**
    * Dynamics of Multiple Pole Cart. Get reward based on current state and current
    * action.
@@ -219,7 +260,7 @@ class MultiplePoleCart
    */
   double Sample(const State& state, const Action& action)
   {
-    State nextState(poleNum);
+    State nextState;
     return Sample(state, action, nextState);
   }
 
@@ -231,7 +272,7 @@ class MultiplePoleCart
   State InitialSample()
   {
     stepsPerformed = 0;
-    return State((arma::randu<arma::mat>(2, poleNum + 1) - 0.5) / 10.0);
+    return State((arma::randu<arma::vec>(6) - 0.5) / 10.0);
   }
 
   /**
@@ -253,13 +294,11 @@ class MultiplePoleCart
       Log::Info << "Episode terminated due to cart crossing threshold";
       return true;
     }
-    for (size_t i = 1; i <= poleNum; i++)
+    if (std::abs(state.Angle(1)) > thetaThresholdRadians ||
+        std::abs(state.Angle(2)) > thetaThresholdRadians)
     {
-      if (std::abs(state.Angle(i)) > thetaThresholdRadians)
-      {
-        Log::Info << "Episode terminated due to pole falling";
-        return true;
-      }
+      Log::Info << "Episode terminated due to pole falling";
+      return true;
     }
     return false;
   }
@@ -273,14 +312,17 @@ class MultiplePoleCart
   size_t& MaxSteps() { return maxSteps; }
 
  private:
-  //! Locally-stored number of poles.
-  size_t poleNum;
+  //! Locally-stored mass of the first pole.
+  double m1;
 
-  //! Locally-stored length of poles.
-  arma::vec poleLengths;
+  //! Locally-stored mass of the second pole.
+  double m2;
 
-  //! Locally-stored mass of the pole.
-  arma::vec poleMasses;
+  //! Locally-stored length of the first pole.
+  double l1;
+
+  //! Locally-stored length of
+  double l2;
 
   //! Locally-stored gravity.
   double gravity;
