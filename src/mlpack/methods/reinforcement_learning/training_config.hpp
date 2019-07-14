@@ -25,7 +25,8 @@ class TrainingConfig
       stepLimit(0),
       explorationSteps(1),
       gradientLimit(40),
-      doubleQLearning(false)
+      doubleQLearning(false),
+      epsilon(0.2)
   { /* Nothing to do here. */ }
 
   TrainingConfig(

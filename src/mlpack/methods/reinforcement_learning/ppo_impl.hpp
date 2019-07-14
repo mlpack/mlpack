@@ -121,6 +121,9 @@ void PPO<
 
   actorNetwork.Backward(loss, actorGradients);
   updater.Update(actorNetwork.Parameters(), config.StepSize(), actorGradients);
+
+  // update the oldActorNetwork
+  oldActorNetwork = actorNetwork;
 }
 
 template<
