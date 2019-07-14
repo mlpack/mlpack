@@ -77,6 +77,8 @@ void PPO<
   ReplayType
 >::Update()
 {
+  // todo: sync the oldActorNetwork
+
   // Sample from previous experience.
   arma::mat sampledStates;
   std::vector<ActionType> sampledActions;
@@ -102,12 +104,10 @@ void PPO<
 
   advantages = discountedRewards - actionValues;
 
+  // update the critic
   criticNetwork.Backward(advantages, criticGradients);
   updater.Update(criticNetwork.Parameters(), config.StepSize(),
       criticGradients);
-
-  // update the critic
-  criticNetwork.Backward(actionValues, sampledRewards);
 
   // update the actor
   arma::vec prob, oldProb;
@@ -115,12 +115,9 @@ void PPO<
   oldNormalDist.Probability(actionValues, oldProb);
   arma::mat ratio =  prob / oldProb;
 
-  arma::mat surrogateLoss1 = ratio * advantages;
-  arma::mat surrogateLoss2 = arma::clamp(ratio, 1 - config.Epsilon(),
+  arma::mat surrogateLoss = arma::clamp(ratio, 1 - config.Epsilon(),
       1 + config.Epsilon()) * advantages;
-  arma::mat loss = - arma::min(surrogateLoss1, surrogateLoss2);
-
-  // todo: calculate the surrogate loss
+  arma::mat loss = - arma::min(ratio * advantages, surrogateLoss);
 
   actorNetwork.Backward(loss, actorGradients);
   updater.Update(actorNetwork.Parameters(), config.StepSize(), actorGradients);
@@ -144,22 +141,16 @@ double PPO<
 >::Step()
 {
   // Get the action value for each action at current state.
-  arma::mat actionValue;
+  arma::mat actionValue, sigma, mu;
   actorNetwork.Predict(state.Encode(), actionValue);
 
-  arma::mat sigma, mu;
   ann::TanhFunction::Fn(actionValue.col(0), sigma);
   ann::SoftplusFunction::Fn(actionValue.col(1), mu);
-
   normalDist = distribution::GaussianDistribution(sigma, mu);
-
-  // Get the action value for each action at current state.
-  actorNetwork.Predict(state.Encode(), actionValue);
 
   oldActorNetwork.Predict(state.Encode(), actionValue);
   ann::TanhFunction::Fn(actionValue.col(0), sigma);
   ann::SoftplusFunction::Fn(actionValue.col(1), mu);
-
   oldNormalDist = distribution::GaussianDistribution(sigma, mu);
 
   ActionType action;
