@@ -49,6 +49,7 @@ double InceptionScore(ModelType model,
     scores(i) = exp(arma::as_scalar(arma::mean(arma::sum(curPreds, 0))));
     index += curSize;
   }
+
   return arma::mean(scores);
 }
 
