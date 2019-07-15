@@ -28,7 +28,7 @@ Image utilities supports loading and saving of image.
 
 It supports filetypes "jpg", "png", "tga","bmp", "psd", "gif", "hdr", "pic", "pnm" for loading and "jpg", "png", "tga", "bmp", "hdr" for saving.
 
-The datatype associated is unsigned char to support RGB values in the range 1-255. To feed data into the network typecast of `arma::Mat` may be required. Images are stored in matrix as (width * height * channels, n_images). Therefore imageMatrix.col(0) would be the first image if images are loaded in imageMatrix.
+The datatype associated is unsigned char to support RGB values in the range 1-255. To feed data into the network typecast of `arma::Mat` may be required. Images are stored in matrix as (width * height * channels, NumberOfImages). Therefore imageMatrix.col(0) would be the first image if images are loaded in imageMatrix.
 
 @section imageinfo_api_imagetut ImageInfo
 
@@ -78,7 +78,7 @@ data::ImageInfo info;
 data::Load("test_image.png", matrix, info, false, true);
 @endcode
 
-If the size of image is known beforehand, it can be passed into the constructor of ImageInfo to set the size of outputMatrix(the matrix into which the image is loaded).
+ImageInfo requires height, width, number of channels of the image.
 
 @code
 size_t height = 64, width = 64, channels = 1;
@@ -116,7 +116,7 @@ Loading multiple images:
 
 @section save_api_imagetut Save
 
-Save images expects a matrix of type unsigned char in the form (width * height * channels, n_images).
+Save images expects a matrix of type unsigned char in the form (width * height * channels, NumberOfImages).
 Just like load it can be used to save one image or multiple images. Besides image data it also expects the shape of the image as input (width, height, channels).
 
 Saving one image:
@@ -180,6 +180,6 @@ Saving multiple images:
   data::Save(files, matrix, info, false, true);
 @endcode
 
-Multiple images are saved according to the vector of file name specified.
+Multiple images are saved according to the vector of filenames specified.
 
 */

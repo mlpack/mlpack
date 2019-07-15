@@ -39,6 +39,10 @@ namespace data {
 inline bool ImageFormatSupported(const std::string& fileName,
                                  const bool save = false);
 
+/**
+ * Implements meta-data of images required by data::Load and
+ * data::Save for loading and saving images into arma::Mat.
+ */
 class ImageInfo
 {
  public:
@@ -56,15 +60,15 @@ class ImageInfo
             const size_t channels = 3,
             const size_t quality = 90);
 
-  //! Get the image height.
-  const size_t& Height() const { return height; }
-  //! Modify the image height.
-  size_t& Height() { return height; }
-
   //! Get the image width.
   const size_t& Width() const { return width; }
   //! Modify the image width.
   size_t& Width() { return width; }
+  //! Get the image height.
+
+  const size_t& Height() const { return height; }
+  //! Modify the image height.
+  size_t& Height() { return height; }
 
   //! Get the image channels.
   const size_t& Channels() const { return channels; }
@@ -77,11 +81,11 @@ class ImageInfo
   size_t& Quality() { return quality; }
 
  private:
+  // To store the image width.
+  size_t width;
+
   // To store the image height.
   size_t height;
-
-  // To store the image width;
-  size_t width;
 
   // To store the number of channels in the image.
   size_t channels;
