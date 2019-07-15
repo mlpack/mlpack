@@ -374,7 +374,7 @@ BOOST_AUTO_TEST_CASE(MountainCarWithDQN)
        */
       Log::Debug << "Average return: " << averageReturn.mean()
           << " Episode return: " << episodeReturn << std::endl;
-      if (averageReturn.mean() > 100)
+      if (averageReturn.mean() > -370)
       {
         agent.Deterministic() = true;
         arma::running_stat<double> testReturn;
