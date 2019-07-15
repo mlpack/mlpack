@@ -27,7 +27,7 @@ static const std::vector<std::string> loadFileTypes({"jpg", "png", "tga",
 static const std::vector<std::string> saveFileTypes({"jpg", "png", "tga",
     "bmp", "hdr"});
 
-inline bool ImageFormatSupported(const std::string& fileName, bool save)
+inline bool ImageFormatSupported(const std::string& fileName, const bool save)
 {
   if (save)
   {
@@ -58,9 +58,7 @@ inline ImageInfo::ImageInfo(const size_t width,
     width(width),
     height(height),
     channels(channels),
-    quality(quality),
-    format(""),
-    flipVertical(true)
+    quality(quality)
 {
   // Do nothing.
 }

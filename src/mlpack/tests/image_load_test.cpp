@@ -22,7 +22,8 @@ using namespace std;
 BOOST_AUTO_TEST_SUITE(ImageLoadTest);
 
 /**
- * Test the invalid extension.
+ * Test if an image with an unsupported extension throws an expected
+ * exception.
  */
 BOOST_AUTO_TEST_CASE(LoadInvalidExtensionFile)
 {
@@ -33,7 +34,7 @@ BOOST_AUTO_TEST_CASE(LoadInvalidExtensionFile)
 }
 
 /**
- * Test the images is loaded correctly into the matrix using the API.
+ * Test that the image is loaded correctly into the matrix using the API.
  */
 BOOST_AUTO_TEST_CASE(LoadImageAPITest)
 {

@@ -37,14 +37,14 @@ namespace data {
  * @return Boolean value indicating success if it is an image.
  */
 inline bool ImageFormatSupported(const std::string& fileName,
-                                 bool save = false);
+                                 const bool save = false);
 
 class ImageInfo
 {
  public:
   /**
    * Instantiate the ImageInfo object with the given image width, height,
-   * channels parameter.
+   * number of channels and quality parameter.
    *
    * @param width Image width.
    * @param height Image height.
@@ -88,12 +88,6 @@ class ImageInfo
 
   // Compression of the image if saved as jpg (0 - 100).
   size_t quality;
-
-  // Image format.
-  std::string format;
-
-  // Flip the image vertical upon loading/saving.
-  bool flipVertical;
 };
 
 } // namespace data
