@@ -1,8 +1,8 @@
 /**
- * @file continuous_multiple_pole_cart.hpp
+ * @file continuous_double_pole_cart.hpp
  * @author Rahul Ganesh Prabhu
  *
- * This file is an implementation of Continuous Multiple Pole Cart Balancing
+ * This file is an implementation of Continuous Double Pole Cart Balancing
  * Task.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -11,8 +11,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_MULTIPLE_POLE_CART_HPP
-#define MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_MULTIPLE_POLE_CART_HPP
+#ifndef MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_DOUBLE_POLE_CART_HPP
+#define MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_DOUBLE_POLE_CART_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -20,13 +20,13 @@ namespace mlpack {
 namespace rl {
 
 /**
- * Implementation of Continuous Multiple Pole Cart Balancing task.
+ * Implementation of Continuous Double Pole Cart Balancing task.
  */
-class ContinuousMultiplePoleCart
+class ContinuousDoublePoleCart
 {
  public:
   /**
-   * Implementation of the state of Continuous Multiple Pole Cart. The state is 
+   * Implementation of the state of Continuous Double Pole Cart. The state is 
    * expressed as a vector (position, velocity, angle, angular velocity, angle,
    * angular velocity)
    */
@@ -84,7 +84,7 @@ class ContinuousMultiplePoleCart
   };
 
   /**
-   * Implementation of action of Continuous Multiple Pole Cart.
+   * Implementation of action of Continuous Double Pole Cart.
    */
   struct Action
   {
@@ -94,7 +94,7 @@ class ContinuousMultiplePoleCart
   };
 
   /**
-   * Construct a Multiple Pole Cart instance using the given constants.
+   * Construct a Double Pole Cart instance using the given constants.
    *
    * @param m1 The mass of the first pole.
    * @param m2 The mass of the second pole.
@@ -111,7 +111,7 @@ class ContinuousMultiplePoleCart
    * @param maxSteps The number of steps after which the episode
    *    terminates. If the value is 0, there is no limit.
    */
-  ContinuousMultiplePoleCart(const double m1 = 0.1,
+  ContinuousDoublePoleCart(const double m1 = 0.1,
                              const double m2 = 0.01,
                              const double l1 = 0.5,
                              const double l2 = 0.05,
@@ -140,7 +140,7 @@ class ContinuousMultiplePoleCart
   { /* Nothing to do here */ }
 
   /**
-   * Dynamics of Continuous Multiple Pole Cart instance. Get reward and next
+   * Dynamics of Continuous Double Pole Cart instance. Get reward and next
    * state based on current state and current action.
    *
    * @param state The current state.
@@ -267,7 +267,7 @@ class ContinuousMultiplePoleCart
   }
 
   /**
-   * Dynamics of Continuous Multiple Pole Cart. Get reward based on current
+   * Dynamics of Continuous Double Pole Cart. Get reward based on current
    * state and current action.
    *
    * @param state The current state.

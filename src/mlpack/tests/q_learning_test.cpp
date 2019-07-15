@@ -21,7 +21,7 @@
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/multiple_pole_cart.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/double_pole_cart.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
 
@@ -397,8 +397,8 @@ BOOST_AUTO_TEST_CASE(MountainCarWithDQN)
   BOOST_REQUIRE_EQUAL(success, true);
 }
 
-//! Test DQN in MultiplePOleCart task.
-BOOST_AUTO_TEST_CASE(MultiplePoleCartWithDQN)
+//! Test DQN in DoublePoleCart task.
+BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
 {
   // We will allow three trials total.
   bool success = false;
@@ -414,8 +414,8 @@ BOOST_AUTO_TEST_CASE(MultiplePoleCartWithDQN)
     model.Add<Linear<>>(32, 3);
 
     // Set up the policy and replay method.
-    GreedyPolicy<MultiplePoleCart> policy(1.0, 1000, 0.1, 0.99);
-    RandomReplay<MultiplePoleCart> replayMethod(20, 10000);
+    GreedyPolicy<DoublePoleCart> policy(1.0, 1000, 0.1, 0.99);
+    RandomReplay<DoublePoleCart> replayMethod(20, 10000);
 
     TrainingConfig config;
     config.StepSize() = 0.0001;
@@ -426,7 +426,7 @@ BOOST_AUTO_TEST_CASE(MultiplePoleCartWithDQN)
     config.StepLimit() = 400;
 
     // Set up DQN agent.
-    QLearning<MultiplePoleCart, decltype(model), AdamUpdate, decltype(policy)>
+    QLearning<DoublePoleCart, decltype(model), AdamUpdate, decltype(policy)>
         agent(std::move(config), std::move(model), std::move(policy),
         std::move(replayMethod));
 

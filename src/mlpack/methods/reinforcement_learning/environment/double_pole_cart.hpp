@@ -1,8 +1,8 @@
 /**
- * @file multiple_pole_cart.hpp
+ * @file double_pole_cart.hpp
  * @author Rahul Ganesh Prabhu
  *
- * This file is an implementation of Multiple Pole Cart Balancing Task.
+ * This file is an implementation of Double Pole Cart Balancing Task.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,8 +10,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_RL_ENVIRONMENT_MULTIPLE_POLE_CART_HPP
-#define MLPACK_METHODS_RL_ENVIRONMENT_MULTIPLE_POLE_CART_HPP
+#ifndef MLPACK_METHODS_RL_ENVIRONMENT_DOUBLE_POLE_CART_HPP
+#define MLPACK_METHODS_RL_ENVIRONMENT_DOUBLE_POLE_CART_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -19,13 +19,13 @@ namespace mlpack {
 namespace rl {
 
 /**
- * Implementation of Multiple Pole Cart Balancing task.
+ * Implementation of Double Pole Cart Balancing task.
  */
-class MultiplePoleCart
+class DoublePoleCart
 {
  public:
   /**
-   * Implementation of the state of Multiple Pole Cart. The state is expressed as
+   * Implementation of the state of Double Pole Cart. The state is expressed as
    * a vector (position, velocity, angle, angular velocity, angle, angular
    * velocity)
    */
@@ -83,7 +83,7 @@ class MultiplePoleCart
   };
 
   /**
-   * Implementation of action of Multiple Pole Cart.
+   * Implementation of action of Double Pole Cart.
    */
   enum Action
   {
@@ -95,7 +95,7 @@ class MultiplePoleCart
   };
 
   /**
-   * Construct a Multiple Pole Cart instance using the given constants.
+   * Construct a Double Pole Cart instance using the given constants.
    *
    * @param m1 The mass of the first pole.
    * @param m2 The mass of the second pole.
@@ -112,7 +112,7 @@ class MultiplePoleCart
    * @param maxSteps The number of steps after which the episode
    *    terminates. If the value is 0, there is no limit.
    */
-  MultiplePoleCart(const double m1 = 0.1,
+  DoublePoleCart(const double m1 = 0.1,
                    const double m2 = 0.01,
                    const double l1 = 0.5,
                    const double l2 = 0.05,
@@ -140,7 +140,7 @@ class MultiplePoleCart
   { /* Nothing to do here */ }
 
   /**
-   * Dynamics of Multiple Pole Cart instance. Get reward and next state based on current
+   * Dynamics of Double Pole Cart instance. Get reward and next state based on current
    * state and current action.
    *
    * @param state The current state.
@@ -267,7 +267,7 @@ class MultiplePoleCart
   }
 
   /**
-   * Dynamics of Multiple Pole Cart. Get reward based on current state and current
+   * Dynamics of Double Pole Cart. Get reward based on current state and current
    * action.
    *
    * @param state The current state.
