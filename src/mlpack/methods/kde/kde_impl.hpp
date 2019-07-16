@@ -461,8 +461,8 @@ Evaluate(Tree* queryTree,
   {
     Timer::Start("cleaning_query_tree");
     KDECleanRules<Tree> cleanRules;
-    DualTreeTraversalType<KDECleanRules<Tree>> cleanTraverser(cleanRules);
-    cleanTraverser.Traverse(*queryTree, *referenceTree);
+    SingleTreeTraversalType<KDECleanRules<Tree>> cleanTraverser(cleanRules);
+    cleanTraverser.Traverse(0, *queryTree);
     Timer::Stop("cleaning_query_tree");
   }
 
