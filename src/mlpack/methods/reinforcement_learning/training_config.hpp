@@ -47,7 +47,8 @@ class TrainingConfig
       stepSize(stepSize),
       discount(discount),
       gradientLimit(gradientLimit),
-      doubleQLearning(doubleQLearning)
+      doubleQLearning(doubleQLearning),
+      epsilon(0.2)
   { /* Nothing to do here. */ }
 
   //! Get the amount of workers.
