@@ -75,6 +75,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     ::Train()
 {
   Genome<ActivationFunction>::nextInnovID = 0;
+  Genome<ActivationFunction>::mutationBuffer.clear();
 
   // Initialize.
   Initialize();
@@ -86,9 +87,6 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
   for (size_t gen = 0; gen < maxGen; gen++)
   {
     meanComplexity = 0;
-    std::cout << "Generation: " << gen << std::endl;
-    std::cout << "Evaluating." << std::endl;
-
     arma::vec fitnesses(popSize);
 
     #pragma omp parallel for
@@ -112,15 +110,10 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     else
       searchMode = 0;
 
-    std::cout << "Maximum fitness " << fitnesses.max() << std::endl;
+    Log::Info << "The maximum fitness in generation " << gen << " is " <<
+        fitnesses.max() << std::endl;
 
-    double mean = arma::mean(fitnesses);
-
-    std::printf("%f\n", mean);
-
-    std::cout << "Speciating." << std::endl;
     Speciate(false);
-    std::cout << "Reproducing." << std::endl;
     Reproduce();
   }
 
@@ -502,22 +495,32 @@ template <class TaskType,
           class SelectionPolicy>
 template <typename Task>
 typename std::enable_if<
-    HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value,
+    HasStartingGenome<Task, std::vector<ConnectionGene>(Task::*)()>::value,
     void>::type
 NEAT<TaskType, ActivationFunction, SelectionPolicy>::Initialize()
 {
-  startingGenome = task.StartingGenome();
+  std::vector<ConnectionGene> connGeneList = task.startingGenome();
+  size_t maxInnovID = 0, maxNodeID = 0;
+  for (size_t i = 0; i < connGeneList.size(); i++)
+  {
+    if (connGeneList[i].InnovationID() > maxInnovID)
+      maxInnovID = connGeneList[i].InnovationID;
+    if (connGeneList[i].Source() > maxNodeID)
+      maxNodeID = connGeneList[i].Source();
+    if (connGeneList[i].Target() > maxNodeID)
+      maxNodeID = connGeneList[i].Target();
+  }
+  Genome<ActivationFunction>::nextInnovID = maxInnovID + 1;
 
   for (size_t i = 0; i < popSize; i++)
   {
     if (isAcyclic)
     {
       double bias = startingGenome.Bias() + arma::randn();
-      genomeList.emplace_back(Genome<ActivationFunction>(startingGenome.
-      connectionGeneList, inputNodeCount, outputNodeCount, startingGenome.
-      NodeCount(), bias, weightMutationProb, weightMutationSize,
-      biasMutationProb, biasMutationSize, nodeAdditionProb, connAdditionProb,
-      connDeletionProb, isAcyclic));
+      genomeList.emplace_back(Genome<ActivationFunction>(connGeneList,
+      inputNodeCount, outputNodeCount, maxNodeID + 1, bias, weightMutationProb,
+      weightMutationSize, biasMutationProb, biasMutationSize, nodeAdditionProb,
+      connAdditionProb, connDeletionProb, isAcyclic));
 
       // Let's find the node depths.
       genomeList[i].nodeDepths.resize(genomeList[i].NodeCount(), 0);
@@ -529,11 +532,10 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::Initialize()
     else
     {
       double bias = startingGenome.Bias() + arma::randn();
-      genomeList.emplace_back(Genome<ActivationFunction>(startingGenome.
-      connectionGeneList, inputNodeCount, outputNodeCount, startingGenome.
-      NodeCount(), bias, weightMutationProb, weightMutationSize,
-      biasMutationProb, biasMutationSize, nodeAdditionProb, connAdditionProb,
-      connDeletionProb, isAcyclic));
+      genomeList.emplace_back(Genome<ActivationFunction>(connGeneList,
+      inputNodeCount, outputNodeCount, maxNodeID + 1, bias, weightMutationProb,
+      weightMutationSize, biasMutationProb, biasMutationSize, nodeAdditionProb,
+      connAdditionProb, connDeletionProb, isAcyclic));
 
       genomeList[i].MutateWeights();
     }
@@ -545,7 +547,7 @@ template <class TaskType,
           class SelectionPolicy>
 template <typename Task>
 typename std::enable_if<
-    !HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value,
+    !HasStartingGenome<Task, std::vector<ConnectionGene>(Task::*)()>::value,
     void>::type
 NEAT<TaskType, ActivationFunction, SelectionPolicy>::Initialize()
 {

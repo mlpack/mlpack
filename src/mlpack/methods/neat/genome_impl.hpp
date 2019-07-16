@@ -429,8 +429,8 @@ void Genome<ActivationFunction>::AddNodeMutation()
   connectionGeneList.emplace_back(ConnectionGene(innovID2, 1,
       newNodeID, targetID));
   directedGraph.emplace(std::piecewise_construct,
-                          std::make_tuple(newNodeID),
-                          std::make_tuple());
+                        std::make_tuple(newNodeID),
+                        std::make_tuple());
   directedGraph[newNodeID].emplace(targetID, ConnectionGene(innovID2, 1,
       newNodeID, targetID));
 

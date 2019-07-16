@@ -16,9 +16,6 @@
 #include <mlpack/methods/neat/neat.hpp>
 #include <mlpack/methods/neat/selection_strategies/rank_selection.hpp>
 
-// Activation functions.
-#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
-
 #include <mlpack/tests/neat_test_tools.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -32,20 +29,22 @@ using namespace mlpack::neat;
 BOOST_AUTO_TEST_SUITE(NEATTest)
 
 /**
- * Test NEAT on the XOR Test.
+ * Test NEAT on the XOR Test. XOR normally performs better in cyclic cases,
+ * this is meant to be a test of the acyclic network.
  */
 BOOST_AUTO_TEST_CASE(NEATXORTest)
 {
   XORTask task;
   NEAT<XORTask> model(task, 2, 1, 100, 150, 10);
-  model.FinalFitness() = 3.9;
+  model.FinalFitness() = 3.6;
+  model.IsAcyclic() = true;
 
   // Find the best genome and it's fitness.
   Genome<> bestGenome = model.Train();
   double finalFitness = bestGenome.Fitness();
 
   // Check if the final fitness is acceptable.
-  BOOST_REQUIRE(finalFitness >= 3.9);
+  BOOST_REQUIRE(finalFitness >= 3.6);
 }
 
 /**
@@ -53,20 +52,19 @@ BOOST_AUTO_TEST_CASE(NEATXORTest)
  */
 BOOST_AUTO_TEST_CASE(NEATDoublePoleCartNoVelocitiesTest)
 {
-  arma::vec poleLengths = {0.5, 0.05};
-  arma::vec poleMasses = {0.1, 0.01};
-  const MultiplePoleCart env = MultiplePoleCart();
+  MultiplePoleCart env = MultiplePoleCart();
   DPNVTask task(env);
   NEAT<DPNVTask> model(task, 3, 1, 1000, 200, 50, 0, 1, 0.8, 1.8, 0.5, 0.01,
       0.3, 0.2, 0.05, 0);
+  model.FinalFitness() = 10000;
 
   // Find the best genome and it's fitness.
   Genome<> bestGenome = model.Train();
   double finalFitness = bestGenome.Fitness();
-  std::cout << finalFitness << std::endl;
+  Log::Debug << "The final fitness is " << finalFitness << std::endl;
 
-  // Check if the final fitness is acceptable (Placeholder).
-  BOOST_REQUIRE(finalFitness >= 300);
+  // Check if the final fitness is acceptable.
+  BOOST_REQUIRE(finalFitness >= 10000);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -197,7 +197,7 @@ class NEAT
    */
   template <typename Task = TaskType>
   typename std::enable_if<
-      HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value,
+      HasStartingGenome<Task, std::vector<ConnectionGene>(Task::*)()>::value,
       void>::type
   Initialize();
 
@@ -207,7 +207,7 @@ class NEAT
    */
   template <typename Task = TaskType>
   typename std::enable_if<
-      !HasStartingGenome<Task, Genome<ActivationFunction>(Task::*)()>::value,
+      !HasStartingGenome<Task, std::vector<ConnectionGene>(Task::*)()>::value,
       void>::type
   Initialize();
 

@@ -58,9 +58,6 @@ class AcyclicNet
                 std::map<size_t, std::map<size_t, ConnectionGene>>&
                     directedGraph,
                 std::vector<size_t>& nodeDepths);
-
-  //! Exists temporarily for debugging purposes. Stores activation values.
-  std::vector<double> nodeValues;
  private:
   //! The number of nodes.
   size_t nodeCount;

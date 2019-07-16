@@ -15,8 +15,6 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/continuous_multiple_pole_cart.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/multiple_pole_cart.hpp>
-#include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
-#include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 #include <mlpack/methods/neat/neat.hpp>
 
 using namespace mlpack;
@@ -30,7 +28,7 @@ using namespace mlpack::rl;
 class XORTask
 {
  public:
-  double Evaluate(Genome<HardSigmoidFunction>& genome)
+  double Evaluate(Genome<>& genome)
   {
     arma::mat input = {{0, 0, 1, 1},
                        {0, 1, 0, 1}};
@@ -63,7 +61,7 @@ class DPNVTask
     double fitness = 0;
 
     // The starting point is always the same.
-    double oneDegree = 1 * M_PI / 180;
+    double oneDegrees = 1 * M_PI / 180;
     arma::vec data(6, arma::fill::zeros);
     data[2] = oneDegrees;
     MultiplePoleCart::State state(data);
@@ -113,14 +111,13 @@ class DPNVTask
       output = genome.Evaluate(input);
 
       if (timeStep > 10000)
-      {
         break;
-      }
       else if (timeStep > 499)
       {
         double sum = 0;
         for (auto it = wiggleBuffer2.begin(); it != wiggleBuffer2.end(); it++)
           sum += *it;
+        // This means the agent is just wiggling, let's stop this agent.
         if (sum > 30)
           break;
       }

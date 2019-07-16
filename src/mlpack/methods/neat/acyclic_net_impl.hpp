@@ -40,6 +40,8 @@ void AcyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
                                                 ConnectionGene>>& directedGraph,
                                               std::vector<size_t>& nodeDepths)
 {
+  arma::vec nodeValues(nodeCount, arma::fill::zeros);
+
   // Populate the layers.
   for (size_t i = 0; i < nodeCount; i++)
   {
@@ -48,14 +50,11 @@ void AcyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
     layers[nodeDepths[i]].push_back(i);
   }
 
+  nodeValues[0] = bias;
+
   // Add all the nodes to the map.
-  for (size_t i = 0; i < nodeCount; i++)
-  {
-    if (i <= inputNodeCount && i != 0)
-      nodeValues.push_back(input[i-1]);
-    else
-      nodeValues.push_back(0);
-  }
+  for (size_t i = 1; i <= inputNodeCount; i++)
+    nodeValues[i] = input[i - 1];
 
   // Activate the layers one by one.
   for (size_t i = 0; i < layers.size(); i++)
@@ -92,11 +91,7 @@ void AcyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
   }
 
   for (size_t i = 0; i < output.n_elem; i++)
-  {
-    nodeValues[i + inputNodeCount + 1] = ActivationFunction::Fn(nodeValues[i +
-        inputNodeCount + 1]);
-    output[i] = nodeValues[i + inputNodeCount + 1];
-  }
+    output[i] = ActivationFunction::Fn(nodeValues[i + inputNodeCount + 1]);
 }
 
 } // namespace neat
