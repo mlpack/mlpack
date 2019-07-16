@@ -157,12 +157,9 @@ class MultiplePoleCart
     stepsPerformed++;
 
     arma::vec dydx(6, arma::fill::zeros);
-    for (size_t i = 0; i < 2; i++)
-    {
-      dydx[0] = state.Velocity();
-      dydx[2] = state.AngularVelocity(1);
-      dydx[4] = state.AngularVelocity(2);
-    }
+    dydx[0] = state.Velocity();
+    dydx[2] = state.AngularVelocity(1);
+    dydx[4] = state.AngularVelocity(2);
     Step(state, action, dydx);
     RK4(state, action, dydx, nextState);
 

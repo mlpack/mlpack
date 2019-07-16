@@ -110,7 +110,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     else
       searchMode = 0;
 
-    Log::Info << "The maximum fitness in generation " << gen << " is " <<
+    std::cout << "The maximum fitness in generation " << gen << " is " <<
         fitnesses.max() << std::endl;
 
     Speciate(false);
