@@ -61,9 +61,9 @@ class DoublePoleCart
     //! Modify the velocity of the cart.
     double& Velocity() { return data[1]; }
 
-    //! Get the angle of the $i^{th}$ pole with the vertical.
+    //! Get the angle of the $i^{th}$ pole.
     double Angle(const size_t i) const { return data[2 * i]; }
-    //! Modify the angle of the $i^{th}$ pole with the vertical.
+    //! Modify the angle of the $i^{th}$ pole.
     double& Angle(const size_t i) { return data[2 * i]; }
 
     //! Get the angular velocity of the $i^{th}$ pole.
@@ -113,17 +113,17 @@ class DoublePoleCart
    *    terminates. If the value is 0, there is no limit.
    */
   DoublePoleCart(const double m1 = 0.1,
-                   const double m2 = 0.01,
-                   const double l1 = 0.5,
-                   const double l2 = 0.05,
-                   const double gravity = 9.8,
-                   const double massCart = 1.0,
-                   const double forceMag = 10.0,
-                   const double tau = 0.02,
-                   const double thetaThresholdRadians = 36 * 2 * 3.1416 / 360,
-                   const double xThreshold = 2.4,
-                   const double doneReward = 0.0,
-                   const size_t maxSteps = 0) :
+                 const double m2 = 0.01,
+                 const double l1 = 0.5,
+                 const double l2 = 0.05,
+                 const double gravity = 9.8,
+                 const double massCart = 1.0,
+                 const double forceMag = 10.0,
+                 const double tau = 0.02,
+                 const double thetaThresholdRadians = 36 * 2 * 3.1416 / 360,
+                 const double xThreshold = 2.4,
+                 const double doneReward = 0.0,
+                 const size_t maxSteps = 0) :
       m1(m1),
       m2(m2),
       l1(l1),
@@ -161,10 +161,9 @@ class DoublePoleCart
       dydx[0] = state.Velocity();
       dydx[2] = state.AngularVelocity(1);
       dydx[4] = state.AngularVelocity(2);
+      Dsdt(state, action, dydx);
+      RK4(state, action, dydx, nextState);
     }
-    Dsdt(state, action, dydx);
-    RK4(state, action, dydx, nextState);
-
 
     // Check if the episode has terminated.
     bool done = IsTerminal(nextState);
@@ -214,15 +213,11 @@ class DoublePoleCart
     totalMass += m2 * (0.25 + 0.75 * sinTheta2 * sinTheta2);
 
     // Calculate acceleration.
-    double xAcc = totalForce / totalMass;
+    dydx[1] = totalForce / totalMass;
 
     // Calculate angular acceleration.
-    double angAcc1 = -0.75 * (xAcc * cosTheta1 + gravity * sinTheta1) / l1;
-    double angAcc2 = -0.75 * (xAcc * cosTheta2 + gravity * sinTheta2) / l2;
-
-    dydx[1] = xAcc;
-    dydx[3] = angAcc1;
-    dydx[5] = angAcc2;
+    dydx[3] = -0.75 * (xAcc * cosTheta1 + gravity * sinTheta1) / l1;
+    dydx[5] = -0.75 * (xAcc * cosTheta2 + gravity * sinTheta2) / l2;
   }
 
   /**
@@ -239,8 +234,8 @@ class DoublePoleCart
            arma::vec& dydx,
            State& nextState)
   {
-    double hh = tau * 0.5;
-    double h6 = tau / 6;
+    const double hh = tau * 0.5;
+    const double h6 = tau / 6;
     arma::vec yt(6);
     arma::vec dyt(6);
     arma::vec dym(6);
