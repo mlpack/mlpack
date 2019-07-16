@@ -77,8 +77,6 @@ void PPO<
   ReplayType
 >::Update()
 {
-  // todo: sync the oldActorNetwork
-
   // Sample from previous experience.
   arma::mat sampledStates;
   std::vector<ActionType> sampledActions;
@@ -104,12 +102,12 @@ void PPO<
 
   advantages = discountedRewards - actionValues;
 
-  // update the critic
+  // Update the critic.
   criticNetwork.Backward(advantages, criticGradients);
   updater.Update(criticNetwork.Parameters(), config.StepSize(),
       criticGradients);
 
-  // update the actor
+  // Update the actor.
   arma::vec prob, oldProb;
   normalDist.Probability(actionValues, prob);
   oldNormalDist.Probability(actionValues, oldProb);
@@ -122,7 +120,7 @@ void PPO<
   actorNetwork.Backward(loss, actorGradients);
   updater.Update(actorNetwork.Parameters(), config.StepSize(), actorGradients);
 
-  // update the oldActorNetwork
+  // Update the oldActorNetwork, synchronize the parameter.
   oldActorNetwork = actorNetwork;
 }
 
