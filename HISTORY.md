@@ -1,6 +1,6 @@
 ### mlpack 4.0.0
 ###### ????-??-??
-  * Add Multiple Pole Balancing Environment (#1901).
+  * Add Multiple Pole Balancing Environment (#1901, #1951).
 
   * Add new parameter `maximum_depth` to decision tree and random forest
     bindings (#1916).
