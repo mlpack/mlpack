@@ -58,6 +58,21 @@ NEAT<XORTask> model(task, 2, 1, 100, 150, 10);
 Genome<> bestGenome = model.Train();
 @endcode
 
+Sometimes, we may want to extract the best genome from a generation. This is where the \c Step() function comes in. It moves the population forward by a generation and returns the best genome from that generation.
+
+@code
+/ Instantiate a task class instance.
+XORTask task;
+
+// Instantiate a NEAT class instance.
+NEAT<XORTask> model(task, 2, 1, 100, 150, 10);
+
+// Find the best genome from a single generation.
+Genome<> bestGenome = model.Step();
+@endcode
+
+The NEAT class also supports phased searching. Phased searching is performed when NEAT is given a nonzero complexity threshold. If the mean population complexity becomes greater than the complexity threshold, then NEAT begins simplification until complexity decreases below it.
+
 @section neat_template_neattut Template parameters for the 'NEAT' class
 
 The NEAT class has three template parameters:
@@ -115,7 +130,7 @@ using namespace mlpack::neat;
 class XORTask
 {
  public:
-  Genome<> StartingGenome()
+  std::vector<ConnectionGene> StartingGenome()
   {
     // The list of all connection genes.
     std::vector<ConnectionGene> connGeneList;
@@ -127,8 +142,8 @@ class XORTask
     connGeneList.emplace_back(ConnectionGene(2, 1, 2, 4));
     connGeneList.emplace_back(ConnectionGene(3, 1, 4, 3));
 
-    // Return the genome 
-    return Genome(connGeneList, 3, 1, 5, 1, 0.5, 1)
+    // Return the gene list. 
+    return connGeneList;
   }
 };
 @endcode
