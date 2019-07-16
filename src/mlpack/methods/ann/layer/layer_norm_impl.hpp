@@ -82,7 +82,7 @@ void LayerNorm<InputDataType, OutputDataType>::Backward(
 {
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
-  // dl / dxhat
+  // dl / dxhat.
   const arma::mat norm = gy.each_col() % gamma;
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.

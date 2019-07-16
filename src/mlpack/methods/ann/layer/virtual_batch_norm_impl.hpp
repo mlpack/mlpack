@@ -2,7 +2,7 @@
  * @file virtual_batch_norm_impl.hpp
  * @author Saksham Bansal
  *
- * Implementation of the Virtual Batch Normalization layer.
+ * Implementation of the VirtualBatchNorm layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
