@@ -19,7 +19,10 @@ namespace mlpack {
 namespace rl {
 
 /**
- * Implementation of Double Pole Cart Balancing task.
+ * Implementation of Double Pole Cart Balancing task. This is an extension of
+ * the existing CartPole environment. The environment comprises of a cart of a
+ * cart with two poles of different lengths and masses. The agent is meant to
+ * balance the poles by applying force on the cart.
  */
 class DoublePoleCart
 {
@@ -156,14 +159,11 @@ class DoublePoleCart
     stepsPerformed++;
 
     arma::vec dydx(6, arma::fill::zeros);
-    for (size_t i = 0; i < 2; i++)
-    {
-      dydx[0] = state.Velocity();
-      dydx[2] = state.AngularVelocity(1);
-      dydx[4] = state.AngularVelocity(2);
-      Dsdt(state, action, dydx);
-      RK4(state, action, dydx, nextState);
-    }
+    dydx[0] = state.Velocity();
+    dydx[2] = state.AngularVelocity(1);
+    dydx[4] = state.AngularVelocity(2);
+    Dsdt(state, action, dydx);
+    RK4(state, action, dydx, nextState);
 
     // Check if the episode has terminated.
     bool done = IsTerminal(nextState);
