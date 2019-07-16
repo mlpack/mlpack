@@ -104,6 +104,9 @@ class CartPole
    * @param tau The time interval.
    * @param thetaThresholdRadians The maximum angle.
    * @param xThreshold The maximum position.
+   * @param doneReward Reward recieved by agent on success.
+   * @param maxSteps The number of steps after which the episode
+   *    terminates. If the value is 0, there is no limit.
    */
   CartPole(const double gravity = 9.8,
            const double massCart = 1.0,
@@ -113,7 +116,8 @@ class CartPole
            const double tau = 0.02,
            const double thetaThresholdRadians = 12 * 2 * 3.1416 / 360,
            const double xThreshold = 2.4,
-           const double doneReward = 0.0) :
+           const double doneReward = 0.0,
+           const size_t maxSteps = 0) :
       gravity(gravity),
       massCart(massCart),
       massPole(massPole),
@@ -124,7 +128,9 @@ class CartPole
       tau(tau),
       thetaThresholdRadians(thetaThresholdRadians),
       xThreshold(xThreshold),
-      doneReward(doneReward)
+      doneReward(doneReward),
+      maxSteps(maxSteps),
+      stepsPerformed(0)
   { /* Nothing to do here */ }
 
   /**
@@ -138,8 +144,11 @@ class CartPole
    */
   double Sample(const State& state,
                 const Action& action,
-                State& nextState) const
+                State& nextState)
   {
+    // Update the number of steps performed.
+    stepsPerformed++;
+
     // Calculate acceleration.
     double force = action ? forceMag : -forceMag;
     double cosTheta = std::cos(state.Angle());
@@ -156,13 +165,15 @@ class CartPole
     nextState.Angle() = state.Angle() + tau * state.AngularVelocity();
     nextState.AngularVelocity() = state.AngularVelocity() + tau * thetaAcc;
 
-    /**
-     * It is important to note that if the cartpole is falling down, it should
-     * be penalized.
-     */
+    // Check if the episode has terminated.
     bool done = IsTerminal(nextState);
-    if (done)
+
+    // Do not reward agent if it failed.
+    if (done && maxSteps != 0 && stepsPerformed >= maxSteps)
       return doneReward;
+    else if (done)
+      return 0;
+
     /**
      * When done is false, it means that the cartpole has fallen down.
      * For this case the reward is 1.0.
@@ -178,7 +189,7 @@ class CartPole
    * @param action The current action.
    * @return reward, it's always 1.0.
    */
-  double Sample(const State& state, const Action& action) const
+  double Sample(const State& state, const Action& action)
   {
     State nextState;
     return Sample(state, action, nextState);
@@ -189,22 +200,42 @@ class CartPole
    *
    * @return Initial state for each episode.
    */
-  State InitialSample() const
+  State InitialSample()
   {
+    stepsPerformed = 0;
     return State((arma::randu<arma::colvec>(4) - 0.5) / 10.0);
   }
 
   /**
-   * Whether given state is a terminal state.
+   * This function checks if the cart has reached the terminal state.
    *
    * @param state The desired state.
    * @return true if state is a terminal state, otherwise false.
    */
   bool IsTerminal(const State& state) const
   {
-    return std::abs(state.Position()) > xThreshold ||
-        std::abs(state.Angle()) > thetaThresholdRadians;
+    if (maxSteps != 0 && stepsPerformed >= maxSteps)
+    {
+      Log::Info << "Episode terminated due to the maximum number of steps"
+          "being taken.";
+      return true;
+    }
+    else if (std::abs(state.Position()) > xThreshold ||
+        std::abs(state.Angle()) > thetaThresholdRadians)
+    {
+      Log::Info << "Episode terminated due to agent failing.";
+      return true;
+    }
+    return false;
   }
+
+  //! Get the number of steps performed.
+  size_t StepsPerformed() const { return stepsPerformed; }
+
+  //! Get the maximum number of steps allowed.
+  size_t MaxSteps() const { return maxSteps; }
+  //! Set the maximum number of steps allowed.
+  size_t& MaxSteps() { return maxSteps; }
 
  private:
   //! Locally-stored gravity.
@@ -239,6 +270,12 @@ class CartPole
 
   //! Locally-stored done reward.
   double doneReward;
+
+  //! Locally-stored maximum number of steps.
+  size_t maxSteps;
+
+  //! Locally-stored number of steps performed.
+  size_t stepsPerformed;
 };
 
 } // namespace rl

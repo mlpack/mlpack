@@ -17,7 +17,7 @@ Installing the mlpack bindings for Python is straightforward.  It's easy to use
 conda or pip to do this:
 
 @code{.sh}
-pip install mlpack/mlpack3
+pip install mlpack3
 @endcode
 
 @code{.sh}

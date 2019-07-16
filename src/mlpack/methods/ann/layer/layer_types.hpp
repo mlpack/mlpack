@@ -86,6 +86,12 @@ template<typename InputDataType,
          typename OutputDataType,
          typename... CustomLayers
 >
+class Highway;
+
+template<typename InputDataType,
+         typename OutputDataType,
+         typename... CustomLayers
+>
 class Recurrent;
 
 template<typename InputDataType,
@@ -173,6 +179,7 @@ using LayerTypes = boost::variant<
     FlexibleReLU<arma::mat, arma::mat>*,
     Glimpse<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
+    Highway<arma::mat, arma::mat>*,
     Join<arma::mat, arma::mat>*,
     LayerNorm<arma::mat, arma::mat>*,
     LeakyReLU<arma::mat, arma::mat>*,
@@ -191,14 +198,16 @@ using LayerTypes = boost::variant<
     NegativeLogLikelihood<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
     Recurrent<arma::mat, arma::mat>*,
-    RecurrentAttention<arma::mat, arma::mat>*,
+    // TODO find workaround to support more than 50 types
+    // as boost::variant can only be used for up to 50 types.
+    // RecurrentAttention<arma::mat, arma::mat>*,
     ReinforceNormal<arma::mat, arma::mat>*,
     Reparametrization<arma::mat, arma::mat>*,
     Select<arma::mat, arma::mat>*,
     Sequential<arma::mat, arma::mat, false>*,
     Sequential<arma::mat, arma::mat, true>*,
     Subview<arma::mat, arma::mat>*,
-    VRClassReward<arma::mat, arma::mat>*,
+    // VRClassReward<arma::mat, arma::mat>*,
     CustomLayers*...
 >;
 

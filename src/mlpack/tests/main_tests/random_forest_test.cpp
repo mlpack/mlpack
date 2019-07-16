@@ -187,6 +187,26 @@ BOOST_AUTO_TEST_CASE(RandomForestMinimumLeafSizeTest)
 }
 
 /**
+ * Make sure maximum depth specified is always a positive number.
+ */
+BOOST_AUTO_TEST_CASE(RandomForestMaximumDepthTest)
+{
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  SetInputParam("maximum_depth", (int) -1); // Invalid.
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
  * Make sure only one of training data or pre-trained model is passed.
  */
 BOOST_AUTO_TEST_CASE(RandomForestTrainingVerTest)
@@ -229,7 +249,7 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
 
   bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 5; ++trial)
   {
     // Input training data.
     SetInputParam("training", inputData);
@@ -354,8 +374,8 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
     // Train for num_trees 10.
 
     // Input training data.
-    SetInputParam("training", std::move(inputData));
-    SetInputParam("labels", std::move(labels));
+    SetInputParam("training", inputData);
+    SetInputParam("labels", labels);
     SetInputParam("num_trees", (int) 10);
     SetInputParam("minimum_leaf_size", (int) 1);
 

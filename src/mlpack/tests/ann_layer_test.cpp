@@ -95,6 +95,7 @@ BOOST_AUTO_TEST_CASE(GradientAddLayerTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 10);
       model->Add<Add<> >(10);
       model->Add<LogSoftMax<> >();
     }
@@ -400,6 +401,7 @@ BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 10);
       model->Add<Linear<> >(10, 2);
       model->Add<LogSoftMax<> >();
     }
@@ -483,6 +485,7 @@ BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 10);
       model->Add<LinearNoBias<> >(10, 2);
       model->Add<LogSoftMax<> >();
     }
@@ -585,6 +588,7 @@ BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
 
       model->Predictors() = input;
       model->Responses() = target;
+      model->Add<Linear<> >(2, 2);
       model->Add<LinearNoBias<> >(2, 5);
       model->Add<FlexibleReLU<> >(0.05);
       model->Add<LogSoftMax<> >();
@@ -1307,6 +1311,7 @@ BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 10);
 
       concat = new Concat<>(true);
       concat->Add<Linear<> >(10, 2);
@@ -1578,6 +1583,7 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 10);
       model->Add<BatchNorm<> >(10);
       model->Add<Linear<> >(10, 2);
       model->Add<LogSoftMax<> >();
@@ -1751,6 +1757,7 @@ BOOST_AUTO_TEST_CASE(GradientTransposedConvolutionLayerTest)
         model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
         model->Predictors() = input;
         model->Responses() = target;
+        model->Add<Linear<> >(36, 36);
         model->Add<TransposedConvolution<> >(1, 1, 3, 3, 2, 2, 1, 1, 6, 6);
         model->Add<LogSoftMax<> >();
       }
@@ -1868,6 +1875,7 @@ BOOST_AUTO_TEST_CASE(GradientAtrousConvolutionLayerTest)
       model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
+      model->Add<Linear<> >(36, 36);
       model->Add<AtrousConvolution<> >(1, 1, 3, 3, 1, 1, 0, 0, 6, 6, 2, 2);
       model->Add<LogSoftMax<> >();
     }
@@ -1947,6 +1955,7 @@ BOOST_AUTO_TEST_CASE(GradientLayerNormTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 10);
       model->Add<LayerNorm<> >(10);
       model->Add<Linear<> >(10, 2);
       model->Add<LogSoftMax<> >();
@@ -2339,6 +2348,97 @@ BOOST_AUTO_TEST_CASE(SimpleResidualLayerTest)
 }
 
 /**
+ * Simple Highway module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleHighwayLayerTest)
+{
+  arma::mat outputA, outputB, input, deltaA, deltaB;
+  Sequential<>* sequential = new Sequential<>(true);
+  Highway<>* highway = new Highway<>(10, true);
+  highway->Parameters().zeros();
+  highway->Reset();
+
+  Linear<>* linearA = new Linear<>(10, 10);
+  linearA->Parameters().randu();
+  linearA->Reset();
+  Linear<>* linearB = new Linear<>(10, 10);
+  linearB->Parameters().randu();
+  linearB->Reset();
+
+  // Add the same layers (with the same parameters) to both Sequential and
+  // Highway object.
+  highway->Add(linearA);
+  highway->Add(linearB);
+  sequential->Add(linearA);
+  sequential->Add(linearB);
+
+  // Test the Forward function (pass the same input to both).
+  input = arma::randu(10, 1);
+  sequential->Forward(std::move(input), std::move(outputA));
+  highway->Forward(std::move(input), std::move(outputB));
+
+  CheckMatrices(outputB, input * 0.5 + outputA * 0.5);
+
+  delete sequential;
+  delete highway;
+  delete linearA;
+  delete linearB;
+}
+
+/**
+ * Sequential layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientHighwayLayerTest)
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(5, 1);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(5, 10);
+
+      highway = new Highway<>(10);
+      highway->Add<Linear<> >(10, 10);
+      highway->Add<ReLULayer<> >();
+      highway->Add<Linear<> >(10, 10);
+      highway->Add<ReLULayer<> >();
+
+      model->Add(highway);
+      model->Add<Linear<> >(10, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      highway->DeleteModules();
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    Highway<>* highway;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
  * Sequential layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientSequentialLayerTest)
@@ -2355,7 +2455,7 @@ BOOST_AUTO_TEST_CASE(GradientSequentialLayerTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
-
+      model->Add<Linear<> >(10, 10);
       sequential = new Sequential<>();
       sequential->Add<Linear<> >(10, 10);
       sequential->Add<ReLULayer<> >();

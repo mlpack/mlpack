@@ -246,4 +246,63 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   Log::Info << "Output generated!" << std::endl;
 }
 
+/*
+ * Create GAN network and test for memory sharing
+ * between discriminator and gan predictors.
+ */
+BOOST_AUTO_TEST_CASE(GANMemorySharingTest)
+{
+  size_t generatorHiddenLayerSize = 8;
+  size_t discriminatorHiddenLayerSize = 8;
+  size_t generatorOutputSize = 1;
+  size_t discriminatorOutputSize = 1;
+  size_t discriminatorPreTrain = 0;
+  size_t batchSize = 8;
+  size_t noiseDim = 1;
+  size_t generatorUpdateStep = 1;
+  double multiplier = 1;
+
+  arma::mat trainData(1, 10000);
+  trainData.imbue( [&]() { return arma::as_scalar(RandNormal(4, 0.5));});
+  trainData = arma::sort(trainData);
+
+  // Create the Discriminator network
+  FFN<SigmoidCrossEntropyError<> > discriminator;
+  discriminator.Add<Linear<> > (
+      generatorOutputSize, discriminatorHiddenLayerSize * 2);
+  discriminator.Add<ReLULayer<> >();
+  discriminator.Add<Linear<> > (
+      discriminatorHiddenLayerSize * 2, discriminatorHiddenLayerSize * 2);
+  discriminator.Add<ReLULayer<> >();
+  discriminator.Add<Linear<> > (
+      discriminatorHiddenLayerSize * 2, discriminatorHiddenLayerSize * 2);
+  discriminator.Add<ReLULayer<> >();
+  discriminator.Add<Linear<> > (
+      discriminatorHiddenLayerSize * 2, discriminatorOutputSize);
+
+  // Create the Generator network
+  FFN<SigmoidCrossEntropyError<> > generator;
+  generator.Add<Linear<> >(noiseDim, generatorHiddenLayerSize);
+  generator.Add<SoftPlusLayer<> >();
+  generator.Add<Linear<> >(generatorHiddenLayerSize, generatorOutputSize);
+
+  // Create GAN
+  GaussianInitialization gaussian(0, 0.1);
+  std::function<double ()> noiseFunction = [](){ return math::Random(-8, 8) +
+      math::RandNormal(0, 1) * 0.01;};
+  GAN<FFN<SigmoidCrossEntropyError<> >,
+      GaussianInitialization,
+      std::function<double()> >
+  gan(trainData, generator, discriminator, gaussian, noiseFunction,
+      noiseDim, batchSize, generatorUpdateStep, discriminatorPreTrain,
+      multiplier);
+
+  CheckMatrices(gan.Predictors().head_cols(trainData.n_cols), trainData);
+  CheckMatrices(gan.Predictors(), gan.Discriminator().Predictors());
+  gan.Shuffle();
+  CheckMatrices(gan.Predictors(), gan.Discriminator().Predictors());
+  CheckMatricesNotEqual(gan.Predictors().head_cols(trainData.n_cols),
+      trainData);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

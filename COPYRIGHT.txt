@@ -113,6 +113,7 @@ Copyright:
   Copyright 2019, Dan Timson
   Copyright 2019, Miguel Canteras <mcanteras@gmail.com>
   Copyright 2019, Bishwa Karki <karkeebishwa1@gmail.com>
+  Copyright 2019, Yashwant Singh Parihar <yashwantsingh.sngh@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.
