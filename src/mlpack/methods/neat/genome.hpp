@@ -191,6 +191,9 @@ class Genome
    */
   std::map<size_t, std::map<size_t, ConnectionGene>> directedGraph;
 
+  //! The next innovation ID to be allotted.
+  static size_t nextInnovID;
+
   //! Serialize the model.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -237,9 +240,6 @@ class Genome
    * cases.
    */
   void Traverse(size_t startID);
-
-  //! The next innovation ID to be allotted.
-  static size_t nextInnovID;
  private:
   /**
    * Stores the activation of the nodes. Only used if isAcyclic is set to
