@@ -47,10 +47,10 @@ class MeanNormalization
 {
  public:
   /**
-  * Function to fit features, to find out the min max and scale.
-  *
-  * @param input Dataset to fit.
-  */
+   * Function to fit features, to find out the min max and scale.
+   *
+   * @param input Dataset to fit.
+   */
   template<typename MatType>
   void Fit(const MatType& input)
   {
@@ -64,11 +64,11 @@ class MeanNormalization
   }
 
   /**
-  * Function to scale features.
-  *
-  * @param input Dataset to scale features.
-  * @param output Output matrix with scaled features.
-  */
+   * Function to scale features.
+   *
+   * @param input Dataset to scale features.
+   * @param output Output matrix with scaled features.
+   */
   template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
@@ -82,11 +82,11 @@ class MeanNormalization
   }
 
   /**
-  * Function to retrieve original dataset.
-  *
-  * @param input Scaled dataset.
-  * @param output Output matrix with original Dataset.
-  */
+   * Function to retrieve original dataset.
+   *
+   * @param input Scaled dataset.
+   * @param output Output matrix with original Dataset.
+   */
   template<typename MatType>
   void InverseTransform(const MatType& input, MatType& output)
   {

@@ -35,8 +35,8 @@ class ScalingModel
     MIN_MAX_SCALER,
     MEAN_NORMALIZATION,
     MAX_ABS_SCALER,
-    PCAWHITENING,
-    ZCAWHITENING
+    PCA_WHITENING,
+    ZCA_WHITENING
   };
 
  private:
@@ -48,8 +48,8 @@ class ScalingModel
   data::MaxAbsScaler* maxabsscale;
   data::MeanNormalization* meanscale;
   data::StandardScaler* standardscale;
-  data::PcaWhitening* pcascale;
-  data::ZcaWhitening* zcascale;
+  data::PCAWhitening* pcascale;
+  data::ZCAWhitening* zcascale;
 
  public:
   //! Create an object.
@@ -124,9 +124,9 @@ class ScalingModel
       ar & BOOST_SERIALIZATION_NVP(maxabsscale);
     else if (scalerType == ScalerTypes::STANDARD_SCALER)
       ar & BOOST_SERIALIZATION_NVP(standardscale);
-    else if (scalerType == ScalerTypes::PCAWHITENING)
+    else if (scalerType == ScalerTypes::PCA_WHITENING)
       ar & BOOST_SERIALIZATION_NVP(pcascale);
-    else if (scalerType == ScalerTypes::ZCAWHITENING)
+    else if (scalerType == ScalerTypes::ZCA_WHITENING)
       ar & BOOST_SERIALIZATION_NVP(zcascale);
   }
 };

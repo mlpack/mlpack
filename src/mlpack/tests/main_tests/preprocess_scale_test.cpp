@@ -45,6 +45,7 @@ BOOST_FIXTURE_TEST_SUITE(PreprocessScaleMainTest,
 
 arma::mat dataset = "-1 -0.5 0 1;"
                     "2 6 10 18;";
+
 /**
  * Check that two different scalers give two different output.
  */
@@ -291,7 +292,7 @@ BOOST_AUTO_TEST_CASE(MinMaxScalerTest)
 /**
  * Check for PCA scaler type.
  */
-BOOST_AUTO_TEST_CASE(PcaScalerTest)
+BOOST_AUTO_TEST_CASE(PCAScalerTest)
 {
   std::string method = "pca_whitening";
   // Input custom data points.
@@ -310,7 +311,7 @@ BOOST_AUTO_TEST_CASE(PcaScalerTest)
 /**
  * Check for ZCA scaler type.
  */
-BOOST_AUTO_TEST_CASE(ZcaScalerTest)
+BOOST_AUTO_TEST_CASE(ZCAScalerTest)
 {
   std::string method = "zca_whitening";
   // Input custom data points.

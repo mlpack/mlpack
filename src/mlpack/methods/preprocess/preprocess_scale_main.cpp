@@ -109,6 +109,7 @@ static void mlpackMain()
     mlpack::math::RandomSeed(std::time(NULL));
   else
     mlpack::math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+
   // Make sure the user specified output filenames.
   RequireAtLeastOnePassed({ "output", "output_model"}, false,
       "no output will be saved");
@@ -116,6 +117,7 @@ static void mlpackMain()
   RequireParamInSet<std::string>("scaler_method", { "min_max_scaler",
     "standard_scaler", "max_abs_scaler", "mean_normalization", "pca_whitening",
     "zca_whitening" }, true, "unknown scaler type");
+
   // Load the data.
   arma::mat& input = CLI::GetParam<arma::mat>("input");
   arma::mat output;
@@ -147,11 +149,11 @@ static void mlpackMain()
     }
     else if (scalerMethod == "zca_whitening")
     {
-      m->ScalerType() = ScalingModel::ScalerTypes::ZCAWHITENING;
+      m->ScalerType() = ScalingModel::ScalerTypes::ZCA_WHITENING;
     }
     else if (scalerMethod == "pca_whitening")
     {
-      m->ScalerType() = ScalingModel::ScalerTypes::PCAWHITENING;
+      m->ScalerType() = ScalingModel::ScalerTypes::PCA_WHITENING;
     }
     m->Fit(input);
   }
@@ -169,7 +171,7 @@ static void mlpackMain()
     m->InverseTransform(input, output);
   }
 
-  // save the output
+  // Save the output.
   if (CLI::HasParam("output"))
     CLI::GetParam<arma::mat>("output") = std::move(output);
   Timer::Stop("feature_scaling");

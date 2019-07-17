@@ -49,16 +49,16 @@ class MinMaxScaler
 {
  public:
   /**
-  * Default constructor
-  *
-  * @param min Lower range of scaling.
-  * @param max Upper range of scaling. 
-  */
+   * Default constructor
+   *
+   * @param min Lower range of scaling.
+   * @param max Upper range of scaling.
+   */
   MinMaxScaler(const double min = 0, const double max = 1)
   {
     scaleMin = min;
     scaleMax = max;
-    // Ensure scaleMin is smaller than scaleMax
+    // Ensure scaleMin is smaller than scaleMax.
     if (scaleMin > scaleMax)
     {
       throw std::runtime_error("Range is not appropriate");
@@ -66,17 +66,17 @@ class MinMaxScaler
   }
 
   /**
-  * Function to fit features, to find out the min max and scale.
-  *
-  * @param input Dataset to fit.
-  */
+   * Function to fit features, to find out the min max and scale.
+   *
+   * @param input Dataset to fit.
+   */
   template<typename MatType>
   void Fit(const MatType& input)
   {
     itemMin = arma::min(input, 1);
     itemMax = arma::max(input, 1);
     scale = itemMax - itemMin;
-    // Handling zeros in scale vector.
+    // Handle zeros in scale vector.
     scale.for_each([](arma::vec::elem_type& val) { val =
         (val == 0) ? 1 : val; });
     scale = (scaleMax - scaleMin) / scale;
@@ -86,11 +86,11 @@ class MinMaxScaler
   }
 
   /**
-  * Function to scale features.
-  *
-  * @param input Dataset to scale features.
-  * @param output Output matrix with scaled features.
-  */
+   * Function to scale features.
+   *
+   * @param input Dataset to scale features.
+   * @param output Output matrix with scaled features.
+   */
   template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
@@ -104,11 +104,11 @@ class MinMaxScaler
   }
 
   /**
-  * Function to retrieve original dataset.
-  *
-  * @param input Scaled dataset.
-  * @param output Output matrix with original Dataset.
-  */
+   * Function to retrieve original dataset.
+   *
+   * @param input Scaled dataset.
+   * @param output Output matrix with original Dataset.
+   */
   template<typename MatType>
   void InverseTransform(const MatType& input, MatType& output)
   {

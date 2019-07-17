@@ -46,9 +46,9 @@ ScalingModel::ScalingModel(const ScalingModel& other) :
     maxabsscale(other.maxabsscale == NULL ? NULL :
         new data::MaxAbsScaler(*other.maxabsscale)),
     pcascale(other.pcascale == NULL ? NULL :
-        new data::PcaWhitening(*other.pcascale)),
+        new data::PCAWhitening(*other.pcascale)),
     zcascale(other.zcascale == NULL ? NULL :
-        new data::ZcaWhitening(*other.zcascale)),
+        new data::ZCAWhitening(*other.zcascale)),
     meanscale(other.meanscale == NULL ? NULL :
         new data::MeanNormalization(*other.meanscale)),
     standardscale(other.standardscale == NULL ? NULL :
@@ -109,11 +109,11 @@ ScalingModel& ScalingModel::operator= (const ScalingModel& other)
 
   delete pcascale;
   pcascale = (other.pcascale == NULL) ? NULL :
-      new data::PcaWhitening(*other.pcascale);
+      new data::PCAWhitening(*other.pcascale);
 
   delete zcascale;
   zcascale = (other.zcascale == NULL) ? NULL :
-      new data::ZcaWhitening(*other.zcascale);
+      new data::ZCAWhitening(*other.zcascale);
 
   minValue = other.minValue;
   maxValue = other.maxValue;
@@ -159,16 +159,16 @@ void ScalingModel::Fit(const MatType& input)
     maxabsscale = new data::MaxAbsScaler();
     maxabsscale->Fit(input);
   }
-  else if (scalerType == ScalerTypes::PCAWHITENING)
+  else if (scalerType == ScalerTypes::PCA_WHITENING)
   {
     delete pcascale;
-    pcascale = new data::PcaWhitening(epsilon);
+    pcascale = new data::PCAWhitening(epsilon);
     pcascale->Fit(input);
   }
-  else if (scalerType == ScalerTypes::ZCAWHITENING)
+  else if (scalerType == ScalerTypes::ZCA_WHITENING)
   {
     delete zcascale;
-    zcascale = new data::ZcaWhitening(epsilon);
+    zcascale = new data::ZCAWhitening(epsilon);
     zcascale->Fit(input);
   }
 }
@@ -192,11 +192,11 @@ void ScalingModel::Transform(const MatType& input, MatType& output)
   {
     maxabsscale->Transform(input, output);
   }
-  else if (scalerType == ScalerTypes::PCAWHITENING)
+  else if (scalerType == ScalerTypes::PCA_WHITENING)
   {
     pcascale->Transform(input, output);
   }
-  else if (scalerType == ScalerTypes::ZCAWHITENING)
+  else if (scalerType == ScalerTypes::ZCA_WHITENING)
   {
     zcascale->Transform(input, output);
   }
@@ -221,11 +221,11 @@ void ScalingModel::InverseTransform(const MatType& input, MatType& output)
   {
     maxabsscale->InverseTransform(input, output);
   }
-  else if (scalerType == ScalerTypes::PCAWHITENING)
+  else if (scalerType == ScalerTypes::PCA_WHITENING)
   {
     pcascale->InverseTransform(input, output);
   }
-  else if (scalerType == ScalerTypes::ZCAWHITENING)
+  else if (scalerType == ScalerTypes::ZCA_WHITENING)
   {
     zcascale->InverseTransform(input, output);
   }

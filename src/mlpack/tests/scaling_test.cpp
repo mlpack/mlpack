@@ -91,8 +91,8 @@ BOOST_AUTO_TEST_CASE(MeanNormalizationTest)
 }
 
 /**
-* Test to pass same matrix as input and output
-*/
+ * Test to pass same matrix as input and output
+ */
 BOOST_AUTO_TEST_CASE(SameInputOutputTest)
 {
   temp = dataset;
@@ -107,8 +107,8 @@ BOOST_AUTO_TEST_CASE(SameInputOutputTest)
 }
 
 /**
-* Test for Zero Matrix
-*/
+ * Test for Zero Matrix.
+ */
 BOOST_AUTO_TEST_CASE(ZeroMatrixTest)
 {
   arma::mat input(2, 4, arma::fill::zeros);
@@ -121,8 +121,8 @@ BOOST_AUTO_TEST_CASE(ZeroMatrixTest)
 }
 
 /**
-* Test for Zero Scale
-*/
+ * Test for Zero Scale.
+ */
 BOOST_AUTO_TEST_CASE(ZeroScaleTest)
 {
   dataset = "1 1 1 1;"
@@ -138,11 +138,11 @@ BOOST_AUTO_TEST_CASE(ZeroScaleTest)
 }
 
 /**
-* Test for PCA whitening Scale
-*/
+ * Test for PCA whitening Scale.
+ */
 BOOST_AUTO_TEST_CASE(PCAWhiteningTest)
 {
-  data::PcaWhitening scale;
+  data::PCAWhitening scale;
   arma::mat output;
   scale.Fit(dataset);
   scale.Transform(dataset, output);
@@ -157,16 +157,16 @@ BOOST_AUTO_TEST_CASE(PCAWhiteningTest)
 }
 
 /**
-* Test for ZCA whitening Scale
-*/
+ * Test for ZCA whitening Scale.
+ */
 BOOST_AUTO_TEST_CASE(ZCAWhiteningTest)
 {
-  data::ZcaWhitening scale;
+  data::ZCAWhitening scale;
   arma::mat output;
   scale.Fit(dataset);
   scale.Transform(dataset, output);
   arma::vec diagonals = (mlpack::math::ColumnCovariance(output)).diag();
-  // Checking covarience is close to 1.0
+  // Check that the covariance is close to 1.0.
   double ccovsum = 0.0;
   for (size_t i = 0; i < diagonals.n_elem; i++)
     ccovsum += diagonals(i);

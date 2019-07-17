@@ -48,26 +48,26 @@ class StandardScaler
 {
  public:
   /**
-  * Function to fit features, to find out the min max and scale.
-  *
-  * @param input Dataset to fit.
-  */
+   * Function to fit features, to find out the min max and scale.
+   *
+   * @param input Dataset to fit.
+   */
   template<typename MatType>
   void Fit(const MatType& input)
   {
     itemMean = arma::mean(input, 1);
     itemStdDev = arma::stddev(input, 1, 1);
-    // Handling zeros in scale vector.
+    // Handle zeros in scale vector.
     itemStdDev.for_each([](arma::vec::elem_type& val) { val =
         (val == 0) ? 1 : val; });
   }
 
   /**
-  * Function to scale features.
-  *
-  * @param input Dataset to scale features.
-  * @param output Output matrix with scaled features.
-  */
+   * Function to scale features.
+   *
+   * @param input Dataset to scale features.
+   * @param output Output matrix with scaled features.
+   */
   template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
@@ -81,11 +81,11 @@ class StandardScaler
   }
 
   /**
-  * Function to retrieve original dataset.
-  *
-  * @param input Scaled dataset.
-  * @param output Output matrix with original Dataset.
-  */
+   * Function to retrieve original dataset.
+   *
+   * @param input Scaled dataset.
+   * @param output Output matrix with original Dataset.
+   */
   template<typename MatType>
   void InverseTransform(const MatType& input, MatType& output)
   {
@@ -93,9 +93,9 @@ class StandardScaler
     output = (input.each_col() % itemStdDev).each_col() + itemMean;
   }
 
-  //! Get the Mean row vector.
+  //! Get the mean row vector.
   const arma::vec& ItemMean() const { return itemMean; }
-  //! Get the Standard Devation row vector.
+  //! Get the standard deviation row vector.
   const arma::vec& ItemStdDev() const { return itemStdDev; }
 
   template<typename Archive>
@@ -106,9 +106,9 @@ class StandardScaler
   }
 
  private:
-  // Vector which holds mean of each feature
+  // Vector which holds mean of each feature.
   arma::vec itemMean;
-  // Vector which holds standard devation of each feature
+  // Vector which holds standard devation of each feature.
   arma::vec itemStdDev;
 }; // class StandardScaler
 

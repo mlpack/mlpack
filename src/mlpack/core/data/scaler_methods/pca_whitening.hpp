@@ -19,11 +19,11 @@ namespace mlpack {
 namespace data {
 
 /**
- * A simple PcaWhitening class.
+ * A simple PCAWhitening class.
  *
  * Whitens a matrix using the eigendecomposition of the covariance matrix.
  * Whitening means the covariance matrix of the result is the identity matrix.
- * 
+ *
  * For whitening related formula and more info, check the link below.
  * http://ufldl.stanford.edu/tutorial/unsupervised/PCAWhitening/
  *
@@ -33,7 +33,7 @@ namespace data {
  * arma::mat output;
  *
  * // Fit the features.
- * PcaWhitening scale;
+ * PCAWhitening scale;
  * scale.Fit(input)
  *
  * // Scale the features.
@@ -43,18 +43,18 @@ namespace data {
  * scale.InverseTransform(output, input);
  * @endcode
  */
-class PcaWhitening
+class PCAWhitening
 {
  public:
   /**
-  * A constructor to set the regularization parameter.
-  *
-  * @param eps Regularization parameter.
-  */
-  PcaWhitening(double eps = 0.00005)
+   * A constructor to set the regularization parameter.
+   *
+   * @param eps Regularization parameter.
+   */
+  PCAWhitening(double eps = 0.00005)
   {
     epsilon = eps;
-    // Ensure scaleMin is smaller than scaleMax
+    // Ensure scaleMin is smaller than scaleMax.
     if (epsilon < 0)
     {
       throw std::runtime_error("Regularization parameter is not correct");
@@ -62,10 +62,10 @@ class PcaWhitening
   }
 
   /**
-  * Function to fit features, to find out the min max and scale.
-  *
-  * @param input Dataset to fit.
-  */
+   * Function to fit features, to find out the min max and scale.
+   *
+   * @param input Dataset to fit.
+   */
   template<typename MatType>
   void Fit(const MatType& input)
   {
@@ -77,11 +77,11 @@ class PcaWhitening
   }
 
   /**
-  * Function for PCA whitening.
-  *
-  * @param input Dataset to scale features.
-  * @param output Output matrix with whitened features.
-  */
+   * Function for PCA whitening.
+   *
+   * @param input Dataset to scale features.
+   * @param output Output matrix with whitened features.
+   */
   template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
@@ -97,11 +97,11 @@ class PcaWhitening
   }
 
   /**
-  * Function to retrieve original dataset.
-  *
-  * @param input Scaled dataset.
-  * @param output Output matrix with original Dataset.
-  */
+   * Function to retrieve original dataset.
+   *
+   * @param input Scaled dataset.
+   * @param output Output matrix with original Dataset.
+   */
   template<typename MatType>
   void InverseTransform(const MatType& input, MatType& output)
   {
@@ -110,13 +110,13 @@ class PcaWhitening
     output = (output.each_col() + itemMean);
   }
 
-  //! Get the Mean row vector.
+  //! Get the mean row vector.
   const arma::vec& ItemMean() const { return itemMean; }
   //! Get the eigenvalues vector.
   const arma::vec& EigenValues() const { return eigenValues; }
   //! Get the eigenvector.
   const arma::mat& EigenVectors() const { return eigenVectors; }
-  //! Get the Regularisation Parameter.
+  //! Get the regularization parameter.
   const double& Epsilon() const { return epsilon; }
 
   template<typename Archive>
@@ -137,7 +137,7 @@ class PcaWhitening
   double epsilon;
   // Vector which hold the eigenvalues.
   arma::vec eigenValues;
-}; // class PcaWhitening
+}; // class PCAWhitening
 
 } // namespace data
 } // namespace mlpack
