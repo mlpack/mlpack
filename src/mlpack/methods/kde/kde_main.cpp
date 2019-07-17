@@ -111,6 +111,8 @@ PROGRAM_INFO("Kernel Density Estimation",
     SEE_ALSO("@knn", "#knn"),
     SEE_ALSO("Kernel density estimation on Wikipedia",
         "https://en.wikipedia.org/wiki/Kernel_density_estimation"),
+    SEE_ALSO("Tree-Independent Dual-Tree Algorithms",
+             "https://arxiv.org/pdf/1304.4327.pdf"),
     SEE_ALSO("Fast High-dimensional Kernel Summations Using the Monte Carlo "
         "Multipole Method", "http://papers.nips.cc/paper/3539-fast-high-"
         "dimensional-kernel-summations-using-the-monte-carlo-multipole-method."

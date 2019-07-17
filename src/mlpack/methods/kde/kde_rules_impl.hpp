@@ -96,6 +96,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   double score, maxKernel, minKernel, bound, depthAlpha;
   const arma::vec& queryPoint = querySet.unsafe_col(queryIndex);
   const double minDistance = referenceNode.MinDistance(queryPoint);
+  // Calculations are not duplicated.
   bool newCalculations = true;
 
   // Calculate alpha if Monte Carlo is available.
@@ -149,23 +150,27 @@ Score(const size_t queryIndex, TreeType& referenceNode)
            kernelIsGaussian)
   {
     // Monte Carlo probabilistic estimation.
+    // Calculate z using accumulated alpha if possible.
     const double alpha = depthAlpha + accumMCAlpha(queryIndex);
-
     const boost::math::normal normalDist;
     const double z =
         std::abs(boost::math::quantile(normalDist, alpha / 2));
+
+    // Auxiliary variables.
     const size_t numDesc = referenceNode.NumDescendants();
     arma::vec sample;
     size_t m = initialSampleSize;
     double meanSample;
     bool useMonteCarloPredictions = true;
+
+    // Resample as long as confidence is not high enough.
     while (m > 0)
     {
       const size_t oldSize = sample.size();
       const size_t newSize = oldSize + m;
 
-      // Don't use probabilistic estimation if this is gonna take a close
-      // amount of computation to the exact calculation.
+      // Don't use probabilistic estimation if this is going to take a similar
+      // amount of computations to the exact calculation.
       if (newSize >= mcBreakCoef * numDesc)
       {
         useMonteCarloPredictions = false;
@@ -195,7 +200,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 
     if (useMonteCarloPredictions)
     {
-      // Use Monte Carlo estimation.
+      // Confidence is high enough so we can use Monte Carlo estimation.
       densities(queryIndex) += numDesc * meanSample;
       score = DBL_MAX;
 
@@ -218,7 +223,8 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   {
     score = minDistance;
 
-    // If node is going to be exactly computed, reclaim not used alpha.
+    // If node is going to be exactly computed, reclaim not used alpha for
+    // Monte Carlo estimations.
     if (kernelIsGaussian &&
         monteCarlo &&
         newCalculations &&
@@ -235,16 +241,16 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 }
 
 template<typename MetricType, typename KernelType, typename TreeType>
-inline double KDERules<MetricType, KernelType, TreeType>::Rescore(
-    const size_t /* queryIndex */,
-    TreeType& /* referenceNode */,
-    const double oldScore) const
+inline force_inline double KDERules<MetricType, KernelType, TreeType>::
+Rescore(const size_t /* queryIndex */,
+        TreeType& /* referenceNode */,
+        const double oldScore) const
 {
   // If it's pruned it continues to be pruned.
   return oldScore;
 }
 
-//! Double-tree scoring function.
+//! Dual-tree scoring function.
 template<typename MetricType, typename KernelType, typename TreeType>
 inline double KDERules<MetricType, KernelType, TreeType>::
 Score(TreeType& queryNode, TreeType& referenceNode)
@@ -262,7 +268,8 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   else
     depthAlpha = -1;
 
-  // Check if not used alpha can be reclaimed for this combination of nodes.
+  // Check if not used Monte Carlo alpha can be reclaimed for this combination
+  // of nodes.
   const bool canReclaimAlpha =
       kernelIsGaussian &&
       monteCarlo &&
@@ -326,29 +333,35 @@ Score(TreeType& queryNode, TreeType& referenceNode)
            kernelIsGaussian)
   {
     // Monte Carlo probabilistic estimation.
+    // Calculate z using accumulated alpha if possible.
     const double alpha = depthAlpha + queryStat.AccumAlpha();
-
     const boost::math::normal normalDist;
     const double z =
         std::abs(boost::math::quantile(normalDist, alpha / 2));
+
+    // Auxiliary variables.
     const size_t numDesc = referenceNode.NumDescendants();
     arma::vec sample;
     arma::vec means = arma::zeros(queryNode.NumDescendants());
     size_t m;
     double meanSample;
     bool useMonteCarloPredictions = true;
+
+    // Pick a sample for every query node.
     for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
     {
       const size_t queryIndex = queryNode.Descendant(i);
       sample.clear();
       m = initialSampleSize;
+
+      // Resample as long as confidence is not high enough.
       while (m > 0)
       {
         const size_t oldSize = sample.size();
         const size_t newSize = oldSize + m;
 
-        // Don't use probabilistic estimation if this is gonna take a close
-        // amount of computation to the exact calculation.
+        // Don't use probabilistic estimation if this is going to take a similar
+        // amount of computations to the exact calculation.
         if (newSize >= mcBreakCoef * numDesc)
         {
           useMonteCarloPredictions = false;
@@ -376,6 +389,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
           m = 0;
       }
 
+      // Store mean for the i_th query node descendant point.
       if (useMonteCarloPredictions)
         means(i) = meanSample;
       else
@@ -384,11 +398,13 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
     if (useMonteCarloPredictions)
     {
-      // Use Monte Carlo estimation.
-      queryStat.AccumAlpha() = 0;
+      // Confidence is high enough so we can use Monte Carlo estimation.
       score = DBL_MAX;
       for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
         densities(queryNode.Descendant(i)) += numDesc * means(i);
+
+      // Accumulated alpha has been used.
+      queryStat.AccumAlpha() = 0;
     }
     else
     {
@@ -397,7 +413,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
       if (canReclaimAlpha)
       {
-        // Reclaim not used alpha for Monte Carlo since the nodes will be
+        // Reclaim not used Monte Carlo alpha since the nodes will be
         // exactly computed.
         queryStat.AccumAlpha() += depthAlpha;
       }
@@ -407,8 +423,8 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   {
     score = minDistance;
 
-    // The node will be exactly computed, so we reclaim not used Monte Carlo
-    // alpha.
+    // If node is going to be exactly computed, reclaim not used alpha for
+    // Monte Carlo estimations.
     if (canReclaimAlpha)
       queryStat.AccumAlpha() += depthAlpha;
   }
@@ -420,9 +436,9 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   return score;
 }
 
-//! Double-tree rescore.
+//! Dual-tree rescore.
 template<typename MetricType, typename KernelType, typename TreeType>
-inline double KDERules<MetricType, KernelType, TreeType>::
+inline force_inline double KDERules<MetricType, KernelType, TreeType>::
 Rescore(TreeType& /*queryNode*/,
         TreeType& /*referenceNode*/,
         const double oldScore) const

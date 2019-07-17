@@ -71,10 +71,10 @@ class KDERules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
-  //! DoubleTree Score.
+  //! Dual-Tree Score.
   double Score(TreeType& queryNode, TreeType& referenceNode);
 
-  //! DoubleTree Rescore.
+  //! Dual-Tree Rescore.
   double Rescore(TreeType& queryNode,
                  TreeType& referenceNode,
                  const double oldScore) const;
@@ -193,10 +193,10 @@ class KDECleanRules
                  TreeType& /* referenceNode */,
                  const double oldScore) const { return oldScore; }
 
-  //! DoubleTree Score.
+  //! Dual-Tree Score.
   double Score(TreeType& queryNode, TreeType& referenceNode);
 
-  //! DoubleTree Rescore.
+  //! Dual-Tree Rescore.
   double Rescore(TreeType& /* queryNode */,
                  TreeType& /* referenceNode*/ ,
                  const double oldScore) const { return oldScore; }
