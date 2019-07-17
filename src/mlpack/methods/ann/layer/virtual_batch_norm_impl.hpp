@@ -58,6 +58,7 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::Reset()
     gamma.fill(1.0);
     beta.fill(0.0);
   }
+
   loading = false;
 }
 
@@ -76,7 +77,7 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::Forward(
   variance = meanSquared - arma::square(mean);
   // Normalize the input.
   output = input.each_col() - mean;
-  temp = output;
+  inputMean = output;
   output.each_col() /= arma::sqrt(variance + eps);
 
   // Reused in the backward and gradient step.
@@ -93,16 +94,20 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::Backward(
 {
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
-  // Step 1: dl / dxhat.
+  // dl / dxhat.
   const arma::mat norm = gy.each_col() % gamma;
 
-  // Step 2: sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
-  const arma::mat var = arma::sum(norm % temp, 1) %
+  // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
+  const arma::mat var = arma::sum(norm % inputMean, 1) %
       arma::pow(stdInv, 3.0) * -0.5;
 
+  // dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
+  // dl / dmu * newCoefficient / m.
   g = (norm.each_col() % stdInv) + ((inputParameter.each_col() %
       var) * 2 * newCoefficient / inputParameter.n_cols);
 
+  // (sum (dl / dxhat * -1 / stdInv) + (variance * mean * -2)) *
+  // newCoefficient / m.
   g.each_col() += (arma::sum(norm.each_col() % -stdInv, 1) + (var %
       mean * -2)) * newCoefficient / inputParameter.n_cols;
 }
