@@ -2,15 +2,18 @@
 ###### ????-??-??
   * Add Multiple Pole Balancing Environment (#1901).
 
+  * Added functionality for scaling of data (#1876); see the command-line
+    binding `mlpack_preprocess_scale` or Python binding `preprocess_scale()`.
+
   * Add new parameter `maximum_depth` to decision tree and random forest
     bindings (#1916).
 
   * Fix prediction output of softmax regression when test set accuracy is
     calculated (#1922).
-  
+
   * Action struct in continuous RL environments now stores the action as a 
     `double` instead of `double[1]` (#1941, #1931).
-  
+
   * Pendulum environment now checks for termination. All RL environments now
     have an option to terminate after a set number of time steps (no limit
     by default) (#1941).
