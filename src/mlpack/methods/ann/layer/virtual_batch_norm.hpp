@@ -181,7 +181,7 @@ class VirtualBatchNorm
   OutputDataType normalized;
 
   //! Locally-stored zero mean input.
-  OutputDataType inputMean;
+  OutputDataType inputSubMean;
 }; // class VirtualBatchNorm
 
 } // namespace ann

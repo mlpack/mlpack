@@ -77,7 +77,7 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::Forward(
   variance = meanSquared - arma::square(mean);
   // Normalize the input.
   output = input.each_col() - mean;
-  inputMean = output;
+  inputSubMean = output;
   output.each_col() /= arma::sqrt(variance + eps);
 
   // Reused in the backward and gradient step.
@@ -98,7 +98,7 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::Backward(
   const arma::mat norm = gy.each_col() % gamma;
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
-  const arma::mat var = arma::sum(norm % inputMean, 1) %
+  const arma::mat var = arma::sum(norm % inputSubMean, 1) %
       arma::pow(stdInv, 3.0) * -0.5;
 
   // dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
