@@ -2,6 +2,8 @@
 ###### ????-??-??
   * Add Multiple Pole Balancing Environment (#1901).
 
+  * Added functionality for scaling of data (#1876).
+
   * Add new parameter `maximum_depth` to decision tree and random forest
     bindings (#1916).
 

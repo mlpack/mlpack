@@ -109,6 +109,7 @@ add_executable(mlpack_test
   timer_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
+  scaling_test.cpp
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
@@ -139,6 +140,7 @@ add_executable(mlpack_test
   main_tests/pca_test.cpp
   main_tests/perceptron_test.cpp
   main_tests/preprocess_binarize_test.cpp
+  main_tests/preprocess_scale_test.cpp
   main_tests/preprocess_imputer_test.cpp
   main_tests/preprocess_split_test.cpp
   main_tests/random_forest_test.cpp
