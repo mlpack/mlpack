@@ -559,11 +559,11 @@ void KDEModel::serialize(Archive& ar, const unsigned int version)
   }
   else if (Archive::is_loading::value)
   {
-    monteCarlo = false;
-    mcProb = 0.95;
-    initialSampleSize = 100;
-    mcEntryCoef = 3;
-    mcBreakCoef = 0.7;
+    monteCarlo = KDEDefaultParams::monteCarlo;
+    mcProb = KDEDefaultParams::mcProb;
+    initialSampleSize = KDEDefaultParams::initialSampleSize;
+    mcEntryCoef = KDEDefaultParams::mcEntryCoef;
+    mcBreakCoef = KDEDefaultParams::mcBreakCoef;
   }
 
   if (Archive::is_loading::value)

@@ -634,7 +634,8 @@ MCProb(const double newProb)
   if (newProb < 0 || newProb >= 1)
   {
     throw std::invalid_argument("Monte Carlo probability must be a value "
-                                "greater or equal to 0 and smaller than 1");
+                                "greater than or equal to 0 and smaller than"
+                                "1");
   }
   mcProb = newProb;
 }
@@ -658,7 +659,7 @@ MCEntryCoef(const double newCoef)
   if (newCoef < 1)
   {
     throw std::invalid_argument("Monte Carlo entry coefficient must be a value "
-                                "greater or equal to 1");
+                                "greater than or equal to 1");
   }
   mcEntryCoef = newCoef;
 }
@@ -682,7 +683,7 @@ MCBreakCoef(const double newCoef)
   if (newCoef <= 0 || newCoef > 1)
   {
     throw std::invalid_argument("Monte Carlo break coefficient must be a value "
-                                "greater than 0 and less or equal to 1");
+                                "greater than 0 and less than or equal to 1");
   }
   mcBreakCoef = newCoef;
 }
@@ -722,11 +723,11 @@ serialize(Archive& ar, const unsigned int version)
   }
   else if (Archive::is_loading::value)
   {
-    monteCarlo = false;
-    mcProb = 0.95;
-    initialSampleSize = 100;
-    mcEntryCoef = 3;
-    mcBreakCoef = 0.7;
+    monteCarlo = KDEDefaultParams::monteCarlo;
+    mcProb = KDEDefaultParams::mcProb;
+    initialSampleSize = KDEDefaultParams::initialSampleSize;
+    mcEntryCoef = KDEDefaultParams::mcEntryCoef;
+    mcBreakCoef = KDEDefaultParams::mcBreakCoef;
   }
 
   // If we are loading, clean up memory if necessary.
@@ -772,7 +773,7 @@ CheckErrorValues(const double relError, const double absError)
   if (absError < 0)
   {
     throw std::invalid_argument("Absolute error tolerance must be a value "
-                                "greater or equal to 0");
+                                "greater than or equal to 0");
   }
 }
 

@@ -148,11 +148,11 @@ PARAM_STRING_IN("algorithm", "Algorithm to use for the prediction."
 PARAM_DOUBLE_IN("rel_error",
                 "Relative error tolerance for the prediction.",
                 "e",
-                0.05);
+                KDEDefaultParams::relError);
 PARAM_DOUBLE_IN("abs_error",
                 "Relative error tolerance for the prediction.",
                 "E",
-                0.0);
+                KDEDefaultParams::absError);
 PARAM_FLAG("monte_carlo",
            "Whether to use Monte Carlo estimations when possible.",
            "S");
@@ -160,23 +160,23 @@ PARAM_DOUBLE_IN("mc_probability",
                 "Probability of the estimation being bounded by relative error "
                 "when using Monte Carlo estimations.",
                 "P",
-                0.95);
+                KDEDefaultParams::mcProb);
 PARAM_INT_IN("initial_sample_size",
              "Initial sample size for Monte Carlo estimations.",
              "s",
-             100);
+             KDEDefaultParams::initialSampleSize);
 PARAM_DOUBLE_IN("mc_entry_coef",
                 "Controls how much larger does the amount of node descendants "
                 "has to be compared to the " +
                 PRINT_PARAM_STRING("initial_sample_size") + " in order to be "
                 "a candidate for Monte Carlo estimations.",
                 "C",
-                3.0);
+                KDEDefaultParams::mcEntryCoef);
 PARAM_DOUBLE_IN("mc_break_coef",
                 "Controls what fraction of the amount of node's descendants is "
                 "the limit for the sample size before it recurses.",
                 "c",
-                0.7);
+                KDEDefaultParams::mcBreakCoef);
 
 // Output predictions options.
 PARAM_COL_OUT("predictions", "Vector to store density predictions.",
@@ -228,18 +228,19 @@ static void mlpackMain()
   RequireParamValue<double>("rel_error", [](double x){return x >= 0 && x <= 1;},
       true, "relative error must be between 0 and 1");
   RequireParamValue<double>("abs_error", [](double x){return x >= 0;},
-      true, "absolute error must be equal or greater than 0");
+      true, "absolute error must be equal to or greater than 0");
   RequireParamValue<double>("mc_probability",
       [](double x){return x >= 0 && x < 1;}, true,
-      "Monte Carlo probability must be bigger or equal to 0 or less than 1");
+      "Monte Carlo probability must be greater than or equal to 0 or less "
+      "than 1");
   RequireParamValue<int>("initial_sample_size", [](int x){return x > 0;},
-      true, "initial sample size must be bigger than 0");
+      true, "initial sample size must be greater than 0");
   RequireParamValue<double>("mc_entry_coef", [](double x){return x >= 1;},
-      true, "Monte Carlo entry coefficient must be greater or equal to 1");
+      true, "Monte Carlo entry coefficient must be greater than or equal to 1");
   RequireParamValue<double>("mc_break_coef",
       [](double x){return x > 0 && x <= 1;}, true,
-      "Monte Carlo break coefficient must be greater than 0 and smaller or "
-      "equal to 1");
+      "Monte Carlo break coefficient must be greater than 0 and less than "
+      "or equal to 1");
 
   KDEModel* kde;
 
