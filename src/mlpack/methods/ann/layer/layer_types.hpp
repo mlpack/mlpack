@@ -40,6 +40,7 @@
 #include <mlpack/methods/ann/layer/reparametrization.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
 #include <mlpack/methods/ann/layer/subview.hpp>
+#include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
@@ -63,6 +64,11 @@ template<typename InputDataType, typename OutputDataType> class GRU;
 template<typename InputDataType, typename OutputDataType> class FastLSTM;
 template<typename InputDataType, typename OutputDataType> class VRClassReward;
 template<typename InputDataType, typename OutputDataType> class Concatenate;
+
+template<typename InputDataType,
+         typename OutputDataType
+>
+class VirtualBatchNorm;
 
 template<typename InputDataType,
          typename OutputDataType
@@ -208,6 +214,7 @@ using LayerTypes = boost::variant<
     Sequential<arma::mat, arma::mat, true>*,
     Subview<arma::mat, arma::mat>*,
     // VRClassReward<arma::mat, arma::mat>*,
+    VirtualBatchNorm<arma::mat, arma::mat>*,
     CustomLayers*...
 >;
 

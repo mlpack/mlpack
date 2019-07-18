@@ -1611,6 +1611,52 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormTest)
 }
 
 /**
+ * VirtualBatchNorm layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientVirtualBatchNormTest)
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randn(5, 256);
+      arma::mat referenceBatch = arma::mat(input.memptr(), input.n_rows, 16);
+      arma::mat target;
+      target.ones(1, 256);
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(5, 5);
+      model->Add<VirtualBatchNorm<> >(referenceBatch, 5);
+      model->Add<Linear<> >(5, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 256, false);
+      model->Gradient(model->Parameters(), 0, gradient, 256);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
  * Simple Transposed Convolution layer test.
  */
 BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
