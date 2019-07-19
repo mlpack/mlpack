@@ -613,6 +613,35 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
     CLI::GetSingleton().Parameters()["query"].wasPassed = false;
     CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
   }
+
+BOOST_AUTO_TEST_CASE(KFNDifferentLeafSizes)
+  {
+  arma::mat referenceData;
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+
+  // Random input, some k <= number of reference points.
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("k", (int) 10);
+  SetInputParam("leaf_size", (int) 1); 
+
+  mlpackMain();
+
+  KFNModel* output_model;
+  output_model = std::move(CLI::GetParam<KFNModel*>("output_model"));
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+
+  // Input saved model, pass the same query and keep k unchanged.
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("k", (int) 10);
+  SetInputParam("leaf_size", (int) 10); 
+  mlpackMain();
+
+  // Check that initial output matrices and the output matrices using
+  // saved model are equal.
+  BOOST_CHECK_PREDICATE( std::not_equal_to<KFNModel>, (output_model)(CLI::GetParam<KFNModel*>("output_model"))); 
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
