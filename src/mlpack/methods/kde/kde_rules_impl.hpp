@@ -84,6 +84,7 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
   ++baseCases;
   lastQueryIndex = queryIndex;
   lastReferenceIndex = referenceIndex;
+  traversalInfo.LastBaseCase() = distance;
   return distance;
 }
 
@@ -92,12 +93,13 @@ template<typename MetricType, typename KernelType, typename TreeType>
 inline double KDERules<MetricType, KernelType, TreeType>::
 Score(const size_t queryIndex, TreeType& referenceNode)
 {
+  // Auxiliary variables.
   kde::KDEStat& referenceStat = referenceNode.Stat();
-  double score, maxKernel, minKernel, bound, depthAlpha;
   const arma::vec& queryPoint = querySet.unsafe_col(queryIndex);
-  const double minDistance = referenceNode.MinDistance(queryPoint);
+  const size_t refNumDesc = referenceNode.NumDescendants();
+  double score, minDistance, maxDistance, depthAlpha;
   // Calculations are not duplicated.
-  bool newCalculations = true;
+  bool alreadyDidRefPoint0 = true;
 
   // Calculate alpha if Monte Carlo is available.
   if (monteCarlo && kernelIsGaussian)
@@ -111,20 +113,24 @@ Score(const size_t queryIndex, TreeType& referenceNode)
       traversalInfo.LastReferenceNode()->Point(0) == referenceNode.Point(0))
   {
     // Don't duplicate calculations.
-    newCalculations = false;
-    lastQueryIndex = queryIndex;
-    lastReferenceIndex = referenceNode.Point(0);
+    alreadyDidRefPoint0 = false;
+    const double furthestDescDist = referenceNode.FurthestDescendantDistance();
+    minDistance = traversalInfo.LastBaseCase() - furthestDescDist;
+    maxDistance = traversalInfo.LastBaseCase() + furthestDescDist;
   }
   else
   {
     // Calculations are new.
-    maxKernel = kernel.Evaluate(minDistance);
-    minKernel = kernel.Evaluate(referenceNode.MaxDistance(queryPoint));
-    bound = maxKernel - minKernel;
+    const math::Range r = referenceNode.RangeDistance(queryPoint);
+    minDistance = r.Lo();
+    maxDistance = r.Hi();
   }
 
-  if (newCalculations &&
-      bound <= (absError + relError * minKernel) / referenceSet.n_cols)
+  const double maxKernel = kernel.Evaluate(minDistance);
+  const double minKernel = kernel.Evaluate(maxDistance);
+  const double bound = maxKernel - minKernel;
+
+  if (bound <= (absError + relError * minKernel) / referenceSet.n_cols)
   {
     // Estimate values.
     double kernelValue;
@@ -135,7 +141,10 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     else
       kernelValue = EvaluateKernel(queryPoint, referenceStat.Centroid());
 
-    densities(queryIndex) += referenceNode.NumDescendants() * kernelValue;
+    if (alreadyDidRefPoint0)
+      densities(queryIndex) += refNumDesc * kernelValue;
+    else
+      densities(queryIndex) += (refNumDesc - 1) * kernelValue;
 
     // Don't explore this tree branch.
     score = DBL_MAX;
@@ -145,8 +154,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
       accumMCAlpha(queryIndex) += depthAlpha;
   }
   else if (monteCarlo &&
-           referenceNode.NumDescendants() >= mcAccessCoef * initialSampleSize &&
-           newCalculations &&
+           refNumDesc >= mcAccessCoef * initialSampleSize &&
            kernelIsGaussian)
   {
     // Monte Carlo probabilistic estimation.
@@ -157,7 +165,6 @@ Score(const size_t queryIndex, TreeType& referenceNode)
         std::abs(boost::math::quantile(normalDist, alpha / 2));
 
     // Auxiliary variables.
-    const size_t numDesc = referenceNode.NumDescendants();
     arma::vec sample;
     size_t m = initialSampleSize;
     double meanSample;
@@ -171,7 +178,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 
       // Don't use probabilistic estimation if this is going to take a similar
       // amount of computations to the exact calculation.
-      if (newSize >= mcBreakCoef * numDesc)
+      if (newSize >= mcBreakCoef * refNumDesc)
       {
         useMonteCarloPredictions = false;
         break;
@@ -182,7 +189,12 @@ Score(const size_t queryIndex, TreeType& referenceNode)
       for (size_t i = 0; i < m; ++i)
       {
         // Sample and evaluate random points from the reference node.
-        const size_t randomPoint = math::RandInt(0, numDesc);
+        size_t randomPoint;
+        if (alreadyDidRefPoint0)
+          randomPoint = math::RandInt(0, refNumDesc);
+        else
+          randomPoint = math::RandInt(1, refNumDesc);
+
         sample(oldSize + i) =
             EvaluateKernel(queryIndex, referenceNode.Descendant(randomPoint));
       }
@@ -201,7 +213,12 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     if (useMonteCarloPredictions)
     {
       // Confidence is high enough so we can use Monte Carlo estimation.
-      densities(queryIndex) += numDesc * meanSample;
+      if (alreadyDidRefPoint0)
+        densities(queryIndex) += refNumDesc * meanSample;
+      else
+        densities(queryIndex) += (refNumDesc - 1) * meanSample;
+
+      // Prune.
       score = DBL_MAX;
 
       // Accumulated alpha has been used.
@@ -227,7 +244,6 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     // Monte Carlo estimations.
     if (kernelIsGaussian &&
         monteCarlo &&
-        newCalculations &&
         (referenceNode.IsLeaf() || tree::TreeTraits<TreeType>::HasSelfChildren))
     {
       accumMCAlpha(queryIndex) += depthAlpha;
