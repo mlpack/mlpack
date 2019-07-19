@@ -337,7 +337,7 @@ BOOST_AUTO_TEST_CASE(KFNModelReuseTest)
 }
 
 /*
- * Ensure that changing the value of epslion gives us different
+ * Ensure that changing the value of epsilon gives us different
  * approximate KFN results.
  */
 BOOST_AUTO_TEST_CASE(KFNDifferentEpsilonTest)
@@ -427,10 +427,12 @@ BOOST_AUTO_TEST_CASE(KFNRandomBasisTest)
 
   mlpackMain();
 
+  KFNModel* randomBasisModel;
   arma::Mat<size_t> neighbors;
   arma::mat distances;
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
+  randomBasisModel  = std::move(CLI::GetParam<KFNModel*>("output_model"));
 
   bindings::tests::CleanMemory();
 
@@ -444,6 +446,8 @@ BOOST_AUTO_TEST_CASE(KFNRandomBasisTest)
       CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   CheckMatrices(distances,
       CLI::GetParam<arma::mat>("distances"));
+  BOOST_REQUIRE_EQUAL(randomBasisModel->RandomBasis(), true);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<KFNModel*>("distances")->RandomBasis(), false);
 }
 
 /*
@@ -516,8 +520,8 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
   // Keep some k <= number of reference points same over all.
   SetInputParam("k", (int) 10);
 
-  arma::Mat<size_t> neighbors_compare;
-  arma::mat distances_compare;
+  arma::Mat<size_t> neighborsCompare;
+  arma::mat distancesCompare;
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -534,17 +538,17 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
 
     if (i == 0)
     {
-      neighbors_compare = std::move
+      neighborsCompare = std::move
           (CLI::GetParam<arma::Mat<size_t>>("neighbors"));
-      distances_compare = std::move(CLI::GetParam<arma::mat>("distances"));
+      distancesCompare = std::move(CLI::GetParam<arma::mat>("distances"));
     }
     else
     {
       neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
       distances = std::move(CLI::GetParam<arma::mat>("distances"));
 
-      CheckMatrices(neighbors_compare, neighbors);
-      CheckMatrices(distances_compare, distances);
+      CheckMatrices(neighborsCompare, neighbors);
+      CheckMatrices(distancesCompare, distances);
     }
 
     // Reset passed parameters.
@@ -573,8 +577,8 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
   // Keep some k <= number of reference points same over all.
   SetInputParam("k", (int) 10);
 
-  arma::Mat<size_t> neighbors_compare;
-  arma::mat distances_compare;
+  arma::Mat<size_t> neighborsCompare;
+  arma::mat distancesCompare;
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -591,17 +595,17 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
 
     if (i == 0)
     {
-      neighbors_compare = std::move(CLI::GetParam<arma::Mat<size_t>>
+      neighborsCompare = std::move(CLI::GetParam<arma::Mat<size_t>>
           ("neighbors"));
-      distances_compare = std::move(CLI::GetParam<arma::mat>("distances"));
+      distancesCompare = std::move(CLI::GetParam<arma::mat>("distances"));
     }
     else
     {
       neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
       distances = std::move(CLI::GetParam<arma::mat>("distances"));
 
-      CheckMatrices(neighbors_compare, neighbors);
-      CheckMatrices(distances_compare, distances);
+      CheckMatrices(neighborsCompare, neighbors);
+      CheckMatrices(distancesCompare, distances);
     }
 
     // Reset passed parameters.

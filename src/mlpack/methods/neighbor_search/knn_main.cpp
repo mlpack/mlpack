@@ -326,9 +326,8 @@ static void mlpackMain()
     Log::Info << "Search complete." << endl;
 
     // Save output.
-    CLI::GetParam<arma::Mat<size_t>>("neighbors") = neighbors;
-    CLI::GetParam<arma::mat>("distances") = distances;
-
+    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    CLI::GetParam<arma::mat>("distances") = std::move(distances);
     // Calculate the effective error, if desired.
     if (CLI::HasParam("true_distances"))
     {

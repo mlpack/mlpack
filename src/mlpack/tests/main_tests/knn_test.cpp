@@ -441,7 +441,7 @@ BOOST_AUTO_TEST_CASE(KNNDifferentEpsilonTest)
 }
 
 /*
- * Ensure that we get different results on running twice in greedy
+ * Ensure that we get same results on running twice in dual-tree mode
  * search mode when random_basis is specified.
  */
 BOOST_AUTO_TEST_CASE(KNNRandomBasisTest)
@@ -452,15 +452,17 @@ BOOST_AUTO_TEST_CASE(KNNRandomBasisTest)
   // Random input, some k <= number of reference points.
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 10);
-  SetInputParam("algorithm", (string) "greedy");
+  SetInputParam("algorithm", (string) "dual_tree");
   CLI::SetPassed("random_basis");
 
   mlpackMain();
 
   arma::Mat<size_t> neighbors;
+  KNNModel* randomBasisModel;
   arma::mat distances;
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
+  randomBasisModel  = std::move(CLI::GetParam<KNNModel*>("output_model"));
 
   bindings::tests::CleanMemory();
 
@@ -474,6 +476,8 @@ BOOST_AUTO_TEST_CASE(KNNRandomBasisTest)
       CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   CheckMatrices(distances,
       CLI::GetParam<arma::mat>("distances"));
+  BOOST_REQUIRE_EQUAL(randomBasisModel->RandomBasis(), true);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<KNNModel*>("distances")->RandomBasis(), false);
 }
 
 /*
@@ -512,8 +516,6 @@ BOOST_AUTO_TEST_CASE(KNNTrueNeighborDistanceTest)
   arma::mat dummyDistances;
   dummyNeighbors.randu(100, 20);
   dummyDistances.randu(100, 20);
-
-  // bindings::tests::CleanMemory();
 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["true_neighbors"].wasPassed = false;
