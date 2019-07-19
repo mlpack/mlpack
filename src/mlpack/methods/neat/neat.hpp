@@ -19,6 +19,7 @@
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 #include "genome.hpp"
 #include "selection_strategies/rank_selection.hpp"
+#include "selection_strategies/tournament_selection.hpp"
 
 
 namespace mlpack{
@@ -173,6 +174,15 @@ class NEAT
   //! Set the starting genome.
   Genome<ActivationFunction>& StartingGenome() { return startingGenome; }
 
+  //! Get the number of contenders for tournament selection.
+  size_t ContenderNum() const { return contenderNum; }
+  //! Set the number of contenders for tournament selection.
+  size_t& ContenderNum() { return contenderNum; }
+
+  //! Get the base probability for tournament selection.
+  double TournamentSelectProb() const { return tournamentSelectProb; }
+  //! Set the base probability for tournament selection.
+  double& TournamentSelectProb() { return tournamentSelectProb; }
  private:
   // Crosses over two genomes.
   Genome<ActivationFunction> Crossover(Genome<ActivationFunction>& gen1,
@@ -210,6 +220,28 @@ class NEAT
       !HasStartingGenome<Task, std::vector<ConnectionGene>(Task::*)()>::value,
       void>::type
   Initialize();
+
+  /**
+   * Selection in the case of TournamentSelection.
+   */
+  template <typename Policy = SelectionPolicy>
+  typename std::enable_if<
+      std::is_same<Policy, TournamentSelection>::value, void>::type
+  Select(arma::vec& fitnesses,
+         arma::uvec& selection,
+         const size_t contenderNum,
+         const double prob);
+
+  /**
+   * Selection for other policies.
+   */
+  template <typename Policy = SelectionPolicy>
+  typename std::enable_if<
+      !std::is_same<Policy, TournamentSelection>::value, void>::type
+  Select(arma::vec& fitnesses,
+         arma::uvec& selection,
+         const size_t /* Unused */,
+         const double /* Unused */);
 
   //! The task that the model is trained on.
   TaskType task;
@@ -294,6 +326,12 @@ class NEAT
 
   //! The starting genome.
   Genome<ActivationFunction> startingGenome;
+
+  //! The number of contenders in tournament selection.
+  size_t contenderNum;
+
+  //! The base probability used in tournament selection.
+  double tournamentSelectProb;
 };
 
 } // namespace neat

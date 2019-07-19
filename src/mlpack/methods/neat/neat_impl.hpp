@@ -64,7 +64,9 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::
     complexityThreshold(complexityThreshold),
     meanComplexity(0),
     searchMode(0),
-    isAcyclic(isAcyclic)
+    isAcyclic(isAcyclic),
+    contenderNum(0),
+    tournamentSelectProb(0)
 { /* Nothing to do here yet */ }
 
 // The main loop of the NEAT algorithm. Returns the best genome.
@@ -349,7 +351,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
       if (searchMode == 0)
       {
         arma::uvec selection(2);
-        SelectionPolicy::Select(fitnesses, selection);
+        Select(fitnesses, selection, contenderNum, tournamentSelectProb);
         if (selection[0] == selection[1])
         {
           genomeList.push_back(speciesList[i][selection[0]]);
@@ -372,7 +374,8 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
       else
       {
         arma::uvec selection(1);
-        SelectionPolicy::Select(fitnesses, selection);
+        Select(fitnesses, selection, contenderNum, tournamentSelectProb);
+
         genomeList.push_back(speciesList[i][selection[0]]);
 
         // Change mutation parameters for simplification.
@@ -607,6 +610,39 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::
     ar & BOOST_SERIALIZATION_NVP(speciesList);
     ar & BOOST_SERIALIZATION_NVP(centroids);
   }
+}
+
+template <class TaskType,
+          class ActivationFunction,
+          class SelectionPolicy>
+template <typename Policy>
+typename std::enable_if<
+    std::is_same<Policy, TournamentSelection>::value, void>::type
+NEAT<TaskType, ActivationFunction, SelectionPolicy>::
+    Select(arma::vec& fitnesses,
+           arma::uvec& selection,
+           const size_t contenderNum,
+           const double prob)
+{
+  if (contenderNum == 0)
+    Log::Fatal << "contenderNum must be nonzero.";
+
+  Policy::Select(fitnesses, selection, contenderNum, prob);
+}
+
+template <class TaskType,
+          class ActivationFunction,
+          class SelectionPolicy>
+template <typename Policy>
+typename std::enable_if<
+    !std::is_same<Policy, TournamentSelection>::value, void>::type
+NEAT<TaskType, ActivationFunction, SelectionPolicy>::
+    Select(arma::vec& fitnesses,
+           arma::uvec& selection,
+           const size_t /* Unused */,
+           const double /* Unused */)
+{
+  Policy::Select(fitnesses, selection);
 }
 
 } // namespace neat

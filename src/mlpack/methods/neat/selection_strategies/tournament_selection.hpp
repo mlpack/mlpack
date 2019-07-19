@@ -36,26 +36,24 @@ class TournamentSelection
                      const size_t contenderNum,
                      const double prob)
   {
-    selection[0] = fitnesses.n_elem;
-    selection[1] = fitnesses.n_elem;
-    arma::uvec contenders = arma::randi<arma::uvec>(contenderNum,
-        arma::distr_param(0, fitnesses.n_elem));
-    for (size_t k = 0; k < contenderNum; k++)
+    selection.fill(fitnesses.n_elem);
+
+    for (size_t i = 0; i < selection.n_elem; i++)
     {
-      double contenderProb = prob * std::pow(1 - prob, k);
-      if (arma::randu<double>() < contenderProb)
+      arma::uvec contenders = arma::randi<arma::uvec>(contenderNum,
+          arma::distr_param(0, fitnesses.n_elem - 1));
+      arma::sort(contenders);
+      for (size_t k = 0; k < contenderNum; k++)
       {
-        if (selection[0] == fitnesses.n_elem)
-          selection[0] = contenders[k];
-        else if (selection[1] == fitnesses.n_elem && selection[1] !=
-            selection[0])
-          selection[1] = contenders[k];
-        else if (selection[0] != fitnesses.n_elem && selection[1] !=
-            fitnesses.n_elem)
+        double contenderProb = prob * std::pow(1 - prob, k);
+        if (arma::randu<double>() < contenderProb)
+        {
+          selection[i] = contenders[k];
           break;
+        }
+        if (k == contenderNum - 1)
+          selection[i] = contenders[0];
       }
-      if (k == contenderNum - 1)
-        k = 0;
     }
   }
 };
