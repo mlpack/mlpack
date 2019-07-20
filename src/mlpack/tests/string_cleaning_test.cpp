@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(StopWordsTest)
   arr[1] = "2019 gsoc is great.";
   mlpack::data::StringCleaning obj;
   std::unordered_set<boost::string_view,
-      boost::hash<boost::string_view>>stopword;
+      boost::hash<boost::string_view> >stopword;
   stopword.insert("isn't");
   stopword.insert("is");
   obj.RemoveStopWords(arr, stopword, data::SplitByChar(" "));

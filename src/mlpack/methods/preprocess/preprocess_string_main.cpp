@@ -60,8 +60,8 @@ PARAM_STRING_IN("stopwordsfile", "File containing stopwords", "S", "");
 PARAM_FLAG("lowercase", "convert to lowercase.", "l");
 PARAM_FLAG("punctuation", "Remove punctuation.", "p");
 PARAM_FLAG("stopwords", "Remove stopwords.", "s");
-PARAM_VECTOR_IN_REQ(std::string, "dimension", "Column which contains the string data."
-    "(1 by default)", "c");
+PARAM_VECTOR_IN_REQ(std::string, "dimension", "Column which contains the"
+    "string data. (1 by default)", "c");
 
 using namespace mlpack;
 using namespace mlpack::util;
@@ -95,7 +95,8 @@ static void mlpackMain()
       {
         std::cout<<"fdsf \n";
         column_delimiter = "\t";
-        Log::Warn << "Found tsv or txt Extension, taking \\t as column_delimiter. \n";
+        Log::Warn << "Found tsv or txt Extension, taking \\t as"
+        "column_delimiter. \n";
       }
       else
       {
@@ -103,9 +104,10 @@ static void mlpackMain()
       }
   }
   // Handling Dimension vector
-  std::vector<std::string> temp_dimension = CLI::GetParam<std::vector<std::string>>("dimension");
+  std::vector<std::string> temp_dimension = CLI::GetParam<std::vector<
+    std::string> >("dimension");
   std::vector<size_t>dimension;
-  int columnstartindex,columnendindex;
+  int columnstartindex, columnendindex;
   size_t found;
   for (size_t i = 0; i < temp_dimension.size(); i++)
   {
@@ -116,7 +118,7 @@ static void mlpackMain()
       columnstartindex = std::stoi(temp_dimension[i].substr(0, found));       
       columnendindex = std::stoi(temp_dimension[i].substr(found+1,
           temp_dimension[i].length()));
-      for(int i = columnstartindex; i <= columnendindex; i++)
+      for (int i = columnstartindex; i <= columnendindex; i++)
       {
         dimension.push_back(i);
       }
@@ -161,7 +163,7 @@ static void mlpackMain()
     col = 0;
     for (size_t j = 0; j < dataset[i].size(); j++)
     {
-      if(col < dimension.size())
+      if (col < dimension.size())
       {
         if (dimension[col] == j)
         {
@@ -246,4 +248,5 @@ static void mlpackMain()
     fout<<"\n";
   }
 }
-                                        
+
+                                     

@@ -30,7 +30,7 @@ class StringCleaning
   void RemovePunctuation(std::vector<std::string>& input,
                          const std::string& punctuation = "!\"#$%&'()*+"
                          ",-./:;<=>?@[\\]^_`{|}~")
-  { 
+  {
     for (auto& str : input)
     {
       str.erase(boost::remove_if(str, boost::is_any_of(punctuation)),
@@ -53,8 +53,8 @@ class StringCleaning
   * bool fn(const char& c)
   */
   template<typename ReturnType>
-  void RemoveChar(std::vector<std::string>& input,const ReturnType fun)
-  { 
+  void RemoveChar(std::vector<std::string>& input, const ReturnType fun)
+  {
     for (auto& str : input)
     {
       str.erase(boost::remove_if(str, fun), str.end());
@@ -100,7 +100,7 @@ class StringCleaning
   template<typename TokenizerType>
   void RemoveStopWords(std::vector<std::string>& input,
                        std::unordered_set<boost::string_view,
-                       boost::hash<boost::string_view>>stopwords,
+                       boost::hash<boost::string_view> >stopwords,
                        const TokenizerType tokenizer)
   {
     std::string copy;
