@@ -112,7 +112,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     else
       searchMode = 0;
 
-    std::cout << "The maximum fitness in generation " << gen << " is " <<
+    Log::Info << "The maximum fitness in generation " << gen << " is " <<
         fitnesses.max() << std::endl;
 
     Speciate(false);
@@ -381,7 +381,7 @@ void NEAT<TaskType, ActivationFunction, SelectionPolicy>::Reproduce()
         // Change mutation parameters for simplification.
         genomeList[genomeList.size() - 1].NodeAdditionProb() = 0;
         genomeList[genomeList.size() - 1].ConnAdditionProb() = 0;
-        genomeList[genomeList.size() - 1].ConnDeletionProb() = 0.4;
+        genomeList[genomeList.size() - 1].ConnDeletionProb() = 0.8;
 
         genomeList[genomeList.size() - 1].Mutate();
       }

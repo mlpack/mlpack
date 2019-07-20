@@ -61,7 +61,7 @@ Genome<> bestGenome = model.Train();
 Sometimes, we may want to extract the best genome from a generation. This is where the \c Step() function comes in. It moves the population forward by a generation and returns the best genome from that generation.
 
 @code
-/ Instantiate a task class instance.
+// Instantiate a task class instance.
 XORTask task;
 
 // Instantiate a NEAT class instance.
@@ -173,5 +173,21 @@ Any \c SelectionType policy must implement a static Select() function:
 
 It is important to note that any user-implemented policy should be general enough to work with selecting one or two parents, since during phased searching, a single parent is chosen for simplification.
 
+TournamentSelection is a exception to this interface, since it requires additional parameters - the number of contenders and the base probability. We can still use this, but we have to set these parameters beforehand.
+
+@code
+using namespace mlpack::ann;
+using namespace mlpack::neat;
+
+XORTask task;
+NEAT<XORTask, HardSigmoidFunction, TournamentSelection> model(task, 2, 1, 100, 150, 10);
+
+// Set the number of contenders and the base probability.
+model.ContenderNum() = 5;
+model.TournamentSelectProb() = 0.7;
+
+// Train NEAT on the XOR task.
+model.Train();
+@endcode
 
 */

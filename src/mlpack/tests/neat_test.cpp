@@ -42,6 +42,7 @@ BOOST_AUTO_TEST_CASE(NEATXORTest)
   // Find the best genome and it's fitness.
   Genome<> bestGenome = model.Train();
   double finalFitness = bestGenome.Fitness();
+  Log::Debug << "The final fitness is " << finalFitness << std::endl;
 
   // Check if the final fitness is acceptable.
   BOOST_REQUIRE(finalFitness >= 3.6);
