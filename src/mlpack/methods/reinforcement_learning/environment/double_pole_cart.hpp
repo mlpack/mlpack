@@ -213,7 +213,8 @@ class DoublePoleCart
     totalMass += m2 * (0.25 + 0.75 * sinTheta2 * sinTheta2);
 
     // Calculate acceleration.
-    dydx[1] = totalForce / totalMass;
+    double xAcc = totalForce / totalMass;
+    dydx[1] = xAcc;
 
     // Calculate angular acceleration.
     dydx[3] = -0.75 * (xAcc * cosTheta1 + gravity * sinTheta1) / l1;
