@@ -120,8 +120,7 @@ class StringCleaning
         }
         token = tokenizer(strView);
       }
-      boost::algorithm::trim_left(copy);
-      str = copy;
+      str = std::move(copy);
     }
   }
 }; // Class StringCleaning
