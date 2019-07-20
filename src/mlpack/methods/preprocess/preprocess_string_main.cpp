@@ -115,7 +115,7 @@ static void mlpackMain()
     if ( found != string::npos)
     {
       // Has a range include, something of type a-b.
-      columnstartindex = std::stoi(temp_dimension[i].substr(0, found));       
+      columnstartindex = std::stoi(temp_dimension[i].substr(0, found));
       columnendindex = std::stoi(temp_dimension[i].substr(found+1,
           temp_dimension[i].length()));
       for (int i = columnstartindex; i <= columnendindex; i++)
@@ -125,7 +125,7 @@ static void mlpackMain()
     }
     else
     {
-      dimension.push_back(std::stoi(temp_dimension[i]));      
+      dimension.push_back(std::stoi(temp_dimension[i]));
     }
   }
   std::cout<<"\n";
@@ -140,13 +140,13 @@ static void mlpackMain()
   {
     throw std::runtime_error("Unable to open input file");
   }
-  std::string line, word,temp;
+  std::string line, word;
   std::vector<std::vector<std::string>> dataset;
   boost::string_view token, copy;
   stringstream streamLine;
   while (std::getline(fin, line))
   {
-    streamLine.str (line);
+    streamLine.str(line);
     dataset.push_back(std::vector<std::string>());
     // delimeter[0] becase the standard function accepts char as input.
     while (std::getline(streamLine, word, column_delimiter[0]))
@@ -169,10 +169,10 @@ static void mlpackMain()
         {
           // insert into input
           input[col].push_back(dataset[i][j]);
-          col++;          
+          col++;
         }
       }
-      else  
+      else
       {
         break;
       }
@@ -203,8 +203,8 @@ static void mlpackMain()
     std::string word;
     std::deque<std::string> originalword;
     std::unordered_set<boost::string_view,
-        boost::hash<boost::string_view>>stopwords;
-    while (fin>>word)
+        boost::hash<boost::string_view> >stopwords;
+    while (fin >> word)
     {
       originalword.push_back(word);
       stopwords.insert(originalword.back());
@@ -212,7 +212,7 @@ static void mlpackMain()
     fin.close();
     const std::string delimiter = CLI::GetParam<std::string>
         ("delimiter");
-    for (size_t i = 0; i < input.size(); i++)
+    for (size_t i   = 0; i < input.size(); i++)
       obj.RemoveStopWords(input[i], stopwords,
           data::SplitByChar(delimiter));
   }
@@ -248,5 +248,3 @@ static void mlpackMain()
     fout<<"\n";
   }
 }
-
-                                     
