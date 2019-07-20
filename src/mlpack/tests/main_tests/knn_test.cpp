@@ -477,7 +477,8 @@ BOOST_AUTO_TEST_CASE(KNNRandomBasisTest)
   CheckMatrices(distances,
       CLI::GetParam<arma::mat>("distances"));
   BOOST_REQUIRE_EQUAL(randomBasisModel->RandomBasis(), true);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<KNNModel*>("distances")->RandomBasis(), false);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<KNNModel*>("distances")->RandomBasis(),
+    false);
 }
 
 /*
@@ -642,19 +643,20 @@ BOOST_AUTO_TEST_CASE(KNNAllTreeTypesTest)
     CLI::GetSingleton().Parameters()["query"].wasPassed = false;
     CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
   }
+}
 
-  /**
+/**
   * Ensure that different leaf sizes give different results.
  */
 BOOST_AUTO_TEST_CASE(KNNDifferentLeafSizes)
-  {
+{
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 10);
-  SetInputParam("leaf_size", (int) 1); 
+  SetInputParam("leaf_size", (int) 1);
 
   mlpackMain();
 
@@ -667,13 +669,13 @@ BOOST_AUTO_TEST_CASE(KNNDifferentLeafSizes)
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 10);
-  SetInputParam("leaf_size", (int) 10); 
+  SetInputParam("leaf_size", (int) 10);
   mlpackMain();
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  BOOST_CHECK_PREDICATE( std::not_equal_to<KNNModel>, (output_model)(CLI::GetParam<KNNModel*>("output_model"))); 
+  BOOST_CHECK_PREDICATE( std::not_equal_to<KNNModel>,
+    (output_model)(CLI::GetParam<KNNModel*>("output_model")));
   }
-}
 
 BOOST_AUTO_TEST_SUITE_END();
