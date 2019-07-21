@@ -295,8 +295,10 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     alreadyDidRefPoint0 = true;
     lastQueryIndex = queryNode.Point(0);
     lastReferenceIndex = referenceNode.Point(0);
+
+    // Calculate min and max distance.
     const double refFurtDescDist = referenceNode.FurthestDescendantDistance();
-    const double queryFurtDescDist = referenceNode.FurthestDescendantDistance();
+    const double queryFurtDescDist = queryNode.FurthestDescendantDistance();
     const double sumFurtDescDist = refFurtDescDist + queryFurtDescDist;
     minDistance = traversalInfo.LastBaseCase() - sumFurtDescDist;
     maxDistance = traversalInfo.LastBaseCase() + sumFurtDescDist;
@@ -339,6 +341,8 @@ Score(TreeType& queryNode, TreeType& referenceNode)
       else
         densities(queryNode.Descendant(i)) += refNumDesc * kernelValue;
     }
+
+    // Prune.
     score = DBL_MAX;
 
     // Store not used alpha for Monte Carlo.
