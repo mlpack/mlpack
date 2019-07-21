@@ -183,7 +183,7 @@ class ContinuousDoublePoleCart
 
   /**
    * This is the ordinary differential equations required for estimation of
-   * nextState through RK4 method.
+   * next state through RK4 method.
    *
    * @param state The current state.
    * @param action The action taken.
