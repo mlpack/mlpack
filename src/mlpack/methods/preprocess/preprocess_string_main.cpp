@@ -191,12 +191,12 @@ static void mlpackMain()
     {
       throw std::runtime_error("Please provide a file for stopwords.");
     }
-    ifstream fin;
+    ifstream stopwordfile;
     // Open an existing file
     const std::string stopwordfilename = CLI::GetParam<std::string>
         ("stopwordsfile");
-    fin.open(stopwordfilename);
-    if (!fin.is_open())
+    stopwordfile.open(stopwordfilename);
+    if (!stopwordfile.is_open())
     {
       throw std::runtime_error("Unable to open the file for stopwords.");
     }
@@ -204,12 +204,11 @@ static void mlpackMain()
     std::deque<std::string> originalword;
     std::unordered_set<boost::string_view,
         boost::hash<boost::string_view> >stopwords;
-    while (fin >> word)
+    while (stopwordfile >> word)
     {
       originalword.push_back(word);
       stopwords.insert(originalword.back());
     }
-    fin.close();
     const std::string delimiter = CLI::GetParam<std::string>
         ("delimiter");
     for (size_t i   = 0; i < input.size(); i++)
