@@ -26,6 +26,9 @@ class TrainingConfig
       explorationSteps(1),
       gradientLimit(40),
       doubleQLearning(false),
+      targetNetworkSyncInterval(100),
+      stepSize(0.01),
+      discount(0.9),
       epsilon(0.2)
   { /* Nothing to do here. */ }
 
