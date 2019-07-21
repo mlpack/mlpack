@@ -93,7 +93,6 @@ static void mlpackMain()
       else if (data::Extension(filename) == "tsv" ||
           data::Extension(filename) == "txt")
       {
-        std::cout<<"fdsf \n";
         column_delimiter = "\t";
         Log::Warn << "Found tsv or txt Extension, taking \\t as"
         "column_delimiter. \n";
@@ -153,7 +152,7 @@ static void mlpackMain()
     {
       dataset[dataset.size()-1].push_back(word);
     }
-    streamLine.str(std::string());
+    streamLine.clear();
   }
   size_t col = 0;
   // Preparing the input dataset on which string manipulation has to be done.
