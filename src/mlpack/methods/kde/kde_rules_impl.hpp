@@ -99,7 +99,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   const size_t refNumDesc = referenceNode.NumDescendants();
   double score, minDistance, maxDistance, depthAlpha;
   // Calculations are not duplicated.
-  bool alreadyDidRefPoint0 = true;
+  bool alreadyDidRefPoint0 = false;
 
   // Calculate alpha if Monte Carlo is available.
   if (monteCarlo && kernelIsGaussian)
@@ -113,14 +113,14 @@ Score(const size_t queryIndex, TreeType& referenceNode)
       traversalInfo.LastReferenceNode()->Point(0) == referenceNode.Point(0))
   {
     // Don't duplicate calculations.
-    alreadyDidRefPoint0 = false;
+    alreadyDidRefPoint0 = true;
     const double furthestDescDist = referenceNode.FurthestDescendantDistance();
     minDistance = traversalInfo.LastBaseCase() - furthestDescDist;
     maxDistance = traversalInfo.LastBaseCase() + furthestDescDist;
   }
   else
   {
-    // Calculations are new.
+    // All Calculations are new.
     const math::Range r = referenceNode.RangeDistance(queryPoint);
     minDistance = r.Lo();
     maxDistance = r.Hi();
@@ -142,9 +142,9 @@ Score(const size_t queryIndex, TreeType& referenceNode)
       kernelValue = EvaluateKernel(queryPoint, referenceStat.Centroid());
 
     if (alreadyDidRefPoint0)
-      densities(queryIndex) += refNumDesc * kernelValue;
-    else
       densities(queryIndex) += (refNumDesc - 1) * kernelValue;
+    else
+      densities(queryIndex) += refNumDesc * kernelValue;
 
     // Don't explore this tree branch.
     score = DBL_MAX;
@@ -191,9 +191,9 @@ Score(const size_t queryIndex, TreeType& referenceNode)
         // Sample and evaluate random points from the reference node.
         size_t randomPoint;
         if (alreadyDidRefPoint0)
-          randomPoint = math::RandInt(0, refNumDesc);
-        else
           randomPoint = math::RandInt(1, refNumDesc);
+        else
+          randomPoint = math::RandInt(0, refNumDesc);
 
         sample(oldSize + i) =
             EvaluateKernel(queryIndex, referenceNode.Descendant(randomPoint));
@@ -214,9 +214,9 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     {
       // Confidence is high enough so we can use Monte Carlo estimation.
       if (alreadyDidRefPoint0)
-        densities(queryIndex) += refNumDesc * meanSample;
-      else
         densities(queryIndex) += (refNumDesc - 1) * meanSample;
+      else
+        densities(queryIndex) += refNumDesc * meanSample;
 
       // Prune.
       score = DBL_MAX;
@@ -229,7 +229,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
       // Recurse.
       score = minDistance;
 
-      if (referenceNode.IsLeaf() || tree::TreeTraits<TreeType>::HasSelfChildren)
+      if (referenceNode.IsLeaf())
       {
         // Reclaim not used alpha since the node will be exactly computed.
         accumMCAlpha(queryIndex) += depthAlpha;
@@ -242,12 +242,8 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 
     // If node is going to be exactly computed, reclaim not used alpha for
     // Monte Carlo estimations.
-    if (kernelIsGaussian &&
-        monteCarlo &&
-        (referenceNode.IsLeaf() || tree::TreeTraits<TreeType>::HasSelfChildren))
-    {
+    if (kernelIsGaussian && monteCarlo && referenceNode.IsLeaf())
       accumMCAlpha(queryIndex) += depthAlpha;
-    }
   }
 
   ++scores;
@@ -273,10 +269,10 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 {
   kde::KDEStat& referenceStat = referenceNode.Stat();
   kde::KDEStat& queryStat = queryNode.Stat();
-  double score, maxKernel, minKernel, bound, depthAlpha;
-  const double minDistance = queryNode.MinDistance(referenceNode);
+  const size_t refNumDesc = referenceNode.NumDescendants();
+  double score, minDistance, maxDistance, depthAlpha;
   // Calculations are not duplicated.
-  bool newCalculations = true;
+  bool alreadyDidRefPoint0 = false;
 
   // Calculate alpha if Monte Carlo is available.
   if (monteCarlo && kernelIsGaussian)
@@ -287,11 +283,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   // Check if not used Monte Carlo alpha can be reclaimed for this combination
   // of nodes.
   const bool canReclaimAlpha =
-      kernelIsGaussian &&
-      monteCarlo &&
-      newCalculations &&
-      ((queryNode.IsLeaf() && referenceNode.IsLeaf()) ||
-       (tree::TreeTraits<TreeType>::HasSelfChildren));
+      kernelIsGaussian && monteCarlo && referenceNode.IsLeaf();
 
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
       (traversalInfo.LastQueryNode() != NULL) &&
@@ -300,21 +292,29 @@ Score(TreeType& queryNode, TreeType& referenceNode)
       (traversalInfo.LastReferenceNode()->Point(0) == referenceNode.Point(0)))
   {
     // Don't duplicate calculations.
-    newCalculations = false;
+    alreadyDidRefPoint0 = true;
     lastQueryIndex = queryNode.Point(0);
     lastReferenceIndex = referenceNode.Point(0);
+    const double refFurtDescDist = referenceNode.FurthestDescendantDistance();
+    const double queryFurtDescDist = referenceNode.FurthestDescendantDistance();
+    const double sumFurtDescDist = refFurtDescDist + queryFurtDescDist;
+    minDistance = traversalInfo.LastBaseCase() - sumFurtDescDist;
+    maxDistance = traversalInfo.LastBaseCase() + sumFurtDescDist;
   }
   else
   {
-    // Calculations are new.
-    maxKernel = kernel.Evaluate(minDistance);
-    minKernel = kernel.Evaluate(queryNode.MaxDistance(referenceNode));
-    bound = maxKernel - minKernel;
+    // All calculations are new.
+    const math::Range r = queryNode.RangeDistance(referenceNode);
+    minDistance = r.Lo();
+    maxDistance = r.Hi();
   }
 
+  const double maxKernel = kernel.Evaluate(minDistance);
+  const double minKernel = kernel.Evaluate(maxDistance);
+  const double bound = maxKernel - minKernel;
+
   // If possible, avoid some calculations because of the error tolerance.
-  if (newCalculations &&
-      bound <= (absError + relError * minKernel) / referenceSet.n_cols)
+  if (bound <= (absError + relError * minKernel) / referenceSet.n_cols)
   {
     // Auxiliary variables.
     double kernelValue;
@@ -334,8 +334,10 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     // Sum up estimations.
     for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
     {
-      densities(queryNode.Descendant(i)) +=
-          referenceNode.NumDescendants() * kernelValue;
+      if (alreadyDidRefPoint0 && i == 0)
+        densities(queryNode.Descendant(i)) += (refNumDesc - 1) * kernelValue;
+      else
+        densities(queryNode.Descendant(i)) += refNumDesc * kernelValue;
     }
     score = DBL_MAX;
 
@@ -344,8 +346,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
       queryStat.AccumAlpha() += depthAlpha;
   }
   else if (monteCarlo &&
-           referenceNode.NumDescendants() >= mcAccessCoef * initialSampleSize &&
-           newCalculations &&
+           refNumDesc >= mcAccessCoef * initialSampleSize &&
            kernelIsGaussian)
   {
     // Monte Carlo probabilistic estimation.
@@ -356,7 +357,6 @@ Score(TreeType& queryNode, TreeType& referenceNode)
         std::abs(boost::math::quantile(normalDist, alpha / 2));
 
     // Auxiliary variables.
-    const size_t numDesc = referenceNode.NumDescendants();
     arma::vec sample;
     arma::vec means = arma::zeros(queryNode.NumDescendants());
     size_t m;
@@ -378,7 +378,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
         // Don't use probabilistic estimation if this is going to take a similar
         // amount of computations to the exact calculation.
-        if (newSize >= mcBreakCoef * numDesc)
+        if (newSize >= mcBreakCoef * refNumDesc)
         {
           useMonteCarloPredictions = false;
           break;
@@ -389,7 +389,12 @@ Score(TreeType& queryNode, TreeType& referenceNode)
         for (size_t i = 0; i < m; ++i)
         {
           // Sample and evaluate random points from the reference node.
-          const size_t randomPoint = math::RandInt(0, numDesc);
+          size_t randomPoint;
+          if (alreadyDidRefPoint0)
+            randomPoint = math::RandInt(1, refNumDesc);
+          else
+            randomPoint = math::RandInt(0, refNumDesc);
+
           sample(oldSize + i) =
               EvaluateKernel(queryIndex, referenceNode.Descendant(randomPoint));
         }
@@ -415,9 +420,16 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     if (useMonteCarloPredictions)
     {
       // Confidence is high enough so we can use Monte Carlo estimation.
-      score = DBL_MAX;
       for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
-        densities(queryNode.Descendant(i)) += numDesc * means(i);
+      {
+        if (alreadyDidRefPoint0 && i == 0)
+          densities(queryNode.Descendant(i)) += (refNumDesc - 1) * means(i);
+        else
+          densities(queryNode.Descendant(i)) += refNumDesc * means(i);
+      }
+
+      // Prune.
+      score = DBL_MAX;
 
       // Accumulated alpha has been used.
       queryStat.AccumAlpha() = 0;
@@ -437,6 +449,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   }
   else
   {
+    // Recurse.
     score = minDistance;
 
     // If node is going to be exactly computed, reclaim not used alpha for
