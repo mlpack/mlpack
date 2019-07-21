@@ -50,8 +50,10 @@ PPO<
   replayMethod(std::move(replayMethod)),
   environment(std::move(environment))
 {
+  // Set up actor and critic network.
   if (actorNetwork.Parameters().is_empty())
     actorNetwork.ResetParameters();
+
   if (criticNetwork.Parameters().is_empty())
     criticNetwork.ResetParameters();
 
@@ -77,6 +79,8 @@ void PPO<
   ReplayType
 >::Update()
 {
+  std::cout << "update" << std::endl;
+
   // Sample from previous experience.
   arma::mat sampledStates;
   std::vector<ActionType> sampledActions;
@@ -87,7 +91,7 @@ void PPO<
   replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
       sampledNextStates, isTerminal);
 
-  arma::colvec discountedRewards(sampledRewards.n_cols);
+  arma::colvec discountedRewards(sampledRewards.n_rows);
   arma::mat nextActionValues;
   double values = 0.0;
   criticNetwork.Predict(sampledNextStates, nextActionValues);
@@ -98,12 +102,14 @@ void PPO<
   }
 
   arma::mat actionValues, advantages, criticGradients, actorGradients;
-  criticNetwork.Predict(sampledStates, actionValues);
+  criticNetwork.Forward(sampledStates, actionValues);
 
   advantages = discountedRewards - actionValues;
 
   // Update the critic.
   criticNetwork.Backward(advantages, criticGradients);
+
+  // todo: why memory access violation
   updater.Update(criticNetwork.Parameters(), config.StepSize(),
       criticGradients);
 
@@ -145,13 +151,15 @@ double PPO<
   arma::mat actionValue, sigma, mu;
   actorNetwork.Predict(state.Encode(), actionValue);
 
-  ann::TanhFunction::Fn(actionValue.col(0), sigma);
-  ann::SoftplusFunction::Fn(actionValue.col(1), mu);
+  ann::TanhFunction::Fn(actionValue.row(0), sigma);
+  ann::SoftplusFunction::Fn(actionValue.row(1), mu);
   normalDist = distribution::GaussianDistribution(sigma, mu);
 
+  // todo: debug memory access violation
   oldActorNetwork.Predict(state.Encode(), actionValue);
-  ann::TanhFunction::Fn(actionValue.col(0), sigma);
-  ann::SoftplusFunction::Fn(actionValue.col(1), mu);
+
+  ann::TanhFunction::Fn(actionValue.row(0), sigma);
+  ann::SoftplusFunction::Fn(actionValue.row(1), mu);
   oldNormalDist = distribution::GaussianDistribution(sigma, mu);
 
   ActionType action;
@@ -201,8 +209,11 @@ double PPO<
   double totalReturn = 0.0;
 
   // Running until get to the terminal state.
-  while (config.StepLimit() && steps >= config.StepLimit())
+  while (!environment.IsTerminal(state))
   {
+    if (config.StepLimit() && steps >= config.StepLimit())
+      break;
+
     totalReturn += Step();
     steps++;
 

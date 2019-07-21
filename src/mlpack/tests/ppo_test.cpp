@@ -61,8 +61,10 @@ BOOST_AUTO_TEST_CASE(PENDULUMWITHPPO)
     RandomReplay<Pendulum> replayMethod(10, 10000);
 
     TrainingConfig config;
+    config.StepSize() = 0.01;
     config.Discount() = 0.9;
     config.Epsilon() = 0.2;
+    config.StepLimit() = 200;
 
     // Set up the PPO agent.
     PPO<Pendulum, decltype(actor), decltype(critic), AdamUpdate,
@@ -79,6 +81,7 @@ BOOST_AUTO_TEST_CASE(PENDULUMWITHPPO)
       /**
        * I am using a threshold of -136.16 to check convergence.
        */
+//      std::cout << averageReturn.mean() << " " << episodeReturn << std::endl;
       Log::Debug << "Average return: " << averageReturn.mean()
                  << " Episode return: " << episodeReturn << std::endl;
       if (averageReturn.mean() > -136.16) {
