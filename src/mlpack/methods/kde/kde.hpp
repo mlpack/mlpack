@@ -54,7 +54,7 @@ struct KDEDefaultParams
   static constexpr double mcEntryCoef = 3;
 
   //! Monte Carlo break coefficient.
-  static constexpr double mcBreakCoef = 0.7;
+  static constexpr double mcBreakCoef = 0.4;
 };
 
 /**
