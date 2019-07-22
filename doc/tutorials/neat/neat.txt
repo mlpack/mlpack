@@ -4,7 +4,7 @@
 @author Rahul Ganesh Prabhu
 @brief Tutorial for how to use neat in mlpack.
 
-@page neattutorial NeuroEvolution of Augmenting Topologies
+@page neattutorial NeuroEvolution of Augmenting Topologies tutorial
 
 @section intro_neattut Introduction
 
@@ -25,7 +25,7 @@ It is important to know the scheme by which these node IDs are allotted:
   - The output nodes are given the IDs from inputNodeCount + 1 to inputNodeCount + outputNodeCount.
   - The hidden nodes are given IDs greater than inputNodeCount + outputNodeCount.
 
-The bias of the genome can also be gound using the Bias() method.
+The bias of the genome can also be found using the Bias() method.
 
 The genome is also what is used to evaluate an input based on the network it represents. This is done by using the genome's Evaluate() function:
 
@@ -38,9 +38,11 @@ arma::vec input = arma::randn<arma::vec>(inputNodeCount);
 arma::vec output = genome.Evaluate(input);
 @endcode
 
+The activation function used by the genome is the template parameter for the Genome class. It is ann:HardSigmoidFunction by default.
+
 @subsection neat_user Using the NEAT class
 
-The NEAT class is what we use to find the best genome for a task. This is done by using the \c Train() function, which returns the best genome at the task. Below is an example using the XOR task given in the tests:
+The NEAT class is what we use to find the best genome for a task. This is done by using the \c Train() function, which returns the best genome for the task. Below is an example using the XOR task given in the tests:
 
 @code
 #include <mlpack/methods/neat/neat.hpp>
@@ -61,6 +63,11 @@ Genome<> bestGenome = model.Train();
 Sometimes, we may want to extract the best genome from a generation. This is where the \c Step() function comes in. It moves the population forward by a generation and returns the best genome from that generation.
 
 @code
+#include <mlpack/methods/neat/neat.hpp>
+#include <mlpack/tests/neat_test_tools.hpp>
+
+using namespace mlpack::neat;
+
 // Instantiate a task class instance.
 XORTask task;
 
@@ -71,14 +78,31 @@ NEAT<XORTask> model(task, 2, 1, 100, 150, 10);
 Genome<> bestGenome = model.Step();
 @endcode
 
-The NEAT class also supports phased searching. Phased searching is performed when NEAT is given a nonzero complexity threshold. If the mean population complexity becomes greater than the complexity threshold, then NEAT begins simplification until complexity decreases below it.
+The NEAT class also supports phased searching. Phased searching is performed when NEAT is given a nonzero complexity threshold. If the mean population complexity becomes greater than the complexity threshold, then NEAT performs simplification for a predefined number of generations. Once it does this, the complexity ceiling is raised by the value of the complexity threshold, and then begins complexification once more. An example of how to use phased searching is given below:
+
+@code
+// Instantiate a task class instance.
+XORTask task;
+
+// Instantiate a NEAT class instance.
+NEAT<XORTask> model(task, 2, 1, 100, 150, 10);
+
+// Set the complexity threshold.
+model.ComplexityThreshold() = 6;
+
+// Optionally, we can set the number of simplification generations (this is 10  // by default)
+model.MaxSimplifyGen() = 15;
+
+// Find the best genome from a single generation.
+Genome<> bestGenome = model.Train();
+@endcode
 
 @section neat_template_neattut Template parameters for the 'NEAT' class
 
 The NEAT class has three template parameters:
 
 	- \b TaskType: The task that NEAT is to be trained on.
-	- \b ActivationFunction: The activation function to be used by NEAT. It 	is ann::HardSigmoidFunction by default.
+	- \b ActivationFunction: The activation function to be used by NEAT. It is ann::HardSigmoidFunction by default.
 	- \b SelectionType: The selection algorithm used to select genomes for 		crossover. It is RankSelection by default.
 
 @subsection neat_tasktype_neattut The 'TaskType' template parameter
@@ -119,6 +143,8 @@ class XORTask
   }
 };
 @endcode
+
+Please note that the fitnesses returned by the Evaluate() function should be non-negative.
 
 TaskType can also optionally have a StartingGenome() method, which returns a starting point for training. In this case NEAT begins it's training with the initial population having the same structure as this genome, but with mutated weights. If this is not specified, NEAT starts from the simplest fully connected structure, with no hidden nodes. An example for this function is given below.
 
@@ -189,5 +215,10 @@ model.TournamentSelectProb() = 0.7;
 // Train NEAT on the XOR task.
 model.Train();
 @endcode
+
+@section further_doc_neattut Further documentation
+
+For further documentation on the NEAT class, consult the \ref
+mlpack::neat::NEAT "complete API documentation".
 
 */
