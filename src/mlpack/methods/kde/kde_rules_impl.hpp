@@ -282,8 +282,10 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
   // Check if not used Monte Carlo alpha can be reclaimed for this combination
   // of nodes.
-  const bool canReclaimAlpha =
-      kernelIsGaussian && monteCarlo && referenceNode.IsLeaf();
+  const bool canReclaimAlpha = kernelIsGaussian &&
+                               monteCarlo &&
+                               referenceNode.IsLeaf() &&
+                               queryNode.IsLeaf();
 
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
       (traversalInfo.LastQueryNode() != NULL) &&
