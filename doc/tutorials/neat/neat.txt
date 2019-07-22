@@ -12,6 +12,30 @@ NeuroEvolution of Augmenting Topologies (NEAT) is a genetic algorithm proposed b
 
 This implementation of NEAT also has support for Phased Searching, which is a searching scheme proposed by Colin Green, involving alternating between complexification and simplification, based on the mean complexity of the population. Here, complexity is defined as the number of connections in the genome.
 
+@code
+@article{Stanley:2002:ENN:638553.638554,
+ author = {Stanley, Kenneth O. and Miikkulainen, Risto},
+ title = {Evolving Neural Networks Through Augmenting Topologies},
+ journal = {Evol. Comput.},
+ issue_date = {Summer 2002},
+ volume = {10},
+ year = {2002}, 
+@endcode
+
+@section toc_neattut Table of Contents
+
+A list of all the sections this tutorial contains.
+
+  - \ref intro_neattut
+  - \ref toc_neattut
+  - \ref neat_neattut
+    - \ref neat_genome
+    - \ref neat_user
+  - \ref neat_template_neattut
+    - \ref neat_tasktype_neattut
+    - \ref neat_selection_neattut
+  - \ref further_doc_neattut
+
 @section neat_neattut The NEAT class
 
 @subsection neat_genome The Genome class
