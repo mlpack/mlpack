@@ -163,7 +163,6 @@ class MultiplePoleCart
     Step(state, action, dydx);
     RK4(state, action, dydx, nextState);
 
-
     // Check if the episode has terminated.
     bool done = IsTerminal(nextState);
 
@@ -205,14 +204,11 @@ class MultiplePoleCart
 
     // Calculate acceleration.
     double xAcc = totalForce / totalMass;
+    dydx[1] = xAcc;
 
     // Calculate angular acceleration.
-    double angAcc1 = -0.75 * (xAcc * cosTheta1 + gravity * sinTheta1) / l1;
-    double angAcc2 = -0.75 * (xAcc * cosTheta2 + gravity * sinTheta2) / l2;
-
-    dydx[1] = xAcc;
-    dydx[3] = angAcc1;
-    dydx[5] = angAcc2;
+    dydx[3] = -0.75 * (xAcc * cosTheta1 + gravity * sinTheta1) / l1;
+    dydx[5] = -0.75 * (xAcc * cosTheta2 + gravity * sinTheta2) / l2;
   }
 
   void RK4(const State& state,
@@ -220,8 +216,8 @@ class MultiplePoleCart
            arma::vec& dydx,
            State& nextState)
   {
-    double hh = tau * 0.5;
-    double h6 = tau / 6;
+    const double hh = tau * 0.5;
+    const double h6 = tau / 6;
     arma::vec yt(6);
     arma::vec dyt(6);
     arma::vec dym(6);

@@ -30,13 +30,13 @@ BOOST_AUTO_TEST_SUITE(NEATTest)
 
 /**
  * Test NEAT and phased searching on the XOR Test. XOR normally performs better
- *  in cyclic cases, this is meant to be a test of the acyclic network.
+ * in cyclic cases, this is meant to be a test of the acyclic network.
  */
 BOOST_AUTO_TEST_CASE(NEATXORTest)
 {
   XORTask task;
   NEAT<XORTask> model(task, 2, 1, 100, 500, 10);
-  model.FinalFitness() = 3.8;
+  model.FinalFitness() = 3.7;
   model.IsAcyclic() = true;
   model.ComplexityThreshold() = 6;
 
@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(NEATXORTest)
   double meanComplexity = model.MeanComplexity();
 
   // Check if the final fitness is acceptable.
-  BOOST_REQUIRE(finalFitness >= 3.8);
+  BOOST_REQUIRE(finalFitness >= 3.7);
 
   // Check if the complexity is not too far in excess of the complexity
   // ceiling.
