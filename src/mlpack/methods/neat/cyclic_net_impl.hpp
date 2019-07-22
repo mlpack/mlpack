@@ -29,7 +29,7 @@ CyclicNet<ActivationFunction>::CyclicNet(const size_t nodeCount,
     inputNodeCount(inputNodeCount),
     outputNodeCount(outputNodeCount),
     bias(bias)
-{ /* Nothing to do here */}
+{ /* Nothing to do here */ }
 
 template <class ActivationFunction>
 void CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,

@@ -18,7 +18,9 @@ namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */ {
 
 /**
- * A class that represents a connection gene in a genome.
+ * A class that represents a connection gene in a genome. A connection gene is
+ * a directed weighted connection between two nodes in a network, and is
+ * specified by a unique "global innovation ID".
  */
 class ConnectionGene
 {
@@ -69,9 +71,9 @@ class ConnectionGene
   //! Set connection weight.
   double& Weight() { return weight; }
 
-  //! Get Source gene.
+  //! Get source gene.
   size_t Source() const { return source; }
-  //! Set Source gene.
+  //! Set source gene.
   size_t& Source() { return source; }
 
   //! Get target gene.

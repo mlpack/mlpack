@@ -29,9 +29,10 @@ namespace neat /** NeuroEvolution of Augmenting Topologies */ {
  * Output nodes : ID = inputNodeCount + 1 - inputNodeCount + outputNodeCount
  * Hidden nodes : ID > inputNodeCount + outputNodeCount
  * 
- * The genome can undergo two types of structural mutations:
+ * The genome can undergo three types of structural mutations:
  * 1. A connection can be split into two, creating a new node.
  * 2. A new connection can be created between two nodes.
+ * 3. A connection can be deleted.
  * 
  * @tparam ActivationFunction The activation function to be used.
  */
@@ -50,6 +51,7 @@ class Genome
    * @param inputNodeCount The number of input nodes.
    * @param outputNodeCount The number of output nodes.
    * @param bias The bias of the genome.
+   * @param initialWeight The initial weight of the connections.
    * @param weightMutationProb The probability of a weight mutating.
    * @param weightMutationSize The degree to which the weight will mutate.
    * @param biasMutationProb The probability of a bias mutating.
@@ -75,10 +77,10 @@ class Genome
   /**
    * Creates a genome. Used during cyclic reproduction.
    * 
-   * @param inputNodeCount The number of input nodes.
-   * @param outputNodeCount The number of output nodes.
    * @param connectionGeneList A vector of connection genes sorted by
    *     innovation ID.
+   * @param inputNodeCount The number of input nodes.
+   * @param outputNodeCount The number of output nodes.
    * @param nextNodeID The number of nodes in the system.
    * @param bias The bias of the genome.
    * @param weightMutationProb The probability of a weight mutating.
@@ -107,12 +109,12 @@ class Genome
   /**
    * Creates a genome. Used during acyclic reproduction.
    * 
-   * @param inputNodeCount The number of input nodes.
-   * @param outputNodeCount The number of output nodes.
    * @param connectionGeneList A vector of connection genes sorted by
    *     innovation ID.
    * @param nodeDepths A vector of node depths, where the depth is the maximum
    *     number of "jumps" it takes to get to a node from an input node.
+   * @param inputNodeCount The number of input nodes.
+   * @param outputNodeCount The number of output nodes.
    * @param nextNodeID The number of nodes in the system.
    * @param bias The bias of the genome.
    * @param weightMutationProb The probability of a weight mutating.
@@ -169,9 +171,26 @@ class Genome
   size_t Complexity();
 
   /**
+   * Mutates weights of the genome connections.
+   */
+  void MutateWeights();
+
+  /**
+   * A recursive function that assigns depth to nodes. Only used in acyclic
+   * cases.
+   */
+  void Traverse(size_t startID);
+
+  /**
    * A vector containing the connection genes.
    */
   std::vector<ConnectionGene> connectionGeneList;
+
+  /**
+   * A digraph containing connection genes sorted by source ID, and then
+   * secondary sorted by target ID.
+   */
+  std::map<size_t, std::map<size_t, ConnectionGene>> directedGraph;
 
   /**
    * A vector of node depths, where the depth is the maximum number of "jumps"
@@ -184,12 +203,6 @@ class Genome
    * The buffer of added connections along with their innovation IDs.
    */
   static std::map<std::pair<size_t, size_t>, size_t> mutationBuffer;
-
-  /**
-   * A digraph containing connection genes sorted by source ID, and then
-   * secondary sorted by target ID.
-   */
-  std::map<size_t, std::map<size_t, ConnectionGene>> directedGraph;
 
   //! The next innovation ID to be allotted.
   static size_t nextInnovID;
@@ -231,15 +244,6 @@ class Genome
   double Bias() const { return bias; }
   //! Set bias.
   double& Bias() { return bias; }
-
-  // Mutates weights.
-  void MutateWeights();
-
-  /**
-   * A recursive function that assigns depth to nodes. Only used in acyclic
-   * cases.
-   */
-  void Traverse(size_t startID);
  private:
   /**
    * Stores the activation of the nodes. Only used if isAcyclic is set to

@@ -18,6 +18,15 @@
 namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
+// Default constructor for a connection gene.
+ConnectionGene::ConnectionGene():
+    globalInnovationID(0),
+    weight(0),
+    source(0),
+    target(0),
+    enabled(false)
+{ /* Nothing to do here */ }
+
 // Creates a connection gene object.
 ConnectionGene::ConnectionGene(const size_t globalInnovationID,
                                const double weight,
@@ -33,15 +42,6 @@ ConnectionGene::ConnectionGene(const size_t globalInnovationID,
 
 // Default destructor for a connection gene.
 ConnectionGene::~ConnectionGene()
-{ /* Nothing to do here */ }
-
-// Default constructor for a connection gene.
-ConnectionGene::ConnectionGene():
-    globalInnovationID(0),
-    weight(0),
-    source(0),
-    target(0),
-    enabled(false)
 { /* Nothing to do here */ }
 
 void ConnectionGene::Mutate(const double mutationSize)

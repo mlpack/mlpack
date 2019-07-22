@@ -1,5 +1,5 @@
 /**
- * @file genome.hpp
+ * @file genome_impl.hpp
  * @author Rahul Ganesh Prabhu
  *
  * Implementation of the Genome class which represents a genome in the 
@@ -21,6 +21,7 @@
 namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
+// Declare static variables for linking.
 template <class ActivationFunction>
 size_t Genome<ActivationFunction>::nextInnovID;
 
@@ -128,8 +129,6 @@ Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>&
     connDeletionProb(connDeletionProb),
     isAcyclic(isAcyclic)
 {
-  // TODO: Decide whether using map::find() to check which nodes to include in
-  // digraph is better, or preparing like this.
   for (size_t i = 0; i < nextNodeID; i++)
   {
     directedGraph.emplace(std::piecewise_construct,
@@ -226,7 +225,7 @@ arma::vec Genome<ActivationFunction>::Evaluate(arma::vec& input)
 template <class ActivationFunction>
 void Genome<ActivationFunction>::Mutate()
 {
-  // Mutates weights.
+  // Mutate weights.
   MutateWeights();
 
   // Mutate bias.
@@ -246,6 +245,7 @@ void Genome<ActivationFunction>::Mutate()
     DelConnMutation();
 }
 
+// Prints parameters of genome.
 template <class ActivationFunction>
 arma::mat Genome<ActivationFunction>::Parameters()
 {
@@ -261,6 +261,7 @@ arma::mat Genome<ActivationFunction>::Parameters()
   return param;
 }
 
+// Exists for debugging, must be removed before merge.
 template <class ActivationFunction>
 void Genome<ActivationFunction>::Print()
 {
@@ -286,6 +287,7 @@ void Genome<ActivationFunction>::Print()
   }
 }
 
+// Traverses graph and assigns node depths.
 template <class ActivationFunction>
 void Genome<ActivationFunction>::Traverse(size_t startID)
 {
@@ -301,6 +303,7 @@ void Genome<ActivationFunction>::Traverse(size_t startID)
   }
 }
 
+// Mutate weights.
 template <class ActivationFunction>
 void Genome<ActivationFunction>::MutateWeights()
 {
@@ -321,6 +324,7 @@ void Genome<ActivationFunction>::MutateWeights()
   }
 }
 
+// Add connection.
 template <class ActivationFunction>
 void Genome<ActivationFunction>::AddConnMutation()
 {
@@ -385,6 +389,7 @@ void Genome<ActivationFunction>::AddConnMutation()
   }
 }
 
+// Add node.
 template <class ActivationFunction>
 void Genome<ActivationFunction>::AddNodeMutation()
 {
@@ -453,6 +458,7 @@ void Genome<ActivationFunction>::AddNodeMutation()
   }
 }
 
+// Delete connection.
 template <class ActivationFunction>
 void Genome<ActivationFunction>::DelConnMutation()
 {
@@ -479,6 +485,7 @@ void Genome<ActivationFunction>::DelConnMutation()
   }
 }
 
+// Finds complexity of the genome.
 template <class ActivationFunction>
 size_t Genome<ActivationFunction>::Complexity()
 {
@@ -491,6 +498,7 @@ size_t Genome<ActivationFunction>::Complexity()
   return connCount;
 }
 
+// Serializes object.
 template <class ActivationFunction>
 template <typename Archive>
 void Genome<ActivationFunction>::serialize(Archive& ar,

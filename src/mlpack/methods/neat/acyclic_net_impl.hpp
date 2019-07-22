@@ -2,7 +2,7 @@
  * @file acyclic_net_impl.hpp
  * @author Rahul Ganesh Prabhu
  *
- * Implementation of the AcyclicNet class, which representa an acyclic neural
+ * Implementation of the AcyclicNet class, which represents an acyclic neural
  * network.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
