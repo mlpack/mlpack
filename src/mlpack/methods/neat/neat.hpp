@@ -67,6 +67,8 @@ class NEAT
    * @param finalFitness The desired fitness of the genomes. If it is 0, no
    *    no limit on the fitness is considered.
    * @param complexityThreshold The maximum complexity allowed.
+   * @param maxSimplifyGen The maximum number of generations for which
+   *    simplification will occur.
    * @param isAcyclic Denotes whether or not the genome is meant to be acyclic.
    */
   NEAT(TaskType& task,
@@ -88,6 +90,7 @@ class NEAT
        const double elitismProp = 0.1,
        const double finalFitness = 0,
        const size_t complexityThreshold = 0,
+       const size_t maxSimplifyGen = 10,
        const bool isAcyclic = false);
 
   /**
@@ -163,6 +166,21 @@ class NEAT
   size_t ComplexityThreshold() const { return complexityThreshold; }
   //! Set the complexity threshold.
   size_t& ComplexityThreshold() { return complexityThreshold; }
+
+  //! Get the maximum number of generations for simplification.
+  size_t MaxSimplifyGen() const { return maxSimplifyGen; }
+  //! Set the maximum number of generations for simplification.
+  size_t MaxSimplifyGen() { return maxSimplifyGen; }
+
+  //! Get the current complexity ceiling.
+  size_t CurrentComplexityCeiling() const { return currentComplexityCeiling; }
+  //! Set the current complexity ceiling.
+  size_t& CurrentComplexityCeiling() { return currentComplexityCeiling; }
+
+  //! Get the mean complexity.
+  double MeanComplexity() const { return meanComplexity; }
+  //! Set the mean complexity.
+  double& MeanComplexity() { return meanComplexity; }
 
   //! Get the boolean denoting if the genome is acyclic or not.
   bool IsAcyclic() const { return isAcyclic; }
@@ -312,8 +330,17 @@ class NEAT
   //! The maximum complexity after which NEAT performes simplification.
   size_t complexityThreshold;
 
+  //! The current complexity ceiling.
+  size_t currentComplexityCeiling;
+
   //! The mean population complexity.
   double meanComplexity;
+
+  //! The generation at which transition in strategy occurred.
+  size_t lastTransitionGen;
+
+  //! The maximum number of generations for simplification.
+  size_t maxSimplifyGen;
 
   /**
    * The search mode. If it is 1, NEAT is simplifying. If it is 0, NEAT is

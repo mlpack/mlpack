@@ -42,6 +42,7 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::
          const double elitismProp,
          const double finalFitness,
          const size_t complexityThreshold,
+         const size_t maxSimplifyGen,
          const bool isAcyclic):
     task(task),
     inputNodeCount(inputNodeCount),
@@ -62,7 +63,10 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::
     elitismProp(elitismProp),
     finalFitness(finalFitness),
     complexityThreshold(complexityThreshold),
+    currentComplexityCeiling(complexityThreshold),
     meanComplexity(0),
+    lastTransitionGen(0),
+    maxSimplifyGen(maxSimplifyGen),
     searchMode(0),
     isAcyclic(isAcyclic),
     contenderNum(0),
@@ -107,10 +111,24 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
       break;
 
     // Set search mode.
-    if (meanComplexity > (double)complexityThreshold)
+    if (meanComplexity > currentComplexityCeiling)
+    {
+      if (searchMode == 0)
+        lastTransitionGen = gen;
       searchMode = 1;
+    }
     else
+    {
+      if (searchMode == 1)
+        lastTransitionGen = gen;
       searchMode = 0;
+    }
+
+    if (lastTransitionGen + maxSimplifyGen == gen && searchMode == 1)
+    {
+      currentComplexityCeiling += complexityThreshold;
+      searchMode = 0;
+    }
 
     Log::Info << "The maximum fitness in generation " << gen << " is " <<
         fitnesses.max() << std::endl;
