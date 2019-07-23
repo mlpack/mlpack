@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
 //   while (!task.IsTerminal(state))
 //     task.Sample(state, action, state);
 
-//   // Check if the number of steps performed is the same as the maximum allowed.
+  // Check if the number of steps performed is the same as the maximum allowed.
 //   BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
 //   BOOST_REQUIRE_EQUAL(2, MultiplePoleCart::Action::size);
 // }
