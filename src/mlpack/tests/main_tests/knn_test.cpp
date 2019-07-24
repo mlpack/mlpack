@@ -670,12 +670,14 @@ BOOST_AUTO_TEST_CASE(KNNDifferentLeafSizes)
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 10);
   SetInputParam("leaf_size", (int) 10);
+  
   mlpackMain();
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  BOOST_CHECK_PREDICATE( std::not_equal_to<KNNModel>,
-    (output_model)(CLI::GetParam<KNNModel*>("output_model")));
+  BOOST_CHECK_EQUAL(output->LeafSize(), (int) 1);
+  BOOST_CHECK_EQUAL(CLI::GetParam<KNNModel*>("output_model")->LeafSize(),
+    (int) 10);
   }
 
 BOOST_AUTO_TEST_SUITE_END();
