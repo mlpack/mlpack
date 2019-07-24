@@ -630,9 +630,9 @@ BOOST_AUTO_TEST_CASE(KFNDifferentLeafSizes)
   SetInputParam("leaf_size", (int) 1);
   KFNModel* output_model;
   output_model = std::move(CLI::GetParam<KFNModel*>("output_model"));
- 
+
   mlpackMain();
- 
+
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
 
@@ -640,7 +640,7 @@ BOOST_AUTO_TEST_CASE(KFNDifferentLeafSizes)
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 10);
   SetInputParam("leaf_size", (int) 10);
-  
+
   mlpackMain();
 
   // Check that initial output matrices and the output matrices using
