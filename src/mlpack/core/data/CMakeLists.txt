@@ -24,6 +24,9 @@ set(SOURCES
   split_data.hpp
   imputer.hpp
   binarize.hpp
+  confusion_matrix.hpp
+  one_hot_encoding.hpp
+  one_hot_encoding_impl.hpp
 )
 
 # add directory name to sources
@@ -35,6 +38,7 @@ endforeach()
 # Add subdirectories.
 add_subdirectory(imputation_methods)
 add_subdirectory(map_policies)
+add_subdirectory(scaler_methods)
 
 # Append sources (with directory name) to list of all mlpack sources (used at
 # parent scope).

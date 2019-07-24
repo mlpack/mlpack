@@ -21,8 +21,10 @@ namespace mlpack {
 namespace gmm {
 
 //! Constructor.
-template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
-EMFit<InitialClusteringType, CovarianceConstraintPolicy>::EMFit(
+template<typename InitialClusteringType,
+         typename CovarianceConstraintPolicy,
+         typename Distribution>
+EMFit<InitialClusteringType, CovarianceConstraintPolicy, Distribution>::EMFit(
     const size_t maxIterations,
     const double tolerance,
     InitialClusteringType clusterer,
@@ -33,23 +35,36 @@ EMFit<InitialClusteringType, CovarianceConstraintPolicy>::EMFit(
     constraint(constraint)
 { /* Nothing to do. */ }
 
-template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
-void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
-    const arma::mat& observations,
-    std::vector<distribution::GaussianDistribution>& dists,
-    arma::vec& weights,
-    const bool useInitialModel)
+template<typename InitialClusteringType,
+         typename CovarianceConstraintPolicy,
+         typename Distribution>
+void EMFit<InitialClusteringType, CovarianceConstraintPolicy, Distribution>::
+Estimate(const arma::mat& observations,
+         std::vector<Distribution>& dists,
+         arma::vec& weights,
+         const bool useInitialModel)
 {
-  // Shortcut: if the user is using the DiagonalConstraint, then we will call
-  // out to Armadillo.  But Armadillo uses uword internally as an OpenMP index
-  // type, which crashes Visual Studio, so don't do this on Windows.
-  #ifndef _WIN32
-  if (std::is_same<CovarianceConstraintPolicy, DiagonalConstraint>::value)
+  if (std::is_same<Distribution,
+      distribution::DiagonalGaussianDistribution>::value)
   {
-    ArmadilloGMMWrapper(observations, dists, weights, useInitialModel);
-    return;
+    #ifdef _WIN32
+      Log::Warn << "Cannot use arma::gmm_diag on Visual Studio due to OpenMP"
+          << " compilation issues! Using slower EMFit::Estimate() instead..."
+          << std::endl;
+    #else
+      ArmadilloGMMWrapper(observations, dists, weights, useInitialModel);
+      return;
+    #endif
   }
-  #endif
+  else if (std::is_same<CovarianceConstraintPolicy, DiagonalConstraint>::value
+      && std::is_same<Distribution, distribution::GaussianDistribution>::value)
+  {
+    // EMFit::Estimate() using DiagonalConstraint with GaussianDistribution
+    // makes use of slower implementation.
+    Log::Warn << "EMFit::Estimate() using DiagonalConstraint with "
+        << "GaussianDistribution makes use of slower implementation, so "
+        << "DiagonalGMM is recommended for faster training." << std::endl;
+  }
 
   // Only perform initial clustering if the user wanted it.
   if (!useInitialModel)
@@ -101,18 +116,31 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
       // Don't update if there's no probability of the Gaussian having points.
       if (probRowSums[i] != 0)
         dists[i].Mean() = (observations * condProb.col(i)) / probRowSums[i];
+      else
+        continue;
 
       // Calculate the new value of the covariances using the updated
       // conditional probabilities and the updated means.
-      arma::mat tmp = observations - (dists[i].Mean() *
-          arma::ones<arma::rowvec>(observations.n_cols));
-      arma::mat tmpB = tmp % (arma::ones<arma::vec>(observations.n_rows) *
-          trans(condProb.col(i)));
+      arma::mat tmp = observations.each_col() - dists[i].Mean();
 
-      // Don't update if there's no probability of the Gaussian having points.
-      if (probRowSums[i] != 0.0)
+      // If the distribution is DiagonalGaussianDistribution, calculate the
+      // covariance only with diagonal components.
+      if (std::is_same<Distribution,
+          distribution::DiagonalGaussianDistribution>::value)
       {
+        arma::vec covariance = arma::sum((tmp % tmp) %
+            (arma::ones<arma::vec>(observations.n_rows) *
+            trans(condProb.col(i))), 1) / probRowSums[i];
+
+        // Apply covariance constraint.
+        constraint.ApplyConstraint(covariance);
+        dists[i].Covariance(std::move(covariance));
+      }
+      else
+      {
+        arma::mat tmpB = tmp.each_row() % trans(condProb.col(i));
         arma::mat covariance = (tmp * trans(tmpB)) / probRowSums[i];
+
         // Apply covariance constraint.
         constraint.ApplyConstraint(covariance);
         dists[i].Covariance(std::move(covariance));
@@ -131,13 +159,15 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
   }
 }
 
-template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
-void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
-    const arma::mat& observations,
-    const arma::vec& probabilities,
-    std::vector<distribution::GaussianDistribution>& dists,
-    arma::vec& weights,
-    const bool useInitialModel)
+template<typename InitialClusteringType,
+         typename CovarianceConstraintPolicy,
+         typename Distribution>
+void EMFit<InitialClusteringType, CovarianceConstraintPolicy, Distribution>::
+Estimate(const arma::mat& observations,
+         const arma::vec& probabilities,
+         std::vector<Distribution>& dists,
+         arma::vec& weights,
+         const bool useInitialModel)
 {
   if (!useInitialModel)
     InitialClustering(observations, dists, weights);
@@ -189,22 +219,42 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
       // model.
       probRowSums[i] = accu(condProb.col(i) % probabilities);
 
-      dists[i].Mean() = (observations * (condProb.col(i) % probabilities)) /
-        probRowSums[i];
+      // Don't update if there's no probability of the Gaussian having points.
+      if (probRowSums[i] != 0)
+      {
+        dists[i].Mean() = (observations * (condProb.col(i) % probabilities)) /
+            probRowSums[i];
+      }
+      else
+        continue;
 
       // Calculate the new value of the covariances using the updated
       // conditional probabilities and the updated means.
-      arma::mat tmp = observations - (dists[i].Mean() *
-          arma::ones<arma::rowvec>(observations.n_cols));
-      arma::mat tmpB = tmp % (arma::ones<arma::vec>(observations.n_rows) *
-          trans(condProb.col(i) % probabilities));
+      arma::mat tmp = observations.each_col() - dists[i].Mean();
 
-      arma::mat cov = (tmp * trans(tmpB)) / probRowSums[i];
+      // If the distribution is DiagonalGaussianDistribution, calculate the
+      // covariance only with diagonal components.
+      if (std::is_same<Distribution,
+          distribution::DiagonalGaussianDistribution>::value)
+      {
+        arma::vec cov = arma::sum((tmp % tmp) %
+            (arma::ones<arma::vec>(observations.n_rows) *
+            trans(condProb.col(i) % probabilities)), 1) / probRowSums[i];
 
-      // Apply covariance constraint.
-      constraint.ApplyConstraint(cov);
+        // Apply covariance constraint.
+        constraint.ApplyConstraint(cov);
+        dists[i].Covariance(std::move(cov));
+      }
+      else
+      {
+        arma::mat tmpB = tmp.each_row() % trans(condProb.col(i) %
+            probabilities);
+        arma::mat cov = (tmp * trans(tmpB)) / probRowSums[i];
 
-      dists[i].Covariance(std::move(cov));
+        // Apply covariance constraint.
+        constraint.ApplyConstraint(cov);
+        dists[i].Covariance(std::move(cov));
+      }
     }
 
     // Calculate the new values for omega using the updated conditional
@@ -219,10 +269,12 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
   }
 }
 
-template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
-void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::
+template<typename InitialClusteringType,
+         typename CovarianceConstraintPolicy,
+         typename Distribution>
+void EMFit<InitialClusteringType, CovarianceConstraintPolicy, Distribution>::
 InitialClustering(const arma::mat& observations,
-                  std::vector<distribution::GaussianDistribution>& dists,
+                  std::vector<Distribution>& dists,
                   arma::vec& weights)
 {
   // Assignments from clustering.
@@ -231,16 +283,32 @@ InitialClustering(const arma::mat& observations,
   // Run clustering algorithm.
   clusterer.Cluster(observations, dists.size(), assignments);
 
+  // Check if the type of Distribution is DiagonalGaussianDistribution.  If so,
+  // we can get faster performance by using diagonal elements when calculating
+  // the covariance.
+  const bool isDiagGaussDist = std::is_same<Distribution,
+      distribution::DiagonalGaussianDistribution>::value;
+
   std::vector<arma::vec> means(dists.size());
-  std::vector<arma::mat> covs(dists.size());
+
+  // Conditional covariance instantiation.
+  std::vector<typename std::conditional<isDiagGaussDist,
+      arma::vec, arma::mat>::type> covs(dists.size());
 
   // Now calculate the means, covariances, and weights.
   weights.zeros();
   for (size_t i = 0; i < dists.size(); ++i)
   {
     means[i].zeros(dists[i].Mean().n_elem);
-    covs[i].zeros(dists[i].Covariance().n_rows,
-                  dists[i].Covariance().n_cols);
+    if (isDiagGaussDist)
+    {
+      covs[i].zeros(dists[i].Covariance().n_elem);
+    }
+    else
+    {
+      covs[i].zeros(dists[i].Covariance().n_rows,
+                    dists[i].Covariance().n_cols);
+    }
   }
 
   // From the assignments, generate our means, covariances, and weights.
@@ -252,7 +320,10 @@ InitialClustering(const arma::mat& observations,
     means[cluster] += observations.col(i);
 
     // Add this to the relevant covariance.
-    covs[cluster] += observations.col(i) * trans(observations.col(i));
+    if (isDiagGaussDist)
+      covs[cluster] += observations.col(i) % observations.col(i);
+    else
+      covs[cluster] += observations.col(i) * trans(observations.col(i));
 
     // Now add one to the weights (we will normalize).
     weights[cluster]++;
@@ -268,7 +339,10 @@ InitialClustering(const arma::mat& observations,
   {
     const size_t cluster = assignments[i];
     const arma::vec normObs = observations.col(i) - means[cluster];
-    covs[cluster] += normObs * normObs.t();
+    if (isDiagGaussDist)
+      covs[cluster] += normObs % normObs;
+    else
+      covs[cluster] += normObs * normObs.t();
   }
 
   for (size_t i = 0; i < dists.size(); ++i)
@@ -276,7 +350,10 @@ InitialClustering(const arma::mat& observations,
     covs[i] /= (weights[i] > 1) ? weights[i] : 1;
 
     // Apply constraints to covariance matrix.
-    constraint.ApplyConstraint(covs[i]);
+    if (isDiagGaussDist)
+      covs[i] = arma::clamp(covs[i], 1e-10, DBL_MAX);
+    else
+      constraint.ApplyConstraint(covs[i]);
 
     std::swap(dists[i].Mean(), means[i]);
     dists[i].Covariance(std::move(covs[i]));
@@ -286,11 +363,13 @@ InitialClustering(const arma::mat& observations,
   weights /= accu(weights);
 }
 
-template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
-double EMFit<InitialClusteringType, CovarianceConstraintPolicy>::LogLikelihood(
-    const arma::mat& observations,
-    const std::vector<distribution::GaussianDistribution>& dists,
-    const arma::vec& weights) const
+template<typename InitialClusteringType,
+         typename CovarianceConstraintPolicy,
+         typename Distribution>
+double EMFit<InitialClusteringType, CovarianceConstraintPolicy, Distribution>::
+LogLikelihood(const arma::mat& observations,
+              const std::vector<Distribution>& dists,
+              const arma::vec& weights) const
 {
   double logLikelihood = 0;
 
@@ -314,11 +393,12 @@ double EMFit<InitialClusteringType, CovarianceConstraintPolicy>::LogLikelihood(
   return logLikelihood;
 }
 
-template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
+template<typename InitialClusteringType,
+         typename CovarianceConstraintPolicy,
+         typename Distribution>
 template<typename Archive>
-void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+void EMFit<InitialClusteringType, CovarianceConstraintPolicy, Distribution>::
+serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(maxIterations);
   ar & BOOST_SERIALIZATION_NVP(tolerance);
@@ -326,13 +406,12 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::serialize(
   ar & BOOST_SERIALIZATION_NVP(constraint);
 }
 
-// Armadillo uses uword internally as an OpenMP index type, which crashes Visual
-// Studio.
-#ifndef _WIN32
-template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
-void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::
+template<typename InitialClusteringType,
+         typename CovarianceConstraintPolicy,
+         typename Distribution>
+void EMFit<InitialClusteringType, CovarianceConstraintPolicy, Distribution>::
 ArmadilloGMMWrapper(const arma::mat& observations,
-                    std::vector<distribution::GaussianDistribution>& dists,
+                    std::vector<Distribution>& dists,
                     arma::vec& weights,
                     const bool useInitialModel)
 {
@@ -361,7 +440,9 @@ ArmadilloGMMWrapper(const arma::mat& observations,
     for (size_t i = 0; i < dists.size(); ++i)
     {
       means.col(i) = dists[i].Mean();
-      covs.col(i) = dists[i].Covariance().diag();
+
+      // DiagonalGaussianDistribution has diagonal covariance as an arma::vec.
+      covs.col(i) = dists[i].Covariance();
     }
 
     g.reset(observations.n_rows, dists.size());
@@ -383,10 +464,15 @@ ArmadilloGMMWrapper(const arma::mat& observations,
   for (size_t i = 0; i < dists.size(); ++i)
   {
     dists[i].Mean() = g.means.col(i);
-    dists[i].Covariance(arma::diagmat(g.dcovs.col(i)));
+
+    // Apply covariance constraint.
+    arma::vec covsAlias = g.dcovs.unsafe_col(i);
+    constraint.ApplyConstraint(covsAlias);
+
+    // DiagonalGaussianDistribution has diagonal covariance as an arma::vec.
+    dists[i].Covariance(g.dcovs.col(i));
   }
 }
-#endif
 
 } // namespace gmm
 } // namespace mlpack

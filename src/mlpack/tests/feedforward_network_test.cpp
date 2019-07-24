@@ -29,47 +29,17 @@ using namespace mlpack::ann;
 BOOST_AUTO_TEST_SUITE(FeedForwardNetworkTest);
 
 /**
- * Train and evaluate a vanilla network with the specified structure.
+ * Train and evaluate a model with the specified structure.
  */
-template<typename MatType = arma::mat>
-void BuildVanillaNetwork(MatType& trainData,
-                         MatType& trainLabels,
-                         MatType& testData,
-                         MatType& testLabels,
-                         const size_t outputSize,
-                         const size_t hiddenLayerSize,
-                         const size_t maxEpochs,
-                         const double classificationErrorThreshold)
+template<typename MatType = arma::mat, typename ModelType>
+void TestNetwork(ModelType& model,
+                 MatType& trainData,
+                 MatType& trainLabels,
+                 MatType& testData,
+                 MatType& testLabels,
+                 const size_t maxEpochs,
+                 const double classificationErrorThreshold)
 {
-  /*
-   * Construct a feed forward network with trainData.n_rows input nodes,
-   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
-   * network structure looks like:
-   *
-   *  Input         Hidden        Output
-   *  Layer         Layer         Layer
-   * +-----+       +-----+       +-----+
-   * |     |       |     |       |     |
-   * |     +------>|     +------>|     |
-   * |     |     +>|     |     +>|     |
-   * +-----+     | +--+--+     | +-----+
-   *             |             |
-   *  Bias       |  Bias       |
-   *  Layer      |  Layer      |
-   * +-----+     | +-----+     |
-   * |     |     | |     |     |
-   * |     +-----+ |     +-----+
-   * |     |       |     |
-   * +-----+       +-----+
-   */
-
-  FFN<NegativeLogLikelihood<> > model;
-  model.Add<Linear<> >(trainData.n_rows, hiddenLayerSize);
-  model.Add<SigmoidLayer<> >();
-  model.Add<Linear<> >(hiddenLayerSize, outputSize);
-  model.Add<LogSoftMax<> >();
-
-  // RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
   model.Train(trainData, trainLabels, opt);
 
@@ -115,11 +85,38 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
 
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+   * network structure looks like:
+   *
+   *  Input         Hidden        Output
+   *  Layer         Layer         Layer
+   * +-----+       +-----+       +-----+
+   * |     |       |     |       |     |
+   * |     +------>|     +------>|     |
+   * |     |     +>|     |     +>|     |
+   * +-----+     | +--+--+     | +-----+
+   *             |             |
+   *  Bias       |  Bias       |
+   *  Layer      |  Layer      |
+   * +-----+     | +-----+     |
+   * |     |     | |     |     |
+   * |     +-----+ |     +-----+
+   * |     |       |     |
+   * +-----+       +-----+
+   */
+
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<SigmoidLayer<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
+
   // Vanilla neural net with logistic activation function.
-  // Because 92 percent of the patients are not hyperthyroid the neural
+  // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  BuildVanillaNetwork<>
-      (trainData, trainLabels, testData, testLabels, 3, 8, 10, 0.1);
+  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
@@ -132,9 +129,13 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
   labels += 1;
 
+  FFN<NegativeLogLikelihood<> > model1;
+  model1.Add<Linear<> >(dataset.n_rows, 10);
+  model1.Add<SigmoidLayer<> >();
+  model1.Add<Linear<> >(10, 2);
+  model1.Add<LogSoftMax<> >();
   // Vanilla neural net with logistic activation function.
-  BuildVanillaNetwork<>
-      (dataset, labels, dataset, labels, 2, 10, 10, 0.2);
+  TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
 }
 
 BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
@@ -214,18 +215,23 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
 }
 
 /**
- * Train and evaluate a Dropout network with the specified structure.
+ * Train the dropout network on a larger dataset.
  */
-template<typename MatType = arma::mat>
-void BuildDropoutNetwork(MatType& trainData,
-                         MatType& trainLabels,
-                         MatType& testData,
-                         MatType& testLabels,
-                         const size_t outputSize,
-                         const size_t hiddenLayerSize,
-                         const size_t maxEpochs,
-                         const double classificationErrorThreshold)
+BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
 {
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+
   /*
    * Construct a feed forward network with trainData.n_rows input nodes,
    * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
@@ -249,44 +255,70 @@ void BuildDropoutNetwork(MatType& trainData,
    */
 
   FFN<NegativeLogLikelihood<> > model;
-  model.Add<Linear<> >(trainData.n_rows, hiddenLayerSize);
+  model.Add<Linear<> >(trainData.n_rows, 8);
   model.Add<SigmoidLayer<> >();
   model.Add<Dropout<> >();
-  model.Add<Linear<> >(hiddenLayerSize, outputSize);
+  model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
 
-  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  // Vanilla neural net with logistic activation function.
+  // Because 92% of the patients are not hyperthyroid the neural
+  // network must be significant better than 92%.
+  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  arma::mat dataset;
+  dataset.load("mnist_first250_training_4s_and_9s.arm");
 
-  model.Train(trainData, trainLabels, opt);
-
-  MatType predictionTemp;
-  model.Predict(testData, predictionTemp);
-  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
-
-  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+  // Normalize each point since these are images.
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    prediction(i) = arma::as_scalar(arma::find(
-        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+    dataset.col(i) /= norm(dataset.col(i), 2);
   }
 
-  size_t error = 0;
-  for (size_t i = 0; i < testData.n_cols; i++)
-  {
-    if (int(arma::as_scalar(prediction.col(i))) ==
-        int(arma::as_scalar(testLabels.col(i))))
-    {
-      error++;
-    }
-  }
+  arma::mat labels = arma::zeros(1, dataset.n_cols);
+  labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
+  labels += 1;
 
-  double classificationError = 1 - double(error) / testData.n_cols;
-  BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
+  FFN<NegativeLogLikelihood<> > model1;
+  model1.Add<Linear<> >(dataset.n_rows, 10);
+  model1.Add<SigmoidLayer<> >();
+  model.Add<Dropout<> >();
+  model1.Add<Linear<> >(10, 2);
+  model1.Add<LogSoftMax<> >();
+  // Vanilla neural net with logistic activation function.
+  TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
 }
 
 /**
- * Train the dropout network on a larger dataset.
+ * Train the highway network on a larger dataset.
  */
-BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
+BOOST_AUTO_TEST_CASE(HighwayNetworkTest)
+{
+  arma::mat dataset;
+  dataset.load("mnist_first250_training_4s_and_9s.arm");
+
+  // Normalize each point since these are images.
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+    dataset.col(i) /= norm(dataset.col(i), 2);
+
+  arma::mat labels = arma::zeros(1, dataset.n_cols);
+  labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
+  labels += 1;
+
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(dataset.n_rows, 10);
+  Highway<>* highway = new Highway<>(10, true);
+  highway->Add<Linear<> >(10, 10);
+  highway->Add<SigmoidLayer<> >();
+  model.Add(highway);
+  model.Add<Linear<> >(10, 2);
+  model.Add<LogSoftMax<> >();
+  TestNetwork<>(model, dataset, labels, dataset, labels, 10, 0.2);
+}
+
+/**
+ * Train the DropConnect network on a larger dataset.
+ */
+BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
 {
   // Load the dataset.
   arma::mat trainData;
@@ -301,42 +333,6 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
 
-  // Vanilla neural net with logistic activation function.
-  // Because 92 percent of the patients are not hyperthyroid the neural
-  // network must be significant better than 92%.
-  BuildDropoutNetwork<>
-      (trainData, trainLabels, testData, testLabels, 3, 8, 10, 0.1);
-
-  arma::mat dataset;
-  dataset.load("mnist_first250_training_4s_and_9s.arm");
-
-  // Normalize each point since these are images.
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-    dataset.col(i) /= norm(dataset.col(i), 2);
-
-  arma::mat labels = arma::zeros(1, dataset.n_cols);
-  labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
-  labels += 1;
-
-  // Vanilla neural net with logistic activation function.
-  BuildDropoutNetwork<>
-      (dataset, labels, dataset, labels, 2, 10, 10, 0.2);
-}
-
-/**
- * Train and evaluate a DropConnect network(with a baselayer) with the
- * specified structure.
- */
-template<typename MatType = arma::mat>
-void BuildDropConnectNetwork(MatType& trainData,
-                             MatType& trainLabels,
-                             MatType& testData,
-                             MatType& testLabels,
-                             const size_t outputSize,
-                             const size_t hiddenLayerSize,
-                             const size_t maxEpochs,
-                             const double classificationErrorThreshold)
-{
  /*
   *  Construct a feed forward network with trainData.n_rows input nodes,
   *  hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
@@ -362,62 +358,15 @@ void BuildDropConnectNetwork(MatType& trainData,
   */
 
   FFN<NegativeLogLikelihood<> > model;
-  model.Add<Linear<> >(trainData.n_rows, hiddenLayerSize);
+  model.Add<Linear<> >(trainData.n_rows, 8);
   model.Add<SigmoidLayer<> >();
-  model.Add<DropConnect<> >(hiddenLayerSize, outputSize);
+  model.Add<DropConnect<> >(8, 3);
   model.Add<LogSoftMax<> >();
 
-  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
-
-  model.Train(trainData, trainLabels, opt);
-
-  MatType predictionTemp;
-  model.Predict(testData, predictionTemp);
-  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
-
-  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
-  {
-    prediction(i) = arma::as_scalar(arma::find(
-        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
-  }
-
-  size_t error = 0;
-  for (size_t i = 0; i < testData.n_cols; i++)
-  {
-    if (int(arma::as_scalar(prediction.col(i))) ==
-        int(arma::as_scalar(testLabels.col(i))))
-    {
-      error++;
-    }
-  }
-
-  double classificationError = 1 - double(error) / testData.n_cols;
-  BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
-}
-
-/**
- * Train the dropconnect network on a larger dataset.
- */
-BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
-{
-  // Load the dataset.
-  arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
-
-  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
-  trainData.shed_row(trainData.n_rows - 1);
-
-  arma::mat testData;
-  data::Load("thyroid_test.csv", testData, true);
-
-  arma::mat testLabels = testData.row(testData.n_rows - 1);
-  testData.shed_row(testData.n_rows - 1);
-
   // Vanilla neural net with logistic activation function.
-  // Because 92 percent of the patients are not hyperthyroid the neural
+  // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  BuildDropConnectNetwork<>
-      (trainData, trainLabels, testData, testLabels, 3, 8, 10, 0.1);
+  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
@@ -430,9 +379,13 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
   labels += 1;
 
+  FFN<NegativeLogLikelihood<> > model1;
+  model1.Add<Linear<> >(dataset.n_rows, 10);
+  model1.Add<SigmoidLayer<> >();
+  model1.Add<DropConnect<> >(10, 2);
+  model1.Add<LogSoftMax<> >();
   // Vanilla neural net with logistic activation function.
-  BuildDropConnectNetwork<>
-      (dataset, labels, dataset, labels, 2, 10, 10, 0.2);
+  TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
 }
 
 /**
@@ -470,7 +423,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   testData.shed_row(testData.n_rows - 1);
 
   // Vanilla neural net with logistic activation function.
-  // Because 92 percent of the patients are not hyperthyroid the neural
+  // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
   FFN<NegativeLogLikelihood<> > model;
   model.Add<Linear<> >(trainData.n_rows, 8);
@@ -579,4 +532,38 @@ BOOST_AUTO_TEST_CASE(PartialForwardTest)
   CheckMatrices(output, arma::ones(10, 1) * 20);
 }
 
+/**
+ * Test that FFN::Train() returns finite objective value.
+ */
+BOOST_AUTO_TEST_CASE(FFNTrainReturnObjective)
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+
+  // Vanilla neural net with logistic activation function.
+  // Because 92% of the patients are not hyperthyroid the neural
+  // network must be significantly better than 92%.
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<SigmoidLayer<> >();
+  model.Add<Dropout<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
+
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+
+  double objVal = model.Train(trainData, trainLabels, opt);
+
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+}
 BOOST_AUTO_TEST_SUITE_END();

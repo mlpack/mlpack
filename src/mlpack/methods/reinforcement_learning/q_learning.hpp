@@ -16,6 +16,7 @@
 #include <mlpack/prereqs.hpp>
 
 #include "replay/random_replay.hpp"
+#include "replay/prioritized_replay.hpp"
 #include "training_config.hpp"
 
 namespace mlpack {
@@ -100,10 +101,25 @@ class QLearning
    */
   const size_t& TotalSteps() const { return totalSteps; }
 
+  //! Modify the state of the agent.
+  StateType& State() { return state; }
+  //! Get the state of the agent.
+  const StateType& State() const { return state; }
+
+  //! Modify the environment in which the agent is.
+  EnvironmentType& Environment() { return environment; }
+  //! Get the environment in which the agent is.
+  const EnvironmentType& Environment() const { return environment; }
+
   //! Modify the training mode / test mode indicator.
   bool& Deterministic() { return deterministic; }
   //! Get the indicator of training mode / test mode.
   const bool& Deterministic() const { return deterministic; }
+
+  //! Return the learning network.
+  const NetworkType& Network() const { return learningNetwork; }
+  //! Modify the learning network.
+  NetworkType& Network() { return learningNetwork; }
 
  private:
   /**

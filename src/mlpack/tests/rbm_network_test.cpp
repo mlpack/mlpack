@@ -81,7 +81,10 @@ BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
   model.HiddenBias().ones();
 
   // Test the reset function.
-  model.Train(msgd);
+  double objVal = model.Train(msgd);
+
+  // Test that objective value returned by RBM::Train() is finite.
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
@@ -179,7 +182,11 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   modelssRBM.VisiblePenalty().fill(5);
   modelssRBM.SpikeBias().fill(1);
 
-  modelssRBM.Train(msgd);
+  double objVal = modelssRBM.Train(msgd);
+
+  // Test that objective value returned by RBM::Train() is finite.
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
     modelssRBM.HiddenMean(std::move(trainData.col(i)),

@@ -28,6 +28,7 @@
 #include <mlpack/methods/ann/layer/join.hpp>
 #include <mlpack/methods/ann/layer/layer_norm.hpp>
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
+#include <mlpack/methods/ann/layer/c_relu.hpp>
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
 #include <mlpack/methods/ann/layer/lookup.hpp>
@@ -39,6 +40,7 @@
 #include <mlpack/methods/ann/layer/reparametrization.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
 #include <mlpack/methods/ann/layer/subview.hpp>
+#include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
@@ -66,6 +68,11 @@ template<typename InputDataType, typename OutputDataType> class Concatenate;
 template<typename InputDataType,
          typename OutputDataType
 >
+class VirtualBatchNorm;
+
+template<typename InputDataType,
+         typename OutputDataType
+>
 class Reparametrization;
 
 template<typename InputDataType,
@@ -80,6 +87,12 @@ template<typename InputDataType,
          typename... CustomLayers
 >
 class Sequential;
+
+template<typename InputDataType,
+         typename OutputDataType,
+         typename... CustomLayers
+>
+class Highway;
 
 template<typename InputDataType,
          typename OutputDataType,
@@ -172,9 +185,11 @@ using LayerTypes = boost::variant<
     FlexibleReLU<arma::mat, arma::mat>*,
     Glimpse<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
+    Highway<arma::mat, arma::mat>*,
     Join<arma::mat, arma::mat>*,
     LayerNorm<arma::mat, arma::mat>*,
     LeakyReLU<arma::mat, arma::mat>*,
+    CReLU<arma::mat, arma::mat>*,
     Linear<arma::mat, arma::mat>*,
     LinearNoBias<arma::mat, arma::mat>*,
     LogSoftMax<arma::mat, arma::mat>*,
@@ -189,14 +204,17 @@ using LayerTypes = boost::variant<
     NegativeLogLikelihood<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
     Recurrent<arma::mat, arma::mat>*,
-    RecurrentAttention<arma::mat, arma::mat>*,
+    // TODO find workaround to support more than 50 types
+    // as boost::variant can only be used for up to 50 types.
+    // RecurrentAttention<arma::mat, arma::mat>*,
     ReinforceNormal<arma::mat, arma::mat>*,
     Reparametrization<arma::mat, arma::mat>*,
     Select<arma::mat, arma::mat>*,
     Sequential<arma::mat, arma::mat, false>*,
     Sequential<arma::mat, arma::mat, true>*,
     Subview<arma::mat, arma::mat>*,
-    VRClassReward<arma::mat, arma::mat>*,
+    // VRClassReward<arma::mat, arma::mat>*,
+    VirtualBatchNorm<arma::mat, arma::mat>*,
     CustomLayers*...
 >;
 

@@ -2,7 +2,7 @@
  * @file print_doc_functions_impl.hpp
  * @author Ryan Curtin
  *
- * Call out to different printing functionality for different binding languages.
+ * Calls out to different printing functionality for different binding languages.
  * If a new binding is added, this code must be modified.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -67,7 +67,7 @@ inline std::string PrintLanguage(const std::string& language)
 }
 
 /**
- * Print any imports that need to be done before using the binding.
+ * Print any import that needs to be done before using the binding.
  */
 inline std::string PrintImport(const std::string& bindingName)
 {
@@ -129,7 +129,7 @@ inline std::string ToUnderscores(const std::string& str)
 }
 
 /**
- * Print details about the different types for a language.
+ * Print details about the different types of a language.
  */
 inline std::string PrintTypeDocs()
 {
@@ -145,7 +145,7 @@ inline std::string PrintTypeDocs()
   oss << "mlpack bindings for " << PrintLanguage(BindingInfo::Language())
       << " take and return a restricted set of types, for simplicity.  These "
       << "include primitive types, matrix/vector types, categorical matrix "
-      << "types, and model types.  Each type is detailed below." << std::endl;
+      << "types, and model types. Each type is detailed below." << std::endl;
   oss << std::endl;
 
   // Create fake ParamData to pass around.
@@ -453,7 +453,7 @@ inline std::string ProgramCall(const std::string& programName)
   else if (BindingInfo::Language() == "python")
   {
     s += "python\n";
-    std::string import = PrintImport(GetBindingName(programName));
+    std::string import = PrintImport(programName);
     if (import.size() > 0)
       s += ">>> " + import + "\n";
     s += python::ProgramCall(programName);

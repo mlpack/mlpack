@@ -461,7 +461,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionRandomTest)
 
   // Now make sure that reflects the actual distribution.
   arma::vec obsMean = arma::mean(obs, 1);
-  arma::mat obsCov = ccov(obs);
+  arma::mat obsCov = mlpack::math::ColumnCovariance(obs);
 
   // 10% tolerance because this can be noisy.
   BOOST_REQUIRE_CLOSE(obsMean[0], mean[0], 10.0);
@@ -496,7 +496,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainTest)
 
   // Find actual mean and covariance of data.
   arma::vec actualMean = arma::mean(observations, 1);
-  arma::mat actualCov = ccov(observations);
+  arma::mat actualCov = mlpack::math::ColumnCovariance(observations);
 
   d.Train(observations);
 
@@ -1240,6 +1240,285 @@ BOOST_AUTO_TEST_CASE(RegressionDistributionTest)
                 xmlRd.Rf().Parameters(),
                 textRd.Rf().Parameters(),
                 binaryRd.Rf().Parameters());
+}
+
+/*****************************************************/
+/** Diagonal Covariance Gaussian Distribution Tests **/
+/*****************************************************/
+
+/**
+ * Make sure Diagonal Covariance Gaussian distributions are initialized
+ * correctly.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionEmptyConstructor)
+{
+  DiagonalGaussianDistribution d;
+
+  BOOST_REQUIRE_EQUAL(d.Mean().n_elem, 0);
+  BOOST_REQUIRE_EQUAL(d.Covariance().n_elem, 0);
+}
+
+/**
+ * Make sure Diagonal Covariance Gaussian distributions are initialized to
+ * the correct dimensionality.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionDimensionalityConstructor)
+{
+  DiagonalGaussianDistribution d(4);
+
+  BOOST_REQUIRE_EQUAL(d.Mean().n_elem, 4);
+  BOOST_REQUIRE_EQUAL(d.Covariance().n_elem, 4);
+}
+
+/**
+ * Make sure Diagonal Covariance Gaussian distributions are initialized
+ * correctly when we give a mean and covariance.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionConstructor)
+{
+  arma::vec mean = arma::randu<arma::vec>(3);
+  arma::vec covariance = arma::randu<arma::vec>(3);
+
+  DiagonalGaussianDistribution d(mean, covariance);
+
+  // Make sure the mean and covariance is correct.
+  for (size_t i = 0; i < 3; i++)
+  {
+    BOOST_REQUIRE_CLOSE(d.Mean()(i), mean(i), 1e-5);
+    BOOST_REQUIRE_CLOSE(d.Covariance()(i), covariance(i), 1e-5);
+  }
+}
+
+/**
+ * Make sure the probability of observations is correct.
+ * The values were calculated using 'dmvnorm' in R.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionProbabilityTest)
+{
+  arma::vec mean("2 5 3 4 1");
+  arma::vec cov("3 1 5 3 2");
+
+  DiagonalGaussianDistribution d(mean, cov);
+
+  // Observations lists randomly selected.
+  BOOST_REQUIRE_CLOSE(d.LogProbability("3 5 2 7 8"), -20.861264167855161,
+      1e-5);
+  BOOST_REQUIRE_CLOSE(d.LogProbability("7 8 4 0 5"), -22.277930834521829,
+      1e-5);
+  BOOST_REQUIRE_CLOSE(d.LogProbability("6 8 7 7 5"), -21.111264167855161,
+      1e-5);
+  BOOST_REQUIRE_CLOSE(d.LogProbability("2 9 5 6 3"), -16.911264167855162,
+      1e-5);
+  BOOST_REQUIRE_CLOSE(d.LogProbability("5 8 2 9 7"), -26.111264167855161,
+      1e-5);
+}
+
+/**
+ * Test DiagonalGaussianDistribution::Probability() in the univariate case.
+ * The values were calculated using 'dmvnorm' in R.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGaussianUnivariateProbabilityTest)
+{
+  DiagonalGaussianDistribution d(arma::vec("0.0"), arma::vec("1.0"));
+
+  // Mean: 0.0, Covariance: 1.0
+  BOOST_REQUIRE_CLOSE(d.Probability("0.0"), 0.3989422804014327, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("1.0"), 0.24197072451914337, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("-1.0"), 0.24197072451914337, 1e-5);
+
+  // Mean: 0.0, Covariance: 2.0
+  d.Covariance("2.0");
+  BOOST_REQUIRE_CLOSE(d.Probability("0.0"), 0.28209479177387814, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("1.0"), 0.21969564473386122, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("-1.0"), 0.21969564473386122, 1e-5);
+
+  // Mean: 1.0, Covariance: 1.0
+  d.Mean() = "1.0";
+  d.Covariance("1.0");
+  BOOST_REQUIRE_CLOSE(d.Probability("0.0"), 0.24197072451914337, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("1.0"), 0.3989422804014327, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("-1.0"), 0.053990966513188056, 1e-5);
+
+  // Mean: 1.0, Covariance: 2.0
+  d.Covariance("2.0");
+  BOOST_REQUIRE_CLOSE(d.Probability("0.0"), 0.21969564473386122, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("1.0"), 0.28209479177387814, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("-1.0"), 0.10377687435514872, 1e-5);
+}
+
+/**
+ * Test DiagonalGaussianDistribution::Probability() in the multivariate case.
+ * The values were calculated using 'dmvnorm' in R.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGaussianMultivariateProbabilityTest)
+{
+  arma::vec mean("0 0");
+  arma::vec cov("2 2");
+  arma::vec obs("0 0");
+
+  DiagonalGaussianDistribution d(mean, cov);
+
+  BOOST_REQUIRE_CLOSE(d.Probability(obs), 0.079577471545947673, 1e-5);
+
+  obs = "1 1";
+  BOOST_REQUIRE_CLOSE(d.Probability(obs), 0.048266176315026957, 1e-5);
+
+  d.Mean() = "1 3";
+  BOOST_REQUIRE_CLOSE(d.Probability(obs), 0.029274915762159581, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability(-obs), 0.00053618878559782773, 1e-5);
+
+  // Higher dimensional case.
+  d.Mean() = "1 3 6 2 7";
+  d.Covariance("3 1 5 3 2");
+  obs = "2 5 7 3 8";
+  BOOST_REQUIRE_CLOSE(d.Probability(obs), 7.2790083003378082e-05, 1e-5);
+}
+
+/**
+ * Test the phi() function, for multiple points in the multivariate Gaussian
+ * case. The values were calculated using 'dmvnorm' in R.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGaussianMultipointMultivariateProbabilityTest)
+{
+  arma::vec mean = "2 5 3 7 2";
+  arma::vec cov("9 2 1 4 8");
+  arma::mat points = "3 5 2 7 5 8;"
+                     "2 6 8 3 4 6;"
+                     "1 4 2 7 8 2;"
+                     "6 8 4 7 9 2;"
+                     "4 6 7 7 3 2";
+  arma::vec phis;
+  DiagonalGaussianDistribution d(mean, cov);
+  d.LogProbability(points, phis);
+
+  BOOST_REQUIRE_EQUAL(phis.n_elem, 6);
+
+  BOOST_REQUIRE_CLOSE(phis(0), -12.453302051926864, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(1), -10.147746496371308, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(2), -13.210246496371308, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(3), -19.724135385260197, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(4), -21.585246496371308, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(5), -13.647746496371308, 1e-5);
+}
+
+/**
+ * Make sure random observations follow the probability distribution correctly.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionRandomTest)
+{
+  arma::vec mean("2.5 1.25");
+  arma::vec cov("0.50 0.25");
+
+  DiagonalGaussianDistribution d(mean, cov);
+
+  arma::mat obs(2, 5000);
+
+  for (size_t i = 0; i < 5000; i++)
+    obs.col(i) = d.Random();
+
+  // Make sure that reflects the actual distribution.
+  arma::vec obsMean = arma::mean(obs, 1);
+  arma::mat obsCov = mlpack::math::ColumnCovariance(obs);
+
+  // 10% tolerance because this can be noisy.
+  BOOST_REQUIRE_CLOSE(obsMean(0), mean(0), 10.0);
+  BOOST_REQUIRE_CLOSE(obsMean(1), mean(1), 10.0);
+
+  BOOST_REQUIRE_CLOSE(obsCov(0, 0), cov(0), 10);
+  BOOST_REQUIRE_CLOSE(obsCov(1, 1), cov(1), 10);
+}
+
+/**
+ * Make sure that we can properly estimate from given observations.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionTrainTest)
+{
+  arma::vec mean("2.5 1.5 8.2 3.1");
+  arma::vec cov("1.2 3.1 8.3 4.3");
+
+  // Generate the observations.
+  arma::mat observations(4, 10000);
+
+  for (size_t i = 0; i < 10000; i++)
+    observations.col(i) = (arma::sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
+
+  DiagonalGaussianDistribution d;
+
+  // Calculate the actual mean and covariance of data using armadillo.
+  arma::vec actualMean = arma::mean(observations, 1);
+  arma::mat actualCov = mlpack::math::ColumnCovariance(observations);
+
+  // Estimate the parameters.
+  d.Train(observations);
+
+  // Check that the estimated parameters are right.
+  for (size_t i = 0; i < 4; i++)
+  {
+    BOOST_REQUIRE_SMALL(d.Mean()(i) - actualMean(i), 1e-5);
+    BOOST_REQUIRE_SMALL(d.Covariance()(i) - actualCov(i, i), 1e-5);
+  }
+}
+
+/**
+ * Make sure the unbiased estimator of the weighted sample works correctly.
+ * The values were calculated using 'cov.wt' in R.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGaussianUnbiasedEstimatorTest)
+{
+  // Generate the observations.
+  arma::mat observations("3 5 2 7;"
+                         "2 6 8 3;"
+                         "1 4 2 7;"
+                         "6 8 4 7");
+
+  arma::vec probs("0.3 0.4 0.1 0.2");
+
+  DiagonalGaussianDistribution d;
+
+  // Estimate the parameters.
+  d.Train(observations, probs);
+
+  BOOST_REQUIRE_CLOSE(d.Mean()(0), 4.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Mean()(1), 4.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Mean()(2), 3.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Mean()(3), 6.8, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(d.Covariance()(0), 3.78571428571428603, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Covariance()(1), 6.34285714285714253, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Covariance()(2), 6.64285714285714235, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Covariance()(3), 2.22857142857142865, 1e-5);
+}
+
+/**
+ * Make sure that if all weights are the same, i.e. w_i / V1 = 1 / N, then
+ * the weighted mean and covariance reduce to the unweighted sample mean and
+ * covariance.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGaussianWeightedParametersReductionTest)
+{
+  arma::vec mean("2.5 1.5 8.2 3.1");
+  arma::vec cov("1.2 3.1 8.3 4.3");
+
+  // Generate the observations.
+  arma::mat obs(4, 5);
+  arma::vec probs("0.2 0.2 0.2 0.2 0.2");
+
+  for (size_t i = 0; i < 5; i++)
+    obs.col(i) = (arma::sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
+
+  DiagonalGaussianDistribution d1;
+  DiagonalGaussianDistribution d2;
+
+  // Estimate the parameters.
+  d1.Train(obs);
+  d2.Train(obs, probs);
+
+  // Check if these are equal.
+  for (size_t i = 0; i < 4; i++)
+  {
+    BOOST_REQUIRE_CLOSE(d1.Mean()(i), d2.Mean()(i), 1e-5);
+    BOOST_REQUIRE_CLOSE(d1.Covariance()(i), d2.Covariance()(i), 1e-5);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

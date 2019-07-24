@@ -155,7 +155,7 @@ class LayerNorm
   //! Locally-stored epsilon value.
   double eps;
 
-  //! Whether we are in loading or saving mode.
+  //! Variable to keep track of whether we are in loading or saving mode.
   bool loading;
 
   //! Locally-stored scale parameter.
@@ -184,6 +184,9 @@ class LayerNorm
 
   //! Locally-stored normalized input.
   OutputDataType normalized;
+
+  //! Locally-stored zero mean input.
+  OutputDataType inputMean;
 }; // class LayerNorm
 
 } // namespace ann
