@@ -16,8 +16,8 @@
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/multiple_pole_cart.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/continuous_multiple_pole_cart.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/double_pole_cart.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/continuous_double_pole_cart.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
 #include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
@@ -165,9 +165,10 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
 }
 
 /**
- * Constructs a MultiplePoleCart instance and check if the main routine works as
+ * Constructs a DoublePoleCart instance and check if the main routine works as
  * it should be.
  */
+<<<<<<< HEAD
 // BOOST_AUTO_TEST_CASE(MultiplePoleCartTest)
 // {
 //   arma::vec poleLengths = {1, 0.5};
@@ -178,6 +179,16 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
 //   MultiplePoleCart::State state = task.InitialSample();
 //   MultiplePoleCart::Action action = MultiplePoleCart::Action::backward;
 //   double reward = task.Sample(state, action);
+=======
+BOOST_AUTO_TEST_CASE(DoublePoleCartTest)
+{
+  DoublePoleCart task = DoublePoleCart();
+  task.MaxSteps() = 5;
+
+  DoublePoleCart::State state = task.InitialSample();
+  DoublePoleCart::Action action = DoublePoleCart::Action::backward;
+  double reward = task.Sample(state, action);
+>>>>>>> 86c9d452b9a21c837d25e7d0f791ccbd5a7cd30c
 
 //   BOOST_REQUIRE_EQUAL(reward, 1.0);
 //   BOOST_REQUIRE(!task.IsTerminal(state));
@@ -186,26 +197,27 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
 //     task.Sample(state, action, state);
 
   // Check if the number of steps performed is the same as the maximum allowed.
+<<<<<<< HEAD
 //   BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
 //   BOOST_REQUIRE_EQUAL(2, MultiplePoleCart::Action::size);
 // }
+=======
+  BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
+  BOOST_REQUIRE_EQUAL(2, DoublePoleCart::Action::size);
+}
+>>>>>>> 86c9d452b9a21c837d25e7d0f791ccbd5a7cd30c
 
 /**
- * Constructs a ContinuousMultiplePoleCart instance and check if the main 
+ * Constructs a ContinuousDoublePoleCart instance and check if the main 
  * routine works as it should be.
  */
-BOOST_AUTO_TEST_CASE(ContinuousMultiplePoleCartTest)
+BOOST_AUTO_TEST_CASE(ContinuousDoublePoleCartTest)
 {
-  arma::arma_rng::set_seed_random();
-
-  arma::vec poleLengths = {1, 0.5};
-  arma::vec poleMasses = {1, 1};
-  ContinuousMultiplePoleCart task = ContinuousMultiplePoleCart(2, poleLengths,
-      poleMasses);
+  ContinuousDoublePoleCart task = ContinuousDoublePoleCart();
   task.MaxSteps() = 5;
 
-  ContinuousMultiplePoleCart::State state = task.InitialSample();
-  ContinuousMultiplePoleCart::Action action;
+  ContinuousDoublePoleCart::State state = task.InitialSample();
+  ContinuousDoublePoleCart::Action action;
   action.action = math::Random(-1.0, 1.0);
   double reward = task.Sample(state, action);
 

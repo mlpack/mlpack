@@ -34,6 +34,7 @@ BOOST_AUTO_TEST_SUITE(NEATTest)
  */
 BOOST_AUTO_TEST_CASE(NEATXORTest)
 {
+  arma::arma_rng::set_seed_random();
   XORTask task;
   NEAT<XORTask> model(task, 2, 1, 100, 500, 10);
   model.FinalFitness() = 3.7;

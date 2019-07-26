@@ -1,8 +1,9 @@
 /**
- * @file multiple_pole_cart.hpp
+ * @file continuous_double_pole_cart.hpp
  * @author Rahul Ganesh Prabhu
  *
- * This file is an implementation of Multiple Pole Cart Balancing Task.
+ * This file is an implementation of Continuous Double Pole Cart Balancing
+ * Task.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,8 +11,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_RL_ENVIRONMENT_MULTIPLE_POLE_CART_HPP
-#define MLPACK_METHODS_RL_ENVIRONMENT_MULTIPLE_POLE_CART_HPP
+#ifndef MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_DOUBLE_POLE_CART_HPP
+#define MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_DOUBLE_POLE_CART_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -19,24 +20,24 @@ namespace mlpack {
 namespace rl {
 
 /**
- * Implementation of Multiple Pole Cart Balancing task.
+ * Implementation of Continuous Double Pole Cart Balancing task. This is an
+ * extension of the existing CartPole environment. The environment comprises
+ * of a cart with two upright poles of different lengths and masses. The agent
+ * is meant to balance the poles by applying force on the cart.
  */
-class MultiplePoleCart
+class ContinuousDoublePoleCart
 {
  public:
   /**
-   * Implementation of the state of Multiple Pole Cart. The state is expressed as
-   * a matrix where the $0^{th}$ column is the state of the cart, represented by a tuple
-   * (position, velocity) and the $i^{th}$ column is the state of the $i^{th}$ pole, represented
-   * by a tuple (angle, angular velocity).
+   * Implementation of the state of Continuous Double Pole Cart. The state is 
+   * expressed as a vector (position, velocity, angle, angular velocity, angle,
+   * angular velocity)
    */
   class State
   {
    public:
     /**
      * Construct a state instance.
-     * 
-     * @param numPoles The number of poles.
      */
     State() : data(dimension)
     { /* Nothing to do here. */ }
@@ -64,9 +65,9 @@ class MultiplePoleCart
     //! Modify the velocity of the cart.
     double& Velocity() { return data[1]; }
 
-    //! Get the angle of the $i^{th}$ pole with the vertical.
+    //! Get the angle of the $i^{th}$ pole.
     double Angle(const size_t i) const { return data[2 * i]; }
-    //! Modify the angle of the $i^{th}$ pole with the vertical.
+    //! Modify the angle of the $i^{th}$ pole.
     double& Angle(const size_t i) { return data[2 * i]; }
 
     //! Get the angular velocity of the $i^{th}$ pole.
@@ -74,7 +75,7 @@ class MultiplePoleCart
     //! Modify the angular velocity of the $i^{th}$ pole.
     double& AngularVelocity(const size_t i) { return data[2 * i + 1]; }
 
-    //! Encode the state to a matrix.
+    //! Encode the state to a vector..
     const arma::colvec& Encode() const { return data; }
 
     //! Dimension of the encoded state.
@@ -86,24 +87,24 @@ class MultiplePoleCart
   };
 
   /**
-   * Implementation of action of Multiple Pole Cart.
+   * Implementation of action of Continuous Double Pole Cart.
    */
-  enum Action
+  struct Action
   {
-    backward,
-    forward,
-
-    // Track the size of the action space.
-    size
+    double action = 0.0;
+    // Storing degree of freedom
+    const int size = 1;
   };
 
   /**
-   * Construct a Multiple Pole Cart instance using the given constants.
+   * Construct a Double Pole Cart instance using the given constants.
    *
-   * @param poleNum The number of poles
+   * @param m1 The mass of the first pole.
+   * @param m2 The mass of the second pole.
+   * @param l1 The length of the first pole.
+   * @param l2 The length of the second pole.
    * @param gravity The gravity constant.
    * @param massCart The mass of the cart.
-   * @param massPole The mass of the pole.
    * @param length The length of the pole.
    * @param forceMag The magnitude of the applied force.
    * @param tau The time interval.
@@ -113,18 +114,19 @@ class MultiplePoleCart
    * @param maxSteps The number of steps after which the episode
    *    terminates. If the value is 0, there is no limit.
    */
-  MultiplePoleCart(const double m1 = 0.1,
-                   const double m2 = 0.01,
-                   const double l1 = 0.5,
-                   const double l2 = 0.05,
-                   const double gravity = 9.8,
-                   const double massCart = 1.0,
-                   const double forceMag = 10.0,
-                   const double tau = 0.02,
-                   const double thetaThresholdRadians = 36 * 2 * 3.1416 / 360,
-                   const double xThreshold = 2.4,
-                   const double doneReward = 0.0,
-                   const size_t maxSteps = 0) :
+  ContinuousDoublePoleCart(const double m1 = 0.1,
+                           const double m2 = 0.01,
+                           const double l1 = 0.5,
+                           const double l2 = 0.05,
+                           const double gravity = 9.8,
+                           const double massCart = 1.0,
+                           const double forceMag = 10.0,
+                           const double tau = 0.02,
+                           const double thetaThresholdRadians = 36 * 2 *
+                              3.1416 / 360,
+                           const double xThreshold = 2.4,
+                           const double doneReward = 0.0,
+                           const size_t maxSteps = 0) :
       m1(m1),
       m2(m2),
       l1(l1),
@@ -141,8 +143,8 @@ class MultiplePoleCart
   { /* Nothing to do here */ }
 
   /**
-   * Dynamics of Multiple Pole Cart instance. Get reward and next state based on current
-   * state and current action.
+   * Dynamics of Continuous Double Pole Cart instance. Get reward and next
+   * state based on current state and current action.
    *
    * @param state The current state.
    * @param action The current action.
@@ -160,7 +162,7 @@ class MultiplePoleCart
     dydx[0] = state.Velocity();
     dydx[2] = state.AngularVelocity(1);
     dydx[4] = state.AngularVelocity(2);
-    Step(state, action, dydx);
+    Dsdt(state, action, dydx);
     RK4(state, action, dydx, nextState);
 
     // Check if the episode has terminated.
@@ -179,11 +181,19 @@ class MultiplePoleCart
     return 1.0;
   }
 
-  void Step(const State& state,
+  /**
+   * This is the ordinary differential equations required for estimation of
+   * next state through RK4 method.
+   *
+   * @param state The current state.
+   * @param action The action taken.
+   * @param dydx The differential.
+   */
+  void Dsdt(const State& state,
             const Action& action,
             arma::vec& dydx)
   {
-    double totalForce = action ? forceMag : -forceMag;
+    double totalForce = action.action;
     double totalMass = massCart;
     double omega1 = state.AngularVelocity(1);
     double omega2 = state.AngularVelocity(2);
@@ -211,6 +221,15 @@ class MultiplePoleCart
     dydx[5] = -0.75 * (xAcc * cosTheta2 + gravity * sinTheta2) / l2;
   }
 
+  /**
+   * This function calls the RK4 iterative method to estimate the next state
+   * based on given ordinary differential equation.
+   *
+   * @param state The current state.
+   * @param action The action to be applied.
+   * @param dydx The differential.
+   * @param nextState The next state.
+   */
   void RK4(const State& state,
            const Action& action,
            arma::vec& dydx,
@@ -223,20 +242,20 @@ class MultiplePoleCart
     arma::vec dym(6);
 
     yt = state.Data() + (hh * dydx);
-    Step(State(yt), action, dyt);
+    Dsdt(State(yt), action, dyt);
     dyt[0] = yt[1];
     dyt[2] = yt[3];
     dyt[4] = yt[5];
     yt = state.Data() + (hh * dyt);
 
-    Step(State(yt), action, dym);
+    Dsdt(State(yt), action, dym);
     dym[0] = yt[1];
     dym[2] = yt[3];
     dym[4] = yt[5];
     yt = state.Data() + (tau * dym);
     dym += dyt;
 
-    Step(State(yt), action, dyt);
+    Dsdt(State(yt), action, dyt);
     dyt[0] = yt[1];
     dyt[2] = yt[3];
     dyt[4] = yt[5];
@@ -244,8 +263,8 @@ class MultiplePoleCart
   }
 
   /**
-   * Dynamics of Multiple Pole Cart. Get reward based on current state and current
-   * action.
+   * Dynamics of Continuous Double Pole Cart. Get reward based on current
+   * state and current action.
    *
    * @param state The current state.
    * @param action The current action.
