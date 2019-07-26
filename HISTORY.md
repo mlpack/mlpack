@@ -1,6 +1,6 @@
 ### mlpack 4.0.0
 ###### ????-??-??
-  * Add Multiple Pole Balancing Environment (#1901).
+  * Add Multiple Pole Balancing Environment (#1901, #1951).
 
   * Added functionality for scaling of data (#1876); see the command-line
     binding `mlpack_preprocess_scale` or Python binding `preprocess_scale()`.
