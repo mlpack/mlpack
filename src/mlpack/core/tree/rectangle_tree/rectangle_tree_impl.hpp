@@ -268,6 +268,10 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
               AuxiliaryInformationType>::
 operator=(const RectangleTree& other)
 {
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
   for (size_t i = 0; i < numChildren; i++)
     delete children[i];
 
@@ -312,6 +316,10 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
               AuxiliaryInformationType>::
 operator=(RectangleTree&& other)
 {
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
   for (size_t i = 0; i < numChildren; i++)
     delete children[i];
 
