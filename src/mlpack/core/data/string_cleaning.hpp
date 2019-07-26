@@ -52,13 +52,11 @@ class StringCleaning
   * Definiation of function should be of type
   * bool fn(const char& c)
   */
-  template<typename ReturnType>
-  void RemoveChar(std::vector<std::string>& input, const ReturnType fun)
+  template<typename FunctionType>
+  void RemoveChar(std::vector<std::string>& input, const FunctionType& fun)
   {
     for (auto& str : input)
-    {
       str.erase(boost::remove_if(str, fun), str.end());
-    }
   }
 
   /**
@@ -69,9 +67,7 @@ class StringCleaning
   void LowerCase(std::vector<std::string>& input)
   {
     for (auto& str : input)
-    {
       boost::algorithm::to_lower(str);
-    }
   }
   /**
   * Function to convert given vector of strings to Upper case.
@@ -81,9 +77,7 @@ class StringCleaning
   void UpperCase(std::vector<std::string>& input)
   {
     for (auto& str : input)
-    {
       boost::algorithm::to_upper(str);
-    }
   }
   /**
   * Function to remove stopwords from a given vector of strings.
@@ -100,27 +94,33 @@ class StringCleaning
   template<typename TokenizerType>
   void RemoveStopWords(std::vector<std::string>& input,
                        std::unordered_set<boost::string_view,
-                       boost::hash<boost::string_view> >stopwords,
+                                boost::hash<boost::string_view> >stopwords,
                        const TokenizerType tokenizer)
   {
-    std::string copy;
-    boost::string_view token;
-    boost::string_view strView;
     for (auto& str : input)
     {
-      copy.clear();
-      strView = str;
+      std::string result = "";
+      boost::string_view token;
+      boost::string_view strView(str);
+      size_t lineStart = 0;
       token = tokenizer(strView);
       while (!token.empty())
       {
         if (stopwords.find(token) == stopwords.end())
         {
           // token is not a stop word add it;
-          copy += " " + std::string(token);
+          if(!lineStart)
+          {
+            result += std::string(token);
+            lineStart = 1;
+            token = tokenizer(strView);
+            continue;
+          }
+          result += " " + std::string(token);
         }
         token = tokenizer(strView);
       }
-      str = std::move(copy);
+      str = std::move(result);
     }
   }
 }; // Class StringCleaning

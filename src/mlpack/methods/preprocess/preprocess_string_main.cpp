@@ -103,9 +103,9 @@ static void mlpackMain()
       }
   }
   // Handling Dimension vector
-  std::vector<std::string> temp_dimension = CLI::GetParam<std::vector<
-    std::string> >("dimension");
-  std::vector<size_t>dimension;
+  std::vector<std::string> temp_dimension =
+      CLI::GetParam<std::vector<std::string> >("dimension");
+  std::set<size_t>dimension;
   int columnstartindex, columnendindex;
   size_t found;
   for (size_t i = 0; i < temp_dimension.size(); i++)
@@ -113,23 +113,36 @@ static void mlpackMain()
     found = temp_dimension[i].find('-');
     if ( found != string::npos)
     {
-      // Has a range include, something of type a-b.
-      columnstartindex = std::stoi(temp_dimension[i].substr(0, found));
-      columnendindex = std::stoi(temp_dimension[i].substr(found+1,
-          temp_dimension[i].length()));
+      try
+      {
+        // Has a range include, something of type a-b.
+        columnstartindex = std::stoi(temp_dimension[i].substr(0, found));
+        columnendindex = std::stoi(temp_dimension[i].substr(found+1,
+            temp_dimension[i].length()));
+      }
+      catch (const std::exception& e)
+      {
+        Log::Fatal << e.what() << std::endl;
+      }
       for (int i = columnstartindex; i <= columnendindex; i++)
       {
-        dimension.push_back(i);
+        dimension.insert(i);
       }
     }
     else
     {
-      dimension.push_back(std::stoi(temp_dimension[i]));
+      try
+      {
+        dimension.insert(std::stoi(temp_dimension[i]));
+      }
+      catch (const std::exception& e)
+      {
+        Log::Fatal << e.what() << std::endl;      
+      }
     }
   }
   std::cout<<"\n";
   // Sorting neccessary
-  std::sort(dimension.begin(), dimension.end());
   // Extracting the Contents of file
   // File pointer
   ifstream fin;
@@ -137,38 +150,38 @@ static void mlpackMain()
   fin.open(filename);
   if (!fin.is_open())
   {
-    throw std::runtime_error("Unable to open input file");
+    Log::Fatal << "Unable to open input file \n";
   }
   std::string line, word;
   std::vector<std::vector<std::string>> dataset;
   boost::string_view token, copy;
-  stringstream streamLine;
   while (std::getline(fin, line))
   {
-    streamLine.str(line);
+    stringstream streamLine(line);
     dataset.push_back(std::vector<std::string>());
     // delimeter[0] becase the standard function accepts char as input.
     while (std::getline(streamLine, word, column_delimiter[0]))
     {
-      dataset[dataset.size()-1].push_back(word);
+      dataset.back().push_back(word);
     }
-    streamLine.clear();
   }
-  size_t col = 0;
+  std::set<size_t>::iterator dimensionIterator = dimension.begin();
   // Preparing the input dataset on which string manipulation has to be done.
   std::vector<std::vector<std::string>> input(dimension.size());
   for (size_t i = 0; i < dataset.size(); i++)
   {
-    col = 0;
+    size_t col = 0;
+    dimensionIterator = dimension.begin();
     for (size_t j = 0; j < dataset[i].size(); j++)
     {
       if (col < dimension.size())
       {
-        if (dimension[col] == j)
+        if (*dimensionIterator == j)
         {
           // insert into input
           input[col].push_back(dataset[i][j]);
           col++;
+          dimensionIterator++;
         }
       }
       else
@@ -188,16 +201,16 @@ static void mlpackMain()
     // Not sure how to take input for tokenizer from cli.
     if (!CLI::HasParam("stopwordsfile"))
     {
-      throw std::runtime_error("Please provide a file for stopwords.");
+      Log::Fatal << "Please provide a file for stopwords.\n";
     }
     ifstream stopwordfile;
     // Open an existing file
-    const std::string stopwordfilename = CLI::GetParam<std::string>
-        ("stopwordsfile");
+    const std::string stopwordfilename =
+        CLI::GetParam<std::string>("stopwordsfile");
     stopwordfile.open(stopwordfilename);
     if (!stopwordfile.is_open())
     {
-      throw std::runtime_error("Unable to open the file for stopwords.");
+      Log::Fatal << "Unable to open the file for stopwords.\n";
     }
     std::string word;
     std::deque<std::string> originalword;
@@ -219,28 +232,33 @@ static void mlpackMain()
     for (size_t i = 0; i < input.size(); i++)
       obj.RemovePunctuation(input[i]);
   }
-  const std::string filename2 = CLI::GetParam<std::string>("preprocess"
+  const std::string outputFilename = CLI::GetParam<std::string>("preprocess"
       "_dataset");
   ofstream fout;
-  fout.open(filename2, ios::trunc);
+  fout.open(outputFilename, ios::trunc);
   if (!fout.is_open())
   {
-    throw std::runtime_error("Unable to open a file for writing output.");
+    Log::Fatal << "Unable to open a file for writing output.\n";
   }
-  col = 0;
+  dimensionIterator = dimension.begin();
   for (size_t i = 0 ; i < dataset.size(); i++)
   {
-    col = 0;
-    for (size_t j =0 ; j < dataset[i].size(); j++)
+    size_t col = 0;
+    dimensionIterator = dimension.begin();
+    for (size_t j = 0 ; j < dataset[i].size(); j++)
     {
-      if (col < dimension.size() && dimension[col] == j)
+      if (col < dimension.size() && *dimensionIterator == j)
       {
         fout<<input[col][i]<<column_delimiter;
+        dimensionIterator++;
         col++;
       }
       else
       {
-        fout<<dataset[i][j]<<column_delimiter;
+        if (j + 1 < dataset[i].size())
+          fout<<dataset[i][j]<<column_delimiter;
+        else
+          fout<<dataset[i][j];
       }
     }
     fout<<"\n";
