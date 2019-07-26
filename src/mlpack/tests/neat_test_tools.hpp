@@ -63,7 +63,7 @@ class DPNVTask
     double oneDegrees = 1 * M_PI / 180;
     arma::vec data(6, arma::fill::zeros);
     data[2] = oneDegrees;
-    MultiplePoleCart::State state(data);
+    DoublePoleCart::State state(data);
 
     // Create a normalized vector input.
     arma::vec input = {state.Position() / 2.4, state.Angle(1) / 0.62832,
