@@ -168,18 +168,6 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
  * Constructs a DoublePoleCart instance and check if the main routine works as
  * it should be.
  */
-<<<<<<< HEAD
-// BOOST_AUTO_TEST_CASE(MultiplePoleCartTest)
-// {
-//   arma::vec poleLengths = {1, 0.5};
-//   arma::vec poleMasses = {1, 1};
-//   MultiplePoleCart task = MultiplePoleCart(2, poleLengths, poleMasses);
-//   task.MaxSteps() = 5;
-
-//   MultiplePoleCart::State state = task.InitialSample();
-//   MultiplePoleCart::Action action = MultiplePoleCart::Action::backward;
-//   double reward = task.Sample(state, action);
-=======
 BOOST_AUTO_TEST_CASE(DoublePoleCartTest)
 {
   DoublePoleCart task = DoublePoleCart();
@@ -188,24 +176,9 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartTest)
   DoublePoleCart::State state = task.InitialSample();
   DoublePoleCart::Action action = DoublePoleCart::Action::backward;
   double reward = task.Sample(state, action);
->>>>>>> 86c9d452b9a21c837d25e7d0f791ccbd5a7cd30c
-
-//   BOOST_REQUIRE_EQUAL(reward, 1.0);
-//   BOOST_REQUIRE(!task.IsTerminal(state));
-
-//   while (!task.IsTerminal(state))
-//     task.Sample(state, action, state);
-
-  // Check if the number of steps performed is the same as the maximum allowed.
-<<<<<<< HEAD
-//   BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
-//   BOOST_REQUIRE_EQUAL(2, MultiplePoleCart::Action::size);
-// }
-=======
   BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
   BOOST_REQUIRE_EQUAL(2, DoublePoleCart::Action::size);
 }
->>>>>>> 86c9d452b9a21c837d25e7d0f791ccbd5a7cd30c
 
 /**
  * Constructs a ContinuousDoublePoleCart instance and check if the main 

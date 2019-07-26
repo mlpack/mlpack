@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(NEATXORTest)
  */
 BOOST_AUTO_TEST_CASE(NEATDoublePoleCartNoVelocitiesTest)
 {
-  MultiplePoleCart env = MultiplePoleCart();
+  DoublePoleCart env = DoublePoleCart();
   DPNVTask task(env);
   NEAT<DPNVTask> model(task, 3, 1, 1000, 200, 50, 0, 1, 0.8, 1.8, 0.5, 0.01,
       0.3, 0.2, 0.05, 0);

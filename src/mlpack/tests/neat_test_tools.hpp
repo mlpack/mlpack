@@ -13,8 +13,7 @@
 #define MLPACK_TESTS_NEAT_TEST_TOOLS_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/continuous_multiple_pole_cart.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/multiple_pole_cart.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/double_pole_cart.hpp>
 #include <mlpack/methods/neat/neat.hpp>
 
 using namespace mlpack;
@@ -53,7 +52,7 @@ class XORTask
 class DPNVTask
 {
  public:
-  DPNVTask(const MultiplePoleCart& env) : environment(env)
+  DPNVTask(const DoublePoleCart& env) : environment(env)
   { /* Nothing to do here */ }
 
   double Evaluate(Genome<>& genome)
@@ -83,10 +82,10 @@ class DPNVTask
       timeStep++;
 
       // Find the action to apply.
-      const int size = MultiplePoleCart::Action::size;
+      const int size = DoublePoleCart::Action::size;
       output = arma::clamp(output, 0, size - 1);
       int actionInt = std::round(output[0]);
-      MultiplePoleCart::Action action = static_cast<MultiplePoleCart::Action>
+      DoublePoleCart::Action action = static_cast<DoublePoleCart::Action>
           (actionInt);
 
       // Use the current action to get the next state.
@@ -144,7 +143,7 @@ class DPNVTask
   }
 
  private:
-  MultiplePoleCart environment;
+  DoublePoleCart environment;
 };
 
 #endif
