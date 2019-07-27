@@ -1922,7 +1922,6 @@ BOOST_AUTO_TEST_CASE(GradientAtrousConvolutionLayerTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
-      model->Add<Linear<> >(36, 36);
       model->Add<AtrousConvolution<> >(1, 1, 3, 3, 1, 1, 0, 0, 6, 6, 2, 2);
       model->Add<LogSoftMax<> >();
     }
