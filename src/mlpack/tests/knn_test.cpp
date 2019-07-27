@@ -234,7 +234,7 @@ BOOST_AUTO_TEST_CASE(TrainTreeTest)
   arma::Mat<size_t> neighbors, baselineNeighbors;
   arma::mat distances, baselineDistances;
 
-  std::vector<size_t> oldFromNewReferences;
+  std::vector<size_t> oldFromNewReferences(100);
   KNN::Tree tree(dataset, oldFromNewReferences);
   empty.Train(std::move(tree));
 
