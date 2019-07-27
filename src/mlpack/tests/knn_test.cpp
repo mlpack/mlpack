@@ -250,7 +250,7 @@ BOOST_AUTO_TEST_CASE(TrainTreeTest)
   // We have to unmap the results.
   arma::mat tmpDistances(distances.n_rows, distances.n_cols);
   arma::Mat<size_t> tmpNeighbors(neighbors.n_rows, neighbors.n_cols);
-  for (size_t i = 0; i < distances.n_cols; ++i)
+  for (size_t i = 0; i < oldFromNewReferences.size(); ++i)
   {
     tmpDistances.col(oldFromNewReferences[i]) = distances.col(i);
     for (size_t j = 0; j < distances.n_rows; ++j)
