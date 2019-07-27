@@ -80,8 +80,10 @@ XORTask task;
 // Instantiate a NEAT class instance.
 NEAT<XORTask> model(task, 2, 1, 100, 150, 10);
 
+// Initialize a genome to store the best genome.
+Genome<> bestGenome;
 // Train NEAT on the task and find the best genome.
-Genome<> bestGenome = model.Train();
+model.Train(bestGenome);
 @endcode
 
 Sometimes, we may want to extract the best genome from a generation. This is where the \c Step() function comes in. It moves the population forward by a generation and returns the best genome from that generation.
@@ -98,8 +100,10 @@ XORTask task;
 // Instantiate a NEAT class instance.
 NEAT<XORTask> model(task, 2, 1, 100, 150, 10);
 
+// Initialize a genome to store the best genome.
+Genome<> bestGenome;
 // Find the best genome from a single generation.
-Genome<> bestGenome = model.Step();
+model.Step(bestGenome);
 @endcode
 
 The NEAT class also supports phased searching. Phased searching is performed when NEAT is given a nonzero complexity threshold. If the mean population complexity becomes greater than the complexity threshold, then NEAT performs simplification for a predefined number of generations. Once it does this, the complexity ceiling is raised by the value of the complexity threshold, and then begins complexification once more. An example of how to use phased searching is given below:
@@ -117,8 +121,9 @@ model.ComplexityThreshold() = 6;
 // Optionally, we can set the number of simplification generations (this is 10  // by default)
 model.MaxSimplifyGen() = 15;
 
-// Find the best genome from a single generation.
-Genome<> bestGenome = model.Train();
+// Train NEAT on the task and find the best genome.
+Genome<> bestGenome;
+model.Train(bestGenome);
 @endcode
 
 @section neat_template_neattut Template parameters for the 'NEAT' class
@@ -237,7 +242,8 @@ model.ContenderNum() = 5;
 model.TournamentSelectProb() = 0.7;
 
 // Train NEAT on the XOR task.
-model.Train();
+Genome<> bestGenome;
+model.Train(bestGenome);
 @endcode
 
 @section further_doc_neattut Further documentation
