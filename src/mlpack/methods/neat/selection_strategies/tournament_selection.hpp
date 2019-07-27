@@ -28,15 +28,16 @@ class TournamentSelection
    * 
    * @param fitnesses A sorted Armadillo vector of fitnesses in descending
    *    order.
+   * @param selection The selected indices.
    * @param contenderNum The number of contenders.
    * @param prob The probability of the fittest candidate being chosen.
    */
-  static void Select(arma::vec& fitnesses,
+  static void Select(const arma::vec& fitnesses,
                      arma::uvec& selection,
                      const size_t contenderNum,
                      const double prob)
   {
-    selection.fill(fitnesses.n_elem);
+    selection.fill(0);
 
     for (size_t i = 0; i < selection.n_elem; i++)
     {
@@ -51,8 +52,6 @@ class TournamentSelection
           selection[i] = contenders[k];
           break;
         }
-        if (k == contenderNum - 1)
-          selection[i] = contenders[0];
       }
     }
   }

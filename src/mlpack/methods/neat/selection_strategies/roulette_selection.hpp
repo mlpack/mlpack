@@ -25,9 +25,9 @@ class RouletteSelection
    *    order.
    * @param selection The selected indices.
    */
-  static void Select(arma::vec& fitnesses, arma::uvec& selection)
+  static void Select(const arma::vec& fitnesses, arma::uvec& selection)
   {
-    selection.fill(fitnesses.n_elem);
+    selection.fill(0);
     double totalFitness = arma::accu(fitnesses);
     for (size_t i = 0; i < selection.n_elem; i++)
     {
@@ -44,8 +44,6 @@ class RouletteSelection
         }
         k--;
       }
-      if (k == 0)
-        selection[i] = k;
     }
   }
 };

@@ -96,12 +96,12 @@ class NEAT
   /**
    * Trains the model on the task and returns the best Genome.
    */
-  Genome<ActivationFunction> Train();
+  void Train(Genome<ActivationFunction>& genome);
 
   /**
    * Performs a single generation of NEAT.
    */
-  Genome<ActivationFunction> Step();
+  void Step(Genome<ActivationFunction>& genome);
 
   //! Serialize the model.
   template<typename Archive>

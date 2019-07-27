@@ -77,8 +77,8 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::
 template <class TaskType,
           class ActivationFunction,
           class SelectionPolicy>
-Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
-    ::Train()
+void NEAT<TaskType, ActivationFunction, SelectionPolicy>
+    ::Train(Genome<ActivationFunction>& genome)
 {
   Genome<ActivationFunction>::nextInnovID = 0;
   Genome<ActivationFunction>::mutationBuffer.clear();
@@ -149,14 +149,14 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>
     }
   }
 
-  return genomeList[maxIdx];
+  genome = genomeList[maxIdx];
 }
 
 template <class TaskType,
           class ActivationFunction,
           class SelectionPolicy>
-Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>::
-    Step()
+void NEAT<TaskType, ActivationFunction, SelectionPolicy>::
+    Step(Genome<ActivationFunction>& genome)
 {
   // If this is true, the population has not been initialized.
   if (genomeList.size() == 0)
@@ -185,7 +185,7 @@ Genome<ActivationFunction> NEAT<TaskType, ActivationFunction, SelectionPolicy>::
     }
   }
 
-  return genomeList[maxIdx];
+  genome = genomeList[maxIdx];
 }
 
 // Speciates the genomes.

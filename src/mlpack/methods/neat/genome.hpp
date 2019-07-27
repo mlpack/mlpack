@@ -144,7 +144,7 @@ class Genome
   /**
    * Calculates the output of the genome based on the input.
    */
-  arma::vec Evaluate(arma::vec& input);
+  arma::vec Evaluate(const arma::vec& input);
 
   /**
    * Mutates the genome.
@@ -158,11 +158,6 @@ class Genome
    * weights of the enabled connections.
    */
   arma::mat Parameters();
-
-  /**
-   * Prints genome (Used for debugging purposes). [To be removed before merge]
-   */
-  void Print();
 
   /**
    * Calculates complexity of the genome, defined as the number of enabled
@@ -179,7 +174,7 @@ class Genome
    * A recursive function that assigns depth to nodes. Only used in acyclic
    * cases.
    */
-  void Traverse(size_t startID);
+  void Traverse(const size_t startID);
 
   /**
    * A vector containing the connection genes.

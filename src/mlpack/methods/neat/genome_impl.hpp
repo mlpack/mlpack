@@ -193,7 +193,7 @@ Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>&
 
 // Evaluates output based on input.
 template <class ActivationFunction>
-arma::vec Genome<ActivationFunction>::Evaluate(arma::vec& input)
+arma::vec Genome<ActivationFunction>::Evaluate(const arma::vec& input)
 {
   if (input.n_elem != inputNodeCount)
   {
@@ -201,13 +201,11 @@ arma::vec Genome<ActivationFunction>::Evaluate(arma::vec& input)
         "input nodes" << std::endl;
   }
 
-  inputt = input;
-
   if (isAcyclic)
   {
     AcyclicNet<ActivationFunction> net(nextNodeID, inputNodeCount,
         outputNodeCount, bias);
-    output = arma::vec(outputNodeCount, arma::fill::zeros);
+    arma::vec output(outputNodeCount, arma::fill::zeros);
     net.Evaluate(input, output, directedGraph, nodeDepths);
     return output;
   }
@@ -215,7 +213,7 @@ arma::vec Genome<ActivationFunction>::Evaluate(arma::vec& input)
   {
     CyclicNet<ActivationFunction> net(nextNodeID, inputNodeCount,
         outputNodeCount, bias);
-    output = arma::vec(outputNodeCount, arma::fill::zeros);
+    arma::vec output(outputNodeCount, arma::fill::zeros);
     net.Evaluate(input, output, outputNodeValues, directedGraph);
     return output;
   }
@@ -261,35 +259,9 @@ arma::mat Genome<ActivationFunction>::Parameters()
   return param;
 }
 
-// Exists for debugging, must be removed before merge.
-template <class ActivationFunction>
-void Genome<ActivationFunction>::Print()
-{
-  std::cout << "Connections:" << std::endl;
-  for (auto const& x : directedGraph)
-  {
-    for (auto const& y : directedGraph[x.first])
-    {
-      std::cout << x.first << "->" << y.first << " Weight: " <<
-          y.second.Weight() << " Enabled "<< y.second.Enabled() << std::endl;
-    }
-  }
-  std::cout << "Input: " << inputt << std::endl;
-  std::cout << "Output: " << output << std::endl;
-
-  if (!isAcyclic)
-  {
-    for (size_t i = 0; i < outputNodeValues.size(); i++)
-    {
-      std::cout << "Value stored in node " << i << " is " <<
-          outputNodeValues[i] << std::endl;
-    }
-  }
-}
-
 // Traverses graph and assigns node depths.
 template <class ActivationFunction>
-void Genome<ActivationFunction>::Traverse(size_t startID)
+void Genome<ActivationFunction>::Traverse(const size_t startID)
 {
   for (auto const& x : directedGraph[startID])
   {

@@ -31,24 +31,22 @@ class RankSelection
    *    order.
    * @param selection The selected indices.
    */
-  static void Select(arma::vec& fitnesses, arma::uvec& selection)
+  static void Select(const arma::vec& fitnesses, arma::uvec& selection)
   {
-    selection.fill(fitnesses.n_elem);
-    arma::uword size = fitnesses.n_elem;
+    selection.fill(0);
+    size_t size = fitnesses.n_elem;
     double denom = std::pow(size, 2);
     for (size_t i = 0; i < selection.n_elem; i++)
     {
-      arma::uword pos = 0;
-      while (selection[i] == fitnesses.n_elem)
+      size_t pos = 0;
+      while (pos < size)
       {
-        if (pos >= size)
-        {
-          selection[i] = 0;
-          break;
-        }
         double prob = (double)(size - pos) / denom;
         if (arma::randu() < prob)
+        {
           selection[i] = pos;
+          break;
+        }
         pos++;
       }
     }

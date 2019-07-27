@@ -53,7 +53,7 @@ class AcyclicNet
   /**
    * Finds the output of the network from the given input.
    */
-  void Evaluate(arma::vec& input,
+  void Evaluate(const arma::vec& input,
                 arma::vec& output,
                 std::map<size_t, std::map<size_t, ConnectionGene>>&
                     directedGraph,

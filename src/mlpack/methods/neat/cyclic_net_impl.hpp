@@ -32,7 +32,7 @@ CyclicNet<ActivationFunction>::CyclicNet(const size_t nodeCount,
 { /* Nothing to do here */ }
 
 template <class ActivationFunction>
-void CyclicNet<ActivationFunction>::Evaluate(arma::vec& input,
+void CyclicNet<ActivationFunction>::Evaluate(const arma::vec& input,
                                              arma::vec& output,
                                              std::vector<double>&
                                                 outputNodeValues,

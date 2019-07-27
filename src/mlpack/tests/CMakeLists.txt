@@ -69,7 +69,6 @@ add_executable(mlpack_test
   nbc_test.cpp
   nca_test.cpp
   neat_test.cpp
-  neat_test_tools.hpp
   nmf_test.cpp
   nystroem_method_test.cpp
   octree_test.cpp
