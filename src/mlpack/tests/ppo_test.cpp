@@ -17,6 +17,7 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/surrogate_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/empty_loss.hpp>
 #include <mlpack/methods/reinforcement_learning/ppo.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
@@ -44,15 +45,15 @@ BOOST_AUTO_TEST_CASE(PENDULUMWITHPPO)
     FFN<MeanSquaredError<>, GaussianInitialization> critic(
         MeanSquaredError<>(), GaussianInitialization(0, 0.001));
 
-    critic.Add<Linear<>>(4, 128);
+    critic.Add<Linear<>>(2, 128);
     critic.Add<ReLULayer<>>();
     critic.Add<Linear<>>(128, 1);
 
     // todo: add proper loss function
-    FFN<MeanSquaredError<>, GaussianInitialization> actor(
-        MeanSquaredError<>(), GaussianInitialization(0, 0.001));
+    FFN<EmptyLoss<>, GaussianInitialization> actor(
+        EmptyLoss<>(), GaussianInitialization(0, 0.001));
 
-    actor.Add<Linear<>>(4, 128);
+    actor.Add<Linear<>>(2, 128);
     actor.Add<ReLULayer<>>();
     actor.Add<Linear<>>(128, 2);
 
@@ -81,7 +82,6 @@ BOOST_AUTO_TEST_CASE(PENDULUMWITHPPO)
       /**
        * I am using a threshold of -136.16 to check convergence.
        */
-//      std::cout << averageReturn.mean() << " " << episodeReturn << std::endl;
       Log::Debug << "Average return: " << averageReturn.mean()
                  << " Episode return: " << episodeReturn << std::endl;
       if (averageReturn.mean() > -136.16) {
