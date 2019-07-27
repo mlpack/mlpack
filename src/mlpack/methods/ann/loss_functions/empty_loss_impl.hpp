@@ -33,16 +33,16 @@ double EmptyLoss<InputDataType, OutputDataType>::Forward(
     return 0;
 }
 
- template<typename InputDataType, typename OutputDataType>
- template<typename InputType, typename TargetType, typename OutputType>
- void EmptyLoss<InputDataType, OutputDataType>::Backward(
-     const InputType&& input,
-     const TargetType&& target,
-     OutputType&& output)
- {
-   // todo: check correctness
-   output = input;
- }
+template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename TargetType, typename OutputType>
+void EmptyLoss<InputDataType, OutputDataType>::Backward(
+   const InputType&& input,
+   const TargetType&& target,
+   OutputType&& output)
+{
+ // todo: check correctness
+ output = input;
+}
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
