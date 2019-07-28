@@ -132,7 +132,8 @@ void PPO<
   // todo: debug empty loss
   actorNetwork.Backward(loss, actorGradients);
 
-  actorUpdater.Update(actorNetwork.Parameters(), config.StepSize(), actorGradients);
+  actorUpdater.Update(actorNetwork.Parameters(), config.StepSize(),
+      actorGradients);
 
   // Update the oldActorNetwork, synchronize the parameter.
   oldActorNetwork = actorNetwork;
