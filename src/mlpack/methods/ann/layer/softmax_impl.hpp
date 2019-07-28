@@ -68,10 +68,9 @@ void SoftMax<InputDataType, OutputDataType>::Backward(
     arma::Mat<eT>&& gy,
     arma::Mat<eT>&& g)
 {
-  int indexOfMax = input.index_max();
+  int indexOfMax = gy.index_max();
   double maxVal = input[indexOfMax];
-  g[indexOfMax] = 1;
-  g = g * maxVal - maxVal * input;
+  g = gy * maxVal - maxVal * input;
 }
 
 template<typename InputDataType, typename OutputDataType>
