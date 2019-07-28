@@ -36,16 +36,17 @@ PPO<
   PolicyType,
   ReplayType
 >::PPO(TrainingConfig config,
-       ActorNetworkType actorNetwork,
-       CriticNetworkType criticNetwork,
+       ActorNetworkType actor,
+       CriticNetworkType critic,
        PolicyType policy,
        ReplayType replayMethod,
        UpdaterType updater,
        EnvironmentType environment):
   config(std::move(config)),
-  actorNetwork(std::move(actorNetwork)),
-  criticNetwork(std::move(criticNetwork)),
-  updater(std::move(updater)),
+  actorNetwork(std::move(actor)),
+  criticNetwork(std::move(critic)),
+  actorUpdater(std::move(updater)),
+  criticUpdater(std::move(updater)),
   policy(std::move(policy)),
   replayMethod(std::move(replayMethod)),
   environment(std::move(environment))
@@ -57,9 +58,12 @@ PPO<
   if (criticNetwork.Parameters().is_empty())
     criticNetwork.ResetParameters();
 
-  this->updater.Initialize(actorNetwork.Parameters().n_rows,
-                           actorNetwork.Parameters().n_cols);
-  this->oldActorNetwork = actorNetwork;
+  this->criticUpdater.Initialize(criticNetwork.Parameters().n_rows,
+      criticNetwork.Parameters().n_cols);
+
+  this->actorUpdater.Initialize(actorNetwork.Parameters().n_rows,
+      actorNetwork.Parameters().n_cols);
+  oldActorNetwork = actorNetwork;
 }
 
 template<
@@ -91,7 +95,7 @@ void PPO<
   replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
       sampledNextStates, isTerminal);
 
-  arma::colvec discountedRewards(sampledRewards.n_rows);
+  arma::rowvec discountedRewards(sampledRewards.n_rows);
   arma::mat nextActionValues;
   double values = 0.0;
   criticNetwork.Predict(sampledNextStates, nextActionValues);
@@ -104,27 +108,31 @@ void PPO<
   arma::mat actionValues, advantages, criticGradients, actorGradients;
   criticNetwork.Forward(sampledStates, actionValues);
 
-  advantages = discountedRewards - actionValues;
+  advantages = arma::conv_to<arma::mat>::
+      from(discountedRewards) - actionValues;
 
   // Update the critic.
   criticNetwork.Backward(advantages, criticGradients);
 
-  // todo: why memory access violation
-  updater.Update(criticNetwork.Parameters(), config.StepSize(),
+  criticUpdater.Update(criticNetwork.Parameters(), config.StepSize(),
       criticGradients);
 
   // Update the actor.
   arma::vec prob, oldProb;
   normalDist.Probability(actionValues, prob);
   oldNormalDist.Probability(actionValues, oldProb);
-  arma::mat ratio =  prob / oldProb;
+
+  // row vector
+  arma::mat ratio = (prob / oldProb).as_row();
 
   arma::mat surrogateLoss = arma::clamp(ratio, 1 - config.Epsilon(),
-      1 + config.Epsilon()) * advantages;
-  arma::mat loss = - arma::min(ratio * advantages, surrogateLoss);
+      1 + config.Epsilon()) % advantages;
+  arma::mat loss = - arma::min(ratio % advantages, surrogateLoss);
 
+  // todo: debug empty loss
   actorNetwork.Backward(loss, actorGradients);
-  updater.Update(actorNetwork.Parameters(), config.StepSize(), actorGradients);
+
+  actorUpdater.Update(actorNetwork.Parameters(), config.StepSize(), actorGradients);
 
   // Update the oldActorNetwork, synchronize the parameter.
   oldActorNetwork = actorNetwork;
@@ -155,7 +163,6 @@ double PPO<
   ann::SoftplusFunction::Fn(actionValue.row(1), mu);
   normalDist = distribution::GaussianDistribution(sigma, mu);
 
-  // todo: debug memory access violation
   oldActorNetwork.Predict(state.Encode(), actionValue);
 
   ann::TanhFunction::Fn(actionValue.row(0), sigma);

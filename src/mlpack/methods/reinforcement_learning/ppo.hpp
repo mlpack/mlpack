@@ -125,7 +125,10 @@ class PPO
   CriticNetworkType criticNetwork;
 
   //! Locally-stored updater.
-  UpdaterType updater;
+  UpdaterType criticUpdater;
+
+  //! Locally-stored updater.
+  UpdaterType actorUpdater;
 
   //! Locally-stored behavior policy.
   PolicyType policy;

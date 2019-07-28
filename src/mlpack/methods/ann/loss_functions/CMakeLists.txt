@@ -19,6 +19,8 @@ set(SOURCES
   sigmoid_cross_entropy_error_impl.hpp
   surrogate_loss.hpp
   surrogate_loss_impl.hpp
+  empty_loss.hpp
+  empty_loss_impl.hpp
 )
 
 # Add directory name to sources.
