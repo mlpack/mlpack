@@ -19,7 +19,8 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the softmax layer. The softmax loss layer computes
- * the multinomial logistic loss of the softmax of its inputs.
+ * the multinomial logistic loss of the softmax of its inputs. It should be
+ * used for inference only and not with NLL loss (use logsoftmax instead).
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
