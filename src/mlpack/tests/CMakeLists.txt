@@ -99,6 +99,7 @@ add_executable(mlpack_test
   sparse_coding_test.cpp
   spill_tree_test.cpp
   split_data_test.cpp
+  dictionary_encoding_test.cpp
   sumtree_test.cpp
   svd_batch_test.cpp
   svd_incremental_test.cpp
@@ -109,7 +110,6 @@ add_executable(mlpack_test
   timer_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
-  scaling_test.cpp
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
