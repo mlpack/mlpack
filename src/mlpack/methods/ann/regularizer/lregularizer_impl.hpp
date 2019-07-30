@@ -25,7 +25,6 @@ LRegularizer<Power>::LRegularizer(double factor) :
   // Nothing to do here
 }
 
-
 // Unspecialized implementation. This should almost never be used...
 template<int Power>
 template<typename MatType>

@@ -48,6 +48,7 @@ void OrthogonalRegularizer::Evaluate(const MatType& weight, MatType& gradient)
       }
     }
   }
+
   gradient += arma::vectorise(grad) * factor;
 }
 

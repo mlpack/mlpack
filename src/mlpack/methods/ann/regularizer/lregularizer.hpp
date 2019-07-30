@@ -57,7 +57,6 @@ class LRegularizer
 };
 
 // Convenience typedefs.
-
 /**
  * The L1 Regularizer.
  */
@@ -67,7 +66,6 @@ typedef LRegularizer<1> L1Regularizer;
  * The L2 Regularizer.
  */
 typedef LRegularizer<2> L2Regularizer;
-
 
 } // namespace ann
 } // namespace mlpack
