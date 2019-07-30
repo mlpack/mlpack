@@ -14,159 +14,169 @@
 
 // In case it hasn't been included yet.
 #include "string_encoding.hpp"
+#include <type_traits>
 
 namespace mlpack {
 namespace data {
 
-void StringEncoding::Reset()
+template<typename EncodingPolicy, typename DictionaryType>
+template<typename ... ArgTypes>
+StringEncoding<EncodingPolicy, DictionaryType>::StringEncoding(
+    ArgTypes&& ... args) :
+    policy(std::forward<ArgTypes>(args)...)
 {
-  mappings.clear();
-  originalStrings.clear();
 }
 
-StringEncoding::StringEncoding(const
-    StringEncoding& oldObject) : originalStrings(oldObject.originalStrings)
+template<typename EncodingPolicy, typename DictionaryType>
+StringEncoding<EncodingPolicy, DictionaryType>::StringEncoding(
+    EncodingPolicy policy) :
+    policy(std::move(policy))
 {
-  std::deque<std::string>::iterator jt = originalStrings.begin();
-  for (auto it = oldObject.originalStrings.begin();
-      it != oldObject.originalStrings.end(); it++)
-  {
-    mappings[*jt] = oldObject.mappings.at(*it);
-    jt++;
-  }
 }
 
-StringEncoding& StringEncoding::operator= (
-    const StringEncoding &oldObject)
+template<typename EncodingPolicy, typename DictionaryType>
+StringEncoding<EncodingPolicy, DictionaryType>::StringEncoding(
+    StringEncoding& other) :
+    policy(other.policy),
+    dictionary(other.dictionary)
 {
-  if (this != &oldObject)
-  {
-    mappings.clear();
-    originalStrings.clear();
-    originalStrings = oldObject.originalStrings;
-    std::deque<std::string>::iterator jt = originalStrings.begin();
-    for (auto it = oldObject.originalStrings.begin();
-        it != oldObject.originalStrings.end(); it++)
-    {
-      mappings[*jt] = oldObject.mappings.at(*it);
-      jt++;
-    }
-  }
-  return *this;
 }
 
+template<typename EncodingPolicy, typename DictionaryType>
+void StringEncoding<EncodingPolicy, DictionaryType>::Clear()
+{
+  dictionary.Clear();
+}
+
+template<typename EncodingPolicy, typename DictionaryType>
 template<typename TokenizerType>
-void StringEncoding::CreateMap(std::string& input,
-    TokenizerType tokenizer)
+void StringEncoding<EncodingPolicy, DictionaryType>::CreateMap(
+    std::string& input,
+    const TokenizerType& tokenizer)
 {
   boost::string_view strView(input);
-  boost::string_view token;
-  token = tokenizer(strView);
-  std::size_t curLabel = mappings.size() + 1;
+  auto token = tokenizer(strView);
+
+    static_assert(
+        std::is_same<typename std::remove_reference<decltype(token)>::type,
+                     typename std::remove_reference<typename DictionaryType::
+                        TokenType>::type>::value,
+        "The dictionary token type doesn't match the return value type "
+        "of the tokenizer.");
+
   while (!token.empty())
   {
-    if (mappings.find(token) == mappings.end())
-    {
-        originalStrings.push_back(std::string(token));
-        mappings[originalStrings.back()] = curLabel++;
-    }
+    if (!dictionary.HasToken(token))
+      dictionary.AddToken(token);
+
     token = tokenizer(strView);
   }
 }
 
-template<typename MatType, typename TokenizerType, typename EncodingPolicy>
-void StringEncoding::Encode(
+template<typename EncodingPolicy, typename DictionaryType>
+template<typename OutputType, typename TokenizerType>
+void StringEncoding<EncodingPolicy, DictionaryType>::Encode(
     const std::vector<std::string>& input,
-    MatType& output, TokenizerType tokenizer,
-    EncodingPolicy policy)
+    OutputType& output,
+    const TokenizerType& tokenizer)
 {
-  boost::string_view strView;
-  boost::string_view token;
-  std::vector< std::vector<boost::string_view> > dataset;
-  size_t colSize = 0;
+  EncodeHelper(input, output, tokenizer, policy);
+}
+
+
+template<typename EncodingPolicy, typename DictionaryType>
+template<typename MatType, typename TokenizerType, typename EncodingPolicyType>
+void StringEncoding<EncodingPolicy, DictionaryType>::
+EncodeHelper(const std::vector<std::string>& input,
+             MatType& output,
+             const TokenizerType& tokenizer,
+             EncodingPolicyType& policy)
+{
+  size_t numColumns = 0;
+
+  for (const std::string& line : input)
+  {
+    boost::string_view strView(line);
+    auto token = tokenizer(strView);
+
+    static_assert(
+        std::is_same<typename std::remove_reference<decltype(token)>::type,
+                     typename std::remove_reference<typename DictionaryType::
+                        TokenType>::type>::value,
+        "The dictionary token type doesn't match the return value type "
+        "of the tokenizer.");
+
+    size_t numTokens = 0;
+
+    while (!tokenizer.IsTokenEmpty(token))
+    {
+      if (!dictionary.HasToken(token))
+        dictionary.AddToken(token);
+
+      token = tokenizer(strView);
+      numTokens++;
+    }
+    numColumns = std::max(numColumns, numTokens);
+  }
+
+  policy.InitMatrix(output, input.size(), numColumns, dictionary.Size());
+
   for (size_t i = 0; i < input.size(); i++)
   {
-    strView = input[i];
-    token = tokenizer(strView);
-    dataset.push_back(std::vector<boost::string_view>() );
-    while (!token.empty())
-    {
-      dataset[i].push_back(token);
-      token = tokenizer(strView);
-    }
-    colSize = std::max(colSize, dataset[i].size());
-  }
-  size_t curLabel = mappings.size() + 1;
-  for (size_t i = 0; i < dataset.size(); ++i)
-  {
-    for (size_t j = 0; j < dataset[i].size(); ++j)
-    {
-      if (mappings.find(dataset[i][j]) == mappings.end())
-      {
-        originalStrings.push_back(std::string(dataset[i][j]));
-        mappings[originalStrings.back()] = curLabel++;
-      }
-    }
-  }
-  EncodingPolicy::InitMatrix(output, dataset.size(), colSize, mappings.size());
-  for (size_t i = 0; i < dataset.size(); ++i)
-    for (size_t j = 0; j < dataset[i].size(); ++j)
-        EncodingPolicy::Encode(mappings.at(dataset[i][j]), output, i, j);
-  }
+    boost::string_view strView(input[i]);
+    auto token = tokenizer(strView);
+    size_t numTokens = 0;
 
-template<typename TokenizerType, typename EncodingPolicy>
-void StringEncoding::Encode(
-    const std::vector<std::string>& input,
-    std::vector<std::vector<size_t>>& output,
-    TokenizerType tokenizer,
-    EncodingPolicy policy,
-    typename std::enable_if<PolicyTraits<EncodingPolicy>::
-    outputWithNoPadding>::type*)
-{
-  boost::string_view strView;
-  boost::string_view token;
-  size_t curLabel = mappings.size() + 1;
-  for (size_t i = 0; i < input.size(); ++i)
-  {
-    output.push_back(std::vector<size_t>() );
-    strView = input[i];
-    token = tokenizer(strView);
-    while (!token.empty())
+    while (!tokenizer.IsTokenEmpty(token))
     {
-      if (mappings.count(token) == 0)
-      {
-        originalStrings.push_back(std::string(token));
-        mappings[originalStrings.back()] = curLabel++;
-      }
-      EncodingPolicy::Encode(output[i], mappings.at(token));
+      policy.Encode(output, dictionary.Value(token), i, numTokens);
+      token = tokenizer(strView);
+      numTokens++;
+    }
+  }
+}
+
+template<typename EncodingPolicy, typename DictionaryType>
+template<typename TokenizerType, typename EncodingPolicyType>
+void StringEncoding<EncodingPolicy, DictionaryType>::
+EncodeHelper(const std::vector<std::string>& input,
+             std::vector<std::vector<size_t>>& output,
+             const TokenizerType& tokenizer,
+             EncodingPolicyType& policy,
+             typename std::enable_if<StringEncodingPolicyTraits<
+                 EncodingPolicyType>::onePassEncoding>::type*)
+{
+  for (size_t i = 0; i < input.size(); i++)
+  {
+    boost::string_view strView(input[i]);
+    auto token = tokenizer(strView);
+
+    static_assert(
+        std::is_same<typename std::remove_reference<decltype(token)>::type,
+                     typename std::remove_reference<typename DictionaryType::
+                        TokenType>::type>::value,
+        "The dictionary token type doesn't match the return value type "
+        "of the tokenizer.");
+
+    output.emplace_back();
+
+    while (!tokenizer.IsTokenEmpty(token))
+    {
+      if (!dictionary.HasToken(token))
+        dictionary.AddToken(token);
+
+      policy.Encode(output[i], dictionary.Value(token));
       token = tokenizer(strView);
     }
   }
 }
 
+template<typename EncodingPolicy, typename DictionaryType>
 template<typename Archive>
-void StringEncoding::serialize(Archive& ar, const unsigned int
-    /* version */)
+void StringEncoding<EncodingPolicy, DictionaryType>::serialize(
+    Archive& ar, const unsigned int /* version */)
 {
-  size_t count = originalStrings.size();
-  ar & BOOST_SERIALIZATION_NVP(count);
-  if (Archive::is_saving::value)
-  {
-    for (size_t i = 0; i < count; i++)
-    {
-      ar & BOOST_SERIALIZATION_NVP(originalStrings[i]);
-      ar & BOOST_SERIALIZATION_NVP(mappings.at(originalStrings[i]));
-    }
-  }
-  if (Archive::is_loading::value)
-  {
-    originalStrings.resize(count);
-    for (size_t i = 0; i < count; i++)
-    {
-      ar & BOOST_SERIALIZATION_NVP(originalStrings[i]);
-      ar & BOOST_SERIALIZATION_NVP(mappings[originalStrings[i]]);
-    }
-  }
+  ar & BOOST_SERIALIZATION_NVP(dictionary);
 }
 
 } // namespace data

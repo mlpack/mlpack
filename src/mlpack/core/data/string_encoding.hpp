@@ -2,7 +2,7 @@
  * @file string_encoding.hpp
  * @author Jeffin Sam
  *
- * Definition of string encoding functions.
+ * Definition of the StringEncoding class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -13,149 +13,172 @@
 #define MLPACK_CORE_DATA_STRING_ENCODING_HPP
 
 #include <mlpack/prereqs.hpp>
-#include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
-#include <mlpack/core/data/encoding_policies/dictionary_encoding.hpp>
-#include <mlpack/core/data/encoding_policies/policy_traits.hpp>
-#include <utility>
-
-using MapType = std::unordered_map<boost::string_view, size_t,
-    boost::hash<boost::string_view>>;
-
+#include <mlpack/core/boost_backport/boost_backport_string_view.hpp>
+#include <mlpack/core/data/string_encoding_dictionary.hpp>
+#include <mlpack/core/data/string_encoding_policies/policy_traits.hpp>
+#include <vector>
 
 namespace mlpack {
 namespace data {
 
 /**
- * A simple String Enocding class.
+ * Definition of the StringEncoding class. The class translates a set of
+ * strings into numbers using various encoding algorithms.
  *
- * The encoding here simply assigns a word (or a character) to a numeric
- * index and treat the dataset as categorical.The assignement of numeric index
- * is based on the EncodingPolicy.
+ * @tparam EncodingPolicy Type of the encoding algorithm itself.
+ * @tparam DictionaryType Type of the dictionary.
  */
+template<typename EncodingPolicy,
+         typename DictionaryType>
 class StringEncoding
 {
  public:
   /**
-  * A function to create mapping from a given corpus.
-  * 
-  * @param input Corpus of text to encode.
-  * @param tokenizer A function that accepts a boost::string_view as
-  *                  an argument and returns a token.
-  * This can either be a function pointer or function object or a lamda
-  * function. Its return value should be a boost::string_view, a token.
-  *
-  * Definition of function should be of type
-  * boost::string_view fn(boost::string_view& str)
-  *
-  */
+   * Pass the given arguments to the policy constructor and cunstruct
+   * the StringEncoding object using the policy.
+   */
+  template<typename ... ArgTypes>
+  StringEncoding(ArgTypes&& ... args);
+
+  /**
+   * Construct the class from the given policy.
+   *
+   * @param policy The given policy.
+   */
+  StringEncoding(EncodingPolicy policy);
+
+  /**
+   * A variant of the copy constructor for non-constant objects.
+   */
+  StringEncoding(StringEncoding&);
+
+  //! Default copy-constructor.
+  StringEncoding(const StringEncoding&) = default;
+  //! Default copy assignment operator.
+  StringEncoding& operator=(const StringEncoding&) = default;
+  //! Default move-constructor.
+  StringEncoding(StringEncoding&&) = default;
+  //! Default move assignment operator.
+  StringEncoding& operator=(StringEncoding&&) = default;
+
+  /**
+   * Create the mapping from the given corpus.
+   *
+   * @tparam TokenizerType Type of the tokenizer.
+   *
+   * @param input Corpus of text to encode.
+   * @param tokenizer The tokenizer obkect.
+   *
+   * The tokenization algorithm has to be an object with the operator() method
+   * which accepts a reference to boost::string_view and returns the next token
+   * and the IsTokenEmpty() method that accepts the given token and returns true
+   * if the given token is empty.
+   */
   template<typename TokenizerType>
-  void CreateMap(std::string& input, TokenizerType tokenizer);
-  /**
-  * Default Constructor.
-  */
-  StringEncoding() {}
-  /**
-  * Copy Constructor.
-  */
-  StringEncoding(const StringEncoding& oldObject);
-  /*
-  * Move Constructor.
-  */
-  StringEncoding(StringEncoding&& oldObject) = default;
-  /*
-  * Move Assignment Operator.
-  */  
-  StringEncoding& operator= (StringEncoding&& oldObject) = default;
-  /*
-  * Assignment Operator.
-  */
-  StringEncoding& operator= (const StringEncoding& oldObject);
-  /**
-  * A function to reset the mapping that is clear all the encodings.
-  */
-  void Reset();
+  void CreateMap(std::string& input, const TokenizerType& tokenizer);
 
   /**
-  * A fucntion to encode given array of strings using a particular delimiter,
-  * providing custom rule for tokenization.
-  *
-  * For example 
-  * If using DicitonaryEncoding Policy and Vector is :
-  * [hello@wow, wow@hello@good] would be encoded using '@' as delimiter as 
-  * [1 2 0, 2 1 3] 
-  * The function paddes 0 to maintain same sizes across all the rows
-  * User may also provide their custom tokenization rule.
-  *
-  * @param input Vector of strings.
-  * @param output Output matrix to store encoded results (sp_mat or mat).
-  * @param tokenizer A function that accepts a boost::string_view as
-  *                  an argument and returns a token.
-  * This can either be a function pointer or function object or a lamda
-  * function. Its return value should be a boost::string_view, a token.
-  *
-  * Definition of function should be of type
-  * boost::string_view fn(boost::string_view& str)
-  *
-  */
-  template<typename MatType, typename TokenizerType, typename EncodingPolicy>
+   * Clear the dictionary.
+   */
+  void Clear();
+
+  /**
+   * Encode the given text and write the result to the given output.
+   *
+   * @tparam OutputType Type of the output container. The function supports
+   *                    the following types: arma::mat, arma::sp_mat,
+   *                    std::vector<std::vector<size_t>>
+   * @tparam TokenizerType Type of the tokenizer.
+   *
+   * @param input Corpus of text to encode.
+   * @param output Output container to store the result.
+   * @param tokenizer The tokenizer object.
+   *
+   * The tokenization algorithm has to be an object with the operator() method
+   * which accepts a reference to boost::string_view and returns the next token
+   * and the IsTokenEmpty() method that accepts the given token and returns true
+   * if the given token is empty.
+   */
+  template<typename OutputType, typename TokenizerType>
   void Encode(const std::vector<std::string>& input,
-              MatType& output, TokenizerType tokenizer,
-              EncodingPolicy Policy);
+              OutputType& output,
+              const TokenizerType& tokenizer);
 
-  /**
-  * A function to encode given array of strings using a particular delimiter,
-  * with custom tokenization.
-  *
-  * For example 
-  * Vector is :
-  * [hello@wow, wow@hello@good] would be encoded using '@' as delimiter as 
-  * [1 2 , 2 1 3] 
-  * The function does not paddes 0 in this case.
-  *
-  * @param input Vector of strings.
-  * @param output Vector of vectors to store encoded results.
-  * @param tokenizer A function that accepts a boost::string_view as
-  *                  an argument and returns a token.
-  * This can either be a function pointer or function object or a lamda
-  * function. Its return value should be a boost::string_view, a token.
-  *
-  * Definition of function should be of type
-  * boost::string_view fn(boost::string_view& str)
-  *
-  */
-  template<typename TokenizerType, typename EncodingPolicy>
-  void Encode(const
-      std::vector<std::string>& input,
-      std::vector<std::vector<size_t>>& output,
-      TokenizerType tokenizer,
-      EncodingPolicy Policy,
-      typename std::enable_if<PolicyTraits<EncodingPolicy>::
-      outputWithNoPadding>::type* = 0);
+  //! Return the dictionary.
+  const DictionaryType& Dictionary() const { return dictionary; }
 
-  //! Modify the originalStrings.
-  std::deque<std::string>& OriginalStrings() { return originalStrings; }
-
-  //! Return the originalStrings.
-  const std::deque<std::string>& OriginalStrings() const
-      { return originalStrings; }
-
-  //! Return the mappings
-  const MapType& Mappings() const { return mappings; }
-
-  //! Modify the mappings.
-  MapType& Mappings() { return mappings; }
+  //! Modify the dictionary.
+  DictionaryType& Dictionary() { return dictionary; }
 
   /**
    * Serialize the class to the given archive.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
+
  private:
-  //! A map which stores information about mapping.
-  MapType mappings;
-  //! A deque which holds the original string for map's string_view.
-  std::deque<std::string> originalStrings;
-}; // class StringEncoding
+  /**
+   * A helper function to encode the given text and write the result to
+   * the given output.
+   *
+   * @tparam OutputType Type of the output container. The function supports
+   *                    the following types: arma::mat, arma::sp_mat,
+   *                    std::vector<std::vector<size_t>>
+   * @tparam TokenizerType Type of the tokenizer.
+   * @tparam EncodingPolicyType The type of the encoding policy. It has to be
+   *                            equal to EncodingPolicy.
+   *
+   * @param input Corpus of text to encode.
+   * @param output Output container to store the result.
+   * @param tokenizer The tokenizer object.
+   * @param policy The policy object.
+   *
+   * The tokenization algorithm has to be an object with the operator() method
+   * which accepts a reference to boost::string_view and returns the next token
+   * and the IsTokenEmpty() method that accepts the given token and returns true
+   * if the given token is empty.
+   */
+  template<typename OutputType,
+           typename TokenizerType,
+           typename EncodingPolicyType>
+  void EncodeHelper(const std::vector<std::string>& input,
+                    OutputType& output,
+                    const TokenizerType& tokenizer,
+                    EncodingPolicyType& policy);
+
+  /**
+   * A helper function to encode the given text and write the result to
+   * the given output. This is an optimized overload for policies that support
+   * the one pass encoding algorithm.
+   *
+   * @tparam TokenizerType Type of the tokenizer.
+   * @tparam EncodingPolicyType The type of the encoding policy. It has to be
+   *                            equal to EncodingPolicy.
+   *
+   * @param input Corpus of text to encode.
+   * @param output Output container to store the result.
+   * @param tokenizer The tokenizer obkect.
+   * @param policy The policy object.
+   *
+   * The tokenization algorithm has to be an object with the operator() method
+   * which accepts a reference to boost::string_view and returns the next token
+   * and the IsTokenEmpty() method that accepts the given token and returns true
+   * if the given token is empty.
+   */
+  template<typename TokenizerType, typename EncodingPolicyType>
+  void EncodeHelper(const std::vector<std::string>& input,
+                    std::vector<std::vector<size_t>>& output,
+                    const TokenizerType& tokenizer,
+                    EncodingPolicyType& policy,
+                    typename std::enable_if<StringEncodingPolicyTraits<
+                        EncodingPolicyType>::onePassEncoding>::type* = 0);
+
+ private:
+  //! The encoding policy object.
+  EncodingPolicy policy;
+  //! The dictionary that contains the tokens and their labels.
+  DictionaryType dictionary;
+};
 
 } // namespace data
 } // namespace mlpack
