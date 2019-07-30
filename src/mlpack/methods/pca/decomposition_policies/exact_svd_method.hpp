@@ -38,12 +38,12 @@ class ExactSVDPolicy
    * @param eigvec Matrix to put eigenvectors (loadings) into.
    * @param rank Rank of the decomposition.
    */
-  void Apply(const arma::mat& data,
-             const arma::mat& centeredData,
-             arma::mat& transformedData,
-             arma::vec& eigVal,
-             arma::mat& eigvec,
-             const size_t /* rank */)
+  static void Apply(const arma::mat& data,
+                    const arma::mat& centeredData,
+                    arma::mat& transformedData,
+                    arma::vec& eigVal,
+                    arma::mat& eigvec,
+                    const size_t /* rank */)
   {
     // This matrix will store the right singular values; we do not need them.
     arma::mat v;
