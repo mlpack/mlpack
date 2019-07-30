@@ -45,7 +45,7 @@ class StringEncodingDictionary
   {
     return mapping.find(token) != mapping.end();
   }
-  
+
   /**
    * The function adds the given token to the dictionary and assigns a label
    * to the token.
@@ -59,7 +59,7 @@ class StringEncodingDictionary
 
     mapping[std::forward<T>(token)] = size + 1;
   }
-  
+
   /**
    * The function returns the label assigned to the given token. The function
    * throws std::out_of_range if no such token is found.
@@ -70,7 +70,7 @@ class StringEncodingDictionary
   {
     return mapping.at(token);
   }
-  
+
   //! Get the size of the dictionary.
   size_t Size() const { return mapping.size(); }
 
@@ -79,7 +79,7 @@ class StringEncodingDictionary
   {
     mapping.clear();
   }
-  
+
   //! Get the mapping.
   const MapType& Mapping() const { return mapping; }
   //! Modify the mapping.
@@ -144,7 +144,7 @@ class StringEncodingDictionary<boost::string_view>
   //! Standard move assignment operator.
   StringEncodingDictionary& operator=(
       StringEncodingDictionary&& other) = default;
-    
+
   /**
    * The function returns true if the dictionary caontains the given token.
    *
@@ -154,7 +154,7 @@ class StringEncodingDictionary<boost::string_view>
   {
     return mapping.find(token) != mapping.end();
   }
-  
+
   /**
    * The function adds the given token to the dictionary and assigns a label
    * to the token.
@@ -164,12 +164,12 @@ class StringEncodingDictionary<boost::string_view>
   void AddToken(boost::string_view token)
   {
     tokens.emplace_back(token);
-    
+
     size_t size = mapping.size();
 
     mapping[tokens.back()] = size + 1;
   }
-  
+
   /**
    * The function returns the label assigned to the given token. The function
    * throws std::out_of_range if no such token is found.
@@ -180,7 +180,7 @@ class StringEncodingDictionary<boost::string_view>
   {
     return mapping.at(token);
   }
-  
+
   //! Get the size of the dictionary.
   size_t Size() const { return mapping.size(); }
 
@@ -190,17 +190,17 @@ class StringEncodingDictionary<boost::string_view>
     mapping.clear();
     tokens.clear();
   }
-  
+
   //! Get the tokens.
   const std::deque<std::string>& Tokens() const { return tokens; }
   //! Modify the tokens.
   std::deque<std::string>& Tokens() { return tokens; }
-  
+
   //! Get the mapping.
   const MapType& Mapping() const { return mapping; }
   //! Modify the mapping.
   MapType& Mapping() { return mapping; }
-  
+
   /**
    * Serialize the dictionary to the given archive.
    */
@@ -230,7 +230,7 @@ class StringEncodingDictionary<boost::string_view>
       }
     }
   }
-  
+
  private:
   //! The tokens that the dictionary stores.
   std::deque<std::string> tokens;
@@ -245,7 +245,7 @@ class StringEncodingDictionary<int>
  public:
   //! A convenient alias for the internal type of the map.
   using MapType = std::array<size_t, 1 << CHAR_BIT>;
-  
+
   //! The type of the token that the dictionary stores.
   using TokenType = int;
 
@@ -288,7 +288,7 @@ class StringEncodingDictionary<int>
   {
     return mapping[token];
   }
-  
+
   //! Get the size of the dictionary.
   size_t Size() const
   {
@@ -314,7 +314,7 @@ class StringEncodingDictionary<int>
   {
     ar & BOOST_SERIALIZATION_NVP(mapping);
   }
- 
+
  private:
   //! The mapping itself.
   MapType mapping;

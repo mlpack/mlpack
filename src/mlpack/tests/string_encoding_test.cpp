@@ -34,7 +34,7 @@ static vector<string> stringEncodingInput = {
     "as a \"swiss army knife\" for machine learning researchers.",
     "In addition to its powerful C++ interface, mlpack also provides "
     "command-line programs and Python bindings."
-  };
+};
 
 
 /**
@@ -47,11 +47,11 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
   arma::mat output;
   DictionaryEncoding<SplitByAnyOf::TokenType> encoder;
   SplitByAnyOf tokenizer(" .,\"");
-  
+
   encoder.Encode(stringEncodingInput, output, tokenizer);
 
   const DictionaryType& dictionary = encoder.Dictionary();
-  
+
   // Checking that everything is mapped to different numbers
   std::unordered_map<size_t, size_t> keysCount;
   for (auto& keyValue : dictionary.Mapping())
@@ -60,13 +60,15 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
     // Every token should be mapped only once
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
-  
-  arma::mat expected = " 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16  0 "
-                       " 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0 ;"
-                       "17  2 18 14 19 20  9 10 21 14 22  6 23 14 24 20 25 "
-                       "26 27  9 10 28  6 29 30 20 31 32 33 34  9 10 35;"
-                       "36 37 14 38 39  8 40  1 41 42 43 44  6 45 13  0  0 "
-                       " 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0 ;";
+
+  arma::mat expected = {
+    {  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,  0,
+       0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
+    { 17,  2, 18, 14, 19, 20,  9, 10, 21, 14, 22,  6, 23, 14, 24, 20, 25,
+      26, 27,  9, 10, 28,  6, 29, 30, 20, 31, 32, 33, 34,  9, 10, 35 },
+    { 36, 37, 14, 38, 39,  8, 40,  1, 41, 42, 43, 44,  6, 45, 13,  0,  0,
+       0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 }
+  };
 
   CheckMatrices(output, expected);
 }
@@ -82,11 +84,11 @@ BOOST_AUTO_TEST_CASE(OnePassDictionaryEncodingTest)
   DictionaryEncoding<SplitByAnyOf::TokenType> encoder(
       (DictionaryEncodingPolicy()));
   SplitByAnyOf tokenizer(" .,\"");
-  
+
   encoder.Encode(stringEncodingInput, output, tokenizer);
 
   const DictionaryType& dictionary = encoder.Dictionary();
-  
+
   // Checking that everything is mapped to different numbers
   std::unordered_map<size_t, size_t> keysCount;
   for (auto& keyValue : dictionary.Mapping())
@@ -95,14 +97,14 @@ BOOST_AUTO_TEST_CASE(OnePassDictionaryEncodingTest)
     // Every token should be mapped only once
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
-  
+
   vector<vector<size_t>> expected = {
     {  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16 },
     { 17,  2, 18, 14, 19, 20,  9, 10, 21, 14, 22,  6, 23, 14, 24, 20, 25,
       26, 27,  9, 10, 28,  6, 29, 30, 20, 31, 32, 33, 34,  9, 10, 35 },
     { 36, 37, 14, 38, 39,  8, 40,  1, 41, 42, 43, 44,  6, 45, 13 }
   };
-  
+
   BOOST_REQUIRE(output == expected);
 }
 
@@ -122,14 +124,14 @@ BOOST_AUTO_TEST_CASE(SplitByAnyOfTokenizerTest)
     tokens.push_back(token);
     token = tokenizer(line);
   }
-  
+
   vector<string> expected = { "mlpack", "is", "an", "intuitive", "fast",
     "and", "flexible", "C++", "machine", "learning", "library", "with",
     "bindings", "to", "other", "languages"
   };
-  
+
   BOOST_REQUIRE_EQUAL(tokens.size(), expected.size());
-  
+
   for (size_t i = 0; i < tokens.size(); i++)
     BOOST_REQUIRE_EQUAL(tokens[i], expected[i]);
 }
@@ -151,9 +153,11 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingIndividualCharactersTest)
   // Passing a empty string to encode characters
   encoder.Encode(input, output, CharExtract());
 
-  arma::mat target = "1 2 3 3 2 0 0;"
-                     "2 4 3 2 4 3 5;"
-                     "1 2 4 0 0 0 0;";
+  arma::mat target = {
+    { 1, 2, 3, 3, 2, 0, 0 },
+    { 2, 4, 3, 2, 4, 3, 5 },
+    { 1, 2, 4, 0, 0, 0, 0 }
+  };
   CheckMatrices(output, target);
 }
 
@@ -193,21 +197,21 @@ BOOST_AUTO_TEST_CASE(StringEncodingCopyTest)
   arma::sp_mat output;
   DictionaryEncoding<SplitByAnyOf::TokenType> encoderCopy;
   SplitByAnyOf tokenizer(" ,.");
-  
+
   vector<pair<string, size_t>> naiveDictionary;
 
   {
     DictionaryEncoding<SplitByAnyOf::TokenType> encoder;
     encoder.Encode(stringEncodingInput, output, tokenizer);
-    
+
     for (const string& token : encoder.Dictionary().Tokens())
     {
       naiveDictionary.emplace_back(token, encoder.Dictionary().Value(token));
     }
-    
+
     encoderCopy = DictionaryEncoding<SplitByAnyOf::TokenType>(encoder);
   }
-  
+
   const DictionaryType& copiedDictionary = encoderCopy.Dictionary();
 
   BOOST_REQUIRE_EQUAL(naiveDictionary.size(), copiedDictionary.Size());
@@ -215,7 +219,7 @@ BOOST_AUTO_TEST_CASE(StringEncodingCopyTest)
   for (const pair<string, size_t>& keyValue : naiveDictionary)
   {
     BOOST_REQUIRE(copiedDictionary.HasToken(keyValue.first));
-    BOOST_REQUIRE_EQUAL(copiedDictionary.Value(keyValue.first), 
+    BOOST_REQUIRE_EQUAL(copiedDictionary.Value(keyValue.first),
         keyValue.second);
   }
 }
@@ -229,21 +233,21 @@ BOOST_AUTO_TEST_CASE(StringEncodingMoveTest)
   arma::sp_mat output;
   DictionaryEncoding<SplitByAnyOf::TokenType> encoderCopy;
   SplitByAnyOf tokenizer(" ,.");
-  
+
   vector<pair<string, size_t>> naiveDictionary;
 
   {
     DictionaryEncoding<SplitByAnyOf::TokenType> encoder;
     encoder.Encode(stringEncodingInput, output, tokenizer);
-    
+
     for (const string& token : encoder.Dictionary().Tokens())
     {
       naiveDictionary.emplace_back(token, encoder.Dictionary().Value(token));
     }
-    
+
     encoderCopy = std::move(encoder);
   }
-  
+
   const DictionaryType& copiedDictionary = encoderCopy.Dictionary();
 
   BOOST_REQUIRE_EQUAL(naiveDictionary.size(), copiedDictionary.Size());
@@ -251,7 +255,7 @@ BOOST_AUTO_TEST_CASE(StringEncodingMoveTest)
   for (const pair<string, size_t>& keyValue : naiveDictionary)
   {
     BOOST_REQUIRE(copiedDictionary.HasToken(keyValue.first));
-    BOOST_REQUIRE_EQUAL(copiedDictionary.Value(keyValue.first), 
+    BOOST_REQUIRE_EQUAL(copiedDictionary.Value(keyValue.first),
         keyValue.second);
   }
 }

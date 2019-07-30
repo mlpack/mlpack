@@ -47,7 +47,7 @@ class CharExtract
 
     return retval;
   }
-  
+
   /**
    * The function returns true if the given token is equal to EOF.
    *

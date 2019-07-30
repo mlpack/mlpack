@@ -64,7 +64,7 @@ void StringEncoding<EncodingPolicy, DictionaryType>::CreateMap(
         "The dictionary token type doesn't match the return value type "
         "of the tokenizer.");
 
-  while (!token.empty())
+  while (!tokenizer.IsTokenEmpty(token))
   {
     if (!dictionary.HasToken(token))
       dictionary.AddToken(token);

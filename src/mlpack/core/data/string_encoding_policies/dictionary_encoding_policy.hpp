@@ -40,8 +40,8 @@ class DictionaryEncodingPolicy
   * @param dictionarySize The size of the dictionary (not used).
   */
   template<typename MatType>
-  static void InitMatrix(MatType& output, 
-                         size_t datasetSize, 
+  static void InitMatrix(MatType& output,
+                         size_t datasetSize,
                          size_t maxNumTokens,
                          size_t /*dictionarySize*/)
   {

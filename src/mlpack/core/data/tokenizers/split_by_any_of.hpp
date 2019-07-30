@@ -29,7 +29,7 @@ class SplitByAnyOf
  public:
   //! The type of the token which the tokenizer extracts.
   using TokenType = boost::string_view;
-  
+
   //! A convenient alias for the mask type.
   using MaskType = std::array<bool, 1 << CHAR_BIT>;
 
@@ -70,7 +70,7 @@ class SplitByAnyOf
     }
     return retval;
   }
-  
+
   /**
    * The function returns true if the given token is empty.
    *
@@ -106,7 +106,7 @@ class SplitByAnyOf
 
  private:
   //! The mask that corresponds to the delimiters.
-  MaskType mask;  
+  MaskType mask;
 };
 
 } // namespace data
