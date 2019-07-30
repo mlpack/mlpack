@@ -129,7 +129,9 @@ SingleTreeTraversalType>::NeighborSearch(const NeighborSearchMode mode,
   // Build the tree on the empty dataset, if necessary.
   if (mode != NAIVE_MODE)
   {
-    referenceTree = BuildTree<Tree>(*referenceSet, oldFromNewReferences);
+    referenceTree = BuildTree<Tree>(std::move(*referenceSet),
+        oldFromNewReferences);
+    delete referenceSet;
     referenceSet = &referenceTree->Dataset();
   }
 }
@@ -181,8 +183,7 @@ SingleTreeTraversalType>::NeighborSearch(NeighborSearch&& other) :
     treeNeedsReset(other.treeNeedsReset)
 {
   // Clear the other model.
-  other.referenceSet = new MatType();
-  other.referenceTree = BuildTree<Tree>(*other.referenceSet,
+  other.referenceTree = BuildTree<Tree>(std::move(MatType()),
       other.oldFromNewReferences);
   other.referenceSet = &other.referenceTree->Dataset();
   other.searchMode = DUAL_TREE_MODE,
