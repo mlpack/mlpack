@@ -41,7 +41,9 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     const size_t preTrainSize,
     const double multiplier,
     const double clippingParameter,
-    const double lambda):
+    const double lambda,
+    arma::mat trainLabels,
+    const size_t yDim):
     generator(std::move(generator)),
     discriminator(std::move(discriminator)),
     initializeRule(initializeRule),
@@ -53,6 +55,8 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     multiplier(multiplier),
     clippingParameter(clippingParameter),
     lambda(lambda),
+    trainLabels(trainLabels),
+    yDim(yDim),
     reset(false)
 {
   // Insert IdentityLayer for joining the Generator and Discriminator.
@@ -110,7 +114,9 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     currentBatch(network.currentBatch),
     parameter(network.parameter),
     numFunctions(network.numFunctions),
-    noise(network.noise)
+    noise(network.noise),
+    trainLabels(network.trainLabels),
+    yDim(network.yDim)
 {
   /* Nothing to do here */
 }
@@ -141,7 +147,9 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     currentBatch(network.currentBatch),
     parameter(std::move(network.parameter)),
     numFunctions(network.numFunctions),
-    noise(std::move(network.noise))
+    noise(std::move(network.noise)),
+    trainLabels(std::move(network.trainLabels)),
+    yDim(network.yDim)
 {
   /* Nothing to do here */
 }

@@ -78,6 +78,10 @@ class WGAN { /* Nothing to do here */ };
  */
 class WGANGP { /* Nothing to do here */ };
 
+
+
+class CGAN { /* Nothing to do here */ };
+
 } // namespace ann
 } // namespace mlpack
 
