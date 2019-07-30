@@ -10,10 +10,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-// To remove unused functions warnings.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-function"
-
 #ifndef MLPACK_CORE_DATA_IMAGE_INFO_HPP
 #define MLPACK_CORE_DATA_IMAGE_INFO_HPP
 
@@ -107,5 +103,3 @@ class ImageInfo
 #endif // HAS_STB.
 
 #endif
-
-#pragma GCC diagnostic pop
