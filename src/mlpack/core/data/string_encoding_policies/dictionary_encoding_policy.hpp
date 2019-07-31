@@ -75,6 +75,15 @@ class DictionaryEncodingPolicy
   {
     output.push_back(value);
   }
+
+  /**
+   * Serialize the class to the given archive.
+   */
+  template<typename Archive>
+  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  {
+    // Nothing to serialize.
+  }
 };
 
 /**

@@ -207,26 +207,31 @@ class StringEncodingDictionary<boost::string_view>
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    size_t size = tokens.size();
+    size_t numTokens = tokens.size();
 
-    ar & BOOST_SERIALIZATION_NVP(size);
+    ar & BOOST_SERIALIZATION_NVP(numTokens);
 
-    if (Archive::is_saving::value)
-    {
-      for (const std::string& token : tokens)
-      {
-        ar & BOOST_SERIALIZATION_NVP(token);
-        ar & BOOST_SERIALIZATION_NVP(mapping.at(token));
-      }
-    }
     if (Archive::is_loading::value)
     {
-      tokens.resize(size);
+      tokens.resize(numTokens);
 
       for (std::string& token : tokens)
       {
         ar & BOOST_SERIALIZATION_NVP(token);
-        ar & BOOST_SERIALIZATION_NVP(mapping[token]);
+
+        size_t tokenValue = 0;
+        ar & BOOST_SERIALIZATION_NVP(tokenValue);
+        mapping[token] = tokenValue;
+      }
+    }
+    if (Archive::is_saving::value)
+    {
+      for (std::string& token : tokens)
+      {
+        ar & BOOST_SERIALIZATION_NVP(token);
+
+        size_t tokenValue = mapping.at(token);
+        ar & BOOST_SERIALIZATION_NVP(tokenValue);
       }
     }
   }

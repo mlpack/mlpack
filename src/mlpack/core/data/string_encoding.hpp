@@ -25,10 +25,10 @@ namespace data {
  * Definition of the StringEncoding class. The class translates a set of
  * strings into numbers using various encoding algorithms.
  *
- * @tparam EncodingPolicy Type of the encoding algorithm itself.
+ * @tparam EncodingPolicyType Type of the encoding algorithm itself.
  * @tparam DictionaryType Type of the dictionary.
  */
-template<typename EncodingPolicy,
+template<typename EncodingPolicyType,
          typename DictionaryType>
 class StringEncoding
 {
@@ -45,7 +45,7 @@ class StringEncoding
    *
    * @param policy The given policy.
    */
-  StringEncoding(EncodingPolicy policy);
+  StringEncoding(EncodingPolicyType encodingPolicy);
 
   /**
    * A variant of the copy constructor for non-constant objects.
@@ -109,9 +109,13 @@ class StringEncoding
 
   //! Return the dictionary.
   const DictionaryType& Dictionary() const { return dictionary; }
-
   //! Modify the dictionary.
   DictionaryType& Dictionary() { return dictionary; }
+
+  //! Return the encoding policy object.
+  const EncodingPolicyType& EncodingPolicy() const { return encodingPolicy; }
+  //! Modify the encoding policy object.
+  EncodingPolicyType& EncodingPolicy() { return encodingPolicy; }
 
   /**
    * Serialize the class to the given archive.
@@ -128,8 +132,8 @@ class StringEncoding
    *                    the following types: arma::mat, arma::sp_mat,
    *                    std::vector<std::vector<size_t>>
    * @tparam TokenizerType Type of the tokenizer.
-   * @tparam EncodingPolicyType The type of the encoding policy. It has to be
-   *                            equal to EncodingPolicy.
+   * @tparam PolicyType The type of the encoding policy. It has to be
+   *                    equal to EncodingPolicyType.
    *
    * @param input Corpus of text to encode.
    * @param output Output container to store the result.
@@ -143,11 +147,11 @@ class StringEncoding
    */
   template<typename OutputType,
            typename TokenizerType,
-           typename EncodingPolicyType>
+           typename PolicyType>
   void EncodeHelper(const std::vector<std::string>& input,
                     OutputType& output,
                     const TokenizerType& tokenizer,
-                    EncodingPolicyType& policy);
+                    PolicyType& policy);
 
   /**
    * A helper function to encode the given text and write the result to
@@ -155,8 +159,8 @@ class StringEncoding
    * the one pass encoding algorithm.
    *
    * @tparam TokenizerType Type of the tokenizer.
-   * @tparam EncodingPolicyType The type of the encoding policy. It has to be
-   *                            equal to EncodingPolicy.
+   * @tparam PolicyType The type of the encoding policy. It has to be
+   *                    equal to EncodingPolicyType.
    *
    * @param input Corpus of text to encode.
    * @param output Output container to store the result.
@@ -168,17 +172,17 @@ class StringEncoding
    * and the IsTokenEmpty() method that accepts the given token and returns true
    * if the given token is empty.
    */
-  template<typename TokenizerType, typename EncodingPolicyType>
+  template<typename TokenizerType, typename PolicyType>
   void EncodeHelper(const std::vector<std::string>& input,
                     std::vector<std::vector<size_t>>& output,
                     const TokenizerType& tokenizer,
-                    EncodingPolicyType& policy,
+                    PolicyType& policy,
                     typename std::enable_if<StringEncodingPolicyTraits<
-                        EncodingPolicyType>::onePassEncoding>::type* = 0);
+                        PolicyType>::onePassEncoding>::type* = 0);
 
  private:
   //! The encoding policy object.
-  EncodingPolicy policy;
+  EncodingPolicyType encodingPolicy;
   //! The dictionary that contains the tokens and their labels.
   DictionaryType dictionary;
 };

@@ -18,6 +18,7 @@
 #include <boost/test/unit_test.hpp>
 #include <memory>
 #include "test_tools.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::data;
@@ -260,6 +261,145 @@ BOOST_AUTO_TEST_CASE(StringEncodingMoveTest)
   }
 }
 
+/**
+ * The function checks that the given dictionaries contain the same data.
+ */
+template<typename TokenType>
+void CheckDictionaries(const StringEncodingDictionary<TokenType>& expected,
+                       const StringEncodingDictionary<TokenType>& obtained)
+{
+  // MapType is equal to std::unordered_map<Token, size_t>.
+  using MapType = typename StringEncodingDictionary<TokenType>::MapType;
+
+  const MapType& mapping = obtained.Mapping();
+  const MapType& expectedMapping = expected.Mapping();
+
+  BOOST_REQUIRE_EQUAL(mapping.size(), expectedMapping.size());
+
+  for (auto& keyVal : expectedMapping)
+  {
+    BOOST_REQUIRE_EQUAL(mapping.at(keyVal.first), keyVal.second);
+  }
+
+  for (auto& keyVal : mapping)
+  {
+    BOOST_REQUIRE_EQUAL(expectedMapping.at(keyVal.first), keyVal.second);
+  }
+}
+
+/**
+ * This is a specialization of the CheckDictionaries() function for
+ * the boost::string_view token type.
+ */
+template<>
+void CheckDictionaries(
+    const StringEncodingDictionary<boost::string_view>& expected,
+    const StringEncodingDictionary<boost::string_view>& obtained)
+{
+  /* MapType is equal to
+   *
+   * std::unordered_map<boost::string_view,
+   *                    size_t,
+   *                    boost::hash<boost::string_view>>.
+   */
+  using MapType =
+      typename StringEncodingDictionary<boost::string_view>::MapType;
+
+  const std::deque<std::string>& expectedTokens = expected.Tokens();
+  const std::deque<std::string>& tokens = obtained.Tokens();
+  const MapType& expectedMapping = expected.Mapping();
+  const MapType& mapping = obtained.Mapping();
+
+  BOOST_REQUIRE_EQUAL(tokens.size(), expectedTokens.size());
+  BOOST_REQUIRE_EQUAL(mapping.size(), expectedMapping.size());
+  BOOST_REQUIRE_EQUAL(mapping.size(), tokens.size());
+
+  for (size_t i = 0; i < tokens.size(); i++)
+  {
+    BOOST_REQUIRE_EQUAL(tokens[i], expectedTokens[i]);
+    BOOST_REQUIRE_EQUAL(expectedMapping.at(tokens[i]), mapping.at(tokens[i]));
+  }
+}
+
+/**
+ * This is a specialization of the CheckDictionaries() function for
+ * the integer token type.
+ */
+template<>
+void CheckDictionaries(const StringEncodingDictionary<int>& expected,
+                       const StringEncodingDictionary<int>& obtained)
+{
+  // MapType is equal to std::arry<size_t, 256>.
+  using MapType = typename StringEncodingDictionary<int>::MapType;
+
+  const MapType& expectedMapping = expected.Mapping();
+  const MapType& mapping = obtained.Mapping();
+
+  for (size_t i = 0; i < mapping.size(); i++)
+  {
+    BOOST_REQUIRE_EQUAL(mapping[i], expectedMapping[i]);
+  }
+}
+
+/**
+ * Serialization test for the dictionary encoding algorithm with
+ * the SplitByAnyOf tokenizer.
+ */
+BOOST_AUTO_TEST_CASE(SplitByAnyOfDictionaryEncodingSerialization)
+{
+  using EncoderType = DictionaryEncoding<SplitByAnyOf::TokenType>;
+
+  EncoderType encoder;
+  SplitByAnyOf tokenizer(" ,.");
+  arma::mat output;
+
+  encoder.Encode(stringEncodingInput, output, tokenizer);
+
+  EncoderType xmlEncoder, textEncoder, binaryEncoder;
+  arma::mat xmlOutput, textOutput, binaryOutput;
+
+  SerializeObjectAll(encoder, xmlEncoder, textEncoder, binaryEncoder);
+
+  CheckDictionaries(encoder.Dictionary(), xmlEncoder.Dictionary());
+  CheckDictionaries(encoder.Dictionary(), textEncoder.Dictionary());
+  CheckDictionaries(encoder.Dictionary(), binaryEncoder.Dictionary());
+
+  xmlEncoder.Encode(stringEncodingInput, xmlOutput, tokenizer);
+  textEncoder.Encode(stringEncodingInput, textOutput, tokenizer);
+  binaryEncoder.Encode(stringEncodingInput, binaryOutput, tokenizer);
+
+  CheckMatrices(output, xmlOutput, textOutput, binaryOutput);
+}
+
+/**
+ * Serialization test for the dictionary encoding algorithm with
+ * the CharExtract tokenizer.
+ */
+BOOST_AUTO_TEST_CASE(CharExtractDictionaryEncodingSerialization)
+{
+  using EncoderType = DictionaryEncoding<CharExtract::TokenType>;
+
+  EncoderType encoder;
+  CharExtract tokenizer;
+  arma::mat output;
+
+  encoder.Encode(stringEncodingInput, output, tokenizer);
+
+  EncoderType xmlEncoder, textEncoder, binaryEncoder;
+  arma::mat xmlOutput, textOutput, binaryOutput;
+
+  SerializeObjectAll(encoder, xmlEncoder, textEncoder, binaryEncoder);
+
+  CheckDictionaries(encoder.Dictionary(), xmlEncoder.Dictionary());
+  CheckDictionaries(encoder.Dictionary(), textEncoder.Dictionary());
+  CheckDictionaries(encoder.Dictionary(), binaryEncoder.Dictionary());
+
+  xmlEncoder.Encode(stringEncodingInput, xmlOutput, tokenizer);
+  textEncoder.Encode(stringEncodingInput, textOutput, tokenizer);
+  binaryEncoder.Encode(stringEncodingInput, binaryOutput, tokenizer);
+
+  CheckMatrices(output, xmlOutput, textOutput, binaryOutput);
+}
 
 BOOST_AUTO_TEST_SUITE_END();
 

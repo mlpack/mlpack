@@ -19,54 +19,54 @@
 namespace mlpack {
 namespace data {
 
-template<typename EncodingPolicy, typename DictionaryType>
+template<typename EncodingPolicyType, typename DictionaryType>
 template<typename ... ArgTypes>
-StringEncoding<EncodingPolicy, DictionaryType>::StringEncoding(
+StringEncoding<EncodingPolicyType, DictionaryType>::StringEncoding(
     ArgTypes&& ... args) :
-    policy(std::forward<ArgTypes>(args)...)
+    encodingPolicy(std::forward<ArgTypes>(args)...)
 {
 }
 
-template<typename EncodingPolicy, typename DictionaryType>
-StringEncoding<EncodingPolicy, DictionaryType>::StringEncoding(
-    EncodingPolicy policy) :
-    policy(std::move(policy))
+template<typename EncodingPolicyType, typename DictionaryType>
+StringEncoding<EncodingPolicyType, DictionaryType>::StringEncoding(
+    EncodingPolicyType encodingPolicy) :
+    encodingPolicy(std::move(encodingPolicy))
 {
 }
 
-template<typename EncodingPolicy, typename DictionaryType>
-StringEncoding<EncodingPolicy, DictionaryType>::StringEncoding(
+template<typename EncodingPolicyType, typename DictionaryType>
+StringEncoding<EncodingPolicyType, DictionaryType>::StringEncoding(
     StringEncoding& other) :
-    policy(other.policy),
+    encodingPolicy(other.encodingPolicy),
     dictionary(other.dictionary)
 {
 }
 
-template<typename EncodingPolicy, typename DictionaryType>
-StringEncoding<EncodingPolicy, DictionaryType>::StringEncoding(
+template<typename EncodingPolicyType, typename DictionaryType>
+StringEncoding<EncodingPolicyType, DictionaryType>::StringEncoding(
     const StringEncoding& other) :
-    policy(other.policy),
+    encodingPolicy(other.encodingPolicy),
     dictionary(other.dictionary)
 {
 }
 
-template<typename EncodingPolicy, typename DictionaryType>
-StringEncoding<EncodingPolicy, DictionaryType>::StringEncoding(
+template<typename EncodingPolicyType, typename DictionaryType>
+StringEncoding<EncodingPolicyType, DictionaryType>::StringEncoding(
     StringEncoding&& other) :
-    policy(std::move(other.policy)),
+    encodingPolicy(std::move(other.encodingPolicy)),
     dictionary(std::move(other.dictionary))
 {
 }
 
-template<typename EncodingPolicy, typename DictionaryType>
-void StringEncoding<EncodingPolicy, DictionaryType>::Clear()
+template<typename EncodingPolicyType, typename DictionaryType>
+void StringEncoding<EncodingPolicyType, DictionaryType>::Clear()
 {
   dictionary.Clear();
 }
 
-template<typename EncodingPolicy, typename DictionaryType>
+template<typename EncodingPolicyType, typename DictionaryType>
 template<typename TokenizerType>
-void StringEncoding<EncodingPolicy, DictionaryType>::CreateMap(
+void StringEncoding<EncodingPolicyType, DictionaryType>::CreateMap(
     std::string& input,
     const TokenizerType& tokenizer)
 {
@@ -89,24 +89,24 @@ void StringEncoding<EncodingPolicy, DictionaryType>::CreateMap(
   }
 }
 
-template<typename EncodingPolicy, typename DictionaryType>
+template<typename EncodingPolicyType, typename DictionaryType>
 template<typename OutputType, typename TokenizerType>
-void StringEncoding<EncodingPolicy, DictionaryType>::Encode(
+void StringEncoding<EncodingPolicyType, DictionaryType>::Encode(
     const std::vector<std::string>& input,
     OutputType& output,
     const TokenizerType& tokenizer)
 {
-  EncodeHelper(input, output, tokenizer, policy);
+  EncodeHelper(input, output, tokenizer, encodingPolicy);
 }
 
 
-template<typename EncodingPolicy, typename DictionaryType>
-template<typename MatType, typename TokenizerType, typename EncodingPolicyType>
-void StringEncoding<EncodingPolicy, DictionaryType>::
+template<typename EncodingPolicyType, typename DictionaryType>
+template<typename MatType, typename TokenizerType, typename PolicyType>
+void StringEncoding<EncodingPolicyType, DictionaryType>::
 EncodeHelper(const std::vector<std::string>& input,
              MatType& output,
              const TokenizerType& tokenizer,
-             EncodingPolicyType& policy)
+             PolicyType& policy)
 {
   size_t numColumns = 0;
 
@@ -152,15 +152,15 @@ EncodeHelper(const std::vector<std::string>& input,
   }
 }
 
-template<typename EncodingPolicy, typename DictionaryType>
-template<typename TokenizerType, typename EncodingPolicyType>
-void StringEncoding<EncodingPolicy, DictionaryType>::
+template<typename EncodingPolicyType, typename DictionaryType>
+template<typename TokenizerType, typename PolicyType>
+void StringEncoding<EncodingPolicyType, DictionaryType>::
 EncodeHelper(const std::vector<std::string>& input,
              std::vector<std::vector<size_t>>& output,
              const TokenizerType& tokenizer,
-             EncodingPolicyType& policy,
+             PolicyType& policy,
              typename std::enable_if<StringEncodingPolicyTraits<
-                 EncodingPolicyType>::onePassEncoding>::type*)
+                 PolicyType>::onePassEncoding>::type*)
 {
   for (size_t i = 0; i < input.size(); i++)
   {
@@ -187,11 +187,12 @@ EncodeHelper(const std::vector<std::string>& input,
   }
 }
 
-template<typename EncodingPolicy, typename DictionaryType>
+template<typename EncodingPolicyType, typename DictionaryType>
 template<typename Archive>
-void StringEncoding<EncodingPolicy, DictionaryType>::serialize(
+void StringEncoding<EncodingPolicyType, DictionaryType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
+  ar & BOOST_SERIALIZATION_NVP(encodingPolicy);
   ar & BOOST_SERIALIZATION_NVP(dictionary);
 }
 
