@@ -36,9 +36,11 @@ AcyclicNet<ActivationFunction>::AcyclicNet(const size_t nodeCount,
 template <class ActivationFunction>
 void AcyclicNet<ActivationFunction>::Evaluate(const arma::vec& input,
                                               arma::vec& output,
-                                              std::map<size_t, std::map<size_t,
-                                                ConnectionGene>>& directedGraph,
-                                              std::vector<size_t>& nodeDepths)
+                                              const std::map<size_t, std::map
+                                                  <size_t, ConnectionGene>>&
+                                                  directedGraph,
+                                              const std::vector<size_t>&
+                                                  nodeDepths)
 {
   arma::vec nodeValues(nodeCount, arma::fill::zeros);
 

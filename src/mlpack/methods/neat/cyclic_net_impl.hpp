@@ -36,8 +36,9 @@ void CyclicNet<ActivationFunction>::Evaluate(const arma::vec& input,
                                              arma::vec& output,
                                              std::vector<double>&
                                                 outputNodeValues,
-                                             std::map<size_t, std::map<size_t,
-                                                ConnectionGene>>& directedGraph)
+                                             const std::map<size_t, std::map
+                                                <size_t, ConnectionGene>>&
+                                                directedGraph)
 {
   arma::vec inputNodeValues(nodeCount, arma::fill::zeros);
 
