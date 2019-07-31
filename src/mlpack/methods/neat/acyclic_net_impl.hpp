@@ -45,6 +45,7 @@ void AcyclicNet<ActivationFunction>::Evaluate(const arma::vec& input,
   // Populate the layers.
   for (size_t i = 0; i < nodeCount; i++)
   {
+    layers.reserve(nodeDepths[i] + 1);
     while (layers.size() < nodeDepths[i] + 1)
       layers.emplace_back(std::vector<size_t>());
     layers[nodeDepths[i]].push_back(i);
@@ -62,6 +63,7 @@ void AcyclicNet<ActivationFunction>::Evaluate(const arma::vec& input,
     for (size_t j = 0; j < layers[i].size(); j++)
     {
       size_t nodeID = layers[i][j];
+      // If this is a bias node, we need to add bias to it's connections.
       if (nodeID == 0)
       {
         for (auto const& x : directedGraph[nodeID])
@@ -70,6 +72,7 @@ void AcyclicNet<ActivationFunction>::Evaluate(const arma::vec& input,
             nodeValues[x.first] += bias * x.second.Weight();
         }
       }
+      // If it is an input node, we need not apply the activation function.
       else if (nodeID <= inputNodeCount)
       {
         for (auto const& x : directedGraph[nodeID])
@@ -78,6 +81,7 @@ void AcyclicNet<ActivationFunction>::Evaluate(const arma::vec& input,
             nodeValues[x.first] += nodeValues[nodeID] * x.second.Weight();
         }
       }
+      // In all other cases, we can proceed normally.
       else
       {
         double result = ActivationFunction::Fn(nodeValues[nodeID]);
