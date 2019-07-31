@@ -53,11 +53,14 @@ class StringEncoding
   StringEncoding(StringEncoding&);
 
   //! Default copy-constructor.
-  StringEncoding(const StringEncoding&) = default;
+  StringEncoding(const StringEncoding&);
+
   //! Default copy assignment operator.
   StringEncoding& operator=(const StringEncoding&) = default;
+
   //! Default move-constructor.
-  StringEncoding(StringEncoding&&) = default;
+  StringEncoding(StringEncoding&&);
+
   //! Default move assignment operator.
   StringEncoding& operator=(StringEncoding&&) = default;
 

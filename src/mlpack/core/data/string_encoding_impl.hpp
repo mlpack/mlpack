@@ -43,6 +43,22 @@ StringEncoding<EncodingPolicy, DictionaryType>::StringEncoding(
 }
 
 template<typename EncodingPolicy, typename DictionaryType>
+StringEncoding<EncodingPolicy, DictionaryType>::StringEncoding(
+    const StringEncoding& other) :
+    policy(other.policy),
+    dictionary(other.dictionary)
+{
+}
+
+template<typename EncodingPolicy, typename DictionaryType>
+StringEncoding<EncodingPolicy, DictionaryType>::StringEncoding(
+    StringEncoding&& other) :
+    policy(std::move(other.policy)),
+    dictionary(std::move(other.dictionary))
+{
+}
+
+template<typename EncodingPolicy, typename DictionaryType>
 void StringEncoding<EncodingPolicy, DictionaryType>::Clear()
 {
   dictionary.Clear();
