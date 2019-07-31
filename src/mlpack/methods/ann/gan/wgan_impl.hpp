@@ -34,8 +34,10 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
     const size_t i,
     const size_t /* batchSize */)
 {
-  if ((parameter.is_empty()))
+  if (parameter.is_empty())
+  {
     Reset();
+  }
 
   if (!deterministic)
   {
@@ -88,8 +90,10 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
                      GradType& gradient,
                      const size_t /* batchSize */)
 {
-  if ((parameter.is_empty()))
+  if (parameter.is_empty())
+  {
     Reset();
+  }
 
   if (gradient.is_empty())
   {

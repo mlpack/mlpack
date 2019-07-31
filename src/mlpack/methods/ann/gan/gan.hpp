@@ -68,7 +68,8 @@ class GAN
    *
    * @param generator Generator network.
    * @param discriminator Discriminator network.
-   * @param initializeRule Initialization to use for initializing parameters.
+   * @param initializeRule Initialization rule to use for initializing
+   *                       parameters.
    * @param noiseFunction Function to be used for generating noise.
    * @param noiseDim Dimension of noise vector to be created.
    * @param batchSize Batch size to be used for training.

@@ -162,8 +162,10 @@ void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
   this->generator.predictors.set_size(noiseDim, batchSize);
   this->generator.responses.set_size(predictors.n_rows, batchSize);
 
-  if ((!reset))
+  if (!reset)
+  {
     Reset();
+  }
 }
 
 template<
@@ -234,8 +236,10 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
     const size_t i,
     const size_t /* batchSize */)
 {
-  if ((parameter.is_empty()))
+  if (parameter.is_empty())
+  {
     Reset();
+  }
 
   if (!deterministic)
   {
@@ -289,8 +293,10 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
                      GradType& gradient,
                      const size_t /* batchSize */)
 {
-  if ((parameter.is_empty()))
+  if (parameter.is_empty())
+  {
     Reset();
+  }
 
   if (gradient.is_empty())
   {
@@ -409,8 +415,10 @@ template<
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::Forward(
     arma::mat&& input)
 {
-  if ((parameter.is_empty()))
+  if (parameter.is_empty())
+  {
     Reset();
+  }
 
   generator.Forward(std::move(input));
   arma::mat ganOutput = boost::apply_visitor(outputParameterVisitor,
@@ -428,8 +436,10 @@ template<
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::
 Predict(arma::mat input, arma::mat& output)
 {
-  if ((parameter.is_empty()))
+  if (parameter.is_empty())
+  {
     Reset();
+  }
 
   if (!deterministic)
   {
