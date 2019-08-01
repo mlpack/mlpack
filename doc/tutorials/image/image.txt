@@ -24,7 +24,7 @@ This tutorial is split into the following sections:
 
 @section model_api_imagetut Model API
 
-Image utilities supports loading and saving of image.
+Image utilities supports loading and saving of images.
 
 It supports filetypes "jpg", "png", "tga","bmp", "psd", "gif", "hdr", "pic", "pnm" for loading and "jpg", "png", "tga", "bmp", "hdr" for saving.
 

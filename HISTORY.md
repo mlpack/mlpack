@@ -1,5 +1,30 @@
-### mlpack 3.1.1
+### mlpack 4.0.0
 ###### ????-??-??
+  * Added support for loading and saving of images (#1903).
+  
+  * Add Multiple Pole Balancing Environment (#1901, #1951).
+
+  * Added functionality for scaling of data (#1876); see the command-line
+    binding `mlpack_preprocess_scale` or Python binding `preprocess_scale()`.
+
+  * Add new parameter `maximum_depth` to decision tree and random forest
+    bindings (#1916).
+
+  * Fix prediction output of softmax regression when test set accuracy is
+    calculated (#1922).
+
+  * Action struct in continuous RL environments now stores the action as a 
+    `double` instead of `double[1]` (#1941, #1931).
+
+  * Pendulum environment now checks for termination. All RL environments now
+    have an option to terminate after a set number of time steps (no limit
+    by default) (#1941).
+
+  * Add support for probabilistic KDE (kernel density estimation) error bounds
+    when using the Gaussian kernel (#1934).
+
+### mlpack 3.1.1
+###### 2019-05-26
   * Fix random forest bug for numerical-only data (#1887).
 
   * Significant speedups for random forest (#1887).
@@ -606,3 +631,4 @@
   * Initial release.  See any resolved tickets numbered less than #196 or
     execute this query:
     http://www.mlpack.org/trac/query?status=closed&milestone=mlpack+1.0.0
+

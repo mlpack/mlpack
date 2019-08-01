@@ -358,8 +358,7 @@ bool Save(const std::string& filename,
     Timer::Stop("saving_image");
     if (fatal)
       Log::Fatal << e.what() << std::endl;
-    else
-      Log::Warn << e.what() << std::endl;
+    Log::Warn << e.what() << std::endl;
     return false;
   }
   Timer::Stop("saving_image");
