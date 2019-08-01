@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_KDE_RULES_HPP
 
 #include <mlpack/core/tree/traversal_info.hpp>
+#include <stack>
 
 namespace mlpack {
 namespace kde {
@@ -212,6 +213,46 @@ class KDECleanRules
  private:
   //! Traversal information.
   TraversalInfoType traversalInfo;
+};
+
+/**
+ * A dual-tree traversal rules class that pushes nodes into a stack. It can be
+ * useful to perform a reverse traversal afterwards.
+ */
+template<typename TreeType>
+class KDEStackRules
+{
+ public:
+  //! Construct KDEStackRules.
+  KDEStackRules(std::stack<TreeType*>& stack) :
+      stack(stack)
+  { /* Nothing to do. */ }
+
+  //! Base Case.
+  double BaseCase(const size_t /* queryIndex */, const size_t /* refIndex */);
+
+  //! Single-tree Score.
+  double Score(const size_t /* queryIndex */, TreeType& referenceNode);
+
+  //! Single-tree Rescore.
+  double Rescore(const size_t /* queryIndex */,
+                 TreeType& /* referenceNode */,
+                 const double oldScore) const { return oldScore; }
+
+  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
+
+  //! Get traversal information.
+  const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
+
+  //! Modify traversal information.
+  TraversalInfoType& TraversalInfo() { return traversalInfo; }
+
+ private:
+  //! Traversal information.
+  TraversalInfoType traversalInfo;
+
+  //! Stack where node pointers will be pushed.
+  std::stack<TreeType*>& stack;
 };
 
 } // namespace kde

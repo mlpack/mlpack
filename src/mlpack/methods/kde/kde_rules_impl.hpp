@@ -557,6 +557,23 @@ double KDECleanRules<TreeType>::Score(TreeType& queryNode,
   return 0;
 }
 
+template<typename TreeType>
+inline force_inline
+double KDEStackRules<TreeType>::BaseCase(const size_t /* queryIndex */,
+                                         const size_t /* refIndex */)
+{
+  return 0;
+}
+
+template<typename TreeType>
+inline force_inline
+double KDEStackRules<TreeType>::Score(const size_t /* queryIndex */,
+                                      TreeType& referenceNode)
+{
+  stack.push(&referenceNode);
+  return 0;
+}
+
 } // namespace kde
 } // namespace mlpack
 
