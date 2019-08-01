@@ -97,9 +97,8 @@ class GAN
   GAN(GAN&&);
 
   /**
-   * Intialize the generator, discriminator and weights of the model for
-   * training.
-   * This function won't actually trigger training process.
+   * Initialize the generator, discriminator and weights of the model for
+   * training. This function won't actually trigger training process.
    *
    * @param trainData The data points of real distribution.
    * @param realLabel The label for data points from real distribution.
