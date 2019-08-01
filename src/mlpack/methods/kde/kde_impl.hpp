@@ -763,6 +763,172 @@ void KDE<KernelType,
          TreeType,
          DualTreeTraversalType,
          SingleTreeTraversalType>::
+ComputePCA(Tree& rootNode, const double varToRetain)
+{
+  // TODO check method parameters.
+  Timer::Start("computing_dimensionality_reduction");
+  std::stack<Tree*> nodes;
+  KDEStackRules<Tree> reverseRules(nodes);
+  SingleTreeTraversalType<KDEStackRules<Tree>> reverseTraverser(reverseRules);
+  reverseTraverser.Traverse(0, rootNode);
+
+  while(!nodes.empty())
+  {
+    Tree* node = nodes.top();
+    nodes.pop();
+    KDEStat& stat = node->Stat();
+
+    // Compute base.
+    if (node->IsLeaf())
+    {
+      const size_t numPoints = node->NumPoints();
+      const size_t firstPoint = node->Point(0);
+      arma::mat pointsInTheNode =
+          node->Dataset().cols(firstPoint, firstPoint + numPoints - 1);
+      math::Center(pointsInTheNode, pointsInTheNode);
+
+      // Calculate base mean.
+      stat.Mean() = arma::mean(pointsInTheNode, 1);
+
+      // Right singular values. Unused.
+      arma::mat v;
+
+      // Singular value decomposition.
+      if (pointsInTheNode.n_rows > pointsInTheNode.n_cols)
+        arma::svd_econ(stat.EigVec(), stat.EigVal(), v, pointsInTheNode, "l");
+      else
+        arma::svd(stat.EigVec(), stat.EigVal(), v, pointsInTheNode);
+
+      // Square singular values to get eigenvalues.
+      stat.EigVal() %= stat.EigVal() / (pointsInTheNode.n_cols - 1);
+    }
+    else
+    {
+      const Tree& child0 = node->Child(0);
+      const Tree& child1 = node->Child(1);
+      const KDEStat& statChild0 = child0.Stat();
+      const KDEStat& statChild1 = child1.Stat();
+
+      if (child0.NumDescendants() == 0)
+      {
+        // Not used at the moment.
+        stat.EigVec() = statChild1.EigVec();
+        stat.EigVal() = statChild1.EigVal();
+        stat.Mean() = statChild1.Mean();
+      }
+      else if (child1.NumDescendants() == 0)
+      {
+        // Not used at the moment.
+        stat.EigVec() = statChild0.EigVec();
+        stat.EigVal() = statChild0.EigVal();
+        stat.Mean() = statChild0.Mean();
+      }
+      else
+      {
+        const arma::mat& U = statChild0.EigVec();
+        const arma::mat& V = statChild1.EigVec();
+        const arma::vec& mean0 = statChild0.Mean();
+        const arma::vec& mean1 = statChild1.Mean();
+        const arma::vec& eigVal0 = statChild0.EigVal();
+        const arma::vec& eigVal1 = statChild1.EigVal();
+
+        // Orthonormal basis.
+        const arma::mat G = U.t() * V;
+        arma::mat H = V - U * G;
+        //arma::mat h = mean0 - U * U.t() * (mean0 - mean1);
+        H.insert_cols(H.n_cols, mean0 - U * U.t() * (mean0 - mean1));
+        const arma::mat v = arma::orth(H);
+
+        // New eigenproblem.
+        const size_t N = child0.NumDescendants();
+        const size_t M = child1.NumDescendants();
+        const size_t P = N + M;
+        const size_t s = eigVal0.size() + v.n_cols;
+        const arma::mat gamma = v.t() * V;
+        arma::mat firstMat(s, s, arma::fill::zeros);
+        firstMat.submat(0, 0, eigVal0.size() - 1, eigVal0.size() - 1) =
+            arma::diagmat(eigVal0);
+
+        arma::mat secondMat(s, s, arma::fill::zeros);
+        // Upper left.
+        secondMat.submat(0, 0, G.n_rows - 1, G.n_rows - 1) =
+            G * arma::diagmat(eigVal1) * G.t();
+        // Lower left.
+        secondMat.submat(G.n_rows, 0, s - 1, G.n_rows - 1) =
+            gamma * arma::diagmat(eigVal1) * G.t();
+        // Upper right.
+        secondMat.submat(0, G.n_rows, G.n_rows - 1, s - 1) =
+            G * arma::diagmat(eigVal1) * gamma.t();
+        // Lower right.
+        secondMat.submat(G.n_rows, G.n_rows, s - 1, s - 1) =
+            gamma * arma::diagmat(eigVal1) * gamma.t();
+
+        arma::mat thirdMat(s, s, arma::fill::zeros);
+        // Upper left.
+        thirdMat.submat(0, 0, G.n_rows - 1, G.n_rows - 1) = G * G.t();
+        // Lower left.
+        thirdMat.submat(G.n_rows, 0, s - 1, G.n_rows - 1) = gamma * G.t();
+        // Upper right.
+        thirdMat.submat(0, G.n_rows, G.n_rows - 1, s - 1) = G * gamma.t();
+        // Lower right.
+        thirdMat.submat(G.n_rows, G.n_rows, s - 1, s - 1) = gamma * gamma.t();
+
+        arma::mat newEigenProblem = ((double) N / P) * firstMat +
+                                    ((double) M / P) * secondMat +
+                                    ((double) N * M / (P * P)) * thirdMat;
+
+        // Right singular values. Unused.
+        arma::mat rightEigVal, newEigVec;
+        arma::vec newEigVal;
+
+        arma::svd(newEigVec, newEigVal, rightEigVal, newEigenProblem);
+
+        arma::mat upsilon(U.n_rows, U.n_cols + v.n_cols);
+        upsilon.cols(0, U.n_cols - 1) = U;
+        upsilon.cols(U.n_cols, upsilon.n_cols - 1) = v;
+
+        // Update node's orthogonal base.
+        stat.Mean() = (1 / (double) P) * (N * mean0 + M * mean1);
+        stat.EigVal() = newEigVal;
+        stat.EigVec() = upsilon * newEigVec;
+      }
+    }
+
+    // Calculate the dimensions of the data we should keep.
+    double varRetained = 0;
+    size_t newDimension = 0;
+    arma::vec normalizedEigVal = arma::normalise(stat.EigVal(), 1);
+    while((varRetained < varToRetain) &&
+          (newDimension < normalizedEigVal.size()))
+    {
+      varRetained += normalizedEigVal(newDimension);
+      ++newDimension;
+    }
+
+    // Reduce dimensions of the base to match the retained variance.
+    if (newDimension < normalizedEigVal.size())
+    {
+      stat.EigVec().shed_cols(newDimension, normalizedEigVal.size() - 1);
+      stat.EigVal().shed_rows(newDimension, normalizedEigVal.size() - 1);
+    }
+  }
+  Timer::Stop("computing_dimensionality_reduction");
+}
+
+template<typename KernelType,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+void KDE<KernelType,
+         MetricType,
+         MatType,
+         TreeType,
+         DualTreeTraversalType,
+         SingleTreeTraversalType>::
 CheckErrorValues(const double relError, const double absError)
 {
   if (relError < 0 || relError > 1)

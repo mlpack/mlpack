@@ -341,6 +341,9 @@ class KDE
   //! is the limit before Monte Carlo estimation recurses.
   double mcBreakCoef;
 
+  //! Preprocess tree PCA bases. TODO improve docs.
+  void ComputePCA(Tree& rootNode, const double varToRetain = 1.0);
+
   //! Check whether absolute and relative error values are compatible.
   static void CheckErrorValues(const double relError, const double absError);
 
