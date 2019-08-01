@@ -39,6 +39,7 @@ endforeach()
 # Add subdirectories.
 add_subdirectory(imputation_methods)
 add_subdirectory(map_policies)
+add_subdirectory(scaler_methods)
 
 # Append sources (with directory name) to list of all mlpack sources (used at
 # parent scope).
