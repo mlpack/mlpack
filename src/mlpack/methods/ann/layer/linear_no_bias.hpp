@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_ANN_LAYER_LINEAR_NO_BIAS_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/methods/ann/regularizer/regularizer.hpp>
 
 #include "layer_types.hpp"
 
@@ -31,7 +32,8 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template <
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename OutputDataType = arma::mat,
+    typename RegularizerType = NoRegularizer
 >
 class LinearNoBias
 {
@@ -44,7 +46,9 @@ class LinearNoBias
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  LinearNoBias(const size_t inSize, const size_t outSize);
+  LinearNoBias(const size_t inSize,
+               const size_t outSize,
+               RegularizerType regularizer = RegularizerType());
 
   /*
    * Reset the layer parameter.
@@ -142,6 +146,9 @@ class LinearNoBias
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Locally-stored regularizer object.
+  RegularizerType regularizer;
 }; // class LinearNoBias
 
 } // namespace ann

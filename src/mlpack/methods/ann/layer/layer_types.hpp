@@ -59,7 +59,6 @@ template<typename InputDataType, typename OutputDataType> class BatchNorm;
 template<typename InputDataType, typename OutputDataType> class DropConnect;
 template<typename InputDataType, typename OutputDataType> class Glimpse;
 template<typename InputDataType, typename OutputDataType> class LayerNorm;
-template<typename InputDataType, typename OutputDataType> class LinearNoBias;
 template<typename InputDataType, typename OutputDataType> class LSTM;
 template<typename InputDataType, typename OutputDataType> class GRU;
 template<typename InputDataType, typename OutputDataType> class FastLSTM;
@@ -70,6 +69,11 @@ template<typename InputDataType,
          typename OutputDataType,
          typename RegularizerType>
 class Linear;
+
+template<typename InputDataType,
+         typename OutputDataType,
+         typename RegularizerType>
+class LinearNoBias;
 
 template<typename InputDataType,
          typename OutputDataType
@@ -185,7 +189,7 @@ using LayerTypes = boost::variant<
     LeakyReLU<arma::mat, arma::mat>*,
     CReLU<arma::mat, arma::mat>*,
     Linear<arma::mat, arma::mat, NoRegularizer>*,
-    LinearNoBias<arma::mat, arma::mat>*,
+    LinearNoBias<arma::mat, arma::mat, NoRegularizer>*,
     LogSoftMax<arma::mat, arma::mat>*,
     Lookup<arma::mat, arma::mat>*,
     LSTM<arma::mat, arma::mat>*,
