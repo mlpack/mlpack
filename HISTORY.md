@@ -1,6 +1,6 @@
 ### mlpack 4.0.0
 ###### ????-??-??
-  * Add Multiple Pole Balancing Environment (#1901).
+  * Add Multiple Pole Balancing Environment (#1901, #1951).
 
   * Added functionality for scaling of data (#1876); see the command-line
     binding `mlpack_preprocess_scale` or Python binding `preprocess_scale()`.
@@ -17,6 +17,9 @@
   * Pendulum environment now checks for termination. All RL environments now
     have an option to terminate after a set number of time steps (no limit
     by default) (#1941).
+
+  * Add support for probabilistic KDE (kernel density estimation) error bounds
+    when using the Gaussian kernel (#1934).
 
 ### mlpack 3.1.1
 ###### 2019-05-26
