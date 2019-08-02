@@ -30,7 +30,7 @@ template<typename InputType, typename TargetType>
 double EmptyLoss<InputDataType, OutputDataType>::Forward(
   const InputType&& input, const TargetType&& target)
 {
-    return 0;
+  return arma::accu(target) / target.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -41,7 +41,7 @@ void EmptyLoss<InputDataType, OutputDataType>::Backward(
     OutputType&& output)
 {
   // todo: check correctness
-  output = input;
+  output = target / target.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>
