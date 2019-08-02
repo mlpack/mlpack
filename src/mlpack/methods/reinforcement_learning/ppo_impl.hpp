@@ -122,23 +122,28 @@ void PPO<
   ann::SoftplusFunction::Fn(actionValue.row(1), sigma);
 
   ann::NormalDistribution normalDist =
-      ann::NormalDistribution(mu.as_col(), sigma.as_col());
+      ann::NormalDistribution(vectorise(mu, 0), vectorise(sigma, 0));
 
   oldActorNetwork.Forward(sampledStates, actionValue);
   ann::TanhFunction::Fn(actionValue.row(0), mu);
   ann::SoftplusFunction::Fn(actionValue.row(1), sigma);
 
   ann::NormalDistribution oldNormalDist =
-      ann::NormalDistribution(mu.as_col(), sigma.as_col());
+      ann::NormalDistribution(vectorise(mu, 0), vectorise(sigma, 0));
 
   // Update the actor.
   // observation use action.
   arma::vec prob, oldProb;
-  normalDist.Probability(actionValues.as_col(), prob);
-  oldNormalDist.Probability(actionValues.as_col(), oldProb);
+  arma::colvec observation(sampledActions.size());
+  for (size_t i = 0; i < sampledActions.size(); i ++)
+  {
+    observation[i] = sampledActions[i].action;
+  }
+  normalDist.Probability(observation, prob);
+  oldNormalDist.Probability(observation, oldProb);
 
   // row vector
-  arma::mat ratio = (prob / oldProb).as_row();
+  arma::mat ratio = vectorise((prob / oldProb), 1);
 
   arma::mat surrogateLoss = arma::clamp(ratio, 1 - config.Epsilon(),
       1 + config.Epsilon()) % advantages;
