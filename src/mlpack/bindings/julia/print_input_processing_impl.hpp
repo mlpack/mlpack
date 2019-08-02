@@ -98,8 +98,7 @@ void PrintInputProcessing(
 
   // Now print the CLISetParam call.
   std::cout << indent << "CLISetParam" << uChar << matTypeModifier << "(\""
-      << d.name << "\", convert(" << GetJuliaType<T>() << ", " << juliaName
-      << ")" << extra << ")" << std::endl;
+      << d.name << "\", " << juliaName << extra << ")" << std::endl;
 
   if (!d.required)
   {

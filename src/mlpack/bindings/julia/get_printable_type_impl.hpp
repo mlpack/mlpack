@@ -63,17 +63,17 @@ std::string GetPrintableType(
     const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
 {
   if (std::is_same<T, arma::mat>::value)
-    return "Array{Float64, 2}";
+    return "Float64 matrix-like";
   else if (std::is_same<T, arma::Mat<size_t>>::value)
-    return "Array{Int64, 2}";
+    return "Int64 matrix-like";
   else if (std::is_same<T, arma::rowvec>::value)
-    return "Array{Float64, 1}";
+    return "Float64 vector-like";
   else if (std::is_same<T, arma::Row<size_t>>::value)
-    return "Array{Int64, 1}";
+    return "Int64 vector-like";
   else if (std::is_same<T, arma::vec>::value)
-    return "Array{Float64, 1}";
+    return "Float64 vector-like";
   else if (std::is_same<T, arma::Col<size_t>>::value)
-    return "Array{Int64, 1}";
+    return "Int64 vector-like";
   else
     throw std::invalid_argument("unknown Armadillo type" + data.cppType);
 }

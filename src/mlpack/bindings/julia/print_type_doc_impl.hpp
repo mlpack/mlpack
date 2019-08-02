@@ -91,24 +91,31 @@ std::string PrintTypeDoc(
   {
     if (T::is_col || T::is_row)
     {
-      return "A 1-d array containing Float64 data.";
+      return "A 1-d vector-like containing Float64 data (could be an "
+          "Array{Float64, 1}, an Array{Float64, 2} with one dimension having "
+          "size 1, or anything convertible to Array{Float64, 1}.";
     }
     else
     {
-      return "A 2-d array containing Float64 data.";
+      return "A 2-d matrix-like containing Float64 data (could be an "
+          "Array{Float64, 2} or a DataFrame or anything convertible to an "
+          "Array{Float64, 2}).";
     }
   }
   else if (std::is_same<typename T::elem_type, size_t>::value)
   {
     if (T::is_col || T::is_row)
     {
-      return "A 1-d array containing Int data (elements should be greater than "
-          "or equal to 0).";
+      return "A 1-d vector-like containing Int data (elements should be greater"
+          " than or equal to 0).  Could be an Array{Int64, 1}, an Array{Int64, "
+          "2} with one dimension having size 1, or anything convertible to "
+          "Array{Int64, 1}.";
     }
     else
     {
-      return "A 2-d array containing Int data (elements should be greater than "
-          "or equal to 0).";
+      return "A 2-d matrix-like containing Int data (elements should be greater"
+          " than or equal to 0).  Could be an Array{Int64, 2} or a DataFrame or"
+          " anything convertible to an Array{Int64, 2}.";
     }
   }
   else

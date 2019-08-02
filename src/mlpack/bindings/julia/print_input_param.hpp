@@ -26,17 +26,26 @@ void PrintInputParam(const util::ParamData& d,
   // "type" is a reserved keyword or function.
   const std::string juliaName = (d.name == "type") ? "type_" : d.name;
 
-  std::cout << juliaName << "::";
-  // If it's required, then we need the type.
-  if (d.required)
+  std::cout << juliaName;
+
+  if (!arma::is_arma_type<T>::value)
   {
-    std::cout << GetJuliaType<typename std::remove_pointer<T>::type>();
+    std::cout << "::";
+    // If it's required, then we need the type.
+    if (d.required)
+    {
+      std::cout << GetJuliaType<typename std::remove_pointer<T>::type>();
+    }
+    else
+    {
+      std::cout << "Union{"
+          << GetJuliaType<typename std::remove_pointer<T>::type>()
+          << ", Missing} = missing";
+    }
   }
-  else
+  else if (!d.required)
   {
-    std::cout << "Union{"
-        << GetJuliaType<typename std::remove_pointer<T>::type>()
-        << ", Missing} = missing";
+    std::cout << " = missing";
   }
 }
 
