@@ -55,7 +55,7 @@ class AcyclicNet
    */
   void Evaluate(const arma::vec& input,
                 arma::vec& output,
-                const std::map<size_t, std::map<size_t, ConnectionGene>>&
+                std::map<size_t, std::map<size_t, ConnectionGene>>&
                     directedGraph,
                 const std::vector<size_t>& nodeDepths);
  private:

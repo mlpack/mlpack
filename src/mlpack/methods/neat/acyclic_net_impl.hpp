@@ -36,7 +36,7 @@ AcyclicNet<ActivationFunction>::AcyclicNet(const size_t nodeCount,
 template <class ActivationFunction>
 void AcyclicNet<ActivationFunction>::Evaluate(const arma::vec& input,
                                               arma::vec& output,
-                                              const std::map<size_t, std::map
+                                              std::map<size_t, std::map
                                                   <size_t, ConnectionGene>>&
                                                   directedGraph,
                                               const std::vector<size_t>&
@@ -74,7 +74,7 @@ void AcyclicNet<ActivationFunction>::Evaluate(const arma::vec& input,
             nodeValues[x.first] += bias * x.second.Weight();
         }
       }
-      // If it is an input node, we need not apply the activation function.
+      // If it is an input node, we don't need to apply the activation function.
       else if (nodeID <= inputNodeCount)
       {
         for (auto const& x : directedGraph[nodeID])
