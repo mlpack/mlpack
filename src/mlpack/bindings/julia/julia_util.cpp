@@ -322,8 +322,21 @@ size_t CLI_GetParamUMatCols(const char* paramName)
  */
 size_t* CLI_GetParamUMat(const char* paramName)
 {
-  arma::access::rw(CLI::GetParam<arma::Mat<size_t>>(paramName).mem_state) = 1;
-  return CLI::GetParam<arma::Mat<size_t>>(paramName).memptr();
+  // Are we using preallocated memory?  If so we have to handle this more
+  // carefully.
+  arma::Mat<size_t>& mat = CLI::GetParam<arma::Mat<size_t>>(paramName);
+  if (mat.n_elem <= arma::arma_config::mat_prealloc)
+  {
+    // Copy the memory to something that we can give back to Julia.
+    size_t* newMem = new size_t[mat.n_elem];
+    arma::arrayops::copy(newMem, mat.mem, mat.n_elem);
+    return newMem; // We believe Julia will free it.  Hopefully we are right.
+  }
+  else
+  {
+    arma::access::rw(mat.mem_state) = 1;
+    return mat.memptr();
+  }
 }
 
 /**
