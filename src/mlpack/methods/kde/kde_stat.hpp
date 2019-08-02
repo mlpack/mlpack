@@ -25,11 +25,18 @@ class KDEStat
 {
  public:
   //! Initialize the statistic.
-  KDEStat() : validCentroid(false) { }
+  KDEStat() :
+      validCentroid(false),
+      mcBeta(0),
+      mcAlpha(0),
+      accumAlpha(0) { }
 
   //! Initialization for a fully initialized node.
   template<typename TreeType>
-  KDEStat(TreeType& node)
+  KDEStat(TreeType& node) :
+      mcBeta(0),
+      mcAlpha(0),
+      accumAlpha(0)
   {
     // Calculate centroid if necessary.
     if (!tree::TreeTraits<TreeType>::FirstPointIsCentroid)
@@ -52,6 +59,24 @@ class KDEStat
                            "value");
   }
 
+  //! Get accumulated Monte Carlo alpha of the node.
+  inline double MCBeta() const { return mcBeta; }
+
+  //! Modify accumulated Monte Carlo alpha of the node.
+  inline double& MCBeta() { return mcBeta; }
+
+  //! Get accumulated Monte Carlo alpha of the node.
+  inline double AccumAlpha() const { return accumAlpha; }
+
+  //! Modify accumulated Monte Carlo alpha of the node.
+  inline double& AccumAlpha() { return accumAlpha; }
+
+  //! Get Monte Carlo alpha of the node.
+  inline double MCAlpha() const { return mcAlpha; }
+
+  //! Modify Monte Carlo alpha of the node.
+  inline double& MCAlpha() { return mcAlpha; }
+
   //! Modify the centroid of the node.
   void SetCentroid(arma::vec newCentroid)
   {
@@ -64,10 +89,25 @@ class KDEStat
 
   //! Serialize the statistic to/from an archive.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int version)
   {
     ar & BOOST_SERIALIZATION_NVP(centroid);
     ar & BOOST_SERIALIZATION_NVP(validCentroid);
+
+    // Backward compatibility: Old versions of KDEStat did not need to handle
+    // alpha values.
+    if (version > 0)
+    {
+      ar & BOOST_SERIALIZATION_NVP(mcBeta);
+      ar & BOOST_SERIALIZATION_NVP(mcAlpha);
+      ar & BOOST_SERIALIZATION_NVP(accumAlpha);
+    }
+    else if (Archive::is_loading::value)
+    {
+      mcBeta = -1;
+      mcAlpha = -1;
+      accumAlpha = -1;
+    }
   }
 
  private:
@@ -76,9 +116,21 @@ class KDEStat
 
   //! Whether the centroid is updated or is junk.
   bool validCentroid;
+
+  //! Beta value for which mcAlpha is valid.
+  double mcBeta;
+
+  //! Monte Carlo alpha for this node.
+  double mcAlpha;
+
+  //! Accumulated not used Monte Carlo alpha in the current node.
+  double accumAlpha;
 };
 
 } // namespace kde
 } // namespace mlpack
+
+//! Set the serialization version of the KDEStat class.
+BOOST_TEMPLATE_CLASS_VERSION(template<>, mlpack::kde::KDEStat, 1);
 
 #endif

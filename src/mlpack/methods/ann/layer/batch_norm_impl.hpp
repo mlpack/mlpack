@@ -110,7 +110,7 @@ void BatchNorm<InputDataType, OutputDataType>::Backward(
 {
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
-  // Step 1: dl / dxhat
+  // Step 1: dl / dxhat.
   const arma::mat norm = gy.each_col() % gamma;
 
   // Step 2: sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.

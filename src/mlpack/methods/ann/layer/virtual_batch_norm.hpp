@@ -1,17 +1,16 @@
 /**
- * @file batch_norm.hpp
- * @author Praveen Ch
- * @author Manthan-R-Sheth
+ * @file virtual_batch_norm.hpp
+ * @author Saksham Bansal
  *
- * Definition of the Batch Normalization layer class.
+ * Definition of the VirtualBatchNorm layer class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_BATCHNORM_HPP
-#define MLPACK_METHODS_ANN_LAYER_BATCHNORM_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_VIRTUALBATCHNORM_HPP
+#define MLPACK_METHODS_ANN_LAYER_VIRTUALBATCHNORM_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -19,28 +18,19 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Declaration of the Batch Normalization layer class. The layer transforms
- * the input data into zero mean and unit variance and then scales and shifts
- * the data by parameters, gamma and beta respectively. These parameters are
- * learnt by the network.
- *
- * If deterministic is false (training), the mean and variance over the batch is
- * calculated and the data is normalized. If it is set to true (testing) then
- * the mean and variance accrued over the training set is used.
+ * Declaration of the VirtualBatchNorm layer class. Instead of using the
+ * batch statistics for normalizing on a mini-batch, it uses a reference subset of
+ * the data for calculating the normalization statistics.
  *
  * For more information, refer to the following paper,
  *
  * @code
- * @article{Ioffe15,
- *   author    = {Sergey Ioffe and
- *                Christian Szegedy},
- *   title     = {Batch Normalization: Accelerating Deep Network Training by
- *                Reducing Internal Covariate Shift},
- *   journal   = {CoRR},
- *   volume    = {abs/1502.03167},
- *   year      = {2015},
- *   url       = {http://arxiv.org/abs/1502.03167},
- *   eprint    = {1502.03167},
+ * @article{Goodfellow2016,
+ *   author  = {Tim Salimans, Ian Goodfellow, Wojciech Zaremba, Vicki Cheung,
+ *              Alec Radford, Xi Chen},
+ *   title   = {Improved Techniques for Training GANs},
+ *   year    = {2016},
+ *   url     = {https://arxiv.org/abs/1606.03498},
  * }
  * @endcode
  *
@@ -53,31 +43,36 @@ template <
   typename InputDataType = arma::mat,
   typename OutputDataType = arma::mat
 >
-class BatchNorm
+class VirtualBatchNorm
 {
  public:
-  //! Create the BatchNorm object.
-  BatchNorm();
+  //! Create the VirtualBatchNorm object.
+  VirtualBatchNorm();
 
   /**
-   * Create the BatchNorm layer object for a specified number of input units.
+   * Create the VirtualBatchNorm layer object for a specified number of input units.
    *
+   * @param referenceBatch The data from which the normalization
+   *        statistics are computed.
    * @param size The number of input units.
    * @param eps The epsilon added to variance to ensure numerical stability.
    */
-  BatchNorm(const size_t size, const double eps = 1e-8);
+  template<typename eT>
+  VirtualBatchNorm(const arma::Mat<eT>& referenceBatch,
+                   const size_t size,
+                   const double eps = 1e-8);
 
   /**
-   * Reset the layer parameters
+   * Reset the layer parameters.
    */
   void Reset();
 
   /**
-   * Forward pass of the Batch Normalization layer. Transforms the input data
+   * Forward pass of the Virtual Batch Normalization layer. Transforms the input data
    * into zero mean and unit variance, scales the data by a factor gamma and
    * shifts it by beta.
    *
-   * @param input Input data for the layer
+   * @param input Input data for the layer.
    * @param output Resulting output activations.
    */
   template<typename eT>
@@ -86,24 +81,24 @@ class BatchNorm
   /**
    * Backward pass through the layer.
    *
-   * @param input The input activations
+   * @param input The input activations.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
+  void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
 
   /**
    * Calculate the gradient using the output delta and the input activations.
    *
-   * @param input The input activations
-   * @param error The calculated error
+   * @param input The input activations.
+   * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& input,
+  void Gradient(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& error,
                 arma::Mat<eT>&& gradient);
 
@@ -127,19 +122,8 @@ class BatchNorm
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
-  //! Get the value of deterministic parameter.
-  bool Deterministic() const { return deterministic; }
-  //! Modify the value of deterministic parameter.
-  bool& Deterministic() { return deterministic; }
-
-  //! Get the mean over the training data.
-  OutputDataType TrainingMean() { return runningMean; }
-
-  //! Get the variance over the training data.
-  OutputDataType TrainingVariance() { return runningVariance / count; }
-
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -163,26 +147,23 @@ class BatchNorm
   //! Locally-stored parameters.
   OutputDataType weights;
 
-  /**
-   * If true then mean and variance over the training set will be considered
-   * instead of being calculated over the batch.
-   */
-  bool deterministic;
+  //! Mean of features in the reference batch.
+  OutputDataType referenceBatchMean;
 
-  //! Locally-stored running mean/variance counter.
-  size_t count;
+  //! Variance of features in the reference batch.
+  OutputDataType referenceBatchMeanSquared;
+
+  //! The coefficient for reference batch statistics.
+  double oldCoefficient;
+
+  //! The coefficient for input batch statistics.
+  double newCoefficient;
 
   //! Locally-stored mean object.
   OutputDataType mean;
 
   //! Locally-stored variance object.
   OutputDataType variance;
-
-  //! Locally-stored mean object.
-  OutputDataType runningMean;
-
-  //! Locally-stored variance object.
-  OutputDataType runningVariance;
 
   //! Locally-stored gradient object.
   OutputDataType gradient;
@@ -193,17 +174,20 @@ class BatchNorm
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
+  //! Locally-stored input parameter object.
+  OutputDataType inputParameter;
+
   //! Locally-stored normalized input.
   OutputDataType normalized;
 
   //! Locally-stored zero mean input.
-  OutputDataType inputMean;
-}; // class BatchNorm
+  OutputDataType inputSubMean;
+}; // class VirtualBatchNorm
 
 } // namespace ann
 } // namespace mlpack
 
 // Include the implementation.
-#include "batch_norm_impl.hpp"
+#include "virtual_batch_norm_impl.hpp"
 
 #endif
