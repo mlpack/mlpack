@@ -142,8 +142,7 @@ void PPO<
       1 + config.Epsilon()) % advantages;
   arma::mat loss = - arma::min(ratio % advantages, surrogateLoss);
 
-  // todo: debug empty loss
-  //trick action
+  // todo: debug empty loss and backward
   loss.insert_rows(loss.n_rows, loss.row(0));
 
   actorNetwork.Backward(loss, actorGradients);
