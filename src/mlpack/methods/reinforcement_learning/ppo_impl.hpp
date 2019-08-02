@@ -83,8 +83,6 @@ void PPO<
   ReplayType
 >::Update()
 {
-  std::cout << "update" << std::endl;
-
   // Sample from previous experience.
   arma::mat sampledStates;
   std::vector<ActionType> sampledActions;
@@ -113,14 +111,29 @@ void PPO<
 
   // Update the critic.
   criticNetwork.Backward(advantages, criticGradients);
-
   criticUpdater.Update(criticNetwork.Parameters(), config.StepSize(),
       criticGradients);
 
+  arma::mat actionValue, sigma, mu;
+  actorNetwork.Forward(sampledStates, actionValue);
+
+  ann::TanhFunction::Fn(actionValue.row(0), mu);
+  ann::SoftplusFunction::Fn(actionValue.row(1), sigma);
+
+  ann::NormalDistribution normalDist =
+      ann::NormalDistribution(mu.as_col(), sigma.as_col());
+
+  oldActorNetwork.Forward(sampledStates, actionValue);
+  ann::TanhFunction::Fn(actionValue.row(0), mu);
+  ann::SoftplusFunction::Fn(actionValue.row(1), sigma);
+
+  ann::NormalDistribution oldNormalDist =
+      ann::NormalDistribution(mu.as_col(), sigma.as_col());
+
   // Update the actor.
   arma::vec prob, oldProb;
-  normalDist.Probability(actionValues, prob);
-  oldNormalDist.Probability(actionValues, oldProb);
+  normalDist.Probability(actionValues.as_col(), prob);
+  oldNormalDist.Probability(actionValues.as_col(), oldProb);
 
   // row vector
   arma::mat ratio = (prob / oldProb).as_row();
@@ -130,6 +143,9 @@ void PPO<
   arma::mat loss = - arma::min(ratio % advantages, surrogateLoss);
 
   // todo: debug empty loss
+  //trick action
+  loss.insert_rows(loss.n_rows, loss.row(0));
+
   actorNetwork.Backward(loss, actorGradients);
 
   actorUpdater.Update(actorNetwork.Parameters(), config.StepSize(),
@@ -158,20 +174,19 @@ double PPO<
 {
   // Get the action value for each action at current state.
   arma::mat actionValue, sigma, mu;
+
   actorNetwork.Predict(state.Encode(), actionValue);
 
-  ann::TanhFunction::Fn(actionValue.row(0), sigma);
-  ann::SoftplusFunction::Fn(actionValue.row(1), mu);
-  normalDist = distribution::GaussianDistribution(sigma, mu);
+  ann::TanhFunction::Fn(actionValue.row(0), mu);
+  ann::SoftplusFunction::Fn(actionValue.row(1), sigma);
 
-  oldActorNetwork.Predict(state.Encode(), actionValue);
 
-  ann::TanhFunction::Fn(actionValue.row(0), sigma);
-  ann::SoftplusFunction::Fn(actionValue.row(1), mu);
-  oldNormalDist = distribution::GaussianDistribution(sigma, mu);
+  ann::NormalDistribution normalDist
+      = ann::NormalDistribution(mu, sigma);
 
   ActionType action;
-  action.action = normalDist.Random()[0];
+  action.action = normalDist.Sample()[0];
+
 
   // Interact with the environment to advance to next state.
   StateType nextState;

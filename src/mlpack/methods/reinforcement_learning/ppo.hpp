@@ -18,6 +18,7 @@
 #include "replay/random_replay.hpp"
 #include "mlpack/methods/ann/activation_functions/tanh_function.hpp"
 #include "mlpack/core/dists/gaussian_distribution.hpp"
+#include "mlpack/methods/ann/dists/normal_distribution.hpp"
 #include "training_config.hpp"
 
 namespace mlpack {
@@ -100,7 +101,7 @@ class PPO
     */
   double Episode();
 
-  /*
+  /**
    * Update the actor and critic model
    * */
   void Update();
@@ -147,12 +148,6 @@ class PPO
 
   //! Locally-stored flag indicating training mode or test mode.
   bool deterministic;
-
-  //! Locally-stored distribution for sampling action.
-  distribution::GaussianDistribution normalDist;
-
-  //! Locally-stored distribution for oldActorNetwork sampling action.
-  distribution::GaussianDistribution oldNormalDist;
 };
 
 } // namespace rl
