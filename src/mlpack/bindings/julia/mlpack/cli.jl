@@ -27,6 +27,40 @@ export CLISetPassed
 
 const library = joinpath(@__DIR__, "libmlpack_julia_util.so")
 
+# Utility function to convert 1d object to 2d.
+function convert_to_2d(in::Array{T, 1})::Array{T, 2} where T
+  reshape(in, length(in), 1)
+end
+
+# Utility function to convert 2d object to 1d.  Fails if the size of one
+# dimension is not 1.
+function convert_to_1d(in::Array{T, 2})::Array{T, 1} where T
+  if size(in, 1) != 1 && size(in, 2) != 1
+    throw(ArgumentError("given matrix must be 1-dimensional; but its size is " *
+        "$(size(in))"))
+  end
+
+  vec(in)
+end
+
+# Utility function to convert to and return a matrix.
+function to_matrix(input, T::Type)
+  if isa(input, Array{T, 1})
+    convert_to_2d(input)
+  else
+    convert(Array{T, 2}, input)
+  end
+end
+
+# Utility function to convert to and return a vector.
+function to_vector(input, T::Type)
+  if isa(input, Array{T, 1})
+    input
+  else
+    convert_to_1d(convert(Array{T, 2}, input))
+  end
+end
+
 function CLIRestoreSettings(programName::String)
   ccall((:CLI_RestoreSettings, library), Nothing, (Cstring,), programName);
 end
@@ -52,23 +86,26 @@ function CLISetParam(paramName::String, paramValue::String)
 end
 
 function CLISetParamMat(paramName::String,
-                        paramValue::Array{Float64, 2},
+                        paramValue,
                         pointsAsRows::Bool)
+  paramMat = to_matrix(paramValue, Float64)
   ccall((:CLI_SetParamMat, library), Nothing, (Cstring, Ptr{Float64}, UInt64,
-      UInt64, Bool), paramName, Base.pointer(paramValue), size(paramValue, 1),
-      size(paramValue, 2), pointsAsRows);
+      UInt64, Bool), paramName, Base.pointer(paramMat), size(paramMat, 1),
+      size(paramMat, 2), pointsAsRows);
 end
 
 function CLISetParamUMat(paramName::String,
-                         paramValue::Array{Int64, 2},
+                         paramValue,
                          pointsAsRows::Bool)
+  paramMat = to_matrix(paramValue, Int64)
+
   # Sanity check.
-  if minimum(paramValue) <= 0
-    throw(DomainError("Input $(paramName)::Array{Int64, 2} cannot have 0 or " *
-        "negative values!  Must be 1 or greater."))
+  if minimum(paramMat) <= 0
+    throw(DomainError("Input $(paramName) cannot have 0 or negative values!  " *
+        "Must be 1 or greater."))
   end
 
-  m = convert(Array{UInt64, 2}, paramValue .- 1)
+  m = convert(Array{UInt64, 2}, paramMat .- 1)
   ccall((:CLI_SetParamUMat, library), Nothing, (Cstring, Ptr{UInt64}, UInt64,
       UInt64, Bool), paramName, Base.pointer(m), size(paramValue, 1),
       size(paramValue, 2), pointsAsRows);
@@ -104,36 +141,42 @@ function CLISetParam(paramName::String,
 end
 
 function CLISetParamRow(paramName::String,
-                        paramValue::Array{Float64, 1})
+                        paramValue)
+  paramVec = to_vector(paramValue, Float64)
   ccall((:CLI_SetParamRow, library), Nothing, (Cstring, Ptr{Float64}, UInt64),
-      paramName, Base.pointer(paramValue), size(paramValue, 1));
+      paramName, Base.pointer(paramVec), size(paramVec, 1));
 end
 
 function CLISetParamCol(paramName::String,
-                        paramValue::Array{Float64, 1})
+                        paramValue)
+  paramVec = to_vector(paramValue, Float64)
   ccall((:CLI_SetParamCol, library), Nothing, (Cstring, Ptr{Float64}, UInt64),
-      paramName, Base.pointer(paramValue), size(paramValue, 1));
+      paramName, Base.pointer(paramVec), size(paramVec, 1));
 end
 
 function CLISetParamURow(paramName::String,
-                         paramValue::Array{Int64, 1})
+                         paramValue)
+  paramVec = to_vector(paramValue, Int64)
+
   # Sanity check.
-  if minimum(paramValue) <= 0
-    throw(DomainError("Input $(paramName)::Array{Int64, 1} cannot have 0 or " *
-        "negative values!  Must be 1 or greater."))
+  if minimum(paramVec) <= 0
+    throw(DomainError("Input $(paramName) cannot have 0 or negative values!  " *
+        "Must be 1 or greater."))
   end
-  m = convert(Array{UInt64, 1}, paramValue .- 1)
+  m = convert(Array{UInt64, 1}, paramVec .- 1)
 
   ccall((:CLI_SetParamURow, library), Nothing, (Cstring, Ptr{UInt64}, UInt64),
       paramName, Base.pointer(m), size(paramValue, 1));
 end
 
 function CLISetParamUCol(paramName::String,
-                         paramValue::Array{Int64, 1})
+                         paramValue)
+  paramVec = to_vector(paramValue, Int64)
+
   # Sanity check.
-  if minimum(paramValue) <= 0
-    throw(DomainError("Input $(paramName)::Array{Int64, 1} cannot have 0 or " *
-        "negative values!  Must be 1 or greater."))
+  if minimum(paramVec) <= 0
+    throw(DomainError("Input $(paramName) cannot have 0 or negative values!  " *
+        "Must be 1 or greater."))
   end
   m = convert(Array{UInt64, 1}, paramValue .- 1)
 
