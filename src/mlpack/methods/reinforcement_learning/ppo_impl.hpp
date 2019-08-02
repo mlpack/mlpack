@@ -114,6 +114,7 @@ void PPO<
   criticUpdater.Update(criticNetwork.Parameters(), config.StepSize(),
       criticGradients);
 
+  // calculate the ratio.
   arma::mat actionValue, sigma, mu;
   actorNetwork.Forward(sampledStates, actionValue);
 
@@ -131,6 +132,7 @@ void PPO<
       ann::NormalDistribution(mu.as_col(), sigma.as_col());
 
   // Update the actor.
+  // observation use action.
   arma::vec prob, oldProb;
   normalDist.Probability(actionValues.as_col(), prob);
   oldNormalDist.Probability(actionValues.as_col(), oldProb);
@@ -237,13 +239,14 @@ double PPO<
       break;
 
     totalReturn += Step();
-    steps++;
 
-    if (totalSteps % config.UpdateInterval() == 0)
+    if (steps > 0 && totalSteps % config.UpdateInterval() == 0)
     {
       Update();
+      replayMethod.Clear();
     }
 
+    steps++;
     totalSteps++;
   }
   return totalReturn;
