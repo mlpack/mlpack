@@ -150,9 +150,14 @@ void PPO<
   arma::mat loss = - arma::min(ratio % advantages, surrogateLoss);
 
   // todo: debug empty loss and backward
-  loss.insert_rows(loss.n_rows, loss.row(0));
+  // loss.insert_rows(loss.n_rows, loss.row(0));
+  arma::mat dTanh, dSoftP;
+  ann::TanhFunction::Deriv(vectorise(loss, 1), dTanh);
+  ann::SoftplusFunction::Deriv(vectorise(loss, 1), dSoftP);
 
-  actorNetwork.Backward(loss, actorGradients);
+  arma::mat dLoss = arma::join_cols(dTanh, dSoftP);
+
+  actorNetwork.Backward(dLoss, actorGradients);
 
   actorUpdater.Update(actorNetwork.Parameters(), config.StepSize(),
       actorGradients);
