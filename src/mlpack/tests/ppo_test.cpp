@@ -16,7 +16,6 @@
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
-#include <mlpack/methods/ann/loss_functions/surrogate_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/empty_loss.hpp>
 #include <mlpack/methods/reinforcement_learning/ppo.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
@@ -49,7 +48,6 @@ BOOST_AUTO_TEST_CASE(PENDULUMWITHPPO)
     critic.Add<ReLULayer<>>();
     critic.Add<Linear<>>(128, 1);
 
-    // todo: add proper loss function
     FFN<EmptyLoss<>, GaussianInitialization> actor(
         EmptyLoss<>(), GaussianInitialization(0, 0.001));
 
