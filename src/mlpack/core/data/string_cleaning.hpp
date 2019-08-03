@@ -97,12 +97,14 @@ class StringCleaning
                                 boost::hash<boost::string_view> >stopwords,
                        const TokenizerType tokenizer)
   {
-    for (auto& str : input)
-    {
       std::string result = "";
       boost::string_view token;
-      boost::string_view strView(str);
+      boost::string_view strView;
       size_t lineStart = 0;
+    for (auto& str : input)
+    {
+      strView = str;
+      lineStart = 0;
       token = tokenizer(strView);
       while (!token.empty())
       {
