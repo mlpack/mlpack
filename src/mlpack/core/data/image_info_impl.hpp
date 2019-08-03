@@ -22,7 +22,7 @@ namespace mlpack {
 namespace data {
 
 static const std::vector<std::string> loadFileTypes({"jpg", "png", "tga",
-    "bmp", "psd", "gif", "hdr", "pic", "pnm"});
+    "bmp", "psd", "gif", "hdr", "pic", "pnm", "jpeg"});
 
 static const std::vector<std::string> saveFileTypes({"jpg", "png", "tga",
     "bmp", "hdr"});
