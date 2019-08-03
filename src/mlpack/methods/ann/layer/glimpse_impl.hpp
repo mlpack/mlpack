@@ -224,6 +224,9 @@ void Glimpse<InputDataType, OutputDataType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(depth);
   ar & BOOST_SERIALIZATION_NVP(scale);
   ar & BOOST_SERIALIZATION_NVP(inputWidth);
+  ar & BOOST_SERIALIZATION_NVP(inputHeight);
+  ar & BOOST_SERIALIZATION_NVP(outputWidth);
+  ar & BOOST_SERIALIZATION_NVP(outputHeight);
   ar & BOOST_SERIALIZATION_NVP(location);
 }
 
