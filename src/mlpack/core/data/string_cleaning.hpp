@@ -93,33 +93,26 @@ class StringCleaning
   */
   template<typename TokenizerType>
   void RemoveStopWords(std::vector<std::string>& input,
-                       std::unordered_set<boost::string_view,
-                                boost::hash<boost::string_view> >stopwords,
-                       const TokenizerType tokenizer)
+                       const std::unordered_set<boost::string_view,
+                                boost::hash<boost::string_view> >& stopwords,
+                       const TokenizerType& tokenizer)
   {
-      std::string result = "";
-      boost::string_view token;
-      boost::string_view strView;
-      size_t lineStart = 0;
     for (auto& str : input)
     {
-      strView = str;
-      lineStart = 0;
+      std::string result = "";
+      boost::string_view token;
+      boost::string_view strView(str);
       token = tokenizer(strView);
+      if (!token.empty() && stopwords.find(token) == stopwords.end())
+        result += std::string(token);
+      if (!token.empty())
+        token = tokenizer(strView);
+      std::cout<<"here"<<result<<"opt \n";
       while (!token.empty())
       {
         if (stopwords.find(token) == stopwords.end())
-        {
-          // token is not a stop word add it;
-          if(!lineStart)
-          {
-            result += std::string(token);
-            lineStart = 1;
-            token = tokenizer(strView);
-            continue;
-          }
-          result += " " + std::string(token);
-        }
+          result += (result == "") ? std::string(token) : " " + 
+              std::string(token);
         token = tokenizer(strView);
       }
       str = std::move(result);

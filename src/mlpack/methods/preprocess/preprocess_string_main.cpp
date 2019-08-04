@@ -78,7 +78,7 @@ static void mlpackMain()
   if (CLI::HasParam("column_delimiter"))
   {
     column_delimiter = CLI::GetParam<std::string>("column_delimiter");
-    // Allow only 3 delimeter.
+    // Allow only 3 delimiters.
     RequireParamValue<std::string>("column_delimiter", [](std::string del)
         { return del == "\t" || del == "," || del == " "; }, true,
         "Delimiter should be either \\t (tab) or , (comma) or ' ' (space) ");
@@ -122,12 +122,11 @@ static void mlpackMain()
       }
       catch (const std::exception& e)
       {
-        Log::Fatal << e.what() << std::endl;
+        Log::Fatal << "Dimension value not clear, either negatve or can't "
+        "parse the range. Usage a-b \n";
       }
       for (int i = columnstartindex; i <= columnendindex; i++)
-      {
         dimension.insert(i);
-      }
     }
     else
     {
@@ -137,12 +136,11 @@ static void mlpackMain()
       }
       catch (const std::exception& e)
       {
-        Log::Fatal << e.what() << std::endl;      
+        Log::Fatal << "Dimension value not appropriate \n";      
       }
     }
   }
-  std::cout<<"\n";
-  // Sorting neccessary
+
   // Extracting the Contents of file
   // File pointer
   ifstream fin;
@@ -158,7 +156,7 @@ static void mlpackMain()
   while (std::getline(fin, line))
   {
     stringstream streamLine(line);
-    dataset.push_back(std::vector<std::string>());
+    dataset.emplace_back(std::vector<std::string>());
     // delimeter[0] becase the standard function accepts char as input.
     while (std::getline(streamLine, word, column_delimiter[0]))
     {
@@ -193,8 +191,8 @@ static void mlpackMain()
   data::StringCleaning obj;
   if (CLI::HasParam("lowercase"))
   {
-    for (size_t i = 0; i < input.size(); i++)
-      obj.LowerCase(input[i]);
+    for (auto& column_line : input)
+      obj.LowerCase(column_line);
   }
   if (CLI::HasParam("stopwords"))
   {
@@ -223,14 +221,14 @@ static void mlpackMain()
     }
     const std::string delimiter = CLI::GetParam<std::string>
         ("delimiter");
-    for (size_t i   = 0; i < input.size(); i++)
-      obj.RemoveStopWords(input[i], stopwords,
+    for (auto& column_line : input)
+      obj.RemoveStopWords(column_line, stopwords,
           data::SplitByChar(delimiter));
   }
   if (CLI::HasParam("punctuation"))
   {
-    for (size_t i = 0; i < input.size(); i++)
-      obj.RemovePunctuation(input[i]);
+    for (auto& column_line : input)
+      obj.RemovePunctuation(column_line);
   }
   const std::string outputFilename = CLI::GetParam<std::string>("preprocess"
       "_dataset");
@@ -249,7 +247,10 @@ static void mlpackMain()
     {
       if (col < dimension.size() && *dimensionIterator == j)
       {
-        fout<<input[col][i]<<column_delimiter;
+        if (j + 1 < dataset[i].size())
+          fout<<input[col][i]<<column_delimiter;
+        else
+          fout<<input[col][i];
         dimensionIterator++;
         col++;
       }
