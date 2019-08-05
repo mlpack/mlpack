@@ -542,13 +542,36 @@ BOOST_AUTO_TEST_CASE(TfIdfEncodingTest)
     // Every token should be mapped only once
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
-  std::cout<<"inside \n"<<output<<"\n";
   arma::mat expected = {
     { 0.1193, 0.0440, 0.0440, 0.0440, 0, 0, 0, 0 },
     { 0, 0, 0, 0, 0.1590, 0.1590, 0.1590, 0 },
     { 0, 0.0440, 0.0440, 0.0440, 0, 0, 0, 0.1193 }
   };
   CheckMatrices(output, expected, 1e-01);
+}
+
+/**
+* Test TFIDF encoding for characters using lamda function.
+*/
+BOOST_AUTO_TEST_CASE(TfIdfEncodingIndividualCharactersTest)
+{
+  vector<string> input = {
+    "GACCA",
+    "ABCABCD",
+    "GAB"
+  };
+
+  arma::mat output;
+  TfIdfEncoding<CharExtract::TokenType> encoder;
+
+  // Passing a empty string to encode characters
+  encoder.Encode(input, output, CharExtract());
+  arma::mat target = {
+    { 0.0440, 0.0440, 0.0440, 0, 0 },
+    { 0, 0, 0, 0, 0.0587 },
+    { 0.0185, 0.0556, 0, 0.0371, 0 }
+  };
+  CheckMatrices(output, target, 1e-01);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

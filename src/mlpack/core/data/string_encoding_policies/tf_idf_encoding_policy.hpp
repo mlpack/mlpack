@@ -46,7 +46,6 @@ class TfIdfEncodingPolicy
                          size_t dictionarySize)
   {
     output.zeros(datasetSize, dictionarySize);
-    std::cout<<"Init matrix "<<output.n_rows<<" "<<output.n_cols<<"\n";
   }
 
   /**
@@ -80,9 +79,7 @@ class TfIdfEncodingPolicy
   static void Encode(MatType& output, size_t value, size_t row, size_t /*col*/)
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.
-    std::cout<<"tokencoutn for "<<row<<" "<<value-1<<" is "<<tokenCount[row][value - 1]<<" and divided by "<<row_size[row]-1<<"\n";
-    std::cout<<"taking log10 of "<<output.n_rows<<" and "<<idfdict[value];
-    output(row, value-1) = (tokenCount[row][value - 1] / (row_size[row]-1)) * 
+    output(row, value-1) = (tokenCount[row][value - 1] / row_size[row]) * 
         std::log10(output.n_rows / idfdict[value-1]);
   }
 
@@ -100,7 +97,7 @@ class TfIdfEncodingPolicy
                      size_t row, size_t /*col*/)
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.
-    output[row][value-1] = (tokenCount[row][value - 1] / (row_size[row]-1)) * 
+    output[row][value-1] = (tokenCount[row][value - 1] / row_size[row]) * 
         std::log10(output.size() / idfdict[value-1]);
   }
 
