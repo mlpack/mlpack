@@ -574,30 +574,15 @@ BOOST_AUTO_TEST_CASE(OnePassTfIdfEncodingTest)
     // Every token should be mapped only once
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
-  std::cout<<"print output "<<std::endl;
-  for(int i=0;i<output.size();i++)
-  {
-    for(int j=0;j<output[i].size();j++)
-    {
-      cout<<output[i][j]<<" ";
-    }
-    std::cout<<std::endl;
-  }
+
   vector<vector<double>> expected = {
-    { 0.1193, 0.0440, 0.0440, 0.0440, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0.1590, 0.1590, 0.1590, 0 },
-    { 0, 0.0440, 0.0440, 0.0440, 0, 0, 0, 0.1193 }
+    { 0.11928, 0.0440228, 0.0440228, 0.0440228, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0.15904, 0.15904, 0.15904, 0 },
+    { 0, 0.044028, 0.0440228, 0.0440228, 0, 0, 0, 0.11928 }
   };
-  std::cout<<"normal expected"<<std::endl;
-  for(int i=0;i<expected.size();i++)
-  {
-    for(int j=0;j<expected[i].size();j++)
-    {
-      cout<<expected[i][j]<<" ";
-    }
-    std::cout<<std::endl;
-  }
-  BOOST_REQUIRE(output == expected);
+  for(size_t i=0;i<expected.size();i++)
+    for(size_t j=0;j<expected[i].size();j++)
+      BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-01);
 }
 
 /**
@@ -617,11 +602,38 @@ BOOST_AUTO_TEST_CASE(TfIdfEncodingIndividualCharactersTest)
   // Passing a empty string to encode characters
   encoder.Encode(input, output, CharExtract());
   arma::mat target = {
-    { 0.0440, 0.0440, 0.0440, 0, 0 },
-    { 0, 0, 0, 0, 0.0587 },
-    { 0.0185, 0.0556, 0, 0.0371, 0 }
+    { 0.0352, 0, 0.0704, 0, 0 },
+    { 0, 0, 0.0503, 0.0503, 0.0682 },
+    { 0.0587, 0, 0, 0.0587, 0 }
   };
   CheckMatrices(output, target, 1e-01);
+}
+
+/**
+ * Test the one pass modification of the Bag of Words encoding algorithm
+ * in case of individual character encoding.
+ */
+BOOST_AUTO_TEST_CASE(OnePassTfIdfEncodingIndividualCharactersTest)
+{
+  std::vector<string> input = {
+    "GACCA",
+    "ABCABCD",
+    "GAB"
+  };
+
+  vector<vector<double>> output;
+  TfIdfEncoding<CharExtract::TokenType> encoder;
+
+  // Passing a empty string to encode characters
+  encoder.Encode(input, output, CharExtract());
+  vector<vector<double>> expected = {
+    { 0.0352, 0, 0.0704, 0, 0 },
+    { 0, 0, 0.0503, 0.0503, 0.0682 },
+    { 0.0587, 0, 0, 0.0587, 0 }
+  };
+  for(size_t i=0;i<expected.size();i++)
+    for(size_t j=0;j<expected[i].size();j++)
+      BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-01);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

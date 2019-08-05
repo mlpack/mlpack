@@ -46,13 +46,6 @@ class TfIdfEncodingPolicy
                          size_t dictionarySize)
   {
     output.zeros(datasetSize, dictionarySize);
-    std::cout<<"arma::mat;\n";
-    for(auto it=idfdict.begin();it!=idfdict.end();it++)
-    {
-      std::cout<<it->first<<" "<<it->second<<"\n ";
-    }
-    std::cout<<"\n";
-
   }
 
   /**
@@ -72,12 +65,6 @@ class TfIdfEncodingPolicy
                          size_t dictionarySize)
   {
     output.resize(datasetSize, std::vector<OutputType> (dictionarySize,0));
-    std::cout<<"std::vector<char> v;\n";
-    for(auto it=idfdict.begin();it!=idfdict.end();it++)
-    {
-      std::cout<<it->first<<" "<<it->second<<"\n";
-    }
-    std::cout<<"\n";
   }
 
   /** 
@@ -90,15 +77,11 @@ class TfIdfEncodingPolicy
   * @param col The row token number at which the encoding is performed.
   */
   template<typename MatType>
-  static void Encode(MatType& output, size_t value, size_t row, size_t /*col*/)
+  void Encode(MatType& output, size_t value, size_t row, size_t /*col*/)
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.
-    // std::cout<<"divide "<<(tokenCount[row][value - 1] / row_size[row])<<"\n";
-    // std::cout<<"output size "<<output.n_rows<<" idfdict value "<<value-1<<" is "<<idfdict[value-1]<<"\n";
-    // std::cout<<"multipy "<<(output.n_rows / idfdict[value-1])<<" "<<std::log10(output.n_rows / idfdict[value-1])<<"\n";
     output(row, value-1) = (tokenCount[row][value - 1] / row_size[row]) * 
         std::log10(output.n_rows / idfdict[value-1]);
-    // std::cout<<"output at "<<row<<" "<<value-1<<" "<<output(row, value-1)<<"\n";
   }
 
   /** 
@@ -112,16 +95,12 @@ class TfIdfEncodingPolicy
   * @param col The row token number at which the encoding is performed.
   */
   template<typename OutputType>
-  static void Encode(std::vector<std::vector<OutputType> >& output, size_t value,
+  void Encode(std::vector<std::vector<OutputType> >& output, size_t value,
                      size_t row, size_t /*col*/)
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.
-    // std::cout<<"divide "<<(tokenCount[row][value - 1] / row_size[row])<<"\n";
-    // std::cout<<"output size "<<output.size()<<" idfdict value "<<value-1<<" is "<<idfdict[value-1]<<"\n";
-    // std::cout<<"multipy "<<(output.size() / idfdict[value-1])<<" "<<std::log10(output.size() / idfdict[value-1])<<"\n";
     output[row][value-1] = (tokenCount[row][value - 1] / row_size[row]) * 
         std::log10(output.size() / idfdict[value-1]);
-    // std::cout<<"output at std::vector"<<row<<" "<<value-1<<" "<<output[row][value-1]<<"\n";
   }
 
   /**
@@ -141,7 +120,7 @@ class TfIdfEncodingPolicy
   * @param numToken The count of token parsed till now.
   * @param value The encoded token.
   */
-  static void PreprocessToken(size_t row, size_t /*numTokens*/,
+   void PreprocessToken(size_t row, size_t /*numTokens*/,
                        size_t value)
   {
     if(row>=tokenCount.size())
@@ -155,14 +134,10 @@ class TfIdfEncodingPolicy
     row_size.back()++;
   }
  private:
-  static std::vector<std::unordered_map<size_t, double>> tokenCount;
-  static std::unordered_map<size_t, double> idfdict;
-  static std::vector<double> row_size;
+  std::vector<std::unordered_map<size_t, double>> tokenCount;
+  std::unordered_map<size_t, double> idfdict;
+  std::vector<double> row_size;
 };
-
-std::vector<double> TfIdfEncodingPolicy::row_size = {};
-std::unordered_map<size_t, double> TfIdfEncodingPolicy::idfdict = {};
-std::vector<std::unordered_map<size_t, double>> TfIdfEncodingPolicy::tokenCount = {};
 
 /**
  * The specialization provides some information about the dictionary encoding
