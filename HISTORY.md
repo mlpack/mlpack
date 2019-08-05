@@ -18,6 +18,9 @@
     have an option to terminate after a set number of time steps (no limit
     by default) (#1941).
 
+  * Add support for probabilistic KDE (kernel density estimation) error bounds
+    when using the Gaussian kernel (#1934).
+
 ### mlpack 3.1.1
 ###### 2019-05-26
   * Fix random forest bug for numerical-only data (#1887).
