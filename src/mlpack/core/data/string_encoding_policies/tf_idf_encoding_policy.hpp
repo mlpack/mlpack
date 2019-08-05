@@ -46,6 +46,13 @@ class TfIdfEncodingPolicy
                          size_t dictionarySize)
   {
     output.zeros(datasetSize, dictionarySize);
+    std::cout<<"arma::mat;\n";
+    for(auto it=idfdict.begin();it!=idfdict.end();it++)
+    {
+      std::cout<<it->first<<" "<<it->second<<"\n ";
+    }
+    std::cout<<"\n";
+
   }
 
   /**
@@ -65,6 +72,12 @@ class TfIdfEncodingPolicy
                          size_t dictionarySize)
   {
     output.resize(datasetSize, std::vector<OutputType> (dictionarySize,0));
+    std::cout<<"std::vector<char> v;\n";
+    for(auto it=idfdict.begin();it!=idfdict.end();it++)
+    {
+      std::cout<<it->first<<" "<<it->second<<"\n";
+    }
+    std::cout<<"\n";
   }
 
   /** 
