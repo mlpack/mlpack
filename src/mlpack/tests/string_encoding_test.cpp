@@ -551,6 +551,56 @@ BOOST_AUTO_TEST_CASE(TfIdfEncodingTest)
 }
 
 /**
+ * Test the one pass modification of the TfIdf encoding algorithm.
+ */
+BOOST_AUTO_TEST_CASE(OnePassTfIdfEncodingTest)
+{
+  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+
+  vector<vector<double>> output;
+  TfIdfEncoding<SplitByAnyOf::TokenType> encoder(
+      (TfIdfEncodingPolicy()));
+  SplitByAnyOf tokenizer(" ");
+
+  encoder.Encode(stringEncodingInputSmall, output, tokenizer);
+
+  const DictionaryType& dictionary = encoder.Dictionary();
+
+  // Checking that everything is mapped to different numbers
+  std::unordered_map<size_t, size_t> keysCount;
+  for (auto& keyValue : dictionary.Mapping())
+  {
+    keysCount[keyValue.second]++;
+    // Every token should be mapped only once
+    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+  }
+  std::cout<<"print output "<<std::endl;
+  for(int i=0;i<output.size();i++)
+  {
+    for(int j=0;j<output[i].size();j++)
+    {
+      cout<<output[i][j]<<" ";
+    }
+    std::cout<<std::endl;
+  }
+  vector<vector<double>> expected = {
+    { 0.1193, 0.0440, 0.0440, 0.0440, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0.1590, 0.1590, 0.1590, 0 },
+    { 0, 0.0440, 0.0440, 0.0440, 0, 0, 0, 0.1193 }
+  };
+  std::cout<<"normal expected"<<std::endl;
+  for(int i=0;i<expected.size();i++)
+  {
+    for(int j=0;j<expected[i].size();j++)
+    {
+      cout<<expected[i][j]<<" ";
+    }
+    std::cout<<std::endl;
+  }
+  BOOST_REQUIRE(output == expected);
+}
+
+/**
 * Test TFIDF encoding for characters using lamda function.
 */
 BOOST_AUTO_TEST_CASE(TfIdfEncodingIndividualCharactersTest)

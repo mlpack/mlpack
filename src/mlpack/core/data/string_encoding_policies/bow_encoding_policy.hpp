@@ -58,12 +58,13 @@ class BagOfWordsEncodingPolicy
                         input dataset.
   * @param dictionarySize The size of the dictionary (not used).
   */
-  static void InitMatrix(std::vector<std::vector<size_t> >& output,
+  template<typename OutputType>
+  static void InitMatrix(std::vector<std::vector<OutputType> >& output,
                          size_t datasetSize,
                          size_t /*maxNumTokens*/,
                          size_t dictionarySize)
   {
-    output.resize(datasetSize, std::vector<size_t> (dictionarySize,0));
+    output.resize(datasetSize, std::vector<OutputType> (dictionarySize,0));
   }
 
   /** 
@@ -92,7 +93,8 @@ class BagOfWordsEncodingPolicy
   * @param row The row number at which the encoding is performed.
   * @param col The row token number at which the encoding is performed.
   */
-  static void Encode(std::vector<std::vector<size_t> >& output, size_t value,
+  template<typename OutputType>
+  static void Encode(std::vector<std::vector<OutputType> >& output, size_t value,
                      size_t row, size_t /*col*/)
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.

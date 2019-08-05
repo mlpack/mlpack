@@ -71,7 +71,8 @@ class DictionaryEncodingPolicy
    * @param output Output vector to store the encoded results.
    * @param value The encoded token.
    */
-  static void Encode(std::vector<size_t>& output, size_t value)
+  template<typename OutputType>
+  static void Encode(std::vector<OutputType>& output, size_t value)
   {
     output.push_back(value);
   }

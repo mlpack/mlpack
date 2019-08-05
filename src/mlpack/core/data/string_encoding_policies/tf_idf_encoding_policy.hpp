@@ -58,12 +58,13 @@ class TfIdfEncodingPolicy
                         input dataset.
   * @param dictionarySize The size of the dictionary (not used).
   */
-  static void InitMatrix(std::vector<std::vector<size_t> >& output,
+  template<typename OutputType>
+  static void InitMatrix(std::vector<std::vector<OutputType> >& output,
                          size_t datasetSize,
                          size_t /*maxNumTokens*/,
                          size_t dictionarySize)
   {
-    output.resize(datasetSize, std::vector<size_t> (dictionarySize,0));
+    output.resize(datasetSize, std::vector<OutputType> (dictionarySize,0));
   }
 
   /** 
@@ -79,8 +80,12 @@ class TfIdfEncodingPolicy
   static void Encode(MatType& output, size_t value, size_t row, size_t /*col*/)
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.
+    // std::cout<<"divide "<<(tokenCount[row][value - 1] / row_size[row])<<"\n";
+    // std::cout<<"output size "<<output.n_rows<<" idfdict value "<<value-1<<" is "<<idfdict[value-1]<<"\n";
+    // std::cout<<"multipy "<<(output.n_rows / idfdict[value-1])<<" "<<std::log10(output.n_rows / idfdict[value-1])<<"\n";
     output(row, value-1) = (tokenCount[row][value - 1] / row_size[row]) * 
         std::log10(output.n_rows / idfdict[value-1]);
+    // std::cout<<"output at "<<row<<" "<<value-1<<" "<<output(row, value-1)<<"\n";
   }
 
   /** 
@@ -93,12 +98,17 @@ class TfIdfEncodingPolicy
   * @param row The row number at which the encoding is performed.
   * @param col The row token number at which the encoding is performed.
   */
-  static void Encode(std::vector<std::vector<size_t> >& output, size_t value,
+  template<typename OutputType>
+  static void Encode(std::vector<std::vector<OutputType> >& output, size_t value,
                      size_t row, size_t /*col*/)
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.
+    // std::cout<<"divide "<<(tokenCount[row][value - 1] / row_size[row])<<"\n";
+    // std::cout<<"output size "<<output.size()<<" idfdict value "<<value-1<<" is "<<idfdict[value-1]<<"\n";
+    // std::cout<<"multipy "<<(output.size() / idfdict[value-1])<<" "<<std::log10(output.size() / idfdict[value-1])<<"\n";
     output[row][value-1] = (tokenCount[row][value - 1] / row_size[row]) * 
         std::log10(output.size() / idfdict[value-1]);
+    // std::cout<<"output at std::vector"<<row<<" "<<value-1<<" "<<output[row][value-1]<<"\n";
   }
 
   /**
@@ -118,7 +128,7 @@ class TfIdfEncodingPolicy
   * @param numToken The count of token parsed till now.
   * @param value The encoded token.
   */
-  static void PreprocessToken(size_t row, size_t numTokens,
+  static void PreprocessToken(size_t row, size_t /*numTokens*/,
                        size_t value)
   {
     if(row>=tokenCount.size())
