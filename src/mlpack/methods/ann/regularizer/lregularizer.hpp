@@ -3,7 +3,6 @@
  * @author Saksham Bansal
  *
  * Generalized L-regularizer, allowing both l1 and l2 regularization methods.
- *
  * This also gives several convenience typedefs for commonly used L-regularizers.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
