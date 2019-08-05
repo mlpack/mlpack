@@ -6,6 +6,7 @@ add_executable(mlpack_test
   aknn_test.cpp
   ann_dist_test.cpp
   ann_layer_test.cpp
+  ann_regularizer_test.cpp
   ann_test_tools.hpp
   arma_extend_test.cpp
   armadillo_svd_test.cpp

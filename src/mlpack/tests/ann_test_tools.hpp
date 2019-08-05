@@ -167,4 +167,37 @@ double CheckGradient(FunctionType& function, const double eps = 1e-7)
       arma::norm(orgGradient + estGradient);
 }
 
+// Simple numerical gradient checker for regularizers.
+template<class FunctionType>
+double CheckRegularizerGradient(FunctionType& function, const double eps = 1e-7)
+{
+  // Get gradients for the current parameters.
+  arma::mat orgGradient, estGradient;
+  arma::mat weight = arma::randu(10, 15);
+  function.Gradient(weight, orgGradient);
+
+  estGradient = arma::zeros(weight.n_rows, weight.n_cols);
+
+  // Compute numeric approximations to gradient.
+  for (size_t i = 0; i < weight.n_rows; ++i)
+  {
+    for (size_t j = 0; j < weight.n_cols; ++j)
+    {
+      weight(i, j) += eps;
+      double costPlus = function.Output(weight, i, j);
+      weight(i, j) -= 2 * eps;
+      double costMinus = function.Output(weight, i, j);
+
+      // Restore the weight value.
+      weight(i, j) += eps;
+      estGradient(i, j) = (costPlus - costMinus) / (2 * eps);
+    }
+  }
+  estGradient = arma::vectorise(estGradient);
+
+  // Estimate error of gradient.
+  return arma::norm(orgGradient - estGradient) /
+      arma::norm(orgGradient + estGradient);
+}
+
 #endif

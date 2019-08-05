@@ -52,7 +52,7 @@ class LRegularizer
   static const int Power = TPower;
 
   //! The constant for the regularization
-  const int factor;
+  const double factor;
 };
 
 // Convenience typedefs.
