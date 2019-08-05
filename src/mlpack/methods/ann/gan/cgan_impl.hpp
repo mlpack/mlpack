@@ -16,7 +16,7 @@
 
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/network_init.hpp>
-#include <mlpack/methods/ann/visitor/output_parameter_visitor.hpp>
+#include <mlpack/methods/ann/visitor/concat_visitor.hpp>
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 
 namespace mlpack {
@@ -50,17 +50,13 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
 
   for (size_t i = 0; i < discriminator.network.size(); i++)
   {
-    if (std::is_same<discriminator.network[i], Concatenate<>* >::value)
-    {
-      discriminator.network[i]->concat() = currentTrainY;
-    }
+    boost::apply_visitor(ConcatVisitor(std::move(currentTrainY)),
+        discriminator.network[i]);
   }
   for (size_t i = 0; i < generator.network.size(); i++)
   {
-    if (std::is_same<generator.network[i], Concatenate<>* >::value)
-    {
-      generator.network[i]->concat() = currentTrainY;
-    }
+    boost::apply_visitor(ConcatVisitor(std::move(currentTrainY)),
+        generator.network[i]);
   }
 
   discriminator.Forward(std::move(currentInput));
@@ -140,17 +136,13 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
   for (size_t i = 0; i < discriminator.network.size(); i++)
   {
-    if (std::is_same<discriminator.network[i], Concatenate<>* >::value)
-    {
-      discriminator.network[i]->concat() = currentTrainY;
-    }
+    boost::apply_visitor(ConcatVisitor(std::move(currentTrainY)),
+        discriminator.network[i]);
   }
   for (size_t i = 0; i < generator.network.size(); i++)
   {
-    if (std::is_same<generator.network[i], Concatenate<>* >::value)
-    {
-      generator.network[i]->concat() = currentTrainY;
-    }
+    boost::apply_visitor(ConcatVisitor(std::move(currentTrainY)),
+        generator.network[i]);
   }
   // Get the gradients of the Discriminator.
   double res = discriminator.EvaluateWithGradient(discriminator.parameter,
@@ -234,7 +226,7 @@ ResetData()
   trainY.set_size(yDim, trainLabels.n_cols);
   for (size_t i = 0; i < trainLabels.n_cols; i++)
   {
-    trainY(trainLabels(i), i) = 1;
+    trainY(trainLabels(i) - 1, i) = 1;
   }
 }
 

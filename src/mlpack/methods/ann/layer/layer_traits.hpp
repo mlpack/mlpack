@@ -55,6 +55,10 @@ class LayerTraits
   static const bool IsConnection = false;
 };
 
+// This gives us a HasConcatCheck<T, U> type (where U is a function pointer)
+// we can use with SFINAE to catch when a type has a Conact(...) function.
+HAS_MEM_FUNC(Concat, HasConcatCheck);
+
 // This gives us a HasGradientCheck<T, U> type (where U is a function pointer)
 // we can use with SFINAE to catch when a type has a Gradient(...) function.
 HAS_MEM_FUNC(Gradient, HasGradientCheck);

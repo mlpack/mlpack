@@ -15,6 +15,7 @@ add_executable(mlpack_test
   binarize_test.cpp
   block_krylov_svd_test.cpp
   cf_test.cpp
+  cgan_test.cpp
   cli_binding_test.cpp
   cli_test.cpp
   convolution_test.cpp

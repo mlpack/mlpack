@@ -448,6 +448,7 @@ class GAN
 } // namespace mlpack
 
 // Include implementation.
+#include "cgan_impl.hpp"
 #include "gan_impl.hpp"
 #include "wgan_impl.hpp"
 #include "wgangp_impl.hpp"
