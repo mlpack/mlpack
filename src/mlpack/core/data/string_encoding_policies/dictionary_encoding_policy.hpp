@@ -77,6 +77,16 @@ class DictionaryEncodingPolicy
   }
 
   /**
+  * Empty function, Important for tf-idf encoding policy
+  *
+  * @param row The row number at which the encoding is performed.
+  * @param numToken The count of token parsed till now.
+  * @param value The encoded token.
+  */
+  static void PreprocessToken(size_t /*row*/, size_t /*numTokens*/,
+                       size_t /*value*/) { }
+
+  /**
    * Serialize the class to the given archive.
    */
   template<typename Archive>

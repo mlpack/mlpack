@@ -2,6 +2,8 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   dictionary_encoding_policy.hpp
+  bow_encoding_policy.hpp
+  tf_idf_encoding_policy.hpp
   policy_traits.hpp
 )
 

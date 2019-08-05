@@ -110,9 +110,9 @@ EncodeHelper(const std::vector<std::string>& input,
 {
   size_t numColumns = 0;
 
-  for (const std::string& line : input)
+  for (size_t i = 0; i < input.size(); i++)
   {
-    boost::string_view strView(line);
+    boost::string_view strView(input[i]);
     auto token = tokenizer(strView);
 
     static_assert(
@@ -128,7 +128,7 @@ EncodeHelper(const std::vector<std::string>& input,
     {
       if (!dictionary.HasToken(token))
         dictionary.AddToken(token);
-
+      policy.PreprocessToken(i, numTokens, dictionary.Value(token));
       token = tokenizer(strView);
       numTokens++;
     }
@@ -136,7 +136,6 @@ EncodeHelper(const std::vector<std::string>& input,
   }
 
   policy.InitMatrix(output, input.size(), numColumns, dictionary.Size());
-
   for (size_t i = 0; i < input.size(); i++)
   {
     boost::string_view strView(input[i]);
