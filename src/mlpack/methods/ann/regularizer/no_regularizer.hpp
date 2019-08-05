@@ -26,8 +26,6 @@ class NoRegularizer
  public:
   /**
    * Create the regularizer object.
-   *
-   * @param factor The factor for regularization.
    */
   NoRegularizer()
   {
@@ -42,14 +40,7 @@ class NoRegularizer
    * @param gradient The calculated gradient.
    */
   template<typename MatType>
-  void Evaluate(const MatType& weight, MatType& gradient)
-  {
-    // Nothing to do here.
-  }
-
-  //! Serialize the regularizer (nothing to do).
-  template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void Evaluate(const MatType& /* weight */, MatType& /* gradient */)
   {
     // Nothing to do here.
   }

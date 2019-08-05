@@ -40,16 +40,16 @@ BOOST_AUTO_TEST_CASE(GradientL1RegularizerTest)
 
     double Output(const arma::mat& weight, size_t i, size_t j)
     {
-     return abs(weight(i, j)) * factor;
+     return std::abs(weight(i, j)) * factor;
     }
 
     void Gradient(arma::mat& weight, arma::mat& gradient)
     {
       reg.Evaluate(weight, gradient);
     }
+
     double factor;
     L1Regularizer reg;
-
   } function;
 
   BOOST_REQUIRE_LE(CheckRegularizerGradient(function), 1e-4);
@@ -76,9 +76,9 @@ BOOST_AUTO_TEST_CASE(GradientL2RegularizerTest)
     {
       reg.Evaluate(weight, gradient);
     }
+
     double factor;
     L2Regularizer reg;
-
   } function;
 
   BOOST_REQUIRE_LE(CheckRegularizerGradient(function), 1e-4);

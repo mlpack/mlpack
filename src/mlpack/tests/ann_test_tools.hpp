@@ -185,7 +185,7 @@ double CheckRegularizerGradient(FunctionType& function, const double eps = 1e-7)
     {
       weight(i, j) += eps;
       double costPlus = function.Output(weight, i, j);
-      weight(i, j) -= 2 * eps;
+      weight(i, j) -= (2 * eps);
       double costMinus = function.Output(weight, i, j);
 
       // Restore the weight value.
@@ -193,8 +193,8 @@ double CheckRegularizerGradient(FunctionType& function, const double eps = 1e-7)
       estGradient(i, j) = (costPlus - costMinus) / (2 * eps);
     }
   }
-  estGradient = arma::vectorise(estGradient);
 
+  estGradient = arma::vectorise(estGradient);
   // Estimate error of gradient.
   return arma::norm(orgGradient - estGradient) /
       arma::norm(orgGradient + estGradient);

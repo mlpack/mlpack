@@ -60,7 +60,7 @@ class OrthogonalRegularizer
   void serialize(Archive& ar, const unsigned int /* version */);
 
   //! The constant for the regularization
-  const int factor;
+  double factor;
 };
 
 } // namespace ann
