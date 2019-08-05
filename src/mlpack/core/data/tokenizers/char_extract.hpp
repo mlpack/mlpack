@@ -34,7 +34,7 @@ class CharExtract
    * it belongs to [0, 255]. The functon returns EOF provided that the input 
    * string is empty.
    *
-   * @param str The given string view to retrieve token from.
+   * @param str String view to retrieve the next token from.
    */
   int operator()(boost::string_view& str) const
   {

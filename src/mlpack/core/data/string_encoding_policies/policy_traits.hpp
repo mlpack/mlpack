@@ -19,7 +19,7 @@ namespace mlpack {
 namespace data {
 
 /**
- * This is a template class that can provide some information about various
+ * This is a template struct that provides some information about various
  * encoding policies.
  */
 template<class PolicyType>

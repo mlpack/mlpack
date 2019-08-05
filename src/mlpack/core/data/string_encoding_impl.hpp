@@ -2,7 +2,7 @@
  * @file string_encoding_impl.hpp
  * @author Jeffin Sam
  *
- * Implementation of string encoding functions.
+ * Implementation of the StringEncoding class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -73,12 +73,12 @@ void StringEncoding<EncodingPolicyType, DictionaryType>::CreateMap(
   boost::string_view strView(input);
   auto token = tokenizer(strView);
 
-    static_assert(
-        std::is_same<typename std::remove_reference<decltype(token)>::type,
-                     typename std::remove_reference<typename DictionaryType::
-                        TokenType>::type>::value,
-        "The dictionary token type doesn't match the return value type "
-        "of the tokenizer.");
+  static_assert(
+      std::is_same<typename std::remove_reference<decltype(token)>::type,
+                   typename std::remove_reference<typename DictionaryType::
+                      TokenType>::type>::value,
+      "The dictionary token type doesn't match the return value type "
+      "of the tokenizer.");
 
   while (!tokenizer.IsTokenEmpty(token))
   {

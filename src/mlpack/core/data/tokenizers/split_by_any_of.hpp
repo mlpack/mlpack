@@ -50,7 +50,7 @@ class SplitByAnyOf
    * The function extracts the first token from the given string view and
    * then removes the prefix containing the token from the view.
    *
-   * @param str The given string view to retrieve the token from.
+   * @param str String view to retrieve the token from.
    */
   boost::string_view operator()(boost::string_view& str) const
   {
@@ -92,7 +92,7 @@ class SplitByAnyOf
    * any of the delimiters and returns the position of the character or 
    * str.npos if no such character is found.
    *
-   * @param str The given string where to find the character.
+   * @param str String where to find the character.
    */
   size_t FindFirstDelimiter(boost::string_view str) const
   {

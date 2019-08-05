@@ -24,7 +24,10 @@ namespace data {
 /*
  * Definition of the StringEncodingDictionary class.
  *
- * @tparam Token The type of the token that the dictionary stores.
+ * This class provides a dictionary interface for the purpose of string
+ * encoding. It works like an adapter to the internal dictionary.
+ *
+ * @tparam Token Type of the token that the dictionary stores.
  */
 template<typename Token>
 class StringEncodingDictionary
@@ -37,7 +40,7 @@ class StringEncodingDictionary
   using TokenType = Token;
 
   /**
-   * The function returns true if the dictionary caontains the given token.
+   * The function returns true if the dictionary contains the given token.
    *
    * @param token The given token.
    */
@@ -86,7 +89,7 @@ class StringEncodingDictionary
   MapType& Mapping() { return mapping; }
 
   /**
-   * Serialize the dictionary to the given archive.
+   * Serialize the class to the given archive.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
@@ -115,10 +118,10 @@ class StringEncodingDictionary<boost::string_view>
   //! The type of the token that the dictionary stores.
   using TokenType = boost::string_view;
 
-  //! Cunstruct the default class.
+  //! Construct the default class.
   StringEncodingDictionary() = default;
 
-  //! Construct the class using the given object.
+  //! Copy the class from the given object.
   StringEncodingDictionary(const StringEncodingDictionary& other) :
       tokens(other.tokens)
   {
@@ -146,7 +149,7 @@ class StringEncodingDictionary<boost::string_view>
       StringEncodingDictionary&& other) = default;
 
   /**
-   * The function returns true if the dictionary caontains the given token.
+   * The function returns true if the dictionary contains the given token.
    *
    * @param token The given token.
    */
@@ -202,7 +205,7 @@ class StringEncodingDictionary<boost::string_view>
   MapType& Mapping() { return mapping; }
 
   /**
-   * Serialize the dictionary to the given archive.
+   * Serialize the class to the given archive.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
@@ -254,7 +257,7 @@ class StringEncodingDictionary<int>
   //! The type of the token that the dictionary stores.
   using TokenType = int;
 
-  //! Cunstruct the default class.
+  //! Construct the default class.
   StringEncodingDictionary() :
     size(0)
   {
@@ -262,8 +265,9 @@ class StringEncodingDictionary<int>
   }
 
   /**
-   * The function returns true if the dictionary caontains the given token.
-   * The given token must belong to [0, 255].
+   * The function returns true if the dictionary contains the given token.
+   * The given token must belong to [0, 255]; otherwise the behavior is
+   * undefined.
    *
    * @param token The given token.
    */
@@ -274,7 +278,8 @@ class StringEncodingDictionary<int>
 
   /**
    * The function adds the given token to the dictionary and assigns a label
-   * to the token. The given token must belong to [0, 255].
+   * to the token. The given token must belong to [0, 255]; otherwise
+   * the behavior is undefined.
    *
    * @param token The given token.
    */
@@ -285,7 +290,8 @@ class StringEncodingDictionary<int>
 
   /**
    * The function returns the label assigned to the given token. The function
-   * doesn't verify that the dictionary contains the given token.
+   * doesn't verify that the dictionary contains the given token. The token must
+   * belong to [0, 255]; otherwise the behavior is undefined.
    *
    * @param token The given token.
    */
@@ -312,7 +318,7 @@ class StringEncodingDictionary<int>
   MapType& Mapping() { return mapping; }
 
   /**
-   * Serialize the dictionary to the given archive.
+   * Serialize the class to the given archive.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)

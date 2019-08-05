@@ -53,8 +53,9 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
 
   const DictionaryType& dictionary = encoder.Dictionary();
 
-  // Checking that everything is mapped to different numbers
+  // Checking that each token has a unique label.
   std::unordered_map<size_t, size_t> keysCount;
+
   for (auto& keyValue : dictionary.Mapping())
   {
     keysCount[keyValue.second]++;
@@ -90,8 +91,9 @@ BOOST_AUTO_TEST_CASE(OnePassDictionaryEncodingTest)
 
   const DictionaryType& dictionary = encoder.Dictionary();
 
-  // Checking that everything is mapped to different numbers
+  // Checking that each token has a unique label.
   std::unordered_map<size_t, size_t> keysCount;
+
   for (auto& keyValue : dictionary.Mapping())
   {
     keysCount[keyValue.second]++;
@@ -111,7 +113,7 @@ BOOST_AUTO_TEST_CASE(OnePassDictionaryEncodingTest)
 
 
 /**
- * Test for the SplitByAnyOf tokenizer.
+ * Test the SplitByAnyOf tokenizer.
  */
 BOOST_AUTO_TEST_CASE(SplitByAnyOfTokenizerTest)
 {
@@ -138,7 +140,7 @@ BOOST_AUTO_TEST_CASE(SplitByAnyOfTokenizerTest)
 }
 
 /**
-* Test Dictionary encoding for characters using lamda function.
+* Test the CharExtract tokenizer.
 */
 BOOST_AUTO_TEST_CASE(DictionaryEncodingIndividualCharactersTest)
 {
@@ -151,7 +153,6 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingIndividualCharactersTest)
   arma::mat output;
   DictionaryEncoding<CharExtract::TokenType> encoder;
 
-  // Passing a empty string to encode characters
   encoder.Encode(input, output, CharExtract());
 
   arma::mat target = {
@@ -177,7 +178,6 @@ BOOST_AUTO_TEST_CASE(OnePassDictionaryEncodingIndividualCharactersTest)
   vector<vector<size_t>> output;
   DictionaryEncoding<CharExtract::TokenType> encoder;
 
-  // Passing a empty string to encode characters
   encoder.Encode(input, output, CharExtract());
 
   vector<vector<size_t>> expected = {

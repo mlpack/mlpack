@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_DICTIONARY_ENCODING_POLICY_HPP
-#define MLPACK_CORE_DATA_DICTIONARY_ENCODING_POLICY_HPP
+#ifndef MLPACK_CORE_DATA_STRING_ENCODING_POLICIES_DICTIONARY_ENCODING_POLICY_HPP
+#define MLPACK_CORE_DATA_STRING_ENCODING_POLICIES_DICTIONARY_ENCODING_POLICY_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/data/string_encoding_policies/policy_traits.hpp>
@@ -18,6 +18,7 @@
 
 namespace mlpack {
 namespace data {
+
 /**
  * Definition of the DictionaryEncodingPolicy class.
  *
@@ -55,7 +56,7 @@ class DictionaryEncodingPolicy
   * @param output Output matrix to store the encoded results (sp_mat or mat).
   * @param value The encoded token.
   * @param row The row number at which the encoding is performed.
-  * @param col The row token number at which the encoding is performed.
+  * @param col The token index in the row.
   */
   template<typename MatType>
   static void Encode(MatType& output, size_t value, size_t row, size_t col)
@@ -100,6 +101,12 @@ struct StringEncodingPolicyTraits<DictionaryEncodingPolicy>
   static const bool onePassEncoding = true;
 };
 
+/**
+ * A convenient alias for the StringEncoding class with DictionaryEncodingPolicy
+ * and the default dictionary for the given token type.
+ *
+ * @tparam TokenType Type of the tokens.
+ */
 template<typename TokenType>
 using DictionaryEncoding = StringEncoding<DictionaryEncodingPolicy,
                                           StringEncodingDictionary<TokenType>>;
