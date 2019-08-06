@@ -213,7 +213,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
     cout << ";" << endl << string(indent, ' ');
   else
     cout << "," << endl << string(indent, ' ');
-  cout << "points_are_rows::Bool = false)" << endl;
+  cout << "points_are_rows::Bool = true)" << endl;
 
   // Force symbols to load.
   cout << "  # Force the symbols to load." << endl;

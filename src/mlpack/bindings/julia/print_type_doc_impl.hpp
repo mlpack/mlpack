@@ -99,7 +99,9 @@ std::string PrintTypeDoc(
     {
       return "A 2-d matrix-like containing `Float64` data (could be an "
           "`Array{Float64, 2}` or a `DataFrame` or anything convertible to an "
-          "`Array{Float64, 2}`).";
+          "`Array{Float64, 2}`).  It is expected that each row of the matrix "
+          "corresponds to a data point, unless `points_are_rows` is set to "
+          "`false` when calling mlpack bindings.";
     }
   }
   else if (std::is_same<typename T::elem_type, size_t>::value)
@@ -115,7 +117,10 @@ std::string PrintTypeDoc(
     {
       return "A 2-d matrix-like containing `Int` data (elements should be "
           "greater than or equal to 0).  Could be an `Array{Int64, 2}` or a "
-          "`DataFrame` or anything convertible to an `Array{Int64, 2}`.";
+          "`DataFrame` or anything convertible to an `Array{Int64, 2}`.  It is "
+          "expected that each row of the matrix corresponds to a data point, "
+          "unless `points_are_rows` is set to `false` when calling mlpack "
+          "bindings.";
     }
   }
   else
@@ -137,7 +142,9 @@ std::string PrintTypeDoc(
       "indicating which dimensions are categorical (represented by `true`) and "
       "which are numeric (represented by `false`).  The number of elements in "
       "the boolean array should be the same as the dimensionality of the data "
-      "matrix.";
+      "matrix.  It is expected that each row of the matrix corresponds to a "
+      "single data point, unless `points_are_rows` is set to `false` when "
+      "calling mlpack bindings.";
 }
 
 /**
