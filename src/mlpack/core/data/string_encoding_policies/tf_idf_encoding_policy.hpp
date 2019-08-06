@@ -30,6 +30,11 @@ class TfIdfEncodingPolicy
 {
  public:
 
+  TfIdfEncodingPolicy(bool binary = false, bool smooth_idf = true,
+                      bool sublinear_tf = false, bool raw_count = true,
+                      bool term_frequency = false) : binary (binary),
+                      smooth_idf (smooth_idf), sublinear_tf (sublinear_tf),
+                      raw_count (raw_count), term_frequency (term_frequency) {}
   /**
   * The function initializes the output matrix.
   *
@@ -80,8 +85,20 @@ class TfIdfEncodingPolicy
   void Encode(MatType& output, size_t value, size_t row, size_t /*col*/)
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.
-    output(row, value-1) = (tokenCount[row][value - 1] / row_size[row]) * 
-        std::log10(output.n_rows / idfdict[value-1]);
+    double idf, tf;
+    if(smooth_idf)
+      idf = std::log((output.n_rows + 1) / (1 + idfdict[value-1])) + 1;
+    else
+      idf = std::log(output.n_rows / idfdict[value - 1]) + 1;
+    if (sublinear_tf)
+      tf = tokenCount[row][value - 1] / row_size[row];
+    else if (term_frequency)
+      tf = std::log(tokenCount[row][value - 1]) + 1;
+    else if (binary)
+      tf = tokenCount[row][value - 1] > 0 ? 1 : 0;
+    else
+      tf = tokenCount[row][value - 1];
+    output(row, value-1) =  tf * idf;
   }
 
   /** 
@@ -99,8 +116,20 @@ class TfIdfEncodingPolicy
                      size_t row, size_t /*col*/)
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.
-    output[row][value-1] = (tokenCount[row][value - 1] / row_size[row]) * 
-        std::log10(output.size() / idfdict[value-1]);
+    double idf, tf;
+    if(smooth_idf)
+      idf = std::log((output.size() + 1) / (1 + idfdict[value-1])) + 1;
+    else
+      idf = std::log(output.size() / idfdict[value - 1]) + 1;
+    if (sublinear_tf)
+      tf = tokenCount[row][value - 1] / row_size[row];
+    else if (term_frequency)
+      tf = std::log(tokenCount[row][value - 1]) + 1;
+    else if (binary)
+      tf = tokenCount[row][value - 1] > 0 ? 1 : 0;
+    else
+      tf = tokenCount[row][value - 1];
+    output[row][value-1] =  tf * idf;
   }
 
   /**
@@ -137,6 +166,11 @@ class TfIdfEncodingPolicy
   std::vector<std::unordered_map<size_t, double>> tokenCount;
   std::unordered_map<size_t, double> idfdict;
   std::vector<double> row_size;
+  bool binary;
+  bool smooth_idf;
+  bool sublinear_tf;
+  bool raw_count;
+  bool term_frequency;
 };
 
 /**

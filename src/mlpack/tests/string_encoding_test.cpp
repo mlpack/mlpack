@@ -521,7 +521,7 @@ BOOST_AUTO_TEST_CASE(OnePassBagOfWordsEncodingIndividualCharactersTest)
   BOOST_REQUIRE(output == expected);
 }
 
-BOOST_AUTO_TEST_CASE(TfIdfEncodingTest)
+BOOST_AUTO_TEST_CASE(TfIdfrawcountsmoothidftrueEncodingTest)
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
@@ -542,27 +542,24 @@ BOOST_AUTO_TEST_CASE(TfIdfEncodingTest)
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
   arma::mat expected = {
-    {  0.01100570369098, 0.01100570369098, 0.029820078419979,
-       0.029820078419979, 0.029820078419979, 0, 0.029820078419979,
-       0.01100570369098, 0.01100570369098, 0.01100570369098, 0.029820078419979,
-       0.029820078419979, 0.029820078419979, 0, 0.029820078419979,
-       0.029820078419979, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    {  0, 0.0053360987592630683, 0, 0, 0, 0, 0, 0, 0.016008296277789203,
-       0.016008296277789203, 0, 0, 0, 0, 0, 0, 0.014458219839989772,
-       0.014458219839989772, 0.014458219839989772, 0.043374659519969,
-       0.014458219839989772, 0.014458219839989772, 0.014458219839989772,
-       0.014458219839989772, 0.014458219839989772, 0.014458219839989772,
-       0.014458219839989772, 0.014458219839989772, 0.014458219839989772,
-       0.014458219839989772, 0.014458219839989772, 0.014458219839989772,
-       0.014458219839989772, 0.014458219839989772, 0.014458219839989772, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
-    {  0.011739417270378749, 0, 0, 0, 0, 0, 0, 0.011739417270378749, 0, 0, 0,
+    {  1.28768207245178, 1.28768207245178, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 1, 1.69314718055995, 1.28768207245178,
+       1.28768207245178, 1.28768207245178, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 1, 1.69314718055995, 1.69314718055995, 0, 0, 0, 0, 0,
        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0.031808083647977492, 0.031808083647977492, 0.031808083647977492,
-       0.031808083647977492, 0.031808083647977492, 0.031808083647977492,
-       0.031808083647977492, 0.031808083647977492, 0.031808083647977492,
-       0.031808083647977492, 0.031808083647977492  }
+       0  },
+    {  0, 1.28768207245178, 0, 0, 0, 2, 0, 0, 3.86304621735534,
+       3.86304621735534, 0, 0, 0, 3, 0, 0, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 5.07944154167984, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
+    {  1.28768207245178, 0, 0, 0, 0, 1, 0, 1.28768207245178, 0, 0, 0, 0, 0, 1,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 1.69314718055995, 1.69314718055995  }
   };
   CheckMatrices(output, expected, 1e-12);
 }
@@ -570,7 +567,7 @@ BOOST_AUTO_TEST_CASE(TfIdfEncodingTest)
 /**
  * Test the one pass modification of the TfIdf encoding algorithm.
  */
-BOOST_AUTO_TEST_CASE(OnePassTfIdfEncodingTest)
+BOOST_AUTO_TEST_CASE(OnePassTfIdfrawcountsmoothidftrueEncodingTest)
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
@@ -593,27 +590,24 @@ BOOST_AUTO_TEST_CASE(OnePassTfIdfEncodingTest)
   }
 
   vector<vector<double>> expected = {
-    {  0.01100570369098, 0.01100570369098, 0.029820078419979,
-       0.029820078419979, 0.029820078419979, 0, 0.029820078419979,
-       0.01100570369098, 0.01100570369098, 0.01100570369098, 0.029820078419979,
-       0.029820078419979, 0.029820078419979, 0, 0.029820078419979,
-       0.029820078419979, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    {  0, 0.0053360987592630683, 0, 0, 0, 0, 0, 0, 0.016008296277789203,
-       0.016008296277789203, 0, 0, 0, 0, 0, 0, 0.014458219839989772,
-       0.014458219839989772, 0.014458219839989772, 0.043374659519969,
-       0.014458219839989772, 0.014458219839989772, 0.014458219839989772,
-       0.014458219839989772, 0.014458219839989772, 0.014458219839989772,
-       0.014458219839989772, 0.014458219839989772, 0.014458219839989772,
-       0.014458219839989772, 0.014458219839989772, 0.014458219839989772,
-       0.014458219839989772, 0.014458219839989772, 0.014458219839989772, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
-    {  0.011739417270378749, 0, 0, 0, 0, 0, 0, 0.011739417270378749, 0, 0, 0,
+    {  1.28768207245178, 1.28768207245178, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 1, 1.69314718055995, 1.28768207245178,
+       1.28768207245178, 1.28768207245178, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 1, 1.69314718055995, 1.69314718055995, 0, 0, 0, 0, 0,
        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0.031808083647977492, 0.031808083647977492, 0.031808083647977492,
-       0.031808083647977492, 0.031808083647977492, 0.031808083647977492,
-       0.031808083647977492, 0.031808083647977492, 0.031808083647977492,
-       0.031808083647977492, 0.031808083647977492  }
+       0  },
+    {  0, 1.28768207245178, 0, 0, 0, 2, 0, 0, 3.86304621735534,
+       3.86304621735534, 0, 0, 0, 3, 0, 0, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 5.07944154167984, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
+    {  1.28768207245178, 0, 0, 0, 0, 1, 0, 1.28768207245178, 0, 0, 0, 0, 0, 1,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
+       1.69314718055995, 1.69314718055995, 1.69314718055995  }
   };
   for(size_t i=0;i<expected.size();i++)
     for(size_t j=0;j<expected[i].size();j++)
@@ -623,7 +617,7 @@ BOOST_AUTO_TEST_CASE(OnePassTfIdfEncodingTest)
 /**
 * Test TFIDF encoding for characters using lamda function.
 */
-BOOST_AUTO_TEST_CASE(TfIdfEncodingIndividualCharactersTest)
+BOOST_AUTO_TEST_CASE(TfIdfrawcountsmoothidftrueEncodingIndividualCharactersTest)
 {
   vector<string> input = {
     "GACCA",
@@ -634,13 +628,12 @@ BOOST_AUTO_TEST_CASE(TfIdfEncodingIndividualCharactersTest)
   arma::mat output;
   TfIdfEncoding<CharExtract::TokenType> encoder;
 
-  // Passing a empty string to encode characters
+  // Passing a empty string to encode charactersrawcountsmoothidftrue
   encoder.Encode(input, output, CharExtract());
   arma::mat target = {
-    { 0.0352182518111362474755310, 0, 0.0704365036222724949510621, 0, 0 },
-    { 0, 0, 0.0503117883016232086967889, 0.0503117883016232086967889,
-      0.0681601792456660582342209 },
-    { 0.0586970863518937457925517, 0, 0, 0.0586970863518937457925517, 0 }
+    { 1.2876820724517808, 2, 2.5753641449035616, 0, 0 },
+    { 0, 2, 2.5753641449035616, 2.5753641449035616, 1.6931471805599454 },
+    { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
   };
   CheckMatrices(output, target, 1e-12);
 }
@@ -649,7 +642,7 @@ BOOST_AUTO_TEST_CASE(TfIdfEncodingIndividualCharactersTest)
  * Test the one pass modification of the Bag of Words encoding algorithm
  * in case of individual character encoding.
  */
-BOOST_AUTO_TEST_CASE(OnePassTfIdfEncodingIndividualCharactersTest)
+BOOST_AUTO_TEST_CASE(OnePassTfIdfrawcountsmoothidftrueEncodingIndividualCharactersTest)
 {
   std::vector<string> input = {
     "GACCA",
@@ -663,15 +656,214 @@ BOOST_AUTO_TEST_CASE(OnePassTfIdfEncodingIndividualCharactersTest)
   // Passing a empty string to encode characters
   encoder.Encode(input, output, CharExtract());
   vector<vector<double>> expected = {
-    { 0.0352182518111362474755310, 0, 0.0704365036222724949510621, 0, 0 },
-    { 0, 0, 0.0503117883016232086967889, 0.0503117883016232086967889,
-      0.0681601792456660582342209 },
-    { 0.0586970863518937457925517, 0, 0, 0.0586970863518937457925517, 0 }
+    { 1.2876820724517808, 2, 2.5753641449035616, 0, 0 },
+    { 0, 2, 2.5753641449035616, 2.5753641449035616, 1.6931471805599454 },
+    { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
   };
   for(size_t i=0;i<expected.size();i++)
     for(size_t j=0;j<expected[i].size();j++)
       BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-12);
 }
 
+BOOST_AUTO_TEST_CASE(TfIdfrawcountsmoothidffalseEncodingTest)
+{
+  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+
+  arma::mat output;
+  TfIdfEncoding<SplitByAnyOf::TokenType> encoder(
+      (TfIdfEncodingPolicy(false, false)));
+  SplitByAnyOf tokenizer(" ");
+
+  encoder.Encode(stringEncodingInput, output, tokenizer);
+
+  const DictionaryType& dictionary = encoder.Dictionary();
+
+  // Checking that everything is mapped to different numbers
+  std::unordered_map<size_t, size_t> keysCount;
+  for (auto& keyValue : dictionary.Mapping())
+  {
+    keysCount[keyValue.second]++;
+    // Every token should be mapped only once
+    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+  }
+
+  arma::mat expected = {
+    {  1.40546510810816, 1.40546510810816, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 1, 2.09861228866811, 1.40546510810816,
+       1.40546510810816, 1.40546510810816, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 1, 2.09861228866811, 2.09861228866811, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0  },
+    {  0, 1.40546510810816, 0, 0, 0, 2, 0, 0, 4.21639532432449,
+       4.21639532432449, 0, 0, 0, 3, 0, 0, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 6.29583686600433, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
+    {  1.40546510810816, 0, 0, 0, 0, 1, 0, 1.40546510810816, 0, 0, 0, 0, 0, 1,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 2.09861228866811, 2.09861228866811  }
+  };
+  CheckMatrices(output, expected, 1e-12);
+}
+
+/**
+ * Test the one pass modification of the TfIdf encoding algorithm.
+ */
+BOOST_AUTO_TEST_CASE(OnePassTfIdfrawcountsmoothidffalseEncodingTest)
+{
+  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+
+  vector<vector<double>> output;
+  TfIdfEncoding<SplitByAnyOf::TokenType> encoder(
+      (TfIdfEncodingPolicy(false, false)));
+  SplitByAnyOf tokenizer(" ");
+
+  encoder.Encode(stringEncodingInput, output, tokenizer);
+
+  const DictionaryType& dictionary = encoder.Dictionary();
+
+  // Checking that everything is mapped to different numbers
+  std::unordered_map<size_t, size_t> keysCount;
+  for (auto& keyValue : dictionary.Mapping())
+  {
+    keysCount[keyValue.second]++;
+    // Every token should be mapped only once
+    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+  }
+
+  vector<vector<double>> expected = {
+    {  1.40546510810816, 1.40546510810816, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 1, 2.09861228866811, 1.40546510810816,
+       1.40546510810816, 1.40546510810816, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 1, 2.09861228866811, 2.09861228866811, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0  },
+    {  0, 1.40546510810816, 0, 0, 0, 2, 0, 0, 4.21639532432449,
+       4.21639532432449, 0, 0, 0, 3, 0, 0, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 6.29583686600433, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
+    {  1.40546510810816, 0, 0, 0, 0, 1, 0, 1.40546510810816, 0, 0, 0, 0, 0, 1,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
+       2.09861228866811, 2.09861228866811, 2.09861228866811  }
+  };
+  for(size_t i=0;i<expected.size();i++)
+    for(size_t j=0;j<expected[i].size();j++)
+      BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-12);
+}
+
+/**
+* Test TFIDF encoding for characters using lamda function.
+*/
+BOOST_AUTO_TEST_CASE(TfIdfrawcountsmoothidffalseEncodingIndividualCharactersTest)
+{
+  vector<string> input = {
+    "GACCA",
+    "ABCABCD",
+    "GAB"
+  };
+
+  arma::mat output;
+  TfIdfEncoding<CharExtract::TokenType> encoder(
+      (TfIdfEncodingPolicy(false, false)));
+
+  // Passing a empty string to encode charactersrawcountsmoothidftrue
+  encoder.Encode(input, output, CharExtract());
+  arma::mat target = {
+    { 1.4054651081081644, 2, 2.8109302162163288, 0, 0 },
+    { 0, 2, 2.8109302162163288, 2.8109302162163288, 2.0986122886681100 },
+    { 1.4054651081081644, 1, 0, 1.4054651081081644, 0 }
+  };
+  CheckMatrices(output, target, 1e-12);
+}
+
+/**
+ * Test the one pass modification of the Bag of Words encoding algorithm
+ * in case of individual character encoding.
+ */
+BOOST_AUTO_TEST_CASE(OnePassTfIdfrawcountsmoothidfalseEncodingIndividualCharactersTest)
+{
+  std::vector<string> input = {
+    "GACCA",
+    "ABCABCD",
+    "GAB"
+  };
+
+  vector<vector<double>> output;
+  TfIdfEncoding<CharExtract::TokenType> encoder(
+      (TfIdfEncodingPolicy(false, false)));
+
+  // Passing a empty string to encode characters
+  encoder.Encode(input, output, CharExtract());
+  vector<vector<double>> expected = {
+    { 1.4054651081081644, 2, 2.8109302162163288, 0, 0 },
+    { 0, 2, 2.8109302162163288, 2.8109302162163288, 2.0986122886681100 },
+    { 1.4054651081081644, 1, 0, 1.4054651081081644, 0 }
+  };
+  for(size_t i=0;i<expected.size();i++)
+    for(size_t j=0;j<expected[i].size();j++)
+      BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-12);
+}
+
+/**
+* Test TFIDF encoding for characters using lamda function.
+*/
+BOOST_AUTO_TEST_CASE(TfIdfbinarysmoothidftrueEncodingIndividualCharactersTest)
+{
+  vector<string> input = {
+    "GACCA",
+    "ABCABCD",
+    "GAB"
+  };
+
+  arma::mat output;
+  TfIdfEncoding<CharExtract::TokenType> encoder(
+      (TfIdfEncodingPolicy(true)));
+
+  // Passing a empty string to encode charactersrawcountsmoothidftrue
+  encoder.Encode(input, output, CharExtract());
+  arma::mat target = {
+    { 1.2876820724517808, 1, 1.2876820724517808, 0, 0 },
+    { 0, 1, 1.2876820724517808, 1.2876820724517808, 1.6931471805599454 },
+    { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
+  };
+  CheckMatrices(output, target, 1e-12);
+}
+
+/**
+ * Test the one pass modification of the Bag of Words encoding algorithm
+ * in case of individual character encoding.
+ */
+BOOST_AUTO_TEST_CASE(OnePassTfIdfbnarysmoothidtrueEncodingIndividualCharactersTest)
+{
+  std::vector<string> input = {
+    "GACCA",
+    "ABCABCD",
+    "GAB"
+  };
+
+  vector<vector<double>> output;
+  TfIdfEncoding<CharExtract::TokenType> encoder(
+      (TfIdfEncodingPolicy(true)));
+
+  // Passing a empty string to encode characters
+  encoder.Encode(input, output, CharExtract());
+  vector<vector<double>> expected = {
+    { 1.2876820724517808, 1, 1.2876820724517808, 0, 0 },
+    { 0, 1, 1.2876820724517808, 1.2876820724517808, 1.6931471805599454 },
+    { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
+  };
+  for(size_t i=0;i<expected.size();i++)
+    for(size_t j=0;j<expected[i].size();j++)
+      BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-12);
+}
 BOOST_AUTO_TEST_SUITE_END();
 
