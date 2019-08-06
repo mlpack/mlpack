@@ -408,12 +408,12 @@ BOOST_AUTO_TEST_CASE(CharExtractDictionaryEncodingSerialization)
   CheckMatrices(output, xmlOutput, textOutput, binaryOutput);
 }
 
-BOOST_AUTO_TEST_CASE(BowEncodingTest)
+BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
   arma::mat output;
-  BowEncoding<SplitByAnyOf::TokenType> encoder;
+  BagOfWordsEncoding<SplitByAnyOf::TokenType> encoder;
   SplitByAnyOf tokenizer(" ");
 
   encoder.Encode(stringEncodingInputSmall, output, tokenizer);
@@ -439,12 +439,12 @@ BOOST_AUTO_TEST_CASE(BowEncodingTest)
 /**
  * Test the one pass modification of the Bag of Words encoding algorithm.
  */
-BOOST_AUTO_TEST_CASE(OnePassBowEncodingTest)
+BOOST_AUTO_TEST_CASE(OnePassBagOfWordsEncodingTest)
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
   vector<vector<size_t>> output;
-  BowEncoding<SplitByAnyOf::TokenType> encoder(
+  BagOfWordsEncoding<SplitByAnyOf::TokenType> encoder(
       (BagOfWordsEncodingPolicy()));
   SplitByAnyOf tokenizer(" ");
 
@@ -473,7 +473,7 @@ BOOST_AUTO_TEST_CASE(OnePassBowEncodingTest)
 /**
 * Test Bag of Words encoding for characters using lamda function.
 */
-BOOST_AUTO_TEST_CASE(BowEncodingIndividualCharactersTest)
+BOOST_AUTO_TEST_CASE(BagOfWordsEncodingIndividualCharactersTest)
 {
   vector<string> input = {
     "GACCA",
@@ -482,7 +482,7 @@ BOOST_AUTO_TEST_CASE(BowEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  BowEncoding<CharExtract::TokenType> encoder;
+  BagOfWordsEncoding<CharExtract::TokenType> encoder;
 
   // Passing a empty string to encode characters
   encoder.Encode(input, output, CharExtract());
@@ -499,7 +499,7 @@ BOOST_AUTO_TEST_CASE(BowEncodingIndividualCharactersTest)
  * Test the one pass modification of the Bag of Words encoding algorithm
  * in case of individual character encoding.
  */
-BOOST_AUTO_TEST_CASE(OnePassBowEncodingIndividualCharactersTest)
+BOOST_AUTO_TEST_CASE(OnePassBagOfWordsEncodingIndividualCharactersTest)
 {
   std::vector<string> input = {
     "GACCA",
@@ -508,7 +508,7 @@ BOOST_AUTO_TEST_CASE(OnePassBowEncodingIndividualCharactersTest)
   };
 
   vector<vector<size_t>> output;
-  BowEncoding<CharExtract::TokenType> encoder;
+  BagOfWordsEncoding<CharExtract::TokenType> encoder;
 
   // Passing a empty string to encode characters
   encoder.Encode(input, output, CharExtract());
@@ -543,11 +543,11 @@ BOOST_AUTO_TEST_CASE(TfIdfEncodingTest)
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
   arma::mat expected = {
-    { 0.1193, 0.0440, 0.0440, 0.0440, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0.1590, 0.1590, 0.1590, 0 },
-    { 0, 0.0440, 0.0440, 0.0440, 0, 0, 0, 0.1193 }
+    { 0.1192803136799, 0.0440228147639, 0.0440228147639, 0.0440228147639, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0.1590404182399, 0.1590404182399, 0.1590404182399, 0 },
+    { 0, 0.0440228147639 , 0.0440228147639 , 0.0440228147639 , 0, 0, 0, 0.1192803136799 }
   };
-  CheckMatrices(output, expected, 1e-01);
+  CheckMatrices(output, expected, 1e-10);
 }
 
 /**
@@ -576,13 +576,13 @@ BOOST_AUTO_TEST_CASE(OnePassTfIdfEncodingTest)
   }
 
   vector<vector<double>> expected = {
-    { 0.11928, 0.0440228, 0.0440228, 0.0440228, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0.15904, 0.15904, 0.15904, 0 },
-    { 0, 0.044028, 0.0440228, 0.0440228, 0, 0, 0, 0.11928 }
+    { 0.1192803136799, 0.0440228147639, 0.0440228147639, 0.0440228147639, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0.1590404182399, 0.1590404182399, 0.1590404182399, 0 },
+    { 0, 0.0440228147639 , 0.0440228147639 , 0.0440228147639 , 0, 0, 0, 0.1192803136799 }
   };
   for(size_t i=0;i<expected.size();i++)
     for(size_t j=0;j<expected[i].size();j++)
-      BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-01);
+      BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-05);
 }
 
 /**
@@ -602,11 +602,11 @@ BOOST_AUTO_TEST_CASE(TfIdfEncodingIndividualCharactersTest)
   // Passing a empty string to encode characters
   encoder.Encode(input, output, CharExtract());
   arma::mat target = {
-    { 0.0352, 0, 0.0704, 0, 0 },
-    { 0, 0, 0.0503, 0.0503, 0.0682 },
-    { 0.0587, 0, 0, 0.0587, 0 }
+    { 0.0352182518111, 0, 0.0704365036223, 0, 0 },
+    { 0, 0, 0.0503117883016, 0.0503117883016, 0.0681601792457 },
+    { 0.0586970863519, 0, 0, 0.0586970863519, 0 }
   };
-  CheckMatrices(output, target, 1e-01);
+  CheckMatrices(output, target, 1e-07);
 }
 
 /**
@@ -627,13 +627,13 @@ BOOST_AUTO_TEST_CASE(OnePassTfIdfEncodingIndividualCharactersTest)
   // Passing a empty string to encode characters
   encoder.Encode(input, output, CharExtract());
   vector<vector<double>> expected = {
-    { 0.0352, 0, 0.0704, 0, 0 },
-    { 0, 0, 0.0503, 0.0503, 0.0682 },
-    { 0.0587, 0, 0, 0.0587, 0 }
+    { 0.0352182518111, 0, 0.0704365036223, 0, 0 },
+    { 0, 0, 0.0503117883016, 0.0503117883016, 0.0681601792457 },
+    { 0.0586970863519, 0, 0, 0.0586970863519, 0 }
   };
   for(size_t i=0;i<expected.size();i++)
     for(size_t j=0;j<expected[i].size();j++)
-      BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-01);
+      BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-07);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

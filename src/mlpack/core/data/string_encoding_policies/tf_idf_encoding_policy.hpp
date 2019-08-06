@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_TF_IDF_ENCODING_POLICY_HPP
-#define MLPACK_CORE_DATA_TF_IDF_ENCODING_POLICY_HPP
+#ifndef MLPACK_CORE_DATA_ENCODING_POLICIES_TF_IDF_ENCODING_POLICY_HPP
+#define MLPACK_CORE_DATA_ENCODING_POLICIES_TF_IDF_ENCODING_POLICY_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/data/string_encoding_policies/policy_traits.hpp>
@@ -64,7 +64,7 @@ class TfIdfEncodingPolicy
                          size_t /*maxNumTokens*/,
                          size_t dictionarySize)
   {
-    output.resize(datasetSize, std::vector<OutputType> (dictionarySize,0));
+    output.resize(datasetSize, std::vector<OutputType> (dictionarySize, 0));
   }
 
   /** 

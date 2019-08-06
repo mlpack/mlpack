@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_BAG_OF_WORDS_ENCODING_POLICY_HPP
-#define MLPACK_CORE_DATA_BAG_OF_WORDS_ENCODING_POLICY_HPP
+#ifndef MLPACK_CORE_DATA_ENCODING_POLICIES_BAG_OF_WORDS_ENCODING_POLICY_HPP
+#define MLPACK_CORE_DATA_ENCODING_POLICIES_BAG_OF_WORDS_ENCODING_POLICY_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/data/string_encoding_policies/policy_traits.hpp>
@@ -64,11 +64,11 @@ class BagOfWordsEncodingPolicy
                          size_t /*maxNumTokens*/,
                          size_t dictionarySize)
   {
-    output.resize(datasetSize, std::vector<OutputType> (dictionarySize,0));
+    output.resize(datasetSize, std::vector<OutputType> (dictionarySize, 0));
   }
 
   /** 
-  * The function performs the bagofwords encoding algorithm i.e. it writes
+  * The function performs the bag of words encoding algorithm i.e. it writes
   * the encoded token to the ouput.
   *
   * @param output Output matrix to store the encoded results (sp_mat or mat).
@@ -84,7 +84,7 @@ class BagOfWordsEncodingPolicy
   }
 
   /** 
-  * The function performs the bagofwords encoding algorithm i.e. it writes
+  * The function performs the bag of words encoding algorithm i.e. it writess
   * the encoded token to the ouput.
   * Overload function to accepted vector<vector<size_t>> as output type.
   *
@@ -136,7 +136,7 @@ struct StringEncodingPolicyTraits<BagOfWordsEncodingPolicy>
 };
 
 template<typename TokenType>
-using BowEncoding = StringEncoding<BagOfWordsEncodingPolicy,
+using BagOfWordsEncoding = StringEncoding<BagOfWordsEncodingPolicy,
                                           StringEncodingDictionary<TokenType>>;
 } // namespace data
 } // namespace mlpack
