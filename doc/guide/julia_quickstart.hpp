@@ -59,20 +59,18 @@ dataset = select!(df, Not(:label))
 test, test_labels, train, train_labels = mlpack.preprocess_split(
     input=dataset,
     input_labels=labels,
-    test_ratio=0.3,
-    points_are_rows=true)
+    test_ratio=0.3)
 
 # Train a random forest.
 rf_model, _, _ = mlpack.random_forest(training=train,
                               labels=train_labels,
                               print_training_accuracy=true,
                               num_trees=10,
-                              minimum_leaf_size=3,
-                              points_are_rows=true)
+                              minimum_leaf_size=3)
 
 # Predict the labels of the test points.
 _, predictions, _ = mlpack.random_forest(input_model=rf_model,
-                              test=test, points_are_rows=true)
+                                         test=test)
 
 # Now print the accuracy.  The third return value ('probabilities'), which we
 # ignored here, could also be used to generate an ROC curve.
@@ -128,7 +126,7 @@ movies = CSV.read(ZlibInflateInputStream(open(download(
 
 # Hold out 10% of the dataset into a test set so we can evaluate performance.
 ratings_test, _, ratings_train, _ = mlpack.preprocess_split(ratings;
-    test_ratio=0.1, verbose=true, points_are_rows=true)
+    test_ratio=0.1, verbose=true)
 
 # Train the model.  Change the rank to increase/decrease the complexity of the
 # model.
@@ -136,15 +134,13 @@ _, cf_model = mlpack.cf(training=ratings_train,
                         test=ratings_test,
                         rank=10,
                         verbose=true,
-                        algorithm="RegSVD",
-                        points_are_rows=true)
+                        algorithm="RegSVD")
 
 # Now query the 5 top movies for user 1.
 output, _ = mlpack.cf(input_model=cf_model,
                       query=[1],
                       recommendations=10,
                       verbose=true,
-                      points_are_rows=true,
                       max_iterations=10)
 
 print("Recommendations for user 1:\n")
