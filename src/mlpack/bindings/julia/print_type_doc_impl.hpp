@@ -67,11 +67,11 @@ std::string PrintTypeDoc(
 {
   if (std::is_same<T, std::vector<int>>::value)
   {
-    return "A vector of integers; i.e., [0, 1, 2].";
+    return "A vector of integers; i.e., `[0, 1, 2]`.";
   }
   else if (std::is_same<T, std::vector<std::string>>::value)
   {
-    return "A vector of strings; i.e., [\"hello\", \"goodbye\"].";
+    return "A vector of strings; i.e., `[\"hello\", \"goodbye\"]`.";
   }
   else
   {
@@ -91,31 +91,31 @@ std::string PrintTypeDoc(
   {
     if (T::is_col || T::is_row)
     {
-      return "A 1-d vector-like containing Float64 data (could be an "
-          "Array{Float64, 1}, an Array{Float64, 2} with one dimension having "
-          "size 1, or anything convertible to Array{Float64, 1}.";
+      return "A 1-d vector-like containing `Float64` data (could be an "
+          "`Array{Float64, 1}`, an `Array{Float64, 2}` with one dimension "
+          "of size 1, or anything convertible to `Array{Float64, 1}`.";
     }
     else
     {
-      return "A 2-d matrix-like containing Float64 data (could be an "
-          "Array{Float64, 2} or a DataFrame or anything convertible to an "
-          "Array{Float64, 2}).";
+      return "A 2-d matrix-like containing `Float64` data (could be an "
+          "`Array{Float64, 2}` or a `DataFrame` or anything convertible to an "
+          "`Array{Float64, 2}`).";
     }
   }
   else if (std::is_same<typename T::elem_type, size_t>::value)
   {
     if (T::is_col || T::is_row)
     {
-      return "A 1-d vector-like containing Int data (elements should be greater"
-          " than or equal to 0).  Could be an Array{Int64, 1}, an Array{Int64, "
-          "2} with one dimension having size 1, or anything convertible to "
-          "Array{Int64, 1}.";
+      return "A 1-d vector-like containing `Int` data (elements should be "
+          "greater than or equal to 0).  Could be an `Array{Int64, 1}`, an "
+          "`Array{Int64, 2}` with one dimension of size 1, or anything "
+          "convertible to `Array{Int64, 1}`.";
     }
     else
     {
-      return "A 2-d matrix-like containing Int data (elements should be greater"
-          " than or equal to 0).  Could be an Array{Int64, 2} or a DataFrame or"
-          " anything convertible to an Array{Int64, 2}.";
+      return "A 2-d matrix-like containing `Int` data (elements should be "
+          "greater than or equal to 0).  Could be an `Array{Int64, 2}` or a "
+          "`DataFrame` or anything convertible to an `Array{Int64, 2}`.";
     }
   }
   else
@@ -133,7 +133,7 @@ std::string PrintTypeDoc(
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
-  return "A 2-d array containing Float64 data along with a boolean array "
+  return "A 2-d array containing `Float64` data along with a boolean array "
       "indicating which dimensions are categorical (represented by `true`) and "
       "which are numeric (represented by `false`).  The number of elements in "
       "the boolean array should be the same as the dimensionality of the data "
