@@ -125,11 +125,7 @@ inline std::string CreateInputArguments(const std::string& paramName,
 
     oss << CreateInputArguments(args...);
 
-    // If we created anything at all, it uses the CSV.jl package, so we need an
-    // include there.
-    std::string csvInclude = "julia> using CSV\n";
-
-    return csvInclude + oss.str();
+    return oss.str();
   }
   else
   {
@@ -374,8 +370,14 @@ inline std::string ProgramCall(const std::string& programName, Args... args)
 {
   std::ostringstream oss;
 
-  // Print any input argument definitions.
-  oss << CreateInputArguments(args...);
+  // Print any input argument definitions.  The only input argument definitions
+  // will be the definitions of matrices, which use the CSV.jl package, so we
+  // should also include a `using CSV` in there too.
+  std::string inputArgs = CreateInputArguments(args...);
+  if (inputArgs != "")
+    inputArgs = "julia> using CSV\n" + inputArgs;
+
+  oss << inputArgs;
 
   oss << "julia> ";
 
