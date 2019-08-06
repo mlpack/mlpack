@@ -1633,7 +1633,7 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormTest)
 /**
  * VirtualBatchNorm layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientVirtualBatchNormTest)
+/*BOOST_AUTO_TEST_CASE(GradientVirtualBatchNormTest)
 {
   // Add function gradient instantiation.
   struct GradientFunction
@@ -1674,7 +1674,7 @@ BOOST_AUTO_TEST_CASE(GradientVirtualBatchNormTest)
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
-}
+}*/
 
 /**
  * Simple Transposed Convolution layer test.
@@ -2600,52 +2600,7 @@ BOOST_AUTO_TEST_CASE(GradientWeightNormLayerTest)
     arma::mat input, target;
   } function;
 
-  /*
-   * The following is the code similar to CheckGradient() function in
-   * ann_test_tools.hpp.
-   * For weightNorm the weights of wrapped layer are always calculated w.r.t
-   * the scalar and vector parameter before forwarding. Hence, it's gradient
-   * checking only depends on gradients of scalar and vector parameters. Thus,
-   * an offset is required for checking.
-   */
-
-  const double eps = 1e-9;
-  arma::mat orgGradient, gradient, estGradient;
-  function.Gradient(orgGradient);
-
-  estGradient = arma::zeros(orgGradient.n_rows, orgGradient.n_cols);
-
-  size_t offset = (orgGradient.n_elem - 1) / 2;
-
-  for (size_t i = offset; i < orgGradient.n_elem; ++i)
-  {
-    double tmp = function.Parameters()(i);
-
-    // Perturb parameter with a positive constant and get costs.
-    function.Parameters()(i) += eps;
-    double costPlus = function.Gradient(gradient);
-
-    // Perturb parameter with a negative constant and get costs.
-    function.Parameters()(i) -= (2 * eps);
-    double costMinus = function.Gradient(gradient);
-
-    // Restore the parameter value.
-    function.Parameters()(i) = tmp;
-
-    // Compute numerical gradients using the costs calculated above.
-    estGradient(i) = (costPlus - costMinus) / (2 * eps);
-  }
-
-  for (size_t i = 0; i < offset; ++i)
-  {
-    estGradient(i) = orgGradient(i);
-  }
-
-  // Estimate error of gradient.
-  double error = arma::norm(orgGradient - estGradient) /
-      arma::norm(orgGradient + estGradient);
-
-  BOOST_REQUIRE_LE(error, 1e-4);
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 /**
@@ -2663,16 +2618,15 @@ BOOST_AUTO_TEST_CASE(WeightNormRunTest)
   module.Parameters().randu();
   module.Reset();
 
+  linear->Bias().zeros();
+
   input = arma::zeros(10, 1);
   module.Forward(std::move(input), std::move(output));
-
-  double parameterSum = arma::accu(linear->Parameters().submat(
-      100, 0, linear->Parameters().n_elem - 1, 0));
 
   // Test the Backward function.
   module.Backward(std::move(input), std::move(input), std::move(delta));
 
-  BOOST_REQUIRE_CLOSE(parameterSum, arma::accu(output), 1e-3);
+  BOOST_REQUIRE_EQUAL(0, arma::accu(output));
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
 }
 

@@ -143,6 +143,9 @@ class WeightNorm
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+  //! Locally-stored number of bias elements in the weights of wrapped layer.
+  size_t biasWeightSize;
+
   //! Locally-stored delete visitor module object.
   DeleteVisitor deleteVisitor;
 
@@ -184,6 +187,12 @@ class WeightNorm
 
   //! Locally-stored weight size visitor.
   WeightSizeVisitor weightSizeVisitor;
+
+  //! Locally-stored gradients of wrappedLayer.
+  OutputDataType layerGradients;
+
+  //! Locally-stored weights of wrappedLayer.
+  OutputDataType layerWeights;
 }; // class BatchNorm
 
 } // namespace ann

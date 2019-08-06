@@ -19,6 +19,7 @@
 #include "../visitor/forward_visitor.hpp"
 #include "../visitor/backward_visitor.hpp"
 #include "../visitor/gradient_visitor.hpp"
+#include "../visitor/bias_set_visitor.hpp"
 
 namespace mlpack {
 namespace ann { /** Artificial Neural Network. */
@@ -30,7 +31,10 @@ WeightNorm<InputDataType, OutputDataType, CustomLayers...>::WeightNorm(
     wrappedLayer(layer)
 {
   layerWeightSize = boost::apply_visitor(weightSizeVisitor, wrappedLayer);
-  weights.set_size(2 * layerWeightSize + 1, 1);
+  weights.set_size(layerWeightSize + 1, 1);
+
+  layerWeights.set_size(layerWeightSize, 1);
+  layerGradients.set_size(layerWeightSize, 1);
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -44,14 +48,20 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Reset()
 {
-  size_t offset = boost::apply_visitor(WeightSetVisitor(std::move(weights),
-      0), wrappedLayer);
+  // Set the weights of the inside layer to layerWeights.
+  // This is done to set the non-bias terms correctly.
+  boost::apply_visitor(WeightSetVisitor(std::move(layerWeights), 0),
+      wrappedLayer);
+
   boost::apply_visitor(resetVisitor, wrappedLayer);
 
-  vectorParameter = arma::mat(weights.memptr() + offset, offset, 1, false,
-      false);
+  biasWeightSize = boost::apply_visitor(BiasSetVisitor(std::move(weights),
+      0), wrappedLayer);
 
-  scalarParameter = arma::mat(weights.memptr() + 2 * offset, 1, 1, false,
+  vectorParameter = arma::mat(weights.memptr() + biasWeightSize,
+      layerWeightSize - biasWeightSize, 1, false, false);
+
+  scalarParameter = arma::mat(weights.memptr() + layerWeightSize, 1, 1, false,
       false);
 }
 
@@ -61,10 +71,10 @@ template<typename eT>
 void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  // Intialize the weights of wrapped layer.
+  // Intialize the non-bias weights of wrapped layer.
   double normVectorParameter = arma::norm(vectorParameter, 2);
-  weights.rows(0, layerWeightSize - 1) = scalarParameter(0) * vectorParameter
-      / normVectorParameter;
+  layerWeights.rows(0, layerWeightSize - biasWeightSize - 1) =
+      scalarParameter(0) * vectorParameter / normVectorParameter;
 
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
       boost::apply_visitor(outputParameterVisitor, wrappedLayer))),
@@ -94,7 +104,7 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Gradient(
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
-  ResetGradients(gradient);
+  ResetGradients(layerGradients);
 
   // Calculate the gradients of the wrapped layer.
   boost::apply_visitor(GradientVisitor(std::move(input),
@@ -103,14 +113,22 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Gradient(
   // Store the norm of vector parameter temporarily.
   double normVectorParameter = arma::norm(vectorParameter, 2);
 
+  // Set the gradients of the bias terms.
+  if (biasWeightSize != 0)
+  {
+    gradient.rows(0, biasWeightSize - 1) = arma::mat(layerGradients.memptr() +
+        layerWeightSize - biasWeightSize, biasWeightSize, 1, false, false);
+  }
+
   // Calculate the gradients of the scalar parameter.
-  gradient[gradient.n_rows - 1] = arma::accu(gradient.rows(0, layerWeightSize
-      - 1) % vectorParameter) / normVectorParameter;
+  gradient[gradient.n_rows - 1] = arma::accu(layerGradients.rows(0,
+      layerWeightSize - biasWeightSize - 1) % vectorParameter) /
+      normVectorParameter;
 
   // Calculate the gradients of the vector parameter.
-  gradient.rows(layerWeightSize, 2 * layerWeightSize - 1) =
-      scalarParameter(0) / normVectorParameter * (gradient.rows(0,
-      layerWeightSize - 1) - gradient[gradient.n_rows - 1] /
+  gradient.rows(biasWeightSize, layerWeightSize - 1) =
+      scalarParameter(0) / normVectorParameter * (layerGradients.rows(0,
+      layerWeightSize - biasWeightSize - 1) - gradient[gradient.n_rows - 1] /
       normVectorParameter * vectorParameter);
 }
 
