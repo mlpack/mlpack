@@ -117,6 +117,9 @@ class Linear
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Modify the bias weights of the layer.
+  arma::mat& Bias() { return bias; }
+
   /**
    * Serialize the layer
    */

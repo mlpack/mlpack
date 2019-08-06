@@ -161,6 +161,9 @@ class Convolution
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
+  //! Modify the bias weights of the layer.
+  arma::mat& Bias() { return bias; }
+
   /**
    * Serialize the layer
    */
