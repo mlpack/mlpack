@@ -22,8 +22,6 @@ namespace mlpack {
 namespace data {
 
 /*
- * Definition of the StringEncodingDictionary class.
- *
  * This class provides a dictionary interface for the purpose of string
  * encoding. It works like an adapter to the internal dictionary.
  *
@@ -51,16 +49,19 @@ class StringEncodingDictionary
 
   /**
    * The function adds the given token to the dictionary and assigns a label
-   * to the token.
+   * to the token. The label is equal to the resulting size of the dictionary.
+   * The function returns the assigned label.
    *
    * @param token The given token.
    */
   template<typename T>
-  void AddToken(T&& token)
+  size_t AddToken(T&& token)
   {
     size_t size = mapping.size();
 
-    mapping[std::forward<T>(token)] = size + 1;
+    mapping[std::forward<T>(token)] = ++size;
+
+    return size;
   }
 
   /**
@@ -132,7 +133,7 @@ class StringEncodingDictionary<boost::string_view>
   //! Standard move constructor.
   StringEncodingDictionary(StringEncodingDictionary&& other) = default;
 
-  //! Copy the class using the given object.
+  //! Copy the class from the given object.
   StringEncodingDictionary& operator=(const StringEncodingDictionary& other)
   {
     tokens = other.tokens;
@@ -160,17 +161,20 @@ class StringEncodingDictionary<boost::string_view>
 
   /**
    * The function adds the given token to the dictionary and assigns a label
-   * to the token.
+   * to the token. The label is equal to the resulting size of the dictionary.
+   * The function returns the assigned label.
    *
    * @param token The given token.
    */
-  void AddToken(boost::string_view token)
+  size_t AddToken(boost::string_view token)
   {
     tokens.emplace_back(token);
 
     size_t size = mapping.size();
 
-    mapping[tokens.back()] = size + 1;
+    mapping[tokens.back()] = ++size;
+
+    return size;
   }
 
   /**
@@ -266,8 +270,7 @@ class StringEncodingDictionary<int>
 
   /**
    * The function returns true if the dictionary contains the given token.
-   * The given token must belong to [0, 255]; otherwise the behavior is
-   * undefined.
+   * The token must belong to [0, 255]; otherwise the behavior is undefined.
    *
    * @param token The given token.
    */
@@ -278,19 +281,22 @@ class StringEncodingDictionary<int>
 
   /**
    * The function adds the given token to the dictionary and assigns a label
-   * to the token. The given token must belong to [0, 255]; otherwise
-   * the behavior is undefined.
+   * to the token. The token must belong to [0, 255]; otherwise the behavior
+   * is undefined. The label is equal to the resulting size of the dictionary.
+   * The function returns the assigned label.
    *
    * @param token The given token.
    */
-  void AddToken(int token)
+  size_t AddToken(int token)
   {
     mapping[token] = ++size;
+
+    return size;
   }
 
   /**
    * The function returns the label assigned to the given token. The function
-   * doesn't verify that the dictionary contains the given token. The token must
+   * doesn't verify that the dictionary contains the token. The token must
    * belong to [0, 255]; otherwise the behavior is undefined.
    *
    * @param token The given token.

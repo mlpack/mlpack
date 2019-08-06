@@ -2,7 +2,7 @@
  * @file policy_traits.hpp
  * @author Jeffin Sam
  *
- * This provides the StringEncodingPolicyTraits struct, a template struct to 
+ * This provides the StringEncodingPolicyTraits struct, a template struct to
  * get information about various encoding policies.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -26,7 +26,7 @@ template<class PolicyType>
 struct StringEncodingPolicyTraits
 {
   /**
-   * Indicates if the policy is able to encode the token at once without 
+   * Indicates if the policy is able to encode the token at once without
    * any information about other tokens as well as the total tokens count.
    */
   static const bool onePassEncoding = false;

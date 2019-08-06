@@ -19,8 +19,7 @@ namespace mlpack {
 namespace data {
 
 /**
- * Definition of the CharExtract class. The class is used to split 
- * the given string into characters.
+ * The class is used to split the given string into characters.
  */
 class CharExtract
 {

@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
   for (auto& keyValue : dictionary.Mapping())
   {
     keysCount[keyValue.second]++;
-    // Every token should be mapped only once
+
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
 
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(OnePassDictionaryEncodingTest)
   for (auto& keyValue : dictionary.Mapping())
   {
     keysCount[keyValue.second]++;
-    // Every token should be mapped only once
+
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
 
@@ -339,6 +339,41 @@ void CheckDictionaries(const StringEncodingDictionary<int>& expected,
   {
     BOOST_REQUIRE_EQUAL(mapping[i], expectedMapping[i]);
   }
+}
+
+/**
+ * Serialization test for the general template of the StringEncodingDictionary
+ * class.
+ */
+BOOST_AUTO_TEST_CASE(StringEncodingDictionarySerialization)
+{
+  using DictionaryType = StringEncodingDictionary<string>;
+
+  DictionaryType dictionary;
+  SplitByAnyOf tokenizer(" ,.");
+
+  for (const string& line : stringEncodingInput)
+  {
+    boost::string_view lineView(line);
+
+    boost::string_view token = tokenizer(lineView);
+
+    while (!tokenizer.IsTokenEmpty(token))
+    {
+      dictionary.AddToken(string(token));
+
+      token = tokenizer(lineView);
+    }
+  }
+
+  DictionaryType xmlDictionary, textDictionary, binaryDictionary;
+
+  SerializeObjectAll(dictionary, xmlDictionary, textDictionary,
+      binaryDictionary);
+
+  CheckDictionaries(dictionary, xmlDictionary);
+  CheckDictionaries(dictionary, textDictionary);
+  CheckDictionaries(dictionary, binaryDictionary);
 }
 
 /**

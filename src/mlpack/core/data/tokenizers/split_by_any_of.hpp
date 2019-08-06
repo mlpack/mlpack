@@ -21,8 +21,7 @@ namespace mlpack {
 namespace data {
 
 /**
- * Definition of the SplitByAnyOf class. The class is used to split 
- * the given string using the given delimiters.
+ * The class is used to split the given string using the given delimiters.
  */
 class SplitByAnyOf
 {
@@ -34,7 +33,7 @@ class SplitByAnyOf
   using MaskType = std::array<bool, 1 << CHAR_BIT>;
 
   /**
-   * Construct the object from the given delimiers.
+   * Construct the object from the given delimiters.
    *
    * @param delimiters The given delimiters.
    */
@@ -90,7 +89,7 @@ class SplitByAnyOf
   /**
    * The function finds the first character in the given string view equal to 
    * any of the delimiters and returns the position of the character or 
-   * str.npos if no such character is found.
+   * boost::string_view::npos if no such character is found.
    *
    * @param str String where to find the character.
    */

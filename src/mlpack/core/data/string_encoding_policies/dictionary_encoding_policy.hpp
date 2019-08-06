@@ -20,12 +20,10 @@ namespace mlpack {
 namespace data {
 
 /**
- * Definition of the DictionaryEncodingPolicy class.
- *
- * DicitonaryEnocding is used as a helper class for StringEncoding.
- * The encoder assigns a positive integer number to each unique token and treat 
- * the dataset as categorical. The numbers are assigned sequentially starting 
- * from one. The tokens are labeled in the order of their occurrence 
+ * DicitonaryEnocdingPolicy is used as a helper class for StringEncoding.
+ * The encoder assigns a positive integer number to each unique token and treats
+ * the dataset as categorical. The numbers are assigned sequentially starting
+ * from one. The tokens are labeled in the order of their occurrence
  * in the input dataset.
  */
 class DictionaryEncodingPolicy
@@ -95,7 +93,7 @@ template<>
 struct StringEncodingPolicyTraits<DictionaryEncodingPolicy>
 {
   /**
-   * Indicates if the policy is able to encode the token at once without 
+   * Indicates if the policy is able to encode the token at once without
    * any information about other tokens as well as the total tokens count.
    */
   static const bool onePassEncoding = true;

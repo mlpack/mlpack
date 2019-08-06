@@ -22,8 +22,8 @@ namespace mlpack {
 namespace data {
 
 /**
- * Definition of the StringEncoding class. The class translates a set of
- * strings into numbers using various encoding algorithms.
+ * The class translates a set of strings into numbers using various encoding
+ * algorithms.
  *
  * @tparam EncodingPolicyType Type of the encoding algorithm itself.
  * @tparam DictionaryType Type of the dictionary.
@@ -41,9 +41,9 @@ class StringEncoding
   StringEncoding(ArgTypes&& ... args);
 
   /**
-   * Construct the class from the given policy.
+   * Construct the class from the given encoding policy.
    *
-   * @param encodingPolicy The given policy.
+   * @param encodingPolicy The given encoding policy.
    */
   StringEncoding(EncodingPolicyType encodingPolicy);
 
@@ -72,11 +72,11 @@ class StringEncoding
    * @param input Corpus of text to encode.
    * @param tokenizer The tokenizer object.
    *
-   * The tokenization algorithm has to be an object with two public methods
-   *   1. operator() which accepts a reference to boost::string_view and returns
-   *      the next token;
-   *   2. IsTokenEmpty() that accepts a token and returns true if the given
-   *      token is empty.
+   * The tokenization algorithm has to be an object with two public methods:
+   * 1. operator() which accepts a reference to boost::string_view and returns
+   *    the next token;
+   * 2. IsTokenEmpty() that accepts a token and returns true if the given
+   *    token is empty.
    */
   template<typename TokenizerType>
   void CreateMap(std::string& input, const TokenizerType& tokenizer);
@@ -98,11 +98,11 @@ class StringEncoding
    * @param output Output container to store the result.
    * @param tokenizer The tokenizer object.
    *
-   * The tokenization algorithm has to be an object with two public methods
-   *   1. operator() which accepts a reference to boost::string_view and returns
-   *      the next token;
-   *   2. IsTokenEmpty() that accepts a token and returns true if the given
-   *      token is empty.
+   * The tokenization algorithm has to be an object with two public methods:
+   * 1. operator() which accepts a reference to boost::string_view and returns
+   *    the next token;
+   * 2. IsTokenEmpty() that accepts a token and returns true if the given
+   *    token is empty.
    */
   template<typename OutputType, typename TokenizerType>
   void Encode(const std::vector<std::string>& input,
@@ -142,11 +142,11 @@ class StringEncoding
    * @param tokenizer The tokenizer object.
    * @param policy The policy object.
    *
-   * The tokenization algorithm has to be an object with two public methods
-   *   1. operator() which accepts a reference to boost::string_view and returns
-   *      the next token;
-   *   2. IsTokenEmpty() that accepts a token and returns true if the given
-   *      token is empty.
+   * The tokenization algorithm has to be an object with two public methods:
+   * 1. operator() which accepts a reference to boost::string_view and returns
+   *    the next token;
+   * 2. IsTokenEmpty() that accepts a token and returns true if the given
+   *    token is empty.
    */
   template<typename OutputType,
            typename TokenizerType,
@@ -170,11 +170,11 @@ class StringEncoding
    * @param tokenizer The tokenizer object.
    * @param policy The policy object.
    *
-   * The tokenization algorithm has to be an object with two public methods
-   *   1. operator() which accepts a reference to boost::string_view and returns
-   *      the next token;
-   *   2. IsTokenEmpty() that accepts a token and returns true if the given
-   *      token is empty.
+   * The tokenization algorithm has to be an object with two public methods:
+   * 1. operator() which accepts a reference to boost::string_view and returns
+   *    the next token;
+   * 2. IsTokenEmpty() that accepts a token and returns true if the given
+   *    token is empty.
    */
   template<typename TokenizerType, typename PolicyType>
   void EncodeHelper(const std::vector<std::string>& input,

@@ -80,10 +80,11 @@ void StringEncoding<EncodingPolicyType, DictionaryType>::CreateMap(
       "The dictionary token type doesn't match the return value type "
       "of the tokenizer.");
 
+  // The loop below adds the extracted tokens to the dictionary.
   while (!tokenizer.IsTokenEmpty(token))
   {
     if (!dictionary.HasToken(token))
-      dictionary.AddToken(token);
+      dictionary.AddToken(std::move(token));
 
     token = tokenizer(strView);
   }
@@ -110,6 +111,7 @@ EncodeHelper(const std::vector<std::string>& input,
 {
   size_t numColumns = 0;
 
+  // The first pass adds the extracted tokens to the dictionary.
   for (const std::string& line : input)
   {
     boost::string_view strView(line);
@@ -127,7 +129,7 @@ EncodeHelper(const std::vector<std::string>& input,
     while (!tokenizer.IsTokenEmpty(token))
     {
       if (!dictionary.HasToken(token))
-        dictionary.AddToken(token);
+        dictionary.AddToken(std::move(token));
 
       token = tokenizer(strView);
       numTokens++;
@@ -137,6 +139,7 @@ EncodeHelper(const std::vector<std::string>& input,
 
   policy.InitMatrix(output, input.size(), numColumns, dictionary.Size());
 
+  // The second pass writes the encoded values to the output.
   for (size_t i = 0; i < input.size(); i++)
   {
     boost::string_view strView(input[i]);
@@ -162,6 +165,8 @@ EncodeHelper(const std::vector<std::string>& input,
              typename std::enable_if<StringEncodingPolicyTraits<
                  PolicyType>::onePassEncoding>::type*)
 {
+  // The loop below extracts the tokens and writes the encoded values
+  // at once.
   for (size_t i = 0; i < input.size(); i++)
   {
     boost::string_view strView(input[i]);
@@ -178,10 +183,11 @@ EncodeHelper(const std::vector<std::string>& input,
 
     while (!tokenizer.IsTokenEmpty(token))
     {
-      if (!dictionary.HasToken(token))
-        dictionary.AddToken(token);
+      if (dictionary.HasToken(token))
+        policy.Encode(output[i], dictionary.Value(token));
+      else
+        policy.Encode(output[i], dictionary.AddToken(std::move(token)));
 
-      policy.Encode(output[i], dictionary.Value(token));
       token = tokenizer(strView);
     }
   }
