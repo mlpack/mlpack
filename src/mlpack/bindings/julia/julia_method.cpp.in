@@ -17,9 +17,18 @@ static void ${PROGRAM_NAME}_mlpackMain()
 extern "C"
 {
 
-void ${PROGRAM_NAME}()
+bool ${PROGRAM_NAME}()
 {
-  ${PROGRAM_NAME}_mlpackMain();
+  try
+  {
+    ${PROGRAM_NAME}_mlpackMain();
+    return true;
+  }
+  catch (std::runtime_error& e)
+  {
+    std::cout << e.what() << std::endl;
+    return false;
+  }
 }
 
 void loadSymbols()

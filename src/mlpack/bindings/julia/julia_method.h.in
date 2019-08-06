@@ -13,7 +13,7 @@ extern "C"
 {
 #endif
 
-void ${PROGRAM_NAME}();
+bool ${PROGRAM_NAME}();
 
 // This is just used to force Julia to load each .so in the order we need.
 void loadSymbols();

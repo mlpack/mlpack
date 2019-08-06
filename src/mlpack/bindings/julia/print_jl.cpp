@@ -73,8 +73,14 @@ void PrintJL(const util::ProgramDoc& programInfo,
   cout << "# Call the C binding of the mlpack " << functionName << " binding."
       << endl;
   cout << "function " << functionName << "_mlpackMain()" << endl;
-  cout << "  ccall((:" << functionName << ", " << functionName << "Library), "
-      << "Nothing, ())" << endl;
+  cout << "  success = ccall((:" << functionName << ", " << functionName
+      << "Library), Bool, ())" << endl;
+  cout << "  if !success" << endl;
+  cout << "    # Throw an exception---false means there was a C++ exception."
+      << endl;
+  cout << "    throw(ErrorException(\"mlpack binding error; see output\"))"
+      << endl;
+  cout << "  end" << endl;
   cout << "end" << endl;
   cout << endl;
 
