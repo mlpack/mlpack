@@ -19,33 +19,32 @@ namespace mlpack {
 namespace ann {
 
 //! ConcatVisitor visitor class.
-inline ConcatVisitor::ConcatVisitor(arma::mat&& input) :
-    input(std::move(input))
+inline ConcatVisitor::ConcatVisitor(arma::mat&& concat) :
+    concat(std::move(concat))
 {
   /* Nothing to do here. */
 }
 
-//! ConcatVisitor visitor class.
 template<typename LayerType>
-inline void ConcatVisitor::operator()(LayerType* layer) const
+inline void ConcatVisitor::operator()(LayerType *layer) const
 {
-  Concat(layer);
+  LayerConcat(layer, layer->OutputParameter());
 }
 
-template<typename T>
+template<typename T, typename P>
 inline typename std::enable_if<
-    HasConcatCheck<T, void(T::*)(const size_t)>::value, void>::type
-ConcatVisitor::Concat(T* layer) const
-{
-  layer->Concat() = input;
-}
-
-template<typename T>
-inline typename std::enable_if<
-    !HasConcatCheck<T, void(T::*)(const size_t)>::value, void>::type
-ConcatVisitor::Concat(T* /* layer */) const
+    !HasConcatCheck<T, P&(T::*)()>::value, void>::type
+ConcatVisitor::LayerConcat(T* /* layer */, P& /* output */) const
 {
   /* Nothing to do here. */
+}
+
+template<typename T, typename P>
+inline typename std::enable_if<
+    HasConcatCheck<T, P&(T::*)()>::value, void>::type
+ConcatVisitor::LayerConcat(T* layer, P& /* output */) const
+{
+  layer->Concat() = concat;
 }
 
 } // namespace ann

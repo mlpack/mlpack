@@ -70,7 +70,6 @@ BOOST_AUTO_TEST_CASE(CGANMNISTTest)
   trainData = trainData.cols(0, datasetMaxCols - 1);
 
   arma::mat labels = arma::zeros(1, datasetMaxCols);
-  labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
   labels += 1;
   size_t yDim = 2;
 
@@ -97,9 +96,9 @@ BOOST_AUTO_TEST_CASE(CGANMNISTTest)
 
   // Create the Generator network
   FFN<SigmoidCrossEntropyError<> > generator;
-  generator.Add<Linear<> >(noiseDim, 3136);
   generator.Add<Concatenate<> >();
-  generator.Add<BatchNorm<> >(3136 + yDim);
+  generator.Add<Linear<> >(noiseDim + yDim, 3136);
+  generator.Add<BatchNorm<> >(3136);
   generator.Add<ReLULayer<> >();
   generator.Add<Convolution<> >(1, noiseDim / 2, 3, 3, 2, 2, 1, 1, 56, 56);
   generator.Add<BatchNorm<> >(39200);

@@ -2,7 +2,8 @@
  * @file concat_visitor.hpp
  * @author Saksham Bansal
  *
- * Boost static visitor abstraction for calling Concat function.
+ * This file provides an abstraction for the Concat() function for different
+ * layers.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -21,34 +22,35 @@ namespace mlpack {
 namespace ann {
 
 /**
- * ConcatVisitor executes the Concat() function.
+ * ConcatVisitor update the concat matrix using the given matrix.
  */
 class ConcatVisitor : public boost::static_visitor<void>
 {
  public:
-  //! Concat the the given input matrix.
-  ConcatVisitor(arma::mat&& input);
+  //! Update the concat given the concat matrix.
+  ConcatVisitor(arma::mat&& concat);
 
-  //! Execute the Concat() function.
+  //! Update the concat matrix.
   template<typename LayerType>
-  void operator()(LayerType* layer) const;
+  void operator()(LayerType *layer) const;
 
  private:
-  arma::mat&& input;
+  //! The concat matrix.
+  arma::mat&& concat;
 
-  //! Execute the Concat() function for a module which implements
-  //! the Concat() function.
-  template<typename T>
+  //! Do not update the concat set if the module doesn't implement the
+  //! Concat() function.
+  template<typename T, typename P>
   typename std::enable_if<
-      HasConcatCheck<T, void(T::*)(const size_t)>::value, void>::type
-  Concat(T* layer) const;
+      !HasConcatCheck<T, P&(T::*)()>::value, void>::type
+  LayerConcat(T* layer, P& output) const;
 
-  //! Do not execute the Concat() function for a module which doesn't implement
-  // the Concat() or Model() function.
-  template<typename T>
+  //! Update the concat set if the module implements the Concat()
+  //! function.
+  template<typename T, typename P>
   typename std::enable_if<
-      !HasConcatCheck<T, void(T::*)(const size_t)>::value, void>::type
-  Concat(T* layer) const;
+      HasConcatCheck<T, P&(T::*)()>::value, void>::type
+  LayerConcat(T* layer, P& output) const;
 };
 
 } // namespace ann

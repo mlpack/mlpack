@@ -100,12 +100,6 @@ class GAN
   // Reset function.
   void Reset();
 
-  // Reset data function.
-  template<typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, CGAN>::value,
-                          void>::type
-  ResetData();
-
   /**
    * Train function.
    *

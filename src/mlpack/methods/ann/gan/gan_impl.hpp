@@ -83,6 +83,14 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
   numFunctions = predictors.n_cols;
 
   noise.set_size(noiseDim, batchSize);
+  if (yDim)
+  {
+    trainY.set_size(yDim, trainLabels.n_cols);
+    for (size_t i = 0; i < trainLabels.n_cols; i++)
+    {
+      trainY(trainLabels(i) - 1, i) = 1;
+    }
+  }
 
   this->generator.predictors.set_size(noiseDim, batchSize);
   this->generator.responses.set_size(predictors.n_rows, batchSize);

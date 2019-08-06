@@ -35,11 +35,7 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
     const size_t /* batchSize */)
 {
   if (!reset)
-  {
     Reset();
-    ResetData();
-  }
-
 
   currentInput = arma::mat(predictors.memptr() + (i * predictors.n_rows),
       predictors.n_rows, batchSize, false, false);
@@ -100,10 +96,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
                      const size_t /* batchSize */)
 {
   if (!reset)
-  {
     Reset();
-    ResetData();
-  }
 
   if (gradient.is_empty())
   {
@@ -211,25 +204,6 @@ Gradient(const arma::mat& parameters,
 {
   this->EvaluateWithGradient(parameters, i, gradient, batchSize);
 }
-
-template<
-  typename Model,
-  typename InitializationRuleType,
-  typename Noise,
-  typename PolicyType
->
-template<typename Policy>
-typename std::enable_if<std::is_same<Policy, CGAN>::value, void>::type
-GAN<Model, InitializationRuleType, Noise, PolicyType>::
-ResetData()
-{
-  trainY.set_size(yDim, trainLabels.n_cols);
-  for (size_t i = 0; i < trainLabels.n_cols; i++)
-  {
-    trainY(trainLabels(i) - 1, i) = 1;
-  }
-}
-
 
 } // namespace ann
 } // namespace mlpack
