@@ -373,7 +373,6 @@ template<typename... Args>
 inline std::string ProgramCall(const std::string& programName, Args... args)
 {
   std::ostringstream oss;
-  oss << "```jldoctest" << std::endl;
 
   // Print any input argument definitions.
   oss << CreateInputArguments(args...);
@@ -390,7 +389,6 @@ inline std::string ProgramCall(const std::string& programName, Args... args)
   // Now process each input option.
   oss << PrintInputOptions(args...);
   oss << ")" << std::endl;
-  oss << "```";
 
   return util::HyphenateString(oss.str(), 0);
 }
