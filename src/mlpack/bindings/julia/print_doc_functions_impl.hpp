@@ -379,20 +379,22 @@ inline std::string ProgramCall(const std::string& programName, Args... args)
 
   oss << inputArgs;
 
-  oss << "julia> ";
+  std::ostreamstream ossCall << "julia> ";
 
   // Find out if we have any output options first.
   std::ostringstream ossOutput;
   ossOutput << PrintOutputOptions(args...);
   if (ossOutput.str() != "")
-    oss << ossOutput.str() << " = ";
-  oss << programName << "(";
+    ossCall << ossOutput.str() << " = ";
+  ossCall << programName << "(";
 
   // Now process each input option.
-  oss << PrintInputOptions(args...);
-  oss << ")" << std::endl;
+  ossCall << PrintInputOptions(args...);
+  ossCall << ")";
 
-  return util::HyphenateString(oss.str(), 0);
+  oss << util::HyphenateString(ossCall.str(), 8);
+
+  return oss.str();
 }
 
 /**
