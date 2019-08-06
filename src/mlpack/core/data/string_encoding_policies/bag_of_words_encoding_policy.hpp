@@ -1,5 +1,5 @@
 /**
- * @file bow_encoding_policy.hpp
+ * @file bag_of_words_encoding_policy.hpp
  * @author Jeffin Sam
  *
  * Definition of the BagOfWordsEncodingPolicy class.
