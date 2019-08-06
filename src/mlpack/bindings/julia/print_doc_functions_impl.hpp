@@ -113,17 +113,23 @@ inline std::string CreateInputArguments(const std::string& paramName,
     {
       if (d.cppType == "arma::mat")
       {
-        oss << "julia> " << value << " = rand(100, 10)" << std::endl;
+        oss << "julia> " << value << " = CSV.read(\"" << value << ".csv\")"
+            << std::endl;
       }
       else if (d.cppType == "arma::Mat<size_t>")
       {
-        oss << "julia> " << value << " = rand(UInt64, (100, 10))" << std::endl;
+        oss << "julia> " << value << " = CSV.read(\"" << value
+            << ".csv\"; type=Int64)" << std::endl;
       }
     }
 
     oss << CreateInputArguments(args...);
 
-    return oss.str();
+    // If we created anything at all, it uses the CSV.jl package, so we need an
+    // include there.
+    std::string csvInclude = "julia> using CSV\n";
+
+    return csvInclude + oss.str();
   }
   else
   {
