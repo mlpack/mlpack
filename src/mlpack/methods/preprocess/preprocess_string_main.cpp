@@ -216,6 +216,9 @@ static void mlpackMain()
       CLI::GetParam<vector<string> >("dimension");
   unordered_set<size_t> dimensions = GetColumnIndices(tempDimension);
   vector<vector<string>> dataset = CreateDataset(filename, columnDelimiter[0]);
+  for (auto colIndex : dimensions)
+    if (colIndex >= dataset.back().size())
+      Log::Fatal << "The index given is out of range, please verify \n";
   // Preparing the input dataset on which string manipulation has to be done.
   // vector<vector<string>> nonNumericInput(dimension.size());
   unordered_map<size_t , vector<string>> nonNumericInput;
