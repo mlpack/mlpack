@@ -616,7 +616,7 @@ BOOST_AUTO_TEST_CASE(OnePassRawCountSmoothIdfEncodingTest)
   };
   for (size_t i = 0; i < expected.size(); i++)
     for (size_t j = 0; j < expected[i].size(); j++)
-      BOOST_REQUIRE_CLOSE (expected[i][j], output[i][j], 1e-12);
+      BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-12);
 }
 
 /**

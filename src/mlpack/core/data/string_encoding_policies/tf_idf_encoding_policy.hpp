@@ -36,7 +36,6 @@ namespace data {
 class TfIdfEncodingPolicy
 {
  public:
-
   /* 
   * Enum Class used to identify the type of tf encoding
   *
@@ -57,7 +56,7 @@ class TfIdfEncodingPolicy
 
   TfIdfEncodingPolicy(size_t tfType = 0, bool smooth_idf = true) :
                       tfType(tfType), smooth_idf(smooth_idf)
-  { 
+  {
   }
   /**
   * The function initializes the output matrix.
@@ -178,9 +177,9 @@ class TfIdfEncodingPolicy
   * @param numToken The count of token parsed till now.
   * @param value The encoded token.
   */
-   void PreprocessToken(size_t row,
-                        size_t /*numTokens*/,
-                        size_t value)
+  void PreprocessToken(size_t row,
+                       size_t /*numTokens*/,
+                       size_t value)
   {
     if (row >= tokenCount.size())
     {
