@@ -92,7 +92,7 @@ void PPO<
 
   replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
       sampledNextStates, isTerminal);
-
+  
   arma::rowvec discountedRewards(sampledRewards.n_rows);
   arma::mat nextActionValues;
   double values = 0.0;
@@ -142,18 +142,27 @@ void PPO<
   normalDist.Probability(observation, prob);
   oldNormalDist.Probability(observation, oldProb);
 
-  // row vector
   arma::mat ratio = vectorise((prob / oldProb), 1);
 
   arma::mat surrogateLoss = arma::clamp(ratio, 1 - config.Epsilon(),
       1 + config.Epsilon()) % advantages;
   arma::mat loss = - arma::min(ratio % advantages, surrogateLoss);
 
+  //backward the gradient
+  arma::mat dsurro1 = -loss % (ratio % advantages <= surrogateLoss) % advantages;
+  arma::mat dsurro2 = -loss % (ratio % advantages > surrogateLoss);
+  arma::mat dratio1 = (ratio >= (1 - config.Epsilon())) %
+      (ratio <= (1 + config.Epsilon())) % advantages % dsurro2;
+  arma::mat dprob = (dratio1 + dsurro1) % vectorise((1.0 / oldProb), 1);
+  arma::mat dmu = (vectorise(observation, 1) - mu) / (arma::square(sigma)) % dprob;
+
+  arma::mat dsigma = -1 / sigma +
+      arma::square(vectorise(observation, 1) - mu) / arma::pow(sigma, 3);
+
   // todo: debug empty loss and backward
-  // loss.insert_rows(loss.n_rows, loss.row(0));
   arma::mat dTanh, dSoftP;
-  ann::TanhFunction::Deriv(vectorise(loss, 1), dTanh);
-  ann::SoftplusFunction::Deriv(vectorise(loss, 1), dSoftP);
+  ann::TanhFunction::Deriv(vectorise(dmu, 1), dTanh);
+  ann::SoftplusFunction::Deriv(vectorise(dsigma, 1), dSoftP);
 
   arma::mat dLoss = arma::join_cols(dTanh, dSoftP);
 
@@ -191,13 +200,11 @@ double PPO<
   ann::TanhFunction::Fn(actionValue.row(0), mu);
   ann::SoftplusFunction::Fn(actionValue.row(1), sigma);
 
-
   ann::NormalDistribution normalDist
       = ann::NormalDistribution(mu, sigma);
 
   ActionType action;
   action.action = normalDist.Sample()[0];
-
 
   // Interact with the environment to advance to next state.
   StateType nextState;
@@ -245,10 +252,10 @@ double PPO<
   // Running until get to the terminal state.
   while (!environment.IsTerminal(state))
   {
-    if (config.StepLimit() && steps >= config.StepLimit())
-      break;
-
     totalReturn += Step();
+
+    steps++;
+    totalSteps++;
 
     if (steps > 0 && totalSteps % config.UpdateInterval() == 0)
     {
@@ -256,8 +263,8 @@ double PPO<
       replayMethod.Clear();
     }
 
-    steps++;
-    totalSteps++;
+    if (config.StepLimit() && steps >= config.StepLimit())
+      break;
   }
   return totalReturn;
 }
