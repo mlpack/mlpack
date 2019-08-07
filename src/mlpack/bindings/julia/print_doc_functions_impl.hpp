@@ -111,12 +111,17 @@ inline std::string CreateInputArguments(const std::string& paramName,
 
     if (d.input)
     {
-      if (d.cppType == "arma::mat")
+      if (d.cppType == "arma::mat" ||
+          d.cppType == "arma::vec" ||
+          d.cppType == "arma::rowvec" ||
+          d.cppType == "std::tuple<mlpack::data::DatasetInfo, arma::mat>")
       {
         oss << "julia> " << value << " = CSV.read(\"" << value << ".csv\")"
             << std::endl;
       }
-      else if (d.cppType == "arma::Mat<size_t>")
+      else if (d.cppType == "arma::Mat<size_t>" ||
+               d.cppType == "arma::Row<size_t>" ||
+               d.cppType == "arma::Col<size_t>")
       {
         oss << "julia> " << value << " = CSV.read(\"" << value
             << ".csv\"; type=Int64)" << std::endl;
@@ -443,6 +448,10 @@ inline std::string ProgramCall(const std::string& programName)
 
   result << programName << "(";
 
+  // Store length for hyphenation.
+  const size_t hyphenationLength = (result.str().size() > 35) ? 10 :
+      result.str().size();
+
   // Now, print all required input options.
   size_t inputs = 0;
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
@@ -481,8 +490,7 @@ inline std::string ProgramCall(const std::string& programName)
 
   result << ")";
 
-  // 7 characters is the length of 'julia> '.
-  return util::HyphenateString(result.str(), 7);
+  return util::HyphenateString(result.str(), hyphenationLength);
 }
 
 /**

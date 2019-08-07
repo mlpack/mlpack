@@ -142,6 +142,8 @@ inline std::string ToUnderscores(const std::string& str)
 {
   std::string ret(str);
   std::replace(ret.begin(), ret.end(), ' ', '_');
+  std::replace(ret.begin(), ret.end(), '{', '_');
+  std::replace(ret.begin(), ret.end(), '}', '_');
   return ret;
 }
 
