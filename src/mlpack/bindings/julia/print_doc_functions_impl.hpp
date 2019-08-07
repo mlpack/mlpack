@@ -379,7 +379,8 @@ inline std::string ProgramCall(const std::string& programName, Args... args)
 
   oss << inputArgs;
 
-  std::ostringstream ossCall << "julia> ";
+  std::ostringstream ossCall;
+  ossCall << "julia> ";
 
   // Find out if we have any output options first.
   std::ostringstream ossOutput;
