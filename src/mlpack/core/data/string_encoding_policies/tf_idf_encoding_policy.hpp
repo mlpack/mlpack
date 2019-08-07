@@ -29,12 +29,17 @@ namespace data {
 class TfIdfEncodingPolicy
 {
  public:
+  
+  enum tfTypes
+  {
+    rawCount,
+    binary,
+    sublinearTf,
+    termFrequency,
+  };
 
-  TfIdfEncodingPolicy(bool binary = false, bool smooth_idf = true,
-                      bool sublinear_tf = false, bool raw_count = true,
-                      bool term_frequency = false) : binary (binary),
-                      smooth_idf (smooth_idf), sublinear_tf (sublinear_tf),
-                      raw_count (raw_count), term_frequency (term_frequency) {}
+  TfIdfEncodingPolicy(size_t tfType = 0, bool smooth_idf = true) :
+                      tfType (tfType), smooth_idf (smooth_idf) {}
   /**
   * The function initializes the output matrix.
   *
@@ -90,11 +95,11 @@ class TfIdfEncodingPolicy
       idf = std::log((output.n_rows + 1) / (1 + idfdict[value-1])) + 1;
     else
       idf = std::log(output.n_rows / idfdict[value - 1]) + 1;
-    if (sublinear_tf)
+    if (tfType == tfTypes::termFrequency)
       tf = tokenCount[row][value - 1] / row_size[row];
-    else if (term_frequency)
+    else if (tfType == tfTypes::sublinearTf)
       tf = std::log(tokenCount[row][value - 1]) + 1;
-    else if (binary)
+    else if (tfType == tfTypes::binary)
       tf = tokenCount[row][value - 1] > 0 ? 1 : 0;
     else
       tf = tokenCount[row][value - 1];
@@ -121,11 +126,11 @@ class TfIdfEncodingPolicy
       idf = std::log((output.size() + 1) / (1 + idfdict[value-1])) + 1;
     else
       idf = std::log(output.size() / idfdict[value - 1]) + 1;
-    if (sublinear_tf)
+    if (tfType == tfTypes::termFrequency)
       tf = tokenCount[row][value - 1] / row_size[row];
-    else if (term_frequency)
+    else if (tfType == tfTypes::sublinearTf)
       tf = std::log(tokenCount[row][value - 1]) + 1;
-    else if (binary)
+    else if (tfType == tfTypes::binary)
       tf = tokenCount[row][value - 1] > 0 ? 1 : 0;
     else
       tf = tokenCount[row][value - 1];
@@ -166,11 +171,8 @@ class TfIdfEncodingPolicy
   std::vector<std::unordered_map<size_t, double>> tokenCount;
   std::unordered_map<size_t, double> idfdict;
   std::vector<double> row_size;
-  bool binary;
   bool smooth_idf;
-  bool sublinear_tf;
-  bool raw_count;
-  bool term_frequency;
+  size_t tfType;
 };
 
 /**
