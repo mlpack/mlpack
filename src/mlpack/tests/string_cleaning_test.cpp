@@ -36,7 +36,6 @@ BOOST_AUTO_TEST_CASE(StopWordsTest)
   stopword.insert("isn't");
   stopword.insert("is");
   obj.RemoveStopWords(arr, stopword, data::SplitByChar(" "));
-  cout<<"jeffin"<<arr[0]<<endl;
   BOOST_CHECK_EQUAL(arr[0], "mlpack great?");
   BOOST_CHECK_EQUAL(arr[1], "2019 gsoc great.");
 }

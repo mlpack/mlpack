@@ -107,7 +107,6 @@ class StringCleaning
         result += std::string(token);
       if (!token.empty())
         token = tokenizer(strView);
-      std::cout<<"here"<<result<<"opt \n";
       while (!token.empty())
       {
         if (stopwords.find(token) == stopwords.end())
