@@ -51,7 +51,7 @@ PARAM_STRING_IN_REQ("actual_dataset", "File containing the reference dataset.",
     "t");
 PARAM_STRING_IN_REQ("preprocess_dataset", "File containing the preprocess "
     "dataset.", "o");
-PARAM_STRING_IN("column_delimiter", "delimeter used to seperate Column in files"
+PARAM_STRING_IN("columnDelimiter", "delimeter used to seperate Column in files"
     "example '\\t' for '.tsv' and ',' for '.csv'.", "d", "\t");
 PARAM_STRING_IN("delimiter", "A set of chars that is used as delimeter to"
     "tokenize the string dataset ", "D", " ");
@@ -68,115 +68,106 @@ using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
-void createDataset(std::vector<std::vector<std::string>>& dataset,
-                   const std::string& filename,
-                   const std::string& column_delimiter)
+static vector<vector<string>> CreateDataset(const string& filename,
+                                            const char& columnDelimiter)
 {
+  vector<vector<string>> dataset;
   // Extracting the Contents of file
-  // File pointer
-  ifstream fin;
-  // Open an existing file
-  fin.open(filename);
+  // File stream.
+  ifstream fin(filename);
   if (!fin.is_open())
-  {
     Log::Fatal << "Unable to open input file \n";
-  }
-  std::string line, word;
-  boost::string_view token, copy;
-  while (std::getline(fin, line))
+  string line, word;
+  while (getline(fin, line))
   {
     stringstream streamLine(line);
-    dataset.emplace_back(std::vector<std::string>());
+    dataset.emplace_back();
     // delimeter[0] becase the standard function accepts char as input.
-    while (std::getline(streamLine, word, column_delimiter[0]))
+    while (getline(streamLine, word, columnDelimiter))
     {
       dataset.back().push_back(word);
     }
   }
+  return dataset;
 }
 
-void checkForDigit(const std::string& column)
+static bool IsNumber(const string& column)
 {
   for (auto& i : column)
-    if (!std::isdigit(i))
-    Log::Fatal << "Characters encountered, Please give only digits";
+    if (!isdigit(i))
+      return false;
+  return true;
 }
 
-void getColumn(const std::vector<std::string>& temp_dimension,
-               std::set<size_t>& dimension)
+static unordered_set<size_t> GetColumnIndices(const vector<string>& tempDimension)
 {
+  unordered_set<size_t> dimensions;
   int columnstartindex, columnendindex;
   size_t found;
-  for (size_t i = 0; i < temp_dimension.size(); i++)
+  for (size_t i = 0; i < tempDimension.size(); i++)
   {
-    found = temp_dimension[i].find('-');
+    found = tempDimension[i].find('-');
     if ( found != string::npos)
     {
       try
       {
         // Has a range include, something of type a-b.
-        checkForDigit(temp_dimension[i].substr(0, found));
-        checkForDigit(temp_dimension[i].substr(found+1,
-            temp_dimension[i].length()));        
-        columnstartindex = std::stoi(temp_dimension[i].substr(0, found));
-        columnendindex = std::stoi(temp_dimension[i].substr(found+1,
-            temp_dimension[i].length()));
+        string subStringStart = tempDimension[i].substr(0, found);
+        string subStringEnd = tempDimension[i].substr(found+1,
+            tempDimension[i].length());
+        IsNumber(subStringStart);
+        IsNumber(subStringEnd);        
+        columnstartindex = stoi(subStringStart);
+        columnendindex = stoi(subStringEnd);
       }
-      catch (const std::exception& e)
+      catch (const exception& e)
       {
         Log::Fatal << "Dimension value not clear, either negatve or can't "
         "parse the range. Usage a-b \n";
       }
       for (int i = columnstartindex; i <= columnendindex; i++)
-        dimension.insert(i);
+        dimensions.insert(i);
     }
     else
     {
       try
       {
-        checkForDigit(temp_dimension[i]);
-        dimension.insert(std::stoi(temp_dimension[i]));
+        IsNumber(tempDimension[i]);
+        dimensions.insert(stoi(tempDimension[i]));
       }
-      catch (const std::exception& e)
+      catch (const exception& e)
       {
         Log::Fatal << "Dimension value not appropriate \n";      
       }
     }
   }
+  return dimensions;
 }
 
-void writeOutput(const std::string& outputFilename,
-                 const std::vector<std::vector<std::string>>& dataset,
-                 const std::vector<std::vector<std::string>>& nonNumericInput,
-                 const std::string& column_delimiter,
-                 const std::set<size_t>& dimension)
+static void WriteOutput(const string& outputFilename,
+                 const vector<vector<string>>& dataset,
+                 const unordered_map<size_t, vector<string>>& nonNumericInput,
+                 const string& columnDelimiter,
+                 const unordered_set<size_t>& dimensions)
 {
-  ofstream fout;
-  fout.open(outputFilename, ios::trunc);
+  ofstream fout(outputFilename, ios::trunc);
   if (!fout.is_open())
-  {
     Log::Fatal << "Unable to open a file for writing output.\n";
-  }
-  std::set<size_t>::iterator dimensionIterator;
   for (size_t i = 0 ; i < dataset.size(); i++)
   {
-    size_t col = 0;
-    dimensionIterator = dimension.begin();
     for (size_t j = 0 ; j < dataset[i].size(); j++)
     {
-      if (col < dimension.size() && *dimensionIterator == j)
+      if (dimensions.find(j) != dimensions.end())
       {
         if (j + 1 < dataset[i].size())
-          fout<<nonNumericInput[col][i]<<column_delimiter;
+          fout<<nonNumericInput.at(j)[i]<<columnDelimiter;
         else
-          fout<<nonNumericInput[col][i];
-        dimensionIterator++;
-        col++;
+          fout<<nonNumericInput.at(j)[i];
       }
       else
       {
         if (j + 1 < dataset[i].size())
-          fout<<dataset[i][j]<<column_delimiter;
+          fout<<dataset[i][j]<<columnDelimiter;
         else
           fout<<dataset[i][j];
       }
@@ -189,14 +180,14 @@ static void mlpackMain()
 {
   // Parse command line options.
   // Extracting the filename
-  const std::string filename = CLI::GetParam<std::string>("actual_dataset");
+  const string filename = CLI::GetParam<string>("actual_dataset");
   // This is very dangerous, Let's add a check tommorrow.
-  std::string column_delimiter;
-  if (CLI::HasParam("column_delimiter"))
+  string columnDelimiter;
+  if (CLI::HasParam("columnDelimiter"))
   {
-    column_delimiter = CLI::GetParam<std::string>("column_delimiter");
+    columnDelimiter = CLI::GetParam<string>("columnDelimiter");
     // Allow only 3 delimiters.
-    RequireParamValue<std::string>("column_delimiter", [](std::string del)
+    RequireParamValue<string>("columnDelimiter", [](string del)
         { return del == "\t" || del == "," || del == " "; }, true,
         "Delimiter should be either \\t (tab) or , (comma) or ' ' (space) ");
   }
@@ -204,98 +195,76 @@ static void mlpackMain()
   {
       if (data::Extension(filename) == "csv")
       {
-        column_delimiter = ",";
-        Log::Warn << "Found csv Extension, taking , as column_delimiter. \n";
+        columnDelimiter = ",";
+        Log::Warn << "Found csv Extension, taking , as columnDelimiter. \n";
       }
       else if (data::Extension(filename) == "tsv" ||
           data::Extension(filename) == "txt")
       {
-        column_delimiter = "\t";
+        columnDelimiter = "\t";
         Log::Warn << "Found tsv or txt Extension, taking \\t as"
-        "column_delimiter. \n";
+        "columnDelimiter. \n";
       }
       else
       {
-        column_delimiter = "\t";
-        Log::Warn << "column_delimiter not specified, taking default value \n";
+        columnDelimiter = "\t";
+        Log::Warn << "columnDelimiter not specified, taking default value \n";
       }
   }
   // Handling Dimension vector
-  std::vector<std::string> temp_dimension =
-      CLI::GetParam<std::vector<std::string> >("dimension");
-  std::set<size_t> dimension;
-  getColumn(temp_dimension, dimension);
-  std::vector<std::vector<std::string>> dataset;
-  createDataset(dataset, filename, column_delimiter);
+  vector<string> tempDimension =
+      CLI::GetParam<vector<string> >("dimension");
+  unordered_set<size_t> dimensions = GetColumnIndices(tempDimension);
+  vector<vector<string>> dataset = CreateDataset(filename, columnDelimiter[0]);
   // Preparing the input dataset on which string manipulation has to be done.
-  std::vector<std::vector<std::string>> nonNumericInput(dimension.size());
-  std::set<size_t>::iterator dimensionIterator = dimension.begin();
+  // vector<vector<string>> nonNumericInput(dimension.size());
+  unordered_map<size_t , vector<string>> nonNumericInput;
   for (size_t i = 0; i < dataset.size(); i++)
   {
-    size_t col = 0;
-    dimensionIterator = dimension.begin();
-    for (size_t j = 0; j < dataset[i].size(); j++)
-    {
-      if (col < dimension.size())
-      {
-        if (*dimensionIterator == j)
-        {
-          // insert into input
-          nonNumericInput[col].push_back(dataset[i][j]);
-          col++;
-          dimensionIterator++;
-        }
-      }
-      else
-      {
-        break;
-      }
-    }
+    for (auto& datasetCol : dimensions)
+      nonNumericInput[datasetCol].push_back(dataset[i][datasetCol]);
   }
   data::StringCleaning obj;
   if (CLI::HasParam("lowercase"))
   {
-    for (auto& column_line : nonNumericInput)
-      obj.LowerCase(column_line);
+    for (auto& datasetCol : dimensions)
+      obj.LowerCase(nonNumericInput[datasetCol]);
   }
   if (CLI::HasParam("stopwords"))
   {
     // Not sure how to take input for tokenizer from cli.
     if (!CLI::HasParam("stopwordsfile"))
-    {
       Log::Fatal << "Please provide a file for stopwords.\n";
-    }
-    ifstream stopwordfile;
     // Open an existing file
-    const std::string stopwordfilename =
-        CLI::GetParam<std::string>("stopwordsfile");
-    stopwordfile.open(stopwordfilename);
-    if (!stopwordfile.is_open())
+    const string stopWordFilename =
+        CLI::GetParam<string>("stopwordsfile");
+    ifstream stopWordFile(stopWordFilename);
+    if (!stopWordFile.is_open())
     {
       Log::Fatal << "Unable to open the file for stopwords.\n";
     }
-    std::string word;
-    std::deque<std::string> originalword;
-    std::unordered_set<boost::string_view,
+    string word;
+    deque<string> originalword;
+    unordered_set<boost::string_view,
         boost::hash<boost::string_view> >stopwords;
-    while (stopwordfile >> word)
+    while (stopWordFile >> word)
     {
       originalword.push_back(word);
       stopwords.insert(originalword.back());
     }
-    const std::string delimiter = CLI::GetParam<std::string>
+    const string delimiter = CLI::GetParam<string>
         ("delimiter");
-    for (auto& column_line : nonNumericInput)
-      obj.RemoveStopWords(column_line, stopwords,
+    for (auto& datasetCol : dimensions)
+      obj.RemoveStopWords(nonNumericInput[datasetCol], stopwords,
           data::SplitByChar(delimiter));
   }
   if (CLI::HasParam("punctuation"))
   {
-    for (auto& column_line : nonNumericInput)
-      obj.RemovePunctuation(column_line);
+    for (auto& datasetCol : dimensions)
+      obj.RemovePunctuation(nonNumericInput[datasetCol]);
   }
-  const std::string outputFilename = CLI::GetParam<std::string>("preprocess"
+  const string outputFilename = CLI::GetParam<string>("preprocess"
       "_dataset");
-  writeOutput(outputFilename, dataset,nonNumericInput, column_delimiter,
-      dimension);
+  WriteOutput(outputFilename, dataset,nonNumericInput, columnDelimiter,
+      dimensions);
 }
