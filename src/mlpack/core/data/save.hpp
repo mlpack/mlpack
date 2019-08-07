@@ -92,6 +92,17 @@ bool Save(const std::string& filename,
           format f = format::autodetect);
 
 #ifdef HAS_STB
+
+/**
+ * Save the image file from the given matrix.
+ *
+ * @param filename Name of the image file.
+ * @param matrix Matrix to save the image from.
+ * @param info An object of ImageInfo class.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @param transpose If true, transpose the matrix after loading.
+ * @return Boolean value indicating success or failure of load.
+ */
 template<typename eT>
 bool Save(const std::string& filename,
           arma::Mat<eT>& matrix,
@@ -99,6 +110,16 @@ bool Save(const std::string& filename,
           const bool fatal = false,
           const bool transpose = true);
 
+/**
+ * Save the image file from the given matrix.
+ *
+ * @param files A vector consisting of filenames.
+ * @param matrix Matrix to save the image from.
+ * @param info An object of ImageInfo class.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @param transpose If true, transpose the matrix after loading.
+ * @return Boolean value indicating success or failure of load.
+ */
 template<typename eT>
 bool Save(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
