@@ -36,7 +36,7 @@ namespace data {
 class TfIdfEncodingPolicy
 {
  public:
-  
+
   /* 
   * Enum Class used to identify the type of tf encoding
   *
@@ -56,7 +56,9 @@ class TfIdfEncodingPolicy
   };
 
   TfIdfEncodingPolicy(size_t tfType = 0, bool smooth_idf = true) :
-                      tfType (tfType), smooth_idf (smooth_idf) {}
+                      tfType(tfType), smooth_idf(smooth_idf)
+  { 
+  }
   /**
   * The function initializes the output matrix.
   *
@@ -111,7 +113,7 @@ class TfIdfEncodingPolicy
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.
     double idf, tf;
-    if(smooth_idf)
+    if (smooth_idf)
       idf = std::log((output.n_rows + 1) / (1 + idfdict[value - 1])) + 1;
     else
       idf = std::log(output.n_rows / idfdict[value - 1]) + 1;
@@ -144,7 +146,7 @@ class TfIdfEncodingPolicy
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.
     double idf, tf;
-    if(smooth_idf)
+    if (smooth_idf)
       idf = std::log((output.size() + 1) / (1 + idfdict[value - 1])) + 1;
     else
       idf = std::log(output.size() / idfdict[value - 1]) + 1;
@@ -180,13 +182,13 @@ class TfIdfEncodingPolicy
                         size_t /*numTokens*/,
                         size_t value)
   {
-    if(row>=tokenCount.size())
+    if (row >= tokenCount.size())
     {
       row_size.push_back(0);
       tokenCount.push_back(std::unordered_map<size_t, double>());
     }
     tokenCount.back()[value-1]++;
-    if(tokenCount.back()[value - 1]==1)
+    if (tokenCount.back()[value - 1] == 1)
       idfdict[value - 1]++;
     row_size.back()++;
   }
@@ -223,4 +225,4 @@ using TfIdfEncoding = StringEncoding<TfIdfEncodingPolicy,
 } // namespace data
 } // namespace mlpack
 
-#endif 
+#endif

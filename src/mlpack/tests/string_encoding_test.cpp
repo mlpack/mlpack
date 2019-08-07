@@ -614,9 +614,9 @@ BOOST_AUTO_TEST_CASE(OnePassRawCountSmoothIdfEncodingTest)
        1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995, 1.69314718055995  }
   };
-  for(size_t i=0;i<expected.size();i++)
-    for(size_t j=0;j<expected[i].size();j++)
-      BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-12);
+  for (size_t i = 0; i < expected.size(); i++)
+    for (size_t j = 0; j < expected[i].size(); j++)
+      BOOST_REQUIRE_CLOSE (expected[i][j], output[i][j], 1e-12);
 }
 
 /**
@@ -666,8 +666,8 @@ BOOST_AUTO_TEST_CASE(OnePassRawCountSmoothIdfEncodingIndividualCharactersTest)
     { 0, 2, 2.5753641449035616, 2.5753641449035616, 1.6931471805599454 },
     { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
   };
-  for(size_t i=0;i<expected.size();i++)
-    for(size_t j=0;j<expected[i].size();j++)
+  for (size_t i = 0; i < expected.size(); i++)
+    for (size_t j = 0; j < expected[i].size(); j++)
       BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-12);
 }
 
@@ -765,8 +765,8 @@ BOOST_AUTO_TEST_CASE(OnePassTfIdfRawCountEncodingTest)
        2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
        2.09861228866811, 2.09861228866811, 2.09861228866811  }
   };
-  for(size_t i=0;i<expected.size();i++)
-    for(size_t j=0;j<expected[i].size();j++)
+  for (size_t i = 0; i < expected.size(); i++)
+    for (size_t j = 0; j < expected[i].size(); j++)
       BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-12);
 }
 
@@ -820,8 +820,8 @@ BOOST_AUTO_TEST_CASE(OnePassRawcountEncodingIndividualCharactersTest)
     { 0, 2, 2.8109302162163288, 2.8109302162163288, 2.0986122886681100 },
     { 1.4054651081081644, 1, 0, 1.4054651081081644, 0 }
   };
-  for(size_t i=0;i<expected.size();i++)
-    for(size_t j=0;j<expected[i].size();j++)
+  for (size_t i = 0; i < expected.size(); i++)
+    for (size_t j = 0; j < expected[i].size(); j++)
       BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-12);
 }
 
@@ -874,8 +874,8 @@ BOOST_AUTO_TEST_CASE(OnePassBnarySmoothIdfEncodingIndividualCharactersTest)
     { 0, 1, 1.2876820724517808, 1.2876820724517808, 1.6931471805599454 },
     { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
   };
-  for(size_t i=0;i<expected.size();i++)
-    for(size_t j=0;j<expected[i].size();j++)
+  for (size_t i = 0; i < expected.size(); i++)
+    for (size_t j = 0; j < expected[i].size(); j++)
       BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-12);
 }
 

@@ -146,4 +146,4 @@ using BagOfWordsEncoding = StringEncoding<BagOfWordsEncodingPolicy,
 } // namespace data
 } // namespace mlpack
 
-#endif 
+#endif
