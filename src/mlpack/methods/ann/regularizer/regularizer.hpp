@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_REGULARIZER_LAYER_HPP
-#define MLPACK_METHODS_ANN_REGULARIZER_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_REGULARIZER_HPP
+#define MLPACK_METHODS_ANN_REGULARIZER_HPP
 
 #include "lregularizer.hpp"
 #include "orthogonal_regularizer.hpp"

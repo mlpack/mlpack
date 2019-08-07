@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_ANN_LAYER_LINEAR_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/ann/regularizer/regularizer.hpp>
+#include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
 
 #include "layer_types.hpp"
 

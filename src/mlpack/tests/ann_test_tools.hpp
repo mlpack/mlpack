@@ -173,7 +173,7 @@ double CheckRegularizerGradient(FunctionType& function, const double eps = 1e-7)
 {
   // Get gradients for the current parameters.
   arma::mat orgGradient, estGradient;
-  arma::mat weight = arma::randu(10, 15);
+  arma::mat weight = arma::randu(10, 10);
   function.Gradient(weight, orgGradient);
 
   estGradient = arma::zeros(weight.n_rows, weight.n_cols);
@@ -183,13 +183,15 @@ double CheckRegularizerGradient(FunctionType& function, const double eps = 1e-7)
   {
     for (size_t j = 0; j < weight.n_cols; ++j)
     {
+      double tmp = weight(i, j);
+
       weight(i, j) += eps;
       double costPlus = function.Output(weight, i, j);
       weight(i, j) -= (2 * eps);
       double costMinus = function.Output(weight, i, j);
 
       // Restore the weight value.
-      weight(i, j) += eps;
+      weight(i, j) = tmp;
       estGradient(i, j) = (costPlus - costMinus) / (2 * eps);
     }
   }

@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LREGULARIZER_IMPL_HPP
-#define MLPACK_METHODS_ANN_LREGULARIZER_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_ORTHOGONAL_REGULARIZER_IMPL_HPP
+#define MLPACK_METHODS_ANN_ORTHOGONAL_REGULARIZER_IMPL_HPP
 
 // In case it hasn't been included.
 #include "orthogonal_regularizer.hpp"
@@ -49,12 +49,11 @@ void OrthogonalRegularizer::Evaluate(const MatType& weight, MatType& gradient)
     }
   }
 
-  gradient += arma::vectorise(grad) * factor;
+  gradient = arma::vectorise(grad) * factor;
 }
 
-template<int Power>
 template<typename Archive>
-void OrthogonalRegularizer<Power>::serialize(
+void OrthogonalRegularizer::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(factor);

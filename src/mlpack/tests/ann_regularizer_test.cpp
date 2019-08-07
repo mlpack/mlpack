@@ -17,7 +17,6 @@
 #include <mlpack/methods/ann/regularizer/regularizer.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 #include "ann_test_tools.hpp"
 #include "serialization.hpp"
 
@@ -79,6 +78,38 @@ BOOST_AUTO_TEST_CASE(GradientL2RegularizerTest)
 
     double factor;
     L2Regularizer reg;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckRegularizerGradient(function), 1e-4);
+}
+
+BOOST_AUTO_TEST_CASE(GradientOrthogonalRegularizerTest)
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+      factor(0.6),
+      reg(factor)
+    {
+      // Nothing to do here.
+    }
+
+    double Output(const arma::mat& weight, size_t /* i */, size_t /* j */)
+    {
+      arma::mat I;
+      I.eye(weight.n_rows, weight.n_rows);
+      arma::mat x = arma::abs(weight * weight.t() - I) * factor;
+      return arma::accu(x);
+    }
+
+    void Gradient(arma::mat& weight, arma::mat& gradient)
+    {
+      reg.Evaluate(weight, gradient);
+    }
+
+    double factor;
+    OrthogonalRegularizer reg;
   } function;
 
   BOOST_REQUIRE_LE(CheckRegularizerGradient(function), 1e-4);
