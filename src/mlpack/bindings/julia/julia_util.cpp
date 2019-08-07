@@ -4,7 +4,7 @@
  *
  * Implementations of Julia binding functionality.
  */
-#include "julia_util.h"
+#include <mlpack/bindings/julia/julia_util.h>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
 
