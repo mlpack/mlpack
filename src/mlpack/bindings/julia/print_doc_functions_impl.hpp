@@ -393,7 +393,8 @@ inline std::string ProgramCall(const std::string& programName, Args... args)
   ossCall << PrintInputOptions(args...);
   ossCall << ")";
 
-  oss << util::HyphenateString(ossCall.str(), 8);
+  // Since `julia> ` is 8 characters, let's indent 12 otherwise it looks weird.
+  oss << util::HyphenateString(ossCall.str(), 12);
 
   return oss.str();
 }
