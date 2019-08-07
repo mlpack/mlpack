@@ -13,7 +13,6 @@
 #ifndef MLPACK_CORE_DATA_IMAGE_INFO_HPP
 #define MLPACK_CORE_DATA_IMAGE_INFO_HPP
 
-#ifdef HAS_STB // Compile this only if stb is present.
 
 #include <mlpack/prereqs.hpp>
 
@@ -29,6 +28,8 @@
 
 namespace mlpack {
 namespace data {
+
+#ifdef HAS_STB // Compile this only if stb is present.
 
 /**
  * Checks if the given image filename is supported.
@@ -93,13 +94,15 @@ class ImageInfo
   // Compression of the image if saved as jpg (0 - 100).
   size_t quality;
 };
+#else
+class ImageInfo { };
+
+#endif // HAS_STB.
 
 } // namespace data
 } // namespace mlpack
 
 // Include implementation of Image.
 #include "image_info_impl.hpp"
-
-#endif // HAS_STB.
 
 #endif

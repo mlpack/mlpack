@@ -305,30 +305,7 @@ bool Load(const std::vector<std::string>& files,
           ImageInfo& info,
           const bool fatal = false,
           const bool transpose = true);
-#else
-class ImageInfo { };
 
-template<typename eT>
-bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true)
-{
-  throw std::runtime_error("Load(): HAS_STB is not defined, "
-      "so STB is not available and images cannot be loaded!");
-}
-
-template<typename eT>
-bool Load(const std::vector<std::string>& files,
-          arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true)
-{
-  throw std::runtime_error("Load(): HAS_STB is not defined, "
-      "so STB is not available and images cannot be loaded!");
-}
 #endif // HAS_STB.
 
 } // namespace data

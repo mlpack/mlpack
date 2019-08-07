@@ -400,6 +400,28 @@ bool Save(const std::vector<std::string>& files,
   }
   return status;
 }
+#else
+template<typename eT>
+bool Save(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false,
+          const bool transpose = true)
+{
+  throw std::runtime_error("Save(): HAS_STB is not defined, "
+      "so STB is not available and images cannot be saved!");
+}
+
+template<typename eT>
+bool Save(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false,
+          const bool transpose = true)
+{
+  throw std::runtime_error("Save(): HAS_STB is not defined, "
+      "so STB is not available and images cannot be saved!");
+}
 #endif // HAS_STB.
 
 } // namespace data

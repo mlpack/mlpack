@@ -13,13 +13,14 @@
 #ifndef MLPACK_CORE_DATA_LOAD_IMAGE_IMPL_HPP
 #define MLPACK_CORE_DATA_LOAD_IMAGE_IMPL_HPP
 
-#ifdef HAS_STB // Compile this only if stb is present.
 
 // In case it hasn't been included yet.
 #include "load.hpp"
 
 namespace mlpack {
 namespace data {
+
+#ifdef HAS_STB // Compile this only if stb is present.
 
 // Image loading API.
 template<typename eT>
@@ -118,9 +119,31 @@ bool Load(const std::vector<std::string>& files,
   return status;
 }
 
+#else // No STB.
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false,
+          const bool transpose = true)
+{
+  throw std::runtime_error("Load(): HAS_STB is not defined, "
+      "so STB is not available and images cannot be loaded!");
+}
+
+template<typename eT>
+bool Load(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false,
+          const bool transpose = true)
+{
+  throw std::runtime_error("Load(): HAS_STB is not defined, "
+      "so STB is not available and images cannot be loaded!");
+}
+#endif // HAS_STB.
+
 } // namespace data
 } // namespace mlpack
-
-#endif // HAS_STB.
 
 #endif
