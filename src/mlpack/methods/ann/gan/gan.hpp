@@ -68,6 +68,10 @@ class GAN
    * @param trainData The real data.
    * @param generator Generator network.
    * @param discriminator Discriminator network.
+   * @param initializeRule Instantiated InitializationRule object
+   *        for initializing the network parameter.
+   * @param noiseFunction Noise to be used for feeding the Generator.
+   * @param noiseDim The dimension of noise passed to the Generator.
    * @param batchSize Batch size to be used for training.
    * @param generatorUpdateStep Number of steps to train Discriminator
    *                            before updating Generator.
@@ -87,9 +91,44 @@ class GAN
       const size_t preTrainSize,
       const double multiplier,
       const double clippingParameter = 0.01,
-      const double lambda = 10.0,
-      arma::mat trainLabels = arma::mat(),
-      const size_t yDim = 0);
+      const double lambda = 10.0);
+
+
+  /**
+   * Constructor for CGAN class.
+   *
+   * @param trainData The real data.
+   * @param trainLabels The labels for the real data.
+   * @param generator Generator network.
+   * @param discriminator Discriminator network.
+   * @param initializeRule Instantiated InitializationRule object
+   *        for initializing the network parameter.
+   * @param noiseFunction Noise to be used for feeding the Generator.
+   * @param noiseDim The dimension of noise passed to the Generator.
+   * @param yDim The dimension of the one-hot encoded labels passed to the
+   *        Generator.
+   * @param batchSize Batch size to be used for training.
+   * @param generatorUpdateStep Number of steps to train Discriminator
+   *                            before updating Generator.
+   * @param preTrainSize Number of pre-training steps of Discriminator.
+   * @param multiplier Ratio of learning rate of Discriminator to the Generator.
+   * @param clippingParameter Weight range for enforcing Lipschitz constraint.
+   * @param lambda Parameter for setting the gradient penalty.
+   */
+  GAN(arma::mat& trainData,
+      arma::mat& trainLabels,
+      Model generator,
+      Model discriminator,
+      InitializationRuleType& initializeRule,
+      Noise& noiseFunction,
+      const size_t noiseDim,
+      const size_t yDim,
+      const size_t batchSize,
+      const size_t generatorUpdateStep,
+      const size_t preTrainSize,
+      const double multiplier,
+      const double clippingParameter = 0.01,
+      const double lambda = 10.0);
 
   //! Copy constructor.
   GAN(const GAN&);
@@ -313,6 +352,22 @@ class GAN
            const size_t batchSize);
 
   /**
+   * Forward function for CGAN.
+   * Performs a forward pass of the noise and labels through the generator
+   * to generate the samples.
+   *
+   * @param noise The noise for generating the samples.
+   * @param labels The labels for the images to be generated.
+   * @param samples The generated samples.
+   */
+  template<typename Policy = PolicyType>
+  typename std::enable_if<std::is_same<Policy, CGAN>::value,
+                          void>::type
+  Forward(arma::mat noise,
+          const arma::mat& labels,
+          arma::mat& samples);
+
+  /**
    * Shuffle the order of function visitation. This may be called by the
    * optimizer.
    */
@@ -368,8 +423,6 @@ class GAN
  private:
   //! Locally stored parameter for training data + noise data.
   arma::mat predictors;
-  //! Locally stored labels for the predictors.
-  arma::mat trainLabels;
   //! Locally stored one-hot encoded labels.
   arma::mat trainY;
   //! Locally stored parameters of the network.
@@ -384,8 +437,6 @@ class GAN
   Noise noiseFunction;
   //! Locally stored input dimension of the Generator network.
   size_t noiseDim;
-  //! Locally stored dimension of the conditional input.
-  size_t yDim;
   //! Locally stored number of data points.
   size_t numFunctions;
   //! Locally stored batch size parameter.
@@ -436,6 +487,10 @@ class GAN
   arma::mat gradientGenerator;
   //! Locally stored output of the Generator network.
   arma::mat ganOutput;
+  //! Locally stored labels for the predictors.
+  arma::mat trainLabels;
+  //! Locally stored dimension of the conditional input.
+  size_t yDim;
 };
 
 } // namespace ann

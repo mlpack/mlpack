@@ -119,9 +119,10 @@ BOOST_AUTO_TEST_CASE(CGANMNISTTest)
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};
   GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
-      std::function<double()>, CGAN> cgan(trainData, generator, discriminator,
-      gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
-      discriminatorPreTrain, multiplier, clippingParameter, 10.0, labels, yDim);
+      std::function<double()>, CGAN> cgan(trainData, labels, generator,
+      discriminator, gaussian, noiseFunction, noiseDim, yDim, batchSize,
+      generatorUpdateStep, discriminatorPreTrain, multiplier,
+      clippingParameter);
 
   Log::Info << "Training..." << std::endl;
   double objVal = cgan.Train(optimizer);
@@ -134,13 +135,13 @@ BOOST_AUTO_TEST_CASE(CGANMNISTTest)
   arma::mat noise(noiseDim, batchSize);
   size_t dim = std::sqrt(trainData.n_rows);
   arma::mat generatedData(2 * dim, dim * numSamples);
-
+  arma::mat labelsSample = arma::ones(1, batchSize);
   for (size_t i = 0; i < numSamples; i++)
   {
     arma::mat samples;
     noise.imbue( [&]() { return noiseFunction(); } );
 
-    cgan.Generator().Forward(noise, samples);
+    cgan.Forward(noise, labelsSample, samples);
     samples.reshape(dim, dim);
     samples = samples.t();
 

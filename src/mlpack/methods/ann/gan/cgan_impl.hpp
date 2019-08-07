@@ -205,6 +205,40 @@ Gradient(const arma::mat& parameters,
   this->EvaluateWithGradient(parameters, i, gradient, batchSize);
 }
 
+template<
+  typename Model,
+  typename InitializationRuleType,
+  typename Noise,
+  typename PolicyType
+>
+template<typename Policy>
+typename std::enable_if<std::is_same<Policy, CGAN>::value, void>::type
+GAN<Model, InitializationRuleType, Noise, PolicyType>::
+Forward(arma::mat noise,
+        const arma::mat& labels,
+        arma::mat& samples)
+{
+  if (!reset)
+    Reset();
+
+  arma::mat concat(yDim, labels.n_cols, arma::fill::zeros);
+
+  for (size_t i = 0; i < labels.n_cols; i++)
+  {
+    concat(labels(i) - 1, i) = 1;
+  }
+
+  for (size_t i = 0; i < generator.network.size(); i++)
+  {
+    boost::apply_visitor(ConcatVisitor(std::move(concat)),
+        generator.network[i]);
+  }
+
+  generator.Forward(std::move(noise));
+  samples = boost::apply_visitor(outputParameterVisitor,
+      generator.network.back());
+}
+
 } // namespace ann
 } // namespace mlpack
 # endif
