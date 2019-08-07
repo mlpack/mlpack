@@ -23,8 +23,8 @@ namespace data {
  * DicitonaryEnocdingPolicy is used as a helper class for StringEncoding.
  * The encoder assigns a positive integer number to each unique token and treats
  * the dataset as categorical. The numbers are assigned sequentially starting
- * from one. The tokens are labeled in the order of their occurrence
- * in the input dataset.
+ * from one. The order in which the tokens are labeled is defined by
+ * the dictionary used by the StringEncoding class.
  */
 class DictionaryEncodingPolicy
 {

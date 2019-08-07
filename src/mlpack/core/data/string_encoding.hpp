@@ -34,7 +34,7 @@ class StringEncoding
 {
  public:
   /**
-   * Pass the given arguments to the policy constructor and construct
+   * Pass the given arguments to the policy constructor and create
    * the StringEncoding object using the policy.
    */
   template<typename ... ArgTypes>
@@ -73,8 +73,9 @@ class StringEncoding
    * @param tokenizer The tokenizer object.
    *
    * The tokenization algorithm has to be an object with two public methods:
-   * 1. operator() which accepts a reference to boost::string_view and returns
-   *    the next token;
+   * 1. operator() which accepts a reference to boost::string_view, extracts
+   * the next token from the given view, removes the prefix containing
+   * the extracted token and returns the token;
    * 2. IsTokenEmpty() that accepts a token and returns true if the given
    *    token is empty.
    */
@@ -99,8 +100,9 @@ class StringEncoding
    * @param tokenizer The tokenizer object.
    *
    * The tokenization algorithm has to be an object with two public methods:
-   * 1. operator() which accepts a reference to boost::string_view and returns
-   *    the next token;
+   * 1. operator() which accepts a reference to boost::string_view, extracts
+   * the next token from the given view, removes the prefix containing
+   * the extracted token and returns the token;
    * 2. IsTokenEmpty() that accepts a token and returns true if the given
    *    token is empty.
    */
@@ -143,8 +145,9 @@ class StringEncoding
    * @param policy The policy object.
    *
    * The tokenization algorithm has to be an object with two public methods:
-   * 1. operator() which accepts a reference to boost::string_view and returns
-   *    the next token;
+   * 1. operator() which accepts a reference to boost::string_view, extracts
+   * the next token from the given view, removes the prefix containing
+   * the extracted token and returns the token;
    * 2. IsTokenEmpty() that accepts a token and returns true if the given
    *    token is empty.
    */
@@ -171,8 +174,9 @@ class StringEncoding
    * @param policy The policy object.
    *
    * The tokenization algorithm has to be an object with two public methods:
-   * 1. operator() which accepts a reference to boost::string_view and returns
-   *    the next token;
+   * 1. operator() which accepts a reference to boost::string_view, extracts
+   * the next token from the given view, removes the prefix containing
+   * the extracted token and returns the token;
    * 2. IsTokenEmpty() that accepts a token and returns true if the given
    *    token is empty.
    */

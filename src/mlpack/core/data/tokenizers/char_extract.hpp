@@ -2,7 +2,7 @@
  * @file char_extract.hpp
  * @author Jeffin Sam
  *
- * Definition of the CharExtract class which tokenizes the given string into 
+ * Definition of the CharExtract class which tokenizes a string into
  * characters.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -19,7 +19,7 @@ namespace mlpack {
 namespace data {
 
 /**
- * The class is used to split the given string into characters.
+ * The class is used to split a string into characters.
  */
 class CharExtract
 {

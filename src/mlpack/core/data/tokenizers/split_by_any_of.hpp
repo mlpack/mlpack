@@ -2,8 +2,7 @@
  * @file split_by_any_of.hpp
  * @author Jeffin Sam
  *
- * Definition of the SplitByAnyOf class which tokenizes the given string
- * using the given set of characters.
+ * Definition of the SplitByAnyOf class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -21,7 +20,7 @@ namespace mlpack {
 namespace data {
 
 /**
- * The class is used to split the given string using the given delimiters.
+ * The SplitByAnyOf class tokenizes a string using a set of delimiters.
  */
 class SplitByAnyOf
 {
