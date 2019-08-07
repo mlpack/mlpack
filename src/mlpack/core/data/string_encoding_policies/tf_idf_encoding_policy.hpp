@@ -20,16 +20,33 @@ namespace data {
 /**
  * Definition of the TfIdfEncodingPolicy class.
  *
- * DicitonaryEnocding is used as a helper class for StringEncoding.
- * The encoder assigns a positive integer number to each unique token and treat 
- * the dataset as categorical. The numbers are assigned sequentially starting 
- * from one. The tokens are labeled in the order of their occurrence 
- * in the input dataset.
+ * Tf means term-frequency while tf-idf means term-frequency times inverse
+ * document-frequency. This is a common term weighting scheme in information
+ * retrieval, that has also found good use in document classification.
+ * The goal of using tf-idf instead of the raw frequencies of occurrence of a
+ * token in a given document is to scale down the impact of tokens that occur
+ * very frequently in a given corpus and that are hence empirically less
+ * informative than features that occur in a small fraction of the training
+ * corpus.
+ * TfIdfEncodingPolicy is used as a helper class for StringEncoding.
+ * The encoder assigns a tf-idf number to each unique token and treat 
+ * the dataset as categorical. The tokens are labeled in the order of their
+ * occurrence in the input dataset.
  */
 class TfIdfEncodingPolicy
 {
  public:
   
+  /* 
+  * Enum Class used to identify the type of tf encoding
+  *
+  * Follwing are the defination of the types
+  * binary : binary weighting scheme (0,1)
+  * rawCount : raw count weighting scheme (count of token for every row)
+  * termFrequency : term frequency weighting scheme (count / length(row))
+  * subinerTf : logarthimic weighting scheme (log(tf) + 1) 
+  * 
+  */
   enum tfTypes
   {
     rawCount,
@@ -87,12 +104,15 @@ class TfIdfEncodingPolicy
   * @param col The row token number at which the encoding is performed.
   */
   template<typename MatType>
-  void Encode(MatType& output, size_t value, size_t row, size_t /*col*/)
+  void Encode(MatType& output,
+              size_t value,
+              size_t row,
+              size_t /*col*/)
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.
     double idf, tf;
     if(smooth_idf)
-      idf = std::log((output.n_rows + 1) / (1 + idfdict[value-1])) + 1;
+      idf = std::log((output.n_rows + 1) / (1 + idfdict[value - 1])) + 1;
     else
       idf = std::log(output.n_rows / idfdict[value - 1]) + 1;
     if (tfType == tfTypes::termFrequency)
@@ -117,13 +137,15 @@ class TfIdfEncodingPolicy
   * @param col The row token number at which the encoding is performed.
   */
   template<typename OutputType>
-  void Encode(std::vector<std::vector<OutputType> >& output, size_t value,
-                     size_t row, size_t /*col*/)
+  void Encode(std::vector<std::vector<OutputType> >& output,
+              size_t value,
+              size_t row,
+              size_t /*col*/)
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.
     double idf, tf;
     if(smooth_idf)
-      idf = std::log((output.size() + 1) / (1 + idfdict[value-1])) + 1;
+      idf = std::log((output.size() + 1) / (1 + idfdict[value - 1])) + 1;
     else
       idf = std::log(output.size() / idfdict[value - 1]) + 1;
     if (tfType == tfTypes::termFrequency)
@@ -154,8 +176,9 @@ class TfIdfEncodingPolicy
   * @param numToken The count of token parsed till now.
   * @param value The encoded token.
   */
-   void PreprocessToken(size_t row, size_t /*numTokens*/,
-                       size_t value)
+   void PreprocessToken(size_t row,
+                        size_t /*numTokens*/,
+                        size_t value)
   {
     if(row>=tokenCount.size())
     {
@@ -163,15 +186,20 @@ class TfIdfEncodingPolicy
       tokenCount.push_back(std::unordered_map<size_t, double>());
     }
     tokenCount.back()[value-1]++;
-    if(tokenCount.back()[value-1]==1)
-      idfdict[value-1]++;
+    if(tokenCount.back()[value - 1]==1)
+      idfdict[value - 1]++;
     row_size.back()++;
   }
  private:
+  // Used to store the count of token for each row.
   std::vector<std::unordered_map<size_t, double>> tokenCount;
+  // Used to store the idf values.
   std::unordered_map<size_t, double> idfdict;
+  // Used to store the number of tokens in each row.
   std::vector<double> row_size;
+  // smooth_idf variable to indicate smoothining.
   bool smooth_idf;
+  // Type of Term Frequency to use.
   size_t tfType;
 };
 

@@ -21,11 +21,10 @@ namespace data {
 /**
  * Definition of the BagOfWordsEncodingPolicy class.
  *
- * DicitonaryEnocding is used as a helper class for StringEncoding.
- * The encoder assigns a positive integer number to each unique token and treat 
- * the dataset as categorical. The numbers are assigned sequentially starting 
- * from one. The tokens are labeled in the order of their occurrence 
- * in the input dataset.
+ * BagOfWords is used as a helper class for StringEncoding.
+ * The encoder create a vector of all the unique token and then assigns
+ * 1 if the token is present in the document, 0 if not present. The tokens
+ * are labeled in the order of their occurrence in the input dataset.
  */
 class BagOfWordsEncodingPolicy
 {
@@ -77,7 +76,10 @@ class BagOfWordsEncodingPolicy
   * @param col The row token number at which the encoding is performed.
   */
   template<typename MatType>
-  static void Encode(MatType& output, size_t value, size_t row, size_t /*col*/)
+  static void Encode(MatType& output,
+                     size_t value,
+                     size_t row,
+                     size_t /*col*/)
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.
     output(row, value-1) = 1;
@@ -94,8 +96,10 @@ class BagOfWordsEncodingPolicy
   * @param col The row token number at which the encoding is performed.
   */
   template<typename OutputType>
-  static void Encode(std::vector<std::vector<OutputType> >& output, size_t value,
-                     size_t row, size_t /*col*/)
+  static void Encode(std::vector<std::vector<OutputType> >& output,
+                     size_t value,
+                     size_t row,
+                     size_t /*col*/)
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.
     output[row][value-1] = 1;
@@ -117,8 +121,9 @@ class BagOfWordsEncodingPolicy
   * @param numToken The count of token parsed till now.
   * @param value The encoded token.
   */
-  static void PreprocessToken(size_t /*row*/, size_t /*numTokens*/,
-                       size_t /*value*/) { }
+  static void PreprocessToken(size_t /*row*/,
+                              size_t /*numTokens*/,
+                              size_t /*value*/) { }
 };
 
 /**

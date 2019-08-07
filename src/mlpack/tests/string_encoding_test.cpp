@@ -521,6 +521,10 @@ BOOST_AUTO_TEST_CASE(OnePassBagOfWordsEncodingIndividualCharactersTest)
   BOOST_REQUIRE(output == expected);
 }
 
+/**
+ * Test the Tf-Idf Encoding using rawcount type and smoothidf as true,
+ * which is the deafult values used for algorithim.
+ */
 BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingTest)
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
@@ -565,7 +569,8 @@ BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingTest)
 }
 
 /**
- * Test the one pass modification of the TfIdf encoding algorithm.
+ * Test the one pass modification of the TfIdf encoding algorithm, using rawcount
+ * as type of tf and smoothIdf as true.
  */
 BOOST_AUTO_TEST_CASE(OnePassRawCountSmoothIdfEncodingTest)
 {
@@ -615,8 +620,9 @@ BOOST_AUTO_TEST_CASE(OnePassRawCountSmoothIdfEncodingTest)
 }
 
 /**
-* Test TFIDF encoding for characters using lamda function.
-*/
+ * Test TFIDF encoding for characters using lamda function, using rawcount as tf
+ * type and smoothidf as true.
+ */
 BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingIndividualCharactersTest)
 {
   vector<string> input = {
@@ -639,8 +645,8 @@ BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingIndividualCharactersTest)
 }
 
 /**
- * Test the one pass modification of the Bag of Words encoding algorithm
- * in case of individual character encoding.
+ * Test the one pass modification of the Tf-Idf encoding algorithm
+ * in case of individual character encoding using default values.
  */
 BOOST_AUTO_TEST_CASE(OnePassRawCountSmoothIdfEncodingIndividualCharactersTest)
 {
@@ -665,6 +671,9 @@ BOOST_AUTO_TEST_CASE(OnePassRawCountSmoothIdfEncodingIndividualCharactersTest)
       BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-12);
 }
 
+/**
+ * Test the Tf-Idf Encoding using rawcount type and smoothidf as false.
+ */
 BOOST_AUTO_TEST_CASE(TfIdfRawCountEncodingTest)
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
@@ -711,7 +720,8 @@ BOOST_AUTO_TEST_CASE(TfIdfRawCountEncodingTest)
 }
 
 /**
- * Test the one pass modification of the TfIdf encoding algorithm.
+ * Test the one pass modification of the TfIdf encoding algorithm, with rawcount
+ * as type, but with smoothidf as false.
  */
 BOOST_AUTO_TEST_CASE(OnePassTfIdfRawCountEncodingTest)
 {
@@ -761,8 +771,9 @@ BOOST_AUTO_TEST_CASE(OnePassTfIdfRawCountEncodingTest)
 }
 
 /**
-* Test TFIDF encoding for characters using lamda function.
-*/
+ * Test TFIDF encoding for characters using lamda function, using rawcount as
+ * tf type and smoothidf as false.
+ */
 BOOST_AUTO_TEST_CASE(RawcountTfIdfEncodingIndividualCharactersTest)
 {
   vector<string> input = {
@@ -786,8 +797,9 @@ BOOST_AUTO_TEST_CASE(RawcountTfIdfEncodingIndividualCharactersTest)
 }
 
 /**
- * Test the one pass modification of the Bag of Words encoding algorithm
- * in case of individual character encoding.
+ * Test the one pass modification of the Tf Idf encoding algorithm
+ * in case of individual character encoding, using raw count as type,
+ * and smoothidf as false.
  */
 BOOST_AUTO_TEST_CASE(OnePassRawcountEncodingIndividualCharactersTest)
 {
@@ -814,8 +826,9 @@ BOOST_AUTO_TEST_CASE(OnePassRawcountEncodingIndividualCharactersTest)
 }
 
 /**
-* Test TFIDF encoding for characters using lamda function.
-*/
+ * Test TFIDF encoding for characters using lamda function, using binary
+ * weighting scheme for tf and smoothidf as true.
+ */
 BOOST_AUTO_TEST_CASE(BinarySmoothIdfEncodingIndividualCharactersTest)
 {
   vector<string> input = {
@@ -839,8 +852,8 @@ BOOST_AUTO_TEST_CASE(BinarySmoothIdfEncodingIndividualCharactersTest)
 }
 
 /**
- * Test the one pass modification of the Bag of Words encoding algorithm
- * in case of individual character encoding.
+ * Test TFIDF encoding for characters using lamda function, using binary
+ * weighting scheme for tf and smoothidf as true.
  */
 BOOST_AUTO_TEST_CASE(OnePassBnarySmoothIdfEncodingIndividualCharactersTest)
 {
@@ -867,8 +880,9 @@ BOOST_AUTO_TEST_CASE(OnePassBnarySmoothIdfEncodingIndividualCharactersTest)
 }
 
 /**
-* Test TFIDF encoding for characters using lamda function.
-*/
+ * Test TFIDF encoding for characters using lamda function, using binary
+ * as weighting scheme and smoothidf as false.
+ */
 BOOST_AUTO_TEST_CASE(BinaryTfIdfEncodingIndividualCharactersTest)
 {
   vector<string> input = {
@@ -892,8 +906,9 @@ BOOST_AUTO_TEST_CASE(BinaryTfIdfEncodingIndividualCharactersTest)
 }
 
 /**
-* Test TFIDF encoding for characters using lamda function.
-*/
+ * Test TFIDF encoding for characters using lamda function, using sublinear
+ * as weighting scheme and smoothidf as true.
+ */
 BOOST_AUTO_TEST_CASE(SublinearSmoothIdfEncodingIndividualCharactersTest)
 {
   vector<string> input = {
@@ -918,8 +933,9 @@ BOOST_AUTO_TEST_CASE(SublinearSmoothIdfEncodingIndividualCharactersTest)
 }
 
 /**
-* Test TFIDF encoding for characters using lamda function.
-*/
+ * Test TFIDF encoding for characters using lamda function, using sublinear
+ * as weighting scheme and smoothidf as false.
+ */
 BOOST_AUTO_TEST_CASE(SublinearTfIdfEncodingIndividualCharactersTest)
 {
   vector<string> input = {
@@ -944,8 +960,9 @@ BOOST_AUTO_TEST_CASE(SublinearTfIdfEncodingIndividualCharactersTest)
 }
 
 /**
-* Test TFIDF encoding for characters using lamda function.
-*/
+ * Test TFIDF encoding for characters using lamda function, using term
+ * Frequency as weighting scheme and smoothidf as true.
+ */
 BOOST_AUTO_TEST_CASE(TermFrequencySmoothIdfEncodingIndividualCharactersTest)
 {
   vector<string> input = {
@@ -970,8 +987,9 @@ BOOST_AUTO_TEST_CASE(TermFrequencySmoothIdfEncodingIndividualCharactersTest)
 }
 
 /**
-* Test TFIDF encoding for characters using lamda function.
-*/
+ * Test TFIDF encoding for characters using lamda function, using Term
+ * Frequency as weighting scheme and smoothidf as false.
+ */
 BOOST_AUTO_TEST_CASE(TermFrequencyTfIdfEncodingIndividualCharactersTest)
 {
   vector<string> input = {

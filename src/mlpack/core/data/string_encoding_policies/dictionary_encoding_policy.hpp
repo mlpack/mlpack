@@ -58,7 +58,10 @@ class DictionaryEncodingPolicy
   * @param col The row token number at which the encoding is performed.
   */
   template<typename MatType>
-  static void Encode(MatType& output, size_t value, size_t row, size_t col)
+  static void Encode(MatType& output,
+                     size_t value,
+                     size_t row,
+                     size_t col)
   {
     output(row, col) = value;
   }
@@ -84,8 +87,9 @@ class DictionaryEncodingPolicy
   * @param numToken The count of token parsed till now.
   * @param value The encoded token.
   */
-  static void PreprocessToken(size_t /*row*/, size_t /*numTokens*/,
-                       size_t /*value*/) { }
+  static void PreprocessToken(size_t /*row*/,
+                              size_t /*numTokens*/,
+                              size_t /*value*/) {}
 
   /**
    * Serialize the class to the given archive.
