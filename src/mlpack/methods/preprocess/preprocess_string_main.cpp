@@ -68,6 +68,123 @@ using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
+void createDataset(std::vector<std::vector<std::string>>& dataset,
+                   const std::string& filename,
+                   const std::string& column_delimiter)
+{
+  // Extracting the Contents of file
+  // File pointer
+  ifstream fin;
+  // Open an existing file
+  fin.open(filename);
+  if (!fin.is_open())
+  {
+    Log::Fatal << "Unable to open input file \n";
+  }
+  std::string line, word;
+  boost::string_view token, copy;
+  while (std::getline(fin, line))
+  {
+    stringstream streamLine(line);
+    dataset.emplace_back(std::vector<std::string>());
+    // delimeter[0] becase the standard function accepts char as input.
+    while (std::getline(streamLine, word, column_delimiter[0]))
+    {
+      dataset.back().push_back(word);
+    }
+  }
+}
+
+void checkForDigit(const std::string& column)
+{
+  for (auto& i : column)
+    if (!std::isdigit(i))
+    Log::Fatal << "Characters encountered, Please give only digits";
+}
+
+void getColumn(const std::vector<std::string>& temp_dimension,
+               std::set<size_t>& dimension)
+{
+  int columnstartindex, columnendindex;
+  size_t found;
+  for (size_t i = 0; i < temp_dimension.size(); i++)
+  {
+    found = temp_dimension[i].find('-');
+    if ( found != string::npos)
+    {
+      try
+      {
+        // Has a range include, something of type a-b.
+        checkForDigit(temp_dimension[i].substr(0, found));
+        checkForDigit(temp_dimension[i].substr(found+1,
+            temp_dimension[i].length()));        
+        columnstartindex = std::stoi(temp_dimension[i].substr(0, found));
+        columnendindex = std::stoi(temp_dimension[i].substr(found+1,
+            temp_dimension[i].length()));
+      }
+      catch (const std::exception& e)
+      {
+        Log::Fatal << "Dimension value not clear, either negatve or can't "
+        "parse the range. Usage a-b \n";
+      }
+      for (int i = columnstartindex; i <= columnendindex; i++)
+        dimension.insert(i);
+    }
+    else
+    {
+      try
+      {
+        checkForDigit(temp_dimension[i]);
+        dimension.insert(std::stoi(temp_dimension[i]));
+      }
+      catch (const std::exception& e)
+      {
+        Log::Fatal << "Dimension value not appropriate \n";      
+      }
+    }
+  }
+}
+
+void writeOutput(const std::string& outputFilename,
+                 const std::vector<std::vector<std::string>>& dataset,
+                 const std::vector<std::vector<std::string>>& nonNumericInput,
+                 const std::string& column_delimiter,
+                 const std::set<size_t>& dimension)
+{
+  ofstream fout;
+  fout.open(outputFilename, ios::trunc);
+  if (!fout.is_open())
+  {
+    Log::Fatal << "Unable to open a file for writing output.\n";
+  }
+  std::set<size_t>::iterator dimensionIterator;
+  for (size_t i = 0 ; i < dataset.size(); i++)
+  {
+    size_t col = 0;
+    dimensionIterator = dimension.begin();
+    for (size_t j = 0 ; j < dataset[i].size(); j++)
+    {
+      if (col < dimension.size() && *dimensionIterator == j)
+      {
+        if (j + 1 < dataset[i].size())
+          fout<<nonNumericInput[col][i]<<column_delimiter;
+        else
+          fout<<nonNumericInput[col][i];
+        dimensionIterator++;
+        col++;
+      }
+      else
+      {
+        if (j + 1 < dataset[i].size())
+          fout<<dataset[i][j]<<column_delimiter;
+        else
+          fout<<dataset[i][j];
+      }
+    }
+    fout<<"\n";
+  } 
+}
+
 static void mlpackMain()
 {
   // Parse command line options.
@@ -99,73 +216,20 @@ static void mlpackMain()
       }
       else
       {
+        column_delimiter = "\t";
         Log::Warn << "column_delimiter not specified, taking default value \n";
       }
   }
   // Handling Dimension vector
   std::vector<std::string> temp_dimension =
       CLI::GetParam<std::vector<std::string> >("dimension");
-  std::set<size_t>dimension;
-  int columnstartindex, columnendindex;
-  size_t found;
-  for (size_t i = 0; i < temp_dimension.size(); i++)
-  {
-    found = temp_dimension[i].find('-');
-    if ( found != string::npos)
-    {
-      try
-      {
-        // Has a range include, something of type a-b.
-        columnstartindex = std::stoi(temp_dimension[i].substr(0, found));
-        columnendindex = std::stoi(temp_dimension[i].substr(found+1,
-            temp_dimension[i].length()));
-      }
-      catch (const std::exception& e)
-      {
-        Log::Fatal << "Dimension value not clear, either negatve or can't "
-        "parse the range. Usage a-b \n";
-      }
-      for (int i = columnstartindex; i <= columnendindex; i++)
-        dimension.insert(i);
-    }
-    else
-    {
-      try
-      {
-        dimension.insert(std::stoi(temp_dimension[i]));
-      }
-      catch (const std::exception& e)
-      {
-        Log::Fatal << "Dimension value not appropriate \n";      
-      }
-    }
-  }
-
-  // Extracting the Contents of file
-  // File pointer
-  ifstream fin;
-  // Open an existing file
-  fin.open(filename);
-  if (!fin.is_open())
-  {
-    Log::Fatal << "Unable to open input file \n";
-  }
-  std::string line, word;
+  std::set<size_t> dimension;
+  getColumn(temp_dimension, dimension);
   std::vector<std::vector<std::string>> dataset;
-  boost::string_view token, copy;
-  while (std::getline(fin, line))
-  {
-    stringstream streamLine(line);
-    dataset.emplace_back(std::vector<std::string>());
-    // delimeter[0] becase the standard function accepts char as input.
-    while (std::getline(streamLine, word, column_delimiter[0]))
-    {
-      dataset.back().push_back(word);
-    }
-  }
-  std::set<size_t>::iterator dimensionIterator = dimension.begin();
+  createDataset(dataset, filename, column_delimiter);
   // Preparing the input dataset on which string manipulation has to be done.
-  std::vector<std::vector<std::string>> input(dimension.size());
+  std::vector<std::vector<std::string>> nonNumericInput(dimension.size());
+  std::set<size_t>::iterator dimensionIterator = dimension.begin();
   for (size_t i = 0; i < dataset.size(); i++)
   {
     size_t col = 0;
@@ -177,7 +241,7 @@ static void mlpackMain()
         if (*dimensionIterator == j)
         {
           // insert into input
-          input[col].push_back(dataset[i][j]);
+          nonNumericInput[col].push_back(dataset[i][j]);
           col++;
           dimensionIterator++;
         }
@@ -191,7 +255,7 @@ static void mlpackMain()
   data::StringCleaning obj;
   if (CLI::HasParam("lowercase"))
   {
-    for (auto& column_line : input)
+    for (auto& column_line : nonNumericInput)
       obj.LowerCase(column_line);
   }
   if (CLI::HasParam("stopwords"))
@@ -221,47 +285,17 @@ static void mlpackMain()
     }
     const std::string delimiter = CLI::GetParam<std::string>
         ("delimiter");
-    for (auto& column_line : input)
+    for (auto& column_line : nonNumericInput)
       obj.RemoveStopWords(column_line, stopwords,
           data::SplitByChar(delimiter));
   }
   if (CLI::HasParam("punctuation"))
   {
-    for (auto& column_line : input)
+    for (auto& column_line : nonNumericInput)
       obj.RemovePunctuation(column_line);
   }
   const std::string outputFilename = CLI::GetParam<std::string>("preprocess"
       "_dataset");
-  ofstream fout;
-  fout.open(outputFilename, ios::trunc);
-  if (!fout.is_open())
-  {
-    Log::Fatal << "Unable to open a file for writing output.\n";
-  }
-  dimensionIterator = dimension.begin();
-  for (size_t i = 0 ; i < dataset.size(); i++)
-  {
-    size_t col = 0;
-    dimensionIterator = dimension.begin();
-    for (size_t j = 0 ; j < dataset[i].size(); j++)
-    {
-      if (col < dimension.size() && *dimensionIterator == j)
-      {
-        if (j + 1 < dataset[i].size())
-          fout<<input[col][i]<<column_delimiter;
-        else
-          fout<<input[col][i];
-        dimensionIterator++;
-        col++;
-      }
-      else
-      {
-        if (j + 1 < dataset[i].size())
-          fout<<dataset[i][j]<<column_delimiter;
-        else
-          fout<<dataset[i][j];
-      }
-    }
-    fout<<"\n";
-  }
+  writeOutput(outputFilename, dataset,nonNumericInput, column_delimiter,
+      dimension);
 }

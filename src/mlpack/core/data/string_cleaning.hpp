@@ -99,7 +99,7 @@ class StringCleaning
   {
     for (auto& str : input)
     {
-      std::string result = "";
+      std::string result;
       boost::string_view token;
       boost::string_view strView(str);
       token = tokenizer(strView);
