@@ -206,6 +206,9 @@ class Genome
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
 
+  //! Get complexity.
+  size_t Complexity() { return connCount; }
+
   //! Get fitness.
   double Fitness() const { return fitness; }
   //! Set fitness.
@@ -300,9 +303,8 @@ class Genome
   //! Boolean indicating if the phenome is acyclic.
   bool isAcyclic;
 
-  //! Stuff for debugging. [To be removed before merge]
-  arma::vec inputt;
-  arma::vec output;
+  //! The number of connections.
+  size_t connCount;
 };
 
 } // namespace neat

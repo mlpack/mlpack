@@ -88,6 +88,9 @@ Genome<ActivationFunction>::Genome(const size_t inputNodeCount,
   // Set innovation ID.
   nextInnovID = counter;
 
+  // Set the number of connections.
+  connCount = counter;
+
   // If the genome is meant to be acyclic, we must maintain nodeDepths.
   if (isAcyclic)
   {
@@ -127,7 +130,8 @@ Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>&
     nodeAdditionProb(nodeAdditionProb),
     connAdditionProb(connAdditionProb),
     connDeletionProb(connDeletionProb),
-    isAcyclic(isAcyclic)
+    isAcyclic(isAcyclic),
+    connCount(0)
 {
   for (size_t i = 0; i < nextNodeID; i++)
   {
@@ -141,6 +145,8 @@ Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>&
     size_t sourceID = connectionGeneList[i].Source();
     size_t targetID = connectionGeneList[i].Target();
     directedGraph[sourceID][targetID] = connectionGeneList[i];
+    if (connectionGeneList[i].Enabled())
+      connCount++;
   }
 }
 
@@ -174,7 +180,8 @@ Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>&
     nodeAdditionProb(nodeAdditionProb),
     connAdditionProb(connAdditionProb),
     connDeletionProb(connDeletionProb),
-    isAcyclic(isAcyclic)
+    isAcyclic(isAcyclic),
+    connCount(0)
 {
   for (size_t i = 0; i < nextNodeID; i++)
   {
@@ -188,6 +195,8 @@ Genome<ActivationFunction>::Genome(std::vector<ConnectionGene>&
     size_t sourceID = connectionGeneList[i].Source();
     size_t targetID = connectionGeneList[i].Target();
     directedGraph[sourceID][targetID] = connectionGeneList[i];
+    if (connectionGeneList[i].Enabled())
+      connCount++;
   }
 }
 
@@ -356,6 +365,9 @@ void Genome<ActivationFunction>::AddConnMutation()
       }
     }
   }
+
+  // Update connection count.
+  connCount++;
 }
 
 // Add node.
@@ -422,6 +434,9 @@ void Genome<ActivationFunction>::AddNodeMutation()
       Traverse(targetID);
     }
   }
+
+  // Update number of connections.
+  connCount++;
 }
 
 // Delete connection.
@@ -448,19 +463,9 @@ void Genome<ActivationFunction>::DelConnMutation()
     for (size_t j = 0; j <= inputNodeCount; j++)
       Traverse(j);
   }
-}
 
-// Finds complexity of the genome.
-template <class ActivationFunction>
-size_t Genome<ActivationFunction>::Complexity()
-{
-  size_t connCount = 0;
-  for (size_t i = 0 ; i < connectionGeneList.size(); i++)
-  {
-    if (connectionGeneList[i].Enabled())
-      connCount++;
-  }
-  return connCount;
+  // Update connection count.
+  connCount--;
 }
 
 // Serializes object.
@@ -501,6 +506,7 @@ void Genome<ActivationFunction>::serialize(Archive& ar,
   ar & BOOST_SERIALIZATION_NVP(connDeletionProb);
   ar & BOOST_SERIALIZATION_NVP(fitness);
   ar & BOOST_SERIALIZATION_NVP(isAcyclic);
+  ar & BOOST_SERIALIZATION_NVP(connCount);
   ar & BOOST_SERIALIZATION_NVP(connectionGeneList);
   ar & BOOST_SERIALIZATION_NVP(nextInnovID);
   ar & BOOST_SERIALIZATION_NVP(mutationBuffer);
