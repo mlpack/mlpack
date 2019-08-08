@@ -160,12 +160,6 @@ class Genome
   arma::mat Parameters();
 
   /**
-   * Calculates complexity of the genome, defined as the number of enabled
-   * connection genes.
-   */
-  size_t Complexity();
-
-  /**
    * Mutates weights of the genome connections.
    */
   void MutateWeights();
@@ -206,7 +200,10 @@ class Genome
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
 
-  //! Get complexity.
+  /**
+   * Calculates complexity of the genome, defined as the number of enabled
+   * connection genes.
+   */
   size_t Complexity() { return connCount; }
 
   //! Get fitness.
