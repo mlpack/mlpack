@@ -785,16 +785,15 @@ void KDE<KernelType,
          TreeType,
          DualTreeTraversalType,
          SingleTreeTraversalType>::
-ComputePCA(Tree& rootNode, const double varToRetain)
+ComputePCA(Tree& rootNode)
 {
-  // TODO check method parameters.
   Timer::Start("computing_dimensionality_reduction");
   std::stack<Tree*> nodes;
   KDEStackRules<Tree> reverseRules(nodes);
   SingleTreeTraversalType<KDEStackRules<Tree>> reverseTraverser(reverseRules);
   reverseTraverser.Traverse(0, rootNode);
 
-  while(!nodes.empty())
+  while (!nodes.empty())
   {
     Tree* node = nodes.top();
     nodes.pop();
@@ -804,10 +803,12 @@ ComputePCA(Tree& rootNode, const double varToRetain)
     if (node->IsLeaf())
     {
       const size_t numPoints = node->NumPoints();
-      const size_t firstPoint = node->Point(0);
-      arma::mat pointsInTheNode =
-          node->Dataset().cols(firstPoint, firstPoint + numPoints - 1);
-      math::Center(pointsInTheNode, pointsInTheNode);
+      arma::mat pointsInTheNode(node->Dataset().n_rows, numPoints);
+      for (size_t i = 0; i < numPoints; ++i)
+        pointsInTheNode.col(i) = node->Dataset().col(node->Point(i));
+
+      // Amount of points for which the base has been calculated.
+      stat.PointsInTheBase() = numPoints;
 
       // Calculate base mean.
       stat.Mean() = arma::mean(pointsInTheNode, 1);
@@ -826,47 +827,35 @@ ComputePCA(Tree& rootNode, const double varToRetain)
     }
     else
     {
-      const Tree& child0 = node->Child(0);
-      const Tree& child1 = node->Child(1);
-      const KDEStat& statChild0 = child0.Stat();
-      const KDEStat& statChild1 = child1.Stat();
+      stat.EigVec() = node->Child(0).Stat().EigVec();
+      stat.EigVal() = node->Child(0).Stat().EigVal();
+      stat.Mean() = node->Child(0).Stat().Mean();
+      stat.PointsInTheBase() = node->Child(0).Stat().PointsInTheBase();
 
-      if (child0.NumDescendants() == 0)
+      // Merge bases of all children into this node.
+      for (size_t i = 1; i < node->NumChildren(); ++i)
       {
-        // Not used at the moment.
-        stat.EigVec() = statChild1.EigVec();
-        stat.EigVal() = statChild1.EigVal();
-        stat.Mean() = statChild1.Mean();
-      }
-      else if (child1.NumDescendants() == 0)
-      {
-        // Not used at the moment.
-        stat.EigVec() = statChild0.EigVec();
-        stat.EigVal() = statChild0.EigVal();
-        stat.Mean() = statChild0.Mean();
-      }
-      else
-      {
-        const arma::mat& U = statChild0.EigVec();
-        const arma::mat& V = statChild1.EigVec();
-        const arma::vec& mean0 = statChild0.Mean();
-        const arma::vec& mean1 = statChild1.Mean();
-        const arma::vec& eigVal0 = statChild0.EigVal();
-        const arma::vec& eigVal1 = statChild1.EigVal();
+        const KDEStat& statChild = node->Child(i).Stat();
+        const arma::mat& U = stat.EigVec();
+        const arma::mat& V = statChild.EigVec();
+        const arma::vec& mean0 = stat.Mean();
+        const arma::vec& mean1 = statChild.Mean();
+        const arma::vec& eigVal0 = stat.EigVal();
+        const arma::vec& eigVal1 = statChild.EigVal();
 
         // Orthonormal basis.
         const arma::mat G = U.t() * V;
         arma::mat H = V - U * G;
-        //arma::mat h = mean0 - U * U.t() * (mean0 - mean1);
         H.insert_cols(H.n_cols, mean0 - U * U.t() * (mean0 - mean1));
         const arma::mat v = arma::orth(H);
 
         // New eigenproblem.
-        const size_t N = child0.NumDescendants();
-        const size_t M = child1.NumDescendants();
+        const size_t N = stat.PointsInTheBase();
+        const size_t M = node->Child(i).NumDescendants();
         const size_t P = N + M;
         const size_t s = eigVal0.size() + v.n_cols;
         const arma::mat gamma = v.t() * V;
+
         arma::mat firstMat(s, s, arma::fill::zeros);
         firstMat.submat(0, 0, eigVal0.size() - 1, eigVal0.size() - 1) =
             arma::diagmat(eigVal0);
@@ -913,6 +902,7 @@ ComputePCA(Tree& rootNode, const double varToRetain)
         stat.Mean() = (1 / (double) P) * (N * mean0 + M * mean1);
         stat.EigVal() = newEigVal;
         stat.EigVec() = upsilon * newEigVec;
+        stat.PointsInTheBase() = P;
       }
     }
 
@@ -920,8 +910,8 @@ ComputePCA(Tree& rootNode, const double varToRetain)
     double varRetained = 0;
     size_t newDimension = 0;
     arma::vec normalizedEigVal = arma::normalise(stat.EigVal(), 1);
-    while((varRetained < varToRetain) &&
-          (newDimension < normalizedEigVal.size()))
+    while ((varRetained < pcaVarRetained) &&
+           (newDimension < normalizedEigVal.size()))
     {
       varRetained += normalizedEigVal(newDimension);
       ++newDimension;
