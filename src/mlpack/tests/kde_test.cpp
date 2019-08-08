@@ -1231,4 +1231,60 @@ BOOST_AUTO_TEST_CASE(GaussianBreadthDualKDTreeMonteCarloKDE)
   BOOST_REQUIRE_GT(correctResults, 70);
 }
 
+/**
+ * Test single KD-tree implementation results against brute force results using
+ * Monte Carlo estimations when possible as well as PCA for the reference tree.
+ */
+BOOST_AUTO_TEST_CASE(GaussianSingleKDTreeMonteCarloPCAKDE)
+{
+  arma::mat reference = arma::randu(50, 3000);
+  arma::mat query = arma::randu(50, 100);
+  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  const double kernelBandwidth = 0.35;
+  const double relError = 0.05;
+
+  // Brute force KDE.
+  GaussianKernel kernel(kernelBandwidth);
+  BruteForceKDE<GaussianKernel>(reference,
+                                query,
+                                bfEstimations,
+                                kernel);
+
+  // Optimized KDE.
+  metric::EuclideanDistance metric;
+  KDE<GaussianKernel,
+      metric::EuclideanDistance,
+      arma::mat,
+      tree::KDTree>
+    kde(relError,
+        0.0,
+        kernel,
+        KDEMode::SINGLE_TREE_MODE,
+        metric,
+        true,
+        0.95,
+        100,
+        2,
+        0.7,
+        true,
+        0.9);
+  kde.Train(reference);
+  kde.Evaluate(query, treeEstimations);
+
+  // The Monte Carlo estimation has a random component so it can fail. Therefore
+  // we require a reasonable amount of results to be right.
+  size_t correctResults = 0;
+  for (size_t i = 0; i < query.n_cols; ++i)
+  {
+    BOOST_CHECK_CLOSE(bfEstimations(i), treeEstimations(i), relError * 100);
+    const double resultRelativeError =
+      std::abs((bfEstimations[i] - treeEstimations[i]) / bfEstimations[i]);
+    if (resultRelativeError < relError)
+      ++correctResults;
+  }
+
+  BOOST_REQUIRE_GT(correctResults, 70);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
