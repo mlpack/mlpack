@@ -99,7 +99,8 @@ static bool IsNumber(const string& column)
   return true;
 }
 
-static unordered_set<size_t> GetColumnIndices(const vector<string>& tempDimension)
+static unordered_set<size_t> GetColumnIndices(const 
+                                              vector<string>& tempDimension)
 {
   unordered_set<size_t> dimensions;
   int columnstartindex, columnendindex;
@@ -180,8 +181,8 @@ static void WriteOutput(const string& outputFilename,
           fout << dataset[i][j];
       }
     }
-    fout<<"\n";
-  } 
+    fout << "\n";
+  }
 }
 
 static void mlpackMain()
@@ -278,6 +279,6 @@ static void mlpackMain()
   }
   const string outputFilename = CLI::GetParam<string>("preprocess"
       "_dataset");
-  WriteOutput(outputFilename, dataset,nonNumericInput, columnDelimiter,
+  WriteOutput(outputFilename, dataset, nonNumericInput, columnDelimiter,
       dimensions);
 }

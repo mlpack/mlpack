@@ -103,11 +103,11 @@ class StringCleaning
       boost::string_view token;
       boost::string_view strView(str);
       token = tokenizer(strView);
-      while(!token.empty())
+      while (!token.empty())
       {
         if (stopwords.find(token) == stopwords.end())
         {
-          result += result.empty() ? std::string(token) : 
+          result += result.empty() ? std::string(token) :
               " " + std::string(token);
         }
         token = tokenizer(strView);
