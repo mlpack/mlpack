@@ -227,6 +227,8 @@ Score(const size_t queryIndex, TreeType& referenceNode)
         }
       }
 
+      meanSample = arma::mean(sample);
+
       // Calculate standard deviation.
       if (pca && kernelIsGaussian)
       {
@@ -241,7 +243,6 @@ Score(const size_t queryIndex, TreeType& referenceNode)
         stddev = arma::stddev(sample);
       }
 
-      meanSample = arma::mean(sample);
       const double mThreshBase =
           z * stddev * (1 + relError) / (relError * meanSample);
       const size_t mThresh = std::ceil(mThreshBase * mThreshBase);
