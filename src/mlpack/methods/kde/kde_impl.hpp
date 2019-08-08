@@ -923,6 +923,23 @@ ComputePCA(Tree& rootNode)
       stat.EigVec().shed_cols(newDimension, normalizedEigVal.size() - 1);
       stat.EigVal().shed_rows(newDimension, normalizedEigVal.size() - 1);
     }
+
+    // Pre-cache computations that will be needed for the KDE evaluation.
+    stat.MinKernelRecon() = DBL_MAX;
+    stat.MaxKernelRecon() = DBL_MIN;
+    for (size_t i = 0; i < node->NumDescendants(); ++i)
+    {
+      const arma::vec& rPoint = node->Dataset().unsafe_col(i);
+      const arma::vec rProj = stat.EigVec().t() * (rPoint - stat.Mean());
+      const arma::vec rRecon = stat.EigVec() * rProj + stat.Mean();
+      const double rReconKernelValue = kernel.Evaluate(metric.Evaluate(rRecon,
+                                                                       rPoint));
+
+      if (rReconKernelValue > stat.MaxKernelRecon())
+        stat.MaxKernelRecon() = rReconKernelValue;
+      if (rReconKernelValue < stat.MinKernelRecon())
+        stat.MinKernelRecon() = rReconKernelValue;
+    }
   }
   Timer::Stop("computing_dimensionality_reduction");
 }

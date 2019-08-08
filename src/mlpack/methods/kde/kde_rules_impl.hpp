@@ -166,11 +166,23 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     const double z =
         std::abs(boost::math::quantile(normalDist, alpha / 2));
 
-    // Auxiliary variables.
+    // Auxiliary variables for Monte Carlo.
     arma::vec sample;
     size_t m = initialSampleSize;
-    double meanSample;
+    double meanSample, stddev;
     bool useMonteCarloPredictions = true;
+
+    // Auxiliary variables for PCA.
+    const arma::vec& pcaMean = referenceStat.Mean();
+    arma::vec qProj, qRecon;
+    double kernelValue1;
+
+    if (pca)
+    {
+      qProj = referenceStat.EigVec().t() * (queryPoint - pcaMean);
+      qRecon = referenceStat.EigVec() * qProj + pcaMean;
+      kernelValue1 = EvaluateKernel(queryPoint, qRecon);
+    }
 
     // Resample as long as confidence is not high enough.
     while (m > 0)
@@ -197,11 +209,39 @@ Score(const size_t queryIndex, TreeType& referenceNode)
         else
           randomPoint = math::RandInt(0, refNumDesc);
 
-        sample(oldSize + i) =
-            EvaluateKernel(queryIndex, referenceNode.Descendant(randomPoint));
+        if (pca && kernelIsGaussian)
+        {
+          // Compute kernel value using PCA base.
+          const arma::vec& rPoint =
+              referenceSet.unsafe_col(referenceNode.Descendant(randomPoint));
+          const arma::vec rProj =
+              referenceStat.EigVec().t() * (rPoint - pcaMean);
+          const double kernelValue2 = kernel.Evaluate(metric.Evaluate(qProj,
+                                                                      rProj));
+          sample(oldSize + i) = kernelValue1 * kernelValue2;
+        }
+        else
+        {
+          sample(oldSize + i) =
+              EvaluateKernel(queryIndex, referenceNode.Descendant(randomPoint));
+        }
       }
+
+      // Calculate standard deviation.
+      if (pca && kernelIsGaussian)
+      {
+        stddev =
+            ((double) 1.0 / (m - 1)) *
+            (arma::sum(sample) * std::min(1.0, referenceStat.MaxKernelRecon()) -
+             m * std::pow(meanSample * referenceStat.MinKernelRecon(), 2));
+        stddev = std::sqrt(stddev);
+      }
+      else
+      {
+        stddev = arma::stddev(sample);
+      }
+
       meanSample = arma::mean(sample);
-      const double stddev = arma::stddev(sample);
       const double mThreshBase =
           z * stddev * (1 + relError) / (relError * meanSample);
       const size_t mThresh = std::ceil(mThreshBase * mThreshBase);
