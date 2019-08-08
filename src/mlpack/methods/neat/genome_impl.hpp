@@ -303,10 +303,7 @@ void Genome<ActivationFunction>::AddConnMutation()
   size_t inputAndOutputNodeCount = outputNodeCount + inputNodeCount;
   size_t sourceID = inputAndOutputNodeCount;
   while (sourceID > inputNodeCount && sourceID <= inputAndOutputNodeCount)
-  {
-    sourceID = arma::randi<arma::uvec>(1, arma::distr_param(0,
-        (int)(nextNodeID - 1)))[0];
-  }
+    sourceID = math::RandInt(0, (int)(nextNodeID - 1));
 
   size_t newTarget = sourceID;
   size_t innovID;
@@ -316,8 +313,8 @@ void Genome<ActivationFunction>::AddConnMutation()
     // Only create connections where the target has a higher depth.
     while (nodeDepths[sourceID] >= nodeDepths[newTarget])
     {
-      newTarget = arma::randi<arma::uvec>(1, arma::distr_param(1 +
-        (int)(inputNodeCount), (int)(nextNodeID) - 1))[0];
+      newTarget = math::RandInt(1 + (int)(inputNodeCount), (int)(nextNodeID)
+          - 1);
     }
   }
   else
@@ -367,10 +364,7 @@ void Genome<ActivationFunction>::AddNodeMutation()
 {
   size_t i = 0;
   while (connectionGeneList[i].Source() == 0)
-  {
-    i = arma::randi<arma::uvec>(1, arma::distr_param(0, (int)
-        (connectionGeneList.size() - 1)))[0];
-  }
+    i = math::RandInt(0, connectionGeneList.size() - 1);
   size_t sourceID = connectionGeneList[i].Source();
   size_t targetID = connectionGeneList[i].Target();
   size_t newNodeID = nextNodeID++;
@@ -435,8 +429,7 @@ template <class ActivationFunction>
 void Genome<ActivationFunction>::DelConnMutation()
 {
   size_t i = 0;
-  i = arma::randi<arma::uvec>(1, arma::distr_param(0,
-      (int)(connectionGeneList.size() - 1)))[0];
+  i = math::RandInt(0, connectionGeneList.size() - 1);
 
   if (connectionGeneList[i].Enabled())
     return;
