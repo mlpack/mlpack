@@ -115,18 +115,18 @@ void PPO<
       criticGradients);
 
   // calculate the ratio.
-  arma::mat actionValue, sigma, mu;
-  actorNetwork.Forward(sampledStates, actionValue);
+  arma::mat actionParameter, sigma, mu;
+  actorNetwork.Forward(sampledStates, actionParameter);
 
-  ann::TanhFunction::Fn(actionValue.row(0), mu);
-  ann::SoftplusFunction::Fn(actionValue.row(1), sigma);
+  ann::TanhFunction::Fn(actionParameter.row(0), mu);
+  ann::SoftplusFunction::Fn(actionParameter.row(1), sigma);
 
   ann::NormalDistribution normalDist =
       ann::NormalDistribution(vectorise(mu, 0), vectorise(sigma, 0));
 
-  oldActorNetwork.Forward(sampledStates, actionValue);
-  ann::TanhFunction::Fn(actionValue.row(0), mu);
-  ann::SoftplusFunction::Fn(actionValue.row(1), sigma);
+  oldActorNetwork.Forward(sampledStates, actionParameter);
+  ann::TanhFunction::Fn(actionParameter.row(0), mu);
+  ann::SoftplusFunction::Fn(actionParameter.row(1), sigma);
 
   ann::NormalDistribution oldNormalDist =
       ann::NormalDistribution(vectorise(mu, 0), vectorise(sigma, 0));
@@ -148,7 +148,7 @@ void PPO<
       1 + config.Epsilon()) % advantages;
   arma::mat loss = - arma::min(ratio % advantages, surrogateLoss);
 
-  //backward the gradient
+  // backward the gradient
   arma::mat dsurro1 = -loss % (ratio % advantages <= surrogateLoss)
       % advantages;
   arma::mat dsurro2 = -loss % (ratio % advantages > surrogateLoss);
@@ -195,12 +195,12 @@ double PPO<
 >::Step()
 {
   // Get the action value for each action at current state.
-  arma::mat actionValue, sigma, mu;
+  arma::mat actionParameter, sigma, mu;
 
-  actorNetwork.Predict(state.Encode(), actionValue);
+  actorNetwork.Predict(state.Encode(), actionParameter);
 
-  ann::TanhFunction::Fn(actionValue.row(0), mu);
-  ann::SoftplusFunction::Fn(actionValue.row(1), sigma);
+  ann::TanhFunction::Fn(actionParameter.row(0), mu);
+  ann::SoftplusFunction::Fn(actionParameter.row(1), sigma);
 
   ann::NormalDistribution normalDist
       = ann::NormalDistribution(mu, sigma);
