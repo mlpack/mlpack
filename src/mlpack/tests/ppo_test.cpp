@@ -64,6 +64,7 @@ BOOST_AUTO_TEST_CASE(PENDULUMWITHPPO)
     config.Discount() = 0.9;
     config.Epsilon() = 0.2;
     config.StepLimit() = 200;
+    config.UpdateInterval() = 32;
 
     // Set up the PPO agent.
     PPO<Pendulum, decltype(actor), decltype(critic), AdamUpdate,
@@ -100,6 +101,32 @@ BOOST_AUTO_TEST_CASE(PENDULUMWITHPPO)
   }
 
   BOOST_REQUIRE(converged);
+}
+
+BOOST_AUTO_TEST_CASE(TESTNN)
+{
+    FFN<MeanSquaredError<>, GaussianInitialization> critic(
+    MeanSquaredError<>(), GaussianInitialization(0, 0.001));
+
+    critic.Add<Linear<>>(3, 2);
+    critic.Add<ReLULayer<>>();
+    critic.Add<Linear<>>(2, 1);
+
+    AdamUpdate updater = AdamUpdate();
+    updater.Initialize(critic.Parameters().n_rows, critic.Parameters().n_cols);
+
+    arma::mat input(3, 2, arma::fill::ones);
+    arma::mat output(1, 2, arma::fill::zeros);
+    arma::mat target, gradients;
+    critic.Forward(input, target);
+
+    std::cout << target << std::endl;
+
+    double loss = critic.Backward(output, gradients);
+
+    std::cout << loss << std::endl;
+    std::cout << gradients << std::endl;
+    std::cout << gradients.n_rows << " " << gradients.n_cols << std::endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -149,19 +149,19 @@ void PPO<
   arma::mat loss = - arma::min(ratio % advantages, surrogateLoss);
 
   // backward the gradient
-  arma::mat dsurro1 = -loss % (ratio % advantages <= surrogateLoss)
-      % advantages;
-  arma::mat dsurro2 = -loss % (ratio % advantages > surrogateLoss);
-  arma::mat dratio1 = (ratio >= (1 - config.Epsilon())) %
-      (ratio <= (1 + config.Epsilon())) % advantages % dsurro2;
-  arma::mat dprob = (dratio1 + dsurro1) % vectorise((1.0 / oldProb), 1);
+  arma::mat dratio1 = -loss % (ratio % advantages <= surrogateLoss)
+                      % advantages;
+  arma::mat dsurro = -loss % (ratio % advantages >= surrogateLoss);
+  arma::mat dratio2 = (ratio >= (1 - config.Epsilon())) %
+                      (ratio <= (1 + config.Epsilon())) % advantages % dsurro;
+
+  arma::mat dprob = (dratio1 + dratio2) % vectorise((1.0 / oldProb), 1);
   arma::mat dmu = (vectorise(observation, 1) - mu) /
       (arma::square(sigma)) % dprob;
 
   arma::mat dsigma = -1 / sigma +
       arma::square(vectorise(observation, 1) - mu) / arma::pow(sigma, 3);
 
-  // todo: debug empty loss and backward
   arma::mat dTanh, dSoftP;
   ann::TanhFunction::Deriv(vectorise(dmu, 1), dTanh);
   ann::SoftplusFunction::Deriv(vectorise(dsigma, 1), dSoftP);
