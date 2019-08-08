@@ -728,8 +728,7 @@ BOOST_AUTO_TEST_CASE(OnePassTfIdfRawCountEncodingTest)
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
   vector<vector<double>> output;
-  TfIdfEncoding<SplitByAnyOf::TokenType> encoder(
-      (TfIdfEncodingPolicy(0, false)));
+  TfIdfEncoding<SplitByAnyOf::TokenType> encoder(0, false);
   SplitByAnyOf tokenizer(" ");
 
   encoder.Encode(stringEncodingInput, output, tokenizer);
@@ -783,8 +782,7 @@ BOOST_AUTO_TEST_CASE(RawcountTfIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(
-      (TfIdfEncodingPolicy(0, false)));
+  TfIdfEncoding<CharExtract::TokenType> encoder(0, false);
 
   // Passing a empty string to encode charactersrawcountsmoothidftrue
   encoder.Encode(input, output, CharExtract());
@@ -810,8 +808,7 @@ BOOST_AUTO_TEST_CASE(OnePassRawcountEncodingIndividualCharactersTest)
   };
 
   vector<vector<double>> output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(
-      (TfIdfEncodingPolicy(false, false)));
+  TfIdfEncoding<CharExtract::TokenType> encoder(0, false);
 
   // Passing a empty string to encode characters
   encoder.Encode(input, output, CharExtract());
@@ -838,8 +835,7 @@ BOOST_AUTO_TEST_CASE(BinarySmoothIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(
-      (TfIdfEncodingPolicy(1, true)));
+  TfIdfEncoding<CharExtract::TokenType> encoder(1, true);
 
   // Passing a empty string to encode charactersrawcountsmoothidftrue
   encoder.Encode(input, output, CharExtract());
@@ -864,8 +860,7 @@ BOOST_AUTO_TEST_CASE(OnePassBnarySmoothIdfEncodingIndividualCharactersTest)
   };
 
   vector<vector<double>> output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(
-      (TfIdfEncodingPolicy(1, true)));
+  TfIdfEncoding<CharExtract::TokenType> encoder(1, true);
 
   // Passing a empty string to encode characters
   encoder.Encode(input, output, CharExtract());
@@ -892,8 +887,7 @@ BOOST_AUTO_TEST_CASE(BinaryTfIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(
-      (TfIdfEncodingPolicy(1, false)));
+  TfIdfEncoding<CharExtract::TokenType> encoder(1, false);
 
   // Passing a empty string to encode charactersrawcountsmoothidftrue
   encoder.Encode(input, output, CharExtract());
@@ -918,8 +912,7 @@ BOOST_AUTO_TEST_CASE(SublinearSmoothIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(
-      (TfIdfEncodingPolicy(2, true)));
+  TfIdfEncoding<CharExtract::TokenType> encoder(2, true);
 
   // Passing a empty string to encode charactersrawcountsmoothidftrue
   encoder.Encode(input, output, CharExtract());
@@ -945,8 +938,7 @@ BOOST_AUTO_TEST_CASE(SublinearTfIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(
-      (TfIdfEncodingPolicy(2, false)));
+  TfIdfEncoding<CharExtract::TokenType> encoder(2, false);
 
   // Passing a empty string to encode charactersrawcountsmoothidftrue
   encoder.Encode(input, output, CharExtract());
@@ -972,8 +964,7 @@ BOOST_AUTO_TEST_CASE(TermFrequencySmoothIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(
-      (TfIdfEncodingPolicy(3, true)));
+  TfIdfEncoding<CharExtract::TokenType> encoder(3, true);
 
   // Passing a empty string to encode charactersrawcountsmoothidftrue
   encoder.Encode(input, output, CharExtract());
@@ -999,8 +990,7 @@ BOOST_AUTO_TEST_CASE(TermFrequencyTfIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(
-      (TfIdfEncodingPolicy(3, false)));
+  TfIdfEncoding<CharExtract::TokenType> encoder(3, false);
 
   // Passing a empty string to encode charactersrawcountsmoothidftrue
   encoder.Encode(input, output, CharExtract());

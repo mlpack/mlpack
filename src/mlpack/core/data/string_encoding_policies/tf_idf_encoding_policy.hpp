@@ -48,14 +48,14 @@ class TfIdfEncodingPolicy
   */
   enum tfTypes
   {
-    rawCount,
-    binary,
-    sublinearTf,
-    termFrequency,
+    RAW_COUNT,
+    BINARY,
+    SUBLINEAR_TF,
+    TERM_FREQUENCY,
   };
 
-  TfIdfEncodingPolicy(size_t tfType = 0, bool smooth_idf = true) :
-                      tfType(tfType), smooth_idf(smooth_idf)
+  TfIdfEncodingPolicy(size_t tfType = 0, bool smoothIdf = true) :
+                      tfType(tfType), smoothIdf(smoothIdf)
   {
   }
   /**
@@ -112,18 +112,20 @@ class TfIdfEncodingPolicy
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.
     double idf, tf;
-    if (smooth_idf)
+    if (smoothIdf)
       idf = std::log((output.n_rows + 1) / (1 + idfdict[value - 1])) + 1;
     else
       idf = std::log(output.n_rows / idfdict[value - 1]) + 1;
-    if (tfType == tfTypes::termFrequency)
+
+    if (tfType == tfTypes::TERM_FREQUENCY)
       tf = tokenCount[row][value - 1] / row_size[row];
-    else if (tfType == tfTypes::sublinearTf)
+    else if (tfType == tfTypes::SUBLINEAR_TF)
       tf = std::log(tokenCount[row][value - 1]) + 1;
-    else if (tfType == tfTypes::binary)
+    else if (tfType == tfTypes::BINARY)
       tf = tokenCount[row][value - 1] > 0 ? 1 : 0;
     else
       tf = tokenCount[row][value - 1];
+
     output(row, value-1) =  tf * idf;
   }
 
@@ -145,18 +147,20 @@ class TfIdfEncodingPolicy
   {
     // Important since Mapping starts from 1 whereas allowed column value is 0.
     double idf, tf;
-    if (smooth_idf)
+    if (smoothIdf)
       idf = std::log((output.size() + 1) / (1 + idfdict[value - 1])) + 1;
     else
       idf = std::log(output.size() / idfdict[value - 1]) + 1;
-    if (tfType == tfTypes::termFrequency)
+
+    if (tfType == tfTypes::TERM_FREQUENCY)
       tf = tokenCount[row][value - 1] / row_size[row];
-    else if (tfType == tfTypes::sublinearTf)
+    else if (tfType == tfTypes::SUBLINEAR_TF)
       tf = std::log(tokenCount[row][value - 1]) + 1;
-    else if (tfType == tfTypes::binary)
+    else if (tfType == tfTypes::BINARY)
       tf = tokenCount[row][value - 1] > 0 ? 1 : 0;
     else
       tf = tokenCount[row][value - 1];
+
     output[row][value-1] =  tf * idf;
   }
 
@@ -164,9 +168,13 @@ class TfIdfEncodingPolicy
    * Serialize the class to the given archive.
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  void serialize(Archive& ar , const unsigned int /* version */)
   {
-    // Nothing to serialize.
+    ar & BOOST_SERIALIZATION_NVP(tfType);
+    ar & BOOST_SERIALIZATION_NVP(tokenCount);
+    ar & BOOST_SERIALIZATION_NVP(idfdict);
+    ar & BOOST_SERIALIZATION_NVP(smoothIdf);
+    ar & BOOST_SERIALIZATION_NVP(row_size);  
   }
 
   /*
@@ -198,8 +206,8 @@ class TfIdfEncodingPolicy
   std::unordered_map<size_t, double> idfdict;
   // Used to store the number of tokens in each row.
   std::vector<double> row_size;
-  // smooth_idf variable to indicate smoothining.
-  bool smooth_idf;
+  // smoothIdf variable to indicate smoothining.
+  bool smoothIdf;
   // Type of Term Frequency to use.
   size_t tfType;
 };
