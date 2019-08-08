@@ -92,7 +92,7 @@ void PPO<
 
   replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
       sampledNextStates, isTerminal);
-  
+
   arma::rowvec discountedRewards(sampledRewards.n_rows);
   arma::mat nextActionValues;
   double values = 0.0;
@@ -149,12 +149,14 @@ void PPO<
   arma::mat loss = - arma::min(ratio % advantages, surrogateLoss);
 
   //backward the gradient
-  arma::mat dsurro1 = -loss % (ratio % advantages <= surrogateLoss) % advantages;
+  arma::mat dsurro1 = -loss % (ratio % advantages <= surrogateLoss)
+      % advantages;
   arma::mat dsurro2 = -loss % (ratio % advantages > surrogateLoss);
   arma::mat dratio1 = (ratio >= (1 - config.Epsilon())) %
       (ratio <= (1 + config.Epsilon())) % advantages % dsurro2;
   arma::mat dprob = (dratio1 + dsurro1) % vectorise((1.0 / oldProb), 1);
-  arma::mat dmu = (vectorise(observation, 1) - mu) / (arma::square(sigma)) % dprob;
+  arma::mat dmu = (vectorise(observation, 1) - mu) /
+      (arma::square(sigma)) % dprob;
 
   arma::mat dsigma = -1 / sigma +
       arma::square(vectorise(observation, 1) - mu) / arma::pow(sigma, 3);
