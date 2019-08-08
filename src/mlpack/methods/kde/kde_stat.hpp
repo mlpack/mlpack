@@ -30,14 +30,21 @@ class KDEStat
       validCentroid(false),
       mcBeta(0),
       mcAlpha(0),
-      accumAlpha(0) { }
+      accumAlpha(0),
+      pointsInTheBase(0),
+      minKernelRecon(DBL_MAX),
+      maxKernelRecon(DBL_MIN)
+  { /* Nothing to do here. */ }
 
   //! Initialization for a fully initialized node.
   template<typename TreeType>
   KDEStat(TreeType& node) :
       mcBeta(0),
       mcAlpha(0),
-      accumAlpha(0)
+      accumAlpha(0),
+      pointsInTheBase(0),
+      minKernelRecon(DBL_MAX),
+      maxKernelRecon(DBL_MIN)
   {
     // Calculate centroid if necessary.
     if (!tree::TreeTraits<TreeType>::FirstPointIsCentroid)
@@ -69,6 +76,9 @@ class KDEStat
   //! Get row mean of all descendant points of the node.
   inline const arma::vec& Mean() const { return mean; }
 
+  //! Get amount of points for which the base is computed.
+  inline size_t PointsInTheBase() const { return pointsInTheBase; }
+
   //! Modify eigenvectors of the base.
   inline arma::mat& EigVec() { return eigVec; }
 
@@ -77,6 +87,23 @@ class KDEStat
 
   //! Modify row mean of all descendant points of the node.
   inline arma::vec& Mean() { return mean; }
+
+  //! Modify amount of points for which the base is computed.
+  inline size_t& PointsInTheBase() { return pointsInTheBase; }
+
+  //! Get minimum kernel value of the points (p_recon, p) in the current base.
+  inline double MinKernelRecon() const { return minKernelRecon; }
+
+  //! Modify minimum kernel value of the points (p_recon, p) in the current
+  //! base.
+  inline double& MinKernelRecon() { return minKernelRecon; }
+
+  //! Get maximum kernel value of the points (p_recon, p) in the current base.
+  inline double MaxKernelRecon() const { return maxKernelRecon; }
+
+  //! Modify maximum kernel value of the points (p_recon, p) in the current
+  //! base.
+  inline double& MaxKernelRecon() { return maxKernelRecon; }
 
   //! Get accumulated Monte Carlo alpha of the node.
   inline double MCBeta() const { return mcBeta; }
@@ -123,6 +150,7 @@ class KDEStat
       ar & BOOST_SERIALIZATION_NVP(eigVec);
       ar & BOOST_SERIALIZATION_NVP(eigVal);
       ar & BOOST_SERIALIZATION_NVP(mean);
+      ar & BOOST_SERIALIZATION_NVP(pointsInTheBase);
     }
     else if (Archive::is_loading::value)
     {
@@ -132,8 +160,12 @@ class KDEStat
       eigVec.clear();
       eigVal.clear();
       mean.clear();
+      pointsInTheBase = 0;
     }
   }
+
+  double maxK = DBL_MIN;
+  double minK = DBL_MAX;
 
  private:
   //! Node centroid.
@@ -159,6 +191,15 @@ class KDEStat
 
   //! Row mean of all descendant points of the node.
   arma::vec mean;
+
+  //! Amount of points for which the base is computed.
+  size_t pointsInTheBase;
+
+  //! Minimum kernel value of the points (p_recon, p) in the current base.
+  double minKernelRecon;
+
+  //! Maximum kernel value of the points (p_recon, p) in the current base.
+  double maxKernelRecon;
 };
 
 } // namespace kde
