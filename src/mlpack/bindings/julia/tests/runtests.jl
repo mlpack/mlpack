@@ -109,7 +109,8 @@ end
 
   _, _, _, _, matOut, _, _, _, _, _, _, _, _, _ =
       test_julia_binding(4.0, 12, "hello",
-                         matrix_in=x)
+                         matrix_in=x,
+                         points_are_rows=false)
 
   @test size(matOut, 1) == 4
   @test size(matOut, 2) == 100
@@ -158,7 +159,8 @@ end
 
   _, _, _, _, _, _, _, _, _, _, _, umatOut, _, _ =
       test_julia_binding(4.0, 12, "hello",
-                         umatrix_in=x)
+                         umatrix_in=x,
+                         points_are_rows=false)
 
   @test size(umatOut, 1) == 4
   @test size(umatOut, 2) == 100
