@@ -69,14 +69,14 @@ using namespace arma;
 using namespace std;
 
 static vector<vector<string>> CreateDataset(const string& filename,
-                                            const char& columnDelimiter)
+                                            char& columnDelimiter)
 {
   vector<vector<string>> dataset;
   // Extracting the Contents of file
   // File stream.
   ifstream fin(filename);
   if (!fin.is_open())
-    Log::Fatal << "Unable to open input file \n";
+    Log::Fatal << "Unable to open input file" << endl;
   string line, word;
   while (getline(fin, line))
   {
@@ -115,29 +115,36 @@ static unordered_set<size_t> GetColumnIndices(const vector<string>& tempDimensio
         string subStringStart = tempDimension[i].substr(0, found);
         string subStringEnd = tempDimension[i].substr(found+1,
             tempDimension[i].length());
-        IsNumber(subStringStart);
-        IsNumber(subStringEnd);        
+        if (!IsNumber(subStringStart) || !IsNumber(subStringEnd))
+        {
+          Log::Fatal << "Dimension value accepts only digits, characters"
+              " encountered, please recheck" << endl;
+        }
         columnstartindex = stoi(subStringStart);
         columnendindex = stoi(subStringEnd);
+        for (int i = columnstartindex; i <= columnendindex; i++)
+          dimensions.insert(i);
       }
       catch (const exception& e)
       {
         Log::Fatal << "Dimension value not clear, either negatve or can't "
-        "parse the range. Usage a-b \n";
+        "parse the range. Usage a-b" << endl;
       }
-      for (int i = columnstartindex; i <= columnendindex; i++)
-        dimensions.insert(i);
     }
     else
     {
       try
       {
-        IsNumber(tempDimension[i]);
+        if (!IsNumber(tempDimension[i]))
+        {
+          Log::Fatal << "Dimension value accepts only digits, characters"
+              " encountered, please recheck" << endl;
+        }
         dimensions.insert(stoi(tempDimension[i]));
       }
       catch (const exception& e)
       {
-        Log::Fatal << "Dimension value not appropriate \n";      
+        Log::Fatal << "Dimension value not appropriate " << endl;
       }
     }
   }
@@ -145,14 +152,15 @@ static unordered_set<size_t> GetColumnIndices(const vector<string>& tempDimensio
 }
 
 static void WriteOutput(const string& outputFilename,
-                 const vector<vector<string>>& dataset,
-                 const unordered_map<size_t, vector<string>>& nonNumericInput,
-                 const string& columnDelimiter,
-                 const unordered_set<size_t>& dimensions)
+                        const vector<vector<string>>& dataset,
+                        const unordered_map<size_t, vector<string>>&
+                            nonNumericInput,
+                        const string& columnDelimiter,
+                        const unordered_set<size_t>& dimensions)
 {
   ofstream fout(outputFilename, ios::trunc);
   if (!fout.is_open())
-    Log::Fatal << "Unable to open a file for writing output.\n";
+    Log::Fatal << "Unable to open a file for writing output" << endl;
   for (size_t i = 0 ; i < dataset.size(); i++)
   {
     for (size_t j = 0 ; j < dataset[i].size(); j++)
@@ -160,16 +168,16 @@ static void WriteOutput(const string& outputFilename,
       if (dimensions.find(j) != dimensions.end())
       {
         if (j + 1 < dataset[i].size())
-          fout<<nonNumericInput.at(j)[i]<<columnDelimiter;
+          fout << nonNumericInput.at(j)[i] << columnDelimiter;
         else
-          fout<<nonNumericInput.at(j)[i];
+          fout << nonNumericInput.at(j)[i];
       }
       else
       {
         if (j + 1 < dataset[i].size())
-          fout<<dataset[i][j]<<columnDelimiter;
+          fout << dataset[i][j] << columnDelimiter;
         else
-          fout<<dataset[i][j];
+          fout << dataset[i][j];
       }
     }
     fout<<"\n";
@@ -187,7 +195,7 @@ static void mlpackMain()
   {
     columnDelimiter = CLI::GetParam<string>("columnDelimiter");
     // Allow only 3 delimiters.
-    RequireParamValue<string>("columnDelimiter", [](string del)
+    RequireParamValue<string>("columnDelimiter", [](const string del)
         { return del == "\t" || del == "," || del == " "; }, true,
         "Delimiter should be either \\t (tab) or , (comma) or ' ' (space) ");
   }
@@ -196,19 +204,21 @@ static void mlpackMain()
       if (data::Extension(filename) == "csv")
       {
         columnDelimiter = ",";
-        Log::Warn << "Found csv Extension, taking , as columnDelimiter. \n";
+        Log::Warn << "Found csv Extension, taking , as "
+            "columnDelimiter." << endl;
       }
       else if (data::Extension(filename) == "tsv" ||
           data::Extension(filename) == "txt")
       {
         columnDelimiter = "\t";
-        Log::Warn << "Found tsv or txt Extension, taking \\t as"
-        "columnDelimiter. \n";
+        Log::Warn << "Found tsv or txt Extension, taking \\t as "
+        "columnDelimiter." << endl;
       }
       else
       {
         columnDelimiter = "\t";
-        Log::Warn << "columnDelimiter not specified, taking default value \n";
+        Log::Warn << "columnDelimiter not specified, taking default"
+            " value" << endl;
       }
   }
   // Handling Dimension vector
@@ -218,14 +228,14 @@ static void mlpackMain()
   vector<vector<string>> dataset = CreateDataset(filename, columnDelimiter[0]);
   for (auto colIndex : dimensions)
     if (colIndex >= dataset.back().size())
-      Log::Fatal << "The index given is out of range, please verify \n";
+      Log::Fatal << "The index given is out of range, please verify" << endl;
   // Preparing the input dataset on which string manipulation has to be done.
   // vector<vector<string>> nonNumericInput(dimension.size());
   unordered_map<size_t , vector<string>> nonNumericInput;
   for (size_t i = 0; i < dataset.size(); i++)
   {
     for (auto& datasetCol : dimensions)
-      nonNumericInput[datasetCol].push_back(dataset[i][datasetCol]);
+      nonNumericInput[datasetCol].push_back(move(dataset[i][datasetCol]));
   }
   data::StringCleaning obj;
   if (CLI::HasParam("lowercase"))
@@ -237,14 +247,14 @@ static void mlpackMain()
   {
     // Not sure how to take input for tokenizer from cli.
     if (!CLI::HasParam("stopwordsfile"))
-      Log::Fatal << "Please provide a file for stopwords.\n";
+      Log::Fatal << "Please provide a file for stopwords." << endl;
     // Open an existing file
     const string stopWordFilename =
         CLI::GetParam<string>("stopwordsfile");
     ifstream stopWordFile(stopWordFilename);
     if (!stopWordFile.is_open())
     {
-      Log::Fatal << "Unable to open the file for stopwords.\n";
+      Log::Fatal << "Unable to open the file for stopwords." << endl;
     }
     string word;
     deque<string> originalword;
