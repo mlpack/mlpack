@@ -55,6 +55,12 @@ struct KDEDefaultParams
 
   //! Monte Carlo break coefficient.
   static constexpr double mcBreakCoef = 0.4;
+
+  //! Whether perform PCA when possible.
+  static constexpr bool pca = false;
+
+  //! Minimum amount of variance retained by the PCA.
+  static constexpr double pcaVarRetained = 0.9;
 };
 
 /**
@@ -110,6 +116,7 @@ class KDE
    * @param mcBreakCoef Coefficient to control what fraction of the node's
    *                    descendants evaluated is the limit before Monte Carlo
    *                    estimation recurses.
+   * TODO add pca params.
    */
   KDE(const double relError = KDEDefaultParams::relError,
       const double absError = KDEDefaultParams::absError,
@@ -120,7 +127,9 @@ class KDE
       const double mcProb = KDEDefaultParams::mcProb,
       const size_t initialSampleSize = KDEDefaultParams::initialSampleSize,
       const double mcEntryCoef = KDEDefaultParams::mcEntryCoef,
-      const double mcBreakCoef = KDEDefaultParams::mcBreakCoef);
+      const double mcBreakCoef = KDEDefaultParams::mcBreakCoef,
+      const bool pca = KDEDefaultParams::pca,
+      const double pcaVarRetained = KDEDefaultParams::pcaVarRetained);
 
   /**
    * Construct KDE object as a copy of the given model. This may be
@@ -341,8 +350,15 @@ class KDE
   //! is the limit before Monte Carlo estimation recurses.
   double mcBreakCoef;
 
+  //! If true, PCA will be computed and kernel evaluations will be performed
+  //! in a lower dimension space.
+  bool pca;
+
+  //! Minimum amount of variance retained by the PCA.
+  double pcaVarRetained;
+
   //! Preprocess tree PCA bases. TODO improve docs.
-  void ComputePCA(Tree& rootNode, const double varToRetain = 1.0);
+  void ComputePCA(Tree& rootNode);
 
   //! Check whether absolute and relative error values are compatible.
   static void CheckErrorValues(const double relError, const double absError);

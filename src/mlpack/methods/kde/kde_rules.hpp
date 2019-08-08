@@ -44,6 +44,7 @@ class KDERules
    * @param kernel Instantiated kernel.
    * @param monteCarlo If true Monte Carlo estimations will be applied when
    *                   possible.
+   * @param pca If true kernel evaluations will be computed using the PCA base.
    * @param sameSet True if query and reference sets are the same
    *                (monochromatic evaluation).
    */
@@ -59,6 +60,7 @@ class KDERules
            MetricType& metric,
            KernelType& kernel,
            const bool monteCarlo,
+           const bool pca,
            const bool sameSet);
 
   //! Base Case.
@@ -145,6 +147,10 @@ class KDERules
 
   //! Whether Monte Carlo estimations are going to be applied.
   const bool monteCarlo;
+
+  //! Whether kernel evaluations can be computed in a lower dimensional space
+  //! using the PCA base.
+  const bool pca;
 
   //! Accumulated not used MC alpha values for each query point.
   arma::vec accumMCAlpha;

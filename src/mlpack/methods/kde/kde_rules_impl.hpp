@@ -36,6 +36,7 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     MetricType& metric,
     KernelType& kernel,
     const bool monteCarlo,
+    const bool pca,
     const bool sameSet) :
     referenceSet(referenceSet),
     querySet(querySet),
@@ -49,6 +50,7 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     metric(metric),
     kernel(kernel),
     monteCarlo(monteCarlo),
+    pca(pca),
     sameSet(sameSet),
     lastQueryIndex(querySet.n_cols),
     lastReferenceIndex(referenceSet.n_cols),

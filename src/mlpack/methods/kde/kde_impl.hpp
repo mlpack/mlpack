@@ -61,7 +61,9 @@ KDE(const double relError,
     const double mcProb,
     const size_t initialSampleSize,
     const double mcEntryCoef,
-    const double mcBreakCoef) :
+    const double mcBreakCoef,
+    const bool pca,
+    const double pcaVarRetained) :
     kernel(kernel),
     metric(metric),
     referenceTree(nullptr),
@@ -72,7 +74,9 @@ KDE(const double relError,
     trained(false),
     mode(mode),
     monteCarlo(monteCarlo),
-    initialSampleSize(initialSampleSize)
+    initialSampleSize(initialSampleSize),
+    pca(pca),
+    pcaVarRetained(pcaVarRetained) // TODO check 0 < var < 1.
 {
   CheckErrorValues(relError, absError);
   MCProb(mcProb);
@@ -106,7 +110,9 @@ KDE(const KDE& other) :
     mcProb(other.mcProb),
     initialSampleSize(other.initialSampleSize),
     mcEntryCoef(other.mcEntryCoef),
-    mcBreakCoef(other.mcBreakCoef)
+    mcBreakCoef(other.mcBreakCoef),
+    pca(other.pca),
+    pcaVarRetained(other.pcaVarRetained)
 {
   if (trained)
   {
@@ -152,7 +158,9 @@ KDE(KDE&& other) :
     mcProb(other.mcProb),
     initialSampleSize(other.initialSampleSize),
     mcEntryCoef(other.mcEntryCoef),
-    mcBreakCoef(other.mcBreakCoef)
+    mcBreakCoef(other.mcBreakCoef),
+    pca(other.pca),
+    pcaVarRetained(other.pcaVarRetained)
 {
   other.kernel = std::move(KernelType());
   other.metric = std::move(MetricType());
@@ -168,6 +176,8 @@ KDE(KDE&& other) :
   other.initialSampleSize = KDEDefaultParams::initialSampleSize;
   other.mcEntryCoef = KDEDefaultParams::mcEntryCoef;
   other.mcBreakCoef = KDEDefaultParams::mcBreakCoef;
+  other.pca = KDEDefaultParams::pca;
+  other.pcaVarRetained = KDEDefaultParams::pcaVarRetained;
 }
 
 template<typename KernelType,
@@ -214,6 +224,8 @@ operator=(KDE other)
   this->initialSampleSize = other.initialSampleSize;
   this->mcEntryCoef = other.mcEntryCoef;
   this->mcBreakCoef = other.mcBreakCoef;
+  this->pca = other.pca;
+  this->pcaVarRetained = other.pcaVarRetained;
 
   return *this;
 }
@@ -368,6 +380,9 @@ Evaluate(MatType querySet, arma::vec& estimations)
                                   "referenceSet dimensions don't match");
     }
 
+    if (pca && std::is_same<KernelType, kernel::GaussianKernel>::value)
+      ComputePCA(*referenceTree);
+
     Timer::Start("computing_kde");
 
     // Evaluate.
@@ -384,6 +399,7 @@ Evaluate(MatType querySet, arma::vec& estimations)
                               metric,
                               kernel,
                               monteCarlo,
+                              pca,
                               false);
 
     // Create traverser.
@@ -482,6 +498,7 @@ Evaluate(Tree* queryTree,
                             metric,
                             kernel,
                             monteCarlo,
+                            pca,
                             false);
 
   // Create traverser.
@@ -551,6 +568,7 @@ Evaluate(arma::vec& estimations)
                             metric,
                             kernel,
                             monteCarlo,
+                            pca,
                             true);
 
   if (mode == DUAL_TREE_MODE)
@@ -720,6 +738,8 @@ serialize(Archive& ar, const unsigned int version)
     ar & BOOST_SERIALIZATION_NVP(initialSampleSize);
     ar & BOOST_SERIALIZATION_NVP(mcEntryCoef);
     ar & BOOST_SERIALIZATION_NVP(mcBreakCoef);
+    ar & BOOST_SERIALIZATION_NVP(pca);
+    ar & BOOST_SERIALIZATION_NVP(pcaVarRetained);
   }
   else if (Archive::is_loading::value)
   {
@@ -728,6 +748,8 @@ serialize(Archive& ar, const unsigned int version)
     initialSampleSize = KDEDefaultParams::initialSampleSize;
     mcEntryCoef = KDEDefaultParams::mcEntryCoef;
     mcBreakCoef = KDEDefaultParams::mcBreakCoef;
+    pca = KDEDefaultParams::pca;
+    pcaVarRetained = KDEDefaultParams::pcaVarRetained;
   }
 
   // If we are loading, clean up memory if necessary.
