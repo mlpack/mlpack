@@ -81,6 +81,18 @@ class NormalDistribution
   }
 
   /**
+    * Calculates the log of normal probability density function for each
+    * data point (column) in the given matrix.
+    *
+    * @param x List of observations.
+    * @param log probabilities Output probabilities for each input observation.
+    */
+  void LogProbability(const arma::vec& x, arma::vec& probabilities) const
+  {
+    probabilities = LogProbability(x);
+  }
+
+  /**
    * Return a randomly generated observation according to the probability
    * distribution defined by this object.
    *

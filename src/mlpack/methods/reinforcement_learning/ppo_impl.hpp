@@ -113,7 +113,7 @@ void PPO<
   criticNetwork.Backward(advantages, criticGradients);
   criticUpdater.Update(criticNetwork.Parameters(), config.StepSize(),
       criticGradients);
-
+  
   // calculate the ratio.
   arma::mat actionParameter, sigma, mu;
   actorNetwork.Forward(sampledStates, actionParameter);
@@ -139,10 +139,10 @@ void PPO<
   {
     observation[i] = sampledActions[i].action;
   }
-  normalDist.Probability(observation, prob);
-  oldNormalDist.Probability(observation, oldProb);
+  normalDist.LogProbability(observation, prob);
+  oldNormalDist.LogProbability(observation, oldProb);
 
-  arma::mat ratio = vectorise((prob / oldProb), 1);
+  arma::mat ratio = arma::exp(vectorise(prob - oldProb, 1));
 
   arma::mat surrogateLoss = arma::clamp(ratio, 1 - config.Epsilon(),
       1 + config.Epsilon()) % advantages;
@@ -155,7 +155,8 @@ void PPO<
   arma::mat dratio2 = (ratio >= (1 - config.Epsilon())) %
                       (ratio <= (1 + config.Epsilon())) % advantages % dsurro;
 
-  arma::mat dprob = (dratio1 + dratio2) % vectorise((1.0 / oldProb), 1);
+  arma::mat dprob = (dratio1 + dratio2) %
+      arma::exp(vectorise(prob - oldProb, 1));
   arma::mat dmu = (vectorise(observation, 1) - mu) /
       (arma::square(sigma)) % dprob;
 
