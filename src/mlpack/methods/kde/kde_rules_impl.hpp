@@ -78,16 +78,58 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
   if ((lastQueryIndex == queryIndex) && (lastReferenceIndex == referenceIndex))
     return 0.0;
 
-  // Calculations.
-  const double distance = metric.Evaluate(querySet.col(queryIndex),
-                                          referenceSet.col(referenceIndex));
-  densities(queryIndex) += kernel.Evaluate(distance);
+  // Use PCA evaluation if possible.
+  if (pca)
+  {
+    const KDEStat& stat = traversalInfo.LastReferenceNode()->Stat();
+
+    const arma::vec& qPoint = querySet.col(queryIndex);
+    const arma::vec qProj = stat.EigVec().t() * (qPoint - stat.Mean());
+    const arma::vec qRecon = stat.EigVec() * qProj + stat.Mean();
+    const double kernelValue1 = EvaluateKernel(qPoint, qRecon);
+
+    // Base case for each reference node.
+    const arma::vec& rPoint = referenceSet.col(referenceIndex);
+    const arma::vec rProj = stat.EigVec().t() * (rPoint - stat.Mean());
+    const arma::vec rRecon = stat.EigVec() * rProj + stat.Mean();
+
+    const double maxMetricError = metric.Evaluate(rRecon, rPoint);
+    const double metricProjValue = metric.Evaluate(qProj, rProj);
+
+    const double maxProjKernel = kernel.Evaluate(metricProjValue -
+                                                 maxMetricError);
+    const double minProjKernel = kernel.Evaluate(metricProjValue +
+                                                 maxMetricError);
+
+    const double maxK = kernelValue1 * maxProjKernel;
+    const double minK = kernelValue1 * minProjKernel;
+    const double newBound = maxK - minK;
+
+    if (newBound <= (absError + relError * minK) / referenceSet.n_cols)
+    {
+      densities(queryIndex) += kernelValue1 * kernel.Evaluate(metricProjValue);
+      std::cout << "Used PCA projection" << std::endl;
+    }
+    else
+    {
+      const double distance = metric.Evaluate(querySet.col(queryIndex),
+                                              referenceSet.col(referenceIndex));
+      densities(queryIndex) += kernel.Evaluate(distance);
+    }
+  }
+  else
+  {
+    // Calculations.
+    const double distance = metric.Evaluate(querySet.col(queryIndex),
+                                            referenceSet.col(referenceIndex));
+    densities(queryIndex) += kernel.Evaluate(distance);
+  }
 
   ++baseCases;
   lastQueryIndex = queryIndex;
   lastReferenceIndex = referenceIndex;
-  traversalInfo.LastBaseCase() = distance;
-  return distance;
+  traversalInfo.LastBaseCase() = 0; // distance;
+  return 0; // distance;
 }
 
 //! Single-tree scoring function.

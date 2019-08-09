@@ -1235,14 +1235,14 @@ BOOST_AUTO_TEST_CASE(GaussianBreadthDualKDTreeMonteCarloKDE)
  * Test single KD-tree implementation results against brute force results using
  * Monte Carlo estimations when possible as well as PCA for the reference tree.
  */
-BOOST_AUTO_TEST_CASE(GaussianSingleKDTreeMonteCarloPCAKDE)
+BOOST_AUTO_TEST_CASE(GaussianSingleKDTreePCA)
 {
   arma::mat reference = arma::randu(50, 3000);
   arma::mat query = arma::randu(50, 100);
   arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   const double kernelBandwidth = 0.35;
-  const double relError = 0.05;
+  const double relError = 0.1;
 
   // Brute force KDE.
   GaussianKernel kernel(kernelBandwidth);
@@ -1262,7 +1262,7 @@ BOOST_AUTO_TEST_CASE(GaussianSingleKDTreeMonteCarloPCAKDE)
         kernel,
         KDEMode::SINGLE_TREE_MODE,
         metric,
-        true,
+        false,
         0.95,
         100,
         2,
