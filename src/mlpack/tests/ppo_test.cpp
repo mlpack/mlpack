@@ -65,6 +65,7 @@ BOOST_AUTO_TEST_CASE(PENDULUMWITHPPO)
     config.Epsilon() = 0.2;
     config.StepLimit() = 200;
     config.UpdateInterval() = 32;
+    config.ActorUpdateStep() = 10;
 
     // Set up the PPO agent.
     PPO<Pendulum, decltype(actor), decltype(critic), AdamUpdate,

@@ -29,7 +29,8 @@ class TrainingConfig
       targetNetworkSyncInterval(100),
       stepSize(0.01),
       discount(0.9),
-      epsilon(0.2)
+      epsilon(0.2),
+      actorUpdateStep(1)
   { /* Nothing to do here. */ }
 
   TrainingConfig(
@@ -51,7 +52,8 @@ class TrainingConfig
       discount(discount),
       gradientLimit(gradientLimit),
       doubleQLearning(doubleQLearning),
-      epsilon(0.2)
+      epsilon(0.2),
+      actorUpdateStep(1)
   { /* Nothing to do here. */ }
 
   //! Get the amount of workers.
@@ -107,6 +109,11 @@ class TrainingConfig
   double Epsilon() const { return epsilon; }
   //! Modify the discount rate for future reward.
   double& Epsilon() { return epsilon; }
+
+  //! Get the Actor Network Update Step.
+  size_t ActorUpdateStep() const { return actorUpdateStep; }
+  //! Modify the Actor Network Update Step.
+  size_t& ActorUpdateStep() { return actorUpdateStep; }
 
  private:
   /**
@@ -166,7 +173,15 @@ class TrainingConfig
    */
   bool doubleQLearning;
 
+  /**
+   * the discount rate for future reward.
+   */
   double epsilon;
+
+  /**
+   * the number step of updating the actor network.
+   */
+  size_t actorUpdateStep;
 };
 
 } // namespace rl

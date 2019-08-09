@@ -113,66 +113,67 @@ void PPO<
   criticNetwork.Backward(advantages, criticGradients);
   criticUpdater.Update(criticNetwork.Parameters(), config.StepSize(),
       criticGradients);
-  
-  // calculate the ratio.
-  arma::mat actionParameter, sigma, mu;
-  actorNetwork.Forward(sampledStates, actionParameter);
 
-  ann::TanhFunction::Fn(actionParameter.row(0), mu);
-  ann::SoftplusFunction::Fn(actionParameter.row(1), sigma);
+  for (size_t step = 0; step < config.ActorUpdateStep(); step ++) {
+    // calculate the ratio.
+    arma::mat actionParameter, sigma, mu;
+    actorNetwork.Forward(sampledStates, actionParameter);
 
-  ann::NormalDistribution normalDist =
-      ann::NormalDistribution(vectorise(mu, 0), vectorise(sigma, 0));
+    ann::TanhFunction::Fn(actionParameter.row(0), mu);
+    ann::SoftplusFunction::Fn(actionParameter.row(1), sigma);
 
-  oldActorNetwork.Forward(sampledStates, actionParameter);
-  ann::TanhFunction::Fn(actionParameter.row(0), mu);
-  ann::SoftplusFunction::Fn(actionParameter.row(1), sigma);
+    ann::NormalDistribution normalDist =
+        ann::NormalDistribution(vectorise(mu, 0), vectorise(sigma, 0));
 
-  ann::NormalDistribution oldNormalDist =
-      ann::NormalDistribution(vectorise(mu, 0), vectorise(sigma, 0));
+    oldActorNetwork.Forward(sampledStates, actionParameter);
+    ann::TanhFunction::Fn(actionParameter.row(0), mu);
+    ann::SoftplusFunction::Fn(actionParameter.row(1), sigma);
 
-  // Update the actor.
-  // observation use action.
-  arma::vec prob, oldProb;
-  arma::colvec observation(sampledActions.size());
-  for (size_t i = 0; i < sampledActions.size(); i ++)
-  {
-    observation[i] = sampledActions[i].action;
+    ann::NormalDistribution oldNormalDist =
+        ann::NormalDistribution(vectorise(mu, 0), vectorise(sigma, 0));
+
+    // Update the actor.
+    // observation use action.
+    arma::vec prob, oldProb;
+    arma::colvec observation(sampledActions.size());
+    for (size_t i = 0; i < sampledActions.size(); i++) {
+      observation[i] = sampledActions[i].action;
+    }
+    normalDist.LogProbability(observation, prob);
+    oldNormalDist.LogProbability(observation, oldProb);
+
+    arma::mat ratio = arma::exp(vectorise(prob - oldProb, 1));
+    
+    arma::mat surrogateLoss = arma::clamp(ratio, 1 - config.Epsilon(),
+                                          1 + config.Epsilon()) % advantages;
+    arma::mat loss = -arma::min(ratio % advantages, surrogateLoss);
+
+    // backward the gradient
+    arma::mat dratio1 = -loss % (ratio % advantages <= surrogateLoss)
+                        % advantages;
+    arma::mat dsurro = -loss % (ratio % advantages >= surrogateLoss);
+    arma::mat dratio2 = (ratio >= (1 - config.Epsilon())) %
+                        (ratio <= (1 + config.Epsilon())) % advantages % dsurro;
+
+    arma::mat dprob = (dratio1 + dratio2) %
+                      arma::exp(vectorise(prob - oldProb, 1));
+    arma::mat dmu = (vectorise(observation, 1) - mu) /
+                    (arma::square(sigma)) % dprob;
+
+    arma::mat dsigma = -1 / sigma +
+                       arma::square(vectorise(observation, 1) - mu) / arma::pow(sigma, 3);
+
+    arma::mat dTanh, dSoftP;
+    ann::TanhFunction::Deriv(vectorise(dmu, 1), dTanh);
+    ann::SoftplusFunction::Deriv(vectorise(dsigma, 1), dSoftP);
+
+    arma::mat dLoss = arma::join_cols(dTanh, dSoftP);
+
+    actorNetwork.Backward(dLoss, actorGradients);
+
+    actorUpdater.Update(actorNetwork.Parameters(), config.StepSize(),
+                        actorGradients);
   }
-  normalDist.LogProbability(observation, prob);
-  oldNormalDist.LogProbability(observation, oldProb);
-
-  arma::mat ratio = arma::exp(vectorise(prob - oldProb, 1));
-
-  arma::mat surrogateLoss = arma::clamp(ratio, 1 - config.Epsilon(),
-      1 + config.Epsilon()) % advantages;
-  arma::mat loss = - arma::min(ratio % advantages, surrogateLoss);
-
-  // backward the gradient
-  arma::mat dratio1 = -loss % (ratio % advantages <= surrogateLoss)
-                      % advantages;
-  arma::mat dsurro = -loss % (ratio % advantages >= surrogateLoss);
-  arma::mat dratio2 = (ratio >= (1 - config.Epsilon())) %
-                      (ratio <= (1 + config.Epsilon())) % advantages % dsurro;
-
-  arma::mat dprob = (dratio1 + dratio2) %
-      arma::exp(vectorise(prob - oldProb, 1));
-  arma::mat dmu = (vectorise(observation, 1) - mu) /
-      (arma::square(sigma)) % dprob;
-
-  arma::mat dsigma = -1 / sigma +
-      arma::square(vectorise(observation, 1) - mu) / arma::pow(sigma, 3);
-
-  arma::mat dTanh, dSoftP;
-  ann::TanhFunction::Deriv(vectorise(dmu, 1), dTanh);
-  ann::SoftplusFunction::Deriv(vectorise(dsigma, 1), dSoftP);
-
-  arma::mat dLoss = arma::join_cols(dTanh, dSoftP);
-
-  actorNetwork.Backward(dLoss, actorGradients);
-
-  actorUpdater.Update(actorNetwork.Parameters(), config.StepSize(),
-      actorGradients);
 
   // Update the oldActorNetwork, synchronize the parameter.
   oldActorNetwork = actorNetwork;
