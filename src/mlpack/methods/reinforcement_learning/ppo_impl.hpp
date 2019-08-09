@@ -143,9 +143,9 @@ void PPO<
     oldNormalDist.LogProbability(observation, oldProb);
 
     arma::mat ratio = arma::exp(vectorise(prob - oldProb, 1));
-    
+
     arma::mat surrogateLoss = arma::clamp(ratio, 1 - config.Epsilon(),
-                                          1 + config.Epsilon()) % advantages;
+        1 + config.Epsilon()) % advantages;
     arma::mat loss = -arma::min(ratio % advantages, surrogateLoss);
 
     // backward the gradient
@@ -153,15 +153,16 @@ void PPO<
                         % advantages;
     arma::mat dsurro = -loss % (ratio % advantages >= surrogateLoss);
     arma::mat dratio2 = (ratio >= (1 - config.Epsilon())) %
-                        (ratio <= (1 + config.Epsilon())) % advantages % dsurro;
+        (ratio <= (1 + config.Epsilon())) % advantages % dsurro;
 
     arma::mat dprob = (dratio1 + dratio2) %
-                      arma::exp(vectorise(prob - oldProb, 1));
+        arma::exp(vectorise(prob - oldProb, 1));
+
     arma::mat dmu = (vectorise(observation, 1) - mu) /
-                    (arma::square(sigma)) % dprob;
+        (arma::square(sigma)) % dprob;
 
     arma::mat dsigma = -1 / sigma +
-                       arma::square(vectorise(observation, 1) - mu) / arma::pow(sigma, 3);
+        arma::square(vectorise(observation, 1) - mu) / arma::pow(sigma, 3);
 
     arma::mat dTanh, dSoftP;
     ann::TanhFunction::Deriv(vectorise(dmu, 1), dTanh);
@@ -172,7 +173,7 @@ void PPO<
     actorNetwork.Backward(dLoss, actorGradients);
 
     actorUpdater.Update(actorNetwork.Parameters(), config.StepSize(),
-                        actorGradients);
+        actorGradients);
   }
 
   // Update the oldActorNetwork, synchronize the parameter.
