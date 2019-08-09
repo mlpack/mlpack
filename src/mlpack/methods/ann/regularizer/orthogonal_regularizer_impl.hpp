@@ -49,7 +49,7 @@ void OrthogonalRegularizer::Evaluate(const MatType& weight, MatType& gradient)
     }
   }
 
-  gradient = arma::vectorise(grad) * factor;
+  gradient += arma::vectorise(grad) * factor;
 }
 
 template<typename Archive>

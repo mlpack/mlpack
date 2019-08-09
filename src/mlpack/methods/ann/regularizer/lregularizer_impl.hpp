@@ -30,7 +30,7 @@ template<int Power>
 template<typename MatType>
 void LRegularizer<Power>::Evaluate(const MatType& weight, MatType& gradient)
 {
-  gradient = arma::vectorise(arma::pow(weight, Power - 1) * Power * factor);
+  gradient += arma::vectorise(arma::pow(weight, Power - 1) * Power * factor);
 }
 
 // L1-Regularizer specializations.
@@ -38,7 +38,7 @@ template<>
 template<typename MatType>
 void LRegularizer<1>::Evaluate(const MatType& weight, MatType& gradient)
 {
-  gradient = arma::vectorise(factor * weight / arma::abs(weight));
+  gradient += arma::vectorise(factor * weight / arma::abs(weight));
 }
 
 // L2-Regularizer specializations.
@@ -46,7 +46,7 @@ template<>
 template<typename MatType>
 void LRegularizer<2>::Evaluate(const MatType& weight, MatType& gradient)
 {
-  gradient = arma::vectorise(2 * factor * weight);
+  gradient += arma::vectorise(2 * factor * weight);
 }
 
 template<int Power>
