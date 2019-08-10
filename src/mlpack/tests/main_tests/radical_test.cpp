@@ -120,7 +120,11 @@ BOOST_AUTO_TEST_CASE(RadicalBoundsTest)
  */
 BOOST_AUTO_TEST_CASE(RadicalDiffNoiseStdDevTest)
 {
-  arma::mat input = arma::randu<arma::mat>(5, 3);
+  arma::mat input("0.497369 0.891621 0.565789;"
+                  "0.33821 0.494571 0.491079;"
+                  "0.424898 0.297599 0.475061;"
+                  "0.285009 0.152635 0.878107;"
+                  "0.321474 0.997979 0.42137");
 
   SetInputParam("input", input);
 
@@ -147,7 +151,11 @@ BOOST_AUTO_TEST_CASE(RadicalDiffNoiseStdDevTest)
  */
 BOOST_AUTO_TEST_CASE(RadicalDiffReplicatesTest)
 {
-  arma::mat input = arma::randu<arma::mat>(5, 3);
+  arma::mat input("0.497369 0.891621 0.565789;"
+                  "0.33821 0.494571 0.491079;"
+                  "0.424898 0.297599 0.475061;"
+                  "0.285009 0.152635 0.878107;"
+                  "0.321474 0.997979 0.42137");
 
   SetInputParam("input", input);
 
@@ -174,7 +182,11 @@ BOOST_AUTO_TEST_CASE(RadicalDiffReplicatesTest)
  */
 BOOST_AUTO_TEST_CASE(RadicalDiffAnglesTest)
 {
-  arma::mat input = arma::randu<arma::mat>(5, 3);
+  arma::mat input("0.497369 0.891621 0.565789;"
+                  "0.33821 0.494571 0.491079;"
+                  "0.424898 0.297599 0.475061;"
+                  "0.285009 0.152635 0.878107;"
+                  "0.321474 0.997979 0.42137");
 
   SetInputParam("input", input);
 
@@ -201,7 +213,11 @@ BOOST_AUTO_TEST_CASE(RadicalDiffAnglesTest)
  */
 BOOST_AUTO_TEST_CASE(RadicalDiffSweepsTest)
 {
-  arma::mat input = arma::randu<arma::mat>(5, 3);
+  arma::mat input("0.497369 0.891621 0.565789;"
+                  "0.33821 0.494571 0.491079;"
+                  "0.424898 0.297599 0.475061;"
+                  "0.285009 0.152635 0.878107;"
+                  "0.321474 0.997979 0.42137");
 
   SetInputParam("input", input);
 
