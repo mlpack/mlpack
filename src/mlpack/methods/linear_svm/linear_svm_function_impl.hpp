@@ -285,7 +285,7 @@ void LinearSVMFunction<MatType>::Gradient(
   }
   else
   {
-    gradient.set_size(size(parameters));
+    gradient.set_size(arma::size(parameters));
     gradient.submat(0, 0, parameters.n_rows - 2, parameters.n_cols - 1) =
         dataset * difference.t();
     gradient.row(parameters.n_rows - 1) =
@@ -342,7 +342,7 @@ void LinearSVMFunction<MatType>::Gradient(
   }
   else
   {
-    gradient.set_size(size(parameters));
+    gradient.set_size(arma::size(parameters));
     gradient.submat(0, 0, parameters.n_rows - 2, parameters.n_cols - 1) =
         dataset.cols(firstId, lastId) * difference.t();
     gradient.row(parameters.n_rows - 1) =
