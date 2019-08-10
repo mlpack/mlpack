@@ -4,6 +4,8 @@
 
   * Fix gcc 9 OpenMP compilation issue (#1970).
 
+  * Added support for loading and saving of images (#1903).
+
   * Add Multiple Pole Balancing Environment (#1901, #1951).
 
   * Added functionality for scaling of data (#1876); see the command-line
@@ -633,3 +635,4 @@
   * Initial release.  See any resolved tickets numbered less than #196 or
     execute this query:
     http://www.mlpack.org/trac/query?status=closed&milestone=mlpack+1.0.0
+
