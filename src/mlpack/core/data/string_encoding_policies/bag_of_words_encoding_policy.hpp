@@ -37,6 +37,7 @@ class BagOfWordsEncodingPolicy
   * @param maxNumTokens The maximum number of tokens in the strings of the 
                         input dataset (not used).
   * @param dictionarySize The size of the dictionary.
+  * @tparam MatType The type of output matrix.
   */
   template<typename MatType>
   static void InitMatrix(MatType& output,
@@ -49,13 +50,14 @@ class BagOfWordsEncodingPolicy
 
   /**
   * The function initializes the output matrix.
-  * Overloaded function to store result in vector<vector<size_t>>
+  * Overloaded function to store result in vector<vector<OutputType>>
   * 
   * @param output Output matrix to store the encoded results.
   * @param datasetSize The number of strings in the input dataset.
   * @param maxNumTokens The maximum number of tokens in the strings of the 
                         input dataset.
   * @param dictionarySize The size of the dictionary (not used).
+  * @tparam OutputType The type of output vector.
   */
   template<typename OutputType>
   static void InitMatrix(std::vector<std::vector<OutputType> >& output,
@@ -74,6 +76,7 @@ class BagOfWordsEncodingPolicy
   * @param value The encoded token.
   * @param row The row number at which the encoding is performed.
   * @param col The row token number at which the encoding is performed.
+  * @tparam MatType The type of output matrix.
   */
   template<typename MatType>
   static void Encode(MatType& output,
@@ -81,19 +84,21 @@ class BagOfWordsEncodingPolicy
                      size_t row,
                      size_t /*col*/)
   {
-    // Important since Mapping starts from 1 whereas allowed column value is 0.
-    output(row, value-1) = 1;
+    // Important since Mapping of words,Dcitionary Encoding starts from 1,
+    // whereas allowed column value is 0.
+    output(row, value - 1) = 1;
   }
 
   /** 
-  * The function performs the bag of words encoding algorithm i.e. it writess
+  * The function performs the bag of words encoding algorithm i.e. it writes
   * the encoded token to the ouput.
-  * Overload function to accepted vector<vector<size_t>> as output type.
+  * Overload function to accepted vector<vector<OutputType>> as output type.
   *
   * @param output Output matrix to store the encoded results.
   * @param value The encoded token.
   * @param row The row number at which the encoding is performed.
   * @param col The row token number at which the encoding is performed.
+  * @tparam OutputType The type of output vector.
   */
   template<typename OutputType>
   static void Encode(std::vector<std::vector<OutputType> >& output,
@@ -101,8 +106,9 @@ class BagOfWordsEncodingPolicy
                      size_t row,
                      size_t /*col*/)
   {
-    // Important since Mapping starts from 1 whereas allowed column value is 0.
-    output[row][value-1] = 1;
+    // Important since Mapping of words,Dcitionary Encoding starts from 1,
+    // whereas allowed column value is 0.
+    output[row][value - 1] = 1;
   }
 
   /**
@@ -124,20 +130,6 @@ class BagOfWordsEncodingPolicy
   static void PreprocessToken(size_t /*row*/,
                               size_t /*numTokens*/,
                               size_t /*value*/) { }
-};
-
-/**
- * The specialization provides some information about the about the bag of
- * words encoding policy.
- */
-template<>
-struct StringEncodingPolicyTraits<BagOfWordsEncodingPolicy>
-{
-  /**
-   * Indicates if the policy is able to encode the token at once without 
-   * any information about other tokens as well as the total tokens count.
-   */
-  static const bool onePassEncoding = false;
 };
 
 template<typename TokenType>

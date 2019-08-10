@@ -407,7 +407,7 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
 
   arma::mat output;
   BagOfWordsEncoding<SplitByAnyOf::TokenType> encoder;
-  SplitByAnyOf tokenizer(" ");
+  SplitByAnyOf tokenizer(" ,.");
 
   encoder.Encode(stringEncodingInput, output, tokenizer);
   const DictionaryType& dictionary = encoder.Dictionary();
@@ -422,26 +422,26 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
   }
   arma::mat expected = {
     {  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     {  0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
-    {  1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1  }
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    {  1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
   };
   CheckMatrices(output, expected);
 }
 
 /**
-* Test the one pass modification of the Bag of Words encoding algorithm.
+* Bag of Words encoding algorithm output saved in a vector.
 */ 
-BOOST_AUTO_TEST_CASE(OnePassBagOfWordsEncodingTest)
+BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingTest)
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
   vector<vector<size_t>> output;
   BagOfWordsEncoding<SplitByAnyOf::TokenType> encoder(
       (BagOfWordsEncodingPolicy()));
-  SplitByAnyOf tokenizer(" ");
+  SplitByAnyOf tokenizer(" ,.");
 
   encoder.Encode(stringEncodingInput, output, tokenizer);
 
@@ -458,18 +458,18 @@ BOOST_AUTO_TEST_CASE(OnePassBagOfWordsEncodingTest)
 
   vector<vector<size_t>> expected = {
     {  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     {  0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
-    {  1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1  }
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    {  1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
   };
 
   BOOST_REQUIRE(output == expected);
 }
 
 /**
-* Test Bag of Words encoding for characters using lamda function.
+* Test Bag of Words encoding for characters.
 */
 BOOST_AUTO_TEST_CASE(BagOfWordsEncodingIndividualCharactersTest)
 {
@@ -494,8 +494,8 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingIndividualCharactersTest)
 }
 
 /**
- * Test the one pass modification of the Bag of Words encoding algorithm
- * in case of individual character encoding.
+ * Test the Bag of Words encoding algorithm in case of individual
+ * character encoding, storing resulting in vector<vector<vectorType>>.
  */
 BOOST_AUTO_TEST_CASE(OnePassBagOfWordsEncodingIndividualCharactersTest)
 {
@@ -530,10 +530,9 @@ BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingTest)
 
   arma::mat output;
   TfIdfEncoding<SplitByAnyOf::TokenType> encoder;
-  SplitByAnyOf tokenizer(" ");
+  SplitByAnyOf tokenizer(" ,.");
 
   encoder.Encode(stringEncodingInput, output, tokenizer);
-
   const DictionaryType& dictionary = encoder.Dictionary();
 
   // Checking that everything is mapped to different numbers
@@ -548,37 +547,37 @@ BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingTest)
     {  1.28768207245178, 1.28768207245178, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1, 1.69314718055995, 1.28768207245178,
        1.28768207245178, 1.28768207245178, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1, 1.69314718055995, 1.69314718055995, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0  },
+       1.28768207245178, 1, 1.69314718055995, 1.69314718055995, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0 },
     {  0, 1.28768207245178, 0, 0, 0, 2, 0, 0, 3.86304621735534,
        3.86304621735534, 0, 0, 0, 3, 0, 0, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 5.07944154167984, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
-    {  1.28768207245178, 0, 0, 0, 0, 1, 0, 1.28768207245178, 0, 0, 0, 0, 0, 1,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       1.69314718055995, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    {  1.28768207245178, 0, 0, 0, 0, 1, 0, 1.28768207245178, 0, 0, 0, 0,
+       1.28768207245178, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 1.69314718055995, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1.69314718055995, 1.69314718055995  }
+       1.69314718055995, 1.69314718055995,  1.69314718055995 }
   };
   CheckMatrices(output, expected, 1e-12);
 }
 
 /**
- * Test the one pass modification of the TfIdf encoding algorithm, using rawcount
- * as type of tf and smoothIdf as true.
+ * Test the TfIdf encoding algorithm, using rawcount as type of tf and smoothIdf
+ * as true, storing the result in a vector<vecotr<vectorType>>.
  */
-BOOST_AUTO_TEST_CASE(OnePassRawCountSmoothIdfEncodingTest)
+BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingTest)
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
   vector<vector<double>> output;
   TfIdfEncoding<SplitByAnyOf::TokenType> encoder(
       (TfIdfEncodingPolicy()));
-  SplitByAnyOf tokenizer(" ");
+  SplitByAnyOf tokenizer(" ,.");
 
   encoder.Encode(stringEncodingInput, output, tokenizer);
 
@@ -597,21 +596,21 @@ BOOST_AUTO_TEST_CASE(OnePassRawCountSmoothIdfEncodingTest)
     {  1.28768207245178, 1.28768207245178, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1, 1.69314718055995, 1.28768207245178,
        1.28768207245178, 1.28768207245178, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1, 1.69314718055995, 1.69314718055995, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0  },
+       1.28768207245178, 1, 1.69314718055995, 1.69314718055995, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0 },
     {  0, 1.28768207245178, 0, 0, 0, 2, 0, 0, 3.86304621735534,
        3.86304621735534, 0, 0, 0, 3, 0, 0, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 5.07944154167984, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
-    {  1.28768207245178, 0, 0, 0, 0, 1, 0, 1.28768207245178, 0, 0, 0, 0, 0, 1,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       1.69314718055995, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    {  1.28768207245178, 0, 0, 0, 0, 1, 0, 1.28768207245178, 0, 0, 0, 0,
+       1.28768207245178, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 1.69314718055995, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1.69314718055995, 1.69314718055995  }
+       1.69314718055995, 1.69314718055995,  1.69314718055995 }
   };
   for (size_t i = 0; i < expected.size(); i++)
     for (size_t j = 0; j < expected[i].size(); j++)
@@ -619,8 +618,8 @@ BOOST_AUTO_TEST_CASE(OnePassRawCountSmoothIdfEncodingTest)
 }
 
 /**
- * Test TFIDF encoding for characters using lamda function, using rawcount as tf
- * type and smoothidf as true.
+ * Test TFIDF encoding for characters, using rawcount as tf type and
+ * smoothidf as true.
  */
 BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingIndividualCharactersTest)
 {
@@ -644,10 +643,10 @@ BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingIndividualCharactersTest)
 }
 
 /**
- * Test the one pass modification of the Tf-Idf encoding algorithm
+ * Test the Tf-Idf encoding algorithm to store result in vector
  * in case of individual character encoding using default values.
  */
-BOOST_AUTO_TEST_CASE(OnePassRawCountSmoothIdfEncodingIndividualCharactersTest)
+BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingIndividualCharactersTest)
 {
   std::vector<string> input = {
     "GACCA",
@@ -679,8 +678,8 @@ BOOST_AUTO_TEST_CASE(TfIdfRawCountEncodingTest)
 
   arma::mat output;
   TfIdfEncoding<SplitByAnyOf::TokenType> encoder(
-      (TfIdfEncodingPolicy(0, false)));
-  SplitByAnyOf tokenizer(" ");
+      (TfIdfEncodingPolicy(TfIdfEncodingPolicy::TfTypes::RAW_COUNT, false)));
+  SplitByAnyOf tokenizer(" ,.");
 
   encoder.Encode(stringEncodingInput, output, tokenizer);
 
@@ -699,36 +698,37 @@ BOOST_AUTO_TEST_CASE(TfIdfRawCountEncodingTest)
     {  1.40546510810816, 1.40546510810816, 2.09861228866811, 2.09861228866811,
        2.09861228866811, 1, 2.09861228866811, 1.40546510810816,
        1.40546510810816, 1.40546510810816, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 1, 2.09861228866811, 2.09861228866811, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0  },
+       1.40546510810816, 1, 2.09861228866811, 2.09861228866811, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0 },
     {  0, 1.40546510810816, 0, 0, 0, 2, 0, 0, 4.21639532432449,
        4.21639532432449, 0, 0, 0, 3, 0, 0, 2.09861228866811, 2.09861228866811,
        2.09861228866811, 6.29583686600433, 2.09861228866811, 2.09861228866811,
        2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
        2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
        2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
-    {  1.40546510810816, 0, 0, 0, 0, 1, 0, 1.40546510810816, 0, 0, 0, 0, 0, 1,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       2.09861228866811, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    {  1.40546510810816, 0, 0, 0, 0, 1, 0, 1.40546510810816, 0, 0, 0, 0,
+       1.40546510810816, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 2.09861228866811, 2.09861228866811, 2.09861228866811,
        2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 2.09861228866811, 2.09861228866811  }
+       2.09861228866811, 2.09861228866811,  2.09861228866811 }
   };
   CheckMatrices(output, expected, 1e-12);
 }
 
 /**
- * Test the one pass modification of the TfIdf encoding algorithm, with rawcount
+ * Test the TfIdf encoding algorithm for output type as vector, with rawcount
  * as type, but with smoothidf as false.
  */ 
-BOOST_AUTO_TEST_CASE(OnePassTfIdfRawCountEncodingTest)
+BOOST_AUTO_TEST_CASE(VectorTfIdfRawCountEncodingTest)
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
   vector<vector<double>> output;
-  TfIdfEncoding<SplitByAnyOf::TokenType> encoder(0, false);
-  SplitByAnyOf tokenizer(" ");
+  TfIdfEncoding<SplitByAnyOf::TokenType>
+      encoder(TfIdfEncodingPolicy::TfTypes::RAW_COUNT, false);
+  SplitByAnyOf tokenizer(" ,.");
 
   encoder.Encode(stringEncodingInput, output, tokenizer);
 
@@ -747,21 +747,21 @@ BOOST_AUTO_TEST_CASE(OnePassTfIdfRawCountEncodingTest)
     {  1.40546510810816, 1.40546510810816, 2.09861228866811, 2.09861228866811,
        2.09861228866811, 1, 2.09861228866811, 1.40546510810816,
        1.40546510810816, 1.40546510810816, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 1, 2.09861228866811, 2.09861228866811, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0  },
+       1.40546510810816, 1, 2.09861228866811, 2.09861228866811, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0 },
     {  0, 1.40546510810816, 0, 0, 0, 2, 0, 0, 4.21639532432449,
        4.21639532432449, 0, 0, 0, 3, 0, 0, 2.09861228866811, 2.09861228866811,
        2.09861228866811, 6.29583686600433, 2.09861228866811, 2.09861228866811,
        2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
        2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
        2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
-    {  1.40546510810816, 0, 0, 0, 0, 1, 0, 1.40546510810816, 0, 0, 0, 0, 0, 1,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       2.09861228866811, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    {  1.40546510810816, 0, 0, 0, 0, 1, 0, 1.40546510810816, 0, 0, 0, 0,
+       1.40546510810816, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 2.09861228866811, 2.09861228866811, 2.09861228866811,
        2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 2.09861228866811, 2.09861228866811  }
+       2.09861228866811, 2.09861228866811,  2.09861228866811 }
   };
   for (size_t i = 0; i < expected.size(); i++)
     for (size_t j = 0; j < expected[i].size(); j++)
@@ -769,7 +769,7 @@ BOOST_AUTO_TEST_CASE(OnePassTfIdfRawCountEncodingTest)
 }
 
 /**
- * Test TFIDF encoding for characters using lamda function, using rawcount as
+ * Test TFIDF encoding for characters, using rawcount as
  * tf type and smoothidf as false.
  */
 BOOST_AUTO_TEST_CASE(RawcountTfIdfEncodingIndividualCharactersTest)
@@ -781,7 +781,8 @@ BOOST_AUTO_TEST_CASE(RawcountTfIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(0, false);
+  TfIdfEncoding<CharExtract::TokenType>
+      encoder(TfIdfEncodingPolicy::TfTypes::RAW_COUNT, false);
 
   // Passing a empty string to encode charactersrawcountsmoothidftrue
   encoder.Encode(input, output, CharExtract());
@@ -794,11 +795,11 @@ BOOST_AUTO_TEST_CASE(RawcountTfIdfEncodingIndividualCharactersTest)
 }
 
 /**
- * Test the one pass modification of the Tf Idf encoding algorithm
+ * Test the Tf Idf encoding algorithm to store result in vector
  * in case of individual character encoding, using raw count as type,
  * and smoothidf as false.
  */
-BOOST_AUTO_TEST_CASE(OnePassRawcountEncodingIndividualCharactersTest)
+BOOST_AUTO_TEST_CASE(VectorRawcountEncodingIndividualCharactersTest)
 {
   std::vector<string> input = {
     "GACCA",
@@ -807,7 +808,8 @@ BOOST_AUTO_TEST_CASE(OnePassRawcountEncodingIndividualCharactersTest)
   };
 
   vector<vector<double>> output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(0, false);
+  TfIdfEncoding<CharExtract::TokenType>
+      encoder(TfIdfEncodingPolicy::TfTypes::RAW_COUNT, false);
 
   // Passing a empty string to encode characters
   encoder.Encode(input, output, CharExtract());
@@ -822,8 +824,8 @@ BOOST_AUTO_TEST_CASE(OnePassRawcountEncodingIndividualCharactersTest)
 }
 
 /**
- * Test TFIDF encoding for characters using lamda function, using binary
- * weighting scheme for tf and smoothidf as true.
+ * Test TFIDF encoding for characters, using binary weighting scheme
+ * for tf and smoothidf as true.
  */
 BOOST_AUTO_TEST_CASE(BinarySmoothIdfEncodingIndividualCharactersTest)
 {
@@ -834,7 +836,8 @@ BOOST_AUTO_TEST_CASE(BinarySmoothIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(1, true);
+  TfIdfEncoding<CharExtract::TokenType>
+      encoder(TfIdfEncodingPolicy::TfTypes::BINARY, true);
 
   // Passing a empty string to encode charactersrawcountsmoothidftrue
   encoder.Encode(input, output, CharExtract());
@@ -847,10 +850,10 @@ BOOST_AUTO_TEST_CASE(BinarySmoothIdfEncodingIndividualCharactersTest)
 }
 
 /**
- * Test TFIDF encoding for characters using lamda function, using binary
+ * Test TFIDF encoding for characters to store results in vector, using binary
  * weighting scheme for tf and smoothidf as true.
  */
-BOOST_AUTO_TEST_CASE(OnePassBnarySmoothIdfEncodingIndividualCharactersTest)
+BOOST_AUTO_TEST_CASE(VectorBnarySmoothIdfEncodingIndividualCharactersTest)
 {
   std::vector<string> input = {
     "GACCA",
@@ -859,7 +862,8 @@ BOOST_AUTO_TEST_CASE(OnePassBnarySmoothIdfEncodingIndividualCharactersTest)
   };
 
   vector<vector<double>> output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(1, true);
+  TfIdfEncoding<CharExtract::TokenType>
+      encoder(TfIdfEncodingPolicy::TfTypes::BINARY, true);
 
   // Passing a empty string to encode characters
   encoder.Encode(input, output, CharExtract());
@@ -874,7 +878,7 @@ BOOST_AUTO_TEST_CASE(OnePassBnarySmoothIdfEncodingIndividualCharactersTest)
 }
 
 /**
- * Test TFIDF encoding for characters using lamda function, using binary
+ * Test TFIDF encoding for characters, using binary
  * as weighting scheme and smoothidf as false.
  */
 BOOST_AUTO_TEST_CASE(BinaryTfIdfEncodingIndividualCharactersTest)
@@ -886,7 +890,8 @@ BOOST_AUTO_TEST_CASE(BinaryTfIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(1, false);
+  TfIdfEncoding<CharExtract::TokenType>
+      encoder(TfIdfEncodingPolicy::TfTypes::BINARY, false);
 
   // Passing a empty string to encode charactersrawcountsmoothidftrue
   encoder.Encode(input, output, CharExtract());
@@ -899,7 +904,7 @@ BOOST_AUTO_TEST_CASE(BinaryTfIdfEncodingIndividualCharactersTest)
 }
 
 /**
- * Test TFIDF encoding for characters using lamda function, using sublinear
+ * Test TFIDF encoding for characters, using sublinear
  * as weighting scheme and smoothidf as true.
  */
 BOOST_AUTO_TEST_CASE(SublinearSmoothIdfEncodingIndividualCharactersTest)
@@ -911,7 +916,8 @@ BOOST_AUTO_TEST_CASE(SublinearSmoothIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(2, true);
+  TfIdfEncoding<CharExtract::TokenType>
+      encoder(TfIdfEncodingPolicy::TfTypes::SUBLINEAR_TF, true);
 
   // Passing a empty string to encode charactersrawcountsmoothidftrue
   encoder.Encode(input, output, CharExtract());
@@ -925,7 +931,7 @@ BOOST_AUTO_TEST_CASE(SublinearSmoothIdfEncodingIndividualCharactersTest)
 }
 
 /**
- * Test TFIDF encoding for characters using lamda function, using sublinear
+ * Test TFIDF encoding for characters, using sublinear
  * as weighting scheme and smoothidf as false.
  */
 BOOST_AUTO_TEST_CASE(SublinearTfIdfEncodingIndividualCharactersTest)
@@ -937,7 +943,8 @@ BOOST_AUTO_TEST_CASE(SublinearTfIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(2, false);
+  TfIdfEncoding<CharExtract::TokenType>
+      encoder(TfIdfEncodingPolicy::TfTypes::SUBLINEAR_TF, false);
 
   // Passing a empty string to encode charactersrawcountsmoothidftrue
   encoder.Encode(input, output, CharExtract());
@@ -951,7 +958,7 @@ BOOST_AUTO_TEST_CASE(SublinearTfIdfEncodingIndividualCharactersTest)
 }
 
 /**
- * Test TFIDF encoding for characters using lamda function, using term
+ * Test TFIDF encoding for characters, using term
  * Frequency as weighting scheme and smoothidf as true.
  */
 BOOST_AUTO_TEST_CASE(TermFrequencySmoothIdfEncodingIndividualCharactersTest)
@@ -963,7 +970,8 @@ BOOST_AUTO_TEST_CASE(TermFrequencySmoothIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(3, true);
+  TfIdfEncoding<CharExtract::TokenType>
+      encoder(TfIdfEncodingPolicy::TfTypes::TERM_FREQUENCY, true);
 
   // Passing a empty string to encode charactersrawcountsmoothidftrue
   encoder.Encode(input, output, CharExtract());
@@ -977,7 +985,7 @@ BOOST_AUTO_TEST_CASE(TermFrequencySmoothIdfEncodingIndividualCharactersTest)
 }
 
 /**
- * Test TFIDF encoding for characters using lamda function, using Term
+ * Test TFIDF encoding for characters, using Term
  * Frequency as weighting scheme and smoothidf as false.
  */
 BOOST_AUTO_TEST_CASE(TermFrequencyTfIdfEncodingIndividualCharactersTest)
@@ -989,7 +997,8 @@ BOOST_AUTO_TEST_CASE(TermFrequencyTfIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType> encoder(3, false);
+  TfIdfEncoding<CharExtract::TokenType>
+      encoder(TfIdfEncodingPolicy::TfTypes::TERM_FREQUENCY, false);
 
   // Passing a empty string to encode charactersrawcountsmoothidftrue
   encoder.Encode(input, output, CharExtract());
