@@ -99,7 +99,7 @@ static bool IsNumber(const string& column)
   return true;
 }
 
-static unordered_set<size_t> GetColumnIndices(const 
+static unordered_set<size_t> GetColumnIndices(const
                                               vector<string>& tempDimension)
 {
   unordered_set<size_t> dimensions;
