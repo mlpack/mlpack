@@ -1,6 +1,7 @@
 /**
  * @file string_encoding_impl.hpp
  * @author Jeffin Sam
+ * @author Mikhail Lozhnikov
  *
  * Implementation of the StringEncoding class.
  *
@@ -67,7 +68,7 @@ void StringEncoding<EncodingPolicyType, DictionaryType>::Clear()
 template<typename EncodingPolicyType, typename DictionaryType>
 template<typename TokenizerType>
 void StringEncoding<EncodingPolicyType, DictionaryType>::CreateMap(
-    std::string& input,
+    const std::string& input,
     const TokenizerType& tokenizer)
 {
   boost::string_view strView(input);

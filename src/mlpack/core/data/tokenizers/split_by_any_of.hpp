@@ -1,6 +1,7 @@
 /**
  * @file split_by_any_of.hpp
  * @author Jeffin Sam
+ * @author Mikhail Lozhnikov
  *
  * Definition of the SplitByAnyOf class.
  *
@@ -36,7 +37,7 @@ class SplitByAnyOf
    *
    * @param delimiters The given delimiters.
    */
-  SplitByAnyOf(boost::string_view delimiters)
+  SplitByAnyOf(const boost::string_view delimiters)
   {
     mask.fill(false);
 
@@ -56,7 +57,7 @@ class SplitByAnyOf
 
     while (retval.empty())
     {
-      std::size_t pos = FindFirstDelimiter(str);
+      const std::size_t pos = FindFirstDelimiter(str);
       if (pos == str.npos)
       {
         retval = str;
@@ -74,7 +75,7 @@ class SplitByAnyOf
    *
    * @param token The given token.
    */
-  static bool IsTokenEmpty(boost::string_view token)
+  static bool IsTokenEmpty(const boost::string_view token)
   {
     return token.empty();
   }
@@ -92,7 +93,7 @@ class SplitByAnyOf
    *
    * @param str String where to find the character.
    */
-  size_t FindFirstDelimiter(boost::string_view str) const
+  size_t FindFirstDelimiter(const boost::string_view str) const
   {
     for (size_t pos = 0; pos < str.size(); pos++)
     {

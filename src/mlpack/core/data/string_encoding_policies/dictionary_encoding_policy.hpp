@@ -1,6 +1,7 @@
 /**
  * @file dictionary_encoding_policy.hpp
  * @author Jeffin Sam
+ * @author Mikhail Lozhnikov
  *
  * Definition of the DictionaryEncodingPolicy class.
  *
@@ -32,6 +33,8 @@ class DictionaryEncodingPolicy
   /**
   * The function initializes the output matrix.
   *
+  * @tparam MatType The output matrix type.
+  *
   * @param output Output matrix to store the encoded results (sp_mat or mat).
   * @param datasetSize The number of strings in the input dataset.
   * @param maxNumTokens The maximum number of tokens in the strings of the 
@@ -40,9 +43,9 @@ class DictionaryEncodingPolicy
   */
   template<typename MatType>
   static void InitMatrix(MatType& output,
-                         size_t datasetSize,
-                         size_t maxNumTokens,
-                         size_t /*dictionarySize*/)
+                         const size_t datasetSize,
+                         const size_t maxNumTokens,
+                         const size_t /*dictionarySize*/)
   {
     output.zeros(datasetSize, maxNumTokens);
   }
@@ -51,13 +54,18 @@ class DictionaryEncodingPolicy
   * The function performs the dictionary encoding algorithm i.e. it writes
   * the encoded token to the ouput.
   *
+  * @tparam MatType The output matrix type.
+  *
   * @param output Output matrix to store the encoded results (sp_mat or mat).
   * @param value The encoded token.
   * @param row The row number at which the encoding is performed.
   * @param col The token index in the row.
   */
   template<typename MatType>
-  static void Encode(MatType& output, size_t value, size_t row, size_t col)
+  static void Encode(MatType& output,
+                     const size_t value,
+                     const size_t row,
+                     const size_t col)
   {
     output(row, col) = value;
   }
@@ -70,7 +78,8 @@ class DictionaryEncodingPolicy
    * @param output Output vector to store the encoded results.
    * @param value The encoded token.
    */
-  static void Encode(std::vector<size_t>& output, size_t value)
+  static void Encode(std::vector<size_t>& output,
+                     const size_t value)
   {
     output.push_back(value);
   }

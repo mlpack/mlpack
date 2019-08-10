@@ -1,6 +1,7 @@
 /**
  * @file string_encoding_test.cpp
  * @author Jeffin Sam
+ * @author Mikhail Lozhnikov
  *
  * Tests for the StringEncoding class.
  *

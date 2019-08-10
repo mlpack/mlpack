@@ -1,6 +1,7 @@
 /**
  * @file string_encoding.hpp
  * @author Jeffin Sam
+ * @author Mikhail Lozhnikov
  *
  * Definition of the StringEncoding class.
  *
@@ -80,7 +81,8 @@ class StringEncoding
    *    token is empty.
    */
   template<typename TokenizerType>
-  void CreateMap(std::string& input, const TokenizerType& tokenizer);
+  void CreateMap(const std::string& input,
+                 const TokenizerType& tokenizer);
 
   /**
    * Clear the dictionary.

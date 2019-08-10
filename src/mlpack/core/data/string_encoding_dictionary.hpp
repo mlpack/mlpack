@@ -1,6 +1,7 @@
 /**
  * @file string_encoding_dictionary.hpp
  * @author Jeffin Sam
+ * @author Mikhail Lozhnikov
  *
  * Definition of the StringEncodingDictionary class.
  *
@@ -154,7 +155,7 @@ class StringEncodingDictionary<boost::string_view>
    *
    * @param token The given token.
    */
-  bool HasToken(boost::string_view token) const
+  bool HasToken(const boost::string_view token) const
   {
     return mapping.find(token) != mapping.end();
   }
@@ -166,7 +167,7 @@ class StringEncodingDictionary<boost::string_view>
    *
    * @param token The given token.
    */
-  size_t AddToken(boost::string_view token)
+  size_t AddToken(const boost::string_view token)
   {
     tokens.emplace_back(token);
 
@@ -183,7 +184,7 @@ class StringEncodingDictionary<boost::string_view>
    *
    * @param token The given token.
    */
-  size_t Value(boost::string_view token) const
+  size_t Value(const boost::string_view token) const
   {
     return mapping.at(token);
   }
@@ -274,7 +275,7 @@ class StringEncodingDictionary<int>
    *
    * @param token The given token.
    */
-  bool HasToken(int token) const
+  bool HasToken(const int token) const
   {
     return mapping[token] > 0;
   }
@@ -287,7 +288,7 @@ class StringEncodingDictionary<int>
    *
    * @param token The given token.
    */
-  size_t AddToken(int token)
+  size_t AddToken(const int token)
   {
     mapping[token] = ++size;
 
@@ -301,7 +302,7 @@ class StringEncodingDictionary<int>
    *
    * @param token The given token.
    */
-  size_t Value(int token) const
+  size_t Value(const int token) const
   {
     return mapping[token];
   }

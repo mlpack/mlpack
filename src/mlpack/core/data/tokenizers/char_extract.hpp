@@ -1,6 +1,7 @@
 /**
  * @file char_extract.hpp
  * @author Jeffin Sam
+ * @author Mikhail Lozhnikov
  *
  * Definition of the CharExtract class which tokenizes a string into
  * characters.
@@ -40,7 +41,7 @@ class CharExtract
     if (str.empty())
       return EOF;
 
-    int retval = static_cast<unsigned char>(str[0]);
+    const int retval = static_cast<unsigned char>(str[0]);
 
     str.remove_prefix(1);
 
@@ -52,7 +53,7 @@ class CharExtract
    *
    * @param token The given token.
    */
-  static bool IsTokenEmpty(int token)
+  static bool IsTokenEmpty(const int token)
   {
     return token == EOF;
   }

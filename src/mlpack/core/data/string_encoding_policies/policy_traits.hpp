@@ -1,6 +1,7 @@
 /**
  * @file policy_traits.hpp
  * @author Jeffin Sam
+ * @author Mikhail Lozhnikov
  *
  * This provides the StringEncodingPolicyTraits struct, a template struct to
  * get information about various encoding policies.
