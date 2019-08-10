@@ -1,5 +1,7 @@
 ### mlpack 4.0.0
 ###### ????-??-??
+  * Fix occasionally-failing RADICAL test (#1924).
+
   * Fix gcc 9 OpenMP compilation issue (#1970).
 
   * Add Multiple Pole Balancing Environment (#1901, #1951).
