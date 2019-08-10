@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(GradientL1RegularizerTest)
 
     double Output(const arma::mat& weight, size_t i, size_t j)
     {
-     return std::abs(weight(i, j)) * factor;
+      return std::abs(weight(i, j)) * factor;
     }
 
     void Gradient(arma::mat& weight, arma::mat& gradient)
@@ -60,15 +60,15 @@ BOOST_AUTO_TEST_CASE(GradientL2RegularizerTest)
   struct GradientFunction
   {
     GradientFunction() :
-      factor(0.6),
-      reg(factor)
+        factor(0.6),
+        reg(factor)
     {
       // Nothing to do here.
     }
 
     double Output(const arma::mat& weight, size_t i, size_t j)
     {
-     return weight(i, j) * weight(i, j) * factor;
+      return weight(i, j) * weight(i, j) * factor;
     }
 
     void Gradient(arma::mat& weight, arma::mat& gradient)
@@ -89,17 +89,16 @@ BOOST_AUTO_TEST_CASE(GradientOrthogonalRegularizerTest)
   struct GradientFunction
   {
     GradientFunction() :
-      factor(0.6),
-      reg(factor)
+        factor(0.6),
+        reg(factor)
     {
       // Nothing to do here.
     }
 
     double Output(const arma::mat& weight, size_t /* i */, size_t /* j */)
     {
-      arma::mat I;
-      I.eye(weight.n_rows, weight.n_rows);
-      arma::mat x = arma::abs(weight * weight.t() - I) * factor;
+      arma::mat x = arma::abs(weight * weight.t() -
+          arma::eye<arma::mat>(weight.n_rows, weight.n_cols)) * factor;
       return arma::accu(x);
     }
 
