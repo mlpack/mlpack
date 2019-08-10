@@ -373,12 +373,12 @@ BOOST_AUTO_TEST_CASE(SplitByAnyOfDictionaryEncodingSerialization)
 }
 
 /**
- * Serialization test for the Bag Of Words encoding algorithm with
+ * Serialization test for the dictionary encoding algorithm with
  * the CharExtract tokenizer.
  */
-BOOST_AUTO_TEST_CASE(CharExtractBagOfWordsEncodingSerialization)
+BOOST_AUTO_TEST_CASE(CharExtractDictionaryEncodingSerialization)
 {
-  using EncoderType = BagOfWordsEncoding<CharExtract::TokenType>;
+  using EncoderType = DictionaryEncoding<CharExtract::TokenType>;
 
   EncoderType encoder;
   CharExtract tokenizer;
@@ -431,9 +431,9 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
   CheckMatrices(output, expected);
 }
 
-*
- * Test the one pass modification of the Bag of Words encoding algorithm.
- 
+/**
+* Test the one pass modification of the Bag of Words encoding algorithm.
+*/ 
 BOOST_AUTO_TEST_CASE(OnePassBagOfWordsEncodingTest)
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
