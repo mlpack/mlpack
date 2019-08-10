@@ -112,12 +112,8 @@ EncodeHelper(const std::vector<std::string>& input,
 {
   size_t numColumns = 0;
 
-<<<<<<< HEAD
-  for (size_t i = 0; i < input.size(); i++)
-=======
   // The first pass adds the extracted tokens to the dictionary.
-  for (const std::string& line : input)
->>>>>>> lozhnikov/string-encoding-fixes
+  for (size_t i = 0; i < input.size(); i++)
   {
     boost::string_view strView(input[i]);
     auto token = tokenizer(strView);
