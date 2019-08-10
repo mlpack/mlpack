@@ -69,12 +69,11 @@ class TfIdfEncodingPolicy
   * @param dictionarySize The size of the dictionary (not used).
   */
   template<typename MatType>
-  static void InitMatrix(MatType& output,
+  void InitMatrix(MatType& output,
                          size_t datasetSize,
                          size_t /*maxNumTokens*/,
                          size_t dictionarySize)
   {
-    std::cout<<"dataset "<<datasetSize<<" and dictionary "<<dictionarySize<<std::endl;
     output.zeros(datasetSize, dictionarySize);
   }
 
@@ -173,11 +172,7 @@ class TfIdfEncodingPolicy
   void serialize(Archive& ar , const unsigned int /* version */)
   {
     ar & BOOST_SERIALIZATION_NVP(tfType);
-    ar & BOOST_SERIALIZATION_NVP(tokenCount);
-    ar & BOOST_SERIALIZATION_NVP(idfdict);
     ar & BOOST_SERIALIZATION_NVP(smoothIdf);
-    ar & BOOST_SERIALIZATION_NVP(row_size); 
-    std::cout<<"hello world"<<std::endl; 
   }
 
   /*
@@ -192,18 +187,14 @@ class TfIdfEncodingPolicy
                        size_t /*numTokens*/,
                        size_t value)
   {
-    std::cout<<"hello \n";
     if (row >= tokenCount.size())
     {
       row_size.push_back(0);
       tokenCount.push_back(std::unordered_map<size_t, double>());
     }
-    std::cout<<"error"<<std::endl;
     tokenCount.back()[value-1]++;
-    std::cout<<"yagab \n";
     if (tokenCount.back()[value - 1] == 1)
       idfdict[value - 1]++;
-    std::cout<<"yaganvngvn \n";
     row_size.back()++;
   }
  private:
