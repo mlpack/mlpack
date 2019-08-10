@@ -46,7 +46,7 @@ class TfIdfEncodingPolicy
   * subinerTf : logarthimic weighting scheme (log(tf) + 1) 
   * 
   */
-  enum tfTypes
+  enum class TfTypes
   {
     RAW_COUNT,
     BINARY,
@@ -55,7 +55,8 @@ class TfIdfEncodingPolicy
   };
 
   TfIdfEncodingPolicy(size_t tfType = 0, bool smoothIdf = true) :
-                      tfType(tfType), smoothIdf(smoothIdf)
+                      tfType(tfType),
+                      smoothIdf(smoothIdf)
   {
   }
   /**
@@ -73,6 +74,7 @@ class TfIdfEncodingPolicy
                          size_t /*maxNumTokens*/,
                          size_t dictionarySize)
   {
+    std::cout<<"dataset "<<datasetSize<<" and dictionary "<<dictionarySize<<std::endl;
     output.zeros(datasetSize, dictionarySize);
   }
 
@@ -117,11 +119,11 @@ class TfIdfEncodingPolicy
     else
       idf = std::log(output.n_rows / idfdict[value - 1]) + 1;
 
-    if (tfType == tfTypes::TERM_FREQUENCY)
+    if (tfType == static_cast<size_t>(TfTypes::TERM_FREQUENCY))
       tf = tokenCount[row][value - 1] / row_size[row];
-    else if (tfType == tfTypes::SUBLINEAR_TF)
+    else if (tfType == static_cast<size_t>(TfTypes::SUBLINEAR_TF))
       tf = std::log(tokenCount[row][value - 1]) + 1;
-    else if (tfType == tfTypes::BINARY)
+    else if (tfType == static_cast<size_t>(TfTypes::BINARY))
       tf = tokenCount[row][value - 1] > 0 ? 1 : 0;
     else
       tf = tokenCount[row][value - 1];
@@ -152,11 +154,11 @@ class TfIdfEncodingPolicy
     else
       idf = std::log(output.size() / idfdict[value - 1]) + 1;
 
-    if (tfType == tfTypes::TERM_FREQUENCY)
+    if (tfType == static_cast<size_t>(TfTypes::TERM_FREQUENCY))
       tf = tokenCount[row][value - 1] / row_size[row];
-    else if (tfType == tfTypes::SUBLINEAR_TF)
+    else if (tfType == static_cast<size_t>(TfTypes::SUBLINEAR_TF))
       tf = std::log(tokenCount[row][value - 1]) + 1;
-    else if (tfType == tfTypes::BINARY)
+    else if (tfType == static_cast<size_t>(TfTypes::BINARY))
       tf = tokenCount[row][value - 1] > 0 ? 1 : 0;
     else
       tf = tokenCount[row][value - 1];
@@ -174,7 +176,8 @@ class TfIdfEncodingPolicy
     ar & BOOST_SERIALIZATION_NVP(tokenCount);
     ar & BOOST_SERIALIZATION_NVP(idfdict);
     ar & BOOST_SERIALIZATION_NVP(smoothIdf);
-    ar & BOOST_SERIALIZATION_NVP(row_size);  
+    ar & BOOST_SERIALIZATION_NVP(row_size); 
+    std::cout<<"hello world"<<std::endl; 
   }
 
   /*
@@ -189,14 +192,18 @@ class TfIdfEncodingPolicy
                        size_t /*numTokens*/,
                        size_t value)
   {
+    std::cout<<"hello \n";
     if (row >= tokenCount.size())
     {
       row_size.push_back(0);
       tokenCount.push_back(std::unordered_map<size_t, double>());
     }
+    std::cout<<"error"<<std::endl;
     tokenCount.back()[value-1]++;
+    std::cout<<"yagab \n";
     if (tokenCount.back()[value - 1] == 1)
       idfdict[value - 1]++;
+    std::cout<<"yaganvngvn \n";
     row_size.back()++;
   }
  private:

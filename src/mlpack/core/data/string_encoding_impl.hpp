@@ -134,7 +134,7 @@ EncodeHelper(const std::vector<std::string>& input,
     }
     numColumns = std::max(numColumns, numTokens);
   }
-
+  std::cout<<"dictionary size is "<<dictionary.Size()<<std::endl;
   policy.InitMatrix(output, input.size(), numColumns, dictionary.Size());
   for (size_t i = 0; i < input.size(); i++)
   {

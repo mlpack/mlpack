@@ -22,7 +22,7 @@ namespace data {
  * Definition of the BagOfWordsEncodingPolicy class.
  *
  * BagOfWords is used as a helper class for StringEncoding.
- * The encoder create a vector of all the unique token and then assigns
+ * The encoder creates a vector of all the unique token and then assigns
  * 1 if the token is present in the document, 0 if not present. The tokens
  * are labeled in the order of their occurrence in the input dataset.
  */
@@ -44,6 +44,7 @@ class BagOfWordsEncodingPolicy
                          size_t /*maxNumTokens*/,
                          size_t dictionarySize)
   {
+    std::cout<<"row "<<datasetSize<<" col "<<dictionarySize<<std::endl;
     output.zeros(datasetSize, dictionarySize);
   }
 
@@ -127,8 +128,8 @@ class BagOfWordsEncodingPolicy
 };
 
 /**
- * The specialization provides some information about the dictionary encoding
- * policy.
+ * The specialization provides some information about the about the bag of
+ * words encoding policy.
  */
 template<>
 struct StringEncodingPolicyTraits<BagOfWordsEncodingPolicy>
