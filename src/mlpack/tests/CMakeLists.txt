@@ -37,6 +37,7 @@ add_executable(mlpack_test
   hoeffding_tree_test.cpp
   hpt_test.cpp
   hyperplane_test.cpp
+  image_load_test.cpp
   imputation_test.cpp
   init_rules_test.cpp
   kde_test.cpp
@@ -187,11 +188,20 @@ add_custom_command(TARGET mlpack_test
 
 # The list of long running parallel tests
 set(parallel_tests
+  "ANNLayerTest;"
   "AsyncLearningTest;"
-  "SVDIncrementalTest;SVDBatchTest;"
-  "LocalCoordinateCodingTest;FeedForwardNetworkTest;SparseAutoencoderTest;"
-  "GMMTest;CFTest;ConvolutionalNetworkTest;HMMTest;LARSTest;"
-  "LogisticRegressionTest;GmmTrainMainTest;"
+  "SVDIncrementalTest;"
+  "SVDBatchTest;"
+  "LocalCoordinateCodingTest;"
+  "FeedForwardNetworkTest;"
+  "SparseAutoencoderTest;"
+  "GMMTest;"
+  "CFTest;"
+  "ConvolutionalNetworkTest;"
+  "HMMTest;"
+  "LARSTest;"
+  "LogisticRegressionTest;"
+  "GmmTrainMainTest;"
   "LinearSVMTest")
 
 # Add tests to the testing framework

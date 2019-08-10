@@ -1,6 +1,7 @@
 /**
  * @file string_encoding_dictionary.hpp
  * @author Jeffin Sam
+ * @author Mikhail Lozhnikov
  *
  * Definition of the StringEncodingDictionary class.
  *
@@ -22,9 +23,10 @@ namespace mlpack {
 namespace data {
 
 /*
- * Definition of the StringEncodingDictionary class.
+ * This class provides a dictionary interface for the purpose of string
+ * encoding. It works like an adapter to the internal dictionary.
  *
- * @tparam Token The type of the token that the dictionary stores.
+ * @tparam Token Type of the token that the dictionary stores.
  */
 template<typename Token>
 class StringEncodingDictionary
@@ -37,7 +39,7 @@ class StringEncodingDictionary
   using TokenType = Token;
 
   /**
-   * The function returns true if the dictionary caontains the given token.
+   * The function returns true if the dictionary contains the given token.
    *
    * @param token The given token.
    */
@@ -48,16 +50,19 @@ class StringEncodingDictionary
 
   /**
    * The function adds the given token to the dictionary and assigns a label
-   * to the token.
+   * to the token. The label is equal to the resulting size of the dictionary.
+   * The function returns the assigned label.
    *
    * @param token The given token.
    */
   template<typename T>
-  void AddToken(T&& token)
+  size_t AddToken(T&& token)
   {
     size_t size = mapping.size();
 
-    mapping[std::forward<T>(token)] = size + 1;
+    mapping[std::forward<T>(token)] = ++size;
+
+    return size;
   }
 
   /**
@@ -86,7 +91,7 @@ class StringEncodingDictionary
   MapType& Mapping() { return mapping; }
 
   /**
-   * Serialize the dictionary to the given archive.
+   * Serialize the class to the given archive.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
@@ -115,10 +120,10 @@ class StringEncodingDictionary<boost::string_view>
   //! The type of the token that the dictionary stores.
   using TokenType = boost::string_view;
 
-  //! Cunstruct the default class.
+  //! Construct the default class.
   StringEncodingDictionary() = default;
 
-  //! Construct the class using the given object.
+  //! Copy the class from the given object.
   StringEncodingDictionary(const StringEncodingDictionary& other) :
       tokens(other.tokens)
   {
@@ -129,7 +134,7 @@ class StringEncodingDictionary<boost::string_view>
   //! Standard move constructor.
   StringEncodingDictionary(StringEncodingDictionary&& other) = default;
 
-  //! Copy the class using the given object.
+  //! Copy the class from the given object.
   StringEncodingDictionary& operator=(const StringEncodingDictionary& other)
   {
     tokens = other.tokens;
@@ -146,28 +151,31 @@ class StringEncodingDictionary<boost::string_view>
       StringEncodingDictionary&& other) = default;
 
   /**
-   * The function returns true if the dictionary caontains the given token.
+   * The function returns true if the dictionary contains the given token.
    *
    * @param token The given token.
    */
-  bool HasToken(boost::string_view token) const
+  bool HasToken(const boost::string_view token) const
   {
     return mapping.find(token) != mapping.end();
   }
 
   /**
    * The function adds the given token to the dictionary and assigns a label
-   * to the token.
+   * to the token. The label is equal to the resulting size of the dictionary.
+   * The function returns the assigned label.
    *
    * @param token The given token.
    */
-  void AddToken(boost::string_view token)
+  size_t AddToken(const boost::string_view token)
   {
     tokens.emplace_back(token);
 
     size_t size = mapping.size();
 
-    mapping[tokens.back()] = size + 1;
+    mapping[tokens.back()] = ++size;
+
+    return size;
   }
 
   /**
@@ -176,7 +184,7 @@ class StringEncodingDictionary<boost::string_view>
    *
    * @param token The given token.
    */
-  size_t Value(boost::string_view token) const
+  size_t Value(const boost::string_view token) const
   {
     return mapping.at(token);
   }
@@ -202,7 +210,7 @@ class StringEncodingDictionary<boost::string_view>
   MapType& Mapping() { return mapping; }
 
   /**
-   * Serialize the dictionary to the given archive.
+   * Serialize the class to the given archive.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
@@ -254,7 +262,7 @@ class StringEncodingDictionary<int>
   //! The type of the token that the dictionary stores.
   using TokenType = int;
 
-  //! Cunstruct the default class.
+  //! Construct the default class.
   StringEncodingDictionary() :
     size(0)
   {
@@ -262,34 +270,39 @@ class StringEncodingDictionary<int>
   }
 
   /**
-   * The function returns true if the dictionary caontains the given token.
-   * The given token must belong to [0, 255].
+   * The function returns true if the dictionary contains the given token.
+   * The token must belong to [0, 255]; otherwise the behavior is undefined.
    *
    * @param token The given token.
    */
-  bool HasToken(int token) const
+  bool HasToken(const int token) const
   {
     return mapping[token] > 0;
   }
 
   /**
    * The function adds the given token to the dictionary and assigns a label
-   * to the token. The given token must belong to [0, 255].
+   * to the token. The token must belong to [0, 255]; otherwise the behavior
+   * is undefined. The label is equal to the resulting size of the dictionary.
+   * The function returns the assigned label.
    *
    * @param token The given token.
    */
-  void AddToken(int token)
+  size_t AddToken(const int token)
   {
     mapping[token] = ++size;
+
+    return size;
   }
 
   /**
    * The function returns the label assigned to the given token. The function
-   * doesn't verify that the dictionary contains the given token.
+   * doesn't verify that the dictionary contains the token. The token must
+   * belong to [0, 255]; otherwise the behavior is undefined.
    *
    * @param token The given token.
    */
-  size_t Value(int token) const
+  size_t Value(const int token) const
   {
     return mapping[token];
   }
@@ -312,7 +325,7 @@ class StringEncodingDictionary<int>
   MapType& Mapping() { return mapping; }
 
   /**
-   * Serialize the dictionary to the given archive.
+   * Serialize the class to the given archive.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)

@@ -1,6 +1,7 @@
 /**
  * @file string_encoding.hpp
  * @author Jeffin Sam
+ * @author Mikhail Lozhnikov
  *
  * Definition of the StringEncoding class.
  *
@@ -22,8 +23,8 @@ namespace mlpack {
 namespace data {
 
 /**
- * Definition of the StringEncoding class. The class translates a set of
- * strings into numbers using various encoding algorithms.
+ * The class translates a set of strings into numbers using various encoding
+ * algorithms.
  *
  * @tparam EncodingPolicyType Type of the encoding algorithm itself.
  * @tparam DictionaryType Type of the dictionary.
@@ -34,16 +35,16 @@ class StringEncoding
 {
  public:
   /**
-   * Pass the given arguments to the policy constructor and cunstruct
+   * Pass the given arguments to the policy constructor and create
    * the StringEncoding object using the policy.
    */
   template<typename ... ArgTypes>
   StringEncoding(ArgTypes&& ... args);
 
   /**
-   * Construct the class from the given policy.
+   * Construct the class from the given encoding policy.
    *
-   * @param policy The given policy.
+   * @param encodingPolicy The given encoding policy.
    */
   StringEncoding(EncodingPolicyType encodingPolicy);
 
@@ -65,20 +66,23 @@ class StringEncoding
   StringEncoding& operator=(StringEncoding&&) = default;
 
   /**
-   * Create the mapping from the given corpus.
+   * Initialize the dictionary using the given corpus.
    *
    * @tparam TokenizerType Type of the tokenizer.
    *
    * @param input Corpus of text to encode.
-   * @param tokenizer The tokenizer obkect.
+   * @param tokenizer The tokenizer object.
    *
-   * The tokenization algorithm has to be an object with the operator() method
-   * which accepts a reference to boost::string_view and returns the next token
-   * and the IsTokenEmpty() method that accepts the given token and returns true
-   * if the given token is empty.
+   * The tokenization algorithm has to be an object with two public methods:
+   * 1. operator() which accepts a reference to boost::string_view, extracts
+   * the next token from the given view, removes the prefix containing
+   * the extracted token and returns the token;
+   * 2. IsTokenEmpty() that accepts a token and returns true if the given
+   *    token is empty.
    */
   template<typename TokenizerType>
-  void CreateMap(std::string& input, const TokenizerType& tokenizer);
+  void CreateMap(const std::string& input,
+                 const TokenizerType& tokenizer);
 
   /**
    * Clear the dictionary.
@@ -90,17 +94,19 @@ class StringEncoding
    *
    * @tparam OutputType Type of the output container. The function supports
    *                    the following types: arma::mat, arma::sp_mat,
-   *                    std::vector<std::vector<size_t>>
+   *                    std::vector<std::vector<size_t>>.
    * @tparam TokenizerType Type of the tokenizer.
    *
    * @param input Corpus of text to encode.
    * @param output Output container to store the result.
    * @param tokenizer The tokenizer object.
    *
-   * The tokenization algorithm has to be an object with the operator() method
-   * which accepts a reference to boost::string_view and returns the next token
-   * and the IsTokenEmpty() method that accepts the given token and returns true
-   * if the given token is empty.
+   * The tokenization algorithm has to be an object with two public methods:
+   * 1. operator() which accepts a reference to boost::string_view, extracts
+   * the next token from the given view, removes the prefix containing
+   * the extracted token and returns the token;
+   * 2. IsTokenEmpty() that accepts a token and returns true if the given
+   *    token is empty.
    */
   template<typename OutputType, typename TokenizerType>
   void Encode(const std::vector<std::string>& input,
@@ -130,7 +136,7 @@ class StringEncoding
    *
    * @tparam OutputType Type of the output container. The function supports
    *                    the following types: arma::mat, arma::sp_mat,
-   *                    std::vector<std::vector<size_t>>
+   *                    std::vector<std::vector<size_t>>.
    * @tparam TokenizerType Type of the tokenizer.
    * @tparam PolicyType The type of the encoding policy. It has to be
    *                    equal to EncodingPolicyType.
@@ -140,10 +146,12 @@ class StringEncoding
    * @param tokenizer The tokenizer object.
    * @param policy The policy object.
    *
-   * The tokenization algorithm has to be an object with the operator() method
-   * which accepts a reference to boost::string_view and returns the next token
-   * and the IsTokenEmpty() method that accepts the given token and returns true
-   * if the given token is empty.
+   * The tokenization algorithm has to be an object with two public methods:
+   * 1. operator() which accepts a reference to boost::string_view, extracts
+   * the next token from the given view, removes the prefix containing
+   * the extracted token and returns the token;
+   * 2. IsTokenEmpty() that accepts a token and returns true if the given
+   *    token is empty.
    */
   template<typename OutputType,
            typename TokenizerType,
@@ -164,13 +172,15 @@ class StringEncoding
    *
    * @param input Corpus of text to encode.
    * @param output Output container to store the result.
-   * @param tokenizer The tokenizer obkect.
+   * @param tokenizer The tokenizer object.
    * @param policy The policy object.
    *
-   * The tokenization algorithm has to be an object with the operator() method
-   * which accepts a reference to boost::string_view and returns the next token
-   * and the IsTokenEmpty() method that accepts the given token and returns true
-   * if the given token is empty.
+   * The tokenization algorithm has to be an object with two public methods:
+   * 1. operator() which accepts a reference to boost::string_view, extracts
+   * the next token from the given view, removes the prefix containing
+   * the extracted token and returns the token;
+   * 2. IsTokenEmpty() that accepts a token and returns true if the given
+   *    token is empty.
    */
   template<typename TokenizerType, typename PolicyType,
   typename OutputType>

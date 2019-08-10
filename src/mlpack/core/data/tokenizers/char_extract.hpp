@@ -1,8 +1,9 @@
 /**
  * @file char_extract.hpp
  * @author Jeffin Sam
+ * @author Mikhail Lozhnikov
  *
- * Definition of the CharExtract class which tokenizes the given string into 
+ * Definition of the CharExtract class which tokenizes a string into
  * characters.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -19,8 +20,7 @@ namespace mlpack {
 namespace data {
 
 /**
- * Definition of the CharExtract class. The class is used to split 
- * the given string into characters.
+ * The class is used to split a string into characters.
  */
 class CharExtract
 {
@@ -34,14 +34,14 @@ class CharExtract
    * it belongs to [0, 255]. The functon returns EOF provided that the input 
    * string is empty.
    *
-   * @param str The given string view to retrieve token from.
+   * @param str String view to retrieve the next token from.
    */
   int operator()(boost::string_view& str) const
   {
     if (str.empty())
       return EOF;
 
-    int retval = static_cast<unsigned char>(str[0]);
+    const int retval = static_cast<unsigned char>(str[0]);
 
     str.remove_prefix(1);
 
@@ -53,7 +53,7 @@ class CharExtract
    *
    * @param token The given token.
    */
-  static bool IsTokenEmpty(int token)
+  static bool IsTokenEmpty(const int token)
   {
     return token == EOF;
   }

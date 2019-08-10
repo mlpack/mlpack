@@ -1,9 +1,9 @@
 /**
  * @file split_by_any_of.hpp
  * @author Jeffin Sam
+ * @author Mikhail Lozhnikov
  *
- * Definition of the SplitByAnyOf class which tokenizes the given string
- * using the given set of characters.
+ * Definition of the SplitByAnyOf class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -21,8 +21,7 @@ namespace mlpack {
 namespace data {
 
 /**
- * Definition of the SplitByAnyOf class. The class is used to split 
- * the given string using the given delimiters.
+ * The SplitByAnyOf class tokenizes a string using a set of delimiters.
  */
 class SplitByAnyOf
 {
@@ -34,11 +33,11 @@ class SplitByAnyOf
   using MaskType = std::array<bool, 1 << CHAR_BIT>;
 
   /**
-   * Construct the object from the given delimiers.
+   * Construct the object from the given delimiters.
    *
    * @param delimiters The given delimiters.
    */
-  SplitByAnyOf(boost::string_view delimiters)
+  SplitByAnyOf(const boost::string_view delimiters)
   {
     mask.fill(false);
 
@@ -50,7 +49,7 @@ class SplitByAnyOf
    * The function extracts the first token from the given string view and
    * then removes the prefix containing the token from the view.
    *
-   * @param str The given string view to retrieve the token from.
+   * @param str String view to retrieve the token from.
    */
   boost::string_view operator()(boost::string_view& str) const
   {
@@ -58,7 +57,7 @@ class SplitByAnyOf
 
     while (retval.empty())
     {
-      std::size_t pos = FindFirstDelimiter(str);
+      const std::size_t pos = FindFirstDelimiter(str);
       if (pos == str.npos)
       {
         retval = str;
@@ -76,7 +75,7 @@ class SplitByAnyOf
    *
    * @param token The given token.
    */
-  static bool IsTokenEmpty(boost::string_view token)
+  static bool IsTokenEmpty(const boost::string_view token)
   {
     return token.empty();
   }
@@ -90,11 +89,11 @@ class SplitByAnyOf
   /**
    * The function finds the first character in the given string view equal to 
    * any of the delimiters and returns the position of the character or 
-   * str.npos if no such character is found.
+   * boost::string_view::npos if no such character is found.
    *
-   * @param str The given string where to find the character.
+   * @param str String where to find the character.
    */
-  size_t FindFirstDelimiter(boost::string_view str) const
+  size_t FindFirstDelimiter(const boost::string_view str) const
   {
     for (size_t pos = 0; pos < str.size(); pos++)
     {
