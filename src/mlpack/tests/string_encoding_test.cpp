@@ -39,228 +39,228 @@ static vector<string> stringEncodingInput = {
     "command-line programs and Python bindings."
 };
 
-// /**
-//  * Test the dictionary encoding algorithm.
-//  */
-// BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
-// {
-//   using DictionaryType = StringEncodingDictionary<boost::string_view>;
+/**
+ * Test the dictionary encoding algorithm.
+ */
+BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
+{
+  using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
-//   arma::mat output;
-//   DictionaryEncoding<SplitByAnyOf::TokenType> encoder;
-//   SplitByAnyOf tokenizer(" .,\"");
+  arma::mat output;
+  DictionaryEncoding<SplitByAnyOf::TokenType> encoder;
+  SplitByAnyOf tokenizer(" .,\"");
 
-//   encoder.Encode(stringEncodingInput, output, tokenizer);
+  encoder.Encode(stringEncodingInput, output, tokenizer);
 
-//   const DictionaryType& dictionary = encoder.Dictionary();
+  const DictionaryType& dictionary = encoder.Dictionary();
 
-//   // Checking that everything is mapped to different numbers
-//   std::unordered_map<size_t, size_t> keysCount;
-//   for (auto& keyValue : dictionary.Mapping())
-//   {
-//     keysCount[keyValue.second]++;
-//     // Every token should be mapped only once
-//     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
-//   }
+  // Checking that everything is mapped to different numbers
+  std::unordered_map<size_t, size_t> keysCount;
+  for (auto& keyValue : dictionary.Mapping())
+  {
+    keysCount[keyValue.second]++;
+    // Every token should be mapped only once
+    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+  }
 
-//   arma::mat expected = {
-//     {  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,  0,
-//        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-//     { 17,  2, 18, 14, 19, 20,  9, 10, 21, 14, 22,  6, 23, 14, 24, 20, 25,
-//       26, 27,  9, 10, 28,  6, 29, 30, 20, 31, 32, 33, 34,  9, 10, 35 },
-//     { 36, 37, 14, 38, 39,  8, 40,  1, 41, 42, 43, 44,  6, 45, 13,  0,  0,
-//        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 }
-//   };
+  arma::mat expected = {
+    {  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,  0,
+       0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
+    { 17,  2, 18, 14, 19, 20,  9, 10, 21, 14, 22,  6, 23, 14, 24, 20, 25,
+      26, 27,  9, 10, 28,  6, 29, 30, 20, 31, 32, 33, 34,  9, 10, 35 },
+    { 36, 37, 14, 38, 39,  8, 40,  1, 41, 42, 43, 44,  6, 45, 13,  0,  0,
+       0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 }
+  };
 
-//   CheckMatrices(output, expected);
-// }
+  CheckMatrices(output, expected);
+}
 
-// /**
-//  * Test the one pass modification of the dictionary encoding algorithm.
-//  */
-// BOOST_AUTO_TEST_CASE(OnePassDictionaryEncodingTest)
-// {
-//   using DictionaryType = StringEncodingDictionary<boost::string_view>;
+/**
+ * Test the one pass modification of the dictionary encoding algorithm.
+ */
+BOOST_AUTO_TEST_CASE(OnePassDictionaryEncodingTest)
+{
+  using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
-//   vector<vector<size_t>> output;
-//   DictionaryEncoding<SplitByAnyOf::TokenType> encoder(
-//       (DictionaryEncodingPolicy()));
-//   SplitByAnyOf tokenizer(" .,\"");
+  vector<vector<size_t>> output;
+  DictionaryEncoding<SplitByAnyOf::TokenType> encoder(
+      (DictionaryEncodingPolicy()));
+  SplitByAnyOf tokenizer(" .,\"");
 
-//   encoder.Encode(stringEncodingInput, output, tokenizer);
+  encoder.Encode(stringEncodingInput, output, tokenizer);
 
-//   const DictionaryType& dictionary = encoder.Dictionary();
+  const DictionaryType& dictionary = encoder.Dictionary();
 
-//   // Checking that everything is mapped to different numbers
-//   std::unordered_map<size_t, size_t> keysCount;
-//   for (auto& keyValue : dictionary.Mapping())
-//   {
-//     keysCount[keyValue.second]++;
-//     // Every token should be mapped only once
-//     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
-//   }
+  // Checking that everything is mapped to different numbers
+  std::unordered_map<size_t, size_t> keysCount;
+  for (auto& keyValue : dictionary.Mapping())
+  {
+    keysCount[keyValue.second]++;
+    // Every token should be mapped only once
+    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+  }
 
-//   vector<vector<size_t>> expected = {
-//     {  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16 },
-//     { 17,  2, 18, 14, 19, 20,  9, 10, 21, 14, 22,  6, 23, 14, 24, 20, 25,
-//       26, 27,  9, 10, 28,  6, 29, 30, 20, 31, 32, 33, 34,  9, 10, 35 },
-//     { 36, 37, 14, 38, 39,  8, 40,  1, 41, 42, 43, 44,  6, 45, 13 }
-//   };
+  vector<vector<size_t>> expected = {
+    {  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16 },
+    { 17,  2, 18, 14, 19, 20,  9, 10, 21, 14, 22,  6, 23, 14, 24, 20, 25,
+      26, 27,  9, 10, 28,  6, 29, 30, 20, 31, 32, 33, 34,  9, 10, 35 },
+    { 36, 37, 14, 38, 39,  8, 40,  1, 41, 42, 43, 44,  6, 45, 13 }
+  };
 
-//   BOOST_REQUIRE(output == expected);
-// }
+  BOOST_REQUIRE(output == expected);
+}
 
 
-// /**
-//  * Test for the SplitByAnyOf tokenizer.
-//  */
-// BOOST_AUTO_TEST_CASE(SplitByAnyOfTokenizerTest)
-// {
-//   std::vector<boost::string_view> tokens;
-//   boost::string_view line(stringEncodingInput[0]);
-//   SplitByAnyOf tokenizer(" ,.");
-//   boost::string_view token = tokenizer(line);
+/**
+ * Test for the SplitByAnyOf tokenizer.
+ */
+BOOST_AUTO_TEST_CASE(SplitByAnyOfTokenizerTest)
+{
+  std::vector<boost::string_view> tokens;
+  boost::string_view line(stringEncodingInput[0]);
+  SplitByAnyOf tokenizer(" ,.");
+  boost::string_view token = tokenizer(line);
 
-//   while (!token.empty())
-//   {
-//     tokens.push_back(token);
-//     token = tokenizer(line);
-//   }
+  while (!token.empty())
+  {
+    tokens.push_back(token);
+    token = tokenizer(line);
+  }
 
-//   vector<string> expected = { "mlpack", "is", "an", "intuitive", "fast",
-//     "and", "flexible", "C++", "machine", "learning", "library", "with",
-//     "bindings", "to", "other", "languages"
-//   };
+  vector<string> expected = { "mlpack", "is", "an", "intuitive", "fast",
+    "and", "flexible", "C++", "machine", "learning", "library", "with",
+    "bindings", "to", "other", "languages"
+  };
 
-//   BOOST_REQUIRE_EQUAL(tokens.size(), expected.size());
+  BOOST_REQUIRE_EQUAL(tokens.size(), expected.size());
 
-//   for (size_t i = 0; i < tokens.size(); i++)
-//     BOOST_REQUIRE_EQUAL(tokens[i], expected[i]);
-// }
+  for (size_t i = 0; i < tokens.size(); i++)
+    BOOST_REQUIRE_EQUAL(tokens[i], expected[i]);
+}
 
-// /**
-// * Test Dictionary encoding for characters using lamda function.
-// */
-// BOOST_AUTO_TEST_CASE(DictionaryEncodingIndividualCharactersTest)
-// {
-//   vector<string> input = {
-//     "GACCA",
-//     "ABCABCD",
-//     "GAB"
-//   };
+/**
+* Test Dictionary encoding for characters using lamda function.
+*/
+BOOST_AUTO_TEST_CASE(DictionaryEncodingIndividualCharactersTest)
+{
+  vector<string> input = {
+    "GACCA",
+    "ABCABCD",
+    "GAB"
+  };
 
-//   arma::mat output;
-//   DictionaryEncoding<CharExtract::TokenType> encoder;
+  arma::mat output;
+  DictionaryEncoding<CharExtract::TokenType> encoder;
 
-//   // Passing a empty string to encode characters
-//   encoder.Encode(input, output, CharExtract());
+  // Passing a empty string to encode characters
+  encoder.Encode(input, output, CharExtract());
 
-//   arma::mat target = {
-//     { 1, 2, 3, 3, 2, 0, 0 },
-//     { 2, 4, 3, 2, 4, 3, 5 },
-//     { 1, 2, 4, 0, 0, 0, 0 }
-//   };
-//   CheckMatrices(output, target);
-// }
+  arma::mat target = {
+    { 1, 2, 3, 3, 2, 0, 0 },
+    { 2, 4, 3, 2, 4, 3, 5 },
+    { 1, 2, 4, 0, 0, 0, 0 }
+  };
+  CheckMatrices(output, target);
+}
 
-// /**
-//  * Test the one pass modification of the dictionary encoding algorithm
-//  * in case of individual character encoding.
-//  */
-// BOOST_AUTO_TEST_CASE(OnePassDictionaryEncodingIndividualCharactersTest)
-// {
-//   std::vector<string> input = {
-//     "GACCA",
-//     "ABCABCD",
-//     "GAB"
-//   };
+/**
+ * Test the one pass modification of the dictionary encoding algorithm
+ * in case of individual character encoding.
+ */
+BOOST_AUTO_TEST_CASE(OnePassDictionaryEncodingIndividualCharactersTest)
+{
+  std::vector<string> input = {
+    "GACCA",
+    "ABCABCD",
+    "GAB"
+  };
 
-//   vector<vector<size_t>> output;
-//   DictionaryEncoding<CharExtract::TokenType> encoder;
+  vector<vector<size_t>> output;
+  DictionaryEncoding<CharExtract::TokenType> encoder;
 
-//   // Passing a empty string to encode characters
-//   encoder.Encode(input, output, CharExtract());
+  // Passing a empty string to encode characters
+  encoder.Encode(input, output, CharExtract());
 
-//   vector<vector<size_t>> expected = {
-//     { 1, 2, 3, 3, 2 },
-//     { 2, 4, 3, 2, 4, 3, 5 },
-//     { 1, 2, 4 }
-//   };
+  vector<vector<size_t>> expected = {
+    { 1, 2, 3, 3, 2 },
+    { 2, 4, 3, 2, 4, 3, 5 },
+    { 1, 2, 4 }
+  };
 
-//   BOOST_REQUIRE(output == expected);
-// }
+  BOOST_REQUIRE(output == expected);
+}
 
-// /**
-//  * Test the functionality of copy constructor.
-//  */
-// BOOST_AUTO_TEST_CASE(StringEncodingCopyTest)
-// {
-//   using DictionaryType = StringEncodingDictionary<boost::string_view>;
-//   arma::sp_mat output;
-//   DictionaryEncoding<SplitByAnyOf::TokenType> encoderCopy;
-//   SplitByAnyOf tokenizer(" ,.");
+/**
+ * Test the functionality of copy constructor.
+ */
+BOOST_AUTO_TEST_CASE(StringEncodingCopyTest)
+{
+  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+  arma::sp_mat output;
+  DictionaryEncoding<SplitByAnyOf::TokenType> encoderCopy;
+  SplitByAnyOf tokenizer(" ,.");
 
-//   vector<pair<string, size_t>> naiveDictionary;
+  vector<pair<string, size_t>> naiveDictionary;
 
-//   {
-//     DictionaryEncoding<SplitByAnyOf::TokenType> encoder;
-//     encoder.Encode(stringEncodingInput, output, tokenizer);
+  {
+    DictionaryEncoding<SplitByAnyOf::TokenType> encoder;
+    encoder.Encode(stringEncodingInput, output, tokenizer);
 
-//     for (const string& token : encoder.Dictionary().Tokens())
-//     {
-//       naiveDictionary.emplace_back(token, encoder.Dictionary().Value(token));
-//     }
+    for (const string& token : encoder.Dictionary().Tokens())
+    {
+      naiveDictionary.emplace_back(token, encoder.Dictionary().Value(token));
+    }
 
-//     encoderCopy = DictionaryEncoding<SplitByAnyOf::TokenType>(encoder);
-//   }
+    encoderCopy = DictionaryEncoding<SplitByAnyOf::TokenType>(encoder);
+  }
 
-//   const DictionaryType& copiedDictionary = encoderCopy.Dictionary();
+  const DictionaryType& copiedDictionary = encoderCopy.Dictionary();
 
-//   BOOST_REQUIRE_EQUAL(naiveDictionary.size(), copiedDictionary.Size());
+  BOOST_REQUIRE_EQUAL(naiveDictionary.size(), copiedDictionary.Size());
 
-//   for (const pair<string, size_t>& keyValue : naiveDictionary)
-//   {
-//     BOOST_REQUIRE(copiedDictionary.HasToken(keyValue.first));
-//     BOOST_REQUIRE_EQUAL(copiedDictionary.Value(keyValue.first),
-//         keyValue.second);
-//   }
-// }
+  for (const pair<string, size_t>& keyValue : naiveDictionary)
+  {
+    BOOST_REQUIRE(copiedDictionary.HasToken(keyValue.first));
+    BOOST_REQUIRE_EQUAL(copiedDictionary.Value(keyValue.first),
+        keyValue.second);
+  }
+}
 
-// /**
-//  * Test the move assignment operator.
-//  */
-// BOOST_AUTO_TEST_CASE(StringEncodingMoveTest)
-// {
-//   using DictionaryType = StringEncodingDictionary<boost::string_view>;
-//   arma::sp_mat output;
-//   DictionaryEncoding<SplitByAnyOf::TokenType> encoderCopy;
-//   SplitByAnyOf tokenizer(" ,.");
+/**
+ * Test the move assignment operator.
+ */
+BOOST_AUTO_TEST_CASE(StringEncodingMoveTest)
+{
+  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+  arma::sp_mat output;
+  DictionaryEncoding<SplitByAnyOf::TokenType> encoderCopy;
+  SplitByAnyOf tokenizer(" ,.");
 
-//   vector<pair<string, size_t>> naiveDictionary;
+  vector<pair<string, size_t>> naiveDictionary;
 
-//   {
-//     DictionaryEncoding<SplitByAnyOf::TokenType> encoder;
-//     encoder.Encode(stringEncodingInput, output, tokenizer);
+  {
+    DictionaryEncoding<SplitByAnyOf::TokenType> encoder;
+    encoder.Encode(stringEncodingInput, output, tokenizer);
 
-//     for (const string& token : encoder.Dictionary().Tokens())
-//     {
-//       naiveDictionary.emplace_back(token, encoder.Dictionary().Value(token));
-//     }
+    for (const string& token : encoder.Dictionary().Tokens())
+    {
+      naiveDictionary.emplace_back(token, encoder.Dictionary().Value(token));
+    }
 
-//     encoderCopy = std::move(encoder);
-//   }
+    encoderCopy = std::move(encoder);
+  }
 
-//   const DictionaryType& copiedDictionary = encoderCopy.Dictionary();
+  const DictionaryType& copiedDictionary = encoderCopy.Dictionary();
 
-//   BOOST_REQUIRE_EQUAL(naiveDictionary.size(), copiedDictionary.Size());
+  BOOST_REQUIRE_EQUAL(naiveDictionary.size(), copiedDictionary.Size());
 
-//   for (const pair<string, size_t>& keyValue : naiveDictionary)
-//   {
-//     BOOST_REQUIRE(copiedDictionary.HasToken(keyValue.first));
-//     BOOST_REQUIRE_EQUAL(copiedDictionary.Value(keyValue.first),
-//         keyValue.second);
-//   }
-// }
+  for (const pair<string, size_t>& keyValue : naiveDictionary)
+  {
+    BOOST_REQUIRE(copiedDictionary.HasToken(keyValue.first));
+    BOOST_REQUIRE_EQUAL(copiedDictionary.Value(keyValue.first),
+        keyValue.second);
+  }
+}
 
 /**
  * The function checks that the given dictionaries contain the same data.
@@ -342,53 +342,19 @@ void CheckDictionaries(const StringEncodingDictionary<int>& expected,
   }
 }
 
-// /**
-//  * Serialization test for the dictionary encoding algorithm with
-//  * the SplitByAnyOf tokenizer.
-//  */
-// BOOST_AUTO_TEST_CASE(SplitByAnyOfDictionaryEncodingSerialization)
-// {
-//   using EncoderType = DictionaryEncoding<SplitByAnyOf::TokenType>;
-
-//   EncoderType encoder;
-//   SplitByAnyOf tokenizer(" ,.");
-//   arma::mat output;
-
-//   encoder.Encode(stringEncodingInput, output, tokenizer);
-
-//   EncoderType xmlEncoder, textEncoder, binaryEncoder;
-//   arma::mat xmlOutput, textOutput, binaryOutput;
-
-//   SerializeObjectAll(encoder, xmlEncoder, textEncoder, binaryEncoder);
-
-//   CheckDictionaries(encoder.Dictionary(), xmlEncoder.Dictionary());
-//   CheckDictionaries(encoder.Dictionary(), textEncoder.Dictionary());
-//   CheckDictionaries(encoder.Dictionary(), binaryEncoder.Dictionary());
-
-//   xmlEncoder.Encode(stringEncodingInput, xmlOutput, tokenizer);
-//   textEncoder.Encode(stringEncodingInput, textOutput, tokenizer);
-//   binaryEncoder.Encode(stringEncodingInput, binaryOutput, tokenizer);
-
-//   CheckMatrices(output, xmlOutput, textOutput, binaryOutput);
-// }
-
 /**
  * Serialization test for the dictionary encoding algorithm with
- * the CharExtract tokenizer.
+ * the SplitByAnyOf tokenizer.
  */
-BOOST_AUTO_TEST_CASE(CharExtractDictionaryEncodingSerialization)
+BOOST_AUTO_TEST_CASE(SplitByAnyOfDictionaryEncodingSerialization)
 {
-  using EncoderType = BagOfWordsEncoding<CharExtract::TokenType>;
+  using EncoderType = DictionaryEncoding<SplitByAnyOf::TokenType>;
 
   EncoderType encoder;
-  CharExtract tokenizer;
+  SplitByAnyOf tokenizer(" ,.");
   arma::mat output;
-  std::vector<string> input = {
-    "GACCA",
-    "ABCABCD",
-    "GAB"
-  };
-  encoder.Encode(input, output, tokenizer);
+
+  encoder.Encode(stringEncodingInput, output, tokenizer);
 
   EncoderType xmlEncoder, textEncoder, binaryEncoder;
   arma::mat xmlOutput, textOutput, binaryOutput;
@@ -398,132 +364,161 @@ BOOST_AUTO_TEST_CASE(CharExtractDictionaryEncodingSerialization)
   CheckDictionaries(encoder.Dictionary(), xmlEncoder.Dictionary());
   CheckDictionaries(encoder.Dictionary(), textEncoder.Dictionary());
   CheckDictionaries(encoder.Dictionary(), binaryEncoder.Dictionary());
-  std::cout<<"Calling the actual object"<<std::endl;
-  xmlEncoder.Encode(input, xmlOutput, tokenizer);
-  textEncoder.Encode(input, textOutput, tokenizer);
-  binaryEncoder.Encode(input, binaryOutput, tokenizer);
+
+  xmlEncoder.Encode(stringEncodingInput, xmlOutput, tokenizer);
+  textEncoder.Encode(stringEncodingInput, textOutput, tokenizer);
+  binaryEncoder.Encode(stringEncodingInput, binaryOutput, tokenizer);
 
   CheckMatrices(output, xmlOutput, textOutput, binaryOutput);
 }
 
-// BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
-// {
-//   using DictionaryType = StringEncodingDictionary<boost::string_view>;
+/**
+ * Serialization test for the Bag Of Words encoding algorithm with
+ * the CharExtract tokenizer.
+ */
+BOOST_AUTO_TEST_CASE(CharExtractBagOfWordsEncodingSerialization)
+{
+  using EncoderType = BagOfWordsEncoding<CharExtract::TokenType>;
 
-//   arma::mat output;
-//   BagOfWordsEncoding<SplitByAnyOf::TokenType> encoder;
-//   SplitByAnyOf tokenizer(" ");
+  EncoderType encoder;
+  CharExtract tokenizer;
+  arma::mat output;
+  encoder.Encode(stringEncodingInput, output, tokenizer);
 
-//   encoder.Encode(stringEncodingInput, output, tokenizer);
-//   const DictionaryType& dictionary = encoder.Dictionary();
+  EncoderType xmlEncoder, textEncoder, binaryEncoder;
+  arma::mat xmlOutput, textOutput, binaryOutput;
 
-//   // Checking that everything is mapped to different numbers
-//   std::unordered_map<size_t, size_t> keysCount;
-//   for (auto& keyValue : dictionary.Mapping())
-//   {
-//     keysCount[keyValue.second]++;
-//     // Every token should be mapped only once
-//     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
-//   }
-//   arma::mat expected = {
-//     {  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-//        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
-//     {  0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-//        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
-//     {  1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1  }
-//   };
-//   CheckMatrices(output, expected);
-// }
+  SerializeObjectAll(encoder, xmlEncoder, textEncoder, binaryEncoder);
 
-// *
-//  * Test the one pass modification of the Bag of Words encoding algorithm.
+  CheckDictionaries(encoder.Dictionary(), xmlEncoder.Dictionary());
+  CheckDictionaries(encoder.Dictionary(), textEncoder.Dictionary());
+  CheckDictionaries(encoder.Dictionary(), binaryEncoder.Dictionary());
+
+  xmlEncoder.Encode(stringEncodingInput, xmlOutput, tokenizer);
+  textEncoder.Encode(stringEncodingInput, textOutput, tokenizer);
+  binaryEncoder.Encode(stringEncodingInput, binaryOutput, tokenizer);
+
+  CheckMatrices(output, xmlOutput, textOutput, binaryOutput);
+}
+
+BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
+{
+  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+
+  arma::mat output;
+  BagOfWordsEncoding<SplitByAnyOf::TokenType> encoder;
+  SplitByAnyOf tokenizer(" ");
+
+  encoder.Encode(stringEncodingInput, output, tokenizer);
+  const DictionaryType& dictionary = encoder.Dictionary();
+
+  // Checking that everything is mapped to different numbers
+  std::unordered_map<size_t, size_t> keysCount;
+  for (auto& keyValue : dictionary.Mapping())
+  {
+    keysCount[keyValue.second]++;
+    // Every token should be mapped only once
+    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+  }
+  arma::mat expected = {
+    {  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
+    {  0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
+    {  1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1  }
+  };
+  CheckMatrices(output, expected);
+}
+
+*
+ * Test the one pass modification of the Bag of Words encoding algorithm.
  
-// BOOST_AUTO_TEST_CASE(OnePassBagOfWordsEncodingTest)
-// {
-//   using DictionaryType = StringEncodingDictionary<boost::string_view>;
+BOOST_AUTO_TEST_CASE(OnePassBagOfWordsEncodingTest)
+{
+  using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
-//   vector<vector<size_t>> output;
-//   BagOfWordsEncoding<SplitByAnyOf::TokenType> encoder(
-//       (BagOfWordsEncodingPolicy()));
-//   SplitByAnyOf tokenizer(" ");
+  vector<vector<size_t>> output;
+  BagOfWordsEncoding<SplitByAnyOf::TokenType> encoder(
+      (BagOfWordsEncodingPolicy()));
+  SplitByAnyOf tokenizer(" ");
 
-//   encoder.Encode(stringEncodingInput, output, tokenizer);
+  encoder.Encode(stringEncodingInput, output, tokenizer);
 
-//   const DictionaryType& dictionary = encoder.Dictionary();
+  const DictionaryType& dictionary = encoder.Dictionary();
 
-//   // Checking that everything is mapped to different numbers
-//   std::unordered_map<size_t, size_t> keysCount;
-//   for (auto& keyValue : dictionary.Mapping())
-//   {
-//     keysCount[keyValue.second]++;
-//     // Every token should be mapped only once
-//     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
-//   }
+  // Checking that everything is mapped to different numbers
+  std::unordered_map<size_t, size_t> keysCount;
+  for (auto& keyValue : dictionary.Mapping())
+  {
+    keysCount[keyValue.second]++;
+    // Every token should be mapped only once
+    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+  }
 
-//   vector<vector<size_t>> expected = {
-//     {  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-//        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
-//     {  0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-//        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
-//     {  1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1  }
-//   };
+  vector<vector<size_t>> expected = {
+    {  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
+    {  0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  },
+    {  1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1  }
+  };
 
-//   BOOST_REQUIRE(output == expected);
-// }
+  BOOST_REQUIRE(output == expected);
+}
 
-// /**
-// * Test Bag of Words encoding for characters using lamda function.
-// */
-// BOOST_AUTO_TEST_CASE(BagOfWordsEncodingIndividualCharactersTest)
-// {
-//   vector<string> input = {
-//     "GACCA",
-//     "ABCABCD",
-//     "GAB"
-//   };
+/**
+* Test Bag of Words encoding for characters using lamda function.
+*/
+BOOST_AUTO_TEST_CASE(BagOfWordsEncodingIndividualCharactersTest)
+{
+  vector<string> input = {
+    "GACCA",
+    "ABCABCD",
+    "GAB"
+  };
 
-//   arma::mat output;
-//   BagOfWordsEncoding<CharExtract::TokenType> encoder;
+  arma::mat output;
+  BagOfWordsEncoding<CharExtract::TokenType> encoder;
 
-//   // Passing a empty string to encode characters
-//   encoder.Encode(input, output, CharExtract());
-//   arma::mat target = {
-//     { 1, 1, 1, 0, 0 },
-//     { 0, 1, 1, 1, 1 },
-//     { 1, 1, 0, 1, 0 }
-//   };
+  // Passing a empty string to encode characters
+  encoder.Encode(input, output, CharExtract());
+  arma::mat target = {
+    { 1, 1, 1, 0, 0 },
+    { 0, 1, 1, 1, 1 },
+    { 1, 1, 0, 1, 0 }
+  };
 
-//   CheckMatrices(output, target);
-// }
+  CheckMatrices(output, target);
+}
 
-// /**
-//  * Test the one pass modification of the Bag of Words encoding algorithm
-//  * in case of individual character encoding.
-//  */
-// BOOST_AUTO_TEST_CASE(OnePassBagOfWordsEncodingIndividualCharactersTest)
-// {
-//   std::vector<string> input = {
-//     "GACCA",
-//     "ABCABCD",
-//     "GAB"
-//   };
+/**
+ * Test the one pass modification of the Bag of Words encoding algorithm
+ * in case of individual character encoding.
+ */
+BOOST_AUTO_TEST_CASE(OnePassBagOfWordsEncodingIndividualCharactersTest)
+{
+  std::vector<string> input = {
+    "GACCA",
+    "ABCABCD",
+    "GAB"
+  };
 
-//   vector<vector<size_t>> output;
-//   BagOfWordsEncoding<CharExtract::TokenType> encoder;
+  vector<vector<size_t>> output;
+  BagOfWordsEncoding<CharExtract::TokenType> encoder;
 
-//   // Passing a empty string to encode characters
-//   encoder.Encode(input, output, CharExtract());
+  // Passing a empty string to encode characters
+  encoder.Encode(input, output, CharExtract());
 
-//   vector<vector<size_t>> expected = {
-//     { 1, 1, 1, 0, 0 },
-//     { 0, 1, 1, 1, 1 },
-//     { 1, 1, 0, 1, 0 }
-//   };
+  vector<vector<size_t>> expected = {
+    { 1, 1, 1, 0, 0 },
+    { 0, 1, 1, 1, 1 },
+    { 1, 1, 0, 1, 0 }
+  };
 
-//   BOOST_REQUIRE(output == expected);
-// }
+  BOOST_REQUIRE(output == expected);
+}
 
 // /**
 //  * Test the Tf-Idf Encoding using rawcount type and smoothidf as true,
@@ -1008,10 +1003,10 @@ BOOST_AUTO_TEST_CASE(CharExtractDictionaryEncodingSerialization)
 // }
 
 /**
- * Serialization test for the dictionary encoding algorithm with
+ * Serialization test for the TF-IDF encoding algorithm with
  * the CharExtract tokenizer.
  */
-BOOST_AUTO_TEST_CASE(CharExtractBagOfWordsEncodingSerialization)
+BOOST_AUTO_TEST_CASE(CharExtractTfIdfEncodingSerialization)
 {
   using EncoderType = TfIdfEncoding<CharExtract::TokenType>;
 

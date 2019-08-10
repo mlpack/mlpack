@@ -318,6 +318,7 @@ class StringEncodingDictionary<int>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & BOOST_SERIALIZATION_NVP(mapping);
+    ar & BOOST_SERIALIZATION_NVP(size);
   }
 
  private:

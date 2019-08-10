@@ -44,7 +44,6 @@ class BagOfWordsEncodingPolicy
                          size_t /*maxNumTokens*/,
                          size_t dictionarySize)
   {
-    std::cout<<"row "<<datasetSize<<" col "<<dictionarySize<<std::endl;
     output.zeros(datasetSize, dictionarySize);
   }
 
