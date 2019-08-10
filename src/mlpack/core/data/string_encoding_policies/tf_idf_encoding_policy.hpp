@@ -23,11 +23,10 @@ namespace data {
  * Tf means term-frequency while tf-idf means term-frequency times inverse
  * document-frequency. This is a common term weighting scheme in information
  * retrieval, that has also found good use in document classification.
- * The goal of using tf-idf instead of the raw frequencies of occurrence of a
- * token in a given document is to scale down the impact of tokens that occur
- * very frequently in a given corpus and that are hence empirically less
- * informative than features that occur in a small fraction of the training
- * corpus.
+ * The goal of using tf-idf is to scale down the impact of tokens that occur
+ * very frequently in a given corpus while using the raw frequencies of a token
+ * and that are hence empirically less informative than features that occur in
+ * a small fraction of the training corpus.
  * TfIdfEncodingPolicy is used as a helper class for StringEncoding.
  * The encoder assigns a tf-idf number to each unique token and treat 
  * the dataset as categorical. The tokens are labeled in the order of their
@@ -199,9 +198,8 @@ class TfIdfEncodingPolicy
     {
       row_size.push_back(0);
       tokenCount.emplace_back();
-      ///tokenCount.push_back(std::unordered_map<size_t, double>());
     }
-    tokenCount.back()[value-1]++;
+    tokenCount.back()[value - 1]++;
 
     if (tokenCount.back()[value - 1] == 1)
       idfdict[value - 1]++;
