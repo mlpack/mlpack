@@ -269,6 +269,11 @@ static void mlpackMain()
     for (auto& column : nonNumericInput)
       obj.LowerCase(column.second);
   }
+  if (CLI::HasParam("punctuation"))
+  {
+    for (auto& column : nonNumericInput)
+      obj.RemovePunctuation(column.second);
+  }
   if (CLI::HasParam("stopwords"))
   {
     // Not sure how to take input for tokenizer from cli.
@@ -294,11 +299,6 @@ static void mlpackMain()
     for (auto& column : nonNumericInput)
       obj.RemoveStopWords(column.second, stopwords,
           data::SplitByChar(delimiter));
-  }
-  if (CLI::HasParam("punctuation"))
-  {
-    for (auto& column : nonNumericInput)
-      obj.RemovePunctuation(column.second);
   }
   const string outputFilename = CLI::GetParam<string>("preprocess"
       "_dataset");
