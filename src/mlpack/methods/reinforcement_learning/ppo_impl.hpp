@@ -151,7 +151,7 @@ void PPO<
 
     // backward the gradient
     arma::mat dratio1 = -loss % (ratio % advantages <= surrogateLoss)
-                        % advantages;
+        % advantages;
     arma::mat dsurro = -loss % (ratio % advantages >= surrogateLoss);
     arma::mat dratio2 = (ratio >= (1 - config.Epsilon())) %
         (ratio <= (1 + config.Epsilon())) % advantages % dsurro;
