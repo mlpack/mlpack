@@ -143,6 +143,7 @@ add_executable(mlpack_test
   main_tests/perceptron_test.cpp
   main_tests/preprocess_binarize_test.cpp
   main_tests/preprocess_scale_test.cpp
+  main_tests/preprocess_string_test.cpp
   main_tests/preprocess_imputer_test.cpp
   main_tests/preprocess_split_test.cpp
   main_tests/random_forest_test.cpp
