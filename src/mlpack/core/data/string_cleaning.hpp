@@ -2,6 +2,8 @@
  * @file string_cleaning.hpp
  * @author jeffin sam
  *
+ * Definition of the StringCleaning class.
+ *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -19,6 +21,11 @@
 namespace mlpack {
 namespace data {
 
+/**
+ * StringCleaning class is a utility class that provides you some
+ * functionalities to remove stopwords, punctuation and convert strings
+ * to upper case or lower case whenever needed.
+ */
 class StringCleaning
 {
  public:
@@ -26,6 +33,7 @@ class StringCleaning
   * Function to remove punctuation from a given vector of strings.
   *
   * @param input Vector of strings
+  * @param punctuation A string of all the puncutations you want to remove.
   */
   void RemovePunctuation(std::vector<std::string>& input,
                          const std::string& punctuation = "!\"#$%&'()*+"
@@ -50,7 +58,7 @@ class StringCleaning
   * function. Its return value should be of bool type.
   *
   * Definiation of function should be of type
-  * bool fn(const char& c)
+  * bool fn(const char c)
   */
   template<typename FunctionType>
   void RemoveChar(std::vector<std::string>& input, const FunctionType& fun)
@@ -70,7 +78,7 @@ class StringCleaning
       boost::algorithm::to_lower(str);
   }
   /**
-  * Function to convert given vector of strings to Upper case.
+  * Function to convert given vector of strings to upper case.
   *
   * @param input Vector of strings
   */

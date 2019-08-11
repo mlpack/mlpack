@@ -20,7 +20,7 @@
 PROGRAM_INFO("preprocess_string",
     // Short description.
     "A utility to preprocess string data. This utility can remove stopwords, "
-    "punctuation and convert to lowercase.",
+    "punctuation and convert to lowercase and uppercase.",
     // Long description.
     "This utility takes a dataset and the dimension and arguments and "
     "does the preprocessing of string dataset according to arguments given."
@@ -51,7 +51,7 @@ PARAM_STRING_IN_REQ("actual_dataset", "File containing the reference dataset.",
     "t");
 PARAM_STRING_IN_REQ("preprocess_dataset", "File containing the preprocess "
     "dataset.", "o");
-PARAM_STRING_IN("columnDelimiter", "delimeter used to seperate Column in files"
+PARAM_STRING_IN("column_delimiter", "delimeter used to seperate Column in files"
     "example '\\t' for '.tsv' and ',' for '.csv'.", "d", "\t");
 PARAM_STRING_IN("delimiter", "A set of chars that is used as delimeter to"
     "tokenize the string dataset ", "D", " ");
@@ -68,8 +68,15 @@ using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
+/**
+ * Function neccessary to create a vector<vector<string>> by readin
+ * the contents of a file.
+ *
+ * @param filename Name of the file whose contents need to be preproccessed.
+ * @param columnDelimiter Delimiter used to split the columns of file.
+ */
 static vector<vector<string>> CreateDataset(const string& filename,
-                                            char& columnDelimiter)
+                                            char columnDelimiter)
 {
   vector<vector<string>> dataset;
   // Extracting the Contents of file
@@ -82,7 +89,6 @@ static vector<vector<string>> CreateDataset(const string& filename,
   {
     stringstream streamLine(line);
     dataset.emplace_back();
-    // delimeter[0] becase the standard function accepts char as input.
     while (getline(streamLine, word, columnDelimiter))
     {
       dataset.back().push_back(word);
@@ -93,12 +99,18 @@ static vector<vector<string>> CreateDataset(const string& filename,
 
 static bool IsNumber(const string& column)
 {
-  for (auto& i : column)
+  for (auto i : column)
     if (!isdigit(i))
       return false;
   return true;
 }
 
+/**
+ * Function used to get the columns which has non numeric dataset.
+ *
+ * @param tempDimesnion A vector of string passed which has column number or
+ *    column ranges.
+ */
 static unordered_set<size_t> GetColumnIndices(const
                                               vector<string>& tempDimension)
 {
@@ -114,7 +126,7 @@ static unordered_set<size_t> GetColumnIndices(const
       {
         // Has a range include, something of type a-b.
         string subStringStart = tempDimension[i].substr(0, found);
-        string subStringEnd = tempDimension[i].substr(found+1,
+        string subStringEnd = tempDimension[i].substr(found + 1,
             tempDimension[i].length());
         if (!IsNumber(subStringStart) || !IsNumber(subStringEnd))
         {
@@ -152,6 +164,15 @@ static unordered_set<size_t> GetColumnIndices(const
   return dimensions;
 }
 
+/**
+ * Function used to write back the preproccessed data to a file.
+ *
+ * @param outputFilename Name of the file to save the data into.
+ * @param dataset The actual dataset which was read from file.
+ * @param nonNumericInput The preproccessed data
+ * @param columnDelimiter Delimiter used to separate columns of the file.
+ * @param dimesnions Dimesnion which we non numeric or of type string.
+ */
 static void WriteOutput(const string& outputFilename,
                         const vector<vector<string>>& dataset,
                         const unordered_map<size_t, vector<string>>&
@@ -192,11 +213,11 @@ static void mlpackMain()
   const string filename = CLI::GetParam<string>("actual_dataset");
   // This is very dangerous, Let's add a check tommorrow.
   string columnDelimiter;
-  if (CLI::HasParam("columnDelimiter"))
+  if (CLI::HasParam("column_delimiter"))
   {
-    columnDelimiter = CLI::GetParam<string>("columnDelimiter");
+    columnDelimiter = CLI::GetParam<string>("column_delimiter");
     // Allow only 3 delimiters.
-    RequireParamValue<string>("columnDelimiter", [](const string del)
+    RequireParamValue<string>("column_delimiter", [](const string del)
         { return del == "\t" || del == "," || del == " "; }, true,
         "Delimiter should be either \\t (tab) or , (comma) or ' ' (space) ");
   }
@@ -228,21 +249,25 @@ static void mlpackMain()
   unordered_set<size_t> dimensions = GetColumnIndices(tempDimension);
   vector<vector<string>> dataset = CreateDataset(filename, columnDelimiter[0]);
   for (auto colIndex : dimensions)
+  {
     if (colIndex >= dataset.back().size())
       Log::Fatal << "The index given is out of range, please verify" << endl;
+  }
   // Preparing the input dataset on which string manipulation has to be done.
   // vector<vector<string>> nonNumericInput(dimension.size());
   unordered_map<size_t , vector<string>> nonNumericInput;
   for (size_t i = 0; i < dataset.size(); i++)
   {
     for (auto& datasetCol : dimensions)
+    {
       nonNumericInput[datasetCol].push_back(move(dataset[i][datasetCol]));
+    }
   }
   data::StringCleaning obj;
   if (CLI::HasParam("lowercase"))
   {
-    for (auto& datasetCol : dimensions)
-      obj.LowerCase(nonNumericInput[datasetCol]);
+    for (auto& column : nonNumericInput)
+      obj.LowerCase(column.second);
   }
   if (CLI::HasParam("stopwords"))
   {
@@ -250,8 +275,7 @@ static void mlpackMain()
     if (!CLI::HasParam("stopwordsfile"))
       Log::Fatal << "Please provide a file for stopwords." << endl;
     // Open an existing file
-    const string stopWordFilename =
-        CLI::GetParam<string>("stopwordsfile");
+    const string stopWordFilename = CLI::GetParam<string>("stopwordsfile");
     ifstream stopWordFile(stopWordFilename);
     if (!stopWordFile.is_open())
     {
@@ -266,16 +290,15 @@ static void mlpackMain()
       originalword.push_back(word);
       stopwords.insert(originalword.back());
     }
-    const string delimiter = CLI::GetParam<string>
-        ("delimiter");
-    for (auto& datasetCol : dimensions)
-      obj.RemoveStopWords(nonNumericInput[datasetCol], stopwords,
+    const string delimiter = CLI::GetParam<string> ("delimiter");
+    for (auto& column : nonNumericInput)
+      obj.RemoveStopWords(column.second, stopwords,
           data::SplitByChar(delimiter));
   }
   if (CLI::HasParam("punctuation"))
   {
-    for (auto& datasetCol : dimensions)
-      obj.RemovePunctuation(nonNumericInput[datasetCol]);
+    for (auto& column : nonNumericInput)
+      obj.RemovePunctuation(column.second);
   }
   const string outputFilename = CLI::GetParam<string>("preprocess"
       "_dataset");
