@@ -86,29 +86,29 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
     const arma::vec& qPoint = querySet.col(queryIndex);
     const arma::vec qProj = stat.EigVec().t() * (qPoint - stat.Mean());
     const arma::vec qRecon = stat.EigVec() * qProj + stat.Mean();
-    const double kernelValue1 = EvaluateKernel(qPoint, qRecon);
 
     // Base case for each reference node.
     const arma::vec& rPoint = referenceSet.col(referenceIndex);
     const arma::vec rProj = stat.EigVec().t() * (rPoint - stat.Mean());
     const arma::vec rRecon = stat.EigVec() * rProj + stat.Mean();
 
-    const double maxMetricError = metric.Evaluate(rRecon, rPoint);
+    const double maxRefMetricError = arma::norm(rRecon, 1);
+    const double maxQueryMetricError = arma::norm(qRecon, 1);
     const double metricProjValue = metric.Evaluate(qProj, rProj);
+    const double pcaMetricValue = std::sqrt(std::pow(metricProjValue, 2) +
+                                            std::pow(maxQueryMetricError, 2));
 
-    const double maxProjKernel = kernel.Evaluate(metricProjValue -
-                                                 maxMetricError);
-    const double minProjKernel = kernel.Evaluate(metricProjValue +
-                                                 maxMetricError);
+    const double minProjMetric = std::abs(pcaMetricValue - maxRefMetricError);
+    const double maxProjMetric = pcaMetricValue + maxRefMetricError;
 
-    const double maxK = kernelValue1 * maxProjKernel;
-    const double minK = kernelValue1 * minProjKernel;
+
+    const double maxK = kernel.Evaluate(minProjMetric);
+    const double minK = kernel.Evaluate(maxProjMetric);
     const double newBound = maxK - minK;
 
     if (newBound <= (absError + relError * minK) / referenceSet.n_cols)
     {
-      densities(queryIndex) += kernelValue1 * kernel.Evaluate(metricProjValue);
-      std::cout << "Used PCA projection" << std::endl;
+      densities(queryIndex) += kernel.Evaluate(pcaMetricValue);
     }
     else
     {

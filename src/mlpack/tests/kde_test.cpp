@@ -1242,7 +1242,7 @@ BOOST_AUTO_TEST_CASE(GaussianSingleKDTreePCA)
   arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   const double kernelBandwidth = 0.35;
-  const double relError = 0.1;
+  const double relError = 0.05;
 
   // Brute force KDE.
   GaussianKernel kernel(kernelBandwidth);
