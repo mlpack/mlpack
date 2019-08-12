@@ -163,6 +163,12 @@ template<typename InputDataType,
 >
 class MultiplyMerge;
 
+template<typename InputDataType,
+         typename OutputDataType,
+         typename... CustomLayers
+>
+class InceptionLayer;
+
 template <typename... CustomLayers>
 using LayerTypes = boost::variant<
     Add<arma::mat, arma::mat>*,
@@ -207,6 +213,7 @@ using LayerTypes = boost::variant<
     Lookup<arma::mat, arma::mat>*,
     LSTM<arma::mat, arma::mat>*,
     GRU<arma::mat, arma::mat>*,
+    InceptionLayer<arma::mat, arma::mat>*,
     FastLSTM<arma::mat, arma::mat>*,
     MaxPooling<arma::mat, arma::mat>*,
     MeanPooling<arma::mat, arma::mat>*,
