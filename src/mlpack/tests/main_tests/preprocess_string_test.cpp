@@ -102,11 +102,10 @@ BOOST_AUTO_TEST_CASE(LowerCaseTest)
     "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." }  
   };
   CreateFile(stringLowerInput,"preprocess_string_lower_test.txt","\t" );
-  SetInputParam("actual_dataset", (std::string) "string_test.txt");
-  SetInputParam("preprocess_dataset",
-      (std::string) "output_preprocess_string_lower_test.txt");
-  std::vector<std::string> dimension = {"1", "3-4"};
-  SetInputParam("dimension", dimension);
+  SetInputParam<string>("actual_dataset", "string_test.txt");
+  SetInputParam<string>("preprocess_dataset",
+      "output_preprocess_string_lower_test.txt");
+  SetInputParam<vector<string>>("dimension", {"1", "3-4"});
   SetInputParam("lowercase", true );
 
   mlpackMain();
@@ -130,11 +129,10 @@ BOOST_AUTO_TEST_CASE(PunctuationTest)
   };
   CreateFile(stringPunctuationInput,"preprocess_string_punctuation_test.txt",
       "\t");
-  SetInputParam("actual_dataset", (std::string) "string_test.txt");
-  SetInputParam("preprocess_dataset",
-      (std::string) "output_preprocess_punctuation_test.txt");
-  std::vector<std::string> dimension = {"1", "3-4"};
-  SetInputParam("dimension", dimension);
+  SetInputParam<string>("actual_dataset", "string_test.txt");
+  SetInputParam<string>("preprocess_dataset",
+      "output_preprocess_punctuation_test.txt");
+  SetInputParam<vector<string>>("dimension", {"1", "3-4"});
   SetInputParam("punctuation", true );
 
   mlpackMain();
@@ -157,15 +155,14 @@ BOOST_AUTO_TEST_CASE(StopWordsTest)
   };
   CreateFile(stringStopWordsInput,"preprocess_string_stop_words_test.txt",
       "\t");
-  SetInputParam("actual_dataset", (std::string) "string_test.txt");
-  SetInputParam("preprocess_dataset",
-      (std::string) "output_preprocess_stop_words_test.txt");
-  std::vector<std::string> dimension = {"1", "3-4"};
-  SetInputParam("dimension", dimension);
+  SetInputParam<string>("actual_dataset", "string_test.txt");
+  SetInputParam<string>("preprocess_dataset",
+      "output_preprocess_stop_words_test.txt");
+  SetInputParam<vector<string>>("dimension", {"1", "3-4"});
   SetInputParam("punctuation", true );
   SetInputParam("lowercase", true );
   SetInputParam("stopwords", true );
-  SetInputParam("stopwordsfile", (std::string) "stopwords.txt");
+  SetInputParam<string>("stopwordsfile", "stopwords.txt");
 
   mlpackMain();
   BOOST_REQUIRE_EQUAL(CompareFiles("output_preprocess_stop_words_test.txt",
@@ -186,11 +183,10 @@ BOOST_AUTO_TEST_CASE(CsvLowerCaseTest)
     "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." }  
   };
   CreateFile(stringLowerInput,"preprocess_string_lower_test.csv","," );
-  SetInputParam("actual_dataset", (std::string) "string_test.csv");
-  SetInputParam("preprocess_dataset",
-      (std::string) "output_preprocess_string_lower_test.csv");
-  std::vector<std::string> dimension = {"1", "3-4"};
-  SetInputParam("dimension", dimension);
+  SetInputParam<string>("actual_dataset", "string_test.csv");
+  SetInputParam<string>("preprocess_dataset",
+      "output_preprocess_string_lower_test.csv");
+  SetInputParam<vector<string>>("dimension", {"1", "3-4"});
   SetInputParam("lowercase", true );
 
   mlpackMain();
@@ -214,11 +210,10 @@ BOOST_AUTO_TEST_CASE(CsvPunctuationTest)
   };
   CreateFile(stringPunctuationInput,"preprocess_string_punctuation_test.csv",
       ",");
-  SetInputParam("actual_dataset", (std::string) "string_test.csv");
-  SetInputParam("preprocess_dataset",
-      (std::string) "output_preprocess_punctuation_test.csv");
-  std::vector<std::string> dimension = {"1", "3-4"};
-  SetInputParam("dimension", dimension);
+  SetInputParam<string>("actual_dataset", "string_test.csv");
+  SetInputParam<string>("preprocess_dataset",
+      "output_preprocess_punctuation_test.csv");
+  SetInputParam<vector<string>>("dimension", {"1", "3-4"});
   SetInputParam("punctuation", true );
 
   mlpackMain();
@@ -241,15 +236,14 @@ BOOST_AUTO_TEST_CASE(CsvStopWordsTest)
   };
   CreateFile(stringStopWordsInput,"preprocess_string_stop_words_test.csv",
       ",");
-  SetInputParam("actual_dataset", (std::string) "string_test.csv");
-  SetInputParam("preprocess_dataset",
-      (std::string) "output_preprocess_stop_words_test.csv");
-  std::vector<std::string> dimension = {"1", "3-4"};
-  SetInputParam("dimension", dimension);
+  SetInputParam<string>("actual_dataset", "string_test.csv");
+  SetInputParam<string>("preprocess_dataset",
+      "output_preprocess_stop_words_test.csv");
+  SetInputParam<vector<string>>("dimension", {"1", "3-4"});
   SetInputParam("punctuation", true );
   SetInputParam("lowercase", true );
   SetInputParam("stopwords", true );
-  SetInputParam("stopwordsfile", (std::string) "stopwords.txt");
+  SetInputParam<string>("stopwordsfile", "stopwords.txt");
 
   mlpackMain();
   BOOST_REQUIRE_EQUAL(CompareFiles("output_preprocess_stop_words_test.csv",
@@ -271,15 +265,14 @@ BOOST_AUTO_TEST_CASE(InvalidDimesnionTest)
   };
   CreateFile(stringStopWordsInput,"preprocess_string_stop_words_test.csv",
       ",");
-  SetInputParam("actual_dataset", (std::string) "string_test.csv");
-  SetInputParam("preprocess_dataset",
-      (std::string) "output_preprocess_stop_words_test.csv");
-  std::vector<std::string> dimension = {"1", "3-6"};
-  SetInputParam("dimension", dimension);
+  SetInputParam<string>("actual_dataset", "string_test.csv");
+  SetInputParam<string>("preprocess_dataset",
+      "output_preprocess_stop_words_test.csv");
+  SetInputParam<vector<string>>("dimension", {"1", "3-6"});
   SetInputParam("punctuation", true );
   SetInputParam("lowercase", true );
   SetInputParam("stopwords", true );
-  SetInputParam("stopwordsfile", (std::string) "stopwords.txt");
+  SetInputParam<string>("stopwordsfile", "stopwords.txt");
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -302,11 +295,10 @@ BOOST_AUTO_TEST_CASE(NoStopwordsFileTest)
   };
   CreateFile(stringStopWordsInput,"preprocess_string_stop_words_test.csv",
       ",");
-  SetInputParam("actual_dataset", (std::string) "string_test.csv");
-  SetInputParam("preprocess_dataset",
-      (std::string) "output_preprocess_stop_words_test.csv");
-  std::vector<std::string> dimension = {"1", "3-4"};
-  SetInputParam("dimension", dimension);
+  SetInputParam<string>("actual_dataset", "string_test.csv");
+  SetInputParam<string>("preprocess_dataset",
+      "output_preprocess_stop_words_test.csv");
+  SetInputParam<vector<string>>("dimension", {"1", "3-4"});
   SetInputParam("punctuation", true );
   SetInputParam("lowercase", true );
   SetInputParam("stopwords", true );
@@ -332,11 +324,10 @@ BOOST_AUTO_TEST_CASE(CharDimesionTest)
   };
   CreateFile(stringStopWordsInput,"preprocess_string_stop_words_test.csv",
       ",");
-  SetInputParam("actual_dataset", (std::string) "string_test.csv");
-  SetInputParam("preprocess_dataset",
-      (std::string) "output_preprocess_stop_words_test.csv");
-  std::vector<std::string> dimension = {"1", "a1b-4"};
-  SetInputParam("dimension", dimension);
+  SetInputParam<string>("actual_dataset", "string_test.csv");
+  SetInputParam<string>("preprocess_dataset",
+      "output_preprocess_stop_words_test.csv");
+  SetInputParam<vector<string>>("dimension", {"1", "a1b-4"});
   SetInputParam("punctuation", true );
   SetInputParam("lowercase", true );
   SetInputParam("stopwords", true );
@@ -362,9 +353,8 @@ BOOST_AUTO_TEST_CASE(NoOutputFileTest)
   };
   CreateFile(stringLowerInput,"preprocess_string_lower_test.txt","\t" );
 
-  SetInputParam("actual_dataset", (std::string) "string_test.txt");
-  std::vector<std::string> dimension = {"1", "3-4"};
-  SetInputParam("dimension", dimension);
+  SetInputParam<string>("actual_dataset", "string_test.txt");
+  SetInputParam<vector<string>>("dimension", {"1", "3-4"});
   SetInputParam("lowercase", true );
 
   Log::Fatal.ignoreInput = true;
@@ -388,9 +378,8 @@ BOOST_AUTO_TEST_CASE(NegativeDimesionTest)
   };
   CreateFile(stringLowerInput,"preprocess_string_lower_test.txt","\t" );
 
-  SetInputParam("actual_dataset", (std::string) "string_test.txt");
-  std::vector<std::string> dimension = {"-1", "3-4"};
-  SetInputParam("dimension", dimension);
+  SetInputParam<string>("actual_dataset", "string_test.txt");
+  SetInputParam<vector<string>>("dimension", {"-1", "3-4"});
   SetInputParam("lowercase", true );
 
   Log::Fatal.ignoreInput = true;
@@ -414,11 +403,10 @@ BOOST_AUTO_TEST_CASE(invalidColumDelimiterTest)
   };
   CreateFile(stringLowerInput,"preprocess_string_lower_test.txt","\t" );
 
-  SetInputParam("actual_dataset", (std::string) "string_test.txt");
-  std::vector<std::string> dimension = {"-1", "3-4"};
-  SetInputParam("dimension", dimension);
+  SetInputParam<string>("actual_dataset", "string_test.txt");
+  SetInputParam<vector<string>>("dimension", {"-1", "3-4"});
   SetInputParam("lowercase", true );
-  SetInputParam("column_delimiter", (std::string) "@");
+  SetInputParam<string>("column_delimiter", "@");
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
