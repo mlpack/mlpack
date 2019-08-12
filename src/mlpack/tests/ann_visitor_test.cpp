@@ -23,6 +23,9 @@ using namespace mlpack::ann;
 
 BOOST_AUTO_TEST_SUITE(ANNVisitorTest);
 
+/**
+ * Test that the BiasSetVisitor works properly.
+ */
 BOOST_AUTO_TEST_CASE(BiasSetVisitorTest)
 {
   LayerTypes<> linear = new Linear<>(10, 10);
