@@ -1,10 +1,10 @@
 # Define the files that we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  dictionary_encoding_policy.hpp
   bag_of_words_encoding_policy.hpp
-  tf_idf_encoding_policy.hpp
+  dictionary_encoding_policy.hpp
   policy_traits.hpp
+  tf_idf_encoding_policy.hpp
 )
 
 # add directory name to sources

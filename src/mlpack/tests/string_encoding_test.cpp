@@ -533,7 +533,7 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingIndividualCharactersTest)
  * Test the Bag of Words encoding algorithm in case of individual
  * character encoding, storing resulting in vector<vector<vectorType>>.
  */
-BOOST_AUTO_TEST_CASE(OnePassBagOfWordsEncodingIndividualCharactersTest)
+BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingIndividualCharactersTest)
 {
   std::vector<string> input = {
     "GACCA",
@@ -1086,7 +1086,7 @@ BOOST_AUTO_TEST_CASE(SplitByAnyOfTfIdfEncodingSerialization)
   using EncoderType = TfIdfEncoding<SplitByAnyOf::TokenType>;
 
   EncoderType encoder;
-  SplitByAnyOf tokenizer(" ");
+  SplitByAnyOf tokenizer(" ,.\"");
   arma::mat output;
 
   encoder.Encode(stringEncodingInput, output, tokenizer);

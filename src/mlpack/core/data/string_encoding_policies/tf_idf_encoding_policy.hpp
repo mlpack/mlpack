@@ -20,13 +20,12 @@ namespace data {
 /**
  * Definition of the TfIdfEncodingPolicy class.
  *
- * Tf means term-frequency while tf-idf means term-frequency times inverse
- * document-frequency. This is a common term weighting scheme in information
- * retrieval, that has also found good use in document classification.
+ * Tf-idf is weighing scheme that stands for term-frequency multiplied by
+ * inverse document-frequency.
  * The goal of using tf-idf is to scale down the impact of tokens that occur
- * very frequently in a given corpus while using the raw frequencies of a token
- * and that are hence empirically less informative than features that occur in
- * a small fraction of the training corpus.
+ * very frequently in a given corpus while using the type of Term-Frequency
+ * of a token and that are hence empirically less informative than features
+ * that occur in a small fraction of the training corpus.
  * TfIdfEncodingPolicy is used as a helper class for StringEncoding.
  * The encoder assigns a tf-idf number to each unique token and treat 
  * the dataset as categorical. The tokens are labeled in the order of their
@@ -35,7 +34,7 @@ namespace data {
 class TfIdfEncodingPolicy
 {
  public:
-  /* 
+  /**
   * Enum class used to identify the type of tf encoding
   *
   * Follwing are the defination of the types
@@ -53,6 +52,18 @@ class TfIdfEncodingPolicy
     TERM_FREQUENCY,
   };
 
+  /**
+  * A constructor for the class which is use to set the type of term frequency
+  * and also the value for somoothIdf.
+  *
+  * @param tfType The type of term frequency, The avialbale option are
+  *     RAW_COUNT : The count of a specific token
+  *     BINARY : 1 if token occurs in document and 0 otherwise;
+  *     TERM_FREQUENCY :  Raw_count ÷ (number of words in document)
+  *     SUBLINEAR_TF : log(Raw_Count) + 1
+  *
+  * @param smoothIdf Used to indicate whether to use smooth idf or not.
+  */
   TfIdfEncodingPolicy(TfTypes tfType = TfTypes::RAW_COUNT,
                       bool smoothIdf = true) :
                       tfType(tfType),
