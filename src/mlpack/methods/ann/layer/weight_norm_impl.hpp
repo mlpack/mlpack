@@ -71,7 +71,7 @@ template<typename eT>
 void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  // Intialize the non-bias weights of wrapped layer.
+  // Initialize the non-bias weights of wrapped layer.
   double normVectorParameter = arma::norm(vectorParameter, 2);
   layerWeights.rows(0, layerWeightSize - biasWeightSize - 1) =
       scalarParameter(0) * vectorParameter / normVectorParameter;

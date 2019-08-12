@@ -101,7 +101,7 @@ class WeightNorm
                 arma::Mat<eT>&& g);
 
   /**
-   * Calculate the gradient using the output delta and the input activations and
+   * Calculate the gradient using the output delta, input activations and the
    * weights of the wrapped layer.
    *
    * @param input The input activations.
