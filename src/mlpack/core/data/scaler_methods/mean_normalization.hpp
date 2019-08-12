@@ -26,7 +26,7 @@ namespace data {
  * \[z = x - average(x) / (max(x) - min(x))\]
  *
  * where x is an original value,z is the normalized value.
- * 
+ *
  * @code
  * arma::mat input;
  * Load("train.csv", input);

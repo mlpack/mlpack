@@ -25,7 +25,7 @@ namespace data {
  *
  * \[z = x / max(abs(x))\]
  *
- * where max(abs(x)) is maximum absolute value of feature. 
+ * where max(abs(x)) is maximum absolute value of feature.
  *
  * @code
  * arma::mat input;

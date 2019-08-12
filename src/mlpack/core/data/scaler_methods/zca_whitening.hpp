@@ -102,7 +102,7 @@ class ZCAWhitening
   //! Get the eigenvector.
   const arma::mat& EigenVectors() const { return pca->EigenVectors(); }
   //! Get the regularization parameter.
-  const double& Epsilon() const { return pca->Epsilon(); }
+  double Epsilon() const { return pca->Epsilon(); }
 
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)

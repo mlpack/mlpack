@@ -27,7 +27,7 @@ namespace data {
  *
  * where u is the mean of the training samples and s is the standard deviation
  * of the training samples.
- * 
+ *
  * @code
  * arma::mat input;
  * Load("train.csv", input);
