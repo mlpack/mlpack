@@ -337,6 +337,8 @@ void CheckDictionaries(const StringEncodingDictionary<int>& expected,
   const MapType& expectedMapping = expected.Mapping();
   const MapType& mapping = obtained.Mapping();
 
+  BOOST_REQUIRE_EQUAL(expected.Size(), obtained.Size());
+
   for (size_t i = 0; i < mapping.size(); i++)
   {
     BOOST_REQUIRE_EQUAL(mapping[i], expectedMapping[i]);
@@ -1045,36 +1047,6 @@ BOOST_AUTO_TEST_CASE(TermFrequencyTfIdfEncodingIndividualCharactersTest)
     { 0.4684883693693881, 0.3333333333333333, 0, 0.4684883693693881, 0 }
   };
   CheckMatrices(output, target, 1e-12);
-}
-
-/**
- * Serialization test for the TF-IDF encoding algorithm with
- * the CharExtract tokenizer.
- */
-BOOST_AUTO_TEST_CASE(CharExtractTfIdfEncodingSerialization)
-{
-  using EncoderType = TfIdfEncoding<CharExtract::TokenType>;
-
-  EncoderType encoder;
-  CharExtract tokenizer;
-  arma::mat output;
-
-  encoder.Encode(stringEncodingInput, output, tokenizer);
-
-  EncoderType xmlEncoder, textEncoder, binaryEncoder;
-  arma::mat xmlOutput, textOutput, binaryOutput;
-
-  SerializeObjectAll(encoder, xmlEncoder, textEncoder, binaryEncoder);
-
-  CheckDictionaries(encoder.Dictionary(), xmlEncoder.Dictionary());
-  CheckDictionaries(encoder.Dictionary(), textEncoder.Dictionary());
-  CheckDictionaries(encoder.Dictionary(), binaryEncoder.Dictionary());
-
-  xmlEncoder.Encode(stringEncodingInput, xmlOutput, tokenizer);
-  textEncoder.Encode(stringEncodingInput, textOutput, tokenizer);
-  binaryEncoder.Encode(stringEncodingInput, binaryOutput, tokenizer);
-
-  CheckMatrices(output, xmlOutput, textOutput, binaryOutput);
 }
 
 /**
