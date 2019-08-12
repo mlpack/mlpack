@@ -112,7 +112,7 @@ class GAN
   void Reset();
 
   /**
-   * Train function for standard GAN and DCGAN.
+   * Train function for standard GAN, DCGAN and LSGAN.
    *
    * @param trainData The data points of real distribution.
    * @param optimizer Instantiated optimizer used to train the model.
@@ -122,7 +122,8 @@ class GAN
    */
   template<typename Policy = PolicyType, typename OptimizerType>
   typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
-                          std::is_same<Policy, DCGAN>::value, double>::type
+                          std::is_same<Policy, DCGAN>::value ||
+                          std::is_same<Policy, LSGAN>::value, double>::type
   Train(arma::mat trainData,
         OptimizerType& Optimizer,
         const double realLabel = 1.0,
@@ -146,7 +147,7 @@ class GAN
         const double fakeLabel = -1.0);
 
   /**
-   * Evaluate function for the Standard GAN and DCGAN.
+   * Evaluate function for the Standard GAN, DCGAN and LSGAN.
    * This function gives the performance of the Standard GAN or DCGAN on the
    * current input.
    *
@@ -156,7 +157,8 @@ class GAN
    */
   template<typename Policy = PolicyType>
   typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
-                          std::is_same<Policy, DCGAN>::value, double>::type
+                          std::is_same<Policy, DCGAN>::value ||
+                          std::is_same<Policy, LSGAN>::value, double>::type
   Evaluate(const arma::mat& parameters,
            const size_t i,
            const size_t batchSize);
@@ -192,7 +194,7 @@ class GAN
            const size_t batchSize);
 
   /**
-   * EvaluateWithGradient function for the Standard GAN and DCGAN.
+   * EvaluateWithGradient function for the Standard GAN, DCGAN and LSGAN.
    * This function gives the performance of the Standard GAN or DCGAN on the
    * current input, while updating Gradients.
    *
@@ -203,7 +205,8 @@ class GAN
    */
   template<typename GradType, typename Policy = PolicyType>
   typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
-                          std::is_same<Policy, DCGAN>::value, double>::type
+                          std::is_same<Policy, DCGAN>::value ||
+                          std::is_same<Policy, LSGAN>::value, double>::type
   EvaluateWithGradient(const arma::mat& parameters,
                        const size_t i,
                        GradType& gradient,
@@ -246,7 +249,7 @@ class GAN
                        const size_t batchSize);
 
   /**
-   * Gradient function for Standard GAN and DCGAN.
+   * Gradient function for Standard GAN, DCGAN and LSGAN.
    * This function passes the gradient based on which network is being
    * trained, i.e., Generator or Discriminator.
    *
@@ -257,7 +260,8 @@ class GAN
    */
   template<typename Policy = PolicyType>
   typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
-                          std::is_same<Policy, DCGAN>::value, void>::type
+                          std::is_same<Policy, DCGAN>::value ||
+                          std::is_same<Policy, LSGAN>::value, void>::type
   Gradient(const arma::mat& parameters,
            const size_t i,
            arma::mat& gradient,
