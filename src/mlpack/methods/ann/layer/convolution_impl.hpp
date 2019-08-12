@@ -15,8 +15,6 @@
 // In case it hasn't yet been included.
 #include "convolution.hpp"
 
-#include "../visitor/forward_visitor.hpp"
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -76,7 +74,7 @@ Convolution<
     outputHeight(0)
 {
   weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
-  padding = new Padding<>(padW, padH);
+  padding = new Padding<>(padW, padW, padH, padH);
 }
 
 template<
@@ -126,8 +124,8 @@ void Convolution<
         inputTemp.n_cols + padH * 2, inputTemp.n_slices);
     for (size_t i = 0; i < inputTemp.n_slices; ++i)
     {
-      boost::apply_visitor(ForwardVisitor(std::move(inputTemp.slice(i)),
-          std::move(inputPaddedTemp.slice(i))), padding);
+      padding->Forward(std::move(inputTemp.slice(i)),
+          std::move(inputPaddedTemp.slice(i)));
     }
   }
 

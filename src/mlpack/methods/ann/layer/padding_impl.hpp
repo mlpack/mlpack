@@ -21,10 +21,14 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 Padding<InputDataType, OutputDataType>::Padding(
-    const size_t padW,
-    const size_t padH) :
-    padW(padW),
-    padH(padH),
+    const size_t padWLeft,
+    const size_t padWRight,
+    const size_t padHTop,
+    const size_t padHBottom) :
+    padWLeft(padWLeft),
+    padWRight(padWRight),
+    padHTop(padHTop),
+    padHBottom(padHBottom),
     nRows(0),
     nCols(0)
 {
@@ -38,9 +42,10 @@ void Padding<InputDataType, OutputDataType>::Forward(
 {
   nRows = input.n_rows;
   nCols = input.n_cols;
-  output = arma::zeros(input.n_rows + padW * 2, input.n_cols + padH * 2);
-  output.submat(padW, padH, padW + input.n_rows - 1,
-        padH + input.n_cols - 1) = input;
+  output = arma::zeros(input.n_rows + padWLeft + padWRight,
+      input.n_cols + padHTop + padHBottom);
+  output.submat(padWLeft, padHTop, padWLeft + input.n_rows - 1,
+      padHTop + input.n_cols - 1) = input;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -50,8 +55,8 @@ void Padding<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& gy,
     arma::Mat<eT>&& g)
 {
-  g = gy.submat(padW, padH, padW + nRows - 1,
-        padH + nCols - 1);
+  g = gy.submat(padWLeft, padHTop, padWLeft + nRows - 1,
+      padHTop + nCols - 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -59,8 +64,10 @@ template<typename Archive>
 void Padding<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(padW);
-  ar & BOOST_SERIALIZATION_NVP(padH);
+  ar & BOOST_SERIALIZATION_NVP(padWLeft);
+  ar & BOOST_SERIALIZATION_NVP(padWRight);
+  ar & BOOST_SERIALIZATION_NVP(padHTop);
+  ar & BOOST_SERIALIZATION_NVP(padHBottom);
 }
 
 } // namespace ann

@@ -37,11 +37,15 @@ class Padding
   /**
    * Create the Padding object using the specified number of output units.
    *
-   * @param padW Padding width of the input.
-   * @param padH Padding height of the input.
+   * @param padWLeft Left padding width of the input.
+   * @param padWLeft Right padding width of the input.
+   * @param padHTop Top padding height of the input.
+   * @param padHBottom Bottom padding height of the input.
    */
-  Padding(const size_t padW = 0,
-          const size_t padH = 0);
+  Padding(const size_t padWLeft = 0,
+          const size_t padWRight = 0,
+          const size_t padHTop = 0,
+          const size_t padHBottom = 0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -84,11 +88,17 @@ class Padding
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! Locally-stored padding width.
-  size_t padW;
+  //! Locally-stored left padding width.
+  size_t padWLeft;
 
-  //! Locally-stored padding height.
-  size_t padH;
+  //! Locally-stored right padding width.
+  size_t padWRight;
+
+  //! Locally-stored top padding height.
+  size_t padHTop;
+
+  //! Locally-stored bottom padding height.
+  size_t padHBottom;
 
   //! Locally-stored number of rows and columns of input.
   size_t nRows, nCols;
