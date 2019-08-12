@@ -19,17 +19,16 @@ namespace ann /** Artificial Neural Network. */ {
  * For more information, see the following paper:
  *
  * @code
- * @article{Salimans16,
- *   author    = {Tim Salimans, Ian Goodfellow, Wojciech Zaremba,
- *                Vicki Cheung, Alec Radford and Xi Chen},
- *   title     = {Improved Techniques for Training GANs},
- *   year      = {2016},
- *   url       = {http://arxiv.org/abs/1606.03498},
- *   eprint    = {1606.03498},
+ * @article{Mirza14,
+ *   author    = {Mehdi Mirza, Simon Osindero},
+ *   title     = {Conditional Generative Adversarial Nets},
+ *   year      = {2014},
+ *   url       = {https://arxiv.org/abs/1411.1784},
+ *   eprint    = {1411.1784},
  * }
  * @endcode
  */
-class StandardGAN { /* Nothing to do here */ };
+class CGAN { /* Nothing to do here */ };
 
 /**
  * For more information, see the following paper:
@@ -46,6 +45,22 @@ class StandardGAN { /* Nothing to do here */ };
  * @endcode
  */
 class DCGAN { /* Nothing to do here */ };
+
+/**
+ * For more information, see the following paper:
+ *
+ * @code
+ * @article{Salimans16,
+ *   author    = {Tim Salimans, Ian Goodfellow, Wojciech Zaremba,
+ *                Vicki Cheung, Alec Radford and Xi Chen},
+ *   title     = {Improved Techniques for Training GANs},
+ *   year      = {2016},
+ *   url       = {http://arxiv.org/abs/1606.03498},
+ *   eprint    = {1606.03498},
+ * }
+ * @endcode
+ */
+class StandardGAN { /* Nothing to do here */ };
 
 /**
  * For more information, see the following paper:
@@ -77,10 +92,6 @@ class WGAN { /* Nothing to do here */ };
  * @endcode
  */
 class WGANGP { /* Nothing to do here */ };
-
-
-
-class CGAN { /* Nothing to do here */ };
 
 } // namespace ann
 } // namespace mlpack
