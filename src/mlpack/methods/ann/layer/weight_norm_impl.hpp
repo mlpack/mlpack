@@ -158,7 +158,7 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::serialize(
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)
   {
-    weights.set_size(2 * layerWeightSize + 1, 1);
+    weights.set_size(layerWeightSize + 1, 1);
   }
 }
 

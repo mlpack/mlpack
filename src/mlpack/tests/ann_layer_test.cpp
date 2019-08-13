@@ -2572,7 +2572,7 @@ BOOST_AUTO_TEST_CASE(GradientWeightNormLayerTest)
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
-      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 10);
 
       Linear<>* linear = new Linear<>(10, 2);
       weightNorm = new WeightNorm<>(linear);
