@@ -1,14 +1,14 @@
 /**
-  * @file logistic_regression_test.cpp
-  * @author Yashwant Singh Parihar
-  *
-  * Test mlpackMain() of logistic_regression_main.cpp
-  *
-  * mlpack is free software; you may redistribute it and/or modify it under the
-  * terms of the 3-clause BSD license.  You should have received a copy of the
-  * 3-clause BSD license along with mlpack.  If not, see
-  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
-  */
+ * @file linear_svm_test.cpp
+ * @author Yashwant Singh Parihar
+ *
+ * Test mlpackMain() of logistic_regression_main.cpp
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #include <string>
 
 #define BINDING_TYPE BINDING_TYPE_TEST
@@ -24,7 +24,6 @@ static const std::string testName = "LinearSVM";
 #include "../test_tools.hpp"
 
 using namespace mlpack;
-
 
 struct LinearSVMTestFixture
 {
@@ -48,7 +47,7 @@ BOOST_FIXTURE_TEST_SUITE(LinearSVMMainTest,
 
 /**
  * Ensure that trainingSet are necessarily passed when training.
- **/
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMNoTrainingData)
 {
   arma::Row<size_t> trainLabels;
@@ -99,8 +98,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMOutputDimensionTest)
 }
 
 /**
-  * Ensuring that the labels size is checked.
- **/
+ * Ensuring that the labels size is checked.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMCheckLabelsSizeTest)
 {
   arma::mat trainData;
@@ -133,6 +132,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMLabelsRepresentationTest)
   SetInputParam("test", testData);
 
   // The first solution.
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Get the output.
@@ -153,6 +153,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMLabelsRepresentationTest)
   SetInputParam("test", std::move(testData));
 
   // The second solution.
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // get the output
@@ -188,8 +189,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMModelReuseTest)
   mlpackMain();
 
   // Get the output model obtained from training.
-  LinearSVM<>* model =
-      CLI::GetParam<LinearSVM<>*>("output_model");
+  LinearSVMModel* model =
+      CLI::GetParam<LinearSVMModel*>("output_model");
   // Get the output.
   const arma::Row<size_t>& testLabels1 =
       std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
@@ -214,8 +215,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMModelReuseTest)
 }
 
 /**
-  * Checking for dimensionality of the test data set.
- **/
+ * Checking for dimensionality of the test data set.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMCheckDimOfTestData)
 {
   // Dimensionality of trainingSet is trainData.n_rows - 1 because labels are
@@ -258,8 +259,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMCheckDimOfTestData2)
   mlpackMain();
 
   // Get the output model obtained from training.
-  LinearSVM<>* model =
-      CLI::GetParam<LinearSVM<>*>("output_model");
+  LinearSVMModel* model =
+      CLI::GetParam<LinearSVMModel*>("output_model");
 
   // Reset the data passed.
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
@@ -275,8 +276,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMCheckDimOfTestData2)
 }
 
 /**
-  * Ensuring that max iteration for optimizers is non negative.
- **/
+ * Ensuring that max iteration for optimizers is non negative.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeMaxIterationTest)
 {
   arma::mat trainData;
@@ -298,8 +299,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeMaxIterationTest)
 }
 
 /**
-  * Ensuring that lambda for optimizers is non negative.
- **/
+ * Ensuring that lambda for optimizers is non negative.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeLambdaTest)
 {
   arma::mat trainData;
@@ -321,8 +322,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeLambdaTest)
 }
 
 /**
-  * Ensuring that number of classes for optimizers is non negative.
- **/
+ * Ensuring that number of classes for optimizers is non negative.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeNumberOfClassesTest)
 {
   arma::mat trainData;
@@ -335,7 +336,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeNumberOfClassesTest)
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
-  SetInputParam("number_of_classes", int(-1));
+  SetInputParam("num_classes", int(-1));
 
   // Maximum iterations is negative. It should a runtime error.
   Log::Fatal.ignoreInput = true;
@@ -344,8 +345,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeNumberOfClassesTest)
 }
 
 /**
-  * Ensuring that tolerance is non negative.
- **/
+ * Ensuring that tolerance is non negative.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeToleranceTest)
 {
   arma::mat trainData;
@@ -367,8 +368,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeToleranceTest)
 }
 
 /**
-  * Ensuring that delta is non negative.
- **/
+ * Ensuring that delta is non negative.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeDeltaTest)
 {
   arma::mat trainData;
@@ -390,8 +391,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeDeltaTest)
 }
 
 /**
-  * Ensuring that epochs is non negative.
- **/
+ * Ensuring that epochs is non negative.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeEpochsTest)
 {
   arma::mat trainData;
@@ -413,8 +414,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeEpochsTest)
 }
 
 /**
-  * Ensuring that number classes must not be zero.
- **/
+ * Ensuring that number classes must not be zero.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMZeroNumberOfClassesTest)
 {
   arma::mat trainData = "2 0 0;"
@@ -435,8 +436,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMZeroNumberOfClassesTest)
 }
 
 /**
-  * Ensuring that Optimizer must be correct.
- **/
+ * Ensuring that Optimizer must be correct.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMOptimizerTest)
 {
   arma::mat trainData;
@@ -458,8 +459,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMOptimizerTest)
 }
 
 /**
-  * Ensuring changing Maximum number of iterations changes the output model.
- **/
+ * Ensuring changing Maximum number of iterations changes the output model.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMDiffMaxIterationsTest)
 {
   arma::mat trainData;
@@ -478,9 +479,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffMaxIterationsTest)
   mlpackMain();
 
   // Get the parameters of the output model obtained after first training.
-  const arma::mat parameters1 =
-      std::move(CLI::GetParam<LinearSVM<>*>("output_model")
-                ->Parameters());
+  const arma::mat parameters1 = std::move(
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
@@ -496,15 +496,15 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffMaxIterationsTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVM<>*>("output_model")->Parameters();
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
 }
 
 /**
-  * Ensuring that lambda has some effects on the output.
- **/
+ * Ensuring that lambda has some effects on the output.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMDiffLambdaTest)
 {
   arma::mat trainData;
@@ -523,9 +523,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffLambdaTest)
   mlpackMain();
 
   // Get the parameters of the output model obtained after first training.
-  const arma::mat parameters1 =
-      std::move(CLI::GetParam<LinearSVM<>*>("output_model")
-                ->Parameters());
+  const arma::mat parameters1 = std::move(
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
@@ -541,15 +540,15 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffLambdaTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVM<>*>("output_model")->Parameters();
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
 }
 
 /**
-  * Ensuring that delta has some effects on the output.
- **/
+ * Ensuring that delta has some effects on the output.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMDiffDeltaTest)
 {
   arma::mat trainData;
@@ -568,9 +567,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffDeltaTest)
   mlpackMain();
 
   // Get the parameters of the output model obtained after first training.
-  const arma::mat parameters1 =
-      std::move(CLI::GetParam<LinearSVM<>*>("output_model")
-                ->Parameters());
+  const arma::mat parameters1 = std::move(
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
@@ -586,15 +584,15 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffDeltaTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVM<>*>("output_model")->Parameters();
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
 }
 
 /**
-  * Ensuring that no_intercept has some effects on the output.
- **/
+ * Ensuring that no_intercept has some effects on the output.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTest)
 {
   arma::mat trainData;
@@ -612,9 +610,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTest)
   mlpackMain();
 
   // Get the parameters of the output model obtained after first training.
-  const arma::mat parameters1 =
-      std::move(CLI::GetParam<LinearSVM<>*>("output_model")
-                ->Parameters());
+  const arma::mat parameters1 = std::move(
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
@@ -630,20 +627,15 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVM<>*>("output_model")->Parameters();
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
 }
 
 /**
- * The test is only compiled if the user has not specified OpenMP to be
- * used and we test these case in one core.
+ * Ensuring that step size for optimizer is non negative.
  */
-#ifndef HAS_OPENMP
-/**
-  * Ensuring that step size for optimizer is non negative.
- **/
 BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeStepSizeTest)
 {
   arma::mat trainData;
@@ -666,8 +658,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeStepSizeTest)
 }
 
 /**
-  * Ensuring that epochs has some effects on the output.
- **/
+ * Ensuring that epochs has some effects on the output.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMDiffEpochsTest)
 {
   arma::mat trainData = "2 0 0;"
@@ -688,9 +680,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffEpochsTest)
   mlpackMain();
 
   // Get the parameters of the output model obtained after first training.
-  const arma::mat parameters1 =
-      std::move(CLI::GetParam<LinearSVM<>*>("output_model")
-                ->Parameters());
+  const arma::mat parameters1 =std::move(
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
@@ -708,15 +699,15 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffEpochsTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVM<>*>("output_model")->Parameters();
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
 }
 
 /**
-  * Ensuring that Step size has some effects on the output.
- **/
+ * Ensuring that Step size has some effects on the output.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
 {
   arma::mat trainData = "2 0 0;"
@@ -730,7 +721,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
   SetInputParam("optimizer", std::string("psgd"));
-  SetInputParam("number_of_classes", int(2));
+  SetInputParam("num_classes", int(2));
   SetInputParam("step_size", double(0.02));
 
   // First solution.
@@ -738,9 +729,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
   mlpackMain();
 
   // Get the parameters of the output model obtained after first training.
-  const arma::mat parameters1 =
-      std::move(CLI::GetParam<LinearSVM<>*>("output_model")
-                ->Parameters());
+  const arma::mat parameters1 = std::move(
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
@@ -750,7 +740,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
   SetInputParam("optimizer", std::string("psgd"));
-  SetInputParam("number_of_classes", int(2));
+  SetInputParam("num_classes", int(2));
   SetInputParam("step_size", double(1.02));
 
   // Second solution.
@@ -759,15 +749,15 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVM<>*>("output_model")->Parameters();
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
 }
 
 /**
-  * Ensuring that tolerance has some effects on the output.
- **/
+ * Ensuring that tolerance has some effects on the output.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
 {
   arma::mat trainData = "2 0 0;"
@@ -781,7 +771,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
   SetInputParam("optimizer", std::string("psgd"));
-  SetInputParam("number_of_classes", int(2));
+  SetInputParam("num_classes", int(2));
   SetInputParam("tolerance", double(1e-1));
 
   // First solution.
@@ -789,9 +779,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
   mlpackMain();
 
   // Get the parameters of the output model obtained after first training.
-  const arma::mat parameters1 =
-      std::move(CLI::GetParam<LinearSVM<>*>("output_model")
-                ->Parameters());
+  const arma::mat parameters1 = std::move(
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
@@ -801,7 +790,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
   SetInputParam("optimizer", std::string("psgd"));
-  SetInputParam("number_of_classes", int(2));
+  SetInputParam("num_classes", int(2));
   SetInputParam("tolerance", double(1e-10));
 
   // Second solution.
@@ -810,15 +799,15 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVM<>*>("output_model")->Parameters();
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
 }
 
 /**
-  * Ensuring that lbfgs optimizer converges to a different result than psgd.
- **/
+ * Ensuring that lbfgs optimizer converges to a different result than psgd.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMDiffOptimizerTest)
 {
   arma::mat trainData = "2 0 0;"
@@ -837,9 +826,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffOptimizerTest)
   mlpackMain();
 
   // Get the parameters of the output model obtained after first training.
-  const arma::mat parameters1 =
-      std::move(CLI::GetParam<LinearSVM<>*>("output_model")
-                ->Parameters());
+  const arma::mat parameters1 = std::move(
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
@@ -855,12 +843,11 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffOptimizerTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVM<>*>("output_model")->Parameters();
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
 }
-#endif
 
 BOOST_AUTO_TEST_SUITE_END();
 

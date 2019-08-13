@@ -23,7 +23,7 @@ using namespace mlpack;
 using namespace mlpack::svm;
 using namespace mlpack::util;
 
-PROGRAM_INFO("Linear SVM is an L2-regularized support vector machine",
+PROGRAM_INFO("Linear SVM is an L2-regularized support vector machine.",
     // Short description.
     "An implementation of linear SVM for multiclass classification. "
     "Given labeled data, a model can be trained and saved for "
@@ -45,16 +45,16 @@ PROGRAM_INFO("Linear SVM is an L2-regularized support vector machine",
     "\n\n"
     "The training data, if specified, may have class labels as its last "
     "dimension.  Alternately, the " + PRINT_PARAM_STRING("labels") + " "
-    "parameter may be used to specify a separate matrix of labels."
+    "parameter may be used to specify a separate vector of labels."
     "\n\n"
     "When a model is being trained, there are many options.  L2 regularization "
     "(to prevent overfitting) can be specified with the " +
     PRINT_PARAM_STRING("lambda") + " option, and the number of classes can be "
-    "manually specified with the " + PRINT_PARAM_STRING("number_of_classes") +
+    "manually specified with the " + PRINT_PARAM_STRING("num_classes") +
     "and if an intercept term is not desired in the model, the " +
     PRINT_PARAM_STRING("no_intercept") + " parameter can be specified."
     "Margin of difference between correct class and other classes can "
-    "be specified with the" + PRINT_PARAM_STRING("delta") + "option."
+    "be specified with the " + PRINT_PARAM_STRING("delta") + " option."
     "The optimizer used to train the model can be specified with the " +
     PRINT_PARAM_STRING("optimizer") + " parameter.  Available options are "
     "'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS"
@@ -85,7 +85,7 @@ PROGRAM_INFO("Linear SVM is an L2-regularized support vector machine",
     PRINT_MODEL("lsvm_model") + "', the following command may be used:"
     "\n\n" +
     PRINT_CALL("linear_svm", "training", "data", "labels", "labels",
-        "lambda", 0.1, "delta", 1.0, "number_of_classes", 0,
+        "lambda", 0.1, "delta", 1.0, "num_classes", 0,
         "output_model", "lsvm_model") +
     "\n\n"
     "Then, to use that model to predict classes for the dataset '" +
@@ -112,7 +112,7 @@ PARAM_DOUBLE_IN("lambda", "L2-regularization parameter for training.", "L",
     0.0001);
 PARAM_DOUBLE_IN("delta", "Margin of difference between correct class and other "
     "classes.", "d", 1.0);
-PARAM_INT_IN("number_of_classes", "Number of classes for classification; if "
+PARAM_INT_IN("num_classes", "Number of classes for classification; if "
     "unspecified (or 0), the number of classes found in the labels will be "
     "used.", "c", 0);
 PARAM_FLAG("no_intercept", "Do not add the intercept term to the model.", "N");
@@ -130,10 +130,25 @@ PARAM_INT_IN("epochs", "Maximum number of full epochs over dataset for "
     "psgd", "E", 50);
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "r", 0);
 
+class LinearSVMModel
+{
+ public:
+  arma::Col<size_t> mappings;
+  LinearSVM<> svm;
+
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & BOOST_SERIALIZATION_NVP(mappings);
+    ar & BOOST_SERIALIZATION_NVP(svm);
+  }
+};
+
+
 // Model loading/saving.
-PARAM_MODEL_IN(LinearSVM<>, "input_model", "Existing model "
+PARAM_MODEL_IN(LinearSVMModel, "input_model", "Existing model "
     "(parameters).", "m");
-PARAM_MODEL_OUT(LinearSVM<>, "output_model", "Output for trained "
+PARAM_MODEL_OUT(LinearSVMModel, "output_model", "Output for trained "
     "linear svm model.", "M");
 
 // Testing.
@@ -175,11 +190,11 @@ static void mlpackMain()
 
   // Max Iterations needs to be positive.
   RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },
-      true, "max_iterations must be positive or zero");
+      true, "max_iterations must be non-negative");
 
   // Tolerance needs to be positive.
   RequireParamValue<double>("tolerance", [](double x) { return x >= 0.0; },
-      true, "tolerance must be positive or zero");
+      true, "tolerance must be non-negative");
 
   // Optimizer has to be L-BFGS or parallel SGD.
   RequireParamInSet<string>("optimizer", { "lbfgs", "psgd" },
@@ -208,16 +223,25 @@ static void mlpackMain()
     }
   }
 
+  if (optimizerType != "lbfgs")
+  {
+    if (CLI::HasParam("max_iterations"))
+    {
+      Log::Warn << PRINT_PARAM_STRING("max_iterations") << " ignored because "
+          << "optimizer type is not 'lbfgs'." << std::endl;
+    }
+  }
+
   // Step Size must be positive.
   RequireParamValue<double>("step_size", [](double x) { return x >= 0.0; },
       true, "step size must be positive");
 
   // Lambda must be positive.
   RequireParamValue<double>("lambda", [](double x) { return x >= 0.0; },
-      true, "lambda must be positive or zero");
+      true, "lambda must be non-negative");
 
   // Number of Classes must be Non-Negative
-  RequireParamValue<int>("number_of_classes", [](int x) { return x >= 0; },
+  RequireParamValue<int>("num_classes", [](int x) { return x >= 0; },
                          true, "number of classes must be greater than or "
                          "equal to 0 (equal to 0 in case of unspecified.)");
 
@@ -234,8 +258,7 @@ static void mlpackMain()
   arma::Row<size_t> labels;
   arma::Row<size_t> rawLabels;
   arma::mat testSet;
-  arma::Row<size_t> predictions;
-  arma::Col<size_t> mappings;
+  arma::Row<size_t> predictedLabels;
   size_t numClasses;
 
   // Load data matrix.
@@ -267,31 +290,31 @@ static void mlpackMain()
     trainingSet.shed_row(trainingSet.n_rows - 1);
   }
 
-  data::NormalizeLabels(rawLabels, labels, mappings);
-
   // Load the model, if necessary.
-  LinearSVM<>* model;
+  LinearSVMModel* model;
   if (CLI::HasParam("input_model"))
   {
-    model = CLI::GetParam<LinearSVM<>*>("input_model");
+    model = CLI::GetParam<LinearSVMModel*>("input_model");
   }
   else
   {
-    numClasses = CLI::GetParam<int>("number_of_classes") == 0 ?
-        arma::max(labels) + 1 : CLI::GetParam<int>("number_of_classes");
-    model = new LinearSVM<>(0, numClasses);
+    model = new LinearSVMModel();
   }
+
+  data::NormalizeLabels(rawLabels, labels, model->mappings);
+  numClasses = CLI::GetParam<int>("num_classes") == 0 ?
+      arma::max(labels) + 1 : CLI::GetParam<int>("num_classes");
 
   // Now, do the training.
   if (CLI::HasParam("training"))
   {
-    model->Lambda() = lambda;
-    model->Delta() = delta;
-    numClasses = model->NumClasses();
+    model->svm.Lambda() = lambda;
+    model->svm.Delta() = delta;
+    model->svm.NumClasses() = numClasses;
 
     if (optimizerType == "lbfgs")
     {
-      model->FitIntercept() = intercept;
+      model->svm.FitIntercept() = intercept;
 
       ens::L_BFGS lbfgsOpt;
       lbfgsOpt.MaxIterations() = maxIterations;
@@ -300,39 +323,37 @@ static void mlpackMain()
       Log::Info << "Training model with L-BFGS optimizer." << endl;
 
       // This will train the model.
-      model->Train(trainingSet, labels, numClasses, lbfgsOpt);
+      model->svm.Train(trainingSet, labels, numClasses, lbfgsOpt);
     }
     else if (optimizerType == "psgd")
     {
-      const double step_size = CLI::GetParam<double>("step_size");
+      const double stepSize = CLI::GetParam<double>("step_size");
       const bool shuffle = !CLI::HasParam("shuffle");
       const size_t maxIt = epochs * trainingSet.n_cols;
 
-      ens::ConstantStep decayPolicy(step_size);
+      ens::ConstantStep decayPolicy(stepSize);
 
-      #ifndef HAS_OPENMP
-      ens::ParallelSGD<ens::ConstantStep> psgdOpt(maxIt, trainingSet.n_cols,
-        tolerance, shuffle, decayPolicy);
-      #endif
-
-      // This optimizer is only compiled if OpenMP is used.
       #ifdef HAS_OPENMP
-      ens::ParallelSGD<ens::ConstantStep> psgdOpt(maxIt, std::ceil(
-        (float)trainingSet.n_cols / omp_get_max_threads()), tolerance, shuffle,
-        decayPolicy);
+      size_t threads = omp_get_max_threads();
+      #else
+      size_t threads = 1;
       #endif
+
+      ens::ParallelSGD<ens::ConstantStep> psgdOpt(maxIt, std::ceil(
+        (float) trainingSet.n_cols / threads), tolerance, shuffle,
+        decayPolicy);
 
       Log::Info << "Training model with ParallelSGD optimizer." << endl;
 
       // This will train the model.
-      model->Train(trainingSet, labels, numClasses, psgdOpt);
+      model->svm.Train(trainingSet, labels, numClasses, psgdOpt);
     }
   }
   if (CLI::HasParam("test"))
   {
     if (!CLI::HasParam("training"))
     {
-      numClasses = model->NumClasses();
+      numClasses = model->svm.NumClasses();
     }
     // Get the test dataset, and get predictions.
     testSet = std::move(CLI::GetParam<arma::mat>("test"));
@@ -341,9 +362,9 @@ static void mlpackMain()
 
     // Set the dimensionality according to fitintercept.
     if (intercept && optimizerType == "lbfgs")
-      trainingDimensionality = model->Parameters().n_rows - 1;
+      trainingDimensionality = model->svm.Parameters().n_rows - 1;
     else
-      trainingDimensionality = model->Parameters().n_rows;
+      trainingDimensionality = model->svm.Parameters().n_rows;
 
     // Checking the dimensionality of the test data.
     if (testSet.n_rows != trainingDimensionality)
@@ -356,14 +377,15 @@ static void mlpackMain()
     // Save class score, if desired.
     if (CLI::HasParam("score"))
     {
-      Log::Info << "Calculating class score of points in '"
-          << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
+      Log::Info << "Calculating class score of points in "
+          << CLI::GetPrintableParam<arma::mat>("test") << "." << endl;
       arma::mat score;
-      model->Classify(testSet, score);
+      model->svm.Classify(testSet, score);
       CLI::GetParam<arma::mat>("score") = std::move(score);
     }
 
-    model->Classify(testSet, predictions);
+    model->svm.Classify(testSet, predictedLabels);
+    data::RevertLabels(predictedLabels, model->mappings, predictions);
 
     // Calculate accuracy, if desired.
     if (CLI::HasParam("test_labels"))
@@ -415,5 +437,5 @@ static void mlpackMain()
     }
   }
 
-  CLI::GetParam<LinearSVM<>*>("output_model") = model;
+  CLI::GetParam<LinearSVMModel*>("output_model") = model;
 }

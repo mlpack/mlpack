@@ -48,11 +48,10 @@ LinearSVM<MatType>::LinearSVM(
     delta(delta),
     fitIntercept(fitIntercept)
 {
-  if (numClasses == 1)
+  if (numClasses <= 1)
   {
-    std::ostringstream oss;
-    oss << "LinearSVM dataset has 0 number of classes!";
-    throw std::invalid_argument(oss.str());
+    std::string error = "LinearSVM dataset has 0 number of classes!";
+    throw std::invalid_argument(error);
   }
   LinearSVMFunction<MatType>::InitializeWeights(parameters, inputSize,
       numClasses, fitIntercept);
@@ -69,12 +68,7 @@ LinearSVM<MatType>::LinearSVM(
     delta(delta),
     fitIntercept(fitIntercept)
 {
-  if (numClasses == 1)
-  {
-    std::ostringstream oss;
-    oss << "LinearSVM dataset has 0 number of classes!";
-    throw std::invalid_argument(oss.str());
-  }
+  // No training to do here.
 }
 
 template <typename MatType>
@@ -85,6 +79,12 @@ double LinearSVM<MatType>::Train(
     const size_t numClasses,
     OptimizerType optimizer)
 {
+  if (numClasses <= 1)
+  {
+    std::string error = "LinearSVM dataset has 0 number of classes!";
+    throw std::invalid_argument(error);
+  }
+
   LinearSVMFunction<MatType> svm(data, labels, numClasses, lambda, delta,
       fitIntercept);
   if (parameters.is_empty())
