@@ -301,13 +301,12 @@ static void mlpackMain()
     model = new LinearSVMModel();
   }
 
-  data::NormalizeLabels(rawLabels, labels, model->mappings);
-  numClasses = CLI::GetParam<int>("num_classes") == 0 ?
-      arma::max(labels) + 1 : CLI::GetParam<int>("num_classes");
-
   // Now, do the training.
   if (CLI::HasParam("training"))
   {
+    data::NormalizeLabels(rawLabels, labels, model->mappings);
+    numClasses = CLI::GetParam<int>("num_classes") == 0 ?
+        arma::max(labels) + 1 : CLI::GetParam<int>("num_classes");
     model->svm.Lambda() = lambda;
     model->svm.Delta() = delta;
     model->svm.NumClasses() = numClasses;
