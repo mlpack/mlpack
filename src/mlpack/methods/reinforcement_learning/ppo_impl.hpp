@@ -163,10 +163,10 @@ void PPO<
         arma::square(observation.t() - mu) / arma::pow(sigma, 3);
 
     arma::mat dTanh, dSoftP;
-    ann::TanhFunction::Deriv(dmu.t(), dTanh);
-    ann::SoftplusFunction::Deriv(dsigma.t(), dSoftP);
+    ann::TanhFunction::Deriv(dmu, dTanh);
+    ann::SoftplusFunction::Deriv(dsigma, dSoftP);
 
-    arma::mat dLoss = arma::join_cols(dTanh.t(), dSoftP.t());
+    arma::mat dLoss = arma::join_cols(dTanh, dSoftP);
 
     actorNetwork.Backward(dLoss, actorGradients);
 
