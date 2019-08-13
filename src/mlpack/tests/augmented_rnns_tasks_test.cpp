@@ -95,7 +95,8 @@ class HardCodedSortModel
   void Train(arma::field<arma::mat>& predictors,
              arma::field<arma::mat>& labels)
   {
-    assert(predictors.n_elem == labels.n_elem);
+    const bool check = predictors.n_elem == labels.n_elem;
+    assert(check == true);
   }
 
   void Predict(arma::mat& predictors,

@@ -19,8 +19,9 @@
 namespace mlpack {
 namespace data {
 
-ScalingModel::ScalingModel(const int minvalue, const int maxvalue,
-    double epsilonvalue) :
+ScalingModel::ScalingModel(const int minvalue,
+                           const int maxvalue,
+                           double epsilonvalue) :
     scalerType(0),
     minmaxscale(NULL),
     maxabsscale(NULL),
@@ -37,22 +38,22 @@ ScalingModel::ScalingModel(const int minvalue, const int maxvalue,
 
 //! Copy constructor.
 ScalingModel::ScalingModel(const ScalingModel& other) :
-    minValue(other.minValue),
     scalerType(other.scalerType),
-    maxValue(other.maxValue),
-    epsilon(other.epsilon),
     minmaxscale(other.minmaxscale == NULL ? NULL :
         new data::MinMaxScaler(*other.minmaxscale)),
     maxabsscale(other.maxabsscale == NULL ? NULL :
         new data::MaxAbsScaler(*other.maxabsscale)),
+    meanscale(other.meanscale == NULL ? NULL :
+        new data::MeanNormalization(*other.meanscale)),
+    standardscale(other.standardscale == NULL ? NULL :
+        new data::StandardScaler(*other.standardscale)),
     pcascale(other.pcascale == NULL ? NULL :
         new data::PCAWhitening(*other.pcascale)),
     zcascale(other.zcascale == NULL ? NULL :
         new data::ZCAWhitening(*other.zcascale)),
-    meanscale(other.meanscale == NULL ? NULL :
-        new data::MeanNormalization(*other.meanscale)),
-    standardscale(other.standardscale == NULL ? NULL :
-        new data::StandardScaler(*other.standardscale))
+    minValue(other.minValue),
+    maxValue(other.maxValue),
+    epsilon(other.epsilon)
 {
   // Nothing to do.
 }
@@ -62,13 +63,13 @@ ScalingModel::ScalingModel(ScalingModel&& other) :
     scalerType(other.scalerType),
     minmaxscale(other.minmaxscale),
     maxabsscale(other.maxabsscale),
-    pcascale(other.pcascale),
-    zcascale(other.zcascale),
     meanscale(other.meanscale),
     standardscale(other.standardscale),
-    epsilon(other.epsilon),
+    pcascale(other.pcascale),
+    zcascale(other.zcascale),
     minValue(other.minValue),
-    maxValue(other.maxValue)
+    maxValue(other.maxValue),
+    epsilon(other.epsilon)
 {
   other.scalerType = 0;
   other.minmaxscale = NULL;
