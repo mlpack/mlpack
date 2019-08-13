@@ -680,7 +680,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffEpochsTest)
   mlpackMain();
 
   // Get the parameters of the output model obtained after first training.
-  const arma::mat parameters1 =std::move(
+  const arma::mat parameters1 = std::move(
       CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
