@@ -30,6 +30,8 @@ class OutputParameterVisitor : public boost::static_visitor<arma::mat&>
   //! Return the output parameter set.
   template<typename LayerType>
   arma::mat& operator()(LayerType* layer) const;
+
+  arma::mat& operator()(MoreTypes layer) const;
 };
 
 } // namespace ann

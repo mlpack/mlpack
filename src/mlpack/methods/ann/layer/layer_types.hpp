@@ -163,6 +163,10 @@ template<typename InputDataType,
 >
 class MultiplyMerge;
 
+using MoreTypes = boost::variant<
+        VirtualBatchNorm<arma::mat, arma::mat>*
+>;
+
 template <typename... CustomLayers>
 using LayerTypes = boost::variant<
     Add<arma::mat, arma::mat>*,
@@ -225,7 +229,7 @@ using LayerTypes = boost::variant<
     Sequential<arma::mat, arma::mat, true>*,
     Subview<arma::mat, arma::mat>*,
     // VRClassReward<arma::mat, arma::mat>*,
-    VirtualBatchNorm<arma::mat, arma::mat>*,
+    MoreTypes,
     CustomLayers*...
 >;
 
