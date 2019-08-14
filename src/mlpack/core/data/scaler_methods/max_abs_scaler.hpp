@@ -74,7 +74,7 @@ class MaxAbsScaler
     if (scale.is_empty())
     {
       throw std::runtime_error("Call Fit() before Transform(), please"
-        " refer documentation.");
+        " refer to the documentation.");
     }
     output.copy_size(input);
     output = input.each_col() / scale;
