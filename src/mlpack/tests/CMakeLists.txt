@@ -8,6 +8,7 @@ add_executable(mlpack_test
   ann_layer_test.cpp
   ann_regularizer_test.cpp
   ann_test_tools.hpp
+  ann_visitor_test.cpp
   arma_extend_test.cpp
   armadillo_svd_test.cpp
   async_learning_test.cpp
