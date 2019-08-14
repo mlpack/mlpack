@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  cgan_impl.hpp
   gan.hpp
   gan_impl.hpp
   gan_policies.hpp

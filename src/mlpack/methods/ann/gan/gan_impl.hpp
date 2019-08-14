@@ -91,6 +91,50 @@ template<
   typename PolicyType
 >
 GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
+    arma::mat& trainData,
+    arma::mat& trainLabels,
+    Model generator,
+    Model discriminator,
+    InitializationRuleType& initializeRule,
+    Noise& noiseFunction,
+    const size_t noiseDim,
+    const size_t yDim,
+    const size_t batchSize,
+    const size_t generatorUpdateStep,
+    const size_t preTrainSize,
+    const double multiplier,
+    const double clippingParameter,
+    const double lambda) :
+    GAN(trainData,
+        generator,
+        discriminator,
+        initializeRule,
+        noiseFunction,
+        noiseDim,
+        batchSize,
+        generatorUpdateStep,
+        preTrainSize,
+        multiplier,
+        clippingParameter,
+        lambda)
+{
+  this->trainLabels = trainLabels;
+  this->yDim = yDim;
+  trainY.set_size(yDim, trainLabels.n_cols);
+
+  for (size_t i = 0; i < trainLabels.n_cols; i++)
+  {
+    trainY(trainLabels(i) - 1, i) = 1;
+  }
+}
+
+template<
+  typename Model,
+  typename InitializationRuleType,
+  typename Noise,
+  typename PolicyType
+>
+GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     const GAN& network):
     predictors(network.predictors),
     responses(network.responses),
@@ -110,7 +154,10 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     currentBatch(network.currentBatch),
     parameter(network.parameter),
     numFunctions(network.numFunctions),
-    noise(network.noise)
+    noise(network.noise),
+    trainLabels(network.trainLabels),
+    yDim(network.yDim),
+    trainY(network.trainY)
 {
   /* Nothing to do here */
 }
@@ -141,7 +188,10 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     currentBatch(network.currentBatch),
     parameter(std::move(network.parameter)),
     numFunctions(network.numFunctions),
-    noise(std::move(network.noise))
+    noise(std::move(network.noise)),
+    trainLabels(std::move(network.trainLabels)),
+    yDim(network.yDim),
+    trainY(std::move(network.trainY))
 {
   /* Nothing to do here */
 }

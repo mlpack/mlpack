@@ -68,6 +68,10 @@ class GAN
    * @param trainData The real data.
    * @param generator Generator network.
    * @param discriminator Discriminator network.
+   * @param initializeRule Instantiated InitializationRule object
+   *        for initializing the network parameter.
+   * @param noiseFunction Noise to be used for feeding the Generator.
+   * @param noiseDim The dimension of noise passed to the Generator.
    * @param batchSize Batch size to be used for training.
    * @param generatorUpdateStep Number of steps to train Discriminator
    *                            before updating Generator.
@@ -82,6 +86,43 @@ class GAN
       InitializationRuleType& initializeRule,
       Noise& noiseFunction,
       const size_t noiseDim,
+      const size_t batchSize,
+      const size_t generatorUpdateStep,
+      const size_t preTrainSize,
+      const double multiplier,
+      const double clippingParameter = 0.01,
+      const double lambda = 10.0);
+
+
+  /**
+   * Constructor for CGAN class.
+   *
+   * @param trainData The real data.
+   * @param trainLabels The labels for the real data.
+   * @param generator Generator network.
+   * @param discriminator Discriminator network.
+   * @param initializeRule Instantiated InitializationRule object
+   *        for initializing the network parameter.
+   * @param noiseFunction Noise to be used for feeding the Generator.
+   * @param noiseDim The dimension of noise passed to the Generator.
+   * @param yDim The dimension of the one-hot encoded labels passed to the
+   *        Generator.
+   * @param batchSize Batch size to be used for training.
+   * @param generatorUpdateStep Number of steps to train Discriminator
+   *                            before updating Generator.
+   * @param preTrainSize Number of pre-training steps of Discriminator.
+   * @param multiplier Ratio of learning rate of Discriminator to the Generator.
+   * @param clippingParameter Weight range for enforcing Lipschitz constraint.
+   * @param lambda Parameter for setting the gradient penalty.
+   */
+  GAN(arma::mat& trainData,
+      arma::mat& trainLabels,
+      Model generator,
+      Model discriminator,
+      InitializationRuleType& initializeRule,
+      Noise& noiseFunction,
+      const size_t noiseDim,
+      const size_t yDim,
       const size_t batchSize,
       const size_t generatorUpdateStep,
       const size_t preTrainSize,
@@ -153,6 +194,21 @@ class GAN
            const size_t batchSize);
 
   /**
+   * Evaluate function for the CGAN.
+   * This function gives the performance of the CGAN on the current input.
+   *
+   * @param parameters The parameters of the network.
+   * @param i Index of the current input.
+   * @param batchSize Variable to store the present number of inputs.
+   */
+  template<typename Policy = PolicyType>
+  typename std::enable_if<std::is_same<Policy, CGAN>::value,
+                          double>::type
+  Evaluate(const arma::mat& parameters,
+           const size_t i,
+           const size_t batchSize);
+
+  /**
    * EvaluateWithGradient function for the Standard GAN and DCGAN.
    * This function gives the performance of the Standard GAN or DCGAN on the
    * current input, while updating Gradients.
@@ -200,6 +256,24 @@ class GAN
    */
   template<typename GradType, typename Policy = PolicyType>
   typename std::enable_if<std::is_same<Policy, WGANGP>::value,
+                          double>::type
+  EvaluateWithGradient(const arma::mat& parameters,
+                       const size_t i,
+                       GradType& gradient,
+                       const size_t batchSize);
+
+  /**
+   * EvaluateWithGradient function for the CGAN.
+   * This function gives the performance of the CGAN on the
+   * current input, while updating Gradients.
+   *
+   * @param parameters The parameters of the network.
+   * @param i Index of the current input.
+   * @param gradient Variable to store the present gradient.
+   * @param batchSize Variable to store the present number of inputs.
+   */
+  template<typename GradType, typename Policy = PolicyType>
+  typename std::enable_if<std::is_same<Policy, CGAN>::value,
                           double>::type
   EvaluateWithGradient(const arma::mat& parameters,
                        const size_t i,
@@ -260,6 +334,40 @@ class GAN
            const size_t batchSize);
 
   /**
+   * Gradient function for CGAN.
+   * This function passes the gradient based on which network is being
+   * trained, i.e., Generator or Discriminator.
+   *
+   * @param parameters present parameters of the network.
+   * @param i Index of the predictors.
+   * @param gradient Variable to store the present gradient.
+   * @param batchSize Variable to store the present number of inputs.
+   */
+  template<typename Policy = PolicyType>
+  typename std::enable_if<std::is_same<Policy, CGAN>::value,
+                          void>::type
+  Gradient(const arma::mat& parameters,
+           const size_t i,
+           arma::mat& gradient,
+           const size_t batchSize);
+
+  /**
+   * Forward function for CGAN.
+   * Performs a forward pass of the noise and labels through the generator
+   * to generate the samples.
+   *
+   * @param noise The noise for generating the samples.
+   * @param labels The labels for the images to be generated.
+   * @param samples The generated samples.
+   */
+  template<typename Policy = PolicyType>
+  typename std::enable_if<std::is_same<Policy, CGAN>::value,
+                          void>::type
+  Forward(arma::mat noise,
+          const arma::mat& labels,
+          arma::mat& samples);
+
+  /**
    * Shuffle the order of function visitation. This may be called by the
    * optimizer.
    */
@@ -315,6 +423,8 @@ class GAN
  private:
   //! Locally stored parameter for training data + noise data.
   arma::mat predictors;
+  //! Locally stored one-hot encoded labels.
+  arma::mat trainY;
   //! Locally stored parameters of the network.
   arma::mat parameter;
   //! Locally stored Generator network.
@@ -355,6 +465,8 @@ class GAN
   arma::mat currentInput;
   //! Locally stored current target.
   arma::mat currentTarget;
+  //! Locally stored current one-hot encoded labels.
+  arma::mat currentTrainY;
   //! Locally-stored output parameter visitor.
   OutputParameterVisitor outputParameterVisitor;
   //! Locally-stored weight size visitor.
@@ -375,12 +487,17 @@ class GAN
   arma::mat gradientGenerator;
   //! Locally stored output of the Generator network.
   arma::mat ganOutput;
+  //! Locally stored labels for the predictors.
+  arma::mat trainLabels;
+  //! Locally stored dimension of the conditional input.
+  size_t yDim;
 };
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
+#include "cgan_impl.hpp"
 #include "gan_impl.hpp"
 #include "wgan_impl.hpp"
 #include "wgangp_impl.hpp"
