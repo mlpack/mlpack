@@ -48,6 +48,7 @@ inline typename std::enable_if<
 BiasSetVisitor::LayerSize(T* layer) const
 {
   size_t modelOffset = 0;
+
   for (size_t i = 0; i < layer->Model().size(); ++i)
   {
     modelOffset += boost::apply_visitor(BiasSetVisitor(
@@ -79,6 +80,7 @@ BiasSetVisitor::LayerSize(T* layer) const
       layer->Bias().n_rows, layer->Bias().n_cols, false, false);
 
   size_t modelOffset = layer->Bias().n_elem;
+
   for (size_t i = 0; i < layer->Model().size(); ++i)
   {
     modelOffset += boost::apply_visitor(BiasSetVisitor(

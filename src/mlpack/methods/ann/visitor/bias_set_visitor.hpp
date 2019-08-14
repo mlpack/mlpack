@@ -21,7 +21,7 @@ namespace mlpack {
 namespace ann {
 
 /**
- * BiasSetVisitor update the module bias parameters given the parameters set.
+ * BiasSetVisitor updates the module bias parameters given the parameters set.
  */
 class BiasSetVisitor : public boost::static_visitor<size_t>
 {
