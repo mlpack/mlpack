@@ -164,6 +164,15 @@ template<typename InputDataType,
 class MultiplyMerge;
 
 using MoreTypes = boost::variant<
+        Recurrent<arma::mat, arma::mat>*,
+        RecurrentAttention<arma::mat, arma::mat>*,
+        ReinforceNormal<arma::mat, arma::mat>*,
+        Reparametrization<arma::mat, arma::mat>*,
+        Select<arma::mat, arma::mat>*,
+        Sequential<arma::mat, arma::mat, false>*,
+        Sequential<arma::mat, arma::mat, true>*,
+        Subview<arma::mat, arma::mat>*,
+        VRClassReward<arma::mat, arma::mat>*,
         VirtualBatchNorm<arma::mat, arma::mat>*
 >;
 
@@ -218,17 +227,6 @@ using LayerTypes = boost::variant<
     MultiplyMerge<arma::mat, arma::mat>*,
     NegativeLogLikelihood<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
-    Recurrent<arma::mat, arma::mat>*,
-    // TODO find workaround to support more than 50 types
-    // as boost::variant can only be used for up to 50 types.
-    // RecurrentAttention<arma::mat, arma::mat>*,
-    ReinforceNormal<arma::mat, arma::mat>*,
-    Reparametrization<arma::mat, arma::mat>*,
-    Select<arma::mat, arma::mat>*,
-    Sequential<arma::mat, arma::mat, false>*,
-    Sequential<arma::mat, arma::mat, true>*,
-    Subview<arma::mat, arma::mat>*,
-    // VRClassReward<arma::mat, arma::mat>*,
     MoreTypes,
     CustomLayers*...
 >;
