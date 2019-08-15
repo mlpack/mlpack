@@ -32,6 +32,11 @@ inline size_t BiasSetVisitor::operator()(LayerType* layer) const
   return LayerSize(layer);
 }
 
+inline size_t BiasSetVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     !HasBiasCheck<T, arma::mat&(T::*)()>::value &&
