@@ -43,7 +43,7 @@ class TournamentSelection
     {
       arma::uvec contenders = arma::randi<arma::uvec>(contenderNum,
           arma::distr_param(0, fitnesses.n_elem - 1));
-      arma::sort(contenders);
+      contenders = arma::sort(contenders);
       for (size_t k = 0; k < contenderNum; k++)
       {
         double contenderProb = prob * std::pow(1 - prob, k);

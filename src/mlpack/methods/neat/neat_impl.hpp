@@ -525,7 +525,7 @@ NEAT<TaskType, ActivationFunction, SelectionPolicy>::Initialize()
   for (size_t i = 0; i < connGeneList.size(); i++)
   {
     if (connGeneList[i].InnovationID() > maxInnovID)
-      maxInnovID = connGeneList[i].InnovationID;
+      maxInnovID = connGeneList[i].InnovationID();
     if (connGeneList[i].Source() > maxNodeID)
       maxNodeID = connGeneList[i].Source();
     if (connGeneList[i].Target() > maxNodeID)
