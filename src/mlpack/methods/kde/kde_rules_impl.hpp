@@ -78,58 +78,17 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
   if ((lastQueryIndex == queryIndex) && (lastReferenceIndex == referenceIndex))
     return 0.0;
 
-  // Use PCA evaluation if possible.
-  if (pca)
-  {
-    const KDEStat& stat = traversalInfo.LastReferenceNode()->Stat();
-
-    const arma::vec& qPoint = querySet.col(queryIndex);
-    const arma::vec qProj = stat.EigVec().t() * (qPoint - stat.Mean());
-    const arma::vec qRecon = stat.EigVec() * qProj + stat.Mean();
-
-    // Base case for each reference node.
-    const arma::vec& rPoint = referenceSet.col(referenceIndex);
-    const arma::vec rProj = stat.EigVec().t() * (rPoint - stat.Mean());
-    const arma::vec rRecon = stat.EigVec() * rProj + stat.Mean();
-
-    const double maxRefMetricError = arma::norm(rRecon, 1);
-    const double maxQueryMetricError = arma::norm(qRecon, 1);
-    const double metricProjValue = metric.Evaluate(qProj, rProj);
-    const double pcaMetricValue = std::sqrt(std::pow(metricProjValue, 2) +
-                                            std::pow(maxQueryMetricError, 2));
-
-    const double minProjMetric = std::abs(pcaMetricValue - maxRefMetricError);
-    const double maxProjMetric = pcaMetricValue + maxRefMetricError;
-
-
-    const double maxK = kernel.Evaluate(minProjMetric);
-    const double minK = kernel.Evaluate(maxProjMetric);
-    const double newBound = maxK - minK;
-
-    if (newBound <= (absError + relError * minK) / referenceSet.n_cols)
-    {
-      densities(queryIndex) += kernel.Evaluate(pcaMetricValue);
-    }
-    else
-    {
-      const double distance = metric.Evaluate(querySet.col(queryIndex),
-                                              referenceSet.col(referenceIndex));
-      densities(queryIndex) += kernel.Evaluate(distance);
-    }
-  }
-  else
-  {
-    // Calculations.
-    const double distance = metric.Evaluate(querySet.col(queryIndex),
-                                            referenceSet.col(referenceIndex));
-    densities(queryIndex) += kernel.Evaluate(distance);
-  }
+  // Calculations.
+  const double distance =
+      metric.Evaluate(querySet.unsafe_col(queryIndex),
+                      referenceSet.unsafe_col(referenceIndex));
+  densities(queryIndex) += kernel.Evaluate(distance);
 
   ++baseCases;
   lastQueryIndex = queryIndex;
   lastReferenceIndex = referenceIndex;
-  traversalInfo.LastBaseCase() = 0; // distance;
-  return 0; // distance;
+  traversalInfo.LastBaseCase() = distance;
+  return distance;
 }
 
 //! Single-tree scoring function.
@@ -173,6 +132,52 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   const double maxKernel = kernel.Evaluate(minDistance);
   const double minKernel = kernel.Evaluate(maxDistance);
   const double bound = maxKernel - minKernel;
+
+  if (pca && referenceNode.IsLeaf())
+  {
+    const arma::mat& eigVec = referenceStat.EigVec();
+    const arma::vec& mean = referenceStat.Mean();
+
+    const arma::vec& qPoint = querySet.col(queryIndex);
+    const arma::vec qProj = eigVec.t() * (qPoint - mean);
+    const arma::vec qRecon = eigVec * qProj + mean;
+
+    const double maxQueryMetricError = metric.Evaluate(qPoint, qRecon);
+
+    for (size_t i = 0; i < referenceNode.NumDescendants(); ++i)
+    {
+      // Reference points.
+      const arma::vec& rPoint = referenceSet.col(referenceNode.Descendant(i));
+      const arma::vec rProj = eigVec.t() * (rPoint - mean);
+      const arma::vec rRecon = eigVec * rProj + mean;
+
+      const double maxRefMetricError = metric.Evaluate(rPoint, rRecon);
+
+      const double metricProjValue = metric.Evaluate(qProj, rProj);
+      const double pcaMetricValue = std::sqrt(std::pow(metricProjValue, 2) +
+                                              std::pow(maxQueryMetricError, 2));
+
+      const double minProjMetric = std::abs(pcaMetricValue - maxRefMetricError);
+      const double maxProjMetric = pcaMetricValue + maxRefMetricError;
+
+      const double maxK = kernel.Evaluate(minProjMetric);
+      const double minK = kernel.Evaluate(maxProjMetric);
+      const double newBound = maxK - minK;
+
+      if (newBound <= (absError + relError * minK) / referenceSet.n_cols)
+      {
+        densities(queryIndex) += kernel.Evaluate(pcaMetricValue);
+        std::cout << "PCA\n";
+      }
+      else
+      {
+        densities(queryIndex) += EvaluateKernel(qPoint, rPoint);
+        std::cout << "Classic\n";
+      }
+    }
+    // Just for testing purposes.
+    return DBL_MAX;
+  }
 
   if (bound <= (absError + relError * minKernel) / referenceSet.n_cols)
   {

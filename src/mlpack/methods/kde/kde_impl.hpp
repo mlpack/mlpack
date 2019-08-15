@@ -813,6 +813,11 @@ ComputePCA(Tree& rootNode)
       // Calculate base mean.
       stat.Mean() = arma::mean(pointsInTheNode, 1);
 
+      // Center the dataset.
+      pointsInTheNode = pointsInTheNode - arma::repmat(stat.Mean(),
+                                                       1,
+                                                       pointsInTheNode.n_cols);
+
       // Right singular values. Unused.
       arma::mat v;
 

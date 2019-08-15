@@ -1237,11 +1237,11 @@ BOOST_AUTO_TEST_CASE(GaussianBreadthDualKDTreeMonteCarloKDE)
  */
 BOOST_AUTO_TEST_CASE(GaussianSingleKDTreePCA)
 {
-  arma::mat reference = arma::randu(50, 3000);
-  arma::mat query = arma::randu(50, 100);
+  arma::mat reference = arma::randu(300, 3000);
+  arma::mat query = arma::randu(300, 100);
   arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  const double kernelBandwidth = 0.35;
+  const double kernelBandwidth = 3;
   const double relError = 0.05;
 
   // Brute force KDE.
