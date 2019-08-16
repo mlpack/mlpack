@@ -79,6 +79,7 @@ AtrousConvolution<
     dilationH(dilationH)
 {
   weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
+  padding = new Padding<>(padW, padW, padH, padH);
 }
 
 template<
@@ -124,7 +125,13 @@ void AtrousConvolution<
 
   if (padW != 0 || padH != 0)
   {
-    Pad(inputTemp, padW, padH, inputPaddedTemp);
+    inputPaddedTemp.set_size(inputTemp.n_rows + padW * 2,
+        inputTemp.n_cols + padH * 2, inputTemp.n_slices);
+    for (size_t i = 0; i < inputTemp.n_slices; ++i)
+    {
+      padding->Forward(std::move(inputTemp.slice(i)),
+          std::move(inputPaddedTemp.slice(i)));
+    }
   }
 
   size_t wConv = ConvOutSize(inputWidth, kW, dW, padW, dilationW);
