@@ -210,7 +210,7 @@ using LayerTypes = boost::variant<
     DropConnect<arma::mat, arma::mat>*,
     Dropout<arma::mat, arma::mat>*,
     AlphaDropout<arma::mat, arma::mat>*,
-    // ELU<arma::mat, arma::mat>*,
+    ELU<arma::mat, arma::mat>*,
     FlexibleReLU<arma::mat, arma::mat>*,
     Glimpse<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
