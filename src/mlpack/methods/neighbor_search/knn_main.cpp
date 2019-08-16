@@ -292,7 +292,7 @@ static void mlpackMain()
       if (queryData.n_rows != knn->Dataset().n_rows)
       {
         Log::Fatal << "Query has invalid dimensions(" << queryData.n_rows <<
-            ") whereas it should be " << knn->Dataset().n_rows << endl;
+            "); should be " << knn->Dataset().n_rows << "!" << endl;
       }
     }
 
@@ -325,9 +325,6 @@ static void mlpackMain()
       knn->Search(k, neighbors, distances);
     Log::Info << "Search complete." << endl;
 
-    // Save output.
-    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
-    CLI::GetParam<arma::mat>("distances") = std::move(distances);
     // Calculate the effective error, if desired.
     if (CLI::HasParam("true_distances"))
     {
@@ -366,6 +363,10 @@ static void mlpackMain()
 
       Log::Info << "Recall: " << KNN::Recall(neighbors, trueNeighbors) << endl;
     }
+
+    // Save output.
+    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    CLI::GetParam<arma::mat>("distances") = std::move(distances);
   }
 
   CLI::GetParam<KNNModel*>("output_model") = knn;
