@@ -40,7 +40,7 @@
 #include <mlpack/methods/ann/layer/reparametrization.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
 #include <mlpack/methods/ann/layer/subview.hpp>
-// #include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
+#include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
@@ -77,10 +77,10 @@ template<typename InputDataType,
          typename RegularizerType>
 class LinearNoBias;
 
-/*template<typename InputDataType,
+template<typename InputDataType,
          typename OutputDataType
 >
-class VirtualBatchNorm;*/
+class VirtualBatchNorm;
 
 template<typename InputDataType,
          typename OutputDataType
