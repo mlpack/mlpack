@@ -31,6 +31,11 @@ inline void DeterministicSetVisitor::operator()(LayerType* layer) const
   LayerDeterministic(layer);
 }
 
+inline void DeterministicSetVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     HasDeterministicCheck<T, bool&(T::*)(void)>::value &&

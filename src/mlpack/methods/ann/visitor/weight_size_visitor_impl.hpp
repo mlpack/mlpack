@@ -25,6 +25,11 @@ inline size_t WeightSizeVisitor::operator()(LayerType* layer) const
   return LayerSize(layer, layer->OutputParameter());
 }
 
+inline size_t WeightSizeVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
+}
+
 template<typename T, typename P>
 inline typename std::enable_if<
     !HasParametersCheck<T, P&(T::*)()>::value &&

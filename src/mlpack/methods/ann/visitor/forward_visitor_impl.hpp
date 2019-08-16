@@ -32,6 +32,11 @@ inline void ForwardVisitor::operator()(LayerType* layer) const
   layer->Forward(std::move(input), std::move(output));
 }
 
+inline void ForwardVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
+}
+
 } // namespace ann
 } // namespace mlpack
 

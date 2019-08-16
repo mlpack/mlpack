@@ -28,6 +28,8 @@ class CopyVisitor : public boost::static_visitor<LayerTypes<CustomLayers...> >
  public:
   template <typename LayerType>
   LayerTypes<CustomLayers...> operator()(LayerType*) const;
+
+  LayerTypes<CustomLayers...> operator()(MoreTypes) const;
 };
 
 } // namespace ann
