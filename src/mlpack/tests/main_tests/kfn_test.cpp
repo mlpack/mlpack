@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(KFNInvalidKTest)
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
   // Random input, some k > number of reference points.
-  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 101);
 
   Log::Fatal.ignoreInput = true;
@@ -422,33 +422,30 @@ BOOST_AUTO_TEST_CASE(KFNRandomBasisTest)
   // Random input, some k <= number of reference points.
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 10);
-  SetInputParam("algorithm", (string) "greedy");
   CLI::SetPassed("random_basis");
 
   mlpackMain();
 
-  KFNModel* randomBasisModel;
   arma::Mat<size_t> neighbors;
   arma::mat distances;
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
-  randomBasisModel  = std::move(CLI::GetParam<KFNModel*>("output_model"));
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<KFNModel*>("output_model")->RandomBasis(),
+      true);
 
   bindings::tests::CleanMemory();
 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["random_basis"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
 
   mlpackMain();
 
-  CheckMatrices(neighbors,
-      CLI::GetParam<arma::Mat<size_t>>("neighbors"));
-  CheckMatrices(distances,
-      CLI::GetParam<arma::mat>("distances"));
-  BOOST_REQUIRE_EQUAL(randomBasisModel->RandomBasis(), true);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<KFNModel*>("distances")->RandomBasis(),
-    false);
+  CheckMatrices(neighbors, CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  CheckMatrices(distances, CLI::GetParam<arma::mat>("distances"));
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<KFNModel*>("output_model")->RandomBasis(),
+      false);
 }
 
 /*
@@ -483,10 +480,10 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
   BOOST_REQUIRE_NO_THROW(mlpackMain());
 
   // True output matrices have incorrect shape.
-  arma::Mat<size_t> dummy_neighbors;
-  arma::mat dummy_distances;
-  dummy_neighbors.randu(20, 100);
-  dummy_distances.randu(20, 100);
+  arma::Mat<size_t> dummyNeighbors;
+  arma::mat dummyDistances;
+  dummyNeighbors.randu(20, 100);
+  dummyDistances.randu(20, 100);
 
   // bindings::tests::CleanMemory();
 
@@ -495,8 +492,8 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
   CLI::GetSingleton().Parameters()["true_distances"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
-  SetInputParam("true_neighbors", std::move(dummy_neighbors));
-  SetInputParam("true_distances", std::move(dummy_distances));
+  SetInputParam("true_neighbors", std::move(dummyNeighbors));
+  SetInputParam("true_distances", std::move(dummyDistances));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -596,8 +593,8 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
 
     if (i == 0)
     {
-      neighborsCompare = std::move(CLI::GetParam<arma::Mat<size_t>>
-          ("neighbors"));
+      neighborsCompare = std::move(
+          CLI::GetParam<arma::Mat<size_t>>("neighbors"));
       distancesCompare = std::move(CLI::GetParam<arma::mat>("distances"));
     }
     else
@@ -625,13 +622,16 @@ BOOST_AUTO_TEST_CASE(KFNDifferentLeafSizes)
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
-  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 10);
   SetInputParam("leaf_size", (int) 1);
-  KFNModel* output_model;
-  output_model = std::move(CLI::GetParam<KFNModel*>("output_model"));
 
   mlpackMain();
+
+  BOOST_CHECK_EQUAL(CLI::GetParam<KFNModel*>("output_model")->LeafSize(),
+      (int) 1);
+
+  bindings::tests::CleanMemory();
 
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
@@ -645,9 +645,8 @@ BOOST_AUTO_TEST_CASE(KFNDifferentLeafSizes)
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  BOOST_CHECK_EQUAL(output_model->LeafSize(), (int) 1);
   BOOST_CHECK_EQUAL(CLI::GetParam<KFNModel*>("output_model")->LeafSize(),
-    (int) 10);
+      (int) 10);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

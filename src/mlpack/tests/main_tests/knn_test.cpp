@@ -258,8 +258,8 @@ BOOST_AUTO_TEST_CASE(KNNInvalidRhoTest)
 }
 
 /**
- * Make sure that dimensions of the neighbors and distances
- * matrices are correct given a value of k.
+ * Make sure that dimensions of the neighbors and distances matrices are correct
+ * given a value of k.
  */
 BOOST_AUTO_TEST_CASE(KNNOutputDimensionTest)
 {
@@ -377,7 +377,7 @@ BOOST_AUTO_TEST_CASE(KNNDifferentRhoTest)
   SetInputParam("k", (int) 10);
   SetInputParam("tree_type", (string) "spill");
   SetInputParam("tau", (double) 0.3);
-  SetInputParam("rho", (double) 0.2);
+  SetInputParam("rho", (double) 0.01);
   SetInputParam("algorithm", (string) "greedy");
 
   mlpackMain();
@@ -393,7 +393,7 @@ BOOST_AUTO_TEST_CASE(KNNDifferentRhoTest)
   CLI::GetSingleton().Parameters()["rho"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
-  SetInputParam("rho", (double) 0.8);
+  SetInputParam("rho", (double) 0.99);
 
   mlpackMain();
 
@@ -458,27 +458,25 @@ BOOST_AUTO_TEST_CASE(KNNRandomBasisTest)
   mlpackMain();
 
   arma::Mat<size_t> neighbors;
-  KNNModel* randomBasisModel;
   arma::mat distances;
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
-  randomBasisModel  = std::move(CLI::GetParam<KNNModel*>("output_model"));
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<KNNModel*>("output_model")->RandomBasis(),
+      true);
 
   bindings::tests::CleanMemory();
 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["random_basis"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
 
   mlpackMain();
 
-  CheckMatrices(neighbors,
-      CLI::GetParam<arma::Mat<size_t>>("neighbors"));
-  CheckMatrices(distances,
-      CLI::GetParam<arma::mat>("distances"));
-  BOOST_REQUIRE_EQUAL(randomBasisModel->RandomBasis(), true);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<KNNModel*>("distances")->RandomBasis(),
-    false);
+  CheckMatrices(neighbors, CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  CheckMatrices(distances, CLI::GetParam<arma::mat>("distances"));
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<KNNModel*>("output_model")->RandomBasis(),
+      false);
 }
 
 /*
@@ -567,8 +565,8 @@ BOOST_AUTO_TEST_CASE(KNNAllAlgorithmsTest)
 
     if (i == 0)
     {
-      neighborsCompare = std::move(CLI::GetParam<arma::Mat<size_t>>
-        ("neighbors"));
+      neighborsCompare = std::move(
+          CLI::GetParam<arma::Mat<size_t>>("neighbors"));
       distancesCompare = std::move(CLI::GetParam<arma::mat>("distances"));
     }
     else
@@ -625,8 +623,8 @@ BOOST_AUTO_TEST_CASE(KNNAllTreeTypesTest)
 
     if (i == 0)
     {
-      neighborsCompare = std::move(CLI::GetParam<arma::Mat<size_t>>
-        ("neighbors"));
+      neighborsCompare = std::move(
+          CLI::GetParam<arma::Mat<size_t>>("neighbors"));
       distancesCompare = std::move(CLI::GetParam<arma::mat>("distances"));
     }
     else
@@ -654,7 +652,7 @@ BOOST_AUTO_TEST_CASE(KNNDifferentLeafSizes)
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
-  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 10);
   SetInputParam("leaf_size", (int) 1);
 
