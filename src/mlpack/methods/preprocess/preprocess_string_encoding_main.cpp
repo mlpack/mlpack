@@ -280,8 +280,15 @@ static void mlpackMain()
   const string delimiter = CLI::GetParam<string> ("delimiter");
   data::SplitByAnyOf tokenizer(delimiter);
 
-  // Convert NonNumeric to their respective encodings.
-  const string encodingType = CLI::GetParam<string>("encoding_type");
+
+  if (CLI::HasParam("encoding_type"))
+  {
+    RequireParamValue<string>("encoding_type", [](const string et)
+        { return et == "DictionaryEncoding" || et == "BagOfWordsEncoding" 
+        || et == "TfIdfEncoding"; }, true, "Encoding Type should be either"
+        " BagOfWordsEncoding or DictionaryEncoding or TfIdfEncoding ");
+  }
+  const string& encodingType = CLI::GetParam<string>("encoding_type");
   arma::mat output;
   size_t encodedColumnCount = 0;
   for (auto& column : nonNumericInput)
@@ -310,11 +317,18 @@ static void mlpackMain()
     {
       // Tfidf Encoding.
       const bool smoothIdf = CLI::GetParam<bool>("smooth_idf");
+      if (CLI::HasParam("tfidf_encoding_type"))
+      {
+        RequireParamValue<string>("tfidf_encoding_type", [](const string et)
+            { return et == "RawCount" || et == "Binary" || et == "SublinearTf" 
+            || et == "TermFrequency"; }, true, "Tf Idf encoding type should be "
+            " either RawCount, Binary, SublinearTf or TermFrequency ");
+      }
       const string tfidfEncodingType = CLI::GetParam<string>("tfidf_encoding_type");
       if ("RawCount" == tfidfEncodingType)
       {
           data::TfIdfEncoding<data::SplitByAnyOf::TokenType>
-            encoder(data::TfIdfEncodingPolicy::TfTypes::RAW_COUNT, smoothIdf);
+            encoder(data::TfIdfEncodingPolicy::TfTypes::RAW_COUNT, !smoothIdf);
           encoder.Encode(column.second, output, tokenizer);
           encodedResult[column.first] = std::move(output);
           // Calculate the no of features after encoded
@@ -323,7 +337,7 @@ static void mlpackMain()
       else if("Binary" == tfidfEncodingType)
       {
         data::TfIdfEncoding<data::SplitByAnyOf::TokenType> 
-          encoder(data::TfIdfEncodingPolicy::TfTypes::BINARY, smoothIdf);
+          encoder(data::TfIdfEncodingPolicy::TfTypes::BINARY, !smoothIdf);
 
         encoder.Encode(column.second, output, tokenizer);
         encodedResult[column.first] = std::move(output);
@@ -333,7 +347,7 @@ static void mlpackMain()
       else if("SublinearTf" == tfidfEncodingType)
       {
         data::TfIdfEncoding<data::SplitByAnyOf::TokenType>
-          encoder(data::TfIdfEncodingPolicy::TfTypes::SUBLINEAR_TF, smoothIdf);
+          encoder(data::TfIdfEncodingPolicy::TfTypes::SUBLINEAR_TF, !smoothIdf);
         encoder.Encode(column.second, output, tokenizer);
         encodedResult[column.first] = std::move(output);
         // Calculate the no of features after encoded
@@ -342,7 +356,7 @@ static void mlpackMain()
       else 
       {
         data::TfIdfEncoding<data::SplitByAnyOf::TokenType>
-          encoder(data::TfIdfEncodingPolicy::TfTypes::TERM_FREQUENCY, smoothIdf);
+          encoder(data::TfIdfEncodingPolicy::TfTypes::TERM_FREQUENCY, !smoothIdf);
         encoder.Encode(column.second, output, tokenizer);
         encodedResult[column.first] = std::move(output);
         // Calculate the no of features after encoded
