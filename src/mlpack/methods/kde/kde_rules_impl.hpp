@@ -167,7 +167,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     // Auxiliary variables.
     arma::vec sample;
     size_t m = initialSampleSize;
-    double meanSample;
+    double meanSample = 0;
     bool useMonteCarloPredictions = true;
 
     // Resample as long as confidence is not high enough.
@@ -366,7 +366,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     arma::vec sample;
     arma::vec means = arma::zeros(queryNode.NumDescendants());
     size_t m;
-    double meanSample;
+    double meanSample = 0;
     bool useMonteCarloPredictions = true;
 
     // Pick a sample for every query node.
