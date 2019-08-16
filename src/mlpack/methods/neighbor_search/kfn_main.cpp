@@ -154,8 +154,9 @@ static void mlpackMain()
 
   // Sanity check on epsilon.
   double epsilon = CLI::GetParam<double>("epsilon");
-  RequireParamValue<double>("epsilon", [](double x) { return x >= 0.0; }, true,
-      "epsilon must be positive");
+  RequireParamValue<double>("epsilon", [](double x)
+      { return x >= 0.0 && x < 1; }, true,
+          "epsilon must be in the range [0, 1).");
 
   // Sanity check on percentage.
   const double percentage = CLI::GetParam<double>("percentage");
@@ -271,6 +272,11 @@ static void mlpackMain()
       Log::Info << "Using query data from '"
           << CLI::GetPrintableParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
+      if (queryData.n_rows != kfn->Dataset().n_rows)
+      {
+        Log::Fatal << "Query has invalid dimensions(" << queryData.n_rows <<
+            ") whereas it should be " << kfn->Dataset().n_rows << endl;
+      }
     }
 
     // Sanity check on k value: must be greater than 0, must be less than or
@@ -303,8 +309,8 @@ static void mlpackMain()
     Log::Info << "Search complete." << endl;
 
     // Save output.
-    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
-    CLI::GetParam<arma::mat>("distances") = std::move(distances);
+    CLI::GetParam<arma::Mat<size_t>>("neighbors") = neighbors;
+    CLI::GetParam<arma::mat>("distances") = distances;
 
     // Calculate the effective error, if desired.
     if (CLI::HasParam("true_distances"))

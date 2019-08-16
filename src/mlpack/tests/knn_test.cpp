@@ -1100,6 +1100,7 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
   models[26] = KNNModel(KNNModel::TreeTypes::OCTREE, true);
   models[27] = KNNModel(KNNModel::TreeTypes::OCTREE, false);
 
+
   for (size_t j = 0; j < 3; ++j)
   {
     // Get a baseline.
@@ -1183,7 +1184,9 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
   models[26] = KNNModel(KNNModel::TreeTypes::OCTREE, true);
   models[27] = KNNModel(KNNModel::TreeTypes::OCTREE, false);
 
+
   for (size_t j = 0; j < 3; ++j)
+
   {
     // Get a baseline.
     KNN knn(referenceData);
