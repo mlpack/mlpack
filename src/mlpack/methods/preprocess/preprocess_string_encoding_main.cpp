@@ -52,8 +52,8 @@ PROGRAM_INFO("preprocess_string_encoding",
 
 PARAM_STRING_IN_REQ("actual_dataset", "File containing the reference dataset.",
     "t");
-PARAM_STRING_IN_REQ("preprocess_dataset", "File containing the preprocess "
-    "dataset.", "o");
+PARAM_STRING_IN_REQ("preprocess_dataset", "File containing the preprocess or"
+    "encoded dataset.", "o");
 PARAM_STRING_IN("column_delimiter", "delimeter used to seperate Column in files"
     "example '\\t' for '.tsv' and ',' for '.csv'.", "d", "\t");
 PARAM_STRING_IN("delimiter", "A set of chars that is used as delimeter to"
@@ -170,9 +170,9 @@ static unordered_set<size_t> GetColumnIndices(const
  *
  * @param outputFilename Name of the file to save the data into.
  * @param dataset The actual dataset which was read from file.
- * @param nonNumericInput The preproccessed data
  * @param columnDelimiter Delimiter used to separate columns of the file.
  * @param dimesnions Dimesnion which we non numeric or of type string.
+ * @param encodedResult Collection of arma matrices havinf encoded Results.
  */
 static void WriteOutput(const string& outputFilename,
                         const vector<vector<string>>& dataset,
@@ -224,7 +224,6 @@ static void mlpackMain()
   // Parse command line options.
   // Extracting the filename
   const string filename = CLI::GetParam<string>("actual_dataset");
-  // This is very dangerous, Let's add a check tommorrow.
   string columnDelimiter;
   if (CLI::HasParam("column_delimiter"))
   {
@@ -290,7 +289,6 @@ static void mlpackMain()
   }
   const string& encodingType = CLI::GetParam<string>("encoding_type");
   arma::mat output;
-  size_t encodedColumnCount = 0;
   for (auto& column : nonNumericInput)
   {
 
@@ -300,8 +298,6 @@ static void mlpackMain()
       data::DictionaryEncoding<data::SplitByAnyOf::TokenType> encoder;
       encoder.Encode(column.second, output, tokenizer);
       encodedResult[column.first] = std::move(output);
-      // Calculate the no of features after encoded
-      encodedColumnCount += output.n_cols;
     }
     else if(encodingType == "BagOfWordsEncoding")
     {
@@ -310,8 +306,6 @@ static void mlpackMain()
 
       encoder.Encode(column.second, output, tokenizer);
       encodedResult[column.first] = std::move(output);
-      // Calculate the no of features after encoded
-      encodedColumnCount += output.n_cols;
     }
     else
     {
@@ -331,8 +325,6 @@ static void mlpackMain()
             encoder(data::TfIdfEncodingPolicy::TfTypes::RAW_COUNT, !smoothIdf);
           encoder.Encode(column.second, output, tokenizer);
           encodedResult[column.first] = std::move(output);
-          // Calculate the no of features after encoded
-          encodedColumnCount += output.n_cols;
       }
       else if("Binary" == tfidfEncodingType)
       {
@@ -341,8 +333,6 @@ static void mlpackMain()
 
         encoder.Encode(column.second, output, tokenizer);
         encodedResult[column.first] = std::move(output);
-        // Calculate the no of features after encoded
-        encodedColumnCount += output.n_cols;
       }
       else if("SublinearTf" == tfidfEncodingType)
       {
@@ -350,8 +340,6 @@ static void mlpackMain()
           encoder(data::TfIdfEncodingPolicy::TfTypes::SUBLINEAR_TF, !smoothIdf);
         encoder.Encode(column.second, output, tokenizer);
         encodedResult[column.first] = std::move(output);
-        // Calculate the no of features after encoded
-        encodedColumnCount += output.n_cols;
       }
       else 
       {
@@ -359,8 +347,6 @@ static void mlpackMain()
           encoder(data::TfIdfEncodingPolicy::TfTypes::TERM_FREQUENCY, !smoothIdf);
         encoder.Encode(column.second, output, tokenizer);
         encodedResult[column.first] = std::move(output);
-        // Calculate the no of features after encoded
-        encodedColumnCount += output.n_cols;
       }
     }
   }
