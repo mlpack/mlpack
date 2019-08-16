@@ -84,6 +84,9 @@ BOOST_AUTO_TEST_CASE(KFNInvalidKTest)
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
+  delete CLI::GetParam<KFNModel*>("output_model");
+  CLI::GetParam<KFNModel*>("output_model") = NULL;
+
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["k"].wasPassed = false;
 
@@ -468,9 +471,8 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
 
-  bindings::tests::CleanMemory();
-
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  delete CLI::GetParam<KFNModel*>("output_model");
+  CLI::GetParam<KFNModel*>("output_model") = NULL;
 
   SetInputParam("reference", referenceData);
   SetInputParam("true_neighbors", neighbors);
@@ -485,7 +487,8 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
   dummyNeighbors.randu(20, 100);
   dummyDistances.randu(20, 100);
 
-  // bindings::tests::CleanMemory();
+  delete CLI::GetParam<KFNModel*>("output_model");
+  CLI::GetParam<KFNModel*>("output_model") = NULL;
 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["true_neighbors"].wasPassed = false;
@@ -549,6 +552,9 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
       CheckMatrices(distancesCompare, distances);
     }
 
+    delete CLI::GetParam<KFNModel*>("output_model");
+    CLI::GetParam<KFNModel*>("output_model") = NULL;
+
     // Reset passed parameters.
     CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
     CLI::GetSingleton().Parameters()["query"].wasPassed = false;
@@ -605,6 +611,9 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
       CheckMatrices(neighborsCompare, neighbors);
       CheckMatrices(distancesCompare, distances);
     }
+
+    delete CLI::GetParam<KFNModel*>("output_model");
+    CLI::GetParam<KFNModel*>("output_model") = NULL;
 
     // Reset passed parameters.
     CLI::GetSingleton().Parameters()["reference"].wasPassed = false;

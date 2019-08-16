@@ -578,6 +578,9 @@ BOOST_AUTO_TEST_CASE(KNNAllAlgorithmsTest)
       CheckMatrices(distancesCompare, distances);
     }
 
+    delete CLI::GetParam<KNNModel*>("output_model");
+    CLI::GetParam<KNNModel*>("output_model") = NULL;
+
     // Reset passed parameters.
     CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
     CLI::GetSingleton().Parameters()["query"].wasPassed = false;
@@ -635,6 +638,9 @@ BOOST_AUTO_TEST_CASE(KNNAllTreeTypesTest)
       CheckMatrices(neighborsCompare, neighbors);
       CheckMatrices(distancesCompare, distances);
     }
+
+    delete CLI::GetParam<KNNModel*>("output_model");
+    CLI::GetParam<KNNModel*>("output_model") = NULL;
 
     // Reset passed parameters.
     CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
