@@ -79,7 +79,7 @@ PROGRAM_INFO("Linear SVM is an L2-regularized support vector machine.",
     "from the linear SVM model may be saved with the " +
     PRINT_PARAM_STRING("predictions") + " parameter." +
     "\n\n"
-    "As an example, to train a LinaerSVM model on the data '" +
+    "As an example, to train a LinaerSVM on the data '" +
     PRINT_DATASET("data") + "' with labels '" + PRINT_DATASET("labels") + "' "
     "with L2 regularization of 0.1, saving the model to '" +
     PRINT_MODEL("lsvm_model") + "', the following command may be used:"
@@ -156,8 +156,8 @@ PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
 PARAM_UROW_IN("test_labels", "Matrix containing test labels.", "A");
 PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
     "the predictions for the test set will be saved.", "P");
-PARAM_MATRIX_OUT("score", "If test data is specified, this "
-    "matrix is where the class score for the test set will be saved.",
+PARAM_MATRIX_OUT("probabilities", "If test data is specified, this "
+    "matrix is where the class probabilities for the test set will be saved.",
     "p");
 
 static void mlpackMain()
@@ -181,11 +181,11 @@ static void mlpackMain()
 
   // If no output file is given, the user should know that the model will not be
   // saved, but only if a model is being trained.
-  RequireAtLeastOnePassed({ "output_model", "predictions", "score"},
+  RequireAtLeastOnePassed({ "output_model", "predictions", "probabilities"},
       false, "no output will be saved");
 
   ReportIgnoredParam({{ "test", false }}, "predictions");
-  ReportIgnoredParam({{ "test", false }}, "score");
+  ReportIgnoredParam({{ "test", false }}, "probabilities");
   ReportIgnoredParam({{ "test", false }}, "test_labels");
 
   // Max Iterations needs to be positive.
@@ -233,7 +233,7 @@ static void mlpackMain()
   }
 
   // Step Size must be positive.
-  RequireParamValue<double>("step_size", [](double x) { return x >= 0.0; },
+  RequireParamValue<double>("step_size", [](double x) { return x > 0.0; },
       true, "step size must be positive");
 
   // Lambda must be positive.
@@ -306,7 +306,7 @@ static void mlpackMain()
   {
     data::NormalizeLabels(rawLabels, labels, model->mappings);
     numClasses = CLI::GetParam<int>("num_classes") == 0 ?
-        arma::max(labels) + 1 : CLI::GetParam<int>("num_classes");
+        model->mappings.n_elem + 1 : CLI::GetParam<int>("num_classes");
     model->svm.Lambda() = lambda;
     model->svm.Delta() = delta;
     model->svm.NumClasses() = numClasses;
@@ -333,9 +333,15 @@ static void mlpackMain()
       ens::ConstantStep decayPolicy(stepSize);
 
       #ifdef HAS_OPENMP
-      size_t threads = omp_get_max_threads();
+        #ifdef BUILD_TESTS
+        size_t threads = 1;
+        #else
+        size_t threads = omp_get_max_threads();
+        #endif
       #else
       size_t threads = 1;
+      Log::Warn << "Using parallel SGD, but OpenMP support is "
+                << "not available!" << endl;
       #endif
 
       ens::ParallelSGD<ens::ConstantStep> psgdOpt(maxIt, std::ceil(
@@ -373,14 +379,14 @@ static void mlpackMain()
           << trainingDimensionality << ")!" << endl;
     }
 
-    // Save class score, if desired.
-    if (CLI::HasParam("score"))
+    // Save class probabilities, if desired.
+    if (CLI::HasParam("probabilities"))
     {
-      Log::Info << "Calculating class score of points in "
+      Log::Info << "Calculating class probabilities of points in "
           << CLI::GetPrintableParam<arma::mat>("test") << "." << endl;
-      arma::mat score;
-      model->svm.Classify(testSet, score);
-      CLI::GetParam<arma::mat>("score") = std::move(score);
+      arma::mat probabilities;
+      model->svm.Classify(testSet, probabilities);
+      CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
     }
 
     model->svm.Classify(testSet, predictedLabels);

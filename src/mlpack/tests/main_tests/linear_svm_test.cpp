@@ -315,7 +315,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeLambdaTest)
   SetInputParam("labels", std::move(trainLabels));
   SetInputParam("lambda", double(-0.01));
 
-  // Maximum iterations is negative. It should a runtime error.
+  // Lambda is negative. It should a runtime error.
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
@@ -338,7 +338,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeNumberOfClassesTest)
   SetInputParam("labels", std::move(trainLabels));
   SetInputParam("num_classes", int(-1));
 
-  // Maximum iterations is negative. It should a runtime error.
+  // Number of classes is negative. It should a runtime error.
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
@@ -384,7 +384,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeDeltaTest)
   SetInputParam("labels", std::move(trainLabels));
   SetInputParam("delta", double(-0.01));
 
-  // Tolerance is negative. It should throw a runtime error.
+  // Delta is negative. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
@@ -407,7 +407,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeEpochsTest)
   SetInputParam("labels", std::move(trainLabels));
   SetInputParam("epochs", int(-1));
 
-  // Tolerance is negative. It should throw a runtime error.
+  // Epochs is negative. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
@@ -429,7 +429,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMZeroNumberOfClassesTest)
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
 
-  // Step size for optimizer is negative. It should throw a runtime error.
+  // Number of classes for optimizer is zero.
+  // It should throw a invalid_argument error.
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::invalid_argument);
   Log::Fatal.ignoreInput = false;
@@ -452,7 +453,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMOptimizerTest)
   SetInputParam("labels", std::move(trainLabels));
   SetInputParam("optimizer", std::string("hello"));
 
-  // Tolerance is negative. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
@@ -476,6 +476,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffMaxIterationsTest)
   SetInputParam("max_iterations", int(1));
 
   // First solution.
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Get the parameters of the output model obtained after first training.
@@ -492,6 +493,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffMaxIterationsTest)
   SetInputParam("max_iterations", int(100));
 
   // Second solution.
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Get the parameters of the output model obtained after second training.
@@ -520,6 +522,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffLambdaTest)
   SetInputParam("lambda", double(0.001));
 
   // First solution.
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Get the parameters of the output model obtained after first training.
@@ -536,6 +539,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffLambdaTest)
   SetInputParam("lambda", double(1000));
 
   // Second solution.
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Get the parameters of the output model obtained after second training.
@@ -564,6 +568,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffDeltaTest)
   SetInputParam("delta", double(1.0));
 
   // First solution.
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Get the parameters of the output model obtained after first training.
@@ -580,6 +585,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffDeltaTest)
   SetInputParam("delta", double(1000));
 
   // Second solution.
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Get the parameters of the output model obtained after second training.
@@ -607,6 +613,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTest)
   SetInputParam("labels", trainLabels);
 
   // First solution.
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Get the parameters of the output model obtained after first training.
@@ -623,6 +630,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTest)
   SetInputParam("no_intercept", bool(true));
 
   // Second solution.
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Get the parameters of the output model obtained after second training.
@@ -673,7 +681,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffEpochsTest)
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
   SetInputParam("optimizer", std::string("psgd"));
-  SetInputParam("epochs", int(10));
+  SetInputParam("epochs", int(5));
 
   // First solution.
   mlpack::math::FixedRandomSeed();
@@ -691,7 +699,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffEpochsTest)
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
   SetInputParam("optimizer", std::string("psgd"));
-  SetInputParam("epochs", int(50));
+  SetInputParam("epochs", int(10));
 
   // Second solution.
   mlpack::math::FixedRandomSeed();
@@ -823,6 +831,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffOptimizerTest)
   SetInputParam("optimizer", std::string("lbfgs"));
 
   // First solution.
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Get the parameters of the output model obtained after first training.
@@ -839,6 +848,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffOptimizerTest)
   SetInputParam("optimizer", std::string("psgd"));
 
   // Second solution.
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Get the parameters of the output model obtained after second training.
