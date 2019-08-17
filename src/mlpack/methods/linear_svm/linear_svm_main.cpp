@@ -306,7 +306,7 @@ static void mlpackMain()
   {
     data::NormalizeLabels(rawLabels, labels, model->mappings);
     numClasses = CLI::GetParam<int>("num_classes") == 0 ?
-        model->mappings.n_elem + 1 : CLI::GetParam<int>("num_classes");
+        model->mappings.n_elem : CLI::GetParam<int>("num_classes");
     model->svm.Lambda() = lambda;
     model->svm.Delta() = delta;
     model->svm.NumClasses() = numClasses;
