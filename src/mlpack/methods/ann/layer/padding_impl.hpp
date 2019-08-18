@@ -42,10 +42,10 @@ void Padding<InputDataType, OutputDataType>::Forward(
 {
   nRows = input.n_rows;
   nCols = input.n_cols;
-  output = arma::zeros(input.n_rows + padWLeft + padWRight,
-      input.n_cols + padHTop + padHBottom);
-  output.submat(padWLeft, padHTop, padWLeft + input.n_rows - 1,
-      padHTop + input.n_cols - 1) = input;
+  output = arma::zeros(nRows + padWLeft + padWRight,
+      nCols + padHTop + padHBottom);
+  output.submat(padWLeft, padHTop, padWLeft + nRows - 1,
+      padHTop + nCols - 1) = input;
 }
 
 template<typename InputDataType, typename OutputDataType>

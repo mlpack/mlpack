@@ -82,7 +82,7 @@ class Padding
   OutputDataType& Delta() { return delta; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);

@@ -122,6 +122,7 @@ void Convolution<
   {
     inputPaddedTemp.set_size(inputTemp.n_rows + padW * 2,
         inputTemp.n_cols + padH * 2, inputTemp.n_slices);
+
     for (size_t i = 0; i < inputTemp.n_slices; ++i)
     {
       padding->Forward(std::move(inputTemp.slice(i)),
