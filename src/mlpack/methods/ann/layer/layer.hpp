@@ -32,6 +32,7 @@
 #include "recurrent_attention.hpp"
 #include "reparametrization.hpp"
 #include "sequential.hpp"
+#include "spectral_norm.hpp"
 #include "subview.hpp"
 #include "concat.hpp"
 #include "vr_class_reward.hpp"

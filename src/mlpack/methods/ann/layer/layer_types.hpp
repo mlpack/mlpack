@@ -163,6 +163,12 @@ template<typename InputDataType,
 >
 class MultiplyMerge;
 
+template<typename InputDataType,
+         typename OutputDataType,
+         typename... CustomLayers
+>
+class SpectralNorm;
+
 using MoreTypes = boost::variant<
         Recurrent<arma::mat, arma::mat>*,
         RecurrentAttention<arma::mat, arma::mat>*,
@@ -227,6 +233,7 @@ using LayerTypes = boost::variant<
     MultiplyMerge<arma::mat, arma::mat>*,
     NegativeLogLikelihood<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
+    SpectralNorm<arma::mat, arma::mat>*,
     MoreTypes,
     CustomLayers*...
 >;
