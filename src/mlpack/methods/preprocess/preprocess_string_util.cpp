@@ -1,5 +1,5 @@
 /**
- * @file preprocess_string_util.hpp
+ * @file preprocess_string_util.cpp
  * @author Jeffin Sam
  *
  * A CLI executable to encode string dataset.
@@ -9,9 +9,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
-#ifndef MLPACK_CORE_DATA_STRING_UTIL_HPP
-#define MLPACK_CORE_DATA_STRING_UTIL_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
@@ -29,9 +26,6 @@ using namespace mlpack;
 using namespace mlpack::util;
 using namespace arma;
 using namespace std;
-
-namespace mlpack {
-namespace data {
 
 /**
  * Function neccessary to create a vector<vector<string>> by readin
@@ -163,8 +157,3 @@ static string ColumnDelimiterType(const string& filename)
   }
   return columnDelimiter;
 }
-
-} // namespace data
-} // namespace mlpack
-
-#endif
