@@ -1,6 +1,7 @@
 /**
  * @file kfn_test.cpp
  * @author Atharva Khandait
+ * @author Heet Sankesara
  *
  * Test mlpackMain() of kfn_main.cpp.
  *
