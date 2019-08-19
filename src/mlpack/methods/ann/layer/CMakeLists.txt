@@ -83,6 +83,8 @@ set(SOURCES
   select_impl.hpp
   sequential.hpp
   sequential_impl.hpp
+  spectral_norm.hpp
+  spectral_norm_impl.hpp
   subview.hpp
   transposed_convolution.hpp
   transposed_convolution_impl.hpp
