@@ -3,6 +3,8 @@
 set(SOURCES
 scaling_model.hpp
 scaling_model_impl.hpp
+preprocess_string_util_impl.hpp
+preprocess_string_util.hpp
 )
 
 # Add directory name to sources.

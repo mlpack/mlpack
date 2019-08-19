@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include "mlpack/methods/preprocess/preprocess_string_util.cpp"
+#include "mlpack/methods/preprocess/preprocess_string_util.hpp"
 
 PROGRAM_INFO("preprocess_string_encoding",
     // Short description.
@@ -130,13 +130,13 @@ static void mlpackMain()
   }
   else
   {
-    columnDelimiter = ColumnDelimiterType(filename);  
+    columnDelimiter = data::ColumnDelimiterType(filename);  
   }
   // Handling Dimension vector
   vector<string> tempDimension =
       CLI::GetParam<vector<string> >("dimension");
-  unordered_set<size_t> dimensions = GetColumnIndices(tempDimension);
-  vector<vector<string>> dataset = CreateDataset(filename, columnDelimiter[0]);
+  unordered_set<size_t> dimensions = data::GetColumnIndices(tempDimension);
+  vector<vector<string>> dataset = data::CreateDataset(filename, columnDelimiter[0]);
   for (auto colIndex : dimensions)
   {
     if (colIndex >= dataset.back().size())
