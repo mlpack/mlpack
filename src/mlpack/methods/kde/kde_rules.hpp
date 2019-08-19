@@ -148,6 +148,9 @@ class KDERules
   //! Accumulated not used MC alpha values for each query point.
   arma::vec accumMCAlpha;
 
+  //! Accumulated not used error tolerance for each query point.
+  arma::vec accumError;
+
   //! Whether reference and query sets are the same.
   const bool sameSet;
 

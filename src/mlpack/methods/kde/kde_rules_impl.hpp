@@ -55,6 +55,9 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     baseCases(0),
     scores(0)
 {
+  // Initialize accumError.
+  accumError = arma::vec(querySet.n_cols, arma::fill::zeros);
+
   // Initialize accumMCAlpha only if Monte Carlo estimations are available.
   if (monteCarlo && kernelIsGaussian)
     accumMCAlpha = arma::vec(querySet.n_cols, arma::fill::zeros);
@@ -130,7 +133,10 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   const double minKernel = kernel.Evaluate(maxDistance);
   const double bound = maxKernel - minKernel;
 
-  if (bound <= (absError + relError * minKernel) / referenceSet.n_cols)
+  const double errorTolerance =
+      (absError + relError * minKernel) / referenceSet.n_cols;
+
+  if (bound <= accumError(queryIndex) + errorTolerance)
   {
     // Estimate values.
     double kernelValue;
@@ -148,6 +154,9 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 
     // Don't explore this tree branch.
     score = DBL_MAX;
+
+    // Update accumulated unused error tolerance.
+    accumError(queryIndex) = std::max(accumError(queryIndex) - bound, 0.0);
 
     // Store not used alpha for Monte Carlo.
     if (kernelIsGaussian && monteCarlo)
@@ -239,6 +248,10 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   else
   {
     score = minDistance;
+
+    // Update accumulated unused error tolerance.
+    if (referenceNode.IsLeaf())
+      accumError(queryIndex) += errorTolerance;
 
     // If node is going to be exactly computed, reclaim not used alpha for
     // Monte Carlo estimations.
