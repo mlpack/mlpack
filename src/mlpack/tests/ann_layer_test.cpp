@@ -1633,7 +1633,7 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormTest)
 /**
  * VirtualBatchNorm layer numerical gradient test.
  */
-/*BOOST_AUTO_TEST_CASE(GradientVirtualBatchNormTest)
+BOOST_AUTO_TEST_CASE(GradientVirtualBatchNormTest)
 {
   // Add function gradient instantiation.
   struct GradientFunction
@@ -1674,7 +1674,7 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormTest)
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
-}*/
+}
 
 /**
  * Simple Transposed Convolution layer test.

@@ -137,8 +137,8 @@ template<typename InputDataType, typename OutputDataType,
 void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::ResetGradients(
     arma::mat& gradient)
 {
-    boost::apply_visitor(GradientSetVisitor(std::move(gradient), 0),
-        wrappedLayer);
+  boost::apply_visitor(GradientSetVisitor(std::move(gradient), 0),
+      wrappedLayer);
 }
 
 template<typename InputDataType, typename OutputDataType,

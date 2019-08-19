@@ -193,7 +193,7 @@ class WeightNorm
 
   //! Locally-stored weights of wrappedLayer.
   OutputDataType layerWeights;
-}; // class BatchNorm
+}; // class WeightNorm
 
 } // namespace ann
 } // namespace mlpack
