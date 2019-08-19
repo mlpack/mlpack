@@ -448,6 +448,26 @@ BOOST_AUTO_TEST_CASE(SimpleLinearNoBiasLayerTest)
 }
 
 /**
+ * Simple padding layer test.
+ */
+BOOST_AUTO_TEST_CASE(SimplePaddingLayerTest)
+{
+  arma::mat output, input, delta;
+  Padding<> module(1, 2, 3, 4);
+
+  // Test the Forward function.
+  input = arma::randu(10, 1);
+  module.Forward(std::move(input), std::move(output));
+  BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(output));
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows + 3);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols + 7);
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(output), std::move(delta));
+  CheckMatrices(delta, input);
+}
+
+/**
  * Jacobian linear no bias module test.
  */
 BOOST_AUTO_TEST_CASE(JacobianLinearNoBiasLayerTest)
