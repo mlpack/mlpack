@@ -109,7 +109,7 @@ In this example, we'll train a collaborative filtering model using mlpack's
 https://grouplens.org/datasets/movielens/, and then we'll use the model that we
 train to give recommendations.
 
-You can copy-paste this code directly into Python to run it.
+You can copy-paste this code directly into Julia to run it.
 
 @code{.julia}
 using CSV
