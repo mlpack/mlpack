@@ -23,29 +23,16 @@ namespace julia {
 inline std::string StripType(std::string cppType)
 {
   // Basically what we need to do is strip any '<' (template bits) from the
-  // type.
-  if (cppType.find("<") != std::string::npos)
-  {
-    // Are there any template parameters?  Or is it the default?
-    const size_t loc = cppType.find("<>");
-    if (loc != std::string::npos)
-    {
-      // Convert it from "<>".
-      cppType.replace(loc, 2, "");
-    }
-    else
-    {
-      // Let's just replace the '<' and '>' with a valid '_' character.
-      while (cppType.find("<") != std::string::npos)
-        cppType.replace(cppType.find("<"), 1, "_");
-      while (cppType.find(">") != std::string::npos)
-        cppType.replace(cppType.find(">"), 1, "_");
-      while (cppType.find(" ") != std::string::npos)
-        cppType.replace(cppType.find(" "), 1, "_");
-      while (cppType.find(",") != std::string::npos)
-        cppType.replace(cppType.find(","), 1, "_");
-    }
-  }
+  // type.  We'll try first by removing any instances of <>.
+  const size_t loc = cppType.find("<>");
+  if (loc != std::string::npos)
+    cppType.replace(loc, 2, "");
+
+  // Let's just replace any invalid characters with valid '_' characters.
+  std::replace(cppType.begin(), cppType.end(), '<', '_');
+  std::replace(cppType.begin(), cppType.end(), '>', '_');
+  std::replace(cppType.begin(), cppType.end(), ' ', '_');
+  std::replace(cppType.begin(), cppType.end(), ',', '_');
 
   return cppType;
 }
