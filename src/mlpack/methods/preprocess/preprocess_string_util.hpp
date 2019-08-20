@@ -68,7 +68,4 @@ string ColumnDelimiterType(const string& filename);
 } // namespace data
 } // namespace mlpack
 
-// Include implementation.
-#include "preprocess_string_util_impl.hpp"
-
 #endif

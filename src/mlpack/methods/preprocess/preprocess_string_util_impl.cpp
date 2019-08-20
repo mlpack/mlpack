@@ -10,9 +10,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_CORE_DATA_STRING_UTIL_IMPL_HPP
-#define MLPACK_CORE_DATA_STRING_UTIL_IMPL_HPP
-
 #include "mlpack/methods/preprocess/preprocess_string_util.hpp"
 
 using namespace mlpack;
@@ -156,5 +153,3 @@ string ColumnDelimiterType(const string& filename)
 
 } // namespace data
 } // namespace mlpack
-
-#endif
