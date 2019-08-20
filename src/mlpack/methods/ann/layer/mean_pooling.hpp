@@ -104,6 +104,41 @@ class MeanPooling
   //! Modify the height.
   size_t& OutputHeight() { return outputHeight; }
 
+  //! Get the input size
+  size_t const& InputSize() const { return inSize; }
+  //! Modify the input size.
+  size_t& InputSize() { return inSize; }
+
+  //! Get the output size.
+  size_t const& OutputSize() const { return outSize; }
+  //! Modify the output size.
+  size_t& OutputSize() { return outSize; }
+
+  //! Get the kernel height.
+  size_t const& KernelHeight() const { return kH; }
+  //! Modify the kernel height.
+  size_t& KernelHeight() { return kH; }
+
+  //! Get the kernel width.
+  size_t const& KernelWidth() const { return kW; }
+  //! Modify the kernel width.
+  size_t& KernelWidth() { return kW; }
+
+  //! Get the stride height.
+  size_t const& StrideHeight() const { return dH; }
+  //! Modify the stride height.
+  size_t& StrideHeight() { return dH; }
+
+  //! Get the stride width.
+  size_t const& StrideWidth() const { return dW; }
+  //! Modify the stride width.
+  size_t& StrideWidth() { return dW; }
+
+  //! Get the value of the rounding operation
+  bool const& Floor() const { return floor; }
+  //! Modify the value of the rounding operation
+  bool& Floor() { return floor; }
+
   //! Get the value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.

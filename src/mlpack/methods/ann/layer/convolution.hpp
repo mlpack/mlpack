@@ -162,6 +162,46 @@ class Convolution
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
+  //! Get the input size
+  size_t const& InputSize() const { return inSize; }
+  //! Modify the input size.
+  size_t& InputSize() { return inSize; }
+
+  //! Get the output size.
+  size_t const& OutputSize() const { return outSize; }
+  //! Modify the output size.
+  size_t& OutputSize() { return outSize; }
+
+  //! Get the kernel height.
+  size_t const& KernelHeight() const { return kH; }
+  //! Modify the kernel height.
+  size_t& KernelHeight() { return kH; }
+
+  //! Get the kernel width.
+  size_t const& KernelWidth() const { return kW; }
+  //! Modify the kernel width.
+  size_t& KernelWidth() { return kW; }
+
+  //! Get the stride height.
+  size_t const& StrideHeight() const { return dH; }
+  //! Modify the stride height.
+  size_t& StrideHeight() { return dH; }
+
+  //! Get the stride width.
+  size_t const& StrideWidth() const { return dW; }
+  //! Modify the stride width.
+  size_t& StrideWidth() { return dW; }
+
+  //! Get the padding height.
+  size_t const& PaddingHeight() const { return padH; }
+  //! Modify the padding height.
+  size_t& PaddingHeight() { return padH; }
+
+  //! Get the padding width.
+  size_t const& PaddingWidth() const { return padW; }
+  //! Modify the padding width.
+  size_t& PaddingWidth() { return padW; }
+
   //! Modify the bias weights of the layer.
   arma::mat& Bias() { return bias; }
 

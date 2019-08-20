@@ -112,6 +112,16 @@ class Linear
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the input size
+  size_t const& InputSize() const { return inSize; }
+  //! Modify the input size.
+  size_t& InputSize() { return inSize; }
+
+  //! Get the output size.
+  size_t const& OutputSize() const { return outSize; }
+  //! Modify the output size.
+  size_t& OutputSize() { return outSize; }
+
   //! Get the gradient.
   OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
