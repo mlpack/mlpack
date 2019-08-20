@@ -133,6 +133,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   const double minKernel = kernel.Evaluate(maxDistance);
   const double bound = maxKernel - minKernel;
 
+  // Error tolerance of the current query point and reference node.
   const double errorTolerance =
       (absError + relError * minKernel) / referenceSet.n_cols;
 
@@ -247,6 +248,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   }
   else
   {
+    // Recurse.
     score = minDistance;
 
     // Update accumulated unused error tolerance.
@@ -330,8 +332,12 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   const double minKernel = kernel.Evaluate(maxDistance);
   const double bound = maxKernel - minKernel;
 
+  // Error tolerance of the current nodes combination.
+  const double errorTolerance =
+      (absError + relError * minKernel) / referenceSet.n_cols;
+
   // If possible, avoid some calculations because of the error tolerance.
-  if (bound <= (absError + relError * minKernel) / referenceSet.n_cols)
+  if (bound <= queryStat.AccumError() + errorTolerance)
   {
     // Auxiliary variables.
     double kernelValue;
@@ -359,6 +365,9 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
     // Prune.
     score = DBL_MAX;
+
+    // Update accumulated unused error tolerance.
+    queryStat.AccumError() = std::max(queryStat.AccumError() - bound, 0.0);
 
     // Store not used alpha for Monte Carlo.
     if (kernelIsGaussian && monteCarlo)
@@ -471,6 +480,10 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     // Recurse.
     score = minDistance;
 
+    // Update accumulated unused error tolerance.
+    if (referenceNode.IsLeaf() && queryNode.IsLeaf())
+      queryStat.AccumError() += errorTolerance;
+
     // If node is going to be exactly computed, reclaim not used alpha for
     // Monte Carlo estimations.
     if (canReclaimAlpha)
@@ -556,6 +569,7 @@ double KDECleanRules<TreeType>::Score(const size_t /* queryIndex */,
                                       TreeType& referenceNode)
 {
   referenceNode.Stat().AccumAlpha() = 0;
+  referenceNode.Stat().AccumError() = 0;
   return 0;
 }
 
@@ -567,6 +581,10 @@ double KDECleanRules<TreeType>::Score(TreeType& queryNode,
 {
   queryNode.Stat().AccumAlpha() = 0;
   referenceNode.Stat().AccumAlpha() = 0;
+
+  queryNode.Stat().AccumError() = 0;
+  referenceNode.Stat().AccumError() = 0;
+
   return 0;
 }
 

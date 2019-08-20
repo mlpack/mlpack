@@ -29,14 +29,17 @@ class KDEStat
       validCentroid(false),
       mcBeta(0),
       mcAlpha(0),
-      accumAlpha(0) { }
+      accumAlpha(0),
+      accumError(0)
+  { /* Nothing to do.*/ }
 
   //! Initialization for a fully initialized node.
   template<typename TreeType>
   KDEStat(TreeType& node) :
       mcBeta(0),
       mcAlpha(0),
-      accumAlpha(0)
+      accumAlpha(0),
+      accumError(0)
   {
     // Calculate centroid if necessary.
     if (!tree::TreeTraits<TreeType>::FirstPointIsCentroid)
@@ -71,6 +74,12 @@ class KDEStat
   //! Modify accumulated Monte Carlo alpha of the node.
   inline double& AccumAlpha() { return accumAlpha; }
 
+  //! Get accumulated error tolerance of the node.
+  inline double AccumError() const { return accumError; }
+
+  //! Modify accumulated error tolerance of the node.
+  inline double& AccumError() { return accumError; }
+
   //! Get Monte Carlo alpha of the node.
   inline double MCAlpha() const { return mcAlpha; }
 
@@ -101,12 +110,14 @@ class KDEStat
       ar & BOOST_SERIALIZATION_NVP(mcBeta);
       ar & BOOST_SERIALIZATION_NVP(mcAlpha);
       ar & BOOST_SERIALIZATION_NVP(accumAlpha);
+      ar & BOOST_SERIALIZATION_NVP(accumError);
     }
     else if (Archive::is_loading::value)
     {
       mcBeta = -1;
       mcAlpha = -1;
       accumAlpha = -1;
+      accumError = -1;
     }
   }
 
@@ -125,6 +136,9 @@ class KDEStat
 
   //! Accumulated not used Monte Carlo alpha in the current node.
   double accumAlpha;
+
+  //! Accumulated not used error tolerance in the current node.
+  double accumError;
 };
 
 } // namespace kde
