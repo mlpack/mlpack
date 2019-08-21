@@ -21,7 +21,7 @@ namespace rl{
 
 /**
  * Implementation of Lunarlander game. Lunarlander is a 2-link pendulum with only the
- * second joint actuated. Intitially, both links point downwards. The goal is
+ * second joint actuated. Initially, both links point downwards. The goal is
  * to swing the end-effector at a height at least the length of one link above
  * the base. Both links can swing freely and can pass by each other, i.e.,
  * they don't collide when they have the same angle.
@@ -83,7 +83,7 @@ class LunarLander
     arma::colvec data;
   };
 
-  /*
+  /**
    * Implementation of action for Lunarlander
    */
   struct Action
@@ -95,48 +95,38 @@ class LunarLander
   };
 
   /**
-   * Construct a Acrobot instance using the given constants.
+   * Construct a LunarLander instance using the given constants.
    *
-   * @param gravity The gravity parameter.
-   * @param linkLength1 The length of link 1.
-   * @param linkLength2 The length of link 2.
-   * @param linkMass1 The mass of link 1.
-   * @param linkMass2 The mass of link 2.
-   * @param linkCom1 The position of the center of mass of link 1.
-   * @param linkCom2 The position of the center of mass of link 2.
-   * @param linkMoi The moments of inertia for both links.
-   * @param maxVel1 The max angular velocity of link1.
-   * @param maxVel2 The max angular velocity of link2.
-   * @param dt The differential value.
-   * @param doneReward The reward recieved by the agent on success.
-   * @param maxSteps The number of steps after which the episode
-   *    terminates. If the value is 0, there is no limit.
+   * @param elapsedTime .
+   * @param velocity The initial speed of System.
+   * @param height .
+   * @param fuelRemaining The total number of fuel of LunarLander system.
+   * @param doneReward The reward received by the agent on success.
    */
   LunarLander(const double elapsedTime = 0,
               const double velocity = 50,
-              const double burnAmount = 0,
               const double height = 1000,
               const double fuelRemaining = 150,
-              const double doneReward = 200) :
+              const double doneReward = 100) :
       elapsedTime(elapsedTime),
       velocity(velocity),
-      burnAmount(burnAmount),
       height(height),
       fuelRemaining(fuelRemaining)
   { /* Nothing to do here */ }
 
-  arma::colvec UpdateStatus(const State& state,
+  State UpdateStatus(const State& state,
                     const Action& action)
   {
     double burnAmount = action.action;
-    double fuelRemaining = state[3] - burnAmount;
-    double height = state[1] - (((state[2] - burnAmount) + 5) + state[2]) / 2);
-    double velocity = state[2] - burnAmount + 5;
-    return {0, height, velocity, fuelRemaining};
+    double fuelRemaining = state.Fuel() - burnAmount;
+    double height = state.Height() - (((state.Speed() - burnAmount) + 5)
+        + state.Speed()) / 2);
+    double velocity = state.Speed() - burnAmount + 5;
+    return State({0, height, velocity, fuelRemaining});
   }
 
   /**
-   * Dynamics of the LunarLander System. To get reward and next state based on
+   * Dynamics of the LunarLander system. To get reward and next state based on
    * current state and current action.
    *
    * @param state The current State.
@@ -151,28 +141,54 @@ class LunarLander
     // Update the number of steps performed.
     stepsPerformed++;
 
-    // Make a vector to estimate nextstate.
-    arma::colvec currentState = {state.ElapsedTime(), state.Height(),
-        state.Speed(), state.Fuel()};
+    if (state.Fuel() <= 0)
+      action.action = 0.0;
 
-    arma::colvec currentNextState = UpdateStatus(currentState, action);
-
-    nextState.ElapsedTime() = currentNextState.ElapsedTime();
-    nextState.Height() = currentNextState.Height();
-    nextState.Speed() = currentNextState.Speed();
-    nextState.Fuel() = std::max(0, currentNextState.Fuel());
+    State currentNextState = UpdateStatus(state, action);
 
     // Check if the episode has terminated.
-    bool done = IsTerminal(nextState);
+    bool done = IsTerminal(currentNextState);
 
-    // Do not reward the agent if time ran out.
-    if (done && nextState.Speed() < 0)
-      return 0;
-    else if (done && nextState.Speed() == 0)
-      return doneReward;
+    if (done) {
+      TouchDown(currentNextState, action, nextState);
+      if (nextState.Speed() == 0) {
+        return doneReward;
+      }else if(nextState.Speed() >= 30) {
+        return -doneReward;
+      }
+    }else{
+      nextState = currentNextState;
+    }
 
-    return -1;
-  };
+    return 0;
+  }
+
+  /**
+   * The Lunarlander system touchs down when the height is zero.
+   *
+   * @param state The current state.
+   * @param action The current action.
+   * @param nextState The next state after touch donw.
+   * */
+  void TouchDown(const State& state,
+                 const Action& action,
+                 State& nextState)
+  {
+    double oldVelocity = state.Speed() + action.action - 5;
+    double oldHeight = state.Height() + (state.Speed() + oldVelocity) / 2;
+    double oldTime = state.ElapsedTime() - 1;
+    double fraction = 0.0;
+
+    if (action.action == 5)
+      fraction = oldheight / oldvelocity;
+    else
+      fraction = (std::sqrt(oldvelocity * oldvelocity +
+          oldheight * (10 - (2 * burnAmount))) - oldvelocity) / (5 - burnAmount);
+
+    nextState.ElapsedTime() = oldTime + fraction;
+    nextState.Speed() = oldVelocity + (5 - burnAmount) * fraction;
+    nextState.Height() = state.Height();
+  }
 
   /**
    * Dynamics of the LunarLander System. To get reward and next state based on
@@ -199,23 +215,20 @@ class LunarLander
   }
 
   /**
-   * This function checks if the acrobot has reached the terminal state.
+   * This function checks if the LunarLander has reached the terminal state.
    *
    * @param state The current State.
    * @return true if state is a terminal state, otherwise false.
    */
   bool IsTerminal(const State& state) const {
-    if (state.Fuel() <= 0) return true;
-    if (state.Speed() <= 0) return true;
-    return false;
+    if (state.Height() > 0) return true;
+    else return false;
   }
 
  private:
   double elapsedTime;
 
   double velocity;
-
-  double burnAmount;
 
   double height;
 
