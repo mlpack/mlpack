@@ -168,19 +168,19 @@ class LunarLander
     {
       return doneReward;
     }
-    else if(speed >= 2.0 && speed < 5.0)
+    else if (speed >= 2.0 && speed < 5.0)
     {
       return 0.5 * doneReward;
     }
-    else if(speed >= 5.0 && speed < 10.0)
+    else if (speed >= 5.0 && speed < 10.0)
     {
       return -0.2 * doneReward;
     }
-    else if(speed >= 10.0 && speed < 30.0)
+    else if (speed >= 10.0 && speed < 30.0)
     {
       return -0.5 * doneReward;
     }
-    else if(speed >= 30.0 && speed < 50.0)
+    else if (speed >= 30.0 && speed < 50.0)
     {
       return -0.8 * doneReward;
     }
