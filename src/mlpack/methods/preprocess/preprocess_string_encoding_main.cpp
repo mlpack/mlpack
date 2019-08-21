@@ -11,6 +11,7 @@
  */
 
 #include "mlpack/methods/preprocess/preprocess_string_util.hpp"
+#include <mlpack/core/util/mlpack_main.hpp> 
 
 PROGRAM_INFO("preprocess_string_encoding",
     // Short description.

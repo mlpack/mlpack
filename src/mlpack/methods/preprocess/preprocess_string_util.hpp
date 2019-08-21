@@ -14,7 +14,6 @@
 #define MLPACK_CORE_DATA_STRING_UTIL_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/extension.hpp>
@@ -24,11 +23,6 @@
 #include <mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp>
 #include <mlpack/core/data/string_encoding_policies/bag_of_words_encoding_policy.hpp>
 #include <mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp>
-
-using namespace mlpack;
-using namespace mlpack::util;
-using namespace arma;
-using namespace std;
 
 namespace mlpack {
 namespace data {
@@ -40,14 +34,14 @@ namespace data {
  * @param filename Name of the file whose contents need to be preproccessed.
  * @param columnDelimiter Delimiter used to split the columns of file.
  */
-vector<vector<string>> CreateDataset(const string& filename,
-                                            char columnDelimiter);
+std::vector<std::vector<std::string>> CreateDataset(const std::string& filename,
+                                                    char columnDelimiter);
 /**
  * Function to check whether the given colum has only digits.
  *
  * @param column The column no
  */
-bool IsNumber(const string& column);
+bool IsNumber(const std::string& column);
 
 /**
  * Function used to get the columns which has non numeric dataset.
@@ -55,15 +49,15 @@ bool IsNumber(const string& column);
  * @param tempDimesnion A vector of string passed which has column number or
  *    column ranges.
  */
-unordered_set<size_t> GetColumnIndices(const
-                                              vector<string>& tempDimension);
+std::unordered_set<size_t> GetColumnIndices(const
+                                            std::vector<std::string>& tempDimension);
 
 /**
  * Function to get the type of column delimiter base on file extension.
  *
  * @param filename Name of the input file.
  */
-string ColumnDelimiterType(const string& filename);
+std::string ColumnDelimiterType(const std::string& filename);
 
 } // namespace data
 } // namespace mlpack
