@@ -11,7 +11,7 @@
  */
 
 #include "mlpack/methods/preprocess/preprocess_string_util.hpp"
-#include <mlpack/core/util/mlpack_main.hpp> 
+#include <mlpack/core/util/mlpack_main.hpp>
 
 PROGRAM_INFO("preprocess_string_encoding",
     // Short description.
@@ -50,8 +50,8 @@ PARAM_STRING_IN("column_delimiter", "delimeter used to seperate Column in files"
     "example '\\t' for '.tsv' and ',' for '.csv'.", "d", "\t");
 PARAM_STRING_IN("delimiter", "A set of chars that is used as delimeter to"
     "tokenize the string dataset ", "D", " ");
-PARAM_STRING_IN("encoding_type","Type of encoding","e","DictionaryEncoding")
-PARAM_STRING_IN("tfidf_encoding_type","Type of tfidf encoding","E","RawCount")
+PARAM_STRING_IN("encoding_type", "Type of encoding", "e", "DictionaryEncoding")
+PARAM_STRING_IN("tfidf_encoding_type", "Type of tfidf encoding", "E", "RawCount")
 PARAM_FLAG("smooth_idf", "True to have smooth_idf for Tf-Idf.", "s");
 PARAM_VECTOR_IN_REQ(std::string, "dimension", "Column which contains the"
     "string data. (1 by default)", "c");
@@ -203,7 +203,7 @@ static void mlpackMain()
       }
       else if ("Binary" == tfidfEncodingType)
       {
-        data::TfIdfEncoding<data::SplitByAnyOf::TokenType> 
+        data::TfIdfEncoding<data::SplitByAnyOf::TokenType>
           encoder(data::TfIdfEncodingPolicy::TfTypes::BINARY, !smoothIdf);
         encoder.Encode(column.second, output, tokenizer);
         encodedResult[column.first] = std::move(output);
@@ -215,10 +215,11 @@ static void mlpackMain()
         encoder.Encode(column.second, output, tokenizer);
         encodedResult[column.first] = std::move(output);
       }
-      else 
+      else
       {
         data::TfIdfEncoding<data::SplitByAnyOf::TokenType>
-          encoder(data::TfIdfEncodingPolicy::TfTypes::TERM_FREQUENCY, !smoothIdf);
+          encoder(data::TfIdfEncodingPolicy::TfTypes::TERM_FREQUENCY,
+          !smoothIdf);
         encoder.Encode(column.second, output, tokenizer);
         encodedResult[column.first] = std::move(output);
       }

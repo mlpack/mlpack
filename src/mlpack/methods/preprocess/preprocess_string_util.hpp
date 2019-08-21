@@ -49,8 +49,8 @@ bool IsNumber(const std::string& column);
  * @param tempDimesnion A vector of string passed which has column number or
  *    column ranges.
  */
-std::unordered_set<size_t> GetColumnIndices(const
-                                            std::vector<std::string>& tempDimension);
+std::unordered_set<size_t> GetColumnIndices
+    (const std::vector<std::string>& tempDimension);
 
 /**
  * Function to get the type of column delimiter base on file extension.

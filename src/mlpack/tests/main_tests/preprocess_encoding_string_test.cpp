@@ -391,7 +391,7 @@ BOOST_AUTO_TEST_CASE(InvalidTfIdfTypeEncodingTest)
        1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995,  1.69314718055995 }
   };
-  CreateFile(stringencodeddata,"preprocess_string_encoded_test.txt", "\t");
+  CreateFile(stringencodeddata, "preprocess_string_encoded_test.txt", "\t");
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_string_encoded_test.txt");
