@@ -20,11 +20,8 @@ namespace mlpack{
 namespace rl{
 
 /**
- * Implementation of Lunarlander game. Lunarlander is a 2-link pendulum with only the
- * second joint actuated. Initially, both links point downwards. The goal is
- * to swing the end-effector at a height at least the length of one link above
- * the base. Both links can swing freely and can pass by each other, i.e.,
- * they don't collide when they have the same angle.
+ * Implementation of Lunarlander game. The goal is to touchdown to the land pad
+ * with reasonable speed, so that the ship will not crash when landing.
  */
 class LunarLander
 {
@@ -149,26 +146,56 @@ class LunarLander
     // Check if the episode has terminated.
     bool done = IsTerminal(currentNextState);
 
-    if (done) {
+    if (done)
+    {
       TouchDown(currentNextState, action, nextState);
-      if (nextState.Speed() == 0) {
-        return doneReward;
-      }else if(nextState.Speed() >= 30) {
-        return -doneReward;
-      }
-    }else{
+      return GetReward(nextState.Speed());
+    }
+    else
+    {
       nextState = currentNextState;
     }
 
     return 0;
   }
 
+   /**
+    *  Helper function to determine the reward according to final speed.
+    */
+  void GetReward(double speed)
+  {
+    if (speed == 0)
+    {
+      return doneReward;
+    }
+    else if(speed >= 2.0 && speed < 5.0)
+    {
+      return 0.5 * doneReward;
+    }
+    else if(speed >= 5.0 && speed < 10.0)
+    {
+      return -0.2 * doneReward;
+    }
+    else if(speed >= 10.0 && speed < 30.0)
+    {
+      return -0.5 * doneReward;
+    }
+    else if(speed >= 30.0 && speed < 50.0)
+    {
+      return -0.8 * doneReward;
+    }
+    else
+    {
+      return -doneReward;
+    }
+  }
+
   /**
-   * The Lunarlander system touchs down when the height is zero.
+   * The Lunarlander system touchdown when the height is zero.
    *
    * @param state The current state.
    * @param action The current action.
-   * @param nextState The next state after touch donw.
+   * @param nextState The next state after touchdown.
    * */
   void TouchDown(const State& state,
                  const Action& action,
@@ -183,7 +210,7 @@ class LunarLander
       fraction = oldheight / oldvelocity;
     else
       fraction = (std::sqrt(oldvelocity * oldvelocity +
-          oldheight * (10 - (2 * burnAmount))) - oldvelocity) / (5 - burnAmount);
+          oldheight * (10 - 2 * burnAmount)) - oldvelocity) / (5 - burnAmount);
 
     nextState.ElapsedTime() = oldTime + fraction;
     nextState.Speed() = oldVelocity + (5 - burnAmount) * fraction;
