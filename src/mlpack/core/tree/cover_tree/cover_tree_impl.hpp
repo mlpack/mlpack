@@ -911,8 +911,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
       other.Dataset().col(other.Point()));
 
   math::RangeType<ElemType> result;
-  result.Lo() = distance - furthestDescendantDistance -
-      other.FurthestDescendantDistance();
+  result.Lo() = std::max(distance - furthestDescendantDistance -
+      other.FurthestDescendantDistance(), 0.0);
   result.Hi() = distance + furthestDescendantDistance +
       other.FurthestDescendantDistance();
 
@@ -934,8 +934,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
                   const ElemType distance) const
 {
   math::RangeType<ElemType> result;
-  result.Lo() = distance - furthestDescendantDistance -
-      other.FurthestDescendantDistance();
+  result.Lo() = std::max(distance - furthestDescendantDistance -
+      other.FurthestDescendantDistance(), 0.0);
   result.Hi() = distance + furthestDescendantDistance +
       other.FurthestDescendantDistance();
 
@@ -956,8 +956,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 {
   const ElemType distance = metric->Evaluate(dataset->col(point), other);
 
-  return math::RangeType<ElemType>(distance - furthestDescendantDistance,
-                     distance + furthestDescendantDistance);
+  return math::RangeType<ElemType>(
+      std::max(distance - furthestDescendantDistance, 0.0),
+      distance + furthestDescendantDistance);
 }
 
 //! Return the minimum and maximum distance to another point given that the
@@ -974,8 +975,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     RangeDistance(const arma::vec& /* other */,
                   const ElemType distance) const
 {
-  return math::RangeType<ElemType>(distance - furthestDescendantDistance,
-                     distance + furthestDescendantDistance);
+  return math::RangeType<ElemType>(
+      std::max(distance - furthestDescendantDistance, 0.0),
+      distance + furthestDescendantDistance);
 }
 
 //! For a newly initialized node, create children using the near and far set.
