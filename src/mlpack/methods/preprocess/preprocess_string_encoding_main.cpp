@@ -130,29 +130,26 @@ static void mlpackMain()
         "Delimiter should be either \\t (tab) or , (comma) or ' ' (space) ");
   }
   else
-  {
-    columnDelimiter = data::ColumnDelimiterType(filename);  
-  }
+    columnDelimiter = data::ColumnDelimiterType(filename);
+
   // Handling Dimension vector
   vector<string> tempDimension =
       CLI::GetParam<vector<string> >("dimension");
   unordered_set<size_t> dimensions = data::GetColumnIndices(tempDimension);
-  vector<vector<string>> dataset = data::CreateDataset(filename, columnDelimiter[0]);
+  vector<vector<string>> dataset = data::CreateDataset(filename,
+      columnDelimiter[0]);
   for (auto colIndex : dimensions)
-  {
     if (colIndex >= dataset.back().size())
       Log::Fatal << "The index given is out of range, please verify" << endl;
-  }
+
   // Preparing the input dataset on which string manipulation has to be done.
   // vector<vector<string>> nonNumericInput(dimension.size());
   unordered_map<size_t , vector<string>> nonNumericInput;
+
   for (size_t i = 0; i < dataset.size(); i++)
-  {
     for (auto& datasetCol : dimensions)
-    {
       nonNumericInput[datasetCol].push_back(move(dataset[i][datasetCol]));
-    }
-  }
+
   unordered_map<size_t , arma::mat> encodedResult;
   const string delimiter = CLI::GetParam<string> ("delimiter");
   data::SplitByAnyOf tokenizer(delimiter);
@@ -161,7 +158,7 @@ static void mlpackMain()
   if (CLI::HasParam("encoding_type"))
   {
     RequireParamValue<string>("encoding_type", [](const string et)
-        { return et == "DictionaryEncoding" || et == "BagOfWordsEncoding" 
+        { return et == "DictionaryEncoding" || et == "BagOfWordsEncoding"
         || et == "TfIdfEncoding"; }, true, "Encoding Type should be either"
         " BagOfWordsEncoding or DictionaryEncoding or TfIdfEncoding ");
   }
@@ -169,7 +166,6 @@ static void mlpackMain()
   arma::mat output;
   for (auto& column : nonNumericInput)
   {
-
     if (encodingType == "DictionaryEncoding")
     {
         // dictionary Encoding.
@@ -177,7 +173,7 @@ static void mlpackMain()
       encoder.Encode(column.second, output, tokenizer);
       encodedResult[column.first] = std::move(output);
     }
-    else if(encodingType == "BagOfWordsEncoding")
+    else if (encodingType == "BagOfWordsEncoding")
     {
       // BagofWords Encoding.
       data::BagOfWordsEncoding<data::SplitByAnyOf::TokenType> encoder;
@@ -192,11 +188,12 @@ static void mlpackMain()
       if (CLI::HasParam("tfidf_encoding_type"))
       {
         RequireParamValue<string>("tfidf_encoding_type", [](const string et)
-            { return et == "RawCount" || et == "Binary" || et == "SublinearTf" 
+            { return et == "RawCount" || et == "Binary" || et == "SublinearTf"
             || et == "TermFrequency"; }, true, "Tf Idf encoding type should be "
             " either RawCount, Binary, SublinearTf or TermFrequency ");
       }
-      const string tfidfEncodingType = CLI::GetParam<string>("tfidf_encoding_type");
+      const string tfidfEncodingType =
+          CLI::GetParam<string>("tfidf_encoding_type");
       if ("RawCount" == tfidfEncodingType)
       {
           data::TfIdfEncoding<data::SplitByAnyOf::TokenType>
@@ -204,15 +201,14 @@ static void mlpackMain()
           encoder.Encode(column.second, output, tokenizer);
           encodedResult[column.first] = std::move(output);
       }
-      else if("Binary" == tfidfEncodingType)
+      else if ("Binary" == tfidfEncodingType)
       {
         data::TfIdfEncoding<data::SplitByAnyOf::TokenType> 
           encoder(data::TfIdfEncodingPolicy::TfTypes::BINARY, !smoothIdf);
-
         encoder.Encode(column.second, output, tokenizer);
         encodedResult[column.first] = std::move(output);
       }
-      else if("SublinearTf" == tfidfEncodingType)
+      else if ("SublinearTf" == tfidfEncodingType)
       {
         data::TfIdfEncoding<data::SplitByAnyOf::TokenType>
           encoder(data::TfIdfEncodingPolicy::TfTypes::SUBLINEAR_TF, !smoothIdf);

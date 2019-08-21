@@ -128,7 +128,7 @@ unordered_set<size_t> GetColumnIndices(const
  */
 string ColumnDelimiterType(const string& filename)
 {
-  string columnDelimiter ;
+  string columnDelimiter;
   if (data::Extension(filename) == "csv")
   {
     columnDelimiter = ",";

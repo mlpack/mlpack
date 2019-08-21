@@ -28,14 +28,14 @@ bool CompareFiles(const string& fileName1, const string& fileName2)
 {
   ifstream f1(fileName1), f2(fileName2);
   string file1line, file2line;
-  if(!f1.is_open())
+  if (!f1.is_open())
     Log::Fatal << fileName1 << " can't be opened" << endl;
-  if(!f2.is_open())
+  if (!f2.is_open())
     Log::Fatal << fileName2 << " can't be opened" << endl;
-  while(getline(f1, file1line) && getline(f2, file2line))
+  while (getline(f1, file1line) && getline(f2, file2line))
   {
     for (size_t i = 0; i < file1line.length(); i++)
-      if(file1line[i] != file2line[i])
+      if (file1line[i] != file2line[i])
         return false;
   }
   return true;
@@ -101,14 +101,14 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
       25, 26, 27,  9, 10, 28,  6, 29, 30, 20, 31, 32, 33, 34,  9, 10, 35 },
     { 9, 19, 36, 37, 14, 38, 39,  8, 40,  1, 41, 42, 43, 44,  6, 45, 13,  0, 0,
        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 }
- };
-  CreateFile(stringencodeddata,"preprocess_string_encoded_test.txt","\t" );
+  };
+  CreateFile(stringencodeddata, "preprocess_string_encoded_test.txt", "\t");
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_string_encoded_test.txt");
   SetInputParam<vector<string>>("dimension", {"2"});
-  SetInputParam<string>("encoding_type", "DictionaryEncoding" );
-  SetInputParam<string>("delimiter", " .,\"" );
+  SetInputParam<string>("encoding_type", "DictionaryEncoding");
+  SetInputParam<string>("delimiter", " .,\"");
 
   mlpackMain();
 
@@ -130,14 +130,14 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {  9, 19, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
- };
-  CreateFile(stringencodeddata,"preprocess_string_encoded_test.txt", "\t" );
+  };
+  CreateFile(stringencodeddata, "preprocess_string_encoded_test.txt", "\t");
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_string_encoded_test.txt");
   SetInputParam<vector<string>>("dimension", {"2"});
-  SetInputParam<string>("encoding_type", "BagOfWordsEncoding" );
-  SetInputParam<string>("delimiter", " .,\"" );
+  SetInputParam<string>("encoding_type", "BagOfWordsEncoding");
+  SetInputParam<string>("delimiter", " .,\"");
 
   mlpackMain();
 
@@ -171,14 +171,14 @@ BOOST_AUTO_TEST_CASE(TfIdfEncodingTest)
        0, 0, 0, 0, 1.69314718055995, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995,  1.69314718055995 }
- };
-  CreateFile(stringencodeddata,"preprocess_string_encoded_test.txt", "\t" );
+  };
+  CreateFile(stringencodeddata, "preprocess_string_encoded_test.txt", "\t");
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_string_encoded_test.txt");
   SetInputParam<vector<string>>("dimension", {"2"});
-  SetInputParam<string>("encoding_type", "TfIdfEncoding" );
-  SetInputParam<string>("delimiter", " .,\"" );
+  SetInputParam<string>("encoding_type", "TfIdfEncoding");
+  SetInputParam<string>("delimiter", " .,\"");
 
   mlpackMain();
 
@@ -200,14 +200,14 @@ BOOST_AUTO_TEST_CASE(InvalidDimesnionTest)
       25, 26, 27,  9, 10, 28,  6, 29, 30, 20, 31, 32, 33, 34,  9, 10, 35 },
     { 9, 19, 36, 37, 14, 38, 39,  8, 40,  1, 41, 42, 43, 44,  6, 45, 13,  0, 0,
        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 }
- };
-  CreateFile(stringencodeddata,"preprocess_string_encoded_test.txt","\t" );
+  };
+  CreateFile(stringencodeddata, "preprocess_string_encoded_test.txt", "\t");
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_string_encoded_test.txt");
   SetInputParam<vector<string>>("dimension", {"1", "3-6"});
-  SetInputParam<string>("encoding_type", "TfIdfEncoding" );
-  SetInputParam<string>("delimiter", " .,\"" );
+  SetInputParam<string>("encoding_type", "TfIdfEncoding");
+  SetInputParam<string>("delimiter", " .,\"");
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -229,14 +229,14 @@ BOOST_AUTO_TEST_CASE(InvalidEncodingTest)
       25, 26, 27,  9, 10, 28,  6, 29, 30, 20, 31, 32, 33, 34,  9, 10, 35 },
     { 9, 19, 36, 37, 14, 38, 39,  8, 40,  1, 41, 42, 43, 44,  6, 45, 13,  0, 0,
        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 }
- };
-  CreateFile(stringencodeddata,"preprocess_string_encoded_test.txt","\t" );
+  };
+  CreateFile(stringencodeddata, "preprocess_string_encoded_test.txt", "\t");
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_string_encoded_test.txt");
   SetInputParam<vector<string>>("dimension", {"1", "3-6"});
-  SetInputParam<string>("encoding_type", "InvalidEncodingTest" );
-  SetInputParam<string>("delimiter", " .,\"" );
+  SetInputParam<string>("encoding_type", "InvalidEncodingTest");
+  SetInputParam<string>("delimiter", " .,\"");
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -258,14 +258,14 @@ BOOST_AUTO_TEST_CASE(ExtraOptionTest)
       25, 26, 27,  9, 10, 28,  6, 29, 30, 20, 31, 32, 33, 34,  9, 10, 35 },
     { 9, 19, 36, 37, 14, 38, 39,  8, 40,  1, 41, 42, 43, 44,  6, 45, 13,  0, 0,
        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 }
- };
-  CreateFile(stringencodeddata,"preprocess_string_encoded_test.txt","\t" );
+  };
+  CreateFile(stringencodeddata, "preprocess_string_encoded_test.txt", "\t");
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_string_encoded_test.txt");
   SetInputParam<vector<string>>("dimension", {"2"});
-  SetInputParam<string>("encoding_type", "DictionaryEncoding" );
-  SetInputParam<string>("delimiter", " .,\"" );
+  SetInputParam<string>("encoding_type", "DictionaryEncoding");
+  SetInputParam<string>("delimiter", " .,\"");
   SetInputParam("smooth_idf", true);
 
   mlpackMain();
@@ -285,8 +285,8 @@ BOOST_AUTO_TEST_CASE(SmoothIdfTest)
   SetInputParam<string>("preprocess_dataset",
       "output_smooth_idf_string_encoded_test.txt");
   SetInputParam<vector<string>>("dimension", {"2"});
-  SetInputParam<string>("encoding_type", "TfIdfEncoding" );
-  SetInputParam<string>("delimiter", " .,\"" );
+  SetInputParam<string>("encoding_type", "TfIdfEncoding");
+  SetInputParam<string>("delimiter", " .,\"");
   SetInputParam("smooth_idf", true);
 
   mlpackMain();
@@ -295,8 +295,8 @@ BOOST_AUTO_TEST_CASE(SmoothIdfTest)
   SetInputParam<string>("preprocess_dataset",
       "output_no_smooth_idf_encoded_test.txt");
   SetInputParam<vector<string>>("dimension", {"2"});
-  SetInputParam<string>("encoding_type", "TfIdfEncoding" );
-  SetInputParam<string>("delimiter", " .,\"" );
+  SetInputParam<string>("encoding_type", "TfIdfEncoding");
+  SetInputParam<string>("delimiter", " .,\"");
   SetInputParam("smooth_idf", false);
 
   mlpackMain();
@@ -316,8 +316,8 @@ BOOST_AUTO_TEST_CASE(DifferentEncodingTest)
   SetInputParam<string>("preprocess_dataset",
       "output_dictionary_encdoing_test.txt");
   SetInputParam<vector<string>>("dimension", {"2"});
-  SetInputParam<string>("encoding_type", "DictionaryEncoding" );
-  SetInputParam<string>("delimiter", " .,\"" );
+  SetInputParam<string>("encoding_type", "DictionaryEncoding");
+  SetInputParam<string>("delimiter", " .,\"");
 
   mlpackMain();
 
@@ -325,8 +325,8 @@ BOOST_AUTO_TEST_CASE(DifferentEncodingTest)
   SetInputParam<string>("preprocess_dataset",
       "output_bow_encoding_string_encoded_test.txt");
   SetInputParam<vector<string>>("dimension", {"2"});
-  SetInputParam<string>("encoding_type", "BagOfWordsEncoding" );
-  SetInputParam<string>("delimiter", " .,\"" );
+  SetInputParam<string>("encoding_type", "BagOfWordsEncoding");
+  SetInputParam<string>("delimiter", " .,\"");
 
   mlpackMain();
 
@@ -345,8 +345,8 @@ BOOST_AUTO_TEST_CASE(DifferenTfIdfTest)
   SetInputParam<string>("preprocess_dataset",
       "output_raw_count_encdoing_string_encoded_test.txt");
   SetInputParam<vector<string>>("dimension", {"2"});
-  SetInputParam<string>("encoding_type", "TfIdfEncoding" );
-  SetInputParam<string>("delimiter", " .,\"" );
+  SetInputParam<string>("encoding_type", "TfIdfEncoding");
+  SetInputParam<string>("delimiter", " .,\"");
 
   mlpackMain();
 
@@ -354,8 +354,8 @@ BOOST_AUTO_TEST_CASE(DifferenTfIdfTest)
   SetInputParam<string>("preprocess_dataset",
       "output_sublinear_tf_encoding_test.txt");
   SetInputParam<vector<string>>("dimension", {"2"});
-  SetInputParam<string>("encoding_type", "TfIdfEncoding" );
-  SetInputParam<string>("delimiter", " .,\"" );
+  SetInputParam<string>("encoding_type", "TfIdfEncoding");
+  SetInputParam<string>("delimiter", " .,\"");
   SetInputParam<string>("tfidf_encoding_type", "SublinearTf");
 
   mlpackMain();
@@ -390,14 +390,14 @@ BOOST_AUTO_TEST_CASE(InvalidTfIdfTypeEncodingTest)
        0, 0, 0, 0, 1.69314718055995, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995,  1.69314718055995 }
- };
-  CreateFile(stringencodeddata,"preprocess_string_encoded_test.txt","\t" );
+  };
+  CreateFile(stringencodeddata,"preprocess_string_encoded_test.txt", "\t");
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_string_encoded_test.txt");
   SetInputParam<vector<string>>("dimension", {"2"});
-  SetInputParam<string>("encoding_type", "TfIdfEncoding" );
-  SetInputParam<string>("delimiter", " .,\"" );
+  SetInputParam<string>("encoding_type", "TfIdfEncoding");
+  SetInputParam<string>("delimiter", " .,\"");
   SetInputParam<string>("tfidf_encoding_type", "invalidetfidftype");
 
   Log::Fatal.ignoreInput = true;
