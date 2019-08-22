@@ -87,6 +87,21 @@ BOOST_AUTO_TEST_CASE(FastMKSInvalidKTest)
   Log::Fatal.ignoreInput = false;
 }
 
+/**
+ * Check that when k is specified, it must be greater than 0.
+ */
+BOOST_AUTO_TEST_CASE(FastMKSZeroKTest)
+{
+  arma::mat referenceData(3, 50, arma::fill::randu);
+
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("k", (int) 0); // Invalid when reference is specified.
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
 /*
  * Check that we can't specify an invalid k when both reference
  * and query matrices are given.
