@@ -125,7 +125,8 @@ static void mlpackMain()
   vector<string> tempDimension =
       CLI::GetParam<vector<string> >("dimension");
   unordered_set<size_t> dimensions = data::GetColumnIndices(tempDimension);
-  vector<vector<string>> dataset = data::CreateDataset(filename, columnDelimiter[0]);
+  vector<vector<string>> dataset = data::CreateDataset(filename,
+      columnDelimiter[0]);
   for (auto colIndex : dimensions)
   {
     if (colIndex >= dataset.back().size())

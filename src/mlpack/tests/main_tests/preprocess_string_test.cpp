@@ -28,14 +28,14 @@ bool CompareFiles(const string& fileName1, const string& fileName2)
 {
   ifstream f1(fileName1), f2(fileName2);
   string file1line, file2line;
-  if(!f1.is_open())
+  if (!f1.is_open())
     Log::Fatal << fileName1 << " can't be opened" << endl;
-  if(!f2.is_open())
+  if (!f2.is_open())
     Log::Fatal << fileName2 << " can't be opened" << endl;
-  while(getline(f1, file1line) && getline(f2, file2line))
+  while (getline(f1, file1line) && getline(f2, file2line))
   {
     for (size_t i = 0; i < file1line.length(); i++)
-      if(file1line[i] != file2line[i])
+      if (file1line[i] != file2line[i])
         return false;
   }
   return true;
@@ -49,18 +49,16 @@ void CreateFile(vector<vector<string> >& input,
   for (auto& row : input)
   {
     for (auto& colum : row)
-    {
       file << colum << columnDelimiter;
-    }
     file << "\n";
   }
 }
 
 vector<vector<string>> stringCleaningInput = {
-  { "5", "MLpaCk. Is!' a FAst! macHInE Learning.", "7", 
+  { "5", "MLpaCk. Is!' a FAst! macHInE Learning.", "7",
     "MLpaCk. Is!' a FAst! macHInE Learning.", "GsOc. is!' GreAt!." },
   { "4", "MLpaCk. Is!' a FAst! macHInE Learning.", "9",
-    "MLpaCk. Is!' a FAst! macHInE Learning.", "GsOc. is!' GreAt!." }  
+    "MLpaCk. Is!' a FAst! macHInE Learning.", "GsOc. is!' GreAt!." }
 };
 
 vector<vector<string>> stopwords ={ { "is" }, { "a" } , { "great" } };
@@ -95,18 +93,18 @@ BOOST_FIXTURE_TEST_SUITE(PreprocessStringMainTest,
  */
 BOOST_AUTO_TEST_CASE(LowerCaseTest)
 {
-  vector<vector<string>> stringLowerInput={
-  { "5", "mlpack. is!' a fast! machine learning.", "7", 
+  vector<vector<string>> stringLowerInput = {
+  { "5", "mlpack. is!' a fast! machine learning.", "7",
     "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." },
   { "4", "mlpack. is!' a fast! machine learning.", "9",
-    "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." }  
+    "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." }
   };
-  CreateFile(stringLowerInput,"preprocess_string_lower_test.txt","\t" );
+  CreateFile(stringLowerInput, "preprocess_string_lower_test.txt", "\t");
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_string_lower_test.txt");
   SetInputParam<vector<string>>("dimension", {"1", "3-4"});
-  SetInputParam("lowercase", true );
+  SetInputParam("lowercase", true);
 
   mlpackMain();
 
@@ -121,19 +119,19 @@ BOOST_AUTO_TEST_CASE(LowerCaseTest)
  */
 BOOST_AUTO_TEST_CASE(PunctuationTest)
 {
-  vector<vector<string>> stringPunctuationInput={
-  { "5", "MLpaCk Is a FAst macHInE Learning", "7", 
+  vector<vector<string>> stringPunctuationInput = {
+  { "5", "MLpaCk Is a FAst macHInE Learning", "7",
     "MLpaCk Is a FAst macHInE Learning", "GsOc is GreAt" },
   { "4", "MLpaCk Is a FAst macHInE Learning", "9",
-    "MLpaCk Is a FAst macHInE Learning", "GsOc is GreAt" }  
+    "MLpaCk Is a FAst macHInE Learning", "GsOc is GreAt" }
   };
-  CreateFile(stringPunctuationInput,"preprocess_string_punctuation_test.txt",
+  CreateFile(stringPunctuationInput, "preprocess_string_punctuation_test.txt",
       "\t");
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_punctuation_test.txt");
   SetInputParam<vector<string>>("dimension", {"1", "3-4"});
-  SetInputParam("punctuation", true );
+  SetInputParam("punctuation", true);
 
   mlpackMain();
   BOOST_REQUIRE_EQUAL(CompareFiles("output_preprocess_punctuation_test.txt",
@@ -147,21 +145,21 @@ BOOST_AUTO_TEST_CASE(PunctuationTest)
  */
 BOOST_AUTO_TEST_CASE(StopWordsTest)
 {
-  vector<vector<string>> stringStopWordsInput={
-  { "5", "mlpack fast machine learning", "7", 
+  vector<vector<string>> stringStopWordsInput = {
+  { "5", "mlpack fast machine learning", "7",
     "mlpack fast machine learning", "gsoc" },
   { "4", "mlpack fast machine learning", "9",
-    "mlpack fast machine learning", "gsoc" }  
+    "mlpack fast machine learning", "gsoc" }
   };
-  CreateFile(stringStopWordsInput,"preprocess_string_stop_words_test.txt",
+  CreateFile(stringStopWordsInput, "preprocess_string_stop_words_test.txt",
       "\t");
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_stop_words_test.txt");
   SetInputParam<vector<string>>("dimension", {"1", "3-4"});
-  SetInputParam("punctuation", true );
-  SetInputParam("lowercase", true );
-  SetInputParam("stopwords", true );
+  SetInputParam("punctuation", true);
+  SetInputParam("lowercase", true);
+  SetInputParam("stopwords", true);
   SetInputParam<string>("stopwordsfile", "stopwords.txt");
 
   mlpackMain();
@@ -176,18 +174,18 @@ BOOST_AUTO_TEST_CASE(StopWordsTest)
  */
 BOOST_AUTO_TEST_CASE(CsvLowerCaseTest)
 {
-  vector<vector<string>> stringLowerInput={
-  { "5", "mlpack. is!' a fast! machine learning.", "7", 
+  vector<vector<string>> stringLowerInput = {
+  { "5", "mlpack. is!' a fast! machine learning.", "7",
     "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." },
   { "4", "mlpack. is!' a fast! machine learning.", "9",
-    "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." }  
+    "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." }
   };
-  CreateFile(stringLowerInput,"preprocess_string_lower_test.csv","," );
+  CreateFile(stringLowerInput, "preprocess_string_lower_test.csv", ",");
   SetInputParam<string>("actual_dataset", "string_test.csv");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_string_lower_test.csv");
   SetInputParam<vector<string>>("dimension", {"1", "3-4"});
-  SetInputParam("lowercase", true );
+  SetInputParam("lowercase", true);
 
   mlpackMain();
 
@@ -202,19 +200,19 @@ BOOST_AUTO_TEST_CASE(CsvLowerCaseTest)
  */
 BOOST_AUTO_TEST_CASE(CsvPunctuationTest)
 {
-  vector<vector<string>> stringPunctuationInput={
-  { "5", "MLpaCk Is a FAst macHInE Learning", "7", 
+  vector<vector<string>> stringPunctuationInput = {
+  { "5", "MLpaCk Is a FAst macHInE Learning", "7",
     "MLpaCk Is a FAst macHInE Learning", "GsOc is GreAt" },
   { "4", "MLpaCk Is a FAst macHInE Learning", "9",
-    "MLpaCk Is a FAst macHInE Learning", "GsOc is GreAt" }  
+    "MLpaCk Is a FAst macHInE Learning", "GsOc is GreAt" }
   };
-  CreateFile(stringPunctuationInput,"preprocess_string_punctuation_test.csv",
+  CreateFile(stringPunctuationInput, "preprocess_string_punctuation_test.csv",
       ",");
   SetInputParam<string>("actual_dataset", "string_test.csv");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_punctuation_test.csv");
   SetInputParam<vector<string>>("dimension", {"1", "3-4"});
-  SetInputParam("punctuation", true );
+  SetInputParam("punctuation", true);
 
   mlpackMain();
   BOOST_REQUIRE_EQUAL(CompareFiles("output_preprocess_punctuation_test.csv",
@@ -228,21 +226,21 @@ BOOST_AUTO_TEST_CASE(CsvPunctuationTest)
  */
 BOOST_AUTO_TEST_CASE(CsvStopWordsTest)
 {
-  vector<vector<string>> stringStopWordsInput={
-  { "5", "mlpack fast machine learning", "7", 
+  vector<vector<string>> stringStopWordsInput = {
+  { "5", "mlpack fast machine learning", "7",
     "mlpack fast machine learning", "gsoc" },
   { "4", "mlpack fast machine learning", "9",
-    "mlpack fast machine learning", "gsoc" }  
+    "mlpack fast machine learning", "gsoc" } 
   };
-  CreateFile(stringStopWordsInput,"preprocess_string_stop_words_test.csv",
+  CreateFile(stringStopWordsInput, "preprocess_string_stop_words_test.csv",
       ",");
   SetInputParam<string>("actual_dataset", "string_test.csv");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_stop_words_test.csv");
   SetInputParam<vector<string>>("dimension", {"1", "3-4"});
-  SetInputParam("punctuation", true );
-  SetInputParam("lowercase", true );
-  SetInputParam("stopwords", true );
+  SetInputParam("punctuation", true);
+  SetInputParam("lowercase", true);
+  SetInputParam("stopwords", true);
   SetInputParam<string>("stopwordsfile", "stopwords.txt");
 
   mlpackMain();
@@ -257,21 +255,21 @@ BOOST_AUTO_TEST_CASE(CsvStopWordsTest)
  */
 BOOST_AUTO_TEST_CASE(InvalidDimesnionTest)
 {
-  vector<vector<string>> stringStopWordsInput={
-  { "5", "mlpack fast machine learning", "7", 
+  vector<vector<string>> stringStopWordsInput = {
+  { "5", "mlpack fast machine learning", "7",
     "mlpack fast machine learning", "gsoc" },
   { "4", "mlpack fast machine learning", "9",
-    "mlpack fast machine learning", "gsoc" }  
+    "mlpack fast machine learning", "gsoc" } 
   };
-  CreateFile(stringStopWordsInput,"preprocess_string_stop_words_test.csv",
+  CreateFile(stringStopWordsInput, "preprocess_string_stop_words_test.csv",
       ",");
   SetInputParam<string>("actual_dataset", "string_test.csv");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_stop_words_test.csv");
   SetInputParam<vector<string>>("dimension", {"1", "3-6"});
-  SetInputParam("punctuation", true );
-  SetInputParam("lowercase", true );
-  SetInputParam("stopwords", true );
+  SetInputParam("punctuation", true);
+  SetInputParam("lowercase", true);
+  SetInputParam("stopwords", true);
   SetInputParam<string>("stopwordsfile", "stopwords.txt");
 
   Log::Fatal.ignoreInput = true;
@@ -287,21 +285,21 @@ BOOST_AUTO_TEST_CASE(InvalidDimesnionTest)
  */
 BOOST_AUTO_TEST_CASE(NoStopwordsFileTest)
 {
-  vector<vector<string>> stringStopWordsInput={
-  { "5", "mlpack fast machine learning", "7", 
+  vector<vector<string>> stringStopWordsInput = {
+  { "5", "mlpack fast machine learning", "7",
     "mlpack fast machine learning", "gsoc" },
   { "4", "mlpack fast machine learning", "9",
-    "mlpack fast machine learning", "gsoc" }  
+    "mlpack fast machine learning", "gsoc" } 
   };
-  CreateFile(stringStopWordsInput,"preprocess_string_stop_words_test.csv",
+  CreateFile(stringStopWordsInput, "preprocess_string_stop_words_test.csv",
       ",");
   SetInputParam<string>("actual_dataset", "string_test.csv");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_stop_words_test.csv");
   SetInputParam<vector<string>>("dimension", {"1", "3-4"});
-  SetInputParam("punctuation", true );
-  SetInputParam("lowercase", true );
-  SetInputParam("stopwords", true );
+  SetInputParam("punctuation", true);
+  SetInputParam("lowercase", true);
+  SetInputParam("stopwords", true);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -316,21 +314,21 @@ BOOST_AUTO_TEST_CASE(NoStopwordsFileTest)
  */
 BOOST_AUTO_TEST_CASE(CharDimesionTest)
 {
-  vector<vector<string>> stringStopWordsInput={
-  { "5", "mlpack fast machine learning", "7", 
+  vector<vector<string>> stringStopWordsInput = {
+  { "5", "mlpack fast machine learning", "7",
     "mlpack fast machine learning", "gsoc" },
   { "4", "mlpack fast machine learning", "9",
-    "mlpack fast machine learning", "gsoc" }  
+    "mlpack fast machine learning", "gsoc" } 
   };
-  CreateFile(stringStopWordsInput,"preprocess_string_stop_words_test.csv",
+  CreateFile(stringStopWordsInput, "preprocess_string_stop_words_test.csv",
       ",");
   SetInputParam<string>("actual_dataset", "string_test.csv");
   SetInputParam<string>("preprocess_dataset",
       "output_preprocess_stop_words_test.csv");
   SetInputParam<vector<string>>("dimension", {"1", "a1b-4"});
-  SetInputParam("punctuation", true );
-  SetInputParam("lowercase", true );
-  SetInputParam("stopwords", true );
+  SetInputParam("punctuation", true);
+  SetInputParam("lowercase", true);
+  SetInputParam("stopwords", true);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -345,17 +343,17 @@ BOOST_AUTO_TEST_CASE(CharDimesionTest)
  */
 BOOST_AUTO_TEST_CASE(NoOutputFileTest)
 {
-  vector<vector<string>> stringLowerInput={
-  { "5", "mlpack. is!' a fast! machine learning.", "7", 
+  vector<vector<string>> stringLowerInput = {
+  { "5", "mlpack. is!' a fast! machine learning.", "7",
     "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." },
   { "4", "mlpack. is!' a fast! machine learning.", "9",
-    "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." }  
+    "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." }
   };
-  CreateFile(stringLowerInput,"preprocess_string_lower_test.txt","\t" );
+  CreateFile(stringLowerInput, "preprocess_string_lower_test.txt", "\t");
 
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<vector<string>>("dimension", {"1", "3-4"});
-  SetInputParam("lowercase", true );
+  SetInputParam("lowercase", true);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -370,17 +368,17 @@ BOOST_AUTO_TEST_CASE(NoOutputFileTest)
  */
 BOOST_AUTO_TEST_CASE(NegativeDimesionTest)
 {
-  vector<vector<string>> stringLowerInput={
-  { "5", "mlpack. is!' a fast! machine learning.", "7", 
+  vector<vector<string>> stringLowerInput = {
+  { "5", "mlpack. is!' a fast! machine learning.", "7",
     "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." },
   { "4", "mlpack. is!' a fast! machine learning.", "9",
-    "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." }  
+    "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." }
   };
-  CreateFile(stringLowerInput,"preprocess_string_lower_test.txt","\t" );
+  CreateFile(stringLowerInput, "preprocess_string_lower_test.txt", "\t");
 
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<vector<string>>("dimension", {"-1", "3-4"});
-  SetInputParam("lowercase", true );
+  SetInputParam("lowercase", true);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -395,17 +393,17 @@ BOOST_AUTO_TEST_CASE(NegativeDimesionTest)
  */
 BOOST_AUTO_TEST_CASE(invalidColumDelimiterTest)
 {
-  vector<vector<string>> stringLowerInput={
-  { "5", "mlpack. is!' a fast! machine learning.", "7", 
+  vector<vector<string>> stringLowerInput = {
+  { "5", "mlpack. is!' a fast! machine learning.", "7",
     "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." },
   { "4", "mlpack. is!' a fast! machine learning.", "9",
-    "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." }  
+    "mlpack. is!' a fast! machine learning.", "gsoc. is!' great!." }
   };
-  CreateFile(stringLowerInput,"preprocess_string_lower_test.txt","\t" );
+  CreateFile(stringLowerInput, "preprocess_string_lower_test.txt", "\t");
 
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<vector<string>>("dimension", {"-1", "3-4"});
-  SetInputParam("lowercase", true );
+  SetInputParam("lowercase", true);
   SetInputParam<string>("column_delimiter", "@");
 
   Log::Fatal.ignoreInput = true;
