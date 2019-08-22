@@ -133,8 +133,8 @@ class WeightNorm
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
-  //! Modify the wrapped layer.
-  LayerTypes<CustomLayers...>& Layer() { return wrappedLayer; }
+  //! Get the wrapped layer.
+  LayerTypes<CustomLayers...> const& Layer() { return wrappedLayer; }
 
   /**
    * Serialize the layer.
