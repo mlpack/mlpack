@@ -51,7 +51,8 @@ PARAM_STRING_IN("column_delimiter", "delimeter used to seperate Column in files"
 PARAM_STRING_IN("delimiter", "A set of chars that is used as delimeter to"
     "tokenize the string dataset ", "D", " ");
 PARAM_STRING_IN("encoding_type", "Type of encoding", "e", "DictionaryEncoding")
-PARAM_STRING_IN("tfidf_encoding_type", "Type of tfidf encoding", "E", "RawCount")
+PARAM_STRING_IN("tfidf_encoding_type", "Type of tfidf encoding", "E",
+    "RawCount")
 PARAM_FLAG("smooth_idf", "True to have smooth_idf for Tf-Idf.", "s");
 PARAM_VECTOR_IN_REQ(std::string, "dimension", "Column which contains the"
     "string data. (1 by default)", "c");
