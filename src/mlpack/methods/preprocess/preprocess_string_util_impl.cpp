@@ -1,5 +1,5 @@
 /**
- * @file preprocess_string_util.cpp
+ * @file preprocess_string_util_impl.hpp
  * @author Jeffin Sam
  *
  * A CLI executable to encode string dataset.
@@ -9,18 +9,16 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/core/math/random.hpp>
-#include <mlpack/core/util/cli.hpp>
-#include <mlpack/core/data/string_cleaning.hpp>
-#include <mlpack/core/data/extension.hpp>
-#include <mlpack/core/data/tokenizer/split_by_char.hpp>
+
+#include "mlpack/methods/preprocess/preprocess_string_util.hpp"
 
 using namespace mlpack;
 using namespace mlpack::util;
 using namespace arma;
 using namespace std;
+
+namespace mlpack {
+namespace data {
 
 /**
  * Function neccessary to create a vector<vector<string>> by readin
@@ -29,7 +27,7 @@ using namespace std;
  * @param filename Name of the file whose contents need to be preproccessed.
  * @param columnDelimiter Delimiter used to split the columns of file.
  */
-static vector<vector<string>> CreateDataset(const string& filename,
+vector<vector<string>> CreateDataset(const string& filename,
                                             char columnDelimiter)
 {
   vector<vector<string>> dataset;
@@ -56,7 +54,7 @@ static vector<vector<string>> CreateDataset(const string& filename,
  *
  * @param column The column no
  */
-static bool IsNumber(const string& column)
+bool IsNumber(const string& column)
 {
   for (auto i : column)
     if (!isdigit(i))
@@ -70,7 +68,7 @@ static bool IsNumber(const string& column)
  * @param tempDimesnion A vector of string passed which has column number or
  *    column ranges.
  */
-static unordered_set<size_t> GetColumnIndices(const
+unordered_set<size_t> GetColumnIndices(const
                                               vector<string>& tempDimension)
 {
   unordered_set<size_t> dimensions;
@@ -128,9 +126,9 @@ static unordered_set<size_t> GetColumnIndices(const
  *
  * @param filename Name of the input file.
  */
-static string ColumnDelimiterType(const string& filename)
+string ColumnDelimiterType(const string& filename)
 {
-  string columnDelimiter ;
+  string columnDelimiter;
   if (data::Extension(filename) == "csv")
   {
     columnDelimiter = ",";
@@ -152,3 +150,6 @@ static string ColumnDelimiterType(const string& filename)
   }
   return columnDelimiter;
 }
+
+} // namespace data
+} // namespace mlpack
