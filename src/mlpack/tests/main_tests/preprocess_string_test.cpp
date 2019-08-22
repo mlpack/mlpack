@@ -230,7 +230,7 @@ BOOST_AUTO_TEST_CASE(CsvStopWordsTest)
   { "5", "mlpack fast machine learning", "7",
     "mlpack fast machine learning", "gsoc" },
   { "4", "mlpack fast machine learning", "9",
-    "mlpack fast machine learning", "gsoc" } 
+    "mlpack fast machine learning", "gsoc" }
   };
   CreateFile(stringStopWordsInput, "preprocess_string_stop_words_test.csv",
       ",");
@@ -259,7 +259,7 @@ BOOST_AUTO_TEST_CASE(InvalidDimesnionTest)
   { "5", "mlpack fast machine learning", "7",
     "mlpack fast machine learning", "gsoc" },
   { "4", "mlpack fast machine learning", "9",
-    "mlpack fast machine learning", "gsoc" } 
+    "mlpack fast machine learning", "gsoc" }
   };
   CreateFile(stringStopWordsInput, "preprocess_string_stop_words_test.csv",
       ",");
@@ -289,7 +289,7 @@ BOOST_AUTO_TEST_CASE(NoStopwordsFileTest)
   { "5", "mlpack fast machine learning", "7",
     "mlpack fast machine learning", "gsoc" },
   { "4", "mlpack fast machine learning", "9",
-    "mlpack fast machine learning", "gsoc" } 
+    "mlpack fast machine learning", "gsoc" }
   };
   CreateFile(stringStopWordsInput, "preprocess_string_stop_words_test.csv",
       ",");
@@ -318,7 +318,7 @@ BOOST_AUTO_TEST_CASE(CharDimesionTest)
   { "5", "mlpack fast machine learning", "7",
     "mlpack fast machine learning", "gsoc" },
   { "4", "mlpack fast machine learning", "9",
-    "mlpack fast machine learning", "gsoc" } 
+    "mlpack fast machine learning", "gsoc" }
   };
   CreateFile(stringStopWordsInput, "preprocess_string_stop_words_test.csv",
       ",");
