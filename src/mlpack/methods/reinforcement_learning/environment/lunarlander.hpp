@@ -111,13 +111,19 @@ class LunarLander
       fuelRemaining(fuelRemaining)
   { /* Nothing to do here */ }
 
+  /**
+   * Update the state when taking action.
+   *
+   * @param state The current state.
+   * @param action The action to take.
+   */
   State UpdateStatus(const State& state,
                     const Action& action)
   {
     double burnAmount = action.action;
     double fuelRemaining = state.Fuel() - burnAmount;
-    double height = state.Height() - (((state.Speed() - burnAmount) + 5)
-        + state.Speed()) / 2);
+    double height = state.Height() - ((state.Speed() - burnAmount + 5)
+        + state.Speed()) / 2;
     double velocity = state.Speed() - burnAmount + 5;
     return State({0, height, velocity, fuelRemaining});
   }
@@ -138,10 +144,18 @@ class LunarLander
     // Update the number of steps performed.
     stepsPerformed++;
 
+    State currentNextState;
     if (state.Fuel() <= 0)
-      action.action = 0.0;
-
-    State currentNextState = UpdateStatus(state, action);
+    {
+      Action noAction;
+      noAction.action = 0.0;
+      std::cout << noAction.action << std::endl;
+      currentNextState = UpdateStatus(state, noAction);
+    }
+    else
+    {
+      currentNextState = UpdateStatus(state, action);
+    }
 
     // Check if the episode has terminated.
     bool done = IsTerminal(currentNextState);
@@ -162,7 +176,7 @@ class LunarLander
    /**
     *  Helper function to determine the reward according to final speed.
     */
-  void GetReward(double speed)
+  double GetReward(double speed)
   {
     if (speed == 0)
     {
@@ -204,13 +218,14 @@ class LunarLander
     double oldVelocity = state.Speed() + action.action - 5;
     double oldHeight = state.Height() + (state.Speed() + oldVelocity) / 2;
     double oldTime = state.ElapsedTime() - 1;
+    double burnAmount = action.action;
     double fraction = 0.0;
 
-    if (action.action == 5)
-      fraction = oldheight / oldvelocity;
+    if (burnAmount == 5)
+      fraction = oldHeight / oldVelocity;
     else
-      fraction = (std::sqrt(oldvelocity * oldvelocity +
-          oldheight * (10 - 2 * burnAmount)) - oldvelocity) / (5 - burnAmount);
+      fraction = (std::sqrt(oldVelocity * oldVelocity +
+          oldHeight * (10 - 2 * burnAmount)) - oldVelocity) / (5 - burnAmount);
 
     nextState.ElapsedTime() = oldTime + fraction;
     nextState.Speed() = oldVelocity + (5 - burnAmount) * fraction;
