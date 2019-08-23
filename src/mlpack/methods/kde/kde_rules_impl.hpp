@@ -117,7 +117,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
       lastQueryIndex == queryIndex &&
       traversalInfo.LastReferenceNode() != NULL &&
-      traversalInfo.LastReferenceNode()->Point(0) == referenceNode.Point(0))
+      lastReferenceIndex == referenceNode.Point(0))
   {
     // Don't duplicate calculations.
     alreadyDidRefPoint0 = true;
