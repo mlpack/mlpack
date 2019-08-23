@@ -75,6 +75,7 @@ TransposedConvolution<
     outputHeight(0)
 {
   weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
+  padding = new Padding<>(padW, padW, padH, padH);
 }
 
 template<

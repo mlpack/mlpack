@@ -26,6 +26,7 @@
 #include "linear_no_bias.hpp"
 #include "lstm.hpp"
 #include "multiply_merge.hpp"
+#include "padding.hpp"
 #include "gru.hpp"
 #include "fast_lstm.hpp"
 #include "recurrent.hpp"

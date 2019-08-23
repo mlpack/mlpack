@@ -27,6 +27,8 @@
   * Add support for probabilistic KDE (kernel density estimation) error bounds
     when using the Gaussian kernel (#1934).
 
+  * Fix negative distances for cover tree computation (#1979).
+
   * Improve KDE pruning by reclaiming not used error tolerance (#1954, #1984).
 
 ### mlpack 3.1.1

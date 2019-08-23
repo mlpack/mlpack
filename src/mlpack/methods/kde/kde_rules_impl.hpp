@@ -121,7 +121,8 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     // Don't duplicate calculations.
     alreadyDidRefPoint0 = true;
     const double furthestDescDist = referenceNode.FurthestDescendantDistance();
-    minDistance = traversalInfo.LastBaseCase() - furthestDescDist;
+    minDistance = std::max(traversalInfo.LastBaseCase() - furthestDescDist,
+        0.0);
     maxDistance = traversalInfo.LastBaseCase() + furthestDescDist;
   }
   else
@@ -322,7 +323,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     const double refFurtDescDist = referenceNode.FurthestDescendantDistance();
     const double queryFurtDescDist = queryNode.FurthestDescendantDistance();
     const double sumFurtDescDist = refFurtDescDist + queryFurtDescDist;
-    minDistance = traversalInfo.LastBaseCase() - sumFurtDescDist;
+    minDistance = std::max(traversalInfo.LastBaseCase() - sumFurtDescDist, 0.0);
     maxDistance = traversalInfo.LastBaseCase() + sumFurtDescDist;
   }
   else
