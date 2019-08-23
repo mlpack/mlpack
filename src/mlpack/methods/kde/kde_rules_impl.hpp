@@ -84,6 +84,9 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
                                           referenceSet.col(referenceIndex));
   densities(queryIndex) += kernel.Evaluate(distance);
 
+  // Update accumulated relative error tolerance for single-tree pruning.
+  accumError(queryIndex) += relError * kernel.Evaluate(distance);
+
   ++baseCases;
   lastQueryIndex = queryIndex;
   lastReferenceIndex = referenceIndex;
@@ -134,10 +137,12 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   const double bound = maxKernel - minKernel;
 
   // Error tolerance of the current query point and reference node.
-  const double errorTolerance =
-      (absError + relError * minKernel) / referenceSet.n_cols;
+  const double absErrorTol = absError / referenceSet.n_cols;
+  const double relErrorTol = relError * minKernel;
+  const double errorTolerance = absErrorTol + relErrorTol;
+  const double pointAccumErrorTol = accumError(queryIndex) / refNumDesc;
 
-  if (bound <= accumError(queryIndex) + errorTolerance)
+  if (bound <= 2 * (errorTolerance + pointAccumErrorTol))
   {
     // Estimate values.
     double kernelValue;
@@ -157,7 +162,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     score = DBL_MAX;
 
     // Update accumulated unused error tolerance.
-    accumError(queryIndex) = std::max(accumError(queryIndex) - bound, 0.0);
+    accumError(queryIndex) -= (bound - 2 * errorTolerance);
 
     // Store not used alpha for Monte Carlo.
     if (kernelIsGaussian && monteCarlo)
@@ -251,9 +256,9 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     // Recurse.
     score = minDistance;
 
-    // Update accumulated unused error tolerance.
+    // Update accumulated unused absolute error tolerance.
     if (referenceNode.IsLeaf())
-      accumError(queryIndex) += errorTolerance;
+      accumError(queryIndex) += refNumDesc * absError / referenceSet.n_cols;
 
     // If node is going to be exactly computed, reclaim not used alpha for
     // Monte Carlo estimations.
@@ -333,11 +338,13 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   const double bound = maxKernel - minKernel;
 
   // Error tolerance of the current nodes combination.
-  const double errorTolerance =
-      (absError + relError * minKernel) / referenceSet.n_cols;
+  const double absErrorTol = absError / referenceSet.n_cols;
+  const double relErrorTol = relError * minKernel;
+  const double errorTolerance = absErrorTol + relErrorTol;
+  const double pointAccumErrorTol = queryStat.AccumError() / refNumDesc;
 
   // If possible, avoid some calculations because of the error tolerance.
-  if (bound <= queryStat.AccumError() + errorTolerance)
+  if (bound <= 2 * (errorTolerance + pointAccumErrorTol))
   {
     // Auxiliary variables.
     double kernelValue;
@@ -367,7 +374,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     score = DBL_MAX;
 
     // Update accumulated unused error tolerance.
-    queryStat.AccumError() = std::max(queryStat.AccumError() - bound, 0.0);
+    queryStat.AccumError() -= (bound - 2 * errorTolerance);
 
     // Store not used alpha for Monte Carlo.
     if (kernelIsGaussian && monteCarlo)
@@ -482,7 +489,10 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
     // Update accumulated unused error tolerance.
     if (referenceNode.IsLeaf() && queryNode.IsLeaf())
-      queryStat.AccumError() += errorTolerance;
+    {
+      queryStat.AccumError() += (refNumDesc * absError / referenceSet.n_cols) +
+                                (relError * refNumDesc * minKernel);
+    }
 
     // If node is going to be exactly computed, reclaim not used alpha for
     // Monte Carlo estimations.
