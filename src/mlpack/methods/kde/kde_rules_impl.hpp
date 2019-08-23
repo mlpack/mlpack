@@ -82,10 +82,11 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
   // Calculations.
   const double distance = metric.Evaluate(querySet.col(queryIndex),
                                           referenceSet.col(referenceIndex));
-  densities(queryIndex) += kernel.Evaluate(distance);
+  const double kernelValue = kernel.Evaluate(distance);
+  densities(queryIndex) += kernelValue;
 
   // Update accumulated relative error tolerance for single-tree pruning.
-  accumError(queryIndex) += relError * kernel.Evaluate(distance);
+  accumError(queryIndex) += relError * kernelValue;
 
   ++baseCases;
   lastQueryIndex = queryIndex;
@@ -163,7 +164,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     score = DBL_MAX;
 
     // Update accumulated unused error tolerance.
-    accumError(queryIndex) -= (bound - 2 * errorTolerance);
+    accumError(queryIndex) -= refNumDesc * (bound - 2 * errorTolerance);
 
     // Store not used alpha for Monte Carlo.
     if (kernelIsGaussian && monteCarlo)
@@ -375,7 +376,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     score = DBL_MAX;
 
     // Update accumulated unused error tolerance.
-    queryStat.AccumError() -= (bound - 2 * errorTolerance);
+    queryStat.AccumError() -= refNumDesc * (bound - 2 * errorTolerance);
 
     // Store not used alpha for Monte Carlo.
     if (kernelIsGaussian && monteCarlo)
