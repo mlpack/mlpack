@@ -135,7 +135,7 @@ class LunarLander
    * @param state The current State.
    * @param action The action taken.
    * @param nextState The next state.
-   * @return reward, it's always -1.0.
+   * @return reward, it's always 0.0.
    */
   double Sample(const State& state,
                 const Action& action,
@@ -144,17 +144,18 @@ class LunarLander
     // Update the number of steps performed.
     stepsPerformed++;
 
+    Action modifyAction;
+    modifyAction.action = std::max(action.action, 0.0);
+
     State currentNextState;
     if (state.Fuel() <= 0)
     {
-      Action noAction;
-      noAction.action = 0.0;
-      std::cout << noAction.action << std::endl;
-      currentNextState = UpdateStatus(state, noAction);
+      modifyAction.action = 0.0;
+      currentNextState = UpdateStatus(state, modifyAction);
     }
     else
     {
-      currentNextState = UpdateStatus(state, action);
+      currentNextState = UpdateStatus(state, modifyAction);
     }
 
     // Check if the episode has terminated.
@@ -260,11 +261,11 @@ class LunarLander
    * This function checks if the LunarLander has reached the terminal state.
    *
    * @param state The current State.
-   * @return true if state is a terminal state, otherwise false.
+   * @return true If state is a terminal state, otherwise false.
    */
   bool IsTerminal(const State& state) const {
-    if (state.Height() > 0) return true;
-    else return false;
+    if (state.Height() > 0) return false;
+    else return true;
   }
 
  private:
