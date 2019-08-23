@@ -1,5 +1,5 @@
 /**
- * @file preprocess_string_util_impl.hpp
+ * @file preprocess_string_util.cpp
  * @author Jeffin Sam
  *
  * A CLI executable to encode string dataset.
@@ -28,10 +28,10 @@ namespace data {
  * @param columnDelimiter Delimiter used to split the columns of file.
  */
 vector<vector<string>> CreateDataset(const string& filename,
-                                            char columnDelimiter)
+                                     char columnDelimiter)
 {
   vector<vector<string>> dataset;
-  // Extracting the Contents of file
+  // Extracting the contents of file.
   // File stream.
   ifstream fin(filename);
   if (!fin.is_open())
@@ -57,8 +57,10 @@ vector<vector<string>> CreateDataset(const string& filename,
 bool IsNumber(const string& column)
 {
   for (auto i : column)
+  {
     if (!isdigit(i))
       return false;
+  }
   return true;
 }
 
@@ -68,8 +70,7 @@ bool IsNumber(const string& column)
  * @param tempDimesnion A vector of string passed which has column number or
  *    column ranges.
  */
-unordered_set<size_t> GetColumnIndices(const
-                                              vector<string>& tempDimension)
+unordered_set<size_t> GetColumnIndices(const vector<string>& tempDimension)
 {
   unordered_set<size_t> dimensions;
   int columnstartindex, columnendindex;

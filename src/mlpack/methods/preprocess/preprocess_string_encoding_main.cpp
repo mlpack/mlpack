@@ -12,6 +12,12 @@
 
 #include "mlpack/methods/preprocess/preprocess_string_util.hpp"
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/data/string_encoding.hpp>
+#include <mlpack/core/data/tokenizers/split_by_any_of.hpp>
+#include <mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp>
+#include <mlpack/core/data/string_encoding_policies/bag_of_words_encoding_policy.hpp>
+#include <mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp>
 
 PROGRAM_INFO("preprocess_string_encoding",
     // Short description.
@@ -68,8 +74,8 @@ using namespace std;
  * @param outputFilename Name of the file to save the data into.
  * @param dataset The actual dataset which was read from file.
  * @param columnDelimiter Delimiter used to separate columns of the file.
- * @param dimesnions Dimesnion which we non numeric or of type string.
- * @param encodedResult Collection of arma matrices havinf encoded Results.
+ * @param dimensions Dimesnion which has non numeric or string data.
+ * @param encodedResult Collection of arma matrices having encoded results.
  */
 static void WriteOutput(const string& outputFilename,
                         const vector<vector<string>>& dataset,
@@ -140,20 +146,24 @@ static void mlpackMain()
   vector<vector<string>> dataset = data::CreateDataset(filename,
       columnDelimiter[0]);
   for (auto colIndex : dimensions)
+  {
     if (colIndex >= dataset.back().size())
       Log::Fatal << "The index given is out of range, please verify" << endl;
+  }
 
   // Preparing the input dataset on which string manipulation has to be done.
   // vector<vector<string>> nonNumericInput(dimension.size());
   unordered_map<size_t , vector<string>> nonNumericInput;
 
   for (size_t i = 0; i < dataset.size(); i++)
+  {
     for (auto& datasetCol : dimensions)
       nonNumericInput[datasetCol].push_back(move(dataset[i][datasetCol]));
+  }
 
   unordered_map<size_t , arma::mat> encodedResult;
-  const string delimiter = CLI::GetParam<string> ("delimiter");
-  data::SplitByAnyOf tokenizer(delimiter);
+  const string delimiters = CLI::GetParam<string> ("delimiter");
+  data::SplitByAnyOf tokenizer(delimiters);
 
 
   if (CLI::HasParam("encoding_type"))
@@ -165,19 +175,20 @@ static void mlpackMain()
   }
   const string& encodingType = CLI::GetParam<string>("encoding_type");
   arma::mat output;
+  using TokenType = data::SplitByAnyOf::TokenType;
   for (auto& column : nonNumericInput)
   {
     if (encodingType == "DictionaryEncoding")
     {
         // dictionary Encoding.
-      data::DictionaryEncoding<data::SplitByAnyOf::TokenType> encoder;
+      data::DictionaryEncoding<TokenType> encoder;
       encoder.Encode(column.second, output, tokenizer);
       encodedResult[column.first] = std::move(output);
     }
     else if (encodingType == "BagOfWordsEncoding")
     {
       // BagofWords Encoding.
-      data::BagOfWordsEncoding<data::SplitByAnyOf::TokenType> encoder;
+      data::BagOfWordsEncoding<TokenType> encoder;
 
       encoder.Encode(column.second, output, tokenizer);
       encodedResult[column.first] = std::move(output);
@@ -195,31 +206,32 @@ static void mlpackMain()
       }
       const string tfidfEncodingType =
           CLI::GetParam<string>("tfidf_encoding_type");
+      using TfTypes = data::TfIdfEncodingPolicy::TfTypes;
       if ("RawCount" == tfidfEncodingType)
       {
-          data::TfIdfEncoding<data::SplitByAnyOf::TokenType>
-            encoder(data::TfIdfEncodingPolicy::TfTypes::RAW_COUNT, !smoothIdf);
+          data::TfIdfEncoding<TokenType>
+            encoder(TfTypes::RAW_COUNT, !smoothIdf);
           encoder.Encode(column.second, output, tokenizer);
           encodedResult[column.first] = std::move(output);
       }
       else if ("Binary" == tfidfEncodingType)
       {
-        data::TfIdfEncoding<data::SplitByAnyOf::TokenType>
-          encoder(data::TfIdfEncodingPolicy::TfTypes::BINARY, !smoothIdf);
+        data::TfIdfEncoding<TokenType>
+          encoder(TfTypes::BINARY, !smoothIdf);
         encoder.Encode(column.second, output, tokenizer);
         encodedResult[column.first] = std::move(output);
       }
       else if ("SublinearTf" == tfidfEncodingType)
       {
-        data::TfIdfEncoding<data::SplitByAnyOf::TokenType>
-          encoder(data::TfIdfEncodingPolicy::TfTypes::SUBLINEAR_TF, !smoothIdf);
+        data::TfIdfEncoding<TokenType>
+          encoder(TfTypes::SUBLINEAR_TF, !smoothIdf);
         encoder.Encode(column.second, output, tokenizer);
         encodedResult[column.first] = std::move(output);
       }
       else
       {
-        data::TfIdfEncoding<data::SplitByAnyOf::TokenType>
-          encoder(data::TfIdfEncodingPolicy::TfTypes::TERM_FREQUENCY,
+        data::TfIdfEncoding<TokenType>
+          encoder(TfTypes::TERM_FREQUENCY,
           !smoothIdf);
         encoder.Encode(column.second, output, tokenizer);
         encodedResult[column.first] = std::move(output);

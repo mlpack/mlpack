@@ -10,19 +10,13 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_CORE_DATA_STRING_UTIL_HPP
-#define MLPACK_CORE_DATA_STRING_UTIL_HPP
+#ifndef MLPACK_METHODS_PREPROCESS_PREPROCESS_STRING_UTIL_HPP
+#define MLPACK_METHODS_PREPROCESS_PREPROCESS_STRING_UTIL_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
-#include <mlpack/core/util/cli.hpp>
-#include <mlpack/core/data/extension.hpp>
 #include <unordered_set>
-#include <mlpack/core/data/string_encoding.hpp>
-#include <mlpack/core/data/tokenizers/split_by_any_of.hpp>
-#include <mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp>
-#include <mlpack/core/data/string_encoding_policies/bag_of_words_encoding_policy.hpp>
-#include <mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp>
+#include <mlpack/core/data/extension.hpp>
 
 namespace mlpack {
 namespace data {
