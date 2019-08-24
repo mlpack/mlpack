@@ -165,43 +165,42 @@ class TransposedConvolution
 
   //! Get the input size
   size_t const& InputSize() const { return inSize; }
-  //! Modify the input size.
-  size_t& InputSize() { return inSize; }
 
   //! Get the output size.
   size_t const& OutputSize() const { return outSize; }
-  //! Modify the output size.
-  size_t& OutputSize() { return outSize; }
 
-  //! Get the kernel height.
-  size_t const& KernelHeight() const { return kH; }
-  //! Modify the kernel height.
-  size_t& KernelHeight() { return kH; }
+  //! Get the kernel dimensions.
+  std::tuple<size_t, size_t> const& KernelDims() const
+  {
+    return std::tuple(kH, kW);
+  }
+  //! Modify the kernel dimensions.
+  std::tuple<size_t, size_t>& KernelDims()
+  {
+    return std::tuple(kH, kW);
+  }
 
-  //! Get the kernel width.
-  size_t const& KernelWidth() const { return kW; }
-  //! Modify the kernel width.
-  size_t& KernelWidth() { return kW; }
+  //! Get the stride dimensions.
+  std::tuple<size_t, size_t> const& StrideDims() const
+  {
+    return std::tuple(dH, dW);
+  }
+  //! Modify the stride dimensions.
+  std::tuple<size_t, size_t>& StrideDims()
+  {
+    return std::tuple(dH, dW);
+  }
 
-  //! Get the stride height.
-  size_t const& StrideHeight() const { return dH; }
-  //! Modify the stride height.
-  size_t& StrideHeight() { return dH; }
-
-  //! Get the stride width.
-  size_t const& StrideWidth() const { return dW; }
-  //! Modify the stride width.
-  size_t& StrideWidth() { return dW; }
-
-  //! Get the padding height.
-  size_t const& PaddingHeight() const { return padH; }
-  //! Modify the padding height.
-  size_t& PaddingHeight() { return padH; }
-
-  //! Get the padding width.
-  size_t const& PaddingWidth() const { return padW; }
-  //! Modify the padding width.
-  size_t& PaddingWidth() { return padW; }
+  //! Get the padding dimensions.
+  std::tuple<size_t, size_t> const& PaddingDims() const
+  {
+    return std::tuple(padH, padW);
+  }
+  //! Modify the padding dimensions.
+  std::tuple<size_t, size_t>& PaddingDims()
+  {
+    return std::tuple(padH, padW);
+  }
 
   //! Modify the bias weights of the layer.
   arma::mat& Bias() { return bias; }
