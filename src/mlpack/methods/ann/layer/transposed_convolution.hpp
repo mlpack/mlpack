@@ -175,7 +175,7 @@ class TransposedConvolution
     return std::forward_as_tuple(kH, kW);
   }
   //! Modify the kernel dimensions.
-  std::tuple<size_t&, size_t&>& KernelDims()
+  std::tuple<size_t&, size_t&> KernelDims()
   {
     return std::forward_as_tuple(kH, kW);
   }
@@ -186,7 +186,7 @@ class TransposedConvolution
     return std::forward_as_tuple(dH, dW);
   }
   //! Modify the stride dimensions.
-  std::tuple<size_t&, size_t&>& StrideDims()
+  std::tuple<size_t&, size_t&> StrideDims()
   {
     return std::forward_as_tuple(dH, dW);
   }
@@ -197,7 +197,7 @@ class TransposedConvolution
     return std::forward_as_tuple(padH, padW);
   }
   //! Modify the padding dimensions.
-  std::tuple<size_t&, size_t&>& PaddingDims()
+  std::tuple<size_t&, size_t&> PaddingDims()
   {
     return std::forward_as_tuple(padH, padW);
   }
