@@ -113,23 +113,23 @@ class MeanPooling
   //! Get the kernel dimensions.
   std::tuple<size_t&, size_t&> const& KernelDims() const
   {
-    return std::forward_tuple(kH, kW);
+    return std::forward_as_tuple(kH, kW);
   }
   //! Modify the kernel dimensions.
   std::tuple<size_t&, size_t&>& KernelDims()
   {
-    return std::forward_tuple(kH, kW);
+    return std::forward_as_tuple(kH, kW);
   }
 
   //! Get the stride dimensions.
   std::tuple<size_t&, size_t&> const& StrideDims() const
   {
-    return std::forward_tuple(dH, dW);
+    return std::forward_as_tuple(dH, dW);
   }
   //! Modify the stride dimensions.
   std::tuple<size_t&, size_t&>& StrideDims()
   {
-    return std::forward_tuple(dH, dW);
+    return std::forward_as_tuple(dH, dW);
   }
 
   //! Get the value of the rounding operation
