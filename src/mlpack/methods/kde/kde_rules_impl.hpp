@@ -159,14 +159,8 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 
   if (bound <= 2 * (errorTolerance + pointAccumErrorTol))
   {
-    // Estimate values.
-    double kernelValue;
-
-    // Calculate kernel value based on reference node centroid.
-    if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
-      kernelValue = EvaluateKernel(queryIndex, referenceNode.Point(0));
-    else
-      kernelValue = EvaluateKernel(queryPoint, referenceStat.Centroid());
+    // Estimate kernel value.
+    const double kernelValue = (maxKernel + minKernel) / 2.0;
 
     if (alreadyDidRefPoint0)
       densities(queryIndex) += (refNumDesc - 1) * kernelValue;
@@ -379,20 +373,8 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   // If possible, avoid some calculations because of the error tolerance.
   if (bound <= 2 * (errorTolerance + pointAccumErrorTol))
   {
-    // Auxiliary variables.
-    double kernelValue;
-
-    // If calculating a center is not required.
-    if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
-    {
-      kernelValue = EvaluateKernel(queryNode.Point(0), referenceNode.Point(0));
-    }
-    // Sadly, we have no choice but to calculate the center.
-    else
-    {
-      kernelValue = EvaluateKernel(queryStat.Centroid(),
-                                   referenceStat.Centroid());
-    }
+    // Estimate kernel value.
+    const double kernelValue = (maxKernel + minKernel) / 2.0;
 
     // Sum up estimations.
     for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
