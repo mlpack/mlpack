@@ -275,6 +275,12 @@ class FFN
   //! Modify the matrix of data points (predictors).
   arma::mat& Predictors() { return predictors; }
 
+  //! Get the FFN model
+  const std::vector<LayerTypes<CustomLayers...> >& Network() const
+  { return network; }
+  //! Modify the FFN model
+  std::vector<LayerTypes<CustomLayers...> >& Network() { return network; }
+
   /**
    * Reset the module infomration (weights/parameters).
    */
