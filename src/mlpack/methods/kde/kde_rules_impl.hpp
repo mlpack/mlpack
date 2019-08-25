@@ -132,6 +132,14 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     const math::Range r = referenceNode.RangeDistance(queryPoint);
     minDistance = r.Lo();
     maxDistance = r.Hi();
+
+    // Check if we are a self-child.
+    if (tree::TreeTraits<TreeType>::HasSelfChildren &&
+        referenceNode.Parent() != NULL &&
+        referenceNode.Parent()->Point(0) == referenceNode.Point(0))
+    {
+      alreadyDidRefPoint0 = true;
+    }
   }
 
   const double maxKernel = kernel.Evaluate(minDistance);
