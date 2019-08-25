@@ -86,7 +86,7 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
   densities(queryIndex) += kernelValue;
 
   // Update accumulated relative error tolerance for single-tree pruning.
-  accumError(queryIndex) += relError * kernelValue;
+  accumError(queryIndex) += 2 * relError * kernelValue;
 
   ++baseCases;
   lastQueryIndex = queryIndex;
@@ -101,7 +101,6 @@ inline double KDERules<MetricType, KernelType, TreeType>::
 Score(const size_t queryIndex, TreeType& referenceNode)
 {
   // Auxiliary variables.
-  kde::KDEStat& referenceStat = referenceNode.Stat();
   const arma::vec& queryPoint = querySet.unsafe_col(queryIndex);
   const size_t refNumDesc = referenceNode.NumDescendants();
   double score, minDistance, maxDistance, depthAlpha;
@@ -157,7 +156,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   else
     pointAccumErrorTol = accumError(queryIndex) / refNumDesc;
 
-  if (bound <= 2 * (errorTolerance + pointAccumErrorTol))
+  if (bound <= 2 * errorTolerance + pointAccumErrorTol)
   {
     // Estimate kernel value.
     const double kernelValue = (maxKernel + minKernel) / 2.0;
@@ -272,14 +271,9 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     if (referenceNode.IsLeaf())
     {
       if (alreadyDidRefPoint0)
-      {
-        accumError(queryIndex) +=
-            (refNumDesc - 1) * absError / referenceSet.n_cols;
-      }
+        accumError(queryIndex) += (refNumDesc - 1) * 2 * absErrorTol;
       else
-      {
-        accumError(queryIndex) += refNumDesc * absError / referenceSet.n_cols;
-      }
+        accumError(queryIndex) += refNumDesc * 2 * absErrorTol;
     }
 
     // If node is going to be exactly computed, reclaim not used alpha for
@@ -309,7 +303,6 @@ template<typename MetricType, typename KernelType, typename TreeType>
 inline double KDERules<MetricType, KernelType, TreeType>::
 Score(TreeType& queryNode, TreeType& referenceNode)
 {
-  kde::KDEStat& referenceStat = referenceNode.Stat();
   kde::KDEStat& queryStat = queryNode.Stat();
   const size_t refNumDesc = referenceNode.NumDescendants();
   double score, minDistance, maxDistance, depthAlpha;
@@ -371,7 +364,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     pointAccumErrorTol = queryStat.AccumError() / refNumDesc;
 
   // If possible, avoid some calculations because of the error tolerance.
-  if (bound <= 2 * (errorTolerance + pointAccumErrorTol))
+  if (bound <= 2 * errorTolerance + pointAccumErrorTol)
   {
     // Estimate kernel value.
     const double kernelValue = (maxKernel + minKernel) / 2.0;
@@ -509,17 +502,9 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     if (referenceNode.IsLeaf() && queryNode.IsLeaf())
     {
       if (alreadyDidRefPoint0)
-      {
-        queryStat.AccumError() +=
-          ((refNumDesc - 1) * absError / referenceSet.n_cols) +
-          (relError * (refNumDesc - 1) * minKernel);
-      }
+        queryStat.AccumError() += (refNumDesc - 1) * 2 * errorTolerance;
       else
-      {
-        queryStat.AccumError() +=
-          (refNumDesc * absError / referenceSet.n_cols) +
-          (relError * refNumDesc * minKernel);
-      }
+        queryStat.AccumError() += refNumDesc * 2 * errorTolerance;
     }
 
     // If node is going to be exactly computed, reclaim not used alpha for
