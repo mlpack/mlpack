@@ -135,8 +135,8 @@ BOOST_AUTO_TEST_CASE(KDETreeAsArguments)
  */
 BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
 {
-  arma::mat reference = arma::randu(2, 3000);
-  arma::mat query = arma::randu(2, 100);
+  arma::mat reference = arma::randu(2, 200);
+  arma::mat query = arma::randu(2, 60);
   arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   const double kernelBandwidth = 0.12;
@@ -169,7 +169,7 @@ BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
  */
 BOOST_AUTO_TEST_CASE(GaussianSingleKDEBruteForceTest)
 {
-  arma::mat reference = arma::randu(2, 3000);
+  arma::mat reference = arma::randu(2, 300);
   arma::mat query = arma::randu(2, 100);
   arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
@@ -249,9 +249,9 @@ BOOST_AUTO_TEST_CASE(EpanechnikovOctreeSingleKDETest)
   // Brute force KDE.
   EpanechnikovKernel kernel(kernelBandwidth);
   BruteForceKDE<EpanechnikovKernel>(reference,
-                                query,
-                                bfEstimations,
-                                kernel);
+                                    query,
+                                    bfEstimations,
+                                    kernel);
 
   // Optimized KDE.
   metric::EuclideanDistance metric;
