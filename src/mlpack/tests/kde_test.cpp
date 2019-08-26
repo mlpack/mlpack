@@ -443,7 +443,42 @@ BOOST_AUTO_TEST_CASE(StandardCoverTreeGaussianKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
+}
+
+/**
+ * Test Standard Cover Tree dual-tree implementation results against brute
+ * force results using Epanechnikov kernel.
+ */
+BOOST_AUTO_TEST_CASE(StandardCoverTreeEpanechnikovKDETest)
+{
+  arma::mat reference = arma::randu(2, 500);
+  arma::mat query = arma::randu(2, 200);
+  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  const double kernelBandwidth = 0.3;
+  const double relError = 0.01;
+
+  // Brute force KDE.
+  EpanechnikovKernel kernel(kernelBandwidth);
+  BruteForceKDE<EpanechnikovKernel>(reference,
+                                query,
+                                bfEstimations,
+                                kernel);
+
+  // Optimized KDE.
+  metric::EuclideanDistance metric;
+  KDE<EpanechnikovKernel,
+      metric::EuclideanDistance,
+      arma::mat,
+      tree::StandardCoverTree>
+      kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
+  kde.Train(reference);
+  kde.Evaluate(query, treeEstimations);
+
+  // Check whether results are equal.
+  for (size_t i = 0; i < query.n_cols; ++i)
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
