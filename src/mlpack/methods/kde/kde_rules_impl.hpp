@@ -357,11 +357,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   const double relErrorTol = relError * minKernel;
   const double errorTolerance = absErrorTol + relErrorTol;
 
-  double pointAccumErrorTol;
-  if (alreadyDidRefPoint0)
-    pointAccumErrorTol = queryStat.AccumError() / (refNumDesc - 1);
-  else
-    pointAccumErrorTol = queryStat.AccumError() / refNumDesc;
+  const double pointAccumErrorTol = queryStat.AccumError() / refNumDesc;
 
   // If possible, avoid some calculations because of the error tolerance.
   if (bound <= 2 * errorTolerance + pointAccumErrorTol)
@@ -382,10 +378,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     score = DBL_MAX;
 
     // Update accumulated unused error tolerance.
-    if (alreadyDidRefPoint0)
-      queryStat.AccumError() -= (refNumDesc - 1) * (bound - 2 * errorTolerance);
-    else
-      queryStat.AccumError() -= refNumDesc * (bound - 2 * errorTolerance);
+    queryStat.AccumError() -= refNumDesc * (bound - 2 * errorTolerance);
 
     // Store not used alpha for Monte Carlo.
     if (kernelIsGaussian && monteCarlo)
@@ -500,12 +493,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
     // Update accumulated unused error tolerance.
     if (referenceNode.IsLeaf() && queryNode.IsLeaf())
-    {
-      if (alreadyDidRefPoint0)
-        queryStat.AccumError() += (refNumDesc - 1) * 2 * errorTolerance;
-      else
-        queryStat.AccumError() += refNumDesc * 2 * errorTolerance;
-    }
+      queryStat.AccumError() += refNumDesc * 2 * errorTolerance;
 
     // If node is going to be exactly computed, reclaim not used alpha for
     // Monte Carlo estimations.
