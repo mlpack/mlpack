@@ -50,6 +50,7 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     kernel(kernel),
     monteCarlo(monteCarlo),
     sameSet(sameSet),
+    absErrorTol(absError / referenceSet.n_cols),
     lastQueryIndex(querySet.n_cols),
     lastReferenceIndex(referenceSet.n_cols),
     baseCases(0),
@@ -146,7 +147,6 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   const double bound = maxKernel - minKernel;
 
   // Error tolerance of the current query point and reference node.
-  const double absErrorTol = absError / referenceSet.n_cols;
   const double relErrorTol = relError * minKernel;
   const double errorTolerance = absErrorTol + relErrorTol;
 
@@ -353,7 +353,6 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   const double bound = maxKernel - minKernel;
 
   // Error tolerance of the current nodes combination.
-  const double absErrorTol = absError / referenceSet.n_cols;
   const double relErrorTol = relError * minKernel;
   const double errorTolerance = absErrorTol + relErrorTol;
 

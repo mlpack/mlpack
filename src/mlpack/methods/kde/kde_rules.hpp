@@ -158,6 +158,9 @@ class KDERules
   constexpr static bool kernelIsGaussian =
       std::is_same<KernelType, kernel::GaussianKernel>::value;
 
+  //! Absolute error tolerance available for each reference point.
+  const double absErrorTol;
+
   //! The last query index.
   size_t lastQueryIndex;
 
