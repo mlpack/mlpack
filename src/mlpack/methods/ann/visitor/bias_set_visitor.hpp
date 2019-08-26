@@ -26,20 +26,20 @@ namespace ann {
 class BiasSetVisitor : public boost::static_visitor<size_t>
 {
  public:
-  //! Update the bias parameters given the parameters set and offset.
+  //! Update the bias parameters given the parameters' set and offset.
   BiasSetVisitor(arma::mat&& weight, const size_t offset = 0);
 
-  //! Update the parameters set.
+  //! Update the parameters' set.
   template<typename LayerType>
   size_t operator()(LayerType* layer) const;
 
   size_t operator()(MoreTypes layer) const;
 
  private:
-  //! The parameters set.
+  //! The parameters' set.
   arma::mat&& weight;
 
-  //! The parameters offset.
+  //! The parameters' offset.
   const size_t offset;
 
   //! Do not update the bias parameters if the module doesn't implement the

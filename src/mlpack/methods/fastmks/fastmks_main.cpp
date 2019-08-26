@@ -121,6 +121,13 @@ static void mlpackMain()
       "gaussian", "triangular", "hyptan", "epanechnikov" }, true,
       "unknown kernel type");
 
+  // Make sure number of maximum kernels is greater than 0.
+  if (CLI::HasParam("k"))
+  {
+    RequireParamValue<int>("k", [](int x) { return x > 0; }, true,
+        "number of maximum kernels must be greater than 0");
+  }
+
   // Naive mode overrides single mode.
   ReportIgnoredParam({{ "naive", true }}, "single");
 

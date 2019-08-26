@@ -115,9 +115,13 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 
   // Use the furthest descendant distance to determine the scale of the root
-  // node.
-  if (furthestDescendantDistance == 0.0)
+  // node.  Note that if the root is a leaf, we can have scale INT_MIN, but if
+  // it *isn't* a leaf, we need to mark the scale as one higher than INT_MIN, so
+  // that the recursions don't fail.
+  if (furthestDescendantDistance == 0.0 && dataset.n_cols == 1)
     scale = INT_MIN;
+  else if (furthestDescendantDistance == 0.0)
+    scale = INT_MIN + 1;
   else
     scale = (int) ceil(log(furthestDescendantDistance) / log(base));
 
@@ -206,9 +210,13 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 
   // Use the furthest descendant distance to determine the scale of the root
-  // node.
-  if (furthestDescendantDistance == 0.0)
+  // node.  Note that if the root is a leaf, we can have scale INT_MIN, but if
+  // it *isn't* a leaf, we need to mark the scale as one higher than INT_MIN, so
+  // that the recursions don't fail.
+  if (furthestDescendantDistance == 0.0 && dataset.n_cols == 1)
     scale = INT_MIN;
+  else if (furthestDescendantDistance == 0.0)
+    scale = INT_MIN + 1;
   else
     scale = (int) ceil(log(furthestDescendantDistance) / log(base));
 
@@ -298,9 +306,13 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 
   // Use the furthest descendant distance to determine the scale of the root
-  // node.
-  if (furthestDescendantDistance == 0.0)
+  // node.  Note that if the root is a leaf, we can have scale INT_MIN, but if
+  // it *isn't* a leaf, we need to mark the scale as one higher than INT_MIN, so
+  // that the recursions don't fail.
+  if (furthestDescendantDistance == 0.0 && dataset->n_cols == 1)
     scale = INT_MIN;
+  else if (furthestDescendantDistance == 0.0)
+    scale = INT_MIN + 1;
   else
     scale = (int) ceil(log(furthestDescendantDistance) / log(base));
 
@@ -389,9 +401,13 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 
   // Use the furthest descendant distance to determine the scale of the root
-  // node.
-  if (furthestDescendantDistance == 0.0)
+  // node.  Note that if the root is a leaf, we can have scale INT_MIN, but if
+  // it *isn't* a leaf, we need to mark the scale as one higher than INT_MIN, so
+  // that the recursions don't fail.
+  if (furthestDescendantDistance == 0.0 && dataset->n_cols == 1)
     scale = INT_MIN;
+  else if (furthestDescendantDistance == 0.0)
+    scale = INT_MIN + 1;
   else
     scale = (int) ceil(log(furthestDescendantDistance) / log(base));
 

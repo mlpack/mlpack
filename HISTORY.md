@@ -29,6 +29,8 @@
 
   * Fix negative distances for cover tree computation (#1979).
 
+  * Fix cover tree building when all pairwise distances are 0 (#1986).
+
   * Improve KDE pruning by reclaiming not used error tolerance (#1954, #1984).
 
 ### mlpack 3.1.1
