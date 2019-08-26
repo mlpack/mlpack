@@ -14,7 +14,6 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <boost/variant/static_visitor.hpp>
-#include <iostream>
 #include <string>
 
 using namespace mlpack::ann;
@@ -86,7 +85,7 @@ class TestVisitor : public boost::static_visitor<std::string>
       !std::is_same<T, LogSoftMax<> >::value,
       std::string>::type
   LayerString(T* layer) const { return "convolution"; }
-  
+
   template<typename T>
   typename std::enable_if<
       !std::is_same<T, Linear<> >::value &&
