@@ -58,7 +58,7 @@ class TestVisitor : public boost::static_visitor<std::string>
       !std::is_same<T, LogSoftMax<> >::value,
       std::string>::type
   LayerString(T* layer) const { return "linear"; }
-  
+
   template<typename T>
   typename std::enable_if<
       !std::is_same<T, Linear<> >::value &&
@@ -142,7 +142,7 @@ class TestVisitor : public boost::static_visitor<std::string>
       !std::is_same<T, LogSoftMax<> >::value,
       std::string>::type
   LayerString(T* layer) const { return "maxpooling"; }
-  
+
   template<typename T>
   typename std::enable_if<
       !std::is_same<T, Linear<> >::value &&
@@ -170,7 +170,7 @@ class TestVisitor : public boost::static_visitor<std::string>
       !std::is_same<T, LogSoftMax<> >::value,
       std::string>::type
   LayerString(T* layer) const { return "atrousconvolution"; }
-  
+
   template<typename T>
   typename std::enable_if<
       !std::is_same<T, Linear<> >::value &&
@@ -226,7 +226,7 @@ class TestVisitor : public boost::static_visitor<std::string>
       !std::is_same<T, LogSoftMax<> >::value,
       std::string>::type
   LayerString(T* layer) const { return "batchnorm"; }
-  
+
   template<typename T>
   typename std::enable_if<
       !std::is_same<T, Linear<> >::value &&
@@ -310,7 +310,7 @@ class TestVisitor : public boost::static_visitor<std::string>
       !std::is_same<T, LogSoftMax<> >::value,
       std::string>::type
   LayerString(T* layer) const { return "dropout"; }
-  
+
   template<typename T>
   typename std::enable_if<
       !std::is_same<T, Linear<> >::value &&
@@ -338,7 +338,7 @@ class TestVisitor : public boost::static_visitor<std::string>
       !std::is_same<T, LogSoftMax<> >::value,
       std::string>::type
   LayerString(T* layer) const { return "layernorm"; }
-  
+
   template<typename T>
   typename std::enable_if<
       !std::is_same<T, Linear<> >::value &&
@@ -366,7 +366,7 @@ class TestVisitor : public boost::static_visitor<std::string>
       !std::is_same<T, LogSoftMax<> >::value,
       std::string>::type
   LayerString(T* layer) const { return "linearnobias"; }
-  
+
   template<typename T>
   typename std::enable_if<
       !std::is_same<T, Linear<> >::value &&
@@ -450,7 +450,7 @@ class TestVisitor : public boost::static_visitor<std::string>
       !std::is_same<T, LogSoftMax<> >::value,
       std::string>::type
   LayerString(T* layer) const { return "transposedconvolution"; }
-  
+
   template<typename T>
   typename std::enable_if<
       !std::is_same<T, Linear<> >::value &&
@@ -506,7 +506,7 @@ class TestVisitor : public boost::static_visitor<std::string>
       !std::is_same<T, LogSoftMax<> >::value,
       std::string>::type
   LayerString(T* layer) const { return "tanh"; }
-  
+
   template<typename T>
   typename std::enable_if<
       !std::is_same<T, Linear<> >::value &&
