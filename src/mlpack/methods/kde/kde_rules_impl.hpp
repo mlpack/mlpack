@@ -146,10 +146,14 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   const double minKernel = kernel.Evaluate(maxDistance);
   const double bound = maxKernel - minKernel;
 
-  // Error tolerance of the current query point and reference node.
+  // Error tolerance of the current combination of query point and reference
+  // node.
   const double relErrorTol = relError * minKernel;
   const double errorTolerance = absErrorTol + relErrorTol;
 
+  // We relax the bound for pruning by accumError(queryIndex), so that if there
+  // is any leftover error tolerance from the rest of the traversal, we can use
+  // it here to prune more.
   double pointAccumErrorTol;
   if (alreadyDidRefPoint0)
     pointAccumErrorTol = accumError(queryIndex) / (refNumDesc - 1);
@@ -169,7 +173,8 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     // Don't explore this tree branch.
     score = DBL_MAX;
 
-    // Update accumulated unused error tolerance.
+    // Subtract used error tolerance or add extra available tolerace from this
+    // prune.
     if (alreadyDidRefPoint0)
       accumError(queryIndex) -= (refNumDesc - 1) * (bound - 2 * errorTolerance);
     else
@@ -267,7 +272,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     // Recurse.
     score = minDistance;
 
-    // Update accumulated unused absolute error tolerance.
+    // Add accumulated unused absolute error tolerance.
     if (referenceNode.IsLeaf())
     {
       if (alreadyDidRefPoint0)
@@ -352,10 +357,14 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   const double minKernel = kernel.Evaluate(maxDistance);
   const double bound = maxKernel - minKernel;
 
-  // Error tolerance of the current nodes combination.
+  // Error tolerance of the current combination of query node and reference
+  // node.
   const double relErrorTol = relError * minKernel;
   const double errorTolerance = absErrorTol + relErrorTol;
 
+  // We relax the bound for pruning by queryStat.AccumError(), so that if there
+  // is any leftover error tolerance from the rest of the traversal, we can use
+  // it here to prune more.
   const double pointAccumErrorTol = queryStat.AccumError() / refNumDesc;
 
   // If possible, avoid some calculations because of the error tolerance.
@@ -376,7 +385,8 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     // Prune.
     score = DBL_MAX;
 
-    // Update accumulated unused error tolerance.
+    // Subtract used error tolerance or add extra available tolerace from this
+    // prune.
     queryStat.AccumError() -= refNumDesc * (bound - 2 * errorTolerance);
 
     // Store not used alpha for Monte Carlo.
@@ -490,7 +500,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     // Recurse.
     score = minDistance;
 
-    // Update accumulated unused error tolerance.
+    // Add accumulated unused error tolerance.
     if (referenceNode.IsLeaf() && queryNode.IsLeaf())
       queryStat.AccumError() += refNumDesc * 2 * errorTolerance;
 
