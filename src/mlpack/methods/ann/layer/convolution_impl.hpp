@@ -379,7 +379,7 @@ void Convolution<
   size_t totalVerticalPadding = (dW - 1) * inputWidth + kW - dW;
   size_t totalHorizontalPadding = (dH - 1) * inputHeight + kH - dH;
 
-  padWLeft =totalVerticalPadding / 2;
+  padWLeft = totalVerticalPadding / 2;
   padWRight = totalVerticalPadding - totalVerticalPadding / 2;
   padHTop = totalHorizontalPadding / 2;
   padHBottom = totalHorizontalPadding - totalHorizontalPadding / 2;
