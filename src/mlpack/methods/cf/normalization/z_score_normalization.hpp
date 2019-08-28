@@ -88,6 +88,8 @@ class ZScoreNormalization
     }
 
     // Subtract mean from existing rating and divide it by stddev.
+    // TODO: consider using spmat::transform() instead of spmat iterators
+    // TODO: http://arma.sourceforge.net/docs.html#transform
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();
     for (; it != it_end; ++it)
