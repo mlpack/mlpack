@@ -216,11 +216,6 @@ if(TEST_VERBOSE)
   add_definitions(-DTEST_VERBOSE)
 endif()
 
-# If the user asked for running tests, turn that on.
-if(BUILD_TESTS)
-  add_definitions(-DBUILD_TESTS)
-endif()
-
 # If the user asked for extra Armadillo debugging output, turn that on.
 if(ARMA_EXTRA_DEBUG)
   add_definitions(-DARMA_EXTRA_DEBUG)

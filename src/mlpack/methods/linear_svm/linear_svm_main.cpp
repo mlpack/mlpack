@@ -310,11 +310,10 @@ static void mlpackMain()
     model->svm.Lambda() = lambda;
     model->svm.Delta() = delta;
     model->svm.NumClasses() = numClasses;
+    model->svm.FitIntercept() = intercept;
 
     if (optimizerType == "lbfgs")
     {
-      model->svm.FitIntercept() = intercept;
-
       ens::L_BFGS lbfgsOpt;
       lbfgsOpt.MaxIterations() = maxIterations;
       lbfgsOpt.MinGradientNorm() = tolerance;
@@ -333,11 +332,7 @@ static void mlpackMain()
       ens::ConstantStep decayPolicy(stepSize);
 
       #ifdef HAS_OPENMP
-        #ifdef BUILD_TESTS
-        size_t threads = 1;
-        #else
-        size_t threads = omp_get_max_threads();
-        #endif
+      size_t threads = omp_get_max_threads();
       #else
       size_t threads = 1;
       Log::Warn << "Using parallel SGD, but OpenMP support is "
@@ -366,7 +361,7 @@ static void mlpackMain()
     size_t trainingDimensionality;
 
     // Set the dimensionality according to fitintercept.
-    if (intercept && optimizerType == "lbfgs")
+    if (intercept)
       trainingDimensionality = model->svm.Parameters().n_rows - 1;
     else
       trainingDimensionality = model->svm.Parameters().n_rows;
@@ -406,6 +401,8 @@ static void mlpackMain()
             << testLabels.n_elem << " labels!" << endl;
       }
 
+      numClasses = CLI::GetParam<int>("num_classes") == 0 ?
+        model->mappings.n_elem : CLI::GetParam<int>("num_classes");
       vector<size_t> correctClassCounts(numClasses, 0);
       vector<size_t> labelSize(numClasses, 0);
       for (arma::uword i = 0; i != predictions.n_elem; ++i)
