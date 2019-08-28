@@ -92,11 +92,14 @@ class ZScoreNormalization
     arma::sp_mat::iterator it_end = cleanedData.end();
     for (; it != it_end; ++it)
     {
-      *it = (*it - mean) / stddev;
+      double tmp = (*it - mean) / stddev;
+      
       // The algorithm omits rating of zero. If normalized rating equals zero,
       // it is set to the smallest positive double value.
-      if (*it == 0)
-        *it = std::numeric_limits<double>::min();
+      if (tmp == 0)
+        tmp = std::numeric_limits<double>::min();
+      
+      *it = tmp;
     }
   }
 
