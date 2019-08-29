@@ -18,687 +18,142 @@
 
 using namespace mlpack::ann;
 
-class TestVisitor : public boost::static_visitor<std::string>
+class LayerNameVisitor : public boost::static_visitor<std::string>
 {
  public:
-  TestVisitor() { /*Nothing to do here*/ }
+  LayerNameVisitor()
+  {
+  }
+
+  std::string LayerString(AtrousConvolution<>* /*layer*/) const
+  {
+    return "atrousconvolution";
+  }
+
+  std::string LayerString(AlphaDropout<>* /*layer*/) const
+  {
+    return "alphadropout";
+  }
+
+  std::string LayerString(BatchNorm<>* /*layer*/) const
+  {
+    return "batchnorm";
+  }
+
+  std::string LayerString(Constant<>* /*layer*/) const
+  {
+    return "constant";
+  }
+
+  std::string LayerString(Convolution<>* /*layer*/) const
+  {
+    return "convolution";
+  }
+
+  std::string LayerString(DropConnect<>* /*layer*/) const
+  {
+    return "dropconnect";
+  }
+
+  std::string LayerString(Dropout<>* /*layer*/) const
+  {
+    return "dropout";
+  }
+
+  std::string LayerString(FlexibleReLU<>* /*layer*/) const
+  {
+    return "frelu";
+  }
+
+  std::string LayerString(LayerNorm<>* /*layer*/) const
+  {
+    return "layernorm";
+  }
+
+  std::string LayerString(Linear<>* /*layer*/) const
+  {
+    return "linear";
+  }
+
+  std::string LayerString(LinearNoBias<>* /*layer*/) const
+  {
+    return "linearnobias";
+  }
+
+  std::string LayerString(MaxPooling<>* /*layer*/) const
+  {
+    return "maxpooling";
+  }
+
+  std::string LayerString(MeanPooling<>* /*layer*/) const
+  {
+    return "meanpooling";
+  }
+
+  std::string LayerString(MultiplyConstant<>* /*layer*/) const
+  {
+    return "multiplyconstant";
+  }
+
+  std::string LayerString(ReLULayer<>* /*layer*/) const
+  {
+    return "relu";
+  }
+
+  std::string LayerString(TransposedConvolution<>* /*layer*/) const
+  {
+    return "transposedconvolution";
+  }
+
+  std::string LayerString(IdentityLayer<>* /*layer*/) const
+  {
+    return "identity";
+  }
+
+  std::string LayerString(TanHLayer<>* /*layer*/) const
+  {
+    return "tanh";
+  }
+
+  std::string LayerString(ELU<>* /*layer*/) const
+  {
+    return "elu";
+  }
+
+  std::string LayerString(HardTanH<>* /*layer*/) const
+  {
+    return "hardtanh";
+  }
+
+  std::string LayerString(LeakyReLU<>* /*layer*/) const
+  {
+    return "leakyrelu";
+  }
+
+  std::string LayerString(PReLU<>* /*layer*/) const
+  {
+    return "prelu";
+  }
+
+  std::string LayerString(SigmoidLayer<>* /*layer*/) const
+  {
+    return "sigmoid";
+  }
+
+  std::string LayerString(LogSoftMax<>* /*layer*/) const
+  {
+    return "logsoftmax";
+  }
+
+  template<typename T>
+  std::string LayerString(T* /*layer*/) const
+  {
+    return "unsupported";
+  }
 
   template<typename LayerType>
   std::string operator()(LayerType* layer) const
   {
     return LayerString(layer);
   }
-
- private:
-  template<typename T>
-  typename std::enable_if<
-      std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "linear"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "convolution"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "relu"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "maxpooling"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "atrousconvolution"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "alphadropout"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "batchnorm"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "constant"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "dropconnect"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "dropout"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "layernorm"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "linearnobias"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "meanpooling"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "multiplyconstant"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "transposedconvolution"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "identity"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "tanh"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "elu"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "hardtanh"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "leakyrelu"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "prelu"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "sigmoid"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "logsoftmax"; }
-
-  template<typename T>
-  typename std::enable_if<
-      !std::is_same<T, Linear<> >::value &&
-      !std::is_same<T, Convolution<> >::value &&
-      !std::is_same<T, ReLULayer<> >::value &&
-      !std::is_same<T, MaxPooling<> >::value &&
-      !std::is_same<T, AtrousConvolution<> >::value &&
-      !std::is_same<T, AlphaDropout<> >::value &&
-      !std::is_same<T, BatchNorm<> >::value &&
-      !std::is_same<T, Constant<> >::value &&
-      !std::is_same<T, DropConnect<> >::value &&
-      !std::is_same<T, Dropout<> >::value &&
-      !std::is_same<T, LayerNorm<> >::value &&
-      !std::is_same<T, LinearNoBias<> >::value &&
-      !std::is_same<T, MeanPooling<> >::value &&
-      !std::is_same<T, MultiplyConstant<> >::value &&
-      !std::is_same<T, TransposedConvolution<> >::value &&
-      !std::is_same<T, IdentityLayer<> >::value &&
-      !std::is_same<T, TanHLayer<> >::value &&
-      !std::is_same<T, ELU<> >::value &&
-      !std::is_same<T, HardTanH<> >::value &&
-      !std::is_same<T, LeakyReLU<> >::value &&
-      !std::is_same<T, PReLU<> >::value &&
-      !std::is_same<T, SigmoidLayer<> >::value &&
-      !std::is_same<T, LogSoftMax<> >::value,
-      std::string>::type
-  LayerString(T* layer) const { return "Unsupported"; }
 };
