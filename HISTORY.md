@@ -33,6 +33,9 @@
 
   * Improve KDE pruning by reclaiming not used error tolerance (#1954, #1984).
 
+  * Optimizations for sparse matrix accesses in z-score normalization for CF
+    (#1989).
+
 ### mlpack 3.1.1
 ###### 2019-05-26
   * Fix random forest bug for numerical-only data (#1887).
