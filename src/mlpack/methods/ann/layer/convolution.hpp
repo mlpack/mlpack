@@ -78,6 +78,38 @@ class Convolution
               const size_t inputHeight = 0,
               const std::string paddingType = "None");
 
+  /**
+   * Create the Convolution object using the specified number of input maps,
+   * output maps, filter size, stride and padding parameter.
+   *
+   * @param inSize The number of input maps.
+   * @param outSize The number of output maps.
+   * @param kW Width of the filter/kernel.
+   * @param kH Height of the filter/kernel.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param padW A two-value tuple indicating padding widths of the input.
+   *             First value is padding at left side. Second value is padding on
+   *             right side.
+   * @param padH A two-value tuple indicating padding heights of the input.
+   *             First value is padding at top. Second value is padding on
+   *             bottom.
+   * @param inputWidth The width of the input data.
+   * @param inputHeight The height of the input data.
+   * @param paddingType The type of padding (Valid or Same). Defaults to None.
+   */
+  Convolution(const size_t inSize,
+              const size_t outSize,
+              const size_t kW,
+              const size_t kH,
+              const size_t dW,
+              const size_t dH,
+              const std::tuple<size_t, size_t> padW,
+              const std::tuple<size_t, size_t> padH,
+              const size_t inputWidth = 0,
+              const size_t inputHeight = 0,
+              const std::string paddingType = "None");
+
   /*
    * Set the weight and bias term.
    */

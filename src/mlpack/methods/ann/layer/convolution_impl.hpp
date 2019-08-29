@@ -99,6 +99,62 @@ template<
     typename InputDataType,
     typename OutputDataType
 >
+Convolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::Convolution(
+    const size_t inSize,
+    const size_t outSize,
+    const size_t kW,
+    const size_t kH,
+    const size_t dW,
+    const size_t dH,
+    const std::tuple<size_t, size_t> padW,
+    const std::tuple<size_t, size_t> padH,
+    const size_t inputWidth,
+    const size_t inputHeight,
+    const std::string paddingType) :
+    inSize(inSize),
+    outSize(outSize),
+    kW(kW),
+    kH(kH),
+    dW(dW),
+    dH(dH),
+    padWLeft(std::get<0>(padW)),
+    padWRight(std::get<1>(padW)),
+    padHBottom(std::get<1>(padH)),
+    padHTop(std::get<0>(padH)),
+    inputWidth(inputWidth),
+    inputHeight(inputHeight),
+    outputWidth(0),
+    outputHeight(0)
+{
+  weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
+  if (paddingType == "Valid")
+  {
+    padWLeft = 0;
+    padWRight = 0;
+    padHTop = 0;
+    padHBottom = 0;
+  }
+  else if (paddingType == "Same")
+  {
+    InitializeSamePadding();
+  }
+
+  padding = new Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+}
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
 void Convolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
