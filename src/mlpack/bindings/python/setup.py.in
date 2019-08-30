@@ -30,10 +30,8 @@ else:
   extra_link_args=['${OpenMP_CXX_FLAGS}']
 
 # Get list of library dirs.
-#library_dirs = filter(None, ['${MLPACK_LIBDIR}'] +
-#    '${BOOST_LIBDIRS}'.split(' '))
-#if library_dirs == []:
-#  library_dirs = None
+library_dirs = list(filter(None, ['${MLPACK_LIBDIR}'] +
+    '${Boost_LIBRARY_DIRS}'.split(' ')))
 
 # We'll link with the exact paths to each library using extra_objects, instead
 # of linking with 'libraries' and 'library_dirs', because of differences in
@@ -60,6 +58,7 @@ else:
     extra_args = ['-DBINDING_TYPE=BINDING_TYPE_PYX',
                   '-std=c++11',
                   '${OpenMP_CXX_FLAGS}']
+  extra_args = extra_args + ['/MD', '/O2', '/Ob2', '/DNDEBUG']
 
   # This is used for parallel builds; CMake will set PYX_TO_BUILD accordingly.
   if module is not None:
@@ -71,6 +70,7 @@ else:
                       np.get_include(), \
                       '${OUTPUT_DIR}/src/mlpack/bindings/python/'] +
                       '${CYTHON_INCLUDE_DIRECTORIES}'.split(' '),
+                  library_dirs=library_dirs,
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
                   extra_link_args=extra_link_args,
@@ -86,6 +86,7 @@ else:
                       np.get_include(), \
                       '${OUTPUT_DIR}/src/mlpack/bindings/python/'] +
                       '${CYTHON_INCLUDE_DIRECTORIES}'.split(' '),
+                  library_dirs=library_dirs,
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
                   extra_link_args=extra_link_args,
