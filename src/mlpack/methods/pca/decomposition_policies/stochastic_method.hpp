@@ -15,9 +15,7 @@
 #define MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_STOCHASTIC_METHOD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
-#include <mlpack/core/optimizers/adam/adam.hpp>
-#include <mlpack/core/optimizers/svrg/svrg.hpp>
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace pca {
@@ -210,7 +208,7 @@ class StochasticPolicyType
  * Implementation of the PCA Update policy which wraps the existing optimizer
  * update policies.
  */
-template<typename UpdatePolicyType = optimization::VanillaUpdate>
+template<typename UpdatePolicyType = ens::VanillaUpdate>
 class PCAUpdate
 {
  public:
@@ -273,13 +271,13 @@ class PCAUpdate
 // Convenience typedefs.
 
 using StochasticSGDPolicy = StochasticPolicyType<
-    optimization::SGD<PCAUpdate<optimization::VanillaUpdate> > >;
+    ens::SGD<PCAUpdate<ens::VanillaUpdate> > >;
 
 using StochasticAdamPolicy = StochasticPolicyType<
-    optimization::AdamType<PCAUpdate<optimization::AdamUpdate> > >;
+    ens::AdamType<PCAUpdate<ens::AdamUpdate> > >;
 
-using StochasticSVRGPolicy = StochasticPolicyType<optimization::SVRGType<
-    PCAUpdate<optimization::SVRGUpdate>, optimization::NoDecay> >;
+using StochasticSVRGPolicy = StochasticPolicyType<ens::SVRGType<
+    PCAUpdate<ens::SVRGUpdate>, ens::NoDecay> >;
 
 } // namespace pca
 } // namespace mlpack

@@ -215,7 +215,7 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonRandomizedPCATest)
  */
 BOOST_AUTO_TEST_CASE(ArmaComparisonStochasticSGDPCATest)
 {
-  ArmaComparisonPCA<StochasticSGDPolicy >();
+  ArmaComparisonPCA<StochasticSGDPolicy>();
 }
 
 /**
@@ -223,7 +223,7 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonStochasticSGDPCATest)
  */
 BOOST_AUTO_TEST_CASE(ArmaComparisonStochasticAdamPCATest)
 {
-  ArmaComparisonPCA<StochasticAdamPolicy >();
+  ArmaComparisonPCA<StochasticAdamPolicy>();
 }
 
 /**
