@@ -237,7 +237,7 @@ class TestPythonBinding(unittest.TestCase):
                                  s_umatrix_in=z)
 
     self.assertEqual(output['s_umatrix_out'].shape[0], 100)
-    self.assertEqual(output['s_umatrix_out'].dtype, np.long)
+    self.assertEqual(output['s_umatrix_out'].dtype, np.dtype('intp'))
 
     for i in range(100):
       self.assertEqual(output['s_umatrix_out'][i, 0], x.iloc[i] * 2)
@@ -256,7 +256,7 @@ class TestPythonBinding(unittest.TestCase):
                                  copy_all_inputs=True)
 
     self.assertEqual(output['s_umatrix_out'].shape[0], 100)
-    self.assertEqual(output['s_umatrix_out'].dtype, np.long)
+    self.assertEqual(output['s_umatrix_out'].dtype, np.dtype('intp'))
 
     for i in range(100):
       self.assertEqual(output['s_umatrix_out'][i, 0], x.iloc[i] * 2)
@@ -418,7 +418,7 @@ class TestPythonBinding(unittest.TestCase):
 
     self.assertEqual(output['umatrix_out'].shape[0], 100)
     self.assertEqual(output['umatrix_out'].shape[1], 4)
-    self.assertEqual(output['umatrix_out'].dtype, np.long)
+    self.assertEqual(output['umatrix_out'].dtype, np.dtype('intp'))
     for i in [0, 1, 3]:
       for j in range(100):
         self.assertEqual(x[j, i], output['umatrix_out'][j, i])
@@ -440,7 +440,7 @@ class TestPythonBinding(unittest.TestCase):
 
     self.assertEqual(output['umatrix_out'].shape[0], 100)
     self.assertEqual(output['umatrix_out'].shape[1], 4)
-    self.assertEqual(output['umatrix_out'].dtype, np.long)
+    self.assertEqual(output['umatrix_out'].dtype, np.dtype('intp'))
     for i in [0, 1, 3]:
       for j in range(100):
         self.assertEqual(x[j, i], output['umatrix_out'][j, i])
@@ -463,7 +463,7 @@ class TestPythonBinding(unittest.TestCase):
 
     self.assertEqual(output['umatrix_out'].shape[0], 3)
     self.assertEqual(output['umatrix_out'].shape[1], 4)
-    self.assertEqual(output['umatrix_out'].dtype, np.long)
+    self.assertEqual(output['umatrix_out'].dtype, np.dtype('intp'))
     self.assertEqual(output['umatrix_out'][0, 0], 1)
     self.assertEqual(output['umatrix_out'][0, 1], 2)
     self.assertEqual(output['umatrix_out'][0, 2], 6)
@@ -495,7 +495,7 @@ class TestPythonBinding(unittest.TestCase):
     self.assertEqual(output['umatrix_out'].shape[1], 4)
     self.assertEqual(len(x), 3)
     self.assertEqual(len(x[0]), 5)
-    self.assertEqual(output['umatrix_out'].dtype, np.long)
+    self.assertEqual(output['umatrix_out'].dtype, np.dtype('intp'))
     self.assertEqual(output['umatrix_out'][0, 0], 1)
     self.assertEqual(output['umatrix_out'][0, 1], 2)
     self.assertEqual(output['umatrix_out'][0, 2], 6)
@@ -558,7 +558,7 @@ class TestPythonBinding(unittest.TestCase):
                                  ucol_in=z)
 
     self.assertEqual(output['ucol_out'].shape[0], 100)
-    self.assertEqual(output['ucol_out'].dtype, np.long)
+    self.assertEqual(output['ucol_out'].dtype, np.dtype('intp'))
     for i in range(100):
       self.assertEqual(output['ucol_out'][i], x[i] * 2)
 
@@ -575,7 +575,7 @@ class TestPythonBinding(unittest.TestCase):
                                  copy_all_inputs=True)
 
     self.assertEqual(output['ucol_out'].shape[0], 100)
-    self.assertEqual(output['ucol_out'].dtype, np.long)
+    self.assertEqual(output['ucol_out'].dtype, np.dtype('intp'))
     for i in range(100):
       self.assertEqual(output['ucol_out'][i], x[i] * 2)
 
@@ -628,7 +628,7 @@ class TestPythonBinding(unittest.TestCase):
                                  urow_in=z)
 
     self.assertEqual(output['urow_out'].shape[0], 100)
-    self.assertEqual(output['urow_out'].dtype, np.long)
+    self.assertEqual(output['urow_out'].dtype, np.dtype('intp'))
 
     for i in range(100):
       self.assertEqual(output['urow_out'][i], x[i] * 2)
@@ -646,7 +646,7 @@ class TestPythonBinding(unittest.TestCase):
                                  copy_all_inputs=True)
 
     self.assertEqual(output['urow_out'].shape[0], 100)
-    self.assertEqual(output['urow_out'].dtype, np.long)
+    self.assertEqual(output['urow_out'].dtype, np.dtype('intp'))
 
     for i in range(100):
       self.assertEqual(output['urow_out'][i], x[i] * 2)
@@ -837,7 +837,7 @@ class TestPythonBinding(unittest.TestCase):
                                  s_umatrix_in=z)
 
     self.assertEqual(output['s_umatrix_out'].shape[0], 100)
-    self.assertEqual(output['s_umatrix_out'].dtype, np.long)
+    self.assertEqual(output['s_umatrix_out'].dtype, np.dtype('intp'))
 
     for i in range(100):
       self.assertEqual(output['s_umatrix_out'][i, 0], x[i] * 2)
@@ -855,7 +855,7 @@ class TestPythonBinding(unittest.TestCase):
                                  copy_all_inputs=True)
 
     self.assertEqual(output['s_umatrix_out'].shape[0], 100)
-    self.assertEqual(output['s_umatrix_out'].dtype, np.long)
+    self.assertEqual(output['s_umatrix_out'].dtype, np.dtype('intp'))
 
     for i in range(100):
       self.assertEqual(output['s_umatrix_out'][i, 0], x[i] * 2)
@@ -909,7 +909,7 @@ class TestPythonBinding(unittest.TestCase):
                                  ucol_in=z)
 
     self.assertEqual(output['ucol_out'].shape[0], 100)
-    self.assertEqual(output['ucol_out'].dtype, np.long)
+    self.assertEqual(output['ucol_out'].dtype, np.dtype('intp'))
     for i in range(100):
       self.assertEqual(output['ucol_out'][i], x[i] * 2)
 
@@ -926,7 +926,7 @@ class TestPythonBinding(unittest.TestCase):
                                  copy_all_inputs=True)
 
     self.assertEqual(output['ucol_out'].shape[0], 100)
-    self.assertEqual(output['ucol_out'].dtype, np.long)
+    self.assertEqual(output['ucol_out'].dtype, np.dtype('intp'))
     for i in range(100):
       self.assertEqual(output['ucol_out'][i], x[i] * 2)
 
@@ -979,7 +979,7 @@ class TestPythonBinding(unittest.TestCase):
                                  urow_in=z)
 
     self.assertEqual(output['urow_out'].shape[0], 100)
-    self.assertEqual(output['urow_out'].dtype, np.long)
+    self.assertEqual(output['urow_out'].dtype, np.dtype('intp'))
 
     for i in range(100):
       self.assertEqual(output['urow_out'][i], x[i] * 2)
@@ -997,7 +997,7 @@ class TestPythonBinding(unittest.TestCase):
                                  copy_all_inputs=True)
 
     self.assertEqual(output['urow_out'].shape[0], 101)
-    self.assertEqual(output['urow_out'].dtype, np.long)
+    self.assertEqual(output['urow_out'].dtype, np.dtype('intp'))
 
     for i in range(101):
       self.assertEqual(output['urow_out'][i], x[0][i] * 2)
