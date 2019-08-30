@@ -76,9 +76,6 @@ class StochasticPolicyType
   {
     PCAFunction f(centeredData);
 
-    // Adjust the step size if necessary.
-    // SetStepSize(optimizer);
-
     eigvec = arma::randn(centeredData.n_rows, rank);
     optimizer.Optimize(f, eigvec);
 
