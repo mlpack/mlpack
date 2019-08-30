@@ -184,8 +184,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   // intmax_t because size_t is not yet supported by their OpenMP
   // implementation. omp_size_t is the appropriate type according to the
   // platform.
-  #pragma omp parallel for default(none) \
-      shared(prunedSequence, regularizationConstants)
+  #pragma omp parallel for shared(prunedSequence, regularizationConstants)
   for (omp_size_t fold = 0; fold < (omp_size_t) folds; fold++)
   {
     // Break up data into train and test sets.

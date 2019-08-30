@@ -13,6 +13,7 @@ option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
+option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 
 # Currently Python bindings aren't known to build successfully on Windows, so
 # set BUILD_PYTHON_BINDINGS to OFF when the platform is Windows.
@@ -77,6 +78,10 @@ if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -ftemplate-depth=1000")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
+
+  # To remove unused functions warnings.
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-function")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-function")
 endif()
 
 # These support libraries are used if we need to link against something
@@ -312,6 +317,51 @@ endif ()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
+# Find stb_image.h and stb_image_write.h.
+find_package(StbImage)
+# Download stb_image for image loading.
+if (NOT STB_IMAGE_FOUND)
+  if (DOWNLOAD_STB_IMAGE)
+    set(STB_DIR "stb")
+    install(DIRECTORY DESTINATION ${CMAKE_BINARY_DIR}/deps/${STB_DIR})
+    file(DOWNLOAD http://mlpack.org/files/stb/stb_image.h
+        "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h"
+        STATUS STB_IMAGE_DOWNLOAD_STATUS_LIST LOG STB_IMAGE_DOWNLOAD_LOG
+        SHOW_PROGRESS)
+    list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 0 STB_IMAGE_DOWNLOAD_STATUS)
+    file(DOWNLOAD http://mlpack.org/files/stb/stb_image_write.h
+        "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h"
+        STATUS STB_IMAGE_WRITE_DOWNLOAD_STATUS_LIST
+        LOG STB_IMAGE_WRITE_DOWNLOAD_LOG
+        SHOW_PROGRESS)
+    list(GET STB_IMAGE_WRITE_DOWNLOAD_STATUS_LIST 0
+        STB_IMAGE_WRITE_DOWNLOAD_STATUS)
+    if (STB_IMAGE_DOWNLOAD_STATUS EQUAL 0 AND
+        STB_IMAGE_WRITE_DOWNLOAD_STATUS EQUAL 0)
+      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+          "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+      message(STATUS
+          "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+      # Now we have to also ensure these header files get installed.
+      install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+      install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+      add_definitions(-DHAS_STB)
+    else ()
+      list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
+      message(WARNING
+          "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
+    endif ()
+  else ()
+    message(WARNING
+        "stb/stb_image.h is not installed. Image utilites will not be available!")
+  endif ()
+else ()
+  # Already has STB installed.
+  add_definitions(-DHAS_STB)
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${STB_IMAGE_INCLUDE_DIR})
+endif ()
+
+
 # Find ensmallen.
 # Once ensmallen is readily available in package repos, the automatic downloader
 # here can be removed.
@@ -338,14 +388,17 @@ if (NOT ENSMALLEN_FOUND)
             "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include")
         message(STATUS
             "Successfully downloaded ensmallen into ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/")
+
+        # Now we have to also ensure these header files get installed.
+        install(DIRECTORY ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen_bits/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ensmallen_bits)
+        install(FILES ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
       else ()
         message(FATAL_ERROR "Problem unpacking ensmallen!  Expected only one directory ensmallen-x.y.z/; found ${ENS_DIRECTORIES}. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
       endif ()
     else ()
       list(GET ENS_DOWNLOAD_STATUS_LIST 1 ENS_DOWNLOAD_ERROR)
       message(FATAL_ERROR
-          "Could not download ensmallen! Error code ${ENS_DOWNLOAD_STATUS}:
-${ENS_DOWNLOAD_ERROR}!  Error log: ${ENS_DOWBLOAD_LOG}")
+          "Could not download ensmallen! Error code ${ENS_DOWNLOAD_STATUS}: ${ENS_DOWNLOAD_ERROR}!  Error log: ${ENS_DOWNLOAD_LOG}")
     endif ()
   else ()
     # Release versions will have ensmallen packaged with the release so we can

@@ -5,6 +5,8 @@ set(SOURCES
   add_visitor_impl.hpp
   backward_visitor.hpp
   backward_visitor_impl.hpp
+  bias_set_visitor.hpp
+  bias_set_visitor_impl.hpp
   copy_visitor.hpp
   copy_visitor_impl.hpp
   delete_visitor.hpp

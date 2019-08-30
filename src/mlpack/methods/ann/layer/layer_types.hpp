@@ -28,6 +28,7 @@
 #include <mlpack/methods/ann/layer/join.hpp>
 #include <mlpack/methods/ann/layer/layer_norm.hpp>
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
+#include <mlpack/methods/ann/layer/c_relu.hpp>
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
 #include <mlpack/methods/ann/layer/lookup.hpp>
@@ -39,11 +40,15 @@
 #include <mlpack/methods/ann/layer/reparametrization.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
 #include <mlpack/methods/ann/layer/subview.hpp>
+#include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
+
+// Regularizers.
+#include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
 
 // Loss function modules.
 #include <mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp>
@@ -55,13 +60,27 @@ template<typename InputDataType, typename OutputDataType> class BatchNorm;
 template<typename InputDataType, typename OutputDataType> class DropConnect;
 template<typename InputDataType, typename OutputDataType> class Glimpse;
 template<typename InputDataType, typename OutputDataType> class LayerNorm;
-template<typename InputDataType, typename OutputDataType> class Linear;
-template<typename InputDataType, typename OutputDataType> class LinearNoBias;
 template<typename InputDataType, typename OutputDataType> class LSTM;
 template<typename InputDataType, typename OutputDataType> class GRU;
 template<typename InputDataType, typename OutputDataType> class FastLSTM;
 template<typename InputDataType, typename OutputDataType> class VRClassReward;
 template<typename InputDataType, typename OutputDataType> class Concatenate;
+template<typename InputDataType, typename OutputDataType> class Padding;
+
+template<typename InputDataType,
+         typename OutputDataType,
+         typename RegularizerType>
+class Linear;
+
+template<typename InputDataType,
+         typename OutputDataType,
+         typename RegularizerType>
+class LinearNoBias;
+
+template<typename InputDataType,
+         typename OutputDataType
+>
+class VirtualBatchNorm;
 
 template<typename InputDataType,
          typename OutputDataType
@@ -80,6 +99,12 @@ template<typename InputDataType,
          typename... CustomLayers
 >
 class Sequential;
+
+template<typename InputDataType,
+         typename OutputDataType,
+         typename... CustomLayers
+>
+class Highway;
 
 template<typename InputDataType,
          typename OutputDataType,
@@ -139,6 +164,26 @@ template<typename InputDataType,
 >
 class MultiplyMerge;
 
+template <typename InputDataType,
+          typename OutputDataType,
+          typename... CustomLayers
+>
+class WeightNorm;
+
+using MoreTypes = boost::variant<
+        Recurrent<arma::mat, arma::mat>*,
+        RecurrentAttention<arma::mat, arma::mat>*,
+        ReinforceNormal<arma::mat, arma::mat>*,
+        Reparametrization<arma::mat, arma::mat>*,
+        Select<arma::mat, arma::mat>*,
+        Sequential<arma::mat, arma::mat, false>*,
+        Sequential<arma::mat, arma::mat, true>*,
+        Subview<arma::mat, arma::mat>*,
+        VRClassReward<arma::mat, arma::mat>*,
+        VirtualBatchNorm<arma::mat, arma::mat>*,
+        WeightNorm<arma::mat, arma::mat>*
+>;
+
 template <typename... CustomLayers>
 using LayerTypes = boost::variant<
     Add<arma::mat, arma::mat>*,
@@ -172,11 +217,13 @@ using LayerTypes = boost::variant<
     FlexibleReLU<arma::mat, arma::mat>*,
     Glimpse<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
+    Highway<arma::mat, arma::mat>*,
     Join<arma::mat, arma::mat>*,
     LayerNorm<arma::mat, arma::mat>*,
     LeakyReLU<arma::mat, arma::mat>*,
-    Linear<arma::mat, arma::mat>*,
-    LinearNoBias<arma::mat, arma::mat>*,
+    CReLU<arma::mat, arma::mat>*,
+    Linear<arma::mat, arma::mat, NoRegularizer>*,
+    LinearNoBias<arma::mat, arma::mat, NoRegularizer>*,
     LogSoftMax<arma::mat, arma::mat>*,
     Lookup<arma::mat, arma::mat>*,
     LSTM<arma::mat, arma::mat>*,
@@ -187,16 +234,9 @@ using LayerTypes = boost::variant<
     MultiplyConstant<arma::mat, arma::mat>*,
     MultiplyMerge<arma::mat, arma::mat>*,
     NegativeLogLikelihood<arma::mat, arma::mat>*,
+    Padding<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
-    Recurrent<arma::mat, arma::mat>*,
-    RecurrentAttention<arma::mat, arma::mat>*,
-    ReinforceNormal<arma::mat, arma::mat>*,
-    Reparametrization<arma::mat, arma::mat>*,
-    Select<arma::mat, arma::mat>*,
-    Sequential<arma::mat, arma::mat, false>*,
-    Sequential<arma::mat, arma::mat, true>*,
-    Subview<arma::mat, arma::mat>*,
-    VRClassReward<arma::mat, arma::mat>*,
+    MoreTypes,
     CustomLayers*...
 >;
 

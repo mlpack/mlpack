@@ -35,6 +35,12 @@ inline void AddVisitor<CustomLayers...>::operator()(LayerType* layer) const
 }
 
 template<typename... CustomLayers>
+inline void AddVisitor<CustomLayers...>::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
+}
+
+template<typename... CustomLayers>
 template<typename T>
 inline typename std::enable_if<
     HasAddCheck<T, void(T::*)(LayerTypes<CustomLayers...>)>::value, void>::type

@@ -121,6 +121,13 @@ static void mlpackMain()
       "gaussian", "triangular", "hyptan", "epanechnikov" }, true,
       "unknown kernel type");
 
+  // Make sure number of maximum kernels is greater than 0.
+  if (CLI::HasParam("k"))
+  {
+    RequireParamValue<int>("k", [](int x) { return x > 0; }, true,
+        "number of maximum kernels must be greater than 0");
+  }
+
   // Naive mode overrides single mode.
   ReportIgnoredParam({{ "naive", true }}, "single");
 
@@ -152,43 +159,43 @@ static void mlpackMain()
     {
       LinearKernel lk;
       model->KernelType() = FastMKSModel::LINEAR_KERNEL;
-      model->BuildModel(referenceData, lk, single, naive, base);
+      model->BuildModel(std::move(referenceData), lk, single, naive, base);
     }
     else if (kernelType == "polynomial")
     {
       PolynomialKernel pk(degree, offset);
       model->KernelType() = FastMKSModel::POLYNOMIAL_KERNEL;
-      model->BuildModel(referenceData, pk, single, naive, base);
+      model->BuildModel(std::move(referenceData), pk, single, naive, base);
     }
     else if (kernelType == "cosine")
     {
       CosineDistance cd;
       model->KernelType() = FastMKSModel::COSINE_DISTANCE;
-      model->BuildModel(referenceData, cd, single, naive, base);
+      model->BuildModel(std::move(referenceData), cd, single, naive, base);
     }
     else if (kernelType == "gaussian")
     {
       GaussianKernel gk(bandwidth);
       model->KernelType() = FastMKSModel::GAUSSIAN_KERNEL;
-      model->BuildModel(referenceData, gk, single, naive, base);
+      model->BuildModel(std::move(referenceData), gk, single, naive, base);
     }
     else if (kernelType == "epanechnikov")
     {
       EpanechnikovKernel ek(bandwidth);
       model->KernelType() = FastMKSModel::EPANECHNIKOV_KERNEL;
-      model->BuildModel(referenceData, ek, single, naive, base);
+      model->BuildModel(std::move(referenceData), ek, single, naive, base);
     }
     else if (kernelType == "triangular")
     {
       TriangularKernel tk(bandwidth);
       model->KernelType() = FastMKSModel::TRIANGULAR_KERNEL;
-      model->BuildModel(referenceData, tk, single, naive, base);
+      model->BuildModel(std::move(referenceData), tk, single, naive, base);
     }
     else if (kernelType == "hyptan")
     {
       HyperbolicTangentKernel htk(scale, offset);
       model->KernelType() = FastMKSModel::HYPTAN_KERNEL;
-      model->BuildModel(referenceData, htk, single, naive, base);
+      model->BuildModel(std::move(referenceData), htk, single, naive, base);
     }
   }
   else

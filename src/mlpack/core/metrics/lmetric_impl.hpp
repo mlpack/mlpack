@@ -61,7 +61,7 @@ typename VecTypeA::elem_type LMetric<2, true>::Evaluate(
     const VecTypeA& a,
     const VecTypeB& b)
 {
-  return sqrt(arma::accu(square(a - b)));
+  return arma::norm(a - b, 2);
 }
 
 template<>
