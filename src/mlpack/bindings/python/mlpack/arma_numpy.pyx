@@ -48,7 +48,7 @@ cdef arma.Mat[double]* numpy_to_mat_d(numpy.ndarray[numpy.double_t, ndim=2] X, \
   """
   Convert a numpy ndarray to a matrix.  The memory will still be owned by numpy.
   """
-  if not X.flags.c_contiguous or (not X.flags.owndata and not isWin)):
+  if not X.flags.c_contiguous or (not X.flags.owndata and not isWin):
     # If needed, make a copy where we own the memory.
     X = X.copy(order="C")
     takeOwnership = True
@@ -57,7 +57,7 @@ cdef arma.Mat[double]* numpy_to_mat_d(numpy.ndarray[numpy.double_t, ndim=2] X, \
       X.shape[0], isWin, False)
 
   # Take ownership of the memory, if we need to and we are not on Windows.
-  if takeOwnership and !isWin:
+  if takeOwnership and not isWin:
     PyArray_CLEARFLAGS(X, numpy.NPY_OWNDATA)
     SetMemState[arma.Mat[double]](m[0], 0)
 
@@ -68,7 +68,7 @@ cdef arma.Mat[size_t]* numpy_to_mat_s(numpy.ndarray[numpy.npy_intp, ndim=2] X, \
   """
   Convert a numpy ndarray to a matrix.  The memory will still be owned by numpy.
   """
-  if not X.flags.c_contiguous or (not X.flags.owndata and not isWin)):
+  if not X.flags.c_contiguous or (not X.flags.owndata and not isWin):
     # If needed, make a copy where we own the memory, except on Windows where
     # we never copy.
     X = X.copy(order="C")
@@ -78,7 +78,7 @@ cdef arma.Mat[size_t]* numpy_to_mat_s(numpy.ndarray[numpy.npy_intp, ndim=2] X, \
       X.shape[0], isWin, False)
 
   # Take ownership of the memory, if we need to.
-  if takeOwnership and !isWin:
+  if takeOwnership and not isWin:
     PyArray_CLEARFLAGS(X, numpy.NPY_OWNDATA)
     SetMemState[arma.Mat[size_t]](m[0], 0)
 
@@ -132,7 +132,7 @@ cdef arma.Row[double]* numpy_to_row_d(numpy.ndarray[numpy.double_t, ndim=1] X, \
   Convert a numpy one-dimensional ndarray to a row.  The memory will still be
   owned by numpy.
   """
-  if not X.flags.c_contiguous or (not X.flags.owndata and not isWin)):
+  if not X.flags.c_contiguous or (not X.flags.owndata and not isWin):
     # If needed, make a copy where we own the memory, except on Windows where
     # we never copy.
     X = X.copy(order="C")
@@ -154,7 +154,7 @@ cdef arma.Row[size_t]* numpy_to_row_s(numpy.ndarray[numpy.npy_intp, ndim=1] X, \
   Convert a numpy one-dimensional ndarray to a row.  The memory will still be
   owned by numpy.
   """
-  if not X.flags.c_contiguous or (not X.flags.owndata and not isWin)):
+  if not X.flags.c_contiguous or (not X.flags.owndata and not isWin):
     # If needed, make a copy where we own the memory, except on Windows where
     # we never copy.
     X = X.copy(order="C")
@@ -215,7 +215,7 @@ cdef arma.Col[double]* numpy_to_col_d(numpy.ndarray[numpy.double_t, ndim=1] X, \
   Convert a numpy one-dimensional ndarray to a column vector.  The memory will
   still be owned by numpy.
   """
-  if not X.flags.c_contiguous or (not X.flags.owndata and not isWin)):
+  if not X.flags.c_contiguous or (not X.flags.owndata and not isWin):
     # If needed, make a copy where we own the memory, except on Windows where
     # we never copy.
     X = X.copy(order="C")
@@ -237,7 +237,7 @@ cdef arma.Col[size_t]* numpy_to_col_s(numpy.ndarray[numpy.npy_intp, ndim=1] X, \
   Convert a numpy one-dimensional ndarray to a column vector.  The memory will
   still be owned by numpy.
   """
-  if not X.flags.c_contiguous or (not X.flags.owndata and not isWin)):
+  if not X.flags.c_contiguous or (not X.flags.owndata and not isWin):
     # If needed, make a copy where we own the memory, except on Windows where
     # we never copy.
     X = X.copy(order="C")
@@ -289,4 +289,4 @@ cdef numpy.ndarray[numpy.npy_intp, ndim=1] col_to_numpy_s(arma.Col[size_t]& X) \
     SetMemState[arma.Col[size_t]](X, 1)
     PyArray_ENABLEFLAGS(output, numpy.NPY_OWNDATA)
 
-  return output2
+  return output
