@@ -19,6 +19,7 @@
 #include <mlpack/methods/pca/decomposition_policies/quic_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/randomized_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/randomized_block_krylov_method.hpp>
+#include <mlpack/methods/pca/decomposition_policies/stochastic_method.hpp>
 
 using namespace mlpack;
 using namespace mlpack::pca;
@@ -34,7 +35,8 @@ PROGRAM_INFO("Principal Components Analysis",
     "linear transformation determined by PCA.",
     // Long description.
     "This program performs principal components analysis on the given dataset "
-    "using the exact, randomized, randomized block Krylov, or QUIC SVD method. "
+    "using the exact, randomized, randomized block Krylov, SGD, SVRG, Adam or "
+    "QUIC SVD method. "
     "It will transform the data onto its principal components, optionally "
     "performing dimensionality reduction by ignoring the principal components "
     "with the smallest eigenvalues."
@@ -50,7 +52,8 @@ PROGRAM_INFO("Principal Components Analysis",
     "Multiple different decomposition techniques can be used.  The method to "
     "use can be specified with the " +
     PRINT_PARAM_STRING("decomposition_method") + " parameter, and it may take "
-    "the values 'exact', 'randomized', or 'quic'."
+    "the values 'exact', 'randomized', 'randomized-block-krylov', 'sgd', 'svrg' "
+    "'adam' or 'quic'."
     "\n\n"
     "For example, to reduce the dimensionality of the matrix " +
     PRINT_DATASET("data") + " to 5 dimensions using randomized SVD for the "
@@ -77,7 +80,7 @@ PARAM_FLAG("scale", "If set, the data will be scaled before running PCA, such "
 
 PARAM_STRING_IN("decomposition_method", "Method used for the principal "
     "components analysis: 'exact', 'randomized', 'randomized-block-krylov', "
-    "'quic'.", "c", "exact");
+    "'sgd', 'svrg', 'adam', 'quic'.", "c", "exact");
 
 
 //! Run RunPCA on the specified dataset with the given decomposition method.
@@ -119,7 +122,7 @@ static void mlpackMain()
 
   // Check decomposition method validity.
   RequireParamInSet<string>("decomposition_method", { "exact", "randomized",
-      "randomized-block-krylov", "quic" }, true,
+      "randomized-block-krylov", "sgd", "svrg", "adam" ,"quic" }, true,
       "unknown decomposition method");
 
   // Find out what dimension we want.
@@ -157,6 +160,18 @@ static void mlpackMain()
   {
     RunPCA<RandomizedBlockKrylovSVDPolicy>(dataset, newDimension, scale,
         varToRetain);
+  }
+  else if (decompositionMethod == "sgd")
+  {
+    RunPCA<StochasticSGDPolicy>(dataset, newDimension, scale, varToRetain);
+  }
+  else if (decompositionMethod == "svrg")
+  {
+    RunPCA<StochasticSVRGPolicy>(dataset, newDimension, scale, varToRetain);
+  }
+  else if (decompositionMethod == "adam")
+  {
+    RunPCA<StochasticAdamPolicy>(dataset, newDimension, scale, varToRetain);
   }
   else if (decompositionMethod == "quic")
   {
