@@ -36,6 +36,9 @@
   * Optimizations for sparse matrix accesses in z-score normalization for CF
     (#1989).
 
+  * Add Stochastic Approximation Algorithms for Principal Component Analysis
+    (#1391).
+
 ### mlpack 3.1.1
 ###### 2019-05-26
   * Fix random forest bug for numerical-only data (#1887).
