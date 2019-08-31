@@ -77,14 +77,20 @@ Convolution<
     outputHeight(0)
 {
   weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
-  if (paddingType == "Valid")
+
+  // Transform paddingType to lowercase.
+  std::string paddingTypeLow = paddingType;
+  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
+      [](unsigned char c){ return std::tolower(c); });
+
+  if (paddingTypeLow == "valid")
   {
     padWLeft = 0;
     padWRight = 0;
     padHTop = 0;
     padHBottom = 0;
   }
-  else if (paddingType == "Same")
+  else if (paddingTypeLow == "same")
   {
     InitializeSamePadding();
   }
@@ -133,14 +139,20 @@ Convolution<
     outputHeight(0)
 {
   weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
-  if (paddingType == "Valid")
+
+  // Transform paddingType to lowercase.
+  std::string paddingTypeLow = paddingType;
+  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
+      [](unsigned char c){ return std::tolower(c); });
+
+  if (paddingTypeLow == "valid")
   {
     padWLeft = 0;
     padWRight = 0;
     padHTop = 0;
     padHBottom = 0;
   }
-  else if (paddingType == "Same")
+  else if (paddingTypeLow == "same")
   {
     InitializeSamePadding();
   }
@@ -285,7 +297,7 @@ void Convolution<
       BackwardConvolutionRule::Convolution(mappedError.slice(outMap),
           rotatedFilter, output, dW, dH);
 
-      if (padWLeft != 0 || padHTop != 0)
+      if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
       {
         gTemp.slice(inMap + batchCount * inSize) += output.submat(padWLeft,
             padHTop, padWLeft + gTemp.n_rows - 1, padHTop + gTemp.n_cols - 1);
