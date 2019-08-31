@@ -111,7 +111,7 @@ class MeanPooling
   size_t const& OutputSize() const { return outSize; }
 
   //! Get the kernel dimensions.
-  std::tuple<size_t&, size_t&> const& KernelDims() const
+  std::tuple<size_t, size_t> const& KernelDims() const
   {
     return std::forward_as_tuple(kH, kW);
   }
@@ -122,7 +122,7 @@ class MeanPooling
   }
 
   //! Get the stride dimensions.
-  std::tuple<size_t&, size_t&> const& StrideDims() const
+  std::tuple<size_t, size_t> const& StrideDims() const
   {
     return std::forward_as_tuple(dH, dW);
   }
