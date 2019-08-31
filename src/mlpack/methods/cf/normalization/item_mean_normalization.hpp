@@ -109,11 +109,14 @@ class ItemMeanNormalization
     it = cleanedData.begin();
     for (; it != cleanedData.end(); ++it)
     {
-      *it = *it - itemMean(it.row());
+      double tmp = *it - itemMean(it.row());
+
       // The algorithm omits rating of zero. If normalized rating equals zero,
       // it is set to the smallest positive double value.
-      if (*it == 0)
-        *it = std::numeric_limits<double>::min();
+      if (tmp == 0)
+        tmp = std::numeric_limits<double>::min();
+
+      *it = tmp;
     }
   }
 
