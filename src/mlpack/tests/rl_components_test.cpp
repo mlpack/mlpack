@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
 
   Pendulum::State state = task.InitialSample();
   Pendulum::Action action;
-  action.action = math::Random(-2.0, 2.0);
+  action.action[0] = math::Random(-2.0, 2.0);
   double reward = task.Sample(state, action);
 
   // The reward is always negative. Check if not lower than lowest possible.
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
 
   ContinuousMountainCar::State state = task.InitialSample();
   ContinuousMountainCar::Action action;
-  action.action = math::Random(-1.0, 1.0);
+  action.action[0] = math::Random(-1.0, 1.0);
   double reward = task.Sample(state, action);
   // Maximum reward possible is 100.
   BOOST_REQUIRE(reward <= 100.0);
@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(ContinuousDoublePoleCartTest)
 
   ContinuousDoublePoleCart::State state = task.InitialSample();
   ContinuousDoublePoleCart::Action action;
-  action.action = math::Random(-1.0, 1.0);
+  action.action[0] = math::Random(-1.0, 1.0);
   double reward = task.Sample(state, action);
 
   BOOST_REQUIRE_EQUAL(reward, 1.0);
