@@ -251,15 +251,11 @@ inline bool CheckDifferentTrees(const TreeType& nodeA, const TreeType& nodeB)
 }
 
 /**
- * Ensure that training accuracy changes as minimum_leaf_size decreases.
+ * Ensure that the trees have different structure as the minimum leaf size is
+ * changed.
  */
 BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
 {
-const size_t seed = std::time(NULL);
-mlpack::math::randGen.seed((uint32_t) seed);
-srand((unsigned int) seed);
-arma::arma_rng::set_seed(seed);
-
   // Train for minimum leaf size 20.
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
@@ -324,16 +320,11 @@ arma::arma_rng::set_seed(seed);
 }
 
 /**
- * Ensure that test accuracy changes as num_trees increases (we aren't
- * guaranteed that accuracy will go up).
+ * Ensure that the number of trees are different when num_trees is specified
+ * differently.
  */
 BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
 {
-const size_t seed = std::time(NULL);
-mlpack::math::randGen.seed((uint32_t) seed);
-srand((unsigned int) seed);
-arma::arma_rng::set_seed(seed);
-
   // Train for num_trees 1.
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
@@ -394,6 +385,72 @@ arma::arma_rng::set_seed(seed);
 
   BOOST_REQUIRE_NE(numTrees1, numTrees2);
   BOOST_REQUIRE_NE(numTrees2, numTrees3);
+}
+
+/**
+ * Ensure that the maximum_depth parameter makes a difference.
+ */
+BOOST_AUTO_TEST_CASE(RandomForestDiffMaxDepthTest)
+{
+  // Train for minimum leaf size 20.
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  // Input training data.
+  SetInputParam("training", inputData);
+  SetInputParam("labels", labels);
+  SetInputParam("maximum_depth", (int) 1);
+
+  mlpackMain();
+
+  // Calculate training accuracy.
+  RandomForestModel* rf1 =
+      std::move(CLI::GetParam<RandomForestModel*>("output_model"));
+  CLI::GetParam<RandomForestModel*>("output_model") = NULL;
+
+  bindings::tests::CleanMemory();
+
+  // Input training data.
+  SetInputParam("training", inputData);
+  SetInputParam("labels", labels);
+  SetInputParam("maximum_depth", (int) 2);
+
+  mlpackMain();
+
+  RandomForestModel* rf2 =
+      std::move(CLI::GetParam<RandomForestModel*>("output_model"));
+  CLI::GetParam<RandomForestModel*>("output_model") = NULL;
+
+  bindings::tests::CleanMemory();
+
+  // Train for minimum leaf size 1.
+
+  // Input training data.
+  SetInputParam("training", inputData);
+  SetInputParam("labels", labels);
+  SetInputParam("maximum_depth", (int) 3);
+
+  mlpackMain();
+
+  RandomForestModel* rf3 =
+      std::move(CLI::GetParam<RandomForestModel*>("output_model"));
+  CLI::GetParam<RandomForestModel*>("output_model") = NULL;
+
+  // Check that each tree is different.
+  for (size_t i = 0; i < rf1->rf.NumTrees(); ++i)
+  {
+    BOOST_REQUIRE(CheckDifferentTrees(rf1->rf.Tree(i), rf2->rf.Tree(i)));
+    BOOST_REQUIRE(CheckDifferentTrees(rf1->rf.Tree(i), rf3->rf.Tree(i)));
+  }
+
+  delete rf1;
+  delete rf2;
+  delete rf3;
 }
 
 BOOST_AUTO_TEST_SUITE_END();
