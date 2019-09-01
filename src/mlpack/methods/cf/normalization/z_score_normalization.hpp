@@ -60,7 +60,7 @@ class ZScoreNormalization
 
     data.row(2) = (data.row(2) - mean) / stddev;
     // The algorithm omits rating of zero. If normalized rating equals zero,
-    // it is set to the smallest positive double value.
+    // it is set to the smallest positive float value.
     data.row(2).for_each([](double& x)
     {
       if (x == 0)
@@ -97,7 +97,7 @@ class ZScoreNormalization
       double tmp = (*it - mean) / stddev;
 
       // The algorithm omits rating of zero. If normalized rating equals zero,
-      // it is set to the smallest positive double value.
+      // it is set to the smallest positive float value.
       if (tmp == 0)
         tmp = std::numeric_limits<float>::min();
 

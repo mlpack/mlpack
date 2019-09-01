@@ -76,7 +76,7 @@ class ItemMeanNormalization
       const size_t item = (size_t) datapoint(1);
       datapoint(2) -= itemMean(item);
       // The algorithm omits rating of zero. If normalized rating equals zero,
-      // it is set to the smallest positive double value.
+      // it is set to the smallest positive float value.
       if (datapoint(2) == 0)
         datapoint(2) = std::numeric_limits<float>::min();
     });

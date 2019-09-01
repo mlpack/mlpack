@@ -52,7 +52,7 @@ class OverallMeanNormalization
     mean = arma::mean(data.row(2));
     data.row(2) -= mean;
     // The algorithm omits rating of zero. If normalized rating equals zero,
-    // it is set to the smallest positive double value.
+    // it is set to the smallest positive float value.
     data.row(2).for_each([](double& x)
     {
       if (x == 0)
@@ -79,9 +79,9 @@ class OverallMeanNormalization
         double tmp = *it - mean;
 
         // The algorithm omits rating of zero. If normalized rating equals zero,
-        // it is set to the smallest positive double value.
+        // it is set to the smallest positive float value.
         if (tmp == 0)
-          tmp = std::numeric_limits<double>::min();
+          tmp = std::numeric_limits<float>::min();
 
         *it = tmp;
       }
