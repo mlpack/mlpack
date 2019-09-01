@@ -114,7 +114,7 @@ class UserMeanNormalization
       // The algorithm omits rating of zero. If normalized rating equals zero,
       // it is set to the smallest positive double value.
       if (tmp == 0)
-        tmp = std::numeric_limits<double>::min();
+        tmp = std::numeric_limits<float>::min();
 
       *it = tmp;
     }

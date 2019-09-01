@@ -702,7 +702,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDCompleteTest)
 /**
  * Make sure recommendations that are generated are reasonably accurate
  * for SVD Incomplete Incremental method.
- */ 
+ */
 BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDIncompleteTest)
 {
   RecommendationAccuracy<SVDIncompletePolicy>();
@@ -711,7 +711,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDIncompleteTest)
 /**
  * Make sure recommendations that are generated are reasonably accurate
  * for Bias SVD method.
- */ 
+ */
 BOOST_AUTO_TEST_CASE(RecommendationAccuracyBiasSVDTest)
 {
   RecommendationAccuracy<BiasSVDPolicy>();
