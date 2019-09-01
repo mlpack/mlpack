@@ -53,8 +53,10 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
   while (!task.IsTerminal(state))
     task.Sample(state, action, state);
 
-  // Check if the number of steps performed is the same as the maximum allowed.
-  BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
+  // Check if the number of steps performed is less or equal as the maximum
+  // allowed, since we use a random action there is no guarantee that we will
+  // reach the maximum number of steps.
+  BOOST_REQUIRE_LE(task.StepsPerformed(), 5);
 
   // The action is simply the torque. Check if dimension is 1.
   BOOST_REQUIRE_EQUAL(1, action.size);
