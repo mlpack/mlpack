@@ -31,10 +31,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type AtrousConvolution as a string
+   * Return the name of the given layer of type AtrousConvolution as a string.
    * 
-   * @param Given layer of type AtrousConvolution
-   * @return The string representation of the layer
+   * @param Given layer of type AtrousConvolution.
+   * @return The string representation of the layer.
    */
   std::string LayerString(AtrousConvolution<>* /*layer*/) const
   {
@@ -42,10 +42,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type AlphaDropout as a string
+   * Return the name of the given layer of type AlphaDropout as a string.
    * 
-   * @param Given layer of type AlphaDropout
-   * @return The string representation of the layer
+   * @param Given layer of type AlphaDropout.
+   * @return The string representation of the layer.
    */
   std::string LayerString(AlphaDropout<>* /*layer*/) const
   {
@@ -53,10 +53,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type BatchNorm as a string
+   * Return the name of the given layer of type BatchNorm as a string.
    * 
-   * @param Given layer of type BatchNorm
-   * @return The string representation of the layer
+   * @param Given layer of type BatchNorm.
+   * @return The string representation of the layer.
    */
   std::string LayerString(BatchNorm<>* /*layer*/) const
   {
@@ -64,10 +64,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type Constant as a string
+   * Return the name of the given layer of type Constant as a string.
    * 
-   * @param Given layer of type Constant
-   * @return The string representation of the layer
+   * @param Given layer of type Constant.
+   * @return The string representation of the layer.
    */
   std::string LayerString(Constant<>* /*layer*/) const
   {
@@ -75,10 +75,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type Convolution as a string
+   * Return the name of the given layer of type Convolution as a string.
    * 
-   * @param Given layer of type Convolution
-   * @return The string representation of the layer
+   * @param Given layer of type Convolution.
+   * @return The string representation of the layer.
    */
   std::string LayerString(Convolution<>* /*layer*/) const
   {
@@ -86,10 +86,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type DropConnect as a string
+   * Return the name of the given layer of type DropConnect as a string.
    * 
-   * @param Given layer of type DropConnect
-   * @return The string representation of the layer
+   * @param Given layer of type DropConnect.
+   * @return The string representation of the layer.
    */
   std::string LayerString(DropConnect<>* /*layer*/) const
   {
@@ -97,10 +97,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type Dropout as a string
+   * Return the name of the given layer of type Dropout as a string.
    * 
-   * @param Given layer of type Dropout
-   * @return The string representation of the layer
+   * @param Given layer of type Dropout.
+   * @return The string representation of the layer.
    */
   std::string LayerString(Dropout<>* /*layer*/) const
   {
@@ -108,10 +108,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type FlexibleReLU as a string
+   * Return the name of the given layer of type FlexibleReLU as a string.
    * 
-   * @param Given layer of type FlexibleReLU
-   * @return The string representation of the layer
+   * @param Given layer of type FlexibleReLU.
+   * @return The string representation of the layer.
    */
   std::string LayerString(FlexibleReLU<>* /*layer*/) const
   {
@@ -119,10 +119,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type LayerNorm as a string
+   * Return the name of the given layer of type LayerNorm as a string.
    * 
-   * @param Given layer of type LayerNorm
-   * @return The string representation of the layer
+   * @param Given layer of type LayerNorm.
+   * @return The string representation of the layer.
    */
   std::string LayerString(LayerNorm<>* /*layer*/) const
   {
@@ -130,10 +130,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type Linear as a string
+   * Return the name of the given layer of type Linear as a string.
    * 
-   * @param Given layer of type Linear
-   * @return The string representation of the layer
+   * @param Given layer of type Linear.
+   * @return The string representation of the layer.
    */
   std::string LayerString(Linear<>* /*layer*/) const
   {
@@ -141,10 +141,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type LinearNoBias as a string
+   * Return the name of the given layer of type LinearNoBias as a string.
    * 
-   * @param Given layer of type LinearNoBias
-   * @return The string representation of the layer
+   * @param Given layer of type LinearNoBias.
+   * @return The string representation of the layer.
    */
   std::string LayerString(LinearNoBias<>* /*layer*/) const
   {
@@ -152,10 +152,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type MaxPooling as a string
+   * Return the name of the given layer of type MaxPooling as a string.
    * 
-   * @param Given layer of type MaxPooling
-   * @return The string representation of the layer
+   * @param Given layer of type MaxPooling.
+   * @return The string representation of the layer.
    */
   std::string LayerString(MaxPooling<>* /*layer*/) const
   {
@@ -163,10 +163,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type MeanPooling as a string
+   * Return the name of the given layer of type MeanPooling as a string.
    * 
-   * @param Given layer of type MeanPooling
-   * @return The string representation of the layer
+   * @param Given layer of type MeanPooling.
+   * @return The string representation of the layer.
    */
   std::string LayerString(MeanPooling<>* /*layer*/) const
   {
@@ -174,10 +174,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type MultiplyConstant as a string
+   * Return the name of the given layer of type MultiplyConstant as a string.
    * 
-   * @param Given layer of type MultiplyConstant
-   * @return The string representation of the layer
+   * @param Given layer of type MultiplyConstant.
+   * @return The string representation of the layer.
    */
   std::string LayerString(MultiplyConstant<>* /*layer*/) const
   {
@@ -185,10 +185,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type ReLULayer as a string
+   * Return the name of the given layer of type ReLULayer as a string.
    * 
-   * @param Given layer of type ReLULayer
-   * @return The string representation of the layer
+   * @param Given layer of type ReLULayer.
+   * @return The string representation of the layer.
    */
   std::string LayerString(ReLULayer<>* /*layer*/) const
   {
@@ -197,10 +197,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
 
   /*
    * Return the name of the given layer of type TransposedConvolution as a
-   * string
+   * string.
    * 
-   * @param Given layer of type TransposedConvolution
-   * @return The string representation of the layer
+   * @param Given layer of type TransposedConvolution.
+   * @return The string representation of the layer.
    */
   std::string LayerString(TransposedConvolution<>* /*layer*/) const
   {
@@ -208,7 +208,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type IdentityLayer as a string
+   * Return the name of the given layer of type IdentityLayer as a string.
    * 
    * @param Given layer of type IdentityLayer
    * @return The string representation of the layer
@@ -219,10 +219,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type TanHLayer as a string
+   * Return the name of the given layer of type TanHLayer as a string.
    * 
-   * @param Given layer of type TanHLayer
-   * @return The string representation of the layer
+   * @param Given layer of type TanHLayer.
+   * @return The string representation of the layer.
    */
   std::string LayerString(TanHLayer<>* /*layer*/) const
   {
@@ -230,10 +230,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type ELU as a string
+   * Return the name of the given layer of type ELU as a string.
    * 
-   * @param Given layer of type ELU
-   * @return The string representation of the layer
+   * @param Given layer of type ELU.
+   * @return The string representation of the layer.
    */
   std::string LayerString(ELU<>* /*layer*/) const
   {
@@ -241,10 +241,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type HardTanH as a string
+   * Return the name of the given layer of type HardTanH as a string.
    * 
-   * @param Given layer of type HardTanH
-   * @return The string representation of the layer
+   * @param Given layer of type HardTanH.
+   * @return The string representation of the layer.
    */
   std::string LayerString(HardTanH<>* /*layer*/) const
   {
@@ -252,10 +252,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type LeakyReLU as a string
+   * Return the name of the given layer of type LeakyReLU as a string.
    * 
-   * @param Given layer of type LeakyReLU
-   * @return The string representation of the layer
+   * @param Given layer of type LeakyReLU.
+   * @return The string representation of the layer.
    */
   std::string LayerString(LeakyReLU<>* /*layer*/) const
   {
@@ -263,10 +263,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type PReLU as a string
+   * Return the name of the given layer of type PReLU as a string.
    * 
-   * @param Given layer of type PReLU
-   * @return The string representation of the layer
+   * @param Given layer of type PReLU.
+   * @return The string representation of the layer.
    */
   std::string LayerString(PReLU<>* /*layer*/) const
   {
@@ -274,10 +274,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type SigmoidLayer as a string
+   * Return the name of the given layer of type SigmoidLayer as a string.
    * 
-   * @param Given layer of type SigmoidLayer
-   * @return The string representation of the layer
+   * @param Given layer of type SigmoidLayer.
+   * @return The string representation of the layer.
    */
   std::string LayerString(SigmoidLayer<>* /*layer*/) const
   {
@@ -285,10 +285,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the given layer of type LogSoftMax as a string
+   * Return the name of the given layer of type LogSoftMax as a string.
    * 
-   * @param Given layer of type LogSoftMax
-   * @return The string representation of the layer
+   * @param Given layer of type LogSoftMax.
+   * @return The string representation of the layer.
    */
   std::string LayerString(LogSoftMax<>* /*layer*/) const
   {
@@ -296,10 +296,10 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
-   * Return the name of the layer of specified type as a string
+   * Return the name of the layer of specified type as a string.
    * 
-   * @param Given layer of any type
-   * @return A string declaring that the layer is unsupported
+   * @param Given layer of any type.
+   * @return A string declaring that the layer is unsupported.
    */
   template<typename T>
   std::string LayerString(T* /*layer*/) const
@@ -307,7 +307,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "unsupported";
   }
 
-  //! Overload function call
+  //! Overload function call.
   template<typename LayerType>
   std::string operator()(LayerType* layer) const
   {
