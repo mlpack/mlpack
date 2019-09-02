@@ -25,7 +25,7 @@ using namespace mlpack::ann;
 class LayerNameVisitor : public boost::static_visitor<std::string>
 {
  public:
-  //! Create the LayerNameVisitor object
+  //! Create the LayerNameVisitor object.
   LayerNameVisitor()
   {
   }
