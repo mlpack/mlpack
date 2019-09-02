@@ -150,13 +150,11 @@ BOOST_AUTO_TEST_CASE(LunarLanderWithPPO)
 
     for (episodes = 0; episodes <= 10; ++episodes) {
       double episodeReturn = agent.Episode();
-      std::cout << "episode: " << episodes << " " << episodeReturn << std::endl;
       averageReturn(episodeReturn);
 
       /**
        * I am using a threshold of 100 to check convergence.
        */
-      std::cout << "average: " << averageReturn.mean() << " " << episodeReturn << std::endl;
       Log::Debug << "Average return: " << averageReturn.mean()
                  << " Episode return: " << episodeReturn << std::endl;
       if (averageReturn.mean() > 100) {
