@@ -130,24 +130,24 @@ class MaxPooling
   //! Get the output size.
   size_t const& OutputSize() const { return outSize; }
 
-  //! Get the kernel dimensions.
-  std::tuple<size_t, size_t> const& KernelDims() const
+  //! Get the kernel size.
+  std::tuple<size_t, size_t> const& KernelSize() const
   {
     return std::forward_as_tuple(kH, kW);
   }
-  //! Modify the kernel dimensions.
-  std::tuple<size_t&, size_t&> KernelDims()
+  //! Modify the kernel size.
+  std::tuple<size_t&, size_t&> KernelSize()
   {
     return std::forward_as_tuple(kH, kW);
   }
 
   //! Get the stride dimensions.
-  std::tuple<size_t, size_t> const& StrideDims() const
+  std::tuple<size_t, size_t> const& Strides() const
   {
     return std::forward_as_tuple(dH, dW);
   }
   //! Modify the stride dimensions.
-  std::tuple<size_t&, size_t&> StrideDims()
+  std::tuple<size_t&, size_t&> Strides()
   {
     return std::forward_as_tuple(dH, dW);
   }

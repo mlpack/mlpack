@@ -166,6 +166,56 @@ class AtrousConvolution
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
+  //! Get the input size
+  size_t const& InputSize() const { return inSize; }
+
+  //! Get the output size.
+  size_t const& OutputSize() const { return outSize; }
+
+  //! Get the kernel size.
+  std::tuple<size_t, size_t> const& KernelSize() const
+  {
+    return std::forward_as_tuple(kH, kW);
+  }
+  //! Modify the kernel size.
+  std::tuple<size_t&, size_t&> KernelSize()
+  {
+    return std::forward_as_tuple(kH, kW);
+  }
+
+  //! Get the stride dimensions.
+  std::tuple<size_t, size_t> const& Strides() const
+  {
+    return std::forward_as_tuple(dH, dW);
+  }
+  //! Modify the stride dimensions.
+  std::tuple<size_t&, size_t&> Strides()
+  {
+    return std::forward_as_tuple(dH, dW);
+  }
+
+  //! Get the padding dimensions.
+  std::tuple<size_t, size_t> const& Padding() const
+  {
+    return std::forward_as_tuple(padH, padW);
+  }
+  //! Modify the padding dimensions.
+  std::tuple<size_t&, size_t&> Padding()
+  {
+    return std::forward_as_tuple(padH, padW);
+  }
+
+  //! Get the dilation rate.
+  std::tuple<size_t, size_t> const& DilationRate() const
+  {
+    return std::forward_as_tuple(dilationH, dilationW);
+  }
+  //! Modify the dilation rate.
+  std::tuple<size_t&, size_t&> DilationRate()
+  {
+    return std::forward_as_tuple(dilationH, dilationW);
+  }
+
   //! Modify the bias weights of the layer.
   arma::mat& Bias() { return bias; }
 
