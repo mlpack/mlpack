@@ -33,6 +33,8 @@
   * Optimizations for sparse matrix accesses in z-score normalization for CF
     (#1989).
 
+  * Add `kmeans_max_iterations` option to GMM training binding `gmm_train_main`.
+
 ### mlpack 3.1.1
 ###### 2019-05-26
   * Fix random forest bug for numerical-only data (#1887).
