@@ -22,7 +22,7 @@
 namespace mlpack {
 namespace data {
 
-/*
+/**
  * This class provides a dictionary interface for the purpose of string
  * encoding. It works like an adapter to the internal dictionary.
  *
@@ -331,6 +331,7 @@ class StringEncodingDictionary<int>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & BOOST_SERIALIZATION_NVP(mapping);
+    ar & BOOST_SERIALIZATION_NVP(size);
   }
 
  private:

@@ -336,6 +336,8 @@ void CheckDictionaries(const StringEncodingDictionary<int>& expected,
   const MapType& expectedMapping = expected.Mapping();
   const MapType& mapping = obtained.Mapping();
 
+  BOOST_REQUIRE_EQUAL(expected.Size(), obtained.Size());
+
   for (size_t i = 0; i < mapping.size(); i++)
   {
     BOOST_REQUIRE_EQUAL(mapping[i], expectedMapping[i]);

@@ -25,39 +25,34 @@ template<typename ... ArgTypes>
 StringEncoding<EncodingPolicyType, DictionaryType>::StringEncoding(
     ArgTypes&& ... args) :
     encodingPolicy(std::forward<ArgTypes>(args)...)
-{
-}
+{ }
 
 template<typename EncodingPolicyType, typename DictionaryType>
 StringEncoding<EncodingPolicyType, DictionaryType>::StringEncoding(
     EncodingPolicyType encodingPolicy) :
     encodingPolicy(std::move(encodingPolicy))
-{
-}
+{ }
 
 template<typename EncodingPolicyType, typename DictionaryType>
 StringEncoding<EncodingPolicyType, DictionaryType>::StringEncoding(
     StringEncoding& other) :
     encodingPolicy(other.encodingPolicy),
     dictionary(other.dictionary)
-{
-}
+{ }
 
 template<typename EncodingPolicyType, typename DictionaryType>
 StringEncoding<EncodingPolicyType, DictionaryType>::StringEncoding(
     const StringEncoding& other) :
     encodingPolicy(other.encodingPolicy),
     dictionary(other.dictionary)
-{
-}
+{ }
 
 template<typename EncodingPolicyType, typename DictionaryType>
 StringEncoding<EncodingPolicyType, DictionaryType>::StringEncoding(
     StringEncoding&& other) :
     encodingPolicy(std::move(other.encodingPolicy)),
     dictionary(std::move(other.dictionary))
-{
-}
+{ }
 
 template<typename EncodingPolicyType, typename DictionaryType>
 void StringEncoding<EncodingPolicyType, DictionaryType>::Clear()
