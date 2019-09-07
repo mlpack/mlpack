@@ -607,7 +607,7 @@ BOOST_AUTO_TEST_CASE(KNNAllTreeTypesTest)
   queryData.randu(3, 90); // 90 points in 3 dimensions.
 
   // Keep some k <= number of reference points same over all.
-  SetInputParam("k", (int) 10);
+  SetInputParam("k", (int) 15);
 
   arma::Mat<size_t> neighborsCompare;
   arma::mat distancesCompare;
