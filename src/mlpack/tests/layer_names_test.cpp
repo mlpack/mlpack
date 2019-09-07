@@ -54,56 +54,56 @@ BOOST_AUTO_TEST_CASE(LayerNameVisitorTest)
   LayerTypes<> unsupportedLayer = new BilinearInterpolation<>(); /* Bilinear
   interpolation is not yet supported by the string converter */
 
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      atrousConvolution), "atrousconvolution");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      alphaDropout), "alphadropout");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      batchNorm), "batchnorm");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      constant), "constant");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      convolution), "convolution");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      dropConnect), "dropconnect");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      dropout), "dropout");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      flexibleReLU), "flexiblerelu");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      layerNorm), "layernorm");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      linear), "linear");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      linearNoBias), "linearnobias");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      maxPooling), "maxpooling");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      meanPooling), "meanpooling");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      multiplyConstant), "multiplyconstant");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      reLULayer), "relu");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      transposedConvolution), "transposedconvolution");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      identityLayer), "identity");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      tanHLayer), "tanh");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      eLU), "elu");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      hardTanH), "hardtanh");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      leakyReLU), "leakyrelu");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      pReLU), "prelu");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      sigmoidLayer), "sigmoid");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      logSoftMax), "logsoftmax");
-  BOOST_REQUIRE_EQUAL(boost::apply_visitor(LayerNameVisitor(),
-                      unsupportedLayer), "unsupported");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      atrousConvolution) == "atrousconvolution");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      alphaDropout) == "alphadropout");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      batchNorm) == "batchnorm");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      constant) == "constant");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      convolution) == "convolution");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      dropConnect) == "dropconnect");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      dropout) == "dropout");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      flexibleReLU) == "flexiblerelu");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      layerNorm) == "layernorm");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      linear) == "linear");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      linearNoBias) == "linearnobias");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      maxPooling) == "maxpooling");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      meanPooling) == "meanpooling");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      multiplyConstant) == "multiplyconstant");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      reLULayer) == "relu");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      transposedConvolution) == "transposedconvolution");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      identityLayer) == "identity");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      tanHLayer) == "tanh");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      eLU) == "elu");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      hardTanH) == "hardtanh");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      leakyReLU) == "leakyrelu");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      pReLU) == "prelu");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      sigmoidLayer) == "sigmoid");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      logSoftMax) == "logsoftmax");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      unsupportedLayer) == "unsupported");
 }
 
 BOOST_AUTO_TEST_SUITE_END();
