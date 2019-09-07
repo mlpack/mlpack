@@ -191,12 +191,12 @@ class Convolution
   }
 
   //! Get the padding dimensions.
-  std::tuple<size_t, size_t> const& Padding() const
+  std::tuple<size_t, size_t> const& PadSize() const
   {
     return std::forward_as_tuple(padH, padW);
   }
   //! Modify the padding dimensions.
-  std::tuple<size_t&, size_t&> Padding()
+  std::tuple<size_t&, size_t&> PadSize()
   {
     return std::forward_as_tuple(padH, padW);
   }
