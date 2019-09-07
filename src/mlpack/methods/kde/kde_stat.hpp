@@ -26,38 +26,20 @@ class KDEStat
  public:
   //! Initialize the statistic.
   KDEStat() :
-      validCentroid(false),
       mcBeta(0),
       mcAlpha(0),
-      accumAlpha(0) { }
+      accumAlpha(0),
+      accumError(0)
+  { /* Nothing to do.*/ }
 
   //! Initialization for a fully initialized node.
   template<typename TreeType>
-  KDEStat(TreeType& node) :
+  KDEStat(TreeType& /* node */) :
       mcBeta(0),
       mcAlpha(0),
-      accumAlpha(0)
-  {
-    // Calculate centroid if necessary.
-    if (!tree::TreeTraits<TreeType>::FirstPointIsCentroid)
-    {
-      node.Center(centroid);
-      validCentroid = true;
-    }
-    else
-    {
-      validCentroid = false;
-    }
-  }
-
-  //! Get the centroid of the node.
-  inline const arma::vec& Centroid() const
-  {
-    if (validCentroid)
-      return centroid;
-    throw std::logic_error("Centroid must be assigned before requesting its "
-                           "value");
-  }
+      accumAlpha(0),
+      accumError(0)
+  { /* Nothing to do. */ }
 
   //! Get accumulated Monte Carlo alpha of the node.
   inline double MCBeta() const { return mcBeta; }
@@ -71,28 +53,33 @@ class KDEStat
   //! Modify accumulated Monte Carlo alpha of the node.
   inline double& AccumAlpha() { return accumAlpha; }
 
+  //! Get accumulated error tolerance of the node.
+  inline double AccumError() const { return accumError; }
+
+  //! Modify accumulated error tolerance of the node.
+  inline double& AccumError() { return accumError; }
+
   //! Get Monte Carlo alpha of the node.
   inline double MCAlpha() const { return mcAlpha; }
 
   //! Modify Monte Carlo alpha of the node.
   inline double& MCAlpha() { return mcAlpha; }
 
-  //! Modify the centroid of the node.
-  void SetCentroid(arma::vec newCentroid)
-  {
-    validCentroid = true;
-    centroid = std::move(newCentroid);
-  }
-
-  //! Get whether the centroid is valid.
-  inline bool ValidCentroid() const { return validCentroid; }
-
   //! Serialize the statistic to/from an archive.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int version)
   {
-    ar & BOOST_SERIALIZATION_NVP(centroid);
-    ar & BOOST_SERIALIZATION_NVP(validCentroid);
+    // Backward compatibility: Old versions of KDEStat needed to handle obsolete
+    // values.
+    if (version == 0 && Archive::is_loading::value)
+    {
+      // Placeholders.
+      arma::vec centroid;
+      bool validCentroid;
+
+      ar & BOOST_SERIALIZATION_NVP(centroid);
+      ar & BOOST_SERIALIZATION_NVP(validCentroid);
+    }
 
     // Backward compatibility: Old versions of KDEStat did not need to handle
     // alpha values.
@@ -101,22 +88,18 @@ class KDEStat
       ar & BOOST_SERIALIZATION_NVP(mcBeta);
       ar & BOOST_SERIALIZATION_NVP(mcAlpha);
       ar & BOOST_SERIALIZATION_NVP(accumAlpha);
+      ar & BOOST_SERIALIZATION_NVP(accumError);
     }
     else if (Archive::is_loading::value)
     {
       mcBeta = -1;
       mcAlpha = -1;
       accumAlpha = -1;
+      accumError = -1;
     }
   }
 
  private:
-  //! Node centroid.
-  arma::vec centroid;
-
-  //! Whether the centroid is updated or is junk.
-  bool validCentroid;
-
   //! Beta value for which mcAlpha is valid.
   double mcBeta;
 
@@ -125,6 +108,9 @@ class KDEStat
 
   //! Accumulated not used Monte Carlo alpha in the current node.
   double accumAlpha;
+
+  //! Accumulated not used error tolerance in the current node.
+  double accumError;
 };
 
 } // namespace kde

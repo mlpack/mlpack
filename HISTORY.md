@@ -17,15 +17,21 @@
   * Fix prediction output of softmax regression when test set accuracy is
     calculated (#1922).
 
-  * Action struct in continuous RL environments now stores the action as a
-    `double` instead of `double[1]` (#1941, #1931).
-
   * Pendulum environment now checks for termination. All RL environments now
     have an option to terminate after a set number of time steps (no limit
     by default) (#1941).
 
   * Add support for probabilistic KDE (kernel density estimation) error bounds
     when using the Gaussian kernel (#1934).
+
+  * Fix negative distances for cover tree computation (#1979).
+
+  * Fix cover tree building when all pairwise distances are 0 (#1986).
+
+  * Improve KDE pruning by reclaiming not used error tolerance (#1954, #1984).
+
+  * Optimizations for sparse matrix accesses in z-score normalization for CF
+    (#1989).
 
 ### mlpack 3.1.1
 ###### 2019-05-26

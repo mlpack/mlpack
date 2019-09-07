@@ -167,8 +167,7 @@ PARAM_INT_IN("initial_sample_size",
              KDEDefaultParams::initialSampleSize);
 PARAM_DOUBLE_IN("mc_entry_coef",
                 "Controls how much larger does the amount of node descendants "
-                "has to be compared to the " +
-                PRINT_PARAM_STRING("initial_sample_size") + " in order to be "
+                "has to be compared to the initial sample size in order to be "
                 "a candidate for Monte Carlo estimations.",
                 "C",
                 KDEDefaultParams::mcEntryCoef);

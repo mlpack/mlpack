@@ -448,6 +448,26 @@ BOOST_AUTO_TEST_CASE(SimpleLinearNoBiasLayerTest)
 }
 
 /**
+ * Simple padding layer test.
+ */
+BOOST_AUTO_TEST_CASE(SimplePaddingLayerTest)
+{
+  arma::mat output, input, delta;
+  Padding<> module(1, 2, 3, 4);
+
+  // Test the Forward function.
+  input = arma::randu(10, 1);
+  module.Forward(std::move(input), std::move(output));
+  BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(output));
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows + 3);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols + 7);
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(output), std::move(delta));
+  CheckMatrices(delta, input);
+}
+
+/**
  * Jacobian linear no bias module test.
  */
 BOOST_AUTO_TEST_CASE(JacobianLinearNoBiasLayerTest)
@@ -1657,6 +1677,49 @@ BOOST_AUTO_TEST_CASE(GradientVirtualBatchNormTest)
 }
 
 /**
+ * MiniBatchDiscrimination layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(MiniBatchDiscriminationTest)
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randn(5, 4);
+      arma::mat target;
+      target.ones(1, 4);
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(5, 5);
+      model->Add<MiniBatchDiscrimination<> >(5, 10, 16);
+      model->Add<Linear<> >(10, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      return model->EvaluateWithGradient(model->Parameters(), 0, gradient, 4);
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
  * Simple Transposed Convolution layer test.
  */
 BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
@@ -2534,6 +2597,80 @@ BOOST_AUTO_TEST_CASE(GradientSequentialLayerTest)
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * WeightNorm layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientWeightNormLayerTest)
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<Linear<> >(10, 10);
+
+      Linear<>* linear = new Linear<>(10, 2);
+      weightNorm = new WeightNorm<>(linear);
+
+      model->Add(weightNorm);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    WeightNorm<>* weightNorm;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * Test if the WeightNorm layer is able to forward the
+ * Forward/Backward/Gradient calls.
+ */
+BOOST_AUTO_TEST_CASE(WeightNormRunTest)
+{
+  arma::mat output, input, delta, error;
+
+  Linear<>* linear = new Linear<>(10, 10);
+
+  WeightNorm<> module(linear);
+
+  module.Parameters().randu();
+  module.Reset();
+
+  linear->Bias().zeros();
+
+  input = arma::zeros(10, 1);
+  module.Forward(std::move(input), std::move(output));
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(input), std::move(delta));
+
+  BOOST_REQUIRE_EQUAL(0, arma::accu(output));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
 }
 
 // General ANN serialization test.

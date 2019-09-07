@@ -25,6 +25,11 @@ inline size_t OutputHeightVisitor::operator()(LayerType* layer) const
   return LayerOutputHeight(layer);
 }
 
+inline size_t OutputHeightVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     !HasInputHeight<T, size_t&(T::*)()>::value &&

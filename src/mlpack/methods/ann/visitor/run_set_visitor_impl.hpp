@@ -31,6 +31,11 @@ inline void RunSetVisitor::operator()(LayerType* layer) const
   LayerRun(layer);
 }
 
+inline void RunSetVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     HasRunCheck<T, bool&(T::*)(void)>::value &&

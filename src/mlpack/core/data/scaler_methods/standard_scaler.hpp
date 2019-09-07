@@ -27,7 +27,7 @@ namespace data {
  *
  * where u is the mean of the training samples and s is the standard deviation
  * of the training samples.
- * 
+ *
  * @code
  * arma::mat input;
  * Load("train.csv", input);
@@ -74,7 +74,7 @@ class StandardScaler
     if (itemMean.is_empty() || itemStdDev.is_empty())
     {
       throw std::runtime_error("Call Fit() before Transform(), please"
-        " refer documentation.");
+        " refer to the documentation.");
     }
     output.copy_size(input);
     output = (input.each_col() - itemMean).each_col() / itemStdDev;

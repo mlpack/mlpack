@@ -87,6 +87,7 @@ mlpack has the following dependencies:
       Boost (program_options, math_c99, unit_test_framework, serialization,
              spirit)
       CMake         >= 3.3.2
+      ensmallen     >= 1.10.0
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
@@ -99,6 +100,9 @@ following Python packages are installed:
       cython >= 0.24
       numpy
       pandas >= 0.15.0
+
+If the STB library headers are available, image loading support will be
+compiled.
 
 If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
@@ -164,6 +168,7 @@ Options are specified with the -D flag.  The allowed options include:
     BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
        static libraries
     DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
+    DOWNLOAD_STB_IMAGE=(ON/OFF): If STB is not found, download it
     ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
        for ensmallen
     USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available

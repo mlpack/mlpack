@@ -40,6 +40,8 @@ class BackwardVisitor : public boost::static_visitor<void>
   template<typename LayerType>
   void operator()(LayerType* layer) const;
 
+  void operator()(MoreTypes layer) const;
+
  private:
   //! The input parameter set.
   arma::mat&& input;
