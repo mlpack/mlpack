@@ -159,7 +159,12 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
 
   ens::VanillaUpdate opt;
   model.ResetParameters();
+  #if ENS_VERSION_MAJOR == 1
   opt.Initialize(model.Parameters().n_rows, model.Parameters().n_cols);
+  #else
+  ens::VanillaUpdate::Policy<arma::mat, arma::mat> optPolicy(opt,
+      model.Parameters().n_rows, model.Parameters().n_cols);
+  #endif
   double stepSize = 0.01;
   size_t batchSize = 10;
 
@@ -179,7 +184,11 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
       model.Forward(currentData, currentResuls);
       arma::mat gradients;
       model.Backward(currentLabels, gradients);
+      #if ENS_VERSION_MAJOR == 1
       opt.Update(model.Parameters(), stepSize, gradients);
+      #else
+      optPolicy.Update(model.Parameters(), stepSize, gradients);
+      #endif
       batchStart = batchEnd;
 
       arma::mat prediction = arma::zeros<arma::mat>(1, currentResuls.n_cols);
