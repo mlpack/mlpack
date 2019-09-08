@@ -82,7 +82,8 @@ class OneStepSarsaWorker
       pending(other.pending),
       pendingIndex(other.pendingIndex),
       network(other.network),
-      state(other.state)
+      state(other.state),
+      action(other.action)
   {
     Reset();
 
@@ -112,7 +113,8 @@ class OneStepSarsaWorker
       pending(std::move(other.pending)),
       pendingIndex(std::move(other.pendingIndex)),
       network(std::move(other.network)),
-      state(std::move(other.state))
+      state(std::move(other.state)),
+      action(std::move(other.action))
   {
     #if ENS_VERSION_MAJOR >= 2
     other.updatePolicy = NULL;
@@ -148,6 +150,7 @@ class OneStepSarsaWorker
     pendingIndex = other.pendingIndex;
     network = other.network;
     state = other.state;
+    action = other.action;
 
     #if ENS_VERSION_MAJOR >= 2
     updatePolicy = new typename UpdaterType::template
@@ -185,6 +188,7 @@ class OneStepSarsaWorker
     pendingIndex = std::move(other.pendingIndex);
     network = std::move(other.network);
     state = std::move(other.state);
+    action = std::move(other.action);
 
     #if ENS_VERSION_MAJOR >= 2
     other.updatePolicy = NULL;
