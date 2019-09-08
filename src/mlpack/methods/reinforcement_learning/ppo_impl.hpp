@@ -83,7 +83,6 @@ void PPO<
   ReplayType
 >::Update()
 {
-  // Sample from previous experience.
   arma::mat sampledStates;
   std::vector<ActionType> sampledActions;
   arma::colvec sampledRewards;
@@ -91,7 +90,7 @@ void PPO<
   arma::icolvec isTerminal;
 
   replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
-      sampledNextStates, isTerminal);
+                      sampledNextStates, isTerminal);
 
   arma::rowvec discountedRewards(sampledRewards.n_rows);
   arma::mat nextActionValues;
@@ -107,12 +106,12 @@ void PPO<
   criticNetwork.Forward(sampledStates, actionValues);
 
   advantages = arma::conv_to<arma::mat>::
-      from(discountedRewards) - actionValues;
+               from(discountedRewards) - actionValues;
 
   // Update the critic.
   criticNetwork.Backward(advantages, criticGradients);
   criticUpdater.Update(criticNetwork.Parameters(), config.StepSize(),
-      criticGradients);
+                       criticGradients);
 
   for (size_t step = 0; step < config.ActorUpdateStep(); step ++) {
     // calculate the ratio.
@@ -123,14 +122,14 @@ void PPO<
     ann::SoftplusFunction::Fn(actionParameter.row(1), sigma);
 
     ann::NormalDistribution normalDist =
-        ann::NormalDistribution(vectorise(mu, 0), vectorise(sigma, 0));
+      ann::NormalDistribution(vectorise(mu, 0), vectorise(sigma, 0));
 
     oldActorNetwork.Forward(sampledStates, actionParameter);
     ann::TanhFunction::Fn(actionParameter.row(0), mu);
     ann::SoftplusFunction::Fn(actionParameter.row(1), sigma);
 
     ann::NormalDistribution oldNormalDist =
-        ann::NormalDistribution(vectorise(mu, 0), vectorise(sigma, 0));
+      ann::NormalDistribution(vectorise(mu, 0), vectorise(sigma, 0));
 
     // Update the actor.
     // observation use action.
@@ -146,21 +145,21 @@ void PPO<
     arma::mat ratio = arma::exp((prob - oldProb).t());
 
     arma::mat surrogateLoss = arma::clamp(ratio, 1 - config.Epsilon(),
-        1 + config.Epsilon()) % advantages;
+                                          1 + config.Epsilon()) % advantages;
     arma::mat loss = -arma::min(ratio % advantages, surrogateLoss);
 
     // backward the gradient
     arma::mat dratio1 = -loss % (ratio % advantages <= surrogateLoss)
-        % advantages;
+                        % advantages;
     arma::mat dsurro = -loss % (ratio % advantages >= surrogateLoss);
     arma::mat dratio2 = (ratio >= (1 - config.Epsilon())) %
-        (ratio <= (1 + config.Epsilon())) % advantages % dsurro;
+                        (ratio <= (1 + config.Epsilon())) % advantages % dsurro;
 
     arma::mat dprob = (dratio1 + dratio2) % ratio;
 
     arma::mat dmu = (observation.t() - mu) / (arma::square(sigma)) % dprob;
     arma::mat dsigma = -1.0 / sigma +
-        arma::square(observation.t() - mu) / arma::pow(sigma, 3);
+                       arma::square(observation.t() - mu) / arma::pow(sigma, 3);
 
     arma::mat dTanh, dSoftP;
     ann::TanhFunction::Deriv(dmu, dTanh);
@@ -171,7 +170,7 @@ void PPO<
     actorNetwork.Backward(dLoss, actorGradients);
 
     actorUpdater.Update(actorNetwork.Parameters(), config.StepSize(),
-        actorGradients);
+                        actorGradients);
   }
 
   // Update the oldActorNetwork, synchronize the parameter.
@@ -198,10 +197,14 @@ double PPO<
   // Get the action value for each action at current state.
   arma::mat actionParameter, sigma, mu;
 
+//  std::cout << "state: " << state.Encode() << std::endl;
+
   actorNetwork.Predict(state.Encode(), actionParameter);
 
   ann::TanhFunction::Fn(actionParameter.row(0), mu);
   ann::SoftplusFunction::Fn(actionParameter.row(1), sigma);
+
+//  std::cout << "mu sigma: "<< mu << " " << sigma << std::endl;
 
   ann::NormalDistribution normalDist
       = ann::NormalDistribution(mu, sigma);
@@ -209,9 +212,13 @@ double PPO<
   ActionType action;
   action.action = normalDist.Sample()[0];
 
+//  std::cout << "action: " << action.action << std::endl;
+
   // Interact with the environment to advance to next state.
   StateType nextState;
   double reward = environment.Sample(state, action, nextState);
+
+//  std::cout << "reward: " << reward << std::endl;
 
   // Store the transition for replay.
   replayMethod.Store(state, action, reward, nextState,
@@ -260,6 +267,9 @@ double PPO<
     steps++;
     totalSteps++;
 
+    if (deterministic)
+      continue;
+
     if (steps > 0 && totalSteps % config.UpdateInterval() == 0)
     {
       Update();
@@ -269,6 +279,7 @@ double PPO<
     if (config.StepLimit() && steps >= config.StepLimit())
       break;
   }
+
   return totalReturn;
 }
 
