@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_PYTHON_JULIA_OPTION_HPP
-#define MLPACK_BINDINGS_PYTHON_JULIA_OPTION_HPP
+#ifndef MLPACK_BINDINGS_JULIA_JULIA_OPTION_HPP
+#define MLPACK_BINDINGS_JULIA_JULIA_OPTION_HPP
 
 #include <mlpack/core/util/param_data.hpp>
 #include "get_param.hpp"
@@ -30,7 +30,7 @@ namespace julia {
 extern std::string programName;
 
 /**
- * The Python option class.
+ * The Julia option class.
  */
 template<typename T>
 class JuliaOption
@@ -71,7 +71,7 @@ class JuliaOption
       data.persistent = false;
     data.cppType = cppName;
 
-    // Every parameter we'll get from Python will have the correct type.
+    // Every parameter we'll get from Julia will have the correct type.
     data.value = boost::any(defaultValue);
 
     // Restore the parameters for this program.

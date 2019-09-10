@@ -129,7 +129,7 @@ std::string DefaultParamImpl(
 }
 
 /**
- * Return the default value of a model option (always "None").
+ * Return the default value of a model option (always "nothing").
  */
 template<typename T>
 std::string DefaultParamImpl(

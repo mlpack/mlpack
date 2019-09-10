@@ -35,7 +35,7 @@ std::string GetPrintableType(
   else if (std::is_same<T, std::string>::value)
     return "String";
   else
-    throw std::invalid_argument("unknown parameter type" + data.cppType);
+    throw std::invalid_argument("unknown parameter type " + data.cppType);
 }
 
 /**
@@ -75,7 +75,7 @@ std::string GetPrintableType(
   else if (std::is_same<T, arma::Col<size_t>>::value)
     return "Int64 vector-like";
   else
-    throw std::invalid_argument("unknown Armadillo type" + data.cppType);
+    throw std::invalid_argument("unknown Armadillo type " + data.cppType);
 }
 
 /**

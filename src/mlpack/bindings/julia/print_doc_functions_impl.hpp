@@ -494,7 +494,7 @@ inline std::string ProgramCall(const std::string& programName)
 }
 
 /**
- * Print any closing call to a program.  For a Python binding this is a closing
+ * Print any closing call to a program.  For a Julia binding this is a closing
  * brace.
  */
 inline std::string ProgramCallClose()
