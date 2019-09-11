@@ -9,7 +9,7 @@ matrix:
         - sudo apt-get update
         - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev python-pip cython python-numpy python-pandas
         - sudo pip install --upgrade --ignore-installed setuptools cython
-        - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.gz | tar xvz && cd armadillo*
+        - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz | tar xv && cd armadillo*
         - cmake . && make && sudo make install && cd ..
         - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 
@@ -20,7 +20,7 @@ matrix:
         - sudo apt-get update
         - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev python3-pip cython3 python3-numpy
         - sudo pip3 install --upgrade --ignore-installed setuptools cython pandas
-        - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.gz | tar xvz && cd armadillo*
+        - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz | tar xv && cd armadillo*
         - cmake . && make && sudo make install && cd ..
         - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 
@@ -30,7 +30,7 @@ matrix:
       before_install:
         - sudo apt-get update
         - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev
-        - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.gz | tar xvz && cd armadillo*
+        - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz | tar xz && cd armadillo*
         - cmake . && make && sudo make install && cd ..
         - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 
