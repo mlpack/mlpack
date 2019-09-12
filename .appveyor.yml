@@ -69,7 +69,7 @@ build_script:
     if not exist armadillo.tar.xz
     appveyor DownloadFile %ARMADILLO_DOWNLOAD%
     -FileName armadillo.tar.xz
-  - 7z x armadillo.tar.xz -so | 7z x -si -ttar > nul
+  - 7z x armadillo.tar.xz -so -txz | 7z x -si -ttar > nul
   - cd armadillo-8.400.0 && mkdir build && cd build
   - >
     cmake -G "%VSVER%"
