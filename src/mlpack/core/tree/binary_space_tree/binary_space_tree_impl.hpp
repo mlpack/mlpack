@@ -379,6 +379,98 @@ BinarySpaceTree(
   }
 }
 
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+BinarySpaceTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>&
+BinarySpaceTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
+operator=(const BinarySpaceTree& other)
+{
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
+  for (size_t i = 0; i < numChildren; i++)
+    delete children[i];
+
+  if (ownsDataset)
+    delete dataset;
+
+  maxNumChildren = other.MaxNumChildren();
+  minNumChildren = other.MinNumChildren();
+  numChildren = other.NumChildren();
+  children.resize(maxNumChildren + 1, NULL);
+  parent = NULL;
+  begin = other.Begin();
+  count = other.Count();
+  numDescendants = other.numDescendants;
+  maxLeafSize = other.MaxLeafSize();
+  minLeafSize = other.MinLeafSize();
+  bound = other.bound;
+  parentDistance = other.ParentDistance();
+  dataset = new MatType(*other.dataset);
+  ownsDataset = true;
+  points = other.points;
+  auxiliaryInfo = AuxiliaryInfoType(other.auxiliaryInfo, this, true);
+
+  if (numChildren > 0)
+  {
+    for (size_t i = 0; i < numChildren; i++)
+      children[i] = new BinarySpaceTree(other.Child(i), true, this);
+  }
+
+  return *this;
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>&
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
+operator=(RectangleTree&& other)
+{
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
+  for (size_t i = 0; i < numChildren; i++)
+    delete children[i];
+
+  if (ownsDataset)
+    delete dataset;
+
+  maxNumChildren = other.MaxNumChildren();
+  minNumChildren = other.MinNumChildren();
+  numChildren = other.NumChildren();
+  children = std::move(other.children);
+  parent = other.Parent();
+  begin = other.Begin();
+  count = other.Count();
+  numDescendants = other.numDescendants;
+  maxLeafSize = other.MaxLeafSize();
+  minLeafSize = other.MinLeafSize();
+  bound = std::move(other.bound);
+  parentDistance = other.ParentDistance();
+  dataset = other.dataset;
+  ownsDataset = other.ownsDataset;
+  points = std::move(other.points);
+  auxiliaryInfo = std::move(other.auxiliaryInfo);
+
+  return *this;
+}
+
+
 /**
  * Move constructor.
  */
