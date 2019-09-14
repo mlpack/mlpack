@@ -430,18 +430,25 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
 
     size_t episodes = 0;
     bool converged = true;
-    size_t successive = 0;
+    size_t episodeSuccesses = 0;
     while (true)
     {
       double episodeReturn = agent.Episode();
       episodes += 1;
 
       if (episodeReturn >= 280)
-        successive++;
+        episodeSuccesses++;
 
-      // If the model can solve the environment in two consecutive trials this
-      // is fine for a simple test.
-      if (successive >= 2)
+      if (episodes > 2000)
+      {
+        Log::Debug << "Cart Pole with DQN failed." << std::endl;
+        converged = false;
+        break;
+      }
+
+      // If the model can solve the environment in two trials this is fine for
+      // a simple test.
+      if (episodeSuccesses >= 2)
       {
         Log::Debug << "QLearning has succeeded in the multiple pole cart" <<
             " environment." << std::endl;
