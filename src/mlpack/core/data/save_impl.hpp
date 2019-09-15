@@ -325,7 +325,8 @@ bool Save(const std::string& filename,
   bool status = false;
   try
   {
-    unsigned char* image = matrix.memptr();
+    arma::Mat<unsigned char> temp = arma::conv_to<arma::Mat<unsigned char> >::from(matrix);
+    unsigned char* image = temp.memptr();
 
     if ("png" == Extension(filename))
     {
@@ -384,17 +385,10 @@ bool Save(const std::vector<std::string>& files,
   // We transpose by default. So, un-transpose if necessary.
   if (!transpose)
     matrix = arma::trans(matrix);
-
-  arma::Mat<unsigned char> img;
-  bool status = Save(files[0], img, info, fatal, transpose);
-
-  // Decide matrix dimension using the image height and width.
-  matrix.set_size(info.Width() * info.Height() * info.Channels(), files.size());
-  matrix.col(0) = img;
-
-  for (size_t i = 1; i < files.size() ; i++)
+  bool status = true;
+  for (size_t i = 0; i < files.size() ; i++)
   {
-    arma::Mat<unsigned char> colImg(matrix.colptr(i), matrix.n_rows, 1,
+    arma::Mat<eT> colImg(matrix.colptr(i), matrix.n_rows, 1,
         false, true);
     status &= Save(files[i], colImg, info, fatal, transpose);
   }
