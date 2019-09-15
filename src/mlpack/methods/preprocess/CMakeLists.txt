@@ -35,3 +35,7 @@ add_markdown_docs(preprocess_imputer "cli" "preprocessing")
 add_cli_executable(preprocess_scale)
 add_python_binding(preprocess_scale)
 add_markdown_docs(preprocess_scale "cli;python" "preprocessing")
+
+add_cli_executable(load_save_image)
+add_python_binding(load_save_image)
+add_markdown_docs(load_save_image "cli;python" "preprocessing")

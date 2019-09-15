@@ -77,8 +77,8 @@ bool Load(const std::string& filename,
   info.Channels() = tempChannels;
 
   // Copy image into armadillo Mat.
-  matrix = arma::Mat<unsigned char>(image, info.Width() * info.Height() *
-      info.Channels(), 1, true, true);
+  matrix = arma::conv_to<arma::Mat<eT> >::from(arma::Mat<unsigned char>(image, info.Width() * info.Height() *
+      info.Channels(), 1, true, true));
 
   // Free the image pointer.
   free(image);
@@ -108,11 +108,11 @@ bool Load(const std::vector<std::string>& files,
 
   // Decide matrix dimension using the image height and width.
   matrix.set_size(info.Width() * info.Height() * info.Channels(), files.size());
-  matrix.col(0) = img;
+  matrix.col(0) = arma::conv_to<arma::Col<eT>>::from(img);
 
   for (size_t i = 1; i < files.size() ; i++)
   {
-    arma::Mat<unsigned char> colImg(matrix.colptr(i), matrix.n_rows, 1,
+    arma::Mat<eT> colImg(matrix.colptr(i), matrix.n_rows, 1,
         false, true);
     status &= Load(files[i], colImg, info, fatal, transpose);
   }
