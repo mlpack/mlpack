@@ -477,9 +477,7 @@ void Serialization()
       cBinary.CleanedData().n_nonzero);
   BOOST_REQUIRE_EQUAL(c.CleanedData().n_nonzero, cText.CleanedData().n_nonzero);
 
-#if ARMA_VERSION_MAJOR >= 8
   c.CleanedData().sync();
-#endif
 
   for (size_t i = 0; i <= c.CleanedData().n_cols; ++i)
   {
