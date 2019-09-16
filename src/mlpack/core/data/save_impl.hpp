@@ -293,9 +293,6 @@ bool Save(const std::string& filename,
           const bool transpose)
 {
   Timer::Start("saving_image");
-  // We transpose by default. So, un-transpose if necessary.
-  if (!transpose)
-    matrix = arma::trans(matrix);
 
   int tempWidth, tempHeight, tempChannels, tempQuality;
 
@@ -382,9 +379,7 @@ bool Save(const std::vector<std::string>& files,
     throw std::runtime_error(oss.str());
     return false;
   }
-  // We transpose by default. So, un-transpose if necessary.
-  if (!transpose)
-    matrix = arma::trans(matrix);
+
   bool status = true;
   for (size_t i = 0; i < files.size() ; i++)
   {

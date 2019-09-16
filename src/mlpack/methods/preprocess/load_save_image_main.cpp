@@ -23,27 +23,26 @@ using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
-PROGRAM_INFO("Load Image",
+PROGRAM_INFO("Load Save Image",
     // Short description.
     "A utility to load and save image dataset. This utility will allow you to "
     "load and save a single image or an array of images.",
     // Long description.
-    "This utility takes a images or an array of images and loads them to arma matrix."
-    "You can specify the height " + PRINT_PARAM_STRING("height") + "width " +
-    PRINT_PARAM_STRING("width") + " and channel " + PRINT_PARAM_STRING("channel") + 
-    "of the images that needs to be loaded. \n There are other options too, that" 
-    "can be specified such as quality " + PRINT_PARAM_STRING("quality") + " and " +
-    PRINT_PARAM_STRING("transpose") + 
-    "\n\n" +
-    "You can also provide a dataset and save them as image using " + 
-    PRINT_PARAM_STRING("dataset") + "and " + PRINT_PARAM_STRING("save") +
-    "as an parameter. An example to load an "
-    "image"  + "\n\n" + 
+    "This utility takes a image or an array of images and loads them to a" 
+    "matrix. You can specify the height " + PRINT_PARAM_STRING("height") +
+    " width " + PRINT_PARAM_STRING("width") + " and channel " +
+    PRINT_PARAM_STRING("channel") + "of the images that needs to be loaded. "
+    "\nThere are other options too, that can be specified such as " + 
+    PRINT_PARAM_STRING("quality") + " and " + PRINT_PARAM_STRING("transpose")
+    + ".\n\n" +
+    "You can also provide a dataset and save them as images using " + 
+    PRINT_PARAM_STRING("dataset") + " and " + PRINT_PARAM_STRING("save") +
+    "as an parameter. An example to load an image : "  + "\n\n" + 
     PRINT_CALL("load_save_image", "input", "X", "height", 256, "width", 256,
         "channel", 3, "output", "Y") + "\n\n" +
     " An example to save an image is :" + "\n\n" + 
     PRINT_CALL("load_save_image", "input", "X", "height", 256, "width", 256,
-        "channel", 3, "dataset", "Y"),
+        "channel", 3, "dataset", "Y", "save", true),
     SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
     SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
     SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"));
@@ -58,7 +57,8 @@ PARAM_INT_IN_REQ("channel", "Number of channel", "C");
 
 PARAM_MATRIX_OUT("output", "Matrix to save images data to.", "o");
 
-PARAM_INT_IN("quality", "Compression of the image if saved as jpg (0-100).", "q",90);
+PARAM_INT_IN("quality", "Compression of the image if saved as jpg (0-100).",
+    "q", 90);
 
 PARAM_FLAG("transpose", "Loaded dataset to be transposed", "t");
 
@@ -85,9 +85,11 @@ static void mlpackMain()
   {
     if(!CLI::HasParam("dataset"))
     {
-      throw std::runtime_error("Please provide a input matrix to save images from");
+      throw std::runtime_error("Please provide a input matrix to save "
+          "images from");
     }
-    data::Save(fileNames, CLI::GetParam<arma::mat>("dataset"), info, false, !CLI::HasParam("transpose"));
+    data::Save(fileNames, CLI::GetParam<arma::mat>("dataset"), info, false,
+        !CLI::HasParam("transpose"));
   }
 }
 
