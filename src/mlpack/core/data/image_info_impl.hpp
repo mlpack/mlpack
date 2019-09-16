@@ -63,6 +63,14 @@ inline ImageInfo::ImageInfo(const size_t width,
   // Do nothing.
 }
 
+  template<typename Archive>
+  void ImageInfo::serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & BOOST_SERIALIZATION_NVP(width);
+    ar & BOOST_SERIALIZATION_NVP(channels);
+    ar & BOOST_SERIALIZATION_NVP(height);
+    ar & BOOST_SERIALIZATION_NVP(quality);
+  }
 } // namespace data
 } // namespace mlpack
 

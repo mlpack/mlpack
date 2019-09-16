@@ -22,6 +22,7 @@ using namespace mlpack;
 using namespace mlpack::util;
 using namespace arma;
 using namespace std;
+using namespace mlpack::data;
 
 PROGRAM_INFO("Load Save Image",
     // Short description.
@@ -51,8 +52,8 @@ PROGRAM_INFO("Load Save Image",
 PARAM_VECTOR_IN_REQ(string, "input", "Image filenames which has to "
     "be loaded/saved", "i"); 
 
-PARAM_INT_IN_REQ("width", "Width of the image", "W");
-PARAM_INT_IN_REQ("channel", "Number of channel", "C");
+PARAM_INT_IN("width", "Width of the image", "W", 256);
+PARAM_INT_IN("channel", "Number of channel", "C",  3);
 
 
 PARAM_MATRIX_OUT("output", "Matrix to save images data to.", "o");
@@ -62,23 +63,41 @@ PARAM_INT_IN("quality", "Compression of the image if saved as jpg (0-100).",
 
 PARAM_FLAG("transpose", "Loaded dataset to be transposed", "t");
 
-PARAM_INT_IN_REQ("height", "Height of the images", "H");
+PARAM_INT_IN("height", "Height of the images", "H", 256);
 PARAM_FLAG("save", "Save a dataset as images", "s");
 PARAM_MATRIX_IN("dataset", "Input matrix to save as images.", "I");
+// Loading/saving of a Image Info model.
+PARAM_MODEL_IN(ImageInfo, "input_model", "Input Image Info model.", "m");
+PARAM_MODEL_OUT(ImageInfo, "output_model", "Output Image Info model.", "M");
 
 static void mlpackMain()
 {
   // Parse command line options.
-  const int height = CLI::GetParam<int>("height");
-  const int width = CLI::GetParam<int>("width");
-  const int channel = CLI::GetParam<int>("channel");
-  const int quality = CLI::GetParam<int>("quality");
-  data::ImageInfo info(height, width, channel, quality);
+  ImageInfo* info;
+  Timer::Start("Loading/Saving Image");
+  if (CLI::HasParam("input_model"))
+  {
+    info = CLI::GetParam<ImageInfo*>("input_model");
+  }
+  else
+  {
+    if(!CLI::HasParam("width") || !CLI::HasParam("height") ||
+        !CLI::HasParam("channel"))
+    {
+      throw std::runtime_error("Please provide height, width and "
+          "number of channels of the images.");
+    }
+    const int height = CLI::GetParam<int>("height");
+    const int width = CLI::GetParam<int>("width");
+    const int channel = CLI::GetParam<int>("channel");
+    const int quality = CLI::GetParam<int>("quality");
+    info = new ImageInfo(height, width, channel, quality);
+  }
   const vector<string> fileNames =
       CLI::GetParam<vector<string> >("input");
   arma::mat out;
   if(!CLI::HasParam("save"))
-    data::Load(fileNames, out, info, false, !CLI::HasParam("transpose"));
+    Load(fileNames, out, *info, false, !CLI::HasParam("transpose"));
   if (CLI::HasParam("output"))
     CLI::GetParam<arma::mat>("output") = std::move(out);
   if(CLI::HasParam("save"))
@@ -88,9 +107,12 @@ static void mlpackMain()
       throw std::runtime_error("Please provide a input matrix to save "
           "images from");
     }
-    data::Save(fileNames, CLI::GetParam<arma::mat>("dataset"), info, false,
+    Save(fileNames, CLI::GetParam<arma::mat>("dataset"), *info, false,
         !CLI::HasParam("transpose"));
   }
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<ImageInfo*>("output_model") = info;
+
 }
 
 #endif // HAS_STB.
