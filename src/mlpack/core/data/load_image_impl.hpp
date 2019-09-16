@@ -77,8 +77,8 @@ bool Load(const std::string& filename,
   info.Channels() = tempChannels;
 
   // Copy image into armadillo Mat.
-  matrix = arma::conv_to<arma::Mat<eT> >::from(arma::Mat<unsigned char>(image, info.Width() * info.Height() *
-      info.Channels(), 1, true, true));
+  matrix = arma::conv_to<arma::Mat<eT> >::from(arma::Mat<unsigned char>(image,
+      info.Width() * info.Height() * info.Channels(), 1, true, true));
 
   // Free the image pointer.
   free(image);
