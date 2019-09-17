@@ -76,9 +76,15 @@ The directory can have any name, not just 'build', but 'build' is sufficient.
 mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
 
- - Armadillo >= 6.500.0 (with LAPACK support)
+ - Armadillo >= 8.400.0 (with LAPACK support)
  - Boost (math_c99, program_options, serialization, unit_test_framework, heap,
           spirit) >= 1.49
+ - ensmallen (will be downloaded if not found)
+
+In addition, mlpack has the following optional dependencies:
+
+ - STB: this will allow loading of images; the library is downloaded if not
+   found and the CMake variable DOWNLOAD_STB_IMAGE is set to ON (the default)
 
 For Python bindings, the following packages are required:
 
@@ -93,7 +99,8 @@ In Ubuntu and Debian, you can get all of these dependencies through apt:
 @code
 # apt-get install libboost-math-dev libboost-program-options-dev
   libboost-test-dev libboost-serialization-dev libarmadillo-dev binutils-dev
-  python-pandas python-numpy cython python-setuptools
+  python-pandas python-numpy cython python-setuptools libensmallen-dev
+  libstb-dev
 @endcode
 
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
@@ -101,11 +108,12 @@ On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 @code
 # dnf install boost-devel boost-test boost-program-options boost-math
   armadillo-devel binutils-devel python2-Cython python2-setuptools
-  python2-numpy python2-pandas
+  python2-numpy python2-pandas ensmallen-devel stbi-devel
 @endcode
 
 (It's also possible to use python3 packages from the package manager---mlpack
-will work with either.)
+will work with either.  Also, the ensmallen-devel package is only available in
+Fedora 29 or RHEL7 or newer.)
 
 @section build_config Configuring CMake
 
@@ -146,8 +154,10 @@ The full list of options mlpack allows:
        (default OFF)
  - DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
        (default ON)
+ - DOWNLOAD_STB_IMAGE=(ON/OFF): If STB is not found, download it (default ON)
  - BUILD_WITH_COVERAGE=(ON/OFF): Build with support for code coverage tools
       (gcc only) (default OFF)
+ - PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable     
  - BUILD_MARKDOWN_BINDINGS=(ON/OFF): Build Markdown bindings for website
        documentation (default OFF)
  - MATHJAX=(ON/OFF): use MathJax for generated Doxygen documentation (default

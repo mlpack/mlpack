@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 
 //! Test DQN in Cart Pole task with Prioritized Replay.
 BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
-  {
+{
   // Set up the network.
   FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
       GaussianInitialization(0, 0.001));

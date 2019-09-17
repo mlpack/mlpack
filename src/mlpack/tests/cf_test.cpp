@@ -477,9 +477,7 @@ void Serialization()
       cBinary.CleanedData().n_nonzero);
   BOOST_REQUIRE_EQUAL(c.CleanedData().n_nonzero, cText.CleanedData().n_nonzero);
 
-#if ARMA_VERSION_MAJOR >= 8
   c.CleanedData().sync();
-#endif
 
   for (size_t i = 0; i <= c.CleanedData().n_cols; ++i)
   {
@@ -702,7 +700,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDCompleteTest)
 /**
  * Make sure recommendations that are generated are reasonably accurate
  * for SVD Incomplete Incremental method.
- */ 
+ */
 BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDIncompleteTest)
 {
   RecommendationAccuracy<SVDIncompletePolicy>();
@@ -711,7 +709,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDIncompleteTest)
 /**
  * Make sure recommendations that are generated are reasonably accurate
  * for Bias SVD method.
- */ 
+ */
 BOOST_AUTO_TEST_CASE(RecommendationAccuracyBiasSVDTest)
 {
   RecommendationAccuracy<BiasSVDPolicy>();

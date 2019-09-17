@@ -556,7 +556,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSTwoClasses)
 
   // Compare test accuracy to 1.
   const double testAcc = lsvm.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(testAcc, 1.0, 0.6);
+  BOOST_REQUIRE_CLOSE(testAcc, 1.0, 1.0);
 }
 
 /**

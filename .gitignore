@@ -6,3 +6,4 @@ src/mlpack/core/util/arma_config.hpp
 .idea
 cmake-build-*
 *.pyc
+Testing/

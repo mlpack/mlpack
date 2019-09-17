@@ -33,6 +33,11 @@ inline size_t GradientSetVisitor::operator()(LayerType* layer) const
   return LayerGradients(layer, layer->OutputParameter());
 }
 
+inline size_t GradientSetVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     HasGradientCheck<T, arma::mat&(T::*)()>::value &&
