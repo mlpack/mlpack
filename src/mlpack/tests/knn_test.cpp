@@ -1336,7 +1336,7 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorBinarySpaceTreeTest)
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      BinarySpaceTree> NeighborSearchType;
+      KDTree> NeighborSearchType;
   NeighborSearchType knn(std::move(dataset));
 
   // Copy constructor and operator.
@@ -1417,7 +1417,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorBinarySpaceTreeTest)
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      BinarySpaceTree> NeighborSearchType;
+      KDTree> NeighborSearchType;
   NeighborSearchType* knn = new NeighborSearchType(std::move(dataset));
 
   // Get predictions.
