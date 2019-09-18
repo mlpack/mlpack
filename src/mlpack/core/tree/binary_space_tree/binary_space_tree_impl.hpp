@@ -379,7 +379,7 @@ BinarySpaceTree(
   }
 }
 
-//Copy Assignment
+// Copy Assignment
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -403,10 +403,10 @@ operator=(const BinarySpaceTree& other)
   stat = other.stat;
   parentDistance = other.ParentDistance();
   furthestDescendantDistance = other.FurthestDescendantDistance();
-  
+
   // Copy matrix, but only if we are the root.
   dataset = ((other.parent == NULL) ? new MatType(*other.dataset) : NULL);
-    
+
   // Create left and right children (if any).
   if (other.Left())
   {
@@ -440,11 +440,11 @@ operator=(const BinarySpaceTree& other)
         queue.push(node->right);
     }
   }
-  
+
   return *this;
 }
 
-//Move Assignment
+// Move Assignment
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
