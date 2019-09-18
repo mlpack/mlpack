@@ -379,7 +379,7 @@ BinarySpaceTree(
   }
 }
 
-
+//Copy Assignment
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -403,9 +403,48 @@ operator=(const BinarySpaceTree& other)
   stat = other.stat;
   parentDistance = other.ParentDistance();
   furthestDescendantDistance = other.FurthestDescendantDistance();
+  
+  // Copy matrix, but only if we are the root.
+  dataset = ((other.parent == NULL) ? new MatType(*other.dataset) : NULL);
+    
+  // Create left and right children (if any).
+  if (other.Left())
+  {
+    left = new BinarySpaceTree(*other.Left());
+    left->Parent() = this; // Set parent to this, not other tree.
+  }
+
+  if (other.Right())
+  {
+    right = new BinarySpaceTree(*other.Right());
+    right->Parent() = this; // Set parent to this, not other tree.
+  }
+
+  // Propagate matrix, but only if we are the root.
+  if (parent == NULL)
+  {
+    std::queue<BinarySpaceTree*> queue;
+    if (left)
+      queue.push(left);
+    if (right)
+      queue.push(right);
+    while (!queue.empty())
+    {
+      BinarySpaceTree* node = queue.front();
+      queue.pop();
+
+      node->dataset = dataset;
+      if (node->left)
+        queue.push(node->left);
+      if (node->right)
+        queue.push(node->right);
+    }
+  }
+  
   return *this;
 }
 
+//Move Assignment
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
