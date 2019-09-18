@@ -224,10 +224,10 @@ class TransposedConvolution
    */
   template<typename eT>
   void Pad(const arma::Mat<eT>& input,
-           size_t wPad,
-           size_t hPad,
-           size_t wExtra,
-           size_t hExtra,
+           const size_t wPad,
+           const size_t hPad,
+           const size_t wExtra,
+           const size_t hExtra,
            arma::Mat<eT>& output)
   {
     if (output.n_rows != input.n_rows + wPad * 2 + wExtra ||
@@ -253,10 +253,10 @@ class TransposedConvolution
    */
   template<typename eT>
   void Pad(const arma::Cube<eT>& input,
-           size_t wPad,
-           size_t hPad,
-           size_t wExtra,
-           size_t hExtra,
+           const size_t wPad,
+           const size_t hPad,
+           const size_t wExtra,
+           const size_t hExtra,
            arma::Cube<eT>& output)
   {
     output = arma::zeros(input.n_rows + wPad * 2 + wExtra,
@@ -279,8 +279,8 @@ class TransposedConvolution
    */
   template<typename eT>
   void InsertZeros(const arma::Mat<eT>& input,
-                   size_t dW,
-                   size_t dH,
+                   const size_t dW,
+                   const size_t dH,
                    arma::Mat<eT>& output)
   {
     if (output.n_rows != input.n_rows * dW - dW + 1 ||
@@ -312,8 +312,8 @@ class TransposedConvolution
    */
   template<typename eT>
   void InsertZeros(const arma::Cube<eT>& input,
-                   size_t dW,
-                   size_t dH,
+                   const size_t dW,
+                   const size_t dH,
                    arma::Cube<eT>& output)
   {
     output = arma::zeros(input.n_rows * dW - dW + 1,
@@ -355,7 +355,7 @@ class TransposedConvolution
   //! Locally-stored number of zeros added to the right of input.
   size_t aW;
 
-  //! Locally-stored number of zeros added to the right of input.
+  //! Locally-stored number of zeros added to the top of input.
   size_t aH;
 
   //! Locally-stored weight object.
