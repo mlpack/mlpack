@@ -272,9 +272,8 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
   // To prevent underflow in log of sum of exp of x operation (where x is a
   // small negative value), we use logsumexp(x - max(x)) + max(x).
   const double maxValue = arma::max(logLikelihoods);
-  const double logProbX = log(arma::accu(exp(logLikelihoods - maxValue))) +
-      maxValue; // Log(Prob(X)).
-  probabilities = exp(logLikelihoods - logProbX); // log(exp(value)) == value.
+  probabilities = exp(logLikelihoods - log(arma::accu(exp(logLikelihoods -
+      maxValue))) + maxValue); // log(exp(value)) == value.
 
   arma::uword maxIndex = 0;
   logLikelihoods.max(maxIndex);
@@ -321,24 +320,21 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
 
   predictions.set_size(data.n_cols);
 
-  ModelMatType logLikelihoods, predictionLogProb;
+  ModelMatType logLikelihoods;
   LogLikelihood(data, logLikelihoods);
 
-  // This will hold log(Prob(X)) for each point.
-  arma::Col<ElemType> logProbX(data.n_cols);
-  predictionLogProb.set_size(arma::size(logLikelihoods));
+  predictionProbs.set_size(arma::size(logLikelihoods));
   double maxValue;
   for (size_t j = 0; j < data.n_cols; ++j)
   {
-    // To prevent underflow in log of sum of exp of x operation (where x is a
-    // small negative value), we use logsumexp(x - max(x)) + max(x).
+    // The LogLikelihood() gives us the unnormalized log likelihood which is
+    // Log(Prob(X|Y)) + Log(Prob(Y)), so we subtract the normalization term.
+    // Besides, to prevent underflow in log of sum of exp of x operation (where
+    // x is a small negative value), we use logsumexp(x - max(x)) + max(x).
     maxValue = arma::max(logLikelihoods.col(j));
-    logProbX(j) = log(arma::accu(exp(logLikelihoods.col(j) - maxValue))) +
-        maxValue;
-    predictionLogProb.col(j) = logLikelihoods.col(j) - logProbX(j);
+    predictionProbs.col(j) = arma::exp(logLikelihoods.col(j) -
+        log(arma::accu(exp(logLikelihoods.col(j) - maxValue))) + maxValue);
   }
-
-  predictionProbs = arma::exp(predictionLogProb);
 
   // Now calculate maximum probabilities for each point.
   for (size_t i = 0; i < data.n_cols; ++i)
