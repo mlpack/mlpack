@@ -203,6 +203,7 @@ RectangleTree(
     children = other.children;
 }
 
+// Move Constructor
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -242,6 +243,8 @@ RectangleTree(RectangleTree&& other) :
     for (size_t i = 0; i < numChildren; i++)
       children[i]->parent = this;
   }
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.  
   other.maxNumChildren = 0;
   other.minNumChildren = 0;
   other.numChildren = 0;
@@ -256,6 +259,7 @@ RectangleTree(RectangleTree&& other) :
   other.ownsDataset = false;
 }
 
+// Copy Assignment
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -304,6 +308,7 @@ operator=(const RectangleTree& other)
   return *this;
 }
 
+// Move Assignment
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -342,6 +347,21 @@ operator=(RectangleTree&& other)
   ownsDataset = other.ownsDataset;
   points = std::move(other.points);
   auxiliaryInfo = std::move(other.auxiliaryInfo);
+
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.  
+  other.maxNumChildren = 0;
+  other.minNumChildren = 0;
+  other.numChildren = 0;
+  other.parent = NULL;
+  other.begin = 0;
+  other.count = 0;
+  other.numDescendants = 0;
+  other.maxLeafSize = 0;
+  other.minLeafSize = 0;
+  other.parentDistance = 0;
+  other.dataset = NULL;
+  other.ownsDataset = false;
 
   return *this;
 }
