@@ -471,6 +471,16 @@ operator=(BinarySpaceTree&& other)
   minimumBoundDistance = other.MinimumBoundDistance();
   dataset = other.dataset;
 
+  other.left = NULL;
+  other.right = NULL;
+  other.parent = NULL;
+  other.begin = 0;
+  other.count = 0;
+  other.parentDistance = 0.0;
+  other.furthestDescendantDistance = 0.0;
+  other.minimumBoundDistance = 0.0;
+  other.dataset = NULL;
+
   return *this;
 }
 
@@ -502,6 +512,7 @@ BinarySpaceTree(BinarySpaceTree&& other) :
   // tree's contents, so it doesn't delete anything when it is destructed.
   other.left = NULL;
   other.right = NULL;
+  other.parent = NULL;
   other.begin = 0;
   other.count = 0;
   other.parentDistance = 0.0;
