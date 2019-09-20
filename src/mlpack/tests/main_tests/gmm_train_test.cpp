@@ -277,7 +277,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
 
     ResetGmmTrainSetting();
 
-    SetInputParam("input", std::move(inputData));
+    SetInputParam("input", inputData);
     SetInputParam("gaussians", (int) 5);
     SetInputParam("trials", (int) 100);
     SetInputParam("max_iterations", (int) 1);
