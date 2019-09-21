@@ -15,6 +15,7 @@ add_executable(mlpack_test
   augmented_rnns_tasks_test.cpp
   bias_svd_test.cpp
   binarize_test.cpp
+  bayesian_ridge_test.cpp
   block_krylov_svd_test.cpp
   cf_test.cpp
   cli_binding_test.cpp
