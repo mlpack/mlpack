@@ -244,7 +244,7 @@ RectangleTree(RectangleTree&& other) :
       children[i]->parent = this;
   }
   // Now we are a clone of the other tree.  But we must also clear the other
-  // tree's contents, so it doesn't delete anything when it is destructed.  
+  // tree's contents, so it doesn't delete anything when it is destructed.
   other.maxNumChildren = 0;
   other.minNumChildren = 0;
   other.numChildren = 0;
@@ -349,7 +349,7 @@ operator=(RectangleTree&& other)
   auxiliaryInfo = std::move(other.auxiliaryInfo);
 
   // Now we are a clone of the other tree.  But we must also clear the other
-  // tree's contents, so it doesn't delete anything when it is destructed.  
+  // tree's contents, so it doesn't delete anything when it is destructed.
   other.maxNumChildren = 0;
   other.minNumChildren = 0;
   other.numChildren = 0;
