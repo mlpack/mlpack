@@ -322,7 +322,8 @@ bool Save(const std::string& filename,
   bool status = false;
   try
   {
-    arma::Mat<unsigned char> temp = arma::conv_to<arma::Mat<unsigned char> >::from(matrix);
+    arma::Mat<unsigned char> temp = arma::conv_to<arma::Mat<unsigned char> >
+        ::from(matrix);
     unsigned char* image = temp.memptr();
 
     if ("png" == Extension(filename))

@@ -155,7 +155,6 @@ BOOST_AUTO_TEST_CASE(SaveImageMatAPITest)
  */
 BOOST_AUTO_TEST_CASE(ImageInfoSerialization)
 {
-
   data::ImageInfo info(5, 5, 3, 90);
   data::ImageInfo xmlInfo, textInfo, binaryInfo;
 
@@ -173,7 +172,6 @@ BOOST_AUTO_TEST_CASE(ImageInfoSerialization)
   BOOST_REQUIRE_EQUAL(info.Height(), binaryInfo.Height());
   BOOST_REQUIRE_EQUAL(info.Channels(), binaryInfo.Channels());
   BOOST_REQUIRE_EQUAL(info.Quality(), binaryInfo.Quality());
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();

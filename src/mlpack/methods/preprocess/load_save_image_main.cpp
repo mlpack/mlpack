@@ -46,7 +46,7 @@ PROGRAM_INFO("Load Save Image",
     SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
     SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"));
 
-//DEFINE PATAM
+// DEFINE PARAM
 PARAM_VECTOR_IN_REQ(string, "input", "Image filenames which has to "
     "be loaded/saved", "i");
 
@@ -107,12 +107,11 @@ static void mlpackMain()
       throw std::runtime_error("Please provide a input matrix to save "
           "images from");
     }
-    Save (fileNames, CLI::GetParam<arma::mat> ("dataset"), *info, false,
+    Save(fileNames, CLI::GetParam<arma::mat> ("dataset"), *info, false,
         !CLI::HasParam("transpose"));
   }
   if (CLI::HasParam("output_model"))
     CLI::GetParam<ImageInfo*> ("output_model") = info;
-
 }
 #else
 

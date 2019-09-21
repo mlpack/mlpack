@@ -87,7 +87,7 @@ class ImageInfo
     ar & BOOST_SERIALIZATION_NVP(width);
     ar & BOOST_SERIALIZATION_NVP(channels);
     ar & BOOST_SERIALIZATION_NVP(height);
-    ar & BOOST_SERIALIZATION_NVP(quality);    
+    ar & BOOST_SERIALIZATION_NVP(quality);
   }
 
  private:
