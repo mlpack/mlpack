@@ -9,20 +9,18 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifdef HAS_STB // Compile this only if stb is present.
-
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/core/math/random.hpp>
 #include <mlpack/core/util/cli.hpp>
-#include <mlpack/core/data/load.hpp>
-#include <mlpack/core/data/image_info.hpp>
+#include <mlpack/core.hpp>
 
 using namespace mlpack;
 using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 using namespace mlpack::data;
+
+#ifdef HAS_STB // Compile this only if stb is present.
 
 PROGRAM_INFO("Load Save Image",
     // Short description.
@@ -65,6 +63,7 @@ PARAM_FLAG("transpose", "Loaded dataset to be transposed", "t");
 PARAM_INT_IN("height", "Height of the images", "H", 256);
 PARAM_FLAG("save", "Save a dataset as images", "s");
 PARAM_MATRIX_IN("dataset", "Input matrix to save as images.", "I");
+
 // Loading/saving of a Image Info model.
 PARAM_MODEL_IN(ImageInfo, "input_model", "Input Image Info model.", "m");
 PARAM_MODEL_OUT(ImageInfo, "output_model", "Output Image Info model.", "M");
@@ -72,7 +71,9 @@ PARAM_MODEL_OUT(ImageInfo, "output_model", "Output Image Info model.", "M");
 static void mlpackMain()
 {
   // Parse command line options.
-  ImageInfo* info;
+
+  data::ImageInfo* info;
+
   Timer::Start("Loading/Saving Image");
   if (CLI::HasParam("input_model"))
   {
@@ -86,11 +87,11 @@ static void mlpackMain()
       throw std::runtime_error("Please provide height, width and "
           "number of channels of the images.");
     }
-    const int height = CLI::GetParam<int>("height");
-    const int width = CLI::GetParam<int>("width");
-    const int channel = CLI::GetParam<int>("channel");
-    const int quality = CLI::GetParam<int>("quality");
-    info = new ImageInfo(height, width, channel, quality);
+    const size_t& height = CLI::GetParam<int>("height");
+    const size_t& width = CLI::GetParam<int>("width");
+    const size_t& channel = CLI::GetParam<int>("channel");
+    const size_t& quality = CLI::GetParam<int>("quality");
+    info = new data::ImageInfo(width, height, channel, quality);
   }
   const vector<string> fileNames =
       CLI::GetParam<vector<string> >("input");
@@ -113,5 +114,8 @@ static void mlpackMain()
     CLI::GetParam<ImageInfo*> ("output_model") = info;
 
 }
+#else
+
+static void mlpackMain() {}
 
 #endif // HAS_STB.

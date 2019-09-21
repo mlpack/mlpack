@@ -51,10 +51,10 @@ inline bool ImageFormatSupported(const std::string& fileName, const bool save)
   return false;
 }
 
-inline ImageInfo::ImageInfo(const size_t width,
-                            const size_t height,
-                            const size_t channels,
-                            const size_t quality) :
+inline ImageInfo::ImageInfo(const size_t& width,
+                            const size_t& height,
+                            const size_t& channels,
+                            const size_t& quality) :
     width(width),
     height(height),
     channels(channels),
@@ -63,14 +63,6 @@ inline ImageInfo::ImageInfo(const size_t width,
   // Do nothing.
 }
 
-  template<typename Archive>
-  void ImageInfo::serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & BOOST_SERIALIZATION_NVP(width);
-    ar & BOOST_SERIALIZATION_NVP(channels);
-    ar & BOOST_SERIALIZATION_NVP(height);
-    ar & BOOST_SERIALIZATION_NVP(quality);
-  }
 } // namespace data
 } // namespace mlpack
 

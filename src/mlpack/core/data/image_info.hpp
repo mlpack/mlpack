@@ -56,10 +56,10 @@ class ImageInfo
    * @param channels Number of channels in the image.
    * @param quality Compression of the image if saved as jpg (0 - 100).
    */
-  ImageInfo(const size_t width = 0,
-            const size_t height = 0,
-            const size_t channels = 3,
-            const size_t quality = 90);
+  ImageInfo(const size_t& width = 0,
+            const size_t& height = 0,
+            const size_t& channels = 3,
+            const size_t& quality = 90);
 
   //! Get the image width.
   const size_t& Width() const { return width; }
@@ -82,7 +82,13 @@ class ImageInfo
   size_t& Quality() { return quality; }
 
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & BOOST_SERIALIZATION_NVP(width);
+    ar & BOOST_SERIALIZATION_NVP(channels);
+    ar & BOOST_SERIALIZATION_NVP(height);
+    ar & BOOST_SERIALIZATION_NVP(quality);    
+  }
 
  private:
   // To store the image width.
@@ -98,7 +104,15 @@ class ImageInfo
   size_t quality;
 };
 #else
-class ImageInfo { };
+class ImageInfo
+{
+ public:
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */)
+  {
+    // Nothing to do
+  }
+};
 
 #endif // HAS_STB.
 
