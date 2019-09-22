@@ -71,7 +71,6 @@ PARAM_MODEL_OUT(ImageInfo, "output_model", "Output Image Info model.", "M");
 static void mlpackMain()
 {
   // Parse command line options.
-
   data::ImageInfo* info;
 
   Timer::Start("Loading/Saving Image");
@@ -97,9 +96,11 @@ static void mlpackMain()
       CLI::GetParam<vector<string> >("input");
   arma::mat out;
   if (!CLI::HasParam("save"))
+  {
     Load(fileNames, out, *info, false, !CLI::HasParam("transpose"));
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(out);
+    if (CLI::HasParam("output"))
+      CLI::GetParam<arma::mat>("output") = std::move(out);
+  }
   if (CLI::HasParam("save"))
   {
     if (!CLI::HasParam("dataset"))
