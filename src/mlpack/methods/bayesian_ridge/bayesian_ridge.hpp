@@ -1,9 +1,9 @@
 /**
- * @file bayesridge.hpp
+ * @file bayesian_ridge.hpp
  * @ Clement Mercier
  *
  * Definition of the BayesianRidge class, which performs the 
- * bayesian linear regression
+ * bayesian linear regression.
 **/
 #ifndef MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_HPP 
 #define  MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_HPP 
