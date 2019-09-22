@@ -1,5 +1,5 @@
 /**
- * @file bayesridge.cpp
+ * @file bayesian_ridge.cpp
  * @author Clement Mercier 
  *
  * Implementation of Bayesian Ridge regression.
