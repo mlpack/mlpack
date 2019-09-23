@@ -115,7 +115,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
    */
   std::string LayerString(FlexibleReLU<>* /*layer*/) const
   {
-    return "frelu";
+    return "flexiblerelu";
   }
 
   /*
@@ -305,6 +305,12 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   std::string LayerString(T* /*layer*/) const
   {
     return "unsupported";
+  }
+
+  //! Overload function call.
+  std::string operator()(MoreTypes* layer) const
+  {
+    return layer.apply_visitor(*this);
   }
 
   //! Overload function call.
