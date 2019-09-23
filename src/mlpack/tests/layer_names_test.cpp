@@ -104,6 +104,32 @@ BOOST_AUTO_TEST_CASE(LayerNameVisitorTest)
                       logSoftMax) == "logsoftmax");
   BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       unsupportedLayer) == "unsupported");
+  // Delete all instances.
+  delete &atrousConvolution;
+  delete &alphaDropout;
+  delete &batchNorm;
+  delete &constant;
+  delete &convolution;
+  delete &dropConnect;
+  delete &dropout;
+  delete &flexibleReLU;
+  delete &layerNorm;
+  delete &linear;
+  delete &linearNoBias;
+  delete &maxPooling;
+  delete &meanPooling;
+  delete &multiplyConstant;
+  delete &reLULayer;
+  delete &transposedConvolution;
+  delete &identityLayer;
+  delete &tanHLayer;
+  delete &eLU;
+  delete &hardTanH;
+  delete &leakyReLU;
+  delete &pReLU;
+  delete &sigmoidLayer;
+  delete &logSoftMax;
+  delete &unsupportedLayer;
 }
 
 BOOST_AUTO_TEST_SUITE_END();
