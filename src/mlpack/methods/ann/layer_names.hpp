@@ -308,7 +308,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   //! Overload function call.
-  std::string operator()(MoreTypes* layer) const
+  std::string operator()(MoreTypes layer) const
   {
     return layer.apply_visitor(*this);
   }
