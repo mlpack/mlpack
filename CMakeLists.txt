@@ -363,7 +363,7 @@ endif ()
 # Find ensmallen.
 # Once ensmallen is readily available in package repos, the automatic downloader
 # here can be removed.
-find_package(Ensmallen 1.10.0)
+find_package(Ensmallen 2.10.0)
 if (NOT ENSMALLEN_FOUND)
   if (DOWNLOAD_ENSMALLEN)
     file(DOWNLOAD http://www.ensmallen.org/files/ensmallen-latest.tar.gz
