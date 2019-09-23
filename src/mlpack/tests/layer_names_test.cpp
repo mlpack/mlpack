@@ -51,8 +51,8 @@ BOOST_AUTO_TEST_CASE(LayerNameVisitorTest)
   LayerTypes<> pReLU = new PReLU<>();
   LayerTypes<> sigmoidLayer = new SigmoidLayer<>();
   LayerTypes<> logSoftMax = new LogSoftMax<>();
-  LayerTypes<> unsupportedLayer = new BilinearInterpolation<>(); /* Bilinear
-  interpolation is not yet supported by the string converter */
+  // Bilinear interpolation is not yet supported by the string converter
+  LayerTypes<> unsupportedLayer = new BilinearInterpolation<>();
 
   BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       atrousConvolution) == "atrousconvolution");
