@@ -117,6 +117,13 @@ static void mlpackMain()
 }
 #else
 
-static void mlpackMain() {}
+static void mlpackMain() 
+{
+  if (!CLI::HasParam("input") || !CLI::HasParam("width") ||
+      !CLI::HasParam("height") || !CLI::HasParam("channel"))
+  {
+    throw std::runtime_error("Are you sure We are on correct path");
+  }
+}
 
 #endif // HAS_STB.
