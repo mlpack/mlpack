@@ -66,32 +66,56 @@ BOOST_AUTO_TEST_CASE(LoadImageTest)
   output = CLI::GetParam<arma::mat>("output");
   BOOST_REQUIRE_EQUAL(output.n_rows, 50 * 50 * 3); // width * height * channels.
   BOOST_REQUIRE_EQUAL(output.n_cols, 2);
+
+  // SetInputParam<vector<string>>("input", {"test_image777.png", "test_image999.png"});
+  // SetInputParam("height", 50);
+  // SetInputParam("width", 50);
+  // SetInputParam("channel", 3);
+  // SetInputParam("save", true);
+  // SetInputParam("dataset", output);
+  // mlpackMain();
+  // std::cout<<"output given is "<<output.n_rows<<"\n";
+  // bindings::tests::CleanMemory();
+  // SetInputParam<vector<string>>("input", {"test_image777.png", "test_image999.png"});
+  // SetInputParam("height", 50);
+  // SetInputParam("width", 50);
+  // SetInputParam("channel", 3);
+
+  // mlpackMain();
+  // input = CLI::GetParam<arma::mat>("output");
+  //  std::cout<<"outputnew is "<<input.n_rows<<"\n";
+  // BOOST_REQUIRE_EQUAL(input.n_rows, 50 * 50 * 3); // width * height * channels.
+  // BOOST_REQUIRE_EQUAL(input.n_cols, 2);
+  // for (size_t i = 0; i < output.n_elem; ++i)
+  //   BOOST_REQUIRE_CLOSE(input[i], output[i], 1e-5);
 }
 
 BOOST_AUTO_TEST_CASE(SaveImageTest)
 {
- // SetInputParam<vector<string>>("input", {"test_image777.png", "test_image999.png"});
- //  SetInputParam("height", 50);
- //  SetInputParam("width", 50);
- //  SetInputParam("channel", 3);
- //  SetInputParam("save", true);
- //  SetInputParam("dataset", output);
- //  mlpackMain();
- //  std::cout<<"output given is "<<output.n_rows<<"\n";
- //  bindings::tests::CleanMemory();
- //  SetInputParam<vector<string>>("input", {"test_image777.png", "test_image999.png"});
- //  SetInputParam("height", 50);
- //  SetInputParam("width", 50);
- //  SetInputParam("channel", 3);
- //  SetInputParam("save", false);
+  // std::cout<<"output entry is "<<output.n_rows<<"\n";
 
- //  mlpackMain();
- //  input = CLI::GetParam<arma::mat>("output");
- //   std::cout<<"outputnew is "<<input.n_rows<<"\n";
- //  BOOST_REQUIRE_EQUAL(input.n_rows, 50 * 50 * 3); // width * height * channels.
- //  BOOST_REQUIRE_EQUAL(input.n_cols, 2);
- //  for (size_t i = 0; i < output.n_elem; ++i)
- //    BOOST_REQUIRE_CLOSE(input[i], output[i], 1e-5);
+  // SetInputParam<vector<string>>("input", {"test_image777.png", "test_image999.png"});
+  // SetInputParam("height", 50);
+  // SetInputParam("width", 50);
+  // SetInputParam("channel", 3);
+  // SetInputParam("save", true);
+  // SetInputParam("dataset", output);
+  // mlpackMain();
+  // std::cout<<"output given is "<<output.n_rows<<"\n";
+
+  // SetInputParam<vector<string>>("input", {"test_image777.png", "test_image999.png"});
+  // SetInputParam("height", 50);
+  // SetInputParam("width", 50);
+  // SetInputParam("channel", 3);
+
+  // mlpackMain();
+  // input = CLI::GetParam<arma::mat>("output");
+  //  std::cout<<"outputnew is "<<input.n_rows<<"\n";
+  // BOOST_REQUIRE_EQUAL(input.n_rows, 50 * 50 * 3); // width * height * channels.
+  // BOOST_REQUIRE_EQUAL(input.n_cols, 2);
+  // for (size_t i = 0; i < output.n_elem; ++i)
+  //   BOOST_REQUIRE_CLOSE(input[i], output[i], 1e-5);
+
 }
 
 BOOST_AUTO_TEST_SUITE_END();
