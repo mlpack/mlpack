@@ -344,6 +344,7 @@ if (NOT STB_IMAGE_FOUND)
       install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
       install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
       add_definitions(-DHAS_STB)
+      set(STB_AVAILABLE "1")
     else ()
       list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
       message(WARNING
@@ -357,6 +358,7 @@ else ()
   # Already has STB installed.
   add_definitions(-DHAS_STB)
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${STB_IMAGE_INCLUDE_DIR})
+  set(STB_AVAILABLE "1")
 endif ()
 
 
