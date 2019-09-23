@@ -20,7 +20,6 @@ using namespace arma;
 using namespace std;
 using namespace mlpack::data;
 
-#ifdef HAS_STB // Compile this only if stb is present.
 
 PROGRAM_INFO("Load Save Image",
     // Short description.
@@ -67,6 +66,8 @@ PARAM_MATRIX_IN("dataset", "Input matrix to save as images.", "I");
 // Loading/saving of a Image Info model.
 PARAM_MODEL_IN(ImageInfo, "input_model", "Input Image Info model.", "m");
 PARAM_MODEL_OUT(ImageInfo, "output_model", "Output Image Info model.", "M");
+
+#ifdef HAS_STB // Compile this only if stb is present.
 
 static void mlpackMain()
 {
