@@ -118,4 +118,49 @@ BOOST_AUTO_TEST_CASE(SaveImageTest)
 
 }
 
+/**
+ * Check Saved model is working.
+ */
+BOOST_AUTO_TEST_CASE(SavedModelTest)
+{
+  SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
+  SetInputParam("height", 50);
+  SetInputParam("width", 50);
+  SetInputParam("channel", 3);
+
+  mlpackMain();
+  arma::mat randomOutput = CLI::GetParam<arma::mat>("output");
+
+  SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
+  SetInputParam("input_model",
+                CLI::GetParam<ImageInfo*>("output_model"));
+
+  mlpackMain();
+  arma::mat savedOutput = CLI::GetParam<arma::mat>("output");
+  CheckMatrices(randomOutput, savedOutput);
+}
+
+/**
+ * Check transpose option give two different output.
+ */
+BOOST_AUTO_TEST_CASE(TransposeTest)
+{
+  SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
+  SetInputParam("height", 50);
+  SetInputParam("width", 50);
+  SetInputParam("channel", 3);
+
+  mlpackMain();
+  arma::mat normalOutput = CLI::GetParam<arma::mat>("output");
+
+  SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
+  SetInputParam("input_model",
+                CLI::GetParam<ImageInfo*>("output_model"));
+  SetInputParam("transpose", true);
+  mlpackMain();
+  arma::mat transposeOutput = CLI::GetParam<arma::mat>("output");
+
+  CheckMatricesNotEqual(normalOutput, transposeOutput);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
