@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(BayesianRidgeRegressionTest)
       BOOST_REQUIRE_CLOSE(predictions[i], y[i], 1e-6);
     }
   // Check that the estimated variance is zero.
-  BOOST_REQUIRE_SMALL(estimator.getVariance(), 1e-6);
+  BOOST_REQUIRE_SMALL(estimator.Variance(), 1e-6);
 }
 
 
@@ -71,13 +71,13 @@ BOOST_AUTO_TEST_CASE(TestCenter0Normalize0)
   estimator.Train(X,y);
 
   // To be neutral data_offset must be all 0.
-  BOOST_TEST(sum(estimator.getdata_offset()) == 0);
+  BOOST_TEST(sum(estimator.Data_offset()) == 0);
 
   // To be neutral responses_offset must be 0.
-  BOOST_TEST(estimator.getresponses_offset() == 0);
+  BOOST_TEST(estimator.Responses_offset() == 0);
 
   // To be neutral data_scale must be all 1.
-  BOOST_TEST(sum(estimator.getdata_scale()) == nDims);
+  BOOST_TEST(sum(estimator.Data_scale()) == nDims);
 }
 
 // Verify that centering and normalization are correct.
@@ -95,11 +95,11 @@ BOOST_AUTO_TEST_CASE(TestCenter1Normalize1)
   arma::colvec x_std = arma::stddev(X, 0, 1);
   double y_mean = arma::mean(y);
 
-  BOOST_REQUIRE_SMALL(sum(estimator.getdata_offset() - x_mean), 1e-6);
+  BOOST_REQUIRE_SMALL(sum(estimator.Data_offset() - x_mean), 1e-6);
     
-  BOOST_REQUIRE_SMALL(abs(estimator.getresponses_offset() - y_mean), 1e-6);
+  BOOST_REQUIRE_SMALL(abs(estimator.Responses_offset() - y_mean), 1e-6);
 
-  BOOST_REQUIRE_SMALL(sum(estimator.getdata_scale() - x_std), 1e-6);
+  BOOST_REQUIRE_SMALL(sum(estimator.Data_scale() - x_std), 1e-6);
 }
 
 
