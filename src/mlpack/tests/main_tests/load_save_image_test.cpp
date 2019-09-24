@@ -43,18 +43,6 @@ struct LoadSaveImageTestFixture
 BOOST_FIXTURE_TEST_SUITE(LoadSaveImageMainTest,
                          LoadSaveImageTestFixture);
 
-
-/**
- * Check that two different scalers give two different output.
- */
-
-// arma::mat testimage = arma::conv_to<arma::mat>::from(
-//     arma::randi<arma::Mat<unsigned char>>((50 * 50 * 3), 2));
-
-// Global variable to avoid creating of multiple files
-arma::mat input;
-arma::mat output;
-
 BOOST_AUTO_TEST_CASE(LoadImageTest)
 {
   SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
@@ -63,59 +51,40 @@ BOOST_AUTO_TEST_CASE(LoadImageTest)
   SetInputParam("channel", 3);
 
   mlpackMain();
-  output = CLI::GetParam<arma::mat>("output");
-  BOOST_REQUIRE_EQUAL(output.n_rows, 50 * 50 * 3); // width * height * channels.
+  arma::mat output = CLI::GetParam<arma::mat>("output");
+  // width * height * channels.
+  BOOST_REQUIRE_EQUAL(output.n_rows, 50 * 50 * 3);
   BOOST_REQUIRE_EQUAL(output.n_cols, 2);
-
-  // SetInputParam<vector<string>>("input", {"test_image777.png", "test_image999.png"});
-  // SetInputParam("height", 50);
-  // SetInputParam("width", 50);
-  // SetInputParam("channel", 3);
-  // SetInputParam("save", true);
-  // SetInputParam("dataset", output);
-  // mlpackMain();
-  // std::cout<<"output given is "<<output.n_rows<<"\n";
-  // bindings::tests::CleanMemory();
-  // SetInputParam<vector<string>>("input", {"test_image777.png", "test_image999.png"});
-  // SetInputParam("height", 50);
-  // SetInputParam("width", 50);
-  // SetInputParam("channel", 3);
-
-  // mlpackMain();
-  // input = CLI::GetParam<arma::mat>("output");
-  //  std::cout<<"outputnew is "<<input.n_rows<<"\n";
-  // BOOST_REQUIRE_EQUAL(input.n_rows, 50 * 50 * 3); // width * height * channels.
-  // BOOST_REQUIRE_EQUAL(input.n_cols, 2);
-  // for (size_t i = 0; i < output.n_elem; ++i)
-  //   BOOST_REQUIRE_CLOSE(input[i], output[i], 1e-5);
 }
 
 BOOST_AUTO_TEST_CASE(SaveImageTest)
 {
-  // std::cout<<"output entry is "<<output.n_rows<<"\n";
+  arma::mat testimage = arma::conv_to<arma::mat>::from(
+      arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
+  SetInputParam<vector<string>>("input", {"test_image777.png",
+      "test_image999.png"});
+  SetInputParam("height", 5);
+  SetInputParam("width", 5);
+  SetInputParam("channel", 3);
+  SetInputParam("save", true);
+  SetInputParam("dataset", testimage);
+  mlpackMain();
 
-  // SetInputParam<vector<string>>("input", {"test_image777.png", "test_image999.png"});
-  // SetInputParam("height", 50);
-  // SetInputParam("width", 50);
-  // SetInputParam("channel", 3);
-  // SetInputParam("save", true);
-  // SetInputParam("dataset", output);
-  // mlpackMain();
-  // std::cout<<"output given is "<<output.n_rows<<"\n";
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
 
-  // SetInputParam<vector<string>>("input", {"test_image777.png", "test_image999.png"});
-  // SetInputParam("height", 50);
-  // SetInputParam("width", 50);
-  // SetInputParam("channel", 3);
+  SetInputParam<vector<string>>("input", {"test_image777.png",
+    "test_image999.png"});
+  SetInputParam("height", 5);
+  SetInputParam("width", 5);
+  SetInputParam("channel", 3);
 
-  // mlpackMain();
-  // input = CLI::GetParam<arma::mat>("output");
-  //  std::cout<<"outputnew is "<<input.n_rows<<"\n";
-  // BOOST_REQUIRE_EQUAL(input.n_rows, 50 * 50 * 3); // width * height * channels.
-  // BOOST_REQUIRE_EQUAL(input.n_cols, 2);
-  // for (size_t i = 0; i < output.n_elem; ++i)
-  //   BOOST_REQUIRE_CLOSE(input[i], output[i], 1e-5);
-
+  mlpackMain();
+  arma::mat output = CLI::GetParam<arma::mat>("output");
+  BOOST_REQUIRE_EQUAL(output.n_rows, 5 * 5 * 3);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 2);
+  for (size_t i = 0; i < output.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(testimage[i], output[i], 1e-5);
 }
 
 /**
@@ -161,6 +130,36 @@ BOOST_AUTO_TEST_CASE(TransposeTest)
   arma::mat transposeOutput = CLI::GetParam<arma::mat>("output");
 
   CheckMatricesNotEqual(normalOutput, transposeOutput);
+}
+
+/**
+ * Check whether binding throws error if height, width or channel are not
+ * specified.
+ */
+BOOST_AUTO_TEST_CASE(IncompleteTest)
+{
+  SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
+  SetInputParam("height", 50);
+  SetInputParam("width", 50);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Check for invalid height values.
+ */
+BOOST_AUTO_TEST_CASE(InvalidInputTest)
+{
+  SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
+  SetInputParam("height", -50);
+  SetInputParam("width", 50);
+  SetInputParam("channel", 3);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -87,6 +87,19 @@ static void mlpackMain()
       throw std::runtime_error("Please provide height, width and "
           "number of channels of the images.");
     }
+    // Positive value for width.
+    RequireParamValue<int>("width", [](int x) { return x >= 0;}, true,
+        "width must be Positive");
+    // Positive value for height.
+    RequireParamValue<int>("height", [](int x) { return x >= 0;}, true,
+        "height must be Positive");
+    // Positive value for channel.
+    RequireParamValue<int>("channel", [](int x) { return x >= 0;}, true,
+        "channel must be Positive");
+    // Positive value for quality.
+    RequireParamValue<int>("quality", [](int x) { return x >= 0;}, true,
+        "quality must be Positive");
+
     const size_t& height = CLI::GetParam<int>("height");
     const size_t& width = CLI::GetParam<int>("width");
     const size_t& channel = CLI::GetParam<int>("channel");
