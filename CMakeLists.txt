@@ -238,7 +238,7 @@ endif()
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
 #   MATHJAX_ROOT - root of MathJax installation
 
-find_package(Armadillo 6.500.0 REQUIRED)
+find_package(Armadillo 8.400.0 REQUIRED)
 
 # If Armadillo was compiled without ARMA_64BIT_WORD and we are on a 64-bit
 # system (where size_t will be 64 bits), suggest to the user that they should
