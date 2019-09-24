@@ -3,7 +3,8 @@
  * @ Clement Mercier
  *
  * Definition of the BayesianRidge class, which performs the 
- * bayesian linear regression.
+ * bayesian linear regression. According to the armadillo standards,
+ * all the functions consider data in column-major format.
 **/
 #ifndef MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_HPP 
 #define  MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_HPP 
@@ -12,6 +13,19 @@
 
 namespace mlpack{
 namespace regression{
+  /**
+   * This class implements the bayesian linear regression. "Bayesian treatment
+   * of linear regression, which will avoid the over-fitting problem of maximum 
+   * likelihood, and which will also lead to automatic methods of determining 
+   * model complexity using the training data alone.", C.Bishop.
+   * More details and description in : 
+   * Christopher Bishop (2006), Pattern Recognition and Machine Learning.
+   * David J.C MacKay (1991), Bayesian Interpolation, Computation and Neural 
+   * systems.
+   
+   * Model optimization is automatic and does not require cross validation 
+   * procedure to be optimized.
+   */
 
 class BayesianRidge
 {
@@ -21,10 +35,10 @@ public:
    *    regulariation parameter is automaticaly set to its optimal value by 
    *    maximmization of the marginal likelihood.
    *
-   * @param fitIntercept Whether or not center the data according to the *
-   *      examples.
+   * @param fitIntercept Whether or not center the data according to the 
+   *    examples.
    * @param normalize Whether or to normalize the data according to the 
-   * standard deviation of each feature.
+   *    standard deviation of each feature.
    **/
   BayesianRidge(const bool fitIntercept = true,
 		const bool normalize = false);
@@ -45,7 +59,7 @@ public:
    * currently-trained Bayesian Ridge model.
    *
    * @param points The data points to apply the model.
-   * @param predictions y, which will contained calculated values on completion.
+   * @param predictions y, which will contained predicted values on completion.
    **/
   void Predict(const arma::mat& points,
                arma::rowvec& predictions) const;
@@ -55,21 +69,19 @@ public:
    * currently-trained Bayesian Ridge model.
    *
    * @param point The data point to apply the model.
-   * @param prediction y, which will contained calculated value on completion.
+   * @param prediction y, which will contained predicted value on completion.
    **/
 
   void Predict(const arma::colvec& point, double& prediction) const;
 
   /**
    * Predict \f$y_{i}\f$ and the standard deviation of the predictive posterior 
-   * distribution for each data point in the given data matrix using the
+   * distribution for each data point in the given data matrix, using the
    * currently-trained Bayesian Ridge estimator.
    *
-   * @param points The data points to apply the model.
+   * @param points The data point to apply the model.
    * @param predictions y, which will contained calculated values on completion.
    * @param std Standard deviations of the predictions.
-   * @param rowMajor Should be true if the data points matrix is row-major and
-   *     false otherwise.
    */
   void Predict(const arma::mat& points,
                arma::rowvec& predictions,
@@ -86,20 +98,21 @@ public:
    * @param std Standard deviation of the prediction.
    */
   void Predict(const arma::colvec& point,
-			      double& prediction,
-			      double& std) const;
+	       double& prediction,
+	       double& std) const;
 
   
   /**
    * Compute the Root Mean Square Error
    * between the predictions returned by the model
-   * and the true repsonses
+   * and the true repsonses.
+   *
    * @param Points Data points to predict
    * @param responses A vector of targets.
    * @return RMSE
    **/
   double Rmse(const arma::mat& data,
-	     const arma::rowvec& responses) const;
+	      const arma::rowvec& responses) const;
   
   /*
    * Center and normalize the data. The last four arguments
@@ -138,7 +151,7 @@ public:
   BayesianRidge(const BayesianRidge& other);
 
   /**
-   * Move constructor . Construct the BayesianRidge object by taking ownership
+   * Move constructor. Construct the BayesianRidge object by taking ownership
    * of the the  given BayesianRidge object.
    *
    * @param other BayesianRidge to take the ownership.
@@ -153,7 +166,7 @@ public:
   BayesianRidge& operator=(const BayesianRidge& other);
 
   /**
-   * Take ownershipof  the given BayesianRidge object.
+   * Take ownership of the given BayesianRidge object.
    *
    * @param other BayesianRidge object to copy.
    */
@@ -162,6 +175,7 @@ public:
   
   /**
    * Get the solution vector
+   *
    * @return omega Solution vector.
    **/
   inline arma::colvec getCoefs() const{return this->omega;}
@@ -169,6 +183,7 @@ public:
 
   /**
    * Get the precesion (or inverse variance) beta of the model.
+   *
    * @return \f$ \beta \f$ 
    **/
   inline double getBeta() const {return this->beta;} 
@@ -176,6 +191,7 @@ public:
 
   /**
    * Get the estimated variance.
+   *   
    * @return 1.0 / \f$ \beta \f$
    **/
   inline double getVariance() const {return 1.0 / this->getBeta();}
@@ -184,6 +200,7 @@ public:
   /**
    * Get the mean vector computed on the features over the training points.
    * Vector of 0 if fitIntercept is false.
+   *   
    * @return responses_offset
    **/
   inline arma::rowvec getdata_offset() const {return this->data_offset;}
@@ -191,8 +208,9 @@ public:
 
   /**
    * Get the vector of standard deviations computed on the features over the 
-   *    training points. Vector of 1 if normalize is false.
-   * @return data_offset
+   * training points. Vector of 1 if normalize is false.
+   *  
+   * return data_offset
    **/
   inline arma::rowvec getdata_scale() const {return this->data_scale;}
 
@@ -210,40 +228,40 @@ public:
   void serialize(Archive& ar, const unsigned int /* version */);
 
 private:
-  //! Center the data if true
+  //! Center the data if true.
   bool fitIntercept;
 
-  //! Scale the data by standard deviations if true
+  //! Scale the data by standard deviations if true.
   bool normalize;
 
-  //! Mean vector computed over the points
+  //! Mean vector computed over the points.
   arma::colvec data_offset;
 
-  //! Std vector computed over the points
+  //! Std vector computed over the points.
   arma::colvec data_scale;
 
-  //! Mean of the response vector computed over the points
+  //! Mean of the response vector computed over the points.
   double responses_offset;
 
-  //! Precision of the prio pdf (gaussian)
+  //! Precision of the prior pdf (gaussian).
   double alpha;
 
-  //! Noise inverse variance
+  //! Noise inverse variance.
   double beta;
 
-  //! Effective number of parameters
+  //! Effective number of parameters.
   double gamma;
 
   //! Solution vector
   arma::colvec omega;
 
-  //! Coavriance matrix of the solution vector omega
+  //! Covariance matrix of the solution vector omega.
   arma::mat matCovariance;
 };
 } // namespace regression
 } // namespace mlpack
 
-// Include implementation of serialize
+// Include implementation of serialize.
 #include "bayesian_ridge_impl.hpp"
 
 #endif
