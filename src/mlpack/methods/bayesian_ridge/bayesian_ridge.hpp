@@ -178,7 +178,7 @@ public:
    *
    * @return omega Solution vector.
    **/
-  inline arma::colvec getCoefs() const{return this->omega;}
+  inline arma::colvec Omega() const{return this->omega;}
 
 
   /**
@@ -186,7 +186,7 @@ public:
    *
    * @return \f$ \beta \f$ 
    **/
-  inline double getBeta() const {return this->beta;} 
+  inline double Beta() const {return this->beta;} 
   
 
   /**
@@ -194,7 +194,7 @@ public:
    *   
    * @return 1.0 / \f$ \beta \f$
    **/
-  inline double getVariance() const {return 1.0 / this->getBeta();}
+  inline double Variance() const {return 1.0 / this->Beta();}
 
 
   /**
@@ -203,7 +203,7 @@ public:
    *   
    * @return responses_offset
    **/
-  inline arma::rowvec getdata_offset() const {return this->data_offset;}
+  inline arma::rowvec Data_offset() const {return this->data_offset;}
 
 
   /**
@@ -212,14 +212,14 @@ public:
    *  
    * return data_offset
    **/
-  inline arma::rowvec getdata_scale() const {return this->data_scale;}
+  inline arma::rowvec Data_scale() const {return this->data_scale;}
 
 
   /**
    * Get the mean value of the train responses.
    * @return responses_offset
    **/
-  inline double getresponses_offset() const
+  inline double Responses_offset() const
   {return this->responses_offset;}
 
   
