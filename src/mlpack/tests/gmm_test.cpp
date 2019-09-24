@@ -28,7 +28,7 @@ using namespace mlpack::gmm;
 
 BOOST_AUTO_TEST_SUITE(GMMTest);
 /**
- * Test GMM::Probability() for a single observation for a few cases.
+ * Test GMM::Probability() for a different observation for a few cases.
  */
 BOOST_AUTO_TEST_CASE(GMMProbabilityTest)
 {
@@ -45,6 +45,46 @@ BOOST_AUTO_TEST_CASE(GMMProbabilityTest)
   BOOST_REQUIRE_CLOSE(gmm.Probability("3 3"), 0.06432759685, 1e-5);
   BOOST_REQUIRE_CLOSE(gmm.Probability("-1 5.3"), 2.503171278804e-6, 1e-5);
   BOOST_REQUIRE_CLOSE(gmm.Probability("1.4 0"), 0.024676682176, 1e-5);
+
+  arma::vec probs;
+
+  arma::mat obs("0 1;"
+                "0 1;");
+
+  gmm.Probability(obs, probs);
+
+  BOOST_REQUIRE_EQUAL(probs.n_elem, 2);
+
+  BOOST_REQUIRE_CLOSE(probs(0), 0.05094887202, 1e-5);
+  BOOST_REQUIRE_CLOSE(probs(1), 0.03451996667, 1e-5);
+}
+
+/**
+ * Test GMM::LogProbability() for different observation for a few cases.
+ */
+BOOST_AUTO_TEST_CASE(GMMLogProbabilityTest)
+{
+  // Create a GMM.
+  GMM gmm(2, 2);
+  gmm.Component(0) = distribution::GaussianDistribution("0 0", "1 0; 0 1");
+  gmm.Component(1) = distribution::GaussianDistribution("3 3", "2 1; 1 2");
+  gmm.Weights() = "0.3 0.7";
+
+  // Now test a couple observations.  These comparisons are calculated by hand.
+  BOOST_REQUIRE_CLOSE(gmm.LogProbability("0 0"), -2.97693265851, 1e-5);
+  BOOST_REQUIRE_CLOSE(gmm.LogProbability("1 1"), -3.36621737829, 1e-5);
+
+  arma::vec logProbs;
+
+  arma::mat obs("0 1;"
+                "0 1;");
+
+  gmm.LogProbability(obs, logProbs);
+
+  BOOST_REQUIRE_EQUAL(logProbs.n_elem, 2);
+
+  BOOST_REQUIRE_CLOSE(logProbs(0), -2.97693265851, 1e-5);
+  BOOST_REQUIRE_CLOSE(logProbs(1), -3.36621737829, 1e-5);
 }
 
 /**

@@ -53,6 +53,8 @@ GMM& GMM::operator=(const GMM& other)
 
 /**
  * Return the log probability of the given observation being from this GMM.
+ *
+ * @param observation Observation vector to compute log-probabilty.
  */
 double GMM::LogProbability(const arma::vec& observation) const
 {
@@ -67,7 +69,45 @@ double GMM::LogProbability(const arma::vec& observation) const
 }
 
 /**
+ * Return the log probability of the given observation GMM matrix.
+ *
+ * @param observation Observation matrix to compute log-probabilty.
+ * @param logProbs Stores the value of log-probability for Observation.
+ */
+void GMM::LogProbability(const arma::mat& observation,
+                         arma::vec& logProbs) const
+{
+  // Sum the probability for each Gaussian in our mixture (and we have to
+  // multiply by the prior for each Gaussian too).
+  logProbs.set_size(observation.n_cols);
+
+  // Store log-probability value in a matrix.
+  arma::mat logProb(observation.n_cols, gaussians);
+
+  // Assign value to the matrix.
+  for (size_t i = 0; i < gaussians; i++)
+  {
+    arma::vec temp(logProb.colptr(i), observation.n_cols, false, true);
+    dists[i].LogProbability(observation, temp);
+  }
+
+  // Save log(weights) as a vector.
+  arma::vec logWeights = arma::log(weights);
+  // Compute Log Probability.
+
+  logProb = logProb.t();
+
+  for (size_t j = 0; j < observation.n_cols; j++)
+  {
+    const arma::vec sumVec = logWeights + logProb.unsafe_col(j);
+    logProbs(j) = math::AccuLog(sumVec);
+  }
+}
+
+/**
  * Return the probability of the given observation being from this GMM.
+ *
+ * @param observation Observation vector to compute probabilty.
  */
 double GMM::Probability(const arma::vec& observation) const
 {
@@ -75,8 +115,25 @@ double GMM::Probability(const arma::vec& observation) const
 }
 
 /**
+ * Return the probability of the given observation GMM matrix.
+ *
+ * @param observation Observation matrix to compute probabilty.
+ * @param probs Stores the value of probability for x.
+ */
+void GMM::Probability(const arma::mat& observation,
+                      arma::vec& probs) const
+{
+  LogProbability(observation, probs);
+  probs = exp(probs);
+}
+
+
+/**
  * Return the log probability of the given observation being from the given
  * component in the mixture.
+ *
+ * @param observation Observation vector to compute log-probabilty.
+ * @param component Calculate the log-probability for given observation vector.
  */
 double GMM::LogProbability(const arma::vec& observation,
                         const size_t component) const
@@ -89,6 +146,9 @@ double GMM::LogProbability(const arma::vec& observation,
 /**
  * Return the probability of the given observation being from the given
  * component in the mixture.
+ *
+ * @param observation Observation matrix to compute probabilty.
+ * @param component Calculate the probability for given component. 
  */
 double GMM::Probability(const arma::vec& observation,
                         const size_t component) const
@@ -124,6 +184,9 @@ arma::vec GMM::Random() const
 /**
  * Classify the given observations as being from an individual component in this
  * GMM.
+ *
+ * @param observation Observation matrix for classification.
+ * @param labels Save the labels for the given observation matrix.
  */
 void GMM::Classify(const arma::mat& observations,
                    arma::Row<size_t>& labels) const
@@ -151,6 +214,10 @@ void GMM::Classify(const arma::mat& observations,
 
 /**
  * Get the log-likelihood of this data's fit to the model.
+ *
+ * @param data Data matrix to compute log-likelihood.
+ * @parma distsL Vector of Gaussian distribution. 
+ * @param weightsL Vector of weights for computing likelihoods.
  */
 double GMM::LogLikelihood(
     const arma::mat& data,
