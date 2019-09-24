@@ -158,7 +158,7 @@ void BayesianRidge::Predict(const arma::mat& points,
   for (size_t i = 0; i < X.n_cols; i++)
     {
       phi = X.col(i);
-      std[i] = sqrt(this->getVariance()
+      std[i] = sqrt(this->Variance()
 		    + dot(phi.t() * this->matCovariance, phi));
     }
 }

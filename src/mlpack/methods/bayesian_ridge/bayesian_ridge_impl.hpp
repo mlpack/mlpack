@@ -12,7 +12,6 @@
 #ifndef MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_IMPL_HPP
 #define MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_IMPL_HPP
 
-//! In case it hasn't been included yet.
 #include "bayesian_ridge.hpp"
 
 namespace mlpack {
