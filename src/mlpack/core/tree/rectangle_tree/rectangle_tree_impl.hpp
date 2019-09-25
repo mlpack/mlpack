@@ -183,6 +183,7 @@ RectangleTree(
     maxLeafSize(other.MaxLeafSize()),
     minLeafSize(other.MinLeafSize()),
     bound(other.bound),
+    stat(other.stat),
     parentDistance(other.ParentDistance()),
     dataset(deepCopy ?
         (parent ? parent->dataset : new MatType(*other.dataset)) :
@@ -224,6 +225,7 @@ RectangleTree(RectangleTree&& other) :
     maxLeafSize(other.MaxLeafSize()),
     minLeafSize(other.MinLeafSize()),
     bound(std::move(other.bound)),
+    stat(std:move(other.stat)),
     parentDistance(other.ParentDistance()),
     dataset(other.dataset),
     ownsDataset(other.ownsDataset),
@@ -293,6 +295,7 @@ operator=(const RectangleTree& other)
   maxLeafSize = other.MaxLeafSize();
   minLeafSize = other.MinLeafSize();
   bound = other.bound;
+  stat = other.stat;
   parentDistance = other.ParentDistance();
   dataset = new MatType(*other.dataset);
   ownsDataset = true;
@@ -342,6 +345,7 @@ operator=(RectangleTree&& other)
   maxLeafSize = other.MaxLeafSize();
   minLeafSize = other.MinLeafSize();
   bound = std::move(other.bound);
+  stat = std::move(other.stat);
   parentDistance = other.ParentDistance();
   dataset = other.dataset;
   ownsDataset = other.ownsDataset;
