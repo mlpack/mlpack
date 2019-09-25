@@ -87,7 +87,7 @@ mlpack has the following dependencies:
       Boost (program_options, math_c99, unit_test_framework, serialization,
              spirit)
       CMake         >= 3.3.2
-      ensmallen     >= 1.10.0
+      ensmallen     >= 2.10.0
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
