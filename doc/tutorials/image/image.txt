@@ -46,7 +46,6 @@ ImageInfo class contains the metadata of the images.
             const size_t channels);
 @endcode
 Other public memebers include:
-  - flipVertical Flip the image vertical upon loading.
   - quality Compression of the image if saved as jpg (0-100).
 
 @section load_api_imagetut Load
@@ -61,7 +60,8 @@ Standalone loading of images.
    * @param matrix Matrix to load the image into.
    * @param info An object of ImageInfo class.
    * @param fatal If an error should be reported as fatal (default false).
-   * @param transpose If true, transpose the matrix after loading.
+   * @param transpose If true, Filps the image, same as transposing the
+   *    matrix after loading.
    * @return Boolean value indicating success or failure of load.
    */
    template<typename eT>
@@ -97,7 +97,8 @@ Loading multiple images:
    * @param matrix Matrix to save the image from.
    * @param info An object of ImageInfo class.
    * @param fatal If an error should be reported as fatal (default false).
-   * @param transpose If true, transpose the matrix after loading.
+   * @param transpose If true, Filps the image, same as transposing the
+   *    matrix after loading.
    * @return Boolean value indicating success or failure of load.
    */
    template<typename eT>
@@ -129,7 +130,8 @@ Saving one image:
    * @param matrix Matrix to save the image from.
    * @param info An object of ImageInfo class.
    * @param fatal If an error should be reported as fatal (default false).
-   * @param transpose If true, transpose the matrix after loading.
+   * @param transpose If true, Filps the image, same as transposing the
+   *    matrix after loading.
    * @return Boolean value indicating success or failure of load.
    */
    template<typename eT>
@@ -160,7 +162,8 @@ Saving multiple images:
    * @param matrix Matrix to save the image from.
    * @param info An object of ImageInfo class.
    * @param fatal If an error should be reported as fatal (default false).
-   * @param transpose If true, transpose the matrix after loading.
+   * @param transpose If true, Filps the image, same as transposing the
+   *    matrix after loading.
    * @return Boolean value indicating success or failure of load.
    */
    template<typename eT>

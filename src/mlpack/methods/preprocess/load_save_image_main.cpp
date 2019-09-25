@@ -2,7 +2,7 @@
  * @file load_save_image_main.cpp
  * @author Jeffin Sam
  *
- * A CLI executable to load and image dataset.
+ * A CLI executable to load and save a image dataset.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -40,7 +40,11 @@ PROGRAM_INFO("Load Save Image",
         "channel", 3, "output", "Y") + "\n\n" +
     " An example to save an image is :" + "\n\n" +
     PRINT_CALL("load_save_image", "input", "X", "height", 256, "width", 256,
-        "channel", 3, "dataset", "Y", "save", true),
+        "channel", 3, "dataset", "Y", "save", true) + "\n\n" + 
+    " An example to load an image and also flipping it while loading is :"
+    + "\n\n" +
+    PRINT_CALL("load_save_image", "input", "X", "height", 256, "width", 256,
+        "channel", 3, "output", "Y", "transpose", true),
     SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
     SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
     SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"));

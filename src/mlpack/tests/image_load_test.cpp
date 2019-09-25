@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(SaveImageAPITest)
 
   BOOST_REQUIRE_EQUAL(im1.n_cols, im2.n_cols);
   BOOST_REQUIRE_EQUAL(im1.n_rows, im2.n_rows);
-  for (size_t i = 10; i < im1.n_elem; ++i)
+  for (size_t i = 0; i < im1.n_elem; ++i)
     BOOST_REQUIRE_EQUAL(im1[i], im2[i]);
 }
 
@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_CASE(SaveImageTransposeAPITest)
 
   BOOST_REQUIRE_EQUAL(im1.n_cols, im2.n_cols);
   BOOST_REQUIRE_EQUAL(im1.n_rows, im2.n_rows);
-  for (size_t i = 10; i < im1.n_elem; ++i)
+  for (size_t i = 0; i < im1.n_elem; ++i)
     BOOST_REQUIRE_EQUAL(im1[i], im2[i]);
 }
 
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(LoadVectorImageAPITest)
  */
 BOOST_AUTO_TEST_CASE(SaveImageVectorAPITest)
 {
-  data::ImageInfo info(5, 5, 3, 90);
+  data::ImageInfo info(5, 5, 3);
 
   arma::Mat<unsigned char> im1;
   size_t dimension = info.Width() * info.Height() * info.Channels();
@@ -124,16 +124,16 @@ BOOST_AUTO_TEST_CASE(SaveImageVectorAPITest)
 
   BOOST_REQUIRE_EQUAL(im1.n_cols, im2.n_cols);
   BOOST_REQUIRE_EQUAL(im1.n_rows, im2.n_rows);
-  for (size_t i = 10; i < im1.n_elem; ++i)
+  for (size_t i = 0; i < im1.n_elem; ++i)
     BOOST_REQUIRE_EQUAL(im1[i], im2[i]);
 }
 
 /**
- * Test if the image is saved correctly using API for arm mat.
+ * Test if the image is saved correctly using API for arma mat.
  */
 BOOST_AUTO_TEST_CASE(SaveImageMatAPITest)
 {
-  data::ImageInfo* info = new ImageInfo(5, 5, 3, 90);
+  data::ImageInfo* info = new ImageInfo(5, 5, 3);
 
   arma::Mat<unsigned char> im1;
   size_t dimension = info->Width() * info->Height() * info->Channels();
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(SaveImageMatAPITest)
 
   BOOST_REQUIRE_EQUAL(input.n_cols, output.n_cols);
   BOOST_REQUIRE_EQUAL(input.n_rows, output.n_rows);
-  for (size_t i = 10; i < input.n_elem; ++i)
+  for (size_t i = 0; i < input.n_elem; ++i)
     BOOST_REQUIRE_CLOSE(input[i], output[i], 1e-5);
 }
 

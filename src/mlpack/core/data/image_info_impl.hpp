@@ -51,10 +51,10 @@ inline bool ImageFormatSupported(const std::string& fileName, const bool save)
   return false;
 }
 
-inline ImageInfo::ImageInfo(const size_t& width,
-                            const size_t& height,
-                            const size_t& channels,
-                            const size_t& quality) :
+inline ImageInfo::ImageInfo(const size_t width,
+                            const size_t height,
+                            const size_t channels,
+                            const size_t quality) :
     width(width),
     height(height),
     channels(channels),

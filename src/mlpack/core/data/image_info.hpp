@@ -56,10 +56,10 @@ class ImageInfo
    * @param channels Number of channels in the image.
    * @param quality Compression of the image if saved as jpg (0 - 100).
    */
-  ImageInfo(const size_t& width = 0,
-            const size_t& height = 0,
-            const size_t& channels = 3,
-            const size_t& quality = 90);
+  ImageInfo(const size_t width = 0,
+            const size_t height = 0,
+            const size_t channels = 3,
+            const size_t quality = 90);
 
   //! Get the image width.
   const size_t& Width() const { return width; }
