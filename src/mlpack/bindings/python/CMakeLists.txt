@@ -184,6 +184,26 @@ install(SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/PythonInstall.cmake)
 file(COPY mlpack/__init__.py DESTINATION
     ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
 
+if (WIN32)
+  # Copy all necessary DLLs to the Python build directory.
+  foreach (dir ${DLL_COPY_DIRS})
+    file(GLOB dll_dir_files "${dir}/*.dll")
+    file(COPY ${dll_dir_files} DESTINATION ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
+  endforeach ()
+
+  foreach (dll ${DLL_COPY_LIBS})
+    file(COPY ${dll} DESTINATION ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
+  endforeach ()
+
+  # We also need to copy the boost DLLs over.
+  file(GLOB boost_ser_dll_files "${Boost_LIBRARY_DIRS}/*serialization*.dll")
+  file(COPY ${boost_ser_dll_files} DESTINATION ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
+  file(GLOB boost_po_dll_files "${Boost_LIBRARY_DIRS}/*program*options*.dll")
+  file(COPY ${boost_po_dll_files} DESTINATION ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
+  file(GLOB boost_utf_dll_files "${Boost_LIBRARY_DIRS}/*unit*test*framework*.dll")
+  file(COPY ${boost_utf_dll_files} DESTINATION ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
+endif ()
+
 # Add a macro to build a python binding.
 macro (add_python_binding name)
 if (BUILD_PYTHON_BINDINGS)

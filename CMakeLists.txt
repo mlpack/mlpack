@@ -24,6 +24,9 @@ if (WIN32)
   if (NOT BUILD_PYTHON_BINDINGS)
     message(WARNING "By default Python bindings are not compiled for Windows because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if you want them built.")
   endif ()
+
+  set(DLL_COPY_DIRS "" CACHE STRING "List of directories (separated by ';') containing DLLs to copy for runtime.")
+  set(DLL_COPY_LIBS "" CACHE STRING "List of DLLs (separated by ';') that should be copied for runtime.")
 else ()
   option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
   option(BUILD_SHARED_LIBS
@@ -310,7 +313,23 @@ if (WIN32)
 
   # Piggyback LAPACK and BLAS linking into Armadillo link.
   set(ARMADILLO_LIBRARIES
-       ${ARMADILLO_LIBRARIES} ${BLAS_LIBRARY} ${LAPACK_LIBRARY})
+      ${ARMADILLO_LIBRARIES} ${BLAS_LIBRARY} ${LAPACK_LIBRARY})
+
+  # Ensure that the libraries are added to the MSVC IDE runtime path.
+  get_filename_component(BLAS_DIR ${BLAS_LIBRARY} DIRECTORY)
+  get_filename_component(LAPACK_DIR ${LAPACK_LIBRARY} DIRECTORY)
+
+  # Sometimes, especially with an OpenBLAS install via nuget, the DLLs are
+  # actually in ../../bin/x64/.  Automatically add these.
+  if (EXISTS "${BLAS_DIR}/../../bin/x64/")
+    get_filename_component(BLAS_DLL_DIR "${BLAS_DIR}/../../bin/x64" ABSOLUTE)
+    set(DLL_COPY_DIRS ${DLL_COPY_DIRS} "${BLAS_DLL_DIR}")
+  endif ()
+
+  if (EXISTS "${LAPACK_DIR}/../../bin/x64/")
+    get_filename_component(LAPACK_DLL_DIR "${LAPACK_DIR}/../../bin/x64" ABSOLUTE)
+    set(DLL_COPY_DIRS ${DLL_COPY_DIRS} "${BLAS_DLL_DIR}")
+  endif ()
 endif ()
 
 # Include directories for the previous dependencies.
@@ -454,6 +473,8 @@ link_directories(${Boost_LIBRARY_DIRS})
 # handle it.
 if (MSVC)
   link_directories(${Boost_LIBRARY_DIRS})
+  set(CMAKE_MSVCIDE_RUN_PATH ${CMAKE_MSVCIDE_RUN_PATH} ${Boost_LIBRARY_DIRS})
+  message("boost lib dirs ${Boost_LIBRARY_DIRS}")
   set(Boost_LIBRARIES "")
 endif ()
 
@@ -506,6 +527,21 @@ if (WIN32)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+  # Copy all necessary DLLs for runtime to the build directory.
+  # This is a little hackish, but I can't figure out clear ways to make CMake
+  # consistently link everything 100% statically across platforms or set the
+  # runtime path right always, so this is the best I know how to do for now.
+  foreach(dir ${DLL_COPY_DIRS})
+    file(GLOB dir_dll_list "${dir}/*.dll")
+    file(COPY ${dir_dll_list} DESTINATION ${CMAKE_BINARY_DIR}/Release/)
+    file(COPY ${dir_dll_list} DESTINATION ${CMAKE_BINARY_DIR}/Debug/)
+  endforeach ()
+
+  foreach(file ${DLL_COPY_LIBS})
+    file(COPY ${file} DESTINATION ${CMAKE_BINARY_DIR}/Release/)
+    file(COPY ${file} DESTINATION ${CMAKE_BINARY_DIR}/Debug/)
+  endforeach()
 else ()
   # If not on Windows, put them under more standard UNIX-like places.  This is
   # necessary, otherwise they would all end up in
