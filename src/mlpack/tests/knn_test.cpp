@@ -1383,7 +1383,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
 }
 
 /**
- * Test the move constructor using R trees.
+ * Test the move constructor & move assignment using R trees.
  */
 BOOST_AUTO_TEST_CASE(MoveConstructorRTreeTest)
 {
@@ -1393,8 +1393,8 @@ BOOST_AUTO_TEST_CASE(MoveConstructorRTreeTest)
   NeighborSearchType* knn = new NeighborSearchType(std::move(dataset));
 
   // Get predictions.
-  arma::mat distances, distances2;
-  arma::Mat<size_t> neighbors, neighbors2;
+  arma::mat distances, distances2, distances3;
+  arma::Mat<size_t> neighbors, neighbors2, neighbors3;
 
   knn->Search(3, neighbors, distances);
 
@@ -1405,13 +1405,17 @@ BOOST_AUTO_TEST_CASE(MoveConstructorRTreeTest)
 
   knn2.Search(3, neighbors2, distances2);
 
+  // Use move assignment.
+  NeighborSearchType knn3 = std::move(knn2);
+  knn3.Search(3, neighbors3, distances3);
+
   CheckMatrices(neighbors, neighbors2);
   CheckMatrices(distances, distances2);
 }
 
 
 /**
- * Test the move constructor using Binary Space trees.
+ * Test the move constructor & move assignment using Binary Space trees.
  */
 BOOST_AUTO_TEST_CASE(MoveConstructorBinarySpaceTreeTest)
 {
@@ -1421,8 +1425,8 @@ BOOST_AUTO_TEST_CASE(MoveConstructorBinarySpaceTreeTest)
   NeighborSearchType* knn = new NeighborSearchType(std::move(dataset));
 
   // Get predictions.
-  arma::mat distances, distances2;
-  arma::Mat<size_t> neighbors, neighbors2;
+  arma::mat distances, distances2, distances3;
+  arma::Mat<size_t> neighbors, neighbors2, neighbors3;
 
   knn->Search(3, neighbors, distances);
 
@@ -1432,6 +1436,10 @@ BOOST_AUTO_TEST_CASE(MoveConstructorBinarySpaceTreeTest)
   delete knn;
 
   knn2.Search(3, neighbors2, distances2);
+
+  // Use move assignment.
+  NeighborSearchType knn3 = std::move(knn2);
+  knn3.Search(3, neighbors3, distances3);
 
   CheckMatrices(neighbors, neighbors2);
   CheckMatrices(distances, distances2);
