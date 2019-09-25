@@ -40,7 +40,7 @@ PROGRAM_INFO("Load Save Image",
         "channel", 3, "output", "Y") + "\n\n" +
     " An example to save an image is :" + "\n\n" +
     PRINT_CALL("load_save_image", "input", "X", "height", 256, "width", 256,
-        "channel", 3, "dataset", "Y", "save", true) + "\n\n" + 
+        "channel", 3, "dataset", "Y", "save", true) + "\n\n" +
     " An example to load an image and also flipping it while loading is :"
     + "\n\n" +
     PRINT_CALL("load_save_image", "input", "X", "height", 256, "width", 256,
