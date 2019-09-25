@@ -225,7 +225,7 @@ RectangleTree(RectangleTree&& other) :
     maxLeafSize(other.MaxLeafSize()),
     minLeafSize(other.MinLeafSize()),
     bound(std::move(other.bound)),
-    stat(std:move(other.stat)),
+    stat(std::move(other.stat)),
     parentDistance(other.ParentDistance()),
     dataset(other.dataset),
     ownsDataset(other.ownsDataset),
