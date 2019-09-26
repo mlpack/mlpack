@@ -23,10 +23,10 @@ using namespace mlpack::util;
 
 PROGRAM_INFO("BayesianRidge",
     // Short description.
-    " An implementation of the bayesian linear regression, also known"
+    "An implementation of the bayesian linear regression, also known "
     "as the Bayesian Ridge regression. This can train a Bayesian Ridge model "
-    "and use that model or a pre-trained model to output regression predictions "
-    "for a test set.",
+    "and use that model or a pre-trained model to output regression "
+    "predictions for a test set.",
     // Long description.
     "An implementation of the bayesian linear regression, also known"
     "as the Bayesian Ridge regression.\n "
@@ -38,12 +38,13 @@ PROGRAM_INFO("BayesianRidge",
     "Optimization is AUTOMATIC and does not require cross validation. "
     "The optimization is performed by type II maximium likihood. Parameters "
     "are tunned during the maximization of the marginal likelihood. This "
-    "procedure includes the Occam's razor that penalizes over complex solutions. "
+    "procedure includes the Occam's razor that penalizes over complex "
+    "solutions. "
     "\n\n"
     "This program is able to train a Baysian Ridge model or load a "
     "model from file, output regression predictions for a test set, and save "
-    "the trained model to a file. The Bayesian Ridge algorithm is described in more "
-    "detail below:"
+    "the trained model to a file. The Bayesian Ridge algorithm is described "
+    "in more detail below:"
     "\n\n"
     "Let X be a matrix where each row is a point and each column is a "
     "dimension, t is a vector of targets, alpha is the precision of the "
@@ -60,7 +61,7 @@ PROGRAM_INFO("BayesianRidge",
     "and " + PRINT_PARAM_STRING("normalize") + " parameters control the "
     "centering and the normalizing options. A trained model can be saved with "
     "the " + PRINT_PARAM_STRING("output_model") + ". If no training is desired "
-    "at all, a model can be passed via the "+ PRINT_PARAM_STRING("input_model") +
+    "at all, a model can be passed via the "+ PRINT_PARAM_STRING("input_model")+
     " parameter."
     "\n\n"
     "The program can also provide predictions for test data using either the "
@@ -71,8 +72,8 @@ PROGRAM_INFO("BayesianRidge",
     "\n\n"
     "For example, the following command trains a model on the data " +
     PRINT_DATASET("data") + " and responses " + PRINT_DATASET("responses") +
-    " with fitIntercept set to true and normalize set to false (so, Bayesian Ridge "
-    "is being solved, and then the model is saved to " +
+    "with fitIntercept set to true and normalize set to false (so, Bayesian "
+    "Ridge is being solved, and then the model is saved to " +
     PRINT_MODEL("bayesian_ridge_model") + ":"
     "\n\n" +
     PRINT_CALL("bayesian_ridge", "input", "data", "responses", "responses",
@@ -80,7 +81,7 @@ PROGRAM_INFO("BayesianRidge",
 	       "bayesian_ridge_model") +
     "\n\n"
     "The following command uses the " + PRINT_MODEL("bayesian_ridge_model") +
-    " to provide predicted responses for the data " + PRINT_DATASET("test") +  
+    " to provide predicted responses for the data " + PRINT_DATASET("test") +
     " and save those responses to " + PRINT_DATASET("test_predictions") + ": "
     "\n\n" +
     PRINT_CALL("bayesian_ridge", "input_model", "bayesian_ridge_model", "test",
@@ -93,13 +94,13 @@ PARAM_MODEL_IN(BayesianRidge, "input_model", "Trained LARS model to use.", "m");
 PARAM_MODEL_OUT(BayesianRidge, "output_model", "Output LARS model.", "M");
 
 PARAM_TMATRIX_IN("test", "Matrix containing points to regress on (test "
-    "points).", "t");
+		 "points).", "t");
 
 PARAM_TMATRIX_OUT("output_predictions", "If --test_file is specified, this "
     "file is where the predicted responses will be saved.", "o");
 
 PARAM_INT_IN("fitIntercept", "Center the data and fit the intercept",
-	     "f",
+             "f",
 	     1);
 PARAM_INT_IN("normalize", "Normlize each feature by their standard deviations.",
 	     "n",
@@ -127,11 +128,11 @@ static void mlpackMain()
   BayesianRidge* bayesRidge;
   if (CLI::HasParam("input"))
   {
-    Log::Info << "input detected " << std::endl; 
+    Log::Info << "input detected " << std::endl;
     // Initialize the object.
     bayesRidge = new BayesianRidge(fitIntercept, normalize);
 
-    // Load covariates.  
+    // Load covariates.
     mat matX = std::move(CLI::GetParam<arma::mat>("input"));
 
     // Load responses.  The responses should be a one-dimensional vector, and it
@@ -164,10 +165,10 @@ static void mlpackMain()
     Log::Info << "Regressing on test points." << endl;
     // Load test points.
     mat testPoints = std::move(CLI::GetParam<arma::mat>("test"));
-
+    
     arma::rowvec predictions;
     bayesRidge->Predict(testPoints.t(), predictions);
-
+    
     // Save test predictions (one per line).
     CLI::GetParam<arma::mat>("output_predictions") = std::move(predictions.t());
     Log::Info << predictions << std::endl;
