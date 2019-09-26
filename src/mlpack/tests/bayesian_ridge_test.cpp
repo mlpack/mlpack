@@ -28,7 +28,7 @@ void GenerateProblem(arma::mat& X,
 		     float sigma=0.0)
 {
   arma::arma_rng::set_seed(4);
-    
+  
   X = arma::randn(nDims, nPoints);
   arma::colvec omega = arma::randn(nDims);
   arma::colvec noise = arma::randn(nPoints) * sigma;
@@ -42,12 +42,12 @@ BOOST_AUTO_TEST_CASE(BayesianRidgeRegressionTest)
 {
   arma::mat X;
   arma::rowvec y, predictions;
-  
+ 
   GenerateProblem(X, y, 200, 10);
-
+  
   // Instanciate and train the estimator.
   BayesianRidge estimator(true);
-  estimator.Train(X,y);
+  estimator.Train(X, y);
   estimator.Predict(X, predictions);
   
   for (size_t i = 0; i < y.size(); i++)
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(TestCenter0Normalize0)
   GenerateProblem(X, y, nPoints, nDims, 0.5);
 
   BayesianRidge estimator(false, false);
-  estimator.Train(X,y);
+  estimator.Train(X, y);
 
   // To be neutral data_offset must be all 0.
   BOOST_TEST(sum(estimator.Data_offset()) == 0);
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(TestCenter1Normalize1)
   double y_mean = arma::mean(y);
 
   BOOST_REQUIRE_SMALL(sum(estimator.Data_offset() - x_mean), 1e-6);
-    
+
   BOOST_REQUIRE_SMALL(abs(estimator.Responses_offset() - y_mean), 1e-6);
 
   BOOST_REQUIRE_SMALL(sum(estimator.Data_scale() - x_std), 1e-6);
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(ColinearTest)
   Load("lars_dependent_y.csv", y, false, true);
 
   BayesianRidge estimator(false, false);
-  estimator.Train(X,y);
+  estimator.Train(X, y);
 }
 
 BOOST_AUTO_TEST_CASE(OnePointTest)
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(OnePointTest)
   double y_i, std_i;
 
   GenerateProblem(X, y, 100, 10, 2.0);
-    
+  
   BayesianRidge estimator(false, false);
   estimator.Train(X, y);
 
@@ -136,9 +136,9 @@ BOOST_AUTO_TEST_CASE(OnePointTest)
   for (size_t i = 0; i < y.size(); i++)
     {
       estimator.Predict(X.col(i), y_i);
-      BOOST_REQUIRE_CLOSE(predictions(i), y_i, 1e-5); 
+      BOOST_REQUIRE_CLOSE(predictions(i), y_i, 1e-5);
     }
-
+  
   // Ensure that the single prediction from column vector are possible and
   // equal to the matrix version. Idem for the std.
   estimator.Predict(X, predictions, std);
@@ -146,9 +146,9 @@ BOOST_AUTO_TEST_CASE(OnePointTest)
     {
       estimator.Predict(X.col(i), y_i, std_i);
       BOOST_REQUIRE_CLOSE(predictions(i), y_i, 1e-5);
-      BOOST_REQUIRE_CLOSE(std(i), std_i, 1e-5); 
+      BOOST_REQUIRE_CLOSE(std(i), std_i, 1e-5);
     }
- }
+}
 
 BOOST_AUTO_TEST_SUITE_END();
 
