@@ -1,9 +1,9 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Enforce CMake version check for ensmallen (#2032).
 
 ### mlpack 3.2.0
 ###### 2019-09-25
-
   * Fix occasionally-failing RADICAL test (#1924).
 
   * Fix gcc 9 OpenMP compilation issue (#1970).
