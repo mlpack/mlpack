@@ -1410,7 +1410,9 @@ BOOST_AUTO_TEST_CASE(MoveConstructorRTreeTest)
   knn3.Search(3, neighbors3, distances3);
 
   CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(neighbors, neighbors3);
   CheckMatrices(distances, distances2);
+  CheckMatrices(distances, distances3);
 }
 
 
@@ -1442,7 +1444,9 @@ BOOST_AUTO_TEST_CASE(MoveConstructorBinarySpaceTreeTest)
   knn3.Search(3, neighbors3, distances3);
 
   CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(neighbors, neighbors3);
   CheckMatrices(distances, distances2);
+  CheckMatrices(distances, distances3);  
 }
 
 /**
