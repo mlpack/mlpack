@@ -1446,7 +1446,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorBinarySpaceTreeTest)
   CheckMatrices(neighbors, neighbors2);
   CheckMatrices(neighbors, neighbors3);
   CheckMatrices(distances, distances2);
-  CheckMatrices(distances, distances3);  
+  CheckMatrices(distances, distances3);
 }
 
 /**
