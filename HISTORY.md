@@ -1,5 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Fix CMake check for Armadillo version (#2029).
 
 ### mlpack 3.2.0
 ###### 2019-09-25
