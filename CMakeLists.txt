@@ -384,12 +384,12 @@ endif ()
 # Find ensmallen.
 # Once ensmallen is readily available in package repos, the automatic downloader
 # here can be removed.
-find_package(Ensmallen 1.10.0)
+find_package(Ensmallen 2.10.0)
 if (NOT ENSMALLEN_FOUND)
   if (DOWNLOAD_ENSMALLEN)
     file(DOWNLOAD http://www.ensmallen.org/files/ensmallen-latest.tar.gz
         "${CMAKE_BINARY_DIR}/deps/ensmallen-latest.tar.gz"
-        STATUS ENS_DOWNLOAD_STATUS_LIST LOG ENS_DOWBLOAD_LOG
+        STATUS ENS_DOWNLOAD_STATUS_LIST LOG ENS_DOWNLOAD_LOG
         SHOW_PROGRESS)
     list(GET ENS_DOWNLOAD_STATUS_LIST 0 ENS_DOWNLOAD_STATUS)
     if (ENS_DOWNLOAD_STATUS EQUAL 0)
@@ -400,6 +400,7 @@ if (NOT ENSMALLEN_FOUND)
       # Get the name of the directory.
       file (GLOB ENS_DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
           "${CMAKE_BINARY_DIR}/deps/ensmallen-[0-9]*.[0-9]*.[0-9]*")
+      list(FILTER ENS_DIRECTORIES EXCLUDE REGEX "ensmallen-.*\.tar\.gz")
       list(LENGTH ENS_DIRECTORIES ENS_DIRECTORIES_LEN)
       if (ENS_DIRECTORIES_LEN EQUAL 1)
         list(GET ENS_DIRECTORIES 0 ENSMALLEN_INCLUDE_DIR)

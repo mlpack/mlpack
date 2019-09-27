@@ -23,7 +23,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-3.1.1.tar.gz">current stable version (3.1.1)</a>
+    <a href="https://www.mlpack.org/files/mlpack-3.2.0.tar.gz">current stable version (3.2.0)</a>
   </em>
 </p>
 
@@ -83,11 +83,11 @@ Citations are beneficial for the growth and improvement of mlpack.
 
 mlpack has the following dependencies:
 
-      Armadillo     >= 6.500.0
+      Armadillo     >= 8.400.0
       Boost (program_options, math_c99, unit_test_framework, serialization,
              spirit)
       CMake         >= 3.3.2
-      ensmallen     >= 1.10.0
+      ensmallen     >= 2.10.0
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
@@ -164,6 +164,7 @@ Options are specified with the -D flag.  The allowed options include:
     ARMADILLO_LIBRARY=(/path/to/armadillo/libarmadillo.so): Armadillo library
     BUILD_CLI_EXECUTABLES=(ON/OFF): whether or not to build command-line programs
     BUILD_PYTHON_BINDINGS=(ON/OFF): whether or not to build Python bindings
+    PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
     BUILD_TESTS=(ON/OFF): whether or not to build tests
     BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
        static libraries

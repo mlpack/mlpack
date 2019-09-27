@@ -63,6 +63,13 @@ inline void FixedRandomSeed()
   srand((unsigned int) seed);
   arma::arma_rng::set_seed(seed);
 }
+
+inline void CustomRandomSeed(const size_t seed)
+{
+  randGen.seed((uint32_t) seed);
+  srand((unsigned int) seed);
+  arma::arma_rng::set_seed(seed);
+}
 #endif
 
 /**
