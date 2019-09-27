@@ -51,7 +51,13 @@ inline bool ImageFormatSupported(const std::string& fileName, const bool save)
   return false;
 }
 
+} // namespace data
+} // namespace mlpack
+
 #endif // HAS_STB.
+
+namespace mlpack {
+namespace data {
 
 inline ImageInfo::ImageInfo(const size_t width,
                             const size_t height,
