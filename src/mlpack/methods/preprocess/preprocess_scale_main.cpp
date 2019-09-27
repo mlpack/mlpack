@@ -50,7 +50,7 @@ PROGRAM_INFO("Scale Data",
     "\n\n"
     "So, a simple example where we want to scale the dataset " +
     PRINT_DATASET("X") + " into " + PRINT_DATASET("X_scaled")+ " with "
-    " standard_scaler as scaler_method, we coud run "
+    " standard_scaler as scaler_method, we could run "
     "\n\n" +
     PRINT_CALL("preprocess_scale", "input", "X", "output", "X_scaled",
     "scaler_method", "standard_scaler") +
@@ -58,7 +58,7 @@ PROGRAM_INFO("Scale Data",
     "A simple example where we want to whiten the dataset " +
     PRINT_DATASET("X") + " into " + PRINT_DATASET("X_whitened")+ " with "
     " PCA as whitening_method and use 0.01 as regularization parameter, "
-    "we coud run "
+    "we could run "
     "\n\n" +
     PRINT_CALL("preprocess_scale", "input", "X", "output", "X_scaled",
     "scaler_method", "pca_whitening", "epsilon", 0.01) +
@@ -74,7 +74,7 @@ PROGRAM_INFO("Scale Data",
     "Another simple example where we want to scale the dataset " +
     PRINT_DATASET("X") + " into " + PRINT_DATASET("X_scaled") + " with "
     " min_max_scaler as scaler method, where scaling range is 1 to 3 instead"
-    " of deafult 0 to 1. We coud run "
+    " of default 0 to 1. We could run "
     "\n\n" +
     PRINT_CALL("preprocess_scale", "input", "X", "output", "X_scaled",
     "scaler_method", "min_max_scaler", "min_value", 1, "max_value", 3),
