@@ -1,5 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Better handling of when STB is not installed (#2033).
 
 ### mlpack 3.2.0
 ###### 2019-09-25
