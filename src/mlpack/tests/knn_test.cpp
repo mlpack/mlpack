@@ -1358,6 +1358,34 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorBinarySpaceTreeTest)
 }
 
 /**
+ * Test the copy constructor and copy operator using the Octree.
+ */
+BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorOctreeTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
+      Octree> NeighborSearchType;
+  NeighborSearchType knn(std::move(dataset));
+
+  // Copy constructor and operator.
+  NeighborSearchType knn2(knn);
+  NeighborSearchType knn3 = knn;
+
+  // Get results.
+  arma::mat distances, distances2, distances3;
+  arma::Mat<size_t> neighbors, neighbors2, neighbors3;
+
+  knn.Search(3, neighbors, distances);
+  knn2.Search(3, neighbors2, distances2);
+  knn3.Search(3, neighbors3, distances3);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(neighbors, neighbors3);
+  CheckMatrices(distances, distances2);
+  CheckMatrices(distances, distances3);
+}
+
+/**
  * Test the move constructor.
  */
 BOOST_AUTO_TEST_CASE(MoveConstructorTest)
@@ -1424,6 +1452,39 @@ BOOST_AUTO_TEST_CASE(MoveConstructorBinarySpaceTreeTest)
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
       KDTree> NeighborSearchType;
+  NeighborSearchType* knn = new NeighborSearchType(std::move(dataset));
+
+  // Get predictions.
+  arma::mat distances, distances2, distances3;
+  arma::Mat<size_t> neighbors, neighbors2, neighbors3;
+
+  knn->Search(3, neighbors, distances);
+
+  // Use move constructor.
+  NeighborSearchType knn2(std::move(*knn));
+
+  delete knn;
+
+  knn2.Search(3, neighbors2, distances2);
+
+  // Use move assignment.
+  NeighborSearchType knn3 = std::move(knn2);
+  knn3.Search(3, neighbors3, distances3);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(neighbors, neighbors3);
+  CheckMatrices(distances, distances2);
+  CheckMatrices(distances, distances3);
+}
+
+/**
+ * Test the move constructor & move assignment using Octree.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorOctreeTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
+      Octree> NeighborSearchType;
   NeighborSearchType* knn = new NeighborSearchType(std::move(dataset));
 
   // Get predictions.
