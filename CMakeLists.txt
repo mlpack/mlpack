@@ -348,10 +348,12 @@ if (NOT STB_IMAGE_FOUND)
       list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
       message(WARNING
           "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
+      message(WARNING
+          "stb/stb_image.h is not installed. Image utilities will not be available!")
     endif ()
   else ()
     message(WARNING
-        "stb/stb_image.h is not installed. Image utilites will not be available!")
+        "stb/stb_image.h is not installed. Image utilities will not be available!")
   endif ()
 else ()
   # Already has STB installed.
