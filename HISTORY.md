@@ -4,6 +4,8 @@
 
   * Fix CMake check for Armadillo version (#2029).
 
+  * Better handling of when STB is not installed (#2033).
+
 ### mlpack 3.2.0
 ###### 2019-09-25
   * Fix some potential infinity errors in Naive Bayes Classifier (#2022).
