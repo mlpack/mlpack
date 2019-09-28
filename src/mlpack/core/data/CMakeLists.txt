@@ -26,6 +26,8 @@ set(SOURCES
   binarize.hpp
   feature_selection.hpp
   feature_selection_impl.hpp
+  chi2_feature_selection.hpp
+  chi2_feature_selection_impl.hpp
   confusion_matrix.hpp
   confusion_matrix_impl.hpp
   one_hot_encoding.hpp

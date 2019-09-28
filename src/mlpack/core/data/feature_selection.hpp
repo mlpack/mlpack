@@ -20,6 +20,7 @@
 
 namespace mlpack {
 namespace data {
+namespace fs {
 
 /**
  *
@@ -47,6 +48,7 @@ template<typename T>
 void VarianceSelection(const arma::Mat<T>& input, const double threshold,
                        arma::Mat<T>& output);
 
+} // namespace fs
 } // namespace data
 } // namespace mlpack
 

@@ -21,6 +21,7 @@
 
 namespace mlpack {
 namespace data {
+namespace fs {
 
 /**
  *
@@ -49,6 +50,7 @@ void VarianceSelection(const arma::Mat<T>& input, const double threshold,
   output = input.rows(arma::uvec(indices));
 }
 
+} // namespace fs
 } // namespace data
 } // namespace mlpack
 

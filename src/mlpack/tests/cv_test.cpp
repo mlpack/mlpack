@@ -15,6 +15,7 @@
 #include <mlpack/core/cv/metrics/accuracy.hpp>
 #include <mlpack/core/cv/metrics/f1.hpp>
 #include <mlpack/core/data/feature_selection.hpp>
+#include <mlpack/core/data/chi2_feature_selection.hpp>
 #include <mlpack/core/cv/metrics/mse.hpp>
 #include <mlpack/core/cv/metrics/precision.hpp>
 #include <mlpack/core/cv/metrics/recall.hpp>
@@ -561,13 +562,36 @@ BOOST_AUTO_TEST_CASE(VarianceFeatureSelectionTest)
 
   // Output matirx with less features.
   arma::mat output;
-  data::VarianceSelection(matrix, 0.009, output);
+  data::fs::VarianceSelection(matrix, 0.009, output);
   BOOST_REQUIRE_EQUAL(output.n_rows, 2);
   BOOST_REQUIRE_EQUAL(output.n_cols, 4);
   for (size_t i = 0; i < output.n_cols; i++)
   {
     BOOST_REQUIRE_EQUAL(output(0, i), matrix(0, i));
     BOOST_REQUIRE_EQUAL(output(1, i), matrix(2, i));
+  }
+}
+
+/**
+ * Test for feature selection based on ch12.
+ */
+BOOST_AUTO_TEST_CASE(Chi2FeatureSelectionTest)
+{
+  // Dataset with 2 features.
+  arma::mat matrix;
+  // Second row will be deleted 
+  matrix = "0 0 1 2 2 2 1 0 0 2 0 1 1 2;"
+           "0 1 0 0 0 1 1 0 0 0 1 1 0 1;";
+ 
+  // Output matirx with less features.
+  arma::mat output;
+  arma::rowvec temp =  "0 0 1 1 1 0 1 0 1 1 1 1 1 0;";
+  data::fs::Chi2Selection(matrix, temp, output, 1);
+  BOOST_REQUIRE_EQUAL(output.n_rows, 1);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 14);
+  for (size_t i = 0; i < output.n_cols; i++)
+  {
+    BOOST_REQUIRE_EQUAL(output(0, i), matrix(0, i));
   }
 }
 
