@@ -232,7 +232,7 @@ class Octree
    *
    * @param other The tree to take ownership of.
    */
-  Octree& operator=(Octree&& other);  
+  Octree& operator=(Octree&& other);
 
   /**
    * Initialize the tree from a boost::serialization archive.
