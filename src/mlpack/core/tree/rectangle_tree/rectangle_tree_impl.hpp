@@ -204,7 +204,9 @@ RectangleTree(
     children = other.children;
 }
 
-// Move Constructor
+/**
+ * Move constructor.
+ */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -261,7 +263,9 @@ RectangleTree(RectangleTree&& other) :
   other.ownsDataset = false;
 }
 
-// Copy Assignment
+/**
+ * Copy Assignment
+ */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -311,7 +315,9 @@ operator=(const RectangleTree& other)
   return *this;
 }
 
-// Move Assignment
+/**
+ * Move Assignment
+ */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,

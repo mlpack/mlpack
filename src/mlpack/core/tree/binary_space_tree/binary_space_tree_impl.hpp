@@ -379,7 +379,9 @@ BinarySpaceTree(
   }
 }
 
-// Copy Assignment
+/**
+ * Copy Assignment
+ */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -444,7 +446,9 @@ operator=(const BinarySpaceTree& other)
   return *this;
 }
 
-// Move Assignment
+/**
+ * Move Assignment
+ */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,

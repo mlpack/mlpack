@@ -228,7 +228,7 @@ class Octree
   Octree& operator=(const Octree& other);
 
   /**
-   * Take ownership of the given rectangle tree.
+   * Take ownership of the given Octree.
    *
    * @param other The tree to take ownership of.
    */
