@@ -341,6 +341,7 @@ BinarySpaceTree(
     stat(other.stat),
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
+    minimumBoundDistance(other.minimumBoundDistance),
     // Copy matrix, but only if we are the root.
     dataset((other.parent == NULL) ? new MatType(*other.dataset) : NULL)
 {
@@ -405,7 +406,7 @@ operator=(const BinarySpaceTree& other)
   stat = other.stat;
   parentDistance = other.ParentDistance();
   furthestDescendantDistance = other.FurthestDescendantDistance();
-
+  minimumBoundDistance = other.MinimumBoundDistance();
   // Copy matrix, but only if we are the root.
   dataset = ((other.parent == NULL) ? new MatType(*other.dataset) : NULL);
 
