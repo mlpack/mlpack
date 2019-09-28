@@ -272,8 +272,9 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
   // To prevent underflow in log of sum of exp of x operation (where x is a
   // small negative value), we use logsumexp(x - max(x)) + max(x).
   const double maxValue = arma::max(logLikelihoods);
-  probabilities = exp(logLikelihoods - log(arma::accu(exp(logLikelihoods -
-      maxValue))) + maxValue); // log(exp(value)) == value.
+  const double logProbX = log(arma::accu(exp(logLikelihoods - maxValue))) +
+      maxValue;
+  probabilities = exp(logLikelihoods - logProbX); // log(exp(value)) == value.
 
   arma::uword maxIndex = 0;
   logLikelihoods.max(maxIndex);
@@ -324,7 +325,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
   LogLikelihood(data, logLikelihoods);
 
   predictionProbs.set_size(arma::size(logLikelihoods));
-  double maxValue;
+  double maxValue, logProbX;
   for (size_t j = 0; j < data.n_cols; ++j)
   {
     // The LogLikelihood() gives us the unnormalized log likelihood which is
@@ -332,8 +333,9 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
     // Besides, to prevent underflow in log of sum of exp of x operation (where
     // x is a small negative value), we use logsumexp(x - max(x)) + max(x).
     maxValue = arma::max(logLikelihoods.col(j));
-    predictionProbs.col(j) = arma::exp(logLikelihoods.col(j) -
-        log(arma::accu(exp(logLikelihoods.col(j) - maxValue))) + maxValue);
+    logProbX = log(arma::accu(exp(logLikelihoods.col(j) -
+        maxValue))) + maxValue;
+    predictionProbs.col(j) = arma::exp(logLikelihoods.col(j) - logProbX);
   }
 
   // Now calculate maximum probabilities for each point.
