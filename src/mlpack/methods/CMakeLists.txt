@@ -7,6 +7,7 @@ set(DIRS
   approx_kfn
   bias_svd
   block_krylov_svd
+  boostmetric
   cf
   dbscan
   decision_stump
