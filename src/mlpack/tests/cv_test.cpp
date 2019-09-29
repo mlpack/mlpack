@@ -16,6 +16,7 @@
 #include <mlpack/core/cv/metrics/f1.hpp>
 #include <mlpack/core/data/feature_selection.hpp>
 #include <mlpack/core/data/chi2_feature_selection.hpp>
+#include <mlpack/core/data/correlation_feature_selection.hpp>
 #include <mlpack/core/cv/metrics/mse.hpp>
 #include <mlpack/core/cv/metrics/precision.hpp>
 #include <mlpack/core/cv/metrics/recall.hpp>
@@ -573,6 +574,28 @@ BOOST_AUTO_TEST_CASE(VarianceFeatureSelectionTest)
 }
 
 /**
+ * Test for feature selection based on Correlation.
+ */
+BOOST_AUTO_TEST_CASE(CorrelationFeatureSelectionTest)
+{
+  // Dataset with 4 features.
+  arma::mat matrix;
+  matrix = "3 4 1 2;"
+           "0 0 0 0;" // this row will be deleted since less variance
+           "2 5 7 9;"
+           "1 1 1 1;"; // this row will be deleted since less variance
+
+  arma::rowvec temp =  "23 22 20 7";
+  // Output matirx with less features.
+  arma::mat output;
+  data::fs::CorrelationSelection(matrix, temp, output, 1);
+  BOOST_REQUIRE_EQUAL(output.n_rows, 1);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 4);
+  for (size_t i = 0; i < output.n_cols; i++)
+    BOOST_REQUIRE_EQUAL(output(0, i), matrix(0, i));
+}
+
+/**
  * Test for feature selection based on ch12.
  */
 BOOST_AUTO_TEST_CASE(Chi2FeatureSelectionTest)
@@ -590,9 +613,7 @@ BOOST_AUTO_TEST_CASE(Chi2FeatureSelectionTest)
   BOOST_REQUIRE_EQUAL(output.n_rows, 1);
   BOOST_REQUIRE_EQUAL(output.n_cols, 14);
   for (size_t i = 0; i < output.n_cols; i++)
-  {
     BOOST_REQUIRE_EQUAL(output(0, i), matrix(0, i));
-  }
 }
 
 /**
