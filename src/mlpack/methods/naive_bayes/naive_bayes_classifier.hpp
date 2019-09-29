@@ -78,12 +78,14 @@ class NaiveBayesClassifier
    * @param incrementalVariance If true, an incremental algorithm is used to
    *     calculate the variance; this can prevent loss of precision in some
    *     cases, but will be somewhat slower to calculate.
+   * @param epsilon Small value to prevent log of zero.
    */
   template<typename MatType>
   NaiveBayesClassifier(const MatType& data,
                        const arma::Row<size_t>& labels,
                        const size_t numClasses,
-                       const bool incrementalVariance = false);
+                       const bool incrementalVariance = false,
+                       const double epsilon = 1e-10);
 
   /**
    * Initialize the Naive Bayes classifier without performing training.  All of
@@ -92,7 +94,8 @@ class NaiveBayesClassifier
    * meaningless.
    */
   NaiveBayesClassifier(const size_t dimensionality = 0,
-                       const size_t numClasses = 0);
+                       const size_t numClasses = 0,
+                       const double epsilon = 1e-10);
 
   /**
    * Train the Naive Bayes classifier on the given dataset.  If the incremental
@@ -224,6 +227,8 @@ class NaiveBayesClassifier
   ModelMatType probabilities;
   //! Number of training points seen so far.
   size_t trainingPoints;
+  //! Small value to prevent log of zero.
+  double epsilon;
 
   /**
    * Compute the unnormalized posterior log probability of given points (log
