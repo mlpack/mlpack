@@ -2,53 +2,101 @@
  * @file bayesian_ridge.hpp
  * @ Clement Mercier
  *
- * Definition of the BayesianRidge class, which performs the 
+ * Definition of the BayesianRidge class, which performs the
  * bayesian linear regression. According to the armadillo standards,
  * all the functions consider data in column-major format.
 **/
-#ifndef MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_HPP 
-#define  MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_HPP 
+#ifndef MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_HPP
+#define  MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_HPP
 
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack{
 namespace regression{
-  /**
-   * This class implements the bayesian linear regression. "Bayesian treatment
-   * of linear regression, which will avoid the over-fitting problem of maximum 
-   * likelihood, and which will also lead to automatic methods of determining 
-   * model complexity using the training data alone.", C.Bishop.
-   * More details and description in : 
-   * Christopher Bishop (2006), Pattern Recognition and Machine Learning.
-   * David J.C MacKay (1991), Bayesian Interpolation, Computation and Neural 
-   * systems.
-   
-   * Model optimization is automatic and does not require cross validation 
-   * procedure to be optimized.
-   */
-
+/**
+ * This class implements the bayesian linear regression. "Bayesian treatment
+ * of linear regression, which will avoid the over-fitting problem of maximum
+ * likelihood, and which will also lead to automatic methods of determining
+ * model complexity using the training data alone.", C.Bishop.
+ *
+ * More details and description in :
+ * Christopher Bishop (2006), Pattern Recognition and Machine Learning.
+ * David J.C MacKay (1991), Bayesian Interpolation, Computation and Neural
+ * systems.
+ 
+ * Model optimization is automatic and does not require cross validation
+ * procedure to be optimized.
+ *
+ * @code
+ * @article{MacKay91bayesianinterpolation,
+ *   author = {David J.C. MacKay},
+ *   title = {Bayesian Interpolation},
+ *   journal = {NEURAL COMPUTATION},
+ *   year = {1991},
+ *   volume = {4},
+ *   pages = {415--447}
+ * }
+ * @endcode
+ *
+ * @book{Bishop:2006:PRM:1162264,
+ *   author = {Bishop, Christopher M.},
+ *   title = {Pattern Recognition and Machine Learning (Information Science 
+ *            and Statistics)},
+ *   chapter = {3}
+ *   year = {2006},
+ *   isbn = {0387310738},
+ *   publisher = {Springer-Verlag},
+ *   address = {Berlin, Heidelberg},
+ * } 
+ * @encode
+ *   
+ * Example of use:
+ *
+ * @code
+ * arma::mat Xtrain; // Train data matrix. Column-major.
+ * arma::rowvec ytrain; // Train target values.
+ 
+ * // Train the model. Regularization strength is optimally tunned with the
+ * // training data alone by applying the Train method.
+ * BayesianRidge estimator(); // Instanciate the estimator with default option.
+ * estimator.Train(Xtrain, ytrain);
+ 
+ * // Prediction on test points.
+ * arma::mat Xtest; // Test data matrix. Column-major.
+ * arma::rowvec predictions;
+ 
+ * estimator.Predict(Xtest, prediction);
+ 
+ * arma::rowvec ytest; // Test target values.
+ * estimator.Rmse(Xtest, ytest); // Evaluate using the RMSE score.
+ 
+ * // Compute the standard deviations of the predictions.
+ * arma::rowvec stds;
+ * estimator.Predict(Xtest, responses, stds)
+ * @endcode
+ */
 class BayesianRidge
 {
 public:
   /**
    * Set the parameters of Bayesian Ridge regression object. The
-   *    regulariation parameter is automaticaly set to its optimal value by 
+   *    regulariation parameter is automaticaly set to its optimal value by
    *    maximmization of the marginal likelihood.
    *
-   * @param fitIntercept Whether or not center the data according to the 
+   * @param fitIntercept Whether or not center the data according to the
    *    examples.
-   * @param normalize Whether or to normalize the data according to the 
+   * @param normalize Whether or to normalize the data according to the
    *    standard deviation of each feature.
    **/
   BayesianRidge(const bool fitIntercept = true,
 		const bool normalize = false);
 
-  /** 
-   * Run BayesianRidge regression. The input matrix (like all mlpack matrices) 
+  /**
+   * Run BayesianRidge regression. The input matrix (like all mlpack matrices)
    * should be
    * column-major -- each column is an observation and each row is a dimension.
    * 
-   * @param data Column-major input data 
+   * @param data Column-major input data
    * @param responses A vector of targets.
    **/
   void Train(const arma::mat& data,
@@ -59,7 +107,7 @@ public:
    * currently-trained Bayesian Ridge model.
    *
    * @param points The data points to apply the model.
-   * @param predictions y, which will contained predicted values on completion.
+   * @param predictions y, Contain the  predicted values on completion.
    **/
   void Predict(const arma::mat& points,
                arma::rowvec& predictions) const;
