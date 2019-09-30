@@ -69,6 +69,35 @@ class CosineTree
              const double delta);
 
   /**
+   * Copy the given tree.  Be careful!  This may use a lot of memory.
+   *
+   * @param other Tree to copy from.
+   */
+  CosineTree(const CosineTree& other);
+
+  /**
+   * Move the given tree.  The tree passed as a parameter will be emptied and
+   * will not be usable after this call.
+   *
+   * @param other Tree to move.
+   */
+  CosineTree(CosineTree&& other);
+
+  /**
+   * Copy the given Cosine Tree.
+   *
+   * @param other The tree to be copied.
+   */
+  CosineTree& operator=(const CosineTree& other);
+
+  /**
+   * Take ownership of the given Cosine Tree.
+   *
+   * @param other The tree to take ownership of.
+   */
+  CosineTree& operator=(CosineTree&& other);
+
+  /**
    * Clean up the CosineTree: release allocated memory (including children).
    */
   ~CosineTree();

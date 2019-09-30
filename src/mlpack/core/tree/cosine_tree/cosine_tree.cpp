@@ -150,6 +150,96 @@ CosineTree::CosineTree(const arma::mat& dataset,
   ConstructBasis(treeQueue);
 }
 
+//! Copy the given tree.
+CosineTree::CosineTree(const CosineTree& other) :
+  dataset((other.parent == NULL) ? other.dataset : NULL),
+  delta(other.delta),
+  parent(other.Parent()),
+  left(other.Left()),
+  right(other.Right()),
+  indices(other.indices),
+  l2NormsSquared(other.l2NormsSquared),
+  centroid(other.centroid),
+  basisVector(other.basisVector),
+  splitPointIndex(other.SplitPointIndex()),
+  numColumns(other.NumColumns()),
+  l2Error(other.L2Error()),
+  frobNormSquared(other.FrobNormSquared())
+{
+  //copy children
+}
+
+//! Copy Assignment
+CosineTree&
+CosineTree::
+operator=(const CosineTree& other)
+{
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
+  //dataset = (other.parent == NULL) ? other.dataset : NULL;
+  delta = other.delta;
+  parent = other.Parent();
+  left = other.Left();
+  right = other.Right();
+  indices = other.indices;
+  l2NormsSquared = other.l2NormsSquared;
+  centroid = other.centroid;
+  basisVector = other.basisVector;
+  splitPointIndex = other.SplitPointIndex();
+  numColumns = other.NumColumns();
+  l2Error = other.L2Error();
+  frobNormSquared = other.FrobNormSquared();
+
+  //copy children
+
+  return *this;  
+}
+
+//! Move the given tree.
+CosineTree::CosineTree(CosineTree&& other) :
+  dataset(other.dataset),
+  delta(std::move(other.delta)),
+  parent(other.parent),
+  left(other.left),
+  right(other.right),
+  indices(std::move(other.indices)),
+  l2NormsSquared(std::move(other.l2NormsSquared)),
+  centroid(std::move(other.centroid)),
+  basisVector(std::move(other.basisVector)),
+  splitPointIndex(other.splitPointIndex),
+  numColumns(other.numColumns),
+  l2Error(other.l2Error),
+  frobNormSquared(other.frobNormSquared)
+{
+  //move children
+}
+
+//! Move Assignment
+CosineTree&
+CosineTree::
+operator=(CosineTree&& other)
+{
+  //dataset = other.dataset;
+  delta = std::move(other.delta);
+  parent = other.Parent();
+  left = other.Left();
+  right = other.Right();
+  indices = std::move(other.indices);
+  l2NormsSquared = std::move(other.l2NormsSquared);
+  centroid = std::move(other.centroid);
+  basisVector = std::move(other.basisVector);
+  splitPointIndex = other.SplitPointIndex();
+  numColumns = other.NumColumns();
+  l2Error = other.L2Error();
+  frobNormSquared = other.FrobNormSquared();
+
+  //move children
+
+  return *this;
+}
+
 CosineTree::~CosineTree()
 {
   if (left)
