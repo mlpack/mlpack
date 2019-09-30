@@ -194,7 +194,7 @@ operator=(const CosineTree& other)
 
   //copy children
 
-  return *this;  
+  return *this;
 }
 
 //! Move the given tree.
