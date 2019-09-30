@@ -1,5 +1,19 @@
-### mlpack 4.0.0
+### mlpack ?.?.?
 ###### ????-??-??
+  * Enforce CMake version check for ensmallen (#2032).
+
+  * Fix CMake check for Armadillo version (#2029).
+
+  * Better handling of when STB is not installed (#2033).
+
+  * Fix Naive Bayes classifier computations in high dimensions (#2022).
+  
+  * Add Stochastic Approximation Algorithms for Principal Component Analysis (#1391).
+
+### mlpack 3.2.0
+###### 2019-09-25
+  * Fix some potential infinity errors in Naive Bayes Classifier (#2022).
+
   * Fix occasionally-failing RADICAL test (#1924).
 
   * Fix gcc 9 OpenMP compilation issue (#1970).
@@ -17,9 +31,6 @@
   * Fix prediction output of softmax regression when test set accuracy is
     calculated (#1922).
 
-  * Action struct in continuous RL environments now stores the action as a
-    `double` instead of `double[1]` (#1941, #1931).
-
   * Pendulum environment now checks for termination. All RL environments now
     have an option to terminate after a set number of time steps (no limit
     by default) (#1941).
@@ -36,8 +47,10 @@
   * Optimizations for sparse matrix accesses in z-score normalization for CF
     (#1989).
 
-  * Add Stochastic Approximation Algorithms for Principal Component Analysis
-    (#1391).
+  * Add `kmeans_max_iterations` option to GMM training binding `gmm_train_main`.
+
+  * Bump minimum Armadillo version to 8.400.0 due to ensmallen dependency
+    requirement (#2015).
 
 ### mlpack 3.1.1
 ###### 2019-05-26
