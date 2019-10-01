@@ -1,5 +1,5 @@
-### mlpack ?.?.?
-###### ????-??-??
+### mlpack 3.2.1
+###### 2019-10-01
   * Enforce CMake version check for ensmallen (#2032).
 
   * Fix CMake check for Armadillo version (#2029).
