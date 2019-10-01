@@ -368,14 +368,14 @@ endif ()
 find_package(Ensmallen 2.10.0)
 if (NOT ENSMALLEN_FOUND)
   if (DOWNLOAD_ENSMALLEN)
-    file(DOWNLOAD http://www.ensmallen.org/files/ensmallen-2.10.3.tar.gz
-        "${CMAKE_BINARY_DIR}/deps/ensmallen-2.10.3.tar.gz"
+    file(DOWNLOAD http://www.ensmallen.org/files/ensmallen-latest.tar.gz
+        "${CMAKE_BINARY_DIR}/deps/ensmallen-latest.tar.gz"
         STATUS ENS_DOWNLOAD_STATUS_LIST LOG ENS_DOWNLOAD_LOG
         SHOW_PROGRESS)
     list(GET ENS_DOWNLOAD_STATUS_LIST 0 ENS_DOWNLOAD_STATUS)
     if (ENS_DOWNLOAD_STATUS EQUAL 0)
       execute_process(COMMAND ${CMAKE_COMMAND} -E
-          tar xzf "${CMAKE_BINARY_DIR}/deps/ensmallen-2.10.3.tar.gz"
+          tar xzf "${CMAKE_BINARY_DIR}/deps/ensmallen-latest.tar.gz"
           WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
 
       # Get the name of the directory.
