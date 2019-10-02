@@ -63,11 +63,12 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::~RNN()
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-template<typename OptimizerType>
+template<typename OptimizerType, typename... CallbackTypes>
 double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::cube predictors,
     arma::cube responses,
-    OptimizerType& optimizer)
+    OptimizerType& optimizer,
+    CallbackTypes&&... callbacks)
 {
   numFunctions = responses.n_cols;
 
@@ -84,7 +85,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   // Train the model.
   Timer::Start("rnn_optimization");
-  const double out = optimizer.Optimize(*this, parameter);
+  const double out = optimizer.Optimize(*this, parameter, callbacks...);
   Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out
@@ -105,10 +106,11 @@ void RNN<OutputLayerType, InitializationRuleType,
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-template<typename OptimizerType>
+template<typename OptimizerType, typename... CallbackTypes>
 double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::cube predictors,
-    arma::cube responses)
+    arma::cube responses,
+    CallbackTypes&&... callbacks)
 {
   numFunctions = responses.n_cols;
 
@@ -127,7 +129,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   // Train the model.
   Timer::Start("rnn_optimization");
-  const double out = optimizer.Optimize(*this, parameter);
+  const double out = optimizer.Optimize(*this, parameter, callbacks...);
   Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out

@@ -99,10 +99,11 @@ class FFN
    * @param optimizer Instantiated optimizer used to train the model.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType>
+  template<typename OptimizerType, typename... CallbackTypes>
   double Train(arma::mat predictors,
                arma::mat responses,
-               OptimizerType& optimizer);
+               OptimizerType& optimizer,
+               CallbackTypes&&... callbacks);
 
   /**
    * Train the feedforward network on the given input data. By default, the
@@ -121,8 +122,10 @@ class FFN
    * @param responses Outputs results from input training variables.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType = ens::RMSProp>
-  double Train(arma::mat predictors, arma::mat responses);
+  template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
+  double Train(arma::mat predictors,
+               arma::mat responses,
+               CallbackTypes&&... callbacks);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
