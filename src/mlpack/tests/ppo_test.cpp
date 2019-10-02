@@ -129,14 +129,14 @@ BOOST_AUTO_TEST_CASE(ContinuousMountainCarWithPPO)
 
     // Set up the policy and replay method.
     GreedyPolicy<ContinuousMountainCar> policy(1.0, 1000, 0.1, 0.99);
-    RandomReplay<ContinuousMountainCar> replayMethod(32, 10000);
+    RandomReplay<ContinuousMountainCar> replayMethod(64, 10000);
 
     TrainingConfig config;
     config.StepSize() = 0.0001;
     config.Discount() = 0.99;
     config.Epsilon() = 0.2;
     config.StepLimit() = 100000;
-    config.UpdateInterval() = 32;
+    config.UpdateInterval() = 64;
     config.ActorUpdateStep() = 10;
 
     // Set up the PPO agent.
@@ -152,13 +152,11 @@ BOOST_AUTO_TEST_CASE(ContinuousMountainCarWithPPO)
       averageReturn(episodeReturn);
 
       /**
-       * I am using a threshold of 100 to check convergence.
+       * I am using a threshold of 120 to check convergence.
        */
       Log::Debug << "Average return: " << averageReturn.mean()
                  << " Episode return: " << episodeReturn << std::endl;
-      std::cout << "Average return: " << averageReturn.mean()
-                << " Episode return: " << episodeReturn << std::endl;
-      if (averageReturn.mean() > 100) {
+      if (averageReturn.mean() > 120) {
         agent.Deterministic() = true;
         arma::running_stat<double> testReturn;
         for (size_t i = 0; i < 10; ++i)
