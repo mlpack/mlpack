@@ -553,7 +553,7 @@ BOOST_AUTO_TEST_CASE(PerfectTrainingSet)
 
     BOOST_REQUIRE_EQUAL(prediction, labels[i]);
     BOOST_REQUIRE_EQUAL(probabilities.n_elem, 2);
-    for (size_t j = 0; j < 3; ++j)
+    for (size_t j = 0; j < 2; ++j)
     {
       if (labels[i] == j)
         BOOST_REQUIRE_CLOSE(probabilities[j], 1.0, 1e-5);
@@ -596,7 +596,7 @@ BOOST_AUTO_TEST_CASE(PerfectTrainingSetWithWeight)
 
     BOOST_REQUIRE_EQUAL(prediction, labels[i]);
     BOOST_REQUIRE_EQUAL(probabilities.n_elem, 2);
-    for (size_t j = 0; j < 3; ++j)
+    for (size_t j = 0; j < 2; ++j)
     {
       if (labels[i] == j)
         BOOST_REQUIRE_CLOSE(probabilities[j], 1.0, 1e-5);

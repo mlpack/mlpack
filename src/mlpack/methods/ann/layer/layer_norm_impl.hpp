@@ -82,7 +82,7 @@ void LayerNorm<InputDataType, OutputDataType>::Backward(
 {
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
-  // dl / dxhat
+  // dl / dxhat.
   const arma::mat norm = gy.each_col() % gamma;
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
@@ -96,8 +96,7 @@ void LayerNorm<InputDataType, OutputDataType>::Backward(
 
   // sum (dl / dxhat * -1 / stdInv) + variance *
   // (sum -2 * (x - mu)) / m.
-  g.each_row() += (arma::sum(norm.each_row() % -stdInv, 0) + (var %
-      arma::mean(-2 * inputMean, 0))) / input.n_rows;
+  g.each_row() += arma::sum(norm.each_row() % -stdInv, 0) / input.n_rows;
 }
 
 template<typename InputDataType, typename OutputDataType>

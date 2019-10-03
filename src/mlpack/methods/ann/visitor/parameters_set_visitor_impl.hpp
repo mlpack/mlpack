@@ -31,6 +31,11 @@ inline void ParametersSetVisitor::operator()(LayerType *layer) const
   LayerParameters(layer, layer->OutputParameter());
 }
 
+inline void ParametersSetVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
+}
+
 template<typename T, typename P>
 inline typename std::enable_if<
     !HasParametersCheck<T, P&(T::*)()>::value, void>::type

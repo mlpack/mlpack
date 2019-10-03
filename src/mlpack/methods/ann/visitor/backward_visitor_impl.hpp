@@ -50,6 +50,11 @@ inline void BackwardVisitor::operator()(LayerType* layer) const
   LayerBackward(layer, layer->OutputParameter());
 }
 
+inline void BackwardVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     !HasRunCheck<T, bool&(T::*)(void)>::value, void>::type
