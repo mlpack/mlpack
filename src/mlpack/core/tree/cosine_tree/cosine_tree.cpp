@@ -166,7 +166,49 @@ CosineTree::CosineTree(const CosineTree& other) :
   l2Error(other.L2Error()),
   frobNormSquared(other.FrobNormSquared())
 {
-  //copy children
+  std::vector<CosineTree*> nodeStack;
+  nodeStack.push_back(this);
+
+  // While stack is not empty.
+  while (nodeStack.size())
+  {
+    // Pop a node from the stack and split it.
+    CosineTree *currentNode, *currentLeft, *currentRight;
+    currentNode = nodeStack.back();
+    currentNode->CosineNodeSplit();
+    nodeStack.pop_back();
+
+    // Obtain pointers to the children of the node.
+    currentLeft = currentNode->Left();
+    currentRight = currentNode->Right();
+
+    // If children exist.
+    if (currentLeft && currentRight)
+    {
+      // Push the child nodes on to the stack.
+      nodeStack.push_back(currentLeft);
+      nodeStack.push_back(currentRight);
+
+      // Obtain the split point of the popped node.
+      arma::vec splitPoint = data.col(currentNode->SplitPointIndex());
+
+      // Column indices of the the child nodes.
+      std::vector<size_t> leftIndices, rightIndices;
+      leftIndices = currentLeft->VectorIndices();
+      rightIndices = currentRight->VectorIndices();
+
+      // Calculate the cosine values for each of the columns in the node.
+      arma::vec cosines;
+      cosines.zeros(currentNode->NumColumns());
+
+      size_t i, j, k;
+      for (i = 0; i < leftIndices.size(); i++)
+        cosines(i) = arma::norm_dot(data.col(leftIndices[i]), splitPoint);
+
+      for (j = 0, k = i; j < rightIndices.size(); j++, k++)
+        cosines(k) = arma::norm_dot(data.col(rightIndices[j]), splitPoint);
+    }
+  }
 }
 
 //! Copy Assignment
@@ -192,7 +234,49 @@ operator=(const CosineTree& other)
   l2Error = other.L2Error();
   frobNormSquared = other.FrobNormSquared();
 
-  //copy children
+  std::vector<CosineTree*> nodeStack;
+  nodeStack.push_back(this);
+
+  // While stack is not empty.
+  while (nodeStack.size())
+  {
+    // Pop a node from the stack and split it.
+    CosineTree *currentNode, *currentLeft, *currentRight;
+    currentNode = nodeStack.back();
+    currentNode->CosineNodeSplit();
+    nodeStack.pop_back();
+
+    // Obtain pointers to the children of the node.
+    currentLeft = currentNode->Left();
+    currentRight = currentNode->Right();
+
+    // If children exist.
+    if (currentLeft && currentRight)
+    {
+      // Push the child nodes on to the stack.
+      nodeStack.push_back(currentLeft);
+      nodeStack.push_back(currentRight);
+
+      // Obtain the split point of the popped node.
+      arma::vec splitPoint = data.col(currentNode->SplitPointIndex());
+
+      // Column indices of the the child nodes.
+      std::vector<size_t> leftIndices, rightIndices;
+      leftIndices = currentLeft->VectorIndices();
+      rightIndices = currentRight->VectorIndices();
+
+      // Calculate the cosine values for each of the columns in the node.
+      arma::vec cosines;
+      cosines.zeros(currentNode->NumColumns());
+
+      size_t i, j, k;
+      for (i = 0; i < leftIndices.size(); i++)
+        cosines(i) = arma::norm_dot(data.col(leftIndices[i]), splitPoint);
+
+      for (j = 0, k = i; j < rightIndices.size(); j++, k++)
+        cosines(k) = arma::norm_dot(data.col(rightIndices[j]), splitPoint);
+    }
+  }
 
   return *this;
 }
@@ -213,7 +297,21 @@ CosineTree::CosineTree(CosineTree&& other) :
   l2Error(other.l2Error),
   frobNormSquared(other.frobNormSquared)
 {
-  //move children
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.
+  other.dataset = NULL;
+  other.parent = NULL;
+  other.left = NULL;
+  other.right = NULL;
+  other.splitPointIndex = ColumnSampleLS();
+  other.numColumns = dataset.n_cols;
+  other.l2Error = -1;
+  other.frobNormSquared = arma::accu(l2NormsSquared);
+  // Set new parent.
+  if (left)
+    left->parent = this;
+  if (right)
+    right->parent = this;
 }
 
 //! Move Assignment
@@ -235,7 +333,21 @@ operator=(CosineTree&& other)
   l2Error = other.L2Error();
   frobNormSquared = other.FrobNormSquared();
 
-  //move children
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.
+  other.dataset = NULL;
+  other.parent = NULL;
+  other.left = NULL;
+  other.right = NULL;
+  other.splitPointIndex = ColumnSampleLS();
+  other.numColumns = dataset.n_cols;
+  other.l2Error = -1;
+  other.frobNormSquared = arma::accu(l2NormsSquared);
+  // Set new parent.
+  if (left)
+    left->parent = this;
+  if (right)
+    right->parent = this;
 
   return *this;
 }
