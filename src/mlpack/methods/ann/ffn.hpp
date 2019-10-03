@@ -257,6 +257,14 @@ class FFN
    */
   void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
 
+  //! Get the network model.
+  const std::vector<LayerTypes<CustomLayers...> >& Model() const
+  {
+    return network;
+  }
+  //! Modify the network model.
+  std::vector<LayerTypes<CustomLayers...> >& Model() { return network; }
+
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
 
@@ -265,7 +273,7 @@ class FFN
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
 
-  //! Get the matrix of responses to the input data points.
+  //! Get the matrix of resposnses to the input data points.
   const arma::mat& Responses() const { return responses; }
   //! Modify the matrix of responses to the input data points.
   arma::mat& Responses() { return responses; }
