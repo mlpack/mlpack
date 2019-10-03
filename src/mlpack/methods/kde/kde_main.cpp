@@ -37,7 +37,7 @@ PROGRAM_INFO("Kernel Density Estimation",
     "performance as it uses an approximate dual or single tree algorithm for "
     "acceleration."
     "\n\n"
-    "Dual or single tree optimization allows to avoid lots of barely relevant "
+    "Dual or single tree optimization avoids many barely relevant "
     "calculations (as kernel function values decrease with distance), so it is "
     "an approximate computation. You can specify the maximum relative error "
     "tolerance for each query value with " + PRINT_PARAM_STRING("rel_error") +

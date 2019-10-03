@@ -24,18 +24,18 @@ using namespace mlpack::data;
 PROGRAM_INFO("Load Save Image",
     // Short description.
     "A utility to load and save image dataset. This utility will allow you to "
-    "load and save a single image or an array of images.",
+    "load and save a single image or an list of images.",
     // Long description.
     "This utility takes a image or an array of images and loads them to a"
-    "matrix. You can specify the height " + PRINT_PARAM_STRING("height") +
+    " matrix. You can specify the height " + PRINT_PARAM_STRING("height") +
     " width " + PRINT_PARAM_STRING("width") + " and channel " +
-    PRINT_PARAM_STRING("channel") + "of the images that needs to be loaded. "
+    PRINT_PARAM_STRING("channel") + " of the images that needs to be loaded. "
     "\nThere are other options too, that can be specified such as " +
     PRINT_PARAM_STRING("quality") + " and " + PRINT_PARAM_STRING("transpose")
     + ".\n\n" +
     "You can also provide a dataset and save them as images using " +
     PRINT_PARAM_STRING("dataset") + " and " + PRINT_PARAM_STRING("save") +
-    "as an parameter. An example to load an image : "  + "\n\n" +
+    " as an parameter. An example to load an image : "  + "\n\n" +
     PRINT_CALL("load_save_image", "input", "X", "height", 256, "width", 256,
         "channel", 3, "output", "Y") + "\n\n" +
     " An example to save an image is :" + "\n\n" +

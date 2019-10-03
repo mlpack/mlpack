@@ -13,7 +13,6 @@
 #ifndef MLPACK_CORE_DATA_LOAD_IMAGE_IMPL_HPP
 #define MLPACK_CORE_DATA_LOAD_IMAGE_IMPL_HPP
 
-
 // In case it hasn't been included yet.
 #include "load.hpp"
 

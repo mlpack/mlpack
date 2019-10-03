@@ -1,5 +1,20 @@
-### mlpack 4.0.0
+### mlpack ?.?.?
 ###### ????-??-??
+
+### mlpack 3.2.1
+###### 2019-10-01
+  * Enforce CMake version check for ensmallen (#2032).
+
+  * Fix CMake check for Armadillo version (#2029).
+
+  * Better handling of when STB is not installed (#2033).
+
+  * Fix Naive Bayes classifier computations in high dimensions (#2022).
+
+### mlpack 3.2.0
+###### 2019-09-25
+  * Fix some potential infinity errors in Naive Bayes Classifier (#2022).
+
   * Fix occasionally-failing RADICAL test (#1924).
 
   * Fix gcc 9 OpenMP compilation issue (#1970).

@@ -23,7 +23,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-3.1.1.tar.gz">current stable version (3.1.1)</a>
+    <a href="https://www.mlpack.org/files/mlpack-3.2.0.tar.gz">current stable version (3.2.0)</a>
   </em>
 </p>
 
@@ -87,7 +87,7 @@ mlpack has the following dependencies:
       Boost (program_options, math_c99, unit_test_framework, serialization,
              spirit)
       CMake         >= 3.3.2
-      ensmallen     >= 1.10.0
+      ensmallen     >= 2.10.0
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
