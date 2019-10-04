@@ -221,7 +221,7 @@ class SpillTree
    *
    * @param other The tree to take ownership of.
    */
-  SpillTree& operator=(SpillTree&& other); 
+  SpillTree& operator=(SpillTree&& other);
 
   /**
    * Initialize the tree from a boost::serialization archive.
