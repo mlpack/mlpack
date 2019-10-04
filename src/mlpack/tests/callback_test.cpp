@@ -51,10 +51,6 @@ BOOST_AUTO_TEST_CASE(RNNCallbackTest)
   model.Add<LSTM<> >(10, 3, rho);
   model.Add<LogSoftMax<> >();
 
-  // Use LSTM layer with rho = MAXSIZE.
-  model.Add<LSTM<> >(10, 3);
-  model.Add<LogSoftMax<> >();
-
   std::stringstream stream;
   model.Train(input, target, ens::PrintLoss(stream));
 
