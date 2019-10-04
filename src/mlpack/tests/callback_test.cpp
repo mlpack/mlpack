@@ -34,4 +34,31 @@ BOOST_AUTO_TEST_CASE(FFNCallbackTest)
   BOOST_REQUIRE_GT(stream.str().length(), 0);
 }
 
+BOOST_AUTO_TEST_CASE(RNNCallbackTest)
+{
+  const size_t rho = 5;
+  arma::cube input = arma::randu(1, 1, 5);
+  arma::cube target = arma::ones(1, 1, 5);
+  RandomInitialization init(0.5, 0.5);
+
+  // Create model with user defined rho parameter.
+  RNN<NegativeLogLikelihood<>, RandomInitialization> model(
+      rho, false, NegativeLogLikelihood<>(), init);
+  model.Add<IdentityLayer<> >();
+  model.Add<Linear<> >(1, 10);
+
+  // Use LSTM layer with rho.
+  model.Add<LSTM<> >(10, 3, rho);
+  model.Add<LogSoftMax<> >();
+
+  // Use LSTM layer with rho = MAXSIZE.
+  model.Add<LSTM<> >(10, 3);
+  model.Add<LogSoftMax<> >();
+
+  std::stringstream stream;
+  model.Train(input, target, ens::PrintLoss(stream));
+
+  BOOST_REQUIRE_GT(stream.str().length(), 0);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
