@@ -28,7 +28,6 @@ BOOST_AUTO_TEST_CASE(FFNCallbackTest)
   model.Add<Linear<>>(2, 1);
   model.Add<SigmoidLayer<>>();
 
-
   std::stringstream stream;
   model.Train(data, labels, ens::PrintLoss(stream));
 
