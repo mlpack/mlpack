@@ -310,11 +310,10 @@ static void mlpackMain()
     model->svm.Lambda() = lambda;
     model->svm.Delta() = delta;
     model->svm.NumClasses() = numClasses;
+    model->svm.FitIntercept() = intercept;
 
     if (optimizerType == "lbfgs")
     {
-      model->svm.FitIntercept() = intercept;
-
       ens::L_BFGS lbfgsOpt;
       lbfgsOpt.MaxIterations() = maxIterations;
       lbfgsOpt.MinGradientNorm() = tolerance;
@@ -362,7 +361,7 @@ static void mlpackMain()
     size_t trainingDimensionality;
 
     // Set the dimensionality according to fitintercept.
-    if (intercept && optimizerType == "lbfgs")
+    if (intercept)
       trainingDimensionality = model->svm.Parameters().n_rows - 1;
     else
       trainingDimensionality = model->svm.Parameters().n_rows;
