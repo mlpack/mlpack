@@ -240,7 +240,7 @@ operator=(const SpillTree& other)
     pointsIndex = new arma::Col<size_t>(*other.pointsIndex);
 
   // Propagate matrix, but only if we are the root.
-/*  if (parent == NULL && localDataset)
+  if (parent == NULL && localDataset)
   {
     std::queue<SpillTree*> queue;
     if (left)
@@ -258,7 +258,7 @@ operator=(const SpillTree& other)
       if (node->right)
         queue.push(node->right);
     }
-*/
+  }
   return *this;
 }
 
