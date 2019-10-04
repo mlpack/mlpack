@@ -642,6 +642,62 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTest)
 }
 
 /**
+ * Ensuring that no_intercept has some effects on the output
+ * when the optimizer is 'psgd'.
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTestWithPsgd)
+{
+  arma::mat trainData = "2 0 0;"
+                        "0 0 0;"
+                        "0 2 1;"
+                        "1 0 2;"
+                        "0 1 0";
+
+  arma::Row<size_t> trainLabels = "1 0 1";
+
+  SetInputParam("training", trainData);
+  SetInputParam("labels", trainLabels);
+  SetInputParam("optimizer", std::string("psgd"));
+
+  // First solution.
+  #ifdef HAS_OPENMP
+  omp_set_num_threads(1);
+  #endif
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  // Get the parameters of the output model obtained after first training.
+  const arma::mat parameters1 = std::move(
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+
+  // Reset the settings.
+  bindings::tests::CleanMemory();
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
+
+  SetInputParam("training", std::move(trainData));
+  SetInputParam("labels", std::move(trainLabels));
+  SetInputParam("optimizer", std::string("psgd"));
+  SetInputParam("no_intercept", bool(true));
+
+  // Second solution.
+  #ifdef HAS_OPENMP
+  omp_set_num_threads(1);
+  #endif
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  // Get the parameters of the output model obtained after second training.
+  const arma::mat& parameters2 =
+      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+
+  // Both solutions should be not equal.
+  CheckMatricesNotEqual(parameters1, parameters2);
+}
+
+/**
  * Ensuring that step size for optimizer is non negative.
  */
 BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeStepSizeTest)
