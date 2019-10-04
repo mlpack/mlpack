@@ -13,6 +13,9 @@ using namespace mlpack::ann;
 
 BOOST_AUTO_TEST_SUITE(CallbackTest);
 
+/**
+ * Test a FFN model with PrintLoss callback
+ */
 BOOST_AUTO_TEST_CASE(FFNCallbackTest)
 {
   arma::mat data;
@@ -34,6 +37,9 @@ BOOST_AUTO_TEST_CASE(FFNCallbackTest)
   BOOST_REQUIRE_GT(stream.str().length(), 0);
 }
 
+/**
+ * Test a RNN model with PrintLoss callback
+ */
 BOOST_AUTO_TEST_CASE(RNNCallbackTest)
 {
   const size_t rho = 5;

@@ -91,9 +91,11 @@ class RNN
    * at time slice k.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
+   * @param callbacks Callback functions.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
@@ -122,8 +124,10 @@ class RNN
    * at time slice k.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
+   * @param callbacks Callback functions.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType = ens::StandardSGD, typename... CallbackTypes>
