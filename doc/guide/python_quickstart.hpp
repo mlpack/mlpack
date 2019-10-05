@@ -17,11 +17,11 @@ Installing the mlpack bindings for Python is straightforward.  It's easy to use
 conda or pip to do this:
 
 @code{.sh}
-pip install mlpack3
+pip install mlpack
 @endcode
 
 @code{.sh}
-conda install -c mlpack mlpack
+conda install -c conda-forge mlpack
 @endcode
 
 Otherwise, we can build the Python bindings from scratch, as follows.  First we
