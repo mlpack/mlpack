@@ -1,6 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * Update documentation for pip and conda installation packages.
+  * Add Model() to the FFN class to access individual layers (#2043).
+
+  * Update documentation for pip and conda installation packages (#2044).
 
 ### mlpack 3.2.1
 ###### 2019-10-01
