@@ -77,7 +77,7 @@ namespace regression{
  */
 class BayesianRidge
 {
-public:
+ public:
   /**
    * Set the parameters of Bayesian Ridge regression object. The
    *    regulariation parameter is automaticaly set to its optimal value by
@@ -161,8 +161,9 @@ public:
    **/
   double Rmse(const arma::mat& data,
 	      const arma::rowvec& responses) const;
+
   
-  /*
+  /**
    * Center and normalize the data. The last four arguments
    * allow future modifation of new points.
    *
@@ -188,7 +189,7 @@ public:
 		       arma::colvec& data_offset,
 		       arma::colvec& data_scale,
 		       double& responses_offset);
-  
+
 
   /**
    * Copy constructor. Construct the BayesianRidge object by copying the 
@@ -220,7 +221,7 @@ public:
    */
   BayesianRidge& operator=(BayesianRidge&& other);
 
-  
+
   /**
    * Get the solution vector
    *
@@ -232,9 +233,9 @@ public:
   /**
    * Get the precesion (or inverse variance) beta of the model.
    *
-   * @return \f$ \beta \f$ 
+   * @return \f$ \beta \f$
    **/
-  inline double Beta() const {return this->beta;} 
+  inline double Beta() const {return this->beta;}
   
 
   /**
@@ -270,12 +271,14 @@ public:
   inline double Responses_offset() const
   {return this->responses_offset;}
 
-  
 
+  /**
+   * Serialize the BayesianRidge model.
+   **/
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
 
-private:
+ private:
   //! Center the data if true.
   bool fitIntercept;
 
@@ -313,5 +316,3 @@ private:
 #include "bayesian_ridge_impl.hpp"
 
 #endif
-
-  
