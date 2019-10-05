@@ -1,5 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Add Model() to the FFN class to access individual layers (#2043).
 
 ### mlpack 3.2.1
 ###### 2019-10-01
