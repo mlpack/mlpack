@@ -42,9 +42,9 @@ BOOST_AUTO_TEST_CASE(BayesianRidgeRegressionTest)
 {
   arma::mat X;
   arma::rowvec y, predictions;
- 
+
   GenerateProblem(X, y, 200, 10);
-  
+
   // Instanciate and train the estimator.
   BayesianRidge estimator(true);
   estimator.Train(X, y);
@@ -122,9 +122,8 @@ BOOST_AUTO_TEST_CASE(OnePointTest)
   arma::rowvec y;
   arma::rowvec predictions, std;
   double y_i, std_i;
-
-  GenerateProblem(X, y, 100, 10, 2.0);
   
+  GenerateProblem(X, y, 100, 10, 2.0);
   BayesianRidge estimator(false, false);
   estimator.Train(X, y);
 
@@ -138,7 +137,7 @@ BOOST_AUTO_TEST_CASE(OnePointTest)
       estimator.Predict(X.col(i), y_i);
       BOOST_REQUIRE_CLOSE(predictions(i), y_i, 1e-5);
     }
-  
+
   // Ensure that the single prediction from column vector are possible and
   // equal to the matrix version. Idem for the std.
   estimator.Predict(X, predictions, std);
@@ -151,5 +150,3 @@ BOOST_AUTO_TEST_CASE(OnePointTest)
 }
 
 BOOST_AUTO_TEST_SUITE_END();
-
-
