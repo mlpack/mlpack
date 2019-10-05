@@ -38,6 +38,31 @@ BOOST_AUTO_TEST_CASE(FFNCallbackTest)
 }
 
 /**
+ * Test a FFN model with PrintLoss callback and optimizer parameter
+ */
+BOOST_AUTO_TEST_CASE(FFNWithOptimizerCallbackTest)
+{
+  arma::mat data;
+  arma::mat labels;
+
+  data::Load("lab1.csv", data, true);
+  data::Load("lab3.csv", labels, true);
+
+  FFN<MeanSquaredError<>, RandomInitialization> model;
+
+  model.Add<Linear<>>(1, 2);
+  model.Add<SigmoidLayer<>>();
+  model.Add<Linear<>>(2, 1);
+  model.Add<SigmoidLayer<>>();
+
+  std::stringstream stream;
+  ens::StandardSGD opt(0.1, 1, 5);
+  model.Train(data, labels, ens::PrintLoss(stream));
+
+  BOOST_REQUIRE_GT(stream.str().length(), 0);
+}
+
+/**
  * Test a RNN model with PrintLoss callback
  */
 BOOST_AUTO_TEST_CASE(RNNCallbackTest)
@@ -59,6 +84,33 @@ BOOST_AUTO_TEST_CASE(RNNCallbackTest)
 
   std::stringstream stream;
   model.Train(input, target, ens::PrintLoss(stream));
+
+  BOOST_REQUIRE_GT(stream.str().length(), 0);
+}
+
+/**
+ * Test a RNN model with PrintLoss callback and optimizer parameter
+ */
+BOOST_AUTO_TEST_CASE(RNNWithOptimizerCallbackTest)
+{
+  const size_t rho = 5;
+  arma::cube input = arma::randu(1, 1, 5);
+  arma::cube target = arma::ones(1, 1, 5);
+  RandomInitialization init(0.5, 0.5);
+
+  // Create model with user defined rho parameter.
+  RNN<NegativeLogLikelihood<>, RandomInitialization> model(
+      rho, false, NegativeLogLikelihood<>(), init);
+  model.Add<IdentityLayer<> >();
+  model.Add<Linear<> >(1, 10);
+
+  // Use LSTM layer with rho.
+  model.Add<LSTM<> >(10, 3, rho);
+  model.Add<LogSoftMax<> >();
+
+  std::stringstream stream;
+  ens::StandardSGD opt(0.1, 1, 5);
+  model.Train(input, target, opt, ens::PrintLoss(stream));
 
   BOOST_REQUIRE_GT(stream.str().length(), 0);
 }
