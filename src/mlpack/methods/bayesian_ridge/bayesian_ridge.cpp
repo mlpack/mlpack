@@ -23,11 +23,11 @@ BayesianRidge::BayesianRidge(const bool fitIntercept,
   normalize(normalize)
 {
   Log::Info << "Baysian Ridge regression(fitIntercept="
-  	    << this->fitIntercept
-  	    <<", normalize="
-  	    <<this->normalize
-  	    <<")"
-  	    <<std::endl;
+	    << this->fitIntercept
+	    << ", normalize="
+	    << this->normalize
+	    << ")"
+	    << std::endl;
 }
 
 void BayesianRidge::Train(const arma::mat& data,
@@ -42,7 +42,7 @@ void BayesianRidge::Train(const arma::mat& data,
   arma::colvec eigval;
   arma::mat eigvec;
   arma::colvec eigvali;
-    
+  
   // Preprocess the data. Center and normalize.
   this->CenterNormalize(data,
 			responses,
@@ -64,8 +64,8 @@ void BayesianRidge::Train(const arma::mat& data,
   // begin with an infinitely broad prior.
   this->alpha = 1e-6;
   this->beta =  1 / (var(t) * 0.1);
-
-  double tol = 1e-3; 
+  
+  double tol = 1e-3;
   unsigned short nIterMax = 50;
   unsigned short i = 0;
   double deltaAlpha = 1, deltaBeta = 1, crit = 1;
@@ -113,7 +113,7 @@ void BayesianRidge::Predict(const arma::mat& points,
 {
   arma::mat X = points;
 
-  //Center and normalize the points before applying the model
+  // Center and normalize the points before applying the model
   X.each_col() -= this->data_offset;
   X.each_col() /= this->data_scale;
   predictions = this->omega.t() * X + this->responses_offset;
