@@ -17,7 +17,7 @@
 namespace mlpack {
 namespace tree {
 
-CosineTree::CosineTree(const arma::mat& dataset) :
+CosineTree::CosineTree(arma::mat& dataset) :
     dataset(dataset),
     parent(NULL),
     left(NULL),
@@ -73,7 +73,7 @@ CosineTree::CosineTree(CosineTree& parentNode,
   splitPointIndex = ColumnSampleLS();
 }
 
-CosineTree::CosineTree(const arma::mat& dataset,
+CosineTree::CosineTree(arma::mat& dataset,
                        const double epsilon,
                        const double delta) :
     dataset(dataset),
@@ -152,7 +152,8 @@ CosineTree::CosineTree(const arma::mat& dataset,
 
 //! Copy the given tree.
 CosineTree::CosineTree(const CosineTree& other) :
-  dataset((other.parent == NULL) ? other.dataset : NULL),
+  //dataset((other.parent == NULL) ? other.dataset : NULL)
+  dataset(other.dataset),
   delta(other.delta),
   parent(other.Parent()),
   left(other.Left()),
@@ -220,7 +221,7 @@ operator=(const CosineTree& other)
   if (this == &other)
     return *this;
 
-  //dataset = (other.parent == NULL) ? other.dataset : NULL;
+  dataset = (other.parent == NULL) ? other.dataset : NULL;
   delta = other.delta;
   parent = other.Parent();
   left = other.Left();
@@ -319,7 +320,7 @@ CosineTree&
 CosineTree::
 operator=(CosineTree&& other)
 {
-  //dataset = other.dataset;
+  dataset = other.dataset;
   delta = std::move(other.delta);
   parent = other.Parent();
   left = other.Left();
