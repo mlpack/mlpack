@@ -1,5 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Update documentation for pip and conda installation packages.
 
 ### mlpack 3.2.1
 ###### 2019-10-01
