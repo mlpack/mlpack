@@ -257,6 +257,14 @@ class FFN
    */
   void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
 
+  //! Get the network model.
+  const std::vector<LayerTypes<CustomLayers...> >& Model() const
+  {
+    return network;
+  }
+  //! Modify the network model.
+  std::vector<LayerTypes<CustomLayers...> >& Model() { return network; }
+
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
 
