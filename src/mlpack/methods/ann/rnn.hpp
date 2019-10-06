@@ -91,7 +91,7 @@ class RNN
    * at time slice k.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
-   * @tparam CallbackTypes Types of Callback Functions
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
@@ -124,7 +124,7 @@ class RNN
    * at time slice k.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
-   * @tparam CallbackTypes Types of Callback Functions
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param callbacks Callback functions.

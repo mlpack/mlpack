@@ -94,7 +94,7 @@ class FFN
    * object, be sure to use std::move to avoid unnecessary copy.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
-   * @tparam CallbackTypes Types of Callback Functions
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
@@ -121,7 +121,7 @@ class FFN
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
-   * @tparam CallbackTypes Types of Callback Functions
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param responses Outputs results from input training variables.
    * @param callbacks Callback Functions.
    * @return The final objective of the trained model (NaN or Inf on error).
