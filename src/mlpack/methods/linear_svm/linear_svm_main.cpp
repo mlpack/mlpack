@@ -153,7 +153,7 @@ PARAM_MODEL_OUT(LinearSVMModel, "output_model", "Output for trained "
 
 // Testing.
 PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
-PARAM_UROW_IN("test_labels", "Matrix containing test labels.", "A");
+PARAM_UROW_IN("test_labels", "Matrix containing test labels.", "L");
 PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
     "the predictions for the test set will be saved.", "P");
 PARAM_MATRIX_OUT("probabilities", "If test data is specified, this "
