@@ -47,9 +47,9 @@ PROGRAM_INFO("Decision tree",
     " parameter specifies the minimum number of training points that must fall"
     " into each leaf for it to be split.  The " +
     PRINT_PARAM_STRING("minimum_gain_split") + " parameter specifies "
-    "the minimum gain that is needed for the node to split. The " +
+    "the minimum gain that is needed for the node to split.  The " +
     PRINT_PARAM_STRING("maximum_depth") + " parameter specifies "
-    "the maximum depth of the tree. If " +
+    "the maximum depth of the tree.  If " +
     PRINT_PARAM_STRING("print_training_error") + " is specified, the training "
     "error will be printed."
     "\n\n"
@@ -102,8 +102,8 @@ PARAM_INT_IN("minimum_leaf_size", "Minimum number of points in a leaf.", "n",
     20);
 PARAM_DOUBLE_IN("minimum_gain_split", "Minimum gain for node splitting.", "g",
     1e-7);
-PARAM_INT_IN("maximum_depth", "Maximum Depth of the tree.", "D",
-    0);
+PARAM_INT_IN("maximum_depth", "Maximum depth of the tree (0 means no limit).",
+    "D", 0);
 // This is deprecated and should be removed in mlpack 4.0.0.
 PARAM_FLAG("print_training_error", "Print the training error (deprecated; will "
       "be removed in mlpack 4.0.0).", "e");
@@ -162,7 +162,7 @@ static void mlpackMain()
       "leaf size must be positive");
 
   RequireParamValue<int>("maximum_depth", [](int x) { return x >= 0; }, true,
-      "depth must not be negative");
+      "maximum depth must not be negative");
 
   RequireParamValue<double>("minimum_gain_split", [](double x)
                          { return (x > 0.0 && x < 1.0); }, true,

@@ -50,7 +50,7 @@ PROGRAM_INFO("Random forests",
     " controls the number of trees in the random forest.  The " +
     PRINT_PARAM_STRING("minimum_gain_split") + " parameter controls the minimum"
     " required gain for a decision tree node to split.  Larger values will "
-    "force higher-confidence splits. The " +
+    "force higher-confidence splits.  The " +
     PRINT_PARAM_STRING("maximum_depth") + " parameter specifies "
     "the maximum depth of the tree.  The " +
     PRINT_PARAM_STRING("subspace_dim") + " parameter is used to control the "
@@ -107,7 +107,8 @@ PARAM_FLAG("print_training_accuracy", "If set, then the accuracy of the model "
 PARAM_INT_IN("num_trees", "Number of trees in the random forest.", "N", 10);
 PARAM_INT_IN("minimum_leaf_size", "Minimum number of points in each leaf "
     "node.", "n", 1);
-PARAM_INT_IN("maximum_depth", "Maximum depth of the tree.", "D", 0);
+PARAM_INT_IN("maximum_depth", "Maximum depth of the tree (0 means no limit).",
+    "D", 0);
 PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each "
     "point in the test set.", "P");
 PARAM_UROW_OUT("predictions", "Predicted classes for each point in the test "
@@ -180,7 +181,7 @@ static void mlpackMain()
   RequireParamValue<int>("minimum_leaf_size", [](int x) { return x > 0; }, true,
       "minimum leaf size must be greater than 0");
   RequireParamValue<int>("maximum_depth", [](int x) { return x >= 0; }, true,
-      "depth must not be negative");
+      "maximum depth must not be negative");
   RequireParamValue<int>("subspace_dim", [](int x) { return x >= 0; }, true,
       "subspace dimensionality must be nonnegative");
   RequireParamValue<double>("minimum_gain_split",

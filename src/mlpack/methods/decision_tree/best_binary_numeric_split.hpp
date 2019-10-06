@@ -45,7 +45,6 @@ class BestBinaryNumericSplit
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in a leaf node for
    *      splitting.
-   * @param maximumDepth Maximum Depth Minimum for the tree.
    * @param classProbabilities Class probabilities vector, which may be filled
    *      with split information a successful split.
    * @param aux Auxiliary split information, which may be modified on a
@@ -60,7 +59,6 @@ class BestBinaryNumericSplit
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,
-      const size_t maximumDepth,
       arma::Col<typename VecType::elem_type>& classProbabilities,
       AuxiliarySplitInfo<typename VecType::elem_type>& aux);
 

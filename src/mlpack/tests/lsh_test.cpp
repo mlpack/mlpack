@@ -486,7 +486,7 @@ BOOST_AUTO_TEST_CASE(DeterministicNoMerge)
 BOOST_AUTO_TEST_CASE(MultiprobeTest)
 {
   // Test parameters.
-  const double epsilonIncrease = 0.05;
+  const double epsilonIncrease = 0.01;
   const size_t repetitions = 5; // Train five objects.
 
   const size_t probeTrials = 5;
@@ -506,6 +506,11 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
   arma::mat qdata;
   data::Load(trainSet, rdata, true);
   data::Load(testSet, qdata, true);
+
+  // Add a slight amount of noise to the dataset, so that we don't end up with
+  // points that have the same distance (hopefully).
+  rdata += 0.0001 * arma::randn<arma::mat>(rdata.n_rows, rdata.n_cols);
+  qdata += 0.0001 * arma::randn<arma::mat>(qdata.n_rows, qdata.n_cols);
 
   // Run classic knn on reference set.
   KNN knn(rdata);

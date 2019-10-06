@@ -25,14 +25,9 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
-    const size_t maximumDepth,
     arma::Col<typename VecType::elem_type>& classProbabilities,
     AuxiliarySplitInfo<typename VecType::elem_type>& /* aux */)
 {
-  // First sanity check: if we have reached maximum depth, we can't split.
-  if (maximumDepth == 1)
-    return DBL_MAX;
-
   // First sanity check: if we don't have enough points, we can't split.
   if (data.n_elem < (minimumLeafSize * 2))
     return DBL_MAX;
