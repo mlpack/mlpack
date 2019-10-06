@@ -193,7 +193,7 @@ SpillTree(const SpillTree& other) :
 }
 
 /**
- *   Copy Assignment
+ * Copy Assignment
  * */
 template<typename MetricType,
          typename StatisticType,
@@ -216,6 +216,7 @@ operator=(const SpillTree& other)
   stat = other.stat;
   parentDistance = other.parentDistance;
   furthestDescendantDistance = other.furthestDescendantDistance;
+
   // Copy matrix, but only if we are the root and the other tree has its own
   // copy of the dataset.
   dataset = (other.parent == NULL && other.localDataset) ?
@@ -308,7 +309,7 @@ SpillTree(SpillTree&& other) :
 }
 
 /**
- *  Move Assignment
+ * Move Assignment
  * */
 template<typename MetricType,
          typename StatisticType,
