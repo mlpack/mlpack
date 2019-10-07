@@ -14,7 +14,7 @@ using namespace mlpack::ann;
 BOOST_AUTO_TEST_SUITE(CallbackTest);
 
 /**
- * Test a FFN model with PrintLoss callback
+ * Test a FFN model with PrintLoss callback.
  */
 BOOST_AUTO_TEST_CASE(FFNCallbackTest)
 {
@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(FFNCallbackTest)
 }
 
 /**
- * Test a FFN model with PrintLoss callback and optimizer parameter
+ * Test a FFN model with PrintLoss callback and optimizer parameter.
  */
 BOOST_AUTO_TEST_CASE(FFNWithOptimizerCallbackTest)
 {
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(FFNWithOptimizerCallbackTest)
 }
 
 /**
- * Test a RNN model with PrintLoss callback
+ * Test a RNN model with PrintLoss callback.
  */
 BOOST_AUTO_TEST_CASE(RNNCallbackTest)
 {
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(RNNCallbackTest)
 }
 
 /**
- * Test a RNN model with PrintLoss callback and optimizer parameter
+ * Test a RNN model with PrintLoss callback and optimizer parameter.
  */
 BOOST_AUTO_TEST_CASE(RNNWithOptimizerCallbackTest)
 {
