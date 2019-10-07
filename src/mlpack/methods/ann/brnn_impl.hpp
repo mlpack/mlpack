@@ -63,12 +63,13 @@ BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
 template<typename OutputLayerType, typename MergeLayerType,
          typename MergeOutputType, typename InitializationRuleType,
          typename... CustomLayers>
-template<typename OptimizerType>
+template<typename OptimizerType, typename... CallbackTypes>
 double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::Train(
     arma::cube predictors,
     arma::cube responses,
-    OptimizerType& optimizer)
+    OptimizerType& optimizer,
+    CallbackTypes&&... callbacks)
 {
   numFunctions = responses.n_cols;
 
@@ -85,7 +86,7 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
 
   // Train the model.
   Timer::Start("BRNN_optimization");
-  const double out = optimizer.Optimize(*this, parameter);
+  const double out = optimizer.Optimize(*this, parameter, callbacks...);
   Timer::Stop("BRNN_optimization");
 
   Log::Info << "BRNN::BRNN(): final objective of trained model is " << out
@@ -96,11 +97,12 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
 template<typename OutputLayerType, typename MergeLayerType,
          typename MergeOutputType, typename InitializationRuleType,
          typename... CustomLayers>
-template<typename OptimizerType>
+template<typename OptimizerType, typename... CallbackTypes>
 double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::Train(
     arma::cube predictors,
-    arma::cube responses)
+    arma::cube responses,
+    CallbackTypes&&... callbacks)
 {
   numFunctions = responses.n_cols;
 
@@ -118,7 +120,7 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
   OptimizerType optimizer;
 
   // Train the model.
-  const double out = optimizer.Optimize(*this, parameter);
+  const double out = optimizer.Optimize(*this, parameter, callbacks...);
 
   Log::Info << "BRNN::BRNN(): final objective of trained model is " << out
       << "." << std::endl;

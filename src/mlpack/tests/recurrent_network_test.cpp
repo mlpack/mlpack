@@ -16,6 +16,7 @@
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 #include <mlpack/methods/ann/brnn.hpp>
+#include <ensmallen_bits/callbacks/callbacks.hpp>
 #include <mlpack/core/data/binarize.hpp>
 #include <mlpack/core/math/random.hpp>
 
@@ -1412,5 +1413,83 @@ BOOST_AUTO_TEST_CASE(BRNNTrainReturnObjective)
   // Test that BRNN::Train() returns finite objective value.
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 }
+
+/**
+ * Test a BRNN model with PrintLoss callback and optimizer.
+ */
+BOOST_AUTO_TEST_CASE(BRNNWithOptimizerCallbackTest)
+{
+  const size_t rho = 10;
+
+  arma::cube input;
+  arma::mat labelsTemp;
+  GenerateNoisySines(input, labelsTemp, rho, 6);
+
+  arma::cube labels = arma::zeros<arma::cube>(1, labelsTemp.n_cols, rho);
+  for (size_t i = 0; i < labelsTemp.n_cols; ++i)
+  {
+    const int value = arma::as_scalar(arma::find(
+        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+    labels.tube(0, i).fill(value);
+  }
+
+  Add<> add(4);
+  Linear<> lookup(1, 4);
+  SigmoidLayer<> sigmoidLayer;
+  Linear<> linear(4, 4);
+  Recurrent<>* recurrent = new Recurrent<>(
+      add, lookup, linear, sigmoidLayer, rho);
+
+  BRNN<> model(rho);
+  model.Add<IdentityLayer<> >();
+  model.Add(recurrent);
+  model.Add<Linear<> >(4, 5);
+  std::stringstream stream;
+  
+  StandardSGD opt(0.1, 1, 500 * input.n_cols, -100);
+  model.Train(input, labels, opt, PrintLoss(stream));
+  BOOST_TEST_CHECKPOINT("Training over");
+
+  BOOST_REQUIRE_GT(stream.str().length(), 0);
+}
+
+/**
+ * Test a BRNN model with PrintLoss callbacks.
+ */
+BOOST_AUTO_TEST_CASE(BRNNCallbackTest)
+{
+  const size_t rho = 10;
+
+  arma::cube input;
+  arma::mat labelsTemp;
+  GenerateNoisySines(input, labelsTemp, rho, 6);
+
+  arma::cube labels = arma::zeros<arma::cube>(1, labelsTemp.n_cols, rho);
+  for (size_t i = 0; i < labelsTemp.n_cols; ++i)
+  {
+    const int value = arma::as_scalar(arma::find(
+        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+    labels.tube(0, i).fill(value);
+  }
+
+  Add<> add(4);
+  Linear<> lookup(1, 4);
+  SigmoidLayer<> sigmoidLayer;
+  Linear<> linear(4, 4);
+  Recurrent<>* recurrent = new Recurrent<>(
+      add, lookup, linear, sigmoidLayer, rho);
+
+  BRNN<> model(rho);
+  model.Add<IdentityLayer<> >();
+  model.Add(recurrent);
+  model.Add<Linear<> >(4, 5);
+  std::stringstream stream;
+  
+  model.Train(input, labels, PrintLoss(stream));
+  BOOST_TEST_CHECKPOINT("Training over");
+
+  BOOST_REQUIRE_GT(stream.str().length(), 0);
+}
+
 
 BOOST_AUTO_TEST_SUITE_END();
