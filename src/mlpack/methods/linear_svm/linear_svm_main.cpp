@@ -405,7 +405,7 @@ static void mlpackMain()
       }
 
       numClasses = CLI::GetParam<int>("num_classes") == 0 ?
-        model->mappings.n_elem : CLI::GetParam<int>("num_classes");
+          model->mappings.n_elem : CLI::GetParam<int>("num_classes");
       arma::Col<size_t> correctClassCounts;
       arma::Col<size_t> labelSize;
       correctClassCounts.zeros(numClasses);
