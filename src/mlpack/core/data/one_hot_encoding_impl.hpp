@@ -34,36 +34,19 @@ template<typename eT, typename RowType>
 void OneHotEncoding(const RowType& labelsIn,
                     arma::Mat<eT>& output)
 {
-  arma::Row<size_t> labels;
-  labels.set_size(labelsIn.n_elem);
+  RowType labels = arma::unique(labelsIn);
 
-  // Loop over the input labels, and develop the mapping.
-  std::unordered_map<eT, size_t> labelMap; // Map for labelsIn to labels.
-  size_t curLabel = 0;
+  // Resize output matrix to necessary size.
+  // Fill it with zero
+  output.zeros(labelsIn.n_elem, labels.n_elem);
+
+  // Filling one at required place
   for (size_t i = 0; i < labelsIn.n_elem; ++i)
-  {
-    // If labelsIn[i] is already in the map, use the existing label.
-    if (labelMap.count(labelsIn[i]) != 0)
-    {
-      labels[i] = labelMap[labelsIn[i]] - 1;
-    }
-    else
-    {
-      // If labelsIn[i] not there then add it to the map.
-      labelMap[labelsIn[i]] = curLabel + 1;
-      labels[i] = curLabel;
-      ++curLabel;
-    }
-  }
-  // Resize output matrix to necessary size, and fill it with zeros.
-  output.zeros(labelsIn.n_elem, curLabel);
-  // Fill ones in at the required places.
-  for (size_t i = 0; i < labelsIn.n_elem; ++i)
-  {
-    output(i, labels[i]) = 1;
-  }
-  labelMap.clear();
+    output(i, std::lower_bound(labels.begin(), labels.end(),
+        labelsIn[i]) - labels.begin()) = 1;
+
 }
+
 } // namespace data
 } // namespace mlpack
 
