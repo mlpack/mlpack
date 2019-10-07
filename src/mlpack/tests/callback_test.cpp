@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(FFNWithOptimizerCallbackTest)
 
   std::stringstream stream;
   ens::StandardSGD opt(0.1, 1, 5);
-  model.Train(data, labels, ens::PrintLoss(stream));
+  model.Train(data, labels, opt, ens::PrintLoss(stream));
 
   BOOST_REQUIRE_GT(stream.str().length(), 0);
 }
