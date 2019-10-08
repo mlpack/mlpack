@@ -38,14 +38,14 @@ void BayesianRidge::Train(const arma::mat& data,
   
   // Preprocess the data. Center and normalize.
   CenterNormalize(data,
-		  responses,
-		  fitIntercept,
-		  normalize,
-		  phi,
-		  t,
-		  data_offset,
-		  data_scale,
-		  responses_offset);
+		          responses,
+		          fitIntercept,
+		          normalize,
+		          phi,
+		          t,
+		          data_offset,
+		          data_scale,
+		          responses_offset);
   vecphitT = phi * t.t();
   phiphiT =  phi * phi.t();
 
