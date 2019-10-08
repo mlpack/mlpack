@@ -12,7 +12,7 @@
 #include "bayesian_ridge.hpp"
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/timers.hpp>
-
+      
 using namespace mlpack;
 using namespace mlpack::regression;
 
@@ -21,14 +21,7 @@ BayesianRidge::BayesianRidge(const bool fitIntercept,
 			     const bool normalize) :
   fitIntercept(fitIntercept),
   normalize(normalize)
-{
-  Log::Info << "Baysian Ridge regression(fitIntercept="
-	    << this->fitIntercept
-	    << ", normalize="
-	    << this->normalize
-	    << ")"
-	    << std::endl;
-}
+{/* Nothing to do */}
 
 void BayesianRidge::Train(const arma::mat& data,
 			  const arma::rowvec& responses)
@@ -44,15 +37,15 @@ void BayesianRidge::Train(const arma::mat& data,
   arma::colvec eigvali;
   
   // Preprocess the data. Center and normalize.
-  this->CenterNormalize(data,
-			responses,
-			this->fitIntercept,
-			this->normalize,
-			phi,
-			t,
-			this->data_offset,
-			this->data_scale,
-			this->responses_offset);
+  CenterNormalize(data,
+		  responses,
+		  fitIntercept,
+		  normalize,
+		  phi,
+		  t,
+		  data_offset,
+		  data_scale,
+		  responses_offset);
   vecphitT = phi * t.t();
   phiphiT =  phi * phi.t();
 
@@ -62,8 +55,8 @@ void BayesianRidge::Train(const arma::mat& data,
   unsigned short p = data.n_rows, n = data.n_cols;
   // Initialize the hyperparameters and
   // begin with an infinitely broad prior.
-  this->alpha = 1e-6;
-  this->beta =  1 / (var(t) * 0.1);
+  alpha = 1e-6;
+  beta =  1 / (var(t) * 0.1);
   
   double tol = 1e-3;
   unsigned short nIterMax = 50;
@@ -74,82 +67,83 @@ void BayesianRidge::Train(const arma::mat& data,
 
   while ((crit > tol) && (i < nIterMax))
     {
-      deltaAlpha = -this->alpha;
-      deltaBeta = -this->beta;
+      deltaAlpha = -alpha;
+      deltaBeta = -beta;
 
       // Compute the posterior statistics.
       // with inv()
-      for (size_t k = 0; k < p; k++) {matA(k, k) = this->alpha;}
+      for (size_t k = 0; k < p; k++) {matA(k, k) = alpha;}
       // inv is used instead of solve beacause we need matCovariance to
       // compute the prediction uncertainties. If solve is used, matCovariance
       // must be comptuted at the end of the loop.
-      this->matCovariance = inv_sympd(matA + phiphiT * this->beta);
-      this->omega = (this->matCovariance * vecphitT) * this->beta;
+      matCovariance = inv_sympd(matA + phiphiT * beta);
+      omega = (matCovariance * vecphitT) * beta;
 
       // // with solve()
-      // for (size_t k = 0; k < p; k++) {matA(k,k) = this->alpha / this->beta;}
-      // this->omega = solve(matA + phiphiT, vecphitT);
+      // for (size_t k = 0; k < p; k++) {matA(k,k) = alpha / beta;}
+      // omega = solve(matA + phiphiT, vecphitT);
 
       // Update alpha.
-      eigvali = eigval * this->beta;
-      gamma = sum(eigvali / (this->alpha + eigvali));
-      this->alpha = gamma / dot(this->omega.t(), this->omega);
+      eigvali = eigval * beta;
+      gamma = sum(eigvali / (alpha + eigvali));
+      alpha = gamma / dot(omega.t(), omega);
 
       // Update beta.
-      temp = t - this->omega.t() * phi;
-      this->beta = (n - gamma) / dot(temp, temp);
+      temp = t - omega.t() * phi;
+      beta = (n - gamma) / dot(temp, temp);
       
       // Comptute the stopping criterion.
-      deltaAlpha += this->alpha;
-      deltaBeta += this->beta;
-      crit = abs(deltaAlpha/this->alpha + deltaBeta/this->beta);
+      deltaAlpha += alpha;
+      deltaBeta += beta;
+      crit = abs(deltaAlpha/alpha + deltaBeta/beta);
       i++;
     }
   Timer::Stop("bayesian_ridge_regression");
 }
 
 void BayesianRidge::Predict(const arma::mat& points,
-			    arma::rowvec& predictions) const
+                            arma::rowvec& predictions) const
 {
   arma::mat X = points;
 
   // Center and normalize the points before applying the model
-  X.each_col() -= this->data_offset;
-  X.each_col() /= this->data_scale;
-  predictions = this->omega.t() * X + this->responses_offset;
+  X.each_col() -= data_offset;
+  X.each_col() /= data_scale;
+  predictions = omega.t() * X + responses_offset;
 }
 
-void BayesianRidge::Predict(const arma::colvec& point, double& prediction) const
+void BayesianRidge::Predict(const arma::colvec& point,
+                            double& prediction) const
 {
   arma::mat point_mat = arma::conv_to<arma::mat>::from(point);
   arma::rowvec prediction_vec(1);
-  this->Predict(point_mat, prediction_vec);
+  Predict(point_mat, prediction_vec);
   prediction = prediction_vec[0];
 }
 
 
 void BayesianRidge::Predict(const arma::colvec& point,
-			    double& prediction,
-			    double& std) const
+                            double& prediction,
+                            double& std) const
 {
   arma::mat point_mat = arma::conv_to<arma::mat>::from(point);
   arma::rowvec prediction_vec(1);
   arma::rowvec std_vec(1);
-  this->Predict(point_mat, prediction_vec, std_vec);
+  Predict(point_mat, prediction_vec, std_vec);
   prediction = prediction_vec[0];
   std = std_vec[0];
 }
 
 void BayesianRidge::Predict(const arma::mat& points,
-			    arma::rowvec& predictions,
-			    arma::rowvec& std) const
+                            arma::rowvec& predictions,
+                            arma::rowvec& std) const
 {
   arma::mat X = points;
 
   // Center and normalize the points before applying the model.
-  X.each_col() -= this->data_offset;
-  X.each_col() /= this->data_scale;
-  predictions = this->omega.t() * X + this->responses_offset;
+  X.each_col() -= data_offset;
+  X.each_col() /= data_scale;
+  predictions = omega.t() * X + responses_offset;
   
   // Compute the standard deviation of each prediction.
   std = arma::zeros<arma::rowvec>(X.n_cols);
@@ -157,28 +151,28 @@ void BayesianRidge::Predict(const arma::mat& points,
   for (size_t i = 0; i < X.n_cols; i++)
     {
       phi = X.col(i);
-      std[i] = sqrt(this->Variance()
-		    + dot(phi.t() * this->matCovariance, phi));
+      std[i] = sqrt(Variance()
+               + dot(phi.t() * matCovariance, phi));
     }
 }
 
 double BayesianRidge::Rmse(const arma::mat& data,
-			   const arma::rowvec& responses) const
+                           const arma::rowvec& responses) const
 {
   arma::rowvec predictions;
-  this->Predict(data, predictions);
+  Predict(data, predictions);
   return sqrt(mean(square(responses - predictions)));
 }
 
 void BayesianRidge::CenterNormalize(const arma::mat& data,
-				    const arma::rowvec& responses,
-				    bool fit_intercept,
-				    bool normalize,
-				    arma::mat& data_proc,
-				    arma::rowvec& responses_proc,
-				    arma::colvec& data_offset,
-				    arma::colvec& data_scale,
-				    double& responses_offset)
+                                    const arma::rowvec& responses,
+                                    bool fit_intercept,
+                                    bool normalize,
+                                    arma::mat& data_proc,
+                                    arma::rowvec& responses_proc,
+                                    arma::colvec& data_offset,
+                                    arma::colvec& data_scale,
+                                    double& responses_offset)
 {
   // Initialize the offsets to their neutral forms.
   data_offset = arma::zeros<arma::colvec>(data.n_rows);
@@ -268,7 +262,7 @@ BayesianRidge& BayesianRidge::operator=(const BayesianRidge& other)
 
 BayesianRidge& BayesianRidge::operator=(BayesianRidge&& other)
 {
-  if (this != &other )
+  if (this != &other)
     {
       fitIntercept = other.fitIntercept;
       normalize = other.normalize;
