@@ -95,11 +95,11 @@ BOOST_AUTO_TEST_CASE(TestCenter1Normalize1)
   arma::colvec x_std = arma::stddev(X, 0, 1);
   double y_mean = arma::mean(y);
 
-  BOOST_REQUIRE_SMALL(sum(estimator.Data_offset() - x_mean), 1e-6);
+  BOOST_REQUIRE_SMALL((double) abs(sum(estimator.Data_offset() - x_mean)), 1e-6);
 
-  BOOST_REQUIRE_SMALL(abs(estimator.Responses_offset() - y_mean), 1e-6);
+  BOOST_REQUIRE_SMALL((double) abs(estimator.Responses_offset() - y_mean), 1e-6);
 
-  BOOST_REQUIRE_SMALL(sum(estimator.Data_scale() - x_std), 1e-6);
+  BOOST_REQUIRE_SMALL((double) abs(sum(estimator.Data_scale() - x_std)), 1e-6);
 }
 
 
