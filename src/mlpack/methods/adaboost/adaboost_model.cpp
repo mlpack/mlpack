@@ -119,10 +119,12 @@ void AdaBoostModel::Train(const mat& data,
 }
 
 //! Classify test points.
-void AdaBoostModel::Classify(const mat& testData, Row<size_t>& predictions)
+void AdaBoostModel::Classify(const mat& testData,
+                             Row<size_t>& predictions,
+                             mat& probabilities)
 {
   if (weakLearnerType == WeakLearnerTypes::DECISION_STUMP)
-    dsBoost->Classify(testData, predictions);
+    dsBoost->Classify(testData, predictions, probabilities);
   else if (weakLearnerType == WeakLearnerTypes::PERCEPTRON)
-    pBoost->Classify(testData, predictions);
+    pBoost->Classify(testData, predictions, probabilities);
 }

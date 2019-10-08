@@ -120,7 +120,9 @@ PARAM_UROW_IN("labels", "Labels for the training set.", "l");
 PARAM_MATRIX_IN("test", "Test dataset.", "T");
 // PARAM_UROW_OUT("output") is deprecated and will be removed in mlpack 4.0.0.
 PARAM_UROW_OUT("output", "Predicted labels for the test set.", "o");
-PARAM_UROW_OUT("predictions", "Predicted labels for the test set.", "P");
+PARAM_UROW_OUT("predictions", "Predicted labels for the test set.", "p");
+PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each "
+    "point in the test set.", "P");
 
 // Training options.
 PARAM_INT_IN("iterations", "The maximum number of boosting iterations to be run"
@@ -233,8 +235,10 @@ static void mlpackMain()
           << m->Dimensionality() << ")!" << endl;
 
     Row<size_t> predictedLabels(testingData.n_cols);
+    mat probabilities;
+
     Timer::Start("adaboost_classification");
-    m->Classify(testingData, predictedLabels);
+    m->Classify(testingData, predictedLabels, probabilities);
     Timer::Stop("adaboost_classification");
 
     Row<size_t> results;
@@ -245,6 +249,8 @@ static void mlpackMain()
       CLI::GetParam<arma::Row<size_t>>("output") = results;
     if (CLI::HasParam("predictions"))
       CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(results);
+    if (CLI::HasParam("probabilities"))
+      CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
   }
 
   CLI::GetParam<AdaBoostModel*>("output_model") = m;

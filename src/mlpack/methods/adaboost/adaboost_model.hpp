@@ -87,7 +87,9 @@ class AdaBoostModel
              const double tolerance);
 
   //! Classify test points.
-  void Classify(const arma::mat& testData, arma::Row<size_t>& predictions);
+  void Classify(const arma::mat& testData,
+                arma::Row<size_t>& predictions,
+                arma::mat& probabilities);
 
   //! Serialize the model.
   template<typename Archive>

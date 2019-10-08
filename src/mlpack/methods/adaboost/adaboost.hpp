@@ -153,7 +153,9 @@ class AdaBoost
    * @param predictedLabels Vector in which to the predicted labels of the test
    *      set will be stored.
    */
-  void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
+  void Classify(const MatType& test,
+                arma::Row<size_t>& predictedLabels,
+                arma::mat& probabilities);
 
   /**
    * Serialize the AdaBoost model.
