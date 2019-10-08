@@ -99,7 +99,11 @@ build_script:
     "%MSBUILD%" "C:\projects\mlpack\build\mlpack.sln"
     /m /verbosity:minimal /nologo /p:BuildInParallel=true
     /p:Configuration=Release;Platform=x64
-  
+
+  - >
+    "%MSBUILD%" "C:\projects\mlpack\doc\examples\sample-ml-app.sln"
+    /m /verbosity:minimal /nologo /p:BuildInParallel=true
+
   # Zip Artifacts.
   - >
     7z a mlpack-windows-no-libs.zip
