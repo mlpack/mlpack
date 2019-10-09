@@ -56,7 +56,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
-  a.Classify(inputData, predictedLabels);
+  arma::mat probabilities;
+  a.Classify(inputData, predictedLabels, probabilities);
 
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -108,7 +109,8 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
   AdaBoost<> a(inputData, labels.row(0), numClasses, p, iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
-  a.Classify(inputData, predictedLabels);
+  arma::mat probabilities;
+  a.Classify(inputData, predictedLabels, probabilities);
 
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -149,7 +151,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
-  a.Classify(inputData, predictedLabels);
+  arma::mat probabilities;
+  a.Classify(inputData, predictedLabels, probabilities);
 
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -199,7 +202,8 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
   AdaBoost<> a(inputData, labels.row(0), numClasses, p, iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
-  a.Classify(inputData, predictedLabels);
+  arma::mat probabilities;
+  a.Classify(inputData, predictedLabels, probabilities);
 
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -240,7 +244,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
-  a.Classify(inputData, predictedLabels);
+  arma::mat probabilities;
+  a.Classify(inputData, predictedLabels, probabilities);
 
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -290,7 +295,8 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
   AdaBoost<> a(inputData, labels.row(0), numClasses, p, iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
-  a.Classify(inputData, predictedLabels);
+  arma::mat probabilities;
+  a.Classify(inputData, predictedLabels, probabilities);
 
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -329,7 +335,8 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
-  a.Classify(inputData, predictedLabels);
+  arma::mat probabilities;
+  a.Classify(inputData, predictedLabels, probabilities);
 
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -383,7 +390,8 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
-  a.Classify(inputData, predictedLabels);
+  arma::mat probabilities;
+  a.Classify(inputData, predictedLabels, probabilities);
 
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -425,7 +433,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
-  a.Classify(inputData, predictedLabels);
+  arma::mat probabilities;
+  a.Classify(inputData, predictedLabels, probabilities);
 
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -476,7 +485,8 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
-  a.Classify(inputData, predictedLabels);
+  arma::mat probabilities;
+  a.Classify(inputData, predictedLabels, probabilities);
 
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -517,7 +527,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
-  a.Classify(inputData, predictedLabels);
+  arma::mat probabilities;
+  a.Classify(inputData, predictedLabels, probabilities);
 
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -569,7 +580,8 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
-  a.Classify(inputData, predictedLabels);
+  arma::mat probabilities;
+  a.Classify(inputData, predictedLabels, probabilities);
 
   size_t countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -621,7 +633,8 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
   AdaBoost<> a(inputData, labels.row(0), numClasses, p, iterations, tolerance);
 
   arma::Row<size_t> predictedLabels(testData.n_cols);
-  a.Classify(testData, predictedLabels);
+  arma::mat probabilities;
+  a.Classify(testData, predictedLabels, probabilities);
 
   size_t localError = 0;
   for (size_t i = 0; i < trueTestLabels.n_cols; i++)
@@ -672,7 +685,8 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels(testData.n_cols);
-  a.Classify(testData, predictedLabels);
+  arma::mat probabilities;
+  a.Classify(testData, predictedLabels, probabilities);
 
   size_t localError = 0;
   for (size_t i = 0; i < trueTestLabels.n_cols; i++)
@@ -716,8 +730,8 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
     BOOST_FAIL("Cannot load test dataset iris_test.csv!");
 
   arma::Row<size_t> predictedLabels(testData.n_cols);
-
-  a.Classify(testData, predictedLabels);
+  arma::mat probabilities;
+  a.Classify(testData, predictedLabels, probabilities);
 
   arma::Mat<size_t> trueTestLabels;
   if (!data::Load("iris_test_labels.csv", trueTestLabels))
@@ -779,7 +793,8 @@ BOOST_AUTO_TEST_CASE(TrainTest)
 
   // Define parameters for AdaBoost.
   arma::Row<size_t> predictedLabels(testData.n_cols);
-  a.Classify(testData, predictedLabels);
+  arma::mat probabilities;
+  a.Classify(testData, predictedLabels, probabilities);
 
   int localError = 0;
   for (size_t i = 0; i < trueTestLabels.n_cols; i++)

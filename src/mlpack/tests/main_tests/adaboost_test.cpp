@@ -323,8 +323,9 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
 
   // Calculate accuracy.
   arma::Row<size_t> output;
+  arma::mat probabilities;
   CLI::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
-       output);
+       output, probabilities);
 
   size_t correct = arma::accu(output == testLabels);
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
@@ -341,7 +342,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
 
   // Calculate accuracy.
   CLI::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
-       output);
+       output, probabilities);
 
   correct = arma::accu(output == testLabels);
   double accuracy10 = (double(correct) / double(testLabels.n_elem) * 100);
@@ -358,7 +359,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
 
   // Calculate accuracy.
   CLI::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
-       output);
+       output, probabilities);
 
   correct = arma::accu(output == testLabels);
   double accuracy100 = (double(correct) / double(testLabels.n_elem) * 100);
@@ -398,8 +399,9 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
 
   // Calculate accuracy.
   arma::Row<size_t> output;
+  arma::mat probabilities;
   CLI::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
-       output);
+       output, probabilities);
 
   size_t correct = arma::accu(output == testLabels);
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
@@ -415,7 +417,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
 
   // Calculate accuracy.
   CLI::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
-       output);
+       output, probabilities);
 
   correct = arma::accu(output == testLabels);
   double accuracy2 = (double(correct) / double(testLabels.n_elem) * 100);
@@ -431,7 +433,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
 
   // Calculate accuracy.
   CLI::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
-       output);
+       output, probabilities);
 
   correct = arma::accu(output == testLabels);
   double accuracy3 = (double(correct) / double(testLabels.n_elem) * 100);
