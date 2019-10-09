@@ -4,6 +4,8 @@
 
   * Update documentation for pip and conda installation packages (#2044).
 
+  * Add CLI-Bindings for LinearSVM (#1935)
+
 ### mlpack 3.2.1
 ###### 2019-10-01
   * Enforce CMake version check for ensmallen (#2032).
