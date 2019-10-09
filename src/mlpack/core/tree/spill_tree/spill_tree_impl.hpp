@@ -319,7 +319,8 @@ template<typename MetricType,
              class SplitType>
 SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
 SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-operator=(SpillTree&& other){
+operator=(SpillTree&& other)
+{
   left = other.left;
   right = other.right;
   parent = other.parent;
@@ -355,7 +356,6 @@ operator=(SpillTree&& other){
 
   return *this;
 }
-
 
 /**
  * Initialize the tree from an archive.
