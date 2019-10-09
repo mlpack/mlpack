@@ -193,8 +193,8 @@ SpillTree(const SpillTree& other) :
 }
 
 /**
- * Copy Assignment
- * */
+ * Copy Assignment.
+ */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -309,8 +309,8 @@ SpillTree(SpillTree&& other) :
 }
 
 /**
- * Move Assignment
- * */
+ * Move Assignment.
+ */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
