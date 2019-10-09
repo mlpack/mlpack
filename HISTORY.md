@@ -4,7 +4,8 @@
 
   * Update documentation for pip and conda installation packages (#2044).
 
-  * Add CLI-Bindings for LinearSVM (#1935)
+  * Add bindings for linear SVM (#1935); `mlpack_linear_svm` from the
+    command-line, `linear_svm()` from Python.
 
 ### mlpack 3.2.1
 ###### 2019-10-01
