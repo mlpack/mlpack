@@ -39,7 +39,8 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     height(0),
     reset(false),
     numFunctions(0),
-    deterministic(true)
+    deterministic(true),
+    supervised(true)
 {
   /* Nothing to do here */
 }
@@ -69,6 +70,23 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::ResetData(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::ResetData(
+    arma::mat predictors)
+{
+  numFunctions = predictors.n_cols;
+  this->predictors = std::move(predictors);
+  this->deterministic = true;
+  ResetDeterministic();
+
+  // As only predictors are passed make the learning mode as unsupervised.
+  supervised = false;
+
+  if (!reset)
+    ResetParameters();
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
 template<typename OptimizerType>
 double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
       arma::mat predictors,
@@ -76,6 +94,25 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
       OptimizerType& optimizer)
 {
   ResetData(std::move(predictors), std::move(responses));
+
+  // Train the model.
+  Timer::Start("ffn_optimization");
+  const double out = optimizer.Optimize(*this, parameter);
+  Timer::Stop("ffn_optimization");
+
+  Log::Info << "FFN::FFN(): final objective of trained model is " << out
+      << "." << std::endl;
+  return out;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+template<typename OptimizerType>
+double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
+      arma::mat predictors,
+      OptimizerType& optimizer)
+{
+  ResetData(std::move(predictors));
 
   // Train the model.
   Timer::Start("ffn_optimization");
@@ -262,9 +299,14 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
   }
 
   Forward(std::move(predictors.cols(begin, begin + batchSize - 1)));
-  double res = outputLayer.Forward(
-      std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
-      std::move(responses.cols(begin, begin + batchSize - 1)));
+  double res = 0;
+
+  if (supervised)
+  {
+    res = outputLayer.Forward(
+        std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
+        std::move(responses.cols(begin, begin + batchSize - 1)));
+  }
 
   for (size_t i = 0; i < network.size(); ++i)
   {
@@ -322,20 +364,27 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     ResetDeterministic();
   }
 
+  double res = 0;
   Forward(std::move(predictors.cols(begin, begin + batchSize - 1)));
-  double res = outputLayer.Forward(
-      std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
-      std::move(responses.cols(begin, begin + batchSize - 1)));
 
+  if (supervised)
+  {
+    res = outputLayer.Forward(
+        std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
+        std::move(responses.cols(begin, begin + batchSize - 1)));
+  }
   for (size_t i = 0; i < network.size(); ++i)
   {
     res += boost::apply_visitor(lossVisitor, network[i]);
   }
 
-  outputLayer.Backward(
-      std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
-      std::move(responses.cols(begin, begin + batchSize - 1)),
-      std::move(error));
+  if (supervised)
+  {
+    outputLayer.Backward(
+        std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
+        std::move(responses.cols(begin, begin + batchSize - 1)),
+        std::move(error));
+  }
 
   Backward();
   ResetGradients(gradient);
@@ -561,6 +610,7 @@ void FFN<OutputLayerType, InitializationRuleType,
   std::swap(error, network.error);
   std::swap(currentInput, network.currentInput);
   std::swap(deterministic, network.deterministic);
+  std::swap(supervised, network.supervised);
   std::swap(delta, network.delta);
   std::swap(inputParameter, network.inputParameter);
   std::swap(outputParameter, network.outputParameter);
@@ -583,6 +633,7 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     error(network.error),
     currentInput(network.currentInput),
     deterministic(network.deterministic),
+    supervised(network.supervised),
     delta(network.delta),
     inputParameter(network.inputParameter),
     outputParameter(network.outputParameter),
@@ -612,6 +663,7 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     error(std::move(network.error)),
     currentInput(std::move(network.currentInput)),
     deterministic(network.deterministic),
+    supervised(network.supervised),
     delta(std::move(network.delta)),
     inputParameter(std::move(network.inputParameter)),
     outputParameter(std::move(network.outputParameter)),
