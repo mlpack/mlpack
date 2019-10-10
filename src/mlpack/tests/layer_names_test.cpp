@@ -105,31 +105,31 @@ BOOST_AUTO_TEST_CASE(LayerNameVisitorTest)
   BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       unsupportedLayer) == "unsupported");
   // Delete all instances.
-  delete &atrousConvolution;
-  delete &alphaDropout;
-  delete &batchNorm;
-  delete &constant;
-  delete &convolution;
-  delete &dropConnect;
-  delete &dropout;
-  delete &flexibleReLU;
-  delete &layerNorm;
-  delete &linear;
-  delete &linearNoBias;
-  delete &maxPooling;
-  delete &meanPooling;
-  delete &multiplyConstant;
-  delete &reLULayer;
-  delete &transposedConvolution;
-  delete &identityLayer;
-  delete &tanHLayer;
-  delete &eLU;
-  delete &hardTanH;
-  delete &leakyReLU;
-  delete &pReLU;
-  delete &sigmoidLayer;
-  delete &logSoftMax;
-  delete &unsupportedLayer;
+  boost::apply_visitor(DeleteVisitor(), atrousConvolution);
+  boost::apply_visitor(DeleteVisitor(), alphaDropout);
+  boost::apply_visitor(DeleteVisitor(), batchNorm);
+  boost::apply_visitor(DeleteVisitor(), constant);
+  boost::apply_visitor(DeleteVisitor(), convolution);
+  boost::apply_visitor(DeleteVisitor(), dropConnect);
+  boost::apply_visitor(DeleteVisitor(), dropout);
+  boost::apply_visitor(DeleteVisitor(), flexibleReLU);
+  boost::apply_visitor(DeleteVisitor(), layerNorm);
+  boost::apply_visitor(DeleteVisitor(), linear);
+  boost::apply_visitor(DeleteVisitor(), linearNoBias);
+  boost::apply_visitor(DeleteVisitor(), maxPooling);
+  boost::apply_visitor(DeleteVisitor(), meanPooling);
+  boost::apply_visitor(DeleteVisitor(), multiplyConstant);
+  boost::apply_visitor(DeleteVisitor(), reLULayer);
+  boost::apply_visitor(DeleteVisitor(), transposedConvolution);
+  boost::apply_visitor(DeleteVisitor(), identityLayer);
+  boost::apply_visitor(DeleteVisitor(), tanHLayer);
+  boost::apply_visitor(DeleteVisitor(), eLU);
+  boost::apply_visitor(DeleteVisitor(), hardTanH);
+  boost::apply_visitor(DeleteVisitor(), leakyReLU);
+  boost::apply_visitor(DeleteVisitor(), pReLU);
+  boost::apply_visitor(DeleteVisitor(), sigmoidLayer);
+  boost::apply_visitor(DeleteVisitor(), logSoftMax);
+  boost::apply_visitor(DeleteVisitor(), unsupportedLayer);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
