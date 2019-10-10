@@ -152,7 +152,6 @@ CosineTree::CosineTree(arma::mat& dataset,
 
 //! Copy the given tree.
 CosineTree::CosineTree(const CosineTree& other) :
-  //dataset((other.parent == NULL) ? other.dataset : NULL)
   dataset(other.dataset),
   delta(other.delta),
   parent(other.Parent()),
@@ -170,6 +169,7 @@ CosineTree::CosineTree(const CosineTree& other) :
   std::vector<CosineTree*> nodeStack;
   nodeStack.push_back(this);
 
+  dataset = other.parent->GetDataset();
   // While stack is not empty.
   while (nodeStack.size())
   {
@@ -191,7 +191,7 @@ CosineTree::CosineTree(const CosineTree& other) :
       nodeStack.push_back(currentRight);
 
       // Obtain the split point of the popped node.
-      arma::vec splitPoint = data.col(currentNode->SplitPointIndex());
+      arma::vec splitPoint = dataset.col(currentNode->SplitPointIndex());
 
       // Column indices of the the child nodes.
       std::vector<size_t> leftIndices, rightIndices;
@@ -204,10 +204,10 @@ CosineTree::CosineTree(const CosineTree& other) :
 
       size_t i, j, k;
       for (i = 0; i < leftIndices.size(); i++)
-        cosines(i) = arma::norm_dot(data.col(leftIndices[i]), splitPoint);
+        cosines(i) = arma::norm_dot(dataset.col(leftIndices[i]), splitPoint);
 
       for (j = 0, k = i; j < rightIndices.size(); j++, k++)
-        cosines(k) = arma::norm_dot(data.col(rightIndices[j]), splitPoint);
+        cosines(k) = arma::norm_dot(dataset.col(rightIndices[j]), splitPoint);
     }
   }
 }
@@ -221,7 +221,7 @@ operator=(const CosineTree& other)
   if (this == &other)
     return *this;
 
-  dataset = (other.parent == NULL) ? other.dataset : NULL;
+  dataset = (other.parent == NULL) ? other.parent->GetDataset() : NULL;
   delta = other.delta;
   parent = other.Parent();
   left = other.Left();
@@ -259,7 +259,7 @@ operator=(const CosineTree& other)
       nodeStack.push_back(currentRight);
 
       // Obtain the split point of the popped node.
-      arma::vec splitPoint = data.col(currentNode->SplitPointIndex());
+      arma::vec splitPoint = dataset.col(currentNode->SplitPointIndex());
 
       // Column indices of the the child nodes.
       std::vector<size_t> leftIndices, rightIndices;
@@ -272,10 +272,10 @@ operator=(const CosineTree& other)
 
       size_t i, j, k;
       for (i = 0; i < leftIndices.size(); i++)
-        cosines(i) = arma::norm_dot(data.col(leftIndices[i]), splitPoint);
+        cosines(i) = arma::norm_dot(dataset.col(leftIndices[i]), splitPoint);
 
       for (j = 0, k = i; j < rightIndices.size(); j++, k++)
-        cosines(k) = arma::norm_dot(data.col(rightIndices[j]), splitPoint);
+        cosines(k) = arma::norm_dot(dataset.col(rightIndices[j]), splitPoint);
     }
   }
 
@@ -300,7 +300,8 @@ CosineTree::CosineTree(CosineTree&& other) :
 {
   // Now we are a clone of the other tree.  But we must also clear the other
   // tree's contents, so it doesn't delete anything when it is destructed.
-  other.dataset = NULL;
+  arma::mat a;
+  other.dataset = a;
   other.parent = NULL;
   other.left = NULL;
   other.right = NULL;
@@ -336,7 +337,8 @@ operator=(CosineTree&& other)
 
   // Now we are a clone of the other tree.  But we must also clear the other
   // tree's contents, so it doesn't delete anything when it is destructed.
-  other.dataset = NULL;
+  arma::mat a;
+  other.dataset = a;
   other.parent = NULL;
   other.left = NULL;
   other.right = NULL;
