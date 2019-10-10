@@ -152,7 +152,7 @@ CosineTree::CosineTree(arma::mat& dataset,
 
 //! Copy the given tree.
 CosineTree::CosineTree(const CosineTree& other) :
-  dataset(other.dataset),
+  dataset(other.parent->GetDataset()),
   delta(other.delta),
   parent(other.Parent()),
   left(other.Left()),
@@ -169,7 +169,6 @@ CosineTree::CosineTree(const CosineTree& other) :
   std::vector<CosineTree*> nodeStack;
   nodeStack.push_back(this);
 
-  dataset = other.parent->GetDataset();
   // While stack is not empty.
   while (nodeStack.size())
   {
@@ -212,7 +211,7 @@ CosineTree::CosineTree(const CosineTree& other) :
   }
 }
 
-//! Copy Assignment
+//! Copy Assignment.
 CosineTree&
 CosineTree::
 operator=(const CosineTree& other)
@@ -316,7 +315,7 @@ CosineTree::CosineTree(CosineTree&& other) :
     right->parent = this;
 }
 
-//! Move Assignment
+//! Move Assignment.
 CosineTree&
 CosineTree::
 operator=(CosineTree&& other)
