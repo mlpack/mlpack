@@ -209,12 +209,11 @@ template<typename WeakLearnerType, typename MatType>
 void AdaBoost<WeakLearnerType, MatType>::Classify(
     const MatType& test,
     arma::Row<size_t>& predictedLabels,
-    arma::mat& cMatrix)
+    arma::mat& probabilities)
 {
   arma::Row<size_t> tempPredictedLabels(test.n_cols);
-  cMatrix.set_size(numClasses, test.n_cols);
 
-  cMatrix.zeros();
+  probabilities.zeros(numClasses, test.n_cols);
   predictedLabels.set_size(test.n_cols);
 
   for (size_t i = 0; i < wl.size(); i++)
@@ -222,16 +221,16 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
     wl[i].Classify(test, tempPredictedLabels);
 
     for (size_t j = 0; j < tempPredictedLabels.n_cols; j++)
-      cMatrix(tempPredictedLabels(j), j) += alpha[i];
+      probabilities(tempPredictedLabels(j), j) += alpha[i];
   }
 
-  arma::colvec cMRow;
+  arma::colvec pRow;
   arma::uword maxIndex = 0;
 
   for (size_t i = 0; i < predictedLabels.n_cols; i++)
   {
-    cMRow = cMatrix.unsafe_col(i);
-    cMRow.max(maxIndex);
+    pRow = probabilities.unsafe_col(i);
+    pRow.max(maxIndex);
     predictedLabels(i) = maxIndex;
   }
 }

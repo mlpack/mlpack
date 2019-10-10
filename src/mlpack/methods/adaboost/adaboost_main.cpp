@@ -120,9 +120,9 @@ PARAM_UROW_IN("labels", "Labels for the training set.", "l");
 PARAM_MATRIX_IN("test", "Test dataset.", "T");
 // PARAM_UROW_OUT("output") is deprecated and will be removed in mlpack 4.0.0.
 PARAM_UROW_OUT("output", "Predicted labels for the test set.", "o");
-PARAM_UROW_OUT("predictions", "Predicted labels for the test set.", "p");
+PARAM_UROW_OUT("predictions", "Predicted labels for the test set.", "P");
 PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each "
-    "point in the test set.", "P");
+    "point in the test set.", "p");
 
 // Training options.
 PARAM_INT_IN("iterations", "The maximum number of boosting iterations to be run"
