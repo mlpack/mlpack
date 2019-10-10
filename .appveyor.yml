@@ -150,7 +150,7 @@ build_script:
       cp C:\projects\mlpack\src\mlpack\tests\data\german.csv
       C:\projects\mlpack\dist\win-installer\staging\examples\sample-ml-app\sample-ml-app\data\
   - >
-    "%MSBUILD%" "C:\projects\mlpack\doc\examples\sample-ml-app.sln"
+    "%MSBUILD%" "C:\projects\mlpack\dist\win-installer\staging\sample-ml-app.sln"
     /m /verbosity:minimal /nologo /p:BuildInParallel=true
   
   # Checking current gitversion or mlpack version.
