@@ -78,15 +78,15 @@ TransposedConvolution<
 {
   weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
   // TODO: Use the Padding layer.
-  // padding = new Padding<>(padW, padW, padH, padH);
+  // padding = new Padding<>(this->padW, this->padW, this->padH, this->padH);
 
-  aW = (outputWidth + kW - 2 * padW - 2) % dW;
-  aH = (outputHeight + kH - 2 * padH - 2) % dH;
+  aW = (outputWidth + kW - 2 * this->padW - 2) % dW;
+  aH = (outputHeight + kH - 2 * this->padH - 2) % dH;
 
   // Check if the output height and width are possible given the other
   // parameters of the layer.
-  if (outputWidth != dW * (inputWidth - 1) + aW + 2 * padW + 2 - kW ||
-      outputHeight != dH * (inputHeight - 1) + aW + 2 * padH + 2 - kH)
+  if (outputWidth != dW * (inputWidth - 1) + aW + 2 * this->padW + 2 - kW ||
+      outputHeight != dH * (inputHeight - 1) + aH + 2 * this->padH + 2 - kH)
   {
     Log::Fatal << "The output width / output height is not possible given "
         << "the other parameters of the layer." << std::endl;
@@ -340,8 +340,6 @@ void TransposedConvolution<
   ar & BOOST_SERIALIZATION_NVP(inputHeight);
   ar & BOOST_SERIALIZATION_NVP(outputWidth);
   ar & BOOST_SERIALIZATION_NVP(outputHeight);
-  ar & BOOST_SERIALIZATION_NVP(aW);
-  ar & BOOST_SERIALIZATION_NVP(aH);
 
   if (Archive::is_loading::value)
   {
