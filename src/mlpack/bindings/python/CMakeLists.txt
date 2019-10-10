@@ -178,7 +178,7 @@ install(CODE "set(PYTHON_EXECUTABLE \"${PYTHON_EXECUTABLE}\")")
 install(CODE "set(CMAKE_BINARY_DIR \"${CMAKE_BINARY_DIR}\")")
 install(CODE "set(CMAKE_INSTALL_PREFIX \"${CMAKE_INSTALL_PREFIX}\")")
 install(CODE "execute_process(COMMAND mkdir -p $ENV{DESTDIR}${CMAKE_PYTHON_PATH})")
-install(SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/PythonInstall.cmake)
+install(SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/PythonInstall.cmake")
 
 # Prepare __init__.py for having all of the convenience imports appended to it.
 file(COPY mlpack/__init__.py DESTINATION

@@ -342,7 +342,7 @@ find_package(StbImage)
 if (NOT STB_IMAGE_FOUND)
   if (DOWNLOAD_STB_IMAGE)
     set(STB_DIR "stb")
-    install(DIRECTORY DESTINATION ${CMAKE_BINARY_DIR}/deps/${STB_DIR})
+    install(DIRECTORY DESTINATION "${CMAKE_BINARY_DIR}/deps/${STB_DIR}")
     file(DOWNLOAD http://mlpack.org/files/stb/stb_image.h
         "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h"
         STATUS STB_IMAGE_DOWNLOAD_STATUS_LIST LOG STB_IMAGE_DOWNLOAD_LOG
@@ -362,8 +362,8 @@ if (NOT STB_IMAGE_FOUND)
       message(STATUS
           "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
       # Now we have to also ensure these header files get installed.
-      install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-      install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+      install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+      install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
       add_definitions(-DHAS_STB)
     else ()
       list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
@@ -410,8 +410,8 @@ if (NOT ENSMALLEN_FOUND)
             "Successfully downloaded ensmallen into ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/")
 
         # Now we have to also ensure these header files get installed.
-        install(DIRECTORY ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen_bits/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ensmallen_bits)
-        install(FILES ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen_bits/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ensmallen_bits")
+        install(FILES "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen.hpp" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
       else ()
         message(FATAL_ERROR "Problem unpacking ensmallen!  Expected only one directory ensmallen-x.y.z/; found ${ENS_DIRECTORIES}. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
       endif ()
@@ -616,8 +616,8 @@ if (BUILD_CLI_EXECUTABLES AND UNIX)
     )
 
     # Set the rules to install the documentation.
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/share/man/
-        DESTINATION ${CMAKE_INSTALL_MANDIR})
+    install(DIRECTORY "${CMAKE_BINARY_DIR}/share/man/"
+        DESTINATION "${CMAKE_INSTALL_MANDIR}")
   endif ()
 endif ()
 
@@ -668,8 +668,8 @@ if (DOXYGEN_FOUND)
       COMMENT "Generating API documentation with Doxygen"
   )
 
-  install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html
-      DESTINATION ${CMAKE_INSTALL_DOCDIR}
+  install(DIRECTORY "${CMAKE_BINARY_DIR}/doc/html"
+      DESTINATION "${CMAKE_INSTALL_DOCDIR}"
       COMPONENT doc
       OPTIONAL
   )
@@ -748,6 +748,6 @@ if (PKG_CONFIG_FOUND)
       DEPENDS mlpack_headers
       COMMENT "Generating mlpack.pc (pkg-config) file.")
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc
-      DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig/)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc"
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
 endif ()
