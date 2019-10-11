@@ -7,6 +7,8 @@
   * Add bindings for linear SVM (#1935); `mlpack_linear_svm` from the
     command-line, `linear_svm()` from Python.
 
+  * Add support to return the layer name as `std::string` (#1987).
+
 ### mlpack 3.2.1
 ###### 2019-10-01
   * Enforce CMake version check for ensmallen (#2032).
