@@ -52,6 +52,7 @@ add_executable(mlpack_test
   krann_search_test.cpp
   ksinit_test.cpp
   lars_test.cpp
+  layer_names_test.cpp
   lin_alg_test.cpp
   linear_regression_test.cpp
   linear_svm_test.cpp
