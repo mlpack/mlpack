@@ -14,21 +14,15 @@ option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
+option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 
-# Currently Python bindings aren't known to build successfully on Windows, so
-# set BUILD_PYTHON_BINDINGS to OFF when the platform is Windows.
 if (WIN32)
-  option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." OFF)
-  if (NOT BUILD_PYTHON_BINDINGS)
-    message(WARNING "By default Python bindings are not compiled for Windows because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if you want them built.")
-  endif ()
 
   set(DLL_COPY_DIRS "" CACHE STRING "List of directories (separated by ';') containing DLLs to copy for runtime.")
   set(DLL_COPY_LIBS "" CACHE STRING "List of DLLs (separated by ';') that should be copied for runtime.")
 else ()
-  option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 endif()
