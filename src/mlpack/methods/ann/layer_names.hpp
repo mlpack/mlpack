@@ -210,8 +210,8 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   /*
    * Return the name of the given layer of type IdentityLayer as a string.
    * 
-   * @param Given layer of type IdentityLayer
-   * @return The string representation of the layer
+   * @param Given layer of type IdentityLayer.
+   * @return The string representation of the layer.
    */
   std::string LayerString(IdentityLayer<>* /*layer*/) const
   {

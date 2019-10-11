@@ -1,5 +1,6 @@
 /**
  * @file layer_names_test.cpp
+ * @author Sreenik Seal
  *
  * Tests for testing the string representation of
  * layers in mlpack's ANN module.
@@ -51,7 +52,7 @@ BOOST_AUTO_TEST_CASE(LayerNameVisitorTest)
   LayerTypes<> pReLU = new PReLU<>();
   LayerTypes<> sigmoidLayer = new SigmoidLayer<>();
   LayerTypes<> logSoftMax = new LogSoftMax<>();
-  // Bilinear interpolation is not yet supported by the string converter
+  // Bilinear interpolation is not yet supported by the string converter.
   LayerTypes<> unsupportedLayer = new BilinearInterpolation<>();
 
   BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
