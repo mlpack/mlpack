@@ -9,6 +9,8 @@
 
   * Add support to return the layer name as `std::string` (#1987).
 
+  * Speed and memory improvements for the Transposed Convolution layer (#1493).
+
 ### mlpack 3.2.1
 ###### 2019-10-01
   * Enforce CMake version check for ensmallen (#2032).
