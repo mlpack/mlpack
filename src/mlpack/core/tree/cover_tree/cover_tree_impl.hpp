@@ -559,20 +559,23 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>&
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 operator=(const CoverTree& other)
 {
-    dataset = ((other.parent == NULL && other.localDataset) ?
-        new MatType(*other.dataset) : other.dataset);
-    point = other.point;
-    scale = other.scale;
-    base = other.base;
-    stat = other.stat;
-    numDescendants = other.numDescendants;
-    parent = other.parent;
-    parentDistance = other.parentDistance;
-    furthestDescendantDistance = other.furthestDescendantDistance;
-    localMetric = false;
-    localDataset = (other.parent == NULL && other.localDataset);
-    metric = other.metric;
-    distanceComps = 0;
+  if (this == &other)
+    return *this;
+
+  dataset = ((other.parent == NULL && other.localDataset) ?
+      new MatType(*other.dataset) : other.dataset);
+  point = other.point;
+  scale = other.scale;
+  base = other.base;
+  stat = other.stat;
+  numDescendants = other.numDescendants;
+  parent = other.parent;
+  parentDistance = other.parentDistance;
+  furthestDescendantDistance = other.furthestDescendantDistance;
+  localMetric = false;
+  localDataset = (other.parent == NULL && other.localDataset);
+  metric = other.metric;
+  distanceComps = 0;
 
   // Copy each child by hand.
   for (size_t i = 0; i < other.NumChildren(); ++i)
@@ -627,6 +630,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     metric(other.metric),
     distanceComps(other.distanceComps)
 {
+  if (this == &other)
+    return *this;
+
   // Set proper parent pointer.
   for (size_t i = 0; i < children.size(); ++i)
     children[i]->Parent() = this;
