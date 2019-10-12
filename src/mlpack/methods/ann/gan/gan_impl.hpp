@@ -148,6 +148,11 @@ void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
   deterministic = true;
   ResetDeterministic();
 
+  /**
+   * These predictors are shared by the discriminator network. The additional
+   * batch size predictors are taken from the generator network while training.
+   * For more details please look in EvaluateWithGradient() function.
+   */
   this->predictors.set_size(trainData.n_rows, numFunctions + batchSize);
   this->predictors.cols(0, numFunctions - 1) = std::move(trainData);
   this->discriminator.predictors = arma::mat(this->predictors.memptr(),
