@@ -244,6 +244,38 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   }
 
   Log::Info << "Output generated!" << std::endl;
+
+  // Check that Serialization is working correctly.
+  arma::mat orgPredictions;
+  gan.Predict(noise, orgPredictions);
+
+  GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
+      std::function<double()> > ganText(generator, discriminator,
+      gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
+      discriminatorPreTrain, multiplier);
+
+  GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
+      std::function<double()> > ganXml(generator, discriminator,
+      gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
+      discriminatorPreTrain, multiplier);
+
+  GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
+      std::function<double()> > ganBinary(generator, discriminator,
+      gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
+      discriminatorPreTrain, multiplier);
+
+  SerializeObjectAll(gan, ganXml, ganText, ganBinary);
+
+  arma::mat predictions, xmlPredictions, textPredictions, binaryPredictions;
+  gan.Predict(noise, predictions);
+  ganXml.Predict(noise, xmlPredictions);
+  ganText.Predict(noise, textPredictions);
+  ganBinary.Predict(noise, binaryPredictions);
+
+  CheckMatrices(orgPredictions, predictions);
+  CheckMatrices(orgPredictions, xmlPredictions);
+  CheckMatrices(orgPredictions, textPredictions);
+  CheckMatrices(orgPredictions, binaryPredictions);
 }
 
 /*
