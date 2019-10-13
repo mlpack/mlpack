@@ -660,7 +660,7 @@ operator=(CoverTree&& other)
 {
   if (this == &other)
     return *this;
-  
+
   dataset = other.dataset;
   point = other.point;
   children = std::move(other.children);
