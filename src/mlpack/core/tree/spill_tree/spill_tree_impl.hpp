@@ -205,6 +205,9 @@ SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
 SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 operator=(const SpillTree& other)
 {
+  if (this == &other)
+    return *this;
+
   left = NULL;
   right = NULL;
   parent = other.parent;
@@ -321,6 +324,9 @@ SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
 SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 operator=(SpillTree&& other)
 {
+  if (this == &other)
+    return *this;
+
   left = other.left;
   right = other.right;
   parent = other.parent;

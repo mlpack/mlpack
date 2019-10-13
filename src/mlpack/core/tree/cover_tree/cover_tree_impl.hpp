@@ -630,9 +630,6 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     metric(other.metric),
     distanceComps(other.distanceComps)
 {
-  if (this == &other)
-    return *this;
-
   // Set proper parent pointer.
   for (size_t i = 0; i < children.size(); ++i)
     children[i]->Parent() = this;
@@ -661,6 +658,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>&
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 operator=(CoverTree&& other)
 {
+  if (this == &other)
+    return *this;
+  
   dataset = other.dataset;
   point = other.point;
   children = std::move(other.children);
