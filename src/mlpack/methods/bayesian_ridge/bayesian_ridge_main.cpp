@@ -77,15 +77,15 @@ PROGRAM_INFO("BayesianRidge",
     PRINT_MODEL("bayesian_ridge_model") + ":"
     "\n\n" +
     PRINT_CALL("bayesian_ridge", "input", "data", "responses", "responses",
-	       "fitIntercept", 1, "normalize", 0, "output_model",
-	       "bayesian_ridge_model") +
+               "fitIntercept", 1, "normalize", 0, "output_model",
+               "bayesian_ridge_model") +
     "\n\n"
     "The following command uses the " + PRINT_MODEL("bayesian_ridge_model") +
     " to provide predicted responses for the data " + PRINT_DATASET("test") +
     " and save those responses to " + PRINT_DATASET("test_predictions") + ": "
     "\n\n" +
     PRINT_CALL("bayesian_ridge", "input_model", "bayesian_ridge_model", "test",
-    	       "test", "output_predictions", "test_predictions"));
+               "test", "output_predictions", "test_predictions"));
 
 PARAM_TMATRIX_IN("input", "Matrix of covariates (X).", "i");
 PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");
@@ -94,17 +94,17 @@ PARAM_MODEL_IN(BayesianRidge, "input_model", "Trained LARS model to use.", "m");
 PARAM_MODEL_OUT(BayesianRidge, "output_model", "Output LARS model.", "M");
 
 PARAM_TMATRIX_IN("test", "Matrix containing points to regress on (test "
-		 "points).", "t");
+                 "points).", "t");
 
 PARAM_TMATRIX_OUT("output_predictions", "If --test_file is specified, this "
-    "file is where the predicted responses will be saved.", "o");
+                  "file is where the predicted responses will be saved.", "o");
 
 PARAM_INT_IN("fitIntercept", "Center the data and fit the intercept",
              "f",
-	     1);
+             1);
 PARAM_INT_IN("normalize", "Normlize each feature by their standard deviations.",
-	     "n",
-	     0);
+             "n",
+             0);
 
 static void mlpackMain()
 {
@@ -165,14 +165,14 @@ static void mlpackMain()
     Log::Info << "Regressing on test points." << endl;
     // Load test points.
     mat testPoints = std::move(CLI::GetParam<arma::mat>("test"));
-    
+ 
     arma::rowvec predictions;
     bayesRidge->Predict(testPoints.t(), predictions);
-    
+ 
     // Save test predictions (one per line).
     CLI::GetParam<arma::mat>("output_predictions") = std::move(predictions.t());
     Log::Info << predictions << std::endl;
   }
-  
+
   CLI::GetParam<BayesianRidge*>("output_model") = bayesRidge;
 }
