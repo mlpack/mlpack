@@ -2,8 +2,10 @@
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
-  sparse_svm_function.hpp
-  sparse_svm_function_impl.hpp
+  linear_svm.hpp
+  linear_svm_impl.hpp
+  linear_svm_function.hpp
+  linear_svm_function_impl.hpp
 )
 
 # add directory name to sources
@@ -14,3 +16,7 @@ endforeach()
 # append sources (with directory name) to list of all mlpack sources (used at
 # the parent scope)
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+add_cli_executable(linear_svm)
+add_python_binding(linear_svm)
+add_markdown_docs(linear_svm "cli;python" "classification")

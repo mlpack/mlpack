@@ -60,21 +60,37 @@ TransposedConvolution<
     const size_t padW,
     const size_t padH,
     const size_t inputWidth,
-    const size_t inputHeight) :
+    const size_t inputHeight,
+    const size_t outputWidth,
+    const size_t outputHeight) :
     inSize(inSize),
     outSize(outSize),
     kW(kW),
     kH(kH),
     dW(dW),
     dH(dH),
-    padW(padW),
-    padH(padH),
+    padW(kW - padW - 1),
+    padH(kH - padH - 1),
     inputWidth(inputWidth),
     inputHeight(inputHeight),
-    outputWidth(0),
-    outputHeight(0)
+    outputWidth(outputWidth),
+    outputHeight(outputHeight)
 {
   weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
+  // TODO: Use the Padding layer.
+  // padding = new Padding<>(this->padW, this->padW, this->padH, this->padH);
+
+  aW = (outputWidth + kW - 2 * this->padW - 2) % dW;
+  aH = (outputHeight + kH - 2 * this->padH - 2) % dH;
+
+  // Check if the output height and width are possible given the other
+  // parameters of the layer.
+  if (outputWidth != dW * (inputWidth - 1) + aW + 2 * this->padW + 2 - kW ||
+      outputHeight != dH * (inputHeight - 1) + aH + 2 * this->padH + 2 - kH)
+  {
+    Log::Fatal << "The output width / output height is not possible given "
+        << "the other parameters of the layer." << std::endl;
+  }
 }
 
 template<
@@ -118,8 +134,23 @@ void TransposedConvolution<
   inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
       inputWidth, inputHeight, inSize * batchSize, false, false);
 
-  outputWidth = TransposedConvOutSize(inputWidth, kW, dW, padW);
-  outputHeight = TransposedConvOutSize(inputHeight, kH, dH, padH);
+  if (dW > 1 || dH > 1)
+  {
+    InsertZeros(inputTemp, dW, dH, inputExpandedTemp);
+
+    if (padW != 0 || padH != 0 || aW != 0 || aH != 0)
+      Pad(inputExpandedTemp, padW, padH, aW, aH, inputPaddedTemp);
+    else
+    {
+      inputPaddedTemp = arma::Cube<eT>(inputExpandedTemp.memptr(),
+          inputExpandedTemp.n_rows, inputExpandedTemp.n_cols,
+          inputExpandedTemp.n_slices, false, false);;
+    }
+  }
+  else if (padW != 0 || padH != 0 || aW != 0 || aH != 0)
+  {
+    Pad(inputTemp, padW, padH, aW, aH, inputPaddedTemp);
+  }
 
   output.set_size(outputWidth * outputHeight * outSize, batchSize);
   outputTemp = arma::Cube<eT>(output.memptr(), outputWidth, outputHeight,
@@ -140,8 +171,16 @@ void TransposedConvolution<
       arma::Mat<eT> convOutput, rotatedFilter;
       Rotate180(weight.slice(outMapIdx), rotatedFilter);
 
-      BackwardConvolutionRule::Convolution(inputTemp.slice(inMap +
-          batchCount * inSize), rotatedFilter, convOutput, 1, 1);
+      if (dW > 1 || dH > 1 || padW != 0 || padH != 0 || aW != 0 || aH != 0)
+      {
+        ForwardConvolutionRule::Convolution(inputPaddedTemp.slice(inMap +
+            batchCount * inSize), rotatedFilter, convOutput, 1, 1);
+      }
+      else
+      {
+        ForwardConvolutionRule::Convolution(inputTemp.slice(inMap +
+            batchCount * inSize), rotatedFilter, convOutput, 1, 1);
+      }
 
       outputTemp.slice(outMap) += convOutput;
     }
@@ -167,8 +206,13 @@ void TransposedConvolution<
 >::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  arma::cube mappedError(gy.memptr(), outputWidth, outputHeight,
+  arma::Cube<eT> mappedError(gy.memptr(), outputWidth, outputHeight,
       outSize * batchSize, false, false);
+
+  arma::Cube<eT> mappedErrorPadded;
+  if ((int)(kW - padW - 1) > 0 || (int)(kH - padH - 1) > 0)
+    Pad(mappedError, kW - padW - 1, kH - padH - 1, 0, 0, mappedErrorPadded);
+
   g.set_size(inputTemp.n_rows * inputTemp.n_cols * inSize, batchSize);
   gTemp = arma::Cube<eT>(g.memptr(), inputTemp.n_rows,
       inputTemp.n_cols, inputTemp.n_slices, false, false);
@@ -188,8 +232,16 @@ void TransposedConvolution<
     {
       arma::Mat<eT> output;
 
-      ForwardConvolutionRule::Convolution(mappedError.slice(outMap),
-          weight.slice(outMapIdx), output, 1, 1);
+      if ((int)(kW - padW - 1) > 0 || (int)(kH - padH - 1) > 0)
+      {
+        BackwardConvolutionRule::Convolution(mappedErrorPadded.slice(outMap),
+            weight.slice(outMapIdx), output, dW, dH);
+      }
+      else
+      {
+        BackwardConvolutionRule::Convolution(mappedError.slice(outMap),
+            weight.slice(outMapIdx), output, dW, dH);
+      }
 
       gTemp.slice(inMap + batchCount * inSize) += output;
     }
@@ -215,13 +267,15 @@ void TransposedConvolution<
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
-  arma::cube mappedError(error.memptr(), outputWidth,
+  arma::Cube<eT> mappedError(error.memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
 
   gradient.set_size(weights.n_elem, 1);
   gradientTemp = arma::Cube<eT>(gradient.memptr(), weight.n_rows,
       weight.n_cols, weight.n_slices, false, false);
   gradientTemp.zeros();
+
+  arma::Mat<eT> inputSlice, output, deltaSlice, rotatedOutput;
 
   for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
       outSize * batchSize; outMap++)
@@ -232,16 +286,23 @@ void TransposedConvolution<
       outMapIdx = 0;
     }
 
+    deltaSlice = mappedError.slice(outMap);
+
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
-      arma::Mat<eT> inputSlice, output;
-      inputSlice = inputTemp.slice(inMap + batchCount * inSize);
-      arma::Mat<eT> deltaSlice = mappedError.slice(outMap);
+      if (dW > 1 || dH > 1 || padW != 0 || padH != 0 || aW != 0 || aH != 0)
+      {
+        inputSlice = inputPaddedTemp.slice(inMap + batchCount * inSize);
+      }
+      else
+      {
+        inputSlice = inputTemp.slice(inMap + batchCount * inSize);
+      }
 
-      GradientConvolutionRule::Convolution(deltaSlice, inputSlice,
+      GradientConvolutionRule::Convolution(inputSlice, deltaSlice,
           output, 1, 1);
-
-      gradientTemp.slice(outMapIdx) += output;
+      Rotate180(output, rotatedOutput);
+      gradientTemp.slice(outMapIdx) += rotatedOutput;
     }
 
     gradient.submat(weight.n_elem + (outMap % outSize), 0, weight.n_elem +
@@ -281,7 +342,12 @@ void TransposedConvolution<
   ar & BOOST_SERIALIZATION_NVP(outputHeight);
 
   if (Archive::is_loading::value)
+  {
     weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
+
+    aW = (outputWidth + kW - 2 * padW - 2) % dW;
+    aH = (outputHeight + kH - 2 * padH - 2) % dH;
+  }
 }
 
 } // namespace ann

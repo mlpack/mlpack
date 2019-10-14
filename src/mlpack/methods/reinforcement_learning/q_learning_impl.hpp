@@ -39,17 +39,50 @@ QLearning<
     config(std::move(config)),
     learningNetwork(std::move(network)),
     updater(std::move(updater)),
+    #if ENS_VERSION_MAJOR >= 2
+    updatePolicy(NULL),
+    #endif
     policy(std::move(policy)),
     replayMethod(std::move(replayMethod)),
     environment(std::move(environment)),
     totalSteps(0),
     deterministic(false)
 {
+  // Set up q-learning network.
   if (learningNetwork.Parameters().is_empty())
     learningNetwork.ResetParameters();
+
+  #if ENS_VERSION_MAJOR == 1
   this->updater.Initialize(learningNetwork.Parameters().n_rows,
-      learningNetwork.Parameters().n_cols);
+                           learningNetwork.Parameters().n_cols);
+  #else
+  this->updatePolicy = new typename UpdaterType::template
+      Policy<arma::mat, arma::mat>(this->updater,
+                                   learningNetwork.Parameters().n_rows,
+                                   learningNetwork.Parameters().n_cols);
+  #endif
+
   targetNetwork = learningNetwork;
+}
+
+template <
+  typename EnvironmentType,
+  typename NetworkType,
+  typename UpdaterType,
+  typename PolicyType,
+  typename ReplayType
+>
+QLearning<
+  EnvironmentType,
+  NetworkType,
+  UpdaterType,
+  PolicyType,
+  ReplayType
+>::~QLearning()
+{
+  #if ENS_VERSION_MAJOR >= 2
+  delete updatePolicy;
+  #endif
 }
 
 template <
@@ -67,6 +100,7 @@ arma::Col<size_t> QLearning<
   ReplayType
 >::BestAction(const arma::mat& actionValues)
 {
+  // Take best possible action at a particular instance.
   arma::Col<size_t> bestActions(actionValues.n_cols);
   arma::rowvec maxActionValues = arma::max(actionValues, 0);
   for (size_t i = 0; i < actionValues.n_cols; ++i)
@@ -121,6 +155,7 @@ double QLearning<
   arma::colvec sampledRewards;
   arma::mat sampledNextStates;
   arma::icolvec isTerminal;
+
   replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
       sampledNextStates, isTerminal);
 
@@ -152,16 +187,28 @@ double QLearning<
   for (size_t i = 0; i < sampledNextStates.n_cols; ++i)
   {
     if (isTerminal[i])
-      target(sampledActions[i], i) = sampledRewards[i];
+    {
+      target(sampledActions(i), i) = sampledRewards(i);
+    }
     else
-      target(sampledActions[i], i) = sampledRewards[i] + config.Discount() *
-          nextActionValues(bestActions[i], i);
+    {
+      target(sampledActions(i), i) = sampledRewards(i) + config.Discount() *
+          nextActionValues(bestActions(i), i);
+    }
   }
 
-  // Learn form experience.
+  // Learn from experience.
   arma::mat gradients;
   learningNetwork.Backward(target, gradients);
+
+  replayMethod.Update(target, sampledActions, nextActionValues, gradients);
+
+  #if ENS_VERSION_MAJOR == 1
   updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
+  #else
+  updatePolicy->Update(learningNetwork.Parameters(), config.StepSize(),
+      gradients);
+  #endif
 
   return reward;
 }

@@ -96,23 +96,23 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
   // Create the Generator network
   FFN<EarthMoverDistance<> > generator;
   generator.Add<TransposedConvolution<> >(noiseDim, 8 * dNumKernels, 2, 2,
-      1, 1, 1, 1, 1, 1);
+      1, 1, 0, 0, 1, 1, 2, 2);
   generator.Add<BatchNorm<> >(1024);
   generator.Add<ReLULayer<> >();
   generator.Add<TransposedConvolution<> >(8 * dNumKernels, 4 * dNumKernels,
-      2, 2, 1, 1, 0, 0, 2, 2);
+      2, 2, 1, 1, 0, 0, 2, 2, 3, 3);
   generator.Add<BatchNorm<> >(1152);
   generator.Add<ReLULayer<> >();
   generator.Add<TransposedConvolution<> >(4 * dNumKernels, 2 * dNumKernels,
-      5, 5, 2, 2, 1, 1, 3, 3);
+      5, 5, 2, 2, 1, 1, 3, 3, 7, 7);
   generator.Add<BatchNorm<> >(3136);
   generator.Add<ReLULayer<> >();
-  generator.Add<TransposedConvolution<> >(2 * dNumKernels, dNumKernels, 8, 8,
-      1, 1, 1, 1, 7, 7);
+  generator.Add<TransposedConvolution<> >(2 * dNumKernels, dNumKernels, 4, 4,
+      2, 2, 1, 1, 7, 7, 14, 14);
   generator.Add<BatchNorm<> >(6272);
   generator.Add<ReLULayer<> >();
-  generator.Add<TransposedConvolution<> >(dNumKernels, 1, 15, 15, 1, 1, 1, 1,
-      14, 14);
+  generator.Add<TransposedConvolution<> >(dNumKernels, 1, 4, 4, 2, 2, 1, 1,
+      14, 14, 28, 28);
   generator.Add<TanHLayer<> >();
 
   // Create WGAN
@@ -127,7 +127,10 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
       discriminatorPreTrain, multiplier, clippingParameter);
 
   Log::Info << "Training..." << std::endl;
-  wgan.Train(optimizer);
+  double objVal = wgan.Train(optimizer);
+
+  // Test that objective value returned by GAN::Train() is finite.
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;
@@ -223,23 +226,23 @@ BOOST_AUTO_TEST_CASE(WGANGPMNISTTest)
   // Create the Generator network
   FFN<EarthMoverDistance<> > generator;
   generator.Add<TransposedConvolution<> >(noiseDim, 8 * dNumKernels, 2, 2,
-      1, 1, 1, 1, 1, 1);
+      1, 1, 0, 0, 1, 1, 2, 2);
   generator.Add<BatchNorm<> >(1024);
   generator.Add<ReLULayer<> >();
   generator.Add<TransposedConvolution<> >(8 * dNumKernels, 4 * dNumKernels,
-      2, 2, 1, 1, 0, 0, 2, 2);
+      2, 2, 1, 1, 0, 0, 2, 2, 3, 3);
   generator.Add<BatchNorm<> >(1152);
   generator.Add<ReLULayer<> >();
   generator.Add<TransposedConvolution<> >(4 * dNumKernels, 2 * dNumKernels,
-      5, 5, 2, 2, 1, 1, 3, 3);
+      5, 5, 2, 2, 1, 1, 3, 3, 7, 7);
   generator.Add<BatchNorm<> >(3136);
   generator.Add<ReLULayer<> >();
-  generator.Add<TransposedConvolution<> >(2 * dNumKernels, dNumKernels, 8, 8,
-      1, 1, 1, 1, 7, 7);
+  generator.Add<TransposedConvolution<> >(2 * dNumKernels, dNumKernels, 4, 4,
+      2, 2, 1, 1, 7, 7, 14, 14);
   generator.Add<BatchNorm<> >(6272);
   generator.Add<ReLULayer<> >();
-  generator.Add<TransposedConvolution<> >(dNumKernels, 1, 15, 15, 1, 1, 1, 1,
-      14, 14);
+  generator.Add<TransposedConvolution<> >(dNumKernels, 1, 4, 4, 2, 2, 1, 1,
+      14, 14, 28, 28);
   generator.Add<TanHLayer<> >();
 
   // Create WGANGP
@@ -255,7 +258,10 @@ BOOST_AUTO_TEST_CASE(WGANGPMNISTTest)
       lambda);
 
   Log::Info << "Training..." << std::endl;
-  wganGP.Train(optimizer);
+  double objVal = wganGP.Train(optimizer);
+
+  // Test that objective value returned by GAN::Train() is finite.
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;

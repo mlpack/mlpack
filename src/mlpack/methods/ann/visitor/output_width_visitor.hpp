@@ -31,6 +31,8 @@ class OutputWidthVisitor : public boost::static_visitor<size_t>
   template<typename LayerType>
   size_t operator()(LayerType* layer) const;
 
+  size_t operator()(MoreTypes layer) const;
+
  private:
   //! Return 0 if the module doesn't implement the InputWidth() or Model()
   //! function.

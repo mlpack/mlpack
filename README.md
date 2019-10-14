@@ -5,11 +5,12 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 </h2>
 
 <h5 align="center">
-  <a href="http://mlpack.org">Home</a> |
-  <a href="http://www.mlpack.org/docs/mlpack-git/doxygen/index.html">Documentation</a> |
-  <a href="http://www.mlpack.org/involved.html">Community</a> |
-  <a href="http://www.mlpack.org/help.html">Help</a> |
-  <a href="http://webchat.freenode.net/?channels=mlpack">IRC Chat</a>
+  <a href="https://mlpack.org">Home</a> |
+  <a href="https://www.mlpack.org/docs.html">Documentation</a> |
+  <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/index.html">Doxygen</a> |
+  <a href="https://www.mlpack.org/community.html">Community</a> |
+  <a href="https://www.mlpack.org/questions.html">Help</a> |
+  <a href="https://webchat.freenode.net/?channels=mlpack">IRC Chat</a>
 </h5>
 
 <p align="center">
@@ -22,7 +23,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="http://www.mlpack.org/files/mlpack-3.0.4.tar.gz">current stable version (3.0.4)</a>
+    <a href="https://www.mlpack.org/files/mlpack-3.2.1.tar.gz">current stable version (3 2.1)</a>
   </em>
 </p>
 
@@ -46,15 +47,16 @@ Python bindings.
 
 ###  1. Introduction
 
-The mlpack website can be found at http://www.mlpack.org and it contains numerous
-tutorials and extensive documentation.  This README serves as a guide for what
-mlpack is, how to install it, how to run it, and where to find more
-documentation. Read the links below for further information:
+The mlpack website can be found at https://www.mlpack.org and it contains
+numerous tutorials and extensive documentation.  This README serves as a guide
+for what mlpack is, how to install it, how to run it, and where to find more
+documentation. The website should be consulted for further information:
 
-  - [mlpack homepage](http://www.mlpack.org/)
-  - [Tutorials](http://www.mlpack.org/docs/mlpack-git/doxygen/tutorials.html)
-  - [Development Site (Github)](http://www.github.com/mlpack/mlpack/)
-  - [API documentation](http://www.mlpack.org/docs/mlpack-git/doxygen/index.html)
+  - [mlpack homepage](https://www.mlpack.org/)
+  - [mlpack documentation](https://www.mlpack.org/docs.html)
+  - [Tutorials](https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html)
+  - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
+  - [API documentation (Doxygen)](https://www.mlpack.org/doc/mlpack-git/doxygen/index.html)
 
 ### 2. Citation details
 
@@ -81,10 +83,11 @@ Citations are beneficial for the growth and improvement of mlpack.
 
 mlpack has the following dependencies:
 
-      Armadillo     >= 6.500.0
+      Armadillo     >= 8.400.0
       Boost (program_options, math_c99, unit_test_framework, serialization,
              spirit)
       CMake         >= 3.3.2
+      ensmallen     >= 2.10.0
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for each of those packages for more information.
@@ -96,6 +99,9 @@ following Python packages are installed:
       cython >= 0.24
       numpy
       pandas >= 0.15.0
+
+If the STB library headers are available, image loading support will be
+compiled.
 
 If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
@@ -115,8 +121,8 @@ a PPA or other non-official sources, or installing with a manual build.
 
 There are some useful pages to consult in addition to this section:
 
-  - [Building mlpack From Source](http://www.mlpack.org/docs/mlpack-git/doxygen/build.html)
-  - [Building mlpack From Source on Windows](http://www.mlpack.org/docs/mlpack-git/doxygen/build_windows.html)
+  - [Building mlpack From Source](https://www.mlpack.org/doc/mlpack-git/doxygen/build.html)
+  - [Building mlpack From Source on Windows](https://www.mlpack.org/doc/mlpack-git/doxygen/build_windows.html)
 
 mlpack uses CMake as a build system and allows several flexible build
 configuration options. You can consult any of the CMake tutorials for
@@ -154,16 +160,18 @@ Options are specified with the -D flag.  The allowed options include:
     ARMADILLO_LIBRARY=(/path/to/armadillo/libarmadillo.so): Armadillo library
     BUILD_CLI_EXECUTABLES=(ON/OFF): whether or not to build command-line programs
     BUILD_PYTHON_BINDINGS=(ON/OFF): whether or not to build Python bindings
+    PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
     BUILD_TESTS=(ON/OFF): whether or not to build tests
     BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
        static libraries
     DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
+    DOWNLOAD_STB_IMAGE=(ON/OFF): If STB is not found, download it
     ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
        for ensmallen
     USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available
 
-Other tools can be used to configure CMake, but those are not documented
-here.  See [this section of the build guide](http://www.mlpack.org/docs/mlpack-git/doxygen/build.html#build_config)
+Other tools can also be used to configure CMake, but those are not documented
+here.  See [this section of the build guide](https://www.mlpack.org/doc/mlpack-git/doxygen/build.html#build_config)
 for more details, including a full list of options, and their default values.
 
 By default, command-line programs will be built, and if the Python dependencies
@@ -286,14 +294,15 @@ for mlpack.  If doxygen is installed, you can type `make doc` to build the
 documentation locally.  Alternately, up-to-date documentation is available for
 older versions of mlpack:
 
-  - [mlpack homepage](http://www.mlpack.org/)
-  - [Tutorials](http://www.mlpack.org/docs/mlpack-git/doxygen/tutorials.html)
+  - [mlpack homepage](https://www.mlpack.org/)
+  - [mlpack documentation](https://www.mlpack.org/docs.html)
+  - [Tutorials](https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html)
   - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
-  - [API documentation](http://www.mlpack.org/docs/mlpack-git/doxygen/index.html)
+  - [API documentation](https://www.mlpack.org/doc/mlpack-git/doxygen/index.html)
 
 ### 8. Bug reporting
 
-   (see also [mlpack help](http://www.mlpack.org/help.html))
+   (see also [mlpack help](https://www.mlpack.org/questions.html))
 
 If you find a bug in mlpack or have any problems, numerous routes are available
 for help.

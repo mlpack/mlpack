@@ -112,6 +112,11 @@ Copyright:
   Copyright 2019, Toshal Agrawal <tagrawal1339@gmail.com>
   Copyright 2019, Dan Timson
   Copyright 2019, Miguel Canteras <mcanteras@gmail.com>
+  Copyright 2019, Bishwa Karki <karkeebishwa1@gmail.com>
+  Copyright 2019, Mehul Kumar Nirala <mehulkumarnirala@gmail.com>
+  Copyright 2019, Yashwant Singh Parihar <yashwantsingh.sngh@gmail.com>
+  Copyright 2019, Heet Sankesara <heetsankesara3@gmail.com>
+  Copyright 2019, Jeffin Sam <sam.jeffin@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.

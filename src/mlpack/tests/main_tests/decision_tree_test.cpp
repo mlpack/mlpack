@@ -41,6 +41,12 @@ struct DecisionTreeTestFixture
   }
 };
 
+void ResetDTSettings()
+{
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
+}
+
 BOOST_FIXTURE_TEST_SUITE(DecisionTreeMainTest,
                          DecisionTreeTestFixture);
 
@@ -168,6 +174,35 @@ BOOST_AUTO_TEST_CASE(DecisionTreeMinimumLeafSizeTest)
 }
 
 /**
+ * Make sure maximum depth is always a non-negative number.
+ */
+BOOST_AUTO_TEST_CASE(DecisionTreeNonNegativeMaximumDepthTest)
+{
+  arma::mat inputData;
+  DatasetInfo info;
+  if (!data::Load("braziltourism.arff", inputData, info))
+    BOOST_FAIL("Cannot load train dataset braziltourism.arff!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("braziltourism_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for braziltourism_labels.txt");
+
+  // Initialize an all-ones weight matrix.
+  arma::mat weights(1, labels.n_cols, arma::fill::ones);
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("weights", std::move(weights));
+
+  SetInputParam("maximum_depth", (int) -1); // Invalid.
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
  * Make sure minimum gain split is always a fraction in range [0,1].
  */
 BOOST_AUTO_TEST_CASE(DecisionMinimumGainSplitTest)
@@ -226,6 +261,8 @@ BOOST_AUTO_TEST_CASE(DecisionRegularisationTest)
   mlpackMain();
   pred = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
 
+  bindings::tests::CleanMemory();
+
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
@@ -240,8 +277,8 @@ BOOST_AUTO_TEST_CASE(DecisionRegularisationTest)
   predRegularised = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
 
   size_t count = 0;
-  // This part of code is dupliacte with no weighted one.
-  for (size_t i = 0; i < 1000; ++i)
+  BOOST_REQUIRE_EQUAL(pred.n_elem, predRegularised.n_elem);
+  for (size_t i = 0; i < pred.n_elem; ++i)
   {
     if (pred[i] != predRegularised[i])
       count++;
@@ -342,9 +379,13 @@ BOOST_AUTO_TEST_CASE(DecisionTreeTrainingVerTest)
 
   mlpackMain();
 
+  DecisionTreeModel* model = CLI::GetParam<DecisionTreeModel*>("output_model");
+  CLI::GetParam<DecisionTreeModel*>("output_model") = NULL;
+
+  bindings::tests::CleanMemory();
+
   // Input pre-trained model.
-  SetInputParam("input_model",
-                std::move(CLI::GetParam<DecisionTreeModel*>("output_model")));
+  SetInputParam("input_model", model);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -389,6 +430,11 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
   predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
   probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
 
+  DecisionTreeModel* model = CLI::GetParam<DecisionTreeModel*>("output_model");
+  CLI::GetParam<DecisionTreeModel*>("output_model") = NULL;
+
+  bindings::tests::CleanMemory();
+
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
   CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
@@ -397,8 +443,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
 
   // Input trained model.
   SetInputParam("test", std::make_tuple(info, testData));
-  SetInputParam("input_model",
-      std::move(CLI::GetParam<DecisionTreeModel*>("output_model")));
+  SetInputParam("input_model", model);
 
   mlpackMain();
 
@@ -417,6 +462,59 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
   // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(probabilities, CLI::GetParam<arma::mat>("probabilities"));
+}
+
+/**
+ * Check that different maximum depths give different results.
+ */
+BOOST_AUTO_TEST_CASE(DecisionTreeMaximumDepthTest)
+{
+  arma::mat inputData;
+  DatasetInfo info;
+  if (!data::Load("vc2.csv", inputData, info))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  // Initialize an all-ones weight matrix.
+  arma::mat weights(1, labels.n_cols, arma::fill::ones);
+
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData, info))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  // Input training data.
+  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("labels", labels);
+  SetInputParam("weights", weights);
+  SetInputParam("maximum_depth", (int) 0);
+
+  // Input test data.
+  SetInputParam("test", std::make_tuple(info, testData));
+
+  mlpackMain();
+
+  // Check that number of output points are equal to number of input points.
+  arma::Row<size_t> predictions;
+  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+
+  bindings::tests::CleanMemory();
+
+  // Input training data.
+  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("weights", std::move(weights));
+  SetInputParam("maximum_depth", (int) 2);
+
+  // Input test data.
+  SetInputParam("test", std::make_tuple(info, testData));
+
+  mlpackMain();
+
+  CheckMatricesNotEqual(predictions,
+                        CLI::GetParam<arma::Row<size_t>>("predictions"));
 }
 
 BOOST_AUTO_TEST_SUITE_END();

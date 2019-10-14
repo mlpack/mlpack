@@ -81,7 +81,10 @@ BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
   model.HiddenBias().ones();
 
   // Test the reset function.
-  model.Train(msgd);
+  double objVal = model.Train(msgd);
+
+  // Test that objective value returned by RBM::Train() is finite.
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
@@ -179,7 +182,11 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   modelssRBM.VisiblePenalty().fill(5);
   modelssRBM.SpikeBias().fill(1);
 
-  modelssRBM.Train(msgd);
+  double objVal = modelssRBM.Train(msgd);
+
+  // Test that objective value returned by RBM::Train() is finite.
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
     modelssRBM.HiddenMean(std::move(trainData.col(i)),
@@ -204,10 +211,10 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
       YRbm, testLabels);
 
   // 76.18 is the standard accuracy of the Softmax regression classifier,
-  // omitted here for speed.  We add a margin of 2% since ssRBM isn't guaranteed
+  // omitted here for speed.  We add a margin of 3% since ssRBM isn't guaranteed
   // to give us better results (we just generally expect it to be about as good
   // or better).
-  BOOST_REQUIRE_GE(ssRbmClassificationAccuracy, 76.18 - 2.0);
+  BOOST_REQUIRE_GE(ssRbmClassificationAccuracy, 76.18 - 3.0);
 }
 
 template<typename MatType = arma::mat>
