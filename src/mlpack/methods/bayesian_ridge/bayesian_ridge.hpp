@@ -89,7 +89,7 @@ class BayesianRidge
    *    standard deviation of each feature.
    **/
   BayesianRidge(const bool fitIntercept = true,
-		const bool normalize = false);
+                const bool normalize = false);
 
   /**
    * Run BayesianRidge regression. The input matrix (like all mlpack matrices)
@@ -100,7 +100,7 @@ class BayesianRidge
    * @param responses A vector of targets.
    **/
   void Train(const arma::mat& data,
-	     const arma::rowvec& responses);
+             const arma::rowvec& responses);
 
   /**
    * Predict \f$y_{i}\f$ for each data point in the given data matrix using the
@@ -133,7 +133,7 @@ class BayesianRidge
    */
   void Predict(const arma::mat& points,
                arma::rowvec& predictions,
-	       arma::rowvec& std) const;
+               arma::rowvec& std) const;
 
 
   /**
@@ -146,11 +146,11 @@ class BayesianRidge
    * @param std Standard deviation of the prediction.
    */
   void Predict(const arma::colvec& point,
-	       double& prediction,
-	       double& std) const;
+               double& prediction,
+               double& std) const;
 
-  
-  /**
+
+   /**
    * Compute the Root Mean Square Error
    * between the predictions returned by the model
    * and the true repsonses.
@@ -160,9 +160,9 @@ class BayesianRidge
    * @return RMSE
    **/
   double Rmse(const arma::mat& data,
-	      const arma::rowvec& responses) const;
+              const arma::rowvec& responses) const;
 
-  
+
   /**
    * Center and normalize the data. The last four arguments
    * allow future modifation of new points.
@@ -181,14 +181,14 @@ class BayesianRidge
    * @param reponses_offset Mean of responses.
    */
   void CenterNormalize(const arma::mat& data,
-		       const arma::rowvec& responses,
-		       const bool fit_intercept,
-		       const bool normalize,
-		       arma::mat& data_proc,
-		       arma::rowvec& responses_proc,
-		       arma::colvec& data_offset,
-		       arma::colvec& data_scale,
-		       double& responses_offset);
+                       const arma::rowvec& responses,
+                       const bool fit_intercept,
+                       const bool normalize,
+                       arma::mat& data_proc,
+                       arma::rowvec& responses_proc,
+                       arma::colvec& data_offset,
+                       arma::colvec& data_scale,
+                       double& responses_offset);
 
 
   /**
@@ -236,9 +236,9 @@ class BayesianRidge
    * @return \f$ \beta \f$
    **/
   inline double Beta() const {return this->beta;}
-  
 
-  /**
+
+   /**
    * Get the estimated variance.
    *   
    * @return 1.0 / \f$ \beta \f$
