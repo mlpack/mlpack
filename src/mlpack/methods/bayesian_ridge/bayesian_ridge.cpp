@@ -12,19 +12,19 @@
 #include "bayesian_ridge.hpp"
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/timers.hpp>
-      
+
 using namespace mlpack;
 using namespace mlpack::regression;
 
 
 BayesianRidge::BayesianRidge(const bool fitIntercept,
-			     const bool normalize) :
+                             const bool normalize) :
   fitIntercept(fitIntercept),
   normalize(normalize)
 {/* Nothing to do */}
 
 void BayesianRidge::Train(const arma::mat& data,
-			  const arma::rowvec& responses)
+                          const arma::rowvec& responses)
 {
   Timer::Start("bayesian_ridge_regression");
 
@@ -32,32 +32,32 @@ void BayesianRidge::Train(const arma::mat& data,
   arma::rowvec t;
   arma::colvec vecphitT;
   arma::mat phiphiT;
-  arma::colvec eigval;
+    arma::colvec eigval;
   arma::mat eigvec;
   arma::colvec eigvali;
-  
+
   // Preprocess the data. Center and normalize.
   CenterNormalize(data,
-		          responses,
-		          fitIntercept,
-		          normalize,
-		          phi,
-		          t,
-		          data_offset,
-		          data_scale,
-		          responses_offset);
+                  responses,
+                  fitIntercept,
+                  normalize,
+                  phi,
+                  t,
+                  data_offset,
+                  data_scale,
+                  responses_offset);
   vecphitT = phi * t.t();
   phiphiT =  phi * phi.t();
-
+  
   // Compute the eigenvalues only once.
   arma::eig_sym(eigval, eigvec, phiphiT);
-  
+
   unsigned short p = data.n_rows, n = data.n_cols;
   // Initialize the hyperparameters and
   // begin with an infinitely broad prior.
   alpha = 1e-6;
   beta =  1 / (var(t) * 0.1);
-  
+
   double tol = 1e-3;
   unsigned short nIterMax = 50;
   unsigned short i = 0;
@@ -91,7 +91,7 @@ void BayesianRidge::Train(const arma::mat& data,
       // Update beta.
       temp = t - omega.t() * phi;
       beta = (n - gamma) / dot(temp, temp);
-      
+ 
       // Comptute the stopping criterion.
       deltaAlpha += alpha;
       deltaBeta += beta;
@@ -246,7 +246,7 @@ BayesianRidge& BayesianRidge::operator=(const BayesianRidge& other)
 {
   if (this == &other)
     return *this;
-  
+
   fitIntercept = other.fitIntercept;
   normalize = other.normalize;
   data_offset = other.data_offset;
