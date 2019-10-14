@@ -22,13 +22,13 @@ using namespace mlpack::data;
 BOOST_AUTO_TEST_SUITE(BayesianRidgeTest);
 
 void GenerateProblem(arma::mat& X,
-		     arma::rowvec& y,
-		     size_t nPoints,
-		     size_t nDims,
-		     float sigma=0.0)
+                     arma::rowvec& y,
+                     size_t nPoints,
+                     size_t nDims,
+                     float sigma = 0.0)
 {
   arma::arma_rng::set_seed(4);
-  
+
   X = arma::randn(nDims, nPoints);
   arma::colvec omega = arma::randn(nDims);
   arma::colvec noise = arma::randn(nPoints) * sigma;
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(BayesianRidgeRegressionTest)
   BayesianRidge estimator(true);
   estimator.Train(X, y);
   estimator.Predict(X, predictions);
-  
+
   for (size_t i = 0; i < y.size(); i++)
     {
       BOOST_REQUIRE_CLOSE(predictions[i], y[i], 1e-6);
@@ -95,13 +95,15 @@ BOOST_AUTO_TEST_CASE(TestCenter1Normalize1)
   arma::colvec x_std = arma::stddev(X, 0, 1);
   double y_mean = arma::mean(y);
 
-  BOOST_REQUIRE_SMALL((double) abs(sum(estimator.Data_offset() - x_mean)), 1e-6);
+  BOOST_REQUIRE_SMALL((double) abs(sum(estimator.Data_offset() - x_mean)),
+                      1e-6);
 
-  BOOST_REQUIRE_SMALL((double) abs(estimator.Responses_offset() - y_mean), 1e-6);
+  BOOST_REQUIRE_SMALL((double) abs(estimator.Responses_offset() - y_mean),
+                      1e-6);
 
-  BOOST_REQUIRE_SMALL((double) abs(sum(estimator.Data_scale() - x_std)), 1e-6);
+  BOOST_REQUIRE_SMALL((double) abs(sum(estimator.Data_scale() - x_std)),
+                      1e-6);
 }
-
 
 
 BOOST_AUTO_TEST_CASE(ColinearTest)
@@ -122,7 +124,7 @@ BOOST_AUTO_TEST_CASE(OnePointTest)
   arma::rowvec y;
   arma::rowvec predictions, std;
   double y_i, std_i;
-  
+
   GenerateProblem(X, y, 100, 10, 2.0);
   BayesianRidge estimator(false, false);
   estimator.Train(X, y);
