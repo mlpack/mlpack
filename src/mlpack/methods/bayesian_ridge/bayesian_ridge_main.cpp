@@ -165,10 +165,10 @@ static void mlpackMain()
     Log::Info << "Regressing on test points." << endl;
     // Load test points.
     mat testPoints = std::move(CLI::GetParam<arma::mat>("test"));
- 
+
     arma::rowvec predictions;
     bayesRidge->Predict(testPoints.t(), predictions);
- 
+
     // Save test predictions (one per line).
     CLI::GetParam<arma::mat>("output_predictions") = std::move(predictions.t());
     Log::Info << predictions << std::endl;

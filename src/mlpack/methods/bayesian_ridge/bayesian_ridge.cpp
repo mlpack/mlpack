@@ -48,7 +48,7 @@ void BayesianRidge::Train(const arma::mat& data,
                   responses_offset);
   vecphitT = phi * t.t();
   phiphiT =  phi * phi.t();
-  
+
   // Compute the eigenvalues only once.
   arma::eig_sym(eigval, eigvec, phiphiT);
 
@@ -91,7 +91,7 @@ void BayesianRidge::Train(const arma::mat& data,
       // Update beta.
       temp = t - omega.t() * phi;
       beta = (n - gamma) / dot(temp, temp);
- 
+
       // Comptute the stopping criterion.
       deltaAlpha += alpha;
       deltaBeta += beta;
@@ -144,7 +144,7 @@ void BayesianRidge::Predict(const arma::mat& points,
   X.each_col() -= data_offset;
   X.each_col() /= data_scale;
   predictions = omega.t() * X + responses_offset;
-  
+
   // Compute the standard deviation of each prediction.
   std = arma::zeros<arma::rowvec>(X.n_cols);
   arma::colvec phi(X.n_rows);
@@ -274,7 +274,7 @@ BayesianRidge& BayesianRidge::operator=(BayesianRidge&& other)
       beta = other.beta;
       omega = other.omega;
       matCovariance = other.matCovariance;
-      
+
       // Clear the other object.
       other.fitIntercept = false;
       other.normalize = false;
