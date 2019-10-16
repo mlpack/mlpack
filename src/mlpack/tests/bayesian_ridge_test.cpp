@@ -106,18 +106,6 @@ BOOST_AUTO_TEST_CASE(TestCenter1Normalize1)
 }
 
 
-BOOST_AUTO_TEST_CASE(ColinearTest)
-{
-  arma::mat X;
-  arma::rowvec y;
-
-  Load("lars_dependent_x.csv", X, false, true);
-  Load("lars_dependent_y.csv", y, false, true);
-
-  BayesianRidge estimator(false, false);
-  estimator.Train(X, y);
-}
-
 BOOST_AUTO_TEST_CASE(OnePointTest)
 {
   arma::mat X;
@@ -149,6 +137,19 @@ BOOST_AUTO_TEST_CASE(OnePointTest)
       BOOST_REQUIRE_CLOSE(predictions(i), y_i, 1e-5);
       BOOST_REQUIRE_CLOSE(std(i), std_i, 1e-5);
     }
+}
+
+// Verify that Train() return -1 for a singular matrices or colinear feature.
+BOOST_AUTO_TEST_CASE(ColinearTest)
+{
+  arma::mat X;
+  arma::rowvec y;
+
+  Load("lars_dependent_x.csv", X, false, true);
+  Load("lars_dependent_y.csv", y, false, true);
+
+  BayesianRidge estimator(true, false);
+  BOOST_TEST(estimator.Train(X, y) == - 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

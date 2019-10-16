@@ -23,8 +23,8 @@ BayesianRidge::BayesianRidge(const bool fitIntercept,
   normalize(normalize)
 {/* Nothing to do */}
 
-void BayesianRidge::Train(const arma::mat& data,
-                          const arma::rowvec& responses)
+float BayesianRidge::Train(const arma::mat& data,
+                           const arma::rowvec& responses)
 {
   Timer::Start("bayesian_ridge_regression");
 
@@ -32,7 +32,7 @@ void BayesianRidge::Train(const arma::mat& data,
   arma::rowvec t;
   arma::colvec vecphitT;
   arma::mat phiphiT;
-    arma::colvec eigval;
+  arma::colvec eigval;
   arma::mat eigvec;
   arma::colvec eigvali;
 
@@ -49,8 +49,15 @@ void BayesianRidge::Train(const arma::mat& data,
   vecphitT = phi * t.t();
   phiphiT =  phi * phi.t();
 
-  // Compute the eigenvalues only once.
   arma::eig_sym(eigval, eigvec, phiphiT);
+
+  // Detect singular matrix.
+  if (eigval[0] == 0)
+  {
+    Log::Warn << "Singular matrix. Two lines or more are colinear."
+              <<  std::endl;
+    return -1;
+  }
 
   unsigned short p = data.n_rows, n = data.n_cols;
   // Initialize the hyperparameters and
@@ -99,6 +106,7 @@ void BayesianRidge::Train(const arma::mat& data,
       i++;
     }
   Timer::Stop("bayesian_ridge_regression");
+  return Rmse(data, responses);
 }
 
 void BayesianRidge::Predict(const arma::mat& points,

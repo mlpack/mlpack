@@ -98,9 +98,10 @@ class BayesianRidge
    * 
    * @param data Column-major input data
    * @param responses A vector of targets.
+   * @return score. Root Mean Square Error. 
    **/
-  void Train(const arma::mat& data,
-             const arma::rowvec& responses);
+  float Train(const arma::mat& data,
+              const arma::rowvec& responses);
 
   /**
    * Predict \f$y_{i}\f$ for each data point in the given data matrix using the
