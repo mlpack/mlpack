@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(ColinearTest)
   Load("lars_dependent_y.csv", y, false, true);
 
   BayesianRidge estimator(true, false);
-  BOOST_TEST(estimator.Train(X, y) == - 1);
+  BOOST_ASSERT(estimator.Train(X, y) == -1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
