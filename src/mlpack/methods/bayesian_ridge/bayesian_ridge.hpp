@@ -98,7 +98,8 @@ class BayesianRidge
    * 
    * @param data Column-major input data
    * @param responses A vector of targets.
-   * @return score. Root Mean Square Error. 
+   * @return score. Root Mean Square Error. Equal to -1 of two feature vectors 
+   *    or more are colinear.
    **/
   float Train(const arma::mat& data,
               const arma::rowvec& responses);
