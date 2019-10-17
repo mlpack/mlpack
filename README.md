@@ -90,7 +90,8 @@ mlpack has the following dependencies:
       ensmallen     >= 2.10.0
 
 All of those should be available in your distribution's package manager.  If
-not, you will have to compile each of them by hand.  See the documentation for each of those packages for more information.
+not, you will have to compile each of them by hand.  See the documentation for
+each of those packages for more information.
 
 If you would like to use or build the mlpack Python bindings, make sure that the
 following Python packages are installed:
@@ -126,7 +127,8 @@ There are some useful pages to consult in addition to this section:
 
 mlpack uses CMake as a build system and allows several flexible build
 configuration options. You can consult any of the CMake tutorials for
-further documentation, but this tutorial can get mlpack built and installed.
+further documentation, but this tutorial should be eough to get mlpack built
+and installed.
 
 First, unpack the mlpack source and change into the unpacked directory.  Here we
 use mlpack-x.y.z where x.y.z is the version.
@@ -142,7 +144,8 @@ Then, make a build directory.  The directory can have any name, but 'build' is
 
 The next step is to run CMake to configure the project.  Running CMake is the
 equivalent to running `./configure` with autotools. If you run CMake with no
-options, it will configure the project to build with no debugging symbols and not profiling information: 
+options, it will configure the project to build with no debugging symbols and 
+no profiling information: 
 
     $ cmake ../
 
@@ -184,7 +187,8 @@ This will build all library components as well as 'mlpack_test'.
 
     $ make
     
-If you do not want to build everything in the library, individual components of the build can be specified:
+If you do not want to build everything in the library, individual components 
+of the build can be specified:
 
     $ make mlpack_pca mlpack_knn mlpack_kfn
 
@@ -195,7 +199,7 @@ and submit an issue. The mlpack developers will quickly help you figure it out:
 
 Alternately, mlpack help can be found in IRC at `#mlpack` on irc.freenode.net.
 
-If you wish to install mlpack to `/usr/local/include/mlpack/` , `/usr/local/lib/`
+If you wish to install mlpack to `/usr/local/include/mlpack/`, `/usr/local/lib/`,
 and `/usr/local/bin/`, make sure you have root privileges (or write permissions 
 to those three directories), and simply type
 
