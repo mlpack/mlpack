@@ -152,19 +152,19 @@ CosineTree::CosineTree(arma::mat& dataset,
 
 //! Copy the given tree.
 CosineTree::CosineTree(const CosineTree& other) :
-  dataset(other.parent->GetDataset()),
-  delta(other.delta),
-  parent(other.Parent()),
-  left(other.Left()),
-  right(other.Right()),
-  indices(other.indices),
-  l2NormsSquared(other.l2NormsSquared),
-  centroid(other.centroid),
-  basisVector(other.basisVector),
-  splitPointIndex(other.SplitPointIndex()),
-  numColumns(other.NumColumns()),
-  l2Error(other.L2Error()),
-  frobNormSquared(other.FrobNormSquared())
+    dataset(other.parent->GetDataset()),
+    delta(other.delta),
+    parent(other.Parent()),
+    left(other.Left()),
+    right(other.Right()),
+    indices(other.indices),
+    l2NormsSquared(other.l2NormsSquared),
+    centroid(other.centroid),
+    basisVector(other.basisVector),
+    splitPointIndex(other.SplitPointIndex()),
+    numColumns(other.NumColumns()),
+    l2Error(other.L2Error()),
+    frobNormSquared(other.FrobNormSquared())
 {
   std::vector<CosineTree*> nodeStack;
   nodeStack.push_back(this);
@@ -212,9 +212,7 @@ CosineTree::CosineTree(const CosineTree& other) :
 }
 
 //! Copy Assignment.
-CosineTree&
-CosineTree::
-operator=(const CosineTree& other)
+CosineTree&CosineTree::operator=(const CosineTree& other)
 {
   // Return if it's the same tree.
   if (this == &other)
@@ -304,7 +302,7 @@ CosineTree::CosineTree(CosineTree&& other) :
   other.parent = NULL;
   other.left = NULL;
   other.right = NULL;
-  other.splitPointIndex = ColumnSampleLS();
+  other.splitPointIndex = 0;
   other.numColumns = dataset.n_cols;
   other.l2Error = -1;
   other.frobNormSquared = arma::accu(l2NormsSquared);
@@ -316,9 +314,7 @@ CosineTree::CosineTree(CosineTree&& other) :
 }
 
 //! Move Assignment.
-CosineTree&
-CosineTree::
-operator=(CosineTree&& other)
+CosineTree&CosineTree::operator=(CosineTree&& other)
 {
   dataset = other.dataset;
   delta = std::move(other.delta);
@@ -336,8 +332,7 @@ operator=(CosineTree&& other)
 
   // Now we are a clone of the other tree.  But we must also clear the other
   // tree's contents, so it doesn't delete anything when it is destructed.
-  arma::mat a;
-  other.dataset = a;
+  other.dataset = arma::mat();
   other.parent = NULL;
   other.left = NULL;
   other.right = NULL;
