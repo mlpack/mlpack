@@ -137,7 +137,7 @@ use mlpack-x.y.z where x.y.z is the version.
     $ cd mlpack-x.y.z
 
 Then, make a build directory.  The directory can have any name, but 'build' is
- sufficient.
+sufficient.
 
     $ mkdir build
     $ cd build
@@ -145,7 +145,7 @@ Then, make a build directory.  The directory can have any name, but 'build' is
 The next step is to run CMake to configure the project.  Running CMake is the
 equivalent to running `./configure` with autotools. If you run CMake with no
 options, it will configure the project to build with no debugging symbols and 
-no profiling information: 
+no profiling information:
 
     $ cmake ../
 
@@ -186,7 +186,6 @@ Once CMake is configured, building the library is as simple as typing 'make'.
 This will build all library components as well as 'mlpack_test'.
 
     $ make
-    
 If you do not want to build everything in the library, individual components 
 of the build can be specified:
 
