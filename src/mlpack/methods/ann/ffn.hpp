@@ -94,15 +94,18 @@ class FFN
    * object, be sure to use std::move to avoid unnecessary copy.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
+   * @param callbacks Callback Functions.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType>
+  template<typename OptimizerType, typename... CallbackTypes>
   double Train(arma::mat predictors,
                arma::mat responses,
-               OptimizerType& optimizer);
+               OptimizerType& optimizer,
+               CallbackTypes&&... callbacks);
 
   /**
    * Train the feedforward network on the given input data. By default, the
@@ -118,11 +121,15 @@ class FFN
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param responses Outputs results from input training variables.
+   * @param callbacks Callback Functions.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType = ens::RMSProp>
-  double Train(arma::mat predictors, arma::mat responses);
+  template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
+  double Train(arma::mat predictors,
+               arma::mat responses,
+               CallbackTypes&&... callbacks);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
