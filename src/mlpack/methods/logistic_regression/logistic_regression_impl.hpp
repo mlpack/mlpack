@@ -74,7 +74,11 @@ double LogisticRegression<MatType>::Train(
         CallbackTypes&&... callbacks)
 {
   OptimizerType optimizer;
-  return Train(predictors, responses, optimizer,  callbacks...);
+  return Train(
+          predictors,
+          responses,
+          optimizer,
+          callbacks...);
 }
 
 template<typename MatType>
