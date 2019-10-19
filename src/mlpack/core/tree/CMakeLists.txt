@@ -33,6 +33,7 @@ set(SOURCES
   cellbound_impl.hpp
   cosine_tree/cosine_tree.hpp
   cosine_tree/cosine_tree.cpp
+  cover_tree.hpp
   cover_tree/cover_tree.hpp
   cover_tree/cover_tree_impl.hpp
   cover_tree/first_point_is_root.hpp
@@ -74,6 +75,8 @@ set(SOURCES
   rectangle_tree/r_star_tree_descent_heuristic_impl.hpp
   rectangle_tree/r_star_tree_split.hpp
   rectangle_tree/r_star_tree_split_impl.hpp
+  rectangle_tree/traits.hpp
+  rectangle_tree/typedef.hpp
   rectangle_tree/x_tree_split.hpp
   rectangle_tree/x_tree_split_impl.hpp
   rectangle_tree/x_tree_auxiliary_information.hpp
@@ -120,6 +123,7 @@ set(SOURCES
   statistic.hpp
   traversal_info.hpp
   tree_traits.hpp
+  enumerate_tree.hpp
 )
 
 # add directory name to sources

@@ -5,9 +5,6 @@
  * Include Armadillo extensions which currently are not part of the main
  * Armadillo codebase.
  *
- * This will allow the use of the ccov() function (which performs the same
- * function as cov(trans(X)) but without the cost of computing trans(X)).  This
- * also gives sparse matrix support, if it is necessary.
  */
 #ifndef MLPACK_CORE_ARMA_EXTEND_ARMA_EXTEND_HPP
 #define MLPACK_CORE_ARMA_EXTEND_ARMA_EXTEND_HPP
@@ -55,20 +52,9 @@ namespace arma {
   // u64/s64
   #include "hdf5_misc.hpp"
 
-  // ccov()
-  #include "op_ccov_proto.hpp"
-  #include "op_ccov_meat.hpp"
-  #include "glue_ccov_proto.hpp"
-  #include "glue_ccov_meat.hpp"
-  #include "fn_ccov.hpp"
 
-  // index to subscript and vice versa
-  #include "fn_ind2sub.hpp"
   // inplace_reshape()
   #include "fn_inplace_reshape.hpp"
-
-  // unary minus for sparse matrices
-  #include "operator_minus.hpp"
 };
 
 #endif

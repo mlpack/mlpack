@@ -15,6 +15,7 @@
 #include <mlpack/methods/pca/decomposition_policies/exact_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/quic_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/randomized_svd_method.hpp>
+#include <mlpack/methods/pca/decomposition_policies/randomized_block_krylov_method.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -31,15 +32,17 @@ using namespace mlpack::distribution;
  * specified decomposition policy.
  */
 template<typename DecompositionPolicy>
-void ArmaComparisonPCA()
+void ArmaComparisonPCA(
+    const bool scaleData = false,
+    const DecompositionPolicy& decomposition = DecompositionPolicy())
 {
   arma::mat coeff, coeff1, score, score1;
   arma::vec eigVal, eigVal1;
 
   arma::mat data = arma::randu<arma::mat>(3, 1000);
 
-  PCAType<DecompositionPolicy> exactPCA;
-  exactPCA.Apply(data, score1, eigVal1, coeff1);
+  PCA<DecompositionPolicy> pcaType(scaleData, decomposition);
+  pcaType.Apply(data, score1, eigVal1, coeff1);
 
   princomp(coeff, score, eigVal, trans(data));
 
@@ -58,7 +61,9 @@ void ArmaComparisonPCA()
  * (which should be correct!) using the specified decomposition policy.
  */
 template<typename DecompositionPolicy>
-void PCADimensionalityReduction()
+void PCADimensionalityReduction(
+    const bool scaleData = false,
+    const DecompositionPolicy& decomposition = DecompositionPolicy())
 {
   // Fake, simple dataset.  The results we will compare against are from MATLAB.
   mat data("1 0 2 3 9;"
@@ -66,8 +71,24 @@ void PCADimensionalityReduction()
            "6 7 3 1 8");
 
   // Now run PCA to reduce the dimensionality.
-  PCAType<DecompositionPolicy> p;
-  const double varRetained = p.Apply(data, 2); // Reduce to 2 dimensions.
+  size_t trial = 0;
+  bool success = false;
+  double varRetained = 0.0;
+  while (trial < 3 && !success)
+  {
+    // In some cases the LU decomposition may fail.
+    try
+    {
+      PCA<DecompositionPolicy> p(scaleData, decomposition);
+      varRetained = p.Apply(data, 2); // Reduce to 2 dimensions.
+      success = true;
+    }
+    catch (std::logic_error&) { }
+
+    ++trial;
+  }
+
+  BOOST_REQUIRE_EQUAL(success, true);
 
   // Compare with correct results.
   mat correct("-1.53781086 -3.51358020 -0.16139887 -1.87706634  7.08985628;"
@@ -116,7 +137,7 @@ void PCAVarianceRetained()
   // and if we keep two, the actual variance retained is
   //   0.904876047045906
   // and if we keep three, the actual variance retained is 1.
-  PCAType<DecompositionPolicy> p;
+  PCA<DecompositionPolicy> p;
   arma::mat origData = data;
   double varRetained = p.Apply(data, 0.1);
 
@@ -169,6 +190,16 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonExactPCATest)
 }
 
 /**
+ * Compare the output of our randomized block krylov PCA implementation with
+ * Armadillo's.
+ */
+BOOST_AUTO_TEST_CASE(ArmaComparisonRandomizedBlockKrylovPCATest)
+{
+  RandomizedBlockKrylovSVDPolicy decomposition(5);
+  ArmaComparisonPCA<RandomizedBlockKrylovSVDPolicy>(false, decomposition);
+}
+
+/**
  * Compare the output of our randomized-SVD PCA implementation with Armadillo's.
  */
 BOOST_AUTO_TEST_CASE(ArmaComparisonRandomizedPCATest)
@@ -183,6 +214,17 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonRandomizedPCATest)
 BOOST_AUTO_TEST_CASE(ExactPCADimensionalityReductionTest)
 {
   PCADimensionalityReduction<ExactSVDPolicy>();
+}
+
+/**
+ * Test that dimensionality reduction with randomized block krylov PCA works the
+ * same way MATLAB does (which should be correct!).
+ */
+BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovPCADimensionalityReductionTest)
+{
+  RandomizedBlockKrylovSVDPolicy decomposition(5);
+  PCADimensionalityReduction<RandomizedBlockKrylovSVDPolicy>(false,
+      decomposition);
 }
 
 /**
@@ -204,21 +246,27 @@ BOOST_AUTO_TEST_CASE(QUICPCADimensionalityReductionTest)
   data::Load("test_data_3_1000.csv", data);
   data1 = data;
 
+  arma::mat backupData(data);
+
   // It isn't guaranteed that the QUIC-SVD will match with the exact SVD method,
   // starting with random samples. If this works 1 of 5 times, I'm fine with
-  // that. All I want to know is that the QUIC-SVD method is  able to solve the
+  // that. All I want to know is that the QUIC-SVD method is able to solve the
   // task and is at least as good as the exact method (plus a little bit for
   // noise).
   size_t successes = 0;
   for (size_t trial = 0; trial < 5; ++trial)
   {
+    if (trial > 0)
+    {
+      data = backupData;
+      data1 = backupData;
+    }
 
-    PCAType<ExactSVDPolicy> exactPCA;
+    PCA<ExactSVDPolicy> exactPCA;
     const double varRetainedExact = exactPCA.Apply(data, 1);
 
-    PCAType<QUICSVDPolicy> quicPCA;
+    PCA<QUICSVDPolicy> quicPCA;
     const double varRetainedQUIC = quicPCA.Apply(data1, 1);
-
 
     if (std::abs(varRetainedExact - varRetainedQUIC) < 0.2)
     {
@@ -259,7 +307,7 @@ BOOST_AUTO_TEST_CASE(PCAScalingTest)
     data.col(i) = g.Random();
 
   // Now get the principal components when we are scaling.
-  PCA p(true);
+  PCA<> p(true);
   arma::mat transData;
   arma::vec eigval;
   arma::mat eigvec;
@@ -269,21 +317,21 @@ BOOST_AUTO_TEST_CASE(PCAScalingTest)
   // The first two components of the eigenvector with largest eigenvalue should
   // be somewhere near sqrt(2) / 2.  The third component should be close to
   // zero.  There is noise, of course...
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(0, 0)), sqrt(2) / 2, 0.2);
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(1, 0)), sqrt(2) / 2, 0.2);
-  BOOST_REQUIRE_SMALL(eigvec(2, 0), 0.08); // Large tolerance for noise.
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(0, 0)), sqrt(2) / 2, 0.35);
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(1, 0)), sqrt(2) / 2, 0.35);
+  BOOST_REQUIRE_SMALL(eigvec(2, 0), 0.1); // Large tolerance for noise.
 
   // The second component should be focused almost entirely in the third
   // dimension.
-  BOOST_REQUIRE_SMALL(eigvec(0, 1), 0.08);
-  BOOST_REQUIRE_SMALL(eigvec(1, 1), 0.08);
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(2, 1)), 1.0, 0.2);
+  BOOST_REQUIRE_SMALL(eigvec(0, 1), 0.1);
+  BOOST_REQUIRE_SMALL(eigvec(1, 1), 0.1);
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(2, 1)), 1.0, 0.35);
 
   // The third component should have the same absolute value characteristics as
-  // the first.
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(0, 0)), sqrt(2) / 2, 0.2); // 20% tolerance.
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(1, 0)), sqrt(2) / 2, 0.2);
-  BOOST_REQUIRE_SMALL(eigvec(2, 0), 0.08); // Large tolerance for noise.
+  // the first (plus 20% tolerance).
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(0, 0)), sqrt(2) / 2, 0.35);
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(1, 0)), sqrt(2) / 2, 0.35);
+  BOOST_REQUIRE_SMALL(eigvec(2, 0), 0.1); // Large tolerance for noise.
 
   // The eigenvalues should sum to three.
   BOOST_REQUIRE_CLOSE(accu(eigval), 3.0, 0.1); // 10% tolerance.

@@ -39,15 +39,38 @@ extern MLPACK_EXPORT std::normal_distribution<> randNormalDist;
  */
 inline void RandomSeed(const size_t seed)
 {
+  #if (!defined(BINDING_TYPE) || BINDING_TYPE != BINDING_TYPE_TEST)
+    randGen.seed((uint32_t) seed);
+    srand((unsigned int) seed);
+    arma::arma_rng::set_seed(seed);
+  #else
+    (void) seed;
+  #endif
+}
+
+/**
+ * Set the random seed to a fixed number.
+ * This function is used in binding tests to set a fixed random seed before
+ * calling mlpack(). In this way we can test whether a certain parameter makes
+ * a difference to execution of CLI binding.
+ * Refer to pull request #1306 for discussion on this function.
+ */
+#if (BINDING_TYPE == BINDING_TYPE_TEST)
+inline void FixedRandomSeed()
+{
+  const static size_t seed = rand();
   randGen.seed((uint32_t) seed);
   srand((unsigned int) seed);
-#if ARMA_VERSION_MAJOR > 3 || \
-    (ARMA_VERSION_MAJOR == 3 && ARMA_VERSION_MINOR >= 930)
-  // Armadillo >= 3.930 has its own random number generator internally that we
-  // need to set the seed for also.
   arma::arma_rng::set_seed(seed);
-#endif
 }
+
+inline void CustomRandomSeed(const size_t seed)
+{
+  randGen.seed((uint32_t) seed);
+  srand((unsigned int) seed);
+  arma::arma_rng::set_seed(seed);
+}
+#endif
 
 /**
  * Generates a uniform random number between 0 and 1.
@@ -63,6 +86,17 @@ inline double Random()
 inline double Random(const double lo, const double hi)
 {
   return lo + (hi - lo) * randUniformDist(randGen);
+}
+
+/**
+ * Generates a 0/1 specified by the input.
+ */
+inline double RandBernoulli(const double input)
+{
+  if (Random() < input)
+    return 1;
+  else
+    return 0;
 }
 
 /**

@@ -56,6 +56,12 @@ class RecurrentAttention
 {
  public:
   /**
+   * Default constructor: this will not give a usable RecurrentAttention object,
+   * so be sure to set all the parameters before use.
+   */
+  RecurrentAttention();
+
+  /**
    * Create the RecurrentAttention object using the specified modules.
    *
    * @param start The module output size.
@@ -106,7 +112,7 @@ class RecurrentAttention
                 arma::Mat<eT>&& /* gradient */);
 
   //! Get the model modules.
-  std::vector<LayerTypes>& Model() { return network; }
+  std::vector<LayerTypes<>>& Model() { return network; }
 
     //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
@@ -117,11 +123,6 @@ class RecurrentAttention
   OutputDataType const& Parameters() const { return parameters; }
   //! Modify the parameters.
   OutputDataType& Parameters() { return parameters; }
-
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -142,7 +143,7 @@ class RecurrentAttention
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Calculate the gradient of the attention module.
@@ -175,10 +176,10 @@ class RecurrentAttention
   size_t outSize;
 
   //! Locally-stored start module.
-  LayerTypes rnnModule;
+  LayerTypes<> rnnModule;
 
   //! Locally-stored input module.
-  LayerTypes actionModule;
+  LayerTypes<> actionModule;
 
   //! Number of steps to backpropagate through time (BPTT).
   size_t rho;
@@ -195,17 +196,8 @@ class RecurrentAttention
   //! Locally-stored weight object.
   OutputDataType parameters;
 
-  //! Locally-stored initial module.
-  LayerTypes initialModule;
-
-  //! Locally-stored recurrent module.
-  LayerTypes recurrentModule;
-
   //! Locally-stored model modules.
-  std::vector<LayerTypes> network;
-
-  //! Locally-stored merge module.
-  LayerTypes mergeModule;
+  std::vector<LayerTypes<>> network;
 
   //! Locally-stored weight size visitor.
   WeightSizeVisitor weightSizeVisitor;
@@ -227,9 +219,6 @@ class RecurrentAttention
 
   //! Locally-stored gradient object.
   OutputDataType gradient;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;

@@ -24,19 +24,15 @@
 namespace boost { \
 namespace serialization { \
 SIGNATURE \
-struct version<mlpack::data::SecondShim<T>> \
+struct version<T> \
 { \
   typedef mpl::int_<N> type; \
   typedef mpl::integral_c_tag tag; \
   BOOST_STATIC_CONSTANT(int, value = version::type::value); \
-  BOOST_MPL_ASSERT(( \
-      boost::mpl::less< \
-          boost::mpl::int_<N>, \
-          boost::mpl::int_<256> \
-      > \
-  )); \
+  BOOST_MPL_ASSERT((boost::mpl::less<boost::mpl::int_<N>, \
+                                     boost::mpl::int_<256>>)); \
 }; \
-} \
-}
+} /* namespace serialization */ \
+} /* namespace boost */
 
 #endif

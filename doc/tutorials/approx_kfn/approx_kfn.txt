@@ -60,6 +60,17 @@ These methods are described in the following papers:
 }
 @endcode
 
+@code
+@article{curtin2018exploiting,
+  title={Exploiting the structure of furthest neighbor search for fast
+      approximate results},
+  author={Curtin, Ryan R., and Echauz, Javier, and Gardner, Andrew B.},
+  journal={Information Systems},
+  year={2018},
+  publisher={Elsevier}
+}
+@endcode
+
 The problem of furthest neighbor search is simple, and is the opposite of the
 much-more-studied nearest neighbor search problem.  Given a set of reference
 points \f$R\f$ (the set in which we are searching), and a set of query points
@@ -144,7 +155,7 @@ neighbor search:
  - \c mlpack_kfn, for exact and approximate tree-based approaches
 
 These two programs allow a large number of algorithms to be used to find
-approximate furthest neighbors.  Note that the \c mlpack_kfn program is also 
+approximate furthest neighbors.  Note that the \c mlpack_kfn program is also
 documented by the \ref cli_nstut section of the \ref nstutorial page, as it
 shares options with the \c mlpack_knn program.
 
@@ -170,7 +181,7 @@ $ mlpack_approx_kfn -q queries.csv -r refs.csv -v -k 5 -n n.csv -d d.csv
 [INFO ] Search complete.
 [INFO ] Saving CSV data to 'n.csv'.
 [INFO ] Saving CSV data to 'd.csv'.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   algorithm: ds
 [INFO ]   calculate_error: false
@@ -188,7 +199,7 @@ $ mlpack_approx_kfn -q queries.csv -r refs.csv -v -k 5 -n n.csv -d d.csv
 [INFO ]   reference_file: refs.csv
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   drusilla_select_construct: 0.000342s
 [INFO ]   drusilla_select_search: 0.000780s
@@ -231,7 +242,7 @@ $ mlpack_approx_kfn -q queries.csv -r refs.csv -v -k 4 -n n.csv -d d.csv -t 10 -
 [INFO ] Search complete.
 [INFO ] Saving CSV data to 'n.csv'.
 [INFO ] Saving CSV data to 'd.csv'.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   algorithm: ds
 [INFO ]   calculate_error: false
@@ -249,7 +260,7 @@ $ mlpack_approx_kfn -q queries.csv -r refs.csv -v -k 4 -n n.csv -d d.csv -t 10 -
 [INFO ]   reference_file: refs.csv
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   drusilla_select_construct: 0.000645s
 [INFO ]   drusilla_select_search: 0.000551s
@@ -276,7 +287,7 @@ $ mlpack_approx_kfn -q queries.csv -r refs.csv -v -k 3 -n n.csv -d d.csv -a qdaf
 [INFO ] Search complete.
 [INFO ] Saving CSV data to 'n.csv'.
 [INFO ] Saving CSV data to 'd.csv'.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   algorithm: qdafn
 [INFO ]   calculate_error: false
@@ -294,7 +305,7 @@ $ mlpack_approx_kfn -q queries.csv -r refs.csv -v -k 3 -n n.csv -d d.csv -a qdaf
 [INFO ]   reference_file: refs.csv
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   loading_data: 0.008380s
 [INFO ]   qdafn_construct: 0.003399s
@@ -326,7 +337,7 @@ $ mlpack_approx_kfn -q queries.csv -r refs.csv -v -k 1 -e -q -n n.csv
 [INFO ] Average error: 1.08417.
 [INFO ] Maximum error: 1.28712.
 [INFO ] Minimum error: 1.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   algorithm: ds
 [INFO ]   calculate_error: true
@@ -344,7 +355,7 @@ $ mlpack_approx_kfn -q queries.csv -r refs.csv -v -k 1 -e -q -n n.csv
 [INFO ]   reference_file: refs.csv
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   computing_neighbors: 0.001476s
 [INFO ]   drusilla_select_construct: 0.000309s
@@ -391,7 +402,7 @@ $ mlpack_approx_kfn -q queries.csv -r refs.csv -k 1 -e -x exact.csv -n n.csv -v 
 [INFO ] Maximum error: 1.67407.
 [INFO ] Minimum error: 1.
 [INFO ] Saving CSV data to 'n.csv'.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   algorithm: qdafn
 [INFO ]   calculate_error: true
@@ -409,7 +420,7 @@ $ mlpack_approx_kfn -q queries.csv -r refs.csv -k 1 -e -x exact.csv -n n.csv -v 
 [INFO ]   reference_file: refs.csv
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   loading_data: 0.010348s
 [INFO ]   qdafn_construct: 0.000318s
@@ -443,7 +454,7 @@ $ mlpack_kfn -q queries.csv -r refs.csv -v -k 3 -e 0.5 -n n.csv -d d.csv
 [INFO ] Search complete.
 [INFO ] Saving CSV data to 'n.csv'.
 [INFO ] Saving CSV data to 'd.csv'.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   algorithm: dual_tree
 [INFO ]   distances_file: d.csv
@@ -467,7 +478,7 @@ $ mlpack_kfn -q queries.csv -r refs.csv -v -k 3 -e 0.5 -n n.csv -d d.csv
 [INFO ]   true_neighbors_file: ""
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   computing_neighbors: 0.000442s
 [INFO ]   loading_data: 0.008060s
@@ -503,7 +514,7 @@ mlpack_kfn -q queries.csv -r refs.csv -v -k 3 -e 0.1 -n n.csv -d d.csv -a single
 [INFO ] Search complete.
 [INFO ] Saving CSV data to 'n.csv'.
 [INFO ] Saving CSV data to 'd.csv'.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   algorithm: single_tree
 [INFO ]   distances_file: d.csv
@@ -527,7 +538,7 @@ mlpack_kfn -q queries.csv -r refs.csv -v -k 3 -e 0.1 -n n.csv -d d.csv -a single
 [INFO ]   true_neighbors_file: ""
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   computing_neighbors: 0.000850s
 [INFO ]   loading_data: 0.007858s
@@ -554,7 +565,7 @@ $ mlpack_approx_kfn -r refs.csv -t 5 -p 10 -v -M model.bin
 [INFO ] Loading 'refs.csv' as CSV data.  Size is 3 x 1000.
 [INFO ] Building DrusillaSelect model...
 [INFO ] Model built.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   algorithm: ds
 [INFO ]   calculate_error: false
@@ -572,7 +583,7 @@ $ mlpack_approx_kfn -r refs.csv -t 5 -p 10 -v -M model.bin
 [INFO ]   reference_file: refs.csv
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   drusilla_select_construct: 0.000321s
 [INFO ]   loading_data: 0.004700s
@@ -589,7 +600,7 @@ $ mlpack_approx_kfn -m model.bin -q queries.csv -k 3 -d d.csv -n n.csv -v
 [INFO ] Search complete.
 [INFO ] Saving CSV data to 'n.csv'.
 [INFO ] Saving CSV data to 'd.csv'.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   algorithm: ds
 [INFO ]   calculate_error: false
@@ -607,7 +618,7 @@ $ mlpack_approx_kfn -m model.bin -q queries.csv -k 3 -d d.csv -n n.csv -v
 [INFO ]   reference_file: ""
 [INFO ]   verbose: true
 [INFO ]   version: false
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   drusilla_select_search: 0.000878s
 [INFO ]   loading_data: 0.004599s

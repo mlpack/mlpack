@@ -82,7 +82,7 @@ void PointToAddress(AddressType& address, const VecType& point)
   for (size_t i = 0; i < point.n_elem; i++)
   {
     int e;
-    VecElemType normalizedVal = std::frexp(point(i),&e);
+    VecElemType normalizedVal = std::frexp(point(i), &e);
     bool sgn = std::signbit(normalizedVal);
 
     if (point(i) == 0)
@@ -262,6 +262,6 @@ bool Contains(const AddressType1& address, const AddressType2& loBound,
 
 } // namespace addr
 } // namespace bound
-} // namespave mlpack
+} // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_ADDRESS_HPP

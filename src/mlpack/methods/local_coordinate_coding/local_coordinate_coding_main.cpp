@@ -1,5 +1,5 @@
 /**
- * @file lcc_main.cpp
+ * @file local_coordinate_coding_main.cpp
  * @author Nishant Mehta
  *
  * Executable for Local Coordinate Coding.
@@ -11,6 +11,8 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+
 #include "lcc.hpp"
 
 using namespace arma;
@@ -19,8 +21,15 @@ using namespace mlpack;
 using namespace mlpack::math;
 using namespace mlpack::lcc;
 using namespace mlpack::sparse_coding; // For NothingInitializer.
+using namespace mlpack::util;
 
 PROGRAM_INFO("Local Coordinate Coding",
+    // Short description.
+    "An implementation of Local Coordinate Coding (LCC), a data transformation "
+    "technique.  Given input data, this transforms each point to be expressed "
+    "as a linear combination of a few points in the dataset; once an LCC model "
+    "is trained, it can be used to transform points later also.",
+    // Long description.
     "An implementation of Local Coordinate Coding (LCC), which "
     "codes data that approximately lives on a manifold using a variation of l1-"
     "norm regularized sparse coding.  Given a dense data matrix X with n points"
@@ -39,18 +48,38 @@ PROGRAM_INFO("Local Coordinate Coding",
     "\n\n"
     "To run this program, the input matrix X must be specified (with -i), along"
     " with the number of atoms in the dictionary (-k).  An initial dictionary "
-    "may also be specified with the --initial_dictionary option.  The l1-norm "
-    "regularization parameter is specified with -l.  For example, to run LCC on"
-    " the dataset in data.csv using 200 atoms and an l1-regularization "
-    "parameter of 0.1, saving the dictionary into dict.csv and the codes into "
-    "codes.csv, use "
+    "may also be specified with the " +
+    PRINT_PARAM_STRING("initial_dictionary") + " parameter.  The l1-norm "
+    "regularization parameter is specified with the " +
+    PRINT_PARAM_STRING("lambda") + " parameter.  For example, to run LCC on "
+    "the dataset " + PRINT_DATASET("data") + " using 200 atoms and an "
+    "l1-regularization parameter of 0.1, saving the dictionary " +
+    PRINT_PARAM_STRING("dictionary") + " and the codes into " +
+    PRINT_PARAM_STRING("codes") + ", use"
+    "\n\n" +
+    PRINT_CALL("local_coordinate_coding", "training", "data", "atoms", 200,
+        "lambda", 0.1, "dictionary", "dict", "codes", "codes") +
     "\n\n"
-    "$ local_coordinate_coding -i data.csv -k 200 -l 0.1 -d dict.csv -c "
-    "codes.csv"
-    "\n\n"
-    "The maximum number of iterations may be specified with the -n option. "
+    "The maximum number of iterations may be specified with the " +
+    PRINT_PARAM_STRING("max_iterations") + " parameter. "
     "Optionally, the input data matrix X can be normalized before coding with "
-    "the -N option.");
+    "the " + PRINT_PARAM_STRING("normalize") + " parameter."
+    "\n\n"
+    "An LCC model may be saved using the " +
+    PRINT_PARAM_STRING("output_model") + " output parameter.  Then, to encode "
+    "new points from the dataset " + PRINT_DATASET("points") + " with the "
+    "previously saved model " + PRINT_MODEL("lcc_model") + ", saving the new "
+    "codes to " + PRINT_DATASET("new_codes") + ", the following command can "
+    "be used:"
+    "\n\n" +
+    PRINT_CALL("local_coordinate_coding", "input_model", "lcc_model", "test",
+        "points", "codes", "new_codes"),
+    SEE_ALSO("@sparse_coding", "#sparse_coding"),
+    SEE_ALSO("Nonlinear learning using local coordinate coding (pdf)",
+        "https://papers.nips.cc/paper/3875-nonlinear-learning-using-local-"
+        "coordinate-coding.pdf"),
+    SEE_ALSO("mlpack::lcc::LocalCoordinateCoding C++ class documentation",
+        "@doxygen/classmlpack_1_1lcc_1_1LocalCoordinateCoding.html"));
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");
@@ -76,64 +105,37 @@ PARAM_MATRIX_OUT("codes", "Output codes matrix.", "c");
 
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
-int main(int argc, char* argv[])
+static void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   if (CLI::GetParam<int>("seed") != 0)
     RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
     RandomSeed((size_t) std::time(NULL));
 
   // Check for parameter validity.
-  if (CLI::HasParam("input_model") && CLI::HasParam("initial_dictionary"))
-    Log::Fatal << "Cannot specify both --input_model_file (-m) and "
-        << "--initial_dictionary_file (-i)!" << endl;
+  RequireOnlyOnePassed({ "training", "input_model" }, true);
 
-  if (CLI::HasParam("training") && !CLI::HasParam("atoms"))
-    Log::Fatal << "If --training_file is specified, the number of atoms in the "
-        << "dictionary must be specified with --atoms (-k)!" << endl;
+  if (CLI::HasParam("training"))
+    RequireAtLeastOnePassed({ "atoms" }, true);
 
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
-    Log::Fatal << "One of --training_file (-t) or --input_model_file (-m) must "
-        << "be specified!" << endl;
+  RequireAtLeastOnePassed({ "codes", "dictionary", "output_model" }, false,
+      "no output will be saved");
 
-  if (!CLI::HasParam("codes") && !CLI::HasParam("dictionary") &&
-      !CLI::HasParam("output_model"))
-    Log::Warn << "Neither --codes_file (-c), --dictionary_file (-d), nor "
-        << "--output_model_file (-M) are specified; no output will be saved."
-        << endl;
+  ReportIgnoredParam({{ "test", false }}, "codes");
 
-  if (CLI::HasParam("codes") && !CLI::HasParam("test"))
-    Log::Fatal << "--codes_file (-c) is specified, but no test matrix ("
-        << "specified with --test_file or -T) is given to encode!" << endl;
-
-  if (!CLI::HasParam("training"))
-  {
-    if (CLI::HasParam("atoms"))
-      Log::Warn << "--atoms (-k) ignored because --training_file (-t) is not "
-          << "specified." << endl;
-    if (CLI::HasParam("lambda"))
-      Log::Warn << "--lambda (-l) ignored because --training_file (-t) is not "
-          << "specified." << endl;
-    if (CLI::HasParam("initial_dictionary"))
-      Log::Warn << "--initial_dictionary_file (-i) ignored because "
-          << "--training_file (-t) is not specified." << endl;
-    if (CLI::HasParam("max_iterations"))
-      Log::Warn << "--max_iterations (-n) ignored because --training_file (-t) "
-          << "is not specified." << endl;
-    if (CLI::HasParam("normalize"))
-      Log::Warn << "--normalize (-N) ignored because --training_file (-t) is "
-          << "not specified." << endl;
-    if (CLI::HasParam("tolerance"))
-      Log::Warn << "--tolerance (-o) ignored because --training_file (-t) is "
-          << "not specified." << endl;
-  }
+  ReportIgnoredParam({{ "training", false }}, "atoms");
+  ReportIgnoredParam({{ "training", false }}, "lambda");
+  ReportIgnoredParam({{ "training", false }}, "initial_dictionary");
+  ReportIgnoredParam({{ "training", false }}, "max_iterations");
+  ReportIgnoredParam({{ "training", false }}, "normalize");
+  ReportIgnoredParam({{ "training", false }}, "tolerance");
 
   // Do we have an existing model?
-  LocalCoordinateCoding lcc(0, 0.0);
+  LocalCoordinateCoding* lcc;
   if (CLI::HasParam("input_model"))
-    lcc = std::move(CLI::GetParam<LocalCoordinateCoding>("input_model"));
+    lcc = CLI::GetParam<LocalCoordinateCoding*>("input_model");
+  else
+    lcc = new LocalCoordinateCoding(0, 0.0);
 
   if (CLI::HasParam("training"))
   {
@@ -147,46 +149,57 @@ int main(int argc, char* argv[])
         matX.col(i) /= norm(matX.col(i), 2);
     }
 
-    lcc.Lambda() = CLI::GetParam<double>("lambda");
-    lcc.Atoms() = (size_t) CLI::GetParam<int>("atoms");
-    lcc.MaxIterations() = (size_t) CLI::GetParam<int>("max_iterations");
-    lcc.Tolerance() = CLI::GetParam<double>("tolerance");
+    // Check if the parameters lie within the bounds.
+    RequireParamValue<int>("atoms", [&matX](int x)
+        { return (x > 0) && ((size_t) x < matX.n_cols); }, 1,
+        "Number of atoms must lie between 1 and number of training points");
+
+    RequireParamValue<double>("lambda", [](double x) { return x >= 0; }, 1,
+        "The regularization parameter should be a non-negative real number");
+
+    RequireParamValue<double>("tolerance", [](double x) { return x > 0; }, 1,
+        "Tolerance should be a positive real number");
+
+    lcc->Lambda() = CLI::GetParam<double>("lambda");
+    lcc->Atoms() = (size_t) CLI::GetParam<int>("atoms");
+    lcc->MaxIterations() = (size_t) CLI::GetParam<int>("max_iterations");
+    lcc->Tolerance() = CLI::GetParam<double>("tolerance");
 
     // Inform the user if we are overwriting their model.
     if (CLI::HasParam("input_model"))
     {
       Log::Info << "Using dictionary from existing model in '"
-          << CLI::GetUnmappedParam<string>("input_model") << "' as initial "
+          << CLI::GetPrintableParam<string>("input_model") << "' as initial "
           << "dictionary for training." << endl;
-      lcc.Train<NothingInitializer>(matX);
+      lcc->Train<NothingInitializer>(matX);
     }
     else if (CLI::HasParam("initial_dictionary"))
     {
       // Load initial dictionary directly into LCC object.
-      lcc.Dictionary() = std::move(CLI::GetParam<mat>("initial_dictionary"));
+      lcc->Dictionary() = std::move(CLI::GetParam<mat>("initial_dictionary"));
 
       // Validate the size of the initial dictionary.
-      if (lcc.Dictionary().n_cols != lcc.Atoms())
+      if (lcc->Dictionary().n_cols != lcc->Atoms())
       {
-        Log::Fatal << "The initial dictionary has " << lcc.Dictionary().n_cols
+        Log::Fatal << "The initial dictionary has " << lcc->Dictionary().n_cols
             << " atoms, but the number of atoms was specified to be "
-            << lcc.Atoms() << "!" << endl;
+            << lcc->Atoms() << "!" << endl;
       }
 
-      if (lcc.Dictionary().n_rows != matX.n_rows)
+      if (lcc->Dictionary().n_rows != matX.n_rows)
       {
-        Log::Fatal << "The initial dictionary has " << lcc.Dictionary().n_rows
+        Log::Fatal << "The initial dictionary has " << lcc->Dictionary().n_rows
             << " dimensions, but the data has " << matX.n_rows << " dimensions!"
             << endl;
       }
 
       // Train the model.
-      lcc.Train<NothingInitializer>(matX);
+      lcc->Train<NothingInitializer>(matX);
     }
     else
     {
       // Run with the default initialization.
-      lcc.Train(matX);
+      lcc->Train(matX);
     }
   }
 
@@ -195,10 +208,10 @@ int main(int argc, char* argv[])
   {
     mat matY = std::move(CLI::GetParam<mat>("test"));
 
-    if (matY.n_rows != lcc.Dictionary().n_rows)
+    if (matY.n_rows != lcc->Dictionary().n_rows)
       Log::Fatal << "Model was trained with a dimensionality of "
-          << lcc.Dictionary().n_rows << ", but data in test file "
-          << CLI::GetUnmappedParam<mat>("test") << " has a dimensionality of "
+          << lcc->Dictionary().n_rows << ", but data in test file "
+          << CLI::GetPrintableParam<mat>("test") << " has a dimensionality of "
           << matY.n_rows << "!" << endl;
 
     // Normalize each point if the user asked for it.
@@ -210,19 +223,12 @@ int main(int argc, char* argv[])
     }
 
     mat codes;
-    lcc.Encode(matY, codes);
+    lcc->Encode(matY, codes);
 
-    if (CLI::HasParam("codes"))
-      CLI::GetParam<mat>("codes") = std::move(codes);
+    CLI::GetParam<mat>("codes") = std::move(codes);
   }
 
-  // Did the user want to save the dictionary?
-  if (CLI::HasParam("dictionary"))
-    CLI::GetParam<mat>("dictionary") = std::move(lcc.Dictionary());
-
-  // Did the user want to save the model?
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<LocalCoordinateCoding>("output_model") = std::move(lcc);
-
-  CLI::Destroy();
+  // Save the dictionary and the model.
+  CLI::GetParam<mat>("dictionary") = lcc->Dictionary();
+  CLI::GetParam<LocalCoordinateCoding*>("output_model") = lcc;
 }

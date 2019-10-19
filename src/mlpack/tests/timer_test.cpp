@@ -33,6 +33,7 @@ BOOST_AUTO_TEST_SUITE(TimerTest);
  */
 BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
 {
+  Timer::EnableTiming();
   Timer::Start("test_timer");
 
   // On Windows (or, at least, in Windows not using VS2010) we cannot use
@@ -73,21 +74,77 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
   Timer::Stop("test_timer");
 
   BOOST_REQUIRE_GE(Timer::Get("test_timer").count(), 40000);
+  Timer::DisableTiming();
 }
 
 BOOST_AUTO_TEST_CASE(TwiceStopTimerTest)
 {
+  Timer::EnableTiming();
   Timer::Start("test_timer");
   Timer::Stop("test_timer");
 
   BOOST_REQUIRE_THROW(Timer::Stop("test_timer"), std::runtime_error);
+
+  Timer::DisableTiming();
 }
 
 BOOST_AUTO_TEST_CASE(TwiceStartTimerTest)
 {
+  Timer::EnableTiming();
   Timer::Start("test_timer");
 
   BOOST_REQUIRE_THROW(Timer::Start("test_timer"), std::runtime_error);
+  Timer::Stop("test_timer");
+  Timer::DisableTiming();
+}
+
+BOOST_AUTO_TEST_CASE(MultithreadTimerTest)
+{
+  Timer::EnableTiming();
+  // Make three different threads all start a timer then stop a timer.
+  std::thread threads[3];
+  for (size_t i = 0; i < 3; ++i)
+  {
+    threads[i] = std::thread([]()
+        {
+          Timer::Start("thread_timer");
+
+          #ifdef _WIN32
+          Sleep(20);
+          #else
+          int restarts = 0;
+          // Catch occasional EINTR failures.
+          while (usleep(20000) != 0 && restarts < 3)
+            ++restarts;
+          #endif
+
+          Timer::Stop("thread_timer");
+        });
+  }
+
+  for (size_t i = 0; i < 3; ++i)
+    threads[i].join();
+
+  // If we made it this far without a problem, then the multithreaded part has
+  // worked.  Next we ensure that the total timer time is counting multiple
+  // threads.
+  BOOST_REQUIRE(Timer::Get("thread_timer") > std::chrono::microseconds(50000));
+}
+
+BOOST_AUTO_TEST_CASE(DisabledTimingTest)
+{
+  // It should be disabled by default but let's be paranoid.
+  Timer::DisableTiming();
+
+  Timer::Start("test_timer");
+  #ifdef _WIN32
+  Sleep(20);
+  #else
+  usleep(20000);
+  #endif
+  Timer::Stop("test_timer");
+
+  BOOST_REQUIRE(Timer::Get("test_timer") == std::chrono::microseconds(0));
 }
 
 BOOST_AUTO_TEST_SUITE_END();

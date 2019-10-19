@@ -93,14 +93,13 @@ class EpanechnikovKernel
    * Serialize the kernel.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const unsigned int version);
 
  private:
   //! Bandwidth of the kernel.
   double bandwidth;
   //! Cached value of the inverse bandwidth squared (to speed up computation).
   double inverseBandwidthSquared;
-
 };
 
 //! Kernel traits for the Epanechnikov kernel.

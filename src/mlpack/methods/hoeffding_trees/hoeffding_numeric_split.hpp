@@ -65,7 +65,7 @@ class HoeffdingNumericSplit
    * @param observationsBeforeBinning Number of points to see before binning is
    *      performed.
    */
-  HoeffdingNumericSplit(const size_t numClasses,
+  HoeffdingNumericSplit(const size_t numClasses = 0,
                         const size_t bins = 10,
                         const size_t observationsBeforeBinning = 100);
 
@@ -121,7 +121,7 @@ class HoeffdingNumericSplit
 
   //! Serialize the object.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Before binning, this holds the points we have seen so far.

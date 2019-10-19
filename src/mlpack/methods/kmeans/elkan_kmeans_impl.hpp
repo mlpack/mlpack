@@ -25,7 +25,7 @@ ElkanKMeans<MetricType, MatType>::ElkanKMeans(const MatType& dataset,
     metric(metric),
     distanceCalculations(0)
 {
-
+  // Nothing to do here.
 }
 
 // Run a single iteration of Elkan's algorithm for Lloyd iterations.

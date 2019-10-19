@@ -15,38 +15,14 @@
 #include <mlpack/core.hpp>
 #include <boost/version.hpp>
 
-// This is only necessary for pre-1.36 Boost.Test.
-#if BOOST_VERSION < 103600
-
-#include <boost/test/floating_point_comparison.hpp>
-#include <boost/test/auto_unit_test.hpp>
-
-// This depends on other macros.  Probably not a great idea... but it works, and
-// we only need it for ancient Boost versions.
-#define BOOST_REQUIRE_GE( L, R ) \
-    BOOST_REQUIRE_EQUAL( (L >= R), true )
-
-#define BOOST_REQUIRE_NE( L, R ) \
-    BOOST_REQUIRE_EQUAL( (L != R), true )
-
-#define BOOST_REQUIRE_LE( L, R ) \
-    BOOST_REQUIRE_EQUAL( (L <= R), true )
-
-#define BOOST_REQUIRE_LT( L, R ) \
-    BOOST_REQUIRE_EQUAL( (L < R), true )
-
-#define BOOST_REQUIRE_GT( L, R ) \
-    BOOST_REQUIRE_EQUAL( (L > R), true )
-
-#endif
-
 // Require the approximation L to be within a relative error of E respect to the
 // actual value R.
-#define REQUIRE_RELATIVE_ERR( L, R, E ) \
-    BOOST_REQUIRE_LE( std::abs((R) - (L)), (E) * std::abs(R))
+#define REQUIRE_RELATIVE_ERR(L, R, E) \
+    BOOST_REQUIRE_LE(std::abs((R) - (L)), (E) * std::abs(R))
 
 // Check the values of two matrices.
-inline void CheckMatrices(const arma::mat& a, const arma::mat& b,
+inline void CheckMatrices(const arma::mat& a,
+                          const arma::mat& b,
                           double tolerance = 1e-5)
 {
   BOOST_REQUIRE_EQUAL(a.n_rows, b.n_rows);
@@ -62,13 +38,137 @@ inline void CheckMatrices(const arma::mat& a, const arma::mat& b,
 }
 
 // Check the values of two unsigned matrices.
-inline void CheckMatrices(const arma::Mat<size_t>& a, const arma::Mat<size_t>& b)
+inline void CheckMatrices(const arma::Mat<size_t>& a,
+                          const arma::Mat<size_t>& b)
 {
   BOOST_REQUIRE_EQUAL(a.n_rows, b.n_rows);
   BOOST_REQUIRE_EQUAL(a.n_cols, b.n_cols);
 
   for (size_t i = 0; i < a.n_elem; ++i)
     BOOST_REQUIRE_EQUAL(a[i], b[i]);
+}
+
+// Check the values of two cubes.
+inline void CheckMatrices(const arma::cube& a,
+                          const arma::cube& b,
+                          double tolerance = 1e-5)
+{
+  BOOST_REQUIRE_EQUAL(a.n_rows, b.n_rows);
+  BOOST_REQUIRE_EQUAL(a.n_cols, b.n_cols);
+  BOOST_REQUIRE_EQUAL(a.n_slices, b.n_slices);
+
+  for (size_t i = 0; i < a.n_elem; ++i)
+  {
+    if (std::abs(a[i]) < tolerance / 2)
+      BOOST_REQUIRE_SMALL(b[i], tolerance / 2);
+    else
+      BOOST_REQUIRE_CLOSE(a[i], b[i], tolerance);
+  }
+}
+
+// Check if two matrices are different.
+inline void CheckMatricesNotEqual(const arma::mat& a,
+                                  const arma::mat& b,
+                                  double tolerance = 1e-5)
+{
+  bool areDifferent = false;
+
+  // Only check the elements if the dimensions are equal.
+  if (a.n_rows == b.n_rows && a.n_cols == b.n_cols)
+  {
+    for (size_t i = 0; i < a.n_elem; ++i)
+    {
+      if (std::abs(a[i]) < tolerance / 2 &&
+          b[i] > tolerance / 2)
+      {
+        areDifferent = true;
+        break;
+      }
+      else if (std::abs(a[i] - b[i]) > tolerance)
+      {
+        areDifferent = true;
+        break;
+      }
+    }
+  }
+  else
+    areDifferent = true;
+
+  if (!areDifferent)
+    BOOST_ERROR("The matrices are equal.");
+}
+
+// Check if two unsigned matrices are different.
+inline void CheckMatricesNotEqual(const arma::Mat<size_t>& a,
+                                  const arma::Mat<size_t>& b)
+{
+  bool areDifferent = false;
+
+  // Only check the elements if the dimensions are equal.
+  if (a.n_rows == b.n_rows && a.n_cols == b.n_cols)
+  {
+    for (size_t i = 0; i < a.n_elem; ++i)
+    {
+      if (a[i] != b[i])
+      {
+        areDifferent = true;
+        break;
+      }
+    }
+  }
+  else
+    areDifferent = true;
+
+  if (!areDifferent)
+    BOOST_ERROR("The matrices are equal.");
+}
+
+// Check if two cubes are different.
+inline void CheckMatricesNotEqual(const arma::cube& a,
+                                  const arma::cube& b,
+                                  double tolerance = 1e-5)
+{
+  bool areDifferent = false;
+
+  // Only check the elements if the dimensions are equal.
+  if (a.n_rows == b.n_rows && a.n_cols == b.n_cols &&
+      a.n_slices == b.n_slices)
+  {
+    for (size_t i = 0; i < a.n_elem; ++i)
+    {
+      if (std::abs(a[i]) < tolerance / 2 &&
+          b[i] > tolerance / 2)
+      {
+        areDifferent = true;
+        break;
+      }
+      else if (std::abs(a[i] - b[i]) > tolerance)
+      {
+        areDifferent = true;
+        break;
+      }
+    }
+  }
+  else
+    areDifferent = true;
+
+  if (!areDifferent)
+    BOOST_ERROR("The matrices are equal.");
+}
+
+// Filter typeinfo string to generate unique filenames for serialization tests.
+inline std::string FilterFileName(const std::string& inputString)
+{
+  // Take the last valid 32 characters for the filename.
+  std::string fileName;
+  for (auto it = inputString.rbegin(); it != inputString.rend() &&
+      fileName.size() != 32; ++it)
+  {
+    if (std::isalnum(*it))
+      fileName.push_back(*it);
+  }
+
+  return fileName;
 }
 
 #endif

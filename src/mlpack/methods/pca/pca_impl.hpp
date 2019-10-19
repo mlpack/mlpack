@@ -26,8 +26,8 @@ namespace mlpack {
 namespace pca {
 
 template<typename DecompositionPolicy>
-PCAType<DecompositionPolicy>::PCAType(const bool scaleData,
-                                      const DecompositionPolicy& decomposition) :
+PCA<DecompositionPolicy>::PCA(
+    const bool scaleData, const DecompositionPolicy& decomposition) :
     scaleData(scaleData),
     decomposition(decomposition)
 { }
@@ -41,10 +41,10 @@ PCAType<DecompositionPolicy>::PCAType(const bool scaleData,
  * @param eigvec - PCA Loadings/Coeffs/EigenVectors
  */
 template<typename DecompositionPolicy>
-void PCAType<DecompositionPolicy>::Apply(const arma::mat& data,
-                                         arma::mat& transformedData,
-                                         arma::vec& eigVal,
-                                         arma::mat& eigvec)
+void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
+                                     arma::mat& transformedData,
+                                     arma::vec& eigVal,
+                                     arma::mat& eigvec)
 {
   Timer::Start("pca");
 
@@ -69,9 +69,9 @@ void PCAType<DecompositionPolicy>::Apply(const arma::mat& data,
  * @param eigVal - contains eigen values in a column vector
  */
 template<typename DecompositionPolicy>
-void PCAType<DecompositionPolicy>::Apply(const arma::mat& data,
-                                         arma::mat& transformedData,
-                                         arma::vec& eigVal)
+void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
+                                     arma::mat& transformedData,
+                                     arma::vec& eigVal)
 {
   arma::mat eigvec;
   Apply(data, transformedData, eigVal, eigvec);
@@ -89,8 +89,8 @@ void PCAType<DecompositionPolicy>::Apply(const arma::mat& data,
  * @return Amount of the variance of the data retained (between 0 and 1).
  */
 template<typename DecompositionPolicy>
-double PCAType<DecompositionPolicy>::Apply(arma::mat& data,
-                                           const size_t newDimension)
+double PCA<DecompositionPolicy>::Apply(arma::mat& data,
+                                       const size_t newDimension)
 {
   // Parameter validation.
   if (newDimension == 0)
@@ -140,8 +140,8 @@ double PCAType<DecompositionPolicy>::Apply(arma::mat& data,
  * always be greater than or equal to the varRetained parameter.
  */
 template<typename DecompositionPolicy>
-double PCAType<DecompositionPolicy>::Apply(arma::mat& data,
-                                           const double varRetained)
+double PCA<DecompositionPolicy>::Apply(arma::mat& data,
+                                       const double varRetained)
 {
   // Parameter validation.
   if (varRetained < 0)

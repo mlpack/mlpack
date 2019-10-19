@@ -13,7 +13,6 @@
  */
 #include "mvu.hpp"
 
-//#include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
 #include <mlpack/core/optimizers/sdp/lrsdp.hpp>
 
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>

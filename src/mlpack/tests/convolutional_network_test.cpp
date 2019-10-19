@@ -1,6 +1,7 @@
 /**
  * @file convolutional_network_test.cpp
  * @author Marcus Edel
+ * @author Abhinav Moudgil
  *
  * Tests the convolutional neural network.
  *
@@ -11,17 +12,17 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
+
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::optimization;
-
 
 BOOST_AUTO_TEST_SUITE(ConvolutionalNetworkTest);
 
@@ -46,11 +47,13 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   {
     if (i < nPoints / 2)
     {
-      Y(i) = 4;
+      // Assign label "1" to all samples with digit = 4
+      Y(i) = 1;
     }
     else
     {
-      Y(i) = 9;
+      // Assign label "2" to all samples with digit = 9
+      Y(i) = 2;
     }
   }
 
@@ -71,46 +74,62 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
    * |   |      +-+   |      +-+   |      +-+   |      +-+   |    |   |
    * +---+        +---+        +---+        +---+        +---+    +---+
    */
-  FFN<NegativeLogLikelihood<> > model;
-
-  model.Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
-  model.Add<ReLULayer<> >();
-  model.Add<MaxPooling<> >(8, 8, 2, 2);
-  model.Add<Convolution<> >(8, 12, 2, 2);
-  model.Add<ReLULayer<> >();
-  model.Add<MaxPooling<> >(2, 2, 2, 2);
-  model.Add<Linear<> >(192, 20);
-  model.Add<ReLULayer<> >();
-  model.Add<Linear<> >(20, 30);
-  model.Add<ReLULayer<> >();
-  model.Add<Linear<> >(30, 10);
-  model.Add<LogSoftMax<> >();
-
-  RMSprop<decltype(model)> opt(model, 0.01, 0.88, 1e-8, 5000, -1);
-
-  model.Train(std::move(X), std::move(Y), opt);
-
-  arma::mat predictionTemp;
-  model.Predict(X, predictionTemp);
-  arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp.n_cols);
-
-  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights. If this works 1 of 5 times, I'm fine
+  // with that. All I want to know is that the network is able to escape from
+  // local minima and to solve the task.
+  bool success = false;
+  for (size_t trial = 0; trial < 5; ++trial)
   {
-    prediction(i) = arma::as_scalar(arma::find(
-        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
-  }
+    FFN<NegativeLogLikelihood<>, RandomInitialization> model;
 
-  size_t error = 0;
-  for (size_t i = 0; i < X.n_cols; i++)
-  {
-    if (prediction(i) == Y(i))
+    model.Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+    model.Add<ReLULayer<> >();
+    model.Add<MaxPooling<> >(8, 8, 2, 2);
+    model.Add<Convolution<> >(8, 12, 2, 2);
+    model.Add<ReLULayer<> >();
+    model.Add<MaxPooling<> >(2, 2, 2, 2);
+    model.Add<Linear<> >(192, 20);
+    model.Add<ReLULayer<> >();
+    model.Add<Linear<> >(20, 10);
+    model.Add<ReLULayer<> >();
+    model.Add<Linear<> >(10, 2);
+    model.Add<LogSoftMax<> >();
+
+    // Train for only 8 epochs.
+    ens::RMSProp opt(0.001, 1, 0.88, 1e-8, 8 * nPoints, -1);
+
+    double objVal = model.Train(X, Y, opt);
+
+    // Test that objective value returned by FFN::Train() is finite.
+    BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+
+    arma::mat predictionTemp;
+    model.Predict(X, predictionTemp);
+    arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp.n_cols);
+
+    for (size_t i = 0; i < predictionTemp.n_cols; ++i)
     {
-      error++;
+      prediction(i) = arma::as_scalar(arma::find(
+            arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+    }
+
+    size_t correct = 0;
+    for (size_t i = 0; i < X.n_cols; i++)
+    {
+      if (prediction(i) == Y(i))
+        correct++;
+    }
+
+    double classificationError = 1 - double(correct) / X.n_cols;
+    if (classificationError <= 0.25)
+    {
+      success = true;
+      break;
     }
   }
 
-  double classificationError = 1 - double(error) / X.n_cols;
-  BOOST_REQUIRE_LE(classificationError, 0.2);
+  BOOST_REQUIRE_EQUAL(success, true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

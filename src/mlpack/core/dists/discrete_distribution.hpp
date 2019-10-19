@@ -1,6 +1,7 @@
 /**
  * @file discrete_distribution.hpp
  * @author Ryan Curtin
+ * @author Rohan Raj
  *
  * Implementation of the discrete distribution, where each discrete observation
  * has a given probability.
@@ -30,8 +31,8 @@ namespace distribution /** Probability distributions. */ {
  * observation is passed (i.e. observation > numObservations), a crash will
  * probably occur.
  *
- * This distribution only supports one-dimensional observations, so when passing
- * an arma::vec as an observation, it should only have one dimension
+ * This distribution only supports one-dimensional observations, so when
+ * passing an arma::vec as an observation, it should only have one dimension
  * (vec.n_rows == 1).  Any additional dimensions will simply be ignored.
  *
  * @note
@@ -46,7 +47,8 @@ class DiscreteDistribution
 {
  public:
   /**
-   * Default constructor, which creates a distribution that has no observations.
+   * Default constructor, which creates a distribution that has no
+   * observations.
    */
   DiscreteDistribution() :
       probabilities(std::vector<arma::vec>(1)){ /* Nothing to do. */ }
@@ -65,9 +67,9 @@ class DiscreteDistribution
   { /* Nothing to do. */ }
 
   /**
-   * Define the multidimensional discrete distribution as having numObservations possible
-   * observations.  The probability in each state will be set to (1 /
-   * numObservations of each dimension).
+   * Define the multidimensional discrete distribution as having
+   * numObservations possible observations.  The probability in each state will
+   * be set to (1 / numObservations of each dimension).
    *
    * @param numObservations Number of possible observations this distribution
    *    can have.
@@ -89,8 +91,8 @@ class DiscreteDistribution
   }
 
   /**
-   * Define the multidimensional discrete distribution as having the given probabilities for each
-   * observation.
+   * Define the multidimensional discrete distribution as having the given
+   * probabilities for each observation.
    *
    * @param probabilities Probabilities of each possible observation.
    */
@@ -126,14 +128,14 @@ class DiscreteDistribution
   double Probability(const arma::vec& observation) const
   {
     double probability = 1.0;
-    // Ensure the observation has the same dimension with the probabilities
+    // Ensure the observation has the same dimension with the probabilities.
     if (observation.n_elem != probabilities.size())
     {
-      Log::Debug << "the obversation must has the same dimension with the probabilities"
-          << "the observation's dimension is" << observation.n_elem << "but the dimension of "
-          << "probabilities is" << probabilities.size() << std::endl;
-      return probability;
+      Log::Fatal << "DiscreteDistribution::Probability(): observation has "
+          << "incorrect dimension " << observation.n_elem << " but should have"
+          << " dimension " << probabilities.size() << "!" << std::endl;
     }
+
     for (size_t dimension = 0; dimension < observation.n_elem; dimension++)
     {
       // Adding 0.5 helps ensure that we cast the floating point to a size_t
@@ -143,9 +145,10 @@ class DiscreteDistribution
       // Ensure that the observation is within the bounds.
       if (obs >= probabilities[dimension].n_elem)
       {
-        Log::Debug << "DiscreteDistribution::Probability(): received observation "
-             << obs << "; observation must be in [0, " << probabilities[dimension].n_elem
-             << "] for this distribution." << std::endl;
+        Log::Fatal << "DiscreteDistribution::Probability(): received "
+            << "observation " << obs << "; observation must be in [0, "
+            << probabilities[dimension].n_elem << "] for this distribution."
+            << std::endl;
       }
       probability *= probabilities[dimension][obs];
     }
@@ -154,8 +157,8 @@ class DiscreteDistribution
   }
 
   /**
-   * Return the log probability of the given observation.  If the observation is
-   * greater than the number of possible observations, then a crash will
+   * Return the log probability of the given observation.  If the observation
+   * is greater than the number of possible observations, then a crash will
    * probably occur -- bounds checking is not performed.
    *
    * @param observation Observation to return the log probability of.
@@ -168,6 +171,35 @@ class DiscreteDistribution
   }
 
   /**
+   * Calculates the Discrete probability density function for each
+   * data point (column) in the given matrix.
+   *
+   * @param x List of observations.
+   * @param probabilities Output probabilities for each input observation.
+   */
+  void Probability(const arma::mat& x, arma::vec& probabilities) const
+  {
+    probabilities.set_size(x.n_cols);
+    for (size_t i = 0; i < x.n_cols; i++)
+      probabilities(i) = Probability(x.unsafe_col(i));
+  }
+
+  /**
+   * Returns the Log probability of the given matrix. These values are stored
+   * in logProbabilities.
+   *
+   * @param x List of observations.
+   * @param logProbabilities Output log-probabilities for each input
+   *   observation.
+   */
+  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const
+  {
+    logProbabilities.set_size(x.n_cols);
+    for (size_t i = 0; i < x.n_cols; i++)
+      logProbabilities(i) = log(Probability(x.unsafe_col(i)));
+  }
+
+  /**
    * Return a randomly generated observation (one-dimensional vector; one
    * observation) according to the probability distribution defined by this
    * object.
@@ -177,9 +209,9 @@ class DiscreteDistribution
   arma::vec Random() const;
 
   /**
-   * Estimate the probability distribution directly from the given observations.
-   * If any of the observations is greater than numObservations, a crash is
-   * likely to occur.
+   * Estimate the probability distribution directly from the given
+   * observations. If any of the observations is greater than numObservations,
+   * a crash is likely to occur.
    *
    * @param observations List of observations.
    */
@@ -192,7 +224,7 @@ class DiscreteDistribution
    *
    * @param observations List of observations.
    * @param probabilities List of probabilities that each observation is
-   *    actually from this distribution.
+   *     actually from this distribution.
    */
   void Train(const arma::mat& observations,
              const arma::vec& probabilities);
@@ -207,26 +239,9 @@ class DiscreteDistribution
    * Serialize the distribution.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    // We serialize the vector manually since there seem to be some problems
-    // with some boost versions.
-    size_t dimensionality;
-    dimensionality = probabilities.size();
-    ar & data::CreateNVP(dimensionality, "dimensionality");
-
-    if (Archive::is_loading::value)
-    {
-      probabilities.clear();
-      probabilities.resize(dimensionality);
-    }
-
-    for (size_t i = 0; i < dimensionality; ++i)
-    {
-      std::ostringstream oss;
-      oss << "probabilities" << i;
-      ar & data::CreateNVP(probabilities[i], oss.str());
-    }
+    ar & BOOST_SERIALIZATION_NVP(probabilities);
   }
 
  private:

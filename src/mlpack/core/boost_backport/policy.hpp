@@ -31,7 +31,7 @@
 #include <stddef.h>
 #include <math.h>
 
-namespace boost{ namespace math{ 
+namespace boost{ namespace math{
 
 namespace tools{
 
@@ -309,7 +309,7 @@ char test_is_valid_arg(const default_policy*);
 char test_is_default_arg(const default_policy*);
 
 template <class T>
-struct is_valid_policy_imp 
+struct is_valid_policy_imp
 {
    BOOST_STATIC_CONSTANT(bool, value = sizeof(::boost::math::policies::detail::test_is_valid_arg(static_cast<T*>(0))) == 1);
 };
@@ -320,13 +320,13 @@ struct is_default_policy_imp
    BOOST_STATIC_CONSTANT(bool, value = sizeof(::boost::math::policies::detail::test_is_default_arg(static_cast<T*>(0))) == 1);
 };
 
-template <class T> struct is_valid_policy 
-: public mpl::bool_< 
+template <class T> struct is_valid_policy
+: public mpl::bool_<
    ::boost::math::policies::detail::is_valid_policy_imp<T>::value>
 {};
 
-template <class T> struct is_default_policy 
-: public mpl::bool_< 
+template <class T> struct is_default_policy
+: public mpl::bool_<
    ::boost::math::policies::detail::is_default_policy_imp<T>::value>
 {
    template <class U>
@@ -389,8 +389,8 @@ typedef default_args<BOOST_MATH_PROMOTE_FLOAT_POLICY, BOOST_MATH_PROMOTE_DOUBLE_
 // Now define the policy type with enough arguments to handle all
 // the policies:
 //
-template <class A1 = default_policy, 
-          class A2 = default_policy, 
+template <class A1 = default_policy,
+          class A2 = default_policy,
           class A3 = default_policy,
           class A4 = default_policy,
           class A5 = default_policy,
@@ -517,9 +517,9 @@ public:
    typedef max_root_iterations<> max_root_iterations_type;
 };
 
-template <class Policy, 
-          class A1 = default_policy, 
-          class A2 = default_policy, 
+template <class Policy,
+          class A1 = default_policy,
+          class A2 = default_policy,
           class A3 = default_policy,
           class A4 = default_policy,
           class A5 = default_policy,
@@ -614,9 +614,9 @@ public:
 // Full specialisation to speed up compilation of the common case:
 //
 template <>
-struct normalise<policy<>, 
-          promote_float<false>, 
-          promote_double<false>, 
+struct normalise<policy<>,
+          promote_float<false>,
+          promote_double<false>,
           discrete_quantile<>,
           assert_undefined<>,
           default_policy,
@@ -652,72 +652,72 @@ inline BOOST_MATH_CONSTEXPR policy<> make_policy() BOOST_NOEXCEPT
 
 template <class A1>
 inline BOOST_MATH_CONSTEXPR typename normalise<policy<>, A1>::type make_policy(const A1&) BOOST_NOEXCEPT
-{ 
+{
    typedef typename normalise<policy<>, A1>::type result_type;
-   return result_type(); 
+   return result_type();
 }
 
 template <class A1, class A2>
 inline BOOST_MATH_CONSTEXPR typename normalise<policy<>, A1, A2>::type make_policy(const A1&, const A2&) BOOST_NOEXCEPT
-{ 
+{
    typedef typename normalise<policy<>, A1, A2>::type result_type;
-   return result_type(); 
+   return result_type();
 }
 
 template <class A1, class A2, class A3>
 inline BOOST_MATH_CONSTEXPR typename normalise<policy<>, A1, A2, A3>::type make_policy(const A1&, const A2&, const A3&) BOOST_NOEXCEPT
-{ 
+{
    typedef typename normalise<policy<>, A1, A2, A3>::type result_type;
-   return result_type(); 
+   return result_type();
 }
 
 template <class A1, class A2, class A3, class A4>
 inline BOOST_MATH_CONSTEXPR typename normalise<policy<>, A1, A2, A3, A4>::type make_policy(const A1&, const A2&, const A3&, const A4&) BOOST_NOEXCEPT
-{ 
+{
    typedef typename normalise<policy<>, A1, A2, A3, A4>::type result_type;
-   return result_type(); 
+   return result_type();
 }
 
 template <class A1, class A2, class A3, class A4, class A5>
 inline BOOST_MATH_CONSTEXPR typename normalise<policy<>, A1, A2, A3, A4, A5>::type make_policy(const A1&, const A2&, const A3&, const A4&, const A5&) BOOST_NOEXCEPT
-{ 
+{
    typedef typename normalise<policy<>, A1, A2, A3, A4, A5>::type result_type;
-   return result_type(); 
+   return result_type();
 }
 
 template <class A1, class A2, class A3, class A4, class A5, class A6>
 inline BOOST_MATH_CONSTEXPR typename normalise<policy<>, A1, A2, A3, A4, A5, A6>::type make_policy(const A1&, const A2&, const A3&, const A4&, const A5&, const A6&) BOOST_NOEXCEPT
-{ 
+{
    typedef typename normalise<policy<>, A1, A2, A3, A4, A5, A6>::type result_type;
-   return result_type(); 
+   return result_type();
 }
 
 template <class A1, class A2, class A3, class A4, class A5, class A6, class A7>
 inline BOOST_MATH_CONSTEXPR typename normalise<policy<>, A1, A2, A3, A4, A5, A6, A7>::type make_policy(const A1&, const A2&, const A3&, const A4&, const A5&, const A6&, const A7&) BOOST_NOEXCEPT
-{ 
+{
    typedef typename normalise<policy<>, A1, A2, A3, A4, A5, A6, A7>::type result_type;
-   return result_type(); 
+   return result_type();
 }
 
 template <class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8>
 inline BOOST_MATH_CONSTEXPR typename normalise<policy<>, A1, A2, A3, A4, A5, A6, A7, A8>::type make_policy(const A1&, const A2&, const A3&, const A4&, const A5&, const A6&, const A7&, const A8&) BOOST_NOEXCEPT
-{ 
+{
    typedef typename normalise<policy<>, A1, A2, A3, A4, A5, A6, A7, A8>::type result_type;
-   return result_type(); 
+   return result_type();
 }
 
 template <class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class A9>
 inline BOOST_MATH_CONSTEXPR typename normalise<policy<>, A1, A2, A3, A4, A5, A6, A7, A8, A9>::type make_policy(const A1&, const A2&, const A3&, const A4&, const A5&, const A6&, const A7&, const A8&, const A9&) BOOST_NOEXCEPT
-{ 
+{
    typedef typename normalise<policy<>, A1, A2, A3, A4, A5, A6, A7, A8, A9>::type result_type;
-   return result_type(); 
+   return result_type();
 }
 
 template <class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class A9, class A10>
 inline BOOST_MATH_CONSTEXPR typename normalise<policy<>, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10>::type make_policy(const A1&, const A2&, const A3&, const A4&, const A5&, const A6&, const A7&, const A8&, const A9&, const A10&) BOOST_NOEXCEPT
-{ 
+{
    typedef typename normalise<policy<>, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10>::type result_type;
-   return result_type(); 
+   return result_type();
 }
 
 template <class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class A9, class A10, class A11>
@@ -808,7 +808,7 @@ struct precision
       // Possibly unknown precision:
       precision_type,
       typename mpl::if_c<
-         ((::std::numeric_limits<Real>::digits <= precision_type::value) 
+         ((::std::numeric_limits<Real>::digits <= precision_type::value)
          || (Policy::precision_type::value <= 0)),
          // Default case, full precision for RealType:
          digits2< ::std::numeric_limits<Real>::digits>,
@@ -966,8 +966,8 @@ inline BOOST_MATH_CONSTEXPR T get_epsilon(BOOST_MATH_EXPLICIT_TEMPLATE_TYPE(T)) 
 
 namespace detail{
 
-template <class A1, 
-          class A2, 
+template <class A1,
+          class A2,
           class A3,
           class A4,
           class A5,
@@ -1028,7 +1028,7 @@ struct is_noexcept_error_policy
    typedef typename Policy::rounding_error_type             t7;
    typedef typename Policy::indeterminate_result_error_type t8;
 
-   BOOST_STATIC_CONSTANT(bool, value = 
+   BOOST_STATIC_CONSTANT(bool, value =
       ((t1::value != throw_on_error) && (t1::value != user_error)
       && (t2::value != throw_on_error) && (t2::value != user_error)
       && (t3::value != throw_on_error) && (t3::value != user_error)

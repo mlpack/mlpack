@@ -46,7 +46,7 @@ class AllowEmptyClusters
    * @return Number of points changed (0).
    */
   template<typename MetricType, typename MatType>
-  static inline force_inline size_t EmptyCluster(
+  static inline force_inline void EmptyCluster(
       const MatType& /* data */,
       const size_t emptyCluster,
       const arma::mat& oldCentroids,
@@ -57,12 +57,11 @@ class AllowEmptyClusters
   {
     // Take the last iteration's centroid.
     newCentroids.col(emptyCluster) = oldCentroids.col(emptyCluster);
-    return 0; // No points were changed.
   }
 
   //! Serialize the empty cluster policy (nothing to do).
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 } // namespace kmeans

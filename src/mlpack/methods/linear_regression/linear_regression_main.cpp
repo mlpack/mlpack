@@ -11,35 +11,75 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+
 #include "linear_regression.hpp"
 
 using namespace mlpack;
 using namespace mlpack::regression;
+using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
 PROGRAM_INFO("Simple Linear Regression and Prediction",
+    // Short description.
+    "An implementation of simple linear regression and ridge regression using "
+    "ordinary least squares.  Given a dataset and responses, a model can be "
+    "trained and saved for later use, or a pre-trained model can be used to "
+    "output regression predictions for a test set.",
+    // Long description.
     "An implementation of simple linear regression and simple ridge regression "
-    "using ordinary least squares. This solves the problem\n\n"
-    "  y = X * b + e\n\n"
-    "where X (--input_file) and y (the last column of --input_file, or "
-    "--input_responses) are known and b is the desired variable.  If the "
-    "covariance matrix (X'X) is not invertible, or if the solution is "
-    "overdetermined, then specify a Tikhonov regularization constant (--lambda)"
-    " greater than 0, which will regularize the covariance matrix to make it "
-    "invertible.  The calculated b is saved to disk (--output_file).\n"
-    "\n"
+    "using ordinary least squares. This solves the problem"
+    "\n\n"
+    "  y = X * b + e"
+    "\n\n"
+    "where X (specified by " + PRINT_PARAM_STRING("training") + ") and y "
+    "(specified either as the last column of the input matrix " +
+    PRINT_PARAM_STRING("training") + " or via the " +
+    PRINT_PARAM_STRING("training_responses") + " parameter) are known and b is"
+    " the desired variable.  If the covariance matrix (X'X) is not invertible, "
+    "or if the solution is overdetermined, then specify a Tikhonov "
+    "regularization constant (with " + PRINT_PARAM_STRING("lambda") + ") "
+    "greater than 0, which will regularize the covariance matrix to make it "
+    "invertible.  The calculated b may be saved with the " +
+    PRINT_PARAM_STRING("output_predictions") + " output parameter."
+    "\n\n"
     "Optionally, the calculated value of b is used to predict the responses for"
-    " another matrix X' (--test_file):\n\n"
-    "   y' = X' * b\n\n"
-    "and these predicted responses, y', are saved to a file "
-    "(--output_predictions).  This type of regression is related to "
-    "least-angle regression, which mlpack implements with the 'lars' "
-    "executable.");
+    " another matrix X' (specified by the " + PRINT_PARAM_STRING("test") + " "
+    "parameter):"
+    "\n\n"
+    "   y' = X' * b"
+    "\n\n"
+    "and the predicted responses y' may be saved with the " +
+    PRINT_PARAM_STRING("output_predictions") + " output parameter.  This type "
+    "of regression is related to least-angle regression, which mlpack "
+    "implements as the 'lars' program."
+    "\n\n"
+    "For example, to run a linear regression on the dataset " +
+    PRINT_DATASET("X") + " with responses " + PRINT_DATASET("y") + ", saving "
+    "the trained model to " + PRINT_MODEL("lr_model") + ", the following "
+    "command could be used:"
+    "\n\n" +
+    PRINT_CALL("linear_regression", "training", "X", "training_responses", "y",
+        "output_model", "lr_model") +
+    "\n\n"
+    "Then, to use " + PRINT_MODEL("lr_model") + " to predict responses for a "
+    "test set " + PRINT_DATASET("X_test") + ", saving the predictions to " +
+    PRINT_DATASET("X_test_responses") + ", the following command could be "
+    "used:"
+    "\n\n" +
+    PRINT_CALL("linear_regression", "input_model", "lr_model", "test", "X_test",
+        "output_predictions", "X_test_responses"),
+    SEE_ALSO("Linear/ridge regression tutorial", "@doxygen/lrtutorial.html"),
+    SEE_ALSO("@lars", "#lars"),
+    SEE_ALSO("Linear regression on Wikipedia",
+        "https://en.wikipedia.org/wiki/Linear_regression"),
+    SEE_ALSO("mlpack::regression::LinearRegression C++ class documentation",
+        "@doxygen/classmlpack_1_1regression_1_1LinearRegression.html"));
 
 PARAM_MATRIX_IN("training", "Matrix containing training set X (regressors).",
     "t");
-PARAM_COL_IN("training_responses", "Optional vector containing y "
+PARAM_ROW_IN("training_responses", "Optional vector containing y "
     "(responses). If not given, the responses are assumed to be the last row "
     "of the input file.", "r");
 
@@ -51,76 +91,40 @@ PARAM_MODEL_OUT(LinearRegression, "output_model", "Output LinearRegression "
 PARAM_MATRIX_IN("test", "Matrix containing X' (test regressors).", "T");
 
 // This is the future name of the parameter.
-PARAM_COL_OUT("output_predictions", "If --test_file is specified, this "
+PARAM_ROW_OUT("output_predictions", "If --test_file is specified, this "
     "matrix is where the predicted responses will be saved.", "o");
 
 PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
     " the method reduces to linear regression.", "l", 0.0);
 
-int main(int argc, char* argv[])
+static void mlpackMain()
 {
-  // Handle parameters.
-  CLI::ParseCommandLine(argc, argv);
-
   const double lambda = CLI::GetParam<double>("lambda");
 
-  if (!CLI::HasParam("test") && CLI::HasParam("output_predictions"))
-    Log::Warn << "--output_predictions_file (-o) ignored because --test_file "
-        << "(-T) is not specified." << endl;
+  RequireOnlyOnePassed({ "training", "input_model" }, true);
+
+  ReportIgnoredParam({{ "test", true }}, "output_predictions");
 
   mat regressors;
-  vec responses;
+  rowvec responses;
 
-  LinearRegression lr;
-  lr.Lambda() = lambda;
+  LinearRegression* lr;
 
-  bool computeModel = false;
-
-  // We want to determine if an input file XOR model file were given.
-  if (!CLI::HasParam("training"))
-  {
-    if (!CLI::HasParam("input_model"))
-      Log::Fatal << "You must specify either --input_file or --model_file."
-          << endl;
-    else // The model file was specified, no problems.
-      computeModel = false;
-  }
-  // The user specified an input file but no model file, no problems.
-  else if (!CLI::HasParam("input_model"))
-    computeModel = true;
-
-  // The user specified both an input file and model file.
-  // This is ambiguous -- which model should we use? A generated one or given
-  // one?  Report error and exit.
-  else
-  {
-    Log::Fatal << "You must specify either --input_file or --input_model_file, "
-        << "not both." << endl;
-  }
-
-  if (CLI::HasParam("test") && !CLI::HasParam("output_predictions"))
-    Log::Warn << "--test_file (-t) specified, but --output_predictions_file "
-        << "(-o) is not; no results will be saved." << endl;
+  const bool computeModel = !CLI::HasParam("input_model");
+  const bool computePrediction = CLI::HasParam("test");
 
   // If they specified a model file, we also need a test file or we
   // have nothing to do.
-  if (!computeModel && !CLI::HasParam("test"))
+  if (!computeModel)
   {
-    Log::Fatal << "When specifying --model_file, you must also specify "
-        << "--test_file." << endl;
+    RequireAtLeastOnePassed({ "test" }, true, "test points must be specified "
+        "when an input model is given");
   }
 
-  if (!computeModel && CLI::HasParam("lambda"))
-  {
-    Log::Warn << "--lambda ignored because no model is being trained." << endl;
-  }
+  ReportIgnoredParam({{ "input_model", true }}, "lambda");
 
-  if (!CLI::HasParam("output_model") &&
-      !CLI::HasParam("output_predictions"))
-  {
-    Log::Warn << "Neither --output_model_file nor --output_predictions_file are"
-        << " specified; no output will be saved!" << endl;
-  }
+  RequireAtLeastOnePassed({ "output_model", "output_predictions" }, false,
+      "no output will be saved");
 
   // An input file was given and we need to generate the model.
   if (computeModel)
@@ -133,6 +137,11 @@ int main(int argc, char* argv[])
     if (!CLI::HasParam("training_responses"))
     {
       // The initial predictors for y, Nx1.
+      if (regressors.n_rows < 2)
+      {
+        Log::Fatal << "Can't get responses from training data "
+            "since it has less than 2 rows." << endl;
+      }
       responses = regressors.row(regressors.n_rows - 1);
       regressors.shed_row(regressors.n_rows - 1);
     }
@@ -140,58 +149,60 @@ int main(int argc, char* argv[])
     {
       // The initial predictors for y, Nx1.
       Timer::Start("load_responses");
-      responses = std::move(CLI::GetParam<vec>("training_responses"));
+      responses = CLI::GetParam<rowvec>("training_responses");
       Timer::Stop("load_responses");
 
-      if (responses.n_rows != regressors.n_cols)
-        Log::Fatal << "The responses must have the same number of rows as the "
-            "training file." << endl;
+      if (responses.n_cols != regressors.n_cols)
+      {
+        Log::Fatal << "The responses must have the same number of columns "
+            "as the training set." << endl;
+      }
     }
 
     Timer::Start("regression");
-    lr = LinearRegression(regressors, responses);
+    lr = new LinearRegression(regressors, responses, lambda);
     Timer::Stop("regression");
-
-    // Save the parameters.
-    if (CLI::HasParam("output_model"))
-      CLI::GetParam<LinearRegression>("output_model") = std::move(lr);
+  }
+  else
+  {
+    // A model file was passed in, so load it.
+    Timer::Start("load_model");
+    lr = CLI::GetParam<LinearRegression*>("input_model");
+    Timer::Stop("load_model");
   }
 
   // Did we want to predict, too?
-  if (CLI::HasParam("test"))
+  if (computePrediction)
   {
-    // A model file was passed in, so load it.
-    if (!computeModel)
-    {
-      Timer::Start("load_model");
-      lr = std::move(CLI::GetParam<LinearRegression>("input_model"));
-      Timer::Stop("load_model");
-    }
-
     // Load the test file data.
     Timer::Start("load_test_points");
     mat points = std::move(CLI::GetParam<mat>("test"));
     Timer::Stop("load_test_points");
 
     // Ensure that test file data has the right number of features.
-    if ((lr.Parameters().n_elem - 1) != points.n_rows)
+    if ((lr->Parameters().n_elem - 1) != points.n_rows)
     {
-      Log::Fatal << "The model was trained on " << lr.Parameters().n_elem - 1
-          << "-dimensional data, but the test points in '"
-          << CLI::GetUnmappedParam<mat>("test") << "' are " << points.n_rows
+      // If we built the model, nothing will free it so we have to...
+      const size_t dimensions = lr->Parameters().n_elem - 1;
+      if (computeModel)
+        delete lr;
+
+      Log::Fatal << "The model was trained on " << dimensions << "-dimensional "
+          << "data, but the test points in '"
+          << CLI::GetPrintableParam<mat>("test") << "' are " << points.n_rows
           << "-dimensional!" << endl;
     }
 
     // Perform the predictions using our model.
-    vec predictions;
+    rowvec predictions;
     Timer::Start("prediction");
-    lr.Predict(points, predictions);
+    lr->Predict(points, predictions);
     Timer::Stop("prediction");
 
     // Save predictions.
-    if (CLI::HasParam("output_predictions"))
-      CLI::GetParam<vec>("output_predictions") = std::move(predictions);
+    CLI::GetParam<rowvec>("output_predictions") = std::move(predictions);
   }
 
-  CLI::Destroy();
+  // Save the model if needed.
+  CLI::GetParam<LinearRegression*>("output_model") = lr;
 }

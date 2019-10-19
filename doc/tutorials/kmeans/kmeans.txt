@@ -132,12 +132,23 @@ $ mlpack_kmeans -c 5 -i dataset.csv -v -o assignments.csv -C centroids.csv
 
 If you would like to allow empty clusters to exist, instead of reinitializing
 them, simply specify the \c -e (\c --allow_empty_clusters) option.  Note that
-when you save your clusters, some of the clusters may be filled with NaNs.  This
-is expected behavior -- if a cluster has no points, the concept of a centroid
-makes no sense.
+when you save your clusters, even empty clusters will still have centroids.
+The centroids of the empty cluster will be the same as what they were on the
+last iteration when the cluster was not empty.
 
 @code
-$ mlpack_kmeans -c 5 -i dataset.csv -v -o assignments.csv -C centroids.csv
+$ mlpack_kmeans -c 5 -i dataset.csv -v -e -o assignments.csv -C centroids.csv
+@endcode
+
+@subsection cli_ex3_kmtut Killing empty clusters
+
+If you would like to kill empty clusters , instead of reinitializing
+them, simply specify the \c -E (\c --kill_empty_clusters) option.  Note that
+when you save your clusters, all the empty clusters will be removed and the
+final result may contain less than specified number of clusters.
+
+@code
+$ mlpack_kmeans -c 5 -i dataset.csv -v -E -o assignments.csv -C centroids.csv
 @endcode
 
 @subsection cli_ex4_kmtut Limiting the maximum number of iterations
@@ -646,8 +657,8 @@ and must accept two template parameters of its own:
 
 The \c LloydStepType policy also mandates three functions:
 
- - a constructor: \c "LloydStepType(const MatType& dataset, MetricType&
-   metric);"
+ - a constructor: <tt>LloydStepType(const MatType& dataset, MetricType&
+   metric);</tt>
  - an \c Iterate() function:
 
 @code

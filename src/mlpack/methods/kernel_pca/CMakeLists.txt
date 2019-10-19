@@ -5,6 +5,8 @@ set(SOURCES
   kernel_pca_impl.hpp
 )
 
+add_subdirectory(kernel_rules)
+
 # Add directory name to sources.
 set(DIR_SRCS)
 foreach(file ${SOURCES})
@@ -14,6 +16,6 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_subdirectory(kernel_rules)
-
 add_cli_executable(kernel_pca)
+add_python_binding(kernel_pca)
+add_markdown_docs(kernel_pca "cli;python" "transformations")

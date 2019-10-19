@@ -70,7 +70,7 @@ class FastMKSModel
    * to the correct entry in KernelTypes for the given KernelType class!
    */
   template<typename TKernelType>
-  void BuildModel(const arma::mat& referenceData,
+  void BuildModel(arma::mat&& referenceData,
                   TKernelType& kernel,
                   const bool singleMode,
                   const bool naive,
@@ -126,7 +126,7 @@ class FastMKSModel
    * Serialize the model.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! The type of kernel we are using.

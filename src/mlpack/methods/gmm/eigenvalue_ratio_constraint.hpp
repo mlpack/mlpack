@@ -76,13 +76,34 @@ class EigenvalueRatioConstraint
     covariance = eigenvectors * arma::diagmat(eigenvalues) * eigenvectors.t();
   }
 
+  /**
+   * Apply the eigenvalue ratio constraint to the given diagonal covariance
+   * matrix (represented as a vector).
+   */
+  void ApplyConstraint(arma::vec& diagCovariance) const
+  {
+    // The matrix is already eigendecomposed but we need to sort the elements.
+    arma::uvec eigvalOrder = arma::sort_index(diagCovariance);
+    arma::vec eigvals = diagCovariance(eigvalOrder);
+
+    // Change the eigenvalues to what we are forcing them to be.  There
+    // shouldn't be any negative eigenvalues anyway, so it doesn't matter if we
+    // are suddenly forcing them to be positive.  If the first eigenvalue is
+    // negative, well, there are going to be some problems later...
+    eigvals = eigvals[0] * ratios;
+
+    // Reassemble the matrix.
+    for (size_t i = 0; i < eigvalOrder.n_elem; ++i)
+      diagCovariance[eigvalOrder[i]] = eigvals[i];
+  }
+
   //! Serialize the constraint.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
     // Strip the const for the sake of loading/saving.  This is the only time it
     // is modified (other than the constructor).
-    ar & data::CreateNVP(const_cast<arma::vec&>(ratios), "ratios");
+    ar & BOOST_SERIALIZATION_NVP(const_cast<arma::vec&>(ratios));
   }
 
  private:

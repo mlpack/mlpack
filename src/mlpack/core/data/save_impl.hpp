@@ -21,8 +21,6 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
-#include "serialization_shim.hpp"
-
 namespace mlpack {
 namespace data {
 
@@ -155,10 +153,8 @@ bool Save(const std::string& filename,
   Log::Info << "Saving " << stringType << " to '" << filename << "'."
       << std::endl;
 
-  // Transpose the matrix.  If we are saving HDF5, Armadillo already transposes
-  // this on save, so we don't need to.
-  if ((transpose && saveType != arma::hdf5_binary) ||
-      (!transpose && saveType == arma::hdf5_binary))
+  // Transpose the matrix.
+  if (transpose)
   {
     arma::Mat<eT> tmp = trans(matrix);
 
@@ -261,17 +257,17 @@ bool Save(const std::string& filename,
     if (f == format::xml)
     {
       boost::archive::xml_oarchive ar(ofs);
-      ar << CreateNVP(t, name);
+      ar << boost::serialization::make_nvp(name.c_str(), t);
     }
     else if (f == format::text)
     {
       boost::archive::text_oarchive ar(ofs);
-      ar << CreateNVP(t, name);
+      ar << boost::serialization::make_nvp(name.c_str(), t);
     }
     else if (f == format::binary)
     {
       boost::archive::binary_oarchive ar(ofs);
-      ar << CreateNVP(t, name);
+      ar << boost::serialization::make_nvp(name.c_str(), t);
     }
 
     return true;
@@ -286,6 +282,147 @@ bool Save(const std::string& filename,
     return false;
   }
 }
+
+#ifdef HAS_STB
+// Image saving API.
+template<typename eT>
+bool Save(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal,
+          const bool transpose)
+{
+  Timer::Start("saving_image");
+  // We transpose by default. So, un-transpose if necessary.
+  if (!transpose)
+    matrix = arma::trans(matrix);
+
+  int tempWidth, tempHeight, tempChannels, tempQuality;
+
+  tempWidth = info.Width();
+  tempHeight = info.Height();
+  tempChannels = info.Channels();
+  tempQuality = info.Quality();
+
+  if (!ImageFormatSupported(filename, true))
+  {
+    std::ostringstream oss;
+    oss << "File type " << Extension(filename) << " not supported.\n";
+    oss << "Currently it supports ";
+    for (auto extension : saveFileTypes)
+      oss << ", " << extension;
+    oss << std::endl;
+    throw std::runtime_error(oss.str());
+    return false;
+  }
+  if (matrix.n_cols > 1)
+  {
+    std::cout << "Input Matrix contains more than 1 image." << std::endl;
+    std::cout << "Only the firstimage will be saved!" << std::endl;
+  }
+  stbi_flip_vertically_on_write(transpose);
+
+  bool status = false;
+  try
+  {
+    unsigned char* image = matrix.memptr();
+
+    if ("png" == Extension(filename))
+    {
+      status = stbi_write_png(filename.c_str(), tempWidth, tempHeight,
+          tempChannels, image, tempWidth * tempChannels);
+    }
+    else if ("bmp" == Extension(filename))
+    {
+      status = stbi_write_bmp(filename.c_str(), tempWidth, tempHeight,
+          tempChannels, image);
+    }
+    else if ("tga" == Extension(filename))
+    {
+      status = stbi_write_tga(filename.c_str(), tempWidth, tempHeight,
+          tempChannels, image);
+    }
+    else if ("hdr" == Extension(filename))
+    {
+      status = stbi_write_hdr(filename.c_str(), tempWidth, tempHeight,
+          tempChannels, reinterpret_cast<float*>(image));
+    }
+    else if ("jpg" == Extension(filename))
+    {
+      status = stbi_write_jpg(filename.c_str(), tempWidth, tempHeight,
+          tempChannels, image, tempQuality);
+    }
+  }
+  catch (std::exception& e)
+  {
+    Timer::Stop("saving_image");
+    if (fatal)
+      Log::Fatal << e.what() << std::endl;
+    Log::Warn << e.what() << std::endl;
+    return false;
+  }
+  Timer::Stop("saving_image");
+  return status;
+}
+
+// Image saving API for multiple files.
+template<typename eT>
+bool Save(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal,
+          const bool transpose)
+{
+  if (files.size() == 0)
+  {
+    std::ostringstream oss;
+    oss << "Files vector is empty." << std::endl;
+
+    throw std::runtime_error(oss.str());
+    return false;
+  }
+  // We transpose by default. So, un-transpose if necessary.
+  if (!transpose)
+    matrix = arma::trans(matrix);
+
+  arma::Mat<unsigned char> img;
+  bool status = Save(files[0], img, info, fatal, transpose);
+
+  // Decide matrix dimension using the image height and width.
+  matrix.set_size(info.Width() * info.Height() * info.Channels(), files.size());
+  matrix.col(0) = img;
+
+  for (size_t i = 1; i < files.size() ; i++)
+  {
+    arma::Mat<unsigned char> colImg(matrix.colptr(i), matrix.n_rows, 1,
+        false, true);
+    status &= Save(files[i], colImg, info, fatal, transpose);
+  }
+  return status;
+}
+#else
+template<typename eT>
+bool Save(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false,
+          const bool transpose = true)
+{
+  throw std::runtime_error("Save(): HAS_STB is not defined, "
+      "so STB is not available and images cannot be saved!");
+}
+
+template<typename eT>
+bool Save(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false,
+          const bool transpose = true)
+{
+  throw std::runtime_error("Save(): HAS_STB is not defined, "
+      "so STB is not available and images cannot be saved!");
+}
+#endif // HAS_STB.
 
 } // namespace data
 } // namespace mlpack

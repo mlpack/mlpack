@@ -3,12 +3,19 @@
  * @author Ryan Curtin
  *
  * A serializable AdaBoost model, used by the main program.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ADABOOST_ADABOOST_MODEL_HPP
 #define MLPACK_METHODS_ADABOOST_ADABOOST_MODEL_HPP
 
 #include <mlpack/core.hpp>
-#include "adaboost.hpp"
+
+// Use forward declaration instead of include to accelerate compilation.
+class AdaBoost;
 
 namespace mlpack {
 namespace adaboost {
@@ -75,6 +82,7 @@ class AdaBoostModel
   //! Train the model.
   void Train(const arma::mat& data,
              const arma::Row<size_t>& labels,
+             const size_t numClasses,
              const size_t iterations,
              const double tolerance);
 
@@ -83,7 +91,7 @@ class AdaBoostModel
 
   //! Serialize the model.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
     if (Archive::is_loading::value)
     {
@@ -96,13 +104,13 @@ class AdaBoostModel
       pBoost = NULL;
     }
 
-    ar & data::CreateNVP(mappings, "mappings");
-    ar & data::CreateNVP(weakLearnerType, "weakLearnerType");
+    ar & BOOST_SERIALIZATION_NVP(mappings);
+    ar & BOOST_SERIALIZATION_NVP(weakLearnerType);
     if (weakLearnerType == WeakLearnerTypes::DECISION_STUMP)
-      ar & data::CreateNVP(dsBoost, "adaboost_ds");
+      ar & BOOST_SERIALIZATION_NVP(dsBoost);
     else if (weakLearnerType == WeakLearnerTypes::PERCEPTRON)
-      ar & data::CreateNVP(pBoost, "adaboost_p");
-    ar & data::CreateNVP(dimensionality, "dimensionality");
+      ar & BOOST_SERIALIZATION_NVP(pBoost);
+    ar & BOOST_SERIALIZATION_NVP(dimensionality);
   }
 };
 

@@ -16,7 +16,6 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/randomized_svd/randomized_svd.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
 
 namespace mlpack {
 namespace pca {
@@ -26,7 +25,7 @@ namespace pca {
  */
 class RandomizedSVDPolicy
 {
-  public:
+ public:
   /**
    * Use randomized SVD method to perform the principal components analysis
    * (PCA).
@@ -88,12 +87,12 @@ class RandomizedSVDPolicy
   //! Modify the number of iterations for the power method.
   size_t& MaxIterations() { return maxIterations; }
 
-  private:
-    //! Locally stored size of the normalized power iterations.
-    size_t iteratedPower;
+ private:
+  //! Locally stored size of the normalized power iterations.
+  size_t iteratedPower;
 
-    //! Locally stored number of iterations for the power method.
-    size_t maxIterations;
+  //! Locally stored number of iterations for the power method.
+  size_t maxIterations;
 };
 
 } // namespace pca

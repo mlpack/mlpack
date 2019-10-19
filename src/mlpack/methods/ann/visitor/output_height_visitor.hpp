@@ -15,7 +15,6 @@
 #define MLPACK_METHODS_ANN_VISITOR_OUTPUT_HEIGHT_VISITOR_HPP
 
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
 
 #include <boost/variant.hpp>
 
@@ -23,7 +22,7 @@ namespace mlpack {
 namespace ann {
 
 /**
- * OutputWidthVisitor exposes the OutputHeight() method of the given module.
+ * OutputHeightVisitor exposes the OutputHeight() method of the given module.
  */
 class OutputHeightVisitor : public boost::static_visitor<size_t>
 {
@@ -32,13 +31,15 @@ class OutputHeightVisitor : public boost::static_visitor<size_t>
   template<typename LayerType>
   size_t operator()(LayerType* layer) const;
 
+  size_t operator()(MoreTypes layer) const;
+
  private:
   //! Return 0 if the module doesn't implement the InputHeight() or Model()
   //! function.
   template<typename T>
   typename std::enable_if<
       !HasInputHeight<T, size_t&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      !HasModelCheck<T>::value, size_t>::type
   LayerOutputHeight(T* layer) const;
 
   //! Return the output height if the module implements the InputHeight()
@@ -46,22 +47,22 @@ class OutputHeightVisitor : public boost::static_visitor<size_t>
   template<typename T>
   typename std::enable_if<
       HasInputHeight<T, size_t&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      !HasModelCheck<T>::value, size_t>::type
   LayerOutputHeight(T* layer) const;
 
   //! Return the output height if the module implements the Model() function.
   template<typename T>
   typename std::enable_if<
       !HasInputHeight<T, size_t&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      HasModelCheck<T>::value, size_t>::type
   LayerOutputHeight(T* layer) const;
 
-  //! Return the output height if the module implement the Model() or
+  //! Return the output height if the module implements the Model() or
   //! InputHeight() function.
   template<typename T>
   typename std::enable_if<
       HasInputHeight<T, size_t&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      HasModelCheck<T>::value, size_t>::type
   LayerOutputHeight(T* layer) const;
 };
 

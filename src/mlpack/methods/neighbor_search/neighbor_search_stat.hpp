@@ -92,14 +92,12 @@ class NeighborSearchStat
 
   //! Serialize the statistic to/from an archive.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    using data::CreateNVP;
-
-    ar & CreateNVP(firstBound, "firstBound");
-    ar & CreateNVP(secondBound, "secondBound");
-    ar & CreateNVP(auxBound, "auxBound");
-    ar & CreateNVP(lastDistance, "lastDistance");
+    ar & BOOST_SERIALIZATION_NVP(firstBound);
+    ar & BOOST_SERIALIZATION_NVP(secondBound);
+    ar & BOOST_SERIALIZATION_NVP(auxBound);
+    ar & BOOST_SERIALIZATION_NVP(lastDistance);
   }
 };
 

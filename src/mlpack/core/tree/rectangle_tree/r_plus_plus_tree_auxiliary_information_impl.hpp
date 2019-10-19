@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_AUXILIARY_INFORMATION_IMPL_HPP
-#define MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_AUXILIARY_INFORMATION_IMPL_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_RPP_TREE_AUXILIARY_INFO_IMPL_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_RPP_TREE_AUXILIARY_INFO_IMPL_HPP
 
 #include "r_plus_plus_tree_auxiliary_information.hpp"
 
@@ -23,9 +23,7 @@ template<typename TreeType>
 RPlusPlusTreeAuxiliaryInformation<TreeType>::
 RPlusPlusTreeAuxiliaryInformation() :
     outerBound(0)
-{
-
-}
+{ /* Nothing to do. */ }
 
 template<typename TreeType>
 RPlusPlusTreeAuxiliaryInformation<TreeType>::
@@ -36,11 +34,13 @@ RPlusPlusTreeAuxiliaryInformation(const TreeType* tree) :
 {
   // Initialize the maximum bounding rectangle if the node is the root
   if (!tree->Parent())
+  {
     for (size_t k = 0; k < outerBound.Dim(); k++)
     {
       outerBound[k].Lo() = std::numeric_limits<ElemType>::lowest();
       outerBound[k].Hi() = std::numeric_limits<ElemType>::max();
     }
+  }
 }
 
 template<typename TreeType>
@@ -50,17 +50,13 @@ RPlusPlusTreeAuxiliaryInformation(
     TreeType* /* tree */,
     bool /* deepCopy */) :
     outerBound(other.OuterBound())
-{
-
-}
+{ /* Nothing to do. */ }
 
 template<typename TreeType>
 RPlusPlusTreeAuxiliaryInformation<TreeType>::
 RPlusPlusTreeAuxiliaryInformation(RPlusPlusTreeAuxiliaryInformation&& other) :
     outerBound(std::move(other.outerBound))
-{
-
-}
+{ /* Nothing to do. */ }
 
 template<typename TreeType>
 bool RPlusPlusTreeAuxiliaryInformation<TreeType>::HandlePointInsertion(
@@ -122,24 +118,21 @@ void RPlusPlusTreeAuxiliaryInformation<TreeType>::SplitAuxiliaryInfo(
 
 template<typename TreeType>
 void RPlusPlusTreeAuxiliaryInformation<TreeType>::NullifyData()
-{
-
-}
+{ /* Nothing to do */ }
 
 /**
  * Serialize the information.
  */
 template<typename TreeType>
 template<typename Archive>
-void RPlusPlusTreeAuxiliaryInformation<TreeType>::
-Serialize(Archive& ar, const unsigned int /* version */)
+void RPlusPlusTreeAuxiliaryInformation<TreeType>::serialize(
+    Archive& ar,
+    const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
-  ar & CreateNVP(outerBound, "outerBound");
+  ar & BOOST_SERIALIZATION_NVP(outerBound);
 }
 
 } // namespace tree
 } // namespace mlpack
 
-#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_AUXILIARY_INFORMATION_IMPL_HPP
+#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_RPP_TREE_AUXILIARY_INFO_IMPL_HPP

@@ -126,7 +126,7 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::Split(
   double min = DBL_MAX;
   double max = -DBL_MAX;
   for (typename std::multimap<ObservationType, size_t>::const_iterator it =
-      sortedElements.begin();// (*it).first < bestSplit; ++it)
+      sortedElements.begin(); // (*it).first < bestSplit; ++it)
       it != sortedElements.end(); ++it)
   {
     // Move the point to the correct side of the split.
@@ -170,13 +170,13 @@ double BinaryNumericSplit<FitnessFunction, ObservationType>::
 
 template<typename FitnessFunction, typename ObservationType>
 template<typename Archive>
-void BinaryNumericSplit<FitnessFunction, ObservationType>::Serialize(
+void BinaryNumericSplit<FitnessFunction, ObservationType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
   // Serialize.
-  ar & data::CreateNVP(sortedElements, "sortedElements");
-  ar & data::CreateNVP(classCounts, "classCounts");
+  ar & BOOST_SERIALIZATION_NVP(sortedElements);
+  ar & BOOST_SERIALIZATION_NVP(classCounts);
 }
 
 

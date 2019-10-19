@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRandomEvaluate)
           (1 + arma::exp(-(parameters.submat(0, 0, l1 - 1, l2 - 1) *
           data.col(j) + parameters.submat(0, l2, l1 - 1, l2))));
       outputLayer = 1.0 /
-          (1 + arma::exp(-(parameters.submat(l1, 0, l3 - 1,l2 - 1).t()
+          (1 + arma::exp(-(parameters.submat(l1, 0, l3 - 1, l2 - 1).t()
           * hiddenLayer + parameters.submat(l3, 0, l3, l2 - 1).t())));
       diff = outputLayer - data.col(j);
 
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionKLDivergenceEvaluate)
   SparseAutoencoderFunction safBigDiv(data, vSize, hSize, 0, 20, rho);
 
   // Run a number of trials.
-  for(size_t i = 0; i < trials; i++)
+  for (size_t i = 0; i < trials; i++)
   {
     // Create a random set of parameters.
     arma::mat parameters;

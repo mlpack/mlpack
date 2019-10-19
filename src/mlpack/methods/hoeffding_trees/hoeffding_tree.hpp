@@ -136,6 +136,12 @@ class HoeffdingTree
                     dimensionMappings = NULL);
 
   /**
+   * Construct a Hoeffding tree with no data and no information.  Be sure to
+   * call Train() before trying to use the tree.
+   */
+  HoeffdingTree();
+
+  /**
    * Copy another tree (warning: this will duplicate the tree entirely, and may
    * use a lot of memory.  Make sure it's what you want before you do it).
    *
@@ -158,6 +164,16 @@ class HoeffdingTree
    */
   template<typename MatType>
   void Train(const MatType& data,
+             const arma::Row<size_t>& labels,
+             const bool batchTraining = true);
+
+  /**
+   * Train on a set of points, either in streaming mode or in batch mode, with
+   * the given labels and the given DatasetInfo.  This will reset the tree.
+   */
+  template<typename MatType>
+  void Train(const MatType& data,
+             const data::DatasetInfo& info,
              const arma::Row<size_t>& labels,
              const bool batchTraining = true);
 
@@ -238,6 +254,9 @@ class HoeffdingTree
   template<typename VecType>
   size_t Classify(const VecType& point) const;
 
+  //! Get the size of the Hoeffding Tree.
+  size_t NumDescendants() const;
+
   /**
    * Classify the given point and also return an estimate of the probability
    * that the prediction is correct.  (This estimate is simply the probability
@@ -286,7 +305,7 @@ class HoeffdingTree
 
   //! Serialize the split.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   // We need to keep some information for before we have split.

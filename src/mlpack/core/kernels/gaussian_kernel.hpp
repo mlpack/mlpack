@@ -126,8 +126,8 @@ class GaussianKernel
   template<typename VecTypeA, typename VecTypeB>
   double ConvolutionIntegral(const VecTypeA& a, const VecTypeB& b)
   {
-    return Evaluate(sqrt(metric::SquaredEuclideanDistance::Evaluate(a, b) / 2.0)) /
-        (Normalizer(a.n_rows) * pow(2.0, (double) a.n_rows / 2.0));
+    return Evaluate(sqrt(metric::SquaredEuclideanDistance::Evaluate(a, b) /
+        2.0)) / (Normalizer(a.n_rows) * pow(2.0, (double) a.n_rows / 2.0));
   }
 
 
@@ -147,10 +147,10 @@ class GaussianKernel
 
   //! Serialize the kernel.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(bandwidth, "bandwidth");
-    ar & data::CreateNVP(gamma, "gamma");
+    ar & BOOST_SERIALIZATION_NVP(bandwidth);
+    ar & BOOST_SERIALIZATION_NVP(gamma);
   }
 
  private:

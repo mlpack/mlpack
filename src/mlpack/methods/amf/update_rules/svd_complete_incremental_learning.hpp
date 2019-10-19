@@ -92,7 +92,7 @@ class SVDCompleteIncrementalLearning
     deltaW.zeros(1, W.n_cols);
 
     // Loop until a non-zero entry is found.
-    while(true)
+    while (true)
     {
       const double val = V(currentItemIndex, currentUserIndex);
       // Update feature vector if current entry is non-zero and break the loop.
@@ -168,7 +168,7 @@ class SVDCompleteIncrementalLearning
 template<>
 class SVDCompleteIncrementalLearning<arma::sp_mat>
 {
-  public:
+ public:
   SVDCompleteIncrementalLearning(double u = 0.01,
                                  double kw = 0,
                                  double kh = 0)
@@ -203,7 +203,8 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
                       arma::mat& W,
                       const arma::mat& H)
   {
-    if (!isStart) (*it)++;
+    if (!isStart)
+        ++(*it);
     else isStart = false;
 
     if (*it == V.end())
@@ -218,8 +219,8 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
     arma::mat deltaW(1, W.n_cols);
     deltaW.zeros();
 
-    deltaW += (**it - arma::dot(W.row(currentItemIndex), H.col(currentUserIndex)))
-                                      * arma::trans(H.col(currentUserIndex));
+    deltaW += (**it - arma::dot(W.row(currentItemIndex),
+        H.col(currentUserIndex))) * arma::trans(H.col(currentUserIndex));
     if (kw != 0) deltaW -= kw * W.row(currentItemIndex);
 
     W.row(currentItemIndex) += u*deltaW;
@@ -234,20 +235,18 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
    * @param W Basis matrix.
    * @param H Encoding matrix to be updated.
    */
-  inline void HUpdate(const arma::sp_mat& V,
+  inline void HUpdate(const arma::sp_mat& /* V */,
                       const arma::mat& W,
                       arma::mat& H)
   {
-    (void)V;
-
     arma::mat deltaH(H.n_rows, 1);
     deltaH.zeros();
 
     size_t currentUserIndex = it->col();
     size_t currentItemIndex = it->row();
 
-    deltaH += (**it - arma::dot(W.row(currentItemIndex), H.col(currentUserIndex)))
-                                        * arma::trans(W.row(currentItemIndex));
+    deltaH += (**it - arma::dot(W.row(currentItemIndex),
+        H.col(currentUserIndex))) * arma::trans(W.row(currentItemIndex));
     if (kh != 0) deltaH -= kh * H.col(currentUserIndex);
 
     H.col(currentUserIndex) += u * deltaH;

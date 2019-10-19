@@ -14,11 +14,11 @@
 #define MLPACK_METHODS_ANN_LAYER_RECURRENT_HPP
 
 #include <mlpack/core.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
 
+#include "../visitor/delete_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
+#include "../visitor/copy_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
-#include "../visitor/weight_size_visitor.hpp"
 
 #include "layer_types.hpp"
 #include "add_merge.hpp"
@@ -38,18 +38,31 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template <
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename OutputDataType = arma::mat,
+    typename... CustomLayers
 >
 class Recurrent
 {
  public:
   /**
+   * Default constructor---this will create a Recurrent object that can't be
+   * used, so be careful!  Make sure to set all the parameters before use.
+   */
+  Recurrent();
+
+  //! Destructor to release allocated memory.
+  ~Recurrent();
+
+  //! Copy constructor.
+  Recurrent(const Recurrent&);
+
+  /**
    * Create the Recurrent object using the specified modules.
    *
    * @param start The start module.
-   * @param start The input module.
-   * @param start The feedback module.
-   * @param start The transfer module.
+   * @param input The input module.
+   * @param feedback The feedback module.
+   * @param transfer The transfer module.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
   template<typename StartModuleType,
@@ -99,7 +112,7 @@ class Recurrent
                 arma::Mat<eT>&& /* gradient */);
 
   //! Get the model modules.
-  std::vector<LayerTypes>& Model() { return network; }
+  std::vector<LayerTypes<CustomLayers...> >& Model() { return network; }
 
     //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
@@ -110,11 +123,6 @@ class Recurrent
   OutputDataType const& Parameters() const { return parameters; }
   //! Modify the parameters.
   OutputDataType& Parameters() { return parameters; }
-
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -135,20 +143,26 @@ class Recurrent
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+  //! Locally-stored delete visitor module object.
+  DeleteVisitor deleteVisitor;
+
+  //! Locally-stored copy visitor
+  CopyVisitor<CustomLayers...> copyVisitor;
+
   //! Locally-stored start module.
-  LayerTypes startModule;
+  LayerTypes<CustomLayers...> startModule;
 
   //! Locally-stored input module.
-  LayerTypes inputModule;
+  LayerTypes<CustomLayers...> inputModule;
 
   //! Locally-stored feedback module.
-  LayerTypes feedbackModule;
+  LayerTypes<CustomLayers...> feedbackModule;
 
   //! Locally-stored transfer module.
-  LayerTypes transferModule;
+  LayerTypes<CustomLayers...> transferModule;
 
   //! Number of steps to backpropagate through time (BPTT).
   size_t rho;
@@ -165,23 +179,24 @@ class Recurrent
   //! If true dropout and scaling is disabled, see notes above.
   bool deterministic;
 
+  //! To know whether this object allocated memory. We need this to know
+  //! whether we should delete the metric member variable in the destructor.
+  bool ownsLayer;
+
   //! Locally-stored weight object.
   OutputDataType parameters;
 
   //! Locally-stored initial module.
-  LayerTypes initialModule;
+  LayerTypes<CustomLayers...> initialModule;
 
   //! Locally-stored recurrent module.
-  LayerTypes recurrentModule;
+  LayerTypes<CustomLayers...> recurrentModule;
 
   //! Locally-stored model modules.
-  std::vector<LayerTypes> network;
+  std::vector<LayerTypes<CustomLayers...> > network;
 
   //! Locally-stored merge module.
-  LayerTypes mergeModule;
-
-  //! Locally-stored weight size visitor.
-  WeightSizeVisitor weightSizeVisitor;
+  LayerTypes<CustomLayers...> mergeModule;
 
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;
@@ -197,9 +212,6 @@ class Recurrent
 
   //! Locally-stored gradient object.
   OutputDataType gradient;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;

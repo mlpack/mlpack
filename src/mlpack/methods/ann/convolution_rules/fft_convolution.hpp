@@ -21,8 +21,8 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Computes the two-dimensional convolution through fft. This class allows
- * specification of the type of the border type. The convolution can be compute
- * with the valid border type of the full border type (default).
+ * specification of the type of the border type. The convolution can be
+ * computed with the valid border type or the full border type (default).
  *
  * FullConvolution: returns the full two-dimensional convolution.
  * ValidConvolution: returns only those parts of the convolution that are
@@ -40,12 +40,12 @@ class FFTConvolution
   /*
    * Perform a convolution through fft (valid mode). This method only supports
    * input which is even on the last dimension. In case of an odd input width, a
-   * user can manually pad the imput or specify the padLastDim parameter which
+   * user can manually pad the input or specify the padLastDim parameter which
    * takes care of the padding. The filter instead can have any size. When using
-   * the valid mode the filters has to be smaller than the input.
+   * the valid mode the filter has to be smaller than the input.
    *
    * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the conolution.
+   * @param filter Filter used to perform the convolution.
    * @param output Output data that contains the results of the convolution.
    */
   template<typename eT, typename Border = BorderMode>
@@ -64,23 +64,23 @@ class FFTConvolution
     // Pad filter and input to the output shape.
     filterPadded.resize(inputPadded.n_rows, inputPadded.n_cols);
 
-    output = arma::real(ifft2(arma::fft2(inputPadded) % arma::fft2(
+    arma::Mat<eT> temp = arma::real(ifft2(arma::fft2(inputPadded) % arma::fft2(
         filterPadded)));
 
     // Extract the region of interest. We don't need to handle the padLastDim in
     // a special way we just cut it out from the output matrix.
-    output = output.submat(filter.n_rows - 1, filter.n_cols - 1,
+    output = temp.submat(filter.n_rows - 1, filter.n_cols - 1,
         input.n_rows - 1, input.n_cols - 1);
   }
 
   /*
    * Perform a convolution through fft (full mode). This method only supports
    * input which is even on the last dimension. In case of an odd input width, a
-   * user can manually pad the imput or specify the padLastDim parameter which
+   * user can manually pad the input or specify the padLastDim parameter which
    * takes care of the padding. The filter instead can have any size.
    *
    * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the conolution.
+   * @param filter Filter used to perform the convolution.
    * @param output Output data that contains the results of the convolution.
    */
   template<typename eT, typename Border = BorderMode>
@@ -110,12 +110,12 @@ class FFTConvolution
     filterPadded.resize(outputRows, outputCols);
 
     // Perform FFT and IFFT
-    output = arma::real(ifft2(arma::fft2(inputPadded) % arma::fft2(
+    arma::Mat<eT> temp = arma::real(ifft2(arma::fft2(inputPadded) % arma::fft2(
         filterPadded)));
 
     // Extract the region of interest. We don't need to handle the padLastDim
     // parameter in a special way we just cut it out from the output matrix.
-    output = output.submat(filter.n_rows - 1, filter.n_cols - 1,
+    output = temp.submat(filter.n_rows - 1, filter.n_cols - 1,
         2 * (filter.n_rows - 1) + input.n_rows - 1,
         2 * (filter.n_cols - 1) + input.n_cols - 1);
   }
@@ -123,12 +123,12 @@ class FFTConvolution
   /*
    * Perform a convolution through fft using 3rd order tensors. This method only
    * supports input which is even on the last dimension. In case of an odd input
-   * width, a user can manually pad the imput or specify the padLastDim
+   * width, a user can manually pad the input or specify the padLastDim
    * parameter which takes care of the padding. The filter instead can have any
    * size.
    *
    * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the conolution.
+   * @param filter Filter used to perform the convolution.
    * @param output Output data that contains the results of the convolution.
    */
   template<typename eT>
@@ -147,8 +147,7 @@ class FFTConvolution
     for (size_t i = 1; i < input.n_slices; i++)
     {
       FFTConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
-          convOutput);
-      output.slice(i) = convOutput;
+          output.slice(i));
     }
   }
 
@@ -156,11 +155,11 @@ class FFTConvolution
    * Perform a convolution through fft using dense matrix as input and a 3rd
    * order tensors as filter and output. This method only supports input which
    * is even on the last dimension. In case of an odd input width, a user can
-   * manually pad the imput or specify the padLastDim parameter which takes care
+   * manually pad the input or specify the padLastDim parameter which takes care
    * of the padding. The filter instead can have any size.
    *
    * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the conolution.
+   * @param filter Filter used to perform the convolution.
    * @param output Output data that contains the results of the convolution.
    */
   template<typename eT>
@@ -179,8 +178,7 @@ class FFTConvolution
     for (size_t i = 1; i < filter.n_slices; i++)
     {
       FFTConvolution<BorderMode>::Convolution(input, filter.slice(i),
-          convOutput);
-      output.slice(i) = convOutput;
+          output.slice(i));
     }
   }
 
@@ -189,7 +187,7 @@ class FFTConvolution
    * dense matrix as filter.
    *
    * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the conolution.
+   * @param filter Filter used to perform the convolution.
    * @param output Output data that contains the results of the convolution.
    */
   template<typename eT>
@@ -208,11 +206,9 @@ class FFTConvolution
     for (size_t i = 1; i < input.n_slices; i++)
     {
       FFTConvolution<BorderMode>::Convolution(input.slice(i), filter,
-          convOutput);
-      output.slice(i) = convOutput;
+          output.slice(i));
     }
   }
-
 };  // class FFTConvolution
 
 } // namespace ann

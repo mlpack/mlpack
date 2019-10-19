@@ -11,6 +11,11 @@
  */
 #include <mlpack/core.hpp>
 
+#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/ffn.hpp>
+
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 #include "serialization.hpp"
@@ -34,6 +39,8 @@
 #include <mlpack/methods/lsh/lsh_search.hpp>
 #include <mlpack/methods/decision_stump/decision_stump.hpp>
 #include <mlpack/methods/lars/lars.hpp>
+#include <mlpack/methods/ann/rbm/rbm.hpp>
+#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -46,6 +53,7 @@ using namespace mlpack::regression;
 using namespace mlpack::naive_bayes;
 using namespace mlpack::neighbor;
 using namespace mlpack::decision_stump;
+using namespace mlpack::ann;
 
 using namespace arma;
 using namespace boost;
@@ -147,191 +155,6 @@ BOOST_AUTO_TEST_CASE(EmptySparseMatrixSerializeTest)
 {
   arma::sp_mat m;
   TestAllArmadilloSerialization(m);
-}
-
-// Now, test mlpack objects.
-BOOST_AUTO_TEST_CASE(DiscreteDistributionTest)
-{
-  // I assume that I am properly saving vectors, so, this should be
-  // straightforward.
-  vec prob;
-  prob.randu(12);
-  std::vector<arma::vec> prob_vector = std::vector<arma::vec>(1, prob);
-  DiscreteDistribution t(prob_vector);
-
-  DiscreteDistribution xmlT, textT, binaryT;
-
-  // Load and save with all serializers.
-  SerializeObjectAll(t, xmlT, textT, binaryT);
-
-  for (size_t i = 0; i < 12; ++i)
-  {
-    vec obs(1);
-    obs[0] = i;
-    const double prob = t.Probability(obs);
-    if (prob == 0.0)
-    {
-      BOOST_REQUIRE_SMALL(xmlT.Probability(obs), 1e-8);
-      BOOST_REQUIRE_SMALL(textT.Probability(obs), 1e-8);
-      BOOST_REQUIRE_SMALL(binaryT.Probability(obs), 1e-8);
-    }
-    else
-    {
-      BOOST_REQUIRE_CLOSE(prob, xmlT.Probability(obs), 1e-8);
-      BOOST_REQUIRE_CLOSE(prob, textT.Probability(obs), 1e-8);
-      BOOST_REQUIRE_CLOSE(prob, binaryT.Probability(obs), 1e-8);
-    }
-  }
-}
-
-BOOST_AUTO_TEST_CASE(GaussianDistributionTest)
-{
-  vec mean(10);
-  mean.randu();
-  // Generate a covariance matrix.
-  mat cov;
-  cov.randu(10, 10);
-  cov = (cov * cov.t());
-
-  GaussianDistribution g(mean, cov);
-  GaussianDistribution xmlG, textG, binaryG;
-
-  SerializeObjectAll(g, xmlG, textG, binaryG);
-
-  BOOST_REQUIRE_EQUAL(g.Dimensionality(), xmlG.Dimensionality());
-  BOOST_REQUIRE_EQUAL(g.Dimensionality(), textG.Dimensionality());
-  BOOST_REQUIRE_EQUAL(g.Dimensionality(), binaryG.Dimensionality());
-
-  // First, check the means.
-  CheckMatrices(g.Mean(), xmlG.Mean(), textG.Mean(), binaryG.Mean());
-
-  // Now, check the covariance.
-  CheckMatrices(g.Covariance(), xmlG.Covariance(), textG.Covariance(),
-      binaryG.Covariance());
-
-  // Lastly, run some observations through and make sure the probability is the
-  // same.  This should test anything cached internally.
-  arma::mat randomObs;
-  randomObs.randu(10, 500);
-
-  for (size_t i = 0; i < 500; ++i)
-  {
-    const double prob = g.Probability(randomObs.unsafe_col(i));
-
-    if (prob == 0.0)
-    {
-      BOOST_REQUIRE_SMALL(xmlG.Probability(randomObs.unsafe_col(i)), 1e-8);
-      BOOST_REQUIRE_SMALL(textG.Probability(randomObs.unsafe_col(i)), 1e-8);
-      BOOST_REQUIRE_SMALL(binaryG.Probability(randomObs.unsafe_col(i)), 1e-8);
-    }
-    else
-    {
-      BOOST_REQUIRE_CLOSE(prob, xmlG.Probability(randomObs.unsafe_col(i)),
-          1e-8);
-      BOOST_REQUIRE_CLOSE(prob, textG.Probability(randomObs.unsafe_col(i)),
-          1e-8);
-      BOOST_REQUIRE_CLOSE(prob, binaryG.Probability(randomObs.unsafe_col(i)),
-          1e-8);
-    }
-  }
-}
-
-BOOST_AUTO_TEST_CASE(LaplaceDistributionTest)
-{
-  vec mean(20);
-  mean.randu();
-
-  LaplaceDistribution l(mean, 2.5);
-  LaplaceDistribution xmlL, textL, binaryL;
-
-  SerializeObjectAll(l, xmlL, textL, binaryL);
-
-  BOOST_REQUIRE_CLOSE(l.Scale(), xmlL.Scale(), 1e-8);
-  BOOST_REQUIRE_CLOSE(l.Scale(), textL.Scale(), 1e-8);
-  BOOST_REQUIRE_CLOSE(l.Scale(), binaryL.Scale(), 1e-8);
-
-  CheckMatrices(l.Mean(), xmlL.Mean(), textL.Mean(), binaryL.Mean());
-}
-
-BOOST_AUTO_TEST_CASE(MahalanobisDistanceTest)
-{
-  MahalanobisDistance<> d;
-  d.Covariance().randu(50, 50);
-
-  MahalanobisDistance<> xmlD, textD, binaryD;
-
-  SerializeObjectAll(d, xmlD, textD, binaryD);
-
-  // Check the covariance matrices.
-  CheckMatrices(d.Covariance(),
-                xmlD.Covariance(),
-                textD.Covariance(),
-                binaryD.Covariance());
-}
-
-BOOST_AUTO_TEST_CASE(LinearRegressionTest)
-{
-  // Generate some random data.
-  mat data;
-  data.randn(15, 800);
-  vec responses;
-  responses.randn(800, 1);
-
-  LinearRegression lr(data, responses, 0.05); // Train the model.
-  LinearRegression xmlLr, textLr, binaryLr;
-
-  SerializeObjectAll(lr, xmlLr, textLr, binaryLr);
-
-  BOOST_REQUIRE_CLOSE(lr.Lambda(), xmlLr.Lambda(), 1e-8);
-  BOOST_REQUIRE_CLOSE(lr.Lambda(), textLr.Lambda(), 1e-8);
-  BOOST_REQUIRE_CLOSE(lr.Lambda(), binaryLr.Lambda(), 1e-8);
-
-  CheckMatrices(lr.Parameters(), xmlLr.Parameters(), textLr.Parameters(),
-      binaryLr.Parameters());
-}
-
-BOOST_AUTO_TEST_CASE(RegressionDistributionTest)
-{
-  // Generate some random data.
-  mat data;
-  data.randn(15, 800);
-  vec responses;
-  responses.randn(800, 1);
-
-  RegressionDistribution rd(data, responses);
-  RegressionDistribution xmlRd, textRd, binaryRd;
-
-  // Okay, now save it and load it.
-  SerializeObjectAll(rd, xmlRd, textRd, binaryRd);
-
-  // Check the gaussian distribution.
-  CheckMatrices(rd.Err().Mean(),
-                xmlRd.Err().Mean(),
-                textRd.Err().Mean(),
-                binaryRd.Err().Mean());
-  CheckMatrices(rd.Err().Covariance(),
-                xmlRd.Err().Covariance(),
-                textRd.Err().Covariance(),
-                binaryRd.Err().Covariance());
-
-  // Check the regression function.
-  if (rd.Rf().Lambda() == 0.0)
-  {
-    BOOST_REQUIRE_SMALL(xmlRd.Rf().Lambda(), 1e-8);
-    BOOST_REQUIRE_SMALL(textRd.Rf().Lambda(), 1e-8);
-    BOOST_REQUIRE_SMALL(binaryRd.Rf().Lambda(), 1e-8);
-  }
-  else
-  {
-    BOOST_REQUIRE_CLOSE(rd.Rf().Lambda(), xmlRd.Rf().Lambda(), 1e-8);
-    BOOST_REQUIRE_CLOSE(rd.Rf().Lambda(), textRd.Rf().Lambda(), 1e-8);
-    BOOST_REQUIRE_CLOSE(rd.Rf().Lambda(), binaryRd.Rf().Lambda(), 1e-8);
-  }
-
-  CheckMatrices(rd.Rf().Parameters(),
-                xmlRd.Rf().Parameters(),
-                textRd.Rf().Parameters(),
-                binaryRd.Rf().Parameters());
 }
 
 BOOST_AUTO_TEST_CASE(BallBoundTest)
@@ -844,11 +667,11 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTest)
   for (size_t i = 500; i < 1000; ++i)
     labels[i] = 1;
 
-  SoftmaxRegression<> sr(dataset, labels, 2);
+  SoftmaxRegression sr(dataset, labels, 2);
 
-  SoftmaxRegression<> srXml(dataset.n_rows, 2);
-  SoftmaxRegression<> srText(dataset.n_rows, 2);
-  SoftmaxRegression<> srBinary(dataset.n_rows, 2);
+  SoftmaxRegression srXml(dataset.n_rows, 2);
+  SoftmaxRegression srText(dataset.n_rows, 2);
+  SoftmaxRegression srBinary(dataset.n_rows, 2);
 
   SerializeObjectAll(sr, srXml, srText, srBinary);
 
@@ -1130,7 +953,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesSerializationTest)
 
 BOOST_AUTO_TEST_CASE(RASearchTest)
 {
-  using neighbor::AllkRANN;
+  using neighbor::KRANN;
   using neighbor::KNN;
   arma::mat dataset = arma::randu<arma::mat>(5, 200);
   arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
@@ -1138,11 +961,11 @@ BOOST_AUTO_TEST_CASE(RASearchTest)
   // Find nearest neighbors in the top 10, with accuracy 0.95.  So 95% of the
   // results we get (at least) should fall into the top 10 of the true nearest
   // neighbors.
-  AllkRANN allkrann(dataset, false, false, 5, 0.95);
+  KRANN allkrann(dataset, false, false, 5, 0.95);
 
-  AllkRANN krannXml(otherDataset, false, false);
-  AllkRANN krannText(otherDataset, true, false);
-  AllkRANN krannBinary(otherDataset, true, true);
+  KRANN krannXml(otherDataset, false, false);
+  KRANN krannText(otherDataset, true, false);
+  KRANN krannBinary(otherDataset, true, true);
 
   SerializeObjectAll(allkrann, krannXml, krannText, krannBinary);
 
@@ -1288,7 +1111,7 @@ BOOST_AUTO_TEST_CASE(LARSTest)
   // Create a dataset.
   arma::mat X = arma::randn(75, 250);
   arma::vec beta = arma::randn(75, 1);
-  arma::vec y = trans(X) * beta;
+  arma::rowvec y = beta.t() * X;
 
   LARS lars(true, 0.1, 0.1);
   arma::vec betaOpt;
@@ -1301,14 +1124,14 @@ BOOST_AUTO_TEST_CASE(LARSTest)
   // Train textLars.
   arma::mat textX = arma::randn(25, 150);
   arma::vec textBeta = arma::randn(25, 1);
-  arma::vec textY = trans(textX) * textBeta;
+  arma::rowvec textY = textBeta.t() * textX;
   arma::vec textBetaOpt;
   textLars.Train(textX, textY, textBetaOpt);
 
   SerializeObjectAll(lars, xmlLars, binaryLars, textLars);
 
   // Now, check that predictions are the same.
-  arma::vec pred, xmlPred, textPred, binaryPred;
+  arma::rowvec pred, xmlPred, textPred, binaryPred;
   lars.Predict(X, pred);
   xmlLars.Predict(X, xmlPred);
   textLars.Predict(X, textPred);
@@ -1688,6 +1511,97 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
     BOOST_REQUIRE_EQUAL(tree.Child(i).SplitDimension(),
         binaryTree.Child(i).SplitDimension());
   }
+}
+
+/**
+ * Build a Binary RBM, then save it and make sure the parameters of the
+ * all the RBM are equal.
+ */
+BOOST_AUTO_TEST_CASE(BinaryRBMTest)
+{
+  arma::mat data;
+  size_t hiddenLayerSize = 5;
+  data.randu(3, 100);
+
+  GaussianInitialization gaussian(0, 0.1);
+  RBM<GaussianInitialization> Rbm(data, gaussian, data.n_rows, hiddenLayerSize,
+      1, 1, 1, 2, 8, 1, true);
+  RBM<GaussianInitialization> RbmXml(data, gaussian, data.n_rows,
+      hiddenLayerSize, 1, 1, 1, 2, 8, 1, true);
+  RBM<GaussianInitialization> RbmText(data, gaussian, data.n_rows,
+      hiddenLayerSize, 1, 1, 1, 2, 8, 1, true);
+  RBM<GaussianInitialization> RbmBinary(data, gaussian, data.n_rows,
+      hiddenLayerSize, 1, 1, 1, 2, 8, 1, true);
+  Rbm.Reset();
+
+  SerializeObjectAll(Rbm, RbmXml, RbmText, RbmBinary);
+  CheckMatrices(Rbm.Parameters(), RbmXml.Parameters(), RbmText.Parameters(),
+      RbmBinary.Parameters());
+  CheckMatrices(Rbm.VisibleBias(), RbmXml.VisibleBias());
+  CheckMatrices(Rbm.VisibleBias(), RbmText.VisibleBias());
+  CheckMatrices(Rbm.VisibleBias(), RbmBinary.VisibleBias());
+
+  CheckMatrices(Rbm.HiddenBias(), RbmXml.HiddenBias());
+  CheckMatrices(Rbm.HiddenBias(), RbmText.HiddenBias());
+  CheckMatrices(Rbm.HiddenBias(), RbmBinary.HiddenBias());
+
+  CheckMatrices(Rbm.Weight(), RbmXml.Weight());
+  CheckMatrices(Rbm.Weight(), RbmText.Weight());
+  CheckMatrices(Rbm.Weight(), RbmBinary.Weight());
+}
+
+/**
+ * Build a ssRBM, then save it and make sure the parameters of the
+ * all the RBM are equal.
+ */
+BOOST_AUTO_TEST_CASE(ssRBMTest)
+{
+  arma::mat data;
+  size_t hiddenLayerSize = 5;
+  data.randu(3, 100);
+  double slabPenalty = 1;
+  double tempRadius, radius = arma::norm(data.col(0));
+  for (size_t i = 1; i < data.n_cols; i++)
+  {
+    tempRadius = arma::norm(data.col(i));
+    if (radius < tempRadius)
+      radius = tempRadius;
+  }
+
+  size_t poolSize = 1;
+
+  GaussianInitialization gaussian(0, 0.1);
+  RBM<GaussianInitialization, arma::mat, SpikeSlabRBM> Rbm(data, gaussian,
+      data.n_rows, hiddenLayerSize, 1, 1, 1, poolSize, slabPenalty, radius,
+      true);
+  RBM<GaussianInitialization, arma::mat, SpikeSlabRBM> RbmXml(data, gaussian,
+      data.n_rows, hiddenLayerSize, 1, 1, 1, poolSize, slabPenalty, radius,
+      true);
+  RBM<GaussianInitialization, arma::mat, SpikeSlabRBM> RbmText(data, gaussian,
+      data.n_rows, hiddenLayerSize, 1, 1, 1, poolSize, slabPenalty, radius,
+      true);
+  RBM<GaussianInitialization, arma::mat, SpikeSlabRBM> RbmBinary(data, gaussian,
+      data.n_rows, hiddenLayerSize, 1, 1, 1, poolSize, slabPenalty, radius,
+      true);
+  Rbm.Reset();
+  Rbm.VisiblePenalty().fill(15);
+  Rbm.SpikeBias().ones();
+
+  SerializeObjectAll(Rbm, RbmXml, RbmText, RbmBinary);
+  CheckMatrices(Rbm.Parameters(), RbmXml.Parameters(), RbmText.Parameters(),
+      RbmBinary.Parameters());
+
+  CheckMatrices(Rbm.VisiblePenalty(), RbmXml.VisiblePenalty());
+  CheckMatrices(Rbm.VisiblePenalty(), RbmText.VisiblePenalty());
+  CheckMatrices(Rbm.VisiblePenalty(), RbmBinary.VisiblePenalty());
+
+  CheckMatrices(Rbm.SpikeBias(), RbmXml.SpikeBias());
+  CheckMatrices(Rbm.SpikeBias(), RbmText.SpikeBias());
+  CheckMatrices(Rbm.SpikeBias(), RbmBinary.SpikeBias());
+
+  CheckMatrices(Rbm.Weight(), RbmXml.Weight());
+  CheckMatrices(Rbm.Weight(), RbmText.Weight());
+  CheckMatrices(Rbm.Weight(), RbmBinary.Weight());
 }
 
 BOOST_AUTO_TEST_SUITE_END();

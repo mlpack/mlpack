@@ -18,6 +18,8 @@
 #include <mlpack/methods/ann/activation_functions/identity_function.hpp>
 #include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
+#include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
+#include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -87,11 +89,6 @@ class BaseLayer
     g = gy % derivative;
   }
 
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -106,7 +103,7 @@ class BaseLayer
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */)
+  void serialize(Archive& /* ar */, const unsigned int /* version */)
   {
     /* Nothing to do here */
   }
@@ -114,9 +111,6 @@ class BaseLayer
  private:
   //! Locally-stored delta object.
   OutputDataType delta;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
@@ -166,6 +160,28 @@ template <
     typename OutputDataType = arma::mat
 >
 using TanHLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard Softplus-Layer using the Softplus activation function.
+ */
+template <
+    class ActivationFunction = SoftplusFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using SoftPlusLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard HardSigmoid-Layer using the HardSigmoid activation function.
+ */
+template <
+    class ActivationFunction = HardSigmoidFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using HardSigmoidLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 } // namespace ann

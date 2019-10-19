@@ -54,7 +54,6 @@ class BallBound
   bool ownsMetric;
 
  public:
-
   //! Empty Constructor.
   BallBound();
 
@@ -109,6 +108,8 @@ class BallBound
 
   /**
    * Determines if a point is within this bound.
+   *
+   * @param point Point to check the condition.
    */
   bool Contains(const VecType& point) const;
 
@@ -121,6 +122,8 @@ class BallBound
 
   /**
    * Calculates minimum bound-to-point squared distance.
+   *
+   * @param point Point to which the minimum distance is requested.
    */
   template<typename OtherVecType>
   ElemType MinDistance(
@@ -129,11 +132,15 @@ class BallBound
 
   /**
    * Calculates minimum bound-to-bound squared distance.
+   *
+   * @param other Bound to which the minimum distance is requested.
    */
   ElemType MinDistance(const BallBound& other) const;
 
   /**
    * Computes maximum distance.
+   *
+   * @param point Point to which the maximum distance is requested.
    */
   template<typename OtherVecType>
   ElemType MaxDistance(
@@ -142,11 +149,16 @@ class BallBound
 
   /**
    * Computes maximum distance.
+   *
+   * @param other Bound to which the maximum distance is requested.
    */
   ElemType MaxDistance(const BallBound& other) const;
 
   /**
    * Calculates minimum and maximum bound-to-point distance.
+   *
+   * @param point Point to which the minimum and maximum distances are
+   *     requested.
    */
   template<typename OtherVecType>
   math::RangeType<ElemType> RangeDistance(
@@ -157,6 +169,9 @@ class BallBound
    * Calculates minimum and maximum bound-to-bound distance.
    *
    * Example: bound1.MinDistanceSq(other) for minimum distance.
+   *
+   * @param other Bound to which the minimum and maximum distances are
+   *     requested.
    */
   math::RangeType<ElemType> RangeDistance(const BallBound& other) const;
 
@@ -188,7 +203,7 @@ class BallBound
 
   //! Serialize the bound.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const unsigned int version);
 };
 
 //! A specialization of BoundTraits for this bound type.

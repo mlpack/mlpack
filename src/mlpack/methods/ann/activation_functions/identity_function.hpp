@@ -71,7 +71,7 @@ class IdentityFunction
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& y, OutputVecType& x)
   {
-    x.ones(y.n_elem);
+    x.ones(arma::size(y));
   }
 
   /**
@@ -86,8 +86,6 @@ class IdentityFunction
   {
     x.ones(y.n_rows, y.n_cols, y.n_slices);
   }
-
-
 }; // class IdentityFunction
 
 } // namespace ann

@@ -24,7 +24,22 @@ inline BackwardVisitor::BackwardVisitor(arma::mat&& input,
                                         arma::mat&& delta) :
   input(std::move(input)),
   error(std::move(error)),
-  delta(std::move(delta))
+  delta(std::move(delta)),
+  index(0),
+  hasIndex(false)
+{
+  /* Nothing to do here. */
+}
+
+inline BackwardVisitor::BackwardVisitor(arma::mat&& input,
+                                        arma::mat&& error,
+                                        arma::mat&& delta,
+                                        const size_t index) :
+  input(std::move(input)),
+  error(std::move(error)),
+  delta(std::move(delta)),
+  index(index),
+  hasIndex(true)
 {
   /* Nothing to do here. */
 }
@@ -32,7 +47,37 @@ inline BackwardVisitor::BackwardVisitor(arma::mat&& input,
 template<typename LayerType>
 inline void BackwardVisitor::operator()(LayerType* layer) const
 {
+  LayerBackward(layer, layer->OutputParameter());
+}
+
+inline void BackwardVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
+}
+
+template<typename T>
+inline typename std::enable_if<
+    !HasRunCheck<T, bool&(T::*)(void)>::value, void>::type
+BackwardVisitor::LayerBackward(T* layer, arma::mat& /* input */) const
+{
   layer->Backward(std::move(input), std::move(error), std::move(delta));
+}
+
+template<typename T>
+inline typename std::enable_if<
+    HasRunCheck<T, bool&(T::*)(void)>::value, void>::type
+BackwardVisitor::LayerBackward(T* layer, arma::mat& /* input */) const
+{
+  if (!hasIndex)
+  {
+    layer->Backward(std::move(input), std::move(error),
+        std::move(delta));
+  }
+  else
+  {
+    layer->Backward(std::move(input), std::move(error),
+        std::move(delta), index);
+  }
 }
 
 } // namespace ann

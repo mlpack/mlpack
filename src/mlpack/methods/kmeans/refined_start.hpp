@@ -89,10 +89,10 @@ class RefinedStart
 
   //! Serialize the object.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(samplings, "samplings");
-    ar & data::CreateNVP(percentage, "percentage");
+    ar & BOOST_SERIALIZATION_NVP(samplings);
+    ar & BOOST_SERIALIZATION_NVP(percentage);
   }
 
  private:

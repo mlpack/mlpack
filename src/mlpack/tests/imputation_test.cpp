@@ -184,7 +184,7 @@ BOOST_AUTO_TEST_CASE(MeanImputationTest)
 }
 
 /**
- * Make sure MeanImputation method replaces data 0 to median value of each
+ * Make sure MedianImputation method replaces data 0 to median value of each
  * dimensions.
  */
 BOOST_AUTO_TEST_CASE(MedianImputationTest)
@@ -227,6 +227,7 @@ BOOST_AUTO_TEST_CASE(MedianImputationTest)
   BOOST_REQUIRE_CLOSE(rowWiseInput(2, 0), 9.0, 1e-5);
   BOOST_REQUIRE_CLOSE(rowWiseInput(2, 1), 8.0, 1e-5);
   BOOST_REQUIRE_CLOSE(rowWiseInput(2, 2), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(rowWiseInput(2, 3), 8.0, 1e-5);
 }
 
 /**
@@ -264,6 +265,54 @@ BOOST_AUTO_TEST_CASE(ListwiseDeletionTest)
   BOOST_REQUIRE_CLOSE(rowWiseInput(1, 1), 8.0, 1e-5);
   BOOST_REQUIRE_CLOSE(rowWiseInput(1, 2), 4.0, 1e-5);
   BOOST_REQUIRE_CLOSE(rowWiseInput(1, 3), 8.0, 1e-5);
+}
+
+/**
+ * Make sure we can map non-strings.
+ */
+BOOST_AUTO_TEST_CASE(DatasetMapperNonStringMapping)
+{
+  IncrementPolicy incr(true);
+  DatasetMapper<IncrementPolicy, double> dm(incr, 1);
+  dm.MapString<size_t>(5.0, 0);
+  dm.MapString<size_t>(4.3, 0);
+  dm.MapString<size_t>(1.1, 0);
+
+  BOOST_REQUIRE_EQUAL(dm.NumMappings(0), 3);
+
+  BOOST_REQUIRE(dm.Type(0) == data::Datatype::categorical);
+
+  BOOST_REQUIRE_EQUAL(dm.UnmapValue(5.0, 0), 0);
+  BOOST_REQUIRE_EQUAL(dm.UnmapValue(4.3, 0), 1);
+  BOOST_REQUIRE_EQUAL(dm.UnmapValue(1.1, 0), 2);
+
+  BOOST_REQUIRE_EQUAL(dm.UnmapString(0, 0), 5.0);
+  BOOST_REQUIRE_EQUAL(dm.UnmapString(1, 0), 4.3);
+  BOOST_REQUIRE_EQUAL(dm.UnmapString(2, 0), 1.1);
+}
+
+/**
+ * Make sure we can map strange types.
+ */
+BOOST_AUTO_TEST_CASE(DatasetMapperPointerMapping)
+{
+  int a = 1, b = 2, c = 3;
+  IncrementPolicy incr(true);
+  DatasetMapper<IncrementPolicy, int*> dm(incr, 1);
+
+  dm.MapString<size_t>(&a, 0);
+  dm.MapString<size_t>(&b, 0);
+  dm.MapString<size_t>(&c, 0);
+
+  BOOST_REQUIRE_EQUAL(dm.NumMappings(0), 3);
+
+  BOOST_REQUIRE_EQUAL(dm.UnmapValue(&a, 0), 0);
+  BOOST_REQUIRE_EQUAL(dm.UnmapValue(&b, 0), 1);
+  BOOST_REQUIRE_EQUAL(dm.UnmapValue(&c, 0), 2);
+
+  BOOST_REQUIRE_EQUAL(dm.UnmapString(0, 0), &a);
+  BOOST_REQUIRE_EQUAL(dm.UnmapString(1, 0), &b);
+  BOOST_REQUIRE_EQUAL(dm.UnmapString(2, 0), &c);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

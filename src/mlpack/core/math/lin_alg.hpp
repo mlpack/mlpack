@@ -124,6 +124,19 @@ inline size_t SvecIndex(size_t i, size_t j, size_t n);
  */
 void SymKronId(const arma::mat& A, arma::mat& op);
 
+/**
+ * Signum function.
+ * Return 1 if x>0; return 0 if x=0; return -1 if x<0.
+ * Return type are the same as input type.
+ *
+ * @param x Number of any type.
+ */
+template <typename T>
+T Sign(const T x)
+{
+    return (T(0) < x) - (x < T(0));
+}
+
 } // namespace math
 } // namespace mlpack
 

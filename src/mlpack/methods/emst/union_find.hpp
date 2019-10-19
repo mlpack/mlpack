@@ -61,7 +61,7 @@ class UnionFind
     }
     else
     {
-      // This ensures that the tree has a small depth
+      // This ensures that the tree has a small depth.
       parent[x] = Find(parent[x]);
       return parent[x];
     }

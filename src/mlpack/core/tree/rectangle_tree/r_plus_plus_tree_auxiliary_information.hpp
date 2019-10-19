@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_AUXILIARY_INFORMATION_HPP
-#define MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_AUXILIARY_INFORMATION_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_RPP_TREE_AUXILIARY_INFO_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_RPP_TREE_AUXILIARY_INFO_HPP
 
 #include <mlpack/prereqs.hpp>
 #include "../hrectbound.hpp"
@@ -147,15 +147,17 @@ class RPlusPlusTreeAuxiliaryInformation
 
   //! Modify the maximum bounding rectangle.
   const BoundType& OuterBound() const { return outerBound; }
+
  private:
   //! The maximum bounding rectangle.
   BoundType outerBound;
+
  public:
   /**
    * Serialize the information.
    */
   template<typename Archive>
-  void Serialize(Archive &, const unsigned int /* version */);
+  void serialize(Archive &, const unsigned int /* version */);
 };
 
 } // namespace tree
@@ -163,4 +165,4 @@ class RPlusPlusTreeAuxiliaryInformation
 
 #include "r_plus_plus_tree_auxiliary_information_impl.hpp"
 
-#endif//MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_AUXILIARY_INFORMATION_HPP
+#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_RPP_TREE_AUXILIARY_INFO_HPP

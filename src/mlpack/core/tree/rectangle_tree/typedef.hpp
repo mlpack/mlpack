@@ -125,7 +125,7 @@ using XTree = RectangleTree<MetricType,
  */
 template<typename TreeType>
 using DiscreteHilbertRTreeAuxiliaryInformation =
-      HilbertRTreeAuxiliaryInformation<TreeType,DiscreteHilbertValue>;
+      HilbertRTreeAuxiliaryInformation<TreeType, DiscreteHilbertValue>;
 
 template<typename MetricType, typename StatisticType, typename MatType>
 using HilbertRTree = RectangleTree<MetricType,
@@ -186,7 +186,8 @@ using RPlusTree = RectangleTree<MetricType,
  * @endcode
  *
  * @see @ref trees, RTree, RTree, RPlusTree, RPlusPlusTree
- */template<typename MetricType, typename StatisticType, typename MatType>
+ */
+template<typename MetricType, typename StatisticType, typename MatType>
 using RPlusPlusTree = RectangleTree<MetricType,
                             StatisticType,
                             MatType,

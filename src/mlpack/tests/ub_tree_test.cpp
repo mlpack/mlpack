@@ -47,7 +47,6 @@ BOOST_AUTO_TEST_CASE(AddressTest)
     for (size_t k = 0; k < dataset.n_rows; k++)
       BOOST_REQUIRE_CLOSE(dataset(k, i), point[k], 1e-13);
   }
-
 }
 
 template<typename TreeType>
@@ -203,7 +202,7 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
       BOOST_REQUIRE_LE(maxDist, r.Hi() *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
     }
-      
+
     if (!tree.IsLeaf())
     {
       CheckDistance<TreeType, MetricType>(*tree.Left());
@@ -252,7 +251,7 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
 BOOST_AUTO_TEST_CASE(UBTreeDistanceTest)
 {
   typedef UBTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
-  arma::mat dataset(8, 1000);
+  arma::mat dataset(8, 200);
 
   dataset.randu();
 
@@ -314,7 +313,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
   arma::mat distances2;
 
   // Nearest neighbor search with the UB tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
+  NeighborSearch<NearestNS, metric::LMetric<2, true>, arma::mat,
       UBTree> knn1(dataset, SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
@@ -341,7 +340,7 @@ BOOST_AUTO_TEST_CASE(DualTreeTraverserTest)
   arma::mat distances2;
 
   // Nearest neighbor search with the UB tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
+  NeighborSearch<NearestNS, metric::LMetric<2, true>, arma::mat,
       UBTree> knn1(dataset, DUAL_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);

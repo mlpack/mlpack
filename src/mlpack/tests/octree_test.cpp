@@ -193,15 +193,17 @@ void CheckFurthestDistances(TreeType& node)
   for (size_t i = 0; i < node.NumPoints(); ++i)
   {
     // Handle floating-point inaccuracies.
-    BOOST_REQUIRE_LE(metric::EuclideanDistance::Evaluate(node.Dataset().col(node.Point(i)),
-        center), node.FurthestPointDistance() * (1 + 1e-5));
+    BOOST_REQUIRE_LE(metric::EuclideanDistance::Evaluate(
+        node.Dataset().col(node.Point(i)), center),
+        node.FurthestPointDistance() * (1 + 1e-5));
   }
 
   // Compare descendants held in the node.
   for (size_t i = 0; i < node.NumDescendants(); ++i)
   {
     // Handle floating-point inaccuracies.
-    BOOST_REQUIRE_LE(metric::EuclideanDistance::Evaluate(node.Dataset().col(node.Descendant(i)),
+    BOOST_REQUIRE_LE(metric::EuclideanDistance::Evaluate(
+        node.Dataset().col(node.Descendant(i)),
         center), node.FurthestDescendantDistance() * (1 + 1e-5));
   }
 

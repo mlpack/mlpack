@@ -20,8 +20,8 @@ namespace ann {
 
 //! ForwardVisitor visitor class.
 inline ForwardVisitor::ForwardVisitor(arma::mat&& input, arma::mat&& output) :
-  input(std::move(input)),
-  output(std::move(output))
+    input(std::move(input)),
+    output(std::move(output))
 {
   /* Nothing to do here. */
 }
@@ -30,6 +30,11 @@ template<typename LayerType>
 inline void ForwardVisitor::operator()(LayerType* layer) const
 {
   layer->Forward(std::move(input), std::move(output));
+}
+
+inline void ForwardVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
 }
 
 } // namespace ann

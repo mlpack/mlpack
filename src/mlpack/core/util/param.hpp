@@ -21,13 +21,28 @@ namespace data {
 
 class IncrementPolicy;
 
-template<typename PolicyType>
+template<typename PolicyType, typename InputType>
 class DatasetMapper;
 
-using DatasetInfo = DatasetMapper<IncrementPolicy>;
+using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 
 } // namespace data
 } // namespace mlpack
+
+/**
+ * Provide a link for a binding's "see also" documentation section, which is
+ * primarily (but not necessarily exclusively) used by the Markdown bindings
+ * This link can be specified by calling SEE_ALSO("description", "link"), where
+ * "description" is the description of the link and "link" may be one of the
+ * following:
+ *
+ * - A direct URL, starting with http:// or https://.
+ * - A page anchor for documentation, referencing another binding by its CMake
+ *      binding name, i.e. "#knn".
+ * - A link to a Doxygen page, using the mangled Doxygen name after a
+ *      '@doxygen/', i.e., "@doxygen/mlpack1_1_adaboost1_1_AdaBoost".
+ */
+#define SEE_ALSO(DESCRIPTION, LINK) {DESCRIPTION, LINK}
 
 /**
  * Document an executable.  Only one instance of this macro should be
@@ -41,19 +56,30 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().
  *
  * @param NAME Short string representing the name of the program.
+ * @param SHORT_DESC Short two-sentence description of the program; it should
+ *     describe what the program implements and does, and a quick overview of
+ *     how it can be used and what it should be used for.
  * @param DESC Long string describing what the program does and possibly a
  *     simple usage example.  Newlines should not be used here; this is taken
  *     care of by CLI (however, you can explicitly specify newlines to denote
- *     new paragraphs).
+ *     new paragraphs).  You can also use printing macros like
+ *     PRINT_PARAM_STRING(), PRINT_DATASET(), and others.
+ * @param SEE_ALSOS A set of SEE_ALSO() macros that are used for generating
+ *     documentation.  See the SEE_ALSO() macro.  This is a varargs argument, so
+ *     you can add as many SEE_ALSO()s as you like.
  */
-#define PROGRAM_INFO(NAME, DESC) static mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, DESC);
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
+    static mlpack::util::ProgramDoc \
+    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
+    []() { return DESC; }, { __VA_ARGS__ } )
 
 /**
  * Define a flag parameter.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -76,13 +102,16 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * --ID=value.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
  * @bug
+// Use a forward declaration of the class.
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
  * identifier for options declared using the PARAM_*() macros. However, not all
  * compilers have this support--most notably, gcc < 4.3. In that case, the
@@ -106,7 +135,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * will be issued.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -119,7 +150,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_INT_OUT(ID, DESC) \
-    PARAM_IN(int, ID, DESC, "", 0, false)
+    PARAM_OUT(int, ID, DESC, "", 0, false)
 
 /**
  * Define a double input parameter.
@@ -128,7 +159,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * --ID=value.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
@@ -158,7 +191,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * will be issued.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -181,7 +216,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * PROGRAM_INFO() macro), the parameter can be specified with just --ID=value.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
@@ -211,7 +248,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -239,7 +278,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -265,7 +306,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -296,7 +339,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * types.
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -323,7 +368,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -351,7 +398,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -384,7 +433,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * types.
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -410,7 +461,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -437,7 +490,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -469,7 +524,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * types.
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -496,7 +553,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -511,6 +570,34 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
     PARAM_COL(ID, DESC, ALIAS, false, true, true)
 
 /**
+ * Define a required vector input parameter (type arma::vec).  From the command
+ * line, the user can specify the file that holds the vector, using the name of
+ * the vector parameter with "_file" appended (and the same alias).  So for
+ * instance, if the name of the vector parameter was "vec", the user could
+ * specify that the "vec" vector was held in vec.csv by giving the parameter:
+ *
+ * @code
+ * --vec_file vector.csv
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_COL_IN_REQ(ID, DESC, ALIAS) \
+    PARAM_COL(ID, DESC, ALIAS, true, true, true)
+
+/**
  * Define a row vector input parameter (type arma::rowvec).  From the command
  * line, the user can specify the file that holds the vector, using the name of
  * the vector parameter with "_file" appended (and the same alias).  So for
@@ -522,7 +609,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -548,7 +637,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -575,7 +666,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -606,7 +699,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * types.
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -637,7 +732,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * types.
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -668,7 +765,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * types.
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -699,7 +798,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * types.
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -720,7 +821,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * --ID=value1,value2,value3.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
@@ -751,7 +854,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * will be issued.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -763,8 +868,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * collisions are still possible, and they produce bizarre error messages.  See
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
-#define PARAM_VECTOR_OUT(T, ID) \
-    PARAM_OUT(std::vector<T>, ID, DESC, "", std::vector<T>(), false)
+#define PARAM_VECTOR_OUT(T, ID, DESC, ALIAS) \
+    PARAM_OUT(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), false)
 
 /**
  * Define an input DatasetInfo/matrix parameter.  From the command line, the
@@ -787,7 +892,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS One-character string representing the alias of the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -830,7 +937,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  *
  * @param TYPE Type of the model to be loaded.
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter.
+ * @param DESC Description of the parameter.  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  */
 #define PARAM_MODEL_IN(TYPE, ID, DESC, ALIAS) \
@@ -862,7 +971,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  *
  * @param TYPE Type of the model to be loaded.
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter.
+ * @param DESC Description of the parameter.  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  */
 #define PARAM_MODEL_IN_REQ(TYPE, ID, DESC, ALIAS) \
@@ -885,7 +996,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  *
  * @param TYPE Type of the model to be saved.
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter.
+ * @param DESC Description of the parameter.  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  */
 #define PARAM_MODEL_OUT(TYPE, ID, DESC, ALIAS) \
@@ -897,7 +1010,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * The parameter must then be specified on the command line with --ID=value.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -919,7 +1034,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * The parameter must then be specified on the command line with --ID=value.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -933,7 +1050,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_DOUBLE_IN_REQ(ID, DESC, ALIAS) \
-    PARAM_IN(double, ID, DESC, ALIAS, 0.0d, true)
+    PARAM_IN(double, ID, DESC, ALIAS, 0.0, true)
 
 /**
  * Define a required string parameter.
@@ -941,7 +1058,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * The parameter must then be specified on the command line with --ID=value.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -964,7 +1083,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * --ID=value1,value2,value3.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -989,6 +1110,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
 // unique identifier inside of the PARAM() module.
 #define JOIN(x, y) JOIN_AGAIN(x, y)
 #define JOIN_AGAIN(x, y) x ## y
+
 /** @endcond */
 
 /**
@@ -1000,7 +1122,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  *
  * @param T Type of the parameter.
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS Alias for this parameter (one letter).
  * @param DEF Default value of the parameter.
  * @param REQ Whether or not parameter is required (boolean value).
@@ -1009,50 +1133,55 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
   #define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
       JOIN(cli_option_dummy_object_in_, __COUNTER__) \
-      (DEF, ID, DESC, ALIAS, REQ, true, false);
+      (DEF, ID, DESC, ALIAS, #T, REQ, true, false, testName);
 
   #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
       JOIN(cli_option_dummy_object_out_, __COUNTER__) \
-      (DEF, ID, DESC, ALIAS, REQ, false, false);
+      (DEF, ID, DESC, ALIAS, #T, REQ, false, false, testName);
 
   #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::mat> \
       JOIN(cli_option_dummy_matrix_, __COUNTER__) \
-      (arma::mat(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+      (arma::mat(), ID, DESC, ALIAS, "arma::mat", \
+      REQ, IN, !TRANS, testName);
 
   #define PARAM_UMATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::Mat<size_t>> \
       JOIN(cli_option_dummy_umatrix_, __COUNTER__) \
-      (arma::Mat<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+      (arma::Mat<size_t>(), ID, DESC, ALIAS, "arma::Mat<size_t>", \
+      REQ, IN, !TRANS, testName);
 
   #define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::vec> \
       JOIN(cli_option_dummy_col_, __COUNTER__) \
-      (arma::vec(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+      (arma::vec(), ID, DESC, ALIAS, "arma::vec", \
+      REQ, IN, !TRANS, testName);
 
   #define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::Col<size_t>> \
       JOIN(cli_option_dummy_ucol_, __COUNTER__) \
-      (arma::Col<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+      (arma::Col<size_t>(), ID, DESC, ALIAS, "arma::Col<size_t>", \
+      REQ, IN, !TRANS, testName);
 
   #define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::rowvec> \
       JOIN(cli_option_dummy_row_, __COUNTER__) \
-      (arma::rowvec(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+      (arma::rowvec(), ID, DESC, ALIAS, "arma::rowvec", \
+      REQ, IN, !TRANS, testName);
 
   #define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::Row<size_t>> \
       JOIN(cli_option_dummy_urow_, __COUNTER__) \
-      (arma::Row<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
-
+      (arma::Row<size_t>(), ID, DESC, ALIAS, "arma::Row<size_t>", \
+      REQ, IN, !TRANS, testName);
 
   // There are no uses of required models, so that is not an option to this
   // macro (it would be easy to add).
   #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
-      static mlpack::util::Option<TYPE> \
+      static mlpack::util::Option<TYPE*> \
       JOIN(cli_option_dummy_model_, __COUNTER__) \
-      (TYPE(), ID, DESC, ALIAS, REQ, IN);
+      (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, testName);
 #else
   // We have to do some really bizarre stuff since __COUNTER__ isn't defined. I
   // don't think we can absolutely guarantee success, but it should be "good
@@ -1061,47 +1190,54 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
   #define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
       JOIN(JOIN(cli_option_dummy_object_in_, __LINE__), opt) \
-      (DEF, ID, DESC, ALIAS, REQ, true, false);
+      (DEF, ID, DESC, ALIAS, #T, REQ, true, false, testName);
 
   #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
       JOIN(JOIN(cli_option_dummy_object_out_, __LINE__), opt) \
-      (DEF, ID, DESC, ALIAS, REQ, false, false);
+      (DEF, ID, DESC, ALIAS, #T, REQ, false, false, testName);
 
   #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::mat> \
       JOIN(JOIN(cli_option_dummy_object_matrix_, __LINE__), opt) \
-      (arma::mat(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+      (arma::mat(), ID, DESC, ALIAS, "arma::mat", REQ, IN, !TRANS, \
+      testName);
 
   #define PARAM_UMATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::Mat<size_t>> \
       JOIN(JOIN(cli_option_dummy_object_umatrix_, __LINE__), opt) \
-      (arma::Mat<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+      (arma::Mat<size_t>(), ID, DESC, ALIAS, "arma::Mat<size_t>", REQ, IN, \
+      !TRANS, testName);
 
   #define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::vec> \
       JOIN(cli_option_dummy_object_col_, __LINE__) \
-      (arma::vec(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+      (arma::vec(), ID, DESC, ALIAS, "arma::vec", REQ, IN, !TRANS, \
+      testName);
 
   #define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::Col<size_t>> \
       JOIN(cli_option_dummy_object_ucol_, __LINE__) \
-      (arma::Col<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+      (arma::Col<size_t>(), ID, DESC, ALIAS, "arma::Col<size_t>", REQ, IN, \
+      !TRANS, testName);
 
   #define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::rowvec> \
       JOIN(cli_option_dummy_object_row_, __LINE__) \
-      (arma::rowvec(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+      (arma::rowvec(), ID, DESC, ALIAS, "arma::rowvec", REQ, IN, !TRANS, \
+      testName);
 
   #define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::Row<size_t>> \
       JOIN(cli_option_dummy_object_urow_, __LINE__) \
-      (arma::Row<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+      (arma::Row<size_t>(), ID, DESC, ALIAS, "arma::Row<size_t>", REQ, IN, \
+      !TRANS, testName);
 
   #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
-      static mlpack::util::Option<TYPE> \
+      static mlpack::util::Option<TYPE*> \
       JOIN(JOIN(cli_option_dummy_object_model_, __LINE__), opt) \
-      (TYPE(), ID, DESC, ALIAS, REQ, IN);
+      (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, \
+      testName);
 #endif
 
 #endif

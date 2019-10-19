@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_AUXILIARY_INFORMATION_IMPL_HPP
-#define MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_AUXILIARY_INFORMATION_IMPL_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_HR_TREE_AUXILIARY_INFO_IMPL_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_HR_TREE_AUXILIARY_INFO_IMPL_HPP
 
 #include "hilbert_r_tree_auxiliary_information.hpp"
 
@@ -126,7 +126,7 @@ bool HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
 HandlePointDeletion(TreeType* node, const size_t localIndex)
 {
   // Update the largest Hilbert value.
-  hilbertValue.DeletePoint(node,localIndex);
+  hilbertValue.DeletePoint(node, localIndex);
 
   for (size_t i = localIndex + 1; localIndex < node->NumPoints(); i++)
     node->Point(i - 1) = node->Point(i);
@@ -141,7 +141,7 @@ bool HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
 HandleNodeRemoval(TreeType* node, const size_t nodeIndex)
 {
   // Update the largest Hilbert value.
-  hilbertValue.RemoveNode(node,nodeIndex);
+  hilbertValue.RemoveNode(node, nodeIndex);
 
   for (size_t i = nodeIndex + 1; nodeIndex < node->NumChildren(); i++)
     node->children[i - 1] = node->children[i];
@@ -178,16 +178,15 @@ NullifyData()
 template<typename TreeType,
          template<typename> class HilbertValueType>
 template<typename Archive>
-void HilbertRTreeAuxiliaryInformation<TreeType ,HilbertValueType>::
-Serialize(Archive& ar, const unsigned int /* version */)
+void HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::serialize(
+    Archive& ar,
+    const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
-  ar & CreateNVP(hilbertValue, "hilbertValue");
+  ar & BOOST_SERIALIZATION_NVP(hilbertValue);
 }
 
 
 } // namespace tree
 } // namespace mlpack
 
-#endif//MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_AUXILIARY_INFORMATION_IMPL_HPP
+#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_HR_TREE_AUXILIARY_INFO_IMPL_HPP

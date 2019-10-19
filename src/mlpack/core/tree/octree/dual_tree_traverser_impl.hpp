@@ -42,6 +42,18 @@ void Octree<MetricType, StatisticType, MatType>::DualTreeTraverser<RuleType>::
   // Store the current traversal info.
   traversalInfo = rule.TraversalInfo();
 
+  // If both nodes are root nodes, just score them.
+  if (queryNode.Parent() == NULL && referenceNode.Parent() == NULL)
+  {
+    const double rootScore = rule.Score(queryNode, referenceNode);
+    // If root score is DBL_MAX, don't recurse.
+    if (rootScore == DBL_MAX)
+    {
+      ++numPrunes;
+      return;
+    }
+  }
+
   if (queryNode.IsLeaf() && referenceNode.IsLeaf())
   {
     const size_t begin = queryNode.Point(0);
@@ -135,7 +147,8 @@ void Octree<MetricType, StatisticType, MatType>::DualTreeTraverser<RuleType>::
       {
         if (scores[scoreOrder[i]] == DBL_MAX)
         {
-          // We don't need to check any more---all children past here are pruned.
+          // We don't need to check any more
+          // All children past here are pruned.
           numPrunes += scoreOrder.n_elem - i;
           break;
         }

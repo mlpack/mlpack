@@ -184,26 +184,23 @@ double HoeffdingNumericSplit<FitnessFunction, ObservationType>::
 
     return double(classCounts.max()) / double(arma::sum(classCounts));
   }
-
 }
 
 template<typename FitnessFunction, typename ObservationType>
 template<typename Archive>
-void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Serialize(
+void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
-  ar & CreateNVP(samplesSeen, "samplesSeen");
-  ar & CreateNVP(observationsBeforeBinning, "observationsBeforeBinning");
-  ar & CreateNVP(bins, "bins");
+  ar & BOOST_SERIALIZATION_NVP(samplesSeen);
+  ar & BOOST_SERIALIZATION_NVP(observationsBeforeBinning);
+  ar & BOOST_SERIALIZATION_NVP(bins);
 
   if (samplesSeen >= observationsBeforeBinning)
   {
     // The binning has happened, so we only need to save the resulting bins.
-    ar & CreateNVP(splitPoints, "splitPoints");
-    ar & CreateNVP(sufficientStatistics, "sufficientStatistics");
+    ar & BOOST_SERIALIZATION_NVP(splitPoints);
+    ar & BOOST_SERIALIZATION_NVP(sufficientStatistics);
 
     if (Archive::is_loading::value)
     {
@@ -226,18 +223,9 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Serialize(
     size_t numClasses;
     if (Archive::is_saving::value)
       numClasses = sufficientStatistics.n_rows;
-    ar & data::CreateNVP(numClasses, "numClasses");
-
-    for (size_t i = 0; i < samplesSeen; ++i)
-    {
-      std::ostringstream oss;
-      oss << "obs" << i;
-      ar & CreateNVP(observations[i], oss.str());
-
-      std::ostringstream oss2;
-      oss2 << "label" << i;
-      ar & CreateNVP(labels[i], oss2.str());
-    }
+    ar & BOOST_SERIALIZATION_NVP(numClasses);
+    ar & BOOST_SERIALIZATION_NVP(observations);
+    ar & BOOST_SERIALIZATION_NVP(labels);
 
     if (Archive::is_loading::value)
     {

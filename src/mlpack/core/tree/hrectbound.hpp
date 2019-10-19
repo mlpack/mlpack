@@ -39,7 +39,7 @@ struct IsLMetric<metric::LMetric<Power, TakeRoot>>
   static const bool Value = true;
 };
 
-} // namespace util
+} // namespace meta
 
 /**
  * Hyper-rectangle bound for an L-metric.  This should be used in conjunction
@@ -66,6 +66,8 @@ class HRectBound
   /**
    * Initializes to specified dimensionality with each dimension the empty
    * set.
+   *
+   * @param dimension Dimensionality of bound.
    */
   HRectBound(const size_t dimension);
 
@@ -100,6 +102,11 @@ class HRectBound
   ElemType MinWidth() const { return minWidth; }
   //! Modify the minimum width of the bound.
   ElemType& MinWidth() { return minWidth; }
+
+  //! Get the instantiated metric associated with the bound.
+  const MetricType& Metric() const { return metric; }
+  //! Modify the instantiated metric associated with the bound.
+  MetricType& Metric() { return metric; }
 
   /**
    * Calculates the center of the range, placing it into the given vector.
@@ -185,12 +192,16 @@ class HRectBound
 
   /**
    * Determines if a point is within this bound.
+   *
+   * @param point Point to check the condition.   
    */
   template<typename VecType>
   bool Contains(const VecType& point) const;
 
   /**
    * Determines if this bound partially contains a bound.
+   *
+   * @param other Bound to check the condition.
    */
   bool Contains(const HRectBound& bound) const;
 
@@ -218,7 +229,7 @@ class HRectBound
    * Serialize the bound object.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const unsigned int version);
 
  private:
   //! The dimensionality of the bound.
@@ -227,6 +238,8 @@ class HRectBound
   math::RangeType<ElemType>* bounds;
   //! Cached minimum width of bound.
   ElemType minWidth;
+  //! Instantiated metric (likely has size 0).
+  MetricType metric;
 };
 
 // A specialization of BoundTraits for this class.

@@ -107,7 +107,7 @@ class ExampleKernel
    * not need to do anything at all.
    */
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
 
   /**
    * Obtains the convolution integral [integral K(||x-a||)K(||b-x||)dx]
@@ -140,7 +140,7 @@ class ExampleKernel
   static double Normalizer() { return 0; }
 
   // Modified to remove unused variable "dimension"
-  //static double Normalizer(size_t dimension=1) { return 0; }
+  // static double Normalizer(size_t dimension=1) { return 0; }
 };
 
 } // namespace kernel

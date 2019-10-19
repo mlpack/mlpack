@@ -15,7 +15,6 @@
 #define MLPACK_METHODS_ANN_VISITOR_OUTPUT_WIDTH_VISITOR_HPP
 
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
 
 #include <boost/variant.hpp>
 
@@ -32,13 +31,15 @@ class OutputWidthVisitor : public boost::static_visitor<size_t>
   template<typename LayerType>
   size_t operator()(LayerType* layer) const;
 
+  size_t operator()(MoreTypes layer) const;
+
  private:
   //! Return 0 if the module doesn't implement the InputWidth() or Model()
   //! function.
   template<typename T>
   typename std::enable_if<
       !HasInputWidth<T, size_t&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      !HasModelCheck<T>::value, size_t>::type
   LayerOutputWidth(T* layer) const;
 
   //! Return the output width if the module implements the InputWidth()
@@ -46,14 +47,14 @@ class OutputWidthVisitor : public boost::static_visitor<size_t>
   template<typename T>
   typename std::enable_if<
       HasInputWidth<T, size_t&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      !HasModelCheck<T>::value, size_t>::type
   LayerOutputWidth(T* layer) const;
 
   //! Return the output width if the module implements the Model() function.
   template<typename T>
   typename std::enable_if<
       !HasInputWidth<T, size_t&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      HasModelCheck<T>::value, size_t>::type
   LayerOutputWidth(T* layer) const;
 
   //! Return the output width if the module implements the Model() or
@@ -61,7 +62,7 @@ class OutputWidthVisitor : public boost::static_visitor<size_t>
   template<typename T>
   typename std::enable_if<
       HasInputWidth<T, size_t&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      HasModelCheck<T>::value, size_t>::type
   LayerOutputWidth(T* layer) const;
 };
 

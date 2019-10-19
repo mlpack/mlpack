@@ -29,7 +29,7 @@ using namespace mlpack::util;
 BOOST_AUTO_TEST_SUITE(PrefixedOutStreamTest);
 
 /**
- * Test the output of CLI using PrefixedOutStream.  We will pass bogus 
+ * Test the output of CLI using PrefixedOutStream.  We will pass bogus
  * input to a stringstream so that none of it gets to the screen.
  */
 BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamBasic)
@@ -105,7 +105,6 @@ BOOST_AUTO_TEST_CASE(TestArmadilloPrefixedOutStream)
       BASH_GREEN "[INFO ] " BASH_CLEAR "hello   1.0000   1.5000   2.0000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000   3.0000   3.5000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   4.0000   4.5000   5.0000\n");
-
 }
 
 /**
@@ -220,11 +219,11 @@ BOOST_AUTO_TEST_CASE(TestArmaCustomPrecision)
   pss << trans(test2);
 
   BOOST_REQUIRE_EQUAL(ss.str(),
-      BASH_GREEN "[INFO ] " BASH_CLEAR 
+      BASH_GREEN "[INFO ] " BASH_CLEAR
       "    1.00000000    2.50000000   40.00000000\n"
-      BASH_GREEN "[INFO ] " BASH_CLEAR 
+      BASH_GREEN "[INFO ] " BASH_CLEAR
       "    1.50000000    3.00000000    4.50000000\n"
-      BASH_GREEN "[INFO ] " BASH_CLEAR 
+      BASH_GREEN "[INFO ] " BASH_CLEAR
       "    2.00000000    3.50000000    4.99999000\n");
 
   // Test stream after reset.

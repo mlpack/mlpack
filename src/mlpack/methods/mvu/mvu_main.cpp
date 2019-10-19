@@ -31,6 +31,7 @@ PARAM_INT_IN("num_neighbors", "Number of nearest neighbors to consider while "
 using namespace mlpack;
 using namespace mlpack::mvu;
 using namespace mlpack::math;
+using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
@@ -44,8 +45,10 @@ int main(int argc, char **argv)
   const int numNeighbors = CLI::GetParam<int>("num_neighbors");
 
   if (!CLI::HasParam("output"))
+  {
     Log::Warn << "--output_file (-o) is not specified; no results will be "
         << "saved!" << endl;
+  }
 
   RandomSeed(time(NULL));
 

@@ -66,22 +66,6 @@ using DefeatistKNN = NeighborSearch<
  */
 typedef DefeatistKNN<tree::SPTree> SpillKNN;
 
-/**
- * @deprecated
- * The AllkNN class is the k-nearest-neighbors method.  It returns L2 distances
- * (Euclidean distances) for each of the k nearest neighbors.  This typedef will
- * be removed in mlpack 3.0.0; use the KNN typedef instead.
- */
-typedef NeighborSearch<NearestNeighborSort, metric::EuclideanDistance> AllkNN;
-
-/**
- * @deprecated
- * The AllkFN class is the k-furthest-neighbors method.  It returns L2
- * distances (Euclidean distances) for each of the k furthest neighbors.  This
- * typedef will be removed in mlpack 3.0.0; use the KFN typedef instead.
- */
-typedef NeighborSearch<FurthestNeighborSort, metric::EuclideanDistance> AllkFN;
-
 } // namespace neighbor
 } // namespace mlpack
 

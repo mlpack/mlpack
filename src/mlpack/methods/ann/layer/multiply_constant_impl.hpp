@@ -4,6 +4,11 @@
  *
  * Implementation of the MultiplyConstantLayer class, which multiplies the
  * input by a (non-learnable) constant.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_LAYER_MULTIPLY_CONSTANT_IMPL_HPP
 #define MLPACK_METHODS_ANN_LAYER_MULTIPLY_CONSTANT_IMPL_HPP
@@ -39,10 +44,10 @@ void MultiplyConstant<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void MultiplyConstant<InputDataType, OutputDataType>::Serialize(
+void MultiplyConstant<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(scalar, "scalar");
+  ar & BOOST_SERIALIZATION_NVP(scalar);
 }
 
 } // namespace ann

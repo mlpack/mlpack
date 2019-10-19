@@ -62,10 +62,10 @@ class RAQueryStat
 
   //! Serialize the statistic.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(bound, "bound");
-    ar & data::CreateNVP(numSamplesMade, "numSamplesMade");
+    ar & BOOST_SERIALIZATION_NVP(bound);
+    ar & BOOST_SERIALIZATION_NVP(numSamplesMade);
   }
 
  private:

@@ -4,6 +4,11 @@
  *
  * Implementation of the VRClassReward class, which implements the variance
  * reduced classification reinforcement layer.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_LAYER_VR_CLASS_REWARD_IMPL_HPP
 #define MLPACK_METHODS_ANN_LAYER_VR_CLASS_REWARD_IMPL_HPP
@@ -27,12 +32,11 @@ VRClassReward<InputDataType, OutputDataType>::VRClassReward(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
+template<typename InputType, typename TargetType>
 double VRClassReward<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, const arma::Mat<eT>&& target)
+    const InputType&& input, const TargetType&& target)
 {
   double output = 0;
-
   for (size_t i = 0; i < input.n_cols - 1; ++i)
   {
     size_t currentTarget = target(i) - 1;
@@ -60,13 +64,13 @@ double VRClassReward<InputDataType, OutputDataType>::Forward(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
+template<typename InputType, typename TargetType, typename OutputType>
 void VRClassReward<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& input,
-    const arma::Mat<eT>&& target,
-    arma::Mat<eT>&& output)
+    const InputType&& input,
+    const TargetType&& target,
+    OutputType&& output)
 {
-  output = arma::zeros<arma::Mat<eT> >(input.n_rows, input.n_cols);
+  output = arma::zeros<OutputType>(input.n_rows, input.n_cols);
   for (size_t i = 0; i < (input.n_cols - 1); ++i)
   {
     size_t currentTarget = target(i) - 1;
@@ -90,7 +94,7 @@ void VRClassReward<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void VRClassReward<InputDataType, OutputDataType>::Serialize(
+void VRClassReward<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
     const unsigned int /* version */)
 {

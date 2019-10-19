@@ -1,0 +1,88 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: nominal
+% CLASSINDEX: last
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-braziltourism
+
+@attribute 'Age' INTEGER
+@attribute 'Sex' {0,1,4}
+@attribute 'Income' REAL
+@attribute 'Travel_cost' REAL
+@attribute 'Access_road' {0,1}
+@attribute 'Active' {0,1,2,3,4,5,6}
+@attribute 'Passive' {0,1,2,3,4}
+@attribute 'Logged_income' REAL
+
+@data
+19,1,2351.485149,170.4,0,0,0,7.762802386
+42,1,198.019802,48.0003,1,0,0,5.288367036
+28,1,222.7722772,60,0,0,0,5.406150071
+47,0,990.0990099,48.0003,0,0,1,6.897804948
+30,1,742.5742574,48.0003,0,0,1,6.610122876
+16,0,0,161.7,0,1,1,0
+21,1,0,170.4,0,1,2,0
+45,1,0,48.0003,0,2,2,0
+23,0,937.5,87,0,1,2,6.843216758
+29,0,781.25,48.0003,0,2,2,6.660895201
+36,1,1250,48.0003,0,2,3,7.13089883
+40,0,625,203.7,0,2,1,6.43775165
+50,1,1250,303.6,1,1,0,7.13089883
+33,1,1000,535.5,0,0,3,6.907755279
+19,1,168.75,48.0003,0,1,1,5.12841833
+20,0,250,48.0003,0,3,1,5.521460918
+28,1,2500,45,1,3,3,7.824046011
+17,1,0,216.3,0,2,1,0
+24,1,0,48.0003,0,0,1,0
+27,1,600,170.4,0,3,3,6.396929655
+36,0,1406.25,176.4,0,1,3,7.248681866
+53,0,187.5,48.0003,0,0,2,5.233778845
+22,1,109.375,48.0003,1,1,2,4.694782345
+34,1,937.5,190.8,0,0,2,6.843216758
+43,0,937.5,48.0003,0,1,2,6.843216758
+20,0,1562.5,48.0003,0,3,1,7.354042382
+35,1,2812.5,197.4,0,2,3,7.941829047
+28,0,1250,48,0,2,1,7.13089883
+29,1,156.25,48.0003,0,2,1,5.051457289
+69,0,500,48.0003,0,1,1,6.214608098
+46,0,2500,48.0003,0,0,0,7.824046011
+32,1,2000,48.0003,0,0,0,7.60090246
+64,0,1250,48.0003,1,0,0,7.13089883
+53,0,250,48,0,0,0,5.521460918
+28,0,312.5,48.0003,0,0,0,5.744604469
+19,0,1562.5,82.2,0,1,1,7.354042382
+30,0,312.5,48.0003,0,1,1,5.744604469
+23,1,625,190.8,0,1,1,6.43775165
+22,1,117.25,29.4,1,0,0,4.764308407
+18,0,175.88,29.4,0,0,0,5.169801944
+53,0,312.5,29.4,0,0,0,5.744604469
+29,1,586.25,29.4,1,1,2,6.37374632
+32,1,875,48,0,2,0,6.774223886
+47,0,1406.25,170.4,0,2,0,7.248681866
+54,0,218.75,52.2,0,0,0,5.387929525
+32,0,187.5,48.0003,0,0,2,5.233778845
+27,1,562.5,48.0003,0,4,3,6.332391134
+35,1,1250,48.0003,0,3,2,7.13089883
+24,1,1250,48.0003,0,4,3,7.13089883
+30,0,562.5,82.2,0,1,0,6.332391134
+28,0,1250,48.0003,0,0,0,7.13089883

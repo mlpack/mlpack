@@ -19,7 +19,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-Join<InputDataType, OutputDataType>::Join()
+Join<InputDataType, OutputDataType>::Join() :
+    inSizeRows(0),
+    inSizeCols(0)
 {
   // Nothing to do here.
 }
@@ -46,12 +48,12 @@ void Join<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void Join<InputDataType, OutputDataType>::Serialize(
+void Join<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & data::CreateNVP(inSizeRows, "inSizeRows");
-  ar & data::CreateNVP(inSizeCols, "inSizeCols");
+  ar & BOOST_SERIALIZATION_NVP(inSizeRows);
+  ar & BOOST_SERIALIZATION_NVP(inSizeCols);
 }
 
 } // namespace ann

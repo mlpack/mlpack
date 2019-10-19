@@ -26,9 +26,9 @@
 #include "neighbor_search_rules.hpp"
 
 namespace mlpack {
-namespace neighbor /** Neighbor-search routines.  These include
-                    * all-nearest-neighbors and all-furthest-neighbors
-                    * searches. */ {
+// Neighbor-search routines. These include all-nearest-neighbors and
+// all-furthest-neighbors searches.
+namespace neighbor  {
 
 // Forward declaration.
 template<typename SortPolicy>
@@ -93,39 +93,16 @@ class NeighborSearch
    * where the metric has internal data (i.e. the distance::MahalanobisDistance
    * class).
    *
-   * This method will copy the matrices to internal copies, which are rearranged
-   * during tree-building.  You can avoid this extra copy by pre-constructing
-   * the trees and passing them using a different constructor, or by using the
-   * construct that takes an rvalue reference to the dataset.
+   * This method will move the matrices to internal copies, which are rearranged
+   * during tree-building.  You can avoid creating an extra copy by pre-constructing
+   * the trees, passing std::move(yourReferenceSet).
    *
    * @param referenceSet Set of reference points.
    * @param mode Neighbor search mode.
    * @param epsilon Relative approximate error (non-negative).
    * @param metric An optional instance of the MetricType class.
    */
-  NeighborSearch(const MatType& referenceSet,
-                 const NeighborSearchMode mode = DUAL_TREE_MODE,
-                 const double epsilon = 0,
-                 const MetricType metric = MetricType());
-
-  /**
-   * Initialize the NeighborSearch object, taking ownership of the reference
-   * dataset (this is the dataset which is searched).  Optionally, perform the
-   * computation in a different mode.  An initialized distance metric can be
-   * given, for cases where the metric has internal data (i.e. the
-   * distance::MahalanobisDistance class).
-   *
-   * This method will not copy the data matrix, but will take ownership of it,
-   * and depending on the type of tree used, may rearrange the points.  If you
-   * would rather a copy be made, consider using the constructor that takes a
-   * const reference to the data instead.
-   *
-   * @param referenceSet Set of reference points.
-   * @param mode Neighbor search mode.
-   * @param epsilon Relative approximate error (non-negative).
-   * @param metric An optional instance of the MetricType class.
-   */
-  NeighborSearch(MatType&& referenceSet,
+  NeighborSearch(MatType referenceSet,
                  const NeighborSearchMode mode = DUAL_TREE_MODE,
                  const double epsilon = 0,
                  const MetricType metric = MetricType());
@@ -138,8 +115,9 @@ class NeighborSearch
    * instantiated distance metric can be given, for cases where the distance
    * metric holds data.
    *
-   * This method will copy the given tree.  You can avoid this copy by using the
-   * construct that takes a rvalue reference to the tree.
+   * This method will copy the given tree. When copies must absolutely be avoided,
+   * you can avoid this copy, while taking ownership of the given tree, by passing
+   * std::move(yourReferenceTree)
    *
    * @note
    * Mapping the points of the matrix back to their original indices is not done
@@ -153,41 +131,10 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated distance metric.
    */
-  NeighborSearch(
-      const Tree& referenceTree,
-      const NeighborSearchMode mode = DUAL_TREE_MODE,
-      const double epsilon = 0,
-      const MetricType metric = MetricType());
-
-  /**
-   * Initialize the NeighborSearch object with the given pre-constructed
-   * reference tree (this is the tree built on the points that will be
-   * searched).  Optionally, choose to use single-tree mode.  Naive mode is not
-   * available as an option for this constructor.  Additionally, an instantiated
-   * distance metric can be given, for cases where the distance metric holds
-   * data.
-   *
-   * This method will take ownership of the given tree. There is no copying of
-   * the data matrices (because tree-building is not necessary), so this is the
-   * constructor to use when copies absolutely must be avoided.
-   *
-   * @note
-   * Mapping the points of the matrix back to their original indices is not done
-   * when this constructor is used, so if the tree type you are using maps
-   * points (like BinarySpaceTree), then you will have to perform the re-mapping
-   * manually.
-   * @endnote
-   *
-   * @param referenceTree Pre-built tree for reference points.
-   * @param mode Neighbor search mode.
-   * @param epsilon Relative approximate error (non-negative).
-   * @param metric Instantiated distance metric.
-   */
-  NeighborSearch(
-      Tree&& referenceTree,
-      const NeighborSearchMode mode = DUAL_TREE_MODE,
-      const double epsilon = 0,
-      const MetricType metric = MetricType());
+  NeighborSearch(Tree referenceTree,
+                 const NeighborSearchMode mode = DUAL_TREE_MODE,
+                 const double epsilon = 0,
+                 const MetricType metric = MetricType());
 
   /**
    * Create a NeighborSearch object without any reference data.  If Search() is
@@ -240,42 +187,25 @@ class NeighborSearch
 
   /**
    * Set the reference set to a new reference set, and build a tree if
-   * necessary.  This method is called 'Train()' in order to match the rest of
-   * the mlpack abstractions, even though calling this "training" is maybe a bit
-   * of a stretch.
+   * necessary. The dataset is copied by default, but the copy can be avoided by
+   * transferring the ownership of the dataset using std::move().  This method
+   * is called 'Train()' in order to match the rest of the mlpack abstractions,
+   * even though calling this "training" is maybe a bit of a stretch.
    *
    * @param referenceSet New set of reference data.
    */
-  void Train(const MatType& referenceSet);
+  void Train(MatType referenceSet);
 
   /**
-   * Set the reference set to a new reference set, taking ownership of the set,
-   * and build a tree if necessary.  This method is called 'Train()' in order to
-   * match the rest of the mlpack abstractions, even though calling this
-   * "training" is maybe a bit of a stretch.
-   *
-   * @param referenceSet New set of reference data.
-   */
-  void Train(MatType&& referenceSet);
-
-  /**
-   * Set the reference tree as a copy of the given reference tree.
-   *
-   * This method will copy the given tree.  You can avoid this copy by using the
-   * Train() method that takes a rvalue reference to the tree.
+   * Set the reference tree to a new reference tree.  The tree is copied by
+   * default, but the copy can be avoided by using std::move() to transfer the
+   * ownership of the tree.  This method is called 'Train()' in order to match
+   * the rest of the mlpack abstractions, even though calling this "training" is
+   * maybe a bit of a stretch.
    *
    * @param referenceTree Pre-built tree for reference points.
    */
-  void Train(const Tree& referenceTree);
-
-  /**
-   * Set the reference tree to a new reference tree.
-   *
-   * This method will take ownership of the given tree.
-   *
-   * @param referenceTree Pre-built tree for reference points.
-   */
-  void Train(Tree&& referenceTree);
+  void Train(Tree referenceTree);
 
   /**
    * For each point in the query set, compute the nearest neighbors and store
@@ -402,7 +332,7 @@ class NeighborSearch
 
   //! Serialize the NeighborSearch model.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Permutations of reference points during tree building.
@@ -411,11 +341,6 @@ class NeighborSearch
   Tree* referenceTree;
   //! Reference dataset.  In some situations we may be the owner of this.
   const MatType* referenceSet;
-
-  //! If true, this object created the trees and is responsible for them.
-  bool treeOwner;
-  //! If true, we own the reference set.
-  bool setOwner;
 
   //! Indicates the neighbor search mode.
   NeighborSearchMode searchMode;

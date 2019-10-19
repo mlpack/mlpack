@@ -52,10 +52,10 @@ class RandomPartition
 
   //! Serialize the partitioner (nothing to do).
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
-}
-}
+} // namespace kmeans
+} // namespace mlpack
 
 #endif

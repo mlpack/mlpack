@@ -53,7 +53,7 @@ class SimpleResidueTermination
   {
     // Initialize the things we keep track of.
     residue = DBL_MAX;
-    iteration = 1;
+    iteration = 0;
     nm = V.n_rows * V.n_cols;
     // Remove history.
     normOld = 0;
@@ -82,7 +82,8 @@ class SimpleResidueTermination
     Log::Info << "Iteration " << iteration << "; residue " << residue << ".\n";
 
     // Check if termination criterion is met.
-    return (residue < minResidue || iteration > maxIterations);
+    // If maxIterations == 0, there is no iteration limit.
+    return (residue < minResidue || iteration == maxIterations);
   }
 
   //! Get current value of residue
@@ -99,7 +100,7 @@ class SimpleResidueTermination
   const double& MinResidue() const { return minResidue; }
   double& MinResidue() { return minResidue; }
 
-public:
+ public:
   //! residue threshold
   double minResidue;
   //! iteration threshold

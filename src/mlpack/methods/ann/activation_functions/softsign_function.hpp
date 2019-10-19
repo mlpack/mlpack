@@ -46,7 +46,7 @@ namespace ann /** Artificial Neural Network. */ {
  */
 class SoftsignFunction
 {
-  public:
+ public:
   /**
    * Computes the softsign function.
    *
@@ -69,7 +69,7 @@ class SoftsignFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = x;
+    y.set_size(arma::size(x));
 
     for (size_t i = 0; i < x.n_elem; i++)
       y(i) = Fn(x(i));
@@ -121,7 +121,7 @@ class SoftsignFunction
   template<typename InputVecType, typename OutputVecType>
   static void Inv(const InputVecType& y, OutputVecType& x)
   {
-    x = y;
+    x.set_size(arma::size(y));
 
     for (size_t i = 0; i < y.n_elem; i++)
       x(i) = Inv(y(i));

@@ -80,10 +80,10 @@ class RandomInitialization
 
  private:
   //! The number used as lower bound.
-  const double lowerBound;
+  double lowerBound;
 
   //! The number used as upper bound.
-  const double upperBound;
+  double upperBound;
 }; // class RandomInitialization
 
 } // namespace ann

@@ -3,7 +3,7 @@
  * @author Marcus Edel
  *
  * Implementation of the convolution using the singular value decomposition to
- * speeded up the computation.
+ * speed up the computation.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -24,7 +24,7 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * Computes the two-dimensional convolution using singular value decomposition.
  * This class allows specification of the type of the border type. The
- * convolution can be compute with the valid border type of the full border
+ * convolution can be computed with the valid border type of the full border
  * type (default).
  *
  * FullConvolution: returns the full two-dimensional convolution.
@@ -87,13 +87,13 @@ class SVDConvolution
         NaiveConvolution<BorderMode>::Convolution(subOutput, U.unsafe_col(0),
             output);
 
+        arma::Mat<eT> temp;
         for (size_t r = 1; r < rank; r++)
         {
           subFilter = V.unsafe_col(r) * s(r);
           NaiveConvolution<BorderMode>::Convolution(input, subFilter,
               subOutput);
 
-          arma::Mat<eT> temp;
           subOutput = subOutput.t();
           NaiveConvolution<BorderMode>::Convolution(subOutput, U.unsafe_col(r),
               temp);
@@ -134,8 +134,7 @@ class SVDConvolution
     for (size_t i = 1; i < input.n_slices; i++)
     {
       SVDConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
-          convOutput);
-      output.slice(i) = convOutput;
+          output.slice(i));
     }
   }
 
@@ -164,8 +163,7 @@ class SVDConvolution
     for (size_t i = 1; i < filter.n_slices; i++)
     {
       SVDConvolution<BorderMode>::Convolution(input, filter.slice(i),
-          convOutput);
-      output.slice(i) = convOutput;
+          output.slice(i));
     }
   }
 
@@ -194,11 +192,9 @@ class SVDConvolution
     for (size_t i = 1; i < input.n_slices; i++)
     {
       SVDConvolution<BorderMode>::Convolution(input.slice(i), filter,
-          convOutput);
-      output.slice(i) = convOutput;
+          output.slice(i));
     }
   }
-
 };  // class SVDConvolution
 
 } // namespace ann

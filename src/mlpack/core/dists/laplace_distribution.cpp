@@ -1,6 +1,7 @@
 /*
  * @file laplace_distribution.cpp
  * @author Zhihao Lou
+ * @author Rohan Raj
  *
  * Implementation of Laplace distribution.
  *
@@ -21,8 +22,25 @@ using namespace mlpack::distribution;
  */
 double LaplaceDistribution::LogProbability(const arma::vec& observation) const
 {
-  // Evaluate the PDF of the Laplace distribution to determine the log probability.
+  // Evaluate the PDF of the Laplace distribution to determine
+  // the log probability.
   return -log(2. * scale) - arma::norm(observation - mean, 2) / scale;
+}
+
+/**
+ * Evaluate probability density function of given observation.
+ *
+ * @param x List of observations.
+ * @param probabilities Output probabilities for each input observation.
+ */
+void LaplaceDistribution::Probability(const arma::mat& x,
+                                      arma::vec& probabilities) const
+{
+  probabilities.set_size(x.n_cols);
+  for (size_t i = 0; i < x.n_cols; i++)
+  {
+    probabilities(i) = Probability(x.unsafe_col(i));
+  }
 }
 
 /**
@@ -73,8 +91,9 @@ void LaplaceDistribution::Estimate(const arma::mat& observations,
     mean += observations.col(i) * probabilities(i);
   mean /= arma::accu(probabilities);
 
-  // This the same formula as the previous function, but here we are multiplying
-  // by the probability that the point is actually from this distribution.
+  // This is the same formula as the previous function, but here we are
+  // multiplying by the probability that the point is actually from
+  // this distribution.
   scale = 0.0;
   for (size_t i = 0; i < observations.n_cols; ++i)
     scale += probabilities(i) * arma::norm(observations.col(i) - mean, 2);

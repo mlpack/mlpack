@@ -31,9 +31,14 @@ inline void SaveOutputParameterVisitor::operator()(LayerType* layer) const
   OutputParameter(layer);
 }
 
+inline void SaveOutputParameterVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+    !HasModelCheck<T>::value, void>::type
 SaveOutputParameterVisitor::OutputParameter(T* layer) const
 {
   parameter.push_back(layer->OutputParameter());
@@ -41,7 +46,7 @@ SaveOutputParameterVisitor::OutputParameter(T* layer) const
 
 template<typename T>
 inline typename std::enable_if<
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+    HasModelCheck<T>::value, void>::type
 SaveOutputParameterVisitor::OutputParameter(T* layer) const
 {
   parameter.push_back(layer->OutputParameter());

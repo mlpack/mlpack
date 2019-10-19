@@ -41,17 +41,17 @@ namespace det /** Density Estimation Trees */ {
  * }
  * @endcode
  */
-template <typename MatType,
-          typename TagType = int>
+template<typename MatType = arma::mat,
+         typename TagType = int>
 class DTree
 {
  public:
-  /**
-   * The actual, underlying type we're working with.
-   */
-  typedef typename MatType::elem_type     ElemType;
-  typedef typename MatType::vec_type      VecType;
-  typedef typename arma::Col<ElemType>    StatType;
+  //! The actual, underlying type we're working with.
+  typedef typename MatType::elem_type  ElemType;
+  //! The type of vector we are using.
+  typedef typename MatType::vec_type   VecType;
+  //! The statistic type we are holding.
+  typedef typename arma::Col<ElemType> StatType;
 
   /**
    * Create an empty density estimation tree.
@@ -184,11 +184,14 @@ class DTree
   /**
    * Index the buckets for possible usage later; this results in every leaf in
    * the tree having a specific tag (accessible with BucketTag()).  This
-   * function calls itself recursively.
+   * function calls itself recursively. The tag is incremented with
+   * `operator++()`, so any `TagType` overriding it will do.
    *
    * @param tag Tag for the next leaf; leave at 0 for the initial call.
+   * @param everyNodde Whether to increment on every node, not just leaves.
    */
-  TagType TagTree(const TagType& tag = 0);
+  TagType TagTree(const TagType& tag = 0, bool everyNode = false);
+
 
   /**
    * Return the tag of the leaf containing the query.  This is useful for
@@ -197,6 +200,7 @@ class DTree
    * @param query Query to search for.
    */
   TagType FindBucket(const VecType& query) const;
+
 
   /**
    * Compute the variable importance of each dimension in the learned tree.
@@ -301,7 +305,19 @@ class DTree
   //! Return the upper part of the alpha sum.
   double AlphaUpper() const { return alphaUpper; }
   //! Return the current bucket's ID, if leaf, or -1 otherwise
-  TagType BucketTag() const { return subtreeLeaves == 1 ? bucketTag : -1; }
+  TagType BucketTag() const { return bucketTag; }
+  //! Return the number of children in this node.
+  size_t NumChildren() const { return !left ? 0 : 2; }
+
+  /**
+   * Return the specified child (0 will be left, 1 will be right).  If the index
+   * is greater than 1, this will return the right child.
+   *
+   * @param child Index of child to return.
+   */
+  DTree& Child(const size_t child) const { return !child ? *left : *right; }
+
+  DTree*& ChildPtr(const size_t child) { return (!child) ? left : right; }
 
   //! Return the maximum values.
   const StatType& MaxVals() const { return maxVals; }
@@ -313,10 +329,9 @@ class DTree
    * Serialize the density estimation tree.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   // Utility methods.
 
   /**
@@ -337,6 +352,8 @@ class DTree
                    const ElemType splitValue,
                    arma::Col<size_t>& oldFromNew) const;
 
+  void  FillMinMax(const StatType& mins,
+                   const StatType& maxs);
 };
 
 } // namespace det

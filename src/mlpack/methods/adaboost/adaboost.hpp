@@ -95,6 +95,7 @@ class AdaBoost
    */
   AdaBoost(const MatType& data,
            const arma::Row<size_t>& labels,
+           const size_t numClasses,
            const WeakLearnerType& other,
            const size_t iterations = 100,
            const double tolerance = 1e-6);
@@ -105,16 +106,13 @@ class AdaBoost
    */
   AdaBoost(const double tolerance = 1e-6);
 
-  // Return the value of ztProduct.
-  double ZtProduct() { return ztProduct; }
-
   //! Get the tolerance for stopping the optimization during training.
   double Tolerance() const { return tolerance; }
   //! Modify the tolerance for stopping the optimization during training.
   double& Tolerance() { return tolerance; }
 
   //! Get the number of classes this model is trained on.
-  size_t Classes() const { return classes; }
+  size_t NumClasses() const { return numClasses; }
 
   //! Get the number of weak learners in the model.
   size_t WeakLearners() const { return alpha.size(); }
@@ -139,12 +137,14 @@ class AdaBoost
    * @param data Dataset to train on.
    * @param labels Labels for each point in the dataset.
    * @param learner Learner to use for training.
+   * @return The upper bound for training error.
    */
-  void Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const WeakLearnerType& learner,
-             const size_t iterations = 100,
-             const double tolerance = 1e-6);
+  double Train(const MatType& data,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const WeakLearnerType& learner,
+               const size_t iterations = 100,
+               const double tolerance = 1e-6);
 
   /**
    * Classify the given test points.
@@ -159,11 +159,11 @@ class AdaBoost
    * Serialize the AdaBoost model.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
-private:
+ private:
   //! The number of classes in the model.
-  size_t classes;
+  size_t numClasses;
   // The tolerance for change in rt and when to stop.
   double tolerance;
 
@@ -171,15 +171,25 @@ private:
   std::vector<WeakLearnerType> wl;
   //! The weights corresponding to each weak learner.
   std::vector<double> alpha;
-
-  //! To check for the bound for the Hamming loss.
-  double ztProduct;
-
 }; // class AdaBoost
 
 } // namespace adaboost
 } // namespace mlpack
 
+//! Set the serialization version of the adaboost class.
+namespace boost {
+namespace serialization {
+
+template<typename WeakLearnerType, typename MatType>
+struct version<mlpack::adaboost::AdaBoost<WeakLearnerType, MatType>>
+{
+  BOOST_STATIC_CONSTANT(int, value = 1);
+};
+
+} // namespace serialization
+} // namespace boost
+
+// Include implementation.
 #include "adaboost_impl.hpp"
 
 #endif

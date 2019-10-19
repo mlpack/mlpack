@@ -294,7 +294,7 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
   arma::Mat<size_t> qrRanks;
   data::Load("rann_test_qr_ranks.csv", qrRanks, true, false); // No transpose.
 
-  size_t numRounds = 1000;
+  size_t numRounds = 100;
   arma::Col<size_t> numSuccessRounds(queryData.n_cols);
   numSuccessRounds.fill(0);
 
@@ -359,7 +359,7 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   arma::Mat<size_t> qrRanks;
   data::Load("rann_test_qr_ranks.csv", qrRanks, true, false); // No transpose.
 
-  size_t numRounds = 1000;
+  size_t numRounds = 100;
   arma::Col<size_t> numSuccessRounds(queryData.n_cols);
   numSuccessRounds.fill(0);
 
@@ -708,7 +708,7 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
 
       // assert that at most 5% of the queries fall out of this threshold
       // 5% of 100 queries is 5.
-      size_t maxNumQueriesFail = 25; // See #734 for why this is so high.
+      size_t maxNumQueriesFail = 50; // See #734 for why this is so high.
 
       BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
     }

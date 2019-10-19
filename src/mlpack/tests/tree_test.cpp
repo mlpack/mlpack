@@ -12,6 +12,7 @@
 #include <mlpack/core/tree/bounds.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/metrics/mahalanobis_distance.hpp>
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 
@@ -1573,7 +1574,6 @@ void CheckRPTreeSplit(const TreeType& tree)
       BOOST_REQUIRE_LE(maxDist, dist *
           (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
     }
-    
   }
 
   CheckRPTreeSplit<TreeType, MetricType>(*tree.Left());
@@ -1648,9 +1648,9 @@ BOOST_AUTO_TEST_CASE(BallTreeTest)
     BOOST_REQUIRE_EQUAL(root.NumDescendants(), size);
 
     // Check the forward and backward mappings for correctness.
-    for(size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++)
     {
-      for(size_t j = 0; j < dimensions; j++)
+      for (size_t j = 0; j < dimensions; j++)
       {
         BOOST_REQUIRE_EQUAL(treeset(j, i), dataset(j, newToOld[i]));
         BOOST_REQUIRE_EQUAL(treeset(j, oldToNew[i]), dataset(j, i));
@@ -1660,6 +1660,30 @@ BOOST_AUTO_TEST_CASE(BallTreeTest)
     // Now check that each point is contained inside of all bounds above it.
     CheckPointBounds(root);
   }
+}
+
+/**
+ * Ensure that we can build a ball tree with a custom instantiated metric type.
+ */
+BOOST_AUTO_TEST_CASE(MahalanobisBallTreeTest)
+{
+  arma::mat dataset(10, 1000, arma::fill::randu);
+  arma::mat cov = arma::eye<arma::mat>(10, 10);
+  cov(2, 2) = 2.0; // Just so it's not completely the identity matrix.
+  MahalanobisDistance<> m(std::move(cov));
+
+  typedef BallTree<MahalanobisDistance<>, EmptyStatistic, arma::mat> TreeType;
+
+  TreeType tree(dataset);
+
+  // As long as it built successfully, I am okay with that.
+  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 1000);
+
+  // Also test when we give oldFromNew, since this uses a different code path.
+  std::vector<size_t> oldFromNew;
+  TreeType tree2(std::move(dataset), oldFromNew);
+
+  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 1000);
 }
 
 template<typename TreeType>

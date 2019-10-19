@@ -33,10 +33,15 @@ inline size_t GradientUpdateVisitor::operator()(LayerType* layer) const
   return LayerGradients(layer, layer->OutputParameter());
 }
 
+inline size_t GradientUpdateVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     HasGradientCheck<T, arma::mat&(T::*)()>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+    !HasModelCheck<T>::value, size_t>::type
 GradientUpdateVisitor::LayerGradients(T* layer, arma::mat& /* input */) const
 {
   if (layer->Parameters().n_elem != 0)
@@ -51,7 +56,7 @@ GradientUpdateVisitor::LayerGradients(T* layer, arma::mat& /* input */) const
 template<typename T>
 inline typename std::enable_if<
     !HasGradientCheck<T, arma::mat&(T::*)()>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+    HasModelCheck<T>::value, size_t>::type
 GradientUpdateVisitor::LayerGradients(T* layer, arma::mat& /* input */) const
 {
   size_t modelOffset = 0;
@@ -67,7 +72,7 @@ GradientUpdateVisitor::LayerGradients(T* layer, arma::mat& /* input */) const
 template<typename T>
 inline typename std::enable_if<
     HasGradientCheck<T, arma::mat&(T::*)()>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+    HasModelCheck<T>::value, size_t>::type
 GradientUpdateVisitor::LayerGradients(T* layer, arma::mat& /* input */) const
 {
   if (layer->Parameters().n_elem != 0)
@@ -89,7 +94,7 @@ GradientUpdateVisitor::LayerGradients(T* layer, arma::mat& /* input */) const
 template<typename T, typename P>
 inline typename std::enable_if<
     !HasGradientCheck<T, P&(T::*)()>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+    !HasModelCheck<T>::value, size_t>::type
 GradientUpdateVisitor::LayerGradients(T* /* layer */, P& /* input */) const
 {
   return 0;

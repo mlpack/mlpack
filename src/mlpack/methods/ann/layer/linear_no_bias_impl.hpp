@@ -19,62 +19,79 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-LinearNoBias<InputDataType, OutputDataType>::LinearNoBias()
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias() :
+    inSize(0),
+    outSize(0)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-LinearNoBias<InputDataType, OutputDataType>::LinearNoBias(
-    const size_t inSize, const size_t outSize) :
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias(
+    const size_t inSize,
+    const size_t outSize,
+    RegularizerType regularizer) :
     inSize(inSize),
-    outSize(outSize)
+    outSize(outSize),
+    regularizer(regularizer)
 {
   weights.set_size(outSize * inSize, 1);
 }
 
-template <typename InputDataType, typename OutputDataType>
-void LinearNoBias<InputDataType, OutputDataType>::Reset()
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::Reset()
 {
   weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 template<typename eT>
-void LinearNoBias<InputDataType, OutputDataType>::Forward(
+void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::Forward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
   output = weight * input;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 template<typename eT>
-void LinearNoBias<InputDataType, OutputDataType>::Backward(
+void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   g = weight.t() * gy;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 template<typename eT>
-void LinearNoBias<InputDataType, OutputDataType>::Gradient(
+void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::Gradient(
     const arma::Mat<eT>&& input,
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
   gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
       error * input.t());
+  regularizer.Evaluate(weights, gradient);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 template<typename Archive>
-void LinearNoBias<InputDataType, OutputDataType>::Serialize(
+void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(weights, "weights");
-  ar & data::CreateNVP(inSize, "inSize");
-  ar & data::CreateNVP(outSize, "outSize");
+  ar & BOOST_SERIALIZATION_NVP(inSize);
+  ar & BOOST_SERIALIZATION_NVP(outSize);
+
+  // This is inefficient, but necessary so that WeightSetVisitor sets the right
+  // size.
+  if (Archive::is_loading::value)
+    weights.set_size(outSize * inSize, 1);
 }
 
 } // namespace ann

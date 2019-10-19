@@ -55,7 +55,7 @@ class BinaryNumericSplit
    *
    * @param numClasses Number of classes in dataset.
    */
-  BinaryNumericSplit(const size_t numClasses);
+  BinaryNumericSplit(const size_t numClasses = 0);
 
   /**
    * Create the BinaryNumericSplit object with the given number of classes,
@@ -108,7 +108,7 @@ class BinaryNumericSplit
 
   //! Serialize the object.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! The elements seen so far, in sorted order.

@@ -6,6 +6,8 @@ set(SOURCES
   hmm_model.hpp
   hmm_regression.hpp
   hmm_regression_impl.hpp
+  hmm_util.hpp
+  hmm_util_impl.hpp
 )
 
 # Add directory name to sources.
@@ -18,7 +20,17 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(hmm_train)
-add_cli_executable(hmm_loglik)
-add_cli_executable(hmm_viterbi)
-add_cli_executable(hmm_generate)
+add_python_binding(hmm_train)
+add_markdown_docs(hmm_train "cli;python" "misc. / other")
 
+add_cli_executable(hmm_loglik)
+add_python_binding(hmm_loglik)
+add_markdown_docs(hmm_loglik "cli;python" "misc. / other")
+
+add_cli_executable(hmm_viterbi)
+add_python_binding(hmm_viterbi)
+add_markdown_docs(hmm_viterbi "cli;python" "misc. / other")
+
+add_cli_executable(hmm_generate)
+add_python_binding(hmm_generate)
+add_markdown_docs(hmm_generate "cli;python" "misc. / other")

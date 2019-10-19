@@ -234,7 +234,7 @@ BOOST_AUTO_TEST_CASE(TrainTreeTest)
   arma::Mat<size_t> neighbors, baselineNeighbors;
   arma::mat distances, baselineDistances;
 
-  std::vector<size_t> oldFromNewReferences;
+  std::vector<size_t> oldFromNewReferences(100);
   KNN::Tree tree(dataset, oldFromNewReferences);
   empty.Train(std::move(tree));
 
@@ -245,11 +245,12 @@ BOOST_AUTO_TEST_CASE(TrainTreeTest)
   BOOST_REQUIRE_EQUAL(neighbors.n_cols, baselineNeighbors.n_cols);
   BOOST_REQUIRE_EQUAL(distances.n_rows, baselineDistances.n_rows);
   BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
+  BOOST_REQUIRE_EQUAL(oldFromNewReferences.size(), distances.n_cols);
 
   // We have to unmap the results.
   arma::mat tmpDistances(distances.n_rows, distances.n_cols);
   arma::Mat<size_t> tmpNeighbors(neighbors.n_rows, neighbors.n_cols);
-  for (size_t i = 0; i < distances.n_cols; ++i)
+  for (size_t i = 0; i < oldFromNewReferences.size(); ++i)
   {
     tmpDistances.col(oldFromNewReferences[i]) = distances.col(i);
     for (size_t j = 0; j < distances.n_rows; ++j)
@@ -384,7 +385,6 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
 
   for (int i = 0; i < 3; i++)
   {
-
     switch (i)
     {
       case 0: // Use the dual-tree method.
@@ -649,7 +649,6 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     BOOST_REQUIRE_CLOSE(distances(8, newFromOld[10]), 3.00, 1e-5);
     BOOST_REQUIRE_EQUAL(neighbors(9, newFromOld[10]), newFromOld[4]);
     BOOST_REQUIRE_CLOSE(distances(9, newFromOld[10]), 4.05, 1e-5);
-
   }
 }
 
@@ -1101,7 +1100,7 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
   models[26] = KNNModel(KNNModel::TreeTypes::OCTREE, true);
   models[27] = KNNModel(KNNModel::TreeTypes::OCTREE, false);
 
-  for (size_t j = 0; j < 2; ++j)
+  for (size_t j = 0; j < 3; ++j)
   {
     // Get a baseline.
     KNN knn(referenceData);
@@ -1184,7 +1183,7 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
   models[26] = KNNModel(KNNModel::TreeTypes::OCTREE, true);
   models[27] = KNNModel(KNNModel::TreeTypes::OCTREE, false);
 
-  for (size_t j = 0; j < 2; ++j)
+  for (size_t j = 0; j < 3; ++j)
   {
     // Get a baseline.
     KNN knn(referenceData);
@@ -1303,6 +1302,34 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
 }
 
 /**
+ * Test the copy constructor and copy operator using the RectangleTree.
+ */
+BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorRTreeTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
+      RTree> NeighborSearchType;
+  NeighborSearchType knn(std::move(dataset));
+
+  // Copy constructor and operator.
+  NeighborSearchType knn2(knn);
+  NeighborSearchType knn3 = knn;
+
+  // Get results.
+  arma::mat distances, distances2, distances3;
+  arma::Mat<size_t> neighbors, neighbors2, neighbors3;
+
+  knn.Search(3, neighbors, distances);
+  knn2.Search(3, neighbors2, distances2);
+  knn3.Search(3, neighbors3, distances3);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(neighbors, neighbors3);
+  CheckMatrices(distances, distances2);
+  CheckMatrices(distances, distances3);
+}
+
+/**
  * Test the move constructor.
  */
 BOOST_AUTO_TEST_CASE(MoveConstructorTest)
@@ -1326,6 +1353,34 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
   CheckMatrices(neighbors, neighbors2);
   CheckMatrices(distances, distances2);
 }
+
+/**
+ * Test the move constructor using R trees.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorRTreeTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
+      RTree> NeighborSearchType;
+  NeighborSearchType* knn = new NeighborSearchType(std::move(dataset));
+
+  // Get predictions.
+  arma::mat distances, distances2;
+  arma::Mat<size_t> neighbors, neighbors2;
+
+  knn->Search(3, neighbors, distances);
+
+  // Use move constructor.
+  NeighborSearchType knn2(std::move(*knn));
+
+  delete knn;
+
+  knn2.Search(3, neighbors2, distances2);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(distances, distances2);
+}
+
 
 /**
  * Test the move operator.
@@ -1434,6 +1489,38 @@ BOOST_AUTO_TEST_CASE(MoveOperatorNaiveTest)
 
   CheckMatrices(neighbors, neighbors2);
   CheckMatrices(distances, distances2);
+}
+
+/**
+ * Check that no garbage value is returned when greedy tree traversal
+ * is performed over kd-tree.
+ */
+BOOST_AUTO_TEST_CASE(GreedyTreeSearch)
+{
+  // Initalize dataset.
+  arma::mat dataset = arma::randu<arma::mat>(3, 100);
+
+  // Build tree with a leaf_size of 1.
+  KDTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
+      arma::mat> tree(dataset, 1);
+
+  NeighborSearch<NearestNeighborSort, LMetric<2>, arma::mat, KDTree>
+      greedyTreeSearch(std::move(tree), GREEDY_SINGLE_TREE_MODE);
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+
+  // Search for 5 nearest neighbours.
+  greedyTreeSearch.Search(5, neighbors, distances);
+
+  // Check that all neighbour values are between 0 and 100, as only 100 points
+  // are present in dataset.
+  BOOST_REQUIRE_EQUAL(arma::accu(neighbors < 0 || neighbors >= 100), 0);
+
+  // Check that all distances values are between 0.0 and 1.0 as arma::randu
+  // generates a uniform distribution in [0, 1].
+  BOOST_REQUIRE_EQUAL(arma::accu(distances < 0.0 || distances > std::sqrt(3.0)),
+      0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

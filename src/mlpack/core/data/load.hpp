@@ -20,6 +20,7 @@
 
 #include "format.hpp"
 #include "dataset_mapper.hpp"
+#include "image_info.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
@@ -64,6 +65,13 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           const bool transpose = true);
 
+/**
+ * Don't document these with doxygen; these declarations aren't helpful to
+ * users.
+ *
+ * @cond
+ */
+
 extern template bool Load<int>(const std::string&,
                                arma::Mat<int>&,
                                const bool,
@@ -94,6 +102,10 @@ extern template bool Load<double>(const std::string&,
                                   arma::Mat<double>&,
                                   const bool,
                                   const bool);
+
+/**
+ * @endcond
+ */
 
 /**
  * Load a column vector from a file, guessing the filetype from the extension.
@@ -198,6 +210,13 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           const bool transpose = true);
 
+/**
+ * Don't document these with doxygen; they aren't helpful for users to know
+ * about.
+ *
+ * @cond
+ */
+
 extern template bool Load<int, IncrementPolicy>(
     const std::string&,
     arma::Mat<int>&,
@@ -234,6 +253,10 @@ extern template bool Load<double, IncrementPolicy>(
     const bool);
 
 /**
+ * @endcond
+ */
+
+/**
  * Load a model from a file, guessing the filetype from the extension, or,
  * optionally, loading the specified format.  If automatic extension detection
  * is used and the filetype cannot be determined, an error will be given.
@@ -265,6 +288,47 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           format f = format::autodetect);
 
+/**
+ * Image load/save interfaces.
+ */
+#ifdef HAS_STB
+
+/**
+ * Load the image file into the given matrix.
+ *
+ * @param filename Name of the image file.
+ * @param matrix Matrix to load the image into.
+ * @param info An object of ImageInfo class.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @param transpose If true, transpose the matrix after loading.
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false,
+          const bool transpose = true);
+
+/**
+ * Load the image file into the given matrix.
+ *
+ * @param files A vector consisting of filenames.
+ * @param matrix Matrix to save the image from.
+ * @param info An object of ImageInfo class.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @param transpose If true, transpose the matrix after loading.
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false,
+          const bool transpose = true);
+
+#endif // HAS_STB.
+
 } // namespace data
 } // namespace mlpack
 
@@ -272,5 +336,7 @@ bool Load(const std::string& filename,
 #include "load_model_impl.hpp"
 // Include implementation of Load() for vectors.
 #include "load_vec_impl.hpp"
+// Include implementation of Load() for images.
+#include "load_image_impl.hpp"
 
 #endif

@@ -413,7 +413,7 @@ BinarySpaceTree(BinarySpaceTree&& other) :
   other.minimumBoundDistance = 0.0;
   other.dataset = NULL;
 
-  //Set new parent.
+  // Set new parent.
   if (left)
     left->parent = this;
   if (right)
@@ -438,7 +438,7 @@ BinarySpaceTree(
 {
   // We've delegated to the constructor which gives us an empty tree, and now we
   // can serialize from it.
-  ar >> data::CreateNVP(*this, "tree");
+  ar >> BOOST_SERIALIZATION_NVP(*this);
 }
 
 /**
@@ -794,8 +794,9 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   left->Center(leftCenter);
   right->Center(rightCenter);
 
-  const ElemType leftParentDistance = MetricType::Evaluate(center, leftCenter);
-  const ElemType rightParentDistance = MetricType::Evaluate(center,
+  const ElemType leftParentDistance = bound.Metric().Evaluate(center,
+      leftCenter);
+  const ElemType rightParentDistance = bound.Metric().Evaluate(center,
       rightCenter);
 
   left->ParentDistance() = leftParentDistance;
@@ -861,8 +862,9 @@ SplitNode(std::vector<size_t>& oldFromNew,
   left->Center(leftCenter);
   right->Center(rightCenter);
 
-  const ElemType leftParentDistance = MetricType::Evaluate(center, leftCenter);
-  const ElemType rightParentDistance = MetricType::Evaluate(center,
+  const ElemType leftParentDistance = bound.Metric().Evaluate(center,
+      leftCenter);
+  const ElemType rightParentDistance = bound.Metric().Evaluate(center,
       rightCenter);
 
   left->ParentDistance() = leftParentDistance;
@@ -942,10 +944,8 @@ template<typename MetricType,
              class SplitType>
 template<typename Archive>
 void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
-    Serialize(Archive& ar, const unsigned int /* version */)
+    serialize(Archive& ar, const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
   // If we're loading, and we have children, they need to be deleted.
   if (Archive::is_loading::value)
   {
@@ -955,59 +955,38 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
       delete right;
     if (!parent)
       delete dataset;
+
+    parent = NULL;
+    left = NULL;
+    right = NULL;
   }
 
-  ar & CreateNVP(parent, "parent");
-  ar & CreateNVP(begin, "begin");
-  ar & CreateNVP(count, "count");
-  ar & CreateNVP(bound, "bound");
-  ar & CreateNVP(stat, "statistic");
-  ar & CreateNVP(parentDistance, "parentDistance");
-  ar & CreateNVP(furthestDescendantDistance, "furthestDescendantDistance");
-  ar & CreateNVP(dataset, "dataset");
+  ar & BOOST_SERIALIZATION_NVP(begin);
+  ar & BOOST_SERIALIZATION_NVP(count);
+  ar & BOOST_SERIALIZATION_NVP(bound);
+  ar & BOOST_SERIALIZATION_NVP(stat);
+
+  ar & BOOST_SERIALIZATION_NVP(parentDistance);
+  ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
+  ar & BOOST_SERIALIZATION_NVP(dataset);
 
   // Save children last; otherwise boost::serialization gets confused.
-  ar & CreateNVP(left, "left");
-  ar & CreateNVP(right, "right");
+  bool hasLeft = (left != NULL);
+  bool hasRight = (right != NULL);
 
-  // Due to quirks of boost::serialization, if a tree is saved as an object and
-  // not a pointer, the first level of the tree will be duplicated on load.
-  // Therefore, if we are the root of the tree, then we need to make sure our
-  // children's parent links are correct, and delete the duplicated node if
-  // necessary.
+  ar & BOOST_SERIALIZATION_NVP(hasLeft);
+  ar & BOOST_SERIALIZATION_NVP(hasRight);
+  if (hasLeft)
+    ar & BOOST_SERIALIZATION_NVP(left);
+  if (hasRight)
+    ar & BOOST_SERIALIZATION_NVP(right);
+
   if (Archive::is_loading::value)
   {
-    // Get parents of left and right children, or, NULL, if they don't exist.
-    BinarySpaceTree* leftParent = left ? left->Parent() : NULL;
-    BinarySpaceTree* rightParent = right ? right->Parent() : NULL;
-
-    // Reassign parent links if necessary.
-    if (left && left->Parent() != this)
-      left->Parent() = this;
-    if (right && right->Parent() != this)
-      right->Parent() = this;
-
-    // Do we need to delete the left parent?
-    if (leftParent != NULL && leftParent != this)
-    {
-      // Sever the duplicate parent's children.  Ensure we don't delete the
-      // dataset, by faking the duplicated parent's parent (that is, we need to
-      // set the parent to something non-NULL; 'this' works).
-      leftParent->Parent() = this;
-      leftParent->Left() = NULL;
-      leftParent->Right() = NULL;
-      delete leftParent;
-    }
-
-    // Do we need to delete the right parent?
-    if (rightParent != NULL && rightParent != this && rightParent != leftParent)
-    {
-      // Sever the duplicate parent's children, in the same way as above.
-      rightParent->Parent() = this;
-      rightParent->Left() = NULL;
-      rightParent->Right() = NULL;
-      delete rightParent;
-    }
+    if (left)
+      left->parent = this;
+    if (right)
+      right->parent = this;
   }
 }
 

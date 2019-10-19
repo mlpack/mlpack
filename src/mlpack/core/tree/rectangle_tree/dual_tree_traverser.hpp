@@ -67,7 +67,6 @@ class RectangleTree<MetricType, StatisticType, MatType, SplitType,
   size_t& NumBaseCases() { return numBaseCases; }
 
  private:
-
   // We use this struct and this function to make the sorting and scoring easy
   // and efficient:
   struct NodeAndScore

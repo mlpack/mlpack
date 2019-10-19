@@ -2,6 +2,7 @@
  * @file timers.cpp
  * @author Matthew Amidon
  * @author Marcus Edel
+ * @author Ryan Curtin
  *
  * Implementation of timers.
  *
@@ -18,60 +19,97 @@
 #include <string>
 
 using namespace mlpack;
-using namespace std::chrono;
+using namespace std;
+using namespace chrono;
 
 /**
  * Start the given timer.
  */
-void Timer::Start(const std::string& name)
+void Timer::Start(const string& name)
 {
-  CLI::GetSingleton().timer.StartTimer(name);
+  CLI::GetSingleton().timer.StartTimer(name, this_thread::get_id());
 }
 
 /**
  * Stop the given timer.
  */
-void Timer::Stop(const std::string& name)
+void Timer::Stop(const string& name)
 {
-  CLI::GetSingleton().timer.StopTimer(name);
+  CLI::GetSingleton().timer.StopTimer(name, this_thread::get_id());
 }
 
 /**
- * Get the given timer.
+ * Get the given timer, summing over all threads.
  */
-microseconds Timer::Get(const std::string& name)
+microseconds Timer::Get(const string& name)
 {
   return CLI::GetSingleton().timer.GetTimer(name);
 }
 
-std::map<std::string, microseconds>& Timers::GetAllTimers()
+// Enable timing.
+void Timer::EnableTiming()
 {
+  CLI::GetSingleton().timer.Enabled() = true;
+}
+
+// Disable timing.
+void Timer::DisableTiming()
+{
+  CLI::GetSingleton().timer.Enabled() = false;
+}
+
+// Reset all timers.  Save state of enabled.
+void Timer::ResetAll()
+{
+  CLI::GetSingleton().timer.Reset();
+}
+
+// Reset a Timers object.
+void Timers::Reset()
+{
+  lock_guard<mutex> lock(timersMutex);
+  timers.clear();
+  timerStartTime.clear();
+}
+
+map<string, microseconds> Timers::GetAllTimers()
+{
+  // Make a copy of the timer.
+  lock_guard<mutex> lock(timersMutex);
   return timers;
 }
 
-microseconds Timers::GetTimer(const std::string& timerName)
+microseconds Timers::GetTimer(const string& timerName)
 {
+  if (!enabled)
+    return microseconds(0);
+
+  lock_guard<mutex> lock(timersMutex);
   return timers[timerName];
 }
 
-bool Timers::GetState(std::string timerName)
+bool Timers::GetState(const string& timerName,
+                      const thread::id& threadId)
 {
-  return timerState[timerName];
+  lock_guard<mutex> lock(timersMutex);
+  if (timerStartTime.count(threadId) == 0)
+    return 0;
+  return (timerStartTime[threadId].count(timerName) > 0);
 }
 
-void Timers::PrintTimer(const std::string& timerName)
+void Timers::PrintTimer(const string& timerName)
 {
-  microseconds totalDuration = timers[timerName];
   // Convert microseconds to seconds.
+  microseconds totalDuration = GetTimer(timerName);
   seconds totalDurationSec = duration_cast<seconds>(totalDuration);
   microseconds totalDurationMicroSec =
       duration_cast<microseconds>(totalDuration % seconds(1));
-  Log::Info << totalDurationSec.count() << "." << std::setw(6)
-      << std::setfill('0') << totalDurationMicroSec.count() << "s";
+  Log::Info << totalDurationSec.count() << "." << setw(6)
+      << setfill('0') << totalDurationMicroSec.count() << "s";
 
   // Also output convenient day/hr/min/sec.
   // The following line is a custom duration for a day.
-  typedef duration<int, std::ratio<60 * 60 * 24, 1>> days;
+  typedef duration<int, ratio<60 * 60 * 24, 1>> days;
   days d = duration_cast<days>(totalDuration);
   hours h = duration_cast<hours>(totalDuration % days(1));
   minutes m = duration_cast<minutes>(totalDuration % hours(1));
@@ -109,60 +147,86 @@ void Timers::PrintTimer(const std::string& timerName)
     {
       if (output)
         Log::Info << ", ";
-      Log::Info << s.count() << "." << std::setw(1)
+      Log::Info << s.count() << "." << setw(1)
           << (totalDurationMicroSec.count() / 100000) << " secs";
-      output = true;
     }
 
     Log::Info << ")";
   }
 
-  Log::Info << std::endl;
+  Log::Info << endl;
 }
 
-high_resolution_clock::time_point Timers::GetTime()
+void Timers::StopAllTimers()
 {
-  return high_resolution_clock::now();
+  // Terminate the program timers.  Don't use StopTimer() since that modifies
+  // the map and would invalidate our iterators.
+  lock_guard<mutex> lock(timersMutex);
+
+  high_resolution_clock::time_point currTime = high_resolution_clock::now();
+  for (auto it : timerStartTime)
+    for (auto it2 : it.second)
+      timers[it2.first] += duration_cast<microseconds>(currTime - it2.second);
+
+  // If all timers are stopped, we can clear the maps.
+  timerStartTime.clear();
 }
 
-void Timers::StartTimer(const std::string& timerName)
+void Timers::StartTimer(const string& timerName,
+                        const thread::id& threadId)
 {
-  if ((timerState[timerName] == 1) && (timerName != "total_time"))
+  // Don't do anything if we aren't timing.
+  if (!enabled)
+    return;
+
+  lock_guard<mutex> lock(timersMutex);
+
+  if ((timerStartTime.count(threadId) > 0) &&
+      (timerStartTime[threadId].count(timerName)))
   {
-    std::ostringstream error;
+    ostringstream error;
     error << "Timer::Start(): timer '" << timerName
         << "' has already been started";
-    throw std::runtime_error(error.str());
+    throw runtime_error(error.str());
   }
 
-  timerState[timerName] = true;
+  high_resolution_clock::time_point currTime = high_resolution_clock::now();
 
-  high_resolution_clock::time_point currTime = GetTime();
-
-  // If the timer is added first time
+  // If the timer is added for the first time.
   if (timers.count(timerName) == 0)
   {
     timers[timerName] = (microseconds) 0;
   }
 
-  timerStartTime[timerName] = currTime;
+  timerStartTime[threadId][timerName] = currTime;
 }
 
-void Timers::StopTimer(const std::string& timerName)
+void Timers::StopTimer(const string& timerName,
+                       const thread::id& threadId)
 {
-  if ((timerState[timerName] == 0) && (timerName != "total_time"))
+  // Don't do anything if we aren't timing.
+  if (!enabled)
+    return;
+
+  lock_guard<mutex> lock(timersMutex);
+
+  if ((timerStartTime.count(threadId) == 0) ||
+      (timerStartTime[threadId].count(timerName) == 0))
   {
-    std::ostringstream error;
-    error << "Timer::Stop(): timer '" << timerName
-        << "' has already been stopped";
-    throw std::runtime_error(error.str());
+    ostringstream error;
+    error << "Timer::Stop(): no timer with name '" << timerName
+        << "' currently running";
+    throw runtime_error(error.str());
   }
 
-  timerState[timerName] = false;
-
-  high_resolution_clock::time_point currTime = GetTime();
+  high_resolution_clock::time_point currTime = high_resolution_clock::now();
 
   // Calculate the delta time.
   timers[timerName] += duration_cast<microseconds>(currTime -
-      timerStartTime[timerName]);
+      timerStartTime[threadId][timerName]);
+
+  // Remove the entries.
+  timerStartTime[threadId].erase(timerName);
+  if (timerStartTime[threadId].empty())
+    timerStartTime.erase(threadId);
 }

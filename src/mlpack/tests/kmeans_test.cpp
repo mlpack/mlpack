@@ -23,6 +23,7 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include <mlpack/methods/kmeans/kill_empty_clusters.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
@@ -122,8 +123,9 @@ BOOST_AUTO_TEST_CASE(AllowEmptyClusterTest)
 
   // Make sure the method doesn't modify any points.
   metric::LMetric<2, true> metric;
-  BOOST_REQUIRE_EQUAL(AllowEmptyClusters::EmptyCluster(kMeansData, 2, centroids,
-      centroids, counts, metric, 0), 0);
+
+  AllowEmptyClusters::EmptyCluster(kMeansData, 2, centroids, centroids, counts,
+      metric, 0);
 
   // Make sure no assignments were changed.
   for (size_t i = 0; i < assignments.n_elem; i++)
@@ -132,6 +134,42 @@ BOOST_AUTO_TEST_CASE(AllowEmptyClusterTest)
   // Make sure no counts were changed.
   for (size_t i = 0; i < 3; i++)
     BOOST_REQUIRE_EQUAL(counts[i], countsOld[i]);
+}
+
+/**
+ * Make sure kill empty cluster policy removes the empty cluster.
+ */
+BOOST_AUTO_TEST_CASE(KillEmptyClusterTest)
+{
+  arma::Row<size_t> assignments;
+  assignments.randu(30);
+  arma::Row<size_t> assignmentsOld = assignments;
+
+  arma::mat centroids;
+  centroids.randu(30, 3); // This doesn't matter.
+
+  arma::Col<size_t> counts(3);
+  counts[0] = accu(assignments == 0);
+  counts[1] = accu(assignments == 1);
+  counts[2] = 0;
+  arma::Col<size_t> countsOld = counts;
+
+  // Make sure the method modify the specified point.
+  metric::LMetric<2, true> metric;
+
+  KillEmptyClusters::EmptyCluster(kMeansData, 2, centroids, centroids, counts,
+      metric, 0);
+
+  // Make sure no assignments were changed.
+  for (size_t i = 0; i < assignments.n_elem; i++)
+    BOOST_REQUIRE_EQUAL(assignments[i], assignmentsOld[i]);
+
+  // Make sure no counts were changed for clusters that are not empty.
+  for (size_t i = 0; i < 2; i++)
+    BOOST_REQUIRE_EQUAL(counts[i], countsOld[i]);
+
+  // Make sure that counts contain one less element than old counts.
+  BOOST_REQUIRE_GT(countsOld.n_elem, counts.n_elem);
 }
 
 /**
@@ -158,8 +196,7 @@ BOOST_AUTO_TEST_CASE(MaxVarianceNewClusterTest)
 
   // This should only change one point.
   MaxVarianceNewCluster mvnc;
-  BOOST_REQUIRE_EQUAL(mvnc.EmptyCluster(data, 2, centroids, centroids, counts,
-      metric, 0), 1);
+  mvnc.EmptyCluster(data, 2, centroids, centroids, counts, metric, 0);
 
   // Add the variance of each point's distance away from the cluster.  I think
   // this is the sensible thing to do.
@@ -453,9 +490,6 @@ BOOST_AUTO_TEST_CASE(RefinedStartTest)
 }
 
 #ifdef ARMA_HAS_SPMAT
-// Can't do this test on Armadillo 3.4; var(SpBase) is not implemented.
-#if !((ARMA_VERSION_MAJOR == 3) && (ARMA_VERSION_MINOR == 4))
-
 /**
  * Make sure sparse k-means works okay.
  */
@@ -500,7 +534,6 @@ BOOST_AUTO_TEST_CASE(SparseKMeansTest)
   BOOST_REQUIRE_EQUAL(assignments[11], clusterTwo);
 }
 
-#endif // Exclude Armadillo 3.4.
 #endif // ARMA_HAS_SPMAT
 
 BOOST_AUTO_TEST_CASE(ElkanTest)
@@ -612,7 +645,7 @@ BOOST_AUTO_TEST_CASE(DTNNTest)
 
   for (size_t t = 0; t < trials; ++t)
   {
-    arma::mat dataset(10, 1000);
+    arma::mat dataset(10, 300);
     dataset.randu();
 
     const size_t k = 5 * (t + 1);
@@ -644,7 +677,7 @@ BOOST_AUTO_TEST_CASE(DTNNCoverTreeTest)
 
   for (size_t t = 0; t < trials; ++t)
   {
-    arma::mat dataset(10, 1000);
+    arma::mat dataset(10, 300);
     dataset.randu();
 
     const size_t k = 5;

@@ -124,7 +124,7 @@ class KMeans
    *      initial cluster centroids.
    */
   void Cluster(const MatType& data,
-               const size_t clusters,
+               size_t clusters,
                arma::mat& centroids,
                const bool initialGuess = false);
 
@@ -178,7 +178,7 @@ class KMeans
 
   //! Serialize the k-means object.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const unsigned int version);
 
  private:
   //! Maximum number of iterations before giving up.

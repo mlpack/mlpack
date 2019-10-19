@@ -1,11 +1,12 @@
-cmake_minimum_required(VERSION 2.8)
-
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   perceptron.hpp
   perceptron_impl.hpp
 )
+
+add_subdirectory(initialization_methods)
+add_subdirectory(learning_policies)
 
 # Add directory name to sources.
 set(DIR_SRCS)
@@ -16,7 +17,6 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_subdirectory(initialization_methods)
-add_subdirectory(learning_policies)
-
 add_cli_executable(perceptron)
+add_python_binding(perceptron)
+add_markdown_docs(perceptron "cli;python" "classification")

@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_SUITE(ConvolutionTest);
  * Implementation of the convolution function test.
  *
  * @param input Input used to perform the convolution.
- * @param filter Filter used to perform the conolution.
+ * @param filter Filter used to perform the convolution.
  * @param output The reference output data that contains the results of the
  * convolution.
  *
@@ -43,7 +43,7 @@ void Convolution2DMethodTest(const arma::mat input,
   arma::mat convOutput;
   ConvolutionFunction::Convolution(input, filter, convOutput);
 
-  // Check the outut dimension.
+  // Check the output dimension.
   bool b = (convOutput.n_rows == output.n_rows) &&
       (convOutput.n_cols == output.n_cols);
   BOOST_REQUIRE_EQUAL(b, 1);
@@ -59,7 +59,7 @@ void Convolution2DMethodTest(const arma::mat input,
  * Implementation of the convolution function test using 3rd order tensors.
  *
  * @param input Input used to perform the convolution.
- * @param filter Filter used to perform the conolution.
+ * @param filter Filter used to perform the convolution.
  * @param output The reference output data that contains the results of the
  * convolution.
  *
@@ -73,7 +73,7 @@ void Convolution3DMethodTest(const arma::cube input,
   arma::cube convOutput;
   ConvolutionFunction::Convolution(input, filter, convOutput);
 
-  // Check the outut dimension.
+  // Check the output dimension.
   bool b = (convOutput.n_rows == output.n_rows) &&
       (convOutput.n_cols == output.n_cols &&
       convOutput.n_slices == output.n_slices);
@@ -91,7 +91,7 @@ void Convolution3DMethodTest(const arma::cube input,
  * and a 3rd order tensors as filter and output (batch modus).
  *
  * @param input Input used to perform the convolution.
- * @param filter Filter used to perform the conolution.
+ * @param filter Filter used to perform the convolution.
  * @param output The reference output data that contains the results of the
  * convolution.
  *
@@ -105,7 +105,7 @@ void ConvolutionMethodBatchTest(const arma::mat input,
   arma::cube convOutput;
   ConvolutionFunction::Convolution(input, filter, convOutput);
 
-  // Check the outut dimension.
+  // Check the output dimension.
   bool b = (convOutput.n_rows == output.n_rows) &&
       (convOutput.n_cols == output.n_cols &&
       convOutput.n_slices == output.n_slices);
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(ValidConvolution2DTest)
       output);
 
   // Perform the convolution using singular value decomposition to
-  // speeded up the computation.
+  // speed up the computation.
   Convolution2DMethodTest<SVDConvolution<ValidConvolution> >(input, filter,
       output);
 }
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(FullConvolution2DTest)
       output);
 
   // Perform the convolution using singular value decomposition to
-  // speeded up the computation.
+  // speed up the computation.
   Convolution2DMethodTest<SVDConvolution<FullConvolution> >(input, filter,
       output);
 }
@@ -228,7 +228,7 @@ BOOST_AUTO_TEST_CASE(ValidConvolution3DTest)
       filterCube, outputCube);
 
   // Perform the convolution using using the singular value decomposition to
-  // speeded up the computation.
+  // speed up the computation.
   Convolution3DMethodTest<SVDConvolution<ValidConvolution> >(inputCube,
       filterCube, outputCube);
 }
@@ -277,7 +277,7 @@ BOOST_AUTO_TEST_CASE(FullConvolution3DTest)
       filterCube, outputCube);
 
   // Perform the convolution using using the singular value decomposition to
-  // speeded up the computation.
+  // speed up the computation.
   Convolution3DMethodTest<SVDConvolution<FullConvolution> >(inputCube,
       filterCube, outputCube);
 }
@@ -319,7 +319,7 @@ BOOST_AUTO_TEST_CASE(ValidConvolutionBatchTest)
       filterCube, outputCube);
 
   // Perform the convolution using using the singular value decomposition to
-  // speeded up the computation.
+  // speed up the computation.
   ConvolutionMethodBatchTest<SVDConvolution<ValidConvolution> >(input,
       filterCube, outputCube);
 }
@@ -365,7 +365,7 @@ BOOST_AUTO_TEST_CASE(FullConvolutionBatchTest)
       filterCube, outputCube);
 
   // Perform the convolution using using the singular value decomposition to
-  // speeded up the computation.
+  // speed up the computation.
   ConvolutionMethodBatchTest<SVDConvolution<FullConvolution> >(input,
       filterCube, outputCube);
 }

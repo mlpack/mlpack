@@ -51,7 +51,7 @@ template <
 >
 class MaxPooling
 {
-public:
+ public:
   //! Create the MaxPooling object.
   MaxPooling();
 
@@ -94,11 +94,6 @@ public:
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
 
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -138,10 +133,9 @@ public:
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
  /**
    * Apply pooling to the input and store the results.
    *
@@ -194,12 +188,6 @@ public:
     }
   }
 
-  //! Locally-stored number of input units.
-  size_t inSize;
-
-  //! Locally-stored number of output units.
-  size_t outSize;
-
   //! Locally-stored width of the pooling window.
   size_t kW;
 
@@ -212,14 +200,17 @@ public:
   //! Locally-stored height of the stride operation.
   size_t dH;
 
-  //! Locally-stored reset parameter used to initialize the module once.
-  bool reset;
-
   //! Rounding operation used.
   bool floor;
 
-  //! Locally-stored stored rounding offset.
-  size_t offset;
+  //! Locally-stored number of input channels.
+  size_t inSize;
+
+  //! Locally-stored number of output channels.
+  size_t outSize;
+
+  //! Locally-stored reset parameter used to initialize the module once.
+  bool reset;
 
   //! Locally-stored input width.
   size_t inputWidth;
@@ -235,6 +226,12 @@ public:
 
   //! If true use maximum a posteriori during the forward pass.
   bool deterministic;
+
+  //! Locally-stored stored rounding offset.
+  size_t offset;
+
+  //! Locally-stored number of input units.
+  size_t batchSize;
 
   //! Locally-stored output parameter.
   arma::cube outputTemp;
@@ -253,9 +250,6 @@ public:
 
   //! Locally-stored gradient object.
   OutputDataType gradient;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;

@@ -143,7 +143,7 @@ void Split(const arma::Mat<T>& input,
  * @return std::tuple containing trainData (arma::Mat<T>), testData
  *      (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>).
  */
-template<typename T,typename U>
+template<typename T, typename U>
 std::tuple<arma::Mat<T>, arma::Mat<T>, arma::Row<U>, arma::Row<U>>
 Split(const arma::Mat<T>& input,
       const arma::Row<U>& inputLabel,

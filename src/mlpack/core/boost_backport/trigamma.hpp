@@ -99,7 +99,7 @@ T trigamma_prec(T x, const mpl::int_<53>*, const Policy&)
    T y = 1 / x;
    return (1 + tools::evaluate_polynomial(P_4_inf, y) / tools::evaluate_polynomial(Q_4_inf, y)) / x;
 }
-   
+
 template <class T, class Policy>
 T trigamma_prec(T x, const mpl::int_<64>*, const Policy&)
 {
@@ -418,7 +418,7 @@ const typename trigamma_initializer<T, Policy>::init trigamma_initializer<T, Pol
 } // namespace detail
 
 template <class T, class Policy>
-inline typename tools::promote_args<T>::type 
+inline typename tools::promote_args<T>::type
    trigamma(T x, const Policy&)
 {
    typedef typename tools::promote_args<T>::type result_type;
@@ -457,7 +457,7 @@ inline typename tools::promote_args<T>::type
 }
 
 template <class T>
-inline typename tools::promote_args<T>::type 
+inline typename tools::promote_args<T>::type
    trigamma(T x)
 {
    return trigamma(x, policies::policy<>());

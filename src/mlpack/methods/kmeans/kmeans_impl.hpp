@@ -222,7 +222,7 @@ Cluster(const MatType& data,
 
     // If we are not allowing empty clusters, then check that all of our
     // clusters have points.
-    for (size_t i = 0; i < clusters; i++)
+    for (size_t i = 0; i < counts.n_elem; i++)
     {
       if (counts[i] == 0)
       {
@@ -241,7 +241,6 @@ Cluster(const MatType& data,
         << cNorm << ".\n";
     if (std::isnan(cNorm) || std::isinf(cNorm))
       cNorm = 1e-4; // Keep iterating.
-
   } while (cNorm > 1e-5 && iteration != maxIterations);
 
   // If we ended on an even iteration, then the centroids are in the
@@ -312,9 +311,11 @@ Cluster(const MatType& data,
   Cluster(data, clusters, centroids,
       initialAssignmentGuess || initialCentroidGuess);
 
-  // Calculate final assignments.
+  // Calculate final assignments in parallel over the entire dataset.
   assignments.set_size(data.n_cols);
-  for (size_t i = 0; i < data.n_cols; ++i)
+
+  #pragma omp parallel for
+  for (omp_size_t i = 0; i < (omp_size_t) data.n_cols; ++i)
   {
     // Find the closest centroid to this point.
     double minDistance = std::numeric_limits<double>::infinity();
@@ -346,12 +347,12 @@ void KMeans<MetricType,
             InitialPartitionPolicy,
             EmptyClusterPolicy,
             LloydStepType,
-            MatType>::Serialize(Archive& ar, const unsigned int /* version */)
+            MatType>::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(maxIterations, "max_iterations");
-  ar & data::CreateNVP(metric, "metric");
-  ar & data::CreateNVP(partitioner, "partitioner");
-  ar & data::CreateNVP(emptyClusterAction, "emptyClusterAction");
+  ar & BOOST_SERIALIZATION_NVP(maxIterations);
+  ar & BOOST_SERIALIZATION_NVP(metric);
+  ar & BOOST_SERIALIZATION_NVP(partitioner);
+  ar & BOOST_SERIALIZATION_NVP(emptyClusterAction);
 }
 
 } // namespace kmeans

@@ -22,13 +22,13 @@ namespace kmeans {
  * Take action about an empty cluster.
  */
 template<typename MetricType, typename MatType>
-size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
-                                           const size_t emptyCluster,
-                                           const arma::mat& oldCentroids,
-                                           arma::mat& newCentroids,
-                                           arma::Col<size_t>& clusterCounts,
-                                           MetricType& metric,
-                                           const size_t iteration)
+void MaxVarianceNewCluster::EmptyCluster(const MatType& data,
+                                         const size_t emptyCluster,
+                                         const arma::mat& oldCentroids,
+                                         arma::mat& newCentroids,
+                                         arma::Col<size_t>& clusterCounts,
+                                         MetricType& metric,
+                                         const size_t iteration)
 {
   // If necessary, calculate the variances and assignments.
   if (iteration != this->iteration || assignments.n_elem != data.n_cols)
@@ -42,7 +42,7 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   // If the cluster with maximum variance has variance of 0, then we can't
   // continue.  All the points are the same.
   if (variances[maxVarCluster] == 0.0)
-    return 0;
+    return;
 
   // Now, inside this cluster, find the point which is furthest away.
   size_t furthestPoint = data.n_cols;
@@ -65,8 +65,8 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   // Take that point and add it to the empty cluster.
   newCentroids.col(maxVarCluster) *= (double(clusterCounts[maxVarCluster]) /
       double(clusterCounts[maxVarCluster] - 1));
-  newCentroids.col(maxVarCluster) -= (1.0 / (clusterCounts[maxVarCluster] - 1.0)) *
-      arma::vec(data.col(furthestPoint));
+  newCentroids.col(maxVarCluster) -= (1.0 / (clusterCounts[maxVarCluster] -
+      1.0)) * arma::vec(data.col(furthestPoint));
   clusterCounts[maxVarCluster]--;
   clusterCounts[emptyCluster]++;
   newCentroids.col(emptyCluster) = arma::vec(data.col(furthestPoint));
@@ -87,19 +87,18 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   else
   {
     variances[maxVarCluster] = (1.0 / clusterCounts[maxVarCluster]) *
-      ((clusterCounts[maxVarCluster] + 1) * variances[maxVarCluster] - maxDistance);
+        ((clusterCounts[maxVarCluster] + 1) * variances[maxVarCluster] -
+        maxDistance);
   }
 
   // Output some debugging information.
   Log::Debug << "Point " << furthestPoint << " assigned to empty cluster " <<
       emptyCluster << ".\n";
-
-  return 1; // We only changed one point.
 }
 
 //! Serialize the object.
 template<typename Archive>
-void MaxVarianceNewCluster::Serialize(Archive& /* ar */,
+void MaxVarianceNewCluster::serialize(Archive& /* ar */,
                                       const unsigned int /* version */)
 {
   // Serialization is useless here, because the only thing we store is

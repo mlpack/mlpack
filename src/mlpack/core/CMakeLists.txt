@@ -2,12 +2,13 @@
 set(DIRS
   arma_extend
   boost_backport
+  cv
   data
   dists
+  hpt
   kernels
   math
   metrics
-  optimizers
   tree
   util
 )

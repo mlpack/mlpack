@@ -4,6 +4,11 @@
  *
  * Definition of the ReinforceNormalLayer class, which implements the REINFORCE
  * algorithm for the normal distribution.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_LAYER_REINFORCE_NORMAL_HPP
 #define MLPACK_METHODS_ANN_LAYER_REINFORCE_NORMAL_HPP
@@ -34,7 +39,7 @@ class ReinforceNormal
    *
    * @param stdev Standard deviation used during the forward and backward pass.
    */
-  ReinforceNormal(const double stdev);
+  ReinforceNormal(const double stdev = 1.0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -57,11 +62,6 @@ class ReinforceNormal
    */
   template<typename DataType>
   void Backward(const DataType&& input, DataType&& /* gy */, DataType&& g);
-
-  //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
@@ -87,20 +87,17 @@ class ReinforceNormal
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& /* ar */, const unsigned int /* version */);
 
  private:
   //! Standard deviation used during the forward and backward pass.
-  const double stdev;
+  double stdev;
 
   //! Locally-stored reward parameter.
   double reward;
 
   //! Locally-stored delta object.
   OutputDataType delta;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;

@@ -113,17 +113,12 @@ class DropConnect
                 arma::Mat<eT>&& /* gradient */);
 
   //! Get the model modules.
-  std::vector<LayerTypes>& Model() { return network; }
+  std::vector<LayerTypes<> >& Model() { return network; }
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return parameters; }
   //! Modify the parameters.
   OutputDataType& Parameters() { return parameters; }
-
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -160,9 +155,9 @@ class DropConnect
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
-private:
+ private:
   //! The probability of setting a value to zero.
   double ratio;
 
@@ -178,9 +173,6 @@ private:
   //! Locally-stored gradient object.
   OutputDataType gradient;
 
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
-
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
@@ -194,10 +186,10 @@ private:
   OutputDataType denoise;
 
   //! Locally-stored layer module.
-  LayerTypes baseLayer;
+  LayerTypes<> baseLayer;
 
   //! Locally-stored network modules.
-  std::vector<LayerTypes> network;
+  std::vector<LayerTypes<> > network;
 }; // class DropConnect.
 
 }  // namespace ann

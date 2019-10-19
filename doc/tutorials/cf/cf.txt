@@ -409,8 +409,10 @@ existing factorizers that can be used in \b mlpack; these were detailed in the
 
 The \c FactorizerType class must implement one of the two following methods:
 
- - \c "Apply(arma::mat& data, const size_t rank, arma::mat& W, arma::mat& H);"
- - \c "Apply(arma::sp_mat& data, const size_t rank, arma::mat& W, arma::mat& H);"
+ - <tt>Apply(arma::mat& data, const size_t rank, arma::mat& W, arma::mat&
+   H);</tt>
+ - <tt>Apply(arma::sp_mat& data, const size_t rank, arma::mat& W, arma::mat&
+   H);</tt>
 
 The difference between these two methods is whether \c arma::mat or \c
 arma::sp_mat is used as input.  If \c arma::mat is used, then the data matrix is

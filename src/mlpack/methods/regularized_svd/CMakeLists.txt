@@ -4,7 +4,7 @@ set(SOURCES
   regularized_svd.hpp
   regularized_svd_impl.hpp
   regularized_svd_function.hpp
-  regularized_svd_function.cpp
+  regularized_svd_function_impl.hpp
 )
 
 # Add directory name to sources.

@@ -47,6 +47,15 @@ else()
   set(ARMA_64BIT_WORD_DEFINE "#define MLPACK_ARMA_64BIT_WORD")
 endif()
 
+# Next we need to know if we are compiling with OpenMP support.
+# Other places in the CMake configuration should have already done the
+# find(OpenMP).
+if (OPENMP_FOUND)
+  set(ARMA_HAS_OPENMP_DEFINE "#define MLPACK_ARMA_USE_OPENMP")
+else ()
+  set(ARMA_HAS_OPENMP_DEFINE "#define MLPACK_ARMA_DONT_USE_OPENMP")
+endif ()
+
 set(NEW_FILE_CONTENTS
 "/**
  * @file arma_config.hpp
@@ -66,6 +75,8 @@ set(NEW_FILE_CONTENTS
 #define MLPACK_CORE_UTIL_ARMA_CONFIG_HPP
 
 ${ARMA_64BIT_WORD_DEFINE}
+
+${ARMA_HAS_OPENMP_DEFINE}
 
 #endif
 ")

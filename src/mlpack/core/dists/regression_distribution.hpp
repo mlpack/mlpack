@@ -2,7 +2,8 @@
  * @file regression_distribution.hpp
  * @author Michael Fox
  *
- * Implementation of conditional Gaussian distribution for HMM regression (HMMR)
+ * Implementation of conditional Gaussian distribution for HMM regression
+ * (HMMR).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -48,10 +49,22 @@ class RegressionDistribution
    * @param predictors Matrix of predictors (X).
    * @param responses Vector of responses (y).
    */
+  mlpack_deprecated RegressionDistribution(const arma::mat& predictors,
+                                           const arma::vec& responses) :
+    RegressionDistribution(predictors, arma::rowvec(responses.t()))
+  {}
+
+  /**
+   * Create a Conditional Gaussian distribution with conditional mean function
+   * obtained by running RegressionFunction on predictors, responses.
+   *
+   * @param predictors Matrix of predictors (X).
+   * @param responses Vector of responses (y).
+   */
   RegressionDistribution(const arma::mat& predictors,
-                         const arma::vec& responses) :
-      rf(regression::LinearRegression(predictors, responses))
+                         const arma::rowvec& responses)
   {
+    rf.Train(predictors, responses);
     err = GaussianDistribution(1);
     arma::mat cov(1, 1);
     cov(0, 0) = rf.ComputeError(predictors, responses);
@@ -62,10 +75,10 @@ class RegressionDistribution
    * Serialize the distribution.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(rf, "rf");
-    ar & data::CreateNVP(err, "err");
+    ar & BOOST_SERIALIZATION_NVP(rf);
+    ar & BOOST_SERIALIZATION_NVP(err);
   }
 
   //! Return regression function.
@@ -86,40 +99,60 @@ class RegressionDistribution
   void Train(const arma::mat& observations);
 
   /**
-   * Estimate parameters using provided observation weights
+   * Estimate parameters using provided observation weights.
    *
-   * @param weights probability that given observation is from distribution
+   * @param observations List of observations.
+   * @param weights Probability that given observation is from distribution.
    */
-  void Train(const arma::mat& observations, const arma::vec& weights);
+  mlpack_deprecated void Train(const arma::mat& observations,
+                               const arma::vec& weights);
 
   /**
-  * Evaluate probability density function of given observation
-  *
-  * @param observation point to evaluate probability at
-  */
+   * Estimate parameters using provided observation weights.
+   *
+   * @param observations List of observations.
+   * @param weights Probability that given observation is from distribution.
+   */
+  void Train(const arma::mat& observations, const arma::rowvec& weights);
+
+  /**
+   * Evaluate probability density function of given observation.
+   *
+   * @param observation Point to evaluate probability at.
+   */
   double Probability(const arma::vec& observation) const;
 
   /**
-  * Evaluate log probability density function of given observation
-  *
-  * @param observation point to evaluate log probability at
-  */
-  double LogProbability(const arma::vec& observation) const {
+   * Evaluate log probability density function of given observation.
+   *
+   * @param observation Point to evaluate log probability at.
+   */
+  double LogProbability(const arma::vec& observation) const
+  {
     return log(Probability(observation));
   }
 
   /**
    * Calculate y_i for each data point in points.
    *
-   * @param points the data points to calculate with.
-   * @param predictions y, will contain calculated values on completion.
+   * @param points The data points to calculate with.
+   * @param predictions Y, will contain calculated values on completion.
    */
-  void Predict(const arma::mat& points, arma::vec& predictions) const;
+  mlpack_deprecated void Predict(const arma::mat& points,
+                                 arma::vec& predictions) const;
+
+  /**
+   * Calculate y_i for each data point in points.
+   *
+   * @param points The data points to calculate with.
+   * @param predictions Y, will contain calculated values on completion.
+   */
+  void Predict(const arma::mat& points, arma::rowvec& predictions) const;
 
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return rf.Parameters(); }
 
-  //! Return the dimensionality
+  //! Return the dimensionality.
   size_t Dimensionality() const { return rf.Parameters().n_elem; }
 };
 

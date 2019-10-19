@@ -1,3 +1,15 @@
+/**
+ * @file load_csv.cpp
+ * @author Tham Ngap Wei
+ * @author Mehul Kumar Nirala
+ *
+ * A CSV reader that uses boost::spirit.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #include "load_csv.hpp"
 
 using namespace boost::spirit;
@@ -13,16 +25,29 @@ LoadCSV::LoadCSV(const std::string& file) :
   // Attempt to open stream.
   CheckOpen();
 
+  //! Spirit rule for parsing quoted string.
+  boost::spirit::qi::rule<std::string::iterator, iter_type()> quotedRule;
+  // Match quoted strings as: "string" or 'string'
+  quotedRule = qi::raw[(qi::char_("'") >> *((qi::char_ - "'") |
+                               "'" >> qi::char_("'")) >> "'") |
+                       (qi::char_('"') >> *((qi::char_ - '"') |
+                               '"' >> qi::char_('"')) >> '"') ];
+
   // Set rules.
-  if (extension == "csv" || extension == "txt")
+  if (extension == "csv")
   {
     // Match all characters that are not ',', '\r', or '\n'.
-    stringRule = qi::raw[*~qi::char_(" ,\r\n")];
+    stringRule = quotedRule.copy() | qi::raw[*~qi::char_(",\r\n")];
   }
-  else
+  else if (extension == "txt")
+  {
+    // Match all characters that are not ' ', ',', '\r', or '\n'.
+    stringRule = quotedRule.copy() | qi::raw[*~qi::char_(" ,\r\n")];
+  }
+  else // TSV.
   {
     // Match all characters that are not '\t', '\r', or '\n'.
-    stringRule = qi::raw[*~qi::char_(" \t\r\n")];
+    stringRule = quotedRule.copy() | qi::raw[*~qi::char_("\t\r\n")];
   }
 
   if (extension == "csv")

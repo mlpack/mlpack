@@ -16,10 +16,10 @@
 #include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
 #include <mlpack/core/kernels/laplacian_kernel.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
-#include <mlpack/core/kernels/linear_kernel.hpp>
 #include <mlpack/core/kernels/polynomial_kernel.hpp>
 #include <mlpack/core/kernels/spherical_kernel.hpp>
 #include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
+#include <mlpack/core/kernels/cauchy_kernel.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
 
@@ -254,8 +254,8 @@ BOOST_AUTO_TEST_CASE(LinearKernelTest)
   arma::vec b = ".56 .21 .623 .82";
 
   LinearKernel lk;
-  BOOST_REQUIRE_CLOSE(lk.Evaluate(a,b), .5062, 1e-5);
-  BOOST_REQUIRE_CLOSE(lk.Evaluate(b,a), .5062, 1e-5);
+  BOOST_REQUIRE_CLOSE(lk.Evaluate(a, b), .5062, 1e-5);
+  BOOST_REQUIRE_CLOSE(lk.Evaluate(b, a), .5062, 1e-5);
 }
 
 /**
@@ -267,8 +267,8 @@ BOOST_AUTO_TEST_CASE(LinearKernelOrthogonalTest)
   arma::vec b = "0 0 1";
 
   LinearKernel lk;
-  BOOST_REQUIRE_SMALL(lk.Evaluate(a,b), 1e-5);
-  BOOST_REQUIRE_SMALL(lk.Evaluate(b,a), 1e-5);
+  BOOST_REQUIRE_SMALL(lk.Evaluate(a, b), 1e-5);
+  BOOST_REQUIRE_SMALL(lk.Evaluate(b, a), 1e-5);
 }
 
 BOOST_AUTO_TEST_CASE(GaussianKernelTest)
@@ -294,9 +294,9 @@ BOOST_AUTO_TEST_CASE(GaussianKernelTest)
   BOOST_REQUIRE_CLOSE(gk.Normalizer(3), 1.9687012432153019, 1e-5);
   BOOST_REQUIRE_CLOSE(gk.Normalizer(4), 2.4674011002723386, 1e-5);
   /* check the convolution integral */
-  BOOST_REQUIRE_CLOSE(gk.ConvolutionIntegral(a,b), 0.024304474038457577, 1e-5);
-  BOOST_REQUIRE_CLOSE(gk.ConvolutionIntegral(a,c), 0.024304474038457577, 1e-5);
-  BOOST_REQUIRE_CLOSE(gk.ConvolutionIntegral(b,c), 0.024304474038457577, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.ConvolutionIntegral(a, b), 0.024304474038457577, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.ConvolutionIntegral(a, c), 0.024304474038457577, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.ConvolutionIntegral(b, c), 0.024304474038457577, 1e-5);
 }
 
 BOOST_AUTO_TEST_CASE(GaussianKernelSerializationTest)
@@ -334,9 +334,9 @@ BOOST_AUTO_TEST_CASE(SphericalKernelTest)
   BOOST_REQUIRE_CLOSE(sk.Normalizer(3), 0.52359877559829893, 1e-5);
   BOOST_REQUIRE_CLOSE(sk.Normalizer(4), 0.30842513753404244, 1e-5);
   /* check the convolution integral */
-  BOOST_REQUIRE_CLOSE(sk.ConvolutionIntegral(a,b), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(sk.ConvolutionIntegral(a,c), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(sk.ConvolutionIntegral(b,c), 1.0021155029652784, 1e-5);
+  BOOST_REQUIRE_CLOSE(sk.ConvolutionIntegral(a, b), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(sk.ConvolutionIntegral(a, c), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(sk.ConvolutionIntegral(b, c), 1.0021155029652784, 1e-5);
 }
 
 BOOST_AUTO_TEST_CASE(EpanechnikovKernelTest)
@@ -360,9 +360,9 @@ BOOST_AUTO_TEST_CASE(EpanechnikovKernelTest)
   BOOST_REQUIRE_CLOSE(ek.Normalizer(3), 0.20943951023931956, 1e-5);
   BOOST_REQUIRE_CLOSE(ek.Normalizer(4), 0.10280837917801415, 1e-5);
   /* check the convolution integral */
-  BOOST_REQUIRE_CLOSE(ek.ConvolutionIntegral(a,b), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(ek.ConvolutionIntegral(a,c), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(ek.ConvolutionIntegral(b,c), 1.5263455690698258, 1e-5);
+  BOOST_REQUIRE_CLOSE(ek.ConvolutionIntegral(a, b), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(ek.ConvolutionIntegral(a, c), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(ek.ConvolutionIntegral(b, c), 1.5263455690698258, 1e-5);
 }
 
 BOOST_AUTO_TEST_CASE(PolynomialKernelTest)
@@ -607,6 +607,19 @@ BOOST_AUTO_TEST_CASE(PSpectrumStringEvaluateTest)
   a = "0 3";
   BOOST_REQUIRE_CLOSE(p.Evaluate(a, b), 11.0, 1e-5);
   BOOST_REQUIRE_CLOSE(p.Evaluate(b, a), 11.0, 1e-5);
+}
+
+/**
+ * Cauchy Kernel test.
+ */
+BOOST_AUTO_TEST_CASE(CauchyKernelTest)
+{
+  arma::vec a = "0 0 1";
+  arma::vec b = "0 1 0";
+
+  CauchyKernel ck(5.0);
+  BOOST_REQUIRE_CLOSE(ck.Evaluate(a, b), 0.92592588, 1e-5);
+  BOOST_REQUIRE_CLOSE(ck.Evaluate(b, a), 0.92592588, 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

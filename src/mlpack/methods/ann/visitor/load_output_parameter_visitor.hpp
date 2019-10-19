@@ -15,7 +15,6 @@
 #define MLPACK_METHODS_ANN_VISITOR_LOAD_OUTPUT_PARAMETER_VISITOR_HPP
 
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
 
 #include <boost/variant.hpp>
 
@@ -36,6 +35,8 @@ class LoadOutputParameterVisitor : public boost::static_visitor<void>
   template<typename LayerType>
   void operator()(LayerType* layer) const;
 
+  void operator()(MoreTypes layer) const;
+
  private:
   //! The parameter set.
   std::vector<arma::mat>&& parameter;
@@ -44,14 +45,14 @@ class LoadOutputParameterVisitor : public boost::static_visitor<void>
   //! Model() function.
   template<typename T>
   typename std::enable_if<
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+      !HasModelCheck<T>::value, void>::type
   OutputParameter(T* layer) const;
 
   //! Restore the output parameter for a module which implements the Model()
   //! function.
   template<typename T>
   typename std::enable_if<
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+      HasModelCheck<T>::value, void>::type
   OutputParameter(T* layer) const;
 };
 

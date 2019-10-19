@@ -5,6 +5,10 @@ set(SOURCES
   add_visitor_impl.hpp
   backward_visitor.hpp
   backward_visitor_impl.hpp
+  bias_set_visitor.hpp
+  bias_set_visitor_impl.hpp
+  copy_visitor.hpp
+  copy_visitor_impl.hpp
   delete_visitor.hpp
   delete_visitor_impl.hpp
   delta_visitor.hpp
@@ -23,6 +27,8 @@ set(SOURCES
   gradient_zero_visitor_impl.hpp
   load_output_parameter_visitor.hpp
   load_output_parameter_visitor_impl.hpp
+  loss_visitor.hpp
+  loss_visitor_impl.hpp
   output_height_visitor.hpp
   output_height_visitor_impl.hpp
   output_parameter_visitor.hpp
@@ -33,10 +39,14 @@ set(SOURCES
   parameters_set_visitor_impl.hpp
   parameters_visitor.hpp
   parameters_visitor_impl.hpp
+  reset_cell_visitor.hpp
+  reset_cell_visitor_impl.hpp
   reset_visitor.hpp
   reset_visitor_impl.hpp
   reward_set_visitor.hpp
   reward_set_visitor_impl.hpp
+  run_set_visitor.hpp
+  run_set_visitor_impl.hpp
   save_output_parameter_visitor.hpp
   save_output_parameter_visitor_impl.hpp
   set_input_height_visitor.hpp

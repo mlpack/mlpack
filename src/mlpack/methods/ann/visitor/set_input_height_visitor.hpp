@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_ANN_VISITOR_SET_INPUT_HEIGHT_VISITOR_HPP
 
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
 
 #include <boost/variant.hpp>
 
@@ -35,6 +34,8 @@ class SetInputHeightVisitor : public boost::static_visitor<bool>
   template<typename LayerType>
   bool operator()(LayerType* layer) const;
 
+  bool operator()(MoreTypes layer) const;
+
  private:
   //! The input height parameter.
   size_t inputHeight;
@@ -47,7 +48,7 @@ class SetInputHeightVisitor : public boost::static_visitor<bool>
   template<typename T>
   typename std::enable_if<
       !HasInputHeight<T, size_t&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+      !HasModelCheck<T>::value, bool>::type
   LayerInputHeight(T* layer) const;
 
   //! Update the input height if the module implements the InputHeight()
@@ -55,14 +56,14 @@ class SetInputHeightVisitor : public boost::static_visitor<bool>
   template<typename T>
   typename std::enable_if<
       HasInputHeight<T, size_t&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+      !HasModelCheck<T>::value, bool>::type
   LayerInputHeight(T* layer) const;
 
   //! Update the input height if the module implements the Model() function.
   template<typename T>
   typename std::enable_if<
       !HasInputHeight<T, size_t&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+      HasModelCheck<T>::value, bool>::type
   LayerInputHeight(T* layer) const;
 
   //! Update the input height if the module implements the InputHeight() or
@@ -70,7 +71,7 @@ class SetInputHeightVisitor : public boost::static_visitor<bool>
   template<typename T>
   typename std::enable_if<
       HasInputHeight<T, size_t&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+      HasModelCheck<T>::value, bool>::type
   LayerInputHeight(T* layer) const;
 };
 

@@ -246,7 +246,6 @@ class CosineTree
 class CompareCosineNode
 {
  public:
-
   // Comparison function for construction of priority queue.
   bool operator() (const CosineTree* a, const CosineTree* b) const
   {

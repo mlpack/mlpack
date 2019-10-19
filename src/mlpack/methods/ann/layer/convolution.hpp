@@ -20,6 +20,7 @@
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
 
 #include "layer_types.hpp"
+#include "padding.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -45,7 +46,7 @@ template <
 >
 class Convolution
 {
-public:
+ public:
   //! Create the Convolution object.
   Convolution();
 
@@ -61,7 +62,7 @@ public:
    * @param dH Stride of filter application in the y direction.
    * @param padW Padding width of the input.
    * @param padH Padding height of the input.
-   * @param inputWidth The widht of the input data.
+   * @param inputWidth The width of the input data.
    * @param inputHeight The height of the input data.
    */
   Convolution(const size_t inSize,
@@ -161,14 +162,16 @@ public:
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
+  //! Modify the bias weights of the layer.
+  arma::mat& Bias() { return bias; }
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   /*
    * Return the convolution output size.
    *
@@ -215,58 +218,14 @@ public:
     output = arma::fliplr(arma::flipud(input));
   }
 
-  /*
-   * Pad the given input data.
-   *
-   * @param input The input to be padded.
-   * @param wPad Padding width of the input.
-   * @param hPad Padding height of the input.
-   * @param output The padded output data.
-   */
-  template<typename eT>
-  void Pad(const arma::Mat<eT>& input,
-           size_t wPad,
-           size_t hPad,
-           arma::Mat<eT>& output)
-  {
-    if (output.n_rows != input.n_rows + wPad * 2 ||
-        output.n_cols != input.n_cols + hPad * 2)
-    {
-      output = arma::zeros(input.n_rows + wPad * 2, input.n_cols + hPad * 2);
-    }
-
-    output.submat(wPad, hPad, wPad + input.n_rows - 1,
-        hPad + input.n_cols - 1) = input;
-  }
-
-  /*
-   * Pad the given input data.
-   *
-   * @param input The input to be padded.
-   * @param wPad Padding width of the input.
-   * @param hPad Padding height of the input.
-   * @param output The padded output data.
-   */
-  template<typename eT>
-  void Pad(const arma::Cube<eT>& input,
-           size_t wPad,
-           size_t hPad,
-           arma::Cube<eT>& output)
-  {
-    output = arma::zeros(input.n_rows + wPad * 2,
-        input.n_cols + hPad * 2, input.n_slices);
-
-    for (size_t i = 0; i < input.n_slices; ++i)
-    {
-      Pad<double>(input.slice(i), wPad, hPad, output.slice(i));
-    }
-  }
-
-  //! Locally-stored number of input units.
+  //! Locally-stored number of input channels.
   size_t inSize;
 
-  //! Locally-stored number of output units.
+  //! Locally-stored number of output channels.
   size_t outSize;
+
+  //! Locally-stored number of input units.
+  size_t batchSize;
 
   //! Locally-stored filter/kernel width.
   size_t kW;
@@ -322,6 +281,9 @@ public:
   //! Locally-stored transformed gradient parameter.
   arma::cube gradientTemp;
 
+  //! Locally-stored padding layer.
+  Padding<>* padding;
+
   //! Locally-stored delta object.
   OutputDataType delta;
 
@@ -337,6 +299,27 @@ public:
 
 } // namespace ann
 } // namespace mlpack
+
+//! Set the serialization version of the Convolution class.
+namespace boost {
+namespace serialization {
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+struct version<
+    mlpack::ann::Convolution<ForwardConvolutionRule, BackwardConvolutionRule,
+        GradientConvolutionRule, InputDataType, OutputDataType> >
+{
+  BOOST_STATIC_CONSTANT(int, value = 1);
+};
+
+} // namespace serialization
+} // namespace boost
 
 // Include implementation.
 #include "convolution_impl.hpp"

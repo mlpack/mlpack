@@ -51,9 +51,9 @@ class RangeSearch
    * naive mode or single-tree mode. Additionally, an instantiated metric can be
    * given, for cases where the distance metric holds data.
    *
-   * This method will copy the matrices to internal copies, which are rearranged
-   * during tree-building.  You can avoid this extra copy by pre-constructing
-   * the trees and passing them using a different constructor.
+   * This method will move the matrices to internal copies, which are
+   * rearranged during tree-building.  You can avoid creating an extra copy by
+   * pre-constructing the trees and passing them in using std::move.
    *
    * @param referenceSet Reference dataset.
    * @param naive Whether the computation should be done in O(n^2) naive mode.
@@ -61,31 +61,7 @@ class RangeSearch
    *      opposed to dual-tree computation).
    * @param metric Instantiated distance metric.
    */
-  RangeSearch(const MatType& referenceSet,
-              const bool naive = false,
-              const bool singleMode = false,
-              const MetricType metric = MetricType());
-
-  /**
-   * Initialize the RangeSearch object with the given reference dataset (this is
-   * the dataset which is searched), taking ownership of the matrix.
-   * Optionally, perform the computation in naive mode or single-tree mode.
-   * Additionally, an instantiated metric can be given, for cases where the
-   * distance metric holds data.
-   *
-   * This method will not copy the data matrix, but will take ownership of it,
-   * and depending on the type of tree used, may rearrange the points.  If you
-   * would rather a copy be made, consider using the constructor that takes a
-   * const reference to the data instead.
-   *
-   * @param referenceSet Set of reference points.
-   * @param naive If true, brute force naive search will be used (as opposed to
-   *      dual-tree search).  This overrides singleMode (if it is set to true).
-   * @param singleMode If true, single-tree search will be used (as opposed to
-   *      dual-tree search).
-   * @param metric An optional instance of the MetricType class.
-   */
-  RangeSearch(MatType&& referenceSet,
+  RangeSearch(MatType referenceSet,
               const bool naive = false,
               const bool singleMode = false,
               const MetricType metric = MetricType());
@@ -149,17 +125,11 @@ class RangeSearch
 
   /**
    * Copy the given RangeSearch model.
+   * Use std::move to pass in the model if the old copy is no longer needed.
    *
    * @param other RangeSearch model to copy.
    */
-  RangeSearch& operator=(const RangeSearch& other);
-
-  /**
-   * Take ownership of the given RangeSearch model.
-   *
-   * @param other RangeSearch model to take ownership of.
-   */
-  RangeSearch& operator=(RangeSearch&& other);
+  RangeSearch& operator=(RangeSearch other);
 
   /**
    * Destroy the RangeSearch object.  If trees were created, they will be
@@ -170,22 +140,15 @@ class RangeSearch
   /**
    * Set the reference set to a new reference set, and build a tree if
    * necessary.  This method is called 'Train()' in order to match the rest of
-   * the mlpack abstractions, even though calling this "training" is maybe a bit
-   * of a stretch.
+   * the mlpack abstractions, even though calling this "training" is maybe a
+   * bit of a stretch.
+   *
+   * Use std::move to pass in the reference set if the old copy is no longer
+   * needed.
    *
    * @param referenceSet New set of reference data.
    */
-  void Train(const MatType& referenceSet);
-
-  /**
-   * Set the reference set to a new reference set, taking ownership of the set.
-   * A tree is built if necessary.  This method is called 'Train()' in order to
-   * match the rest of the mlpack abstractions, even though calling this
-   * "training" is maybe a bit of a stretch.
-   *
-   * @param referenceSet New set of reference data.
-   */
-  void Train(MatType&& referenceSet);
+  void Train(MatType referenceSet);
 
   /**
    * Set the reference tree to a new reference tree.
@@ -316,7 +279,7 @@ class RangeSearch
 
   //! Serialize the model.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const unsigned int version);
 
   //! Return the reference set.
   const MatType& ReferenceSet() const { return *referenceSet; }
@@ -335,8 +298,6 @@ class RangeSearch
 
   //! If true, this object is responsible for deleting the trees.
   bool treeOwner;
-  //! If true, we own the reference set.
-  bool setOwner;
 
   //! If true, O(n^2) naive computation is used.
   bool naive;

@@ -49,7 +49,8 @@ template<typename MetricType = metric::EuclideanDistance,
          typename MatType = arma::mat,
          typename SplitType = RTreeSplit,
          typename DescentType = RTreeDescentHeuristic,
-         template<typename> class AuxiliaryInformationType = NoAuxiliaryInformation>
+         template<typename> class AuxiliaryInformationType =
+             NoAuxiliaryInformation>
 class RectangleTree
 {
   // The metric *must* be the euclidean distance.
@@ -180,9 +181,23 @@ class RectangleTree
   /**
    * Create a rectangle tree by moving the other tree.
    *
-   * @param other The tree to be copied.
+   * @param other The tree to be moved.
    */
   RectangleTree(RectangleTree&& other);
+
+  /**
+   * Copy the given rectangle tree.
+   *
+   * @param other The tree to be copied.
+   */
+  RectangleTree& operator=(const RectangleTree& other);
+
+  /**
+   * Take ownership of the given rectangle tree.
+   *
+   * @param other The tree to take ownership of.
+   */
+  RectangleTree& operator=(RectangleTree&& other);
 
   /**
    * Construct the tree from a boost::serialization archive.
@@ -541,6 +556,13 @@ class RectangleTree
    */
   void SplitNode(std::vector<bool>& relevels);
 
+  /**
+   * Builds statistics for a node and all its descendants in a bottom-up way.
+   *
+   * @param node Node for which statistics will be built.
+   */
+  void BuildStatistics(RectangleTree* node);
+
  protected:
   /**
    * A default constructor.  This is meant to only be used with
@@ -605,7 +627,7 @@ class RectangleTree
    * Serialize the tree.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 };
 
 } // namespace tree

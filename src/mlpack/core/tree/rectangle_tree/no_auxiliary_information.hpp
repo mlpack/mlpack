@@ -21,15 +21,15 @@ class NoAuxiliaryInformation
 {
  public:
   //! Construct the auxiliary information object.
-  NoAuxiliaryInformation() { };
+  NoAuxiliaryInformation() { }
   //! Construct the auxiliary information object.
-  NoAuxiliaryInformation(const TreeType* /* node */) { };
+  NoAuxiliaryInformation(const TreeType* /* node */) { }
   //! Construct the auxiliary information object.
   NoAuxiliaryInformation(const NoAuxiliaryInformation& /* other */,
                          TreeType* /* tree */,
-                         bool /* deepCopy */ = true) { };
+                         bool /* deepCopy */ = true) { }
   //! Construct the auxiliary information object.
-  NoAuxiliaryInformation(NoAuxiliaryInformation&& /* other */) { };
+  NoAuxiliaryInformation(NoAuxiliaryInformation&& /* other */) { }
 
   //! Copy the auxiliary information object.
   NoAuxiliaryInformation& operator=(const NoAuxiliaryInformation& /* other */)
@@ -141,7 +141,7 @@ class NoAuxiliaryInformation
    * Serialize the information.
    */
   template<typename Archive>
-  void Serialize(Archive &, const unsigned int /* version */) { };
+  void serialize(Archive &, const unsigned int /* version */) { }
 };
 
 } // namespace tree

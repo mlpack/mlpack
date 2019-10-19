@@ -4,7 +4,7 @@
 
 mlpack provides a simple timer interface for the timing of machine learning
 methods.  The results of any timers used during the program are displayed at
-output by the mlpack::CLI object, when --verbose is given:
+output by any command-line binding, when --verbose is given:
 
 @code
 $ mlpack_knn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
@@ -33,7 +33,7 @@ and the result will be the sum of the runs of the timer.  Note that \c
 Timer::Stop() must be called before \c Timer::Start() is called again,
 otherwise a std::runtime_error exception will be thrown.
 
-A "total_time" timer is run by default for each mlpack program.
+A \c "total_time" timer is run by default for each mlpack program.
 
 @section example Timer Example
 
@@ -41,13 +41,14 @@ Below is a very simple example of timer usage in code.
 
 @code
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/cli.hpp>
+#define BINDING_TYPE BINDING_TYPE_CLI
+#include <mlpack/core/util/mlpack_main.hpp>
 
 using namespace mlpack;
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Start a timer.
   Timer::Start("some_timer");
 
@@ -59,7 +60,7 @@ int main(int argc, char** argv)
 }
 @endcode
 
-If the --verbose flag was given to this executable, the resultant time that
-"some_timer" ran for would be shown.
+If the --verbose flag was given to this executable, the time that
+\c "some_timer" ran for would be printed at the end of the program's output.
 
 */

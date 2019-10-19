@@ -52,14 +52,16 @@ class AllCategoricalSplit
    * @param aux Auxiliary split information, which may be modified on a
    *      successful split.
    */
-  template<typename VecType>
+  template<bool UseWeights, typename VecType, typename WeightVecType>
   static double SplitIfBetter(
       const double bestGain,
       const VecType& data,
       const size_t numCategories,
       const arma::Row<size_t>& labels,
       const size_t numClasses,
+      const WeightVecType& weights,
       const size_t minimumLeafSize,
+      const double minimumGainSplit,
       arma::Col<typename VecType::elem_type>& classProbabilities,
       AuxiliarySplitInfo<typename VecType::elem_type>& aux);
 

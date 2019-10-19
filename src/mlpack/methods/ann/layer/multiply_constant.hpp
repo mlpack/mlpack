@@ -4,6 +4,11 @@
  *
  * Definition of the MultiplyConstantLayer class, which multiplies the input by
  * a (non-learnable) constant.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_LAYER_MULTIPLY_CONSTANT_HPP
 #define MLPACK_METHODS_ANN_LAYER_MULTIPLY_CONSTANT_HPP
@@ -32,7 +37,7 @@ class MultiplyConstant
   /**
    * Create the MultiplyConstant object.
    */
-  MultiplyConstant(const double scalar);
+  MultiplyConstant(const double scalar = 1.0);
 
   /**
    * Ordinary feed forward pass of a neural network. Multiply the input with the
@@ -55,11 +60,6 @@ class MultiplyConstant
   template<typename DataType>
   void Backward(const DataType&& /* input */, DataType&& gy, DataType&& g);
 
-  //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -74,17 +74,14 @@ class MultiplyConstant
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored constant scalar value.
-  const double scalar;
+  double scalar;
 
   //! Locally-stored delta object.
   OutputDataType delta;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;

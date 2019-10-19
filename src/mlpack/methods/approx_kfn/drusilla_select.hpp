@@ -97,7 +97,7 @@ class DrusillaSelect
    * Serialize the model.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
   //! Access the candidate set.
   const MatType& CandidateSet() const { return candidateSet; }

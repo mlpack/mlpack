@@ -25,10 +25,15 @@ inline size_t WeightSizeVisitor::operator()(LayerType* layer) const
   return LayerSize(layer, layer->OutputParameter());
 }
 
+inline size_t WeightSizeVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
+}
+
 template<typename T, typename P>
 inline typename std::enable_if<
     !HasParametersCheck<T, P&(T::*)()>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+    !HasModelCheck<T>::value, size_t>::type
 WeightSizeVisitor::LayerSize(T* /* layer */, P& /* output */) const
 {
   return 0;
@@ -37,7 +42,7 @@ WeightSizeVisitor::LayerSize(T* /* layer */, P& /* output */) const
 template<typename T, typename P>
 inline typename std::enable_if<
     !HasParametersCheck<T, P&(T::*)()>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+    HasModelCheck<T>::value, size_t>::type
 WeightSizeVisitor::LayerSize(T* layer, P& /* output */) const
 {
   size_t weights = 0;
@@ -52,7 +57,7 @@ WeightSizeVisitor::LayerSize(T* layer, P& /* output */) const
 template<typename T, typename P>
 inline typename std::enable_if<
     HasParametersCheck<T, P&(T::*)()>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+    !HasModelCheck<T>::value, size_t>::type
 WeightSizeVisitor::LayerSize(T* layer, P& /* output */) const
 {
   return layer->Parameters().n_elem;
@@ -61,7 +66,7 @@ WeightSizeVisitor::LayerSize(T* layer, P& /* output */) const
 template<typename T, typename P>
 inline typename std::enable_if<
     HasParametersCheck<T, P&(T::*)()>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+    HasModelCheck<T>::value, size_t>::type
 WeightSizeVisitor::LayerSize(T* layer, P& /* output */) const
 {
   size_t weights = layer->Parameters().n_elem;

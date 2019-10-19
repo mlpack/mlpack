@@ -171,7 +171,7 @@ void CheckExactContainment(const TreeType& tree)
     {
       double min = DBL_MAX;
       double max = -1.0 * DBL_MAX;
-      for(size_t j = 0; j < tree.Count(); j++)
+      for (size_t j = 0; j < tree.Count(); j++)
       {
         if (tree.Dataset().col(tree.Point(j))[i] < min)
           min = tree.Dataset().col(tree.Point(j))[i];
@@ -716,8 +716,10 @@ void CheckDiscreteHilbertValueSync(const TreeType& tree)
     }
   }
   else
+  {
     for (size_t i = 0; i < tree.NumChildren(); i++)
       CheckDiscreteHilbertValueSync(tree.Child(i));
+  }
 }
 
 BOOST_AUTO_TEST_CASE(DiscreteHilbertValueSyncTest)
@@ -726,7 +728,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHilbertValueSyncTest)
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
   typedef HilbertRTree<EuclideanDistance,
-      NeighborSearchStat<NearestNeighborSort>,arma::mat> TreeType;
+      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
   TreeType hilbertRTree(dataset, 20, 6, 5, 2, 0);
 
   CheckDiscreteHilbertValueSync(hilbertRTree);
@@ -982,7 +984,7 @@ BOOST_AUTO_TEST_CASE(RPlusTreeOverlapTest)
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
   typedef RPlusTree<EuclideanDistance,
-      NeighborSearchStat<NearestNeighborSort>,arma::mat> TreeType;
+      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
   TreeType rPlusTree(dataset, 20, 6, 5, 2, 0);
 
   CheckOverlap(rPlusTree);
@@ -1100,7 +1102,7 @@ BOOST_AUTO_TEST_CASE(RPlusPlusTreeBoundTest)
 
   // Check the MinimalCoverageSweep.
   typedef RPlusPlusTree<EuclideanDistance,
-      NeighborSearchStat<NearestNeighborSort>,arma::mat> TreeType;
+      NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
   TreeType rPlusPlusTree(dataset, 20, 6, 5, 2, 0);
 
   CheckRPlusPlusTreeBound(rPlusPlusTree);

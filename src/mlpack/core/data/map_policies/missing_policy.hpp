@@ -14,7 +14,6 @@
 
 #include <mlpack/prereqs.hpp>
 #include <unordered_map>
-#include <boost/bimap.hpp>
 #include <mlpack/core/data/map_policies/datatype.hpp>
 #include <limits>
 
@@ -94,6 +93,12 @@ class MissingPolicy
     T t;
     token >> t; // Could be sped up by only doing this if we need to.
 
+    MappedType value = std::numeric_limits<MappedType>::quiet_NaN();
+    // But we can't use that for the map, so we need some other thing that will
+    // represent quiet_NaN().
+    const MappedType mapValue = std::nexttoward(
+        std::numeric_limits<MappedType>::max(), MappedType(0));
+
     // If extraction of the value fails, or if it is a value that is supposed to
     // be mapped, then do mapping.
     if (token.fail() || !token.eof() ||
@@ -102,16 +107,23 @@ class MissingPolicy
       // Everything is mapped to NaN.  However we must still keep track of
       // everything that we have mapped, so we add it to the maps if needed.
       if (maps.count(dimension) == 0 ||
-          maps[dimension].first.left.count(string) == 0)
+          maps[dimension].first.count(string) == 0)
       {
         // This string does not exist yet.
-        typedef boost::bimap<std::string, MappedType>::value_type PairType;
-        maps[dimension].first.insert(PairType(string,
-            std::numeric_limits<MappedType>::quiet_NaN()));
-        maps[dimension].second++;
+        typedef std::pair<std::string, MappedType> PairType;
+        maps[dimension].first.insert(PairType(string, value));
+
+        // Insert right mapping too.
+        if (maps[dimension].second.count(mapValue) == 0)
+        {
+          // Create new element in reverse map.
+          maps[dimension].second.insert(std::make_pair(mapValue,
+              std::vector<std::string>()));
+        }
+        maps[dimension].second[mapValue].push_back(string);
       }
 
-      return std::numeric_limits<T>::quiet_NaN();
+      return value;
     }
     else
     {

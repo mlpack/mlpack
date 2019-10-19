@@ -4,6 +4,9 @@ set(SOURCES
   gmm.hpp
   gmm.cpp
   gmm_impl.hpp
+  diagonal_gmm.hpp
+  diagonal_gmm.cpp
+  diagonal_gmm_impl.hpp
   em_fit.hpp
   em_fit_impl.hpp
   no_constraint.hpp
@@ -22,5 +25,13 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(gmm_train)
+add_python_binding(gmm_train)
+add_markdown_docs(gmm_train "cli;python" "clustering")
+
 add_cli_executable(gmm_generate)
+add_python_binding(gmm_generate)
+add_markdown_docs(gmm_generate "cli;python" "clustering")
+
 add_cli_executable(gmm_probability)
+add_python_binding(gmm_probability)
+add_markdown_docs(gmm_probability "cli;python" "clustering")

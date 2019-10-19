@@ -13,7 +13,7 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/load_arff.hpp>
-
+#include <mlpack/core/data/map_policies/missing_policy.hpp>
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
@@ -230,6 +230,144 @@ BOOST_AUTO_TEST_CASE(LoadColVecTransposedCSVTest)
 
   // Remove the file.
   remove("test_file.csv");
+}
+
+/**
+ * Make sure besides numeric data "quoted strings" or
+ * 'quoted strings' in csv files are loaded correctly.
+ */
+BOOST_AUTO_TEST_CASE(LoadQuotedStringInCSVTest)
+{
+  fstream f;
+  f.open("test_file.csv", fstream::out);
+
+  f << "1,field 2,field 3" << endl;
+  f << "2,\"field 2, with comma\",field 3" << endl;
+  f << "3,field 2 with \"embedded quote\",field 3" << endl;
+  f << "4, field 2 with embedded \\ ,field 3" << endl;
+  f << "5, ,field 3" << endl;
+
+  f.close();
+
+  std::vector<std::string> elements;
+  elements.push_back("field 2");
+  elements.push_back("\"field 2, with comma\"");
+  elements.push_back("field 2 with \"embedded quote\"");
+  elements.push_back("field 2 with embedded \\");
+  elements.push_back("");
+
+  arma::mat test;
+  data::DatasetInfo info;
+  BOOST_REQUIRE(data::Load("test_file.csv", test, info, false, true) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 5);
+  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
+
+  // Check each element for equality/ closeness.
+  for (size_t i = 0; i < 5; ++i)
+    BOOST_REQUIRE_CLOSE(test.at(0, i), (double) (i + 1), 1e-5);
+
+  for (size_t i = 0; i < 5; ++i)
+    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(1, i), 1, 0), elements[i]);
+
+  for (size_t i = 0; i < 5; ++i)
+    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(2, i), 2, 0), "field 3");
+
+  // Clear the vector to free the space.
+  elements.clear();
+  // Remove the file.
+  remove("test_file.csv");
+}
+
+/**
+ * Make sure besides numeric data "quoted strings" or
+ * 'quoted strings' in txt files are loaded correctly.
+ */
+BOOST_AUTO_TEST_CASE(LoadQuotedStringInTXTTest)
+{
+  fstream f;
+  f.open("test_file.txt", fstream::out);
+
+  f << "1 field2 field3" << endl;
+  f << "2 \"field 2 with space\" field3" << endl;
+
+  f.close();
+
+  std::vector<std::string> elements;
+  elements.push_back("field2");
+  elements.push_back("\"field 2 with space\"");
+
+  arma::mat test;
+  data::DatasetInfo info;
+  BOOST_REQUIRE(data::Load("test_file.txt", test, info, false, true) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
+
+  // Check each element for equality/ closeness.
+  for (size_t i = 0; i < 2; ++i)
+    BOOST_REQUIRE_CLOSE(test.at(0, i), (double) (i + 1), 1e-5);
+
+  for (size_t i = 0; i < 2; ++i)
+    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(1, i), 1, 0), elements[i]);
+
+  for (size_t i = 0; i < 2; ++i)
+    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(2, i), 2, 0), "field3");
+
+  // Clear the vector to free the space.
+  elements.clear();
+  // Remove the file.
+  remove("test_file.txt");
+}
+
+/**
+ * Make sure besides numeric data "quoted strings" or
+ * 'quoted strings' in tsv files are loaded correctly.
+ */
+BOOST_AUTO_TEST_CASE(LoadQuotedStringInTSVTest)
+{
+  fstream f;
+  f.open("test_file.tsv", fstream::out);
+
+  f << "1\tfield 2\tfield 3" << endl;
+  f << "2\t\"field 2\t with tab\"\tfield 3" << endl;
+  f << "3\tfield 2 with \"embedded quote\"\tfield 3" << endl;
+  f << "4\t field 2 with embedded \\ \tfield 3" << endl;
+  f << "5\t \tfield 3" << endl;
+
+  f.close();
+
+  std::vector<std::string> elements;
+  elements.push_back("field 2");
+  elements.push_back("\"field 2\t with tab\"");
+  elements.push_back("field 2 with \"embedded quote\"");
+  elements.push_back("field 2 with embedded \\");
+  elements.push_back("");
+
+  arma::mat test;
+  data::DatasetInfo info;
+  BOOST_REQUIRE(data::Load("test_file.tsv", test, info, false, true) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 5);
+  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
+
+  // Check each element for equality/ closeness.
+  for (size_t i = 0; i < 5; ++i)
+    BOOST_REQUIRE_CLOSE(test.at(0, i), (double) (i + 1), 1e-5);
+
+  for (size_t i = 0; i < 5; ++i)
+    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(1, i), 1, 0), elements[i]);
+
+  for (size_t i = 0; i < 5; ++i)
+    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(2, i), 2, 0), "field 3");
+
+  // Clear the vector to free the space.
+  elements.clear();
+  // Remove the file.
+  remove("test_file.tsv");
 }
 
 /**
@@ -651,12 +789,6 @@ BOOST_AUTO_TEST_CASE(SavePGMBinaryTest)
   remove("test_file.pgm");
 }
 
-// Don't perform any HDF5 tests on Armadillo 4.300-4.400 (inclusive).  A bug
-// causes loading to fail.
-#if ((ARMA_VERSION_MAJOR == 4) && \
-        (ARMA_VERSION_MINOR < 300 || ARMA_VERSION_MINOR > 400)) || \
-    (ARMA_VERSION_MAJOR >= 5)
-
 #if defined(ARMA_USE_HDF5)
 /**
  * Make sure load as HDF5 is successful.
@@ -770,24 +902,32 @@ BOOST_AUTO_TEST_CASE(SaveHDF5Test)
   remove("test_file.hdf5");
   remove("test_file.he5");
 }
-#else
+
+#endif
+
 /**
- * Ensure saving as HDF5 fails.
+ * Test one hot encoding.
  */
-BOOST_AUTO_TEST_CASE(NoHDF5Test)
+BOOST_AUTO_TEST_CASE(OneHotEncodingTest)
 {
-  arma::mat test;
-  test.randu(5, 5);
+  arma::Mat<size_t> matrix;
+  matrix = "1 0;"
+           "0 1;"
+           "1 0;"
+           "1 0;"
+           "1 0;"
+           "1 0;"
+           "0 1;"
+           "1 0;";
+// Output matrix to save onehotencoding results.
+  arma::Mat<size_t> output;
+  arma::irowvec labels("-1 1 -1 -1 -1 -1 1 -1");
+  data::OneHotEncoding(labels, output);
 
-  // Stop warnings.
-  BOOST_REQUIRE(data::Save("test_file.h5", test) == false);
-  BOOST_REQUIRE(data::Save("test_file.hdf5", test) == false);
-  BOOST_REQUIRE(data::Save("test_file.hdf", test) == false);
-  BOOST_REQUIRE(data::Save("test_file.he5", test) == false);
+  BOOST_REQUIRE_EQUAL(matrix.n_cols, output.n_cols);
+  BOOST_REQUIRE_EQUAL(matrix.n_rows, output.n_rows);
+  CheckMatrices(output, matrix);
 }
-#endif
-
-#endif
 
 /**
  * Test normalization of labels.
@@ -850,10 +990,10 @@ class TestInner
   TestInner(char c, string s) : c(c), s(s) { }
 
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(c, "char");
-    ar & data::CreateNVP(s, "string");
+    ar & BOOST_SERIALIZATION_NVP(c);
+    ar & BOOST_SERIALIZATION_NVP(s);
   }
 
   // Public members for testing.
@@ -867,12 +1007,12 @@ class Test
   Test(int x, int y) : x(x), y(y), ina('a', "hello"), inb('b', "goodbye") { }
 
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(x, "x");
-    ar & data::CreateNVP(y, "y");
-    ar & data::CreateNVP(ina, "ina");
-    ar & data::CreateNVP(inb, "inb");
+    ar & BOOST_SERIALIZATION_NVP(x);
+    ar & BOOST_SERIALIZATION_NVP(y);
+    ar & BOOST_SERIALIZATION_NVP(ina);
+    ar & BOOST_SERIALIZATION_NVP(inb);
   }
 
   // Public members for testing.
@@ -1682,7 +1822,7 @@ BOOST_AUTO_TEST_CASE(SimpleARFFCategoricalTest)
   f << endl;
   f << "@attribute three STRING" << endl;
   f << endl;
-  f << "\% a comment line " << endl;
+  f << "% a comment line " << endl;
   f << endl;
   f << "@data" << endl;
   f << "hello, 1, moo" << endl;
@@ -1738,15 +1878,15 @@ BOOST_AUTO_TEST_CASE(HarderARFFTest)
   f << endl;
   f << "@attribute @@@@flfl numeric" << endl;
   f << endl;
-  f << "\% comment" << endl;
+  f << "% comment" << endl;
   f << "@attribute \"hello world\" string" << endl;
   f << "@attribute 12345 integer" << endl;
   f << "@attribute real real" << endl;
-  f << "@attribute \"blah blah blah     \t \" numeric \% comment" << endl;
-  f << "\% comment" << endl;
+  f << "@attribute \"blah blah blah     \t \" numeric % comment" << endl;
+  f << "% comment" << endl;
   f << "@data" << endl;
   f << "1, one, 3, 4.5, 6" << endl;
-  f << "2, two, 4, 5.5, 7 \% comment" << endl;
+  f << "2, two, 4, 5.5, 7 % comment" << endl;
   f << "3, \"three five, six\", 5, 6.5, 8" << endl;
   f.close();
 
@@ -1803,15 +1943,15 @@ BOOST_AUTO_TEST_CASE(BadDatasetInfoARFFTest)
   f << endl;
   f << "@attribute @@@@flfl numeric" << endl;
   f << endl;
-  f << "\% comment" << endl;
+  f << "% comment" << endl;
   f << "@attribute \"hello world\" string" << endl;
   f << "@attribute 12345 integer" << endl;
   f << "@attribute real real" << endl;
-  f << "@attribute \"blah blah blah     \t \" numeric \% comment" << endl;
-  f << "\% comment" << endl;
+  f << "@attribute \"blah blah blah     \t \" numeric % comment" << endl;
+  f << "% comment" << endl;
   f << "@data" << endl;
   f << "1, one, 3, 4.5, 6" << endl;
-  f << "2, two, 4, 5.5, 7 \% comment" << endl;
+  f << "2, two, 4, 5.5, 7 % comment" << endl;
   f << "3, \"three five, six\", 5, 6.5, 8" << endl;
   f.close();
 
@@ -1822,6 +1962,20 @@ BOOST_AUTO_TEST_CASE(BadDatasetInfoARFFTest)
       std::invalid_argument);
 
   remove("test.arff");
+}
+
+/**
+ * If file is not found, it should throw.
+ */
+BOOST_AUTO_TEST_CASE(NonExistentFileARFFTest)
+{
+  arma::mat dataset;
+  DatasetInfo info;
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(data::LoadARFF("nonexistentfile.arff", dataset, info),
+      std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -1992,5 +2146,27 @@ BOOST_AUTO_TEST_CASE(LoadCSVNoTransposeTXTTest)
   remove("test.txt");
 }
 
+/**
+ * Make sure DatasetMapper properly unmaps from non-unique strings.
+ */
+BOOST_AUTO_TEST_CASE(DatasetMapperNonUniqueTest)
+{
+  DatasetMapper<MissingPolicy> dm(1);
+
+  // Map a couple of strings; they'll map to quiet_NaN().
+  dm.MapString<double>("0.5", 0); // No mapping created.
+  dm.MapString<double>("hello", 0); // Mapping created.
+  dm.MapString<double>("goodbye", 0);
+  dm.MapString<double>("cheese", 0);
+
+  double nan = std::numeric_limits<double>::quiet_NaN();
+  BOOST_REQUIRE_EQUAL(dm.NumMappings(0), 3);
+  BOOST_REQUIRE_EQUAL(dm.NumUnmappings(nan, 0), 3);
+
+  BOOST_REQUIRE_EQUAL(dm.UnmapString(nan, 0), "hello");
+  BOOST_REQUIRE_EQUAL(dm.UnmapString(nan, 0, 0), "hello");
+  BOOST_REQUIRE_EQUAL(dm.UnmapString(nan, 0, 1), "goodbye");
+  BOOST_REQUIRE_EQUAL(dm.UnmapString(nan, 0, 2), "cheese");
+}
 
 BOOST_AUTO_TEST_SUITE_END();

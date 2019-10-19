@@ -2,8 +2,9 @@
  * @file timers.hpp
  * @author Matthew Amidon
  * @author Marcus Edel
+ * @author Ryan Curtin
  *
- * Timers for MLPACK.
+ * Timers for mlpack.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -15,10 +16,14 @@
 
 #include <map>
 #include <string>
-#include <chrono> // chrono library for cross platform timer calculation
+#include <chrono> // chrono library for cross platform timer calculation.
+#include <thread> // std::thread is used for thread safety.
+#include <mutex>
+#include <list>
+#include <atomic>
 
 #if defined(_WIN32)
- // uint64_t isn't defined on every windows.
+  // uint64_t isn't defined on every windows.
   #if !defined(HAVE_UINT64_T)
     #if SIZEOF_UNSIGNED_LONG == 8
       typedef unsigned long uint64_t;
@@ -33,7 +38,9 @@ namespace mlpack {
 /**
  * The timer class provides a way for mlpack methods to be timed.  The three
  * methods contained in this class allow a named timer to be started and
- * stopped, and its value to be obtained.
+ * stopped, and its value to be obtained.  A named timer is specific to the
+ * thread it is running on, so if you start a timer in one thread, it cannot be
+ * stopped from a different thread.
  */
 class Timer
 {
@@ -67,21 +74,46 @@ class Timer
    * @param name Name of timer to return value of.
    */
   static std::chrono::microseconds Get(const std::string& name);
+
+  /**
+   * Enable timing of mlpack programs.  Do not run this while timers are
+   * running!
+   */
+  static void EnableTiming();
+
+  /**
+   * Disable timing of mlpack programs.  Do not run this while timers are
+   * running!
+   */
+  static void DisableTiming();
+
+  /**
+   * Stop and reset all running timers.  This removes all knowledge of any
+   * existing timers.
+   */
+  static void ResetAll();
 };
 
 class Timers
 {
  public:
-  //! Nothing to do for the constructor.
-  Timers() { }
+  //! Default to disabled.
+  Timers() : enabled(false) { }
 
   /**
    * Returns a copy of all the timers used via this interface.
    */
-  std::map<std::string, std::chrono::microseconds>& GetAllTimers();
+  std::map<std::string, std::chrono::microseconds> GetAllTimers();
 
   /**
-   * Returns a copy of the timer specified.
+   * Reset the timers.  This stops all running timers and removes them.  Whether
+   * or not timing is enabled will not be changed.
+   */
+  void Reset();
+
+  /**
+   * Returns a copy of the timer specified.  This contains the sum of the timing
+   * results for timers that have been stopped with this name.
    *
    * @param timerName The name of the timer in question.
    */
@@ -102,34 +134,50 @@ class Timers
    * length of both runs of the timer.
    *
    * @param timerName The name of the timer in question.
+   * @param threadId Id of the thread accessing the timer.
    */
-  void StartTimer(const std::string& timerName);
+  void StartTimer(const std::string& timerName,
+                  const std::thread::id& threadId = std::thread::id());
 
   /**
-   * Halts the timer, and replaces it's value with
-   * the delta time from it's start
+   * Halts the timer, and replaces its value with the delta time from its start.
    *
    * @param timerName The name of the timer in question.
+   * @param threadId Id of the thread accessing the timer.
    */
-  void StopTimer(const std::string& timerName);
+  void StopTimer(const std::string& timerName,
+                 const std::thread::id& threadId = std::thread::id());
 
   /**
    * Returns state of the given timer.
    *
    * @param timerName The name of the timer in question.
+   * @param threadId Id of the thread accessing the timer.
    */
-  bool GetState(std::string timerName);
+  bool GetState(const std::string& timerName,
+                const std::thread::id& threadId = std::thread::id());
+
+  /**
+   * Stop all timers.
+   */
+  void StopAllTimers();
+
+  //! Modify whether or not timing is enabled.
+  std::atomic<bool>& Enabled() { return enabled; }
+  //! Get whether or not timing is enabled.
+  bool Enabled() const { return enabled; }
 
  private:
   //! A map of all the timers that are being tracked.
   std::map<std::string, std::chrono::microseconds> timers;
-  //! A map that contains whether or not each timer is currently running.
-  std::map<std::string, bool> timerState;
+  //! A mutex for modifying the timers.
+  std::mutex timersMutex;
   //! A map for the starting values of the timers.
-  std::map<std::string, std::chrono::high_resolution_clock::time_point>
-      timerStartTime;
+  std::map<std::thread::id, std::map<std::string,
+      std::chrono::high_resolution_clock::time_point>> timerStartTime;
 
-  std::chrono::high_resolution_clock::time_point GetTime();
+  //! Whether or not timing is enabled.
+  std::atomic<bool> enabled;
 };
 
 } // namespace mlpack

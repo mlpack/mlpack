@@ -28,8 +28,6 @@
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
 
-#include "serialization_shim.hpp"
-
 namespace mlpack {
 namespace data {
 
@@ -92,17 +90,17 @@ bool Load(const std::string& filename,
     if (f == format::xml)
     {
       boost::archive::xml_iarchive ar(ifs);
-      ar >> CreateNVP(t, name);
+      ar >> boost::serialization::make_nvp(name.c_str(), t);
     }
     else if (f == format::text)
     {
       boost::archive::text_iarchive ar(ifs);
-      ar >> CreateNVP(t, name);
+      ar >> boost::serialization::make_nvp(name.c_str(), t);
     }
     else if (f == format::binary)
     {
       boost::archive::binary_iarchive ar(ifs);
-      ar >> CreateNVP(t, name);
+      ar >> boost::serialization::make_nvp(name.c_str(), t);
     }
 
     return true;

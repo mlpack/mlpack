@@ -81,7 +81,7 @@ void KernelPCA<KernelType, KernelRule>::Apply(arma::mat& data,
     data.shed_rows(newDimension, data.n_rows - 1);
 }
 
-} // namespace mlpack
 } // namespace kpca
+} // namespace mlpack
 
 #endif

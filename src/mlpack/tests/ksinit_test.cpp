@@ -15,14 +15,14 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
+#include <ensmallen.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(KSInitialization);
 
@@ -85,10 +85,9 @@ void BuildVanillaNetwork(MatType& trainData,
   model.Add<LeakyReLU<> >();
   model.Add<Linear<> >(hiddenLayerSize, outputSize);
 
-  RMSprop<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
-      maxEpochs * trainData.n_cols, 1e-18);
+  ens::RMSProp opt(0.01, 1, 0.88, 1e-8, maxEpochs * trainData.n_cols, 1e-18);
 
-  model.Train(std::move(trainData), std::move(trainLabels), opt);
+  model.Train(trainData, trainLabels, opt);
 
   MatType prediction;
 
@@ -229,8 +228,8 @@ void AvgCrossValidation(arma::mat& dataset,
  */
 BOOST_AUTO_TEST_CASE(IrisDataset)
 {
-  double trainErrorThreshold = 0.001;
-  double validationErrorThreshold = 0.001;
+  double trainErrorThreshold = 0.01;
+  double validationErrorThreshold = 0.01;
 
   arma::mat dataset, labels;
 
@@ -242,7 +241,7 @@ BOOST_AUTO_TEST_CASE(IrisDataset)
   // Normalization used in the paper.
   dataset /= 10;
 
-  //Counter for the number of failures.
+  // Counter for the number of failures.
   size_t numFails = 0;
 
   // It isn't guaranteed that the network will converge in the specified number
@@ -254,7 +253,7 @@ BOOST_AUTO_TEST_CASE(IrisDataset)
     double avgTrainError, avgValidationError;
 
     // Run the CV for 10 times.
-    AvgCrossValidation(dataset, 1, 10, 3, 52, avgTrainError,
+    AvgCrossValidation(dataset, 1, 10, 3, 15, avgTrainError,
         avgValidationError);
 
     if (avgTrainError <= trainErrorThreshold &&
@@ -314,8 +313,8 @@ BOOST_AUTO_TEST_CASE(NonLinearFunctionApproximation)
   {
     double avgTrainError, avgValidationError;
 
-    // Run CV 10 times.
-    AvgCrossValidation(dataset, 3, 10, 10, 20, avgTrainError,
+    // Run CV 5 times.
+    AvgCrossValidation(dataset, 3, 5, 10, 10, avgTrainError,
         avgValidationError);
 
     if (avgTrainError <= trainErrorThreshold &&

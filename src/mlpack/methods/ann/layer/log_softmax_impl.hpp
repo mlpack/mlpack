@@ -32,9 +32,9 @@ void LogSoftMax<InputDataType, OutputDataType>::Forward(
   arma::mat maxInput = arma::repmat(arma::max(input), input.n_rows, 1);
   output = (maxInput - input);
 
-  // Approximation of the hyperbolic tangent. The acuracy however is
-  // about 0.00001 lower as using tanh. Credits go to Leon Bottou.
-  output.transform( [](double x)
+  // Approximation of the base-e exponential function. The acuracy however is
+  // about 0.00001 lower as using exp. Credits go to Leon Bottou.
+  output.transform([](double x)
   {
     //! Fast approximation of exp(-x) for x positive.
     static constexpr double A0 = 1.0;
@@ -55,9 +55,10 @@ void LogSoftMax<InputDataType, OutputDataType>::Forward(
     }
 
     return 0.0;
-  } );
+  });
 
-  output = input - (maxInput + std::log(arma::accu(output)));
+  maxInput.each_row() += arma::log(arma::sum(output));
+  output = input - maxInput;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -67,12 +68,12 @@ void LogSoftMax<InputDataType, OutputDataType>::Backward(
     arma::Mat<eT>&& gy,
     arma::Mat<eT>&& g)
 {
-  g = gy - arma::exp(input) * arma::accu(gy);
+  g = arma::exp(input) + gy;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void LogSoftMax<InputDataType, OutputDataType>::Serialize(
+void LogSoftMax<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
     const unsigned int /* version */)
 {

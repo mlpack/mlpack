@@ -7,6 +7,9 @@ set(SOURCES
   lin_alg.hpp
   lin_alg_impl.hpp
   lin_alg.cpp
+  log_add.hpp
+  log_add_impl.hpp
+  make_alias.hpp
   random.hpp
   random.cpp
   random_basis.hpp
@@ -14,6 +17,9 @@ set(SOURCES
   range.hpp
   range_impl.hpp
   round.hpp
+  shuffle_data.hpp
+  ccov.hpp
+  ccov_impl.hpp
 )
 
 # add directory name to sources

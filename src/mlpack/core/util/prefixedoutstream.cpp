@@ -36,7 +36,7 @@ PrefixedOutStream& PrefixedOutStream::operator<<(short val)
 
 PrefixedOutStream& PrefixedOutStream::operator<<(unsigned short val)
 {
- BaseLogic<unsigned short>(val);
+  BaseLogic<unsigned short>(val);
   return *this;
 }
 

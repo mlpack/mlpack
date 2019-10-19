@@ -5,6 +5,11 @@
  * Implementation of the GlimpseLayer class, which takes an input image and a
  * location to extract a retina-like representation of the input image at
  * different increasing scales.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_LAYER_GLIMPSE_IMPL_HPP
 #define MLPACK_METHODS_ANN_LAYER_GLIMPSE_IMPL_HPP
@@ -28,7 +33,11 @@ Glimpse<InputDataType, OutputDataType>::Glimpse(
     depth(depth),
     scale(scale),
     inputWidth(inputWidth),
-    inputHeight(inputHeight)
+    inputHeight(inputHeight),
+    outputWidth(size),
+    outputHeight(size),
+    inputDepth(0),
+    deterministic(true)
 {
   // Nothing to do here.
 }
@@ -207,15 +216,18 @@ void Glimpse<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void Glimpse<InputDataType, OutputDataType>::Serialize(
+void Glimpse<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(inSize, "inSize");
-  ar & data::CreateNVP(size, "size");
-  ar & data::CreateNVP(depth, "depth");
-  ar & data::CreateNVP(scale, "scale");
-  ar & data::CreateNVP(inputWidth, "inputWidth");
-  ar & data::CreateNVP(location, "location");
+  ar & BOOST_SERIALIZATION_NVP(inSize);
+  ar & BOOST_SERIALIZATION_NVP(size);
+  ar & BOOST_SERIALIZATION_NVP(depth);
+  ar & BOOST_SERIALIZATION_NVP(scale);
+  ar & BOOST_SERIALIZATION_NVP(inputWidth);
+  ar & BOOST_SERIALIZATION_NVP(inputHeight);
+  ar & BOOST_SERIALIZATION_NVP(outputWidth);
+  ar & BOOST_SERIALIZATION_NVP(outputHeight);
+  ar & BOOST_SERIALIZATION_NVP(location);
 }
 
 } // namespace ann

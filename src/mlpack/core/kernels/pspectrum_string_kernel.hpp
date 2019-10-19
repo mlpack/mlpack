@@ -102,9 +102,6 @@ class PSpectrumStringKernel
   size_t& P() { return p; }
 
  private:
-  //! The datasets.
-  const std::vector<std::vector<std::string> >& datasets;
-
   //! Mappings of the datasets to counts of substrings.  Such a huge structure
   //! is not wonderful...
   std::vector<std::vector<std::map<std::string, int> > > counts;

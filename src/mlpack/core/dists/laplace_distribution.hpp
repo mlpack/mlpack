@@ -1,6 +1,7 @@
 /*
  * @file laplace.hpp
  * @author Zhihao Lou
+ * @author Rohan Raj
  *
  * Laplace (double exponential) distribution used in SA.
  *
@@ -24,8 +25,8 @@ namespace distribution {
  * \f]
  *
  * given scale parameter \f$\theta\f$ and mean \f$\mu\f$.  This implementation
- * assumes a diagonal covariance, but a rewrite to support arbitrary covariances
- * is possible.
+ * assumes a diagonal covariance, but a rewrite to support arbitrary
+ * covariances is possible.
  *
  * See the following paper for more information on the non-diagonal-covariance
  * Laplace distribution and estimation techniques:
@@ -42,9 +43,9 @@ namespace distribution {
  * }
  * @endcode
  *
- * Note that because of the diagonal covariance restriction, much of the algebra
- * in the paper above becomes simplified, and the PDF takes roughly the same
- * form as the univariate case.
+ * Note that because of the diagonal covariance restriction, much of the
+ * algebra in the paper above becomes simplified, and the PDF takes roughly
+ * the same form as the univariate case.
  */
 class LaplaceDistribution
 {
@@ -56,8 +57,8 @@ class LaplaceDistribution
   LaplaceDistribution() : scale(0) { }
 
   /**
-   * Construct the Laplace distribution with the given scale and dimensionality.
-   * The mean is initialized to zero.
+   * Construct the Laplace distribution with the given scale and
+   * dimensionality. The mean is initialized to zero.
    *
    * @param dimensionality Dimensionality of distribution.
    * @param scale Scale of distribution.
@@ -66,7 +67,8 @@ class LaplaceDistribution
       mean(arma::zeros<arma::vec>(dimensionality)), scale(scale) { }
 
   /**
-   * Construct the Laplace distribution with the given mean and scale parameter.
+   * Construct the Laplace distribution with the given mean and scale
+   * parameter.
    *
    * @param mean Mean of distribution.
    * @param scale Scale of distribution.
@@ -79,6 +81,8 @@ class LaplaceDistribution
 
   /**
    * Return the probability of the given observation.
+   *
+   * @param observation Point to evaluate probability at.
    */
   double Probability(const arma::vec& observation) const
   {
@@ -86,9 +90,34 @@ class LaplaceDistribution
   }
 
   /**
+   * Evaluate probability density function of given observation.
+   *
+   * @param x List of observations.
+   * @param probabilities Output probabilities for each input observation.
+   */
+  void Probability(const arma::mat& x, arma::vec& probabilities) const;
+
+  /**
    * Return the log probability of the given observation.
+   *
+   * @param observation Point to evaluate logarithm of probability.
    */
   double LogProbability(const arma::vec& observation) const;
+
+  /**
+   * Evaluate log probability density function of given observation.
+   *
+   * @param x List of observations.
+   * @param logProbabilities Output probabilities for each input observation.
+   */
+  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const
+  {
+    logProbabilities.set_size(x.n_cols);
+    for (size_t i = 0; i < x.n_cols; i++)
+    {
+      logProbabilities(i) = LogProbability(x.unsafe_col(i));
+    }
+  }
 
   /**
    * Return a randomly generated observation according to the probability
@@ -144,10 +173,10 @@ class LaplaceDistribution
    * Serialize the distribution.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(mean, "mean");
-    ar & data::CreateNVP(scale, "scale");
+    ar & BOOST_SERIALIZATION_NVP(mean);
+    ar & BOOST_SERIALIZATION_NVP(scale);
   }
 
  private:
@@ -155,7 +184,6 @@ class LaplaceDistribution
   arma::vec mean;
   //! Scale parameter of the distribution.
   double scale;
-
 };
 
 } // namespace distribution

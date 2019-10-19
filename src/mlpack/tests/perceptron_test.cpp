@@ -181,7 +181,6 @@ BOOST_AUTO_TEST_CASE(Random3)
 
   for (size_t i = 0; i < predictedLabels.n_cols; i++)
     BOOST_CHECK_EQUAL(predictedLabels(0, i), 0);
-
 }
 
 /**

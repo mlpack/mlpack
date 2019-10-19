@@ -1,0 +1,52 @@
+/**
+ * @file generate_markdown.binding.cpp.in
+ * @author Ryan Curtin
+ *
+ * Print Markdown for a specific binding.  This provides two utility
+ * methods---one that prints info for a table of contents, and one that prints
+ * the Markdown bindings themselves.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+
+#define BINDING_NAME "${BINDING}"
+
+#include <mlpack/core.hpp>
+#include "generate_markdown.${BINDING}.hpp"
+#include "binding_info.hpp"
+#include "print_docs.hpp"
+#include "get_binding_name.hpp"
+
+static const std::string testName = "${BINDING}";
+#include <${PROGRAM_MAIN_FILE}>
+
+using namespace std;
+
+namespace mlpack {
+namespace bindings {
+namespace markdown {
+
+void Print${BINDING}Headers()
+{
+  // Fill the vector of languages for which we want to print.
+  vector<string> languages;
+  ${LANGUAGES_PUSH_BACK_CODE}
+
+  PrintHeaders("${BINDING}", languages);
+}
+
+void Print${BINDING}Docs()
+{
+  // Fill the vector of languages for which we want to print.
+  vector<string> languages;
+  ${LANGUAGES_PUSH_BACK_CODE}
+
+  PrintDocs("${BINDING}", languages);
+}
+
+} // namespace markdown
+} // namespace bindings
+} // namespace mlpack

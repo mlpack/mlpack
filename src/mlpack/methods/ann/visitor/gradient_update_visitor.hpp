@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_ANN_VISITOR_GRADIENT_UPDATE_VISITOR_HPP
 
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
 
 #include <boost/variant.hpp>
 
@@ -34,6 +33,8 @@ class GradientUpdateVisitor : public boost::static_visitor<size_t>
   template<typename LayerType>
   size_t operator()(LayerType* layer) const;
 
+  size_t operator()(MoreTypes layer) const;
+
  private:
   //! The gradient set.
   arma::mat&& gradient;
@@ -45,14 +46,14 @@ class GradientUpdateVisitor : public boost::static_visitor<size_t>
   template<typename T>
   typename std::enable_if<
       HasGradientCheck<T, arma::mat&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      !HasModelCheck<T>::value, size_t>::type
   LayerGradients(T* layer, arma::mat& input) const;
 
   //! Update the gradient if the module implements the Model() function.
   template<typename T>
   typename std::enable_if<
       !HasGradientCheck<T, arma::mat&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      HasModelCheck<T>::value, size_t>::type
   LayerGradients(T* layer, arma::mat& input) const;
 
   //! Update the gradient if the module implements the Gradient() and Model()
@@ -60,7 +61,7 @@ class GradientUpdateVisitor : public boost::static_visitor<size_t>
   template<typename T>
   typename std::enable_if<
       HasGradientCheck<T, arma::mat&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      HasModelCheck<T>::value, size_t>::type
   LayerGradients(T* layer, arma::mat& input) const;
 
   //! Do not update the gradient parameter if the module doesn't implement the
@@ -68,7 +69,7 @@ class GradientUpdateVisitor : public boost::static_visitor<size_t>
   template<typename T, typename P>
   typename std::enable_if<
       !HasGradientCheck<T, P&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      !HasModelCheck<T>::value, size_t>::type
   LayerGradients(T* layer, P& input) const;
 };
 

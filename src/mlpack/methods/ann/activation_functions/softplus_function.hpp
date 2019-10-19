@@ -42,8 +42,7 @@ namespace ann /** Artificial Neural Network. */ {
  */
 class SoftplusFunction
 {
-  public:
-  
+ public:
   /**
    * Computes the softplus function.
    *
@@ -63,10 +62,10 @@ class SoftplusFunction
    * @param x Input data.
    * @param y The resulting output activation.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Fn(const InputVecType& x, OutputVecType& y)
+  template<typename InputType, typename OutputType>
+  static void Fn(const InputType& x, OutputType& y)
   {
-    y = x;
+    y.set_size(arma::size(x));
 
     for (size_t i = 0; i < x.n_elem; i++)
       y(i) = Fn(x(i));
@@ -89,8 +88,8 @@ class SoftplusFunction
    * @param y Input activations.
    * @param x The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& y, OutputVecType& x)
+  template<typename InputType, typename OutputType>
+  static void Deriv(const InputType& y, OutputType& x)
   {
     x = 1.0 / (1 + arma::exp(-y));
   }
@@ -112,10 +111,10 @@ class SoftplusFunction
    * @param y Input data.
    * @param x The resulting inverse of the input data.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Inv(const InputVecType& y, OutputVecType& x)
+  template<typename InputType, typename OutputType>
+  static void Inv(const InputType& y, OutputType& x)
   {
-    x = y;
+    x.set_size(arma::size(y));
 
     for (size_t i = 0; i < y.n_elem; i++)
       x(i) = Inv(y(i));

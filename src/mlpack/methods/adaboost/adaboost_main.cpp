@@ -1,6 +1,6 @@
-/*
- * @file: adaboost_main.cpp
- * @author: Udit Saxena
+/**
+ * @file adaboost_main.cpp
+ * @author Udit Saxena
  *
  * Implementation of the AdaBoost main program.
  *
@@ -34,6 +34,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "adaboost.hpp"
 #include "adaboost_model.hpp"
 
@@ -43,8 +44,16 @@ using namespace arma;
 using namespace mlpack::adaboost;
 using namespace mlpack::decision_stump;
 using namespace mlpack::perceptron;
+using namespace mlpack::util;
 
-PROGRAM_INFO("AdaBoost", "This program implements the AdaBoost (or Adaptive "
+PROGRAM_INFO("AdaBoost",
+    // Short description.
+    "An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for "
+    "classification.  This can be used to train an AdaBoost model on labeled "
+    "data or use an existing AdaBoost model to predict the classes of new "
+    "points.",
+    // Long description.
+    "This program implements the AdaBoost (or Adaptive "
     "Boosting) algorithm. The variant of AdaBoost implemented here is "
     "AdaBoost.MH. It uses a weak learner, either decision stumps or "
     "perceptrons, and over many iterations, creates a strong learner that is a "
@@ -58,17 +67,50 @@ PROGRAM_INFO("AdaBoost", "This program implements the AdaBoost (or Adaptive "
     "\n\n"
     "This program allows training of an AdaBoost model, and then application of"
     " that model to a test dataset.  To train a model, a dataset must be passed"
-    " with the --training_file (-t) option.  Labels can be given with the "
-    "--labels_file (-l) option; if no labels file is specified, the labels will"
-    " be assumed to be the last column of the input dataset.  Alternately, an "
-    "AdaBoost model may be loaded with the --input_model_file (-m) option."
+    " with the " + PRINT_PARAM_STRING("training") + " option.  Labels can be "
+    "given with the " + PRINT_PARAM_STRING("labels") + " option; if no labels "
+    "are specified, the labels will be assumed to be the last column of the "
+    "input dataset.  Alternately, an AdaBoost model may be loaded with the " +
+    PRINT_PARAM_STRING("input_model") + " option."
     "\n\n"
     "Once a model is trained or loaded, it may be used to provide class "
     "predictions for a given test dataset.  A test dataset may be specified "
-    "with the --test_file (-T) parameter.  The predicted classes for each point"
-    " in the test dataset will be saved into the file specified by the "
-    "--output_file (-o) parameter.  The AdaBoost model itself may be saved to "
-    "a file specified by the --output_model_file (-M) parameter.");
+    "with the " + PRINT_PARAM_STRING("test") + " parameter.  The predicted "
+    "classes for each point in the test dataset are output to the " +
+    PRINT_PARAM_STRING("predictions") + " output parameter.  The AdaBoost "
+    "model itself is output to the " + PRINT_PARAM_STRING("output_model") +
+    " output parameter."
+    "\n\n"
+    "Note: the following parameter is deprecated and "
+    "will be removed in mlpack 4.0.0: " + PRINT_PARAM_STRING("output") +
+    "."
+    "\n"
+    "Use " + PRINT_PARAM_STRING("predictions") + " instead of " +
+    PRINT_PARAM_STRING("output") + '.' +
+    "\n\n"
+    "For example, to run AdaBoost on an input dataset " +
+    PRINT_DATASET("data") + " with perceptrons as the weak learner type, "
+    "storing the trained model in " + PRINT_MODEL("model") + ", one could "
+    "use the following command: "
+    "\n\n" +
+    PRINT_CALL("adaboost", "training", "data", "output_model", "model",
+        "weak_learner", "perceptron") +
+    "\n\n"
+    "Similarly, an already-trained model in " + PRINT_MODEL("model") + " can"
+    " be used to provide class predictions from test data " +
+    PRINT_DATASET("test_data") + " and store the output in " +
+    PRINT_DATASET("predictions") + " with the following command: "
+    "\n\n" +
+    PRINT_CALL("adaboost", "input_model", "model", "test", "test_data",
+        "predictions", "predictions"),
+    // See also...
+    SEE_ALSO("AdaBoost on Wikipedia", "https://en.wikipedia.org/wiki/AdaBoost"),
+    SEE_ALSO("Improved boosting algorithms using confidence-rated predictions "
+        "(pdf)", "http://rob.schapire.net/papers/SchapireSi98.pdf"),
+    SEE_ALSO("Perceptron", "#perceptron"),
+    SEE_ALSO("Decision Stump", "#decision_stump"),
+    SEE_ALSO("mlpack::adaboost::AdaBoost C++ class documentation",
+        "@doxygen/classmlpack_1_1adaboost_1_1AdaBoost.html"));
 
 // Input for training.
 PARAM_MATRIX_IN("training", "Dataset for training AdaBoost.", "t");
@@ -76,7 +118,9 @@ PARAM_UROW_IN("labels", "Labels for the training set.", "l");
 
 // Classification options.
 PARAM_MATRIX_IN("test", "Test dataset.", "T");
+// PARAM_UROW_OUT("output") is deprecated and will be removed in mlpack 4.0.0.
 PARAM_UROW_OUT("output", "Predicted labels for the test set.", "o");
+PARAM_UROW_OUT("predictions", "Predicted labels for the test set.", "P");
 
 // Training options.
 PARAM_INT_IN("iterations", "The maximum number of boosting iterations to be run"
@@ -91,83 +135,46 @@ PARAM_MODEL_IN(AdaBoostModel, "input_model", "Input AdaBoost model.", "m");
 PARAM_MODEL_OUT(AdaBoostModel, "output_model", "Output trained AdaBoost model.",
     "M");
 
-int main(int argc, char *argv[])
+static void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Check input parameters and issue warnings/errors as necessary.
 
   // The user cannot specify both a training file and an input model file.
-  if (CLI::HasParam("training") && CLI::HasParam("input_model"))
-  {
-    Log::Fatal << "Only one of --training_file or --input_model_file may be "
-        << "specified!" << endl;
-  }
-
-  // The user must specify either a training file or an input model file.
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
-  {
-    Log::Fatal << "Either --training_file or --input_model_file must be "
-        << "specified!" << endl;
-  }
+  RequireOnlyOnePassed({ "training", "input_model" });
 
   // The weak learner must make sense.
-  if (CLI::GetParam<string>("weak_learner") != "decision_stump" &&
-      CLI::GetParam<string>("weak_learner") != "perceptron")
-  {
-    Log::Fatal << "Unknown weak learner type '"
-        << CLI::GetParam<string>("weak_learner")
-        << "'; must be 'decision_stump' or 'perceptron'." << endl;
-  }
+  RequireParamInSet<std::string>("weak_learner",
+      { "decision_stump", "perceptron" }, true, "unknown weak learner type");
 
   // --labels can't be specified without --training.
-  if (CLI::HasParam("labels") && !CLI::HasParam("training"))
-    Log::Warn << "--labels_file ignored, because --training_file was not "
-        << "passed." << endl;
+  ReportIgnoredParam({{ "training", false }}, "labels");
 
   // Sanity check on iterations.
-  int iterInt = CLI::GetParam<int>("iterations");
-  if (iterInt < 0)
-  {
-    Log::Fatal << "Invalid number of iterations (" << iterInt << ") specified! "
-        << "Must be greater than 0." << endl;
-  }
+  RequireParamValue<int>("iterations", [](int x) { return x > 0; },
+      true, "invalid number of iterations specified");
 
   // If a weak learner is specified with a model, it will be ignored.
-  if (CLI::HasParam("input_model") && CLI::HasParam("weak_learner"))
-  {
-    Log::Warn << "--weak_learner ignored because --input_model_file is "
-        << "specified." << endl;
-  }
+  ReportIgnoredParam({{ "input_model", true }}, "weak_learner");
 
   // Training parameters are ignored if no training file is given.
-  if (CLI::HasParam("tolerance") && !CLI::HasParam("training"))
-  {
-    Log::Warn << "--tolerance ignored, because --training_file was not "
-        << "passed." << endl;
-  }
-  if (CLI::HasParam("iterations") && !CLI::HasParam("training"))
-  {
-    Log::Warn << "--iterations ignored, because --training_file was not "
-        << "passed." << endl;
-  }
+  ReportIgnoredParam({{ "training", false }}, "tolerance");
+  ReportIgnoredParam({{ "training", false }}, "iterations");
 
-  if (!CLI::HasParam("output_model") && !CLI::HasParam("output"))
-  {
-    Log::Warn << "Neither --output_model_file nor --output_file are specified; "
-        << "no results will be saved." << endl;
-  }
+  // If we gave an input model but no test set, issue a warning.
+  if (CLI::HasParam("input_model"))
+    RequireAtLeastOnePassed({ "test" }, false, "no task will be performed");
 
-  if (CLI::HasParam("output") && !CLI::HasParam("test"))
-  {
-    Log::Warn << "--output_file ignored because --test_file is not specified."
-        << endl;
-  }
+  RequireAtLeastOnePassed({ "output_model", "output", "predictions" }, false,
+      "no results will be saved");
 
-  AdaBoostModel m;
+  // "output" will be removed in mlpack 4.0.0.
+  ReportIgnoredParam({{ "test", false }}, "predictions");
+
+  AdaBoostModel* m;
   if (CLI::HasParam("training"))
   {
     mat trainingData = std::move(CLI::GetParam<arma::mat>("training"));
+    m = new AdaBoostModel();
 
     // Load labels.
     arma::Row<size_t> labelsIn;
@@ -191,25 +198,28 @@ int main(int argc, char *argv[])
     Row<size_t> labels;
 
     // Normalize the labels.
-    data::NormalizeLabels(labelsIn, labels, m.Mappings());
+    data::NormalizeLabels(labelsIn, labels, m->Mappings());
 
     // Get other training parameters.
     const double tolerance = CLI::GetParam<double>("tolerance");
     const size_t iterations = (size_t) CLI::GetParam<int>("iterations");
     const string weakLearner = CLI::GetParam<string>("weak_learner");
     if (weakLearner == "decision_stump")
-      m.WeakLearnerType() = AdaBoostModel::WeakLearnerTypes::DECISION_STUMP;
+      m->WeakLearnerType() = AdaBoostModel::WeakLearnerTypes::DECISION_STUMP;
     else if (weakLearner == "perceptron")
-      m.WeakLearnerType() = AdaBoostModel::WeakLearnerTypes::PERCEPTRON;
+      m->WeakLearnerType() = AdaBoostModel::WeakLearnerTypes::PERCEPTRON;
+
+    const size_t numClasses = m->Mappings().n_elem;
+    Log::Info << numClasses << " classes in dataset." << endl;
 
     Timer::Start("adaboost_training");
-    m.Train(trainingData, labels, iterations, tolerance);
+    m->Train(trainingData, labels, numClasses, iterations, tolerance);
     Timer::Stop("adaboost_training");
   }
   else
   {
     // We have a specified input model.
-    m = std::move(CLI::GetParam<AdaBoostModel>("input_model"));
+    m = CLI::GetParam<AdaBoostModel*>("input_model");
   }
 
   // Perform classification, if desired.
@@ -217,26 +227,25 @@ int main(int argc, char *argv[])
   {
     mat testingData = std::move(CLI::GetParam<arma::mat>("test"));
 
-    if (testingData.n_rows != m.Dimensionality())
+    if (testingData.n_rows != m->Dimensionality())
       Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
           << "must be the same as the model dimensionality ("
-          << m.Dimensionality() << ")!" << endl;
+          << m->Dimensionality() << ")!" << endl;
 
     Row<size_t> predictedLabels(testingData.n_cols);
     Timer::Start("adaboost_classification");
-    m.Classify(testingData, predictedLabels);
+    m->Classify(testingData, predictedLabels);
     Timer::Stop("adaboost_classification");
 
     Row<size_t> results;
-    data::RevertLabels(predictedLabels, m.Mappings(), results);
-    
+    data::RevertLabels(predictedLabels, m->Mappings(), results);
+
+    // Save the predicted labels.
     if (CLI::HasParam("output"))
-      CLI::GetParam<arma::Row<size_t>>("output") = std::move(results);
+      CLI::GetParam<arma::Row<size_t>>("output") = results;
+    if (CLI::HasParam("predictions"))
+      CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(results);
   }
 
-  // Should we save the model, too?
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<AdaBoostModel>("output_model") = std::move(m);
-
-  CLI::Destroy();
+  CLI::GetParam<AdaBoostModel*>("output_model") = m;
 }

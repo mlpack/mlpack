@@ -166,7 +166,7 @@ CalculateValue(const VecType& pt,
   for (size_t i = 0; i < pt.n_rows; i++)
   {
     int e;
-    VecElemType normalizedVal = std::frexp(pt(i),&e);
+    VecElemType normalizedVal = std::frexp(pt(i), &e);
     bool sgn = std::signbit(normalizedVal);
 
     if (pt(i) == 0)
@@ -325,7 +325,7 @@ CompareWith(const VecType& pt,
   if (numValues == 0)
     return -1;
 
-  return CompareValues(localHilbertValues->col(numValues - 1),val);
+  return CompareValues(localHilbertValues->col(numValues - 1), val);
 }
 
 template<typename TreeElemType>
@@ -384,7 +384,7 @@ void DiscreteHilbertValue<TreeElemType>::InsertNode(TreeType* node)
 {
   DiscreteHilbertValue &val = node->AuxiliaryInfo().HilbertValue();
 
-  if (CompareWith(node,val) < 0)
+  if (CompareWith(node, val) < 0)
   {
     localHilbertValues = val.LocalHilbertValues();
     numValues = val.NumValues();
@@ -396,7 +396,6 @@ template<typename TreeType>
 void DiscreteHilbertValue<TreeElemType>::
 DeletePoint(TreeType* /* node */, const size_t localIndex)
 {
-
   // Delete the Hilbert value from the local dataset
   for (size_t i = numValues - 1; i > localIndex; i--)
     localHilbertValues->col(i - 1) = localHilbertValues->col(i);
@@ -515,16 +514,15 @@ void DiscreteHilbertValue<TreeElemType>::RedistributeHilbertValues(
 
 template<typename TreeElemType>
 template<typename Archive>
-void DiscreteHilbertValue<TreeElemType>::
-Serialize(Archive& ar, const unsigned int /* version */)
+void DiscreteHilbertValue<TreeElemType>::serialize(
+    Archive& ar,
+    const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
-  ar & CreateNVP(localHilbertValues, "localHilbertValues");
-  ar & CreateNVP(ownsLocalHilbertValues, "ownsLocalHilbertValues");
-  ar & CreateNVP(numValues, "numValues");
-  ar & CreateNVP(valueToInsert, "valueToInsert");
-  ar & CreateNVP(ownsValueToInsert, "ownsValueToInsert");
+  ar & BOOST_SERIALIZATION_NVP(localHilbertValues);
+  ar & BOOST_SERIALIZATION_NVP(ownsLocalHilbertValues);
+  ar & BOOST_SERIALIZATION_NVP(numValues);
+  ar & BOOST_SERIALIZATION_NVP(valueToInsert);
+  ar & BOOST_SERIALIZATION_NVP(ownsValueToInsert);
 }
 
 } // namespace tree

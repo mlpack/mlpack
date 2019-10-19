@@ -1,5 +1,254 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Add Model() to the FFN class to access individual layers (#2043).
+
+  * Update documentation for pip and conda installation packages (#2044).
+
+  * Add bindings for linear SVM (#1935); `mlpack_linear_svm` from the
+    command-line, `linear_svm()` from Python.
+
+  * Add support to return the layer name as `std::string` (#1987).
+
+  * Speed and memory improvements for the Transposed Convolution layer (#1493).
+
+### mlpack 3.2.1
+###### 2019-10-01
+  * Enforce CMake version check for ensmallen (#2032).
+
+  * Fix CMake check for Armadillo version (#2029).
+
+  * Better handling of when STB is not installed (#2033).
+
+  * Fix Naive Bayes classifier computations in high dimensions (#2022).
+
+### mlpack 3.2.0
+###### 2019-09-25
+  * Fix some potential infinity errors in Naive Bayes Classifier (#2022).
+
+  * Fix occasionally-failing RADICAL test (#1924).
+
+  * Fix gcc 9 OpenMP compilation issue (#1970).
+
+  * Added support for loading and saving of images (#1903).
+
+  * Add Multiple Pole Balancing Environment (#1901, #1951).
+
+  * Added functionality for scaling of data (#1876); see the command-line
+    binding `mlpack_preprocess_scale` or Python binding `preprocess_scale()`.
+
+  * Add new parameter `maximum_depth` to decision tree and random forest
+    bindings (#1916).
+
+  * Fix prediction output of softmax regression when test set accuracy is
+    calculated (#1922).
+
+  * Pendulum environment now checks for termination. All RL environments now
+    have an option to terminate after a set number of time steps (no limit
+    by default) (#1941).
+
+  * Add support for probabilistic KDE (kernel density estimation) error bounds
+    when using the Gaussian kernel (#1934).
+
+  * Fix negative distances for cover tree computation (#1979).
+
+  * Fix cover tree building when all pairwise distances are 0 (#1986).
+
+  * Improve KDE pruning by reclaiming not used error tolerance (#1954, #1984).
+
+  * Optimizations for sparse matrix accesses in z-score normalization for CF
+    (#1989).
+
+  * Add `kmeans_max_iterations` option to GMM training binding `gmm_train_main`.
+
+  * Bump minimum Armadillo version to 8.400.0 due to ensmallen dependency
+    requirement (#2015).
+
+### mlpack 3.1.1
+###### 2019-05-26
+  * Fix random forest bug for numerical-only data (#1887).
+
+  * Significant speedups for random forest (#1887).
+
+  * Random forest now has `minimum_gain_split` and `subspace_dim` parameters
+    (#1887).
+
+  * Decision tree parameter `print_training_error` deprecated in favor of
+    `print_training_accuracy`.
+
+  * `output` option changed to `predictions` for adaboost and perceptron
+    binding. Old options are now deprecated and will be preserved until mlpack
+    4.0.0 (#1882).
+
+  * Concatenated ReLU layer (#1843).
+
+  * Accelerate NormalizeLabels function using hashing instead of linear search
+    (see `src/mlpack/core/data/normalize_labels_impl.hpp`) (#1780).
+
+  * Add `ConfusionMatrix()` function for checking performance of classifiers
+    (#1798).
+
+  * Install ensmallen headers when it is downloaded during build (#1900).
+
+### mlpack 3.1.0
+###### 2019-04-25
+  * Add DiagonalGaussianDistribution and DiagonalGMM classes to speed up the
+    diagonal covariance computation and deprecate DiagonalConstraint (#1666).
+
+  * Add kernel density estimation (KDE) implementation with bindings to other
+    languages (#1301).
+
+  * Where relevant, all models with a `Train()` method now return a `double`
+    value representing the goodness of fit (i.e. final objective value, error,
+    etc.) (#1678).
+
+  * Add implementation for linear support vector machine (see
+    `src/mlpack/methods/linear_svm`).
+
+  * Change DBSCAN to use PointSelectionPolicy and add OrderedPointSelection (#1625).
+
+  * Residual block support (#1594).
+
+  * Bidirectional RNN (#1626).
+
+  * Dice loss layer (#1674, #1714) and hard sigmoid layer (#1776).
+
+  * `output` option changed to `predictions` and `output_probabilities` to
+    `probabilities` for Naive Bayes binding (`mlpack_nbc`/`nbc()`).  Old options
+    are now deprecated and will be preserved until mlpack 4.0.0 (#1616).
+
+  * Add support for Diagonal GMMs to HMM code (#1658, #1666).  This can provide
+    large speedup when a diagonal GMM is acceptable as an emission probability
+    distribution.
+
+  * Python binding improvements: check parameter type (#1717), avoid copying
+    Pandas dataframes (#1711), handle Pandas Series objects (#1700).
+
+### mlpack 3.0.4
+###### 2018-11-13
+  * Bump minimum CMake version to 3.3.2.
+
+  * CMake fixes for Ninja generator by Marc Espie.
+
+### mlpack 3.0.3
+###### 2018-07-27
+  * Fix Visual Studio compilation issue (#1443).
+
+  * Allow running local_coordinate_coding binding with no initial_dictionary
+    parameter when input_model is not specified (#1457).
+
+  * Make use of OpenMP optional via the CMake 'USE_OPENMP' configuration
+    variable (#1474).
+
+  * Accelerate FNN training by 20-30% by avoiding redundant calculations
+    (#1467).
+
+  * Fix math::RandomSeed() usage in tests (#1462, #1440).
+
+  * Generate better Python setup.py with documentation (#1460).
+
+### mlpack 3.0.2
+###### 2018-06-08
+  * Documentation generation fixes for Python bindings (#1421).
+
+  * Fix build error for man pages if command-line bindings are not being built
+    (#1424).
+
+  * Add 'shuffle' parameter and Shuffle() method to KFoldCV (#1412).  This will
+    shuffle the data when the object is constructed, or when Shuffle() is
+    called.
+
+  * Added neural network layers: AtrousConvolution (#1390), Embedding (#1401),
+    and LayerNorm (layer normalization) (#1389).
+
+  * Add Pendulum environment for reinforcement learning (#1388) and update
+    Mountain Car environment (#1394).
+
+### mlpack 3.0.1
+###### 2018-05-10
+  * Fix intermittently failing tests (#1387).
+
+  * Add big-batch SGD (BBSGD) optimizer in
+    src/mlpack/core/optimizers/bigbatch_sgd/ (#1131).
+
+  * Fix simple compiler warnings (#1380, #1373).
+
+  * Simplify NeighborSearch constructor and Train() overloads (#1378).
+
+  * Add warning for OpenMP setting differences (#1358/#1382).  When mlpack is
+    compiled with OpenMP but another application is not (or vice versa), a
+    compilation warning will now be issued.
+
+  * Restructured loss functions in src/mlpack/methods/ann/ (#1365).
+
+  * Add environments for reinforcement learning tests (#1368, #1370, #1329).
+
+  * Allow single outputs for multiple timestep inputs for recurrent neural
+    networks (#1348).
+
+  * Add He and LeCun normal initializations for neural networks (#1342).
+    Neural networks: add He and LeCun normal initializations (#1342), add FReLU
+    and SELU activation functions (#1346, #1341), add alpha-dropout (#1349).
+
+### mlpack 3.0.0
+###### 2018-03-30
+  * Speed and memory improvements for DBSCAN.  --single_mode can now be used for
+    situations where previously RAM usage was too high.
+
+  * Bump minimum required version of Armadillo to 6.500.0.
+
+  * Add automatically generated Python bindings.  These have the same interface
+    as the command-line programs.
+
+  * Add deep learning infrastructure in src/mlpack/methods/ann/.
+
+  * Add reinforcement learning infrastructure in
+    src/mlpack/methods/reinforcement_learning/.
+
+  * Add optimizers: AdaGrad, CMAES, CNE, FrankeWolfe, GradientDescent,
+    GridSearch, IQN, Katyusha, LineSearch, ParallelSGD, SARAH, SCD, SGDR,
+    SMORMS3, SPALeRA, SVRG.
+
+  * Add hyperparameter tuning infrastructure and cross-validation infrastructure
+    in src/mlpack/core/cv/ and src/mlpack/core/hpt/.
+
+  * Fix bug in mean shift.
+
+  * Add random forests (see src/mlpack/methods/random_forest).
+
+  * Numerous other bugfixes and testing improvements.
+
+  * Add randomized Krylov SVD and Block Krylov SVD.
+
+### mlpack 2.2.5
+###### 2017-08-25
+  * Compilation fix for some systems (#1082).
+
+  * Fix PARAM_INT_OUT() (#1100).
+
+### mlpack 2.2.4
+###### 2017-07-18
+  * Speed and memory improvements for DBSCAN. --single_mode can now be used for
+    situations where previously RAM usage was too high.
+
+  * Fix bug in CF causing incorrect recommendations.
+
+### mlpack 2.2.3
+###### 2017-05-24
+  * Bug fix for --predictions_file in mlpack_decision_tree program.
+
+### mlpack 2.2.2
+###### 2017-05-04
+  * Install backwards-compatibility mlpack_allknn and mlpack_allkfn programs;
+    note they are deprecated and will be removed in mlpack 3.0.0 (#992).
+
+  * Fix RStarTree bug that surfaced on OS X only (#964).
+
+  * Small fixes for MiniBatchSGD and SGD and tests.
+
+### mlpack 2.2.1
+###### 2017-04-13
+  * Compilation fix for mlpack_nca and mlpack_test on older Armadillo versions
+    (#984).
 
 ### mlpack 2.2.0
 ###### 2017-03-21
@@ -196,7 +445,7 @@
 
   * Add support for observation weights to LinearRegression.
 
-  * MahalanobisDistance<> now takes root of the distance by default and
+  * MahalanobisDistance<> now takes the root of the distance by default and
     therefore satisfies the triangle inequality (TakeRoot now defaults to true).
 
   * Better handling of optional Armadillo HDF5 dependency.
@@ -410,7 +659,7 @@
 
   * Added range search executable (#192).
 
-  * Adapted citations in documentation to BiBTeX; no citations in -h output
+  * Adapted citations in documentation to BibTeX; no citations in -h output
     (#195).
 
   * Stop use of 'const char*' and prefer 'std::string' (#176).
@@ -422,3 +671,4 @@
   * Initial release.  See any resolved tickets numbered less than #196 or
     execute this query:
     http://www.mlpack.org/trac/query?status=closed&milestone=mlpack+1.0.0
+

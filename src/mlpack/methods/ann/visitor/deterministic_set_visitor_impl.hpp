@@ -31,10 +31,15 @@ inline void DeterministicSetVisitor::operator()(LayerType* layer) const
   LayerDeterministic(layer);
 }
 
+inline void DeterministicSetVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     HasDeterministicCheck<T, bool&(T::*)(void)>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+    HasModelCheck<T>::value, void>::type
 DeterministicSetVisitor::LayerDeterministic(T* layer) const
 {
   layer->Deterministic() = deterministic;
@@ -49,7 +54,7 @@ DeterministicSetVisitor::LayerDeterministic(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     !HasDeterministicCheck<T, bool&(T::*)(void)>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+    HasModelCheck<T>::value, void>::type
 DeterministicSetVisitor::LayerDeterministic(T* layer) const
 {
   for (size_t i = 0; i < layer->Model().size(); ++i)
@@ -62,7 +67,7 @@ DeterministicSetVisitor::LayerDeterministic(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     HasDeterministicCheck<T, bool&(T::*)(void)>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+    !HasModelCheck<T>::value, void>::type
 DeterministicSetVisitor::LayerDeterministic(T* layer) const
 {
   layer->Deterministic() = deterministic;
@@ -71,7 +76,7 @@ DeterministicSetVisitor::LayerDeterministic(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     !HasDeterministicCheck<T, bool&(T::*)(void)>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+    !HasModelCheck<T>::value, void>::type
 DeterministicSetVisitor::LayerDeterministic(T* /* input */) const
 {
   /* Nothing to do here. */

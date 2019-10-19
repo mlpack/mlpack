@@ -93,6 +93,62 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(const MatType& referenceSet,
   Timer::Stop("tree_building");
 }
 
+// No instantiated kernel.
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+FastMKS<KernelType, MatType, TreeType>::FastMKS(
+    MatType&& referenceSet,
+    const bool singleMode,
+    const bool naive) :
+    referenceSet(naive ? new MatType(std::move(referenceSet)) : NULL),
+    referenceTree(NULL),
+    treeOwner(true),
+    setOwner(naive),
+    singleMode(singleMode),
+    naive(naive)
+{
+  Timer::Start("tree_building");
+  if (!naive)
+  {
+    referenceTree = new Tree(std::move(referenceSet));
+    referenceSet = &referenceTree->Dataset();
+  }
+  Timer::Stop("tree_building");
+}
+
+// Instantiated kernel.
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+FastMKS<KernelType, MatType, TreeType>::FastMKS(MatType&& referenceSet,
+                                                KernelType& kernel,
+                                                const bool singleMode,
+                                                const bool naive) :
+    referenceSet(naive ? new MatType(std::move(referenceSet)) : NULL),
+    referenceTree(NULL),
+    treeOwner(true),
+    setOwner(naive),
+    singleMode(singleMode),
+    naive(naive),
+    metric(kernel)
+{
+  Timer::Start("tree_building");
+
+  // If necessary, the reference tree should be built.  There is no query tree.
+  if (!naive)
+  {
+    referenceTree = new Tree(referenceSet, metric);
+    referenceSet = &referenceTree->Dataset();
+  }
+
+  Timer::Stop("tree_building");
+}
+
 // One dataset, pre-built tree.
 template<typename KernelType,
          typename MatType,
@@ -164,6 +220,9 @@ template<typename KernelType,
 FastMKS<KernelType, MatType, TreeType>&
 FastMKS<KernelType, MatType, TreeType>::operator=(const FastMKS& other)
 {
+  if (this == &other)
+    return *this;
+
   // Clear anything we currently have.
   if (treeOwner)
     delete referenceTree;
@@ -256,6 +315,60 @@ template<typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
+void FastMKS<KernelType, MatType, TreeType>::Train(MatType&& referenceSet)
+{
+  if (setOwner)
+    delete this->referenceSet;
+
+  if (!naive)
+  {
+    if (treeOwner && referenceTree)
+      delete referenceTree;
+    referenceTree = new Tree(std::move(referenceSet), metric);
+    referenceSet = referenceTree->Dataset();
+    treeOwner = true;
+    setOwner = false;
+  }
+  else
+  {
+    this->referenceSet = new MatType(std::move(referenceSet));
+    this->setOwner = true;
+  }
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void FastMKS<KernelType, MatType, TreeType>::Train(MatType&& referenceSet,
+                                                   KernelType& kernel)
+{
+  if (setOwner)
+    delete this->referenceSet;
+
+  this->metric = metric::IPMetric<KernelType>(kernel);
+
+  if (!naive)
+  {
+    if (treeOwner && referenceTree)
+      delete referenceTree;
+    referenceTree = new Tree(std::move(referenceSet), metric);
+    treeOwner = true;
+    setOwner = false;
+  }
+  else
+  {
+    this->referenceSet = new MatType(std::move(referenceSet));
+    this->setOwner = true;
+  }
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Train(Tree* tree)
 {
   if (naive)
@@ -292,6 +405,15 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     std::stringstream ss;
     ss << "requested value of k (" << k << ") is greater than the number of "
         << "points in the reference set (" << referenceSet->n_cols << ")";
+    throw std::invalid_argument(ss.str());
+  }
+
+  if (querySet.n_rows != referenceSet->n_rows)
+  {
+    std::stringstream ss;
+    ss << "The number of dimensions in the query set (" << querySet.n_rows
+        << ") must be equal to the number of dimensions in the reference set ("
+        << referenceSet->n_rows << ")!";
     throw std::invalid_argument(ss.str());
   }
 
@@ -385,6 +507,14 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     std::stringstream ss;
     ss << "requested value of k (" << k << ") is greater than the number of "
         << "points in the reference set (" << referenceSet->n_cols << ")";
+    throw std::invalid_argument(ss.str());
+  }
+  if (queryTree->Dataset().n_rows != referenceSet->n_rows)
+  {
+    std::stringstream ss;
+    ss << "The number of dimensions in the query set ("
+        << queryTree->Dataset().n_rows << ") must be equal to the number of "
+        << "dimensions in the reference set (" << referenceSet->n_rows << ")!";
     throw std::invalid_argument(ss.str());
   }
 
@@ -509,15 +639,13 @@ template<typename KernelType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 template<typename Archive>
-void FastMKS<KernelType, MatType, TreeType>::Serialize(
+void FastMKS<KernelType, MatType, TreeType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
   // Serialize preferences for search.
-  ar & CreateNVP(naive, "naive");
-  ar & CreateNVP(singleMode, "singleMode");
+  ar & BOOST_SERIALIZATION_NVP(naive);
+  ar & BOOST_SERIALIZATION_NVP(singleMode);
 
   // If we are doing naive search, serialize the dataset.  Otherwise we
   // serialize the tree.
@@ -531,8 +659,8 @@ void FastMKS<KernelType, MatType, TreeType>::Serialize(
       setOwner = true;
     }
 
-    ar & CreateNVP(referenceSet, "referenceSet");
-    ar & CreateNVP(metric, "metric");
+    ar & BOOST_SERIALIZATION_NVP(referenceSet);
+    ar & BOOST_SERIALIZATION_NVP(metric);
   }
   else
   {
@@ -545,7 +673,7 @@ void FastMKS<KernelType, MatType, TreeType>::Serialize(
       treeOwner = true;
     }
 
-    ar & CreateNVP(referenceTree, "referenceTree");
+    ar & BOOST_SERIALIZATION_NVP(referenceTree);
 
     if (Archive::is_loading::value)
     {

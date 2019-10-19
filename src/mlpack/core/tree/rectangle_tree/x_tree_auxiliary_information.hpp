@@ -197,10 +197,10 @@ class XTreeAuxiliaryInformation
     }
 
     template<typename Archive>
-    void Serialize(Archive& ar, const unsigned int /* version */)
+    void serialize(Archive& ar, const unsigned int /* version */)
     {
-      ar & data::CreateNVP(lastDimension, "lastDimension");
-      ar & data::CreateNVP(history, "history");
+      ar & BOOST_SERIALIZATION_NVP(lastDimension);
+      ar & BOOST_SERIALIZATION_NVP(history);
     }
   } SplitHistoryStruct;
 
@@ -224,14 +224,11 @@ class XTreeAuxiliaryInformation
    * Serialize the information.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    using data::CreateNVP;
-
-    ar & CreateNVP(normalNodeMaxNumChildren, "normalNodeMaxNumChildren");
-    ar & CreateNVP(splitHistory, "splitHistory");
+    ar & BOOST_SERIALIZATION_NVP(normalNodeMaxNumChildren);
+    ar & BOOST_SERIALIZATION_NVP(splitHistory);
   }
-
 };
 
 } // namespace tree

@@ -29,7 +29,6 @@ using namespace mlpack::kernel;
 mlpack::kernel::PSpectrumStringKernel::PSpectrumStringKernel(
     const std::vector<std::vector<std::string> >& datasets,
     const size_t p) :
-    datasets(datasets),
     p(p)
 {
   // We have to assemble the counts of substrings.  This is not a particularly

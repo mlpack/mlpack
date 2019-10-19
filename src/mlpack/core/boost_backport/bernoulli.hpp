@@ -48,8 +48,8 @@ namespace boost { namespace math{
 #include "detail/unchecked_bernoulli.hpp"
 #include "detail/bernoulli_details.hpp"
 
-namespace boost { namespace math { 
-   
+namespace boost { namespace math {
+
 namespace detail {
 
 template <class T, class OutputIterator, class Policy, int N>
@@ -60,7 +60,7 @@ OutputIterator bernoulli_number_imp(OutputIterator out, std::size_t start, std::
       *out = unchecked_bernoulli_imp<T>(i, tag);
       ++out;
    }
-   
+
    for(std::size_t i = (std::max)(static_cast<std::size_t>(max_bernoulli_b2n<T>::value + 1), start); i < start + n; ++i)
    {
       // We must overflow:

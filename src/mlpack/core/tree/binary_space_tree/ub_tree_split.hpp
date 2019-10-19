@@ -30,9 +30,10 @@ class UBTreeSplit
 {
  public:
   //! The type of an address element.
-  typedef typename std::conditional<sizeof(typename MatType::elem_type) * CHAR_BIT <= 32,
-                                    uint32_t,
-                                    uint64_t>::type AddressElemType;
+  typedef typename std::conditional<
+      sizeof(typename MatType::elem_type) * CHAR_BIT <= 32,
+      uint32_t,
+      uint64_t>::type AddressElemType;
 
   //! An information about the partition.
   struct SplitInfo

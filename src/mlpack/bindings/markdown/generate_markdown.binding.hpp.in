@@ -1,0 +1,33 @@
+/**
+ * @file generate_markdown.binding.hpp.in
+ * @author Ryan Curtin
+ *
+ * Print Markdown for a specific binding.  This provides two utility
+ * methods---one that prints info for a table of contents, and one that prints
+ * the Markdown bindings themselves.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+#ifndef MLPACK_BINDINGS_MARKDOWN_GENERATE_MARKDOWN_${BINDING}_HPP
+#define MLPACK_BINDINGS_MARKDOWN_GENERATE_MARKDOWN_${BINDING}_HPP
+
+#include "print_docs.hpp"
+#include "get_binding_name.hpp"
+
+using namespace std;
+
+namespace mlpack {
+namespace bindings {
+namespace markdown {
+
+void Print${BINDING}Headers();
+void Print${BINDING}Docs();
+
+} // namespace markdown
+} // namespace bindings
+} // namespace mlpack
+
+#endif

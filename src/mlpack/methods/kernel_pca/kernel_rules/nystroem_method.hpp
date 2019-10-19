@@ -26,56 +26,56 @@ template<
 >
 class NystroemKernelRule
 {
-  public:
-    /**
-     * Construct the kernel matrix approximation using the nystroem method.
-     *
-     * @param data Input data points.
-     * @param transformedData Matrix to output results into.
-     * @param eigval KPCA eigenvalues will be written to this vector.
-     * @param eigvec KPCA eigenvectors will be written to this matrix.
-     * @param rank Rank to be used for matrix approximation.
-     * @param kernel Kernel to be used for computation.
-     */
-    static void ApplyKernelMatrix(const arma::mat& data,
-                                  arma::mat& transformedData,
-                                  arma::vec& eigval,
-                                  arma::mat& eigvec,
-                                  const size_t rank,
-                                  KernelType kernel = KernelType())
-    {
-      arma::mat G, v;
-      kernel::NystroemMethod<KernelType, PointSelectionPolicy> nm(data, kernel,
-                                                        rank);
-      nm.Apply(G);
-      transformedData = G.t() * G;
+ public:
+  /**
+   * Construct the kernel matrix approximation using the nystroem method.
+   *
+   * @param data Input data points.
+   * @param transformedData Matrix to output results into.
+   * @param eigval KPCA eigenvalues will be written to this vector.
+   * @param eigvec KPCA eigenvectors will be written to this matrix.
+   * @param rank Rank to be used for matrix approximation.
+   * @param kernel Kernel to be used for computation.
+   */
+  static void ApplyKernelMatrix(const arma::mat& data,
+                                arma::mat& transformedData,
+                                arma::vec& eigval,
+                                arma::mat& eigvec,
+                                const size_t rank,
+                                KernelType kernel = KernelType())
+  {
+    arma::mat G, v;
+    kernel::NystroemMethod<KernelType, PointSelectionPolicy> nm(data, kernel,
+        rank);
+    nm.Apply(G);
+    transformedData = G.t() * G;
 
-      // Center the reconstructed approximation.
-      math::Center(transformedData, transformedData);
+    // Center the reconstructed approximation.
+    math::Center(transformedData, transformedData);
 
-      // For PCA the data has to be centered, even if the data is centered. But
-      // it is not guaranteed that the data, when mapped to the kernel space, is
-      // also centered. Since we actually never work in the feature space we
-      // cannot center the data. So, we perform a "psuedo-centering" using the
-      // kernel matrix.
-      arma::colvec colMean = arma::sum(G, 1) / G.n_rows;
-      G.each_row() -= arma::sum(G, 0) / G.n_rows;
-      G.each_col() -= colMean;
-      G += arma::sum(colMean) / G.n_rows;
+    // For PCA the data has to be centered, even if the data is centered. But
+    // it is not guaranteed that the data, when mapped to the kernel space, is
+    // also centered. Since we actually never work in the feature space we
+    // cannot center the data. So, we perform a "psuedo-centering" using the
+    // kernel matrix.
+    arma::colvec colMean = arma::sum(G, 1) / G.n_rows;
+    G.each_row() -= arma::sum(G, 0) / G.n_rows;
+    G.each_col() -= colMean;
+    G += arma::sum(colMean) / G.n_rows;
 
-      // Eigendecompose the centered kernel matrix.
-      arma::eig_sym(eigval, eigvec, transformedData);
+    // Eigendecompose the centered kernel matrix.
+    arma::eig_sym(eigval, eigvec, transformedData);
 
-      // Swap the eigenvalues since they are ordered backwards (we need largest
-      // to smallest).
-      for (size_t i = 0; i < floor(eigval.n_elem / 2.0); ++i)
-        eigval.swap_rows(i, (eigval.n_elem - 1) - i);
+    // Swap the eigenvalues since they are ordered backwards (we need largest
+    // to smallest).
+    for (size_t i = 0; i < floor(eigval.n_elem / 2.0); ++i)
+      eigval.swap_rows(i, (eigval.n_elem - 1) - i);
 
-      // Flip the coefficients to produce the same effect.
-      eigvec = arma::fliplr(eigvec);
+    // Flip the coefficients to produce the same effect.
+    eigvec = arma::fliplr(eigvec);
 
-      transformedData = eigvec.t() * G.t();
-    }
+    transformedData = eigvec.t() * G.t();
+  }
 };
 
 } // namespace kpca

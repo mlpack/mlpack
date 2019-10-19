@@ -58,12 +58,12 @@ void HardTanH<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void HardTanH<InputDataType, OutputDataType>::Serialize(
+void HardTanH<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & data::CreateNVP(maxValue, "maxValue");
-  ar & data::CreateNVP(minValue, "minValue");
+  ar & BOOST_SERIALIZATION_NVP(maxValue);
+  ar & BOOST_SERIALIZATION_NVP(minValue);
 }
 
 } // namespace ann

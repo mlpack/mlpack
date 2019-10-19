@@ -1,8 +1,10 @@
-include_directories(..) # <mlpack/[whatever]>
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/..) # mlpack/mlpack_export.hpp
 
 # Add core.hpp to list of sources.
-set(MLPACK_SRCS ${MLPACK_SRCS} "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp")
+set(MLPACK_SRCS ${MLPACK_SRCS}
+  "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/prereqs.hpp"
+)
 
 ## Recurse into both core/ and methods/.
 set(DIRS
@@ -12,12 +14,8 @@ set(DIRS
 )
 
 foreach(dir ${DIRS})
-    add_subdirectory(${dir})
+  add_subdirectory(${dir})
 endforeach()
-
-if (BUILD_TESTS)
-  add_subdirectory(tests)
-endif ()
 
 # MLPACK_SRCS is set in the subdirectories.  The dependencies (MLPACK_LIBRARIES)
 # are set in the root CMakeLists.txt.
@@ -42,13 +40,12 @@ if (NOT BUILD_SHARED_LIBS)
   add_definitions(-DMLPACK_STATIC_DEFINE)
 endif ()
 
-target_link_libraries(mlpack
-  ${MLPACK_LIBRARIES})
+target_link_libraries(mlpack ${MLPACK_LIBRARIES})
 
 set_target_properties(mlpack
   PROPERTIES
-  VERSION 2.0
-  SOVERSION 2
+  VERSION 3.2
+  SOVERSION 3
 )
 
 # Backtrace for Linux need those libs.
@@ -58,6 +55,13 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_link_libraries(mlpack ${LIBDL_LIBRARIES})
   endif()
 endif()
+
+set_target_properties(mlpack PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "prereqs.hpp")
+cotire(mlpack)
+
+if (BUILD_TESTS)
+  add_subdirectory(tests)
+endif ()
 
 # Collect all header files in the library.
 file(GLOB_RECURSE INCLUDE_H_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
@@ -80,18 +84,46 @@ foreach(incl_file ${INCLUDE_FILES})
   add_custom_command(TARGET mlpack_headers POST_BUILD
     COMMAND ${CMAKE_COMMAND} ARGS -E
       copy ${CMAKE_CURRENT_SOURCE_DIR}/${incl_file}
-           ${CMAKE_BINARY_DIR}/include/mlpack/${incl_file})
+           ${CMAKE_BINARY_DIR}/include/mlpack/${incl_file}
+      BYPRODUCTS ${CMAKE_BINARY_DIR}/include/mlpack/${incl_file})
 endforeach()
 
 # At install time, we simply install that directory of header files we
 # collected to include/.
-install(DIRECTORY ${CMAKE_BINARY_DIR}/include/mlpack DESTINATION include)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/include/mlpack DESTINATION
+    ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Set generated executables to be installed.  Unfortunately they must manually
 # be entered...
 install(TARGETS mlpack
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib)
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 add_dependencies(mlpack mlpack_headers)
+
+# If we are building Python bindings, we have to configure setup.py but only
+# after we've recursed into methods/.
+if (BUILD_PYTHON_BINDINGS)
+  # Extract the version number.
+  file(READ "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/version.hpp"
+      VERSION_HPP_CONTENTS)
+  string(REGEX REPLACE ".*#define MLPACK_VERSION_MAJOR ([0-9]+).*" "\\1"
+      MLPACK_VERSION_MAJOR "${VERSION_HPP_CONTENTS}")
+  string(REGEX REPLACE ".*#define MLPACK_VERSION_MINOR ([0-9]+).*" "\\1"
+      MLPACK_VERSION_MINOR "${VERSION_HPP_CONTENTS}")
+  string(REGEX REPLACE ".*#define MLPACK_VERSION_PATCH [\"]?([0-9x]+)[\"]?.*"
+      "\\1" MLPACK_VERSION_PATCH "${VERSION_HPP_CONTENTS}")
+
+  set(PACKAGE_VERSION
+      "${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}")
+
+  get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      PROPERTY INCLUDE_DIRECTORIES)
+  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
+                 ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py)
+endif ()
+
+# If we are building Markdown documentation, we have to run some setup after we
+# recurse into methods/.  If not, this function is empty.
+post_markdown_setup()

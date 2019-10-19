@@ -4,6 +4,11 @@
  *
  * Implementation of the ReinforceNormalLayer class, which implements the
  * REINFORCE algorithm for the normal distribution.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_LAYER_REINFORCE_NORMAL_IMPL_HPP
 #define MLPACK_METHODS_ANN_LAYER_REINFORCE_NORMAL_IMPL_HPP
@@ -57,7 +62,7 @@ void ReinforceNormal<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void ReinforceNormal<InputDataType, OutputDataType>::Serialize(
+void ReinforceNormal<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */, const unsigned int /* version */)
 {
   // Nothing to do here.

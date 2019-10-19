@@ -1,0 +1,7 @@
+<?xml version='1.0'?>
+ <WixLocalization xmlns="http://schemas.microsoft.com/wix/2006/localization">
+   <String Id='LANG'>1033</String>
+   <String Id="WelcomeDlgTitle">{\WixUI_Font_Bigger}Welcome to the [ProductName] [MLPACK_VERSION] Setup Wizard</String>
+   <String Id="WelcomeDlgDescription">The Setup Wizard will install [ProductName] [MLPACK_VERSION] on your computer. Click Next to continue or Cancel to exit the Setup Wizard.</String>   
+ </WixLocalization>
+ 

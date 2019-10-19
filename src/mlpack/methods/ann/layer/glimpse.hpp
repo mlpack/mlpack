@@ -17,6 +17,11 @@
  *   year    = {2014},
  * }
  * @endcode
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_LAYER_GLIMPSE_HPP
 #define MLPACK_METHODS_ANN_LAYER_GLIMPSE_HPP
@@ -82,7 +87,6 @@ template <
 class Glimpse
 {
  public:
-
   /**
    * Create the GlimpseLayer object using the specified ratio and rescale
    * parameter.
@@ -95,8 +99,8 @@ class Glimpse
    * @param inputWidth The input width of the given input data.
    * @param inputHeight The input height of the given input data.
    */
-  Glimpse(const size_t inSize,
-          const size_t size,
+  Glimpse(const size_t inSize = 0,
+          const size_t size = 0,
           const size_t depth = 3,
           const size_t scale = 2,
           const size_t inputWidth = 0,
@@ -123,11 +127,6 @@ class Glimpse
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
 
-  //! Get the input parameter.
-  InputDataType& InputParameter() const {return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
   //! Get the output parameter.
   OutputDataType& OutputParameter() const {return outputParameter; }
   //! Modify the output parameter.
@@ -145,7 +144,7 @@ class Glimpse
     this->location = location;
   }
 
-   //! Get the input width.
+  //! Get the input width.
   size_t const& InputWidth() const { return inputWidth; }
   //! Modify input the width.
   size_t& InputWidth() { return inputWidth; }
@@ -174,7 +173,7 @@ class Glimpse
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   /*
@@ -222,7 +221,6 @@ class Glimpse
                const arma::Mat<eT>& input,
                arma::Mat<eT>& output)
   {
-
     const size_t rStep = kSize;
     const size_t cStep = kSize;
 
@@ -389,9 +387,6 @@ class Glimpse
 
   //! Locally-stored delta object.
   OutputDataType delta;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;

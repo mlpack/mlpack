@@ -78,4 +78,35 @@ void CheckMatrices(const arma::Mat<size_t>& x,
   }
 }
 
+void CheckMatrices(const arma::cube& x,
+                   const arma::cube& xmlX,
+                   const arma::cube& textX,
+                   const arma::cube& binaryX)
+{
+  // First check dimensions.
+  BOOST_REQUIRE_EQUAL(x.n_rows, xmlX.n_rows);
+  BOOST_REQUIRE_EQUAL(x.n_rows, textX.n_rows);
+  BOOST_REQUIRE_EQUAL(x.n_rows, binaryX.n_rows);
+
+  BOOST_REQUIRE_EQUAL(x.n_cols, xmlX.n_cols);
+  BOOST_REQUIRE_EQUAL(x.n_cols, textX.n_cols);
+  BOOST_REQUIRE_EQUAL(x.n_cols, binaryX.n_cols);
+
+  BOOST_REQUIRE_EQUAL(x.n_slices, xmlX.n_slices);
+  BOOST_REQUIRE_EQUAL(x.n_slices, textX.n_slices);
+  BOOST_REQUIRE_EQUAL(x.n_slices, binaryX.n_slices);
+
+  BOOST_REQUIRE_EQUAL(x.n_elem, xmlX.n_elem);
+  BOOST_REQUIRE_EQUAL(x.n_elem, textX.n_elem);
+  BOOST_REQUIRE_EQUAL(x.n_elem, binaryX.n_elem);
+
+  // Now check elements.
+  for (size_t i = 0; i < x.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(x[i], xmlX[i]);
+    BOOST_REQUIRE_EQUAL(x[i], textX[i]);
+    BOOST_REQUIRE_EQUAL(x[i], binaryX[i]);
+  }
+}
+
 } // namespace mlpack

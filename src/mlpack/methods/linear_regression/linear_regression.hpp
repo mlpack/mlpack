@@ -29,24 +29,30 @@ class LinearRegression
   /**
    * Creates the model.
    *
-   * @param predictors X, matrix of data points to create B with.
+   * @param predictors X, matrix of data points.
    * @param responses y, the measured data for each point in X.
    * @param lambda Regularization constant for ridge regression.
    * @param intercept Whether or not to include an intercept term.
-   * @param weights Observation weights (for boosting).
    */
   LinearRegression(const arma::mat& predictors,
-                   const arma::vec& responses,
+                   const arma::rowvec& responses,
                    const double lambda = 0,
-                   const bool intercept = true,
-                   const arma::vec& weights = arma::vec());
+                   const bool intercept = true);
 
   /**
-   * Copy constructor.
+   * Creates the model with weighted learning.
    *
-   * @param linearRegression the other instance to copy parameters from.
+   * @param predictors X, matrix of data points.
+   * @param responses y, the measured data for each point in X.
+   * @param weights Observation weights (for boosting).
+   * @param lambda Regularization constant for ridge regression.
+   * @param intercept Whether or not to include an intercept term.
    */
-  LinearRegression(const LinearRegression& linearRegression);
+  LinearRegression(const arma::mat& predictors,
+                   const arma::rowvec& responses,
+                   const arma::rowvec& weights,
+                   const double lambda = 0,
+                   const bool intercept = true);
 
   /**
    * Empty constructor.  This gives a non-working model, so make sure Train() is
@@ -56,21 +62,38 @@ class LinearRegression
   LinearRegression() : lambda(0.0), intercept(true) { }
 
   /**
-   * Train the LinearRegression model on the given data.  Careful!  This will
-   * completely ignore and overwrite the existing model.  This particular
+   * Train the LinearRegression model on the given data. Careful! This will
+   * completely ignore and overwrite the existing model. This particular
    * implementation does not have an incremental training algorithm.  To set the
    * regularization parameter lambda, call Lambda() or set a different value in
    * the constructor.
    *
    * @param predictors X, the matrix of data points to train the model on.
-   * @param responses y, the vector of responses to each data point.
+   * @param responses y, the responses to the data points.
    * @param intercept Whether or not to fit an intercept term.
-   * @param weights Observation weights (for boosting).
+   * @return The least squares error after training.
    */
-  void Train(const arma::mat& predictors,
-             const arma::vec& responses,
-             const bool intercept = true,
-             const arma::vec& weights = arma::vec());
+  double Train(const arma::mat& predictors,
+               const arma::rowvec& responses,
+               const bool intercept = true);
+
+  /**
+   * Train the LinearRegression model on the given data and weights. Careful!
+   * This will completely ignore and overwrite the existing model. This
+   * particular implementation does not have an incremental training algorithm.
+   * To set the regularization parameter lambda, call Lambda() or set a
+   * different value in the constructor.
+   *
+   * @param predictors X, the matrix of data points to train the model on.
+   * @param responses y, the responses to the data points.
+   * @param weights Observation weights (for boosting).
+   * @param intercept Whether or not to fit an intercept term.
+   * @return The least squares error after training.
+   */
+  double Train(const arma::mat& predictors,
+               const arma::rowvec& responses,
+               const arma::rowvec& weights,
+               const bool intercept = true);
 
   /**
    * Calculate y_i for each data point in points.
@@ -78,11 +101,11 @@ class LinearRegression
    * @param points the data points to calculate with.
    * @param predictions y, will contain calculated values on completion.
    */
-  void Predict(const arma::mat& points, arma::vec& predictions) const;
+  void Predict(const arma::mat& points, arma::rowvec& predictions) const;
 
   /**
    * Calculate the L2 squared error on the given predictors and responses using
-   * this linear regression model.  This calculation returns
+   * this linear regression model. This calculation returns
    *
    * \f[
    * (1 / n) * \| y - X B \|^2_2
@@ -95,10 +118,10 @@ class LinearRegression
    * As this number decreases to 0, the linear regression fit is better.
    *
    * @param points Matrix of predictors (X).
-   * @param responses Vector of responses (y).
+   * @param responses Transposed vector of responses (y^T).
    */
   double ComputeError(const arma::mat& points,
-                      const arma::vec& responses) const;
+                      const arma::rowvec& responses) const;
 
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return parameters; }
@@ -117,11 +140,11 @@ class LinearRegression
    * Serialize the model.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(parameters, "parameters");
-    ar & data::CreateNVP(lambda, "lambda");
-    ar & data::CreateNVP(intercept, "intercept");
+    ar & BOOST_SERIALIZATION_NVP(parameters);
+    ar & BOOST_SERIALIZATION_NVP(lambda);
+    ar & BOOST_SERIALIZATION_NVP(intercept);
   }
 
  private:
@@ -141,7 +164,7 @@ class LinearRegression
   bool intercept;
 };
 
-} // namespace linear_regression
+} // namespace regression
 } // namespace mlpack
 
 #endif // MLPACK_METHODS_LINEAR_REGRESSION_HPP

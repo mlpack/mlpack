@@ -9,7 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
- #include "softmax_regression_function.hpp"
+#include "softmax_regression_function.hpp"
+#include <mlpack/core/math/make_alias.hpp>
 
 using namespace mlpack;
 using namespace mlpack::regression;
@@ -20,7 +21,7 @@ SoftmaxRegressionFunction::SoftmaxRegressionFunction(
     const size_t numClasses,
     const double lambda,
     const bool fitIntercept) :
-    data(data),
+    data(math::MakeAlias(const_cast<arma::mat&>(data), false)),
     numClasses(numClasses),
     lambda(lambda),
     fitIntercept(fitIntercept)
@@ -30,6 +31,43 @@ SoftmaxRegressionFunction::SoftmaxRegressionFunction(
 
   // Calculate the label matrix.
   GetGroundTruthMatrix(labels, groundTruth);
+}
+
+/**
+ * Shuffle the data.
+ */
+void SoftmaxRegressionFunction::Shuffle()
+{
+  // Determine new ordering.
+  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
+      data.n_cols - 1, data.n_cols));
+
+  // Re-sort data.
+  arma::mat newData = data.cols(ordering);
+  math::ClearAlias(data);
+  data = std::move(newData);
+
+  // Assemble data for batch constructor.  We need reverse orderings though...
+  arma::uvec reverseOrdering(ordering.n_elem);
+  for (size_t i = 0; i < ordering.n_elem; ++i)
+    reverseOrdering[ordering[i]] = i;
+
+  arma::umat newLocations(2, groundTruth.n_nonzero);
+  arma::vec values(groundTruth.n_nonzero);
+  arma::sp_mat::const_iterator it = groundTruth.begin();
+  size_t loc = 0;
+  while (it != groundTruth.end())
+  {
+    newLocations(0, loc) = reverseOrdering(it.col());
+    newLocations(1, loc) = it.row();
+    values(loc) = (*it);
+
+    ++it;
+    ++loc;
+  }
+
+  groundTruth = arma::sp_mat(newLocations, values, groundTruth.n_rows,
+      groundTruth.n_cols);
 }
 
 /**
@@ -73,8 +111,8 @@ void SoftmaxRegressionFunction::InitializeWeights(
  * labels. The output is in the form of a matrix, which leads to simpler
  * calculations in the Evaluate() and Gradient() methods.
  */
-void SoftmaxRegressionFunction::GetGroundTruthMatrix(const arma::Row<size_t>& labels,
-                                                     arma::sp_mat& groundTruth)
+void SoftmaxRegressionFunction::GetGroundTruthMatrix(
+    const arma::Row<size_t>& labels, arma::sp_mat& groundTruth)
 {
   // Calculate the ground truth matrix according to the labels passed. The
   // ground truth matrix is a matrix of dimensions 'numClasses * numExamples',
@@ -85,12 +123,15 @@ void SoftmaxRegressionFunction::GetGroundTruthMatrix(const arma::Row<size_t>& la
   arma::uvec rowPointers(labels.n_elem);
   arma::uvec colPointers(labels.n_elem + 1);
 
+  // colPointers[0] needs to be set to 0.
+  colPointers[0] = 0;
+
   // Row pointers are the labels of the examples, and column pointers are the
   // number of cumulative entries made uptil that column.
-  for(size_t i = 0; i < labels.n_elem; i++)
+  for (size_t i = 0; i < labels.n_elem; i++)
   {
     rowPointers(i) = labels(i);
-    colPointers(i+1) = i + 1;
+    colPointers(i + 1) = i + 1;
   }
 
   // All entries are '1'.
@@ -108,7 +149,9 @@ void SoftmaxRegressionFunction::GetGroundTruthMatrix(const arma::Row<size_t>& la
  */
 void SoftmaxRegressionFunction::GetProbabilitiesMatrix(
     const arma::mat& parameters,
-    arma::mat& probabilities) const
+    arma::mat& probabilities,
+    const size_t start,
+    const size_t batchSize) const
 {
   arma::mat hypothesis;
 
@@ -118,14 +161,17 @@ void SoftmaxRegressionFunction::GetProbabilitiesMatrix(
     //     [1; data] = arma::join_cols(ones(1, data.n_cols), data)
     //     hypothesis = arma::exp(parameters * [1; data]).
     //
-    // Since the cost of join maybe high due to the copy of original data,
+    // Since the cost of join may be high due to the copy of original data,
     // split the hypothesis computation to two components.
-    hypothesis = arma::exp(arma::repmat(parameters.col(0), 1, data.n_cols) +
-                           parameters.cols(1, parameters.n_cols - 1) * data);
+    hypothesis = arma::exp(
+        arma::repmat(parameters.col(0), 1, batchSize) +
+        parameters.cols(1, parameters.n_cols - 1) *
+        data.cols(start, start + batchSize - 1));
   }
   else
   {
-    hypothesis = arma::exp(parameters * data);
+    hypothesis = arma::exp(parameters *
+        data.cols(start, start + batchSize - 1));
   }
 
   probabilities = hypothesis / arma::repmat(arma::sum(hypothesis, 0),
@@ -154,7 +200,7 @@ double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters) const
   // x_i is the input vector for a particular training example.
   // theta_j is the parameter vector associated with a particular class.
   arma::mat probabilities;
-  GetProbabilitiesMatrix(parameters, probabilities);
+  GetProbabilitiesMatrix(parameters, probabilities, 0, data.n_cols);
 
   // Calculate the log likelihood and regularization terms.
   double logLikelihood, weightDecay, cost;
@@ -171,6 +217,26 @@ double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters) const
 }
 
 /**
+ * Evaluate the objective function for the given points given the parameters.
+ */
+double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters,
+                                           const size_t start,
+                                           const size_t batchSize) const
+{
+  arma::mat probabilities;
+  GetProbabilitiesMatrix(parameters, probabilities, start, batchSize);
+
+  // Calculate the log likelihood and regularization terms.
+  double logLikelihood, weightDecay;
+
+  logLikelihood = arma::accu(groundTruth.cols(start, start + batchSize - 1) %
+      arma::log(probabilities)) / batchSize;
+  weightDecay = 0.5 * lambda * arma::accu(parameters * parameters);
+
+  return -logLikelihood + weightDecay;
+}
+
+/**
  * Calculates and stores the gradient values given a set of parameters.
  */
 void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
@@ -183,7 +249,7 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
   // x_i is the input vector for a particular training example.
   // theta_j is the parameter vector associated with a particular class.
   arma::mat probabilities;
-  GetProbabilitiesMatrix(parameters, probabilities);
+  GetProbabilitiesMatrix(parameters, probabilities, 0, data.n_cols);
 
   // Calculate the parameter gradients.
   gradient.set_size(parameters.n_rows, parameters.n_cols);
@@ -203,5 +269,66 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
   {
     gradient = (probabilities - groundTruth) * data.t() / data.n_cols +
                lambda * parameters;
+  }
+}
+
+void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
+                                         const size_t start,
+                                         arma::mat& gradient,
+                                         const size_t batchSize) const
+{
+  arma::mat probabilities;
+  GetProbabilitiesMatrix(parameters, probabilities, start, batchSize);
+
+  // Calculate the parameter gradients.
+  gradient.set_size(parameters.n_rows, parameters.n_cols);
+  if (fitIntercept)
+  {
+    arma::mat inner = probabilities - groundTruth.cols(start, start +
+        batchSize - 1);
+    gradient.col(0) =
+        inner * arma::ones<arma::mat>(batchSize, 1) / batchSize +
+        lambda * parameters.col(0);
+    gradient.cols(1, parameters.n_cols - 1) =
+        inner * data.cols(start, start + batchSize - 1).t() / batchSize +
+        lambda * parameters.cols(1, parameters.n_cols - 1);
+  }
+  else
+  {
+    gradient = (probabilities - groundTruth.cols(start, start + batchSize - 1))
+        * data.cols(start, start + batchSize - 1).t() / batchSize
+        + lambda * parameters;
+  }
+}
+
+void SoftmaxRegressionFunction::PartialGradient(const arma::mat& parameters,
+                                                const size_t j,
+                                                arma::sp_mat& gradient) const
+{
+  gradient.zeros(arma::size(parameters));
+
+  arma::mat probabilities;
+  GetProbabilitiesMatrix(parameters, probabilities, 0, data.n_cols);
+
+  // Calculate the required part of the gradient.
+  arma::mat inner = probabilities - groundTruth;
+  if (fitIntercept)
+  {
+    if (j == 0)
+    {
+      gradient.col(j) =
+          inner * arma::ones<arma::mat>(data.n_cols, 1) / data.n_cols +
+          lambda * parameters.col(0);
+    }
+    else
+    {
+      gradient.col(j) = inner * data.row(j).t() / data.n_cols + lambda *
+          parameters.col(j);
+    }
+  }
+  else
+  {
+    gradient.col(j) = inner * data.row(j).t() / data.n_cols + lambda *
+        parameters.col(j);
   }
 }

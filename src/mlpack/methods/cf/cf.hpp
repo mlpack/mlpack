@@ -5,7 +5,7 @@
  *
  * Collaborative filtering.
  *
- * Defines the CF class to perform collaborative filtering on the specified data
+ * Defines the CFType class to perform collaborative filtering on the specified data
  * set using alternating least squares (ALS).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -21,30 +21,16 @@
 #include <mlpack/methods/amf/amf.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_als.hpp>
 #include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
+#include <mlpack/methods/cf/normalization/no_normalization.hpp>
+#include <mlpack/methods/cf/decomposition_policies/nmf_method.hpp>
+#include <mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp>
+#include <mlpack/methods/cf/interpolation_policies/average_interpolation.hpp>
 #include <set>
 #include <map>
 #include <iostream>
 
 namespace mlpack {
-namespace cf /** Collaborative filtering. */ {
-
-/**
- * Template class for factorizer traits. This stores the default values for the
- * variables to be assumed for a given factorizer. If any of the factorizers
- * needs to have a different value for the traits, a template specialization has
- * be wriiten for that factorizer. An example can be found in the module for
- * Regularized SVD.
- */
-template<typename FactorizerType>
-struct FactorizerTraits
-{
-  /**
-   * If true, then the passed data matrix is used for factorizer.Apply().
-   * Otherwise, it is modified into a form suitable for factorization.
-   */
-  static const bool UsesCoordinateList = false;
-};
-
+namespace cf /** Collaborative filtering. **/ {
 /**
  * This class implements Collaborative Filtering (CF). This implementation
  * presently supports Alternating Least Squares (ALS) for collaborative
@@ -57,7 +43,7 @@ struct FactorizerTraits
  * extern arma::Col<size_t> users; // users seeking recommendations
  * arma::Mat<size_t> recommendations; // Recommendations
  *
- * CF cf(data); // Default options.
+ * CFType<> cf(data); // Default options.
  *
  * // Generate 10 recommendations for all users.
  * cf.GetRecommendations(10, recommendations);
@@ -73,100 +59,96 @@ struct FactorizerTraits
  * are in a matrix that holds doubles, should hold integer (or size_t) values.
  * The user and item indices are assumed to start at 0.
  *
- * @tparam FactorizerType The type of matrix factorization to use to decompose
- *     the rating matrix (a W and H matrix).  This must implement the method
- *     Apply(arma::sp_mat& data, size_t rank, arma::mat& W, arma::mat& H).
+ * @tparam DecompositionPolicy The policy used to decompose the rating matrix.
+ *     It also provides methods to compute prediction and neighborhood.
+ * @tparam NormalizationType The type of normalization performed on raw data.
+ *     Data is normalized before calling Train() method. Predicted rating is
+ *     denormalized before return.
  */
-class CF
+template<typename DecompositionPolicy = NMFPolicy,
+         typename NormalizationType = NoNormalization>
+class CFType
 {
  public:
   /**
-   * Initialize the CF object without performing any factorization.  Be sure to
+   * Initialize the CFType object without performing any factorization.  Be sure to
    * call Train() before calling GetRecommendations() or any other functions!
    */
-  CF(const size_t numUsersForSimilarity = 5,
-     const size_t rank = 0);
+  CFType(const size_t numUsersForSimilarity = 5, const size_t rank = 0);
 
   /**
-   * Initialize the CF object using an instantiated factorizer, immediately
+   * Initialize the CFType object using any decomposition method, immediately
    * factorizing the given data to create a model. There are parameters that can
    * be set; default values are provided for each of them. If the rank is left
    * unset (or is set to 0), a simple density-based heuristic will be used to
    * choose a rank.
    *
-   * The provided dataset should be a coordinate list; that is, a 3-row matrix
+   * The provided dataset can be a coordinate list; that is, a 3-row matrix
    * where each column corresponds to a (user, item, rating) entry in the
-   * matrix.
+   * matrix or a sparse matrix representing (user, item) table.
    *
-   * @param data Data matrix: coordinate list or dense matrix.
-   * @param factorizer Instantiated factorizer object.
+   * @tparam MatType The type of input matrix, which is expected to be either
+   *     arma::mat (table of (user, item, rating)) or arma::sp_mat (sparse
+   *     rating matrix where row is item and column is user).
+   *
+   * @param data Data matrix: dense matrix (coordinate lists) 
+   *    or sparse matrix(cleaned).
+   * @param decomposition Instantiated DecompositionPolicy object.
    * @param numUsersForSimilarity Size of the neighborhood.
    * @param rank Rank parameter for matrix factorization.
+   * @param maxIterations Maximum number of iterations.
+   * @param minResidue Residue required to terminate.
+   * @param mit Whether to terminate only when maxIterations is reached.
    */
-  template<typename FactorizerType = amf::NMFALSFactorizer>
-  CF(const arma::mat& data,
-     FactorizerType factorizer = FactorizerType(),
-     const size_t numUsersForSimilarity = 5,
-     const size_t rank = 0);
+  template<typename MatType>
+  CFType(const MatType& data,
+         const DecompositionPolicy& decomposition = DecompositionPolicy(),
+         const size_t numUsersForSimilarity = 5,
+         const size_t rank = 0,
+         const size_t maxIterations = 1000,
+         const double minResidue = 1e-5,
+         const bool mit = false);
 
   /**
-   * Initialize the CF object using an instantiated factorizer, immediately
-   * factorizing the given data to create a model. There are parameters that can
-   * be set; default values are provided for each of them. If the rank is left
-   * unset (or is set to 0), a simple density-based heuristic will be used to
-   * choose a rank. Data will be considered in the format of items vs. users and
-   * will be passed directly to the factorizer without cleaning.  This overload
-   * of the constructor will only be available if the factorizer does not use a
-   * coordinate list (i.e. if UsesCoordinateList is false).
+   * Train the CFType model (i.e. factorize the input matrix) using the
+   * parameters that have already been set for the model (specifically, the rank
+   * parameter), and optionally, using the given DecompositionPolicy.
    *
-   * The U and T template parameters are for SFINAE, so that this overload is
-   * only available when the FactorizerType uses a coordinate list.
-   *
-   * @param data Sparse matrix data.
-   * @param factorizer Instantiated factorizer object.
-   * @param numUsersForSimilarity Size of the neighborhood.
-   * @param rank Rank parameter for matrix factorization.
+   * @param data Input dataset; dense matrix (coordinate lists).
+   * @param decomposition Instantiated DecompositionPolicy object.
+   * @param maxIterations Maximum number of iterations.
+   * @param minResidue Residue required to terminate.
+   * @param mit Whether to terminate only when maxIterations is reached.
    */
-  template<typename FactorizerType = amf::NMFALSFactorizer>
-  CF(const arma::sp_mat& data,
-     FactorizerType factorizer = FactorizerType(),
-     const size_t numUsersForSimilarity = 5,
-     const size_t rank = 0,
-     const typename std::enable_if_t<
-         !FactorizerTraits<FactorizerType>::UsesCoordinateList>* = 0);
-
-  /**
-   * Train the CF model (i.e. factorize the input matrix) using the parameters
-   * that have already been set for the model (specifically, the rank
-   * parameter), and optionally, using the given FactorizerType.
-   *
-   * @param data Input dataset; coordinate list or dense matrix.
-   * @param factorizer Instantiated factorizer.
-   */
-  template<typename FactorizerType = amf::NMFALSFactorizer>
   void Train(const arma::mat& data,
-             FactorizerType factorizer = FactorizerType());
+             const DecompositionPolicy& decomposition,
+             const size_t maxIterations = 1000,
+             const double minResidue = 1e-5,
+             const bool mit = false);
 
   /**
-   * Train the CF model (i.e. factorize the input matrix) using the parameters
-   * that have already been set for the model (specifically, the rank
-   * parameter), and optionally, using the given FactorizerType.
+   * Train the CFType model (i.e. factorize the input matrix) using the
+   * parameters that have already been set for the model (specifically, the
+   * rank parameter), and optionally, using the given DecompositionPolicy.
    *
-   * @param data Sparse matrix data.
-   * @param factorizer Instantiated factorizer.
+   * @param data Input dataset; sparse matrix (user item table).
+   * @param decomposition Instantiated DecompositionPolicy object.
+   * @param maxIterations Maximum number of iterations.
+   * @param minResidue Residue required to terminate.
+   * @param mit Whether to terminate only when maxIterations is reached.
    */
-  template<typename FactorizerType = amf::NMFALSFactorizer>
   void Train(const arma::sp_mat& data,
-             FactorizerType factorizer = FactorizerType(),
-             const typename std::enable_if_t<
-                 !FactorizerTraits<FactorizerType>::UsesCoordinateList>* = 0);
+             const DecompositionPolicy& decomposition,
+             const size_t maxIterations = 1000,
+             const double minResidue = 1e-5,
+             const bool mit = false);
 
   //! Sets number of users for calculating similarity.
   void NumUsersForSimilarity(const size_t num)
   {
     if (num < 1)
     {
-      Log::Warn << "CF::NumUsersForSimilarity(): invalid value (< 1) "
+      Log::Warn << "CFType::NumUsersForSimilarity(): invalid value (< 1) "
           "ignored." << std::endl;
       return;
     }
@@ -191,42 +173,65 @@ class CF
     return rank;
   }
 
-  //! Get the User Matrix.
-  const arma::mat& W() const { return w; }
-  //! Get the Item Matrix.
-  const arma::mat& H() const { return h; }
+  //! Gets decomposition object.
+  const DecompositionPolicy& Decomposition() const { return decomposition; }
+
   //! Get the cleaned data matrix.
   const arma::sp_mat& CleanedData() const { return cleanedData; }
+
+  //! Get the normalization object.
+  const NormalizationType& Normalization() const { return normalization; }
 
   /**
    * Generates the given number of recommendations for all users.
    *
-   * @param numRecs Number of Recommendations
+   * @tparam NeighborSearchPolicy The policy used to search neighbors of
+   *     query set in referece set.
+   * @tparam InterpolationPolicy The policy used to calculate interpolation
+   *     weights.
+   *
+   * @param numRecs Number of Recommendations.
    * @param recommendations Matrix to save recommendations into.
    */
+  template<typename NeighborSearchPolicy = EuclideanSearch,
+           typename InterpolationPolicy = AverageInterpolation>
   void GetRecommendations(const size_t numRecs,
                           arma::Mat<size_t>& recommendations);
 
   /**
    * Generates the given number of recommendations for the specified users.
    *
-   * @param numRecs Number of Recommendations
-   * @param recommendations Matrix to save recommendations
-   * @param users Users for which recommendations are to be generated
+   * @tparam NeighborSearchPolicy The policy used to search neighbors of
+   *     query set in referece set.
+   * @tparam InterpolationPolicy The policy used to calculate interpolation
+   *     weights.
+   *
+   * @param numRecs Number of Recommendations.
+   * @param recommendations Matrix to save recommendations.
+   * @param users Users for which recommendations are to be generated.
    */
+  template<typename NeighborSearchPolicy = EuclideanSearch,
+           typename InterpolationPolicy = AverageInterpolation>
   void GetRecommendations(const size_t numRecs,
                           arma::Mat<size_t>& recommendations,
                           const arma::Col<size_t>& users);
 
-  //! Converts the User, Item, Value Matrix to User-Item Table
+  //! Converts the User, Item, Value Matrix to User-Item Table.
   static void CleanData(const arma::mat& data, arma::sp_mat& cleanedData);
 
   /**
    * Predict the rating of an item by a particular user.
    *
+   * @tparam NeighborSearchPolicy The policy used to search neighbors of
+   *     query set in referece set.
+   * @tparam InterpolationPolicy The policy used to calculate interpolation
+   *     weights.
+   *
    * @param user User to predict for.
    * @param item Item to predict for.
    */
+  template<typename NeighborSearchPolicy = EuclideanSearch,
+           typename InterpolationPolicy = AverageInterpolation>
   double Predict(const size_t user, const size_t item) const;
 
   /**
@@ -238,29 +243,36 @@ class CF
    * have length equal to combinations.n_cols, and predictions[i] will be equal
    * to the prediction for the user/item combination in combinations.col(i).
    *
+   * @tparam NeighborSearchPolicy The policy used to search neighbors of
+   *     query set in referece set.
+   * @tparam InterpolationPolicy The policy used to calculate interpolation
+   *     weights.
+   *
    * @param combinations User/item combinations to predict.
    * @param predictions Predicted ratings for each user/item combination.
    */
+  template<typename NeighborSearchPolicy = EuclideanSearch,
+           typename InterpolationPolicy = AverageInterpolation>
   void Predict(const arma::Mat<size_t>& combinations,
                arma::vec& predictions) const;
 
   /**
-   * Serialize the CF model to the given archive.
+   * Serialize the CFType model to the given archive.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Number of users for similarity.
   size_t numUsersForSimilarity;
   //! Rank used for matrix factorization.
   size_t rank;
-  //! User matrix.
-  arma::mat w;
-  //! Item matrix.
-  arma::mat h;
+  //! DecompositionPolicy object.
+  DecompositionPolicy decomposition;
   //! Cleaned data matrix.
   arma::sp_mat cleanedData;
+  //! Data normalization object.
+  NormalizationType normalization;
 
   //! Candidate represents a possible recommendation (value, item).
   typedef std::pair<double, size_t> Candidate;
@@ -272,7 +284,7 @@ class CF
       return c1.first > c2.first;
     };
   };
-}; // class CF
+}; // class CFType
 
 } // namespace cf
 } // namespace mlpack

@@ -21,13 +21,18 @@ namespace fastmks {
 template<typename KernelType>
 void BuildFastMKSModel(FastMKS<KernelType>& f,
                        KernelType& k,
-                       const arma::mat& referenceData,
+                       arma::mat&& referenceData,
                        const double base)
 {
   // Do we need to build the tree?
+  if (base <= 1.0)
+  {
+    throw std::invalid_argument("base must be greater than 1");
+  }
+
   if (f.Naive())
   {
-    f.Train(referenceData, k);
+    f.Train(std::move(referenceData), k);
   }
   else
   {
@@ -35,7 +40,8 @@ void BuildFastMKSModel(FastMKS<KernelType>& f,
     Timer::Start("tree_building");
     metric::IPMetric<KernelType> metric(k);
     typename FastMKS<KernelType>::Tree* tree =
-        new typename FastMKS<KernelType>::Tree(referenceData, metric, base);
+        new typename FastMKS<KernelType>::Tree(std::move(referenceData),
+                                                metric, base);
     Timer::Stop("tree_building");
 
     f.Train(tree);
@@ -47,7 +53,7 @@ template<typename KernelType,
          typename FastMKSType>
 void BuildFastMKSModel(FastMKSType& /* f */,
                        KernelType& /* k */,
-                       const arma::mat& /* referenceData */,
+                       arma::mat&& /* referenceData */,
                        const double /* base */)
 {
   throw std::invalid_argument("FastMKSModel::BuildModel(): given kernel type is"
@@ -55,7 +61,7 @@ void BuildFastMKSModel(FastMKSType& /* f */,
 }
 
 template<typename TKernelType>
-void FastMKSModel::BuildModel(const arma::mat& referenceData,
+void FastMKSModel::BuildModel(arma::mat&& referenceData,
                               TKernelType& kernel,
                               const bool singleMode,
                               const bool naive,
@@ -90,47 +96,45 @@ void FastMKSModel::BuildModel(const arma::mat& referenceData,
   {
     case LINEAR_KERNEL:
       linear = new FastMKS<kernel::LinearKernel>(singleMode, naive);
-      BuildFastMKSModel(*linear, kernel, referenceData, base);
+      BuildFastMKSModel(*linear, kernel, std::move(referenceData), base);
       break;
 
     case POLYNOMIAL_KERNEL:
       polynomial = new FastMKS<kernel::PolynomialKernel>(singleMode, naive);
-      BuildFastMKSModel(*polynomial, kernel, referenceData, base);
+      BuildFastMKSModel(*polynomial, kernel, std::move(referenceData), base);
       break;
 
     case COSINE_DISTANCE:
       cosine = new FastMKS<kernel::CosineDistance>(singleMode, naive);
-      BuildFastMKSModel(*cosine, kernel, referenceData, base);
+      BuildFastMKSModel(*cosine, kernel, std::move(referenceData), base);
       break;
 
     case GAUSSIAN_KERNEL:
       gaussian = new FastMKS<kernel::GaussianKernel>(singleMode, naive);
-      BuildFastMKSModel(*gaussian, kernel, referenceData, base);
+      BuildFastMKSModel(*gaussian, kernel, std::move(referenceData), base);
       break;
 
     case EPANECHNIKOV_KERNEL:
       epan = new FastMKS<kernel::EpanechnikovKernel>(singleMode, naive);
-      BuildFastMKSModel(*epan, kernel, referenceData, base);
+      BuildFastMKSModel(*epan, kernel, std::move(referenceData), base);
       break;
 
     case TRIANGULAR_KERNEL:
       triangular = new FastMKS<kernel::TriangularKernel>(singleMode, naive);
-      BuildFastMKSModel(*triangular, kernel, referenceData, base);
+      BuildFastMKSModel(*triangular, kernel, std::move(referenceData), base);
       break;
 
     case HYPTAN_KERNEL:
       hyptan = new FastMKS<kernel::HyperbolicTangentKernel>(singleMode, naive);
-      BuildFastMKSModel(*hyptan, kernel, referenceData, base);
+      BuildFastMKSModel(*hyptan, kernel, std::move(referenceData), base);
       break;
   }
 }
 
 template<typename Archive>
-void FastMKSModel::Serialize(Archive& ar, const unsigned int /* version */)
+void FastMKSModel::serialize(Archive& ar, const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
-  ar & CreateNVP(kernelType, "kernelType");
+  ar & BOOST_SERIALIZATION_NVP(kernelType);
 
   if (Archive::is_loading::value)
   {
@@ -163,31 +167,31 @@ void FastMKSModel::Serialize(Archive& ar, const unsigned int /* version */)
   switch (kernelType)
   {
     case LINEAR_KERNEL:
-      ar & CreateNVP(linear, "linear_fastmks");
+      ar & BOOST_SERIALIZATION_NVP(linear);
       break;
 
     case POLYNOMIAL_KERNEL:
-      ar & CreateNVP(polynomial, "polynomial_fastmks");
+      ar & BOOST_SERIALIZATION_NVP(polynomial);
       break;
 
     case COSINE_DISTANCE:
-      ar & CreateNVP(cosine, "cosine_fastmks");
+      ar & BOOST_SERIALIZATION_NVP(cosine);
       break;
 
     case GAUSSIAN_KERNEL:
-      ar & CreateNVP(gaussian, "gaussian_fastmks");
+      ar & BOOST_SERIALIZATION_NVP(gaussian);
       break;
 
     case EPANECHNIKOV_KERNEL:
-      ar & CreateNVP(epan, "epan_fastmks");
+      ar & BOOST_SERIALIZATION_NVP(epan);
       break;
 
     case TRIANGULAR_KERNEL:
-      ar & CreateNVP(triangular, "triangular_fastmks");
+      ar & BOOST_SERIALIZATION_NVP(triangular);
       break;
 
     case HYPTAN_KERNEL:
-      ar & CreateNVP(hyptan, "hyptan_fastmks");
+      ar & BOOST_SERIALIZATION_NVP(hyptan);
       break;
   }
 }

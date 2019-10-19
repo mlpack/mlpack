@@ -135,14 +135,15 @@ class LocalCoordinateCoding
    * @param objTolerance Tolerance of objective function.  When the objective
    *     function changes by a value lower than this tolerance, the optimization
    *     terminates.
+   * @return The final objective value.
    */
   template<
       typename DictionaryInitializer =
           sparse_coding::DataDependentRandomInitializer
   >
-  void Train(const arma::mat& data,
-             const DictionaryInitializer& initializer =
-                 DictionaryInitializer());
+  double Train(const arma::mat& data,
+               const DictionaryInitializer& initializer =
+                   DictionaryInitializer());
 
   /**
    * Code each point via distance-weighted LARS.
@@ -197,7 +198,7 @@ class LocalCoordinateCoding
 
   //! Serialize the model.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Number of atoms in dictionary.

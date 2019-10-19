@@ -1,9 +1,14 @@
 /**
  * @file elu_impl.hpp
  * @author Vivek Pal
+ * @author Dakshit Agrawal
  *
  * Implementation of the ELU activation function as descibed by Djork-Arne
  * Clevert, Thomas Unterthiner and Sepp Hochreiter.
+ *
+ * Implementation of the SELU function as introduced by Klambauer et. al. in
+ * Self Neural Networks.  The SELU activation function keeps the mean and
+ * variance of the input invariant.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,9 +24,24 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+// This constructor is called for SELU activation function.  The values of
+// alpha and lambda are constant for normalized inputs.
 template<typename InputDataType, typename OutputDataType>
-ELU<InputDataType, OutputDataType>::ELU(
-    const double alpha) : alpha(alpha)
+ELU<InputDataType, OutputDataType>::ELU() :
+    alpha(1.6732632423543774),
+    lambda(1.0507009873554802),
+    deterministic(false)
+{
+  // Nothing to do here.
+}
+
+// This constructor is called for ELU activation function.  The value of lambda
+// is fixed and equal to 1.  'alpha' is a hyperparameter.
+template<typename InputDataType, typename OutputDataType>
+ELU<InputDataType, OutputDataType>::ELU(const double alpha) :
+    alpha(alpha),
+    lambda(1),
+    deterministic(false)
 {
   // Nothing to do here.
 }
@@ -32,25 +52,29 @@ void ELU<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
   Fn(input, output);
+
+  if (!deterministic)
+  {
+    Deriv(input, output);
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void ELU<InputDataType, OutputDataType>::Backward(
-    const DataType&& input, DataType&& gy, DataType&& g)
+    const DataType&& /* input */, DataType&& gy, DataType&& g)
 {
-  DataType derivative;
-  Deriv(input, derivative);
   g = gy % derivative;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void ELU<InputDataType, OutputDataType>::Serialize(
+void ELU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & data::CreateNVP(alpha, "alpha");
+  ar & BOOST_SERIALIZATION_NVP(alpha);
+  ar & BOOST_SERIALIZATION_NVP(lambda);
 }
 
 } // namespace ann

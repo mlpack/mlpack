@@ -11,7 +11,7 @@
  */
 #include "cli.hpp"
 #include "log.hpp"
-#include "singletons.hpp"
+#include <iostream>
 
 using namespace mlpack;
 using namespace mlpack::util;
@@ -31,9 +31,6 @@ using namespace mlpack::util;
   #define BASH_CLEAR ""
 #endif
 
-CLI* CLI::singleton = NULL;
-
-// Only output debugging output if in debug mode.
 #ifdef DEBUG
 PrefixedOutStream Log::Debug = PrefixedOutStream(std::cout,
     BASH_CYAN "[DEBUG] " BASH_CLEAR);
@@ -47,9 +44,3 @@ PrefixedOutStream Log::Warn = PrefixedOutStream(std::cout,
     BASH_YELLOW "[WARN ] " BASH_CLEAR, false, false);
 PrefixedOutStream Log::Fatal = PrefixedOutStream(std::cerr,
     BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
-
-/**
- * This has to be last, so that the CLI object is destroyed before the Log
- * output objects are destroyed.
- */
-CLIDeleter cliDeleter;

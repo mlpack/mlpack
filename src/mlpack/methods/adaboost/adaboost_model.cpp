@@ -3,7 +3,13 @@
  * @author Ryan Curtin
  *
  * A serializable AdaBoost model, used by the main program.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#include "adaboost.hpp"
 #include "adaboost_model.hpp"
 
 using namespace mlpack;
@@ -91,6 +97,7 @@ AdaBoostModel::~AdaBoostModel()
 //! Train the model.
 void AdaBoostModel::Train(const mat& data,
                           const Row<size_t>& labels,
+                          const size_t numClasses,
                           const size_t iterations,
                           const double tolerance)
 {
@@ -100,13 +107,13 @@ void AdaBoostModel::Train(const mat& data,
     delete dsBoost;
 
     DecisionStump<> ds(data, labels, max(labels) + 1);
-    dsBoost = new AdaBoost<DecisionStump<>>(data, labels, ds, iterations,
-        tolerance);
+    dsBoost = new AdaBoost<DecisionStump<>>(data, labels, numClasses, ds,
+        iterations, tolerance);
   }
   else if (weakLearnerType == WeakLearnerTypes::PERCEPTRON)
   {
     Perceptron<> p(data, labels, max(labels) + 1);
-    pBoost = new AdaBoost<Perceptron<>>(data, labels, p, iterations,
+    pBoost = new AdaBoost<Perceptron<>>(data, labels, numClasses, p, iterations,
         tolerance);
   }
 }

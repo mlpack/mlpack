@@ -70,12 +70,18 @@ class TriangularKernel
    *
    * @param distance The distance between the two points.
    */
-  double Gradient(const double distance) const {
-    if (distance < 1) {
+  double Gradient(const double distance) const
+  {
+    if (distance < 1)
+    {
       return -1.0 / bandwidth;
-    } else if (distance > 1) {
+    }
+    else if (distance > 1)
+    {
       return 0;
-    } else {
+    }
+    else
+    {
       return arma::datum::nan;
     }
   }
@@ -87,9 +93,9 @@ class TriangularKernel
 
   //! Serialize the kernel.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(bandwidth, "bandwidth");
+    ar & BOOST_SERIALIZATION_NVP(bandwidth);
   }
 
  private:

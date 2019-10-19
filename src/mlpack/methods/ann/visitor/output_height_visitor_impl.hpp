@@ -25,10 +25,15 @@ inline size_t OutputHeightVisitor::operator()(LayerType* layer) const
   return LayerOutputHeight(layer);
 }
 
+inline size_t OutputHeightVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     !HasInputHeight<T, size_t&(T::*)()>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+    !HasModelCheck<T>::value, size_t>::type
 OutputHeightVisitor::LayerOutputHeight(T* /* layer */) const
 {
   return 0;
@@ -37,7 +42,7 @@ OutputHeightVisitor::LayerOutputHeight(T* /* layer */) const
 template<typename T>
 inline typename std::enable_if<
     HasInputHeight<T, size_t&(T::*)()>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+    !HasModelCheck<T>::value, size_t>::type
 OutputHeightVisitor::LayerOutputHeight(T* layer) const
 {
   return layer->OutputHeight();
@@ -46,7 +51,7 @@ OutputHeightVisitor::LayerOutputHeight(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     !HasInputHeight<T, size_t&(T::*)()>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+    HasModelCheck<T>::value, size_t>::type
 OutputHeightVisitor::LayerOutputHeight(T* layer) const
 {
   for (size_t i = 0; i < layer->Model().size(); ++i)
@@ -66,7 +71,7 @@ OutputHeightVisitor::LayerOutputHeight(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     HasInputHeight<T, size_t&(T::*)()>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+    HasModelCheck<T>::value, size_t>::type
 OutputHeightVisitor::LayerOutputHeight(T* layer) const
 {
   size_t outputHeight = layer->OutputHeight();

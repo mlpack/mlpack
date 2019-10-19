@@ -171,19 +171,17 @@ void QDAFN<MatType>::Search(const MatType& querySet,
 
 template<typename MatType>
 template<typename Archive>
-void QDAFN<MatType>::Serialize(Archive& ar, const unsigned int /* version */)
+void QDAFN<MatType>::serialize(Archive& ar, const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
-  ar & CreateNVP(l, "l");
-  ar & CreateNVP(m, "m");
-  ar & CreateNVP(lines, "lines");
-  ar & CreateNVP(projections, "projections");
-  ar & CreateNVP(sIndices, "sIndices");
-  ar & CreateNVP(sValues, "sValues");
+  ar & BOOST_SERIALIZATION_NVP(l);
+  ar & BOOST_SERIALIZATION_NVP(m);
+  ar & BOOST_SERIALIZATION_NVP(lines);
+  ar & BOOST_SERIALIZATION_NVP(projections);
+  ar & BOOST_SERIALIZATION_NVP(sIndices);
+  ar & BOOST_SERIALIZATION_NVP(sValues);
   if (Archive::is_loading::value)
     candidateSet.clear();
-  ar & CreateNVP(candidateSet, "candidateSet");
+  ar & BOOST_SERIALIZATION_NVP(candidateSet);
 }
 
 } // namespace neighbor

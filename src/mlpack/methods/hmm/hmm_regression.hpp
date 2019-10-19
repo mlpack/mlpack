@@ -287,13 +287,13 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
   /**
    * Utility functions to facilitate the use of the HMM class for HMMR.
    */
-   void StackData(const std::vector<arma::mat>& predictors,
-                  const std::vector<arma::vec>& responses,
-                  std::vector<arma::mat>& dataSeq) const;
+  void StackData(const std::vector<arma::mat>& predictors,
+                 const std::vector<arma::vec>& responses,
+                 std::vector<arma::mat>& dataSeq) const;
 
-   void StackData(const arma::mat& predictors,
-                  const arma::vec& responses,
-                  arma::mat& dataSeq) const;
+  void StackData(const arma::mat& predictors,
+                 const arma::vec& responses,
+                 arma::mat& dataSeq) const;
 
   /**
    * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
@@ -327,8 +327,6 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
                 const arma::vec& responses,
                 const arma::vec& scales,
                 arma::mat& backwardProb) const;
-
-
 };
 
 } // namespace hmm

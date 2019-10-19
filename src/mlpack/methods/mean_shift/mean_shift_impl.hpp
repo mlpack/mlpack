@@ -27,8 +27,8 @@ namespace mlpack {
 namespace meanshift {
 
 /**
-  * Construct the Mean Shift object.
-  */
+ * Construct the Mean Shift object.
+ */
 template<bool UseKernel, typename KernelType, typename MatType>
 MeanShift<UseKernel, KernelType, MatType>::
 MeanShift(const double radius,
@@ -68,7 +68,7 @@ EstimateRadius(const MatType& data, double ratio)
   arma::rowvec maxDistances = max(distances);
 
   // Calculate and return the radius.
-  return sum(maxDistances) / (double) data.n_cols;
+  return arma::sum(maxDistances) / (double) data.n_cols;
 }
 
 // Class to compare two vectors.
@@ -183,8 +183,9 @@ CalculateCentroid(const MatType& data,
 template<bool UseKernel, typename KernelType, typename MatType>
 inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
     const MatType& data,
-    arma::Col<size_t>& assignments,
+    arma::Row<size_t>& assignments,
     arma::mat& centroids,
+    bool forceConvergence,
     bool useSeeds)
 {
   if (radius <= 0)
@@ -216,15 +217,15 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   {
     // Initial centroid is the seed itself.
     allCentroids.col(i) = pSeeds->unsafe_col(i);
-    for (size_t completedIterations = 0; completedIterations < maxIterations;
-         completedIterations++)
+    for (size_t completedIterations = 0; completedIterations < maxIterations
+        || forceConvergence; completedIterations++)
     {
       // Store new centroid in this.
       arma::colvec newCentroid = arma::zeros<arma::colvec>(pSeeds->n_rows);
 
       rangeSearcher.Search(allCentroids.unsafe_col(i), validRadius,
           neighbors, distances);
-      if (neighbors[0].size() <= 1)
+      if (neighbors[0].size() == 0) // There are no points in the cluster.
         break;
 
       // Calculate new centroid.
@@ -260,12 +261,37 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
     }
   }
 
-  // Assign centroids to each point.
-  neighbor::KNN neighborSearcher(centroids);
-  arma::mat neighborDistances;
-  arma::Mat<size_t> resultingNeighbors;
-  neighborSearcher.Search(data, 1, resultingNeighbors, neighborDistances);
-  assignments = resultingNeighbors.t();
+  // If no centroid has converged due to too little iterations and without
+  // forcing convergence, take 1 random centroid calculated.
+  if (centroids.empty())
+  {
+    Log::Warn << "No clusters converged; setting 1 random centroid calculated. "
+        << "Try increasing the maximum number of iterations or setting the "
+        << "option to force convergence." << std::endl;
+
+    if (maxIterations == 0)
+    {
+      centroids.insert_cols(centroids.n_cols, data.col(0));
+    }
+    else
+    {
+      centroids.insert_cols(centroids.n_cols, allCentroids.col(0));
+    }
+    assignments.zeros();
+  }
+  else if (centroids.n_cols == 1)
+  {
+    assignments.zeros();
+  }
+  else
+  {
+    // Assign centroids to each point.
+    neighbor::KNN neighborSearcher(centroids);
+    arma::mat neighborDistances;
+    arma::Mat<size_t> resultingNeighbors;
+    neighborSearcher.Search(data, 1, resultingNeighbors, neighborDistances);
+    assignments = resultingNeighbors;
+  }
 }
 
 } // namespace meanshift

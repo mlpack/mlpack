@@ -145,7 +145,10 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
 
   for (size_t i = 0; i < testResProba.n_cols; ++i)
     for (size_t j = 0; j < testResProba.n_rows; ++j)
-      BOOST_REQUIRE_CLOSE(testResProba(j, i) + .00001, calcProbs(j, i) + .00001, 0.01);
+    {
+      BOOST_REQUIRE_CLOSE(
+          testResProba(j, i) + .00001, calcProbs(j, i) + .00001, 0.01);
+    }
 }
 
 /**
@@ -169,7 +172,7 @@ BOOST_AUTO_TEST_CASE(SeparateTrainTest)
 
   NaiveBayesClassifier<> nbc(trainData, labels, classes, true);
   NaiveBayesClassifier<> nbcTrain(trainData.n_rows, classes);
-  nbcTrain.Train(trainData, labels, false);
+  nbcTrain.Train(trainData, labels, classes, false);
 
   BOOST_REQUIRE_EQUAL(nbc.Means().n_rows, nbcTrain.Means().n_rows);
   BOOST_REQUIRE_EQUAL(nbc.Means().n_cols, nbcTrain.Means().n_cols);
@@ -222,7 +225,7 @@ BOOST_AUTO_TEST_CASE(SeparateTrainIncrementalTest)
 
   NaiveBayesClassifier<> nbc(trainData, labels, classes, true);
   NaiveBayesClassifier<> nbcTrain(trainData.n_rows, classes);
-  nbcTrain.Train(trainData, labels, true);
+  nbcTrain.Train(trainData, labels, classes, true);
 
   BOOST_REQUIRE_EQUAL(nbc.Means().n_rows, nbcTrain.Means().n_rows);
   BOOST_REQUIRE_EQUAL(nbc.Means().n_cols, nbcTrain.Means().n_cols);
@@ -309,6 +312,47 @@ BOOST_AUTO_TEST_CASE(SeparateTrainIndividualIncrementalTest)
       BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], nbcTrain.Probabilities()[i],
           1e-5);
   }
+}
+
+/**
+ * Check if NaiveBayesClassifier::Classify() works properly for a high
+ * dimension datasets.
+ */
+BOOST_AUTO_TEST_CASE(NaiveBayesClassifierHighDimensionsTest)
+{
+  // Set file names of dataset of training and test.
+  // The training dataset has 5 classes and each class has 1,000 dimensions.
+  const char* trainFilename = "nbc_high_dim_train.csv";
+  const char* testFilename = "nbc_high_dim_test.csv";
+  const char* trainLabelsFileName = "nbc_high_dim_train_labels.csv";
+  const char* testLabelsFilename = "nbc_high_dim_test_labels.csv";
+
+  size_t classes = 5;
+
+  // Create variables for training and assign data to them.
+  arma::mat trainData;
+  arma::Row<size_t> trainLabels;
+  data::Load(trainFilename, trainData, true);
+  data::Load(trainLabelsFileName, trainLabels, true);
+
+  // Initialize and train a NBC model.
+  NaiveBayesClassifier<> nbcTest(trainData, trainLabels, classes);
+
+  // Create variables for test and assign data to them.
+  arma::mat testData, calcProbs;
+  arma::Row<size_t> testLabels;
+  arma::Row<size_t> calcVec;
+  data::Load(testFilename, testData, true);
+  data::Load(testLabelsFilename, testLabels, true);
+
+  // Classify observations in the test dataset. To use Classify() method with
+  // a parameter for probabilities of predictions, we pass 'calcProbs' to the
+  // method.
+  nbcTest.Classify(testData, calcVec, calcProbs);
+
+  // Check the results.
+  for (size_t i = 0; i < calcVec.n_cols; i++)
+    BOOST_REQUIRE_EQUAL(calcVec(i), testLabels(i));
 }
 
 BOOST_AUTO_TEST_SUITE_END();

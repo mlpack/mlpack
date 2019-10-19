@@ -180,7 +180,7 @@ class LoadCSV
             stringRule[findRowSize] % delimiterRule);
 
         // Now that we know the dimensionality, initialize the DatasetMapper.
-        info = DatasetMapper<MapPolicy>(rows);
+        info.SetDimensionality(rows);
       }
 
       // If we need to do a first pass for the DatasetMapper, do it.
@@ -204,7 +204,7 @@ class LoadCSV
     }
   }
 
-private:
+ private:
   using iter_type = boost::iterator_range<std::string::iterator>;
 
   /**
@@ -256,8 +256,8 @@ private:
       // Remove whitespace from either side.
       boost::trim(line);
 
-      //parse the numbers from a line(ex : 1,2,3,4), if the parser find the
-      //number it will execute the setNum function
+      // Parse the numbers from a line (ex: 1,2,3,4); if the parser finds a
+      // number it will execute the setNum function.
       const bool canParse = qi::parse(line.begin(), line.end(),
           stringRule[setCharClass] % delimiterRule);
 

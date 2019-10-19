@@ -25,8 +25,7 @@ namespace pca {
  */
 class QUICSVDPolicy
 {
-  public:
-
+ public:
   /**
    * Use QUIC-SVD method to perform the principal components analysis (PCA).
    *
@@ -83,12 +82,12 @@ class QUICSVDPolicy
   //! Modify the cumulative probability for Monte Carlo error lower bound.
   double& Delta() { return delta; }
 
-  private:
-    //! Error tolerance fraction for calculated subspace.
-    double epsilon;
+ private:
+  //! Error tolerance fraction for calculated subspace.
+  double epsilon;
 
-    //! Cumulative probability for Monte Carlo error lower bound.
-    double delta;
+  //! Cumulative probability for Monte Carlo error lower bound.
+  double delta;
 };
 
 } // namespace pca

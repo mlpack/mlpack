@@ -42,7 +42,7 @@ class Lookup
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  Lookup(const size_t inSize, const size_t outSize);
+  Lookup(const size_t inSize = 0, const size_t outSize = 0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -85,11 +85,6 @@ class Lookup
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -109,10 +104,9 @@ class Lookup
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   //! Locally-stored number of input units.
   size_t inSize;
 
@@ -128,12 +122,13 @@ class Lookup
   //! Locally-stored gradient object.
   OutputDataType gradient;
 
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
-
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 }; // class Lookup
+
+// Alias for using as embedding layer.
+template<typename MatType = arma::mat>
+using Embedding = Lookup<MatType, MatType>;
 
 } // namespace ann
 } // namespace mlpack

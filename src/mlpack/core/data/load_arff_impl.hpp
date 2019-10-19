@@ -16,6 +16,7 @@
 #include "load_arff.hpp"
 
 #include <boost/algorithm/string/trim.hpp>
+#include "is_naninf.hpp"
 
 namespace mlpack {
 namespace data {
@@ -27,13 +28,19 @@ void LoadARFF(const std::string& filename,
 {
   // First, open the file.
   std::ifstream ifs;
-  ifs.open(filename);
+  ifs.open(filename, std::ios::in | std::ios::binary);
+
+  // if file is not open throw an error (file not found).
+  if (!ifs.is_open())
+  {
+    Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
+  }
 
   std::string line;
   size_t dimensionality = 0;
   std::vector<bool> types;
   size_t headerLines = 0;
-  while (!ifs.eof())
+  while (ifs.good())
   {
     // Read the next line, then strip whitespace from either side.
     std::getline(ifs, line, '\n');
@@ -49,8 +56,8 @@ void LoadARFF(const std::string& filename,
     if (line[0] == '@')
     {
       typedef boost::tokenizer<boost::escaped_list_separator<char>> Tokenizer;
-      std::string separators = " \t\%"; // Split on comments too.
-      boost::escaped_list_separator<char> sep("\\", separators, "\"{");
+      std::string separators = " \t%"; // Split on comments too.
+      boost::escaped_list_separator<char> sep("\\", separators, "{\"");
       Tokenizer tok(line, sep);
       Tokenizer::iterator it = tok.begin();
 
@@ -127,7 +134,7 @@ void LoadARFF(const std::string& filename,
   // We need to find out how many lines of data are in the file.
   std::streampos pos = ifs.tellg();
   size_t row = 0;
-  while (!ifs.eof())
+  while (ifs.good())
   {
     std::getline(ifs, line, '\n');
     ++row;
@@ -144,7 +151,7 @@ void LoadARFF(const std::string& filename,
 
   // Now we are looking at the @data section.
   row = 0;
-  while (!ifs.eof())
+  while (ifs.good())
   {
     std::getline(ifs, line, '\n');
     boost::trim(line);
@@ -182,7 +189,8 @@ void LoadARFF(const std::string& filename,
         // Strip spaces before mapping.
         std::string token = *it;
         boost::trim(token);
-        matrix(col, row) = info.template MapString<eT>(token, col); // We load transposed.
+        // We load transposed.
+        matrix(col, row) = info.template MapString<eT>(token, col);
       }
       else if (info.Type(col) == Datatype::numeric)
       {
@@ -196,7 +204,7 @@ void LoadARFF(const std::string& filename,
         if (token.fail())
         {
           // Check for NaN or inf.
-          if (!arma::diskio::convert_naninf(val, token.str()))
+          if (!IsNaNInf(val, token.str()))
           {
             // Okay, it's not NaN or inf.  If it's '?', we issue a specific
             // error, otherwise we issue a general error.

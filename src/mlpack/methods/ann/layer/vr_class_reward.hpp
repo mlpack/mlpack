@@ -4,6 +4,11 @@
  *
  * Definition of the VRClassReward class, which implements the variance
  * reduced classification reinforcement layer.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_LAYER_VR_CLASS_REWARD_HPP
 #define MLPACK_METHODS_ANN_LAYER_VR_CLASS_REWARD_HPP
@@ -49,8 +54,8 @@ class VRClassReward
    * @param target The target vector, that contains the class index in the range
    *        between 1 and the number of classes.
    */
-  template<typename eT>
-  double Forward(const arma::Mat<eT>&& input, const arma::Mat<eT>&& target);
+  template<typename InputType, typename TargetType>
+  double Forward(const InputType&& input, const TargetType&& target);
 
   /**
    * Ordinary feed backward pass of a neural network. The negative log
@@ -63,15 +68,10 @@ class VRClassReward
    *        between 1 and the number of classes.
    * @param output The calculated error.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
-                const arma::Mat<eT>&& target,
-                arma::Mat<eT>&& output);
-
-  //! Get the input parameter.
-  InputDataType& InputParameter() const {return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
+  template<typename InputType, typename TargetType, typename OutputType>
+  void Backward(const InputType&& input,
+                const TargetType&& target,
+                OutputType&& output);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const {return outputParameter; }
@@ -101,29 +101,26 @@ class VRClassReward
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes layer) { network.push_back(layer); }
+  void Add(LayerTypes<> layer) { network.push_back(layer); }
 
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& /* ar */, const unsigned int /* version */);
 
  private:
   //! Locally-stored value to scale the reward.
-  const double scale;
+  double scale;
 
   //! If true take the average over all batches.
-  const bool sizeAverage;
+  bool sizeAverage;
 
   //! Locally stored reward parameter.
   double reward;
 
   //! Locally-stored delta object.
   OutputDataType delta;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
@@ -132,7 +129,7 @@ class VRClassReward
   bool deterministic;
 
   //! Locally-stored network modules.
-  std::vector<LayerTypes> network;
+  std::vector<LayerTypes<> > network;
 }; // class VRClassReward
 
 } // namespace ann

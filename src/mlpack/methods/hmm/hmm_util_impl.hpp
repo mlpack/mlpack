@@ -16,6 +16,7 @@
 
 #include <mlpack/methods/hmm/hmm.hpp>
 #include <mlpack/methods/gmm/gmm.hpp>
+#include <mlpack/methods/gmm/diagonal_gmm.hpp>
 
 namespace mlpack {
 namespace hmm {
@@ -66,7 +67,7 @@ void LoadHMMAndPerformActionHelper(const std::string& modelFile,
 
   // Read in the unsigned integer that denotes the type of the model.
   char type;
-  ar >> data::CreateNVP(type, "hmm_type");
+  ar >> BOOST_SERIALIZATION_NVP(type);
 
   using namespace mlpack::distribution;
 
@@ -87,6 +88,10 @@ void LoadHMMAndPerformActionHelper(const std::string& modelFile,
           HMM<gmm::GMM>>(ar, x);
       break;
 
+    case HMMType::DiagonalGaussianMixtureModelHMM:
+      DeserializeHMMAndPerformAction<ActionType, ArchiveType,
+          HMM<gmm::DiagonalGMM>>(ar, x);
+
     default:
       Log::Fatal << "Unknown HMM type '" << (unsigned int) type << "'!"
           << std::endl;
@@ -101,7 +106,7 @@ void DeserializeHMMAndPerformAction(ArchiveType& ar, ExtraInfoType* x)
 {
   // Extract the HMM and perform the action.
   HMMType hmm;
-  ar >> data::CreateNVP(hmm, "hmm");
+  ar >> BOOST_SERIALIZATION_NVP(hmm);
   ActionType::Apply(hmm, x);
 }
 
@@ -143,8 +148,8 @@ void SaveHMMHelper(HMMType& hmm, const std::string& modelFile)
   if (type == char(-1))
     Log::Fatal << "Unknown HMM type given to SaveHMM()!" << std::endl;
 
-  ar << data::CreateNVP(type, "hmm_type");
-  ar << data::CreateNVP(hmm, "hmm");
+  ar << BOOST_SERIALIZATION_NVP(type);
+  ar << BOOST_SERIALIZATION_NVP(hmm);
 }
 
 // Utility functions to turn a type into something we can store.
@@ -167,6 +172,12 @@ template<>
 char GetHMMType<HMM<gmm::GMM>>()
 {
   return HMMType::GaussianMixtureModelHMM;
+}
+
+template<>
+char GetHMMType<HMM<gmm::DiagonalGMM>>()
+{
+  return HMMType::DiagonalGaussianMixtureModelHMM;
 }
 
 } // namespace hmm

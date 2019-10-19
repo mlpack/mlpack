@@ -38,43 +38,43 @@ struct IsVector
 };
 
 // Commenting out the first template per case, because
-//Visual Studio doesn't like this instantiaion pattern (error C2910).
-//template<>
+// Visual Studio doesn't like this instantiaion pattern (error C2910).
+// template<>
 template<typename eT>
 struct IsVector<arma::Col<eT> >
 {
   const static bool value = true;
 };
 
-//template<>
+// template<>
 template<typename eT>
 struct IsVector<arma::SpCol<eT> >
 {
   const static bool value = true;
 };
 
-//template<>
+// template<>
 template<typename eT>
 struct IsVector<arma::Row<eT> >
 {
   const static bool value = true;
 };
 
-//template<>
+// template<>
 template<typename eT>
 struct IsVector<arma::SpRow<eT> >
 {
   const static bool value = true;
 };
 
-//template<>
+// template<>
 template<typename eT>
 struct IsVector<arma::subview_col<eT> >
 {
   const static bool value = true;
 };
 
-//template<>
+// template<>
 template<typename eT>
 struct IsVector<arma::subview_row<eT> >
 {
@@ -84,7 +84,7 @@ struct IsVector<arma::subview_row<eT> >
 // I'm not so sure about this one.  An SpSubview object can be a row or column,
 // but it can also be a matrix subview.
 
-//template<>
+// template<>
 template<typename eT>
 struct IsVector<arma::SpSubview<eT> >
 {

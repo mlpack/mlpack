@@ -94,7 +94,8 @@ CosineTree::CosineTree(const arma::mat& dataset,
   // Initialize Monte Carlo error estimate for comparison.
   double monteCarloError = root.FrobNormSquared();
 
-  while (monteCarloError > epsilon * root.FrobNormSquared())
+  while (treeQueue.size() > 0 &&
+         (monteCarloError > epsilon * root.FrobNormSquared()))
   {
     // Pop node from queue with highest projection error.
     CosineTree* currentNode;

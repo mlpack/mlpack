@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(HollowBallBoundTest)
   b2 = HollowBallBound<EuclideanDistance>(0.5, 2.0,
       arma::vec("1.0 8.0 3.0 4.0 5.0"));
   BOOST_REQUIRE_CLOSE(b.MaxDistance(b2), 12.0, 1e-5);
-  
+
   b2 = HollowBallBound<EuclideanDistance>(0.5, 2.0,
       arma::vec("1.0 3.0 3.0 4.0 5.0"));
   BOOST_REQUIRE_CLOSE(b.MaxDistance(b2), 7.0, 1e-5);
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(HollowBallBoundTest)
 
   b1 |= b2;
   BOOST_REQUIRE_CLOSE(b1.InnerRadius(), 0.5, 1e-5);
-  
+
   b1 = b;
   b2 = HollowBallBound<EuclideanDistance>(0.5, 2.0,
       arma::vec("1.0 3.0 3.0 4.0 5.0"));
@@ -220,9 +220,9 @@ BOOST_AUTO_TEST_CASE(VPTreeTest)
     BOOST_REQUIRE_EQUAL(root.NumDescendants(), size);
 
     // Check the forward and backward mappings for correctness.
-    for(size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++)
     {
-      for(size_t j = 0; j < dimensions; j++)
+      for (size_t j = 0; j < dimensions; j++)
       {
         BOOST_REQUIRE_EQUAL(treeset(j, i), dataset(j, newToOld[i]));
         BOOST_REQUIRE_EQUAL(treeset(j, oldToNew[i]), dataset(j, i));

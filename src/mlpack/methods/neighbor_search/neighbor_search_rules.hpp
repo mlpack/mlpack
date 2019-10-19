@@ -15,6 +15,8 @@
 
 #include <mlpack/core/tree/traversal_info.hpp>
 
+#include <queue>
+
 namespace mlpack {
 namespace neighbor {
 
