@@ -316,6 +316,10 @@ CosineTree::CosineTree(CosineTree&& other) :
 //! Move Assignment.
 CosineTree&CosineTree::operator=(CosineTree&& other)
 {
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+  
   dataset = other.dataset;
   delta = std::move(other.delta);
   parent = other.Parent();
