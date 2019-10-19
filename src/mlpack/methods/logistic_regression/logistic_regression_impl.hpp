@@ -95,7 +95,10 @@ double LogisticRegression<MatType>::Train(
   errorFunction.InitialPoint() = parameters;
 
   Timer::Start("logistic_regression_optimization");
-  const double out = optimizer.Optimize(errorFunction, parameters, callbacks...);
+  const double out = optimizer.Optimize(
+          errorFunction,
+          parameters,
+          callbacks...);
   Timer::Stop("logistic_regression_optimization");
 
   Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
