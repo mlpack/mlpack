@@ -23,7 +23,7 @@
     <ProjectGuid>{2A22A5E8-4617-41D4-BEEC-E0970D7596F2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>samplemlapp</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.26624</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
