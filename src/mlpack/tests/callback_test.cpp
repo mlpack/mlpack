@@ -133,10 +133,8 @@ BOOST_AUTO_TEST_CASE(LRWithOptimizerCallback)
             data,
             responses,
             sgd,
-            ens::PrintLoss(stream)
-            );
+            ens::PrintLoss(stream));
     BOOST_REQUIRE_GT(stream.str().length(), 0);
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();
