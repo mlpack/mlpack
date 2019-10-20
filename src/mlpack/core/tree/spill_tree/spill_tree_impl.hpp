@@ -208,6 +208,13 @@ operator=(const SpillTree& other)
   if (this == &other)
     return *this;
 
+  // Freeing memory that will not be used anymore.
+  delete dataset;
+  delete pointsIndex;
+  delete left;
+  delete right;
+  delete parent;
+
   left = NULL;
   right = NULL;
   parent = other.parent;
@@ -326,6 +333,13 @@ operator=(SpillTree&& other)
 {
   if (this == &other)
     return *this;
+
+  // Freeing memory that will not be used anymore.
+  delete dataset;
+  delete pointsIndex;
+  delete left;
+  delete right;
+  delete parent;
 
   left = other.left;
   right = other.right;
