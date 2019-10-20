@@ -127,7 +127,7 @@ There are some useful pages to consult in addition to this section:
 
 mlpack uses CMake as a build system and allows several flexible build
 configuration options. You can consult any of the CMake tutorials for
-further documentation, but this tutorial should be eough to get mlpack built
+further documentation, but this tutorial should be enough to get mlpack built
 and installed.
 
 First, unpack the mlpack source and change into the unpacked directory.  Here we
