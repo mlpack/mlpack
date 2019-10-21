@@ -126,10 +126,10 @@ BOOST_AUTO_TEST_CASE(LRWithOptimizerCallback)
     arma::mat data("1 2 3;"
                    "1 2 3");
     arma::Row<size_t> responses("1 1 0");
-    ens::StandardSGD sgd(0.005, 32, 500000, 1e-4);
+    ens::StandardSGD sgd(0.1, 1, 5);
     LogisticRegression<> logisticRegression(data, responses, sgd, 0.001);
     std::stringstream stream;
-    logisticRegression.Train<ens::L_BFGS>(
+    logisticRegression.Train<ens::StandardSGD>(
             data,
             responses,
             sgd,
