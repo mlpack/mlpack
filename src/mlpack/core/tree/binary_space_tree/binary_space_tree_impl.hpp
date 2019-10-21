@@ -397,6 +397,11 @@ operator=(const BinarySpaceTree& other)
   if (this == &other)
     return *this;
 
+  // Freeing memory that will not be used anymore.  
+  delete dataset;
+  delete left;
+  delete right;
+
   left = NULL;
   right = NULL;
   parent = other.Parent();
@@ -463,6 +468,11 @@ operator=(BinarySpaceTree&& other)
   // Return if it's the same tree.
   if (this == &other)
     return *this;
+
+  // Freeing memory that will not be used anymore.  
+  delete dataset;
+  delete left;
+  delete right;
 
   parent = other.Parent();
   left = other.Left();
