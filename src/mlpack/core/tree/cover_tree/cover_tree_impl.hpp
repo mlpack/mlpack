@@ -566,9 +566,7 @@ operator=(const CoverTree& other)
   delete dataset;
   delete metric;
   for (size_t i = 0; i < children.size(); ++i)
-  {
     delete children[i];
-  }
   children.clear();
 
   dataset = ((other.parent == NULL && other.localDataset) ?
@@ -674,9 +672,7 @@ operator=(CoverTree&& other)
   delete dataset;
   delete metric;
   for (size_t i = 0; i < children.size(); ++i)
-  {
     delete children[i];
-  }
   children.clear();
 
   dataset = other.dataset;
