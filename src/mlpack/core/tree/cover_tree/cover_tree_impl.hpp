@@ -564,7 +564,7 @@ operator=(const CoverTree& other)
 
   // Freeing memory that will not be used anymore.
   delete dataset;
-  delete metric; 
+  delete metric;
   for (size_t i = 0; i < children.size(); ++i)
   {
     delete children[i];
