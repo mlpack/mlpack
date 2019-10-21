@@ -681,7 +681,6 @@ operator=(CoverTree&& other)
 
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
-  children.clear();
 
   dataset = other.dataset;
   point = other.point;
