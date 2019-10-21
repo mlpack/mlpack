@@ -209,7 +209,9 @@ operator=(const SpillTree& other)
     return *this;
 
   // Freeing memory that will not be used anymore.
-  delete dataset;
+  if (localDataset)
+    delete dataset;
+
   delete pointsIndex;
   delete left;
   delete right;
@@ -334,7 +336,9 @@ operator=(SpillTree&& other)
     return *this;
 
   // Freeing memory that will not be used anymore.
-  delete dataset;
+  if (localDataset)
+    delete dataset;
+
   delete pointsIndex;
   delete left;
   delete right;

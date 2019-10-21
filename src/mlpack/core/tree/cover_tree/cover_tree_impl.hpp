@@ -516,9 +516,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     parent(other.parent),
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
-    localMetric(false),
+    localMetric(other.localMetric),
     localDataset(other.parent == NULL && other.localDataset),
-    metric(other.metric),
+    metric((other.localMetric ? new MetricType() : other.metric)),
     distanceComps(0)
 {
   // Copy each child by hand.
@@ -563,8 +563,12 @@ operator=(const CoverTree& other)
     return *this;
 
   // Freeing memory that will not be used anymore.
-  delete dataset;
-  delete metric;
+  if (localDataset)
+    delete dataset;
+
+  if (localMetric)
+    delete metric;
+
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
   children.clear();
@@ -579,9 +583,9 @@ operator=(const CoverTree& other)
   parent = other.parent;
   parentDistance = other.parentDistance;
   furthestDescendantDistance = other.furthestDescendantDistance;
-  localMetric = false;
+  localMetric = other.localMetric;
   localDataset = (other.parent == NULL && other.localDataset);
-  metric = other.metric;
+  metric = (other.localMetric ? new MetricType() : other.metric);
   distanceComps = 0;
 
   // Copy each child by hand.
@@ -669,8 +673,12 @@ operator=(CoverTree&& other)
     return *this;
 
   // Freeing memory that will not be used anymore.
-  delete dataset;
-  delete metric;
+  if (localDataset)
+    delete dataset;
+
+  if (localMetric)
+    delete metric;
+
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
   children.clear();
