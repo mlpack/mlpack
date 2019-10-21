@@ -564,10 +564,12 @@ operator=(const CoverTree& other)
 
   // Freeing memory that will not be used anymore.
   delete dataset;
+  delete metric; 
   for (size_t i = 0; i < children.size(); ++i)
   {
     delete children[i];
   }
+  children.clear();
 
   dataset = ((other.parent == NULL && other.localDataset) ?
       new MatType(*other.dataset) : other.dataset);
@@ -670,10 +672,12 @@ operator=(CoverTree&& other)
 
   // Freeing memory that will not be used anymore.
   delete dataset;
+  delete metric;
   for (size_t i = 0; i < children.size(); ++i)
   {
     delete children[i];
   }
+  children.clear();
 
   dataset = other.dataset;
   point = other.point;

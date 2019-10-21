@@ -213,7 +213,6 @@ operator=(const SpillTree& other)
   delete pointsIndex;
   delete left;
   delete right;
-  delete parent;
 
   left = NULL;
   right = NULL;
@@ -339,7 +338,6 @@ operator=(SpillTree&& other)
   delete pointsIndex;
   delete left;
   delete right;
-  delete parent;
 
   left = other.left;
   right = other.right;
