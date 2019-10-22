@@ -129,10 +129,7 @@ BOOST_AUTO_TEST_CASE(LRWithOptimizerCallback)
     ens::StandardSGD sgd(0.1, 1, 5);
     LogisticRegression<> logisticRegression(data, responses, sgd, 0.001);
     std::stringstream stream;
-    logisticRegression.Train<ens::StandardSGD>(
-            data,
-            responses,
-            sgd,
+    logisticRegression.Train<ens::StandardSGD>(data, responses, sgd,
             ens::PrintLoss(stream));
     BOOST_REQUIRE_GT(stream.str().length(), 0);
 }
