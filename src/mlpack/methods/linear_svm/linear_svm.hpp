@@ -202,6 +202,7 @@ class LinearSVM
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
    * @param optimizer Desired optimizer.
+   * @param callbacks Callback Functions.
    * @return Objective value of the final point.
    */
   template <typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>
