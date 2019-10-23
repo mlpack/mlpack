@@ -196,8 +196,9 @@ class LinearSVM
   /**
    * Train the Linear SVM with the given training data.
    *
-   * @tparam OptimizerType Desired optimizer
-   * @param data Input training features. Each column associate with one sample
+   * @tparam OptimizerType Desired optimizer.
+   * @tparam CallbackTypes Types of Callback Functions.
+   * @param data Input training features. Each column associate with one sample.
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
