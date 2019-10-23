@@ -282,6 +282,7 @@ operator=(const RectangleTree& other)
   if (this == &other)
     return *this;
 
+  // Freeing memory that will not be used anymore.
   for (size_t i = 0; i < numChildren; i++)
     delete children[i];
 
@@ -334,6 +335,7 @@ operator=(RectangleTree&& other)
   if (this == &other)
     return *this;
 
+  // Freeing memory that will not be used anymore.
   for (size_t i = 0; i < numChildren; i++)
     delete children[i];
 
