@@ -190,13 +190,13 @@ template<
   typename Noise,
   typename PolicyType
 >
-template<typename OptimizerType>
+template<typename OptimizerType, typename... CallbackTypes>
 double GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
-    OptimizerType& Optimizer)
+								    OptimizerType& Optimizer, CallbackTypes&&... callbacks)
 {
   if (!reset)
     Reset();
-  return Optimizer.Optimize(*this, parameter);
+  return Optimizer.Optimize(*this, parameter, callbacks...);
 }
 
 template<
