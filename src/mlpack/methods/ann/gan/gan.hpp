@@ -105,8 +105,8 @@ class GAN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
-  double Train(OptimizerType& Optimizer,
-	       CallbackTypes&&... callbacks);
+  double Train(OptimizerType& Optimizer, 
+               CallbackTypes&&... callbacks);
 
   /**
    * Evaluate function for the Standard GAN and DCGAN.
