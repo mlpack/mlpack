@@ -215,7 +215,8 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
       discriminatorPreTrain, multiplier);
 
   Log::Info << "Training..." << std::endl;
-  double objVal = gan.Train(optimizer);
+  std::stringstream stream;
+  double objVal = gan.Train(optimizer, ens::PrintLoss(stream));
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
   // Generate samples.
