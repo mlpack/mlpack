@@ -67,12 +67,13 @@ LinearSVM<MatType>::LinearSVM(
 }
 
 template <typename MatType>
-template <typename OptimizerType>
+template <typename OptimizerType, typename... CallbackTypes>
 double LinearSVM<MatType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    OptimizerType optimizer)
+    OptimizerType optimizer,
+    CallbackTypes&&... callbacks)
 {
   if (numClasses <= 1)
   {
@@ -86,7 +87,7 @@ double LinearSVM<MatType>::Train(
 
   // Train the model.
   Timer::Start("linear_svm_optimization");
-  const double out = optimizer.Optimize(svm, parameters);
+  const double out = optimizer.Optimize(svm, parameters, callbacks...);
   Timer::Stop("linear_svm_optimization");
 
   Log::Info << "LinearSVM::LinearSVM(): final objective of "

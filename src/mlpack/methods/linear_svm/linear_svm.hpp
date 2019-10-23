@@ -204,11 +204,12 @@ class LinearSVM
    * @param optimizer Desired optimizer.
    * @return Objective value of the final point.
    */
-  template <typename OptimizerType = ens::L_BFGS>
+  template <typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>
   double Train(const MatType& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses = 2,
-               OptimizerType optimizer = OptimizerType());
+               OptimizerType optimizer = OptimizerType(),
+               CallbackTypes&&... callbacks);
 
 
   //! Sets the number of classes.

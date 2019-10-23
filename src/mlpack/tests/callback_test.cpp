@@ -1,4 +1,3 @@
-
 #include <ensmallen.hpp>
 #include <ensmallen_bits/callbacks/callbacks.hpp>
 #include <mlpack/core.hpp>
