@@ -166,47 +166,37 @@ CosineTree::CosineTree(const CosineTree& other) :
     l2Error(other.L2Error()),
     frobNormSquared(other.FrobNormSquared())
 {
-  std::vector<CosineTree*> nodeStack;
-  nodeStack.push_back(this);
-
-  // While stack is not empty.
-  while (nodeStack.size())
+  // Create left and right children (if any).
+  if (other.Left())
   {
-    // Pop a node from the stack and split it.
-    CosineTree *currentNode, *currentLeft, *currentRight;
-    currentNode = nodeStack.back();
-    currentNode->CosineNodeSplit();
-    nodeStack.pop_back();
+    left = new CosineTree(*other.Left());
+    left->Parent() = this; // Set parent to this, not other tree.
+  }
 
-    // Obtain pointers to the children of the node.
-    currentLeft = currentNode->Left();
-    currentRight = currentNode->Right();
+  if (other.Right())
+  {
+    right = new CosineTree(*other.Right());
+    right->Parent() = this; // Set parent to this, not other tree.
+  }
 
-    // If children exist.
-    if (currentLeft && currentRight)
+  // Propagate matrix, but only if we are the root.
+  if (parent == NULL)
+  {
+    std::queue<CosineTree*> queue;
+    if (left)
+      queue.push(left);
+    if (right)
+      queue.push(right);
+    while (!queue.empty())
     {
-      // Push the child nodes on to the stack.
-      nodeStack.push_back(currentLeft);
-      nodeStack.push_back(currentRight);
+      CosineTree* node = queue.front();
+      queue.pop();
 
-      // Obtain the split point of the popped node.
-      arma::vec splitPoint = dataset.col(currentNode->SplitPointIndex());
-
-      // Column indices of the the child nodes.
-      std::vector<size_t> leftIndices, rightIndices;
-      leftIndices = currentLeft->VectorIndices();
-      rightIndices = currentRight->VectorIndices();
-
-      // Calculate the cosine values for each of the columns in the node.
-      arma::vec cosines;
-      cosines.zeros(currentNode->NumColumns());
-
-      size_t i, j, k;
-      for (i = 0; i < leftIndices.size(); i++)
-        cosines(i) = arma::norm_dot(dataset.col(leftIndices[i]), splitPoint);
-
-      for (j = 0, k = i; j < rightIndices.size(); j++, k++)
-        cosines(k) = arma::norm_dot(dataset.col(rightIndices[j]), splitPoint);
+      node->dataset = dataset;
+      if (node->left)
+        queue.push(node->left);
+      if (node->right)
+        queue.push(node->right);
     }
   }
 }
@@ -217,6 +207,10 @@ CosineTree&CosineTree::operator=(const CosineTree& other)
   // Return if it's the same tree.
   if (this == &other)
     return *this;
+
+  // Freeing memory that will not be used anymore.  
+  delete left;
+  delete right;
 
   dataset = (other.parent == NULL) ? other.parent->GetDataset() : NULL;
   delta = other.delta;
@@ -232,47 +226,37 @@ CosineTree&CosineTree::operator=(const CosineTree& other)
   l2Error = other.L2Error();
   frobNormSquared = other.FrobNormSquared();
 
-  std::vector<CosineTree*> nodeStack;
-  nodeStack.push_back(this);
-
-  // While stack is not empty.
-  while (nodeStack.size())
+  // Create left and right children (if any).
+  if (other.Left())
   {
-    // Pop a node from the stack and split it.
-    CosineTree *currentNode, *currentLeft, *currentRight;
-    currentNode = nodeStack.back();
-    currentNode->CosineNodeSplit();
-    nodeStack.pop_back();
+    left = new CosineTree(*other.Left());
+    left->Parent() = this; // Set parent to this, not other tree.
+  }
 
-    // Obtain pointers to the children of the node.
-    currentLeft = currentNode->Left();
-    currentRight = currentNode->Right();
+  if (other.Right())
+  {
+    right = new CosineTree(*other.Right());
+    right->Parent() = this; // Set parent to this, not other tree.
+  }
 
-    // If children exist.
-    if (currentLeft && currentRight)
+  // Propagate matrix, but only if we are the root.
+  if (parent == NULL)
+  {
+    std::queue<CosineTree*> queue;
+    if (left)
+      queue.push(left);
+    if (right)
+      queue.push(right);
+    while (!queue.empty())
     {
-      // Push the child nodes on to the stack.
-      nodeStack.push_back(currentLeft);
-      nodeStack.push_back(currentRight);
+      CosineTree* node = queue.front();
+      queue.pop();
 
-      // Obtain the split point of the popped node.
-      arma::vec splitPoint = dataset.col(currentNode->SplitPointIndex());
-
-      // Column indices of the the child nodes.
-      std::vector<size_t> leftIndices, rightIndices;
-      leftIndices = currentLeft->VectorIndices();
-      rightIndices = currentRight->VectorIndices();
-
-      // Calculate the cosine values for each of the columns in the node.
-      arma::vec cosines;
-      cosines.zeros(currentNode->NumColumns());
-
-      size_t i, j, k;
-      for (i = 0; i < leftIndices.size(); i++)
-        cosines(i) = arma::norm_dot(dataset.col(leftIndices[i]), splitPoint);
-
-      for (j = 0, k = i; j < rightIndices.size(); j++, k++)
-        cosines(k) = arma::norm_dot(dataset.col(rightIndices[j]), splitPoint);
+      node->dataset = dataset;
+      if (node->left)
+        queue.push(node->left);
+      if (node->right)
+        queue.push(node->right);
     }
   }
 
@@ -319,7 +303,11 @@ CosineTree&CosineTree::operator=(CosineTree&& other)
   // Return if it's the same tree.
   if (this == &other)
     return *this;
-  
+
+  // Freeing memory that will not be used anymore.  
+  delete left;
+  delete right;
+
   dataset = other.dataset;
   delta = std::move(other.delta);
   parent = other.Parent();
