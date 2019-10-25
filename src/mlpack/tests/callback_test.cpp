@@ -118,19 +118,20 @@ BOOST_AUTO_TEST_CASE(RNNWithOptimizerCallbackTest)
 }
 
 /**
- *  Test Logistic regression implementation with Printloss callback.
+ * Test Logistic regression implementation with PrintLoss callback.
  */
-
 BOOST_AUTO_TEST_CASE(LRWithOptimizerCallback)
 {
     arma::mat data("1 2 3;"
                    "1 2 3");
     arma::Row<size_t> responses("1 1 0");
+
     ens::StandardSGD sgd(0.1, 1, 5);
     LogisticRegression<> logisticRegression(data, responses, sgd, 0.001);
     std::stringstream stream;
     logisticRegression.Train<ens::StandardSGD>(data, responses, sgd,
-            ens::PrintLoss(stream));
+        ens::PrintLoss(stream));
+
     BOOST_REQUIRE_GT(stream.str().length(), 0);
 }
 

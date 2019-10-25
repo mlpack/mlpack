@@ -92,7 +92,7 @@ double LogisticRegression<MatType>::Train(
 
   Timer::Start("logistic_regression_optimization");
   const double out = optimizer.Optimize(errorFunction, parameters,
-          callbacks...);
+      callbacks...);
   Timer::Stop("logistic_regression_optimization");
 
   Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
