@@ -1413,4 +1413,45 @@ BOOST_AUTO_TEST_CASE(BRNNTrainReturnObjective)
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 }
 
+/**
+ * Test that BRNN::Train() optimizer callbacks are called
+ */
+BOOST_AUTO_TEST_CASE(BRNNTrainCallbackTest)
+{
+  const size_t rho = 10;
+
+  arma::cube input;
+  arma::mat labelsTemp;
+  GenerateNoisySines(input, labelsTemp, rho, 6);
+
+  arma::cube labels = arma::zeros<arma::cube>(1, labelsTemp.n_cols, rho);
+  for (size_t i = 0; i < labelsTemp.n_cols; ++i)
+  {
+    const int value = arma::as_scalar(arma::find(
+        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+    labels.tube(0, i).fill(value);
+  }
+
+  Add<> add(4);
+  Linear<> lookup(1, 4);
+  SigmoidLayer<> sigmoidLayer;
+  Linear<> linear(4, 4);
+  Recurrent<>* recurrent = new Recurrent<>(
+      add, lookup, linear, sigmoidLayer, rho);
+
+  BRNN<> model(rho);
+  model.Add<IdentityLayer<> >();
+  model.Add(recurrent);
+  model.Add<Linear<> >(4, 5);
+
+  std::stringstream stream;
+
+  StandardSGD opt(0.1, 1, 500 * input.n_cols, -100);
+  double objVal = model.Train(input, labels, opt, ens::PrintLoss(stream));
+  BOOST_TEST_CHECKPOINT("Training over");
+
+  // Test that BRNN::Train() calls the PrintLoss function.
+  BOOST_REQUIRE_GT(stream.str().length(), 0);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
