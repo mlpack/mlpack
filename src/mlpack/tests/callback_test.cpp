@@ -5,11 +5,13 @@
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
+#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack;
 using namespace mlpack::ann;
+using namespace mlpack::regression;
 
 BOOST_AUTO_TEST_SUITE(CallbackTest);
 
@@ -113,6 +115,23 @@ BOOST_AUTO_TEST_CASE(RNNWithOptimizerCallbackTest)
   model.Train(input, target, opt, ens::PrintLoss(stream));
 
   BOOST_REQUIRE_GT(stream.str().length(), 0);
+}
+
+/**
+ *  Test Logistic regression implementation with Printloss callback.
+ */
+
+BOOST_AUTO_TEST_CASE(LRWithOptimizerCallback)
+{
+    arma::mat data("1 2 3;"
+                   "1 2 3");
+    arma::Row<size_t> responses("1 1 0");
+    ens::StandardSGD sgd(0.1, 1, 5);
+    LogisticRegression<> logisticRegression(data, responses, sgd, 0.001);
+    std::stringstream stream;
+    logisticRegression.Train<ens::StandardSGD>(data, responses, sgd,
+            ens::PrintLoss(stream));
+    BOOST_REQUIRE_GT(stream.str().length(), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
