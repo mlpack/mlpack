@@ -397,7 +397,7 @@ operator=(const BinarySpaceTree& other)
   if (this == &other)
     return *this;
 
-  // Freeing memory that will not be used anymore.  
+  // Freeing memory that will not be used anymore.
   delete dataset;
   delete left;
   delete right;
@@ -469,7 +469,7 @@ operator=(BinarySpaceTree&& other)
   if (this == &other)
     return *this;
 
-  // Freeing memory that will not be used anymore.  
+  // Freeing memory that will not be used anymore.
   delete dataset;
   delete left;
   delete right;

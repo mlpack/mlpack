@@ -208,7 +208,7 @@ CosineTree&CosineTree::operator=(const CosineTree& other)
   if (this == &other)
     return *this;
 
-  // Freeing memory that will not be used anymore.  
+  // Freeing memory that will not be used anymore.
   delete left;
   delete right;
 
@@ -304,7 +304,7 @@ CosineTree&CosineTree::operator=(CosineTree&& other)
   if (this == &other)
     return *this;
 
-  // Freeing memory that will not be used anymore.  
+  // Freeing memory that will not be used anymore.
   delete left;
   delete right;
 
