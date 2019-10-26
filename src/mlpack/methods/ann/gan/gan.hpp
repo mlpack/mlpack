@@ -101,7 +101,9 @@ class GAN
 
   /**
    * Train function.
-   *
+   * 
+   * @tparam CallbackTypes Types of Callback functions.
+   * @param callbacks Callback functions.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
