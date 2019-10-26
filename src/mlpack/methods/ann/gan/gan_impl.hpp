@@ -191,7 +191,9 @@ template<
   typename PolicyType
 >
 template<typename OptimizerType, typename... CallbackTypes>
-double GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(OptimizerType& Optimizer, CallbackTypes&&... callbacks)
+double GAN<Model, InitializationRuleType, Noise,
+           PolicyType>::Train(OptimizerType& Optimizer,
+           CallbackTypes&&... callbacks)
 {
   if (!reset)
     Reset();
