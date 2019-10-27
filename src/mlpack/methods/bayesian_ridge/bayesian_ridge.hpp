@@ -254,7 +254,7 @@ class BayesianRidge
    *   
    * @return responses_offset
    **/
-  inline arma::rowvec Data_offset() const {return this->data_offset;}
+  inline arma::colvec Data_offset() const {return this->data_offset;}
 
 
   /**
@@ -263,7 +263,7 @@ class BayesianRidge
    *  
    * return data_offset
    **/
-  inline arma::rowvec Data_scale() const {return this->data_scale;}
+  inline arma::colvec Data_scale() const {return this->data_scale;}
 
 
   /**
