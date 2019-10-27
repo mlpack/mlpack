@@ -1,0 +1,66 @@
+steps:
+# Checkout repository
+- checkout: self
+  clean: true
+  fetchDepth: 1
+
+# Set python version
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '$(python.version)'
+
+# Install build dependencies
+- script: |
+    sudo apt-get update
+    unset BOOST_ROOT
+    sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-math-dev libboost-program-options-dev libboost-test-dev libboost-serialization-dev libarmadillo-dev xz-utils
+
+    if [ '$(python.version)' == '2.7' ]; then
+      sudo apt-get install -y --allow-unauthenticated python-pip cython python-numpy python-pandas
+      sudo pip install --upgrade --ignore-installed setuptools cython
+    fi
+
+    if [ '$(python.version)' == '3.7' ]; then
+      sudo apt-get install -y --allow-unauthenticated python3-pip cython3 python3-numpy
+      sudo pip3 install --upgrade --ignore-installed setuptools cython pandas
+    fi
+
+    # Install armadillo.
+    curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*
+    cmake . && make && sudo make install && cd ..
+    sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
+  displayName: 'Install Build Dependencies'
+
+# Configure mlpack (CMake)
+- script: unset BOOST_ROOT && mkdir build && cd build && cmake $(CMakeArgs) ..
+  displayName: 'CMake'
+
+# Build mlpack
+- script: cd build && make -j2
+  displayName: 'Build'
+
+# Run tests
+- script: cd build && bin/mlpack_test --result_code=no --report_level=detailed --log_level=test_suite --log_format=HRF --log_sink=res.txt
+  displayName: 'Run tests'
+
+# Process test results
+- bash: |
+    curl https://gist.githubusercontent.com/zoq/9ccf753c4b61efcc5e6f0452c9c22e26/raw/a7790189a530925a5575b2dc45fdc6b915b01313/convert.py -O
+    python convert.py > mlpack_test.xml
+  displayName: 'Process test results'
+
+# Publish test results to Azure Pipelines
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: JUnit
+    testResultsFiles: 'mlpack_test.xml'
+    failTaskOnFailedTests: true
+  displayName: 'Publish tests'
+
+# Publish build artifacts to Azure Pipelines
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: 'mlpack_test.xml'
+    artifactName: 'mlpack_test_linux.xml'
+  displayName: 'Publish artifacts test results'
+  

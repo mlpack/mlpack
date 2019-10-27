@@ -1,0 +1,57 @@
+steps:
+# Checkout repository
+- checkout: self
+  clean: true
+  fetchDepth: 1
+
+# Set python version.
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '$(python.version)'
+
+# Install Build Dependencies
+- script: |
+    set -e
+    sudo xcode-select --switch /Applications/Xcode_10.1.app/Contents/Developer
+    unset BOOST_ROOT
+    pip install cython numpy pandas
+    brew install openblas armadillo boost
+  displayName: 'Install Build Dependencies'
+
+# Configure mlpack (CMake)
+- script: |
+    unset BOOST_ROOT
+    mkdir build && cd build
+    export PYPATH=$(which python)
+    cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=$PYPATH ..
+  displayName: 'CMake'
+
+# Build mlpack
+- script: cd build && make -j2
+  displayName: 'Build'
+
+# Run tests
+- script: cd build && bin/mlpack_test --result_code=no --report_level=detailed --log_level=test_suite --log_format=HRF --log_sink=res.txt
+  displayName: 'Run tests'
+
+# Process test results
+- bash: |
+    curl https://gist.githubusercontent.com/zoq/9ccf753c4b61efcc5e6f0452c9c22e26/raw/a7790189a530925a5575b2dc45fdc6b915b01313/convert.py -O
+    python convert.py > mlpack_test.xml
+  displayName: 'Process test results'
+
+# Publish test results to Azure Pipelines
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: JUnit
+    testResultsFiles: 'mlpack_test.xml'
+    failTaskOnFailedTests: true
+  displayName: 'Publish tests'
+
+# Publish build artifacts to Azure Pipelines
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: 'mlpack_test.xml'
+    artifactName: 'mlpack_test_macos.xml'
+  displayName: 'Publish artifacts test results'
+  

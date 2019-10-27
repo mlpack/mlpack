@@ -1,0 +1,150 @@
+steps:
+- checkout: self
+  clean: true
+  fetchDepth: 1
+- task: NuGetToolInstaller@0
+  inputs:
+    versionSpec: '5.3.0'
+
+# Fetch build dependencies
+- powershell: |
+    nuget install OpenBLAS -o $(Agent.ToolsDirectory)
+    nuget install boost -o $(Agent.ToolsDirectory) -Version 1.60.0
+    nuget install boost_unit_test_framework-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
+    nuget install boost_program_options-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
+    nuget install boost_random-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
+    nuget install boost_serialization-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
+    nuget install boost_math_c99-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
+    nuget install OpenBLAS -o $(Agent.ToolsDirectory)
+
+    mkdir -p $(Agent.ToolsDirectory)/boost_libs
+    cp $(Agent.ToolsDirectory)/boost_program_options-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
+    cp $(Agent.ToolsDirectory)/boost_math_c99-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
+    cp $(Agent.ToolsDirectory)/boost_random-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
+    cp $(Agent.ToolsDirectory)/boost_serialization-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
+    cp $(Agent.ToolsDirectory)/boost_unit_test_framework-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
+  displayName: 'Fetch build dependencies'
+
+# Configure armadillo
+- bash: |
+    curl http://masterblaster.mlpack.org:5005/armadillo-8.400.0.tar.gz | tar xvz
+
+    cd armadillo-8.400.0/ && cmake -G "Visual Studio 14 2015 Win64" \
+    -DBLAS_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+    -DLAPACK_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+    -DCMAKE_PREFIX:FILEPATH=../../armadillo \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_BUILD_TYPE=Release .
+  displayName: 'Configure armadillo'
+
+# Build armadillo
+- task: MSBuild@1
+  inputs:
+    solution: 'armadillo-8.400.0/*.sln'
+    msbuildLocationMethod: 'location'
+    msbuildVersion: '14.0'
+    configuration: 'Release'
+    msbuildArchitecture: 'x64'
+    msbuildArguments: /m /p:BuildInParallel=true
+    clean: false
+    maximumCpuCount: false
+  displayName: 'Build armadillo'
+
+# Configure mlpack
+- powershell: |
+    mkdir build
+    cd build
+
+    cmake -G "Visual Studio 14 2015 Win64" `
+    $(CMakeArgs) `
+    -DBLAS_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
+    -DLAPACK_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
+    -DARMADILLO_INCLUDE_DIR="..\armadillo-8.400.0\include" `
+    -DARMADILLO_LIBRARY="..\armadillo-8.400.0\Release\armadillo.lib" `
+    -DBOOST_INCLUDEDIR=$(Agent.ToolsDirectory)\boost.1.60.0.0\lib\native\include `
+    -DBOOST_LIBRARYDIR=$(Agent.ToolsDirectory)\boost_libs `
+    -DCMAKE_BUILD_TYPE=Release ..
+  displayName: 'Configure mlpack'
+
+# Build mlpack
+- task: MSBuild@1
+  inputs:
+    solution: 'build/*.sln'
+    msbuildLocationMethod: 'location'
+    msbuildVersion: '15.0'
+    configuration: 'Release'
+    msbuildArchitecture: 'x64'
+    msbuildArguments: /m /p:BuildInParallel=true
+    maximumCpuCount: false
+    clean: false
+  displayName: 'Build mlpack'
+
+# Configure mlpack
+- powershell: |
+    cp $(Agent.ToolsDirectory)\boost_libs\*.* build\Release\
+    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\*.* build\Release\
+    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* build\Release\
+  displayName: 'Configure mlpack'
+
+# Run tests
+- bash: |
+    cd build
+    ls
+    Release/mlpack_test.exe --result_code=no --report_level=detailed --log_level=test_suite --log_format=HRF --log_sink=res.txt
+  displayName: 'Run tests'
+
+# Process test results
+- bash: |
+    curl https://gist.githubusercontent.com/zoq/9ccf753c4b61efcc5e6f0452c9c22e26/raw/a7790189a530925a5575b2dc45fdc6b915b01313/convert.py -O
+    python convert.py > mlpack_test.xml
+  displayName: 'Process test results'
+
+# Copy artifacts
+- powershell: |
+    mkdir exe-archive
+    cp build\Release\*.exe exe-archive\
+  displayName: 'Copy artifacts'
+
+# Build artifacts archive
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: 'exe-archive\'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: 'mlpack-windows-vs14-no-libs.zip'
+    replaceExistingArchive: true
+  displayName: 'Build artifacts'
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: 'build\Release\'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: 'mlpack-windows-vs14.zip'
+    replaceExistingArchive: true
+  displayName: 'Build artifacts'
+
+# Publish artifacts to Azure Pipelines
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: 'mlpack-windows-vs14-no-libs.zip'
+    artifactName: 'mlpack-windows-vs14-no-libs.zip'
+  displayName: 'Publish artifacts no-libs'
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: 'mlpack-windows-vs14.zip'
+    artifactName: 'mlpack-windows-vs14.zip'
+  displayName: 'Publish artifacts complete'
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: 'mlpack_test.xml'
+    artifactName: 'mlpack_test-vs14.xml'
+  displayName: 'Publish artifacts test results'
+
+# Publish test results to Azure Pipelines
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: JUnit
+    testResultsFiles: 'mlpack_test.xml'
+    failTaskOnFailedTests: true
+  displayName: 'Publish tests'

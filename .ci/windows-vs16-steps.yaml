@@ -1,0 +1,130 @@
+steps:
+- checkout: self
+  clean: true
+  fetchDepth: 1
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '$(python.version)'
+- task: NuGetToolInstaller@0
+  inputs:
+    versionSpec: '5.3.0'
+
+# Fetch build dependencies
+- bash: |
+    nuget install OpenBLAS -o $(Agent.ToolsDirectory)
+    nuget install boost -o $(Agent.ToolsDirectory) -Version 1.60.0
+    nuget install boost_unit_test_framework-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
+    nuget install boost_program_options-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
+    nuget install boost_random-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
+    nuget install boost_serialization-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
+    nuget install boost_math_c99-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
+    nuget install OpenBLAS -o $(Agent.ToolsDirectory)
+
+    mkdir -p $(Agent.ToolsDirectory)/boost_libs
+    cp $(Agent.ToolsDirectory)/boost_program_options-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
+    cp $(Agent.ToolsDirectory)/boost_math_c99-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
+    cp $(Agent.ToolsDirectory)/boost_random-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
+    cp $(Agent.ToolsDirectory)/boost_serialization-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
+    cp $(Agent.ToolsDirectory)/boost_unit_test_framework-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
+
+    curl http://masterblaster.mlpack.org:5005/armadillo-8.400.0.tar.gz | tar xvz
+  displayName: 'Fetch build dependencies'
+
+# Configure armadillo
+- bash: |
+    cd armadillo-8.400.0/ && cmake -G "Visual Studio 16 2019" \
+    -DBLAS_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+    -DLAPACK_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+    -DCMAKE_PREFIX:FILEPATH=../../armadillo \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_BUILD_TYPE=Release .
+  displayName: 'Configure armadillo'
+
+# Build armadillo
+- task: MSBuild@1
+  inputs:
+    solution: 'armadillo-8.400.0/*.sln'
+    msbuildLocationMethod: 'location'
+    msbuildVersion: '16.0'
+    configuration: 'Release'
+    msbuildArchitecture: 'x64'
+    msbuildArguments: /m /p:BuildInParallel=true
+    clean: false
+    maximumCpuCount: false
+  displayName: 'Build armadillo'
+
+# Configure mlpack
+- bash: |
+    mkdir build && cd build && \
+    cmake -G "Visual Studio 16 2019" \
+    -DBLAS_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+    -DLAPACK_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+    -DARMADILLO_INCLUDE_DIR="../armadillo-8.400.0/include" \
+    -DARMADILLO_LIBRARY:FILEPATH="../armadillo-8.400.0/Release/armadillo.lib" \
+    -DBOOST_INCLUDEDIR:PATH=$(Agent.ToolsDirectory)/boost.1.60.0.0/lib/native/include \
+    -DBOOST_LIBRARYDIR:PATH=$(Agent.ToolsDirectory)/boost_libs \
+    -DDEBUG=OFF \
+    -DPROFILE=OFF \
+    -DBUILD_PYTHON_BINDINGS=OFF \
+    -DCMAKE_BUILD_TYPE=Release .. \
+  displayName: 'Configure mlpack'
+
+# Build mlpack
+- task: MSBuild@1
+  inputs:
+    solution: 'build/*.sln'
+    msbuildLocationMethod: 'location'
+    msbuildVersion: '15.0'
+    configuration: 'Release'
+    msbuildArchitecture: 'x64'
+    msbuildArguments: /m /p:BuildInParallel=true
+    maximumCpuCount: false
+    clean: false
+  displayName: 'Build mlpack'
+
+# Run tests
+- powershell: |
+    cp $(Agent.ToolsDirectory)\boost_libs\*.* build\
+    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib/x64\*.* build\
+    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* build\
+
+    cd build
+    Release\mlpack_test.exe --result_code=no --report_level=detailed --log_level=test_suite --log_format=HRF --log_sink=res.txt
+  displayName: 'Run tests'
+
+# Process test results
+- bash: |
+    curl https://gist.githubusercontent.com/zoq/9ccf753c4b61efcc5e6f0452c9c22e26/raw/a7790189a530925a5575b2dc45fdc6b915b01313/convert.py -O
+    python convert.py > mlpack_test.xml
+  displayName: 'Process test results'
+
+# Publish test results to Azure Pipelines
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: JUnit
+    testResultsFiles: 'mlpack_test.xml'
+    failTaskOnFailedTests: true
+  displayName: 'Publish tests'
+
+# Build artifacts
+- bash: |
+    7z a mlpack-windows-vs16-no-libs.zip build/Release/*.exe
+    7z a mlpack-windows-vs16.zip build/Release/*.*
+  displayName: 'Build artifacts'
+
+# Publish build artifacts to Azure Pipelines
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: 'mlpack-windows-vs16-no-libs.zip'
+    artifactName: 'mlpack-windows-vs16-no-libs.zip'
+  displayName: 'Publish artifacts no-libs'
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: 'mlpack-windows-vs16.zip'
+    artifactName: 'mlpack-windows-vs16.zip'
+  displayName: 'Publish artifacts complete'
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: 'mlpack_test.xml'
+    artifactName: 'mlpack_test_vs16.xml'
+  displayName: 'Publish artifacts test results'
