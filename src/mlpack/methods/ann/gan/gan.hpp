@@ -66,9 +66,11 @@ class GAN
   /**
    * Constructor for GAN class.
    *
-   * @param trainData The real data.
    * @param generator Generator network.
    * @param discriminator Discriminator network.
+   * @param initializeRule Intialization to use for intializing parameters.
+   * @param noiseFunction Function to be used for generating noise.
+   * @param noiseDim Dimension of noise to be created.
    * @param batchSize Batch size to be used for training.
    * @param generatorUpdateStep Number of steps to train Discriminator
    *                            before updating Generator.
@@ -77,8 +79,7 @@ class GAN
    * @param clippingParameter Weight range for enforcing Lipschitz constraint.
    * @param lambda Parameter for setting the gradient penalty.
    */
-  GAN(arma::mat& trainData,
-      Model generator,
+  GAN(Model generator,
       Model discriminator,
       InitializationRuleType& initializeRule,
       Noise& noiseFunction,
@@ -96,19 +97,58 @@ class GAN
   //! Move constructor.
   GAN(GAN&&);
 
+  /**
+   * Initialize the generator, discriminator and weights of the model for
+   * training. This function won't actually trigger training process.
+   *
+   * @param trainData The data points of real distribution.
+   * @param realLabel The label for data points from real distribution.
+   * @param fakeLabel The label for data points which are generated.
+   */
+  void ResetData(arma::mat trainData,
+                 const double realLabel = 1.0,
+                 const double fakeLabel = 0.0);
+
   // Reset function.
   void Reset();
 
   /**
-   * Train function.
+   * Train function for standard GAN, DCGAN and LSGAN.
    *
+   * @param trainData The data points of real distribution.
+   * @param optimizer Instantiated optimizer used to train the model.
+   * @param realLabel The label for data points from real distribution.
+   * @param fakeLabel The label for data points which are generated.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType>
-  double Train(OptimizerType& Optimizer);
+  template<typename Policy = PolicyType, typename OptimizerType>
+  typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
+                          std::is_same<Policy, DCGAN>::value ||
+                          std::is_same<Policy, LSGAN>::value, double>::type
+  Train(arma::mat trainData,
+        OptimizerType& Optimizer,
+        const double realLabel = 1.0,
+        const double fakeLabel = 0.0);
 
   /**
-   * Evaluate function for the Standard GAN and DCGAN.
+   * Train function for WGAN and WGANGP.
+   *
+   * @param trainData The data points of real distribution.
+   * @param optimizer Instantiated optimizer used to train the model.
+   * @param realLabel The label for data points from real distribution.
+   * @param fakeLabel The label for data points which are generated.
+   * @return The final objective of the trained model (NaN or Inf on error).
+   */
+  template<typename Policy = PolicyType, typename OptimizerType>
+  typename std::enable_if<std::is_same<Policy, WGAN>::value ||
+                          std::is_same<Policy, WGANGP>::value, double>::type
+  Train(arma::mat trainData,
+        OptimizerType& Optimizer,
+        const double realLabel = 1.0,
+        const double fakeLabel = -1.0);
+
+  /**
+   * Evaluate function for the Standard GAN, DCGAN and LSGAN.
    * This function gives the performance of the Standard GAN or DCGAN on the
    * current input.
    *
@@ -118,7 +158,8 @@ class GAN
    */
   template<typename Policy = PolicyType>
   typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
-                          std::is_same<Policy, DCGAN>::value, double>::type
+                          std::is_same<Policy, DCGAN>::value ||
+                          std::is_same<Policy, LSGAN>::value, double>::type
   Evaluate(const arma::mat& parameters,
            const size_t i,
            const size_t batchSize);
@@ -154,7 +195,7 @@ class GAN
            const size_t batchSize);
 
   /**
-   * EvaluateWithGradient function for the Standard GAN and DCGAN.
+   * EvaluateWithGradient function for the Standard GAN, DCGAN and LSGAN.
    * This function gives the performance of the Standard GAN or DCGAN on the
    * current input, while updating Gradients.
    *
@@ -165,7 +206,8 @@ class GAN
    */
   template<typename GradType, typename Policy = PolicyType>
   typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
-                          std::is_same<Policy, DCGAN>::value, double>::type
+                          std::is_same<Policy, DCGAN>::value ||
+                          std::is_same<Policy, LSGAN>::value, double>::type
   EvaluateWithGradient(const arma::mat& parameters,
                        const size_t i,
                        GradType& gradient,
@@ -208,7 +250,7 @@ class GAN
                        const size_t batchSize);
 
   /**
-   * Gradient function for Standard GAN and DCGAN.
+   * Gradient function for Standard GAN, DCGAN and LSGAN.
    * This function passes the gradient based on which network is being
    * trained, i.e., Generator or Discriminator.
    *
@@ -219,7 +261,8 @@ class GAN
    */
   template<typename Policy = PolicyType>
   typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
-                          std::is_same<Policy, DCGAN>::value, void>::type
+                          std::is_same<Policy, DCGAN>::value ||
+                          std::is_same<Policy, LSGAN>::value, void>::type
   Gradient(const arma::mat& parameters,
            const size_t i,
            arma::mat& gradient,
@@ -276,11 +319,10 @@ class GAN
   /**
    * This function predicts the output of the network on the given input.
    *
-   * @param input The input the Discriminator network.
+   * @param input The input of the Generator network.
    * @param output Result of the Discriminator network.
    */
-  void Predict(arma::mat&& input,
-               arma::mat& output);
+  void Predict(arma::mat input, arma::mat& output);
 
   //! Return the parameters of the network.
   const arma::mat& Parameters() const { return parameter; }
@@ -314,6 +356,12 @@ class GAN
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+  /**
+  * Reset the module status by setting the current deterministic parameter
+  * for the discriminator and generator networks and their respective layers.
+  */
+  void ResetDeterministic();
+
   //! Locally stored parameter for training data + noise data.
   arma::mat predictors;
   //! Locally stored parameters of the network.
@@ -374,8 +422,16 @@ class GAN
   arma::mat noise;
   //! Locally stored gradient for Generator.
   arma::mat gradientGenerator;
-  //! Locally stored output of the Generator network.
-  arma::mat ganOutput;
+  //! The current evaluation mode (training or testing).
+  bool deterministic;
+  //! To keep track of number of generator weights in total weights.
+  size_t genWeights;
+  //! To keep track of number of discriminator weights in total weights.
+  size_t discWeights;
+  //! Responses for data points in real distribution.
+  double realLabel;
+  //! Responses for data points which are generated.
+  double fakeLabel;
 };
 
 } // namespace ann

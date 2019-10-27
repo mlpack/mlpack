@@ -30,7 +30,6 @@ template<
   typename PolicyType
 >
 GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
-    arma::mat& predictors,
     Model generator,
     Model discriminator,
     InitializationRuleType& initializeRule,
@@ -47,41 +46,26 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     initializeRule(initializeRule),
     noiseFunction(noiseFunction),
     noiseDim(noiseDim),
+    numFunctions(0),
     batchSize(batchSize),
+    counter(0),
+    currentBatch(0),
     generatorUpdateStep(generatorUpdateStep),
     preTrainSize(preTrainSize),
     multiplier(multiplier),
     clippingParameter(clippingParameter),
     lambda(lambda),
-    reset(false)
+    reset(false),
+    deterministic(false),
+    genWeights(0),
+    discWeights(0),
+    realLabel(0),
+    fakeLabel(0)
 {
   // Insert IdentityLayer for joining the Generator and Discriminator.
   this->discriminator.network.insert(
       this->discriminator.network.begin(),
       new IdentityLayer<>());
-
-  counter = 0;
-  currentBatch = 0;
-
-  this->discriminator.deterministic = this->generator.deterministic = true;
-
-  this->predictors.set_size(predictors.n_rows, predictors.n_cols + batchSize);
-  this->predictors.cols(0, predictors.n_cols - 1) = predictors;
-  this->discriminator.predictors = arma::mat(this->predictors.memptr(),
-      this->predictors.n_rows, this->predictors.n_cols, false, false);
-
-  responses.ones(1, predictors.n_cols + batchSize);
-  responses.cols(predictors.n_cols,
-      predictors.n_cols + batchSize - 1) = arma::zeros(1, batchSize);
-  this->discriminator.responses = arma::mat(this->responses.memptr(),
-      this->responses.n_rows, this->responses.n_cols, false, false);
-
-  numFunctions = predictors.n_cols;
-
-  noise.set_size(noiseDim, batchSize);
-
-  this->generator.predictors.set_size(noiseDim, batchSize);
-  this->generator.responses.set_size(predictors.n_rows, batchSize);
 }
 
 template<
@@ -110,7 +94,12 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     currentBatch(network.currentBatch),
     parameter(network.parameter),
     numFunctions(network.numFunctions),
-    noise(network.noise)
+    noise(network.noise),
+    deterministic(network.deterministic),
+    genWeights(network.genWeights),
+    discWeights(network.discWeights),
+    realLabel(network.realLabel),
+    fakeLabel(network.fakeLabel)
 {
   /* Nothing to do here */
 }
@@ -141,7 +130,12 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     currentBatch(network.currentBatch),
     parameter(std::move(network.parameter)),
     numFunctions(network.numFunctions),
-    noise(std::move(network.noise))
+    noise(std::move(network.noise)),
+    deterministic(network.deterministic),
+    genWeights(network.genWeights),
+    discWeights(network.discWeights),
+    realLabel(network.realLabel),
+    fakeLabel(network.fakeLabel)
 {
   /* Nothing to do here */
 }
@@ -152,10 +146,56 @@ template<
   typename Noise,
   typename PolicyType
 >
+void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
+    arma::mat trainData,
+    const double realLabel,
+    const double fakeLabel)
+{
+  counter = 0;
+  currentBatch = 0;
+  this->realLabel = realLabel;
+  this->fakeLabel = fakeLabel;
+
+  numFunctions = trainData.n_cols;
+  noise.set_size(noiseDim, batchSize);
+
+  deterministic = true;
+  ResetDeterministic();
+
+  this->predictors.set_size(trainData.n_rows, numFunctions + batchSize);
+  this->predictors.cols(0, numFunctions - 1) = std::move(trainData);
+  this->discriminator.predictors = arma::mat(this->predictors.memptr(),
+      this->predictors.n_rows, this->predictors.n_cols, false, false);
+
+  responses.set_size(1, numFunctions);
+  responses.fill(realLabel);
+
+  arma::mat fakeResponses;
+  fakeResponses.set_size(1, batchSize);
+  fakeResponses.fill(fakeLabel);
+
+  responses = arma::join_rows(responses, fakeResponses);
+
+  this->discriminator.responses = arma::mat(this->responses.memptr(),
+      this->responses.n_rows, this->responses.n_cols, false, false);
+
+  this->generator.predictors.set_size(noiseDim, batchSize);
+  this->generator.responses.set_size(predictors.n_rows, batchSize);
+
+  if (!reset)
+    Reset();
+}
+
+template<
+  typename Model,
+  typename InitializationRuleType,
+  typename Noise,
+  typename PolicyType
+>
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::Reset()
 {
-  size_t genWeights = 0;
-  size_t discWeights = 0;
+  genWeights = 0;
+  discWeights = 0;
 
   NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
 
@@ -190,12 +230,38 @@ template<
   typename Noise,
   typename PolicyType
 >
-template<typename OptimizerType>
-double GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
-    OptimizerType& Optimizer)
+template<typename Policy, typename OptimizerType>
+typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
+                        std::is_same<Policy, DCGAN>::value ||
+                        std::is_same<Policy, LSGAN>::value, double>::type
+GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
+    arma::mat trainData,
+    OptimizerType& Optimizer,
+    const double realLabel,
+    const double fakeLabel)
 {
-  if (!reset)
-    Reset();
+  ResetData(std::move(trainData), realLabel, fakeLabel);
+
+  return Optimizer.Optimize(*this, parameter);
+}
+
+template<
+  typename Model,
+  typename InitializationRuleType,
+  typename Noise,
+  typename PolicyType
+>
+template<typename Policy, typename OptimizerType>
+typename std::enable_if<std::is_same<Policy, WGAN>::value ||
+                        std::is_same<Policy, WGANGP>::value, double>::type
+GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
+    arma::mat trainData,
+    OptimizerType& Optimizer,
+    const double realLabel,
+    const double fakeLabel)
+{
+  ResetData(std::move(trainData), realLabel, fakeLabel);
+
   return Optimizer.Optimize(*this, parameter);
 }
 
@@ -207,14 +273,21 @@ template<
 >
 template<typename Policy>
 typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
-                        std::is_same<Policy, DCGAN>::value, double>::type
+                        std::is_same<Policy, DCGAN>::value ||
+                        std::is_same<Policy, LSGAN>::value, double>::type
 GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
     const arma::mat& /* parameters */,
     const size_t i,
     const size_t /* batchSize */)
 {
-  if (!reset)
+  if (parameter.is_empty())
     Reset();
+
+  if (!deterministic)
+  {
+    deterministic = true;
+    ResetDeterministic();
+  }
 
   currentInput = arma::mat(predictors.memptr() + (i * predictors.n_rows),
       predictors.n_rows, batchSize, false, false);
@@ -234,8 +307,8 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
       boost::apply_visitor(outputParameterVisitor, generator.network.back());
   discriminator.Forward(std::move(predictors.cols(numFunctions,
       numFunctions + batchSize - 1)));
-  responses.cols(numFunctions, numFunctions + batchSize - 1) =
-      arma::zeros(1, batchSize);
+
+  responses.cols(numFunctions, numFunctions + batchSize - 1).fill(fakeLabel);
 
   currentTarget = arma::mat(responses.memptr() + numFunctions,
       1, batchSize, false, false);
@@ -255,14 +328,15 @@ template<
 >
 template<typename GradType, typename Policy>
 typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
-                        std::is_same<Policy, DCGAN>::value, double>::type
+                        std::is_same<Policy, DCGAN>::value ||
+                        std::is_same<Policy, LSGAN>::value, double>::type
 GAN<Model, InitializationRuleType, Noise, PolicyType>::
 EvaluateWithGradient(const arma::mat& /* parameters */,
                      const size_t i,
                      GradType& gradient,
                      const size_t /* batchSize */)
 {
-  if (!reset)
+  if (parameter.is_empty())
     Reset();
 
   if (gradient.is_empty())
@@ -273,6 +347,12 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   }
   else
     gradient.zeros();
+
+  if (this->deterministic)
+  {
+    this->deterministic = false;
+    ResetDeterministic();
+  }
 
   if (noiseGradientDiscriminator.is_empty())
   {
@@ -299,8 +379,8 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   generator.Forward(std::move(noise));
   predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       boost::apply_visitor(outputParameterVisitor, generator.network.back());
-  responses.cols(numFunctions, numFunctions + batchSize - 1) =
-      arma::zeros(1, batchSize);
+
+  responses.cols(numFunctions, numFunctions + batchSize - 1).fill(fakeLabel);
 
   // Get the gradients of the Generator.
   res += discriminator.EvaluateWithGradient(discriminator.parameter,
@@ -311,16 +391,17 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   {
     // Minimize -log(D(G(noise))).
     // Pass the error from Discriminator to Generator.
-    responses.cols(numFunctions, numFunctions + batchSize - 1) =
-        arma::ones(1, batchSize);
+    responses.cols(numFunctions, numFunctions + batchSize - 1).fill(realLabel);
     discriminator.Gradient(discriminator.parameter, numFunctions,
         noiseGradientDiscriminator, batchSize);
     generator.error = boost::apply_visitor(deltaVisitor,
         discriminator.network[1]);
 
     generator.Predictors() = noise;
+    generator.Backward();
     generator.ResetGradients(gradientGenerator);
-    generator.Gradient(generator.parameter, 0, gradientGenerator, batchSize);
+    generator.Gradient(std::move(generator.Predictors().cols(0,
+        batchSize - 1)));
 
     gradientGenerator *= multiplier;
   }
@@ -350,7 +431,8 @@ template<
 >
 template<typename Policy>
 typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
-                        std::is_same<Policy, DCGAN>::value, void>::type
+                        std::is_same<Policy, DCGAN>::value ||
+                        std::is_same<Policy, LSGAN>::value, void>::type
 GAN<Model, InitializationRuleType, Noise, PolicyType>::
 Gradient(const arma::mat& parameters,
          const size_t i,
@@ -382,12 +464,11 @@ template<
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::Forward(
     arma::mat&& input)
 {
-  if (!reset)
+  if (parameter.is_empty())
     Reset();
 
   generator.Forward(std::move(input));
-  ganOutput = boost::apply_visitor(
-      outputParameterVisitor,
+  arma::mat ganOutput = boost::apply_visitor(outputParameterVisitor,
       generator.network.back());
 
   discriminator.Forward(std::move(ganOutput));
@@ -400,15 +481,36 @@ template<
   typename PolicyType
 >
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::
-Predict(arma::mat&& input, arma::mat& output)
+Predict(arma::mat input, arma::mat& output)
 {
-  if (!reset)
+  if (parameter.is_empty())
     Reset();
+
+  if (!deterministic)
+  {
+    deterministic = true;
+    ResetDeterministic();
+  }
 
   Forward(std::move(input));
 
   output = boost::apply_visitor(outputParameterVisitor,
       discriminator.network.back());
+}
+
+template<
+  typename Model,
+  typename InitializationRuleType,
+  typename Noise,
+  typename PolicyType
+>
+void GAN<Model, InitializationRuleType, Noise, PolicyType>::
+ResetDeterministic()
+{
+  this->discriminator.deterministic = deterministic;
+  this->generator.deterministic = deterministic;
+  this->discriminator.ResetDeterministic();
+  this->generator.ResetDeterministic();
 }
 
 template<
@@ -424,7 +526,39 @@ serialize(Archive& ar, const unsigned int /* version */)
   ar & BOOST_SERIALIZATION_NVP(parameter);
   ar & BOOST_SERIALIZATION_NVP(generator);
   ar & BOOST_SERIALIZATION_NVP(discriminator);
-  ar & BOOST_SERIALIZATION_NVP(noiseFunction);
+  ar & BOOST_SERIALIZATION_NVP(reset);
+  ar & BOOST_SERIALIZATION_NVP(genWeights);
+  ar & BOOST_SERIALIZATION_NVP(discWeights);
+
+  if (Archive::is_loading::value)
+  {
+    // Share the parameters between the network.
+    generator.Parameters() = arma::mat(parameter.memptr(), genWeights, 1, false,
+        false);
+    discriminator.Parameters() = arma::mat(parameter.memptr() + genWeights,
+        discWeights, 1, false, false);
+
+    size_t offset = 0;
+    for (size_t i = 0; i < generator.network.size(); ++i)
+    {
+      offset += boost::apply_visitor(WeightSetVisitor(std::move(
+          generator.parameter), offset), generator.network[i]);
+
+      boost::apply_visitor(resetVisitor, generator.network[i]);
+    }
+
+    offset = 0;
+    for (size_t i = 0; i < discriminator.network.size(); ++i)
+    {
+      offset += boost::apply_visitor(WeightSetVisitor(std::move(
+          discriminator.parameter), offset), discriminator.network[i]);
+
+      boost::apply_visitor(resetVisitor, discriminator.network[i]);
+    }
+
+    deterministic = true;
+    ResetDeterministic();
+  }
 }
 
 } // namespace ann

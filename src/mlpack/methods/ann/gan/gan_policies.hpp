@@ -19,6 +19,22 @@ namespace ann /** Artificial Neural Network. */ {
  * For more information, see the following paper:
  *
  * @code
+ * @article{
+ *   author    = {Xudong Mao, Qing Li, Haoran Xie,
+ *                Raymond Y.K. Lau, Zheng Wang and Stephan Paul Smolley},
+ *   title     = {Least Squares Generative Adversarial Networks},
+ *   year      = {2016},
+ *   url       = {https://arxiv.org/abs/1611.04076},
+ *   eprint    = {1611.04076},
+ * }
+ * @endcode
+ */
+class LSGAN { /* Nothing to do here */ };
+
+/**
+ * For more information, see the following paper:
+ *
+ * @code
  * @article{Salimans16,
  *   author    = {Tim Salimans, Ian Goodfellow, Wojciech Zaremba,
  *                Vicki Cheung, Alec Radford and Xi Chen},
