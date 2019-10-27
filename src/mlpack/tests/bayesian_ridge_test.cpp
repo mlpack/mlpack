@@ -33,7 +33,7 @@ void GenerateProblem(arma::mat& X,
   arma::colvec omega = arma::randn(nDims);
   arma::colvec noise = arma::randn(nPoints) * sigma;
   y = (omega.t() * X);
-  y += noise;
+  y += noise.t();
 }
 
 // Ensure that predictions are close enough to the target
@@ -50,6 +50,7 @@ BOOST_AUTO_TEST_CASE(BayesianRidgeRegressionTest)
   estimator.Train(X, y);
   estimator.Predict(X, predictions);
 
+  BOOST_REQUIRE(true);
   for (size_t i = 0; i < y.size(); i++)
     {
       BOOST_REQUIRE_CLOSE(predictions[i], y[i], 1e-6);
@@ -65,13 +66,15 @@ BOOST_AUTO_TEST_CASE(TestCenter0Normalize0)
   arma::mat X;
   arma::rowvec y;
   size_t nDims = 30, nPoints = 100;
+
   GenerateProblem(X, y, nPoints, nDims, 0.5);
 
   BayesianRidge estimator(false, false);
+
   estimator.Train(X, y);
 
   // To be neutral data_offset must be all 0.
-  BOOST_REQUIRE(sum(estimator.Data_offset()) == 0);
+  BOOST_REQUIRE(sum(estimator.Data_offset()) == 0.0);
 
   // To be neutral responses_offset must be 0.
   BOOST_REQUIRE(estimator.Responses_offset() == 0);
@@ -139,16 +142,17 @@ BOOST_AUTO_TEST_CASE(OnePointTest)
     }
 }
 
-// Verify that Train() return -1 for a singular matrices or colinear feature.
+// Verify that Train() return -1 for a singular matrice or colinear feature.
 BOOST_AUTO_TEST_CASE(ColinearTest)
 {
   arma::mat X;
-  arma::rowvec y;
+  arma::mat y;
 
   Load("lars_dependent_x.csv", X, false, true);
   Load("lars_dependent_y.csv", y, false, true);
 
   BayesianRidge estimator(true, false);
+
   BOOST_ASSERT(estimator.Train(X, y) == -1);
 }
 
