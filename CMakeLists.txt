@@ -322,12 +322,12 @@ if (NOT STB_IMAGE_FOUND)
   if (DOWNLOAD_STB_IMAGE)
     set(STB_DIR "stb")
     install(DIRECTORY DESTINATION ${CMAKE_BINARY_DIR}/deps/${STB_DIR})
-    file(DOWNLOAD http://mlpack.org/files/stb/stb_image.h
+    file(DOWNLOAD http://mlpack.org/files/stb-2.22/stb_image.h
         "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h"
         STATUS STB_IMAGE_DOWNLOAD_STATUS_LIST LOG STB_IMAGE_DOWNLOAD_LOG
         SHOW_PROGRESS)
     list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 0 STB_IMAGE_DOWNLOAD_STATUS)
-    file(DOWNLOAD http://mlpack.org/files/stb/stb_image_write.h
+    file(DOWNLOAD http://mlpack.org/files/stb-1.13/stb_image_write.h
         "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h"
         STATUS STB_IMAGE_WRITE_DOWNLOAD_STATUS_LIST
         LOG STB_IMAGE_WRITE_DOWNLOAD_LOG
