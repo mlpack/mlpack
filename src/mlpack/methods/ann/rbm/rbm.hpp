@@ -87,10 +87,11 @@ class RBM
    * parameters vector directly with Parameters() and modify it as desired.
    *
    * @param optimizer Optimizer type.
+   * @param callbacks Callback Functions
    * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType>
-  double Train(OptimizerType& optimizer);
+  template<typename OptimizerType, typename... CallbackType>
+  double Train(OptimizerType& optimizer, CallbackType&&... callbacks);
 
   /**
    * Evaluate the RBM network with the given parameters.
