@@ -66,9 +66,12 @@ class GAN
   /**
    * Constructor for GAN class.
    *
-   * @param trainData The real data.
    * @param generator Generator network.
    * @param discriminator Discriminator network.
+   * @param initializeRule Initialization rule to use for initializing
+   *                       parameters.
+   * @param noiseFunction Function to be used for generating noise.
+   * @param noiseDim Dimension of noise vector to be created.
    * @param batchSize Batch size to be used for training.
    * @param generatorUpdateStep Number of steps to train Discriminator
    *                            before updating Generator.
@@ -77,8 +80,7 @@ class GAN
    * @param clippingParameter Weight range for enforcing Lipschitz constraint.
    * @param lambda Parameter for setting the gradient penalty.
    */
-  GAN(arma::mat& trainData,
-      Model generator,
+  GAN(Model generator,
       Model discriminator,
       InitializationRuleType& initializeRule,
       Noise& noiseFunction,
@@ -96,6 +98,14 @@ class GAN
   //! Move constructor.
   GAN(GAN&&);
 
+  /**
+   * Initialize the generator, discriminator and weights of the model for
+   * training. This function won't actually trigger training process.
+   *
+   * @param trainData The data points of real distribution.
+   */
+  void ResetData(arma::mat trainData);
+
   // Reset function.
   void Reset();
 
@@ -110,7 +120,6 @@ class GAN
    */
   template<typename OptimizerType, typename... CallbackTypes>
   double Train(OptimizerType& Optimizer, CallbackTypes&&... callbacks);
-
   /**
    * Evaluate function for the Standard GAN and DCGAN.
    * This function gives the performance of the Standard GAN or DCGAN on the
@@ -280,11 +289,10 @@ class GAN
   /**
    * This function predicts the output of the network on the given input.
    *
-   * @param input The input the Discriminator network.
+   * @param input The input of the Generator network.
    * @param output Result of the Discriminator network.
    */
-  void Predict(arma::mat&& input,
-               arma::mat& output);
+  void Predict(arma::mat input, arma::mat& output);
 
   //! Return the parameters of the network.
   const arma::mat& Parameters() const { return parameter; }
@@ -318,6 +326,12 @@ class GAN
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+  /**
+  * Reset the module status by setting the current deterministic parameter
+  * for the discriminator and generator networks and their respective layers.
+  */
+  void ResetDeterministic();
+
   //! Locally stored parameter for training data + noise data.
   arma::mat predictors;
   //! Locally stored parameters of the network.
@@ -336,8 +350,6 @@ class GAN
   size_t numFunctions;
   //! Locally stored batch size parameter.
   size_t batchSize;
-  //! Locally stored number of iterations that have been completed.
-  size_t counter;
   //! Locally stored batch number which is being processed.
   size_t currentBatch;
   //! Locally stored number of training step before Generator is trained.
@@ -378,8 +390,12 @@ class GAN
   arma::mat noise;
   //! Locally stored gradient for Generator.
   arma::mat gradientGenerator;
-  //! Locally stored output of the Generator network.
-  arma::mat ganOutput;
+  //! The current evaluation mode (training or testing).
+  bool deterministic;
+  //! To keep track of number of generator weights in total weights.
+  size_t genWeights;
+  //! To keep track of number of discriminator weights in total weights.
+  size_t discWeights;
 };
 
 } // namespace ann

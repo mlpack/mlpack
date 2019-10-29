@@ -319,8 +319,7 @@ void Convolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::serialize(
-    Archive& ar, const unsigned int /* version */)
+>::serialize(Archive& ar, const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_NVP(inSize);
   ar & BOOST_SERIALIZATION_NVP(outSize);
@@ -335,6 +334,9 @@ void Convolution<
   ar & BOOST_SERIALIZATION_NVP(inputHeight);
   ar & BOOST_SERIALIZATION_NVP(outputWidth);
   ar & BOOST_SERIALIZATION_NVP(outputHeight);
+
+  if (version > 0)
+    ar & BOOST_SERIALIZATION_NVP(padding);
 
   if (Archive::is_loading::value)
     weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
