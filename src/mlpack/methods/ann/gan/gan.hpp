@@ -114,12 +114,14 @@ class GAN
    * 
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @tparam CallbackTypes Types of Callback functions.
+   * @param trainData The data points of real distribution.
    * @param optimizer Instantiated optimizer used to train the model. 
    * @param callbacks Callback functions.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
-  double Train(OptimizerType& Optimizer, CallbackTypes&&... callbacks);
+  double Train(arma::mat trainData, OptimizerType& Optimizer, CallbackTypes&&... callbacks);
+
   /**
    * Evaluate function for the Standard GAN and DCGAN.
    * This function gives the performance of the Standard GAN or DCGAN on the

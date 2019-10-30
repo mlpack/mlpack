@@ -219,11 +219,11 @@ template<
 >
 template<typename OptimizerType, typename... CallbackTypes>
 double GAN<Model, InitializationRuleType, Noise,
-           PolicyType>::Train(OptimizerType& Optimizer,
+           PolicyType>::Train(arma::mat trainData, OptimizerType& Optimizer,
            CallbackTypes&&... callbacks)
 {
-  if (!reset)
-    Reset();
+  ResetData(std::move(trainData));
+
   return Optimizer.Optimize(*this, parameter, callbacks...);
 }
 
