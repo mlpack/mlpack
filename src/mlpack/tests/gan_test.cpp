@@ -216,7 +216,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
 
   Log::Info << "Training..." << std::endl;
   std::stringstream stream;
-  double objVal = gan.Train(optimizer, ens::ProgressBar(70, stream));
+  double objVal = gan.Train(trainData, optimizer, ens::ProgressBar(70, stream));
   BOOST_REQUIRE_GT(stream.str().length(), 0);
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
