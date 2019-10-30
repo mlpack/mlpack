@@ -2036,6 +2036,7 @@ BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerPaddingTest)
   module1.Reset();
   module1.Forward(std::move(input), std::move(output));
 
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, 9);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
@@ -2052,6 +2053,7 @@ BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerPaddingTest)
   module2.Reset();
   module2.Forward(std::move(input), std::move(output));
 
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, 49);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
@@ -2792,6 +2794,7 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerPaddingTest)
   module1.Reset();
   module1.Forward(std::move(input), std::move(output));
 
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, 25);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
@@ -2807,6 +2810,7 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerPaddingTest)
   module2.Reset();
   module2.Forward(std::move(input), std::move(output));
 
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, 49);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
