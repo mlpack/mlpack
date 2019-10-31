@@ -82,17 +82,19 @@ class LinearSVM
  public:
   /**
    * Construct the LinearSVM class with the provided data and labels.
-   * This will train the model. Optionally, the parameter 'lambda' can be
-   * passed, which controls the amount of L2-regularization in the objective
-   * function. By default, the model takes a small value.
+   * This will train the model. The parameter 'lambda' controls the
+   * amount of L2-regularization in the objective function. The model
+   * takes a small value for this parameter, for example 0.0001.
    *
    * @tparam OptimizerType Desired differentiable separable optimizer
+   * @tparam CallbackTypes Types of callback functions.
    * @param data Input training features. Each column associate with one sample
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
    * @paran delta Margin of difference between correct class and other classes.
    * @param optimizer Desired optimizer.
+   * @param callbacks Callback functions.
    */
   template <typename OptimizerType = ens::L_BFGS>
   LinearSVM(const MatType& data,
