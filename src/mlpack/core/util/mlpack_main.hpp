@@ -21,6 +21,7 @@
 #define BINDING_TYPE_CLI 0
 #define BINDING_TYPE_TEST 1
 #define BINDING_TYPE_PYX 2
+#define BINDING_TYPE_JAVA 5
 #define BINDING_TYPE_MARKDOWN 128
 #define BINDING_TYPE_UNKNOWN -1
 
@@ -155,6 +156,52 @@ using Option = mlpack::bindings::tests::TestOption<T>;
     static mlpack::util::ProgramDoc \
     cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
     []() { return DESC; }, { __VA_ARGS__ })
+
+#elif (BINDING_TYPE == BINDING_TYPE_JAVA) // This is a Java binding.
+
+// TODO: not sure where we use this
+// Also: sometimes we transpose them, sometimes we do not
+#define BINDING_MATRIX_TRANSPOSED true
+
+#include <mlpack/bindings/java/java_option.hpp>
+#include <mlpack/bindings/java/print_doc_functions.hpp>
+
+#define PRINT_PARAM_STRING mlpack::bindings::java::ParamString
+#define PRINT_PARAM_VALUE mlpack::bindings::java::PrintValue
+#define PRINT_DATASET mlpack::bindings::java::PrintDataset
+#define PRINT_MODEL mlpack::bindings::java::PrintModel
+#define PRINT_CALL mlpack::bindings::java::ProgramCall
+#define BINDING_IGNORE_CHECK mlpack::bindings::java::IgnoreCheck
+
+namespace mlpack {
+namespace util {
+
+template<typename T>
+using Option = mlpack::bindings::java::JavaOption<T>;
+
+}
+}
+
+static const std::string testName = "";
+#include <mlpack/core/util/param.hpp>
+
+#undef PROGRAM_INFO
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
+    static mlpack::util::ProgramDoc \
+    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
+    []() { return DESC; }, { __VA_ARGS__ }); \
+    namespace mlpack { \
+    namespace bindings { \
+    namespace java { \
+    std::string programName = NAME; \
+    } \
+    } \
+    }
+
+PARAM_FLAG("verbose", "Display informational messages and the full list of "
+    "parameters and timers at the end of execution.", "v");
+
+// Nothing else needs to be defined---the binding will use mlpackMain() as-is.
 
 #elif(BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
 
