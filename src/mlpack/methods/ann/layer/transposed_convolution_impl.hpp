@@ -80,6 +80,7 @@ TransposedConvolution<
   // TODO: Use the Padding layer.
   // padding = new Padding<>(this->padW, this->padW, this->padH, this->padH);
 
+  padding = new Padding<>(padW, padW, padH, padH);
   aW = (outputWidth + kW - 2 * this->padW - 2) % dW;
   aH = (outputHeight + kH - 2 * this->padH - 2) % dH;
 
@@ -139,7 +140,15 @@ void TransposedConvolution<
     InsertZeros(inputTemp, dW, dH, inputExpandedTemp);
 
     if (padW != 0 || padH != 0 || aW != 0 || aH != 0)
-      Pad(inputExpandedTemp, padW, padH, aW, aH, inputPaddedTemp);
+      inputPaddedTemp.set_size(inputTemp.n_rows + padW * 2 + aW,
+        inputTemp.n_cols + padH * 2 + aH, inputTemp.n_slices);
+
+      for (size_t i = 0; i < inputTemp.n_slices; ++i)
+      {
+        padding->Forward(std::move(inputTemp.slice(i)),
+            std::move(inputPaddedTemp.slice(i)));
+      }
+      // Pad(inputExpandedTemp, padW, padH, aW, aH, inputPaddedTemp);
     else
     {
       inputPaddedTemp = arma::Cube<eT>(inputExpandedTemp.memptr(),
@@ -149,7 +158,15 @@ void TransposedConvolution<
   }
   else if (padW != 0 || padH != 0 || aW != 0 || aH != 0)
   {
-    Pad(inputTemp, padW, padH, aW, aH, inputPaddedTemp);
+    inputPaddedTemp.set_size(inputTemp.n_rows + padW * 2 + aW,
+        inputTemp.n_cols + padH * 2 + aH, inputTemp.n_slices);
+
+    for (size_t i = 0; i < inputTemp.n_slices; ++i)
+    {
+      padding->Forward(std::move(inputTemp.slice(i)),
+          std::move(inputPaddedTemp.slice(i)));
+    }
+    // Pad(inputTemp, padW, padH, aW, aH, inputPaddedTemp);
   }
 
   output.set_size(outputWidth * outputHeight * outSize, batchSize);
