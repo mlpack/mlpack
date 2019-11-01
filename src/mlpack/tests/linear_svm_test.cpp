@@ -455,14 +455,14 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSSimpleTest)
   const size_t numClasses = 2;
   const double lambda = 0.0001;
 
-  // A very simple fake dataset
+  // A very simple fake dataset.
   arma::mat dataset = "2 0 0;"
                       "0 0 0;"
                       "0 2 1;"
                       "1 0 2;"
                       "0 1 0";
 
-  //  Corresponding labels
+  // Corresponding labels.
   arma::Row<size_t> labels = "1 0 1";
 
   // Create a linear svm object using L-BFGS optimizer.
