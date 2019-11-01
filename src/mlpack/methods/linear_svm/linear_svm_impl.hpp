@@ -53,6 +53,20 @@ LinearSVM<MatType>::LinearSVM(
 }
 
 template <typename MatType>
+LinearSVM<MatType>::LinearSVM(
+    const size_t numClasses,
+    const double lambda,
+    const double delta,
+    const bool fitIntercept) :
+    numClasses(numClasses),
+    lambda(lambda),
+    delta(delta),
+    fitIntercept(fitIntercept)
+{
+  // No training to do here.
+}
+
+template <typename MatType>
 template <typename OptimizerType>
 double LinearSVM<MatType>::Train(
     const MatType& data,
@@ -60,6 +74,11 @@ double LinearSVM<MatType>::Train(
     const size_t numClasses,
     OptimizerType optimizer)
 {
+  if (numClasses <= 1)
+  {
+    throw std::invalid_argument("LinearSVM dataset has 0 number of classes!");
+  }
+
   LinearSVMFunction<MatType> svm(data, labels, numClasses, lambda, delta,
       fitIntercept);
   if (parameters.is_empty())
@@ -93,41 +112,11 @@ void LinearSVM<MatType>::Classify(
 {
   Classify(data, scores);
 
-  #if ARMA_VERSION_MAJOR > 7 || \
-      (ARMA_VERSION_MAJOR == 7 && \
-       ARMA_VERSION_MINOR >= 300)
-
-  // Prepare necessary data
+  // Prepare necessary data.
   labels.zeros(data.n_cols);
 
   labels = arma::conv_to<arma::Row<size_t>>::from(
       arma::index_max(scores));
-
-  #else
-  // Once the minimum version is Armadillo is increased, remove this part.
-
-  // Prepare necessary data
-  labels.zeros(data.n_cols);
-  double maxScore = 0;
-
-  // For each test input.
-  for (size_t i = 0; i < data.n_cols; ++i)
-  {
-    // For each class.
-    for (size_t j = 0; j < numClasses; ++j)
-    {
-      // If a higher class probability is encountered, change score.
-      if (scores(j, i) > maxScore)
-      {
-        maxScore = scores(j, i);
-        labels(i) = j;
-      }
-    }
-
-    // Set maximum probability to zero for next input.
-    maxScore = 0;
-  }
-  #endif
 }
 
 template <typename MatType>

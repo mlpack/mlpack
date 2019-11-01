@@ -22,6 +22,7 @@ namespace ann { /** Artificial Neural Network. */
 
 template<typename InputDataType, typename OutputDataType>
 BatchNorm<InputDataType, OutputDataType>::BatchNorm() :
+    size(0),
     eps(1e-8),
     loading(false),
     deterministic(false),
@@ -80,6 +81,7 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
 
     // Normalize the input.
     output = input.each_col() - mean;
+    inputMean = output;
     output.each_col() /= arma::sqrt(variance + eps);
 
     // Use Welford method to compute the sample variance and mean.
@@ -87,9 +89,9 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
     {
       count += 1;
 
-      OutputDataType delta = input.col(i) - runningMean;
-      runningMean = runningMean + delta / count;
-      runningVariance += delta % (input.col(i) - runningMean);
+      OutputDataType diff = input.col(i) - runningMean;
+      runningMean = runningMean + diff / count;
+      runningVariance += diff % (input.col(i) - runningMean);
     }
 
     // Reused in the backward and gradient step.
@@ -106,10 +108,9 @@ template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  const arma::mat inputMean = input.each_col() - mean;
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
-  // Step 1: dl / dxhat
+  // Step 1: dl / dxhat.
   const arma::mat norm = gy.each_col() % gamma;
 
   // Step 2: sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
@@ -123,8 +124,7 @@ void BatchNorm<InputDataType, OutputDataType>::Backward(
 
   // Step 3: sum (dl / dxhat * -1 / stdInv) + variance *
   // (sum -2 * (x - mu)) / m.
-  g.each_col() += (arma::sum(norm.each_col() % -stdInv, 1) + (var %
-      arma::mean(-2 * inputMean, 1))) / input.n_cols;
+  g.each_col() += arma::sum(norm.each_col() % -stdInv, 1) / input.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>

@@ -119,6 +119,20 @@ class LinearSVM
             const double lambda = 0.0001,
             const double delta = 1.0,
             const bool fitIntercept = false);
+  /**
+   * Initialize the Linear SVM without performing training.  Default
+   * value of lambda is 0.0001.  Be sure to use Train() before calling
+   * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
+   *
+   * @param numClasses Number of classes for classification.
+   * @param lambda L2-regularization constant.
+   * @paran delta Margin of difference between correct class and other classes.
+   * @param fitIntercept add intercept term or not.
+   */
+  LinearSVM(const size_t numClasses = 0,
+            const double lambda = 0.0001,
+            const double delta = 1.0,
+            const bool fitIntercept = false);
 
   /**
    * Classify the given points, returning the predicted labels for each point.
@@ -206,6 +220,14 @@ class LinearSVM
   double& Lambda() { return lambda; }
   //! Gets the regularization parameter.
   double Lambda() const { return lambda; }
+
+  //! Sets the margin between the correct class and all other classes.
+  double& Delta() { return delta; }
+  //! Gets the margin between the correct class and all other classes.
+  double Delta() const { return delta; }
+
+  //! Sets the intercept term flag.
+  bool& FitIntercept() { return fitIntercept; }
 
   //! Set the model parameters.
   arma::mat& Parameters() { return parameters; }

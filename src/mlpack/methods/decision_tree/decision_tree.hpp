@@ -64,6 +64,7 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
   template<typename MatType, typename LabelsType>
@@ -73,6 +74,7 @@ class DecisionTree :
                const size_t numClasses,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -89,6 +91,7 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
   template<typename MatType, typename LabelsType>
@@ -97,6 +100,7 @@ class DecisionTree :
                const size_t numClasses,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -116,6 +120,7 @@ class DecisionTree :
    * @param weights The weight list of given label.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
@@ -126,6 +131,7 @@ class DecisionTree :
                WeightsType weights,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
                const std::enable_if_t<arma::is_arma_type<
@@ -147,6 +153,7 @@ class DecisionTree :
    * @param weights The Weight list of given labels.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
@@ -156,6 +163,7 @@ class DecisionTree :
                WeightsType weights,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
                const std::enable_if_t<arma::is_arma_type<
@@ -222,6 +230,7 @@ class DecisionTree :
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The final entropy of decision tree.
    */
@@ -232,6 +241,7 @@ class DecisionTree :
                const size_t numClasses,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -249,6 +259,7 @@ class DecisionTree :
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The final entropy of decision tree.
    */
@@ -258,6 +269,7 @@ class DecisionTree :
                const size_t numClasses,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -278,6 +290,7 @@ class DecisionTree :
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The final entropy of decision tree.
    */
@@ -289,6 +302,7 @@ class DecisionTree :
                WeightsType weights,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
                const std::enable_if_t<arma::is_arma_type<typename
@@ -309,6 +323,7 @@ class DecisionTree :
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The final entropy of decision tree.
    */
@@ -319,6 +334,7 @@ class DecisionTree :
                WeightsType weights,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
                const std::enable_if_t<arma::is_arma_type<typename
@@ -453,6 +469,7 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
    * @return The final entropy of decision tree.
    */
   template<bool UseWeights, typename MatType>
@@ -465,6 +482,7 @@ class DecisionTree :
                arma::rowvec& weights,
                const size_t minimumLeafSize,
                const double minimumGainSplit,
+               const size_t maximumDepth,
                DimensionSelectionType& dimensionSelector);
 
   /**
@@ -480,6 +498,7 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
    * @return The final entropy of decision tree.
    */
   template<bool UseWeights, typename MatType>
@@ -491,6 +510,7 @@ class DecisionTree :
                arma::rowvec& weights,
                const size_t minimumLeafSize,
                const double minimumGainSplit,
+               const size_t maximumDepth,
                DimensionSelectionType& dimensionSelector);
 };
 

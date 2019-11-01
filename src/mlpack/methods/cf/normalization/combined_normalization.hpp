@@ -119,7 +119,7 @@ class CombinedNormalization
   void SequenceNormalize(MatType& data)
   {
     std::get<I>(normalizations).Normalize(data);
-    SequenceNormalize<I+1>(data);
+    SequenceNormalize<I + 1>(data);
   }
 
   //! End of tuple unpacking.
@@ -140,7 +140,7 @@ class CombinedNormalization
   {
     // The order of denormalization should be the reversed order
     // of normalization.
-    double realRating = SequenceDenormalize<I+1>(user, item, rating);
+    double realRating = SequenceDenormalize<I + 1>(user, item, rating);
     realRating =
         std::get<I>(normalizations).Denormalize(user, item, realRating);
     return realRating;
@@ -190,7 +190,7 @@ class CombinedNormalization
     tagName += std::to_string(I);
     ar & boost::serialization::make_nvp(
         tagName.c_str(), std::get<I>(normalizations));
-    SequenceSerialize<I+1, Archive>(ar, version);
+    SequenceSerialize<I + 1, Archive>(ar, version);
   }
 
   //! End of tuple unpacking.

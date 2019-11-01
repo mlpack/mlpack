@@ -79,6 +79,7 @@ AtrousConvolution<
     dilationH(dilationH)
 {
   weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
+  padding = new Padding<>(padW, padW, padH, padH);
 }
 
 template<
@@ -124,7 +125,14 @@ void AtrousConvolution<
 
   if (padW != 0 || padH != 0)
   {
-    Pad(inputTemp, padW, padH, inputPaddedTemp);
+    inputPaddedTemp.set_size(inputTemp.n_rows + padW * 2,
+        inputTemp.n_cols + padH * 2, inputTemp.n_slices);
+
+    for (size_t i = 0; i < inputTemp.n_slices; ++i)
+    {
+      padding->Forward(std::move(inputTemp.slice(i)),
+          std::move(inputPaddedTemp.slice(i)));
+    }
   }
 
   size_t wConv = ConvOutSize(inputWidth, kW, dW, padW, dilationW);
@@ -331,8 +339,7 @@ void AtrousConvolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::serialize(
-    Archive& ar, const unsigned int /* version */)
+>::serialize(Archive& ar, const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_NVP(inSize);
   ar & BOOST_SERIALIZATION_NVP(outSize);
@@ -349,6 +356,9 @@ void AtrousConvolution<
   ar & BOOST_SERIALIZATION_NVP(outputHeight);
   ar & BOOST_SERIALIZATION_NVP(dilationW);
   ar & BOOST_SERIALIZATION_NVP(dilationH);
+
+  if (version > 0)
+    ar & BOOST_SERIALIZATION_NVP(padding);
 
   if (Archive::is_loading::value)
     weights.set_size((outSize * inSize * kW * kH) + outSize, 1);

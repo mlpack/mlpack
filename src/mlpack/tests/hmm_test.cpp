@@ -493,7 +493,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
   hmm2.Train(sequences, states);
 
   // Check that training gives the same result.
-  BOOST_REQUIRE_LT(arma::norm(hmm.Transition() - hmm2.Transition()), 0.01);
+  BOOST_REQUIRE_LT(arma::norm(hmm.Transition() - hmm2.Transition()), 0.02);
 
   for (size_t row = 0; row < 6; row++)
   {
@@ -502,7 +502,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
     for (size_t col = 0; col < 4; col++)
     {
       BOOST_REQUIRE_SMALL(hmm.Emission()[col].Probability(obs) -
-          hmm2.Emission()[col].Probability(obs), 0.01);
+          hmm2.Emission()[col].Probability(obs), 0.02);
     }
   }
 }

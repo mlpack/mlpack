@@ -30,6 +30,8 @@ class DeltaVisitor : public boost::static_visitor<arma::mat&>
   //! Return the delta parameter.
   template<typename LayerType>
   arma::mat& operator()(LayerType* layer) const;
+
+  arma::mat& operator()(MoreTypes layer) const;
 };
 
 } // namespace ann

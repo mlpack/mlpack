@@ -30,6 +30,8 @@ class LossVisitor : public boost::static_visitor<double>
   template<typename LayerType>
   double operator()(LayerType* layer) const;
 
+  double operator()(MoreTypes layer) const;
+
  private:
   //! Return 0 if the module doesn't implement the Loss() or Model() function.
   template<typename T>

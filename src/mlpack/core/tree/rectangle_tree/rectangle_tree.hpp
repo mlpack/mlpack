@@ -181,9 +181,23 @@ class RectangleTree
   /**
    * Create a rectangle tree by moving the other tree.
    *
-   * @param other The tree to be copied.
+   * @param other The tree to be moved.
    */
   RectangleTree(RectangleTree&& other);
+
+  /**
+   * Copy the given rectangle tree.
+   *
+   * @param other The tree to be copied.
+   */
+  RectangleTree& operator=(const RectangleTree& other);
+
+  /**
+   * Take ownership of the given rectangle tree.
+   *
+   * @param other The tree to take ownership of.
+   */
+  RectangleTree& operator=(RectangleTree&& other);
 
   /**
    * Construct the tree from a boost::serialization archive.
@@ -541,6 +555,13 @@ class RectangleTree
    * @param relevels Vector to track which levels have been inserted to.
    */
   void SplitNode(std::vector<bool>& relevels);
+
+  /**
+   * Builds statistics for a node and all its descendants in a bottom-up way.
+   *
+   * @param node Node for which statistics will be built.
+   */
+  void BuildStatistics(RectangleTree* node);
 
  protected:
   /**

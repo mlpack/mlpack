@@ -66,11 +66,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeOutputDimensionTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
@@ -109,11 +109,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeCategoricalOutputDimensionTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
@@ -157,10 +157,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
@@ -191,8 +191,8 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
   inputData.shed_row(inputData.n_rows - 1);
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("test", std::make_tuple(info, testData));
   // Pass Labels.
   SetInputParam("labels", std::move(labels));
 
@@ -305,11 +305,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelCategoricalReuseTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
@@ -372,11 +372,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingMinSamplesTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("min_samples", 10);
   SetInputParam("confidence", 0.25);
@@ -404,11 +404,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingMinSamplesTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("min_samples", 2000);
   SetInputParam("confidence", 0.25);
@@ -441,11 +441,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingMaxSamplesTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("max_samples", 50000);
   SetInputParam("confidence", 0.95);
@@ -473,11 +473,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingMaxSamplesTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("max_samples", 5);
   SetInputParam("confidence", 0.95);
@@ -509,11 +509,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingConfidenceTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("confidence", 0.95);
 
@@ -540,11 +540,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingConfidenceTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   // Model with low confidence.
   SetInputParam("confidence", 0.25);
@@ -575,11 +575,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingPassesTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("passes", 1);
 
@@ -606,11 +606,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingPassesTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   // Model with larger number of passes.
   SetInputParam("passes", 100);
@@ -641,11 +641,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingBinarySplittingStrategyTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("numeric_split_strategy", (string) "binary");
   SetInputParam("max_samples", 50);
@@ -679,11 +679,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingDomingosSplittingStrategyTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("numeric_split_strategy", (string) "domingos");
   SetInputParam("max_samples", 50);
@@ -714,11 +714,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingDomingosSplittingStrategyTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("numeric_split_strategy", (string) "domingos");
   SetInputParam("max_samples", 50);
@@ -756,11 +756,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingBinningTest)
   modLabels = labels.cols(0, 49);
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, modData)));
+  SetInputParam("training", std::make_tuple(info, modData));
   SetInputParam("labels", std::move(modLabels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("numeric_split_strategy", (string) "domingos");
   SetInputParam("min_samples", 10);

@@ -30,6 +30,8 @@ class DeleteVisitor : public boost::static_visitor<void>
   //! Execute the destructor.
   template<typename LayerType>
   void operator()(LayerType* layer) const;
+
+  void operator()(MoreTypes layer) const;
 };
 
 } // namespace ann

@@ -220,7 +220,7 @@ struct NAME                                                                  \
 #define SINGLE_ARG(...) __VA_ARGS__
 
 /**
- * HAS_METHOD_FORM generates a template that allows to check at compile time
+ * HAS_METHOD_FORM generates a template that allows a compile time check for
  * whether a given class has a method of the requested form. For example, for
  * the following class
  *
@@ -254,8 +254,8 @@ struct NAME                                                                  \
     HAS_METHOD_FORM_BASE(SINGLE_ARG(METHOD), SINGLE_ARG(NAME), 7)
 
 /**
- * HAS_EXACT_METHOD_FORM generates a template that allows to check at compile
- * time whether a given class has a method of the requested form. For example,
+ * HAS_EXACT_METHOD_FORM generates a template that allows a compile time check
+ * whether a given class has a method of the requested form. For example,
  * for the following class
  *
  * class A
@@ -291,7 +291,7 @@ struct NAME                                                                  \
  * A version of HAS_METHOD_FORM() where the maximum number of extra arguments is
  * set to the default of 7.
  *
- * HAS_METHOD_FORM generates a template that allows to check at compile time
+ * HAS_METHOD_FORM generates a template that allows a compile time check as to
  * whether a given class has a method of the requested form. For example, for
  * the following class
  *

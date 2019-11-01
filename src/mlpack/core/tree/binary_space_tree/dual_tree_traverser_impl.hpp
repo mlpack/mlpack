@@ -56,6 +56,18 @@ DualTreeTraverser<RuleType>::Traverse(
   // Store the current traversal info.
   traversalInfo = rule.TraversalInfo();
 
+  // If both nodes are root nodes, just score them.
+  if (queryNode.Parent() == NULL && referenceNode.Parent() == NULL)
+  {
+    const double rootScore = rule.Score(queryNode, referenceNode);
+    // If root score is DBL_MAX, don't recurse.
+    if (rootScore == DBL_MAX)
+    {
+      ++numPrunes;
+      return;
+    }
+  }
+
   // If both are leaves, we must evaluate the base case.
   if (queryNode.IsLeaf() && referenceNode.IsLeaf())
   {
