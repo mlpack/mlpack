@@ -305,11 +305,10 @@ BOOST_AUTO_TEST_CASE(RBMCallbackTest)
   
   std::stringstream stream;
   
-  // Call the train function with printloss callback
+  // Call the train function with printloss callback.
   double objVal = model.Train(msgd, ens::PrintLoss(stream));
 
   BOOST_REQUIRE_GT(stream.str().length(), 0);
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();
