@@ -100,7 +100,7 @@ double RBM<InitializationRuleType, DataType, PolicyType>::Train(
     Reset();
   }
 
-  return optimizer.Optimize(*this, parameter, callbacks);
+  return optimizer.Optimize(*this, parameter, callbacks...);
 }
 
 template<
