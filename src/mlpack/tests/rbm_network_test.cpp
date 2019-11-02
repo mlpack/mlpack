@@ -302,9 +302,7 @@ BOOST_AUTO_TEST_CASE(RBMCallbackTest)
   model.Reset();
   model.VisibleBias().ones();
   model.HiddenBias().ones();
-  
   std::stringstream stream;
-  
   // Call the train function with printloss callback.
   double objVal = model.Train(msgd, ens::PrintLoss(stream));
 
