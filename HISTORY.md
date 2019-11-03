@@ -11,6 +11,8 @@
 
   * Speed and memory improvements for the Transposed Convolution layer (#1493).
 
+  * Fix Windows Python build configuration (#1885).
+
 ### mlpack 3.2.1
 ###### 2019-10-01
   * Enforce CMake version check for ensmallen (#2032).
