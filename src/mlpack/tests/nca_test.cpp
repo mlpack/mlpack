@@ -272,7 +272,10 @@ BOOST_AUTO_TEST_CASE(NCASGDSimpleDataset)
   nca.Optimizer().Shuffle() = true;
 
   arma::mat outputMatrix;
-  nca.LearnDistance(outputMatrix);
+  
+  std::stringstream stream;
+  nca.LearnDistance(outputMatrix, ens::ProgressBar(70, stream));
+  BOOST_REQUIRE_GT(stream.str().length(), 0);
 
   // Ensure that the objective function is better now.
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
