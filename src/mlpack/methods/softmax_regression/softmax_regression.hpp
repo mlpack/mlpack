@@ -162,11 +162,12 @@ class SoftmaxRegression
    * @param optimizer Desired optimizer.
    * @return Objective value of the final point.
    */
-  template<typename OptimizerType = ens::L_BFGS>
+  template<typename OptimizerType = ens::L_BFGS,typename... CallbackTypes>
   double Train(const arma::mat& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
-               OptimizerType optimizer = OptimizerType());
+               OptimizerType optimizer = OptimizerType(),
+               CallbackTypes&&... callbacks);
 
   //! Sets the number of classes.
   size_t& NumClasses() { return numClasses; }

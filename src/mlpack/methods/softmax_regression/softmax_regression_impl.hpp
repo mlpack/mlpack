@@ -41,11 +41,12 @@ size_t SoftmaxRegression::Classify(const VecType& point) const
   return size_t(label(0));
 }
 
-template<typename OptimizerType>
+template<typename OptimizerType,typename... CallbackTypes>
 double SoftmaxRegression::Train(const arma::mat& data,
                                 const arma::Row<size_t>& labels,
                                 const size_t numClasses,
-                                OptimizerType optimizer)
+                                OptimizerType optimizer,
+                                CallbackTypes&&... callbacks)
 {
   SoftmaxRegressionFunction regressor(data, labels, numClasses,
                                       lambda, fitIntercept);
@@ -54,7 +55,7 @@ double SoftmaxRegression::Train(const arma::mat& data,
 
   // Train the model.
   Timer::Start("softmax_regression_optimization");
-  const double out = optimizer.Optimize(regressor, parameters);
+  const double out = optimizer.Optimize(regressor, parameters,callbacks...);
   Timer::Stop("softmax_regression_optimization");
 
   Log::Info << "SoftmaxRegression::SoftmaxRegression(): final objective of "
