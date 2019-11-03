@@ -14,16 +14,15 @@ option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
+option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 
-# Currently Python bindings aren't known to build successfully on Windows, so
-# set BUILD_PYTHON_BINDINGS to OFF when the platform is Windows.
 if (WIN32)
-  option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." OFF)
-  message(WARNING "By default Python bindings are not compiled for Windows because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if you want them built.")
+
+  set(DLL_COPY_DIRS "" CACHE STRING "List of directories (separated by ';') containing DLLs to copy for runtime.")
+  set(DLL_COPY_LIBS "" CACHE STRING "List of DLLs (separated by ';') that should be copied for runtime.")
 else ()
-  option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 endif()
@@ -308,7 +307,23 @@ if (WIN32)
 
   # Piggyback LAPACK and BLAS linking into Armadillo link.
   set(ARMADILLO_LIBRARIES
-       ${ARMADILLO_LIBRARIES} ${BLAS_LIBRARY} ${LAPACK_LIBRARY})
+      ${ARMADILLO_LIBRARIES} ${BLAS_LIBRARY} ${LAPACK_LIBRARY})
+
+  # Ensure that the libraries are added to the MSVC IDE runtime path.
+  get_filename_component(BLAS_DIR ${BLAS_LIBRARY} DIRECTORY)
+  get_filename_component(LAPACK_DIR ${LAPACK_LIBRARY} DIRECTORY)
+
+  # Sometimes, especially with an OpenBLAS install via nuget, the DLLs are
+  # actually in ../../bin/x64/.  Automatically add these.
+  if (EXISTS "${BLAS_DIR}/../../bin/x64/")
+    get_filename_component(BLAS_DLL_DIR "${BLAS_DIR}/../../bin/x64" ABSOLUTE)
+    set(DLL_COPY_DIRS ${DLL_COPY_DIRS} "${BLAS_DLL_DIR}")
+  endif ()
+
+  if (EXISTS "${LAPACK_DIR}/../../bin/x64/")
+    get_filename_component(LAPACK_DLL_DIR "${LAPACK_DIR}/../../bin/x64" ABSOLUTE)
+    set(DLL_COPY_DIRS ${DLL_COPY_DIRS} "${BLAS_DLL_DIR}")
+  endif ()
 endif ()
 
 # Include directories for the previous dependencies.
@@ -321,7 +336,7 @@ find_package(StbImage)
 if (NOT STB_IMAGE_FOUND)
   if (DOWNLOAD_STB_IMAGE)
     set(STB_DIR "stb")
-    install(DIRECTORY DESTINATION ${CMAKE_BINARY_DIR}/deps/${STB_DIR})
+    install(DIRECTORY DESTINATION "${CMAKE_BINARY_DIR}/deps/${STB_DIR}")
     file(DOWNLOAD http://mlpack.org/files/stb-2.22/stb_image.h
         "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h"
         STATUS STB_IMAGE_DOWNLOAD_STATUS_LIST LOG STB_IMAGE_DOWNLOAD_LOG
@@ -341,8 +356,8 @@ if (NOT STB_IMAGE_FOUND)
       message(STATUS
           "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
       # Now we have to also ensure these header files get installed.
-      install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-      install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+      install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+      install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
       add_definitions(-DHAS_STB)
     else ()
       list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
@@ -391,8 +406,8 @@ if (NOT ENSMALLEN_FOUND)
             "Successfully downloaded ensmallen into ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/")
 
         # Now we have to also ensure these header files get installed.
-        install(DIRECTORY ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen_bits/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ensmallen_bits)
-        install(FILES ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen_bits/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ensmallen_bits")
+        install(FILES "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen.hpp" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
       else ()
         message(FATAL_ERROR "Problem unpacking ensmallen!  Expected only one directory ensmallen-x.y.z/; found ${ENS_DIRECTORIES}. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
       endif ()
@@ -455,6 +470,8 @@ link_directories(${Boost_LIBRARY_DIRS})
 # handle it.
 if (MSVC)
   link_directories(${Boost_LIBRARY_DIRS})
+  set(CMAKE_MSVCIDE_RUN_PATH ${CMAKE_MSVCIDE_RUN_PATH} ${Boost_LIBRARY_DIRS})
+  message("boost lib dirs ${Boost_LIBRARY_DIRS}")
   set(Boost_LIBRARIES "")
 endif ()
 
@@ -507,6 +524,21 @@ if (WIN32)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+  # Copy all necessary DLLs for runtime to the build directory.
+  # This is a little hackish, but I can't figure out clear ways to make CMake
+  # consistently link everything 100% statically across platforms or set the
+  # runtime path right always, so this is the best I know how to do for now.
+  foreach(dir ${DLL_COPY_DIRS})
+    file(GLOB dir_dll_list "${dir}/*.dll")
+    file(COPY ${dir_dll_list} DESTINATION ${CMAKE_BINARY_DIR}/Release/)
+    file(COPY ${dir_dll_list} DESTINATION ${CMAKE_BINARY_DIR}/Debug/)
+  endforeach ()
+
+  foreach(file ${DLL_COPY_LIBS})
+    file(COPY ${file} DESTINATION ${CMAKE_BINARY_DIR}/Release/)
+    file(COPY ${file} DESTINATION ${CMAKE_BINARY_DIR}/Debug/)
+  endforeach()
 else ()
   # If not on Windows, put them under more standard UNIX-like places.  This is
   # necessary, otherwise they would all end up in
@@ -580,8 +612,8 @@ if (BUILD_CLI_EXECUTABLES AND UNIX)
     )
 
     # Set the rules to install the documentation.
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/share/man/
-        DESTINATION ${CMAKE_INSTALL_MANDIR})
+    install(DIRECTORY "${CMAKE_BINARY_DIR}/share/man/"
+        DESTINATION "${CMAKE_INSTALL_MANDIR}")
   endif ()
 endif ()
 
@@ -632,8 +664,8 @@ if (DOXYGEN_FOUND)
       COMMENT "Generating API documentation with Doxygen"
   )
 
-  install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html
-      DESTINATION ${CMAKE_INSTALL_DOCDIR}
+  install(DIRECTORY "${CMAKE_BINARY_DIR}/doc/html"
+      DESTINATION "${CMAKE_INSTALL_DOCDIR}"
       COMPONENT doc
       OPTIONAL
   )
@@ -712,6 +744,6 @@ if (PKG_CONFIG_FOUND)
       DEPENDS mlpack_headers
       COMMENT "Generating mlpack.pc (pkg-config) file.")
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc
-      DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig/)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc"
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
 endif ()
