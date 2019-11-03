@@ -73,7 +73,9 @@ class NCA
    * dataset.n_rows), that matrix will be used as the starting point for
    * optimization.
    *
+   * @tparam CallbackTypes Types of Callback functions.
    * @param output_matrix Covariance matrix of Mahalanobis distance.
+   * @param callbacks Callback Functions. 
    */
   template<typename... CallbackTypes>
   void LearnDistance(arma::mat& outputMatrix, CallbackTypes&&... callbacks);
