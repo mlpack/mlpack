@@ -75,7 +75,8 @@ class NCA
    *
    * @param output_matrix Covariance matrix of Mahalanobis distance.
    */
-  void LearnDistance(arma::mat& outputMatrix);
+  template<typename... CallbackTypes>
+  void LearnDistance(arma::mat& outputMatrix, CallbackTypes&&... callbacks);
 
   //! Get the dataset reference.
   const arma::mat& Dataset() const { return dataset; }
