@@ -357,10 +357,7 @@ BOOST_AUTO_TEST_CASE(LMNNSGDSimpleDatasetTest)
   LMNN<> lmnn(dataset, labels, 1);
 
   arma::mat outputMatrix;
-  std::stringstream stream;
-
-  lmnn.LearnDistance(outputMatrix, ens::ProgressBar(70, stream));
-  BOOST_REQUIRE_GT(stream.str().length(), 0);
+  lmnn.LearnDistance(outputMatrix);
 
   // Ensure that the objective function is better now.
   LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
