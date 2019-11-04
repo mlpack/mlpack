@@ -75,7 +75,8 @@ class NCA
    *
    * @tparam CallbackTypes Types of Callback functions.
    * @param output_matrix Covariance matrix of Mahalanobis distance.
-   * @param callbacks Callback Functions. 
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    */
   template<typename... CallbackTypes>
   void LearnDistance(arma::mat& outputMatrix, CallbackTypes&&... callbacks);
