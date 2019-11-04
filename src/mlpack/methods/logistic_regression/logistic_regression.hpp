@@ -126,7 +126,8 @@ class LogisticRegression
    * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
-   * @param callbacks Callback Functions.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error)
    */
   template<typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>
@@ -151,7 +152,8 @@ class LogisticRegression
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer with instantiated error function.
-   * @param callbacks Callback Functions.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error)
    */
   template<typename OptimizerType, typename... CallbackTypes>
