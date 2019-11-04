@@ -89,7 +89,9 @@ class RBM
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @tparam CallbackTypes Types of Callback functions.
    * @param optimizer Optimizer type.
-   * @param callbacks Callback Functions.
+   * @param callbacks Callback Functions for ensmallen optimizer 
+   *      `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackType>
