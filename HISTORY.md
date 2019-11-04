@@ -1,5 +1,17 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Add Model() to the FFN class to access individual layers (#2043).
+
+  * Update documentation for pip and conda installation packages (#2044).
+
+  * Add bindings for linear SVM (#1935); `mlpack_linear_svm` from the
+    command-line, `linear_svm()` from Python.
+
+  * Add support to return the layer name as `std::string` (#1987).
+
+  * Speed and memory improvements for the Transposed Convolution layer (#1493).
+
+  * Fix Windows Python build configuration (#1885).
 
 ### mlpack 3.2.1
 ###### 2019-10-01
