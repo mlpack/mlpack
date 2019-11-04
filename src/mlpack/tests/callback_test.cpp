@@ -6,12 +6,18 @@
 #include <mlpack/methods/ann/rnn.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+#include <mlpack/methods/lmnn/lmnn.hpp>
+#include <mlpack/methods/nca/nca.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
 
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::regression;
+using namespace mlpack::lmnn;
+using namespace mlpack::metric;
+using namespace mlpack::nca;
 
 BOOST_AUTO_TEST_SUITE(CallbackTest);
 
@@ -133,6 +139,44 @@ BOOST_AUTO_TEST_CASE(LRWithOptimizerCallback)
         ens::PrintLoss(stream));
 
     BOOST_REQUIRE_GT(stream.str().length(), 0);
+}
+
+/**
+ * Test LMNN implementation with ProgressBar callback.
+ */
+BOOST_AUTO_TEST_CASE(LMNNWithOptimizerCallback)
+{
+  // Useful but simple dataset with six points and two classes.
+  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+
+  LMNN<> lmnn(dataset, labels, 1);
+
+  arma::mat outputMatrix;
+  std::stringstream stream;
+
+  lmnn.LearnDistance(outputMatrix, ens::ProgressBar(70, stream));
+  BOOST_REQUIRE_GT(stream.str().length(), 0);
+}
+
+/**
+ * Test NCA implementation with ProgressBar callback.
+ */
+BOOST_AUTO_TEST_CASE(NCAWithOptimizerCallback)
+{
+  // Useful but simple dataset with six points and two classes.
+  arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+
+  NCA<SquaredEuclideanDistance> nca(data, labels);
+
+  arma::mat outputMatrix;
+  std::stringstream stream;
+
+  nca.LearnDistance(outputMatrix, ens::ProgressBar(70, stream));
+  BOOST_REQUIRE_GT(stream.str().length(), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
