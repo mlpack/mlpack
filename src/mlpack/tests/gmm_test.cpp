@@ -28,7 +28,7 @@ using namespace mlpack::gmm;
 
 BOOST_AUTO_TEST_SUITE(GMMTest);
 /**
- * Test GMM::Probability() for a different observation for a few cases.
+ * Test GMM::Probability() with a single observation at a time for a few cases.
  */
 BOOST_AUTO_TEST_CASE(GMMProbabilityTest)
 {

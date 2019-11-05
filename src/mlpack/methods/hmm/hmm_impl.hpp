@@ -329,8 +329,19 @@ double HMM<Distribution>::LogEstimate(const arma::mat& dataSeq,
                                       arma::mat& stateLogProb,
                                       arma::mat& forwardLogProb,
                                       arma::mat& backwardLogProb,
-                                      arma::vec& logScales) const
+                                      arma::vec& logScales)
 {
+  logProbs.resize(dataSeq.n_cols, transition.n_rows);
+
+  // Save the values of log-probability to logProbs.
+  for (size_t i = 0; i < transition.n_rows; i++)
+  {
+    // Define alias of desired column.
+    arma::vec alias(logProbs.colptr(i), logProbs.n_rows, false, true);
+    // Use advanced constructor for using logProbs directly.
+    emission[i].LogProbability(dataSeq, alias);
+  }
+
   // First run the forward-backward algorithm.
   Forward(dataSeq, logScales, forwardLogProb);
   Backward(dataSeq, logScales, backwardLogProb);
@@ -352,7 +363,7 @@ double HMM<Distribution>::Estimate(const arma::mat& dataSeq,
                                    arma::mat& stateProb,
                                    arma::mat& forwardProb,
                                    arma::mat& backwardProb,
-                                   arma::vec& scales) const
+                                   arma::vec& scales)
 {
   arma::mat stateLogProb;
   arma::mat forwardLogProb;
@@ -376,7 +387,7 @@ double HMM<Distribution>::Estimate(const arma::mat& dataSeq,
  */
 template<typename Distribution>
 double HMM<Distribution>::Estimate(const arma::mat& dataSeq,
-                                   arma::mat& stateProb) const
+                                   arma::mat& stateProb)
 {
   // We don't need to save these.
   arma::mat stateLogProb;
@@ -517,10 +528,22 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
  * Compute the log-likelihood of the given data sequence.
  */
 template<typename Distribution>
-double HMM<Distribution>::LogLikelihood(const arma::mat& dataSeq) const
+double HMM<Distribution>::LogLikelihood(const arma::mat& dataSeq)
 {
   arma::mat forwardLog;
   arma::vec logScales;
+
+  // This is needed here.
+  logProbs.resize(dataSeq.n_cols, transition.n_rows);
+
+  // Save the values of log-probability to logProbs.
+  for (size_t i = 0; i < transition.n_rows; i++)
+  {
+    // Define alias of desired column.
+    arma::vec alias(logProbs.colptr(i), logProbs.n_rows, false, true);
+    // Use advanced constructor for using logProbs directly.
+    emission[i].LogProbability(dataSeq, alias);
+  }
 
   Forward(dataSeq, logScales, forwardLog);
 
@@ -559,7 +582,7 @@ void HMM<Distribution>::Filter(const arma::mat& dataSeq,
  */
 template<typename Distribution>
 void HMM<Distribution>::Smooth(const arma::mat& dataSeq,
-                               arma::mat& smoothSeq) const
+                               arma::mat& smoothSeq)
 {
   // First run the forward algorithm.
   arma::mat stateLogProb;
@@ -592,18 +615,6 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
   logScales.fill(-std::numeric_limits<double>::infinity());
 
   arma::mat logTrans = trans(log(transition));
-
-  // Define a variable to store the value of log-probability for dataSeq.
-  arma::mat logProbs(dataSeq.n_cols, transition.n_rows);
-
-  // Save the values of log-probability to logProbs.
-  for (size_t i = 0; i < transition.n_rows; i++)
-  {
-    // Define alias of desired column.
-    arma::vec alias(logProbs.colptr(i), logProbs.n_rows, false, true);
-    // Use advanced constructor for using logProbs directly.
-    emission[i].LogProbability(dataSeq, alias);
-  }
 
   // The first entry in the forward algorithm uses the initial state
   // probabilities.  Note that MATLAB assumes that the starting state (at
@@ -652,18 +663,6 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
 
   // The last element probability is 1.
   backwardLogProb.col(dataSeq.n_cols - 1).fill(0);
-
-  // Define a variable to store the value of log-probability for dataSeq.
-  arma::mat logProbs(dataSeq.n_cols, transition.n_rows);
-
-  // Save the values of log-probability to logProbs.
-  for (size_t i = 0; i < transition.n_rows; i++)
-  {
-    // Define alias of desired column.
-    arma::vec alias(logProbs.colptr(i), logProbs.n_rows, false, true);
-    // Use advanced constructor for using logProbs directly.
-    emission[i].LogProbability(dataSeq, alias);
-  }
 
   // Now step backwards through all other observations.
   for (size_t t = dataSeq.n_cols - 2; t + 1 > 0; t--)

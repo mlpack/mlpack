@@ -172,7 +172,6 @@ class GMM
    */
   void Probability(const arma::mat& observation, arma::vec& probs) const;
 
-
   /**
    * Return the log probability that the given observation came from this
    * distribution.

@@ -215,7 +215,7 @@ class HMM
                      arma::mat& stateLogProb,
                      arma::mat& forwardLogProb,
                      arma::mat& backwardLogProb,
-                     arma::vec& logScales) const;
+                     arma::vec& logScales);
 
   /**
    * Estimate the probabilities of each hidden state at each time step for each
@@ -239,7 +239,7 @@ class HMM
                   arma::mat& stateProb,
                   arma::mat& forwardProb,
                   arma::mat& backwardProb,
-                  arma::vec& scales) const;
+                  arma::vec& scales);
 
   /**
    * Estimate the probabilities of each hidden state at each time step of each
@@ -253,7 +253,7 @@ class HMM
    * @return Log-likelihood of most likely state sequence.
    */
   double Estimate(const arma::mat& dataSeq,
-                  arma::mat& stateProb) const;
+                  arma::mat& stateProb);
 
   /**
    * Generate a random data sequence of the given length.  The data sequence is
@@ -290,7 +290,7 @@ class HMM
    * @param dataSeq Data sequence to evaluate the likelihood of.
    * @return Log-likelihood of the given sequence.
    */
-  double LogLikelihood(const arma::mat& dataSeq) const;
+  double LogLikelihood(const arma::mat& dataSeq);
 
   /**
    * HMM filtering. Computes the k-step-ahead expected emission at each time
@@ -320,7 +320,7 @@ class HMM
    *    stored.
    */
   void Smooth(const arma::mat& dataSeq,
-              arma::mat& smoothSeq) const;
+              arma::mat& smoothSeq);
 
   //! Return the vector of initial state probabilities.
   const arma::vec& Initial() const { return initial; }
@@ -399,6 +399,7 @@ class HMM
 
   //! Tolerance of Baum-Welch algorithm.
   double tolerance;
+  arma::mat logProbs;
 };
 
 } // namespace hmm
