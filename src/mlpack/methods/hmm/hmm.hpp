@@ -293,6 +293,17 @@ class HMM
   double LogLikelihood(const arma::mat& dataSeq) const;
 
   /**
+   * Compute the log-likelihood of the given emission probability up to time t
+   *
+   * @param dataSeq Data sequence to evaluate the likelihood of.
+   * @return Log-likelihood of the given sequence of emission up to time t.
+   */
+  double LogLikelihood(size_t t,
+                       const arma::vec& emissionLogProb,
+                       double &logScale, 
+                       arma::vec& prevForwardLogProb, 
+                       arma::vec& forwardLogProb) const;
+  /**
    * HMM filtering. Computes the k-step-ahead expected emission at each time
    * conditioned only on prior observations. That is
    * E{ Y[t+k] | Y[0], ..., Y[t] }.
@@ -360,6 +371,18 @@ class HMM
 
 
  protected:
+     
+  void ForwardAtT0(
+    const arma::vec& emissionLogProb,
+    double& logScales,
+    arma::vec& forwardLogProb) const;
+
+  void ForwardAtTn(
+    const arma::vec& emissionLogProb,
+    double& logScales,
+    const arma::vec& prevForwardLogProb,
+    arma::vec& forwardLogProb) const;
+
   // Helper functions.
   /**
    * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
