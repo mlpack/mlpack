@@ -323,14 +323,14 @@ class HMM
               arma::mat& smoothSeq) const;
 
   //! Return the vector of initial state probabilities.
-  const arma::vec& Initial() const { return initial; }
+  const arma::vec Initial() const { return initialProxy; }
   //! Modify the vector of initial state probabilities.
-  arma::vec& Initial() { return initial; }
+  arma::vec& Initial() { return initialProxy; }
 
   //! Return the transition matrix.
-  const arma::mat& Transition() const { return transition; }
+  const arma::mat Transition() const { return transitionProxy; }
   //! Return a modifiable transition matrix reference.
-  arma::mat& Transition() { return transition; }
+  arma::mat& Transition() { return transitionProxy; }
 
   //! Return the emission distributions.
   const std::vector<Distribution>& Emission() const { return emission; }
@@ -351,7 +351,13 @@ class HMM
    * Serialize the object.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void load(Archive& ar, const unsigned int version);
+
+  template<typename Archive>
+  void save(Archive& ar, const unsigned int version) const;
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER()
+
 
  protected:
   // Helper functions.
@@ -387,12 +393,19 @@ class HMM
   //! Set of emission probability distributions; one for each state.
   std::vector<Distribution> emission;
 
+  arma::mat transitionProxy;
+
   //! Transition probability matrix.
-  arma::mat transition;
+  mutable arma::mat logTransition;
 
  private:
+     
+  void ConvertToLogSpace() const;   
+  
+  arma::vec initialProxy;
+
   //! Initial state probability vector.
-  arma::vec initial;
+  mutable arma::vec logInitial;
 
   //! Dimensionality of observations.
   size_t dimensionality;
