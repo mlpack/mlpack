@@ -88,6 +88,10 @@ class AdaBoostModel
 
   //! Classify test points.
   void Classify(const arma::mat& testData,
+                arma::Row<size_t>& predictions);
+
+  //! Classify test points.
+  void Classify(const arma::mat& testData,
                 arma::Row<size_t>& predictions,
                 arma::mat& probabilities);
 

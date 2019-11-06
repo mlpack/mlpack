@@ -208,6 +208,39 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
 template<typename WeakLearnerType, typename MatType>
 void AdaBoost<WeakLearnerType, MatType>::Classify(
     const MatType& test,
+    arma::Row<size_t>& predictedLabels)
+{
+  arma::Row<size_t> tempPredictedLabels(test.n_cols);
+  arma::mat probabilities;
+  
+  probabilities.zeros(numClasses, test.n_cols);
+  predictedLabels.set_size(test.n_cols);
+
+  for (size_t i = 0; i < wl.size(); i++)
+  {
+    wl[i].Classify(test, tempPredictedLabels);
+
+    for (size_t j = 0; j < tempPredictedLabels.n_cols; j++)
+      probabilities(tempPredictedLabels(j), j) += alpha[i];
+  }
+
+  arma::colvec pRow;
+  arma::uword maxIndex = 0;
+
+  for (size_t i = 0; i < predictedLabels.n_cols; i++)
+  {
+    pRow = probabilities.unsafe_col(i);
+    pRow.max(maxIndex);
+    predictedLabels(i) = maxIndex;
+  }
+}
+
+/**
+ * Classify the given test points.
+ */
+template<typename WeakLearnerType, typename MatType>
+void AdaBoost<WeakLearnerType, MatType>::Classify(
+    const MatType& test,
     arma::Row<size_t>& predictedLabels,
     arma::mat& probabilities)
 {

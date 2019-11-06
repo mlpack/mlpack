@@ -237,9 +237,18 @@ static void mlpackMain()
     Row<size_t> predictedLabels(testingData.n_cols);
     mat probabilities;
 
-    Timer::Start("adaboost_classification");
-    m->Classify(testingData, predictedLabels, probabilities);
-    Timer::Stop("adaboost_classification");
+    if (CLI::HasParam("probabilities"))
+    {
+      Timer::Start("adaboost_classification");
+      m->Classify(testingData, predictedLabels, probabilities);
+      Timer::Stop("adaboost_classification");
+    }
+    else
+    {
+      Timer::Start("adaboost_classification");
+      m->Classify(testingData, predictedLabels);
+      Timer::Stop("adaboost_classification");
+    }
 
     Row<size_t> results;
     data::RevertLabels(predictedLabels, m->Mappings(), results);
