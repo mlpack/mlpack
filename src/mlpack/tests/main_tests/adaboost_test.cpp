@@ -323,9 +323,8 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
 
   // Calculate accuracy.
   arma::Row<size_t> output;
-  arma::mat probabilities;
   CLI::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
-       output, probabilities);
+       output);
 
   size_t correct = arma::accu(output == testLabels);
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
@@ -342,7 +341,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
 
   // Calculate accuracy.
   CLI::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
-       output, probabilities);
+       output);
 
   correct = arma::accu(output == testLabels);
   double accuracy10 = (double(correct) / double(testLabels.n_elem) * 100);
@@ -359,7 +358,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
 
   // Calculate accuracy.
   CLI::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
-       output, probabilities);
+       output);
 
   correct = arma::accu(output == testLabels);
   double accuracy100 = (double(correct) / double(testLabels.n_elem) * 100);
