@@ -753,6 +753,8 @@ void HMM<Distribution>::load(Archive& ar, const unsigned int /* version */)
   // Load the emissions; generate the correct name for each one.
   ar & BOOST_SERIALIZATION_NVP(emission);
   
+  initialProxy = initial;
+  transitionProxy = transition;
   logTransition = log(transition);
   logInitial = log(initial);
  }
