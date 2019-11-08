@@ -26,6 +26,8 @@ StringEncoding<EncodingPolicyType, DictionaryType>::StringEncoding(
     ArgTypes&& ... args) :
     encodingPolicy(std::forward<ArgTypes>(args)...)
 {
+  maxNgram = 1;
+  minNgram = 1;
 }
 
 template<typename EncodingPolicyType, typename DictionaryType>
@@ -33,6 +35,8 @@ StringEncoding<EncodingPolicyType, DictionaryType>::StringEncoding(
     EncodingPolicyType encodingPolicy) :
     encodingPolicy(std::move(encodingPolicy))
 {
+  maxNgram = 1;
+  minNgram = 1;
 }
 
 template<typename EncodingPolicyType, typename DictionaryType>
@@ -71,23 +75,26 @@ void StringEncoding<EncodingPolicyType, DictionaryType>::CreateMap(
     const std::string& input,
     const TokenizerType& tokenizer)
 {
-  boost::string_view strView(input);
-  auto token = tokenizer(strView);
-
-  static_assert(
-      std::is_same<typename std::remove_reference<decltype(token)>::type,
-                   typename std::remove_reference<typename DictionaryType::
-                      TokenType>::type>::value,
-      "The dictionary token type doesn't match the return value type "
-      "of the tokenizer.");
-
-  // The loop below adds the extracted tokens to the dictionary.
-  while (!tokenizer.IsTokenEmpty(token))
+  for(int ngram = minNgram; ngram <= maxNgram; ngram++)
   {
-    if (!dictionary.HasToken(token))
-      dictionary.AddToken(std::move(token));
+    boost::string_view strView(input);
+    auto token = tokenizer(strView, ngram);
 
-    token = tokenizer(strView);
+    static_assert(
+        std::is_same<typename std::remove_reference<decltype(token)>::type,
+                     typename std::remove_reference<typename DictionaryType::
+                        TokenType>::type>::value,
+        "The dictionary token type doesn't match the return value type "
+        "of the tokenizer.");
+
+    // The loop below adds the extracted tokens to the dictionary.
+    while (!tokenizer.IsTokenEmpty(token))
+    {
+      if (!dictionary.HasToken(token))
+        dictionary.AddToken(std::move(token));
+
+      token = tokenizer(strView, ngram);
+    }
   }
 }
 
@@ -113,29 +120,33 @@ EncodeHelper(const std::vector<std::string>& input,
   size_t numColumns = 0;
 
   // The first pass adds the extracted tokens to the dictionary.
+  // Do it for Ngram 
   for (size_t i = 0; i < input.size(); i++)
   {
-    boost::string_view strView(input[i]);
-    auto token = tokenizer(strView);
-
-    static_assert(
-        std::is_same<typename std::remove_reference<decltype(token)>::type,
-                     typename std::remove_reference<typename DictionaryType::
-                        TokenType>::type>::value,
-        "The dictionary token type doesn't match the return value type "
-        "of the tokenizer.");
-
     size_t numTokens = 0;
-
-    while (!tokenizer.IsTokenEmpty(token))
+    for (int ngram = minNgram; ngram <= maxNgram; ngram++)
     {
-      if (!dictionary.HasToken(token))
-        dictionary.AddToken(std::move(token));
-      policy.PreprocessToken(i, numTokens, dictionary.Value(token));
+      boost::string_view strView(input[i]);
+      auto token = tokenizer(strView, ngram);
+      // Time consuming
+      static_assert(
+          std::is_same<typename std::remove_reference<decltype(token)>::type,
+                       typename std::remove_reference<typename DictionaryType::
+                          TokenType>::type>::value,
+          "The dictionary token type doesn't match the return value type "
+          "of the tokenizer.");
 
-      token = tokenizer(strView);
-      numTokens++;
-    }
+
+      while (!tokenizer.IsTokenEmpty(token))
+      {
+        if (!dictionary.HasToken(token))
+          dictionary.AddToken(std::move(token));
+        policy.PreprocessToken(i, numTokens, dictionary.Value(token));
+
+        token = tokenizer(strView, ngram);
+        numTokens++;
+      }
+    }    
     numColumns = std::max(numColumns, numTokens);
   }
   policy.InitMatrix(output, input.size(), numColumns, dictionary.Size());
@@ -143,16 +154,19 @@ EncodeHelper(const std::vector<std::string>& input,
   // The second pass writes the encoded values to the output.
   for (size_t i = 0; i < input.size(); i++)
   {
-    boost::string_view strView(input[i]);
-    auto token = tokenizer(strView);
-    size_t numTokens = 0;
-
-    while (!tokenizer.IsTokenEmpty(token))
+    for (int ngram = minNgram; ngram <= maxNgram; ngram++)
     {
-      policy.Encode(output, dictionary.Value(token), i, numTokens);
-      token = tokenizer(strView);
-      numTokens++;
-    }
+      boost::string_view strView(input[i]);
+      auto token = tokenizer(strView, ngram);
+      size_t numTokens = 0;
+
+      while (!tokenizer.IsTokenEmpty(token))
+      {
+        policy.Encode(output, dictionary.Value(token), i, numTokens);
+        token = tokenizer(strView, ngram);
+        numTokens++;
+      }
+    }    
   }
 }
 
@@ -171,26 +185,29 @@ EncodeHelper(const std::vector<std::string>& input,
   // at once.
   for (size_t i = 0; i < input.size(); i++)
   {
-    boost::string_view strView(input[i]);
-    auto token = tokenizer(strView);
-
-    static_assert(
-        std::is_same<typename std::remove_reference<decltype(token)>::type,
-                     typename std::remove_reference<typename DictionaryType::
-                        TokenType>::type>::value,
-        "The dictionary token type doesn't match the return value type "
-        "of the tokenizer.");
-
-    output.emplace_back();
-
-    while (!tokenizer.IsTokenEmpty(token))
+    for (int ngram = minNgram; ngram <= maxNgram; ngram++)
     {
-      if (dictionary.HasToken(token))
-        policy.Encode(output[i], dictionary.Value(token));
-      else
-        policy.Encode(output[i], dictionary.AddToken(std::move(token)));
+      boost::string_view strView(input[i]);
+      auto token = tokenizer(strView, ngram);
 
-      token = tokenizer(strView);
+      static_assert(
+          std::is_same<typename std::remove_reference<decltype(token)>::type,
+                       typename std::remove_reference<typename DictionaryType::
+                          TokenType>::type>::value,
+          "The dictionary token type doesn't match the return value type "
+          "of the tokenizer.");
+
+      output.emplace_back();
+
+      while (!tokenizer.IsTokenEmpty(token))
+      {
+        if (dictionary.HasToken(token))
+          policy.Encode(output[i], dictionary.Value(token));
+        else
+          policy.Encode(output[i], dictionary.AddToken(std::move(token)));
+
+        token = tokenizer(strView, ngram);
+      }
     }
   }
 }
@@ -202,6 +219,20 @@ void StringEncoding<EncodingPolicyType, DictionaryType>::serialize(
 {
   ar & BOOST_SERIALIZATION_NVP(encodingPolicy);
   ar & BOOST_SERIALIZATION_NVP(dictionary);
+}
+
+template<typename EncodingPolicyType, typename DictionaryType>
+void StringEncoding<EncodingPolicyType, DictionaryType>::SetmaxNgram(
+  int value)
+{
+  maxNgram = value;
+}
+
+template<typename EncodingPolicyType, typename DictionaryType>
+void StringEncoding<EncodingPolicyType, DictionaryType>::SetminNgram(
+  int value)
+{
+  minNgram = value;
 }
 
 } // namespace data

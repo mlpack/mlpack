@@ -36,15 +36,20 @@ class CharExtract
    *
    * @param str String view to retrieve the next token from.
    */
-  int operator()(boost::string_view& str) const
+  int operator()(boost::string_view& str, int ngram = 1) const
   {
+    int retval = 0;
     if (str.empty())
       return EOF;
-
-    const int retval = static_cast<unsigned char>(str[0]);
-
+    int count = 0;
+    while(ngram--)
+    {
+      retval = retval * pow(10,count) + (static_cast<unsigned char>(str[count]));
+      count++;
+      if(count>=str.length())
+        break;
+    }
     str.remove_prefix(1);
-
     return retval;
   }
 

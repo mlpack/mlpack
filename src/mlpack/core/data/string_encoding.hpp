@@ -90,6 +90,22 @@ class StringEncoding
   void Clear();
 
   /**
+   * Set maximum value for ngram.
+   */
+  void SetmaxNgram(int value);
+
+  /**
+   * Set minimum value for ngram.
+   */
+  void SetminNgram(int value);
+
+  //! Return the maxNgram
+  const int& MaxNgram() const { return maxNgram; }
+
+  //! Return the maxNgram
+  const int& MinNgram() const { return minNgram; }
+
+  /**
    * Encode the given text and write the result to the given output.
    *
    * @tparam OutputType Type of the output container. The function supports
@@ -196,6 +212,10 @@ class StringEncoding
   EncodingPolicyType encodingPolicy;
   //! The dictionary that contains the tokens and their labels.
   DictionaryType dictionary;
+  //! Maximum value of ngram.
+  int maxNgram;
+  //! Minimum value of ngram.
+  int minNgram;
 };
 
 } // namespace data

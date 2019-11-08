@@ -51,20 +51,20 @@ class SplitByAnyOf
    *
    * @param str String view to retrieve the token from.
    */
-  boost::string_view operator()(boost::string_view& str) const
+  boost::string_view operator()(boost::string_view& str, int ngram = 1) const
   {
     boost::string_view retval;
-
     while (retval.empty())
     {
       const std::size_t pos = FindFirstDelimiter(str);
-      if (pos == str.npos)
+      const std::size_t nthpos = FindNthDelimiter(str, ngram);
+      if (pos == str.npos || nthpos == str.npos)
       {
-        retval = str;
         str.clear();
+        retval = str;
         return retval;
       }
-      retval = str.substr(0, pos);
+        retval = str.substr(0, nthpos);
       str.remove_prefix(pos + 1);
     }
     return retval;
@@ -93,6 +93,21 @@ class SplitByAnyOf
    *
    * @param str String where to find the character.
    */
+  size_t FindNthDelimiter(const boost::string_view str, int ntimes) const
+  {
+    int nPos = 0;
+    for (size_t pos = 0; pos < str.size(); pos++)
+    {
+      if (mask[static_cast<unsigned char>(str[pos])])
+      { 
+        nPos++;
+        if (nPos == ntimes)
+          return pos;
+      }
+    }
+    return str.npos;
+  }
+
   size_t FindFirstDelimiter(const boost::string_view str) const
   {
     for (size_t pos = 0; pos < str.size(); pos++)

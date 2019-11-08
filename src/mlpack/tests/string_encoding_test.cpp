@@ -1079,5 +1079,98 @@ BOOST_AUTO_TEST_CASE(SplitByAnyOfTfIdfEncodingSerialization)
   CheckMatrices(output, xmlOutput, textOutput, binaryOutput);
 }
 
+// Following Test will be changed
+
+/**
+ * Test the Tf-Idf Encoding using rawcount type and smoothidf as true,
+ * which is the deafult values with ngram range 4-5.
+ */
+BOOST_AUTO_TEST_CASE(NgramRawCountSmoothIdfEncodingTest)
+{
+  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+
+//! Common input for some tests.
+static vector<string> stringInput = {
+    "this is the first document.",
+    "this document is the second document.",
+    "and this is the third one.",
+    "is this the first document."
+};
+
+  arma::mat output;
+  TfIdfEncoding<SplitByAnyOf::TokenType> encoder;
+  SplitByAnyOf tokenizer(" ,.");
+  encoder.SetmaxNgram(5);
+  encoder.SetminNgram(4);
+  const int val = encoder.MinNgram();
+  encoder.Encode(stringInput, output, tokenizer);
+  const DictionaryType& dictionary = encoder.Dictionary();
+
+  // Checking that everything is mapped to different numbers
+  std::unordered_map<size_t, size_t> keysCount;
+  for (auto& keyValue : dictionary.Mapping())
+  {
+    keysCount[keyValue.second]++;
+    // Every token should be mapped only once
+    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+  }
+
+  arma::mat expected = {
+    {  1.9162907318741551, 1.9162907318741551, 1.9162907318741551, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    {  0, 0, 0, 1.9162907318741551, 1.9162907318741551, 1.9162907318741551, 
+       1.9162907318741551, 1.9162907318741551, 0, 0, 0, 0, 0, 0, 0, 0 },
+    {  0, 0, 0, 0, 0, 0, 0, 0, 1.9162907318741551, 1.9162907318741551,
+       1.9162907318741551, 1.9162907318741551, 1.9162907318741551, 0, 0, 0 },
+    {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 1.9162907318741551,
+       1.9162907318741551, 1.9162907318741551 } 
+  };
+  CheckMatrices(output, expected, 1e-12);
+}
+
+/**
+ * Test the ngram with max equal to min in Ngram range.
+ */
+BOOST_AUTO_TEST_CASE(NgramEncodingTest)
+{
+  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+
+  //! Common input for some tests.
+  static vector<string> stringInput = {
+      "this is the first document.",
+      "this document is the second document.",
+      "and this is the third one.",
+      "is this the first document."
+  };
+
+  arma::mat output;
+  TfIdfEncoding<SplitByAnyOf::TokenType> encoder;
+  SplitByAnyOf tokenizer(" ,.");
+  encoder.SetmaxNgram(3);
+  encoder.SetminNgram(3);
+  encoder.Encode(stringInput, output, tokenizer);
+  const DictionaryType& dictionary = encoder.Dictionary();
+
+  // Checking that everything is mapped to different numbers
+  std::unordered_map<size_t, size_t> keysCount;
+  for (auto& keyValue : dictionary.Mapping())
+  {
+    keysCount[keyValue.second]++;
+    // Every token should be mapped only once
+    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+  }
+  arma::mat expected = {
+    {  1.51082562376599070, 1.9162907318741551, 1.51082562376599070, 0, 0, 0,
+       0, 0, 0, 0, 0, 0 },
+    {  0, 0, 0, 1.9162907318741551, 1.9162907318741551, 1.9162907318741551, 
+       1.9162907318741551, 0, 0, 0, 0, 0 },
+    {  1.51082562376599070, 0, 0, 0, 0, 0, 0, 1.9162907318741551,
+       1.9162907318741551, 1.9162907318741551, 0, 0 },
+    {  0, 0, 1.51082562376599070, 0, 0, 0, 0, 0, 0, 0 , 1.9162907318741551,
+       1.9162907318741551 } 
+  };
+  CheckMatrices(output, expected, 1e-12);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
 
