@@ -41,11 +41,15 @@ class Padding
    * @param padWLeft Right padding width of the input.
    * @param padHTop Top padding height of the input.
    * @param padHBottom Bottom padding height of the input.
+   * @param aW number of extra zeros added to the right of input.
+   * @param aH number of extra zeros added to the top of input.
    */
   Padding(const size_t padWLeft = 0,
           const size_t padWRight = 0,
           const size_t padHTop = 0,
-          const size_t padHBottom = 0);
+          const size_t padHBottom = 0,
+          const size_t aW = 0,
+          const size_t aH = 0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -99,6 +103,12 @@ class Padding
 
   //! Locally-stored bottom padding height.
   size_t padHBottom;
+
+  //! Locally-stored number of zeros added to the right of input.
+  size_t aW;
+
+  //! Locally-stored number of zeros added to the top of input.
+  size_t aH;
 
   //! Locally-stored number of rows and columns of input.
   size_t nRows, nCols;
