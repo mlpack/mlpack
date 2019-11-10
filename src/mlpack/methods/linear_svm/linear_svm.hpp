@@ -82,10 +82,9 @@ class LinearSVM
  public:
   /**
    * Construct the LinearSVM class with the provided data and labels.
-   * This will train the model and then execute the given callbacks.
-   * The parameter 'lambda' controls the amount of L2-regularization 
-   * in the objective function. The model takes a small value for this 
-   * parameter, for example 0.0001.
+   * This will train the model. Optionally, the parameter 'lambda' can be
+   * passed, which controls the amount of L2-regularization in the objective
+   * function. By default, the model takes a small value.
    *
    * @tparam OptimizerType Desired differentiable separable optimizer
    * @tparam CallbackTypes Types of callback functions.
@@ -111,9 +110,9 @@ class LinearSVM
 
   /**
    * Construct the LinearSVM class with the provided data and labels.
-   * This will train the model. The parameter 'lambda' controls the
-   * amount of L2-regularization in the objective function. The model
-   * takes a small value for this parameter, for example 0.0001.
+   * This will train the model. Optionally, the parameter 'lambda' can be
+   * passed, which controls the amount of L2-regularization in the objective
+   * function. By default, the model takes a small value.
    *
    * @tparam OptimizerType Desired differentiable separable optimizer
    * @param data Input training features. Each column associate with one sample
