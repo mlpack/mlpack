@@ -48,8 +48,8 @@ void Padding<InputDataType, OutputDataType>::Forward(
   nCols = input.n_cols;
   output = arma::zeros(nRows + padWLeft + padWRight + aW,
       nCols + padHTop + padHBottom + aH);
-  output.submat(padHTop, padWLeft, padHTop + nRows - 1,
-      padWLeft + nCols - 1) = input;
+  output.submat(padWLeft, padHTop, padWLeft + nRows - 1,
+      padHTop + nCols - 1) = input;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -59,8 +59,8 @@ void Padding<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& gy,
     arma::Mat<eT>&& g)
 {
-  g = gy.submat(padHTop, padWLeft, padHTop + nRows - 1,
-      padWLeft + nCols - 1);
+  g = gy.submat(padWLeft, padHTop, padWLeft + nRows - 1,
+      padHTop + nCols - 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
