@@ -230,17 +230,33 @@ class LinearSVM
    * @param data Input training features. Each column associate with one sample.
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
-   * @param lambda L2-regularization constant.
    * @param optimizer Desired optimizer.
    * @param callbacks Callback Functions.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return Objective value of the final point.
    */
-  template <typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>
+  template <typename OptimizerType, typename... CallbackTypes>
+  double Train(const MatType& data,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               OptimizerType optimizer,
+               CallbackTypes&&... callbacks);
+
+  /**
+   * Train the Linear SVM with the given training data.
+   *
+   * @tparam OptimizerType Desired optimizer.
+   * @param data Input training features. Each column associate with one sample.
+   * @param labels Labels associated with the feature data.
+   * @param numClasses Number of classes for classification.
+   * @param optimizer Desired optimizer.
+   * @return Objective value of the final point.
+   */
+  template <typename OptimizerType = ens::L_BFGS>
   double Train(const MatType& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses = 2,
-               OptimizerType optimizer = OptimizerType(),
-               CallbackTypes&&... callbacks);
+               OptimizerType optimizer = OptimizerType());
 
 
   //! Sets the number of classes.
