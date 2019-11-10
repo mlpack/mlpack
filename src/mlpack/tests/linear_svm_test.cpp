@@ -25,19 +25,19 @@ using namespace mlpack::distribution;
  */
 class CallbackTestFunction
 {
-  public:
-    CallbackTestFunction() : calledEndOptimization(false) {}
+ public:
+  CallbackTestFunction() : calledEndOptimization(false) {}
 
-    template<typename OptimizerType, typename FunctionType, typename MatType>
-    void EndOptimization(OptimizerType& /* optimizer */,
-                         FunctionType& /* function */,
-                         MatType& /* coordinates */)
-    {
-      calledEndOptimization = true;
-    }
+  template<typename OptimizerType, typename FunctionType, typename MatType>
+  void EndOptimization(OptimizerType& /* optimizer */,
+                       FunctionType& /* function */,
+                       MatType& /* coordinates */)
+  {
+   calledEndOptimization = true;
+  }
 
-    //! Track to check if callback is executed.
-    bool calledEndOptimization;
+  //! Track to check if callback is executed.
+  bool calledEndOptimization;
 };
 
 BOOST_AUTO_TEST_SUITE(LinearSVMTest);
@@ -1157,7 +1157,6 @@ BOOST_AUTO_TEST_CASE(SinglePointClassifyTest)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMCallbackTest)
 {
-
   const size_t numClasses = 2;
   const double lambda = 0.0001;
   const double delta = 1.0;
