@@ -33,7 +33,7 @@ class CallbackTestFunction
                        FunctionType& /* function */,
                        MatType& /* coordinates */)
   {
-   calledEndOptimization = true;
+    calledEndOptimization = true;
   }
 
   //! Track to check if callback is executed.
