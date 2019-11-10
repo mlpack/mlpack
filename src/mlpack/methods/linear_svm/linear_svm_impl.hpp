@@ -19,6 +19,25 @@ namespace mlpack {
 namespace svm {
 
 template <typename MatType>
+template <typename OptimizerType, typename... CallbackTypes>
+LinearSVM<MatType>::LinearSVM(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const double lambda,
+    const double delta,
+    const bool fitIntercept,
+    OptimizerType optimizer,
+    CallbackTypes&&... callbacks) :
+    numClasses(numClasses),
+    lambda(lambda),
+    delta(delta),
+    fitIntercept(fitIntercept)
+{
+  Train(data, labels, numClasses, optimizer, callbacks...);
+}
+
+template <typename MatType>
 template <typename OptimizerType>
 LinearSVM<MatType>::LinearSVM(
     const MatType& data,

@@ -82,9 +82,10 @@ class LinearSVM
  public:
   /**
    * Construct the LinearSVM class with the provided data and labels.
-   * This will train the model. The parameter 'lambda' controls the
-   * amount of L2-regularization in the objective function. The model
-   * takes a small value for this parameter, for example 0.0001.
+   * This will train the model and then execute the given callbacks.
+   * The parameter 'lambda' controls the amount of L2-regularization 
+   * in the objective function. The model takes a small value for this 
+   * parameter, for example 0.0001.
    *
    * @tparam OptimizerType Desired differentiable separable optimizer
    * @tparam CallbackTypes Types of callback functions.
@@ -92,9 +93,36 @@ class LinearSVM
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
-   * @paran delta Margin of difference between correct class and other classes.
+   * @param delta Margin of difference between correct class and other classes.
+   * @param fitIntercept add intercept term or not.
    * @param optimizer Desired optimizer.
    * @param callbacks Callback functions.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   */
+  template <typename OptimizerType, typename... CallbackTypes>
+  LinearSVM(const MatType& data,
+            const arma::Row<size_t>& labels,
+            const size_t numClasses,
+            const double lambda,
+            const double delta,
+            const bool fitIntercept,
+            OptimizerType optimizer,
+            CallbackTypes&&... callbacks);
+
+  /**
+   * Construct the LinearSVM class with the provided data and labels.
+   * This will train the model. The parameter 'lambda' controls the
+   * amount of L2-regularization in the objective function. The model
+   * takes a small value for this parameter, for example 0.0001.
+   *
+   * @tparam OptimizerType Desired differentiable separable optimizer
+   * @param data Input training features. Each column associate with one sample
+   * @param labels Labels associated with the feature data.
+   * @param numClasses Number of classes for classification.
+   * @param lambda L2-regularization constant.
+   * @paran delta Margin of difference between correct class and other classes.
+   * @param fitIntercept add intercept term or not.
+   * @param optimizer Desired optimizer.
    */
   template <typename OptimizerType = ens::L_BFGS>
   LinearSVM(const MatType& data,
