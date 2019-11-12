@@ -24,15 +24,11 @@ Padding<InputDataType, OutputDataType>::Padding(
     const size_t padWLeft,
     const size_t padWRight,
     const size_t padHTop,
-    const size_t padHBottom,
-    const size_t aW,
-    const size_t aH) :
+    const size_t padHBottom):
     padWLeft(padWLeft),
     padWRight(padWRight),
     padHTop(padHTop),
     padHBottom(padHBottom),
-    aW(aW),
-    aH(aH),
     nRows(0),
     nCols(0)
 {
@@ -42,7 +38,10 @@ Padding<InputDataType, OutputDataType>::Padding(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Padding<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>&& input, 
+    arma::Mat<eT>&& output, 
+    size_t aW,
+    size_t aH)
 {
   nRows = input.n_rows;
   nCols = input.n_cols;

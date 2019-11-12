@@ -80,8 +80,7 @@ TransposedConvolution<
 
   aW = (outputWidth + kW - 2 * this->padW - 2) % dW;
   aH = (outputHeight + kH - 2 * this->padH - 2) % dH;
-  paddingForward = new Padding<>(this->padW, this->padW, this->padH, this->padH,
-      this->aW, this->aH);
+
   // Check if the output height and width are possible given the other
   // parameters of the layer.
   if (outputWidth != dW * (inputWidth - 1) + aW + 2 * this->padW + 2 - kW ||
@@ -129,6 +128,7 @@ void TransposedConvolution<
     OutputDataType
 >::Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
+  paddingForward = new Padding<>(padW, padW, padH, padH);
   batchSize = input.n_cols;
   inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
       inputWidth, inputHeight, inSize * batchSize, false, false);
@@ -140,12 +140,12 @@ void TransposedConvolution<
     if (padW != 0 || padH != 0 || aW != 0 || aH != 0)
     {      
       inputPaddedTemp.set_size(inputExpandedTemp.n_rows + padW * 2 + aW,
-        inputExpandedTemp.n_cols + padH * 2 + aH, inputExpandedTemp.n_slices);
+          inputExpandedTemp.n_cols + padH * 2 + aH, inputExpandedTemp.n_slices);
 
       for (size_t i = 0; i < inputExpandedTemp.n_slices; ++i)
       { 
         paddingForward->Forward(std::move(inputExpandedTemp.slice(i)),
-            std::move(inputPaddedTemp.slice(i)));
+            std::move(inputPaddedTemp.slice(i)), aW, aH);
       }
     }
     else
@@ -156,14 +156,14 @@ void TransposedConvolution<
     }
   }
   else if (padW != 0 || padH != 0 || aW != 0 || aH != 0)
-  {
+  { 
     inputPaddedTemp.set_size(inputTemp.n_rows + padW * 2 + aW,
-            inputTemp.n_cols + padH * 2 + aH, inputTemp.n_slices);
-    
+        inputTemp.n_cols + padH * 2 + aH, inputTemp.n_slices);
+
     for (size_t i = 0; i < inputTemp.n_slices; ++i)
     { 
       paddingForward->Forward(std::move(inputTemp.slice(i)),
-          std::move(inputPaddedTemp.slice(i)));
+          std::move(inputPaddedTemp.slice(i)), aW, aH);
     }
   }
 
@@ -228,14 +228,14 @@ void TransposedConvolution<
   { 
     size_t wPad = kW - padW - 1;
     size_t hPad = kH - padH - 1;
-    paddingBackward = new Padding<>(wPad, wPad, hPad, hPad, 0, 0);
+    paddingBackward = new Padding<>(wPad, wPad, hPad, hPad);
     mappedErrorPadded.set_size(mappedError.n_rows + wPad * 2,
         mappedError.n_cols + hPad * 2, mappedError.n_slices);
     
     for (size_t i = 0; i < mappedError.n_slices; ++i)
     { 
       paddingBackward->Forward(std::move(mappedError.slice(i)),
-          std::move(mappedErrorPadded.slice(i)));
+          std::move(mappedErrorPadded.slice(i)), 0, 0);
     }
   }
   g.set_size(inputTemp.n_rows * inputTemp.n_cols * inSize, batchSize);
