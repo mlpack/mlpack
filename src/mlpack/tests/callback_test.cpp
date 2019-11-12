@@ -188,47 +188,22 @@ BOOST_AUTO_TEST_CASE(NCAWithOptimizerCallback)
 BOOST_AUTO_TEST_CASE(RBMCallbackTest)
 {
   // Normalised dataset.
-  int hiddenLayerSize = 100;
+  int hiddenLayerSize = 10;
   size_t batchSize = 10;
-  size_t numEpoches = 30;
   arma::mat trainData, testData, dataset;
   arma::mat trainLabelsTemp, testLabelsTemp;
   trainData.load("digits_train.arm");
-  testData.load("digits_test.arm");
-  trainLabelsTemp.load("digits_train_label.arm");
-  testLabelsTemp.load("digits_test_label.arm");
-
-  arma::Row<size_t> trainLabels = arma::zeros<arma::Row<size_t>>(1,
-      trainLabelsTemp.n_cols);
-  arma::Row<size_t> testLabels = arma::zeros<arma::Row<size_t>>(1,
-      testLabelsTemp.n_cols);
-
-  for (size_t i = 0; i < trainLabelsTemp.n_cols; ++i)
-    trainLabels(i) = arma::as_scalar(trainLabelsTemp.col(i));
-
-  for (size_t i = 0; i < testLabelsTemp.n_cols; ++i)
-    testLabels(i) = arma::as_scalar(testLabelsTemp.col(i));
-
-  arma::mat output, XRbm(hiddenLayerSize, trainData.n_cols),
-      YRbm(hiddenLayerSize, testLabels.n_cols);
-
-  XRbm.zeros();
-  YRbm.zeros();
 
   GaussianInitialization gaussian(0, 0.1);
   RBM<GaussianInitialization> model(trainData,
       gaussian, trainData.n_rows, hiddenLayerSize, batchSize);
 
-  size_t numRBMIterations = trainData.n_cols * numEpoches;
-  numRBMIterations /= batchSize;
+  size_t numRBMIterations = 10;
   ens::StandardSGD msgd(0.03, batchSize, numRBMIterations, 0, true);
-  model.Reset();
-  model.VisibleBias().ones();
-  model.HiddenBias().ones();
   std::stringstream stream;
-  // Call the train function with printloss callback.
-  double objVal = model.Train(msgd, ens::PrintLoss(stream));
 
+  // Call the train function with printloss callback.
+  double objVal = model.Train(msgd, ens::ProgressBar(70, stream));
   BOOST_REQUIRE_GT(stream.str().length(), 0);
 }
 
