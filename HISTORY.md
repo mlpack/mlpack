@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Add `valid` and `same` padding option in `Convolution` and `Transposed
+    Convolution` layer (#1988).
+
   * Add Model() to the FFN class to access individual layers (#2043).
 
   * Update documentation for pip and conda installation packages (#2044).
@@ -673,4 +676,3 @@
   * Initial release.  See any resolved tickets numbered less than #196 or
     execute this query:
     http://www.mlpack.org/trac/query?status=closed&milestone=mlpack+1.0.0
-
