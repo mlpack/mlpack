@@ -1,6 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * Add `valid` and `same` padding option in `Convolution` and `Transposed
+  * Add `valid` and `same` padding option in `Convolution` and `Atrous
     Convolution` layer (#1988).
 
   * Add Model() to the FFN class to access individual layers (#2043).
