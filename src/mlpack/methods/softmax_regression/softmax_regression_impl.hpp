@@ -41,6 +41,19 @@ size_t SoftmaxRegression::Classify(const VecType& point) const
   return size_t(label(0));
 }
 
+/**
+   * Train the softmax regression with the given training data.
+   * @tparam OptimizerType Type of optimizer to use to train the model
+   * @tparam CallbackTypes Types of Callback Functions.
+   * @param data Input data with each column as one example.
+   * @param labels Labels associated with the feature data.
+   * @param numClasses Number of classes for classification.
+   * @param optimizer Desired optimizer.
+   * @return Objective value of the final point.
+   * @param callbacks Callback Functions.
+   *
+   */
+
 template<typename OptimizerType,typename... CallbackTypes>
 double SoftmaxRegression::Train(const arma::mat& data,
                                 const arma::Row<size_t>& labels,

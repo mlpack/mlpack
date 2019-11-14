@@ -156,13 +156,16 @@ class SoftmaxRegression
    * Train the softmax regression with the given training data.
    *
    * @tparam OptimizerType Desired optimizer type.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param data Input data with each column as one example.
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param optimizer Desired optimizer.
    * @return Objective value of the final point.
+   * @param callbacks Callback Functions.
+   * @return The final objective of the trained model (NaN or Inf on error)
    */
-  template<typename OptimizerType = ens::L_BFGS,typename... CallbackTypes>
+  template<typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>
   double Train(const arma::mat& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
