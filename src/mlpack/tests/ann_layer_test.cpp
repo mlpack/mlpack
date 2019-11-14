@@ -2027,8 +2027,9 @@ BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerPaddingTest)
   arma::mat output, input, delta;
 
   // Check valid padding option.
-  AtrousConvolution<> module1(1, 1, 3, 3, 1, 1, {1, 1}, {1, 1}, 7, 7, 2, 2,
-      "valid");
+  AtrousConvolution<> module1(1, 1, 3, 3, 1, 1,
+      std::tuple<size_t, size_t>(1, 1), std::tuple<size_t, size_t>(1, 1),7, 7,
+      2, 2, "valid");
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 48, 49);
@@ -2044,8 +2045,9 @@ BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerPaddingTest)
   module1.Backward(std::move(input), std::move(output), std::move(delta));
 
   // Check same padding option.
-  AtrousConvolution<> module2(1, 1, 3, 3, 1, 1, {0, 0}, {0, 0}, 7, 7, 2, 2,
-      "same");
+  AtrousConvolution<> module2(1, 1, 3, 3, 1, 1,
+      std::tuple<size_t, size_t>(0, 0), std::tuple<size_t, size_t>(0, 0), 7, 7,
+      2, 2, "same");
 
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 48, 49);
@@ -2786,7 +2788,8 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerPaddingTest)
   arma::mat output, input, delta;
 
   // Check valid padding option.
-  Convolution<> module1(1, 1, 3, 3, 1, 1, {1, 1}, {1, 1}, 7, 7, "valid");
+  Convolution<> module1(1, 1, 3, 3, 1, 1, std::tuple<size_t, size_t>(1, 1),
+      std::tuple<size_t, size_t>(1, 1), 7, 7, "valid");
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 48, 49);
@@ -2802,7 +2805,8 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerPaddingTest)
   module1.Backward(std::move(input), std::move(output), std::move(delta));
 
   // Check same padding option.
-  Convolution<> module2(1, 1, 3, 3, 1, 1, {0, 0}, {0, 0}, 7, 7, "same");
+  Convolution<> module2(1, 1, 3, 3, 1, 1, std::tuple<size_t, size_t>(0, 0),
+      std::tuple<size_t, size_t>(0, 0), 7, 7, "same");
 
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 48, 49);
