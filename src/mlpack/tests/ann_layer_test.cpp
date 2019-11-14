@@ -2028,7 +2028,7 @@ BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerPaddingTest)
 
   // Check valid padding option.
   AtrousConvolution<> module1(1, 1, 3, 3, 1, 1,
-      std::tuple<size_t, size_t>(1, 1), std::tuple<size_t, size_t>(1, 1),7, 7,
+      std::tuple<size_t, size_t>(1, 1), std::tuple<size_t, size_t>(1, 1), 7, 7,
       2, 2, "valid");
 
   // Test the Forward function.
