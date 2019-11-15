@@ -83,6 +83,11 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     ResetParameters();
   }
 
+  if(rho>responses.size())
+  {
+    rho=responses.size();
+  }
+
   // Train the model.
   Timer::Start("rnn_optimization");
   const double out = optimizer.Optimize(*this, parameter, callbacks...);
