@@ -127,9 +127,9 @@ class GAN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<
-    typename Policy = PolicyType,
     typename OptimizerType,
-    typename... CallbackTypes
+    typename... CallbackTypes,
+    typename Policy = PolicyType,
   >
   typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
                           std::is_same<Policy, DCGAN>::value, double>::type
@@ -153,9 +153,9 @@ class GAN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<
-    typename Policy = PolicyType,
     typename OptimizerType,
-    typename... CallbackTypes
+    typename... CallbackTypes,
+    typename Policy = PolicyType,
   >
   typename std::enable_if<std::is_same<Policy, WGAN>::value ||
                           std::is_same<Policy, WGANGP>::value, double>::type

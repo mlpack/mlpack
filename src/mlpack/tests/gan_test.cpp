@@ -56,10 +56,6 @@ BOOST_AUTO_TEST_CASE(GANTest)
 
   // Create the Discriminator network.
   FFN<SigmoidCrossEntropyError<> > discriminator;
-=======
-  // Create the Discriminator network.
-  FFN<CrossEntropyError<> > discriminator;
->>>>>>> Improving Gan Serialization.
   discriminator.Add<Linear<> > (
       generatorOutputSize, discriminatorHiddenLayerSize * 2);
   discriminator.Add<ReLULayer<> >();
@@ -220,7 +216,8 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
 
   Log::Info << "Training..." << std::endl;
   std::stringstream stream;
-  double objVal = gan.Train(trainData, optimizer, ens::ProgressBar(70, stream));
+  double objVal = gan.Train(trainData, optimizer, 1.0, 0.0,
+      ens::ProgressBar(70, stream));
   BOOST_REQUIRE_GT(stream.str().length(), 0);
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
@@ -332,7 +329,7 @@ BOOST_AUTO_TEST_CASE(GANMemorySharingTest)
   // Create GAN.
   GaussianInitialization gaussian(0, 0.1);
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
-      tolerance, shuffle);
+      tolerance, shuffle, true, true);
   std::function<double ()> noiseFunction = [](){ return math::Random(-8, 8) +
       math::RandNormal(0, 1) * 0.01;};
   GAN<FFN<SigmoidCrossEntropyError<> >,
