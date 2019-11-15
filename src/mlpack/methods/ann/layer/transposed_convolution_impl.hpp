@@ -128,7 +128,7 @@ void TransposedConvolution<
     OutputDataType
 >::Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  paddingForward = new Padding<>(padW, padW, padH, padH);
+  paddingForward = new Padding<>(padW, padW + aW, padH, padH + aH);
   batchSize = input.n_cols;
   inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
       inputWidth, inputHeight, inSize * batchSize, false, false);
@@ -145,7 +145,7 @@ void TransposedConvolution<
       for (size_t i = 0; i < inputExpandedTemp.n_slices; ++i)
       { 
         paddingForward->Forward(std::move(inputExpandedTemp.slice(i)),
-            std::move(inputPaddedTemp.slice(i)), aW, aH);
+            std::move(inputPaddedTemp.slice(i)));
       }
     }
     else
@@ -163,7 +163,7 @@ void TransposedConvolution<
     for (size_t i = 0; i < inputTemp.n_slices; ++i)
     { 
       paddingForward->Forward(std::move(inputTemp.slice(i)),
-          std::move(inputPaddedTemp.slice(i)), aW, aH);
+          std::move(inputPaddedTemp.slice(i)));
     }
   }
 
@@ -235,7 +235,7 @@ void TransposedConvolution<
     for (size_t i = 0; i < mappedError.n_slices; ++i)
     { 
       paddingBackward->Forward(std::move(mappedError.slice(i)),
-          std::move(mappedErrorPadded.slice(i)), 0, 0);
+          std::move(mappedErrorPadded.slice(i)));
     }
   }
   g.set_size(inputTemp.n_rows * inputTemp.n_cols * inSize, batchSize);

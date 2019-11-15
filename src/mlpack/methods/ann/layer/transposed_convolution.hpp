@@ -215,7 +215,7 @@ class TransposedConvolution
 
   /*
    * Insert zeros between the units of the given input data.
-   * Note: This function should be used before padding.
+   * Note: This function should be used before using padding layer.
    *
    * @param input The input to be padded.
    * @param dW Stride of filter application in the x direction.
@@ -248,7 +248,7 @@ class TransposedConvolution
 
   /*
    * Insert zeros between the units of the given input data.
-   * Note: This function should be used before the padding.
+   * Note: This function should be used before using padding layer.
    *
    * @param input The input to be padded.
    * @param dW Stride of filter application in the x direction.
@@ -300,7 +300,7 @@ class TransposedConvolution
   //! Locally-stored number of zeros added to the right of input.
   size_t aW;
 
-  //! Locally-stored number of zeros added to the top of input.
+  //! Locally-stored number of zeros added to the bottom of input.
   size_t aH;
 
   //! Locally-stored weight object.

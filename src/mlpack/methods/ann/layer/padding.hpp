@@ -41,8 +41,6 @@ class Padding
    * @param padWLeft Right padding width of the input.
    * @param padHTop Top padding height of the input.
    * @param padHBottom Bottom padding height of the input.
-   * @param aW number of extra zeros added to the right of input.
-   * @param aH number of extra zeros added to the top of input.
    */
   Padding(const size_t padWLeft = 0,
           const size_t padWRight = 0,
@@ -57,9 +55,7 @@ class Padding
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output,
-               size_t aW = 0,
-               size_t aH = 0);
+  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
