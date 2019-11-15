@@ -215,7 +215,7 @@ class HMM
                      arma::mat& stateLogProb,
                      arma::mat& forwardLogProb,
                      arma::mat& backwardLogProb,
-                     arma::vec& logScales);
+                     arma::vec& logScales) const;
 
   /**
    * Estimate the probabilities of each hidden state at each time step for each
@@ -239,7 +239,7 @@ class HMM
                   arma::mat& stateProb,
                   arma::mat& forwardProb,
                   arma::mat& backwardProb,
-                  arma::vec& scales);
+                  arma::vec& scales) const;
 
   /**
    * Estimate the probabilities of each hidden state at each time step of each
@@ -253,7 +253,7 @@ class HMM
    * @return Log-likelihood of most likely state sequence.
    */
   double Estimate(const arma::mat& dataSeq,
-                  arma::mat& stateProb);
+                  arma::mat& stateProb) const;
 
   /**
    * Generate a random data sequence of the given length.  The data sequence is
@@ -290,7 +290,7 @@ class HMM
    * @param dataSeq Data sequence to evaluate the likelihood of.
    * @return Log-likelihood of the given sequence.
    */
-  double LogLikelihood(const arma::mat& dataSeq);
+  double LogLikelihood(const arma::mat& dataSeq) const;
 
   /**
    * HMM filtering. Computes the k-step-ahead expected emission at each time
@@ -367,7 +367,8 @@ class HMM
    */
   void Forward(const arma::mat& dataSeq,
                arma::vec& logScales,
-               arma::mat& forwardLogProb) const;
+               arma::mat& forwardLogProb,
+               arma::mat& logProbs) const;
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm).  Computes
@@ -382,7 +383,8 @@ class HMM
    */
   void Backward(const arma::mat& dataSeq,
                 const arma::vec& logScales,
-                arma::mat& backwardLogProb) const;
+                arma::mat& backwardLogProb,
+                arma::mat& logProbs) const;
 
   //! Set of emission probability distributions; one for each state.
   std::vector<Distribution> emission;
@@ -399,7 +401,7 @@ class HMM
 
   //! Tolerance of Baum-Welch algorithm.
   double tolerance;
-  arma::mat logProbs;
+  
 };
 
 } // namespace hmm

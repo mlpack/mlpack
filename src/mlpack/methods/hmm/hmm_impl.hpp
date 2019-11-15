@@ -329,9 +329,9 @@ double HMM<Distribution>::LogEstimate(const arma::mat& dataSeq,
                                       arma::mat& stateLogProb,
                                       arma::mat& forwardLogProb,
                                       arma::mat& backwardLogProb,
-                                      arma::vec& logScales)
+                                      arma::vec& logScales) const
 {
-  logProbs.resize(dataSeq.n_cols, transition.n_rows);
+  arma::mat logProbs(dataSeq.n_cols, transition.n_rows);
 
   // Save the values of log-probability to logProbs.
   for (size_t i = 0; i < transition.n_rows; i++)
@@ -343,8 +343,8 @@ double HMM<Distribution>::LogEstimate(const arma::mat& dataSeq,
   }
 
   // First run the forward-backward algorithm.
-  Forward(dataSeq, logScales, forwardLogProb);
-  Backward(dataSeq, logScales, backwardLogProb);
+  Forward(dataSeq, logScales, forwardLogProb, logProbs);
+  Backward(dataSeq, logScales, backwardLogProb, logProbs);
 
   // Now assemble the state probability matrix based on the forward and backward
   // probabilities.
@@ -363,7 +363,7 @@ double HMM<Distribution>::Estimate(const arma::mat& dataSeq,
                                    arma::mat& stateProb,
                                    arma::mat& forwardProb,
                                    arma::mat& backwardProb,
-                                   arma::vec& scales)
+                                   arma::vec& scales) const
 {
   arma::mat stateLogProb;
   arma::mat forwardLogProb;
@@ -387,7 +387,7 @@ double HMM<Distribution>::Estimate(const arma::mat& dataSeq,
  */
 template<typename Distribution>
 double HMM<Distribution>::Estimate(const arma::mat& dataSeq,
-                                   arma::mat& stateProb)
+                                   arma::mat& stateProb) const
 {
   // We don't need to save these.
   arma::mat stateLogProb;
@@ -528,13 +528,13 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
  * Compute the log-likelihood of the given data sequence.
  */
 template<typename Distribution>
-double HMM<Distribution>::LogLikelihood(const arma::mat& dataSeq)
+double HMM<Distribution>::LogLikelihood(const arma::mat& dataSeq) const
 {
   arma::mat forwardLog;
   arma::vec logScales;
 
   // This is needed here.
-  logProbs.resize(dataSeq.n_cols, transition.n_rows);
+  arma::mat logProbs(dataSeq.n_cols, transition.n_rows);
 
   // Save the values of log-probability to logProbs.
   for (size_t i = 0; i < transition.n_rows; i++)
@@ -545,7 +545,7 @@ double HMM<Distribution>::LogLikelihood(const arma::mat& dataSeq)
     emission[i].LogProbability(dataSeq, alias);
   }
 
-  Forward(dataSeq, logScales, forwardLog);
+  Forward(dataSeq, logScales, forwardLog, logProbs);
 
   // The log-likelihood is the log of the scales for each time step.
   return accu(logScales);
@@ -562,7 +562,19 @@ void HMM<Distribution>::Filter(const arma::mat& dataSeq,
   // First run the forward algorithm.
   arma::mat forwardLogProb;
   arma::vec logScales;
-  Forward(dataSeq, logScales, forwardLogProb);
+  // This is needed here.
+  arma::mat logProbs(dataSeq.n_cols, transition.n_rows);
+
+  // Save the values of log-probability to logProbs.
+  for (size_t i = 0; i < transition.n_rows; i++)
+  {
+    // Define alias of desired column.
+    arma::vec alias(logProbs.colptr(i), logProbs.n_rows, false, true);
+    // Use advanced constructor for using logProbs directly.
+    emission[i].LogProbability(dataSeq, alias);
+  }
+
+  Forward(dataSeq, logScales, forwardLogProb, logProbs);
 
   arma::mat forwardProb = exp(forwardLogProb);
 
@@ -605,7 +617,8 @@ void HMM<Distribution>::Smooth(const arma::mat& dataSeq,
 template<typename Distribution>
 void HMM<Distribution>::Forward(const arma::mat& dataSeq,
                                 arma::vec& logScales,
-                                arma::mat& forwardLogProb) const
+                                arma::mat& forwardLogProb,
+                                arma::mat& logProbs) const
 {
   // Our goal is to calculate the forward probabilities:
   //  P(X_k | o_{1:k}) for all possible states X_k, for each time point k.
@@ -653,7 +666,8 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
 template<typename Distribution>
 void HMM<Distribution>::Backward(const arma::mat& dataSeq,
                                  const arma::vec& logScales,
-                                 arma::mat& backwardLogProb) const
+                                 arma::mat& backwardLogProb,
+                                 arma::mat& logProbs) const
 {
   // Our goal is to calculate the backward probabilities:
   //  P(X_k | o_{k + 1:T}) for all possible states X_k, for each time point k.
