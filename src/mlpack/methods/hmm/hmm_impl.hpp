@@ -594,7 +594,7 @@ void HMM<Distribution>::Filter(const arma::mat& dataSeq,
  */
 template<typename Distribution>
 void HMM<Distribution>::Smooth(const arma::mat& dataSeq,
-                               arma::mat& smoothSeq)
+                               arma::mat& smoothSeq) const
 {
   // First run the forward algorithm.
   arma::mat stateLogProb;

@@ -320,7 +320,7 @@ class HMM
    *    stored.
    */
   void Smooth(const arma::mat& dataSeq,
-              arma::mat& smoothSeq);
+              arma::mat& smoothSeq) const;
 
   //! Return the vector of initial state probabilities.
   const arma::vec& Initial() const { return initial; }
@@ -401,7 +401,6 @@ class HMM
 
   //! Tolerance of Baum-Welch algorithm.
   double tolerance;
-  
 };
 
 } // namespace hmm
