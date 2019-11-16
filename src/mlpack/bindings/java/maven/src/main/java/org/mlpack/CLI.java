@@ -1,18 +1,19 @@
 package org.mlpack;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.factory.Nd4j;
 import org.bytedeco.javacpp.*;
 import org.bytedeco.javacpp.annotation.*;
 
-@Platform(include = "../../cli_util.hpp")
+@Platform(include = "cli_util.hpp")
 @Namespace("mlpack::util")
 class CLI {
   private static final char ARMA_ORDER = 'f';
 
-  private static final class ManagedPointer extends Pointer {
-    private static final class MethodDeallocator extends ManagedPointer implements Deallocator {
+  private static class ManagedPointer extends Pointer {
+    private static class MethodDeallocator extends ManagedPointer implements Deallocator {
       private MethodDeallocator(ManagedPointer p) {
         super(p);
       }
@@ -75,10 +76,10 @@ class CLI {
     int columns = mat.columns();
 
     switch (type) {
-      case DataType.DOUBLE:
+      case DOUBLE:
         nativeSetMatParam(name, new DoublePointer(data), rows, columns);
         break;
-      case DataType.LONG:
+      case LONG:
         nativeSetMatParam(name, new LongPointer(data), rows, columns);
         break;
       default:
@@ -118,7 +119,7 @@ class CLI {
     long length = getMatParamLength(name);
 
     DataBuffer buffer = Nd4j.createBuffer(data, length, type);
-    long[] shape = {rows, cols};
+    long[] shape = {rows, columns};
     long[] stride = Nd4j.getStrides(shape, ARMA_ORDER);
     long offset = 0;
     char ordering = ARMA_ORDER;

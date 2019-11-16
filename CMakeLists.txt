@@ -28,6 +28,8 @@ else ()
       "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 endif()
 
+option(BUILD_JAVA_BINDINGS "Build Java bindings" OFF)
+
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.
 option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)

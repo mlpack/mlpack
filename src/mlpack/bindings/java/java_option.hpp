@@ -87,7 +87,7 @@ class JavaOption
   }
 };
 
-} // namespace python
+} // namespace java
 } // namespace bindings
 } // namespace mlpack
 
