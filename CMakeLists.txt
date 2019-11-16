@@ -3,6 +3,17 @@ project(mlpack C CXX)
 
 include(CMake/cotire.cmake)
 
+# Validate md5 hash give md5file url and the file directory.
+# If hash check fails set HASH_CHECK_FAIL to non-zero and remove the files.
+macro (check_hash MD5_URL DIR HASH_CHECK_FAIL)
+  file(DOWNLOAD MD5_URL "${DIR}/hash.md5")
+  execute_process(COMMAND ${CMAKE_COMMAND} -E md5sum -c "${DIR}/hash.md5"
+      RESULT_VARIABLE HASH_CHECK_FAIL)
+  if (HASH_CHECK_FAIL)
+    file(REMOVE_RECURSE DIR)
+  endif ()
+endmacro (check_hash)
+
 # First, define all the compilation options.
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information." OFF)
@@ -349,8 +360,11 @@ if (NOT STB_IMAGE_FOUND)
         SHOW_PROGRESS)
     list(GET STB_IMAGE_WRITE_DOWNLOAD_STATUS_LIST 0
         STB_IMAGE_WRITE_DOWNLOAD_STATUS)
+    check_hash (http://mlpack.org/files/stb/hash.md5 "${CMAKE_BINARY_DIR}/deps/${STB_DIR}"
+        HASH_CHECK_FAIL)
     if (STB_IMAGE_DOWNLOAD_STATUS EQUAL 0 AND
-        STB_IMAGE_WRITE_DOWNLOAD_STATUS EQUAL 0)
+        STB_IMAGE_WRITE_DOWNLOAD_STATUS EQUAL 0 AND
+        HASH_CHECK_FAIL EQUAL 0)
       set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
           "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
       message(STATUS
