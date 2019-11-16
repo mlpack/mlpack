@@ -11,6 +11,8 @@ steps:
 
 # Install build dependencies
 - script: |
+    git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
+
     sudo apt-get update
     unset BOOST_ROOT
     sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-math-dev libboost-program-options-dev libboost-test-dev libboost-serialization-dev libarmadillo-dev xz-utils
@@ -45,8 +47,7 @@ steps:
 
 # Process test results
 - bash: |
-    curl https://gist.githubusercontent.com/zoq/9ccf753c4b61efcc5e6f0452c9c22e26/raw/a7790189a530925a5575b2dc45fdc6b915b01313/convert.py -O
-    python convert.py > mlpack_test.xml
+    python conf/ci/convert.py > mlpack_test.xml
   displayName: 'Process test results'
 
 # Publish test results to Azure Pipelines

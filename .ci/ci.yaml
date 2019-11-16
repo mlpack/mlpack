@@ -18,7 +18,7 @@ jobs:
         CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_MARKDOWN_BINDINGS=ON -DBUILD_PYTHON_BINDINGS=OFF'
 
   steps:
-  - template: ci/linux-steps.yaml
+  - template: linux-steps.yaml
 
 - job: macOS
   pool:
@@ -36,22 +36,28 @@ jobs:
         CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF'
 
   steps:
-  - template: ci/macos-steps.yaml
+  - template: macos-steps.yaml
 
 - job: WindowsVS14
   timeoutInMinutes: 360
+  displayName: Windows VS14
   pool:
     vmImage: vs2015-win2012r2
   strategy:
     matrix:
       Plain:
         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF'
-
+        CMakeGenerator: '-G "Visual Studio 14 2015 Win64"'
+        MSBuildVersion: '14.0'
+        ArchiveNoLibs: 'mlpack-windows-vs14-no-libs.zip'
+        ArchiveLibs: 'mlpack-windows-vs14.zip'
+        ArchiveTests: 'mlpack_test-vs14.xml'
   steps:
-  - template: ci/windows-vs14-steps.yaml
+  - template: windows-steps.yaml
 
 - job: WindowsVS15
   timeoutInMinutes: 360
+  displayName: Windows VS15
   pool:
     vmImage: vs2017-win2016
   strategy:
@@ -59,12 +65,18 @@ jobs:
       Plain:
         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF'
         python.version: '2.7'
+        CMakeGenerator: '-G "Visual Studio 15 2017 Win64"'
+        MSBuildVersion: '15.0'
+        ArchiveNoLibs: 'mlpack-windows-vs15-no-libs.zip'
+        ArchiveLibs: 'mlpack-windows-vs15.zip'
+        ArchiveTests: 'mlpack_test-vs15.xml'
 
   steps:
-  - template: ci/windows-vs15-steps.yaml
+  - template: windows-steps.yaml
 
 - job: WindowsVS16
   timeoutInMinutes: 360
+  displayName: Windows VS16
   pool:
     vmImage: windows-2019
   strategy:
@@ -72,6 +84,11 @@ jobs:
       Plain:
         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF'
         python.version: '2.7'
+        CMakeGenerator: '-G "Visual Studio 16 2019"'
+        MSBuildVersion: '16.0'
+        ArchiveNoLibs: 'mlpack-windows-vs16-no-libs.zip'
+        ArchiveLibs: 'mlpack-windows-vs16.zip'
+        ArchiveTests: 'mlpack_test-vs16.xml'
 
   steps:
-  - template: ci/windows-vs16-steps.yaml
+  - template: windows-steps.yaml

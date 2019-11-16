@@ -16,6 +16,8 @@ steps:
     unset BOOST_ROOT
     pip install cython numpy pandas
     brew install openblas armadillo boost
+
+    git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
   displayName: 'Install Build Dependencies'
 
 # Configure mlpack (CMake)
@@ -36,8 +38,7 @@ steps:
 
 # Process test results
 - bash: |
-    curl https://gist.githubusercontent.com/zoq/9ccf753c4b61efcc5e6f0452c9c22e26/raw/a7790189a530925a5575b2dc45fdc6b915b01313/convert.py -O
-    python convert.py > mlpack_test.xml
+    python conf/ci/convert.py > mlpack_test.xml
   displayName: 'Process test results'
 
 # Publish test results to Azure Pipelines
