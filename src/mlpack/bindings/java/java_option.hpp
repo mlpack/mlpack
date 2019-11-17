@@ -13,6 +13,7 @@
 #define MLPACK_BINDINGS_PYTHON_PY_OPTION_HPP
 
 #include <mlpack/core/util/param_data.hpp>
+#include <mlpack/core/util/cli.hpp>
 
 namespace mlpack {
 namespace bindings {
