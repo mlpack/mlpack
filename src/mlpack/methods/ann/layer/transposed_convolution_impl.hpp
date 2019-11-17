@@ -81,6 +81,10 @@ TransposedConvolution<
   aW = (outputWidth + kW - 2 * this->padW - 2) % dW;
   aH = (outputHeight + kH - 2 * this->padH - 2) % dH;
 
+  paddingForward = new Padding<>(this->padW, this->padW + aW, this->padH, this->padH + aH);
+  paddingBackward = new Padding<>(kW - this->padW - 1, kW - this->padW - 1, 
+      kH - this->padH - 1, kH - this->padH - 1);
+      
   // Check if the output height and width are possible given the other
   // parameters of the layer.
   if (outputWidth != dW * (inputWidth - 1) + aW + 2 * this->padW + 2 - kW ||
@@ -128,7 +132,6 @@ void TransposedConvolution<
     OutputDataType
 >::Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  paddingForward = new Padding<>(padW, padW + aW, padH, padH + aH);
   batchSize = input.n_cols;
   inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
       inputWidth, inputHeight, inSize * batchSize, false, false);
@@ -228,7 +231,6 @@ void TransposedConvolution<
   { 
     size_t wPad = kW - padW - 1;
     size_t hPad = kH - padH - 1;
-    paddingBackward = new Padding<>(wPad, wPad, hPad, hPad);
     mappedErrorPadded.set_size(mappedError.n_rows + wPad * 2,
         mappedError.n_cols + hPad * 2, mappedError.n_slices);
     
@@ -350,7 +352,7 @@ void TransposedConvolution<
     InputDataType,
     OutputDataType
 >::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_NVP(inSize);
   ar & BOOST_SERIALIZATION_NVP(outSize);
@@ -365,6 +367,11 @@ void TransposedConvolution<
   ar & BOOST_SERIALIZATION_NVP(inputHeight);
   ar & BOOST_SERIALIZATION_NVP(outputWidth);
   ar & BOOST_SERIALIZATION_NVP(outputHeight);
+
+  if(version > 0){
+    ar & BOOST_SERIALIZATION_NVP(paddingForward);
+    ar & BOOST_SERIALIZATION_NVP(paddingBackward);
+  }
 
   if (Archive::is_loading::value)
   {
