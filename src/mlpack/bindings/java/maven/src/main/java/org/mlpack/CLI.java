@@ -52,13 +52,16 @@ class CLI {
     }
   }
 
+  @Name("RestoreSettings")
+  static native void restoreSettings(String name);
+
   @Name("SetMatParam<double>")
   private static native void nativeSetMatParam(String name, 
       DoublePointer data, long rows, long columns);
 
   @Name("SetMatParam<size_t>")
   private static native void nativeSetMatParam(String name, 
-      LongPointer data, long rows, long columns);
+      SizeTPointer data, long rows, long columns);
 
   static void setMatParam(String name, INDArray mat, DataType type) {
     argumentCheck(mat.rank() == 2, "Passed argument is not a 2D matrix.");
@@ -80,10 +83,10 @@ class CLI {
         nativeSetMatParam(name, new DoublePointer(data), rows, columns);
         break;
       case LONG:
-        nativeSetMatParam(name, new LongPointer(data), rows, columns);
+        nativeSetMatParam(name, new SizeTPointer(data), rows, columns); // not sure about size_t though
         break;
       default:
-        throw new UnsupportedOperationException("Matrix elemnt type " + type + " is not supported");
+        throw new UnsupportedOperationException("Matrix element type " + type + " is not supported");
     }
   }
 
@@ -99,8 +102,24 @@ class CLI {
   @Name("SetParam<std::string>")
   static native void setParam(String name, String value);
 
-  @Name("GetMatParamData")
-  private static native Pointer getMatParamData(String name);
+  @Name("GetParam<int>")
+  static native int getIntParam(String name);
+
+  @Name("GetParam<double>")
+  static native double getDoubleParam(String name);
+
+  @Name("GetParam<bool>")
+  static native boolean getBooleanParam(String name);
+
+  @Name("GetParam<std::string>")
+  @StdString
+  static native String getStringParam(String name);
+
+  @Name("GetMatParamData<double>")
+  private static native DoublePointer getMatParamDataDouble(String name);
+
+  @Name("GetMatParamData<size_t>")
+  private static native SizeTPointer getMatParamDataLong(String name);
 
   @Name("GetMatParamRows")
   private static native long getMatParamRows(String name);
@@ -112,11 +131,29 @@ class CLI {
   private static native long getMatParamLength(String name);
 
   static INDArray getMatParam(String name, DataType type) {
-    Pointer data = ManagedPointer.create(getMatParamData(name));
+    Pointer data;
+
+    switch (type) {
+      case DOUBLE:
+        data = getMatParamDataDouble(name);
+        break;
+      case LONG:
+        data = getMatParamDataLong(name);
+        break;
+      default:
+        throw new UnsupportedOperationException("Matrix element type " + type + " is not supported");
+    }
+    
+    if (data == null) {
+      return null; // if output parameter wasn't passed
+    }
+
+    data = ManagedPointer.create(data);
 
     long rows = getMatParamRows(name);
     long columns = getMatParamColumns(name);
     long length = getMatParamLength(name);
+    data.capacity(length);
 
     DataBuffer buffer = Nd4j.createBuffer(data, length, type);
     long[] shape = {rows, columns};
