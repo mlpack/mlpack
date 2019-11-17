@@ -99,7 +99,7 @@ add_custom_command(TARGET jniCLI_configure PRE_BUILD
 
 # Generate JNI wrappers from compiled java bytecode
 add_custom_command(OUTPUT ${JNI_GEN_DIR}/jnijavacpp.cpp ${JNI_GEN_DIR}/jniCLI.cpp
-    COMMAND ${Java_JAVA_EXECUTABLE} ARGS -jar ${JAVACPP} -nocompile -d ${JNI_GEN_DIR} org/mlpack/CLI.class
+    COMMAND ${Java_JAVA_EXECUTABLE} ARGS -jar ${JAVACPP} -classpath .:${MAVEN_BUILD_DIR}/lib/* -nocompile -d ${JNI_GEN_DIR} org/mlpack/CLI.class
     WORKING_DIRECTORY ${MAVEN_BUILD_DIR}/target/classes)
 
 # Compile shared object
@@ -117,9 +117,11 @@ add_dependencies(java jniCLI)
 
 # Make sure we have no *.class files left
 add_custom_command(TARGET jniCLI POST_BUILD
-    COMMAND ${CMAKE_COMMAND} ARGS -E remove_directory ${MAVEN_BUILD_DIR}/target) 
+    COMMAND ${MAVEN} ARGS clean
+    WORKING_DIRECTORY ${MAVEN_BUILD_DIR}) 
 
 macro(add_java_binding name java_name)
   
 endmacro(add_java_binding name java_name)
 
+add_subdirectory(tests)
