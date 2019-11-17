@@ -2,17 +2,7 @@ cmake_minimum_required(VERSION 3.3.2)
 project(mlpack C CXX)
 
 include(CMake/cotire.cmake)
-
-# Validate md5 hash give md5file url and the file directory.
-# If hash check fails set HASH_CHECK_FAIL to non-zero and remove the files.
-macro (check_hash MD5_URL DIR HASH_CHECK_FAIL)
-  file(DOWNLOAD MD5_URL "${DIR}/hash.md5")
-  execute_process(COMMAND ${CMAKE_COMMAND} -E md5sum -c "${DIR}/hash.md5"
-      RESULT_VARIABLE HASH_CHECK_FAIL)
-  if (HASH_CHECK_FAIL)
-    file(REMOVE_RECURSE DIR)
-  endif ()
-endmacro (check_hash)
+include(CMake/CheckHash.cmake)
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
