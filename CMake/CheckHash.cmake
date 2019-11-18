@@ -21,7 +21,7 @@ macro (check_hash MD5_URL DIR HASH_CHECK_FAIL)
         set(HASH_CHECK_FAIL 1)
         file(REMOVE_RECURSE ${DIR})
         message(WARNING
-            "Could not verify md5 hash!")
+            "md5sum verification error for ${item}!  Got ${LOCAL_HASH}, expected ${EXPECTED_HASH}.")
         break()
       endif()
     endforeach()
