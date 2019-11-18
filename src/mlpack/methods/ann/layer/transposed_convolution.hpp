@@ -342,10 +342,10 @@ class TransposedConvolution
   //! Locally-stored transformed gradient parameter.
   arma::cube gradientTemp;
 
-  //! Locally-stored padding layer for Forward padding.
+  //! Locally-stored padding layer for forward propagation.
   Padding<>* paddingForward;
 
-  //! Locally-stored padding layer for Backward padding.
+  //! Locally-stored padding layer for back propagation.
   Padding<>* paddingBackward;
 
   //! Locally-stored delta object.
@@ -376,8 +376,9 @@ template<
     typename OutputDataType
 >
 struct version<
-    mlpack::ann::TransposedConvolution<ForwardConvolutionRule, BackwardConvolutionRule,
-        GradientConvolutionRule, InputDataType, OutputDataType> >
+    mlpack::ann::TransposedConvolution<ForwardConvolutionRule,
+        BackwardConvolutionRule, GradientConvolutionRule, InputDataType,
+        OutputDataType> >
 {
   BOOST_STATIC_CONSTANT(int, value = 1);
 };

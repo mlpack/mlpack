@@ -81,10 +81,11 @@ TransposedConvolution<
   aW = (outputWidth + kW - 2 * this->padW - 2) % dW;
   aH = (outputHeight + kH - 2 * this->padH - 2) % dH;
 
-  paddingForward = new Padding<>(this->padW, this->padW + aW, this->padH, this->padH + aH);
-  paddingBackward = new Padding<>(kW - this->padW - 1, kW - this->padW - 1, 
+  paddingForward = new Padding<>(this->padW, this->padW + aW, this->padH,
+      this->padH + aH);
+  paddingBackward = new Padding<>(kW - this->padW - 1, kW - this->padW - 1,
       kH - this->padH - 1, kH - this->padH - 1);
-      
+
   // Check if the output height and width are possible given the other
   // parameters of the layer.
   if (outputWidth != dW * (inputWidth - 1) + aW + 2 * this->padW + 2 - kW ||
@@ -141,12 +142,12 @@ void TransposedConvolution<
     InsertZeros(inputTemp, dW, dH, inputExpandedTemp);
 
     if (padW != 0 || padH != 0 || aW != 0 || aH != 0)
-    {      
+    {
       inputPaddedTemp.set_size(inputExpandedTemp.n_rows + padW * 2 + aW,
           inputExpandedTemp.n_cols + padH * 2 + aH, inputExpandedTemp.n_slices);
 
       for (size_t i = 0; i < inputExpandedTemp.n_slices; ++i)
-      { 
+      {
         paddingForward->Forward(std::move(inputExpandedTemp.slice(i)),
             std::move(inputPaddedTemp.slice(i)));
       }
@@ -159,12 +160,12 @@ void TransposedConvolution<
     }
   }
   else if (padW != 0 || padH != 0 || aW != 0 || aH != 0)
-  { 
+  {
     inputPaddedTemp.set_size(inputTemp.n_rows + padW * 2 + aW,
         inputTemp.n_cols + padH * 2 + aH, inputTemp.n_slices);
 
     for (size_t i = 0; i < inputTemp.n_slices; ++i)
-    { 
+    {
       paddingForward->Forward(std::move(inputTemp.slice(i)),
           std::move(inputPaddedTemp.slice(i)));
     }
@@ -228,14 +229,14 @@ void TransposedConvolution<
       outSize * batchSize, false, false);
   arma::Cube<eT> mappedErrorPadded;
   if ((int)(kW - padW - 1) > 0 || (int)(kH - padH - 1) > 0)
-  { 
+  {
     size_t wPad = kW - padW - 1;
     size_t hPad = kH - padH - 1;
     mappedErrorPadded.set_size(mappedError.n_rows + wPad * 2,
         mappedError.n_cols + hPad * 2, mappedError.n_slices);
-    
+
     for (size_t i = 0; i < mappedError.n_slices; ++i)
-    { 
+    {
       paddingBackward->Forward(std::move(mappedError.slice(i)),
           std::move(mappedErrorPadded.slice(i)));
     }
@@ -368,7 +369,8 @@ void TransposedConvolution<
   ar & BOOST_SERIALIZATION_NVP(outputWidth);
   ar & BOOST_SERIALIZATION_NVP(outputHeight);
 
-  if(version > 0){
+  if (version > 0)
+  {
     ar & BOOST_SERIALIZATION_NVP(paddingForward);
     ar & BOOST_SERIALIZATION_NVP(paddingBackward);
   }
