@@ -304,7 +304,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
     // Wrap a matrix around our data to avoid a copy.
-    if (seqNum>r_size)
+    if (seqNum>=r_size)
     {
       break;
     }
@@ -346,7 +346,9 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
     currentGradient.zeros();
-    if (seqNum>r_size)
+    size_t x=0;
+    x = (rho>r_size)?r_size:rho;
+    if (seqNum>=r_size)
     {
       break;
     }
@@ -367,8 +369,6 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
           std::move(arma::mat(responses.slice(0).colptr(begin),
           responses.n_rows, batchSize, false, true)), std::move(error));
     }
-    size_t x = 0;
-    x = (rho>r_size)?r_size:rho;    
     else
     {
       outputLayer.Backward(std::move(boost::apply_visitor(
