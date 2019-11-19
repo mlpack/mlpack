@@ -303,11 +303,11 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
-    // Wrap a matrix around our data to avoid a copy.
-    if (seqNum>=r_size)
+    if (seqNum >= r_size)
     {
       break;
     }
+    // Wrap a matrix around our data to avoid a copy.
     arma::mat stepData(predictors.slice(seqNum).colptr(begin),
         predictors.n_rows, batchSize, false, true);
     Forward(std::move(stepData));
@@ -342,13 +342,13 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   }
 
   ResetGradients(currentGradient);
+  size_t x = 0;
+  x = (rho > r_size) ? r_size : rho;
 
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
     currentGradient.zeros();
-    size_t x=0;
-    x = (rho>r_size)?r_size:rho;
-    if (seqNum>=r_size)
+    if (seqNum >= r_size)
     {
       break;
     }
@@ -379,8 +379,8 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
     Backward();
     Gradient(std::move(
-    arma::mat(predictors.slice(x - seqNum - 1).colptr(begin),
-    predictors.n_rows, batchSize, false, true)));
+      arma::mat(predictors.slice(x - seqNum - 1).colptr(begin),
+      predictors.n_rows, batchSize, false, true)));
     gradient += currentGradient;
   }
 

@@ -1413,4 +1413,71 @@ BOOST_AUTO_TEST_CASE(BRNNTrainReturnObjective)
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 }
 
+/**
+ * Test that RNN::Train() does not give an error for large rho.
+ */
+BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
+{
+
+  const int rho = 18;
+  const int hiddenSize = 128;
+  const int numLetters = 256;
+  using namespace arma;
+
+  using MatType = cube;
+  std::vector<std::string> trainingData;
+  trainingData.push_back(std::string("THIS IS THE INPUT"));
+
+  RNN<> model(rho);
+  model.Add<IdentityLayer<>>();
+  model.Add<LSTM<>>(numLetters, hiddenSize, rho);
+  model.Add<Dropout<>>(0.1);
+  model.Add<Linear<>>(hiddenSize, numLetters);
+
+  const auto makeInput = [](const char *line) -> MatType {
+    const auto strLen = strlen(line);
+    // rows: number of dimensions
+    // cols: number of sequences/points
+    // slices: number of steps in sequences
+    MatType result(numLetters, 1, strLen, fill::zeros);
+    for(int i = 0; i < strLen; ++i)
+    {
+      const auto letter = line[i];
+      result.at(static_cast<uword>(letter), 0, i) = 1.0;
+    }
+    return result;
+  };
+
+  const auto makeTarget = [] (const char *line) -> MatType {
+    const auto strLen = strlen(line);
+    // responses for NegativeLogLikelihood should be
+    // non-one-hot-encoded class IDs (from 1 to num_classes)
+    cube result(1, 1, strLen, fill::zeros);
+    // the response is the *next* letter in the sequence
+    for(int i = 0; i < strLen - 1; ++i)
+    {
+      const auto letter = line[i + 1];
+      result.at(0, 0, i) = static_cast<uword>(letter) + 1.0;
+    }
+    // the final response is empty, so we set it to class 0
+    result.at(0, 0, strLen - 1) = 1.0;
+    return result;
+  };
+
+  std::vector<cube> inputs(trainingData.size());
+  std::vector<cube> targets(trainingData.size());
+  for(int i = 0; i < trainingData.size(); ++i)
+  {
+    inputs[i] = makeInput(trainingData[i].c_str());
+    targets[i] = makeTarget(trainingData[i].c_str());
+  }
+
+  ens::SGD<> opt(0.01, 1, 100);
+  double objVal = model.Train(inputs[0], targets[0], opt);
+  BOOST_TEST_CHECKPOINT("Training over");
+
+  // Test that RNN::Train() returns finite objective value.
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
