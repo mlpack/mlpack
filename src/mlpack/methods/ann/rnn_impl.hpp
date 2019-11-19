@@ -83,11 +83,6 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     ResetParameters();
   }
 
-  if(rho>responses.size())
-  {
-    rho=responses.size();
-  }
-
   // Train the model.
   Timer::Start("rnn_optimization");
   const double out = optimizer.Optimize(*this, parameter, callbacks...);
@@ -304,10 +299,15 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
   double performance = 0;
   size_t responseSeq = 0;
+  size_t r_size = responses.size();
 
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
     // Wrap a matrix around our data to avoid a copy.
+    if (seqNum>r_size)
+    {
+      break;
+    }
     arma::mat stepData(predictors.slice(seqNum).colptr(begin),
         predictors.n_rows, batchSize, false, true);
     Forward(std::move(stepData));
@@ -346,7 +346,10 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
     currentGradient.zeros();
-
+    if (seqNum>r_size)
+    {
+      break;
+    }
     for (size_t l = 0; l < network.size(); ++l)
     {
       boost::apply_visitor(LoadOutputParameterVisitor(
@@ -364,18 +367,20 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
           std::move(arma::mat(responses.slice(0).colptr(begin),
           responses.n_rows, batchSize, false, true)), std::move(error));
     }
+    size_t x = 0;
+    x = (rho>r_size)?r_size:rho;    
     else
     {
       outputLayer.Backward(std::move(boost::apply_visitor(
           outputParameterVisitor, network.back())),
-          std::move(arma::mat(responses.slice(rho - seqNum - 1).colptr(begin),
+          std::move(arma::mat(responses.slice(x - seqNum - 1).colptr(begin),
           responses.n_rows, batchSize, false, true)), std::move(error));
     }
 
     Backward();
     Gradient(std::move(
-        arma::mat(predictors.slice(rho - seqNum - 1).colptr(begin),
-        predictors.n_rows, batchSize, false, true)));
+    arma::mat(predictors.slice(x - seqNum - 1).colptr(begin),
+    predictors.n_rows, batchSize, false, true)));
     gradient += currentGradient;
   }
 
