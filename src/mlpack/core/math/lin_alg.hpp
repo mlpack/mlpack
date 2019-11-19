@@ -49,7 +49,7 @@ void WhitenUsingSVD(const arma::mat& x,
  * Whitens a matrix using the eigendecomposition of the covariance matrix.
  * Whitening means the covariance matrix of the result is the identity matrix.
  */
-void WhitenUsingEig(const arma::mat& x,
+bool WhitenUsingEig(const arma::mat& x,
                     arma::mat& xWhitened,
                     arma::mat& whiteningMatrix);
 

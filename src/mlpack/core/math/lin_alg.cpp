@@ -77,7 +77,7 @@ void mlpack::math::WhitenUsingSVD(const arma::mat& x,
  * Whitens a matrix using the eigendecomposition of the covariance matrix.
  * Whitening means the covariance matrix of the result is the identity matrix.
  */
-void mlpack::math::WhitenUsingEig(const arma::mat& x,
+bool mlpack::math::WhitenUsingEig(const arma::mat& x,
                                   arma::mat& xWhitened,
                                   arma::mat& whiteningMatrix)
 {
@@ -85,7 +85,11 @@ void mlpack::math::WhitenUsingEig(const arma::mat& x,
   arma::vec eigenvalues;
 
   // Get eigenvectors of covariance of input matrix.
-  eig_sym(eigenvalues, eigenvectors, mlpack::math::ColumnCovariance(x));
+  if (!eig_sym(eigenvalues, eigenvectors, mlpack::math::ColumnCovariance(x)))
+  {
+      Log::Fatal << "Failed Whitening" << std::endl;
+      return false; 
+  }
 
   // Generate diagonal matrix using 1 / sqrt(eigenvalues) for each value.
   VectorPower(eigenvalues, -0.5);
@@ -97,6 +101,7 @@ void mlpack::math::WhitenUsingEig(const arma::mat& x,
 
   // Now apply the whitening matrix.
   xWhitened = whiteningMatrix * x;
+  return true;
 }
 
 /**
