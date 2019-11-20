@@ -664,12 +664,14 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
  */
 template<typename Distribution>
 void HMM<Distribution>::ConvertToLogSpace() const {
-    if( recalculateInitial ){
+    if (recalculateInitial)
+    {
         logInitial = log(initialProxy);
         recalculateInitial = false;
     }
 
-    if( recalculateTransition ){
+    if (recalculateTransition)
+    {
         logTransition = log(transitionProxy);
         recalculateTransition = false;
     }
@@ -697,12 +699,13 @@ void HMM<Distribution>::load(Archive& ar, const unsigned int /* version */)
   logInitial = log(initial);
   initialProxy = std::move(initial);
   transitionProxy = std::move(transition);
- }
+}
 
 //! Serialize the HMM.
 template<typename Distribution>
 template<typename Archive>
-void HMM<Distribution>::save(Archive& ar, const unsigned int /* version */) const
+void HMM<Distribution>::save(Archive& ar, 
+                             const unsigned int /* version */) const
 {
   arma::mat transition = exp(logTransition);
   arma::vec initial = exp(logInitial);
