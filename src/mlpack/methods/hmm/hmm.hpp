@@ -394,22 +394,23 @@ class HMM
   //! Set of emission probability distributions; one for each state.
   std::vector<Distribution> emission;
 
-  //! a proxy vriable in linear space for logTransition
+  //! a proxy vriable in linear space for logTransition. Should be removed in mlpack 4.0.
   arma::mat transitionProxy;
 
-  //! Transition probability matrix.
+  //! Transition probability matrix. No need to be mutable in mlpack 4.0.
   mutable arma::mat logTransition;
 
  private:
   /**
-   * Make sure the variables in log space are in sync with the linear counter parts
+   * Make sure the variables in log space are in sync with the linear counter parts.
+   * Should be removed in mlpack 4.0.
    */
   void ConvertToLogSpace() const;
 
-  //! a proxy vriable in linear space for logInitial
+  //! a proxy vriable in linear space for logInitial. Should be removed in mlpack 4.0.
   arma::vec initialProxy;
 
-  //! Initial state probability vector.
+  //! Initial state probability vector. No need to be mutable in mlpack 4.0.
   mutable arma::vec logInitial;
 
   //! Dimensionality of observations.
@@ -418,10 +419,10 @@ class HMM
   //! Tolerance of Baum-Welch algorithm.
   double tolerance;
 
-  //! Whether or not we need to update the logInitial from initialProxy
+  //! Whether or not we need to update the logInitial from initialProxy. Should be removed in mlpack 4.0.
   mutable bool recalculateInitial;
 
-  //! Whether or not we need to update the logTransition from transitionProxy
+  //! Whether or not we need to update the logTransition from transitionProxy. Should be removed in mlpack 4.0.
   mutable bool recalculateTransition;
 };
 
