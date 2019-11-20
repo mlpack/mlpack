@@ -1418,7 +1418,6 @@ BOOST_AUTO_TEST_CASE(BRNNTrainReturnObjective)
  */
 BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
 {
-
   const int rho = 18;
   const int hiddenSize = 128;
   const int numLetters = 256;
@@ -1440,7 +1439,7 @@ BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
     // cols: number of sequences/points
     // slices: number of steps in sequences
     MatType result(numLetters, 1, strLen, fill::zeros);
-    for(int i = 0; i < strLen; ++i)
+    for (int i = 0; i < strLen; ++i)
     {
       const auto letter = line[i];
       result.at(static_cast<uword>(letter), 0, i) = 1.0;
@@ -1454,7 +1453,7 @@ BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
     // non-one-hot-encoded class IDs (from 1 to num_classes)
     cube result(1, 1, strLen, fill::zeros);
     // the response is the *next* letter in the sequence
-    for(int i = 0; i < strLen - 1; ++i)
+    for (int i = 0; i < strLen - 1; ++i)
     {
       const auto letter = line[i + 1];
       result.at(0, 0, i) = static_cast<uword>(letter) + 1.0;
@@ -1466,7 +1465,7 @@ BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
 
   std::vector<cube> inputs(trainingData.size());
   std::vector<cube> targets(trainingData.size());
-  for(int i = 0; i < trainingData.size(); ++i)
+  for (int i = 0; i < trainingData.size(); ++i)
   {
     inputs[i] = makeInput(trainingData[i].c_str());
     targets[i] = makeTarget(trainingData[i].c_str());
