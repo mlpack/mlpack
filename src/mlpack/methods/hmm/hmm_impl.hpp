@@ -704,7 +704,7 @@ void HMM<Distribution>::load(Archive& ar, const unsigned int /* version */)
 //! Serialize the HMM.
 template<typename Distribution>
 template<typename Archive>
-void HMM<Distribution>::save(Archive& ar, 
+void HMM<Distribution>::save(Archive& ar,
                              const unsigned int /* version */) const
 {
   arma::mat transition = exp(logTransition);
