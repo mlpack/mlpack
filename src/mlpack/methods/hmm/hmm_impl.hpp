@@ -33,13 +33,15 @@ HMM<Distribution>::HMM(const size_t states,
     transitionProxy(arma::randu<arma::mat>(states, states)),
     initialProxy(arma::randu<arma::vec>(states) / (double) states),
     dimensionality(emissions.Dimensionality()),
-    tolerance(tolerance)
+    tolerance(tolerance),
+    recalculateInitial(false),
+    recalculateTransition(false)
 {
   // Normalize the transition probabilities and initial state probabilities.
   initialProxy /= arma::accu(initialProxy);
   for (size_t i = 0; i < transitionProxy.n_cols; ++i)
-    transitionProxy.col(i) /= arma::accu(transitionProxy.col(i));  
-  
+    transitionProxy.col(i) /= arma::accu(transitionProxy.col(i));
+
   logTransition = log(transitionProxy);
   logInitial = log(initialProxy);
 }
@@ -58,7 +60,9 @@ HMM<Distribution>::HMM(const arma::vec& initial,
     logTransition(log(transition)),
     initialProxy(initial),
     logInitial(log(initial)),
-    tolerance(tolerance)
+    tolerance(tolerance),
+    recalculateInitial(false),
+    recalculateTransition(false)
 {
   // Set the dimensionality, if we can.
   if (emission.size() > 0)
@@ -198,7 +202,7 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
     // still be multiplied by the old elements (this is the multiplication we
     // earlier postponed).
     logTransition += newLogTransition;
-    
+
     // Now we normalize the transition matrix.
     for (size_t i = 0; i < logTransition.n_cols; i++)
     {
@@ -238,7 +242,8 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
   }
 
   arma::mat initial = arma::zeros(logInitial.n_elem);
-  arma::mat transition = arma::zeros(logTransition.n_rows, logTransition.n_cols);
+  arma::mat transition = arma::zeros(logTransition.n_rows, 
+				                     logTransition.n_cols);
 
   // Estimate the transition and emission matrices directly from the
   // observations.  The emission list holds the time indices for observations
@@ -290,7 +295,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
     if (sum > 0)
       transition.col(col) /= sum;
   }
-  
+
   initialProxy = initial;
   transitionProxy = transition;
   logTransition = log(transition);
@@ -419,7 +424,7 @@ void HMM<Distribution>::Generate(const size_t length,
   dataSequence.col(0) = emission[startState].Random();
 
   ConvertToLogSpace();
-  
+
   // Now choose the states and emissions for the rest of the sequence.
   for (size_t t = 1; t < length; t++)
   {
@@ -654,10 +659,20 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
   }
 }
 
+/**
+ * Make sure the variables in log space are in sync with the linear counter parts
+ */
 template<typename Distribution>
 void HMM<Distribution>::ConvertToLogSpace() const {
-    logInitial = log(initialProxy);
-    logTransition = log(transitionProxy);
+    if(recalculateInitial){
+        logInitial = log(initialProxy);
+        recalculateInitial = false;
+    }
+    
+    if(recalculateTransition){
+        logTransition = log(transitionProxy);
+        recalculateTransition = false;
+    }
 }
 
 //! Serialize the HMM.
@@ -678,10 +693,10 @@ void HMM<Distribution>::load(Archive& ar, const unsigned int /* version */)
   // Load the emissions; generate the correct name for each one.
   ar & BOOST_SERIALIZATION_NVP(emission);
   
-  initialProxy = initial;
-  transitionProxy = transition;
   logTransition = log(transition);
   logInitial = log(initial);
+  initialProxy = std::move(initial);
+  transitionProxy = std::move(transition);
  }
 
 //! Serialize the HMM.

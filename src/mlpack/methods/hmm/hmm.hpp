@@ -325,12 +325,12 @@ class HMM
   //! Return the vector of initial state probabilities.
   const arma::vec Initial() const { return initialProxy; }
   //! Modify the vector of initial state probabilities.
-  arma::vec& Initial() { return initialProxy; }
+  arma::vec& Initial() { recalculateInitial = true; return initialProxy; }
 
   //! Return the transition matrix.
   const arma::mat Transition() const { return transitionProxy; }
   //! Return a modifiable transition matrix reference.
-  arma::mat& Transition() { return transitionProxy; }
+  arma::mat& Transition() { recalculateTransition = true; return transitionProxy; }
 
   //! Return the emission distributions.
   const std::vector<Distribution>& Emission() const { return emission; }
@@ -393,15 +393,19 @@ class HMM
   //! Set of emission probability distributions; one for each state.
   std::vector<Distribution> emission;
 
+  //! a proxy vriable in linear space for logTransition
   arma::mat transitionProxy;
 
   //! Transition probability matrix.
   mutable arma::mat logTransition;
 
  private:
-     
-  void ConvertToLogSpace() const;   
+  /**
+   * Make sure the variables in log space are in sync with the linear counter parts
+   */
+  void ConvertToLogSpace() const;
   
+  //! a proxy vriable in linear space for logInitial
   arma::vec initialProxy;
 
   //! Initial state probability vector.
@@ -412,6 +416,12 @@ class HMM
 
   //! Tolerance of Baum-Welch algorithm.
   double tolerance;
+
+  //! Whether or not we need to update the logInitial from initialProxy
+  mutable bool recalculateInitial;
+
+  //! Whether or not we need to update the logTransition from transitionProxy
+  mutable bool recalculateTransition;
 };
 
 } // namespace hmm
