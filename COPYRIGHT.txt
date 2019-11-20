@@ -118,6 +118,7 @@ Copyright:
   Copyright 2019, Heet Sankesara <heetsankesara3@gmail.com>
   Copyright 2019, Jeffin Sam <sam.jeffin@gmail.com>
   Copyright 2019, Vikas S Shetty <shettyvikas209@gmail.com>
+  Copyright 2019, Tejasvi Tomar <tstomar@outlook.com>
 
 License: BSD-3-clause
   All rights reserved.
