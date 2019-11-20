@@ -201,14 +201,14 @@ class HMM
    * of the most probable sequence is returned.
    *
    * @param dataSeq Sequence of observations.
-   * @param stateProb Matrix in which the log probabilities of each state at each
-   *    time interval will be stored.
-   * @param forwardProb Matrix in which the forward log probabilities of each state
-   *    at each time interval will be stored.
+   * @param stateProb Matrix in which the log probabilities of each state at
+   *    each time interval will be stored.
+   * @param forwardProb Matrix in which the forward log probabilities of each
+   *    state at each time interval will be stored.
    * @param backwardProb Matrix in which the backward log probabilities of each
    *    state at each time interval will be stored.
-   * @param scales Vector in which the log of scaling factors at each time interval
-   *    will be stored.
+   * @param scales Vector in which the log of scaling factors at each time
+   *    interval will be stored.
    * @return Log-likelihood of most likely state sequence.
    */
   double LogEstimate(const arma::mat& dataSeq,
@@ -394,7 +394,10 @@ class HMM
   //! Set of emission probability distributions; one for each state.
   std::vector<Distribution> emission;
 
-  //! a proxy vriable in linear space for logTransition. Should be removed in mlpack 4.0.
+  /**
+   *a proxy vriable in linear space for logTransition.
+   *Should be removed in mlpack 4.0.
+   */
   arma::mat transitionProxy;
 
   //! Transition probability matrix. No need to be mutable in mlpack 4.0.
@@ -402,12 +405,16 @@ class HMM
 
  private:
   /**
-   * Make sure the variables in log space are in sync with the linear counter parts.
+   * Make sure the variables in log space are in sync
+   * with the linear counter parts.
    * Should be removed in mlpack 4.0.
    */
   void ConvertToLogSpace() const;
 
-  //! a proxy vriable in linear space for logInitial. Should be removed in mlpack 4.0.
+  /**
+   * a proxy vriable in linear space for logInitial.
+   * Should be removed in mlpack 4.0.
+   */
   arma::vec initialProxy;
 
   //! Initial state probability vector. No need to be mutable in mlpack 4.0.
@@ -419,10 +426,16 @@ class HMM
   //! Tolerance of Baum-Welch algorithm.
   double tolerance;
 
-  //! Whether or not we need to update the logInitial from initialProxy. Should be removed in mlpack 4.0.
+  /**
+   * Whether or not we need to update the logInitial from initialProxy.
+   * Should be removed in mlpack 4.0.
+   */
   mutable bool recalculateInitial;
 
-  //! Whether or not we need to update the logTransition from transitionProxy. Should be removed in mlpack 4.0.
+  /**
+   * Whether or not we need to update the logTransition from transitionProxy.
+   * Should be removed in mlpack 4.0.
+   */
   mutable bool recalculateTransition;
 };
 
