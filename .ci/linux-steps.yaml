@@ -12,7 +12,8 @@ steps:
 # Install build dependencies
 - script: |
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
-
+    
+    sudo add-apt-repository ppa:mhier/libboost-latest
     sudo apt-get update
 
     # Remove BOOST_ROOT from the environment to prevent attempting to use a
