@@ -330,7 +330,8 @@ class HMM
   //! Return the transition matrix.
   const arma::mat Transition() const { return transitionProxy; }
   //! Return a modifiable transition matrix reference.
-  arma::mat& Transition() { recalculateTransition = true; return transitionProxy; }
+  arma::mat& Transition() { recalculateTransition = true;
+                            return transitionProxy; }
 
   //! Return the emission distributions.
   const std::vector<Distribution>& Emission() const { return emission; }
@@ -404,7 +405,7 @@ class HMM
    * Make sure the variables in log space are in sync with the linear counter parts
    */
   void ConvertToLogSpace() const;
-  
+
   //! a proxy vriable in linear space for logInitial
   arma::vec initialProxy;
 

@@ -100,7 +100,7 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
 
   // Maximum iterations?
   size_t iterations = 1000;
-  
+
   // Find length of all sequences and ensure they are the correct size.
   size_t totalLength = 0;
   for (size_t seq = 0; seq < dataSeq.size(); seq++)
@@ -242,8 +242,8 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
   }
 
   arma::mat initial = arma::zeros(logInitial.n_elem);
-  arma::mat transition = arma::zeros(logTransition.n_rows, 
-				                     logTransition.n_cols);
+  arma::mat transition = arma::zeros(logTransition.n_rows,
+                                     logTransition.n_cols);
 
   // Estimate the transition and emission matrices directly from the
   // observations.  The emission list holds the time indices for observations
@@ -467,7 +467,7 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
   arma::mat stateSeqBack(logTransition.n_rows, dataSeq.n_cols);
 
   ConvertToLogSpace();
-  
+
   // The calculation of the first state is slightly different; the probability
   // of the first state being state j is the maximum probability that the state
   // came to be j from another state.
@@ -584,9 +584,9 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
   forwardLogProb.fill(-std::numeric_limits<double>::infinity());
   logScales.resize(dataSeq.n_cols);
   logScales.fill(-std::numeric_limits<double>::infinity());
-  
+
   ConvertToLogSpace();
-  
+
   // The first entry in the forward algorithm uses the initial state
   // probabilities.  Note that MATLAB assumes that the starting state (at
   // t = -1) is state 0; this is not our assumption here.  To force that
@@ -664,12 +664,12 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
  */
 template<typename Distribution>
 void HMM<Distribution>::ConvertToLogSpace() const {
-    if(recalculateInitial){
+    if( recalculateInitial ){
         logInitial = log(initialProxy);
         recalculateInitial = false;
     }
-    
-    if(recalculateTransition){
+
+    if( recalculateTransition ){
         logTransition = log(transitionProxy);
         recalculateTransition = false;
     }
@@ -686,13 +686,13 @@ void HMM<Distribution>::load(Archive& ar, const unsigned int /* version */)
   ar & BOOST_SERIALIZATION_NVP(tolerance);
   ar & BOOST_SERIALIZATION_NVP(transition);
   ar & BOOST_SERIALIZATION_NVP(initial);
-  
+
   // Now serialize each emission.  If we are loading, we must resize the vector
   // of emissions correctly.
   emission.resize(transition.n_rows);
   // Load the emissions; generate the correct name for each one.
   ar & BOOST_SERIALIZATION_NVP(emission);
-  
+
   logTransition = log(transition);
   logInitial = log(initial);
   initialProxy = std::move(initial);
