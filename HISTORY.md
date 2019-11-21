@@ -1,5 +1,14 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Fix pkgconfig generation on non-Linux systems (#2101).
+  
+  * Add padding layer in TransposedConvolutionLayer (#2082).
+
+### mlpack 3.2.2
+###### 2019-11-26
+  * Add `valid` and `same` padding option in `Convolution` and `Atrous
+    Convolution` layer (#1988).
+
   * Add Model() to the FFN class to access individual layers (#2043).
 
   * Update documentation for pip and conda installation packages (#2044).
