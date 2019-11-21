@@ -1422,7 +1422,6 @@ BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
   const int hiddenSize = 128;
   const int numLetters = 256;
   using namespace arma;
-
   using MatType = cube;
   std::vector<std::string> trainingData;
   trainingData.push_back(std::string("THIS IS THE INPUT"));
@@ -1470,7 +1469,6 @@ BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
     inputs[i] = makeInput(trainingData[i].c_str());
     targets[i] = makeTarget(trainingData[i].c_str());
   }
-
   ens::SGD<> opt(0.01, 1, 100);
   double objVal = model.Train(inputs[0], targets[0], opt);
   BOOST_TEST_CHECKPOINT("Training over");
