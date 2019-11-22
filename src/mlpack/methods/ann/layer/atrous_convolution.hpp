@@ -127,53 +127,53 @@ class AtrousConvolution
                 arma::Mat<eT>&& gradient);
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  const OutputDataType& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  const OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  const OutputDataType& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
+  const OutputDataType& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the input width.
-  size_t const& InputWidth() const { return inputWidth; }
+  const size_t& InputWidth() const { return inputWidth; }
   //! Modify input the width.
   size_t& InputWidth() { return inputWidth; }
 
   //! Get the input height.
-  size_t const& InputHeight() const { return inputHeight; }
+  const size_t& InputHeight() const { return inputHeight; }
   //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
   //! Get the output width.
-  size_t const& OutputWidth() const { return outputWidth; }
+  const size_t& OutputWidth() const { return outputWidth; }
   //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
   //! Get the output height.
-  size_t const& OutputHeight() const { return outputHeight; }
+  const size_t& OutputHeight() const { return outputHeight; }
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size
-  size_t const& InputSize() const { return inSize; }
+  const size_t& InputSize() const { return inSize; }
 
   //! Get the output size.
-  size_t const& OutputSize() const { return outSize; }
+  const size_t& OutputSize() const { return outSize; }
 
   //! Get the kernel size.
-  std::tuple<size_t, size_t> const& KernelSize() const
+  const std::tuple<size_t, size_t> KernelSize() const
   {
     return std::forward_as_tuple(kH, kW);
   }
@@ -184,7 +184,7 @@ class AtrousConvolution
   }
 
   //! Get the stride dimensions.
-  std::tuple<size_t, size_t> const& Strides() const
+  const std::tuple<size_t, size_t> Strides() const
   {
     return std::forward_as_tuple(dH, dW);
   }
@@ -194,19 +194,30 @@ class AtrousConvolution
     return std::forward_as_tuple(dH, dW);
   }
 
-  //! Get the padding dimensions.
-  std::tuple<size_t, size_t> const& PadSize() const
+  //! Get the padding height dimensions (top and bottom).
+  const std::tuple<size_t, size_t> PadHSize() const
   {
-    return std::forward_as_tuple(padH, padW);
+    return std::forward_as_tuple(padHTop, padHBottom);
   }
-  //! Modify the padding dimensions.
-  std::tuple<size_t&, size_t&> PadSize()
+  //! Modify the padding dimensions (top and bottom).
+  std::tuple<size_t&, size_t&> PadHSize()
   {
-    return std::forward_as_tuple(padH, padW);
+    return std::forward_as_tuple(padHTop, padHBottom);
+  }
+
+  //! Get the padding width dimensions (left and right).
+  const std::tuple<size_t, size_t> PadWSize() const
+  {
+    return std::forward_as_tuple(padWLeft, padWRight);
+  }
+  //! Modify the padding width dimensions (left and right).
+  std::tuple<size_t&, size_t&> PadWSize()
+  {
+    return std::forward_as_tuple(padWLeft, padWRight);
   }
 
   //! Get the dilation rate.
-  std::tuple<size_t, size_t> const& DilationRate() const
+  const std::tuple<size_t, size_t> DilationRate() const
   {
     return std::forward_as_tuple(dilationH, dilationW);
   }
