@@ -162,7 +162,9 @@ class SoftmaxRegression
    * @param numClasses Number of classes for classification.
    * @param optimizer Desired optimizer.
    * @return Objective value of the final point.
-   * @param callbacks Callback Functions.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * 
    * @return The final objective of the trained model (NaN or Inf on error)
    */
   template<typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>

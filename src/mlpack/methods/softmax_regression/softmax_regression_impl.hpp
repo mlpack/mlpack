@@ -51,10 +51,9 @@ size_t SoftmaxRegression::Classify(const VecType& point) const
    * @param optimizer Desired optimizer.
    * @return Objective value of the final point.
    * @param callbacks Callback Functions.
-   *
    */
 
-template<typename OptimizerType,typename... CallbackTypes>
+template<typename OptimizerType, typename... CallbackTypes>
 double SoftmaxRegression::Train(const arma::mat& data,
                                 const arma::Row<size_t>& labels,
                                 const size_t numClasses,
