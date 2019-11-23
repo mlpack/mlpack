@@ -43,7 +43,7 @@ variety of other needs.
 <div align="center">
   <a href="https://numfocus.org/donate-to-mlpack">
     <img height="60px"
-         src="https://raw.githubusercontent.com/numfocus/templates/master/numfocus-logo.png"
+         src="https://raw.githubusercontent.com/numfocus/templates/master/images/numfocus-logo.png"
          align="center">
   </a>
 </div>
