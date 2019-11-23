@@ -34,7 +34,7 @@ functions as a "swiss army knife" for machine learning researchers.  In addition
 to its powerful C++ interface, mlpack also provides command-line programs and
 Python bindings.
 
-mlpack uses as [open governance model](./GOVERNANCE.md) and is fiscally
+mlpack uses an [open governance model](./GOVERNANCE.md) and is fiscally
 sponsored by [NumFOCUS](https://numfocus.org/).  Consider making a
 [tax-deductible donation](https://numfocus.org/donate-to-mlpack) to help the
 project pay for developer time, professional services, travel, workshops, and a
