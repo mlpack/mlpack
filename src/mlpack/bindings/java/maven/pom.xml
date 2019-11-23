@@ -17,7 +17,7 @@
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-native-platform</artifactId>
-            <version>1.0.0-beta4</version>
+            <version>1.0.0-beta5</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -40,6 +40,8 @@
                     <version>3.8.1</version>
                     <configuration>
                         <includes>${changed.classes}</includes>
+                        <source>1.7</source>
+                        <target>1.7</target>
                     </configuration>
                 </plugin>
                 <plugin>
