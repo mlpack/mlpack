@@ -33,6 +33,8 @@ class WeightSetVisitor : public boost::static_visitor<size_t>
   template<typename LayerType>
   size_t operator()(LayerType* layer) const;
 
+  size_t operator()(MoreTypes layer) const;
+
  private:
   //! The parameters set.
   arma::mat&& weight;

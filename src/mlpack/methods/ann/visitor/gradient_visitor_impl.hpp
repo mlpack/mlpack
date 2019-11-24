@@ -44,6 +44,11 @@ inline void GradientVisitor::operator()(LayerType* layer) const
   LayerGradients(layer, layer->OutputParameter());
 }
 
+inline void GradientVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     HasGradientCheck<T, arma::mat&(T::*)()>::value &&

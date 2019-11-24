@@ -6,7 +6,9 @@ add_executable(mlpack_test
   aknn_test.cpp
   ann_dist_test.cpp
   ann_layer_test.cpp
+  ann_regularizer_test.cpp
   ann_test_tools.hpp
+  ann_visitor_test.cpp
   arma_extend_test.cpp
   armadillo_svd_test.cpp
   async_learning_test.cpp
@@ -14,6 +16,7 @@ add_executable(mlpack_test
   bias_svd_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
+  callback_test.cpp
   cf_test.cpp
   cli_binding_test.cpp
   cli_test.cpp
@@ -37,6 +40,7 @@ add_executable(mlpack_test
   hoeffding_tree_test.cpp
   hpt_test.cpp
   hyperplane_test.cpp
+  image_load_test.cpp
   imputation_test.cpp
   init_rules_test.cpp
   kde_test.cpp
@@ -49,6 +53,7 @@ add_executable(mlpack_test
   krann_search_test.cpp
   ksinit_test.cpp
   lars_test.cpp
+  layer_names_test.cpp
   lin_alg_test.cpp
   linear_regression_test.cpp
   linear_svm_test.cpp
@@ -129,7 +134,10 @@ add_executable(mlpack_test
   main_tests/gmm_train_test.cpp
   main_tests/fastmks_test.cpp
   main_tests/kde_test.cpp
+  main_tests/kfn_test.cpp
+  main_tests/knn_test.cpp
   main_tests/linear_regression_test.cpp
+  main_tests/linear_svm_test.cpp
   main_tests/logistic_regression_test.cpp
   main_tests/local_coordinate_coding_test.cpp
   main_tests/lmnn_test.cpp

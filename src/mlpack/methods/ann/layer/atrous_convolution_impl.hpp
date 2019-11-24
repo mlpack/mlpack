@@ -62,15 +62,18 @@ AtrousConvolution<
     const size_t inputWidth,
     const size_t inputHeight,
     const size_t dilationW,
-    const size_t dilationH) :
+    const size_t dilationH,
+    const std::string paddingType) :
     inSize(inSize),
     outSize(outSize),
     kW(kW),
     kH(kH),
     dW(dW),
     dH(dH),
-    padW(padW),
-    padH(padH),
+    padWLeft(padW),
+    padWRight(padW),
+    padHBottom(padH),
+    padHTop(padH),
     inputWidth(inputWidth),
     inputHeight(inputHeight),
     outputWidth(0),
@@ -79,6 +82,91 @@ AtrousConvolution<
     dilationH(dilationH)
 {
   weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
+
+  // Transform paddingType to lowercase.
+  std::string paddingTypeLow = paddingType;
+  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
+      [](unsigned char c){ return std::tolower(c); });
+
+  if (paddingTypeLow == "valid")
+  {
+    padWLeft = 0;
+    padWRight = 0;
+    padHTop = 0;
+    padHBottom = 0;
+  }
+  else if (paddingTypeLow == "same")
+  {
+    InitializeSamePadding();
+  }
+
+  padding = new Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+}
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+AtrousConvolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::AtrousConvolution(
+    const size_t inSize,
+    const size_t outSize,
+    const size_t kW,
+    const size_t kH,
+    const size_t dW,
+    const size_t dH,
+    const std::tuple<size_t, size_t> padW,
+    const std::tuple<size_t, size_t> padH,
+    const size_t inputWidth,
+    const size_t inputHeight,
+    const size_t dilationW,
+    const size_t dilationH,
+    const std::string paddingType) :
+    inSize(inSize),
+    outSize(outSize),
+    kW(kW),
+    kH(kH),
+    dW(dW),
+    dH(dH),
+    padWLeft(std::get<0>(padW)),
+    padWRight(std::get<1>(padW)),
+    padHBottom(std::get<1>(padH)),
+    padHTop(std::get<0>(padH)),
+    inputWidth(inputWidth),
+    inputHeight(inputHeight),
+    outputWidth(0),
+    outputHeight(0),
+    dilationW(dilationW),
+    dilationH(dilationH)
+{
+  weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
+
+  // Transform paddingType to lowercase.
+  std::string paddingTypeLow = paddingType;
+  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
+      [](unsigned char c){ return std::tolower(c); });
+
+  if (paddingTypeLow == "valid")
+  {
+    padWLeft = 0;
+    padWRight = 0;
+    padHTop = 0;
+    padHBottom = 0;
+  }
+  else if (paddingTypeLow == "same")
+  {
+    InitializeSamePadding();
+  }
+
+  padding = new Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 }
 
 template<
@@ -122,13 +210,22 @@ void AtrousConvolution<
   inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
       inputWidth, inputHeight, inSize * batchSize, false, false);
 
-  if (padW != 0 || padH != 0)
+  if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
   {
-    Pad(inputTemp, padW, padH, inputPaddedTemp);
+    inputPaddedTemp.set_size(inputTemp.n_rows + padWLeft + padWRight,
+        inputTemp.n_cols + padHTop + padHBottom, inputTemp.n_slices);
+
+    for (size_t i = 0; i < inputTemp.n_slices; ++i)
+    {
+      padding->Forward(std::move(inputTemp.slice(i)),
+          std::move(inputPaddedTemp.slice(i)));
+    }
   }
 
-  size_t wConv = ConvOutSize(inputWidth, kW, dW, padW, dilationW);
-  size_t hConv = ConvOutSize(inputHeight, kH, dH, padH, dilationH);
+  size_t wConv = ConvOutSize(inputWidth, kW, dW, padWLeft, padWRight,
+      dilationW);
+  size_t hConv = ConvOutSize(inputHeight, kH, dH, padHTop, padHBottom,
+      dilationH);
 
   output.set_size(wConv * hConv * outSize, batchSize);
   outputTemp = arma::Cube<eT>(output.memptr(), wConv, hConv,
@@ -148,7 +245,7 @@ void AtrousConvolution<
     {
       arma::Mat<eT> convOutput;
 
-      if (padW != 0 || padH != 0)
+      if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
       {
         ForwardConvolutionRule::Convolution(inputPaddedTemp.slice(inMap +
             batchCount * inSize), weight.slice(outMapIdx), convOutput, dW, dH,
@@ -213,11 +310,10 @@ void AtrousConvolution<
       BackwardConvolutionRule::Convolution(mappedError.slice(outMap),
           rotatedFilter, output, dW, dH, dilationW, dilationH);
 
-      if (padW != 0 || padH != 0)
+      if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
       {
-        gTemp.slice(inMap + batchCount * inSize) += output.submat(padW, padH,
-            padW + gTemp.n_rows - 1,
-            padH + gTemp.n_cols - 1);
+        gTemp.slice(inMap + batchCount * inSize) += output.submat(padWLeft,
+            padHTop, padWLeft + gTemp.n_rows - 1, padHTop + gTemp.n_cols - 1);
       }
       else
       {
@@ -266,7 +362,7 @@ void AtrousConvolution<
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
       arma::Mat<eT> inputSlice;
-      if (padW != 0 || padH != 0)
+      if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
       {
         inputSlice = inputPaddedTemp.slice(inMap + batchCount * inSize);
       }
@@ -331,8 +427,7 @@ void AtrousConvolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::serialize(
-    Archive& ar, const unsigned int /* version */)
+>::serialize(Archive& ar, const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_NVP(inSize);
   ar & BOOST_SERIALIZATION_NVP(outSize);
@@ -341,8 +436,10 @@ void AtrousConvolution<
   ar & BOOST_SERIALIZATION_NVP(kH);
   ar & BOOST_SERIALIZATION_NVP(dW);
   ar & BOOST_SERIALIZATION_NVP(dH);
-  ar & BOOST_SERIALIZATION_NVP(padW);
-  ar & BOOST_SERIALIZATION_NVP(padH);
+  ar & BOOST_SERIALIZATION_NVP(padWLeft);
+  ar & BOOST_SERIALIZATION_NVP(padWRight);
+  ar & BOOST_SERIALIZATION_NVP(padHBottom);
+  ar & BOOST_SERIALIZATION_NVP(padHTop);
   ar & BOOST_SERIALIZATION_NVP(inputWidth);
   ar & BOOST_SERIALIZATION_NVP(inputHeight);
   ar & BOOST_SERIALIZATION_NVP(outputWidth);
@@ -350,8 +447,40 @@ void AtrousConvolution<
   ar & BOOST_SERIALIZATION_NVP(dilationW);
   ar & BOOST_SERIALIZATION_NVP(dilationH);
 
+  if (version > 0)
+    ar & BOOST_SERIALIZATION_NVP(padding);
+
   if (Archive::is_loading::value)
     weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
+}
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+void AtrousConvolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::InitializeSamePadding()
+{
+  /*
+   * Using O = (W - F + 2P) / s + 1;
+   */
+  size_t totalVerticalPadding = (dW - 1) * inputWidth + kW - dW + (dilationW -
+      1) * (kW - 1);
+  size_t totalHorizontalPadding = (dH - 1) * inputHeight + kH - dH + (dilationH
+      - 1) * (kH - 1);
+
+  padWLeft = totalVerticalPadding / 2;
+  padWRight = totalVerticalPadding - totalVerticalPadding / 2;
+  padHTop = totalHorizontalPadding / 2;
+  padHBottom = totalHorizontalPadding - totalHorizontalPadding / 2;
 }
 
 } // namespace ann

@@ -25,7 +25,7 @@ namespace data {
  *
  * \[z = x / max(abs(x))\]
  *
- * where max(abs(x)) is maximum absolute value of feature. 
+ * where max(abs(x)) is maximum absolute value of feature.
  *
  * @code
  * arma::mat input;
@@ -74,7 +74,7 @@ class MaxAbsScaler
     if (scale.is_empty())
     {
       throw std::runtime_error("Call Fit() before Transform(), please"
-        " refer documentation.");
+        " refer to the documentation.");
     }
     output.copy_size(input);
     output = input.each_col() / scale;

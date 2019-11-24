@@ -25,7 +25,9 @@
 #include "linear.hpp"
 #include "linear_no_bias.hpp"
 #include "lstm.hpp"
+#include "minibatch_discrimination.hpp"
 #include "multiply_merge.hpp"
+#include "padding.hpp"
 #include "gru.hpp"
 #include "fast_lstm.hpp"
 #include "recurrent.hpp"
@@ -36,5 +38,6 @@
 #include "concat.hpp"
 #include "vr_class_reward.hpp"
 #include "transposed_convolution.hpp"
+#include "weight_norm.hpp"
 
 #endif

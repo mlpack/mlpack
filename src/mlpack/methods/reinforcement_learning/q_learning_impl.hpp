@@ -39,6 +39,9 @@ QLearning<
     config(std::move(config)),
     learningNetwork(std::move(network)),
     updater(std::move(updater)),
+    #if ENS_VERSION_MAJOR >= 2
+    updatePolicy(NULL),
+    #endif
     policy(std::move(policy)),
     replayMethod(std::move(replayMethod)),
     environment(std::move(environment)),
@@ -49,9 +52,37 @@ QLearning<
   if (learningNetwork.Parameters().is_empty())
     learningNetwork.ResetParameters();
 
+  #if ENS_VERSION_MAJOR == 1
   this->updater.Initialize(learningNetwork.Parameters().n_rows,
-      learningNetwork.Parameters().n_cols);
+                           learningNetwork.Parameters().n_cols);
+  #else
+  this->updatePolicy = new typename UpdaterType::template
+      Policy<arma::mat, arma::mat>(this->updater,
+                                   learningNetwork.Parameters().n_rows,
+                                   learningNetwork.Parameters().n_cols);
+  #endif
+
   targetNetwork = learningNetwork;
+}
+
+template <
+  typename EnvironmentType,
+  typename NetworkType,
+  typename UpdaterType,
+  typename PolicyType,
+  typename ReplayType
+>
+QLearning<
+  EnvironmentType,
+  NetworkType,
+  UpdaterType,
+  PolicyType,
+  ReplayType
+>::~QLearning()
+{
+  #if ENS_VERSION_MAJOR >= 2
+  delete updatePolicy;
+  #endif
 }
 
 template <
@@ -166,14 +197,18 @@ double QLearning<
     }
   }
 
-  // Learn form experience.
+  // Learn from experience.
   arma::mat gradients;
   learningNetwork.Backward(target, gradients);
 
-  replayMethod.Update(target, sampledActions,
-      nextActionValues, gradients);
+  replayMethod.Update(target, sampledActions, nextActionValues, gradients);
 
+  #if ENS_VERSION_MAJOR == 1
   updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
+  #else
+  updatePolicy->Update(learningNetwork.Parameters(), config.StepSize(),
+      gradients);
+  #endif
 
   return reward;
 }
