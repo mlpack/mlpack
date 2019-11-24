@@ -16,6 +16,8 @@
 
   * Fix Windows Python build configuration (#1885).
 
+  * Add `__version__` to `__init__.py` (#2092).
+
 ### mlpack 3.2.1
 ###### 2019-10-01
   * Enforce CMake version check for ensmallen (#2032).
