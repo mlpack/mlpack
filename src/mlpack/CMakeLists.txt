@@ -141,6 +141,7 @@ if (BUILDING_PYTHON_BINDINGS)
   add_dependencies(python_configure python_copy)
   add_dependencies(python_configured python_configure)
 
+  # Append the package version to __init__.py after all the imports are loaded.
   file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
   "__version__='${PACKAGE_VERSION}'\n")
 endif ()
