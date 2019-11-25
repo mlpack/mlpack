@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.3.2)
 project(mlpack C CXX)
 
 include(CMake/cotire.cmake)
+include(CMake/CheckHash.cmake)
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
@@ -351,20 +352,28 @@ if (NOT STB_IMAGE_FOUND)
         STB_IMAGE_WRITE_DOWNLOAD_STATUS)
     if (STB_IMAGE_DOWNLOAD_STATUS EQUAL 0 AND
         STB_IMAGE_WRITE_DOWNLOAD_STATUS EQUAL 0)
-      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-          "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
-      message(STATUS
-          "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
-      # Now we have to also ensure these header files get installed.
-      install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-      install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-      add_definitions(-DHAS_STB)
+      check_hash (http://mlpack.org/files/stb/hash.md5 "${CMAKE_BINARY_DIR}/deps/${STB_DIR}"
+          HASH_CHECK_FAIL)
+      if (HASH_CHECK_FAIL EQUAL 0)
+        set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+            "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+        message(STATUS
+            "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+        # Now we have to also ensure these header files get installed.
+        install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+        install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+        add_definitions(-DHAS_STB)
+      else ()
+        message(WARNING
+            "stb/stb_image.h is not installed. Image utilities will not be available!")
+      endif ()
     else ()
-      list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
-      message(WARNING
-          "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
-      message(WARNING
-          "stb/stb_image.h is not installed. Image utilities will not be available!")
+        file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+        list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
+        message(WARNING
+            "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
+        message(WARNING
+            "stb/stb_image.h is not installed. Image utilities will not be available!")
     endif ()
   else ()
     message(WARNING
