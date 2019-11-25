@@ -18,6 +18,8 @@
 
   * Validate md5 of STB library after download (#2087).
 
+  * Add `__version__` to `__init__.py` (#2092).
+
 ### mlpack 3.2.1
 ###### 2019-10-01
   * Enforce CMake version check for ensmallen (#2032).
