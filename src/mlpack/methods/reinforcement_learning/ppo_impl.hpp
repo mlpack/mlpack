@@ -46,7 +46,13 @@ PPO<
   actorNetwork(std::move(actor)),
   criticNetwork(std::move(critic)),
   actorUpdater(std::move(updater)),
+  #if ENS_VERSION_MAJOR >= 2
+  actorUpdatePolicy(NULL),
+  #endif
   criticUpdater(std::move(updater)),
+  #if ENS_VERSION_MAJOR >= 2
+  criticUpdatePolicy(NULL),
+  #endif
   policy(std::move(policy)),
   replayMethod(std::move(replayMethod)),
   environment(std::move(environment))
@@ -58,12 +64,50 @@ PPO<
   if (criticNetwork.Parameters().is_empty())
     criticNetwork.ResetParameters();
 
+  #if ENS_VERSION_MAJOR == 1
   this->criticUpdater.Initialize(criticNetwork.Parameters().n_rows,
-      criticNetwork.Parameters().n_cols);
+                                 criticNetwork.Parameters().n_cols);
+  #else
+  this->criticUpdatePolicy = new typename UpdaterType::template
+  Policy<arma::mat, arma::mat>(this->criticUpdater,
+                               criticNetwork.Parameters().n_rows,
+                               criticNetwork.Parameters().n_cols);
+  #endif
 
+  #if ENS_VERSION_MAJOR == 1
   this->actorUpdater.Initialize(actorNetwork.Parameters().n_rows,
-      actorNetwork.Parameters().n_cols);
+                                actorNetwork.Parameters().n_cols);
+  #else
+  this->actorUpdatePolicy = new typename UpdaterType::template
+  Policy<arma::mat, arma::mat>(this->actorUpdater,
+                               actorNetwork.Parameters().n_rows,
+                               actorNetwork.Parameters().n_cols);
+  #endif
+
   oldActorNetwork = actorNetwork;
+}
+
+template<
+  typename EnvironmentType,
+  typename ActorNetworkType,
+  typename CriticNetworkType,
+  typename UpdaterType,
+  typename PolicyType,
+  typename ReplayType
+>
+PPO<
+  EnvironmentType,
+  ActorNetworkType,
+  CriticNetworkType,
+  UpdaterType,
+  PolicyType,
+  ReplayType
+>::~PPO()
+{
+  #if ENS_VERSION_MAJOR >= 2
+  delete actorUpdatePolicy;
+  delete criticUpdatePolicy;
+  #endif
 }
 
 template<
@@ -110,8 +154,13 @@ void PPO<
 
   // Update the critic.
   criticNetwork.Backward(advantages, criticGradients);
+  #if ENS_VERSION_MAJOR == 1
   criticUpdater.Update(criticNetwork.Parameters(), config.StepSize(),
                        criticGradients);
+  #else
+  criticUpdatePolicy->Update(criticNetwork.Parameters(), config.StepSize(),
+                             criticGradients);
+  #endif
 
   for (size_t step = 0; step < config.ActorUpdateStep(); step ++) {
     // calculate the ratio.
@@ -137,7 +186,7 @@ void PPO<
     arma::colvec observation(sampledActions.size());
     for (size_t i = 0; i < sampledActions.size(); i++)
     {
-      observation[i] = sampledActions[i].action;
+      observation[i] = sampledActions[i].action[0];
     }
     normalDist.LogProbability(observation, prob);
     oldNormalDist.LogProbability(observation, oldProb);
@@ -169,8 +218,13 @@ void PPO<
 
     actorNetwork.Backward(dLoss, actorGradients);
 
+    #if ENS_VERSION_MAJOR == 1
     actorUpdater.Update(actorNetwork.Parameters(), config.StepSize(),
                         actorGradients);
+    #else
+    criticUpdatePolicy->Update(actorNetwork.Parameters(), config.StepSize(),
+                               actorGradients);
+    #endif
   }
 
   // Update the oldActorNetwork, synchronize the parameter.
@@ -210,7 +264,7 @@ double PPO<
       = ann::NormalDistribution(mu, sigma);
 
   ActionType action;
-  action.action = normalDist.Sample()[0];
+  action.action[0] = normalDist.Sample()[0];
 
 //  std::cout << "action: " << action.action << std::endl;
 

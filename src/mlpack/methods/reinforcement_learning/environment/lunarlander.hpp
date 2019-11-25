@@ -86,7 +86,7 @@ class LunarLander
   struct Action
   {
     // Fuel burn amount
-    double action = 0.0;
+    double action[1];
     // Storing degree of freedom
     int size = 1;
   };
@@ -120,7 +120,7 @@ class LunarLander
   State UpdateStatus(const State& state,
                     const Action& action)
   {
-    double burnAmount = action.action;
+    double burnAmount = action.action[0];
     double fuelRemaining = state.Fuel() - burnAmount;
     double height = state.Height() - ((state.Speed() - burnAmount + 5)
         + state.Speed()) / 2;
@@ -145,12 +145,12 @@ class LunarLander
     stepsPerformed++;
 
     Action modifyAction;
-    modifyAction.action = std::max(action.action, 0.0);
+    modifyAction.action[0] = std::max(action.action[0], 0.0);
 
     State currentNextState;
     if (state.Fuel() <= 0)
     {
-      modifyAction.action = 0.0;
+      modifyAction.action[0] = 0.0;
       currentNextState = UpdateStatus(state, modifyAction);
     }
     else
@@ -216,10 +216,10 @@ class LunarLander
                  const Action& action,
                  State& nextState)
   {
-    double oldVelocity = state.Speed() + action.action - 5;
+    double oldVelocity = state.Speed() + action.action[0] - 5;
     double oldHeight = state.Height() + (state.Speed() + oldVelocity) / 2;
     double oldTime = state.ElapsedTime() - 1;
-    double burnAmount = action.action;
+    double burnAmount = action.action[0];
     double fraction = 0.0;
 
     if (burnAmount == 5)

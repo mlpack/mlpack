@@ -90,6 +90,11 @@ class PPO
       EnvironmentType environment = EnvironmentType());
 
   /**
+    * Clean memory.
+    */
+  ~PPO();
+
+  /**
     * Execute a step in an episode.
     * @return Reward for the step.
     */
@@ -127,9 +132,17 @@ class PPO
 
   //! Locally-stored updater.
   UpdaterType criticUpdater;
+  #if ENS_VERSION_MAJOR >= 2
+    typename UpdaterType::template
+      Policy<arma::mat, arma::mat>* criticUpdatePolicy;
+  #endif
 
   //! Locally-stored updater.
   UpdaterType actorUpdater;
+  #if ENS_VERSION_MAJOR >= 2
+    typename UpdaterType::template
+    Policy<arma::mat, arma::mat>* actorUpdatePolicy;
+  #endif
 
   //! Locally-stored behavior policy.
   PolicyType policy;
