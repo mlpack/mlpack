@@ -81,7 +81,8 @@ public class BindingsTest {
       params.put("build_model", null);
       params.put("model_out", null);
       params.put("model_bw_out", null);
-      
+      params.put("matrix_and_info_in", null);
+      params.put("matrix_and_info_out", null);
     }
 
     public void put(String name, Object value) {
@@ -281,6 +282,15 @@ public class BindingsTest {
       }
     }
 
+    {
+      String name = "matrix_and_info_in";
+      MatrixWithInfo value = params.get(name, MatrixWithInfo.class);
+      if (value != null) {
+        CLI.setMatWithInfoParam(name, value);
+        CLI.setPassed(name);
+      }
+    }
+
     mlpackMain();
 
     params.put("string_out", CLI.getStringParam("string_out"));
@@ -297,5 +307,6 @@ public class BindingsTest {
     params.put("umatrix_order_out", CLI.getUMatParam("umatrix_order_out"));
     params.put("model_out", new GaussianKernel(GaussianKernelPtr.create(getGaussianKernelPtr("model_out"))));
     params.put("model_bw_out", CLI.getDoubleParam("model_bw_out"));
+    params.put("matrix_and_info_out", CLI.getMatParam("matrix_and_info_out"));
   }
 }

@@ -80,7 +80,10 @@ add_custom_target(jniCLI_configure ALL DEPENDS java_configure)
 add_custom_command(TARGET jniCLI_configure PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_CURRENT_SOURCE_DIR}/maven/src/main/java/org/mlpack/CLI.java
-        ${MAVEN_BUILD_DIR}/src/main/java/org/mlpack/CLI.java)
+        ${MAVEN_BUILD_DIR}/src/main/java/org/mlpack/CLI.java
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/maven/src/main/java/org/mlpack/MatrixWithInfo.java
+        ${MAVEN_BUILD_DIR}/src/main/java/org/mlpack/MatrixWithInfo.java)
 
 add_custom_command(
     OUTPUT 

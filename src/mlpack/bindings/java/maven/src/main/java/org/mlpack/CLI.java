@@ -15,8 +15,8 @@ import org.bytedeco.javacpp.annotation.*;
 @Namespace("mlpack::util")
 class CLI {
   private static final char ARMA_ORDER = 'f';
-  private static final DataType FP_TYPE = DataType.DOUBLE;
-  private static final DataType UNSIGNED_TYPE = DataType.UINT64;
+  static final DataType FP_TYPE = DataType.DOUBLE;
+  static final DataType UNSIGNED_TYPE = DataType.UINT64;
 
   private static class ManagedPointer extends Pointer {
     private static class MethodDeallocator extends ManagedPointer implements Deallocator {
@@ -222,6 +222,25 @@ class CLI {
     long size = array.length();
 
     nativeSetRowParam(name, new SizeTPointer(data), size);
+  }
+
+  @Name("SetMatWithInfoParam")
+  private static native void nativeSetMatWithInfoParam(
+      String name, DoublePointer data, @Cast("bool*") boolean[] info, long rows, long columns, boolean pointsAreRows);
+
+  static void setMatWithInfoParam(String name, MatrixWithInfo value) {
+    INDArray matrix = value.getMatrix();
+    boolean[] info = value.getInfo();
+
+    if (matrix.ordering() != ARMA_ORDER) {
+      matrix = matrix.dup(ARMA_ORDER);
+    }
+
+    DoublePointer data = new DoublePointer(matrix.data().addressPointer());
+    long rows = matrix.rows();
+    long columns = matrix.columns();
+    boolean pointsAreRows = value.getInfoOrder() == MatrixWithInfo.Order.ROW_MAJOR;
+    nativeSetMatWithInfoParam(name, data, info, rows, columns, pointsAreRows);
   }
 
   // getters
@@ -456,5 +475,55 @@ class CLI {
     char ordering = ARMA_ORDER;
 
     return Nd4j.create(buffer, shape, stride, offset, ordering, type);
+  }
+
+  @Name("GetMatWithInfoParamData")
+  private static native DoublePointer getMatWithInfoParamData(String name);
+
+  @Name("GetMatWithInfoParamCols")
+  private static native long getMatWithInfoParamCols(String name);
+
+  @Name("GetMatWithInfoParamRows")
+  private static native long getMatWithInfoParamRows(String name);
+
+  @Name("GetMatWithInfoParamLength")
+  private static native long getMatWithInfoParamLength(String name);
+
+  @Name("GetMatWithInfoParamInfo")
+  private static native BoolPointer getMatWithInfoParamInfo(String name);
+
+  static MatrixWithInfo getMatWithInfoParam(String name) {
+    Pointer data = getMatWithInfoParamData(name);
+
+    if (data == null) {
+      return null;
+    }
+
+    data = ManagedPointer.create(data);
+
+    long rows = getMatWithInfoParamRows(name);
+    long columns = getMatWithInfoParamCols(name);
+    long length = getMatWithInfoParamLength(name);
+    DataType type = FP_TYPE;
+    data.capacity(length);
+
+    DataBuffer buffer = Nd4j.createBuffer(data, length, type);
+    long[] shape = {rows, columns};
+    long[] stride = Nd4j.getStrides(shape, ARMA_ORDER);
+    long offset = 0;
+    char ordering = ARMA_ORDER;
+
+    INDArray matrix = Nd4j.create(buffer, shape, stride, offset, ordering, type);
+    BoolPointer infoPtr = getMatWithInfoParamInfo(name);
+    infoPtr.capacity(rows);
+
+    boolean[] info = new boolean[(int)rows];
+    for (int i = 0; i < info.length; ++i) {
+      info[i] = infoPtr.get(i);
+    }
+
+    ManagedPointer.create(infoPtr);
+
+    return new MatrixWithInfo(matrix, info, MatrixWithInfo.Order.COLUMN_MAJOR);
   }
 }

@@ -488,4 +488,54 @@ public class BindingsJUnitTest {
 
     assertEquals(20.0, params.get("model_bw_out", Double.class), 0.0001);
   }
+
+  @Test
+  public void runWithMatrixAndInfo() {
+    INDArray matrix = Nd4j.rand(DataType.DOUBLE, 'c', new long[] {10, 100});
+    boolean[] info = new boolean[10];
+    MatrixWithInfo data = new MatrixWithInfo(matrix, info, MatrixWithInfo.Order.COLUMN_MAJOR);
+
+    BindingsTest.Params params = new BindingsTest.Params();
+    params.put("int_in", 12);
+    params.put("double_in", 4.0);
+    params.put("string_in", "hello");
+    params.put("matrix_and_info_in", data);
+
+    BindingsTest.run(params);
+
+    INDArray result = params.get("matrix_and_info_out", INDArray.class);
+    assertEquals(matrix.size(0), result.size(0));
+    assertEquals(matrix.size(1), result.size(1));
+
+    for (int i = 0, n = (int) result.size(0); i < n; ++i) {
+      for (int j = 0, m = (int) result.size(1); j < m; ++j) {
+        assertEquals(matrix.getDouble(i, j) * 2, result.getDouble(i, j), 0.0001);
+      }
+    }
+  }
+
+  @Test
+  public void runWithMatrixAndInfoRowMajor() {
+    INDArray matrix = Nd4j.rand(DataType.DOUBLE, 'c', new long[] {100, 10});
+    boolean[] info = new boolean[10];
+    MatrixWithInfo data = new MatrixWithInfo(matrix, info, MatrixWithInfo.Order.ROW_MAJOR);
+
+    BindingsTest.Params params = new BindingsTest.Params();
+    params.put("int_in", 12);
+    params.put("double_in", 4.0);
+    params.put("string_in", "hello");
+    params.put("matrix_and_info_in", data);
+
+    BindingsTest.run(params);
+
+    INDArray result = params.get("matrix_and_info_out", INDArray.class);
+    assertEquals(matrix.size(0), result.size(0));
+    assertEquals(matrix.size(1), result.size(1));
+
+    for (int i = 0, n = (int) result.size(0); i < n; ++i) {
+      for (int j = 0, m = (int) result.size(1); j < m; ++j) {
+        assertEquals(matrix.getDouble(i, j) * 2, result.getDouble(i, j), 0.0001);
+      }
+    }
+  }
 }

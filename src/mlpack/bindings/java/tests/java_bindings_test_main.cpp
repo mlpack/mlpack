@@ -25,7 +25,7 @@ PARAM_COL_IN("col_in", "Input column.", "c");
 PARAM_UCOL_IN("ucol_in", "Input unsigned column.", "");
 PARAM_ROW_IN("row_in", "Input row.", "");
 PARAM_UROW_IN("urow_in", "Input unsigned row.", "");
-//PARAM_MATRIX_AND_INFO_IN("matrix_and_info_in", "Input matrix and info.", "");
+PARAM_MATRIX_AND_INFO_IN("matrix_and_info_in", "Input matrix and info.", "");
 PARAM_VECTOR_IN(int, "vector_in", "Input vector of numbers.", "");
 PARAM_VECTOR_IN(string, "str_vector_in", "Input vector of strings.", "");
 PARAM_MODEL_IN(GaussianKernel, "model_in", "Input model.", "");
@@ -41,8 +41,8 @@ PARAM_COL_OUT("col_out", "Output column. 2x input column", "");
 PARAM_UCOL_OUT("ucol_out", "Output unsigned column. 2x input column.", "");
 PARAM_ROW_OUT("row_out", "Output row.  2x input row.", "");
 PARAM_UROW_OUT("urow_out", "Output unsigned row.  2x input row.", "");
-//PARAM_MATRIX_OUT("matrix_and_info_out", "Output matrix and info; all numeric "
-    //"elements multiplied by 3.", "");
+PARAM_MATRIX_OUT("matrix_and_info_out", "Output matrix and info; all numeric "
+    "elements multiplied by 3.", "");
 PARAM_VECTOR_OUT(int, "vector_out", "Output vector.", "");
 PARAM_VECTOR_OUT(string, "str_vector_out", "Output string vector.", "");
 PARAM_MODEL_OUT(GaussianKernel, "model_out", "Output model, with twice the "
@@ -155,7 +155,7 @@ static void mlpackMain()
   }
 
   // All numeric elements should be multiplied by 3.
-  /*if (CLI::HasParam("matrix_and_info_in"))
+  if (CLI::HasParam("matrix_and_info_in"))
   {
     typedef tuple<data::DatasetInfo, arma::mat> TupleType;
     TupleType tuple = move(CLI::GetParam<TupleType>("matrix_and_info_in"));
@@ -170,7 +170,7 @@ static void mlpackMain()
     }
 
     CLI::GetParam<arma::mat>("matrix_and_info_out") = move(m);
-  }*/
+  }
 
   // If we got a request to build a model, then build it.
   if (CLI::HasParam("build_model"))

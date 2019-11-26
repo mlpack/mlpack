@@ -33,6 +33,8 @@ void SetParam(const char* name, T value)
   CLI::GetParam<T>(name) = std::move(value);
 }
 
+void SetMatWithInfoParam(const char* name, double* data, bool* info, size_t rows, size_t columns, bool pointsAreRows);
+
 template <typename T>
 T GetParam(const char* name)
 {
@@ -101,6 +103,16 @@ T GetVecElement(const char* name, int i)
 void SetPassed(const char* name);
 
 void RestoreSettings(const char* name);
+
+double* GetMatWithInfoParamData(const char* name);
+
+size_t GetMatWithInfoParamCols(const char* name);
+
+size_t GetMatWithInfoParamRows(const char* name);
+
+size_t GetMatWithInfoParamLength(const char* name);
+
+bool* GetMatWithInfoParamInfo(const char* name);
 
 }
 }
