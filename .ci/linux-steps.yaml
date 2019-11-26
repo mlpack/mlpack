@@ -12,10 +12,16 @@ steps:
 # Install build dependencies
 - script: |
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
-
+    
+    sudo add-apt-repository ppa:mhier/libboost-latest
     sudo apt-get update
+
+    # Remove BOOST_ROOT from the environment to prevent attempting to use a
+    # boost which is incompatible with the compiler.
     unset BOOST_ROOT
-    sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-math-dev libboost-program-options-dev libboost-test-dev libboost-serialization-dev libarmadillo-dev xz-utils
+    echo "##vso[task.setvariable variable=BOOST_ROOT]"$BOOST_ROOT
+
+    sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost1.70-dev libarmadillo-dev xz-utils
 
     if [ '$(python.version)' == '2.7' ]; then
       sudo apt-get install -y --allow-unauthenticated python-pip cython python-numpy python-pandas

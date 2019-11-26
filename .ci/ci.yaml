@@ -1,5 +1,6 @@
 jobs:
 - job: Linux
+  timeoutInMinutes: 360
   pool:
     vmImage: ubuntu-16.04
   strategy:
@@ -21,6 +22,7 @@ jobs:
   - template: linux-steps.yaml
 
 - job: macOS
+  timeoutInMinutes: 360
   pool:
     vmImage: macOS-10.13
   strategy:
