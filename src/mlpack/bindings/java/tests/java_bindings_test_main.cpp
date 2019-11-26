@@ -1,9 +1,11 @@
-#include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
-
+#include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/kernels/gaussian_kernel.hpp>
 
 using namespace std;
 using namespace mlpack;
+using namespace mlpack::kernel;
 
 PROGRAM_INFO("Java binding test",
     "A simple program to test Julia binding functionality.",
@@ -26,8 +28,8 @@ PARAM_UROW_IN("urow_in", "Input unsigned row.", "");
 //PARAM_MATRIX_AND_INFO_IN("matrix_and_info_in", "Input matrix and info.", "");
 PARAM_VECTOR_IN(int, "vector_in", "Input vector of numbers.", "");
 PARAM_VECTOR_IN(string, "str_vector_in", "Input vector of strings.", "");
-//PARAM_MODEL_IN(GaussianKernel, "model_in", "Input model.", "");
-//PARAM_FLAG("build_model", "If true, a model will be returned.", "");
+PARAM_MODEL_IN(GaussianKernel, "model_in", "Input model.", "");
+PARAM_FLAG("build_model", "If true, a model will be returned.", "");
 
 PARAM_STRING_OUT("string_out", "Output string, will be 'hello2'.", "S");
 PARAM_INT_OUT("int_out", "Output int, will be 13.");
@@ -43,9 +45,9 @@ PARAM_UROW_OUT("urow_out", "Output unsigned row.  2x input row.", "");
     //"elements multiplied by 3.", "");
 PARAM_VECTOR_OUT(int, "vector_out", "Output vector.", "");
 PARAM_VECTOR_OUT(string, "str_vector_out", "Output string vector.", "");
-//PARAM_MODEL_OUT(GaussianKernel, "model_out", "Output model, with twice the "
-    //"bandwidth.", "");
-//PARAM_DOUBLE_OUT("model_bw_out", "The bandwidth of the model.");
+PARAM_MODEL_OUT(GaussianKernel, "model_out", "Output model, with twice the "
+    "bandwidth.", "");
+PARAM_DOUBLE_OUT("model_bw_out", "The bandwidth of the model.");
 
 static void mlpackMain() 
 {
@@ -171,15 +173,15 @@ static void mlpackMain()
   }*/
 
   // If we got a request to build a model, then build it.
-  /*if (CLI::HasParam("build_model"))
+  if (CLI::HasParam("build_model"))
   {
     CLI::GetParam<GaussianKernel*>("model_out") = new GaussianKernel(10.0);
-  }*/
+  }
 
   // If we got an input model, double the bandwidth and output that.
-  /*if (CLI::HasParam("model_in"))
+  if (CLI::HasParam("model_in"))
   {
     CLI::GetParam<double>("model_bw_out") =
         CLI::GetParam<GaussianKernel*>("model_in")->Bandwidth() * 2.0;
-  }*/
+  }
 }

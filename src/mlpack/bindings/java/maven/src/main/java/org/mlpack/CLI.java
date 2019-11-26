@@ -11,7 +11,7 @@ import java.util.List;
 import org.bytedeco.javacpp.*;
 import org.bytedeco.javacpp.annotation.*;
 
-@Platform(include = "cli_util.hpp")
+@Platform(include = {"cli_util.hpp", "deleter.hpp"})
 @Namespace("mlpack::util")
 class CLI {
   private static final char ARMA_ORDER = 'f';
@@ -79,10 +79,6 @@ class CLI {
     argumentCheck(mat.dataType() == FP_TYPE, 
         "Matrix data type is %s. %s expected.", mat.dataType(), FP_TYPE);
 
-    // TODO(Vasniktel): decide the best place to do it: here or in C++
-    // So far it seems there is no way to avoid it
-    // Also would be good to make sure everything works as expected with
-    //   JavaOption.noTranspose
     if (mat.ordering() != ARMA_ORDER) {
       mat = mat.dup(ARMA_ORDER);
     }
@@ -91,8 +87,6 @@ class CLI {
     int rows = mat.rows();
     int columns = mat.columns();
 
-    // Nd4j beta4, which is currently used, doesn't have unsigned data type but beta5 does
-    // TODO: decide whether we should use beta5 instead
     nativeSetMatParam(name, new DoublePointer(data), rows, columns);
   }
 
@@ -101,11 +95,6 @@ class CLI {
     argumentCheck(mat.dataType() == UNSIGNED_TYPE, 
         "Matrix data type is %s. %s expected.", mat.dataType(), UNSIGNED_TYPE);
 
-    // TODO(Vasniktel): So far it seems there is no way to avoid copying
-    // Also would be good to make sure everything works as expected with
-    //   JavaOption.noTranspose
-    // BUG(Vasniktel): There is an issue with INDArray.setOrder method:
-    // when we use it, the condition below can't guarantee data consistency
     if (mat.ordering() != ARMA_ORDER) {
       mat = mat.dup(ARMA_ORDER);
     }
@@ -114,9 +103,6 @@ class CLI {
     int rows = mat.rows();
     int columns = mat.columns();
 
-    // Nd4j beta4, which is currently used, doesn't have unsigned data type but beta5 does
-    // TODO: decide whether we should use beta5 instead
-    // TODO: should we handle convertion from signed to unsigned here somehow?
     nativeSetMatParam(name, new SizeTPointer(data), rows, columns);
   }
 

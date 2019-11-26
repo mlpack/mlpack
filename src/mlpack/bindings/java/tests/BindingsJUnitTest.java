@@ -442,12 +442,12 @@ public class BindingsJUnitTest {
 
   @Test
   public void doubleDeallocation() {
-    int[] arr = new int[25];
+    int[] arr = new int[100];
     for (int i = 0; i < arr.length; ++i) {
       arr[i] = i;
     }
 
-    long[] shape = {5, 5};
+    long[] shape = {10, 10};
     INDArray matrix = Nd4j.create(arr, shape, DataType.UINT64);
 
     BindingsTest.Params params = new BindingsTest.Params();
@@ -469,5 +469,23 @@ public class BindingsJUnitTest {
     System.gc();
 
     assertTrue(true);
+  }
+
+  @Test
+  public void runWithModel() {
+    BindingsTest.Params params = new BindingsTest.Params();
+    params.put("int_in", 12);
+    params.put("double_in", 4.0);
+    params.put("string_in", "hello");
+    params.put("build_model", true);
+
+    BindingsTest.run(params);
+
+    params.put("build_model", false);
+    params.put("model_in", params.get("model_out", GaussianKernel.class));
+
+    BindingsTest.run(params);
+
+    assertEquals(20.0, params.get("model_bw_out", Double.class), 0.0001);
   }
 }

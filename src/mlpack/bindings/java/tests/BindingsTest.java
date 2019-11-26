@@ -6,9 +6,44 @@ import org.bytedeco.javacpp.annotation.*;
 
 import java.util.*;
 
-@Platform(include = "java_bindings_test_main.cpp")
+@Platform(include = {"java_bindings_test_main.cpp", "cli_util.hpp", "deleter.hpp"})
 public class BindingsTest {
   private static final String THIS_NAME = "Java binding test";
+
+  private static class GaussianKernelPtr extends Pointer {
+    private static class MethodDeallocator extends GaussianKernelPtr implements Deallocator {
+      private MethodDeallocator(GaussianKernelPtr p) {
+        super(p);
+      }
+
+      @Override
+      public void deallocate() {
+        delete(this);
+      }
+
+      @Namespace("::mlpack::util")
+      @Name("Delete<GaussianKernel>")
+      private static native void delete(Pointer p);
+    }
+
+    private GaussianKernelPtr(Pointer p) {
+      super(p);
+    }
+
+    static Pointer create(Pointer p) {
+      GaussianKernelPtr result = new GaussianKernelPtr(p);
+      result.deallocator(new MethodDeallocator(result));
+      return result;
+    }
+  }
+
+  @Namespace("::mlpack::util")
+  @Name("GetParam<GaussianKernel*>")
+  private static native Pointer getGaussianKernelPtr(String name);
+
+  @Namespace("::mlpack::util")
+  @Name("SetParam<GaussianKernel*>")
+  private static native void setGaussianKernelPtr(String name, @Cast("GaussianKernel*") Pointer model);
 
   private static native void mlpackMain();
 
@@ -31,7 +66,6 @@ public class BindingsTest {
       params.put("str_vector_in", null);
       params.put("umatrix_order_in", null);
       params.put("umatrix_order_out", null);
-      //params.put("build_model", null);
       params.put("string_out", null);
       params.put("int_out", null);
       params.put("double_out", null);
@@ -43,6 +77,10 @@ public class BindingsTest {
       params.put("urow_out", null);
       params.put("vector_out", null);
       params.put("str_vector_out", null);
+      params.put("model_in", null);
+      params.put("build_model", null);
+      params.put("model_out", null);
+      params.put("model_bw_out", null);
       
     }
 
@@ -225,6 +263,24 @@ public class BindingsTest {
       }
     }
 
+    {
+      String name = "model_in";
+      GaussianKernel value = params.get(name, GaussianKernel.class);
+      if (value != null) {
+        setGaussianKernelPtr(name, value.getPointer());
+        CLI.setPassed(name);
+      }
+    }
+
+    {
+      String name = "build_model";
+      Boolean value = params.get(name, Boolean.class);
+      if (value != null) {
+        CLI.setBoolParam(name, value);
+        CLI.setPassed(name);
+      }
+    }
+
     mlpackMain();
 
     params.put("string_out", CLI.getStringParam("string_out"));
@@ -239,5 +295,7 @@ public class BindingsTest {
     params.put("vector_out", CLI.getVecIntParam("vector_out"));
     params.put("str_vector_out", CLI.getVecStringParam("str_vector_out"));
     params.put("umatrix_order_out", CLI.getUMatParam("umatrix_order_out"));
+    params.put("model_out", new GaussianKernel(GaussianKernelPtr.create(getGaussianKernelPtr("model_out"))));
+    params.put("model_bw_out", CLI.getDoubleParam("model_bw_out"));
   }
 }

@@ -7,19 +7,6 @@ namespace mlpack {
 namespace util {
 
 template <typename T>
-typename std::enable_if<!std::is_array<T>::value>::type Delete(void* p)
-{
-  delete static_cast<T*>(p);
-}
-
-template <typename T>
-typename std::enable_if<std::is_array<T>::value>::type Delete(void* p)
-{
-  using U = typename std::remove_all_extents<T>::type;
-  delete[] static_cast<U*>(p);
-}
-
-template <typename T>
 void SetMatParam(const char* name, T* data, size_t rows, size_t columns)
 {
   arma::Mat<T> m(data, rows, columns, false, true);
@@ -53,14 +40,13 @@ T GetParam(const char* name)
 }
 
 template <typename T>
-auto GetArmaParamData(const char* name)
-    -> decltype(CLI::GetParam<T>(name).memptr())
+typename T::elem_type* GetArmaParamData(const char* name)
 {
-  using R = boost::remove_const_t<boost::remove_pointer_t<decltype(CLI::GetParam<T>(name).memptr())>>;
   auto& param = CLI::GetParam<T>(name);
   
   if (param.mem && param.n_elem <= arma::arma_config::mat_prealloc) 
   {
+    using R = typename T::elem_type;
     R* result = new R[param.n_elem];
     arma::arrayops::copy(result, param.mem, param.n_elem);
     return result;

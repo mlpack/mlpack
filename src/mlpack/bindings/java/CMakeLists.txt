@@ -82,12 +82,17 @@ add_custom_command(TARGET jniCLI_configure PRE_BUILD
         ${CMAKE_CURRENT_SOURCE_DIR}/maven/src/main/java/org/mlpack/CLI.java
         ${MAVEN_BUILD_DIR}/src/main/java/org/mlpack/CLI.java)
 
-add_custom_command(OUTPUT ${BUILD_SRC_DIR}/cli_util.hpp
+add_custom_command(
+    OUTPUT 
+        ${BUILD_SRC_DIR}/cli_util.hpp 
+        ${BUILD_SRC_DIR}/deleter.hpp
+        ${BUILD_SRC_DIR}/cli_util.cpp
     COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_CURRENT_SOURCE_DIR}/cli_util.hpp
-        ${BUILD_SRC_DIR}/cli_util.hpp)
-
-add_custom_command(OUTPUT ${BUILD_SRC_DIR}/cli_util.cpp
+        ${BUILD_SRC_DIR}/cli_util.hpp
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/deleter.hpp
+        ${BUILD_SRC_DIR}/deleter.hpp
     COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_CURRENT_SOURCE_DIR}/cli_util.cpp
         ${BUILD_SRC_DIR}/cli_util.cpp)
@@ -99,7 +104,7 @@ add_custom_command(TARGET jniCLI_configure PRE_BUILD
 
 # Generate JNI wrappers from compiled java bytecode
 add_custom_command(OUTPUT ${JNI_GEN_DIR}/jnijavacpp.cpp ${JNI_GEN_DIR}/jniCLI.cpp
-    COMMAND ${Java_JAVA_EXECUTABLE} ARGS -jar ${JAVACPP} -classpath .:${MAVEN_BUILD_DIR}/lib/* -nocompile -d ${JNI_GEN_DIR} org/mlpack/CLI.class
+    COMMAND ${Java_JAVA_EXECUTABLE} -jar ${JAVACPP} -classpath .:${MAVEN_BUILD_DIR}/lib/* -nocompile -d ${JNI_GEN_DIR} org/mlpack/CLI.class
     WORKING_DIRECTORY ${MAVEN_BUILD_DIR}/target/classes)
 
 # Compile shared object
@@ -107,7 +112,8 @@ add_library(jniCLI SHARED
     ${JNI_GEN_DIR}/jnijavacpp.cpp 
     ${JNI_GEN_DIR}/jniCLI.cpp
     ${BUILD_SRC_DIR}/cli_util.hpp
-    ${BUILD_SRC_DIR}/cli_util.cpp)
+    ${BUILD_SRC_DIR}/cli_util.cpp
+    ${BUILD_SRC_DIR}/deleter.hpp)
 
 target_include_directories(jniCLI PUBLIC ${BUILD_SRC_DIR} ${JNI_GEN_DIR} ${JNI_INCLUDE_DIRS})
 target_link_libraries(jniCLI mlpack)
@@ -116,9 +122,9 @@ add_dependencies(jniCLI jniCLI_configure)
 add_dependencies(java jniCLI)
 
 # Make sure we have no *.class files left
-add_custom_command(TARGET jniCLI POST_BUILD
-    COMMAND ${MAVEN} ARGS clean
-    WORKING_DIRECTORY ${MAVEN_BUILD_DIR}) 
+#add_custom_command(TARGET jniCLI POST_BUILD
+ #   COMMAND ${MAVEN} ARGS clean
+  #  WORKING_DIRECTORY ${MAVEN_BUILD_DIR}) 
 
 macro(add_java_binding name java_name)
   
