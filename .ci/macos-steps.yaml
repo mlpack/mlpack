@@ -18,9 +18,11 @@ steps:
     brew install openblas armadillo boost
 
     if [ 'a$(julia.version)' != 'a' ]; then
-      wget https://julialang-s3.julialang.org/bin/linux/x64/1.3/julia-1.3.0-linux-x86_64.tar.gz
-      sudo mkdir /opt/ # Maybe there is a better place on OS X?
-      sudo tar -C /opt/ -xvpf julia-1.3.0-linux-x86_64.tar.gz
+      wget https://julialang-s3.julialang.org/bin/mac/x64/1.3/julia-1.3.0-mac64.dmg
+      sudo hdiutil attach julia-1.3.0-mac64.dmg
+      # for debugging
+      ls /Volumes/
+      ls /Volumes/julia-1.3.0-mac64/
     fi
 
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
