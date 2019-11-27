@@ -21,6 +21,7 @@
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/double_pole_cart.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
 
@@ -104,7 +105,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 
 //! Test DQN in Cart Pole task with Prioritized Replay.
 BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
-  {
+{
   // Set up the network.
   FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
       GaussianInitialization(0, 0.001));
@@ -382,6 +383,76 @@ BOOST_AUTO_TEST_CASE(MountainCarWithDQN)
 
         Log::Debug << "Average return in deterministic test: "
             << testReturn.mean() << std::endl;
+        break;
+      }
+    }
+
+    if (converged)
+    {
+      success = true;
+      break;
+    }
+  }
+
+  BOOST_REQUIRE_EQUAL(success, true);
+}
+
+//! Test DQN in DoublePoleCart task.
+BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
+{
+  // We will allow four trials total.
+  bool success = false;
+  for (size_t trial = 0; trial < 4; trial++)
+  {
+    // Set up the network.
+    FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
+        GaussianInitialization(0, 0.001));
+    model.Add<Linear<>>(6, 256);
+    model.Add<ReLULayer<>>();
+    model.Add<Linear<>>(256, 3);
+
+    // Set up the policy and replay method.
+    GreedyPolicy<DoublePoleCart> policy(1.0, 1000, 0.1, 0.99);
+    RandomReplay<DoublePoleCart> replayMethod(20, 10000);
+
+    TrainingConfig config;
+    config.StepSize() = 0.01;
+    config.Discount() = 0.9;
+    config.TargetNetworkSyncInterval() = 100;
+    config.ExplorationSteps() = 100;
+    config.DoubleQLearning() = false;
+    config.StepLimit() = 600;
+
+    // Set up DQN agent.
+    QLearning<DoublePoleCart, decltype(model), AdamUpdate, decltype(policy)>
+        agent(std::move(config), std::move(model), std::move(policy),
+        std::move(replayMethod));
+
+    size_t episodes = 0;
+    bool converged = true;
+    size_t episodeSuccesses = 0;
+    while (true)
+    {
+      double episodeReturn = agent.Episode();
+      episodes += 1;
+
+      if (episodeReturn >= 280)
+        episodeSuccesses++;
+
+      if (episodes > 2000)
+      {
+        Log::Debug << "Cart Pole with DQN failed." << std::endl;
+        converged = false;
+        break;
+      }
+
+      // If the model can solve the environment in two trials this is fine for
+      // a simple test.
+      if (episodeSuccesses >= 2)
+      {
+        Log::Debug << "QLearning has succeeded in the multiple pole cart" <<
+            " environment." << std::endl;
+        converged = true;
         break;
       }
     }

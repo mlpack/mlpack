@@ -37,11 +37,43 @@
 #include <mlpack/bindings/cli/cli_option.hpp>
 #include <mlpack/bindings/cli/print_doc_functions.hpp>
 
+/**
+ * PRINT_PARAM_STRING() returns a string that contains the correct
+ * language-specific representation of a parameter's name.
+ */
 #define PRINT_PARAM_STRING mlpack::bindings::cli::ParamString
+
+/**
+ * PRINT_PARAM_VALUE() returns a string that contains a correct
+ * language-specific representation of a parameter's value.
+ */
 #define PRINT_PARAM_VALUE mlpack::bindings::cli::PrintValue
+
+/**
+ * PRINT_CALL() returns a string that contains the full language-specific
+ * representation of a call to an mlpack binding.  The first argument should be
+ * the name of the binding, and all other arguments should be names of
+ * parameters followed by values (in the case where the preceding parameter is
+ * not a flag).
+ */
 #define PRINT_CALL mlpack::bindings::cli::ProgramCall
+
+/**
+ * PRINT_DATASET() returns a string that contains a correct language-specific
+ * representation of a dataset name.
+ */
 #define PRINT_DATASET mlpack::bindings::cli::PrintDataset
+
+/**
+ * PRINT_MODEL() returns a string that contains a correct language-specific
+ * representation of an mlpack model name.
+ */
 #define PRINT_MODEL mlpack::bindings::cli::PrintModel
+
+/**
+ * BINDING_IGNORE_CHECK() is an internally-used macro to determine whether or
+ * not a specific parameter check should be ignored.
+ */
 #define BINDING_IGNORE_CHECK mlpack::bindings::cli::IgnoreCheck
 
 namespace mlpack {
@@ -91,7 +123,20 @@ int main(int argc, char** argv)
 #define PRINT_PARAM_VALUE(A, B) std::string(" ")
 #define PRINT_DATASET(A) std::string(" ")
 #define PRINT_MODEL(A) std::string(" ")
+
+/**
+ * PRINT_CALL() returns a string that contains the full language-specific
+ * representation of a call to an mlpack binding.  The first argument should be
+ * the name of the binding, and all other arguments should be names of
+ * parameters followed by values (in the case where the preceding parameter is
+ * not a flag).
+ */
 #define PRINT_CALL(...) std::string(" ")
+
+/**
+ * BINDING_IGNORE_CHECK() is an internally-used macro to determine whether or
+ * not a specific parameter check should be ignored.
+ */
 #define BINDING_IGNORE_CHECK mlpack::bindings::tests::IgnoreCheck
 
 namespace mlpack {
@@ -120,11 +165,43 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 #include <mlpack/bindings/python/py_option.hpp>
 #include <mlpack/bindings/python/print_doc_functions.hpp>
 
+/**
+ * PRINT_PARAM_STRING() returns a string that contains the correct
+ * language-specific representation of a parameter's name.
+ */
 #define PRINT_PARAM_STRING mlpack::bindings::python::ParamString
+
+/**
+ * PRINT_PARAM_VALUE() returns a string that contains a correct
+ * language-specific representation of a parameter's value.
+ */
 #define PRINT_PARAM_VALUE mlpack::bindings::python::PrintValue
+
+/**
+ * PRINT_DATASET() returns a string that contains a correct language-specific
+ * representation of a dataset name.
+ */
 #define PRINT_DATASET mlpack::bindings::python::PrintDataset
+
+/**
+ * PRINT_MODEL() returns a string that contains a correct language-specific
+ * representation of an mlpack model name.
+ */
 #define PRINT_MODEL mlpack::bindings::python::PrintModel
+
+/**
+ * PRINT_CALL() returns a string that contains the full language-specific
+ * representation of a call to an mlpack binding.  The first argument should be
+ * the name of the binding, and all other arguments should be names of
+ * parameters followed by values (in the case where the preceding parameter is
+ * not a flag).
+ */
 #define PRINT_CALL mlpack::bindings::python::ProgramCall
+
+/**
+ * BINDING_IGNORE_CHECK() is an internally-used macro to determine whether or
+ * not a specific parameter check should be ignored.
+ */
 #define BINDING_IGNORE_CHECK mlpack::bindings::python::IgnoreCheck
 
 namespace mlpack {
@@ -217,11 +294,43 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 #include <mlpack/bindings/markdown/md_option.hpp>
 #include <mlpack/bindings/markdown/print_doc_functions.hpp>
 
+/**
+ * PRINT_PARAM_STRING() returns a string that contains the correct
+ * language-specific representation of a parameter's name.
+ */
 #define PRINT_PARAM_STRING mlpack::bindings::markdown::ParamString
+
+/**
+ * PRINT_PARAM_VALUE() returns a string that contains a correct
+ * language-specific representation of a parameter's value.
+ */
 #define PRINT_PARAM_VALUE mlpack::bindings::markdown::PrintValue
+
+/**
+ * PRINT_DATASET() returns a string that contains a correct language-specific
+ * representation of a dataset name.
+ */
 #define PRINT_DATASET mlpack::bindings::markdown::PrintDataset
+
+/**
+ * PRINT_MODEL() returns a string that contains a correct language-specific
+ * representation of an mlpack model name.
+ */
 #define PRINT_MODEL mlpack::bindings::markdown::PrintModel
+
+/**
+ * PRINT_CALL() returns a string that contains the full language-specific
+ * representation of a call to an mlpack binding.  The first argument should be
+ * the name of the binding, and all other arguments should be names of
+ * parameters followed by values (in the case where the preceding parameter is
+ * not a flag).
+ */
 #define PRINT_CALL mlpack::bindings::markdown::ProgramCall
+
+/**
+ * BINDING_IGNORE_CHECK() is an internally-used macro to determine whether or
+ * not a specific parameter check should be ignored.
+ */
 #define BINDING_IGNORE_CHECK mlpack::bindings::markdown::IgnoreCheck
 
 // This doesn't actually matter for this binding type.

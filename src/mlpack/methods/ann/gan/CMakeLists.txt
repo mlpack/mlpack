@@ -8,6 +8,8 @@ set(SOURCES
   wgangp_impl.hpp
 )
 
+add_subdirectory(metrics)
+
 # Add directory name to sources.
 set(DIR_SRCS)
 foreach(file ${SOURCES})

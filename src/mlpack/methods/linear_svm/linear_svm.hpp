@@ -87,11 +87,40 @@ class LinearSVM
    * function. By default, the model takes a small value.
    *
    * @tparam OptimizerType Desired differentiable separable optimizer
+   * @tparam CallbackTypes Types of callback functions.
+   * @param data Input training features. Each column associate with one sample
+   * @param labels Labels associated with the feature data.
+   * @param numClasses Number of classes for classification.
+   * @param lambda L2-regularization constant.
+   * @param delta Margin of difference between correct class and other classes.
+   * @param fitIntercept add intercept term or not.
+   * @param optimizer Desired optimizer.
+   * @param callbacks Callback functions.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   */
+  template <typename OptimizerType, typename... CallbackTypes>
+  LinearSVM(const MatType& data,
+            const arma::Row<size_t>& labels,
+            const size_t numClasses,
+            const double lambda,
+            const double delta,
+            const bool fitIntercept,
+            OptimizerType optimizer,
+            CallbackTypes&&... callbacks);
+
+  /**
+   * Construct the LinearSVM class with the provided data and labels.
+   * This will train the model. Optionally, the parameter 'lambda' can be
+   * passed, which controls the amount of L2-regularization in the objective
+   * function. By default, the model takes a small value.
+   *
+   * @tparam OptimizerType Desired differentiable separable optimizer
    * @param data Input training features. Each column associate with one sample
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
    * @paran delta Margin of difference between correct class and other classes.
+   * @param fitIntercept add intercept term or not.
    * @param optimizer Desired optimizer.
    */
   template <typename OptimizerType = ens::L_BFGS>
@@ -116,6 +145,20 @@ class LinearSVM
    */
   LinearSVM(const size_t inputSize,
             const size_t numClasses = 0,
+            const double lambda = 0.0001,
+            const double delta = 1.0,
+            const bool fitIntercept = false);
+  /**
+   * Initialize the Linear SVM without performing training.  Default
+   * value of lambda is 0.0001.  Be sure to use Train() before calling
+   * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
+   *
+   * @param numClasses Number of classes for classification.
+   * @param lambda L2-regularization constant.
+   * @paran delta Margin of difference between correct class and other classes.
+   * @param fitIntercept add intercept term or not.
+   */
+  LinearSVM(const size_t numClasses = 0,
             const double lambda = 0.0001,
             const double delta = 1.0,
             const bool fitIntercept = false);
@@ -182,11 +225,30 @@ class LinearSVM
   /**
    * Train the Linear SVM with the given training data.
    *
-   * @tparam OptimizerType Desired optimizer
-   * @param data Input training features. Each column associate with one sample
+   * @tparam OptimizerType Desired optimizer.
+   * @tparam CallbackTypes Types of Callback Functions.
+   * @param data Input training features. Each column associate with one sample.
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
-   * @param lambda L2-regularization constant.
+   * @param optimizer Desired optimizer.
+   * @param callbacks Callback Functions.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return Objective value of the final point.
+   */
+  template <typename OptimizerType, typename... CallbackTypes>
+  double Train(const MatType& data,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               OptimizerType optimizer,
+               CallbackTypes&&... callbacks);
+
+  /**
+   * Train the Linear SVM with the given training data.
+   *
+   * @tparam OptimizerType Desired optimizer.
+   * @param data Input training features. Each column associate with one sample.
+   * @param labels Labels associated with the feature data.
+   * @param numClasses Number of classes for classification.
    * @param optimizer Desired optimizer.
    * @return Objective value of the final point.
    */
@@ -206,6 +268,14 @@ class LinearSVM
   double& Lambda() { return lambda; }
   //! Gets the regularization parameter.
   double Lambda() const { return lambda; }
+
+  //! Sets the margin between the correct class and all other classes.
+  double& Delta() { return delta; }
+  //! Gets the margin between the correct class and all other classes.
+  double Delta() const { return delta; }
+
+  //! Sets the intercept term flag.
+  bool& FitIntercept() { return fitIntercept; }
 
   //! Set the model parameters.
   arma::mat& Parameters() { return parameters; }

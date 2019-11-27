@@ -1,6 +1,8 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+scaling_model.hpp
+scaling_model_impl.hpp
 )
 
 # Add directory name to sources.
@@ -35,3 +37,7 @@ add_cli_executable(preprocess_imputer)
 #add_python_binding(preprocess_imputer)
 #add_julia_binding(preprocess_imputer)
 add_markdown_docs(preprocess_imputer "cli" "preprocessing")
+
+add_cli_executable(preprocess_scale)
+add_python_binding(preprocess_scale)
+add_markdown_docs(preprocess_scale "cli;python" "preprocessing")

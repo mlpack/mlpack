@@ -16,8 +16,8 @@
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/multiple_pole_cart.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/continuous_multiple_pole_cart.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/double_pole_cart.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/continuous_double_pole_cart.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
 #include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
 
   Pendulum::State state = task.InitialSample();
   Pendulum::Action action;
-  action.action = math::Random(-2.0, 2.0);
+  action.action[0] = math::Random(-2.0, 2.0);
   double reward = task.Sample(state, action);
 
   // The reward is always negative. Check if not lower than lowest possible.
@@ -53,8 +53,10 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
   while (!task.IsTerminal(state))
     task.Sample(state, action, state);
 
-  // Check if the number of steps performed is the same as the maximum allowed.
-  BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
+  // Check if the number of steps performed is less or equal as the maximum
+  // allowed, since we use a random action there is no guarantee that we will
+  // reach the maximum number of steps.
+  BOOST_REQUIRE_LE(task.StepsPerformed(), 5);
 
   // The action is simply the torque. Check if dimension is 1.
   BOOST_REQUIRE_EQUAL(1, action.size);
@@ -71,7 +73,7 @@ BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
 
   ContinuousMountainCar::State state = task.InitialSample();
   ContinuousMountainCar::Action action;
-  action.action = math::Random(-1.0, 1.0);
+  action.action[0] = math::Random(-1.0, 1.0);
   double reward = task.Sample(state, action);
   // Maximum reward possible is 100.
   BOOST_REQUIRE(reward <= 100.0);
@@ -165,18 +167,16 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
 }
 
 /**
- * Constructs a MultiplePoleCart instance and check if the main routine works as
+ * Constructs a DoublePoleCart instance and check if the main routine works as
  * it should be.
  */
-BOOST_AUTO_TEST_CASE(MultiplePoleCartTest)
+BOOST_AUTO_TEST_CASE(DoublePoleCartTest)
 {
-  arma::vec poleLengths = {1, 0.5};
-  arma::vec poleMasses = {1, 1};
-  MultiplePoleCart task = MultiplePoleCart(2, poleLengths, poleMasses);
+  DoublePoleCart task = DoublePoleCart();
   task.MaxSteps() = 5;
 
-  MultiplePoleCart::State state = task.InitialSample();
-  MultiplePoleCart::Action action = MultiplePoleCart::Action::backward;
+  DoublePoleCart::State state = task.InitialSample();
+  DoublePoleCart::Action action = DoublePoleCart::Action::backward;
   double reward = task.Sample(state, action);
 
   BOOST_REQUIRE_EQUAL(reward, 1.0);
@@ -187,26 +187,21 @@ BOOST_AUTO_TEST_CASE(MultiplePoleCartTest)
 
   // Check if the number of steps performed is the same as the maximum allowed.
   BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
-  BOOST_REQUIRE_EQUAL(2, MultiplePoleCart::Action::size);
+  BOOST_REQUIRE_EQUAL(2, DoublePoleCart::Action::size);
 }
 
 /**
- * Constructs a ContinuousMultiplePoleCart instance and check if the main 
+ * Constructs a ContinuousDoublePoleCart instance and check if the main 
  * routine works as it should be.
  */
-BOOST_AUTO_TEST_CASE(ContinuousMultiplePoleCartTest)
+BOOST_AUTO_TEST_CASE(ContinuousDoublePoleCartTest)
 {
-  arma::arma_rng::set_seed_random();
-
-  arma::vec poleLengths = {1, 0.5};
-  arma::vec poleMasses = {1, 1};
-  ContinuousMultiplePoleCart task = ContinuousMultiplePoleCart(2, poleLengths,
-      poleMasses);
+  ContinuousDoublePoleCart task = ContinuousDoublePoleCart();
   task.MaxSteps() = 5;
 
-  ContinuousMultiplePoleCart::State state = task.InitialSample();
-  ContinuousMultiplePoleCart::Action action;
-  action.action = math::Random(-1.0, 1.0);
+  ContinuousDoublePoleCart::State state = task.InitialSample();
+  ContinuousDoublePoleCart::Action action;
+  action.action[0] = math::Random(-1.0, 1.0);
   double reward = task.Sample(state, action);
 
   BOOST_REQUIRE_EQUAL(reward, 1.0);
