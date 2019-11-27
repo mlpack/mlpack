@@ -114,6 +114,10 @@ size_t GetMatWithInfoParamLength(const char* name);
 
 bool* GetMatWithInfoParamInfo(const char* name);
 
+void EnableVerbose();
+
+void DisableVerbose();
+
 }
 }
 

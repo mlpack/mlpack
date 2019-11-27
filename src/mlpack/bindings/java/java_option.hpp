@@ -9,11 +9,14 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_PYTHON_PY_OPTION_HPP
-#define MLPACK_BINDINGS_PYTHON_PY_OPTION_HPP
+#ifndef MLPACK_BINDINGS_JAVA_JAVA_OPTION_HPP
+#define MLPACK_BINDINGS_JAVA_JAVA_OPTION_HPP
 
 #include <mlpack/core/util/param_data.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include "print_input_param.hpp"
+#include "print_output_param.hpp"
+#include "print_param_defn.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -76,7 +79,10 @@ class JavaOption
     // also the binding itself.  (The binding itself will only use GetParam,
     // GetPrintableParam, and GetRawParam.)
     
-    // TODO
+    CLI::GetSingleton().functionMap[data.tname]["PrintParamDefn"] = &PrintParamDefn<T>;
+    CLI::GetSingleton().functionMap[data.tname]["PrintInputParam"] = &PrintInputParam<T>;
+    CLI::GetSingleton().functionMap[data.tname]["PrintOutputParam"] = &PrintOutputParam<T>;
+    CLI::GetSingleton().functionMap[data.tname]["GetJavaType"] = &GetJavaType<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
     // import more than one .so that uses CLI, so we have to keep the options

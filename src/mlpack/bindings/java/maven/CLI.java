@@ -64,6 +64,12 @@ class CLI {
   @Name("SetPassed")
   static native void setPassed(String name);
 
+  @Name("EnableVerbose")
+  static native void enableVerbose();
+
+  @Name("DisableVerbose")
+  static native void disableVerbose();
+
   // setters
 
   @Name("SetMatParam<double>")
@@ -130,13 +136,6 @@ class CLI {
   @Name("SetVecSize<std::string>")
   private static native void setVecStringSize(String name, int size);
 
-  static void setVecIntParam(String name, int[] data) {
-    setVecIntSize(name, data.length);
-    for (int i = 0; i < data.length; ++i) {
-      setVecElement(name, i, data[i]);
-    }
-  }
-
   static void setVecIntParam(String name, List<?> data) {
     setVecIntSize(name, data.size());
     for (int i = 0, n = data.size(); i < n; ++i) {
@@ -146,13 +145,6 @@ class CLI {
       }
 
       setVecElement(name, i, (Integer) value);
-    }
-  }
-
-  static void setVecStringParam(String name, String[] data) {
-    setVecStringSize(name, data.length);
-    for (int i = 0; i < data.length; ++i) {
-      setVecElement(name, i, data[i]);
     }
   }
 

@@ -2,10 +2,10 @@ package org.mlpack;
 
 import org.bytedeco.javacpp.*;
 
-public class GaussianKernel {
+public class ${model_name} {
   private final Pointer pointer;
 
-  GaussianKernel(Pointer pointer) {
+  ${model_name}(Pointer pointer) {
     this.pointer = pointer;
   }
 

@@ -328,7 +328,7 @@ public class BindingsJUnitTest {
   }
 
   @Test
-  public void runWithIntVectorList() {
+  public void runWithIntVector() {
     List<Integer> data = Arrays.asList(1, 2, 3, 4, 5);
 
     BindingsTest.Params params = new BindingsTest.Params();
@@ -349,28 +349,7 @@ public class BindingsJUnitTest {
   }
 
   @Test
-  public void runWithIntVectorArray() {
-    int[] data = {1, 2, 3, 4, 5};
-
-    BindingsTest.Params params = new BindingsTest.Params();
-    params.put("int_in", 12);
-    params.put("double_in", 4.0);
-    params.put("string_in", "hello");
-    params.put("flag1", true);
-    params.put("vector_in", data);
-
-    BindingsTest.run(params);
-
-    List<Integer> result = params.get("vector_out", List.class);
-    assertEquals(data.length - 1, result.size());
-
-    for (int i = 0, n = result.size(); i < n; ++i) {
-      assertEquals(data[i], (int) result.get(i));
-    }
-  }
-
-  @Test
-  public void runWithStringVectorList() {
+  public void runWithStringVector() {
     List<String> data = Arrays.asList("one", "two", "three", "four", "five");
 
     BindingsTest.Params params = new BindingsTest.Params();
@@ -387,27 +366,6 @@ public class BindingsJUnitTest {
 
     for (int i = 0, n = result.size(); i < n; ++i) {
       assertEquals(data.get(i), result.get(i));
-    }
-  }
-
-  @Test
-  public void runWithStringVectorArray() {
-    String[] data = {"one", "two", "three", "four", "five"};
-
-    BindingsTest.Params params = new BindingsTest.Params();
-    params.put("int_in", 12);
-    params.put("double_in", 4.0);
-    params.put("string_in", "hello");
-    params.put("flag1", true);
-    params.put("str_vector_in", data);
-
-    BindingsTest.run(params);
-
-    List<String> result = params.get("str_vector_out", List.class);
-    assertEquals(data.length - 1, result.size());
-
-    for (int i = 0, n = result.size(); i < n; ++i) {
-      assertEquals(data[i], result.get(i));
     }
   }
 

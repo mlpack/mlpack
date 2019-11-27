@@ -1,0 +1,40 @@
+/**
+ * @file generate_java.cpp.in
+ * @author Ryan Curtin
+ * @author Vasyl Teliman
+ *
+ * This is a template file to call the PrintJava() function for a given binding.
+ */
+#define BINDING_TYPE BINDING_TYPE_JAVA
+// Disable debug output.
+#ifdef DEBUG
+  #define HAD_DEBUG
+  #undef DEBUG
+#endif
+#include <mlpack/core/util/log.hpp>
+#ifdef HAD_DEBUG
+  #undef HAD_DEBUG
+  #define DEBUG
+#endif
+
+#include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/bindings/java/print_java.hpp>
+
+// This will include the ParamData options that are part of the program.
+#include <${PROGRAM_MAIN_FILE}>
+
+using namespace mlpack;
+using namespace mlpack::bindings;
+using namespace mlpack::bindings::java;
+using namespace std;
+using namespace mlpack::util;
+
+int main(int /* argc */, char** /* argv */)
+{
+  // All the parameters are registered, but stored, so restore them.
+  // programName is defined in mlpack_main.hpp.
+  CLI::RestoreSettings(programName);
+
+  PrintJava(*CLI::GetSingleton().doc, "${FILE_NAME}", "${CLASS_NAME}");
+}

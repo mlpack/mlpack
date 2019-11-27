@@ -7,7 +7,7 @@ namespace java {
 
 inline std::string ParamString(const std::string& paramName)
 {
-  return '`' + paramName + '`';
+  return "{@code " + paramName + '}';
 }
 
 template<typename T>

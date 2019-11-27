@@ -74,5 +74,15 @@ void SetMatWithInfoParam(const char* name, double* data, bool* info, size_t rows
       name)) = pointsAreRows ? std::move(m.t()) : std::move(m);
 }
 
+void EnableVerbose()
+{
+  Log::Info.ignoreInput = false;
+}
+
+void DisableVerbose()
+{
+  Log::Info.ignoreInput = true;
+}
+
 }
 }
