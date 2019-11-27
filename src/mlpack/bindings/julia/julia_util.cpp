@@ -367,8 +367,21 @@ size_t CLI_GetParamColRows(const char* paramName)
  */
 double* CLI_GetParamCol(const char* paramName)
 {
-  arma::access::rw(CLI::GetParam<arma::vec>(paramName).mem_state) = 1;
-  return CLI::GetParam<arma::vec>(paramName).memptr();
+  // Are we using preallocated memory?  If so we have to handle this more
+  // carefully.
+  arma::vec& vec = CLI::GetParam<arma::vec>(paramName);
+  if (vec.n_elem <= arma::arma_config::mat_prealloc)
+  {
+    // Copy the memory to something we can give back to Julia.
+    double* newMem = new double[vec.n_elem];
+    arma::arrayops::copy(newMem, vec.mem, vec.n_elem);
+    return newMem; // We believe Julia will free it.  Hopefully we are right.
+  }
+  else
+  {
+    arma::access::rw(vec.mem_state) = 1;
+    return vec.memptr();
+  }
 }
 
 /**
@@ -386,8 +399,21 @@ size_t CLI_GetParamUColRows(const char* paramName)
  */
 size_t* CLI_GetParamUCol(const char* paramName)
 {
-  arma::access::rw(CLI::GetParam<arma::Col<size_t>>(paramName).mem_state) = 1;
-  return CLI::GetParam<arma::Col<size_t>>(paramName).memptr();
+  // Are we using preallocated memory?  If so we have to handle this more
+  // carefully.
+  arma::Col<size_t>& vec = CLI::GetParam<arma::Col<size_t>>(paramName);
+  if (vec.n_elem <= arma::arma_config::mat_prealloc)
+  {
+    // Copy the memory to something we can give back to Julia.
+    size_t* newMem = new size_t[vec.n_elem];
+    arma::arrayops::copy(newMem, vec.mem, vec.n_elem);
+    return newMem; // We believe Julia will free it.  Hopefully we are right.
+  }
+  else
+  {
+    arma::access::rw(vec.mem_state) = 1;
+    return vec.memptr();
+  }
 }
 
 /**
@@ -405,8 +431,21 @@ size_t CLI_GetParamRowCols(const char* paramName)
  */
 double* CLI_GetParamRow(const char* paramName)
 {
-  arma::access::rw(CLI::GetParam<arma::rowvec>(paramName).mem_state) = 1;
-  return CLI::GetParam<arma::rowvec>(paramName).memptr();
+  // Are we using preallocated memory?  If so we have to handle this more
+  // carefully.
+  arma::rowvec& vec = CLI::GetParam<arma::rowvec>(paramName);
+  if (vec.n_elem <= arma::arma_config::mat_prealloc)
+  {
+    // Copy the memory to something we can give back to Julia.
+    double* newMem = new double[vec.n_elem];
+    arma::arrayops::copy(newMem, vec.mem, vec.n_elem);
+    return newMem;
+  }
+  else
+  {
+    arma::access::rw(vec.mem_state) = 1;
+    return vec.memptr();
+  }
 }
 
 /**
@@ -424,8 +463,21 @@ size_t CLI_GetParamURowCols(const char* paramName)
  */
 size_t* CLI_GetParamURow(const char* paramName)
 {
-  arma::access::rw(CLI::GetParam<arma::Row<size_t>>(paramName).mem_state) = 1;
-  return CLI::GetParam<arma::Row<size_t>>(paramName).memptr();
+  // Are we using preallocated memory?  If so we have to handle this more
+  // carefully.
+  arma::Row<size_t>& vec = CLI::GetParam<arma::Row<size_t>>(paramName);
+  if (vec.n_elem <= arma::arma_config::mat_prealloc)
+  {
+    // Copy the memory to something we can give back to Julia.
+    size_t* newMem = new size_t[vec.n_elem];
+    arma::arrayops::copy(newMem, vec.mem, vec.n_elem);
+    return newMem;
+  }
+  else
+  {
+    arma::access::rw(vec.mem_state) = 1;
+    return vec.memptr();
+  }
 }
 
 /**
@@ -469,10 +521,21 @@ bool* CLI_GetParamMatWithInfoBoolPtr(const char* paramName)
  */
 double* CLI_GetParamMatWithInfoPtr(const char* paramName)
 {
+  // Are we using preallocated memory?  If so we have to handle this more
+  // carefully.
   arma::mat& m = std::get<1>(
       CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(paramName));
-  arma::access::rw(m.mem_state) = 1;
-  return m.memptr();
+  if (m.n_elem <= arma::arma_config::mat_prealloc)
+  {
+    double* newMem = new double[m.n_elem];
+    arma::arrayops::copy(newMem, m.mem, m.n_elem);
+    return newMem;
+  }
+  else
+  {
+    arma::access::rw(m.mem_state) = 1;
+    return m.memptr();
+  }
 }
 
 /**
