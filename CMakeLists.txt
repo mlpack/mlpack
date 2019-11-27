@@ -144,7 +144,7 @@ endif()
 
 # Setup build for test coverage
 if(BUILD_WITH_COVERAGE)
-  # Currently coverage only works with GNU g++
+  # Currently coverage only works with GNU g++.
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # Find gcov and lcov
     find_program(GCOV gcov)
@@ -156,6 +156,7 @@ if(BUILD_WITH_COVERAGE)
     endif()
 
     set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "supc++")
+    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "quadmath")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -fkeep-inline-functions")
     message(STATUS "Adding debug compile options for code coverage.")
     # Remove optimizations for better line coverage
