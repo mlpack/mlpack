@@ -120,6 +120,8 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     weights = arma::sum(D);
 
     // Use the existing weak learner to train a new one with new weights.
+    // In fact, the new weak learner just inherits some hyperparameters
+    // from existing weak learner.
     WeakLearnerType w(other, tempData, labels, numClasses, weights);
     w.Classify(tempData, predictedLabels);
 
