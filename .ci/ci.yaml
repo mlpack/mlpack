@@ -43,7 +43,7 @@ jobs:
       Julia:
         python.version: '2.7'
         julia.version: '1.3.0'
-        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_JULIA_BINDINGS=ON -DJULIA_EXECUTABLE=/Volumes/Julia-1.3.0/bin/julia'
+        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_JULIA_BINDINGS=ON -DBUILD_PYTHON_BINDINGS=OFF'
 
   steps:
   - template: macos-steps.yaml
