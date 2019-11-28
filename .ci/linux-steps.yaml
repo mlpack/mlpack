@@ -70,7 +70,6 @@ steps:
 # Publish build artifacts to Azure Pipelines
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtoPublish: 'build/Testing/*/Test.xml'
-    artifactName: 'Tests.xml'
+    pathtoPublish: 'build/Testing/'
+    artifactName: 'Tests'
   displayName: 'Publish artifacts test results'
-  
