@@ -160,7 +160,6 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 #elif (BINDING_TYPE == BINDING_TYPE_JAVA) // This is a Java binding.
 
 // TODO: not sure where we use this
-// Also: sometimes we transpose them, sometimes we do not
 #define BINDING_MATRIX_TRANSPOSED true
 
 #include <mlpack/bindings/java/java_option.hpp>

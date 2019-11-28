@@ -37,4 +37,5 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 # reference sets.
 add_cli_executable(krann)
 add_python_binding(krann)
+add_java_binding(krann Krann RANNModel)
 add_markdown_docs(krann "cli;python" "geometry")

@@ -16,4 +16,5 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(lars)
 add_python_binding(lars)
+add_java_binding(lars LARS LARS)
 add_markdown_docs(lars "cli;python" "regression")

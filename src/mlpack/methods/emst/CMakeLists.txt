@@ -23,4 +23,5 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(emst)
 add_python_binding(emst)
+add_java_binding(emst Emst)
 add_markdown_docs(emst "cli;python" "geometry")

@@ -20,4 +20,5 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(lmnn)
 add_python_binding(lmnn)
+add_java_binding(lmnn Lmnn)
 add_markdown_docs(lmnn "cli;python" "transformations")
