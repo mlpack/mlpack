@@ -40,8 +40,8 @@
                     <version>3.8.1</version>
                     <configuration>
                         <includes>${changed.classes}</includes>
-                        <source>1.7</source>
-                        <target>1.7</target>
+                        <source>@JAVA_VERSION@</source>
+                        <target>@JAVA_VERSION@</target>
                     </configuration>
                 </plugin>
                 <plugin>
