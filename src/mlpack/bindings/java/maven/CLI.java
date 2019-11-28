@@ -218,7 +218,7 @@ class CLI {
 
   @Name("SetMatWithInfoParam")
   private static native void nativeSetMatWithInfoParam(
-      String name, DoublePointer data, @Cast("bool*") boolean[] info, long rows, long columns, boolean pointsAreRows);
+      String name, DoublePointer data, @Cast("bool*") boolean[] info, long rows, long columns);
 
   static void setMatWithInfoParam(String name, MatrixWithInfo value) {
     INDArray matrix = value.getMatrix();
@@ -231,8 +231,7 @@ class CLI {
     DoublePointer data = new DoublePointer(matrix.data().addressPointer());
     long rows = matrix.rows();
     long columns = matrix.columns();
-    boolean pointsAreRows = value.getInfoOrder() == MatrixWithInfo.Order.ROW_MAJOR;
-    nativeSetMatWithInfoParam(name, data, info, rows, columns, pointsAreRows);
+    nativeSetMatWithInfoParam(name, data, info, rows, columns);
   }
 
   // getters
@@ -516,6 +515,6 @@ class CLI {
 
     ManagedPointer.create(infoPtr);
 
-    return new MatrixWithInfo(matrix, info, MatrixWithInfo.Order.COLUMN_MAJOR);
+    return new MatrixWithInfo(matrix, info);
   }
 }

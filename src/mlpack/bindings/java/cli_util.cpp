@@ -58,9 +58,9 @@ size_t GetMatWithInfoParamRows(const char* name)
   return std::get<1>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(name)).n_rows;
 }
 
-void SetMatWithInfoParam(const char* name, double* data, bool* info, size_t rows, size_t columns, bool pointsAreRows)
+void SetMatWithInfoParam(const char* name, double* data, bool* info, size_t rows, size_t columns)
 {
-  data::DatasetInfo d(pointsAreRows ? columns : rows);
+  data::DatasetInfo d(rows);
   for (size_t i = 0; i < d.Dimensionality(); ++i)
   {
     d.Type(i) = (info[i]) ? data::Datatype::categorical :
@@ -71,7 +71,7 @@ void SetMatWithInfoParam(const char* name, double* data, bool* info, size_t rows
   std::get<0>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
       name)) = std::move(d);
   std::get<1>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
-      name)) = pointsAreRows ? std::move(m.t()) : std::move(m);
+      name)) = std::move(m);
 }
 
 void EnableVerbose()

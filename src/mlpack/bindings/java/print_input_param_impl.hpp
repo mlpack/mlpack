@@ -28,15 +28,15 @@ void PrintInputParam(
   if (d.name == "verbose")
   {
     std::cout << "    {" << std::endl
-       << "      String name = \"verbose\";" << std::endl
-       << "      Boolean value = params.get(name, Boolean.class);" << std::endl
-       << "      if (value != null && value == true) {" << std::endl
-       << "        CLI.enableVerbose();" << std::endl
-       << "      } else {" << std::endl
-       << "        CLI.disableVerbose();" << std::endl
-       << "      }" << std::endl
-       << "    }" << std::endl
-       << std::endl;
+              << "      String name = \"verbose\";" << std::endl
+              << "      Boolean value = params.get(name, Boolean.class);" << std::endl
+              << "      if (value != null && value == true) {" << std::endl
+              << "        CLI.enableVerbose();" << std::endl
+              << "      } else {" << std::endl
+              << "        CLI.disableVerbose();" << std::endl
+              << "      }" << std::endl
+              << "    }" << std::endl
+              << std::endl;
     return;
   }
 
@@ -72,7 +72,8 @@ void PrintInputParam(
               << "      " << javaClass << " value = params.get(name, " << javaClass << ".class);" << std::endl
               << "      CLI.set" << typeName << "Param(name, value);" << std::endl
               << "      CLI.setPassed(name);" << std::endl
-              << "    }" << std::endl;
+              << "    }" << std::endl
+              << std::endl;
   }
   else
   {
@@ -83,7 +84,8 @@ void PrintInputParam(
               << "        CLI.set" << typeName << "Param(name, value);" << std::endl
               << "        CLI.setPassed(name);" << std::endl
               << "      }" << std::endl
-              << "    }" << std::endl;
+              << "    }" << std::endl
+              << std::endl;
   }
 }
 
@@ -122,7 +124,8 @@ void PrintInputParam(
               << "      INDArray value = params.get(name, INDArray.class);" << std::endl
               << "      CLI.set" << uChar << matTypeSuffix << "Param(name, value);" << std::endl
               << "      CLI.setPassed(name);" << std::endl
-              << "    }" << std::endl;
+              << "    }" << std::endl
+              << std::endl;
   }
   else
   {
@@ -133,7 +136,8 @@ void PrintInputParam(
               << "        CLI.set" << uChar << matTypeSuffix << "Param(name, value);" << std::endl
               << "        CLI.setPassed(name);" << std::endl
               << "      }" << std::endl
-              << "    }" << std::endl;
+              << "    }" << std::endl
+              << std::endl;
   }
 }
 
@@ -155,21 +159,23 @@ void PrintInputParam(
     std::cout << "    {" << std::endl
               << "      String name = \"" << d.name << "\";" << std::endl
               << "      checkHasRequiredParameter(params, name);" << std::endl
-              << "      " << type << " value = params.get(name, " << type << ".class);" << std::endl
+              << "      " << type << "Type value = params.get(name, " << type << "Type.class);" << std::endl
               << "      set" << type << "Ptr(name, value.getPointer());" << std::endl
               << "      CLI.setPassed(name);" << std::endl
-              << "    }" << std::endl;
+              << "    }" << std::endl
+              << std::endl;
   }
   else
   {
     std::cout << "    {" << std::endl
               << "      String name = \"" << d.name << "\";" << std::endl
-              << "      " << type << " value = params.get(name, " << type << ".class);" << std::endl
+              << "      " << type << "Type value = params.get(name, " << type << "Type.class);" << std::endl
               << "      if (value != null) {" << std::endl
               << "        set" << type << "Ptr(name, value.getPointer());" << std::endl
               << "        CLI.setPassed(name);" << std::endl
               << "      }" << std::endl
-              << "    }" << std::endl;
+              << "    }" << std::endl
+              << std::endl;
   }
 }
 
@@ -191,7 +197,8 @@ void PrintInputParam(
               << "      MatrixWithInfo value = params.get(name, MatrixWithInfo.class);" << std::endl
               << "      CLI.setMatWithInfoParam(name, value);" << std::endl
               << "      CLI.setPassed(name);" << std::endl
-              << "    }" << std::endl;
+              << "    }" << std::endl
+              << std::endl;
   }
   else
   {
@@ -202,7 +209,8 @@ void PrintInputParam(
               << "        CLI.setMatWithInfoParam(name, value);" << std::endl
               << "        CLI.setPassed(name);" << std::endl
               << "      }" << std::endl
-              << "    }" << std::endl;
+              << "    }" << std::endl
+              << std::endl;
   }
 }
 

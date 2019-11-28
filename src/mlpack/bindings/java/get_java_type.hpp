@@ -10,6 +10,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/is_std_vector.hpp>
 #include <mlpack/core/util/param_data.hpp>
+#include "strip_type.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -67,7 +68,6 @@ inline std::string GetJavaType<double>(const util::ParamData&,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*,
     const typename std::enable_if<!data::HasSerialize<double>::value>::type*)
 {
-  // I suppose on some systems this may not be 64 bit.
   return "Double";
 }
 
@@ -138,15 +138,17 @@ template<typename T>
 inline std::string GetJavaType(const util::ParamData& d,
     const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0,
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
-  return d.cppType;
+  return StripType(d.cppType) + "Type";
 }
 
 template <typename T>
 void GetJavaType(const util::ParamData& d, const void*, void* out)
 {
-  *(std::string*)out = GetJavaType<T>(d);
+  *(std::string*)out = GetJavaType<typename std::remove_pointer<T>::type>(d);
 }
 
 } // namespace java

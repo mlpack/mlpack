@@ -133,8 +133,6 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& fileName,
     cout << "      params.put(\"" << param.name << "\", null);" << endl;
   }
 
-  cout << "      params.put(\"verbose\", null);" << endl;
-
   for (const auto& param : output)
   {
     cout << "      params.put(\"" << param.name << "\", null);" << endl;

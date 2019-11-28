@@ -88,7 +88,7 @@ void PrintOutputParam(
 {
   std::string type = StripType(d.cppType);
 
-  std::cout << "    params.put(\"" << d.name << "\", new " << type << "(" 
+  std::cout << "    params.put(\"" << d.name << "\", new " << type << "Type(" 
             << type << "Ptr.create(get" << type << "Ptr(\"" << d.name << "\"))));" << std::endl;
 }
 

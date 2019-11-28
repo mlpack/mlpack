@@ -145,17 +145,28 @@ set_target_properties(jniCLI PROPERTIES
 add_dependencies(jniCLI jniCLI_configure)
 add_dependencies(java jniCLI)
 
+add_library(java_generate_parts STATIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/strip_type.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/print_param_defn.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/print_output_param.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/print_java.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/print_java.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/print_input_param.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/print_doc_functions.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/java_option.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/get_java_type.hpp)
+
 macro(add_java_binding file_name class_name)
   foreach(model_name ${ARGN})
     configure_file(
         ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java/model.java.in 
-        ${MAVEN_BUILD_DIR}/src/main/java/org/mlpack/${model_name}.java)
+        ${MAVEN_BUILD_DIR}/src/main/java/org/mlpack/${model_name}Type.java)
   endforeach()
   
   add_custom_command(OUTPUT ${BUILD_SRC_DIR}/generate_java_${class_name}.cpp
       COMMAND ${CMAKE_COMMAND}
-          -DCLASS_NAME=${class_name}
           -DFILE_NAME=${file_name}
+          -DCLASS_NAME=${class_name}
           -DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java/generate_java.cpp.in
           -DGENERATE_CPP_OUT=${BUILD_SRC_DIR}/generate_java_${class_name}.cpp
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${file_name}_main.cpp
@@ -164,18 +175,12 @@ macro(add_java_binding file_name class_name)
               ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake)
   
   add_executable(generate_java_${class_name}
-      ${BUILD_SRC_DIR}/generate_java_${class_name}.cpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java/strip_type.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java/print_param_defn.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java/print_output_param.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java/print_java.cpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java/print_java.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java/print_input_param.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java/print_doc_functions.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java/java_option.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java/get_java_type.hpp)
+      ${BUILD_SRC_DIR}/generate_java_${class_name}.cpp)
   
-  target_link_libraries(generate_java_${class_name} mlpack ${MLPACK_LIBRARIES})
+  target_link_libraries(generate_java_${class_name} 
+      mlpack 
+      java_generate_parts 
+      ${MLPACK_LIBRARIES})
 
   set_target_properties(generate_java_${class_name} PROPERTIES
       COMPILE_FLAGS -DBINDING_TYPE=BINDING_TYPE_JAVA
@@ -206,11 +211,10 @@ macro(add_java_binding file_name class_name)
       ${JNI_INCLUDE}
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java)
       
-  target_link_libraries(jni${class_name} mlpack jnijavacpp)
+  target_link_libraries(jni${class_name} mlpack ${MLPACK_LIBRARIES} jnijavacpp)
 
   set_target_properties(jni${class_name} PROPERTIES 
       COMPILE_FLAGS -DBINDING_TYPE=BINDING_TYPE_JAVA
-      LINKER_LANGUAGE CXX
       LIBRARY_OUTPUT_DIRECTORY "${NATIVE_OUT_DIR}")
 
   add_dependencies(jni${class_name} jni${class_name}_configure)

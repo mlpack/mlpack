@@ -370,6 +370,7 @@ public class BindingsJUnitTest {
   }
 
   @Test
+  // Supposed to fail but doesn't, need to investigate
   public void runWithSetOrder() {
     int[] arr = new int[25];
     for (int i = 0; i < arr.length; ++i) {
@@ -424,6 +425,8 @@ public class BindingsJUnitTest {
     result = null;
     params = null;
 
+    // This won't actually cause double deallocation because arma copies memory,
+    // when matrix is being moved (true only for [copy_aux_mem=false, strict=true] constructor params)
     System.gc();
 
     assertTrue(true);
@@ -440,7 +443,7 @@ public class BindingsJUnitTest {
     BindingsTest.run(params);
 
     params.put("build_model", false);
-    params.put("model_in", params.get("model_out", GaussianKernel.class));
+    params.put("model_in", params.get("model_out", GaussianKernelType.class));
 
     BindingsTest.run(params);
 
@@ -451,32 +454,7 @@ public class BindingsJUnitTest {
   public void runWithMatrixAndInfo() {
     INDArray matrix = Nd4j.rand(DataType.DOUBLE, 'c', new long[] {10, 100});
     boolean[] info = new boolean[10];
-    MatrixWithInfo data = new MatrixWithInfo(matrix, info, MatrixWithInfo.Order.COLUMN_MAJOR);
-
-    BindingsTest.Params params = new BindingsTest.Params();
-    params.put("int_in", 12);
-    params.put("double_in", 4.0);
-    params.put("string_in", "hello");
-    params.put("matrix_and_info_in", data);
-
-    BindingsTest.run(params);
-
-    INDArray result = params.get("matrix_and_info_out", INDArray.class);
-    assertEquals(matrix.size(0), result.size(0));
-    assertEquals(matrix.size(1), result.size(1));
-
-    for (int i = 0, n = (int) result.size(0); i < n; ++i) {
-      for (int j = 0, m = (int) result.size(1); j < m; ++j) {
-        assertEquals(matrix.getDouble(i, j) * 2, result.getDouble(i, j), 0.0001);
-      }
-    }
-  }
-
-  @Test
-  public void runWithMatrixAndInfoRowMajor() {
-    INDArray matrix = Nd4j.rand(DataType.DOUBLE, 'c', new long[] {100, 10});
-    boolean[] info = new boolean[10];
-    MatrixWithInfo data = new MatrixWithInfo(matrix, info, MatrixWithInfo.Order.ROW_MAJOR);
+    MatrixWithInfo data = new MatrixWithInfo(matrix, info);
 
     BindingsTest.Params params = new BindingsTest.Params();
     params.put("int_in", 12);

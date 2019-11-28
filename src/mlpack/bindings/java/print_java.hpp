@@ -7,8 +7,7 @@ namespace mlpack {
 namespace bindings {
 namespace java {
 
-void PrintJava(const util::ProgramDoc& programInfo, 
-    const std::string& fileName, const std::string& className);
+void PrintJava(const util::ProgramDoc& programInfo, const std::string& fileName, const std::string& className);
 
 }
 }

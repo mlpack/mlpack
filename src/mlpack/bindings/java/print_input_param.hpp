@@ -59,7 +59,7 @@ void PrintInputParam(
  */
 template<typename T>
 void PrintInputParam(const util::ParamData& d,
-                          const void* input,
+                          const void* /* input */,
                           void* /* output */)
 {
   // Call out to the right overload.
