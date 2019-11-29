@@ -16,6 +16,11 @@
   #define DEBUG
 #endif
 
+// Be sure to define this if it is not .so!
+#ifndef MLPACK_JL_LIB_SUFFIX
+#define MLPACK_JL_LIB_SUFFIX "so"
+#endif
+
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/bindings/julia/print_jl.hpp>

@@ -66,7 +66,8 @@ void PrintJL(const util::ProgramDoc& programInfo,
 
   // Make sure the libraries we need are accessible.
   cout << "const " << functionName << "Library = joinpath(@__DIR__, "
-      << "\"libmlpack_julia_" << functionName << ".so\")" << endl;
+      << "\"libmlpack_julia_" << functionName << "." << MLPACK_JL_LIB_SUFFIX
+      << ")" << endl;
   cout << endl;
 
   // Define mlpackMain() function to call.
