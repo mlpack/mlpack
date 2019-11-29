@@ -56,9 +56,6 @@ steps:
 - script: cd build && ctest -T Test .
   displayName: 'Run tests via ctest'
 
-- script: find build/
-  displayName: 'List build directory.'
-
 # Publish test results to Azure Pipelines
 - task: PublishTestResults@2
   inputs:
