@@ -23,7 +23,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-3.2.1.tar.gz">current stable version (3 2.1)</a>
+    <a href="https://www.mlpack.org/files/mlpack-3.2.2.tar.gz">current stable version (3.2.2)</a>
   </em>
 </p>
 
@@ -33,6 +33,21 @@ LAPACK, and aims to implement a wide array of machine learning methods and
 functions as a "swiss army knife" for machine learning researchers.  In addition
 to its powerful C++ interface, mlpack also provides command-line programs and
 Python bindings.
+
+mlpack uses an [open governance model](./GOVERNANCE.md) and is fiscally
+sponsored by [NumFOCUS](https://numfocus.org/).  Consider making a
+[tax-deductible donation](https://numfocus.org/donate-to-mlpack) to help the
+project pay for developer time, professional services, travel, workshops, and a
+variety of other needs.
+
+<div align="center">
+  <a href="https://numfocus.org/donate-to-mlpack">
+    <img height="60px"
+         src="https://raw.githubusercontent.com/numfocus/templates/master/images/numfocus-logo.png"
+         align="center">
+  </a>
+</div>
+<br>
 
 ### 0. Contents
 
