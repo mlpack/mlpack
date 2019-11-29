@@ -53,7 +53,7 @@ steps:
   displayName: 'Build'
 
 # Run tests via ctest.
-- script: cd build && ctest -T Test .
+- script: cd build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
   displayName: 'Run tests via ctest'
 
 # Publish test results to Azure Pipelines
