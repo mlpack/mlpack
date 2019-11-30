@@ -202,23 +202,23 @@ class Convolution
   //! Get the output size.
   const size_t& OutputSize() const { return outSize; }
 
-  //! Get the kernel size.
+  //! Get the kernel size (width and height).
   const std::tuple<size_t, size_t> KernelSize() const
   {
     return std::forward_as_tuple(kW, kH);
   }
-  //! Modify the kernel size.
+  //! Modify the kernel size (width and height).
   std::tuple<size_t&, size_t&> KernelSize()
   {
     return std::forward_as_tuple(kW, kH);
   }
 
-  //! Get the stride dimensions.
+  //! Get the stride dimensions (width and height).
   const std::tuple<size_t, size_t> Strides() const
   {
     return std::forward_as_tuple(dW, dH);
   }
-  //! Modify the stride dimensions.
+  //! Modify the stride dimensions (width and height).
   std::tuple<size_t&, size_t&> Strides()
   {
     return std::forward_as_tuple(dW, dH);

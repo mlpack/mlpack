@@ -211,23 +211,23 @@ class AtrousConvolution
   //! Get the output size.
   const size_t& OutputSize() const { return outSize; }
 
-  //! Get the kernel size.
+  //! Get the kernel size (width and height).
   const std::tuple<size_t, size_t> KernelSize() const
   {
     return std::forward_as_tuple(kW, kH);
   }
-  //! Modify the kernel size.
+  //! Modify the kernel size (width and height).
   std::tuple<size_t&, size_t&> KernelSize()
   {
     return std::forward_as_tuple(kW, kH);
   }
 
-  //! Get the stride dimensions.
+  //! Get the stride dimensions (width and height).
   const std::tuple<size_t, size_t> Strides() const
   {
     return std::forward_as_tuple(dW, dH);
   }
-  //! Modify the stride dimensions.
+  //! Modify the stride dimensions (width and height).
   std::tuple<size_t&, size_t&> Strides()
   {
     return std::forward_as_tuple(dW, dH);
@@ -255,12 +255,12 @@ class AtrousConvolution
     return std::forward_as_tuple(padWLeft, padWRight);
   }
 
-  //! Get the dilation rate.
+  //! Get the dilation rate (width and height).
   const std::tuple<size_t, size_t> DilationRate() const
   {
     return std::forward_as_tuple(dilationW, dilationH);
   }
-  //! Modify the dilation rate.
+  //! Modify the dilation rate (width and height).
   std::tuple<size_t&, size_t&> DilationRate()
   {
     return std::forward_as_tuple(dilationW, dilationH);
