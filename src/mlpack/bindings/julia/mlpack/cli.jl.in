@@ -25,7 +25,7 @@ export CLIEnableVerbose
 export CLIDisableVerbose
 export CLISetPassed
 
-const library = joinpath(@__DIR__, "libmlpack_julia_util.${CMAKE_SHARED_LIBRARY_SUFFIX}")
+const library = joinpath(@__DIR__, "libmlpack_julia_util${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
 # Utility function to convert 1d object to 2d.
 function convert_to_2d(in::Array{T, 1})::Array{T, 2} where T
