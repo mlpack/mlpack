@@ -379,8 +379,13 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
     Backward();
     Gradient(std::move(
+<<<<<<< HEAD
       arma::mat(predictors.slice(x - seqNum - 1).colptr(begin),
       predictors.n_rows, batchSize, false, true)));
+=======
+        arma::mat(predictors.slice(x - seqNum - 1).colptr(begin),
+        predictors.n_rows, batchSize, false, true)));
+>>>>>>> 2e73d807b841ea2c186d547f2a7955e3ed47805c
     gradient += currentGradient;
   }
 
