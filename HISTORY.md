@@ -1,5 +1,10 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Add functions to access parameters of `Convolution` and `AtrousConvolution`
+    layers (#1985).
+
+### mlpack 3.2.2
+###### 2019-11-26
   * Add `valid` and `same` padding option in `Convolution` and `Atrous
     Convolution` layer (#1988).
 
