@@ -1,7 +1,7 @@
 /**
  * @file print_input_param.hpp
  * @author Vasyl Teliman
- * 
+ *
  *
  * Print Java code to handle input arguments.
  */
@@ -66,7 +66,7 @@ void PrintInputParam(const util::ParamData& d,
   PrintInputParam<typename std::remove_pointer<T>::type>(d);
 }
 
-} // namespace julia
+} // namespace java
 } // namespace bindings
 } // namespace mlpack
 

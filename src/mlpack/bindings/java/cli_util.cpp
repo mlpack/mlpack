@@ -15,12 +15,13 @@ void RestoreSettings(const char* name)
 
 bool* GetMatWithInfoParamInfo(const char* name)
 {
-  const auto& info = std::get<0>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(name));
+  const auto& info = std::get<0>(
+      CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(name));
 
   size_t n = info.Dimensionality();
   bool* result = new bool[n];
 
-  for (size_t i = 0; i < n; ++i) 
+  for (size_t i = 0; i < n; ++i)
   {
     result[i] = info.Type(i) == data::Datatype::categorical;
   }
@@ -30,14 +31,16 @@ bool* GetMatWithInfoParamInfo(const char* name)
 
 size_t GetMatWithInfoParamLength(const char* name)
 {
-  return std::get<1>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(name)).n_elem;
+  return std::get<1>(
+      CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(name)).n_elem;
 }
 
 double* GetMatWithInfoParamData(const char* name)
 {
-  auto& param = std::get<1>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(name));
-  
-  if (param.mem && param.n_elem <= arma::arma_config::mat_prealloc) 
+  auto& param = std::get<1>(
+      CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(name));
+
+  if (param.mem && param.n_elem <= arma::arma_config::mat_prealloc)
   {
     double* result = new double[param.n_elem];
     arma::arrayops::copy(result, param.mem, param.n_elem);
@@ -50,15 +53,18 @@ double* GetMatWithInfoParamData(const char* name)
 
 size_t GetMatWithInfoParamCols(const char* name)
 {
-  return std::get<1>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(name)).n_cols;
+  return std::get<1>(
+      CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(name)).n_cols;
 }
 
 size_t GetMatWithInfoParamRows(const char* name)
 {
-  return std::get<1>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(name)).n_rows;
+  return std::get<1>(
+      CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(name)).n_rows;
 }
 
-void SetMatWithInfoParam(const char* name, double* data, bool* info, size_t rows, size_t columns)
+void SetMatWithInfoParam(
+    const char* name, double* data, bool* info, size_t rows, size_t columns)
 {
   data::DatasetInfo d(rows);
   for (size_t i = 0; i < d.Dimensionality(); ++i)
@@ -84,5 +90,5 @@ void DisableVerbose()
   Log::Info.ignoreInput = true;
 }
 
-}
-}
+} // namespace util
+} // namespace mlpack

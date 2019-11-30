@@ -157,7 +157,7 @@ using Option = mlpack::bindings::tests::TestOption<T>;
     cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
     []() { return DESC; }, { __VA_ARGS__ })
 
-#elif (BINDING_TYPE == BINDING_TYPE_JAVA) // This is a Java binding.
+#elif(BINDING_TYPE == BINDING_TYPE_JAVA) // This is a Java binding.
 
 // TODO: not sure where we use this
 #define BINDING_MATRIX_TRANSPOSED true

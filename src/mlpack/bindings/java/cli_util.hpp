@@ -28,12 +28,13 @@ void SetColParam(const char* name, T* data, size_t length)
 }
 
 template <typename T>
-void SetParam(const char* name, T value) 
+void SetParam(const char* name, T value)
 {
   CLI::GetParam<T>(name) = std::move(value);
 }
 
-void SetMatWithInfoParam(const char* name, double* data, bool* info, size_t rows, size_t columns);
+void SetMatWithInfoParam(
+    const char* name, double* data, bool* info, size_t rows, size_t columns);
 
 template <typename T>
 T GetParam(const char* name)
@@ -45,8 +46,8 @@ template <typename T>
 typename T::elem_type* GetArmaParamData(const char* name)
 {
   auto& param = CLI::GetParam<T>(name);
-  
-  if (param.mem && param.n_elem <= arma::arma_config::mat_prealloc) 
+
+  if (param.mem && param.n_elem <= arma::arma_config::mat_prealloc)
   {
     using R = typename T::elem_type;
     R* result = new R[param.n_elem];
@@ -118,7 +119,7 @@ void EnableVerbose();
 
 void DisableVerbose();
 
-}
-}
+} // namespace util
+} // namespace mlpack
 
 #endif

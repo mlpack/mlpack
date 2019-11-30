@@ -19,7 +19,7 @@ typename std::enable_if<std::is_array<T>::value>::type Delete(void* p)
   delete[] static_cast<U*>(p);
 }
 
-}
-}
+} // namespace util
+} // namespace mlpack
 
 #endif

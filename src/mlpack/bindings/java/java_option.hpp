@@ -34,7 +34,7 @@ class JavaOption
  public:
   /**
    * Construct a JavaOption object.  When constructed, it will register itself
-   * with CLI. The testName parameter is not used and added for compatibility 
+   * with CLI. The testName parameter is not used and added for compatibility
    * reasons.
    */
   JavaOption(const T defaultValue,
@@ -78,11 +78,15 @@ class JavaOption
     // pointers will be used by both the program that generates the pyx, and
     // also the binding itself.  (The binding itself will only use GetParam,
     // GetPrintableParam, and GetRawParam.)
-    
-    CLI::GetSingleton().functionMap[data.tname]["PrintParamDefn"] = &PrintParamDefn<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintInputParam"] = &PrintInputParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintOutputParam"] = &PrintOutputParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetJavaType"] = &GetJavaType<T>;
+
+    CLI::GetSingleton().functionMap[data.tname]["PrintParamDefn"] =
+        &PrintParamDefn<T>;
+    CLI::GetSingleton().functionMap[data.tname]["PrintInputParam"] =
+        &PrintInputParam<T>;
+    CLI::GetSingleton().functionMap[data.tname]["PrintOutputParam"] =
+        &PrintOutputParam<T>;
+    CLI::GetSingleton().functionMap[data.tname]["GetJavaType"] =
+        &GetJavaType<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
     // import more than one .so that uses CLI, so we have to keep the options

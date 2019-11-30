@@ -73,16 +73,16 @@ class CLI {
   // setters
 
   @Name("SetMatParam<double>")
-  private static native void nativeSetMatParam(String name, 
+  private static native void nativeSetMatParam(String name,
       DoublePointer data, long rows, long columns);
 
   @Name("SetMatParam<size_t>")
-  private static native void nativeSetMatParam(String name, 
+  private static native void nativeSetMatParam(String name,
       SizeTPointer data, long rows, long columns);
 
   static void setMatParam(String name, INDArray mat) {
     argumentCheck(mat.rank() == 2, "Passed argument is not a 2D matrix.");
-    argumentCheck(mat.dataType() == FP_TYPE, 
+    argumentCheck(mat.dataType() == FP_TYPE,
         "Matrix data type is %s. %s expected.", mat.dataType(), FP_TYPE);
 
     if (mat.ordering() != ARMA_ORDER) {
@@ -98,7 +98,7 @@ class CLI {
 
   static void setUMatParam(String name, INDArray mat) {
     argumentCheck(mat.rank() == 2, "Passed argument is not a 2D matrix.");
-    argumentCheck(mat.dataType() == UNSIGNED_TYPE, 
+    argumentCheck(mat.dataType() == UNSIGNED_TYPE,
         "Matrix data type is %s. %s expected.", mat.dataType(), UNSIGNED_TYPE);
 
     if (mat.ordering() != ARMA_ORDER) {
@@ -168,7 +168,7 @@ class CLI {
 
   static void setColParam(String name, INDArray array) {
     argumentCheck(array.isColumnVectorOrScalar(), "Argument is not a column vector");
-    argumentCheck(array.dataType() == FP_TYPE, 
+    argumentCheck(array.dataType() == FP_TYPE,
         "Column data type is %s but %s is expected", array.dataType(), FP_TYPE);
 
     Pointer data = array.data().addressPointer();
@@ -179,7 +179,7 @@ class CLI {
 
   static void setUColParam(String name, INDArray array) {
     argumentCheck(array.isColumnVectorOrScalar(), "Argument is not a column vector");
-    argumentCheck(array.dataType() == UNSIGNED_TYPE, 
+    argumentCheck(array.dataType() == UNSIGNED_TYPE,
         "Column data type is %s but %s is expected", array.dataType(), UNSIGNED_TYPE);
 
     Pointer data = array.data().addressPointer();
@@ -196,7 +196,7 @@ class CLI {
 
   static void setRowParam(String name, INDArray array) {
     argumentCheck(array.isRowVectorOrScalar(), "Argument is not a row vector");
-    argumentCheck(array.dataType() == FP_TYPE, 
+    argumentCheck(array.dataType() == FP_TYPE,
         "Column data type is %s but %s is expected", array.dataType(), FP_TYPE);
 
     Pointer data = array.data().addressPointer();
@@ -207,7 +207,7 @@ class CLI {
 
   static void setURowParam(String name, INDArray array) {
     argumentCheck(array.isRowVectorOrScalar(), "Argument is not a row vector");
-    argumentCheck(array.dataType() == UNSIGNED_TYPE, 
+    argumentCheck(array.dataType() == UNSIGNED_TYPE,
         "Column data type is %s but %s is expected", array.dataType(), UNSIGNED_TYPE);
 
     Pointer data = array.data().addressPointer();
@@ -275,7 +275,7 @@ class CLI {
 
   static INDArray getMatParam(String name) {
     Pointer data = getMatParamData(name);
-    
+
     if (data == null) {
       return null; // if output parameter wasn't passed
     }
@@ -299,7 +299,7 @@ class CLI {
 
   static INDArray getUMatParam(String name) {
     Pointer data = getUMatParamData(name);
-    
+
     if (data == null) {
       return null; // if output parameter wasn't passed
     }
@@ -370,7 +370,7 @@ class CLI {
 
   static INDArray getColParam(String name) {
     Pointer data = getColParamData(name);
-    
+
     if (data == null) {
       return null; // if output parameter wasn't passed
     }
@@ -392,7 +392,7 @@ class CLI {
 
   static INDArray getUColParam(String name) {
     Pointer data = getUColParamData(name);
-    
+
     if (data == null) {
       return null; // if output parameter wasn't passed
     }
@@ -426,7 +426,7 @@ class CLI {
 
   static INDArray getRowParam(String name) {
     Pointer data = getRowParamData(name);
-    
+
     if (data == null) {
       return null; // if output parameter wasn't passed
     }
@@ -448,7 +448,7 @@ class CLI {
 
   static INDArray getURowParam(String name) {
     Pointer data = getURowParamData(name);
-    
+
     if (data == null) {
       return null; // if output parameter wasn't passed
     }

@@ -11,7 +11,8 @@ inline void PrintInputCallParam(std::ostream&)
 {}
 
 template <typename T, typename... Args>
-void PrintInputCallParam(std::ostream& os, const std::string& name, const T& value, const Args&... args)
+void PrintInputCallParam(std::ostream& os, const std::string& name,
+    const T& value, const Args&... args)
 {
   const auto& param = CLI::Parameters().at(name);
   if (param.input)
@@ -29,7 +30,8 @@ void PrintInputCallParam(std::ostream& os, const std::string& name, const T& val
         param.cppType == "arma::Row<size_t>" ||
         param.cppType == "arma::Col<size_t>")
     {
-      os << "    .put(\"" << name << "\", Nd4j.createFromNpyFile(new File(\"" << value << ".npy\"))";
+      os << "    .put(\"" << name << "\", Nd4j.createFromNpyFile(new File(\""
+         << value << ".npy\"))";
     }
     else if (param.cppType == "std::string")
     {
@@ -40,7 +42,7 @@ void PrintInputCallParam(std::ostream& os, const std::string& name, const T& val
       os << "    .put(\"" << name << "\", " << value << ")";
     }
   }
-  
+
   PrintInputCallParam(os, args...);
 }
 
@@ -48,18 +50,21 @@ inline void PrintOutputCallParam(std::ostream&)
 {}
 
 template <typename T, typename... Args>
-void PrintOutputCallParam(std::ostream& os, const std::string& name, const T& /* value */, const Args&... args)
+void PrintOutputCallParam(std::ostream& os, const std::string& name,
+    const T& /* value */, const Args&... args)
 {
   const auto& param = CLI::Parameters().at(name);
   if (!param.input)
   {
     os << std::endl;
     std::string type;
-    CLI::GetSingleton().functionMap[param.tname]["GetJavaType"](param, nullptr, (void*) &type);
+    CLI::GetSingleton().functionMap[param.tname]["GetJavaType"]
+        (param, nullptr, (void*) &type);
 
-    os << type << " " << name << " = params.get(\"" << name << "\", " << type << ".class);";
+    os << type << " " << name << " = params.get(\"" << name << "\", "
+       << type << ".class);";
   }
-   
+
   PrintOutputCallParam(os, args...);
 }
 
@@ -69,7 +74,7 @@ inline std::string ParamString(const std::string& paramName)
 }
 
 template<typename T>
-inline std::string PrintValue(const T& value, bool quotes) 
+inline std::string PrintValue(const T& value, bool quotes)
 {
   std::ostringstream oss;
   oss << std::boolalpha;
@@ -78,7 +83,7 @@ inline std::string PrintValue(const T& value, bool quotes)
   return oss.str();
 }
 
-inline std::string PrintDataset(const std::string& datasetName) 
+inline std::string PrintDataset(const std::string& datasetName)
 {
   return "{@code " + datasetName + '}';
 }
@@ -96,7 +101,7 @@ std::string ProgramCall(const std::string& /* programName */, Args... args)
 
   oss << "<pre>" << std::endl
       << "{@code" << std::endl;
-  
+
   oss << "Params params = new Params()";
 
   PrintInputCallParam(oss, args...);
@@ -104,7 +109,7 @@ std::string ProgramCall(const std::string& /* programName */, Args... args)
   oss << ";" << std::endl
       << std::endl
       << "run(params);" << std::endl;
-  
+
   PrintOutputCallParam(oss, args...);
 
   oss << std::endl
@@ -124,7 +129,7 @@ inline std::string ProgramCall(const std::string& /* programName */)
       << "run(params);" << std::endl
       << "}" << std::endl
       << "</pre>" << std::endl;
-  
+
   return oss.str();
 }
 
@@ -157,8 +162,8 @@ inline bool IgnoreCheck(
   return !CLI::Parameters()[paramName].input;
 }
 
-}
-}
-}
+} // namespace java
+} // namespace bindings
+} // namespace mlpack
 
 #endif

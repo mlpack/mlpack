@@ -49,7 +49,7 @@ PARAM_MODEL_OUT(GaussianKernel, "model_out", "Output model, with twice the "
     "bandwidth.", "");
 PARAM_DOUBLE_OUT("model_bw_out", "The bandwidth of the model.");
 
-static void mlpackMain() 
+static void mlpackMain()
 {
   const string s = CLI::GetParam<string>("string_in");
   const int i = CLI::GetParam<int>("int_in");
@@ -61,7 +61,7 @@ static void mlpackMain()
 
   if (CLI::HasParam("umatrix_order_in"))
   {
-    CLI::GetParam<arma::Mat<size_t>>("umatrix_order_out") = 
+    CLI::GetParam<arma::Mat<size_t>>("umatrix_order_out") =
         std::move(CLI::GetParam<arma::Mat<size_t>>("umatrix_order_in"));
   }
 

@@ -71,9 +71,9 @@ inline bool IgnoreCheck(
     const std::vector<std::pair<std::string, bool>>& constraints,
     const std::string& paramName);
 
-}
-}
-}
+} // namespace java
+} // namespace bindings
+} // namespace mlpack
 
 #include "print_doc_functions_impl.hpp"
 

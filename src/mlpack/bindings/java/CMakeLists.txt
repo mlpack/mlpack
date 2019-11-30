@@ -63,7 +63,7 @@ add_custom_command(TARGET java_configure PRE_BUILD
 
 set(BUILD_SRC_DIR ${CMAKE_BINARY_DIR}/src/mlpack/bindings/java/build/src CACHE INTERNAL "")
 add_custom_command(TARGET java_configure PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${BUILD_SRC_DIR}) 
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${BUILD_SRC_DIR})
 
 # Copy maven pom.xml
 set(JAVACPP_VERSION 1.5.1)
@@ -100,8 +100,8 @@ add_custom_target(jniCLI_configure ALL
     DEPENDS java_configure)
 
 add_custom_command(
-    OUTPUT 
-        ${BUILD_SRC_DIR}/cli_util.hpp 
+    OUTPUT
+        ${BUILD_SRC_DIR}/cli_util.hpp
         ${BUILD_SRC_DIR}/deleter.hpp
         ${BUILD_SRC_DIR}/cli_util.cpp
     COMMAND ${CMAKE_COMMAND} -E copy
@@ -117,7 +117,7 @@ add_custom_command(
 # Compile java sources with maven
 add_custom_command(TARGET jniCLI_configure PRE_BUILD
     COMMAND ${MAVEN} compile -Dchanged.classes=org/mlpack/CLI.java
-    WORKING_DIRECTORY ${MAVEN_BUILD_DIR}) 
+    WORKING_DIRECTORY ${MAVEN_BUILD_DIR})
 
 # Generate JNI wrappers from compiled java bytecode
 add_custom_command(OUTPUT ${JNI_GEN_DIR}/jnijavacpp.cpp ${JNI_GEN_DIR}/jniCLI.cpp
@@ -160,10 +160,10 @@ add_library(java_generate_parts STATIC
 macro(add_java_binding file_name class_name)
   foreach(model_name ${ARGN})
     configure_file(
-        ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java/model.java.in 
+        ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java/model.java.in
         ${MAVEN_BUILD_DIR}/src/main/java/org/mlpack/${model_name}Type.java)
   endforeach()
-  
+
   add_custom_command(OUTPUT ${BUILD_SRC_DIR}/generate_java_${class_name}.cpp
       COMMAND ${CMAKE_COMMAND}
           -DFILE_NAME=${file_name}
@@ -174,13 +174,13 @@ macro(add_java_binding file_name class_name)
           -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java/generate_java.cpp.in
               ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake)
-  
+
   add_executable(generate_java_${class_name}
       ${BUILD_SRC_DIR}/generate_java_${class_name}.cpp)
-  
-  target_link_libraries(generate_java_${class_name} 
-      mlpack 
-      java_generate_parts 
+
+  target_link_libraries(generate_java_${class_name}
+      mlpack
+      java_generate_parts
       ${MLPACK_LIBRARIES})
 
   set_target_properties(generate_java_${class_name} PROPERTIES
@@ -201,7 +201,7 @@ macro(add_java_binding file_name class_name)
   add_custom_command(OUTPUT ${JNI_GEN_DIR}/jni${class_name}.cpp
       COMMAND ${JAVA} -jar ${JAVACPP} -classpath .:${MAVEN_BUILD_DIR}/lib/* -nocompile -d ${JNI_GEN_DIR} org/mlpack/${class_name}.class
       WORKING_DIRECTORY ${MAVEN_BUILD_DIR}/target/classes)
-  
+
   add_library(jni${class_name} SHARED
       ${JNI_GEN_DIR}/jni${class_name}.cpp)
 
@@ -211,10 +211,10 @@ macro(add_java_binding file_name class_name)
       ${JNI_GEN_DIR}
       ${JNI_INCLUDE}
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java)
-      
+
   target_link_libraries(jni${class_name} mlpack ${MLPACK_LIBRARIES} jnijavacpp)
 
-  set_target_properties(jni${class_name} PROPERTIES 
+  set_target_properties(jni${class_name} PROPERTIES
       COMPILE_FLAGS -DBINDING_TYPE=BINDING_TYPE_JAVA
       LIBRARY_OUTPUT_DIRECTORY "${NATIVE_OUT_DIR}")
 
