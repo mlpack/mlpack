@@ -85,6 +85,11 @@ class VirtualBatchNorm;
 template<typename InputDataType,
          typename OutputDataType
 >
+class MiniBatchDiscrimination;
+
+template<typename InputDataType,
+         typename OutputDataType
+>
 class Reparametrization;
 
 template<typename InputDataType,
@@ -164,6 +169,12 @@ template<typename InputDataType,
 >
 class MultiplyMerge;
 
+template <typename InputDataType,
+          typename OutputDataType,
+          typename... CustomLayers
+>
+class WeightNorm;
+
 using MoreTypes = boost::variant<
         Recurrent<arma::mat, arma::mat>*,
         RecurrentAttention<arma::mat, arma::mat>*,
@@ -201,7 +212,7 @@ using LayerTypes = boost::variant<
                 NaiveConvolution<FullConvolution>,
                 NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
     TransposedConvolution<NaiveConvolution<ValidConvolution>,
-            NaiveConvolution<FullConvolution>,
+            NaiveConvolution<ValidConvolution>,
             NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
     DropConnect<arma::mat, arma::mat>*,
     Dropout<arma::mat, arma::mat>*,
@@ -224,11 +235,13 @@ using LayerTypes = boost::variant<
     FastLSTM<arma::mat, arma::mat>*,
     MaxPooling<arma::mat, arma::mat>*,
     MeanPooling<arma::mat, arma::mat>*,
+    MiniBatchDiscrimination<arma::mat, arma::mat>*,
     MultiplyConstant<arma::mat, arma::mat>*,
     MultiplyMerge<arma::mat, arma::mat>*,
     NegativeLogLikelihood<arma::mat, arma::mat>*,
     Padding<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
+    WeightNorm<arma::mat, arma::mat>*,
     MoreTypes,
     CustomLayers*...
 >;

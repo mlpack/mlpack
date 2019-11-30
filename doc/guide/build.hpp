@@ -29,7 +29,7 @@ to build mlpack on Windows, see \ref build_windows (alternatively, you can read
 is based on older versions).
 
 You can download the latest mlpack release from here:
-<a href="https://www.mlpack.org/files/mlpack-3.1.1.tar.gz">mlpack-3.1.1</a>
+<a href="https://www.mlpack.org/files/mlpack-3.2.1.tar.gz">mlpack-3.2.1</a>
 
 @section build_simple Simple Linux build instructions
 
@@ -37,9 +37,9 @@ Assuming all dependencies are installed in the system, you can run the commands
 below directly to build and install mlpack.
 
 @code
-$ wget https://www.mlpack.org/files/mlpack-3.1.1.tar.gz
-$ tar -xvzpf mlpack-3.1.1.tar.gz
-$ mkdir mlpack-3.1.1/build && cd mlpack-3.1.1/build
+$ wget https://www.mlpack.org/files/mlpack-3.2.1.tar.gz
+$ tar -xvzpf mlpack-3.2.1.tar.gz
+$ mkdir mlpack-3.2.1/build && cd mlpack-3.2.1/build
 $ cmake ../
 $ make -j4  # The -j is the number of cores you want to use for a build.
 $ sudo make install
@@ -64,8 +64,8 @@ configure mlpack.
 First we should unpack the mlpack source and create a build directory.
 
 @code
-$ tar -xvzpf mlpack-3.1.1.tar.gz
-$ cd mlpack-3.1.1
+$ tar -xvzpf mlpack-3.2.1.tar.gz
+$ cd mlpack-3.2.1
 $ mkdir build
 @endcode
 
@@ -76,10 +76,10 @@ The directory can have any name, not just 'build', but 'build' is sufficient.
 mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
 
- - Armadillo >= 6.500.0 (with LAPACK support)
+ - Armadillo >= 8.400.0 (with LAPACK support)
  - Boost (math_c99, program_options, serialization, unit_test_framework, heap,
           spirit) >= 1.49
- - ensmallen (will be downloaded if not found)
+ - ensmallen >= 2.10.0 (will be downloaded if not found)
 
 In addition, mlpack has the following optional dependencies:
 
@@ -157,6 +157,7 @@ The full list of options mlpack allows:
  - DOWNLOAD_STB_IMAGE=(ON/OFF): If STB is not found, download it (default ON)
  - BUILD_WITH_COVERAGE=(ON/OFF): Build with support for code coverage tools
       (gcc only) (default OFF)
+ - PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable     
  - BUILD_MARKDOWN_BINDINGS=(ON/OFF): Build Markdown bindings for website
        documentation (default OFF)
  - MATHJAX=(ON/OFF): use MathJax for generated Doxygen documentation (default

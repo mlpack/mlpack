@@ -23,7 +23,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-3.1.1.tar.gz">current stable version (3.1.1)</a>
+    <a href="https://www.mlpack.org/files/mlpack-3.2.2.tar.gz">current stable version (3.2.2)</a>
   </em>
 </p>
 
@@ -33,6 +33,21 @@ LAPACK, and aims to implement a wide array of machine learning methods and
 functions as a "swiss army knife" for machine learning researchers.  In addition
 to its powerful C++ interface, mlpack also provides command-line programs and
 Python bindings.
+
+mlpack uses an [open governance model](./GOVERNANCE.md) and is fiscally
+sponsored by [NumFOCUS](https://numfocus.org/).  Consider making a
+[tax-deductible donation](https://numfocus.org/donate-to-mlpack) to help the
+project pay for developer time, professional services, travel, workshops, and a
+variety of other needs.
+
+<div align="center">
+  <a href="https://numfocus.org/donate-to-mlpack">
+    <img height="60px"
+         src="https://raw.githubusercontent.com/numfocus/templates/master/images/numfocus-logo.png"
+         align="center">
+  </a>
+</div>
+<br>
 
 ### 0. Contents
 
@@ -83,11 +98,11 @@ Citations are beneficial for the growth and improvement of mlpack.
 
 mlpack has the following dependencies:
 
-      Armadillo     >= 6.500.0
+      Armadillo     >= 8.400.0
       Boost (program_options, math_c99, unit_test_framework, serialization,
              spirit)
       CMake         >= 3.3.2
-      ensmallen     >= 1.10.0
+      ensmallen     >= 2.10.0
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
@@ -109,7 +124,7 @@ If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 ### 4. Building mlpack from source
 
 This section discusses how to build mlpack from source.  However, mlpack is in
-the repositories of many Linux distributions and so it may be easier to use the
+the repositories of many Linux distributions, so it may be easier to use the
 package manager for your system.  For example, on Ubuntu, you can install mlpack
 with the following command:
 
@@ -120,13 +135,13 @@ available---for instance, at the time of this writing, Ubuntu 16.04 only has
 mlpack 2.0.1 available.  Options include upgrading your Ubuntu version, finding
 a PPA or other non-official sources, or installing with a manual build.
 
-There are some other useful pages to consult in addition to this section:
+There are some useful pages to consult in addition to this section:
 
   - [Building mlpack From Source](https://www.mlpack.org/doc/mlpack-git/doxygen/build.html)
   - [Building mlpack From Source on Windows](https://www.mlpack.org/doc/mlpack-git/doxygen/build_windows.html)
 
 mlpack uses CMake as a build system and allows several flexible build
-configuration options. One can consult any of numerous CMake tutorials for
+configuration options. You can consult any of the CMake tutorials for
 further documentation, but this tutorial should be enough to get mlpack built
 and installed.
 
@@ -136,21 +151,20 @@ use mlpack-x.y.z where x.y.z is the version.
     $ tar -xzf mlpack-x.y.z.tar.gz
     $ cd mlpack-x.y.z
 
-Then, make a build directory.  The directory can have any name, not just
-'build', but 'build' is sufficient.
+Then, make a build directory.  The directory can have any name, but 'build' is
+sufficient.
 
     $ mkdir build
     $ cd build
 
 The next step is to run CMake to configure the project.  Running CMake is the
 equivalent to running `./configure` with autotools. If you run CMake with no
-options, it will configure the project to build with no debugging symbols and no
-profiling information:
+options, it will configure the project to build with no debugging symbols and 
+no profiling information:
 
     $ cmake ../
 
-You can specify options to compile with debugging information and profiling
-information:
+Options can be specified to compile with debugging information and profiling information:
 
     $ cmake -D DEBUG=ON -D PROFILE=ON ../
 
@@ -164,6 +178,7 @@ Options are specified with the -D flag.  The allowed options include:
     ARMADILLO_LIBRARY=(/path/to/armadillo/libarmadillo.so): Armadillo library
     BUILD_CLI_EXECUTABLES=(ON/OFF): whether or not to build command-line programs
     BUILD_PYTHON_BINDINGS=(ON/OFF): whether or not to build Python bindings
+    PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
     BUILD_TESTS=(ON/OFF): whether or not to build tests
     BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
        static libraries
@@ -186,22 +201,21 @@ Once CMake is configured, building the library is as simple as typing 'make'.
 This will build all library components as well as 'mlpack_test'.
 
     $ make
-
-You can specify individual components which you want to build, if you do not
-want to build everything in the library:
+If you do not want to build everything in the library, individual components 
+of the build can be specified:
 
     $ make mlpack_pca mlpack_knn mlpack_kfn
 
 If the build fails and you cannot figure out why, register an account on Github
-and submit an issue; the mlpack developers will quickly help you figure it out:
+and submit an issue. The mlpack developers will quickly help you figure it out:
 
 [mlpack on Github](https://www.github.com/mlpack/mlpack/)
 
 Alternately, mlpack help can be found in IRC at `#mlpack` on irc.freenode.net.
 
-If you wish to install mlpack to `/usr/local/include/mlpack/` and `/usr/local/lib/`
-and `/usr/local/bin/`, once it has built, make sure you have root privileges (or
-write permissions to those three directories), and simply type
+If you wish to install mlpack to `/usr/local/include/mlpack/`, `/usr/local/lib/`,
+and `/usr/local/bin/`, make sure you have root privileges (or write permissions 
+to those three directories), and simply type
 
     $ make install
 
@@ -209,7 +223,7 @@ You can now run the executables by name; you can link against mlpack with
     `-lmlpack`
 and the mlpack headers are found in
     `/usr/local/include/mlpack/`
-and if Python bindings were built, they will be accessible with the `mlpack`
+and if Python bindings were built, you can access them with the `mlpack`
 package in Python.
 
 If running the programs (i.e. `$ mlpack_knn -h`) gives an error of the form

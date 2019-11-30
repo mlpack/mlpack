@@ -1,5 +1,39 @@
-### mlpack 4.0.0
+### mlpack ?.?.?
 ###### ????-??-??
+  * Add `valid` and `same` padding option in `Convolution` and `Atrous
+    Convolution` layer (#1988).
+
+  * Add Model() to the FFN class to access individual layers (#2043).
+
+  * Update documentation for pip and conda installation packages (#2044).
+
+  * Add bindings for linear SVM (#1935); `mlpack_linear_svm` from the
+    command-line, `linear_svm()` from Python.
+
+  * Add support to return the layer name as `std::string` (#1987).
+
+  * Speed and memory improvements for the Transposed Convolution layer (#1493).
+
+  * Fix Windows Python build configuration (#1885).
+
+  * Validate md5 of STB library after download (#2087).
+
+  * Add `__version__` to `__init__.py` (#2092).
+
+### mlpack 3.2.1
+###### 2019-10-01
+  * Enforce CMake version check for ensmallen (#2032).
+
+  * Fix CMake check for Armadillo version (#2029).
+
+  * Better handling of when STB is not installed (#2033).
+
+  * Fix Naive Bayes classifier computations in high dimensions (#2022).
+
+### mlpack 3.2.0
+###### 2019-09-25
+  * Fix some potential infinity errors in Naive Bayes Classifier (#2022).
+
   * Fix occasionally-failing RADICAL test (#1924).
 
   * Fix gcc 9 OpenMP compilation issue (#1970).
@@ -17,15 +51,26 @@
   * Fix prediction output of softmax regression when test set accuracy is
     calculated (#1922).
 
-  * Action struct in continuous RL environments now stores the action as a
-    `double` instead of `double[1]` (#1941, #1931).
-
   * Pendulum environment now checks for termination. All RL environments now
     have an option to terminate after a set number of time steps (no limit
     by default) (#1941).
 
   * Add support for probabilistic KDE (kernel density estimation) error bounds
     when using the Gaussian kernel (#1934).
+
+  * Fix negative distances for cover tree computation (#1979).
+
+  * Fix cover tree building when all pairwise distances are 0 (#1986).
+
+  * Improve KDE pruning by reclaiming not used error tolerance (#1954, #1984).
+
+  * Optimizations for sparse matrix accesses in z-score normalization for CF
+    (#1989).
+
+  * Add `kmeans_max_iterations` option to GMM training binding `gmm_train_main`.
+
+  * Bump minimum Armadillo version to 8.400.0 due to ensmallen dependency
+    requirement (#2015).
 
 ### mlpack 3.1.1
 ###### 2019-05-26
@@ -635,4 +680,3 @@
   * Initial release.  See any resolved tickets numbered less than #196 or
     execute this query:
     http://www.mlpack.org/trac/query?status=closed&milestone=mlpack+1.0.0
-

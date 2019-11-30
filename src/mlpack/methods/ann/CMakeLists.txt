@@ -7,6 +7,7 @@ set(SOURCES
   rnn_impl.hpp
   brnn.hpp
   brnn_impl.hpp
+  layer_names.hpp
 )
 
 add_subdirectory(visitor)
