@@ -36,10 +36,6 @@ steps:
 - script: cd build && make -j2
   displayName: 'Build'
 
-# List files for debugging...
-- script: find build/
-  displayName: 'List build environment'
-
 # Run tests via ctest.
 - script: cd build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
   displayName: 'Run tests via ctest'
