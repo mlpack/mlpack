@@ -24,10 +24,6 @@ if (BUILD_JULIA_BINDINGS)
           ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/)
   add_custom_command(TARGET julia PRE_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy
-          ${CMAKE_CURRENT_SOURCE_DIR}/mlpack/cli.jl
-          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/cli.jl)
-  add_custom_command(TARGET julia PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy
           ${CMAKE_CURRENT_SOURCE_DIR}/mlpack/REQUIRE
           ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/REQUIRE)
 
@@ -56,6 +52,9 @@ if (BUILD_JULIA_BINDINGS)
       PROPERTY INCLUDE_DIRECTORIES)
   configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack/Project.toml.in
                  ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/Project.toml)
+  # Configure cli.jl.in with the right suffix for libraries.
+  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack/cli.jl.in
+                 ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/cli.jl)
 
   # Create the empty mlpack.jl file that we will fill with includes.
   file(WRITE

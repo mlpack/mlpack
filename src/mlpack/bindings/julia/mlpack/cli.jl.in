@@ -25,7 +25,7 @@ export CLIEnableVerbose
 export CLIDisableVerbose
 export CLISetPassed
 
-const library = joinpath(@__DIR__, "libmlpack_julia_util.so")
+const library = joinpath(@__DIR__, "libmlpack_julia_util.${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
 # Utility function to convert 1d object to 2d.
 function convert_to_2d(in::Array{T, 1})::Array{T, 2} where T
@@ -278,9 +278,9 @@ function CLIGetParamCol(paramName::String)
   local ptr::Ptr{Float64};
   local rows::UInt64;
 
-  rows = ccall((:CLI_GetParamColRows, "libmlpack_julia_util.so"), UInt64,
+  rows = ccall((:CLI_GetParamColRows, "libmlpack_julia_util${CMAKE_SHARED_LIBRARY_SUFFIX}"), UInt64,
       (Cstring,), paramName);
-  ptr = ccall((:CLI_GetParamCol, "libmlpack_julia_util.so"), Ptr{Float64},
+  ptr = ccall((:CLI_GetParamCol, "libmlpack_julia_util${CMAKE_SHARED_LIBRARY_SUFFIX}"), Ptr{Float64},
       (Cstring,), paramName);
 
   return Base.unsafe_wrap(Array{Float64, 1}, ptr, rows, own=true);
@@ -290,9 +290,9 @@ function CLIGetParamRow(paramName::String)
   local ptr::Ptr{Float64};
   local cols::UInt64;
 
-  cols = ccall((:CLI_GetParamRowCols, "libmlpack_julia_util.so"), UInt64,
+  cols = ccall((:CLI_GetParamRowCols, "libmlpack_julia_util${CMAKE_SHARED_LIBRARY_SUFFIX}"), UInt64,
       (Cstring,), paramName);
-  ptr = ccall((:CLI_GetParamRow, "libmlpack_julia_util.so"), Ptr{Float64},
+  ptr = ccall((:CLI_GetParamRow, "libmlpack_julia_util${CMAKE_SHARED_LIBRARY_SUFFIX}"), Ptr{Float64},
       (Cstring,), paramName);
 
   return Base.unsafe_wrap(Array{Float64, 1}, ptr, cols, own=true);
@@ -302,9 +302,9 @@ function CLIGetParamUCol(paramName::String)
   local ptr::Ptr{UInt64};
   local rows::UInt64;
 
-  rows = ccall((:CLI_GetParamUColRows, "libmlpack_julia_util.so"), UInt64,
+  rows = ccall((:CLI_GetParamUColRows, "libmlpack_julia_util${CMAKE_SHARED_LIBRARY_SUFFIX}"), UInt64,
       (Cstring,), paramName);
-  ptr = ccall((:CLI_GetParamUCol, "libmlpack_julia_util.so"), Ptr{UInt64},
+  ptr = ccall((:CLI_GetParamUCol, "libmlpack_julia_util${CMAKE_SHARED_LIBRARY_SUFFIX}"), Ptr{UInt64},
       (Cstring,), paramName);
 
   m = Base.unsafe_wrap(Array{UInt64, 1}, ptr, rows, own=true);
