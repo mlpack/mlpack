@@ -2019,6 +2019,72 @@ BOOST_AUTO_TEST_CASE(GradientAtrousConvolutionLayerTest)
 }
 
 /**
+ * Test the functions to access and modify the parameters of the
+ * AtrousConvolution layer.
+ */
+BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerParametersTest)
+{
+  // Parameter order for the constructor: inSize, outSize, kW, kH, dW, dH, padW,
+  // padH, inputWidth, inputHeight, dilationW, dilationH, paddingType ("none").
+  AtrousConvolution<> layer1(1, 2, 3, 4, 5, 6, std::make_tuple(7, 8),
+      std::make_tuple(9, 10), 11, 12, 13, 14);
+  AtrousConvolution<> layer2(2, 3, 4, 5, 6, 7, std::make_tuple(8, 9),
+      std::make_tuple(10, 11), 12, 13, 14, 15);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), 11);
+  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), 12);
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.KernelSize()), 3);
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.KernelSize()), 4);
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.Strides()), 5);
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.Strides()), 6);
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.PadHSize()), 9);
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.PadHSize()), 10);
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.PadWSize()), 7);
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.PadWSize()), 8);
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.DilationRate()), 13);
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.DilationRate()), 14);
+
+  // Now modify the parameters to match the second layer.
+  layer1.InputWidth() = 12;
+  layer1.InputHeight() = 13;
+  std::get<0>(layer1.KernelSize()) = 4;
+  std::get<1>(layer1.KernelSize()) = 5;
+  std::get<0>(layer1.Strides()) = 6;
+  std::get<1>(layer1.Strides()) = 7;
+  std::get<0>(layer1.PadHSize()) = 10;
+  std::get<1>(layer1.PadHSize()) = 11;
+  std::get<0>(layer1.PadWSize()) = 8;
+  std::get<1>(layer1.PadWSize()) = 9;
+  std::get<0>(layer1.DilationRate()) = 12;
+  std::get<1>(layer1.DilationRate()) = 13;
+
+  // Now ensure all results are the same.
+  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), layer2.InputWidth());
+  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), layer2.InputHeight());
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.KernelSize()),
+                      std::get<0>(layer2.KernelSize()));
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.KernelSize()),
+                      std::get<1>(layer2.KernelSize()));
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.Strides()),
+                      std::get<0>(layer2.Strides()));
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.Strides()),
+                      std::get<1>(layer2.Strides()));
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.PadHSize()),
+                      std::get<0>(layer2.PadHSize()));
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.PadHSize()),
+                      std::get<1>(layer2.PadHSize()));
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.PadWSize()),
+                      std::get<0>(layer2.PadWSize()));
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.PadWSize()),
+                      std::get<1>(layer2.PadWSize()));
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.DilationRate()),
+                      std::get<0>(layer1.DilationRate()));
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer2.DilationRate()),
+                      std::get<1>(layer2.DilationRate()));
+}
+
+/**
  * Test that the padding options are working correctly in Atrous Convolution
  * layer.
  */
@@ -2778,6 +2844,64 @@ BOOST_AUTO_TEST_CASE(LayerNormSerializationTest)
 {
   LayerNorm<> layer(10);
   ANNLayerSerializationTest(layer);
+}
+
+/**
+ * Test that the functions that can modify and access the parameters of the
+ * Convolution layer work.
+ */
+BOOST_AUTO_TEST_CASE(ConvolutionLayerParametersTest)
+{
+  // Parameter order: inSize, outSize, kW, kH, dW, dH, padW, padH, inputWidth,
+  // inputHeight, paddingType.
+  Convolution<> layer1(1, 2, 3, 4, 5, 6, std::tuple<size_t, size_t>(7, 8),
+      std::tuple<size_t, size_t>(9, 10), 11, 12, "none");
+  Convolution<> layer2(2, 3, 4, 5, 6, 7, std::tuple<size_t, size_t>(8, 9),
+      std::tuple<size_t, size_t>(10, 11), 12, 13, "none");
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), 11);
+  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), 12);
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.KernelSize()), 3);
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.KernelSize()), 4);
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.Strides()), 5);
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.Strides()), 6);
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.PadHSize()), 9);
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.PadHSize()), 10);
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.PadWSize()), 7);
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.PadWSize()), 8);
+
+  // Now modify the parameters to match the second layer.
+  layer1.InputWidth() = 12;
+  layer1.InputHeight() = 13;
+  std::get<0>(layer1.KernelSize()) = 4;
+  std::get<1>(layer1.KernelSize()) = 5;
+  std::get<0>(layer1.Strides()) = 6;
+  std::get<1>(layer1.Strides()) = 7;
+  std::get<0>(layer1.PadHSize()) = 10;
+  std::get<1>(layer1.PadHSize()) = 11;
+  std::get<0>(layer1.PadWSize()) = 8;
+  std::get<1>(layer1.PadWSize()) = 9;
+
+  // Now ensure all results are the same.
+  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), layer2.InputWidth());
+  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), layer2.InputHeight());
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.KernelSize()),
+                      std::get<0>(layer2.KernelSize()));
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.KernelSize()),
+                      std::get<1>(layer2.KernelSize()));
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.Strides()),
+                      std::get<0>(layer2.Strides()));
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.Strides()),
+                      std::get<1>(layer2.Strides()));
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.PadHSize()),
+                      std::get<0>(layer2.PadHSize()));
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.PadHSize()),
+                      std::get<1>(layer2.PadHSize()));
+  BOOST_REQUIRE_EQUAL(std::get<0>(layer1.PadWSize()),
+                      std::get<0>(layer2.PadWSize()));
+  BOOST_REQUIRE_EQUAL(std::get<1>(layer1.PadWSize()),
+                      std::get<1>(layer2.PadWSize()));
 }
 
 /**
