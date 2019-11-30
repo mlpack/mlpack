@@ -278,10 +278,8 @@ function CLIGetParamCol(paramName::String)
   local ptr::Ptr{Float64};
   local rows::UInt64;
 
-  rows = ccall((:CLI_GetParamColRows, "libmlpack_julia_util${CMAKE_SHARED_LIBRARY_SUFFIX}"), UInt64,
-      (Cstring,), paramName);
-  ptr = ccall((:CLI_GetParamCol, "libmlpack_julia_util${CMAKE_SHARED_LIBRARY_SUFFIX}"), Ptr{Float64},
-      (Cstring,), paramName);
+  rows = ccall((:CLI_GetParamColRows, library), UInt64, (Cstring,), paramName);
+  ptr = ccall((:CLI_GetParamCol, library), Ptr{Float64}, (Cstring,), paramName);
 
   return Base.unsafe_wrap(Array{Float64, 1}, ptr, rows, own=true);
 end
@@ -290,10 +288,8 @@ function CLIGetParamRow(paramName::String)
   local ptr::Ptr{Float64};
   local cols::UInt64;
 
-  cols = ccall((:CLI_GetParamRowCols, "libmlpack_julia_util${CMAKE_SHARED_LIBRARY_SUFFIX}"), UInt64,
-      (Cstring,), paramName);
-  ptr = ccall((:CLI_GetParamRow, "libmlpack_julia_util${CMAKE_SHARED_LIBRARY_SUFFIX}"), Ptr{Float64},
-      (Cstring,), paramName);
+  cols = ccall((:CLI_GetParamRowCols, library), UInt64, (Cstring,), paramName);
+  ptr = ccall((:CLI_GetParamRow, library), Ptr{Float64}, (Cstring,), paramName);
 
   return Base.unsafe_wrap(Array{Float64, 1}, ptr, cols, own=true);
 end
@@ -302,10 +298,8 @@ function CLIGetParamUCol(paramName::String)
   local ptr::Ptr{UInt64};
   local rows::UInt64;
 
-  rows = ccall((:CLI_GetParamUColRows, "libmlpack_julia_util${CMAKE_SHARED_LIBRARY_SUFFIX}"), UInt64,
-      (Cstring,), paramName);
-  ptr = ccall((:CLI_GetParamUCol, "libmlpack_julia_util${CMAKE_SHARED_LIBRARY_SUFFIX}"), Ptr{UInt64},
-      (Cstring,), paramName);
+  rows = ccall((:CLI_GetParamUColRows, library), UInt64, (Cstring,), paramName);
+  ptr = ccall((:CLI_GetParamUCol, library), Ptr{UInt64}, (Cstring,), paramName);
 
   m = Base.unsafe_wrap(Array{UInt64, 1}, ptr, rows, own=true);
   return convert(Array{Int64, 1}, m .+ 1)
