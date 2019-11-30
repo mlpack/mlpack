@@ -133,7 +133,7 @@ if (BUILD_JULIA_BINDINGS)
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/strip_type.hpp)
   target_link_libraries(generate_jl_${name} mlpack ${MLPACK_LIBRARIES})
   set_target_properties(generate_jl_${name} PROPERTIES
-      COMPILE_FLAGS -DBINDING_TYPE=BINDING_TYPE_JL
+      COMPILE_FLAGS "-DBINDING_TYPE=BINDING_TYPE_JL"
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/bin/")
   add_custom_command(TARGET generate_jl_${name} POST_BUILD
       COMMAND ${CMAKE_COMMAND}

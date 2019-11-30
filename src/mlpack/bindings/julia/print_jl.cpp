@@ -20,7 +20,8 @@ extern std::string programName;
  * Print the code for a .jl binding for an mlpack program to stdout.
  */
 void PrintJL(const util::ProgramDoc& programInfo,
-             const string& functionName)
+             const string& functionName,
+             const std::string& mlpackJuliaLibSuffix)
 {
   // Restore parameters.
   CLI::RestoreSettings(programInfo.programName);
@@ -66,8 +67,8 @@ void PrintJL(const util::ProgramDoc& programInfo,
 
   // Make sure the libraries we need are accessible.
   cout << "const " << functionName << "Library = joinpath(@__DIR__, "
-      << "\"libmlpack_julia_" << functionName << "." << MLPACK_JL_LIB_SUFFIX
-      << ")" << endl;
+      << "\"libmlpack_julia_" << functionName << mlpackJuliaLibSuffix << "\")"
+      << endl;
   cout << endl;
 
   // Define mlpackMain() function to call.
