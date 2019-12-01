@@ -1447,7 +1447,7 @@ BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
     return result;
   };
 
-  const auto makeTarget = [] (const char *line) -> MatType 
+  const auto makeTarget = [] (const char *line) -> MatType
   {
     const auto strLen = strlen(line);
     // Responses for NegativeLogLikelihood should be
