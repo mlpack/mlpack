@@ -1418,18 +1418,10 @@ BOOST_AUTO_TEST_CASE(BRNNTrainReturnObjective)
  */
 BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
 {
-<<<<<<< HEAD
-
-=======
->>>>>>> 2e73d807b841ea2c186d547f2a7955e3ed47805c
   const int rho = 18;
   const int hiddenSize = 128;
   const int numLetters = 256;
   using namespace arma;
-<<<<<<< HEAD
-
-=======
->>>>>>> 2e73d807b841ea2c186d547f2a7955e3ed47805c
   using MatType = cube;
   std::vector<std::string> trainingData;
   trainingData.push_back(std::string("THIS IS THE INPUT"));
@@ -1440,17 +1432,14 @@ BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
   model.Add<Dropout<>>(0.1);
   model.Add<Linear<>>(hiddenSize, numLetters);
 
-  const auto makeInput = [](const char *line) -> MatType {
+  const auto makeInput = [](const char *line) -> MatType
+  {
     const auto strLen = strlen(line);
     // rows: number of dimensions
     // cols: number of sequences/points
     // slices: number of steps in sequences
     MatType result(numLetters, 1, strLen, fill::zeros);
-<<<<<<< HEAD
-    for(int i = 0; i < strLen; ++i)
-=======
     for (int i = 0; i < strLen; ++i)
->>>>>>> 2e73d807b841ea2c186d547f2a7955e3ed47805c
     {
       const auto letter = line[i];
       result.at(static_cast<uword>(letter), 0, i) = 1.0;
@@ -1458,17 +1447,14 @@ BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
     return result;
   };
 
-  const auto makeTarget = [] (const char *line) -> MatType {
+  const auto makeTarget = [] (const char *line) -> MatType 
+  {
     const auto strLen = strlen(line);
-    // responses for NegativeLogLikelihood should be
-    // non-one-hot-encoded class IDs (from 1 to num_classes)
+    // Responses for NegativeLogLikelihood should be 
+    // non-one-hot-encoded class IDs (from 1 to num_classes).
     cube result(1, 1, strLen, fill::zeros);
     // the response is the *next* letter in the sequence
-<<<<<<< HEAD
-    for(int i = 0; i < strLen - 1; ++i)
-=======
     for (int i = 0; i < strLen - 1; ++i)
->>>>>>> 2e73d807b841ea2c186d547f2a7955e3ed47805c
     {
       const auto letter = line[i + 1];
       result.at(0, 0, i) = static_cast<uword>(letter) + 1.0;
@@ -1480,19 +1466,11 @@ BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
 
   std::vector<cube> inputs(trainingData.size());
   std::vector<cube> targets(trainingData.size());
-<<<<<<< HEAD
-  for(int i = 0; i < trainingData.size(); ++i)
-=======
   for (int i = 0; i < trainingData.size(); ++i)
->>>>>>> 2e73d807b841ea2c186d547f2a7955e3ed47805c
   {
     inputs[i] = makeInput(trainingData[i].c_str());
     targets[i] = makeTarget(trainingData[i].c_str());
   }
-<<<<<<< HEAD
-
-=======
->>>>>>> 2e73d807b841ea2c186d547f2a7955e3ed47805c
   ens::SGD<> opt(0.01, 1, 100);
   double objVal = model.Train(inputs[0], targets[0], opt);
   BOOST_TEST_CHECKPOINT("Training over");
