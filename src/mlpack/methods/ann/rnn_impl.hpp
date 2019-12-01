@@ -363,7 +363,8 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     {
       outputLayer.Backward(std::move(boost::apply_visitor(
           outputParameterVisitor, network.back())),
-          std::move(arma::mat(responses.slice(effectiveRho - seqNum - 1).colptr(begin),
+          std::move(arma::mat(
+          responses.slice(effectiveRho - seqNum - 1).colptr(begin),
           responses.n_rows, batchSize, false, true)), std::move(error));
     }
 
