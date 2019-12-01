@@ -171,6 +171,10 @@ class CLI {
     argumentCheck(array.dataType() == FP_TYPE,
         "Column data type is %s but %s is expected", array.dataType(), FP_TYPE);
 
+    if (array.ordering() == 'c') {
+      array = array.dup();
+    }
+
     Pointer data = array.data().addressPointer();
     long size = array.length();
 
@@ -181,6 +185,10 @@ class CLI {
     argumentCheck(array.isColumnVectorOrScalar(), "Argument is not a column vector");
     argumentCheck(array.dataType() == UNSIGNED_TYPE,
         "Column data type is %s but %s is expected", array.dataType(), UNSIGNED_TYPE);
+
+    if (array.ordering() == 'c') {
+      array = array.dup();
+    }
 
     Pointer data = array.data().addressPointer();
     long size = array.length();
@@ -199,6 +207,10 @@ class CLI {
     argumentCheck(array.dataType() == FP_TYPE,
         "Column data type is %s but %s is expected", array.dataType(), FP_TYPE);
 
+    if (array.ordering() == 'f') {
+      array = array.dup();
+    }
+
     Pointer data = array.data().addressPointer();
     long size = array.length();
 
@@ -209,6 +221,10 @@ class CLI {
     argumentCheck(array.isRowVectorOrScalar(), "Argument is not a row vector");
     argumentCheck(array.dataType() == UNSIGNED_TYPE,
         "Column data type is %s but %s is expected", array.dataType(), UNSIGNED_TYPE);
+
+    if (array.ordering() == 'f') {
+      array = array.dup();
+    }
 
     Pointer data = array.data().addressPointer();
     long size = array.length();

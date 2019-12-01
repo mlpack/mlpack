@@ -30,6 +30,8 @@ PARAM_VECTOR_IN(int, "vector_in", "Input vector of numbers.", "");
 PARAM_VECTOR_IN(string, "str_vector_in", "Input vector of strings.", "");
 PARAM_MODEL_IN(GaussianKernel, "model_in", "Input model.", "");
 PARAM_FLAG("build_model", "If true, a model will be returned.", "");
+PARAM_ROW_IN("row_view_in", "Row view input", "");
+PARAM_COL_IN("col_view_in", "Col view input", "");
 
 PARAM_STRING_OUT("string_out", "Output string, will be 'hello2'.", "S");
 PARAM_INT_OUT("int_out", "Output int, will be 13.");
@@ -48,6 +50,8 @@ PARAM_VECTOR_OUT(string, "str_vector_out", "Output string vector.", "");
 PARAM_MODEL_OUT(GaussianKernel, "model_out", "Output model, with twice the "
     "bandwidth.", "");
 PARAM_DOUBLE_OUT("model_bw_out", "The bandwidth of the model.");
+PARAM_ROW_OUT("row_view_out", "Row view out", "");
+PARAM_COL_OUT("col_view_out", "Col view out", "");
 
 static void mlpackMain()
 {
@@ -63,6 +67,18 @@ static void mlpackMain()
   {
     CLI::GetParam<arma::Mat<size_t>>("umatrix_order_out") =
         std::move(CLI::GetParam<arma::Mat<size_t>>("umatrix_order_in"));
+  }
+
+  if (CLI::HasParam("row_view_in"))
+  {
+    CLI::GetParam<arma::rowvec>("row_view_out") =
+        std::move(CLI::GetParam<arma::rowvec>("row_view_in"));
+  }
+
+  if (CLI::HasParam("col_view_in"))
+  {
+    CLI::GetParam<arma::colvec>("col_view_out") =
+        std::move(CLI::GetParam<arma::colvec>("col_view_in"));
   }
 
   // Check that everything is right on the input, and then set output

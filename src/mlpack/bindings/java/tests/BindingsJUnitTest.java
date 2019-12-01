@@ -474,4 +474,91 @@ public class BindingsJUnitTest {
       }
     }
   }
+
+  @Test(expected = AssertionError.class)
+  // this test is almost identical to the next one but will fail
+  public void runWithRowViewFail() {
+    int[] data = {
+      1, 2, 3, 4, 5,
+      6, 7, 8, 9, 10,
+      11, 12, 13, 14, 15,
+      16, 17, 18, 19, 20,
+      21, 22, 23, 24, 25
+    };
+
+    long[] shape = {5, 5};
+    char order = 'f';
+    long[] strides = Nd4j.getStrides(shape, order);
+    INDArray matrix = Nd4j.create(data, shape, strides, order, DataType.DOUBLE);
+
+    BindingsTest.Params params = new BindingsTest.Params()
+        .put("int_in", 12)
+        .put("double_in", 4.0)
+        .put("string_in", "hello")
+        // it fails because of the `true` value below.
+        // true means `keep dimensions intact`, at which point Nd4j will copy
+        // row's data with the default ordering, which is 'c',
+        // whereas the correct ordering remains the same - 'f'
+        // (i.e. data is still laid out in column wise order)
+        .put("row_view_in", matrix.getRow(0, true));
+
+    BindingsTest.run(params);
+
+    INDArray result = params.get("row_view_out", INDArray.class);
+    assertEquals(result, matrix.getRow(0, true));
+  }
+
+  @Test
+  public void runWithRowView() {
+    int[] data = {
+      1, 2, 3, 4, 5,
+      6, 7, 8, 9, 10,
+      11, 12, 13, 14, 15,
+      16, 17, 18, 19, 20,
+      21, 22, 23, 24, 25
+    };
+
+    long[] shape = {5, 5};
+    char order = 'f';
+    long[] strides = Nd4j.getStrides(shape, order);
+    INDArray matrix = Nd4j.create(data, shape, strides, order, DataType.DOUBLE);
+
+    BindingsTest.Params params = new BindingsTest.Params()
+        .put("int_in", 12)
+        .put("double_in", 4.0)
+        .put("string_in", "hello")
+        .put("row_view_in", matrix.getRow(0));
+
+    BindingsTest.run(params);
+
+    INDArray result = params.get("row_view_out", INDArray.class);
+    assertEquals(result, matrix.getRow(0, true));
+  }
+
+  @Test
+  public void runWithColView() {
+    int[] data = {
+      1, 2, 3, 4, 5,
+      6, 7, 8, 9, 10,
+      11, 12, 13, 14, 15,
+      16, 17, 18, 19, 20,
+      21, 22, 23, 24, 25
+    };
+
+    long[] shape = {5, 5};
+    char order = 'c';
+    long[] strides = Nd4j.getStrides(shape, order);
+    INDArray matrix = Nd4j.create(data, shape, strides, order, DataType.DOUBLE);
+
+    BindingsTest.Params params = new BindingsTest.Params()
+        .put("int_in", 12)
+        .put("double_in", 4.0)
+        .put("string_in", "hello")
+        .put("col_view_in", matrix.getColumn(0, true));
+
+    BindingsTest.run(params);
+
+    INDArray result = params.get("col_view_out", INDArray.class);
+    assertEquals(matrix.getColumn(0, true), result);
+  }
 }
