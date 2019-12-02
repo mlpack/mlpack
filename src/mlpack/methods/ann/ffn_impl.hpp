@@ -69,17 +69,18 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::ResetData(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-template<typename OptimizerType>
+template<typename OptimizerType, typename... CallbackTypes>
 double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
       arma::mat predictors,
       arma::mat responses,
-      OptimizerType& optimizer)
+      OptimizerType& optimizer,
+      CallbackTypes&&... callbacks)
 {
   ResetData(std::move(predictors), std::move(responses));
 
   // Train the model.
   Timer::Start("ffn_optimization");
-  const double out = optimizer.Optimize(*this, parameter);
+  const double out = optimizer.Optimize(*this, parameter, callbacks...);
   Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
@@ -89,9 +90,11 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-template<typename OptimizerType>
+template<typename OptimizerType, typename... CallbackTypes>
 double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
-    arma::mat predictors, arma::mat responses)
+    arma::mat predictors,
+    arma::mat responses,
+    CallbackTypes&&... callbacks)
 {
   ResetData(std::move(predictors), std::move(responses));
 
@@ -99,7 +102,7 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   // Train the model.
   Timer::Start("ffn_optimization");
-  const double out = optimizer.Optimize(*this, parameter);
+  const double out = optimizer.Optimize(*this, parameter, callbacks...);
   Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out

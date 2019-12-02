@@ -1726,8 +1726,8 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
 {
   arma::mat output, input, delta;
 
-  TransposedConvolution<> module1(1, 1, 3, 3, 1, 1, 0, 0, 4, 4);
-  // Test the Forward function.
+  TransposedConvolution<> module1(1, 1, 3, 3, 1, 1, 0, 0, 4, 4, 6, 6);
+  // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 15, 16);
   module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module1.Parameters()(0) = 1.0;
@@ -1737,11 +1737,12 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   // Value calculated using tensorflow.nn.conv2d_transpose()
   BOOST_REQUIRE_EQUAL(arma::accu(output), 360.0);
 
-  // Test the Backward function.
+  // Test the backward function.
   module1.Backward(std::move(input), std::move(output), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 720);
+  // Value calculated using tensorflow.nn.conv2d()
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 720.0);
 
-  TransposedConvolution<> module2(1, 1, 4, 4, 1, 1, 2, 2, 5, 5);
+  TransposedConvolution<> module2(1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 6, 6);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
   module2.Parameters() = arma::mat(16 + 1, 1, arma::fill::zeros);
@@ -1753,14 +1754,15 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module2.Parameters()(15) = 2.0;
   module2.Reset();
   module2.Forward(std::move(input), std::move(output));
-  // Value calculated using tensorflow.nn.conv2d_transpose()
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 2100.0);
+  // Value calculated using torch.nn.functional.conv_transpose2d()
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 1512.0);
 
   // Test the backward function.
   module2.Backward(std::move(input), std::move(output), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 7740);
+  // Value calculated using torch.nn.functional.conv2d()
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 6504.0);
 
-  TransposedConvolution<> module3(1, 1, 3, 3, 1, 1, 1, 1, 5, 5);
+  TransposedConvolution<> module3(1, 1, 3, 3, 1, 1, 1, 1, 5, 5, 5, 5);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
   module3.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
@@ -1770,14 +1772,15 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module3.Parameters()(8) = 1.0;
   module3.Reset();
   module3.Forward(std::move(input), std::move(output));
-  // Value calculated using tensorflow.nn.conv2d_transpose()
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 3000.0);
+  // Value calculated using torch.nn.functional.conv_transpose2d()
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 2370.0);
 
   // Test the backward function.
   module3.Backward(std::move(input), std::move(output), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 21480);
+  // Value calculated using torch.nn.functional.conv2d()
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 19154.0);
 
-  TransposedConvolution<> module4(1, 1, 3, 3, 1, 1, 2, 2, 5, 5);
+  TransposedConvolution<> module4(1, 1, 3, 3, 1, 1, 0, 0, 5, 5, 7, 7);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
   module4.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
@@ -1787,33 +1790,35 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module4.Parameters()(8) = 8.0;
   module4.Reset();
   module4.Forward(std::move(input), std::move(output));
-  // Value calculated using tensorflow.nn.conv2d_transpose()
+  // Value calculated using torch.nn.functional.conv_transpose2d()
   BOOST_REQUIRE_EQUAL(arma::accu(output), 6000.0);
 
   // Test the backward function.
   module4.Backward(std::move(input), std::move(output), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 86208);
+  // Value calculated using torch.nn.functional.conv2d()
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 86208.0);
 
-  TransposedConvolution<> module5(1, 1, 3, 3, 2, 2, 0, 0, 5, 5);
+  TransposedConvolution<> module5(1, 1, 3, 3, 2, 2, 0, 0, 2, 2, 5, 5);
   // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 24, 25);
-  module5.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  input = arma::linspace<arma::colvec>(0, 3, 4);
+  module5.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
   module5.Parameters()(2) = 8.0;
   module5.Parameters()(4) = 6.0;
   module5.Parameters()(6) = 4.0;
   module5.Parameters()(8) = 2.0;
   module5.Reset();
   module5.Forward(std::move(input), std::move(output));
-  // Value calculated using tensorflow.nn.conv2d_transpose()
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 6000.0);
+  // Value calculated using torch.nn.functional.conv_transpose2d()
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 120.0);
 
   // Test the backward function.
   module5.Backward(std::move(input), std::move(output), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 83808);
+  // Value calculated using torch.nn.functional.conv2d()
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 960.0);
 
-  TransposedConvolution<> module6(1, 1, 3, 3, 2, 2, 1, 1, 5, 5);
+  TransposedConvolution<> module6(1, 1, 3, 3, 2, 2, 1, 1, 3, 3, 5, 5);
   // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 24, 25);
+  input = arma::linspace<arma::colvec>(0, 8, 9);
   module6.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module6.Parameters()(0) = 8.0;
   module6.Parameters()(3) = 6.0;
@@ -1821,16 +1826,17 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module6.Parameters()(8) = 4.0;
   module6.Reset();
   module6.Forward(std::move(input), std::move(output));
-  // Value calculated using tensorflow.nn.conv2d_transpose()
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 6000.0);
+  // Value calculated using torch.nn.functional.conv_transpose2d()
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 410.0);
 
   // Test the backward function.
   module6.Backward(std::move(input), std::move(output), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 87264);
+  // Value calculated using torch.nn.functional.conv2d()
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 4444.0);
 
-  TransposedConvolution<> module7(1, 1, 3, 3, 2, 2, 1, 1, 6, 6);
+  TransposedConvolution<> module7(1, 1, 3, 3, 2, 2, 1, 1, 3, 3, 6, 6);
   // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 35, 36);
+  input = arma::linspace<arma::colvec>(0, 8, 9);
   module7.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module7.Parameters()(0) = 8.0;
   module7.Parameters()(2) = 6.0;
@@ -1838,12 +1844,12 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module7.Parameters()(8) = 4.0;
   module7.Reset();
   module7.Forward(std::move(input), std::move(output));
-  // Value calculated using tensorflow.nn.conv2d_transpose()
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 12600.0);
+  // Value calculated using torch.nn.functional.conv_transpose2d()
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 606.0);
 
-  // Test the backward function.
   module7.Backward(std::move(input), std::move(output), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 185500);
+  // Value calculated using torch.nn.functional.conv2d()
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 7732.0);
 }
 
 /**
@@ -1866,8 +1872,8 @@ BOOST_AUTO_TEST_CASE(GradientTransposedConvolutionLayerTest)
         model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
         model->Predictors() = input;
         model->Responses() = target;
-        model->Add<Linear<> >(36, 36);
-        model->Add<TransposedConvolution<> >(1, 1, 3, 3, 2, 2, 1, 1, 6, 6);
+        model->Add<TransposedConvolution<> >
+            (1, 1, 3, 3, 2, 2, 1, 1, 6, 6, 12, 12);
         model->Add<LogSoftMax<> >();
       }
 
@@ -2010,6 +2016,51 @@ BOOST_AUTO_TEST_CASE(GradientAtrousConvolutionLayerTest)
   // TODO: this tolerance seems far higher than necessary.  The implementation
   // should be checked.
   BOOST_REQUIRE_LE(CheckGradient(function), 0.2);
+}
+
+/**
+ * Test that the padding options are working correctly in Atrous Convolution
+ * layer.
+ */
+BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerPaddingTest)
+{
+  arma::mat output, input, delta;
+
+  // Check valid padding option.
+  AtrousConvolution<> module1(1, 1, 3, 3, 1, 1,
+      std::tuple<size_t, size_t>(1, 1), std::tuple<size_t, size_t>(1, 1), 7, 7,
+      2, 2, "valid");
+
+  // Test the Forward function.
+  input = arma::linspace<arma::colvec>(0, 48, 49);
+  module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module1.Reset();
+  module1.Forward(std::move(input), std::move(output));
+
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
+  BOOST_REQUIRE_EQUAL(output.n_rows, 9);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+
+  // Test the Backward function.
+  module1.Backward(std::move(input), std::move(output), std::move(delta));
+
+  // Check same padding option.
+  AtrousConvolution<> module2(1, 1, 3, 3, 1, 1,
+      std::tuple<size_t, size_t>(0, 0), std::tuple<size_t, size_t>(0, 0), 7, 7,
+      2, 2, "same");
+
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 48, 49);
+  module2.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module2.Reset();
+  module2.Forward(std::move(input), std::move(output));
+
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
+  BOOST_REQUIRE_EQUAL(output.n_rows, 49);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+
+  // Test the backward function.
+  module2.Backward(std::move(input), std::move(output), std::move(delta));
 }
 
 /**
@@ -2691,7 +2742,7 @@ void ANNLayerSerializationTest(LayerType& layer)
   model.Train(input, output, opt);
 
   arma::mat originalOutput;
-  model.Predict(input.col(0), originalOutput);
+  model.Predict(input, originalOutput);
 
   // Now serialize the model.
   FFN<NegativeLogLikelihood<>, ann::RandomInitialization> xmlModel, textModel,
@@ -2700,10 +2751,10 @@ void ANNLayerSerializationTest(LayerType& layer)
 
   // Ensure that predictions are the same.
   arma::mat modelOutput, xmlOutput, textOutput, binaryOutput;
-  model.Predict(input.col(0), modelOutput);
-  xmlModel.Predict(input.col(0), xmlOutput);
-  textModel.Predict(input.col(0), textOutput);
-  binaryModel.Predict(input.col(0), binaryOutput);
+  model.Predict(input, modelOutput);
+  xmlModel.Predict(input, xmlOutput);
+  textModel.Predict(input, textOutput);
+  binaryModel.Predict(input, binaryOutput);
 
   CheckMatrices(originalOutput, modelOutput, 1e-5);
   CheckMatrices(originalOutput, xmlOutput, 1e-5);
@@ -2727,6 +2778,48 @@ BOOST_AUTO_TEST_CASE(LayerNormSerializationTest)
 {
   LayerNorm<> layer(10);
   ANNLayerSerializationTest(layer);
+}
+
+/**
+ * Test that the padding options are working correctly in Convolution layer.
+ */
+BOOST_AUTO_TEST_CASE(ConvolutionLayerPaddingTest)
+{
+  arma::mat output, input, delta;
+
+  // Check valid padding option.
+  Convolution<> module1(1, 1, 3, 3, 1, 1, std::tuple<size_t, size_t>(1, 1),
+      std::tuple<size_t, size_t>(1, 1), 7, 7, "valid");
+
+  // Test the Forward function.
+  input = arma::linspace<arma::colvec>(0, 48, 49);
+  module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module1.Reset();
+  module1.Forward(std::move(input), std::move(output));
+
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
+  BOOST_REQUIRE_EQUAL(output.n_rows, 25);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+
+  // Test the Backward function.
+  module1.Backward(std::move(input), std::move(output), std::move(delta));
+
+  // Check same padding option.
+  Convolution<> module2(1, 1, 3, 3, 1, 1, std::tuple<size_t, size_t>(0, 0),
+      std::tuple<size_t, size_t>(0, 0), 7, 7, "same");
+
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 48, 49);
+  module2.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module2.Reset();
+  module2.Forward(std::move(input), std::move(output));
+
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
+  BOOST_REQUIRE_EQUAL(output.n_rows, 49);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+
+  // Test the backward function.
+  module2.Backward(std::move(input), std::move(output), std::move(delta));
 }
 
 BOOST_AUTO_TEST_SUITE_END();

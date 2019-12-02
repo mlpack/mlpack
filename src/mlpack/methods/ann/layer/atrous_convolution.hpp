@@ -71,6 +71,7 @@ class AtrousConvolution
    * @param inputHeight The height of the input data.
    * @param dilationW The space between the cells of filters in x direction.
    * @param dilationH The space between the cells of filters in y direction.
+   * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
   AtrousConvolution(const size_t inSize,
                     const size_t outSize,
@@ -83,7 +84,45 @@ class AtrousConvolution
                     const size_t inputWidth = 0,
                     const size_t inputHeight = 0,
                     const size_t dilationW = 1,
-                    const size_t dilationH = 1);
+                    const size_t dilationH = 1,
+                    const std::string paddingType = "None");
+
+  /**
+   * Create the AtrousConvolution object using the specified number of
+   * input maps, output maps, filter size, stride, dilation and
+   * padding parameter.
+   *
+   * @param inSize The number of input maps.
+   * @param outSize The number of output maps.
+   * @param kW Width of the filter/kernel.
+   * @param kH Height of the filter/kernel.
+   * @param dW Stride of filter application in the x direction.
+   * @param dH Stride of filter application in the y direction.
+   * @param padW A two-value tuple indicating padding widths of the input.
+   *             First value is padding at left side. Second value is padding on
+   *             right side.
+   * @param padH A two-value tuple indicating padding heights of the input.
+   *             First value is padding at top. Second value is padding on
+   *             bottom.
+   * @param inputWidth The widht of the input data.
+   * @param inputHeight The height of the input data.
+   * @param dilationW The space between the cells of filters in x direction.
+   * @param dilationH The space between the cells of filters in y direction.
+   * @param paddingType The type of padding (Valid or Same). Defaults to None.
+   */
+  AtrousConvolution(const size_t inSize,
+                    const size_t outSize,
+                    const size_t kW,
+                    const size_t kH,
+                    const size_t dW,
+                    const size_t dH,
+                    const std::tuple<size_t, size_t> padW,
+                    const std::tuple<size_t, size_t> padH,
+                    const size_t inputWidth = 0,
+                    const size_t inputHeight = 0,
+                    const size_t dilationW = 1,
+                    const size_t dilationH = 1,
+                    const std::string paddingType = "None");
 
   /*
    * Set the weight and bias term.
@@ -182,18 +221,25 @@ class AtrousConvolution
    * @param size The size of the input (row or column).
    * @param k The size of the filter (width or height).
    * @param s The stride size (x or y direction).
-   * @param p The size of the padding (width or height).
+   * @param pSideOne The size of the padding (width or height) on one side.
+   * @param pSideTwo The size of the padding (width or height) on another side.
    * @param d The dilation size.
    * @return The convolution output size.
    */
   size_t ConvOutSize(const size_t size,
-                      const size_t k,
-                      const size_t s,
-                      const size_t p,
-                      const size_t d)
+                     const size_t k,
+                     const size_t s,
+                     const size_t pSideOne,
+                     const size_t pSideTwo,
+                     const size_t d)
   {
-    return std::floor(size + p * 2 - d * (k - 1) - 1) / s + 1;
+    return std::floor(size + pSideOne + pSideTwo - d * (k - 1) - 1) / s + 1;
   }
+
+  /*
+   * Function to assign padding such that output size is same as input size.
+   */
+  void InitializeSamePadding();
 
   /*
    * Rotates a 3rd-order tensor counterclockwise by 180 degrees.
@@ -245,11 +291,17 @@ class AtrousConvolution
   //! Locally-stored stride of the filter in y-direction.
   size_t dH;
 
-  //! Locally-stored padding width.
-  size_t padW;
+  //! Locally-stored left-side padding width.
+  size_t padWLeft;
 
-  //! Locally-stored padding height.
-  size_t padH;
+  //! Locally-stored right-side padding width.
+  size_t padWRight;
+
+  //! Locally-stored bottom padding height.
+  size_t padHBottom;
+
+  //! Locally-stored top padding height.
+  size_t padHTop;
 
   //! Locally-stored weight object.
   OutputDataType weights;
@@ -308,6 +360,28 @@ class AtrousConvolution
 
 } // namespace ann
 } // namespace mlpack
+
+//! Set the serialization version of the AtrousConvolution class.
+namespace boost {
+namespace serialization {
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+struct version<
+    mlpack::ann::AtrousConvolution<ForwardConvolutionRule,
+        BackwardConvolutionRule, GradientConvolutionRule, InputDataType,
+        OutputDataType> >
+{
+  BOOST_STATIC_CONSTANT(int, value = 1);
+};
+
+} // namespace serialization
+} // namespace boost
 
 // Include implementation
 #include "atrous_convolution_impl.hpp"
