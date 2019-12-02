@@ -299,7 +299,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
   double performance = 0;
   size_t responseSeq = 0;
-  const size_t effectiveRho = (rho > responses.size()) ? responses.size() : rho;
+  const size_t effectiveRho = std::min(rho, size_t(responses.size()));
 
   for (size_t seqNum = 0; seqNum < effectiveRho; ++seqNum)
   {
