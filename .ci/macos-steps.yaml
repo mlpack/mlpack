@@ -17,6 +17,10 @@ steps:
     pip install cython numpy pandas
     brew install openblas armadillo boost
 
+    if [ "a$(julia.version)" != "a" ]; then
+      brew cask install julia
+    fi
+
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
   displayName: 'Install Build Dependencies'
 
@@ -32,27 +36,21 @@ steps:
 - script: cd build && make -j2
   displayName: 'Build'
 
-# Run tests
-- script: cd build && bin/mlpack_test --result_code=no --report_level=detailed --log_level=test_suite --log_format=HRF --log_sink=res.txt
-  displayName: 'Run tests'
-
-# Process test results
-- bash: |
-    python conf/ci/convert.py > mlpack_test.xml
-  displayName: 'Process test results'
+# Run tests via ctest.
+- script: cd build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
+  displayName: 'Run tests via ctest'
 
 # Publish test results to Azure Pipelines
 - task: PublishTestResults@2
   inputs:
-    testResultsFormat: JUnit
-    testResultsFiles: 'mlpack_test.xml'
+    testResultsFormat: cTest
+    testResultsFiles: build/Testing/*/Test.xml
     failTaskOnFailedTests: true
   displayName: 'Publish tests'
 
 # Publish build artifacts to Azure Pipelines
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtoPublish: 'mlpack_test.xml'
-    artifactName: 'mlpack_test_macos.xml'
+    pathtoPublish: 'build/Testing/'
+    artifactName: 'Tests'
   displayName: 'Publish artifacts test results'
-  

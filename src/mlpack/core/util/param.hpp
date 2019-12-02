@@ -886,9 +886,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *
  * @code
  * DatasetInfo d = std::move(
- *     CLI::GetParam<std::tuple<arma::mat, DatasetInfo>>("matrix").get<0>());
+ *     CLI::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<0>());
  * arma::mat m = std::move(
- *     CLI::GetParam<std::tuple<arma::mat, DatasetInfo>>("matrix").get<1>());
+ *     CLI::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<1>());
  * @endcode
  *
  * @param ID Name of the parameter.
