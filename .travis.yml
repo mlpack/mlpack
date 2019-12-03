@@ -34,6 +34,18 @@ matrix:
         - cmake . && make && sudo make install && cd ..
         - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 
+    - os: linux
+      dist: xenial
+      env: CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DBUILD_JULIA_BINDINGS=ON -DJULIA_EXECUTABLE=/opt/julia-1.1.1/bin/julia"
+      before_install:
+        - sudo apt-get update
+        - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev wget
+        - wget https://julialang-s3.julialang.org/bin/linux/x64/1.1/julia-1.1.1-linux-x86_64.tar.gz
+        - sudo tar -C /opt/ -xvpf julia-1.1.1-linux-x86_64.tar.gz
+        - wget https://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz
+        - tar xvf armadillo-8.400.0.tar.xz && cd armadillo*
+        - cmake . && make && sudo make install && cd ..
+
     - os: osx
       osx_image: xcode9.4 # Maybe we can try some different ones?
       env: CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"

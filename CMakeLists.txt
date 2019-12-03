@@ -28,6 +28,15 @@ else ()
       "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 endif()
 
+# Detect whether the user passed BUILD_JULIA_BINDINGS in order to determine if
+# we should fail if Julia isn't found.
+if (BUILD_JULIA_BINDINGS)
+  set(FORCE_BUILD_JULIA_BINDINGS ON)
+else()
+  set(FORCE_BUILD_JULIA_BINDINGS OFF)
+endif()
+option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
+
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.
 option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)
@@ -716,7 +725,7 @@ if (PKG_CONFIG_FOUND)
     if ("${first}" STREQUAL "/")
       # We need to split the directory and the library.
       string(REGEX REPLACE "(.*/)[^/]*$" "\\1" library_dir "${lib}")
-      string(REGEX REPLACE ".*/lib([^/]*).so.*$" "\\1" library_name "${lib}")
+      string(REGEX REPLACE ".*/lib([^/]*)[.][a-z]*[.]*$" "\\1" library_name "${lib}")
 
       list(APPEND MLPACK_LIBRARIES_LIST "-L${library_dir}")
       list(APPEND MLPACK_LIBRARIES_LIST "-l${library_name}")

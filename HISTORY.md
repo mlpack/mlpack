@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Fix pkgconfig generation on non-Linux systems (#2101).
+
   * Add functions to access parameters of `Convolution` and `AtrousConvolution`
     layers (#1985).
 

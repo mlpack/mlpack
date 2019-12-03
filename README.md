@@ -31,8 +31,8 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 bindings to other languages.  It is meant to be a machine learning analog to
 LAPACK, and aims to implement a wide array of machine learning methods and
 functions as a "swiss army knife" for machine learning researchers.  In addition
-to its powerful C++ interface, mlpack also provides command-line programs and
-Python bindings.
+to its powerful C++ interface, mlpack also provides command-line programs,
+Python bindings, and Julia bindings.
 
 mlpack uses an [open governance model](./GOVERNANCE.md) and is fiscally
 sponsored by [NumFOCUS](https://numfocus.org/).  Consider making a
