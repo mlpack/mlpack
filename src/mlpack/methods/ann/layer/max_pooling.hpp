@@ -95,66 +95,66 @@ class MaxPooling
                 arma::Mat<eT>&& g);
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  const OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  const OutputDataType& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
   //! Get the width.
-  size_t const& InputWidth() const { return inputWidth; }
+  size_t InputWidth() const { return inputWidth; }
   //! Modify the width.
   size_t& InputWidth() { return inputWidth; }
 
   //! Get the height.
-  size_t const& InputHeight() const { return inputHeight; }
+  size_t InputHeight() const { return inputHeight; }
   //! Modify the height.
   size_t& InputHeight() { return inputHeight; }
 
   //! Get the width.
-  size_t const& OutputWidth() const { return outputWidth; }
+  size_t OutputWidth() const { return outputWidth; }
   //! Modify the width.
   size_t& OutputWidth() { return outputWidth; }
 
   //! Get the height.
-  size_t const& OutputHeight() const { return outputHeight; }
+  size_t OutputHeight() const { return outputHeight; }
   //! Modify the height.
   size_t& OutputHeight() { return outputHeight; }
 
-  //! Get the input size
-  size_t const& InputSize() const { return inSize; }
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
 
   //! Get the output size.
-  size_t const& OutputSize() const { return outSize; }
+  size_t OutputSize() const { return outSize; }
 
   //! Get the kernel size.
-  std::tuple<size_t, size_t> const& KernelSize() const
+  const std::tuple<size_t, size_t>& KernelSize() const
   {
-    return std::forward_as_tuple(kH, kW);
+    return std::forward_as_tuple(kW, kH);
   }
   //! Modify the kernel size.
   std::tuple<size_t&, size_t&> KernelSize()
   {
-    return std::forward_as_tuple(kH, kW);
+    return std::forward_as_tuple(kW, kH);
   }
 
   //! Get the stride dimensions.
-  std::tuple<size_t, size_t> const& Strides() const
+  const std::tuple<size_t, size_t>& Strides() const
   {
-    return std::forward_as_tuple(dH, dW);
+    return std::forward_as_tuple(dW, dH);
   }
   //! Modify the stride dimensions.
   std::tuple<size_t&, size_t&> Strides()
   {
-    return std::forward_as_tuple(dH, dW);
+    return std::forward_as_tuple(dW, dH);
   }
 
-  //! Get the value of the rounding operation
-  bool const& Floor() const { return floor; }
-  //! Modify the value of the rounding operation
+  //! Get the value of the rounding operation.
+  bool Floor() const { return floor; }
+  //! Modify the value of the rounding operation.
   bool& Floor() { return floor; }
 
   //! Get the value of the deterministic parameter.

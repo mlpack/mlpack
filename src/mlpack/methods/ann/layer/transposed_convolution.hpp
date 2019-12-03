@@ -173,50 +173,50 @@ class TransposedConvolution
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
-  //! Get the input size
-  size_t const& InputSize() const { return inSize; }
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
 
   //! Get the output size.
-  size_t const& OutputSize() const { return outSize; }
+  size_t OutputSize() const { return outSize; }
 
   //! Get the kernel size.
-  std::tuple<size_t, size_t> const& KernelSize() const
+  const std::tuple<size_t, size_t>& KernelSize() const
   {
-    return std::forward_as_tuple(kH, kW);
+    return std::forward_as_tuple(kW, kH);
   }
   //! Modify the kernel size.
   std::tuple<size_t&, size_t&> KernelSize()
   {
-    return std::forward_as_tuple(kH, kW);
+    return std::forward_as_tuple(kW, kH);
   }
 
   //! Get the stride dimensions.
-  std::tuple<size_t, size_t> const& Strides() const
+  const std::tuple<size_t, size_t>& Strides() const
   {
-    return std::forward_as_tuple(dH, dW);
+    return std::forward_as_tuple(dW, dH);
   }
   //! Modify the stride dimensions.
   std::tuple<size_t&, size_t&> Strides()
   {
-    return std::forward_as_tuple(dH, dW);
+    return std::forward_as_tuple(dW, dH);
   }
 
   //! Get the padding dimensions.
-  std::tuple<size_t, size_t> const& PadSize() const
+  const std::tuple<size_t, size_t>& PadSize() const
   {
-    return std::forward_as_tuple(padH, padW);
+    return std::forward_as_tuple(padW, padH);
   }
   //! Modify the padding dimensions.
   std::tuple<size_t&, size_t&> PadSize()
   {
-    return std::forward_as_tuple(padH, padW);
+    return std::forward_as_tuple(padW, padH);
   }
 
   //! Modify the bias weights of the layer.
   arma::mat& Bias() { return bias; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
