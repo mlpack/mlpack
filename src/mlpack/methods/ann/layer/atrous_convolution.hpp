@@ -61,30 +61,30 @@ class AtrousConvolution
    *
    * @param inSize The number of input maps.
    * @param outSize The number of output maps.
-   * @param kW Width of the filter/kernel.
-   * @param kH Height of the filter/kernel.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
+   * @param kernelWidth Width of the filter/kernel.
+   * @param kernelHeight Height of the filter/kernel.
+   * @param strideWidth Stride of filter application in the x direction.
+   * @param strideHeight Stride of filter application in the y direction.
    * @param padW Padding width of the input.
    * @param padH Padding height of the input.
    * @param inputWidth The widht of the input data.
    * @param inputHeight The height of the input data.
-   * @param dilationW The space between the cells of filters in x direction.
-   * @param dilationH The space between the cells of filters in y direction.
+   * @param dilationWidth The space between the cells of filters in x direction.
+   * @param dilationHeight The space between the cells of filters in y direction.
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
   AtrousConvolution(const size_t inSize,
                     const size_t outSize,
-                    const size_t kW,
-                    const size_t kH,
-                    const size_t dW = 1,
-                    const size_t dH = 1,
+                    const size_t kernelWidth,
+                    const size_t kernelHeight,
+                    const size_t strideWidth = 1,
+                    const size_t strideHeight = 1,
                     const size_t padW = 0,
                     const size_t padH = 0,
                     const size_t inputWidth = 0,
                     const size_t inputHeight = 0,
-                    const size_t dilationW = 1,
-                    const size_t dilationH = 1,
+                    const size_t dilationWidth = 1,
+                    const size_t dilationHeight = 1,
                     const std::string paddingType = "None");
 
   /**
@@ -94,10 +94,10 @@ class AtrousConvolution
    *
    * @param inSize The number of input maps.
    * @param outSize The number of output maps.
-   * @param kW Width of the filter/kernel.
-   * @param kH Height of the filter/kernel.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
+   * @param kernelWidth Width of the filter/kernel.
+   * @param kernelHeight Height of the filter/kernel.
+   * @param strideWidth Stride of filter application in the x direction.
+   * @param strideHeight Stride of filter application in the y direction.
    * @param padW A two-value tuple indicating padding widths of the input.
    *             First value is padding at left side. Second value is padding on
    *             right side.
@@ -106,22 +106,22 @@ class AtrousConvolution
    *             bottom.
    * @param inputWidth The widht of the input data.
    * @param inputHeight The height of the input data.
-   * @param dilationW The space between the cells of filters in x direction.
-   * @param dilationH The space between the cells of filters in y direction.
-   * @param paddingType The type of padding (Valid or Same). Defaults to None.
+   * @param dilationWidth The space between the cells of filters in x direction.
+   * @param dilationHeight The space between the cells of filters in y direction.
+   * @param paddingType The type of padding (Valid/Same/None). Defaults to None.
    */
   AtrousConvolution(const size_t inSize,
                     const size_t outSize,
-                    const size_t kW,
-                    const size_t kH,
-                    const size_t dW,
-                    const size_t dH,
+                    const size_t kernelWidth,
+                    const size_t kernelHeight,
+                    const size_t strideWidth,
+                    const size_t strideHeight,
                     const std::tuple<size_t, size_t> padW,
                     const std::tuple<size_t, size_t> padH,
                     const size_t inputWidth = 0,
                     const size_t inputHeight = 0,
-                    const size_t dilationW = 1,
-                    const size_t dilationH = 1,
+                    const size_t dilationWidth = 1,
+                    const size_t dilationHeight = 1,
                     const std::string paddingType = "None");
 
   /*
@@ -211,60 +211,40 @@ class AtrousConvolution
   //! Get the output size.
   const size_t& OutputSize() const { return outSize; }
 
-  //! Get the kernel size (width and height).
-  const std::tuple<size_t, size_t> KernelSize() const
-  {
-    return std::forward_as_tuple(kW, kH);
-  }
-  //! Modify the kernel size (width and height).
-  std::tuple<size_t&, size_t&> KernelSize()
-  {
-    return std::forward_as_tuple(kW, kH);
-  }
+  //! Get the kernel width.
+  size_t KernelWidth() const { return kernelWidth; }
+  //! Modify the kernel width.
+  size_t& KernelWidth() { return kernelWidth; }
 
-  //! Get the stride dimensions (width and height).
-  const std::tuple<size_t, size_t> Strides() const
-  {
-    return std::forward_as_tuple(dW, dH);
-  }
-  //! Modify the stride dimensions (width and height).
-  std::tuple<size_t&, size_t&> Strides()
-  {
-    return std::forward_as_tuple(dW, dH);
-  }
+  //! Get the kernel height.
+  size_t KernelHeight() const { return kernelHeight; }
+  //! Modify the kernel height.
+  size_t& KernelHeight() { return kernelHeight; }
 
-  //! Get the padding height dimensions (top and bottom).
-  const std::tuple<size_t, size_t> PadHSize() const
-  {
-    return std::forward_as_tuple(padHTop, padHBottom);
-  }
-  //! Modify the padding dimensions (top and bottom).
-  std::tuple<size_t&, size_t&> PadHSize()
-  {
-    return std::forward_as_tuple(padHTop, padHBottom);
-  }
+  //! Get the stride width.
+  size_t StrideWidth() const { return strideWidth; }
+  //! Modify the stride width.
+  size_t& StrideWidth() { return strideWidth; }
 
-  //! Get the padding width dimensions (left and right).
-  const std::tuple<size_t, size_t> PadWSize() const
-  {
-    return std::forward_as_tuple(padWLeft, padWRight);
-  }
-  //! Modify the padding width dimensions (left and right).
-  std::tuple<size_t&, size_t&> PadWSize()
-  {
-    return std::forward_as_tuple(padWLeft, padWRight);
-  }
+  //! Get the stride height.
+  size_t StrideHeight() const { return strideHeight; }
+  //! Modify the stride height.
+  size_t& StrideHeight() { return strideHeight; }
 
-  //! Get the dilation rate (width and height).
-  const std::tuple<size_t, size_t> DilationRate() const
-  {
-    return std::forward_as_tuple(dilationW, dilationH);
-  }
-  //! Modify the dilation rate (width and height).
-  std::tuple<size_t&, size_t&> DilationRate()
-  {
-    return std::forward_as_tuple(dilationW, dilationH);
-  }
+  //! Get the dilation rate on the X axis.
+  size_t DilationWidth() const { return dilationWidth; }
+  //! Modify the dilation rate on the X axis.
+  size_t& DilationWidth() { return dilationWidth; }
+
+  //! Get the dilation rate on the Y axis.
+  size_t DilationHeight() const { return dilationHeight; }
+  //! Modify the dilation rate on the Y axis.
+  size_t& DilationHeight() { return dilationHeight; }
+
+  //! Get the internal Padding layer.
+  const ann::Padding<>& Padding() const { return padding; }
+  //! Modify the internal Padding layer.
+  ann::Padding<>& Padding() { return padding; }
 
   //! Modify the bias weights of the layer.
   arma::mat& Bias() { return bias; }
@@ -300,7 +280,10 @@ class AtrousConvolution
   /*
    * Function to assign padding such that output size is same as input size.
    */
-  void InitializeSamePadding();
+  void InitializeSamePadding(size_t& padWLeft,
+                             size_t& padWRight,
+                             size_t& padHBottom,
+                             size_t& padHTop) const;
 
   /*
    * Rotates a 3rd-order tensor counterclockwise by 180 degrees.
@@ -341,28 +324,16 @@ class AtrousConvolution
   size_t batchSize;
 
   //! Locally-stored filter/kernel width.
-  size_t kW;
+  size_t kernelWidth;
 
   //! Locally-stored filter/kernel height.
-  size_t kH;
+  size_t kernelHeight;
 
   //! Locally-stored stride of the filter in x-direction.
-  size_t dW;
+  size_t strideWidth;
 
   //! Locally-stored stride of the filter in y-direction.
-  size_t dH;
-
-  //! Locally-stored left-side padding width.
-  size_t padWLeft;
-
-  //! Locally-stored right-side padding width.
-  size_t padWRight;
-
-  //! Locally-stored bottom padding height.
-  size_t padHBottom;
-
-  //! Locally-stored top padding height.
-  size_t padHTop;
+  size_t strideHeight;
 
   //! Locally-stored weight object.
   OutputDataType weights;
@@ -386,10 +357,10 @@ class AtrousConvolution
   size_t outputHeight;
 
   //! Locally-stored width dilation factor.
-  size_t dilationW;
+  size_t dilationWidth;
 
   //! Locally-stored height dilation factor.
-  size_t dilationH;
+  size_t dilationHeight;
 
   //! Locally-stored transformed output parameter.
   arma::cube outputTemp;
@@ -407,7 +378,7 @@ class AtrousConvolution
   arma::cube gradientTemp;
 
   //! Locally-stored padding layer.
-  Padding<>* padding;
+  ann::Padding<> padding;
 
   //! Locally-stored delta object.
   OutputDataType delta;
@@ -438,7 +409,7 @@ struct version<
         BackwardConvolutionRule, GradientConvolutionRule, InputDataType,
         OutputDataType> >
 {
-  BOOST_STATIC_CONSTANT(int, value = 1);
+  BOOST_STATIC_CONSTANT(int, value = 2);
 };
 
 } // namespace serialization

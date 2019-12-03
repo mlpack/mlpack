@@ -27,15 +27,15 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling()
 
 template<typename InputDataType, typename OutputDataType>
 MaxPooling<InputDataType, OutputDataType>::MaxPooling(
-    const size_t kW,
-    const size_t kH,
-    const size_t dW,
-    const size_t dH,
+    const size_t kernelWidth,
+    const size_t kernelHeight,
+    const size_t strideWidth,
+    const size_t strideHeight,
     const bool floor) :
-    kW(kW),
-    kH(kH),
-    dW(dW),
-    dH(dH),
+    kernelWidth(kernelWidth),
+    kernelHeight(kernelHeight),
+    strideWidth(strideWidth),
+    strideHeight(strideHeight),
     floor(floor),
     inSize(0),
     outSize(0),
@@ -63,14 +63,14 @@ void MaxPooling<InputDataType, OutputDataType>::Forward(
 
   if (floor)
   {
-    outputWidth = std::floor((inputWidth - (double) kW) / (double) dW + 1);
-    outputHeight = std::floor((inputHeight - (double) kH) / (double) dH + 1);
+    outputWidth = std::floor((inputWidth - (double) kernelWidth) / (double) strideWidth + 1);
+    outputHeight = std::floor((inputHeight - (double) kernelHeight) / (double) strideHeight + 1);
     offset = 0;
   }
   else
   {
-    outputWidth = std::ceil((inputWidth - (double) kW) / (double) dW + 1);
-    outputHeight = std::ceil((inputHeight - (double) kH) / (double) dH + 1);
+    outputWidth = std::ceil((inputWidth - (double) kernelWidth) / (double) strideWidth + 1);
+    outputHeight = std::ceil((inputHeight - (double) kernelHeight) / (double) strideHeight + 1);
     offset = 1;
   }
 
@@ -143,10 +143,10 @@ void MaxPooling<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(kW);
-  ar & BOOST_SERIALIZATION_NVP(kH);
-  ar & BOOST_SERIALIZATION_NVP(dW);
-  ar & BOOST_SERIALIZATION_NVP(dH);
+  ar & BOOST_SERIALIZATION_NVP(kernelWidth);
+  ar & BOOST_SERIALIZATION_NVP(kernelHeight);
+  ar & BOOST_SERIALIZATION_NVP(strideWidth);
+  ar & BOOST_SERIALIZATION_NVP(strideHeight);
   ar & BOOST_SERIALIZATION_NVP(batchSize);
   ar & BOOST_SERIALIZATION_NVP(floor);
   ar & BOOST_SERIALIZATION_NVP(inputWidth);

@@ -58,16 +58,16 @@ class MaxPooling
   /**
    * Create the MaxPooling object using the specified number of units.
    *
-   * @param kW Width of the pooling window.
-   * @param kH Height of the pooling window.
-   * @param dW Width of the stride operation.
-   * @param dH Width of the stride operation.
+   * @param kernelWidth Width of the pooling window.
+   * @param kernelHeight Height of the pooling window.
+   * @param strideWidth Width of the stride operation.
+   * @param strideHeight Width of the stride operation.
    * @param floor Rounding operator (floor or ceil).
    */
-  MaxPooling(const size_t kW,
-             const size_t kH,
-             const size_t dW = 1,
-             const size_t dH = 1,
+  MaxPooling(const size_t kernelWidth,
+             const size_t kernelHeight,
+             const size_t strideWidth = 1,
+             const size_t strideHeight = 1,
              const bool floor = true);
 
   /**
@@ -130,27 +130,25 @@ class MaxPooling
   //! Get the output size.
   size_t OutputSize() const { return outSize; }
 
-  //! Get the kernel size.
-  const std::tuple<size_t, size_t>& KernelSize() const
-  {
-    return std::forward_as_tuple(kW, kH);
-  }
-  //! Modify the kernel size.
-  std::tuple<size_t&, size_t&> KernelSize()
-  {
-    return std::forward_as_tuple(kW, kH);
-  }
+  //! Get the kernel width.
+  size_t KernelWidth() const { return kernelWidth; }
+  //! Modify the kernel width.
+  size_t& KernelWidth() { return kernelWidth; }
 
-  //! Get the stride dimensions.
-  const std::tuple<size_t, size_t>& Strides() const
-  {
-    return std::forward_as_tuple(dW, dH);
-  }
-  //! Modify the stride dimensions.
-  std::tuple<size_t&, size_t&> Strides()
-  {
-    return std::forward_as_tuple(dW, dH);
-  }
+  //! Get the kernel height.
+  size_t KernelHeight() const { return kernelHeight; }
+  //! Modify the kernel height.
+  size_t& KernelHeight() { return kernelHeight; }
+
+  //! Get the stride width.
+  size_t StrideWidth() const { return strideWidth; }
+  //! Modify the stride width.
+  size_t& StrideWidth() { return strideWidth; }
+
+  //! Get the stride height.
+  size_t StrideHeight() const { return strideHeight; }
+  //! Modify the stride height.
+  size_t& StrideHeight() { return strideHeight; }
 
   //! Get the value of the rounding operation.
   bool Floor() const { return floor; }
@@ -181,12 +179,12 @@ class MaxPooling
                         arma::Mat<eT>& output,
                         arma::Mat<eT>& poolingIndices)
   {
-    for (size_t j = 0, colidx = 0; j < output.n_cols; ++j, colidx += dW)
+    for (size_t j = 0, colidx = 0; j < output.n_cols; ++j, colidx += strideWidth)
     {
-      for (size_t i = 0, rowidx = 0; i < output.n_rows; ++i, rowidx += dH)
+      for (size_t i = 0, rowidx = 0; i < output.n_rows; ++i, rowidx += strideHeight)
       {
-        arma::mat subInput = input(arma::span(rowidx, rowidx + kW - 1 - offset),
-            arma::span(colidx, colidx + kH - 1 - offset));
+        arma::mat subInput = input(arma::span(rowidx, rowidx + kernelWidth - 1 - offset),
+            arma::span(colidx, colidx + kernelHeight - 1 - offset));
 
         const size_t idx = pooling.Pooling(subInput);
         output(i, j) = subInput(idx);
@@ -194,8 +192,8 @@ class MaxPooling
         if (!deterministic)
         {
           arma::Mat<size_t> subIndices = indices(arma::span(rowidx,
-              rowidx + kW - 1 - offset),
-              arma::span(colidx, colidx + kH - 1 - offset));
+              rowidx + kernelWidth - 1 - offset),
+              arma::span(colidx, colidx + kernelHeight - 1 - offset));
 
           poolingIndices(i, j) = subIndices(idx);
         }
@@ -222,16 +220,16 @@ class MaxPooling
   }
 
   //! Locally-stored width of the pooling window.
-  size_t kW;
+  size_t kernelWidth;
 
   //! Locally-stored height of the pooling window.
-  size_t kH;
+  size_t kernelHeight;
 
   //! Locally-stored width of the stride operation.
-  size_t dW;
+  size_t strideWidth;
 
   //! Locally-stored height of the stride operation.
-  size_t dH;
+  size_t strideHeight;
 
   //! Rounding operation used.
   bool floor;

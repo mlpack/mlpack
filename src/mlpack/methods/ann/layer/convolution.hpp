@@ -56,10 +56,10 @@ class Convolution
    *
    * @param inSize The number of input maps.
    * @param outSize The number of output maps.
-   * @param kW Width of the filter/kernel.
-   * @param kH Height of the filter/kernel.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
+   * @param kernelWidth Width of the filter/kernel.
+   * @param kernelHeight Height of the filter/kernel.
+   * @param strideWidth Stride of filter application in the x direction.
+   * @param strideHeight Stride of filter application in the y direction.
    * @param padW Padding width of the input.
    * @param padH Padding height of the input.
    * @param inputWidth The width of the input data.
@@ -68,10 +68,10 @@ class Convolution
    */
   Convolution(const size_t inSize,
               const size_t outSize,
-              const size_t kW,
-              const size_t kH,
-              const size_t dW = 1,
-              const size_t dH = 1,
+              const size_t kernelWidth,
+              const size_t kernelHeight,
+              const size_t strideWidth = 1,
+              const size_t strideHeight = 1,
               const size_t padW = 0,
               const size_t padH = 0,
               const size_t inputWidth = 0,
@@ -84,10 +84,10 @@ class Convolution
    *
    * @param inSize The number of input maps.
    * @param outSize The number of output maps.
-   * @param kW Width of the filter/kernel.
-   * @param kH Height of the filter/kernel.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
+   * @param kernelWidth Width of the filter/kernel.
+   * @param kernelHeight Height of the filter/kernel.
+   * @param strideWidth Stride of filter application in the x direction.
+   * @param strideHeight Stride of filter application in the y direction.
    * @param padW A two-value tuple indicating padding widths of the input.
    *             First value is padding at left side. Second value is padding on
    *             right side.
@@ -100,10 +100,10 @@ class Convolution
    */
   Convolution(const size_t inSize,
               const size_t outSize,
-              const size_t kW,
-              const size_t kH,
-              const size_t dW,
-              const size_t dH,
+              const size_t kernelWidth,
+              const size_t kernelHeight,
+              const size_t strideWidth,
+              const size_t strideHeight,
               const std::tuple<size_t, size_t> padW,
               const std::tuple<size_t, size_t> padH,
               const size_t inputWidth = 0,
@@ -196,61 +196,37 @@ class Convolution
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
-  //! Get the input size
-  const size_t& InputSize() const { return inSize; }
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
 
   //! Get the output size.
-  const size_t& OutputSize() const { return outSize; }
+  size_t OutputSize() const { return outSize; }
 
-  //! Get the kernel size (width and height).
-  const std::tuple<size_t, size_t> KernelSize() const
-  {
-    return std::forward_as_tuple(kW, kH);
-  }
-  //! Modify the kernel size (width and height).
-  std::tuple<size_t&, size_t&> KernelSize()
-  {
-    return std::forward_as_tuple(kW, kH);
-  }
+  //! Get the kernel width.
+  size_t KernelWidth() const { return kernelWidth; }
+  //! Modify the kernel width.
+  size_t& KernelWidth() { return kernelWidth; }
 
-  //! Get the stride dimensions (width and height).
-  const std::tuple<size_t, size_t> Strides() const
-  {
-    return std::forward_as_tuple(dW, dH);
-  }
-  //! Modify the stride dimensions (width and height).
-  std::tuple<size_t&, size_t&> Strides()
-  {
-    return std::forward_as_tuple(dW, dH);
-  }
+  //! Get the kernel height.
+  size_t KernelHeight() const { return kernelHeight; }
+  //! Modify the kernel height.
+  size_t& KernelHeight() { return kernelHeight; }
 
-  //! Get the padding height dimensions (top and bottom).
-  const std::tuple<size_t, size_t>& PadHSize() const
-  {
-    return std::forward_as_tuple(padHTop, padHBottom);
-  }
-  //! Modify the padding height dimensions (top and bottom).
-  std::tuple<size_t&, size_t&> PadHSize()
-  {
-    return std::forward_as_tuple(padHTop, padHBottom);
-  }
+  //! Get the stride width.
+  size_t StrideWidth() const { return strideWidth; }
+  //! Modify the stride width.
+  size_t& StrideWidth() { return strideWidth; }
 
-  //! Get the padding width dimensions (left and right).
-  const std::tuple<size_t, size_t> PadWSize() const
-  {
-    return std::forward_as_tuple(padWLeft, padWRight);
-  }
-  //! Modify the padding width dimensions (left and right).
-  std::tuple<size_t&, size_t&> PadWSize()
-  {
-    return std::forward_as_tuple(padWLeft, padWRight);
-  }
+  //! Get the stride height.
+  size_t StrideHeight() const { return strideHeight; }
+  //! Modify the stride height.
+  size_t& StrideHeight() { return strideHeight; }
 
   //! Modify the bias weights of the layer.
   arma::mat& Bias() { return bias; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -319,16 +295,16 @@ class Convolution
   size_t batchSize;
 
   //! Locally-stored filter/kernel width.
-  size_t kW;
+  size_t kernelWidth;
 
   //! Locally-stored filter/kernel height.
-  size_t kH;
+  size_t kernelHeight;
 
   //! Locally-stored stride of the filter in x-direction.
-  size_t dW;
+  size_t strideWidth;
 
   //! Locally-stored stride of the filter in y-direction.
-  size_t dH;
+  size_t strideHeight;
 
   //! Locally-stored left-side padding width.
   size_t padWLeft;
