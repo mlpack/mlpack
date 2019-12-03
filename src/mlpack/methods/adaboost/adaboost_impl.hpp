@@ -243,6 +243,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
 
   for (size_t i = 0; i < predictedLabels.n_cols; i++)
   {
+    probabilities.col(i) /= arma::accu(probabilities.col(i));
     pRow = probabilities.unsafe_col(i);
     pRow.max(maxIndex);
     predictedLabels(i) = maxIndex;
