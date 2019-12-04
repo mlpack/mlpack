@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.3.2)
 project(mlpack C CXX)
 
 include(CMake/cotire.cmake)
+include(CMake/CheckHash.cmake)
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
@@ -14,19 +15,27 @@ option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
+option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 
-# Currently Python bindings aren't known to build successfully on Windows, so
-# set BUILD_PYTHON_BINDINGS to OFF when the platform is Windows.
 if (WIN32)
-  option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." OFF)
-  message(WARNING "By default Python bindings are not compiled for Windows because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if you want them built.")
+
+  set(DLL_COPY_DIRS "" CACHE STRING "List of directories (separated by ';') containing DLLs to copy for runtime.")
+  set(DLL_COPY_LIBS "" CACHE STRING "List of DLLs (separated by ';') that should be copied for runtime.")
 else ()
-  option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 endif()
+
+# Detect whether the user passed BUILD_JULIA_BINDINGS in order to determine if
+# we should fail if Julia isn't found.
+if (BUILD_JULIA_BINDINGS)
+  set(FORCE_BUILD_JULIA_BINDINGS ON)
+else()
+  set(FORCE_BUILD_JULIA_BINDINGS OFF)
+endif()
+option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
 
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.
@@ -144,7 +153,7 @@ endif()
 
 # Setup build for test coverage
 if(BUILD_WITH_COVERAGE)
-  # Currently coverage only works with GNU g++
+  # Currently coverage only works with GNU g++.
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # Find gcov and lcov
     find_program(GCOV gcov)
@@ -156,6 +165,7 @@ if(BUILD_WITH_COVERAGE)
     endif()
 
     set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "supc++")
+    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "quadmath")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -fkeep-inline-functions")
     message(STATUS "Adding debug compile options for code coverage.")
     # Remove optimizations for better line coverage
@@ -308,7 +318,23 @@ if (WIN32)
 
   # Piggyback LAPACK and BLAS linking into Armadillo link.
   set(ARMADILLO_LIBRARIES
-       ${ARMADILLO_LIBRARIES} ${BLAS_LIBRARY} ${LAPACK_LIBRARY})
+      ${ARMADILLO_LIBRARIES} ${BLAS_LIBRARY} ${LAPACK_LIBRARY})
+
+  # Ensure that the libraries are added to the MSVC IDE runtime path.
+  get_filename_component(BLAS_DIR ${BLAS_LIBRARY} DIRECTORY)
+  get_filename_component(LAPACK_DIR ${LAPACK_LIBRARY} DIRECTORY)
+
+  # Sometimes, especially with an OpenBLAS install via nuget, the DLLs are
+  # actually in ../../bin/x64/.  Automatically add these.
+  if (EXISTS "${BLAS_DIR}/../../bin/x64/")
+    get_filename_component(BLAS_DLL_DIR "${BLAS_DIR}/../../bin/x64" ABSOLUTE)
+    set(DLL_COPY_DIRS ${DLL_COPY_DIRS} "${BLAS_DLL_DIR}")
+  endif ()
+
+  if (EXISTS "${LAPACK_DIR}/../../bin/x64/")
+    get_filename_component(LAPACK_DLL_DIR "${LAPACK_DIR}/../../bin/x64" ABSOLUTE)
+    set(DLL_COPY_DIRS ${DLL_COPY_DIRS} "${BLAS_DLL_DIR}")
+  endif ()
 endif ()
 
 # Include directories for the previous dependencies.
@@ -321,13 +347,13 @@ find_package(StbImage)
 if (NOT STB_IMAGE_FOUND)
   if (DOWNLOAD_STB_IMAGE)
     set(STB_DIR "stb")
-    install(DIRECTORY DESTINATION ${CMAKE_BINARY_DIR}/deps/${STB_DIR})
-    file(DOWNLOAD http://mlpack.org/files/stb/stb_image.h
+    install(DIRECTORY DESTINATION "${CMAKE_BINARY_DIR}/deps/${STB_DIR}")
+    file(DOWNLOAD http://mlpack.org/files/stb-2.22/stb_image.h
         "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h"
         STATUS STB_IMAGE_DOWNLOAD_STATUS_LIST LOG STB_IMAGE_DOWNLOAD_LOG
         SHOW_PROGRESS)
     list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 0 STB_IMAGE_DOWNLOAD_STATUS)
-    file(DOWNLOAD http://mlpack.org/files/stb/stb_image_write.h
+    file(DOWNLOAD http://mlpack.org/files/stb-1.13/stb_image_write.h
         "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h"
         STATUS STB_IMAGE_WRITE_DOWNLOAD_STATUS_LIST
         LOG STB_IMAGE_WRITE_DOWNLOAD_LOG
@@ -336,20 +362,28 @@ if (NOT STB_IMAGE_FOUND)
         STB_IMAGE_WRITE_DOWNLOAD_STATUS)
     if (STB_IMAGE_DOWNLOAD_STATUS EQUAL 0 AND
         STB_IMAGE_WRITE_DOWNLOAD_STATUS EQUAL 0)
-      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-          "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
-      message(STATUS
-          "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
-      # Now we have to also ensure these header files get installed.
-      install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-      install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-      add_definitions(-DHAS_STB)
+      check_hash (http://mlpack.org/files/stb/hash.md5 "${CMAKE_BINARY_DIR}/deps/${STB_DIR}"
+          HASH_CHECK_FAIL)
+      if (HASH_CHECK_FAIL EQUAL 0)
+        set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+            "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+        message(STATUS
+            "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+        # Now we have to also ensure these header files get installed.
+        install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+        install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+        add_definitions(-DHAS_STB)
+      else ()
+        message(WARNING
+            "stb/stb_image.h is not installed. Image utilities will not be available!")
+      endif ()
     else ()
-      list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
-      message(WARNING
-          "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
-      message(WARNING
-          "stb/stb_image.h is not installed. Image utilities will not be available!")
+        file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+        list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
+        message(WARNING
+            "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
+        message(WARNING
+            "stb/stb_image.h is not installed. Image utilities will not be available!")
     endif ()
   else ()
     message(WARNING
@@ -391,8 +425,8 @@ if (NOT ENSMALLEN_FOUND)
             "Successfully downloaded ensmallen into ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/")
 
         # Now we have to also ensure these header files get installed.
-        install(DIRECTORY ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen_bits/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ensmallen_bits)
-        install(FILES ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen_bits/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ensmallen_bits")
+        install(FILES "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen.hpp" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
       else ()
         message(FATAL_ERROR "Problem unpacking ensmallen!  Expected only one directory ensmallen-x.y.z/; found ${ENS_DIRECTORIES}. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
       endif ()
@@ -455,6 +489,8 @@ link_directories(${Boost_LIBRARY_DIRS})
 # handle it.
 if (MSVC)
   link_directories(${Boost_LIBRARY_DIRS})
+  set(CMAKE_MSVCIDE_RUN_PATH ${CMAKE_MSVCIDE_RUN_PATH} ${Boost_LIBRARY_DIRS})
+  message("boost lib dirs ${Boost_LIBRARY_DIRS}")
   set(Boost_LIBRARIES "")
 endif ()
 
@@ -507,6 +543,21 @@ if (WIN32)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+  # Copy all necessary DLLs for runtime to the build directory.
+  # This is a little hackish, but I can't figure out clear ways to make CMake
+  # consistently link everything 100% statically across platforms or set the
+  # runtime path right always, so this is the best I know how to do for now.
+  foreach(dir ${DLL_COPY_DIRS})
+    file(GLOB dir_dll_list "${dir}/*.dll")
+    file(COPY ${dir_dll_list} DESTINATION ${CMAKE_BINARY_DIR}/Release/)
+    file(COPY ${dir_dll_list} DESTINATION ${CMAKE_BINARY_DIR}/Debug/)
+  endforeach ()
+
+  foreach(file ${DLL_COPY_LIBS})
+    file(COPY ${file} DESTINATION ${CMAKE_BINARY_DIR}/Release/)
+    file(COPY ${file} DESTINATION ${CMAKE_BINARY_DIR}/Debug/)
+  endforeach()
 else ()
   # If not on Windows, put them under more standard UNIX-like places.  This is
   # necessary, otherwise they would all end up in
@@ -580,8 +631,8 @@ if (BUILD_CLI_EXECUTABLES AND UNIX)
     )
 
     # Set the rules to install the documentation.
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/share/man/
-        DESTINATION ${CMAKE_INSTALL_MANDIR})
+    install(DIRECTORY "${CMAKE_BINARY_DIR}/share/man/"
+        DESTINATION "${CMAKE_INSTALL_MANDIR}")
   endif ()
 endif ()
 
@@ -632,8 +683,8 @@ if (DOXYGEN_FOUND)
       COMMENT "Generating API documentation with Doxygen"
   )
 
-  install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html
-      DESTINATION ${CMAKE_INSTALL_DOCDIR}
+  install(DIRECTORY "${CMAKE_BINARY_DIR}/doc/html"
+      DESTINATION "${CMAKE_INSTALL_DOCDIR}"
       COMPONENT doc
       OPTIONAL
   )
@@ -674,7 +725,7 @@ if (PKG_CONFIG_FOUND)
     if ("${first}" STREQUAL "/")
       # We need to split the directory and the library.
       string(REGEX REPLACE "(.*/)[^/]*$" "\\1" library_dir "${lib}")
-      string(REGEX REPLACE ".*/lib([^/]*).so.*$" "\\1" library_name "${lib}")
+      string(REGEX REPLACE ".*/lib([^/]*)[.][a-z]*[.]*$" "\\1" library_name "${lib}")
 
       list(APPEND MLPACK_LIBRARIES_LIST "-L${library_dir}")
       list(APPEND MLPACK_LIBRARIES_LIST "-l${library_name}")
@@ -712,6 +763,6 @@ if (PKG_CONFIG_FOUND)
       DEPENDS mlpack_headers
       COMMENT "Generating mlpack.pc (pkg-config) file.")
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc
-      DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig/)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc"
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
 endif ()

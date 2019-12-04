@@ -1,0 +1,6 @@
+name = "mlpack"
+uuid = "cf18a64e-e90e-11e8-37b7-fb5df6478bc0"
+version = "${PACKAGE_VERSION}"
+author = [ "mlpack developers <mlpack@lists.mlpack.org>" ]
+
+[deps]

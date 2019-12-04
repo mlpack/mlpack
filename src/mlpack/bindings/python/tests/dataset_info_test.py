@@ -60,7 +60,8 @@ class TestToMatrix(unittest.TestCase):
     """
     d = pd.DataFrame({'a': range(50)})
     d['b'] = np.random.randn(50, 1)
-    self.assertEqual(d['a'].dtype, int)
+    self.assertTrue((d['a'].dtype == np.dtype('int32')) or
+                    (d['a'].dtype == np.dtype('int64')))
     self.assertEqual(d['b'].dtype, np.dtype(np.double))
 
     m, _ = to_matrix(d)
@@ -190,7 +191,8 @@ class TestToMatrixWithInfo(unittest.TestCase):
     """
     d = pd.DataFrame({'a': range(50)})
     d['b'] = np.random.randn(50, 1)
-    self.assertEqual(d['a'].dtype, int)
+    self.assertTrue((d['a'].dtype == np.dtype('int32')) or
+                    (d['a'].dtype == np.dtype('int64')))
     self.assertEqual(d['b'].dtype, np.dtype(np.double))
 
     m, _, dims = to_matrix_with_info(d, np.double)

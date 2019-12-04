@@ -15,21 +15,27 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 #add_cli_executable(preprocess_stats)
+
 add_cli_executable(preprocess_split)
 add_python_binding(preprocess_split)
-add_markdown_docs(preprocess_split "cli;python" "preprocessing")
+add_julia_binding(preprocess_split)
+add_markdown_docs(preprocess_split "cli;python;julia" "preprocessing")
 
 add_cli_executable(preprocess_binarize)
 add_python_binding(preprocess_binarize)
-add_markdown_docs(preprocess_binarize "cli;python" "preprocessing")
+add_julia_binding(preprocess_binarize)
+add_markdown_docs(preprocess_binarize "cli;python;julia" "preprocessing")
 
 add_cli_executable(preprocess_describe)
 add_python_binding(preprocess_describe)
-add_markdown_docs(preprocess_describe "cli;python" "preprocessing")
+add_julia_binding(preprocess_describe)
+add_markdown_docs(preprocess_describe "cli;python;julia" "preprocessing")
 
 #add_cli_executable(preprocess_scan)
+
 add_cli_executable(preprocess_imputer)
 #add_python_binding(preprocess_imputer)
+#add_julia_binding(preprocess_imputer)
 add_markdown_docs(preprocess_imputer "cli" "preprocessing")
 
 add_cli_executable(preprocess_scale)
