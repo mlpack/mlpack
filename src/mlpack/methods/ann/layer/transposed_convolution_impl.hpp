@@ -81,9 +81,9 @@ TransposedConvolution<
   aW = (outputWidth + kW - 2 * this->padW - 2) % dW;
   aH = (outputHeight + kH - 2 * this->padH - 2) % dH;
 
-  paddingForward = new Padding<>(this->padW, this->padW + aW, this->padH,
+  paddingForward = ann::Padding<>(this->padW, this->padW + aW, this->padH,
       this->padH + aH);
-  paddingBackward = new Padding<>(kW - this->padW - 1, kW - this->padW - 1,
+  paddingBackward = ann::Padding<>(kW - this->padW - 1, kW - this->padW - 1,
       kH - this->padH - 1, kH - this->padH - 1);
 
   // Check if the output height and width are possible given the other
@@ -148,7 +148,7 @@ void TransposedConvolution<
 
       for (size_t i = 0; i < inputExpandedTemp.n_slices; ++i)
       {
-        paddingForward->Forward(std::move(inputExpandedTemp.slice(i)),
+        paddingForward.Forward(std::move(inputExpandedTemp.slice(i)),
             std::move(inputPaddedTemp.slice(i)));
       }
     }
@@ -166,7 +166,7 @@ void TransposedConvolution<
 
     for (size_t i = 0; i < inputTemp.n_slices; ++i)
     {
-      paddingForward->Forward(std::move(inputTemp.slice(i)),
+      paddingForward.Forward(std::move(inputTemp.slice(i)),
           std::move(inputPaddedTemp.slice(i)));
     }
   }
@@ -237,7 +237,7 @@ void TransposedConvolution<
 
     for (size_t i = 0; i < mappedError.n_slices; ++i)
     {
-      paddingBackward->Forward(std::move(mappedError.slice(i)),
+      paddingBackward.Forward(std::move(mappedError.slice(i)),
           std::move(mappedErrorPadded.slice(i)));
     }
   }

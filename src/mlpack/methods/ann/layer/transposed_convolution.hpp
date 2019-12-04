@@ -343,10 +343,10 @@ class TransposedConvolution
   arma::cube gradientTemp;
 
   //! Locally-stored padding layer for forward propagation.
-  Padding<>* paddingForward;
+  ann::Padding<> paddingForward;
 
   //! Locally-stored padding layer for back propagation.
-  Padding<>* paddingBackward;
+  ann::Padding<> paddingBackward;
 
   //! Locally-stored delta object.
   OutputDataType delta;
