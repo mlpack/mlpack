@@ -2,6 +2,10 @@
 ###### ????-??-??
   * Fix pkgconfig generation on non-Linux systems (#2101).
 
+  * Fix STB header search paths (#2104).
+
+  * Add `DISABLE_DOWNLOADS` CMake configuration option (#2104).
+
 ### mlpack 3.2.2
 ###### 2019-11-26
   * Add `valid` and `same` padding option in `Convolution` and `Atrous

@@ -146,18 +146,21 @@ The full list of options mlpack allows:
        (default ON)
  - BUILD_PYTHON_BINDINGS=(ON/OFF): compile the bindings for Python, if the
        necessary Python libraries are available (default ON except on Windows)
- - MATLAB_BINDINGS=(ON/OFF): Compile MATLAB bindings if MATLAB is found
-       (default OFF)
+ - BUILD_JULIA_BINDINGS=(ON/OFF): compile Julia bindings, if Julia is found
+       (default ON)
  - BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
        static libraries (default ON)
  - TEST_VERBOSE=(ON/OFF): run test cases in \c mlpack_test with verbose output
+       (default OFF)
+ - DISABLE_DOWNLOADS=(ON/OFF): Disable downloads of dependencies during build
        (default OFF)
  - DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
        (default ON)
  - DOWNLOAD_STB_IMAGE=(ON/OFF): If STB is not found, download it (default ON)
  - BUILD_WITH_COVERAGE=(ON/OFF): Build with support for code coverage tools
       (gcc only) (default OFF)
- - PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable     
+ - PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
+ - JULIA_EXECUTABLE=(/path/to/julia): Path to specific Julia executable
  - BUILD_MARKDOWN_BINDINGS=(ON/OFF): Build Markdown bindings for website
        documentation (default OFF)
  - MATHJAX=(ON/OFF): use MathJax for generated Doxygen documentation (default
