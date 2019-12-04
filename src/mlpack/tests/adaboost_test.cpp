@@ -620,7 +620,8 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
   double tolerance = 1e-10;
   AdaBoost<> a(inputData, labels.row(0), numClasses, p, iterations, tolerance);
 
-  arma::Row<size_t> predictedLabels1(testData.n_cols), predictedLabels2(testData.n_cols);
+  arma::Row<size_t> predictedLabels1(testData.n_cols),
+                    predictedLabels2(testData.n_cols);
   arma::mat probabilities;
 
   a.Classify(testData, predictedLabels1);
@@ -689,8 +690,9 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
   double tolerance = 1e-10;
   AdaBoost<DecisionStump<> > a(inputData, labels.row(0), numClasses, ds,
       iterations, tolerance);
- 
-  arma::Row<size_t> predictedLabels1(testData.n_cols), predictedLabels2(testData.n_cols);
+
+  arma::Row<size_t> predictedLabels1(testData.n_cols),
+                    predictedLabels2(testData.n_cols);
   arma::mat probabilities;
 
   a.Classify(testData, predictedLabels1);
@@ -760,7 +762,8 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
   if (!data::Load("iris_test_labels.csv", trueTestLabels))
     BOOST_FAIL("Cannot load test dataset iris_test_labels.csv!");
 
-  arma::Row<size_t> predictedLabels1(testData.n_cols), predictedLabels2(testData.n_cols);
+  arma::Row<size_t> predictedLabels1(testData.n_cols),
+                    predictedLabels2(testData.n_cols);
   arma::mat probabilities;
 
   a.Classify(testData, predictedLabels1);

@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostProbabilitiesTest)
   SetInputParam("test", std::move(testData));
 
   mlpackMain();
- 
+
   arma::mat probabilities;
   probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
 
