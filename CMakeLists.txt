@@ -13,6 +13,7 @@ option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
+option(DISABLE_DOWNLOADS "Disable all downloading of dependencies." OFF)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
@@ -56,6 +57,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
+
+# Disable any downloads if needed.
+if (DISABLE_DOWNLOADS)
+  set(DOWNLOAD_ENSMALLEN OFF)
+  set(DOWNLOAD_STB_IMAGE OFF)
+endif ()
 
 # If we are on a Unix-like system, use the GNU install directories module.
 # Otherwise set the values manually.
