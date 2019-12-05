@@ -323,7 +323,7 @@ class HMM
               arma::mat& smoothSeq) const;
 
   //! Return the vector of initial state probabilities.
-  const arma::vec Initial() const { return initialProxy; }
+  const arma::vec& Initial() const { return initialProxy; }
   //! Modify the vector of initial state probabilities.
   arma::vec& Initial()
   {
@@ -332,7 +332,7 @@ class HMM
   }
 
   //! Return the transition matrix.
-  const arma::mat Transition() const { return transitionProxy; }
+  const arma::mat& Transition() const { return transitionProxy; }
   //! Return a modifiable transition matrix reference.
   arma::mat& Transition()
   {
