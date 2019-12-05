@@ -325,13 +325,20 @@ class HMM
   //! Return the vector of initial state probabilities.
   const arma::vec Initial() const { return initialProxy; }
   //! Modify the vector of initial state probabilities.
-  arma::vec& Initial() { recalculateInitial = true; return initialProxy; }
+  arma::vec& Initial()
+  {
+    recalculateInitial = true;
+    return initialProxy;
+  }
 
   //! Return the transition matrix.
   const arma::mat Transition() const { return transitionProxy; }
   //! Return a modifiable transition matrix reference.
-  arma::mat& Transition() { recalculateTransition = true;
-                            return transitionProxy; }
+  arma::mat& Transition()
+  {
+    recalculateTransition = true;
+    return transitionProxy;
+  }
 
   //! Return the emission distributions.
   const std::vector<Distribution>& Emission() const { return emission; }
