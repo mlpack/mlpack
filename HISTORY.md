@@ -22,7 +22,6 @@
 
   * Fix Windows Python build configuration (#1885).
 
-  * Add padding layer in TransposedConvolutionLayer (#2082).
 
 ### mlpack 3.2.1
 ###### 2019-10-01
