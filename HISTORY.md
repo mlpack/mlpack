@@ -1,8 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * Fix pkgconfig generation on non-Linux systems (#2101).
-  
   * Add padding layer in TransposedConvolutionLayer (#2082).
+
+  * Fix pkgconfig generation on non-Linux systems (#2101).
 
 ### mlpack 3.2.2
 ###### 2019-11-26
@@ -22,6 +22,9 @@
 
   * Fix Windows Python build configuration (#1885).
 
+  * Validate md5 of STB library after download (#2087).
+
+  * Add `__version__` to `__init__.py` (#2092).
 
 ### mlpack 3.2.1
 ###### 2019-10-01
@@ -683,4 +686,3 @@
   * Initial release.  See any resolved tickets numbered less than #196 or
     execute this query:
     http://www.mlpack.org/trac/query?status=closed&milestone=mlpack+1.0.0
-

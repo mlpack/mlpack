@@ -20,40 +20,6 @@ using namespace arma;
 BOOST_AUTO_TEST_SUITE(ArmaExtendTest);
 
 /**
- * Make sure we can reshape a matrix in-place without changing anything.
- */
-BOOST_AUTO_TEST_CASE(InplaceReshapeColumnTest)
-{
-  arma::mat X;
-  X.randu(1, 10);
-  arma::mat oldX = X;
-
-  arma::inplace_reshape(X, 2, 5);
-
-  BOOST_REQUIRE_EQUAL(X.n_rows, 2);
-  BOOST_REQUIRE_EQUAL(X.n_cols, 5);
-  for (size_t i = 0; i < 10; ++i)
-    BOOST_REQUIRE_CLOSE(X[i], oldX[i], 1e-5); // Order should be preserved.
-}
-
-/**
- * Make sure we can reshape a large matrix.
- */
-BOOST_AUTO_TEST_CASE(InplaceReshapeMatrixTest)
-{
-  arma::mat X;
-  X.randu(8, 10);
-  arma::mat oldX = X;
-
-  arma::inplace_reshape(X, 10, 8);
-
-  BOOST_REQUIRE_EQUAL(X.n_rows, 10);
-  BOOST_REQUIRE_EQUAL(X.n_cols, 8);
-  for (size_t i = 0; i < 80; ++i)
-    BOOST_REQUIRE_CLOSE(X[i], oldX[i], 1e-5); // Order should be preserved.
-}
-
-/**
  * Test const_row_col_iterator for basic functionality.
  */
 BOOST_AUTO_TEST_CASE(ConstRowColIteratorTest)

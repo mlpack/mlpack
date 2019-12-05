@@ -215,8 +215,9 @@ if (BUILD_PYTHON_BINDINGS)
           -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
           -DPROGRAM_NAME=${name}
-          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGeneratePYX.cmake
-      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_pyx.cpp.in)
+          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake
+      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_pyx.cpp.in
+              ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake)
 
   add_executable(generate_pyx_${name}
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
