@@ -663,18 +663,19 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
  * Make sure the variables in log space are in sync with the linear counter parts
  */
 template<typename Distribution>
-void HMM<Distribution>::ConvertToLogSpace() const {
-    if (recalculateInitial)
-    {
-        logInitial = log(initialProxy);
-        recalculateInitial = false;
-    }
+void HMM<Distribution>::ConvertToLogSpace() const
+{
+  if (recalculateInitial)
+  {
+    logInitial = log(initialProxy);
+    recalculateInitial = false;
+  }
 
-    if (recalculateTransition)
-    {
-        logTransition = log(transitionProxy);
-        recalculateTransition = false;
-    }
+  if (recalculateTransition)
+  {
+    logTransition = log(transitionProxy);
+    recalculateTransition = false;
+  }
 }
 
 //! Serialize the HMM.

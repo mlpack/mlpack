@@ -356,15 +356,18 @@ class HMM
   double& Tolerance() { return tolerance; }
 
   /**
-   * Serialize the object.
+   * Load the object.
    */
   template<typename Archive>
   void load(Archive& ar, const unsigned int version);
 
+  /**
+   * Save the object.
+   */
   template<typename Archive>
   void save(Archive& ar, const unsigned int version) const;
 
-  BOOST_SERIALIZATION_SPLIT_MEMBER()
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
 
 
  protected:
@@ -402,8 +405,8 @@ class HMM
   std::vector<Distribution> emission;
 
   /**
-   *a proxy vriable in linear space for logTransition.
-   *Should be removed in mlpack 4.0.
+   * A proxy variable in linear space for logTransition.
+   * Should be removed in mlpack 4.0.
    */
   arma::mat transitionProxy;
 
@@ -419,7 +422,7 @@ class HMM
   void ConvertToLogSpace() const;
 
   /**
-   * a proxy vriable in linear space for logInitial.
+   * A proxy vriable in linear space for logInitial.
    * Should be removed in mlpack 4.0.
    */
   arma::vec initialProxy;
