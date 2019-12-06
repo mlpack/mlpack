@@ -1,10 +1,15 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * Fix pkgconfig generation on non-Linux systems (#2101).
-
   * Fix STB header search paths (#2104).
 
   * Add `DISABLE_DOWNLOADS` CMake configuration option (#2104).
+
+  * Add padding layer in TransposedConvolutionLayer (#2082).
+
+  * Fix pkgconfig generation on non-Linux systems (#2101).
+
+  * Use log-space to represent HMM initial state and transition probabilities
+    (#2081).
 
 ### mlpack 3.2.2
 ###### 2019-11-26
