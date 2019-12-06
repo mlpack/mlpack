@@ -119,6 +119,8 @@ Copyright:
   Copyright 2019, Jeffin Sam <sam.jeffin@gmail.com>
   Copyright 2019, Vikas S Shetty <shettyvikas209@gmail.com>
   Copyright 2019, Khizir Siddiqui <khizirsiddiqui@gmail.com>
+  Copyright 2019, Tejasvi Tomar <tstomar@outlook.com>
+  Copyright 2019, Jai Agarwal <jai.bhageria@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.

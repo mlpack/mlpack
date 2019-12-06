@@ -97,7 +97,7 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
     const bool singleMode,
     const MetricType metric) :
     referenceTree(NULL),
-    referenceSet(new MatType()), // Empty matrix.
+    referenceSet(naive ? new MatType() : NULL), // Empty matrix.
     treeOwner(false),
     naive(naive),
     singleMode(singleMode),
@@ -108,8 +108,9 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
   // Build the tree on the empty dataset, if necessary.
   if (!naive)
   {
-    referenceTree = BuildTree<Tree>(const_cast<MatType&>(*referenceSet),
+    referenceTree = BuildTree<Tree>(std::move(arma::mat()),
         oldFromNewReferences);
+    referenceSet = &referenceTree->Dataset();
     treeOwner = true;
   }
 }
@@ -152,10 +153,9 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(RangeSearch&& other) :
     scores(other.scores)
 {
   // Clear other object.
-  other.referenceSet = new MatType();
   other.referenceTree =
-      BuildTree<Tree>(const_cast<MatType&>(*other.referenceSet),
-      other.oldFromNewReferences);
+      BuildTree<Tree>(std::move(arma::mat()), other.oldFromNewReferences);
+  other.referenceSet = &other.referenceTree->Dataset();
   other.treeOwner = true;
   other.naive = false;
   other.singleMode = false;

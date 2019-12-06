@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.3.2)
 project(mlpack C CXX)
 
 include(CMake/cotire.cmake)
+include(CMake/CheckHash.cmake)
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
@@ -26,6 +27,15 @@ else ()
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 endif()
+
+# Detect whether the user passed BUILD_JULIA_BINDINGS in order to determine if
+# we should fail if Julia isn't found.
+if (BUILD_JULIA_BINDINGS)
+  set(FORCE_BUILD_JULIA_BINDINGS ON)
+else()
+  set(FORCE_BUILD_JULIA_BINDINGS OFF)
+endif()
+option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
 
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.
@@ -143,7 +153,7 @@ endif()
 
 # Setup build for test coverage
 if(BUILD_WITH_COVERAGE)
-  # Currently coverage only works with GNU g++
+  # Currently coverage only works with GNU g++.
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # Find gcov and lcov
     find_program(GCOV gcov)
@@ -155,6 +165,7 @@ if(BUILD_WITH_COVERAGE)
     endif()
 
     set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "supc++")
+    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "quadmath")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -fkeep-inline-functions")
     message(STATUS "Adding debug compile options for code coverage.")
     # Remove optimizations for better line coverage
@@ -351,20 +362,28 @@ if (NOT STB_IMAGE_FOUND)
         STB_IMAGE_WRITE_DOWNLOAD_STATUS)
     if (STB_IMAGE_DOWNLOAD_STATUS EQUAL 0 AND
         STB_IMAGE_WRITE_DOWNLOAD_STATUS EQUAL 0)
-      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-          "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
-      message(STATUS
-          "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
-      # Now we have to also ensure these header files get installed.
-      install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-      install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-      add_definitions(-DHAS_STB)
+      check_hash (http://mlpack.org/files/stb/hash.md5 "${CMAKE_BINARY_DIR}/deps/${STB_DIR}"
+          HASH_CHECK_FAIL)
+      if (HASH_CHECK_FAIL EQUAL 0)
+        set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+            "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+        message(STATUS
+            "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+        # Now we have to also ensure these header files get installed.
+        install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+        install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+        add_definitions(-DHAS_STB)
+      else ()
+        message(WARNING
+            "stb/stb_image.h is not installed. Image utilities will not be available!")
+      endif ()
     else ()
-      list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
-      message(WARNING
-          "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
-      message(WARNING
-          "stb/stb_image.h is not installed. Image utilities will not be available!")
+        file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+        list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
+        message(WARNING
+            "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
+        message(WARNING
+            "stb/stb_image.h is not installed. Image utilities will not be available!")
     endif ()
   else ()
     message(WARNING
@@ -706,7 +725,7 @@ if (PKG_CONFIG_FOUND)
     if ("${first}" STREQUAL "/")
       # We need to split the directory and the library.
       string(REGEX REPLACE "(.*/)[^/]*$" "\\1" library_dir "${lib}")
-      string(REGEX REPLACE ".*/lib([^/]*).so.*$" "\\1" library_name "${lib}")
+      string(REGEX REPLACE ".*/lib([^/]*)[.][a-z]*[.]*$" "\\1" library_name "${lib}")
 
       list(APPEND MLPACK_LIBRARIES_LIST "-L${library_dir}")
       list(APPEND MLPACK_LIBRARIES_LIST "-l${library_name}")

@@ -14,8 +14,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 </h5>
 
 <p align="center">
-  <a href="http://ci.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/s/http/ci.mlpack.org/job/mlpack%20-%20git%20commit%20test.svg?label=Linux%20build&style=flat-square" alt="Jenkins"></a>
-  <a href="https://ci.appveyor.com/project/mlpack/mlpack"><img src="https://img.shields.io/appveyor/ci/mlpack/mlpack/master.svg?label=Windows%20build&style=flat-square&logoWidth=0.1" alt="Appveyor"></a>
+  <a href="http://ci.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/build.svg?jobUrl=http%3A%2F%2Fci.mlpack.org%2Fjob%2Fmlpack%2520-%2520git%2520commit%2520test%2F&label=Linux%20build&style=flat-square" alt="Jenkins"></a>
   <a href="https://coveralls.io/github/mlpack/mlpack?branch=master"><img src="https://img.shields.io/coveralls/mlpack/mlpack/master.svg?style=flat-square" alt="Coveralls"></a>
   <a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License"></a>
 </p>
@@ -23,7 +22,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-3.2.1.tar.gz">current stable version (3 2.1)</a>
+    <a href="https://www.mlpack.org/files/mlpack-3.2.2.tar.gz">current stable version (3.2.2)</a>
   </em>
 </p>
 
@@ -31,8 +30,23 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 bindings to other languages.  It is meant to be a machine learning analog to
 LAPACK, and aims to implement a wide array of machine learning methods and
 functions as a "swiss army knife" for machine learning researchers.  In addition
-to its powerful C++ interface, mlpack also provides command-line programs and
-Python bindings.
+to its powerful C++ interface, mlpack also provides command-line programs,
+Python bindings, and Julia bindings.
+
+mlpack uses an [open governance model](./GOVERNANCE.md) and is fiscally
+sponsored by [NumFOCUS](https://numfocus.org/).  Consider making a
+[tax-deductible donation](https://numfocus.org/donate-to-mlpack) to help the
+project pay for developer time, professional services, travel, workshops, and a
+variety of other needs.
+
+<div align="center">
+  <a href="https://numfocus.org/donate-to-mlpack">
+    <img height="60px"
+         src="https://raw.githubusercontent.com/numfocus/templates/master/images/numfocus-logo.png"
+         align="center">
+  </a>
+</div>
+<br>
 
 ### 0. Contents
 
