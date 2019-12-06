@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Add padding layer in TransposedConvolutionLayer (#2082).
+
   * Fix pkgconfig generation on non-Linux systems (#2101).
 
   * Use log-space to represent HMM initial state and transition probabilities
