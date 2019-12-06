@@ -186,9 +186,11 @@ Options are specified with the -D flag.  The allowed options include:
        static libraries
     DISABLE_DOWNLOADS=(ON/OFF): whether to disable all downloads during build
     DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
-    DOWNLOAD_STB_IMAGE=(ON/OFF): If STB is not found, download it
     ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
        for ensmallen
+    DOWNLOAD_STB_IMAGE=(ON/OFF): If STB is not found, download it
+    STB_IMAGE_INCLUDE_DIR=(/path/to/stb/include): path to include directory for
+       STB image library
     USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available
 
 Other tools can also be used to configure CMake, but those are not documented

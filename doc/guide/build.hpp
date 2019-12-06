@@ -183,6 +183,8 @@ and libraries. These also use the '-D' flag.
  - BOOST_ROOT=(/path/to/boost/): path to root of boost installation
  - ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
        for ensmallen
+ - STB_IMAGE_INCLUDE_DIR=(/path/to/stb/include): path to include directory for
+      STB image library
  - MATHJAX_ROOT=(/path/to/mathjax): path to root of MathJax installation
 
 @section build_build Building mlpack

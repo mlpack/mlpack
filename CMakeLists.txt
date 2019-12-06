@@ -253,6 +253,7 @@ endif()
 #   BOOST_INCLUDEDIR - include directory for Boost
 #   BOOST_LIBRARYDIR - library directory for Boost
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
+#   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
 
 find_package(Armadillo 8.400.0 REQUIRED)
