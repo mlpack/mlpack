@@ -329,7 +329,7 @@ class Convolution
   arma::cube gradientTemp;
 
   //! Locally-stored padding layer.
-  Padding<>* padding;
+  ann::Padding<> padding;
 
   //! Locally-stored delta object.
   OutputDataType delta;
