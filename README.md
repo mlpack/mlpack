@@ -178,13 +178,18 @@ Options are specified with the -D flag.  The allowed options include:
     BUILD_CLI_EXECUTABLES=(ON/OFF): whether or not to build command-line programs
     BUILD_PYTHON_BINDINGS=(ON/OFF): whether or not to build Python bindings
     PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
+    BUILD_JULIA_BINDINGS=(ON/OFF): whether or not to build Julia bindings
+    JULIA_EXECUTABLE=(/path/to/julia): Path to specific Julia executable
     BUILD_TESTS=(ON/OFF): whether or not to build tests
     BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
        static libraries
+    DISABLE_DOWNLOADS=(ON/OFF): whether to disable all downloads during build
     DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
-    DOWNLOAD_STB_IMAGE=(ON/OFF): If STB is not found, download it
     ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
        for ensmallen
+    DOWNLOAD_STB_IMAGE=(ON/OFF): If STB is not found, download it
+    STB_IMAGE_INCLUDE_DIR=(/path/to/stb/include): path to include directory for
+       STB image library
     USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available
 
 Other tools can also be used to configure CMake, but those are not documented
@@ -200,6 +205,7 @@ Once CMake is configured, building the library is as simple as typing 'make'.
 This will build all library components as well as 'mlpack_test'.
 
     $ make
+
 If you do not want to build everything in the library, individual components 
 of the build can be specified:
 

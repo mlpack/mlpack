@@ -1,5 +1,9 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Fix STB header search paths (#2104).
+
+  * Add `DISABLE_DOWNLOADS` CMake configuration option (#2104).
+
   * Add padding layer in TransposedConvolutionLayer (#2082).
 
   * Fix pkgconfig generation on non-Linux systems (#2101).
