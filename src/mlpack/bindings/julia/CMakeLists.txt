@@ -2,11 +2,7 @@ if (BUILD_JULIA_BINDINGS)
   ## We need to check here if Julia is even available.  Although actually
   ## technically, I'm not sure if we even need to know!  For the tests though we
   ## do.  So it's probably a good idea to check.
-  if (FORCE_BUILD_JULIA_BINDINGS)
-    find_package(Julia 0.7.0 REQUIRED)
-  else ()
-    find_package(Julia 0.7.0)
-  endif ()
+  find_package(Julia 0.7.0)
 
   if (NOT JULIA_FOUND)
     # We can't build anything, so define the macro to do nothing.

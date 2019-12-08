@@ -17,6 +17,7 @@ option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
+option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
 
 if (WIN32)
   option(BUILD_SHARED_LIBS
@@ -28,15 +29,6 @@ else ()
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 endif()
-
-# Detect whether the user passed BUILD_JULIA_BINDINGS in order to determine if
-# we should fail if Julia isn't found.
-if (BUILD_JULIA_BINDINGS AND NOT DEFINED FORCE_BUILD_JULIA_BINDINGS)
-  set(FORCE_BUILD_JULIA_BINDINGS ON CACHE BOOL "Force building Julia bindings.")
-else()
-  set(FORCE_BUILD_JULIA_BINDINGS OFF CACHE BOOL "Force building Julia binidngs.")
-endif()
-option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
 
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.
