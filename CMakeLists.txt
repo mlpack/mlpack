@@ -482,6 +482,12 @@ set(Boost_ADDITIONAL_VERSIONS
   "1.51.1" "1.51.0" "1.51"
   "1.50.1" "1.50.0" "1.50"
   "1.49.1" "1.49.0" "1.49")
+# Disable forced config-mode CMake search for Boost, which only imports targets
+# and does not set the variables that we need.
+#
+# TODO for the brave: transition all mlpack's CMake to 'target-based modern
+# CMake'.  Good luck!  You'll need it.
+set(Boost_NO_BOOST_CMAKE 1)
 find_package(Boost 1.49
     COMPONENTS
       program_options
