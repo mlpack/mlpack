@@ -31,10 +31,10 @@ endif()
 
 # Detect whether the user passed BUILD_JULIA_BINDINGS in order to determine if
 # we should fail if Julia isn't found.
-if (BUILD_JULIA_BINDINGS)
-  set(FORCE_BUILD_JULIA_BINDINGS ON)
+if (BUILD_JULIA_BINDINGS AND NOT DEFINED FORCE_BUILD_JULIA_BINDINGS)
+  set(FORCE_BUILD_JULIA_BINDINGS ON CACHE BOOL "Force building Julia bindings.")
 else()
-  set(FORCE_BUILD_JULIA_BINDINGS OFF)
+  set(FORCE_BUILD_JULIA_BINDINGS OFF CACHE BOOL "Force building Julia binidngs.")
 endif()
 option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
 
