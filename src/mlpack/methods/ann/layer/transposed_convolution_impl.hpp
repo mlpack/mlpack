@@ -69,24 +69,27 @@ TransposedConvolution<
     kernelHeight(kernelHeight),
     strideWidth(strideWidth),
     strideHeight(strideHeight),
-    padWidth(kernelWidth - padWidth - 1),
-    padHeight(kernelHeight - padHeight - 1),
     inputWidth(inputWidth),
     inputHeight(inputHeight),
     outputWidth(outputWidth),
     outputHeight(outputHeight)
 {
   weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize, 1);
-  // TODO: Use the Padding layer.
-  // padding = new Padding<>(this->padWidth, this->padWidth, this->padHeight, this->padHeight);
 
-  aW = (outputWidth + kernelWidth - 2 * this->padWidth - 2) % strideWidth;
-  aH = (outputHeight + kernelHeight - 2 * this->padHeight - 2) % strideHeight;
+  aW = (outputWidth + 2 * padWidth - kernelWidth) % strideWidth;
+  aH = (outputHeight + 2 * padHeight - kernelHeight) % strideHeight;
+
+  const size_t padWidthForward = kernelWidth - padWidth - 1;
+  const size_t padHeightForward = kernelHeight - padHeight - 1;
+
+  paddingForward = ann::Padding<>(padWidthForward, padWidthForward + aW,
+      padHeightForward, padHeightForward + aH);
+  paddingBackward = ann::Padding<>(padWidth, padWidth, padHeight, padHeight);
 
   // Check if the output height and width are possible given the other
   // parameters of the layer.
-  if (outputWidth != strideWidth * (inputWidth - 1) + aW + 2 * this->padWidth + 2 - kernelWidth ||
-      outputHeight != strideHeight * (inputHeight - 1) + aH + 2 * this->padHeight + 2 - kernelHeight)
+  if (outputWidth != strideWidth * (inputWidth - 1) + aW + kernelWidth - 2 * padWidth ||
+      outputHeight != strideHeight * (inputHeight - 1) + aH + kernelHeight - 2 * padHeight)
   {
     Log::Fatal << "The output width / output height is not possible given "
         << "the other parameters of the layer." << std::endl;
@@ -138,8 +141,19 @@ void TransposedConvolution<
   {
     InsertZeros(inputTemp, strideWidth, strideHeight, inputExpandedTemp);
 
-    if (padWidth != 0 || padHeight != 0 || aW != 0 || aH != 0)
-      Pad(inputExpandedTemp, padWidth, padHeight, aW, aH, inputPaddedTemp);
+    if (paddingForward.PadWLeft() != 0 || paddingForward.PadHTop() != 0 ||
+        aW != 0 || aH != 0)
+    {
+      inputPaddedTemp.set_size(inputExpandedTemp.n_rows +
+          paddingForward.PadWLeft() * 2 + aW, inputExpandedTemp.n_cols +
+          paddingForward.PadHTop() * 2 + aH, inputExpandedTemp.n_slices);
+
+      for (size_t i = 0; i < inputExpandedTemp.n_slices; ++i)
+      {
+        paddingForward.Forward(std::move(inputExpandedTemp.slice(i)),
+            std::move(inputPaddedTemp.slice(i)));
+      }
+    }
     else
     {
       inputPaddedTemp = arma::Cube<eT>(inputExpandedTemp.memptr(),
@@ -147,9 +161,20 @@ void TransposedConvolution<
           inputExpandedTemp.n_slices, false, false);;
     }
   }
-  else if (padWidth != 0 || padHeight != 0 || aW != 0 || aH != 0)
+  else if (paddingForward.PadWLeft() != 0 ||
+           paddingForward.PadHTop() != 0 ||
+           aW != 0 ||
+           aH != 0)
   {
-    Pad(inputTemp, padWidth, padHeight, aW, aH, inputPaddedTemp);
+    inputPaddedTemp.set_size(inputTemp.n_rows + paddingForward.PadWLeft() * 2 +
+        aW, inputTemp.n_cols + paddingForward.PadHTop() * 2 + aH,
+        inputTemp.n_slices);
+
+    for (size_t i = 0; i < inputTemp.n_slices; ++i)
+    {
+      paddingForward.Forward(std::move(inputTemp.slice(i)),
+          std::move(inputPaddedTemp.slice(i)));
+    }
   }
 
   output.set_size(outputWidth * outputHeight * outSize, batchSize);
@@ -171,7 +196,12 @@ void TransposedConvolution<
       arma::Mat<eT> convOutput, rotatedFilter;
       Rotate180(weight.slice(outMapIdx), rotatedFilter);
 
-      if (strideWidth > 1 || strideHeight > 1 || padWidth != 0 || padHeight != 0 || aW != 0 || aH != 0)
+      if (strideWidth > 1 ||
+          strideHeight > 1 ||
+          paddingForward.PadWLeft() != 0 ||
+          paddingForward.PadHTop() != 0 ||
+          aW != 0 ||
+          aH != 0)
       {
         ForwardConvolutionRule::Convolution(inputPaddedTemp.slice(inMap +
             batchCount * inSize), rotatedFilter, convOutput, 1, 1);
@@ -208,11 +238,19 @@ void TransposedConvolution<
 {
   arma::Cube<eT> mappedError(gy.memptr(), outputWidth, outputHeight,
       outSize * batchSize, false, false);
-
   arma::Cube<eT> mappedErrorPadded;
-  if ((int)(kernelWidth - padWidth - 1) > 0 || (int)(kernelHeight - padHeight - 1) > 0)
-    Pad(mappedError, kernelWidth - padWidth - 1, kernelHeight - padHeight - 1, 0, 0, mappedErrorPadded);
+  if (paddingBackward.PadWLeft() != 0 || paddingBackward.PadHTop() != 0)
+  {
+    mappedErrorPadded.set_size(mappedError.n_rows +
+        paddingBackward.PadWLeft() * 2, mappedError.n_cols +
+        paddingBackward.PadHTop() * 2, mappedError.n_slices);
 
+    for (size_t i = 0; i < mappedError.n_slices; ++i)
+    {
+      paddingBackward.Forward(std::move(mappedError.slice(i)),
+          std::move(mappedErrorPadded.slice(i)));
+    }
+  }
   g.set_size(inputTemp.n_rows * inputTemp.n_cols * inSize, batchSize);
   gTemp = arma::Cube<eT>(g.memptr(), inputTemp.n_rows,
       inputTemp.n_cols, inputTemp.n_slices, false, false);
@@ -232,7 +270,7 @@ void TransposedConvolution<
     {
       arma::Mat<eT> output;
 
-      if ((int)(kernelWidth - padWidth - 1) > 0 || (int)(kernelHeight - padHeight - 1) > 0)
+      if (paddingBackward.PadWLeft() != 0 || paddingBackward.PadHTop() != 0)
       {
         BackwardConvolutionRule::Convolution(mappedErrorPadded.slice(outMap),
             weight.slice(outMapIdx), output, strideWidth, strideHeight);
@@ -290,7 +328,12 @@ void TransposedConvolution<
 
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
-      if (strideWidth > 1 || strideHeight > 1 || padWidth != 0 || padHeight != 0 || aW != 0 || aH != 0)
+      if (strideWidth > 1 ||
+          strideHeight > 1 ||
+          paddingForward.PadWLeft() != 0 ||
+          paddingForward.PadHTop() != 0 ||
+          aW != 0 ||
+          aH != 0)
       {
         inputSlice = inputPaddedTemp.slice(inMap + batchCount * inSize);
       }
@@ -325,7 +368,7 @@ void TransposedConvolution<
     InputDataType,
     OutputDataType
 >::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_NVP(inSize);
   ar & BOOST_SERIALIZATION_NVP(outSize);
@@ -334,12 +377,23 @@ void TransposedConvolution<
   ar & BOOST_SERIALIZATION_NVP(kernelHeight);
   ar & BOOST_SERIALIZATION_NVP(strideWidth);
   ar & BOOST_SERIALIZATION_NVP(strideHeight);
-  ar & BOOST_SERIALIZATION_NVP(padWidth);
-  ar & BOOST_SERIALIZATION_NVP(padHeight);
+  if (version == 0)
+  {
+    // These are now stored in paddingForward and paddingBackward.
+    size_t padWidth, padHeight;
+    ar & BOOST_SERIALIZATION_NVP(padWidth);
+    ar & BOOST_SERIALIZATION_NVP(padHeight);
+  }
   ar & BOOST_SERIALIZATION_NVP(inputWidth);
   ar & BOOST_SERIALIZATION_NVP(inputHeight);
   ar & BOOST_SERIALIZATION_NVP(outputWidth);
   ar & BOOST_SERIALIZATION_NVP(outputHeight);
+
+  if (version > 0)
+  {
+    ar & BOOST_SERIALIZATION_NVP(paddingForward);
+    ar & BOOST_SERIALIZATION_NVP(paddingBackward);
+  }
 
   if (Archive::is_loading::value)
   {

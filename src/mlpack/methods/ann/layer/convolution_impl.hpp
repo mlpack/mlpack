@@ -95,7 +95,7 @@ Convolution<
     InitializeSamePadding();
   }
 
-  padding = new Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 }
 
 template<
@@ -157,7 +157,7 @@ Convolution<
     InitializeSamePadding();
   }
 
-  padding = new Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 }
 
 template<
@@ -208,7 +208,7 @@ void Convolution<
 
     for (size_t i = 0; i < inputTemp.n_slices; ++i)
     {
-      padding->Forward(std::move(inputTemp.slice(i)),
+      padding.Forward(std::move(inputTemp.slice(i)),
           std::move(inputPaddedTemp.slice(i)));
     }
   }

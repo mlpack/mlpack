@@ -1,6 +1,15 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Fix STB header search paths (#2104).
+
+  * Add `DISABLE_DOWNLOADS` CMake configuration option (#2104).
+
+  * Add padding layer in TransposedConvolutionLayer (#2082).
+
   * Fix pkgconfig generation on non-Linux systems (#2101).
+
+  * Use log-space to represent HMM initial state and transition probabilities
+    (#2081).
 
   * Add functions to access parameters of `Convolution` and `AtrousConvolution`
     layers (#1985).

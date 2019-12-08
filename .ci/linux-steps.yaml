@@ -41,7 +41,6 @@ steps:
     # Install armadillo.
     curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*
     cmake . && make && sudo make install && cd ..
-    sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
   displayName: 'Install Build Dependencies'
 
 # Configure mlpack (CMake)

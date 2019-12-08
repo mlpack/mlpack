@@ -248,65 +248,10 @@ class TransposedConvolution
     output = arma::fliplr(arma::flipud(input));
   }
 
-  /*
-   * Pad the given input data.
-   *
-   * @param input The input to be padded.
-   * @param wPad Padding width of the input.
-   * @param hPad Padding height of the input.
-   * @param wExtra The number of extra zeros to the right.
-   * @param hExtra The number of extra zeros to the bottom.
-   * @param output The padded output data.
-   */
-  template<typename eT>
-  void Pad(const arma::Mat<eT>& input,
-           const size_t wPad,
-           const size_t hPad,
-           const size_t wExtra,
-           const size_t hExtra,
-           arma::Mat<eT>& output)
-  {
-    if (output.n_rows != input.n_rows + wPad * 2 + wExtra ||
-        output.n_cols != input.n_cols + hPad * 2 + hExtra)
-    {
-      output = arma::zeros(input.n_rows + wPad * 2 + wExtra,
-          input.n_cols + hPad * 2 + hExtra);
-    }
-
-    output.submat(wPad, hPad, wPad + input.n_rows - 1,
-        hPad + input.n_cols - 1) = input;
-  }
-
-  /*
-   * Pad the given input data.
-   *
-   * @param input The input to be padded.
-   * @param wPad Padding width of the input.
-   * @param hPad Padding height of the input.
-   * @param wExtra The number of extra zeros to the right.
-   * @param hExtra The number of extra zeros to the bottom.
-   * @param output The padded output data.
-   */
-  template<typename eT>
-  void Pad(const arma::Cube<eT>& input,
-           const size_t wPad,
-           const size_t hPad,
-           const size_t wExtra,
-           const size_t hExtra,
-           arma::Cube<eT>& output)
-  {
-    output = arma::zeros(input.n_rows + wPad * 2 + wExtra,
-        input.n_cols + hPad * 2 + hExtra, input.n_slices);
-
-    for (size_t i = 0; i < input.n_slices; ++i)
-    {
-      Pad<eT>(input.slice(i), wPad, hPad, wExtra, hExtra, output.slice(i));
-    }
-  }
 
   /*
    * Insert zeros between the units of the given input data.
-   * Note: This function should be used before the Pad() function.
+   * Note: This function should be used before using padding layer.
    *
    * @param input The input to be padded.
    * @param strideWidth Stride of filter application in the x direction.
@@ -339,7 +284,7 @@ class TransposedConvolution
 
   /*
    * Insert zeros between the units of the given input data.
-   * Note: This function should be used before the Pad() function.
+   * Note: This function should be used before using padding layer.
    *
    * @param input The input to be padded.
    * @param strideWidth Stride of filter application in the x direction.
@@ -391,7 +336,7 @@ class TransposedConvolution
   //! Locally-stored number of zeros added to the right of input.
   size_t aW;
 
-  //! Locally-stored number of zeros added to the top of input.
+  //! Locally-stored number of zeros added to the bottom of input.
   size_t aH;
 
   //! Locally-stored weight object.
@@ -433,8 +378,11 @@ class TransposedConvolution
   //! Locally-stored transformed gradient parameter.
   arma::cube gradientTemp;
 
-  //! Locally-stored padding layer.
-  Padding<>* padding;
+  //! Locally-stored padding layer for forward propagation.
+  ann::Padding<> paddingForward;
+
+  //! Locally-stored padding layer for back propagation.
+  ann::Padding<> paddingBackward;
 
   //! Locally-stored delta object.
   OutputDataType delta;
@@ -451,6 +399,28 @@ class TransposedConvolution
 
 } // namespace ann
 } // namespace mlpack
+
+//! Set the serialization version of the Transposed Convolution class.
+namespace boost {
+namespace serialization {
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+struct version<
+    mlpack::ann::TransposedConvolution<ForwardConvolutionRule,
+        BackwardConvolutionRule, GradientConvolutionRule, InputDataType,
+        OutputDataType> >
+{
+  BOOST_STATIC_CONSTANT(int, value = 1);
+};
+
+} // namespace serialization
+} // namespace boost
 
 // Include implementation.
 #include "transposed_convolution_impl.hpp"
