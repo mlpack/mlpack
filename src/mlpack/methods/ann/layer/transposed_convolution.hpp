@@ -302,7 +302,8 @@ class TransposedConvolution
 
     for (size_t i = 0; i < input.n_slices; ++i)
     {
-      InsertZeros<eT>(input.slice(i), strideWidth, strideHeight, output.slice(i));
+      InsertZeros<eT>(input.slice(i), strideWidth, strideHeight,
+          output.slice(i));
     }
   }
 

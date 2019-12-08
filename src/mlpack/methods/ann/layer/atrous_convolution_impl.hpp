@@ -77,7 +77,8 @@ AtrousConvolution<
     dilationWidth(dilationWidth),
     dilationHeight(dilationHeight)
 {
-  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize, 1);
+  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
+      1);
 
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
@@ -143,7 +144,8 @@ AtrousConvolution<
     dilationWidth(dilationWidth),
     dilationHeight(dilationHeight)
 {
-  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize, 1);
+  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
+      1);
 
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;

@@ -76,7 +76,8 @@ Convolution<
     outputWidth(0),
     outputHeight(0)
 {
-  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize, 1);
+  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
+      1);
 
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
@@ -138,7 +139,8 @@ Convolution<
     outputWidth(0),
     outputHeight(0)
 {
-  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize, 1);
+  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
+      1);
 
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
@@ -213,8 +215,10 @@ void Convolution<
     }
   }
 
-  size_t wConv = ConvOutSize(inputWidth, kernelWidth, strideWidth, padWLeft, padWRight);
-  size_t hConv = ConvOutSize(inputHeight, kernelHeight, strideHeight, padHTop, padHBottom);
+  size_t wConv = ConvOutSize(inputWidth, kernelWidth, strideWidth, padWLeft,
+      padWRight);
+  size_t hConv = ConvOutSize(inputHeight, kernelHeight, strideHeight, padHTop,
+      padHBottom);
 
   output.set_size(wConv * hConv * outSize, batchSize);
   outputTemp = arma::Cube<eT>(output.memptr(), wConv, hConv,
@@ -237,12 +241,14 @@ void Convolution<
       if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
       {
         ForwardConvolutionRule::Convolution(inputPaddedTemp.slice(inMap +
-            batchCount * inSize), weight.slice(outMapIdx), convOutput, strideWidth, strideHeight);
+            batchCount * inSize), weight.slice(outMapIdx), convOutput,
+            strideWidth, strideHeight);
       }
       else
       {
         ForwardConvolutionRule::Convolution(inputTemp.slice(inMap +
-            batchCount * inSize), weight.slice(outMapIdx), convOutput, strideWidth, strideHeight);
+            batchCount * inSize), weight.slice(outMapIdx), convOutput,
+            strideWidth, strideHeight);
       }
 
       outputTemp.slice(outMap) += convOutput;
@@ -423,7 +429,10 @@ void Convolution<
     ar & BOOST_SERIALIZATION_NVP(padding);
 
   if (Archive::is_loading::value)
-    weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize, 1);
+  {
+    weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
+        1);
+  }
 }
 
 template<
@@ -444,8 +453,10 @@ void Convolution<
   /*
    * Using O = (W - F + 2P) / s + 1;
    */
-  size_t totalVerticalPadding = (strideWidth - 1) * inputWidth + kernelWidth - strideWidth;
-  size_t totalHorizontalPadding = (strideHeight - 1) * inputHeight + kernelHeight - strideHeight;
+  size_t totalVerticalPadding = (strideWidth - 1) * inputWidth + kernelWidth -
+      strideWidth;
+  size_t totalHorizontalPadding = (strideHeight - 1) * inputHeight +
+      kernelHeight - strideHeight;
 
   padWLeft = totalVerticalPadding / 2;
   padWRight = totalVerticalPadding - totalVerticalPadding / 2;

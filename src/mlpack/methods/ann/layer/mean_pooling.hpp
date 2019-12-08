@@ -159,9 +159,11 @@ class MeanPooling
     const size_t rStep = kernelWidth;
     const size_t cStep = kernelHeight;
 
-    for (size_t j = 0, colidx = 0; j < output.n_cols; ++j, colidx += strideHeight)
+    for (size_t j = 0, colidx = 0; j < output.n_cols;
+         ++j, colidx += strideHeight)
     {
-      for (size_t i = 0, rowidx = 0; i < output.n_rows; ++i, rowidx += strideWidth)
+      for (size_t i = 0, rowidx = 0; i < output.n_rows;
+           ++i, rowidx += strideWidth)
       {
         arma::mat subInput = input(
             arma::span(rowidx, rowidx + rStep - 1 - offset),

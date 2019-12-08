@@ -63,15 +63,19 @@ void MeanPooling<InputDataType, OutputDataType>::Forward(
 
   if (floor)
   {
-    outputWidth = std::floor((inputWidth - (double) kernelWidth) / (double) strideWidth + 1);
-    outputHeight = std::floor((inputHeight - (double) kernelHeight) / (double) strideHeight + 1);
+    outputWidth = std::floor((inputWidth -
+        (double) kernelWidth) / (double) strideWidth + 1);
+    outputHeight = std::floor((inputHeight -
+        (double) kernelHeight) / (double) strideHeight + 1);
 
     offset = 0;
   }
   else
   {
-    outputWidth = std::ceil((inputWidth - (double) kernelWidth) / (double) strideWidth + 1);
-    outputHeight = std::ceil((inputHeight - (double) kernelHeight) / (double) strideHeight + 1);
+    outputWidth = std::ceil((inputWidth -
+        (double) kernelWidth) / (double) strideWidth + 1);
+    outputHeight = std::ceil((inputHeight -
+        (double) kernelHeight) / (double) strideHeight + 1);
 
     offset = 1;
   }

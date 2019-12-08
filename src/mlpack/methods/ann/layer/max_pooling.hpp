@@ -179,11 +179,14 @@ class MaxPooling
                         arma::Mat<eT>& output,
                         arma::Mat<eT>& poolingIndices)
   {
-    for (size_t j = 0, colidx = 0; j < output.n_cols; ++j, colidx += strideWidth)
+    for (size_t j = 0, colidx = 0; j < output.n_cols;
+         ++j, colidx += strideWidth)
     {
-      for (size_t i = 0, rowidx = 0; i < output.n_rows; ++i, rowidx += strideHeight)
+      for (size_t i = 0, rowidx = 0; i < output.n_rows;
+           ++i, rowidx += strideHeight)
       {
-        arma::mat subInput = input(arma::span(rowidx, rowidx + kernelWidth - 1 - offset),
+        arma::mat subInput = input(
+            arma::span(rowidx, rowidx + kernelWidth - 1 - offset),
             arma::span(colidx, colidx + kernelHeight - 1 - offset));
 
         const size_t idx = pooling.Pooling(subInput);

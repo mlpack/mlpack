@@ -74,7 +74,8 @@ TransposedConvolution<
     outputWidth(outputWidth),
     outputHeight(outputHeight)
 {
-  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize, 1);
+  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
+      1);
 
   aW = (outputWidth + 2 * padWidth - kernelWidth) % strideWidth;
   aH = (outputHeight + 2 * padHeight - kernelHeight) % strideHeight;
@@ -88,8 +89,10 @@ TransposedConvolution<
 
   // Check if the output height and width are possible given the other
   // parameters of the layer.
-  if (outputWidth != strideWidth * (inputWidth - 1) + aW + kernelWidth - 2 * padWidth ||
-      outputHeight != strideHeight * (inputHeight - 1) + aH + kernelHeight - 2 * padHeight)
+  if (outputWidth != strideWidth * (inputWidth - 1) +
+          aW + kernelWidth - 2 * padWidth ||
+      outputHeight != strideHeight * (inputHeight - 1) +
+          aH + kernelHeight - 2 * padHeight)
   {
     Log::Fatal << "The output width / output height is not possible given "
         << "the other parameters of the layer." << std::endl;
