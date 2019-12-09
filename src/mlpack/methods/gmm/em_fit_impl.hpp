@@ -109,7 +109,8 @@ Estimate(const arma::mat& observations,
 
     // Store the sum of the probability of each state over all the observations.
     arma::vec probRowSums(dists.size());
-    for (size_t i=0;i<dists.size();++i){
+    for (size_t i = 0; i < dists.size(); ++i)
+    {
         probRowSums(i) = mlpack::math::AccuLog(condLogProb.col(i));
     }
 
@@ -258,7 +259,7 @@ Estimate(const arma::mat& observations,
       {
         arma::mat tmpB = tmp.each_row() % trans(arma::exp(condLogProb.col(i) +
             logProbabilities - probRowSums[i]));
-        arma::mat cov = (tmp * trans(tmpB)) ;
+        arma::mat cov = (tmp * trans(tmpB));
 
         // Apply covariance constraint.
         constraint.ApplyConstraint(cov);
