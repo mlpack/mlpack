@@ -575,4 +575,41 @@ BOOST_AUTO_TEST_CASE(FFNTrainReturnObjective)
 
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 }
+
+/**
+ * Test that FFN::Model() allows us to access the instantiated network.
+ */
+BOOST_AUTO_TEST_CASE(FFNReturnModel)
+{
+  // Create dummy network.
+  FFN<NegativeLogLikelihood<> > model;
+  Linear<>* linearA = new Linear<>(3, 3);
+  model.Add(linearA);
+  Linear<>* linearB = new Linear<>(3, 4);
+  model.Add(linearB);
+
+  // Initialize network parameter.
+  model.ResetParameters();
+
+  // Set all network parameter to one.
+  model.Parameters().ones();
+
+  // Zero the second layer parameter.
+  linearB->Parameters().zeros();
+
+  // Get the layer parameter from layer A and layer B and store them in
+  // parameterA and parameterB.
+  arma::mat parameterA, parameterB;
+  boost::apply_visitor(ParametersVisitor(std::move(parameterA)),
+      model.Model()[0]);
+  boost::apply_visitor(ParametersVisitor(std::move(parameterB)),
+      model.Model()[1]);
+
+  CheckMatrices(parameterA, arma::ones(3 * 3 + 3, 1));
+  CheckMatrices(parameterB, arma::zeros(3 * 4 + 4, 1));
+
+  CheckMatrices(linearA->Parameters(), arma::ones(3 * 3 + 3, 1));
+  CheckMatrices(linearB->Parameters(), arma::zeros(3 * 4 + 4, 1));
+}
+
 BOOST_AUTO_TEST_SUITE_END();
