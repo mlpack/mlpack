@@ -295,13 +295,37 @@ class HMM
   /**
    * Compute the log-likelihood of the given emission probability up to time t
    *
-   * @param dataSeq Data sequence to evaluate the likelihood of.
+   * @param t time order
+   * @param log emission probability at time t.
+   * @param logScale Log-likelihood of the given sequence of emission
+   * probability  up to time t-1
+   * @param prevForwardProb Vector in which forward probabilities for time t-1
+   * will be saved.
+   * @param forwardProb Vector in which forward probabilities for time t
+   * will be saved.
    * @return Log-likelihood of the given sequence of emission up to time t.
    */
-  double LogLikelihood(size_t t,
+  double LogLikelihoodEmissionProb(size_t t,
                        const arma::vec& emissionLogProb,
-                       double &logScale, 
-                       arma::vec& prevForwardLogProb, 
+                       double &logScale,
+                       arma::vec& prevForwardLogProb,
+                       arma::vec& forwardLogProb) const;
+  /**
+   * Compute the log-likelihood of the given data up to time t
+   *
+   * @param t time order
+   * @param data observation at time t.
+   * @param logScale Log-likelihood of the given sequence of data up to time t-1
+   * @param prevForwardProb Vector in which forward probabilities for time t-1
+   * will be saved.
+   * @param forwardProb Vector in which forward probabilities for time t
+   * will be saved.
+   * @return Log-likelihood of the given sequence of data up to time t.
+   */
+  double LogLikelihood(size_t t,
+                       const arma::vec &data,
+                       double &logScale,
+                       arma::vec& prevForwardLogProb,
                        arma::vec& forwardLogProb) const;
   /**
    * HMM filtering. Computes the k-step-ahead expected emission at each time
@@ -382,7 +406,6 @@ class HMM
 
 
  protected:
-     
   void ForwardAtT0(
     const arma::vec& emissionLogProb,
     double& logScales,
