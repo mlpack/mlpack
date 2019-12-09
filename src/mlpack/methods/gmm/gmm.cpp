@@ -136,10 +136,11 @@ void GMM::Classify(const arma::mat& observations,
   for (size_t i = 0; i < observations.n_cols; ++i)
   {
     // Find maximum probability component.
-    double probability = 0;
+    double probability = -std::numeric_limits<double>::infinity();
     for (size_t j = 0; j < gaussians; ++j)
     {
-      double newProb = Probability(observations.unsafe_col(i), j);
+  // It has to be LogProbability() otherwise Probability() would overflow easily
+      double newProb = LogProbability(observations.unsafe_col(i), j);
       if (newProb >= probability)
       {
         probability = newProb;
@@ -158,18 +159,19 @@ double GMM::LogLikelihood(
     const arma::vec& weightsL) const
 {
   double loglikelihood = 0;
-  arma::vec phis;
-  arma::mat likelihoods(gaussians, data.n_cols);
+  arma::vec logPhis;
+  arma::mat logLikelihoods(gaussians, data.n_cols);
 
+  // It has to be LogProbability() otherwise Probability() would overflow easily
   for (size_t i = 0; i < gaussians; i++)
   {
-    distsL[i].Probability(data, phis);
-    likelihoods.row(i) = weightsL(i) * trans(phis);
+    distsL[i].LogProbability(data, logPhis);
+    logLikelihoods.row(i) = log(weightsL(i)) + trans(logPhis);
   }
 
   // Now sum over every point.
   for (size_t j = 0; j < data.n_cols; j++)
-    loglikelihood += log(accu(likelihoods.col(j)));
+    loglikelihood += mlpack::math::AccuLog(logLikelihoods.col(j));
   return loglikelihood;
 }
 
