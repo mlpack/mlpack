@@ -38,7 +38,7 @@ class Padding
    * Create the Padding object using the specified number of output units.
    *
    * @param padWLeft Left padding width of the input.
-   * @param padWLeft Right padding width of the input.
+   * @param padWRight Right padding width of the input.
    * @param padHTop Top padding height of the input.
    * @param padHBottom Bottom padding height of the input.
    */
@@ -80,6 +80,26 @@ class Padding
   OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
+
+  //! Get the left padding width.
+  size_t PadWLeft() const { return padWLeft; }
+  //! Modify the left padding width.
+  size_t& PadWLeft() { return padWLeft; }
+
+  //! Get the right padding width.
+  size_t PadWRight() const { return padWRight; }
+  //! Modify the right padding width.
+  size_t& PadWRight() { return padWRight; }
+
+  //! Get the top padding width.
+  size_t PadHTop() const { return padHTop; }
+  //! Modify the top padding width.
+  size_t& PadHTop() { return padHTop; }
+
+  //! Get the bottom padding width.
+  size_t PadHBottom() const { return padHBottom; }
+  //! Modify the bottom padding width.
+  size_t& PadHBottom() { return padHBottom; }
 
   /**
    * Serialize the layer.
