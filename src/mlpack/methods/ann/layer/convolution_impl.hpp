@@ -52,10 +52,10 @@ Convolution<
 >::Convolution(
     const size_t inSize,
     const size_t outSize,
-    const size_t kW,
-    const size_t kH,
-    const size_t dW,
-    const size_t dH,
+    const size_t kernelWidth,
+    const size_t kernelHeight,
+    const size_t strideWidth,
+    const size_t strideHeight,
     const size_t padW,
     const size_t padH,
     const size_t inputWidth,
@@ -63,10 +63,10 @@ Convolution<
     const std::string paddingType) :
     inSize(inSize),
     outSize(outSize),
-    kW(kW),
-    kH(kH),
-    dW(dW),
-    dH(dH),
+    kernelWidth(kernelWidth),
+    kernelHeight(kernelHeight),
+    strideWidth(strideWidth),
+    strideHeight(strideHeight),
     padWLeft(padW),
     padWRight(padW),
     padHBottom(padH),
@@ -76,7 +76,8 @@ Convolution<
     outputWidth(0),
     outputHeight(0)
 {
-  weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
+  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
+      1);
 
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
@@ -95,7 +96,7 @@ Convolution<
     InitializeSamePadding();
   }
 
-  padding = new Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 }
 
 template<
@@ -114,10 +115,10 @@ Convolution<
 >::Convolution(
     const size_t inSize,
     const size_t outSize,
-    const size_t kW,
-    const size_t kH,
-    const size_t dW,
-    const size_t dH,
+    const size_t kernelWidth,
+    const size_t kernelHeight,
+    const size_t strideWidth,
+    const size_t strideHeight,
     const std::tuple<size_t, size_t> padW,
     const std::tuple<size_t, size_t> padH,
     const size_t inputWidth,
@@ -125,10 +126,10 @@ Convolution<
     const std::string paddingType) :
     inSize(inSize),
     outSize(outSize),
-    kW(kW),
-    kH(kH),
-    dW(dW),
-    dH(dH),
+    kernelWidth(kernelWidth),
+    kernelHeight(kernelHeight),
+    strideWidth(strideWidth),
+    strideHeight(strideHeight),
     padWLeft(std::get<0>(padW)),
     padWRight(std::get<1>(padW)),
     padHBottom(std::get<1>(padH)),
@@ -138,7 +139,8 @@ Convolution<
     outputWidth(0),
     outputHeight(0)
 {
-  weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
+  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
+      1);
 
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
@@ -157,7 +159,7 @@ Convolution<
     InitializeSamePadding();
   }
 
-  padding = new Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 }
 
 template<
@@ -175,7 +177,7 @@ void Convolution<
     OutputDataType
 >::Reset()
 {
-    weight = arma::cube(weights.memptr(), kW, kH,
+    weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
         outSize * inSize, false, false);
     bias = arma::mat(weights.memptr() + weight.n_elem,
         outSize, 1, false, false);
@@ -208,13 +210,15 @@ void Convolution<
 
     for (size_t i = 0; i < inputTemp.n_slices; ++i)
     {
-      padding->Forward(std::move(inputTemp.slice(i)),
+      padding.Forward(std::move(inputTemp.slice(i)),
           std::move(inputPaddedTemp.slice(i)));
     }
   }
 
-  size_t wConv = ConvOutSize(inputWidth, kW, dW, padWLeft, padWRight);
-  size_t hConv = ConvOutSize(inputHeight, kH, dH, padHTop, padHBottom);
+  size_t wConv = ConvOutSize(inputWidth, kernelWidth, strideWidth, padWLeft,
+      padWRight);
+  size_t hConv = ConvOutSize(inputHeight, kernelHeight, strideHeight, padHTop,
+      padHBottom);
 
   output.set_size(wConv * hConv * outSize, batchSize);
   outputTemp = arma::Cube<eT>(output.memptr(), wConv, hConv,
@@ -237,12 +241,14 @@ void Convolution<
       if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
       {
         ForwardConvolutionRule::Convolution(inputPaddedTemp.slice(inMap +
-            batchCount * inSize), weight.slice(outMapIdx), convOutput, dW, dH);
+            batchCount * inSize), weight.slice(outMapIdx), convOutput,
+            strideWidth, strideHeight);
       }
       else
       {
         ForwardConvolutionRule::Convolution(inputTemp.slice(inMap +
-            batchCount * inSize), weight.slice(outMapIdx), convOutput, dW, dH);
+            batchCount * inSize), weight.slice(outMapIdx), convOutput,
+            strideWidth, strideHeight);
       }
 
       outputTemp.slice(outMap) += convOutput;
@@ -295,7 +301,7 @@ void Convolution<
       Rotate180(weight.slice(outMapIdx), rotatedFilter);
 
       BackwardConvolutionRule::Convolution(mappedError.slice(outMap),
-          rotatedFilter, output, dW, dH);
+          rotatedFilter, output, strideWidth, strideHeight);
 
       if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
       {
@@ -362,7 +368,7 @@ void Convolution<
 
       arma::Mat<eT> output;
       GradientConvolutionRule::Convolution(inputSlice, deltaSlice,
-          output, dW, dH);
+          output, strideWidth, strideHeight);
 
       if (gradientTemp.n_rows < output.n_rows ||
           gradientTemp.n_cols < output.n_cols)
@@ -406,10 +412,10 @@ void Convolution<
   ar & BOOST_SERIALIZATION_NVP(inSize);
   ar & BOOST_SERIALIZATION_NVP(outSize);
   ar & BOOST_SERIALIZATION_NVP(batchSize);
-  ar & BOOST_SERIALIZATION_NVP(kW);
-  ar & BOOST_SERIALIZATION_NVP(kH);
-  ar & BOOST_SERIALIZATION_NVP(dW);
-  ar & BOOST_SERIALIZATION_NVP(dH);
+  ar & BOOST_SERIALIZATION_NVP(kernelWidth);
+  ar & BOOST_SERIALIZATION_NVP(kernelHeight);
+  ar & BOOST_SERIALIZATION_NVP(strideWidth);
+  ar & BOOST_SERIALIZATION_NVP(strideHeight);
   ar & BOOST_SERIALIZATION_NVP(padWLeft);
   ar & BOOST_SERIALIZATION_NVP(padWRight);
   ar & BOOST_SERIALIZATION_NVP(padHBottom);
@@ -423,7 +429,10 @@ void Convolution<
     ar & BOOST_SERIALIZATION_NVP(padding);
 
   if (Archive::is_loading::value)
-    weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
+  {
+    weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
+        1);
+  }
 }
 
 template<
@@ -444,8 +453,10 @@ void Convolution<
   /*
    * Using O = (W - F + 2P) / s + 1;
    */
-  size_t totalVerticalPadding = (dW - 1) * inputWidth + kW - dW;
-  size_t totalHorizontalPadding = (dH - 1) * inputHeight + kH - dH;
+  size_t totalVerticalPadding = (strideWidth - 1) * inputWidth + kernelWidth -
+      strideWidth;
+  size_t totalHorizontalPadding = (strideHeight - 1) * inputHeight +
+      kernelHeight - strideHeight;
 
   padWLeft = totalVerticalPadding / 2;
   padWRight = totalVerticalPadding - totalVerticalPadding / 2;

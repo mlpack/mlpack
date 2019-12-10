@@ -1,5 +1,21 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Fix STB header search paths (#2104).
+
+  * Add `DISABLE_DOWNLOADS` CMake configuration option (#2104).
+
+  * Add padding layer in TransposedConvolutionLayer (#2082).
+
+  * Fix pkgconfig generation on non-Linux systems (#2101).
+
+  * Use log-space to represent HMM initial state and transition probabilities
+    (#2081).
+
+  * Add functions to access parameters of `Convolution` and `AtrousConvolution`
+    layers (#1985).
+
+### mlpack 3.2.2
+###### 2019-11-26
   * Add `valid` and `same` padding option in `Convolution` and `Atrous
     Convolution` layer (#1988).
 
@@ -15,6 +31,10 @@
   * Speed and memory improvements for the Transposed Convolution layer (#1493).
 
   * Fix Windows Python build configuration (#1885).
+
+  * Validate md5 of STB library after download (#2087).
+
+  * Add `__version__` to `__init__.py` (#2092).
 
 ### mlpack 3.2.1
 ###### 2019-10-01

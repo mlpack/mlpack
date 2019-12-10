@@ -25,4 +25,5 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(decision_tree)
 add_python_binding(decision_tree)
-add_markdown_docs(decision_tree "cli;python" "classification")
+add_julia_binding(decision_tree)
+add_markdown_docs(decision_tree "cli;python;julia" "classification")
