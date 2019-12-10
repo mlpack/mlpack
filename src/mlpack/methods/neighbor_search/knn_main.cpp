@@ -53,7 +53,8 @@ PROGRAM_INFO("k-Nearest-Neighbors Search",
     "in " + PRINT_DATASET("distances") + " and the neighbors in " +
     PRINT_DATASET("neighbors") + ": "
     "\n\n" +
-    PRINT_CALL("knn", "k", 5, "reference", "input", "neighbors", "neighbors") +
+    PRINT_CALL("knn", "k", 5, "reference", "input", "neighbors", "neighbors",
+        "distances", "distances") +
     "\n\n"
     "The output is organized such that row i and column j in the neighbors "
     "output matrix corresponds to the index of the point in the reference set "
