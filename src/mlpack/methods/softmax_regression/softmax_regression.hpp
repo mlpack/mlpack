@@ -171,7 +171,7 @@ class SoftmaxRegression
   double Train(const arma::mat& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
-               OptimizerType optimizer = OptimizerType(),
+               OptimizerType optimizer,
                CallbackTypes&&... callbacks);
 
   //! Sets the number of classes.
