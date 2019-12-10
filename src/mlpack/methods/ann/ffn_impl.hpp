@@ -545,6 +545,12 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
   ar & BOOST_SERIALIZATION_NVP(height);
   ar & BOOST_SERIALIZATION_NVP(currentInput);
 
+  // Earlier versions didn't have the size parameter.
+  if (version > 1)
+  {
+    ar & BOOST_SERIALIZATION_NVP(size);
+  }
+
   // Earlier versions of the FFN code did not serialize whether or not the model
   // was reset.
   if (version > 0)
@@ -569,6 +575,11 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     // to be reset.
     if (version == 0)
       reset = false;
+
+    // The earlier versions didn't have the size parameter. We set it to a
+    // default value that will be inferred later.
+    if (version <= 1)
+      size = 0;
 
     size_t offset = 0;
     for (size_t i = 0; i < network.size(); ++i)

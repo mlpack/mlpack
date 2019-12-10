@@ -52,11 +52,14 @@ class Linear
          RegularizerType regularizer = RegularizerType());
 
   /**
-   * Create the Linear layer object using the specified layer size.
+   * Create the Linear layer object using the specified layer size. The input
+   * layer size will be automatically inferred.
+   *
    *
    * @param layerSize The number of output units.
    */
-  Linear(const size_t layerSize);
+  Linear(const size_t layerSize,
+         RegularizerType regularizer = RegularizerType());
 
   /*
    * Reset the layer parameter.
@@ -132,16 +135,6 @@ class Linear
 
   //! Modify the bias weights of the layer.
   arma::mat& Bias() { return bias; }
-
-  //! Get the input size.
-  size_t const& InputSize() const { return inSize; }
-  //! Modify the input size.
-  size_t& InputSize() { return inSize; }
-
-  //! Get the output size.
-  size_t const& OutputSize() const { return outSize; }
-  //! Modify the output size.
-  size_t& OutputSize() { return outSize; }
 
   /**
    * Serialize the layer

@@ -25,6 +25,11 @@ inline size_t OutputSizeVisitor::operator()(LayerType* layer) const
   return LayerOutputSize(layer);
 }
 
+inline size_t OutputSizeVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     !HasInputSize<T, size_t&(T::*)()>::value &&
