@@ -11,6 +11,10 @@
   * Use log-space to represent HMM initial state and transition probabilities
     (#2081).
 
+  * Add Julia bindings (#1949).  Build settings can be controlled with the
+    `BUILD_JULIA_BINDINGS=(ON/OFF)` and `JULIA_EXECUTABLE=/path/to/julia` CMake
+    parameters.
+
 ### mlpack 3.2.2
 ###### 2019-11-26
   * Add `valid` and `same` padding option in `Convolution` and `Atrous
