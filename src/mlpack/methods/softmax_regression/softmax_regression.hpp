@@ -56,6 +56,7 @@ namespace regression {
  * regressor.Classify(testData, predictions);
  * @endcode
  */
+template<typename MatType = arma::mat>
 class SoftmaxRegression
 {
  public:
@@ -87,13 +88,13 @@ class SoftmaxRegression
    * @param lambda L2-regularization constant.
    * @param fitIntercept add intercept term or not.
    */
-  template<typename OptimizerType = ens::L_BFGS>
+  template<typename OptimizerType>
   SoftmaxRegression(const arma::mat& data,
                     const arma::Row<size_t>& labels,
-                    const size_t numClasses,
-                    const double lambda = 0.0001,
-                    const bool fitIntercept = false,
-                    OptimizerType optimizer = OptimizerType());
+                    const size_t& numClasses,
+                    const double& lambda = 0.0001,
+                    const bool& fitIntercept = false,
+                    OptimizerType& optimizer);
 
   /**
    * Classify the given points, returning the predicted labels for each point.
@@ -170,8 +171,8 @@ class SoftmaxRegression
   template<typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>
   double Train(const arma::mat& data,
                const arma::Row<size_t>& labels,
-               const size_t numClasses,
-               OptimizerType optimizer,
+               const size_t& numClasses,
+               OptimizerType& optimizer,
                CallbackTypes&&... callbacks);
 
   //! Sets the number of classes.

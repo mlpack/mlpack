@@ -18,6 +18,8 @@
 #include <mlpack/methods/lmnn/lmnn.hpp>
 #include <mlpack/methods/nca/nca.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/methods/softmax_regression/softmax_regression.hpp>
+
 
 #include <boost/test/unit_test.hpp>
 
@@ -187,5 +189,24 @@ BOOST_AUTO_TEST_CASE(NCAWithOptimizerCallback)
   nca.LearnDistance(outputMatrix, ens::ProgressBar(70, stream));
   BOOST_REQUIRE_GT(stream.str().length(), 0);
 }
+
+/**
+ * Test softmax_regression implementation with PrintLoss callback.
+ */
+BOOST_AUTO_TEST_CASE(SRWithOptimizerCallback)
+{
+    arma::mat data("1 2 3;"
+                   "1 2 3");
+    arma::Row<size_t> responses("1 1 0");
+
+    ens::StandardSGD sgd(0.1, 1, 5);
+    SoftmaxRegression<> softmaxRegression(data, responses, 1, 0.0001, false, sgd);
+    std::stringstream stream;
+    softmaxRegression.Train<ens::StandardSGD>(data, responses, 2, sgd,
+    ens::PrintLoss(stream));
+
+    BOOST_REQUIRE_GT(stream.str().length(), 0);
+}
+
 
 BOOST_AUTO_TEST_SUITE_END();
