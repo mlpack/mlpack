@@ -133,7 +133,7 @@ class BRNN
    */
   template<typename OptimizerType = ens::StandardSGD, typename... CallbackTypes>
   double Train(arma::cube predictors, arma::cube responses,
-  			   CallbackTypes&&... callbacks);
+               CallbackTypes&&... callbacks);
 
   /**
    * Predict the responses to a given set of predictors. The responses will

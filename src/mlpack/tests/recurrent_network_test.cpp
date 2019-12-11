@@ -1445,7 +1445,7 @@ BOOST_AUTO_TEST_CASE(BRNNWithOptimizerCallbackTest)
   model.Add(recurrent);
   model.Add<Linear<> >(4, 5);
   std::stringstream stream;
-  
+
   StandardSGD opt(0.1, 1, 500 * input.n_cols, -100);
   model.Train(input, labels, opt, PrintLoss(stream));
   BOOST_TEST_CHECKPOINT("Training over");
@@ -1484,7 +1484,7 @@ BOOST_AUTO_TEST_CASE(BRNNCallbackTest)
   model.Add(recurrent);
   model.Add<Linear<> >(4, 5);
   std::stringstream stream;
-  
+
   model.Train(input, labels, PrintLoss(stream));
   BOOST_TEST_CHECKPOINT("Training over");
 
