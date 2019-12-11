@@ -202,6 +202,7 @@ set(parallel_tests
   "SVDBatchTest;"
   "LocalCoordinateCodingTest;"
   "FeedForwardNetworkTest;"
+  "RecurrentNetworkTest;"
   "SparseAutoencoderTest;"
   "GMMTest;"
   "CFTest;"

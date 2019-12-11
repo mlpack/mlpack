@@ -98,7 +98,8 @@ class FFN
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
-   * @param callbacks Callback Functions.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
@@ -123,7 +124,8 @@ class FFN
    * @param predictors Input training variables.
    * @tparam CallbackTypes Types of Callback Functions.
    * @param responses Outputs results from input training variables.
-   * @param callbacks Callback Functions.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
@@ -269,7 +271,9 @@ class FFN
   {
     return network;
   }
-  //! Modify the network model.
+  //! Modify the network model.  Be careful!  If you change the structure of the
+  //! network or parameters for layers, its state may become invalid, so be sure
+  //! to call ResetParameters() afterwards.
   std::vector<LayerTypes<CustomLayers...> >& Model() { return network; }
 
   //! Return the number of separable functions (the number of predictor points).

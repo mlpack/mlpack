@@ -140,6 +140,18 @@ if (BUILDING_PYTHON_BINDINGS)
       COMMENT "Configuring setup.py...")
   add_dependencies(python_configure python_copy)
   add_dependencies(python_configured python_configure)
+
+  # Append the package version to __init__.py after all the imports are loaded.
+  file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
+  "__version__='${PACKAGE_VERSION}'\n")
+endif ()
+
+# If we are building Julia bindings, we have to end the 'module' declaration in
+# mlpack.jl
+if (BUILD_JULIA_BINDINGS)
+  file(APPEND
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
+      "\nend\ninclude(\"functions.jl\")\nend\n")
 endif ()
 
 # If we are building Markdown documentation, we have to run some setup after we

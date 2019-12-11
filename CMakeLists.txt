@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.3.2)
 project(mlpack C CXX)
 
 include(CMake/cotire.cmake)
+include(CMake/CheckHash.cmake)
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
@@ -12,9 +13,11 @@ option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
+option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
+option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
 
 if (WIN32)
   option(BUILD_SHARED_LIBS
@@ -46,6 +49,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
+
+# Disable any downloads if needed.
+if (DISABLE_DOWNLOADS)
+  set(DOWNLOAD_ENSMALLEN OFF)
+  set(DOWNLOAD_STB_IMAGE OFF)
+endif ()
 
 # If we are on a Unix-like system, use the GNU install directories module.
 # Otherwise set the values manually.
@@ -143,7 +152,7 @@ endif()
 
 # Setup build for test coverage
 if(BUILD_WITH_COVERAGE)
-  # Currently coverage only works with GNU g++
+  # Currently coverage only works with GNU g++.
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # Find gcov and lcov
     find_program(GCOV gcov)
@@ -155,6 +164,7 @@ if(BUILD_WITH_COVERAGE)
     endif()
 
     set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "supc++")
+    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "quadmath")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -fkeep-inline-functions")
     message(STATUS "Adding debug compile options for code coverage.")
     # Remove optimizations for better line coverage
@@ -235,6 +245,7 @@ endif()
 #   BOOST_INCLUDEDIR - include directory for Boost
 #   BOOST_LIBRARYDIR - library directory for Boost
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
+#   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
 
 find_package(Armadillo 8.400.0 REQUIRED)
@@ -351,21 +362,29 @@ if (NOT STB_IMAGE_FOUND)
         STB_IMAGE_WRITE_DOWNLOAD_STATUS)
     if (STB_IMAGE_DOWNLOAD_STATUS EQUAL 0 AND
         STB_IMAGE_WRITE_DOWNLOAD_STATUS EQUAL 0)
-      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-          "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
-      message(STATUS
-          "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
-      # Now we have to also ensure these header files get installed.
-      install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-      install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-      add_definitions(-DHAS_STB)
-      set(STB_AVAILABLE "1")
+      check_hash (http://mlpack.org/files/stb/hash.md5 "${CMAKE_BINARY_DIR}/deps/${STB_DIR}"
+          HASH_CHECK_FAIL)
+      if (HASH_CHECK_FAIL EQUAL 0)
+        set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+            "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+        message(STATUS
+            "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+        # Now we have to also ensure these header files get installed.
+        install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+        install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+        add_definitions(-DHAS_STB)
+        set(STB_AVAILABLE "1")
+      else ()
+        message(WARNING
+            "stb/stb_image.h is not installed. Image utilities will not be available!")
+      endif ()
     else ()
-      list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
-      message(WARNING
-          "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
-      message(WARNING
-          "stb/stb_image.h is not installed. Image utilities will not be available!")
+        file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+        list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
+        message(WARNING
+            "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
+        message(WARNING
+            "stb/stb_image.h is not installed. Image utilities will not be available!")
     endif ()
   else ()
     message(WARNING
@@ -457,6 +476,12 @@ set(Boost_ADDITIONAL_VERSIONS
   "1.51.1" "1.51.0" "1.51"
   "1.50.1" "1.50.0" "1.50"
   "1.49.1" "1.49.0" "1.49")
+# Disable forced config-mode CMake search for Boost, which only imports targets
+# and does not set the variables that we need.
+#
+# TODO for the brave: transition all mlpack's CMake to 'target-based modern
+# CMake'.  Good luck!  You'll need it.
+set(Boost_NO_BOOST_CMAKE 1)
 find_package(Boost 1.49
     COMPONENTS
       program_options
@@ -708,7 +733,7 @@ if (PKG_CONFIG_FOUND)
     if ("${first}" STREQUAL "/")
       # We need to split the directory and the library.
       string(REGEX REPLACE "(.*/)[^/]*$" "\\1" library_dir "${lib}")
-      string(REGEX REPLACE ".*/lib([^/]*).so.*$" "\\1" library_name "${lib}")
+      string(REGEX REPLACE ".*/lib([^/]*)[.][a-z]*[.]*$" "\\1" library_name "${lib}")
 
       list(APPEND MLPACK_LIBRARIES_LIST "-L${library_dir}")
       list(APPEND MLPACK_LIBRARIES_LIST "-l${library_name}")
