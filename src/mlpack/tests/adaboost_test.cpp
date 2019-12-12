@@ -628,6 +628,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
   a.Classify(testData, predictedLabels2, probabilities);
 
   BOOST_REQUIRE_EQUAL(probabilities.n_cols, testData.n_cols);
+  BOOST_REQUIRE_EQUAL(probabilities.n_rows, numClasses);
 
   for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
     BOOST_REQUIRE_EQUAL(predictedLabels1[i], predictedLabels2[i]);
@@ -640,7 +641,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
     pRow = probabilities.unsafe_col(i);
     pRow.max(maxIndex);
     BOOST_REQUIRE_EQUAL(predictedLabels1(i), maxIndex);
-    BOOST_REQUIRE_EQUAL(arma::accu(probabilities.col(i)), 1);
+    BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
   }
 
   size_t localError = 0;
@@ -782,7 +783,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
     pRow = probabilities.unsafe_col(i);
     pRow.max(maxIndex);
     BOOST_REQUIRE_EQUAL(predictedLabels1(i), maxIndex);
-    BOOST_REQUIRE_EQUAL(arma::accu(probabilities.col(i)), 1);
+    BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
   }
 
   size_t localError = 0;

@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added `probabilities_file` parameter to get the probabilities matrix of
+    AdaBoost classifier (#2050).
+
   * Add Model() to the FFN class to access individual layers (#2043).
 
   * Update documentation for pip and conda installation packages (#2044).
