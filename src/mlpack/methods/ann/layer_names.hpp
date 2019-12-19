@@ -296,6 +296,83 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
+   * Return the name of the given layer of type LSTM as a string.
+   * 
+   * @param Given layer of type LSTM.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(LSTM<>* /*layer*/) const
+  {
+    return "lstm";
+  }
+
+  /*
+   * Return the name of the given layer of type CReLU as a string.
+   * 
+   * @param Given layer of type CReLU.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(CReLU<>* /*layer*/) const
+  {
+    return "crelu";
+  }
+
+  /*
+   * Return the name of the given layer of type Highway as a string.
+   * 
+   * @param Given layer of type Highway.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(Highway<>* /*layer*/) const
+  {
+    return "highway";
+  }
+
+  /*
+   * Return the name of the given layer of type GRU as a string.
+   * 
+   * @param Given layer of type GRU.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(GRU<>* /*layer*/) const
+  {
+    return "gru";
+  }
+
+  /*
+   * Return the name of the given layer of type Glimpse as a string.
+   * 
+   * @param Given layer of type Glimpse.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(Glimpse<>* /*layer*/) const
+  {
+    return "glimpse";
+  }
+
+  /*
+   * Return the name of the given layer of type FastLSTM as a string.
+   * 
+   * @param Given layer of type FastLSTM.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(FastLSTM<>* /*layer*/) const
+  {
+    return "fastlstm";
+  }
+
+  /*
+   * Return the name of the given layer of type WeightNorm as a string.
+   * 
+   * @param Given layer of type WeightNorm.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(WeightNorm<>* /*layer*/) const
+  {
+    return "weightnorm";
+  }
+
+  /*
    * Return the name of the layer of specified type as a string.
    * 
    * @param Given layer of any type.
