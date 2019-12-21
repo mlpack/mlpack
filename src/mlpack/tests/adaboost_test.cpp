@@ -306,7 +306,6 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
  * checks whether the Hamming loss breaches the upper bound, which is provided
  * by ztAccumulator.  This uses decision stumps as the weak learner.
  */
-<<<<<<< HEAD
 BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
 {
   arma::mat inputData;
@@ -845,66 +844,66 @@ BOOST_AUTO_TEST_CASE(PerceptronSerializationTest)
   }
 }
 
-BOOST_AUTO_TEST_CASE(DecisionStumpSerializationTest)
-{
-  // Build an AdaBoost object.
-  mat data = randu<mat>(10, 500);
-  Row<size_t> labels(500);
-  for (size_t i = 0; i < 250; ++i)
-    labels[i] = 0;
-  for (size_t i = 250; i < 500; ++i)
-    labels[i] = 1;
-
-  DecisionStump<> p(data, labels, 2, 800);
-  AdaBoost<DecisionStump<>> ab(data, labels, 2, p, 50, 1e-10);
-
-  // Now create another dataset to train with.
-  mat otherData = randu<mat>(5, 200);
-  Row<size_t> otherLabels(200);
-  for (size_t i = 0; i < 100; ++i)
-    otherLabels[i] = 1;
-  for (size_t i = 100; i < 150; ++i)
-    otherLabels[i] = 0;
-  for (size_t i = 150; i < 200; ++i)
-    otherLabels[i] = 2;
-
-  DecisionStump<> p2(otherData, otherLabels, 3, 500);
-  AdaBoost<DecisionStump<>> abText(otherData, otherLabels, 3, p2, 50, 1e-10);
-
-  AdaBoost<DecisionStump<>> abXml, abBinary;
-
-  SerializeObjectAll(ab, abXml, abText, abBinary);
-
-  // Now check that the objects are the same.
-  BOOST_REQUIRE_CLOSE(ab.Tolerance(), abXml.Tolerance(), 1e-5);
-  BOOST_REQUIRE_CLOSE(ab.Tolerance(), abText.Tolerance(), 1e-5);
-  BOOST_REQUIRE_CLOSE(ab.Tolerance(), abBinary.Tolerance(), 1e-5);
-
-  BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abXml.WeakLearners());
-  BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abText.WeakLearners());
-  BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abBinary.WeakLearners());
-
-  for (size_t i = 0; i < ab.WeakLearners(); ++i)
-  {
-    BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).SplitDimension(),
-                        abXml.WeakLearner(i).SplitDimension());
-    BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).SplitDimension(),
-                        abText.WeakLearner(i).SplitDimension());
-    BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).SplitDimension(),
-                        abBinary.WeakLearner(i).SplitDimension());
-
-    CheckMatrices(ab.WeakLearner(i).Split(),
-                  abXml.WeakLearner(i).Split(),
-                  abText.WeakLearner(i).Split(),
-                  abBinary.WeakLearner(i).Split());
-
-    CheckMatrices(ab.WeakLearner(i).BinLabels(),
-                  abXml.WeakLearner(i).BinLabels(),
-                  abText.WeakLearner(i).BinLabels(),
-                  abBinary.WeakLearner(i).BinLabels());
-  }
-}
-
+//BOOST_AUTO_TEST_CASE(DecisionStumpSerializationTest)
+//{
+//  // Build an AdaBoost object.
+//  mat data = randu<mat>(10, 500);
+//  Row<size_t> labels(500);
+//  for (size_t i = 0; i < 250; ++i)
+//    labels[i] = 0;
+//  for (size_t i = 250; i < 500; ++i)
+//    labels[i] = 1;
+//
+//  DecisionStump<> p(data, labels, 2, 800);
+//  AdaBoost<DecisionStump<>> ab(data, labels, 2, p, 50, 1e-10);
+//
+//  // Now create another dataset to train with.
+//  mat otherData = randu<mat>(5, 200);
+//  Row<size_t> otherLabels(200);
+// for (size_t i = 0; i < 100; ++i)
+//    otherLabels[i] = 1;
+//  for (size_t i = 100; i < 150; ++i)
+//    otherLabels[i] = 0;
+//  for (size_t i = 150; i < 200; ++i)
+//    otherLabels[i] = 2;
+//
+//  DecisionStump<> p2(otherData, otherLabels, 3, 500);
+//  AdaBoost<DecisionStump<>> abText(otherData, otherLabels, 3, p2, 50, 1e-10);
+//
+//  AdaBoost<DecisionStump<>> abXml, abBinary;
+//
+//  SerializeObjectAll(ab, abXml, abText, abBinary);
+//
+//  // Now check that the objects are the same.
+//  BOOST_REQUIRE_CLOSE(ab.Tolerance(), abXml.Tolerance(), 1e-5);
+// BOOST_REQUIRE_CLOSE(ab.Tolerance(), abText.Tolerance(), 1e-5);
+//  BOOST_REQUIRE_CLOSE(ab.Tolerance(), abBinary.Tolerance(), 1e-5);
+//
+//  BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abXml.WeakLearners());
+//  BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abText.WeakLearners());
+//  BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abBinary.WeakLearners());
+//
+//  for (size_t i = 0; i < ab.WeakLearners(); ++i)
+//  {
+//    BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).SplitDimension(),
+//                        abXml.WeakLearner(i).SplitDimension());
+//    BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).SplitDimension(),
+//                        abText.WeakLearner(i).SplitDimension());
+//    BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).SplitDimension(),
+//                        abBinary.WeakLearner(i).SplitDimension());
+//
+//    CheckMatrices(ab.WeakLearner(i).Split(),
+//                  abXml.WeakLearner(i).Split(),
+//                  abText.WeakLearner(i).Split(),
+//                  abBinary.WeakLearner(i).Split());
+//
+//    CheckMatrices(ab.WeakLearner(i).BinLabels(),
+//                  abXml.WeakLearner(i).BinLabels(),
+//                  abText.WeakLearner(i).BinLabels(),
+//                  abBinary.WeakLearner(i).BinLabels());
+//  }
+//}
+//
 //BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
 //{
 //  arma::mat inputData;
