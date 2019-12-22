@@ -54,6 +54,32 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::~FFN()
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
+  CheckInputDim(size_t numRows, const char *functionName)
+{
+  for (size_t l = 0; l < network.size(); ++l)
+  {
+    size_t layerInSize = boost::apply_visitor(InSizeVisitor(), network[l]);
+    if (layerInSize != 0){
+      if (layerInSize != numRows){
+        std::ostringstream oss;
+        oss << "FNN::" << functionName << " the first layer of the network "
+            << "expects " << layerInSize << " elements, but the input has "
+            << numRows << " rows!  Check your input size for "
+            << "correctness: the number of rows in the input should be "
+            << layerInSize;
+        throw std::out_of_range(oss.str());
+      }
+      else
+      {
+        break;
+      }
+    }
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::ResetData(
     arma::mat predictors, arma::mat responses)
 {
@@ -114,6 +140,7 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   ResetData(std::move(predictors), std::move(responses));
 
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
+  CheckInputDim(predictors.n_rows, "Train");
 
   // Train the model.
   Timer::Start("ffn_optimization");
@@ -134,6 +161,8 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     CallbackTypes&&... callbacks)
 {
   ResetData(std::move(predictors), std::move(responses));
+
+  CheckInputDim(predictors.n_rows, "Train");
 
   OptimizerType optimizer;
 
@@ -225,6 +254,8 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::mat predictors, arma::mat& results)
 {
+  CheckInputDim(predictors.n_rows, "Predict");
+
   if (parameter.is_empty())
     ResetParameters();
 

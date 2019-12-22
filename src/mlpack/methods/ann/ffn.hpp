@@ -324,6 +324,15 @@ class FFN
   //! Modify the matrix of data points (predictors).
   arma::mat& Predictors() { return predictors; }
 
+  /*
+   * Check whether the predictors dimensions are consistent with the layer
+   * requirements.
+   * 
+   * @param numRows Number of rows in predictor.
+   * @param functionName Name of the function checking dimensions.
+   */
+  void CheckInputDim(size_t numRows, const char *functionName);
+
   /**
    * Reset the module infomration (weights/parameters).
    */

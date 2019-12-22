@@ -301,6 +301,16 @@ class RNN
   //! Modify the matrix of data points (predictors).
   arma::cube& Predictors() { return predictors; }
 
+
+  /*
+   * Check whether the predictors dimensions are consistent with the layer
+   * requirements.
+   * 
+   * @param numRows Number of rows in predictor.
+   * @param functionName Name of the function checking dimensions.
+   */
+  void CheckInputDim(size_t numRows, const char *functionName);
+
   /**
    * Reset the state of the network.  This ensures that all internally-held
    * gradients are set to 0, all memory cells are reset, and the parameters

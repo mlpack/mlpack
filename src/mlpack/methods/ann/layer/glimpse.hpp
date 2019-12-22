@@ -155,6 +155,9 @@ class Glimpse
   //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
+
   //! Get the output width.
   size_t const& OutputWidth() const { return outputWidth; }
   //! Modify the output width.

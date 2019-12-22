@@ -78,6 +78,8 @@ class Constant
 
   //! Get the output size.
   size_t OutSize() const { return outSize; }
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
 
   /**
    * Serialize the layer.

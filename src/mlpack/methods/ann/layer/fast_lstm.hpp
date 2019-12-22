@@ -138,6 +138,9 @@ class FastLSTM
   //! Modify the maximum number of steps to backpropagate through time (BPTT).
   size_t& Rho() { return rho; }
 
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
+
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.

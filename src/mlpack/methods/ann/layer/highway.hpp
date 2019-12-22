@@ -149,6 +149,9 @@ class Highway
     return empty;
   }
 
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
+
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.

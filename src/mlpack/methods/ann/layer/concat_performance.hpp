@@ -83,8 +83,13 @@ class ConcatPerformance
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+<<<<<<< HEAD
   //! Get the number of inputs.
   size_t InSize() const { return inSize; }
+=======
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
+>>>>>>> add CheckInputDim function, get inSize visitor
 
   /**
    * Serialize the layer

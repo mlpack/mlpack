@@ -41,6 +41,7 @@ DropConnect<InputDataType, OutputDataType>::DropConnect(
     const size_t inSize,
     const size_t outSize,
     const double ratio) :
+    inSize(inSize),
     ratio(ratio),
     scale(1.0 / (1 - ratio)),
     baseLayer(new Linear<InputDataType, OutputDataType>(inSize, outSize))

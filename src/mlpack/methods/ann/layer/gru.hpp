@@ -146,6 +146,9 @@ class GRU
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
+
   //! Get the model modules.
   std::vector<LayerTypes<> >& Model() { return network; }
 

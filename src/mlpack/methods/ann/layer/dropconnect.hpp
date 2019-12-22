@@ -114,6 +114,9 @@ class DropConnect
   //! Get the model modules.
   std::vector<LayerTypes<> >& Model() { return network; }
 
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
+
   //! Get the parameters.
   OutputDataType const& Parameters() const { return parameters; }
   //! Modify the parameters.
@@ -162,6 +165,9 @@ class DropConnect
 
   //! The scale fraction.
   double scale;
+
+  //! The input size.
+  size_t inSize;
 
   //! Locally-stored weight object.
   OutputDataType parameters;

@@ -80,6 +80,9 @@ class Lookup
                 const arma::Mat<eT>& error,
                 arma::Mat<eT>& gradient);
 
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
+
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.
