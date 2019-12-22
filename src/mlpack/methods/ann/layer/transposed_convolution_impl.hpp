@@ -62,7 +62,8 @@ TransposedConvolution<
     const size_t inputWidth,
     const size_t inputHeight,
     const size_t outputWidth,
-    const size_t outputHeight) :
+    const size_t outputHeight,
+    const std::string paddingType) :
     inSize(inSize),
     outSize(outSize),
     kernelWidth(kernelWidth),
@@ -72,14 +73,33 @@ TransposedConvolution<
     inputWidth(inputWidth),
     inputHeight(inputHeight),
     outputWidth(outputWidth),
-    outputHeight(outputHeight)
+    outputHeight(outputHeight),
+    paddingType(paddingType)
 {
   weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
       1);
 
+  // Transform paddingType to lowercase.
+  std::string paddingTypeLow = paddingType;
+  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
+      [](unsigned char c){ return std::tolower(c); });
+
   aW = (outputWidth + 2 * padWidth - kernelWidth) % strideWidth;
   aH = (outputHeight + 2 * padHeight - kernelHeight) % strideHeight;
 
+  if (paddingTypeLow == "valid")
+  {
+    // No changes
+    aW = aW+0;
+    aH = aH+0;
+    
+  }
+  else if (paddingTypeLow == "same")
+  {
+    InitializeSamePadding();
+  }
+
+  
   const size_t padWidthForward = kernelWidth - padWidth - 1;
   const size_t padHeightForward = kernelHeight - padHeight - 1;
 
@@ -406,6 +426,33 @@ void TransposedConvolution<
     aW = (outputWidth + kernelWidth - 2 * padWidth - 2) % strideWidth;
     aH = (outputHeight + kernelHeight - 2 * padHeight - 2) % strideHeight;
   }
+}
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+void TransposedConvolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::InitializeSamePadding(){
+  /*
+  * Using O=s*(I-1) + K -2P + A
+  * where
+  * s=stride 
+  * I=Input Shape
+  * K=Kernel Size
+  * P=Padding
+  */
+
+  aW=aW-strideWidth;
+  aH=aH-strideHeight; 
+
 }
 
 } // namespace ann
