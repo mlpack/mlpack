@@ -73,6 +73,7 @@ class TransposedConvolution
    * @param inputHeight The height of the input data.
    * @param outputWidth The width of the output data.
    * @param outputHeight The height of the output data.
+   * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
   TransposedConvolution(const size_t inSize,
                         const size_t outSize,
@@ -85,7 +86,8 @@ class TransposedConvolution
                         const size_t inputWidth = 0,
                         const size_t inputHeight = 0,
                         const size_t outputWidth = 0,
-                        const size_t outputHeight = 0);
+                        const size_t outputHeight = 0,
+                        const std::string paddingType = "None");
 
   /*
    * Set the weight and bias term.
@@ -234,6 +236,11 @@ class TransposedConvolution
     for (size_t s = 0; s < output.n_slices; s++)
       output.slice(s) = arma::fliplr(arma::flipud(input.slice(s)));
   }
+  
+  /*
+   * Function to assign padding such that output size is same as input size.
+   */
+  void InitializeSamePadding();
 
   /*
    * Rotates a dense matrix counterclockwise by 180 degrees.
