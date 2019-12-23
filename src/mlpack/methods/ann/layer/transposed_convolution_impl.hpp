@@ -456,10 +456,12 @@ void TransposedConvolution<
   padWidth = (kernelWidth-strideWidth)/2 + kernelWidth-strideWidth%2==1;
   padHeight = (kernelHeight-strideHeight)/2 + kernelHeight-strideHeight%2==1;
   // If Padding is negative set it to 0.
-  if(padWidth<0){
+  if(padWidth<0)
+  {
     padWidth = 0;
   }
-  if(padHeight<0){
+  if(padHeight<0)
+  {
     padHeight = 0;
   }
   aW  = size_t((kernelWidth-strideWidth)%2==1 && strideWidth==1);
