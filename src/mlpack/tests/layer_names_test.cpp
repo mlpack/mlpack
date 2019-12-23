@@ -52,14 +52,14 @@ BOOST_AUTO_TEST_CASE(LayerNameVisitorTest)
   LayerTypes<> pReLU = new PReLU<>();
   LayerTypes<> sigmoidLayer = new SigmoidLayer<>();
   LayerTypes<> logSoftMax = new LogSoftMax<>();
-  LayerTypes<> lstmLayer = new LSTM<>(100,10);
+  LayerTypes<> lstmLayer = new LSTM<>(100, 10);
   LayerTypes<> creluLayer = new CReLU<>();
   LayerTypes<> highwayLayer = new Highway<>();
   LayerTypes<> gruLayer = new GRU<>();
   LayerTypes<> glimpseLayer = new Glimpse<>();
   LayerTypes<> fastlstmLayer = new FastLSTM<>();
   LayerTypes<> weightnormLayer = new WeightNorm<>();
-  
+
   // Bilinear interpolation is not yet supported by the string converter.
   LayerTypes<> unsupportedLayer = new BilinearInterpolation<>();
 
