@@ -73,8 +73,7 @@ TransposedConvolution<
     inputWidth(inputWidth),
     inputHeight(inputHeight),
     outputWidth(outputWidth),
-    outputHeight(outputHeight),
-    paddingType(paddingType)
+    outputHeight(outputHeight)
 {
   weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
       1);
@@ -84,14 +83,14 @@ TransposedConvolution<
   std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
       [](unsigned char c){ return std::tolower(c); });
 
-  aW = (outputWidth + 2 * padWidth - kernelWidth) % strideWidth;
-  aH = (outputHeight + 2 * padHeight - kernelHeight) % strideHeight;
+  aW = 0;
+  aH = 0;
 
   if (paddingTypeLow == "valid")
   {
-    // No changes
-    aW = aW+0;
-    aH = aH+0;
+    // Set Padding to 0
+    padWidth = 0;
+    PadHeight = 0;
     
   }
   else if (paddingTypeLow == "same")
@@ -99,6 +98,8 @@ TransposedConvolution<
     InitializeSamePadding();
   }
 
+  aW + = (outputWidth + 2 * padWidth - kernelWidth) % strideWidth;
+  aH + = (outputHeight + 2 * padHeight - kernelHeight) % strideHeight;
   
   const size_t padWidthForward = kernelWidth - padWidth - 1;
   const size_t padHeightForward = kernelHeight - padHeight - 1;
@@ -450,9 +451,10 @@ void TransposedConvolution<
   * P=Padding
   */
 
-  aW=aW-strideWidth;
-  aH=aH-strideHeight; 
-
+  padWidth = max(ceil((kernelWidth-strideWidth)/2),0);
+  padHeight = max(ceil((kernelHeight-strideHeight)/2),0);
+  aW + = ((kernelWidth-strideWidth)%2==1 && strideWidth==1)
+  aH + = ((kernelHeight-strideHeight)%2==1 && strideHeight==1)
 }
 
 } // namespace ann
