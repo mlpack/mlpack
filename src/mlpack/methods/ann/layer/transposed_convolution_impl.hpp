@@ -451,8 +451,8 @@ void TransposedConvolution<
   * P=Padding
   */
 
-  padWidth = (kernelWidth-strideWidth)/2 + kernelWidth-strideWidth%2==1;
-  padHeight = (kernelHeight-strideHeight)/2 + kernelHeight-strideHeight%2==1;
+  padWidth = (kernelWidth-strideWidth)/2 + kernelWidth-strideWidth%2 == 1;
+  padHeight = (kernelHeight-strideHeight)/2 + kernelHeight-strideHeight%2 == 1;
   // If Padding is negative set it to 0.
   if (padWidth<0)
   {
@@ -462,8 +462,8 @@ void TransposedConvolution<
   {
     padHeight = 0;
   }
-  aW  = size_t((kernelWidth-strideWidth)%2==1 && strideWidth==1);
-  aH  = size_t((kernelHeight-strideHeight)%2==1 && strideHeight==1);
+  aW  = size_t((kernelWidth-strideWidth)%2 == 1 && strideWidth == 1);
+  aH  = size_t((kernelHeight-strideHeight)%2 == 1 && strideHeight == 1);
 }
 
 } // namespace ann
