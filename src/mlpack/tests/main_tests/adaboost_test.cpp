@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostProbabilitiesTest)
   BOOST_REQUIRE_EQUAL(probabilities.n_cols, testSize);
 
   for (size_t i = 0; i < testSize; i++)
-    BOOST_REQUIRE_EQUAL(arma::accu(probabilities.col(i)), 1);
+    BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
 }
 
 /**

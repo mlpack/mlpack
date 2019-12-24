@@ -120,6 +120,7 @@ Copyright:
   Copyright 2019, Vikas S Shetty <shettyvikas209@gmail.com>
   Copyright 2019, Tejasvi Tomar <tstomar@outlook.com>
   Copyright 2019, Jai Agarwal <jai.bhageria@gmail.com>
+  Copyright 2019, Aditya Viki <adityaviki01@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.
