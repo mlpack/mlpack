@@ -299,8 +299,9 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
   double performance = 0;
   size_t responseSeq = 0;
+  const size_t effectiveRho = std::min(rho, size_t(responses.size()));
 
-  for (size_t seqNum = 0; seqNum < rho; ++seqNum)
+  for (size_t seqNum = 0; seqNum < effectiveRho; ++seqNum)
   {
     // Wrap a matrix around our data to avoid a copy.
     arma::mat stepData(predictors.slice(seqNum).colptr(begin),
@@ -338,10 +339,9 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
   ResetGradients(currentGradient);
 
-  for (size_t seqNum = 0; seqNum < rho; ++seqNum)
+  for (size_t seqNum = 0; seqNum < effectiveRho; ++seqNum)
   {
     currentGradient.zeros();
-
     for (size_t l = 0; l < network.size(); ++l)
     {
       boost::apply_visitor(LoadOutputParameterVisitor(
@@ -363,13 +363,14 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     {
       outputLayer.Backward(std::move(boost::apply_visitor(
           outputParameterVisitor, network.back())),
-          std::move(arma::mat(responses.slice(rho - seqNum - 1).colptr(begin),
+          std::move(arma::mat(
+          responses.slice(effectiveRho - seqNum - 1).colptr(begin),
           responses.n_rows, batchSize, false, true)), std::move(error));
     }
 
     Backward();
     Gradient(std::move(
-        arma::mat(predictors.slice(rho - seqNum - 1).colptr(begin),
+        arma::mat(predictors.slice(effectiveRho - seqNum - 1).colptr(begin),
         predictors.n_rows, batchSize, false, true)));
     gradient += currentGradient;
   }
