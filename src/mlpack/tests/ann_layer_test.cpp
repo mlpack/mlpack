@@ -2859,6 +2859,10 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerParametersTest)
   BOOST_REQUIRE_EQUAL(layer1.KernelHeight(), 4);
   BOOST_REQUIRE_EQUAL(layer1.StrideWidth(), 5);
   BOOST_REQUIRE_EQUAL(layer1.StrideHeight(), 6);
+  BOOST_REQUIRE_EQUAL(layer1.PadWLeft(), 7);
+  BOOST_REQUIRE_EQUAL(layer1.PadWRight(), 8);
+  BOOST_REQUIRE_EQUAL(layer1.PadHTop(), 9);
+  BOOST_REQUIRE_EQUAL(layer1.PadHBottom(), 10);
 
   // Now modify the parameters to match the second layer.
   layer1.InputWidth() = 12;
@@ -2867,6 +2871,10 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerParametersTest)
   layer1.KernelHeight() = 5;
   layer1.StrideWidth() = 6;
   layer1.StrideHeight() = 7;
+  layer1.PadWLeft() = 8;
+  layer1.PadWRight() = 9;
+  layer1.PadHTop() = 10;
+  layer1.PadHBottom() = 11;
 
   // Now ensure all results are the same.
   BOOST_REQUIRE_EQUAL(layer1.InputWidth(), layer2.InputWidth());
@@ -2875,6 +2883,10 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerParametersTest)
   BOOST_REQUIRE_EQUAL(layer1.KernelHeight(), layer2.KernelHeight());
   BOOST_REQUIRE_EQUAL(layer1.StrideWidth(), layer2.StrideWidth());
   BOOST_REQUIRE_EQUAL(layer1.StrideHeight(), layer2.StrideHeight());
+  BOOST_REQUIRE_EQUAL(layer1.PadWLeft(), layer2.PadWLeft());
+  BOOST_REQUIRE_EQUAL(layer1.PadWRight(), layer2.PadWRight());
+  BOOST_REQUIRE_EQUAL(layer1.PadHTop(), layer2.PadHTop());
+  BOOST_REQUIRE_EQUAL(layer1.PadHBottom(), layer2.PadHBottom());
 }
 
 /**

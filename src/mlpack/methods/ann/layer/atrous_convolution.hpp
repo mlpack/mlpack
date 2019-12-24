@@ -205,7 +205,7 @@ class AtrousConvolution
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
-  //! Get the input size
+  //! Get the input size.
   const size_t& InputSize() const { return inSize; }
 
   //! Get the output size.
@@ -250,7 +250,7 @@ class AtrousConvolution
   arma::mat& Bias() { return bias; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -415,7 +415,7 @@ struct version<
 } // namespace serialization
 } // namespace boost
 
-// Include implementation
+// Include implementation.
 #include "atrous_convolution_impl.hpp"
 
 #endif
