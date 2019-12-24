@@ -1851,9 +1851,9 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   // Value calculated using torch.nn.functional.conv2d()
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 7732.0);
 
-  TransposedConvolution<> module8(1, 1, 3, 3, 1, 1, 0, 0, 4, 4, 6, 6,"VALID");
+  TransposedConvolution<> module8(1, 1, 3, 3, 1, 1, 0, 0, 4, 4, 6, 6, "VALID");
   // Test the forward function.
-  //Valid Should give the same result.
+  // Valid Should give the same result.
   input = arma::linspace<arma::colvec>(0, 15, 16);
   module8.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module8.Parameters()(0) = 1.0;
