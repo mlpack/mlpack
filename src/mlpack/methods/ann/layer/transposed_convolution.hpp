@@ -67,8 +67,8 @@ class TransposedConvolution
    * @param kernelHeight Height of the filter/kernel.
    * @param strideWidth Stride of filter application in the x direction.
    * @param strideHeight Stride of filter application in the y direction.
-   * @param padWidth Padding width of the input.
-   * @param padHeight Padding height of the input.
+   * @param padW Padding width of the input.
+   * @param padH Padding height of the input.
    * @param inputWidth The width of the input data.
    * @param inputHeight The height of the input data.
    * @param outputWidth The width of the output data.

@@ -1862,6 +1862,18 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module8.Forward(std::move(input), std::move(output));
   // Value calculated using tensorflow.nn.conv2d_transpose()
   BOOST_REQUIRE_EQUAL(arma::accu(output), 360.0);
+
+  TransposedConvolution<> module9(1, 1, 3, 3, 1, 1, 0, 0, 4, 4, 4, 4, "SAME");
+  // Test the forward function.
+  // Valid Should give the same result.
+  input = arma::linspace<arma::colvec>(0, 15, 16);
+  module9.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module9.Parameters()(0) = 1.0;
+  module9.Parameters()(8) = 2.0;
+  module9.Reset();
+  module9.Forward(std::move(input), std::move(output));
+  // I*S=4
+  BOOST_REQUIRE_EQUAL(output.n_elem, 16);
 }
 
 /**
