@@ -102,7 +102,8 @@ cmake -G "Visual Studio 16 2019" -A x64 -DBLAS_LIBRARY:FILEPATH="C:/mlpack/mlpac
 @endcode
 
 @note If you are using different directory paths, a different configuration (e.g. Release)
-or a different VS version, update the cmake command accordingly.
+or a different VS version, update the cmake command accordingly. If CMake cannot identify the 
+compiler version, check if the Visual Studio compiler and Windows SDK are installed correctly.
 
 - Once it has successfully finished, open "C:\mlpack\armadillo\build\armadillo.sln"
 - Build > Build Solution
