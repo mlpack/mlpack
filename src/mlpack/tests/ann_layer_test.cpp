@@ -1862,7 +1862,7 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module8.Forward(std::move(input), std::move(output));
   // Value calculated using tensorflow.nn.conv2d_transpose()
   BOOST_REQUIRE_EQUAL(arma::accu(output), 360.0);
-  
+  // Test Valid for non zero padding.
   TransposedConvolution<> module9(1, 1, 3, 3, 2, 2, 1, 1, 2, 2, 5, 5, "VALID");
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 3, 4);
