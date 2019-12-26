@@ -3,6 +3,7 @@
  * @author German Lancioni
  * @author Miguel Canteras
  * @author Shikhar Jaiswal
+ * @author Ziyang Jiang
 
 @page build_windows Building mlpack From Source on Windows
 
