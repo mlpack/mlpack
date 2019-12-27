@@ -321,7 +321,7 @@ older versions of mlpack:
   - [mlpack documentation](https://www.mlpack.org/docs.html)
   - [Tutorials](https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html)
   - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
-  - [API documentation](https://www.mlpack.org/doc/mlpack-git/doxygen/index.html)
+  - [API documentation (Doxygen)](https://www.mlpack.org/doc/mlpack-git/doxygen/index.html)
 
 ### 8. Bug reporting
 

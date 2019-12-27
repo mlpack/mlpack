@@ -122,6 +122,7 @@ Copyright:
   Copyright 2019, Tejasvi Tomar <tstomar@outlook.com>
   Copyright 2019, Jai Agarwal <jai.bhageria@gmail.com>
   Copyright 2019, Ziyang Jiang <zij004@alumni.stanford.edu>
+  Copyright 2019, Rohit Kartik <rohit.audrey@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.
