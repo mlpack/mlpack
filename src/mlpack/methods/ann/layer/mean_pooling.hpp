@@ -15,6 +15,8 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include "padding.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -37,18 +39,50 @@ class MeanPooling
   MeanPooling();
 
   /**
-   * Create the MeanPooling object using the specified number of units.
+   * Create the MeanPooling object using the specified number of units and padding.
    *
    * @param kernelWidth Width of the pooling window.
    * @param kernelHeight Height of the pooling window.
    * @param strideWidth Width of the stride operation.
    * @param strideHeight Width of the stride operation.
+   * @param floor Rounding operator (floor or ceil).
+   * @param padW Padding width of the input.
+   * @param padH Padding height of the input.
+   * @param paddingType The type of padding (Valid or Same). Defaults to None.
+   */
+
+  MeanPooling(const size_t kernelWidth,
+             const size_t kernelHeight,
+             const size_t strideWidth = 1,
+             const size_t strideHeight = 1,
+             const bool floor = true,
+             const size_t padW = 0,
+             const size_t padH = 0,
+             const std::string paddingType = "None");
+  /**
+   * Create the MeanPooling object using the specified number of units and padding.
+   *
+   * @param kernelWidth Width of the pooling window.
+   * @param kernelHeight Height of the pooling window.
+   * @param strideWidth Width of the stride operation.
+   * @param strideHeight Width of the stride operation.
+   * @param floor Rounding operator (floor or ceil).
+   * @param padW A two-value tuple indicating padding widths of the input.
+   *             First value is padding at left side. Second value is padding on
+   *             right side.
+   * @param padH A two-value tuple indicating padding heights of the input.
+   *             First value is padding at top. Second value is padding on
+   *             bottom.
+   * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
   MeanPooling(const size_t kernelWidth,
-              const size_t kernelHeight,
-              const size_t strideWidth = 1,
-              const size_t strideHeight = 1,
-              const bool floor = true);
+             const size_t kernelHeight,
+             const size_t strideWidth,
+             const size_t strideHeight,
+             const bool floor,
+             const std::tuple<size_t, size_t> padW,
+             const std::tuple<size_t, size_t> padH,
+             const std::string paddingType = "None");
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -182,8 +216,10 @@ class MeanPooling
                  const arma::Mat<eT>& error,
                  arma::Mat<eT>& output)
   {
-    const size_t rStep = input.n_rows / error.n_rows - offset;
-    const size_t cStep = input.n_cols / error.n_cols - offset;
+    const size_t rStep = (input.n_rows + padHTop + padHBottom) / error.n_rows
+        - offset;
+    const size_t cStep = (input.n_cols + padWLeft + padWRight) / error.n_cols
+        - offset;
 
     arma::Mat<eT> unpooledError;
     for (size_t j = 0; j < input.n_cols - cStep; j += cStep)
@@ -194,13 +230,18 @@ class MeanPooling
             arma::span(j, j + cStep - 1));
 
         unpooledError = arma::Mat<eT>(inputArea.n_rows, inputArea.n_cols);
-        unpooledError.fill(error(i / rStep, j / cStep) / inputArea.n_elem);
-
+        unpooledError.fill(error((i + padHTop) / rStep, (j + padWLeft) / cStep)
+            / inputArea.n_elem);
         output(arma::span(i, i + rStep - 1 - offset),
             arma::span(j, j + cStep - 1 - offset)) += unpooledError;
       }
     }
   }
+
+  /*
+   * Function to assign padding such that output size is same as input size.
+   */
+  void InitializeSamePadding();
 
   //! Locally-stored width of the pooling window.
   size_t kernelWidth;
@@ -247,14 +288,32 @@ class MeanPooling
   //! Locally-stored number of input units.
   size_t batchSize;
 
+  //! Locally-stored left-side padding width.
+  size_t padWLeft;
+
+  //! Locally-stored right-side padding width.
+  size_t padWRight;
+
+  //! Locally-stored bottom padding height.
+  size_t padHBottom;
+
+  //! Locally-stored top padding height.
+  size_t padHTop;
+
   //! Locally-stored output parameter.
   arma::cube outputTemp;
 
   //! Locally-stored transformed input parameter.
   arma::cube inputTemp;
 
+  //! Locally-stored transformed padded input parameter.
+  arma::cube inputPaddedTemp;
+
   //! Locally-stored transformed output parameter.
   arma::cube gTemp;
+
+  //! Locally-stored padding layer.
+  ann::Padding<> padding;
 
   //! Locally-stored delta object.
   OutputDataType delta;
