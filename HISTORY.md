@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added `probabilities_file` parameter to get the probabilities matrix of
+    AdaBoost classifier (#2050).
+
   * Fix STB header search paths (#2104).
 
   * Add `DISABLE_DOWNLOADS` CMake configuration option (#2104).
