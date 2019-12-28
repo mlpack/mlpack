@@ -222,6 +222,26 @@ class Convolution
   //! Modify the stride height.
   size_t& StrideHeight() { return strideHeight; }
 
+  //! Get the top padding height.
+  size_t PadHTop() const { return padHTop; }
+  //! Modify the top padding height.
+  size_t& PadHTop() { return padHTop; }
+
+  //! Get the bottom padding height.
+  size_t PadHBottom() const { return padHBottom; }
+  //! Modify the bottom padding height.
+  size_t& PadHBottom() { return padHBottom; }
+
+  //! Get the left padding width.
+  size_t PadWLeft() const { return padWLeft; }
+  //! Modify the left padding width.
+  size_t& PadWLeft() { return padWLeft; }
+
+  //! Get the right padding width.
+  size_t PadWRight() const { return padWRight; }
+  //! Modify the right padding width.
+  size_t& PadWRight() { return padWRight; }
+
   //! Modify the bias weights of the layer.
   arma::mat& Bias() { return bias; }
 
