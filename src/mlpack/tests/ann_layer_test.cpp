@@ -1848,7 +1848,7 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   BOOST_REQUIRE_EQUAL(arma::accu(output), 606.0);
 
   module7.Backward(std::move(input), std::move(output), std::move(delta));
-  // Value calculated using torch.nn.functional.conv2d()
+  // Value calculated using torch.nn.functional.conv2d().
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 7732.0);
 
   TransposedConvolution<> module8(1, 1, 3, 3, 1, 1, 0, 0, 4, 4, 6, 6, "VALID");
