@@ -193,6 +193,7 @@ BOOST_AUTO_TEST_CASE(NCAWithOptimizerCallback)
 /**
  * Test softmax_regression implementation with PrintLoss callback.
  */
+
 BOOST_AUTO_TEST_CASE(SRWithOptimizerCallback)
 {
     arma::mat data("1 2 3;"
@@ -200,13 +201,15 @@ BOOST_AUTO_TEST_CASE(SRWithOptimizerCallback)
     arma::Row<size_t> responses("1 1 0");
 
     ens::StandardSGD sgd(0.1, 1, 5);
-    SoftmaxRegression<> softmaxRegression(data, responses, 1, 0.0001, false, sgd);
+    SoftmaxRegression<>softmaxRegression(data, responses, 1, 0.0001, false, sgd);
     std::stringstream stream;
-    softmaxRegression.Train<ens::StandardSGD>(data, responses, 2, sgd,
+    softmaxRegression.Train<ens::StandardSGD>(data, responses, 1, sgd,
     ens::PrintLoss(stream));
 
     BOOST_REQUIRE_GT(stream.str().length(), 0);
 }
+
+
 
 
 BOOST_AUTO_TEST_SUITE_END();

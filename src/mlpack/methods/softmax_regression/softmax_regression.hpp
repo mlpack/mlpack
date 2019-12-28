@@ -55,6 +55,7 @@ namespace regression {
  * // Obtain predictions from both the learned models.
  * regressor.Classify(testData, predictions);
  * @endcode
+ * @tparam MatType Type of data matrix.
  */
 template<typename MatType = arma::mat>
 class SoftmaxRegression
@@ -88,13 +89,13 @@ class SoftmaxRegression
    * @param lambda L2-regularization constant.
    * @param fitIntercept add intercept term or not.
    */
-  template<typename OptimizerType>
-  SoftmaxRegression(const arma::mat& data,
+  template<typename OptimizerType = ens::L_BFGS>
+  SoftmaxRegression(const MatType& data,
                     const arma::Row<size_t>& labels,
-                    const size_t& numClasses,
-                    const double& lambda = 0.0001,
-                    const bool& fitIntercept = false,
-                    OptimizerType& optimizer);
+                    const size_t numClasses,
+                    const double lambda = 0.0001,
+                    const bool fitIntercept = false,
+                    OptimizerType optimizer = OptimizerType());
 
   /**
    * Classify the given points, returning the predicted labels for each point.
@@ -104,9 +105,8 @@ class SoftmaxRegression
    *
    * @param dataset Set of points to classify.
    * @param labels Predicted labels for each point.
-   */
-  void Classify(const arma::mat& dataset, arma::Row<size_t>& labels) const;
-
+   */  
+  void Classify(const MatType& dataset, arma::Row<size_t>& labels) const;
   /**
    * Classify the given point. The predicted class label is returned.
    * The function calculates the probabilites for every class, given the point.
@@ -129,7 +129,7 @@ class SoftmaxRegression
    * @param labels Predicted labels for each point.
    * @param probabilities Class probabilities for each point.
    */
-  void Classify(const arma::mat& dataset,
+  void Classify(const MatType& dataset,
                 arma::Row<size_t>& labels,
                 arma::mat& probabilites) const;
 
@@ -139,7 +139,7 @@ class SoftmaxRegression
    * @param dataset Matrix of data points to be classified.
    * @param probabilities Class probabilities for each point.
    */
-  void Classify(const arma::mat& dataset,
+  void Classify(const MatType& dataset,
                 arma::mat& probabilities) const;
 
   /**
@@ -150,14 +150,13 @@ class SoftmaxRegression
    * @param testData Matrix of data points using which predictions are made.
    * @param labels Vector of labels associated with the data.
    */
-  double ComputeAccuracy(const arma::mat& testData,
+  double ComputeAccuracy(const MatType& testData,
                          const arma::Row<size_t>& labels) const;
 
   /**
    * Train the softmax regression with the given training data.
    *
    * @tparam OptimizerType Desired optimizer type.
-   * @tparam CallbackTypes Types of Callback Functions.
    * @param data Input data with each column as one example.
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
@@ -165,14 +164,12 @@ class SoftmaxRegression
    * @return Objective value of the final point.
    * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
-   * 
-   * @return The final objective of the trained model (NaN or Inf on error)
    */
   template<typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>
-  double Train(const arma::mat& data,
+  double Train(const MatType& data,
                const arma::Row<size_t>& labels,
-               const size_t& numClasses,
-               OptimizerType& optimizer,
+               const size_t numClasses,
+               OptimizerType optimizer,
                CallbackTypes&&... callbacks);
 
   //! Sets the number of classes.
@@ -213,6 +210,8 @@ class SoftmaxRegression
  private:
   //! Parameters after optimization.
   arma::mat parameters;
+  //! Input size 
+  size_t inputSize;
   //! Number of classes.
   size_t numClasses;
   //! L2-regularization constant.

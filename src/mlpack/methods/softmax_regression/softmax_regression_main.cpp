@@ -8,6 +8,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#include <mlpack/mlpack_export.hpp>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
@@ -94,9 +95,9 @@ PARAM_UROW_IN("labels", "A matrix containing labels (0 or 1) for the points "
     "in the training set (y). The labels must order as a row.", "l");
 
 // Model loading/saving.
-PARAM_MODEL_IN(SoftmaxRegression, "input_model", "File containing existing "
+PARAM_MODEL_IN(SoftmaxRegression<>, "input_model", "File containing existing "
     "model (parameters).", "m");
-PARAM_MODEL_OUT(SoftmaxRegression, "output_model", "File to save trained "
+PARAM_MODEL_OUT(SoftmaxRegression<>, "output_model", "File to save trained "
     "softmax regression model to.", "M");
 
 // Testing.
@@ -122,8 +123,8 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
                                 const arma::Row<size_t>& trainLabels);
 
 // Test the accuracy of the model.
-template<typename Model>
-void TestClassifyAcc(const size_t numClasses, const Model& model);
+//template<typename Model>
+void TestClassifyAcc(const size_t numClasses, SoftmaxRegression<>* model);
 
 // Build the softmax model given the parameters.
 template<typename Model>
@@ -157,12 +158,11 @@ static void mlpackMain()
   // Make sure we have an output file of some sort.
   RequireAtLeastOnePassed({ "output_model", "predictions" }, false, "no results"
       " will be saved");
+  SoftmaxRegression<>*  sm = TrainSoftmax<SoftmaxRegression<>>(maxIterations);
 
-  SoftmaxRegression* sm = TrainSoftmax<SoftmaxRegression>(maxIterations);
+  TestClassifyAcc(sm->NumClasses(), sm);
 
-  TestClassifyAcc(sm->NumClasses(), *sm);
-
-  CLI::GetParam<SoftmaxRegression*>("output_model") = sm;
+  CLI::GetParam<SoftmaxRegression<>*>("output_model") = sm;
 }
 
 size_t CalculateNumberOfClasses(const size_t numClasses,
@@ -180,11 +180,11 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
   }
 }
 
-template<typename Model>
-void TestClassifyAcc(size_t numClasses, const Model& model)
+// template<typename Model>
+void TestClassifyAcc(const size_t numClasses, SoftmaxRegression<>* model)
 {
   using namespace mlpack;
-
+  
   // If there is no test set, there is nothing to test on.
   if (!CLI::HasParam("test"))
   {
@@ -198,7 +198,8 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
   arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
 
   arma::Row<size_t> predictLabels;
-  model.Classify(testData, predictLabels);
+  model->Classify(testData, predictLabels);
+  //model.Classify(testData, predictLabels);
 
   // Calculate accuracy, if desired.
   if (CLI::HasParam("test_labels"))
@@ -251,7 +252,7 @@ Model* TrainSoftmax(const size_t maxIterations)
   Model* sm;
   if (CLI::HasParam("input_model"))
   {
-    sm = CLI::GetParam<Model*>("input_model");
+   sm = CLI::GetParam<Model*>("input_model");
   }
   else
   {
@@ -273,6 +274,6 @@ Model* TrainSoftmax(const size_t maxIterations)
     sm = new Model(trainData, trainLabels, numClasses,
         CLI::GetParam<double>("lambda"), intercept, std::move(optimizer));
   }
-
+  
   return sm;
 }
