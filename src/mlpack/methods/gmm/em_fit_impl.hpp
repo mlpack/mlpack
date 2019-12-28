@@ -16,6 +16,7 @@
 // In case it hasn't been included yet.
 #include "em_fit.hpp"
 #include "diagonal_constraint.hpp"
+#include <mlpack/core/math/log_add.hpp>
 
 namespace mlpack {
 namespace gmm {
@@ -76,7 +77,7 @@ Estimate(const arma::mat& observations,
       << l << std::endl;
 
   double lOld = -DBL_MAX;
-  arma::mat condProb(observations.n_cols, dists.size());
+  arma::mat condLogProb(observations.n_cols, dists.size());
 
   // Iterate to update the model until no more improvement is found.
   size_t iteration = 1;
@@ -89,33 +90,38 @@ Estimate(const arma::mat& observations,
     // Gaussian given the observations and the present theta value.
     for (size_t i = 0; i < dists.size(); i++)
     {
-      // Store conditional probabilities into condProb vector for each
-      // Gaussian.  First we make an alias of the condProb vector.
-      arma::vec condProbAlias = condProb.unsafe_col(i);
-      dists[i].Probability(observations, condProbAlias);
-      condProbAlias *= weights[i];
+      // Store conditional log probabilities into condLogProb vector for each
+      // Gaussian.  First we make an alias of the condLogProb vector.
+      arma::vec condLogProbAlias = condLogProb.unsafe_col(i);
+      dists[i].LogProbability(observations, condLogProbAlias);
+      condLogProbAlias += log(weights[i]);
     }
 
     // Normalize row-wise.
-    for (size_t i = 0; i < condProb.n_rows; i++)
+    for (size_t i = 0; i < condLogProb.n_rows; i++)
     {
       // Avoid dividing by zero; if the probability for everything is 0, we
       // don't want to make it NaN.
-      const double probSum = accu(condProb.row(i));
-      if (probSum != 0.0)
-        condProb.row(i) /= probSum;
+      const double probSum = mlpack::math::AccuLog(condLogProb.row(i));
+      if (probSum != -std::numeric_limits<double>::infinity())
+        condLogProb.row(i) -= probSum;
     }
 
     // Store the sum of the probability of each state over all the observations.
-    arma::vec probRowSums = trans(arma::sum(condProb, 0 /* columnwise */));
+    arma::vec probRowSums(dists.size());
+    for (size_t i = 0; i < dists.size(); ++i)
+    {
+      probRowSums(i) = mlpack::math::AccuLog(condLogProb.col(i));
+    }
 
     // Calculate the new value of the means using the updated conditional
     // probabilities.
     for (size_t i = 0; i < dists.size(); i++)
     {
       // Don't update if there's no probability of the Gaussian having points.
-      if (probRowSums[i] != 0)
-        dists[i].Mean() = (observations * condProb.col(i)) / probRowSums[i];
+      if (probRowSums[i] != -std::numeric_limits<double>::infinity())
+        dists[i].Mean() = observations * arma::exp(condLogProb.col(i) -
+                                                   probRowSums[i]);
       else
         continue;
 
@@ -130,7 +136,7 @@ Estimate(const arma::mat& observations,
       {
         arma::vec covariance = arma::sum((tmp % tmp) %
             (arma::ones<arma::vec>(observations.n_rows) *
-            trans(condProb.col(i))), 1) / probRowSums[i];
+            trans(arma::exp(condLogProb.col(i) - probRowSums[i]))), 1);
 
         // Apply covariance constraint.
         constraint.ApplyConstraint(covariance);
@@ -138,8 +144,9 @@ Estimate(const arma::mat& observations,
       }
       else
       {
-        arma::mat tmpB = tmp.each_row() % trans(condProb.col(i));
-        arma::mat covariance = (tmp * trans(tmpB)) / probRowSums[i];
+        arma::mat tmpB = tmp.each_row() % trans(arma::exp(condLogProb.col(i) -
+                                                          probRowSums[i]));
+        arma::mat covariance = tmp * trans(tmpB);
 
         // Apply covariance constraint.
         constraint.ApplyConstraint(covariance);
@@ -149,7 +156,7 @@ Estimate(const arma::mat& observations,
 
     // Calculate the new values for omega using the updated conditional
     // probabilities.
-    weights = probRowSums / observations.n_cols;
+    weights = arma::exp(probRowSums - log(observations.n_cols));
 
     // Update values of l; calculate new log-likelihood.
     lOld = l;
@@ -178,7 +185,7 @@ Estimate(const arma::mat& observations,
       << l << std::endl;
 
   double lOld = -DBL_MAX;
-  arma::mat condProb(observations.n_cols, dists.size());
+  arma::mat condLogProb(observations.n_cols, dists.size());
 
   // Iterate to update the model until no more improvement is found.
   size_t iteration = 1;
@@ -188,21 +195,21 @@ Estimate(const arma::mat& observations,
     // Gaussian given the observations and the present theta value.
     for (size_t i = 0; i < dists.size(); i++)
     {
-      // Store conditional probabilities into condProb vector for each
-      // Gaussian.  First we make an alias of the condProb vector.
-      arma::vec condProbAlias = condProb.unsafe_col(i);
-      dists[i].Probability(observations, condProbAlias);
-      condProbAlias *= weights[i];
+      // Store conditional log probabilities into condLogProb vector for each
+      // Gaussian.  First we make an alias of the condLogProb vector.
+      arma::vec condLogProbAlias = condLogProb.unsafe_col(i);
+      dists[i].LogProbability(observations, condLogProbAlias);
+      condLogProbAlias += log(weights[i]);
     }
 
     // Normalize row-wise.
-    for (size_t i = 0; i < condProb.n_rows; i++)
+    for (size_t i = 0; i < condLogProb.n_rows; i++)
     {
       // Avoid dividing by zero; if the probability for everything is 0, we
       // don't want to make it NaN.
-      const double probSum = accu(condProb.row(i));
-      if (probSum != 0.0)
-        condProb.row(i) /= probSum;
+      const double probSum = mlpack::math::AccuLog(condLogProb.row(i));
+      if (probSum != -std::numeric_limits<double>::infinity())
+        condLogProb.row(i) -= probSum;
     }
 
     // This will store the sum of probabilities of each state over all the
@@ -211,19 +218,21 @@ Estimate(const arma::mat& observations,
 
     // Calculate the new value of the means using the updated conditional
     // probabilities.
+    arma::vec logProbabilities = arma::log(probabilities);
     for (size_t i = 0; i < dists.size(); i++)
     {
       // Calculate the sum of probabilities of points, which is the
       // conditional probability of each point being from Gaussian i
       // multiplied by the probability of the point being from this mixture
       // model.
-      probRowSums[i] = accu(condProb.col(i) % probabilities);
+      arma::vec tmpProb = condLogProb.col(i) + logProbabilities;
+      probRowSums[i] = mlpack::math::AccuLog(tmpProb);
 
       // Don't update if there's no probability of the Gaussian having points.
-      if (probRowSums[i] != 0)
+      if (probRowSums[i] != -std::numeric_limits<double>::infinity())
       {
-        dists[i].Mean() = (observations * (condProb.col(i) % probabilities)) /
-            probRowSums[i];
+        dists[i].Mean() = observations *
+              arma::exp(condLogProb.col(i) + logProbabilities - probRowSums[i]);
       }
       else
         continue;
@@ -239,7 +248,8 @@ Estimate(const arma::mat& observations,
       {
         arma::vec cov = arma::sum((tmp % tmp) %
             (arma::ones<arma::vec>(observations.n_rows) *
-            trans(condProb.col(i) % probabilities)), 1) / probRowSums[i];
+            trans(arma::exp(condLogProb.col(i) +
+                            logProbabilities - probRowSums[i]))), 1);
 
         // Apply covariance constraint.
         constraint.ApplyConstraint(cov);
@@ -247,9 +257,9 @@ Estimate(const arma::mat& observations,
       }
       else
       {
-        arma::mat tmpB = tmp.each_row() % trans(condProb.col(i) %
-            probabilities);
-        arma::mat cov = (tmp * trans(tmpB)) / probRowSums[i];
+        arma::mat tmpB = tmp.each_row() % trans(arma::exp(condLogProb.col(i) +
+            logProbabilities - probRowSums[i]));
+        arma::mat cov = (tmp * trans(tmpB));
 
         // Apply covariance constraint.
         constraint.ApplyConstraint(cov);
@@ -259,7 +269,7 @@ Estimate(const arma::mat& observations,
 
     // Calculate the new values for omega using the updated conditional
     // probabilities.
-    weights = probRowSums / accu(probabilities);
+    weights = arma::exp(probRowSums - mlpack::math::AccuLog(logProbabilities));
 
     // Update values of l; calculate new log-likelihood.
     lOld = l;
@@ -373,21 +383,25 @@ LogLikelihood(const arma::mat& observations,
 {
   double logLikelihood = 0;
 
-  arma::vec phis;
-  arma::mat likelihoods(dists.size(), observations.n_cols);
+  arma::vec logPhis;
+  arma::mat logLikelihoods(dists.size(), observations.n_cols);
 
+  // It has to be LogProbability() otherwise Probability() would overflow easily
   for (size_t i = 0; i < dists.size(); ++i)
   {
-    dists[i].Probability(observations, phis);
-    likelihoods.row(i) = weights(i) * trans(phis);
+    dists[i].LogProbability(observations, logPhis);
+    logLikelihoods.row(i) = log(weights(i)) + trans(logPhis);
   }
   // Now sum over every point.
   for (size_t j = 0; j < observations.n_cols; ++j)
   {
-    if (accu(likelihoods.col(j)) == 0)
+    if (mlpack::math::AccuLog(logLikelihoods.col(j)) ==
+        -std::numeric_limits<double>::infinity())
+    {
       Log::Info << "Likelihood of point " << j << " is 0!  It is probably an "
           << "outlier." << std::endl;
-    logLikelihood += log(accu(likelihoods.col(j)));
+    }
+    logLikelihood += mlpack::math::AccuLog(logLikelihoods.col(j));
   }
 
   return logLikelihood;
