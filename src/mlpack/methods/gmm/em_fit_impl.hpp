@@ -90,8 +90,8 @@ Estimate(const arma::mat& observations,
     // Gaussian given the observations and the present theta value.
     for (size_t i = 0; i < dists.size(); i++)
     {
-      // Store conditional probabilities into condProb vector for each
-      // Gaussian.  First we make an alias of the condProb vector.
+      // Store conditional log probabilities into condLogProb vector for each
+      // Gaussian.  First we make an alias of the condLogProb vector.
       arma::vec condLogProbAlias = condLogProb.unsafe_col(i);
       dists[i].LogProbability(observations, condLogProbAlias);
       condLogProbAlias += log(weights[i]);
@@ -111,7 +111,7 @@ Estimate(const arma::mat& observations,
     arma::vec probRowSums(dists.size());
     for (size_t i = 0; i < dists.size(); ++i)
     {
-        probRowSums(i) = mlpack::math::AccuLog(condLogProb.col(i));
+      probRowSums(i) = mlpack::math::AccuLog(condLogProb.col(i));
     }
 
     // Calculate the new value of the means using the updated conditional
@@ -135,8 +135,8 @@ Estimate(const arma::mat& observations,
           distribution::DiagonalGaussianDistribution>::value)
       {
         arma::vec covariance = arma::sum((tmp % tmp) %
-                (arma::ones<arma::vec>(observations.n_rows) *
-                trans(arma::exp(condLogProb.col(i) - probRowSums[i]))), 1);
+            (arma::ones<arma::vec>(observations.n_rows) *
+            trans(arma::exp(condLogProb.col(i) - probRowSums[i]))), 1);
 
         // Apply covariance constraint.
         constraint.ApplyConstraint(covariance);
@@ -195,8 +195,8 @@ Estimate(const arma::mat& observations,
     // Gaussian given the observations and the present theta value.
     for (size_t i = 0; i < dists.size(); i++)
     {
-      // Store conditional probabilities into condProb vector for each
-      // Gaussian.  First we make an alias of the condProb vector.
+      // Store conditional log probabilities into condLogProb vector for each
+      // Gaussian.  First we make an alias of the condLogProb vector.
       arma::vec condLogProbAlias = condLogProb.unsafe_col(i);
       dists[i].LogProbability(observations, condLogProbAlias);
       condLogProbAlias += log(weights[i]);
@@ -396,9 +396,11 @@ LogLikelihood(const arma::mat& observations,
   for (size_t j = 0; j < observations.n_cols; ++j)
   {
     if (mlpack::math::AccuLog(logLikelihoods.col(j)) ==
-                                      -std::numeric_limits<double>::infinity())
+        -std::numeric_limits<double>::infinity())
+    {
       Log::Info << "Likelihood of point " << j << " is 0!  It is probably an "
           << "outlier." << std::endl;
+    }
     logLikelihood += mlpack::math::AccuLog(logLikelihoods.col(j));
   }
 

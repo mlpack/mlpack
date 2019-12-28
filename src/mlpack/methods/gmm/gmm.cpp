@@ -139,7 +139,8 @@ void GMM::Classify(const arma::mat& observations,
     double probability = -std::numeric_limits<double>::infinity();
     for (size_t j = 0; j < gaussians; ++j)
     {
-  // It has to be LogProbability() otherwise Probability() would overflow easily
+      // We have to use LogProbability() otherwise Probability() would overflow
+      // easily.
       double newProb = LogProbability(observations.unsafe_col(i), j);
       if (newProb >= probability)
       {
