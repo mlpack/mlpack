@@ -1860,7 +1860,7 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module8.Parameters()(8) = 2.0;
   module8.Reset();
   module8.Forward(std::move(input), std::move(output));
-  // Value calculated using tensorflow.nn.conv2d_transpose()
+  // Value calculated using tensorflow.nn.conv2d_transpose().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 360.0);
   // Test Valid for non zero padding.
   TransposedConvolution<> module9(1, 1, 3, 3, 2, 2, 1, 1, 2, 2, 5, 5, "VALID");
@@ -1873,7 +1873,7 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module9.Parameters()(8) = 2.0;
   module9.Reset();
   module9.Forward(std::move(input), std::move(output));
-  // Value calculated using torch.nn.functional.conv_transpose2d()
+  // Value calculated using torch.nn.functional.conv_transpose2d().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 120.0);
 }
 
