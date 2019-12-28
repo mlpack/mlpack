@@ -13,6 +13,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
+#include <mlpack/methods/ann/rbm/rbm.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 #include <mlpack/methods/lmnn/lmnn.hpp>
@@ -20,6 +21,7 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 
+#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 
 #include <boost/test/unit_test.hpp>
 
@@ -209,7 +211,29 @@ BOOST_AUTO_TEST_CASE(SRWithOptimizerCallback)
     BOOST_REQUIRE_GT(stream.str().length(), 0);
 }
 
+/*
+ * Tests the RBM Implementation with PrintLoss callback.
+ */
+BOOST_AUTO_TEST_CASE(RBMCallbackTest)
+{
+  // Normalised dataset.
+  int hiddenLayerSize = 10;
+  size_t batchSize = 10;
+  arma::mat trainData, testData, dataset;
+  arma::mat trainLabelsTemp, testLabelsTemp;
+  trainData.load("digits_train.arm");
 
+  GaussianInitialization gaussian(0, 0.1);
+  RBM<GaussianInitialization> model(trainData,
+      gaussian, trainData.n_rows, hiddenLayerSize, batchSize);
 
+  size_t numRBMIterations = 10;
+  ens::StandardSGD msgd(0.03, batchSize, numRBMIterations, 0, true);
+  std::stringstream stream;
+
+  // Call the train function with printloss callback.
+  double objVal = model.Train(msgd, ens::ProgressBar(70, stream));
+  BOOST_REQUIRE_GT(stream.str().length(), 0);
+}
 
 BOOST_AUTO_TEST_SUITE_END();
