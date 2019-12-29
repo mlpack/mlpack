@@ -90,7 +90,7 @@ TransposedConvolution<
 
   if (paddingTypeLow == "valid")
   {
-    // Set Padding to 0
+    // Set Padding to 0.
     padWidth = 0;
     padHeight = 0;
   }
@@ -454,14 +454,11 @@ void TransposedConvolution<
   size_t totalpadHeight = (kernelHeight - strideHeight);
   padWidth = totalPadWidth / 2 + totalPadWidth & 1;
   padHeight = totalpadHeight / 2 + totalpadHeight & 1;
-  // If Padding is negative set it to 0.
-  if (padWidth<0)
+  // If Padding is negative throw a fatal error.
+  if (padWidth < 0 || padHeight < 0)
   {
-    padWidth = 0;
-  }
-  if (padHeight<0)
-  {
-    padHeight = 0;
+    Log::Fatal << "The output width / output height is not possible given "
+               << "same padding for the layer." << std::endl;
   }
   aW  = size_t(totalPadWidth % 2 == 1 && strideWidth == 1);
   aH  = size_t(totalpadHeight % 2 == 1 && strideHeight == 1);
