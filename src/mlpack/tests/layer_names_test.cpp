@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(LayerNameVisitorTest)
   LayerTypes<> gruLayer = new GRU<>();
   LayerTypes<> glimpseLayer = new Glimpse<>();
   LayerTypes<> fastlstmLayer = new FastLSTM<>();
-  LayerTypes<> weightnormLayer = new WeightNorm<>();
+  LayerTypes<> weightnormLayer = new WeightNorm<>(new IdentityLayer<>());
 
   // Bilinear interpolation is not yet supported by the string converter.
   LayerTypes<> unsupportedLayer = new BilinearInterpolation<>();
