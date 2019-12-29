@@ -35,61 +35,61 @@ SoftmaxRegression<MatType>::SoftmaxRegression(
 }
 
 template<typename MatType>
-SoftmaxRegression<MatType>::SoftmaxRegression(const size_t inputSize,
+SoftmaxRegression<MatType>::SoftmaxRegression(
+                  const size_t inputSize,
                   const size_t numClasses,
                   const bool fitIntercept) :
-    numClasses(numClasses),
-    lambda(0.0001),
-    fitIntercept(fitIntercept)
-{
-  SoftmaxRegressionFunction::InitializeWeights(
-      parameters, inputSize, numClasses, fitIntercept);
-}
+                  numClasses(numClasses),
+                  lambda(0.0001),
+                  fitIntercept(fitIntercept)
+    {
+      SoftmaxRegressionFunction::InitializeWeights(
+          parameters, inputSize, numClasses, fitIntercept);
+    }
 
 template<typename MatType>
 template<typename VecType>
 size_t SoftmaxRegression<MatType>::Classify(const VecType& point) const
-{
-  arma::Row<size_t> label(1);
-  Classify(point, label);
-  return size_t(label(0));
-}
-
-template<typename MatType>
-void SoftmaxRegression<MatType>::Classify(const MatType& dataset,
-                                 arma::Row<size_t>& labels)
-    const
-{
-  arma::mat probabilities;
-  Classify(dataset, probabilities);
-
-  // Prepare necessary data.
-  labels.zeros(dataset.n_cols);
-  double maxProbability = 0;
-
-  // For each test input.
-  for (size_t i = 0; i < dataset.n_cols; i++)
-  {
-    // For each class.
-    for (size_t j = 0; j < numClasses; j++)
     {
-      // If a higher class probability is encountered, change prediction.
-      if (probabilities(j, i) > maxProbability)
-      {
-        maxProbability = probabilities(j, i);
-        labels(i) = j;
-      }
+          arma::Row<size_t> label(1);
+          Classify(point, label);
+          return size_t(label(0));
     }
 
-    // Set maximum probability to zero for the next input.
-    maxProbability = 0;
-  }
-}
+template<typename MatType>
+void SoftmaxRegression<MatType>::Classify(const MatType& dataset,
+                                          arma::Row<size_t>& labels
+                                         )const
+{
+      arma::mat probabilities;
+      Classify(dataset, probabilities);
+
+      // Prepare necessary data.
+      labels.zeros(dataset.n_cols);
+      double maxProbability = 0;
+
+        // For each test input.
+        for (size_t i = 0; i < dataset.n_cols; i++)
+        {
+            // For each class.
+            for (size_t j = 0; j < numClasses; j++)
+            {
+                // If a higher class probability is encountered, change prediction.
+                if (probabilities(j, i) > maxProbability)
+                {
+                  maxProbability = probabilities(j, i);
+                  labels(i) = j;
+                }
+            }
+
+          // Set maximum probability to zero for the next input.
+          maxProbability = 0;
+        }
+ }
 
 template<typename MatType>
 void SoftmaxRegression<MatType>::Classify(const MatType& dataset,
-                                 arma::mat& probabilities)
-    const
+                                          arma::mat& probabilities)const
 {
   if (dataset.n_rows != FeatureSize())
   {
@@ -124,8 +124,8 @@ void SoftmaxRegression<MatType>::Classify(const MatType& dataset,
 
 template<typename MatType>
 void SoftmaxRegression<MatType>::Classify(const MatType& dataset,
-                                 arma::Row<size_t>& labels,
-                                 arma::mat& probabilities)
+                                          arma::Row<size_t>& labels,
+                                          arma::mat& probabilities)
     const
 {
   Classify(dataset, probabilities);

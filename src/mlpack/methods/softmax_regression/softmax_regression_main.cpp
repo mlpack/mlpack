@@ -123,7 +123,6 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
                                 const arma::Row<size_t>& trainLabels);
 
 // Test the accuracy of the model.
-//template<typename Model>
 void TestClassifyAcc(const size_t numClasses, SoftmaxRegression<>* model);
 
 // Build the softmax model given the parameters.
@@ -180,7 +179,6 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
   }
 }
 
-// template<typename Model>
 void TestClassifyAcc(const size_t numClasses, SoftmaxRegression<>* model)
 {
   using namespace mlpack;
@@ -199,8 +197,7 @@ void TestClassifyAcc(const size_t numClasses, SoftmaxRegression<>* model)
 
   arma::Row<size_t> predictLabels;
   model->Classify(testData, predictLabels);
-  //model.Classify(testData, predictLabels);
-
+  
   // Calculate accuracy, if desired.
   if (CLI::HasParam("test_labels"))
   {
@@ -252,7 +249,7 @@ Model* TrainSoftmax(const size_t maxIterations)
   Model* sm;
   if (CLI::HasParam("input_model"))
   {
-   sm = CLI::GetParam<Model*>("input_model");
+      sm = CLI::GetParam<Model*>("input_model");
   }
   else
   {

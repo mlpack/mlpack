@@ -195,7 +195,6 @@ BOOST_AUTO_TEST_CASE(NCAWithOptimizerCallback)
 /**
  * Test softmax_regression implementation with PrintLoss callback.
  */
-
 BOOST_AUTO_TEST_CASE(SRWithOptimizerCallback)
 {
     arma::mat data("1 2 3;"
