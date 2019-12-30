@@ -84,7 +84,8 @@ TransposedConvolution<
   std::string paddingTypeLow = paddingType;
   std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
       [](unsigned char c){ return std::tolower(c); });
-
+  aW = 0;
+  aH = 0;
   if (paddingTypeLow == "valid")
   {
     // Set Padding to 0.
