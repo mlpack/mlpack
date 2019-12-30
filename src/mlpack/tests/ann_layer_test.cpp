@@ -1877,7 +1877,7 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   BOOST_REQUIRE_EQUAL(arma::accu(output), 120.0);
   // Test Same for unit stride.
   // Output shape should equal input.
-  TransposedConvolution<> module10(1, 1, 3, 3, 1, 1, 0, 0, 5, 5, 5, 5);
+  TransposedConvolution<> module10(1, 1, 3, 3, 1, 1, 0, 0, 5, 5, 5, 5 ,"SAME");
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
   module10.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
