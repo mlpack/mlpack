@@ -113,7 +113,9 @@ TransposedConvolution<
           aH + kernelHeight - 2 * padHeight)
   {
     Log::Fatal << "The output width / output height is not possible given "
-        << "the other parameters of the layer." << std::endl;
+               << "the other parameters of the layer."
+               << strideWidth * (inputWidth - 1) + aW + kernelWidth - 2 * padWidth
+               << std::endl;
   }
 }
 
