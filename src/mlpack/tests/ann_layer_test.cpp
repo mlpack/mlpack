@@ -1875,6 +1875,20 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module9.Forward(std::move(input), std::move(output));
   // Value calculated using torch.nn.functional.conv_transpose2d().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 120.0);
+  // Test Same for unit stride.
+  // Output shape should equal input.
+  TransposedConvolution<> module10(1, 1, 3, 3, 1, 1, 0, 0, 5, 5, 5, 5);
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 24, 25);
+  module10.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module10.Parameters()(2) = 2.0;
+  module10.Parameters()(4) = 4.0;
+  module10.Parameters()(6) = 6.0;
+  module10.Parameters()(8) = 8.0;
+  module10.Reset();
+  module10.Forward(std::move(input), std::move(output));
+  // Value calculated using tensorflow's deconv_output_length().
+  BOOST_REQUIRE_EQUAL(output.n_elem, input.n_elem);
 }
 
 /**
