@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added option to specify type of data file while loading/saving data.
+  
   * Added `probabilities_file` parameter to get the probabilities matrix of
     AdaBoost classifier (#2050).
 

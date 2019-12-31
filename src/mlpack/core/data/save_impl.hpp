@@ -41,14 +41,32 @@ bool Save(const std::string& filename,
   return Save(filename, rowvec, fatal, true);
 }
 
-template<typename eT>
-bool Save(const std::string& filename,
-          const arma::Mat<eT>& matrix,
-          const bool fatal,
-          bool transpose)
+inline
+std::string GetStringType(const arma::file_type& loadType)
 {
-  Timer::Start("saving_data");
+  switch(loadType)
+  {
+    case arma::csv_ascii : return "CSV data";
+    case arma::raw_ascii : return "raw ASCII formatted data";
+    case arma::raw_binary : return "raw binary formatted data";
+    case arma::arma_ascii : return "Armadillo ASCII formatted data";
+    case arma::arma_binary : return "Armadillo binary formatted data";
+    case arma::pgm_binary : return "PGM data";
+    case arma::hdf5_binary : 
+    {
+      #ifdef ARMA_USE_HDF5
+        return "HDF5 data";
+      #else
+        return "";
+      #endif
+    }
+    default : return "";
+  }
+}
 
+inline
+std::string AutoDetect(const std::string& filename,arma::file_type& detectedSaveType,const bool fatal)
+{
   // First we will try to discriminate by file extension.
   std::string extension = Extension(filename);
   if (extension == "")
@@ -61,6 +79,98 @@ bool Save(const std::string& filename,
       Log::Warn << "No extension given with filename '" << filename << "'; "
           << "type unknown.  Save failed." << std::endl;
 
+    return "";
+  }
+
+  std::string stringType;
+  bool unknownType=false;
+
+  if (extension == "csv")
+  {
+    detectedSaveType = arma::csv_ascii;
+    stringType = "CSV data";
+  }
+  else if (extension == "txt")
+  {
+    detectedSaveType = arma::raw_ascii;
+    stringType = "raw ASCII formatted data";
+  }
+  else if (extension == "bin")
+  {
+    detectedSaveType = arma::arma_binary;
+    stringType = "Armadillo binary formatted data";
+  }
+  else if (extension == "pgm")
+  {
+    detectedSaveType = arma::pgm_binary;
+    stringType = "PGM data";
+  }
+  else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
+           extension == "he5")
+  {
+#ifdef ARMA_USE_HDF5
+    detectedSaveType = arma::hdf5_binary;
+    stringType = "HDF5 data";
+#else
+    Timer::Stop("saving_data");
+    if (fatal)
+      Log::Fatal << "Attempted to save HDF5 data to '" << filename << "', but "
+          << "Armadillo was compiled without HDF5 support.  Save failed."
+          << std::endl;
+    else
+      Log::Warn << "Attempted to save HDF5 data to '" << filename << "', but "
+          << "Armadillo was compiled without HDF5 support.  Save failed."
+          << std::endl;
+
+    return "";
+#endif
+  }
+  else
+  {
+    unknownType=true;
+    detectedSaveType = arma::raw_binary; // Won't be used; prevent a warning.
+    stringType = "";
+  }
+  
+  // Provide error if we don't know the type.
+  if (unknownType)
+  {
+    Timer::Stop("saving_data");
+    if (fatal)
+      Log::Fatal << "Unable to determine format to save to from filename '"
+          << filename << "'.  Save failed." << std::endl;
+    else
+      Log::Warn << "Unable to determine format to save to from filename '"
+          << filename << "'.  Save failed." << std::endl;
+
+  }
+  return stringType;
+}
+
+template<typename eT>
+bool Save(const std::string& filename,
+          const arma::Mat<eT>& matrix,
+          const bool fatal,
+          bool transpose,
+          arma::file_type inputSaveType)
+{
+  Timer::Start("saving_data");
+  
+  arma::file_type saveType;
+  std::string stringType = "";
+
+  if(inputSaveType == arma::auto_detect)
+  {
+     stringType = AutoDetect(filename,saveType,fatal);
+  }
+  else
+  {
+    stringType = GetStringType(saveType); 
+  }
+  //If File Type is not automatically detected from extension or no extension 
+  //is specified then return failure.
+  if(stringType == "")
+  {
     return false;
   }
 
@@ -84,70 +194,6 @@ bool Save(const std::string& filename,
     return false;
   }
 
-  bool unknownType = false;
-  arma::file_type saveType;
-  std::string stringType;
-
-  if (extension == "csv")
-  {
-    saveType = arma::csv_ascii;
-    stringType = "CSV data";
-  }
-  else if (extension == "txt")
-  {
-    saveType = arma::raw_ascii;
-    stringType = "raw ASCII formatted data";
-  }
-  else if (extension == "bin")
-  {
-    saveType = arma::arma_binary;
-    stringType = "Armadillo binary formatted data";
-  }
-  else if (extension == "pgm")
-  {
-    saveType = arma::pgm_binary;
-    stringType = "PGM data";
-  }
-  else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
-           extension == "he5")
-  {
-#ifdef ARMA_USE_HDF5
-    saveType = arma::hdf5_binary;
-    stringType = "HDF5 data";
-#else
-    Timer::Stop("saving_data");
-    if (fatal)
-      Log::Fatal << "Attempted to save HDF5 data to '" << filename << "', but "
-          << "Armadillo was compiled without HDF5 support.  Save failed."
-          << std::endl;
-    else
-      Log::Warn << "Attempted to save HDF5 data to '" << filename << "', but "
-          << "Armadillo was compiled without HDF5 support.  Save failed."
-          << std::endl;
-
-    return false;
-#endif
-  }
-  else
-  {
-    unknownType = true;
-    saveType = arma::raw_binary; // Won't be used; prevent a warning.
-    stringType = "";
-  }
-
-  // Provide error if we don't know the type.
-  if (unknownType)
-  {
-    Timer::Stop("saving_data");
-    if (fatal)
-      Log::Fatal << "Unable to determine format to save to from filename '"
-          << filename << "'.  Save failed." << std::endl;
-    else
-      Log::Warn << "Unable to determine format to save to from filename '"
-          << filename << "'.  Save failed." << std::endl;
-
-    return false;
-  }
 
   // Try to save the file.
   Log::Info << "Saving " << stringType << " to '" << filename << "'."

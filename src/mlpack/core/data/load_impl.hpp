@@ -77,51 +77,25 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
   }
 }
 
-template<typename eT>
-bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          const bool fatal,
-          const bool transpose)
+inline
+std::string AutoDetect(std::fstream& stream,const std::string filename,arma::file_type& detectedLoadType,const bool fatal)
 {
-  Timer::Start("loading_data");
-
   // Get the extension.
   std::string extension = Extension(filename);
-
-  // Catch nonexistent files by opening the stream ourselves.
-  std::fstream stream;
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
-#else
-  stream.open(filename.c_str(), std::fstream::in);
-#endif
-  if (!stream.is_open())
-  {
-    Timer::Stop("loading_data");
-    if (fatal)
-      Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
-    else
-      Log::Warn << "Cannot open file '" << filename << "'; load failed."
-          << std::endl;
-
-    return false;
-  }
-
-  bool unknownType = false;
-  arma::file_type loadType;
-  std::string stringType;
+  std::string stringType="";
+  bool unknownType=false;
 
   if (extension == "csv" || extension == "tsv")
   {
-    loadType = arma::diskio::guess_file_type(stream);
-    if (loadType == arma::csv_ascii)
+    detectedLoadType = arma::diskio::guess_file_type(stream);
+    if (detectedLoadType == arma::csv_ascii)
     {
       if (extension == "tsv")
         Log::Warn << "'" << filename << "' is comma-separated, not "
             "tab-separated!" << std::endl;
       stringType = "CSV data";
     }
-    else if (loadType == arma::raw_ascii) // .csv file can be tsv.
+    else if (detectedLoadType == arma::raw_ascii) // .csv file can be tsv.
     {
       if (extension == "csv")
       {
@@ -150,7 +124,7 @@ bool Load(const std::string& filename,
     else
     {
       unknownType = true;
-      loadType = arma::raw_binary; // Won't be used; prevent a warning.
+      detectedLoadType = arma::raw_binary; // Won't be used; prevent a warning.
       stringType = "";
     }
   }
@@ -172,16 +146,16 @@ bool Load(const std::string& filename,
 
     if (rawHeader == ARMA_MAT_TXT)
     {
-      loadType = arma::arma_ascii;
+      detectedLoadType = arma::arma_ascii;
       stringType = "Armadillo ASCII formatted data";
     }
     else // It's not arma_ascii.  Now we let Armadillo guess.
     {
-      loadType = arma::diskio::guess_file_type(stream);
+      detectedLoadType = arma::diskio::guess_file_type(stream);
 
-      if (loadType == arma::raw_ascii) // Raw ASCII (space-separated).
+      if (detectedLoadType == arma::raw_ascii) // Raw ASCII (space-separated).
         stringType = "raw ASCII formatted data";
-      else if (loadType == arma::csv_ascii) // CSV can be .txt too.
+      else if (detectedLoadType == arma::csv_ascii) // CSV can be .txt too.
         stringType = "CSV data";
       else // Unknown .txt... we will throw an error.
         unknownType = true;
@@ -203,24 +177,24 @@ bool Load(const std::string& filename,
     if (rawHeader == ARMA_MAT_BIN)
     {
       stringType = "Armadillo binary formatted data";
-      loadType = arma::arma_binary;
+      detectedLoadType = arma::arma_binary;
     }
     else // We can only assume it's raw binary.
     {
       stringType = "raw binary formatted data";
-      loadType = arma::raw_binary;
+      detectedLoadType = arma::raw_binary;
     }
   }
   else if (extension == "pgm")
   {
-    loadType = arma::pgm_binary;
+    detectedLoadType = arma::pgm_binary;
     stringType = "PGM data";
   }
   else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
            extension == "he5")
   {
 #ifdef ARMA_USE_HDF5
-    loadType = arma::hdf5_binary;
+    detectedLoadType = arma::hdf5_binary;
     stringType = "HDF5 data";
 #else
     Timer::Stop("loading_data");
@@ -233,19 +207,20 @@ bool Load(const std::string& filename,
           << "Armadillo was compiled without HDF5 support.  Load failed."
           << std::endl;
 
-    return false;
+    return "";
 #endif
   }
   else // Unknown extension...
   {
     unknownType = true;
-    loadType = arma::raw_binary; // Won't be used; prevent a warning.
+    detectedLoadType = arma::raw_binary; // Won't be used; prevent a warning.
     stringType = "";
   }
 
   // Provide error if we don't know the type.
   if (unknownType)
   {
+    stringType="";
     Timer::Stop("loading_data");
     if (fatal)
       Log::Fatal << "Unable to detect type of '" << filename << "'; "
@@ -253,7 +228,53 @@ bool Load(const std::string& filename,
     else
       Log::Warn << "Unable to detect type of '" << filename << "'; load failed."
           << " Incorrect extension?" << std::endl;
+  }
+  return stringType; //Empty string denotes undetected file type.
+}
 
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          const bool fatal,
+          const bool transpose,
+          arma::file_type inputLoadType)
+{
+  Timer::Start("loading_data");
+
+  // Catch nonexistent files by opening the stream ourselves.
+  std::fstream stream;
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+  stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
+#else
+  stream.open(filename.c_str(), std::fstream::in);
+#endif
+  if (!stream.is_open())
+  {
+    Timer::Stop("loading_data");
+    if (fatal)
+      Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
+    else
+      Log::Warn << "Cannot open file '" << filename << "'; load failed."
+          << std::endl;
+
+    return false;
+  }
+
+  arma::file_type loadType;
+  std::string stringType;
+  
+  if(inputLoadType==arma::file_type::auto_detect)
+  {
+    stringType = AutoDetect(stream,filename,loadType,fatal);
+  }
+  else
+  {
+    loadType=inputLoadType;
+    stringType=GetStringType(loadType);
+  }
+  //If file type is not detected, return failure for load.
+  if(stringType=="")
+  {
     return false;
   }
 

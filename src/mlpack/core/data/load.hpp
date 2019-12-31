@@ -63,7 +63,8 @@ template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           const bool fatal = false,
-          const bool transpose = true);
+          const bool transpose = true,
+          arma::file_type inputLoadType = arma::auto_detect);
 
 /**
  * Don't document these with doxygen; these declarations aren't helpful to
@@ -75,33 +76,39 @@ bool Load(const std::string& filename,
 extern template bool Load<int>(const std::string&,
                                arma::Mat<int>&,
                                const bool,
-                               const bool);
+                               const bool,
+                               arma::file_type);
 
 // size_t and uword should be one of these three typedefs.
 extern template bool Load<unsigned int>(const std::string&,
                                         arma::Mat<unsigned int>&,
                                         const bool,
-                                        const bool);
+                                        const bool,
+                                        arma::file_type);
 
 extern template bool Load<unsigned long>(const std::string&,
                                          arma::Mat<unsigned long>&,
                                          const bool,
-                                         const bool);
+                                         const bool,
+                                         arma::file_type);
 
 extern template bool Load<unsigned long long>(const std::string&,
                                               arma::Mat<unsigned long long>&,
                                               const bool,
-                                              const bool);
+                                              const bool,
+                                              arma::file_type);
 
 extern template bool Load<float>(const std::string&,
                                  arma::Mat<float>&,
                                  const bool,
-                                 const bool);
+                                 const bool,
+                                 arma::file_type);
 
 extern template bool Load<double>(const std::string&,
                                   arma::Mat<double>&,
                                   const bool,
-                                  const bool);
+                                  const bool,
+                                  arma::file_type);
 
 /**
  * @endcond

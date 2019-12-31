@@ -57,7 +57,8 @@ template<typename eT>
 bool Save(const std::string& filename,
           const arma::Mat<eT>& matrix,
           const bool fatal = false,
-          bool transpose = true);
+          bool transpose = true,
+          arma::file_type inputSaveType = arma::auto_detect);
 
 /**
  * Saves a model to file, guessing the filetype from the extension, or,
