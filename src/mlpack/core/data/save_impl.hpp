@@ -44,7 +44,7 @@ bool Save(const std::string& filename,
 inline
 std::string GetStringType(const arma::file_type& loadType)
 {
-  switch(loadType)
+  switch (loadType)
   {
     case arma::csv_ascii : return "CSV data";
     case arma::raw_ascii : return "raw ASCII formatted data";
@@ -52,7 +52,7 @@ std::string GetStringType(const arma::file_type& loadType)
     case arma::arma_ascii : return "Armadillo ASCII formatted data";
     case arma::arma_binary : return "Armadillo binary formatted data";
     case arma::pgm_binary : return "PGM data";
-    case arma::hdf5_binary : 
+    case arma::hdf5_binary :
     {
       #ifdef ARMA_USE_HDF5
         return "HDF5 data";
@@ -65,7 +65,9 @@ std::string GetStringType(const arma::file_type& loadType)
 }
 
 inline
-std::string AutoDetect(const std::string& filename,arma::file_type& detectedSaveType,const bool fatal)
+std::string AutoDetect(const std::string& filename,
+                      arma::file_type& detectedSaveType,
+                      const bool fatal)
 {
   // First we will try to discriminate by file extension.
   std::string extension = Extension(filename);
@@ -83,7 +85,7 @@ std::string AutoDetect(const std::string& filename,arma::file_type& detectedSave
   }
 
   std::string stringType;
-  bool unknownType=false;
+  bool unknownType = false;
 
   if (extension == "csv")
   {
@@ -127,11 +129,11 @@ std::string AutoDetect(const std::string& filename,arma::file_type& detectedSave
   }
   else
   {
-    unknownType=true;
+    unknownType = true;
     detectedSaveType = arma::raw_binary; // Won't be used; prevent a warning.
     stringType = "";
   }
-  
+
   // Provide error if we don't know the type.
   if (unknownType)
   {
@@ -142,7 +144,6 @@ std::string AutoDetect(const std::string& filename,arma::file_type& detectedSave
     else
       Log::Warn << "Unable to determine format to save to from filename '"
           << filename << "'.  Save failed." << std::endl;
-
   }
   return stringType;
 }
@@ -155,21 +156,21 @@ bool Save(const std::string& filename,
           arma::file_type inputSaveType)
 {
   Timer::Start("saving_data");
-  
+
   arma::file_type saveType;
   std::string stringType = "";
 
-  if(inputSaveType == arma::auto_detect)
+  if (inputSaveType == arma::auto_detect)
   {
-     stringType = AutoDetect(filename,saveType,fatal);
+     stringType = AutoDetect(filename, saveType, fatal);
   }
   else
   {
-    stringType = GetStringType(saveType); 
+    stringType = GetStringType(saveType);
   }
-  //If File Type is not automatically detected from extension or no extension 
-  //is specified then return failure.
-  if(stringType == "")
+  // If File Type is not automatically detected from extension or no extension
+  // is specified then return failure.
+  if (stringType == "")
   {
     return false;
   }

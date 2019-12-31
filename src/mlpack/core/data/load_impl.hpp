@@ -78,12 +78,15 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
 }
 
 inline
-std::string AutoDetect(std::fstream& stream,const std::string filename,arma::file_type& detectedLoadType,const bool fatal)
+std::string AutoDetect(std::fstream& stream,
+                      const std::string filename,
+                      arma::file_type& detectedLoadType,
+                      const bool fatal)
 {
   // Get the extension.
   std::string extension = Extension(filename);
-  std::string stringType="";
-  bool unknownType=false;
+  std::string stringType = "";
+  bool unknownType = false;
 
   if (extension == "csv" || extension == "tsv")
   {
@@ -220,7 +223,7 @@ std::string AutoDetect(std::fstream& stream,const std::string filename,arma::fil
   // Provide error if we don't know the type.
   if (unknownType)
   {
-    stringType="";
+    stringType = "";
     Timer::Stop("loading_data");
     if (fatal)
       Log::Fatal << "Unable to detect type of '" << filename << "'; "
@@ -229,7 +232,7 @@ std::string AutoDetect(std::fstream& stream,const std::string filename,arma::fil
       Log::Warn << "Unable to detect type of '" << filename << "'; load failed."
           << " Incorrect extension?" << std::endl;
   }
-  return stringType; //Empty string denotes undetected file type.
+  return stringType; // Empty string denotes undetected file type.
 }
 
 template<typename eT>
@@ -262,18 +265,18 @@ bool Load(const std::string& filename,
 
   arma::file_type loadType;
   std::string stringType;
-  
-  if(inputLoadType==arma::file_type::auto_detect)
+
+  if (inputLoadType == arma::file_type::auto_detect)
   {
-    stringType = AutoDetect(stream,filename,loadType,fatal);
+    stringType = AutoDetect(stream, filename, loadType, fatal);
   }
   else
   {
-    loadType=inputLoadType;
-    stringType=GetStringType(loadType);
+    loadType = inputLoadType;
+    stringType = GetStringType(loadType);
   }
-  //If file type is not detected, return failure for load.
-  if(stringType=="")
+  // If file type is not detected, return failure for load.
+  if (stringType == "")
   {
     return false;
   }
