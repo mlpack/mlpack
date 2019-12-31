@@ -1889,6 +1889,34 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module10.Forward(std::move(input), std::move(output));
   // Value calculated using tensorflow's deconv_output_length().
   BOOST_REQUIRE_EQUAL(output.n_elem, input.n_elem);
+  // Test Same for unit stride and non-zero padding.
+  // Output shape should equal input.
+  TransposedConvolution<> module11(1, 1, 3, 3, 1, 1, 2, 2, 5, 5, 5, 5, "SAME");
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 24, 25);
+  module11.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module11.Parameters()(2) = 2.0;
+  module11.Parameters()(4) = 4.0;
+  module11.Parameters()(6) = 6.0;
+  module11.Parameters()(8) = 8.0;
+  module11.Reset();
+  module11.Forward(std::move(input), std::move(output));
+  // Value calculated using tensorflow's deconv_output_length().
+  BOOST_REQUIRE_EQUAL(output.n_elem, input.n_elem);
+  // Test Same for non unit stride.
+  // O = S * I.
+  TransposedConvolution<> module12(1, 1, 3, 3, 2, 2, 0, 0, 3, 3, 6, 6, "SAME");
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 8, 9);
+  module12.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module12.Parameters()(0) = 8.0;
+  module12.Parameters()(2) = 6.0;
+  module12.Parameters()(4) = 2.0;
+  module12.Parameters()(8) = 4.0;
+  module12.Reset();
+  module12.Forward(std::move(input), std::move(output));
+  // Value calculated using torch.nn.functional.conv_transpose2d().
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 606.0);
 }
 
 /**
