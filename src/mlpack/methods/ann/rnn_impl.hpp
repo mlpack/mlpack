@@ -106,7 +106,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
       else
       {
         break;
-      }      
+      }
     }
   }
 }
@@ -140,7 +140,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   #ifdef NDEBUG
   CheckInputDim(this->predictors.n_rows, "Train()");
   #endif
-  
+
   this->deterministic = true;
   ResetDeterministic();
 
