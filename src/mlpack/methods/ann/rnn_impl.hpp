@@ -96,11 +96,11 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
     if (layerInSize != 0){
       if (layerInSize != numRows){
         std::ostringstream oss;
-        oss << "RNN::" << functionName << " the first layer of the network "
+        oss << "RNN::" << functionName << ": the first layer of the network "
             << "expects " << layerInSize << " elements, but the input has "
             << numRows << " rows!  Check your input size for "
             << "correctness: the number of rows in the input should be "
-            << layerInSize;
+            << layerInSize << ".\n";
         throw std::out_of_range(oss.str());
       }
       else
@@ -137,8 +137,10 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   this->predictors = std::move(predictors);
   this->responses = std::move(responses);
 
-  CheckInputDim(this->predictors.n_rows, "Train");
-
+  #ifdef NDEBUG
+  CheckInputDim(this->predictors.n_rows, "Train()");
+  #endif
+  
   this->deterministic = true;
   ResetDeterministic();
 
@@ -182,7 +184,9 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   this->predictors = std::move(predictors);
   this->responses = std::move(responses);
 
-  CheckInputDim(this->predictors.n_rows, "Train");
+  #ifdef NDEBUG
+  CheckInputDim(this->predictors.n_rows, "Train()");
+  #endif
 
   this->deterministic = true;
   ResetDeterministic();
@@ -211,7 +215,9 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::cube predictors, arma::cube& results, const size_t batchSize)
 {
-  CheckInputDim(predictors.n_rows, "Predict");
+  #ifdef NDEBUG
+  CheckInputDim(predictors.n_rows, "Predict()");
+  #endif
 
   ResetCells();
 

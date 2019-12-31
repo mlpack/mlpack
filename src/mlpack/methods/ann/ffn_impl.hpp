@@ -63,11 +63,11 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
     if (layerInSize != 0){
       if (layerInSize != numRows){
         std::ostringstream oss;
-        oss << "FNN::" << functionName << " the first layer of the network "
+        oss << "FNN::" << functionName << ": the first layer of the network "
             << "expects " << layerInSize << " elements, but the input has "
             << numRows << " rows!  Check your input size for "
             << "correctness: the number of rows in the input should be "
-            << layerInSize;
+            << layerInSize << ".\n";
         throw std::out_of_range(oss.str());
       }
       else
@@ -140,7 +140,9 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   ResetData(std::move(predictors), std::move(responses));
 
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
-  CheckInputDim(predictors.n_rows, "Train");
+  #ifdef NDEBUG
+  CheckInputDim(predictors.n_rows, "Train()");
+  #endif
 
   // Train the model.
   Timer::Start("ffn_optimization");
@@ -162,7 +164,9 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 {
   ResetData(std::move(predictors), std::move(responses));
 
-  CheckInputDim(predictors.n_rows, "Train");
+  #ifdef NDEBUG
+  CheckInputDim(predictors.n_rows, "Train()");
+  #endif
 
   OptimizerType optimizer;
 
@@ -254,7 +258,9 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::mat predictors, arma::mat& results)
 {
-  CheckInputDim(predictors.n_rows, "Predict");
+  #ifdef NDEBUG
+  CheckInputDim(predictors.n_rows, "Predict()");
+  #endif
 
   if (parameter.is_empty())
     ResetParameters();
