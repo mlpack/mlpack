@@ -17,7 +17,7 @@
 namespace mlpack {
 namespace tree {
 
-CosineTree::CosineTree(arma::mat& dataset) :
+CosineTree::CosineTree(arma::mat* dataset) :
     dataset(dataset),
     parent(NULL),
     left(NULL),
@@ -73,7 +73,7 @@ CosineTree::CosineTree(CosineTree& parentNode,
   splitPointIndex = ColumnSampleLS();
 }
 
-CosineTree::CosineTree(arma::mat& dataset,
+CosineTree::CosineTree(arma::mat* dataset,
                        const double epsilon,
                        const double delta) :
     dataset(dataset),
@@ -281,8 +281,7 @@ CosineTree::CosineTree(CosineTree&& other) :
 {
   // Now we are a clone of the other tree.  But we must also clear the other
   // tree's contents, so it doesn't delete anything when it is destructed.
-  arma::mat a;
-  other.dataset = a;
+  other.dataset = NULL;
   other.parent = NULL;
   other.left = NULL;
   other.right = NULL;
