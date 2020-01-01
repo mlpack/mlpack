@@ -29,7 +29,7 @@ to build mlpack on Windows, see \ref build_windows (alternatively, you can read
 is based on older versions).
 
 You can download the latest mlpack release from here:
-<a href="https://www.mlpack.org/files/mlpack-3.2.0.tar.gz">mlpack-3.2.0</a>
+<a href="https://www.mlpack.org/files/mlpack-3.2.1.tar.gz">mlpack-3.2.1</a>
 
 @section build_simple Simple Linux build instructions
 
@@ -37,9 +37,9 @@ Assuming all dependencies are installed in the system, you can run the commands
 below directly to build and install mlpack.
 
 @code
-$ wget https://www.mlpack.org/files/mlpack-3.2.0.tar.gz
-$ tar -xvzpf mlpack-3.2.0.tar.gz
-$ mkdir mlpack-3.2.0/build && cd mlpack-3.2.0/build
+$ wget https://www.mlpack.org/files/mlpack-3.2.1.tar.gz
+$ tar -xvzpf mlpack-3.2.1.tar.gz
+$ mkdir mlpack-3.2.1/build && cd mlpack-3.2.1/build
 $ cmake ../
 $ make -j4  # The -j is the number of cores you want to use for a build.
 $ sudo make install
@@ -64,8 +64,8 @@ configure mlpack.
 First we should unpack the mlpack source and create a build directory.
 
 @code
-$ tar -xvzpf mlpack-3.2.0.tar.gz
-$ cd mlpack-3.2.0
+$ tar -xvzpf mlpack-3.2.1.tar.gz
+$ cd mlpack-3.2.1
 $ mkdir build
 @endcode
 
@@ -146,18 +146,21 @@ The full list of options mlpack allows:
        (default ON)
  - BUILD_PYTHON_BINDINGS=(ON/OFF): compile the bindings for Python, if the
        necessary Python libraries are available (default ON except on Windows)
- - MATLAB_BINDINGS=(ON/OFF): Compile MATLAB bindings if MATLAB is found
-       (default OFF)
+ - BUILD_JULIA_BINDINGS=(ON/OFF): compile Julia bindings, if Julia is found
+       (default ON)
  - BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
        static libraries (default ON)
  - TEST_VERBOSE=(ON/OFF): run test cases in \c mlpack_test with verbose output
+       (default OFF)
+ - DISABLE_DOWNLOADS=(ON/OFF): Disable downloads of dependencies during build
        (default OFF)
  - DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
        (default ON)
  - DOWNLOAD_STB_IMAGE=(ON/OFF): If STB is not found, download it (default ON)
  - BUILD_WITH_COVERAGE=(ON/OFF): Build with support for code coverage tools
       (gcc only) (default OFF)
- - PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable     
+ - PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
+ - JULIA_EXECUTABLE=(/path/to/julia): Path to specific Julia executable
  - BUILD_MARKDOWN_BINDINGS=(ON/OFF): Build Markdown bindings for website
        documentation (default OFF)
  - MATHJAX=(ON/OFF): use MathJax for generated Doxygen documentation (default
@@ -180,6 +183,8 @@ and libraries. These also use the '-D' flag.
  - BOOST_ROOT=(/path/to/boost/): path to root of boost installation
  - ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
        for ensmallen
+ - STB_IMAGE_INCLUDE_DIR=(/path/to/stb/include): path to include directory for
+      STB image library
  - MATHJAX_ROOT=(/path/to/mathjax): path to root of MathJax installation
 
 @section build_build Building mlpack

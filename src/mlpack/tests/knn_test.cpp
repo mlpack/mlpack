@@ -1330,6 +1330,34 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorRTreeTest)
 }
 
 /**
+ * Test the copy constructor and copy operator using the Cover Tree.
+ */
+BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorCoverTreeTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
+      StandardCoverTree> NeighborSearchType;
+  NeighborSearchType knn(std::move(dataset));
+
+  // Copy constructor and operator.
+  NeighborSearchType knn2(knn);
+  NeighborSearchType knn3 = knn;
+
+  // Get results.
+  arma::mat distances, distances2, distances3;
+  arma::Mat<size_t> neighbors, neighbors2, neighbors3;
+
+  knn.Search(3, neighbors, distances);
+  knn2.Search(3, neighbors2, distances2);
+  knn3.Search(3, neighbors3, distances3);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(neighbors, neighbors3);
+  CheckMatrices(distances, distances2);
+  CheckMatrices(distances, distances3);
+}
+
+/**
  * Test the copy constructor and copy operator using the BinarySpaceTree.
  */
 BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorBinarySpaceTreeTest)
@@ -1337,6 +1365,34 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorBinarySpaceTreeTest)
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
       KDTree> NeighborSearchType;
+  NeighborSearchType knn(std::move(dataset));
+
+  // Copy constructor and operator.
+  NeighborSearchType knn2(knn);
+  NeighborSearchType knn3 = knn;
+
+  // Get results.
+  arma::mat distances, distances2, distances3;
+  arma::Mat<size_t> neighbors, neighbors2, neighbors3;
+
+  knn.Search(3, neighbors, distances);
+  knn2.Search(3, neighbors2, distances2);
+  knn3.Search(3, neighbors3, distances3);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(neighbors, neighbors3);
+  CheckMatrices(distances, distances2);
+  CheckMatrices(distances, distances3);
+}
+
+/**
+ * Test the copy constructor and copy operator using the Spill Tree.
+ */
+BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorSpillTreeTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
+      SPTree> NeighborSearchType;
   NeighborSearchType knn(std::move(dataset));
 
   // Copy constructor and operator.
@@ -1485,6 +1541,72 @@ BOOST_AUTO_TEST_CASE(MoveConstructorOctreeTest)
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
       Octree> NeighborSearchType;
+  NeighborSearchType* knn = new NeighborSearchType(std::move(dataset));
+
+  // Get predictions.
+  arma::mat distances, distances2, distances3;
+  arma::Mat<size_t> neighbors, neighbors2, neighbors3;
+
+  knn->Search(3, neighbors, distances);
+
+  // Use move constructor.
+  NeighborSearchType knn2(std::move(*knn));
+
+  delete knn;
+
+  knn2.Search(3, neighbors2, distances2);
+
+  // Use move assignment.
+  NeighborSearchType knn3 = std::move(knn2);
+  knn3.Search(3, neighbors3, distances3);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(neighbors, neighbors3);
+  CheckMatrices(distances, distances2);
+  CheckMatrices(distances, distances3);
+}
+
+/**
+ * Test the move constructor & move assignment using Cover Tree.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorCoverTreeTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
+      StandardCoverTree> NeighborSearchType;
+  NeighborSearchType* knn = new NeighborSearchType(std::move(dataset));
+
+  // Get predictions.
+  arma::mat distances, distances2, distances3;
+  arma::Mat<size_t> neighbors, neighbors2, neighbors3;
+
+  knn->Search(3, neighbors, distances);
+
+  // Use move constructor.
+  NeighborSearchType knn2(std::move(*knn));
+
+  delete knn;
+
+  knn2.Search(3, neighbors2, distances2);
+
+  // Use move assignment.
+  NeighborSearchType knn3 = std::move(knn2);
+  knn3.Search(3, neighbors3, distances3);
+
+  CheckMatrices(neighbors, neighbors2);
+  CheckMatrices(neighbors, neighbors3);
+  CheckMatrices(distances, distances2);
+  CheckMatrices(distances, distances3);
+}
+
+/**
+ * Test the move constructor & move assignment using Spill Tree.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorSpillTreeTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
+      SPTree> NeighborSearchType;
   NeighborSearchType* knn = new NeighborSearchType(std::move(dataset));
 
   // Get predictions.
