@@ -201,8 +201,8 @@ CosineTree::CosineTree(const CosineTree& other) :
   }
 }
 
-//! Copy Assignment.
-CosineTree&CosineTree::operator=(const CosineTree& other)
+//! Copy assignment operator: copy the given other tree.
+CosineTree& CosineTree::operator=(const CosineTree& other)
 {
   // Return if it's the same tree.
   if (this == &other)
@@ -265,19 +265,19 @@ CosineTree&CosineTree::operator=(const CosineTree& other)
 
 //! Move the given tree.
 CosineTree::CosineTree(CosineTree&& other) :
-  dataset(other.dataset),
-  delta(std::move(other.delta)),
-  parent(other.parent),
-  left(other.left),
-  right(other.right),
-  indices(std::move(other.indices)),
-  l2NormsSquared(std::move(other.l2NormsSquared)),
-  centroid(std::move(other.centroid)),
-  basisVector(std::move(other.basisVector)),
-  splitPointIndex(other.splitPointIndex),
-  numColumns(other.numColumns),
-  l2Error(other.l2Error),
-  frobNormSquared(other.frobNormSquared)
+    dataset(other.dataset),
+    delta(std::move(other.delta)),
+    parent(other.parent),
+    left(other.left),
+    right(other.right),
+    indices(std::move(other.indices)),
+    l2NormsSquared(std::move(other.l2NormsSquared)),
+    centroid(std::move(other.centroid)),
+    basisVector(std::move(other.basisVector)),
+    splitPointIndex(other.splitPointIndex),
+    numColumns(other.numColumns),
+    l2Error(other.l2Error),
+    frobNormSquared(other.frobNormSquared)
 {
   // Now we are a clone of the other tree.  But we must also clear the other
   // tree's contents, so it doesn't delete anything when it is destructed.
@@ -297,8 +297,8 @@ CosineTree::CosineTree(CosineTree&& other) :
     right->parent = this;
 }
 
-//! Move Assignment.
-CosineTree&CosineTree::operator=(CosineTree&& other)
+//! Move assignment operator: take ownership of the given tree.
+CosineTree& CosineTree::operator=(CosineTree&& other)
 {
   // Return if it's the same tree.
   if (this == &other)

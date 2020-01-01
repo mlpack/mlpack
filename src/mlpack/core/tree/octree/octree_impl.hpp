@@ -363,7 +363,7 @@ Octree<MetricType, StatisticType, MatType>::Octree(const Octree& other) :
   }
 }
 
-//! Copy Assignment
+//! Copy assignment operator: copy the given other tree.
 template<typename MetricType, typename StatisticType, typename MatType>
 Octree<MetricType, StatisticType, MatType>&
 Octree<MetricType, StatisticType, MatType>::
@@ -426,7 +426,7 @@ Octree<MetricType, StatisticType, MatType>::Octree(Octree&& other) :
   other.parent = NULL;
 }
 
-//! Move Assignment
+//! Move assignment operator: take ownership of the given tree.
 template<typename MetricType, typename StatisticType, typename MatType>
 Octree<MetricType, StatisticType, MatType>&
 Octree<MetricType, StatisticType, MatType>::
