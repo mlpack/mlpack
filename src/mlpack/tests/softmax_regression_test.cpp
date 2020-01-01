@@ -197,7 +197,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
   }
 
   // Train softmax regression object.
-  SoftmaxRegression<>sr(data, labels, numClasses, lambda);
+  SoftmaxRegression sr(data, labels, numClasses, lambda);
 
   // Compare training accuracy to 100.
   const double acc = sr.ComputeAccuracy(data, labels);
@@ -241,7 +241,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFitIntercept)
   }
 
   // Now train a logistic regression object on it.
-  SoftmaxRegression<>lr(data, responses, 2, 0.01);
+  SoftmaxRegression lr(data, responses, 2, 0.01);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
@@ -309,7 +309,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
   }
 
   // Train softmax regression object.
-  SoftmaxRegression<>sr(data, labels, numClasses, lambda);
+  SoftmaxRegression sr(data, labels, numClasses, lambda);
 
   // Compare training accuracy to 100.
   const double acc = sr.ComputeAccuracy(data, labels);
@@ -357,8 +357,8 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainTest)
   for (size_t i = 500; i < 1000; ++i)
     labels[i] = size_t(1.0);
 
-  SoftmaxRegression<> sr(dataset.n_rows, 2);
-  SoftmaxRegression<> sr2(dataset.n_rows, 2);
+  SoftmaxRegression sr(dataset.n_rows, 2);
+  SoftmaxRegression sr2(dataset.n_rows, 2);
   sr.Parameters() = sr2.Parameters();
   ens::StandardSGD sgd;
   sr.Train<>(dataset, labels, 2, sgd);
@@ -388,10 +388,10 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
     labels[i] = size_t(1.0);
 
   ens::L_BFGS lbfgs;
-  SoftmaxRegression<> sr(dataset.n_rows, 2, true);
+  SoftmaxRegression sr(dataset.n_rows, 2, true);
 
   ens::L_BFGS lbfgs2;
-  SoftmaxRegression<> sr2(dataset.n_rows, 2, true);
+  SoftmaxRegression sr2(dataset.n_rows, 2, true);
 
   sr.Lambda() = sr2.Lambda() = 0.01;
   sr.Parameters() = sr2.Parameters();
@@ -456,7 +456,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionClassifySinglePointTest)
   }
 
   // Train softmax regression object.
-  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
+  SoftmaxRegression sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 5; i++)
@@ -538,7 +538,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesTest)
   }
 
   // Train softmax regression object.
-  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
+  SoftmaxRegression sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 5; i++)
@@ -624,7 +624,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesAndLabelsTest)
   }
 
   // Train softmax regression object.
-  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
+  SoftmaxRegression sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 5; i++)

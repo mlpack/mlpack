@@ -104,14 +104,14 @@ BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
 
   // Use an instantiated optimizer for the training.
   L_BFGS optimizer(numBasis, numIterations);
-  SoftmaxRegression<> regressor(trainData, trainLabels,
+  SoftmaxRegression regressor(trainData, trainLabels,
       numClasses, 0.001, false, optimizer);
 
   double classificationAccuracy = regressor.ComputeAccuracy(testData,
     testLabels);
 
   L_BFGS rbmOptimizer(numBasis, numIterations);
-  SoftmaxRegression<> rbmRegressor(XRbm, trainLabels, numClasses,
+  SoftmaxRegression rbmRegressor(XRbm, trainLabels, numClasses,
         0.001, false, rbmOptimizer);
   double rbmClassificationAccuracy = rbmRegressor.ComputeAccuracy(YRbm,
       testLabels);
@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   const size_t numIterations = 100; // Maximum number of iterations.
 
   L_BFGS ssRbmOptimizer(numBasis, numIterations);
-  SoftmaxRegression<> ssRbmRegressor(XRbm, trainLabels, numClasses,
+  SoftmaxRegression ssRbmRegressor(XRbm, trainLabels, numClasses,
         0.001, false, ssRbmOptimizer);
   double ssRbmClassificationAccuracy = ssRbmRegressor.ComputeAccuracy(
       YRbm, testLabels);
