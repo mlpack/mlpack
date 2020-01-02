@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(NotExistLoad)
  */
 BOOST_AUTO_TEST_CASE(WrongExtensionLoad)
 {
-  //Try to load arma::arma_binary file with ".csv" extension
+  // Try to load arma::arma_binary file with ".csv" extension
   arma::mat test = "1 5;"
                    "2 6;"
                    "3 7;"
