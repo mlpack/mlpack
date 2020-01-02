@@ -119,7 +119,7 @@ void CFModel::Train(const MatType& data,
                     const size_t maxIterations,
                     const double minResidue,
                     const bool mit,
-                    const std::string& normalization = "none")
+                    const std::string& normalization)
 {
   // Delete the current CFType object, if there is one.
   boost::apply_visitor(DeleteVisitor(), cf);
