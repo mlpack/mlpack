@@ -116,7 +116,7 @@ class BayesianRidge
 
   /**
    * Predict \f$y_{i}\f$ for one point using the
-   * currently-trained Bayesian Ridge model.
+   * currently trained Bayesian Ridge model.
    *
    * @param point The data point to apply the model.
    * @param prediction y, which will contained predicted value on completion.
