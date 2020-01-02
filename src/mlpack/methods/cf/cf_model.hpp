@@ -43,7 +43,7 @@ class DeleteVisitor : public boost::static_visitor<void>
  public:
   //! Delete CFType object.
   template <typename DecompositionPolicy,
-            typename NormalizationType>
+            typename NormalizationType = NoNormalization>
   void operator()(CFType<DecompositionPolicy, NormalizationType>* c) const;
 };
 
@@ -55,7 +55,7 @@ class GetValueVisitor : public boost::static_visitor<void*>
  public:
   //! Return stored pointer as void* type.
   template <typename DecompositionPolicy,
-            typename NormalizationType>
+            typename NormalizationType = NoNormalization>
   void* operator()(CFType<DecompositionPolicy, NormalizationType>* c) const;
 };
 
@@ -76,7 +76,7 @@ class PredictVisitor : public boost::static_visitor<void>
  public:
   //! Predict ratings for each user-item combination.
   template <typename DecompositionPolicy,
-            typename NormalizationType>
+            typename NormalizationType = NoNormalization>
   void operator()(CFType<DecompositionPolicy, NormalizationType>* c) const;
 
   //! Visitor constructor.
@@ -111,7 +111,7 @@ class RecommendationVisitor : public boost::static_visitor<void>
 
   //! Generates the given number of recommendations.
   template <typename DecompositionPolicy,
-            typename NormalizationType>
+            typename NormalizationType = NoNormalization>
   void operator()(CFType<DecompositionPolicy, NormalizationType>* c) const;
 };
 
@@ -181,7 +181,7 @@ class CFModel
 
   //! Get the pointer to CFType<> object.
   template <typename DecompositionPolicy,
-            typename NormalizationType>
+            typename NormalizationType = NoNormalization>
   const CFType<DecompositionPolicy, NormalizationType>* CFPtr() const;
 
   //! Train the model.
