@@ -51,6 +51,28 @@ BOOST_AUTO_TEST_CASE(NotExistLoad)
 }
 
 /**
+ * Make sure load fails if the file extension is wrong in automatic detection mode.
+ */
+BOOST_AUTO_TEST_CASE(WrongExtensionLoad)
+{
+  //Try to load arma::arma_binary file with ".csv" extension
+  arma::mat test = "1 5;"
+                   "2 6;"
+                   "3 7;"
+                   "4 8;";
+
+  arma::mat testTrans = trans(test);
+  BOOST_REQUIRE(testTrans.quiet_save("test_file.csv", arma::arma_binary)
+      == true);
+
+  // Now reload through our interface.
+  BOOST_REQUIRE(data::Load("test_file.csv", test) == false);
+
+  // Remove the file.
+  remove("test_file.csv");
+}
+
+/**
  * Make sure a CSV is loaded correctly.
  */
 BOOST_AUTO_TEST_CASE(LoadCSVTest)
