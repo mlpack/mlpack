@@ -144,7 +144,7 @@ class CFModel
                  CFType<SVDIncompletePolicy, ItemMeanNormalization>*,
                  CFType<BiasSVDPolicy, ItemMeanNormalization>*,
                  CFType<SVDPlusPlusPolicy, ItemMeanNormalization>*,
-                 
+
                  CFType<NMFPolicy, UserMeanNormalization>*,
                  CFType<BatchSVDPolicy, UserMeanNormalization>*,
                  CFType<RandomizedSVDPolicy, UserMeanNormalization>*,
@@ -193,7 +193,7 @@ class CFModel
              const size_t maxIterations,
              const double minResidue,
              const bool mit,
-             const string normalizationType = "none");
+             const std::string& normalizationType = "none");
 
   //! Make predictions.
   template <typename NeighborSearchPolicy,

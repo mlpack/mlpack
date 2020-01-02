@@ -27,7 +27,8 @@ using namespace mlpack::cf;
 
 template <typename DecompositionPolicy,
           typename NormalizationType>
-void DeleteVisitor::operator()(CFType<DecompositionPolicy, NormalizationType>* c) const
+void DeleteVisitor::
+operator()(CFType<DecompositionPolicy, NormalizationType>* c) const
 {
   if (c)
     delete c;
@@ -35,7 +36,8 @@ void DeleteVisitor::operator()(CFType<DecompositionPolicy, NormalizationType>* c
 
 template <typename DecompositionPolicy,
           typename NormalizationType>
-void* GetValueVisitor::operator()(CFType<DecompositionPolicy, NormalizationType>* c) const
+void* GetValueVisitor::
+operator()(CFType<DecompositionPolicy, NormalizationType>* c) const
 {
   if (!c)
     throw std::runtime_error("no cf model initialized");
@@ -117,7 +119,7 @@ void CFModel::Train(const MatType& data,
                     const size_t maxIterations,
                     const double minResidue,
                     const bool mit,
-                    const string normalization = "none")
+                    const std::string& normalization = "none")
 {
   // Delete the current CFType object, if there is one.
   boost::apply_visitor(DeleteVisitor(), cf);
@@ -125,20 +127,25 @@ void CFModel::Train(const MatType& data,
   // Instantiate a new CFType object.
   DecompositionPolicy decomposition;
   if (normalization == "overallMean")
-    cf = new CFType<DecompositionPolicy, OverallMeanNormalization>(data, decomposition,
-        numUsersForSimilarity, rank, maxIterations, minResidue, mit);
+    cf = new CFType<DecompositionPolicy, OverallMeanNormalization>(data,
+        decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
+        mit);
   else if (normalization == "itemMean")
-    cf = new CFType<DecompositionPolicy, ItemMeanNormalization>(data, decomposition,
-        numUsersForSimilarity, rank, maxIterations, minResidue, mit);
+    cf = new CFType<DecompositionPolicy, ItemMeanNormalization>(data,
+        decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
+        mit);
   else if (normalization == "userMean")
-    cf = new CFType<DecompositionPolicy, UserMeanNormalization>(data, decomposition,
-        numUsersForSimilarity, rank, maxIterations, minResidue, mit);
+    cf = new CFType<DecompositionPolicy, UserMeanNormalization>(data,
+        decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
+        mit);
   else if (normalization == "zScore")
-    cf = new CFType<DecompositionPolicy, ZScoreNormalization>(data, decomposition,
-        numUsersForSimilarity, rank, maxIterations, minResidue, mit);
+    cf = new CFType<DecompositionPolicy, ZScoreNormalization>(data,
+        decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
+        mit);
   else
-    cf = new CFType<DecompositionPolicy, NoNormalization>(data, decomposition,
-        numUsersForSimilarity, rank, maxIterations, minResidue, mit);
+    cf = new CFType<DecompositionPolicy, NoNormalization>(data,
+        decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
+        mit);
 }
 
 //! Make predictions.
