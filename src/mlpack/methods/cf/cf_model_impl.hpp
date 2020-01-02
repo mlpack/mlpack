@@ -16,17 +16,26 @@
 
 #include <boost/serialization/variant.hpp>
 
+#include <mlpack/methods/cf/normalization/no_normalization.hpp>
+#include <mlpack/methods/cf/normalization/overall_mean_normalization.hpp>
+#include <mlpack/methods/cf/normalization/user_mean_normalization.hpp>
+#include <mlpack/methods/cf/normalization/item_mean_normalization.hpp>
+#include <mlpack/methods/cf/normalization/z_score_normalization.hpp>
+#include <mlpack/methods/cf/normalization/combined_normalization.hpp>
+
 using namespace mlpack::cf;
 
-template<typename DecompositionPolicy>
-void DeleteVisitor::operator()(CFType<DecompositionPolicy>* c) const
+template <typename DecompositionPolicy,
+          typename NormalizationType>
+void DeleteVisitor::operator()(CFType<DecompositionPolicy, NormalizationType>* c) const
 {
   if (c)
     delete c;
 }
 
-template<typename DecompositionPolicy>
-void* GetValueVisitor::operator()(CFType<DecompositionPolicy>* c) const
+template <typename DecompositionPolicy,
+          typename NormalizationType>
+void* GetValueVisitor::operator()(CFType<DecompositionPolicy, NormalizationType>* c) const
 {
   if (!c)
     throw std::runtime_error("no cf model initialized");
@@ -45,9 +54,10 @@ PredictVisitor<NeighborSearchPolicy, InterpolationPolicy>::PredictVisitor(
 
 template <typename NeighborSearchPolicy,
           typename InterpolationPolicy>
-template<typename DecompositionPolicy>
+template <typename DecompositionPolicy,
+          typename NormalizationType>
 void PredictVisitor<NeighborSearchPolicy, InterpolationPolicy>
-        ::operator()(CFType<DecompositionPolicy>* c) const
+        ::operator()(CFType<DecompositionPolicy, NormalizationType>* c) const
 {
   if (!c)
   {
@@ -75,9 +85,10 @@ RecommendationVisitor<NeighborSearchPolicy, InterpolationPolicy>
 
 template <typename NeighborSearchPolicy,
           typename InterpolationPolicy>
-template<typename DecompositionPolicy>
+template <typename DecompositionPolicy,
+          typename NormalizationType>
 void RecommendationVisitor<NeighborSearchPolicy, InterpolationPolicy>
-        ::operator()(CFType<DecompositionPolicy>* c) const
+        ::operator()(CFType<DecompositionPolicy, NormalizationType>* c) const
 {
   if (!c)
   {
@@ -105,15 +116,29 @@ void CFModel::Train(const MatType& data,
                     const size_t rank,
                     const size_t maxIterations,
                     const double minResidue,
-                    const bool mit)
+                    const bool mit,
+                    const string normalization = "none")
 {
   // Delete the current CFType object, if there is one.
   boost::apply_visitor(DeleteVisitor(), cf);
 
   // Instantiate a new CFType object.
   DecompositionPolicy decomposition;
-  cf = new CFType<DecompositionPolicy>(data, decomposition,
-      numUsersForSimilarity, rank, maxIterations, minResidue, mit);
+  if (normalization == "overallMean")
+    cf = new CFType<DecompositionPolicy, OverallMeanNormalization>(data, decomposition,
+        numUsersForSimilarity, rank, maxIterations, minResidue, mit);
+  else if (normalization == "itemMean")
+    cf = new CFType<DecompositionPolicy, ItemMeanNormalization>(data, decomposition,
+        numUsersForSimilarity, rank, maxIterations, minResidue, mit);
+  else if (normalization == "userMean")
+    cf = new CFType<DecompositionPolicy, UserMeanNormalization>(data, decomposition,
+        numUsersForSimilarity, rank, maxIterations, minResidue, mit);
+  else if (normalization == "zScore")
+    cf = new CFType<DecompositionPolicy, ZScoreNormalization>(data, decomposition,
+        numUsersForSimilarity, rank, maxIterations, minResidue, mit);
+  else
+    cf = new CFType<DecompositionPolicy, NoNormalization>(data, decomposition,
+        numUsersForSimilarity, rank, maxIterations, minResidue, mit);
 }
 
 //! Make predictions.
@@ -151,11 +176,12 @@ void CFModel::GetRecommendations(const size_t numRecs,
   boost::apply_visitor(recommendation, cf);
 }
 
-template<typename DecompositionPolicy>
-const CFType<DecompositionPolicy>* CFModel::CFPtr() const
+template <typename DecompositionPolicy,
+          typename NormalizationType>
+const CFType<DecompositionPolicy, NormalizationType>* CFModel::CFPtr() const
 {
   void* pointer = boost::apply_visitor(GetValueVisitor(), cf);
-  return (CFType<DecompositionPolicy>*) pointer;
+  return (CFType<DecompositionPolicy, NormalizationType>*) pointer;
 }
 
 template<typename Archive>

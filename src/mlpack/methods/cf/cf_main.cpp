@@ -100,6 +100,15 @@ PROGRAM_INFO("Collaborative Filtering",
     " - 'average'  -- Average Interpolation Algorithm\n"
     " - 'regression'  -- Regression Interpolation Algorithm\n"
     " - 'similarity'  -- Similarity Interpolation Algorithm\n"
+    "\n\n"
+    "The following ranking normalization algorithms can be specified via" +
+    " the " + PRINT_PARAM_STRING("normalization") + " parameter:"
+    "\n"
+    " - 'none'  -- No Normalization\n"
+    " - 'itemMean'  -- Item Mean Normalization\n"
+    " - 'overallMean'  -- Overall Mean Normalization\n"
+    " - 'userMean'  -- User Mean Normalization\n"
+    " - 'zScore'  -- Z-Score Normalization\n"
     "\n"
     "A trained model may be saved to with the " +
     PRINT_PARAM_STRING("output_model") + " output parameter."
@@ -136,6 +145,8 @@ PROGRAM_INFO("Collaborative Filtering",
 PARAM_MATRIX_IN("training", "Input dataset to perform CF on.", "t");
 PARAM_STRING_IN("algorithm", "Algorithm used for matrix factorization.", "a",
     "NMF");
+PARAM_STRING_IN("normalization", "Normalization performed on the ratings.", "z",
+    "none");
 PARAM_INT_IN("neighborhood", "Size of the neighborhood of similar users to "
     "consider for each query user.", "n", 5);
 PARAM_INT_IN("rank", "Rank of decomposed matrices (if 0, a heuristic is used to"
@@ -364,7 +375,7 @@ void PerformAction(CFModel* c)
   CLI::GetParam<CFModel*>("output_model") = c;
 }
 
-template<typename DecompositionPolicy>
+template <typename DecompositionPolicy>
 void PerformAction(arma::mat& dataset,
                    const size_t rank,
                    const size_t maxIterations,
@@ -372,8 +383,12 @@ void PerformAction(arma::mat& dataset,
 {
   const size_t neighborhood = (size_t) CLI::GetParam<int>("neighborhood");
   CFModel* c = new CFModel();
+
+  const string normalizationType = CLI::GetParam<string>("normalization");
+
   c->template Train<DecompositionPolicy>(dataset, neighborhood, rank,
-      maxIterations, minResidue, CLI::HasParam("iteration_only_termination"));
+      maxIterations, minResidue, CLI::HasParam("iteration_only_termination"),
+      normalizationType);
 
   PerformAction(c);
 }
