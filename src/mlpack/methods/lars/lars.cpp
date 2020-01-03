@@ -540,9 +540,8 @@ void LARS::CholeskyDelete(const size_t colToKill)
 }
 
 arma::mat LARS::ComputeError(const arma::mat& matX,
-                          const arma::rowvec& y)
+                             const arma::rowvec& y)
 {
-  arma::mat cost = (y-matX)*(y-matX);
-
+  arma::mat cost = arma::inv(arma::trans(matX)*matX)*arma::trans(matX)*y;
   return cost;
 }
