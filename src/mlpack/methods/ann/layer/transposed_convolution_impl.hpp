@@ -448,10 +448,10 @@ void TransposedConvolution<
    * K=Kernel Size
    * P=Padding
    */
-  size_t totalPadWidth = (kernelWidth - strideWidth);
-  size_t totalpadHeight = (kernelHeight - strideHeight);
+  size_t totalPadWidth = (strideWidth - 1) * inputWidth + kernelWidth - strideWidth;
+  size_t totalPadHeight = (strideHeight - 1) * inputHeight + kernelHeight - strideHeight;
   padWidth = totalPadWidth / 2 + totalPadWidth & 1;
-  padHeight = totalpadHeight / 2 + totalpadHeight & 1;
+  padHeight = totalPadHeight / 2 + totalPadHeight & 1;
   // If Padding is negative throw a fatal error.
   if (padWidth < 0 || padHeight < 0)
   {
@@ -459,7 +459,7 @@ void TransposedConvolution<
                << "same padding for the layer." << std::endl;
   }
   aW  = size_t(totalPadWidth % 2 == 1 && strideWidth == 1);
-  aH  = size_t(totalpadHeight % 2 == 1 && strideHeight == 1);
+  aH  = size_t(totalPadHeight % 2 == 1 && strideHeight == 1);
 }
 
 } // namespace ann
