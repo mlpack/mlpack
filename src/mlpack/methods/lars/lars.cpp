@@ -538,3 +538,11 @@ void LARS::CholeskyDelete(const size_t colToKill)
     matUtriCholFactor.shed_row(n);
   }
 }
+
+arma::mat LARS::ComputeError(const arma::mat& matX,
+                          const arma::rowvec& y)
+{
+  arma::mat cost = (y-matX)*(y-matX);
+
+  return cost;
+}

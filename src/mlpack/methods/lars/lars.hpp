@@ -328,6 +328,18 @@ class LARS
                     arma::mat& G);
 
   void CholeskyDelete(const size_t colToKill);
+  /**
+   * Find cost error while predicting the value using LARS.
+   *
+   * @param data Column-major input data (or row-major input data if rowMajor =
+   *     true).
+   * @param responses A vector of targets.
+   * @param beta Vector to store the solution (the coefficients) in.
+   * @param transposeData Set to false if the data is row-major.
+   * @return The cost error.
+   */
+  arma::mat ComputeError(const arma::mat& matX,
+                         const arma::rowvec& y);
 };
 
 } // namespace regression
