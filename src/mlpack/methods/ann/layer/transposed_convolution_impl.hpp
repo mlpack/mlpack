@@ -448,10 +448,10 @@ void TransposedConvolution<
    * K=Kernel Size
    * P=Padding
    */
-  size_t totalPadWidth = (strideWidth - 1) * inputWidth + kernelWidth - \
-      strideWidth;
-  size_t totalPadHeight = (strideHeight - 1) * inputHeight + kernelHeight - \
-      strideHeight;
+  size_t totalPadWidth = ((strideWidth - 1) * inputWidth + kernelWidth -
+      strideWidth);
+  size_t totalPadHeight = ((strideHeight - 1) * inputHeight + kernelHeight - 
+      strideHeight);
   padWidth = totalPadWidth / 2 + totalPadWidth & 1;
   padHeight = totalPadHeight / 2 + totalPadHeight & 1;
   // If Padding is negative throw a fatal error.

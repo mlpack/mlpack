@@ -2969,7 +2969,7 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   module3.Reset();
   module3.Forward(std::move(input), std::move(output));
   // Value calculated using torch.nn.functional.conv_transpose2d().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 0.0);
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 }
