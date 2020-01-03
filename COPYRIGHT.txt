@@ -121,13 +121,9 @@ Copyright:
   Copyright 2019, Khizir Siddiqui <khizirsiddiqui@gmail.com>
   Copyright 2019, Tejasvi Tomar <tstomar@outlook.com>
   Copyright 2019, Jai Agarwal <jai.bhageria@gmail.com>
-<<<<<<< HEAD
   Copyright 2019, Ziyang Jiang <zij004@alumni.stanford.edu>
   Copyright 2019, Rohit Kartik <rohit.audrey@gmail.com>
   Copyright 2019, Aditya Viki <adityaviki01@gmail.com>
-=======
-  Copyright 2019, Kartik Dutt <kartikdutt@live.in>
->>>>>>> Added Seprate test case and modified same padding
 
 License: BSD-3-clause
   All rights reserved.
