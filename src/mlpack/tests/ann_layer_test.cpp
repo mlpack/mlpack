@@ -2968,7 +2968,6 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   module3.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module3.Reset();
   module3.Forward(std::move(input), std::move(output));
-  // Value calculated using torch.nn.functional.conv_transpose2d().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
@@ -2979,7 +2978,6 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   module4.Parameters() = arma::mat(16 + 1, 1, arma::fill::zeros);
   module4.Reset();
   module4.Forward(std::move(input), std::move(output));
-  // Value calculated using torch.nn.functional.conv_transpose2d()
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
@@ -3002,7 +3000,6 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   module6.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
   module6.Reset();
   module6.Forward(std::move(input), std::move(output));
-  // Value calculated using torch.nn.functional.conv_transpose2d()
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
