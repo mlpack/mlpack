@@ -127,25 +127,35 @@ void CFModel::Train(const MatType& data,
   // Instantiate a new CFType object.
   DecompositionPolicy decomposition;
   if (normalization == "overallMean")
+  {
     cf = new CFType<DecompositionPolicy, OverallMeanNormalization>(data,
         decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
         mit);
+  }
   else if (normalization == "itemMean")
+  {
     cf = new CFType<DecompositionPolicy, ItemMeanNormalization>(data,
         decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
         mit);
+  }
   else if (normalization == "userMean")
+  {
     cf = new CFType<DecompositionPolicy, UserMeanNormalization>(data,
         decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
         mit);
+  }
   else if (normalization == "zScore")
+  {
     cf = new CFType<DecompositionPolicy, ZScoreNormalization>(data,
         decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
         mit);
+  }
   else
+  {
     cf = new CFType<DecompositionPolicy, NoNormalization>(data,
         decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
         mit);
+  }
 }
 
 //! Make predictions.

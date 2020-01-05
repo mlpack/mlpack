@@ -1,6 +1,7 @@
 /**
  * @file cf_model.hpp
  * @author Wenhao Huang
+ * @author Khizir Siddiqui
  *
  * A serializable CF model, used by the main program.
  *
