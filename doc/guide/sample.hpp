@@ -16,6 +16,23 @@ e.g., @c make @c mlpack_knn or @c make @c mlpack_test; see @ref build.  However,
 any program that uses mlpack (and is not a part of the library itself) can be
 compiled easily with g++ or clang from the command line.
 
+@section compile_link_and_run Compile, Link and Run C++ Files 
+
+Typically the following commands would be used to compile and run the C++ files.
+
+@code{.sh}
+g++ -std=c++11 filename.cpp -o filename
+./filename
+@endcode
+
+If the above commands don't work, it is probably a linker issue. For this, you
+could link the necessary libraries using the following commands.
+
+@code{.sh}
+g++ -std=c++11 filename.cpp -o filename -lmlpack -larmadillo
+./filename
+@endcode
+
 @section covariance Covariance Computation
 
 A simple program to compute the covariance of a data matrix ("data.csv"),
