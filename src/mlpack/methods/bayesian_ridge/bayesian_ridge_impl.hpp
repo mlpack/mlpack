@@ -23,11 +23,11 @@ namespace regression {
 template<typename Archive>
 void BayesianRidge::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(fitIntercept);
-  ar & BOOST_SERIALIZATION_NVP(normalize);
-  ar & BOOST_SERIALIZATION_NVP(data_offset);
-  ar & BOOST_SERIALIZATION_NVP(data_scale);
-  ar & BOOST_SERIALIZATION_NVP(responses_offset);
+  ar & BOOST_SERIALIZATION_NVP(centerData);
+  ar & BOOST_SERIALIZATION_NVP(scaleData);
+  ar & BOOST_SERIALIZATION_NVP(dataOffset);
+  ar & BOOST_SERIALIZATION_NVP(dataScale);
+  ar & BOOST_SERIALIZATION_NVP(responsesOffset);
   ar & BOOST_SERIALIZATION_NVP(alpha);
   ar & BOOST_SERIALIZATION_NVP(beta);
   ar & BOOST_SERIALIZATION_NVP(gamma);
