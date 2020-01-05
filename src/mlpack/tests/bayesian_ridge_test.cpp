@@ -30,7 +30,7 @@ void GenerateProblem(arma::mat& X,
   X = arma::randn(nDims, nPoints);
   arma::colvec omega = arma::randn(nDims);
   arma::colvec noise = arma::randn(nPoints) * sigma;
-  // Compute y and add noise. 
+  // Compute y and add noise.
   y = omega.t() * X + noise.t();
 }
 
@@ -120,9 +120,6 @@ BOOST_AUTO_TEST_CASE(SingularMatix)
   BayesianRidge estimator(false, false);
   double singular = estimator.Train(X, y);
   BOOST_REQUIRE(singular == -1);
-  
-  
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();
