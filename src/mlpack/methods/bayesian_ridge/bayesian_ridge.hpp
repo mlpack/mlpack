@@ -1,6 +1,6 @@
 /**
  * @file bayesian_ridge.hpp
- * @ Clement Mercier
+ * @author Clement Mercier
  *
  * Definition of the BayesianRidge class, which performs the
  * bayesian linear regression. According to the armadillo standards,
@@ -83,13 +83,13 @@ class BayesianRidge
    *    regulariation parameter is automaticaly set to its optimal value by
    *    maximmization of the marginal likelihood.
    *
-   * @param fitIntercept Whether or not center the data according to the
+   * @param centerData Whether or not center the data according to the
    *    examples.
-   * @param normalize Whether or to normalize the data according to the
+   * @param scaleData Whether or to scale the data according to the
    *    standard deviation of each feature.
    **/
-  BayesianRidge(const bool fitIntercept = true,
-                const bool normalize = false);
+  BayesianRidge(const bool centerData = true,
+                const bool scaleData = false);
 
   /**
    * Run BayesianRidge regression. The input matrix (like all mlpack matrices)
@@ -101,8 +101,8 @@ class BayesianRidge
    * @return score. Root Mean Square Error. Equal to -1 of two feature vectors 
    *    or more are colinear.
    **/
-  float Train(const arma::mat& data,
-              const arma::rowvec& responses);
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses);
 
   /**
    * Predict \f$y_{i}\f$ for each data point in the given data matrix using the
@@ -113,16 +113,6 @@ class BayesianRidge
    **/
   void Predict(const arma::mat& points,
                arma::rowvec& predictions) const;
-
-  /**
-   * Predict \f$y_{i}\f$ for one point using the
-   * currently trained Bayesian Ridge model.
-   *
-   * @param point The data point to apply the model.
-   * @param prediction y, which will contained predicted value on completion.
-   **/
-
-  void Predict(const arma::colvec& point, double& prediction) const;
 
   /**
    * Predict \f$y_{i}\f$ and the standard deviation of the predictive posterior 
@@ -137,21 +127,6 @@ class BayesianRidge
                arma::rowvec& predictions,
                arma::rowvec& std) const;
 
-
-  /**
-   * Predict \f$y_{i}\f$ and the standard deviation of the predictive posterior 
-   * distribution for point stored in a column vector using the
-   * currently-trained Bayesian Ridge estimator.
-   *
-   * @param point The data points to apply the model.
-   * @param prediction y, which will contained calculated values on completion.
-   * @param std Standard deviation of the prediction.
-   */
-  void Predict(const arma::colvec& point,
-               double& prediction,
-               double& std) const;
-
-
    /**
    * Compute the Root Mean Square Error
    * between the predictions returned by the model
@@ -164,34 +139,32 @@ class BayesianRidge
   double Rmse(const arma::mat& data,
               const arma::rowvec& responses) const;
 
-
   /**
-   * Center and normalize the data. The last four arguments
+   * Center and scaleData the data. The last four arguments
    * allow future modifation of new points.
    *
    * @param data Design matrix in column-major format, dim(P,N).
    * @param responses A vector of targets.
-   * @param fit_interpept If true data will be centred according to the points.
-   * @param fit_interpept If true data will be scales by the standard deviations
+   * @param centerData If true data will be centred according to the points.
+   * @param centerData If true data will be scales by the standard deviations
    *     of the features computed according to the points.
-   * @param data_proc data processed, dim(N,P).
-   * @param responses_proc responses processed, dim(N).
-   * @param data_offset Mean vector of the design matrix according to the 
+   * @param dataProc data processed, dim(N,P).
+   * @param responsesProc responses processed, dim(N).
+   * @param dataOffset Mean vector of the design matrix according to the 
    *     points, dim(P).
-   * @param data_scale Vector containg the standard deviations of the features
+   * @param dataScale Vector containg the standard deviations of the features
    *     dim(P).
    * @param reponses_offset Mean of responses.
    */
-  void CenterNormalize(const arma::mat& data,
+  void CenterScaleData(const arma::mat& data,
                        const arma::rowvec& responses,
-                       const bool fit_intercept,
-                       const bool normalize,
-                       arma::mat& data_proc,
-                       arma::rowvec& responses_proc,
-                       arma::colvec& data_offset,
-                       arma::colvec& data_scale,
-                       double& responses_offset);
-
+                       const bool centerData,
+                       const bool scaleData,
+                       arma::mat& dataProc,
+                       arma::rowvec& responsesProc,
+                       arma::colvec& dataOffset,
+                       arma::colvec& dataScale,
+                       double& responsesOffset);
 
   /**
    * Copy constructor. Construct the BayesianRidge object by copying the 
@@ -223,14 +196,12 @@ class BayesianRidge
    */
   BayesianRidge& operator=(BayesianRidge&& other);
 
-
   /**
    * Get the solution vector
    *
    * @return omega Solution vector.
    **/
   inline arma::colvec Omega() const{return this->omega;}
-
 
   /**
    * Get the precesion (or inverse variance) beta of the model.
@@ -239,40 +210,35 @@ class BayesianRidge
    **/
   inline double Beta() const {return this->beta;}
 
-
-   /**
+  /**
    * Get the estimated variance.
    *   
    * @return 1.0 / \f$ \beta \f$
    **/
   inline double Variance() const {return 1.0 / this->Beta();}
 
-
   /**
    * Get the mean vector computed on the features over the training points.
-   * Vector of 0 if fitIntercept is false.
+   * Vector of 0 if centerData is false.
    *   
-   * @return responses_offset
+   * @return responsesOffset
    **/
-  inline arma::colvec Data_offset() const {return this->data_offset;}
-
+  inline arma::colvec DataOffset() const {return this->dataOffset;}
 
   /**
    * Get the vector of standard deviations computed on the features over the 
-   * training points. Vector of 1 if normalize is false.
+   * training points. Vector of 1 if scaleData is false.
    *  
-   * return data_offset
+   * return dataOffset
    **/
-  inline arma::colvec Data_scale() const {return this->data_scale;}
-
+  inline arma::colvec DataScale() const {return this->dataScale;}
 
   /**
    * Get the mean value of the train responses.
-   * @return responses_offset
+   * @return responsesOffset
    **/
-  inline double Responses_offset() const
-  {return this->responses_offset;}
-
+  inline double ResponsesOffset() const
+  {return this->responsesOffset;}
 
   /**
    * Serialize the BayesianRidge model.
@@ -282,19 +248,19 @@ class BayesianRidge
 
  private:
   //! Center the data if true.
-  bool fitIntercept;
+  bool centerData;
 
   //! Scale the data by standard deviations if true.
-  bool normalize;
+  bool scaleData;
 
   //! Mean vector computed over the points.
-  arma::colvec data_offset;
+  arma::colvec dataOffset;
 
   //! Std vector computed over the points.
-  arma::colvec data_scale;
+  arma::colvec dataScale;
 
   //! Mean of the response vector computed over the points.
-  double responses_offset;
+  double responsesOffset;
 
   //! Precision of the prior pdf (gaussian).
   double alpha;
