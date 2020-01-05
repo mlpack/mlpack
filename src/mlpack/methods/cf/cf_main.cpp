@@ -375,7 +375,7 @@ void PerformAction(CFModel* c)
   CLI::GetParam<CFModel*>("output_model") = c;
 }
 
-template <typename DecompositionPolicy>
+template<typename DecompositionPolicy>
 void PerformAction(arma::mat& dataset,
                    const size_t rank,
                    const size_t maxIterations,
