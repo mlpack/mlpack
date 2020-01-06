@@ -844,7 +844,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
   for (size_t t = 0; t<obs.n_cols; ++t)
   {
     loglikelihood2 = hmm.LogLikelihood(t, obs.col(t), loglikelihood2,
-				                       prevForwardLogProb, forwardLogProb);
+                                       prevForwardLogProb, forwardLogProb);
   }
 
   hmm.Predict(obs, stateSeq);

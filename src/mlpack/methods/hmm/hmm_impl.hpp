@@ -533,11 +533,11 @@ double HMM<Distribution>::LogLikelihoodEmissionProb(size_t t,
                                         arma::vec& forwardLogProb) const
 {
     if (t == 0)
-	{
+    {
         ForwardAtT0(emissionLogProb, logScale, forwardLogProb);
     }
     else
-	{
+    {
         double curLogSacle;
         ForwardAtTn(emissionLogProb, curLogSacle,
                     prevForwardLogProb, forwardLogProb);
