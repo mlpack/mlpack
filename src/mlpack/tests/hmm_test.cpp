@@ -841,8 +841,10 @@ BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
   double loglikelihood2;
   arma::vec prevForwardLogProb;
   arma::vec forwardLogProb;
-  for(size_t t = 0; t<obs.n_cols; ++t){
-    loglikelihood2 = hmm.LogLikelihood(t, obs.col(t), loglikelihood2, prevForwardLogProb, forwardLogProb);
+  for (size_t t = 0; t<obs.n_cols; ++t)
+  {
+    loglikelihood2 = hmm.LogLikelihood(t, obs.col(t), loglikelihood2,
+				                       prevForwardLogProb, forwardLogProb);
   }
 
   hmm.Predict(obs, stateSeq);

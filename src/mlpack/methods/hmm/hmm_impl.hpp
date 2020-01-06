@@ -532,10 +532,12 @@ double HMM<Distribution>::LogLikelihoodEmissionProb(size_t t,
                                         arma::vec& prevForwardLogProb,
                                         arma::vec& forwardLogProb) const
 {
-    if(t == 0){
+    if (t == 0)
+	{
         ForwardAtT0(emissionLogProb, logScale, forwardLogProb);
     }
-    else{
+    else
+	{
         double curLogSacle;
         ForwardAtTn(emissionLogProb, curLogSacle,
                     prevForwardLogProb, forwardLogProb);
@@ -622,8 +624,7 @@ void HMM<Distribution>::Smooth(const arma::mat& dataSeq,
 template<typename Distribution>
 void HMM<Distribution>::ForwardAtT0(const arma::vec& emissionLogProb,
                                 double& logScales,
-                                arma::vec& forwardLogProb
-                                ) const
+                                arma::vec& forwardLogProb) const
 {
   // Our goal is to calculate the forward probabilities:
   //  P(X_k | o_{1:k}) for all possible states X_k, for each time point k.
@@ -656,8 +657,7 @@ template<typename Distribution>
 void HMM<Distribution>::ForwardAtTn(const arma::vec& emissionLogProb,
                                 double& logScales,
                                 const arma::vec& prevForwardLogProb,
-                                arma::vec& forwardLogProb
-                                ) const
+                                arma::vec& forwardLogProb) const
 {
   // Our goal is to calculate the forward probabilities:
   //  P(X_k | o_{1:k}) for all possible states X_k, for each time point k.
