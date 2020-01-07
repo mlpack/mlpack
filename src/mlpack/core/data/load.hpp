@@ -57,6 +57,7 @@ namespace data /** Functions to load and save matrices and models. */ {
  * @param matrix Matrix to load contents of file into.
  * @param fatal If an error should be reported as fatal (default false).
  * @param transpose If true, transpose the matrix after loading.
+ * @param inputLoadType Used to determine the type of file to load (default arma::auto_detect).
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>

@@ -265,8 +265,7 @@ bool Load(const std::string& filename,
 
   arma::file_type loadType;
   std::string stringType;
-
-  if (inputLoadType == arma::file_type::auto_detect)
+  if (inputLoadType == arma::auto_detect)
   {
     stringType = AutoDetect(stream, filename, loadType, fatal);
   }
