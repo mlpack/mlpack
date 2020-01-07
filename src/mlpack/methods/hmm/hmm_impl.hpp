@@ -693,8 +693,6 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
   logScales.resize(dataSeq.n_cols);
   logScales.fill(-std::numeric_limits<double>::infinity());
 
-  ConvertToLogSpace();
-
   // The first entry in the forward algorithm uses the initial state
   // probabilities.  Note that MATLAB assumes that the starting state (at
   // t = -1) is state 0; this is not our assumption here.  To force that
