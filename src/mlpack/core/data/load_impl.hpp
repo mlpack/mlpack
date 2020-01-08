@@ -79,7 +79,7 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
 
 inline arma::file_type guess_file_type(std::istream& f)
 {
-  //Taken from armadillo's function guess_file_type_internal
+  // Taken from armadillo's function guess_file_type_internal
   f.clear();
   const std::fstream::pos_type pos1 = f.tellg();
 
@@ -106,7 +106,7 @@ inline arma::file_type guess_file_type(std::istream& f)
   unsigned char* data_mem = data.memptr();
 
   f.clear();
-  f.read( reinterpret_cast<char*>(data_mem), std::streamsize(N_use));
+  f.read(reinterpret_cast<char*>(data_mem), std::streamsize(N_use));
 
   const bool load_okay = f.good();
 
@@ -120,7 +120,7 @@ inline arma::file_type guess_file_type(std::istream& f)
   bool has_bracket = false;
   bool has_comma   = false;
 
-  for(arma::uword i=0; i<N_use; ++i)
+  for (arma::uword i = 0; i < N_use; ++i)
   {
     const unsigned char val = data_mem[i];
     if ((val <= 8) || (val >= 123))
