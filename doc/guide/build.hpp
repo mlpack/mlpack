@@ -2,10 +2,11 @@
 
 @section build_buildintro Introduction
 
-This document discusses how to build mlpack from source.  However, mlpack is in
-the repositories of many Linux distributions and so it may be easier to use the
-package manager for your system.  For example, on Ubuntu, you can install mlpack
-with the following command:
+This document discusses how to build mlpack from source. These build directions 
+will work for any Linux-like shell environment (for example Ubuntu, macOS,
+freeBSD etc). However, mlpack is in the repositories of many Linux distributions 
+and so it may be easier to use the package manager for your system.  For example, 
+on Ubuntu, you can install mlpack with the following command:
 
 @code
 $ sudo apt-get install libmlpack-dev
