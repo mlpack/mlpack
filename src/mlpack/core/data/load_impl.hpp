@@ -77,7 +77,7 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
   }
 }
 
-inline arma::file_type guess_file_type(std::istream& f)
+inline arma::file_type GuessFileType(std::istream& f)
 {
   // Taken from armadillo's function guess_file_type_internal
   f.clear();
@@ -161,7 +161,7 @@ std::string AutoDetect(std::fstream& stream,
 
   if (extension == "csv" || extension == "tsv")
   {
-    detectedLoadType = guess_file_type(stream);
+    detectedLoadType = GuessFileType(stream);
     if (detectedLoadType == arma::csv_ascii)
     {
       if (extension == "tsv")
@@ -225,7 +225,7 @@ std::string AutoDetect(std::fstream& stream,
     }
     else // It's not arma_ascii.  Now we let Armadillo guess.
     {
-      detectedLoadType = guess_file_type(stream);
+      detectedLoadType = GuessFileType(stream);
 
       if (detectedLoadType == arma::raw_ascii) // Raw ASCII (space-separated).
         stringType = "raw ASCII formatted data";
