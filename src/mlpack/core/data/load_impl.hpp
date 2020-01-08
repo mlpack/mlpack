@@ -84,26 +84,27 @@ inline arma::file_type GuessFileType(std::istream& f)
   const std::fstream::pos_type pos1 = f.tellg();
 
   f.clear();
-  f.seekg(0, arma::ios::end);
+  f.seekg(0, std::ios::end);
 
   f.clear();
-  const std::fstream::pos_type pos2 = f.tellg();
+  const std::fstream::pos_type pos2 = f.tellg(); // pos2 holds length of stream
 
+  // Compute length of stream in N_max
   const arma::uword N_max = ((pos1 >= 0) && (pos2 >= 0) && (pos2 > pos1)) ?
       arma::uword(pos2 - pos1) : arma::uword(0);
 
   f.clear();
   f.seekg(pos1);
 
+  // Handle empty files.
   if (N_max == 0)
     return arma::file_type_unknown;
 
   const arma::uword N_use = (std::min)(N_max, arma::uword(4096));
 
-  arma::podarray<unsigned char> data(N_use);
-  data.zeros();
-
-  unsigned char* data_mem = data.memptr();
+  unsigned char* data_mem = (unsigned char*) 
+      malloc(sizeof(unsigned char) * N_use);
+  memset(data_mem,0,N_use);
 
   f.clear();
   f.read(reinterpret_cast<char*>(data_mem), std::streamsize(N_use));
@@ -114,7 +115,10 @@ inline arma::file_type GuessFileType(std::istream& f)
   f.seekg(pos1);
 
   if (load_okay == false)
+  {
+    delete data_mem;
     return arma::file_type_unknown;
+  }
 
   bool has_binary  = false;
   bool has_bracket = false;
@@ -138,6 +142,8 @@ inline arma::file_type GuessFileType(std::istream& f)
        has_comma = true;
     }
   }
+
+  delete data_mem;
 
   if (has_binary)
     return arma::raw_binary;
