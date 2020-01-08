@@ -22,7 +22,7 @@ CosineTree::CosineTree(arma::mat* dataset) :
     parent(NULL),
     left(NULL),
     right(NULL),
-    numColumns(dataset.n_cols)
+    numColumns(dataset->n_cols)
 {
   // Initialize sizes of column indices and l2 norms.
   indices.resize(numColumns);
@@ -32,7 +32,7 @@ CosineTree::CosineTree(arma::mat* dataset) :
   for (size_t i = 0; i < numColumns; i++)
   {
     indices[i] = i;
-    double l2Norm = arma::norm(dataset.col(i), 2);
+    double l2Norm = arma::norm(dataset->col(i), 2);
     l2NormsSquared(i) = l2Norm * l2Norm;
   }
 
@@ -86,7 +86,7 @@ CosineTree::CosineTree(arma::mat* dataset,
 
   // Define root node of the tree and add it to the queue.
   CosineTree root(dataset);
-  arma::vec tempVector = arma::zeros(dataset.n_rows);
+  arma::vec tempVector = arma::zeros(dataset->n_rows);
   root.L2Error(-1.0); // We don't know what the error is.
   root.BasisVector(tempVector);
   treeQueue.push(&root);
@@ -286,7 +286,7 @@ CosineTree::CosineTree(CosineTree&& other) :
   other.left = NULL;
   other.right = NULL;
   other.splitPointIndex = 0;
-  other.numColumns = dataset.n_cols;
+  other.numColumns = dataset->n_cols;
   other.l2Error = -1;
   other.frobNormSquared = arma::accu(l2NormsSquared);
   // Set new parent.
@@ -323,12 +323,12 @@ CosineTree& CosineTree::operator=(CosineTree&& other)
 
   // Now we are a clone of the other tree.  But we must also clear the other
   // tree's contents, so it doesn't delete anything when it is destructed.
-  other.dataset = arma::mat();
+  other.dataset = NULL;
   other.parent = NULL;
   other.left = NULL;
   other.right = NULL;
   other.splitPointIndex = ColumnSampleLS();
-  other.numColumns = dataset.n_cols;
+  other.numColumns = dataset->n_cols;
   other.l2Error = -1;
   other.frobNormSquared = arma::accu(l2NormsSquared);
   // Set new parent.
@@ -396,7 +396,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
   node->ColumnSamplesLS(sampledIndices, probabilities, numSamples);
 
   // Get pointer to the original dataset.
-  arma::mat dataset = node->GetDataset();
+  arma::mat* dataset = node->GetDataset();
 
   // Initialize weighted projection magnitudes as zeros.
   arma::vec weightedMagnitudes;
@@ -426,15 +426,15 @@ double CosineTree::MonteCarloError(CosineTree* node,
     {
       currentNode = *j;
 
-      projection(k) = arma::dot(dataset.col(sampledIndices[i]),
+      projection(k) = arma::dot(dataset->col(sampledIndices[i]),
                                 currentNode->BasisVector());
     }
     // If two additional vectors are passed, take their projections.
     if (addBasisVector1 && addBasisVector2)
     {
-      projection(k++) = arma::dot(dataset.col(sampledIndices[i]),
+      projection(k++) = arma::dot(dataset->col(sampledIndices[i]),
                                   *addBasisVector1);
-      projection(k) = arma::dot(dataset.col(sampledIndices[i]),
+      projection(k) = arma::dot(dataset->col(sampledIndices[i]),
                                 *addBasisVector2);
     }
 
@@ -470,7 +470,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
 void CosineTree::ConstructBasis(CosineNodeQueue& treeQueue)
 {
   // Initialize basis as matrix of zeros.
-  basis.zeros(dataset.n_rows, treeQueue.size());
+  basis.zeros(dataset->n_rows, treeQueue.size());
 
   // Variables for iterating through the priority queue.
   CosineTree *currentNode;
@@ -625,8 +625,8 @@ void CosineTree::CalculateCosines(arma::vec& cosines)
     else
     {
       cosines(i) =
-          std::abs(arma::norm_dot(dataset.col(indices[splitPointIndex]),
-                                  dataset.col(indices[i])));
+          std::abs(arma::norm_dot(dataset->col(indices[splitPointIndex]),
+                                  dataset->col(indices[i])));
     }
   }
 }
@@ -634,12 +634,12 @@ void CosineTree::CalculateCosines(arma::vec& cosines)
 void CosineTree::CalculateCentroid()
 {
   // Initialize centroid as vector of zeros.
-  centroid.zeros(dataset.n_rows);
+  centroid.zeros(dataset->n_rows);
 
   // Calculate centroid of columns in the node.
   for (size_t i = 0; i < numColumns; i++)
   {
-    centroid += dataset.col(indices[i]);
+    centroid += dataset->col(indices[i]);
   }
   centroid /= numColumns;
 }
