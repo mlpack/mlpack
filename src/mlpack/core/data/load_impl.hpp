@@ -102,9 +102,9 @@ inline arma::file_type GuessFileType(std::istream& f)
 
   const arma::uword N_use = (std::min)(N_max, arma::uword(4096));
 
-  unsigned char* data_mem = (unsigned char*) 
+  unsigned char* data_mem = (unsigned char*)
       malloc(sizeof(unsigned char) * N_use);
-  memset(data_mem,0,N_use);
+  memset(data_mem, 0, N_use);
 
   f.clear();
   f.read(reinterpret_cast<char*>(data_mem), std::streamsize(N_use));
