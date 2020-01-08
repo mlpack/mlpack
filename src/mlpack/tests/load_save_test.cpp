@@ -88,7 +88,9 @@ BOOST_AUTO_TEST_CASE(WrongExtensionCorrectLoad)
       == true);
 
   // Now reload through our interface.
-  BOOST_REQUIRE(data::Load("test_file.csv", test,false,true,arma::arma_binary) == true);
+  BOOST_REQUIRE(
+      data::Load("test_file.csv", test, false, true, arma::arma_binary)
+      == true);
 
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);

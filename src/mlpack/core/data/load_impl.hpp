@@ -77,6 +77,77 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
   }
 }
 
+inline arma::file_type guess_file_type(std::istream& f)
+{
+  //Taken from armadillo's function guess_file_type_internal
+  f.clear();
+  const std::fstream::pos_type pos1 = f.tellg();
+
+  f.clear();
+  f.seekg(0, arma::ios::end);
+
+  f.clear();
+  const std::fstream::pos_type pos2 = f.tellg();
+
+  const arma::uword N_max = ((pos1 >= 0) && (pos2 >= 0) && (pos2 > pos1)) ?
+      arma::uword(pos2 - pos1) : arma::uword(0);
+
+  f.clear();
+  f.seekg(pos1);
+
+  if (N_max == 0)
+    return arma::file_type_unknown;
+
+  const arma::uword N_use = (std::min)(N_max, arma::uword(4096));
+
+  arma::podarray<unsigned char> data(N_use);
+  data.zeros();
+
+  unsigned char* data_mem = data.memptr();
+
+  f.clear();
+  f.read( reinterpret_cast<char*>(data_mem), std::streamsize(N_use));
+
+  const bool load_okay = f.good();
+
+  f.clear();
+  f.seekg(pos1);
+
+  if (load_okay == false)
+    return arma::file_type_unknown;
+
+  bool has_binary  = false;
+  bool has_bracket = false;
+  bool has_comma   = false;
+
+  for(arma::uword i=0; i<N_use; ++i)
+  {
+    const unsigned char val = data_mem[i];
+    if ((val <= 8) || (val >= 123))
+    {
+      has_binary = true;
+      break;
+    }  // the range checking can be made more elaborate
+
+    if ((val == '(') || (val == ')'))
+    {
+      has_bracket = true;
+    }
+    if (val == ',')
+    {
+       has_comma = true;
+    }
+  }
+
+  if (has_binary)
+    return arma::raw_binary;
+
+  if (has_comma && (has_bracket == false))
+    return arma::csv_ascii;
+
+  return arma::raw_ascii;
+}
+
 inline
 std::string AutoDetect(std::fstream& stream,
                       const std::string filename,
@@ -90,7 +161,7 @@ std::string AutoDetect(std::fstream& stream,
 
   if (extension == "csv" || extension == "tsv")
   {
-    detectedLoadType = arma::diskio::guess_file_type(stream);
+    detectedLoadType = guess_file_type(stream);
     if (detectedLoadType == arma::csv_ascii)
     {
       if (extension == "tsv")
@@ -154,7 +225,7 @@ std::string AutoDetect(std::fstream& stream,
     }
     else // It's not arma_ascii.  Now we let Armadillo guess.
     {
-      detectedLoadType = arma::diskio::guess_file_type(stream);
+      detectedLoadType = guess_file_type(stream);
 
       if (detectedLoadType == arma::raw_ascii) // Raw ASCII (space-separated).
         stringType = "raw ASCII formatted data";
