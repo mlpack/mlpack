@@ -88,10 +88,11 @@ DecisionTree<FitnessFunction,
 
   // Set the correct dimensionality for the dimension selector.
   dimensionSelector.Dimensions() = tmpData.n_rows;
+  arma::Row<size_t> passlabels = tmpLabels;
 
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
-  Train<false>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, weights,
+  Train<false>(tmpData, 0, tmpData.n_cols, passlabels, numClasses, weights,
       minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
 }
 
