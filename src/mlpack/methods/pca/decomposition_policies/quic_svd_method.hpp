@@ -50,8 +50,8 @@ class QUICSVDPolicy
    * @param eigvec Matrix to put eigenvectors (loadings) into.
    * @param rank Rank of the decomposition.
    */
-  void Apply(const arma::mat& data,
-             const arma::mat& centeredData,
+  void Apply(arma::mat& data,
+             arma::mat& centeredData,
              arma::mat& transformedData,
              arma::vec& eigVal,
              arma::mat& eigvec,

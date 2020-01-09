@@ -67,7 +67,7 @@ class QUIC_SVD
    * @param epsilon Error tolerance fraction for calculated subspace.
    * @param delta Cumulative probability for Monte Carlo error lower bound.
    */
-  QUIC_SVD(const arma::mat& dataset,
+  QUIC_SVD(arma::mat& dataset,
            arma::mat& u,
            arma::mat& v,
            arma::mat& sigma,
@@ -86,7 +86,7 @@ class QUIC_SVD
 
  private:
   //! Matrix for which cosine tree is constructed.
-  const arma::mat& dataset;
+  arma::mat& dataset;
   //! Subspace basis of the input dataset.
   arma::mat basis;
 };

@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(CosineTreeNoSplit)
 
   // Make a cosine tree, with the generated dataset and the defined constants.
   // Note that the value of epsilon is one.
-  CosineTree ctree(data, epsilon, delta);
+  CosineTree ctree(&data, epsilon, delta);
   arma::mat basis;
   ctree.GetFinalBasis(basis);
 
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
 
   // Make a random dataset and the root object.
   arma::mat data = arma::randu(numRows, numCols);
-  CosineTree root(data);
+  CosineTree root(&data);
 
   // Stack for depth first search of the tree.
   std::vector<CosineTree*> nodeStack;
@@ -179,13 +179,13 @@ BOOST_AUTO_TEST_CASE(CosineTreeModifiedGramSchmidt)
 
   // Declare a queue and a dummy CosineTree object.
   CosineNodeQueue basisQueue;
-  CosineTree dummyTree(data, epsilon, delta);
+  CosineTree dummyTree(&data, epsilon, delta);
 
   for (size_t i = 0; i < numCols; i++)
   {
     // Make a new CosineNode object.
     CosineTree* basisNode;
-    basisNode = new CosineTree(data);
+    basisNode = new CosineTree(&data);
 
     // Use the columns of the dataset as random centroids.
     arma::vec centroid = data.col(i);
