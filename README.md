@@ -125,7 +125,7 @@ If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
 This document discusses how to build mlpack from source. These build directions 
 will work for any Linux-like shell environment (for example Ubuntu, macOS,
-freeBSD etc). However, mlpack is in the repositories of many Linux distributions 
+FreeBSD etc). However, mlpack is in the repositories of many Linux distributions 
 and so it may be easier to use the package manager for your system.  For example, 
 on Ubuntu, you can install mlpack with the following command:
 
