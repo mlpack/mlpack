@@ -63,11 +63,12 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::~RNN()
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-template<typename OptimizerType>
+template<typename OptimizerType, typename... CallbackTypes>
 double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::cube predictors,
     arma::cube responses,
-    OptimizerType& optimizer)
+    OptimizerType& optimizer,
+    CallbackTypes&&... callbacks)
 {
   numFunctions = responses.n_cols;
 
@@ -84,7 +85,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   // Train the model.
   Timer::Start("rnn_optimization");
-  const double out = optimizer.Optimize(*this, parameter);
+  const double out = optimizer.Optimize(*this, parameter, callbacks...);
   Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out
@@ -105,10 +106,11 @@ void RNN<OutputLayerType, InitializationRuleType,
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-template<typename OptimizerType>
+template<typename OptimizerType, typename... CallbackTypes>
 double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::cube predictors,
-    arma::cube responses)
+    arma::cube responses,
+    CallbackTypes&&... callbacks)
 {
   numFunctions = responses.n_cols;
 
@@ -127,7 +129,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   // Train the model.
   Timer::Start("rnn_optimization");
-  const double out = optimizer.Optimize(*this, parameter);
+  const double out = optimizer.Optimize(*this, parameter, callbacks...);
   Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out
@@ -297,8 +299,9 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
   double performance = 0;
   size_t responseSeq = 0;
+  const size_t effectiveRho = std::min(rho, size_t(responses.size()));
 
-  for (size_t seqNum = 0; seqNum < rho; ++seqNum)
+  for (size_t seqNum = 0; seqNum < effectiveRho; ++seqNum)
   {
     // Wrap a matrix around our data to avoid a copy.
     arma::mat stepData(predictors.slice(seqNum).colptr(begin),
@@ -336,10 +339,9 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
   ResetGradients(currentGradient);
 
-  for (size_t seqNum = 0; seqNum < rho; ++seqNum)
+  for (size_t seqNum = 0; seqNum < effectiveRho; ++seqNum)
   {
     currentGradient.zeros();
-
     for (size_t l = 0; l < network.size(); ++l)
     {
       boost::apply_visitor(LoadOutputParameterVisitor(
@@ -361,13 +363,14 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     {
       outputLayer.Backward(std::move(boost::apply_visitor(
           outputParameterVisitor, network.back())),
-          std::move(arma::mat(responses.slice(rho - seqNum - 1).colptr(begin),
+          std::move(arma::mat(
+          responses.slice(effectiveRho - seqNum - 1).colptr(begin),
           responses.n_rows, batchSize, false, true)), std::move(error));
     }
 
     Backward();
     Gradient(std::move(
-        arma::mat(predictors.slice(rho - seqNum - 1).colptr(begin),
+        arma::mat(predictors.slice(effectiveRho - seqNum - 1).colptr(begin),
         predictors.n_rows, batchSize, false, true)));
     gradient += currentGradient;
   }

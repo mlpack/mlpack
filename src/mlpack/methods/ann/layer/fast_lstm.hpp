@@ -36,6 +36,10 @@ namespace ann /** Artificial Neural Network. */ {
  * Note that FastLSTM network layer does not use peephole connections between
  * the cell and gates.
  *
+ * Note also that if a FastLSTM layer is desired as the first layer of a neural
+ * network, an IdentityLayer should be added to the network as the first layer,
+ * and then the FastLSTM layer should be added.
+ *
  * For more information, see the following.
  *
  * @code

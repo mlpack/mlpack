@@ -150,10 +150,24 @@ class AdaBoost
    * Classify the given test points.
    *
    * @param test Testing data.
-   * @param predictedLabels Vector in which to the predicted labels of the test
+   * @param predictedLabels Vector in which the predicted labels of the test
+   *      set will be stored.
+   * @param probabilities matrix to store the predicted class probabilities for
+   *      each point in the test set.
+   */
+  void Classify(const MatType& test,
+                arma::Row<size_t>& predictedLabels,
+                arma::mat& probabilities);
+
+  /**
+   * Classify the given test points.
+   *
+   * @param test Testing data.
+   * @param predictedLabels Vector in which the predicted labels of the test
    *      set will be stored.
    */
-  void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
+  void Classify(const MatType& test,
+                arma::Row<size_t>& predictedLabels);
 
   /**
    * Serialize the AdaBoost model.

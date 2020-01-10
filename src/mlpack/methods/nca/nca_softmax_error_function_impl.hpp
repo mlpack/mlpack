@@ -17,6 +17,8 @@
 #include <mlpack/core/math/make_alias.hpp>
 #include <mlpack/core/math/shuffle_data.hpp>
 
+#include <mlpack/core.hpp>
+
 namespace mlpack {
 namespace nca {
 

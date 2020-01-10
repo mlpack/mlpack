@@ -20,6 +20,26 @@ using namespace mlpack;
 using namespace mlpack::svm;
 using namespace mlpack::distribution;
 
+/**
+ * Callback test function, based on the EndOptimization callback function.
+ */
+class CallbackTestFunction
+{
+ public:
+  CallbackTestFunction() : calledEndOptimization(false) {}
+
+  template<typename OptimizerType, typename FunctionType, typename MatType>
+  void EndOptimization(OptimizerType& /* optimizer */,
+                       FunctionType& /* function */,
+                       MatType& /* coordinates */)
+  {
+    calledEndOptimization = true;
+  }
+
+  //! Track to check if callback is executed.
+  bool calledEndOptimization;
+};
+
 BOOST_AUTO_TEST_SUITE(LinearSVMTest);
 
 /**
@@ -455,14 +475,14 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSSimpleTest)
   const size_t numClasses = 2;
   const double lambda = 0.0001;
 
-  // A very simple fake dataset
+  // A very simple fake dataset.
   arma::mat dataset = "2 0 0;"
                       "0 0 0;"
                       "0 2 1;"
                       "1 0 2;"
                       "0 1 0";
 
-  //  Corresponding labels
+  // Corresponding labels.
   arma::Row<size_t> labels = "1 0 1";
 
   // Create a linear svm object using L-BFGS optimizer.
@@ -1130,6 +1150,34 @@ BOOST_AUTO_TEST_CASE(SinglePointClassifyTest)
 
     BOOST_REQUIRE_EQUAL(pred, predictions[i]);
   }
+}
+
+/**
+ * Test a Linear SVM model with EndOptimization callback.
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMCallbackTest)
+{
+  const size_t numClasses = 2;
+  const double lambda = 0.0001;
+  const double delta = 1.0;
+
+  // A very simple fake dataset.
+  arma::mat dataset = "2 0 0;"
+                      "0 0 0;"
+                      "0 2 1;"
+                      "1 0 2;"
+                      "0 1 0";
+
+  // Corresponding labels.
+  arma::Row<size_t> labels = "1 0 1";
+
+  CallbackTestFunction cb;
+
+  ens::L_BFGS opt;
+  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda,
+      delta, false, opt, cb);
+
+  BOOST_REQUIRE(cb.calledEndOptimization == true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -2019,6 +2019,110 @@ BOOST_AUTO_TEST_CASE(GradientAtrousConvolutionLayerTest)
 }
 
 /**
+ * Test the functions to access and modify the parameters of the
+ * AtrousConvolution layer.
+ */
+BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerParametersTest)
+{
+  // Parameter order for the constructor: inSize, outSize, kW, kH, dW, dH, padW,
+  // padH, inputWidth, inputHeight, dilationW, dilationH, paddingType ("none").
+  AtrousConvolution<> layer1(1, 2, 3, 4, 5, 6, std::make_tuple(7, 8),
+      std::make_tuple(9, 10), 11, 12, 13, 14);
+  AtrousConvolution<> layer2(2, 3, 4, 5, 6, 7, std::make_tuple(8, 9),
+      std::make_tuple(10, 11), 12, 13, 14, 15);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), 11);
+  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), 12);
+  BOOST_REQUIRE_EQUAL(layer1.KernelWidth(), 3);
+  BOOST_REQUIRE_EQUAL(layer1.KernelHeight(), 4);
+  BOOST_REQUIRE_EQUAL(layer1.StrideWidth(), 5);
+  BOOST_REQUIRE_EQUAL(layer1.StrideHeight(), 6);
+  BOOST_REQUIRE_EQUAL(layer1.Padding().PadHTop(), 9);
+  BOOST_REQUIRE_EQUAL(layer1.Padding().PadHBottom(), 10);
+  BOOST_REQUIRE_EQUAL(layer1.Padding().PadWLeft(), 7);
+  BOOST_REQUIRE_EQUAL(layer1.Padding().PadWRight(), 8);
+  BOOST_REQUIRE_EQUAL(layer1.DilationWidth(), 13);
+  BOOST_REQUIRE_EQUAL(layer1.DilationHeight(), 14);
+
+  // Now modify the parameters to match the second layer.
+  layer1.InputWidth() = 12;
+  layer1.InputHeight() = 13;
+  layer1.KernelWidth() = 4;
+  layer1.KernelHeight() = 5;
+  layer1.StrideWidth() = 6;
+  layer1.StrideHeight() = 7;
+  layer1.Padding().PadHTop() = 10;
+  layer1.Padding().PadHBottom() = 11;
+  layer1.Padding().PadWLeft() = 8;
+  layer1.Padding().PadWRight() = 9;
+  layer1.DilationWidth() = 14;
+  layer1.DilationHeight() = 15;
+
+  // Now ensure all results are the same.
+  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), layer2.InputWidth());
+  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), layer2.InputHeight());
+  BOOST_REQUIRE_EQUAL(layer1.KernelWidth(), layer2.KernelWidth());
+  BOOST_REQUIRE_EQUAL(layer1.KernelHeight(), layer2.KernelHeight());
+  BOOST_REQUIRE_EQUAL(layer1.StrideWidth(), layer2.StrideWidth());
+  BOOST_REQUIRE_EQUAL(layer1.StrideHeight(), layer2.StrideHeight());
+  BOOST_REQUIRE_EQUAL(layer1.Padding().PadHTop(), layer2.Padding().PadHTop());
+  BOOST_REQUIRE_EQUAL(layer1.Padding().PadHBottom(),
+                      layer2.Padding().PadHBottom());
+  BOOST_REQUIRE_EQUAL(layer1.Padding().PadWLeft(),
+                      layer2.Padding().PadWLeft());
+  BOOST_REQUIRE_EQUAL(layer1.Padding().PadWRight(),
+                      layer2.Padding().PadWRight());
+  BOOST_REQUIRE_EQUAL(layer1.DilationWidth(), layer2.DilationWidth());
+  BOOST_REQUIRE_EQUAL(layer1.DilationHeight(), layer2.DilationHeight());
+}
+
+/**
+ * Test that the padding options are working correctly in Atrous Convolution
+ * layer.
+ */
+BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerPaddingTest)
+{
+  arma::mat output, input, delta;
+
+  // Check valid padding option.
+  AtrousConvolution<> module1(1, 1, 3, 3, 1, 1,
+      std::tuple<size_t, size_t>(1, 1), std::tuple<size_t, size_t>(1, 1), 7, 7,
+      2, 2, "valid");
+
+  // Test the Forward function.
+  input = arma::linspace<arma::colvec>(0, 48, 49);
+  module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module1.Reset();
+  module1.Forward(std::move(input), std::move(output));
+
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
+  BOOST_REQUIRE_EQUAL(output.n_rows, 9);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+
+  // Test the Backward function.
+  module1.Backward(std::move(input), std::move(output), std::move(delta));
+
+  // Check same padding option.
+  AtrousConvolution<> module2(1, 1, 3, 3, 1, 1,
+      std::tuple<size_t, size_t>(0, 0), std::tuple<size_t, size_t>(0, 0), 7, 7,
+      2, 2, "same");
+
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 48, 49);
+  module2.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module2.Reset();
+  module2.Forward(std::move(input), std::move(output));
+
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
+  BOOST_REQUIRE_EQUAL(output.n_rows, 49);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+
+  // Test the backward function.
+  module2.Backward(std::move(input), std::move(output), std::move(delta));
+}
+
+/**
  * Tests the LayerNorm layer.
  */
 BOOST_AUTO_TEST_CASE(LayerNormTest)
@@ -2697,7 +2801,7 @@ void ANNLayerSerializationTest(LayerType& layer)
   model.Train(input, output, opt);
 
   arma::mat originalOutput;
-  model.Predict(input.col(0), originalOutput);
+  model.Predict(input, originalOutput);
 
   // Now serialize the model.
   FFN<NegativeLogLikelihood<>, ann::RandomInitialization> xmlModel, textModel,
@@ -2706,10 +2810,10 @@ void ANNLayerSerializationTest(LayerType& layer)
 
   // Ensure that predictions are the same.
   arma::mat modelOutput, xmlOutput, textOutput, binaryOutput;
-  model.Predict(input.col(0), modelOutput);
-  xmlModel.Predict(input.col(0), xmlOutput);
-  textModel.Predict(input.col(0), textOutput);
-  binaryModel.Predict(input.col(0), binaryOutput);
+  model.Predict(input, modelOutput);
+  xmlModel.Predict(input, xmlOutput);
+  textModel.Predict(input, textOutput);
+  binaryModel.Predict(input, binaryOutput);
 
   CheckMatrices(originalOutput, modelOutput, 1e-5);
   CheckMatrices(originalOutput, xmlOutput, 1e-5);
@@ -2733,6 +2837,98 @@ BOOST_AUTO_TEST_CASE(LayerNormSerializationTest)
 {
   LayerNorm<> layer(10);
   ANNLayerSerializationTest(layer);
+}
+
+/**
+ * Test that the functions that can modify and access the parameters of the
+ * Convolution layer work.
+ */
+BOOST_AUTO_TEST_CASE(ConvolutionLayerParametersTest)
+{
+  // Parameter order: inSize, outSize, kW, kH, dW, dH, padW, padH, inputWidth,
+  // inputHeight, paddingType.
+  Convolution<> layer1(1, 2, 3, 4, 5, 6, std::tuple<size_t, size_t>(7, 8),
+      std::tuple<size_t, size_t>(9, 10), 11, 12, "none");
+  Convolution<> layer2(2, 3, 4, 5, 6, 7, std::tuple<size_t, size_t>(8, 9),
+      std::tuple<size_t, size_t>(10, 11), 12, 13, "none");
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), 11);
+  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), 12);
+  BOOST_REQUIRE_EQUAL(layer1.KernelWidth(), 3);
+  BOOST_REQUIRE_EQUAL(layer1.KernelHeight(), 4);
+  BOOST_REQUIRE_EQUAL(layer1.StrideWidth(), 5);
+  BOOST_REQUIRE_EQUAL(layer1.StrideHeight(), 6);
+  BOOST_REQUIRE_EQUAL(layer1.PadWLeft(), 7);
+  BOOST_REQUIRE_EQUAL(layer1.PadWRight(), 8);
+  BOOST_REQUIRE_EQUAL(layer1.PadHTop(), 9);
+  BOOST_REQUIRE_EQUAL(layer1.PadHBottom(), 10);
+
+  // Now modify the parameters to match the second layer.
+  layer1.InputWidth() = 12;
+  layer1.InputHeight() = 13;
+  layer1.KernelWidth() = 4;
+  layer1.KernelHeight() = 5;
+  layer1.StrideWidth() = 6;
+  layer1.StrideHeight() = 7;
+  layer1.PadWLeft() = 8;
+  layer1.PadWRight() = 9;
+  layer1.PadHTop() = 10;
+  layer1.PadHBottom() = 11;
+
+  // Now ensure all results are the same.
+  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), layer2.InputWidth());
+  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), layer2.InputHeight());
+  BOOST_REQUIRE_EQUAL(layer1.KernelWidth(), layer2.KernelWidth());
+  BOOST_REQUIRE_EQUAL(layer1.KernelHeight(), layer2.KernelHeight());
+  BOOST_REQUIRE_EQUAL(layer1.StrideWidth(), layer2.StrideWidth());
+  BOOST_REQUIRE_EQUAL(layer1.StrideHeight(), layer2.StrideHeight());
+  BOOST_REQUIRE_EQUAL(layer1.PadWLeft(), layer2.PadWLeft());
+  BOOST_REQUIRE_EQUAL(layer1.PadWRight(), layer2.PadWRight());
+  BOOST_REQUIRE_EQUAL(layer1.PadHTop(), layer2.PadHTop());
+  BOOST_REQUIRE_EQUAL(layer1.PadHBottom(), layer2.PadHBottom());
+}
+
+/**
+ * Test that the padding options are working correctly in Convolution layer.
+ */
+BOOST_AUTO_TEST_CASE(ConvolutionLayerPaddingTest)
+{
+  arma::mat output, input, delta;
+
+  // Check valid padding option.
+  Convolution<> module1(1, 1, 3, 3, 1, 1, std::tuple<size_t, size_t>(1, 1),
+      std::tuple<size_t, size_t>(1, 1), 7, 7, "valid");
+
+  // Test the Forward function.
+  input = arma::linspace<arma::colvec>(0, 48, 49);
+  module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module1.Reset();
+  module1.Forward(std::move(input), std::move(output));
+
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
+  BOOST_REQUIRE_EQUAL(output.n_rows, 25);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+
+  // Test the Backward function.
+  module1.Backward(std::move(input), std::move(output), std::move(delta));
+
+  // Check same padding option.
+  Convolution<> module2(1, 1, 3, 3, 1, 1, std::tuple<size_t, size_t>(0, 0),
+      std::tuple<size_t, size_t>(0, 0), 7, 7, "same");
+
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 48, 49);
+  module2.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module2.Reset();
+  module2.Forward(std::move(input), std::move(output));
+
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
+  BOOST_REQUIRE_EQUAL(output.n_rows, 49);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+
+  // Test the backward function.
+  module2.Backward(std::move(input), std::move(output), std::move(delta));
 }
 
 BOOST_AUTO_TEST_SUITE_END();
