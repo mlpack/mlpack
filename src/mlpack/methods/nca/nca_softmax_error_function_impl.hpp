@@ -14,8 +14,6 @@
 
 // In case it hasn't been included already.
 #include "nca_softmax_error_function.hpp"
-#include <mlpack/core/math/make_alias.hpp>
-#include <mlpack/core/math/shuffle_data.hpp>
 
 #include <mlpack/core.hpp>
 
