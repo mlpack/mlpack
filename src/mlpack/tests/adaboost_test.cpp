@@ -891,7 +891,6 @@ BOOST_AUTO_TEST_CASE(ID3DecisionStumpSerializationTest)
                         abText.WeakLearner(i).SplitDimension());
     BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).SplitDimension(),
                         abBinary.WeakLearner(i).SplitDimension());
-
   }
 }
 

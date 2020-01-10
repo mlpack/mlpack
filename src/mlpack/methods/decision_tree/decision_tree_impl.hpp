@@ -272,7 +272,7 @@ DecisionTree<FitnessFunction,
 
   // Pass off work to the weighted Train() method.
   Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, tmpWeights,
-              minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
+      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
 }
 
 //! Construct, don't train.
