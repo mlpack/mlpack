@@ -27,6 +27,14 @@ g++ -std=c++11 filename.cpp -o filename -lmlpack -larmadillo
 ./filename
 @endcode
 
+If @c pkg-config is installed:
+
+@code{.sh}
+g++ -std=c++11 filename.cpp -o filename \
+`pkg-config --cflags --libs mlpack armadillo`
+./filename
+@endcode
+
 @subsection compile_using_clang Compile Using Clang
 
 @code{.sh}
@@ -34,10 +42,45 @@ clang++ -Wall filename.cpp -o filename -lmlpack -larmadillo
 ./filename
 @endcode
 
+If @c pkg-config is installed:
+
+@code{.sh}
+clang++ -Wall filename.cpp -o filename \
+`pkg-config --cflags --libs mlpack armadillo`
+./filename
+@endcode
+
 @note
 Flags like @c -lboost_serialization might be required depending upon the 
 code. If you are using LAPACK and BLAS instead of Armadillo the @c -llapack
 and @c -lblas would be required instead of @c -larmadillo
+
+@subsection compile_using_cmake Compile Using Cmake
+
+In /src
+  - filename.cpp
+  - CMakeLists.txt
+
+@code
+# CMakeLists.txt
+cmake_minimum_required(VERSION 3.10)
+
+# set the project name
+project(Project_Name VERSION 1.0)
+
+add_executable(Project_Name filename.cpp)
+
+target_link_libraries(Project_Name -lmlpack)
+target_link_libraries(Project_Name -larmadillo)
+@endcode
+
+Steps to build and run using CMake:
+@code{.sh}
+#In target directory for executable, run the command:
+cmake path/to/src 
+cmake --build .
+./Project_Name
+@endcode
 
 @section covariance Covariance Computation
 
