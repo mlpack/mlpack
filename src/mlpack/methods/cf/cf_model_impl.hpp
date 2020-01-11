@@ -150,11 +150,16 @@ void CFModel::Train(const MatType& data,
         decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
         mit);
   }
-  else
+  else if (normalization == "none")
   {
     cf = new CFType<DecompositionPolicy, NoNormalization>(data,
         decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
         mit);
+  }
+  else
+  {
+    throw std::runtime_error("Unsupported Normalization Algorithm."
+                             "Please refer to help (-h) section for details");
   }
 }
 

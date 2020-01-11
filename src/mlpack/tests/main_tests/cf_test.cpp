@@ -616,4 +616,102 @@ BOOST_AUTO_TEST_CASE(CFNeighborSearchTest)
   BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output3)));
 }
 
+/**
+ * Ensure normalization algorithm is one of { "none", "zScore",
+ * "itemMean", "userMean" }.
+ */
+BOOST_AUTO_TEST_CASE(CFNormalizationBoundTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+
+  const int querySize = 7;
+  Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
+
+  SetInputParam("neighbor_search", std::string("cosine"));
+  SetInputParam("algorithm", std::string("NMF"));
+
+  // normalization algorithm should be valid.
+  SetInputParam("normalization", std::string("invalid_normalization"));
+  SetInputParam("training", std::move(dataset));
+  SetInputParam("query", query);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Ensure that using normalization techniques make difference.
+ */
+BOOST_AUTO_TEST_CASE(CFNormalizationTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+
+  const int querySize = 7;
+  Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
+
+  // Query with different normalization techniques.
+  ResetSettings();
+
+  SetInputParam("training", dataset);
+  SetInputParam("max_iterations", int(10));
+  SetInputParam("query", query);
+  SetInputParam("algorithm", std::string("NMF"));
+
+  // Using without Normalization.
+  SetInputParam("normalization", std::string("none"));
+  SetInputParam("recommendations", 5);
+
+  mlpackMain();
+
+  const arma::Mat<size_t> output1 = CLI::GetParam<arma::Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output1.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(output1.n_cols, 7);
+
+  // Query with different normalization techniques.
+  ResetSettings();
+
+  SetInputParam("training", dataset);
+  SetInputParam("max_iterations", int(10));
+  SetInputParam("query", query);
+  SetInputParam("algorithm", std::string("NMF"));
+
+  // Using without Normalization.
+  SetInputParam("normalization", std::string("itemMean"));
+  SetInputParam("recommendations", 5);
+
+  mlpackMain();
+
+  const arma::Mat<size_t> output2 = CLI::GetParam<arma::Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output2.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(output2.n_cols, 7);
+
+  // Query with different normalization techniques.
+  ResetSettings();
+
+  SetInputParam("training", dataset);
+  SetInputParam("max_iterations", int(10));
+  SetInputParam("query", query);
+  SetInputParam("algorithm", std::string("NMF"));
+
+  // Using without Normalization.
+  SetInputParam("normalization", std::string("zScore"));
+  SetInputParam("recommendations", 5);
+
+  mlpackMain();
+
+  const arma::Mat<size_t> output3 = CLI::GetParam<arma::Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output3.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(output3.n_cols, 7);
+
+  // The resulting matrices should be different.
+  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output3)));
+}
+
 BOOST_AUTO_TEST_SUITE_END();
