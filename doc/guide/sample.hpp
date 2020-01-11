@@ -20,18 +20,24 @@ compiled easily with g++ or clang from the command line.
 
 Typically the following commands would be used to compile and run the C++ files.
 
-@code{.sh}
-g++ -std=c++11 filename.cpp -o filename
-./filename
-@endcode
-
-If the above commands don't work, it is probably a linker issue. For this, you
-could link the necessary libraries using the following commands.
+@subsection compile_using_gcc Compile Using GCC
 
 @code{.sh}
 g++ -std=c++11 filename.cpp -o filename -lmlpack -larmadillo
 ./filename
 @endcode
+
+@subsection compile_using_clang Compile Using Clang
+
+@code{.sh}
+clang++ -Wall filename.cpp -o filename -lmlpack -larmadillo
+./filename
+@endcode
+
+@note
+Flags like @c -lboost_serialization might be required depending upon the 
+code. If you are using LAPACK and BLAS instead of Armadillo the @c -llapack
+and @c -lblas would be required instead of @c -larmadillo
 
 @section covariance Covariance Computation
 
