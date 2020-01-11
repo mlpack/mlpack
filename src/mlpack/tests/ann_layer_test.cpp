@@ -2948,7 +2948,7 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   // Value calculated using tensorflow.nn.conv2d_transpose().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0.0);
   // Test Valid for non zero padding.
-  TransposedConvolution<> module2(1, 1, 3, 3, 2, 2, std::tuple<size_t, size_t>(0, 0), 
+  TransposedConvolution<> module2(1, 1, 3, 3, 2, 2, std::tuple<size_t, size_t>(0, 0),
     std::tuple<size_t, size_t>(0, 0), 2, 2, 5, 5, "VALID");
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 3, 4);
@@ -2985,7 +2985,7 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
 
 
   // Output shape should equal input.
-  TransposedConvolution<> module5(1, 1, 3, 3, 1, 1, std::tuple<size_t, size_t>(2, 2), 
+  TransposedConvolution<> module5(1, 1, 3, 3, 1, 1, std::tuple<size_t, size_t>(2, 2),
     std::tuple<size_t, size_t>(2, 2), 5, 5, 5, 5, "SAME");
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
