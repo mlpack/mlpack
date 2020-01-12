@@ -243,6 +243,7 @@ class LARS
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
+
   /**
    * Compute cost error in the given data matrix using the
    * currently-trained LARS model. Only ||y-betaX||2 is used to calculate
@@ -343,7 +344,6 @@ class LARS
                     arma::mat& G);
 
   void CholeskyDelete(const size_t colToKill);
-
 };
 
 } // namespace regression

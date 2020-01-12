@@ -415,7 +415,6 @@ BOOST_AUTO_TEST_CASE(LARSTestComputeError)
   double cost = lars1.ComputeError(X, y);
 
   BOOST_REQUIRE_EQUAL(std::isfinite(cost), true);
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();
