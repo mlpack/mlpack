@@ -102,11 +102,12 @@ TransposedConvolution<
   size_t totalPadHeight = padHTop + padHBottom;
   aW  = (outputWidth + totalPadWidth - kernelWidth) % strideWidth;
   aH  = (outputHeight + totalPadHeight - kernelHeight) % strideHeight;
-  const size_t padWidthForward = kernelWidth - padWLeft - 1;
-  const size_t padHeightForward = kernelHeight - padHTop - 1;
-
-  paddingForward = ann::Padding<>(padWidthForward, padWidthForward + aW,
-      padHeightForward, padHeightForward + aH);
+  const size_t padWidthLeftForward = kernelWidth - padWLeft - 1;
+  const size_t padHeightTopForward = kernelHeight - padHTop - 1;
+  const size_t padWidthRightForward = kernelWidth - padWRight - 1;
+  const size_t padHeightBottomtForward = kernelHeight - padHBottom - 1;
+  paddingForward = ann::Padding<>(padWidthLeftForward, padWidthRightForward + aW,
+                                  padHeightTopForward, padHeightBottomtForward + aH);
   paddingBackward = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 
   // Check if the output height and width are possible given the other
@@ -186,12 +187,12 @@ TransposedConvolution<
   size_t totalPadHeight = padHTop + padHBottom;
   aW  = (outputWidth + totalPadWidth - kernelWidth) % strideWidth;
   aH  = (outputHeight + totalPadHeight - kernelHeight) % strideHeight;
-  const size_t padWidthForward = kernelWidth - padWLeft - 1;
-  const size_t padHeightForward = kernelHeight - padHTop - 1;
+  const size_t padWidthLeftForward = kernelWidth - padWLeft - 1;
+  const size_t padHeightTopForward = kernelHeight - padHTop - 1;
   const size_t padWidthRightForward = kernelWidth - padWRight - 1;
   const size_t padHeightBottomtForward = kernelHeight - padHBottom - 1;
-  paddingForward = ann::Padding<>(padWidthForward, padWidthRightForward + aW,
-                                  padHeightForward, padHeightBottomtForward + aH);
+  paddingForward = ann::Padding<>(padWidthLeftForward, padWidthRightForward + aW,
+                                  padHeightTopForward, padHeightBottomtForward + aH);
   paddingBackward = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 
   // Check if the output height and width are possible given the other
