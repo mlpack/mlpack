@@ -539,9 +539,19 @@ void LARS::CholeskyDelete(const size_t colToKill)
   }
 }
 
-arma::mat LARS::ComputeError(const arma::mat& matX,
-                             const arma::rowvec& y)
+double LARS::ComputeError(const arma::mat& matX,
+                          const arma::rowvec& y,
+                          const bool rowMajor)
 {
-  arma::mat cost = arma::inv(arma::trans(matX)*matX)*arma::trans(matX)*y;
+  double cost = 0.0;
+  arma::rowvec u;
+  if (rowMajor)
+    u = trans(matX * betaPath.back());
+  else
+    u = betaPath.back().t() * matX;
+  for (size_t i = 0; i < y.size(); i++)
+  {
+    cost = cost + std::fabs(y[i]-u[i])*std::fabs(y[i]-u[i]);
+  }
   return cost;
 }
