@@ -106,8 +106,9 @@ TransposedConvolution<
   const size_t padHeightTopForward = kernelHeight - padHTop - 1;
   const size_t padWidthRightForward = kernelWidth - padWRight - 1;
   const size_t padHeightBottomtForward = kernelHeight - padHBottom - 1;
-  paddingForward = ann::Padding<>(padWidthLeftForward, padWidthRightForward + aW,
-                                  padHeightTopForward, padHeightBottomtForward + aH);
+  paddingForward = ann::Padding<>(padWidthLeftForward,
+                    padWidthRightForward + aW, padHeightTopForward,
+                    padHeightBottomtForward + aH);
   paddingBackward = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 
   // Check if the output height and width are possible given the other
@@ -191,8 +192,9 @@ TransposedConvolution<
   const size_t padHeightTopForward = kernelHeight - padHTop - 1;
   const size_t padWidthRightForward = kernelWidth - padWRight - 1;
   const size_t padHeightBottomtForward = kernelHeight - padHBottom - 1;
-  paddingForward = ann::Padding<>(padWidthLeftForward, padWidthRightForward + aW,
-                                  padHeightTopForward, padHeightBottomtForward + aH);
+  paddingForward = ann::Padding<>(padWidthLeftForward,
+                    padWidthRightForward + aW, padHeightTopForward,
+                    padHeightBottomtForward + aH);
   paddingBackward = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 
   // Check if the output height and width are possible given the other
