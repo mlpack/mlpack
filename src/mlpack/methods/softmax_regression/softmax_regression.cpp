@@ -142,4 +142,5 @@ double SoftmaxRegression::ComputeAccuracy(
 }
 
 } // namespace regression
+
 } // namespace mlpack

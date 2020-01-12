@@ -56,7 +56,7 @@ double SoftmaxRegression::Train(const arma::mat& data,
 
   // Train the model.
   Timer::Start("softmax_regression_optimization");
-  const double out = optimizer.Optimize(regressor, parameters);
+  const double out = optimizer.Optimize(regressor, parameters, callbacks...);
   Timer::Stop("softmax_regression_optimization");
 
   Log::Info << "SoftmaxRegression::SoftmaxRegression(): final objective of "
@@ -66,6 +66,7 @@ double SoftmaxRegression::Train(const arma::mat& data,
 }
 
 } // namespace regression
+
 } // namespace mlpack
 
 #endif
