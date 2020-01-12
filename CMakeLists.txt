@@ -13,9 +13,11 @@ option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
+option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
+option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
 
 if (WIN32)
   option(BUILD_SHARED_LIBS
@@ -47,6 +49,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
+
+# Disable any downloads if needed.
+if (DISABLE_DOWNLOADS)
+  set(DOWNLOAD_ENSMALLEN OFF)
+  set(DOWNLOAD_STB_IMAGE OFF)
+endif ()
 
 # If we are on a Unix-like system, use the GNU install directories module.
 # Otherwise set the values manually.
@@ -237,6 +245,7 @@ endif()
 #   BOOST_INCLUDEDIR - include directory for Boost
 #   BOOST_LIBRARYDIR - library directory for Boost
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
+#   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
 
 find_package(Armadillo 8.400.0 REQUIRED)
@@ -465,6 +474,12 @@ set(Boost_ADDITIONAL_VERSIONS
   "1.51.1" "1.51.0" "1.51"
   "1.50.1" "1.50.0" "1.50"
   "1.49.1" "1.49.0" "1.49")
+# Disable forced config-mode CMake search for Boost, which only imports targets
+# and does not set the variables that we need.
+#
+# TODO for the brave: transition all mlpack's CMake to 'target-based modern
+# CMake'.  Good luck!  You'll need it.
+set(Boost_NO_BOOST_CMAKE 1)
 find_package(Boost 1.49
     COMPONENTS
       program_options
@@ -716,7 +731,7 @@ if (PKG_CONFIG_FOUND)
     if ("${first}" STREQUAL "/")
       # We need to split the directory and the library.
       string(REGEX REPLACE "(.*/)[^/]*$" "\\1" library_dir "${lib}")
-      string(REGEX REPLACE ".*/lib([^/]*).so.*$" "\\1" library_name "${lib}")
+      string(REGEX REPLACE ".*/lib([^/]*)[.][a-z]*[.]*$" "\\1" library_name "${lib}")
 
       list(APPEND MLPACK_LIBRARIES_LIST "-L${library_dir}")
       list(APPEND MLPACK_LIBRARIES_LIST "-l${library_name}")

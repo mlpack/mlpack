@@ -271,7 +271,9 @@ class FFN
   {
     return network;
   }
-  //! Modify the network model.
+  //! Modify the network model.  Be careful!  If you change the structure of the
+  //! network or parameters for layers, its state may become invalid, so be sure
+  //! to call ResetParameters() afterwards.
   std::vector<LayerTypes<CustomLayers...> >& Model() { return network; }
 
   //! Return the number of separable functions (the number of predictor points).
