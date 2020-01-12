@@ -188,9 +188,10 @@ TransposedConvolution<
   aH  = (outputHeight + totalPadHeight - kernelHeight) % strideHeight;
   const size_t padWidthForward = kernelWidth - padWLeft - 1;
   const size_t padHeightForward = kernelHeight - padHTop - 1;
-
-  paddingForward = ann::Padding<>(padWidthForward, padWidthForward + aW,
-      padHeightForward, padHeightForward + aH);
+  const size_t padWidthRightForward = kernelWidth - padWRight - 1;
+  const size_t padHeightBottomtForward = kernelHeight - padHBottom - 1;
+  paddingForward = ann::Padding<>(padWidthForward, padWidthRightForward + aW,
+                                  padHeightForward, padHeightBottomtForward + aH);
   paddingBackward = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 
   // Check if the output height and width are possible given the other
@@ -493,6 +494,10 @@ void TransposedConvolution<
     ar & BOOST_SERIALIZATION_NVP(padWidth);
     ar & BOOST_SERIALIZATION_NVP(padHeight);
   }
+  ar &BOOST_SERIALIZATION_NVP(padWLeft);
+  ar &BOOST_SERIALIZATION_NVP(padWRight);
+  ar &BOOST_SERIALIZATION_NVP(padHBottom);
+  ar &BOOST_SERIALIZATION_NVP(padHTop);
   ar & BOOST_SERIALIZATION_NVP(inputWidth);
   ar & BOOST_SERIALIZATION_NVP(inputHeight);
   ar & BOOST_SERIALIZATION_NVP(outputWidth);
