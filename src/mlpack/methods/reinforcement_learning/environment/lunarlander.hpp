@@ -108,7 +108,8 @@ class LunarLander
       elapsedTime(elapsedTime),
       velocity(velocity),
       height(height),
-      fuelRemaining(fuelRemaining)
+      fuelRemaining(fuelRemaining),
+      doneReward(doneReward)
   { /* Nothing to do here */ }
 
   /**
@@ -253,8 +254,14 @@ class LunarLander
    */
   State InitialSample()
   {
+    State state;
     stepsPerformed = 0;
-    return State({elapsedTime, height, velocity, fuelRemaining});
+    doneReward = 100;
+    state.ElapsedTime() = 0,
+    state.Speed() = arma::as_scalar(arma::randu(1)) * 50;
+    state.Height() = arma::as_scalar(arma::randu(1)) * 1000;
+    state.Fuel() = arma::as_scalar(arma::randu(1)) * 150;
+    return state;
   }
 
   /**
