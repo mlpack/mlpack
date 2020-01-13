@@ -2974,5 +2974,18 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 
+  // Output shape should equal input.
+  TransposedConvolution<> module4(1, 1, 3, 3, 1, 1,
+    std::tuple<size_t, size_t>(2, 2), std::tuple<size_t, size_t>(2, 2),
+    5, 5, 5, 5, "SAME");
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 24, 25);
+  module4.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module4.Reset();
+  module4.Forward(std::move(input), std::move(output));
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+
 }
 BOOST_AUTO_TEST_SUITE_END();
