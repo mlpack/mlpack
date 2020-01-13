@@ -228,7 +228,7 @@ https://mlpack.org/
 
 https://github.com/mlpack/mlpack
 
-Alternately, mlpack help can be found in IRC at \#mlpack on irc.freenode.net.
+Alternately, mlpack help can be found in IRC at \#mlpack on chat.freenode.net.
 
 @section install Installing mlpack
 
