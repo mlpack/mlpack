@@ -2973,7 +2973,6 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
-
   // Output shape should equal input.
   TransposedConvolution<> module4(1, 1, 3, 3, 1, 1,
     std::tuple<size_t, size_t>(2, 2), std::tuple<size_t, size_t>(2, 2),
