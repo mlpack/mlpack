@@ -2986,6 +2986,5 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
-
 }
 BOOST_AUTO_TEST_SUITE_END();
