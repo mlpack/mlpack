@@ -212,7 +212,7 @@ and submit an issue. The mlpack developers will quickly help you figure it out:
 
 [mlpack on Github](https://www.github.com/mlpack/mlpack/)
 
-Alternately, mlpack help can be found in IRC at `#mlpack` on irc.freenode.net.
+Alternately, mlpack help can be found in IRC at `#mlpack` on chat.freenode.net.
 
 If you wish to install mlpack to `/usr/local/include/mlpack/`, `/usr/local/lib/`,
 and `/usr/local/bin/`, make sure you have root privileges (or write permissions 
