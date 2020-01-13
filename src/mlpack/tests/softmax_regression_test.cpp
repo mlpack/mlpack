@@ -241,7 +241,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFitIntercept)
   }
 
   // Now train a logistic regression object on it.
-  SoftmaxRegression lr(data, responses, 2, 0.01);
+  SoftmaxRegression lr(data, responses, 2, 0.01, true);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
@@ -360,8 +360,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainTest)
   SoftmaxRegression sr(dataset.n_rows, 2);
   SoftmaxRegression sr2(dataset.n_rows, 2);
   sr.Parameters() = sr2.Parameters();
-  ens::StandardSGD sgd;
-  sr.Train<>(dataset, labels, 2, sgd);
+  sr.Train<>(dataset, labels, 2);
   ens::L_BFGS lbfgs;
   sr2.Train(dataset, labels, 2, std::move(lbfgs));
 
