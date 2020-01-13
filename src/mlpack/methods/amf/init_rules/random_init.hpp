@@ -51,6 +51,40 @@ class RandomInitialization
     H.randu(r, m);
   }
 
+  /**
+   * Fill W or H with random uniform noise.
+   *
+   * @param V Input matrix.
+   * @param r Rank of decomposition.
+   * @param whichMatrix Specify which matrix to initialize.
+   * @param M W or H matrix, to be filled with random noise.
+   */
+  template<typename MatType>
+  inline void InitializeOne(const MatType& V, 
+                            const size_t r, 
+                            const char whichMatrix, 
+                            arma::mat& M)
+  {
+    // Simple implementation (left in the header file due to its simplicity).
+    const size_t n = V.n_rows;
+    const size_t m = V.n_cols;
+    
+    // Initialize W or H to random values
+    if (whichMatrix == 'W' || whichMatrix == 'w') 
+    {
+      M.randu(n, r);
+    }
+    else if (whichMatrix == 'H' || whichMatrix == 'h') 
+    {
+      M.randu(r, m);
+    }
+    else 
+    {
+      Log::Fatal << "Specify either 'H' or 'W' when initializing "
+          "one of W and H matrices!" << std::endl;
+    }
+  }
+
   //! Serialize the object (in this case, there is nothing to serialize).
   template<typename Archive>
   void serialize(Archive& /* ar */, const unsigned int /* version */) { }
