@@ -102,7 +102,6 @@ class SoftmaxRegression
    * The function calculates the probabilities for every class, given a data
    * point. It then chooses the class which has the highest probability among
    * all.
-   *
    * @param dataset Set of points to classify.
    * @param labels Predicted labels for each point.
    */  
@@ -111,7 +110,6 @@ class SoftmaxRegression
    * Classify the given point. The predicted class label is returned.
    * The function calculates the probabilites for every class, given the point.
    * It then chooses the class which has the highest probability among all.
-   *
    * @param point Point to be classified.
    * @return Predicted class label of the point.
    */
