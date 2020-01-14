@@ -122,10 +122,11 @@ If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
 ### 4. Building mlpack from source
 
-This section discusses how to build mlpack from source.  However, mlpack is in
-the repositories of many Linux distributions, so it may be easier to use the
-package manager for your system.  For example, on Ubuntu, you can install mlpack
-with the following command:
+This document discusses how to build mlpack from source. These build directions 
+will work for any Linux-like shell environment (for example Ubuntu, macOS,
+FreeBSD etc). However, mlpack is in the repositories of many Linux distributions 
+and so it may be easier to use the package manager for your system.  For example, 
+on Ubuntu, you can install mlpack with the following command:
 
     $ sudo apt-get install libmlpack-dev
 
@@ -216,7 +217,7 @@ and submit an issue. The mlpack developers will quickly help you figure it out:
 
 [mlpack on Github](https://www.github.com/mlpack/mlpack/)
 
-Alternately, mlpack help can be found in IRC at `#mlpack` on irc.freenode.net.
+Alternately, mlpack help can be found in IRC at `#mlpack` on chat.freenode.net.
 
 If you wish to install mlpack to `/usr/local/include/mlpack/`, `/usr/local/lib/`,
 and `/usr/local/bin/`, make sure you have root privileges (or write permissions 
