@@ -16,6 +16,7 @@
 #include <mlpack/methods/amf/amf.hpp>
 #include <mlpack/methods/amf/init_rules/random_init.hpp>
 #include <mlpack/methods/amf/init_rules/given_init.hpp>
+#include <mlpack/methods/amf/init_rules/merge_init.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_mult_dist.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_mult_div.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_als.hpp>
