@@ -87,9 +87,14 @@ class BayesianRidge
    *    examples.
    * @param scaleData Whether or to scale the data according to the
    *    standard deviation of each feature.
+   * @param nIterMax Maximum number of iterations for convergency.
+   * @param tol Level from which the solution is considered sufficientlly 
+   *    stable.  
    **/
   BayesianRidge(const bool centerData = true,
-                const bool scaleData = false);
+                const bool scaleData = false,
+                const int nIterMax = 50,
+                const double tol = 1e-4);
 
   /**
    * Run BayesianRidge regression. The input matrix (like all mlpack matrices)
@@ -253,6 +258,12 @@ class BayesianRidge
   //! Scale the data by standard deviations if true.
   bool scaleData;
 
+  //! Maximum number of iterations for convergency.
+  int nIterMax;
+
+  //! Level from which the solution is considered sufficientlly stable.
+  double tol;
+  
   //! Mean vector computed over the points.
   arma::colvec dataOffset;
 
