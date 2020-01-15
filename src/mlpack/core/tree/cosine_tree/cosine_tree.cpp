@@ -17,12 +17,12 @@
 namespace mlpack {
 namespace tree {
 
-CosineTree::CosineTree(arma::mat* dataset) :
-    dataset(dataset),
+CosineTree::CosineTree(const arma::mat& dataset) :
+    dataset(&dataset),
     parent(NULL),
     left(NULL),
     right(NULL),
-    numColumns(dataset->n_cols)
+    numColumns(dataset.n_cols)
 {
   // Initialize sizes of column indices and l2 norms.
   indices.resize(numColumns);
@@ -32,7 +32,7 @@ CosineTree::CosineTree(arma::mat* dataset) :
   for (size_t i = 0; i < numColumns; i++)
   {
     indices[i] = i;
-    double l2Norm = arma::norm(dataset->col(i), 2);
+    double l2Norm = arma::norm(dataset.col(i), 2);
     l2NormsSquared(i) = l2Norm * l2Norm;
   }
 
@@ -47,7 +47,7 @@ CosineTree::CosineTree(arma::mat* dataset) :
 
 CosineTree::CosineTree(CosineTree& parentNode,
                        const std::vector<size_t>& subIndices) :
-    dataset(parentNode.GetDataset()),
+    dataset(&parentNode.GetDataset()),
     parent(&parentNode),
     left(NULL),
     right(NULL),
@@ -73,10 +73,10 @@ CosineTree::CosineTree(CosineTree& parentNode,
   splitPointIndex = ColumnSampleLS();
 }
 
-CosineTree::CosineTree(arma::mat* dataset,
+CosineTree::CosineTree(const arma::mat& dataset,
                        const double epsilon,
                        const double delta) :
-    dataset(dataset),
+    dataset(&dataset),
     delta(delta),
     left(NULL),
     right(NULL)
@@ -86,7 +86,7 @@ CosineTree::CosineTree(arma::mat* dataset,
 
   // Define root node of the tree and add it to the queue.
   CosineTree root(dataset);
-  arma::vec tempVector = arma::zeros(dataset->n_rows);
+  arma::vec tempVector = arma::zeros(dataset.n_rows);
   root.L2Error(-1.0); // We don't know what the error is.
   root.BasisVector(tempVector);
   treeQueue.push(&root);
@@ -152,11 +152,11 @@ CosineTree::CosineTree(arma::mat* dataset,
 
 //! Copy the given tree.
 CosineTree::CosineTree(const CosineTree& other) :
-    dataset(other.parent->GetDataset()),
+    dataset(other.dataset),
     delta(other.delta),
-    parent(other.Parent()),
-    left(other.Left()),
-    right(other.Right()),
+    parent(NULL),
+    left(NULL),
+    right(NULL),
     indices(other.indices),
     l2NormsSquared(other.l2NormsSquared),
     centroid(other.centroid),
@@ -212,7 +212,7 @@ CosineTree& CosineTree::operator=(const CosineTree& other)
   delete left;
   delete right;
 
-  dataset = (other.parent == NULL) ? other.parent->GetDataset() : NULL;
+  dataset = (other.parent == NULL) ? other.dataset : NULL;
   delta = other.delta;
   parent = other.Parent();
   left = other.Left();
@@ -286,9 +286,9 @@ CosineTree::CosineTree(CosineTree&& other) :
   other.left = NULL;
   other.right = NULL;
   other.splitPointIndex = 0;
-  other.numColumns = dataset->n_cols;
+  other.numColumns = 0;
   other.l2Error = -1;
-  other.frobNormSquared = arma::accu(l2NormsSquared);
+  other.frobNormSquared = 0;
   // Set new parent.
   if (left)
     left->parent = this;
@@ -327,10 +327,10 @@ CosineTree& CosineTree::operator=(CosineTree&& other)
   other.parent = NULL;
   other.left = NULL;
   other.right = NULL;
-  other.splitPointIndex = ColumnSampleLS();
-  other.numColumns = dataset->n_cols;
+  other.splitPointIndex = 0;
+  other.numColumns = 0;
   other.l2Error = -1;
-  other.frobNormSquared = arma::accu(l2NormsSquared);
+  other.frobNormSquared = 0;
   // Set new parent.
   if (left)
     left->parent = this;
@@ -396,7 +396,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
   node->ColumnSamplesLS(sampledIndices, probabilities, numSamples);
 
   // Get pointer to the original dataset.
-  arma::mat* dataset = node->GetDataset();
+  const arma::mat& dataset = node->GetDataset();
 
   // Initialize weighted projection magnitudes as zeros.
   arma::vec weightedMagnitudes;
@@ -426,15 +426,15 @@ double CosineTree::MonteCarloError(CosineTree* node,
     {
       currentNode = *j;
 
-      projection(k) = arma::dot(dataset->col(sampledIndices[i]),
+      projection(k) = arma::dot(dataset.col(sampledIndices[i]),
                                 currentNode->BasisVector());
     }
     // If two additional vectors are passed, take their projections.
     if (addBasisVector1 && addBasisVector2)
     {
-      projection(k++) = arma::dot(dataset->col(sampledIndices[i]),
+      projection(k++) = arma::dot(dataset.col(sampledIndices[i]),
                                   *addBasisVector1);
-      projection(k) = arma::dot(dataset->col(sampledIndices[i]),
+      projection(k) = arma::dot(dataset.col(sampledIndices[i]),
                                 *addBasisVector2);
     }
 

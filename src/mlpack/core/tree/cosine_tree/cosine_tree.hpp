@@ -37,7 +37,7 @@ class CosineTree
    *
    * @param dataset Matrix for which cosine tree is constructed.
    */
-  CosineTree(arma::mat* dataset);
+  CosineTree(const arma::mat& dataset);
 
   /**
    * CosineTree constructor for nodes other than the root node of the tree. It
@@ -64,7 +64,7 @@ class CosineTree
    * @param epsilon Error tolerance fraction for calculated subspace.
    * @param delta Cumulative probability for Monte Carlo error lower bound.
    */
-  CosineTree(arma::mat* dataset,
+  CosineTree(const arma::mat& dataset,
              const double epsilon,
              const double delta);
 
@@ -198,7 +198,7 @@ class CosineTree
   void GetFinalBasis(arma::mat& finalBasis) { finalBasis = basis; }
 
   //! Get pointer to the dataset matrix.
-  arma::mat* GetDataset() { return dataset; }
+  const arma::mat& GetDataset() const { return *dataset; }
 
   //! Get the indices of columns in the node.
   std::vector<size_t>& VectorIndices() { return indices; }
@@ -243,7 +243,7 @@ class CosineTree
 
  private:
   //! Matrix for which cosine tree is constructed.
-  arma::mat* dataset;
+  const arma::mat* dataset;
   //! Cumulative probability for Monte Carlo error lower bound.
   double delta;
   //! Subspace basis of the input dataset.

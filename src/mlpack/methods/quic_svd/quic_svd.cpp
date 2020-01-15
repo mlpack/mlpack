@@ -30,11 +30,11 @@ QUIC_SVD::QUIC_SVD(arma::mat& dataset,
   // necessary for maximum speedup.
   CosineTree* ctree;
   if (dataset.n_cols > dataset.n_rows)
-    ctree = new CosineTree(&dataset, epsilon, delta);
+    ctree = new CosineTree(dataset, epsilon, delta);
   else
   {
     arma::mat new_dataset = dataset.t();
-    ctree = new CosineTree(&new_dataset, epsilon, delta);
+    ctree = new CosineTree(new_dataset, epsilon, delta);
   }
 
   // Get subspace basis by creating the cosine tree.
