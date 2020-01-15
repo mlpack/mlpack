@@ -95,14 +95,9 @@ BOOST_AUTO_TEST_CASE(TestCenter1Normalize1)
   arma::colvec xStd = arma::stddev(X, 0, 1);
   double yMean = arma::mean(y);
 
-  BOOST_REQUIRE_SMALL((double) abs(sum(estimator.DataOffset() - xMean)),
-                      1e-6);
-
-  BOOST_REQUIRE_SMALL((double) abs(estimator.ResponsesOffset() - yMean),
-                      1e-6);
-
-  BOOST_REQUIRE_SMALL((double) abs(sum(estimator.DataScale() - xStd)),
-                      1e-6);
+  BOOST_REQUIRE_SMALL((double) abs(sum(estimator.DataOffset() - xMean)), 1e-6);
+  BOOST_REQUIRE_SMALL((double) abs(estimator.ResponsesOffset() - yMean), 1e-6);
+  BOOST_REQUIRE_SMALL((double) abs(sum(estimator.DataScale() - xStd)), 1e-6);
 }
 
 // Check that Train() return -1 if X is singular.
@@ -117,7 +112,7 @@ BOOST_AUTO_TEST_CASE(SingularMatix)
 
   BayesianRidge estimator;
   double singular = estimator.Train(X, y);
-  BOOST_REQUIRE(singular == -1);
+  BOOST_REQUIRE(singular  == -1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
