@@ -41,7 +41,7 @@ PCA<DecompositionPolicy>::PCA(
  * @param eigvec - PCA Loadings/Coeffs/EigenVectors
  */
 template<typename DecompositionPolicy>
-void PCA<DecompositionPolicy>::Apply(arma::mat& data,
+void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
                                      arma::mat& transformedData,
                                      arma::vec& eigVal,
                                      arma::mat& eigvec)
@@ -69,7 +69,7 @@ void PCA<DecompositionPolicy>::Apply(arma::mat& data,
  * @param eigVal - contains eigen values in a column vector
  */
 template<typename DecompositionPolicy>
-void PCA<DecompositionPolicy>::Apply(arma::mat& data,
+void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
                                      arma::mat& transformedData,
                                      arma::vec& eigVal)
 {

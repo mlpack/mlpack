@@ -51,7 +51,7 @@ class PCA
    * @param eigval Vector to put eigenvalues into.
    * @param eigvec Matrix to put eigenvectors (loadings) into.
    */
-  void Apply(arma::mat& data,
+  void Apply(const arma::mat& data,
              arma::mat& transformedData,
              arma::vec& eigVal,
              arma::mat& eigvec);
@@ -64,7 +64,7 @@ class PCA
    * @param transformedData Matrix to store results of PCA in.
    * @param eigVal Vector to put eigenvalues into.
    */
-  void Apply(arma::mat& data,
+  void Apply(const arma::mat& data,
              arma::mat& transformedData,
              arma::vec& eigVal);
 
