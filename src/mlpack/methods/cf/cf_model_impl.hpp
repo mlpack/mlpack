@@ -158,8 +158,8 @@ void CFModel::Train(const MatType& data,
   }
   else
   {
-    throw std::runtime_error("Unsupported normalization algorithm." 
-                             "It should be one of none, overall_mean, " 
+    throw std::runtime_error("Unsupported normalization algorithm."
+                             " It should be one of none, overall_mean, "
                              "item_mean, user_mean or z_score");
   }
 }
