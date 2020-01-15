@@ -617,8 +617,8 @@ BOOST_AUTO_TEST_CASE(CFNeighborSearchTest)
 }
 
 /**
- * Ensure normalization algorithm is one of { "none", "zScore",
- * "itemMean", "userMean" }.
+ * Ensure normalization algorithm is one of { "none", "z_score",
+ * "item_mean", "user_mean" }.
  */
 BOOST_AUTO_TEST_CASE(CFNormalizationBoundTest)
 {
@@ -631,7 +631,7 @@ BOOST_AUTO_TEST_CASE(CFNormalizationBoundTest)
   SetInputParam("neighbor_search", std::string("cosine"));
   SetInputParam("algorithm", std::string("NMF"));
 
-  // normalization algorithm should be valid.
+  // Normalization algorithm should be valid.
   SetInputParam("normalization", std::string("invalid_normalization"));
   SetInputParam("training", std::move(dataset));
   SetInputParam("query", query);
@@ -679,8 +679,8 @@ BOOST_AUTO_TEST_CASE(CFNormalizationTest)
   SetInputParam("query", query);
   SetInputParam("algorithm", std::string("NMF"));
 
-  // Using without Normalization.
-  SetInputParam("normalization", std::string("itemMean"));
+  // Using Item Mean normalization.
+  SetInputParam("normalization", std::string("item_mean"));
   SetInputParam("recommendations", 5);
 
   mlpackMain();
@@ -698,8 +698,8 @@ BOOST_AUTO_TEST_CASE(CFNormalizationTest)
   SetInputParam("query", query);
   SetInputParam("algorithm", std::string("NMF"));
 
-  // Using without Normalization.
-  SetInputParam("normalization", std::string("zScore"));
+  // Using Z-Score normalization.
+  SetInputParam("normalization", std::string("z_score"));
   SetInputParam("recommendations", 5);
 
   mlpackMain();

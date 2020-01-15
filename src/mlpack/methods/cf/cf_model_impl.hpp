@@ -126,25 +126,25 @@ void CFModel::Train(const MatType& data,
 
   // Instantiate a new CFType object.
   DecompositionPolicy decomposition;
-  if (normalization == "overallMean")
+  if (normalization == "overall_mean")
   {
     cf = new CFType<DecompositionPolicy, OverallMeanNormalization>(data,
         decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
         mit);
   }
-  else if (normalization == "itemMean")
+  else if (normalization == "item_mean")
   {
     cf = new CFType<DecompositionPolicy, ItemMeanNormalization>(data,
         decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
         mit);
   }
-  else if (normalization == "userMean")
+  else if (normalization == "user_mean")
   {
     cf = new CFType<DecompositionPolicy, UserMeanNormalization>(data,
         decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
         mit);
   }
-  else if (normalization == "zScore")
+  else if (normalization == "z_score")
   {
     cf = new CFType<DecompositionPolicy, ZScoreNormalization>(data,
         decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
@@ -158,8 +158,9 @@ void CFModel::Train(const MatType& data,
   }
   else
   {
-    throw std::runtime_error("Unsupported Normalization Algorithm."
-                             "Please refer to help (-h) section for details");
+    throw std::runtime_error("Unsupported normalization algorithm." 
+                             "It should be one of none, overall_mean, " 
+                             "item_mean, user_mean or z_score");
   }
 }
 
