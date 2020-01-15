@@ -263,7 +263,7 @@ class BayesianRidge
 
   //! Level from which the solution is considered sufficientlly stable.
   double tol;
-  
+
   //! Mean vector computed over the points.
   arma::colvec dataOffset;
 
