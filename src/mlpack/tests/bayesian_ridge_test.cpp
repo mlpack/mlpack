@@ -105,8 +105,6 @@ BOOST_AUTO_TEST_CASE(TestCenter1Normalize1)
                       1e-6);
 }
 
-
-
 // Check that Train() return -1 if X is singular.
 BOOST_AUTO_TEST_CASE(SingularMatix)
 {
@@ -117,7 +115,7 @@ BOOST_AUTO_TEST_CASE(SingularMatix)
   // Now the first and the second rows are indentical.
   X.row(1) = X.row(0);
 
-  BayesianRidge estimator(false, false);
+  BayesianRidge estimator;
   double singular = estimator.Train(X, y);
   BOOST_REQUIRE(singular == -1);
 }
