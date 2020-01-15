@@ -18,9 +18,13 @@ using namespace mlpack::regression;
 
 
 BayesianRidge::BayesianRidge(const bool centerData,
-                             const bool scaleData) :
+                             const bool scaleData,
+                             const int nIterMax,
+                             const double tol) :
   centerData(centerData),
-  scaleData(scaleData)
+  scaleData(scaleData),
+  nIterMax(nIterMax),
+  tol(tol)
 {/* Nothing to do */}
 
 double BayesianRidge::Train(const arma::mat& data,
@@ -65,7 +69,6 @@ double BayesianRidge::Train(const arma::mat& data,
   alpha = 1e-6;
   beta =  1 / (var(t) * 0.1);
 
-  double tol = 1e-3;
   unsigned short nIterMax = 50;
   unsigned short i = 0;
   double deltaAlpha = 1, deltaBeta = 1, crit = 1;
