@@ -166,6 +166,9 @@ CosineTree::CosineTree(const CosineTree& other) :
     l2Error(other.L2Error()),
     frobNormSquared(other.FrobNormSquared())
 {
+  // Making a deep copy of the dataset.
+  dataset = &other.GetDataset();
+
   // Create left and right children (if any).
   if (other.Left())
   {
@@ -209,6 +212,7 @@ CosineTree& CosineTree::operator=(const CosineTree& other)
     return *this;
 
   // Freeing memory that will not be used anymore.
+  delete dataset;
   delete left;
   delete right;
 
@@ -342,6 +346,10 @@ CosineTree& CosineTree::operator=(CosineTree&& other)
 
 CosineTree::~CosineTree()
 {
+  // If we're the root, delete the matrix.
+  if (!parent)
+    delete dataset;
+
   if (left)
     delete left;
   if (right)
