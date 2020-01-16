@@ -60,25 +60,25 @@ class RandomInitialization
    * @param M W or H matrix, to be filled with random noise.
    */
   template<typename MatType>
-  inline void InitializeOne(const MatType& V, 
-                            const size_t r, 
-                            const char whichMatrix, 
+  inline void InitializeOne(const MatType& V,
+                            const size_t r,
+                            const char whichMatrix,
                             arma::mat& M)
   {
     // Simple implementation (left in the header file due to its simplicity).
     const size_t n = V.n_rows;
     const size_t m = V.n_cols;
-    
+
     // Initialize W or H to random values
-    if (whichMatrix == 'W' || whichMatrix == 'w') 
+    if (whichMatrix == 'W' || whichMatrix == 'w')
     {
       M.randu(n, r);
     }
-    else if (whichMatrix == 'H' || whichMatrix == 'h') 
+    else if (whichMatrix == 'H' || whichMatrix == 'h')
     {
       M.randu(r, m);
     }
-    else 
+    else
     {
       Log::Fatal << "Specify either 'H' or 'W' when initializing "
           "one of W and H matrices!" << std::endl;
