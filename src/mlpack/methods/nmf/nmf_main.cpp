@@ -123,8 +123,9 @@ void ApplyFactorization(const arma::mat& V,
     GivenInitialization ginit = GivenInitialization(
         'W', std::move(CLI::GetParam<arma::mat>("initial_w")));
     RandomInitialization rinit = RandomInitialization();
-    MergeInitialization<GivenInitialization, RandomInitialization> minit = 
-        MergeInitialization<GivenInitialization, RandomInitialization>(ginit, rinit);
+    MergeInitialization<GivenInitialization, RandomInitialization> minit =
+        MergeInitialization<GivenInitialization, RandomInitialization>
+        (ginit, rinit);
     AMF<SimpleResidueTermination,
         MergeInitialization<GivenInitialization, RandomInitialization>,
         UpdateRuleType> amf(srt, minit);
@@ -137,8 +138,9 @@ void ApplyFactorization(const arma::mat& V,
     GivenInitialization ginit = GivenInitialization(
       'H', std::move(CLI::GetParam<arma::mat>("initial_h")));
     RandomInitialization rinit = RandomInitialization();
-    MergeInitialization<RandomInitialization, GivenInitialization> minit = 
-        MergeInitialization<RandomInitialization, GivenInitialization>(rinit, ginit);
+    MergeInitialization<RandomInitialization, GivenInitialization> minit =
+        MergeInitialization<RandomInitialization, GivenInitialization>
+        (rinit, ginit);
     AMF<SimpleResidueTermination,
         MergeInitialization<RandomInitialization, GivenInitialization>,
         UpdateRuleType> amf(srt, minit);
