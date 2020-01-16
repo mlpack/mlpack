@@ -38,8 +38,8 @@ class GivenInitialization
   // matrices.
   GivenInitialization(const arma::mat&& w, const arma::mat&& h) :
     w(std::move(w)),
-    h(std::move(h)), 
-    wIsGiven(true), 
+    h(std::move(h)),
+    wIsGiven(true),
     hIsGiven(true)
   { }
 
@@ -102,11 +102,11 @@ class GivenInitialization
                          arma::mat& H)
   {
     // Make sure the initial W, H matrices are given
-    if (!wIsGiven) 
+    if (!wIsGiven)
     {
       Log::Fatal << "Initial W matrix is not given!" << std::endl;
     }
-    if (!hIsGiven) 
+    if (!hIsGiven)
     {
       Log::Fatal << "Initial H matrix is not given!" << std::endl;
     }
@@ -152,11 +152,11 @@ class GivenInitialization
    */
   template<typename MatType>
   inline void InitializeOne(const MatType& V,
-                            const size_t r, 
-                            const char whichMatrix, 
+                            const size_t r,
+                            const char whichMatrix,
                             arma::mat& M)
   {
-    if (whichMatrix == 'W' || whichMatrix == 'w') 
+    if (whichMatrix == 'W' || whichMatrix == 'w')
     {
       // Make sure the initial W matrix is given.
       if (!wIsGiven)
@@ -181,10 +181,10 @@ class GivenInitialization
       // Initialize W to the given matrix.
       M = w;
     }
-    else if (whichMatrix == 'H' || whichMatrix == 'h') 
+    else if (whichMatrix == 'H' || whichMatrix == 'h')
     {
       // Make sure the initial H matrix is given.
-      if (!hIsGiven) 
+      if (!hIsGiven)
       {
         Log::Fatal << "Initial H matrix is not given!" << std::endl;
       }
@@ -206,7 +206,7 @@ class GivenInitialization
       // Initialize H to the given matrix.
       M = h;
     }
-    else 
+    else
     {
       Log::Fatal << "Specify either 'H' or 'W' when initializing "
           "one of W and H matrices!" << std::endl;
