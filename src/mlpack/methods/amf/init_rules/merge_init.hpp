@@ -32,7 +32,7 @@ class MergeInitialization
 
   // Initialize the MergeInitialization object with existing initialization
   // rules.
-  MergeInitialization(const WInitializationRuleType& wInitRule, 
+  MergeInitialization(const WInitializationRuleType& wInitRule,
                       const HInitializationRuleType& hInitRule)
   {
     wInitializationRule = wInitRule;
@@ -56,7 +56,7 @@ class MergeInitialization
     wInitializationRule.InitializeOne(V, r, 'W', W);
     hInitializationRule.InitializeOne(V, r, 'H', H);
   }
-  
+
  private:
   // Initialization rule for W matrix
   WInitializationRuleType wInitializationRule;
@@ -68,5 +68,3 @@ class MergeInitialization
 } // namespace mlpack
 
 #endif
-
- 
