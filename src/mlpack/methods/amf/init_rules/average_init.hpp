@@ -85,15 +85,15 @@ class AverageInitialization
    * with uniform random noise added.
    */
   template<typename MatType>
-  inline static void InitializeOne(const MatType& V, 
-                                   const size_t r, 
-                                   const char whichMatrix, 
+  inline static void InitializeOne(const MatType& V,
+                                   const size_t r,
+                                   const char whichMatrix,
                                    arma::mat& M)
   {
     const size_t n = V.n_rows;
     const size_t m = V.n_cols;
 
-    if (whichMatrix == 'W' || whichMatrix == 'w') 
+    if (whichMatrix == 'W' || whichMatrix == 'w')
     {
       double avgV = 0;
       size_t count = 0;
@@ -118,7 +118,7 @@ class AverageInitialization
 
       M = M + avgV;
     }
-    else if (whichMatrix == 'H' || whichMatrix == 'h') 
+    else if (whichMatrix == 'H' || whichMatrix == 'h')
     {
       double avgV = 0;
       size_t count = 0;
@@ -143,7 +143,7 @@ class AverageInitialization
 
       M = M + avgV;
     }
-    else 
+    else
     {
       Log::Fatal << "Specify either 'H' or 'W' when initializing "
           "one of W and H matrices!" << std::endl;
