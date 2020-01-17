@@ -21,7 +21,6 @@
 #include <mlpack/methods/cf/normalization/user_mean_normalization.hpp>
 #include <mlpack/methods/cf/normalization/item_mean_normalization.hpp>
 #include <mlpack/methods/cf/normalization/z_score_normalization.hpp>
-#include <mlpack/methods/cf/normalization/combined_normalization.hpp>
 
 using namespace mlpack::cf;
 
