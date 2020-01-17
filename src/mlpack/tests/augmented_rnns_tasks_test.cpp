@@ -54,8 +54,11 @@ class HardCodedCopyModel
       size_t& addVar = (input.at(i, 0) == 0) ? zeroCnt : oneCnt;
       ++addVar;
     }
-    assert(oneCnt % zeroCnt == 0);
-    nRepeats = oneCnt / zeroCnt;
+
+    if (zeroCnt != 0) {
+      assert(oneCnt % zeroCnt == 0);
+      nRepeats = oneCnt / zeroCnt;
+    }
   }
 
   void Predict(arma::mat& predictors,
