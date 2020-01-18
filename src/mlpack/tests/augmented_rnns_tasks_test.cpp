@@ -55,7 +55,7 @@ class HardCodedCopyModel
       ++addVar;
     }
 
-      assert(zeroCnt != 0) 
+      assert(zeroCnt != 0); 
       assert(oneCnt % zeroCnt == 0);
       nRepeats = oneCnt / zeroCnt;
   }
