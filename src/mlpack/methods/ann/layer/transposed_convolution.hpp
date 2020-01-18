@@ -67,13 +67,12 @@ class TransposedConvolution
    * @param kernelHeight Height of the filter/kernel.
    * @param strideWidth Stride of filter application in the x direction.
    * @param strideHeight Stride of filter application in the y direction.
-   * @param padW Padding width of the input.
-   * @param padH Padding height of the input.
+   * @param padWidth Padding width of the input.
+   * @param padHeight Padding height of the input.
    * @param inputWidth The width of the input data.
    * @param inputHeight The height of the input data.
    * @param outputWidth The width of the output data.
    * @param outputHeight The height of the output data.
-   * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
   TransposedConvolution(const size_t inSize,
                         const size_t outSize,
@@ -81,55 +80,12 @@ class TransposedConvolution
                         const size_t kernelHeight,
                         const size_t strideWidth = 1,
                         const size_t strideHeight = 1,
-                        const size_t padW = 0,
-                        const size_t padH = 0,
+                        const size_t padWidth = 0,
+                        const size_t padHeight = 0,
                         const size_t inputWidth = 0,
                         const size_t inputHeight = 0,
                         const size_t outputWidth = 0,
-                        const size_t outputHeight = 0,
-                        const std::string paddingType = "None");
-
-  /**
-     * Create the Transposed Convolution object using the specified number of
-     * input maps, output maps, filter size, stride and padding parameter.
-     *
-     * Note: The equivalent stride of a transposed convolution operation is always
-     * equal to 1. In this implementation, stride of filter represents the stride
-     * of the associated convolution operation.
-     * Note: Padding of input represents padding of associated convolution
-     * operation.
-     *
-     * @param inSize The number of input maps.
-     * @param outSize The number of output maps.
-     * @param kernelWidth Width of the filter/kernel.
-     * @param kernelHeight Height of the filter/kernel.
-     * @param strideWidth Stride of filter application in the x direction.
-     * @param strideHeight Stride of filter application in the y direction.
-     * @param padW A two-value tuple indicating padding widths of the input.
-     *             First value is padding at left side. Second value is padding on
-     *             right side.
-     * @param padH A two-value tuple indicating padding heights of the input.
-     *             First value is padding at top. Second value is padding on
-     *             bottom.
-     * @param inputWidth The width of the input data.
-     * @param inputHeight The height of the input data.
-     * @param outputWidth The width of the output data.
-     * @param outputHeight The height of the output data.
-     * @param paddingType The type of padding (Valid or Same). Defaults to None.
-     */
-    TransposedConvolution(const size_t inSize,
-                          const size_t outSize,
-                          const size_t kernelWidth,
-                          const size_t kernelHeight,
-                          const size_t strideWidth,
-                          const size_t strideHeight,
-                          const std::tuple<size_t, size_t> padW,
-                          const std::tuple<size_t, size_t> padH,
-                          const size_t inputWidth = 0,
-                          const size_t inputHeight = 0,
-                          const size_t outputWidth = 0,
-                          const size_t outputHeight = 0,
-                          const std::string paddingType = "None");
+                        const size_t outputHeight = 0);
 
   /*
    * Set the weight and bias term.
@@ -243,25 +199,15 @@ class TransposedConvolution
   //! Modify the stride height.
   size_t& StrideHeight() { return strideHeight; }
 
-  //! Get the top padding height.
-  size_t PadHTop() const { return padHTop; }
-  //! Modify the top padding height.
-  size_t& PadHTop() { return padHTop; }
+  //! Get the padding width.
+  size_t PadWidth() const { return padWidth; }
+  //! Modify the padding width.
+  size_t& PadWidth() { return padWidth; }
 
-  //! Get the bottom padding height.
-  size_t PadHBottom() const { return padHBottom; }
-  //! Modify the bottom padding height.
-  size_t& PadHBottom() { return padHBottom; }
-
-  //! Get the left padding width.
-  size_t PadWLeft() const { return padWLeft; }
-  //! Modify the left padding width.
-  size_t& PadWLeft() { return padWLeft; }
-
-  //! Get the right padding width.
-  size_t PadWRight() const { return padWRight; }
-  //! Modify the right padding width.
-  size_t& PadWRight() { return padWRight; }
+  //! Get the padding height.
+  size_t PadHeight() const { return padHeight; }
+  //! Modify the padding height.
+  size_t& PadHeight() { return padHeight; }
 
   //! Modify the bias weights of the layer.
   arma::mat& Bias() { return bias; }
@@ -288,10 +234,6 @@ class TransposedConvolution
     for (size_t s = 0; s < output.n_slices; s++)
       output.slice(s) = arma::fliplr(arma::flipud(input.slice(s)));
   }
-  /*
-   * Function to assign padding such that output size is same as input size.
-   */
-  void InitializeSamePadding();
 
   /*
    * Rotates a dense matrix counterclockwise by 180 degrees.
@@ -386,17 +328,11 @@ class TransposedConvolution
   //! Locally-stored stride of the filter in y-direction.
   size_t strideHeight;
 
-  //! Locally-stored left-side padding width.
-  size_t padWLeft;
+  //! Locally-stored padding width.
+  size_t padWidth;
 
-  //! Locally-stored right-side padding width.
-  size_t padWRight;
-
-  //! Locally-stored bottom padding height.
-  size_t padHBottom;
-
-  //! Locally-stored top padding height.
-  size_t padHTop;
+  //! Locally-stored padding height.
+  size_t padHeight;
 
   //! Locally-stored number of zeros added to the right of input.
   size_t aW;
