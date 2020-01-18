@@ -222,11 +222,11 @@ BOOST_AUTO_TEST_CASE(LunarLanderWithPPO)
       averageReturn(episodeReturn);
 
       /**
-       * I am using a threshold of 100 to check convergence.
+       * I am using a threshold of -94.987 to check convergence.
        */
       Log::Debug << "Average return: " << averageReturn.mean()
                  << " Episode return: " << episodeReturn << std::endl;
-      if (averageReturn.mean() > 100) {
+      if (averageReturn.mean() > -94.987) {
         agent.Deterministic() = true;
         arma::running_stat<double> testReturn;
         for (size_t i = 0; i < 10; ++i)
