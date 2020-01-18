@@ -55,10 +55,9 @@ class HardCodedCopyModel
       ++addVar;
     }
 
-    if (zeroCnt != 0) {
+      assert(zeroCnt != 0) 
       assert(oneCnt % zeroCnt == 0);
       nRepeats = oneCnt / zeroCnt;
-    }
   }
 
   void Predict(arma::mat& predictors,
