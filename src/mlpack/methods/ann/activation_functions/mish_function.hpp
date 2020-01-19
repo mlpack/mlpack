@@ -2,7 +2,7 @@
  * @file mish_function.hpp
  * @author Kartik Dutt
  *
- * Definition and implementation of the mish function as described by
+ * Definition and implementation of the Mish function as described by
  * Diganta Misra.
  *
  * For more information, see the following paper.
@@ -27,10 +27,8 @@
 #include <algorithm>
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 
-namespace mlpack
-{
-namespace ann /** Artificial Neural Network. */
-{
+namespace mlpack {
+namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The mish function, defined by
@@ -43,8 +41,9 @@ namespace ann /** Artificial Neural Network. */
 class MishFunction
 {
  public:
+
     /**
-     * Computes the mish function.
+     * Computes the Mish function.
      *
      * @param x Input data.
      * @return f(x).
@@ -68,6 +67,7 @@ class MishFunction
         for (size_t i = 0; i < x.n_elem; i++)
             y(i) = Fn(x(i));
     }
+
     /**
      * Computes the first derivative of the swish function.
      *
@@ -76,10 +76,11 @@ class MishFunction
      */
     static double Deriv(const double y)
     {
-        return std::tanh(SoftplusFunction::Fn(y)) + \
-            y * (SoftplusFunction::Deriv(y) * \
+        return std::tanh(SoftplusFunction::Fn(y)) +
+            y * (SoftplusFunction::Deriv(y) *
             (1 - std::pow(SoftplusFunction::Fn(y), 2)));
     }
+
     /**
      * Computes the first derivatives of the mish function.
      * 
@@ -89,11 +90,12 @@ class MishFunction
     template <typename InputVecType, typename OutputVecType>
     static void Deriv(const InputVecType &y, OutputVecType &x)
     {
-        InputVecType SoftPlusY;
-        SoftplusFunction::Fn(y, SoftPlusY);
-        x = arma::tanh(SoftPlusY) + \
-            y * ((1 - arma::pow(SoftPlusY, 2)) * \
-                1.0 / (1 + arma::exp(-y)));
+        InputVecType softPlusY;
+        InputVecType derivSoftPlusY;
+        SoftplusFunction::Fn(y, softPlusY);
+        SoftplusFunction::Deriv(y,derivSoftPlusY);
+        x = arma::tanh(softPlusY) +
+            y * ((1 - arma::pow(softPlusY, 2)) * derivSoftPlusY);
     }
 }; // class MishFunction
 
