@@ -90,10 +90,8 @@ class MishFunction
     static void Deriv(const InputVecType &y, OutputVecType &x)
     {
         InputVecType SoftPlusY;
-        SoftplusFunction::Fn(y, SoftPlusY);
-        x = arma::tanh(SoftPlusY) + \
-            y * ((1 - arma::pow(SoftPlusY, 2)) * \
-                1.0 / (1 + arma::exp(-y)));
+        SoftplusFunction::Fn(y,SoftPlusY); 
+        x = arma::tanh(SoftPlusY) + y * ((1 - arma::pow(SoftPlusY,2)) * 1.0 / (1 + arma::exp(-y)));
     }
 }; // class MishFunction
 
