@@ -203,7 +203,8 @@ using SwishFunctionLayer = BaseLayer<
 template <
     class ActivationFunction = MishFunction,
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat>
+    typename OutputDataType = arma::mat
+>
 using MishFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 

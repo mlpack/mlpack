@@ -41,7 +41,6 @@ namespace ann /** Artificial Neural Network. */ {
 class MishFunction
 {
  public:
-
     /**
      * Computes the Mish function.
      *
@@ -93,7 +92,7 @@ class MishFunction
         InputVecType softPlusY;
         InputVecType derivSoftPlusY;
         SoftplusFunction::Fn(y, softPlusY);
-        SoftplusFunction::Deriv(y,derivSoftPlusY);
+        SoftplusFunction::Deriv(y, derivSoftPlusY);
         x = arma::tanh(softPlusY) +
             y * ((1 - arma::pow(softPlusY, 2)) * derivSoftPlusY);
     }
