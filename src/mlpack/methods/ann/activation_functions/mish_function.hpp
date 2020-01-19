@@ -53,7 +53,7 @@ class MishFunction
     }
 
     /**
-     * Computes the mish function.
+     * Computes the Mish function.
      *
      * @param x Input data.
      * @param y The resulting output activation.
@@ -68,7 +68,7 @@ class MishFunction
     }
 
     /**
-     * Computes the first derivative of the swish function.
+     * Computes the first derivative of the Mish function.
      *
      * @param y Input data.
      * @return f'(x)
@@ -81,7 +81,7 @@ class MishFunction
     }
 
     /**
-     * Computes the first derivatives of the mish function.
+     * Computes the first derivatives of the Mish function.
      * 
      * @param y Input activations.
      * @param x The resulting derivatives.
