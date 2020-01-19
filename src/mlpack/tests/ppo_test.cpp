@@ -199,15 +199,15 @@ BOOST_AUTO_TEST_CASE(LunarLanderWithPPO)
 
     // Set up the policy and replay method.
     GreedyPolicy<LunarLander> policy(1.0, 1000, 0.1, 0.99);
-    RandomReplay<LunarLander> replayMethod(32, 10000);
+    RandomReplay<LunarLander> replayMethod(64, 10000);
 
     TrainingConfig config;
     config.StepSize() = 0.0001;
     config.Discount() = 0.99;
     config.Epsilon() = 0.2;
     config.StepLimit() = 0;
-    config.UpdateInterval() = 32;
-    config.ActorUpdateStep() = 10;
+    config.UpdateInterval() = 64;
+    config.ActorUpdateStep() = 15;
 
     // Set up the PPO agent.
     PPO<LunarLander, decltype(actor), decltype(critic), AdamUpdate,
@@ -226,6 +226,7 @@ BOOST_AUTO_TEST_CASE(LunarLanderWithPPO)
        */
       Log::Debug << "Average return: " << averageReturn.mean()
                  << " Episode return: " << episodeReturn << std::endl;
+      std::cout << averageReturn.mean() << " " << episodeReturn << std::endl;
       if (averageReturn.mean() > -94.987) {
         agent.Deterministic() = true;
         arma::running_stat<double> testReturn;
