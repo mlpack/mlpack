@@ -25,8 +25,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <algorithm>
-#include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
-#include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
+
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
