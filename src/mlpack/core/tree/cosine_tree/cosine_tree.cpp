@@ -308,7 +308,6 @@ CosineTree& CosineTree::operator=(CosineTree&& other)
     return *this;
 
   // Freeing memory that will not be used anymore.
-  delete dataset;
   delete left;
   delete right;
 
