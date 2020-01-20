@@ -75,8 +75,7 @@ void CheckDerivativeCorrect(const arma::colvec input, const arma::colvec target)
   // Test the calculation of the derivatives using a single value as input.
   for (size_t i = 0; i < target.n_elem; i++)
   {
-    BOOST_REQUIRE_CLOSE(ActivationFunction::Deriv(input.at(i)),
-        target.at(i), 1e-3);
+    BOOST_REQUIRE_CLOSE(ActivationFunction::Deriv(input.at(i)),target.at(i), 1e-3);
   }
 
   // Test the calculation of the derivatives using the entire vector as input.
@@ -645,12 +644,14 @@ BOOST_AUTO_TEST_CASE(MishFunctionTest)
                                          4.498914 0.0 0.86509836 \
                                          -0.30340138 1.943959 0.0");
 
-  const arma::colvec desiredDerivatives("-1.0835508e-01  1.0157449 \
-                                          1.0019072 -3.0576332e-42 \
-                                          1.0490364  5.9216768e-02  \
-                                          1.0693179  6.0000002e-01");
+  const arma::colvec desiredDerivatives("0.4382387  1.0159768849 \
+                                          1.0019108 0.6 \
+                                          1.0192586  0.40639898 \
+                                          1.0725079  0.6");
 
   CheckActivationCorrect<MishFunction>(activationData,
                                        desiredActivations);
+  CheckDerivativeCorrect<MishFunction>(desiredActivations,
+                                        desiredDerivatives);
 }
 BOOST_AUTO_TEST_SUITE_END();

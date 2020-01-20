@@ -77,7 +77,7 @@ class MishFunction
     {
         return std::tanh(SoftplusFunction::Fn(y)) +
             y * (SoftplusFunction::Deriv(y) *
-            (1 - std::pow(SoftplusFunction::Fn(y), 2)));
+            (1 - std::pow(std::tanh(SoftplusFunction::Fn(y)), 2)));
     }
 
     /**
@@ -94,7 +94,8 @@ class MishFunction
         SoftplusFunction::Fn(y, softPlusY);
         SoftplusFunction::Deriv(y, derivSoftPlusY);
         x = arma::tanh(softPlusY) +
-            y * ((1 - arma::pow(softPlusY, 2)) * derivSoftPlusY);
+            y % derivSoftPlusY %
+            (1 - arma::pow(arma::tanh(softPlusY), 2));
     }
 }; // class MishFunction
 
