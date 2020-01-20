@@ -183,7 +183,7 @@ class LARS
    * @param responses A vector of targets.
    * @param beta Vector to store the solution (the coefficients) in.
    * @param transposeData Set to false if the data is row-major.
-   * @return The final absolute maximum correlation.
+   * @return The minimum cost error.
    */
   double Train(const arma::mat& data,
                const arma::rowvec& responses,
@@ -202,7 +202,7 @@ class LARS
    * @param responses A vector of targets.
    * @param transposeData Should be true if the input data is column-major and
    *     false otherwise.
-   * @return The final absolute maximum correlation.
+   * @return The minimum cost error.
    */
   double Train(const arma::mat& data,
                const arma::rowvec& responses,
@@ -254,7 +254,7 @@ class LARS
    * @param responses A vector of targets.
    * @param rowMajor Should be true if the data points matrix is row-major and
    *   false otherwise.
-   * @return The cost error.
+   * @return The minimum cost error.
    */
   double ComputeError(const arma::mat& matX,
                       const arma::rowvec& y,
