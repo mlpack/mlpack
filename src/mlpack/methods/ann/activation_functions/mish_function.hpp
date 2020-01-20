@@ -26,7 +26,6 @@
 #include <mlpack/prereqs.hpp>
 #include <algorithm>
 
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
