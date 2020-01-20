@@ -57,8 +57,8 @@ PROGRAM_INFO("BayesianRidge",
     "\n\n"
     "To train a BayesianRidge model, the " +
     PRINT_PARAM_STRING("input") + " and " + PRINT_PARAM_STRING("responses") +
-    "parameters must be given. The " + PRINT_PARAM_STRING("fitIntercept") +
-    "and " + PRINT_PARAM_STRING("normalize") + " parameters control the "
+    "parameters must be given. The " + PRINT_PARAM_STRING("center") +
+    "and " + PRINT_PARAM_STRING("scale") + " parameters control the "
     "centering and the normalizing options. A trained model can be saved with "
     "the " + PRINT_PARAM_STRING("output_model") + ". If no training is desired "
     "at all, a model can be passed via the "+ PRINT_PARAM_STRING("input_model")+
@@ -72,12 +72,12 @@ PROGRAM_INFO("BayesianRidge",
     "\n\n"
     "For example, the following command trains a model on the data " +
     PRINT_DATASET("data") + " and responses " + PRINT_DATASET("responses") +
-    "with fitIntercept set to true and normalize set to false (so, Bayesian "
+    "with center set to true and scale set to false (so, Bayesian "
     "Ridge is being solved, and then the model is saved to " +
     PRINT_MODEL("bayesian_ridge_model") + ":"
     "\n\n" +
     PRINT_CALL("bayesian_ridge", "input", "data", "responses", "responses",
-               "fitIntercept", 1, "normalize", 0, "output_model",
+               "center", 1, "scale", 0, "output_model",
                "bayesian_ridge_model") +
     "\n\n"
     "The following command uses the " + PRINT_MODEL("bayesian_ridge_model") +
@@ -99,17 +99,19 @@ PARAM_TMATRIX_IN("test", "Matrix containing points to regress on (test "
 PARAM_TMATRIX_OUT("output_predictions", "If --test_file is specified, this "
                   "file is where the predicted responses will be saved.", "o");
 
-PARAM_INT_IN("fitIntercept", "Center the data and fit the intercept",
-             "f",
+PARAM_INT_IN("center", "Center the data and fit the intercept. Set to 0 to "
+            "disable",
+             "c",
              1);
-PARAM_INT_IN("normalize", "Normlize each feature by their standard deviations.",
-             "n",
+PARAM_INT_IN("scale", "Scale each feature by their standard deviations. "
+             "set to 1 to scale.",
+             "s",
              0);
 
 static void mlpackMain()
 {
-  int fitIntercept = CLI::GetParam<int>("fitIntercept");
-  int normalize = CLI::GetParam<int>("normalize");
+  int center = CLI::GetParam<int>("center");
+  int scale = CLI::GetParam<int>("scale");
 
   // Check parameters -- make sure everything given makes sense.
   RequireOnlyOnePassed({ "input", "input_model" }, true);
@@ -130,7 +132,7 @@ static void mlpackMain()
   {
     Log::Info << "input detected " << std::endl;
     // Initialize the object.
-    bayesRidge = new BayesianRidge(fitIntercept, normalize);
+    bayesRidge = new BayesianRidge(center, scale);
 
     // Load covariates.
     mat matX = std::move(CLI::GetParam<arma::mat>("input"));
