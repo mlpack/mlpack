@@ -75,7 +75,8 @@ void CheckDerivativeCorrect(const arma::colvec input, const arma::colvec target)
   // Test the calculation of the derivatives using a single value as input.
   for (size_t i = 0; i < target.n_elem; i++)
   {
-    BOOST_REQUIRE_CLOSE(ActivationFunction::Deriv(input.at(i)),target.at(i), 1e-3);
+    BOOST_REQUIRE_CLOSE(ActivationFunction::Deriv(input.at(i)),
+        target.at(i), 1e-3);
   }
 
   // Test the calculation of the derivatives using the entire vector as input.
