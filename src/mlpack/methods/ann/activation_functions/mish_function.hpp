@@ -26,6 +26,7 @@
 #include <mlpack/prereqs.hpp>
 #include <algorithm>
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
+#include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -91,11 +92,12 @@ class MishFunction
     {
         InputVecType softPlusY;
         InputVecType derivSoftPlusY;
+        InputVecType tanhDeriv;
         SoftplusFunction::Fn(y, softPlusY);
         SoftplusFunction::Deriv(y, derivSoftPlusY);
+        TanhFunction::Deriv(arma::tanh(softPlusY), tanhDeriv);
         x = arma::tanh(softPlusY) +
-            y % derivSoftPlusY %
-            (1 - arma::pow(arma::tanh(softPlusY), 2));
+            y % derivSoftPlusY % tanhDeriv;
     }
 }; // class MishFunction
 
