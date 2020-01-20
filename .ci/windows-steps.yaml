@@ -28,7 +28,11 @@ steps:
 # Configure armadillo
 - bash: |
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> Adding changes in documentation
     curl -O http://masterblaster.mlpack.org:5005/armadillo-8.400.0.tar.gz -o armadillo-8.400.0.tar.gz
     tar -xzvf armadillo-8.400.0.tar.gz
 

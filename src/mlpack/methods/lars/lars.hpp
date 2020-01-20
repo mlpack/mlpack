@@ -183,7 +183,7 @@ class LARS
    * @param responses A vector of targets.
    * @param beta Vector to store the solution (the coefficients) in.
    * @param transposeData Set to false if the data is row-major.
-   * @return The minimum cost error.
+   * @return minimum cost error(||y-beta*X||2 is used to calculate error).
    */
   double Train(const arma::mat& data,
                const arma::rowvec& responses,
@@ -202,7 +202,7 @@ class LARS
    * @param responses A vector of targets.
    * @param transposeData Should be true if the input data is column-major and
    *     false otherwise.
-   * @return The minimum cost error.
+   * @return minimum cost error(||y-beta*X||2 is used to calculate error).
    */
   double Train(const arma::mat& data,
                const arma::rowvec& responses,
@@ -245,8 +245,8 @@ class LARS
   void serialize(Archive& ar, const unsigned int /* version */);
 
   /**
-   * Compute cost error in the given data matrix using the
-   * currently-trained LARS model. Only ||y-betaX||2 is used to calculate
+   * Compute cost error of the given data matrix using the
+   * currently-trained LARS model. Only ||y-beta*X||2 is used to calculate
    * cost error.
    *
    * @param data Column-major input data (or row-major input data if rowMajor =

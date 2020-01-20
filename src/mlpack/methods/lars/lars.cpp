@@ -361,7 +361,7 @@ double LARS::Train(const arma::mat& matX,
   beta = betaPath.back();
 
   Timer::Stop("lars_regression");
-  return ComputeError(matX, y, transposeData);
+  return ComputeError(matX, y, !transposeData);
 }
 
 double LARS::Train(const arma::mat& data,

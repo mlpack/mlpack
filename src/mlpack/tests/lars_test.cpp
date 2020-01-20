@@ -353,7 +353,7 @@ BOOST_AUTO_TEST_CASE(TrainingConstructorWithNonDefaultsTest)
 }
 
 /**
- * Test that LARS::Train() returns finite correlation value.
+ * Test that LARS::Train() returns finite error value.
  */
 BOOST_AUTO_TEST_CASE(LARSTrainReturnCorrelation)
 {
@@ -371,32 +371,35 @@ BOOST_AUTO_TEST_CASE(LARSTrainReturnCorrelation)
   // Test with Cholesky decomposition and with lasso.
   LARS lars1(true, lambda1, 0.0);
   arma::vec betaOpt1;
-  double maxCorr = lars1.Train(X, y, betaOpt1);
+  double error = lars1.Train(X, y, betaOpt1);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
+  BOOST_REQUIRE_EQUAL(std::isfinite(error), true);
 
   // Test without Cholesky decomposition and with lasso.
   LARS lars2(false, lambda1, 0.0);
   arma::vec betaOpt2;
-  maxCorr = lars2.Train(X, y, betaOpt2);
+  error = lars2.Train(X, y, betaOpt2);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
+  BOOST_REQUIRE_EQUAL(std::isfinite(error), true);
 
   // Test with Cholesky decomposition and with elasticnet.
   LARS lars3(true, lambda1, lambda2);
   arma::vec betaOpt3;
-  maxCorr = lars3.Train(X, y, betaOpt3);
+  error = lars3.Train(X, y, betaOpt3);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
+  BOOST_REQUIRE_EQUAL(std::isfinite(error), true);
 
   // Test without Cholesky decomposition and with elasticnet.
   LARS lars4(false, lambda1, lambda2);
   arma::vec betaOpt4;
-  maxCorr = lars4.Train(X, y, betaOpt4);
+  error = lars4.Train(X, y, betaOpt4);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
+  BOOST_REQUIRE_EQUAL(std::isfinite(error), true);
 }
 
+/**
+ * Test that LARS::ComputeError() returns finite error value.
+ */
 BOOST_AUTO_TEST_CASE(LARSTestComputeError)
 {
   arma::mat X;
