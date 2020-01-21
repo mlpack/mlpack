@@ -28,7 +28,7 @@ steps:
 # Configure armadillo
 - bash: |
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
-
+    
     curl http://masterblaster.mlpack.org:5005/armadillo-8.400.0.tar.gz | tar xvz
 
     cd armadillo-8.400.0/ && cmake $(CMakeGenerator) \
