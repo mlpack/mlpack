@@ -635,7 +635,7 @@ BOOST_AUTO_TEST_CASE(HardSigmoidFunctionTest)
       desiredDerivatives);
 }
 /**
- * Basic test of the mish function.
+ * Basic test of the Mish function.
  */
 BOOST_AUTO_TEST_CASE(MishFunctionTest)
 {

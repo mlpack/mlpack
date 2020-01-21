@@ -30,7 +30,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The mish function, defined by
+ * The Mish function, defined by
  *
  * @f{eqnarray*}{
  * f(x) = x * tanh(ln(1+e^x))
@@ -40,63 +40,61 @@ namespace ann /** Artificial Neural Network. */ {
 class MishFunction
 {
  public:
-    /**
-     * Computes the Mish function.
-     *
-     * @param x Input data.
-     * @return f(x).
-     */
-    static double Fn(const double x)
-    {
-        return x * std::tanh(SoftplusFunction::Fn(x));
-    }
+  /**
+   * Computes the Mish function.
+   *
+   * @param x Input data.
+   * @return f(x).
+   */
+  static double Fn(const double x)
+  {
+    return x * std::tanh(SoftplusFunction::Fn(x));
+  }
 
-    /**
-     * Computes the Mish function.
-     *
-     * @param x Input data.
-     * @param y The resulting output activation.
-     */
-    template <typename InputVecType, typename OutputVecType>
-    static void Fn(const InputVecType &x, OutputVecType &y)
-    {
-        y.set_size(arma::size(x));
+  /**
+   * Computes the Mish function.
+   *
+   * @param x Input data.
+   * @param y The resulting output activation.
+   */
+  template <typename InputVecType, typename OutputVecType>
+  static void Fn(const InputVecType &x, OutputVecType &y)
+  {
+    y.set_size(arma::size(x));
+    for (size_t i = 0; i < x.n_elem; i++)
+        y(i) = Fn(x(i));
+  }
 
-        for (size_t i = 0; i < x.n_elem; i++)
-            y(i) = Fn(x(i));
-    }
+  /**
+   * Computes the first derivative of the Mish function.
+   *
+   * @param y Input data.
+   * @return f'(x)
+   */
+  static double Deriv(const double y)
+  {
+    return std::tanh(SoftplusFunction::Fn(y)) +
+           y * (SoftplusFunction::Deriv(y) *
+           (1 - std::pow(std::tanh(SoftplusFunction::Fn(y)), 2)));
+  }
 
-    /**
-     * Computes the first derivative of the Mish function.
-     *
-     * @param y Input data.
-     * @return f'(x)
-     */
-    static double Deriv(const double y)
-    {
-        return std::tanh(SoftplusFunction::Fn(y)) +
-            y * (SoftplusFunction::Deriv(y) *
-            (1 - std::pow(std::tanh(SoftplusFunction::Fn(y)), 2)));
-    }
-
-    /**
-     * Computes the first derivatives of the Mish function.
-     * 
-     * @param y Input activations.
-     * @param x The resulting derivatives.
-     */
-    template <typename InputVecType, typename OutputVecType>
-    static void Deriv(const InputVecType &y, OutputVecType &x)
-    {
-        InputVecType softPlusY;
-        InputVecType derivSoftPlusY;
-        InputVecType tanhDeriv;
-        SoftplusFunction::Fn(y, softPlusY);
-        SoftplusFunction::Deriv(y, derivSoftPlusY);
-        TanhFunction::Deriv(arma::tanh(softPlusY), tanhDeriv);
-        x = arma::tanh(softPlusY) +
-            y % derivSoftPlusY % tanhDeriv;
-    }
+  /**
+   * Computes the first derivatives of the Mish function.
+   * 
+   * @param y Input activations.
+   * @param x The resulting derivatives.
+   */
+  template <typename InputVecType, typename OutputVecType>
+  static void Deriv(const InputVecType &y, OutputVecType &x)
+  {
+    InputVecType softPlusY;
+    InputVecType derivSoftPlusY;
+    SoftplusFunction::Fn(y, softPlusY);
+    SoftplusFunction::Deriv(y, derivSoftPlusY);
+    x = arma::tanh(softPlusY) +
+        y % derivSoftPlusY %
+        (1 - arma::pow(arma::tanh(softPlusY), 2));
+  }
 }; // class MishFunction
 
 } // namespace ann
