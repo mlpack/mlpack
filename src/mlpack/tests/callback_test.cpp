@@ -20,9 +20,9 @@
 #include <mlpack/methods/nca/nca.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-
+#include <mlpack/methods/softmax_regression/softmax_regression_impl.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-
+#include <mlpack/core.hpp>
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack;
@@ -31,6 +31,7 @@ using namespace mlpack::regression;
 using namespace mlpack::lmnn;
 using namespace mlpack::metric;
 using namespace mlpack::nca;
+using namespace mlpack::distribution;
 
 BOOST_AUTO_TEST_SUITE(CallbackTest);
 
@@ -96,12 +97,12 @@ BOOST_AUTO_TEST_CASE(RNNCallbackTest)
   // Create model with user defined rho parameter.
   RNN<NegativeLogLikelihood<>, RandomInitialization> model(
       rho, false, NegativeLogLikelihood<>(), init);
-  model.Add<IdentityLayer<> >();
-  model.Add<Linear<> >(1, 10);
+  model.Add<IdentityLayer<>>();
+  model.Add<Linear<>>(1, 10);
 
   // Use LSTM layer with rho.
-  model.Add<LSTM<> >(10, 3, rho);
-  model.Add<LogSoftMax<> >();
+  model.Add<LSTM<>>(10, 3, rho);
+  model.Add<LogSoftMax<>>();
 
   std::stringstream stream;
   model.Train(input, target, ens::PrintLoss(stream));
@@ -122,12 +123,12 @@ BOOST_AUTO_TEST_CASE(RNNWithOptimizerCallbackTest)
   // Create model with user defined rho parameter.
   RNN<NegativeLogLikelihood<>, RandomInitialization> model(
       rho, false, NegativeLogLikelihood<>(), init);
-  model.Add<IdentityLayer<> >();
-  model.Add<Linear<> >(1, 10);
+  model.Add<IdentityLayer<>>();
+  model.Add<Linear<>>(1, 10);
 
   // Use LSTM layer with rho.
-  model.Add<LSTM<> >(10, 3, rho);
-  model.Add<LogSoftMax<> >();
+  model.Add<LSTM<>>(10, 3, rho);
+  model.Add<LogSoftMax<>>();
 
   std::stringstream stream;
   ens::StandardSGD opt(0.1, 1, 5);
@@ -141,17 +142,17 @@ BOOST_AUTO_TEST_CASE(RNNWithOptimizerCallbackTest)
  */
 BOOST_AUTO_TEST_CASE(LRWithOptimizerCallback)
 {
-    arma::mat data("1 2 3;"
-                   "1 2 3");
-    arma::Row<size_t> responses("1 1 0");
+  arma::mat data("1 2 3;"
+                 "1 2 3");
+  arma::Row<size_t> responses("1 1 0");
 
-    ens::StandardSGD sgd(0.1, 1, 5);
-    LogisticRegression<> logisticRegression(data, responses, sgd, 0.001);
-    std::stringstream stream;
-    logisticRegression.Train<ens::StandardSGD>(data, responses, sgd,
-        ens::PrintLoss(stream));
+  ens::StandardSGD sgd(0.1, 1, 5);
+  LogisticRegression<> logisticRegression(data, responses, sgd, 0.001);
+  std::stringstream stream;
+  logisticRegression.Train<ens::StandardSGD>(data, responses, sgd,
+                                             ens::PrintLoss(stream));
 
-    BOOST_REQUIRE_GT(stream.str().length(), 0);
+  BOOST_REQUIRE_GT(stream.str().length(), 0);
 }
 
 /**
@@ -160,8 +161,8 @@ BOOST_AUTO_TEST_CASE(LRWithOptimizerCallback)
 BOOST_AUTO_TEST_CASE(LMNNWithOptimizerCallback)
 {
   // Useful but simple dataset with six points and two classes.
-  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::mat dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                      " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
   LMNN<> lmnn(dataset, labels, 1);
@@ -179,8 +180,8 @@ BOOST_AUTO_TEST_CASE(LMNNWithOptimizerCallback)
 BOOST_AUTO_TEST_CASE(NCAWithOptimizerCallback)
 {
   // Useful but simple dataset with six points and two classes.
-  arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::mat data = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                   " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
   NCA<SquaredEuclideanDistance> nca(data, labels);
@@ -197,17 +198,35 @@ BOOST_AUTO_TEST_CASE(NCAWithOptimizerCallback)
  */
 BOOST_AUTO_TEST_CASE(SRWithOptimizerCallback)
 {
-    arma::mat data("1 2 3;"
-                   "1 2 3");
-    arma::Row<size_t> responses("1 1 0");
+  const size_t points = 1000;
+  const size_t inputSize = 3;
+  const size_t numClasses = 3;
+  const double lambda = 0.5;
 
-    ens::StandardSGD sgd(0.1, 1, 5);
-    SoftmaxRegression softmaxRegression(data, responses, 2, 0.0001, false, sgd);
-    std::stringstream stream;
-    softmaxRegression.Train<ens::StandardSGD>(data, responses, 2, sgd,
-    ens::PrintLoss(stream));
+  // Generate two-Gaussian dataset.
+  GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
 
-    BOOST_REQUIRE_GT(stream.str().length(), 0);
+  arma::mat data(inputSize, points);
+  arma::Row<size_t> labels(points);
+
+  for (size_t i = 0; i < points / 2; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 2; i < points; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  ens::StandardSGD sgd(0.1, 1, 5);
+  std::stringstream stream;
+  // Train softmax regression object.
+  SoftmaxRegression sr(data, labels, numClasses, lambda);
+  sr.Train(data, labels, numClasses, sgd, ens::ProgressBar(70, stream));
+
+  BOOST_REQUIRE_GT(stream.str().length(), 0);
 }
 
 /*
@@ -224,7 +243,7 @@ BOOST_AUTO_TEST_CASE(RBMCallbackTest)
 
   GaussianInitialization gaussian(0, 0.1);
   RBM<GaussianInitialization> model(trainData,
-      gaussian, trainData.n_rows, hiddenLayerSize, batchSize);
+                                    gaussian, trainData.n_rows, hiddenLayerSize, batchSize);
 
   size_t numRBMIterations = 10;
   ens::StandardSGD msgd(0.03, batchSize, numRBMIterations, 0, true);
