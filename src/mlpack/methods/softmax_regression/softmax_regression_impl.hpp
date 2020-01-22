@@ -49,7 +49,7 @@ double SoftmaxRegression::Train(const arma::mat& data,
                                 OptimizerType optimizer,
                                 CallbackTypes&&... callbacks)
 {
-  SoftmaxRegressionFunction regressor(data, labels, numClasses,0);
+  SoftmaxRegressionFunction regressor(data, labels, numClasses, 0);
   if (parameters.is_empty())
     parameters = regressor.GetInitialPoint();
 
@@ -65,7 +65,6 @@ double SoftmaxRegression::Train(const arma::mat& data,
 }
 
 } // namespace regression
-
 } // namespace mlpack
 
 #endif
