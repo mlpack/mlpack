@@ -49,7 +49,8 @@ double SoftmaxRegression::Train(const arma::mat& data,
                                 OptimizerType optimizer,
                                 CallbackTypes&&... callbacks)
 {
-  SoftmaxRegressionFunction regressor(data, labels, numClasses, 0, fitIntercept);
+  SoftmaxRegressionFunction regressor(data, labels, numClasses, 0,
+                                      fitIntercept);
   if (parameters.is_empty())
     parameters = regressor.GetInitialPoint();
 
