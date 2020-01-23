@@ -25,6 +25,8 @@
 #include "linear.hpp"
 #include "linear_no_bias.hpp"
 #include "lstm.hpp"
+#include "max_pooling.hpp"
+#include "mean_pooling.hpp"
 #include "minibatch_discrimination.hpp"
 #include "multiply_merge.hpp"
 #include "padding.hpp"
