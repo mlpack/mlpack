@@ -2936,7 +2936,7 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerPaddingTest)
  */
 BOOST_AUTO_TEST_CASE(MaxPoolingLayerPaddingTest)
 {
-  arma::mat output, input;
+  arma::mat output, input, delta;
 
   // Check valid padding option.
   MaxPooling<> module1(3, 3, 2, 2, true, std::tuple<size_t, size_t>(1, 1),
@@ -2956,7 +2956,7 @@ BOOST_AUTO_TEST_CASE(MaxPoolingLayerPaddingTest)
   module1.Backward(std::move(input), std::move(output), std::move(delta));
 
   // Check same padding option.
-  MaxPooling<> module1(3, 3, 2, 2, true, std::tuple<size_t, size_t>(0, 0),
+  MaxPooling<> module2(3, 3, 2, 2, true, std::tuple<size_t, size_t>(0, 0),
       std::tuple<size_t, size_t>(0, 0), "same");
 
   // Test the forward function.
@@ -2976,7 +2976,7 @@ BOOST_AUTO_TEST_CASE(MaxPoolingLayerPaddingTest)
  */
 BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
 {
-  arma::mat output, input;
+  arma::mat output, input, delta;
 
   // Check valid padding option.
   MeanPooling<> module1(3, 3, 2, 2, true, std::tuple<size_t, size_t>(1, 1),
@@ -2996,7 +2996,7 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
   module1.Backward(std::move(input), std::move(output), std::move(delta));
 
   // Check same padding option.
-  MeanPooling<> module1(3, 3, 2, 2, true, std::tuple<size_t, size_t>(0, 0),
+  MeanPooling<> module2(3, 3, 2, 2, true, std::tuple<size_t, size_t>(0, 0),
       std::tuple<size_t, size_t>(0, 0), "same");
 
   // Test the forward function.
