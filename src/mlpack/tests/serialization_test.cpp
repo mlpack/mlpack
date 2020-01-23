@@ -666,7 +666,8 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTest)
     labels[i] = 0;
   for (size_t i = 500; i < 1000; ++i)
     labels[i] = 1;
-  SoftmaxRegression sr(dataset, labels, 2);
+    ens::StandardSGD sgd;
+  SoftmaxRegression sr(dataset, labels, 2, 0.001, false, sgd);
   SoftmaxRegression srXml(dataset.n_rows, 2);
   SoftmaxRegression srText(dataset.n_rows, 2);
   SoftmaxRegression srBinary(dataset.n_rows, 2);

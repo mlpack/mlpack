@@ -208,7 +208,7 @@ class SoftmaxRegression
  private:
   //! Parameters after optimization.
   arma::mat parameters;
-  //! Input size 
+  //! Input size
   size_t inputSize;
   //! Number of classes.
   size_t numClasses;

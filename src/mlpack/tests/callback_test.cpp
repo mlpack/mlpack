@@ -22,7 +22,6 @@
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression_impl.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/core.hpp>
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack;
@@ -223,7 +222,7 @@ BOOST_AUTO_TEST_CASE(SRWithOptimizerCallback)
   ens::StandardSGD sgd(0.1, 1, 5);
   std::stringstream stream;
   // Train softmax regression object.
-  SoftmaxRegression sr(data, labels, numClasses, lambda);
+  SoftmaxRegression sr(data, labels, numClasses, lambda, false, sgd, ens::ProgressBar(70, stream));
   sr.Train(data, labels, numClasses, sgd, ens::ProgressBar(70, stream));
 
   BOOST_REQUIRE_GT(stream.str().length(), 0);
@@ -243,7 +242,10 @@ BOOST_AUTO_TEST_CASE(RBMCallbackTest)
 
   GaussianInitialization gaussian(0, 0.1);
   RBM<GaussianInitialization> model(trainData,
-                                    gaussian, trainData.n_rows, hiddenLayerSize, batchSize);
+                                    gaussian,
+                                    trainData.n_rows,
+                                    hiddenLayerSize,
+                                    batchSize);
 
   size_t numRBMIterations = 10;
   ens::StandardSGD msgd(0.03, batchSize, numRBMIterations, 0, true);
