@@ -222,7 +222,7 @@ BOOST_AUTO_TEST_CASE(SRWithOptimizerCallback)
   ens::StandardSGD sgd(0.1, 1, 5);
   std::stringstream stream;
   // Train softmax regression object.
-  SoftmaxRegression sr(data, labels, numClasses, lambda, 
+  SoftmaxRegression sr(data, labels, numClasses, lambda,
                        false, sgd, ens::ProgressBar(70, stream));
   sr.Train(data, labels, numClasses, sgd, ens::ProgressBar(70, stream));
 
