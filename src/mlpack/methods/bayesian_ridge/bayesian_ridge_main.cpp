@@ -88,9 +88,11 @@ PROGRAM_INFO("BayesianRidge",
                "test", "output_predictions", "test_predictions"));
 
 PARAM_TMATRIX_IN("input", "Matrix of covariates (X).", "i");
+
 PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");
 
 PARAM_MODEL_IN(BayesianRidge, "input_model", "Trained LARS model to use.", "m");
+
 PARAM_MODEL_OUT(BayesianRidge, "output_model", "Output LARS model.", "M");
 
 PARAM_TMATRIX_IN("test", "Matrix containing points to regress on (test "
@@ -103,6 +105,7 @@ PARAM_INT_IN("center", "Center the data and fit the intercept. Set to 0 to "
             "disable",
              "c",
              1);
+
 PARAM_INT_IN("scale", "Scale each feature by their standard deviations. "
              "set to 1 to scale.",
              "s",
