@@ -415,7 +415,7 @@ BOOST_AUTO_TEST_CASE(LARSTestComputeError)
   lars1.Train(X, y, betaOpt1);
   double cost = lars1.ComputeError(X, y);
 
-  BOOST_REQUIRE_EQUAL(cost <= 1 ,true);
+  BOOST_REQUIRE_EQUAL(cost <= 1, true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
