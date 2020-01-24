@@ -73,7 +73,7 @@ class MishFunction
    */
   static double Deriv(const double y)
   {
-    return std::exp(y) * (4 * (y + 1) + std::exp(y) * (4 * y + 6) + 
+    return std::exp(y) * (4 * (y + 1) + std::exp(y) * (4 * y + 6) +
            4 * std::exp(2 * y) + std::exp(3 * y)) /
            std::pow(std::exp(2 * y) + 2 * std::exp(y) + 2, 2);
   }
@@ -87,7 +87,7 @@ class MishFunction
   template <typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType &y, OutputVecType &x)
   {
-    x = arma::exp(y) % (4 * (y + 1) + arma::exp(y) % (4 * y + 6) + 
+    x = arma::exp(y) % (4 * (y + 1) + arma::exp(y) % (4 * y + 6) +
         4 * arma::exp(2 * y) + arma::exp(3 * y)) /
         arma::pow(arma::exp(2 * y) + 2 * arma::exp(y) + 2, 2);
   }
