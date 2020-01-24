@@ -103,7 +103,7 @@ class BayesianRidge
    * 
    * @param data Column-major input data
    * @param responses A vector of targets.
-   * @return score. Root Mean Square Error. Equal to -1 of two feature vectors 
+   * @return score. Root Mean Square Error. Equal to -1 if two feature vectors 
    *    or more are colinear.
    **/
   double Train(const arma::mat& data,
@@ -114,7 +114,7 @@ class BayesianRidge
    * currently-trained Bayesian Ridge model.
    *
    * @param points The data points to apply the model.
-   * @param predictions y, Contain the  predicted values on completion.
+   * @param predictions y, Contains the  predicted values on completion.
    **/
   void Predict(const arma::mat& points,
                arma::rowvec& predictions) const;
