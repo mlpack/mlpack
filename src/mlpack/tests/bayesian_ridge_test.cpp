@@ -29,9 +29,8 @@ void GenerateProblem(arma::mat& X,
 {
   X = arma::randn(nDims, nPoints);
   arma::colvec omega = arma::randn(nDims);
-  arma::colvec noise = arma::randn(nPoints) * sigma;
   // Compute y and add noise.
-  y = omega.t() * X + noise.t();
+  y = omega.t() * X + arma::randn(nPoints).t() * sigma;
 }
 
 // Ensure that predictions are close enough to the target
