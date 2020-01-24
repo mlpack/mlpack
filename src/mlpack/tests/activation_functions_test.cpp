@@ -642,8 +642,8 @@ BOOST_AUTO_TEST_CASE(MishFunctionTest)
   // Calculated using tfa.activations.mish().
   // where tfa is tensorflow_addons.
   const arma::colvec desiredActivations("-0.25250152 3.1901977 \
-                                         4.498914 0.0 0.86509836 \
-                                         -0.30340138 1.943959 0.0");
+                                         4.498914 -3.05183208e-42 0.86509836 \
+                                         -0.30340138 1.943959 0");
 
   const arma::colvec desiredDerivatives("0.4382387  1.0159768849 \
                                           1.0019108 0.6 \

@@ -48,7 +48,8 @@ class MishFunction
    */
   static double Fn(const double x)
   {
-    return x * std::tanh(SoftplusFunction::Fn(x));
+    return x * (std::exp(2 * x) + 2 * std::exp(x)) /
+           (2 + 2 * std::exp(x) + std::exp(2 * x));
   }
 
   /**
@@ -60,9 +61,8 @@ class MishFunction
   template <typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType &x, OutputVecType &y)
   {
-    y.set_size(arma::size(x));
-    for (size_t i = 0; i < x.n_elem; i++)
-        y(i) = Fn(x(i));
+    y = x % (arma::exp(2 * x) + 2 * arma::exp(x)) /
+        (2 + 2 * arma::exp(x) + arma::exp(2 * x));
   }
 
   /**
@@ -73,9 +73,9 @@ class MishFunction
    */
   static double Deriv(const double y)
   {
-    return std::tanh(SoftplusFunction::Fn(y)) +
-           y * (SoftplusFunction::Deriv(y) *
-           (1 - std::pow(std::tanh(SoftplusFunction::Fn(y)), 2)));
+    return std::exp(y) * (4 * (y + 1) + std::exp(y) * (4 * y + 6) + 
+           4 * std::exp(2 * y) + std::exp(3 * y)) /
+           std::pow(std::exp(2 * y) + 2 * std::exp(y) + 2, 2);
   }
 
   /**
@@ -87,13 +87,9 @@ class MishFunction
   template <typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType &y, OutputVecType &x)
   {
-    InputVecType softPlusY;
-    InputVecType derivSoftPlusY;
-    SoftplusFunction::Fn(y, softPlusY);
-    SoftplusFunction::Deriv(y, derivSoftPlusY);
-    x = arma::tanh(softPlusY) +
-        y % derivSoftPlusY %
-        (1 - arma::pow(arma::tanh(softPlusY), 2));
+    x = arma::exp(y) % (4 * (y + 1) + arma::exp(y) % (4 * y + 6) + 
+        4 * arma::exp(2 * y) + arma::exp(3 * y)) /
+        arma::pow(arma::exp(2 * y) + 2 * arma::exp(y) + 2, 2);
   }
 }; // class MishFunction
 
