@@ -122,6 +122,7 @@ add_executable(mlpack_test
   main_tests/emst_test.cpp
   main_tests/adaboost_test.cpp
   main_tests/approx_kfn_test.cpp
+  main_tests/bayesian_ridge_test.cpp
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
   main_tests/det_test.cpp
