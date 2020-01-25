@@ -18,20 +18,19 @@
 namespace mlpack {
 namespace regression {
 
-template<typename OptimizerType, typename... CallbackTypes>
+template<typename OptimizerType>
 SoftmaxRegression::SoftmaxRegression(
     const arma::mat& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const double lambda,
     const bool fitIntercept,
-    OptimizerType optimizer,
-    CallbackTypes&&... callbacks) :
+    OptimizerType optimizer) :
     numClasses(numClasses),
     lambda(lambda),
     fitIntercept(fitIntercept)
 {
-  Train(data, labels, numClasses, optimizer, callbacks...);
+  Train(data, labels, numClasses, optimizer);
 }
 
 template<typename VecType>

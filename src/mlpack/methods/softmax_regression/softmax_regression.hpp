@@ -72,7 +72,6 @@ class SoftmaxRegression
   SoftmaxRegression(const size_t inputSize = 0,
                     const size_t numClasses = 0,
                     const bool fitIntercept = false);
-  
     /**
    * Construct the SoftmaxRegression class with the provided data and labels.
    * This will train the model. Optionally, the parameter 'lambda' can be
@@ -88,15 +87,13 @@ class SoftmaxRegression
    * @param lambda L2-regularization constant.
    * @param fitIntercept add intercept term or not.
    */
-  template<typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>
+  template<typename OptimizerType = ens::L_BFGS>
   SoftmaxRegression(const arma::mat& data,
                     const arma::Row<size_t>& labels,
                     const size_t numClasses,
                     const double lambda = 0.0001,
                     const bool fitIntercept = false,
-                    OptimizerType optimizer = OptimizerType(),
-                    CallbackTypes&&... callbacks);
-  
+                    OptimizerType optimizer = OptimizerType());  
   /**
    * Classify the given points, returning the predicted labels for each point.
    * The function calculates the probabilities for every class, given a data
@@ -150,7 +147,6 @@ class SoftmaxRegression
    */
   double ComputeAccuracy(const arma::mat& testData,
                          const arma::Row<size_t>& labels) const;
-  
   /**
    * Train the softmax regression with the given training data.
    *
