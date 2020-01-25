@@ -93,7 +93,7 @@ class SoftmaxRegression
                     const size_t numClasses,
                     const double lambda = 0.0001,
                     const bool fitIntercept = false,
-                    OptimizerType optimizer = OptimizerType());  
+                    OptimizerType optimizer = OptimizerType());
   /**
    * Classify the given points, returning the predicted labels for each point.
    * The function calculates the probabilities for every class, given a data
