@@ -46,10 +46,21 @@ template<typename OptimizerType, typename... CallbackTypes>
 double SoftmaxRegression::Train(const arma::mat& data,
                                 const arma::Row<size_t>& labels,
                                 const size_t numClasses,
+                                CallbackTypes&&... callbacks)
+{
+  OptimizerType optimizer;
+  return Train(data, labels, numClasses, optimizer, callbacks...);
+}
+
+
+template<typename OptimizerType, typename... CallbackTypes>
+double SoftmaxRegression::Train(const arma::mat& data,
+                                const arma::Row<size_t>& labels,
+                                const size_t numClasses,
                                 OptimizerType optimizer,
                                 CallbackTypes&&... callbacks)
 {
-  SoftmaxRegressionFunction regressor(data, labels, numClasses, 0,
+  SoftmaxRegressionFunction regressor(data, labels, numClasses, lambda,
                                       fitIntercept);
   if (parameters.is_empty())
     parameters = regressor.GetInitialPoint();
