@@ -552,6 +552,6 @@ double LARS::ComputeError(const arma::mat& matX,
   else
     u = betaPath.back().t() * matX;
 
-  cost = arma::accu(arma::abs(y-u));
+  cost = arma::accu((y - u) % (y - u));
   return cost;
 }

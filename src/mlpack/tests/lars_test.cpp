@@ -398,7 +398,8 @@ BOOST_AUTO_TEST_CASE(LARSTrainReturnCorrelation)
 }
 
 /**
- * Test that LARS::ComputeError() returns error value less than 1.
+ * Test that LARS::ComputeError() returns error value less than 1
+ * and greater than 0.
  */
 BOOST_AUTO_TEST_CASE(LARSTestComputeError)
 {
@@ -416,6 +417,7 @@ BOOST_AUTO_TEST_CASE(LARSTestComputeError)
   double cost = lars1.ComputeError(X, y);
 
   BOOST_REQUIRE_EQUAL(cost <= 1, true);
+  BOOST_REQUIRE_EQUAL(cost >= 0, true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
