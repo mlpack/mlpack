@@ -45,12 +45,10 @@ template<typename OptimizerType, typename... CallbackTypes>
 double SoftmaxRegression::Train(const arma::mat& data,
                                 const arma::Row<size_t>& labels,
                                 const size_t numClasses,
-                                CallbackTypes&&... callbacks)
+                                OptimizerType optimizer)
 {
-  OptimizerType optimizer;
-  return Train(data, labels, numClasses, optimizer, callbacks...);
+  return Train(data, labels, numClasses, optimizer);
 }
-
 
 template<typename OptimizerType, typename... CallbackTypes>
 double SoftmaxRegression::Train(const arma::mat& data,
