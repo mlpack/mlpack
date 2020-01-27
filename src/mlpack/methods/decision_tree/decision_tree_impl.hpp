@@ -118,10 +118,8 @@ DecisionTree<FitnessFunction,
     const double minimumGainSplit,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
-    const std::enable_if_t<
-        arma::is_arma_type<
-        typename std::remove_reference<
-        WeightsType>::type>::value>*)
+    const std::enable_if_t<arma::is_arma_type<
+        typename std::remove_reference<WeightsType>::type>::value>*)
 {
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueLabelsType = typename std::decay<LabelsType>::type;
@@ -163,10 +161,8 @@ DecisionTree<FitnessFunction,
     WeightsType weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
-    const std::enable_if_t<
-        arma::is_arma_type<
-        typename std::remove_reference<
-        WeightsType>::type>::value>*):
+    const std::enable_if_t<arma::is_arma_type<
+        typename std::remove_reference<WeightsType>::type>::value>*):
         NumericAuxiliarySplitInfo(other),
         CategoricalAuxiliarySplitInfo(other)
 {

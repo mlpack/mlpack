@@ -1,5 +1,9 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+
+  * The DecisionStump class has been marked deprecated use DecisionTree
+    class with `NoRecursion=true` or use `ID3DecisionStump` (#2099).
+
   * Add Model() to the FFN class to access individual layers (#2043).
 
   * Update documentation for pip and conda installation packages (#2044).

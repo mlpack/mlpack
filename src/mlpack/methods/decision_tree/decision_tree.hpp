@@ -589,6 +589,9 @@ using DecisionStump = DecisionTree<FitnessFunction,
                                    ElemType,
                                    false>;
 
+/**
+ * Convenience typedef for decision tree (Three level decision trees).
+ */
 typedef DecisionTree<InformationGain,
                      BestBinaryNumericSplit,
                      AllCategoricalSplit,
