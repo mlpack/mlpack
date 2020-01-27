@@ -115,7 +115,8 @@ class DecisionStump
    * @param predictedLabels Vector to store the predicted classes after
    *     classifying test data.
    */
-  mlpack_deprecated void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
+  mlpack_deprecated void Classify(const MatType& test,
+                                  arma::Row<size_t>& predictedLabels);
 
   //! Access the splitting dimension.
   size_t SplitDimension() const { return splitDimension; }
