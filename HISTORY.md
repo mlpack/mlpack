@@ -23,6 +23,8 @@
 
   * CMake fix for finding STB include directory (#2145).
 
+  * Add normalization support for CF binding (#2136).
+
 ### mlpack 3.2.2
 ###### 2019-11-26
   * Add `valid` and `same` padding option in `Convolution` and `Atrous
