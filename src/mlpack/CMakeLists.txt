@@ -122,24 +122,36 @@ if (BUILDING_PYTHON_BINDINGS)
       PROPERTY INCLUDE_DIRECTORIES)
   add_custom_target(python_configure
       COMMAND ${CMAKE_COMMAND}
-          -D SETUP_PY_IN="${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in"
-          -D SETUP_PY_OUT="${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py"
+          -D SETUP_PY_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
+          -D SETUP_PY_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
           -D PACKAGE_VERSION="${PACKAGE_VERSION}"
           -D Boost_SERIALIZATION_LIBRARY="${Boost_SERIALIZATION_LIBRARY_RELEASE}"
           -D Boost_LIBRARY_DIRS="${Boost_LIBRARY_DIRS}"
           -D ARMADILLO_LIBRARIES="${ARMADILLO_LIBRARIES}"
-          -D MLPACK_LIBRARY="$<TARGET_LINKER_FILE:mlpack>"
-          -D MLPACK_LIBDIR="$<TARGET_LINKER_FILE_DIR:mlpack>"
+          -D MLPACK_LIBRARY=$<TARGET_LINKER_FILE:mlpack>
+          -D MLPACK_LIBDIR=$<TARGET_LINKER_FILE_DIR:mlpack>
           -D MLPACK_PYXS="${MLPACK_PYXS}"
           -D OpenMP_CXX_FLAGS="${OpenMP_CXX_FLAGS}"
           -D DISABLE_CFLAGS="${DISABLE_CFLAGS}"
           -D CYTHON_INCLUDE_DIRECTORIES="${CYTHON_INCLUDE_DIRECTORIES}"
-          -D OUTPUT_DIR="${CMAKE_BINARY_DIR}"
+          -D OUTPUT_DIR=${CMAKE_BINARY_DIR}
           -P "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/ConfigureSetup.cmake"
       BYPRODUCTS "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py"
       COMMENT "Configuring setup.py...")
   add_dependencies(python_configure python_copy)
   add_dependencies(python_configured python_configure)
+
+  # Append the package version to __init__.py after all the imports are loaded.
+  file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
+  "__version__='${PACKAGE_VERSION}'\n")
+endif ()
+
+# If we are building Julia bindings, we have to end the 'module' declaration in
+# mlpack.jl
+if (BUILD_JULIA_BINDINGS)
+  file(APPEND
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
+      "\nend\ninclude(\"functions.jl\")\nend\n")
 endif ()
 
 # If we are building Markdown documentation, we have to run some setup after we

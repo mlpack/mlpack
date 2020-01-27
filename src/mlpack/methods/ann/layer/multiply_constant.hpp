@@ -70,6 +70,11 @@ class MultiplyConstant
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the scalar multiplier.
+  double Scalar() const { return scalar; }
+  //! Modify the scalar multiplier.
+  double& Scalar() { return scalar; }
+
   /**
    * Serialize the layer.
    */
