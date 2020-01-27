@@ -60,7 +60,19 @@ and @c -lblas would be required instead of @c -larmadillo
 In /src
   - filename.cpp
   - CMakeLists.txt
+  - /cmake/FindArmadillo.cmake
+  - /cmake/FindMLPACK.cmake
 
+@note
+Create folders @c /src and @c /src/cmake . 
+Place the files @c FindArmadillo.cmake and @c FindMLPACK.cmake 
+in @c /src/cmake .
+. The required files could be found at 
+ - <a href="https://github.com/mlpack/mlpack/blob/master/CMake/FindArmadillo.cmake"> 
+      FindArmadillo.cmake</a> and
+ - <a href="https://github.com/mlpack/models/blob/master/CMake/FindMLPACK.cmake"> 
+      FindMLPACK.cmake</a>
+      
 @code
 # CMakeLists.txt
 cmake_minimum_required(VERSION 3.10)
@@ -68,15 +80,25 @@ cmake_minimum_required(VERSION 3.10)
 # set the project name
 project(Project_Name VERSION 1.0)
 
+# specify the search path for CMake modules to be loaded by find_package()
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+find_package(Armadillo REQUIRED)
+find_package(MLPACK REQUIRED)
+
+#List of preprocessor include file search directories
+include_directories(${ARMADILLO_INCLUDE_DIRS})
+include_directories(${MLPACK_INCLUDE_DIRS})
+
 add_executable(Project_Name filename.cpp)
 
-target_link_libraries(Project_Name -lmlpack)
-target_link_libraries(Project_Name -larmadillo)
+#Specify libraries to use when linking a target Project_Name
+target_link_libraries(Project_Name ${ARMADILLO_LIBRARIES})
+target_link_libraries(Project_Name ${MLPACK_LIBRARIES})
 @endcode
 
-Steps to build and run using CMake:
+In target directory for executable, run the command:
 @code{.sh}
-#In target directory for executable, run the command:
 cmake path/to/src 
 cmake --build .
 ./Project_Name
