@@ -270,6 +270,8 @@ class CosineTree
   double l2Error;
   //! Frobenius norm squared of columns in the node.
   double frobNormSquared;
+  //! If true, we own the dataset and need to destroy it in the destructor.
+  bool localDataset;
 };
 
 class CompareCosineNode

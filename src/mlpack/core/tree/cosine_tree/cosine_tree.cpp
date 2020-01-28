@@ -22,6 +22,7 @@ CosineTree::CosineTree(const arma::mat& dataset) :
     parent(NULL),
     left(NULL),
     right(NULL),
+    localDataset(true),
     numColumns(dataset.n_cols)
 {
   // Initialize sizes of column indices and l2 norms.
@@ -51,6 +52,7 @@ CosineTree::CosineTree(CosineTree& parentNode,
     parent(&parentNode),
     left(NULL),
     right(NULL),
+    localDataset(false),
     numColumns(subIndices.size())
 {
   // Initialize sizes of column indices and l2 norms.
@@ -79,7 +81,8 @@ CosineTree::CosineTree(const arma::mat& dataset,
     dataset(&dataset),
     delta(delta),
     left(NULL),
-    right(NULL)
+    right(NULL),
+    localDataset(true)
 {
   // Declare the cosine tree priority queue.
   CosineNodeQueue treeQueue;
@@ -163,6 +166,7 @@ CosineTree::CosineTree(const CosineTree& other) :
     basisVector(other.basisVector),
     splitPointIndex(other.SplitPointIndex()),
     numColumns(other.NumColumns()),
+    localDataset(other.parent == NULL && other.localDataset),    
     l2Error(other.L2Error()),
     frobNormSquared(other.FrobNormSquared())
 {
@@ -180,7 +184,7 @@ CosineTree::CosineTree(const CosineTree& other) :
   }
 
   // Propagate matrix, but only if we are the root.
-  if (parent == NULL)
+  if (parent == NULL && localDataset)
   {
     std::queue<CosineTree*> queue;
     if (left)
@@ -209,10 +213,14 @@ CosineTree& CosineTree::operator=(const CosineTree& other)
     return *this;
 
   // Freeing memory that will not be used anymore.
+  if (localDataset)
+    delete dataset;
+
   delete left;
   delete right;
 
-  dataset = (other.parent == NULL) ? other.dataset : NULL;
+  dataset = (other.parent == NULL && other.localDataset) ?
+      other.dataset : NULL;
   delta = other.delta;
   parent = other.Parent();
   left = other.Left();
@@ -224,6 +232,7 @@ CosineTree& CosineTree::operator=(const CosineTree& other)
   splitPointIndex = other.SplitPointIndex();
   numColumns = other.NumColumns();
   l2Error = other.L2Error();
+  localDataset = (other.parent == NULL && other.localDataset);
   frobNormSquared = other.FrobNormSquared();
 
   // Create left and right children (if any).
@@ -240,7 +249,7 @@ CosineTree& CosineTree::operator=(const CosineTree& other)
   }
 
   // Propagate matrix, but only if we are the root.
-  if (parent == NULL)
+  if (parent == NULL && localDataset)
   {
     std::queue<CosineTree*> queue;
     if (left)
@@ -277,6 +286,7 @@ CosineTree::CosineTree(CosineTree&& other) :
     splitPointIndex(other.splitPointIndex),
     numColumns(other.numColumns),
     l2Error(other.l2Error),
+    localDataset(other.localDataset),
     frobNormSquared(other.frobNormSquared)
 {
   // Now we are a clone of the other tree.  But we must also clear the other
@@ -288,6 +298,7 @@ CosineTree::CosineTree(CosineTree&& other) :
   other.splitPointIndex = 0;
   other.numColumns = 0;
   other.l2Error = -1;
+  other.localDataset = false;
   other.frobNormSquared = 0;
   // Set new parent.
   if (left)
@@ -304,6 +315,8 @@ CosineTree& CosineTree::operator=(CosineTree&& other)
     return *this;
 
   // Freeing memory that will not be used anymore.
+  if (localDataset)
+    delete dataset;
   delete left;
   delete right;
 
@@ -319,6 +332,7 @@ CosineTree& CosineTree::operator=(CosineTree&& other)
   splitPointIndex = other.SplitPointIndex();
   numColumns = other.NumColumns();
   l2Error = other.L2Error();
+  localDataset = other.localDataset;
   frobNormSquared = other.FrobNormSquared();
 
   // Now we are a clone of the other tree.  But we must also clear the other
@@ -330,6 +344,7 @@ CosineTree& CosineTree::operator=(CosineTree&& other)
   other.splitPointIndex = 0;
   other.numColumns = 0;
   other.l2Error = -1;
+  other.localDataset = false;
   other.frobNormSquared = 0;
   // Set new parent.
   if (left)
@@ -342,6 +357,8 @@ CosineTree& CosineTree::operator=(CosineTree&& other)
 
 CosineTree::~CosineTree()
 {
+  if (localDataset)
+    delete dataset;
   if (left)
     delete left;
   if (right)
