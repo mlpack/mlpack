@@ -574,8 +574,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesTest)
 
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    double value = arma::sum(probabilities.col(i));
-    BOOST_REQUIRE_CLOSE(std::isnan(value)?1.0:value, 1.0, 1e-5);
+    BOOST_REQUIRE_CLOSE(arma::sum(probabilities.col(i)), 1.0, 1e-5);
   }
 }
 
@@ -664,8 +663,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesAndLabelsTest)
 
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    double value = arma::sum(probabilities.col(i));
-    BOOST_REQUIRE_CLOSE(std::isnan(value)?1.0:value, 1.0, 1e-5);
+    BOOST_REQUIRE_CLOSE(arma::sum(probabilities.col(i)), 1.0, 1e-5);
     BOOST_REQUIRE_EQUAL(testLabels(i), labels(i));
   }
 }
