@@ -57,18 +57,23 @@ TransposedConvolution<
     const size_t kernelHeight,
     const size_t strideWidth,
     const size_t strideHeight,
-    const size_t padWidth,
-    const size_t padHeight,
+    const size_t padW,
+    const size_t padH,
     const size_t inputWidth,
     const size_t inputHeight,
     const size_t outputWidth,
-    const size_t outputHeight) :
+    const size_t outputHeight,
+    const std::string paddingType) :
     inSize(inSize),
     outSize(outSize),
     kernelWidth(kernelWidth),
     kernelHeight(kernelHeight),
     strideWidth(strideWidth),
     strideHeight(strideHeight),
+    padWLeft(padW),
+    padWRight(padW),
+    padHBottom(padH),
+    padHTop(padH),
     inputWidth(inputWidth),
     inputHeight(inputHeight),
     outputWidth(outputWidth),
@@ -77,25 +82,130 @@ TransposedConvolution<
   weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
       1);
 
-  aW = (outputWidth + 2 * padWidth - kernelWidth) % strideWidth;
-  aH = (outputHeight + 2 * padHeight - kernelHeight) % strideHeight;
-
-  const size_t padWidthForward = kernelWidth - padWidth - 1;
-  const size_t padHeightForward = kernelHeight - padHeight - 1;
-
-  paddingForward = ann::Padding<>(padWidthForward, padWidthForward + aW,
-      padHeightForward, padHeightForward + aH);
-  paddingBackward = ann::Padding<>(padWidth, padWidth, padHeight, padHeight);
+  // Transform paddingType to lowercase.
+  std::string paddingTypeLow = paddingType;
+  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
+      [](unsigned char c){ return std::tolower(c); });
+  if (paddingTypeLow == "valid")
+  {
+    // Set Padding to 0.
+    padWLeft = 0;
+    padWRight = 0;
+    padHTop = 0;
+    padHBottom = 0;
+  }
+  else if (paddingTypeLow == "same")
+  {
+    InitializeSamePadding();
+  }
+  size_t totalPadWidth = padWLeft + padWRight;
+  size_t totalPadHeight = padHTop + padHBottom;
+  aW  = (outputWidth + totalPadWidth - kernelWidth) % strideWidth;
+  aH  = (outputHeight + totalPadHeight - kernelHeight) % strideHeight;
+  const size_t padWidthLeftForward = kernelWidth - padWLeft - 1;
+  const size_t padHeightTopForward = kernelHeight - padHTop - 1;
+  const size_t padWidthRightForward = kernelWidth - padWRight - 1;
+  const size_t padHeightBottomtForward = kernelHeight - padHBottom - 1;
+  paddingForward = ann::Padding<>(padWidthLeftForward,
+                    padWidthRightForward + aW, padHeightTopForward,
+                    padHeightBottomtForward + aH);
+  paddingBackward = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 
   // Check if the output height and width are possible given the other
   // parameters of the layer.
   if (outputWidth != strideWidth * (inputWidth - 1) +
-          aW + kernelWidth - 2 * padWidth ||
+          aW + kernelWidth - totalPadWidth ||
       outputHeight != strideHeight * (inputHeight - 1) +
-          aH + kernelHeight - 2 * padHeight)
+          aH + kernelHeight - totalPadHeight)
   {
     Log::Fatal << "The output width / output height is not possible given "
-        << "the other parameters of the layer." << std::endl;
+               << "the other parameters of the layer." << std::endl;
+  }
+}
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+TransposedConvolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::TransposedConvolution(
+    const size_t inSize,
+    const size_t outSize,
+    const size_t kernelWidth,
+    const size_t kernelHeight,
+    const size_t strideWidth,
+    const size_t strideHeight,
+    const std::tuple<size_t, size_t> padW,
+    const std::tuple<size_t, size_t> padH,
+    const size_t inputWidth,
+    const size_t inputHeight,
+    const size_t outputWidth,
+    const size_t outputHeight,
+    const std::string paddingType) :
+    inSize(inSize),
+    outSize(outSize),
+    kernelWidth(kernelWidth),
+    kernelHeight(kernelHeight),
+    strideWidth(strideWidth),
+    strideHeight(strideHeight),
+    padWLeft(std::get<0>(padW)),
+    padWRight(std::get<1>(padW)),
+    padHBottom(std::get<1>(padH)),
+    padHTop(std::get<0>(padH)),
+    inputWidth(inputWidth),
+    inputHeight(inputHeight),
+    outputWidth(outputWidth),
+    outputHeight(outputHeight)
+{
+  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
+      1);
+  // Transform paddingType to lowercase.
+  std::string paddingTypeLow = paddingType;
+  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
+      [](unsigned char c){ return std::tolower(c); });
+
+  if (paddingTypeLow == "valid")
+  {
+    // Set Padding to 0.
+    padWLeft = 0;
+    padWRight = 0;
+    padHTop = 0;
+    padHBottom = 0;
+  }
+  else if (paddingTypeLow == "same")
+  {
+    InitializeSamePadding();
+  }
+  size_t totalPadWidth = padWLeft + padWRight;
+  size_t totalPadHeight = padHTop + padHBottom;
+  aW  = (outputWidth + totalPadWidth - kernelWidth) % strideWidth;
+  aH  = (outputHeight + totalPadHeight - kernelHeight) % strideHeight;
+  const size_t padWidthLeftForward = kernelWidth - padWLeft - 1;
+  const size_t padHeightTopForward = kernelHeight - padHTop - 1;
+  const size_t padWidthRightForward = kernelWidth - padWRight - 1;
+  const size_t padHeightBottomtForward = kernelHeight - padHBottom - 1;
+  paddingForward = ann::Padding<>(padWidthLeftForward,
+                    padWidthRightForward + aW, padHeightTopForward,
+                    padHeightBottomtForward + aH);
+  paddingBackward = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+
+  // Check if the output height and width are possible given the other
+  // parameters of the layer.
+  if (outputWidth != strideWidth * (inputWidth - 1) +
+          aW + kernelWidth - totalPadWidth ||
+      outputHeight != strideHeight * (inputHeight - 1) +
+          aH + kernelHeight - totalPadHeight)
+  {
+    Log::Fatal << "The output width / output height is not possible given "
+               << "the other parameters of the layer." << std::endl;
   }
 }
 
@@ -387,6 +497,10 @@ void TransposedConvolution<
     ar & BOOST_SERIALIZATION_NVP(padWidth);
     ar & BOOST_SERIALIZATION_NVP(padHeight);
   }
+  ar &BOOST_SERIALIZATION_NVP(padWLeft);
+  ar &BOOST_SERIALIZATION_NVP(padWRight);
+  ar &BOOST_SERIALIZATION_NVP(padHBottom);
+  ar &BOOST_SERIALIZATION_NVP(padHTop);
   ar & BOOST_SERIALIZATION_NVP(inputWidth);
   ar & BOOST_SERIALIZATION_NVP(inputHeight);
   ar & BOOST_SERIALIZATION_NVP(outputWidth);
@@ -402,9 +516,48 @@ void TransposedConvolution<
   {
     weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
         1);
+    size_t totalPadWidth = padWLeft + padWRight;
+    size_t totalPadHeight = padHTop + padHBottom;
+    aW = (outputWidth + kernelWidth - totalPadWidth - 2) % strideWidth;
+    aH = (outputHeight + kernelHeight - totalPadHeight - 2) % strideHeight;
+  }
+}
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+void TransposedConvolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::InitializeSamePadding(){
+  /**
+   * Using O=s*(I-1) + K -2P + A
+   * where
+   * s=stride 
+   * I=Input Shape
+   * K=Kernel Size
+   * P=Padding
+   */
+  size_t totalHorizontalPadding  = (strideWidth - 1) * inputWidth + \
+    kernelWidth - strideWidth;
+  size_t totalVerticalPadding = (strideHeight - 1) * inputHeight + \
+    kernelHeight - strideHeight;
 
-    aW = (outputWidth + kernelWidth - 2 * padWidth - 2) % strideWidth;
-    aH = (outputHeight + kernelHeight - 2 * padHeight - 2) % strideHeight;
+  padWLeft = totalVerticalPadding / 2;
+  padWRight = totalVerticalPadding - totalVerticalPadding / 2;
+  padHTop = totalHorizontalPadding / 2;
+  padHBottom = totalHorizontalPadding - totalHorizontalPadding / 2;
+  // If Padding is negative throw a fatal error.
+  if (totalHorizontalPadding < 0 || totalVerticalPadding < 0)
+  {
+    Log::Fatal << "The output width / output height is not possible given "
+               << "same padding for the layer." << std::endl;
   }
 }
 
