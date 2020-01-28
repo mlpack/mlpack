@@ -6,7 +6,6 @@ set(SOURCES
   softsign_function.hpp
   tanh_function.hpp
   tanhshrink_function.hpp
-  elu_function.hpp
   rectifier_function.hpp
   softplus_function.hpp
   swish_function.hpp
