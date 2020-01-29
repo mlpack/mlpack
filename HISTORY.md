@@ -27,9 +27,6 @@
   
   * Add Mish activation function (#2158).
 
-  * Update `init_rules` in AMF to allow users to merge two initialization
-    rules (#2151).
-
 ### mlpack 3.2.2
 ###### 2019-11-26
   * Add `valid` and `same` padding option in `Convolution` and `Atrous
