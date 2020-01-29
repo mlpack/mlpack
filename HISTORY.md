@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added `probabilities_file` parameter to get the probabilities matrix of
+    AdaBoost classifier (#2050).
+
   * Fix STB header search paths (#2104).
 
   * Add `DISABLE_DOWNLOADS` CMake configuration option (#2104).
@@ -17,6 +20,12 @@
   * Add Julia bindings (#1949).  Build settings can be controlled with the
     `BUILD_JULIA_BINDINGS=(ON/OFF)` and `JULIA_EXECUTABLE=/path/to/julia` CMake
     parameters.
+
+  * CMake fix for finding STB include directory (#2145).
+
+  * Add normalization support for CF binding (#2136).
+  
+  * Add Mish activation function (#2158).
 
 ### mlpack 3.2.2
 ###### 2019-11-26

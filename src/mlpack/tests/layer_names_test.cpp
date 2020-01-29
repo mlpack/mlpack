@@ -52,6 +52,14 @@ BOOST_AUTO_TEST_CASE(LayerNameVisitorTest)
   LayerTypes<> pReLU = new PReLU<>();
   LayerTypes<> sigmoidLayer = new SigmoidLayer<>();
   LayerTypes<> logSoftMax = new LogSoftMax<>();
+  LayerTypes<> lstmLayer = new LSTM<>(100, 10);
+  LayerTypes<> creluLayer = new CReLU<>();
+  LayerTypes<> highwayLayer = new Highway<>();
+  LayerTypes<> gruLayer = new GRU<>();
+  LayerTypes<> glimpseLayer = new Glimpse<>();
+  LayerTypes<> fastlstmLayer = new FastLSTM<>();
+  LayerTypes<> weightnormLayer = new WeightNorm<>(new IdentityLayer<>());
+
   // Bilinear interpolation is not yet supported by the string converter.
   LayerTypes<> unsupportedLayer = new BilinearInterpolation<>();
 
@@ -105,6 +113,20 @@ BOOST_AUTO_TEST_CASE(LayerNameVisitorTest)
                       logSoftMax) == "logsoftmax");
   BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       unsupportedLayer) == "unsupported");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      lstmLayer) == "lstm");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      creluLayer) == "crelu");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      highwayLayer) == "highway");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      gruLayer) == "gru");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      glimpseLayer) == "glimpse");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      fastlstmLayer) == "fastlstm");
+  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+                      weightnormLayer) == "weightnorm");
   // Delete all instances.
   boost::apply_visitor(DeleteVisitor(), atrousConvolution);
   boost::apply_visitor(DeleteVisitor(), alphaDropout);
@@ -131,6 +153,13 @@ BOOST_AUTO_TEST_CASE(LayerNameVisitorTest)
   boost::apply_visitor(DeleteVisitor(), sigmoidLayer);
   boost::apply_visitor(DeleteVisitor(), logSoftMax);
   boost::apply_visitor(DeleteVisitor(), unsupportedLayer);
+  boost::apply_visitor(DeleteVisitor(), lstmLayer);
+  boost::apply_visitor(DeleteVisitor(), creluLayer);
+  boost::apply_visitor(DeleteVisitor(), highwayLayer);
+  boost::apply_visitor(DeleteVisitor(), gruLayer);
+  boost::apply_visitor(DeleteVisitor(), glimpseLayer);
+  boost::apply_visitor(DeleteVisitor(), fastlstmLayer);
+  boost::apply_visitor(DeleteVisitor(), weightnormLayer);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

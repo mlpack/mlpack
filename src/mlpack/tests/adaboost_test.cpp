@@ -620,12 +620,33 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
   double tolerance = 1e-10;
   AdaBoost<> a(inputData, labels.row(0), numClasses, p, iterations, tolerance);
 
-  arma::Row<size_t> predictedLabels(testData.n_cols);
-  a.Classify(testData, predictedLabels);
+  arma::Row<size_t> predictedLabels1(testData.n_cols),
+                    predictedLabels2(testData.n_cols);
+  arma::mat probabilities;
+
+  a.Classify(testData, predictedLabels1);
+  a.Classify(testData, predictedLabels2, probabilities);
+
+  BOOST_REQUIRE_EQUAL(probabilities.n_cols, testData.n_cols);
+  BOOST_REQUIRE_EQUAL(probabilities.n_rows, numClasses);
+
+  for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
+    BOOST_REQUIRE_EQUAL(predictedLabels1[i], predictedLabels2[i]);
+
+  arma::colvec pRow;
+  arma::uword maxIndex = 0;
+
+  for (size_t i = 0; i < predictedLabels1.n_cols; i++)
+  {
+    pRow = probabilities.unsafe_col(i);
+    pRow.max(maxIndex);
+    BOOST_REQUIRE_EQUAL(predictedLabels1(i), maxIndex);
+    BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
+  }
 
   size_t localError = 0;
   for (size_t i = 0; i < trueTestLabels.n_cols; i++)
-    if (trueTestLabels(i) != predictedLabels(i))
+    if (trueTestLabels(i) != predictedLabels1(i))
       localError++;
 
   double lError = (double) localError / trueTestLabels.n_cols;
@@ -671,12 +692,32 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
   AdaBoost<DecisionStump<> > a(inputData, labels.row(0), numClasses, ds,
       iterations, tolerance);
 
-  arma::Row<size_t> predictedLabels(testData.n_cols);
-  a.Classify(testData, predictedLabels);
+  arma::Row<size_t> predictedLabels1(testData.n_cols),
+                    predictedLabels2(testData.n_cols);
+  arma::mat probabilities;
+
+  a.Classify(testData, predictedLabels1);
+  a.Classify(testData, predictedLabels2, probabilities);
+
+  BOOST_REQUIRE_EQUAL(probabilities.n_cols, testData.n_cols);
+
+  for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
+    BOOST_REQUIRE_EQUAL(predictedLabels1[i], predictedLabels2[i]);
+
+  arma::colvec pRow;
+  arma::uword maxIndex = 0;
+
+  for (size_t i = 0; i < predictedLabels1.n_cols; i++)
+  {
+    pRow = probabilities.unsafe_col(i);
+    pRow.max(maxIndex);
+    BOOST_REQUIRE_EQUAL(predictedLabels1(i), maxIndex);
+    BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
+  }
 
   size_t localError = 0;
   for (size_t i = 0; i < trueTestLabels.n_cols; i++)
-    if (trueTestLabels(i) != predictedLabels(i))
+    if (trueTestLabels(i) != predictedLabels1(i))
       localError++;
 
   double lError = (double) localError / trueTestLabels.n_cols;
@@ -716,16 +757,38 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
     BOOST_FAIL("Cannot load test dataset iris_test.csv!");
 
   arma::Row<size_t> predictedLabels(testData.n_cols);
-
   a.Classify(testData, predictedLabels);
 
   arma::Mat<size_t> trueTestLabels;
   if (!data::Load("iris_test_labels.csv", trueTestLabels))
     BOOST_FAIL("Cannot load test dataset iris_test_labels.csv!");
 
+  arma::Row<size_t> predictedLabels1(testData.n_cols),
+                    predictedLabels2(testData.n_cols);
+  arma::mat probabilities;
+
+  a.Classify(testData, predictedLabels1);
+  a.Classify(testData, predictedLabels2, probabilities);
+
+  BOOST_REQUIRE_EQUAL(probabilities.n_cols, testData.n_cols);
+
+  for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
+    BOOST_REQUIRE_EQUAL(predictedLabels1[i], predictedLabels2[i]);
+
+  arma::colvec pRow;
+  arma::uword maxIndex = 0;
+
+  for (size_t i = 0; i < predictedLabels1.n_cols; i++)
+  {
+    pRow = probabilities.unsafe_col(i);
+    pRow.max(maxIndex);
+    BOOST_REQUIRE_EQUAL(predictedLabels1(i), maxIndex);
+    BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
+  }
+
   size_t localError = 0;
   for (size_t i = 0; i < trueTestLabels.n_cols; i++)
-    if (trueTestLabels(i) != predictedLabels(i))
+    if (trueTestLabels(i) != predictedLabels1(i))
       localError++;
   double lError = (double) localError / labels.n_cols;
   BOOST_REQUIRE_LE(lError, 0.30);
