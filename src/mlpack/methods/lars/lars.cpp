@@ -543,15 +543,13 @@ double LARS::ComputeError(const arma::mat& matX,
                           const arma::rowvec& y,
                           const bool rowMajor)
 {
-  double cost = 0.0;
-  arma::rowvec u;
-
   if (rowMajor)
-    u = trans(matX * betaPath.back());
+  {
+    return arma::accu(arma::pow(y - trans(matX * betaPath.back()), 2.0));
+  }
 
   else
-    u = betaPath.back().t() * matX;
-
-  cost = arma::accu((y - u) % (y - u));
-  return cost;
+  {
+    return arma::accu(arma::pow(y - betaPath.back().t() * matX, 2.0));
+  }
 }
