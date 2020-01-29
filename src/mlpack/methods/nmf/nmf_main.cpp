@@ -95,6 +95,41 @@ PARAM_STRING_IN("update_rules", "Update rules for each iteration; ( multdist | "
 PARAM_MATRIX_IN("initial_w", "Initial W matrix.", "p");
 PARAM_MATRIX_IN("initial_h", "Initial H matrix.", "q");
 
+void LoadInitialWH(const bool bindingTransposed, arma::mat& w, arma::mat& h)
+{
+  // Note that these datasets will typically be transposed on load, since we are
+  // likely receiving it from a row-major language, but we get it in a
+  // column-major form.  Therefore, we're actually decomposing V^T = W^T * H^T.
+  // Effectively this means we are solving, for the user, V = H*W.  Therefore,
+  // we actually have to switch what we are saving, so we will save the W we get
+  // from amf.Apply() as H, and vice versa.
+  if (bindingTransposed)
+  {
+    w = CLI::GetParam<arma::mat>("initial_h");
+    h = CLI::GetParam<arma::mat>("initial_w");
+  }
+  else
+  {
+    h = CLI::GetParam<arma::mat>("initial_h");
+    w = CLI::GetParam<arma::mat>("initial_w");
+  }
+}
+
+void SaveWH(const bool bindingTransposed, arma::mat&& w, arma::mat&& h)
+{
+  // The same transposition applies when saving.
+  if (bindingTransposed)
+  {
+    CLI::GetParam<arma::mat>("w") = std::move(h);
+    CLI::GetParam<arma::mat>("h") = std::move(w);
+  }
+  else
+  {
+    CLI::GetParam<arma::mat>("h") = std::move(h);
+    CLI::GetParam<arma::mat>("w") = std::move(w);
+  }
+}
+
 template<typename UpdateRuleType>
 void ApplyFactorization(const arma::mat& V,
                         const size_t r,
@@ -105,12 +140,15 @@ void ApplyFactorization(const arma::mat& V,
   const double minResidue = CLI::GetParam<double>("min_residue");
 
   SimpleResidueTermination srt(minResidue, maxIterations);
+
+  // Load input dataset.  We know if the data is transposed based on the
+  // BINDING_MATRIX_TRANSPOSED macro, which will be 'true' or 'false'.
+  arma::mat initialW, initialH;
+  LoadInitialWH(BINDING_MATRIX_TRANSPOSED, initialW, initialH);
   if (CLI::HasParam("initial_w") && CLI::HasParam("initial_h"))
   {
     // Initialize W and H with given matrices
-    GivenInitialization ginit = GivenInitialization(
-        std::move(CLI::GetParam<arma::mat>("initial_w")),
-        std::move(CLI::GetParam<arma::mat>("initial_h")));
+    GivenInitialization ginit = GivenInitialization(initialW, initialH);
     AMF<SimpleResidueTermination,
         GivenInitialization,
         UpdateRuleType> amf(srt, ginit);
@@ -120,8 +158,7 @@ void ApplyFactorization(const arma::mat& V,
   {
     // Merge GivenInitialization and RandomInitialization rules
     // to initialize W with the given matrix, and H with random noise
-    GivenInitialization ginit = GivenInitialization(
-        'W', std::move(CLI::GetParam<arma::mat>("initial_w")));
+    GivenInitialization ginit = GivenInitialization(initialW);
     RandomInitialization rinit = RandomInitialization();
     MergeInitialization<GivenInitialization, RandomInitialization> minit =
         MergeInitialization<GivenInitialization, RandomInitialization>
@@ -135,8 +172,7 @@ void ApplyFactorization(const arma::mat& V,
   {
     // Merge GivenInitialization and RandomInitialization rules
     // to initialize H with the given matrix, and W with random noise
-    GivenInitialization ginit = GivenInitialization(
-      'H', std::move(CLI::GetParam<arma::mat>("initial_h")));
+    GivenInitialization ginit = GivenInitialization(initialH, false);
     RandomInitialization rinit = RandomInitialization();
     MergeInitialization<RandomInitialization, GivenInitialization> minit =
         MergeInitialization<RandomInitialization, GivenInitialization>
@@ -178,8 +214,6 @@ static void mlpackMain()
 
   RequireAtLeastOnePassed({ "h", "w" }, false, "no output will be saved");
 
-  // Load input dataset.  We know if the data is transposed based on the
-  // BINDING_MATRIX_TRANSPOSED macro, which will be 'true' or 'false'.
   arma::mat V = std::move(CLI::GetParam<arma::mat>("input"));
 
   arma::mat W;
@@ -205,9 +239,7 @@ static void mlpackMain()
     ApplyFactorization<NMFALSUpdate>(V, r, W, H);
   }
 
-  // Save results.
-  if (CLI::HasParam("w"))
-    CLI::GetParam<arma::mat>("w") = std::move(W);
-  if (CLI::HasParam("h"))
-    CLI::GetParam<arma::mat>("h") = std::move(H);
+  // Save results.  Remember from our discussion in the comments earlier that we
+  // may need to switch the names of the outputs.
+  SaveWH(BINDING_MATRIX_TRANSPOSED, std::move(W), std::move(H));
 }
