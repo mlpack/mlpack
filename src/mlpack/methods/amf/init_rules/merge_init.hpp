@@ -33,11 +33,10 @@ class MergeInitialization
   // Initialize the MergeInitialization object with existing initialization
   // rules.
   MergeInitialization(const WInitializationRuleType& wInitRule,
-                      const HInitializationRuleType& hInitRule)
-  {
-    wInitializationRule = wInitRule;
-    hInitializationRule = hInitRule;
-  }
+                      const HInitializationRuleType& hInitRule) :
+                      wInitializationRule(wInitRule),
+                      hInitializationRule(hInitRule)
+  { }
 
   /**
    * Initialize W and H with the corresponding initialization rules.
@@ -53,8 +52,8 @@ class MergeInitialization
                          arma::mat& W,
                          arma::mat& H)
   {
-    wInitializationRule.InitializeOne(V, r, 'W', W);
-    hInitializationRule.InitializeOne(V, r, 'H', H);
+    wInitializationRule.InitializeOne(V, r, W);
+    hInitializationRule.InitializeOne(V, r, H, false);
   }
 
  private:
