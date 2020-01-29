@@ -80,20 +80,20 @@ class AverageInitialization
    *
    * @param V Input matrix.
    * @param r Rank of matrix.
-   * @param whichMatrix Specify which matrix to initialize.
    * @param M W or H matrix, to be initialized to the average value of V
    * with uniform random noise added.
+   * @param whichMatrix If true, initialize W. Otherwise, initialize H.
    */
   template<typename MatType>
   inline static void InitializeOne(const MatType& V,
                                    const size_t r,
-                                   const char whichMatrix,
-                                   arma::mat& M)
+                                   arma::mat& M,
+                                   const bool whichMatrix = true)
   {
     const size_t n = V.n_rows;
     const size_t m = V.n_cols;
 
-    if (whichMatrix == 'W' || whichMatrix == 'w')
+    if (whichMatrix)
     {
       double avgV = 0;
       size_t count = 0;
@@ -118,7 +118,7 @@ class AverageInitialization
 
       M = M + avgV;
     }
-    else if (whichMatrix == 'H' || whichMatrix == 'h')
+    else
     {
       double avgV = 0;
       size_t count = 0;
@@ -142,11 +142,6 @@ class AverageInitialization
       M.randu(r, m);
 
       M = M + avgV;
-    }
-    else
-    {
-      Log::Fatal << "Specify either 'H' or 'W' when initializing "
-          "one of W and H matrices!" << std::endl;
     }
   }
 
