@@ -71,7 +71,7 @@ class SoftmaxRegression
   SoftmaxRegression(const size_t inputSize = 0,
                     const size_t numClasses = 0,
                     const bool fitIntercept = false);
-    /**
+  /**
    * Construct the SoftmaxRegression class with the provided data and labels.
    * This will train the model. Optionally, the parameter 'lambda' can be
    * passed, which controls the amount of L2-regularization in the objective
@@ -93,13 +93,14 @@ class SoftmaxRegression
                     const double lambda = 0.0001,
                     const bool fitIntercept = false,
                     OptimizerType optimizer = OptimizerType());
-    /**
+  /**
    * Construct the SoftmaxRegression class with the provided data and labels.
    * This will train the model. Optionally, the parameter 'lambda' can be
    * passed, which controls the amount of L2-regularization in the objective
    * function. By default, the model takes a small value.
    *
    * @tparam OptimizerType Desired optimizer type.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param data Input training features. Each column associate with one sample
    * @param labels Labels associated with the feature data.
    * @param inputSize Size of the input feature vector.
@@ -190,13 +191,14 @@ class SoftmaxRegression
    * Train the softmax regression with the given training data.
    *
    * @tparam OptimizerType Desired optimizer type.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param data Input data with each column as one example.
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param optimizer Desired optimizer.
-   * @return Objective value of the final point.
    * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return Objective value of the final point.
    */
   template<typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>
   double Train(const arma::mat& data,
