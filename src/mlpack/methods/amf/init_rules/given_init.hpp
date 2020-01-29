@@ -44,46 +44,36 @@ class GivenInitialization
   { }
 
   // Initialize either H or W with the given matrix.
-  GivenInitialization(const char whichMatrix, const arma::mat& m)
+  GivenInitialization(const arma::mat& m, const bool whichMatrix = true)
   {
-    if (whichMatrix == 'W' || whichMatrix == 'w')
+    if (whichMatrix)
     {
       w = m;
       wIsGiven = true;
       hIsGiven = false;
     }
-    else if (whichMatrix == 'H' || whichMatrix == 'h')
+    else
     {
       h = m;
       wIsGiven = false;
       hIsGiven = true;
     }
-    else
-    {
-      Log::Fatal << "Specify either 'H' or 'W' when creating "
-          "GivenInitialization object!" << std::endl;
-    }
   }
 
   // Initialize either H or W, taking control of the given matrix.
-  GivenInitialization(const char whichMatrix, const arma::mat&& m)
+  GivenInitialization(const arma::mat&& m, const bool whichMatrix = true)
   {
-    if (whichMatrix == 'W' || whichMatrix == 'w')
+    if (whichMatrix)
     {
       w = std::move(m);
       wIsGiven = true;
       hIsGiven = false;
     }
-    else if (whichMatrix == 'H' || whichMatrix == 'h')
+    else
     {
       h = std::move(m);
       wIsGiven = false;
       hIsGiven = true;
-    }
-    else
-    {
-      Log::Fatal << "Specify either 'H' or 'W' when creating "
-          "GivenInitialization object!" << std::endl;
     }
   }
 
@@ -147,16 +137,16 @@ class GivenInitialization
    *
    * @param V Input matrix.
    * @param r Rank of decomposition.
-   * @param whichMatrix Specify which matrix to initialize.
    * @param M W or H matrix, to be initialized to given matrix.
+   * @param whichMatrix If true, initialize W. Otherwise, initialize H
    */
   template<typename MatType>
   inline void InitializeOne(const MatType& V,
                             const size_t r,
-                            const char whichMatrix,
-                            arma::mat& M)
+                            arma::mat& M
+                            const bool whichMatrix = true)
   {
-    if (whichMatrix == 'W' || whichMatrix == 'w')
+    if (whichMatrix)
     {
       // Make sure the initial W matrix is given.
       if (!wIsGiven)
@@ -181,7 +171,7 @@ class GivenInitialization
       // Initialize W to the given matrix.
       M = w;
     }
-    else if (whichMatrix == 'H' || whichMatrix == 'h')
+    else
     {
       // Make sure the initial H matrix is given.
       if (!hIsGiven)
@@ -205,11 +195,6 @@ class GivenInitialization
 
       // Initialize H to the given matrix.
       M = h;
-    }
-    else
-    {
-      Log::Fatal << "Specify either 'H' or 'W' when initializing "
-          "one of W and H matrices!" << std::endl;
     }
   }
 
