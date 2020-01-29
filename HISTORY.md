@@ -21,6 +21,15 @@
     `BUILD_JULIA_BINDINGS=(ON/OFF)` and `JULIA_EXECUTABLE=/path/to/julia` CMake
     parameters.
 
+  * CMake fix for finding STB include directory (#2145).
+
+  * Add normalization support for CF binding (#2136).
+  
+  * Add Mish activation function (#2158).
+
+  * Update `init_rules` in AMF to allow users to merge two initialization
+    rules (#2151).
+
 ### mlpack 3.2.2
 ###### 2019-11-26
   * Add `valid` and `same` padding option in `Convolution` and `Atrous
@@ -42,8 +51,6 @@
   * Validate md5 of STB library after download (#2087).
 
   * Add `__version__` to `__init__.py` (#2092).
-
-  * Correctly handle RNN sequences that are shorter than the value of rho (#2102).
 
 ### mlpack 3.2.1
 ###### 2019-10-01
