@@ -143,7 +143,7 @@ class GivenInitialization
   template<typename MatType>
   inline void InitializeOne(const MatType& V,
                             const size_t r,
-                            arma::mat& M
+                            arma::mat& M,
                             const bool whichMatrix = true)
   {
     if (whichMatrix)
