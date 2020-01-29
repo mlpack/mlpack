@@ -22,7 +22,7 @@ CosineTree::CosineTree(const arma::mat& dataset) :
     parent(NULL),
     left(NULL),
     right(NULL),
-    localDataset(true),
+    localDataset(false),
     numColumns(dataset.n_cols)
 {
   // Initialize sizes of column indices and l2 norms.
@@ -82,7 +82,7 @@ CosineTree::CosineTree(const arma::mat& dataset,
     delta(delta),
     left(NULL),
     right(NULL),
-    localDataset(true)
+    localDataset(false)
 {
   // Declare the cosine tree priority queue.
   CosineNodeQueue treeQueue;
@@ -166,7 +166,7 @@ CosineTree::CosineTree(const CosineTree& other) :
     basisVector(other.basisVector),
     splitPointIndex(other.SplitPointIndex()),
     numColumns(other.NumColumns()),
-    localDataset(other.parent == NULL && other.localDataset),    
+    localDataset(true),
     l2Error(other.L2Error()),
     frobNormSquared(other.FrobNormSquared())
 {
@@ -219,8 +219,7 @@ CosineTree& CosineTree::operator=(const CosineTree& other)
   delete left;
   delete right;
 
-  dataset = (other.parent == NULL && other.localDataset) ?
-      other.dataset : NULL;
+  dataset = (other.parent == NULL) ? other.dataset : NULL;
   delta = other.delta;
   parent = other.Parent();
   left = other.Left();
@@ -232,7 +231,7 @@ CosineTree& CosineTree::operator=(const CosineTree& other)
   splitPointIndex = other.SplitPointIndex();
   numColumns = other.NumColumns();
   l2Error = other.L2Error();
-  localDataset = (other.parent == NULL && other.localDataset);
+  localDataset = (other.parent == NULL) ? true : false;
   frobNormSquared = other.FrobNormSquared();
 
   // Create left and right children (if any).
