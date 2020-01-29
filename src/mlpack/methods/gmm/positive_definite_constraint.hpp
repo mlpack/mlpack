@@ -34,7 +34,7 @@ class PositiveDefiniteConstraint
    * @param covariance Covariance matrix.
    * @return bool True on success
    */
-  static bool ApplyConstraint(arma::mat& covariance)
+  static void ApplyConstraint(arma::mat& covariance)
   {
     // What we want to do is make sure that the matrix is positive definite and
     // that the condition number isn't too large.  We also need to ensure that
@@ -45,9 +45,8 @@ class PositiveDefiniteConstraint
     covariance = arma::symmatu(covariance);
     if (!arma::eig_sym(eigval, eigvec, covariance))
     {
-      Log::Fatal << "applying to constraint could not be accomplished " 
+      Log::Warn << "applying to constraint could not be accomplished."
           << std::endl;
-      return false;
     }
 
     // If the matrix is not positive definite or if the condition number is
@@ -67,7 +66,6 @@ class PositiveDefiniteConstraint
       // Now reassemble the covariance matrix.
       covariance = eigvec * arma::diagmat(eigval) * eigvec.t();
     }
-    return true;
   }
 
   /**
