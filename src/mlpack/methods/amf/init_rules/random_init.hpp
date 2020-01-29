@@ -56,32 +56,27 @@ class RandomInitialization
    *
    * @param V Input matrix.
    * @param r Rank of decomposition.
-   * @param whichMatrix Specify which matrix to initialize.
    * @param M W or H matrix, to be filled with random noise.
+   * @param whichMatrix If true, initialize W. Otherwise, initialize H.
    */
   template<typename MatType>
   inline void InitializeOne(const MatType& V,
                             const size_t r,
-                            const char whichMatrix,
-                            arma::mat& M)
+                            arma::mat& M,
+                            const bool whichMatrix = true)
   {
     // Simple implementation (left in the header file due to its simplicity).
     const size_t n = V.n_rows;
     const size_t m = V.n_cols;
 
     // Initialize W or H to random values
-    if (whichMatrix == 'W' || whichMatrix == 'w')
+    if (whichMatrix)
     {
       M.randu(n, r);
     }
-    else if (whichMatrix == 'H' || whichMatrix == 'h')
-    {
-      M.randu(r, m);
-    }
     else
     {
-      Log::Fatal << "Specify either 'H' or 'W' when initializing "
-          "one of W and H matrices!" << std::endl;
+      M.randu(r, m);
     }
   }
 
