@@ -71,16 +71,20 @@ class SoftmaxRegression
   SoftmaxRegression(const size_t inputSize = 0,
                     const size_t numClasses = 0,
                     const bool fitIntercept = false);
-  /**
-   * Initialize the SoftmaxRegression without performing training.  Default
-   * value of lambda is 0.0001.  Be sure to use Train() before calling
-   * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
+    /**
+   * Construct the SoftmaxRegression class with the provided data and labels.
+   * This will train the model. Optionally, the parameter 'lambda' can be
+   * passed, which controls the amount of L2-regularization in the objective
+   * function. By default, the model takes a small value.
    *
+   * @tparam OptimizerType Desired optimizer type.
+   * @param data Input training features. Each column associate with one sample
+   * @param labels Labels associated with the feature data.
    * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
+   * @param optimizer Desired optimizer.
+   * @param lambda L2-regularization constant.
    * @param fitIntercept add intercept term or not.
-   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
-   *        See https://www.ensmallen.org/docs.html#callback-documentation.
    */
   template<typename OptimizerType = ens::L_BFGS>
   SoftmaxRegression(const arma::mat& data,
@@ -239,8 +243,6 @@ class SoftmaxRegression
  private:
   //! Parameters after optimization.
   arma::mat parameters;
-  //! Input size
-  size_t inputSize;
   //! Number of classes.
   size_t numClasses;
   //! L2-regularization constant.
