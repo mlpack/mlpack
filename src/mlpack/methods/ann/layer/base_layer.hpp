@@ -20,6 +20,8 @@
 #include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
+#include <mlpack/methods/ann/activation_functions/swish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/mish_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -182,6 +184,28 @@ template <
     typename OutputDataType = arma::mat
 >
 using HardSigmoidLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard Swish-Layer using the Swish activation function.
+ */
+template <
+    class ActivationFunction = SwishFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using SwishFunctionLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard Mish-Layer using the Mish activation function.
+ */
+template <
+    class ActivationFunction = MishFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using MishFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 } // namespace ann

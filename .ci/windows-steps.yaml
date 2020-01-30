@@ -29,7 +29,8 @@ steps:
 - bash: |
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
     
-    curl http://masterblaster.mlpack.org:5005/armadillo-8.400.0.tar.gz | tar xvz
+    curl -O http://masterblaster.mlpack.org:5005/armadillo-8.400.0.tar.gz -o armadillo-8.400.0.tar.gz
+    tar -xzvf armadillo-8.400.0.tar.gz
 
     cd armadillo-8.400.0/ && cmake $(CMakeGenerator) \
     -DBLAS_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
