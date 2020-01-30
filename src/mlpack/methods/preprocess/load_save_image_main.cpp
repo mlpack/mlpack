@@ -23,24 +23,30 @@ using namespace mlpack::data;
 
 PROGRAM_INFO("Load Save Image",
     // Short description.
-    "A utility to load and save image dataset. This utility will allow you to "
-    "load and save a single image or an list of images.",
+    "A utility to load an image or set of images into a single dataset that"
+    "can then be used by other mlpack methods and utilities. This can also"
+    "unpack an image dataset into individual files.",
     // Long description.
     "This utility takes a image or an array of images and loads them to a"
     " matrix. You can specify the height " + PRINT_PARAM_STRING("height") +
     " width " + PRINT_PARAM_STRING("width") + " and channel " +
     PRINT_PARAM_STRING("channel") + " of the images that needs to be loaded. "
-    "\nThere are other options too, that can be specified such as " +
+    "\n"
+    "There are other options too, that can be specified such as " +
     PRINT_PARAM_STRING("quality") + " and " + PRINT_PARAM_STRING("transpose")
     + ".\n\n" +
     "You can also provide a dataset and save them as images using " +
     PRINT_PARAM_STRING("dataset") + " and " + PRINT_PARAM_STRING("save") +
-    " as an parameter. An example to load an image : "  + "\n\n" +
+    " as an parameter. An example to load an image : "  +
+    "\n\n" +
     PRINT_CALL("load_save_image", "input", "X", "height", 256, "width", 256,
-        "channel", 3, "output", "Y") + "\n\n" +
-    " An example to save an image is :" + "\n\n" +
+        "channel", 3, "output", "Y") +
+    "\n\n" +
+    " An example to save an image is :" +
+    "\n\n" +
     PRINT_CALL("load_save_image", "input", "X", "height", 256, "width", 256,
-        "channel", 3, "dataset", "Y", "save", true) + "\n\n" +
+        "channel", 3, "dataset", "Y", "save", true) +
+    "\n\n" +
     " An example to load an image and also flipping it while loading is :"
     + "\n\n" +
     PRINT_CALL("load_save_image", "input", "X", "height", 256, "width", 256,
@@ -50,8 +56,8 @@ PROGRAM_INFO("Load Save Image",
     SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"));
 
 // DEFINE PARAM
-PARAM_VECTOR_IN_REQ(string, "input", "Image filenames which has to "
-    "be loaded/saved", "i");
+PARAM_VECTOR_IN_REQ(string, "input", "Image filenames which have to "
+    "be loaded/saved.", "i");
 
 PARAM_INT_IN("width", "Width of the image", "W", 256);
 PARAM_INT_IN("channel", "Number of channel", "C",  3);
@@ -93,16 +99,16 @@ static void mlpackMain()
     }
     // Positive value for width.
     RequireParamValue<int>("width", [](int x) { return x >= 0;}, true,
-        "width must be Positive");
+        "width must be positive");
     // Positive value for height.
     RequireParamValue<int>("height", [](int x) { return x >= 0;}, true,
-        "height must be Positive");
+        "height must be positive");
     // Positive value for channel.
     RequireParamValue<int>("channel", [](int x) { return x >= 0;}, true,
-        "channel must be Positive");
+        "channel must be positive");
     // Positive value for quality.
     RequireParamValue<int>("quality", [](int x) { return x >= 0;}, true,
-        "quality must be Positive");
+        "quality must be positive");
 
     const size_t& height = CLI::GetParam<int>("height");
     const size_t& width = CLI::GetParam<int>("width");

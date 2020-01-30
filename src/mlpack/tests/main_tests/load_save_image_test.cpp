@@ -130,6 +130,8 @@ BOOST_AUTO_TEST_CASE(TransposeTest)
   arma::mat transposeOutput = CLI::GetParam<arma::mat>("output");
 
   CheckMatricesNotEqual(normalOutput, transposeOutput);
+  BOOST_REQUIRE_EQUAL(normalOutput.n_rows, transposeOutput.n_rows);
+  BOOST_REQUIRE_EQUAL(normalOutput.n_cols, transposeOutput.n_cols);
 }
 
 /**
@@ -161,5 +163,51 @@ BOOST_AUTO_TEST_CASE(InvalidInputTest)
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
+
+/**
+ * Check for invalid width values.
+ */
+BOOST_AUTO_TEST_CASE(InvalidWidthTest)
+{
+  SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
+  SetInputParam("height", 50);
+  SetInputParam("width", -50);
+  SetInputParam("channel", 3);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Check for invalid channel values.
+ */
+BOOST_AUTO_TEST_CASE(InvalidChannelTest)
+{
+  SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
+  SetInputParam("height", 50);
+  SetInputParam("width", 50);
+  SetInputParam("channel", -1);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Check for invalid input values.
+ */
+BOOST_AUTO_TEST_CASE(EmptyinputTest)
+{
+  SetInputParam<vector<string>>("input", {});
+  SetInputParam("height", 50);
+  SetInputParam("width", 50);
+  SetInputParam("channel", 50);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
 
 BOOST_AUTO_TEST_SUITE_END();
