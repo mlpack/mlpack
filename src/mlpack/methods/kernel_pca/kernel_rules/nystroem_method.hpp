@@ -67,7 +67,7 @@ class NystroemKernelRule
     transformedData = arma::symmatu(transformedData);
     if (!arma::eig_sym(eigval, eigvec, transformedData))
     {
-      Log::Warn << "Failed to construct the kernel matrix." << std::endl;
+      Log::Fatal << "Failed to construct the kernel matrix." << std::endl;
     }
 
     // Swap the eigenvalues since they are ordered backwards (we need largest

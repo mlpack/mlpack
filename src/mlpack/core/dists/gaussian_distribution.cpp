@@ -42,7 +42,7 @@ void GaussianDistribution::FactorCovariance()
 
   if (!arma::chol(covLower, covariance, "lower"))
   {
-    Log::Warn << "Cholesky decomposition failed." << std::endl;
+    Log::Fatal << "Cholesky decomposition failed." << std::endl;
   }
   // Comment from rcurtin:
   //

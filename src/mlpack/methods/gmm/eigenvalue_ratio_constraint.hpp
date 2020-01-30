@@ -67,7 +67,7 @@ class EigenvalueRatioConstraint
     covariance = arma::symmatu(covariance);
     if (!arma::eig_sym(eigenvalues, eigenvectors, covariance))
     {
-      Log::Warn << "applying to constraint could not be accomplished."
+      Log::Fatal << "applying to constraint could not be accomplished."
           << std::endl;
     }
 

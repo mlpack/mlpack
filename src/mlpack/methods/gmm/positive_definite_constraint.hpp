@@ -32,7 +32,6 @@ class PositiveDefiniteConstraint
    * and ensure each value on the diagonal is at least 1e-50.
    *
    * @param covariance Covariance matrix.
-   * @return bool True on success
    */
   static void ApplyConstraint(arma::mat& covariance)
   {
@@ -45,7 +44,7 @@ class PositiveDefiniteConstraint
     covariance = arma::symmatu(covariance);
     if (!arma::eig_sym(eigval, eigvec, covariance))
     {
-      Log::Warn << "applying to constraint could not be accomplished."
+      Log::Fatal << "applying to constraint could not be accomplished."
           << std::endl;
     }
 

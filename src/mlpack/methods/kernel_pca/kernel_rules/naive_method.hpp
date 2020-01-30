@@ -76,7 +76,7 @@ class NaiveKernelRule
   kernelMatrix = arma::symmatu(kernelMatrix);
   if (!arma::eig_sym(eigval, eigvec, kernelMatrix))
   {
-    Log::Warn << "Failed to construct the kernel matrix." << std::endl;
+    Log::Fatal << "Failed to construct the kernel matrix." << std::endl;
   }
 
   // Swap the eigenvalues since they are ordered backwards (we need largest to
