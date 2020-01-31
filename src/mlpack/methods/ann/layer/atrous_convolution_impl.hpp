@@ -63,7 +63,7 @@ AtrousConvolution<
     const size_t inputHeight,
     const size_t dilationWidth,
     const size_t dilationHeight,
-    const std::string paddingType) :
+    const std::string& paddingType) :
     inSize(inSize),
     outSize(outSize),
     kernelWidth(kernelWidth),
@@ -124,13 +124,13 @@ AtrousConvolution<
     const size_t kernelHeight,
     const size_t strideWidth,
     const size_t strideHeight,
-    const std::tuple<size_t, size_t> padW,
-    const std::tuple<size_t, size_t> padH,
+    const std::tuple<size_t, size_t>& padW,
+    const std::tuple<size_t, size_t>& padH,
     const size_t inputWidth,
     const size_t inputHeight,
     const size_t dilationWidth,
     const size_t dilationHeight,
-    const std::string paddingType) :
+    const std::string& paddingType) :
     inSize(inSize),
     outSize(outSize),
     kernelWidth(kernelWidth),

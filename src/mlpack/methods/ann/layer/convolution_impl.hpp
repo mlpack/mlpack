@@ -60,7 +60,7 @@ Convolution<
     const size_t padH,
     const size_t inputWidth,
     const size_t inputHeight,
-    const std::string paddingType) :
+    const std::string& paddingType) :
     inSize(inSize),
     outSize(outSize),
     kernelWidth(kernelWidth),
@@ -119,11 +119,11 @@ Convolution<
     const size_t kernelHeight,
     const size_t strideWidth,
     const size_t strideHeight,
-    const std::tuple<size_t, size_t> padW,
-    const std::tuple<size_t, size_t> padH,
+    const std::tuple<size_t, size_t>& padW,
+    const std::tuple<size_t, size_t>& padH,
     const size_t inputWidth,
     const size_t inputHeight,
-    const std::string paddingType) :
+    const std::string& paddingType) :
     inSize(inSize),
     outSize(outSize),
     kernelWidth(kernelWidth),

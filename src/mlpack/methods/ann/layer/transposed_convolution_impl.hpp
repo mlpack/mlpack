@@ -63,7 +63,7 @@ TransposedConvolution<
     const size_t inputHeight,
     const size_t outputWidth,
     const size_t outputHeight,
-    const std::string paddingType) :
+    const std::string& paddingType) :
     inSize(inSize),
     outSize(outSize),
     kernelWidth(kernelWidth),
@@ -100,8 +100,8 @@ TransposedConvolution<
   }
   size_t totalPadWidth = padWLeft + padWRight;
   size_t totalPadHeight = padHTop + padHBottom;
-  aW  = (outputWidth + totalPadWidth - kernelWidth) % strideWidth;
-  aH  = (outputHeight + totalPadHeight - kernelHeight) % strideHeight;
+  aW = (outputWidth + totalPadWidth - kernelWidth) % strideWidth;
+  aH = (outputHeight + totalPadHeight - kernelHeight) % strideHeight;
   const size_t padWidthLeftForward = kernelWidth - padWLeft - 1;
   const size_t padHeightTopForward = kernelHeight - padHTop - 1;
   const size_t padWidthRightForward = kernelWidth - padWRight - 1;
@@ -114,9 +114,9 @@ TransposedConvolution<
   // Check if the output height and width are possible given the other
   // parameters of the layer.
   if (outputWidth != strideWidth * (inputWidth - 1) +
-          aW + kernelWidth - totalPadWidth ||
-      outputHeight != strideHeight * (inputHeight - 1) +
-          aH + kernelHeight - totalPadHeight)
+              aW + kernelWidth - totalPadWidth ||
+              outputHeight != strideHeight * (inputHeight - 1) +
+              aH + kernelHeight - totalPadHeight)
   {
     Log::Fatal << "The output width / output height is not possible given "
                << "the other parameters of the layer." << std::endl;
@@ -143,13 +143,13 @@ TransposedConvolution<
     const size_t kernelHeight,
     const size_t strideWidth,
     const size_t strideHeight,
-    const std::tuple<size_t, size_t> padW,
-    const std::tuple<size_t, size_t> padH,
+    const std::tuple<size_t, size_t>& padW,
+    const std::tuple<size_t, size_t>& padH,
     const size_t inputWidth,
     const size_t inputHeight,
     const size_t outputWidth,
     const size_t outputHeight,
-    const std::string paddingType) :
+    const std::string& paddingType) :
     inSize(inSize),
     outSize(outSize),
     kernelWidth(kernelWidth),
@@ -186,8 +186,8 @@ TransposedConvolution<
   }
   size_t totalPadWidth = padWLeft + padWRight;
   size_t totalPadHeight = padHTop + padHBottom;
-  aW  = (outputWidth + totalPadWidth - kernelWidth) % strideWidth;
-  aH  = (outputHeight + totalPadHeight - kernelHeight) % strideHeight;
+  aW = (outputWidth + totalPadWidth - kernelWidth) % strideWidth;
+  aH = (outputHeight + totalPadHeight - kernelHeight) % strideHeight;
   const size_t padWidthLeftForward = kernelWidth - padWLeft - 1;
   const size_t padHeightTopForward = kernelHeight - padHTop - 1;
   const size_t padWidthRightForward = kernelWidth - padWRight - 1;
@@ -200,9 +200,9 @@ TransposedConvolution<
   // Check if the output height and width are possible given the other
   // parameters of the layer.
   if (outputWidth != strideWidth * (inputWidth - 1) +
-          aW + kernelWidth - totalPadWidth ||
-      outputHeight != strideHeight * (inputHeight - 1) +
-          aH + kernelHeight - totalPadHeight)
+              aW + kernelWidth - totalPadWidth ||
+              outputHeight != strideHeight * (inputHeight - 1) +
+              aH + kernelHeight - totalPadHeight)
   {
     Log::Fatal << "The output width / output height is not possible given "
                << "the other parameters of the layer." << std::endl;
