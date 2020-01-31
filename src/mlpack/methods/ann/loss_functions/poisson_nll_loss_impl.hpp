@@ -12,8 +12,6 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_POISSON_NLL_LOSS_IMPL_HPP
 #define MLPACK_METHODS_ANN_LAYER_POISSON_NLL_LOSS_IMPL_HPP
 
-#define _USE_MATH_DEFINES
-#include <math.h>
 
 // In case it hasn't yet been included.
 #include "poisson_nll_loss.hpp"
@@ -22,61 +20,72 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-PoissonNLLLoss<InputDataType, OutputDataType>::PoissonNLLLoss(const bool log_input, const bool full, 
-                                                              const double eps, const int reduction):
-    log_input(log_input), full(full), eps(eps), reduction(reduction)
+PoissonNegativeLogLikelihoodLoss<InputDataType, OutputDataType>::PoissonNegativeLogLikelihoodLoss(
+	const bool log_input, 
+	const bool full, 
+	const double eps, 
+	const bool reduce):
+  log_input(log_input), full(full), eps(eps), reduce(reduce)
 {
   // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double PoissonNLLLoss<InputDataType, OutputDataType>::Forward(const InputType&& input, TargetType&& target)
+double PoissonNegativeLogLikelihoodLoss<InputDataType, OutputDataType>::Forward(const InputType&& input, 
+                                                                                TargetType&& target)
 {
-    auto loss = arma::zeros<InputType>(input.n_rows, input.n_cols);
-    if(log_input)
-        loss = arma::exp(input) - target%input; //element-wise multiplication of 
-                                                //target and input
-    else
-        loss = input - target%arma::log(input + eps);
-    
-    if(full)
-    {
-        //TODO: needs to be vectorized.
-        for(size_t i = 0; i < input.n_cols; ++i)
-        {
-            for(size_t j = 0; j < input.n_rows; ++i)
-            {
-                if(target(i,j)>1)
-                    loss(i,j) += target(i,j)*std::log(target(i,j)) - target(i,j) + std::log(2*M_PI*target(i,j));
-            }
-        }   
-    }
-    if(reduction == 0)
-        return arma::sum(loss);
-    else if(reduction == 1)
-        return arma::mean(loss);
-    else
-        throw std::invalid_argument("Reduction: 0 for sum and 1 for mean");
+	arma::mat loss = arma::zeros<InputType>(input.n_rows, input.n_cols);
+	if(log_input)
+	{
+		loss = arma::exp(input) - target % input;
+	}
+	else
+	{
+		loss = input - target % arma::log(input + eps);
+	}
+
+	if(full)
+	{
+		// Stirling's approximation : log(n!) = n * log(n) - n + log(2 * pi * n)
+		// Select all elements greater than 1 in target and 
+		// add ```target * log(target) - target + log(2 * pi * target)```
+		loss.elem(find(target > 1)) += target * arma::log(target) - target + (1/2) * arma::log(2 * M_PI * target);
+	}
+
+	if(reduction)
+		return arma::mean(loss);
+	return arma::sum(loss);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
-void PoissonNLLLoss<InputDataType, OutputDataType>::Backward(
-      const InputType&& input,
-      const TargetType&& target,
-      OutputType&& output)
+void PoissonNegativeLogLikelihoodLoss<InputDataType, OutputDataType>::Backward(
+	const InputType&& input,
+	const TargetType&& target,
+	OutputType&& output)
 {
-   output = 1 - target/input;
-   if(full)
-   {
-       output += arma::log(target) + 1/(2*target);
-   }
+	if(log_input)
+	{
+		output = arma::exp(input) - target;
+	}
+	else
+	{
+		output = 1 - target / (input + eps);
+	}
+
+	if(full)
+	{
+		// A good approximation for (1 + 1/2 + 1/3 + ... + 1/n) is (log(n + 1) + log(n) + 1)/2
+		// Select all elements greater than 1 in target and 
+		// add ```(log(n + 1) + log(n) + 1)/2```
+		output.elem( find(target > 1) ) += (arma::log(target + 1) + arma::log(target) + 1)/2;
+	}
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void PoissonNLLLoss<InputDataType, OutputDataType>::serialize(
+void PoissonNegativeLogLikelihoodLoss<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
     const unsigned int /* version */)
 {

@@ -2,7 +2,7 @@
  * @file poisson_nll_loss.hpp
  * @author Mrityunjay Tripathi
  *
- * Definition of the Poisson NegativeLogLikelihood class.
+ * Definition of the Poisson Negative Log Likelihood class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -29,25 +29,28 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+  typename InputDataType = arma::mat,
+  typename OutputDataType = arma::mat
 >
-class PoissonNLLLoss
+class PoissonNegativeLogLikelihoodLoss
 {
  public:
   /**
-   * Create the PoissonNLL object.
+   * Create the PoissonNegativeLogLikelihoodLoss object.
    * 
-   * @param log_input if true the loss is computed as exp(input) - target*input, if
+   * @param log_input If true the loss is computed as exp(input) - target*input, if
    *        false then the loss is input - target*log(input+eps)
-   * @param full boolean value that tell if the the full loss has to be calculated
+   * @param full Boolean value that tell if the full loss has to be calculated
    *        i.e to add Stirling approximation term
    * @param eps A small value to prevent log(0) when log_input = False
-   * @param reduction specifies which reduction to be applied to the output
-   *        i.e sum'|'mean'. The corresponding integer values are 0 and 1.
+   * @param reduce Specifies which reduction to be applied to the output
+   *        i.e sum'|'mean'. The corresponding boolean values are 0 and 1.
    */
-  PoissonNLLLoss(const bool log_input = true, const bool full = false,
-                 const double eps = 1e-08, const int reduction = 1);
+  PoissonNegativeLogLikelihoodLoss(
+    const bool log_input = true, 
+    const bool full = false,
+    const double eps = 1e-08, 
+    const bool reduce = 1);
 
   /**
    * Computes the Poisson Negative log likelihood.
@@ -117,7 +120,7 @@ class PoissonNLLLoss
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class PoissonNLLLoss
+}; // class PoissonNegativeLogLikelihoodLoss
 
 } // namespace ann
 } // namespace mlpack
