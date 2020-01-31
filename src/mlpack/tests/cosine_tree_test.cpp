@@ -222,4 +222,79 @@ BOOST_AUTO_TEST_CASE(CosineTreeModifiedGramSchmidt)
   }
 }
 
+/**
+ * Test the copy constructor & copy assignment using Cosine trees.
+ */
+BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorCosineTreeTest)
+{
+  // Initialize constants required for the test.
+  const size_t numRows = 10;
+  const size_t numCols = 15;
+
+  // Make a random dataset.
+  arma::mat data = arma::randu(numRows, numCols);
+
+  // Make a cosine tree, with the generated dataset and the defined constants.
+  CosineTree ctree1(data);
+
+  // Copy constructor and operator.
+  CosineTree ctree2(ctree1);
+  CosineTree ctree3 = ctree1;
+
+  // Stacks for depth first search of the tree.
+  std::vector<CosineTree*> nodeStack1, nodeStack2, nodeStack3;
+  nodeStack1.push_back(&ctree1);
+  nodeStack2.push_back(&ctree2);
+  nodeStack3.push_back(&ctree3);
+
+  // While stacks are not empty.
+  while (nodeStack1.size() && nodeStack2.size() && nodeStack3.size())
+  {
+    // Pop a node from the stack and split it.
+    CosineTree *currentNode1, *currentLeft1, *currentRight1;
+    CosineTree *currentNode2, *currentLeft2, *currentRight2;
+    CosineTree *currentNode3, *currentLeft3, *currentRight3;
+    
+    currentNode1 = nodeStack1.back();
+    currentNode1->CosineNodeSplit();
+    nodeStack1.pop_back();
+
+    currentNode2 = nodeStack2.back();
+    currentNode2->CosineNodeSplit();
+    nodeStack2.pop_back();
+
+    currentNode3 = nodeStack3.back();
+    currentNode3->CosineNodeSplit();
+    nodeStack3.pop_back();    
+
+    // Obtain pointers to the children of the node.
+    currentLeft1 = currentNode1->Left();
+    currentRight1 = currentNode1->Right();
+
+    currentLeft2 = currentNode2->Left();
+    currentRight2 = currentNode2->Right();
+
+    currentLeft3 = currentNode3->Left();
+    currentRight3 = currentNode3->Right();
+
+    // If children exist.
+    if (currentLeft1 && currentRight1)
+    {
+      // Push the child nodes on to the stack.
+      nodeStack1.push_back(currentLeft1);
+      nodeStack1.push_back(currentRight1);
+
+      nodeStack2.push_back(currentLeft2);
+      nodeStack2.push_back(currentRight2);
+
+      nodeStack3.push_back(currentLeft3);
+      nodeStack3.push_back(currentRight3);
+
+      // The columns in the popped should be split into left and right nodes.
+      BOOST_REQUIRE_EQUAL(currentNode1->NumColumns(), currentNode3->NumColumns());
+      BOOST_REQUIRE_EQUAL(currentNode1->NumColumns(), currentNode2->NumColumns());
+    }
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END();

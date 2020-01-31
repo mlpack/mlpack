@@ -22,8 +22,8 @@ CosineTree::CosineTree(const arma::mat& dataset) :
     parent(NULL),
     left(NULL),
     right(NULL),
-    localDataset(false),
-    numColumns(dataset.n_cols)
+    numColumns(dataset.n_cols),
+    localDataset(false)
 {
   // Initialize sizes of column indices and l2 norms.
   indices.resize(numColumns);
@@ -52,8 +52,8 @@ CosineTree::CosineTree(CosineTree& parentNode,
     parent(&parentNode),
     left(NULL),
     right(NULL),
-    localDataset(false),
-    numColumns(subIndices.size())
+    numColumns(subIndices.size()),
+    localDataset(false)
 {
   // Initialize sizes of column indices and l2 norms.
   indices.resize(numColumns);
@@ -166,9 +166,9 @@ CosineTree::CosineTree(const CosineTree& other) :
     basisVector(other.basisVector),
     splitPointIndex(other.SplitPointIndex()),
     numColumns(other.NumColumns()),
-    localDataset(true),
     l2Error(other.L2Error()),
-    frobNormSquared(other.FrobNormSquared())
+    frobNormSquared(other.FrobNormSquared()),
+    localDataset(true)
 {
   // Create left and right children (if any).
   if (other.Left())
@@ -285,8 +285,8 @@ CosineTree::CosineTree(CosineTree&& other) :
     splitPointIndex(other.splitPointIndex),
     numColumns(other.numColumns),
     l2Error(other.l2Error),
-    localDataset(other.localDataset),
-    frobNormSquared(other.frobNormSquared)
+    frobNormSquared(other.frobNormSquared),
+    localDataset(other.localDataset)
 {
   // Now we are a clone of the other tree.  But we must also clear the other
   // tree's contents, so it doesn't delete anything when it is destructed.
