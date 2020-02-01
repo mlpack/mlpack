@@ -39,6 +39,8 @@ class GiniGain
       return 0.0;
 
     CountType impurity = 0.0;
+    
+    #pragma omp parallel for reduction(+:impurity)
     for (size_t i = 0; i < countLength; ++i)
       impurity += counts[i] * (totalCount - counts[i]);
 
@@ -88,6 +90,7 @@ class GiniGain
 
       // SIMD loop: add counts for four elements simultaneously (if the compiler
       // manages to vectorize the loop).
+      #pragma omp parallel for reduction (+:accWeights)
       for (size_t i = 3; i < labels.n_elem; i += 4)
       {
         const double weight1 = weights[i - 3];
@@ -95,11 +98,20 @@ class GiniGain
         const double weight3 = weights[i - 1];
         const double weight4 = weights[i];
 
+        #pragma omp atomic
         counts[labels[i - 3]] += weight1;
+        #pragma omp atomic
+        
         counts2[labels[i - 2]] += weight2;
+        #pragma omp atomic
+        
         counts3[labels[i - 1]] += weight3;
+        #pragma omp atomic
+        
         counts4[labels[i]] += weight4;
-
+        //cannot add any counts in reduction as it shows some error.
+        
+        
         accWeights[0] += weight1;
         accWeights[1] += weight2;
         accWeights[2] += weight3;
@@ -145,7 +157,7 @@ class GiniGain
       // Catch edge case: if there are no weights, the impurity is zero.
       if (accWeights[0] == 0.0)
         return 0.0;
-
+      //can parallelize
       for (size_t i = 0; i < numClasses; ++i)
       {
         const double f = ((double) counts[i] / (double) accWeights[0]);
@@ -156,6 +168,8 @@ class GiniGain
     {
       // SIMD loop: add counts for four elements simultaneously (if the compiler
       // manages to vectorize the loop).
+      //can parallelize
+      //#pragma omp parallel for reduction (+:counts) 
       for (size_t i = 3; i < labels.n_elem; i += 4)
       {
         counts[labels[i - 3]]++;
@@ -182,7 +196,7 @@ class GiniGain
       }
 
       counts += counts2 + counts3 + counts4;
-
+      //can parallelize
       for (size_t i = 0; i < numClasses; ++i)
       {
         const double f = ((double) counts[i] / (double) labels.n_elem);
