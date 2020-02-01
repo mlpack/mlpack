@@ -163,7 +163,7 @@ class GiniGain
     {
       // SIMD loop: add counts for four elements simultaneously (if the compiler
       // manages to vectorize the loop).
-      // #pragma omp parallel for reduction (+:counts) 
+      // #pragma omp parallel for reduction (+:counts)
       for (size_t i = 3; i < labels.n_elem; i += 4)
       {
         counts[labels[i - 3]]++;
