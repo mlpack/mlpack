@@ -52,9 +52,8 @@ double PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
     // log(n!) = n * log(n) - n + log(2 * pi * n)
     // Select all elements greater than 1 in target and
     // add ```target * log(target) - target + log(2 * pi * target)```
-    loss.elem(find(target > 1)) += target * arma::log(target)
-                                   - target
-                                   + (1/2) * arma::log(2 * arma::datum::pi * target);
+    loss.elem(find(target > 1)) += target * arma::log(target) - target
+                                 + arma::log(2 * arma::datum::pi * target) / 2;
   }
 
   if (reduction)

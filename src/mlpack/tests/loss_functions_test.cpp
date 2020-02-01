@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_SUITE(LossFunctionsTest);
 /**
  * Poisson Negative Log Likelihood Loss function test.
  */
-BOOST_AUTO_TEST_CASE(PoissonNegativeLogLikelihoodTest)
+BOOST_AUTO_TEST_CASE(PoissonNLLLossTest)
 {
   arma::mat input, output, target;
   PoissonNLLLoss<> module;
@@ -59,11 +59,16 @@ BOOST_AUTO_TEST_CASE(PoissonNegativeLogLikelihoodTest)
 
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+}
 
+BOOST_AUTO_TEST_CASE(FullPoissonNLLLossTest)
+{
+  arma::mat input, output, target;
+  PoissonNLLLoss<> module(full = true);
   // Test the error function on a single input and (full == true).
   input = arma::mat("4");
   target = arma::mat("3");
-  module::full = true;
+
   loss = module.Forward(std::move(input), std::move(target));
   // since target > 1, so the extra term log(n!) is added
   // Therefore, loss = e^4 - 3*4 + 3*log(3) - 3 + log(2*pi*3) = 44.3622316
