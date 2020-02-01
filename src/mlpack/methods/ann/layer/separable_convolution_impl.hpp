@@ -60,8 +60,7 @@ SeparableConvolution<
     const size_t padH,
     const size_t inputWidth,
     const size_t inputHeight,
-    const int numGroups,
-    const bool pointWise,
+    const size_t numGroups,
     const std::string &paddingType) :
     inSize(inSize),
     outSize(outSize),
@@ -77,8 +76,7 @@ SeparableConvolution<
     inputHeight(inputHeight),
     outputWidth(0),
     outputHeight(0),
-    numGroups(numGroups),
-    pointWise(pointWise)
+    numGroups(numGroups)
 {
   if(inSize % numGroups != 0 || outSize % numGroups != 0)
   {
@@ -86,11 +84,9 @@ SeparableConvolution<
         << "the number of groups. Input maps / output maps must be " 
         << " divisible by number of groups." << std::endl;
   }
-  depthWiseWeights.set_size((inSize * inSize * kernelWidth * kernelHeight) / numGroups +
-    inSize, 1);
+  weights.set_size((inSize * outSize * kernelWidth * kernelHeight) / numGroups +
+    outSize, 1);
 
-  pointWiseWeights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
-      1);
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
   std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
@@ -135,8 +131,7 @@ SeparableConvolution<
     const std::tuple<size_t, size_t> padH,
     const size_t inputWidth,
     const size_t inputHeight,
-    const int numGroups,
-    const bool pointWise,
+    const size_t numGroups,
     const std::string &paddingType) :
     inSize(inSize),
     outSize(outSize),
@@ -152,8 +147,7 @@ SeparableConvolution<
     inputHeight(inputHeight),
     outputWidth(0),
     outputHeight(0),
-    numGroups(numGroups),
-    pointWise(pointWise)
+    numGroups(numGroups)
 {
   if(inSize % numGroups != 0 || outSize % numGroups != 0)
   {
@@ -161,11 +155,10 @@ SeparableConvolution<
         << "the number of groups. Input maps / output maps must be " 
         << " divisible by number of groups." << std::endl;
   }
-  depthWiseWeights.set_size((inSize * inSize * kernelWidth * kernelHeight) / numGroups +
-    inSize, 1);
 
-  pointWiseWeights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
-      1);
+  weights.set_size((inSize * inSize * kernelWidth * kernelHeight) / numGroups +
+    outSize, 1);
+
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
   std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
@@ -201,14 +194,9 @@ void SeparableConvolution<
     OutputDataType
 >::Reset()
 {
-  depthWiseWeight.set_size(depthWiseWeights.memptr(), kernelWidth, kernelHeight,
-        inSize * inSize, false, false);
-  pointWiseWeight.set_size(pointWiseWeights.memptr(), 1, 1,
+ weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
         outSize * inSize, false, false);
-
-  depthWiseBias = arma::mat(depthWiseWeights.memptr() + depthWiseWeight.n_elem,
-        inSize, 1, false, false);
-  pointWiseBias = arma::mat(pointWiseWeights.memptr() + pointWiseWeight.n_elem,
+  bias = arma::mat(weights.memptr() + weight.n_elem,
         outSize, 1, false, false);
 }
 
@@ -244,7 +232,21 @@ void SeparableConvolution<
     }
   }
 
+  size_t wConv = ConvOutSize(inputWidth, kernelWidth, strideWidth, padWLeft,
+      padWRight);
+  size_t hConv = ConvOutSize(inputHeight, kernelHeight, strideHeight, padHTop,
+      padHBottom);
 
+  output.set_size(wConv * hConv * outSize, batchSize);
+  outputTemp = arma::Cube<eT>(output.memptr(), wConv, hConv,
+      outSize * batchSize, false, false);
+  outputTemp.zeros();
+
+  for(size_t groups = 0; groups < numGroups; groups++)
+  {
+    
+  }
+  
 }
 
 template<
@@ -275,7 +277,6 @@ void SeparableConvolution<
     padHTop = totalHorizontalPadding / 2;
     padHBottom = totalHorizontalPadding - totalHorizontalPadding / 2;
 }
-
 
 } // namespace ann
 } // namespace mlpack
