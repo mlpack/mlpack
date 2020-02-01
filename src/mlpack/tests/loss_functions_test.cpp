@@ -35,10 +35,13 @@ using namespace mlpack::ann;
 
 BOOST_AUTO_TEST_SUITE(LossFunctionsTest);
 
+/**
+ * Poisson Negative Log Likelihood Loss function test.
+ */
 BOOST_AUTO_TEST_CASE(PoissonNegativeLogLikelihoodTest)
 {
   arma::mat input, output, target;
-  PoissonNegativeLogLikelihoodLoss<> module;
+  PoissonNLLLoss<> module;
 
   // Test the Forward function on a user generated input and compare it against
   // the manually calculated result.
@@ -60,7 +63,7 @@ BOOST_AUTO_TEST_CASE(PoissonNegativeLogLikelihoodTest)
   // Test the error function on a single input and (full == true).
   input = arma::mat("4");
   target = arma::mat("3");
-  module.full = true;
+  module::full = true;
   loss = module.Forward(std::move(input), std::move(target));
   // since target > 1, so the extra term log(n!) is added
   // Therefore, loss = e^4 - 3*4 + 3*log(3) - 3 + log(2*pi*3) = 44.3622316

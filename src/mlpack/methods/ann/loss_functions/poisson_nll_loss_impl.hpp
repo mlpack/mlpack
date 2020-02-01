@@ -20,7 +20,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-PoissonNLLLoss<InputDataType, OutputDataType>::PoissonNLLsLoss(
+PoissonNLLLoss<InputDataType, OutputDataType>::PoissonNLLLoss(
   const bool log_input,
   const bool full,
   const double eps,
@@ -36,8 +36,8 @@ double PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
   const InputType&& input,
   TargetType&& target)
 {
-  InputType loss(size(input), fill::zeros);
-  if(log_input)
+  InputType loss(size(input));
+  if (log_input)
   {
     loss = arma::exp(input) - target % input;
   }
@@ -46,7 +46,7 @@ double PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
     loss = input - target % arma::log(input + eps);
   }
 
-  if(full)
+  if (full)
   {
     // Stirling's approximation :
     // log(n!) = n * log(n) - n + log(2 * pi * n)
@@ -54,10 +54,10 @@ double PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
     // add ```target * log(target) - target + log(2 * pi * target)```
     loss.elem(find(target > 1)) += target * arma::log(target)
                                    - target
-                                   + (1/2) * arma::log(2 * M_PI * target);
+                                   + (1/2) * arma::log(2 * arma::datum::pi * target);
   }
 
-  if(reduction)
+  if (reduction)
     return arma::mean(loss);
   return arma::sum(loss);
 }
@@ -69,7 +69,7 @@ void PoissonNLLLoss<InputDataType, OutputDataType>::Backward(
   const TargetType&& target,
   OutputType&& output)
 {
-  if(log_input)
+  if (log_input)
   {
     output = (arma::exp(input) - target)/input.n_elem;
   }
@@ -78,14 +78,14 @@ void PoissonNLLLoss<InputDataType, OutputDataType>::Backward(
     output = (1 - target / (input + eps))/input.n_elem;
   }
 
-  if(full)
+  if (full)
   {
     // Approximation for (1 + 1/2 + 1/3 + ... + 1/n) is
     // (log(n + 1) + log(n) + 1)/2
     // Select all elements greater than 1 in target and
     // add ```(log(n + 1) + log(n) + 1)/2```
     output.elem(find(target > 1)) += (arma::log(target + 1)
-                                     + arma::log(target) + 1)/(2*input.n_elem);
+                                    + arma::log(target) + 1)/(2 * input.n_elem);
   }
 }
 
