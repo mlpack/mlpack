@@ -18,8 +18,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the poisson negative log likelihood layer. The poisson 
- * negative log likelihood layer expects input for each class. 
+ * Implementation of the poisson negative log likelihood layer. The poisson
+ * negative log likelihood layer expects input for each class.
  * The layer also expects a class index, in the range between 1 and the
  * number of classes, as target when calling the Forward function.
  *
@@ -32,24 +32,24 @@ template <
   typename InputDataType = arma::mat,
   typename OutputDataType = arma::mat
 >
-class PoissonNegativeLogLikelihoodLoss
+class PoissonNLLLoss
 {
  public:
   /**
-   * Create the PoissonNegativeLogLikelihoodLoss object.
-   * 
-   * @param log_input If true the loss is computed as exp(input) - target*input, if
-   *        false then the loss is input - target*log(input+eps)
+   * Create the PoissonNLLLoss object.
+   *
+   * @param log_input If true the loss is computed as exp(input) - target*input,
+   *        if false then the loss is input - target*log(input+eps)
    * @param full Boolean value that tell if the full loss has to be calculated
    *        i.e to add Stirling approximation term
    * @param eps A small value to prevent log(0) when log_input = False
    * @param reduce Specifies which reduction to be applied to the output
    *        i.e sum'|'mean'. The corresponding boolean values are 0 and 1.
    */
-  PoissonNegativeLogLikelihoodLoss(
-    const bool log_input = true, 
+  PoissonNLLLoss(
+    const bool log_input = true,
     const bool full = false,
-    const double eps = 1e-08, 
+    const double eps = 1e-08,
     const bool reduce = 1);
 
   /**
@@ -64,7 +64,7 @@ class PoissonNegativeLogLikelihoodLoss
 
   /**
    * Ordinary feed backward pass of a neural network. The poisson negative log
-   * likelihood layer expects the input for each class. 
+   * likelihood layer expects the input for each class.
    * The layer also expects a class index, in the range between 1
    * and the number of classes, as target when calling the Forward function.
    *
@@ -120,7 +120,7 @@ class PoissonNegativeLogLikelihoodLoss
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class PoissonNegativeLogLikelihoodLoss
+}; // class PoissonNLLLoss
 
 } // namespace ann
 } // namespace mlpack

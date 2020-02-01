@@ -20,11 +20,11 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-PoissonNegativeLogLikelihoodLoss<InputDataType, OutputDataType>::PoissonNegativeLogLikelihoodLoss(
-	const bool log_input, 
-	const bool full, 
-	const double eps, 
-	const bool reduce):
+PoissonNLLLoss<InputDataType, OutputDataType>::PoissonNLLsLoss(
+  const bool log_input,
+  const bool full,
+  const double eps,
+  const bool reduce):
   log_input(log_input), full(full), eps(eps), reduce(reduce)
 {
   // Nothing to do here.
@@ -32,60 +32,66 @@ PoissonNegativeLogLikelihoodLoss<InputDataType, OutputDataType>::PoissonNegative
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double PoissonNegativeLogLikelihoodLoss<InputDataType, OutputDataType>::Forward(const InputType&& input, 
-                                                                                TargetType&& target)
+double PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
+  const InputType&& input,
+  TargetType&& target)
 {
-	arma::mat loss = arma::zeros<InputType>(input.n_rows, input.n_cols);
-	if(log_input)
-	{
-		loss = arma::exp(input) - target % input;
-	}
-	else
-	{
-		loss = input - target % arma::log(input + eps);
-	}
+  InputType loss(size(input), fill::zeros);
+  if(log_input)
+  {
+    loss = arma::exp(input) - target % input;
+  }
+  else
+  {
+    loss = input - target % arma::log(input + eps);
+  }
 
-	if(full)
-	{
-		// Stirling's approximation : log(n!) = n * log(n) - n + log(2 * pi * n)
-		// Select all elements greater than 1 in target and 
-		// add ```target * log(target) - target + log(2 * pi * target)```
-		loss.elem(find(target > 1)) += target * arma::log(target) - target + (1/2) * arma::log(2 * M_PI * target);
-	}
+  if(full)
+  {
+    // Stirling's approximation :
+    // log(n!) = n * log(n) - n + log(2 * pi * n)
+    // Select all elements greater than 1 in target and
+    // add ```target * log(target) - target + log(2 * pi * target)```
+    loss.elem(find(target > 1)) += target * arma::log(target)
+                                   - target
+                                   + (1/2) * arma::log(2 * M_PI * target);
+  }
 
-	if(reduction)
-		return arma::mean(loss);
-	return arma::sum(loss);
+  if(reduction)
+    return arma::mean(loss);
+  return arma::sum(loss);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
-void PoissonNegativeLogLikelihoodLoss<InputDataType, OutputDataType>::Backward(
-	const InputType&& input,
-	const TargetType&& target,
-	OutputType&& output)
+void PoissonNLLLoss<InputDataType, OutputDataType>::Backward(
+  const InputType&& input,
+  const TargetType&& target,
+  OutputType&& output)
 {
-	if(log_input)
-	{
-		output = arma::exp(input) - target;
-	}
-	else
-	{
-		output = 1 - target / (input + eps);
-	}
+  if(log_input)
+  {
+    output = (arma::exp(input) - target)/input.n_elem;
+  }
+  else
+  {
+    output = (1 - target / (input + eps))/input.n_elem;
+  }
 
-	if(full)
-	{
-		// A good approximation for (1 + 1/2 + 1/3 + ... + 1/n) is (log(n + 1) + log(n) + 1)/2
-		// Select all elements greater than 1 in target and 
-		// add ```(log(n + 1) + log(n) + 1)/2```
-		output.elem( find(target > 1) ) += (arma::log(target + 1) + arma::log(target) + 1)/2;
-	}
+  if(full)
+  {
+    // Approximation for (1 + 1/2 + 1/3 + ... + 1/n) is
+    // (log(n + 1) + log(n) + 1)/2
+    // Select all elements greater than 1 in target and
+    // add ```(log(n + 1) + log(n) + 1)/2```
+    output.elem(find(target > 1)) += (arma::log(target + 1)
+                                     + arma::log(target) + 1)/(2*input.n_elem);
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void PoissonNegativeLogLikelihoodLoss<InputDataType, OutputDataType>::serialize(
+void PoissonNLLLoss<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
     const unsigned int /* version */)
 {

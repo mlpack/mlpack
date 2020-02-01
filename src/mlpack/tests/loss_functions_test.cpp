@@ -3,6 +3,7 @@
  * @author Dakshit Agrawal
  * @author Sourabh Varshney
  * @author Atharva Khandait
+ * @author Mrityunjay Tripathi
  *
  * Tests for loss functions in mlpack::methods::ann:loss_functions.
  *
@@ -36,28 +37,28 @@ BOOST_AUTO_TEST_SUITE(LossFunctionsTest);
 
 BOOST_AUTO_TEST_CASE(PoissonNegativeLogLikelihoodTest)
 {
-  arma::mat log_input, output, target;
+  arma::mat input, output, target;
   PoissonNegativeLogLikelihoodLoss<> module;
 
   // Test the Forward function on a user generated input and compare it against
   // the manually calculated result.
-  log_input = arma::mat("1.0 1.0 3.0 2.0 -1.0 1.0 -1.0 0.0");
+  input = arma::mat("1.0 1.0 3.0 2.0 -1.0 1.0 -1.0 0.0");
   target = arma::mat("1.0 1.0 1.0 2.0 2.0 1.0 2.0 0.0");
-  double loss = module.Forward(std::move(log_input), std::move(target));
+  double loss = module.Forward(std::move(input), std::move(target));
   BOOST_REQUIRE_CLOSE_FRACTION(loss, 3.9206, 0.0001);
 
   // Test the Backward function.
   module.Backward(std::move(input), std::move(target), std::move(output));
-  
-  // if(full == false) output = 1 - target / (input + eps)
-  arma::mat expected_out = arma::mat("0.2148 0.2148 2.3857 0.6736 -0.2040 0.2148 -0.2040 0.1250");
-  checkMatrices(output, std::move(expected_out));
+
+  // if(full == false) output = e^(input) - target
+  // Sum of expected output as calculated using pytorch = 3.4206
+  BOOST_REQUIRE_CLOSE_FRACTION(arma::accu(output), 3.4206, 0.0001);
 
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 
   // Test the error function on a single input and (full == true).
-  log_input = arma::mat("4");
+  input = arma::mat("4");
   target = arma::mat("3");
   module.full = true;
   loss = module.Forward(std::move(input), std::move(target));
@@ -67,7 +68,7 @@ BOOST_AUTO_TEST_CASE(PoissonNegativeLogLikelihoodTest)
 
   // Test the Backward function on a single input and (full == true).
   module.Backward(std::move(input), std::move(target), std::move(output));
-  
+
   BOOST_REQUIRE_CLOSE_FRACTION(arma::accu(output), 53.3406, 0.0001);
   BOOST_REQUIRE_EQUAL(output.n_elem, 1);
 }
