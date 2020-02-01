@@ -97,13 +97,13 @@ class GiniGain
         const double weight3 = weights[i - 1];
         const double weight4 = weights[i];
 
-        #pragma omp atomic
+        // #pragma omp atomic
         counts[labels[i - 3]] += weight1;
-        #pragma omp atomic
+        // #pragma omp atomic
         counts2[labels[i - 2]] += weight2;
-        #pragma omp atomic
+        // #pragma omp atomic
         counts3[labels[i - 1]] += weight3;
-        #pragma omp atomic
+        // #pragma omp atomic
         counts4[labels[i]] += weight4;
         // cannot add any counts in reduction as it shows some error.
 
