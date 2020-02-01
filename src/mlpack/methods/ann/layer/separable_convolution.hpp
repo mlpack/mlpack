@@ -66,8 +66,6 @@ class SeparableConvolution
    * @param numGroups The number of groups in which input maps will be divided.
    *                  numGroups = inSize implies depthwise convolution.
    *                  Defaults to 1.
-   * @param pointWise Boolean to convert depthwise convolution to seperable convolution.
-   *                  Defaults to true.
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
   SeparableConvolution(const size_t inSize,
@@ -80,8 +78,7 @@ class SeparableConvolution
                        const size_t padH = 0,
                        const size_t inputWidth = 0,
                        const size_t inputHeight = 0,
-                       const int numGroups = 1,
-                       const bool pointWise = true,
+                       const size_t numGroups = 1,
                        const std::string &paddingType = "None");
 
   /**
@@ -105,8 +102,6 @@ class SeparableConvolution
    * @param numGroups The number of groups in which input maps will be divided.
    *                  numGroups = inSize implies depthwise convolution.
    *                  Defaults to 1.
-   * @param pointWise Boolean to convert depthwise convolution to seperable convolution.
-   *                  Defaults to true.
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
   SeparableConvolution(const size_t inSize,
@@ -119,8 +114,7 @@ class SeparableConvolution
                        const std::tuple<size_t, size_t> padH,
                        const size_t inputWidth = 0,
                        const size_t inputHeight = 0,
-                       const int numGroups = 1,
-                       const bool pointWise = true,
+                       const size_t numGroups = 1,
                        const std::string &paddingType = "None");
 
   /*
@@ -165,15 +159,9 @@ class SeparableConvolution
                 arma::Mat<eT> &&gradient);
 
   //! Get the parameters.
-  const std::tuple<OutputDataType&, OutputDataType&> &Parameters() const 
-  { 
-    return std::make_tuple(depthWiseWeights, pointWiseWeights); 
-  }
+  const OutputDataType &Parameters() const { return weights; }
   //! Modify the parameters.
-  std::tuple<OutputDataType &, OutputDataType &> &Parameters()
-  {
-    return std::make_tuple(depthWiseWeights, pointWiseWeights); 
-  }
+  OutputDataType &Parameters() { return weights; }
 
   //! Get the delta.
   const OutputDataType &Delta() const { return delta; }
@@ -236,11 +224,6 @@ class SeparableConvolution
   //! Modify the number of Groups.
   int &NumGroups() { return numGroups; }
 
-  //! Get boolean that performs Point-Wise Convolution.
-  bool PointWise() const { return pointWise; }
-  //! Modify boolean that performs Point-Wise Convolution.
-  bool &PointWise() { return pontWise; }
-
   //! Get the top padding height.
   size_t PadHTop() const { return padHTop; }
   //! Modify the top padding height.
@@ -262,7 +245,7 @@ class SeparableConvolution
   size_t &PadWRight() { return padWRight; }
 
   //! Modify the bias weights of the layer.
-  arma::mat &Bias() { return depthWiseBias; }
+  arma::mat &Bias() { return bias; }
 
   /**
    * Serialize the layer.
@@ -358,23 +341,14 @@ class SeparableConvolution
   //! Locally-stored top padding height.
   size_t padHTop;
 
-  //! Locally-stored depth-wise-weight object.
-  OutputDataType depthWiseWeights;
-
-  //! Locally-stored point-wise-weight object.
-  OutputDataType pointWiseWeights;
+  //! Locally-stored weights object.
+  OutputDataType weights;
 
   //! Locally-stored weight object.
-  arma::cube depthWiseWeight;
+  arma::cube weight;
 
-  //! Locally-stored weight object.
-  arma::cube pointWiseWeight;
-
-  //! Locally-stored depth-wise bias term object.
-  arma::mat depthWiseBias;
-
-  //! Locally-stored point-wise bias term object.
-  arma::mat pointWiseBias;
+  //! Locally-stored bias object.
+  arma::mat bias;
 
   //! Locally-stored input width.
   size_t inputWidth;
@@ -389,10 +363,7 @@ class SeparableConvolution
   size_t outputHeight;
 
   //! Locally stored number of Groups parameter.
-  const int numGroups;
-
-  //! Locally stored boolean pointWise parameter.
-  const bool pointWise;
+  const size_t numGroups;
 
   //! Locally-stored transformed output parameter.
   arma::cube outputTemp;
