@@ -157,7 +157,7 @@ class GiniGain
       // Catch edge case: if there are no weights, the impurity is zero.
       if (accWeights[0] == 0.0)
         return 0.0;
-      //can parallelize
+      #pragma omp parallel for reduction(+:impurity)
       for (size_t i = 0; i < numClasses; ++i)
       {
         const double f = ((double) counts[i] / (double) accWeights[0]);
@@ -168,7 +168,6 @@ class GiniGain
     {
       // SIMD loop: add counts for four elements simultaneously (if the compiler
       // manages to vectorize the loop).
-      //can parallelize
       //#pragma omp parallel for reduction (+:counts) 
       for (size_t i = 3; i < labels.n_elem; i += 4)
       {
@@ -197,6 +196,7 @@ class GiniGain
 
       counts += counts2 + counts3 + counts4;
       //can parallelize
+      #pragma omp parallel for reduction(+:impurity)
       for (size_t i = 0; i < numClasses; ++i)
       {
         const double f = ((double) counts[i] / (double) labels.n_elem);
