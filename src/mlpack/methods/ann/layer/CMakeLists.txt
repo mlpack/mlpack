@@ -83,6 +83,8 @@ set(SOURCES
   reparametrization_impl.hpp
   select.hpp
   select_impl.hpp
+  separable_convolution.hpp
+  separable_convolution_impl.hpp
   sequential.hpp
   sequential_impl.hpp
   subview.hpp
