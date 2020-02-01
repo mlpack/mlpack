@@ -113,8 +113,8 @@ class SeparableConvolution
                        const size_t outSize,
                        const size_t kernelWidth,
                        const size_t kernelHeight,
-                       const size_t strideWidth = 1,
-                       const size_t strideHeight = 1,
+                       const size_t strideWidth,
+                       const size_t strideHeight,
                        const std::tuple<size_t, size_t> padW,
                        const std::tuple<size_t, size_t> padH,
                        const size_t inputWidth = 0,
@@ -165,9 +165,15 @@ class SeparableConvolution
                 arma::Mat<eT> &&gradient);
 
   //! Get the parameters.
-  const OutputDataType &Parameters() const { return weights; }
+  const std::tuple<OutputDataType&, OutputDataType&> &Parameters() const 
+  { 
+    return std::make_tuple(depthWiseWeights, pointWiseWeights); 
+  }
   //! Modify the parameters.
-  OutputDataType &Parameters() { return weights; }
+  std::tuple<OutputDataType &, OutputDataType &> &Parameters()
+  {
+    return std::make_tuple(depthWiseWeights, pointWiseWeights); 
+  }
 
   //! Get the delta.
   const OutputDataType &Delta() const { return delta; }
@@ -256,7 +262,7 @@ class SeparableConvolution
   size_t &PadWRight() { return padWRight; }
 
   //! Modify the bias weights of the layer.
-  arma::mat &Bias() { return bias; }
+  arma::mat &Bias() { return depthWiseBias; }
 
   /**
    * Serialize the layer.
@@ -352,14 +358,23 @@ class SeparableConvolution
   //! Locally-stored top padding height.
   size_t padHTop;
 
-  //! Locally-stored weight object.
-  OutputDataType weights;
+  //! Locally-stored depth-wise-weight object.
+  OutputDataType depthWiseWeights;
+
+  //! Locally-stored point-wise-weight object.
+  OutputDataType pointWiseWeights;
 
   //! Locally-stored weight object.
-  arma::cube weight;
+  arma::cube depthWiseWeight;
 
-  //! Locally-stored bias term object.
-  arma::mat bias;
+  //! Locally-stored weight object.
+  arma::cube pointWiseWeight;
+
+  //! Locally-stored depth-wise bias term object.
+  arma::mat depthWiseBias;
+
+  //! Locally-stored point-wise bias term object.
+  arma::mat pointWiseBias;
 
   //! Locally-stored input width.
   size_t inputWidth;
