@@ -158,6 +158,16 @@ class SeparableConvolution
                 arma::Mat<eT> &&error,
                 arma::Mat<eT> &&gradient);
 
+  //! Get the input parameter.
+  const InputDataType& InputParameter() const { return inputParameter; }
+  //! Modify the input parameter.
+  InputDataType& InputParameter() { return inputParameter; }
+
+  //! Get the output parameter.
+  const OutputDataType& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
+
   //! Get the parameters.
   const OutputDataType &Parameters() const { return weights; }
   //! Modify the parameters.
