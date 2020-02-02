@@ -44,6 +44,9 @@
 #include <mlpack/methods/ann/layer/hardshrink.hpp>
 #include <mlpack/methods/ann/layer/softshrink.hpp>
 
+// Initializations.
+#include <mlpack/methods/ann/init_rules/random_init.hpp>
+
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
@@ -93,6 +96,15 @@ template<typename InputDataType,
          typename OutputDataType
 >
 class Reparametrization;
+template<typename InputDataType, typename OutputDataType> class MemoryHead;
+template<typename InputDataType, typename OutputDataType>
+class NeuralTuringMachine;
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename... CustomLayers
+>
+class FFN;
 
 template<typename InputDataType,
          typename OutputDataType,
@@ -187,7 +199,8 @@ using MoreTypes = boost::variant<
         Sequential<arma::mat, arma::mat, true>*,
         Subview<arma::mat, arma::mat>*,
         VRClassReward<arma::mat, arma::mat>*,
-        VirtualBatchNorm<arma::mat, arma::mat>*
+        VirtualBatchNorm<arma::mat, arma::mat>*,
+        WeightNorm<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
@@ -221,6 +234,7 @@ using LayerTypes = boost::variant<
     AlphaDropout<arma::mat, arma::mat>*,
     ELU<arma::mat, arma::mat>*,
     FlexibleReLU<arma::mat, arma::mat>*,
+    FFN<NegativeLogLikelihood<>, RandomInitialization>*,
     Glimpse<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
     Highway<arma::mat, arma::mat>*,
@@ -235,6 +249,7 @@ using LayerTypes = boost::variant<
     LSTM<arma::mat, arma::mat>*,
     GRU<arma::mat, arma::mat>*,
     FastLSTM<arma::mat, arma::mat>*,
+    MemoryHead<arma::mat, arma::mat>*,
     MaxPooling<arma::mat, arma::mat>*,
     MeanPooling<arma::mat, arma::mat>*,
     MiniBatchDiscrimination<arma::mat, arma::mat>*,
@@ -242,8 +257,8 @@ using LayerTypes = boost::variant<
     MultiplyMerge<arma::mat, arma::mat>*,
     NegativeLogLikelihood<arma::mat, arma::mat>*,
     Padding<arma::mat, arma::mat>*,
+    NeuralTuringMachine<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
-    WeightNorm<arma::mat, arma::mat>*,
     MoreTypes,
     CustomLayers*...
 >;

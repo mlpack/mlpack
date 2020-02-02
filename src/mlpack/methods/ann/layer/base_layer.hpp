@@ -38,6 +38,7 @@ namespace ann /** Artificial Neural Network. */ {
  *  - IdentityLayer
  *  - ReLULayer
  *  - TanHLayer
+ *  - SoftplusLayer
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -231,6 +232,21 @@ template <
 >
 using GELUFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard SoftPlus layer.
+ *
+ * Softplus is a smooth approximation (differentiable) of Rectifier Linear
+ * Unit (ReLU).
+ *
+ * For more information on SoftPlus function see @see softplus_function.hpp
+ */
+template <
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using SoftplusLayer = BaseLayer<
+    SoftplusFunction, InputDataType, OutputDataType>;
 
 } // namespace ann
 } // namespace mlpack

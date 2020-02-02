@@ -71,6 +71,10 @@ set(SOURCES
   multiply_constant_impl.hpp
   multiply_merge.hpp
   multiply_merge_impl.hpp
+  memory_head.hpp
+  memory_head_impl.hpp
+  neural_turing_machine.hpp
+  neural_turing_machine_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
   recurrent.hpp

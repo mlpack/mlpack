@@ -2,12 +2,15 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   arma_extend.hpp
+  fn_shift.hpp
   SpMat_extra_bones.hpp
   SpMat_extra_meat.hpp
   Mat_extra_bones.hpp
   Mat_extra_meat.hpp
   Cube_extra_bones.hpp
   Cube_extra_meat.hpp
+  op_shift_bones.hpp
+  op_shift_meat.hpp
 )
 
 # add directory name to sources

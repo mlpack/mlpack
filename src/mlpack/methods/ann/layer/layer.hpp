@@ -30,6 +30,8 @@
 #include "padding.hpp"
 #include "gru.hpp"
 #include "fast_lstm.hpp"
+#include "memory_head.hpp"
+#include "neural_turing_machine.hpp"
 #include "recurrent.hpp"
 #include "recurrent_attention.hpp"
 #include "reparametrization.hpp"
@@ -39,5 +41,6 @@
 #include "vr_class_reward.hpp"
 #include "transposed_convolution.hpp"
 #include "weight_norm.hpp"
+#include "../ffn.hpp"
 
 #endif

@@ -272,7 +272,8 @@ class FFN
    * @param batchSize Number of points to be processed as a batch for objective
    *        function gradient evaluation.
    */
-  void Gradient(const arma::mat& parameters,
+  template<typename eT>
+  void Gradient(const arma::Mat<eT>& parameters,
                 const size_t begin,
                 arma::mat& gradient,
                 const size_t batchSize);
@@ -303,9 +304,7 @@ class FFN
   {
     return network;
   }
-  //! Modify the network model.  Be careful!  If you change the structure of the
-  //! network or parameters for layers, its state may become invalid, so be sure
-  //! to call ResetParameters() afterwards.
+  //! Modify the network model.
   std::vector<LayerTypes<CustomLayers...> >& Model() { return network; }
 
   //! Return the number of separable functions (the number of predictor points).
@@ -383,6 +382,70 @@ class FFN
                   const TargetsType& targets,
                   GradientsType& gradients);
 
+  /**
+   * Ordinary feed forward pass of a neural network, evaluating the function
+   * f(x) by propagating the activity forward through f.
+   *
+   * @param input Input data used for evaluating the specified function.
+   * @param output Resulting output activation.
+   */
+  template<typename eT>
+  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+
+  /**
+   * Ordinary feed backward pass of a neural network, calculating the function
+   * f(x) by propagating x backwards trough f. Using the results from the feed
+   * forward pass.
+   *
+   * @param input The propagated input activation.
+   * @param gy The backpropagated error.
+   * @param g The calculated gradient.
+   */
+  template<typename eT>
+  void Backward(const arma::Mat<eT>&& /* input */,
+                arma::Mat<eT>&& gy,
+                arma::Mat<eT>&& g);
+
+  /*
+   * Calculate the gradient using the output delta and the input activation.
+   *
+   * @param input The input parameter used for calculating the gradient.
+   * @param error The calculated error.
+   * @param gradient The calculated gradient.
+   */
+  template<typename eT>
+  void Gradient(arma::Mat<eT>&& input,
+                arma::Mat<eT>&& /* error */,
+                arma::Mat<eT>&& /* gradient */);
+
+  //! The value of the deterministic parameter.
+  bool Deterministic() const { return deterministic; }
+  //! Modify the value of the deterministic parameter.
+  bool& Deterministic() { return deterministic; }
+
+  //! Get the input parameter.
+  arma::mat const& InputParameter() const { return inputParameter; }
+  //! Modify the input parameter.
+  arma::mat& InputParameter() { return inputParameter; }
+
+  //! Get the output parameter.
+  arma::mat const& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  arma::mat& OutputParameter() { return outputParameter; }
+
+  //! Get the gradient.
+  arma::mat const& Gradient() const { return gradient; }
+  //! Modify the gradient.
+  arma::mat& Gradient() { return gradient; }
+
+  //! Get the delta.
+  arma::mat const& Delta() const { return delta; }
+  //! Modify the delta.
+  arma::mat& Delta() { return delta; }
+
+  //! Get the model modules.
+  std::vector<LayerTypes<>>& Model() { return network; }
+
  private:
   // Helper functions.
   /**
@@ -414,8 +477,7 @@ class FFN
    * layer defined optimizer.
    */
   template<typename InputType>
-  void Gradient(const InputType& input);
-
+  void UpdateGradient(const InputType& input);
   /**
    * Reset the module status by setting the current deterministic parameter
    * for all modules that implement the Deterministic function.
