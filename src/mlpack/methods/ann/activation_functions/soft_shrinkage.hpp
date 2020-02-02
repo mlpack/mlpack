@@ -49,6 +49,10 @@ class SoftShrinkage
   template <typename InputVecType,typename OutputVecType>
   static void Fn(const InputVecType &x, OutputVecType &y)
   {
-    
+    y.set_size(x.size());
+    for(size_t i=0;i<x.size();i++)
+    {
+      y(i)=Fn(x(i));  
+    }
   }
 }
