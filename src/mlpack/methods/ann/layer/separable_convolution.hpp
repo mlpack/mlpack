@@ -230,9 +230,9 @@ class SeparableConvolution
   size_t &StrideHeight() { return strideHeight; }
 
   //! Get number of Groups for Grouped Convolution.
-  int NumGroups() const { return numGroups; }
+  size_t NumGroups() const { return numGroups; }
   //! Modify the number of Groups.
-  int &NumGroups() { return numGroups; }
+  size_t &NumGroups() { return numGroups; }
 
   //! Get the top padding height.
   size_t PadHTop() const { return padHTop; }
@@ -373,7 +373,7 @@ class SeparableConvolution
   size_t outputHeight;
 
   //! Locally stored number of Groups parameter.
-  const size_t numGroups;
+  size_t numGroups;
 
   //! Locally-stored transformed output parameter.
   arma::cube outputTemp;
