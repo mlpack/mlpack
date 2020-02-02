@@ -78,7 +78,7 @@ class SoftShrinkage
    * @param y Input data.
    * @return f'(x)
    */
-  static double Deriv(const double x, const double lambda)
+  static double Deriv(const double x, const double lambda = 0.5)
   {
       if(x > lambda)
       {
@@ -97,17 +97,17 @@ class SoftShrinkage
    * @param x The resulting derivatives.
    */
   template <typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType &y OutputVecType &x, const doubel lambda)
+  static void Deriv(const InputVecType &y OutputVecType &x, const double lambda = 0.5)
   {
     y.set_size(x.size(), 0);
     InputVecType lambdaTemp(x.size(), lambda);
     if(x > lambdaTemp)
     {
-      y = 1;
+      y.fill(1);
     }
     else if(x < -1 * lambdaTemp)
     {
-      y = 1;
+      y.fill(1);
     }
   }
-}
+};  // class SoftShrinkage
