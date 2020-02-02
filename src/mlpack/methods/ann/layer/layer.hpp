@@ -33,6 +33,7 @@
 #include "recurrent.hpp"
 #include "recurrent_attention.hpp"
 #include "reparametrization.hpp"
+#include "separable_convolution.hpp"
 #include "sequential.hpp"
 #include "subview.hpp"
 #include "concat.hpp"
