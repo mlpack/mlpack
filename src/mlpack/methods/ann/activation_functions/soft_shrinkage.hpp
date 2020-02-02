@@ -50,9 +50,17 @@ class SoftShrinkage
   static void Fn(const InputVecType &x, OutputVecType &y)
   {
     y.set_size(x.size());
-    for(size_t i=0;i<x.size();i++)
+    lambdaNew.set_size(x.size());
+    if(x > lambda)
     {
-      y(i)=Fn(x(i));  
+      return (x - lambda);
     }
+    
+    else if(x < -lambda)
+    {
+      return (x + lambda);
+    }
+
+    return 0;
   }
 }
