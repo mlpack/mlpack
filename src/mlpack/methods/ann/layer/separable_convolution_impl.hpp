@@ -242,11 +242,44 @@ void SeparableConvolution<
       outSize * batchSize, false, false);
   outputTemp.zeros();
 
-  for(size_t groups = 0; groups < numGroups; groups++)
+  for (size_t curGroup = 0; curGroup < numGroups ; curGroup++)
   {
-    
+    for (size_t outMap = outSize * curGroup * batchSize / numGroups, 
+        outMapIdx = outSize * curGroup / numGroups; outMap < outSize *
+        (curGroup + 1) * batchSize / numGroups; outMap++)
+    {
+      if (outMap != 0 && outMap % outSize == 0)
+      {
+        batchCount++;
+        outMapIdx = 0;
+      }
+
+      for (size_t inMap = inSize * curGroup / numGroups;
+          inMap < inSize * (curGroup + 1) / numGroups; inMap++, outMapIdx++)
+      {
+        arma::Mat<eT> convOutput;
+        if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
+        {
+          ForwardConvolutionRule::Convolution(inputPaddedTemp.slice(inMap +
+              batchCount * inSize), weight.slice(outMapIdx), convOutput,
+              strideWidth, strideHeight);
+        }
+        else
+        {
+          ForwardConvolutionRule::Convolution(inputTemp.slice(inMap +
+              batchCount * inSize), weight.slice(outMapIdx), convOutput,
+              strideWidth, strideHeight);
+        }
+
+        outputTemp.slice(outMap) += convOutput;
+      }
+
+      outputTemp.slice(outMap) += bias(outMap % outSize);
+
+    }
   }
-  
+  outputWidth = outputTemp.n_rows;
+  outputHeight = outputTemp.n_cols;
 }
 
 template<
