@@ -38,16 +38,16 @@ class PoissonNLLLoss
   /**
    * Create the PoissonNLLLoss object.
    *
-   * @param log_input If true the loss is computed as exp(input) - target*input,
-   *        if false then the loss is input - target*log(input+eps)
+   * @param logInput If true the loss is computed as exp(input) - target*input,
+   *        if false then the loss is input - target * log(input + eps)
    * @param full Boolean value that tell if the full loss has to be calculated
    *        i.e to add Stirling approximation term
-   * @param eps A small value to prevent log(0) when log_input = False
+   * @param eps A small value to prevent log(0) when logInput = False
    * @param reduce Specifies which reduction to be applied to the output
    *        i.e sum'|'mean'. The corresponding boolean values are 0 and 1.
    */
   PoissonNLLLoss(
-    const bool log_input = true,
+    const bool logInput = true,
     const bool full = false,
     const double eps = 1e-08,
     const bool reduce = 1);
@@ -88,10 +88,10 @@ class PoissonNLLLoss
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //! Get the value of log_input.
-  bool log_input() const { return log_input; }
-  //! Modify the value of log_input.
-  bool& log_input() { return log_input; }
+  //! Get the value of logInput.
+  bool logInput() const { return logInput; }
+  //! Modify the value of logInput.
+  bool& logInput() { return logInput; }
 
   //! Get the value of full.
   bool full() const { return full; }
@@ -120,6 +120,18 @@ class PoissonNLLLoss
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Small value required to avoid log(0)
+  double eps;
+
+  //! Boolean value that tells if input is log(x).
+  bool logInput;
+
+  //! Boolean value that tells if full loss has to be calculated.
+  bool full;
+
+  //! Boolean value that tells if mean has to be taken.
+  bool reduce;
 }; // class PoissonNLLLoss
 
 } // namespace ann

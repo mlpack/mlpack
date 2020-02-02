@@ -21,11 +21,11 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 PoissonNLLLoss<InputDataType, OutputDataType>::PoissonNLLLoss(
-  const bool log_input,
+  const bool logInput,
   const bool full,
   const double eps,
   const bool reduce):
-  log_input(log_input), full(full), eps(eps), reduce(reduce)
+  logInput(logInput), full(full), eps(eps), reduce(reduce)
 {
   // Nothing to do here.
 }
@@ -37,7 +37,7 @@ double PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
   TargetType&& target)
 {
   InputType loss(size(input));
-  if (log_input)
+  if (logInput)
   {
     loss = arma::exp(input) - target % input;
   }
@@ -56,9 +56,14 @@ double PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
                                  + arma::log(2 * arma::datum::pi * target) / 2;
   }
 
-  if (reduction)
-    return arma::mean(loss);
-  return arma::sum(loss);
+  if (reduce)
+  {
+    return arma::accu(loss)/loss.n_elem;
+  }
+  else
+  {
+    return arma::accu(loss);
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -68,7 +73,7 @@ void PoissonNLLLoss<InputDataType, OutputDataType>::Backward(
   const TargetType&& target,
   OutputType&& output)
 {
-  if (log_input)
+  if (logInput)
   {
     output = (arma::exp(input) - target)/input.n_elem;
   }
