@@ -49,7 +49,6 @@ class SoftShrinkage
     {
       return (x + lambda);
     }
-
     return 0;
   }
   /**
@@ -73,5 +72,42 @@ class SoftShrinkage
       y = x + lambdaTemp;
     }
   }
-  static double Deriv
+  /**
+   * Computes the first derivative of the Soft Shrinkage function.
+   *
+   * @param y Input data.
+   * @return f'(x)
+   */
+  static double Deriv(const double x, const double lambda)
+  {
+      if(x > lambda)
+      {
+        return 1;  
+      }
+      else if(x < -lambda)
+      {
+        return 1;
+      }
+      return 0;
+  }
+  /**
+   * Computes the first derivatives of the Soft Shrinkage function.
+   * 
+   * @param y Input activations.
+   * @param x The resulting derivatives.
+   */
+  template <typename InputVecType, typename OutputVecType>
+  static void Deriv(const InputVecType &y OutputVecType &x, const doubel lambda)
+  {
+    y.set_size(x.size(), 0);
+    InputVecType lambdaTemp(x.size(), lambda);
+    if(x > lambdaTemp)
+    {
+      y = 1;
+    }
+    else if(x < -1 * lambdaTemp)
+    {
+      y = 1;
+    }
+  }
 }
