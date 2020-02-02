@@ -214,7 +214,7 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Backward(
 
   Backward();
   ResetGradients(gradients);
-  UpdateGradient(std::move(currentInput));
+  UpdateGradient(inputs);
 
   return res;
 }
@@ -350,6 +350,13 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
                      const size_t begin,
                      GradType& gradient,
                      const size_t batchSize)
+
+template<typename eT>
+void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
+    const arma::Mat<eT>& parameters,
+    const size_t begin,
+    arma::mat& gradient,
+    const size_t batchSize)
 {
   if (gradient.is_empty())
   {
@@ -401,6 +408,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
     const size_t batchSize)
 {
   this->EvaluateWithGradient(parameters, begin, gradient, batchSize);
+  UpdateGradient(predictors.cols(begin, begin + batchSize - 1));
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,

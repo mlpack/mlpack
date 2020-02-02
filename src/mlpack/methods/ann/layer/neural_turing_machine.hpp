@@ -264,11 +264,7 @@ class NeuralTuringMachine
   OutputDataType delta;
 
   //! Locally-stored gradient object.
-<<<<<<< HEAD
   OutputDataType grad;
-=======
-  OutputDataType gradient;
->>>>>>> Adding all files of Neural Turing Network
 
   //! Locally-stored input parameter object.
   InputDataType inputParameter;

@@ -391,6 +391,7 @@ class FFN
    */
   template<typename InputType, typename OutputType>
   void Forward(InputType&& input1, OutputType&& output);
+
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
@@ -442,6 +443,9 @@ class FFN
   //! Modify the delta.
   arma::mat& Delta() { return delta; }
 
+  //! Get the model modules.
+  std::vector<LayerTypes<>>& Model() { return network; }
+
  private:
   // Helper functions.
   /**
@@ -474,6 +478,10 @@ class FFN
    */
   template<typename InputType>
   void UpdateGradient(const InputType& input);
+<<<<<<< HEAD
+=======
+
+>>>>>>> Adding all files
   /**
    * Reset the module status by setting the current deterministic parameter
    * for all modules that implement the Deterministic function.

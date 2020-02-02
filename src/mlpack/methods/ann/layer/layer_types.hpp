@@ -47,6 +47,9 @@
 // Initializations.
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 
+// Initializations.
+#include <mlpack/methods/ann/init_rules/random_init.hpp>
+
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
