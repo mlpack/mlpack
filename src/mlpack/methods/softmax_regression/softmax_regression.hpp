@@ -105,9 +105,9 @@ class SoftmaxRegression
    * @param labels Labels associated with the feature data.
    * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
-   * @param optimizer Desired optimizer.
    * @param lambda L2-regularization constant.
    * @param fitIntercept add intercept term or not.
+   * @param optimizer Desired optimizer.
    * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
    *        See https://www.ensmallen.org/docs.html#callback-documentation.
    */
@@ -126,7 +126,7 @@ class SoftmaxRegression
    * all.
    * @param dataset Set of points to classify.
    * @param labels Predicted labels for each point.
-   */  
+   */
   void Classify(const arma::mat& dataset, arma::Row<size_t>& labels) const;
   /**
    * Classify the given point. The predicted class label is returned.

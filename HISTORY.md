@@ -17,7 +17,7 @@
   * Add functions to access parameters of `Convolution` and `AtrousConvolution`
     layers (#1985).
 
-  * Add Julia bindings (#1949). Build settings can be controlled with the
+  * Add Julia bindings (#1949).  Build settings can be controlled with the
     `BUILD_JULIA_BINDINGS=(ON/OFF)` and `JULIA_EXECUTABLE=/path/to/julia` CMake
     parameters.
 
