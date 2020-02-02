@@ -32,6 +32,12 @@ namespace ann /** Artificial Neural Network. */ {
 class SoftShrinkage
 {
   public:
+  /**
+   * Computes the Soft Shrinkage function.
+   *
+   * @param x Input data.
+   * @return f(x).
+   */
   static double Fn(const double x)
   {
     if(x > lambda)
@@ -46,6 +52,12 @@ class SoftShrinkage
 
     return 0;
   }
+  /**
+   * Computes the Soft Shrinkage function.
+   *
+   * @param x Input data.
+   * @param y The resulting output activation.
+   */
   template <typename InputVecType,typename OutputVecType>
   static void Fn(const InputVecType &x, OutputVecType &y)
   {
