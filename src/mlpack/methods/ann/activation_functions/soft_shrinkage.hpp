@@ -45,7 +45,7 @@ class SoftShrinkage
       return (x - lambda);
     }
     
-    else if(x < -lambda)
+    else if(x < -1 * lambda)
     {
       return (x + lambda);
     }
@@ -68,7 +68,7 @@ class SoftShrinkage
       y = x - lambdaTemp;
     }
     
-    else if(x < -lambdaTemp)
+    else if(x < -1 * lambdaTemp)
     {
       y = x + lambdaTemp;
     }
