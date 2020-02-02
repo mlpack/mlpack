@@ -55,21 +55,26 @@ BOOST_AUTO_TEST_CASE(PoissonNLLLossTest)
 
   // if(full == false) output = e^(input) - target
   // Sum of expected output as calculated using pytorch = 3.4206
-  BOOST_REQUIRE_CLOSE_FRACTION(arma::accu(output), 3.4206, 0.0001);
+  double expected_output = arma::accu(output);
+  BOOST_REQUIRE_CLOSE_FRACTION(expected_output, 3.4206, 0.0001);
 
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 }
 
+/**
+ * Full Poisson Negative Log Likelihood Loss function test.
+ */
 BOOST_AUTO_TEST_CASE(FullPoissonNLLLossTest)
 {
   arma::mat input, output, target;
-  PoissonNLLLoss<> module(full = true);
+  PoissonNLLLoss<> module;
+  module.full = true;
   // Test the error function on a single input and (full == true).
   input = arma::mat("4");
   target = arma::mat("3");
 
-  loss = module.Forward(std::move(input), std::move(target));
+  double loss = module.Forward(std::move(input), std::move(target));
   // since target > 1, so the extra term log(n!) is added
   // Therefore, loss = e^4 - 3*4 + 3*log(3) - 3 + log(2*pi*3) = 44.3622316
   BOOST_REQUIRE_CLOSE_FRACTION(loss, 44.3622316 , 0.0001);
