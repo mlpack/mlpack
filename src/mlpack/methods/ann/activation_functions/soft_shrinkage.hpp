@@ -18,7 +18,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- *SoftShrinkage operator is defined as
+ * SoftShrinkage operator is defined as
  *         | x - lambda, if x >  lambda
  *  f(x) = | x + lambda, if x < -lambda
  *         | 0, otherwise
@@ -61,18 +61,17 @@ class SoftShrinkage
   template <typename InputVecType,typename OutputVecType>
   static void Fn(const InputVecType &x, OutputVecType &y)
   {
-    y.set_size(x.size());
-    InputVecType lambdaTemp(x.size() , lambda);
+    y.set_size(x.size(), 0);
+    InputVecType lambdaTemp(x.size(), lambda);
     if(x > lambda)
     {
-      return (x - lambdaTemp);
+      y = x - lambdaTemp;
     }
     
     else if(x < -lambdaTemp)
     {
-      return (x + lambdaTemp);
+      y = x + lambdaTemp;
     }
-
-    return 0;
   }
+  
 }
