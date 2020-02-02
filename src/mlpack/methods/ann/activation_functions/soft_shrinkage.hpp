@@ -38,7 +38,7 @@ class SoftShrinkage
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  static double Fn(const double x, const double lambda = 0.5)
   {
     if(x > lambda)
     {
@@ -59,7 +59,7 @@ class SoftShrinkage
    * @param y The resulting output activation.
    */
   template <typename InputVecType,typename OutputVecType>
-  static void Fn(const InputVecType &x, OutputVecType &y)
+  static void Fn(const InputVecType &x, OutputVecType &y, const double lambda = 0.5)
   {
     y.set_size(x.size(), 0);
     InputVecType lambdaTemp(x.size(), lambda);
@@ -73,5 +73,5 @@ class SoftShrinkage
       y = x + lambdaTemp;
     }
   }
-  
+  static double Deriv
 }
