@@ -278,8 +278,7 @@ class SeparableConvolution
                      const size_t k,
                      const size_t s,
                      const size_t pSideOne,
-                     const size_t pSideTwo,
-                    )
+                     const size_t pSideTwo)
   {
     return std::floor(size + pSideOne + pSideTwo - k) / s + 1;
   }
