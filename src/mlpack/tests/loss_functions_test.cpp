@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(FullPoissonNLLLossTest)
 {
   arma::mat input, output, target;
   PoissonNLLLoss<> module;
-  module.full = true;
+  module.full() = true;
   // Test the error function on a single input and (full == true).
   input = arma::mat("4");
   target = arma::mat("3");
