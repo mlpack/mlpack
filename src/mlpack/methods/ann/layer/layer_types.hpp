@@ -158,15 +158,6 @@ template<
 class AtrousConvolution;
 
 template<
-    typename ForwardConvolutionRule,
-    typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
->
-class SeparableConvolution;
-
-template<
     typename InputDataType,
     typename OutputDataType
 >
@@ -221,9 +212,6 @@ using LayerTypes = boost::variant<
                 NaiveConvolution<FullConvolution>,
                 NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
     TransposedConvolution<NaiveConvolution<ValidConvolution>,
-            NaiveConvolution<ValidConvolution>,
-            NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
-    SeparableConvolution<NaiveConvolution<ValidConvolution>,
             NaiveConvolution<ValidConvolution>,
             NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
     DropConnect<arma::mat, arma::mat>*,
