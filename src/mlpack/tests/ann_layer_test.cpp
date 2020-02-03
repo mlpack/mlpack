@@ -2938,7 +2938,8 @@ BOOST_AUTO_TEST_CASE(SimpleSeparableConvolutionLayerTest)
 {
   arma::mat output, input, delta;
 
-  SeparableConvolution<> module1(1, 1, 3, 3, 1, 1, 0, 0, 7, 7, 2, 2);
+  // SeparableConvolution<> module1(1, 1, 3, 3, 1, 1, 0, 0, 7, 7, 2, 2, 1);
+  SeparableConvolution<> module1(1, 1, 3, 3, 1, 1, 0, 0, 7, 7, 1);
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 48, 49);
   module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);

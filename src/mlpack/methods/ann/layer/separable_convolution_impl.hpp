@@ -60,6 +60,8 @@ SeparableConvolution<
     const size_t padH,
     const size_t inputWidth,
     const size_t inputHeight,
+    const size_t ouputWidth,
+    const size_t outputHeight,
     const size_t numGroups,
     const std::string &paddingType) :
     inSize(inSize),
@@ -74,8 +76,8 @@ SeparableConvolution<
     padHTop(padH),
     inputWidth(inputWidth),
     inputHeight(inputHeight),
-    outputWidth(0),
-    outputHeight(0),
+    outputWidth(outputWidth),
+    outputHeight(outputHeight),
     numGroups(numGroups)
 {
   if(inSize % numGroups != 0 || outSize % numGroups != 0)
@@ -131,6 +133,8 @@ SeparableConvolution<
     const std::tuple<size_t, size_t> padH,
     const size_t inputWidth,
     const size_t inputHeight,
+    const size_t outputWidth,
+    const size_t outputHeight,
     const size_t numGroups,
     const std::string &paddingType) :
     inSize(inSize),
@@ -145,8 +149,8 @@ SeparableConvolution<
     padHTop(std::get<0>(padH)),
     inputWidth(inputWidth),
     inputHeight(inputHeight),
-    outputWidth(0),
-    outputHeight(0),
+    outputWidth(outputWidth),
+    outputHeight(outputHeight),
     numGroups(numGroups)
 {
   if(inSize % numGroups != 0 || outSize % numGroups != 0)
@@ -282,6 +286,48 @@ void SeparableConvolution<
   outputHeight = outputTemp.n_cols;
 }
 
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+template<typename Archive>
+void SeparableConvolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::serialize(Archive& ar, const unsigned int version)
+{
+  ar & BOOST_SERIALIZATION_NVP(inSize);
+  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar & BOOST_SERIALIZATION_NVP(batchSize);
+  ar & BOOST_SERIALIZATION_NVP(kernelWidth);
+  ar & BOOST_SERIALIZATION_NVP(kernelHeight);
+  ar & BOOST_SERIALIZATION_NVP(strideWidth);
+  ar & BOOST_SERIALIZATION_NVP(strideHeight);
+  ar & BOOST_SERIALIZATION_NVP(padWLeft);
+  ar & BOOST_SERIALIZATION_NVP(padWRight);
+  ar & BOOST_SERIALIZATION_NVP(padHBottom);
+  ar & BOOST_SERIALIZATION_NVP(padHTop);
+  ar & BOOST_SERIALIZATION_NVP(inputWidth);
+  ar & BOOST_SERIALIZATION_NVP(inputHeight);
+  ar & BOOST_SERIALIZATION_NVP(outputWidth);
+  ar & BOOST_SERIALIZATION_NVP(outputHeight);
+  ar & BOOST_SERIALIZATION_NVP(numGroups);
+
+  if (version > 0)
+    ar & BOOST_SERIALIZATION_NVP(padding);
+
+  if (Archive::is_loading::value)
+  {
+    weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
+        1);
+  }
+}
 template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,

@@ -63,6 +63,8 @@ class SeparableConvolution
    * @param padH Padding height of the input.
    * @param inputWidth The width of the input data.
    * @param inputHeight The height of the input data.
+   * @param outputWidth The width of the output data.
+   * @param outputHeight The height of the output data.
    * @param numGroups The number of groups in which input maps will be divided.
    *                  numGroups = inSize implies depthwise convolution.
    *                  Defaults to 1.
@@ -78,6 +80,8 @@ class SeparableConvolution
                        const size_t padH = 0,
                        const size_t inputWidth = 0,
                        const size_t inputHeight = 0,
+                       const size_t outputWidth = 0,
+                       const size_t outputHeight = 0,
                        const size_t numGroups = 1,
                        const std::string &paddingType = "None");
 
@@ -99,6 +103,8 @@ class SeparableConvolution
    *             bottom.
    * @param inputWidth The width of the input data.
    * @param inputHeight The height of the input data.
+   * @param outputWidth The width of the output data.
+   * @param outputHeight The height of the output data.
    * @param numGroups The number of groups in which input maps will be divided.
    *                  numGroups = inSize implies depthwise convolution.
    *                  Defaults to 1.
@@ -114,6 +120,8 @@ class SeparableConvolution
                        const std::tuple<size_t, size_t> padH,
                        const size_t inputWidth = 0,
                        const size_t inputHeight = 0,
+                       const size_t outputWidth = 0,
+                       const size_t outputHeight = 0,
                        const size_t numGroups = 1,
                        const std::string &paddingType = "None");
 
