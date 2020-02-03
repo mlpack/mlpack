@@ -25,7 +25,10 @@ PoissonNLLLoss<InputDataType, OutputDataType>::PoissonNLLLoss(
   const bool full,
   const double eps,
   const bool reduce):
-  logInput(logInput), full(full), eps(eps), reduce(reduce)
+  _logInput(logInput),
+  _full(full),
+  _eps(eps),
+  _reduce(reduce)
 {
   // Nothing to do here.
 }
@@ -37,16 +40,16 @@ double PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
   TargetType&& target)
 {
   InputType loss(size(input));
-  if (logInput)
+  if (_logInput)
   {
     loss = arma::exp(input) - target % input;
   }
   else
   {
-    loss = input - target % arma::log(input + eps);
+    loss = input - target % arma::log(input + _eps);
   }
 
-  if (full)
+  if (_full)
   {
     // Stirling's approximation :
     // log(n!) = n * log(n) - n + log(2 * pi * n)
@@ -56,7 +59,7 @@ double PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
                                  + arma::log(2 * arma::datum::pi * target) / 2;
   }
 
-  if (reduce)
+  if (_reduce)
   {
     return arma::accu(loss)/loss.n_elem;
   }
@@ -73,16 +76,16 @@ void PoissonNLLLoss<InputDataType, OutputDataType>::Backward(
   const TargetType&& target,
   OutputType&& output)
 {
-  if (logInput)
+  if (_logInput)
   {
     output = (arma::exp(input) - target)/input.n_elem;
   }
   else
   {
-    output = (1 - target / (input + eps))/input.n_elem;
+    output = (1 - target / (input + _eps))/input.n_elem;
   }
 
-  if (full)
+  if (_full)
   {
     // Approximation for (1 + 1/2 + 1/3 + ... + 1/n) is
     // (log(n + 1) + log(n) + 1)/2
