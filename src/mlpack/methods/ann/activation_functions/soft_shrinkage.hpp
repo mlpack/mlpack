@@ -111,3 +111,7 @@ class SoftShrinkage
     }
   }
 };  // class SoftShrinkage
+}  //namespace ann
+}  //namespace mlpack
+
+#endif
