@@ -22,6 +22,7 @@
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/soft_shrinkage.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -654,5 +655,16 @@ BOOST_AUTO_TEST_CASE(MishFunctionTest)
                                        desiredActivations);
   CheckDerivativeCorrect<MishFunction>(desiredActivations,
                                         desiredDerivatives);
+}
+BOOST_AUTO_TEST_CASE(SoftShrinkageTest)
+{
+  const arma::colvec desiredActivations("-1.5 2.7 4 -99.7 0.5 -0.5 1.5 0");
+
+  const arma::colvec desiredDerivatives("1 1 1 1 0 0 1");
+
+  CheckActivationCorrect<SoftShrinkage>(activationData,
+                                       desiredActivations);
+  CheckDerivativeCorrect<SoftShrinkage>(desiredActivations,
+                                        desiredDerivatives);                                          
 }
 BOOST_AUTO_TEST_SUITE_END();

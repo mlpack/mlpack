@@ -49,7 +49,7 @@ class SoftShrinkage
     {
       return (x + lambda);
     }
-    return 0;
+    return 0.;
   }
   /**
    * Computes the Soft Shrinkage function.
@@ -60,17 +60,8 @@ class SoftShrinkage
   template <typename InputVecType,typename OutputVecType>
   static void Fn(const InputVecType &x, OutputVecType &y, const double lambda = 0.5)
   {
-    y.set_size(x.size(), 0);
-    InputVecType lambdaTemp(x.size(), lambda);
-    if(x > lambda)
-    {
-      y = x - lambdaTemp;
-    }
-    
-    else if(x < -1 * lambdaTemp)
-    {
-      y = x + lambdaTemp;
-    }
+    y=x;
+    y.transform([](const double x, const double lambda = 0.5){return Fn(x,lambda);});
   }
   /**
    * Computes the first derivative of the Soft Shrinkage function.
@@ -78,16 +69,13 @@ class SoftShrinkage
    * @param y Input data.
    * @return f'(x)
    */
-  static double Deriv(const double x, const double lambda = 0.5)
+  static double Deriv(const double y, const double lambda = 0.5)
   {
-      if(x > lambda)
-      {
-        return 1;  
-      }
-      else if(x < -lambda)
-      {
-        return 1;
-      }
+    // here y is f(x)
+
+      if(y > 0 || y < 0)
+      return 1;
+
       return 0;
   }
   /**
@@ -97,18 +85,14 @@ class SoftShrinkage
    * @param x The resulting derivatives.
    */
   template <typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType &y OutputVecType &x, const double lambda = 0.5)
+  static void Deriv(const InputVecType &x, OutputVecType &y, const double lambda = 0.5)
   {
-    y.set_size(x.size(), 0);
-    InputVecType lambdaTemp(x.size(), lambda);
-    if(x > lambdaTemp)
-    {
-      y.fill(1);
-    }
-    else if(x < -1 * lambdaTemp)
-    {
-      y.fill(1);
-    }
+    /**
+     * here x is f(x)
+     * y is f'(x)
+    */
+    y=x;
+    y.transform([](const double cy, const double lambda = 0.5){return Deriv(cy,lambda);});
   }
 };  // class SoftShrinkage
 }  //namespace ann
