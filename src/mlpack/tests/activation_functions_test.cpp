@@ -659,8 +659,8 @@ BOOST_AUTO_TEST_CASE(MishFunctionTest)
 BOOST_AUTO_TEST_CASE(SoftShrinkageTest)
 {
   const arma::colvec desiredActivations("-1.5 2.7 4 -99.7 0.5 -0.5 1.5 0");
-
-  const arma::colvec desiredDerivatives("1 1 1 1 0 0 1");
+  
+  const arma::colvec desiredDerivatives("1 1 1 1 1 1 1 0");
 
   CheckActivationCorrect<SoftShrinkage>(activationData,
                                        desiredActivations);
