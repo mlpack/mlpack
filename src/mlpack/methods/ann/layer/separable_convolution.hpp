@@ -438,4 +438,7 @@ struct version<
 } // namespace serialization
 } // namespace boost
 
+// Include implementation.
+#include "separable_convolution_impl.hpp"
+
 #endif
