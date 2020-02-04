@@ -323,7 +323,6 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-<<<<<<< HEAD
 double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
     const arma::mat& parameters, const size_t begin, const size_t batchSize)
 {
@@ -351,7 +350,9 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
                      const size_t begin,
                      GradType& gradient,
                      const size_t batchSize)
-
+{}
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
 template<typename eT>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
     const arma::Mat<eT>& parameters,
@@ -407,7 +408,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
     arma::mat& gradient,
     const size_t batchSize)
 {
-  this->EvaluateWithGradient(parameters, begin, gradient, batchSize);
+  this->Gradient(parameters, begin, gradient, batchSize);
   UpdateGradient(std::move(predictors.cols(begin, begin + batchSize - 1)));
 }
 
