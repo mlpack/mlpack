@@ -29,9 +29,10 @@ namespace ann /** Artificial Neural Network. */ {
  *  f'(x) = | 1 , if x < -lambda
  *          | 0 , otherwise
  */
-class SoftShrinkage
+
+class SoftShrinkfunction
 {
-  public:
+ public:
   /**
    * Computes the Soft Shrinkage function.
    *
@@ -51,24 +52,30 @@ class SoftShrinkage
     }
     return 0.;
   }
+  
   /**
    * Computes the Soft Shrinkage function.
    *
    * @param x Input data.
    * @param y The resulting output activation.
    */
-  template <typename InputVecType,typename OutputVecType>
-  static void Fn(const InputVecType &x, OutputVecType &y, const double lambda = 0.5)
+  
+  template <typename InputVecType, typename OutputVecType>
+  static void Fn(const InputVecType &x, OutputVecType &y, /
+                  const double lambda = 0.5)
   {
-    y=x;
-    y.transform([](const double x, const double lambda = 0.5){return Fn(x,lambda);});
+    y = x;
+    y.transform([](const double x, const double lambda = 0.5) /
+                  {return Fn(x, lambda);});
   }
+
   /**
    * Computes the first derivative of the Soft Shrinkage function.
    *
    * @param y Input data.
    * @return f'(x)
    */
+  
   static double Deriv(const double y, const double lambda = 0.5)
   {
     // here y is f(x)
@@ -78,24 +85,29 @@ class SoftShrinkage
 
       return 0;
   }
+  
   /**
    * Computes the first derivatives of the Soft Shrinkage function.
    * 
    * @param y Input activations.
    * @param x The resulting derivatives.
    */
+  
   template <typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType &x, OutputVecType &y, const double lambda = 0.5)
+  static void Deriv(const InputVecType &x, OutputVecType &y, /
+                    const double lambda = 0.5)
   {
     /**
      * here x is f(x)
      * y is f'(x)
     */
     y=x;
-    y.transform([](const double cy, const double lambda = 0.5){return Deriv(cy,lambda);});
+    y.transform([](const double cy, const double lambda = 0.5)  /
+                {return Deriv(cy,lambda);});
   }
+  
 };  // class SoftShrinkage
-}  //namespace ann
-}  //namespace mlpack
+}  // namespace ann
+}  // namespace mlpack
 
 #endif
