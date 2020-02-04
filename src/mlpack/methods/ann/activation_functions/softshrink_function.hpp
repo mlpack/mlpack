@@ -18,19 +18,19 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * SoftShrinkage operator is defined as
+ * SoftShrinkage operator is defined as,
  *         | x - lambda, if x >  lambda
  *  f(x) = | x + lambda, if x < -lambda
  *         | 0, otherwise
  *
- * lambda is set to 0.5 by default
+ * lambda is set to 0.5 by default.
  *
  *          | 1 , if x >  lambda
  *  f'(x) = | 1 , if x < -lambda
  *          | 0 , otherwise
  */
 
-class SoftShrinkfunction
+class SoftShrinkFunction
 {
  public:
   /**
@@ -41,14 +41,13 @@ class SoftShrinkfunction
    */
   static double Fn(const double x, const double lambda = 0.5)
   {
-    if(x > lambda)
+    if (x > lambda)
     {
-      return (x - lambda);
+      return x - lambda;
     }
-    
-    else if(x < -1 * lambda)
+    else if (x < -1 * lambda)
     {
-      return (x + lambda);
+      return x + lambda;
     }
     return 0.;
   }
@@ -78,9 +77,7 @@ class SoftShrinkfunction
   
   static double Deriv(const double y, const double lambda = 0.5)
   {
-    // here y is f(x)
-
-      if(y > 0 || y < 0)
+      if (y > 0 || y < 0)
       return 1;
 
       return 0;
@@ -94,18 +91,14 @@ class SoftShrinkfunction
    */
   
   template <typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType &x, OutputVecType &y, /
+  static void Deriv(const InputVecType &y, OutputVecType &x, /
                     const double lambda = 0.5)
   {
-    /**
-     * here x is f(x)
-     * y is f'(x)
-    */
-    y=x;
-    y.transform([](const double cy, const double lambda = 0.5)  /
+    x = y ;
+    x.transform([](const double cy, const double lambda = 0.5)  /
                 {return Deriv(cy,lambda);});
   }
-  
+
 };  // class SoftShrinkage
 }  // namespace ann
 }  // namespace mlpack

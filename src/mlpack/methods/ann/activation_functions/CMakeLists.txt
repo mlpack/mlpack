@@ -4,7 +4,7 @@ set(SOURCES
   identity_function.hpp
   logistic_function.hpp
   softsign_function.hpp
-  soft_shrinkage.hpp
+  softshrink_function.hpp
   tanh_function.hpp
   rectifier_function.hpp
   softplus_function.hpp
