@@ -428,7 +428,7 @@ template <
     typename OutputDataType
 >
 struct version<
-    mlpack::ann::SeparableConvolution<ForwardConvolutionRule, 
+    mlpack::ann::SeparableConvolution<ForwardConvolutionRule,
         BackwardConvolutionRule, GradientConvolutionRule, InputDataType,
         OutputDataType>>
 {
