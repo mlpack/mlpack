@@ -80,10 +80,10 @@ SeparableConvolution<
     outputHeight(outputHeight),
     numGroups(numGroups)
 {
-  if(inSize % numGroups != 0 || outSize % numGroups != 0)
+  if (inSize % numGroups != 0 || outSize % numGroups != 0)
   {
     Log::Fatal << "The output maps / input maps is not possible given "
-        << "the number of groups. Input maps / output maps must be " 
+        << "the number of groups. Input maps / output maps must be "
         << " divisible by number of groups." << std::endl;
   }
   weights.set_size((inSize * outSize * kernelWidth * kernelHeight) / numGroups +
@@ -106,7 +106,7 @@ SeparableConvolution<
     InitializeSamePadding();
   }
 
-  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom); 
+  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 }
 
 template <
@@ -153,10 +153,10 @@ SeparableConvolution<
     outputHeight(outputHeight),
     numGroups(numGroups)
 {
-  if(inSize % numGroups != 0 || outSize % numGroups != 0)
+  if (inSize % numGroups != 0 || outSize % numGroups != 0)
   {
     Log::Fatal << "The output maps / input maps is not possible given "
-        << "the number of groups. Input maps / output maps must be " 
+        << "the number of groups. Input maps / output maps must be "
         << " divisible by number of groups." << std::endl;
   }
 
@@ -180,7 +180,7 @@ SeparableConvolution<
     InitializeSamePadding();
   }
 
-  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom); 
+  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 }
 
 template<
@@ -198,7 +198,7 @@ void SeparableConvolution<
     OutputDataType
 >::Reset()
 {
- weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
+  weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
         outSize * inSize, false, false);
   bias = arma::mat(weights.memptr() + weight.n_elem,
         outSize, 1, false, false);
@@ -248,9 +248,9 @@ void SeparableConvolution<
 
   for (size_t curGroup = 0; curGroup < numGroups; curGroup++)
   {
-    for (size_t outMap = outSize * curGroup * batchSize / numGroups, 
-        outMapIdx = outSize * curGroup / numGroups, batchCount = 0; outMap < outSize *
-        (curGroup + 1) * batchSize / numGroups; outMap++)
+    for (size_t outMap = outSize * curGroup * batchSize / numGroups,
+        outMapIdx = outSize * curGroup / numGroups, batchCount = 0;
+        outMap < outSize * (curGroup + 1) * batchSize / numGroups; outMap++)
     {
       if (outMap != 0 && outMap % outSize == 0)
       {
@@ -277,9 +277,7 @@ void SeparableConvolution<
 
         outputTemp.slice(outMap) += convOutput;
       }
-
       outputTemp.slice(outMap) += bias(outMap % outSize);
-
     }
   }
   outputWidth = outputTemp.n_rows;
@@ -313,9 +311,9 @@ void SeparableConvolution<
 
   for (size_t curGroup = 0; curGroup < numGroups; curGroup++)
   {
-    for (size_t outMap = outSize * curGroup * batchSize / numGroups, 
-        outMapIdx = outSize * curGroup / numGroups, batchCount = 0; outMap < outSize *
-        (curGroup + 1) * batchSize / numGroups; outMap++)
+    for (size_t outMap = outSize * curGroup * batchSize / numGroups,
+        outMapIdx = outSize * curGroup / numGroups, batchCount = 0;
+        outMap < outSize * (curGroup + 1) * batchSize / numGroups; outMap++)
     {
       if (outMap != 0 && outMap % outSize == 0)
       {
@@ -344,7 +342,6 @@ void SeparableConvolution<
     }
   }
 }
-
 
 template<
     typename ForwardConvolutionRule,
@@ -375,9 +372,9 @@ void SeparableConvolution<
 
   for (size_t curGroup = 0; curGroup < numGroups; curGroup++)
   {
-    for (size_t outMap = outSize * curGroup * batchSize / numGroups, 
-        outMapIdx = outSize * curGroup / numGroups, batchCount = 0; outMap < outSize *
-        (curGroup + 1) * batchSize / numGroups; outMap++)
+    for (size_t outMap = outSize * curGroup * batchSize / numGroups,
+        outMapIdx = outSize * curGroup / numGroups, batchCount = 0;
+        outMap < outSize * (curGroup + 1) * batchSize / numGroups; outMap++)
     {
       if (outMap != 0 && outMap % outSize == 0)
       {
@@ -403,7 +400,7 @@ void SeparableConvolution<
         arma::Mat<eT> output;
         GradientConvolutionRule::Convolution(inputSlice, deltaSlice,
           output, strideWidth, strideHeight);
-        
+
         if (gradientTemp.n_rows < output.n_rows ||
             gradientTemp.n_cols < output.n_cols)
         {
@@ -421,13 +418,10 @@ void SeparableConvolution<
           gradientTemp.slice(outMapIdx) += output;
         }
       }
-
     gradient.submat(weight.n_elem + (outMap % outSize), 0, weight.n_elem +
         (outMap % outSize), 0) = arma::accu(mappedError.slice(outMap));
-
     }
   }
-  
 }
 
 template<
