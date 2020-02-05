@@ -65,8 +65,10 @@ class SoftplusFunction
   template<typename InputType, typename OutputType>
   static void Fn(const InputType& x, OutputType& y)
   {
-    y = (x > DBL_MAX) + (x < DBL_MAX) % (x > -DBL_MAX)
-        % arma::log(1 + arma::exp(x));
+    y.set_size(arma::size(x));
+
+    for (size_t i = 0; i < x.n_elem; i++)
+      y(i) = Fn(x(i));
   }
 
   /**
