@@ -24,6 +24,7 @@
 #include "test_tools.hpp"
 #include "ann_test_tools.hpp"
 #include "serialization.hpp"
+#include "../methods/ann/layer/separable_convolution.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -2937,6 +2938,7 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerPaddingTest)
 BOOST_AUTO_TEST_CASE(SimpleSeparableConvolutionLayerTest)
 {
   arma::mat output, input, delta;
+  SeparableConvolution<>(1, 4, );
 }
 
 BOOST_AUTO_TEST_SUITE_END();
