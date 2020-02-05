@@ -2938,7 +2938,7 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerPaddingTest)
 BOOST_AUTO_TEST_CASE(SimpleSeparableConvolutionLayerTest)
 {
   arma::mat output, input, delta;
-  SeparableConvolution<> module1(1, 4, 2, 2, 1, 1, 0, 0, 3, 3, 1, "valid");
+  Convolution<> module1(1, 4, 2, 2, 1, 1, 0, 0, 3, 3, "valid");
 
   // Test the forward function.
   input = arma::mat(3, 3);
