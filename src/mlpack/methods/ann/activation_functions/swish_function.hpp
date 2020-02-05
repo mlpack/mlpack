@@ -62,10 +62,7 @@ class SwishFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y.set_size(arma::size(x));
-
-    for (size_t i = 0; i < x.n_elem; i++)
-      y(i) = Fn(x(i));
+    y = x / (1.0 + arma::exp(-x));
   }
 
   /**
