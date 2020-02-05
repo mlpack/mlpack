@@ -54,10 +54,8 @@ class HardSigmoidFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y.set_size(size(x));
-
-    for (size_t i = 0; i < x.n_elem; i++)
-      y(i) = Fn(x(i));
+    y = arma::min(arma::ones(x.n_elem),
+        arma::max(arma::zeros(x.n_elem), (x * 0.2 + 0.5)));
   }
 
   /**
