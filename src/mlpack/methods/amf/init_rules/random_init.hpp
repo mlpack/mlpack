@@ -28,14 +28,14 @@ class RandomInitialization
   // Empty constructor required for the InitializeRule template
   RandomInitialization() { }
 
-  /**
-   * Fill W and H with random uniform noise.
-   *
-   * @param V Input matrix.
-   * @param r Rank of decomposition.
-   * @param W W matrix, to be filled with random noise.
-   * @param H H matrix, to be filled with random noise.
-   */
+   /**
+    * Fill W and H with random uniform noise.
+    *
+    * @param V Input matrix.
+    * @param r Rank of decomposition.
+    * @param W W matrix, to be filled with random noise.
+    * @param H H matrix, to be filled with random noise.
+    */
   template<typename MatType>
   inline static void Initialize(const MatType& V,
                                 const size_t r,
@@ -51,14 +51,14 @@ class RandomInitialization
     H.randu(r, m);
   }
 
-  /**
-   * Fill W or H with random uniform noise.
-   *
-   * @param V Input matrix.
-   * @param r Rank of decomposition.
-   * @param M W or H matrix, to be filled with random noise.
-   * @param whichMatrix If true, initialize W. Otherwise, initialize H.
-   */
+   /**
+    * Fill W or H with random uniform noise.
+    *
+    * @param V Input matrix.
+    * @param r Rank of decomposition.
+    * @param M W or H matrix, to be filled with random noise.
+    * @param whichMatrix If true, initialize W. Otherwise, initialize H.
+    */
   template<typename MatType>
   inline void InitializeOne(const MatType& V,
                             const size_t r,
