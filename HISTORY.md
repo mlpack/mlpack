@@ -25,6 +25,8 @@
 
   * Add normalization support for CF binding (#2136).
 
+  * Add Mish activation function (#2158).
+
   * Optimized activation functions (#2178).
 
 ### mlpack 3.2.2
