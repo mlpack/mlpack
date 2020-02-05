@@ -79,7 +79,7 @@ void PoissonNLLLoss<InputDataType, OutputDataType>::Backward(
   }
   else
   {
-    output = (1 - target / (input + _eps)) / input.n_elem;
+    output = (1 - target / (input + eps)) / input.n_elem;
   }
 
   if (full)
