@@ -29,7 +29,6 @@ namespace ann /** Artificial Neural Network. */ {
  *  f'(x) = | 1 , if x < -lambda
  *          | 0 , otherwise
  */
-
 class SoftShrinkFunction
 {
  public:
@@ -51,14 +50,13 @@ class SoftShrinkFunction
     }
     return 0.;
   }
-  
+
   /**
    * Computes the Soft Shrinkage function.
    *
    * @param x Input data.
    * @param y The resulting output activation.
    */
-  
   template <typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType &x, OutputVecType &y,
                   const double lambda = 0.5)
@@ -74,32 +72,29 @@ class SoftShrinkFunction
    * @param y Input data.
    * @return f'(x)
    */
-  
   static double Deriv(const double y, const double lambda = 0.5)
   {
-      if (y > 0 || y < 0)
-      return 1;
-
+    if(y == 0)
       return 0;
+    return 1;
   }
-  
+
   /**
    * Computes the first derivatives of the Soft Shrinkage function.
    * 
    * @param y Input activations.
    * @param x The resulting derivatives.
    */
-  
   template <typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType &y, OutputVecType &x,
                     const double lambda = 0.5)
   {
-    x = y ;
+    x = y;
     x.transform([](const double cy, const double lambda = 0.5){
-                return Deriv(cy,lambda);});
+                return Deriv(cy, lambda);});
   }
-
 };  // class SoftShrinkFunction
+
 }  // namespace ann
 }  // namespace mlpack
 
