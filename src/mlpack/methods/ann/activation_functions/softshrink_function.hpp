@@ -74,7 +74,7 @@ class SoftShrinkFunction
    */
   static double Deriv(const double y, const double lambda = 0.5)
   {
-    if(y == 0)
+    if (y == 0)
       return 0;
     return 1;
   }
