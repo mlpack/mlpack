@@ -84,10 +84,7 @@ class LogisticFunction
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& y, OutputVecType& x)
   {
-    x.set_size(arma::size(y));
-
-    for (size_t i = 0; i < x.n_elem; i++)
-      x(i) = Deriv(y(i));
+    x = y % (1.0 - y);
   }
 
   /**
