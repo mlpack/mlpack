@@ -30,15 +30,15 @@ class AverageInitialization
   // Empty constructor required for the InitializeRule template
   AverageInitialization() { }
 
-  /**
-   * Initialize the matrices W and H to the average value of V with uniform
-   * random noise added.
-   *
-   * @param V Input matrix.
-   * @param r Rank of matrix.
-   * @param W W matrix, to be initialized.
-   * @param H H matrix, to be initialized.
-   */
+   /**
+    * Initialize the matrices W and H to the average value of V with uniform
+    * random noise added.
+    *
+    * @param V Input matrix.
+    * @param r Rank of matrix.
+    * @param W W matrix, to be initialized.
+    * @param H H matrix, to be initialized.
+    */
   template<typename MatType>
   inline static void Initialize(const MatType& V,
                                 const size_t r,
@@ -49,7 +49,6 @@ class AverageInitialization
     const size_t m = V.n_cols;
 
     double avgV = 0;
-    size_t count = 0;
     double min = DBL_MAX;
 
     // Iterate over all elements in the matrix (for sparse matrices, this only
@@ -57,7 +56,6 @@ class AverageInitialization
     for (typename MatType::const_row_col_iterator it = V.begin();
         it != V.end(); ++it)
     {
-      ++count;
       avgV += *it;
       // Track the minimum value.
       if (*it < min)
@@ -74,16 +72,16 @@ class AverageInitialization
     H = H + avgV;
   }
 
-  /**
-   * Initialize the matrix W or H to the average value of V with uniform
-   * random noise added.
-   *
-   * @param V Input matrix.
-   * @param r Rank of matrix.
-   * @param M W or H matrix, to be initialized to the average value of V
-   * with uniform random noise added.
-   * @param whichMatrix If true, initialize W. Otherwise, initialize H.
-   */
+   /**
+    * Initialize the matrix W or H to the average value of V with uniform
+    * random noise added.
+    *
+    * @param V Input matrix.
+    * @param r Rank of matrix.
+    * @param M W or H matrix, to be initialized to the average value of V
+    * with uniform random noise added.
+    * @param whichMatrix If true, initialize W. Otherwise, initialize H.
+    */
   template<typename MatType>
   inline static void InitializeOne(const MatType& V,
                                    const size_t r,
@@ -93,26 +91,24 @@ class AverageInitialization
     const size_t n = V.n_rows;
     const size_t m = V.n_cols;
 
+    double avgV = 0;
+    double min = DBL_MAX;
+
+    // Iterate over all elements in the matrix (for sparse matrices, this only
+    // iterates over nonzeros).
+    for (typename MatType::const_row_col_iterator it = V.begin();
+        it != V.end(); ++it)
+    {
+      avgV += *it;
+      // Track the minimum value.
+      if (*it < min)
+        min = *it;
+    }
+
+    avgV = sqrt(((avgV / (n * m)) - min) / r);
+
     if (whichMatrix)
     {
-      double avgV = 0;
-      size_t count = 0;
-      double min = DBL_MAX;
-
-      // Iterate over all elements in the matrix (for sparse matrices, this only
-      // iterates over nonzeros).
-      for (typename MatType::const_row_col_iterator it = V.begin();
-          it != V.end(); ++it)
-      {
-        ++count;
-        avgV += *it;
-        // Track the minimum value.
-        if (*it < min)
-          min = *it;
-      }
-
-      avgV = sqrt(((avgV / (n * m)) - min) / r);
-
       // Initialize W to random values
       M.randu(n, r);
 
@@ -120,24 +116,6 @@ class AverageInitialization
     }
     else
     {
-      double avgV = 0;
-      size_t count = 0;
-      double min = DBL_MAX;
-
-      // Iterate over all elements in the matrix (for sparse matrices, this only
-      // iterates over nonzeros).
-      for (typename MatType::const_row_col_iterator it = V.begin();
-          it != V.end(); ++it)
-      {
-        ++count;
-        avgV += *it;
-        // Track the minimum value.
-        if (*it < min)
-          min = *it;
-      }
-
-      avgV = sqrt(((avgV / (n * m)) - min) / r);
-
       // Initialize H to random values
       M.randu(r, m);
 
