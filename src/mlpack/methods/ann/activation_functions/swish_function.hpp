@@ -89,8 +89,10 @@ class SwishFunction
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& y, OutputVecType& x)
   {
-    x = y / (1 + arma::exp(-y)) + (1 - y / (1 + arma::exp(-y))) /
-                                           (1 + arma::exp(-y));
+    x.set_size(size(y));
+
+    for (size_t i = 0; i < x.n_elem; i++)
+      x(i) = Deriv(y(i));
   }
 }; // class SwishFunction
 
