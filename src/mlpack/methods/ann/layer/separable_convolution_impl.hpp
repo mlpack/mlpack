@@ -60,8 +60,6 @@ SeparableConvolution<
     const size_t padH,
     const size_t inputWidth,
     const size_t inputHeight,
-    const size_t ouputWidth,
-    const size_t outputHeight,
     const size_t numGroups,
     const std::string &paddingType) :
     inSize(inSize),
@@ -76,8 +74,8 @@ SeparableConvolution<
     padHTop(padH),
     inputWidth(inputWidth),
     inputHeight(inputHeight),
-    outputWidth(outputWidth),
-    outputHeight(outputHeight),
+    outputWidth(0),
+    outputHeight(0),
     numGroups(numGroups)
 {
   if (inSize % numGroups != 0 || outSize % numGroups != 0)
@@ -133,8 +131,6 @@ SeparableConvolution<
     const std::tuple<size_t, size_t> padH,
     const size_t inputWidth,
     const size_t inputHeight,
-    const size_t outputWidth,
-    const size_t outputHeight,
     const size_t numGroups,
     const std::string &paddingType) :
     inSize(inSize),
@@ -149,8 +145,8 @@ SeparableConvolution<
     padHTop(std::get<0>(padH)),
     inputWidth(inputWidth),
     inputHeight(inputHeight),
-    outputWidth(outputWidth),
-    outputHeight(outputHeight),
+    outputWidth(0),
+    outputHeight(0),
     numGroups(numGroups)
 {
   if (inSize % numGroups != 0 || outSize % numGroups != 0)
@@ -160,7 +156,7 @@ SeparableConvolution<
         << " divisible by number of groups." << std::endl;
   }
 
-  weights.set_size((inSize * inSize * kernelWidth * kernelHeight) / numGroups +
+  weights.set_size((inSize * outSize * kernelWidth * kernelHeight) / numGroups +
     outSize, 1);
 
   // Transform paddingType to lowercase.
