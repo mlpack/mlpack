@@ -1,5 +1,5 @@
 /**
- * @file soft_shrinkage_function.hpp
+ * @file softshrink_function.hpp
  * @author Lakshya Ojha
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -8,8 +8,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_SOFT_SHRINKAGE_FUNCTION_HPP
-#define MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_SOFT_SHRINKAGE_FUNCTION_HPP
+#ifndef MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_SOFT_SHRINK_FUNCTION_HPP
+#define MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_SOFT_SHRINK_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <algorithm>
@@ -60,12 +60,12 @@ class SoftShrinkFunction
    */
   
   template <typename InputVecType, typename OutputVecType>
-  static void Fn(const InputVecType &x, OutputVecType &y, /
+  static void Fn(const InputVecType &x, OutputVecType &y,
                   const double lambda = 0.5)
   {
     y = x;
-    y.transform([](const double x, const double lambda = 0.5) /
-                  {return Fn(x, lambda);});
+    y.transform([](const double x, const double lambda = 0.5){
+                  return Fn(x, lambda);});
   }
 
   /**
@@ -91,15 +91,15 @@ class SoftShrinkFunction
    */
   
   template <typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType &y, OutputVecType &x, /
+  static void Deriv(const InputVecType &y, OutputVecType &x,
                     const double lambda = 0.5)
   {
     x = y ;
-    x.transform([](const double cy, const double lambda = 0.5)  /
-                {return Deriv(cy,lambda);});
+    x.transform([](const double cy, const double lambda = 0.5){
+                return Deriv(cy,lambda);});
   }
 
-};  // class SoftShrinkage
+};  // class SoftShrinkFunction
 }  // namespace ann
 }  // namespace mlpack
 
