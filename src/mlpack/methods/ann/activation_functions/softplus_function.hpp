@@ -91,7 +91,7 @@ class SoftplusFunction
   template<typename InputType, typename OutputType>
   static void Deriv(const InputType& y, OutputType& x)
   {
-    x.set_size(size(y));
+    x.set_size(arma::size(y));
 
     for (size_t i = 0; i < x.n_elem; i++)
       x(i) = Deriv(y(i));
