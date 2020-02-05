@@ -24,8 +24,6 @@
   * CMake fix for finding STB include directory (#2145).
 
   * Add normalization support for CF binding (#2136).
-  
-  * Add Mish activation function (#2158).
 
   * Optimized activation functions (#2178).
 
