@@ -55,8 +55,8 @@ BOOST_AUTO_TEST_CASE(PoissonNLLLossTest)
 
   // if(full == false) output = e^(input) - target
   // Sum of expected output as calculated using pytorch = 3.4206
-  double expected_output = arma::accu(output);
-  BOOST_REQUIRE_CLOSE_FRACTION(expected_output, 3.4206, 0.0001);
+  double expectedOutput = arma::accu(output);
+  BOOST_REQUIRE_CLOSE_FRACTION(expectedOutput, 3.4206, 0.0001);
 
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(FullPoissonNLLLossTest)
 {
   arma::mat input, output, target;
   PoissonNLLLoss<> module;
-  module.full() = true;
+  module.Full() = true;
   // Test the error function on a single input and (full == true).
   input = arma::mat("4");
   target = arma::mat("3");

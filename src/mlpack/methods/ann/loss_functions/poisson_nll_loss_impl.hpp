@@ -25,10 +25,10 @@ PoissonNLLLoss<InputDataType, OutputDataType>::PoissonNLLLoss(
   const bool full,
   const double eps,
   const bool reduce):
-  _logInput(logInput),
-  _full(full),
-  _eps(eps),
-  _reduce(reduce)
+  logInput(logInput),
+  full(full),
+  eps(eps),
+  reduce(reduce)
 {
   // Nothing to do here.
 }
@@ -39,34 +39,31 @@ double PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
   const InputType&& input,
   TargetType&& target)
 {
-  InputType loss(size(input));
-  if (_logInput)
+  InputType loss(size(input), arma::fill::zeros);
+  if (logInput)
   {
     loss = arma::exp(input) - target % input;
   }
   else
   {
-    loss = input - target % arma::log(input + _eps);
+    loss = input - target % arma::log(input + eps);
   }
 
-  if (_full)
+  if (full)
   {
     // Stirling's approximation :
     // log(n!) = n * log(n) - n + log(2 * pi * n)
     // Select all elements greater than 1 in target and
     // add ```target * log(target) - target + log(2 * pi * target)```
     loss.elem(find(target > 1)) += target * arma::log(target) - target
-                                 + arma::log(2 * arma::datum::pi * target) / 2;
+        + arma::log(2 * arma::datum::pi * target) / 2;
   }
 
-  if (_reduce)
+  if (reduce)
   {
-    return arma::accu(loss)/loss.n_elem;
+    return arma::accu(loss) / loss.n_elem;
   }
-  else
-  {
-    return arma::accu(loss);
-  }
+  return arma::accu(loss);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -76,23 +73,23 @@ void PoissonNLLLoss<InputDataType, OutputDataType>::Backward(
   const TargetType&& target,
   OutputType&& output)
 {
-  if (_logInput)
+  if (logInput)
   {
-    output = (arma::exp(input) - target)/input.n_elem;
+    output = (arma::exp(input) - target) / input.n_elem;
   }
   else
   {
-    output = (1 - target / (input + _eps))/input.n_elem;
+    output = (1 - target / (input + _eps)) / input.n_elem;
   }
 
-  if (_full)
+  if (full)
   {
     // Approximation for (1 + 1/2 + 1/3 + ... + 1/n) is
     // (log(n + 1) + log(n) + 1)/2
     // Select all elements greater than 1 in target and
     // add ```(log(n + 1) + log(n) + 1)/2```
     output.elem(find(target > 1)) += (arma::log(target + 1)
-                                    + arma::log(target) + 1)/(2 * input.n_elem);
+        + arma::log(target) + 1) / (2 * input.n_elem);
   }
 }
 

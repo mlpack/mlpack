@@ -89,24 +89,24 @@ class PoissonNLLLoss
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the value of logInput.
-  bool logInput() const { return _logInput; }
+  bool LogInput() const { return logInput; }
   //! Modify the value of logInput.
-  bool& logInput() { return _logInput; }
+  bool& LogInput() { return logInput; }
 
   //! Get the value of full.
-  bool full() const { return _full; }
+  bool Full() const { return full; }
   //! Modify the value of full.
-  bool& full() { return _full; }
+  bool& Full() { return full; }
 
   //! Get the value of eps.
-  double eps() const { return _eps; }
+  double Eps() const { return eps; }
   //! Modify the value of eps.
-  double& eps() { return _eps; }
+  double& Eps() { return eps; }
 
   //! Get the value of reduce.
-  bool reduce() const { return _reduce; }
+  bool Reduce() const { return reduce; }
   //! Modify the value of reduce.
-  bool& reduce() { return _reduce; }
+  bool& Reduce() { return reduce; }
 
   /**
    * Serialize the layer
@@ -122,16 +122,16 @@ class PoissonNLLLoss
   OutputDataType outputParameter;
 
   //! Boolean value that tells if input is log(x).
-  bool _logInput;
+  bool logInput;
 
   //! Boolean value that tells if full loss has to be calculated.
-  bool _full;
+  bool full;
 
     //! Small value required to avoid log(0)
-  double _eps;
+  double eps;
 
   //! Boolean value that tells if mean has to be taken.
-  bool _reduce;
+  bool reduce;
 }; // class PoissonNLLLoss
 
 } // namespace ann
