@@ -13,7 +13,7 @@
  */
 #ifndef MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_GELU_FUNCTION_HPP
 #define MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_GELU_FUNCTION_HPP
-# define PI          3.141592653589793238462643383279502884L /* pi */
+# define PI 3.141592653589793238462643383279502884L /* pi */
 
 #include <mlpack/prereqs.hpp>
 
@@ -41,7 +41,8 @@ class GELUFunction
    */
   static double Fn(const double x)
   {
-    return 0.5 * x * (1 + std::tanh(std::sqrt(2/PI)*(x + 0.044715 * std::pow(x, 3))));
+    return 0.5 * x * (1 + std::tanh(std::sqrt(2 / PI) *
+           (x + 0.044715 * std::pow(x, 3))));
   }
 
   /**
@@ -53,7 +54,8 @@ class GELUFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = 0.5 * x * (1 + arma::tanh(std::sqrt(2/PI)*(x + 0.044715 * arma::pow(x, 3))));
+    y = 0.5 * x * (1 + arma::tanh(std::sqrt(2 / PI) *
+        (x + 0.044715 * arma::pow(x, 3))));
   }
 
   /**
@@ -66,7 +68,8 @@ class GELUFunction
   {
     return 0.5 * std::tanh(0.0356774 * std::pow(y, 3) + 0.797885 * y) +
            (0.0535161 * std::pow(y, 3) + 0.398942 * y) *
-           std::pow(1 / std::cosh(0.0356774 * std::pow(y, 3) + 0.797885 * y), 2) + 0.5;
+           std::pow(1 / std::cosh(0.0356774 * std::pow(y, 3) +
+           0.797885 * y), 2) + 0.5;
   }
 
   /**
@@ -80,7 +83,8 @@ class GELUFunction
   {
     x = 0.5 * arma::tanh(0.0356774 * arma::pow(y, 3) + 0.797885 * y) +
         (0.0535161 * arma::pow(y, 3) + 0.398942 * y) *
-        arma::pow(1 / arma::cosh(0.0356774 * arma::pow(y, 3) + 0.797885 * y), 2) + 0.5;
+        arma::pow(1 / arma::cosh(0.0356774 * arma::pow(y, 3) +
+        0.797885 * y), 2) + 0.5;
   }
 
 }; // class GELUFunction

@@ -210,7 +210,7 @@ using MishFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 /**
- * Standard Mish-Layer using the GELU activation function.
+ * Standard GELU-Layer using the GELU activation function.
  */
 template <
     class ActivationFunction = GELUFunction,
