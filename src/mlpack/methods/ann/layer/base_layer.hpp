@@ -210,7 +210,7 @@ using MishFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 /**
- * Standard Mish-Layer using the Mish activation function.
+ * Standard Lisht-Layer using the Lisht activation function.
  */
 template <
     class ActivationFunction = LishtFunction,
