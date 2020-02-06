@@ -39,31 +39,34 @@ double PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
   const InputType&& input,
   TargetType&& target)
 {
-  InputType loss(size(input), arma::fill::zeros);
-  if (logInput)
-  {
-    loss = arma::exp(input) - target % input;
-  }
-  else
-  {
-    loss = input - target % arma::log(input + eps);
-  }
+  double lossThis;
+  double totalLossReduced = 0;
 
-  if (full)
+  for (size_t i = 0; i < input.n_elem; ++i)
   {
-    // Stirling's approximation :
-    // log(n!) = n * log(n) - n + log(2 * pi * n)
-    // Select all elements greater than 1 in target and
-    // add ```target * log(target) - target + log(2 * pi * target)```
-    loss.elem(find(target > 1)) += target * arma::log(target) - target
-        + arma::log(2 * arma::datum::pi * target) / 2;
+    if (logInput)
+    {
+      lossThis = std::exp(input[i]) - target[i] * input[i];
+    }
+    else
+    {
+      lossThis = input[i] - target[i] * std::log(input[i] + eps);
+    }
+
+    if ((full) && (target[i] > 1))
+    {
+      lossThis += target[i] * std::log(target[i]) - target[i]
+          + std::log(2 * M_PI * target[i]) / 2;
+    }
+
+    totalLossReduced += lossThis;
   }
 
   if (reduce)
   {
-    return arma::accu(loss) / loss.n_elem;
+    return totalLossReduced / input.n_elem;
   }
-  return arma::accu(loss);
+  return totalLossReduced;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -73,23 +76,24 @@ void PoissonNLLLoss<InputDataType, OutputDataType>::Backward(
   const TargetType&& target,
   OutputType&& output)
 {
-  if (logInput)
+  output.set_size(size(input));
+  for (size_t i = 0; i < output.n_elem; ++i)
   {
-    output = (arma::exp(input) - target) / input.n_elem;
-  }
-  else
-  {
-    output = (1 - target / (input + eps)) / input.n_elem;
-  }
+    if (logInput)
+    {
+      output[i] = (std::exp(input[i]) - target[i]) / input.n_elem;
+    }
+    else
+    {
+      output[i] = (1 - target[i] / (input[i] + eps)) / input.n_elem;
+    }
 
-  if (full)
-  {
-    // Approximation for (1 + 1/2 + 1/3 + ... + 1/n) is
-    // (log(n + 1) + log(n) + 1)/2
-    // Select all elements greater than 1 in target and
-    // add ```(log(n + 1) + log(n) + 1)/2```
-    output.elem(find(target > 1)) += (arma::log(target + 1)
-        + arma::log(target) + 1) / (2 * input.n_elem);
+    if ((full) && (target[i] > 1))
+    {
+      // Here, (1 + 1/2 + 1/3 + ... + 1/n) =~ (log(n + 1) + log(n) + 1)/2
+      output[i] += (std::log(target[i] + 1)
+          + std::log(target[i]) + 1) / (2 * input.n_elem);
+    }
   }
 }
 

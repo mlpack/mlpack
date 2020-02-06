@@ -109,7 +109,7 @@ class PoissonNLLLoss
   bool& Reduce() { return reduce; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& /* ar */, const unsigned int /* version */);
@@ -127,7 +127,7 @@ class PoissonNLLLoss
   //! Boolean value that tells if full loss has to be calculated.
   bool full;
 
-    //! Small value required to avoid log(0)
+  //! Small value required to avoid 0 in log and denominators.
   double eps;
 
   //! Boolean value that tells if mean has to be taken.

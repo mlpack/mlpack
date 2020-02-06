@@ -53,10 +53,9 @@ BOOST_AUTO_TEST_CASE(PoissonNLLLossTest)
   // Test the Backward function.
   module.Backward(std::move(input), std::move(target), std::move(output));
 
-  // if(full == false) output = e^(input) - target
   // Sum of expected output as calculated using pytorch = 3.4206
-  double expectedOutput = arma::accu(output);
-  BOOST_REQUIRE_CLOSE_FRACTION(expectedOutput, 3.4206, 0.0001);
+  double expectedOutputSum = arma::accu(output);
+  BOOST_REQUIRE_CLOSE_FRACTION(expectedOutputSum, 3.4206, 0.0001);
 
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
@@ -75,8 +74,8 @@ BOOST_AUTO_TEST_CASE(FullPoissonNLLLossTest)
   target = arma::mat("3");
 
   double loss = module.Forward(std::move(input), std::move(target));
-  // since target > 1, so the extra term log(n!) is added
-  // Therefore, loss = e^4 - 3*4 + 3*log(3) - 3 + log(2*pi*3) = 44.3622316
+
+  // loss = e^4 - 3*4 + 3*log(3) - 3 + log(2*pi*3) = 44.3622316
   BOOST_REQUIRE_CLOSE_FRACTION(loss, 44.3622316 , 0.0001);
 
   // Test the Backward function on a single input and (full == true).
