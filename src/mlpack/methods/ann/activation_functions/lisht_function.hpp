@@ -32,7 +32,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The LiSHT function, defined by
+ * The Lisht function, defined by
  *
  * @f{eqnarray*}{
  * f(x) = x * tanh(x)
