@@ -50,9 +50,11 @@ class ISRUFunction
    * @param alpha parameter, default value = 0.1
    */
   template<typename eT>
-  static void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y, const double alpha = 0.1)
+  static void Fn(const arma::Mat<eT>& x,
+                 arma::Mat<eT>& y, 
+                 const double alpha = 0.1)
   {
-    y = x / (arma::sqrt(1 + alpha * arma::pow(x,2)));
+    y = x / (arma::sqrt(1 + alpha * arma::pow(x, 2)));
   }
 
   /**
@@ -63,7 +65,9 @@ class ISRUFunction
    * @param alpha parameter, default value = 0.1
    */
   template<typename InputVecType, typename OutputVecType>
-  static void Fn(const InputVecType& x, OutputVecType& y, const double alpha = 0.1)
+  static void Fn(const InputVecType& x, 
+                 OutputVecType& y, 
+                 const double alpha = 0.1)
   {
     y.set_size(arma::size(x));
 
@@ -91,7 +95,9 @@ class ISRUFunction
    * @param alpha parameter, default value = 0.1
    */
   template<typename InputVecType, typename OutputVecType>
-  static void Inv(const InputVecType& y, OutputVecType& x, const double alpha = 0.1)
+  static void Inv(const InputVecType& y,
+                  OutputVecType& x, 
+                  const double alpha = 0.1)
   {
     x = y / arma::sqrt(1 - alpha * arma::pow(y, 2 ));
   }
@@ -117,11 +123,12 @@ class ISRUFunction
    * @param alpha parameter, default value = 0.1
    */
   template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& y, OutputVecType& x, const double alpha = 0.1)
+  static void Deriv(const InputVecType& y,
+                    OutputVecType& x, 
+                    const double alpha = 0.1)
   {
     x = arma::pow(y / x, 3);
   }
-
 }; // class ISRUFunction
 
 } // namespace ann
