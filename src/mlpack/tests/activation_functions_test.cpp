@@ -22,6 +22,7 @@
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -654,5 +655,27 @@ BOOST_AUTO_TEST_CASE(MishFunctionTest)
                                        desiredActivations);
   CheckDerivativeCorrect<MishFunction>(desiredActivations,
                                         desiredDerivatives);
+}
+
+/**
+ * Basic test of the Lisht function.
+ */
+BOOST_AUTO_TEST_CASE(LishtFunctionTest)
+{
+  // Calculated using tfa.activations.lisht().
+  // where tfa is tensorflow_addons.
+  const arma::colvec desiredActivations("1.928055 3.189384 \
+                                         4.4988894 100.2 0.7615942 \
+                                         0.7615942 1.9280552 0");
+
+  const arma::colvec desiredDerivatives("1.1150033 1.0181904 \
+                                         1.001978 1.0 \
+                                         1.0896928 1.0896928 \
+                                         1.1150033 0.0");
+
+  CheckActivationCorrect<LishtFunction>(activationData,
+                                       desiredActivations);
+  CheckDerivativeCorrect<LishtFunction>(desiredActivations,
+                                       desiredDerivatives);
 }
 BOOST_AUTO_TEST_SUITE_END();

@@ -27,6 +27,8 @@
   
   * Add Mish activation function (#2158).
 
+  * Add Lisht activation function (#2182).
+
 ### mlpack 3.2.2
 ###### 2019-11-26
   * Add `valid` and `same` padding option in `Convolution` and `Atrous

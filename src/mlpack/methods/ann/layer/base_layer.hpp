@@ -22,6 +22,7 @@
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -208,6 +209,16 @@ template <
 using MishFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
+/**
+ * Standard Mish-Layer using the Mish activation function.
+ */
+template <
+    class ActivationFunction = LishtFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using LishtunctionLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
 } // namespace ann
 } // namespace mlpack
 
