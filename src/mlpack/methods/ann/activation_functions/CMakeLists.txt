@@ -4,12 +4,12 @@ set(SOURCES
   identity_function.hpp
   logistic_function.hpp
   softsign_function.hpp
-  softshrink_function.hpp
   tanh_function.hpp
   rectifier_function.hpp
   softplus_function.hpp
   swish_function.hpp
   mish_function.hpp
+  softshrink_function.hpp
 )
 
 # Add directory name to sources.
