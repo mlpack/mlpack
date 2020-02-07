@@ -22,6 +22,7 @@
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/hardshrink_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -653,6 +654,21 @@ BOOST_AUTO_TEST_CASE(MishFunctionTest)
   CheckActivationCorrect<MishFunction>(activationData,
                                        desiredActivations);
   CheckDerivativeCorrect<MishFunction>(desiredActivations,
+                                        desiredDerivatives);
+}
+
+/**
+ * Basic test of the Hard Shrink function.
+ */
+BOOST_AUTO_TEST_CASE(HardShrinkFunctionTest)
+{
+  const arma::colvec desiredActivations("-2 3.2 4.5 -100.2 1 -1 2 0");
+
+  const arma::colvec desiredDerivatives("1 1 1 1 1 1 1 0");
+
+  CheckActivationCorrect<HardShrinkFunction>(activationData,
+                                       desiredActivations);
+  CheckDerivativeCorrect<HardShrinkFunction>(desiredActivations,
                                         desiredDerivatives);
 }
 BOOST_AUTO_TEST_SUITE_END();
