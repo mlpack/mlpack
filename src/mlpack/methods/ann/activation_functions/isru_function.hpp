@@ -119,6 +119,7 @@ class ISRUFunction
    *
    * @param y Input activations.
    * @param x The resulting derivatives. Should be the matrix used to calculate activation y 
+   * @param alpha parameter, default value = 0.1
    */
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& y,
