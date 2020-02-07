@@ -63,8 +63,8 @@ class ISRUFunction
    * @param alpha parameter, default value = 0.1
    */
   template<typename InputVecType, typename OutputVecType>
-  static void Fn(const InputVecType& x, 
-                 OutputVecType& y, 
+  static void Fn(const InputVecType& x,
+                 OutputVecType& y,
                  const double alpha = 0.1)
   {
     y = x / (arma::sqrt(1 + alpha * arma::pow(x, 2)));
@@ -91,7 +91,7 @@ class ISRUFunction
    */
   template<typename InputVecType, typename OutputVecType>
   static void Inv(const InputVecType& y,
-                  OutputVecType& x, 
+                  OutputVecType& x,
                   const double alpha = 0.1)
   {
     x = y / arma::sqrt(1 - alpha * arma::pow(y, 2));
