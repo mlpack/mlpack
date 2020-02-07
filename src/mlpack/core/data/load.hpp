@@ -291,7 +291,6 @@ bool Load(const std::string& filename,
 /**
  * Image load/save interfaces.
  */
-#ifdef HAS_STB
 
 /**
  * Load the image file into the given matrix.
@@ -326,8 +325,6 @@ bool Load(const std::vector<std::string>& files,
           ImageInfo& info,
           const bool fatal = false,
           const bool transpose = true);
-
-#endif // HAS_STB.
 
 } // namespace data
 } // namespace mlpack
