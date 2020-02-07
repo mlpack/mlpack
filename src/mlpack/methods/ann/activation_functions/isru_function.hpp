@@ -8,15 +8,14 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
- 
- #ifndef MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_ISRU_FUNCTION_HPP
- #define MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_ISRU_FUNCTION_HPP
- 
- #include <mlpack/prereqs.hpp>
- 
+#ifndef MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_ISRU_FUNCTION_HPP
+#define MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_ISRU_FUNCTION_HPP
+
+#include <mlpack/prereqs.hpp>
+
 namespace mlpack{
 namespace ann /** Artifical Neural Network. */{
-  
+
 /**
  * The ISRU function, defined by
  * 
@@ -28,7 +27,6 @@ namespace ann /** Artifical Neural Network. */{
 
 class ISRUFunction
 {
-  
  public:
   /**
    * Computes the ISRU function
@@ -41,7 +39,7 @@ class ISRUFunction
   {
     return x / (std::sqrt(1 + alpha*x*x));
   }
-  
+
   /**
    * Computes the ISRU function using a matrix as a input
    * 
@@ -51,7 +49,7 @@ class ISRUFunction
    */
   template<typename eT>
   static void Fn(const arma::Mat<eT>& x,
-                 arma::Mat<eT>& y, 
+                 arma::Mat<eT>& y,
                  const double alpha = 0.1)
   {
     y = x / (arma::sqrt(1 + alpha * arma::pow(x, 2)));
@@ -83,7 +81,7 @@ class ISRUFunction
   {
     return y / std::sqrt(1 - alpha * y * y);
   }
-  
+
   /**
    * Computes the inverse of the ISRU function
    * 
@@ -98,7 +96,7 @@ class ISRUFunction
   {
     x = y / arma::sqrt(1 - alpha * arma::pow(y, 2));
   }
-  
+
   /**
    * Computes the first derivate of the ISRU function
    * 
@@ -108,10 +106,10 @@ class ISRUFunction
    */
   static double Deriv(const double y, const double alpha = 0.1)
   {
-    if(y == 0) 
+    if (y == 0)
       return 1;
     double x = Inv(y, alpha);
-    return std::pow(y / x, 3); 
+    return std::pow(y / x, 3);
   }
 
   /**

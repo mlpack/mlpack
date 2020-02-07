@@ -666,9 +666,10 @@ BOOST_AUTO_TEST_CASE(ISRUFunctionTest)
                                          9.53462589e-01 -9.53462589e-01 \
                                          1.69030851 0.0");
 
-  const arma::colvec desiredDerivatives("0.603681611 0.34728357 0.190069281 \
-                                         3.13868921e-05 0.866784171 0.866784171 \
-                                         0.603681611 1.0");
+  const arma::colvec desiredDerivatives
+                      ("0.603681611 0.34728357 0.190069281 \
+                        3.13868921e-05 0.866784171 0.866784171 \
+                        0.603681611 1.0");
 
   CheckActivationCorrect<ISRUFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<ISRUFunction>(desiredActivations,
