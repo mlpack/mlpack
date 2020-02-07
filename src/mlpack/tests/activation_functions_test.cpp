@@ -672,7 +672,7 @@ BOOST_AUTO_TEST_CASE(ISRUFunctionTest)
 
   CheckActivationCorrect<ISRUFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<ISRUFunction>(desiredActivations,
-      desiredDerivatives);
+                                       desiredDerivatives);
   CheckInverseCorrect<ISRUFunction>(activationData);
 }
 BOOST_AUTO_TEST_SUITE_END();

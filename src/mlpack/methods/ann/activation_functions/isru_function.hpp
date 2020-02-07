@@ -21,8 +21,8 @@ namespace ann /** Artifical Neural Network. */{
  * The ISRU function, defined by
  * 
  * @f{eqnarray*}{
- * f(x) &=& x/sqrt(1 + alpha*x*x)
- * f'(x) &=& cube(1/sqrt(1 + alpha*x*x))
+ * f(x) &=& x / sqrt(1 + alpha* x ^ {2})
+ * f'(x) &=& cube(1 / sqrt(1 + alpha * x ^ {2}))
  * @f
  */
 
@@ -69,10 +69,7 @@ class ISRUFunction
                  OutputVecType& y, 
                  const double alpha = 0.1)
   {
-    y.set_size(arma::size(x));
-
-    for (size_t i = 0; i < x.n_elem; i++)
-      y(i) = Fn(x(i));
+    y = x / (arma::sqrt(1 + alpha * arma::pow(x, 2)));
   }
 
   /**
@@ -99,7 +96,7 @@ class ISRUFunction
                   OutputVecType& x, 
                   const double alpha = 0.1)
   {
-    x = y / arma::sqrt(1 - alpha * arma::pow(y, 2 ));
+    x = y / arma::sqrt(1 - alpha * arma::pow(y, 2));
   }
   
   /**
@@ -111,6 +108,8 @@ class ISRUFunction
    */
   static double Deriv(const double y, const double alpha = 0.1)
   {
+    if(y == 0) 
+      return 1;
     double x = Inv(y, alpha);
     return std::pow(y / x, 3); 
   }
@@ -120,14 +119,14 @@ class ISRUFunction
    *
    * @param y Input activations.
    * @param x The resulting derivatives. Should be the matrix used to calculate activation y 
-   * @param alpha parameter, default value = 0.1
    */
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& y,
-                    OutputVecType& x, 
-                    const double alpha = 0.1)
+                    OutputVecType& x, const double alpha = 0.1)
   {
+    Inv(y, x, alpha);
     x = arma::pow(y / x, 3);
+    x.replace(arma::datum::nan, 1);
   }
 }; // class ISRUFunction
 
