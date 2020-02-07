@@ -8,7 +8,11 @@ set(SOURCES
   rectifier_function.hpp
   softplus_function.hpp
   swish_function.hpp
+<<<<<<< HEAD
   hardshrink_function.hpp
+=======
+  mish_function.hpp
+>>>>>>> master
 )
 
 # Add directory name to sources.
