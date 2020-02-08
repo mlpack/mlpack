@@ -306,7 +306,6 @@ void CheckPReLUDerivativeCorrect(const arma::colvec input,
   }
 }
 
-
 /*
  * Implementation of the PReLU activation function gradient test.
  * The function is implemented as PReLU layer in the file
@@ -363,7 +362,7 @@ void CheckISRUActivationCorrect(const arma::colvec input,
  * @param target Target data used to evaluate the LeakyReLU activation.
  */
 void CheckISRUDerivativeCorrect(const arma::colvec input,
-                                     const arma::colvec target)
+                                const arma::colvec target)
 {
   ISRU<> isru;
 
@@ -714,10 +713,10 @@ BOOST_AUTO_TEST_CASE(ISRUFunctionTest)
                                          9.53462589e-01 -9.53462589e-01 \
                                          1.69030851 0.0");
 
-  const arma::colvec desiredDerivatives
-                      ("0.603681611 0.34728357 0.190069281 \
-                        3.13868921e-05 0.866784171 0.866784171 \
-                        0.603681611 1.0");
+  const arma::colvec desiredDerivatives(
+                        "0.603681611 0.34728357 0.190069281 \
+                         3.13868921e-05 0.866784171 0.866784171 \
+                         0.603681611 1.0");
 
   CheckISRUActivationCorrect(activationData, desiredActivations);
   CheckISRUDerivativeCorrect(desiredActivations, desiredDerivatives);

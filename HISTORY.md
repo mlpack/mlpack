@@ -27,6 +27,9 @@
 
   * Add Mish activation function (#2158).
 
+  * Better error handling of eigendecompositions and Cholesky decompositions
+
+  * Add ISRU activation function (#2181).
 
 ### mlpack 3.2.2
 ###### 2019-11-26

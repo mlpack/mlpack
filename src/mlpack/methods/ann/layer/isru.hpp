@@ -39,6 +39,7 @@ class ISRU
    * @param alpha parameter
    */
   ISRU(const double alpha = 0.1);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -81,8 +82,8 @@ class ISRU
   /**
    * Serialize the layer.
    */
-  template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+   template<typename Archive>
+   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   /**
@@ -99,7 +100,7 @@ class ISRU
   /**
    * Computes the value of ISRU activation function using a dense matrix
    * as input.
-   * 
+   *
    * @param x Input data.
    * @param y The resulting output activation.
    */
@@ -111,32 +112,45 @@ class ISRU
 
   /**
    * Computes the inverse of the ISRU function
-   * 
+   *
    * @param y
    * @return f^{-1}(y)
    */
   double Inv(const double y)
   {
-    return y / std::sqrt(1 - alpha * y * y);
+    if (y >= 1 / std::sqrt(alpha))
+      return DBL_MAX;
+    else if (y <= -1/std::sqrt(alpha))
+      return -DBL_MAX;
+    else
+      return y / std::sqrt(1 - alpha * y * y);
   }
 
   /**
    * Computes the inverse of the ISRU function
-   * 
+   *
    * @param y Input data.
    * @param x The resulting inverse of the input data
    */
   template<typename InputVecType, typename OutputVecType>
-  static void Inv(const InputVecType& y,
-                  OutputVecType& x,
-                  const double alpha = 0.1)
+  void Inv(const InputVecType& y, OutputVecType& x)
   {
+    double yEdge = 1 / std::sqrt(alpha);
+    y.transform( [&yEdge](auto val)
+    {
+      if (y >= yEdge)
+        return yEdge - arma::datum::eps;
+      else if (y <= -yEdge)
+        return -yEdge + arma::datum::eps;
+      else
+        return y;
+    });
     x = y / arma::sqrt(1 - alpha * arma::pow(y, 2));
   }
 
   /**
    * Computes the first derivate of the ISRU function
-   * 
+   *
    * @param y Input activation
    * @return f'(x) where f(x) = y
    */
@@ -157,11 +171,12 @@ class ISRU
    */
   template<typename InputVecType, typename OutputVecType>
   void Deriv(const InputVecType& y,
-                    OutputVecType& x)
+             OutputVecType& x)
   {
     Inv(y, x, alpha);
+    y.replace(0, 1);
+    x.replace(0, 1);
     x = arma::pow(y / x, 3);
-    x.replace(arma::datum::nan, 1);
   }
 
   //! Locally-stored delta object.
