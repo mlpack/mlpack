@@ -66,17 +66,17 @@ class ISRU
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType OutputParameter() { return outputParameter; }
-
-  //! Get the alpha hyperparameter
-  double const& Alpha() const { return alpha; }
-  //! Modify the alpha hyperparameter
-  double Alpha() const { return alpha; }
+  OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
   OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
+
+  //! Get the hyperparameter alpha.
+  double const& Alpha() const { return alpha; }
+  //! Modify the hyperparameter alpha.
+  double& Alpha() { return alpha; }
 
   /**
    * Serialize the layer.
@@ -110,27 +110,58 @@ class ISRU
   }
 
   /**
+   * Computes the inverse of the ISRU function
+   * 
+   * @param y
+   * @return f^{-1}(y)
+   */
+  double Inv(const double y)
+  {
+    return y / std::sqrt(1 - alpha * y * y);
+  }
+
+  /**
+   * Computes the inverse of the ISRU function
+   * 
+   * @param y Input data.
+   * @param x The resulting inverse of the input data
+   */
+  template<typename InputVecType, typename OutputVecType>
+  static void Inv(const InputVecType& y,
+                  OutputVecType& x,
+                  const double alpha = 0.1)
+  {
+    x = y / arma::sqrt(1 - alpha * arma::pow(y, 2));
+  }
+
+  /**
    * Computes the first derivate of the ISRU function
-   *
-   * @param x Input activation
-   * @return f'(x)
+   * 
+   * @param y Input activation
+   * @return f'(x) where f(x) = y
    */
   double Deriv(const double y)
   {
-    return std::pow(1 / (std::sqrt(1 + alpha * x * x)), 3);
+    if (y == 0)
+      return 1;
+    double x = Inv(y, alpha);
+    return std::pow(y / x, 3);
   }
 
   /**
    * Computes the first derivative of the ISRU function.
    *
-   * @param x Input activations.
-   * @param y The resulting derivatives.
+   * @param y Input activations.
+   * @param x The resulting derivatives. Should be the matrix used to calculate activation y 
+   * @param alpha parameter, default value = 0.1
    */
   template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& x,
-                    OutputVecType& y)
+  void Deriv(const InputVecType& y,
+                    OutputVecType& x)
   {
-    y = arma::pow(1 / arma::sqrt(1 + alpha * (x % x)), 3);
+    Inv(y, x, alpha);
+    x = arma::pow(y / x, 3);
+    x.replace(arma::datum::nan, 1);
   }
 
   //! Locally-stored delta object.

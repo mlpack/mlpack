@@ -29,7 +29,7 @@ ISRU<InputDataType, OutputDataType>::ISRU(const double alpha) :
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void LeakyReLU<InputDataType, OutputDataType>::Forward(
+void ISRU<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
   Fn(input, output);
@@ -37,7 +37,7 @@ void LeakyReLU<InputDataType, OutputDataType>::Forward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
-void LeakyReLU<InputDataType, OutputDataType>::Backward(
+void ISRU<InputDataType, OutputDataType>::Backward(
     const DataType&& input, DataType&& gy, DataType&& g)
 {
   DataType derivative;
@@ -47,7 +47,7 @@ void LeakyReLU<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void LeakyReLU<InputDataType, OutputDataType>::serialize(
+void ISRU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {

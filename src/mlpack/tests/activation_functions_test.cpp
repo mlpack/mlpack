@@ -22,7 +22,6 @@
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
-#include <mlpack/methods/ann/activation_functions/isru_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -703,26 +702,6 @@ BOOST_AUTO_TEST_CASE(MishFunctionTest)
                                        desiredActivations);
   CheckDerivativeCorrect<MishFunction>(desiredActivations,
                                         desiredDerivatives);
-}
-/**
- * Basic test of the ISRU function.
- */
-BOOST_AUTO_TEST_CASE(ISRUFunctionTest)
-{
-  const arma::colvec desiredActivations("-1.69030851 2.24928623 \
-                                         2.58731809 -3.160704 \
-                                         9.53462589e-01 -9.53462589e-01 \
-                                         1.69030851 0.0");
-
-  const arma::colvec desiredDerivatives
-                      ("0.603681611 0.34728357 0.190069281 \
-                        3.13868921e-05 0.866784171 0.866784171 \
-                        0.603681611 1.0");
-
-  CheckActivationCorrect<ISRUFunction>(activationData, desiredActivations);
-  CheckDerivativeCorrect<ISRUFunction>(desiredActivations,
-                                       desiredDerivatives);
-  CheckInverseCorrect<ISRUFunction>(activationData);
 }
 
 /**
