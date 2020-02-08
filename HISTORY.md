@@ -28,6 +28,7 @@
   * Add Mish activation function (#2158).
 
   * Better error handling of eigendecompositions and Cholesky decompositions
+    (#2088, #1840).
 
   * Add ISRU activation function (#2181).
 
