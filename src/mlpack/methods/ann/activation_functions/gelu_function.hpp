@@ -1,4 +1,3 @@
-
 /**
  * @file gelu_function.hpp
  * @author Himanshu Pathak
