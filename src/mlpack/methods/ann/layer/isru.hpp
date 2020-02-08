@@ -82,8 +82,8 @@ class ISRU
   /**
    * Serialize the layer.
    */
-   template<typename Archive>
-   void serialize(Archive& ar, const unsigned int /* version */);
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   /**
@@ -136,7 +136,6 @@ class ISRU
   template<typename InputVecType, typename OutputVecType>
   void Inv(const InputVecType& y, OutputVecType& x)
   {
-    
     x.set_size(arma::size(y));
 
     for (size_t i = 0; i < x.n_elem; i++)
