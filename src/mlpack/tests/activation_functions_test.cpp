@@ -307,6 +307,7 @@ void CheckPReLUDerivativeCorrect(const arma::colvec input,
   }
 }
 
+
 /*
  * Implementation of the PReLU activation function gradient test.
  * The function is implemented as PReLU layer in the file
@@ -330,6 +331,53 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
   BOOST_REQUIRE_EQUAL(gradient.n_rows, 1);
   BOOST_REQUIRE_EQUAL(gradient.n_cols, 1);
   BOOST_REQUIRE_CLOSE(gradient(0), target(0), 1e-3);
+}
+
+
+/*
+ * Implementation of the ISRU activation function test. The function is
+ * implemented as ISRU layer in the file isru.hpp
+ *
+ * @param input Input data used for evaluating the LeakyReLU activation function.
+ * @param target Target data used to evaluate the LeakyReLU activation.
+ */
+void CheckISRUActivationCorrect(const arma::colvec input,
+                                     const arma::colvec target)
+{
+  ISRU<> isru;
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  isru.Forward(std::move(input), std::move(activations));
+  for (size_t i = 0; i < activations.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
+  }
+}
+
+/*
+ * Implementation of the ISRU activation function derivative test.
+ * The derivative function is implemented as LeakyReLU layer in the file
+ * leaky_relu_layer.hpp
+ *
+ * @param input Input data used for evaluating the LeakyReLU activation function.
+ * @param target Target data used to evaluate the LeakyReLU activation.
+ */
+void CheckISRUDerivativeCorrect(const arma::colvec input,
+                                     const arma::colvec target)
+{
+  ISRU<> isru;
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  isru.Backward(std::move(input), std::move(error), std::move(derivatives));
+  for (size_t i = 0; i < derivatives.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
+  }
 }
 
 /*
@@ -675,5 +723,24 @@ BOOST_AUTO_TEST_CASE(ISRUFunctionTest)
   CheckDerivativeCorrect<ISRUFunction>(desiredActivations,
                                        desiredDerivatives);
   CheckInverseCorrect<ISRUFunction>(activationData);
+}
+
+/**
+ * Basic test of the ISRU function.
+ */
+BOOST_AUTO_TEST_CASE(ISRUFunctionTest)
+{
+  const arma::colvec desiredActivations("-1.69030851 2.24928623 \
+                                         2.58731809 -3.160704 \
+                                         9.53462589e-01 -9.53462589e-01 \
+                                         1.69030851 0.0");
+
+  const arma::colvec desiredDerivatives
+                      ("0.603681611 0.34728357 0.190069281 \
+                        3.13868921e-05 0.866784171 0.866784171 \
+                        0.603681611 1.0");
+
+  CheckISRUActivationCorrect(activationData, desiredActivations);
+  CheckISRUDerivativeCorrect(desiredActivations, desiredDerivatives);
 }
 BOOST_AUTO_TEST_SUITE_END();
