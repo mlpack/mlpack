@@ -118,9 +118,10 @@ class ISRU
    */
   double Inv(const double y)
   {
-    if (y >= 1 / std::sqrt(alpha))
+    double yEdge = 1 / std::sqrt(alpha);
+    if (y >= yEdge)
       return DBL_MAX;
-    else if (y <= -1/std::sqrt(alpha))
+    else if (y <= -yEdge)
       return -DBL_MAX;
     else
       return y / std::sqrt(1 - alpha * y * y);
@@ -135,17 +136,13 @@ class ISRU
   template<typename InputVecType, typename OutputVecType>
   void Inv(const InputVecType& y, OutputVecType& x)
   {
-    double yEdge = 1 / std::sqrt(alpha);
-    y.transform( [&yEdge](auto val)
+    
+    x.set_size(arma::size(y));
+
+    for (size_t i = 0; i < x.n_elem; i++)
     {
-      if (y >= yEdge)
-        return yEdge - arma::datum::eps;
-      else if (y <= -yEdge)
-        return -yEdge + arma::datum::eps;
-      else
-        return y;
-    });
-    x = y / arma::sqrt(1 - alpha * arma::pow(y, 2));
+      x(i) = Inv(y(i));
+    }
   }
 
   /**
@@ -158,7 +155,7 @@ class ISRU
   {
     if (y == 0)
       return 1;
-    double x = Inv(y, alpha);
+    double x = Inv(y);
     return std::pow(y / x, 3);
   }
 
@@ -166,17 +163,18 @@ class ISRU
    * Computes the first derivative of the ISRU function.
    *
    * @param y Input activations.
-   * @param x The resulting derivatives. Should be the matrix used to calculate activation y 
+   * @param x The resulting derivatives.
    * @param alpha parameter, default value = 0.1
    */
   template<typename InputVecType, typename OutputVecType>
   void Deriv(const InputVecType& y,
              OutputVecType& x)
   {
-    Inv(y, x, alpha);
-    y.replace(0, 1);
-    x.replace(0, 1);
-    x = arma::pow(y / x, 3);
+    Inv(y, x);
+    for (size_t i = 0; i < x.n_elem; i++)
+    {
+      x(i) = Deriv(y(i));
+    }
   }
 
   //! Locally-stored delta object.
