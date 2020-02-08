@@ -46,7 +46,7 @@ class GELUFunction
   }
 
   /**
-   * Computes the tanh function.
+   * Computes the GELU function.
    *
    * @param x Input data.
    * @param y The resulting output activation.
@@ -54,12 +54,12 @@ class GELUFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = 0.5 * x * (1 + arma::tanh(std::sqrt(2 / PI) *
+    y = 0.5 * x % (1 + arma::tanh(std::sqrt(2 / PI) *
         (x + 0.044715 * arma::pow(x, 3))));
   }
 
   /**
-   * Computes the first derivative of the tanh function.
+   * Computes the first derivative of the GELU function.
    *
    * @param y Input data.
    * @return f'(x)
@@ -73,7 +73,7 @@ class GELUFunction
   }
 
   /**
-   * Computes the first derivatives of the tanh function.
+   * Computes the first derivatives of the GELU function.
    *
    * @param y Input data.
    * @param x The resulting derivatives.
@@ -82,7 +82,7 @@ class GELUFunction
   static void Deriv(const InputVecType& y, OutputVecType& x)
   {
     x = 0.5 * arma::tanh(0.0356774 * arma::pow(y, 3) + 0.797885 * y) +
-        (0.0535161 * arma::pow(y, 3) + 0.398942 * y) *
+        (0.0535161 * arma::pow(y, 3) + 0.398942 * y) %
         arma::pow(1 / arma::cosh(0.0356774 * arma::pow(y, 3) +
         0.797885 * y), 2) + 0.5;
   }
