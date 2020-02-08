@@ -41,7 +41,12 @@ class PositiveDefiniteConstraint
     // eigenvalues are at least 1e-50).
     arma::vec eigval;
     arma::mat eigvec;
-    arma::eig_sym(eigval, eigvec, covariance);
+    covariance = arma::symmatu(covariance);
+    if (!arma::eig_sym(eigval, eigvec, covariance))
+    {
+      Log::Fatal << "applying to constraint could not be accomplished."
+          << std::endl;
+    }
 
     // If the matrix is not positive definite or if the condition number is
     // large, we must project it back onto the cone of positive definite
