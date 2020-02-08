@@ -333,6 +333,52 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
 }
 
 /*
+ * Implementation of the Soft Shrink activation function test. The function is
+ * implemented as Soft Shrink layer in the file softshrink.hpp
+ *
+ * @param input Input data used for evaluating the LeakyReLU activation function.
+ * @param target Target data used to evaluate the LeakyReLU activation.
+ */
+void CheckSoftShrinkActivationCorrect(const arma::colvec input,
+                                     const arma::colvec target)
+{
+  SoftShrink<> softshrink;
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  softshrink.Forward(std::move(input), std::move(activations));
+  for (size_t i = 0; i < activations.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
+  }
+}
+
+/*
+ * Implementation of the SoftShrink activation function derivative test.
+ * The derivative function is implemented as LeakyReLU layer in the file
+ * leaky_relu_layer.hpp
+ *
+ * @param input Input data used for evaluating the LeakyReLU activation function.
+ * @param target Target data used to evaluate the LeakyReLU activation.
+ */
+void CheckSoftShrinkDerivativeCorrect(const arma::colvec input,
+                                     const arma::colvec target)
+{
+  SoftShrink<> softshrink;
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  softshrink.Backward(std::move(input), std::move(error), std::move(derivatives));
+  for (size_t i = 0; i < derivatives.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
+  }
+}
+
+/*
  * Simple SELU activation test to check whether the mean and variance remain
  * invariant after passing normalized inputs through the function.
  */
