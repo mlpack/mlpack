@@ -19,7 +19,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 // This constructor is called for ISRU activation function
-// 'alpha' is a hyperparameter 
+// 'alpha' is a hyperparameter
 template<typename InputDataType, typename OutputDataType>
 ISRU<InputDataType, OutputDataType>::ISRU(const double alpha) :
     alpha(alpha)
