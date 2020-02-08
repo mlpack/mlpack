@@ -658,11 +658,11 @@ BOOST_AUTO_TEST_CASE(MishFunctionTest)
 }
 
 /**
- * Basic test of the Lisht function.
+ * Basic test of the LiSHT function.
  */
-BOOST_AUTO_TEST_CASE(LishtFunctionTest)
+BOOST_AUTO_TEST_CASE(LiSHTFunctionTest)
 {
-  // Calculated using tfa.activations.lisht().
+  // Calculated using tfa.activations.LiSHT().
   // where tfa is tensorflow_addons.
   const arma::colvec desiredActivations("1.928055 3.189384 \
                                          4.4988894 100.2 0.7615942 \
@@ -673,9 +673,9 @@ BOOST_AUTO_TEST_CASE(LishtFunctionTest)
                                          1.0896928 1.0896928 \
                                          1.1150033 0.0");
 
-  CheckActivationCorrect<LishtFunction>(activationData,
+  CheckActivationCorrect<LiSHTFunction>(activationData,
                                        desiredActivations);
-  CheckDerivativeCorrect<LishtFunction>(desiredActivations,
+  CheckDerivativeCorrect<LiSHTFunction>(desiredActivations,
                                        desiredDerivatives);
 }
 BOOST_AUTO_TEST_SUITE_END();

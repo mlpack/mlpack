@@ -210,14 +210,14 @@ using MishFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 /**
- * Standard Lisht-Layer using the Lisht activation function.
+ * Standard LiSHT-Layer using the LiSHT activation function.
  */
 template <
-    class ActivationFunction = LishtFunction,
+    class ActivationFunction = LiSHTFunction,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-using LishtunctionLayer = BaseLayer<
+using LiSHTFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 } // namespace ann
 } // namespace mlpack

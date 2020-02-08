@@ -32,18 +32,18 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The Lisht function, defined by
+ * The LiSHT function, defined by
  *
  * @f{eqnarray*}{
  * f(x) = x * tanh(x)
  * f'(x) = tanh(x) + x * (1 - tanh^{2}(x))
  * @f}
  */
-class LishtFunction
+class LiSHTFunction
 {
  public:
   /**
-   * Computes the Lisht function.
+   * Computes the LiSHT function.
    *
    * @param x Input data.
    * @return f(x).
@@ -54,7 +54,7 @@ class LishtFunction
   }
 
   /**
-   * Computes the Lisht function.
+   * Computes the LiSHT function.
    *
    * @param x Input data.
    * @param y The resulting output activation.
@@ -66,7 +66,7 @@ class LishtFunction
   }
 
   /**
-   * Computes the first derivative of the Lisht function.
+   * Computes the first derivative of the LiSHT function.
    *
    * @param y Input data.
    * @return f'(x)
@@ -78,7 +78,7 @@ class LishtFunction
   }
 
   /**
-   * Computes the first derivatives of the Lisht function.
+   * Computes the first derivatives of the LiSHT function.
    * 
    * @param y Input activations.
    * @param x The resulting derivatives.
