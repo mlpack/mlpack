@@ -64,7 +64,12 @@ class EigenvalueRatioConstraint
     // Eigendecompose the matrix.
     arma::vec eigenvalues;
     arma::mat eigenvectors;
-    arma::eig_sym(eigenvalues, eigenvectors, covariance);
+    covariance = arma::symmatu(covariance);
+    if (!arma::eig_sym(eigenvalues, eigenvectors, covariance))
+    {
+      Log::Fatal << "applying to constraint could not be accomplished."
+          << std::endl;
+    }
 
     // Change the eigenvalues to what we are forcing them to be.  There
     // shouldn't be any negative eigenvalues anyway, so it doesn't matter if we

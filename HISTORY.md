@@ -27,7 +27,10 @@
 
   * Add Mish activation function (#2158).
 
-  * Optimized activation functions (#2178).
+  * Better error handling of eigendecompositions and Cholesky decompositions
+    (#2088, #1840).
+
+  * Optimized activation functions (#2178)
 
 ### mlpack 3.2.2
 ###### 2019-11-26
