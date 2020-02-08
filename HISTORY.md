@@ -24,10 +24,9 @@
   * CMake fix for finding STB include directory (#2145).
 
   * Add normalization support for CF binding (#2136).
-  
+
   * Add Mish activation function (#2158).
 
-  * Add ISRU activation function (#2181).
 
 ### mlpack 3.2.2
 ###### 2019-11-26
