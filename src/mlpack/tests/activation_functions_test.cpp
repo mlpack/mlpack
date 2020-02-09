@@ -22,6 +22,7 @@
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
+#include <mlpack/methods/ann/layer/celu.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -406,6 +407,55 @@ BOOST_AUTO_TEST_CASE(SELUFunctionDerivativeTest)
       selu.Lambda() * selu.Alpha() - arma::mean(activations))), 10e-4);
 }
 
+/*
+ * Implementation of the CELU activation function test. The function is
+ * implemented as CELU layer in the file celu.hpp
+ *
+ * @param input Input data used for evaluating the CELU activation function.
+ * @param target Target data used to evaluate the CELU activation.
+ */
+void CheckCELUActivationCorrect(const arma::colvec input,
+                                     const arma::colvec target)
+{
+  // Initialize CELU object with alpha = 1.0.
+  CELU<> lrf(1.0);
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  lrf.Forward(std::move(input), std::move(activations));
+  for (size_t i = 0; i < activations.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
+  }
+}
+
+/*
+ * Implementation of the CELU activation function derivative test. The function
+ * is implemented as CELU layer in the file celu.hpp
+ *
+ * @param input Input data used for evaluating the CELU activation function.
+ * @param target Target data used to evaluate the CELU activation.
+ */
+void CheckCELUDerivativeCorrect(const arma::colvec input,
+                                     const arma::colvec target)
+{
+  // Initialize CELU object with alpha = 1.0.
+  CELU<> lrf(1.0);
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives, activations;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  lrf.Forward(std::move(input), std::move(activations));
+  lrf.Backward(std::move(activations), std::move(error),
+      std::move(derivatives));
+  for (size_t i = 0; i < derivatives.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
+  }
+}
+
 /**
  * Basic test of the tanh function.
  */
@@ -634,6 +684,7 @@ BOOST_AUTO_TEST_CASE(HardSigmoidFunctionTest)
   CheckDerivativeCorrect<HardSigmoidFunction>(desiredActivations,
       desiredDerivatives);
 }
+
 /**
  * Basic test of the Mish function.
  */
@@ -654,5 +705,21 @@ BOOST_AUTO_TEST_CASE(MishFunctionTest)
                                        desiredActivations);
   CheckDerivativeCorrect<MishFunction>(desiredActivations,
                                         desiredDerivatives);
+}
+
+/**
+ * Basic test of the CELU function.
+ */
+BOOST_AUTO_TEST_CASE(CELUFunctionTest)
+{
+  const arma::colvec desiredActivations("0.049787068 3.2 4.5 \
+                                         1.1204654e-44 1 \
+                                         0.13533528 2 0");
+
+  const arma::colvec desiredDerivatives("1.0497871 1 1 1 \
+                                         1 1.1353353 1 1");
+
+  CheckCELUActivationCorrect(activationData, desiredActivations);
+  CheckCELUDerivativeCorrect(activationData, desiredDerivatives);
 }
 BOOST_AUTO_TEST_SUITE_END();
