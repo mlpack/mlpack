@@ -443,9 +443,6 @@ class FFN
   //! Modify the delta.
   arma::mat& Delta() { return delta; }
 
-  //! Get the model modules.
-  std::vector<LayerTypes<>>& Model() { return network; }
-
  private:
   // Helper functions.
   /**
