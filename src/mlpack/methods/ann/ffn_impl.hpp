@@ -350,15 +350,6 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
                      const size_t begin,
                      GradType& gradient,
                      const size_t batchSize)
-{}
-template<typename OutputLayerType, typename InitializationRuleType,
-         typename... CustomLayers>
-template<typename eT>
-void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
-    const arma::Mat<eT>& parameters,
-    const size_t begin,
-    arma::mat& gradient,
-    const size_t batchSize)
 {
   if (gradient.is_empty())
   {
@@ -395,20 +386,21 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
 
   Backward();
   ResetGradients(gradient);
-  Gradient(predictors.cols(begin, begin + batchSize - 1));
+  UpdateGradient(predictors.cols(begin, begin + batchSize - 1));
 
   return res;
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+template<typename eT>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
-    const arma::mat& parameters,
+    const arma::Mat<eT>& parameters,
     const size_t begin,
     arma::mat& gradient,
     const size_t batchSize)
 {
-  this->Gradient(parameters, begin, gradient, batchSize);
+  this->EvaluateWithGradient(parameters, begin, gradient, batchSize);
   UpdateGradient(std::move(predictors.cols(begin, begin + batchSize - 1)));
 }
 
