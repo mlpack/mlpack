@@ -122,14 +122,14 @@ class CELU
    * @return f(x).
    */
   double Fn(const double x)
-	{
-		if(x < DBL_MAX)
-		{
-			return (x >= 0) ? x : alpha * (std::exp((x / alpha) - 1));
-		}
+  {
+    if(x < DBL_MAX)
+    {
+      return (x >= 0) ? x : alpha * (std::exp((x / alpha) - 1));
+    }
 
-		return 1.0;
-	}
+     return 1.0;
+   }
 
   /**
    * Computes the value of activation function using a dense matrix as input.
