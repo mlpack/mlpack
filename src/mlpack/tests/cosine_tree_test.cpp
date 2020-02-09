@@ -301,12 +301,12 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorCosineTreeTest)
     if (currentLeft2 && currentRight2 && currentLeft3 && currentRight3)
     {
       // Push the child nodes on to the stack.
-    	nodeStack2.push_back(currentLeft2);
+      nodeStack2.push_back(currentLeft2);
       nodeStack2.push_back(currentRight2);
 
       v2.push_back(currentNode2->NumColumns());
 
-    	nodeStack3.push_back(currentLeft3);
+      nodeStack3.push_back(currentLeft3);
       nodeStack3.push_back(currentRight3);
 
       v3.push_back(currentNode3->NumColumns());
@@ -330,7 +330,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorAndOperatorCosineTreeTest)
   const size_t numCols = 15;
 
   // Vectors to hold depth-first traversal
-  //of the number of columns in each node.
+  // of the number of columns in each node.
   std::vector<int> v1, v2, v3;
 
   // Make a random dataset.
@@ -377,9 +377,9 @@ BOOST_AUTO_TEST_CASE(MoveConstructorAndOperatorCosineTreeTest)
   while (nodeStack2.size())
   {
     // Pop a node from the stack and split it.
-  	CosineTree *currentNode2, *currentLeft2, *currentRight2;
+    CosineTree *currentNode2, *currentLeft2, *currentRight2;
 
-	  currentNode2 = nodeStack2.back();
+    currentNode2 = nodeStack2.back();
     nodeStack2.pop_back();
 
     // Obtain pointers to the children of the node.
@@ -390,7 +390,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorAndOperatorCosineTreeTest)
     if (currentLeft2 && currentRight2)
     {
       // Push the child nodes on to the stack.
-    	nodeStack2.push_back(currentLeft2);
+      nodeStack2.push_back(currentLeft2);
       nodeStack2.push_back(currentRight2);
 
       v2.push_back(currentNode2->NumColumns());
@@ -406,9 +406,9 @@ BOOST_AUTO_TEST_CASE(MoveConstructorAndOperatorCosineTreeTest)
   while (nodeStack3.size())
   {
     // Pop a node from the stack and split it.
-  	CosineTree *currentNode3, *currentLeft3, *currentRight3;
+    CosineTree *currentNode3, *currentLeft3, *currentRight3;
 
-	  currentNode3 = nodeStack3.back();
+    currentNode3 = nodeStack3.back();
     nodeStack3.pop_back();
 
     // Obtain pointers to the children of the node.
@@ -419,7 +419,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorAndOperatorCosineTreeTest)
     if (currentLeft3 && currentRight3)
     {
       // Push the child nodes on to the stack.
-    	nodeStack3.push_back(currentLeft3);
+      nodeStack3.push_back(currentLeft3);
       nodeStack3.push_back(currentRight3);
 
       v3.push_back(currentNode3->NumColumns());
