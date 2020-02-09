@@ -12,7 +12,6 @@
  */
 #ifndef MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_GELU_FUNCTION_HPP
 #define MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_GELU_FUNCTION_HPP
-# define PI 3.141592653589793238462643383279502884L /* pi */
 
 #include <mlpack/prereqs.hpp>
 
@@ -40,7 +39,7 @@ class GELUFunction
    */
   static double Fn(const double x)
   {
-    return 0.5 * x * (1 + std::tanh(std::sqrt(2 / PI) *
+    return 0.5 * x * (1 + std::tanh(std::sqrt(2 / M_PI) *
            (x + 0.044715 * std::pow(x, 3))));
   }
 
@@ -53,7 +52,7 @@ class GELUFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = 0.5 * x % (1 + arma::tanh(std::sqrt(2 / PI) *
+    y = 0.5 * x % (1 + arma::tanh(std::sqrt(2 / M_PI) *
         (x + 0.044715 * arma::pow(x, 3))));
   }
 
