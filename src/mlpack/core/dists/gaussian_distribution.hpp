@@ -168,6 +168,12 @@ class GaussianDistribution
 
   void Covariance(arma::mat&& covariance);
 
+  //! Return the invCov.
+  const arma::mat& InvCov() const { return invCov; }
+
+  //! Return the logDetCov.
+  double LogDetCov() const { return logDetCov; }
+
   /**
    * Serialize the distribution.
    */

@@ -40,6 +40,8 @@ set(SOURCES
   gru_impl.hpp
   hard_tanh.hpp
   hard_tanh_impl.hpp
+  highway.hpp
+  highway_impl.hpp
   join.hpp
   join_impl.hpp
   layer.hpp
@@ -63,6 +65,8 @@ set(SOURCES
   max_pooling_impl.hpp
   mean_pooling.hpp
   mean_pooling_impl.hpp
+  minibatch_discrimination.hpp
+  minibatch_discrimination_impl.hpp
   multiply_constant.hpp
   multiply_constant_impl.hpp
   multiply_merge.hpp
@@ -88,6 +92,8 @@ set(SOURCES
   vr_class_reward_impl.hpp
   c_relu.hpp
   c_relu_impl.hpp
+  weight_norm.hpp
+  weight_norm_impl.hpp
 )
 
 # Add directory name to sources.

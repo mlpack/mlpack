@@ -36,25 +36,11 @@
     #endif
 #endif
 
-// Make sure that U64 and S64 support is enabled.
-#ifndef ARMA_USE_U64S64
-  #define ARMA_USE_U64S64
-#endif
-
 // Include everything we'll need for serialize().
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/array.hpp>
 
 #include <armadillo>
-
-namespace arma {
-  // u64/s64
-  #include "hdf5_misc.hpp"
-
-
-  // inplace_reshape()
-  #include "fn_inplace_reshape.hpp"
-};
 
 #endif

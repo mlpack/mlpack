@@ -33,6 +33,8 @@ class RewardSetVisitor : public boost::static_visitor<void>
   template<typename LayerType>
   void operator()(LayerType* layer) const;
 
+  void operator()(MoreTypes layer) const;
+
  private:
   //! The reward value.
   const double reward;

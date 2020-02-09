@@ -33,6 +33,11 @@ inline bool SetInputWidthVisitor::operator()(LayerType* layer) const
   return LayerInputWidth(layer);
 }
 
+inline bool SetInputWidthVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     !HasInputWidth<T, size_t&(T::*)()>::value &&

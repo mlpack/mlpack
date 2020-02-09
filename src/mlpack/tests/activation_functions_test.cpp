@@ -21,6 +21,7 @@
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
+#include <mlpack/methods/ann/activation_functions/mish_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -633,5 +634,25 @@ BOOST_AUTO_TEST_CASE(HardSigmoidFunctionTest)
   CheckDerivativeCorrect<HardSigmoidFunction>(desiredActivations,
       desiredDerivatives);
 }
+/**
+ * Basic test of the Mish function.
+ */
+BOOST_AUTO_TEST_CASE(MishFunctionTest)
+{
+  // Calculated using tfa.activations.mish().
+  // where tfa is tensorflow_addons.
+  const arma::colvec desiredActivations("-0.25250152 3.1901977 \
+                                         4.498914 -3.05183208e-42 0.86509836 \
+                                         -0.30340138 1.943959 0");
 
+  const arma::colvec desiredDerivatives("0.4382387  1.0159768849 \
+                                          1.0019108 0.6 \
+                                          1.0192586  0.40639898 \
+                                          1.0725079  0.6");
+
+  CheckActivationCorrect<MishFunction>(activationData,
+                                       desiredActivations);
+  CheckDerivativeCorrect<MishFunction>(desiredActivations,
+                                        desiredDerivatives);
+}
 BOOST_AUTO_TEST_SUITE_END();

@@ -26,6 +26,11 @@ inline void DeleteVisitor::operator()(LayerType* layer) const
     delete layer;
 }
 
+inline void DeleteVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
+}
+
 } // namespace ann
 } // namespace mlpack
 

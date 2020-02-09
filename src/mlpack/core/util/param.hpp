@@ -77,7 +77,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * Define a flag parameter.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -100,7 +102,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * --ID=value.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
@@ -131,7 +135,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * will be issued.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -153,7 +159,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * --ID=value.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
@@ -183,7 +191,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * will be issued.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -206,7 +216,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * PROGRAM_INFO() macro), the parameter can be specified with just --ID=value.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
@@ -236,7 +248,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -264,7 +278,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -290,7 +306,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -321,7 +339,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * types.
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -348,7 +368,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -376,7 +398,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -409,7 +433,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * types.
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -435,7 +461,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -462,7 +490,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -494,7 +524,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * types.
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -521,7 +553,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -547,7 +581,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -573,7 +609,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -599,7 +637,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -626,7 +666,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -657,7 +699,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * types.
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -688,7 +732,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * types.
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -719,7 +765,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * types.
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -750,7 +798,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * types.
  *
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @bug
@@ -771,7 +821,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * --ID=value1,value2,value3.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
@@ -802,7 +854,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * will be issued.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -832,13 +886,15 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *
  * @code
  * DatasetInfo d = std::move(
- *     CLI::GetParam<std::tuple<arma::mat, DatasetInfo>>("matrix").get<0>());
+ *     CLI::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<0>());
  * arma::mat m = std::move(
- *     CLI::GetParam<std::tuple<arma::mat, DatasetInfo>>("matrix").get<1>());
+ *     CLI::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<1>());
  * @endcode
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS One-character string representing the alias of the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -881,7 +937,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *
  * @param TYPE Type of the model to be loaded.
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter.
+ * @param DESC Description of the parameter.  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  */
 #define PARAM_MODEL_IN(TYPE, ID, DESC, ALIAS) \
@@ -913,7 +971,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *
  * @param TYPE Type of the model to be loaded.
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter.
+ * @param DESC Description of the parameter.  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  */
 #define PARAM_MODEL_IN_REQ(TYPE, ID, DESC, ALIAS) \
@@ -936,7 +996,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *
  * @param TYPE Type of the model to be saved.
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter.
+ * @param DESC Description of the parameter.  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  */
 #define PARAM_MODEL_OUT(TYPE, ID, DESC, ALIAS) \
@@ -948,7 +1010,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * The parameter must then be specified on the command line with --ID=value.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -970,7 +1034,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * The parameter must then be specified on the command line with --ID=value.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -992,7 +1058,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * The parameter must then be specified on the command line with --ID=value.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -1015,7 +1083,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * --ID=value1,value2,value3.
  *
  * @param ID Name of the parameter.
- * @param DESC Quick description of the parameter (1-2 sentences).
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -1052,7 +1122,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *
  * @param T Type of the parameter.
  * @param ID Name of the parameter.
- * @param DESC Description of the parameter (1-2 sentences).
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
  * @param ALIAS Alias for this parameter (one letter).
  * @param DEF Default value of the parameter.
  * @param REQ Whether or not parameter is required (boolean value).
