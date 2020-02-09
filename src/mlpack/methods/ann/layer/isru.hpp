@@ -2,7 +2,7 @@
  * @file isru.hpp
  * @author Prince Gupta
  *
- * Definition of ISRU (Inverse Square Root Unit) activation function
+ * Definition of ISRU (Inverse Square Root Unit) activation function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -35,8 +35,9 @@ class ISRU
   /**
    * Create ISRU object using specified hyperparameter alpha.
    * Default (alpha = 0.1). Alpha should be > 0.
+   * ISRU is defined as f(x) = x / (1 + alpha * x^{2})^{1/2}.
    * 
-   * @param alpha parameter
+   * @param alpha hyperparameter used to calculate ISRU function.
    */
   ISRU(const double alpha = 0.1);
 
@@ -57,7 +58,7 @@ class ISRU
    * 
    * @param input The propagated input activation f(x).
    * @param gy The backpropagated error.
-   * @param g The calculated gradient
+   * @param g The calculated gradient.
    */
   template<typename DataType>
   void Backward(const DataType&& input,
@@ -94,7 +95,7 @@ class ISRU
    */
   double Fn(const double x)
   {
-    return x / (std::sqrt(1 + alpha*x*x));
+    return x / (std::sqrt(1 + alpha * std::pow(x, 2)));
   }
 
   /**
@@ -111,9 +112,9 @@ class ISRU
   }
 
   /**
-   * Computes the inverse of the ISRU function
+   * Computes the inverse of the ISRU function for a given input y.
    *
-   * @param y
+   * @param y Input data.
    * @return f^{-1}(y)
    */
   double Inv(const double y)
@@ -128,10 +129,10 @@ class ISRU
   }
 
   /**
-   * Computes the inverse of the ISRU function
+   * Computes the inverse of the ISRU function.
    *
    * @param y Input data.
-   * @param x The resulting inverse of the input data
+   * @param x The resulting inverse of the input data.
    */
   template<typename InputVecType, typename OutputVecType>
   void Inv(const InputVecType& y, OutputVecType& x)
@@ -145,17 +146,16 @@ class ISRU
   }
 
   /**
-   * Computes the first derivate of the ISRU function
+   * Computes the first derivate of the ISRU function.
    *
-   * @param y Input activation
-   * @return f'(x) where f(x) = y
+   * @param y Input activation.
+   * @return f'(x) where f(x) = y.
    */
   double Deriv(const double y)
   {
     if (y == 0)
       return 1;
-    double x = Inv(y);
-    return std::pow(y / x, 3);
+    return std::pow(y / Inv(y), 3);
   }
 
   /**

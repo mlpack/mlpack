@@ -334,13 +334,13 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
 
 /*
  * Implementation of the ISRU activation function test. The function is
- * implemented as ISRU layer in the file isru.hpp
+ * implemented as ISRU layer in the file isru.hpp.
  *
  * @param input Input data used for evaluating the ISRU activation function.
  * @param target Target data used to evaluate the ISRU activation.
  */
 void CheckISRUActivationCorrect(const arma::colvec input,
-                                     const arma::colvec target)
+                                const arma::colvec target)
 {
   ISRU<> isru;
 
@@ -356,7 +356,7 @@ void CheckISRUActivationCorrect(const arma::colvec input,
 /*
  * Implementation of the ISRU activation function derivative test.
  * The derivative function is implemented as ISRU layer in the file
- * isru.hpp
+ * isru.hpp.
  *
  * @param input Input data used for evaluating the ISRU activation function.
  * @param target Target data used to evaluate the ISRU activation.

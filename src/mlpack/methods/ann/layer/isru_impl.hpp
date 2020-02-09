@@ -1,8 +1,8 @@
 /**
- * @file isru.hpp
+ * @file isru_impl.hpp
  * @author Prince Gupta
  *
- * Definition of ISRU (Inverse Square Root Unit) activation function
+ * Implementation of ISRU (Inverse Square Root Unit) activation function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -12,13 +12,13 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_ISRU_IMPL_HPP
 #define MLPACK_METHODS_ANN_LAYER_ISRU_IMPL_HPP
 
-// In case it hasn't yet been included
+// In case it hasn't yet been included.
 #include "isru.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-// This constructor is called for ISRU activation function
+// This constructor is called for ISRU activation function.
 // 'alpha' is a hyperparameter
 template<typename InputDataType, typename OutputDataType>
 ISRU<InputDataType, OutputDataType>::ISRU(const double alpha) :
