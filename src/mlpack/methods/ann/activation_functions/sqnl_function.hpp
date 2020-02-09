@@ -135,7 +135,6 @@ class SQNLFunction
       x(i) = Deriv(y(i));
     }
   }
-
 }; // class SQNL function
 
 } // namespace ann
