@@ -121,7 +121,7 @@ class CELU
    * @param x Input data.
    * @return f(x).
    */
-	double Fn(const double x)
+  double Fn(const double x)
 	{
 		if(x < DBL_MAX)
 		{
