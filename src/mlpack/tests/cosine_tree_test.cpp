@@ -231,8 +231,9 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorCosineTreeTest)
   const size_t numRows = 10;
   const size_t numCols = 15;
 
-  // Vectors to hold depth-first traversal of the number of columns in each node. 
-  std::vector<int> v1,v2,v3;
+  // Vectors to hold depth-first traversal
+  // of the number of columns in each node.
+  std::vector<int> v1, v2, v3;
 
   // Make a random dataset.
   arma::mat data = arma::randu(numRows, numCols);
@@ -280,13 +281,13 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorCosineTreeTest)
   while (nodeStack2.size() && nodeStack3.size())
   {
     // Pop a node from the stack and split it.
-  	CosineTree *currentNode2, *currentLeft2, *currentRight2;
-  	CosineTree *currentNode3, *currentLeft3, *currentRight3;
+    CosineTree *currentNode2, *currentLeft2, *currentRight2;
+    CosineTree *currentNode3, *currentLeft3, *currentRight3;
 
-	  currentNode2 = nodeStack2.back();
+    currentNode2 = nodeStack2.back();
     nodeStack2.pop_back();
 
-	  currentNode3 = nodeStack3.back();
+    currentNode3 = nodeStack3.back();
     nodeStack3.pop_back();
 
     // Obtain pointers to the children of the node.
@@ -309,11 +310,10 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorCosineTreeTest)
       nodeStack3.push_back(currentRight3);
 
       v3.push_back(currentNode3->NumColumns());
-
     }
   }
 
-  for(size_t i=0; i < v1.size(); i++)
+  for (size_t i = 0; i < v1.size(); i++)
   {
     BOOST_REQUIRE_EQUAL(v1.at(i), v2.at(i));
     BOOST_REQUIRE_EQUAL(v1.at(i), v3.at(i));
@@ -329,8 +329,9 @@ BOOST_AUTO_TEST_CASE(MoveConstructorAndOperatorCosineTreeTest)
   const size_t numRows = 10;
   const size_t numCols = 15;
 
-  // Vectors to hold depth-first traversal of the number of columns in each node. 
-  std::vector<int> v1,v2,v3;
+  // Vectors to hold depth-first traversal
+  //of the number of columns in each node.
+  std::vector<int> v1, v2, v3;
 
   // Make a random dataset.
   arma::mat data = arma::randu(numRows, numCols);
@@ -423,13 +424,13 @@ BOOST_AUTO_TEST_CASE(MoveConstructorAndOperatorCosineTreeTest)
 
       v3.push_back(currentNode3->NumColumns());
     }
-  }  
+  }
 
-  for(size_t i=0; i < v1.size(); i++)
+  for (size_t i = 0; i < v1.size(); i++)
   {
     BOOST_REQUIRE_EQUAL(v1.at(i), v2.at(i));
     BOOST_REQUIRE_EQUAL(v1.at(i), v3.at(i));
-  }  
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
