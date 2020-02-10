@@ -210,7 +210,7 @@ using MishFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 /**
- * Standard Mish-Layer using the Mish activation function.
+ * Standard SQNL-Layer using the SQNL activation function.
  */
 template <
     class ActivationFunction = SQNLFunction,

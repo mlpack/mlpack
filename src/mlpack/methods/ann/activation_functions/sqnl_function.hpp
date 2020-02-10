@@ -5,6 +5,16 @@
  * Definition and implementation of the SQNL(Square Non Linearlity)
  * activation function.
  *
+ * For more information, see the following paper.
+ *
+ * @code
+ * @misc{
+ *   author = {Adedamola Wuraola, Nitish Patel},
+ *   title = {SQNL: A New Computationally Efficient Activation Function},
+ *   year = {2018}
+ * }
+ * @endcode
+ *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -23,12 +33,12 @@ namespace ann /** Artifical Neural Network. */ {
  * The SQNL(Square Non Linearity) activation function, defined by
  * 
  * @f{eqnarray*}{
- * f(x) &=& 1, if x > 2
- *          x - x^{2}/4, if 0 <= x <= 2
- *          x + x^{2}/4, if -2 <= x < 0
+ * f(x) &=& 1, if x > 2,
+ *          x + x^{2}/4, if -2 <= x < 0,
+ *          x - x^{2}/4, if 0 <= x <= 2,
  *          -1, if x < -2
- * f'(x) &=& 0, if x > 2 or x < -2
- *           1 - x / 2, if 0 <= x <= 2
+ * f'(x) &=& 0, if x > 2 or x < -2,
+ *           1 - x / 2, if 0 <= x <= 2,
  *           1 + x / 2, if -2 <= x < 0
  * @f}
  */
@@ -124,7 +134,7 @@ class SQNLFunction
    * Computes the first derivate of SQNL function.
    * 
    * @param y Input activations.
-   * @Param x The resulting derivatives.
+   * @param x The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& y, OutputVecType& x)
