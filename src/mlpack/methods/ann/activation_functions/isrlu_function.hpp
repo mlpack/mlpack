@@ -111,7 +111,7 @@ class ISRLUFunction
                   const double alpha = 0.1)
   {
     if (y<0)
-      x = y / arma::sqrt(1 - alpha * arma::pow(y, 2 ));
+      x = y / arma::sqrt(1 - alpha * arma::pow(y, 2));
     else
       x = y;
   }
