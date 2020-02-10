@@ -24,9 +24,12 @@
   * CMake fix for finding STB include directory (#2145).
 
   * Add normalization support for CF binding (#2136).
-  
+
   * Add Mish activation function (#2158).
 
+  * Better error handling of eigendecompositions and Cholesky decompositions
+    (#2088, #1840).
+    
   * Add CELU activation function (#2181)
 
 ### mlpack 3.2.2
