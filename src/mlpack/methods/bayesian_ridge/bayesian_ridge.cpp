@@ -69,7 +69,6 @@ double BayesianRidge::Train(const arma::mat& data,
     return -1;
   }
 
-  unsigned short p = data.n_rows, n = data.n_cols;
   // Initialize the hyperparameters and
   // begin with an infinitely broad prior.
   alpha = 1e-6;
@@ -78,7 +77,7 @@ double BayesianRidge::Train(const arma::mat& data,
   unsigned short nIterMax = 50;
   unsigned short i = 0;
   double deltaAlpha = 1, deltaBeta = 1, crit = 1;
-  arma::mat matA = arma::eye<arma::mat>(p, p);
+  arma::mat matA = arma::eye<arma::mat>(data.n_rows, data.n_rows);
 
   while ((crit > tol) && (i < nIterMax))
   {
@@ -95,7 +94,7 @@ double BayesianRidge::Train(const arma::mat& data,
     omega = (matCovariance * vecphitT) * beta;
 
     // // with solve()
-    // matA.diag().fill(alpha/ beta);
+    // matA.diag().fill(alpha / beta);
     // omega = solve(matA + phiphiT, vecphitT);
 
     // Update alpha.
@@ -105,12 +104,12 @@ double BayesianRidge::Train(const arma::mat& data,
 
     // Update beta.
     const arma::rowvec temp = t - omega.t() * phi;
-    beta = (n - gamma) / dot(temp, temp);
+    beta = (data.n_cols - gamma) / dot(temp, temp);
 
     // Comptute the stopping criterion.
     deltaAlpha += alpha;
     deltaBeta += beta;
-    crit = abs(deltaAlpha/alpha + deltaBeta/beta);
+    crit = abs(deltaAlpha / alpha + deltaBeta / beta);
     i++;
   }
   Timer::Stop("bayesian_ridge_regression");
