@@ -24,11 +24,14 @@
   * CMake fix for finding STB include directory (#2145).
 
   * Add normalization support for CF binding (#2136).
-  
+
   * Add Mish activation function (#2158).
 
   * Update `init_rules` in AMF to allow users to merge two initialization
     rules (#2151).
+
+  * Better error handling of eigendecompositions and Cholesky decompositions
+    (#2088, #1840).
 
 ### mlpack 3.2.2
 ###### 2019-11-26
