@@ -190,15 +190,15 @@ void MaxPooling<InputDataType, OutputDataType>::Forward(
 
   for (size_t s = 0; s < inputRes.n_slices; s++)
   {
-    if (!deterministic)
+    if (deterministic)
     {
       PoolingOperation(inputRes.slice(s), outputTemp.slice(s),
-        poolingIndices.back().slice(s));
+          inputRes.slice(s));
     }
     else
     {
       PoolingOperation(inputRes.slice(s), outputTemp.slice(s),
-          inputRes.slice(s));
+        poolingIndices.back().slice(s));
     }
   }
 
