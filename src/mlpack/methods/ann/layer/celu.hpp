@@ -158,7 +158,7 @@ class CELU
   double Deriv(const double x, const double y)
   {
     return (x >= 0) ? 1 : (y / alpha) + 1;
-  } 
+  }
 
   /**
    * Computes the first derivative of the activation function.
@@ -197,7 +197,7 @@ class CELU
 } // namespace ann
 } // namespace mlpack
 
-// Include implementation. 
+// Include implementation.
 #include "celu_impl.hpp"
 
 #endif
