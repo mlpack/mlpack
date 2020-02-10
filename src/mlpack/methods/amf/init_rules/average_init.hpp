@@ -1,5 +1,5 @@
 /**
- * @file averge_init.hpp
+ * @file average_init.hpp
  * @author Sumedh Ghaisas
  *
  * Initialization rule for Alternating Matrix Factorization.
@@ -30,15 +30,15 @@ class AverageInitialization
   // Empty constructor required for the InitializeRule template
   AverageInitialization() { }
 
-   /**
-    * Initialize the matrices W and H to the average value of V with uniform
-    * random noise added.
-    *
-    * @param V Input matrix.
-    * @param r Rank of matrix.
-    * @param W W matrix, to be initialized.
-    * @param H H matrix, to be initialized.
-    */
+  /**
+   * Initialize the matrices W and H to the average value of V with uniform
+   * random noise added.
+   *
+   * @param V Input matrix.
+   * @param r Rank of matrix.
+   * @param W W matrix, to be initialized.
+   * @param H H matrix, to be initialized.
+   */
   template<typename MatType>
   inline static void Initialize(const MatType& V,
                                 const size_t r,
@@ -68,20 +68,20 @@ class AverageInitialization
     W.randu(n, r);
     H.randu(r, m);
 
-    W = W + avgV;
-    H = H + avgV;
+    W += avgV;
+    H += + avgV;
   }
 
-   /**
-    * Initialize the matrix W or H to the average value of V with uniform
-    * random noise added.
-    *
-    * @param V Input matrix.
-    * @param r Rank of matrix.
-    * @param M W or H matrix, to be initialized to the average value of V
-    * with uniform random noise added.
-    * @param whichMatrix If true, initialize W. Otherwise, initialize H.
-    */
+  /**
+   * Initialize the matrix W or H to the average value of V with uniform
+   * random noise added.
+   *
+   * @param V Input matrix.
+   * @param r Rank of matrix.
+   * @param M W or H matrix, to be initialized to the average value of V
+   * with uniform random noise added.
+   * @param whichMatrix If true, initialize W. Otherwise, initialize H.
+   */
   template<typename MatType>
   inline static void InitializeOne(const MatType& V,
                                    const size_t r,
@@ -111,15 +111,13 @@ class AverageInitialization
     {
       // Initialize W to random values
       M.randu(n, r);
-
-      M = M + avgV;
+      M += avgV;
     }
     else
     {
       // Initialize H to random values
       M.randu(r, m);
-
-      M = M + avgV;
+      M += avgV;
     }
   }
 
