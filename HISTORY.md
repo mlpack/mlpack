@@ -82,7 +82,7 @@
 
   * Add CELU activation function (#2191)
 
-  * Add Log-Hyperbolic-Cosine Loss function (#2207)
+  * Add Log-Hyperbolic-Cosine Loss function (#2207).
 
   * Change neural network types to avoid unnecessary use of rvalue references
     (#2259).
