@@ -712,12 +712,11 @@ BOOST_AUTO_TEST_CASE(MishFunctionTest)
  */
 BOOST_AUTO_TEST_CASE(CELUFunctionTest)
 {
-  const arma::colvec desiredActivations("0.049787068 3.2 4.5 \
-                                         1.1204654e-44 1 \
-                                         0.13533528 2 0");
+  const arma::colvec desiredActivations("-0.86466472 3.2 4.5 \
+                                         -1 1 -0.63212056 2 0");
 
-  const arma::colvec desiredDerivatives("1.0497871 1 1 1 \
-                                         1 1.1353353 1 1");
+  const arma::colvec desiredDerivatives("0.13533528 1 1 0 \
+                                         1 0.36787944 1 1");
 
   CheckCELUActivationCorrect(activationData, desiredActivations);
   CheckCELUDerivativeCorrect(activationData, desiredDerivatives);

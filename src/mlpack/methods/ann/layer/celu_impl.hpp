@@ -33,7 +33,7 @@ void CELU<InputDataType, OutputDataType>::Forward(
 {
   Fn(input, output);
 
-  if(!deterministic)
+  if (!deterministic)
   {
     Deriv(input, output);
   }
@@ -55,7 +55,7 @@ void CELU<InputDataType, OutputDataType>::serialize(
 {
   ar & BOOST_SERIALIZATION_NVP(alpha);
 }
-    
+
 } // namespace ann
 } // namespace mlpack
 

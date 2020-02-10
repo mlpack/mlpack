@@ -23,14 +23,14 @@ namespace ann /** Artificial Neural Network. */ {
  * @f{eqnarray*}{
  * f(x) &=& \left\{
  *   \begin{array}{lr}
- *    x & : x >= 0 \\
- *    \alpha(e^(x/alpha) - 1) & : x \le 0
+ *    x & : x \ge 0 \\
+ *    \alpha(e^(\frac{x}{\alpha}) - 1) & : x < 0
  *   \end{array}
  * \right. \\
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
- *     1 & : x >= 0 \\
- *     (f(x)/alpha) + 1 & : x \le 0
+ *     1 & : x \ge 0 \\
+ *     (\frac{f(x)}{\alpha}) + 1 & : x < 0
  *   \end{array}
  * \right.
  * @f}
@@ -78,8 +78,8 @@ class CELU
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-	template<typename InputType, typename OutputType>
-	void Forward(const InputType&& input, OutputType&& output);
+  template<typename InputType, typename OutputType>
+  void Forward(const InputType&& input, OutputType&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -90,29 +90,29 @@ class CELU
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-	template<typename DataType>
-	void Backward(const DataType&& input, DataType&& gy, DataType&& g);
-	
+  template<typename DataType>
+  void Backward(const DataType&& input, DataType&& gy, DataType&& g);
+
   //! Get the output parameter.
-	OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-	OutputDataType& OutputParameter() { return outputParameter; }
-	
+  OutputDataType& OutputParameter() { return outputParameter; }
+
   //! Get the delta.
-	OutputDataType const& Delta() const { return delta; }
+  OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
-	OutputDataType& Delta() { return delta; }
+  OutputDataType& Delta() { return delta; }
 
   //! Get the non zero gradient.
-	double const& Alpha() const { return alpha; }
+  double const& Alpha() const { return alpha; }
   //! Modify the non zero gradient.
-	double& Alpha() { return alpha; }
+  double& Alpha() { return alpha; }
 
   /**
    * Serialize the layer.
    */
-	template<typename Archive>
-	void serialize(Archive& ar, const unsigned int /* version */);
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   /**
@@ -123,13 +123,13 @@ class CELU
    */
   double Fn(const double x)
   {
-    if(x < DBL_MAX)
+    if (x < DBL_MAX)
     {
-      return (x >= 0) ? x : alpha * (std::exp((x / alpha) - 1));
+      return (x >= 0) ? x : alpha * (std::exp(x / alpha) - 1);
     }
 
      return 1.0;
-   }
+  }
 
   /**
    * Computes the value of activation function using a dense matrix as input.
@@ -142,7 +142,7 @@ class CELU
   {
     y.set_size(arma::size(x));
 
-    for(size_t i = 0; i < x.n_elem; i++)
+    for (size_t i = 0; i < x.n_elem; i++)
     {
       y(i) = Fn(x(i));
     }
@@ -158,7 +158,7 @@ class CELU
   double Deriv(const double x, const double y)
   {
     return (x >= 0) ? 1 : (y / alpha) + 1;
-  }  
+  } 
 
   /**
    * Computes the first derivative of the activation function.
@@ -172,7 +172,7 @@ class CELU
   {
     derivative.set_size(arma::size(x));
 
-    for(size_t i = 0; i < x.n_elem; i++)
+    for (size_t i = 0; i < x.n_elem; i++)
     {
       derivative(i) = Deriv(x(i), y(i));
     }
@@ -184,7 +184,7 @@ class CELU
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
- //! Locally stored first derivative of the activation function.
+  //! Locally stored first derivative of the activation function.
   arma::mat derivative;
 
   //! CELU Hyperparameter (0 < alpha)
