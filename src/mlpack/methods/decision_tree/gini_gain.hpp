@@ -72,12 +72,12 @@ class GiniGain
     // to exploit SIMD instructions if possible.
     arma::vec countSpace(4 * numClasses, arma::fill::zeros);
     arma::vec counts(countSpace.memptr(), numClasses, false, true);
-    // arma::vec counts2(countSpace.memptr() + numClasses, numClasses, false,
-    //    true);
-    // arma::vec counts3(countSpace.memptr() + 2 * numClasses, numClasses, false,
-    //    true);
-    // arma::vec counts4(countSpace.memptr() + 3 * numClasses, numClasses, false,
-    //    true);
+    arma::vec counts2(countSpace.memptr() + numClasses, numClasses, false,
+        true);
+    arma::vec counts3(countSpace.memptr() + 2 * numClasses, numClasses, false,
+        true);
+    arma::vec counts4(countSpace.memptr() + 3 * numClasses, numClasses, false,
+        true);
 
     // Calculate the Gini impurity of the un-split node.
     double impurity = 0.0;
@@ -91,7 +91,7 @@ class GiniGain
       // manages to vectorize the loop).
       #pragma omp parallel for reduction (+:accWeights)
 
-      for (size_t i = 0; i < labels.n_elem; i ++)
+      for (omp_size_t i = 0; i < labels.n_elem; i ++)
       {
         
         const double weight1 = weights[i];
@@ -111,8 +111,20 @@ class GiniGain
         // accWeights[1] += weight2;
         // accWeights[2] += weight3;
         // accWeights[3] += weight4;
-        #pragma omp atomic
-        counts[labels[i]] += weight1;
+        if(i%4==0)
+          #pragma omp atomic
+          counts[labels[i]] += weight1;
+        else if(i%4==1)
+          #pragma omp atomic
+          counts2[labels[i]] += weight1;
+        else if(i%4==2)
+          #pragma omp atomic
+          counts3[labels[i]] += weight1;
+        else if(i%4==3)
+          #pragma omp atomic
+          counts4[labels[i]] += weight1;
+        
+        
         
       }
       /*
@@ -150,13 +162,13 @@ class GiniGain
       }
       */
       // accWeights[0] += accWeights[1] + accWeights[2] + accWeights[3];
-      // counts += counts2 + counts3 + counts4;
+      counts += counts2 + counts3 + counts4;
 
       // Catch edge case: if there are no weights, the impurity is zero.
       if (accWeights == 0.0)
         return 0.0;
       #pragma omp parallel for reduction(+:impurity)
-      for (size_t i = 0; i < numClasses; ++i)
+      for (omp_size_t i = 0; i < numClasses; ++i)
       {
         const double f = ((double) counts[i] / (double) accWeights);
         impurity += f * (1.0 - f);
