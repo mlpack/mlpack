@@ -36,9 +36,9 @@ PROGRAM_INFO("BayesianRidge",
     "on the solution. "
     "\n"
     "Optimization is AUTOMATIC and does not require cross validation. "
-    "The optimization is performed by type II maximium likihood. Parameters "
+    "The optimization is performed by type II maximium likelihood. Parameters "
     "are tunned during the maximization of the marginal likelihood. This "
-    "procedure includes the Occam's razor that penalizes over complex "
+    "procedure includes the Ockham's razor that penalizes over complex "
     "solutions. "
     "\n\n"
     "This program is able to train a Baysian Ridge model or load a "
@@ -91,9 +91,9 @@ PARAM_TMATRIX_IN("input", "Matrix of covariates (X).", "i");
 
 PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");
 
-PARAM_MODEL_IN(BayesianRidge, "input_model", "Trained LARS model to use.", "m");
+PARAM_MODEL_IN(BayesianRidge, "input_model", "Trained BayesianRidge model to use.", "m");
 
-PARAM_MODEL_OUT(BayesianRidge, "output_model", "Output LARS model.", "M");
+PARAM_MODEL_OUT(BayesianRidge, "output_model", "Output BayesianRidge model.", "M");
 
 PARAM_TMATRIX_IN("test", "Matrix containing points to regress on (test "
                  "points).", "t");
