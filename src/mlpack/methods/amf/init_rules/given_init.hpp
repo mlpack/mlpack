@@ -1,5 +1,5 @@
 /**
- * @file given_initialization.hpp
+ * @file given_init.hpp
  * @author Ryan Curtin
  *
  * Initialization rule for alternating matrix factorization (AMF). This simple
@@ -77,14 +77,14 @@ class GivenInitialization
     }
   }
 
-   /**
-    * Fill W and H with given matrices.
-    *
-    * @param V Input matrix.
-    * @param r Rank of decomposition.
-    * @param W W matrix, to be initialized to given matrix.
-    * @param H H matrix, to be initialized to given matrix.
-    */
+  /**
+   * Fill W and H with given matrices.
+   *
+   * @param V Input matrix.
+   * @param r Rank of decomposition.
+   * @param W W matrix, to be initialized to given matrix.
+   * @param H H matrix, to be initialized to given matrix.
+   */
   template<typename MatType>
   inline void Initialize(const MatType& V,
                          const size_t r,
@@ -132,14 +132,14 @@ class GivenInitialization
     H = h;
   }
 
-   /**
-    * Fill W or H with given matrix.
-    *
-    * @param V Input matrix.
-    * @param r Rank of decomposition.
-    * @param M W or H matrix, to be initialized to given matrix.
-    * @param whichMatrix If true, initialize W. Otherwise, initialize H.
-    */
+  /**
+   * Fill W or H with given matrix.
+   *
+   * @param V Input matrix.
+   * @param r Rank of decomposition.
+   * @param M W or H matrix, to be initialized to given matrix.
+   * @param whichMatrix If true, initialize W. Otherwise, initialize H.
+   */
   template<typename MatType>
   inline void InitializeOne(const MatType& V,
                             const size_t r,
