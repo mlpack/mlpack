@@ -38,14 +38,14 @@ class MergeInitialization
                       hInitializationRule(hInitRule)
   { }
 
-   /**
-    * Initialize W and H with the corresponding initialization rules.
-    *
-    * @param V Input matrix.
-    * @param r Rank of decomposition.
-    * @param W W matrix, to be initialized to given matrix.
-    * @param H H matrix, to be initialized to given matrix.
-    */
+  /**
+   * Initialize W and H with the corresponding initialization rules.
+   *
+   * @param V Input matrix.
+   * @param r Rank of decomposition.
+   * @param W W matrix, to be initialized to given matrix.
+   * @param H H matrix, to be initialized to given matrix.
+   */
   template<typename MatType>
   inline void Initialize(const MatType& V,
                          const size_t r,
