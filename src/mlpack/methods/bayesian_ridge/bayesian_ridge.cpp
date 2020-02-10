@@ -51,9 +51,15 @@ double BayesianRidge::Train(const arma::mat& data,
 
   // Compute this quantities once and for all.
   const arma::colvec vecphitT = phi * t.t();
-  const arma::mat phiphiT =  phi * phi.t();
+  // Enforce symmetry of the covariance matrix before eig_sym.
+  const arma::mat phiphiT =  arma::symmatu(phi * phi.t());
 
-  arma::eig_sym(eigval, eigvec, phiphiT);
+  if (arma::eig_sym(eigval, eigvec, phiphiT) == false)
+  {
+    Log::Warn << "Eigen Decomposition failed as Eigen Value "
+              << "does not exists ." << std::endl;
+    return -1;
+  }
 
   // Detect singular matrix.
   if (eigval[0] < 1e-8)
