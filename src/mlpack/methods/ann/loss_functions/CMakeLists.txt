@@ -1,6 +1,8 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  bce_with_logits_loss.hpp
+  bce_with_logits_loss_impl.hpp
   cross_entropy_error.hpp
   cross_entropy_error_impl.hpp
   cosine_embedding_loss.hpp

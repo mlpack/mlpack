@@ -15,6 +15,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/loss_functions/bce_with_logits_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/huber_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/kl_divergence.hpp>
 #include <mlpack/methods/ann/loss_functions/earth_mover_distance.hpp>
@@ -64,6 +65,27 @@ BOOST_AUTO_TEST_CASE(HuberLossTest)
   // Sum of Expected Output = -0.07125.
   double expectedOutputSum = arma::accu(output);
   BOOST_REQUIRE_CLOSE_FRACTION(expectedOutputSum, -0.07125, 0.00001);
+}
+
+/**
+ * Binary Cross Entropy with Logits Loss function test.
+ */
+BOOST_AUTO_TEST_CASE(BCEWithLogitsLossTest)
+{
+  arma::mat input, output, target;
+  BCEWithLogitsLoss<> module;
+
+  input = arma::mat("-2.73 -1.05 1.97 0.98");
+  target = arma::mat("0.0 0.0 1.0 0.0");
+  double loss = module.Forward(std::move(input), std::move(target));
+  BOOST_REQUIRE_CLOSE_FRACTION(loss, 0.4481, 0.0001);
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(target), std::move(output));
+
+  // Sum of expected output as calculated using pytorch = 0.3034
+  double expectedOutputSum = arma::accu(output);
+  BOOST_REQUIRE_CLOSE_FRACTION(expectedOutputSum, 0.2313, 0.0001);
 
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
