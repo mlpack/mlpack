@@ -709,17 +709,15 @@ BOOST_AUTO_TEST_CASE(NTMRecursiveReberGrammarTest)
   size_t memSize = 5;
   size_t shiftSize = 1;
 
-  auto fun = [&](RNN<MeanSquaredError<> >& model)
-  {
-    FFN<>* controller = new FFN<>();
-    controller->Add(new Linear<>(hiddenSize + memSize, hiddenSize));
-    controller->Add(new GRU<>(hiddenSize, hiddenSize));
+  RNN<MeanSquaredError<> > model(5);
+  FFN<>* controller = new FFN<>();
+  controller->Add(new Linear<>(hiddenSize + memSize, hiddenSize));
+  controller->Add(new GRU<>(hiddenSize, hiddenSize));
 
-    model.Add<NeuralTuringMachine<> >(hiddenSize, hiddenSize, numMem, memSize,
-        shiftSize, controller);
-  };
+  model.Add<NeuralTuringMachine<> >(hiddenSize, hiddenSize, numMem, memSize,
+      shiftSize, controller);
 
-  ReberGrammarTestNetwork(fun, hiddenSize, true, 0.001);
+  ReberGrammarTestNetwork(model, hiddenSize, true, 0.001);
 }
 
 /**
@@ -732,17 +730,15 @@ BOOST_AUTO_TEST_CASE(NTMReberGrammarTest)
   size_t memSize = 5;
   size_t shiftSize = 1;
 
-  auto fun = [&](RNN<MeanSquaredError<> >& model)
-  {
-    FFN<>* controller = new FFN<>();
-    controller->Add(new Linear<>(hiddenSize + memSize, hiddenSize));
-    controller->Add(new GRU<>(hiddenSize, hiddenSize));
+  RNN<MeanSquaredError<> > model(5);
+  FFN<>* controller = new FFN<>();
+  controller->Add(new Linear<>(hiddenSize + memSize, hiddenSize));
+  controller->Add(new GRU<>(hiddenSize, hiddenSize));
 
-    model.Add<NeuralTuringMachine<> >(hiddenSize, hiddenSize, numMem, memSize,
-        shiftSize, controller);
-  };
+  model.Add<NeuralTuringMachine<> >(hiddenSize, hiddenSize, numMem, memSize,
+      shiftSize, controller);
 
-  ReberGrammarTestNetwork(fun, hiddenSize, false);
+  ReberGrammarTestNetwork(model, hiddenSize, false);
 }
 
 /*
