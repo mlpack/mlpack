@@ -20,6 +20,7 @@
 #include <mlpack/methods/nca/nca.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
+#include <mlpack/methods/sparse_autoencoder/sparse_autoencoder.hpp>
 
 #include <boost/test/unit_test.hpp>
 
@@ -214,6 +215,21 @@ BOOST_AUTO_TEST_CASE(RBMCallbackTest)
   // Call the train function with printloss callback.
   double objVal = model.Train(msgd, ens::ProgressBar(70, stream));
   BOOST_REQUIRE_GT(stream.str().length(), 0);
+}
+
+BOOST_AUTO_TEST_CASE(SparseAutoencodeCallbackTest)
+{
+  // Simple fake dataset.
+  arma::mat data1("0.1 0.2 0.3 0.4 0.5;"
+                  "0.1 0.2 0.3 0.4 0.5;"
+                  "0.1 0.2 0.3 0.4 0.5;"
+                  "0.1 0.2 0.3 0.4 0.5;"
+                  "0.1 0.2 0.3 0.4 0.5");
+
+  ens::L_BFGS optimizer(5, 100);
+  ens::StoreBestCoordinates<arma::mat> cb;
+  mlpack::nn::SparseAutoencoder encoder2(data1, 2, 1, 0, 0,0 ,optimizer, cb);
+  BOOST_REQUIRE_GT(cb.BestObjective(), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
