@@ -39,18 +39,19 @@ double BayesianRidge::Train(const arma::mat& data,
   arma::colvec eigvali;
 
   // Preprocess the data. Center and scale.
-  CenterScaleData(data,
-                  responses,
-                  centerData,
-                  scaleData,
-                  phi,
-                  t,
-                  dataOffset,
-                  dataScale,
-                  responsesOffset);
+  responsesOffset = CenterScaleData(data,
+                                    responses,
+                                    centerData,
+                                    scaleData,
+                                    phi,
+                                    t,
+                                    dataOffset,
+                                    dataScale);
+                                    
 
   // Compute this quantities once and for all.
   const arma::colvec vecphitT = phi * t.t();
+
   // Enforce symmetry of the covariance matrix before eig_sym.
   const arma::mat phiphiT =  arma::symmatu(phi * phi.t());
 
@@ -143,15 +144,14 @@ double BayesianRidge::Rmse(const arma::mat& data,
   return sqrt(mean(square(responses - predictions)));
 }
 
-void BayesianRidge::CenterScaleData(const arma::mat& data,
+double BayesianRidge::CenterScaleData(const arma::mat& data,
                                     const arma::rowvec& responses,
                                     bool centerData,
                                     bool scaleData,
                                     arma::mat& dataProc,
                                     arma::rowvec& responsesProc,
                                     arma::colvec& dataOffset,
-                                    arma::colvec& dataScale,
-                                    double& responsesOffset)
+                                    arma::colvec& dataScale)
 {
   // Initialize the offsets to their neutral forms.
   dataOffset = arma::zeros<arma::colvec>(data.n_rows);
@@ -175,10 +175,12 @@ void BayesianRidge::CenterScaleData(const arma::mat& data,
   dataProc.each_col() /= dataScale;
   // Center the responses.
   responsesProc = responses - responsesOffset;
+
+  return responsesOffset;
 }
 
 
-// Copy construcor
+// Copy construcor.
 BayesianRidge::BayesianRidge(const BayesianRidge& other):
   centerData(other.centerData),
   scaleData(other.scaleData),
@@ -192,7 +194,7 @@ BayesianRidge::BayesianRidge(const BayesianRidge& other):
   matCovariance(other.matCovariance)
 {/* All is done */}
 
-// Move construcor
+// Move constructor.
 BayesianRidge::BayesianRidge(BayesianRidge&& other):
   centerData(other.centerData),
   scaleData(other.scaleData),
@@ -205,7 +207,7 @@ BayesianRidge::BayesianRidge(BayesianRidge&& other):
   omega(std::move(other.omega)),
   matCovariance(std::move(other.matCovariance))
 {
-  // Clear the other object
+  // Clear the other object.
   if (this != &other)
   {
     other.centerData = false;
