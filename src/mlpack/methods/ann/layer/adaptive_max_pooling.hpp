@@ -2,14 +2,13 @@
  * @file adaptive_max_pooling.hpp
  * @author Kartik Dutt
  *
- * Definition of the Adaptive Mean Pooling layer class.
+ * Definition of the AdaptiveMaxPooling class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #ifndef MLPACK_METHODS_ANN_LAYER_ADAPTIVE_MAX_POOLING_HPP
 #define MLPACK_METHODS_ANN_LAYER_ADAPTIVE_MAX_POOLING_HPP
 
@@ -19,7 +18,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the AdaptiveMaxPooling.
+ * Implementation of the AdaptiveMaxPooling layer.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -43,7 +42,7 @@ class AdaptiveMaxPooling
    * @param outputHeight Height of the output.
    */
   AdaptiveMaxPooling(const size_t outputWidth,
-                      const size_t outputHeight);
+                     const size_t outputHeight);
 
   /**
    * Create the AdaptiveMaxPooling object.
@@ -77,45 +76,40 @@ class AdaptiveMaxPooling
                 arma::Mat<eT>&& g);
 
   //! Get the output parameter.
-  OutputDataType const &OutputParameter() const { return outputParameter; }
+  const OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType &OutputParameter() { return outputParameter; }
+  OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const &Delta() const { return delta; }
+  const OutputDataType& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType &Delta() { return delta; }
+  OutputDataType& Delta() { return delta; }
 
   //! Get the width.
-  size_t const &InputWidth() const { return inputWidth; }
+  size_t InputWidth() const { return inputWidth; }
   //! Modify the width.
-  size_t &InputWidth() { return inputWidth; }
+  size_t& InputWidth() { return inputWidth; }
 
   //! Get the height.
-  size_t const &InputHeight() const { return inputHeight; }
+  size_t InputHeight() const { return inputHeight; }
   //! Modify the height.
-  size_t &InputHeight() { return inputHeight; }
+  size_t& InputHeight() { return inputHeight; }
 
   //! Get the width.
-  size_t const &OutputWidth() const { return outputWidth; }
+  size_t OutputWidth() const { return outputWidth; }
   //! Modify the width.
-  size_t &OutputWidth() { return outputWidth; }
+  size_t& OutputWidth() { return outputWidth; }
 
   //! Get the height.
-  size_t const &OutputHeight() const { return outputHeight; }
+  size_t OutputHeight() const { return outputHeight; }
   //! Modify the height.
-  size_t &OutputHeight() { return outputHeight; }
+  size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size.
   size_t InputSize() const { return inSize; }
 
   //! Get the output size.
   size_t OutputSize() const { return outSize; }
-
-  //! Get the value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool &Deterministic() { return deterministic; }
 
   /**
    * Serialize the layer
@@ -131,14 +125,15 @@ class AdaptiveMaxPooling
   {
     strideWidth = std::floor(inputWidth / outputWidth);
     strideHeight = std::floor(inputHeight / outputHeight);
-  
+
     kernelWidth = inputWidth - (outputWidth - 1) * strideWidth;
     kernelHeight = inputHeight - (outputHeight - 1) * strideHeight;
 
-    if(kernelHeight < 0 || kernelWidth < 0)
+    if (kernelHeight < 0 || kernelWidth < 0)
     {
-      Log::Fatal << "Given output shape is not possible for given "
-                 << " Input shape." << std::endl;
+      Log::Fatal << "Given output shape (" << outputWidth << ", "
+        << outputHeight << ") is not possible for given input shape ("
+        << inputWidth <<", "<< inputHeight << ")."<< std::endl;
     }
   }
 
@@ -154,27 +149,23 @@ class AdaptiveMaxPooling
                         arma::Mat<eT>& output,
                         arma::Mat<eT>& poolingIndices)
   {
+    const size_t rStep = kernelWidth;
+    const size_t cStep = kernelHeight;
     for (size_t j = 0, colidx = 0; j < output.n_cols;
-         ++j, colidx += strideWidth)
+         ++j, colidx += strideHeight)
     {
       for (size_t i = 0, rowidx = 0; i < output.n_rows;
-           ++i, rowidx += strideHeight)
+           ++i, rowidx += strideWidth)
       {
         arma::mat subInput = input(
-            arma::span(rowidx, rowidx + kernelWidth - 1),
-            arma::span(colidx, colidx + kernelHeight - 1));
-
+            arma::span(rowidx, rowidx + rStep - 1),
+            arma::span(colidx, colidx + cStep - 1));
         const size_t idx = pooling.Pooling(subInput);
         output(i, j) = subInput(idx);
-
-        if (!deterministic)
-        {
-          arma::Mat<size_t> subIndices = indices(arma::span(rowidx,
-              rowidx + kernelWidth - 1),
-              arma::span(colidx, colidx + kernelHeight - 1));
-
-          poolingIndices(i, j) = subIndices(idx);
-        }
+        arma::Mat<size_t> subIndices = indices(arma::span(rowidx,
+              rowidx + rStep - 1),
+              arma::span(colidx, colidx + cStep - 1));
+        poolingIndices(i, j) = subIndices(idx);
       }
     }
   }
@@ -215,6 +206,9 @@ class AdaptiveMaxPooling
   //! Locally-stored number of output channels.
   size_t outSize;
 
+  //! Locally-stored reset parameter used to initialize the module once.
+  bool reset;
+
   //! Locally-stored input width.
   size_t inputWidth;
 
@@ -226,12 +220,6 @@ class AdaptiveMaxPooling
 
   //! Locally-stored output height.
   size_t outputHeight;
-
-  //! Locally-stored reset parameter used to initialize the module once.
-  bool reset;
-
-  //! If true use maximum a posteriori during the forward pass.
-  bool deterministic;
 
   //! Locally-stored number of input units.
   size_t batchSize;
@@ -245,6 +233,9 @@ class AdaptiveMaxPooling
   //! Locally-stored transformed output parameter.
   arma::cube gTemp;
 
+  //! Locally-stored pooling strategy.
+  MaxPoolingRule pooling;
+
   //! Locally-stored delta object.
   OutputDataType delta;
 
@@ -257,15 +248,12 @@ class AdaptiveMaxPooling
   //! Locally-stored indices matrix parameter.
   arma::Mat<size_t> indices;
 
-  //! Locally-stored pooling strategy.
-  MaxPoolingRule pooling;
-
   //! Locally-stored indices column parameter.
   arma::Col<size_t> indicesCol;
 
   //! Locally-stored pooling indicies.
   std::vector<arma::cube> poolingIndices;
-}; // class AdaptiveMaxPooling
+}; // class MaxPooling
 
 } // namespace ann
 } // namespace mlpack

@@ -2,7 +2,7 @@
  * @file adaptive_mean_pooling.hpp
  * @author Kartik Dutt
  *
- * Definition of the Adaptive Mean Pooling layer class.
+ * Definition of the AdaptiveMeanPooling layer class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -131,14 +131,15 @@ class AdaptiveMeanPooling
   {
     strideWidth = std::floor(inputWidth / outputWidth);
     strideHeight = std::floor(inputHeight / outputHeight);
-  
+
     kernelWidth = inputWidth - (outputWidth - 1) * strideWidth;
     kernelHeight = inputHeight - (outputHeight - 1) * strideHeight;
 
-    if(kernelHeight < 0 || kernelWidth < 0)
+    if (kernelHeight < 0 || kernelWidth < 0)
     {
-      Log::Fatal << "Given output shape is not possible for given "
-                 << " Input shape." << std::endl;
+      Log::Fatal << "Given output shape (" << outputWidth << ", "
+        << outputHeight << ") is not possible for given input shape ("
+        << inputWidth <<", "<< inputHeight << ")."<< std::endl;
     }
   }
 
@@ -256,7 +257,6 @@ class AdaptiveMeanPooling
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
 }; // class AdaptiveMeanPooling
 
 } // namespace ann

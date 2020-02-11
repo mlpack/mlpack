@@ -35,7 +35,6 @@ AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
     outputWidth(outputWidth),
     outputHeight(outputHeight),
     reset(false),
-    deterministic(false),
     batchSize(0)
 {
   // Nothing to do here.
@@ -51,7 +50,6 @@ AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
     outputWidth(std::get<0>(outputShape)),
     outputHeight(std::get<1>(outputShape)),
     reset(false),
-    deterministic(false),
     batchSize(0)
 {
   // Nothing to do here.
@@ -69,15 +67,14 @@ void AdaptiveMaxPooling<InputDataType, OutputDataType>::Forward(
       inputWidth, inputHeight, batchSize * inSize, false, false);
   outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,
       batchSize * inSize);
-
+  poolingIndices.push_back(outputTemp);
   size_t elements = inputWidth * inputHeight;
   indicesCol = arma::linspace<arma::Col<size_t> >(0, (elements - 1),
       elements);
   indices = arma::Mat<size_t>(indicesCol.memptr(), inputWidth, inputHeight);
-  poolingIndices.push_back(outputTemp);
   for (size_t s = 0; s < inputTemp.n_slices; s++)
     PoolingOperation(inputTemp.slice(s), outputTemp.slice(s),
-        outputTemp.slice(s));
+        poolingIndices.back().slice(s));
 
   output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem / batchSize,
       batchSize);
