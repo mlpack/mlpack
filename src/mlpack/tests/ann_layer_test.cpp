@@ -3123,17 +3123,17 @@ BOOST_AUTO_TEST_CASE(MaxPoolingLayerPaddingTest)
   arma::mat output, input, delta;
 
   // Check valid padding option.
-  MaxPooling<> module1(3, 3, 2, 2, true, std::tuple<size_t, size_t>(1, 1),
+  MaxPooling<> module1(4, 4, 2, 2, true, std::tuple<size_t, size_t>(1, 1),
       std::tuple<size_t, size_t>(1, 1), "valid");
 
   // Test the Forward function.
-  input = arma::linspace<arma::colvec>(0, 72, 25);
+  input = arma::linspace<arma::colvec>(0, 24, 25);
   module1.InputWidth() = 5;
   module1.InputHeight() = 5;
   module1.Forward(std::move(input), std::move(output));
 
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 432);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 18);
+  BOOST_REQUIRE_EQUAL(output.n_rows, 1);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
@@ -3144,12 +3144,12 @@ BOOST_AUTO_TEST_CASE(MaxPoolingLayerPaddingTest)
       std::tuple<size_t, size_t>(0, 0), "same");
 
   // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 72, 25);
+  input = arma::linspace<arma::colvec>(0, 24, 25);
   module2.InputWidth() = 5;
   module2.InputHeight() = 5;
   module2.Forward(std::move(input), std::move(output));
 
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 216);
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 72);
   BOOST_REQUIRE_EQUAL(output.n_rows, 4);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
@@ -3165,17 +3165,17 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
   arma::mat output, input, delta;
 
   // Check valid padding option.
-  MeanPooling<> module1(3, 3, 2, 2, true, std::tuple<size_t, size_t>(1, 1),
+  MeanPooling<> module1(4, 4, 2, 2, true, std::tuple<size_t, size_t>(1, 1),
       std::tuple<size_t, size_t>(1, 1), "valid");
 
   // Test the Forward function.
-  input = arma::linspace<arma::colvec>(0, 72, 25);
+  input = arma::linspace<arma::colvec>(0, 24, 25);
   module1.InputWidth() = 5;
   module1.InputHeight() = 5;
   module1.Forward(std::move(input), std::move(output));
 
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 196);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 9);
+  BOOST_REQUIRE_EQUAL(output.n_rows, 1);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
@@ -3186,12 +3186,12 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
       std::tuple<size_t, size_t>(0, 0), "same");
 
   // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 72, 25);
+  input = arma::linspace<arma::colvec>(0, 24, 25);
   module2.InputWidth() = 5;
   module2.InputHeight() = 5;
   module2.Forward(std::move(input), std::move(output));
 
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 144);
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 34.125);
   BOOST_REQUIRE_EQUAL(output.n_rows, 4);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
