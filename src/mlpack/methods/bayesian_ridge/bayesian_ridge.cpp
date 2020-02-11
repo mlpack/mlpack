@@ -94,7 +94,7 @@ double BayesianRidge::Train(const arma::mat& data,
     omega = (matCovariance * vecphitT) * beta;
 
     // // with solve()
-    // matA.diag().fill(alpha / beta);
+    // matA.diag().fill(alpha/ beta);
     // omega = solve(matA + phiphiT, vecphitT);
 
     // Update alpha.
@@ -119,35 +119,21 @@ double BayesianRidge::Train(const arma::mat& data,
 void BayesianRidge::Predict(const arma::mat& points,
                             arma::rowvec& predictions) const
 {
-  arma::mat X = points;
-
-  // Center and scaleData the points before applying the model
-  X.each_col() -= dataOffset;
-  X.each_col() /= dataScale;
-  predictions = omega.t() * X + responsesOffset;
+  // y_hat = w^T * (X - mu) / sigma + y_mean.
+  predictions = omega.t() *
+  ((points.each_col() - dataOffset).each_col() / dataScale) + responsesOffset;
 }
 
 void BayesianRidge::Predict(const arma::mat& points,
                             arma::rowvec& predictions,
                             arma::rowvec& std) const
 {
-  arma::mat X = points;
-
   // Center and scaleData the points before applying the model.
-  X.each_col() -= dataOffset;
-  X.each_col() /= dataScale;
+  const arma::mat X = (points.each_col() - dataOffset).each_col() / dataScale;
+  
   predictions = omega.t() * X + responsesOffset;
-
-  // Compute the standard deviation of each prediction.
-  std = arma::zeros<arma::rowvec>(X.n_cols);
-  arma::colvec phi(X.n_rows);
-  for (size_t i = 0; i < X.n_cols; i++)
-  {
-    phi = X.col(i);
-    std[i] = sqrt(Variance()
-               + dot(phi.t() * matCovariance, phi));
-  }
-}
+  std = sqrt(Variance() + sum((X % (matCovariance * X)), 0));
+ }
 
 double BayesianRidge::Rmse(const arma::mat& data,
                            const arma::rowvec& responses) const
