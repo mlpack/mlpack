@@ -115,6 +115,8 @@ class BayesianRidge
    *
    * @param points The data points to apply the model.
    * @param predictions y, Contains the  predicted values on completion.
+   *
+   * @return Root mean squared error computed on the train set.
    **/
   void Predict(const arma::mat& points,
                arma::rowvec& predictions) const;
@@ -159,17 +161,16 @@ class BayesianRidge
    *     points, dim(P).
    * @param dataScale Vector containg the standard deviations of the features
    *     dim(P).
-   * @param reponses_offset Mean of responses.
+   * @return reponsesOffset Mean of responses.
    */
-  void CenterScaleData(const arma::mat& data,
-                       const arma::rowvec& responses,
-                       const bool centerData,
-                       const bool scaleData,
-                       arma::mat& dataProc,
-                       arma::rowvec& responsesProc,
-                       arma::colvec& dataOffset,
-                       arma::colvec& dataScale,
-                       double& responsesOffset);
+  double CenterScaleData(const arma::mat& data,
+                         const arma::rowvec& responses,
+                         const bool centerData,
+                         const bool scaleData,
+                         arma::mat& dataProc,
+                         arma::rowvec& responsesProc,
+                         arma::colvec& dataOffset,
+                         arma::colvec& dataScale);
 
   /**
    * Copy constructor. Construct the BayesianRidge object by copying the 
