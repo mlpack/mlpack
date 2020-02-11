@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(BCEWithLogitsLossTest)
   // Test the Backward function.
   module.Backward(std::move(input), std::move(target), std::move(output));
 
-  // Sum of expected output as calculated using pytorch = 0.3034
+  // Sum of expected output as calculated using pytorch = 0.2313
   double expectedOutputSum = arma::accu(output);
   BOOST_REQUIRE_CLOSE_FRACTION(expectedOutputSum, 0.2313, 0.0001);
 

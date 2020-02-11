@@ -22,10 +22,10 @@ template<typename InputDataType, typename OutputDataType>
 BCEWithLogitsLoss<InputDataType, OutputDataType>::BCEWithLogitsLoss(
     const double weight,
     const double posWeight,
-    const bool reduce) :
+    const bool reduction) :
     weight(weight),
     posWeight(posWeight),
-    reduce(reduce)
+    reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -51,12 +51,7 @@ double BCEWithLogitsLoss<InputDataType, OutputDataType>::Forward(
 
     totalLossReduced += lossThis;
   }
-
-  if (reduce)
-  {
-    return totalLossReduced / input.n_elem;
-  }
-  return totalLossReduced;
+  return reduction ? totalLossReduced / input.n_elem : totalLossReduced;
 }
 
 template<typename InputDataType, typename OutputDataType>

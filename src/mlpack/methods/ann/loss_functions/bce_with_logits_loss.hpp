@@ -41,13 +41,15 @@ class BCEWithLogitsLoss
    * Create the BCEWithLogitsLoss object.
    *
    * @param weight The manual rescaling factor given to loss.
+   * @param posWeight The weight of positive of examples.
+   *    posWeight = total negative examples / total positive examples.
    * @param reduction The boolean value, when 1, means reduction type is 'mean'
-   *                  else if it is 0 then reduction type is 'sum'.
+   *    else if it is 0 then reduction type is 'sum'.
    */
   BCEWithLogitsLoss(
     const double weight = 1.0,
     const double posWeight = 1.0,
-    const bool reduce = true);
+    const bool reduction = true);
 
   /**
    * Computes the binary cross-entropy with logits loss.
@@ -91,10 +93,10 @@ class BCEWithLogitsLoss
   //! Modify the posWeight.
   double& PosWeight() { return posWeight; }
 
-  //! Get the reduce.
-  bool Reduce() const { return reduce; }
-  //! Modify the reduce.
-  bool& Reduce() { return reduce; }
+  //! Get the reduction.
+  bool Reduction() const { return reduction; }
+  //! Modify the reduction.
+  bool& Reduction() { return reduction; }
 
   /**
    * Serialize the layer.
@@ -116,7 +118,7 @@ class BCEWithLogitsLoss
   double posWeight;
 
   //! The boolean value that tells if reduction is mean or sum.
-  bool reduce;
+  bool reduction;
 }; // class BCEWithLogitsLoss
 
 } // namespace ann
