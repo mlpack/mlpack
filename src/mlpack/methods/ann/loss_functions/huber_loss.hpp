@@ -42,8 +42,7 @@ class HuberLoss
    */
   HuberLoss(
     const double delta = 1.0,
-    const bool mean = true
-  );
+    const bool mean = true);
 
   /**
    * Computes the Huber Loss function.

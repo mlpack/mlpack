@@ -46,7 +46,7 @@ double HuberLoss<InputDataType, OutputDataType>::Forward(
   }
   if (mean)
   {
-    return totalLoss / input.n_elem
+    return totalLoss / input.n_elem;
   }
   return totalLoss;
 }
