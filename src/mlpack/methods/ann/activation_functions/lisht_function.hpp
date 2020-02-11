@@ -73,8 +73,7 @@ class LiSHTFunction
    */
   static double Deriv(const double y)
   {
-    return (4 * y * std::exp(2 * y) + std::exp(4 * y) - 1) /
-           (std::exp(4 * y) + 2 * std::exp(2 * y) + 1);
+    return std::tanh(y) + y * (1 - std::pow(std::tanh(y), 2));
   }
 
   /**
@@ -86,8 +85,7 @@ class LiSHTFunction
   template <typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType &y, OutputVecType &x)
   {
-    x = (4 * y % arma::exp(2 * y) + arma::exp(4 * y) - 1) /
-        (arma::exp(4 * y) + 2 * arma::exp(2 * y) + 1);
+    x = arma::tanh(y) + y % (1 - arma::pow(arma::tanh(y), 2));
   }
 }; // class LishtFunction
 
