@@ -114,4 +114,23 @@ BOOST_AUTO_TEST_CASE(SingularMatix)
   BOOST_REQUIRE(singular  == -1);
 }
 
+// Check that std are well computed/coherent. At least higher than the
+// estimated predictive variance.
+BOOST_AUTO_TEST_CASE(PredictiveUncertainties)
+{
+  arma::mat X;
+  arma::rowvec y;
+
+  GenerateProblem(X, y, 100, 10, 1);
+
+  BayesianRidge estimator(true, true);
+  estimator.Train(X, y);
+
+  arma::rowvec responses, std;
+  estimator.Predict(X, responses, std);
+  const double estStd = sqrt(estimator.Varaince());
+
+  for (size_t i = 0; i < X.n_cols; i++) BOOST_REQUIRE(std[i] > estStd);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
