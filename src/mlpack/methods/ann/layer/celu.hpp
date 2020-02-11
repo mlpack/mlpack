@@ -4,6 +4,16 @@
  *
  * Definition of the CELU activation function as descibed by Jonathan T. Barron.
  *
+ * For more information, read the following paper.
+ *
+ * @code
+ * @article{
+ *   author  = {Jonathan T. Barron},
+ *   title   = {Continuously Differentiable Exponential Linear Units},
+ *   year    = {2017}
+ * }
+ * @endcode
+ *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -35,24 +45,14 @@ namespace ann /** Artificial Neural Network. */ {
  * \right.
  * @f}
  *
- * For more information, read the following paper:
- *
- * @code
- * @article{
- *   author  = {Jonathan T. Barron},
- *   title   = {Continuously Differentiable Exponential Linear Units},
- *   year    = {2017}
- * }
- * @endcode
- *
  * In the deterministic mode, there is no computation of the derivative.
  *
  * @note During training deterministic should be set to false and during
  *       testing/inference deterministic should be set to true.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @ tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @ tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
@@ -187,7 +187,7 @@ class CELU
   //! Locally stored first derivative of the activation function.
   arma::mat derivative;
 
-  //! CELU Hyperparameter (0 < alpha)
+  //! CELU Hyperparameter (alpha > 0)
   double alpha;
 
   //! If true the derivative computation is disabled, see notes above.

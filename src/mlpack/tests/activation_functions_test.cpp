@@ -261,7 +261,7 @@ void CheckELUDerivativeCorrect(const arma::colvec input,
 
 /*
  * Implementation of the PReLU activation function test. The function
- * is implemented as PReLU layer in the file perametric_relu.hpp
+ * is implemented as PReLU layer in the file parametric_relu.hpp
  *
  * @param input Input data used for evaluating the PReLU activation
  *   function.
@@ -284,7 +284,7 @@ void CheckPReLUActivationCorrect(const arma::colvec input,
 /*
  * Implementation of the PReLU activation function derivative test.
  * The function is implemented as PReLU layer in the file
- * perametric_relu.hpp
+ * parametric_relu.hpp
  *
  * @param input Input data used for evaluating the PReLU activation
  *   function.
@@ -310,7 +310,7 @@ void CheckPReLUDerivativeCorrect(const arma::colvec input,
 /*
  * Implementation of the PReLU activation function gradient test.
  * The function is implemented as PReLU layer in the file
- * perametric_relu.hpp
+ * parametric_relu.hpp
  *
  * @param input Input data used for evaluating the PReLU activation
  *   function.
@@ -715,10 +715,11 @@ BOOST_AUTO_TEST_CASE(CELUFunctionTest)
   const arma::colvec desiredActivations("-0.86466472 3.2 4.5 \
                                          -1 1 -0.63212056 2 0");
 
-  const arma::colvec desiredDerivatives("0.13533528 1 1 0 \
-                                         1 0.36787944 1 1");
+  const arma::colvec desiredDerivatives("0.42119275 1 1 \
+                                         0.36787944 1 \
+                                         0.5314636 1 1");
 
   CheckCELUActivationCorrect(activationData, desiredActivations);
-  CheckCELUDerivativeCorrect(activationData, desiredDerivatives);
+  CheckCELUDerivativeCorrect(desiredActivations, desiredDerivatives);
 }
 BOOST_AUTO_TEST_SUITE_END();
