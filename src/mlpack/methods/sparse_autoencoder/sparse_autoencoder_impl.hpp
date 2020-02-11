@@ -68,7 +68,8 @@ SparseAutoencoder::SparseAutoencoder(const arma::mat& data,
 
   // Train the model.
   Timer::Start("sparse_autoencoder_optimization");
-  const double out = optimizer.Optimize(encoderFunction, parameters, callbacks...);
+  const double out = optimizer.Optimize(encoderFunction, parameters,
+      callbacks...);
   Timer::Stop("sparse_autoencoder_optimization");
 
   Log::Info << "SparseAutoencoder::SparseAutoencoder(): final objective of "

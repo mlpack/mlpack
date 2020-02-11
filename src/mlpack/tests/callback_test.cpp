@@ -228,7 +228,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencodeCallbackTest)
 
   ens::L_BFGS optimizer(5, 100);
   ens::StoreBestCoordinates<arma::mat> cb;
-  mlpack::nn::SparseAutoencoder encoder2(data1, 2, 1, 0, 0,0 ,optimizer, cb);
+  mlpack::nn::SparseAutoencoder encoder2(data1, 2, 1, 0, 0, 0 , optimizer, cb);
   BOOST_REQUIRE_GT(cb.BestObjective(), 0);
 }
 
