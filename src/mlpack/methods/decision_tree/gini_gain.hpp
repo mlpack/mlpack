@@ -111,21 +111,32 @@ class GiniGain
         // accWeights[1] += weight2;
         // accWeights[2] += weight3;
         // accWeights[3] += weight4;
-        if(i%4==0)
+        switch(i%4){
+          case 0:
+          {
           #pragma omp atomic
-          counts[labels[i]] += weight1;
-        else if(i%4==1)
-          #pragma omp atomic
-          counts2[labels[i]] += weight1;
-        else if(i%4==2)
-          #pragma omp atomic
-          counts3[labels[i]] += weight1;
-        else if(i%4==3)
-          #pragma omp atomic
-          counts4[labels[i]] += weight1;
-        
-        
-        
+            counts[labels[i]] += weight1;
+            break;
+          }
+          case 1:
+          {
+            #pragma omp atomic
+            counts2[labels[i]] += weight1;
+            break;
+          }
+          case 2:
+          {
+            #pragma omp atomic
+            counts3[labels[i]] += weight1;
+            break;
+          }
+          case 3:
+          {
+            #pragma omp atomic
+            counts4[labels[i]] += weight1;
+            break;
+          }
+        }
       }
       /*
       // Handle leftovers.
