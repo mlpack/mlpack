@@ -708,13 +708,13 @@ BOOST_AUTO_TEST_CASE(MishFunctionTest)
  */
 BOOST_AUTO_TEST_CASE(HardShrinkFunctionTest)
 {
-  const arma::colvec desiredActivations("-2 3.2 4.5 -100.2 1 -1 2 0");
+  const arma::colvec desiredActivations("-1.5 2.7 4 -99.7 0.5 -0.5 1.5 0");
 
   const arma::colvec desiredDerivatives("1 1 1 1 1 1 1 0");
 
-  CheckActivationCorrect<HardShrinkFunction>(activationData,
+  CheckHardShrinkActivationCorrect(activationData,
                                        desiredActivations);
-  CheckDerivativeCorrect<HardShrinkFunction>(desiredActivations,
+  CheckHardShrinkDerivativeCorrect(desiredActivations,
                                         desiredDerivatives);
 }
 BOOST_AUTO_TEST_SUITE_END();
