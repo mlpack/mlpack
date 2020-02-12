@@ -139,9 +139,9 @@ class HardShrink
    */
   double Inv(const double y)
   {
-    if (x > lambda || x < -1 * lambda)
+    if (y > lambda || y < -1 * lambda)
     {
-      return x;
+      return y;
     }
     return 0.;
   }
