@@ -2,6 +2,11 @@
  * @file softshrink.hpp
  * @author Lakshya Ojha
  *
+ * The soft shrinkage has thresholds proportional to the noise level given by 
+ * the user.
+ * The use of a soft-shrinkage activation function pro-vides adaptive denoising
+ * at various noise levels using a single CNN(Convolution Neural) without a requirement to train a
+ * unique CNN for each noise level.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -36,17 +41,21 @@ class SoftShrink
 {
  public:
   /**
-   * Create SOFTSHRINK object using specified hyperparameter lambda.
+   * Create SoftShrink object using specified hyperparameter lambda.
+   * Soft shrinkage has a threshold lambda which is calculated by multiplying the
+   * noise level sigma of the input(noisy image) and a coefficient 'a' which is one
+   * of the training parameter.
    * Default (lambda = 0.5). lambda should be > 0.
    * 
    * @param lambda parameter
    */
   SoftShrink(const double lambda = 0.5);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    * 
-   * @param input Input data used for evaluating the SOFTSHRINK function.
+   * @param input Input data used for evaluating the SoftShrink function.
    * @param output Resulting output activation
    */
   template<typename InputType, typename OutputType>
@@ -201,9 +210,9 @@ class SoftShrink
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Soft Shrink hyperparameter
+  //! Soft Shrink hyperparameter.
   double lambda;
-}; // class SOFTSHRINK
+}; // class SoftShrink
 
 } // namespace ann
 } // namespace mlpack
