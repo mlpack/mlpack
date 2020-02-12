@@ -117,9 +117,11 @@ class SoftShrink
   template<typename eT>
   void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
-    y = x;
-    y.transform([](const double x){
-                  return Fn(x);});
+    y.set_size(arma::size(x));
+    for(size_t i = 0; i < x.n_elem; i++)
+    {
+      y(i) = Fn(x(i));
+    }
   }
 
   /**
@@ -150,13 +152,15 @@ class SoftShrink
    * @param x The resulting inverse of the input data
    */
   template<typename InputVecType, typename OutputVecType>
-  static void Inv(const InputVecType& y,
+  void Inv(const InputVecType& y,
                   OutputVecType& x,
                   const double lambda = 0.5)
   {
-    x = y;
-    x.transform([](const double cx){
-                  return Inv(cx);});
+    x.set_size(arma::size(y));
+    for(size_t i = 0; i < y.n_elem; i++)
+    {
+      x(i) = Inv(y(i));
+    }
   }
 
   /**
@@ -184,9 +188,11 @@ class SoftShrink
   void Deriv(const InputVecType& y,
                     OutputVecType& x)
   {
-    x = y;
-    x.transform([](const double cy){
-                return Deriv(cy);});
+    x.set_size(arma::size(y));
+    for(size_t i = 0; i < y.n_elem; i++)
+    {
+      x(i) = Deriv(y(i));
+    }
   }
 
   //! Locally-stored delta object.

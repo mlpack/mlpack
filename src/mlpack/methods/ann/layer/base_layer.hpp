@@ -22,7 +22,6 @@
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
-#include <mlpack/methods/ann/activation_functions/softshrink_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -207,17 +206,6 @@ template <
     typename OutputDataType = arma::mat
 >
 using MishFunctionLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
-
-/**
- * Standard SoftShrink-Layer using the Soft Shrink activation function.
- */
-template <
-    class ActivationFunction = SoftShrinkFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using SoftShrinkFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 } // namespace ann
