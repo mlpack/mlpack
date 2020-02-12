@@ -46,13 +46,14 @@ BOOST_AUTO_TEST_CASE(HuberLossTest)
   input = arma::mat("17.45 12.91 13.63 29.01 7.12 15.47 31.52 31.97");
   target = arma::mat("16.52 13.11 13.67 29.51 24.31 15.03 30.72 34.07");
   double loss = module.Forward(std::move(input), std::move(target));
-  BOOST_REQUIRE_CLOSE_FRACTION(loss, 2.4106, 0.00001);
+  BOOST_REQUIRE_CLOSE_FRACTION(loss, 2.4106375, 0.000001);
 
   // Test the backward function.
   module.Backward(std::move(input), std::move(target), std::move(output));
 
   // Expected Output:
   // [0.1162 -0.0250 -0.0050 -0.0625 -0.1250  0.0550  0.1000 -0.1250]
+  // Sum of Expected Output = -0.07125.
   double expectedOutputSum = arma::accu(output);
   BOOST_REQUIRE_CLOSE_FRACTION(expectedOutputSum, -0.07125, 0.00001);
 
