@@ -134,7 +134,7 @@ class SoftShrink
   }
 
   /**
-   * Computes the inverse of the Soft Shrink function
+   * Computes the inverse of the Soft Shrink function.
    *             | y + lambda, y > 0
    * f^{-1}(y) = | y - lambda, y < 0
    *             | 0, otherwise
@@ -155,7 +155,7 @@ class SoftShrink
   }
 
   /**
-   * Computes the inverse of the Soft Shrink function
+   * Computes the inverse of the Soft Shrink function.
    * 
    * @param y Input data.
    * @param x The resulting inverse of the input data
@@ -173,7 +173,7 @@ class SoftShrink
   }
 
   /**
-   * Computes the first derivate of the Soft Shrink function
+   * Computes the first derivate of the Soft Shrink function.
    * 
    * @param y Input activation
    * @return f'(x) where f(x) = y

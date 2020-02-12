@@ -2,7 +2,7 @@
  * @file softshrink.hpp
  * @author Lakshya Ojha
  *
- * Implementation of Soft Shrink activation function
+ * Implementation of Soft Shrink activation function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,8 +18,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-// This constructor is called for SOFT SRHINK activation function
-// 'lambda' is a hyperparameter
+// This constructor is called for SOFT SRHINK activation function.
+// 'lambda' is a hyperparameter.
 template<typename InputDataType, typename OutputDataType>
 SoftShrink<InputDataType, OutputDataType>::SoftShrink(const double lambda) :
     lambda(lambda)
