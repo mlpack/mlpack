@@ -366,8 +366,8 @@ void TransposedConvolution<
   {
     mappedErrorPadded.set_size(mappedError.n_rows +
         paddingBackward.PadWLeft() + paddingBackward.PadWRight(),
-        mappedError.n_cols + paddingBackward.PadHTop() + paddingBackward.PadHBottom(),
-        mappedError.n_slices);
+        mappedError.n_cols + paddingBackward.PadHTop() +
+        paddingBackward.PadHBottom(), mappedError.n_slices);
 
     for (size_t i = 0; i < mappedError.n_slices; ++i)
     {
