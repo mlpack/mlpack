@@ -155,7 +155,7 @@ CosineTree::CosineTree(const arma::mat& dataset,
 
 //! Copy the given tree.
 CosineTree::CosineTree(const CosineTree& other) :
-    dataset(other.dataset),
+    dataset(new arma::mat(*other.dataset)),
     delta(other.delta),
     parent(NULL),
     left(NULL),
@@ -170,10 +170,6 @@ CosineTree::CosineTree(const CosineTree& other) :
     frobNormSquared(other.FrobNormSquared()),
     localDataset(other.localDataset && other.parent == NULL)
 {
-  // Performing a deep copy of the dataset.
-  arma::mat cpy = other.GetDataset();
-  dataset = &cpy;
-
   // Create left and right children (if any).
   if (other.Left())
   {
@@ -224,8 +220,7 @@ CosineTree& CosineTree::operator=(const CosineTree& other)
   delete right;
 
   // Performing a deep copy of the dataset.
-  arma::mat cpy = other.GetDataset();
-  dataset = &cpy;
+  dataset = new arma::mat(*other.dataset);
 
   delta = other.delta;
   parent = other.Parent();
