@@ -100,6 +100,9 @@ class SparseAutoencoder
    * @param lambda L2-regularization parameter.
    * @param beta KL divergence parameter.
    * @param rho Sparsity parameter.
+   * @param optimizer Desired optimizer.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *        See https://www.ensmallen.org/docs.html#callback-documentation.
    */
   template<typename OptimizerType, typename... CallbackTypes>
   SparseAutoencoder(const arma::mat& data,
