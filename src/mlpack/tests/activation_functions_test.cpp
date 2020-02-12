@@ -22,7 +22,6 @@
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
-#include <mlpack/methods/ann/activation_functions/hardshrink_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
