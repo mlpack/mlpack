@@ -15,7 +15,7 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-    namespace ann /** Artificial Neural Network. */ {
+namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Smooth L1 Loss Function computes the Smooth L1 distance between 
@@ -38,8 +38,7 @@ class SmoothL1Loss {
    */
   SmoothL1Loss(
       const bool takeMean = true,
-      const double sigma = 1.0
-    );
+      const double sigma = 1.0);
 
   /**
    * Computes the mean squared error function.

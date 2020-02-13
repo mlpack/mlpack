@@ -36,10 +36,10 @@ double SmoothL1Loss<InputDataType, OutputDataType>::Forward(
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     double delta = input[i] - target[i];
-    if (std::abs(delta) < 1/std::pow(sigma,2)) {
-      output += 0.5 * std::pow(sigma,2) * std::pow(delta,2);
+    if (std::abs(delta) < 1/std::pow(sigma, 2)) {
+      output += 0.5 * std::pow(sigma, 2) * std::pow(delta, 2);
     } else {
-      output += std::abs(delta) - 0.5 / std::pow(delta,2);
+      output += std::abs(delta) - 0.5 / std::pow(delta, 2);
     }
   }
 
@@ -57,8 +57,8 @@ void SmoothL1Loss<InputDataType, OutputDataType>::Backward(
   for (size_t i = 0; i < input.n_cols; ++i)
   {
     double delta = input[i] - target[i];
-    if (std::abs(delta) < 1/std::pow(sigma,2)) {
-      output[i] = std::pow(sigma,2) * delta;
+    if (std::abs(delta) < 1/std::pow(sigma, 2)) {
+      output[i] = std::pow(sigma, 2) * delta;
     } else {
       output[i] = delta > 0 : 1 : -1;
     }
