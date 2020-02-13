@@ -335,8 +335,8 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
  * Implementation of the Hard Shrink activation function test. The function is
  * implemented as Hard Shrink layer in the file hardshrink.hpp
  *
- * @param input Input data used for evaluating the LeakyReLU activation function.
- * @param target Target data used to evaluate the LeakyReLU activation.
+ * @param input Input data used for evaluating the HardShrink activation function.
+ * @param target Target data used to evaluate the HardShrink activation.
  */
 void CheckHardShrinkActivationCorrect(const arma::colvec input,
                                      const arma::colvec target)
@@ -354,11 +354,11 @@ void CheckHardShrinkActivationCorrect(const arma::colvec input,
 
 /*
  * Implementation of the HardShrink activation function derivative test.
- * The derivative function is implemented as LeakyReLU layer in the file
- * leaky_relu_layer.hpp
+ * The derivative function is implemented as HardShrink layer in the file
+ * hardshrink.hpp
  *
- * @param input Input data used for evaluating the LeakyReLU activation function.
- * @param target Target data used to evaluate the LeakyReLU activation.
+ * @param input Input data used for evaluating the HardShrink activation function.
+ * @param target Target data used to evaluate the HardShrink activation.
  */
 void CheckHardShrinkDerivativeCorrect(const arma::colvec input,
                                      const arma::colvec target)

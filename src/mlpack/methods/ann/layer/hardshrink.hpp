@@ -22,7 +22,7 @@ namespace mlpack {
 namespace ann /** Artifical Neural Network. */ {
 
 /**
- * HardShrinkage operator is defined as,
+ * HardShrink function is defined as,
  *         | x , if x >  lambda
  *  f(x) = | x , if x < -lambda
  *         | 0, otherwise
@@ -139,11 +139,7 @@ class HardShrink
    */
   double Inv(const double y)
   {
-    if (y > lambda || y < -1 * lambda)
-    {
-      return y;
-    }
-    return 0.;
+    Fn(y);
   }
 
   /**
