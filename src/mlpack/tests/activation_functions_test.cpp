@@ -333,10 +333,10 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
 
 /*
  * Implementation of the Soft Shrink activation function test. The function is
- * implemented as Soft Shrink layer in the file softshrink.hpp
+ * implemented as Soft Shrink layer in the file softshrink.hpp.
  *
- * @param input Input data used for evaluating the LeakyReLU activation function.
- * @param target Target data used to evaluate the LeakyReLU activation.
+ * @param input Input data used for evaluating the SoftShrink activation function.
+ * @param target Target data used to evaluate the SoftShrink activation.
  */
 void CheckSoftShrinkActivationCorrect(const arma::colvec input,
                                      const arma::colvec target)
@@ -354,11 +354,11 @@ void CheckSoftShrinkActivationCorrect(const arma::colvec input,
 
 /*
  * Implementation of the SoftShrink activation function derivative test.
- * The derivative function is implemented as LeakyReLU layer in the file
- * leaky_relu_layer.hpp
+ * The derivative function is implemented as SoftShrink layer in the file
+ * softshrink.hpp
  *
- * @param input Input data used for evaluating the LeakyReLU activation function.
- * @param target Target data used to evaluate the LeakyReLU activation.
+ * @param input Input data used for evaluating the SoftShrink activation function.
+ * @param target Target data used to evaluate the SoftShrink activation.
  */
 void CheckSoftShrinkDerivativeCorrect(const arma::colvec input,
                                      const arma::colvec target)
@@ -709,8 +709,8 @@ BOOST_AUTO_TEST_CASE(SoftShrinkFunctionTest)
   const arma::colvec desiredDerivatives("1 1 1 1 1 1 1 0");
 
   CheckSoftShrinkActivationCorrect(activationData,
-                                       desiredActivations);
+                                   desiredActivations);
   CheckSoftShrinkDerivativeCorrect(desiredActivations,
-                                        desiredDerivatives);
+                                   desiredDerivatives);
 }
 BOOST_AUTO_TEST_SUITE_END();

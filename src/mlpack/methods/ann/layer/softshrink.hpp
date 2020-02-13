@@ -175,8 +175,8 @@ class SoftShrink
   /**
    * Computes the first derivate of the Soft Shrink function.
    * 
-   * @param y Input activation
-   * @return f'(x) where f(x) = y
+   * @param y Input activation.
+   * @return f'(x) where f(x) = y.
    */
   double Deriv(const double y)
   {
