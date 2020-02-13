@@ -155,7 +155,8 @@ CosineTree::CosineTree(const arma::mat& dataset,
 
 //! Copy the given tree.
 CosineTree::CosineTree(const CosineTree& other) :
-    dataset(new arma::mat(*other.dataset)),
+    // Copy matrix, but only if we are the root.
+    dataset((other.parent == NULL) ? new arma::mat(*other.dataset) : NULL),
     delta(other.delta),
     parent(NULL),
     left(NULL),
