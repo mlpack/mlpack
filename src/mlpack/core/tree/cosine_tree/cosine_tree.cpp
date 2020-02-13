@@ -168,7 +168,7 @@ CosineTree::CosineTree(const CosineTree& other) :
     numColumns(other.NumColumns()),
     l2Error(other.L2Error()),
     frobNormSquared(other.FrobNormSquared()),
-    localDataset(other.localDataset && other.parent == NULL)
+    localDataset(other.parent == NULL)
 {
   // Create left and right children (if any).
   if (other.Left())
