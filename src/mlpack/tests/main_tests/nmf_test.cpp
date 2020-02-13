@@ -337,7 +337,7 @@ BOOST_AUTO_TEST_CASE(NMFWGivenInitTest)
 }
 
 /**
- * Test NMF with given initial_h
+ * Test NMF with given initial_h.
  */
 BOOST_AUTO_TEST_CASE(NMFHGivenInitTest)
 {
