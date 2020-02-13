@@ -30,7 +30,7 @@
   * Better error handling of eigendecompositions and Cholesky decompositions
     (#2088, #1840).
 
-  * Add Valid and Same Padding for Transposed Convolution layer.  
+  * Add Valid and Same Padding for Transposed Convolution layer (#2163).
 
 ### mlpack 3.2.2
 ###### 2019-11-26

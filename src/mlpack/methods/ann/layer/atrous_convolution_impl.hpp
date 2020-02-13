@@ -64,44 +64,22 @@ AtrousConvolution<
     const size_t dilationWidth,
     const size_t dilationHeight,
     const std::string& paddingType) :
-    inSize(inSize),
-    outSize(outSize),
-    kernelWidth(kernelWidth),
-    kernelHeight(kernelHeight),
-    strideWidth(strideWidth),
-    strideHeight(strideHeight),
-    inputWidth(inputWidth),
-    inputHeight(inputHeight),
-    outputWidth(0),
-    outputHeight(0),
-    dilationWidth(dilationWidth),
-    dilationHeight(dilationHeight)
+    AtrousConvolution(
+    inSize,
+    outSize,
+    kernelWidth,
+    kernelHeight,
+    strideWidth,
+    strideHeight,
+    std::tuple<size_t, size_t>(padW, padW),
+    std::tuple<size_t, size_t>(padH, padH),
+    inputWidth,
+    inputHeight,
+    dilationWidth,
+    dilationHeight,
+    paddingType)
 {
-  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
-      1);
-
-  // Transform paddingType to lowercase.
-  std::string paddingTypeLow = paddingType;
-  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
-      [](unsigned char c){ return std::tolower(c); });
-
-  size_t padWLeft = padW;
-  size_t padWRight = padW;
-  size_t padHBottom = padH;
-  size_t padHTop = padH;
-  if (paddingTypeLow == "valid")
-  {
-    padWLeft = 0;
-    padWRight = 0;
-    padHTop = 0;
-    padHBottom = 0;
-  }
-  else if (paddingTypeLow == "same")
-  {
-    InitializeSamePadding(padWLeft, padWRight, padHTop, padHBottom);
-  }
-
-  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+  // Nothing to do here.
 }
 
 template<
