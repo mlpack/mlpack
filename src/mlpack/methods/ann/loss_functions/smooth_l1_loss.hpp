@@ -18,8 +18,8 @@ namespace mlpack {
     namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The Smooth L1 loss is a loss function that measures the mean absolute error (MAE)
- * between each element in the input x and target y
+ * The Smooth L1 Loss Function computes the Smooth L1 distance between 
+ * each element in the input x and target y
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
