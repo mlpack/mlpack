@@ -56,7 +56,7 @@ class HardShrink
    * f(x) by propagating the activity forward through f.
    * 
    * @param input Input data used for evaluating the HardShrink function.
-   * @param output Resulting output activation
+   * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
   void Forward(const InputType&& input, OutputType&& output);
@@ -68,7 +68,7 @@ class HardShrink
    * 
    * @param input The propagated input activation f(x).
    * @param gy The backpropagated error.
-   * @param g The calculated gradient
+   * @param g The calculated gradient.
    */
   template<typename DataType>
   void Backward(const DataType&& input,
@@ -146,7 +146,7 @@ class HardShrink
    * Computes the inverse of the Hard Shrink function.
    * 
    * @param y Input data.
-   * @param x The resulting inverse of the input data
+   * @param x The resulting inverse of the input data.
    */
   template<typename InputVecType, typename OutputVecType>
   void Inv(const InputVecType& y,
