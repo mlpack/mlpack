@@ -111,14 +111,13 @@ class AverageInitialization
     {
       // Initialize W to random values
       M.randu(n, r);
-      M += avgV;
     }
     else
     {
       // Initialize H to random values
       M.randu(r, m);
-      M += avgV;
     }
+    M += avgV;
   }
 
   //! Serialize the object (in this case, there is nothing to do).
