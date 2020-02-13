@@ -288,6 +288,7 @@ class TransposedConvolution
     for (size_t s = 0; s < output.n_slices; s++)
       output.slice(s) = arma::fliplr(arma::flipud(input.slice(s)));
   }
+
   /*
    * Function to assign padding such that output size is same as input size.
    */
