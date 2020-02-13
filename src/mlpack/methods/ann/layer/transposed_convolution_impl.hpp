@@ -65,19 +65,19 @@ TransposedConvolution<
     const size_t outputHeight,
     const std::string& paddingType) :
     TransposedConvolution(
-    inSize,
-    outSize,
-    kernelWidth,
-    kernelHeight,
-    strideWidth,
-    strideHeight,
-    std::tuple<size_t, size_t>(padW, padW),
-    std::tuple<size_t, size_t>(padH, padH),
-    inputWidth,
-    inputHeight,
-    outputWidth,
-    outputHeight,
-    paddingType)
+      inSize,
+      outSize,
+      kernelWidth,
+      kernelHeight,
+      strideWidth,
+      strideHeight,
+      std::tuple<size_t, size_t>(padW, padW),
+      std::tuple<size_t, size_t>(padH, padH),
+      inputWidth,
+      inputHeight,
+      outputWidth,
+      outputHeight,
+      paddingType)
 {
   // Nothing to do here.
 }

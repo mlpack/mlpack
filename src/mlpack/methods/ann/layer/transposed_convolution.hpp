@@ -90,46 +90,46 @@ class TransposedConvolution
                         const std::string& paddingType = "None");
 
   /**
-     * Create the Transposed Convolution object using the specified number of
-     * input maps, output maps, filter size, stride and padding parameter.
-     *
-     * Note: The equivalent stride of a transposed convolution operation is always
-     * equal to 1. In this implementation, stride of filter represents the stride
-     * of the associated convolution operation.
-     * Note: Padding of input represents padding of associated convolution
-     * operation.
-     *
-     * @param inSize The number of input maps.
-     * @param outSize The number of output maps.
-     * @param kernelWidth Width of the filter/kernel.
-     * @param kernelHeight Height of the filter/kernel.
-     * @param strideWidth Stride of filter application in the x direction.
-     * @param strideHeight Stride of filter application in the y direction.
-     * @param padW A two-value tuple indicating padding widths of the input.
-     *             First value is padding at left side. Second value is padding on
-     *             right side.
-     * @param padH A two-value tuple indicating padding heights of the input.
-     *             First value is padding at top. Second value is padding on
-     *             bottom.
-     * @param inputWidth The width of the input data.
-     * @param inputHeight The height of the input data.
-     * @param outputWidth The width of the output data.
-     * @param outputHeight The height of the output data.
-     * @param paddingType The type of padding (Valid or Same). Defaults to None.
-     */
-    TransposedConvolution(const size_t inSize,
-                          const size_t outSize,
-                          const size_t kernelWidth,
-                          const size_t kernelHeight,
-                          const size_t strideWidth,
-                          const size_t strideHeight,
-                          const std::tuple<size_t, size_t>& padW,
-                          const std::tuple<size_t, size_t>& padH,
-                          const size_t inputWidth = 0,
-                          const size_t inputHeight = 0,
-                          const size_t outputWidth = 0,
-                          const size_t outputHeight = 0,
-                          const std::string& paddingType = "None");
+  * Create the Transposed Convolution object using the specified number of
+  * input maps, output maps, filter size, stride and padding parameter.
+  *
+  * Note: The equivalent stride of a transposed convolution operation is always
+  * equal to 1. In this implementation, stride of filter represents the stride
+  * of the associated convolution operation.
+  * Note: Padding of input represents padding of associated convolution
+  * operation.
+  *
+  * @param inSize The number of input maps.
+  * @param outSize The number of output maps.
+  * @param kernelWidth Width of the filter/kernel.
+  * @param kernelHeight Height of the filter/kernel.
+  * @param strideWidth Stride of filter application in the x direction.
+  * @param strideHeight Stride of filter application in the y direction.
+  * @param padW A two-value tuple indicating padding widths of the input.
+  *             First value is padding at left side. Second value is padding on
+  *             right side.
+  * @param padH A two-value tuple indicating padding heights of the input.
+  *             First value is padding at top. Second value is padding on
+  *             bottom.
+  * @param inputWidth The width of the input data.
+  * @param inputHeight The height of the input data.
+  * @param outputWidth The width of the output data.
+  * @param outputHeight The height of the output data.
+  * @param paddingType The type of padding (Valid or Same). Defaults to None.
+  */
+  TransposedConvolution(const size_t inSize,
+                        const size_t outSize,
+                        const size_t kernelWidth,
+                        const size_t kernelHeight,
+                        const size_t strideWidth,
+                        const size_t strideHeight,
+                        const std::tuple<size_t, size_t>& padW,
+                        const std::tuple<size_t, size_t>& padH,
+                        const size_t inputWidth = 0,
+                        const size_t inputHeight = 0,
+                        const size_t outputWidth = 0,
+                        const size_t outputHeight = 0,
+                        const std::string& paddingType = "None");
 
   /*
    * Set the weight and bias term.
