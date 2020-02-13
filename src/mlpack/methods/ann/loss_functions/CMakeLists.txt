@@ -17,6 +17,8 @@ set(SOURCES
   reconstruction_loss_impl.hpp
   sigmoid_cross_entropy_error.hpp
   sigmoid_cross_entropy_error_impl.hpp
+  smooth_l1_loss.hpp
+  smooth_l1_loss_impl.hpp
 )
 
 # Add directory name to sources.
