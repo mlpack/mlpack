@@ -41,6 +41,8 @@ set(SOURCES
   empty_loss_impl.hpp
   mean_absolute_percentage_error.hpp
   mean_absolute_percentage_error_impl.hpp
+  triplet_margin_loss.hpp
+  triplet_margin_loss_impl.hpp
 )
 
 # Add directory name to sources.

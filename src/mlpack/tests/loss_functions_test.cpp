@@ -33,6 +33,7 @@
 #include <mlpack/methods/ann/loss_functions/l1_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/soft_margin_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_absolute_percentage_error.hpp>
+#include <mlpack/methods/ann/loss_functions/triplet_margin_loss.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -897,3 +898,48 @@ TEST_CASE("MeanAbsolutePercentageErrorTest", "[LossFunctionsTest]")
   REQUIRE(output.n_cols == input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
 }
+
+/*
+ * Simple test for the Triplet Margin Loss function.
+ */
+BOOST_AUTO_TEST_CASE(TripletMarginLossTest)
+{
+  arma::mat anchor, positive, negative, output;
+  TripletMarginLoss<> module;
+
+  // Test the Forward function on a user generator input and compare it against
+  // the manually calculated result.
+  anchor = arma::mat("2 3 5");
+  positive = arma::mat("10 12 13");
+  negative = arma::mat("4 5 7");
+  double error = module.Forward(std::move(anchor),
+      std::move(positive), std::move(negative));
+  BOOST_REQUIRE_EQUAL(error, 66);
+
+  // Test the Backward function.
+  module.Backward(std::move(anchor),
+      std::move(positive), std::move(negative), std::move(output));
+  // According to the used backward formula:
+  // output = 2 * (negative - positive) / anchor.n_cols,
+  // output * nofColumns / 2 + positive should be equal to negative.
+  CheckMatrices(negative, output * output.n_cols / 2 + positive);
+  BOOST_REQUIRE_EQUAL(output.n_rows, anchor.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, anchor.n_cols);
+
+  // Test the error function on a single input.
+  anchor = arma::mat("4");
+  positive = arma::mat("7");
+  negative = arma::mat("1");
+  error = module.Forward(std::move(anchor),
+      std::move(positive), std::move(negative));
+  BOOST_REQUIRE_EQUAL(error, 1.0);
+
+  // Test the Backward function on a single input.
+  module.Backward(std::move(anchor),
+      std::move(positive), std::move(negative), std::move(output));
+  // Test whether the output is negative.
+  BOOST_REQUIRE_EQUAL(arma::accu(output), -12);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 1);
+}
+
+BOOST_AUTO_TEST_SUITE_END();
