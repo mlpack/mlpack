@@ -23,6 +23,7 @@
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
+#include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -219,6 +220,18 @@ template <
 >
 using LiSHTFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard GELU-Layer using the GELU activation function.
+ */
+template <
+    class ActivationFunction = GELUFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using GELUFunctionLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
 } // namespace ann
 } // namespace mlpack
 
