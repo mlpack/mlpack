@@ -47,7 +47,6 @@ double BayesianRidge::Train(const arma::mat& data,
                                     t,
                                     dataOffset,
                                     dataScale);
-                                    
 
   // Compute this quantities once and for all.
   const arma::colvec vecphitT = phi * t.t();
@@ -131,10 +130,9 @@ void BayesianRidge::Predict(const arma::mat& points,
 {
   // Center and scaleData the points before applying the model.
   const arma::mat X = (points.each_col() - dataOffset).each_col() / dataScale;
-  
   predictions = omega.t() * X + responsesOffset;
   std = sqrt(Variance() + sum((X % (matCovariance * X)), 0));
- }
+}
 
 double BayesianRidge::Rmse(const arma::mat& data,
                            const arma::rowvec& responses) const

@@ -91,9 +91,11 @@ PARAM_TMATRIX_IN("input", "Matrix of covariates (X).", "i");
 
 PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");
 
-PARAM_MODEL_IN(BayesianRidge, "input_model", "Trained BayesianRidge model to use.", "m");
+PARAM_MODEL_IN(BayesianRidge, "input_model", "Trained BayesianRidge model "
+               "to use.", "m");
 
-PARAM_MODEL_OUT(BayesianRidge, "output_model", "Output BayesianRidge model.", "M");
+PARAM_MODEL_OUT(BayesianRidge, "output_model", "Output BayesianRidge model.",
+                "M");
 
 PARAM_TMATRIX_IN("test", "Matrix containing points to regress on (test "
                  "points).", "t");
