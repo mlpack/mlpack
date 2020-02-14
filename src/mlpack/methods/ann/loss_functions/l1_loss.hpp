@@ -36,9 +36,10 @@ class L1Loss
  public:
   /**
    * Create the L1Loss object.
+   *
+   * @param mean Reduction type. If true, performs mean of loss else sum.
    */
-  L1Loss(
-    const bool mean = true);
+  L1Loss(const bool mean = true);
 
   /**
    * Computes the L1 Loss function.
@@ -71,7 +72,7 @@ class L1Loss
   bool& Mean() { return mean; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);

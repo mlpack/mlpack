@@ -33,9 +33,9 @@ double L1Loss<InputDataType, OutputDataType>::Forward(
 { 
   if (mean)
   {
-    return arma::sum(arma::abs(input - output)) / input.n_elem;
+    return arma::sum(arma::abs(input - target)) / input.n_elem;
   }
-  return arma::sum(arma::abs(input - output));
+  return arma::sum(arma::abs(input - target));
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -45,11 +45,8 @@ void L1Loss<InputDataType, OutputDataType>::Backward(
     const TargetType&& target,
     OutputType&& output)
 {
-  if (mean)
-  {
-    return 1;
-  }
-  return input.n_elem;
+  for (size_t i = 0; i < input.n_elem; ++i)
+    output[i] = (input[i] - target[i])/arma::abs(input[i] - target[i]);
 }
 
 template<typename InputDataType, typename OutputDataType>
