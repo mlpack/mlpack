@@ -64,7 +64,7 @@ template <
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the output parameter.
-  double& Margin() const { return margin; }
+  double Margin() const { return margin; }
   //! Modify the output parameter.
   double& Margin() { return margin; }
 
