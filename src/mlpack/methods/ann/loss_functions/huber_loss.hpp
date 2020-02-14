@@ -39,6 +39,11 @@ class HuberLoss
  public:
   /**
    * Create the HuberLoss object.
+   *
+   * @param delta The threshold value upto which squared error is followed and
+   *              after which absolute error is considered.
+   * @param mean It takes either 1 or 0 i.e. true or false. If true then
+   *             mean of the total loss is taken otherwise sum.
    */
   HuberLoss(
     const double delta = 1.0,
@@ -52,6 +57,7 @@ class HuberLoss
    */
   template<typename InputType, typename TargetType>
   double Forward(const InputType&& input, const TargetType&& target);
+
   /**
    * Ordinary feed backward pass of a neural network.
    *
@@ -80,7 +86,7 @@ class HuberLoss
   bool& Mean() { return mean; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);

@@ -44,11 +44,7 @@ double HuberLoss<InputDataType, OutputDataType>::Forward(
           ? delta * (absError - 0.5 * delta) : 0.5 * std::pow(absError, 2);
       totalLoss += lossThis;
   }
-  if (mean)
-  {
-    return totalLoss / input.n_elem;
-  }
-  return totalLoss;
+  return mean ? totalLoss / input.n_elem : totalLoss;
 }
 
 template<typename InputDataType, typename OutputDataType>
