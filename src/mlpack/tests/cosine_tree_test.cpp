@@ -236,7 +236,7 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorCosineTreeTest)
   std::vector<int> v1, v2, v3;
 
   // Make a random dataset.
-  arma::mat* data = new arma::mat(numRows, numCols,arma::fill::randu);
+  arma::mat* data = new arma::mat(numRows, numCols, arma::fill::randu);
 
   // Make a cosine tree, with the generated dataset.
   CosineTree* ctree1 = new CosineTree(*data);
