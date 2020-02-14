@@ -4,6 +4,19 @@
  *
  * Definition of ISRU (Inverse Square Root Unit) activation function.
  *
+ * For more information, refer the following paper.
+ *
+ * @code
+ * @article{Carlile2017,
+ *   author  = {Brad Carlile, Guy Delamarter, Paul Kinney, Akiko Marti,
+ *              Brian Whitney},
+ *   title   = {Improving Deep Learning by Inverse Square Root Linear
+ *              Units (ISRLUs)},
+ *   year    = {2015},
+ *   url     = {https://arxiv.org/abs/1507.06228},
+ * }
+ * @endcode
+ *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -33,10 +46,11 @@ class ISRU
 {
  public:
   /**
-   * Create ISRU object using specified hyperparameter alpha.
-   * Default (alpha = 0.1). Alpha should be > 0.
-   * ISRU is defined as f(x) = x / (1 + alpha * x^{2})^{1/2}.
-   * 
+   * Create ISRU object using specified Hyperparameter alpha.
+   * Hyperparameter alpha controls the value to which the ISRU function
+   * saturates (default = 0.1).
+   * Alpha should be > 0.
+   *
    * @param alpha hyperparameter used to calculate ISRU function.
    */
   ISRU(const double alpha = 0.1);
