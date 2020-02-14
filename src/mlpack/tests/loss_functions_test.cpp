@@ -736,7 +736,6 @@ BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorTest)
   module.Backward(std::move(input1), std::move(target1), std::move(output));
   for (double el : output)
   {
-    // For the 0.5 constant vector we should get 0.5 everywhere.
     BOOST_REQUIRE_EQUAL(el , 0.5);
   }
   BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);

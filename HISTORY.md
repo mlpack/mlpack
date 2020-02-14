@@ -49,6 +49,7 @@
 
   * Add Mish activation function (#2158).
 
+<<<<<<< HEAD
   * Update `init_rules` in AMF to allow users to merge two initialization
     rules (#2151).
 
@@ -67,6 +68,9 @@
 
   * Change neural network types to avoid unnecessary use of rvalue references
     (#2259).
+=======
+  * Add L1 Loss function (#2203)
+>>>>>>> Adding changes in History.md
 
   * Bump minimum Boost version to 1.58 (#2305).
 
