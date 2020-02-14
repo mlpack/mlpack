@@ -27,7 +27,10 @@ namespace decision_stump {
  * each bin.  Bin i is specified by the range [split[i], split[i + 1]).  The
  * last bin has range up to \infty (split[i + 1] does not exist in that case).
  * Points that are below the first bin will take the label of the first bin.
- * Note: This Class has been and should be removed in mlpack 4.0.0.
+ *
+ * @note
+ * This class has been deprecated and should be removed in mlpack 4.0.0.  Use
+ * `ID3DecisionStump`, found in src/mlpack/methods/decision_tree/, instead.
  *
  * @tparam MatType Type of matrix that is being used (sparse or dense).
  */

@@ -590,8 +590,8 @@ using DecisionStump = DecisionTree<FitnessFunction,
                                    false>;
 
 /**
- * Convenience typedef for ID3decision stumps (single level decision trees
- * made with ID3 algorithm).
+ * Convenience typedef for ID3 decision stumps (single level decision trees made
+ * with the ID3 algorithm).
  */
 typedef DecisionTree<InformationGain,
                      BestBinaryNumericSplit,
