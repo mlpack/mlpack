@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * The DecisionStump class has been marked deprecated; use the `DecisionTree`
+    class with `NoRecursion=true` or use `ID3DecisionStump` instead (#2099).
+
   * Added `probabilities_file` parameter to get the probabilities matrix of
     AdaBoost classifier (#2050).
 
