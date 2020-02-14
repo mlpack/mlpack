@@ -142,7 +142,7 @@ static void mlpackMain()
 
     // Load responses.  The responses should be a one-dimensional vector, and it
     // seems more likely that these will be stored with one response per line
-    // (one per row).  So we should not transpose upon loading.
+    // (one per row). So we should not transpose upon loading.
     mat matY = std::move(CLI::GetParam<arma::mat>("responses"));
 
     // Make sure y is oriented the right way.
