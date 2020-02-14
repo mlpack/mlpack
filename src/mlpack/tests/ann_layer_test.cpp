@@ -2947,6 +2947,11 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   module1.Forward(std::move(input), std::move(output));
   // Value calculated using tensorflow.nn.conv2d_transpose().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0.0);
+
+  // Test the Backward Function.
+  module1.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
+
   // Test Valid for non zero padding.
   TransposedConvolution<> module2(1, 1, 3, 3, 2, 2,
       std::tuple<size_t, size_t>(0, 0), std::tuple<size_t, size_t>(0, 0),
@@ -2963,6 +2968,10 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   // Value calculated using torch.nn.functional.conv_transpose2d().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 120.0);
 
+  // Test the Backward Function.
+  module2.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 960.0);
+
   // Test for same padding type.
   TransposedConvolution<> module3(1, 1, 3, 3, 2, 2, 0, 0, 3, 3, 3, 3, "SAME");
   // Test the forward function.
@@ -2973,6 +2982,11 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+
+  // Test the Backward Function.
+  module3.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
+
   // Output shape should equal input.
   TransposedConvolution<> module4(1, 1, 3, 3, 1, 1,
     std::tuple<size_t, size_t>(2, 2), std::tuple<size_t, size_t>(2, 2),
@@ -2986,6 +3000,10 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 
+  // Test the Backward Function.
+  module4.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
+
   TransposedConvolution<> module5(1, 1, 3, 3, 2, 2, 0, 0, 2, 2, 2, 2, "SAME");
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 3, 4);
@@ -2996,6 +3014,10 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 
+  // Test the Backward Function.
+  module5.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
+
   TransposedConvolution<> module6(1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 5, 5, "SAME");
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
@@ -3005,5 +3027,9 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+
+  // Test the Backward Function.
+  module6.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
 }
 BOOST_AUTO_TEST_SUITE_END();
