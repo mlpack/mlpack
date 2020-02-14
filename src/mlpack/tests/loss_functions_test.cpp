@@ -25,8 +25,15 @@
 #include <mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_bias_error.hpp>
 #include <mlpack/methods/ann/loss_functions/dice_loss.hpp>
+<<<<<<< HEAD
 #include <mlpack/methods/ann/loss_functions/log_cosh_loss.hpp>
+<<<<<<< HEAD
 #include <mlpack/methods/ann/loss_functions/hinge_embedding_loss.hpp>
+=======
+=======
+#include <mlpack/methods/ann/loss_functions/cosine_embedding_loss.hpp>
+>>>>>>> Add Cosine Embeddings
+>>>>>>> Add Cosine Embeddings
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -578,4 +585,23 @@ BOOST_AUTO_TEST_CASE(HingeEmbeddingLossTest)
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 }
+
+/**
+ * Simple test for the Cosine Embedding loss function.
+ */
+BOOST_AUTO_TEST_CASE(CosineEmbeddingLossTest)
+{
+  arma::mat input1, input2, y, target, output;
+  double loss;
+  CosineEmbeddingLoss<> module;
+
+  // Test the Forward function. Loss should be 0 if input1 = input2 and y = 1.
+  input1 = arma::ones(10, 1);
+  input2 = arma::ones(10, 1);
+  y = arma::ones(1);
+  loss = module.Forward(std::move(input1),std::move(input1),
+      std::move(target));
+  BOOST_REQUIRE_CLOSE(loss, 0.0, 1e-4);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
