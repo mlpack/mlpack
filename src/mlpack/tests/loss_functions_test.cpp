@@ -30,6 +30,7 @@
 #include <mlpack/methods/ann/loss_functions/hinge_embedding_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/cosine_embedding_loss.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
+#include <mlpack/methods/ann/init_rules/l1_loss.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -709,6 +710,45 @@ BOOST_AUTO_TEST_CASE(MarginRankingLossTest)
 
   CheckMatrices(output, arma::mat("0.000000 0.000000 0.091240 0.000000 "
       "-0.753830 1.336900 0.000000 0.000000 -0.207000 0.328810"), 1e-6);
+}
+
+/**
+ * Simple test for the l1 loss function.
+ */
+BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorTest)
+{
+  arma::mat input1, input2, output, target1, target2;
+  CrossEntropyError<> module(1e-6);
+
+  // Test the Forward function on a user generator input and compare it against
+  // the manually calculated result.
+  input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5");
+  target1 = arma::zeros(1, 7);
+  double error1 = module.Forward(std::move(input1), std::move(target1));
+  BOOST_REQUIRE_EQUAL(error1, 3.5);
+
+  input2 = arma::mat("0 1 1 0 1 0 0 1");
+  target2 = arma::mat("0 1 1 0 1 0 0 1");
+  double error2 = module.Forward(std::move(input2), std::move(target2));
+  BOOST_REQUIRE_EQUAL(error2, 0);
+
+  // Test the Backward function.
+  module.Backward(std::move(input1), std::move(target1), std::move(output));
+  for (double el : output)
+  {
+    // For the 0.5 constant vector we should get 0.5 everywhere.
+    BOOST_REQUIRE_EQUAL(el , 0.5);
+  }
+  BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
+
+  module.Backward(std::move(input2), std::move(target2), std::move(output));
+  for (size_t i = 0; i < 7; ++i)
+  {
+      BOOST_REQUIRE_EQUAL(el + 1, 0);
+  }
+  BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

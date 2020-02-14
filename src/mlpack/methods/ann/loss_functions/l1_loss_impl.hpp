@@ -45,8 +45,7 @@ void L1Loss<InputDataType, OutputDataType>::Backward(
     const TargetType&& target,
     OutputType&& output)
 {
-  for (size_t i = 0; i < input.n_elem; ++i)
-    output[i] = (input[i] - target[i])/arma::abs(input[i] - target[i]);
+  output = arma::sign(input - target);
 }
 
 template<typename InputDataType, typename OutputDataType>
