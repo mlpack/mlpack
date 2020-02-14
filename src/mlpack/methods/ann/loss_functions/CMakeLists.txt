@@ -13,6 +13,8 @@ set(SOURCES
   mean_squared_error_impl.hpp
   negative_log_likelihood.hpp
   negative_log_likelihood_impl.hpp
+  log_cosh_loss.hpp
+  log_cosh_loss_impl.hpp
   reconstruction_loss.hpp
   reconstruction_loss_impl.hpp
   sigmoid_cross_entropy_error.hpp
