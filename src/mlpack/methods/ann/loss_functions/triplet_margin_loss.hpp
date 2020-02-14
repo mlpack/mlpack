@@ -24,7 +24,6 @@ template <
 class TripletMarginLoss
 {
  public:
-
   /**
    * Create the TripletMarginLoss object with Hyperparameter margin.
    */
@@ -49,8 +48,8 @@ template<typename AnchorType, typename PositiveType, typename NegativeType>
    * @param output The calculated error.
    */
 template <
-    typename AnchorType, 
-    typename PositiveType, 
+    typename AnchorType,
+    typename PositiveType,
     typename NegativeType,
     typename OutputType
 >
@@ -81,9 +80,9 @@ template <
 
   //! The margin value used in calculating Triplet Margin Loss.
   double margin;
-}; // class TripletLossMargin 
+}; // class TripletLossMargin
 
-} //namespace ann
+} // namespace ann
 } // namespace mlpack
 
 // include implementation.
