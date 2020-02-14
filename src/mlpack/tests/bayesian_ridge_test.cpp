@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(PredictiveUncertainties)
 
   arma::rowvec responses, std;
   estimator.Predict(X, responses, std);
-  const double estStd = sqrt(estimator.Varaince());
+  const double estStd = sqrt(estimator.Variance());
 
   for (size_t i = 0; i < X.n_cols; i++) BOOST_REQUIRE(std[i] > estStd);
 }
