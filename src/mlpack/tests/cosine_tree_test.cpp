@@ -236,14 +236,14 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorCosineTreeTest)
   std::vector<int> v1, v2, v3;
 
   // Make a random dataset.
-  arma::mat data = arma::randu(numRows, numCols);
+  arma::mat* data = new arma::mat(numRows, numCols,arma::fill::randu);
 
   // Make a cosine tree, with the generated dataset.
-  CosineTree ctree1(data);
+  CosineTree* ctree1 = new CosineTree(*data);
 
   // Stacks for depth first search of the tree.
   std::vector<CosineTree*> nodeStack1, nodeStack2, nodeStack3;
-  nodeStack1.push_back(&ctree1);
+  nodeStack1.push_back(ctree1);
 
   // While stack is not empty.
   while (nodeStack1.size())
@@ -271,8 +271,11 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorCosineTreeTest)
   }
 
   // Copy constructor and operator.
-  CosineTree ctree2(ctree1);
-  CosineTree ctree3 = ctree1;
+  CosineTree ctree2(*ctree1);
+  CosineTree ctree3 = *ctree1;
+
+  delete ctree1;
+  delete data;
 
   nodeStack2.push_back(&ctree2);
   nodeStack3.push_back(&ctree3);

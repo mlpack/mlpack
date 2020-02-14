@@ -221,7 +221,7 @@ CosineTree& CosineTree::operator=(const CosineTree& other)
   delete right;
 
   // Performing a deep copy of the dataset.
-  dataset = new arma::mat(*other.dataset);
+  dataset = (other.parent == NULL) ? new arma::mat(*other.dataset) : NULL;
 
   delta = other.delta;
   parent = other.Parent();
