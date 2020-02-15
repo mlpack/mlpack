@@ -65,7 +65,7 @@ void Padding<InputDataType, OutputDataType>::Backward(
   g = gy.submat(padWLeft, padHTop, padWLeft + nRows - 1,
       padHTop + nCols - 1);
   BOOST_TEST_MESSAGE( "backward" )
-  BOOST_TEST_MESSAGE( "gy: " << input );
+  BOOST_TEST_MESSAGE( "gy: " << gy );
   BOOST_TEST_MESSAGE( "padslrtb: " << padWLeft << padWRight << padHTop << padHBottom );
   BOOST_TEST_MESSAGE( "rows n cols: " << nRows << nCols );
 }
