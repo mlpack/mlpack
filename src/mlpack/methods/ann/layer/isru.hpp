@@ -12,8 +12,8 @@
  *              Brian Whitney},
  *   title   = {Improving Deep Learning by Inverse Square Root Linear
  *              Units (ISRLUs)},
- *   year    = {2015},
- *   url     = {https://arxiv.org/abs/1507.06228},
+ *   year    = {2017},
+ *   url     = {https://arxiv.org/abs/1710.09967},
  * }
  * @endcode
  *
