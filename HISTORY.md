@@ -37,6 +37,8 @@
   
   * Add LiSHT activation function (#2182).
 
+  * Add Valid and Same Padding for Transposed Convolution layer (#2163).
+
 ### mlpack 3.2.2
 ###### 2019-11-26
   * Add `valid` and `same` padding option in `Convolution` and `Atrous
