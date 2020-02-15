@@ -2,7 +2,7 @@
  * @file celu.hpp
  * @author Gaurav Singh
  *
- * Definition of the CELU activation function as descibed by Jonathan T. Barron.
+ * Definition of the CELU activation function as described by Jonathan T. Barron.
  *
  * For more information, read the following paper.
  *
@@ -45,14 +45,9 @@ namespace ann /** Artificial Neural Network. */ {
  * \right.
  * @f}
  *
- * In the deterministic mode, there is no computation of the derivative.
- *
- * @note During training deterministic should be set to false and during
- *       testing/inference deterministic should be set to true.
- *
- * @ tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @ tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
@@ -189,9 +184,6 @@ class CELU
 
   //! CELU Hyperparameter (alpha > 0)
   double alpha;
-
-  //! If true the derivative computation is disabled, see notes above.
-  bool deterministic;
 }; // class CELU
 
 } // namespace ann

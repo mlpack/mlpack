@@ -2,7 +2,7 @@
  * @file celu_impl.hpp
  * @author Gaurav Singh
  *
- * Implementation of the CELU activation function as descibed by Jonathan T. Barron.
+ * Implementation of the CELU activation function as described by Jonathan T. Barron.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,8 +20,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 CELU<InputDataType, OutputDataType>::CELU(const double alpha) :
-    alpha(alpha),
-    deterministic(false)
+    alpha(alpha)
 {
   // Nothing to do here.
 }
@@ -32,11 +31,7 @@ void CELU<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
   Fn(input, output);
-
-  if (!deterministic)
-  {
-    Deriv(input, output);
-  }
+  Deriv(input, output);
 }
 
 template<typename InputDataType, typename OutputDataType>
