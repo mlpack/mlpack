@@ -48,7 +48,7 @@ BOOST_FIXTURE_TEST_SUITE(BayesianRidgeMainTest, BRTestFixture);
 */
 BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
 {
-  int n = 50, m = 4; 
+  int n = 50, m = 4;
   arma::mat X = arma::randu<arma::mat>(n, m);
   arma::colvec omega = arma::randu<arma::colvec>(m);
   arma::mat y =  X * omega;
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
 }
 
 /**
- * Check prediction of saved model and in code model are equal.
+ * Check predictions of saved model and in code model are equal.
 */
 BOOST_AUTO_TEST_CASE(BayesianRidgeSavedEqualCode)
 {
