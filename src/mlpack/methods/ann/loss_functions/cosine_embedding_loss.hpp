@@ -59,9 +59,13 @@ class CosineEmbeddingLoss
    *          cosine similarity or dissimilarity. It should only
    *          contain values equal to 1 or -1.
    */
-  template<typename InputType, typename TargetType>
-  double Forward(const InputType&& x1, const InputType x2,
-      const TargetType&& y);
+  template<
+    typename FirstTensor,
+    typename SecondTensor,
+    typename ThirdTensor
+  >
+  double Forward(const FirstTensor&& x1, const SecondTensor&& x2,
+      const ThirdTensor&& y);
 
   /**
    * Ordinary feed backward pass of a neural network. The negative log
@@ -69,15 +73,22 @@ class CosineEmbeddingLoss
    * each class. The layer also expects a class index, in the range between 1
    * and the number of classes, as target when calling the Forward function.
    *
-   * @param input The propagated input activation.
-   * @param target The target vector, that contains the class index in the range
+   * @param x1 The propagated input activation.
+   * @param x2 The propagated input activation.
+   * @param y The target vector, that contains the class index in the range
    *        between 1 and the number of classes.
    * @param output The calculated error.
    */
-  template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType&& input,
-                const TargetType&& target,
-                OutputType&& output);
+  template<
+    typename FirstTensor,
+    typename SecondTensor,
+    typename ThirdTensor,
+    typename OutputTensor
+  >
+  void Backward(const FirstTensor&& x1,
+                const SecondTensor&& x2,
+                const ThirdTensor&& y,
+                const OutputTensor&& output);
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -113,11 +124,11 @@ class CosineEmbeddingLoss
 
  private:
   // Returns Cosine-Distance between two vectors.
-  template <typename InputType>
-  double CosineDistance(InputType x1, InputType x2)
+  template <typename FirstTensor, typename SecondTensor>
+  double CosineDistance(const FirstTensor&& x1,
+                        const SecondTensor&& x2)
   {
-    return 1.0 - arma::accu(x1 % x2) /
-        std::sqrt(arma::accu(arma::pow(x1, 2)) * arma::accu(arma::pow(x2, 2)));
+    return arma::dot(arma::normalise(x1), arma::normalise(x2));
   }
 
   //! Locally-stored delta object.

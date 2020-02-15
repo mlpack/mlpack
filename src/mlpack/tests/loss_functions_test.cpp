@@ -591,17 +591,75 @@ BOOST_AUTO_TEST_CASE(HingeEmbeddingLossTest)
  */
 BOOST_AUTO_TEST_CASE(CosineEmbeddingLossTest)
 {
-  arma::mat input1, input2, y, target, output;
+  arma::mat input1, input2, y, output;
   double loss;
   CosineEmbeddingLoss<> module;
 
   // Test the Forward function. Loss should be 0 if input1 = input2 and y = 1.
-  input1 = arma::ones(10, 1);
-  input2 = arma::ones(10, 1);
-  y = arma::ones(1);
+  input1 = arma::mat(1, 10);
+  input2 = arma::mat(1, 10);
+  input1.ones();
+  input2.ones();
+  y = arma::mat(1, 1);
+  y.ones();
   loss = module.Forward(std::move(input1),std::move(input1),
-      std::move(target));
+      std::move(y));
   BOOST_REQUIRE_CLOSE(loss, 0.0, 1e-4);
+  // Check for dissimilarity.
+  y.fill(-1);
+  loss = module.Forward(std::move(input1),std::move(input1),
+      std::move(y));
+  BOOST_REQUIRE_CLOSE(loss, 1.0, 1e-4);
+
+  // Test the Backward function.
+  module.Backward(std::move(input1), std::move(input1), std::move(y),
+      std::move(output));
+  
+  input1 = arma::mat(3, 2);
+  input2 = arma::mat(3, 2);
+  input1.fill(1);
+  input1(4) = 2;
+  input2.fill(1);
+  input2(0) = 2;
+  input2(1) = 2;
+  input2(2) = 2;
+  y = arma::mat(3, 1);
+  y.fill(-1);
+  loss = module.Forward(std::move(input1),std::move(input2),
+      std::move(y));
+  // Caclulated using torch.nn.CosineEmbeddingLoss().
+  BOOST_REQUIRE_CLOSE(loss, 2.8973665961010275, 1e-3);
+
+  // Check for correctness for cube.
+  CosineEmbeddingLoss<> module2(0.5);
+
+  arma::cube input3(3, 2, 2);
+  arma::cube input4(3, 2, 2);
+  input3.fill(1);
+  input4.fill(1);
+  input3(0) = 2;
+  input3(1) = 2;
+  input3(4) = 2;
+  input3(6) = 2;
+  input3(8) = 2;
+  input3(10) = 2;
+  input4(2) = 2;
+  input4(9) = 2;
+  input4(11) = 2;
+  y = arma::mat(6, 1);
+  y.fill(1);
+  y(5) = -1;
+  y(2) = -1;
+  loss = module2.Forward(std::move(input3),std::move(input4),
+      std::move(y));
+  // Caclulated using torch.nn.CosineEmbeddingLoss().
+  BOOST_REQUIRE_CLOSE(loss, 1.0513167019494862, 1e-3);
+
+  // Check Output for mean type of reduction.
+  CosineEmbeddingLoss<> module3(0.0, true);
+  loss = module3.Forward(std::move(input3),std::move(input4),
+      std::move(y));
+  BOOST_REQUIRE_CLOSE(loss, 0.34188611699158106, 1e-3);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
