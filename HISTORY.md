@@ -35,7 +35,7 @@
   * Better error handling of eigendecompositions and Cholesky decompositions
     (#2088, #1840).
     
-  * Add CELU activation function (#2181)
+  * Add CELU activation function (#2191)
 
 ### mlpack 3.2.2
 ###### 2019-11-26
