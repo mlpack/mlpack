@@ -16,6 +16,10 @@
 // In case it hasn't yet been included.
 #include "padding.hpp"
 
+#include <boost/test/unit_test.hpp>
+#include "test_tools.hpp"
+#include "ann_test_tools.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -44,6 +48,11 @@ void Padding<InputDataType, OutputDataType>::Forward(
   nCols = input.n_cols;
   output = arma::zeros(nRows + padWLeft + padWRight,
       nCols + padHTop + padHBottom);
+  BOOST_TEST_MESSAGE( "forward" )
+  BOOST_TEST_MESSAGE( "input: " << input );
+  BOOST_TEST_MESSAGE( "output: " << output );
+  BOOST_TEST_MESSAGE( "padslrtb: " << padWLeft << padWRight << padHTop << padHBottom );
+  BOOST_TEST_MESSAGE( "rows n cols: " << nRows << nCols );
   output.submat(padWLeft, padHTop, padWLeft + nRows - 1,
       padHTop + nCols - 1) = input;
 }
@@ -57,6 +66,10 @@ void Padding<InputDataType, OutputDataType>::Backward(
 {
   g = gy.submat(padWLeft, padHTop, padWLeft + nRows - 1,
       padHTop + nCols - 1);
+  BOOST_TEST_MESSAGE( "backward" )
+  BOOST_TEST_MESSAGE( "gy: " << input );
+  BOOST_TEST_MESSAGE( "padslrtb: " << padWLeft << padWRight << padHTop << padHBottom );
+  BOOST_TEST_MESSAGE( "rows n cols: " << nRows << nCols );
 }
 
 template<typename InputDataType, typename OutputDataType>
