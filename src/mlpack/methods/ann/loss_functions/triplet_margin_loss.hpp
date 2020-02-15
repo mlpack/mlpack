@@ -4,6 +4,17 @@
  *
  * Definition of the Triplet Margin Loss function.
  *
+ * For more information, refer the following paper.
+ *
+ * @code
+ * @article{Schroff2015,
+ *   author  = {Florian Schroff, Dmitry Kalenichenko, James Philbin},
+ *   title   = {FaceNet: A Unified Embedding for Face Recognition and Clustering},
+ *   year    = {2015},
+ *   url     = {https://arxiv.org/abs/1503.03832},
+ * }
+ * @endcode
+ *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
