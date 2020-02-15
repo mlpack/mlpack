@@ -2,7 +2,7 @@
  * @file mean_squared_logarithmic_error_impl.hpp
  * @author Saksham Rastogi
  *
- * Implementation of the mean squared logarithmic error performance function.
+ * Implementation of the mean squared logarithmic error function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
