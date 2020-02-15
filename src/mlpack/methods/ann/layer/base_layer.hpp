@@ -22,6 +22,7 @@
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
 
 namespace mlpack {
@@ -207,6 +208,17 @@ template <
     typename OutputDataType = arma::mat
 >
 using MishFunctionLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard LiSHT-Layer using the LiSHT activation function.
+ */
+template <
+    class ActivationFunction = LiSHTFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using LiSHTFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 /**
