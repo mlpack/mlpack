@@ -35,44 +35,17 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
     const size_t padW,
     const size_t padH,
     const std::string paddingType) :
-    kernelWidth(kernelWidth),
-    kernelHeight(kernelHeight),
-    strideWidth(strideWidth),
-    strideHeight(strideHeight),
-    floor(floor),
-    padWLeft(padW),
-    padWRight(padW),
-    padHBottom(padH),
-    padHTop(padH),
-    inSize(0),
-    outSize(0),
-    inputWidth(0),
-    inputHeight(0),
-    outputWidth(0),
-    outputHeight(0),
-    reset(false),
-    deterministic(false),
-    offset(0),
-    batchSize(0)
+    MeanPooling(
+    kernelWidth,
+    kernelHeight,
+    strideWidth,
+    strideHeight,
+    floor,
+    const std::tuple<size_t, size_t> padW {padW, padW},
+    const std::tuple<size_t, size_t> padH {padH, padH},
+    paddingType)
 {
-  // Transform paddingType to lowercase.
-  std::string paddingTypeLow = paddingType;
-  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
-      [](unsigned char c){ return std::tolower(c); });
-
-  if (paddingTypeLow == "valid")
-  {
-    padWLeft = 0;
-    padWRight = 0;
-    padHTop = 0;
-    padHBottom = 0;
-  }
-  else if (paddingTypeLow == "same")
-  {
-    InitializeSamePadding();
-  }
-
-  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+  // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
