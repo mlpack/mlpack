@@ -19,8 +19,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-L1Loss<InputDataType, OutputDataType>::L1Loss(
-  const bool mean):
+L1LOSS<InputDataType, OutputDataType>::L1LOSS(const bool mean):
   mean(mean)
 {
   // Nothing to do here.
@@ -28,19 +27,24 @@ L1Loss<InputDataType, OutputDataType>::L1Loss(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double L1Loss<InputDataType, OutputDataType>::Forward(
+double L1LOSS<InputDataType, OutputDataType>::Forward(
     const InputType&& input, const TargetType&& target)
 {
+  double loss = 0;
+  for (size_t i = 0; i < input.n_elem; ++i)
+  {
+    loss += std::abs(input[i] - target[i]);
+  }
   if (mean)
   {
-    return arma::sum(arma::abs(input - target)) / input.n_elem;
+    return loss/input.n_elem;
   }
-  return arma::sum(arma::abs(input - target));
+  return loss;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
-void L1Loss<InputDataType, OutputDataType>::Backward(
+void L1LOSS<InputDataType, OutputDataType>::Backward(
     const InputType&& input,
     const TargetType&& target,
     OutputType&& output)
@@ -50,7 +54,7 @@ void L1Loss<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void L1Loss<InputDataType, OutputDataType>::serialize(
+void L1LOSS<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
     const unsigned int /* version */)
 {

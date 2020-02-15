@@ -730,21 +730,21 @@ BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorTest)
   input2 = arma::mat("0 1 1 0 1 0 0 1");
   target2 = arma::mat("0 1 1 0 1 0 0 1");
   double error2 = module.Forward(std::move(input2), std::move(target2));
-  BOOST_REQUIRE_EQUAL(error2, 0);
+  BOOST_REQUIRE_CLOSE(error2, 0.0, 0.00001);
 
   // Test the Backward function.
   module.Backward(std::move(input1), std::move(target1), std::move(output));
   for (double el : output)
   {
-    BOOST_REQUIRE_EQUAL(el , 0.5);
+    BOOST_REQUIRE_EQUAL(el , 1);
   }
   BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
 
   module.Backward(std::move(input2), std::move(target2), std::move(output));
-  for (size_t i = 0; i < 7; ++i)
+for (double el : output)
   {
-      BOOST_REQUIRE_EQUAL(el + 1, 0);
+    BOOST_REQUIRE_EQUAL(el, 0);
   }
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);

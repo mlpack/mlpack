@@ -21,7 +21,6 @@ namespace ann /** Artificial Neural Network. */ {
  * The L1 loss is a loss function that measures the mean absolute error (MAE) 
  * between each element in the input x and target y 
  *
- * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
@@ -31,7 +30,7 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class L1Loss
+class L1LOSS
 {
  public:
   /**
@@ -39,7 +38,7 @@ class L1Loss
    *
    * @param mean Reduction type. If true, performs mean of loss else sum.
    */
-  L1Loss(const bool mean = true);
+  L1LOSS(const bool mean = true);
 
   /**
    * Computes the L1 Loss function.
