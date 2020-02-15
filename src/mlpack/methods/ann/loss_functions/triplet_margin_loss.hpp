@@ -37,8 +37,8 @@ class TripletMarginLoss
  public:
   /**
    * Create the TripletMarginLoss object with Hyperparameter margin.
-   * Hyperparameter margin defines the minimum numeric value by which distance
-   * between Anchor and Negative sample should be higher than the distance between
+   * Hyperparameter margin defines the minimum value by which the distance
+   * between Anchor and Negative sample exceeds the distance between
    * Anchor and Positive sample.
    * The distance between two samples A and B is defined as square of L2 norm
    * of A-B.

@@ -47,8 +47,7 @@ void TripletMarginLoss<InputDataType, OutputDataType>::Backward(
     const AnchorType&& anchor,
     const PositiveType&& positive,
     const NegativeType&& negative,
-    OutputType&& output
-    )
+    OutputType&& output)
 {
   output = 2 * (negative - positive) / anchor.n_cols;
 }
