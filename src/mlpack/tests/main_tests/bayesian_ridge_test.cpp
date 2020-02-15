@@ -28,7 +28,7 @@ struct BRTestFixture
 {
  public:
   BRTestFixture()
-  { 
+  {
     // Cache in the options for this program.
     CLI::RestoreSettings(testName);
   }
