@@ -40,7 +40,8 @@ void MeanBiasError<InputDataType, OutputDataType>::Backward(
     const TargetType&& target,
     OutputType&& output)
 {
-  output = -1;
+  output.set_size(arma::size(input));
+  output.fill(-1.0);
 }
 
 template<typename InputDataType, typename OutputDataType>
