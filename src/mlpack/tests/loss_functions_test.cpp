@@ -21,6 +21,7 @@
 #include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/dice_loss.hpp>
+// #include <mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
