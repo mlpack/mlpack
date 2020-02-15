@@ -34,6 +34,8 @@
 
   * Better error handling of eigendecompositions and Cholesky decompositions
     (#2088, #1840).
+  
+  * Add LiSHT activation function (#2182).
 
 ### mlpack 3.2.2
 ###### 2019-11-26
