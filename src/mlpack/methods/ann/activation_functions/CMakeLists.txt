@@ -10,6 +10,8 @@ set(SOURCES
   swish_function.hpp
   mish_function.hpp
   sqnl_function.hpp
+  lisht_function.hpp
+  gelu_function.hpp
 )
 
 # Add directory name to sources.

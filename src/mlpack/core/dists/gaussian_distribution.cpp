@@ -39,8 +39,11 @@ void GaussianDistribution::Covariance(arma::mat&& covariance)
 void GaussianDistribution::FactorCovariance()
 {
   // On Armadillo < 4.500, the "lower" option isn't available.
-  covLower = arma::chol(covariance, "lower");
 
+  if (!arma::chol(covLower, covariance, "lower"))
+  {
+    Log::Fatal << "Cholesky decomposition failed." << std::endl;
+  }
   // Comment from rcurtin:
   //
   // I think the use of the word "interpret" in the Armadillo documentation

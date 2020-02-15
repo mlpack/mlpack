@@ -125,6 +125,11 @@ static void mlpackMain()
 
   ReportIgnoredParam({{ "test", false }}, "predictions");
 
+  Log::Warn << "DecisionStump is deprecated and will be removed in mlpack "
+            << "4.0.0. Please use DecisionTree instead with the maximum tree "
+            << "depth option set to 1 (that will produce a stump)."
+            << std::endl;
+
   // We must either load a model, or train a new stump.
   DSModel* model;
   if (CLI::HasParam("training"))
