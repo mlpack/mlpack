@@ -29,10 +29,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The Log-Hyperbolic-Cosine loss function is often used for to improve
- * variational auto encoder. The Log-Hyperbolic-Cosine loss function
- * taken log of hyperbolic cosine of difference between true values and
- * predicted values.
+ * The Log-Hyperbolic-Cosine loss function is often used to improve
+ * variational auto encoder. This function is the log of hyperbolic 
+ * cosine of difference between true values and predicted values.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -52,7 +51,7 @@ class LogCoshLoss
    *
    * @param a A double type value for smoothening loss function.
    *          It must be positive real number, Sharpness of loss
-   *          function is directly propotional to a.
+   *          function is directly propotional to `a`.
    *          Default value = 1.0
    */
   LogCoshLoss(const double a = 1.0);
