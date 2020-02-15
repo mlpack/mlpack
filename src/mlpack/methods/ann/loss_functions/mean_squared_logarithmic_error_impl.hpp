@@ -19,7 +19,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-MeanSquaredLogarithmicError<InputDataType, OutputDataType>::MeanSquaredLogarithmicError()
+MeanSquaredLogarithmicError<InputDataType, OutputDataType>
+::MeanSquaredLogarithmicError()
 {
   // Nothing to do here.
 }
