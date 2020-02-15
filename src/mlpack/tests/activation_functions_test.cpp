@@ -732,7 +732,8 @@ BOOST_AUTO_TEST_CASE(GELUFunctionTest)
                                        desiredActivations);
   CheckDerivativeCorrect<GELUFunction>(desiredActivations,
                                         desiredDerivatives);
-  
+}
+
 /**
  * Basic test of the CELU function.
  */
