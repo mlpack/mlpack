@@ -26,6 +26,11 @@ class TripletMarginLoss
  public:
   /**
    * Create the TripletMarginLoss object with Hyperparameter margin.
+   * Hyperparameter margin defines the minimum numeric value by which distance
+   * between Anchor and Negative sample should be higher than the distance between
+   * Anchor and Positive sample.
+   * The distance between two samples A and B is defined as square of L2 norm
+   * of A-B.
    */
   TripletMarginLoss(const double margin = 1.0);
 
@@ -35,7 +40,7 @@ class TripletMarginLoss
    * @param input The propagated input activation.
    * @param target The target vector.
    */
-template<typename AnchorType, typename PositiveType, typename NegativeType>
+  template<typename AnchorType, typename PositiveType, typename NegativeType>
   double Forward(const AnchorType&& anchor,
                  const PositiveType&& positive,
                  const NegativeType&& negative);
@@ -47,12 +52,12 @@ template<typename AnchorType, typename PositiveType, typename NegativeType>
    * @param target The target vector.
    * @param output The calculated error.
    */
-template <
+  template <
     typename AnchorType,
     typename PositiveType,
     typename NegativeType,
     typename OutputType
->
+  >
   void Backward(const AnchorType&& anchor,
                 const PositiveType&& positive,
                 const NegativeType&& negative,
