@@ -41,8 +41,8 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
     strideWidth,
     strideHeight,
     floor,
-    const std::tuple<size_t, size_t> padW {padW, padW},
-    const std::tuple<size_t, size_t> padH {padH, padH},
+    std::tuple<size_t, size_t>{padW, padW},
+    std::tuple<size_t, size_t>{padH, padH},
     paddingType)
 {
   // Nothing to do here.
