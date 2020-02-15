@@ -3204,7 +3204,7 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
   module1.Backward(std::move(input), std::move(output), std::move(delta));
 
   // Check same padding option.
-  MeanPooling<> module2(3, 3, 2, 2, true, std::tuple<size_t, size_t>(0, 0),
+  MeanPooling<> module2(4, 4, 2, 2, true, std::tuple<size_t, size_t>(0, 0),
       std::tuple<size_t, size_t>(0, 0), "same");
 
   // Test the forward function.
