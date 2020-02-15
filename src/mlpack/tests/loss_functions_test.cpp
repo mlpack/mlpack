@@ -416,7 +416,7 @@ BOOST_AUTO_TEST_CASE(SimpleMeanBiasErrorTest)
   // Test the Backward function.
   module.Backward(std::move(input), std::move(target), std::move(output));
   // We should get a vector with -1 everywhere.
-  for(double el : output)
+  for (double el : output)
   {
     BOOST_REQUIRE_EQUAL(el, -1);
   }
