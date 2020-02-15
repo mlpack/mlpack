@@ -3155,6 +3155,28 @@ BOOST_AUTO_TEST_CASE(MaxPoolingLayerPaddingTest)
 
   // Test the backward function.
   module2.Backward(std::move(input), std::move(output), std::move(delta));
+
+  // Check same padding option.
+  MaxPooling<> module3(3, 3, 2, 1, true, std::tuple<size_t, size_t>(1, 2),
+      std::tuple<size_t, size_t>(3, 4));
+
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 45, 6);
+  module3.InputWidth() = 2;
+  module3.InputHeight() = 3;
+  module3.Forward(std::move(input), std::move(output));
+
+  BOOST_TEST_MESSAGE( "input: " << input );
+  BOOST_TEST_MESSAGE( "output: " << output );
+  BOOST_TEST_MESSAGE( "outwidth: " << module3.OutputWidth() );
+  BOOST_TEST_MESSAGE( "outheight: " << module3.OutputHeight() );
+
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 324);
+  BOOST_REQUIRE_EQUAL(output.n_rows, 16);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+
+  // Test the backward function.
+  module3.Backward(std::move(input), std::move(output), std::move(delta));
 }
 
 /**
@@ -3281,6 +3303,28 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
 
   // Test the backward function.
   module2.Backward(std::move(input), std::move(output), std::move(delta));
+
+  // Check same padding option.
+  MeanPooling<> module3(3, 3, 2, 1, true, std::tuple<size_t, size_t>(1, 2),
+      std::tuple<size_t, size_t>(3, 4));
+
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 45, 6);
+  module3.InputWidth() = 2;
+  module3.InputHeight() = 3;
+  module3.Forward(std::move(input), std::move(output));
+
+  BOOST_TEST_MESSAGE( "input: " << input );
+  BOOST_TEST_MESSAGE( "output: " << output );
+  BOOST_TEST_MESSAGE( "outwidth: " << module3.OutputWidth() );
+  BOOST_TEST_MESSAGE( "outheight: " << module3.OutputHeight() );
+
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 70);
+  BOOST_REQUIRE_EQUAL(output.n_rows, 16);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+
+  // Test the backward function.
+  module3.Backward(std::move(input), std::move(output), std::move(delta));
 }
 
 BOOST_AUTO_TEST_SUITE_END();
