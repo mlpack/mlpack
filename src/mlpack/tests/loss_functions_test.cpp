@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredLogarithmicErrorTest)
   // Test the Backward function.
   module.Backward(std::move(input), std::move(target), std::move(output));
   // The output should be equal to 0.
-  CheckMatrices(input,output);
+  CheckMatrices(input, output);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 
