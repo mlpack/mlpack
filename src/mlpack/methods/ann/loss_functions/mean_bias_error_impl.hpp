@@ -30,7 +30,7 @@ template<typename InputType, typename TargetType>
 double MeanBiasError<InputDataType, OutputDataType>::Forward(
     const InputType&& input, const TargetType&& target)
 {
-  return arma::accu(target-input) / target.n_cols;
+  return arma::accu(target - input) / target.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>
