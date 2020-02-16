@@ -2,7 +2,7 @@
  * @file sqnl_function.hpp
  * @author Prince Gupta
  *
- * Definition and implementation of the SQNL(Square Non Linearlity)
+ * Definition and implementation of the SQNL (Square Non-Linearity)
  * activation function.
  *
  * For more information, see the following paper.
@@ -93,7 +93,7 @@ class SQNLFunction
   {
     if (y >= 0 && y <= 1)
       return 2 * (1 - std::sqrt(1 - y));
-    else if (y >= -2 && y < 0)
+    else if (y >= -1 && y < 0)
       return -2 * (1 - std::sqrt(1 + y));
     else
       return 0;
