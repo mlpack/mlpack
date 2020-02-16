@@ -300,7 +300,7 @@ set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 find_package(StbImage)
 # Download stb_image for image loading.
 if (NOT STB_IMAGE_FOUND)
-  if (DOWNLOAD_STB_IMAGE)
+  if (0 AND DOWNLOAD_STB_IMAGE)
     set(STB_DIR "stb")
     install(DIRECTORY DESTINATION "${CMAKE_BINARY_DIR}/deps/${STB_DIR}")
     file(DOWNLOAD http://mlpack.org/files/stb-2.22/stb_image.h

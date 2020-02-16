@@ -196,22 +196,22 @@ add_custom_command(TARGET mlpack_test
 
 # The list of long running parallel tests
 set(parallel_tests
-  "ANNLayerTest;")
-  # "AsyncLearningTest;"
-  # "SVDIncrementalTest;"
-  # "SVDBatchTest;"
-  # "LocalCoordinateCodingTest;"
-  # "FeedForwardNetworkTest;"
-  # "RecurrentNetworkTest;"
-  # "SparseAutoencoderTest;"
-  # "GMMTest;"
-  # "CFTest;"
-  # "ConvolutionalNetworkTest;"
-  # "HMMTest;"
-  # "LARSTest;"
-  # "LogisticRegressionTest;"
-  # "GmmTrainMainTest;"
-  # "LinearSVMTest")
+  "ANNLayerTest;"
+  "AsyncLearningTest;"
+  "SVDIncrementalTest;"
+  "SVDBatchTest;"
+  "LocalCoordinateCodingTest;"
+  "FeedForwardNetworkTest;"
+  "RecurrentNetworkTest;"
+  "SparseAutoencoderTest;"
+  "GMMTest;"
+  "CFTest;"
+  "ConvolutionalNetworkTest;"
+  "HMMTest;"
+  "LARSTest;"
+  "LogisticRegressionTest;"
+  "GmmTrainMainTest;"
+  "LinearSVMTest")
 
 # Add tests to the testing framework
 # Get the list of sources from the test target
