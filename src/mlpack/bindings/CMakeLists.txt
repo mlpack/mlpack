@@ -1,10 +1,10 @@
 # All we have to do is recurse into the subdirectories.
 set(DIRS
   cli
-  julia
-  markdown
-  python
-  tests
+  # julia
+  # markdown
+  # python
+  # tests
 )
 
 foreach(dir ${DIRS})
