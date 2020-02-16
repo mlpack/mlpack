@@ -20,8 +20,8 @@
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp>
 #include <mlpack/methods/ann/loss_functions/dice_loss.hpp>
-// #include <mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -48,6 +48,22 @@ BOOST_AUTO_TEST_CASE(SimpleKLDivergenceTest)
   target = arma::ones(10, 1);
   loss = module.Forward(std::move(input), std::move(target));
   BOOST_REQUIRE_SMALL(loss, 0.00001);
+}
+
+/*
+ * Simple test for the mean squared logarithmic error function.
+ */
+BOOST_AUTO_TEST_CASE(SimpleMeanSquaredLogarithmicErrorTest)
+{
+  arma::mat input, output, target;
+  MeanSquaredLogarithmicError<> module;
+
+  // Test the Forward function on a user generator input and compare it against
+  // the manually calculated result.
+  input = arma::zeros(1, 8);
+  target = arma::zeros(1, 8);
+  double error = module.Forward(std::move(input), std::move(target));
+  BOOST_REQUIRE_SMALL(error, 0.00001);
 }
 
 /**
