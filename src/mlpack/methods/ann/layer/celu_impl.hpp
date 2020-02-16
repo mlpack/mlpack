@@ -20,7 +20,8 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 CELU<InputDataType, OutputDataType>::CELU(const double alpha) :
-    alpha(alpha)
+    alpha(alpha),
+    deterministic(false)
 {
   // Nothing to do here.
 }
@@ -31,7 +32,11 @@ void CELU<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
   Fn(input, output);
-  Deriv(input, output);
+
+  if (!deterministic)
+  {
+    Deriv(input, output);
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>

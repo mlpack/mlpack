@@ -708,6 +708,9 @@ BOOST_AUTO_TEST_CASE(MishFunctionTest)
                                         desiredDerivatives);
 }
 
+/**
+ * Basic test of the GELU function.
+ */
 BOOST_AUTO_TEST_CASE(GELUFunctionTest)
 {
   // Calculated using torch.nn.gelu().

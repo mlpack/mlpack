@@ -45,6 +45,8 @@ namespace ann /** Artificial Neural Network. */ {
  * \right.
  * @f}
  *
+ * In the deterministic mode, there is no computation of the derivative.
+ *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
@@ -183,6 +185,9 @@ class CELU
 
   //! CELU Hyperparameter (alpha > 0)
   double alpha;
+
+  //! If true the derivative computation is disabled, see notes above.
+  bool deterministic;
 }; // class CELU
 
 } // namespace ann
