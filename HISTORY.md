@@ -34,7 +34,11 @@
 
   * Better error handling of eigendecompositions and Cholesky decompositions
     (#2088, #1840).
-    
+  
+  * Add LiSHT activation function (#2182).
+
+  * Add Valid and Same Padding for Transposed Convolution layer (#2163).
+  
   * Add CELU activation function (#2191)
 
 ### mlpack 3.2.2
