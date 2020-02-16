@@ -22,6 +22,7 @@
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
 #include <mlpack/methods/ann/layer/celu.hpp>
 
@@ -709,6 +710,31 @@ BOOST_AUTO_TEST_CASE(MishFunctionTest)
 }
 
 /**
+<<<<<<< HEAD
+=======
+ * Basic test of the LiSHT function.
+ */
+BOOST_AUTO_TEST_CASE(LiSHTFunctionTest)
+{
+  // Calculated using tfa.activations.LiSHT().
+  // where tfa is tensorflow_addons.
+  const arma::colvec desiredActivations("1.928055 3.189384 \
+                                         4.4988894 100.2 0.7615942 \
+                                         0.7615942 1.9280552 0");
+
+  const arma::colvec desiredDerivatives("1.1150033 1.0181904 \
+                                         1.001978 1.0 \
+                                         1.0896928 1.0896928 \
+                                         1.1150033 0.0");
+
+  CheckActivationCorrect<LiSHTFunction>(activationData,
+                                       desiredActivations);
+  CheckDerivativeCorrect<LiSHTFunction>(desiredActivations,
+                                       desiredDerivatives);
+}
+
+/**
+>>>>>>> 362cbfadbcd254aa740fd8f3e5855d1ea79f60ab
  * Basic test of the GELU function.
  */
 BOOST_AUTO_TEST_CASE(GELUFunctionTest)
