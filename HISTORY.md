@@ -30,6 +30,9 @@
 
   * Add Mish activation function (#2158).
 
+  * Update `init_rules` in AMF to allow users to merge two initialization
+    rules (#2151).
+
   * Add GELU activation function (#2183).
 
   * Better error handling of eigendecompositions and Cholesky decompositions
