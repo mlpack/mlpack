@@ -9,10 +9,10 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_ISRLU_FUNCTION_HPP
-#define MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_ISRLU_FUNCTION_HPP
+ #ifndef MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_ISRLU_FUNCTION_HPP
+ #define MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_ISRLU_FUNCTION_HPP
 
-#include <mlpack/prereqs.hpp>
+ #include <mlpack/prereqs.hpp>
 
 namespace mlpack{
 namespace ann /** Artifical Neural Network. */{
@@ -31,6 +31,7 @@ namespace ann /** Artifical Neural Network. */{
 
 class ISRLUFunction
 {
+
  public:
   /**
    * Computes the ISRLU function
@@ -41,7 +42,7 @@ class ISRLUFunction
    */
   static double Fn(const double x, const double alpha = 0.1)
   {
-    if (x<0)
+    if(x<0) 
       return x / (std::sqrt(1 + alpha*x*x));
     else
       return x;
@@ -55,14 +56,12 @@ class ISRLUFunction
    * @param alpha parameter, default value = 0.1
    */
   template<typename eT>
-  static void Fn(const arma::Mat<eT>& x,
-                 arma::Mat<eT>& y,
-                 const double alpha = 0.1)
+  static void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y, const double alpha = 0.1)
   {
-    if (x<0)
-      y = x / (arma::sqrt(1 + alpha * arma::pow(x, 2)));
+    if(x<0)
+      y = x / (arma::sqrt(1 + alpha * arma::pow(x,2)));
     else
-      y = x;
+      y=x;
   }
 
   /**
@@ -73,9 +72,7 @@ class ISRLUFunction
    * @param alpha parameter, default value = 0.1
    */
   template<typename InputVecType, typename OutputVecType>
-  static void Fn(const InputVecType& x,
-                 OutputVecType& y,
-                 const double alpha = 0.1)
+  static void Fn(const InputVecType& x, OutputVecType& y, const double alpha = 0.1)
   {
     y.set_size(arma::size(x));
 
@@ -92,7 +89,7 @@ class ISRLUFunction
    */
   static double Inv(const double y, const double alpha = 0.1)
   {
-    if (y<0)
+    if(y<0)
       return y / std::sqrt(1 - alpha * y * y);
     else
       return y;
@@ -106,11 +103,9 @@ class ISRLUFunction
    * @param alpha parameter, default value = 0.1
    */
   template<typename InputVecType, typename OutputVecType>
-  static void Inv(const InputVecType& y,
-                  OutputVecType& x,
-                  const double alpha = 0.1)
+  static void Inv(const InputVecType& y, OutputVecType& x, const double alpha = 0.1)
   {
-    if (y<0)
+    if(y<0)
       x = y / arma::sqrt(1 - alpha * arma::pow(y, 2 ));
     else
       x = y;
@@ -126,8 +121,8 @@ class ISRLUFunction
   static double Deriv(const double y, const double alpha = 0.1)
   {
     double x = Inv(y, alpha);
-    if (y<0)
-      return std::pow(y / x, 3);
+    if(y<0)
+      return std::pow(y / x, 3); 
     else
       return 1;
   }
@@ -136,23 +131,21 @@ class ISRLUFunction
    * Computes the first derivative of the ISRLU function.
    *
    * @param y Input activations.
-   * @param x The resulting derivatives. Should be the matrix used to calculate
-   * activation y 
+   * @param x The resulting derivatives. Should be the matrix used to calculate activation y 
    * @param alpha parameter, default value = 0.1
    */
   template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& y,
-                    OutputVecType& x,
-                    const double alpha = 0.1)
+  static void Deriv(const InputVecType& y, OutputVecType& x, const double alpha = 0.1)
   {
-    if (y<0)
+    if(y<0)
       x = arma::pow(y / x, 3);
     else
       x = 1;
   }
+
 }; // class ISRLUFunction
 
 } // namespace ann
 } // namespace mlpack
 
-#endif
+#endif 
