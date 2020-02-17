@@ -71,7 +71,6 @@ class SoftmaxRegression
   SoftmaxRegression(const size_t inputSize = 0,
                     const size_t numClasses = 0,
                     const bool fitIntercept = false);
-
   /**
    * Construct the SoftmaxRegression class with the provided data and labels.
    * This will train the model. Optionally, the parameter 'lambda' can be
@@ -94,23 +93,45 @@ class SoftmaxRegression
                     const double lambda = 0.0001,
                     const bool fitIntercept = false,
                     OptimizerType optimizer = OptimizerType());
-
+  /**
+   * Construct the SoftmaxRegression class with the provided data and labels.
+   * This will train the model. Optionally, the parameter 'lambda' can be
+   * passed, which controls the amount of L2-regularization in the objective
+   * function. By default, the model takes a small value.
+   *
+   * @tparam OptimizerType Desired optimizer type.
+   * @tparam CallbackTypes Types of Callback Functions.
+   * @param data Input training features. Each column associate with one sample
+   * @param labels Labels associated with the feature data.
+   * @param inputSize Size of the input feature vector.
+   * @param numClasses Number of classes for classification.
+   * @param lambda L2-regularization constant.
+   * @param fitIntercept add intercept term or not.
+   * @param optimizer Desired optimizer.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *        See https://www.ensmallen.org/docs.html#callback-documentation.
+   */
+  template<typename OptimizerType, typename... CallbackTypes>
+  SoftmaxRegression(const arma::mat& data,
+                    const arma::Row<size_t>& labels,
+                    const size_t numClasses,
+                    const double lambda,
+                    const bool fitIntercept,
+                    OptimizerType optimizer,
+                    CallbackTypes&&... callbacks);
   /**
    * Classify the given points, returning the predicted labels for each point.
    * The function calculates the probabilities for every class, given a data
    * point. It then chooses the class which has the highest probability among
    * all.
-   *
    * @param dataset Set of points to classify.
    * @param labels Predicted labels for each point.
    */
   void Classify(const arma::mat& dataset, arma::Row<size_t>& labels) const;
-
   /**
    * Classify the given point. The predicted class label is returned.
    * The function calculates the probabilites for every class, given the point.
    * It then chooses the class which has the highest probability among all.
-   *
    * @param point Point to be classified.
    * @return Predicted class label of the point.
    */
@@ -151,7 +172,6 @@ class SoftmaxRegression
    */
   double ComputeAccuracy(const arma::mat& testData,
                          const arma::Row<size_t>& labels) const;
-
   /**
    * Train the softmax regression with the given training data.
    *
@@ -167,6 +187,25 @@ class SoftmaxRegression
                const arma::Row<size_t>& labels,
                const size_t numClasses,
                OptimizerType optimizer = OptimizerType());
+  /**
+   * Train the softmax regression with the given training data.
+   *
+   * @tparam OptimizerType Desired optimizer type.
+   * @tparam CallbackTypes Types of Callback Functions.
+   * @param data Input data with each column as one example.
+   * @param labels Labels associated with the feature data.
+   * @param numClasses Number of classes for classification.
+   * @param optimizer Desired optimizer.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return Objective value of the final point.
+   */
+  template<typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>
+  double Train(const arma::mat& data,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               OptimizerType optimizer,
+               CallbackTypes&&... callbacks);
 
   //! Sets the number of classes.
   size_t& NumClasses() { return numClasses; }
@@ -188,7 +227,7 @@ class SoftmaxRegression
 
   //! Gets the features size of the training data
   size_t FeatureSize() const
-  { return fitIntercept ? parameters.n_cols - 1 :
+  { return fitIntercept ? parameters.n_cols - 1:
                           parameters.n_cols; }
 
   /**
