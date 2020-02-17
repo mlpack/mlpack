@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added `mean squared logarithmic error` loss function (#2210).
+
   * The DecisionStump class has been marked deprecated; use the `DecisionTree`
     class with `NoRecursion=true` or use `ID3DecisionStump` instead (#2099).
 
