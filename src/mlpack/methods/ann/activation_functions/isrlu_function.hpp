@@ -2,15 +2,15 @@
  * @file isrlu_function.hpp
  * @author Pranav Reddy
  *
- * Definition and implementation of the ISRLU function
+ * Definition and implementation of the ISRU function
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
- #ifndef MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_ISRLU_FUNCTION_HPP
- #define MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_ISRLU_FUNCTION_HPP
+ #ifndef MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_ISRU_FUNCTION_HPP
+ #define MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_ISRU_FUNCTION_HPP
 
  #include <mlpack/prereqs.hpp>
 
@@ -18,7 +18,7 @@ namespace mlpack{
 namespace ann /** Artifical Neural Network. */{
 
 /**
- * The ISRLU function, defined by
+ * The ISRU function, defined by
  * 
  * @f{eqnarray*}{
  * f(x) &=& x/sqrt(1 + alpha*x*x) if x<0
@@ -29,7 +29,7 @@ namespace ann /** Artifical Neural Network. */{
  * @f
  */
 
-class ISRLUFunction
+class ISRUFunction
 {
 
  public:
@@ -81,7 +81,7 @@ class ISRLUFunction
   }
 
   /**
-   * Computes the inverse of the ISRLU function
+   * Computes the inverse of the ISRU function
    * 
    * @param y
    * @param alpha
