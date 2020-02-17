@@ -4,16 +4,6 @@
  *
  * Definition of the Log-Hyperbolic-Cosine loss function.
  *
- * For more information, see the following paper.
- * 
- * @code
- * article{
- *   title   = {Log Hyperbolic Cosine Loss Improves Variational Auto-Encoder},
- *   journal = {International Conference on Learning Representations},
- *   year    = {2019}
- * }
- * @endcode
- * 
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -52,6 +42,9 @@ class LogCoshLoss
    * @param a A double type value for smoothening loss function.
    *          It must be positive real number, Sharpness of loss
    *          function is directly propotional to `a`.
+   *          It can also act as a scaling factor hence making
+   *          the loss function more sensitive to small losses
+   *          around the origin.
    *          Default value = 1.0
    */
   LogCoshLoss(const double a = 1.0);
