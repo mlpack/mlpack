@@ -2,7 +2,7 @@
  * @file softshrink.hpp
  * @author Lakshya Ojha
  *
- * The soft shrinkage has thresholds proportional to the noise level given by 
+ * The soft shrink function has thresholds proportional to the noise level given by 
  * the user.
  * The use of a soft-shrinkage activation function provides adaptive denoising
  * at various noise levels using a single CNN(Convolution Neural) without a requirement to train a
