@@ -104,9 +104,6 @@ class AverageInitialization
       if (*it < min)
         min = *it;
     }
-
-    avgV = sqrt(((avgV / (n * m)) - min) / r);
-
     if (whichMatrix)
     {
       // Initialize W to random values
@@ -117,7 +114,7 @@ class AverageInitialization
       // Initialize H to random values
       M.randu(r, m);
     }
-    M += avgV;
+    M += sqrt(((avgV / (n * m)) - min) / r);
   }
 
   //! Serialize the object (in this case, there is nothing to do).
