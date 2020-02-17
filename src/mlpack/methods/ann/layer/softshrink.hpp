@@ -42,6 +42,7 @@ class SoftShrink
  public:
   /**
    * Create SoftShrink object using specified hyperparameter lambda.
+   * Hyperparameter lambda.
    * Soft shrinkage has a threshold lambda which is calculated by multiplying the
    * noise level sigma of the input(noisy image) and a coefficient 'a' which is one
    * of the training parameter.

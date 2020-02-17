@@ -702,6 +702,33 @@ BOOST_AUTO_TEST_CASE(MishFunctionTest)
   CheckDerivativeCorrect<MishFunction>(desiredActivations,
                                         desiredDerivatives);
 }
+
+BOOST_AUTO_TEST_CASE(GELUFunctionTest)
+{
+  // Calculated using torch.nn.gelu().
+  const arma::colvec desiredActivations("-0.04540230591222 \
+                                          3.1981304348379158 \
+                                          4.5000 -0.0000 \
+                                          0.84119199060827676 \
+                                          -0.15880800939172329 \
+                                          1.954597694087775 \
+                                          0.0000");
+
+  const arma::colvec desiredDerivatives("0.46379920685377229 \
+                                          1.0065302165778773 \
+                                          1.0000293221871797 \
+                                          0.5 \
+                                          1.0351344625840642 \
+                                          0.37435387859861063 \
+                                          1.0909840032535403 \
+                                          0.5");
+
+  CheckActivationCorrect<GELUFunction>(activationData,
+                                       desiredActivations);
+  CheckDerivativeCorrect<GELUFunction>(desiredActivations,
+                                        desiredDerivatives);
+}
+
 BOOST_AUTO_TEST_CASE(SoftShrinkFunctionTest)
 {
   const arma::colvec desiredActivations("-1.5 2.7 4 -99.7 0.5 -0.5 1.5 0");
