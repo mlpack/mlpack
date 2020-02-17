@@ -85,7 +85,7 @@ class AtrousConvolution
                     const size_t inputHeight = 0,
                     const size_t dilationWidth = 1,
                     const size_t dilationHeight = 1,
-                    const std::string paddingType = "None");
+                    const std::string& paddingType = "None");
 
   /**
    * Create the AtrousConvolution object using the specified number of
@@ -116,13 +116,13 @@ class AtrousConvolution
                     const size_t kernelHeight,
                     const size_t strideWidth,
                     const size_t strideHeight,
-                    const std::tuple<size_t, size_t> padW,
-                    const std::tuple<size_t, size_t> padH,
+                    const std::tuple<size_t, size_t>& padW,
+                    const std::tuple<size_t, size_t>& padH,
                     const size_t inputWidth = 0,
                     const size_t inputHeight = 0,
                     const size_t dilationWidth = 1,
                     const size_t dilationHeight = 1,
-                    const std::string paddingType = "None");
+                    const std::string& paddingType = "None");
 
   /*
    * Set the weight and bias term.
