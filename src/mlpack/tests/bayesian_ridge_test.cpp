@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(TestCenter1Normalize1)
   BOOST_REQUIRE_SMALL((double) abs(sum(estimator.DataScale() - xStd)), 1e-6);
 }
 
-// Check that Train() return -1 if X is singular.
+// Check that Train() does not fail with two colinear vectors.
 BOOST_AUTO_TEST_CASE(SingularMatix)
 {
   arma::mat X;
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(SingularMatix)
 
   BayesianRidge estimator;
   double singular = estimator.Train(X, y);
-  BOOST_REQUIRE(singular  == -1);
+  BOOST_REQUIRE(singular != -1);
 }
 
 // Check that std are well computed/coherent. At least higher than the
