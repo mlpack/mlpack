@@ -1,6 +1,9 @@
 ### mlpack ?.?.?
 ###### ????-??-??
   * Added `mean bias loss function` for neural networks (#2210).
+  
+  * The DecisionStump class has been marked deprecated; use the `DecisionTree`
+    class with `NoRecursion=true` or use `ID3DecisionStump` instead (#2099).
 
   * Added `probabilities_file` parameter to get the probabilities matrix of
     AdaBoost classifier (#2050).
@@ -29,8 +32,17 @@
 
   * Add Mish activation function (#2158).
 
+  * Update `init_rules` in AMF to allow users to merge two initialization
+    rules (#2151).
+
+  * Add GELU activation function (#2183).
+
   * Better error handling of eigendecompositions and Cholesky decompositions
     (#2088, #1840).
+  
+  * Add LiSHT activation function (#2182).
+
+  * Add Valid and Same Padding for Transposed Convolution layer (#2163).
 
 ### mlpack 3.2.2
 ###### 2019-11-26
