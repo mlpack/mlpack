@@ -19,7 +19,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Cosine Embeddings Loss function is used for measuring whether two inputs are
- * similar or dissimilar, using using the cosine distance, and is typically used
+ * similar or dissimilar, using the cosine distance, and is typically used
  * for learning nonlinear embeddings or semi-supervised learning.
  *
  * @f{eqnarray*}{
@@ -41,96 +41,77 @@ class CosineEmbeddingLoss
  public:
   /**
    * Create the CosineEmbeddingLoss object.
-   * 
+   *
    * @param margin Increases cosine distance in case of dissimilarity.
    *               Refer definition of cosine-embedding-loss above.
+   * @param similarity Determines whether to use similarity or dissimilarity for
+   *                   comparision.
    * @param takeMean Boolean variable to specify whether to take mean or not.
    *                 Specifies reduction method i.e. sum or mean corresponding
    *                 to 0 and 1 respectively. Default value = 0.
    */
-  CosineEmbeddingLoss(const double margin = 0.0, const bool takeMean = false);
+  CosineEmbeddingLoss(const double margin = 0.0,
+                       const bool similarity = true,
+                       const bool takeMean = false);
 
   /**
    * Ordinary feed forward pass of a neural network.
    *
-   * @param x1 Input data used for evaluating the given function.
-   * @param x2 Input data used for evaluating the given function.
-   * @param y Input data used to determine whether to calculate
-   *          cosine similarity or dissimilarity. It should only
-   *          contain values equal to 1 or -1.
+   * @param input Input data used for evaluating the specified function.
+   * @param target The target vector.
    */
-  template<
-    typename FirstTensor,
-    typename SecondTensor,
-    typename ThirdTensor
-  >
-  double Forward(const FirstTensor&& x1, const SecondTensor&& x2,
-      const ThirdTensor&& y);
+  template <typename InputType, typename TargetType>
+  double Forward(const InputType& input, const TargetType& target);
 
   /**
-   * Ordinary feed backward pass of a neural network. The negative log
-   * likelihood layer expects that the input contains log-probabilities for
-   * each class. The layer also expects a class index, in the range between 1
-   * and the number of classes, as target when calling the Forward function.
+   * Ordinary feed backward pass of a neural network.
    *
-   * @param x1 The propagated input activation.
-   * @param x2 The propagated input activation.
-   * @param y The target vector, that contains the class index in the range
-   *        between 1 and the number of classes.
+   * @param input The propagated input activation.
+   * @param target The target vector.
    * @param output The calculated error.
    */
-  template<
-    typename FirstTensor,
-    typename SecondTensor,
-    typename ThirdTensor,
-    typename OutputTensor
-  >
-  void Backward(const FirstTensor&& x1,
-                const SecondTensor&& x2,
-                const ThirdTensor&& y,
-                const OutputTensor&& output);
+  template<typename InputType, typename TargetType, typename OutputType>
+  void Backward(const InputType& input,
+                const TargetType& target,
+                OutputType& output);
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
+  InputDataType &InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
+  InputDataType &InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
+  OutputDataType &OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputDataType &OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType& Delta() const { return delta; }
+  OutputDataType &Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputDataType &Delta() { return delta; }
 
   //! Get the value of takeMean.
   bool TakeMean() const { return takeMean; }
   //! Modify the value of takeMean.
-  bool& TakeMean() { return takeMean; }
+  bool &TakeMean() { return takeMean; }
 
   //! Get the value of margin.
-  bool Margin() const { return margin; }
+  double Margin() const { return margin; }
   //! Modify the value of takeMean.
-  bool& Margin() { return margin; }
-  
+  double &Margin() { return margin; }
+
+  //! Get the value of similarity hyperparameter.
+  bool Similarity() const { return similarity; }
+  //! Modify the value of takeMean.
+  bool &Similarity() { return similarity; }
 
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  // Returns Cosine-Distance between two vectors.
-  template <typename FirstTensor, typename SecondTensor>
-  double CosineDistance(const FirstTensor&& x1,
-                        const SecondTensor&& x2)
-  {
-    return arma::dot(arma::normalise(x1), arma::normalise(x2));
-  }
-
   //! Locally-stored delta object.
   OutputDataType delta;
 
@@ -140,10 +121,13 @@ class CosineEmbeddingLoss
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Locally-stored value of margin parameter.
+  //! Locally-stored value of similarity hyper-parameter.
+  bool similarity;
+
+  //! Locally-stored value of margin hyper-parameter.
   double margin;
 
-  //! Locally-stored value of takeMean parameter.
+  //! Locally-stored value of takeMean hyper-parameter.
   bool takeMean;
 }; // class CosineEmbeddingLoss
 

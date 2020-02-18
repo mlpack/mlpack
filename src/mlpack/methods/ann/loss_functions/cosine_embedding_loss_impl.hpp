@@ -20,120 +20,101 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 CosineEmbeddingLoss<InputDataType, OutputDataType>::CosineEmbeddingLoss(
-    const double margin, const bool takeMean):
-    margin(margin), takeMean(takeMean)
+    const double margin, const bool similarity, const bool takeMean):
+    margin(margin), similarity(similarity), takeMean(takeMean)
 {
   // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<
-    typename FirstTensor,
-    typename SecondTensor,
-    typename ThirdTensor
->
+template<typename InputType, typename TargetType>
 double CosineEmbeddingLoss<InputDataType, OutputDataType>::Forward(
-    const FirstTensor&& x1,
-    const SecondTensor&& x2,
-    const ThirdTensor&& y)
+    const InputType& input, const TargetType& target)
 {
-  const size_t cols = x1.n_cols;
-  const size_t batchSize = x1.n_elem / cols;
-  if (x1.n_rows != x2.n_rows || x1.n_cols != x2.n_cols ||
-      x1.n_elem != x2.n_elem)
+  const size_t cols = input.n_cols;
+  const size_t batchSize = input.n_elem / cols;
+  if (arma::size(input) != arma::size(target))
   {
-    Log::Fatal << "Input Dimensions must be same." << std::endl;
+    Log::Fatal << "Input Tensors must have same dimensions." << std::endl;
   }
 
-  if (y.n_elem < batchSize)
-  {
-    Log::Fatal << "Number of rows mismatch." << std::endl;
-  }
-  
-  arma::colvec inputTemp1 = arma::vectorise(x1);
-  arma::colvec inputTemp2 = arma::vectorise(x2);
+  arma::colvec inputTemp1 = arma::vectorise(input);
+  arma::colvec inputTemp2 = arma::vectorise(target);
   double loss = 0.0;
 
-  for(size_t i = 0; i < inputTemp1.n_elem; i+=cols)
+  for (size_t i = 0; i < inputTemp1.n_elem; i += cols)
   {
-    if (y(i / cols) == 1)
+    double cosDist = kernel::CosineDistance::Evaluate(inputTemp1(arma::span(i,
+         i + cols - 1)), inputTemp2(arma::span(i, i + cols - 1)));
+    if (similarity)
     {
-      loss += 1 - CosineDistance(inputTemp1(arma::span(i, i + cols - 1)),
-          inputTemp2(arma::span(i, i + cols - 1)));
-    }
-    else if (y(i / cols) == -1)
-    {
-      double currentLoss = CosineDistance(inputTemp1(arma::span(i, i + cols - 1)),
-          inputTemp2(arma::span(i, i + cols - 1))) - margin;
-      loss += currentLoss > 0 ? currentLoss : 0;
+      loss += 1 - cosDist;
     }
     else
     {
-      Log::Fatal << "y should only contain 1 and -1." << std::endl;
+      double currentLoss = cosDist - margin;
+      loss += currentLoss > 0 ? currentLoss : 0;
     }
   }
 
   if (takeMean)
   {
-    loss = (double)loss / y.n_elem;
+    loss = (double)loss / batchSize;
   }
+
   return loss;
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<
-    typename FirstTensor,
-    typename SecondTensor,
-    typename ThirdTensor,
-    typename OutputTensor
->
+template<typename InputType, typename TargetType, typename OutputType>
 void CosineEmbeddingLoss<InputDataType, OutputDataType>::Backward(
-    const FirstTensor&& x1,
-    const SecondTensor&& x2,
-    const ThirdTensor&& y,
-    const OutputTensor&& output)
+    const InputType& input,
+    const TargetType& target,
+    OutputType& output)
 {
-  const size_t cols = x1.n_cols;
-  const size_t batchSize = x1.n_elem / cols;
-  if (x1.n_rows != x2.n_rows || x1.n_cols != x2.n_cols ||
-      x1.n_elem != x2.n_elem)
+  const size_t cols = input.n_cols;
+  const size_t batchSize = input.n_elem / cols;
+  if (arma::size(input) != arma::size(target))
   {
-    Log::Fatal << "Input Dimensions must be same." << std::endl;
+    Log::Fatal << "Input Tensors must have same dimensions." << std::endl;
   }
 
-  if (y.n_elem < batchSize)
-  {
-    Log::Fatal << "Number of rows mismatch." << std::endl;
-  }
-  
-  arma::colvec inputTemp1 = arma::vectorise(x1);
-  arma::colvec inputTemp2 = arma::vectorise(x2);
-  arma::colvec outputTemp(inputTemp1.n_elem, 1);
+  arma::colvec inputTemp1 = arma::vectorise(input);
+  arma::colvec inputTemp2 = arma::vectorise(target);
+  output.set_size(arma::size(inputTemp1));
 
-  for(size_t i = 0; i < inputTemp1.n_elem; i+=cols)
+  arma::colvec outputTemp(output.memptr(), inputTemp1.n_elem,
+      false, false);
+  for (size_t i = 0; i < inputTemp1.n_elem; i += cols)
   {
-    if (y(i / cols) != 1 && y(i / cols) != -1)
+    double cosDist = kernel::CosineDistance::Evaluate(inputTemp1(arma::span(i,
+         i + cols -1)), inputTemp2(arma::span(i, i + cols -1)));
+
+    if (cosDist < margin && !similarity)
     {
-      Log::Fatal << "y should only contain 1 and -1." << std::endl;
+      outputTemp(arma::span(i, i + cols - 1)).zeros();
     }
-
-    outputTemp(arma::span(i, i + cols -1)) = arma::sign(y(i / cols)) *
-        (arma::normalise(inputTemp2(arma::span(i, i + cols - 1))) -
-        arma::normalise(inputTemp1(arma::span(i, i + cols - 1))) *
-        CosineDistance(inputTemp1(arma::span(i, i + cols - 1)),
-        inputTemp2(arma::span(i, i + cols - 1)))) /
-        std::sqrt(arma::accu(arma::pow(inputTemp1(arma::span(i, i + cols - 1)),
-        2)));
+    else
+    {
+      int multiplier = similarity ? 1 : -1;
+      outputTemp(arma::span(i, i + cols -1)) = -1 * multiplier *
+          (arma::normalise(inputTemp2(arma::span(i, i + cols - 1))) -
+          cosDist * arma::normalise(inputTemp1(arma::span(i, i + cols -
+          1)))) / std::sqrt(arma::accu(arma::pow(inputTemp1(arma::span(i, i +
+          cols - 1)), 2)));
+    }
   }
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void CosineEmbeddingLoss<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
+    Archive&  ar ,
     const unsigned int /* version */)
 {
-  // Nothing to do here.
+  ar & BOOST_SERIALIZATION_NVP(margin);
+  ar & BOOST_SERIALIZATION_NVP(similarity);
+  ar & BOOST_SERIALIZATION_NVP(takeMean);
 }
 
 } // namespace ann

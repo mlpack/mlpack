@@ -25,15 +25,9 @@
 #include <mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_bias_error.hpp>
 #include <mlpack/methods/ann/loss_functions/dice_loss.hpp>
-<<<<<<< HEAD
 #include <mlpack/methods/ann/loss_functions/log_cosh_loss.hpp>
-<<<<<<< HEAD
 #include <mlpack/methods/ann/loss_functions/hinge_embedding_loss.hpp>
-=======
-=======
 #include <mlpack/methods/ann/loss_functions/cosine_embedding_loss.hpp>
->>>>>>> Add Cosine Embeddings
->>>>>>> Add Cosine Embeddings
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -602,19 +596,22 @@ BOOST_AUTO_TEST_CASE(CosineEmbeddingLossTest)
   input2.ones();
   y = arma::mat(1, 1);
   y.ones();
-  loss = module.Forward(std::move(input1),std::move(input1),
-      std::move(y));
-  BOOST_REQUIRE_CLOSE(loss, 0.0, 1e-4);
+  loss = module.Forward(input1, input1);
+  BOOST_REQUIRE_SMALL(loss, 1e-6);
+
+  // Test the Backward function.
+  module.Backward(input1, input1, output);
+  BOOST_REQUIRE_SMALL(arma::accu(output), 1e-6);
+
   // Check for dissimilarity.
-  y.fill(-1);
-  loss = module.Forward(std::move(input1),std::move(input1),
-      std::move(y));
+  module.Similarity() = false;
+  loss = module.Forward(input1, input1);
   BOOST_REQUIRE_CLOSE(loss, 1.0, 1e-4);
 
   // Test the Backward function.
-  module.Backward(std::move(input1), std::move(input1), std::move(y),
-      std::move(output));
-  
+  module.Backward(input1, input1, output);
+  BOOST_REQUIRE_SMALL(arma::accu(output), 1e-6);
+
   input1 = arma::mat(3, 2);
   input2 = arma::mat(3, 2);
   input1.fill(1);
@@ -623,15 +620,16 @@ BOOST_AUTO_TEST_CASE(CosineEmbeddingLossTest)
   input2(0) = 2;
   input2(1) = 2;
   input2(2) = 2;
-  y = arma::mat(3, 1);
-  y.fill(-1);
-  loss = module.Forward(std::move(input1),std::move(input2),
-      std::move(y));
+  loss = module.Forward(input1, input2);
   // Caclulated using torch.nn.CosineEmbeddingLoss().
-  BOOST_REQUIRE_CLOSE(loss, 2.8973665961010275, 1e-3);
+  BOOST_REQUIRE_CLOSE(loss, 2.897367, 1e-3);
+
+  // Test the Backward function.
+  module.Backward(input1, input2, output);
+  BOOST_REQUIRE_CLOSE(arma::accu(output), 0.06324556, 1e-3);
 
   // Check for correctness for cube.
-  CosineEmbeddingLoss<> module2(0.5);
+  CosineEmbeddingLoss<> module2(0.5, true);
 
   arma::cube input3(3, 2, 2);
   arma::cube input4(3, 2, 2);
@@ -646,20 +644,27 @@ BOOST_AUTO_TEST_CASE(CosineEmbeddingLossTest)
   input4(2) = 2;
   input4(9) = 2;
   input4(11) = 2;
-  y = arma::mat(6, 1);
-  y.fill(1);
-  y(5) = -1;
-  y(2) = -1;
-  loss = module2.Forward(std::move(input3),std::move(input4),
-      std::move(y));
+  loss = module2.Forward(input3, input4);
   // Caclulated using torch.nn.CosineEmbeddingLoss().
-  BOOST_REQUIRE_CLOSE(loss, 1.0513167019494862, 1e-3);
+  BOOST_REQUIRE_CLOSE(loss, 0.55395, 1e-3);
+
+  // Test the Backward function.
+  module2.Backward(input3, input4, output);
+  BOOST_REQUIRE_CLOSE(arma::accu(output), -0.36649111, 1e-3);
 
   // Check Output for mean type of reduction.
-  CosineEmbeddingLoss<> module3(0.0, true);
-  loss = module3.Forward(std::move(input3),std::move(input4),
-      std::move(y));
-  BOOST_REQUIRE_CLOSE(loss, 0.34188611699158106, 1e-3);
+  CosineEmbeddingLoss<> module3(0.0, true, true);
+  loss = module3.Forward(input3, input4);
+  BOOST_REQUIRE_CLOSE(loss, 0.092325, 1e-3);
+
+  // Check correctness for cube.
+  module3.Similarity() = false;
+  loss = module3.Forward(input3, input4);
+  BOOST_REQUIRE_CLOSE(loss, 0.90767498236, 1e-3);
+
+  // Test the Backward function.
+  module3.Backward(input3, input4, output);
+  BOOST_REQUIRE_CLOSE(arma::accu(output), 0.36649111, 1e-4);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
