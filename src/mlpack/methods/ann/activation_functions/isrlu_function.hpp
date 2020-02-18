@@ -31,7 +31,6 @@ namespace ann /** Artifical Neural Network. */{
 
 class ISRUFunction
 {
-
  public:
   /**
    * Computes the ISRLU function
@@ -126,7 +125,7 @@ class ISRUFunction
    */
   static double Deriv(const double y, const double alpha = 0.1)
   {
-    double x = Inv( y, alpha);
+    double x = Inv(y, alpha);
     if (y<0)
       return std::pow(y / x, 3);
     else
