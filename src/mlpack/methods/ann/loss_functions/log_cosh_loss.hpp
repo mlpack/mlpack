@@ -41,11 +41,10 @@ class LogCoshLoss
    *
    * @param a A double type value for smoothening loss function.
    *          It must be positive real number, Sharpness of loss
-   *          function is directly propotional to `a`.
-   *          It can also act as a scaling factor hence making
-   *          the loss function more sensitive to small losses
-   *          around the origin.
-   *          Default value = 1.0
+   *          function is directly propotional to a. It can also
+   *          act as a scaling factor hence making the loss
+   *          function more sensitive to small losses around the
+   *          origin. Default value = 1.0
    */
   LogCoshLoss(const double a = 1.0);
 
@@ -75,9 +74,9 @@ class LogCoshLoss
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //! Get the value of hyperparameter `a`.
+  //! Get the value of hyperparameter a.
   bool A() const { return a; }
-  //! Modify the value of hyperparameter `a`.
+  //! Modify the value of hyperparameter a.
   bool& A() { return a; }
 
   /**
