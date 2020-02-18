@@ -43,8 +43,11 @@ class CustomLoss
    *        input, target and output matrices as parameter and saves the
    *        gradient in the ouput matrix.
    */
-  CustomLoss(std::function<double(const InputDataType&&, const InputDataType&&)> forward,
-             std::function<void(const InputDataType&&, const InputDataType&&, OutputDataType&&)> backward);
+  CustomLoss(
+      std::function<double(const InputDataType&&,
+                           const InputDataType&&)> forward,
+      std::function<void(const InputDataType&&,
+                         const InputDataType&&, OutputDataType&&)> backward);
   /**
    * Computes the specified custom loss function.
    * 
@@ -78,12 +81,14 @@ class CustomLoss
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //!Locally-stored output parameter object.
+  //! Locally-stored output parameter object.
   OutputDataType outputParameter;
   //! Locally-stored forward function.
   std::function<double(const InputDataType&&, const InputDataType&&)> forward;
   //! Locally-stored backward function.
-  std::function<void(const InputDataType&&, const InputDataType&&, OutputDataType&&)> backward;
+  std::function<void(const InputDataType&&,
+                     const InputDataType&&,
+                     OutputDataType&&)> backward;
 }; // class CustomLoss
 
 } // namespace ann

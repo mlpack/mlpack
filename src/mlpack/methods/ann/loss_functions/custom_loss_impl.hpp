@@ -21,7 +21,9 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputDataType, typename OutputDataType>
 CustomLoss<InputDataType, OutputDataType>::CustomLoss(
     std::function<double(const InputDataType&&, const InputDataType&&)> forward,
-    std::function<void(const InputDataType&&, const InputDataType&&, OutputDataType&&)> backward) : 
+    std::function<void(const InputDataType&&,
+                       const InputDataType&&,
+                       OutputDataType&&)> backward) :
       forward(forward), backward(backward)
 {
   // Nothing to do here.
