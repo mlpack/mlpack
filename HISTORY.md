@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added `mean bias loss function` for neural networks (#2210).
+
   * Added `probabilities_file` parameter to get the probabilities matrix of
     AdaBoost classifier (#2050).
 
