@@ -29,7 +29,7 @@ namespace ann /** Artifical Neural Network. */{
  * @f
  */
 
-class ISRUFunction
+class ISRLUFunction
 {
 
  public:
