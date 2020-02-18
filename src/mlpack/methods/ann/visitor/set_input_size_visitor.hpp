@@ -51,8 +51,7 @@ class SetInputSizeVisitor : public boost::static_visitor<bool>
       !HasModelCheck<T>::value, bool>::type
   LayerInputSize(T* layer) const;
 
-  //! Update the input size if the module implements the InputSize()
-  //! function.
+  //! Update the input size if the module implements the InputSize() function.
   template<typename T>
   typename std::enable_if<
       HasInputSize<T, size_t&(T::*)()>::value &&

@@ -123,10 +123,10 @@ class Linear
   OutputDataType& Delta() { return delta; }
 
   //! Get the input size.
-  size_t InputSize() const { return inSize; }
+  size_t& InputSize() { return inSize; }
 
   //! Get the output size.
-  size_t OutputSize() const { return outSize; }
+  size_t& OutputSize() { return outSize; }
 
   //! Get the gradient.
   OutputDataType const& Gradient() const { return gradient; }

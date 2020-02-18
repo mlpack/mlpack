@@ -56,6 +56,7 @@ SetInputSizeVisitor::LayerInputSize(T* layer) const
   if (layer->InputSize() == 0 || reset)
   {
     layer->InputSize() = inSize;
+    layer->Reset();
   }
 
   return true;

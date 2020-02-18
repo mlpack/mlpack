@@ -432,7 +432,9 @@ BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleLinearLayerOutputSizeTest)
 {
-  FFN<NegativeLogLikelihood<>, ConstInitialization> modelA, modelB;
+  FFN<NegativeLogLikelihood<>, ConstInitialization>
+      modelA(NegativeLogLikelihood<>(), ConstInitialization(0.5)),
+      modelB(NegativeLogLikelihood<>(), ConstInitialization(0.5));
   arma::mat outputA, outputB, input, delta;
 
   // Test the Forward function.
