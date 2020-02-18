@@ -1,6 +1,6 @@
 /**
  * @file load_image_impl.hpp
- * @author Mehul Kumar Nirala
+ * @authors Mehul Kumar Nirala, Pranav Reddy P
  *
  * An image loading utility implementation.
  *
