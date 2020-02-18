@@ -18,7 +18,6 @@
 
 #include "extension.hpp"
 
-#ifdef HAS_STB // Compile this only if stb is present.
 
 #define STB_IMAGE_STATIC
 #define STB_IMAGE_IMPLEMENTATION
@@ -28,12 +27,10 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
-#endif
 
 namespace mlpack {
 namespace data {
 
-#ifdef HAS_STB // Compile this only if stb is present.
 
 /**
  * Checks if the given image filename is supported.
@@ -44,7 +41,6 @@ namespace data {
 inline bool ImageFormatSupported(const std::string& fileName,
                                  const bool save = false);
 
-#endif
 
 /**
  * Implements meta-data of images required by data::Load and

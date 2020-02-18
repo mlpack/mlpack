@@ -13,7 +13,6 @@
 #ifndef MLPACK_CORE_DATA_IMAGE_INFO_IMPL_HPP
 #define MLPACK_CORE_DATA_IMAGE_INFO_IMPL_HPP
 
-#ifdef HAS_STB // Compile this only if stb is present.
 
 // In case it hasn't been included yet.
 #include "image_info.hpp"
@@ -54,7 +53,6 @@ inline bool ImageFormatSupported(const std::string& fileName, const bool save)
 } // namespace data
 } // namespace mlpack
 
-#endif // HAS_STB.
 
 namespace mlpack {
 namespace data {
