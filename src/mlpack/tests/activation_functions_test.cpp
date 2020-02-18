@@ -710,8 +710,6 @@ BOOST_AUTO_TEST_CASE(MishFunctionTest)
 }
 
 /**
-<<<<<<< HEAD
-=======
  * Basic test of the LiSHT function.
  */
 BOOST_AUTO_TEST_CASE(LiSHTFunctionTest)
@@ -734,7 +732,6 @@ BOOST_AUTO_TEST_CASE(LiSHTFunctionTest)
 }
 
 /**
->>>>>>> 362cbfadbcd254aa740fd8f3e5855d1ea79f60ab
  * Basic test of the GELU function.
  */
 BOOST_AUTO_TEST_CASE(GELUFunctionTest)
