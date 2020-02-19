@@ -103,8 +103,8 @@ template<bool UseWeights, typename RowType, typename WeightVecType>
         counts2[labels[i - 2]] += weight2;
         counts3[labels[i - 1]] += weight3;
         counts4[labels[i]] += weight4;
-    	}
-        
+        }
+
         accWeights[0] += weight1;
         accWeights[1] += weight2;
         accWeights[2] += weight3;
