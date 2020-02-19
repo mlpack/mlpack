@@ -45,6 +45,12 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
     ResetDeterministic();
   }
 
+  if (!deterministic)
+  {
+    deterministic = true;
+    ResetDeterministic();
+  }
+
   currentInput = arma::mat(predictors.memptr() + (i * predictors.n_rows),
       predictors.n_rows, batchSize, false, false);
   currentTarget = arma::mat(responses.memptr() + i, 1, batchSize, false,
@@ -63,8 +69,8 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
       boost::apply_visitor(outputParameterVisitor, generator.network.back());
   discriminator.Forward(std::move(predictors.cols(numFunctions,
       numFunctions + batchSize - 1)));
-  responses.cols(numFunctions, numFunctions + batchSize - 1) =
-      -arma::ones(1, batchSize);
+
+  responses.cols(numFunctions, numFunctions + batchSize - 1).fill(fakeLabel);
 
   currentTarget = arma::mat(responses.memptr() + numFunctions,
       1, batchSize, false, false);
@@ -135,8 +141,8 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   generator.Forward(std::move(noise));
   predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       boost::apply_visitor(outputParameterVisitor, generator.network.back());
-  responses.cols(numFunctions, numFunctions + batchSize - 1) =
-      -arma::ones(1, batchSize);
+
+  responses.cols(numFunctions, numFunctions + batchSize - 1).fill(fakeLabel);
 
   // Get the gradients of the Generator.
   res += discriminator.EvaluateWithGradient(discriminator.parameter,
@@ -149,8 +155,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   {
     // Minimize -D(G(noise)).
     // Pass the error from Discriminator to Generator.
-    responses.cols(numFunctions, numFunctions + batchSize - 1) =
-        arma::ones(1, batchSize);
+    responses.cols(numFunctions, numFunctions + batchSize - 1).fill(realLabel);
     discriminator.Gradient(discriminator.parameter, numFunctions,
         noiseGradientDiscriminator, batchSize);
     generator.error = boost::apply_visitor(deltaVisitor,

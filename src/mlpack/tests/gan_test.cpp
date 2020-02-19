@@ -216,7 +216,8 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
 
   Log::Info << "Training..." << std::endl;
   std::stringstream stream;
-  double objVal = gan.Train(trainData, optimizer, ens::ProgressBar(70, stream));
+  double objVal = gan.Train(trainData, optimizer, 1.0, 0.0,
+      ens::ProgressBar(70, stream));
   BOOST_REQUIRE_GT(stream.str().length(), 0);
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
@@ -328,7 +329,7 @@ BOOST_AUTO_TEST_CASE(GANMemorySharingTest)
   // Create GAN.
   GaussianInitialization gaussian(0, 0.1);
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
-      tolerance, shuffle);
+      tolerance, shuffle, true, true);
   std::function<double ()> noiseFunction = [](){ return math::Random(-8, 8) +
       math::RandNormal(0, 1) * 0.01;};
   GAN<FFN<SigmoidCrossEntropyError<> >,
@@ -346,6 +347,21 @@ BOOST_AUTO_TEST_CASE(GANMemorySharingTest)
   CheckMatrices(gan.Predictors(), gan.Discriminator().Predictors());
   CheckMatricesNotEqual(gan.Predictors().head_cols(trainData.n_cols),
       trainData);
+
+  // Check Label Smoothing.
+  gan.Train(trainData, optimizer, 0.8, 0.2);
+
+  arma::mat expectedResponses;
+  expectedResponses.set_size(1, 10000);
+  expectedResponses.fill(0.8);
+
+  arma::mat fakeResponses;
+  fakeResponses.set_size(1, batchSize);
+  fakeResponses.fill(0.2);
+
+  expectedResponses = arma::join_rows(expectedResponses, fakeResponses);
+
+  CheckMatrices(expectedResponses, gan.Discriminator().Responses());
 }
 
 BOOST_AUTO_TEST_SUITE_END();
