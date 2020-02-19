@@ -59,7 +59,7 @@ class GiniGain
    * @param numClasses Number of classes in the dataset.
    * @param weights Weight of labels.
    */
-  template<bool UseWeights, typename RowType, typename WeightVecType>
+template<bool UseWeights, typename RowType, typename WeightVecType>
   static double Evaluate(const RowType& labels,
                          const size_t numClasses,
                          const WeightVecType& weights)
@@ -85,60 +85,32 @@ class GiniGain
     if (UseWeights)
     {
       // Sum all the weights up.
-      // double accWeights[4] = { 0.0, 0.0, 0.0, 0.0 };
-      double accWeights = 0.0;
+      double accWeights[4] = { 0.0, 0.0, 0.0, 0.0 };
+
       // SIMD loop: add counts for four elements simultaneously (if the compiler
       // manages to vectorize the loop).
       #pragma omp parallel for reduction (+:accWeights)
-
-      for (omp_size_t i = 0; i < labels.n_elem; i ++)
+      for (omp_size_t i = 3; i < labels.n_elem; i += 4)
       {
+        const double weight1 = weights[i - 3];
+        const double weight2 = weights[i - 2];
+        const double weight3 = weights[i - 1];
+        const double weight4 = weights[i];
+
+        #pragma omp critical
+        {
+        counts[labels[i - 3]] += weight1;
+        counts2[labels[i - 2]] += weight2;
+        counts3[labels[i - 1]] += weight3;
+        counts4[labels[i]] += weight4;
+    	}
         
-        const double weight1 = weights[i];
-        // const double weight2 = weights[i - 2];
-        // const double weight3 = weights[i - 1];
-        // const double weight4 = weights[i];
-
-        // #pragma omp atomic
-        // counts2[labels[i - 2]] += weight2;
-        // #pragma omp atomic
-        // counts3[labels[i - 1]] += weight3;
-        // #pragma omp atomic
-        // counts4[labels[i]] += weight4;
-        // cannot add any counts in reduction as it shows some error.
-
-        accWeights += weight1;
-        // accWeights[1] += weight2;
-        // accWeights[2] += weight3;
-        // accWeights[3] += weight4;
-        switch(i%4){
-          case 0:
-          {
-          #pragma omp atomic
-            counts[labels[i]] += weight1;
-            break;
-          }
-          case 1:
-          {
-            #pragma omp atomic
-            counts2[labels[i]] += weight1;
-            break;
-          }
-          case 2:
-          {
-            #pragma omp atomic
-            counts3[labels[i]] += weight1;
-            break;
-          }
-          case 3:
-          {
-            #pragma omp atomic
-            counts4[labels[i]] += weight1;
-            break;
-          }
-        }
+        accWeights[0] += weight1;
+        accWeights[1] += weight2;
+        accWeights[2] += weight3;
+        accWeights[3] += weight4;
       }
-      /*
+
       // Handle leftovers.
       if (labels.n_elem % 4 == 1)
       {
@@ -171,17 +143,17 @@ class GiniGain
         accWeights[1] += weight2;
         accWeights[2] += weight3;
       }
-      */
-      // accWeights[0] += accWeights[1] + accWeights[2] + accWeights[3];
+
+      accWeights[0] += accWeights[1] + accWeights[2] + accWeights[3];
       counts += counts2 + counts3 + counts4;
 
       // Catch edge case: if there are no weights, the impurity is zero.
-      if (accWeights == 0.0)
+      if (accWeights[0] == 0.0)
         return 0.0;
-      #pragma omp parallel for reduction(+:impurity)
-      for (omp_size_t i = 0; i < numClasses; ++i)
+
+      for (size_t i = 0; i < numClasses; ++i)
       {
-        const double f = ((double) counts[i] / (double) accWeights);
+        const double f = ((double) counts[i] / (double) accWeights[0]);
         impurity += f * (1.0 - f);
       }
     }
@@ -189,15 +161,15 @@ class GiniGain
     {
       // SIMD loop: add counts for four elements simultaneously (if the compiler
       // manages to vectorize the loop).
-      // #pragma omp parallel for reduction (+:counts)
-      for (omp_size_t i = 0; i < labels.n_elem; i ++)
+
+      for (size_t i = 3; i < labels.n_elem; i += 4)
       {
-        counts[labels[i]]++;
-        // counts2[labels[i - 2]]++;
-        // counts3[labels[i - 1]]++;
-        // counts4[labels[i]]++;
+        counts[labels[i - 3]]++;
+        counts2[labels[i - 2]]++;
+        counts3[labels[i - 1]]++;
+        counts4[labels[i]]++;
       }
-      /*
+
       // Handle leftovers.
       if (labels.n_elem % 4 == 1)
       {
@@ -214,11 +186,10 @@ class GiniGain
         counts2[labels[labels.n_elem - 2]]++;
         counts3[labels[labels.n_elem - 1]]++;
       }
-      */
-      //counts += counts2 + counts3 + counts4;
-      // can parallelize
-      #pragma omp parallel for reduction(+:impurity)
-      for (omp_size_t i = 0; i < numClasses; ++i)
+
+      counts += counts2 + counts3 + counts4;
+
+      for (size_t i = 0; i < numClasses; ++i)
       {
         const double f = ((double) counts[i] / (double) labels.n_elem);
         impurity += f * (1.0 - f);
@@ -227,6 +198,7 @@ class GiniGain
 
     return -impurity;
   }
+
 
   /**
    * Return the range of the Gini impurity for the given number of classes.
@@ -248,3 +220,4 @@ class GiniGain
 } // namespace mlpack
 
 #endif
+
