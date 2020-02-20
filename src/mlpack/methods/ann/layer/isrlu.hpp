@@ -99,7 +99,7 @@ class ISRLU
    */
   double Fn(const double x)
   {
-    if(x < 0)
+    if (x < 0)
       return x / (std::sqrt(1 + alpha * x * x));
     else
       return x;
@@ -114,7 +114,7 @@ class ISRLU
   template<typename eT>
   void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
-    if(x < 0)
+    if (x < 0)
       y = x / (arma::sqrt(1 + alpha * arma::pow(x, 2)));
     else
       y = x;
@@ -128,7 +128,8 @@ class ISRLU
    */
   double Deriv(const double x)
   {
-    return (x >= 0) ? 1 : std::pow(1 / std::sqrt(1 + alpha * std::pow(x, 2)), 3);
+    return (x >= 0) ? 1 : std::pow
+    (1 / std::sqrt(1 + alpha * std::pow(x, 2)), 3);
   }
 
   /**
@@ -163,6 +164,6 @@ class ISRLU
 } // namespace mlpack
 
 // Include implementation.
-//#include "isrlu_impl.hpp"
+#include "isrlu_impl.hpp"
 
 #endif
