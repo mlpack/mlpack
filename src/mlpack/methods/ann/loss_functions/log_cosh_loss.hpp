@@ -40,8 +40,8 @@ class LogCoshLoss
    * parameters.
    *
    * @param a A double type value for smoothening loss function.
-   *          It must be positive real number, Sharpness of loss
-   *          function is directly propotional to a. It can also
+   *          It must be positive a real number, Sharpness of loss
+   *          function is directly proportional to a. It can also
    *          act as a scaling factor hence making the loss
    *          function more sensitive to small losses around the
    *          origin. Default value = 1.0

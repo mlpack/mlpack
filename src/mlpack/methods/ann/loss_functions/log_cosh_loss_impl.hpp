@@ -23,7 +23,7 @@ template<typename InputDataType, typename OutputDataType>
 LogCoshLoss<InputDataType, OutputDataType>::LogCoshLoss(const double a) :
     a(a)
 {
-  Log::Assert(a > 0, "Hyper-Parameter a must be positive");
+  Log::Assert(a > 0, "Hyper-Parameter \'a\' must be positive");
 }
 
 template<typename InputDataType, typename OutputDataType>
