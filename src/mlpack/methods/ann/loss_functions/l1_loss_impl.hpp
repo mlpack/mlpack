@@ -30,16 +30,11 @@ template<typename InputType, typename TargetType>
 double L1LOSS<InputDataType, OutputDataType>::Forward(
     const InputType&& input, const TargetType&& target)
 {
-  double loss = 0;
-  for (size_t i = 0; i < input.n_elem; ++i)
+ if (mean)
   {
-    loss += std::abs(input[i] - target[i]);
+    return arma::accu(arma::mean(input - target));
   }
-  if (mean)
-  {
-    return loss/input.n_elem;
-  }
-  return loss;
+  return arma::accu(input - target);
 }
 
 template<typename InputDataType, typename OutputDataType>
