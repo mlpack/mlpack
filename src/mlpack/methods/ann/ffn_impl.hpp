@@ -540,7 +540,6 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     Archive& ar, const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_NVP(parameter);
-  ar & BOOST_SERIALIZATION_NVP(size);
   ar & BOOST_SERIALIZATION_NVP(width);
   ar & BOOST_SERIALIZATION_NVP(height);
   ar & BOOST_SERIALIZATION_NVP(currentInput);

@@ -55,7 +55,6 @@ class Linear
    * Create the Linear layer object using the specified layer size. The input
    * layer size will be automatically inferred.
    *
-   *
    * @param layerSize The number of output units.
    */
   Linear(const size_t layerSize,
