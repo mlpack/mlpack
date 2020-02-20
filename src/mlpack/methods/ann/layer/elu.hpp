@@ -223,7 +223,6 @@ class ELU
    *
    * @param x Input data.
    * @param y Output activations f(x).
-   * @param z The resulting derivatives.
    */
   template<typename InputType, typename OutputType>
   void Deriv(const InputType& x, OutputType& y)
