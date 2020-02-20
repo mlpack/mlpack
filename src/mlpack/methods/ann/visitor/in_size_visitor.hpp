@@ -35,15 +35,13 @@ class InSizeVisitor : public boost::static_visitor<size_t>
   size_t operator()(MoreTypes layer) const;
 
  private:
-  //! If the module doesn't implement the InSize() function
-  //! return 0.
+  //! If the module doesn't implement the InSize() function return 0.
   template<typename T>
   typename std::enable_if<
       !HasInputSizeCheck<T>::value, size_t>::type
   LayerSize(T* layer) const;
 
-  //! If the module implements the InSize() function
-  //! returns the inSize.
+  //! If the module implements the InSize() function returns the inSize.
   template<typename T>
   typename std::enable_if<
       HasInputSizeCheck<T>::value, size_t>::type

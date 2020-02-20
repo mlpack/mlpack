@@ -160,14 +160,14 @@ class DropConnect
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+  //! The input size.
+  size_t inSize;
+
   //! The probability of setting a value to zero.
   double ratio;
 
   //! The scale fraction.
   double scale;
-
-  //! The input size.
-  size_t inSize;
 
   //! Locally-stored weight object.
   OutputDataType parameters;

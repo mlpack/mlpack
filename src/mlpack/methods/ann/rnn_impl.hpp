@@ -88,25 +88,29 @@ WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const
 
 
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
-  CheckInputDim(size_t numRows, const char *functionName)
+    CheckInputDim(size_t numRows, const char *functionName)
 {
   for (size_t l = 0; l < network.size(); ++l)
   {
     size_t layerInSize = boost::apply_visitor(InSizeVisitor(), network[l]);
-    if (layerInSize != 0){
-      if (layerInSize != numRows){
-        std::ostringstream oss;
-        oss << "RNN::" << functionName << ": the first layer of the network "
-            << "expects " << layerInSize << " elements, but the input has "
-            << numRows << " rows!  Check your input size for "
-            << "correctness: the number of rows in the input should be "
-            << layerInSize << ".\n";
-        throw std::out_of_range(oss.str());
-      }
-      else
-      {
-        break;
-      }
+    if (layerInSize == 0)
+    {
+      continue;
+    }
+    else if (layerInSize == numRows)
+    {
+      break;
+    }
+    else
+    {
+      std::string estr = "RNN::";
+                  estr += functionName;
+                  estr += "(): the first layer of the network expects" ;
+                  estr += std::to_string(layerInSize);
+                  estr += " elements, but the input has ";
+                  estr += std::to_string(numRows);
+                  estr += " rows!  Check your input size for correctness.\n";
+      throw std::logic_error(estr);
     }
   }
 }
@@ -137,7 +141,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   this->predictors = std::move(predictors);
   this->responses = std::move(responses);
 
-  #ifdef NDEBUG
+  #ifndef NDEBUG
   CheckInputDim(this->predictors.n_rows, "Train()");
   #endif
 
@@ -184,7 +188,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   this->predictors = std::move(predictors);
   this->responses = std::move(responses);
 
-  #ifdef NDEBUG
+  #ifndef NDEBUG
   CheckInputDim(this->predictors.n_rows, "Train()");
   #endif
 
@@ -215,7 +219,7 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::cube predictors, arma::cube& results, const size_t batchSize)
 {
-  #ifdef NDEBUG
+  #ifndef NDEBUG
   CheckInputDim(predictors.n_rows, "Predict()");
   #endif
 
@@ -231,7 +235,6 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     deterministic = true;
     ResetDeterministic();
   }
-
 
   const size_t effectiveBatchSize = std::min(batchSize,
       size_t(predictors.n_cols));

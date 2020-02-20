@@ -3715,4 +3715,46 @@ BOOST_AUTO_TEST_CASE(AdaptiveMeanPoolingTestCase)
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 1.5);
 }
 
+/**
+ * Test that checks whether the input dimensions are consitent with the input
+ * layer size.
+ */
+BOOST_AUTO_TEST_CASE(NetworkInputSizeTest)
+{
+  // We have to make sure backpropagation through time doesn't take more
+  // time steps than we have.
+  const int maxLineLength = 17;
+  const int hiddenSize = 128;
+  const int numLetters = 256;
+
+  using MatType = arma::cube;
+  std::vector<std::string> trainingData;
+  trainingData.push_back(std::string("THIS IS THE INPUT."));
+
+  RNN<> rnn(maxLineLength);
+  rnn.Add<IdentityLayer<>>();
+  rnn.Add<LinearNoBias<>>(numLetters / 16, numLetters / 4);
+  rnn.Add<Dropout<>>(0.6);
+  rnn.Add<Linear<>>(hiddenSize / 4, numLetters);
+
+  const auto makeInput = [](const char *line) -> MatType {
+    const auto strLen = strlen(line);
+    MatType result(numLetters, 1, strLen, arma::fill::zeros);
+    for(size_t i = 0; i < strLen; ++i)
+    {
+      const auto letter = line[i];
+      result.at(static_cast<arma::uword>(letter), 0, i) = 1.0;
+    }
+    return result;
+  };
+
+  std::vector<MatType> inputs(trainingData.size());
+  for(size_t i = 0; i < trainingData.size(); ++i)
+  {
+    inputs[i] = makeInput(trainingData[i].c_str());
+  }
+
+  BOOST_REQUIRE_THROW(rnn.CheckInputDim(inputs[0].n_rows, "Check"), std::logic_error);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

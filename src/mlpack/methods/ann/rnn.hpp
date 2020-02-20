@@ -301,7 +301,6 @@ class RNN
   //! Modify the matrix of data points (predictors).
   arma::cube& Predictors() { return predictors; }
 
-
   /*
    * Check whether the predictors dimensions are consistent with the layer
    * requirements.

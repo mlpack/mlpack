@@ -22,6 +22,7 @@
 #include "visitor/gradient_visitor.hpp"
 #include "visitor/set_input_height_visitor.hpp"
 #include "visitor/set_input_width_visitor.hpp"
+#include "visitor/in_size_visitor.hpp"
 
 #include <boost/serialization/variant.hpp>
 
@@ -55,25 +56,30 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::~FFN()
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
-  CheckInputDim(size_t numRows, const char *functionName)
+    CheckInputDim(size_t numRows, const char *functionName)
 {
   for (size_t l = 0; l < network.size(); ++l)
   {
     size_t layerInSize = boost::apply_visitor(InSizeVisitor(), network[l]);
-    if (layerInSize != 0){
-      if (layerInSize != numRows){
-        std::ostringstream oss;
-        oss << "FNN::" << functionName << ": the first layer of the network "
-            << "expects " << layerInSize << " elements, but the input has "
-            << numRows << " rows!  Check your input size for "
-            << "correctness: the number of rows in the input should be "
-            << layerInSize << ".\n";
-        throw std::out_of_range(oss.str());
-      }
-      else
-      {
-        break;
-      }
+    if (layerInSize == 0)
+    {
+      // Example Identity layer returns 0.
+      continue;
+    }
+    else if (layerInSize == numRows)
+    {
+      break;
+    }
+    else
+    {
+      std::string estr = "FNN::";
+                  estr += functionName;
+                  estr += "(): the first layer of the network expects" ;
+                  estr += std::to_string(layerInSize);
+                  estr += " elements, but the input has ";
+                  estr += std::to_string(numRows);
+                  estr += " rows!  Check your input size for correctness.\n";
+      throw std::logic_error(estr);
     }
   }
 }
@@ -164,7 +170,7 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 {
   ResetData(std::move(predictors), std::move(responses));
 
-  #ifdef NDEBUG
+  #ifndef NDEBUG
   CheckInputDim(predictors.n_rows, "Train()");
   #endif
 
@@ -258,7 +264,7 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::mat predictors, arma::mat& results)
 {
-  #ifdef NDEBUG
+  #ifndef NDEBUG
   CheckInputDim(predictors.n_rows, "Predict()");
   #endif
 

@@ -33,7 +33,7 @@ inline std::size_t InSizeVisitor::operator()(MoreTypes layer) const
 template<typename T>
 inline typename std::enable_if<
     !HasInputSizeCheck<T>::value, std::size_t>::type
-InSizeVisitor::LayerSize(T* layer) const
+InSizeVisitor::LayerSize(T* /* layer */) const
 {
   return 0;
 }

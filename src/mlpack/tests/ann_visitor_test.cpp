@@ -14,6 +14,7 @@
 #include <mlpack/methods/ann/visitor/bias_set_visitor.hpp>
 #include <mlpack/methods/ann/visitor/weight_set_visitor.hpp>
 #include <mlpack/methods/ann/visitor/reset_visitor.hpp>
+#include <mlpack/methods/ann/visitor/in_size_visitor.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -55,4 +56,13 @@ BOOST_AUTO_TEST_CASE(BiasSetVisitorTest)
   boost::apply_visitor(DeleteVisitor(), linear);
 }
 
+/**
+ * Test that the InSizeVisitor works properly.
+ */
+BOOST_AUTO_TEST_CASE(InSizeVisitorTest)
+{
+  LayerTypes<> linear = new Linear<>(10, 10);
+  size_t insize = boost::apply_visitor(InSizeVisitor(), linear);
+  BOOST_REQUIRE_EQUAL(insize, 10);
+}
 BOOST_AUTO_TEST_SUITE_END();
