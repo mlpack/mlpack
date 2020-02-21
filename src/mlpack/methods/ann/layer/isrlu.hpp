@@ -16,12 +16,18 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The ISRLU function, defined by
+ * The ISRLU function, also known as Inverse Square Root Linear Unit
+ * It has a negative value allowing it to push the mean unit activation closer
+ * to zero and bring the normal gradient closer to the unit natural gradient,
+ * ensuring a noise robust deactivation state, lessening the over fitting
+ * risk. Experiments have led to the conclusion that ISRLU leads to faster
+ * learning and better generalization on CNN's than ReLU.
+ *
+ * It is defined by
  * 
  * @f{eqnarray*}{
  * f(x) &=& x/sqrt(1 + alpha*x*x) if x<0
  *      &=& x                     if x>=0
- *
  * f'(x) &=& cube(1/sqrt(1 + alpha*x*x)) if x<0
  *       &=& 1                           if x>=0
  * @f}
@@ -41,9 +47,9 @@ class ISRLU
   /**
    * Create the ISRLU object using the specified parameters.
    * The non zero gradient can be adjusted by specifying the parameter
-   * alpha in the range 0 to 1. Default (alpha = 0.03)
+   * alpha in the range 0 to 1. Default value of alpha = 0.03
    *
-   * @param alpha Non zero gradient
+   * @param alpha Non zero gradient.
    */
   ISRLU(const double alpha = 0.03);
 
@@ -79,7 +85,7 @@ class ISRLU
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the non zero gradient.
+  //! Get the Hyperparameter Alpha.
   double const& Alpha() const { return alpha; }
   //! Modify the non zero gradient.
   double& Alpha() { return alpha; }
@@ -92,15 +98,17 @@ class ISRLU
 
  private:
   /**
-   * Computes the ISRLU function
+   * Computes the ISRLU function.
    *
    * @param x Input data.
    * @return f(x).
    */
   double Fn(const double x)
   {
+    if(alpha <= -1 / std::pow(x,2))
+      return DBL_MAX;
     if (x < 0)
-      return x / (std::sqrt(1 + alpha * x * x));
+      return x / (std::sqrt(1 + alpha * std::pow(2,x)));
     else
       return x;
   }
@@ -114,6 +122,8 @@ class ISRLU
   template<typename eT>
   void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
+    if(alpha <= -1 / std::pow(x,2))
+      y = DBL_MAX;
     if (x < 0)
       y = x / (arma::sqrt(1 + alpha * arma::pow(x, 2)));
     else
@@ -128,6 +138,8 @@ class ISRLU
    */
   double Deriv(const double x)
   {
+    if(alpha <= -1 / std::pow(x,2));
+      return DBL_MAX;
     return (x >= 0) ? 1 : std::pow
     (1 / std::sqrt(1 + alpha * std::pow(x, 2)), 3);
   }
