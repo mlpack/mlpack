@@ -41,26 +41,18 @@ void PrintInputParam(
   }
 
   std::string typeName;
-  if (std::is_same<T, bool>::value)
-    typeName = "Bool";
-  else if (std::is_same<T, int>::value)
-    typeName = "Int";
-  else if (std::is_same<T, double>::value)
-    typeName = "Double";
-  else if (std::is_same<T, std::string>::value)
-    typeName = "String";
-  else if (std::is_same<T, std::vector<std::string>>::value)
+  if (std::is_same<T, std::vector<std::string>>::value)
     typeName = "VecString";
   else if (std::is_same<T, std::vector<int>>::value)
     typeName = "VecInt";
   else
-    typeName = "Unknown";
+    typeName = GetJavaType<T>(d);
 
-  
+
   std::string javaClass;
   if (std::is_same<T, std::vector<std::string>>::value ||
       std::is_same<T, std::vector<int>>::value)
-    javaClass = "List";
+    javaClass = "List<?>";
   else
     javaClass = GetJavaType<T>(d);
 

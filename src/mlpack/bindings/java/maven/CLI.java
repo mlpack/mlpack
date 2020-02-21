@@ -113,10 +113,10 @@ class CLI {
   }
 
   @Name("SetParam<int>")
-  static native void setIntParam(String name, int value);
+  static native void setIntegerParam(String name, int value);
 
   @Name("SetParam<bool>")
-  static native void setBoolParam(String name, boolean value);
+  static native void setBooleanParam(String name, boolean value);
 
   @Name("SetParam<double>")
   static native void setDoubleParam(String name, double value);
@@ -253,7 +253,7 @@ class CLI {
   // getters
 
   @Name("GetParam<int>")
-  static native int getIntParam(String name);
+  static native int getIntegerParam(String name);
 
   @Name("GetParam<double>")
   static native double getDoubleParam(String name);

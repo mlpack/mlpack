@@ -8,7 +8,7 @@
 #define MLPACK_BINDINGS_JAVA_PRINT_OUTPUT_PARAM_IMPL_HPP
 
 #include "print_output_param.hpp"
-
+#include "get_java_type.hpp"
 #include "strip_type.hpp"
 
 namespace mlpack {
@@ -27,22 +27,15 @@ void PrintOutputParam(
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   std::string type;
-  if (std::is_same<T, bool>::value)
-    type = "Bool";
-  else if (std::is_same<T, int>::value)
-    type = "Int";
-  else if (std::is_same<T, double>::value)
-    type = "Double";
-  else if (std::is_same<T, std::string>::value)
-    type = "String";
-  else if (std::is_same<T, std::vector<std::string>>::value)
+  if (std::is_same<T, std::vector<std::string>>::value)
     type = "VecString";
   else if (std::is_same<T, std::vector<int>>::value)
     type = "VecInt";
   else
-    type = "Unknown";
+    type = GetJavaType<T>(d);
 
-  std::cout << "    params.put(\"" << d.name << "\", CLI.get" << type << "Param(\"" << d.name << "\"));" << std::endl;
+  std::cout << "    params.put(\"" << d.name << "\", CLI.get"
+            << type << "Param(\"" << d.name << "\"));" << std::endl;
 }
 
 /**
@@ -72,7 +65,8 @@ void PrintOutputParam(
     matTypeSuffix = "Mat";
   }
 
-  std::cout << "    params.put(\"" << d.name << "\", CLI.get" << uChar << matTypeSuffix << "Param(\"" << d.name << "\"));" << std::endl;
+  std::cout << "    params.put(\"" << d.name << "\", CLI.get" << uChar
+            << matTypeSuffix << "Param(\"" << d.name << "\"));" << std::endl;
 }
 
 /**
@@ -88,8 +82,8 @@ void PrintOutputParam(
 {
   std::string type = StripType(d.cppType);
 
-  std::cout << "    params.put(\"" << d.name << "\", new " << type << "Type(" 
-            << type << "Ptr.create(get" << type << "Ptr(\"" << d.name << "\"))));" << std::endl;
+  std::cout << "    params.put(\"" << d.name << "\", new " << type << "Type(" << std::endl
+            << "        " << type << "Ptr.create(get" << type << "Ptr(\"" << d.name << "\"))));" << std::endl;
 }
 
 /**
