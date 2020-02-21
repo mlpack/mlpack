@@ -1,6 +1,6 @@
 macro (not_found_return message)
   message(STATUS "${message}")
-  macro (add_java_binding name java_name)
+  macro (add_java_binding name)
     # Do nothing.
   endmacro ()
 
