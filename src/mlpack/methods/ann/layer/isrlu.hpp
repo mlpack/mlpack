@@ -105,10 +105,10 @@ class ISRLU
    */
   double Fn(const double x)
   {
-    if(alpha <= -1 / std::pow(x,2))
+    if (alpha <= -1 / std::pow(x, 2))
       return DBL_MAX;
     if (x < 0)
-      return x / (std::sqrt(1 + alpha * std::pow(2,x)));
+      return x / (std::sqrt(1 + alpha * std::pow(2, x)));
     else
       return x;
   }
@@ -122,7 +122,7 @@ class ISRLU
   template<typename eT>
   void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
-    if(alpha <= -1 / std::pow(x,2))
+    if (alpha <= -1 / std::pow(x, 2))
       y = DBL_MAX;
     if (x < 0)
       y = x / (arma::sqrt(1 + alpha * arma::pow(x, 2)));
@@ -138,7 +138,7 @@ class ISRLU
    */
   double Deriv(const double x)
   {
-    if(alpha <= -1 / std::pow(x,2));
+    if (alpha <= -1 / (std::pow(x, 2)))
       return DBL_MAX;
     return (x >= 0) ? 1 : std::pow
     (1 / std::sqrt(1 + alpha * std::pow(x, 2)), 3);
