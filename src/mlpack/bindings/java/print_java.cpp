@@ -2,6 +2,7 @@
 #include <fstream>
 #include <mlpack/core/util/hyphenate_string.hpp>
 #include <mlpack/core.hpp>
+#include <vector>
 #include "print_java.hpp"
 #include "get_java_type.hpp"
 #include "util.hpp"
@@ -48,7 +49,7 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& methodNam
        << " * <p>" << endl
        << " * <ol>" << endl;
 
-  for (const auto& param : input)
+  for (const util::ParamData& param : input)
   {
     if (param.required)
     {
@@ -59,7 +60,7 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& methodNam
     }
   }
 
-  for (const auto& param : input)
+  for (const util::ParamData& param : input)
   {
     if (!param.required)
     {
@@ -75,7 +76,7 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& methodNam
        << " * Output parameters:" << endl
        << " * <ol>" << endl;
 
-  for (const auto& param : output)
+  for (const util::ParamData& param : output)
   {
     string desc = util::HyphenateString(param.desc, " *         ");
     string type;
@@ -102,12 +103,12 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& methodNam
        << endl
        << "    public Params() {" << endl;
 
-  for (const auto& param : input)
+  for (const util::ParamData& param : input)
   {
     cout << "      params.put(\"" << param.name << "\", null);" << endl;
   }
 
-  for (const auto& param : output)
+  for (const util::ParamData& param : output)
   {
     cout << "      params.put(\"" << param.name << "\", null);" << endl;
   }
@@ -161,12 +162,12 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& methodNam
        << "    CLI.restoreSettings(THIS_NAME);" << endl
        << endl;
 
-  for (const auto& param : input)
+  for (const util::ParamData& param : input)
   {
     CLI::GetSingleton().functionMap[param.tname]["PrintInputParam"](param, nullptr, nullptr);
   }
 
-  for (const auto& param : output)
+  for (const util::ParamData& param : output)
   {
     cout << "    CLI.setPassed(\"" << param.name << "\");" << endl;
   }
@@ -175,7 +176,7 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& methodNam
        << "    mlpackMain();" << endl
        << endl;
 
-  for (const auto& param : output)
+  for (const util::ParamData& param : output)
   {
     CLI::GetSingleton().functionMap[param.tname]["PrintOutputParam"](param, nullptr, nullptr);
   }

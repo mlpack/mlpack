@@ -15,7 +15,7 @@ void RestoreSettings(const char* name)
 
 bool* GetMatWithInfoParamInfo(const char* name)
 {
-  const auto& info = std::get<0>(
+  const data::DatasetInfo& info = std::get<0>(
       CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(name));
 
   size_t n = info.Dimensionality();
@@ -37,7 +37,7 @@ size_t GetMatWithInfoParamLength(const char* name)
 
 double* GetMatWithInfoParamData(const char* name)
 {
-  auto& param = std::get<1>(
+  arma::mat& param = std::get<1>(
       CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(name));
 
   if (param.mem && param.n_elem <= arma::arma_config::mat_prealloc)

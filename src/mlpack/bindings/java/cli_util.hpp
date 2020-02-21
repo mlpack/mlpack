@@ -45,7 +45,7 @@ T GetParam(const char* name)
 template <typename T>
 typename T::elem_type* GetArmaParamData(const char* name)
 {
-  auto& param = CLI::GetParam<T>(name);
+  T& param = CLI::GetParam<T>(name);
 
   if (param.mem && param.n_elem <= arma::arma_config::mat_prealloc)
   {

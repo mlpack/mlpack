@@ -14,7 +14,7 @@ template <typename T, typename... Args>
 void PrintInputCallParam(std::ostream& os, const std::string& name,
     const T& value, const Args&... args)
 {
-  const auto& param = CLI::Parameters().at(name);
+  const util::ParamData& param = CLI::Parameters().at(name);
   if (param.input)
   {
     os << std::endl;
@@ -53,7 +53,7 @@ template <typename T, typename... Args>
 void PrintOutputCallParam(std::ostream& os, const std::string& name,
     const T& /* value */, const Args&... args)
 {
-  const auto& param = CLI::Parameters().at(name);
+  const util::ParamData& param = CLI::Parameters().at(name);
   if (!param.input)
   {
     os << std::endl;
