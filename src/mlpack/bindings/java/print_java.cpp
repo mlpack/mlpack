@@ -12,23 +12,6 @@ namespace {
 using namespace std;
 using namespace mlpack;
 
-string PaddWith(const string& data, const string& padding)
-{
-  string result;
-
-  for (char c : data) 
-  {
-    result += c;
-
-    if (c == '\n') 
-    {
-      result += padding;
-    }
-  }
-
-  return result;
-}
-
 void PrintModelPointers(const vector<util::ParamData>& in, const vector<util::ParamData>& out)
 {
   unordered_set<string> types;
@@ -57,7 +40,7 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& fileName,
   CLI::RestoreSettings(programInfo.programName);
 
   vector<util::ParamData> input, output;
-  
+
   for (const auto& param : CLI::Parameters())
   {
     const util::ParamData& paramData = param.second;
@@ -74,9 +57,9 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& fileName,
        << "import java.util.*;" << endl
        << endl
        << "/**" << endl
-       << " * " << PaddWith(util::HyphenateString(programInfo.shortDocumentation, 0), " * ") << endl
+       << " * " << util::HyphenateString(programInfo.shortDocumentation, " * ") << endl
        << " * " << endl
-       << " * " << PaddWith(util::HyphenateString(programInfo.documentation(), 0), " * ") << endl
+       << " * " << util::HyphenateString(programInfo.documentation(), " * ") << endl
        << " * " << endl
        << " * Program expects the following arguments:" << endl
        << " * <p>" << endl
@@ -86,7 +69,7 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& fileName,
   {
     if (param.required)
     {
-      string desc = PaddWith(util::HyphenateString(param.desc, 0), " *         ");
+      string desc = util::HyphenateString(param.desc, " *         ");
       string type;
       CLI::GetSingleton().functionMap[param.tname]["GetJavaType"](param, nullptr, (void*) &type);
       cout << " *   <li>" << type << ' ' << param.name << ": " << desc << "</li>" << endl;
@@ -97,7 +80,7 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& fileName,
   {
     if (!param.required)
     {
-      string desc = PaddWith(util::HyphenateString(param.desc, 0), " *         ");
+      string desc = util::HyphenateString(param.desc, " *         ");
       string type;
       CLI::GetSingleton().functionMap[param.tname]["GetJavaType"](param, nullptr, (void*) &type);
       cout << " *   <li>" << type << ' ' << param.name << " [optional]: " << desc << "</li>" << endl;
@@ -111,7 +94,7 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& fileName,
 
   for (const auto& param : output)
   {
-    string desc = PaddWith(util::HyphenateString(param.desc, 0), " *         ");
+    string desc = util::HyphenateString(param.desc, " *         ");
     string type;
     CLI::GetSingleton().functionMap[param.tname]["GetJavaType"](param, nullptr, (void*) &type);
     cout << " *   <li>" << type << ' ' << param.name << ": " << desc << "</li>" << endl;
@@ -127,7 +110,7 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& fileName,
        << "    private final Map<String, Object> params = new HashMap<>();" << endl
        << endl
        << "    public Params() {" << endl;
-  
+
   for (const auto& param : input)
   {
     cout << "      params.put(\"" << param.name << "\", null);" << endl;
@@ -165,7 +148,7 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& fileName,
        << "    }" << endl
        << "  }" << endl
        << endl;
-  
+
   PrintModelPointers(input, output);
 
   cout << "  static {" << endl
@@ -186,7 +169,7 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& fileName,
        << "  public static void run(Params params) {" << endl
        << "    CLI.restoreSettings(THIS_NAME);" << endl
        << endl;
-  
+
   for (const auto& param : input)
   {
     CLI::GetSingleton().functionMap[param.tname]["PrintInputParam"](param, nullptr, nullptr);
@@ -200,7 +183,7 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& fileName,
   cout << endl
        << "    mlpackMain();" << endl
        << endl;
-  
+
   for (const auto& param : output)
   {
     CLI::GetSingleton().functionMap[param.tname]["PrintOutputParam"](param, nullptr, nullptr);
