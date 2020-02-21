@@ -1,3 +1,9 @@
+/**
+ * @file print_java.cpp
+ * @author Vasyl Teliman
+ *
+ * Implementation of utility PrintJava() function.
+ */
 #include <iostream>
 #include <fstream>
 #include <mlpack/core/util/hyphenate_string.hpp>
@@ -14,7 +20,11 @@ namespace java {
 using namespace std;
 using namespace mlpack;
 
-void PrintJava(const util::ProgramDoc& programInfo, const std::string& methodName, const std::string& methodPath)
+/**
+ * Print the code for a .java binding for an mlpack program to a specific file.
+ */
+void PrintJava(const util::ProgramDoc& programInfo,
+    const std::string& methodName, const std::string& methodPath)
 {
   string methodFile = methodName + "_main.cpp";
   string className = ToCamelCase(methodName);
@@ -90,7 +100,6 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& methodNam
        << "    include = {" << endl
        << "        \"" << methodName << "_main.cpp\"," << endl
        << "        \"cli_util.hpp\"," << endl
-       << "        \"cli_util.cpp\"," << endl
        << "        \"deleter.hpp\"" << endl
        << "    }," << endl
        << "    link = \"mlpack\"," << endl

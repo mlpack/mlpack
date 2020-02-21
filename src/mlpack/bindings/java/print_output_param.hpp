@@ -66,7 +66,7 @@ void PrintOutputParam(const util::ParamData& d,
   PrintOutputParam<typename std::remove_pointer<T>::type>(d);
 }
 
-} // namespace julia
+} // namespace java
 } // namespace bindings
 } // namespace mlpack
 

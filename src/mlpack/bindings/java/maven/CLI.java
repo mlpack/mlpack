@@ -11,7 +11,7 @@ import java.util.List;
 import org.bytedeco.javacpp.*;
 import org.bytedeco.javacpp.annotation.*;
 
-@Platform(include = {"cli_util.hpp", "cli_util.cpp", "deleter.hpp"}, link = "mlpack")
+@Platform(include = {"cli_util.hpp", "deleter.hpp"}, link = "mlpack")
 @Namespace("mlpack::util")
 class CLI {
   private static final char ARMA_ORDER = 'f';

@@ -40,6 +40,7 @@ else()
   find_program(MAVEN_BIN mvn REQUIRED)
 endif()
 
+# Check that maven exists
 if (MAVEN_BIN)
   message(STATUS "Found maven: ${MAVEN_BIN}")
 else()
@@ -106,6 +107,7 @@ add_custom_target(java_cli_util ALL
     DEPENDS java_configure)
 
 # Group some commonly used files into a single library
+# so that we don't need to recompile the every time
 add_library(java_generate_parts STATIC
     ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java/strip_type.hpp
     ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/java/print_param_defn.hpp

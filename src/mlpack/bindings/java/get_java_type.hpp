@@ -16,6 +16,9 @@ namespace mlpack {
 namespace bindings {
 namespace java {
 
+/**
+ * Fallback implementation
+ */
 template<typename T>
 inline std::string GetJavaType(const util::ParamData&,
     const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
@@ -27,6 +30,9 @@ inline std::string GetJavaType(const util::ParamData&,
   return "unknown_"; // This will cause an error most likely...
 }
 
+/**
+ * Map bool -> Boolean
+ */
 template<>
 inline std::string GetJavaType<bool>(const util::ParamData&,
     const typename std::enable_if<!util::IsStdVector<bool>::value>::type*,
@@ -38,6 +44,9 @@ inline std::string GetJavaType<bool>(const util::ParamData&,
   return "Boolean";
 }
 
+/**
+ * Map int -> Integer
+ */
 template<>
 inline std::string GetJavaType<int>(const util::ParamData&,
     const typename std::enable_if<!util::IsStdVector<int>::value>::type*,
@@ -49,6 +58,9 @@ inline std::string GetJavaType<int>(const util::ParamData&,
   return "Integer";
 }
 
+/**
+ * Map size_t -> Long
+ */
 template<>
 inline std::string GetJavaType<size_t>(const util::ParamData&,
     const typename std::enable_if<!util::IsStdVector<size_t>::value>::type*,
@@ -60,6 +72,9 @@ inline std::string GetJavaType<size_t>(const util::ParamData&,
   return "Long";
 }
 
+/**
+ * Map double -> Double
+ */
 template<>
 inline std::string GetJavaType<double>(const util::ParamData&,
     const typename std::enable_if<!util::IsStdVector<double>::value>::type*,
@@ -71,6 +86,9 @@ inline std::string GetJavaType<double>(const util::ParamData&,
   return "Double";
 }
 
+/**
+ * Map std::string -> String
+ */
 template<>
 inline std::string GetJavaType<std::string>(const util::ParamData&,
     const typename std::enable_if<
@@ -85,6 +103,10 @@ inline std::string GetJavaType<std::string>(const util::ParamData&,
   return "String";
 }
 
+/**
+ * Map std::vector<std::string> -> List<String>
+ *     std::vector<int>         -> List<Integer>
+ */
 template<typename T>
 inline std::string GetJavaType(const util::ParamData& data,
     const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0,
@@ -95,6 +117,9 @@ inline std::string GetJavaType(const util::ParamData& data,
   return "List<" + GetJavaType<typename T::value_type>(data) + ">";
 }
 
+/**
+ * Map arma::mat<*> -> INDArray
+ */
 template<typename T>
 inline std::string GetJavaType(const util::ParamData&,
     const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
@@ -105,6 +130,9 @@ inline std::string GetJavaType(const util::ParamData&,
   return "INDArray";
 }
 
+/**
+ * Map for categorical matrices
+ */
 template<typename T>
 inline std::string GetJavaType(const util::ParamData&,
     const typename std::enable_if<std::is_same<T,
@@ -113,7 +141,9 @@ inline std::string GetJavaType(const util::ParamData&,
   return "MatrixWithInfo";
 }
 
-// for serializable types
+/**
+ * Map for serializable types
+ */
 template<typename T>
 inline std::string GetJavaType(const util::ParamData& d,
     const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
@@ -125,6 +155,9 @@ inline std::string GetJavaType(const util::ParamData& d,
   return StripType(d.cppType) + "Type";
 }
 
+/**
+ * Entry point to the implementation
+ */
 template <typename T>
 void GetJavaType(const util::ParamData& d, const void*, void* out)
 {
