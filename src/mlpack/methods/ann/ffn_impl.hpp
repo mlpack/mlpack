@@ -146,9 +146,11 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   ResetData(std::move(predictors), std::move(responses));
 
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
-  #ifdef NDEBUG
+  #ifdef DEBUG
   CheckInputDim(predictors.n_rows, "Train()");
   #endif
+
+  ResetData(std::move(predictors), std::move(responses));
 
   // Train the model.
   Timer::Start("ffn_optimization");
@@ -168,11 +170,11 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::mat responses,
     CallbackTypes&&... callbacks)
 {
-  ResetData(std::move(predictors), std::move(responses));
-
   #ifndef NDEBUG
   CheckInputDim(predictors.n_rows, "Train()");
   #endif
+
+  ResetData(std::move(predictors), std::move(responses));
 
   OptimizerType optimizer;
 
