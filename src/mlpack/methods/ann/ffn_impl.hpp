@@ -74,9 +74,9 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
     {
       std::string estr = "FNN::";
                   estr += functionName;
-                  estr += "(): the first layer of the network expects";
+                  estr += "(): the first layer of the network expects ";
                   estr += std::to_string(layerInSize);
-                  estr += " elements, but the input has ";
+                  estr += " rows, but the input has ";
                   estr += std::to_string(numRows);
                   estr += " rows!  Check your input size for correctness.\n";
       throw std::logic_error(estr);

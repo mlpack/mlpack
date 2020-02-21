@@ -105,9 +105,9 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
     {
       std::string estr = "RNN::";
                   estr += functionName;
-                  estr += "(): the first layer of the network expects";
+                  estr += "(): the first layer of the network expects ";
                   estr += std::to_string(layerInSize);
-                  estr += " elements, but the input has ";
+                  estr += " rows, but the input has ";
                   estr += std::to_string(numRows);
                   estr += " rows!  Check your input size for correctness.\n";
       throw std::logic_error(estr);
@@ -138,12 +138,12 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 {
   numFunctions = responses.n_cols;
 
+  #ifndef NDEBUG
+  CheckInputDim(predictors.n_rows, "Train()");
+  #endif
+
   this->predictors = std::move(predictors);
   this->responses = std::move(responses);
-
-  #ifndef NDEBUG
-  CheckInputDim(this->predictors.n_rows, "Train()");
-  #endif
 
   this->deterministic = true;
   ResetDeterministic();
@@ -185,12 +185,12 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 {
   numFunctions = responses.n_cols;
 
+  #ifndef NDEBUG
+  CheckInputDim(predictors.n_rows, "Train()");
+  #endif
+
   this->predictors = std::move(predictors);
   this->responses = std::move(responses);
-
-  #ifndef NDEBUG
-  CheckInputDim(this->predictors.n_rows, "Train()");
-  #endif
 
   this->deterministic = true;
   ResetDeterministic();

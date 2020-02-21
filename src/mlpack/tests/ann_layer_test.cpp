@@ -3725,7 +3725,7 @@ BOOST_AUTO_TEST_CASE(NetworkInputSizeTest)
   // time steps than we have.
   const int maxLineLength = 17;
   const int hiddenSize = 128;
-  const int numLetters = 256;
+  const arma::uword numLetters = 256;
 
   using MatType = arma::cube;
   std::vector<std::string> trainingData;
@@ -3737,7 +3737,7 @@ BOOST_AUTO_TEST_CASE(NetworkInputSizeTest)
   rnn.Add<Dropout<>>(0.6);
   rnn.Add<Linear<>>(hiddenSize / 4, numLetters);
 
-  const auto makeInput = [](const char *line) -> MatType {
+  const auto makeInput = [=](const char *line) -> MatType {
     const auto strLen = strlen(line);
     MatType result(numLetters, 1, strLen, arma::fill::zeros);
     for (size_t i = 0; i < strLen; ++i)
