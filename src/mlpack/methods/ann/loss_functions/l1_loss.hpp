@@ -30,15 +30,15 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class L1LOSS
+class L1loss
 {
  public:
   /**
-   * Create the L1Loss object.
+   * Create the L1loss object.
    *
    * @param mean Reduction type. If true, performs mean of loss else sum.
    */
-  L1LOSS(const bool mean = true);
+  L1loss(const bool mean = true);
 
   /**
    * Computes the L1 Loss function.
@@ -82,7 +82,7 @@ class L1LOSS
 
   //! Reduction type. If true, performs mean of loss else sum.
   bool mean;
-}; // class L1Loss
+}; // class L1loss
 
 } // namespace ann
 } // namespace mlpack

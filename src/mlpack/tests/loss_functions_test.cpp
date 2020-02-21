@@ -715,10 +715,10 @@ BOOST_AUTO_TEST_CASE(MarginRankingLossTest)
 /**
  * Simple test for the l1 loss function.
  */
-BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorTest)
+BOOST_AUTO_TEST_CASE(SimpleL1lossTest)
 {
   arma::mat input1, input2, output, target1, target2;
-  CrossEntropyError<> module(1e-6);
+  L1loss<> module(false);
 
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.

@@ -19,7 +19,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-L1LOSS<InputDataType, OutputDataType>::L1LOSS(const bool mean):
+L1loss<InputDataType, OutputDataType>::L1loss(const bool mean):
   mean(mean)
 {
   // Nothing to do here.
@@ -27,7 +27,7 @@ L1LOSS<InputDataType, OutputDataType>::L1LOSS(const bool mean):
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double L1LOSS<InputDataType, OutputDataType>::Forward(
+double L1loss<InputDataType, OutputDataType>::Forward(
     const InputType&& input, const TargetType&& target)
 {
   if (mean)
@@ -39,7 +39,7 @@ double L1LOSS<InputDataType, OutputDataType>::Forward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
-void L1LOSS<InputDataType, OutputDataType>::Backward(
+void L1loss<InputDataType, OutputDataType>::Backward(
     const InputType&& input,
     const TargetType&& target,
     OutputType&& output)
@@ -49,7 +49,7 @@ void L1LOSS<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void L1LOSS<InputDataType, OutputDataType>::serialize(
+void L1loss<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
     const unsigned int /* version */)
 {

@@ -49,7 +49,8 @@
 
   * Add Mish activation function (#2158).
 
-<<<<<<< HEAD
+  * Add L1 Loss function (#2203).
+
   * Update `init_rules` in AMF to allow users to merge two initialization
     rules (#2151).
 
