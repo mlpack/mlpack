@@ -52,7 +52,7 @@ void PrintInputParam(
   std::string javaClass;
   if (std::is_same<T, std::vector<std::string>>::value ||
       std::is_same<T, std::vector<int>>::value)
-    javaClass = "List<?>";
+    javaClass = "List";
   else
     javaClass = GetJavaType<T>(d);
 

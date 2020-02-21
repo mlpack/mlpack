@@ -19,6 +19,6 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(logistic_regression)
 add_python_binding(logistic_regression)
-add_java_binding(logistic_regression LogisticRegression LogisticRegression)
+add_java_binding(logistic_regression)
 add_julia_binding(logistic_regression)
 add_markdown_docs(logistic_regression "cli;python;julia" "classification")

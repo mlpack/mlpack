@@ -20,6 +20,6 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(sparse_coding)
 add_python_binding(sparse_coding)
-add_java_binding(sparse_coding SparseCoding SparseCoding)
+add_java_binding(sparse_coding)
 add_julia_binding(sparse_coding)
 add_markdown_docs(sparse_coding "cli;python;julia" "transformations")

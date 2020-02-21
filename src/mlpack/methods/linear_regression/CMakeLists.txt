@@ -17,6 +17,6 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(linear_regression)
 add_python_binding(linear_regression)
-add_java_binding(linear_regression LinearRegression LinearRegression)
+add_java_binding(linear_regression)
 add_julia_binding(linear_regression)
 add_markdown_docs(linear_regression "cli;python;julia" "regression")

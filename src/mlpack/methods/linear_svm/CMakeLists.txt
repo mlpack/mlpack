@@ -19,5 +19,5 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(linear_svm)
 add_python_binding(linear_svm)
-add_java_binding(linear_svm LinearSVM LinearSVMModel)
+add_java_binding(linear_svm)
 add_markdown_docs(linear_svm "cli;python" "classification")

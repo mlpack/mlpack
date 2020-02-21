@@ -20,6 +20,6 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(lmnn)
 add_python_binding(lmnn)
-add_java_binding(lmnn Lmnn)
+add_java_binding(lmnn)
 add_julia_binding(lmnn)
 add_markdown_docs(lmnn "cli;python;julia" "transformations")

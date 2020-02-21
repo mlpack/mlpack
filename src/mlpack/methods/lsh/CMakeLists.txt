@@ -19,6 +19,6 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 # sets with p-stable LSH.
 add_cli_executable(lsh)
 add_python_binding(lsh)
-add_java_binding(lsh LSH LSHSearch)
+add_java_binding(lsh)
 add_julia_binding(lsh)
 add_markdown_docs(lsh "cli;python;julia" "geometry")

@@ -1,9 +1,12 @@
 package org.mlpack;
 
+import org.bytedeco.javacpp.annotation.*;
+
 import java.util.Objects;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 
+@Platform(not = "")
 public class MatrixWithInfo {
   private final INDArray matrix;
   private final boolean[] info;

@@ -1,6 +1,6 @@
-add_java_binding(bindings_test BindingsTest GaussianKernel)
+add_java_binding(bindings_test)
 
-add_custom_command(TARGET jniBindingsTest POST_BUILD
+add_custom_command(TARGET generate_java_bindings_test POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory ${MAVEN_BUILD_DIR}/src/test/java/org/mlpack
     COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_CURRENT_SOURCE_DIR}/BindingsJUnitTest.java

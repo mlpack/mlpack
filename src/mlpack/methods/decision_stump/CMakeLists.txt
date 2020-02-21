@@ -16,6 +16,6 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(decision_stump)
 add_python_binding(decision_stump)
-add_java_binding(decision_stump DecisionStump DSModel)
+add_java_binding(decision_stump)
 add_julia_binding(decision_stump)
 add_markdown_docs(decision_stump "cli;python;julia" "classification")

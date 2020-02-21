@@ -21,13 +21,13 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(hmm_train)
 add_python_binding(hmm_train)
-add_java_binding(hmm_train HmmTrain HMMModel)
+add_java_binding(hmm_train)
 add_julia_binding(hmm_train)
 add_markdown_docs(hmm_train "cli;python;julia" "misc. / other")
 
 add_cli_executable(hmm_loglik)
 add_python_binding(hmm_loglik)
-add_java_binding(hmm_loglik HmmLoglik HMMModel)
+add_java_binding(hmm_loglik)
 add_julia_binding(hmm_loglik)
 add_markdown_docs(hmm_loglik "cli;python;julia" "misc. / other")
 

@@ -30,6 +30,6 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(hoeffding_tree)
 add_python_binding(hoeffding_tree)
-add_java_binding(hoeffding_tree HoeffdingTree HoeffdingTreeModel)
+add_java_binding(hoeffding_tree)
 add_julia_binding(hoeffding_tree)
 add_markdown_docs(hoeffding_tree "cli;python;julia" "classification")

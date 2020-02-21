@@ -16,6 +16,6 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(nbc)
 add_python_binding(nbc)
-add_java_binding(nbc NBC NBCModel)
+add_java_binding(nbc)
 add_julia_binding(nbc)
 add_markdown_docs(nbc "cli;python;julia" "classification")

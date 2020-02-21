@@ -1,23 +1,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.mlpack</groupId>
-  <artifactId>mlpack-java</artifactId>
-  <packaging>jar</packaging>
-  <version>@PACKAGE_VERSION@</version>
-  <name>mlpack-java</name>
-  <url>http://mlpack.org</url>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.mlpack</groupId>
+    <artifactId>mlpack-java</artifactId>
+    <packaging>jar</packaging>
+    <version>@PACKAGE_VERSION@</version>
+    <name>mlpack</name>
+    <url>http://mlpack.org</url>
+
+    <properties>
+        <javacpp.version>1.5.2</javacpp.version>
+        <org.nd4j.version>1.0.0-beta5</org.nd4j.version>
+        <javacpp.platform>@MLPACK_JAVA_TARGET_PLATFORM@</javacpp.platform>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacpp</artifactId>
-            <version>@JAVACPP_VERSION@</version>
+            <version>${javacpp.version}</version>
         </dependency>
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-native-platform</artifactId>
-            <version>1.0.0-beta5</version>
+            <version>${org.nd4j.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -27,68 +34,58 @@
         </dependency>
     </dependencies>
 
-    <properties>
-        <java.library.path>native/</java.library.path>
-    </properties>
-
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
-                    <configuration>
-                        <includes>${changed.classes}</includes>
-                        <source>@JAVA_VERSION@</source>
-                        <target>@JAVA_VERSION@</target>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.2.1</version>
-                    <configuration>
-                        <mainClass>org.mlpack.Test</mainClass>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-shade-plugin</artifactId>
-                    <version>2.1</version>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>shade</goal>
-                            </goals>
-                            <configuration>
-                                <transformers>
-                                    <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    </transformer>
-                                </transformers>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <configuration>
-                        <outputDirectory>lib/</outputDirectory>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.19.1</version>
-                    <configuration>
-                        <forkMode>once</forkMode>
-                        <workingDirectory>target</workingDirectory>
-                        <argLine>-Djava.library.path=${basedir}/native</argLine>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>@JAVA_VERSION@</source>
+                    <target>@JAVA_VERSION@</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.bytedeco</groupId>
+                <artifactId>javacpp</artifactId>
+                <version>${javacpp.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.nd4j</groupId>
+                        <artifactId>nd4j-native-platform</artifactId>
+                        <version>${org.nd4j.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <properties>${javacpp.platform}</properties>
+                    <!--<propertyKeysAndValues>
+                        <property>
+                            <name>platform.root</name>
+                            <value>${javacpp.platform.root}</value>
+                        </property>
+                        <property>
+                            <name>platform.compiler</name>
+                            <value>${javacpp.platform.compiler}</value>
+                        </property>
+                    </propertyKeysAndValues>-->
+                    <includePath>@MLPACK_JAVA_INCLUDE_PATH@</includePath>
+                    <linkPath>@MLPACK_JAVA_LINK_PATH@</linkPath>
+                    <compilerOptions>@MLPACK_JAVA_COMPILER_OPTIONS@</compilerOptions>
+                    <copyLibs>true</copyLibs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>javacpp.compiler</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <configuration>
+                            <classOrPackageName>org.mlpack.*</classOrPackageName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>

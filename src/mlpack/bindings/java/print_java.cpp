@@ -1,42 +1,25 @@
 #include <iostream>
-#include <unordered_set>
+#include <fstream>
 #include <mlpack/core/util/hyphenate_string.hpp>
+#include <mlpack/core.hpp>
 #include "print_java.hpp"
 #include "get_java_type.hpp"
+#include "util.hpp"
 
 namespace mlpack {
 namespace bindings {
 namespace java {
-namespace {
 
 using namespace std;
 using namespace mlpack;
 
-void PrintModelPointers(const vector<util::ParamData>& in, const vector<util::ParamData>& out)
+void PrintJava(const util::ProgramDoc& programInfo, const std::string& methodName, const std::string& methodPath)
 {
-  unordered_set<string> types;
+  string methodFile = methodName + "_main.cpp";
+  string className = ToCamelCase(methodName);
+  ofstream fout(className + ".java");
+  RedirectStream raii(cout, fout);
 
-  for (const auto& param : in)
-  {
-    if (types.count(param.cppType) == 0) {
-      types.insert(param.cppType);
-      CLI::GetSingleton().functionMap[param.tname]["PrintParamDefn"](param, nullptr, nullptr);
-    }
-  }
-
-  for (const auto& param : out)
-  {
-    if (types.count(param.cppType) == 0) {
-      types.insert(param.cppType);
-      CLI::GetSingleton().functionMap[param.tname]["PrintParamDefn"](param, nullptr, nullptr);
-    }
-  }
-}
-
-}
-
-void PrintJava(const util::ProgramDoc& programInfo, const std::string& fileName, const std::string& className)
-{
   CLI::RestoreSettings(programInfo.programName);
 
   vector<util::ParamData> input, output;
@@ -102,7 +85,15 @@ void PrintJava(const util::ProgramDoc& programInfo, const std::string& fileName,
 
   cout << " * </ol>" << endl
        << " */" << endl
-       << "@Platform(include = {\"" << fileName << "_main.cpp\", \"cli_util.hpp\", \"deleter.hpp\"})" << endl
+       << "@Platform(" << endl
+       << "    include = {" << endl
+       << "        \"" << methodName << "_main.cpp\"," << endl
+       << "        \"cli_util.hpp\"," << endl
+       << "        \"cli_util.cpp\"," << endl
+       << "        \"deleter.hpp\"" << endl
+       << "    }," << endl
+       << "    link = \"mlpack\"," << endl
+       << "    includepath = \"" << methodPath << "\")" << endl
        << "public class " << className << " {" << endl
        << "  private static final String THIS_NAME = \"" << programInfo.programName << "\";" << endl
        << endl
