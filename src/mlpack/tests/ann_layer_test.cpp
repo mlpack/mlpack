@@ -3756,8 +3756,7 @@ BOOST_AUTO_TEST_CASE(NetworkInputSizeTest)
 
   BOOST_REQUIRE_THROW(
     rnn.CheckInputDim(inputs[0].n_rows, "Check"),
-    std::logic_error
-  );
+    std::logic_error);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
