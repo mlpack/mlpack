@@ -86,37 +86,13 @@ inline std::string GetJavaType<std::string>(const util::ParamData&,
 }
 
 template<typename T>
-inline std::string GetJavaType(const util::ParamData&,
+inline std::string GetJavaType(const util::ParamData& data,
     const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0)
 {
-  return "List<?>";
-}
-
-template<>
-inline std::string GetJavaType<std::vector<int>>(const util::ParamData&,
-    const typename std::enable_if<
-        util::IsStdVector<std::vector<int>>::value>::type*,
-    const typename std::enable_if<!std::is_same<std::vector<int>,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*,
-    const typename std::enable_if<
-        !arma::is_arma_type<std::vector<int>>::value>::type*)
-{
-  return "List<Integer>";
-}
-
-template<>
-inline std::string GetJavaType<std::vector<std::string>>(const util::ParamData&,
-    const typename std::enable_if<
-        util::IsStdVector<std::vector<std::string>>::value>::type*,
-    const typename std::enable_if<!std::is_same<std::vector<std::string>,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*,
-    const typename std::enable_if<
-        !arma::is_arma_type<std::vector<std::string>>::value>::type*)
-{
-  return "List<String>";
+  return "List<" + GetJavaType<typename T::value_type>(data) + ">";
 }
 
 template<typename T>
