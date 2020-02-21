@@ -3740,7 +3740,7 @@ BOOST_AUTO_TEST_CASE(NetworkInputSizeTest)
   const auto makeInput = [](const char *line) -> MatType {
     const auto strLen = strlen(line);
     MatType result(numLetters, 1, strLen, arma::fill::zeros);
-    for(size_t i = 0; i < strLen; ++i)
+    for (size_t i = 0; i < strLen; ++i)
     {
       const auto letter = line[i];
       result.at(static_cast<arma::uword>(letter), 0, i) = 1.0;
@@ -3749,12 +3749,15 @@ BOOST_AUTO_TEST_CASE(NetworkInputSizeTest)
   };
 
   std::vector<MatType> inputs(trainingData.size());
-  for(size_t i = 0; i < trainingData.size(); ++i)
+  for (size_t i = 0; i < trainingData.size(); ++i)
   {
     inputs[i] = makeInput(trainingData[i].c_str());
   }
 
-  BOOST_REQUIRE_THROW(rnn.CheckInputDim(inputs[0].n_rows, "Check"), std::logic_error);
+  BOOST_REQUIRE_THROW(
+    rnn.CheckInputDim(inputs[0].n_rows, "Check"),
+    std::logic_error
+  );
 }
 
 BOOST_AUTO_TEST_SUITE_END();

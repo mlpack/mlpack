@@ -105,7 +105,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
     {
       std::string estr = "RNN::";
                   estr += functionName;
-                  estr += "(): the first layer of the network expects" ;
+                  estr += "(): the first layer of the network expects";
                   estr += std::to_string(layerInSize);
                   estr += " elements, but the input has ";
                   estr += std::to_string(numRows);
