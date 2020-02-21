@@ -38,14 +38,14 @@ class JavaOption
    * reasons.
    */
   JavaOption(const T defaultValue,
-           const std::string& identifier,
-           const std::string& description,
-           const std::string& alias,
-           const std::string& cppName,
-           const bool required = false,
-           const bool input = true,
-           const bool noTranspose = false,
-           const std::string& /*testName*/ = "")
+             const std::string& identifier,
+             const std::string& description,
+             const std::string& alias,
+             const std::string& cppName,
+             const bool required = false,
+             const bool input = true,
+             const bool noTranspose = false,
+             const std::string& /*testName*/ = "")
   {
     // Create the ParamData object to give to CLI.
     util::ParamData data;
