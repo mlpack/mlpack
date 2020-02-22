@@ -742,7 +742,7 @@ BOOST_AUTO_TEST_CASE(SimpleL1LossTest)
   BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
 
   module.Backward(std::move(input2), std::move(target2), std::move(output));
-for (double el : output)
+  for (double el : output)
   {
     BOOST_REQUIRE_EQUAL(el, 0);
   }
