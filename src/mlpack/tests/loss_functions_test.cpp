@@ -715,10 +715,10 @@ BOOST_AUTO_TEST_CASE(MarginRankingLossTest)
 /**
  * Simple test for the l1 loss function.
  */
-BOOST_AUTO_TEST_CASE(SimpleL1lossTest)
+BOOST_AUTO_TEST_CASE(SimpleL1LossTest)
 {
   arma::mat input1, input2, output, target1, target2;
-  L1loss<> module(false);
+  L1Loss<> module(false);
 
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
