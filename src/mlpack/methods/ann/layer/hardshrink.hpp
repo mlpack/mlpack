@@ -21,17 +21,25 @@
 namespace mlpack {
 namespace ann /** Artifical Neural Network. */ {
 
-/**
- * HardShrink function is defined as,
- *         | x , if x >  lambda
- *  f(x) = | x , if x < -lambda
- *         | 0, otherwise
- *
+ /**
+ * Hard Shrink operator is defined as,
+ * @f{eqnarray*}{
+ * f(x) &=& \left\{
+ *   \begin{array}{lr}
+ *     x  & : x >  lambda \\
+ *     x  & : x < -lambda \\
+ *     0  & : otherwise
+ *   \end{array} \\
+ * \right.
+ * f'(x) &=& \left\{
+ *   \begin{array}{lr}
+ *     1 & : x >  lambda \\
+ *     1 & : x < -lambda \\
+ *     0 & : otherwise
+ *   \end{array}
+ * \right.
+ * @f}
  * lambda is set to 0.5 by default.
- *
- *          | 1 , if x >  lambda
- *  f'(x) = | 1 , if x < -lambda
- *          | 0 , otherwise
  */
 template <
     typename InputDataType = arma::mat,
@@ -40,15 +48,13 @@ template <
 class HardShrink
 {
  public:
-  /**
-   * Create Hard Shrink object using specified hyperparameter lambda.
-   * Hyperparameter lambda.
-   * Hard Shrink has a threshold lambda which is calculated by multiplying the
-   * noise level sigma of the input(noisy image) and a coefficient 'a' which is one
-   * of the training parameter.
-   * Default (lambda = 0.5). lambda should be > 0.
+/**
+   * Create HardShrink object using specified hyperparameter lambda.
    * 
-   * @param lambda parameter
+   * @param lambda is calculated by multiplying the
+   * 		    noise level sigma of the input(noisy image) and a
+   * 		    coefficient 'a' which is one of the training parameters.
+   * 		    Default value of lambda is 0.5.
    */
   HardShrink(const double lambda = 0.5);
 
@@ -56,7 +62,7 @@ class HardShrink
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    * 
-   * @param input Input data used for evaluating the HardShrink function.
+   * @param input Input data used for evaluating the Hard Shrink function.
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
@@ -199,7 +205,7 @@ class HardShrink
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Hard Shrink hyperparameter.
+  //! Locally-stored hyperparameter lambda.
   double lambda;
 }; // class HardShrink
 
