@@ -18,8 +18,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-// This constructor is called for SOFT SRHINK activation function.
-// 'lambda' is a hyperparameter.
+// This constructor is called for Soft Shrink activation function.
+// lambda is a hyperparameter.
 template<typename InputDataType, typename OutputDataType>
 SoftShrink<InputDataType, OutputDataType>::SoftShrink(const double lambda) :
     lambda(lambda)

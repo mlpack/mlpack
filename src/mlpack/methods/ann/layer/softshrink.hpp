@@ -2,9 +2,9 @@
  * @file softshrink.hpp
  * @author Lakshya Ojha
  *
- * The soft shrink function has thresholds proportional to the noise level given by 
+ * The soft shrink function has threshold proportional to the noise level given by 
  * the user.
- * The use of a soft-shrinkage activation function provides adaptive denoising
+ * The use of a Soft Shrink activation function provides adaptive denoising
  * at various noise levels using a single CNN(Convolution Neural) without a requirement to train a
  * unique CNN for each noise level.
  *
@@ -22,8 +22,7 @@ namespace mlpack {
 namespace ann /** Artifical Neural Network. */ {
 
 /**
- * SoftShrinkage operator is defined as,
- * lambda is set to 0.5 by default.
+ * Soft Shrink operator is defined as,
  * @f{eqnarray*}{
  * f(x) &=& \left\{
  *   \begin{array}{lr}
@@ -40,6 +39,7 @@ namespace ann /** Artifical Neural Network. */ {
  *   \end{array}
  * \right.
  * @f}
+ * lambda is set to 0.5 by default.
  */
 template <
     typename InputDataType = arma::mat,
@@ -48,15 +48,13 @@ template <
 class SoftShrink
 {
  public:
-  /**
-   * Create SoftShrink object using specified hyperparameter lambda.
-   * Hyperparameter lambda.
-   * Soft shrink has a threshold lambda which is calculated by multiplying the
-   * noise level sigma of the input(noisy image) and a coefficient 'a' which is one
-   * of the training parameter.
-   * Default (lambda = 0.5). lambda should be > 0.
+/**
+   * Create Soft Shrink object using specified hyperparameter lambda.
    * 
-   * @param lambda parameter
+   * @param lambda is calculated by multiplying the
+   * 		    noise level sigma of the input(noisy image) and a
+   * 		    coefficient 'a' which is one of the training parameters.
+   * 		    Default value of lambda is 0.5.
    */
   SoftShrink(const double lambda = 0.5);
 
@@ -64,7 +62,7 @@ class SoftShrink
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    * 
-   * @param input Input data used for evaluating the SoftShrink function.
+   * @param input Input data used for evaluating the Soft Shrink function.
    * @param output Resulting output activation
    */
   template<typename InputType, typename OutputType>
@@ -144,9 +142,17 @@ class SoftShrink
 
   /**
    * Computes the inverse of the Soft Shrink function.
-   *             | y + lambda, y > 0
-   * f^{-1}(y) = | y - lambda, y < 0
-   *             | 0, otherwise
+   *
+   * @f{eqnarray*}{
+   * f^{-1}(y) &=& \left\{
+   *       \begin{array}{lr}
+   *         y + lambda & : y > 0 \\
+   *         y + lambda & : y < 0 \\
+   *         0 & : otherwise \\
+   *       \end{array}
+   * \right.
+   * @f}
+   
    * @param y
    * @return f^{-1}(y)
    */
