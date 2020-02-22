@@ -41,9 +41,9 @@ class HardShrink
 {
  public:
   /**
-   * Create HardShrink object using specified hyperparameter lambda.
+   * Create Hard Shrink object using specified hyperparameter lambda.
    * Hyperparameter lambda.
-   * Hard shrinkage has a threshold lambda which is calculated by multiplying the
+   * Hard Shrink has a threshold lambda which is calculated by multiplying the
    * noise level sigma of the input(noisy image) and a coefficient 'a' which is one
    * of the training parameter.
    * Default (lambda = 0.5). lambda should be > 0.
