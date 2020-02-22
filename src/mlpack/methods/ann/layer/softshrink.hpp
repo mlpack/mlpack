@@ -23,15 +23,23 @@ namespace ann /** Artifical Neural Network. */ {
 
 /**
  * SoftShrinkage operator is defined as,
- *         | x - lambda, if x >  lambda
- *  f(x) = | x + lambda, if x < -lambda
- *         | 0, otherwise
- *
  * lambda is set to 0.5 by default.
- *
- *          | 1 , if x >  lambda
- *  f'(x) = | 1 , if x < -lambda
- *          | 0 , otherwise
+ * @f{eqnarray*}{
+ * f(x) &=& \left\{
+ *   \begin{array}{lr}
+ *     x - lambda & : x >  lambda \\
+ *     x + lambda & : x < -lambda \\
+ *     0 & : otherwise
+ *   \end{array} \\
+ * \right.
+ * f'(x) &=& \left\{
+ *   \begin{array}{lr}
+ *     1 & : x >  lambda \\
+ *     1 & : x < -lambda \\
+ *     0 & : otherwise
+ *   \end{array}
+ * \right.
+ * @f}
  */
 template <
     typename InputDataType = arma::mat,
@@ -43,7 +51,7 @@ class SoftShrink
   /**
    * Create SoftShrink object using specified hyperparameter lambda.
    * Hyperparameter lambda.
-   * Soft shrinkage has a threshold lambda which is calculated by multiplying the
+   * Soft shrink has a threshold lambda which is calculated by multiplying the
    * noise level sigma of the input(noisy image) and a coefficient 'a' which is one
    * of the training parameter.
    * Default (lambda = 0.5). lambda should be > 0.
@@ -110,7 +118,7 @@ class SoftShrink
     {
       return x - lambda;
     }
-    else if (x < -1 * lambda)
+    else if (x < -lambda)
     {
       return x + lambda;
     }
