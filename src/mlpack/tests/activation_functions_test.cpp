@@ -337,8 +337,8 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
  * Implementation of the Hard Shrink activation function test. The function is
  * implemented as Hard Shrink layer in the file hardshrink.hpp
  *
- * @param input Input data used for evaluating the HardShrink activation function.
- * @param target Target data used to evaluate the HardShrink activation.
+ * @param input Input data used for evaluating the Hard Shrink activation function.
+ * @param target Target data used to evaluate the Hard Shrink activation.
  */
 void CheckHardShrinkActivationCorrect(const arma::colvec input,
                                      const arma::colvec target)
