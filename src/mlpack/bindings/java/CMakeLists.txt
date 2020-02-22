@@ -30,7 +30,8 @@ endif()
 
 # Check if target platform is specified (TODO: test on different platforms)
 if (NOT MLPACK_JAVA_TARGET_PLATFORM)
-  not_found_return("[JAVA BINDINGS] Target platform should be specified (e.g. linux-x86_64)")
+  #not_found_return("[JAVA BINDINGS] Target platform should be specified (e.g. linux-x86_64)")
+  message(STATUS "[JAVA BINDINGS] Building for this platform")
 endif()
 
 # Check that maven is installed
