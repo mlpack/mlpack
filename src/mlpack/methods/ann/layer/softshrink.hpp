@@ -2,11 +2,11 @@
  * @file softshrink.hpp
  * @author Lakshya Ojha
  *
- * The soft shrink function has threshold proportional to the noise level given by 
- * the user.
+ * The soft shrink function has threshold proportional to the noise level given
+ * by the user.
  * The use of a Soft Shrink activation function provides adaptive denoising
- * at various noise levels using a single CNN(Convolution Neural) without a requirement to train a
- * unique CNN for each noise level.
+ * at various noise levels using a single CNN(Convolution Neural) without a
+ * requirement to train a unique CNN for each noise level.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -225,7 +225,7 @@ class SoftShrink
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Soft Shrink hyperparameter.
+  //! Locally-stored hyperparamater lambda.
   double lambda;
 }; // class SoftShrink
 
