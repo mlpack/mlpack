@@ -273,6 +273,5 @@ Model* TrainSoftmax(const size_t maxIterations)
     sm = new Model(trainData, trainLabels, numClasses,
         CLI::GetParam<double>("lambda"), intercept, std::move(optimizer));
   }
-
   return sm;
 }
