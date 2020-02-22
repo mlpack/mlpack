@@ -423,7 +423,7 @@ BOOST_AUTO_TEST_CASE(LogCoshLossTest)
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 
-  // Test the Forward function. Loss should be 0.546621
+  // Test the Forward function. Loss should be 0.546621.
   input = arma::mat("1 2 3 4 5");
   target = arma::mat("1 2.4 3.4 4.2 5.5");
   loss = module.Forward(std::move(input), std::move(target));
