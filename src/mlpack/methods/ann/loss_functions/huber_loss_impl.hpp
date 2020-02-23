@@ -2,7 +2,7 @@
  * @file huber_loss_impl.hpp
  * @author Mrityunjay Tripathi
  *
- * Implementation of the Huber Loss function.
+ * Implementation of the Huber loss function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -33,18 +33,16 @@ template<typename InputType, typename TargetType>
 double HuberLoss<InputDataType, OutputDataType>::Forward(
     const InputType&& input, const TargetType&& target)
 {
-  double lossThis;
-  double totalLoss = 0;
+  double loss = 0;
   double absError;
 
   for (size_t i = 0; i < input.n_elem; ++i)
   {
       absError = std::abs(target[i] - input[i]);
-      lossThis = absError > delta
+      loss += absError > delta
           ? delta * (absError - 0.5 * delta) : 0.5 * std::pow(absError, 2);
-      totalLoss += lossThis;
   }
-  return mean ? totalLoss / input.n_elem : totalLoss;
+  return mean ? loss / input.n_elem : loss;
 }
 
 template<typename InputDataType, typename OutputDataType>

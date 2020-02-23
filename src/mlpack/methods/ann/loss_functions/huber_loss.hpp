@@ -2,7 +2,7 @@
  * @file huber_loss.hpp
  * @author Mrityunjay Tripathi
  *
- * Definition of the Huber Loss function.
+ * Definition of the Huber loss function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,9 +20,9 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * The Huber loss is a loss function used in robust regression,
  * that is less sensitive to outliers in data than the squared error loss.
- * This function is quadratic for small values of `y - f(x)`,
+ * This function is quadratic for small values of \f$ y - f(x) \f$,
  * and linear for large values, with equal values and slopes of the different
- * sections at the two points where `|y - f(x)| = delta`.
+ * sections at the two points where \f$ |y - f(x)| = delta \f$.
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -42,8 +42,7 @@ class HuberLoss
    *
    * @param delta The threshold value upto which squared error is followed and
    *              after which absolute error is considered.
-   * @param mean It takes either 1 or 0 i.e. true or false. If true then
-   *             mean of the total loss is taken otherwise sum.
+   * @param mean If true then mean loss is computed otherwise sum.
    */
   HuberLoss(
     const double delta = 1.0,
