@@ -243,6 +243,7 @@ using LayerTypes = boost::variant<
     Padding<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
     WeightNorm<arma::mat, arma::mat>*,
+    CELU<arma::mat, arma::mat>*,
     MoreTypes,
     CustomLayers*...
 >;

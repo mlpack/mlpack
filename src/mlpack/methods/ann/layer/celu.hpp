@@ -64,9 +64,9 @@ class CELU
    * gradient for negative inputs can be adjusted by specifying the CELU
    * hyperparameter alpha (alpha > 0).
    *
-   * @param alpha Scale parameter for the negative factor.
+   * @param alpha Scale parameter for the negative factor (default=1.0).
    */
-  CELU(const double alpha);
+  CELU(const double alpha = 1.0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
