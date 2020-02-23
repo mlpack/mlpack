@@ -24,6 +24,7 @@
 #include "visitor/weight_size_visitor.hpp"
 #include "visitor/copy_visitor.hpp"
 #include "visitor/loss_visitor.hpp"
+#include "layer_names.hpp"
 
 #include "init_rules/network_init.hpp"
 
@@ -344,6 +345,10 @@ class FFN
    */
   double Backward(arma::mat targets, arma::mat& gradients);
 
+  /**
+   * Print the summary of the current FFN model.
+   */
+  void summary();
  private:
   // Helper functions.
   /**
@@ -453,6 +458,9 @@ class FFN
 
   //! Locally-stored delete visitor.
   DeleteVisitor deleteVisitor;
+
+  //! Locally-stored name visitor.
+  LayerNameVisitor layerNameVisitor;
 
   //! The current evaluation mode (training or testing).
   bool deterministic;
