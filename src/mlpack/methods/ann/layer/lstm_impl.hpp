@@ -98,65 +98,65 @@ void LSTM<InputDataType, OutputDataType>::Reset()
 {
   // Set the weight parameter for the output gate.
   input2GateOutputWeight = OutputDataType(weights.memptr(), outSize, inSize,
-      true);
+      false, false);
   input2GateOutputBias = OutputDataType(weights.memptr() +
-      input2GateOutputWeight.n_elem, outSize, 1, true);
+      input2GateOutputWeight.n_elem, outSize, 1, false, false);
   size_t offset = input2GateOutputWeight.n_elem + input2GateOutputBias.n_elem;
 
   // Set the weight parameter for the forget gate.
   input2GateForgetWeight = OutputDataType(weights.memptr() + offset,
-      outSize, inSize, true);
+      outSize, inSize, false, false);
   input2GateForgetBias = OutputDataType(weights.memptr() +
-      offset + input2GateForgetWeight.n_elem, outSize, 1, true);
+      offset + input2GateForgetWeight.n_elem, outSize, 1, false, false);
   offset += input2GateForgetWeight.n_elem + input2GateForgetBias.n_elem;
 
   // Set the weight parameter for the input gate.
   input2GateInputWeight = OutputDataType(weights.memptr() +
-      offset, outSize, inSize, true);
+      offset, outSize, inSize, false, false);
   input2GateInputBias = OutputDataType(weights.memptr() +
-      offset + input2GateInputWeight.n_elem, outSize, 1, true);
+      offset + input2GateInputWeight.n_elem, outSize, 1, false, false);
   offset += input2GateInputWeight.n_elem + input2GateInputBias.n_elem;
 
   // Set the weight parameter for the hidden gate.
   input2HiddenWeight = OutputDataType(weights.memptr() +
-      offset, outSize, inSize, true);
+      offset, outSize, inSize, false, false);
   input2HiddenBias = OutputDataType(weights.memptr() +
-      offset + input2HiddenWeight.n_elem, outSize, 1, true);
+      offset + input2HiddenWeight.n_elem, outSize, 1, false, false);
   offset += input2HiddenWeight.n_elem + input2HiddenBias.n_elem;
 
   // Set the weight parameter for the output multiplication.
   output2GateOutputWeight = OutputDataType(weights.memptr() +
-      offset, outSize, outSize, true);
+      offset, outSize, outSize, false, false);
   offset += output2GateOutputWeight.n_elem;
 
   // Set the weight parameter for the output multiplication.
   output2GateForgetWeight = OutputDataType(weights.memptr() +
-      offset, outSize, outSize, true);
+      offset, outSize, outSize, false, false);
   offset += output2GateForgetWeight.n_elem;
 
   // Set the weight parameter for the input multiplication.
   output2GateInputWeight = OutputDataType(weights.memptr() +
-      offset, outSize, outSize, true);
+      offset, outSize, outSize, false, false);
   offset += output2GateInputWeight.n_elem;
 
   // Set the weight parameter for the hidden multiplication.
   output2HiddenWeight = OutputDataType(weights.memptr() +
-      offset, outSize, outSize, true);
+      offset, outSize, outSize, false, false);
   offset += output2HiddenWeight.n_elem;
 
   // Set the weight parameter for the cell multiplication.
   cell2GateOutputWeight = OutputDataType(weights.memptr() +
-      offset, outSize, 1, true);
+      offset, outSize, 1, false, false);
   offset += cell2GateOutputWeight.n_elem;
 
   // Set the weight parameter for the cell - forget gate multiplication.
   cell2GateForgetWeight = OutputDataType(weights.memptr() +
-      offset, outSize, 1, true);
+      offset, outSize, 1, false, false);
   offset += cell2GateOutputWeight.n_elem;
 
   // Set the weight parameter for the cell - input gate multiplication.
   cell2GateInputWeight = OutputDataType(weights.memptr() +
-      offset, outSize, 1, true);
+      offset, outSize, 1, false, false);
 }
 
 // Forward when cellState is not needed.
@@ -273,10 +273,10 @@ void LSTM<InputDataType, OutputDataType>::Forward(InputType&& input,
       outputGateActivation.cols(forwardStep, forwardStep + batchStep);
 
   output = OutputType(outParameter.memptr() +
-      (forwardStep + batchSize) * outSize, outSize, batchSize, false, false);
+      (forwardStep + batchSize) * outSize, outSize, batchSize, true);
 
   cellState = OutputType(cell.memptr() +
-      forwardStep * outSize, outSize, batchSize, false, false);
+      forwardStep * outSize, outSize, batchSize, true);
 
   forwardStep += batchSize;
   if ((forwardStep / batchSize) == bpttSteps)

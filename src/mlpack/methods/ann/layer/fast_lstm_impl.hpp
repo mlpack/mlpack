@@ -52,14 +52,14 @@ void FastLSTM<InputDataType, OutputDataType>::Reset()
   // Set the weight parameter for the input to gate layer (linear layer) using
   // the overall layer parameter matrix.
   input2GateWeight = OutputDataType(weights.memptr(),
-      4 * outSize, inSize, true);
+      4 * outSize, inSize, false, false);
   input2GateBias = OutputDataType(weights.memptr() + input2GateWeight.n_elem,
-      4 * outSize, 1, true);
+      4 * outSize, 1, false, false);
 
   // Set the weight parameter for the output to gate layer
   // (linear no bias layer) using the overall layer parameter matrix.
   output2GateWeight = OutputDataType(weights.memptr() + input2GateWeight.n_elem
-      + input2GateBias.n_elem, 4 * outSize, outSize, true);
+      + input2GateBias.n_elem, 4 * outSize, outSize, false, false);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -166,7 +166,7 @@ void FastLSTM<InputDataType, OutputDataType>::Forward(
       outSize, forwardStep, 2 * outSize - 1, forwardStep + batchStep);
 
   output = OutputType(outParameter.memptr() +
-      (forwardStep + batchSize) * outSize, outSize, batchSize, false, false);
+      (forwardStep + batchSize) * outSize, outSize, batchSize, true);
 
   forwardStep += batchSize;
   if ((forwardStep / batchSize) == bpttSteps)
