@@ -167,7 +167,10 @@ void LSTM<InputDataType, OutputDataType>::Forward(
 {
   //! Locally-stored cellState.
   OutputType cellState;
-  Forward(std::move(input), std::move(output), std::move(cellState), false);
+  // Trying a copy here as done in other layers rather than using std::move.
+  inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
+    inputWidth, inputHeight, inSize * batchSize, true, false);
+  Forward(inputTemp, std::move(output), std::move(cellState), false);
 }
 
 // Forward when cellState is needed overloaded LSTM::Forward().
@@ -273,7 +276,7 @@ void LSTM<InputDataType, OutputDataType>::Forward(InputType&& input,
       outputGateActivation.cols(forwardStep, forwardStep + batchStep);
 
   output = OutputType(outParameter.memptr() +
-      (forwardStep + batchSize) * outSize, outSize, batchSize, true);
+      (forwardStep + batchSize) * outSize, outSize, batchSize, false, false);
 
   cellState = OutputType(cell.memptr() +
       forwardStep * outSize, outSize, batchSize, true);

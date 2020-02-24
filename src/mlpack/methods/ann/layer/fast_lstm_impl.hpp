@@ -166,7 +166,7 @@ void FastLSTM<InputDataType, OutputDataType>::Forward(
       outSize, forwardStep, 2 * outSize - 1, forwardStep + batchStep);
 
   output = OutputType(outParameter.memptr() +
-      (forwardStep + batchSize) * outSize, outSize, batchSize, true);
+      (forwardStep + batchSize) * outSize, outSize, batchSize, false, false);
 
   forwardStep += batchSize;
   if ((forwardStep / batchSize) == bpttSteps)

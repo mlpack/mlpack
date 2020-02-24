@@ -159,7 +159,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
       size_t(predictors.n_cols));
 
   Forward(std::move(arma::mat(predictors.slice(0).colptr(0),
-      predictors.n_rows, effectiveBatchSize, false, true)));
+      predictors.n_rows, effectiveBatchSize, true, true)));
   arma::mat resultsTemp = boost::apply_visitor(outputParameterVisitor,
       network.back());
 
@@ -176,7 +176,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     for (size_t seqNum = !begin; seqNum < rho; ++seqNum)
     {
       Forward(std::move(arma::mat(predictors.slice(seqNum).colptr(begin),
-          predictors.n_rows, effectiveBatchSize, false, true)));
+          predictors.n_rows, effectiveBatchSize, true, true)));
 
       results.slice(seqNum).submat(0, begin, results.n_rows - 1, begin +
           effectiveBatchSize - 1) = boost::apply_visitor(outputParameterVisitor,
@@ -223,7 +223,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
   {
     // Wrap a matrix around our data to avoid a copy.
     arma::mat stepData(predictors.slice(seqNum).colptr(begin),
-        predictors.n_rows, batchSize, false, true);
+        predictors.n_rows, batchSize, true, true);
     Forward(std::move(stepData));
     if (!single)
     {
@@ -233,7 +233,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
     performance += outputLayer.Forward(std::move(boost::apply_visitor(
         outputParameterVisitor, network.back())),
         std::move(arma::mat(responses.slice(responseSeq).colptr(begin),
-            responses.n_rows, batchSize, false, true)));
+            responses.n_rows, batchSize, true, true)));
   }
 
   if (outputSize == 0)
@@ -305,7 +305,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   {
     // Wrap a matrix around our data to avoid a copy.
     arma::mat stepData(predictors.slice(seqNum).colptr(begin),
-        predictors.n_rows, batchSize, false, true);
+        predictors.n_rows, batchSize, true, true);
     Forward(std::move(stepData));
     if (!single)
     {
@@ -321,7 +321,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     performance += outputLayer.Forward(std::move(boost::apply_visitor(
         outputParameterVisitor, network.back())),
         std::move(arma::mat(responses.slice(responseSeq).colptr(begin),
-            responses.n_rows, batchSize, false, true)));
+            responses.n_rows, batchSize, true, true)));
   }
 
   if (outputSize == 0)
