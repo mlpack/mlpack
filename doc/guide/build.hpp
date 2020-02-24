@@ -97,21 +97,26 @@ For Python bindings, the following packages are required:
 
 In Ubuntu and Debian:
 
-Armadillo needs to be built from source.
-<a href="http://arma.sourceforge.net/download.html">This link</a>
-can be used to download the file and the README in the uncompressed folder
-can be followed to perform the build. 
-
-Rest of these dependencies can be installed through apt:
+All of these dependencies can be installed through apt for Ubuntu 18.04 and 
+above:
 
 @code
 # apt-get install libboost-math-dev libboost-program-options-dev
-  libboost-test-dev libboost-serialization-dev binutils-dev
-  python-pandas python-numpy cython python-setuptools
+  libboost-test-dev libboost-serialization-dev libarmadillo-dev binutils-dev
+  python-pandas python-numpy cython python-setuptools libensmallen-dev
+  libstb-dev
 @endcode
 
-Note that ensmallen and STB are downloaded and installed automatically by 
-CMake if you keep the flags 'DOWNLOAD_ENSMALLEN' and 'DOWNLOAD_STB_IMAGE' set.
+@note For older versions of Ubuntu, Armadillo needs to be built from 
+source as apt installs an older version. So you need to omit 
+\c libarmadillo-dev from the code snippet above. Then 
+<a href="http://arma.sourceforge.net/download.html">this link</a>
+can be used to download the file and the README in the uncompressed folder
+can be followed to perform the build. <br> <br>
+Also note that if apt is not able to find \c libensmallen-dev and \c 
+libstb-dev, they are downloaded and installed automatically by 
+CMake if you keep the flags \c DOWNLOAD_ENSMALLEN and \c DOWNLOAD_STB_IMAGE 
+set.
 
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
