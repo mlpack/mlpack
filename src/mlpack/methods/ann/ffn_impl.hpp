@@ -78,6 +78,15 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 {
   ResetData(std::move(predictors), std::move(responses));
 
+  if (optimizer.MaxIterations() != predictors.n_cols)
+  {
+    Log::Warn << "The number of iterations is less than the size of the "
+              << "dataset, the optimizer might not pass over the entire "
+              << "dataset. Please modify the number of iterations to be "
+              << "at least equal to the number of columns of your dataset." 
+              << std::endl;
+  }
+
   // Train the model.
   Timer::Start("ffn_optimization");
   const double out = optimizer.Optimize(*this, parameter, callbacks...);
@@ -99,6 +108,15 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   ResetData(std::move(predictors), std::move(responses));
 
   OptimizerType optimizer;
+
+  if (optimizer.MaxIterations() != predictors.n_cols)
+  {
+    Log::Warn << "The number of iterations is less than the size of the "
+              << "dataset, the optimizer might not pass over the entire "
+              << "dataset. Please modify the number of iterations to be "
+              << "at least equal to the number of columns of your dataset." 
+              << std::endl;
+  }
 
   // Train the model.
   Timer::Start("ffn_optimization");
