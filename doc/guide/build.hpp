@@ -95,14 +95,23 @@ For Python bindings, the following packages are required:
  - pandas >= 0.15.0
  - pytest-runner
 
-In Ubuntu and Debian, you can get all of these dependencies through apt:
+In Ubuntu and Debian:
+
+Armadillo needs to be built from source.
+<a href="http://arma.sourceforge.net/download.html">This link</a>
+can be used to download the file and the README in the uncompressed folder
+can be followed to perform the build. 
+
+Rest of these dependencies can be installed through apt:
 
 @code
 # apt-get install libboost-math-dev libboost-program-options-dev
-  libboost-test-dev libboost-serialization-dev libarmadillo-dev binutils-dev
-  python-pandas python-numpy cython python-setuptools libensmallen-dev
-  libstb-dev
+  libboost-test-dev libboost-serialization-dev binutils-dev
+  python-pandas python-numpy cython python-setuptools
 @endcode
+
+Note that ensmallen and STB are downloaded and installed automatically by 
+CMake if you keep the flags 'DOWNLOAD_ENSMALLEN' and 'DOWNLOAD_STB_IMAGE' set.
 
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
