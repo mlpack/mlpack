@@ -107,10 +107,10 @@ installed through apt :
 
 @note For older versions of Ubuntu, Armadillo needs to be built from 
 source as apt installs an older version. So you need to omit 
-\c libarmadillo-dev from the code snippet above. Then 
+\c libarmadillo-dev from the code snippet above and instead use
 <a href="http://arma.sourceforge.net/download.html">this link</a>
-can be used to download the file and the README in the uncompressed folder
-can be followed to perform the build. <br> <br>
+ to download the file. The README in the uncompressed folder can be 
+ followed to build and install it. <br> <br>
 Also note that if apt is not able to find \c libensmallen-dev and \c 
 libstb-dev, they are downloaded and installed automatically by 
 CMake if you keep the flags \c DOWNLOAD_ENSMALLEN and \c DOWNLOAD_STB_IMAGE 
