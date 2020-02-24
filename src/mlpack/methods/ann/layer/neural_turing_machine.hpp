@@ -58,7 +58,7 @@ template <
 class NeuralTuringMachine
 {
  public:
- //! Create the NeuralTuringMachine object.
+  //! Create the NeuralTuringMachine object.
   NeuralTuringMachine();
 
 

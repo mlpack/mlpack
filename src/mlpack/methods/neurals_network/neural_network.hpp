@@ -16,5 +16,5 @@ class NeuralNetwork
   const size_t Layers = sizeof...(Types);
 }
 
-}
-}
+} // namespace neural_network
+} // namespace mlpack

@@ -29,7 +29,6 @@ MemoryHead<InputDataType, OutputDataType>::MemoryHead() :
     memoryHistory(dummyMemoryHistory),
     dMem(dummyDMem)
 {
-
 }
 
 template <typename InputDataType, typename OutputDataType>

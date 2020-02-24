@@ -47,7 +47,7 @@ template <
 class MemoryHead
 {
  public:
- //! Create the MemoryHead object.
+  //! Create the MemoryHead object.
   MemoryHead();
 
   /**

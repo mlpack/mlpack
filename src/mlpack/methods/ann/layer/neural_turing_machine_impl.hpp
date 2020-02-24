@@ -25,7 +25,6 @@ namespace ann /** Artificial Neural Network. */ {
 template <typename InputDataType, typename OutputDataType>
 NeuralTuringMachine<InputDataType, OutputDataType>::NeuralTuringMachine()
 {
-
 }
 
 template <typename InputDataType, typename OutputDataType>
