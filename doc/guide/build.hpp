@@ -95,10 +95,8 @@ For Python bindings, the following packages are required:
  - pandas >= 0.15.0
  - pytest-runner
 
-In Ubuntu and Debian:
-
-All of these dependencies can be installed through apt for Ubuntu 18.04 and 
-above:
+In Ubuntu(>= 18.04) and Debian all of these dependencies can be 
+installed through apt :
 
 @code
 # apt-get install libboost-math-dev libboost-program-options-dev
