@@ -517,13 +517,16 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::summary(
   std::cout << std::setfill(' ') << std::setw(20) << "Layer Type" <<
       std::setw(25) << "Output Shape" << std::setw(15) << "Param #\n";
   std::cout << std::setfill('=') << std::setw(60) << '\n';
-  for( size_t i = 0; i < network.size(); i++)
+  for (size_t i = 0; i < network.size(); i++)
   {
     std::cout << std::setfill(' ') << std::setw(20) <<
-        boost::apply_visitor(layerNameVisitor,network[i]) <<
-        std::setw(25) << std::string("(") + std::to_string(boost::apply_visitor(outputParameterVisitor, network[i]).n_rows) +
-        ", " + std::to_string(boost::apply_visitor(outputParameterVisitor, network[i]).n_cols) + ")" <<
-        std::setw(12) << boost::apply_visitor(weightSizeVisitor, network[i]) << "\n";
+        boost::apply_visitor(layerNameVisitor, network[i]) <<
+        std::setw(25) << std::string("(") +
+        std::to_string(boost::apply_visitor(outputParameterVisitor,
+        network[i]).n_rows) + ", " +
+        std::to_string(boost::apply_visitor(outputParameterVisitor,
+        network[i]).n_cols) + ")" << std::setw(12) <<
+        boost::apply_visitor(weightSizeVisitor, network[i]) << "\n";
 
     std::cout << std::setfill('-') << std::setw(60) << '\n';
     totalParams += boost::apply_visitor(weightSizeVisitor, network[i]);
