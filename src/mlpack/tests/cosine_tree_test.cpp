@@ -222,4 +222,218 @@ BOOST_AUTO_TEST_CASE(CosineTreeModifiedGramSchmidt)
   }
 }
 
+/**
+ * Test the copy constructor & copy assignment using Cosine trees.
+ */
+BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorCosineTreeTest)
+{
+  // Initialize constants required for the test.
+  const size_t numRows = 10;
+  const size_t numCols = 15;
+
+  // Vectors to hold depth-first traversal
+  // of the number of columns in each node.
+  std::vector<int> v1, v2, v3;
+
+  // Make a random dataset.
+  arma::mat* data = new arma::mat(numRows, numCols, arma::fill::randu);
+
+  // Make a cosine tree, with the generated dataset.
+  CosineTree* ctree1 = new CosineTree(*data);
+
+  // Stacks for depth first search of the tree.
+  std::vector<CosineTree*> nodeStack1, nodeStack2, nodeStack3;
+  nodeStack1.push_back(ctree1);
+
+  // While stack is not empty.
+  while (nodeStack1.size())
+  {
+    // Pop a node from the stack and split it.
+    CosineTree *currentNode1, *currentLeft1, *currentRight1;
+
+    currentNode1 = nodeStack1.back();
+    currentNode1->CosineNodeSplit();
+    nodeStack1.pop_back();
+
+    // Obtain pointers to the children of the node.
+    currentLeft1 = currentNode1->Left();
+    currentRight1 = currentNode1->Right();
+
+    // If children exist.
+    if (currentLeft1 && currentRight1)
+    {
+      // Push the child nodes on to the stack.
+      nodeStack1.push_back(currentLeft1);
+      nodeStack1.push_back(currentRight1);
+
+      v1.push_back(currentNode1->NumColumns());
+    }
+  }
+
+  // Copy constructor and operator.
+  CosineTree ctree2(*ctree1);
+  CosineTree ctree3 = *ctree1;
+
+  delete ctree1;
+  delete data;
+
+  nodeStack2.push_back(&ctree2);
+  nodeStack3.push_back(&ctree3);
+
+  // While stacks are not empty.
+  while (nodeStack2.size() && nodeStack3.size())
+  {
+    // Pop a node from the stack and split it.
+    CosineTree *currentNode2, *currentLeft2, *currentRight2;
+    CosineTree *currentNode3, *currentLeft3, *currentRight3;
+
+    currentNode2 = nodeStack2.back();
+    nodeStack2.pop_back();
+
+    currentNode3 = nodeStack3.back();
+    nodeStack3.pop_back();
+
+    // Obtain pointers to the children of the node.
+    currentLeft2 = currentNode2->Left();
+    currentRight2 = currentNode2->Right();
+
+    currentLeft3 = currentNode3->Left();
+    currentRight3 = currentNode3->Right();
+
+    // If children exist.
+    if (currentLeft2 && currentRight2 && currentLeft3 && currentRight3)
+    {
+      // Push the child nodes on to the stack.
+      nodeStack2.push_back(currentLeft2);
+      nodeStack2.push_back(currentRight2);
+
+      v2.push_back(currentNode2->NumColumns());
+
+      nodeStack3.push_back(currentLeft3);
+      nodeStack3.push_back(currentRight3);
+
+      v3.push_back(currentNode3->NumColumns());
+    }
+  }
+
+  for (size_t i = 0; i < v1.size(); i++)
+  {
+    BOOST_REQUIRE_EQUAL(v1.at(i), v2.at(i));
+    BOOST_REQUIRE_EQUAL(v1.at(i), v3.at(i));
+  }
+}
+
+/**
+ * Test the move constructor & move assignment using Cosine trees.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorAndOperatorCosineTreeTest)
+{
+  // Initialize constants required for the test.
+  const size_t numRows = 10;
+  const size_t numCols = 15;
+
+  // Vectors to hold depth-first traversal
+  // of the number of columns in each node.
+  std::vector<int> v1, v2, v3;
+
+  // Make a random dataset.
+  arma::mat data = arma::randu(numRows, numCols);
+
+  // Make a cosine tree, with the generated dataset.
+  CosineTree ctree1(data);
+
+  // Stacks for depth first search of the tree.
+  std::vector<CosineTree*> nodeStack1, nodeStack2, nodeStack3;
+  nodeStack1.push_back(&ctree1);
+
+  // While stack is not empty.
+  while (nodeStack1.size())
+  {
+    // Pop a node from the stack and split it.
+    CosineTree *currentNode1, *currentLeft1, *currentRight1;
+
+    currentNode1 = nodeStack1.back();
+    currentNode1->CosineNodeSplit();
+    nodeStack1.pop_back();
+
+    // Obtain pointers to the children of the node.
+    currentLeft1 = currentNode1->Left();
+    currentRight1 = currentNode1->Right();
+
+    // If children exist.
+    if (currentLeft1 && currentRight1)
+    {
+      // Push the child nodes on to the stack.
+      nodeStack1.push_back(currentLeft1);
+      nodeStack1.push_back(currentRight1);
+
+      v1.push_back(currentNode1->NumColumns());
+    }
+  }
+
+  // Move constructor.
+  CosineTree ctree2(std::move(ctree1));
+
+  nodeStack2.push_back(&ctree2);
+
+  // While stacks are not empty.
+  while (nodeStack2.size())
+  {
+    // Pop a node from the stack and split it.
+    CosineTree *currentNode2, *currentLeft2, *currentRight2;
+
+    currentNode2 = nodeStack2.back();
+    nodeStack2.pop_back();
+
+    // Obtain pointers to the children of the node.
+    currentLeft2 = currentNode2->Left();
+    currentRight2 = currentNode2->Right();
+
+    // If children exist.
+    if (currentLeft2 && currentRight2)
+    {
+      // Push the child nodes on to the stack.
+      nodeStack2.push_back(currentLeft2);
+      nodeStack2.push_back(currentRight2);
+
+      v2.push_back(currentNode2->NumColumns());
+    }
+  }
+
+  // Move operator.
+  CosineTree ctree3 = std::move(ctree2);
+
+  nodeStack3.push_back(&ctree3);
+
+  // While stacks are not empty.
+  while (nodeStack3.size())
+  {
+    // Pop a node from the stack and split it.
+    CosineTree *currentNode3, *currentLeft3, *currentRight3;
+
+    currentNode3 = nodeStack3.back();
+    nodeStack3.pop_back();
+
+    // Obtain pointers to the children of the node.
+    currentLeft3 = currentNode3->Left();
+    currentRight3 = currentNode3->Right();
+
+    // If children exist.
+    if (currentLeft3 && currentRight3)
+    {
+      // Push the child nodes on to the stack.
+      nodeStack3.push_back(currentLeft3);
+      nodeStack3.push_back(currentRight3);
+
+      v3.push_back(currentNode3->NumColumns());
+    }
+  }
+
+  for (size_t i = 0; i < v1.size(); i++)
+  {
+    BOOST_REQUIRE_EQUAL(v1.at(i), v2.at(i));
+    BOOST_REQUIRE_EQUAL(v1.at(i), v3.at(i));
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END();
