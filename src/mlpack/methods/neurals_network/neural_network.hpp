@@ -15,11 +15,5 @@ class NeuralNetwork
  private:
   const size_t Layers = sizeof...(Types);
 }
-
-<<<<<<< HEAD
 } // namespace neural_network
 } // namespace mlpack
-=======
-}
-}
->>>>>>> Adding all files
