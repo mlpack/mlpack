@@ -347,8 +347,11 @@ class FFN
 
   /**
    * Print the summary of the current FFN model.
+   *
+   * @param inputs Input for which model's summary needs to be defined.
    */
-  void summary();
+  void summary(arma::mat& inputs);
+
  private:
   // Helper functions.
   /**

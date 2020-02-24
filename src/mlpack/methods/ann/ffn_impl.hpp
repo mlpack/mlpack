@@ -498,28 +498,39 @@ void FFN<OutputLayerType, InitializationRuleType,
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::summary()
+void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::summary(
+    arma::mat& inputs)
 {
+  // Do a Forward pass to initialize outputParameter in each layer.
+  if (parameter.is_empty())
+    ResetParameters();
+  if (!deterministic)
+  {
+    deterministic = true;
+    ResetDeterministic();
+  }
+  Forward(std::move(inputs));
+
   long long totalParams = 0;
 
-  std::cout << std::setfill('-') << std::setw(45) << '\n';
+  std::cout << std::setfill('-') << std::setw(60) << '\n';
   std::cout << std::setfill(' ') << std::setw(20) << "Layer Type" <<
-      std::setw(15) << "Output Shape" << std::setw(10) << "Param #\n";
-  std::cout << std::setfill('=') << std::setw(45) << '\n';
-  
+      std::setw(25) << "Output Shape" << std::setw(15) << "Param #\n";
+  std::cout << std::setfill('=') << std::setw(60) << '\n';
   for( size_t i = 0; i < network.size(); i++)
   {
-    std::cout << std::setfill(' ') << std::setw(20) << boost::apply_visitor(layerNameVisitor,
-        network[i]) << std::setw(8) << '(' << boost::apply_visitor(outputParameterVisitor, network[i]).n_cols
-        << ", " << boost::apply_visitor(outputParameterVisitor, network[i]).n_rows << ')' <<
-        std::setw(10) << boost::apply_visitor(weightSizeVisitor, network[i]) << "\n";
-    std::cout << std::setfill('-') << std::setw(45) << '\n';
+    std::cout << std::setfill(' ') << std::setw(20) <<
+        boost::apply_visitor(layerNameVisitor,network[i]) <<
+        std::setw(25) << std::string("(") + std::to_string(boost::apply_visitor(outputParameterVisitor, network[i]).n_rows) +
+        ", " + std::to_string(boost::apply_visitor(outputParameterVisitor, network[i]).n_cols) + ")" <<
+        std::setw(12) << boost::apply_visitor(weightSizeVisitor, network[i]) << "\n";
+
+    std::cout << std::setfill('-') << std::setw(60) << '\n';
     totalParams += boost::apply_visitor(weightSizeVisitor, network[i]);
   }
-  std::cout << std::setfill('=') << std::setw(45) << '\n';
+  std::cout << std::setfill('=') << std::setw(60) << '\n';
   std::cout << "Total params: " << totalParams << "\n";
-  std::cout << std::setfill('-') << std::setw(45) << '\n';
-
+  std::cout << std::setfill('-') << std::setw(60) << '\n';
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
