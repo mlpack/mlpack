@@ -316,9 +316,9 @@ class LSTM
 
   //! Locally-stored current rho size.
   size_t rhoSize;
-  
+
   //! Locally-stored transformed input parameter.
-  arma::cube inputTemp;
+  arma::mat inputTemp;
 
   //! Current backpropagate through time steps.
   size_t bpttSteps;

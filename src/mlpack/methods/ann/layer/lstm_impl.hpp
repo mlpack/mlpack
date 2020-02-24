@@ -168,8 +168,8 @@ void LSTM<InputDataType, OutputDataType>::Forward(
   //! Locally-stored cellState.
   OutputType cellState;
   // Trying a copy here as done in other layers rather than using std::move.
-  inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
-    inputWidth, inputHeight, inSize * batchSize, true, false);
+  inputTemp = arma::mat(input.memptr(),
+    input.n_rows, input.n_elem / input.n_rows, true, false);
   Forward(inputTemp, std::move(output), std::move(cellState), false);
 }
 
