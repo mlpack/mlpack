@@ -56,7 +56,7 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Forward(
 {
   batchSize = input.n_cols;
   tempM = weight * input;
-  M = arma::cube(tempM.memptr(), B, C, batchSize, false, false);
+  M = arma::cube(tempM.memptr(), B, C, batchSize, true, false);
   distances.set_size(B, batchSize, batchSize);
   output.set_size(B, batchSize);
 

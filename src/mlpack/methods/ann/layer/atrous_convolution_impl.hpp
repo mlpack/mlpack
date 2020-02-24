@@ -210,7 +210,7 @@ void AtrousConvolution<
 {
   batchSize = input.n_cols;
   inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
-      inputWidth, inputHeight, inSize * batchSize, false, false);
+      inputWidth, inputHeight, inSize * batchSize, true, false);
 
   if (padding.PadWLeft() != 0 || padding.PadWRight() != 0 ||
       padding.PadHTop() != 0 || padding.PadHBottom() != 0)

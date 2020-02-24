@@ -138,7 +138,7 @@ void TransposedConvolution<
 {
   batchSize = input.n_cols;
   inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
-      inputWidth, inputHeight, inSize * batchSize, false, false);
+      inputWidth, inputHeight, inSize * batchSize, true, false);
 
   if (strideWidth > 1 || strideHeight > 1)
   {

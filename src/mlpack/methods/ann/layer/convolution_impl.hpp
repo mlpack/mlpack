@@ -201,7 +201,7 @@ void Convolution<
 {
   batchSize = input.n_cols;
   inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
-      inputWidth, inputHeight, inSize * batchSize, false, false);
+      inputWidth, inputHeight, inSize * batchSize, true, false);
 
   if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
   {

@@ -59,7 +59,7 @@ void MaxPooling<InputDataType, OutputDataType>::Forward(
   batchSize = input.n_cols;
   inSize = input.n_elem / (inputWidth * inputHeight * batchSize);
   inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
-      inputWidth, inputHeight, batchSize * inSize, false, false);
+      inputWidth, inputHeight, batchSize * inSize, true, false);
 
   if (floor)
   {
