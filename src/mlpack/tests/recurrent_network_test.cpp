@@ -839,7 +839,7 @@ void DistractedSequenceRecallTestNetwork(
     {
       arma::cube output;
       arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
-          testInput.at(0, i).n_elem / inputSize, false, true);
+          testInput.at(0, i).n_elem / inputSize, true, true);
 
       model.Predict(input, output);
       for (size_t j = 0; j < output.n_slices; ++j)
@@ -850,7 +850,7 @@ void DistractedSequenceRecallTestNetwork(
       }
 
       arma::cube label(testLabels.at(0, i).memptr(), outputSize, 1,
-          testLabels.at(0, i).n_elem / outputSize, false, true);
+          testLabels.at(0, i).n_elem / outputSize, true, true);
       if (arma::accu(arma::abs(label - output)) != 0)
         error += 1;
     }
