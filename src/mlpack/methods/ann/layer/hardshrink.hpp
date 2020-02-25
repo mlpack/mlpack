@@ -51,7 +51,7 @@ class HardShrink
 /**
    * Create HardShrink object using specified hyperparameter lambda.
    * 
-   * @param lambda is calculated by multiplying the
+   * @param lambda Is calculated by multiplying the
    * 		    noise level sigma of the input(noisy image) and a
    * 		    coefficient 'a' which is one of the training parameters.
    * 		    Default value of lambda is 0.5.
