@@ -4,8 +4,8 @@
  *
  * The soft shrink function has threshold proportional to the noise level given
  * by the user.
- * The use of a Soft Shrink activation function provides adaptive denoising
- * at various noise levels using a single CNN(Convolution Neural) without a
+ * The use of a Soft Shrink activation function provides adaptive denoising at
+ * various noise levels using a single CNN(Convolution Neural) without a
  * requirement to train a unique CNN for each noise level.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
