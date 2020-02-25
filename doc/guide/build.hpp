@@ -95,7 +95,7 @@ For Python bindings, the following packages are required:
  - pandas >= 0.15.0
  - pytest-runner
 
-In Ubuntu (>= 18.04) and Debian (buster, bullseye, sid) all of these dependencies can be 
+In Ubuntu (>= 18.04) and Debian (>= 10) all of these dependencies can be 
 installed through apt :
 
 @code
@@ -105,7 +105,7 @@ installed through apt :
   libstb-dev
 @endcode
  
-@note For older versions of Ubuntu and Debian (jessie, stretch), Armadillo needs to be built from 
+@note For older versions of Ubuntu and Debian , Armadillo needs to be built from 
 source as apt installs an older version. So you need to omit 
 \c libarmadillo-dev from the code snippet above and instead use
 <a href="http://arma.sourceforge.net/download.html">this link</a>
