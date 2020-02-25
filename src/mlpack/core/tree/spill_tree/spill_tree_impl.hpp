@@ -193,6 +193,88 @@ SpillTree(const SpillTree& other) :
 }
 
 /**
+ * Copy assignment operator: copy the given other tree.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
+             class SplitType>
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+operator=(const SpillTree& other)
+{
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  if (localDataset)
+    delete dataset;
+
+  delete pointsIndex;
+  delete left;
+  delete right;
+
+  left = NULL;
+  right = NULL;
+  parent = other.parent;
+  count = other.count;
+  pointsIndex = NULL;
+  overlappingNode = other.overlappingNode;
+  hyperplane = other.hyperplane;
+  bound = other.bound;
+  stat = other.stat;
+  parentDistance = other.parentDistance;
+  furthestDescendantDistance = other.furthestDescendantDistance;
+
+  // Copy matrix, but only if we are the root and the other tree has its own
+  // copy of the dataset.
+  dataset = (other.parent == NULL && other.localDataset) ?
+      new MatType(*other.dataset) : other.dataset;
+  localDataset = other.parent == NULL && other.localDataset;
+
+  // Create left and right children (if any).
+  if (other.Left())
+  {
+    left = new SpillTree(*other.Left());
+    left->Parent() = this; // Set parent to this, not other tree.
+  }
+
+  if (other.Right())
+  {
+    right = new SpillTree(*other.Right());
+    right->Parent() = this; // Set parent to this, not other tree.
+  }
+
+  // If vector of indexes, copy it.
+  if (other.pointsIndex)
+    pointsIndex = new arma::Col<size_t>(*other.pointsIndex);
+
+  // Propagate matrix, but only if we are the root.
+  if (parent == NULL && localDataset)
+  {
+    std::queue<SpillTree*> queue;
+    if (left)
+      queue.push(left);
+    if (right)
+      queue.push(right);
+    while (!queue.empty())
+    {
+      SpillTree* node = queue.front();
+      queue.pop();
+
+      node->dataset = dataset;
+      if (node->left)
+        queue.push(node->left);
+      if (node->right)
+        queue.push(node->right);
+    }
+  }
+  return *this;
+}
+
+/**
  * Move constructor.
  */
 template<typename MetricType,
@@ -235,6 +317,66 @@ SpillTree(SpillTree&& other) :
     left->parent = this;
   if (right)
     right->parent = this;
+}
+
+/**
+ * Move assignment operator: take ownership of the given tree.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
+             class SplitType>
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+operator=(SpillTree&& other)
+{
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  if (localDataset)
+    delete dataset;
+
+  delete pointsIndex;
+  delete left;
+  delete right;
+
+  left = other.left;
+  right = other.right;
+  parent = other.parent;
+  count = other.count;
+  pointsIndex = other.pointsIndex;
+  overlappingNode = other.overlappingNode;
+  hyperplane = other.hyperplane;
+  bound = std::move(other.bound);
+  stat = std::move(other.stat);
+  parentDistance = other.parentDistance;
+  furthestDescendantDistance = other.furthestDescendantDistance;
+  minimumBoundDistance = other.minimumBoundDistance;
+  dataset = other.dataset;
+  localDataset = other.localDataset;
+
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.
+  other.left = NULL;
+  other.right = NULL;
+  other.count = 0;
+  other.pointsIndex = NULL;
+  other.parentDistance = 0.0;
+  other.furthestDescendantDistance = 0.0;
+  other.minimumBoundDistance = 0.0;
+  other.dataset = NULL;
+  other.localDataset = false;
+
+  // Set new parent.
+  if (left)
+    left->parent = this;
+  if (right)
+    right->parent = this;
+
+  return *this;
 }
 
 /**

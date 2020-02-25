@@ -497,6 +497,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     this->metric = new MetricType();
 }
 
+// Copy Constructor.
 template<
     typename MetricType,
     typename StatisticType,
@@ -515,9 +516,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     parent(other.parent),
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
-    localMetric(false),
+    localMetric(other.localMetric),
     localDataset(other.parent == NULL && other.localDataset),
-    metric(other.metric),
+    metric((other.localMetric ? new MetricType() : other.metric)),
     distanceComps(0)
 {
   // Copy each child by hand.
@@ -547,6 +548,76 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 }
 
+// Copy assignment operator: copy the given other tree.
+template<
+    typename MetricType,
+    typename StatisticType,
+    typename MatType,
+    typename RootPointPolicy
+>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>&
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+operator=(const CoverTree& other)
+{
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  if (localDataset)
+    delete dataset;
+
+  if (localMetric)
+    delete metric;
+
+  for (size_t i = 0; i < children.size(); ++i)
+    delete children[i];
+  children.clear();
+
+  dataset = ((other.parent == NULL && other.localDataset) ?
+      new MatType(*other.dataset) : other.dataset);
+  point = other.point;
+  scale = other.scale;
+  base = other.base;
+  stat = other.stat;
+  numDescendants = other.numDescendants;
+  parent = other.parent;
+  parentDistance = other.parentDistance;
+  furthestDescendantDistance = other.furthestDescendantDistance;
+  localMetric = other.localMetric;
+  localDataset = (other.parent == NULL && other.localDataset);
+  metric = (other.localMetric ? new MetricType() : other.metric);
+  distanceComps = 0;
+
+  // Copy each child by hand.
+  for (size_t i = 0; i < other.NumChildren(); ++i)
+  {
+    children.push_back(new CoverTree(other.Child(i)));
+    children[i]->Parent() = this;
+  }
+
+  // Propagate matrix, but only if we are the root.
+  if (parent == NULL && localDataset)
+  {
+    std::queue<CoverTree*> queue;
+
+    for (size_t i = 0; i < NumChildren(); ++i)
+      queue.push(children[i]);
+
+    while (!queue.empty())
+    {
+      CoverTree* node = queue.front();
+      queue.pop();
+
+      node->dataset = dataset;
+      for (size_t i = 0; i < node->NumChildren(); ++i)
+        queue.push(node->children[i]);
+    }
+  }
+
+  return *this;
+}
+
+// Move Constructor.
 template<
     typename MetricType,
     typename StatisticType,
@@ -585,6 +656,64 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   other.localMetric = false;
   other.localDataset = false;
   other.metric = NULL;
+}
+
+// Move assignment operator: take ownership of the given tree.
+template<
+    typename MetricType,
+    typename StatisticType,
+    typename MatType,
+    typename RootPointPolicy
+>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>&
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+operator=(CoverTree&& other)
+{
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  if (localDataset)
+    delete dataset;
+
+  if (localMetric)
+    delete metric;
+
+  for (size_t i = 0; i < children.size(); ++i)
+    delete children[i];
+
+  dataset = other.dataset;
+  point = other.point;
+  children = std::move(other.children);
+  scale = other.scale;
+  base = other.base;
+  stat = std::move(other.stat);
+  numDescendants = other.numDescendants;
+  parent = other.parent;
+  parentDistance = other.parentDistance;
+  furthestDescendantDistance = other.furthestDescendantDistance;
+  localMetric = other.localMetric;
+  localDataset = other.localDataset;
+  metric = other.metric;
+  distanceComps = other.distanceComps;
+
+  // Set proper parent pointer.
+  for (size_t i = 0; i < children.size(); ++i)
+    children[i]->Parent() = this;
+
+  other.dataset = NULL;
+  other.point = 0;
+  other.scale = INT_MIN;
+  other.base = 0;
+  other.numDescendants = 0;
+  other.parent = NULL;
+  other.parentDistance = 0;
+  other.furthestDescendantDistance = 0;
+  other.localMetric = false;
+  other.localDataset = false;
+  other.metric = NULL;
+
+  return *this;
 }
 
 // Construct from a boost::serialization archive.

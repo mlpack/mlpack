@@ -19,7 +19,7 @@
 using namespace arma;
 using namespace mlpack;
 using namespace mlpack::adaboost;
-using namespace mlpack::decision_stump;
+using namespace mlpack::tree;
 using namespace mlpack::perceptron;
 
 BOOST_AUTO_TEST_SUITE(AdaBoostTest);
@@ -319,13 +319,14 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
   // Define your own weak learner, decision stumps in this case.
   const size_t numClasses = 3;
   const size_t inpBucketSize = 6;
-  DecisionStump<> ds(inputData, labels.row(0), numClasses, inpBucketSize);
+  arma::Row<size_t> labelsvec = labels.row(0);
+  ID3DecisionStump ds(inputData, labelsvec, numClasses, inpBucketSize);
 
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<DecisionStump<>> a(tolerance);
-  double ztProduct = a.Train(inputData, labels.row(0), numClasses, ds,
+  AdaBoost<ID3DecisionStump> a(tolerance);
+  double ztProduct = a.Train(inputData, labelsvec, numClasses, ds,
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
@@ -363,10 +364,11 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
   // Define your own weak learner, decision stumps in this case.
   const size_t numClasses = 3;
   const size_t inpBucketSize = 6;
+  arma::Row<size_t> labelsvec = labels.row(0);
 
   arma::Row<size_t> dsPrediction(labels.n_cols);
 
-  DecisionStump<> ds(inputData, labels.row(0), numClasses, inpBucketSize);
+  ID3DecisionStump ds(inputData, labelsvec, numClasses, inpBucketSize);
   ds.Classify(inputData, dsPrediction);
 
   size_t countWeakLearnerError = 0;
@@ -379,7 +381,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
   size_t iterations = 50;
   double tolerance = 1e-10;
 
-  AdaBoost<DecisionStump<>> a(inputData, labels.row(0), numClasses, ds,
+  AdaBoost<ID3DecisionStump> a(inputData, labelsvec, numClasses, ds,
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
@@ -413,15 +415,16 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
   // Define your own weak learner, decision stumps in this case.
   const size_t numClasses = 3;
   const size_t inpBucketSize = 6;
+  arma::Row<size_t> labelsvec = labels.row(0);
 
-  DecisionStump<> ds(inputData, labels.row(0), numClasses, inpBucketSize);
+  ID3DecisionStump ds(inputData, labelsvec, numClasses, inpBucketSize);
 
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   double tolerance = 1e-10;
 
-  AdaBoost<DecisionStump<>> a(tolerance);
-  double ztProduct = a.Train(inputData, labels.row(0), numClasses, ds,
+  AdaBoost<ID3DecisionStump> a(tolerance);
+  double ztProduct = a.Train(inputData, labelsvec, numClasses, ds,
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
@@ -458,8 +461,9 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
   const size_t numClasses = 3;
   const size_t inpBucketSize = 6;
   arma::Row<size_t> dsPrediction(labels.n_cols);
+  arma::Row<size_t> labelsvec = labels.row(0);
 
-  DecisionStump<> ds(inputData, labels.row(0), numClasses, inpBucketSize);
+  ID3DecisionStump ds(inputData, labelsvec, numClasses, inpBucketSize);
   ds.Classify(inputData, dsPrediction);
 
   size_t countWeakLearnerError = 0;
@@ -472,7 +476,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<DecisionStump<>> a(inputData, labels.row(0), numClasses, ds,
+  AdaBoost<ID3DecisionStump> a(inputData, labelsvec, numClasses, ds,
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
@@ -505,15 +509,16 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
   // Define your own weak learner, decision stumps in this case.
   const size_t numClasses = 2;
   const size_t inpBucketSize = 6;
+  arma::Row<size_t> labelsvec = labels.row(0);
 
-  DecisionStump<> ds(inputData, labels.row(0), numClasses, inpBucketSize);
+  ID3DecisionStump ds(inputData, labelsvec, numClasses, inpBucketSize);
 
   // Define parameters for Adaboost.
   size_t iterations = 50;
   double tolerance = 1e-10;
 
-  AdaBoost<DecisionStump<>> a(tolerance);
-  double ztProduct = a.Train(inputData, labels.row(0), numClasses, ds,
+  AdaBoost<ID3DecisionStump> a(tolerance);
+  double ztProduct = a.Train(inputData, labelsvec, numClasses, ds,
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
@@ -549,10 +554,11 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
   // Define your own weak learner, decision stumps in this case.
   const size_t numClasses = 2;
   const size_t inpBucketSize = 3;
+  arma::Row<size_t> labelsvec = labels.row(0);
 
   arma::Row<size_t> dsPrediction(labels.n_cols);
 
-  DecisionStump<> ds(inputData, labels.row(0), numClasses, inpBucketSize);
+  ID3DecisionStump ds(inputData, labelsvec, numClasses, inpBucketSize);
   ds.Classify(inputData, dsPrediction);
 
   size_t countWeakLearnerError = 0;
@@ -565,7 +571,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
   size_t iterations = 500;
   double tolerance = 1e-23;
 
-  AdaBoost<DecisionStump<> > a(inputData, labels.row(0), numClasses, ds,
+  AdaBoost<ID3DecisionStump > a(inputData, labelsvec, numClasses, ds,
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
@@ -620,12 +626,33 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
   double tolerance = 1e-10;
   AdaBoost<> a(inputData, labels.row(0), numClasses, p, iterations, tolerance);
 
-  arma::Row<size_t> predictedLabels(testData.n_cols);
-  a.Classify(testData, predictedLabels);
+  arma::Row<size_t> predictedLabels1(testData.n_cols),
+                    predictedLabels2(testData.n_cols);
+  arma::mat probabilities;
+
+  a.Classify(testData, predictedLabels1);
+  a.Classify(testData, predictedLabels2, probabilities);
+
+  BOOST_REQUIRE_EQUAL(probabilities.n_cols, testData.n_cols);
+  BOOST_REQUIRE_EQUAL(probabilities.n_rows, numClasses);
+
+  for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
+    BOOST_REQUIRE_EQUAL(predictedLabels1[i], predictedLabels2[i]);
+
+  arma::colvec pRow;
+  arma::uword maxIndex = 0;
+
+  for (size_t i = 0; i < predictedLabels1.n_cols; i++)
+  {
+    pRow = probabilities.unsafe_col(i);
+    pRow.max(maxIndex);
+    BOOST_REQUIRE_EQUAL(predictedLabels1(i), maxIndex);
+    BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
+  }
 
   size_t localError = 0;
   for (size_t i = 0; i < trueTestLabels.n_cols; i++)
-    if (trueTestLabels(i) != predictedLabels(i))
+    if (trueTestLabels(i) != predictedLabels1(i))
       localError++;
 
   double lError = (double) localError / trueTestLabels.n_cols;
@@ -650,6 +677,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
   // Define your own weak learner; in this test decision stumps are used.
   const size_t numClasses = 2;
   const size_t inpBucketSize = 3;
+  arma::Row<size_t> labelsvec = labels.row(0);
 
   arma::mat testData;
 
@@ -663,20 +691,40 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
 
   arma::Row<size_t> dsPrediction(labels.n_cols);
 
-  DecisionStump<> ds(inputData, labels.row(0), numClasses, inpBucketSize);
+  ID3DecisionStump ds(inputData, labelsvec, numClasses, inpBucketSize);
 
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<DecisionStump<> > a(inputData, labels.row(0), numClasses, ds,
+  AdaBoost<ID3DecisionStump > a(inputData, labelsvec, numClasses, ds,
       iterations, tolerance);
 
-  arma::Row<size_t> predictedLabels(testData.n_cols);
-  a.Classify(testData, predictedLabels);
+  arma::Row<size_t> predictedLabels1(testData.n_cols),
+                    predictedLabels2(testData.n_cols);
+  arma::mat probabilities;
+
+  a.Classify(testData, predictedLabels1);
+  a.Classify(testData, predictedLabels2, probabilities);
+
+  BOOST_REQUIRE_EQUAL(probabilities.n_cols, testData.n_cols);
+
+  for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
+    BOOST_REQUIRE_EQUAL(predictedLabels1[i], predictedLabels2[i]);
+
+  arma::colvec pRow;
+  arma::uword maxIndex = 0;
+
+  for (size_t i = 0; i < predictedLabels1.n_cols; i++)
+  {
+    pRow = probabilities.unsafe_col(i);
+    pRow.max(maxIndex);
+    BOOST_REQUIRE_EQUAL(predictedLabels1(i), maxIndex);
+    BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
+  }
 
   size_t localError = 0;
   for (size_t i = 0; i < trueTestLabels.n_cols; i++)
-    if (trueTestLabels(i) != predictedLabels(i))
+    if (trueTestLabels(i) != predictedLabels1(i))
       localError++;
 
   double lError = (double) localError / trueTestLabels.n_cols;
@@ -716,16 +764,38 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
     BOOST_FAIL("Cannot load test dataset iris_test.csv!");
 
   arma::Row<size_t> predictedLabels(testData.n_cols);
-
   a.Classify(testData, predictedLabels);
 
   arma::Mat<size_t> trueTestLabels;
   if (!data::Load("iris_test_labels.csv", trueTestLabels))
     BOOST_FAIL("Cannot load test dataset iris_test_labels.csv!");
 
+  arma::Row<size_t> predictedLabels1(testData.n_cols),
+                    predictedLabels2(testData.n_cols);
+  arma::mat probabilities;
+
+  a.Classify(testData, predictedLabels1);
+  a.Classify(testData, predictedLabels2, probabilities);
+
+  BOOST_REQUIRE_EQUAL(probabilities.n_cols, testData.n_cols);
+
+  for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
+    BOOST_REQUIRE_EQUAL(predictedLabels1[i], predictedLabels2[i]);
+
+  arma::colvec pRow;
+  arma::uword maxIndex = 0;
+
+  for (size_t i = 0; i < predictedLabels1.n_cols; i++)
+  {
+    pRow = probabilities.unsafe_col(i);
+    pRow.max(maxIndex);
+    BOOST_REQUIRE_EQUAL(predictedLabels1(i), maxIndex);
+    BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
+  }
+
   size_t localError = 0;
   for (size_t i = 0; i < trueTestLabels.n_cols; i++)
-    if (trueTestLabels(i) != predictedLabels(i))
+    if (trueTestLabels(i) != predictedLabels1(i))
       localError++;
   double lError = (double) localError / labels.n_cols;
   BOOST_REQUIRE_LE(lError, 0.30);
@@ -844,7 +914,7 @@ BOOST_AUTO_TEST_CASE(PerceptronSerializationTest)
   }
 }
 
-BOOST_AUTO_TEST_CASE(DecisionStumpSerializationTest)
+BOOST_AUTO_TEST_CASE(ID3DecisionStumpSerializationTest)
 {
   // Build an AdaBoost object.
   mat data = randu<mat>(10, 500);
@@ -854,8 +924,8 @@ BOOST_AUTO_TEST_CASE(DecisionStumpSerializationTest)
   for (size_t i = 250; i < 500; ++i)
     labels[i] = 1;
 
-  DecisionStump<> p(data, labels, 2, 800);
-  AdaBoost<DecisionStump<>> ab(data, labels, 2, p, 50, 1e-10);
+  ID3DecisionStump p(data, labels, 2, 800);
+  AdaBoost<ID3DecisionStump> ab(data, labels, 2, p, 50, 1e-10);
 
   // Now create another dataset to train with.
   mat otherData = randu<mat>(5, 200);
@@ -867,10 +937,10 @@ BOOST_AUTO_TEST_CASE(DecisionStumpSerializationTest)
   for (size_t i = 150; i < 200; ++i)
     otherLabels[i] = 2;
 
-  DecisionStump<> p2(otherData, otherLabels, 3, 500);
-  AdaBoost<DecisionStump<>> abText(otherData, otherLabels, 3, p2, 50, 1e-10);
+  ID3DecisionStump p2(otherData, otherLabels, 3, 500);
+  AdaBoost<ID3DecisionStump> abText(otherData, otherLabels, 3, p2, 50, 1e-10);
 
-  AdaBoost<DecisionStump<>> abXml, abBinary;
+  AdaBoost<ID3DecisionStump> abXml, abBinary;
 
   SerializeObjectAll(ab, abXml, abText, abBinary);
 
@@ -891,16 +961,6 @@ BOOST_AUTO_TEST_CASE(DecisionStumpSerializationTest)
                         abText.WeakLearner(i).SplitDimension());
     BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).SplitDimension(),
                         abBinary.WeakLearner(i).SplitDimension());
-
-    CheckMatrices(ab.WeakLearner(i).Split(),
-                  abXml.WeakLearner(i).Split(),
-                  abText.WeakLearner(i).Split(),
-                  abBinary.WeakLearner(i).Split());
-
-    CheckMatrices(ab.WeakLearner(i).BinLabels(),
-                  abXml.WeakLearner(i).BinLabels(),
-                  abText.WeakLearner(i).BinLabels(),
-                  abBinary.WeakLearner(i).BinLabels());
   }
 }
 

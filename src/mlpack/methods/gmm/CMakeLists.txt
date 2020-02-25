@@ -26,12 +26,15 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(gmm_train)
 add_python_binding(gmm_train)
-add_markdown_docs(gmm_train "cli;python" "clustering")
+add_julia_binding(gmm_train)
+add_markdown_docs(gmm_train "cli;python;julia" "clustering")
 
 add_cli_executable(gmm_generate)
 add_python_binding(gmm_generate)
-add_markdown_docs(gmm_generate "cli;python" "clustering")
+add_julia_binding(gmm_generate)
+add_markdown_docs(gmm_generate "cli;python;julia" "clustering")
 
 add_cli_executable(gmm_probability)
 add_python_binding(gmm_probability)
-add_markdown_docs(gmm_probability "cli;python" "clustering")
+add_julia_binding(gmm_probability)
+add_markdown_docs(gmm_probability "cli;python;julia" "clustering")

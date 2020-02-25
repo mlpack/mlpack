@@ -31,6 +31,10 @@ namespace ann /** Artificial Neural Network. */ {
  * h &=& o \cdot tanh(c)
  * @f}
  *
+ * Note that if an LSTM layer is desired as the first layer of a neural network,
+ * an IdentityLayer should be added to the network as the first layer, and then
+ * the LSTM layer should be added.
+ *
  * For more information, see the following.
  *
  * @code
