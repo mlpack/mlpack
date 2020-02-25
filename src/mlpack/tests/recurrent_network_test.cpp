@@ -582,9 +582,9 @@ void ReberGrammarTestNetwork(ModelType& model,
         // manually.  We will reshape them into a cube with each slice equal to
         // a time step.
         inputTemp = arma::cube(trainInput.at(0, j).memptr(), inputSize, 1,
-            trainInput.at(0, j).n_elem / inputSize, false, true);
+            trainInput.at(0, j).n_elem / inputSize, true, true);
         labelsTemp = arma::cube(trainLabels.at(0, j).memptr(), inputSize, 1,
-            trainInput.at(0, j).n_elem / inputSize, false, true);
+            trainInput.at(0, j).n_elem / inputSize, true, true);
 
         model.Rho() = inputTemp.n_elem / inputSize;
         model.Train(inputTemp, labelsTemp, opt);
@@ -599,7 +599,7 @@ void ReberGrammarTestNetwork(ModelType& model,
     {
       arma::cube prediction;
       arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
-          testInput.at(0, i).n_elem / inputSize, false, true);
+          testInput.at(0, i).n_elem / inputSize, true, true);
 
       model.Rho() = input.n_elem / inputSize;
       model.Predict(input, prediction);
@@ -1109,9 +1109,9 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
         // manually.  We will reshape them into a cube with each slice equal to
         // a time step.
         inputTemp = arma::cube(trainInput.at(0, j).memptr(), inputSize, 1,
-            trainInput.at(0, j).n_elem / inputSize, false, true);
+            trainInput.at(0, j).n_elem / inputSize, true, true);
         labelsTemp = arma::cube(trainLabels.at(0, j).memptr(), inputSize, 1,
-            trainInput.at(0, j).n_elem / inputSize, false, true);
+            trainInput.at(0, j).n_elem / inputSize, true, true);
 
         model.Rho() = inputTemp.n_elem / inputSize;
         model.Train(inputTemp, labelsTemp, opt);
@@ -1126,7 +1126,7 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
     {
       arma::cube prediction;
       arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
-          testInput.at(0, i).n_elem / inputSize, false, true);
+          testInput.at(0, i).n_elem / inputSize, true, true);
 
       model.Rho() = input.n_elem / inputSize;
       model.Predict(input, prediction);
