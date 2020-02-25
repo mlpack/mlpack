@@ -823,9 +823,9 @@ void DistractedSequenceRecallTestNetwork(
       for (size_t j = 0; j < trainDistractedSequenceCount; j++)
       {
         inputTemp = arma::cube(trainInput.at(0, j).memptr(), inputSize, 1,
-            trainInput.at(0, j).n_elem / inputSize, false, true);
+            trainInput.at(0, j).n_elem / inputSize, true, true);
         labelsTemp = arma::cube(trainLabels.at(0, j).memptr(), outputSize, 1,
-            trainInput.at(0, j).n_elem / outputSize, false, true);
+            trainInput.at(0, j).n_elem / outputSize, true, true);
 
         model.Train(inputTemp, labelsTemp, opt);
       }
