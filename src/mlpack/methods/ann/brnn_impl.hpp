@@ -657,6 +657,94 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
 template<typename OutputLayerType, typename MergeLayerType,
          typename MergeOutputType, typename InitializationRuleType,
          typename... CustomLayers>
+void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
+    InitializationRuleType, CustomLayers...>::summary(
+    arma::cube& inputs)
+{
+//  if (parameter.is_empty())
+//    ResetParameters();
+//
+//  if (deterministic != this->deterministic)
+//  {
+//    this->deterministic = deterministic;
+//    ResetDeterministic();
+//  }
+//
+//  ResetCells();
+//
+//  for (size_t seqNum = 0; seqNum < rho; ++seqNum)
+//  {
+//    arma::mat stepData(inputs.slice(seqNum).colptr(0),
+//        inputs.n_rows, 1, false, true);
+//    Forward(std::move(stepData));
+//  }
+  forwardRNN.rho = backwardRNN.rho = rho;
+  if (parameter.is_empty())
+  {
+    ResetParameters();
+  }
+
+  if (deterministic != this->deterministic)
+  {
+    this->deterministic = deterministic;
+    ResetDeterministic();
+  }
+
+  forwardRNN.ResetCells();
+  backwardRNN.ResetCells();
+
+
+  std::vector<arma::mat> results1, results2;
+  for (size_t seqNum = 0; seqNum < rho; ++seqNum)
+  {
+    forwardRNN.Forward(std::move(arma::mat(
+        inputs.slice(seqNum).colptr(0),
+        inputs.n_rows, 1, false, true)));
+    backwardRNN.Forward(std::move(arma::mat(
+        inputs.slice(rho - seqNum - 1).colptr(0),
+        inputs.n_rows, 1, false, true)));
+
+    boost::apply_visitor(SaveOutputParameterVisitor(
+        std::move(results1)), forwardRNN.network.back());
+    boost::apply_visitor(SaveOutputParameterVisitor(
+        std::move(results2)), backwardRNN.network.back());
+  }
+  if (outputSize == 0)
+  {
+    outputSize = boost::apply_visitor(outputParameterVisitor,
+        forwardRNN.network.back()).n_elem / 1;
+    forwardRNN.outputSize = backwardRNN.outputSize = outputSize;
+  }
+  reverse(results1.begin(), results1.end());
+
+  long long totalParams = 0;
+
+  std::cout << std::setfill('-') << std::setw(60) << '\n';
+  std::cout << std::setfill(' ') << std::setw(20) << "Layer Type" <<
+      std::setw(25) << "Output Shape" << std::setw(15) << "Param #\n";
+  std::cout << std::setfill('=') << std::setw(60) << '\n';
+  for (size_t i = 0; i < forwardRNN.network.size(); i++)
+  {
+    std::cout << std::setfill(' ') << std::setw(20) <<
+        boost::apply_visitor(layerNameVisitor, forwardRNN.network[i]) <<
+        std::setw(25) << std::string("(") +
+        std::to_string(boost::apply_visitor(outputParameterVisitor,
+        forwardRNN.network[i]).n_rows) + ", " +
+        std::to_string(boost::apply_visitor(outputParameterVisitor,
+        forwardRNN.network[i]).n_cols) + ")" << std::setw(12) <<
+        boost::apply_visitor(weightSizeVisitor, forwardRNN.network[i]) << "\n";
+
+    std::cout << std::setfill('-') << std::setw(60) << '\n';
+    totalParams += boost::apply_visitor(weightSizeVisitor, forwardRNN.network[i]);
+  }
+  std::cout << std::setfill('=') << std::setw(60) << '\n';
+  std::cout << "Total params: " << totalParams << "\n";
+  std::cout << std::setfill('-') << std::setw(60) << '\n';
+}
+
+template<typename OutputLayerType, typename MergeLayerType,
+         typename MergeOutputType, typename InitializationRuleType,
+         typename... CustomLayers>
 template<typename Archive>
 void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::serialize(

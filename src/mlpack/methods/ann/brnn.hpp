@@ -20,6 +20,7 @@
 #include "visitor/copy_visitor.hpp"
 #include "visitor/output_parameter_visitor.hpp"
 #include "visitor/reset_visitor.hpp"
+#include "layer_names.hpp"
 
 #include "init_rules/network_init.hpp"
 #include <mlpack/methods/ann/layer/layer_types.hpp>
@@ -280,6 +281,13 @@ class BRNN
    */
   void ResetParameters();
 
+  /**
+   * Print the summary of the current FFN model.
+   *
+   * @param inputs Input for which model's summary needs to be defined.
+   */
+  void summary(arma::cube& inputs);
+
   //! Serialize the model.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -361,6 +369,9 @@ class BRNN
 
   //! Locally-stored delete visitor.
   CopyVisitor<CustomLayers...> copyVisitor;
+
+  //! Locally-stored name visitor.
+  LayerNameVisitor layerNameVisitor;
 
   //! The current evaluation mode (training or testing).
   bool deterministic;

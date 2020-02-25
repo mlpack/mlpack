@@ -18,6 +18,7 @@
 #include "visitor/delta_visitor.hpp"
 #include "visitor/output_parameter_visitor.hpp"
 #include "visitor/reset_visitor.hpp"
+#include "layer_names.hpp"
 
 #include "init_rules/network_init.hpp"
 
@@ -283,6 +284,13 @@ class RNN
    */
   void ResetParameters();
 
+  /**
+   * Print the summary of the current FFN model.
+   *
+   * @param inputs Input for which model's summary needs to be defined.
+   */
+  void summary(arma::cube& inputs);
+
   //! Serialize the model.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -386,6 +394,9 @@ class RNN
 
   //! Locally-stored delete visitor.
   DeleteVisitor deleteVisitor;
+
+  //! Locally-stored name visitor.
+  LayerNameVisitor layerNameVisitor;
 
   //! The current evaluation mode (training or testing).
   bool deterministic;

@@ -507,6 +507,54 @@ void RNN<OutputLayerType, InitializationRuleType,
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::summary(
+    arma::cube& inputs)
+{
+  if (parameter.is_empty())
+    ResetParameters();
+
+  if (deterministic != this->deterministic)
+  {
+    this->deterministic = deterministic;
+    ResetDeterministic();
+  }
+
+  ResetCells();
+
+  for (size_t seqNum = 0; seqNum < rho; ++seqNum)
+  {
+    arma::mat stepData(inputs.slice(seqNum).colptr(0),
+        inputs.n_rows, 1, false, true);
+    Forward(std::move(stepData));
+  }
+
+  long long totalParams = 0;
+
+  std::cout << std::setfill('-') << std::setw(60) << '\n';
+  std::cout << std::setfill(' ') << std::setw(20) << "Layer Type" <<
+      std::setw(25) << "Output Shape" << std::setw(15) << "Param #\n";
+  std::cout << std::setfill('=') << std::setw(60) << '\n';
+  for (size_t i = 0; i < network.size(); i++)
+  {
+    std::cout << std::setfill(' ') << std::setw(20) <<
+        boost::apply_visitor(layerNameVisitor, network[i]) <<
+        std::setw(25) << std::string("(") +
+        std::to_string(boost::apply_visitor(outputParameterVisitor,
+        network[i]).n_rows) + ", " +
+        std::to_string(boost::apply_visitor(outputParameterVisitor,
+        network[i]).n_cols) + ")" << std::setw(12) <<
+        boost::apply_visitor(weightSizeVisitor, network[i]) << "\n";
+
+    std::cout << std::setfill('-') << std::setw(60) << '\n';
+    totalParams += boost::apply_visitor(weightSizeVisitor, network[i]);
+  }
+  std::cout << std::setfill('=') << std::setw(60) << '\n';
+  std::cout << "Total params: " << totalParams << "\n";
+  std::cout << std::setfill('-') << std::setw(60) << '\n';
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
 template<typename Archive>
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     Archive& ar, const unsigned int version)
