@@ -3,8 +3,8 @@
  * @author Lakshya Ojha
  *
  * Same as soft thresholding, if its amplitude is smaller than a predefined
- * threshold, it will be set to
- * zero (kill), otherwise it will be kept unchanged.
+ * threshold, it will be set to zero (kill), otherwise it will be kept 
+ * unchanged.
  * In order to promote sparsity and to improve the approximation, the hard
  * thresholding method is used as an alternative.
  *
