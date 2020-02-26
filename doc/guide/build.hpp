@@ -96,7 +96,7 @@ For Python bindings, the following packages are required:
  - pytest-runner
 
 In Ubuntu (>= 18.04) and Debian (>= 10) all of these dependencies can be 
-installed through apt :
+installed through apt:
 
 @code
 # apt-get install libboost-math-dev libboost-program-options-dev
@@ -110,7 +110,7 @@ source as apt installs an older version. So you need to omit
 \c libarmadillo-dev from the code snippet above and instead use
 <a href="http://arma.sourceforge.net/download.html">this link</a>
  to download the required file. Extract this file and follow the README in the 
- uncompressed folder to build and install armadillo.
+ uncompressed folder to build and install Armadillo.
 
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
