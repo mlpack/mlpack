@@ -24,15 +24,19 @@ Padding<InputDataType, OutputDataType>::Padding(
     const size_t padWLeft,
     const size_t padWRight,
     const size_t padHTop,
-    const size_t padHBottom) :
+    const size_t padHBottom,
+    const std::string& paddingType,
+    const double fillNum) :
     padWLeft(padWLeft),
     padWRight(padWRight),
     padHTop(padHTop),
     padHBottom(padHBottom),
+    fillNum(fillNum),
     nRows(0),
     nCols(0)
 {
-  // Nothing to do here.
+  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
+      [](unsigned char c){ return std::tolower(c); });
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -44,6 +48,10 @@ void Padding<InputDataType, OutputDataType>::Forward(
   nCols = input.n_cols;
   output = arma::zeros(nRows + padWLeft + padWRight,
       nCols + padHTop + padHBottom);
+  if (paddingTypeLow == "constant")
+  {
+    output.fill(fillNum);
+  }
   output.submat(padWLeft, padHTop, padWLeft + nRows - 1,
       padHTop + nCols - 1) = input;
 }

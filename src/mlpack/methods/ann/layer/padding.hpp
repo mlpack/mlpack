@@ -41,11 +41,15 @@ class Padding
    * @param padWRight Right padding width of the input.
    * @param padHTop Top padding height of the input.
    * @param padHBottom Bottom padding height of the input.
+   * @param paddingType ....
+   * @param fillNum .....
    */
   Padding(const size_t padWLeft = 0,
           const size_t padWRight = 0,
           const size_t padHTop = 0,
-          const size_t padHBottom = 0);
+          const size_t padHBottom = 0,
+          const std::string& paddingType = "CONSTANT",
+          const double fillNum = 0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -101,6 +105,11 @@ class Padding
   //! Modify the bottom padding width.
   size_t& PadHBottom() { return padHBottom; }
 
+  //! Get the bottom fill number.
+  size_t FillNum() const { return fillNum; }
+  //! Modify the bottom fill-number.
+  size_t &FillNum() { return fillNum; }
+
   /**
    * Serialize the layer.
    */
@@ -122,6 +131,12 @@ class Padding
 
   //! Locally-stored number of rows and columns of input.
   size_t nRows, nCols;
+
+  //! Locally-stored lowercased padding type.
+  std::string paddingTypeLow;
+
+  //! Locally-stored ....
+  double fillNum;
 
   //! Locally-stored delta object.
   OutputDataType delta;
