@@ -1464,8 +1464,8 @@ BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
     return result;
   };
 
-  std::vector<MatType> inputs(trainingData.size());
-  std::vector<MatType> targets(trainingData.size());
+  std::vector<MatType> inputs(trainingData.size(), MatType());
+  std::vector<MatType> targets(trainingData.size(), MatType());
   for (size_t i = 0; i < trainingData.size(); ++i)
   {
     inputs[i] = makeInput(trainingData[i].c_str());
