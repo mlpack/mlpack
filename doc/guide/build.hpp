@@ -104,6 +104,7 @@ installed through apt:
   python-pandas python-numpy cython python-setuptools libensmallen-dev
   libstb-dev
 @endcode
+
 @note For older versions of Ubuntu and Debian , Armadillo needs to be built from 
 source as apt installs an older version. So you need to omit 
 \c libarmadillo-dev from the code snippet above and instead use
