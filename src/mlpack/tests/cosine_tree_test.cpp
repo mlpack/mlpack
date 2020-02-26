@@ -11,7 +11,7 @@
  */
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/tree/cosine_tree/cosine_tree.hpp>
+#include <mlpack/core/tree/cosine_tree.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"

@@ -241,6 +241,10 @@ class CosineTree
   //! Get the column index of split point of the node.
   size_t SplitPointIndex() const { return indices[splitPointIndex]; }
 
+  //! Serialize the tree.
+  template<typename Archive> 
+  void serialize(Archive& ar, const unsigned int version);
+
  private:
   //! Matrix for which cosine tree is constructed.
   const arma::mat* dataset;
@@ -286,5 +290,11 @@ class CompareCosineNode
 
 } // namespace tree
 } // namespace mlpack
+
+// Include implementation.
+#include "cosine_tree_impl.hpp"
+
+// Include the rest of the pieces, if necessary.
+#include "../cosine_tree.hpp"
 
 #endif

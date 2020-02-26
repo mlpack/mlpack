@@ -13,7 +13,7 @@
 #define MLPACK_METHODS_QUIC_SVD_QUIC_SVD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/tree/cosine_tree/cosine_tree.hpp>
+#include <mlpack/core/tree/cosine_tree.hpp>
 
 namespace mlpack {
 namespace svd {
