@@ -126,60 +126,6 @@ class PReLU
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  /**
-   * Computes the parametric ReLU function.
-   *
-   * @param x Input data.
-   * @return f(x).
-   */
-  double Fn(const double x)
-  {
-    return std::max(x, alpha(0) * x);
-  }
-
-  /**
-   * Computes the parametric ReLU function using a dense matrix as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-  template<typename eT>
-  void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
-  {
-    y = x;
-    arma::uvec negative = arma::find(x < 0);
-    y(negative) = x(negative) * alpha(0);
-  }
-
-  /**
-   * Computes the first derivative of the parametric ReLU function.
-   *
-   * @param x Input data.
-   * @return f'(x)
-   */
-  double Deriv(const double x)
-  {
-    return (x >= 0) ? 1 : alpha(0);
-  }
-
-  /**
-   * Computes the first derivative of the PReLU function.
-   *
-   * @param x Input activations.
-   * @param y The resulting derivatives.
-   */
-
-  template<typename InputType, typename OutputType>
-  void Deriv(const InputType& x, OutputType& y)
-  {
-    y.set_size(arma::size(x));
-
-    for (size_t i = 0; i < x.n_elem; i++)
-    {
-      y(i) = Deriv(x(i));
-    }
-  }
-
   //! Locally-stored delta object.
   OutputDataType delta;
 
