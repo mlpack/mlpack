@@ -64,7 +64,7 @@ void AdaptiveMaxPooling<InputDataType, OutputDataType>::Forward(
   batchSize = input.n_cols;
   inSize = input.n_elem / (inputWidth * inputHeight);
   inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
-      inputWidth, inputHeight, batchSize * inSize, false, false);
+      inputWidth, inputHeight, batchSize * inSize);
   outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,
       batchSize * inSize);
   poolingIndices.push_back(outputTemp);
