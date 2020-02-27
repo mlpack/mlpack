@@ -44,7 +44,7 @@ class LogCoshLoss
    *          function is directly proportional to a. It can also
    *          act as a scaling factor hence making the loss
    *          function more sensitive to small losses around the
-   *          origin. Default value = 1.0
+   *          origin. Default value = 1.0.
    */
   LogCoshLoss(const double a = 1.0);
 
