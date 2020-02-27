@@ -21,6 +21,7 @@
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_bias_error.hpp>
 #include <mlpack/methods/ann/loss_functions/dice_loss.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
@@ -49,6 +50,40 @@ BOOST_AUTO_TEST_CASE(SimpleKLDivergenceTest)
   target = arma::ones(10, 1);
   loss = module.Forward(std::move(input), std::move(target));
   BOOST_REQUIRE_SMALL(loss, 0.00001);
+}
+
+/*
+ * Simple test for the mean squared logarithmic error function.
+ */
+BOOST_AUTO_TEST_CASE(SimpleMeanSquaredLogarithmicErrorTest)
+{
+  arma::mat input, output, target;
+  MeanSquaredLogarithmicError<> module;
+
+  // Test the Forward function on a user generator input and compare it against
+  // the manually calculated result.
+  input = arma::zeros(1, 8);
+  target = arma::zeros(1, 8);
+  double error = module.Forward(std::move(input), std::move(target));
+  BOOST_REQUIRE_SMALL(error, 0.00001);
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(target), std::move(output));
+  // The output should be equal to 0.
+  CheckMatrices(input, output);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+
+  // Test the error function on a single input.
+  input = arma::mat("2");
+  target = arma::mat("3");
+  error = module.Forward(std::move(input), std::move(target));
+  BOOST_REQUIRE_CLOSE(error, 0.082760974810151655, 0.001);
+
+  // Test the Backward function on a single input.
+  module.Backward(std::move(input), std::move(target), std::move(output));
+  BOOST_REQUIRE_CLOSE(arma::accu(output), -0.1917880483011872, 0.001);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 1);
 }
 
 /**

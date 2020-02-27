@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added `mean squared logarithmic error` loss function for neural networks
+    (#2210).
+    
   * Added `mean bias loss function` for neural networks (#2210).
   
   * The DecisionStump class has been marked deprecated; use the `DecisionTree`
