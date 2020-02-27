@@ -82,7 +82,10 @@ class MemoryHead
    */
   template<typename InputType, typename OutputType>
   void Forward(InputType&& input, OutputType&& output);
+<<<<<<< HEAD
 
+=======
+>>>>>>> Some changes for inputypes
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
@@ -306,11 +309,7 @@ class MemoryHead
   OutputDataType delta;
 
   //! Locally-stored gradient object.
-<<<<<<< HEAD
   OutputDataType grad;
-=======
-  OutputDataType gradient;
->>>>>>> Adding all files
 
   //! Locally-stored input parameter object.
   InputDataType inputParameter;

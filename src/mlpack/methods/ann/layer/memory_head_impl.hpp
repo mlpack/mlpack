@@ -196,7 +196,6 @@ void MemoryHead<InputDataType, OutputDataType>::Forward(
 }
 
 template<typename InputDataType, typename OutputDataType>
-<<<<<<< HEAD
 template<typename InputType, typename ErrorType, typename GradientType>
 void MemoryHead<InputDataType, OutputDataType>::Backward(
   const InputType&& /* input */, ErrorType&& gy, GradientType&& g)
