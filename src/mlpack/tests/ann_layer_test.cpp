@@ -3053,11 +3053,7 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
   input(11) = 9;
   // Output-Size should be 2 x 2.
   // Square output.
-<<<<<<< HEAD
   MaxPooling<> module1(2, 2, 2, 1);
-=======
-  AdaptiveMeanPooling<> module1(2, 2);
->>>>>>> Completed and tested MaxPooling, Added both layers to layer_names.hpp
   module1.InputHeight() = 3;
   module1.InputWidth() = 4;
   module1.Forward(input, output);
@@ -3121,8 +3117,6 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
   BOOST_REQUIRE_EQUAL(output.n_elem, 4);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 }
-<<<<<<< HEAD
-=======
 
 BOOST_AUTO_TEST_CASE(AdaptiveMaxPoolingTestCase)
 {
@@ -3144,7 +3138,7 @@ BOOST_AUTO_TEST_CASE(AdaptiveMaxPoolingTestCase)
   AdaptiveMaxPooling<> module1(2, 2);
   module1.InputHeight() = 3;
   module1.InputWidth() = 4;
-  module1.Forward(std::move(input), std::move(output));
+  module1.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 28);
   BOOST_REQUIRE_EQUAL(output.n_elem, 4);
@@ -3163,7 +3157,7 @@ BOOST_AUTO_TEST_CASE(AdaptiveMaxPoolingTestCase)
   AdaptiveMaxPooling<> module2(2, 1);
   module2.InputHeight() = 3;
   module2.InputWidth() = 3;
-  module2.Forward(std::move(input), std::move(output));
+  module2.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 15.0);
   BOOST_REQUIRE_EQUAL(output.n_elem, 2);
@@ -3182,7 +3176,7 @@ BOOST_AUTO_TEST_CASE(AdaptiveMaxPoolingTestCase)
   AdaptiveMaxPooling<> module3(std::tuple<size_t, size_t>(3, 3));
   module3.InputHeight() = 4;
   module3.InputWidth() = 4;
-  module3.Forward(std::move(input), std::move(output));
+  module3.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 30.0);
   BOOST_REQUIRE_EQUAL(output.n_elem, 9);
@@ -3199,11 +3193,10 @@ BOOST_AUTO_TEST_CASE(AdaptiveMaxPoolingTestCase)
   AdaptiveMaxPooling<> module4(std::tuple<size_t, size_t>(2, 2));
   module4.InputHeight() = 2;
   module4.InputWidth() = 3;
-  module4.Forward(std::move(input), std::move(output));
+  module4.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 3);
   BOOST_REQUIRE_EQUAL(output.n_elem, 4);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 }
->>>>>>> Completed and tested MaxPooling, Added both layers to layer_names.hpp
 BOOST_AUTO_TEST_SUITE_END();

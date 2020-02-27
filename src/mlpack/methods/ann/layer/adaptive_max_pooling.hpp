@@ -59,7 +59,7 @@ class AdaptiveMaxPooling
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -71,51 +71,53 @@ class AdaptiveMaxPooling
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& input,
+                arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   //! Get the output parameter.
-  const OutputDataType& OutputParameter() const { return outputParameter; }
+  const OutputDataType& OutputParameter() const
+  { return poolingLayer.OutputParameter(); }
+
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputDataType& OutputParameter() { return poolingLayer.OutputParameter(); }
 
   //! Get the delta.
-  const OutputDataType& Delta() const { return delta; }
+  const OutputDataType& Delta() const { return poolingLayer.Delta(); }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputDataType& Delta() { return poolingLayer.Delta(); }
 
   //! Get the width.
-  size_t InputWidth() const { return inputWidth; }
+  size_t InputWidth() const { return poolingLayer.InputWidth(); }
   //! Modify the width.
-  size_t& InputWidth() { return inputWidth; }
+  size_t& InputWidth() { return poolingLayer.InputWidth(); }
 
   //! Get the height.
-  size_t InputHeight() const { return inputHeight; }
+  size_t InputHeight() const { return poolingLayer.InputHeight(); }
   //! Modify the height.
-  size_t& InputHeight() { return inputHeight; }
+  size_t& InputHeight() { return poolingLayer.InputHeight(); }
 
   //! Get the width.
   size_t OutputWidth() const { return outputWidth; }
   //! Modify the width.
-  size_t& OutputWidth() { return outputWidth; }
+  size_t& OutputWidth() { return outputHeight; }
 
   //! Get the height.
-  size_t OutputHeight() const { return outputHeight; }
+  size_t OutputHeight() const { return poolingLayer.OutputHeight(); }
   //! Modify the height.
-  size_t& OutputHeight() { return outputHeight; }
+  size_t& OutputHeight() { return poolingLayer.OutputHeight(); }
 
   //! Get the input size.
-  size_t InputSize() const { return inSize; }
+  size_t InputSize() const { return poolingLayer.InputSize(); }
 
   //! Get the output size.
-  size_t OutputSize() const { return outSize; }
+  size_t OutputSize() const { return poolingLayer.OutputSize(); }
 
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int version);
 
  private:
   /**
@@ -123,97 +125,26 @@ class AdaptiveMaxPooling
    */
   void IntializeAdaptivePadding()
   {
-    strideWidth = std::floor(inputWidth / outputWidth);
-    strideHeight = std::floor(inputHeight / outputHeight);
+    poolingLayer.StrideWidth() = std::floor(poolingLayer.InputWidth() /
+        outputWidth);
+    poolingLayer.StrideHeight() = std::floor(poolingLayer.InputHeight() /
+        outputHeight);
 
-    kernelWidth = inputWidth - (outputWidth - 1) * strideWidth;
-    kernelHeight = inputHeight - (outputHeight - 1) * strideHeight;
+    poolingLayer.KernelWidth() = poolingLayer.InputWidth() - (outputWidth - 1) *
+        poolingLayer.StrideWidth();
+    poolingLayer.KernelHeight() = poolingLayer.InputHeight() - (outputHeight - 1) *
+        poolingLayer.StrideHeight();
 
-    if (kernelHeight < 0 || kernelWidth < 0)
+    if (poolingLayer.KernelHeight() < 0 || poolingLayer.KernelWidth() < 0)
     {
       Log::Fatal << "Given output shape (" << outputWidth << ", "
         << outputHeight << ") is not possible for given input shape ("
-        << inputWidth <<", "<< inputHeight << ")."<< std::endl;
+        << poolingLayer.InputWidth() <<", "<< poolingLayer.InputHeight() << ")."<< std::endl;
     }
   }
 
-  /**
-   * Apply pooling to the input and store the results.
-   *
-   * @param input The input to be apply the pooling rule.
-   * @param output The pooled result.
-   * @param poolingIndices The pooled indices.
-   */
-  template<typename eT>
-  void PoolingOperation(const arma::Mat<eT>& input,
-                        arma::Mat<eT>& output,
-                        arma::Mat<eT>& poolingIndices)
-  {
-    const size_t rStep = kernelWidth;
-    const size_t cStep = kernelHeight;
-    for (size_t j = 0, colidx = 0; j < output.n_cols;
-         ++j, colidx += strideHeight)
-    {
-      for (size_t i = 0, rowidx = 0; i < output.n_rows;
-           ++i, rowidx += strideWidth)
-      {
-        arma::mat subInput = input(
-            arma::span(rowidx, rowidx + rStep - 1),
-            arma::span(colidx, colidx + cStep - 1));
-        const size_t idx = pooling.Pooling(subInput);
-        output(i, j) = subInput(idx);
-        arma::Mat<size_t> subIndices = indices(arma::span(rowidx,
-              rowidx + rStep - 1),
-              arma::span(colidx, colidx + cStep - 1));
-        poolingIndices(i, j) = subIndices(idx);
-      }
-    }
-  }
-
-  /**
-   * Apply unpooling to the input and store the results.
-   *
-   * @param error The backward error.
-   * @param output The pooled result.
-   * @param poolingIndices The pooled indices.
-   */
-  template<typename eT>
-  void Unpooling(const arma::Mat<eT>& error,
-                 arma::Mat<eT>& output,
-                 arma::Mat<eT>& poolingIndices)
-  {
-    for (size_t i = 0; i < poolingIndices.n_elem; ++i)
-    {
-      output(poolingIndices(i)) += error(i);
-    }
-  }
-
-  //! Locally-stored width of the pooling window.
-  size_t kernelWidth;
-
-  //! Locally-stored height of the pooling window.
-  size_t kernelHeight;
-
-  //! Locally-stored width of the stride operation.
-  size_t strideWidth;
-
-  //! Locally-stored height of the stride operation.
-  size_t strideHeight;
-
-  //! Locally-stored number of input channels.
-  size_t inSize;
-
-  //! Locally-stored number of output channels.
-  size_t outSize;
-
-  //! Locally-stored reset parameter used to initialize the module once.
-  bool reset;
-
-  //! Locally-stored input width.
-  size_t inputWidth;
-
-  //! Locally-stored input height.
-  size_t inputHeight;
+  //! Locally stored MaxPooling Object.
+  ann::MaxPooling<> poolingLayer;
 
   //! Locally-stored output width.
   size_t outputWidth;
@@ -221,38 +152,6 @@ class AdaptiveMaxPooling
   //! Locally-stored output height.
   size_t outputHeight;
 
-  //! Locally-stored number of input units.
-  size_t batchSize;
-
-  //! Locally-stored output parameter.
-  arma::cube outputTemp;
-
-  //! Locally-stored transformed input parameter.
-  arma::cube inputTemp;
-
-  //! Locally-stored transformed output parameter.
-  arma::cube gTemp;
-
-  //! Locally-stored pooling strategy.
-  MaxPoolingRule pooling;
-
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored gradient object.
-  OutputDataType gradient;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
-  //! Locally-stored indices matrix parameter.
-  arma::Mat<size_t> indices;
-
-  //! Locally-stored indices column parameter.
-  arma::Col<size_t> indicesCol;
-
-  //! Locally-stored pooling indicies.
-  std::vector<arma::cube> poolingIndices;
 }; // class MaxPooling
 
 } // namespace ann
