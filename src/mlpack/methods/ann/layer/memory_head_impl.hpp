@@ -90,9 +90,9 @@ MemoryHead<InputDataType, OutputDataType>::~MemoryHead()
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void MemoryHead<InputDataType, OutputDataType>::Forward(arma::Mat<eT>&& input,
-                                                        arma::Mat<eT>&& output)
+template<typename InputType, typename OutputType>
+void MemoryHead<InputDataType, OutputDataType>::Forward(
+    InputType&& input, OutputType&& output)
 {
   const arma::mat& memory = memoryHistory.back();
 
@@ -196,11 +196,10 @@ void MemoryHead<InputDataType, OutputDataType>::Forward(arma::Mat<eT>&& input,
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
+template<typename InputType, typename ErrorType, typename GradientType>
 void MemoryHead<InputDataType, OutputDataType>::Backward(
-  const arma::Mat<eT>&& /* output */,
-  arma::Mat<eT>&& gy,
-  arma::Mat<eT>&& g)
+  const InputType&& /* input */, ErrorType&& gy, GradientType&& g)
+
 {
   if (bBt == lBt.end())
   {
@@ -404,11 +403,9 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
+template<typename InputType, typename ErrorType, typename GradientType>
 void MemoryHead<InputDataType, OutputDataType>::Gradient(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& /* error */,
-    arma::Mat<eT>&& /* gradient */)
+    InputType&& input, ErrorType&& /* error */, GradientType&& gradient)
 {
   boost::apply_visitor(GradientVisitor(std::move(input), std::move(prevError)),
       inputLinear);

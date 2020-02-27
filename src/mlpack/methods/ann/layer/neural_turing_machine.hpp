@@ -92,8 +92,8 @@ class NeuralTuringMachine
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  template<typename InputType, typename OutputType>
+  void Forward(InputType&& input, OutputType&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -104,10 +104,10 @@ class NeuralTuringMachine
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  template<typename InputType, typename ErrorType, typename GradientType>
+  void Backward(const InputType&& input,
+                ErrorType&& gy,
+                GradientType&& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -116,10 +116,10 @@ class NeuralTuringMachine
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& /* error */,
-                arma::Mat<eT>&& /* gradient */);
+  template<typename InputType, typename ErrorType, typename GradientType>
+  void Gradient(InputType&& input,
+                ErrorType&& error,
+                GradientType&& gradient);
 
   /*
    * Resets the cell to accept a new input.
@@ -153,9 +153,9 @@ class NeuralTuringMachine
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
+  OutputDataType const& Gradient() const { return grad; }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  OutputDataType& Gradient() { return grad; }
 
   //! Get the model modules.
   std::vector<LayerTypes<>>& Model() { return network; }
@@ -264,7 +264,7 @@ class NeuralTuringMachine
   OutputDataType delta;
 
   //! Locally-stored gradient object.
-  OutputDataType gradient;
+  OutputDataType grad;
 
   //! Locally-stored input parameter object.
   InputDataType inputParameter;

@@ -97,9 +97,9 @@ NeuralTuringMachine<InputDataType, OutputDataType>::~NeuralTuringMachine()
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
+template<typename InputType, typename OutputType>
 void NeuralTuringMachine<InputDataType, OutputDataType>::Forward(
-    arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    InputType&& input, OutputType&& output)
 {
   // Create input to the controller.
   arma::vec newInput = arma::join_vert(input, lReads.back());
@@ -177,9 +177,9 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Forward(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
+template<typename InputType, typename ErrorType, typename GradientType>
 void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
-  const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+  const InputType&& /* input */, ErrorType&& gy, GradientType&& g)
 {
   if (bMemoryHistory == memoryHistory.end())
   {
@@ -303,11 +303,9 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
+template<typename InputType, typename ErrorType, typename GradientType>
 void NeuralTuringMachine<InputDataType, OutputDataType>::Gradient(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& /* error */,
-    arma::Mat<eT>&& /* gradient */)
+    InputType&& input, ErrorType&& /* error */, GradientType&& gradient)
 {
   if (gReads == lReads.end())
   {
