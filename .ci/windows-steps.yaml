@@ -8,7 +8,7 @@ steps:
 
 # Fetch build dependencies
 - powershell: |
-    nuget install OpenBLAS
+    nuget install OpenBLAS -o $(Agent.ToolsDirectory)
     nuget install boost -o $(Agent.ToolsDirectory) -Version 1.60.0
     nuget install boost_unit_test_framework-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
     nuget install boost_program_options-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
