@@ -12,10 +12,14 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_LAYER_HPP
 
+#include "add.hpp"
 #include "add_merge.hpp"
 #include "atrous_convolution.hpp"
 #include "batch_norm.hpp"
+#include "bilinear_interpolation.hpp"
+#include "concat.hpp"
 #include "concat_performance.hpp"
+#include "concatenate.hpp"
 #include "convolution.hpp"
 #include "dropconnect.hpp"
 #include "glimpse.hpp"
@@ -39,5 +43,10 @@
 #include "vr_class_reward.hpp"
 #include "transposed_convolution.hpp"
 #include "weight_norm.hpp"
+#include "join.hpp"
+#include "lookup.hpp"
+#include "reinforce_normal.hpp"
+#include "select.hpp"
+#include "virtual_batch_norm.hpp"
 
 #endif

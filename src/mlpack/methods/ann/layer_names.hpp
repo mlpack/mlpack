@@ -33,6 +33,28 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
+   * Return the name of the given layer of type Add as a string.
+   * 
+   * @param Given layer of type Add.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(Add<>* /*layer*/) const
+  {
+    return "add";
+  }
+
+  /*
+   * Return the name of the given layer of type AddMerge as a string.
+   * 
+   * @param Given layer of type AddMerge.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(AddMerge<>* /*layer*/) const
+  {
+    return "addmerge";
+  }
+
+  /*
    * Return the name of the given layer of type AtrousConvolution as a string.
    * 
    * @param Given layer of type AtrousConvolution.
@@ -63,6 +85,50 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   std::string LayerString(BatchNorm<>* /*layer*/) const
   {
     return "batchnorm";
+  }
+
+  /*
+   * Return the name of the given layer of type BilinearInterpolation as a string.
+   * 
+   * @param Given layer of type BilinearInterpolation.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(BilinearInterpolation<>* /*layer*/) const
+  {
+    return "bilinearinterpolation";
+  }
+
+  /*
+   * Return the name of the given layer of type Concat as a string.
+   * 
+   * @param Given layer of type Concat.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(Concat<>* /*layer*/) const
+  {
+    return "concat";
+  }
+
+  /*
+   * Return the name of the given layer of type Concatenate as a string.
+   * 
+   * @param Given layer of type Concatenate.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(Concatenate<>* /*layer*/) const
+  {
+    return "concatenate";
+  }
+
+  /*
+   * Return the name of the given layer of type ConcatPerformance as a string.
+   * 
+   * @param Given layer of type ConcatPerformance.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(ConcatPerformance<>* /*layer*/) const
+  {
+    return "concatperformace";
   }
 
   /*
@@ -372,6 +438,171 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   std::string LayerString(WeightNorm<>* /*layer*/) const
   {
     return "weightnorm";
+  }
+
+  /*
+   * Return the name of the given layer of type Join as a string.
+   * 
+   * @param Given layer of type Join.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(Join<>* /*layer*/) const
+  {
+    return "join";
+  }
+
+  /*
+   * Return the name of the given layer of type Lookup as a string.
+   * 
+   * @param Given layer of type Lookup.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(Lookup<>* /*layer*/) const
+  {
+    return "lookup";
+  }
+
+  /*
+   * Return the name of the given layer of type MiniBatchDiscrimination as a string.
+   * 
+   * @param Given layer of type MiniBatchDiscrimination.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(MiniBatchDiscrimination<>* /*layer*/) const
+  {
+    return "minibatchdiscrimination";
+  }
+
+  /*
+   * Return the name of the given layer of type MultiplyMerge as a string.
+   * 
+   * @param Given layer of type MultiplyMerge.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(MultiplyMerge<>* /*layer*/) const
+  {
+    return "multiplymerge";
+  }
+
+  /*
+   * Return the name of the given layer of type Padding as a string.
+   * 
+   * @param Given layer of type Padding.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(Padding<>* /*layer*/) const
+  {
+    return "padding";
+  }
+
+  /*
+   * Return the name of the given layer of type Recurrent as a string.
+   * 
+   * @param Given layer of type Recurrent.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(Recurrent<>* /*layer*/) const
+  {
+    return "recurrent";
+  }
+
+  /*
+   * Return the name of the given layer of type RecurrentAttention as a string.
+   * 
+   * @param Given layer of type RecurrentAttention.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(RecurrentAttention<>* /*layer*/) const
+  {
+    return "recurrentattention";
+  }
+
+  /*
+   * Return the name of the given layer of type ReinforceNormal as a string.
+   * 
+   * @param Given layer of type ReinforceNormal.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(ReinforceNormal<>* /*layer*/) const
+  {
+    return "reinforcenormal";
+  }
+
+  /*
+   * Return the name of the given layer of type Reparametrization as a string.
+   * 
+   * @param Given layer of type Reparametrization.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(Reparametrization<>* /*layer*/) const
+  {
+    return "reparametrization";
+  }
+
+  /*
+   * Return the name of the given layer of type Select as a string.
+   * 
+   * @param Given layer of type Select.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(Select<>* /*layer*/) const
+  {
+    return "select";
+  }
+
+  /*
+   * Return the name of the given layer of type Sequential as a string.
+   * 
+   * @param Given layer of type Sequential.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(Sequential<>* /*layer*/) const
+  {
+    return "sequential";
+  }
+
+  /*
+   * Return the name of the given layer of type Residual as a string.
+   * 
+   * @param Given layer of type Residual.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(Residual<>* /*layer*/) const
+  {
+    return "residual";
+  }
+
+  /*
+   * Return the name of the given layer of type Subview as a string.
+   * 
+   * @param Given layer of type Subview.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(Subview<>* /*layer*/) const
+  {
+    return "subview";
+  }
+
+  /*
+   * Return the name of the given layer of type VirtualBatchNorm as a string.
+   * 
+   * @param Given layer of type VirtualBatchNorm.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(VirtualBatchNorm<>* /*layer*/) const
+  {
+    return "virtualbatchnorm";
+  }
+
+  /*
+   * Return the name of the given layer of type VRClassReward as a string.
+   * 
+   * @param Given layer of type VRClassReward.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(VRClassReward<>* /*layer*/) const
+  {
+    return "vrclassreward";
   }
 
   /*
