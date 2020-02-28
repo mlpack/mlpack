@@ -98,6 +98,16 @@ class CosineTree
   CosineTree& operator=(CosineTree&& other);
 
   /**
+   * Initialize the tree from a boost::serialization archive.
+   *
+   * @param ar Archive to load tree from.  Must be an iarchive, not an oarchive.
+   */
+  template<typename Archive>
+  CosineTree(
+      Archive& ar,
+      const typename std::enable_if_t<Archive::is_loading::value>* = 0);
+
+  /**
    * Clean up the CosineTree: release allocated memory (including children).
    */
   ~CosineTree();
@@ -244,6 +254,18 @@ class CosineTree
   //! Serialize the tree.
   template<typename Archive> 
   void serialize(Archive& ar, const unsigned int version);
+
+ protected:
+  /**
+   * A default constructor.  This is meant to only be used with
+   * boost::serialization, which is allowed with the friend declaration below.
+   * This does not return a valid tree!  The method must be protected, so that
+   * the serialization shim can work with the default constructor.
+   */
+  CosineTree();
+
+  //! Friend access is given for the default constructor.
+  friend class boost::serialization::access;
 
  private:
   //! Matrix for which cosine tree is constructed.

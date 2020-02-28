@@ -72,6 +72,20 @@ void CosineTree::serialize(Archive& ar, const unsigned int /* version */)
   }
 }
 
+/**
+ * Initialize the tree from an archive.
+ */
+template<typename Archive>
+CosineTree::CosineTree(
+    Archive& ar,
+    const typename std::enable_if_t<Archive::is_loading::value>*) :
+    CosineTree() // Create an empty BinarySpaceTree.
+{
+  // We've delegated to the constructor which gives us an empty tree, and now we
+  // can serialize from it.
+  ar >> BOOST_SERIALIZATION_NVP(*this);
+}
+
 } // namespace tree
 } // namespace mlpack
 

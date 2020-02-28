@@ -153,6 +153,21 @@ CosineTree::CosineTree(const arma::mat& dataset,
   ConstructBasis(treeQueue);
 }
 
+// Default constructor (private), for boost::serialization.
+CosineTree::CosineTree():
+    dataset(NULL),
+    left(NULL),
+    right(NULL),
+    parent(NULL),
+    splitPointIndex(0),
+    numColumns(0),
+    l2Error(-1),
+    localDataset(false),
+    frobNormSquared(0)
+{
+  // Nothing to do.
+}
+
 //! Copy the given tree.
 CosineTree::CosineTree(const CosineTree& other) :
     // Copy matrix, but only if we are the root.
