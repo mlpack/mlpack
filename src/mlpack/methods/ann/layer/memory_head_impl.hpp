@@ -405,7 +405,7 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename ErrorType, typename GradientType>
 void MemoryHead<InputDataType, OutputDataType>::Gradient(
-    InputType&& input, ErrorType&& /* error */, GradientType&& gradient)
+    InputType&& input, ErrorType&& /* error */, GradientType&& /* gradient */)
 {
   boost::apply_visitor(GradientVisitor(std::move(input), std::move(prevError)),
       inputLinear);

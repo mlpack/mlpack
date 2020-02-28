@@ -305,7 +305,7 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename ErrorType, typename GradientType>
 void NeuralTuringMachine<InputDataType, OutputDataType>::Gradient(
-    InputType&& input, ErrorType&& /* error */, GradientType&& gradient)
+    InputType&& input, ErrorType&& /* error */, GradientType&& /* gradient */)
 {
   if (gReads == lReads.end())
   {

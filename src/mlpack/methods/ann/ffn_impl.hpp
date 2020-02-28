@@ -401,7 +401,6 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
     const size_t batchSize)
 {
   this->EvaluateWithGradient(parameters, begin, gradient, batchSize);
-  UpdateGradient(std::move(predictors.cols(begin, begin + batchSize - 1)));
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
@@ -686,12 +685,11 @@ FFN<OutputLayerType, InitializationRuleType,
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-template<typename eT>
-void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Forward(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& output)
-{
-  boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
+template<typename InputType, typename OutputType>
+void FFN<OutputLayerType, InitializationRuleType,
+    CustomLayers...>::Forward(
+    InputType&& input, OutputType&& output){
+  boost::apply_visitor(ForwardVisitor(std::move(arma::mat(input)), std::move(
       boost::apply_visitor(outputParameterVisitor, network.front()))),
       network.front());
 
@@ -702,16 +700,15 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Forward(
         boost::apply_visitor(outputParameterVisitor, network[i]))), network[i]);
   }
 
-  output = boost::apply_visitor(outputParameterVisitor, network.back());
+  output = arma::mat(boost::apply_visitor(outputParameterVisitor, network.back()));
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-template<typename eT>
-void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Backward(
-    const arma::Mat<eT>&& /* input */,
-    arma::Mat<eT>&& gy,
-    arma::Mat<eT>&& g)
+template<typename InputType, typename ErrorType, typename GradientType>
+void FFN<OutputLayerType, InitializationRuleType,
+    CustomLayers...>::Backward(
+  const InputType&& /* input */, ErrorType&& gy, GradientType&& g)
 {
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
       outputParameterVisitor, network.back())), std::move(gy),
@@ -736,11 +733,9 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Backward(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-template<typename eT>
+template<typename InputType, typename ErrorType, typename GradientType>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& /* gradient */)
+    InputType&& input, ErrorType&& /* error */, GradientType&& /* gradient */)
 {
   boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
       outputParameterVisitor, network[network.size() - 2])),
