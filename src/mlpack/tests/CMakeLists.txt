@@ -104,6 +104,7 @@ add_executable(mlpack_test
   sparse_coding_test.cpp
   spill_tree_test.cpp
   split_data_test.cpp
+  string_cleaning_test.cpp
   sumtree_test.cpp
   svd_batch_test.cpp
   svd_incremental_test.cpp
@@ -149,6 +150,7 @@ add_executable(mlpack_test
   main_tests/perceptron_test.cpp
   main_tests/preprocess_binarize_test.cpp
   main_tests/preprocess_scale_test.cpp
+  main_tests/preprocess_string_test.cpp
   main_tests/preprocess_imputer_test.cpp
   main_tests/preprocess_split_test.cpp
   main_tests/random_forest_test.cpp

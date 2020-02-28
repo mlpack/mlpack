@@ -15,8 +15,11 @@ set(SOURCES
   unordered_collections_save_imp.hpp
   unordered_map.hpp
   vector.hpp
+  string_view.hpp
+  string_view_fwd.hpp
   collections_load_imp.hpp
   collections_save_imp.hpp
+  boost_backport_string_view.hpp
 )
 
 # add directory name to sources
