@@ -105,7 +105,7 @@ installed through apt:
   libstb-dev
 @endcode
 
-@note For older versions of Ubuntu and Debian , Armadillo needs to be built from 
+@note For older versions of Ubuntu and Debian, Armadillo needs to be built from 
 source as apt installs an older version. So you need to omit 
 \c libarmadillo-dev from the code snippet above and instead use
 <a href="http://arma.sourceforge.net/download.html">this link</a>
