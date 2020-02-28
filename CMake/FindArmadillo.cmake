@@ -92,23 +92,22 @@ if (ARMA_USE_WRAPPER)
     NAMES armadillo
     PATHS "$ENV{ProgramFiles}/Armadillo/lib"  "$ENV{ProgramFiles}/Armadillo/lib64" "$ENV{ProgramFiles}/Armadillo"
     )
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(Armadillo
+    REQUIRED_VARS ARMADILLO_LIBRARY ARMADILLO_INCLUDE_DIR
+    VERSION_VAR ARMADILLO_VERSION_STRING)
+  # version_var fails with cmake < 2.8.4.
 else()
   message(STATUS "Not using ARMA_USE_WRAPPER")
   # std args complains if this isnt' set to something
-  set(ARMADILLO_LIBRARY "TEMP")
   set(ARMADILLO_FOUND true)
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(Armadillo
+    REQUIRED_VARS ARMADILLO_INCLUDE_DIR
+    VERSION_VAR ARMADILLO_VERSION_STRING)
+  # version_var fails with cmake < 2.8.4.
 endif(ARMA_USE_WRAPPER)
 
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Armadillo
-  REQUIRED_VARS ARMADILLO_LIBRARY ARMADILLO_INCLUDE_DIR
-  VERSION_VAR ARMADILLO_VERSION_STRING)
-# version_var fails with cmake < 2.8.4.
-
-if (NOT ARMA_USE_WRAPPER)
-  # unset since we don't use this
-  set(ARMADILLO_LIBRARY "")
-endif()
 
 if (ARMADILLO_FOUND)
   set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})

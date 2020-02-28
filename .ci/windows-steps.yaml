@@ -28,13 +28,11 @@ steps:
 # Configure armadillo
 - bash: |
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
-    
+
     curl -O http://masterblaster.mlpack.org:5005/armadillo-8.400.0.tar.gz -o armadillo-8.400.0.tar.gz
     tar -xzvf armadillo-8.400.0.tar.gz
 
     cd armadillo-8.400.0/ && cmake $(CMakeGenerator) \
-    -DBLAS_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
-    -DLAPACK_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
     -DCMAKE_PREFIX:FILEPATH=../../armadillo \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_BUILD_TYPE=Release .
@@ -60,8 +58,6 @@ steps:
 
     cmake $(CMakeGenerator) `
     $(CMakeArgs) `
-    -DBLAS_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
-    -DLAPACK_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
     -DARMADILLO_INCLUDE_DIR="..\armadillo-8.400.0\include" `
     -DARMADILLO_LIBRARY="..\armadillo-8.400.0\Release\armadillo.lib" `
     -DBOOST_INCLUDEDIR=$(Agent.ToolsDirectory)\boost.1.60.0.0\lib\native\include `
