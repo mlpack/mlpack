@@ -34,6 +34,7 @@ set(SOURCES
   cosine_tree.hpp
   cosine_tree/cosine_tree.hpp
   cosine_tree/cosine_tree_impl.hpp
+  cosine_tree/cosine_tree.cpp
   cover_tree.hpp
   cover_tree/cover_tree.hpp
   cover_tree/cover_tree_impl.hpp
