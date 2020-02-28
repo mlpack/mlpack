@@ -28,6 +28,10 @@ namespace decision_stump {
  * last bin has range up to \infty (split[i + 1] does not exist in that case).
  * Points that are below the first bin will take the label of the first bin.
  *
+ * @note
+ * This class has been deprecated and should be removed in mlpack 4.0.0.  Use
+ * `ID3DecisionStump`, found in src/mlpack/methods/decision_tree/, instead.
+ *
  * @tparam MatType Type of matrix that is being used (sparse or dense).
  */
 template<typename MatType = arma::mat>
@@ -43,10 +47,10 @@ class DecisionStump
    * @param numClasses Number of distinct classes in labels.
    * @param bucketSize Minimum size of bucket when splitting.
    */
-  DecisionStump(const MatType& data,
-                const arma::Row<size_t>& labels,
-                const size_t numClasses,
-                const size_t bucketSize = 10);
+  mlpack_deprecated DecisionStump(const MatType& data,
+                                  const arma::Row<size_t>& labels,
+                                  const size_t numClasses,
+                                  const size_t bucketSize = 10);
 
   /**
    * Alternate constructor which copies the parameters bucketSize and classes
@@ -59,11 +63,11 @@ class DecisionStump
    * @param labels The labels of data.
    * @param weights Weight vector to use while training. For boosting purposes.
    */
-  DecisionStump(const DecisionStump<>& other,
-                const MatType& data,
-                const arma::Row<size_t>& labels,
-                const size_t numClasses,
-                const arma::rowvec& weights);
+  mlpack_deprecated DecisionStump(const DecisionStump<>& other,
+                                  const MatType& data,
+                                  const arma::Row<size_t>& labels,
+                                  const size_t numClasses,
+                                  const arma::rowvec& weights);
 
   /**
    * Create a decision stump without training.  This stump will not be useful
@@ -83,10 +87,10 @@ class DecisionStump
    * @param bucketSize Minimum size of bucket when splitting.
    * @return The final entropy after splitting.
    */
-  double Train(const MatType& data,
-               const arma::Row<size_t>& labels,
-               const size_t numClasses,
-               const size_t bucketSize);
+  mlpack_deprecated double Train(const MatType& data,
+                                 const arma::Row<size_t>& labels,
+                                 const size_t numClasses,
+                                 const size_t bucketSize);
 
   /**
    * Train the decision stump on the given data, with the given weights.  This
@@ -100,11 +104,11 @@ class DecisionStump
    * @param bucketSize Minimum size of bucket when splitting.
    * @return The final entropy after splitting.
    */
-  double Train(const MatType& data,
-               const arma::Row<size_t>& labels,
-               const arma::rowvec& weights,
-               const size_t numClasses,
-               const size_t bucketSize);
+  mlpack_deprecated double Train(const MatType& data,
+                                 const arma::Row<size_t>& labels,
+                                 const arma::rowvec& weights,
+                                 const size_t numClasses,
+                                 const size_t bucketSize);
 
   /**
    * Classification function. After training, classify test, and put the
@@ -114,7 +118,8 @@ class DecisionStump
    * @param predictedLabels Vector to store the predicted classes after
    *     classifying test data.
    */
-  void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
+  mlpack_deprecated void Classify(const MatType& test,
+                                  arma::Row<size_t>& predictedLabels);
 
   //! Access the splitting dimension.
   size_t SplitDimension() const { return splitDimension; }
