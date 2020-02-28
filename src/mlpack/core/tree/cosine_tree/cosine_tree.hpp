@@ -252,7 +252,7 @@ class CosineTree
   size_t SplitPointIndex() const { return indices[splitPointIndex]; }
 
   //! Serialize the tree.
-  template<typename Archive> 
+  template<typename Archive>
   void serialize(Archive& ar, const unsigned int version);
 
  protected:

@@ -79,7 +79,7 @@ template<typename Archive>
 CosineTree::CosineTree(
     Archive& ar,
     const typename std::enable_if_t<Archive::is_loading::value>*) :
-    CosineTree() // Create an empty BinarySpaceTree.
+    CosineTree() // Create an empty CosineTree.
 {
   // We've delegated to the constructor which gives us an empty tree, and now we
   // can serialize from it.
