@@ -39,7 +39,6 @@
 #include "reparametrization.hpp"
 #include "sequential.hpp"
 #include "subview.hpp"
-#include "concat.hpp"
 #include "vr_class_reward.hpp"
 #include "transposed_convolution.hpp"
 #include "weight_norm.hpp"
