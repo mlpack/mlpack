@@ -250,6 +250,26 @@ endif()
 
 find_package(Armadillo 8.400.0 REQUIRED)
 
+# Armadillo config may require some/all dependencies linked to mlpack
+if(NOT ARMA_USE_WRAPPER)
+  set(SUPPORT_LIBRARIES)
+  if(ARMA_USE_BLAS)
+    find_package(BLAS REQUIRED)
+    set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${BLAS_LIBRARIES}")
+  endif(ARMA_USE_BLAS)
+  if(ARMA_USE_LAPACK)
+    find_package(LAPACK REQUIRED)
+    set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${LAPACK_LIBRARIES}")
+  endif(ARMA_USE_LAPACK)
+  if(ARMA_USE_ARPACK)
+    find_package(ARPACK REQUIRED)
+    set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${ARPACK_LIBRARIES}")
+  endif(ARMA_USE_ARPACK)
+  # include all required support libraries with the armadillo libraries
+  set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARIES} ${SUPPORT_LIBRARIES})
+endif(NOT ARMA_USE_WRAPPER)
+
+
 # If Armadillo was compiled without ARMA_64BIT_WORD and we are on a 64-bit
 # system (where size_t will be 64 bits), suggest to the user that they should
 # compile Armadillo with 64-bit words.  Note that with Armadillo 5.000.0 and
@@ -291,51 +311,6 @@ else()
     add_definitions(-DARMA_32BIT_WORD)
   endif ()
 endif()
-
-# On Windows, Armadillo should be using LAPACK and BLAS but we still need to
-# link against it.  We don't want to use the FindLAPACK or FindBLAS modules
-# because then we are required to have a FORTRAN compiler (argh!) so we will try
-# and find LAPACK and BLAS ourselves, using a slightly modified variant of the
-# script Armadillo uses to find these.
-if (WIN32)
-  find_library(LAPACK_LIBRARY
-      NAMES lapack liblapack lapack_win32_MT lapack_win32
-      PATHS "C:/Program Files/Armadillo"
-      PATH_SUFFIXES "examples/lib_win32/")
-
-  if (NOT LAPACK_LIBRARY)
-    message(FATAL_ERROR "Cannot find LAPACK library (.lib)!")
-  endif ()
-
-  find_library(BLAS_LIBRARY
-      NAMES blas libblas blas_win32_MT blas_win32
-      PATHS "C:/Program Files/Armadillo"
-      PATH_SUFFIXES "examples/lib_win32/")
-
-  if (NOT BLAS_LIBRARY)
-    message(FATAL_ERROR "Cannot find BLAS library (.lib)!")
-  endif ()
-
-  # Piggyback LAPACK and BLAS linking into Armadillo link.
-  set(ARMADILLO_LIBRARIES
-      ${ARMADILLO_LIBRARIES} ${BLAS_LIBRARY} ${LAPACK_LIBRARY})
-
-  # Ensure that the libraries are added to the MSVC IDE runtime path.
-  get_filename_component(BLAS_DIR ${BLAS_LIBRARY} DIRECTORY)
-  get_filename_component(LAPACK_DIR ${LAPACK_LIBRARY} DIRECTORY)
-
-  # Sometimes, especially with an OpenBLAS install via nuget, the DLLs are
-  # actually in ../../bin/x64/.  Automatically add these.
-  if (EXISTS "${BLAS_DIR}/../../bin/x64/")
-    get_filename_component(BLAS_DLL_DIR "${BLAS_DIR}/../../bin/x64" ABSOLUTE)
-    set(DLL_COPY_DIRS ${DLL_COPY_DIRS} "${BLAS_DLL_DIR}")
-  endif ()
-
-  if (EXISTS "${LAPACK_DIR}/../../bin/x64/")
-    get_filename_component(LAPACK_DLL_DIR "${LAPACK_DIR}/../../bin/x64" ABSOLUTE)
-    set(DLL_COPY_DIRS ${DLL_COPY_DIRS} "${BLAS_DLL_DIR}")
-  endif ()
-endif ()
 
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
