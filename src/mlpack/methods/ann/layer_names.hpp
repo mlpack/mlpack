@@ -606,6 +606,72 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /*
+   * Return the name of the given layer of type SoftPlusLayer as a string.
+   * 
+   * @param Given layer of type SoftPlusLayer.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(SoftPlusLayer<>* /*layer*/) const
+  {
+    return "softplus";
+  }
+
+  /*
+   * Return the name of the given layer of type HardSigmoidLayer as a string.
+   * 
+   * @param Given layer of type HardSigmoidLayer.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(HardSigmoidLayer<>* /*layer*/) const
+  {
+    return "hardsigmoid";
+  }
+
+  /*
+   * Return the name of the given layer of type SwishFunctionLayer as a string.
+   * 
+   * @param Given layer of type SwishFunctionLayer.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(SwishFunctionLayer<>* /*layer*/) const
+  {
+    return "swish";
+  }
+
+  /*
+   * Return the name of the given layer of type MishFunction as a string.
+   * 
+   * @param Given layer of type MishFunction.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(MishFunction<>* /*layer*/) const
+  {
+    return "mish";
+  }
+
+  /*
+   * Return the name of the given layer of type LiSHTFunction as a string.
+   * 
+   * @param Given layer of type LiSHTFunction.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(LiSHTFunction<>* /*layer*/) const
+  {
+    return "lisht";
+  }
+
+  /*
+   * Return the name of the given layer of type GELUFunctionLayer as a string.
+   * 
+   * @param Given layer of type GELUFunctionLayer.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(GELUFunctionLayer<>* /*layer*/) const
+  {
+    return "gelu";
+  }
+
+  /*
    * Return the name of the layer of specified type as a string.
    * 
    * @param Given layer of any type.
