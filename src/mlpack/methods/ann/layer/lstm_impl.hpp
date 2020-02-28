@@ -279,7 +279,7 @@ void LSTM<InputDataType, OutputDataType>::Forward(InputType&& input,
       (forwardStep + batchSize) * outSize, outSize, batchSize, false, false);
 
   cellState = OutputType(cell.memptr() +
-      forwardStep * outSize, outSize, batchSize, true);
+      forwardStep * outSize, outSize, batchSize, false, false);
 
   forwardStep += batchSize;
   if ((forwardStep / batchSize) == bpttSteps)
