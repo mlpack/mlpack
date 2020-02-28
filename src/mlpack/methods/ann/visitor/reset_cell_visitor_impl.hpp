@@ -74,7 +74,7 @@ ResetCellVisitor::ResetCell(T* /* layer */) const
 
 template<typename T>
 inline typename std::enable_if<
-    !HasModelCheck<T>::value, void>::type
+    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
 ResetCellVisitor::ResetCellModel(T* /* layer */) const
 {
   /* Nothing to do here */
@@ -82,12 +82,12 @@ ResetCellVisitor::ResetCellModel(T* /* layer */) const
 
 template<typename T>
 inline typename std::enable_if<
-    HasModelCheck<T>::value, void>::type
+    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
 ResetCellVisitor::ResetCellModel(T* layer) const
 {
   for (auto l : layer->Model())
   {
-    boost::apply_visitor(ResetCellVisitor(size), l);
+    boost::apply_visitor(ResetCellVisitor(), l);
   }
 }
 

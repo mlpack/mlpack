@@ -391,7 +391,10 @@ class FFN
    */
   template<typename InputType, typename OutputType>
   void Forward(InputType&& input1, OutputType&& output);
+<<<<<<< HEAD
 
+=======
+>>>>>>> Adding reset visitor for Model as a layer
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
@@ -475,10 +478,6 @@ class FFN
    */
   template<typename InputType>
   void UpdateGradient(const InputType& input);
-<<<<<<< HEAD
-=======
-
->>>>>>> Adding all files
   /**
    * Reset the module status by setting the current deterministic parameter
    * for all modules that implement the Deterministic function.

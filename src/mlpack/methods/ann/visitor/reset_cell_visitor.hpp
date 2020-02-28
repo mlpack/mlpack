@@ -70,15 +70,16 @@ class ResetCellVisitor : public boost::static_visitor<void>
   //! the Model() function.
   template<typename T>
   typename std::enable_if<
-      HasModelCheck<T>::value, void>::type
+      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
   ResetCellModel(T* layer) const;
 
   //! Execute the ResetCell() function for a layer model which implements
   //! the Model() function.
   template<typename T>
   typename std::enable_if<
-      !HasModelCheck<T>::value, void>::type
+      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
   ResetCellModel(T* layer) const;
+}
 };
 
 } // namespace ann
