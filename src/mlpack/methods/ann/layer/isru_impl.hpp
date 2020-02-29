@@ -51,7 +51,7 @@ void ISRU<InputDataType, OutputDataType>::Backward(
       continue;
     }
     if (input(i) >= yEdge || input(i) <= -yEdge)
-      x = std::signbit(input(i)) ? -DBL_MAX : DBL_MAX ;
+      x = std::signbit(input(i)) ? -DBL_MAX : DBL_MAX;
     else
       x = input(i) / std::sqrt(1 - alpha * std::pow(input(i), 2));
 
