@@ -98,8 +98,10 @@ if (ARMA_USE_WRAPPER)
     VERSION_VAR ARMADILLO_VERSION_STRING)
   # version_var fails with cmake < 2.8.4.
 else()
-  message(STATUS "Not using ARMA_USE_WRAPPER")
+  message(STATUS "ARMA_USE_WRAPPER is not defined, so all dependencies of "
+                 "Armadillo must be manually linked.")
   # std args complains if this isnt' set to something
+  set(ARMADILLO_LIBRARY "")
   set(ARMADILLO_FOUND true)
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(Armadillo
