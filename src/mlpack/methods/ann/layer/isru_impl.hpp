@@ -32,7 +32,7 @@ template<typename InputType, typename OutputType>
 void ISRU<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
-  output = input / (arma::sqrt(1 + alpha * arma::pow(input, 2)));  
+  output = input / (arma::sqrt(1 + alpha * arma::pow(input, 2)));
 }
 
 template<typename InputDataType, typename OutputDataType>
