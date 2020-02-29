@@ -32,7 +32,7 @@ template<typename InputType, typename OutputType>
 void ISRU<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
-  Fn(input, output);
+  output = input / (arma::sqrt(1 + alpha * arma::pow(input, 2)));  
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -40,9 +40,27 @@ template<typename DataType>
 void ISRU<InputDataType, OutputDataType>::Backward(
     const DataType&& input, DataType&& gy, DataType&& g)
 {
-  DataType derivative;
-  Deriv(input, derivative);
-  g = gy % derivative;
+  double yEdge = 1 / std::sqrt(alpha);
+  double x;
+  g.set_size(arma::size(input));
+  for (size_t i = 0; i < input.n_elem; i++)
+  {
+    if (input(i) == 0)
+    {
+      g(i) = 1;
+      continue;
+    }
+    if (input(i) >= yEdge)
+      x = DBL_MAX;
+    else if (input(i) <= -yEdge)
+      x =  -DBL_MAX;
+    else
+      x = input(i) / std::sqrt(1 - alpha * std::pow(input(i), 2));
+
+    g(i) = std::pow(input(i) / x, 3);
+  }
+
+  g = gy % g;
 }
 
 template<typename InputDataType, typename OutputDataType>
