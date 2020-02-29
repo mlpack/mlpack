@@ -95,7 +95,8 @@ For Python bindings, the following packages are required:
  - pandas >= 0.15.0
  - pytest-runner
 
-In Ubuntu and Debian, you can get all of these dependencies through apt:
+In Ubuntu (>= 18.04) and Debian (>= 10) all of these dependencies can be 
+installed through apt:
 
 @code
 # apt-get install libboost-math-dev libboost-program-options-dev
@@ -110,6 +111,13 @@ packages:
 @code
 # apt-get install libensmallen-dev libstb-dev
 @endcode
+
+@note For older versions of Ubuntu and Debian, Armadillo needs to be built from 
+source as apt installs an older version. So you need to omit 
+\c libarmadillo-dev from the code snippet above and instead use
+<a href="http://arma.sourceforge.net/download.html">this link</a>
+ to download the required file. Extract this file and follow the README in the 
+ uncompressed folder to build and install Armadillo.
 
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
