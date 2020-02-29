@@ -107,7 +107,7 @@ class ISRU
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! ISRU hyperparameter
+  //! ISRU hyperparameter.
   double alpha;
 }; // class ISRU
 

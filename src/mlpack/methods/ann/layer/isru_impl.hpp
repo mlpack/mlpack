@@ -19,7 +19,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 // This constructor is called for ISRU activation function.
-// 'alpha' is a hyperparameter
+// 'alpha' is a hyperparameter.
 template<typename InputDataType, typename OutputDataType>
 ISRU<InputDataType, OutputDataType>::ISRU(const double alpha) :
     alpha(alpha)
@@ -50,10 +50,8 @@ void ISRU<InputDataType, OutputDataType>::Backward(
       g(i) = 1;
       continue;
     }
-    if (input(i) >= yEdge)
-      x = DBL_MAX;
-    else if (input(i) <= -yEdge)
-      x =  -DBL_MAX;
+    if (input(i) >= yEdge || input(i) <= -yEdge)
+      x = std::signbit(input(i)) ? -DBL_MAX : DBL_MAX ;
     else
       x = input(i) / std::sqrt(1 - alpha * std::pow(input(i), 2));
 
