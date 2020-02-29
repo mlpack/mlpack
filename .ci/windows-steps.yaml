@@ -15,6 +15,7 @@ steps:
     nuget install boost_random-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
     nuget install boost_serialization-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
     nuget install boost_math_c99-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
+    nuget install OpenBLAS -o $(Agent.ToolsDirectory)
 
     mkdir -p $(Agent.ToolsDirectory)/boost_libs
     cp $(Agent.ToolsDirectory)/boost_program_options-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
@@ -32,6 +33,8 @@ steps:
     tar -xzvf armadillo-8.400.0.tar.gz
 
     cd armadillo-8.400.0/ && cmake $(CMakeGenerator) \
+    -DBLAS_LIBRARIES:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+    -DLAPACK_LIBRARIES:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
     -DCMAKE_PREFIX:FILEPATH=../../armadillo \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_BUILD_TYPE=Release .
@@ -57,6 +60,8 @@ steps:
 
     cmake $(CMakeGenerator) `
     $(CMakeArgs) `
+    -DBLAS_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
+    -DLAPACK_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
     -DARMADILLO_INCLUDE_DIR="..\armadillo-8.400.0\include" `
     -DARMADILLO_LIBRARY="..\armadillo-8.400.0\Release\armadillo.lib" `
     -DBOOST_INCLUDEDIR=$(Agent.ToolsDirectory)\boost.1.60.0.0\lib\native\include `
@@ -80,6 +85,8 @@ steps:
 # Configure mlpack
 - powershell: |
     cp $(Agent.ToolsDirectory)\boost_libs\*.* build\Release\
+    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\*.* build\Release\
+    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* build\Release\
   displayName: 'Configure mlpack'
 
 # Run tests
