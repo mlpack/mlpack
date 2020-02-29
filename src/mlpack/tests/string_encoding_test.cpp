@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_CASE(UnicodeDictionaryEncodingTest)
   }
 
   arma::mat expected = {
-    { 1,  2, 0, 0, 0 },
+    { 1, 2, 0, 0, 0 },
     { 3, 4, 1, 0, 0 },
     { 5, 2, 3, 5, 4 }
   };
