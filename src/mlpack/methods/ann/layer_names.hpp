@@ -32,7 +32,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   {
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Add as a string.
    * 
    * @param Given layer of type Add.
@@ -43,7 +43,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "add";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type AddMerge as a string.
    * 
    * @param Given layer of type AddMerge.
@@ -54,7 +54,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "addmerge";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type AtrousConvolution as a string.
    * 
    * @param Given layer of type AtrousConvolution.
@@ -65,7 +65,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "atrousconvolution";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type AlphaDropout as a string.
    * 
    * @param Given layer of type AlphaDropout.
@@ -76,7 +76,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "alphadropout";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type BatchNorm as a string.
    * 
    * @param Given layer of type BatchNorm.
@@ -87,7 +87,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "batchnorm";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type BilinearInterpolation as a string.
    * 
    * @param Given layer of type BilinearInterpolation.
@@ -98,7 +98,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "bilinearinterpolation";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Concat as a string.
    * 
    * @param Given layer of type Concat.
@@ -109,7 +109,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "concat";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Concatenate as a string.
    * 
    * @param Given layer of type Concatenate.
@@ -120,7 +120,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "concatenate";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type ConcatPerformance as a string.
    * 
    * @param Given layer of type ConcatPerformance.
@@ -131,7 +131,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "concatperformace";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Constant as a string.
    * 
    * @param Given layer of type Constant.
@@ -142,7 +142,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "constant";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Convolution as a string.
    * 
    * @param Given layer of type Convolution.
@@ -153,7 +153,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "convolution";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type DropConnect as a string.
    * 
    * @param Given layer of type DropConnect.
@@ -164,7 +164,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "dropconnect";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Dropout as a string.
    * 
    * @param Given layer of type Dropout.
@@ -175,7 +175,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "dropout";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type FlexibleReLU as a string.
    * 
    * @param Given layer of type FlexibleReLU.
@@ -186,7 +186,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "flexiblerelu";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type LayerNorm as a string.
    * 
    * @param Given layer of type LayerNorm.
@@ -197,7 +197,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "layernorm";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Linear as a string.
    * 
    * @param Given layer of type Linear.
@@ -208,7 +208,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "linear";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type LinearNoBias as a string.
    * 
    * @param Given layer of type LinearNoBias.
@@ -219,7 +219,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "linearnobias";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type MaxPooling as a string.
    * 
    * @param Given layer of type MaxPooling.
@@ -230,7 +230,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "maxpooling";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type MeanPooling as a string.
    * 
    * @param Given layer of type MeanPooling.
@@ -241,7 +241,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "meanpooling";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type MultiplyConstant as a string.
    * 
    * @param Given layer of type MultiplyConstant.
@@ -252,7 +252,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "multiplyconstant";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type ReLULayer as a string.
    * 
    * @param Given layer of type ReLULayer.
@@ -263,7 +263,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "relu";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type TransposedConvolution as a
    * string.
    * 
@@ -275,7 +275,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "transposedconvolution";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type IdentityLayer as a string.
    * 
    * @param Given layer of type IdentityLayer.
@@ -286,7 +286,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "identity";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type TanHLayer as a string.
    * 
    * @param Given layer of type TanHLayer.
@@ -297,7 +297,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "tanh";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type ELU as a string.
    * 
    * @param Given layer of type ELU.
@@ -308,7 +308,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "elu";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type HardTanH as a string.
    * 
    * @param Given layer of type HardTanH.
@@ -319,7 +319,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "hardtanh";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type LeakyReLU as a string.
    * 
    * @param Given layer of type LeakyReLU.
@@ -330,7 +330,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "leakyrelu";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type PReLU as a string.
    * 
    * @param Given layer of type PReLU.
@@ -341,7 +341,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "prelu";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type SigmoidLayer as a string.
    * 
    * @param Given layer of type SigmoidLayer.
@@ -352,7 +352,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "sigmoid";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type LogSoftMax as a string.
    * 
    * @param Given layer of type LogSoftMax.
@@ -363,7 +363,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "logsoftmax";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type LSTM as a string.
    * 
    * @param Given layer of type LSTM.
@@ -374,7 +374,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "lstm";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type CReLU as a string.
    * 
    * @param Given layer of type CReLU.
@@ -385,7 +385,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "crelu";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Highway as a string.
    * 
    * @param Given layer of type Highway.
@@ -396,7 +396,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "highway";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type GRU as a string.
    * 
    * @param Given layer of type GRU.
@@ -407,7 +407,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "gru";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Glimpse as a string.
    * 
    * @param Given layer of type Glimpse.
@@ -418,7 +418,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "glimpse";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type FastLSTM as a string.
    * 
    * @param Given layer of type FastLSTM.
@@ -429,7 +429,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "fastlstm";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type WeightNorm as a string.
    * 
    * @param Given layer of type WeightNorm.
@@ -440,7 +440,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "weightnorm";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Join as a string.
    * 
    * @param Given layer of type Join.
@@ -451,7 +451,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "join";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Lookup as a string.
    * 
    * @param Given layer of type Lookup.
@@ -462,7 +462,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "lookup";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type MiniBatchDiscrimination as a string.
    * 
    * @param Given layer of type MiniBatchDiscrimination.
@@ -473,7 +473,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "minibatchdiscrimination";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type MultiplyMerge as a string.
    * 
    * @param Given layer of type MultiplyMerge.
@@ -484,7 +484,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "multiplymerge";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Padding as a string.
    * 
    * @param Given layer of type Padding.
@@ -495,7 +495,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "padding";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Recurrent as a string.
    * 
    * @param Given layer of type Recurrent.
@@ -506,7 +506,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "recurrent";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type RecurrentAttention as a string.
    * 
    * @param Given layer of type RecurrentAttention.
@@ -517,7 +517,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "recurrentattention";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type ReinforceNormal as a string.
    * 
    * @param Given layer of type ReinforceNormal.
@@ -528,7 +528,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "reinforcenormal";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Reparametrization as a string.
    * 
    * @param Given layer of type Reparametrization.
@@ -539,7 +539,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "reparametrization";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Select as a string.
    * 
    * @param Given layer of type Select.
@@ -550,7 +550,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "select";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Sequential as a string.
    * 
    * @param Given layer of type Sequential.
@@ -561,7 +561,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "sequential";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Residual as a string.
    * 
    * @param Given layer of type Residual.
@@ -572,7 +572,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "residual";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type Subview as a string.
    * 
    * @param Given layer of type Subview.
@@ -583,7 +583,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "subview";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type VirtualBatchNorm as a string.
    * 
    * @param Given layer of type VirtualBatchNorm.
@@ -594,7 +594,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "virtualbatchnorm";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type VRClassReward as a string.
    * 
    * @param Given layer of type VRClassReward.
@@ -605,7 +605,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "vrclassreward";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type SoftPlusLayer as a string.
    * 
    * @param Given layer of type SoftPlusLayer.
@@ -616,7 +616,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "softplus";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type HardSigmoidLayer as a string.
    * 
    * @param Given layer of type HardSigmoidLayer.
@@ -627,7 +627,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "hardsigmoid";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type SwishFunctionLayer as a string.
    * 
    * @param Given layer of type SwishFunctionLayer.
@@ -638,7 +638,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "swish";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type MishFunction as a string.
    * 
    * @param Given layer of type MishFunction.
@@ -649,7 +649,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "mish";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type LiSHTFunction as a string.
    * 
    * @param Given layer of type LiSHTFunction.
@@ -660,7 +660,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "lisht";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type GELUFunctionLayer as a string.
    * 
    * @param Given layer of type GELUFunctionLayer.
@@ -671,7 +671,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "gelu";
   }
 
-  /*
+  /**
    * Return the name of the layer of specified type as a string.
    * 
    * @param Given layer of any type.
