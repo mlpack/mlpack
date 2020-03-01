@@ -128,10 +128,10 @@ std::string PrintTypeDoc(
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::enable_if<data::HasSerialize<T>>::type*)
 {
-  return "An mlpack model pointer.  This type can be pickled to or from disk, "
-      "and internally holds a pointer to C++ memory containing the mlpack "
-      "model.  Note that this means that the mlpack model itself cannot be "
-      "easily inspected in Go;";
+  return "An mlpack model pointer.  This type holds a pointer to C++ memory "
+      "containing the mlpack model.  Note that this means the mlpack model "
+      "itself cannot be easily inspected in Go.  However, the pointer can "
+      "be passed to subsequent calls to mlpack functions."
 }
 
 } // namespace go
