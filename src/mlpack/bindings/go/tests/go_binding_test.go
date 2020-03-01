@@ -9,7 +9,7 @@ import (
 
 func TestRunBindingNoFlag(t *testing.T) {
   t.Log("Test that when we run the binding correctly (with correct", 
-        "input parameters), we get the expected output.")
+        " input parameters), we get the expected output.")
   param := mlpack.InitializeTestGoBinding()
   d := 4.0
   i := 12
