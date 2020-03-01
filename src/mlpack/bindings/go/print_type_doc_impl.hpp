@@ -131,7 +131,7 @@ std::string PrintTypeDoc(
   return "An mlpack model pointer.  This type holds a pointer to C++ memory "
       "containing the mlpack model.  Note that this means the mlpack model "
       "itself cannot be easily inspected in Go.  However, the pointer can "
-      "be passed to subsequent calls to mlpack functions."
+      "be passed to subsequent calls to mlpack functions.";
 }
 
 } // namespace go
