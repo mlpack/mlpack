@@ -31,11 +31,26 @@ template<typename InputType, typename OutputType>
 void CELU<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
-  Fn(input, output);
+  output.set_size(arma::size(input));
+  for (size_t i = 0; i < input.n_elem; i++)
+  {
+    if (input(i) < DBL_MAX)
+    {
+      output(i) = (input(i) >= 0) ? input(i) : alpha *
+          (std::exp(x / input(i)) - 1);
+    }
+    else
+      output(i) = 1.0;
+  }
 
   if (!deterministic)
   {
-    Deriv(input, output);
+    derivative.set_size(arma::size(input));
+    for (size_t i = 0; i < input.n_elem; i++)
+    {
+      derivative(i) = (input(i) >= 0) ? 1 :
+          (output(i) / alpha) + 1;
+    }
   }
 }
 
