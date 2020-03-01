@@ -37,7 +37,7 @@ void CELU<InputDataType, OutputDataType>::Forward(
     if (input(i) < DBL_MAX)
     {
       output(i) = (input(i) >= 0) ? input(i) : alpha *
-          (std::exp(x / input(i)) - 1);
+          (std::exp(input(i) / alpha) - 1);
     }
     else
       output(i) = 1.0;
