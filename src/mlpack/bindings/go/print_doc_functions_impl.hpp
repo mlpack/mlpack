@@ -344,7 +344,7 @@ std::string ProgramCall(const std::string& programName, Args... args)
   result = result + oss.str();
   oss.str(""); // Reset it.
 
-  // Now process each input required parameters.
+  // Now process each required input parameter.
   oss << PrintInputOptions(args...);
   std::string input = oss.str();
   if (input != "")
