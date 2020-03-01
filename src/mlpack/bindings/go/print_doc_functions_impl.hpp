@@ -501,7 +501,8 @@ template<typename T>
 inline std::string ParamString(const std::string& paramName, const T& value)
 {
   std::ostringstream oss;
-  oss << paramName << "=" << value;
+  oss << paramName << "="
+      << PrintValue(value, d.tname == TYPENAME(std::string));
   return oss.str();
 }
 
