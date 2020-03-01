@@ -500,6 +500,7 @@ inline std::string ParamString(const std::string& paramName)
 template<typename T>
 inline std::string ParamString(const std::string& paramName, const T& value)
 {
+  const util::ParamData& d = CLI::Parameters()[paramName];
   std::ostringstream oss;
   oss << paramName << "="
       << PrintValue(value, d.tname == TYPENAME(std::string));
