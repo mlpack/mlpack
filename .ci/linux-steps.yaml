@@ -41,9 +41,14 @@ steps:
 
 # Configure mlpack (CMake)
 - script: |
+    unset BOOST_ROOT
+    mkdir build && cd build
     export GOPATH=$PWD
-    go get gonum.org/v1/gonum/mat/...
-    unset BOOST_ROOT && mkdir build && cd build && cmake $(CMakeArgs) ..
+    go get -u -t gonum.org/v1/gonum/mat
+    cd src/gonum.org/v1/gonum
+    git checkout release-v0.6
+    cd $GOPATH
+    cmake $(CMakeArgs) ..
   displayName: 'CMake'
 
 # Build mlpack
