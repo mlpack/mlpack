@@ -8,8 +8,8 @@ import (
 )
 
 func TestRunBindingNoFlag(t *testing.T) {
-  t.Log("Test that when we run the binding correctly (with correct", 
-        " input parameters), we get the expected output.")
+	t.Log("Test that if we forget the mandatory flag, we should get wrong",
+        "results.")
   param := mlpack.InitializeTestGoBinding()
   d := 4.0
   i := 12
@@ -29,8 +29,8 @@ func TestRunBindingNoFlag(t *testing.T) {
 }
 
 func TestRunBindingCorrectly(t *testing.T) {
-  t.Log("Test that if we forget the mandatory flag, we should get wrong",
-        "results.")
+	t.Log("Test that when we run the binding correctly (with correct",
+        " input parameters), we get the expected output.")
   param := mlpack.InitializeTestGoBinding()
   param.Flag1 = true
   d := 4.0
@@ -490,7 +490,7 @@ func TestRunIntVector(t *testing.T) {
   s := "hello"
   _, _, _, _, _, _, _, _, _, _, _, _, _, VectorOut :=
       mlpack.TestGoBinding(d, i, s, param)
-  
+
   length := len(VectorOut)
   if length != 5 {
     t.Errorf("Error. Wrong Length.")
@@ -518,7 +518,7 @@ func TestRunStringVector(t *testing.T) {
   s := "hello"
   _, _, _, _, _, _, _, _, StrVectorOut, _, _, _, _, _ :=
       mlpack.TestGoBinding(d, i, s, param)
-  
+
   length := len(StrVectorOut)
   if length != 5 {
     t.Errorf("Error. Wrong Length.")
@@ -547,7 +547,7 @@ func TestGonumMatrixWithInfo(t *testing.T) {
            6, 7, 8, 9, 10,
            11, 12, 13, 14, 15,
   })
-    
+
   param := mlpack.InitializeTestGoBinding()
   param.MatrixAndInfoIn = x
   d := 4.0
