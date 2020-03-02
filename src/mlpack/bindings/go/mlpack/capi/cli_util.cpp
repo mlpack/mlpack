@@ -122,8 +122,7 @@ bool mlpackHasParam(const char* identifier)
 const char* mlpackGetParamString(const char* identifier)
 {
   std::string val = CLI::GetParam<std::string>(identifier);
-  char* cstr = const_cast<char*>(val.c_str());
-  return cstr;
+  return val.c_str();;
 }
 
 /**
@@ -169,8 +168,7 @@ void* mlpackGetVecIntPtr(const char* identifier)
  */
 const char* mlpackGetVecStringPtr(const char* identifier, const size_t i)
 {
-  return const_cast<char*>(CLI::GetParam<std::vector<std::string>>(
-                           identifier)[i].c_str());
+  return CLI::GetParam<std::vector<std::string>>(identifier)[i].c_str();
 }
 
 /**

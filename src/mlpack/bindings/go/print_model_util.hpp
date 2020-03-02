@@ -306,8 +306,6 @@ void PrintModelUtilGo(
    *
    *  func (m *<Type>) get<Type>(identifier string) {
    *    m.alloc<Type>(identifier)
-   *    time.Sleep(time.Second)
-   *    runtime.GC()
    *  }
    *
    */

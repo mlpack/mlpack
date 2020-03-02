@@ -191,11 +191,6 @@ if (BUILD_GO_BINDINGS)
           -DBINDING_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/mlpack/capi/${name}.h
           -P ${CMAKE_SOURCE_DIR}/CMake/GenerateGoBinding.cmake)
 
-  add_custom_target(build_h_${name}
-      DEPENDS generate_h_${name}
-      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/
-      COMMENT "Building ${name}.h for Go binding ...")
-
   # Create .go file, pca.go.
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/generate_go_${name}.cpp
      COMMAND ${CMAKE_COMMAND}
@@ -219,15 +214,9 @@ if (BUILD_GO_BINDINGS)
           -DBINDING_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/mlpack/${name}.go
           -P ${CMAKE_SOURCE_DIR}/CMake/GenerateGoBinding.cmake)
 
-  add_custom_target(build_go_${name}
-      DEPENDS generate_go_${name}
-      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/
-      COMMENT "Building ${name}.go for Go binding ...")
-
-  add_dependencies(build_go_${name} go_copy)
-  add_dependencies(build_go_${name} generate_go_${name})
-  add_dependencies(build_go_${name} build_cpp_${name})
-  add_dependencies(build_go_${name} build_h_${name})
+  add_dependencies(build_cpp_${name} go_copy)
+  add_dependencies(build_cpp_${name} generate_go_${name})
+  add_dependencies(build_cpp_${name} generate_h_${name})
 
   # Create, e.g., libmlpack_go_pca.so.
   add_library(mlpack_go_${name} SHARED
@@ -247,7 +236,7 @@ if (BUILD_GO_BINDINGS)
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-  add_dependencies(mlpack_go_${name} build_go_${name})
+  add_dependencies(mlpack_go_${name} build_cpp_${name})
   add_dependencies(mlpack_go_${name} go_util)
   add_dependencies(go mlpack_go_${name})
 endif ()

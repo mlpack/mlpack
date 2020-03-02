@@ -122,6 +122,8 @@ std::string PrintOptionalInputs(const std::string& paramName,
       std::ostringstream oss;
       oss << "  param." << goParamName << " = ";
       std::string name;
+
+      // Use to identify whether the parameter is model or not. 
       CLI::GetSingleton().functionMap[d.tname]["GetType"](d, NULL,
          (void*) &name);
       if (name[name.size() - 1] == '*')

@@ -118,7 +118,7 @@ inline std::string GetGoType(
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
 {
-  return "MatrixWithInfo";
+  return "matrixWithInfo";
 }
 
 template<typename T>

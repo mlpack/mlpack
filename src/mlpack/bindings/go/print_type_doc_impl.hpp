@@ -92,8 +92,8 @@ std::string PrintTypeDoc(
     }
     else
     {
-      return "A 2-d arraylike containing data.  This can be a gonum matrix.  "
-             "If the type is not already float64, it will be converted.";
+      return "A 2-d gonum Matrix. If the type is not already float64, it "
+             "will be converted.";
     }
   }
   else
@@ -111,8 +111,8 @@ std::string PrintTypeDoc(
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
-  return "A Tuple(MatrixWithInfo) containing `float64` data (Data) along with a"
-     " boolean array (Categories) indicating which dimensions are categorical "
+  return "A Tuple(matrixWithInfo) containing `float64` data (Data) along with a"
+     " boolean array (Categoricals) indicating which dimensions are categorical "
      "(represented by `true`) and which are numeric (represented by `false`)."
      "  The number of elements in the boolean array should be the same as the"
      " dimensionality of the data matrix.  It is expected that each row of the"

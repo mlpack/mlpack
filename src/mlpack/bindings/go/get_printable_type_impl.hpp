@@ -118,7 +118,7 @@ inline std::string GetPrintableType(
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type*)
 {
-  return "MatrixWithInfo";
+  return "matrixWithInfo";
 }
 
 template<typename T>

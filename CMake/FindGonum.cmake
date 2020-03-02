@@ -2,9 +2,6 @@
 #   GONUM_FOUND - true if the Gonum was found
 #   GONUM - Gonum version number
 
-
-find_program(GO_EXECUTABLE go PATHS $ENV{HOME}/go ENV GOROOT GOPATH PATH_SUFFIXES bin)
-
 if(GO_EXECUTABLE)
   execute_process(
      COMMAND ${GO_EXECUTABLE} list gonum.org/v1/gonum/mat
