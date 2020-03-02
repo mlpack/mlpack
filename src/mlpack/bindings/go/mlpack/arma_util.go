@@ -23,20 +23,20 @@ type mlpackArma struct {
 }
 
 // A Tuple containing `float64` data (data) along with a boolean array
-// (Categories) indicating which dimensions are categorical (represented by
+// (Categoricals) indicating which dimensions are categorical (represented by
 // `true`) and which are numeric (represented by `false`).  The number of
 // elements in the boolean array should be the same as the dimensionality of
 // the data matrix.  It is expected that each row of the matrix corresponds to a 
 // single data point when calling mlpack bindings.
-type MatrixWithInfo struct {
-  Categories []bool
+type matrixWithInfo struct {
+  Categoricals []bool
   Data *mat.Dense
 }
 
-// A function used for initializing MatrixWithInfo Tuple.
-func DataAndInfo() *MatrixWithInfo {
-  return &MatrixWithInfo {
-    Categories: nil,
+// A function used for initializing matrixWithInfo Tuple.
+func DataAndInfo() *matrixWithInfo {
+  return &matrixWithInfo {
+    Categoricals: nil,
     Data: nil,
   }
 }
@@ -209,12 +209,12 @@ func gonumToArmaUcol(identifier string, m *mat.Dense) {
 
 // GonumToArmaMatWithInfo passes a gonum matrix with info to C by 
 // using it's gonums underlying blas64.
-func gonumToArmaMatWithInfo(identifier string, m *MatrixWithInfo) {
+func gonumToArmaMatWithInfo(identifier string, m *matrixWithInfo) {
   // Get the number of elements in the Armadillo column.
   r, c := m.Data.Dims()
   blas64General := m.Data.RawMatrix()
   DataAndInfo := blas64General.Data
-  boolarray := m.Categories
+  boolarray := m.Categoricals
   // Pass pointer of the underlying matrix to mlpack.
   boolptr := unsafe.Pointer(&boolarray[0])
   matptr := unsafe.Pointer(&DataAndInfo[0])

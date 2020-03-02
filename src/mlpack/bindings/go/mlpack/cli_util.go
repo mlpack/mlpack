@@ -134,7 +134,6 @@ func getParamVecString(identifier string) []string {
   for i := 0; i < e; i++ {
     data[i] = C.GoString(C.mlpackGetVecStringPtr(C.CString(identifier),
                          C.size_t(i)))
-    runtime.GC()
   }
   return data
 }

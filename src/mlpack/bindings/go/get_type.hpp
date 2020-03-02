@@ -127,9 +127,10 @@ inline std::string GetType(
 }
 
 /**
- * Print an option into a std::string.  This should print a short, one-line
- * representation of the object.  The string will be stored in the output
- * pointer.
+ * Function is used to generate the type names that are used in calls to
+ * functions like gonumToArma<type>() or setParam<type>(), and therefore
+ * what's returned isn't exactly the Go native type used for that parameter
+ * type.
  *
  * @param data Parameter data struct.
  * @param input Unused parameter.
