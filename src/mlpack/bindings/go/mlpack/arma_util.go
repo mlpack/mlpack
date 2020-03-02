@@ -213,11 +213,11 @@ func gonumToArmaMatWithInfo(identifier string, m *matrixWithInfo) {
   // Get the number of elements in the Armadillo column.
   r, c := m.Data.Dims()
   blas64General := m.Data.RawMatrix()
-  DataAndInfo := blas64General.Data
+  dataAndInfo := blas64General.Data
   boolarray := m.Categoricals
   // Pass pointer of the underlying matrix to mlpack.
   boolptr := unsafe.Pointer(&boolarray[0])
-  matptr := unsafe.Pointer(&DataAndInfo[0])
+  matptr := unsafe.Pointer(&dataAndInfo[0])
   C.mlpackToArmaMatWithInfo(C.CString(identifier), (*C.bool)(boolptr),
       (*C.double)(matptr), C.size_t(c), C.size_t(r))
 }

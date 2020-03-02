@@ -121,9 +121,9 @@ std::string PrintOptionalInputs(const std::string& paramName,
       // Print the input option.
       std::ostringstream oss;
       oss << "  param." << goParamName << " = ";
-      std::string name;
 
-      // Use to identify whether the parameter is model or not. 
+      // Special handling is needed for model types.
+      std::string name;
       CLI::GetSingleton().functionMap[d.tname]["GetType"](d, NULL,
          (void*) &name);
       if (name[name.size() - 1] == '*')

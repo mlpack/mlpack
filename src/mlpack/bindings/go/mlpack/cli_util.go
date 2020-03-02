@@ -100,7 +100,11 @@ func (v *mlpackVectorType) allocVecIntPtr(identifier string) {
 }
 
 func setParamVecInt(identifier string, vecInt []int) {
-  ptr := unsafe.Pointer(&vecInt[0])
+  vecInt64 := make([]int64, len(vecInt))
+  for i := 0; i < len(vecInt); i++ {
+    vecInt64[i] = int64(vecInt[i])
+  }
+  ptr := unsafe.Pointer(&vecInt64[0])
   C.mlpackSetParamVectorInt(C.CString(identifier), (*C.longlong)(ptr),
                             C.size_t(len(vecInt)))
 }

@@ -112,8 +112,8 @@ std::string PrintTypeDoc(
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   return "A Tuple(matrixWithInfo) containing `float64` data (Data) along with a"
-     " boolean array (Categoricals) indicating which dimensions are categorical "
-     "(represented by `true`) and which are numeric (represented by `false`)."
+     " boolean array (Categoricals) indicating which dimensions are categorical"
+     " (represented by `true`) and which are numeric (represented by `false`)."
      "  The number of elements in the boolean array should be the same as the"
      " dimensionality of the data matrix.  It is expected that each row of the"
      " matrix corresponds to a single data point when calling mlpack bindings.";
