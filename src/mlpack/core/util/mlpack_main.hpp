@@ -286,6 +286,9 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 
 #elif(BINDING_TYPE == BINDING_TYPE_GO) // This is a Go binding.
 
+// Matrices are transposed on load/save.
+#define BINDING_MATRIX_TRANSPOSED true
+
 #include <mlpack/bindings/go/go_option.hpp>
 #include <mlpack/bindings/go/print_doc_functions.hpp>
 
