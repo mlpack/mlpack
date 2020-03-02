@@ -40,6 +40,7 @@ class DictionaryEncodingPolicy
   * @param maxNumTokens The maximum number of tokens in the strings of the 
                         input dataset.
   * @param dictionarySize The size of the dictionary (not used).
+  * @tparam MatType The type of output matrix.
   */
   template<typename MatType>
   static void InitMatrix(MatType& output,
@@ -60,6 +61,7 @@ class DictionaryEncodingPolicy
   * @param value The encoded token.
   * @param row The row number at which the encoding is performed.
   * @param col The token index in the row.
+  * @tparam MatType The type of output matrix.
   */
   template<typename MatType>
   static void Encode(MatType& output,
@@ -77,12 +79,24 @@ class DictionaryEncodingPolicy
    *
    * @param output Output vector to store the encoded results.
    * @param value The encoded token.
+   * @tparam OutputType The type of output vector.
    */
-  static void Encode(std::vector<size_t>& output,
-                     const size_t value)
+  template<typename OutputType>
+  static void Encode(std::vector<OutputType>& output, size_t value)
   {
     output.push_back(value);
   }
+
+  /**
+  * Empty function, Important for tf-idf encoding policy
+  *
+  * @param row The row number at which the encoding is performed.
+  * @param numToken The count of token parsed till now.
+  * @param value The encoded token.
+  */
+  static void PreprocessToken(size_t /*row*/,
+                              size_t /*numTokens*/,
+                              size_t /*value*/) {}
 
   /**
    * Serialize the class to the given archive.
