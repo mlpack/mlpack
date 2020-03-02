@@ -101,10 +101,13 @@ func (v *mlpackVectorType) allocVecIntPtr(identifier string) {
 
 func setParamVecInt(identifier string, vecInt []int) {
   vecInt64 := make([]int64, len(vecInt))
+  // Here we are promisely passing int64 to C++.
   for i := 0; i < len(vecInt); i++ {
     vecInt64[i] = int64(vecInt[i])
   }
   ptr := unsafe.Pointer(&vecInt64[0])
+  // As we are not guaranteed  that int is always equivalent of int64_t or
+  // int32_t in Go. Hence we are passing `long long` to C++.
   C.mlpackSetParamVectorInt(C.CString(identifier), (*C.longlong)(ptr),
                             C.size_t(len(vecInt)))
 }
