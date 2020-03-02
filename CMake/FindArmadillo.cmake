@@ -23,7 +23,7 @@ This module sets the following variables:
 
   ARMADILLO_FOUND - set to true if the library is found
   ARMADILLO_INCLUDE_DIRS - list of required include directories
-  ARMADILLO_LIBRARIES - list of libraries to be linked, if required
+  ARMADILLO_LIBRARIES - list of libraries to be linked
   ARMADILLO_VERSION_MAJOR - major version number
   ARMADILLO_VERSION_MINOR - minor version number
   ARMADILLO_VERSION_PATCH - patch version number
@@ -85,39 +85,48 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
   string(REGEX MATCH "\r?\n[\t ]*#if[\t ]+!defined[(]ARMA_USE_HDF5[)][\t ]*\r?\n[\t ]*#define[ \t]+ARMA_USE_HDF5[ \t]*\r?\n" ARMA_USE_HDF5 "${_armadillo_CONFIG_CONTENTS}")
 endif()
 
-if (ARMA_USE_WRAPPER)
-  message(STATUS "Using ARMA_USE_WRAPPER")
+include(FindPackageHandleStandardArgs)
+
+# if ARMA_USE_WRAPPER is set, then we just link to armadillo, but if it's not then we need support libraries instead
+set(ARMA_SUPPORT_LIBRARIES)
+
+if(ARMA_USE_WRAPPER)
   # UNIX paths are standard, no need to write.
   find_library(ARMADILLO_LIBRARY
     NAMES armadillo
     PATHS "$ENV{ProgramFiles}/Armadillo/lib"  "$ENV{ProgramFiles}/Armadillo/lib64" "$ENV{ProgramFiles}/Armadillo"
     )
-  include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(Armadillo
     REQUIRED_VARS ARMADILLO_LIBRARY ARMADILLO_INCLUDE_DIR
     VERSION_VAR ARMADILLO_VERSION_STRING)
-  # version_var fails with cmake < 2.8.4.
-else()
-  message(STATUS "ARMA_USE_WRAPPER is not defined, so all dependencies of "
-                 "Armadillo must be manually linked.")
-  # std args complains if this isnt' set to something
+else(ARMA_USE_WRAPPER)
+  # don't link to armadillo in this case
   set(ARMADILLO_LIBRARY "")
+  if(ARMA_USE_LAPACK)
+    find_package(LAPACK REQUIRED)
+    set(ARMA_SUPPORT_LIBRARIES "${ARMA_SUPPORT_LIBRARIES}" "${LAPACK_LIBRARIES}")
+  endif(ARMA_USE_LAPACK)
+  if(ARMA_USE_BLAS)
+    find_package(BLAS REQUIRED)
+    set(ARMA_SUPPORT_LIBRARIES "${ARMA_SUPPORT_LIBRARIES}" "${BLAS_LIBRARIES}")
+  endif(ARMA_USE_BLAS)
+  if(ARMA_USE_ARPACK)
+    find_package(ARPACK REQUIRED)
+    set(ARMA_SUPPORT_LIBRARIES "${ARMA_SUPPORT_LIBRARIES}" "${ARPACK_LIBRARIES}")
+  endif(ARMA_USE_ARPACK)
   set(ARMADILLO_FOUND true)
-  include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(Armadillo
     REQUIRED_VARS ARMADILLO_INCLUDE_DIR
     VERSION_VAR ARMADILLO_VERSION_STRING)
-  # version_var fails with cmake < 2.8.4.
 endif(ARMA_USE_WRAPPER)
-
 
 if (ARMADILLO_FOUND)
   set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})
-  set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY})
+  set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY}  ${ARMA_SUPPORT_LIBRARIES})
 endif ()
-
 
 # Hide internal variables
 mark_as_advanced(
+  ARMA_SUPPORT_LIBRARIES
   ARMADILLO_INCLUDE_DIR
   ARMADILLO_LIBRARY)

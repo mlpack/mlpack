@@ -250,26 +250,6 @@ endif()
 
 find_package(Armadillo 8.400.0 REQUIRED)
 
-# Armadillo config may require some/all dependencies linked to mlpack
-if(NOT ARMA_USE_WRAPPER)
-  set(SUPPORT_LIBRARIES)
-  if(ARMA_USE_LAPACK)
-    find_package(LAPACK REQUIRED)
-    set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${LAPACK_LIBRARIES}")
-  endif(ARMA_USE_LAPACK)
-  if(ARMA_USE_BLAS)
-    find_package(BLAS REQUIRED)
-    set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${BLAS_LIBRARIES}")
-  endif(ARMA_USE_BLAS)
-  if(ARMA_USE_ARPACK)
-    find_package(ARPACK REQUIRED)
-    set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${ARPACK_LIBRARIES}")
-  endif(ARMA_USE_ARPACK)
-  # include all required support libraries with the armadillo libraries
-  set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARIES} ${SUPPORT_LIBRARIES})
-endif(NOT ARMA_USE_WRAPPER)
-
-
 # If Armadillo was compiled without ARMA_64BIT_WORD and we are on a 64-bit
 # system (where size_t will be 64 bits), suggest to the user that they should
 # compile Armadillo with 64-bit words.  Note that with Armadillo 5.000.0 and
