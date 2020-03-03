@@ -1,5 +1,10 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added `mean squared logarithmic error` loss function for neural networks
+    (#2210).
+    
+  * Added `mean bias loss function` for neural networks (#2210).
+  
   * The DecisionStump class has been marked deprecated; use the `DecisionTree`
     class with `NoRecursion=true` or use `ID3DecisionStump` instead (#2099).
 
@@ -29,6 +34,9 @@
   * Add normalization support for CF binding (#2136).
 
   * Add Mish activation function (#2158).
+
+  * Update `init_rules` in AMF to allow users to merge two initialization
+    rules (#2151).
 
   * Add GELU activation function (#2183).
 

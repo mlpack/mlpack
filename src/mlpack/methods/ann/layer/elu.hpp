@@ -173,68 +173,6 @@ class ELU
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  /**
-   * Computes the value of activation function.
-   *
-   * @param x Input data.
-   * @return f(x).
-   */
-  double Fn(const double x)
-  {
-    if (x < DBL_MAX)
-    {
-      return (x > 0) ? lambda * x : lambda * alpha * (std::exp(x) - 1);
-    }
-
-    return 1.0;
-  }
-
-  /**
-   * Computes the value of activation function using a dense matrix as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-  template<typename eT>
-  void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
-  {
-    y.set_size(arma::size(x));
-
-    for (size_t i = 0; i < x.n_elem; i++)
-    {
-      y(i) = Fn(x(i));
-    }
-  }
-
-  /**
-   * Computes the first derivative of the activation function.
-   *
-   * @param x Input data.
-   * @param y Propagated data f(x).
-   * @return f'(x)
-   */
-  double Deriv(const double x, const double y)
-  {
-    return (x > 0) ? lambda : y + lambda * alpha;
-  }
-
-  /**
-   * Computes the first derivative of the activation function.
-   *
-   * @param x Input data.
-   * @param y Output activations f(x).
-   */
-  template<typename InputType, typename OutputType>
-  void Deriv(const InputType& x, OutputType& y)
-  {
-    derivative.set_size(arma::size(x));
-
-    for (size_t i = 0; i < x.n_elem; i++)
-    {
-      derivative(i) = Deriv(x(i), y(i));
-    }
-  }
-
   //! Locally-stored delta object.
   OutputDataType delta;
 
