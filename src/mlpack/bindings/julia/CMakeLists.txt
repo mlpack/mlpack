@@ -56,7 +56,7 @@ if (BUILD_JULIA_BINDINGS)
   file(WRITE
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
       "module mlpack\n\n"
-      "module util\n\n"
+      "module _Internal\n\n"
       "include(\"cli.jl\")\n")
 
   file(WRITE
@@ -150,7 +150,7 @@ if (BUILD_JULIA_BINDINGS)
   # Append the code to define the function in the module.
   file(APPEND
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/functions.jl"
-      "${name} = util.${name}\n")
+      "${name} = _Internal.${name}\n")
 endif ()
 endmacro ()
 
