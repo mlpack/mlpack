@@ -24,7 +24,6 @@
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
-#include <mlpack/methods/ann/layer/celu.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
