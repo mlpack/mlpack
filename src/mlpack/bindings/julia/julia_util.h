@@ -27,7 +27,7 @@ void CLI_RestoreSettings(const char* programName);
 /**
  * Call CLI::SetParam<int>().
  */
-void CLI_SetParamInt(const char* paramName, int paramValue);
+void CLI_SetParamInt(const char* paramName, int64_t paramValue);
 
 /**
  * Call CLI::SetParam<double>().
@@ -48,38 +48,38 @@ void CLI_SetParamBool(const char* paramName, bool paramValue);
  * Call CLI::SetParam<std::vector<std::string>>() to set the length.
  */
 void CLI_SetParamVectorStrLen(const char* paramName,
-                              const size_t length);
+                              const uint64_t length);
 
 /**
  * Call CLI::SetParam<std::vector<std::string>>() to set an individual element.
  */
 void CLI_SetParamVectorStrStr(const char* paramName,
                               const char* str,
-                              const size_t element);
+                              const uint64_t element);
 
 /**
  * Call CLI::SetParam<std::vector<int>>().
  */
 void CLI_SetParamVectorInt(const char* paramName,
-                           uint64_t* ints,
-                           const size_t length);
+                           int64_t* ints,
+                           const uint64_t length);
 
 /**
  * Call CLI::SetParam<arma::mat>().
  */
 void CLI_SetParamMat(const char* paramName,
                      double* memptr,
-                     const size_t rows,
-                     const size_t cols,
+                     const uint64_t rows,
+                     const uint64_t cols,
                      const bool pointsAsRows);
 
 /**
  * Call CLI::SetParam<arma::Mat<size_t>>().
  */
 void CLI_SetParamUMat(const char* paramName,
-                      size_t* memptr,
-                      const size_t rows,
-                      const size_t cols,
+                      uint64_t* memptr,
+                      const uint64_t rows,
+                      const uint64_t cols,
                       const bool pointsAsRows);
 
 /**
@@ -87,28 +87,28 @@ void CLI_SetParamUMat(const char* paramName,
  */
 void CLI_SetParamRow(const char* paramName,
                      double* memptr,
-                     const size_t cols);
+                     const uint64_t cols);
 
 /**
  * Call CLI::SetParam<arma::Row<size_t>>().
  */
 void CLI_SetParamURow(const char* paramName,
-                      size_t* memptr,
-                      const size_t cols);
+                      uint64_t* memptr,
+                      const uint64_t cols);
 
 /**
  * Call CLI::SetParam<arma::vec>().
  */
 void CLI_SetParamCol(const char* paramName,
                      double* memptr,
-                     const size_t rows);
+                     const uint64_t rows);
 
 /**
  * Call CLI::SetParam<arma::Col<size_t>>().
  */
 void CLI_SetParamUCol(const char* paramName,
-                      size_t* memptr,
-                      const size_t rows);
+                      uint64_t* memptr,
+                      const uint64_t rows);
 
 /**
  * Call CLI::SetParam<std::tuple<data::DatasetInfo, arma::mat>>().
@@ -116,14 +116,14 @@ void CLI_SetParamUCol(const char* paramName,
 void CLI_SetParamMatWithInfo(const char* paramName,
                              bool* dimensions,
                              double* memptr,
-                             const size_t rows,
-                             const size_t cols,
+                             const uint64_t rows,
+                             const uint64_t cols,
                              const bool pointsAreRows);
 
 /**
  * Call CLI::GetParam<int>().
  */
-int CLI_GetParamInt(const char* paramName);
+int64_t CLI_GetParamInt(const char* paramName);
 
 /**
  * Call CLI::GetParam<double>().
@@ -144,17 +144,17 @@ bool CLI_GetParamBool(const char* paramName);
  * Call CLI::GetParam<std::vector<std::string>>() and get the length of the
  * vector.
  */
-size_t CLI_GetParamVectorStrLen(const char* paramName);
+uint64_t CLI_GetParamVectorStrLen(const char* paramName);
 
 /**
  * Call CLI::GetParam<std::vector<std::string>>() and get the i'th string.
  */
-const char* CLI_GetParamVectorStrStr(const char* paramName, const int i);
+const char* CLI_GetParamVectorStrStr(const char* paramName, const int64_t i);
 
 /**
  * Call CLI::GetParam<std::vector<int>>() and get the length of the vector.
  */
-size_t CLI_GetParamVectorIntLen(const char* paramName);
+uint64_t CLI_GetParamVectorIntLen(const char* paramName);
 
 /**
  * Call CLI::GetParam<std::vector<int>>() and return a pointer to the vector.
@@ -166,12 +166,12 @@ uint64_t* CLI_GetParamVectorIntPtr(const char* paramName);
 /**
  * Get the number of rows in a matrix parameter.
  */
-size_t CLI_GetParamMatRows(const char* paramName);
+uint64_t CLI_GetParamMatRows(const char* paramName);
 
 /**
  * Get the number of columns in a matrix parameter.
  */
-size_t CLI_GetParamMatCols(const char* paramName);
+uint64_t CLI_GetParamMatCols(const char* paramName);
 
 /**
  * Get the memory pointer for a matrix parameter.
@@ -183,24 +183,24 @@ double* CLI_GetParamMat(const char* paramName);
 /**
  * Get the number of rows in an unsigned matrix parameter.
  */
-size_t CLI_GetParamUMatRows(const char* paramName);
+uint64_t CLI_GetParamUMatRows(const char* paramName);
 
 /**
  * Get the number of columns in an unsigned matrix parameter.
  */
-size_t CLI_GetParamUMatCols(const char* paramName);
+uint64_t CLI_GetParamUMatCols(const char* paramName);
 
 /**
  * Get the memory pointer for an unsigned matrix parameter.
  * Note that this will assume that whatever is calling will take ownership of
  * the memory!
  */
-size_t* CLI_GetParamUMat(const char* paramName);
+uint64_t* CLI_GetParamUMat(const char* paramName);
 
 /**
  * Get the number of rows in a column parameter.
  */
-size_t CLI_GetParamColRows(const char* paramName);
+uint64_t CLI_GetParamColRows(const char* paramName);
 
 /**
  * Get the memory pointer for a column vector parameter.
@@ -212,19 +212,19 @@ double* CLI_GetParamCol(const char* paramName);
 /**
  * Get the number of columns in an unsigned column vector parameter.
  */
-size_t CLI_GetParamUColRows(const char* paramName);
+uint64_t CLI_GetParamUColRows(const char* paramName);
 
 /**
  * Get the memory pointer for an unsigned column vector parameter.
  * Note that this will assume that whatever is calling will take ownership of
  * the memory!
  */
-size_t* CLI_GetParamUCol(const char* paramName);
+uint64_t* CLI_GetParamUCol(const char* paramName);
 
 /**
  * Get the number of columns in a row parameter.
  */
-size_t CLI_GetParamRowCols(const char* paramName);
+uint64_t CLI_GetParamRowCols(const char* paramName);
 
 /**
  * Get the memory pointer for a row parameter.
@@ -236,24 +236,24 @@ double* CLI_GetParamRow(const char* paramName);
 /**
  * Get the number of columns in a row parameter.
  */
-size_t CLI_GetParamURowCols(const char* paramName);
+uint64_t CLI_GetParamURowCols(const char* paramName);
 
 /**
  * Get the memory pointer for a row parameter.
  * Note that this will assume that whatever is calling will take ownership of
  * the memory!
  */
-size_t* CLI_GetParamURow(const char* paramName);
+uint64_t* CLI_GetParamURow(const char* paramName);
 
 /**
  * Get the number of rows in a matrix with DatasetInfo parameter.
  */
-size_t CLI_GetParamMatWithInfoRows(const char* paramName);
+uint64_t CLI_GetParamMatWithInfoRows(const char* paramName);
 
 /**
  * Get the number of columns in a matrix with DatasetInfo parameter.
  */
-size_t CLI_GetParamMatWithInfoCols(const char* paramName);
+uint64_t CLI_GetParamMatWithInfoCols(const char* paramName);
 
 /**
  * Get a pointer to an array of booleans representing whether or not dimensions
