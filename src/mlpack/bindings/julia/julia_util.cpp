@@ -7,6 +7,7 @@
 #include <mlpack/bindings/julia/julia_util.h>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <stdint.h>
 
 using namespace mlpack;
 
@@ -21,11 +22,11 @@ void CLI_RestoreSettings(const char* programName)
 }
 
 /**
- * Call CLI::SetParam<int>().
+ * Call CLI::SetParam<int>().  Julia always gives us an int64.
  */
-void CLI_SetParamInt(const char* paramName, int paramValue)
+void CLI_SetParamInt(const char* paramName, int64_t paramValue)
 {
-  CLI::GetParam<int>(paramName) = paramValue;
+  CLI::GetParam<int>(paramName) = int(paramValue);
   CLI::SetPassed(paramName);
 }
 
@@ -60,10 +61,10 @@ void CLI_SetParamBool(const char* paramName, bool paramValue)
  * Call CLI::SetParam<std::vector<std::string>>() to set the length.
  */
 void CLI_SetParamVectorStrLen(const char* paramName,
-                              const size_t length)
+                              const uint64_t length)
 {
   CLI::GetParam<std::vector<std::string>>(paramName).clear();
-  CLI::GetParam<std::vector<std::string>>(paramName).resize(length);
+  CLI::GetParam<std::vector<std::string>>(paramName).resize(size_t(length));
   CLI::SetPassed(paramName);
 }
 
@@ -72,24 +73,25 @@ void CLI_SetParamVectorStrLen(const char* paramName,
  */
 void CLI_SetParamVectorStrStr(const char* paramName,
                               const char* str,
-                              const size_t element)
+                              const uint64_t element)
 {
-  CLI::GetParam<std::vector<std::string>>(paramName)[element] =
+  CLI::GetParam<std::vector<std::string>>(paramName)[size_t(element)] =
       std::string(str);
 }
 
 /**
- * Call CLI::SetParam<std::vector<int>>().
+ * Call CLI::SetParam<std::vector<int>>().  Julia always gives us int64s.
  */
 void CLI_SetParamVectorInt(const char* paramName,
-                           uint64_t* ints,
-                           const size_t length)
+                           int64_t* ints,
+                           const uint64_t length)
 {
   // Create a std::vector<int> object; unfortunately this requires copying the
   // vector elements.
-  std::vector<int> vec(length);
+  std::vector<int> vec;
+  vec.resize(size_t(length));
   for (size_t i = 0; i < (size_t) length; ++i)
-    vec[i] = ints[i];
+    vec[i] = int(ints[i]);
 
   CLI::GetParam<std::vector<int>>(paramName) = std::move(vec);
   CLI::SetPassed(paramName);
@@ -100,12 +102,12 @@ void CLI_SetParamVectorInt(const char* paramName,
  */
 void CLI_SetParamMat(const char* paramName,
                      double* memptr,
-                     const size_t rows,
-                     const size_t cols,
+                     const uint64_t rows,
+                     const uint64_t cols,
                      const bool pointsAsRows)
 {
   // Create the matrix as an alias.
-  arma::mat m(memptr, rows, cols, false, true);
+  arma::mat m(memptr, arma::uword(rows), arma::uword(cols), false, true);
   CLI::GetParam<arma::mat>(paramName) = pointsAsRows ? m.t() : std::move(m);
   CLI::SetPassed(paramName);
 }
@@ -114,16 +116,32 @@ void CLI_SetParamMat(const char* paramName,
  * Call CLI::SetParam<arma::Mat<size_t>>().
  */
 void CLI_SetParamUMat(const char* paramName,
-                      size_t* memptr,
-                      const size_t rows,
-                      const size_t cols,
+                      uint64_t* memptr,
+                      const uint64_t rows,
+                      const uint64_t cols,
                       const bool pointsAsRows)
 {
-  // Create the matrix as an alias.
-  arma::Mat<size_t> m(memptr, rows, cols, false, true);
-  CLI::GetParam<arma::Mat<size_t>>(paramName) = pointsAsRows ? m.t() :
-      std::move(m);
-  CLI::SetPassed(paramName);
+  // If we're on a 64-bit system, we can create the matrix as an alias.
+  if (sizeof(uint64_t) == sizeof(size_t))
+  {
+    // Create the matrix as an alias.
+    arma::Mat<size_t> m(memptr, arma::uword(rows), arma::uword(cols), false,
+        true);
+    CLI::GetParam<arma::Mat<size_t>>(paramName) = pointsAsRows ? m.t() :
+        std::move(m);
+    CLI::SetPassed(paramName);
+  }
+  else
+  {
+    // We have to perform conversion.  Create an alias of the memory we got, and
+    // then convert it.
+    arma::Mat<uint64_t> m(memptr, arma::uword(rows), arma::uword(cols), false,
+        true);
+    CLI::GetParam<arma::Mat<size_t>>(paramName) = pointsAsRows ?
+        arma::conv_to<arma::Mat<size_t>>::from(m.t()) :
+        arma::conv_to<arma::Mat<size_t>>::from(m);
+    CLI::SetPassed(paramName);
+  }
 }
 
 /**
@@ -131,9 +149,9 @@ void CLI_SetParamUMat(const char* paramName,
  */
 void CLI_SetParamRow(const char* paramName,
                      double* memptr,
-                     const size_t cols)
+                     const uint64_t cols)
 {
-  arma::rowvec m(memptr, cols, false, true);
+  arma::rowvec m(memptr, arma::uword(cols), false, true);
   CLI::GetParam<arma::rowvec>(paramName) = std::move(m);
   CLI::SetPassed(paramName);
 }
@@ -143,9 +161,9 @@ void CLI_SetParamRow(const char* paramName,
  */
 void CLI_SetParamURow(const char* paramName,
                       size_t* memptr,
-                      const size_t cols)
+                      const uint64_t cols)
 {
-  arma::Row<size_t> m(memptr, cols, false, true);
+  arma::Row<size_t> m(memptr, arma::uword(cols), false, true);
   CLI::GetParam<arma::Row<size_t>>(paramName) = std::move(m);
   CLI::SetPassed(paramName);
 }
@@ -155,9 +173,9 @@ void CLI_SetParamURow(const char* paramName,
  */
 void CLI_SetParamCol(const char* paramName,
                      double* memptr,
-                     const size_t rows)
+                     const uint64_t rows)
 {
-  arma::vec m(memptr, rows, false, true);
+  arma::vec m(memptr, arma::uword(rows), false, true);
   CLI::GetParam<arma::vec>(paramName) = std::move(m);
   CLI::SetPassed(paramName);
 }
@@ -166,12 +184,24 @@ void CLI_SetParamCol(const char* paramName,
  * Call CLI::SetParam<arma::Row<size_t>>().
  */
 void CLI_SetParamUCol(const char* paramName,
-                     size_t* memptr,
-                     const size_t rows)
+                      uint64_t* memptr,
+                      const uint64_t rows)
 {
-  arma::Col<size_t> m(memptr, rows, false, true);
-  CLI::GetParam<arma::Col<size_t>>(paramName) = std::move(m);
-  CLI::SetPassed(paramName);
+  // If Julia gave us the right size, we can use an alias; otherwise we have to
+  // copy.
+  if (sizeof(uint64_t) == sizeof(size_t))
+  {
+    arma::Col<size_t> m(memptr, arma::uword(rows), false, true);
+    CLI::GetParam<arma::Col<size_t>>(paramName) = std::move(m);
+    CLI::SetPassed(paramName);
+  }
+  else
+  {
+    arma::Col<uint64_t> m(memptr, arma::uword(rows), false, true);
+    CLI::GetParam<arma::Col<size_t>>(paramName) =
+        arma::conv_to<arma::Col<size_t>>::from(m);
+    CLI::SetPassed(paramName);
+  }
 }
 
 /**
@@ -180,8 +210,8 @@ void CLI_SetParamUCol(const char* paramName,
 void CLI_SetParamMatWithInfo(const char* paramName,
                              bool* dimensions,
                              double* memptr,
-                             const size_t rows,
-                             const size_t cols,
+                             const uint64_t rows,
+                             const uint64_t cols,
                              const bool pointsAreRows)
 {
   data::DatasetInfo d(pointsAreRows ? cols : rows);
@@ -191,7 +221,7 @@ void CLI_SetParamMatWithInfo(const char* paramName,
         data::Datatype::numeric;
   }
 
-  arma::mat m(memptr, rows, cols, false, true);
+  arma::mat m(memptr, arma::uword(rows), arma::uword(cols), false, true);
   std::get<0>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
       paramName)) = std::move(d);
   std::get<1>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
@@ -202,9 +232,9 @@ void CLI_SetParamMatWithInfo(const char* paramName,
 /**
  * Call CLI::GetParam<int>().
  */
-int CLI_GetParamInt(const char* paramName)
+int64_t CLI_GetParamInt(const char* paramName)
 {
-  return CLI::GetParam<int>(paramName);
+  return int64_t(CLI::GetParam<int>(paramName));
 }
 
 /**
@@ -235,25 +265,25 @@ bool CLI_GetParamBool(const char* paramName)
  * Call CLI::GetParam<std::vector<std::string>>() and get the length of the
  * vector.
  */
-size_t CLI_GetParamVectorStrLen(const char* paramName)
+uint64_t CLI_GetParamVectorStrLen(const char* paramName)
 {
-  return CLI::GetParam<std::vector<std::string>>(paramName).size();
+  return uint64_t(CLI::GetParam<std::vector<std::string>>(paramName).size());
 }
 
 /**
  * Call CLI::GetParam<std::vector<std::string>>() and get the i'th string.
  */
-const char* CLI_GetParamVectorStrStr(const char* paramName, const int i)
+const char* CLI_GetParamVectorStrStr(const char* paramName, const int64_t i)
 {
-  return CLI::GetParam<std::vector<std::string>>(paramName)[i].c_str();
+  return CLI::GetParam<std::vector<std::string>>(paramName)[int(i)].c_str();
 }
 
 /**
  * Call CLI::GetParam<std::vector<int>>() and get the length of the vector.
  */
-size_t CLI_GetParamVectorIntLen(const char* paramName)
+uint64_t CLI_GetParamVectorIntLen(const char* paramName)
 {
-  return CLI::GetParam<std::vector<int>>(paramName).size();
+  return uint64_t(CLI::GetParam<std::vector<int>>(paramName).size());
 }
 
 /**
@@ -275,17 +305,17 @@ uint64_t* CLI_GetParamVectorIntPtr(const char* paramName)
 /**
  * Get the number of rows in a matrix parameter.
  */
-size_t CLI_GetParamMatRows(const char* paramName)
+uint64_t CLI_GetParamMatRows(const char* paramName)
 {
-  return CLI::GetParam<arma::mat>(paramName).n_rows;
+  return uint64_t(CLI::GetParam<arma::mat>(paramName).n_rows);
 }
 
 /**
  * Get the number of columns in a matrix parameter.
  */
-size_t CLI_GetParamMatCols(const char* paramName)
+uint64_t CLI_GetParamMatCols(const char* paramName)
 {
-  return CLI::GetParam<arma::mat>(paramName).n_cols;
+  return uint64_t(CLI::GetParam<arma::mat>(paramName).n_cols);
 }
 
 /**
@@ -315,17 +345,17 @@ double* CLI_GetParamMat(const char* paramName)
 /**
  * Get the number of rows in an unsigned matrix parameter.
  */
-size_t CLI_GetParamUMatRows(const char* paramName)
+uint64_t CLI_GetParamUMatRows(const char* paramName)
 {
-  return CLI::GetParam<arma::Mat<size_t>>(paramName).n_rows;
+  return uint64_t(CLI::GetParam<arma::Mat<size_t>>(paramName).n_rows);
 }
 
 /**
  * Get the number of columns in an unsigned matrix parameter.
  */
-size_t CLI_GetParamUMatCols(const char* paramName)
+uint64_t CLI_GetParamUMatCols(const char* paramName)
 {
-  return CLI::GetParam<arma::Mat<size_t>>(paramName).n_cols;
+  return uint64_t(CLI::GetParam<arma::Mat<size_t>>(paramName).n_cols);
 }
 
 /**
@@ -333,31 +363,45 @@ size_t CLI_GetParamUMatCols(const char* paramName)
  * Note that this will assume that whatever is calling will take ownership of
  * the memory!
  */
-size_t* CLI_GetParamUMat(const char* paramName)
+uint64_t* CLI_GetParamUMat(const char* paramName)
 {
-  // Are we using preallocated memory?  If so we have to handle this more
-  // carefully.
   arma::Mat<size_t>& mat = CLI::GetParam<arma::Mat<size_t>>(paramName);
-  if (mat.n_elem <= arma::arma_config::mat_prealloc)
+
+  // Unfortunately, if size_t is not uint64_t, we will incur a copy.
+  if (sizeof(uint64_t) == sizeof(size_t))
   {
-    // Copy the memory to something that we can give back to Julia.
-    size_t* newMem = new size_t[mat.n_elem];
-    arma::arrayops::copy(newMem, mat.mem, mat.n_elem);
-    return newMem; // We believe Julia will free it.  Hopefully we are right.
+    // Are we using preallocated memory?  If so we have to handle this more
+    // carefully.
+    if (mat.n_elem <= arma::arma_config::mat_prealloc)
+    {
+      // Copy the memory to something that we can give back to Julia.
+      size_t* newMem = new size_t[mat.n_elem];
+      arma::arrayops::copy(newMem, mat.mem, mat.n_elem);
+      // We believe Julia will free it.  Hopefully we are right.
+      return (uint64_t*) newMem;
+    }
+    else
+    {
+      arma::access::rw(mat.mem_state) = 1;
+      return (uint64_t*) mat.memptr();
+    }
   }
   else
   {
-    arma::access::rw(mat.mem_state) = 1;
-    return mat.memptr();
+    uint64_t* newMem = new uint64_t[mat.n_elem];
+    for (size_t i = 0; i < mat.n_elem; ++i)
+      newMem[i] = uint64_t(mat[i]);
+    // We believe Julia will free it.  Hopefully we are right.
+    return newMem;
   }
 }
 
 /**
  * Get the number of rows in a column vector parameter.
  */
-size_t CLI_GetParamColRows(const char* paramName)
+uint64_t CLI_GetParamColRows(const char* paramName)
 {
-  return CLI::GetParam<arma::vec>(paramName).n_rows;
+  return uint64_t(CLI::GetParam<arma::vec>(paramName).n_rows);
 }
 
 /**
@@ -387,9 +431,9 @@ double* CLI_GetParamCol(const char* paramName)
 /**
  * Get the number of columns in an unsigned column vector parameter.
  */
-size_t CLI_GetParamUColRows(const char* paramName)
+uint64_t CLI_GetParamUColRows(const char* paramName)
 {
-  return CLI::GetParam<arma::Col<size_t>>(paramName).n_rows;
+  return uint64_t(CLI::GetParam<arma::Col<size_t>>(paramName).n_rows);
 }
 
 /**
@@ -397,31 +441,46 @@ size_t CLI_GetParamUColRows(const char* paramName)
  * Note that this will assume that whatever is calling will take ownership of
  * the memory!
  */
-size_t* CLI_GetParamUCol(const char* paramName)
+uint64_t* CLI_GetParamUCol(const char* paramName)
 {
-  // Are we using preallocated memory?  If so we have to handle this more
-  // carefully.
   arma::Col<size_t>& vec = CLI::GetParam<arma::Col<size_t>>(paramName);
-  if (vec.n_elem <= arma::arma_config::mat_prealloc)
+
+  // If size_t is not the uint64_t that Julia expects, then unfortunately we
+  // will have to make a copy.
+  if (sizeof(uint64_t) == sizeof(size_t))
   {
-    // Copy the memory to something we can give back to Julia.
-    size_t* newMem = new size_t[vec.n_elem];
-    arma::arrayops::copy(newMem, vec.mem, vec.n_elem);
-    return newMem; // We believe Julia will free it.  Hopefully we are right.
+    // Are we using preallocated memory?  If so we have to handle this more
+    // carefully.
+    if (vec.n_elem <= arma::arma_config::mat_prealloc)
+    {
+      // Copy the memory to something we can give back to Julia.
+      size_t* newMem = new size_t[vec.n_elem];
+      arma::arrayops::copy(newMem, vec.mem, vec.n_elem);
+      // We believe Julia will free it.  Hopefully we are right.
+      return (uint64_t*) newMem;
+    }
+    else
+    {
+      arma::access::rw(vec.mem_state) = 1;
+      return (uint64_t*) vec.memptr();
+    }
   }
   else
   {
-    arma::access::rw(vec.mem_state) = 1;
-    return vec.memptr();
+    uint64_t* newMem = new uint64_t[vec.n_elem];
+    for (size_t i = 0; i < vec.n_elem; ++i)
+      newMem[i] = uint64_t(vec[i]);
+    // We believe Julia will free it.  Hopefully we are right.
+    return newMem;
   }
 }
 
 /**
  * Get the number of columns in a row parameter.
  */
-size_t CLI_GetParamRowCols(const char* paramName)
+uint64_t CLI_GetParamRowCols(const char* paramName)
 {
-  return CLI::GetParam<arma::rowvec>(paramName).n_cols;
+  return uint64_t(CLI::GetParam<arma::rowvec>(paramName).n_cols);
 }
 
 /**
@@ -451,9 +510,9 @@ double* CLI_GetParamRow(const char* paramName)
 /**
  * Get the number of columns in a row parameter.
  */
-size_t CLI_GetParamURowCols(const char* paramName)
+uint64_t CLI_GetParamURowCols(const char* paramName)
 {
-  return CLI::GetParam<arma::Row<size_t>>(paramName).n_cols;
+  return uint64_t(CLI::GetParam<arma::Row<size_t>>(paramName).n_cols);
 }
 
 /**
@@ -461,41 +520,57 @@ size_t CLI_GetParamURowCols(const char* paramName)
  * Note that this will assume that whatever is calling will take ownership of
  * the memory!
  */
-size_t* CLI_GetParamURow(const char* paramName)
+uint64_t* CLI_GetParamURow(const char* paramName)
 {
-  // Are we using preallocated memory?  If so we have to handle this more
-  // carefully.
   arma::Row<size_t>& vec = CLI::GetParam<arma::Row<size_t>>(paramName);
-  if (vec.n_elem <= arma::arma_config::mat_prealloc)
+
+  // If size_t is not the uint64_t that Julia expects, then unfortunately we
+  // will have to make a copy.
+  if (sizeof(size_t) == sizeof(uint64_t))
   {
-    // Copy the memory to something we can give back to Julia.
-    size_t* newMem = new size_t[vec.n_elem];
-    arma::arrayops::copy(newMem, vec.mem, vec.n_elem);
-    return newMem;
+    // Are we using preallocated memory?  If so we have to handle this more
+    // carefully.
+    if (vec.n_elem <= arma::arma_config::mat_prealloc)
+    {
+      // Copy the memory to something we can give back to Julia.
+      size_t* newMem = new size_t[vec.n_elem];
+      arma::arrayops::copy(newMem, vec.mem, vec.n_elem);
+      return (uint64_t*) newMem;
+    }
+    else
+    {
+      arma::access::rw(vec.mem_state) = 1;
+      return (uint64_t*) vec.memptr();
+    }
   }
   else
   {
-    arma::access::rw(vec.mem_state) = 1;
-    return vec.memptr();
+    uint64_t* newMem = new uint64_t[vec.n_elem];
+    for (size_t i = 0; i < vec.n_elem; ++i)
+      newMem[i] = uint64_t(vec[i]);
+    // We believe that Julia will free the memory.  Hopefully we are right.
+    return newMem;
   }
 }
 
 /**
  * Get the number of rows in a matrix with DatasetInfo parameter.
  */
-size_t CLI_GetParamMatWithInfoRows(const char* paramName)
+uint64_t CLI_GetParamMatWithInfoRows(const char* paramName)
 {
-  return std::get<1>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
-      paramName)).n_rows;
+  return uint64_t(std::get<1>(
+      CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
+      paramName)).n_rows);
 }
 
 /**
  * Get the number of columns in a matrix with DatasetInfo parameter.
  */
-size_t CLI_GetParamMatWithInfoCols(const char* paramName)
+uint64_t CLI_GetParamMatWithInfoCols(const char* paramName)
 {
-  return std::get<1>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
-      paramName)).n_cols;
+  return uint64_t(std::get<1>(
+      CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
+      paramName)).n_cols);
 }
 
 /**
