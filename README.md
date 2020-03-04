@@ -17,7 +17,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
   <a href="http://ci.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/build.svg?jobUrl=http%3A%2F%2Fci.mlpack.org%2Fjob%2Fmlpack%2520-%2520git%2520commit%2520test%2F&label=Linux%20build&style=flat-square" alt="Jenkins"></a>
   <a href="https://coveralls.io/github/mlpack/mlpack?branch=master"><img src="https://img.shields.io/coveralls/mlpack/mlpack/master.svg?style=flat-square" alt="Coveralls"></a>
   <a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License"></a>
-  <a href="http://numfocus.org"><img src="https://img.shields.io/badge/powered%20by-NumFOCUS-orange.svg?style=flat&colorA=E1523D&colorB=007D8A" alt="NumFOCUS"></a>
+  <a href="http://numfocus.org"><img src="https://img.shields.io/badge/powered%20by-NumFOCUS-orange.svg?style=flat-square" alt="NumFOCUS"></a>
 </p>
 
 <p align="center">
