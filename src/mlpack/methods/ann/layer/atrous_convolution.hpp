@@ -85,7 +85,7 @@ class AtrousConvolution
                     const size_t inputHeight = 0,
                     const size_t dilationWidth = 1,
                     const size_t dilationHeight = 1,
-                    const std::string paddingType = "None");
+                    const std::string& paddingType = "None");
 
   /**
    * Create the AtrousConvolution object using the specified number of
@@ -116,13 +116,13 @@ class AtrousConvolution
                     const size_t kernelHeight,
                     const size_t strideWidth,
                     const size_t strideHeight,
-                    const std::tuple<size_t, size_t> padW,
-                    const std::tuple<size_t, size_t> padH,
+                    const std::tuple<size_t, size_t>& padW,
+                    const std::tuple<size_t, size_t>& padH,
                     const size_t inputWidth = 0,
                     const size_t inputHeight = 0,
                     const size_t dilationWidth = 1,
                     const size_t dilationHeight = 1,
-                    const std::string paddingType = "None");
+                    const std::string& paddingType = "None");
 
   /*
    * Set the weight and bias term.
@@ -205,7 +205,7 @@ class AtrousConvolution
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
-  //! Get the input size
+  //! Get the input size.
   const size_t& InputSize() const { return inSize; }
 
   //! Get the output size.
@@ -250,7 +250,7 @@ class AtrousConvolution
   arma::mat& Bias() { return bias; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -415,7 +415,7 @@ struct version<
 } // namespace serialization
 } // namespace boost
 
-// Include implementation
+// Include implementation.
 #include "atrous_convolution_impl.hpp"
 
 #endif

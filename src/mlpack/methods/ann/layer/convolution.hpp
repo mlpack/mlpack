@@ -76,7 +76,7 @@ class Convolution
               const size_t padH = 0,
               const size_t inputWidth = 0,
               const size_t inputHeight = 0,
-              const std::string paddingType = "None");
+              const std::string& paddingType = "None");
 
   /**
    * Create the Convolution object using the specified number of input maps,
@@ -104,11 +104,11 @@ class Convolution
               const size_t kernelHeight,
               const size_t strideWidth,
               const size_t strideHeight,
-              const std::tuple<size_t, size_t> padW,
-              const std::tuple<size_t, size_t> padH,
+              const std::tuple<size_t, size_t>& padW,
+              const std::tuple<size_t, size_t>& padH,
               const size_t inputWidth = 0,
               const size_t inputHeight = 0,
-              const std::string paddingType = "None");
+              const std::string& paddingType = "None");
 
   /*
    * Set the weight and bias term.
@@ -221,6 +221,26 @@ class Convolution
   size_t StrideHeight() const { return strideHeight; }
   //! Modify the stride height.
   size_t& StrideHeight() { return strideHeight; }
+
+  //! Get the top padding height.
+  size_t PadHTop() const { return padHTop; }
+  //! Modify the top padding height.
+  size_t& PadHTop() { return padHTop; }
+
+  //! Get the bottom padding height.
+  size_t PadHBottom() const { return padHBottom; }
+  //! Modify the bottom padding height.
+  size_t& PadHBottom() { return padHBottom; }
+
+  //! Get the left padding width.
+  size_t PadWLeft() const { return padWLeft; }
+  //! Modify the left padding width.
+  size_t& PadWLeft() { return padWLeft; }
+
+  //! Get the right padding width.
+  size_t PadWRight() const { return padWRight; }
+  //! Modify the right padding width.
+  size_t& PadWRight() { return padWRight; }
 
   //! Modify the bias weights of the layer.
   arma::mat& Bias() { return bias; }

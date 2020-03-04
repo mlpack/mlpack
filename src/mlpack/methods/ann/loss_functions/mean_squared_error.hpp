@@ -47,6 +47,7 @@ class MeanSquaredError
    */
   template<typename InputType, typename TargetType>
   double Forward(const InputType&& input, const TargetType&& target);
+
   /**
    * Ordinary feed backward pass of a neural network.
    *

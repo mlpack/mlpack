@@ -21,6 +21,9 @@
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
+#include <mlpack/methods/ann/activation_functions/mish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
+#include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -632,6 +635,79 @@ BOOST_AUTO_TEST_CASE(HardSigmoidFunctionTest)
       desiredActivations);
   CheckDerivativeCorrect<HardSigmoidFunction>(desiredActivations,
       desiredDerivatives);
+}
+
+/**
+ * Basic test of the Mish function.
+ */
+BOOST_AUTO_TEST_CASE(MishFunctionTest)
+{
+  // Calculated using tfa.activations.mish().
+  // where tfa is tensorflow_addons.
+  const arma::colvec desiredActivations("-0.25250152 3.1901977 \
+                                         4.498914 -3.05183208e-42 0.86509836 \
+                                         -0.30340138 1.943959 0");
+
+  const arma::colvec desiredDerivatives("0.4382387  1.0159768849 \
+                                          1.0019108 0.6 \
+                                          1.0192586  0.40639898 \
+                                          1.0725079  0.6");
+
+  CheckActivationCorrect<MishFunction>(activationData,
+                                       desiredActivations);
+  CheckDerivativeCorrect<MishFunction>(desiredActivations,
+                                        desiredDerivatives);
+}
+
+/**
+ * Basic test of the LiSHT function.
+ */
+BOOST_AUTO_TEST_CASE(LiSHTFunctionTest)
+{
+  // Calculated using tfa.activations.LiSHT().
+  // where tfa is tensorflow_addons.
+  const arma::colvec desiredActivations("1.928055 3.189384 \
+                                         4.4988894 100.2 0.7615942 \
+                                         0.7615942 1.9280552 0");
+
+  const arma::colvec desiredDerivatives("1.1150033 1.0181904 \
+                                         1.001978 1.0 \
+                                         1.0896928 1.0896928 \
+                                         1.1150033 0.0");
+
+  CheckActivationCorrect<LiSHTFunction>(activationData,
+                                       desiredActivations);
+  CheckDerivativeCorrect<LiSHTFunction>(desiredActivations,
+                                       desiredDerivatives);
+}
+
+/**
+ * Basic test of the GELU function.
+ */
+BOOST_AUTO_TEST_CASE(GELUFunctionTest)
+{
+  // Calculated using torch.nn.gelu().
+  const arma::colvec desiredActivations("-0.04540230591222 \
+                                          3.1981304348379158 \
+                                          4.5000 -0.0000 \
+                                          0.84119199060827676 \
+                                          -0.15880800939172329 \
+                                          1.954597694087775 \
+                                          0.0000");
+
+  const arma::colvec desiredDerivatives("0.46379920685377229 \
+                                          1.0065302165778773 \
+                                          1.0000293221871797 \
+                                          0.5 \
+                                          1.0351344625840642 \
+                                          0.37435387859861063 \
+                                          1.0909840032535403 \
+                                          0.5");
+
+  CheckActivationCorrect<GELUFunction>(activationData,
+                                       desiredActivations);
+  CheckDerivativeCorrect<GELUFunction>(desiredActivations,
+                                        desiredDerivatives);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
