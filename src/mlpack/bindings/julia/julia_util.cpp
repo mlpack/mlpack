@@ -125,8 +125,8 @@ void CLI_SetParamUMat(const char* paramName,
   if (sizeof(uint64_t) == sizeof(size_t))
   {
     // Create the matrix as an alias.
-    arma::Mat<size_t> m(memptr, arma::uword(rows), arma::uword(cols), false,
-        true);
+    arma::Mat<size_t> m((size_t*) memptr, arma::uword(rows), arma::uword(cols),
+        false, true);
     CLI::GetParam<arma::Mat<size_t>>(paramName) = pointsAsRows ? m.t() :
         std::move(m);
     CLI::SetPassed(paramName);
@@ -160,12 +160,25 @@ void CLI_SetParamRow(const char* paramName,
  * Call CLI::SetParam<arma::Row<size_t>>().
  */
 void CLI_SetParamURow(const char* paramName,
-                      size_t* memptr,
+                      uint64_t* memptr,
                       const uint64_t cols)
 {
-  arma::Row<size_t> m(memptr, arma::uword(cols), false, true);
-  CLI::GetParam<arma::Row<size_t>>(paramName) = std::move(m);
-  CLI::SetPassed(paramName);
+  // If we're on a 64-bit system, we can create the matrix as an alias.
+  if (sizeof(uint64_t) == sizeof(size_t))
+  {
+    arma::Row<size_t> m((size_t*) memptr, arma::uword(cols), false, true);
+    CLI::GetParam<arma::Row<size_t>>(paramName) = std::move(m);
+    CLI::SetPassed(paramName);
+  }
+  else
+  {
+    // We have to perform conversion.  Create an alias of the memory we got,
+    // and then convert it.
+    arma::Row<uint64_t> m(memptr, arma::uword(cols), false, true);
+    CLI::GetParam<arma::Row<size_t>>(paramName) =
+        arma::conv_to<arma::Row<size_t>>::from(m);
+    CLI::SetPassed(paramName);
+  }
 }
 
 /**
@@ -191,7 +204,7 @@ void CLI_SetParamUCol(const char* paramName,
   // copy.
   if (sizeof(uint64_t) == sizeof(size_t))
   {
-    arma::Col<size_t> m(memptr, arma::uword(rows), false, true);
+    arma::Col<size_t> m((size_t*) memptr, arma::uword(rows), false, true);
     CLI::GetParam<arma::Col<size_t>>(paramName) = std::move(m);
     CLI::SetPassed(paramName);
   }
