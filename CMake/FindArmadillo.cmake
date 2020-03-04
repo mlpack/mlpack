@@ -111,11 +111,16 @@ else(_ARMA_USE_WRAPPER)
       # include files are hidden somewhere very odd that FindHDF5.cmake  will
       # not find.  Thus, we'll also quickly check pkgconfig to see if there is
       # information on what to use there.
+      message(WARNING "HDF5 required but not found; using PkgConfig")
       find_package(PkgConfig)
       if (PKG_CONFIG_FOUND)
         pkg_check_modules(HDF5 REQUIRED hdf5)
+        link_directories("${HDF5_LIBRARY_DIRS}")
+      else()
+        message(FATAL_ERROR "PkgConfig (Used to help find HDF5) was not found")
       endif()
     endif()
+    set(_ARMA_SUPPORT_INCLUDE_DIRS "${HDF5_INCLUDE_DIRS}")
     set(_ARMA_SUPPORT_LIBRARIES "${_ARMA_SUPPORT_LIBRARIES}" "${HDF5_LIBRARIES}")
   endif(_ARMA_USE_HDF5)
   set(ARMADILLO_FOUND true)
@@ -126,6 +131,7 @@ endif(_ARMA_USE_WRAPPER)
 
 if (ARMADILLO_FOUND)
   set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})
+  set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIRS} ${_ARMA_SUPPORT_INCLUDE_DIRS})
   set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY} ${_ARMA_SUPPORT_LIBRARIES})
 endif ()
 
@@ -138,6 +144,7 @@ unset(_ARMA_USE_ARPACK)
 unset(_ARMA_USE_HDF5)
 unset(_ARMA_CONFIG_CONTENTS)
 unset(_ARMA_HEADER_CONTENTS)
+unset(_ARMA_SUPPORT_INCLUDE_DIRS)
 
 # Hide internal variables
 mark_as_advanced(
