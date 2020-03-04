@@ -52,33 +52,26 @@ if(ARMADILLO_INCLUDE_DIR)
   if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp")
 
     # Read and parse armdillo version header file for version number
-    file(STRINGS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp" _armadillo_HEADER_CONTENTS REGEX "#define ARMA_VERSION_[A-Z]+ ")
-    string(REGEX REPLACE ".*#define ARMA_VERSION_MAJOR ([0-9]+).*" "\\1" ARMADILLO_VERSION_MAJOR "${_armadillo_HEADER_CONTENTS}")
-    string(REGEX REPLACE ".*#define ARMA_VERSION_MINOR ([0-9]+).*" "\\1" ARMADILLO_VERSION_MINOR "${_armadillo_HEADER_CONTENTS}")
-    string(REGEX REPLACE ".*#define ARMA_VERSION_PATCH ([0-9]+).*" "\\1" ARMADILLO_VERSION_PATCH "${_armadillo_HEADER_CONTENTS}")
+    file(STRINGS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp" _ARMA_HEADER_CONTENTS REGEX "#define ARMA_VERSION_[A-Z]+ ")
+    string(REGEX REPLACE ".*#define ARMA_VERSION_MAJOR ([0-9]+).*" "\\1" ARMADILLO_VERSION_MAJOR "${_ARMA_HEADER_CONTENTS}")
+    string(REGEX REPLACE ".*#define ARMA_VERSION_MINOR ([0-9]+).*" "\\1" ARMADILLO_VERSION_MINOR "${_ARMA_HEADER_CONTENTS}")
+    string(REGEX REPLACE ".*#define ARMA_VERSION_PATCH ([0-9]+).*" "\\1" ARMADILLO_VERSION_PATCH "${_ARMA_HEADER_CONTENTS}")
 
     # WARNING: The number of spaces before the version name is not one.
-    string(REGEX REPLACE ".*#define ARMA_VERSION_NAME\ +\"([0-9a-zA-Z\ _-]+)\".*" "\\1" ARMADILLO_VERSION_NAME "${_armadillo_HEADER_CONTENTS}")
+    string(REGEX REPLACE ".*#define ARMA_VERSION_NAME\ +\"([0-9a-zA-Z\ _-]+)\".*" "\\1" ARMADILLO_VERSION_NAME "${_ARMA_HEADER_CONTENTS}")
 
   endif()
 
   set(ARMADILLO_VERSION_STRING "${ARMADILLO_VERSION_MAJOR}.${ARMADILLO_VERSION_MINOR}.${ARMADILLO_VERSION_PATCH}")
 endif ()
 
-# Read relevant variables from header
 if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
-  file(STRINGS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp" _armadillo_CONFIG_CONTENTS REGEX "#define ARMA_USE_[A-Z]+ ")
-  # _ARMA_USE_WRAPPER
+  file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp" _armadillo_CONFIG_CONTENTS)
   string(REGEX MATCH "\r?\n[\t ]*#define[ \t]+ARMA_USE_WRAPPER[ \t]*\r?\n" _ARMA_USE_WRAPPER "${_armadillo_CONFIG_CONTENTS}")
-  # _ARMA_USE_LAPACK
-  string(REGEX MATCH "\r?\n[\t ]*#if[\t ]+!defined[(]ARMA_USE_LAPACK[)][\t ]*\r?\n[\t ]*#define[ \t]+_ARMA_USE_LAPACK[ \t]*\r?\n" _ARMA_USE_LAPACK "${_armadillo_CONFIG_CONTENTS}")
-  # _ARMA_USE_BLAS
-  string(REGEX MATCH "\r?\n[\t ]*#if[\t ]+!defined[(]ARMA_USE_BLAS[)][\t ]*\r?\n[\t ]*#define[ \t]+_ARMA_USE_BLAS[ \t]*\r?\n" _ARMA_USE_BLAS "${_armadillo_CONFIG_CONTENTS}")
-  # _ARMA_USE_ARPACK
-  string(REGEX MATCH "\r?\n[\t ]*#if[\t ]+!defined[(]ARMA_USE_ARPACK[)][\t ]*\r?\n[\t ]*#define[ \t]+_ARMA_USE_ARPACK[ \t]*\r?\n" _ARMA_USE_ARPACK "${_armadillo_CONFIG_CONTENTS}")
-  # _ARMA_USE_HDF5
-  string(REGEX MATCH "\r?\n[\t ]*#if[\t ]+!defined[(]ARMA_USE_HDF5[)][\t ]*\r?\n[\t ]*#define[ \t]+_ARMA_USE_HDF5[ \t]*\r?\n" _ARMA_USE_HDF5 "${_armadillo_CONFIG_CONTENTS}")
-  unset(_armadillo_HEADER_CONTENTS)
+  string(REGEX MATCH "\r?\n[\t ]*#if[\t ]+!defined[(]ARMA_USE_LAPACK[)][\t ]*\r?\n[\t ]*#define[ \t]+ARMA_USE_LAPACK[ \t]*\r?\n" _ARMA_USE_LAPACK "${_armadillo_CONFIG_CONTENTS}")
+  string(REGEX MATCH "\r?\n[\t ]*#if[\t ]+!defined[(]ARMA_USE_BLAS[)][\t ]*\r?\n[\t ]*#define[ \t]+ARMA_USE_BLAS[ \t]*\r?\n" _ARMA_USE_BLAS "${_armadillo_CONFIG_CONTENTS}")
+  string(REGEX MATCH "\r?\n[\t ]*#if[\t ]+!defined[(]ARMA_USE_ARPACK[)][\t ]*\r?\n[\t ]*#define[ \t]+ARMA_USE_ARPACK[ \t]*\r?\n" _ARMA_USE_ARPACK "${_armadillo_CONFIG_CONTENTS}")
+  string(REGEX MATCH "\r?\n[\t ]*#if[\t ]+!defined[(]ARMA_USE_HDF5[)][\t ]*\r?\n[\t ]*#define[ \t]+ARMA_USE_HDF5[ \t]*\r?\n" _ARMA_USE_HDF5 "${_armadillo_CONFIG_CONTENTS}")
 endif()
 
 include(FindPackageHandleStandardArgs)
@@ -132,6 +125,8 @@ unset(_ARMA_USE_LAPACK)
 unset(_ARMA_USE_BLAS)
 unset(_ARMA_USE_ARPACK)
 unset(_ARMA_USE_HDF5)
+unset(_ARMA_CONFIG_CONTENTS)
+unset(_ARMA_HEADER_CONTENTS)
 
 # Hide internal variables
 mark_as_advanced(
