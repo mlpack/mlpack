@@ -1,4 +1,4 @@
-# mlpack governance structure (DRAFT)
+# mlpack governance structure
 
 Revised Oct. 21st, 2019.
 
