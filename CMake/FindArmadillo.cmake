@@ -104,7 +104,18 @@ else(_ARMA_USE_WRAPPER)
     set(_ARMA_SUPPORT_LIBRARIES "${_ARMA_SUPPORT_LIBRARIES}" "${ARPACK_LIBRARIES}")
   endif(_ARMA_USE_ARPACK)
   if(_ARMA_USE_HDF5)
-    find_package(HDF5 REQUIRED)
+    find_package(HDF5 QUIET)
+    if(NOT HDF5_FOUND)
+      # On Debian systems, the HDF5 package has been split into multiple
+      # packages so that it is co-installable.  But this may mean that the
+      # include files are hidden somewhere very odd that FindHDF5.cmake  will
+      # not find.  Thus, we'll also quickly check pkgconfig to see if there is
+      # information on what to use there.
+      find_package(PkgConfig)
+      if (PKG_CONFIG_FOUND)
+        pkg_check_modules(HDF5 REQUIRED hdf5)
+      endif()
+    endif()
     set(_ARMA_SUPPORT_LIBRARIES "${_ARMA_SUPPORT_LIBRARIES}" "${HDF5_LIBRARIES}")
   endif(_ARMA_USE_HDF5)
   set(ARMADILLO_FOUND true)
