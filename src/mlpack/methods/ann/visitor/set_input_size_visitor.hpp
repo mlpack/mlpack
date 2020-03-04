@@ -47,21 +47,24 @@ class SetInputSizeVisitor : public boost::static_visitor<bool>
   //! function.
   template<typename T>
   typename std::enable_if<
-      !HasInputSize<T, size_t&(T::*)()>::value &&
+      (!HasInputSize<T, size_t&(T::*)()>::value ||
+       !HasResetCheck<T, void(T::*)()>::value) &&
       !HasModelCheck<T>::value, bool>::type
   LayerInputSize(T* layer) const;
 
   //! Update the input size if the module implements the InputSize() function.
   template<typename T>
   typename std::enable_if<
-      HasInputSize<T, size_t&(T::*)()>::value &&
+       HasInputSize<T, size_t&(T::*)()>::value &&
+       HasResetCheck<T, void(T::*)()>::value &&
       !HasModelCheck<T>::value, bool>::type
   LayerInputSize(T* layer) const;
 
   //! Update the input size if the module implements the Model() function.
   template<typename T>
   typename std::enable_if<
-      !HasInputSize<T, size_t&(T::*)()>::value &&
+      (!HasInputSize<T, size_t&(T::*)()>::value ||
+       !HasResetCheck<T, void(T::*)()>::value) &&
       HasModelCheck<T>::value, bool>::type
   LayerInputSize(T* layer) const;
 
@@ -70,6 +73,7 @@ class SetInputSizeVisitor : public boost::static_visitor<bool>
   template<typename T>
   typename std::enable_if<
       HasInputSize<T, size_t&(T::*)()>::value &&
+      HasResetCheck<T, void(T::*)()>::value &&
       HasModelCheck<T>::value, bool>::type
   LayerInputSize(T* layer) const;
 };

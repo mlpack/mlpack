@@ -40,7 +40,8 @@ inline bool SetInputSizeVisitor::operator()(MoreTypes layer) const
 
 template<typename T>
 inline typename std::enable_if<
-    !HasInputSize<T, size_t&(T::*)()>::value &&
+    (!HasInputSize<T, size_t&(T::*)()>::value ||
+     !HasResetCheck<T, void(T::*)()>::value) &&
     !HasModelCheck<T>::value, bool>::type
 SetInputSizeVisitor::LayerInputSize(T* /* layer */) const
 {
@@ -50,6 +51,7 @@ SetInputSizeVisitor::LayerInputSize(T* /* layer */) const
 template<typename T>
 inline typename std::enable_if<
     HasInputSize<T, size_t&(T::*)()>::value &&
+    HasResetCheck<T, void(T::*)()>::value &&
     !HasModelCheck<T>::value, bool>::type
 SetInputSizeVisitor::LayerInputSize(T* layer) const
 {
@@ -64,7 +66,8 @@ SetInputSizeVisitor::LayerInputSize(T* layer) const
 
 template<typename T>
 inline typename std::enable_if<
-    !HasInputSize<T, size_t&(T::*)()>::value &&
+    (!HasInputSize<T, size_t&(T::*)()>::value ||
+     !HasResetCheck<T, void(T::*)()>::value) &&
     HasModelCheck<T>::value, bool>::type
 SetInputSizeVisitor::LayerInputSize(T* layer) const
 {
@@ -80,6 +83,7 @@ SetInputSizeVisitor::LayerInputSize(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     HasInputSize<T, size_t&(T::*)()>::value &&
+    HasResetCheck<T, void(T::*)()>::value &&
     HasModelCheck<T>::value, bool>::type
 SetInputSizeVisitor::LayerInputSize(T* layer) const
 {
