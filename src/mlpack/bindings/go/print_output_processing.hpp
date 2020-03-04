@@ -65,7 +65,7 @@ void PrintOutputProcessing(
   /**
    * This gives us code like:
    *
-   *  var <paramName>_ptr mlpackArma
+   *  var <paramName>Ptr mlpackArma
    *  <paramName> := <paramName>_ptr.ArmaToGonum_<Type>("paramName")
    *
    */
@@ -94,7 +94,7 @@ void PrintOutputProcessing(
    * This gives us code like:
    *
    *  var <paramName>_ptr mlpackArma
-   *  <paramName> := <paramName>_ptr.ArmaToGonumWithInfo<Type>("paramName")
+   *  <paramName> := <paramName>Ptr.ArmaToGonumWithInfo<Type>("paramName")
    *
    */
   std::string name = d.name;
@@ -125,8 +125,8 @@ void PrintOutputProcessing(
   /**
    * This gives us code like:
    *
-   *  var <paramName> <Type>
-   *  <paramName> = get<Type>("paramName")
+   *  var ModelOut <Type>
+   *  ModelOut.get<Type>("paramName")
    *
    */
 
