@@ -639,23 +639,23 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /**
-   * Return the name of the given layer of type MishFunction as a string.
+   * Return the name of the given layer of type MishFunctionLayer as a string.
    * 
-   * @param Given layer of type MishFunction.
+   * @param Given layer of type MishFunctionLayer.
    * @return The string representation of the layer.
    */
-  std::string LayerString(MishFunction<>* /*layer*/) const
+  std::string LayerString(MishFunctionLayer<>* /*layer*/) const
   {
     return "mish";
   }
 
   /**
-   * Return the name of the given layer of type LiSHTFunction as a string.
+   * Return the name of the given layer of type LiSHTFunctionLayer as a string.
    * 
-   * @param Given layer of type LiSHTFunction.
+   * @param Given layer of type LiSHTFunctionLayer.
    * @return The string representation of the layer.
    */
-  std::string LayerString(LiSHTFunction<>* /*layer*/) const
+  std::string LayerString(LiSHTFunctionLayer<>* /*layer*/) const
   {
     return "lisht";
   }
