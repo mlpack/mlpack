@@ -45,9 +45,20 @@ class LinearNoBias
    *
    * @param inSize The number of input units.
    * @param outSize The number of output units.
+   * @param regularizer The regularization method.
    */
   LinearNoBias(const size_t inSize,
                const size_t outSize,
+               RegularizerType regularizer = RegularizerType());
+
+  /**
+   * Create the LinearNoBias layer object using the specified layer size.
+   * The input layer size will be automatically inferred.
+   *
+   * @param layerSize The number of output units.
+   * @param regularizer The regularization method.
+   */
+  LinearNoBias(const size_t layerSize,
                RegularizerType regularizer = RegularizerType());
 
   /*
@@ -112,10 +123,10 @@ class LinearNoBias
   OutputDataType& Delta() { return delta; }
 
   //! Get the input size.
-  size_t InputSize() const { return inSize; }
+  size_t& InputSize() { return inSize; }
 
   //! Get the output size.
-  size_t OutputSize() const { return outSize; }
+  size_t& OutputSize() { return outSize; }
 
   //! Get the gradient.
   OutputDataType const& Gradient() const { return gradient; }

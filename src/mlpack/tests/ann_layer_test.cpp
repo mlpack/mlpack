@@ -428,7 +428,7 @@ BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
 }
 
 /**
- * Simple linear layer with only output size test.
+ * Simple Linear/LinearNoBias layer with only output size test.
  */
 BOOST_AUTO_TEST_CASE(SimpleLinearLayerOutputSizeTest)
 {
@@ -441,6 +441,7 @@ BOOST_AUTO_TEST_CASE(SimpleLinearLayerOutputSizeTest)
   input = arma::randu(10, 1);
 
   modelA.Add<Linear<> >(10, 10);
+  modelA.Add<LinearNoBias<> >(10, 10);
   modelA.Add<SigmoidLayer<> >();
   modelA.Add<Linear<> >(10, 10);
   modelA.Add<SigmoidLayer<> >();
@@ -448,6 +449,7 @@ BOOST_AUTO_TEST_CASE(SimpleLinearLayerOutputSizeTest)
   modelA.Forward(input, outputA);
 
   modelB.Add<Linear<> >(10);
+  modelB.Add<LinearNoBias<> >(10);
   modelB.Add<SigmoidLayer<> >();
   modelB.Add<Linear<> >(10);
   modelB.Add<SigmoidLayer<> >();

@@ -46,6 +46,7 @@ class Linear
    *
    * @param inSize The number of input units.
    * @param outSize The number of output units.
+   * @param regularizer The regularization method.
    */
   Linear(const size_t inSize,
          const size_t outSize,
@@ -56,6 +57,7 @@ class Linear
    * layer size will be automatically inferred.
    *
    * @param layerSize The number of output units.
+   * @param regularizer The regularization method.
    */
   Linear(const size_t layerSize,
          RegularizerType regularizer = RegularizerType());
