@@ -39,6 +39,25 @@ inline void ResetCellVisitor::operator()(MoreTypes layer) const
 
 template<typename T>
 inline typename std::enable_if<
+      !HasModelCheck<std::vector<LayerTypes<>>&(T::*)()>::value, void>::type
+ResetCellVisitor::ResetCellModel(T* /* layer */) const
+{
+  /* Nothing to do here */
+}
+
+template<typename T>
+inline typename std::enable_if<
+      HasModelCheck<std::vector<LayerTypes<>>&(T::*)()>::value, void>::type
+ResetCellVisitor::ResetCellModel(T* layer) const
+{
+  for (auto l : layer->Model())
+  {
+    boost::apply_visitor(ResetCellVisitor(size), l);
+  }
+}
+
+template<typename T>
+inline typename std::enable_if<
     HasResetCellCheck<T, void(T::*)(const size_t)>::value, void>::type
 ResetCellVisitor::ResetCell(T* layer) const
 {
@@ -51,25 +70,6 @@ inline typename std::enable_if<
 ResetCellVisitor::ResetCell(T* /* layer */) const
 {
   /* Nothing to do here. */
-}
-
-template<typename T>
-inline typename std::enable_if<
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
-ResetCellVisitor::ResetCellModel(T* /* layer */) const
-{
-  /* Nothing to do here */
-}
-
-template<typename T>
-inline typename std::enable_if<
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
-ResetCellVisitor::ResetCellModel(T* layer) const
-{
-  for (auto l : layer->Model())
-  {
-    boost::apply_visitor(ResetCellVisitor(), l);
-  }
 }
 
 } // namespace ann
