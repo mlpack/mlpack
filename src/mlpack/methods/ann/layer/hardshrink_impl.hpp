@@ -32,7 +32,7 @@ template<typename InputType, typename OutputType>
 void HardShrink<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
-  Fn(input, output);
+  output = ((input > lambda) + (input < -lambda)) % input;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -41,7 +41,7 @@ void HardShrink<InputDataType, OutputDataType>::Backward(
     const DataType&& input, DataType&& gy, DataType&& g)
 {
   DataType derivative;
-  Deriv(input, derivative);
+  derivative = (arma::ones(arma::size(input)) - (input==0));
   g = gy % derivative;
 }
 
