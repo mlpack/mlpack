@@ -79,7 +79,6 @@ WarnMessage(OptimizerType& optimizer, size_t no_of_datapoints) const
   if (optimizer.MaxIterations() < no_of_datapoints &&
       optimizer.MaxIterations() != 0)
   {
-    std::cout << optimizer.MaxIterations() << std::endl;
     Log::Warn << "The optimizer's maximum number of iterations "
               << "is less than the size of the dataset, the "
               << "optimizer might not pass over the entire "
