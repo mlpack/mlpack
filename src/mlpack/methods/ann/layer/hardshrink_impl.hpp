@@ -41,7 +41,7 @@ void HardShrink<InputDataType, OutputDataType>::Backward(
     const DataType&& input, DataType&& gy, DataType&& g)
 {
   DataType derivative;
-  derivative = (arma::ones(arma::size(input)) - (input==0));
+  derivative = (arma::ones(arma::size(input)) - (input == 0));
   g = gy % derivative;
 }
 
