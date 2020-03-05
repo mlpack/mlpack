@@ -69,6 +69,41 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::ResetData(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+template<typename OptimizerType>
+typename std::enable_if<
+      HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
+WarnMessage(OptimizerType& optimizer, size_t no_of_datapoints) const
+{
+  if (optimizer.MaxIterations() < no_of_datapoints &&
+      optimizer.MaxIterations() != 0)
+  {
+    std::cout << optimizer.MaxIterations() << std::endl;
+    Log::Warn << "The optimizer's maximum number of iterations "
+              << "is less than the size of the dataset, the "
+              << "optimizer might not pass over the entire "
+              << "dataset. To fix this, modify the maximum "
+              << "number of iterations to be at least equal "
+              << "to the number of points of your dataset "
+              << "(" << no_of_datapoints << ")." <<std::endl;
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+template<typename OptimizerType>
+typename std::enable_if<
+      !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
+WarnMessage(OptimizerType& optimizer, size_t no_of_datapoints) const
+{
+  return;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
 template<typename OptimizerType, typename... CallbackTypes>
 double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
       arma::mat predictors,
@@ -78,14 +113,7 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 {
   ResetData(std::move(predictors), std::move(responses));
 
-  if (optimizer.MaxIterations() < this->predictors.n_cols)
-  {
-    Log::Warn << "The number of iterations is less than the size of the "
-              << "dataset, the optimizer might not pass over the entire "
-              << "dataset. Please modify the number of iterations to be "
-              << "at least equal to the number of columns of your "
-              << "dataset." << std::endl;
-  }
+  WarnMessage<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
   Timer::Start("ffn_optimization");
@@ -109,14 +137,7 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   OptimizerType optimizer;
 
-  if (optimizer.MaxIterations() < this->predictors.n_cols)
-  {
-    Log::Warn << "The number of iterations is less than the size of the "
-              << "dataset, the optimizer might not pass over the entire "
-              << "dataset. Please modify the number of iterations to be "
-              << "at least equal to the number of columns of your "
-              << "dataset." << std::endl;
-  }
+  WarnMessage<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
   Timer::Start("ffn_optimization");
