@@ -248,7 +248,7 @@ size_t CLI_GetParamVectorStrLen(const char* paramName)
  */
 const char* CLI_GetParamVectorStrStr(const char* paramName, const int i)
 {
-  return CLI::GetParam<std::vector<std::string>>(paramName)[int(i)].c_str();
+  return CLI::GetParam<std::vector<std::string>>(paramName)[i].c_str();
 }
 
 /**
@@ -264,13 +264,13 @@ size_t CLI_GetParamVectorIntLen(const char* paramName)
  * The vector will be created in-place and it is expected that the calling
  * function will take ownership.
  */
-size_t* CLI_GetParamVectorIntPtr(const char* paramName)
+int* CLI_GetParamVectorIntPtr(const char* paramName)
 {
   const size_t size = CLI::GetParam<std::vector<int>>(paramName).size();
-  size_t* ints = new size_t[size];
+  int* ints = new int[size];
 
   for (size_t i = 0; i < size; ++i)
-    ints[i] = size_t(CLI::GetParam<std::vector<int>>(paramName)[i]);
+    ints[i] = CLI::GetParam<std::vector<int>>(paramName)[i];
 
   return ints;
 }
@@ -493,7 +493,7 @@ size_t* CLI_GetParamURow(const char* paramName)
  */
 size_t CLI_GetParamMatWithInfoRows(const char* paramName)
 {
-  return std::get<1>( CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
+  return std::get<1>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
       paramName)).n_rows;
 }
 
@@ -502,7 +502,7 @@ size_t CLI_GetParamMatWithInfoRows(const char* paramName)
  */
 size_t CLI_GetParamMatWithInfoCols(const char* paramName)
 {
-  return std::get<1>( CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
+  return std::get<1>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
       paramName)).n_cols;
 }
 
