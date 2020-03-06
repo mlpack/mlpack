@@ -28,3 +28,32 @@ Members of the Contributors team are encouraged to review pull requests that
 have already been reviewed, and pull request contributors are encouraged to seek
 multiple reviews.  Reviews from anyone not on the Contributors team are always
 appreciated and encouraged!
+
+## Reviewing Pull Requests
+
+All mlpack contributors who choose to review and provide feedback on Pull Requests have a responsibility to both the project and the individual making the contribution. 
+
+Reviews and feedback must be helpful, insightful, and geared towards improving the contribution. If there are reasons why you feel the PR should not be merged, explain what those are. Do not expect to be able to block a Pull Request from advancing simply because you say "No" without giving an explanation. Be open to having your mind changed. Be open to working with the contributor to make the Pull Request better.
+
+Reviews that are dismissive or disrespectful of the contributor or any other reviewers are strictly prohibited.
+
+When reviewing a Pull Request, the primary goals are :
+
+- For the codebase/project to improve
+- For the person submitting the request to succeed
+
+Even if a Pull Request does not gets merged, the submitters should come away from the experience feeling like their effort was not wasted or unappreciated. Every Pull Request from a new contributor is an opportunity to grow the community. 
+
+When changes are necessary, request them, do not demand them, and do not assume that the contributor already knows how to do that. Be there to lend a helping hand in case of need.
+
+Since there is clearly a high difference between pull request being raised and those being reviewed we highly encourage everyone to review each others pull request keeping in mind all the above mentioned points. 
+
+Let's welcome new contributors with <3, and not overwhelm them.
+
+## Pull Request Waiting Time 
+
+Since all those associated with the project are working during their free time to improve the project, It sometimes becomes difficult to spare time for a particular pull request and hence please wait patiently until one of the contributors or maintainers reviews your pull request or patches. 
+
+There is a minimum waiting time which we try to respect, so that people who may have important input in such a huge project are able to respond 
+
+Constant pinging or getting in touch to get the pull request wouldn't be of much help and may overload the maintainer which could potentialy reduce the throughput.
