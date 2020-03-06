@@ -451,6 +451,7 @@ inline std::string PrintModel(const std::string& model)
 template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args)
 {
+  std::string s;
   if (BindingInfo::Language() == "cli")
   {
     s += "```bash\n";
