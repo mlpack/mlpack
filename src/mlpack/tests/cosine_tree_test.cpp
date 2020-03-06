@@ -15,6 +15,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+#include "serialization.hpp"
 
 BOOST_AUTO_TEST_SUITE(CosineTreeTest);
 
@@ -434,6 +435,100 @@ BOOST_AUTO_TEST_CASE(MoveConstructorAndOperatorCosineTreeTest)
     BOOST_REQUIRE_EQUAL(v1.at(i), v2.at(i));
     BOOST_REQUIRE_EQUAL(v1.at(i), v3.at(i));
   }
+}
+
+/**
+ * Test serialization.
+ */
+BOOST_AUTO_TEST_CASE(SerializationTest)
+{
+  // Use a small random dataset.
+  arma::mat dataset(3, 500, arma::fill::randu);
+  CosineTree t(std::move(dataset));
+
+  CosineTree* xmlTree;
+  CosineTree* binaryTree;
+  CosineTree* textTree;
+  std::vector<CosineTree*> nodeStack1, nodeStack2, nodeStack3, nodeStack4;
+  std::vector<int> v1, v2, v3, v4;
+
+  SerializePointerObjectAll(&t, xmlTree, binaryTree, textTree);
+
+  nodeStack1.push_back(&t);
+  nodeStack2.push_back(xmlTree);
+  nodeStack3.push_back(binaryTree);
+  nodeStack4.push_back(xmlTree);
+
+  // While stacks are not empty.
+  while (nodeStack1.size())
+  {
+    // Pop a node from the stack and split it.
+    CosineTree *currentNode1, *currentLeft1, *currentRight1;
+    CosineTree *currentNode2, *currentLeft2, *currentRight2;
+    CosineTree *currentNode3, *currentLeft3, *currentRight3;
+    CosineTree *currentNode4, *currentLeft4, *currentRight4;
+
+    currentNode1 = nodeStack1.back();
+    nodeStack1.pop_back();
+
+    currentNode2 = nodeStack2.back();
+    nodeStack2.pop_back();
+
+    currentNode3 = nodeStack3.back();
+    nodeStack3.pop_back();
+
+    currentNode4 = nodeStack4.back();
+    nodeStack4.pop_back();
+
+    // Obtain pointers to the children of the node.
+    currentLeft1 = currentNode1->Left();
+    currentRight1 = currentNode1->Right();
+
+    currentLeft2 = currentNode2->Left();
+    currentRight2 = currentNode2->Right();
+
+    currentLeft3 = currentNode3->Left();
+    currentRight3 = currentNode3->Right();
+
+    currentLeft4 = currentNode4->Left();
+    currentRight4 = currentNode4->Right();
+
+    // If children exist.
+    if (currentLeft1 && currentRight1)
+    {
+      // Push the child nodes on to the stack.
+      nodeStack1.push_back(currentLeft1);
+      nodeStack1.push_back(currentRight1);
+
+      // Push the child nodes on to the stack.
+      nodeStack2.push_back(currentLeft2);
+      nodeStack2.push_back(currentRight2);
+
+      // Push the child nodes on to the stack.
+      nodeStack3.push_back(currentLeft3);
+      nodeStack3.push_back(currentRight3);
+
+      // Push the child nodes on to the stack.
+      nodeStack4.push_back(currentLeft4);
+      nodeStack4.push_back(currentRight4);
+
+      v1.push_back(currentNode1->NumColumns());
+      v2.push_back(currentNode2->NumColumns());
+      v3.push_back(currentNode3->NumColumns());
+      v4.push_back(currentNode4->NumColumns());
+    }
+  }
+
+  for (size_t i = 0; i < v1.size(); i++)
+  {
+    BOOST_REQUIRE_EQUAL(v1.at(i), v2.at(i));
+    BOOST_REQUIRE_EQUAL(v1.at(i), v3.at(i));
+    BOOST_REQUIRE_EQUAL(v1.at(i), v4.at(i));
+  }
+
+  delete xmlTree;
+  delete binaryTree;
+  delete textTree;
 }
 
 BOOST_AUTO_TEST_SUITE_END();
