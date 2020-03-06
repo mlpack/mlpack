@@ -173,9 +173,9 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
           predictors.slice(rho - seqNum - 1).colptr(begin),
           predictors.n_rows, effectiveBatchSize, false, true)));
 
-      boost::apply_visitor(SaveOutputParameterVisitor( results1),
+      boost::apply_visitor(SaveOutputParameterVisitor(results1),
           forwardRNN.network.back());
-      boost::apply_visitor(SaveOutputParameterVisitor( results2),
+      boost::apply_visitor(SaveOutputParameterVisitor(results2),
           backwardRNN.network.back());
     }
     reverse(results1.begin(), results1.end());
@@ -183,9 +183,9 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     // Forward outputs from both RNN's through merge layer for each time step.
     for (size_t seqNum = 0; seqNum < rho; ++seqNum)
     {
-      boost::apply_visitor(LoadOutputParameterVisitor( results1),
+      boost::apply_visitor(LoadOutputParameterVisitor(results1),
           forwardRNN.network.back());
-      boost::apply_visitor(LoadOutputParameterVisitor( results2),
+      boost::apply_visitor(LoadOutputParameterVisitor(results2),
           backwardRNN.network.back());
 
       boost::apply_visitor(ForwardVisitor(std::move(input),
@@ -250,9 +250,9 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
         predictors.slice(rho - seqNum - 1).colptr(begin),
         predictors.n_rows, batchSize, false, true));
 
-    boost::apply_visitor(SaveOutputParameterVisitor( results1),
+    boost::apply_visitor(SaveOutputParameterVisitor(results1),
         forwardRNN.network.back());
-    boost::apply_visitor(SaveOutputParameterVisitor( results2),
+    boost::apply_visitor(SaveOutputParameterVisitor(results2),
         backwardRNN.network.back());
   }
   if (outputSize == 0)
@@ -271,9 +271,9 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     {
       responseSeq = seqNum;
     }
-    boost::apply_visitor(LoadOutputParameterVisitor( results1),
+    boost::apply_visitor(LoadOutputParameterVisitor(results1),
         forwardRNN.network.back());
-    boost::apply_visitor(LoadOutputParameterVisitor( results2),
+    boost::apply_visitor(LoadOutputParameterVisitor(results2),
         backwardRNN.network.back());
 
     boost::apply_visitor(ForwardVisitor(std::move(input),
@@ -375,9 +375,9 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
       boost::apply_visitor(SaveOutputParameterVisitor(
           backwardRNNOutputParameter), backwardRNN.network[l]);
     }
-    boost::apply_visitor(SaveOutputParameterVisitor( results1),
+    boost::apply_visitor(SaveOutputParameterVisitor(results1),
         forwardRNN.network.back());
-    boost::apply_visitor(SaveOutputParameterVisitor( results2),
+    boost::apply_visitor(SaveOutputParameterVisitor(results2),
         backwardRNN.network.back());
   }
   if (outputSize == 0)

@@ -314,7 +314,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
     for (size_t l = 0; l < network.size(); ++l)
     {
-      boost::apply_visitor(SaveOutputParameterVisitor( moduleOutputParameter),
+      boost::apply_visitor(SaveOutputParameterVisitor(moduleOutputParameter),
           network[l]);
     }
 
