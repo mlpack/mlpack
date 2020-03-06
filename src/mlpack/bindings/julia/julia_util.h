@@ -27,7 +27,7 @@ void CLI_RestoreSettings(const char* programName);
 /**
  * Call CLI::SetParam<int>().
  */
-void CLI_SetParamInt(const char* paramName, int64_t paramValue);
+void CLI_SetParamInt(const char* paramName, int paramValue);
 
 /**
  * Call CLI::SetParam<double>().
@@ -61,7 +61,7 @@ void CLI_SetParamVectorStrStr(const char* paramName,
  * Call CLI::SetParam<std::vector<int>>().
  */
 void CLI_SetParamVectorInt(const char* paramName,
-                           int64_t* ints,
+                           int* ints,
                            const size_t length);
 
 /**
@@ -123,7 +123,7 @@ void CLI_SetParamMatWithInfo(const char* paramName,
 /**
  * Call CLI::GetParam<int>().
  */
-int64_t CLI_GetParamInt(const char* paramName);
+int CLI_GetParamInt(const char* paramName);
 
 /**
  * Call CLI::GetParam<double>().
@@ -149,7 +149,7 @@ size_t CLI_GetParamVectorStrLen(const char* paramName);
 /**
  * Call CLI::GetParam<std::vector<std::string>>() and get the i'th string.
  */
-const char* CLI_GetParamVectorStrStr(const char* paramName, const int64_t i);
+const char* CLI_GetParamVectorStrStr(const char* paramName, const int i);
 
 /**
  * Call CLI::GetParam<std::vector<int>>() and get the length of the vector.
