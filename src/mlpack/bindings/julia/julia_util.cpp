@@ -22,7 +22,7 @@ void CLI_RestoreSettings(const char* programName)
 }
 
 /**
- * Call CLI::SetParam<int>().  Julia always gives us an int64.
+ * Call CLI::SetParam<int>().
  */
 void CLI_SetParamInt(const char* paramName, int paramValue)
 {
@@ -80,7 +80,7 @@ void CLI_SetParamVectorStrStr(const char* paramName,
 }
 
 /**
- * Call CLI::SetParam<std::vector<int>>().  Julia always gives us int64s.
+ * Call CLI::SetParam<std::vector<int>>().
  */
 void CLI_SetParamVectorInt(const char* paramName,
                            int* ints,
