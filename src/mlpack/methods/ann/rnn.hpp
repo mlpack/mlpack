@@ -23,6 +23,7 @@
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/layer/layer_traits.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 
 #include <ensmallen.hpp>
@@ -71,6 +72,35 @@ class RNN
 
   //! Destructor to release allocated memory.
   ~RNN();
+
+/**
+   * Check if the optimizer has MaxIterations() parameter, if it does
+   * then check if it's value is less than value of number of
+   * datapoints in the dataset.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param optimizer optimizer used in the training process.
+   * @param no_of_datapoints Number of datapoints in the dataset.
+   */
+  template<typename OptimizerType>
+  typename std::enable_if<
+      HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+  WarnMessage(OptimizerType& optimizer, size_t no_of_datapoints) const;
+
+/**
+   * Check if the optimizer has MaxIterations() parameter, if it
+   * doesn't then simply return from the function.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param optimizer optimizer used in the training process.
+   * @param no_of_datapoints Number of datapoints in the dataset.
+   */
+  template<typename OptimizerType>
+  typename std::enable_if<
+      !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+  WarnMessage(OptimizerType& optimizer, size_t no_of_datapoints) const;
 
   /**
    * Train the recurrent neural network on the given input data using the given

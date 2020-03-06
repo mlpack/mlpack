@@ -63,6 +63,40 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::~RNN()
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+template<typename OptimizerType>
+typename std::enable_if<
+      HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
+WarnMessage(OptimizerType& optimizer, size_t no_of_datapoints) const
+{
+  if (optimizer.MaxIterations() < no_of_datapoints &&
+      optimizer.MaxIterations() != 0)
+  {
+    Log::Warn << "The optimizer's maximum number of iterations "
+              << "is less than the size of the dataset, the "
+              << "optimizer might not pass over the entire "
+              << "dataset. To fix this, modify the maximum "
+              << "number of iterations to be at least equal "
+              << "to the number of points of your dataset "
+              << "(" << no_of_datapoints << ")." <<std::endl;
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+template<typename OptimizerType>
+typename std::enable_if<
+      !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
+WarnMessage(OptimizerType& optimizer, size_t no_of_datapoints) const
+{
+  return;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
 template<typename OptimizerType, typename... CallbackTypes>
 double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::cube predictors,
@@ -83,14 +117,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     ResetParameters();
   }
 
-  if (optimizer.MaxIterations() < this->predictors.n_cols)
-  {
-    Log::Warn << "The number of iterations is less than the size of the "
-              << "dataset, the optimizer might not pass over the entire "
-              << "dataset. Please modify the number of iterations to be "
-              << "at least equal to the number of columns of your "
-              << "dataset." << std::endl;
-  }
+  WarnMessage<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
   Timer::Start("rnn_optimization");
@@ -135,6 +162,8 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   }
 
   OptimizerType optimizer;
+
+  WarnMessage<OptimizerType>(optimizer, this->predictors.n_cols);
 
   if (optimizer.MaxIterations() < this->predictors.n_cols)
   {
