@@ -24,9 +24,9 @@ void CLI_RestoreSettings(const char* programName)
 /**
  * Call CLI::SetParam<int>().  Julia always gives us an int64.
  */
-void CLI_SetParamInt(const char* paramName, int64_t paramValue)
+void CLI_SetParamInt(const char* paramName, int paramValue)
 {
-  CLI::GetParam<int>(paramName) = int(paramValue);
+  CLI::GetParam<int>(paramName) = paramValue;
   CLI::SetPassed(paramName);
 }
 
@@ -83,7 +83,7 @@ void CLI_SetParamVectorStrStr(const char* paramName,
  * Call CLI::SetParam<std::vector<int>>().  Julia always gives us int64s.
  */
 void CLI_SetParamVectorInt(const char* paramName,
-                           int64_t* ints,
+                           int* ints,
                            const size_t length)
 {
   // Create a std::vector<int> object; unfortunately this requires copying the
@@ -91,7 +91,7 @@ void CLI_SetParamVectorInt(const char* paramName,
   std::vector<int> vec;
   vec.resize(length);
   for (size_t i = 0; i < length; ++i)
-    vec[i] = int(ints[i]);
+    vec[i] = ints[i];
 
   CLI::GetParam<std::vector<int>>(paramName) = std::move(vec);
   CLI::SetPassed(paramName);
@@ -205,9 +205,9 @@ void CLI_SetParamMatWithInfo(const char* paramName,
 /**
  * Call CLI::GetParam<int>().
  */
-int64_t CLI_GetParamInt(const char* paramName)
+int CLI_GetParamInt(const char* paramName)
 {
-  return int64_t(CLI::GetParam<int>(paramName));
+  return CLI::GetParam<int>(paramName);
 }
 
 /**
@@ -246,7 +246,7 @@ size_t CLI_GetParamVectorStrLen(const char* paramName)
 /**
  * Call CLI::GetParam<std::vector<std::string>>() and get the i'th string.
  */
-const char* CLI_GetParamVectorStrStr(const char* paramName, const int64_t i)
+const char* CLI_GetParamVectorStrStr(const char* paramName, const int i)
 {
   return CLI::GetParam<std::vector<std::string>>(paramName)[int(i)].c_str();
 }
