@@ -124,7 +124,7 @@ inline std::string CreateInputArguments(const std::string& paramName,
                d.cppType == "arma::Col<size_t>")
       {
         oss << "julia> " << value << " = CSV.read(\"" << value
-            << ".csv\"; type=Int64)" << std::endl;
+            << ".csv\"; type=Int)" << std::endl;
       }
     }
 

@@ -109,15 +109,15 @@ std::string PrintTypeDoc(
     if (T::is_col || T::is_row)
     {
       return "A 1-d vector-like containing `Int` data (elements should be "
-          "greater than or equal to 0).  Could be an `Array{Int64, 1}`, an "
-          "`Array{Int64, 2}` with one dimension of size 1, or anything "
-          "convertible to `Array{Int64, 1}`.";
+          "greater than or equal to 0).  Could be an `Array{Int, 1}`, an "
+          "`Array{Int, 2}` with one dimension of size 1, or anything "
+          "convertible to `Array{Int, 1}`.";
     }
     else
     {
       return "A 2-d matrix-like containing `Int` data (elements should be "
-          "greater than or equal to 0).  Could be an `Array{Int64, 2}` or a "
-          "`DataFrame` or anything convertible to an `Array{Int64, 2}`.  It is "
+          "greater than or equal to 0).  Could be an `Array{Int, 2}` or a "
+          "`DataFrame` or anything convertible to an `Array{Int, 2}`.  It is "
           "expected that each row of the matrix corresponds to a data point, "
           "unless `points_are_rows` is set to `false` when calling mlpack "
           "bindings.";
