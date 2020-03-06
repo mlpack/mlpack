@@ -39,7 +39,7 @@ void PReLU<InputDataType, OutputDataType>::Reset()
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void PReLU<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   output = input;
   arma::uvec negative = arma::find(input < 0);
@@ -49,7 +49,7 @@ void PReLU<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void PReLU<InputDataType, OutputDataType>::Backward(
-    const DataType&& input, DataType&& gy, DataType&& g)
+    const DataType& input, const DataType& gy, DataType& g)
 {
   DataType derivative;
   derivative.set_size(arma::size(input));
@@ -64,8 +64,9 @@ void PReLU<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void PReLU<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
 {
   if (gradient.n_elem == 0)
   {

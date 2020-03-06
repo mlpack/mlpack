@@ -49,7 +49,7 @@ ELU<InputDataType, OutputDataType>::ELU(const double alpha) :
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void ELU<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   output.set_size(arma::size(input));
   for (size_t i = 0; i < input.n_elem; i++)
@@ -77,7 +77,7 @@ void ELU<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void ELU<InputDataType, OutputDataType>::Backward(
-    const DataType&& /* input */, DataType&& gy, DataType&& g)
+    const DataType& /* input */, const DataType& gy, DataType& g)
 {
   g = gy % derivative;
 }

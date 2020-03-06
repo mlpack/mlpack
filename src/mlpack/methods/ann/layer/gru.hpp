@@ -84,7 +84,7 @@ class GRU
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -96,9 +96,9 @@ class GRU
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -108,9 +108,9 @@ class GRU
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& /* error */,
-                arma::Mat<eT>&& /* gradient */);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& /* error */,
+                arma::Mat<eT>& /* gradient */);
 
   /*
    * Resets the cell to accept a new input. This breaks the BPTT chain starts a

@@ -81,7 +81,7 @@ class BatchNorm
    * @param output Resulting output activations.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Backward pass through the layer.
@@ -91,9 +91,9 @@ class BatchNorm
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /**
    * Calculate the gradient using the output delta and the input activations.
@@ -103,9 +103,9 @@ class BatchNorm
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }

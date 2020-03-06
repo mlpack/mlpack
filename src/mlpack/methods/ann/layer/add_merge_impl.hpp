@@ -47,14 +47,14 @@ template <typename InputDataType, typename OutputDataType,
           typename... CustomLayers>
 template<typename InputType, typename OutputType>
 void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Forward(
-    InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   if (run)
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
-          boost::apply_visitor(outputParameterVisitor, network[i]))),
+      boost::apply_visitor(ForwardVisitor(input,
+          boost::apply_visitor(outputParameterVisitor, network[i])),
           network[i]);
     }
   }
@@ -70,15 +70,17 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
   if (run)
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, network[i])), std::move(gy), std::move(
-          boost::apply_visitor(deltaVisitor, network[i]))), network[i]);
+      boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+          outputParameterVisitor, network[i]), gy,
+          boost::apply_visitor(deltaVisitor, network[i])), network[i]);
     }
 
     g = boost::apply_visitor(deltaVisitor, network[0]);
@@ -95,12 +97,14 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g,
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g,
     const size_t index)
 {
-  boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, network[index])), std::move(gy), std::move(
-      boost::apply_visitor(deltaVisitor, network[index]))), network[index]);
+  boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+      outputParameterVisitor, network[index]), gy,
+      boost::apply_visitor(deltaVisitor, network[index])), network[index]);
   g = boost::apply_visitor(deltaVisitor, network[index]);
 }
 
@@ -108,16 +112,15 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Gradient(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& /* gradient */ )
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& /* gradient */ )
 {
   if (run)
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      boost::apply_visitor(GradientVisitor(std::move(input), std::move(error)),
-          network[i]);
+      boost::apply_visitor(GradientVisitor(input, error), network[i]);
     }
   }
 }
@@ -126,13 +129,12 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Gradient(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& /* gradient */,
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& /* gradient */,
     const size_t index)
 {
-  boost::apply_visitor(GradientVisitor(std::move(input), std::move(error)),
-      network[index]);
+  boost::apply_visitor(GradientVisitor(input, error), network[index]);
 }
 
 template<typename InputDataType, typename OutputDataType,

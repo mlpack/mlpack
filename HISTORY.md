@@ -2,9 +2,9 @@
 ###### ????-??-??
   * Added `mean squared logarithmic error` loss function for neural networks
     (#2210).
-    
+
   * Added `mean bias loss function` for neural networks (#2210).
-  
+
   * The DecisionStump class has been marked deprecated; use the `DecisionTree`
     class with `NoRecursion=true` or use `ID3DecisionStump` instead (#2099).
 
@@ -42,10 +42,13 @@
 
   * Better error handling of eigendecompositions and Cholesky decompositions
     (#2088, #1840).
-  
+
   * Add LiSHT activation function (#2182).
 
   * Add Valid and Same Padding for Transposed Convolution layer (#2163).
+
+  * Change neural network types to avoid unnecessary use of rvalue references
+    (#TODO).
 
 ### mlpack 3.2.2
 ###### 2019-11-26

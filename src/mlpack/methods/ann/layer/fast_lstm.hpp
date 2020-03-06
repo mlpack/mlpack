@@ -91,7 +91,7 @@ class FastLSTM
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -103,9 +103,9 @@ class FastLSTM
    * @param g The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Backward(const InputType&& input,
-                ErrorType&& gy,
-                GradientType&& g);
+  void Backward(const InputType& input,
+                const ErrorType& gy,
+                GradientType& g);
 
   /*
    * Reset the layer parameter.
@@ -128,9 +128,9 @@ class FastLSTM
    * @param gradient The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Gradient(InputType&& input,
-                ErrorType&& error,
-                GradientType&& gradient);
+  void Gradient(const InputType& input,
+                const ErrorType& error,
+                GradientType& gradient);
 
   //! Get the maximum number of steps to backpropagate through time (BPTT).
   size_t Rho() const { return rho; }
@@ -171,7 +171,7 @@ class FastLSTM
    * @param sigmoid The matrix to store the sigmoid approximation into.
    */
   template<typename InputType, typename OutputType>
-  void FastSigmoid(InputType&& input, OutputType&& sigmoids)
+  void FastSigmoid(const InputType& input, OutputType& sigmoids)
   {
     for (size_t i = 0; i < input.n_elem; ++i)
       sigmoids(i) = FastSigmoid(input(i));

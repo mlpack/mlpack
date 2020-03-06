@@ -295,7 +295,8 @@ class RNN
    *
    * @param input Data sequence to compute probabilities for.
    */
-  void Forward(arma::mat&& input);
+  template<typename InputType>
+  void Forward(const InputType& input);
 
   /**
    * Reset the state of RNN cells in the network for new input sequence.
@@ -313,7 +314,7 @@ class RNN
    * layer defined optimizer.
    */
   template<typename InputType>
-  void Gradient(InputType&& input);
+  void Gradient(const InputType& input);
 
   /**
    * Reset the module status by setting the current deterministic parameter

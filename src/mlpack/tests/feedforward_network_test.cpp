@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
       arma::mat currentResuls;
       model.Forward(currentData, currentResuls);
       arma::mat gradients;
-      model.Backward(currentLabels, gradients);
+      model.Backward(currentData, currentLabels, gradients);
       #if ENS_VERSION_MAJOR == 1
       opt.Update(model.Parameters(), stepSize, gradients);
       #else
@@ -600,10 +600,8 @@ BOOST_AUTO_TEST_CASE(FFNReturnModel)
   // Get the layer parameter from layer A and layer B and store them in
   // parameterA and parameterB.
   arma::mat parameterA, parameterB;
-  boost::apply_visitor(ParametersVisitor(std::move(parameterA)),
-      model.Model()[0]);
-  boost::apply_visitor(ParametersVisitor(std::move(parameterB)),
-      model.Model()[1]);
+  boost::apply_visitor(ParametersVisitor(parameterA), model.Model()[0]);
+  boost::apply_visitor(ParametersVisitor(parameterB), model.Model()[1]);
 
   CheckMatrices(parameterA, arma::ones(3 * 3 + 3, 1));
   CheckMatrices(parameterB, arma::zeros(3 * 4 + 4, 1));

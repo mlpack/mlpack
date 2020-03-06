@@ -49,7 +49,7 @@ class ReconstructionLoss
    * @param target The target matrix.
    */
   template<typename InputType, typename TargetType>
-  double Forward(const InputType&& input, const TargetType&& target);
+  double Forward(const InputType& input, const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -59,9 +59,9 @@ class ReconstructionLoss
    * @param output The calculated error.
    */
   template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType&& input,
-                const TargetType&& target,
-                OutputType&& output);
+  void Backward(const InputType& input,
+                const TargetType& target,
+                OutputType& output);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }

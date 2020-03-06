@@ -84,7 +84,7 @@ class LSTM
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed-forward pass of a neural network, evaluating the function
@@ -96,9 +96,9 @@ class LSTM
    * @param useCellState Use the cellState passed in the LSTM cell.
    */
   template<typename InputType, typename OutputType>
-  void Forward(InputType&& input,
-               OutputType&& output,
-               OutputType&& cellState,
+  void Forward(const InputType& input,
+               OutputType& output,
+               OutputType& cellState,
                bool useCellState = false);
 
   /**
@@ -111,9 +111,9 @@ class LSTM
    * @param g The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Backward(const InputType&& input,
-                ErrorType&& gy,
-                GradientType&& g);
+  void Backward(const InputType& input,
+                const ErrorType& gy,
+                GradientType& g);
 
   /*
    * Reset the layer parameter.
@@ -136,9 +136,9 @@ class LSTM
    * @param gradient The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Gradient(InputType&& input,
-                ErrorType&& error,
-                GradientType&& gradient);
+  void Gradient(const InputType& input,
+                const ErrorType& error,
+                GradientType& gradient);
 
   //! Get the maximum number of steps to backpropagate through time (BPTT).
   size_t Rho() const { return rho; }

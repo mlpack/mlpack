@@ -207,10 +207,10 @@ void TransposedConvolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+>::Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   batchSize = input.n_cols;
-  inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
+  inputTemp = arma::cube(const_cast<arma::Mat<eT>&>(input).memptr(),
       inputWidth, inputHeight, inSize * batchSize, false, false);
 
   if (strideWidth > 1 || strideHeight > 1)
@@ -227,8 +227,8 @@ void TransposedConvolution<
 
       for (size_t i = 0; i < inputExpandedTemp.n_slices; ++i)
       {
-        paddingForward.Forward(std::move(inputExpandedTemp.slice(i)),
-            std::move(inputPaddedTemp.slice(i)));
+        paddingForward.Forward(inputExpandedTemp.slice(i),
+            inputPaddedTemp.slice(i));
       }
     }
     else
@@ -250,8 +250,7 @@ void TransposedConvolution<
 
     for (size_t i = 0; i < inputTemp.n_slices; ++i)
     {
-      paddingForward.Forward(std::move(inputTemp.slice(i)),
-          std::move(inputPaddedTemp.slice(i)));
+      paddingForward.Forward(inputTemp.slice(i), inputPaddedTemp.slice(i));
     }
   }
 
@@ -312,10 +311,10 @@ void TransposedConvolution<
     InputDataType,
     OutputDataType
 >::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
-  arma::Cube<eT> mappedError(gy.memptr(), outputWidth, outputHeight,
-      outSize * batchSize, false, false);
+  arma::Cube<eT> mappedError(((arma::Mat<eT>&) gy).memptr(), outputWidth,
+      outputHeight, outSize * batchSize, false, false);
   arma::Cube<eT> mappedErrorPadded;
   if (paddingBackward.PadWLeft() != 0 || paddingBackward.PadWRight() != 0 ||
       paddingBackward.PadHTop() != 0 || paddingBackward.PadHBottom() != 0)
@@ -327,8 +326,8 @@ void TransposedConvolution<
 
     for (size_t i = 0; i < mappedError.n_slices; ++i)
     {
-      paddingBackward.Forward(std::move(mappedError.slice(i)),
-          std::move(mappedErrorPadded.slice(i)));
+      paddingBackward.Forward(mappedError.slice(i),
+          mappedErrorPadded.slice(i));
     }
   }
   g.set_size(inputTemp.n_rows * inputTemp.n_cols * inSize, batchSize);
@@ -382,11 +381,11 @@ void TransposedConvolution<
     InputDataType,
     OutputDataType
 >::Gradient(
-    const arma::Mat<eT>&& /* input */,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
 {
-  arma::Cube<eT> mappedError(error.memptr(), outputWidth,
+  arma::Cube<eT> mappedError(((arma::Mat<eT>&) error).memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
 
   gradient.set_size(weights.n_elem, 1);
