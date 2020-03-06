@@ -1,6 +1,6 @@
 /**
  * @file radial_basis_function.hpp
- * @author Hiamsnshu Pathak
+ * @author Himanshu Pathak
  *
  *
  *
@@ -30,7 +30,7 @@ template<typename InputDataType = arma::mat,
 class RBF
 {
  public:
-  //! Create the Linear object.
+  //! Create the RBF object.
   RBF();
 
   /**
