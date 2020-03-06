@@ -47,8 +47,10 @@
 
   * Add Valid and Same Padding for Transposed Convolution layer (#2163).
 
+  * Add Log-Hyperbolic-Cosine Loss function (#2207)
+
   * Change neural network types to avoid unnecessary use of rvalue references
-    (#TODO).
+    (#2259).
 
 ### mlpack 3.2.2
 ###### 2019-11-26
