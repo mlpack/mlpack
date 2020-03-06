@@ -161,7 +161,7 @@ size_t CLI_GetParamVectorIntLen(const char* paramName);
  * The vector will be created in-place and it is expected that the calling
  * function will take ownership.
  */
-size_t* CLI_GetParamVectorIntPtr(const char* paramName);
+int* CLI_GetParamVectorIntPtr(const char* paramName);
 
 /**
  * Get the number of rows in a matrix parameter.
