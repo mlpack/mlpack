@@ -26,9 +26,9 @@ namespace ann /** Artificial Neural Network. */ {
  * i &=& sigmoid(W \cdot x + W \cdot h + W \cdot c + b) \\
  * f &=& sigmoid(W  \cdot x + W \cdot h + W \cdot c + b) \\
  * z &=& tanh(W \cdot x + W \cdot h + b) \\
- * c &=& f \cdot c + i \cdot z \\
+ * c &=& f \odot c + i \odot z \\
  * o &=& sigmoid(W \cdot x + W \cdot h + W \cdot c + b) \\
- * h &=& o \cdot tanh(c)
+ * h &=& o \odot tanh(c)
  * @f}
  *
  * Note that if an LSTM layer is desired as the first layer of a neural network,
