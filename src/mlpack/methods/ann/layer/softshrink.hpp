@@ -50,7 +50,7 @@ class SoftShrink
  public:
 /**
    * Create Soft Shrink object using specified hyperparameter lambda.
-   * 
+   *
    * @param lambda is calculated by multiplying the
    * 		    noise level sigma of the input(noisy image) and a
    * 		    coefficient 'a' which is one of the training parameters.
@@ -104,120 +104,6 @@ class SoftShrink
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  /**
-   * Computes the value of Soft Shrink activation function.
-   *
-   * @param x Input data.
-   * @return f(x) 
-   */
-  double Fn(const double x)
-  {
-    if (x > lambda)
-    {
-      return x - lambda;
-    }
-    else if (x < -lambda)
-    {
-      return x + lambda;
-    }
-    return 0.;
-  }
-
-  /**
-   * Computes the value of Soft Shrink activation function using a dense matrix
-   * as input.
-   * 
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-  template<typename eT>
-  void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
-  {
-    y.set_size(arma::size(x));
-    for (size_t i = 0; i < x.n_elem; i++)
-    {
-      y(i) = Fn(x(i));
-    }
-  }
-
-  /**
-   * Computes the inverse of the Soft Shrink function.
-   *
-   * @f{eqnarray*}{
-   * f^{-1}(y) &=& \left\{
-   *       \begin{array}{lr}
-   *         y + lambda & : y > 0 \\
-   *         y + lambda & : y < 0 \\
-   *         0 & : otherwise \\
-   *       \end{array}
-   * \right.
-   * @f}
-   
-   * @param y
-   * @return f^{-1}(y)
-   */
-  double Inv(const double y)
-  {
-    if ( y > 0)
-    {
-      return y + lambda;
-    }
-    else if (y < 0)
-    {
-      return y - lambda;
-    }
-    return 0;
-  }
-
-  /**
-   * Computes the inverse of the Soft Shrink function.
-   * 
-   * @param y Input data.
-   * @param x The resulting inverse of the input data
-   */
-  template<typename InputVecType, typename OutputVecType>
-  void Inv(const InputVecType& y,
-                  OutputVecType& x,
-                  const double lambda = 0.5)
-  {
-    x.set_size(arma::size(y));
-    for (size_t i = 0; i < y.n_elem; i++)
-    {
-      x(i) = Inv(y(i));
-    }
-  }
-
-  /**
-   * Computes the first derivate of the Soft Shrink function.
-   * 
-   * @param y Input activation.
-   * @return f'(x) where f(x) = y.
-   */
-  double Deriv(const double y)
-  {
-    if (y == 0)
-      return 0;
-    return 1;
-  }
-
-  /**
-   * Computes the first derivative of the Soft Shrink function.
-   *
-   * @param y Input activations.
-   * @param x The resulting derivatives. Should be the matrix used to
-   *          calculate activation y. 
-   * @param lambda parameter, default value = 0.5
-   */
-  template<typename InputVecType, typename OutputVecType>
-  void Deriv(const InputVecType& y,
-                    OutputVecType& x)
-  {
-    x.set_size(arma::size(y));
-    for (size_t i = 0; i < y.n_elem; i++)
-    {
-      x(i) = Deriv(y(i));
-    }
-  }
 
   //! Locally-stored delta object.
   OutputDataType delta;

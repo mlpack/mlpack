@@ -32,7 +32,15 @@ template<typename InputType, typename OutputType>
 void SoftShrink<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
-  Fn(input, output);
+  if (input > lambda)
+  {
+    output = input - lambda;
+  }
+  else if (input < -lambda)
+  {
+    ouput = input + lambda;
+  }
+  output = 0.;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -41,7 +49,9 @@ void SoftShrink<InputDataType, OutputDataType>::Backward(
     const DataType&& input, DataType&& gy, DataType&& g)
 {
   DataType derivative;
-  Deriv(input, derivative);
+  if (y == 0)
+    derivative 0;
+  derivative = 1;
   g = gy % derivative;
 }
 
