@@ -17,6 +17,13 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+/**
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ */
+
 template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
@@ -26,6 +33,8 @@ class MarginRankingLoss
  public:
   /**
    * Create the MarginRankingLoss object with Hyperparameter margin.
+   * Hyperparameter margin defines a minimum distance between correctly ranked
+   * samples.
    */
   MarginRankingLoss(const double margin = 1.0);
 
@@ -44,7 +53,6 @@ class MarginRankingLoss
     typename SecondInputType,
     typename ThirdInputType
   >
-
   double Forward(const FirstInputType&& x1,
                  const SecondInputType&& x2,
                  const ThirdInputType&& y);

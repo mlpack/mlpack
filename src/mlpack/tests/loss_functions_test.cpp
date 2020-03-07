@@ -526,17 +526,7 @@ BOOST_AUTO_TEST_CASE(MarginRankingLossTest)
   x2 = arma::mat("-1 3 -4 11 3 -3");
   y = arma::mat("1 -1 -1 1 -1 1");
   double error = module.Forward(std::move(x1), std::move(x2), std::move(y));
-  // Computed using PyTorch
-  // >>> import torch
-  // >>> import torch.nn.functional as F
-  // >>> x1 = torch.tensor([1., 2., 5., 7., -1., -3.])
-  // >>> x2 = torch.tensor([-1., 3., -4., 11., 3., -3.])
-  // >>> y = torch.tensor([1., -1., -1., 1., -1., 1.], requires_grad=True)
-  // >>> loss = F.margin_ranking_loss(x1, x2, y, margin=1.)
-  // >>> loss.item()
-  // 2.6666667461395264
-  // >>> y.grad
-  // tensor([-0.0000,  0.1667, -1.5000,  0.6667,  0.0000, -0.0000])
+  // Computed using torch.nn.functional.margin_ranking_loss()
   BOOST_REQUIRE_CLOSE(error, 2.66667, 1e-3);
 
   // Test the Backward function.
