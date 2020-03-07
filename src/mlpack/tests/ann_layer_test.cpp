@@ -3072,12 +3072,12 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
   input(6) = 3;
   // Output-Size should be 1 x 2.
   // Rectangular output.
-  MaxPooling<> module2(2, 2, 1, 1);
+  MaxPooling<> module2(3, 2, 3, 1);
   module2.InputHeight() = 3;
   module2.InputWidth() = 3;
   module2.Forward(std::move(input), std::move(output));
   // Calculated using torch.nn.MaxPool2d().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 15.0);
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 12.0);
   BOOST_REQUIRE_EQUAL(output.n_elem, 2);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
