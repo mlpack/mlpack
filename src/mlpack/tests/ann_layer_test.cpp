@@ -3112,7 +3112,7 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
   module4.InputHeight() = 2;
   module4.InputWidth() = 3;
   module4.Forward(std::move(input), std::move(output));
-  // Calculated using torch.nn.AdaptiveMaxPool2d().
+  // Calculated using torch.nn.MaxPool2d().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 3);
   BOOST_REQUIRE_EQUAL(output.n_elem, 4);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
