@@ -75,6 +75,8 @@ class MaxPooling
              const size_t strideWidth = 1,
              const size_t strideHeight = 1,
              const bool floor = true,
+             const size_t inputWidth = 0,
+             const size_t inputHeight = 0,
              const size_t padW = 0,
              const size_t padH = 0,
              const std::string paddingType = "None");
@@ -99,6 +101,8 @@ class MaxPooling
              const size_t strideWidth,
              const size_t strideHeight,
              const bool floor,
+             const size_t inputWidth,
+             const size_t inputHeight,
              const std::tuple<size_t, size_t> padW,
              const std::tuple<size_t, size_t> padH,
              const std::string paddingType = "None");
@@ -219,23 +223,32 @@ class MaxPooling
           ++i, rowidx += strideWidth)
       {
         arma::mat subInput = input(
-            arma::span(rowidx, rowidx + kernelWidth - 1 - offset),
-            arma::span(colidx, colidx + kernelHeight - 1 - offset));
+            arma::span(rowidx, rowidx + kernelHeight - 1 - offset),
+            arma::span(colidx, colidx + kernelWidth - 1 - offset));
 
         const size_t idx = pooling.Pooling(subInput);
         output(i, j) = subInput(idx);
 
         if (!deterministic)
         {
-          if (rowidx >= padHTop && colidx >= padWLeft)
-          {
-            arma::Mat<size_t> subIndices = indices(arma::span(rowidx - padHTop,
-              rowidx - padHTop + kernelWidth - 1 - offset),
-              arma::span(colidx - padWLeft,
-                  colidx - padWLeft + kernelHeight - 1 - offset));
+          arma::Mat<size_t> subIndices;
 
-            poolingIndices(i, j) = subIndices(idx);
+          if (isPadded)
+          {
+            subIndices = paddedIndices(arma::span(rowidx,
+            rowidx + kernelWidth - 1 - offset),
+            arma::span(colidx,
+                colidx + kernelHeight - 1 - offset));
           }
+          else
+          {
+            subIndices = indices(arma::span(rowidx,
+              rowidx + kernelWidth - 1 - offset),
+              arma::span(colidx,
+                  colidx + kernelHeight - 1 - offset));
+          }
+
+          poolingIndices(i, j) = subIndices(idx);
         }
       }
     }
@@ -255,6 +268,7 @@ class MaxPooling
   {
     for (size_t i = 0; i < poolingIndices.n_elem; ++i)
     {
+      if (poolingIndices(i) != 0)
       output(poolingIndices(i)) += error(i);
     }
   }
@@ -309,6 +323,9 @@ class MaxPooling
   //! Locally-stored number of input units.
   size_t batchSize;
 
+  //! If true the input is padded for the operation.
+  bool isPadded;
+
   //! Locally-stored left-side padding width.
   size_t padWLeft;
 
@@ -347,6 +364,9 @@ class MaxPooling
 
   //! Locally-stored indices matrix parameter.
   arma::Mat<size_t> indices;
+
+  //! Locally-stored indices matrix parameter for padded input.
+  arma::Mat<size_t> paddedIndices;
 
   //! Locally-stored indices column parameter.
   arma::Col<size_t> indicesCol;

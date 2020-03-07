@@ -94,10 +94,7 @@ add_executable(mlpack_test
   regularized_svd_test.cpp
   reward_clipping_test.cpp
   rl_components_test.cpp
-<<<<<<< HEAD
   scaling_test.cpp
-=======
->>>>>>> fix
   serialization.cpp
   serialization.hpp
   serialization_test.cpp
@@ -108,10 +105,7 @@ add_executable(mlpack_test
   sparse_coding_test.cpp
   spill_tree_test.cpp
   split_data_test.cpp
-<<<<<<< HEAD
   string_encoding_test.cpp
-=======
->>>>>>> fix
   sumtree_test.cpp
   svd_batch_test.cpp
   svd_incremental_test.cpp
@@ -122,10 +116,6 @@ add_executable(mlpack_test
   timer_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
-<<<<<<< HEAD
-=======
-  scaling_test.cpp
->>>>>>> fix
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
