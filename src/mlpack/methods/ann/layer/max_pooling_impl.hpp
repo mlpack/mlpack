@@ -32,6 +32,8 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling(
     const size_t strideWidth,
     const size_t strideHeight,
     const bool floor,
+    const size_t inputWidth,
+    const size_t inputHeight,
     const size_t padW,
     const size_t padH,
     const std::string paddingType) :
@@ -41,6 +43,8 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling(
     strideWidth,
     strideHeight,
     floor,
+    inputWidth,
+    inputHeight,
     std::tuple<size_t, size_t>{padW, padW},
     std::tuple<size_t, size_t>{padH, padH},
     paddingType)
@@ -55,6 +59,8 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling(
     const size_t strideWidth,
     const size_t strideHeight,
     const bool floor,
+    const size_t inputWidth,
+    const size_t inputHeight,
     const std::tuple<size_t, size_t> padW,
     const std::tuple<size_t, size_t> padH,
     const std::string paddingType) :
@@ -70,8 +76,8 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling(
     inSize(0),
     outSize(0),
     reset(false),
-    inputWidth(0),
-    inputHeight(0),
+    inputWidth(inputWidth),
+    inputHeight(inputHeight),
     outputWidth(0),
     outputHeight(0),
     deterministic(false),
@@ -95,7 +101,13 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling(
     InitializeSamePadding();
   }
 
+  bool isPadded {padWLeft != 0 || padWRight != 0 ||
+      padHTop != 0 || padHBottom != 0};
+  
+  if (isPadded)
+  {
   padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+}
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -141,11 +153,16 @@ void MaxPooling<InputDataType, OutputDataType>::Forward(
 
     indices = arma::Mat<size_t>(indicesCol.memptr(), inputWidth, inputHeight);
 
+    if (isPadded)
+    {
+      paddedIndices.zeros(inputTemp.n_rows + padWLeft + padWRight,
+          inputTemp.n_cols + padHTop + padHBottom);
+      paddedIndices.submat(padWLeft, padHTop, padWLeft + inputTemp.n_cols - 1,
+                           padHTop + inputTemp.n_rows - 1) = indices;
+    }
+
     reset = true;
   }
-
-  bool isPadded {padWLeft != 0 || padWRight != 0 ||
-      padHTop != 0 || padHBottom != 0};
 
   if (isPadded)
   {
