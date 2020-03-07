@@ -93,4 +93,4 @@ class MarginRankingLoss
 // include implementation.
 #include "margin_ranking_loss_impl.hpp"
 
-#endif 
+#endif

@@ -28,7 +28,7 @@ MarginRankingLoss<InputDataType, OutputDataType>::MarginRankingLoss(
 template<typename InputDataType, typename OutputDataType>
 template <
     typename FirstInputType,
-    typename SecondInputType, 
+    typename SecondInputType,
     typename ThirdInputType
 >
 double MarginRankingLoss<InputDataType, OutputDataType>::Forward(
@@ -36,7 +36,7 @@ double MarginRankingLoss<InputDataType, OutputDataType>::Forward(
     const SecondInputType&& x2,
     const ThirdInputType&& y)
 {
-  return arma::accu(arma::max(arma::zeros(size(y)), 
+  return arma::accu(arma::max(arma::zeros(size(y)),
       -y % (x1 - x2) + margin)) / y.n_cols;
 }
 
@@ -71,4 +71,4 @@ void MarginRankingLoss<InputDataType, OutputDataType>::serialize(
 } // namespace ann
 } // namespace mlpack
 
-#endif 
+#endif
