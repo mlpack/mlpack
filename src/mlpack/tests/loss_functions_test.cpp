@@ -540,7 +540,7 @@ BOOST_AUTO_TEST_CASE(MarginRankingLossTest)
   BOOST_REQUIRE_CLOSE(error, 2.66667, 1e-3);
 
   // Test the Backward function.
-  module.Backward(std::move(x1), std::move(x2), std::move(y), 
+  module.Backward(std::move(x1), std::move(x2), std::move(y),
       std::move(output));
 
   CheckMatrices(output, arma::mat("-0.000000 0.166667 -1.500000 0.666667 "
@@ -560,7 +560,7 @@ BOOST_AUTO_TEST_CASE(MarginRankingLossTest)
   // Test the Backward function on the second input.
   module.Backward(std::move(x1), std::move(x2), std::move(y),
       std::move(output));
-  
+
   CheckMatrices(output, arma::mat("0.000000 0.000000 0.091240 0.000000 "
       "-0.753830 1.336900 0.000000 0.000000 -0.207000 0.328810"), 1e-6);
 }

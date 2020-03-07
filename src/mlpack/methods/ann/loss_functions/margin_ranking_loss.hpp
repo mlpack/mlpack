@@ -39,7 +39,12 @@ class MarginRankingLoss
    * @param x2 Second input data used for evaluating the specified function.
    * @param y The label vector which contains -1 or 1 values.
    */
-  template<typename FirstInputType, typename SecondInputType, typename ThirdInputType>
+  template <
+    typename FirstInputType,
+    typename SecondInputType,
+    typename ThirdInputType
+  >
+
   double Forward(const FirstInputType&& x1,
                  const SecondInputType&& x2,
                  const ThirdInputType&& y);
