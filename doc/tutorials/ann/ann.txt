@@ -195,31 +195,41 @@ number of features in the thyroid dataset and are just used as an abstract
 representation.
 
 @code
-// Load the training set.
-arma::mat dataset;
-data::Load("thyroid_train.csv", dataset, true);
+#include <mlpack/core.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/ffn.hpp>
 
-// Split the labels from the training set.
-arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
-    dataset.n_cols - 1);
+using namespace mlpack;
+using namespace mlpack::ann;
 
-// Split the data from the training set.
-arma::mat trainLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
-    dataset.n_rows - 1, dataset.n_cols - 1);
+int main()
+{
+  // Load the training set.
+  arma::mat dataset;
+  data::Load("thyroid_train.csv", dataset, true);
 
-// Initialize the network.
-FFN<> model;
-model.Add<Linear<> >(trainData.n_rows, 8);
-model.Add<SigmoidLayer<> >();
-model.Add<Linear<> >(8, 3);
-model.Add<LogSoftMax<> >();
+  // Split the labels from the training set.
+  arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
+      dataset.n_cols - 1);
 
-// Train the model.
-model.Train(trainData, trainLabels);
+  // Split the data from the training set.
+  arma::mat trainLabels = dataset.submat(dataset.n_rows - 3, 0,
+      dataset.n_rows - 1, dataset.n_cols - 1);
 
-// Use the Predict method to get the assignments.
-arma::mat assignments;
-model.Predict(trainData, assignments);
+  // Initialize the network.
+  FFN<> model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<SigmoidLayer<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
+
+  // Train the model.
+  model.Train(trainData, trainLabels);
+
+  // Use the Predict method to get the assignments.
+  arma::mat assignments;
+  model.Predict(trainData, assignments);
+}
 @endcode
 
 Now, the matrix assignments holds the classification of each point in the

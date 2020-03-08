@@ -115,6 +115,9 @@ following Python packages are installed:
       numpy
       pandas >= 0.15.0
 
+If you would like to build the Julia bindings, make sure that Julia >= 1.3.0 is
+installed.
+
 If the STB library headers are available, image loading support will be
 compiled.
 
@@ -122,10 +125,11 @@ If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
 ### 4. Building mlpack from source
 
-This section discusses how to build mlpack from source.  However, mlpack is in
-the repositories of many Linux distributions, so it may be easier to use the
-package manager for your system.  For example, on Ubuntu, you can install mlpack
-with the following command:
+This document discusses how to build mlpack from source. These build directions 
+will work for any Linux-like shell environment (for example Ubuntu, macOS,
+FreeBSD etc). However, mlpack is in the repositories of many Linux distributions 
+and so it may be easier to use the package manager for your system.  For example, 
+on Ubuntu, you can install mlpack with the following command:
 
     $ sudo apt-get install libmlpack-dev
 
@@ -216,7 +220,7 @@ and submit an issue. The mlpack developers will quickly help you figure it out:
 
 [mlpack on Github](https://www.github.com/mlpack/mlpack/)
 
-Alternately, mlpack help can be found in IRC at `#mlpack` on irc.freenode.net.
+Alternately, mlpack help can be found in IRC at `#mlpack` on chat.freenode.net.
 
 If you wish to install mlpack to `/usr/local/include/mlpack/`, `/usr/local/lib/`,
 and `/usr/local/bin/`, make sure you have root privileges (or write permissions 
@@ -321,7 +325,7 @@ older versions of mlpack:
   - [mlpack documentation](https://www.mlpack.org/docs.html)
   - [Tutorials](https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html)
   - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
-  - [API documentation](https://www.mlpack.org/doc/mlpack-git/doxygen/index.html)
+  - [API documentation (Doxygen)](https://www.mlpack.org/doc/mlpack-git/doxygen/index.html)
 
 ### 8. Bug reporting
 

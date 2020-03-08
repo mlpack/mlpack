@@ -94,6 +94,8 @@ set(SOURCES
   c_relu_impl.hpp
   weight_norm.hpp
   weight_norm_impl.hpp
+  hardshrink.hpp
+  hardshrink_impl.hpp
 )
 
 # Add directory name to sources.

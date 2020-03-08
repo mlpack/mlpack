@@ -73,7 +73,11 @@ class NaiveKernelRule
   kernelMatrix += arma::sum(rowMean) / kernelMatrix.n_cols;
 
   // Eigendecompose the centered kernel matrix.
-  arma::eig_sym(eigval, eigvec, kernelMatrix);
+  kernelMatrix = arma::symmatu(kernelMatrix);
+  if (!arma::eig_sym(eigval, eigvec, kernelMatrix))
+  {
+    Log::Fatal << "Failed to construct the kernel matrix." << std::endl;
+  }
 
   // Swap the eigenvalues since they are ordered backwards (we need largest to
   // smallest).
