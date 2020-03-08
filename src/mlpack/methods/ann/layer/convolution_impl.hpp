@@ -205,10 +205,9 @@ void Convolution<
     OutputDataType
 >::Reset()
 {
-  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize, 1);
-  std::cout << "reset\n";
-  std::cout << "insize: " << inSize << " outsize: " << outSize << " kernelWidth: "<< kernelWidth << " kernelHeight: " << kernelHeight << std::endl;
-   weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
+  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) +
+      outSize, 1);
+  weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
       outSize * inSize, false, false);
   bias = arma::mat(weights.memptr() + weight.n_elem,
       outSize, 1, false, false);
@@ -250,7 +249,7 @@ void Convolution<
       padWRight);
   size_t hConv = ConvOutSize(inputHeight, kernelHeight, strideHeight, padHTop,
       padHBottom);
-  std::cout << "wConv: " << wConv << std::endl;
+
   output.set_size(wConv * hConv * outSize, batchSize);
   outputTemp = arma::Cube<eT>(output.memptr(), wConv, hConv,
       outSize * batchSize, false, false);
@@ -290,8 +289,6 @@ void Convolution<
 
   outputWidth = outputTemp.n_rows;
   outputHeight = outputTemp.n_cols;
-
-  std::cout << output.n_elem << std::endl;
 }
 
 template<

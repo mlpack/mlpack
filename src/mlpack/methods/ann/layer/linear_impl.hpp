@@ -61,7 +61,7 @@ void Linear<InputDataType, OutputDataType, RegularizerType>::Reset()
 
   weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
   bias = arma::mat(weights.memptr() + weight.n_elem,
-      outSize, 1, false, false);
+   outSize, 1, false, false);
 }
 
 template<typename InputDataType, typename OutputDataType,
