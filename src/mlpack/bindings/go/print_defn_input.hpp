@@ -15,6 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include "get_go_type.hpp"
+#include "camel_case.hpp"
 #include "strip_type.hpp"
 
 namespace mlpack {
@@ -35,7 +36,7 @@ void PrintDefnInput(
   if (d.required)
   {
     std::string name = d.name;
-    std::cout << name << " " << GetGoType<T>(d);
+    std::cout << CamelCase(name) << " " << GetGoType<T>(d);
   }
 }
 
@@ -51,7 +52,7 @@ void PrintDefnInput(
   if (d.required)
   {
     std::string name = d.name;
-    std::cout << name << " *" << GetGoType<T>(d);
+    std::cout << CamelCase(name) << " *" << GetGoType<T>(d);
   }
 }
 
@@ -68,7 +69,7 @@ void PrintDefnInput(
   if (d.required)
   {
     std::string name = d.name;
-    std::cout << name << " *" << GetGoType<T>(d);
+    std::cout << CamelCase(name) << " *" << GetGoType<T>(d);
   }
 }
 
@@ -85,11 +86,11 @@ void PrintDefnInput(
   std::string goStrippedType, strippedType, printedType, defaultsType;
   StripType(d.cppType, goStrippedType, strippedType, printedType, defaultsType);
 
-  // param_name *Model_Name
+  // param_name *ModelName
   if (d.required)
   {
     std::string name = d.name;
-    std::cout << name << " *" << goStrippedType;
+    std::cout << CamelCase(name) << " *" << goStrippedType;
   }
 }
 

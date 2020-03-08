@@ -115,7 +115,8 @@ void PrintInputProcessing(
 
     // Print function call to set the given parameter into the cli.
     std::cout << prefix << "setParam" << GetType<T>(d) << "(\""
-              << lowercaseParamName << "\", " << d.name << ")" << std::endl;
+              << lowercaseParamName << "\", " << goParamName << ")"
+              << std::endl;
 
     // Print function call to set the given parameter as passed.
     std::cout << prefix << "setPassed(\"" << d.name << "\")" << std::endl;
@@ -176,7 +177,7 @@ void PrintInputProcessing(
 
     // Print function call to set the given parameter into the cli.
     std::cout << prefix << "gonumToArma" << GetType<T>(d)
-              << "(\"" << d.name << "\", " << lowercaseParamName
+              << "(\"" << goParamName << "\", " << lowercaseParamName
               << ")" << std::endl;
 
     // Print function call to set the given parameter as passed.
@@ -239,7 +240,7 @@ void PrintInputProcessing(
 
     // Print function call to set the given parameter into the cli.
     std::cout << prefix << "gonumToArmaMatWithInfo"
-              << "(\"" << d.name << "\", " << lowercaseParamName
+              << "(\"" << goParamName << "\", " << lowercaseParamName
               << ")" << std::endl;
 
     // Print function call to set the given parameter as passed.
@@ -300,7 +301,7 @@ void PrintInputProcessing(
   else
   {
     // Print function call to set the given parameter into the cli.
-    std::cout << prefix << "set" << strippedType << "(\"" << d.name
+    std::cout << prefix << "set" << strippedType << "(\"" << goParamName
               << "\", " << paramName << ")" << std::endl;
 
     // Print function call to set the given parameter as passed.
