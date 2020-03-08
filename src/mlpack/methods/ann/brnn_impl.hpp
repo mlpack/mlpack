@@ -80,7 +80,7 @@ BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
               << "dataset. To fix this, modify the maximum "
               << "number of iterations to be at least equal "
               << "to the number of points of your dataset "
-              << "(" << no_of_datapoints << ")." << "\n";
+              << "(" << no_of_datapoints << ")." << std::endl;
   }
 }
 
