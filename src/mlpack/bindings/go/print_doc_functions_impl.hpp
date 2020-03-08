@@ -123,10 +123,7 @@ std::string PrintOptionalInputs(const std::string& paramName,
       oss << "  param." << goParamName << " = ";
 
       // Special handling is needed for model types.
-      std::string name;
-      CLI::GetSingleton().functionMap[d.tname]["GetType"](d, NULL,
-         (void*) &name);
-      if (name[name.size() - 1] == '*')
+      if (PrintDefault(paramName) == "nil")
       {
         oss << "&";
         oss << CamelCase(PrintValue(value, d.tname == TYPENAME(std::string)));
@@ -179,10 +176,9 @@ std::string PrintInputOptions(const std::string& paramName,
     {
       // Print the input option.
       std::ostringstream oss;
-      std::string name;
-      CLI::GetSingleton().functionMap[d.tname]["GetType"](d, NULL,
-         (void*) &name);
-      if (name[name.size() - 1] == '*')
+
+      // Special handling is needed for model types.
+      if (PrintDefault(paramName) == "nil")
       {
         oss << "&";
         oss << CamelCase(PrintValue(value, d.tname == TYPENAME(std::string)));
@@ -492,7 +488,7 @@ inline std::string ProgramCallClose()
 inline std::string ParamString(const std::string& paramName)
 {
   // For a Go binding we don't need to know the type.
-  return "\"" + paramName + "\"";
+  return "\"" + CamelCase(paramName) + "\"";
 }
 
 /**
