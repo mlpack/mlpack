@@ -41,6 +41,7 @@
 #include <mlpack/methods/ann/layer/select.hpp>
 #include <mlpack/methods/ann/layer/subview.hpp>
 #include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
+#include <mlpack/methods/ann/layer/hardshrink.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
