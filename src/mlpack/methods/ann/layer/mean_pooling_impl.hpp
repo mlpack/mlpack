@@ -32,47 +32,24 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
     const size_t strideWidth,
     const size_t strideHeight,
     const bool floor,
+    const size_t inputWidth,
+    const size_t inputHeight,
     const size_t padW,
     const size_t padH,
     const std::string paddingType) :
-    kernelWidth(kernelWidth),
-    kernelHeight(kernelHeight),
-    strideWidth(strideWidth),
-    strideHeight(strideHeight),
-    floor(floor),
-    padWLeft(padW),
-    padWRight(padW),
-    padHBottom(padH),
-    padHTop(padH),
-    inSize(0),
-    outSize(0),
-    inputWidth(0),
-    inputHeight(0),
-    outputWidth(0),
-    outputHeight(0),
-    reset(false),
-    deterministic(false),
-    offset(0),
-    batchSize(0)
+    MeanPooling(
+    kernelWidth,
+    kernelHeight,
+    strideWidth,
+    strideHeight,
+    floor,
+    inputWidth,
+    inputHeight,
+    std::tuple<size_t, size_t>{padW, padW},
+    std::tuple<size_t, size_t>{padH, padH},
+    paddingType)
 {
-  // Transform paddingType to lowercase.
-  std::string paddingTypeLow = paddingType;
-  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
-      [](unsigned char c){ return std::tolower(c); });
-
-  if (paddingTypeLow == "valid")
-  {
-    padWLeft = 0;
-    padWRight = 0;
-    padHTop = 0;
-    padHBottom = 0;
-  }
-  else if (paddingTypeLow == "same")
-  {
-    InitializeSamePadding();
-  }
-
-  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+  // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -82,6 +59,8 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
     const size_t strideWidth,
     const size_t strideHeight,
     const bool floor,
+    const size_t inputWidth,
+    const size_t inputHeight,
     const std::tuple<size_t, size_t> padW,
     const std::tuple<size_t, size_t> padH,
     const std::string paddingType) :
@@ -96,8 +75,8 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
     padHTop(std::get<0>(padH)),
     inSize(0),
     outSize(0),
-    inputWidth(0),
-    inputHeight(0),
+    inputWidth(inputWidth),
+    inputHeight(inputHeight),
     outputWidth(0),
     outputHeight(0),
     reset(false),
@@ -122,7 +101,12 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
     InitializeSamePadding();
   }
 
-  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+  isPadded = padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0;
+
+  if (isPadded)
+  {
+    padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -156,9 +140,6 @@ void MeanPooling<InputDataType, OutputDataType>::Forward(
 
   outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,
       batchSize * inSize);
-
-  bool isPadded {padWLeft != 0 || padWRight != 0 ||
-      padHTop != 0 || padHBottom != 0};
 
   if (isPadded)
   {
@@ -207,7 +188,14 @@ void MeanPooling<InputDataType, OutputDataType>::Backward(
 
   for (size_t s = 0; s < mappedError.n_slices; s++)
   {
-    Unpooling(inputTemp.slice(s), mappedError.slice(s), gTemp.slice(s));
+    if (isPadded)
+    {
+      Unpooling(inputPaddedTemp.slice(s), mappedError.slice(s), gTemp.slice(s));
+    }
+    else
+    {
+      Unpooling(inputTemp.slice(s), mappedError.slice(s), gTemp.slice(s));
+    }
   }
 
   g = arma::mat(gTemp.memptr(), gTemp.n_elem / batchSize, batchSize);
@@ -223,6 +211,7 @@ void MeanPooling<InputDataType, OutputDataType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(kernelHeight);
   ar & BOOST_SERIALIZATION_NVP(strideWidth);
   ar & BOOST_SERIALIZATION_NVP(strideHeight);
+  ar & BOOST_SERIALIZATION_NVP(isPadded);
   ar & BOOST_SERIALIZATION_NVP(padWLeft);
   ar & BOOST_SERIALIZATION_NVP(padWRight);
   ar & BOOST_SERIALIZATION_NVP(padHBottom);

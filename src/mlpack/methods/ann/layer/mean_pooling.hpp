@@ -56,6 +56,8 @@ class MeanPooling
              const size_t strideWidth = 1,
              const size_t strideHeight = 1,
              const bool floor = true,
+             const size_t inputWidth = 0,
+             const size_t inputHeight = 0,
              const size_t padW = 0,
              const size_t padH = 0,
              const std::string paddingType = "None");
@@ -80,6 +82,8 @@ class MeanPooling
              const size_t strideWidth,
              const size_t strideHeight,
              const bool floor,
+             const size_t inputWidth,
+             const size_t inputHeight,
              const std::tuple<size_t, size_t> padW,
              const std::tuple<size_t, size_t> padH,
              const std::string paddingType = "None");
@@ -230,11 +234,19 @@ class MeanPooling
         const arma::Mat<eT>& inputArea = input(arma::span(i, i + rStep - 1),
             arma::span(j, j + cStep - 1));
 
-        unpooledError = arma::Mat<eT>(inputArea.n_rows, inputArea.n_cols);
-        unpooledError.fill(error(i / rStep, j / cStep) / inputArea.n_elem);
+        size_t w1 {i * output.n_rows / input.n_rows},
+            w2 {(i + rStep - 1 - offset) * output.n_rows / input.n_rows};
 
-        output(arma::span(i, i + rStep - 1 - offset),
-            arma::span(j, j + cStep - 1 - offset)) += unpooledError;
+        size_t h1 {j * output.n_cols / input.n_cols},
+            h2 {(j + cStep - 1 - offset) * output.n_cols / input.n_cols};
+
+        unpooledError = arma::Mat<eT>(w2 - w1 + 1, h2 - h1 + 1);
+
+        if (i / rStep < error.n_rows && j / cStep < error.n_cols)
+        {
+          unpooledError.fill(error(i / rStep, j / cStep) / inputArea.n_elem);
+          output(arma::span(w1, w2 - offset), arma::span(h1, h2 - offset)) += unpooledError;
+        }
       }
     }
   }
@@ -288,6 +300,9 @@ class MeanPooling
 
   //! Locally-stored number of input units.
   size_t batchSize;
+
+  //! If true the input is padded for the operation.
+  bool isPadded;
 
   //! Locally-stored left-side padding width.
   size_t padWLeft;
