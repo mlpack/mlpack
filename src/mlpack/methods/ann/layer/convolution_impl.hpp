@@ -71,9 +71,63 @@ Convolution<
       std::tuple<size_t, size_t>(padW, padW),
       std::tuple<size_t, size_t>(padH, padH),
       inputWidth,
-      inputHeight)
+      inputHeight,
+      paddingType)
 {
   // Nothing to do here.
+}
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+Convolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::Convolution(
+    const size_t filter,
+    const arma::vec& kernelSize,
+    const arma::vec& strides,
+    const std::string& paddingType) :
+    inSize(0),
+    outSize(filter),
+    kernelWidth(kernelSize(0)),
+    kernelHeight(kernelSize(1)),
+    strideWidth(strides(0)),
+    strideHeight(strides(0)),
+    padWLeft(0),
+    padWRight(0),
+    padHBottom(0),
+    padHTop(0),
+    inputWidth(0),
+    inputHeight(0),
+    outputWidth(0),
+    outputHeight(0)
+{
+  // Transform paddingType to lowercase.
+  std::string paddingTypeLow = paddingType;
+  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
+      [](unsigned char c){ return std::tolower(c); });
+
+  if (paddingTypeLow == "valid")
+  {
+    padWLeft = 0;
+    padWRight = 0;
+    padHTop = 0;
+    padHBottom = 0;
+  }
+  else if (paddingTypeLow == "same")
+  {
+    InitializeSamePadding();
+  }
+
+  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 }
 
 template<
@@ -116,9 +170,6 @@ Convolution<
     outputWidth(0),
     outputHeight(0)
 {
-  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
-      1);
-
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
   std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
@@ -154,10 +205,13 @@ void Convolution<
     OutputDataType
 >::Reset()
 {
-    weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
-        outSize * inSize, false, false);
-    bias = arma::mat(weights.memptr() + weight.n_elem,
-        outSize, 1, false, false);
+  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize, 1);
+  std::cout << "reset\n";
+  std::cout << "insize: " << inSize << " outsize: " << outSize << " kernelWidth: "<< kernelWidth << " kernelHeight: " << kernelHeight << std::endl;
+   weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
+      outSize * inSize, false, false);
+  bias = arma::mat(weights.memptr() + weight.n_elem,
+      outSize, 1, false, false);
 }
 
 template<
@@ -178,7 +232,7 @@ void Convolution<
 {
   batchSize = input.n_cols;
   inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
-      inputWidth, inputHeight, inSize * batchSize, false, false);
+      inputWidth, inputHeight, inSize * batchSize, true, false);
 
   if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
   {
@@ -196,7 +250,7 @@ void Convolution<
       padWRight);
   size_t hConv = ConvOutSize(inputHeight, kernelHeight, strideHeight, padHTop,
       padHBottom);
-
+  std::cout << "wConv: " << wConv << std::endl;
   output.set_size(wConv * hConv * outSize, batchSize);
   outputTemp = arma::Cube<eT>(output.memptr(), wConv, hConv,
       outSize * batchSize, false, false);
@@ -236,6 +290,8 @@ void Convolution<
 
   outputWidth = outputTemp.n_rows;
   outputHeight = outputTemp.n_cols;
+
+  std::cout << output.n_elem << std::endl;
 }
 
 template<

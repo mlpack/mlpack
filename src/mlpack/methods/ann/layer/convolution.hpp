@@ -64,7 +64,8 @@ class Convolution
    * @param padH Padding height of the input.
    * @param inputWidth The width of the input data.
    * @param inputHeight The height of the input data.
-   * @param paddingType The type of padding (Valid or Same). Defaults to None.
+   * @param paddingType The type of padding ('valid', 'same', 'none').
+   *     Defaults to 'none'.
    */
   Convolution(const size_t inSize,
               const size_t outSize,
@@ -76,7 +77,23 @@ class Convolution
               const size_t padH = 0,
               const size_t inputWidth = 0,
               const size_t inputHeight = 0,
-              const std::string& paddingType = "None");
+              const std::string& paddingType = "none");
+
+  /**
+   * Create the Convolution object using the specified number of output maps,
+   * filter size, stride and padding parameter. The number of input maps will
+   * be inferred.
+   *
+   * @param outSize The number of output filter.
+   * @param kernelSize The height and width of the convolution window;
+   * @param strides The height and width of the stride.
+   * @param padding The type of padding ('valid', 'same', 'none').
+   *     Defaults to 'none'.
+   */
+  Convolution(const size_t filter,
+              const arma::vec& kernelSize,
+              const arma::vec& strides = arma::vec({1, 1}),
+              const std::string& padding = "none");
 
   /**
    * Create the Convolution object using the specified number of input maps,
@@ -89,14 +106,14 @@ class Convolution
    * @param strideWidth Stride of filter application in the x direction.
    * @param strideHeight Stride of filter application in the y direction.
    * @param padW A two-value tuple indicating padding widths of the input.
-   *             First value is padding at left side. Second value is padding on
-   *             right side.
+   *     First value is padding at left side. Second value is padding on
+   *     right side.
    * @param padH A two-value tuple indicating padding heights of the input.
-   *             First value is padding at top. Second value is padding on
-   *             bottom.
+   *     First value is padding at top. Second value is padding on bottom.
    * @param inputWidth The width of the input data.
    * @param inputHeight The height of the input data.
-   * @param paddingType The type of padding (Valid or Same). Defaults to None.
+   * @param paddingType The type of padding ('valid', 'same', 'none').
+   *        Defaults to 'none'.
    */
   Convolution(const size_t inSize,
               const size_t outSize,
@@ -108,7 +125,7 @@ class Convolution
               const std::tuple<size_t, size_t>& padH,
               const size_t inputWidth = 0,
               const size_t inputHeight = 0,
-              const std::string& paddingType = "None");
+              const std::string& paddingType = "none");
 
   /*
    * Set the weight and bias term.
@@ -197,10 +214,10 @@ class Convolution
   size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size.
-  size_t InputSize() const { return inSize; }
+  size_t& InputSize() { return inSize; }
 
   //! Get the output size.
-  size_t OutputSize() const { return outSize; }
+  size_t& OutputSize() { return outSize; }
 
   //! Get the kernel width.
   size_t KernelWidth() const { return kernelWidth; }
