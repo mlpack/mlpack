@@ -231,10 +231,10 @@ class MeanPooling
         const arma::Mat<eT>& inputArea = input(arma::span(i, i + rStep - 1),
             arma::span(j, j + cStep - 1));
 
-        size_t w1 {i * output.n_rows / input.n_rows},
+        const size_t w1 {i * output.n_rows / input.n_rows},
             w2 {(i + rStep - 1 - offset) * output.n_rows / input.n_rows};
 
-        size_t h1 {j * output.n_cols / input.n_cols},
+        const size_t h1 {j * output.n_cols / input.n_cols},
             h2 {(j + cStep - 1 - offset) * output.n_cols / input.n_cols};
 
         unpooledError = arma::Mat<eT>(w2 - w1 + 1, h2 - h1 + 1);
@@ -242,7 +242,8 @@ class MeanPooling
         if (i / rStep < error.n_rows && j / cStep < error.n_cols)
         {
           unpooledError.fill(error(i / rStep, j / cStep) / inputArea.n_elem);
-          output(arma::span(w1, w2 - offset), arma::span(h1, h2 - offset)) += unpooledError;
+          output(arma::span(w1, w2 - offset), arma::span(h1, h2 - offset))
+              += unpooledError;
         }
       }
     }
