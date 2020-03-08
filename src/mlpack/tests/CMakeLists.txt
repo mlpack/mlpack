@@ -26,7 +26,6 @@ add_executable(mlpack_test
   cv_test.cpp
   dbscan_test.cpp
   dcgan_test.cpp
-  decision_stump_test.cpp
   decision_tree_test.cpp
   det_test.cpp
   distribution_test.cpp
@@ -128,7 +127,6 @@ add_executable(mlpack_test
   main_tests/dbscan_test.cpp
   main_tests/det_test.cpp
   main_tests/decision_tree_test.cpp
-  main_tests/decision_stump_test.cpp
   main_tests/gmm_generate_test.cpp
   main_tests/gmm_probability_test.cpp
   main_tests/gmm_train_test.cpp
