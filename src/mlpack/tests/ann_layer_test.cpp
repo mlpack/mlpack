@@ -3235,4 +3235,3 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
   module6.Backward(std::move(input), std::move(output), std::move(delta));
 }
 BOOST_AUTO_TEST_SUITE_END();
-

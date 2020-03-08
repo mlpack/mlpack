@@ -3,6 +3,7 @@
  * @author Dakshit Agrawal
  * @author Sourabh Varshney
  * @author Atharva Khandait
+ * @author Saksham Rastogi
  *
  * Tests for loss functions in mlpack::methods::ann:loss_functions.
  *
@@ -20,7 +21,10 @@
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_bias_error.hpp>
 #include <mlpack/methods/ann/loss_functions/dice_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/log_cosh_loss.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -47,6 +51,40 @@ BOOST_AUTO_TEST_CASE(SimpleKLDivergenceTest)
   target = arma::ones(10, 1);
   loss = module.Forward(std::move(input), std::move(target));
   BOOST_REQUIRE_SMALL(loss, 0.00001);
+}
+
+/*
+ * Simple test for the mean squared logarithmic error function.
+ */
+BOOST_AUTO_TEST_CASE(SimpleMeanSquaredLogarithmicErrorTest)
+{
+  arma::mat input, output, target;
+  MeanSquaredLogarithmicError<> module;
+
+  // Test the Forward function on a user generator input and compare it against
+  // the manually calculated result.
+  input = arma::zeros(1, 8);
+  target = arma::zeros(1, 8);
+  double error = module.Forward(std::move(input), std::move(target));
+  BOOST_REQUIRE_SMALL(error, 0.00001);
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(target), std::move(output));
+  // The output should be equal to 0.
+  CheckMatrices(input, output);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+
+  // Test the error function on a single input.
+  input = arma::mat("2");
+  target = arma::mat("3");
+  error = module.Forward(std::move(input), std::move(target));
+  BOOST_REQUIRE_CLOSE(error, 0.082760974810151655, 0.001);
+
+  // Test the Backward function on a single input.
+  module.Backward(std::move(input), std::move(target), std::move(output));
+  BOOST_REQUIRE_CLOSE(arma::accu(output), -0.1917880483011872, 0.001);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 1);
 }
 
 /**
@@ -396,4 +434,80 @@ BOOST_AUTO_TEST_CASE(DiceLossTest)
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
 }
 
+/*
+ * Simple test for the mean bias error performance function.
+ */
+BOOST_AUTO_TEST_CASE(SimpleMeanBiasErrorTest)
+{
+  arma::mat input, output, target;
+  MeanBiasError<> module;
+
+  // Test the Forward function on a user generator input and compare it against
+  // the manually calculated result.
+  input = arma::mat("1.0 0.0 1.0 -1.0 -1.0 0.0 -1.0 0.0");
+  target = arma::zeros(1, 8);
+  double error = module.Forward(std::move(input), std::move(target));
+  BOOST_REQUIRE_EQUAL(error, 0.125);
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(target), std::move(output));
+  // We should get a vector with -1 everywhere.
+  for (double el : output)
+  {
+    BOOST_REQUIRE_EQUAL(el, -1);
+  }
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+
+  // Test the error function on a single input.
+  input = arma::mat("2");
+  target = arma::mat("3");
+  error = module.Forward(std::move(input), std::move(target));
+  BOOST_REQUIRE_EQUAL(error, 1.0);
+
+  // Test the Backward function on a single input.
+  module.Backward(std::move(input), std::move(target), std::move(output));
+  // Test whether the output is negative.
+  BOOST_REQUIRE_EQUAL(arma::accu(output), -1);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 1);
+}
+
+/**
+ * Simple test for the Log-Hyperbolic-Cosine loss function.
+ */
+BOOST_AUTO_TEST_CASE(LogCoshLossTest)
+{
+  arma::mat input, target, output;
+  double loss;
+  LogCoshLoss<> module(2);
+
+  // Test the Forward function. Loss should be 0 if input = target.
+  input = arma::ones(10, 1);
+  target = arma::ones(10, 1);
+  loss = module.Forward(std::move(input), std::move(target));
+  BOOST_REQUIRE_EQUAL(loss, 0);
+
+  // Test the Backward function for input = target.
+  module.Backward(std::move(input), std::move(target), std::move(output));
+  for (double el : output)
+  {
+    // For input = target we should get 0.0 everywhere.
+    BOOST_REQUIRE_CLOSE(el, 0.0, 1e-5);
+  }
+
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+
+  // Test the Forward function. Loss should be 0.546621.
+  input = arma::mat("1 2 3 4 5");
+  target = arma::mat("1 2.4 3.4 4.2 5.5");
+  loss = module.Forward(std::move(input), std::move(target));
+  BOOST_REQUIRE_CLOSE(loss, 0.546621, 1e-3);
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(target), std::move(output));
+  BOOST_REQUIRE_CLOSE(arma::accu(output), 2.46962, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+}
 BOOST_AUTO_TEST_SUITE_END();

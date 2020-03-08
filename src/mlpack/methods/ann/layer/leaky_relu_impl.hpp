@@ -32,7 +32,7 @@ template<typename InputType, typename OutputType>
 void LeakyReLU<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
-  Fn(input, output);
+  output = arma::max(input, alpha * input);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -41,7 +41,10 @@ void LeakyReLU<InputDataType, OutputDataType>::Backward(
     const DataType&& input, DataType&& gy, DataType&& g)
 {
   DataType derivative;
-  Deriv(input, derivative);
+  derivative.set_size(arma::size(input));
+  for (size_t i = 0; i < input.n_elem; i++)
+    derivative(i) = (input(i) >= 0) ? 1 : alpha;
+
   g = gy % derivative;
 }
 
