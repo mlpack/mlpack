@@ -363,6 +363,43 @@ Octree<MetricType, StatisticType, MatType>::Octree(const Octree& other) :
   }
 }
 
+//! Copy assignment operator: copy the given other tree.
+template<typename MetricType, typename StatisticType, typename MatType>
+Octree<MetricType, StatisticType, MatType>&
+Octree<MetricType, StatisticType, MatType>::
+operator=(const Octree& other)
+{
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  delete dataset;
+  for (size_t i = 0; i < children.size(); ++i)
+    delete children[i];
+  children.clear();
+
+  begin = other.Begin();
+  count = other.Count();
+  bound = other.bound;
+  dataset = ((other.parent == NULL) ? new MatType(*other.dataset) : NULL);
+  parent = NULL;
+  stat = other.stat;
+  parentDistance = other.ParentDistance();
+  furthestDescendantDistance = other.FurthestDescendantDistance();
+  metric = other.metric;
+
+  // If we have any children, we need to create them, and then ensure that their
+  // parent links are set right.
+  for (size_t i = 0; i < other.NumChildren(); ++i)
+  {
+    children.push_back(new Octree(other.Child(i)));
+    children[i]->parent = this;
+    children[i]->dataset = this->dataset;
+  }
+  return *this;
+}
+
 //! Move the given tree.
 template<typename MetricType, typename StatisticType, typename MatType>
 Octree<MetricType, StatisticType, MatType>::Octree(Octree&& other) :
@@ -387,6 +424,48 @@ Octree<MetricType, StatisticType, MatType>::Octree(Octree&& other) :
   other.parentDistance = 0.0;
   other.furthestDescendantDistance = 0.0;
   other.parent = NULL;
+}
+
+//! Move assignment operator: take ownership of the given tree.
+template<typename MetricType, typename StatisticType, typename MatType>
+Octree<MetricType, StatisticType, MatType>&
+Octree<MetricType, StatisticType, MatType>::
+operator=(Octree&& other)
+{
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  delete dataset;
+  for (size_t i = 0; i < children.size(); ++i)
+    delete children[i];
+  children.clear();
+
+  children = std::move(other.children);
+  begin = other.Begin();
+  count = other.Count();
+  bound = std::move(other.bound);
+  dataset = other.dataset;
+  parent = other.Parent();
+  stat = std::move(other.stat);
+  parentDistance = other.ParentDistance();
+  furthestDescendantDistance = other.furthestDescendantDistance();
+  metric = std::move(other.metric);
+
+  // Update the parent pointers of the direct children.
+  for (size_t i = 0; i < children.size(); ++i)
+    children[i]->parent = this;
+
+  other.begin = 0;
+  other.count = 0;
+  other.dataset = new MatType();
+  other.parentDistance = 0.0;
+  other.numDescendants = 0;
+  other.furthestDescendantDistance = 0.0;
+  other.parent = NULL;
+
+  return *this;
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>

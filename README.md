@@ -115,6 +115,9 @@ following Python packages are installed:
       numpy
       pandas >= 0.15.0
 
+If you would like to build the Julia bindings, make sure that Julia >= 1.3.0 is
+installed.
+
 If the STB library headers are available, image loading support will be
 compiled.
 

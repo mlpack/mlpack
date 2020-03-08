@@ -34,7 +34,7 @@ namespace data {
 namespace details{
 
 template<typename Tokenizer>
-std::vector<std::string> ToTokens(Tokenizer &lineTok)
+std::vector<std::string> ToTokens(Tokenizer& lineTok)
 {
   std::vector<std::string> tokens;
   std::transform(std::begin(lineTok), std::end(lineTok),
@@ -51,7 +51,7 @@ std::vector<std::string> ToTokens(Tokenizer &lineTok)
 
 inline
 void TransposeTokens(std::vector<std::vector<std::string>> const &input,
-                     std::vector<std::string> &output,
+                     std::vector<std::string>& output,
                      size_t index)
 {
   output.clear();

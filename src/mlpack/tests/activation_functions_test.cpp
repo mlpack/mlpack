@@ -334,6 +334,53 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
 }
 
 /*
+ * Implementation of the Hard Shrink activation function test. The function is
+ * implemented as Hard Shrink layer in the file hardshrink.hpp
+ *
+ * @param input Input data used for evaluating the Hard Shrink activation function.
+ * @param target Target data used to evaluate the Hard Shrink activation.
+ */
+void CheckHardShrinkActivationCorrect(const arma::colvec input,
+                                     const arma::colvec target)
+{
+  HardShrink<> hardshrink;
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  hardshrink.Forward(std::move(input), std::move(activations));
+  for (size_t i = 0; i < activations.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
+  }
+}
+
+/*
+ * Implementation of the HardShrink activation function derivative test.
+ * The derivative function is implemented as HardShrink layer in the file
+ * hardshrink.hpp
+ *
+ * @param input Input data used for evaluating the HardShrink activation function.
+ * @param target Target data used to evaluate the HardShrink activation.
+ */
+void CheckHardShrinkDerivativeCorrect(const arma::colvec input,
+                                     const arma::colvec target)
+{
+  HardShrink<> hardshrink;
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  hardshrink.Backward(std::move(input), std::move(error), std::move(
+                                                        derivatives));
+  for (size_t i = 0; i < derivatives.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
+  }
+}
+
+/*
  * Implementation of the Soft Shrink activation function test. The function is
  * implemented as Soft Shrink layer in the file softshrink.hpp.
  *
@@ -723,9 +770,9 @@ BOOST_AUTO_TEST_CASE(LiSHTFunctionTest)
                                          1.1150033 0.0");
 
   CheckActivationCorrect<LiSHTFunction>(activationData,
-                                       desiredActivations);
+                                        desiredActivations);
   CheckDerivativeCorrect<LiSHTFunction>(desiredActivations,
-                                       desiredDerivatives);
+                                        desiredDerivatives);
 }
 
 /**
@@ -757,6 +804,24 @@ BOOST_AUTO_TEST_CASE(GELUFunctionTest)
                                         desiredDerivatives);
 }
 
+/**
+ * Basic test of the Hard Shrink function.
+ */
+BOOST_AUTO_TEST_CASE(HardShrinkFunctionTest)
+{
+  const arma::colvec desiredActivations("-2 3.2 4.5 -100.2 1 -1 2 0");
+
+  const arma::colvec desiredDerivatives("1 1 1 1 1 1 1 0");
+
+  CheckHardShrinkActivationCorrect(activationData,
+                                   desiredActivations);
+  CheckHardShrinkDerivativeCorrect(desiredActivations,
+                                   desiredDerivatives);
+}
+
+/**
+ * Basic test of the Soft Shrink function.
+ */
 BOOST_AUTO_TEST_CASE(SoftShrinkFunctionTest)
 {
   const arma::colvec desiredActivations("-1.5 2.7 4 -99.7 0.5 -0.5 1.5 0");
