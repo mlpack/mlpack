@@ -101,13 +101,12 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
     InitializeSamePadding();
   }
 
-  bool isPadded {padWLeft != 0 || padWRight != 0 ||
-      padHTop != 0 || padHBottom != 0};
+  isPadded = padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0;
   
   if (isPadded)
   {
-  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
-}
+    padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -189,7 +188,14 @@ void MeanPooling<InputDataType, OutputDataType>::Backward(
 
   for (size_t s = 0; s < mappedError.n_slices; s++)
   {
-    Unpooling(inputTemp.slice(s), mappedError.slice(s), gTemp.slice(s));
+    if (isPadded)
+    {
+      Unpooling(inputPaddedTemp.slice(s), mappedError.slice(s), gTemp.slice(s));
+    }
+    else
+    {
+      Unpooling(inputTemp.slice(s), mappedError.slice(s), gTemp.slice(s));
+    }
   }
 
   g = arma::mat(gTemp.memptr(), gTemp.n_elem / batchSize, batchSize);
@@ -205,6 +211,7 @@ void MeanPooling<InputDataType, OutputDataType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(kernelHeight);
   ar & BOOST_SERIALIZATION_NVP(strideWidth);
   ar & BOOST_SERIALIZATION_NVP(strideHeight);
+  ar & BOOST_SERIALIZATION_NVP(isPadded);
   ar & BOOST_SERIALIZATION_NVP(padWLeft);
   ar & BOOST_SERIALIZATION_NVP(padWRight);
   ar & BOOST_SERIALIZATION_NVP(padHBottom);

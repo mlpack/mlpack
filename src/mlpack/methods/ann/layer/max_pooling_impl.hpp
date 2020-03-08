@@ -101,13 +101,12 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling(
     InitializeSamePadding();
   }
 
-  bool isPadded {padWLeft != 0 || padWRight != 0 ||
-      padHTop != 0 || padHBottom != 0};
+  isPadded = padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0;
   
   if (isPadded)
   {
-  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
-}
+    padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -157,8 +156,8 @@ void MaxPooling<InputDataType, OutputDataType>::Forward(
     {
       paddedIndices.zeros(inputTemp.n_rows + padWLeft + padWRight,
           inputTemp.n_cols + padHTop + padHBottom);
-      paddedIndices.submat(padWLeft, padHTop, padWLeft + inputTemp.n_cols - 1,
-                           padHTop + inputTemp.n_rows - 1) = indices;
+      paddedIndices.submat(padWLeft, padHTop, padWLeft + inputTemp.n_rows - 1,
+                           padHTop + inputTemp.n_cols - 1) = indices;
     }
 
     reset = true;
