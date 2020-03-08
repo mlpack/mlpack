@@ -38,16 +38,16 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
     const size_t padH,
     const std::string paddingType) :
     MeanPooling(
-    kernelWidth,
-    kernelHeight,
-    strideWidth,
-    strideHeight,
-    floor,
-    inputWidth,
-    inputHeight,
-    std::tuple<size_t, size_t>{padW, padW},
-    std::tuple<size_t, size_t>{padH, padH},
-    paddingType)
+      kernelWidth,
+      kernelHeight,
+      strideWidth,
+      strideHeight,
+      floor,
+      inputWidth,
+      inputHeight,
+      std::tuple<size_t, size_t>(padW, padW),
+      std::tuple<size_t, size_t>(padH, padH),
+      paddingType)
 {
   // Nothing to do here.
 }
