@@ -96,6 +96,41 @@ AtrousConvolution<
     InputDataType,
     OutputDataType
 >::AtrousConvolution(
+    const size_t filter,
+    const arma::vec& kernelSize,
+    const arma::vec& strides,
+    const arma::vec& dilation,
+    const std::string& paddingType) :
+    inSize(0),
+    outSize(filter),
+    kernelWidth(kernelSize(0)),
+    kernelHeight(kernelSize(1)),
+    strideWidth(strides(0)),
+    strideHeight(strides(1)),
+    inputWidth(0),
+    inputHeight(0),
+    outputWidth(0),
+    outputHeight(0),
+    dilationWidth(dilation(0)),
+    dilationHeight(dilation(1))
+{
+  // Nothing to do here.
+}
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+AtrousConvolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::AtrousConvolution(
     const size_t inSize,
     const size_t outSize,
     const size_t kernelWidth,
@@ -122,9 +157,6 @@ AtrousConvolution<
     dilationWidth(dilationWidth),
     dilationHeight(dilationHeight)
 {
-  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
-      1);
-
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
   std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
@@ -164,10 +196,13 @@ void AtrousConvolution<
     OutputDataType
 >::Reset()
 {
-    weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
-        outSize * inSize, false, false);
-    bias = arma::mat(weights.memptr() + weight.n_elem,
-        outSize, 1, false, false);
+  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) +
+      outSize, 1);
+
+  weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
+      outSize * inSize, false, false);
+  bias = arma::mat(weights.memptr() + weight.n_elem,
+      outSize, 1, false, false);
 }
 
 template<

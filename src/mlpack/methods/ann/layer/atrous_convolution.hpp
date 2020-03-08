@@ -34,7 +34,8 @@ namespace ann /** Artificial Neural Network. */ {
  * field of reception, without having to increase dicrete kernel sizes.
  *
  * @tparam ForwardConvolutionRule Atrous Convolution to perform forward process.
- * @tparam BackwardConvolutionRule Atrous Convolution to perform backward process.
+ * @tparam BackwardConvolutionRule Atrous Convolution to perform backward
+ *     process.
  * @tparam GradientConvolutionRule Atrous Convolution to calculate gradient.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -71,7 +72,8 @@ class AtrousConvolution
    * @param inputHeight The height of the input data.
    * @param dilationWidth The space between the cells of filters in x direction.
    * @param dilationHeight The space between the cells of filters in y direction.
-   * @param paddingType The type of padding (Valid or Same). Defaults to None.
+   * @param paddingType The type of padding ('valid', 'same', 'none').
+   *     Defaults to 'none'.
    */
   AtrousConvolution(const size_t inSize,
                     const size_t outSize,
@@ -85,7 +87,24 @@ class AtrousConvolution
                     const size_t inputHeight = 0,
                     const size_t dilationWidth = 1,
                     const size_t dilationHeight = 1,
-                    const std::string& paddingType = "None");
+                    const std::string& paddingType = "none");
+  /**
+   * Create the AtrousConvolution object using the specified number of output
+   * maps, filter size, stride and padding parameter. The number of
+   * input maps will be inferred.
+   *
+   * @param outSize The number of output filter.
+   * @param kernelSize The height and width of the convolution window;
+   * @param strides The height and width of the stride.
+   * @param dilation The space between the cells of filters.
+   * @param padding The type of padding ('valid' or 'same', 'none').
+   *     Defaults to 'none'.
+   */
+  AtrousConvolution(const size_t filter,
+                    const arma::vec& kernelSize,
+                    const arma::vec& strides = arma::vec({1, 1}),
+                    const arma::vec& dilation = arma::vec({1, 1}),
+                    const std::string& padding = "none");
 
   /**
    * Create the AtrousConvolution object using the specified number of
@@ -99,16 +118,16 @@ class AtrousConvolution
    * @param strideWidth Stride of filter application in the x direction.
    * @param strideHeight Stride of filter application in the y direction.
    * @param padW A two-value tuple indicating padding widths of the input.
-   *             First value is padding at left side. Second value is padding on
-   *             right side.
+   *     First value is padding at left side. Second value is padding on
+   *     right side.
    * @param padH A two-value tuple indicating padding heights of the input.
-   *             First value is padding at top. Second value is padding on
-   *             bottom.
+   *     First value is padding at top. Second value is padding on bottom.
    * @param inputWidth The widht of the input data.
    * @param inputHeight The height of the input data.
    * @param dilationWidth The space between the cells of filters in x direction.
    * @param dilationHeight The space between the cells of filters in y direction.
-   * @param paddingType The type of padding (Valid/Same/None). Defaults to None.
+   * @param paddingType The type of padding ('valid', 'same', 'none').
+   *     Defaults to 'none'.
    */
   AtrousConvolution(const size_t inSize,
                     const size_t outSize,
@@ -124,7 +143,7 @@ class AtrousConvolution
                     const size_t dilationHeight = 1,
                     const std::string& paddingType = "None");
 
-  /*
+  /**
    * Set the weight and bias term.
    */
   void Reset();
@@ -206,10 +225,10 @@ class AtrousConvolution
   size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size.
-  const size_t& InputSize() const { return inSize; }
+  size_t& InputSize() { return inSize; }
 
   //! Get the output size.
-  const size_t& OutputSize() const { return outSize; }
+  size_t& OutputSize() { return outSize; }
 
   //! Get the kernel width.
   size_t KernelWidth() const { return kernelWidth; }
