@@ -3184,7 +3184,7 @@ BOOST_AUTO_TEST_CASE(MaxPoolingLayerPaddingTest)
 
   // Check "same" even padding option.
   MaxPooling<> module5(4, 4, 2, 2, true, 5, 5, std::tuple<size_t, size_t>(1, 1),
-      std::tuple<size_t, size_t>(1, 1), "valid");
+      std::tuple<size_t, size_t>(1, 1), "same");
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
@@ -3199,7 +3199,7 @@ BOOST_AUTO_TEST_CASE(MaxPoolingLayerPaddingTest)
   
   // Check "same" uneven padding option.
   MaxPooling<> module6(4, 3, 2, 1, true, 5, 4, std::tuple<size_t, size_t>(1, 2),
-      std::tuple<size_t, size_t>(3, 4), "valid");
+      std::tuple<size_t, size_t>(3, 4), "same");
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 19, 20);
@@ -3435,7 +3435,7 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
   
   // Check "same" uneven padding option.
   MeanPooling<> module6(4, 3, 2, 1, true, 5, 4, std::tuple<size_t, size_t>(1, 2),
-      std::tuple<size_t, size_t>(3, 4), "valid");
+      std::tuple<size_t, size_t>(3, 4), "same");
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 19, 20);
