@@ -3034,8 +3034,8 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
 }
 
 /**
-  * Simple test for Max Pooling layer.
-  */
+ * Simple test for Max Pooling layer.
+ */
 BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
 {
   // For rectangular input.
