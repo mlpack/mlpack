@@ -110,12 +110,9 @@ void PrintInputProcessing(
   }
   else
   {
-    std::string lowercaseParamName = d.name;
-    lowercaseParamName[0]  = std::tolower(lowercaseParamName[0]);
-
     // Print function call to set the given parameter into the cli.
     std::cout << prefix << "setParam" << GetType<T>(d) << "(\""
-              << lowercaseParamName << "\", " << goParamName << ")"
+              << d.name << "\", " << goParamName << ")"
               << std::endl;
 
     // Print function call to set the given parameter as passed.
@@ -172,12 +169,9 @@ void PrintInputProcessing(
   }
   else
   {
-    std::string lowercaseParamName = d.name;
-    lowercaseParamName[0]  = std::tolower(lowercaseParamName[0]);
-
     // Print function call to set the given parameter into the cli.
     std::cout << prefix << "gonumToArma" << GetType<T>(d)
-              << "(\"" << goParamName << "\", " << lowercaseParamName
+              << "(\"" << d.name << "\", " << goParamName
               << ")" << std::endl;
 
     // Print function call to set the given parameter as passed.
@@ -235,12 +229,9 @@ void PrintInputProcessing(
   }
   else
   {
-    std::string lowercaseParamName = d.name;
-    lowercaseParamName[0]  = std::tolower(lowercaseParamName[0]);
-
     // Print function call to set the given parameter into the cli.
     std::cout << prefix << "gonumToArmaMatWithInfo"
-              << "(\"" << goParamName << "\", " << lowercaseParamName
+              << "(\"" << d.name << "\", " << goParamName
               << ")" << std::endl;
 
     // Print function call to set the given parameter as passed.
