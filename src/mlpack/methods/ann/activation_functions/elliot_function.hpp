@@ -8,7 +8,7 @@
  * For more information, see the following paper.
  *
  * @code
- * @techreport{elliott1993better,
+ * @techreport{Elliott1993,
  *   title = {A better activation function for artificial neural networks},
  *   author = {Elliott, David L},
  *   url = {https://drum.lib.umd.edu/bitstream/handle/1903/5355/TR\_93-8.pdf}
@@ -37,7 +37,6 @@ namespace ann /** Artificial Neural Network. */ {
  *  f'(x) &=& \frac{1}{(1 + |x|)^2}
  * @f}
  */
-
 class ElliotFunction
 {
  public:
@@ -90,6 +89,5 @@ class ElliotFunction
 
 } // namespace ann
 } // namespace mlpack
-
 
 #endif
