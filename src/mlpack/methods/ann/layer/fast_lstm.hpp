@@ -47,7 +47,8 @@ namespace ann /** Artificial Neural Network. */ {
  *   author  = {Hochreiter, Sepp and Schmidhuber, J\"{u}rgen},
  *   title   = {Long Short-term Memory},
  *   journal = {Neural Comput.},
- *   year    = {1997}
+ *   year    = {1997},
+ *   url = {https://www.bioinf.jku.at/publications/older/2604.pdf}
  * }
  * @endcode
  *

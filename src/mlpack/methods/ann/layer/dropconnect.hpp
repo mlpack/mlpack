@@ -46,7 +46,8 @@ namespace ann /** Artificial Neural Network. */ {
  *                Learning(ICML - 13)},
  *   author = {Li Wan and Matthew Zeiler and Sixin Zhang and Yann L. Cun and
  *             Rob Fergus},
- *   year = {2013}
+ *   year = {2013},
+ *   url = {http://proceedings.mlr.press/v28/wan13.pdf}
  * }
  * @endcode
  *

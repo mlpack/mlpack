@@ -39,7 +39,8 @@ namespace ann /** Artificial Neural Network. */ {
  *   author={Volodymyr Mnih, Nicolas Heess, Alex Graves, Koray Kavukcuoglu},
  *   journal={CoRR},
  *   volume={abs/1406.6247},
- *   year={2014}
+ *   year={2014},
+ *   url = {https://arxiv.org/abs/1406.6247}
  * }
  * @endcode
  *
