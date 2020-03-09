@@ -24,6 +24,7 @@
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
+#include <mlpack/methods/ann/activation_functions/elliot_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -770,6 +771,26 @@ BOOST_AUTO_TEST_CASE(HardShrinkFunctionTest)
                                    desiredActivations);
   CheckHardShrinkDerivativeCorrect(desiredActivations,
                                    desiredDerivatives);
+}
+
+/**
+ * Basic test of the Elliot function.
+ */
+BOOST_AUTO_TEST_CASE(ElliotFunctionTest)
+{
+  // calculated using pytorch tensor
+  const arma::colvec desiredActivations("-0.66666667 0.76190476 0.81818182 \
+                                         -0.99011858 0.5 -0.5 \
+                                          0.66666667 0.0 ");
+
+  const arma::colvec desiredDerivatives("0.36 0.32213294 0.3025 \
+                                         0.25248879 0.44444444 \
+                                         0.44444444 0.36 1.0 ");
+
+  CheckActivationCorrect<ElliotFunction>(activationData,
+                                        desiredActivations);
+  CheckDerivativeCorrect<ElliotFunction>(desiredActivations,
+                                        desiredDerivatives);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
