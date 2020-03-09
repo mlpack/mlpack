@@ -82,9 +82,6 @@ class ConcatPerformance
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the type of the output layer.
-  OutputLayerType const& OutputLayerType() const { return outputLayer; }
-
   //! Get the size of the input.
   size_t const& InSize() const { return inSize; }
 

@@ -140,7 +140,7 @@ class Recurrent
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the number of steps to backpropagate through time.
-  size_t const& Rho() const() { return rho; }
+  size_t const& Rho() const { return rho; }
 
   /**
    * Serialize the layer
