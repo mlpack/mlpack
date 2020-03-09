@@ -31,7 +31,7 @@ void CosineTree::serialize(Archive& ar, const unsigned int /* version */)
       delete left;
     if (right)
       delete right;
-    if (!parent)
+    if (!parent && localDataset)
       delete dataset;
 
     parent = NULL;

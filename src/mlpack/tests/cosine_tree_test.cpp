@@ -450,7 +450,6 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   CosineTree* binaryTree;
   CosineTree* textTree;
   std::vector<CosineTree*> nodeStack1, nodeStack2, nodeStack3, nodeStack4;
-  std::vector<int> v1, v2, v3, v4;
 
   SerializePointerObjectAll(&t, xmlTree, binaryTree, textTree);
 
@@ -512,18 +511,10 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
       nodeStack4.push_back(currentLeft4);
       nodeStack4.push_back(currentRight4);
 
-      v1.push_back(currentNode1->NumColumns());
-      v2.push_back(currentNode2->NumColumns());
-      v3.push_back(currentNode3->NumColumns());
-      v4.push_back(currentNode4->NumColumns());
+      BOOST_REQUIRE_EQUAL(currentNode1->NumColumns(), currentNode2->NumColumns());
+      BOOST_REQUIRE_EQUAL(currentNode1->NumColumns(), currentNode3->NumColumns());
+      BOOST_REQUIRE_EQUAL(currentNode1->NumColumns(), currentNode4->NumColumns());
     }
-  }
-
-  for (size_t i = 0; i < v1.size(); i++)
-  {
-    BOOST_REQUIRE_EQUAL(v1.at(i), v2.at(i));
-    BOOST_REQUIRE_EQUAL(v1.at(i), v3.at(i));
-    BOOST_REQUIRE_EQUAL(v1.at(i), v4.at(i));
   }
 
   delete xmlTree;
