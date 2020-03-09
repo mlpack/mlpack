@@ -43,7 +43,7 @@ namespace ann /** Artificial Neural Network. */ {
  *   author = {Tim Salimans, Diederik P. Kingma},
  *   booktitle = {Neural Information Processing Systems 2016},
  *   year = {2016},
- *   url = {https://arxiv.org/abs/1602.07868},
+ *   url  = {https://arxiv.org/abs/1602.07868},
  * }
  * @endcode
  *

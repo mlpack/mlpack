@@ -57,7 +57,7 @@ namespace ann /** Artificial Neural Network. */ {
  *              Units (ELUs)},
  *   journal = {CoRR},
  *   year    = {2015},
- *   url = {https://arxiv.org/abs/1511.07289}
+ *   url     = {https://arxiv.org/abs/1511.07289}
  * }
  * @endcode
  *

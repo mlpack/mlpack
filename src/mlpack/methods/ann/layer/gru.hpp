@@ -14,7 +14,7 @@
  *    booktitle = {ICML},
  *    pages     = {2067--2075},
  *    year      = {2015},
- *    url = {https://arxiv.org/abs/1502.02367}
+ *    url       = {https://arxiv.org/abs/1502.02367}
  * }
  * @endcode
  *

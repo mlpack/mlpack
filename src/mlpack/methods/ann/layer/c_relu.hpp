@@ -34,7 +34,7 @@ namespace ann /** Artificial Neural Network. */ {
  *             via Concatenated Rectified Linear Units},
  *   author = {LWenling Shang, Kihyuk Sohn, Diogo Almeida, Honglak Lee},
  *   year   = {2016},
- *   url = {https://arxiv.org/abs/1603.05201}
+ *   url    = {https://arxiv.org/abs/1603.05201}
  * }
  * @endcode
  *

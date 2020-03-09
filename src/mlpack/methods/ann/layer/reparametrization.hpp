@@ -40,7 +40,7 @@ namespace ann /** Artificial Neural Network. */ {
  *              Alexander Lerchner | Google DeepMind},
  *   journal = {2017 International Conference on Learning Representations(ICLR)},
  *   year    = {2017},
- *   url = {https://openreview.net/references/pdf?id=Sy2fzU9gl}
+ *   url     = {https://openreview.net/references/pdf?id=Sy2fzU9gl}
  * }
  * @endcode
  *

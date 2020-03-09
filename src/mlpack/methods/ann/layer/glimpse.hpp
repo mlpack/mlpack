@@ -15,7 +15,7 @@
  *   journal = {CoRR},
  *   volume  = {abs/1406.6247},
  *   year    = {2014},
- *   url = {https://arxiv.org/abs/1406.6247}
+ *   url     = {https://arxiv.org/abs/1406.6247}
  * }
  * @endcode
  *
