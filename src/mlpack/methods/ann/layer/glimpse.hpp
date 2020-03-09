@@ -170,6 +170,18 @@ class Glimpse
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
+   //! Get the size of the input units.
+  size_t const& InSize() const { return inSize; }
+
+  //! Get the used glimpse size (height = width).
+  size_t const& GlimpseSize() const { return size;}
+
+  //! Get the number of patches to crop per glimpse.
+  size_t const& Depth() const { return depth; }
+
+  //! Get the scale fraction.
+  size_t const& Scale() const { return scale; }
+
   /**
    * Serialize the layer.
    */

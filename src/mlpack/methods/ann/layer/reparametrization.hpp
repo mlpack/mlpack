@@ -121,6 +121,15 @@ class Reparametrization
         - arma::pow(mean, 2) + 1) / mean.n_cols;
   }
 
+  //! Get the value of the stochastic parameter. 
+  bool const& Stochastic() const { return stochastic; }
+
+  //! Get the value of the includeKl parameter.
+  bool const& IncludeKL() const { return includeKl; }
+
+  //! Get the value of the beta hyperparameter.
+  double const& Beta() const { return beta; }
+
   /**
    * Serialize the layer
    */

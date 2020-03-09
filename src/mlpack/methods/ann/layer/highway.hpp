@@ -171,6 +171,18 @@ class Highway
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the number of input units.
+  size_t const& InSize() const { return inSize; }
+
+  //! Get the value of model parameter.
+  bool const& Model() const { return model;}
+
+  //! Get the width of the input.
+  size_t const& InWidth() const { return width; }
+
+  //! Get the height of the input.
+  size_t const& InHeight() const { return height; }
+
   /**
    * Serialize the layer.
    */

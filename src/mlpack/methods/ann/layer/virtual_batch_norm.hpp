@@ -122,6 +122,12 @@ class VirtualBatchNorm
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the number of input units.
+  size_t const& InSize() const { return size; }
+
+  //! Get the epsilon value.
+  double const& Epsilon() const { return eps; }
+
   /**
    * Serialize the layer.
    */

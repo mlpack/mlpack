@@ -154,6 +154,12 @@ class GRU
   //! Get the model modules.
   std::vector<LayerTypes<> >& Model() { return network; }
 
+  //! Get the number of input units.
+  size_t const& InSize() const { return inSize; }
+
+  //! Get the number of output units.
+  size_t const& OutSize() const { return outSize; }
+
   /**
    * Serialize the layer
    */
