@@ -19,7 +19,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 RBF<InputDataType, OutputDataType>::RBF() :
     inSize(0),
     outSize(0)
@@ -27,7 +28,8 @@ RBF<InputDataType, OutputDataType>::RBF() :
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 RBF<InputDataType, OutputDataType, RegularizerType>::RBF(
     const size_t inSize,
     const size_t outSize) :
@@ -37,7 +39,8 @@ RBF<InputDataType, OutputDataType, RegularizerType>::RBF(
  // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 void RBF<InputDataType, OutputDataType, RegularizerType>::Reset()
 {
   centres = arma::randu(outSize, inSize);
@@ -45,9 +48,9 @@ void RBF<InputDataType, OutputDataType, RegularizerType>::Reset()
   sigmas = arma::ones(outSize);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void RBF<InputDataType, OutputDataType>::Forward(
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+void RBF<InputDataType, OutputDataType, RegularizerType>::Forward(
     const InputDataType&& input, OutputDataType&& output)
 {  
   arma::cube x = arma::cube(input.n_rows, outSize, inSize);
@@ -63,28 +66,21 @@ void RBF<InputDataType, OutputDataType>::Forward(
   {
     input.slice(i)= centres;
   }
-  output = arma::pow (arma::sum (arma::pow ((x - c), 2), 1), 0.5) * sigmas;
+  distances = arma::pow (arma::sum (arma::pow ((x - c), 2), 1), 0.5) * sigmas;
+  output = distances;
 
 }
-
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void RBF<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
-{
-
-}
-
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 template<typename InputType, typename ErrorType, typename GradientType>
-void RBF<InputDataType, OutputDataType>::Gradient(
-    const InputType&& input,
-    ErrorType&& error,
-    GradientType&& gradient)
+void RBF<InputDataType, OutputDataType, RegularizerType>::Backward(
+    const InputDataType&& /* input */, ErrorType&& gy, GradientType&& g)
 {
-
+  g = distances.t() * gy;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 template<typename Archive>
 void RBF<InputDataType, OutputDataType, RegularizerType>::serialize(
     Archive& ar, const unsigned int /* version */)

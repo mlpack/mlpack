@@ -47,7 +47,8 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template <
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename OutputDataType = arma::mat,
+    typename RegularizerType = NoRegularizer
 >
 class RBF
 {
@@ -94,18 +95,6 @@ class RBF
   void Backward(const InputType&& input,
                 ErrorType&& gy,
                 GradientType&& g);
-
-  /*
-   * Calculate the gradient using the output delta and the input activation.
-   *
-   * @param input The input parameter used for calculating the gradient.
-   * @param error The calculated error.
-   * @param gradient The calculated gradient.
-   */
-  template<typename InputType, typename ErrorType, typename GradientType>
-  void Gradient(InputType&& input,
-                ErrorType&& error,
-                GradientType&& gradient);
 
   /*
    * Resets the cell to accept a new input.
@@ -158,6 +147,9 @@ class RBF
 
   //! Locally-stored the learnable scaling factor of the shape.
   InputDataType sigmas;
+
+  //! Locally-stored the outeput distances of the shape.
+  InputDataType distances;
 
   //! Locally-stored number of input units.
   size_t inSize;
@@ -212,5 +204,6 @@ class RBF
 } // namespace mlpack
 
 // Include implementation.
+#include "radial_basis_function_impl.hpp"
 
 #endif
