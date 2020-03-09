@@ -139,11 +139,11 @@ class Subview
   size_t const& EndRow() const { return endRow; }
 
   //! Get the starting column index of subview vector or matrix.
-  size_t const& BeginCol() const() { return beginCol; }
+  size_t const& BeginCol() const { return beginCol; }
 
   //! Get the ending column index of subview vector or matrix.
-  size_t const& EndCol() const() { return endCol; }
-  
+  size_t const& EndCol() const { return endCol; }
+
   /**
    * Serialize the layer.
    */

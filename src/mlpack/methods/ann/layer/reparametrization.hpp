@@ -121,7 +121,7 @@ class Reparametrization
         - arma::pow(mean, 2) + 1) / mean.n_cols;
   }
 
-  //! Get the value of the stochastic parameter. 
+  //! Get the value of the stochastic parameter.
   bool const& Stochastic() const { return stochastic; }
 
   //! Get the value of the includeKl parameter.

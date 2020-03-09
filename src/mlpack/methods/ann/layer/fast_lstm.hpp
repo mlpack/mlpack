@@ -163,7 +163,7 @@ class FastLSTM
 
   //! Get the number of output units.
   size_t const& OutSize() const { return outSize; }
-  
+
   /**
    * Serialize the layer
    */

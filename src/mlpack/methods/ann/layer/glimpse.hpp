@@ -170,7 +170,7 @@ class Glimpse
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
-   //! Get the size of the input units.
+  //! Get the size of the input units.
   size_t const& InSize() const { return inSize; }
 
   //! Get the used glimpse size (height = width).
