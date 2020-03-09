@@ -778,7 +778,7 @@ BOOST_AUTO_TEST_CASE(HardShrinkFunctionTest)
  */
 BOOST_AUTO_TEST_CASE(ElliotFunctionTest)
 {
-  // calculated using pytorch tensor
+  // Calculated using PyTorch tensor.
   const arma::colvec desiredActivations("-0.66666667 0.76190476 0.81818182 \
                                          -0.99011858 0.5 -0.5 \
                                           0.66666667 0.0 ");
