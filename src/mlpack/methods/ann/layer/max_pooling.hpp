@@ -69,17 +69,17 @@ class MaxPooling
    * @param padH Padding height of the input.
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
+  MaxPooling(const size_t kernelWidth,
+             const size_t kernelHeight,
+             const size_t strideWidth = 1,
+             const size_t strideHeight = 1,
+             const bool floor = true,
+             const size_t inputWidth = 0,
+             const size_t inputHeight = 0,
+             const size_t padW = 0,
+             const size_t padH = 0,
+             const std::string paddingType = "None");
 
-  MaxPooling(const size_t      kernelWidth,
-            const size_t      kernelHeight,
-            const size_t      strideWidth  = 1,
-            const size_t      strideHeight = 1,
-            const bool        floor        = true,
-            const size_t      inputWidth   = 0,
-            const size_t      inputHeight  = 0,
-            const size_t      padW         = 0,
-            const size_t      padH         = 0,
-            const std::string paddingType  = "None");
   /**
    * Create the MaxPooling object using the specified number of units and padding.
    *
@@ -96,16 +96,16 @@ class MaxPooling
    *             bottom.
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
-  MaxPooling(const size_t                     kernelWidth,
-            const size_t                     kernelHeight,
-            const size_t                     strideWidth,
-            const size_t                     strideHeight,
-            const bool                       floor,
-            const size_t                     inputWidth,
-            const size_t                     inputHeight,
-            const std::tuple<size_t, size_t> padW,
-            const std::tuple<size_t, size_t> padH,
-            const std::string                paddingType = "None");
+  MaxPooling(const size_t kernelWidth,
+             const size_t kernelHeight,
+             const size_t strideWidth,
+             const size_t strideHeight,
+             const bool floor,
+             const size_t inputWidth,
+             const size_t inputHeight,
+             const std::tuple<size_t, size_t> padW,
+             const std::tuple<size_t, size_t> padH,
+             const std::string paddingType = "None");
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
