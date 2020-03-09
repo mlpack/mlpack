@@ -74,6 +74,12 @@ class Select
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the column index.
+  size_t const& Index() const { return index; }
+
+  //! Get the number of elements selected.
+  size_t const& NumElements() const { return elements; }
+
   /**
    * Serialize the layer
    */

@@ -165,6 +165,15 @@ class LSTM
   //! Modify the gradient.
   OutputDataType& Gradient() { return grad; }
 
+  //! Get the number of input units.
+  size_t const& InSize() const { return inSize; }
+
+  //! Get the number of output units.
+  size_t const& OutSize() const { return outSize; }
+
+  //! Get the number of steps to backpropagate through time.
+  size_t const& Rho() const {return rho; }
+  
   /**
    * Serialize the layer
    */
