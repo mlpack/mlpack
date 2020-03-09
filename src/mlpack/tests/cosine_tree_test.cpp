@@ -511,11 +511,11 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
       nodeStack4.push_back(currentLeft4);
       nodeStack4.push_back(currentRight4);
 
-      BOOST_REQUIRE_EQUAL(currentNode1->NumColumns(), 
+      BOOST_REQUIRE_EQUAL(currentNode1->NumColumns(),
         currentNode2->NumColumns());
-      BOOST_REQUIRE_EQUAL(currentNode1->NumColumns(), 
+      BOOST_REQUIRE_EQUAL(currentNode1->NumColumns(),
         currentNode3->NumColumns());
-      BOOST_REQUIRE_EQUAL(currentNode1->NumColumns(), 
+      BOOST_REQUIRE_EQUAL(currentNode1->NumColumns(),
         currentNode4->NumColumns());
     }
   }
