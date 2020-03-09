@@ -34,6 +34,23 @@ functions as a "swiss army knife" for machine learning researchers.  In addition
 to its powerful C++ interface, mlpack also provides command-line programs,
 Python bindings, and Julia bindings.
 
+[//]: # (numfocus-fiscal-sponsor-attribution)
+
+mlpack uses an [open governance model](./GOVERNANCE.md) and is fiscally
+sponsored by [NumFOCUS](https://numfocus.org/).  Consider making a
+[tax-deductible donation](https://numfocus.org/donate-to-mlpack) to help the
+project pay for developer time, professional services, travel, workshops, and a
+variety of other needs.
+
+<div align="center">
+  <a href="https://numfocus.org/donate-to-mlpack">
+    <img height="60px"
+         src="https://raw.githubusercontent.com/numfocus/templates/master/images/numfocus-logo.png"
+         align="center">
+  </a>
+</div>
+<br>
+
 ### 0. Contents
 
   1. [Introduction](#1-introduction)
