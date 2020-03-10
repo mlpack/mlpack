@@ -36,7 +36,7 @@ namespace ann /** Artificial Neural Network. */ {
  *   title   = {Self-Normalizing Neural Networks},
  *   journal = {Advances in Neural Information Processing Systems},
  *   year    = {2017},
- *   url     = {https://arxiv.org/abs/1706.02515}
+ *   url     = {https://deepmind.com/research/publications/beta-VAE-Learning-Basic-Visual-Concepts-with-a-Constrained-Variational-Framework}
  * }
  * @endcode
  *
