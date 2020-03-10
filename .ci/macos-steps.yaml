@@ -17,6 +17,7 @@ steps:
     pip install cython numpy pandas zipp
     brew update
     brew install openblas armadillo boost
+    brew upgrade hdf5
 
     if [ "a$(julia.version)" != "a" ]; then
       brew cask install julia
