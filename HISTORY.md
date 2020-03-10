@@ -49,6 +49,8 @@
   
   * Add CELU activation function (#2191)
 
+  * Add Log-Hyperbolic-Cosine Loss function (#2207).
+
 ### mlpack 3.2.2
 ###### 2019-11-26
   * Add `valid` and `same` padding option in `Convolution` and `Atrous
