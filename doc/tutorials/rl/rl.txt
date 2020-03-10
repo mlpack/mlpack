@@ -1,0 +1,9 @@
+/*!
+@file rl.txt
+@author Sriram S K
+@brief Tutorial for how to use the Reinforcement Learning module in mlpack
+
+@page rltutorial Reinforcement Learning Tutorial
+
+@section intro_rltut Introduction
+
