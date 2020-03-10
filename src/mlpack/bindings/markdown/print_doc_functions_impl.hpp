@@ -451,20 +451,21 @@ inline std::string PrintModel(const std::string& model)
 template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args)
 {
-  std::string s = "```";
+  std::string s;
   if (BindingInfo::Language() == "cli")
   {
-    s += "bash\n";
+    s += "```bash\n";
     s += cli::ProgramCall(programName, args...);
   }
   else if (BindingInfo::Language() == "python")
   {
-    s += "python\n";
+    s += "```python\n";
     s += python::ProgramCall(programName, args...);
   }
   else if (BindingInfo::Language() == "julia")
   {
-    s += "julia\n";
+    // Julia's ProgramCall() with a set of arguments will automatically enclose
+    // the text in Markdown code, so we don't need to.
     s += julia::ProgramCall(programName, args...);
   }
   else
@@ -472,7 +473,10 @@ std::string ProgramCall(const std::string& programName, Args... args)
     throw std::invalid_argument("ProgramCall(): unknown "
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
-  s += "\n```";
+
+  // Close the Markdown code block, but only if we opened one.
+  if (BindingInfo::Language() != "julia")
+    s += "\n```";
   return s;
 }
 

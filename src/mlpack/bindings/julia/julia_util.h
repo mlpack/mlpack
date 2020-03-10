@@ -61,7 +61,7 @@ void CLI_SetParamVectorStrStr(const char* paramName,
  * Call CLI::SetParam<std::vector<int>>().
  */
 void CLI_SetParamVectorInt(const char* paramName,
-                           uint64_t* ints,
+                           int* ints,
                            const size_t length);
 
 /**
@@ -161,7 +161,7 @@ size_t CLI_GetParamVectorIntLen(const char* paramName);
  * The vector will be created in-place and it is expected that the calling
  * function will take ownership.
  */
-uint64_t* CLI_GetParamVectorIntPtr(const char* paramName);
+int* CLI_GetParamVectorIntPtr(const char* paramName);
 
 /**
  * Get the number of rows in a matrix parameter.
