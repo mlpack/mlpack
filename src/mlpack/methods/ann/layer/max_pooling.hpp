@@ -199,9 +199,9 @@ class MaxPooling
             rowidx + rStep - 1 - offset),
             arma::span(colidx, colidx + cStep - 1 - offset));
           poolingIndices(i, j) = subIndices(idx);
-         }
-       }
-     }
+        }
+      }
+    }
   }
 
   /**
