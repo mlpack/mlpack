@@ -49,6 +49,7 @@
 #include <mlpack/methods/ann/layer/hardshrink.hpp>
 #include <mlpack/methods/ann/layer/celu.hpp>
 #include <mlpack/methods/ann/layer/softshrink.hpp>
+#include <mlpack/methods/ann/layer/radial_basis_function.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
@@ -79,6 +80,10 @@ template<typename InputDataType,
          typename OutputDataType,
          typename RegularizerType>
 class Linear;
+
+template<typename InputDataType,
+         typename OutputDataType>
+class RBF;
 
 template<typename InputDataType,
          typename OutputDataType,
@@ -251,6 +256,7 @@ using LayerTypes = boost::variant<
     LayerNorm<arma::mat, arma::mat>*,
     LeakyReLU<arma::mat, arma::mat>*,
     Linear<arma::mat, arma::mat, NoRegularizer>*,
+    RBF<arma::mat, arma::mat>*,
     LinearNoBias<arma::mat, arma::mat, NoRegularizer>*,
     LogSoftMax<arma::mat, arma::mat>*,
     Lookup<arma::mat, arma::mat>*,

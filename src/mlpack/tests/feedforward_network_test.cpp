@@ -593,10 +593,9 @@ BOOST_AUTO_TEST_CASE(FFNReturnModel)
 }
 
 /**
- * Test to see if the FFN code compiles when the Optimizer
- * doesn't have the MaxIterations() method.
+ * Train the dropout network on a larger dataset.
  */
-BOOST_AUTO_TEST_CASE(OptimizerTest)
+BOOST_AUTO_TEST_CASE(RBFNetworkTest)
 {
   // Load the dataset.
   arma::mat trainData;
@@ -610,15 +609,58 @@ BOOST_AUTO_TEST_CASE(OptimizerTest)
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+   * network structure looks like:
+   *
+   *  Input         Hidden        Dropout      Output
+   *  Layer         Layer         Layer        Layer
+   * +-----+       +-----+       +-----+       +-----+
+   * |     |       |     |       |     |       |     |
+   * |     +------>|     +------>|     +------>|     |
+   * |     |     +>|     |       |     |       |     |
+   * +-----+     | +--+--+       +-----+       +-----+
+   *             |
+   *  Bias       |
+   *  Layer      |
+   * +-----+     |
+   * |     |     |
+   * |     +-----+
+   * |     |
+   * +-----+
+   */
 
-  FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
-  model.Add<Linear<> >(trainData.n_rows, 8);
-  model.Add<CustomLayer<> >();
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<RBF<> >(trainData.n_rows, 8);
+  model.Add<GaussianFunctionLayer<> >();
   model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
 
-  ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
-  model.Train(trainData, trainLabels, opt);
+  // Vanilla neural net with logistic activation function.
+  // Because 92% of the patients are not hyperthyroid the neural
+  // network must be significant better than 92%.
+  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  arma::mat dataset;
+  dataset.load("mnist_first250_training_4s_and_9s.arm");
+
+  // Normalize each point since these are images.
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+  {
+    dataset.col(i) /= norm(dataset.col(i), 2);
+  }
+
+  arma::mat labels = arma::zeros(1, dataset.n_cols);
+  labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
+  labels += 1;
+
+  FFN<NegativeLogLikelihood<> > model1;
+  model1.Add<RBF<> >(dataset.n_rows, 10);
+  model1.Add<GaussianFunctionLayer<> >();
+  model1.Add<Linear<> >(10, 2);
+  model1.Add<LogSoftMax<> >();
+  // Vanilla neural net with logistic activation function.
+  TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
