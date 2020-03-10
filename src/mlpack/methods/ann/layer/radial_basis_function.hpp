@@ -43,7 +43,7 @@ class RBF
     const size_t outSize);
 
   /**
-   * Ordinary feed forward pass of the dropout layer.
+   * Ordinary feed forward pass of the radial basis function.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
@@ -52,7 +52,7 @@ class RBF
   void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /**
-   * Ordinary feed backward pass of the dropout layer.
+   * Ordinary feed backward pass of the radial basis function.
    *
    * @param input The propagated input activation.
    * @param gy The backpropagated error.
