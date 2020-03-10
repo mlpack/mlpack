@@ -25,6 +25,9 @@
   * Add functions to access parameters of `Convolution` and `AtrousConvolution`
     layers (#1985).
 
+  * Add Compute Error function in lars regression and changing Train function to
+    return computed error (#2139).
+
   * Add Julia bindings (#1949).  Build settings can be controlled with the
     `BUILD_JULIA_BINDINGS=(ON/OFF)` and `JULIA_EXECUTABLE=/path/to/julia` CMake
     parameters.
