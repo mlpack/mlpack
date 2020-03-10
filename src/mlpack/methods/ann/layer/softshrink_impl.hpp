@@ -33,7 +33,7 @@ void SoftShrink<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
   output = (input > lambda) % (input - lambda) + (
-            input < -lambda) % (input + lambda);
+    input < -lambda) % (input + lambda);
 }
 
 template<typename InputDataType, typename OutputDataType>

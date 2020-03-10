@@ -388,7 +388,7 @@ void CheckHardShrinkDerivativeCorrect(const arma::colvec input,
  * @param target Target data used to evaluate the Soft Shrink activation.
  */
 void CheckSoftShrinkActivationCorrect(const arma::colvec input,
-                                     const arma::colvec target)
+                                      const arma::colvec target)
 {
   SoftShrink<> softshrink;
 
@@ -410,7 +410,7 @@ void CheckSoftShrinkActivationCorrect(const arma::colvec input,
  * @param target Target data used to evaluate the Soft Shrink activation.
  */
 void CheckSoftShrinkDerivativeCorrect(const arma::colvec input,
-                                     const arma::colvec target)
+                                      const arma::colvec target)
 {
   SoftShrink<> softshrink;
 

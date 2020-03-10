@@ -48,10 +48,14 @@ template <
 class SoftShrink
 {
  public:
-/**
+  /**
    * Create Soft Shrink object using specified hyperparameter lambda.
    *
-   * @param lambda is calculated by multiplying the
+   * @param lambda The noise level of an image depends on settings of an
+   *        imaging device. The settings can be used to select appropriate
+   *        parameters for denoising methods. It is proportional to the noise
+   *        level entered by the user.
+   *        And it is calculated by multiplying the
    * 		    noise level sigma of the input(noisy image) and a
    * 		    coefficient 'a' which is one of the training parameters.
    * 		    Default value of lambda is 0.5.
