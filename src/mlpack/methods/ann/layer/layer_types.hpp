@@ -185,7 +185,12 @@ using MoreTypes = boost::variant<
         Sequential<arma::mat, arma::mat, true>*,
         Subview<arma::mat, arma::mat>*,
         VRClassReward<arma::mat, arma::mat>*,
-        VirtualBatchNorm<arma::mat, arma::mat>*
+        VirtualBatchNorm<arma::mat, arma::mat>*,
+        BaseLayer<HardSigmoidFunction, arma::mat, arma::mat>*,
+        BaseLayer<SwishFunction, arma::mat, arma::mat>*,
+        BaseLayer<MishFunction, arma::mat, arma::mat>*,
+        BaseLayer<LiSHTFunction, arma::mat, arma::mat>*,
+        BaseLayer<GELUFunction, arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
@@ -200,11 +205,7 @@ using LayerTypes = boost::variant<
     BaseLayer<IdentityFunction, arma::mat, arma::mat>*,
     BaseLayer<TanhFunction, arma::mat, arma::mat>*,
     BaseLayer<RectifierFunction, arma::mat, arma::mat>*,
-    BaseLayer<HardSigmoidFunction, arma::mat, arma::mat>*,
-    BaseLayer<SwishFunction, arma::mat, arma::mat>*,
-    BaseLayer<MishFunction, arma::mat, arma::mat>*,
-    BaseLayer<LiSHTFunction, arma::mat, arma::mat>*,
-    BaseLayer<GELUFunction, arma::mat, arma::mat>*,
+    BaseLayer<SoftplusFunction, arma::mat, arma::mat>*,
     BatchNorm<arma::mat, arma::mat>*,
     BilinearInterpolation<arma::mat, arma::mat>*,
     Concat<arma::mat, arma::mat>*,
