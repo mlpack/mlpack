@@ -12,6 +12,7 @@
  *    title={The Quest for the Golden Activation Function},
  *    author={Mina Basirat and Peter M. Roth},
  *    year={2018},
+ *    url={https://arxiv.org/pdf/1808.00783.pdf},
  *    eprint={1808.00783},
  *    archivePrefix={arXiv},
  *    primaryClass={cs.NE} }
@@ -63,7 +64,7 @@ class ElishFunction
     if (x < 0.0) {
         return (std::exp(x) - 1) / (1 + std::exp(-x));
     }
-    return x / (1 + std::exp(x));
+    return x / (1 + std::exp(-x));
   }
 
   /**
