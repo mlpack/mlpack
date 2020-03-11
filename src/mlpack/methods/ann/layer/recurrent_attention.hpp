@@ -35,11 +35,12 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @code
  * @article{MnihHGK14,
- *   title={Recurrent Models of Visual Attention},
- *   author={Volodymyr Mnih, Nicolas Heess, Alex Graves, Koray Kavukcuoglu},
- *   journal={CoRR},
- *   volume={abs/1406.6247},
- *   year={2014}
+ *   title   = {Recurrent Models of Visual Attention},
+ *   author  = {Volodymyr Mnih, Nicolas Heess, Alex Graves, Koray Kavukcuoglu},
+ *   journal = {CoRR},
+ *   volume  = {abs/1406.6247},
+ *   year    = {2014},
+ *   url     = {https://arxiv.org/abs/1406.6247}
  * }
  * @endcode
  *

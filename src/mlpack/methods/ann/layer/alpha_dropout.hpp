@@ -35,7 +35,8 @@ namespace ann /** Artificial Neural Network. */ {
  *              Andreas Mayr},
  *   title   = {Self-Normalizing Neural Networks},
  *   journal = {Advances in Neural Information Processing Systems},
- *   year    = {2017}
+ *   year    = {2017},
+ *   url     = {https://arxiv.org/abs/1706.02515}
  * }
  * @endcode
  *

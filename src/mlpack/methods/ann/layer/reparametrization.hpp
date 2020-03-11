@@ -39,7 +39,8 @@ namespace ann /** Artificial Neural Network. */ {
  *              Xavier Glorot, Matthew Botvinick, Shakir Mohamed and
  *              Alexander Lerchner | Google DeepMind},
  *   journal = {2017 International Conference on Learning Representations(ICLR)},
- *   year    = {2017}
+ *   year    = {2017},
+ *   url     = {https://deepmind.com/research/publications/beta-VAE-Learning-Basic-Visual-Concepts-with-a-Constrained-Variational-Framework}
  * }
  * @endcode
  *

@@ -39,6 +39,7 @@ namespace ann /** Artificial Neural Network. */ {
  *   journal = {CoRR},
  *   volume  = {abs/1207.0580},
  *   year    = {2012},
+ *   url     = {https://arxiv.org/abs/1207.0580}
  * }
  * @endcode
  *

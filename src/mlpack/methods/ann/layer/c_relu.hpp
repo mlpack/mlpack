@@ -33,7 +33,8 @@ namespace ann /** Artificial Neural Network. */ {
  *   title  = {Understanding and Improving Convolutional Neural Networks
  *             via Concatenated Rectified Linear Units},
  *   author = {LWenling Shang, Kihyuk Sohn, Diogo Almeida, Honglak Lee},
- *   year   = {2016}
+ *   year   = {2016},
+ *   url    = {https://arxiv.org/abs/1603.05201}
  * }
  * @endcode
  *
