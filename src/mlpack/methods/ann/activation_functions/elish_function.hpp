@@ -30,10 +30,90 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+/**
+ * The ELiSH function, defined by
+ *
+ * @f{eqnarray*}{
+ * f(x) &=& \left\{
+ *   \begin{array}{lr}
+ *     \frac{x}{1+e^{-x}} & : x \ge 0 \\
+ *     \frac{e^x-1}{1+e^{-x}} & : x < 0
+ *   \end{array}
+ * \right \\
+ * f'(x) &=& \left\{
+ *   \begin{array}{lr}
+ *     \frac{1}{1+e^{-x}} + 
+ *              \frac{xe^{-x}}{ \left(1+e^{-x}}\right)^2} & : x \ge 0 \\
+ *     e^x-\frac{2}{1+e^x}+\frac{2}{\left(1+e^x}\right)^2} & : x < 0
+ *   \end{array}
+ * \right.
+ * @f}
+ */
 class ElishFunction
 {
  public:
+ /**
+   * Computes the ELiSH function.
+   *
+   * @param x Input data.
+   * @return f(x).
+   */
+  static double Fn(const double x)
+  {
+    if (x < 0.0) {
+        return (std::exp(x) - 1) / (1 + std::exp(-x));
+    }
+    return x / (1 + std::exp(x));
+  }
 
+  /**
+   * Computes the ELiSH function.
+   *
+   * @param x Input data.
+   * @param y The resulting output activations.
+   */
+  template<typename InputVecType, typename OutputVecType>
+  static void Fn(const InputVecType& x, OutputVecType& y)
+  {
+    y.set_size(size(x));
+
+    for (size_t i = 0; i < x.n_elem; i++)
+      y(i) = Fn(x(i));
+  }
+
+  /**
+   * Computes the first derivatives of ELiSH function.
+   *
+   * @param y Input data.
+   * @return f'(x)
+   */
+  static double Deriv(const double y)
+  {
+    if (y < 0.0)
+    {
+      return std::exp(y) - 2 / (1 + std::exp(y)) + 
+                    2 / std::pow(1 + std::exp(y) , 2);  
+    }
+    return 1 / (1 + std::exp(-y)) + y * std::exp(-y) / 
+                         std::pow(1 + std::exp(-y) , 2);
+  }
+
+  /**
+   * Computes the first derivatives of the ELiSH function.
+   *
+   * @param y Input activations.
+   * @param x The resulting derivatives.
+   */
+  template<typename InputVecType, typename OutputVecType>
+  static void Deriv(const InputVecType& y, OutputVecType& x)
+  {
+    x.set_size(size(y));
+
+    for (size_t i = 0; i < y.n_elem; i++)
+    {
+      x(i) = Deriv(y(i));
+    }
+  }
 }; // class ElishFunction
 
 } // namespace ann
