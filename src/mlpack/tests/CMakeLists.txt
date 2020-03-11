@@ -1,6 +1,5 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  load_save_test.cpp
   activation_functions_test.cpp
   adaboost_test.cpp
   akfn_test.cpp
@@ -59,6 +58,7 @@ add_executable(mlpack_test
   linear_regression_test.cpp
   linear_svm_test.cpp
   lmnn_test.cpp
+  load_save_test.cpp
   local_coordinate_coding_test.cpp
   log_test.cpp
   logistic_regression_test.cpp
