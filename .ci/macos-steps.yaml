@@ -16,8 +16,8 @@ steps:
     unset BOOST_ROOT
     pip install cython numpy pandas zipp
     brew update
-    brew install openblas armadillo boost
-    brew upgrade hdf5
+    brew install openblas boost
+    brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/9620946e004a29744f9c5e4a27800cba6d6d6b9b/Formula/armadillo.rb
 
     if [ "a$(julia.version)" != "a" ]; then
       brew cask install julia
