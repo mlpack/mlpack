@@ -20,6 +20,10 @@ namespace go {
 /**
  * Given an snake_case like, e.g., "logistic_regression", return
  * CamelCase(e.g. "LogisticRegression") that can be used in Go code.
+ *
+ * @param s input string.
+ * @param lower is of bool type. If lower is true then output must be
+ * lowerCamelCase else UpperCamelCase.
  */
 inline std::string CamelCase(std::string s, bool lower)
 {

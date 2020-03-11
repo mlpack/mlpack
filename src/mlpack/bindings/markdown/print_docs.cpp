@@ -127,6 +127,8 @@ void PrintDocs(const std::string& bindingName,
 
       // Print name, type, description, default.
       cout << "| ";
+      // We need special processing if the language is go then the required
+      // parameter will be lowerCamelCase.
       if (languages[i] == "go")
       {
         if (!it->second.required)
@@ -181,6 +183,8 @@ void PrintDocs(const std::string& bindingName,
 
       // Print name, type, description.
       cout << "| ";
+      // We need special processing if the language is go then the output
+      // parameter will be lowerCamelCase.
       if (languages[i] == "go")
       {
         std::string name = ParamString(it->second.name);
