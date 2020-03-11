@@ -24,6 +24,7 @@
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
+#include <mlpack/methods/ann/activation_functions/elish_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -769,6 +770,32 @@ BOOST_AUTO_TEST_CASE(HardShrinkFunctionTest)
   CheckHardShrinkActivationCorrect(activationData,
                                    desiredActivations);
   CheckHardShrinkDerivativeCorrect(desiredActivations,
+                                   desiredDerivatives);
+}
+
+/**
+ * Basic test of the EliSH function.
+ */
+BOOST_AUTO_TEST_CASE(ElishFunctionTest)
+{
+  const arma::colvec desiredActivations("-0.10307056080762242 \
+                                          3.0746696870503545 \
+                                          4.450558758162331 \
+                                          -3.0457406053548387e-44 \
+                                          0.7310585786300049 \
+                                          -0.17000340156854793 \
+                                          1.7615941559557646 0.0 ");
+
+  const arma::colvec desiredDerivatives("0.4033889157743519 \
+                                         1.0856292040894129 \
+                                         1.0392179837023456 \
+                                         0.5 0.835403899885462 \
+                                         0.3472572607652895 \
+                                         1.0737880406234939 0.5");
+
+  CheckActivationCorrect<ElishFunction>(activationData,
+                                   desiredActivations);
+  CheckDerivativeCorrect<ElishFunction>(desiredActivations,
                                    desiredDerivatives);
 }
 
