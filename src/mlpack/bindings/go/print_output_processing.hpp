@@ -44,7 +44,7 @@ void PrintOutputProcessing(
    */
 
   std::string name = d.name;
-  name = CamelCase(name);
+  name = CamelCase(name, true);
   std::cout << prefix << name << " := getParam" << GetType<T>(d)
             << "(\"" << d.name << "\")" << std::endl;
 }
@@ -70,11 +70,9 @@ void PrintOutputProcessing(
    *
    */
   std::string name = d.name;
-  name = CamelCase(name);
-  std::string dname = CamelCase(name);
-  name[0] = std::tolower(name[0]);
+  name = CamelCase(name, true);
   std::cout << prefix << "var " << name << "Ptr mlpackArma" << std::endl;
-  std::cout << prefix << dname << " := " << name
+  std::cout << prefix << name << " := " << name
             << "Ptr.armaToGonum" << GetType<T>(d)
             << "(\""  << d.name << "\")" << std::endl;
 }
@@ -98,11 +96,9 @@ void PrintOutputProcessing(
    *
    */
   std::string name = d.name;
-  name = CamelCase(name);
-  std::string dname = CamelCase(name);
-  name[0] = std::tolower(name[0]);
+  name = CamelCase(name, true);
   std::cout << prefix << "var " << name << "Ptr mlpackArma" << std::endl;
-  std::cout << prefix << dname << " := " << name << "Ptr.armaToGonumWith"
+  std::cout << prefix << name << " := " << name << "Ptr.armaToGonumWith"
             << "Info(\""  << d.name << "\")" << std::endl;
 }
 
@@ -125,13 +121,13 @@ void PrintOutputProcessing(
   /**
    * This gives us code like:
    *
-   *  var ModelOut <Type>
-   *  ModelOut.get<Type>("paramName")
+   *  var modelOut <Type>
+   *  modelOut.get<Type>("paramName")
    *
    */
 
   std::string name = d.name;
-  name = CamelCase(name);
+  name = CamelCase(name, true);
   std::cout << prefix << "var " << name << " " << goStrippedType << std::endl;
   std::cout << prefix << name << ".get" << strippedType
             << "(\"" << d.name << "\")" << std::endl;

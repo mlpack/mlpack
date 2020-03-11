@@ -10,7 +10,7 @@ import (
 func TestRunBindingNoFlag(t *testing.T) {
 	t.Log("Test that if we forget the mandatory flag, we should get wrong",
         "results.")
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   d := 4.0
   i := 12
   s := "hello"
@@ -31,7 +31,7 @@ func TestRunBindingNoFlag(t *testing.T) {
 func TestRunBindingCorrectly(t *testing.T) {
 	t.Log("Test that when we run the binding correctly (with correct",
         " input parameters), we get the expected output.")
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.Flag1 = true
   d := 4.0
   i := 12
@@ -52,7 +52,7 @@ func TestRunBindingCorrectly(t *testing.T) {
 
 func TestRunBindingWrongString(t *testing.T) {
   t.Log("Test that if we give the wrong string, we should get wrong results.")
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.Flag1 = true
   d := 4.0
   i := 12
@@ -67,7 +67,7 @@ func TestRunBindingWrongString(t *testing.T) {
 
 func TestRunBindingWrongInt(t *testing.T) {
   t.Log("Test that if we give the wrong int, we should get wrong results.")
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.Flag1 = true
   d := 4.0
   i := 15
@@ -83,7 +83,7 @@ func TestRunBindingWrongInt(t *testing.T) {
 
 func TestRunBindingWrongDouble(t *testing.T) {
   t.Log("Test that if we give the wrong double, we should get wrong results.")
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.Flag1 = true
   d := 2.0
   i := 12
@@ -98,7 +98,7 @@ func TestRunBindingWrongDouble(t *testing.T) {
 
 func TestRunBadFlag(t *testing.T) {
   t.Log("Testing that if we give a second flag, it should fail.")
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.Flag1 = true
   param.Flag2 = true
   d := 2.0
@@ -133,7 +133,7 @@ func TestGonumMatrix(t *testing.T) {
     11, 12, 26, 14,
   })
 
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.MatrixIn = x
   d := 4.0
   i := 12
@@ -172,7 +172,7 @@ func TestGonumUMatrix(t *testing.T) {
     11, 12, 26, 14,
   })
 
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.UmatrixIn = x
   d := 4.0
   i := 12
@@ -201,7 +201,7 @@ func TestGonumTransposeRow(t *testing.T) {
     1, 2, 3, 4, 5, 6, 7, 8, 9,
   })
 
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.RowIn = x
   d := 4.0
   i := 12
@@ -229,7 +229,7 @@ func TestGonumTransposeURow(t *testing.T) {
     1, 2, 3, 4, 5, 6, 7, 8, 9,
   })
 
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.UrowIn = x
   d := 4.0
   i := 12
@@ -257,7 +257,7 @@ func TestGonumTransposeCol(t *testing.T) {
     1, 2, 3, 4, 5, 6, 7, 8, 9,
   })
 
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.ColIn = x
   d := 4.0
   i := 12
@@ -285,7 +285,7 @@ func TestGonumTransposeUCol(t *testing.T) {
     1, 2, 3, 4, 5, 6, 7, 8, 9,
   })
 
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.UcolIn = x
   d := 4.0
   i := 12
@@ -313,7 +313,7 @@ func TestGonumRow(t *testing.T) {
     1, 2, 3, 4, 5, 6, 7, 8, 9,
   })
 
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.RowIn = x
   d := 4.0
   i := 12
@@ -341,7 +341,7 @@ func TestGonumURow(t *testing.T) {
     1, 2, 3, 4, 5, 6, 7, 8, 9,
   })
 
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.UrowIn = x
   d := 4.0
   i := 12
@@ -369,7 +369,7 @@ func TestGonumCol(t *testing.T) {
     1, 2, 3, 4, 5, 6, 7, 8, 9,
   })
 
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.ColIn = x
   d := 4.0
   i := 12
@@ -397,7 +397,7 @@ func TestGonumUCol(t *testing.T) {
     1, 2, 3, 4, 5, 6, 7, 8, 9,
   })
 
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.UcolIn = x
   d := 4.0
   i := 12
@@ -434,7 +434,7 @@ func TestGonumWrongRow(t *testing.T) {
     11, 12, 13, 14, 15,
   })
 
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.RowIn = x
   d := 4.0
   i := 12
@@ -463,7 +463,7 @@ func TestGonumWrongCol(t *testing.T) {
     11, 12, 13, 14, 15,
   })
 
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.RowIn = x
   d := 4.0
   i := 12
@@ -479,7 +479,7 @@ func TestGonumWrongCol(t *testing.T) {
 
 func TestRunIntVector(t *testing.T) {
   t.Log("Test a int vector input paramter.")
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   x := []int{
     1, 2, 3, 4, 5, 6,
   }
@@ -507,7 +507,7 @@ func TestRunIntVector(t *testing.T) {
 
 func TestRunStringVector(t *testing.T) {
   t.Log("Test a string vector input paramter.")
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   x := []string{
     "1", "2", "3", "4", "5", "6",
   }
@@ -548,7 +548,7 @@ func TestGonumMatrixWithInfo(t *testing.T) {
            11, 12, 13, 14, 15,
   })
 
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.MatrixAndInfoIn = x
   d := 4.0
   i := 12
@@ -577,7 +577,7 @@ func TestModel(t *testing.T) {
   t.Log("First create a GaussianKernel object, then send it back and",
         "make sure we get the right double value.")
 
-  param := mlpack.InitializeTestGoBinding()
+  param := mlpack.TestGoBindingOptions()
   param.BuildModel = true
   d := 4.0
   i := 12
@@ -585,7 +585,7 @@ func TestModel(t *testing.T) {
   _, _, _, _, _, _, ModelOut, _, _, _, _, _, _, _ :=
       mlpack.TestGoBinding(d, i, s, param)
 
-  param2 := mlpack.InitializeTestGoBinding()
+  param2 := mlpack.TestGoBindingOptions()
   param2.ModelIn = &ModelOut
   _, _, _, _, _, ModelBwOut, _, _, _, _, _, _, _, _ :=
       mlpack.TestGoBinding(d, i, s, param2)

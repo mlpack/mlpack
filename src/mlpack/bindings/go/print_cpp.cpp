@@ -61,7 +61,7 @@ void PrintCPP(const ProgramDoc& programInfo,
   }
 
   // Finally, we generate the wrapper function for mlpackMain().
-  std::string goFunctionName = CamelCase(functionName);
+  std::string goFunctionName = CamelCase(functionName, false);
   cout << "static void " << goFunctionName << "MlpackMain()" << endl;
   cout << "{" << endl;
   cout << "  " << "mlpackMain();" << endl;

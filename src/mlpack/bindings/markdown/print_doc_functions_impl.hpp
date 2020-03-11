@@ -113,6 +113,34 @@ inline std::string PrintImport(const std::string& bindingName)
 }
 
 /**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo()
+{
+  if (BindingInfo::Language() == "cli")
+  {
+    return cli::PrintInputOptionInfo();
+  }
+  else if (BindingInfo::Language() == "python")
+  {
+    return python::PrintInputOptionInfo();
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    return julia::PrintInputOptionInfo();
+  }
+  else if (BindingInfo::Language() == "go")
+  {
+    return go::PrintInputOptionInfo();
+  }
+  else
+  {
+    throw std::invalid_argument("PrintInputOptionInfo(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+}
+
+/**
  * Print any special information about output options.
  */
 inline std::string PrintOutputOptionInfo()

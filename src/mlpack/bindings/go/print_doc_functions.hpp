@@ -36,6 +36,11 @@ inline std::string PrintImport();
 inline std::string PrintOutputOptionInfo();
 
 /**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo();
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>

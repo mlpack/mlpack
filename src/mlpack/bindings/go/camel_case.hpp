@@ -21,9 +21,12 @@ namespace go {
  * Given an snake_case like, e.g., "logistic_regression", return
  * CamelCase(e.g. "LogisticRegression") that can be used in Go code.
  */
-inline std::string CamelCase(std::string s)
+inline std::string CamelCase(std::string s, bool lower)
 {
-  s[0] = std::toupper(s[0]);
+  if (!lower)
+    s[0] = std::toupper(s[0]);
+  else
+    s[0] = std::tolower(s[0]);
   size_t n = s.length();
   size_t res_ind = 0;
   for (size_t i = 0; i < n; i++)

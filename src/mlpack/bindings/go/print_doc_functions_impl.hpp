@@ -28,7 +28,7 @@ namespace go {
 inline std::string GetBindingName(const std::string& bindingName)
 {
   // No modification is needed to the name---we just use it as-is.
-  return CamelCase(bindingName) + "()";
+  return CamelCase(bindingName, false) + "()";
 }
 
 /**
@@ -39,7 +39,7 @@ inline std::string PrintImport()
   return "import (\n"
       "  \"mlpack/build/src/mlpack/bindings/go/mlpack\"\n"
       "  \"gonum.org/v1/gonum/mat\"\n"
-      ")";
+      ")\n";
 }
 
 /**
@@ -48,7 +48,18 @@ inline std::string PrintImport()
 inline std::string PrintOutputOptionInfo()
 {
   return "Output options are returned via Go's support for multiple "
-         "return values.";
+         "return values, in the order listed below.";
+}
+
+/**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo()
+{
+  return "There are two types of input options: required options, which are "
+         "passed directly to the function call, and optional options, which "
+         "are passed via an initialized struct, which allows keyword access "
+         "to each of the options.";
 }
 
 /**
@@ -106,8 +117,8 @@ std::string PrintOptionalInputs() { return ""; }
  */
 template<typename T, typename... Args>
 std::string PrintOptionalInputs(const std::string& paramName,
-                              const T& value,
-                              Args... args)
+                                const T& value,
+                                Args... args)
 {
   // See if this is part of the program.
   std::string result = "";
@@ -116,17 +127,20 @@ std::string PrintOptionalInputs(const std::string& paramName,
     const util::ParamData& d = CLI::Parameters()[paramName];
     if (d.input && !d.required)
     {
-      std::string goParamName = CamelCase(paramName);
+      std::string goParamName = CamelCase(paramName, false);
 
       // Print the input option.
       std::ostringstream oss;
-      oss << "  param." << goParamName << " = ";
+      oss << "param." << goParamName << " = ";
 
       // Special handling is needed for model types.
       if (PrintDefault(paramName) == "nil")
       {
         oss << "&";
-        oss << CamelCase(PrintValue(value, d.tname == TYPENAME(std::string)));
+        std::string goStrippedType, strippedType, printedType, defaultsType;
+        StripType(PrintValue(value, d.tname == TYPENAME(std::string)),
+                  goStrippedType, strippedType, printedType, defaultsType);
+        oss << goStrippedType;
       }
       else
       {
@@ -181,7 +195,10 @@ std::string PrintInputOptions(const std::string& paramName,
       if (PrintDefault(paramName) == "nil")
       {
         oss << "&";
-        oss << CamelCase(PrintValue(value, d.tname == TYPENAME(std::string)));
+        std::string goStrippedType, strippedType, printedType, defaultsType;
+        StripType(PrintValue(value, d.tname == TYPENAME(std::string)),
+                  goStrippedType, strippedType, printedType, defaultsType);
+        oss << goStrippedType;
       }
       else
       {
@@ -285,12 +302,12 @@ std::string PrintOutputOptions(Args... args)
       // We have received this option, so print it.
       if (i == 0)
       {
-        oss << "  " << CamelCase(std::get<1>(passedOptions[index]));
+        oss << std::get<1>(passedOptions[index]);
       }
       else if (i > 0)
       {
         oss << ", ";
-        oss << CamelCase(std::get<1>(passedOptions[index]));
+        oss << std::get<1>(passedOptions[index]);
       }
     }
     else
@@ -298,7 +315,7 @@ std::string PrintOutputOptions(Args... args)
       // We don't care about this option.
       if (i == 0)
       {
-        oss << "  _";
+        oss << "_";
       }
       else if (i > 0)
       {
@@ -318,24 +335,24 @@ template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args)
 {
   std::string result = "";
-  std::string goProgramName = CamelCase(programName);
+  std::string goProgramName = CamelCase(programName, false);
 
   // Initialize the method parameter structure
   std::ostringstream oss;
-  oss << "  param := mlpack.Initialize" << goProgramName << "()\n";
+  oss << "    // Initialize optional parameters for " << goProgramName << "()."
+      << "\n";
+  oss << "param := mlpack." << goProgramName << "Options()\n";
   result = oss.str();
   oss.str(""); // Reset it.
 
   // Now process each optional parameters.
-  oss << PrintOptionalInputs(args...);
-  std::string param = oss.str();
-  result = result + util::HyphenateString(param, 0);
+  oss << PrintOptionalInputs(args...) << "\n";
+  result = result + oss.str();
   oss.str(""); // Reset it.
 
   // Now process each output parameters.
   oss << PrintOutputOptions(args...);
-  std::string output = oss.str();
-  result = result + util::HyphenateString(output, 0);
+  result = result + oss.str();
   oss.str(""); // Reset it.
 
   oss << " := mlpack." << goProgramName << "(";
@@ -348,10 +365,10 @@ std::string ProgramCall(const std::string& programName, Args... args)
   if (input != "")
     result = result + input + ", ";
   oss.str(""); // Reset it.
-  if (param != "")
-    result = result + "param";
-
+  result = result + "param";
   result = result + ")";
+  result = util::HyphenateString(result, 4);
+
   return result;
 }
 
@@ -381,12 +398,13 @@ inline std::string PrintDataset(const std::string& datasetName)
 inline std::string ProgramCall(const std::string& programName)
 {
   std::ostringstream oss;
-  std::string goProgramName = CamelCase(programName);
+  std::string goProgramName = CamelCase(programName, false);
 
   // Determine if we have any output options.
   const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
-
-  oss << "  param := mlpack.Initialize" << goProgramName << "()\n";
+  oss << "    // Initialize optional parameters for " << goProgramName << "()."
+      << "\n";
+  oss << "param := mlpack." << goProgramName << "Options()\n";
 
   std::vector<std::string> outputOptions;
   for (auto it = CLI::Parameters().begin(); it != CLI::Parameters().end(); ++it)
@@ -398,13 +416,13 @@ inline std::string ProgramCall(const std::string& programName)
   std::string result = oss.str();
   oss.str("");
   std::string param = "";
-  // Now iterate over every input option.
+  // Now iterate over every optional input option.
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
     if (it->second.input && !it->second.required && !it->second.persistent)
     {
       // Print the input option.
-      oss << "  param." << CamelCase(it->second.name) << " = ";
+      oss << "param." << CamelCase(it->second.name, false) << " = ";
       std::string value;
       CLI::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
           it->second, NULL, (void*) &value);
@@ -414,21 +432,7 @@ inline std::string ProgramCall(const std::string& programName)
     }
   }
 
-  // Now iterate over every optional input option.
-  for (auto it = parameters.begin(); it != parameters.end(); ++it)
-  {
-    if (it->second.input && it->second.required && !it->second.persistent)
-    {
-      // Print the input option.
-      oss << "  " << CamelCase(it->second.name) << " := ";
-      std::string value;
-      CLI::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
-          it->second, NULL, (void*) &value);
-      oss << value;
-      oss << "\n";
-    }
-  }
-
+  oss << "\n";
   result += oss.str();
   oss.str("");
   oss << result;
@@ -442,11 +446,11 @@ inline std::string ProgramCall(const std::string& programName)
       if (outputs > 0)
       {
         oss << ", ";
-        oss << CamelCase(it->second.name);
+        oss << it->second.name;
       }
       else
       {
-        oss << "  " << CamelCase(it->second.name);
+        oss << it->second.name;
       }
       ++outputs;
     }
@@ -456,16 +460,15 @@ inline std::string ProgramCall(const std::string& programName)
   for (auto i = parameters.begin(); i != parameters.end(); ++i)
   {
     if (i->second.input && i->second.required && i != parameters.end())
-      oss << CamelCase(i->second.name) << ", ";
+      oss << CamelCase(i->second.name, true) << ", ";
     else if (i == parameters.end())
-      oss << CamelCase(i->second.name);
+      oss << CamelCase(i->second.name, true);
   }
   if (param != "")
     oss << "param";
-  oss << ")\n";
+  oss << ")";
 
-  result = "";
-  result = util::HyphenateString(oss.str(), 0);
+  result = util::HyphenateString(oss.str(), 4);
 
   oss.str("");
   oss << result;
@@ -488,7 +491,7 @@ inline std::string ProgramCallClose()
 inline std::string ParamString(const std::string& paramName)
 {
   // For a Go binding we don't need to know the type.
-  return "\"" + CamelCase(paramName) + "\"";
+  return "\"" + CamelCase(paramName, false) + "\"";
 }
 
 /**

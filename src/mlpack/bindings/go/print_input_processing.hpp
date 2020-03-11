@@ -46,7 +46,7 @@ void PrintInputProcessing(
   std::string goParamName = paramName;
   if (!paramName.empty())
   {
-    goParamName = CamelCase(goParamName);
+    goParamName = CamelCase(goParamName, false);
   }
 
   /**
@@ -110,6 +110,7 @@ void PrintInputProcessing(
   }
   else
   {
+    goParamName = CamelCase(goParamName, true);
     // Print function call to set the given parameter into the cli.
     std::cout << prefix << "setParam" << GetType<T>(d) << "(\""
               << d.name << "\", " << goParamName << ")"
@@ -138,7 +139,7 @@ void PrintInputProcessing(
   std::string goParamName = paramName;
   if (!paramName.empty())
   {
-    goParamName = CamelCase(goParamName);
+    goParamName = CamelCase(goParamName, false);
   }
 
   /**
@@ -169,6 +170,7 @@ void PrintInputProcessing(
   }
   else
   {
+    goParamName = CamelCase(goParamName, true);
     // Print function call to set the given parameter into the cli.
     std::cout << prefix << "gonumToArma" << GetType<T>(d)
               << "(\"" << d.name << "\", " << goParamName
@@ -198,7 +200,7 @@ void PrintInputProcessing(
   std::string goParamName = paramName;
   if (!paramName.empty())
   {
-    goParamName = CamelCase(goParamName);
+    goParamName = CamelCase(goParamName, false);
   }
 
   /**
@@ -229,6 +231,7 @@ void PrintInputProcessing(
   }
   else
   {
+    goParamName = CamelCase(goParamName, true);
     // Print function call to set the given parameter into the cli.
     std::cout << prefix << "gonumToArmaMatWithInfo"
               << "(\"" << d.name << "\", " << goParamName
@@ -262,7 +265,7 @@ void PrintInputProcessing(
   std::string goParamName = paramName;
   if (!paramName.empty())
   {
-    goParamName = CamelCase(goParamName);
+    goParamName = CamelCase(goParamName, false);
   }
 
   /**
@@ -291,6 +294,7 @@ void PrintInputProcessing(
   }
   else
   {
+    goParamName = CamelCase(goParamName, true);
     // Print function call to set the given parameter into the cli.
     std::cout << prefix << "set" << strippedType << "(\"" << goParamName
               << "\", " << paramName << ")" << std::endl;

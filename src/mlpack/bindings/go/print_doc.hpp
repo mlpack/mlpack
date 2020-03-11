@@ -32,17 +32,19 @@ namespace go {
  *
  * @param d Parameter data struct.
  * @param input Pointer to size_t containing indent.
- * @param output Unused parameter.
+ * @param isLower is pointer to bool if isLower is true then parameter is Output
+ * or Required Input.
  */
 template<typename T>
 void PrintDoc(const util::ParamData& d,
               const void* input,
-              void* /* output */)
+              void* isLower)
 {
   const size_t indent = *((size_t*) input);
+  bool Lower = *((bool*) isLower);
   std::ostringstream oss;
   oss << " - ";
-  oss << CamelCase(d.name) << " (";
+  oss << CamelCase(d.name, Lower) << " (";
   oss << GetGoType<typename std::remove_pointer<T>::type>(d) << "): "
       << d.desc;
 
