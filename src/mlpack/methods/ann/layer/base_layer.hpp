@@ -24,6 +24,7 @@
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
+#include <mlpack/methods/ann/activation_functions/elish_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -230,6 +231,17 @@ template <
     typename OutputDataType = arma::mat
 >
 using GELUFunctionLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard ELiSH-Layer using the ELiSH activation function.
+ */
+template <
+    class ActivationFunction = ElishFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using ElishFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 } // namespace ann
