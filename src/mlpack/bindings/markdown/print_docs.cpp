@@ -181,7 +181,8 @@ void PrintDocs(const std::string& bindingName,
     cout << "{: #" << languages[i] << "_" << bindingName
         << "_detailed-documentation }" << endl;
     cout << endl;
-    string doc = boost::replace_all_copy(programDoc.documentation(), "|", "\\|");
+    string doc = boost::replace_all_copy(programDoc.documentation(), 
+                                         "|", "\\|");
     cout << doc << endl;
     cout << endl;
 
