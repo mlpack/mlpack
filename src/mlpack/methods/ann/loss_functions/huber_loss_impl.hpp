@@ -60,7 +60,10 @@ void HuberLoss<InputDataType, OutputDataType>::Backward(
     absError = std::abs(target[i] - input[i]);
     output[i] = absError > delta
         ? - delta * (target[i] - input[i]) / absError : input[i] - target[i];
-    output[i] /= output.n_elem;
+    if (mean)
+    {
+      output[i] /= output.n_elem;
+    }
   }
 }
 
