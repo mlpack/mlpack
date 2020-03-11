@@ -292,51 +292,6 @@ else()
   endif ()
 endif()
 
-# On Windows, Armadillo should be using LAPACK and BLAS but we still need to
-# link against it.  We don't want to use the FindLAPACK or FindBLAS modules
-# because then we are required to have a FORTRAN compiler (argh!) so we will try
-# and find LAPACK and BLAS ourselves, using a slightly modified variant of the
-# script Armadillo uses to find these.
-if (WIN32)
-  find_library(LAPACK_LIBRARY
-      NAMES lapack liblapack lapack_win32_MT lapack_win32
-      PATHS "C:/Program Files/Armadillo"
-      PATH_SUFFIXES "examples/lib_win32/")
-
-  if (NOT LAPACK_LIBRARY)
-    message(FATAL_ERROR "Cannot find LAPACK library (.lib)!")
-  endif ()
-
-  find_library(BLAS_LIBRARY
-      NAMES blas libblas blas_win32_MT blas_win32
-      PATHS "C:/Program Files/Armadillo"
-      PATH_SUFFIXES "examples/lib_win32/")
-
-  if (NOT BLAS_LIBRARY)
-    message(FATAL_ERROR "Cannot find BLAS library (.lib)!")
-  endif ()
-
-  # Piggyback LAPACK and BLAS linking into Armadillo link.
-  set(ARMADILLO_LIBRARIES
-      ${ARMADILLO_LIBRARIES} ${BLAS_LIBRARY} ${LAPACK_LIBRARY})
-
-  # Ensure that the libraries are added to the MSVC IDE runtime path.
-  get_filename_component(BLAS_DIR ${BLAS_LIBRARY} DIRECTORY)
-  get_filename_component(LAPACK_DIR ${LAPACK_LIBRARY} DIRECTORY)
-
-  # Sometimes, especially with an OpenBLAS install via nuget, the DLLs are
-  # actually in ../../bin/x64/.  Automatically add these.
-  if (EXISTS "${BLAS_DIR}/../../bin/x64/")
-    get_filename_component(BLAS_DLL_DIR "${BLAS_DIR}/../../bin/x64" ABSOLUTE)
-    set(DLL_COPY_DIRS ${DLL_COPY_DIRS} "${BLAS_DLL_DIR}")
-  endif ()
-
-  if (EXISTS "${LAPACK_DIR}/../../bin/x64/")
-    get_filename_component(LAPACK_DLL_DIR "${LAPACK_DIR}/../../bin/x64" ABSOLUTE)
-    set(DLL_COPY_DIRS ${DLL_COPY_DIRS} "${BLAS_DLL_DIR}")
-  endif ()
-endif ()
-
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})

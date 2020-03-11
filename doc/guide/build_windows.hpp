@@ -118,7 +118,7 @@ compiler version, check if the Visual Studio compiler and Windows SDK are instal
 - Run cmake:
 
 @code
-cmake -G "Visual Studio 16 2019" -A x64 -DBLAS_LIBRARY:FILEPATH="C:/mlpack/mlpack/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DLAPACK_LIBRARY:FILEPATH="C:/mlpack/mlpack/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DARMADILLO_INCLUDE_DIR="C:/mlpack/armadillo/include" -DARMADILLO_LIBRARY:FILEPATH="C:/mlpack/armadillo/build/Debug/armadillo.lib" -DBOOST_INCLUDEDIR:PATH="C:/boost/" -DBOOST_LIBRARYDIR:PATH="C:/boost/lib64-msvc-14.2" -DDEBUG=OFF -DPROFILE=OFF ..
+cmake -G "Visual Studio 16 2019" -A x64 -DBLAS_LIBRARIES:FILEPATH="C:/mlpack/mlpack/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DLAPACK_LIBRARIES:FILEPATH="C:/mlpack/mlpack/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DARMADILLO_INCLUDE_DIR="C:/mlpack/armadillo/include" -DARMADILLO_LIBRARY:FILEPATH="C:/mlpack/armadillo/build/Debug/armadillo.lib" -DBOOST_INCLUDEDIR:PATH="C:/boost/" -DBOOST_LIBRARYDIR:PATH="C:/boost/lib64-msvc-14.2" -DDEBUG=OFF -DPROFILE=OFF ..
 @endcode
 
 @note cmake will attempt to automatically download the ensmallen dependency. If for some reason cmake can't download the dependency, you will need to manually download ensmallen from http://ensmallen.org/ and extract it to "C:\mlpack\mlpack\deps\". Then, specify the path to ensmallen using the flag: -DENSMALLEN_INCLUDE_DIR=C:/mlpack/mlpack/deps/ensmallen/include
