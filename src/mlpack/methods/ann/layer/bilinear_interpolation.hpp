@@ -65,7 +65,7 @@ class BilinearInterpolation
    * @param output The resulting interpolated output matrix.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -79,9 +79,9 @@ class BilinearInterpolation
    * @param output The resulting down-sampled output.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /*input*/,
-                arma::Mat<eT>&& gradient,
-                arma::Mat<eT>&& output);
+  void Backward(const arma::Mat<eT>& /*input*/,
+                const arma::Mat<eT>& gradient,
+                arma::Mat<eT>& output);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }

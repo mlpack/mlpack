@@ -179,6 +179,7 @@ double QLearning<
   // Compute the update target.
   arma::mat target;
   learningNetwork.Forward(sampledStates, target);
+
   /**
    * If the agent is at a terminal state, then we don't need to add the
    * discounted reward. At terminal state, the agent wont perform any
@@ -199,7 +200,7 @@ double QLearning<
 
   // Learn from experience.
   arma::mat gradients;
-  learningNetwork.Backward(target, gradients);
+  learningNetwork.Backward(sampledStates, target, gradients);
 
   replayMethod.Update(target, sampledActions, nextActionValues, gradients);
 

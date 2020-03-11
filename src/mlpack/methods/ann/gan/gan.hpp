@@ -289,7 +289,7 @@ class GAN
    *
    * @param input Sampled noise.
    */
-  void Forward(arma::mat&& input);
+  void Forward(const arma::mat& input);
 
   /**
    * This function predicts the output of the network on the given input.

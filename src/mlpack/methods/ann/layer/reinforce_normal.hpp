@@ -49,7 +49,7 @@ class ReinforceNormal
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -61,7 +61,7 @@ class ReinforceNormal
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input, DataType&& /* gy */, DataType&& g);
+  void Backward(const DataType& input, const DataType& /* gy */, DataType& g);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }

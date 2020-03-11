@@ -29,7 +29,7 @@ class ParametersVisitor : public boost::static_visitor<void>
 {
  public:
   //! Store the parameters set into the given parameters matrix.
-  ParametersVisitor(arma::mat&& parameters);
+  ParametersVisitor(arma::mat& parameters);
 
   //! Set the parameters set.
   template<typename LayerType>
@@ -39,7 +39,7 @@ class ParametersVisitor : public boost::static_visitor<void>
 
  private:
   //! The parameters set.
-  arma::mat&& parameters;
+  arma::mat& parameters;
 
   //! Do not set the parameters set if the module doesn't implement the
   //! Parameters() function.
