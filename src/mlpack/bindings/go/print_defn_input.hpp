@@ -36,7 +36,7 @@ void PrintDefnInput(
   if (d.required)
   {
     std::string name = d.name;
-    std::cout << CamelCase(name) << " " << GetGoType<T>(d);
+    std::cout << CamelCase(name, true) << " " << GetGoType<T>(d);
   }
 }
 
@@ -52,7 +52,7 @@ void PrintDefnInput(
   if (d.required)
   {
     std::string name = d.name;
-    std::cout << CamelCase(name) << " *" << GetGoType<T>(d);
+    std::cout << CamelCase(name, true) << " *" << GetGoType<T>(d);
   }
 }
 
@@ -69,7 +69,7 @@ void PrintDefnInput(
   if (d.required)
   {
     std::string name = d.name;
-    std::cout << CamelCase(name) << " *" << GetGoType<T>(d);
+    std::cout << CamelCase(name, true) << " *" << GetGoType<T>(d);
   }
 }
 
@@ -90,7 +90,7 @@ void PrintDefnInput(
   if (d.required)
   {
     std::string name = d.name;
-    std::cout << CamelCase(name) << " *" << goStrippedType;
+    std::cout << CamelCase(name, true) << " *" << goStrippedType;
   }
 }
 

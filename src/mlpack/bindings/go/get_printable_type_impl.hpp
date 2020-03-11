@@ -14,6 +14,7 @@
 #define MLPACK_BINDINGS_GO_GET_PRINTABLE_TYPE_IMPL_HPP
 
 #include "get_printable_type.hpp"
+#include "strip_type.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -129,7 +130,9 @@ inline std::string GetPrintableType(
     const typename boost::disable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type*)
 {
-  return d.cppType + "Type";
+  std::string goStrippedType, strippedType, printedType, defaultsType;
+  StripType(d.cppType, goStrippedType, strippedType, printedType, defaultsType);
+  return goStrippedType + "Type";
 }
 
 } // namespace go

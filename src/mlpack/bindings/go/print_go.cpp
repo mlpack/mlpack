@@ -93,7 +93,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
   }
   cout << ")" << endl;
   cout << endl;
-  std::string goFunctionName = CamelCase(functionName);
+  std::string goFunctionName = CamelCase(functionName, false);
 
   // Print Go method configuration struct.
   cout << "type " << goFunctionName << "OptionalParam struct {"
@@ -109,7 +109,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
   cout << endl;
 
   // Print Go method configurate struct initialization.
-  cout << "func Initialize" << goFunctionName << "() *"
+  cout << "func " << goFunctionName << "Options() *"
       << goFunctionName << "OptionalParam {"
       << endl;
   cout << "  " << "return &" << goFunctionName << "OptionalParam{" << endl;
@@ -145,8 +145,18 @@ void PrintGo(const util::ProgramDoc& programInfo,
 
     cout << "  ";
     size_t indent = 4;
-    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
-        NULL);
+    if (!d.required)
+    {
+      bool isLower = false;
+      CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+           &isLower);
+    }
+    else
+    {
+      bool isLower = true;
+      CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+          &isLower);
+    }
     cout << endl;
   }
   cout << endl;
@@ -158,8 +168,9 @@ void PrintGo(const util::ProgramDoc& programInfo,
 
     cout << "  ";
     size_t indent = 4;
+    bool isLower = true;
     CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
-        NULL);
+        &isLower);
     cout << endl;
   }
   cout << endl;
@@ -270,7 +281,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
       cout << ", ";
 
     const util::ParamData& d = parameters.at(outputOptions[i]);
-    cout << CamelCase(d.name);
+    cout << CamelCase(d.name, true);
   }
   cout << endl;
 

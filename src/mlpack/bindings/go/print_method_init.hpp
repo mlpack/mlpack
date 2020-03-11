@@ -46,7 +46,7 @@ void PrintMethodInit(
   std::string goParamName = name;
   if (!name.empty())
   {
-    goParamName = CamelCase(goParamName);
+    goParamName = CamelCase(goParamName, false);
   }
 
   // Only print param that are not required.
@@ -100,7 +100,7 @@ void PrintMethodInit(
   std::string goParamName = name;
   if (!name.empty())
   {
-    goParamName = CamelCase(goParamName);
+    goParamName = CamelCase(goParamName, false);
   }
 
   // Only print param that are not required.
@@ -133,7 +133,7 @@ void PrintMethodInit(
   std::string goParamName = name;
   if (!name.empty())
   {
-    goParamName = CamelCase(goParamName);
+    goParamName = CamelCase(goParamName, false);
   }
 
   // Only print param that are not required.
@@ -166,7 +166,7 @@ void PrintMethodInit(
   std::string goParamName = name;
   if (!name.empty())
   {
-    goParamName = CamelCase(goParamName);
+    goParamName = CamelCase(goParamName, false);
   }
 
   // Only print param that are not required.
