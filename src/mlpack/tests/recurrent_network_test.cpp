@@ -817,11 +817,11 @@ void DistractedSequenceRecallTestNetwork(
 
     // We increase the number of iterations (training) if the first run didn't
     // pass.
-    arma::cube inputTemp, labelsTemp;
     for (size_t iteration = 0; iteration < (9 + offset); iteration++)
     {
       for (size_t j = 0; j < trainDistractedSequenceCount; j++)
       {
+        arma::cube inputTemp, labelsTemp;
         inputTemp = arma::cube(trainInput.at(0, j).memptr(), inputSize, 1,
             trainInput.at(0, j).n_elem / inputSize, true, true);
         labelsTemp = arma::cube(trainLabels.at(0, j).memptr(), outputSize, 1,
