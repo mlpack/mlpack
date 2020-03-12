@@ -47,8 +47,19 @@ void PrintInputProcessing(
     //   CLISetParam("<param_name>", convert(<type>, <param_name>))
     // end
     std::cout << "  if !ismissing(" << juliaName << ")" << std::endl;
-    std::cout << "    CLISetParam(\"" << d.name << "\", convert("
-        << GetJuliaType<T>() << ", " << juliaName << "))" << std::endl;
+    std::cout << "    CLISetParam(\"" << d.name << "\", convert(";
+    if (std::is_same<T, std::vector<int>>::value)
+    {
+      // Special case: the type we will call CLISetParam() with for a
+      // vector<int> is not Julia's "Vector{Int}" type but instead
+      // "Vector{Cint}", so we have to make that conversion manually.
+      std::cout << "Vector{Cint}";
+    }
+    else
+    {
+      std::cout << GetJuliaType<T>();
+    }
+    std::cout << ", " << juliaName << "))" << std::endl;
     std::cout << "  end" << std::endl;
   }
 }
