@@ -3053,7 +3053,7 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
   MaxPooling<> module1(2, 2, 2, 1);
   module1.InputHeight() = 3;
   module1.InputWidth() = 4;
-  module1.Forward(std::move(input), std::move(output));
+  module1.Forward(input, output);
   // Calculated using torch.nn.MaxPool2d().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 28);
   BOOST_REQUIRE_EQUAL(output.n_elem, 4);
@@ -3072,7 +3072,7 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
   MaxPooling<> module2(3, 2, 3, 1);
   module2.InputHeight() = 3;
   module2.InputWidth() = 3;
-  module2.Forward(std::move(input), std::move(output));
+  module2.Forward(input, output);
   // Calculated using torch.nn.MaxPool2d().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 12.0);
   BOOST_REQUIRE_EQUAL(output.n_elem, 2);
@@ -3091,7 +3091,7 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
   MaxPooling<> module3(2, 2, 1, 1);
   module3.InputHeight() = 4;
   module3.InputWidth() = 4;
-  module3.Forward(std::move(input), std::move(output));
+  module3.Forward(input, output);
   // Calculated using torch.nn.MaxPool2d().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 30.0);
   BOOST_REQUIRE_EQUAL(output.n_elem, 9);
@@ -3108,7 +3108,7 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
   MaxPooling<> module4(2, 1, 1, 1);
   module4.InputHeight() = 2;
   module4.InputWidth() = 3;
-  module4.Forward(std::move(input), std::move(output));
+  module4.Forward(input, output);
   // Calculated using torch.nn.MaxPool2d().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 3);
   BOOST_REQUIRE_EQUAL(output.n_elem, 4);
