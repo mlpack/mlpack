@@ -113,7 +113,8 @@ bool Load(const std::string& filename,
 
   if (extension == "csv" || extension == "tsv")
   {
-    loadType = arma::diskio::guess_file_type(stream);
+    // In latest Armadillo-9.850.1 guess_file_type is declared arma_deprecated.
+    loadType = arma::diskio::guess_file_type_internal(stream);
     if (loadType == arma::csv_ascii)
     {
       if (extension == "tsv")
@@ -177,7 +178,7 @@ bool Load(const std::string& filename,
     }
     else // It's not arma_ascii.  Now we let Armadillo guess.
     {
-      loadType = arma::diskio::guess_file_type(stream);
+      loadType = arma::diskio::guess_file_type_internal(stream);
 
       if (loadType == arma::raw_ascii) // Raw ASCII (space-separated).
         stringType = "raw ASCII formatted data";
