@@ -126,9 +126,10 @@ function CLISetParam(paramName::String,
 end
 
 function CLISetParam(paramName::String,
-                     vector::Vector{Cint})
+                     vector::Vector{Int})
+  cint_vec = convert(Vector{Cint}, vector)
   ccall((:CLI_SetParamVectorInt, library), Nothing, (Cstring, Ptr{Cint},
-      Csize_t), paramName, Base.pointer(vector), size(vector, 1));
+      Csize_t), paramName, Base.pointer(cint_vec), size(cint_vec, 1));
 end
 
 function CLISetParam(paramName::String,
