@@ -51,6 +51,9 @@
 
   * Change neural network types to avoid unnecessary use of rvalue references
     (#2259).
+  
+  * Adding a warning message in ffn_impl.hpp, brnn_impl.hpp, rnn_impl.hpp
+    (#2226).
 
 ### mlpack 3.2.2
 ###### 2019-11-26
