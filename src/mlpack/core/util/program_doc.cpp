@@ -39,7 +39,7 @@ ProgramDoc::ProgramDoc(
     const std::vector<std::pair<std::string, std::string>> seeAlso) :
     programName(std::move(programName)),
     shortDocumentation(std::move(shortDocumentation)),
-    documentation(std::movie(documentation)),
+    documentation(std::move(documentation)),
     seeAlso(std::move(seeAlso))
 {
   // Register this with CLI.
