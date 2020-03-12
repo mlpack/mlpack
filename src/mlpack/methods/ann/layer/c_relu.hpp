@@ -33,7 +33,8 @@ namespace ann /** Artificial Neural Network. */ {
  *   title  = {Understanding and Improving Convolutional Neural Networks
  *             via Concatenated Rectified Linear Units},
  *   author = {LWenling Shang, Kihyuk Sohn, Diogo Almeida, Honglak Lee},
- *   year   = {2016}
+ *   year   = {2016},
+ *   url    = {https://arxiv.org/abs/1603.05201}
  * }
  * @endcode
  *
@@ -63,7 +64,7 @@ class CReLU
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -75,7 +76,7 @@ class CReLU
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input, DataType&& gy, DataType&& g);
+  void Backward(const DataType& input, const DataType& gy, DataType& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }

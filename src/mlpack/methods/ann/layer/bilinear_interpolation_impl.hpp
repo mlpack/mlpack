@@ -54,7 +54,7 @@ BilinearInterpolation(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   batchSize = input.n_cols;
   if (output.is_empty())
@@ -68,7 +68,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
   assert(inRowSize >= 2);
   assert(inColSize >= 2);
 
-  arma::cube inputAsCube(const_cast<arma::Mat<eT>&&>(input).memptr(),
+  arma::cube inputAsCube(const_cast<arma::Mat<eT>&>(input).memptr(),
       inRowSize, inColSize, depth * batchSize, false, false);
   arma::cube outputAsCube(output.memptr(), outRowSize, outColSize,
                           depth * batchSize, false, true);
@@ -114,9 +114,9 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /*input*/,
-    arma::Mat<eT>&& gradient,
-    arma::Mat<eT>&& output)
+    const arma::Mat<eT>& /*input*/,
+    const arma::Mat<eT>& gradient,
+    arma::Mat<eT>& output)
 {
   if (output.is_empty())
     output.set_size(inRowSize * inColSize * depth, batchSize);
@@ -129,8 +129,8 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
   assert(outRowSize >= 2);
   assert(outColSize >= 2);
 
-  arma::cube gradientAsCube(gradient.memptr(), outRowSize, outColSize,
-                            depth * batchSize, false, false);
+  arma::cube gradientAsCube(((arma::Mat<eT>&) gradient).memptr(), outRowSize,
+      outColSize, depth * batchSize, false, false);
   arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
                           depth * batchSize, false, true);
 

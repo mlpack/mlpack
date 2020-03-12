@@ -35,7 +35,8 @@ namespace ann /** Artificial Neural Network. */ {
  *              Andreas Mayr},
  *   title   = {Self-Normalizing Neural Networks},
  *   journal = {Advances in Neural Information Processing Systems},
- *   year    = {2017}
+ *   year    = {2017},
+ *   url     = {https://arxiv.org/abs/1706.02515}
  * }
  * @endcode
  *
@@ -65,7 +66,7 @@ class AlphaDropout
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of the alpha_dropout layer.
@@ -75,9 +76,9 @@ class AlphaDropout
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
