@@ -31,7 +31,7 @@ HuberLoss<InputDataType, OutputDataType>::HuberLoss(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
 double HuberLoss<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, const TargetType&& target)
+    const InputType& input, const TargetType& target)
 {
   double loss = 0;
   double absError;
@@ -48,9 +48,9 @@ double HuberLoss<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
 void HuberLoss<InputDataType, OutputDataType>::Backward(
-    const InputType&& input,
-    const TargetType&& target,
-    OutputType&& output)
+    const InputType& input,
+    const TargetType& target,
+    OutputType& output)
 {
   output.set_size(size(input));
   double absError;
