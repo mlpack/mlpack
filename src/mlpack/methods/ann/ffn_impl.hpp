@@ -81,7 +81,7 @@ WarnMessage(OptimizerType& optimizer, size_t no_of_datapoints) const
   {
     Log::Warn << "The optimizer's maximum number of iterations "
               << "is less than the size of the dataset, the "
-              << "optimizer might not pass over the entire "
+              << "optimizer will not pass over the entire "
               << "dataset. To fix this, modify the maximum "
               << "number of iterations to be at least equal "
               << "to the number of points of your dataset "
