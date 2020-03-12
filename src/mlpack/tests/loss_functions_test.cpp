@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(SimpleKLDivergenceTest)
   // Test the Forward function.  Loss should be 0 if input = target.
   input = arma::ones(10, 1);
   target = arma::ones(10, 1);
-  loss = module.Forward(std::move(input), std::move(target));
+  loss = module.Forward(input, target);
   BOOST_REQUIRE_SMALL(loss, 0.00001);
 }
 
@@ -65,11 +65,11 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredLogarithmicErrorTest)
   // the manually calculated result.
   input = arma::zeros(1, 8);
   target = arma::zeros(1, 8);
-  double error = module.Forward(std::move(input), std::move(target));
+  double error = module.Forward(input, target);
   BOOST_REQUIRE_SMALL(error, 0.00001);
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(target), std::move(output));
+  module.Backward(input, target, output);
   // The output should be equal to 0.
   CheckMatrices(input, output);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
@@ -78,11 +78,11 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredLogarithmicErrorTest)
   // Test the error function on a single input.
   input = arma::mat("2");
   target = arma::mat("3");
-  error = module.Forward(std::move(input), std::move(target));
+  error = module.Forward(input, target);
   BOOST_REQUIRE_CLOSE(error, 0.082760974810151655, 0.001);
 
   // Test the Backward function on a single input.
-  module.Backward(std::move(input), std::move(target), std::move(output));
+  module.Backward(input, target, output);
   BOOST_REQUIRE_CLOSE(arma::accu(output), -0.1917880483011872, 0.001);
   BOOST_REQUIRE_EQUAL(output.n_elem, 1);
 }
@@ -100,11 +100,11 @@ BOOST_AUTO_TEST_CASE(KLDivergenceMeanTest)
   input = arma::mat("1 1 1 1 1 1 1 1 1 1");
   target = arma::exp(arma::mat("2 1 1 1 1 1 1 1 1 1"));
 
-  loss = module.Forward(std::move(input), std::move(target));
+  loss = module.Forward(input, target);
   BOOST_REQUIRE_CLOSE_FRACTION(loss, -1.1 , 0.00001);
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(target), std::move(output));
+  module.Backward(input, target, output);
   BOOST_REQUIRE_CLOSE_FRACTION(arma::as_scalar(output), -0.1, 0.00001);
 }
 
@@ -121,11 +121,11 @@ BOOST_AUTO_TEST_CASE(KLDivergenceNoMeanTest)
   input = arma::mat("1 1 1 1 1 1 1 1 1 1");
   target = arma::exp(arma::mat("2 1 1 1 1 1 1 1 1 1"));
 
-  loss = module.Forward(std::move(input), std::move(target));
+  loss = module.Forward(input, target);
   BOOST_REQUIRE_CLOSE_FRACTION(loss, -11, 0.00001);
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(target), std::move(output));
+  module.Backward(input, target, output);
   BOOST_REQUIRE_CLOSE_FRACTION(arma::as_scalar(output), -1, 0.00001);
 }
 
@@ -141,11 +141,11 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorTest)
   // the manually calculated result.
   input = arma::mat("1.0 0.0 1.0 0.0 -1.0 0.0 -1.0 0.0");
   target = arma::zeros(1, 8);
-  double error = module.Forward(std::move(input), std::move(target));
+  double error = module.Forward(input, target);
   BOOST_REQUIRE_EQUAL(error, 0.5);
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(target), std::move(output));
+  module.Backward(input, target, output);
   // We subtract a zero vector, so according to the used backward formula:
   // output = 2 * (input - target) / target.n_cols,
   // output * nofColumns / 2 should be equal to input.
@@ -156,11 +156,11 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorTest)
   // Test the error function on a single input.
   input = arma::mat("2");
   target = arma::mat("3");
-  error = module.Forward(std::move(input), std::move(target));
+  error = module.Forward(input, target);
   BOOST_REQUIRE_EQUAL(error, 1.0);
 
   // Test the Backward function on a single input.
-  module.Backward(std::move(input), std::move(target), std::move(output));
+  module.Backward(input, target, output);
   // Test whether the output is negative.
   BOOST_REQUIRE_EQUAL(arma::accu(output), -2);
   BOOST_REQUIRE_EQUAL(output.n_elem, 1);
@@ -178,16 +178,16 @@ BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorTest)
   // the manually calculated result.
   input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
   target1 = arma::zeros(1, 8);
-  double error1 = module.Forward(std::move(input1), std::move(target1));
+  double error1 = module.Forward(input1, target1);
   BOOST_REQUIRE_SMALL(error1 - 8 * std::log(2), 2e-5);
 
   input2 = arma::mat("0 1 1 0 1 0 0 1");
   target2 = arma::mat("0 1 1 0 1 0 0 1");
-  double error2 = module.Forward(std::move(input2), std::move(target2));
+  double error2 = module.Forward(input2, target2);
   BOOST_REQUIRE_SMALL(error2, 1e-5);
 
   // Test the Backward function.
-  module.Backward(std::move(input1), std::move(target1), std::move(output));
+  module.Backward(input1, target1, output);
   for (double el : output)
   {
     // For the 0.5 constant vector we should get 1 / (1 - 0.5) = 2 everywhere.
@@ -196,7 +196,7 @@ BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorTest)
   BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
 
-  module.Backward(std::move(input2), std::move(target2), std::move(output));
+  module.Backward(input2, target2, output);
   for (size_t i = 0; i < 8; ++i)
   {
     double el = output.at(0, i);
@@ -222,25 +222,25 @@ BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyErrorTest)
   // the calculated result.
   input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
   target1 = arma::zeros(1, 8);
-  double error1 = module.Forward(std::move(input1), std::move(target1));
+  double error1 = module.Forward(input1, target1);
   double expected = 0.97407699;
   // Value computed using tensorflow.
   BOOST_REQUIRE_SMALL(error1 / input1.n_elem - expected, 1e-7);
 
   input2 = arma::mat("1 2 3 4 5");
   target2 = arma::mat("0 0 1 0 1");
-  double error2 = module.Forward(std::move(input2), std::move(target2));
+  double error2 = module.Forward(input2, target2);
   expected = 1.5027283;
   BOOST_REQUIRE_SMALL(error2 / input2.n_elem - expected, 1e-6);
 
   input3 = arma::mat("0 -1 -1 0 -1 0 0 -1");
   target3 = arma::mat("0 -1 -1 0 -1 0 0 -1");
-  double error3 = module.Forward(std::move(input3), std::move(target3));
+  double error3 = module.Forward(input3, target3);
   expected = 0.00320443;
   BOOST_REQUIRE_SMALL(error3 / input3.n_elem - expected, 1e-6);
 
   // Test the Backward function.
-  module.Backward(std::move(input1), std::move(target1), std::move(output));
+  module.Backward(input1, target1, output);
   expected = 0.62245929;
   for (size_t i = 0; i < output.n_elem; i++)
     BOOST_REQUIRE_SMALL(output(i) - expected, 1e-5);
@@ -249,13 +249,13 @@ BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyErrorTest)
 
   expectedOutput = arma::mat(
       "0.7310586 0.88079709 -0.04742587 0.98201376 -0.00669285");
-  module.Backward(std::move(input2), std::move(target2), std::move(output));
+  module.Backward(input2, target2, output);
   for (size_t i = 0; i < output.n_elem; i++)
     BOOST_REQUIRE_SMALL(output(i) - expectedOutput(i), 1e-5);
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
 
-  module.Backward(std::move(input3), std::move(target3), std::move(output));
+  module.Backward(input3, target3, output);
   expectedOutput = arma::mat("0.5 1.2689414");
   for (size_t i = 0; i < 8; ++i)
   {
@@ -281,18 +281,18 @@ BOOST_AUTO_TEST_CASE(SimpleEarthMoverDistanceLayerTest)
   // the manually calculated result.
   input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
   target1 = arma::zeros(1, 8);
-  double error1 = module.Forward(std::move(input1), std::move(target1));
+  double error1 = module.Forward(input1, target1);
   double expected = 0.0;
   BOOST_REQUIRE_SMALL(error1 / input1.n_elem - expected, 1e-7);
 
   input2 = arma::mat("1 2 3 4 5");
   target2 = arma::mat("1 0 1 0 1");
-  double error2 = module.Forward(std::move(input2), std::move(target2));
+  double error2 = module.Forward(input2, target2);
   expected = -1.8;
   BOOST_REQUIRE_SMALL(error2 / input2.n_elem - expected, 1e-6);
 
   // Test the Backward function.
-  module.Backward(std::move(input1), std::move(target1), std::move(output));
+  module.Backward(input1, target1, output);
   expected = 0.0;
   for (size_t i = 0; i < output.n_elem; i++)
     BOOST_REQUIRE_SMALL(output(i) - expected, 1e-5);
@@ -300,7 +300,7 @@ BOOST_AUTO_TEST_CASE(SimpleEarthMoverDistanceLayerTest)
   BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
 
   expectedOutput = arma::mat("-1 0 -1 0 -1");
-  module.Backward(std::move(input2), std::move(target2), std::move(output));
+  module.Backward(input2, target2, output);
   for (size_t i = 0; i < output.n_elem; i++)
     BOOST_REQUIRE_SMALL(output(i) - expectedOutput(i), 1e-5);
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
@@ -405,16 +405,16 @@ BOOST_AUTO_TEST_CASE(DiceLossTest)
   // Test the Forward function. Loss should be 0 if input = target.
   input1 = arma::ones(10, 1);
   target = arma::ones(10, 1);
-  loss = module.Forward(std::move(input1), std::move(target));
+  loss = module.Forward(input1, target);
   BOOST_REQUIRE_SMALL(loss, 0.00001);
 
   // Test the Forward function. Loss should be 0.185185185.
   input2 = arma::ones(10, 1) * 0.5;
-  loss = module.Forward(std::move(input2), std::move(target));
+  loss = module.Forward(input2, target);
   BOOST_REQUIRE_CLOSE(loss, 0.185185185, 0.00001);
 
   // Test the Backward function for input = target.
-  module.Backward(std::move(input1), std::move(target), std::move(output));
+  module.Backward(input1, target, output);
   for (double el : output)
   {
     // For input = target we should get 0.0 everywhere.
@@ -424,7 +424,7 @@ BOOST_AUTO_TEST_CASE(DiceLossTest)
   BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
 
   // Test the Backward function.
-  module.Backward(std::move(input2), std::move(target), std::move(output));
+  module.Backward(input2, target, output);
   for (double el : output)
   {
     // For the 0.5 constant vector we should get -0.0877914951989026 everywhere.
@@ -446,11 +446,11 @@ BOOST_AUTO_TEST_CASE(SimpleMeanBiasErrorTest)
   // the manually calculated result.
   input = arma::mat("1.0 0.0 1.0 -1.0 -1.0 0.0 -1.0 0.0");
   target = arma::zeros(1, 8);
-  double error = module.Forward(std::move(input), std::move(target));
+  double error = module.Forward(input, target);
   BOOST_REQUIRE_EQUAL(error, 0.125);
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(target), std::move(output));
+  module.Backward(input, target, output);
   // We should get a vector with -1 everywhere.
   for (double el : output)
   {
@@ -462,11 +462,11 @@ BOOST_AUTO_TEST_CASE(SimpleMeanBiasErrorTest)
   // Test the error function on a single input.
   input = arma::mat("2");
   target = arma::mat("3");
-  error = module.Forward(std::move(input), std::move(target));
+  error = module.Forward(input, target);
   BOOST_REQUIRE_EQUAL(error, 1.0);
 
   // Test the Backward function on a single input.
-  module.Backward(std::move(input), std::move(target), std::move(output));
+  module.Backward(input, target, output);
   // Test whether the output is negative.
   BOOST_REQUIRE_EQUAL(arma::accu(output), -1);
   BOOST_REQUIRE_EQUAL(output.n_elem, 1);

@@ -75,9 +75,9 @@ class LogCoshLoss
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the value of hyperparameter a.
-  bool A() const { return a; }
+  double A() const { return a; }
   //! Modify the value of hyperparameter a.
-  bool& A() { return a; }
+  double& A() { return a; }
 
   /**
    * Serialize the loss function.
