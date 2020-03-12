@@ -1,0 +1,91 @@
+/*!
+@file rl.txt
+@author Sriram S K
+@brief Tutorial for how to use the Reinforcement Learning module in mlpack.
+
+@page rltutorial Reinforcement Learning Tutorial
+
+@section intro_rltut Introduction
+
+Reinforcement Learning is one of the hottest topics right now, with 
+interest surging after DeepMind published their article on training 
+deep neural networks to play Atari games to great success. mlpack
+implements a complete end-to-end framework for Reinforcement Learning,
+featuring multiple environments, policies and methods. Of course, 
+custom environments and policies can be used and plugged into the
+existing framework with no runtime overhead.
+
+mlpack implements typical benchmark environments (Acrobot, Mountain car etc.),
+commonly used policies and replay methods and supports asynchronous
+learning as well. In addition, it can [communicate](https://github.com/zoq/gym_tcp_api) 
+with the OpenAI Gym toolkit for more environments.
+
+@section toc_rltut Table of Contents
+
+This tutorial is split into the following sections:
+
+ - \ref intro_rltut
+ - \ref toc_rltut
+ - \ref environment_rltut
+ - \ref agent_components_rltut
+ - \ref q_learning_rltut
+ - \ref async_learning_rltut
+
+@section environment_rltut Reinforcement Learning Environments
+
+mlpack implements a number of the most popular environments used for testing
+RL agents and algorithms. These include the Cart Pole, Acrobot, Mountain Car
+and their variations. Of course, as mentioned above, you can communicate with 
+OpenAI Gym for other environments, like the Atari video games.
+
+A key component of mlpack is its extensibility. It is a simple process to create
+your own custom environments, specific to your needs, and use it with mlpack's 
+RL framework. All the environments implement a few specific methods and classes 
+which are used by the agents while learning. 
+
+- \c State: The State class is a representation of the environment. For the CartPole,
+   this would involve storing the position, velocity, angle and angular velocity.
+
+- \c Action: It is an enum naming all the possible actions the agent can take in the
+   environment. Continuing with the CartPole example, the Action enum would simply 
+   contain the two possible actions, backward and forward.
+
+- \c Sample: This method is perhaps the heart of the environment, providing rewards to
+   the agent depending on the state and the action taken, and updates the state based on
+   the action taken as well.
+
+Of course, your custom environment will most likely a number of helper methods, depending
+on your application, such as the Dsdt method in the Acrobot environment, used in the RK4 
+iterative method (also another helper method) to estimate the next state.
+
+@section agent_components_rltut Components of an RL Agent
+
+A Reinforcement Learning agent, in general, takes actions in an environment in order
+to maximize a cumulative reward. To that end, it requires a way to choose actions (\b policy) 
+and a way to sample previous experiences (\b replay).
+
+An example of a simple policy would be an epsilon-greedy policy. Using such a policy, the agent
+will choose actions greedily with some probability epsilon. This probability is slowly decreased
+over time, balancing the line between exploration and exploitation. 
+
+Similarly, an example of a simple reply would be a random replay. At each time step, the 
+interactions between the agent and the environment are saved to a memory buffer and previous
+experiences are sampled from the buffer to train the agent.
+
+Instantiating the components of an agent can be easily done by passing the Environment as 
+a templated argument and the parameters of the policy/replay to the constructor. 
+
+To create a Greedy Policy and Prioritized Replay for the CartPole environment, we would do the
+following:
+
+@code
+GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
+PrioritizedReplay<CartPole> replayMethod(10, 10000, 0.6);
+@endcode
+
+The arguments to `policy` are the initial epsilon values, the intenrval of decrease in its value
+and the value at which epsilon bottoms out and won't be reduced further. The arguments to 
+`replayMethod` are size of the batch returned, the number of examples stored in memory, and the 
+degree of prioritization.
+
+@section q_learning_rltut Q-Learning in mlpack
