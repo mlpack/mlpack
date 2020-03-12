@@ -38,8 +38,8 @@ RBF<InputDataType, OutputDataType>::RBF(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void RBF<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input,
-    arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input,
+    arma::Mat<eT>& output)
 {
   centres = arma::randu(outSize, inSize);
   centres = arma::normcdf(centres, 0, 1);
@@ -64,9 +64,9 @@ void RBF<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void RBF<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */,
-    arma::Mat<eT>&& gy,
-    arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
   g = distances.t() * gy;
 }
