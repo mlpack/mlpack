@@ -31,47 +31,45 @@ appreciated and encouraged!
 
 ## Reviewing Pull Requests
 
-All mlpack contributors who choose to review and provide feedback on Pull
-Requests have a responsibility to both the project and the individual making
+All mlpack contributors who choose to review and provide feedback on pull
+requests have a responsibility to both the project and the individual making
 the contribution. 
 
-Reviews and feedback must be
+Reviews and feedback should be
 [helpful, insightful, and geared towards improving the contribution](
   https://www.youtube.com/watch?v=NNXk_WJzyMI).
 If there are reasons why you feel the PR should not be merged, explain
-what those are. Do not expect to be able to block a Pull Request from advancing
-simply because you say "No" without giving an explanation. Be open to having
-your mind changed. Be open to working with the contributor to make the Pull
-Request better.
+what those are. Be open to having your mind changed. Be open to
+working with the contributor to make the pull request better.
 
 Please don't leave dismissive or disrespectful reviews!  It's not helpful for
 anyone.
 
-When reviewing a Pull Request, the primary goals are :
+When reviewing a pull request, the primary goals are:
 
 - For the codebase/project to improve
 - For the person submitting the request to succeed
 
-Even if a Pull Request does not gets merged, the submitters should come away
+Even if a pull request does not get merged, the submitters should come away
 from the experience feeling like their effort was not wasted or unappreciated.
-Every Pull Request from a new contributor is an opportunity to grow the community. 
+Every pull request from a new contributor is an opportunity to grow the community. 
 
 When changes are necessary, request them, do not demand them, and do not assume
 that the contributor already knows how to do that. Be there to lend a helping
 hand in case of need.
 
-Since there is clearly a high difference between pull request being raised and
-those being reviewed we highly encourage everyone to review each others pull
-request keeping in mind all the above mentioned points. 
+Since there can sometimes be a lot more pull requests being opened than
+reviewed, we highly encourage everyone to review each others pull request
+keeping in mind all the above mentioned points.
 
-Let's welcome new contributors with ❤️, and not overwhelm them.
+Let's welcome new contributors with ❤️.
 
 ## Pull Request Waiting Time 
 
-Since members of the Contributors team only work on mlpack in their free time,
-it may take some time for them to review pull requests. While gentle reminders
-are welcome, please be patient and avoid constantly messaging the contributors or
-tagging them on Pull requests.
+mlpack is a community-driven project, so everyone only works on it in their
+free time, this means it may take some time for them to review pull requests.
+While gentle reminders are welcome, please be patient and avoid constantly
+messaging contributors or tagging them on pull requests.
 
 Typically small PRs will be reviewed within a handful of days; larger PRs might
 take a few weeks for an initial review, and it may be a little bit longer in 
