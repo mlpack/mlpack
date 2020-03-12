@@ -3035,7 +3035,7 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
  */
 BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
 {
-  // For rectangular input.
+  // For rectangular input to pooling layers.
   arma::mat input = arma::mat(12, 1);
   arma::mat output;
   input.zeros();
