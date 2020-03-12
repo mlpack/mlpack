@@ -155,7 +155,7 @@ bool mlpackGetParamBool(const char* identifier)
 void* mlpackGetVecIntPtr(const char* identifier)
 {
   const size_t size = mlpackVecIntSize(identifier);
-  int64_t* ints = new int64_t[size];
+  long long* ints = new long long[size];
 
   for (size_t i = 0; i < size; i++)
     ints[i] = CLI::GetParam<std::vector<int>>(identifier)[i];
