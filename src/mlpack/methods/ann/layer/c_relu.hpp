@@ -57,7 +57,7 @@ class CReLU
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
-   * Works only for 2D Tensors.
+   * Works only for 2D Tenosrs.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.

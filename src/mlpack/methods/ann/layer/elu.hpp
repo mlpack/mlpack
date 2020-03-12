@@ -3,7 +3,7 @@
  * @author Vivek Pal
  * @author Dakshit Agrawal
  *
- * Definition of the ELU activation function as described by Djork-Arne Clevert,
+ * Definition of the ELU activation function as descibed by Djork-Arne Clevert,
  * Thomas Unterthiner and Sepp Hochreiter.
  *
  * Definition of the SELU function as introduced by

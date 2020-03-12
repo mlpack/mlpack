@@ -262,7 +262,7 @@ void CheckELUDerivativeCorrect(const arma::colvec input,
 
 /*
  * Implementation of the PReLU activation function test. The function
- * is implemented as PReLU layer in the file parametric_relu.hpp
+ * is implemented as PReLU layer in the file perametric_relu.hpp
  *
  * @param input Input data used for evaluating the PReLU activation
  *   function.
@@ -285,7 +285,7 @@ void CheckPReLUActivationCorrect(const arma::colvec input,
 /*
  * Implementation of the PReLU activation function derivative test.
  * The function is implemented as PReLU layer in the file
- * parametric_relu.hpp
+ * perametric_relu.hpp
  *
  * @param input Input data used for evaluating the PReLU activation
  *   function.
@@ -453,55 +453,6 @@ BOOST_AUTO_TEST_CASE(SELUFunctionDerivativeTest)
 
   BOOST_REQUIRE_LE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
       selu.Lambda() * selu.Alpha() - arma::mean(activations))), 10e-4);
-}
-
-/*
- * Implementation of the CELU activation function test. The function is
- * implemented as CELU layer in the file celu.hpp
- *
- * @param input Input data used for evaluating the CELU activation function.
- * @param target Target data used to evaluate the CELU activation.
- */
-void CheckCELUActivationCorrect(const arma::colvec input,
-                                     const arma::colvec target)
-{
-  // Initialize CELU object with alpha = 1.0.
-  CELU<> lrf(1.0);
-
-  // Test the activation function using the entire vector as input.
-  arma::colvec activations;
-  lrf.Forward(std::move(input), std::move(activations));
-  for (size_t i = 0; i < activations.n_elem; i++)
-  {
-    BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
-  }
-}
-
-/*
- * Implementation of the CELU activation function derivative test. The function
- * is implemented as CELU layer in the file celu.hpp
- *
- * @param input Input data used for evaluating the CELU activation function.
- * @param target Target data used to evaluate the CELU activation.
- */
-void CheckCELUDerivativeCorrect(const arma::colvec input,
-                                     const arma::colvec target)
-{
-  // Initialize CELU object with alpha = 1.0.
-  CELU<> lrf(1.0);
-
-  // Test the calculation of the derivatives using the entire vector as input.
-  arma::colvec derivatives, activations;
-
-  // This error vector will be set to 1 to get the derivatives.
-  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
-  lrf.Forward(std::move(input), std::move(activations));
-  lrf.Backward(std::move(activations), std::move(error),
-      std::move(derivatives));
-  for (size_t i = 0; i < derivatives.n_elem; i++)
-  {
-    BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
-  }
 }
 
 /**
@@ -821,19 +772,4 @@ BOOST_AUTO_TEST_CASE(HardShrinkFunctionTest)
                                    desiredDerivatives);
 }
 
-/**
- * Basic test of the CELU function.
- */
-BOOST_AUTO_TEST_CASE(CELUFunctionTest)
-{
-  const arma::colvec desiredActivations("-0.86466472 3.2 4.5 \
-                                         -1 1 -0.63212056 2 0");
-
-  const arma::colvec desiredDerivatives("0.42119275 1 1 \
-                                         0.36787944 1 \
-                                         0.5314636 1 1");
-
-  CheckCELUActivationCorrect(activationData, desiredActivations);
-  CheckCELUDerivativeCorrect(desiredActivations, desiredDerivatives);
-}
 BOOST_AUTO_TEST_SUITE_END();

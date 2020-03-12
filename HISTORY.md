@@ -46,8 +46,6 @@
   * Add LiSHT activation function (#2182).
 
   * Add Valid and Same Padding for Transposed Convolution layer (#2163).
-  
-  * Add CELU activation function (#2191)
 
   * Add Log-Hyperbolic-Cosine Loss function (#2207).
 

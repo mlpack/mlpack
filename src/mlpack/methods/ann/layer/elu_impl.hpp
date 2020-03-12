@@ -3,7 +3,7 @@
  * @author Vivek Pal
  * @author Dakshit Agrawal
  *
- * Implementation of the ELU activation function as described by Djork-Arne
+ * Implementation of the ELU activation function as descibed by Djork-Arne
  * Clevert, Thomas Unterthiner and Sepp Hochreiter.
  *
  * Implementation of the SELU function as introduced by Klambauer et. al. in

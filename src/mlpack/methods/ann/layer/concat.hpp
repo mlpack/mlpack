@@ -3,7 +3,7 @@
  * @author Marcus Edel
  * @author Mehul Kumar Nirala
  *
- * Definition of the Concat class, which acts as a concatenation container.
+ * Definition of the Concat class, which acts as a concatenation contain.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
