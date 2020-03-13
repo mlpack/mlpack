@@ -14,9 +14,9 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <mlpack/methods/amf/amf.hpp>
-
 #include <mlpack/methods/amf/init_rules/random_init.hpp>
 #include <mlpack/methods/amf/init_rules/given_init.hpp>
+#include <mlpack/methods/amf/init_rules/merge_init.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_mult_dist.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_mult_div.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_als.hpp>
@@ -130,6 +130,68 @@ void SaveWH(const bool bindingTransposed, arma::mat&& w, arma::mat&& h)
   }
 }
 
+template<typename UpdateRuleType>
+void ApplyFactorization(const arma::mat& V,
+                        const size_t r,
+                        arma::mat& W,
+                        arma::mat& H)
+{
+  const size_t maxIterations = CLI::GetParam<int>("max_iterations");
+  const double minResidue = CLI::GetParam<double>("min_residue");
+
+  SimpleResidueTermination srt(minResidue, maxIterations);
+
+  // Load input dataset.  We know if the data is transposed based on the
+  // BINDING_MATRIX_TRANSPOSED macro, which will be 'true' or 'false'.
+  arma::mat initialW, initialH;
+  LoadInitialWH(BINDING_MATRIX_TRANSPOSED, initialW, initialH);
+  if (CLI::HasParam("initial_w") && CLI::HasParam("initial_h"))
+  {
+    // Initialize W and H with given matrices
+    GivenInitialization ginit = GivenInitialization(initialW, initialH);
+    AMF<SimpleResidueTermination,
+        GivenInitialization,
+        UpdateRuleType> amf(srt, ginit);
+    amf.Apply(V, r, W, H);
+  }
+  else if (CLI::HasParam("initial_w"))
+  {
+    // Merge GivenInitialization and RandomInitialization rules
+    // to initialize W with the given matrix, and H with random noise
+    GivenInitialization ginit = GivenInitialization(initialW);
+    RandomInitialization rinit = RandomInitialization();
+    MergeInitialization<GivenInitialization, RandomInitialization> minit =
+        MergeInitialization<GivenInitialization, RandomInitialization>
+        (ginit, rinit);
+    AMF<SimpleResidueTermination,
+        MergeInitialization<GivenInitialization, RandomInitialization>,
+        UpdateRuleType> amf(srt, minit);
+    amf.Apply(V, r, W, H);
+  }
+  else if (CLI::HasParam("initial_h"))
+  {
+    // Merge GivenInitialization and RandomInitialization rules
+    // to initialize H with the given matrix, and W with random noise
+    GivenInitialization ginit = GivenInitialization(initialH, false);
+    RandomInitialization rinit = RandomInitialization();
+    MergeInitialization<RandomInitialization, GivenInitialization> minit =
+        MergeInitialization<RandomInitialization, GivenInitialization>
+        (rinit, ginit);
+    AMF<SimpleResidueTermination,
+        MergeInitialization<RandomInitialization, GivenInitialization>,
+        UpdateRuleType> amf(srt, minit);
+    amf.Apply(V, r, W, H);
+  }
+  else
+  {
+    // Use random initialization
+    AMF<SimpleResidueTermination,
+        RandomInitialization,
+        UpdateRuleType> amf(srt);
+    amf.Apply(V, r, W, H);
+  }
+}
+
 static void mlpackMain()
 {
   // Initialize random seed.
@@ -140,8 +202,6 @@ static void mlpackMain()
 
   // Gather parameters.
   const size_t r = CLI::GetParam<int>("rank");
-  const size_t maxIterations = CLI::GetParam<int>("max_iterations");
-  const double minResidue = CLI::GetParam<double>("min_residue");
   const string updateRules = CLI::GetParam<string>("update_rules");
 
   // Validate parameters.
@@ -153,10 +213,7 @@ static void mlpackMain()
       true, "max_iterations must be non-negative");
 
   RequireAtLeastOnePassed({ "h", "w" }, false, "no output will be saved");
-  RequireNoneOrAllPassed({"initial_w", "initial_h"}, true);
 
-  // Load input dataset.  We know if the data is transposed based on the
-  // BINDING_MATRIX_TRANSPOSED macro, which will be 'true' or 'false'.
   arma::mat V = std::move(CLI::GetParam<arma::mat>("input"));
 
   arma::mat W;
@@ -167,76 +224,19 @@ static void mlpackMain()
   {
     Log::Info << "Performing NMF with multiplicative distance-based update "
         << "rules." << std::endl;
-
-    SimpleResidueTermination srt(minResidue, maxIterations);
-    if (CLI::HasParam("initial_w"))
-    {
-      // Initialization with given W, H matrices.
-      arma::mat initialW, initialH;
-      LoadInitialWH(BINDING_MATRIX_TRANSPOSED, initialW, initialH);
-      GivenInitialization ginit = GivenInitialization(initialW, initialH);
-
-      AMF<SimpleResidueTermination,
-          GivenInitialization> amf(srt, ginit);
-      amf.Apply(V, r, W, H);
-    }
-    else
-    {
-      AMF<> amf(srt);
-      amf.Apply(V, r, W, H);
-    }
+    ApplyFactorization<NMFMultiplicativeDistanceUpdate>(V, r, W, H);
   }
   else if (updateRules == "multdiv")
   {
     Log::Info << "Performing NMF with multiplicative divergence-based update "
         << "rules." << std::endl;
-
-    SimpleResidueTermination srt(minResidue, maxIterations);
-    if (CLI::HasParam("initial_w"))
-    {
-      // Initialization with given W, H matrices.
-      arma::mat initialW, initialH;
-      LoadInitialWH(BINDING_MATRIX_TRANSPOSED, initialW, initialH);
-      GivenInitialization ginit = GivenInitialization(initialW, initialH);
-
-      AMF<SimpleResidueTermination,
-          GivenInitialization,
-          NMFMultiplicativeDivergenceUpdate> amf(srt, ginit);
-      amf.Apply(V, r, W, H);
-    }
-    else
-    {
-      AMF<SimpleResidueTermination,
-        RandomInitialization,
-        NMFMultiplicativeDivergenceUpdate> amf(srt);
-      amf.Apply(V, r, W, H);
-    }
+    ApplyFactorization<NMFMultiplicativeDivergenceUpdate>(V, r, W, H);
   }
   else if (updateRules == "als")
   {
     Log::Info << "Performing NMF with alternating least squared update rules."
         << std::endl;
-
-    SimpleResidueTermination srt(minResidue, maxIterations);
-    if (CLI::HasParam("initial_w"))
-    {
-      // Initialization with given W, H matrices.
-      arma::mat initialW, initialH;
-      LoadInitialWH(BINDING_MATRIX_TRANSPOSED, initialW, initialH);
-      GivenInitialization ginit = GivenInitialization(initialW, initialH);
-
-      AMF<SimpleResidueTermination,
-          GivenInitialization,
-          NMFALSUpdate> amf(srt, ginit);
-      amf.Apply(V, r, W, H);
-    }
-    else
-    {
-      AMF<SimpleResidueTermination,
-        RandomInitialization,
-        NMFALSUpdate> amf(srt);
-      amf.Apply(V, r, W, H);
-    }
+    ApplyFactorization<NMFALSUpdate>(V, r, W, H);
   }
 
   // Save results.  Remember from our discussion in the comments earlier that we

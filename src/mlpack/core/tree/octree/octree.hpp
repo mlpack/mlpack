@@ -221,6 +221,20 @@ class Octree
   Octree(Octree&& other);
 
   /**
+   * Copy the given Octree.
+   *
+   * @param other The tree to be copied.
+   */
+  Octree& operator=(const Octree& other);
+
+  /**
+   * Take ownership of the given Octree.
+   *
+   * @param other The tree to take ownership of.
+   */
+  Octree& operator=(Octree&& other);
+
+  /**
    * Initialize the tree from a boost::serialization archive.
    *
    * @param ar Archive to load tree from.  Must be an iarchive, not an oarchive.

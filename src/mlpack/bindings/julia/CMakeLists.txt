@@ -2,7 +2,7 @@ if (BUILD_JULIA_BINDINGS)
   ## We need to check here if Julia is even available.  Although actually
   ## technically, I'm not sure if we even need to know!  For the tests though we
   ## do.  So it's probably a good idea to check.
-  find_package(Julia 0.7.0)
+  find_package(Julia 1.3.0)
 
   if (NOT JULIA_FOUND)
     # We can't build anything, so define the macro to do nothing.
@@ -18,10 +18,6 @@ if (BUILD_JULIA_BINDINGS)
   add_custom_command(TARGET julia PRE_BUILD
       COMMAND ${CMAKE_COMMAND} -E make_directory
           ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/)
-  add_custom_command(TARGET julia PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy
-          ${CMAKE_CURRENT_SOURCE_DIR}/mlpack/REQUIRE
-          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/REQUIRE)
 
   add_library(mlpack_julia_util
     julia_util.h
@@ -52,12 +48,16 @@ if (BUILD_JULIA_BINDINGS)
   configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack/cli.jl.in
                  ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/cli.jl)
 
-  # Create the empty mlpack.jl file that we will fill with includes.
-  file(WRITE
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
-      "module mlpack\n\n"
-      "module util\n\n"
-      "include(\"cli.jl\")\n")
+  # Create the empty mlpack.jl file that we will fill with includes using the
+  # exsiting template.  Unfortunately COPY doesn't let us change the extension
+  # so we need a follow-up RENAME command.
+  file(COPY
+       "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/mlpack.jl.in"
+       DESTINATION
+       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/")
+  file(RENAME
+       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl.in"
+       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl")
 
   file(WRITE
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/functions.jl"
@@ -150,7 +150,7 @@ if (BUILD_JULIA_BINDINGS)
   # Append the code to define the function in the module.
   file(APPEND
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/functions.jl"
-      "${name} = util.${name}\n")
+      "${name} = _Internal.${name}\n")
 endif ()
 endmacro ()
 
