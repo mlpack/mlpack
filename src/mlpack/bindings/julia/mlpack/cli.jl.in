@@ -66,8 +66,8 @@ function CLIRestoreSettings(programName::String)
 end
 
 function CLISetParam(paramName::String, paramValue::Int)
-  ccall((:CLI_SetParamInt, library), Nothing, (Cstring, Int), paramName,
-      paramValue);
+  ccall((:CLI_SetParamInt, library), Nothing, (Cstring, Cint), paramName,
+      Cint(paramValue));
 end
 
 function CLISetParam(paramName::String, paramValue::Float64)
@@ -127,8 +127,9 @@ end
 
 function CLISetParam(paramName::String,
                      vector::Vector{Int})
-  ccall((:CLI_SetParamVectorInt, library), Nothing, (Cstring, Ptr{Int},
-      Int), paramName, Base.pointer(vector), size(vector, 1));
+  cint_vec = convert(Vector{Cint}, vector)
+  ccall((:CLI_SetParamVectorInt, library), Nothing, (Cstring, Ptr{Cint},
+      Csize_t), paramName, Base.pointer(cint_vec), size(cint_vec, 1));
 end
 
 function CLISetParam(paramName::String,
@@ -189,7 +190,7 @@ function CLIGetParamBool(paramName::String)
 end
 
 function CLIGetParamInt(paramName::String)
-  return ccall((:CLI_GetParamInt, library), Int, (Cstring,), paramName)
+  return Int(ccall((:CLI_GetParamInt, library), Cint, (Cstring,), paramName))
 end
 
 function CLIGetParamDouble(paramName::String)
@@ -219,16 +220,17 @@ end
 
 function CLIGetParamVectorInt(paramName::String)
   local size::Csize_t
-  local ptr::Ptr{Int}
+  local ptr::Ptr{Cint}
 
   # Get the size of the vector, then the pointer to it.  We will own the
   # pointer.
   size = ccall((:CLI_GetParamVectorIntLen, library), Csize_t, (Cstring,),
       paramName);
-  ptr = ccall((:CLI_GetParamVectorIntPtr, library), Ptr{Int}, (Cstring,),
+  ptr = ccall((:CLI_GetParamVectorIntPtr, library), Ptr{Cint}, (Cstring,),
       paramName);
 
-  return Base.unsafe_wrap(Array{Int, 1}, ptr, (size), own=true)
+  return convert(Array{Int, 1}, Base.unsafe_wrap(Array{Cint, 1}, ptr, (size),
+      own=true))
 end
 
 function CLIGetParamMat(paramName::String, pointsAsRows::Bool)
