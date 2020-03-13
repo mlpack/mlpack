@@ -44,6 +44,7 @@ namespace data {
  * @param trainLabel Vector to store training labels into.
  * @param testLabel Vector to store test labels into.
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
+ * @param shuffleData True(Default) if you want to shuffle data.
  */
 template<typename T, typename U>
 void Split(const arma::Mat<T>& input,
@@ -52,7 +53,8 @@ void Split(const arma::Mat<T>& input,
            arma::Mat<T>& testData,
            arma::Row<U>& trainLabel,
            arma::Row<U>& testLabel,
-           const double testRatio)
+           const double testRatio,
+           bool shuffleData = true)
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
@@ -61,9 +63,13 @@ void Split(const arma::Mat<T>& input,
   trainLabel.set_size(trainSize);
   testLabel.set_size(testSize);
 
-  const arma::Col<size_t> order =
-      arma::shuffle(arma::linspace<arma::Col<size_t>>(0, input.n_cols - 1,
-                                                      input.n_cols));
+  arma::Col<size_t> order;
+  if (shuffleData)
+    order = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
+        input.n_cols - 1, input.n_cols));
+  else
+    order = arma::linspace<arma::Col<size_t>>(0, input.n_cols - 1,
+        input.n_cols);
 
   for (size_t i = 0; i != trainSize; ++i)
   {
@@ -98,21 +104,27 @@ void Split(const arma::Mat<T>& input,
  * @param trainData Matrix to store training data into.
  * @param testData Matrix to store test data into.
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
+ * @param shuffleData True(Default) if you want to shuffle data.
  */
 template<typename T>
 void Split(const arma::Mat<T>& input,
            arma::Mat<T>& trainData,
            arma::Mat<T>& testData,
-           const double testRatio)
+           const double testRatio,
+           bool shuffleData = true)
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
   trainData.set_size(input.n_rows, trainSize);
   testData.set_size(input.n_rows, testSize);
 
-  const arma::Col<size_t> order =
-      arma::shuffle(arma::linspace<arma::Col<size_t>>(0, input.n_cols -1,
-                                                      input.n_cols));
+  arma::Col<size_t> order;
+  if (shuffleData)
+    order = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
+        input.n_cols -1, input.n_cols));
+  else
+    order = arma::linspace<arma::Col<size_t>>(0, input.n_cols -1,
+        input.n_cols);
 
   for (size_t i = 0; i != trainSize; ++i)
   {
@@ -140,6 +152,7 @@ void Split(const arma::Mat<T>& input,
  * @param input Input dataset to split.
  * @param label Input labels to split.
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
+ * @param shuffleData True(Default) if you want to shuffle data.
  * @return std::tuple containing trainData (arma::Mat<T>), testData
  *      (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>).
  */
@@ -147,7 +160,8 @@ template<typename T, typename U>
 std::tuple<arma::Mat<T>, arma::Mat<T>, arma::Row<U>, arma::Row<U>>
 Split(const arma::Mat<T>& input,
       const arma::Row<U>& inputLabel,
-      const double testRatio)
+      const double testRatio,
+      bool shuffleData = true)
 {
   arma::Mat<T> trainData;
   arma::Mat<T> testData;
@@ -155,7 +169,7 @@ Split(const arma::Mat<T>& input,
   arma::Row<U> testLabel;
 
   Split(input, inputLabel, trainData, testData, trainLabel, testLabel,
-      testRatio);
+      testRatio, shuffleData);
 
   return std::make_tuple(std::move(trainData),
                          std::move(testData),
@@ -176,17 +190,19 @@ Split(const arma::Mat<T>& input,
  *
  * @param input Input dataset to split.
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
+ * @param shuffleData True(Default) if you want to shuffle data.
  * @return std::tuple containing trainData (arma::Mat<T>)
  *      and testData (arma::Mat<T>).
  */
 template<typename T>
 std::tuple<arma::Mat<T>, arma::Mat<T>>
 Split(const arma::Mat<T>& input,
-      const double testRatio)
+      const double testRatio,
+      bool shuffleData = true)
 {
   arma::Mat<T> trainData;
   arma::Mat<T> testData;
-  Split(input, trainData, testData, testRatio);
+  Split(input, trainData, testData, testRatio, shuffleData);
 
   return std::make_tuple(std::move(trainData),
                          std::move(testData));

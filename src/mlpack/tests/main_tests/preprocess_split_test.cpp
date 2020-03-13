@@ -199,4 +199,35 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitUnityTestRatioTest)
       labelSize);
 }
 
+/**
+ * Check shuffle_data flag is working as expected.
+ */
+BOOST_AUTO_TEST_CASE(PreprocessSplitLabelSuffleDataTest)
+{
+  // Load custom dataset.
+  arma::mat inputData;
+  data::Load("vc2.csv", inputData);
+
+  // Store size of input dataset.
+  int inputSize  = inputData.n_cols;
+
+  // Input custom data points and labels.
+  SetInputParam("input", inputData);
+
+  // Input test_ratio.
+  SetInputParam("test_ratio", (double) 0.1);
+  SetInputParam("shuffle_data", true);
+  mlpackMain();
+
+  // Now check that the output has desired dimensions.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("training").n_cols,
+      std::ceil(0.9 * inputSize));
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("test").n_cols,
+      std::floor(0.1 * inputSize));
+
+  arma::mat concat = arma::join_rows(CLI::GetParam<arma::mat>("training"),
+      CLI::GetParam<arma::mat>("test"));
+  CheckMatrices(inputData, concat);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
