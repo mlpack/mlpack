@@ -30,7 +30,7 @@ ISRU<InputDataType, OutputDataType>::ISRU(const double alpha) :
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void ISRU<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   output = input / (arma::sqrt(1 + alpha * arma::pow(input, 2)));
 }
@@ -38,7 +38,7 @@ void ISRU<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void ISRU<InputDataType, OutputDataType>::Backward(
-    const DataType&& input, DataType&& gy, DataType&& g)
+    const DataType& input, DataType& gy, DataType& g)
 {
   double yEdge = 1 / std::sqrt(alpha);
   double x;
