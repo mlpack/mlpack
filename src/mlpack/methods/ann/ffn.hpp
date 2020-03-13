@@ -98,7 +98,7 @@ class FFN
       ::value, void>::type
   WarnMessage(OptimizerType& optimizer, size_t no_of_datapoints) const;
 
-/**
+ /**
    * Check if the optimizer has MaxIterations() parameter, if it
    * doesn't then simply return from the function.
    *
