@@ -29,7 +29,6 @@ This tutorial is split into the following sections:
  - \ref environment_rltut
  - \ref agent_components_rltut
  - \ref q_learning_rltut
- - \ref async_learning_rltut
  - \ref further_rltut
 
 @section environment_rltut Reinforcement Learning Environments
