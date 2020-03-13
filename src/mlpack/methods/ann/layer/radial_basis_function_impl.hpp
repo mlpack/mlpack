@@ -44,20 +44,28 @@ void RBF<InputDataType, OutputDataType>::Forward(
   centres = arma::randu(outSize, inSize);
   centres = arma::normcdf(centres, 0, 1);
   sigmas = arma::ones(outSize);
-  arma::cube x = arma::cube(input.n_rows, outSize, inSize);
-  for(size_t i=0;i<inSize;i++)
+  arma::cube x = arma::cube(outSize, input.n_rows, input.n_rows);
+  distances = arma::mat(input.n_rows, outSize);
+  arma::cube c = arma::cube(outSize, input.n_rows, input.n_rows);
+
+  for(size_t i=0;i < input.n_rows;i++)
   {
-    for (size_t j = 0;j<input.n_rows; j++)
+    for (size_t j = 0;j < outSize; j++)
     {
-      x.slice(i).row(j)= input.row(i);
+      x.slice(i).row(j) = input.row(i);
     }
   }
-  arma::cube c = arma::cube(input.n_rows, outSize, inSize);
-  for(size_t i=0; i < inSize; i++)
+
+  for(size_t i=0; i < input.n_rows; i++)
   {
     c.slice(i)= centres;
   }
-  distances = arma::mat(arma::pow(arma::sum (arma::pow ((x - c), 2), 1), 0.5)) * sigmas;
+
+  for(size_t i=0;i < input.n_rows;i++)
+  { 
+  distances.row(i) = arma::pow(arma::sum (arma::pow ((x.slice(i) - c.slice(i)), 2), 1), 0.5).t() * sigmas(i);
+  }
+
   output = distances;
 }
 
