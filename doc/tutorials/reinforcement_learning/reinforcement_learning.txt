@@ -16,7 +16,7 @@ custom environments and policies can be used and plugged into the
 existing framework with no runtime overhead.
 
 mlpack implements typical benchmark environments (Acrobot, Mountain car etc.),
-commonly used policies and replay methods and supports asynchronous
+commonly used policies, replay methods and supports asynchronous
 learning as well. In addition, it can [communicate](https://github.com/zoq/gym_tcp_api) 
 with the OpenAI Gym toolkit for more environments.
 
@@ -52,10 +52,10 @@ which are used by the agents while learning.
 
 - \c Sample: This method is perhaps the heart of the environment, providing rewards to
    the agent depending on the state and the action taken, and updates the state based on
-   the action taken as well.
+   the action taken as well.  
 
-Of course, your custom environment will most likely a number of helper methods, depending
-on your application, such as the Dsdt method in the Acrobot environment, used in the RK4 
+Of course, your custom environment will most likely make use of a number of helper methods, depending
+on your application, such as the \c Dsdt method in the \c Acrobot environment, used in the \c RK4 
 iterative method (also another helper method) to estimate the next state.
 
 @section agent_components_rltut Components of an RL Agent
@@ -68,7 +68,7 @@ An example of a simple policy would be an epsilon-greedy policy. Using such a po
 will choose actions greedily with some probability epsilon. This probability is slowly decreased
 over time, balancing the line between exploration and exploitation. 
 
-Similarly, an example of a simple reply would be a random replay. At each time step, the 
+Similarly, an example of a simple replay would be a random replay. At each time step, the 
 interactions between the agent and the environment are saved to a memory buffer and previous
 experiences are sampled from the buffer to train the agent.
 
@@ -83,12 +83,12 @@ GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
 PrioritizedReplay<CartPole> replayMethod(10, 10000, 0.6);
 @endcode
 
-The arguments to `policy` are the initial epsilon values, the intenrval of decrease in its value
+The arguments to `policy` are the initial epsilon values, the interval of decrease in its value
 and the value at which epsilon bottoms out and won't be reduced further. The arguments to 
 `replayMethod` are size of the batch returned, the number of examples stored in memory, and the 
 degree of prioritization.
 
-In addition to the above components, an RL agent requires many hyper-parameters to be tuned during
+In addition to the above components, an RL agent requires many hyperparameters to be tuned during
  it's training period. These parameters include everything from the discount rate of the future 
 reward to whether Double Q-learning should be used or not. The `TrainingConfig` class can be 
 instantiated and configured as follows: 
@@ -228,8 +228,8 @@ reward which can be computed with `arma::running_stat`. It is used for storing r
 statistics of scalars, which in this case is the reward signal. The agent can be said 
 to have converged when the average return reaches a predetermined value (i.e. > 35).  
 
-Conversely, if the average return does not go beyond that amount even after a thousands,
-we can conclude that the agent will not converge and exit the training loop.
+Conversely, if the average return does not go beyond that amount even after a thousand 
+episodes, we can conclude that the agent will not converge and exit the training loop.
 
 @section further_rltut Further documentation
 
