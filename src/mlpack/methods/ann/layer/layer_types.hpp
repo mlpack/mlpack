@@ -42,6 +42,11 @@
 #include <mlpack/methods/ann/layer/subview.hpp>
 #include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
 #include <mlpack/methods/ann/layer/hardshrink.hpp>
+<<<<<<< HEAD
+=======
+#include <mlpack/methods/ann/layer/softshrink.hpp>
+
+>>>>>>> master
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>

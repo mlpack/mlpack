@@ -154,6 +154,6 @@ if (BUILD_JULIA_BINDINGS)
 endif ()
 endmacro ()
 
-if (BUILD_TESTS)
+if (BUILD_TESTS AND BUILD_JULIA_BINDINGS)
   add_subdirectory(tests)
 endif ()

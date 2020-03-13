@@ -246,7 +246,7 @@ size_t CLI_GetParamVectorStrLen(const char* paramName)
 /**
  * Call CLI::GetParam<std::vector<std::string>>() and get the i'th string.
  */
-const char* CLI_GetParamVectorStrStr(const char* paramName, const int i)
+const char* CLI_GetParamVectorStrStr(const char* paramName, const size_t i)
 {
   return CLI::GetParam<std::vector<std::string>>(paramName)[i].c_str();
 }
