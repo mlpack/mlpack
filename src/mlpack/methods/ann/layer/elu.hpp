@@ -165,6 +165,11 @@ class ELU
   //! Modify the non zero gradient.
   double& Alpha() { return alpha; }
 
+  //! Get the value of deterministic parameter.
+  bool Deterministic() const { return deterministic; }
+  //! Modify the value of deterministic parameter.
+  bool& Deterministic() { return deterministic; }
+
   //! Get the lambda parameter.
   double const& Lambda() const { return lambda; }
 
