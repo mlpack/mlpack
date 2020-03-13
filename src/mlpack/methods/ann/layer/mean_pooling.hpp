@@ -156,9 +156,6 @@ class MeanPooling
   template<typename eT>
   void Pooling(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
-    const size_t rStep = kernelWidth;
-    const size_t cStep = kernelHeight;
-
     for (size_t j = 0, colidx = 0; j < output.n_cols;
          ++j, colidx += strideHeight)
     {
@@ -166,8 +163,8 @@ class MeanPooling
            ++i, rowidx += strideWidth)
       {
         arma::mat subInput = input(
-            arma::span(rowidx, rowidx + rStep - 1 - offset),
-            arma::span(colidx, colidx + cStep - 1 - offset));
+            arma::span(rowidx, rowidx + kernelWidth - 1 - offset),
+            arma::span(colidx, colidx + kernelHeight - 1 - offset));
 
         output(i, j) = arma::mean(arma::mean(subInput));
       }

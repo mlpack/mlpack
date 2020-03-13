@@ -346,7 +346,7 @@ void CheckHardShrinkActivationCorrect(const arma::colvec input,
 
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
-  hardshrink.Forward(std::move(input), std::move(activations));
+  hardshrink.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
@@ -371,8 +371,7 @@ void CheckHardShrinkDerivativeCorrect(const arma::colvec input,
 
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
-  hardshrink.Backward(std::move(input), std::move(error), std::move(
-                                                        derivatives));
+  hardshrink.Backward(input, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
