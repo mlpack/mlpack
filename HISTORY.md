@@ -52,7 +52,11 @@
   * Change neural network types to avoid unnecessary use of rvalue references
     (#2259).
 
-  * Add Hinge-Embedding-Loss Function (#2229).
+  * Add Hard Shrink Activation Function (#2186).
+
+  * Add Soft Shrink Activation Function (#2174).
+
+  * Add Hinge Embedding Loss Function (#2229).
 
 ### mlpack 3.2.2
 ###### 2019-11-26

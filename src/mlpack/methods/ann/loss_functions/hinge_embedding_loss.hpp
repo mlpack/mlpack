@@ -24,7 +24,6 @@ namespace ann /** Artificial Neural Network. */ {
  * The Hinge Embedding loss function is often used to compute the loss
  * between y_true and y_pred.
  *
- *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
@@ -49,7 +48,7 @@ class HingeEmbeddingLoss
    * @param target Target data to compare with.
    */
   template<typename InputType, typename TargetType>
-  double Forward(const InputType&& input, const TargetType&& target);
+  double Forward(const InputType& input, const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -59,9 +58,9 @@ class HingeEmbeddingLoss
    * @param output The calculated error.
    */
   template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType&& input,
-                const TargetType&& target,
-                OutputType&& output);
+  void Backward(const InputType& input,
+                const TargetType& target,
+                OutputType& output);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
@@ -77,9 +76,6 @@ class HingeEmbeddingLoss
  private:
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
-  //! Hyperparameter a for smoothening function curve.
-  double a;
 }; // class HingeEmbeddingLoss
 
 } // namespace ann
