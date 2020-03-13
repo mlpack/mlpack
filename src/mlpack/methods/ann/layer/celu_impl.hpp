@@ -23,7 +23,11 @@ CELU<InputDataType, OutputDataType>::CELU(const double alpha) :
     alpha(alpha),
     deterministic(false)
 {
-  // Nothing to do here.
+  if (alpha < 0)
+  {
+    Log::Fatal << "The value of alpha cannot be less than zero, " 
+               << "terminating the program."<< std::endl;
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>

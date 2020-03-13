@@ -105,6 +105,11 @@ class CELU
   //! Modify the non zero gradient.
   double& Alpha() { return alpha; }
 
+  //! Get the value of deterministic parameter.
+  bool Deterministic() const { return deterministic; }
+  //! Modify the value of deterministic parameter.
+  bool& Deterministic() { return deterministic; }
+
   /**
    * Serialize the layer.
    */
