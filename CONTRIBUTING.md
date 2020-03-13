@@ -67,7 +67,7 @@ Let's welcome new contributors with ❤️.
 ## Pull Request Waiting Time 
 
 mlpack is a community-driven project, so everyone only works on it in their
-free time, this means it may take some time for them to review pull requests.
+free time; this means it may take some time for them to review pull requests.
 While gentle reminders are welcome, please be patient and avoid constantly
 messaging contributors or tagging them on pull requests.
 
