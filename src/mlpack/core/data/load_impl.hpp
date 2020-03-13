@@ -34,9 +34,11 @@ using namespace arma;
 class newDiskio: public arma::diskio{
 public:
 // In future if guess_file_type is removed, the code will compile.
-inline static arma::file_type guess_file_type(std::istream& ) __attribute__((weak)); 
-// For runtime checking if the function is present in current version of armadillo.
-inline static arma::file_type guess_file_type_internal(std::istream& ) __attribute__((weak));
+inline static arma::file_type 
+  guess_file_type (std::istream& ) __attribute__((weak)); 
+// For runtime checking, is function present in current version of armadillo.
+inline static arma::file_type 
+  guess_file_type_internal (std::istream& ) __attribute__((weak));
 };//class newDiskio
 }//namespace new_arma
 
@@ -102,11 +104,11 @@ bool Load(const std::string& filename,
   if (new_arma::newDiskio::guess_file_type_internal)
   {
     // If declaration of geuss_file_type_internal is present.
-    guess_file_type=new_arma::newDiskio::guess_file_type_internal;
+    guess_file_type = new_arma::newDiskio::guess_file_type_internal;
   }
   else 
   {
-    guess_file_type=new_arma::newDiskio::guess_file_type;
+    guess_file_type = new_arma::newDiskio::guess_file_type;
   }
 
   // Get the extension.
