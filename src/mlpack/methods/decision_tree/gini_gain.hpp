@@ -39,8 +39,7 @@ class GiniGain
       return 0.0;
 
     CountType impurity = 0.0;
-    #pragma omp parallel for reduction(+:impurity)
-    for (omp_size_t i = 0; i < countLength; ++i)
+    for (size_t i = 0; i < countLength; ++i)
       impurity += counts[i] * (totalCount - counts[i]);
 
     return -((double) impurity / ((double) std::pow(totalCount, 2)));
@@ -59,7 +58,7 @@ class GiniGain
    * @param numClasses Number of classes in the dataset.
    * @param weights Weight of labels.
    */
-template<bool UseWeights, typename RowType, typename WeightVecType>
+  template<bool UseWeights, typename RowType, typename WeightVecType>
   static double Evaluate(const RowType& labels,
                          const size_t numClasses,
                          const WeightVecType& weights)
@@ -89,21 +88,17 @@ template<bool UseWeights, typename RowType, typename WeightVecType>
 
       // SIMD loop: add counts for four elements simultaneously (if the compiler
       // manages to vectorize the loop).
-      #pragma omp parallel for reduction (+:accWeights)
-      for (omp_size_t i = 3; i < labels.n_elem; i += 4)
+      for (size_t i = 3; i < labels.n_elem; i += 4)
       {
         const double weight1 = weights[i - 3];
         const double weight2 = weights[i - 2];
         const double weight3 = weights[i - 1];
         const double weight4 = weights[i];
 
-        #pragma omp critical
-        {
         counts[labels[i - 3]] += weight1;
         counts2[labels[i - 2]] += weight2;
         counts3[labels[i - 1]] += weight3;
         counts4[labels[i]] += weight4;
-        }
 
         accWeights[0] += weight1;
         accWeights[1] += weight2;
@@ -161,7 +156,6 @@ template<bool UseWeights, typename RowType, typename WeightVecType>
     {
       // SIMD loop: add counts for four elements simultaneously (if the compiler
       // manages to vectorize the loop).
-
       for (size_t i = 3; i < labels.n_elem; i += 4)
       {
         counts[labels[i - 3]]++;
@@ -199,7 +193,6 @@ template<bool UseWeights, typename RowType, typename WeightVecType>
     return -impurity;
   }
 
-
   /**
    * Return the range of the Gini impurity for the given number of classes.
    * (That is, the difference between the maximum possible value and the minimum
@@ -220,4 +213,3 @@ template<bool UseWeights, typename RowType, typename WeightVecType>
 } // namespace mlpack
 
 #endif
-
