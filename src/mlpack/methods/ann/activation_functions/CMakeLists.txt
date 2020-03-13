@@ -9,6 +9,7 @@ set(SOURCES
   softplus_function.hpp
   swish_function.hpp
   mish_function.hpp
+  sqnl_function.hpp
   lisht_function.hpp
   gelu_function.hpp
 )

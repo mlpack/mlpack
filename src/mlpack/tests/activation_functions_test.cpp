@@ -22,6 +22,7 @@
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/sqnl_function.hpp>
 #include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
 
@@ -700,6 +701,20 @@ BOOST_AUTO_TEST_CASE(MishFunctionTest)
                                        desiredActivations);
   CheckDerivativeCorrect<MishFunction>(desiredActivations,
                                         desiredDerivatives);
+}
+
+/**
+ * Basic test of the SQNL function.
+ */
+BOOST_AUTO_TEST_CASE(SQNLFunctionTest)
+{
+  const arma::colvec desiredActivations("-1 1 1 -1 0.75 -0.75 1 0");
+
+  const arma::colvec desiredDerivatives("0 0 0 0 0.5 0.5 0 1");
+
+  CheckActivationCorrect<SQNLFunction>(activationData, desiredActivations);
+  CheckDerivativeCorrect<SQNLFunction>(desiredActivations,
+                                       desiredDerivatives);
 }
 
 /**

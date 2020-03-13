@@ -22,6 +22,7 @@
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/sqnl_function.hpp>
 #include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
 
@@ -208,6 +209,17 @@ template <
     typename OutputDataType = arma::mat
 >
 using MishFunctionLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard SQNL-Layer using the SQNL activation function.
+ */
+template <
+    class ActivationFunction = SQNLFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using SQNLFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 /**
