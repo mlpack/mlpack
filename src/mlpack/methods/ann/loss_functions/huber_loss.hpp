@@ -24,7 +24,6 @@ namespace ann /** Artificial Neural Network. */ {
  * and linear for large values, with equal values and slopes of the different
  * sections at the two points where \f$ |y - f(x)| = delta \f$.
  *
- * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
@@ -44,9 +43,7 @@ class HuberLoss
    *              after which absolute error is considered.
    * @param mean If true then mean loss is computed otherwise sum.
    */
-  HuberLoss(
-    const double delta = 1.0,
-    const bool mean = true);
+  HuberLoss(const double delta = 1.0, const bool mean = true);
 
   /**
    * Computes the Huber Loss function.

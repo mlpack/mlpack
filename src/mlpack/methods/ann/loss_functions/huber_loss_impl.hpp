@@ -34,11 +34,9 @@ double HuberLoss<InputDataType, OutputDataType>::Forward(
     const InputType& input, const TargetType& target)
 {
   double loss = 0;
-  double absError;
-
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-      absError = std::abs(target[i] - input[i]);
+      const double absError = std::abs(target[i] - input[i]);
       loss += absError > delta
           ? delta * (absError - 0.5 * delta) : 0.5 * std::pow(absError, 2);
   }
@@ -53,11 +51,9 @@ void HuberLoss<InputDataType, OutputDataType>::Backward(
     OutputType& output)
 {
   output.set_size(size(input));
-  double absError;
-
   for (size_t i = 0; i < output.n_elem; ++i)
   {
-    absError = std::abs(target[i] - input[i]);
+    const double absError = std::abs(target[i] - input[i]);
     output[i] = absError > delta
         ? - delta * (target[i] - input[i]) / absError : input[i] - target[i];
     if (mean)
