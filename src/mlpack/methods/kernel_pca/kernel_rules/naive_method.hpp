@@ -47,20 +47,24 @@ class NaiveKernelRule
   // Note that we only need to calculate the upper triangular part of the
   // kernel matrix, since it is symmetric. This helps minimize the number of
   // kernel evaluations.
-  for (size_t i = 0; i < data.n_cols; ++i)
+  #pragma omp parallel for
+  for (omp_size_t i = 0; i < data.n_cols; ++i)
   {
     for (size_t j = i; j < data.n_cols; ++j)
     {
       // Evaluate the kernel on these two points.
       kernelMatrix(i, j) = kernel.Evaluate(data.unsafe_col(i),
                                            data.unsafe_col(j));
+      kernelMatrix(j-i,i) = kernelMatrix(i, j);
     }
   }
 
   // Copy to the lower triangular part of the matrix.
+  /*
   for (size_t i = 1; i < data.n_cols; ++i)
     for (size_t j = 0; j < i; ++j)
       kernelMatrix(i, j) = kernelMatrix(j, i);
+  */
 
   // For PCA the data has to be centered, even if the data is centered. But it
   // is not guaranteed that the data, when mapped to the kernel space, is also
@@ -77,7 +81,9 @@ class NaiveKernelRule
 
   // Swap the eigenvalues since they are ordered backwards (we need largest to
   // smallest).
-  for (size_t i = 0; i < floor(eigval.n_elem / 2.0); ++i)
+  omp_size_t varForOpenmp = floor(eigval.n_elem / 2.0);
+  #pragma omp parallel for
+  for (omp_size_t i = 0; i < varForOpenmp ; i++)
     eigval.swap_rows(i, (eigval.n_elem - 1) - i);
 
   // Flip the coefficients to produce the same effect.
@@ -92,3 +98,4 @@ class NaiveKernelRule
 } // namespace mlpack
 
 #endif
+
