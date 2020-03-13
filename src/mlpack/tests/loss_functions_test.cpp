@@ -512,11 +512,11 @@ BOOST_AUTO_TEST_CASE(LogCoshLossTest)
   // Test the Forward function. Loss should be 0 if input = target.
   input = arma::ones(10, 1);
   target = arma::ones(10, 1);
-  loss = module.Forward(std::move(input), std::move(target));
+  loss = module.Forward(input, target);
   BOOST_REQUIRE_EQUAL(loss, 0);
 
   // Test the Backward function for input = target.
-  module.Backward(std::move(input), std::move(target), std::move(output));
+  module.Backward(input, target, output);
   for (double el : output)
   {
     // For input = target we should get 0.0 everywhere.
@@ -529,11 +529,11 @@ BOOST_AUTO_TEST_CASE(LogCoshLossTest)
   // Test the Forward function. Loss should be 0.546621.
   input = arma::mat("1 2 3 4 5");
   target = arma::mat("1 2.4 3.4 4.2 5.5");
-  loss = module.Forward(std::move(input), std::move(target));
+  loss = module.Forward(input, target);
   BOOST_REQUIRE_CLOSE(loss, 0.546621, 1e-3);
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(target), std::move(output));
+  module.Backward(input, target, output);
   BOOST_REQUIRE_CLOSE(arma::accu(output), 2.46962, 1e-3);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
