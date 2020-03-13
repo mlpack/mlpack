@@ -28,9 +28,9 @@ TripletMarginLoss<InputDataType, OutputDataType>::TripletMarginLoss(
 template<typename InputDataType, typename OutputDataType>
 template<typename AnchorType, typename PositiveType, typename NegativeType>
 double TripletMarginLoss<InputDataType, OutputDataType>::Forward(
-    const AnchorType&& anchor,
-    const PositiveType&& positive,
-    const NegativeType&& negative)
+    const AnchorType& anchor,
+    const PositiveType& positive,
+    const NegativeType& negative)
 {
   return std::max(0.0, arma::accu(arma::pow(anchor - positive, 2)) -
       arma::accu(arma::pow(anchor - negative, 2)) + margin) / anchor.n_cols;
@@ -44,11 +44,10 @@ template <
     typename OutputType
 >
 void TripletMarginLoss<InputDataType, OutputDataType>::Backward(
-    const AnchorType&& anchor,
-    const PositiveType&& positive,
-    const NegativeType&& negative,
-    OutputType&& output
-    )
+    const AnchorType& anchor,
+    const PositiveType& positive,
+    const NegativeType& negative,
+    OutputType&& output)
 {
   output = 2 * (negative - positive) / anchor.n_cols;
 }
