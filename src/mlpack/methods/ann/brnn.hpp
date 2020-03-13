@@ -77,7 +77,7 @@ class BRNN
        MergeOutputType mergeOutput = MergeOutputType(),
        InitializationRuleType initializeRule = InitializationRuleType());
 
-/**
+ /**
    * Check if the optimizer has MaxIterations() parameter, if it does
    * then check if it's value is less than value of number of
    * datapoints in the dataset.
