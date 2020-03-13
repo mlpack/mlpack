@@ -213,8 +213,6 @@ int main()
   // Split the labels from the training set and testing set respectively.
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   arma::mat testLabels = testData.row(testData.n_rows - 1);
-
-  // Split the data from the training set and testing set respectively.
   trainData.shed_row(trainData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
 
@@ -240,6 +238,9 @@ int main()
 
     The first step towards doing this is to create a matrix of zeros with the 
     desired dimensions (1 x number_of_data_points).
+
+    In predictionsTemp, the 3 dimensions for each data point correspond to the
+    probabilities of belonging to the three possible classes.
   */
   arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp.n_cols);
 
@@ -255,24 +256,21 @@ int main()
     Compute the error between predictions and testLabels, 
     now that we have the desired predictions.
   */
-  size_t error = 0;
+  size_t correct = 0;
   for (size_t i = 0; i < testData.n_cols; i++)
   {
-    if (int(arma::as_scalar(prediction.col(i))) == int(arma::as_scalar(testLabels.col(i))))
-    {
-        error++;
-    }
+    correct = arma::accu(prediction == testLabels);
   } 
-  double classificationError = 1 - double(error) / testData.n_cols;
+  double classificationError = 1 - double(correct) / testData.n_cols;
 
   // Print out the classification error for the testing dataset.
-  cout << "Classification Error for the Test set: " << classificationError << endl;
+  std::cout << "Classification Error for the Test set: " << classificationError << std::endl;
   return 0;
 }
 @endcode
 
 Now, the matrix prediction holds the classification of each point in the
-dataset. Subsequently, we find the classfication error by comparing it 
+dataset. Subsequently, we find the classification error by comparing it 
 with testLabels.
 
 In the next example, we create simple noisy sine sequences, which are trained
