@@ -1,34 +1,34 @@
 /**
- * @file hardshrink.hpp
+ * @file softshrink.hpp
  * @author Lakshya Ojha
  *
- * Same as soft thresholding, if its amplitude is smaller than a predefined
- * threshold, it will be set to zero (kill), otherwise it will be kept 
- * unchanged.
- * In order to promote sparsity and to improve the approximation, the hard
- * thresholding method is used as an alternative.
+ * The soft shrink function has threshold proportional to the noise level given
+ * by the user.
+ * The use of a Soft Shrink activation function provides adaptive denoising at
+ * various noise levels using a single CNN(Convolution Neural) without a
+ * requirement to train a unique CNN for each noise level.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_HARDSHRINK_HPP
-#define MLPACK_METHODS_ANN_LAYER_HARDSHRINK_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_SOFTSHRINK_HPP
+#define MLPACK_METHODS_ANN_LAYER_SOFTSHRINK_HPP
 
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace ann /** Artifical Neural Network. */ {
 
- /**
- * Hard Shrink operator is defined as,
+/**
+ * Soft Shrink operator is defined as,
  * @f{eqnarray*}{
  * f(x) &=& \left\{
  *   \begin{array}{lr}
- *     x  & : x >  lambda \\
- *     x  & : x < -lambda \\
- *     0  & : otherwise
+ *     x - lambda & : x >  lambda \\
+ *     x + lambda & : x < -lambda \\
+ *     0 & : otherwise
  *   \end{array} \\
  * \right.
  * f'(x) &=& \left\{
@@ -39,31 +39,39 @@ namespace ann /** Artifical Neural Network. */ {
  *   \end{array}
  * \right.
  * @f}
- * lambda is set to 0.5 by default.
+ *
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
 template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class HardShrink
+class SoftShrink
 {
  public:
-/**
-   * Create HardShrink object using specified hyperparameter lambda.
-   * 
-   * @param lambda Is calculated by multiplying the
-   * 		    noise level sigma of the input(noisy image) and a
-   * 		    coefficient 'a' which is one of the training parameters.
-   * 		    Default value of lambda is 0.5.
+  /**
+   * Create Soft Shrink object using specified hyperparameter lambda.
+   *
+   * @param lambda The noise level of an image depends on settings of an
+   *        imaging device. The settings can be used to select appropriate
+   *        parameters for denoising methods. It is proportional to the noise
+   *        level entered by the user.
+   *        And it is calculated by multiplying the
+   *        noise level sigma of the input(noisy image) and a
+   *        coefficient 'a' which is one of the training parameters.
+   *        Default value of lambda is 0.5.
    */
-  HardShrink(const double lambda = 0.5);
+  SoftShrink(const double lambda = 0.5);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    * 
-   * @param input Input data used for evaluating the Hard Shrink function.
-   * @param output Resulting output activation.
+   * @param input Input data used for evaluating the Soft Shrink function.
+   * @param output Resulting output activation
    */
   template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output);
@@ -75,7 +83,7 @@ class HardShrink
    * 
    * @param input The propagated input activation f(x).
    * @param gy The backpropagated error.
-   * @param g The calculated gradient.
+   * @param g The calculated gradient
    */
   template<typename DataType>
   void Backward(const DataType& input,
@@ -110,14 +118,14 @@ class HardShrink
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Locally-stored hyperparameter lambda.
+  //! Locally-stored hyperparamater lambda.
   double lambda;
-}; // class HardShrink
+}; // class SoftShrink
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "hardshrink_impl.hpp"
+#include "softshrink_impl.hpp"
 
 #endif

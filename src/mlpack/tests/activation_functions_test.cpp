@@ -346,7 +346,7 @@ void CheckHardShrinkActivationCorrect(const arma::colvec input,
 
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
-  hardshrink.Forward(std::move(input), std::move(activations));
+  hardshrink.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
@@ -371,8 +371,53 @@ void CheckHardShrinkDerivativeCorrect(const arma::colvec input,
 
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
-  hardshrink.Backward(std::move(input), std::move(error), std::move(
-                                                        derivatives));
+  hardshrink.Backward(input, error, derivatives);
+  for (size_t i = 0; i < derivatives.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
+  }
+}
+
+/*
+ * Implementation of the Soft Shrink activation function test. The function is
+ * implemented as Soft Shrink layer in the file softshrink.hpp.
+ *
+ * @param input Input data used for evaluating the Soft Shrink activation function.
+ * @param target Target data used to evaluate the Soft Shrink activation.
+ */
+void CheckSoftShrinkActivationCorrect(const arma::colvec input,
+                                      const arma::colvec target)
+{
+  SoftShrink<> softshrink;
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  softshrink.Forward(input, activations);
+  for (size_t i = 0; i < activations.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
+  }
+}
+
+/*
+ * Implementation of the Soft Shrink activation function derivative test.
+ * The derivative function is implemented as Soft Shrink layer in the file
+ * softshrink.hpp
+ *
+ * @param input Input data used for evaluating the Soft Shrink activation function.
+ * @param target Target data used to evaluate the Soft Shrink activation.
+ */
+void CheckSoftShrinkDerivativeCorrect(const arma::colvec input,
+                                      const arma::colvec target)
+{
+  SoftShrink<> softshrink;
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  softshrink.Backward(input, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
@@ -765,6 +810,21 @@ BOOST_AUTO_TEST_CASE(HardShrinkFunctionTest)
   CheckHardShrinkActivationCorrect(activationData,
                                    desiredActivations);
   CheckHardShrinkDerivativeCorrect(desiredActivations,
+                                   desiredDerivatives);
+}
+
+/**
+ * Basic test of the Soft Shrink function.
+ */
+BOOST_AUTO_TEST_CASE(SoftShrinkFunctionTest)
+{
+  const arma::colvec desiredActivations("-1.5 2.7 4 -99.7 0.5 -0.5 1.5 0");
+
+  const arma::colvec desiredDerivatives("1 1 1 1 1 1 1 0");
+
+  CheckSoftShrinkActivationCorrect(activationData,
+                                   desiredActivations);
+  CheckSoftShrinkDerivativeCorrect(desiredActivations,
                                    desiredDerivatives);
 }
 
