@@ -28,6 +28,18 @@
 
 #include "load_arff.hpp"
 
+namespace new_arma {
+
+using namespace arma;
+class newDiskio: public arma::diskio{
+public:
+// In future if guess_file_type is removed, the code will compile.
+inline static arma::file_type guess_file_type(std::istream& ) __attribute__((weak)); 
+// For runtime checking if the function is present in current version of armadillo.
+inline static arma::file_type guess_file_type_internal(std::istream& ) __attribute__((weak));
+};//class newDiskio
+}//namespace new_arma
+
 namespace mlpack {
 namespace data {
 
@@ -85,6 +97,18 @@ bool Load(const std::string& filename,
 {
   Timer::Start("loading_data");
 
+  // Function pointer points to the most appropiate version of guess_file_type.
+  arma::file_type (*guess_file_type) (std::istream& );
+  if (new_arma::newDiskio::guess_file_type_internal)
+  {
+    // If declaration of geuss_file_type_internal is present.
+    guess_file_type=new_arma::newDiskio::guess_file_type_internal;
+  }
+  else 
+  {
+    guess_file_type=new_arma::newDiskio::guess_file_type;
+  }
+
   // Get the extension.
   std::string extension = Extension(filename);
 
@@ -113,8 +137,7 @@ bool Load(const std::string& filename,
 
   if (extension == "csv" || extension == "tsv")
   {
-    // In latest Armadillo-9.850.1 guess_file_type is declared arma_deprecated.
-    loadType = arma::diskio::guess_file_type_internal(stream);
+    loadType = guess_file_type(stream);
     if (loadType == arma::csv_ascii)
     {
       if (extension == "tsv")
@@ -178,7 +201,7 @@ bool Load(const std::string& filename,
     }
     else // It's not arma_ascii.  Now we let Armadillo guess.
     {
-      loadType = arma::diskio::guess_file_type_internal(stream);
+      loadType = guess_file_type(stream);
 
       if (loadType == arma::raw_ascii) // Raw ASCII (space-separated).
         stringType = "raw ASCII formatted data";
