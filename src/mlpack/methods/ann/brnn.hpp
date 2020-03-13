@@ -79,18 +79,18 @@ class BRNN
 
  /**
    * Check if the optimizer has MaxIterations() parameter, if it does
-   * then check if it's value is less than value of number of
-   * datapoints in the dataset.
+   * then check if it's value is less than the number of datapoints
+   * in the dataset.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param optimizer optimizer used in the training process.
-   * @param no_of_datapoints Number of datapoints in the dataset.
+   * @param samples Number of datapoints in the dataset.
    */
   template<typename OptimizerType>
   typename std::enable_if<
       HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
       ::value, void>::type
-  WarnMessage(OptimizerType& optimizer, size_t no_of_datapoints) const;
+  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 
  /**
    * Check if the optimizer has MaxIterations() parameter, if it
@@ -98,13 +98,13 @@ class BRNN
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param optimizer optimizer used in the training process.
-   * @param no_of_datapoints Number of datapoints in the dataset.
+   * @param samples Number of datapoints in the dataset.
    */
   template<typename OptimizerType>
   typename std::enable_if<
       !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
       ::value, void>::type
-  WarnMessage(OptimizerType& optimizer, size_t no_of_datapoints) const;
+  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 
   /**
    * Train the bidirectional recurrent neural network on the given input data

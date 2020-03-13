@@ -68,9 +68,9 @@ typename std::enable_if<
       HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
       ::value, void>::type
 RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
-WarnMessage(OptimizerType& optimizer, size_t no_of_datapoints) const
+WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 {
-  if (optimizer.MaxIterations() < no_of_datapoints &&
+  if (optimizer.MaxIterations() < samples &&
       optimizer.MaxIterations() != 0)
   {
     Log::Warn << "The optimizer's maximum number of iterations "
@@ -79,7 +79,7 @@ WarnMessage(OptimizerType& optimizer, size_t no_of_datapoints) const
               << "dataset. To fix this, modify the maximum "
               << "number of iterations to be at least equal "
               << "to the number of points of your dataset "
-              << "(" << no_of_datapoints << ")." << std::endl;
+              << "(" << samples << ")." << std::endl;
   }
 }
 
@@ -90,7 +90,7 @@ typename std::enable_if<
       !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
       ::value, void>::type
 RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
-WarnMessage(OptimizerType& optimizer, size_t no_of_datapoints) const
+WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 {
   return;
 }
@@ -117,7 +117,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     ResetParameters();
   }
 
-  WarnMessage<OptimizerType>(optimizer, this->predictors.n_cols);
+  WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
   Timer::Start("rnn_optimization");
@@ -163,7 +163,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   OptimizerType optimizer;
 
-  WarnMessage<OptimizerType>(optimizer, this->predictors.n_cols);
+  WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
   Timer::Start("rnn_optimization");
