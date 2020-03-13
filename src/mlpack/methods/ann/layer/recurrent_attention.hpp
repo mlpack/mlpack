@@ -65,9 +65,9 @@ class RecurrentAttention
   /**
    * Create the RecurrentAttention object using the specified modules.
    *
-   * @param start The module output size.
-   * @param start The recurrent neural network module.
-   * @param start The action module.
+   * @param outSize The module output size.
+   * @param rnn The recurrent neural network module.
+   * @param action The action module.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
   template<typename RNNModuleType, typename ActionModuleType>
