@@ -724,16 +724,16 @@ BOOST_AUTO_TEST_CASE(SimpleL1LossTest)
   // the manually calculated result.
   input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5");
   target1 = arma::zeros(1, 7);
-  double error1 = module.Forward(std::move(input1), std::move(target1));
+  double error1 = module.Forward(input1, target1);
   BOOST_REQUIRE_EQUAL(error1, 3.5);
 
   input2 = arma::mat("0 1 1 0 1 0 0 1");
   target2 = arma::mat("0 1 1 0 1 0 0 1");
-  double error2 = module.Forward(std::move(input2), std::move(target2));
+  double error2 = module.Forward(input2, target2);
   BOOST_REQUIRE_CLOSE(error2, 0.0, 0.00001);
 
   // Test the Backward function.
-  module.Backward(std::move(input1), std::move(target1), std::move(output));
+  module.Backward(input1, target1, output);
   for (double el : output)
   {
     BOOST_REQUIRE_EQUAL(el , 1);
@@ -741,7 +741,7 @@ BOOST_AUTO_TEST_CASE(SimpleL1LossTest)
   BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
 
-  module.Backward(std::move(input2), std::move(target2), std::move(output));
+  module.Backward(input2, target2, output);
   for (double el : output)
   {
     BOOST_REQUIRE_EQUAL(el, 0);

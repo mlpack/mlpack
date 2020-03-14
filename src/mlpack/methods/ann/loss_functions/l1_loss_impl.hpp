@@ -31,9 +31,7 @@ double L1Loss<InputDataType, OutputDataType>::Forward(
     const InputType& input, const TargetType& target)
 {
   if (mean)
-  {
     return arma::accu(arma::mean(input - target));
-  }
   return arma::accu(input - target);
 }
 

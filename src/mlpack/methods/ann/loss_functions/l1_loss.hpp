@@ -36,7 +36,8 @@ class L1Loss
   /**
    * Create the L1Loss object.
    *
-   * @param mean Reduction type. If true, performs mean of loss else sum.
+   * @param mean Reduction type. If true, it returns the mean of 
+   * the loss. Else, it returns the sum.
    */
   L1Loss(const bool mean = true);
 
