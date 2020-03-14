@@ -148,12 +148,18 @@ class KDERules
   //! Accumulated not used MC alpha values for each query point.
   arma::vec accumMCAlpha;
 
+  //! Accumulated not used error tolerance for each query point.
+  arma::vec accumError;
+
   //! Whether reference and query sets are the same.
   const bool sameSet;
 
   //! Whether the kernel used for the rule is the Gaussian Kernel.
   constexpr static bool kernelIsGaussian =
       std::is_same<KernelType, kernel::GaussianKernel>::value;
+
+  //! Absolute error tolerance available for each reference point.
+  const double absErrorTol;
 
   //! The last query index.
   size_t lastQueryIndex;

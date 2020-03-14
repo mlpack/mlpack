@@ -41,15 +41,15 @@ class ScalingModel
 
  private:
   size_t scalerType;
-  int minValue;
-  int maxValue;
-  double epsilon;
   data::MinMaxScaler* minmaxscale;
   data::MaxAbsScaler* maxabsscale;
   data::MeanNormalization* meanscale;
   data::StandardScaler* standardscale;
   data::PCAWhitening* pcascale;
   data::ZCAWhitening* zcascale;
+  int minValue;
+  int maxValue;
+  double epsilon;
 
  public:
   //! Create an object.

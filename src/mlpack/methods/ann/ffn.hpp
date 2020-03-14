@@ -94,15 +94,19 @@ class FFN
    * object, be sure to use std::move to avoid unnecessary copy.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType>
+  template<typename OptimizerType, typename... CallbackTypes>
   double Train(arma::mat predictors,
                arma::mat responses,
-               OptimizerType& optimizer);
+               OptimizerType& optimizer,
+               CallbackTypes&&... callbacks);
 
   /**
    * Train the feedforward network on the given input data. By default, the
@@ -118,11 +122,16 @@ class FFN
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param responses Outputs results from input training variables.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType = ens::RMSProp>
-  double Train(arma::mat predictors, arma::mat responses);
+  template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
+  double Train(arma::mat predictors,
+               arma::mat responses,
+               CallbackTypes&&... callbacks);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -144,7 +153,9 @@ class FFN
    * @param predictors Input variables.
    * @param responses Target outputs for input variables.
    */
-  double Evaluate(arma::mat predictors, arma::mat responses);
+  template<typename PredictorsType, typename ResponsesType>
+  double Evaluate(const PredictorsType& predictors,
+                  const ResponsesType& responses);
 
   /**
    * Evaluate the feedforward network with the given parameters. This function
@@ -257,6 +268,16 @@ class FFN
    */
   void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
 
+  //! Get the network model.
+  const std::vector<LayerTypes<CustomLayers...> >& Model() const
+  {
+    return network;
+  }
+  //! Modify the network model.  Be careful!  If you change the structure of the
+  //! network or parameters for layers, its state may become invalid, so be sure
+  //! to call ResetParameters() afterwards.
+  std::vector<LayerTypes<CustomLayers...> >& Model() { return network; }
+
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
 
@@ -294,7 +315,8 @@ class FFN
    * @param inputs The input data.
    * @param results The predicted results.
    */
-  void Forward(arma::mat inputs, arma::mat& results);
+  template<typename PredictorsType, typename ResponsesType>
+  void Forward(const PredictorsType& inputs, ResponsesType& results);
 
   /**
    * Perform a partial forward pass of the data.
@@ -307,8 +329,9 @@ class FFN
    * @param begin The index of the first layer.
    * @param end The index of the last layer.
    */
-  void Forward(arma::mat inputs,
-               arma::mat& results,
+  template<typename PredictorsType, typename ResponsesType>
+  void Forward(const PredictorsType& inputs ,
+               ResponsesType& results,
                const size_t begin,
                const size_t end);
 
@@ -323,7 +346,12 @@ class FFN
    * @param gradients Computed gradients.
    * @return Training error of the current pass.
    */
-  double Backward(arma::mat targets, arma::mat& gradients);
+  template<typename PredictorsType,
+           typename TargetsType,
+           typename GradientsType>
+  double Backward(const PredictorsType& inputs,
+                  const TargetsType& targets,
+                  GradientsType& gradients);
 
  private:
   // Helper functions.
@@ -333,7 +361,8 @@ class FFN
    *
    * @param input Data sequence to compute probabilities for.
    */
-  void Forward(arma::mat&& input);
+  template<typename InputType>
+  void Forward(const InputType& input);
 
   /**
    * Prepare the network for the given data.
@@ -354,7 +383,8 @@ class FFN
    * Iterate through all layer modules and update the the gradient using the
    * layer defined optimizer.
    */
-  void Gradient(arma::mat&& input);
+  template<typename InputType>
+  void Gradient(const InputType& input);
 
   /**
    * Reset the module status by setting the current deterministic parameter
@@ -407,9 +437,6 @@ class FFN
 
   //! The current error for the backward pass.
   arma::mat error;
-
-  //! THe current input of the forward/backward pass.
-  arma::mat currentInput;
 
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;
@@ -477,7 +504,7 @@ template<typename OutputLayerType,
 struct version<
     mlpack::ann::FFN<OutputLayerType, InitializationRuleType, CustomLayer...>>
 {
-  BOOST_STATIC_CONSTANT(int, value = 1);
+  BOOST_STATIC_CONSTANT(int, value = 2);
 };
 
 } // namespace serialization

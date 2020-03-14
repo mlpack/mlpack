@@ -19,8 +19,8 @@ namespace mlpack {
 namespace ann {
 
 //! ParametersSetVisitor visitor class.
-inline ParametersSetVisitor::ParametersSetVisitor(arma::mat&& parameters) :
-    parameters(std::move(parameters))
+inline ParametersSetVisitor::ParametersSetVisitor(arma::mat& parameters) :
+    parameters(parameters)
 {
   /* Nothing to do here. */
 }
@@ -29,6 +29,11 @@ template<typename LayerType>
 inline void ParametersSetVisitor::operator()(LayerType *layer) const
 {
   LayerParameters(layer, layer->OutputParameter());
+}
+
+inline void ParametersSetVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
 }
 
 template<typename T, typename P>

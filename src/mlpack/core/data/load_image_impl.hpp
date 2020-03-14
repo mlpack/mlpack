@@ -13,7 +13,6 @@
 #ifndef MLPACK_CORE_DATA_LOAD_IMAGE_IMPL_HPP
 #define MLPACK_CORE_DATA_LOAD_IMAGE_IMPL_HPP
 
-
 // In case it hasn't been included yet.
 #include "load.hpp"
 
@@ -27,7 +26,7 @@ template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal,
+          const bool /* fatal */,
           const bool transpose)
 {
   Timer::Start("loading_image");

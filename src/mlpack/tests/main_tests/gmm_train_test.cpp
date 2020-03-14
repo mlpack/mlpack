@@ -48,6 +48,31 @@ void ResetGmmTrainSetting()
   CLI::RestoreSettings(testName);
 }
 
+inline bool CheckDifferent(GMM* gmm1, GMM* gmm2)
+{
+  bool different = (arma::norm(gmm1->Weights() - gmm2->Weights()) > 1e-50);
+  if (!different)
+  {
+    for (size_t i = 0; i < gmm1->Weights().n_elem; ++i)
+    {
+      if (arma::norm(gmm1->Component(i).Mean() -
+                     gmm2->Component(i).Mean()) > 1e-50)
+      {
+        different = true;
+        break;
+      }
+
+      if (arma::norm(gmm1->Component(i).Covariance() -
+                     gmm2->Component(i).Covariance()) > 1e-50)
+      {
+        different = true;
+        break;
+      }
+    }
+  }
+
+  return different;
+}
 
 BOOST_FIXTURE_TEST_SUITE(GmmTrainMainTest, GmmTrainTestFixture);
 
@@ -201,14 +226,11 @@ BOOST_AUTO_TEST_CASE(GmmTrainNoiseTest)
   if (!data::Load("data_3d_mixed.txt", inputData))
     BOOST_FAIL("Unable to load train dataset data_3d_mixed.txt!");
 
+  math::FixedRandomSeed();
+
   SetInputParam("input", inputData);
   SetInputParam("gaussians", (int) 2);
   SetInputParam("noise", (double) 0.0);
-
-  size_t seed = std::time(NULL);
-  mlpack::math::randGen.seed((uint32_t) seed);
-  srand((unsigned int) seed);
-  arma::arma_rng::set_seed(seed);
 
   mlpackMain();
 
@@ -220,39 +242,76 @@ BOOST_AUTO_TEST_CASE(GmmTrainNoiseTest)
   SetInputParam("gaussians", (int) 2);
   SetInputParam("noise", (double) 100.0);
 
-  mlpack::math::randGen.seed((uint32_t) seed);
-  srand((unsigned int) seed);
-  arma::arma_rng::set_seed(seed);
+  math::FixedRandomSeed();
 
   mlpackMain();
 
   GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
 
-  arma::uvec sortedIndices = sort_index(gmm->Weights());
-
-  for (size_t k = 0; k < sortedIndices.n_elem; k++)
-  {
-    BOOST_REQUIRE(arma::norm(gmm->Component(sortedIndices[k]).Mean() -
-                      gmm1->Component(sortedIndices[k]).Mean()) > 1e-50 ||
-                  arma::norm(gmm->Component(sortedIndices[k]).Covariance() -
-                      gmm1->Component(sortedIndices[k]).Covariance()) > 1e-50);
-  }
+  BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
 }
 
 // Ensure that Trials affects the final result.
 BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
 {
-  arma::mat inputData(5, 250, arma::fill::randu);
+  arma::mat inputData(10, 1000, arma::fill::randu);
+
+  // We don't require that this passes every time, since it is possible that the
+  // end result can be an identical model.  Instead, we only require that it's
+  // different at least one in ten times, because that means the "trials" option
+  // is making a difference.
+  bool success = false;
+  for (size_t trial = 0; trial < 10; ++trial)
+  {
+    math::CustomRandomSeed(trial);
+
+    SetInputParam("input", inputData);
+    SetInputParam("gaussians", (int) 5);
+    SetInputParam("trials", (int) 1);
+    SetInputParam("max_iterations", (int) 1);
+    SetInputParam("kmeans_max_iterations", (int) 1);
+
+    mlpackMain();
+
+    GMM* gmm = std::move(CLI::GetParam<GMM*>("output_model"));
+
+    ResetGmmTrainSetting();
+
+    SetInputParam("input", inputData);
+    SetInputParam("gaussians", (int) 5);
+    SetInputParam("trials", (int) 100);
+    SetInputParam("max_iterations", (int) 1);
+    SetInputParam("kmeans_max_iterations", (int) 1);
+
+    math::CustomRandomSeed(trial);
+
+    mlpackMain();
+
+    GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+
+    success = CheckDifferent(gmm, gmm1);
+    if (success)
+      break;
+
+    delete gmm;
+    bindings::tests::CleanMemory();
+  }
+
+  BOOST_REQUIRE_EQUAL(success, true);
+}
+
+// Ensure that the maximum number of iterations affects the result.
+BOOST_AUTO_TEST_CASE(GmmTrainDiffMaxIterationsTest)
+{
+  arma::mat inputData(5, 150, arma::fill::randu);
+
+  mlpack::math::FixedRandomSeed();
 
   SetInputParam("input", inputData);
   SetInputParam("gaussians", (int) 3);
   SetInputParam("trials", (int) 1);
-  SetInputParam("max_iterations", (int) 500);
-
-  size_t seed = std::time(NULL);
-  mlpack::math::randGen.seed((uint32_t) seed);
-  srand((unsigned int) seed);
-  arma::arma_rng::set_seed(seed);
+  SetInputParam("max_iterations", (int) 1);
+  SetInputParam("kmeans_max_iterations", (int) 1);
 
   mlpackMain();
 
@@ -262,26 +321,68 @@ BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("gaussians", (int) 3);
-  SetInputParam("max_iterations", (int) 500);
-  SetInputParam("trials", (int) 500);
+  SetInputParam("trials", (int) 1);
+  SetInputParam("max_iterations", (int) 1000);
+  SetInputParam("kmeans_max_iterations", (int) 1);
 
-  mlpack::math::randGen.seed((uint32_t) seed);
-  srand((unsigned int) seed);
-  arma::arma_rng::set_seed(seed);
+  mlpack::math::FixedRandomSeed();
 
   mlpackMain();
 
   GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
 
-  arma::uvec sortedIndices = sort_index(gmm->Weights());
+  BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
+}
 
-  for (size_t k = 0; k < sortedIndices.n_elem; k++)
+// Ensure that the maximum number of k-means iterations affects the result.
+BOOST_AUTO_TEST_CASE(GmmTrainDiffKmeansMaxIterationsTest)
+{
+  arma::mat inputData(5, 150, arma::fill::randu);
+
+  // We don't require that this passes every time, since it is possible that the
+  // end result can be an identical model.  Instead, we only require that it's
+  // different at least one in ten times, because that means the "trials" option
+  // is making a difference.
+  bool success = false;
+  for (size_t trial = 0; trial < 10; ++trial)
   {
-    BOOST_REQUIRE(arma::norm(gmm->Component(sortedIndices[k]).Mean() -
-                      gmm1->Component(sortedIndices[k]).Mean()) > 1e-50 ||
-                  arma::norm(gmm->Component(sortedIndices[k]).Covariance() -
-                      gmm1->Component(sortedIndices[k]).Covariance()) > 1e-50);
+    math::CustomRandomSeed(trial);
+
+    SetInputParam("input", inputData);
+    SetInputParam("gaussians", (int) 3);
+    SetInputParam("trials", (int) 1);
+    SetInputParam("max_iterations", (int) 1);
+    SetInputParam("kmeans_max_iterations", (int) 1);
+
+    mlpackMain();
+
+    GMM* gmm = CLI::GetParam<GMM*>("output_model");
+
+    ResetGmmTrainSetting();
+
+    SetInputParam("input", std::move(inputData));
+    SetInputParam("gaussians", (int) 3);
+    SetInputParam("trials", (int) 1);
+    SetInputParam("max_iterations", (int) 1);
+    SetInputParam("kmeans_max_iterations", (int) 1000);
+
+    math::CustomRandomSeed(trial);
+
+    mlpackMain();
+
+    GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+
+    ResetGmmTrainSetting();
+
+    success = CheckDifferent(gmm, gmm1);
+    if (success)
+      break;
+
+    delete gmm;
+    bindings::tests::CleanMemory();
   }
+
+  BOOST_REQUIRE_EQUAL(success, true);
 }
 
 // Ensure that Percentage affects the final result when refined_start is true.
@@ -297,10 +398,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainPercentageTest)
   SetInputParam("percentage", (double) 0.01);
   SetInputParam("samplings", (int) 1000);
 
-  size_t seed = std::time(NULL);
-  mlpack::math::randGen.seed((uint32_t) seed);
-  srand((unsigned int) seed);
-  arma::arma_rng::set_seed(seed);
+  mlpack::math::FixedRandomSeed();
 
   mlpackMain();
 
@@ -314,23 +412,13 @@ BOOST_AUTO_TEST_CASE(GmmTrainPercentageTest)
   SetInputParam("percentage", (double) 0.45);
   SetInputParam("samplings", (int) 1000);
 
-  mlpack::math::randGen.seed((uint32_t) seed);
-  srand((unsigned int) seed);
-  arma::arma_rng::set_seed(seed);
+  mlpack::math::FixedRandomSeed();
 
   mlpackMain();
 
   GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
 
-  arma::uvec sortedIndices = sort_index(gmm->Weights());
-
-  for (size_t k = 0; k < sortedIndices.n_elem; k++)
-  {
-    BOOST_REQUIRE(arma::norm(gmm->Component(sortedIndices[k]).Mean() -
-                      gmm1->Component(sortedIndices[k]).Mean()) > 1e-50 ||
-                  arma::norm(gmm->Component(sortedIndices[k]).Covariance() -
-                      gmm1->Component(sortedIndices[k]).Covariance()) > 1e-50);
-  }
+  BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
 }
 
 // Ensure that Sampling affects the final result when refined_start is true.
@@ -346,10 +434,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainSamplingsTest)
   SetInputParam("trials", (int) 2);
   SetInputParam("samplings", (int) 10);
 
-  size_t seed = std::time(NULL);
-  mlpack::math::randGen.seed((uint32_t) seed);
-  srand((unsigned int) seed);
-  arma::arma_rng::set_seed(seed);
+  mlpack::math::FixedRandomSeed();
 
   mlpackMain();
 
@@ -363,23 +448,13 @@ BOOST_AUTO_TEST_CASE(GmmTrainSamplingsTest)
   SetInputParam("trials", (int) 2);
   SetInputParam("samplings", (int) 5000);
 
-  mlpack::math::randGen.seed((uint32_t) seed);
-  srand((unsigned int) seed);
-  arma::arma_rng::set_seed(seed);
+  mlpack::math::FixedRandomSeed();
 
   mlpackMain();
 
   GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
 
-  arma::uvec sortedIndices = sort_index(gmm->Weights());
-
-  for (size_t k = 0; k < sortedIndices.n_elem; k++)
-  {
-    BOOST_REQUIRE(arma::norm(gmm->Component(sortedIndices[k]).Mean() -
-                      gmm1->Component(sortedIndices[k]).Mean()) > 1e-50 ||
-                  arma::norm(gmm->Component(sortedIndices[k]).Covariance() -
-                      gmm1->Component(sortedIndices[k]).Covariance()) > 1e-50);
-  }
+  BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
 }
 
 // Ensure that tolerance affects the final result.
@@ -393,10 +468,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainToleranceTest)
   SetInputParam("gaussians", (int) 2);
   SetInputParam("tolerance", (double) 1e-8);
 
-  size_t seed = std::time(NULL);
-  mlpack::math::randGen.seed((uint32_t) seed);
-  srand((unsigned int) seed);
-  arma::arma_rng::set_seed(seed);
+  mlpack::math::FixedRandomSeed();
 
   mlpackMain();
 
@@ -408,23 +480,13 @@ BOOST_AUTO_TEST_CASE(GmmTrainToleranceTest)
   SetInputParam("gaussians", (int) 2);
   SetInputParam("tolerance", (double) 10);
 
-  mlpack::math::randGen.seed((uint32_t) seed);
-  srand((unsigned int) seed);
-  arma::arma_rng::set_seed(seed);
+  mlpack::math::FixedRandomSeed();
 
   mlpackMain();
 
   GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
 
-  arma::uvec sortedIndices = sort_index(gmm->Weights());
-
-  for (size_t k = 0; k < sortedIndices.n_elem; k++)
-  {
-    BOOST_REQUIRE(arma::norm(gmm->Component(sortedIndices[k]).Mean() -
-                      gmm1->Component(sortedIndices[k]).Mean()) > 1e-50 ||
-                  arma::norm(gmm->Component(sortedIndices[k]).Covariance() -
-                      gmm1->Component(sortedIndices[k]).Covariance()) > 1e-50);
-  }
+  BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
 }
 
 // Ensure that saved model can be used again.
@@ -483,7 +545,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiagCovariance)
       for (size_t i = 0; i < diagCov.n_rows; i++)
         for (size_t j = 0; j < diagCov.n_cols; j++)
           if (i != j && diagCov(i, j) != (double) 0)
-            BOOST_FAIL("Covariance Are Not Diagonal");
+            BOOST_FAIL("Covariance is not diagonal");
   }
 }
 

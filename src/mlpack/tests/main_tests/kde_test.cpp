@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(KDEGaussianRTreeResultsMain)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], 100 * relError);
 }
 
 /**
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(KDETriangularBallTreeResultsMain)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], 100 * relError);
 }
 
 /**
@@ -169,7 +169,7 @@ BOOST_AUTO_TEST_CASE(KDEMonoResultsMain)
 
   // Check whether results are equal.
   for (size_t i = 0; i < reference.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], 100 * relError);
 }
 
 /**
@@ -235,7 +235,7 @@ BOOST_AUTO_TEST_CASE(KDEModelReuse)
 
   // Check estimations are the same.
   for (size_t i = 0; i < samples; ++i)
-    BOOST_REQUIRE_CLOSE(oldEstimations[i], newEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(oldEstimations[i], newEstimations[i], 100 * relError);
 }
 
 /**
@@ -277,7 +277,7 @@ BOOST_AUTO_TEST_CASE(KDEGaussianSingleKDTreeResultsMain)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], 100 * relError);
 }
 
 /**

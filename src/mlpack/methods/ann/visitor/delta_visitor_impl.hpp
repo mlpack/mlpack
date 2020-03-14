@@ -25,6 +25,11 @@ inline arma::mat& DeltaVisitor::operator()(LayerType *layer) const
   return layer->Delta();
 }
 
+inline arma::mat& DeltaVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
+}
+
 } // namespace ann
 } // namespace mlpack
 

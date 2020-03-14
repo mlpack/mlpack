@@ -18,6 +18,8 @@
 
 #include "extension.hpp"
 
+#ifdef HAS_STB // Compile this only if stb is present.
+
 #define STB_IMAGE_STATIC
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -25,6 +27,8 @@
 #define STB_IMAGE_WRITE_STATIC
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
+
+#endif
 
 namespace mlpack {
 namespace data {
@@ -39,6 +43,8 @@ namespace data {
  */
 inline bool ImageFormatSupported(const std::string& fileName,
                                  const bool save = false);
+
+#endif
 
 /**
  * Implements meta-data of images required by data::Load and
@@ -94,10 +100,6 @@ class ImageInfo
   // Compression of the image if saved as jpg (0 - 100).
   size_t quality;
 };
-#else
-class ImageInfo { };
-
-#endif // HAS_STB.
 
 } // namespace data
 } // namespace mlpack

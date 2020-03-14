@@ -85,6 +85,11 @@ class QLearning
             EnvironmentType environment = EnvironmentType());
 
   /**
+   * Clean memory.
+   */
+  ~QLearning();
+
+  /**
    * Execute a step in an episode.
    * @return Reward for the step.
    */
@@ -140,6 +145,9 @@ class QLearning
 
   //! Locally-stored updater.
   UpdaterType updater;
+  #if ENS_VERSION_MAJOR >= 2
+  typename UpdaterType::template Policy<arma::mat, arma::mat>* updatePolicy;
+  #endif
 
   //! Locally-stored behavior policy.
   PolicyType policy;

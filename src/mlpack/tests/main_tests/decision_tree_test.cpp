@@ -261,6 +261,8 @@ BOOST_AUTO_TEST_CASE(DecisionRegularisationTest)
   mlpackMain();
   pred = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
 
+  bindings::tests::CleanMemory();
+
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
@@ -275,8 +277,8 @@ BOOST_AUTO_TEST_CASE(DecisionRegularisationTest)
   predRegularised = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
 
   size_t count = 0;
-  // This part of code is dupliacte with no weighted one.
-  for (size_t i = 0; i < 1000; ++i)
+  BOOST_REQUIRE_EQUAL(pred.n_elem, predRegularised.n_elem);
+  for (size_t i = 0; i < pred.n_elem; ++i)
   {
     if (pred[i] != predRegularised[i])
       count++;
@@ -377,9 +379,13 @@ BOOST_AUTO_TEST_CASE(DecisionTreeTrainingVerTest)
 
   mlpackMain();
 
+  DecisionTreeModel* model = CLI::GetParam<DecisionTreeModel*>("output_model");
+  CLI::GetParam<DecisionTreeModel*>("output_model") = NULL;
+
+  bindings::tests::CleanMemory();
+
   // Input pre-trained model.
-  SetInputParam("input_model",
-                std::move(CLI::GetParam<DecisionTreeModel*>("output_model")));
+  SetInputParam("input_model", model);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -424,6 +430,11 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
   predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
   probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
 
+  DecisionTreeModel* model = CLI::GetParam<DecisionTreeModel*>("output_model");
+  CLI::GetParam<DecisionTreeModel*>("output_model") = NULL;
+
+  bindings::tests::CleanMemory();
+
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
   CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
@@ -432,8 +443,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
 
   // Input trained model.
   SetInputParam("test", std::make_tuple(info, testData));
-  SetInputParam("input_model",
-      std::move(CLI::GetParam<DecisionTreeModel*>("output_model")));
+  SetInputParam("input_model", model);
 
   mlpackMain();
 
@@ -488,18 +498,20 @@ BOOST_AUTO_TEST_CASE(DecisionTreeMaximumDepthTest)
 
   // Check that number of output points are equal to number of input points.
   arma::Row<size_t> predictions;
-  predictions = CLI::GetParam<arma::Row<size_t>>("predictions");
+  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
 
-  ResetDTSettings();
+  bindings::tests::CleanMemory();
 
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
-  SetInputParam("maximum_depth", (int) 4);
+  SetInputParam("maximum_depth", (int) 2);
 
   // Input test data.
   SetInputParam("test", std::make_tuple(info, testData));
+
+  mlpackMain();
 
   CheckMatricesNotEqual(predictions,
                         CLI::GetParam<arma::Row<size_t>>("predictions"));

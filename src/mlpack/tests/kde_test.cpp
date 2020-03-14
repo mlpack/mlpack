@@ -139,8 +139,8 @@ BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
   arma::mat query = arma::randu(2, 60);
   arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
-  const double kernelBandwidth = 0.3;
-  const double relError = 0.01;
+  const double kernelBandwidth = 0.12;
+  const double relError = 0.05;
 
   // Brute force KDE.
   GaussianKernel kernel(kernelBandwidth);
@@ -161,7 +161,7 @@ BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(GaussianSingleKDEBruteForceTest)
   arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   const double kernelBandwidth = 0.3;
-  const double relError = 0.01;
+  const double relError = 0.04;
 
   // Brute force KDE.
   GaussianKernel kernel(kernelBandwidth);
@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE(GaussianSingleKDEBruteForceTest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
@@ -214,9 +214,9 @@ BOOST_AUTO_TEST_CASE(EpanechnikovCoverSingleKDETest)
   // Brute force KDE.
   EpanechnikovKernel kernel(kernelBandwidth);
   BruteForceKDE<EpanechnikovKernel>(reference,
-                                query,
-                                bfEstimations,
-                                kernel);
+                                    query,
+                                    bfEstimations,
+                                    kernel);
 
   // Optimized KDE.
   metric::EuclideanDistance metric;
@@ -230,7 +230,42 @@ BOOST_AUTO_TEST_CASE(EpanechnikovCoverSingleKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
+}
+
+/**
+ * Test single-tree implementation results against brute force results using
+ * a cover-tree and Gaussian kernel.
+ */
+BOOST_AUTO_TEST_CASE(GaussianCoverSingleKDETest)
+{
+  arma::mat reference = arma::randu(2, 300);
+  arma::mat query = arma::randu(2, 100);
+  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  const double kernelBandwidth = 1.1;
+  const double relError = 0.08;
+
+  // Brute force KDE.
+  GaussianKernel kernel(kernelBandwidth);
+  BruteForceKDE<GaussianKernel>(reference,
+                                query,
+                                bfEstimations,
+                                kernel);
+
+  // Optimized KDE.
+  metric::EuclideanDistance metric;
+  KDE<GaussianKernel,
+      metric::EuclideanDistance,
+      arma::mat,
+      tree::StandardCoverTree>
+      kde(relError, 0.0, kernel, KDEMode::SINGLE_TREE_MODE, metric);
+  kde.Train(reference);
+  kde.Evaluate(query, treeEstimations);
+
+  // Check whether results are equal.
+  for (size_t i = 0; i < query.n_cols; ++i)
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
@@ -249,9 +284,9 @@ BOOST_AUTO_TEST_CASE(EpanechnikovOctreeSingleKDETest)
   // Brute force KDE.
   EpanechnikovKernel kernel(kernelBandwidth);
   BruteForceKDE<EpanechnikovKernel>(reference,
-                                query,
-                                bfEstimations,
-                                kernel);
+                                    query,
+                                    bfEstimations,
+                                    kernel);
 
   // Optimized KDE.
   metric::EuclideanDistance metric;
@@ -265,7 +300,7 @@ BOOST_AUTO_TEST_CASE(EpanechnikovOctreeSingleKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
@@ -302,7 +337,7 @@ BOOST_AUTO_TEST_CASE(BallTreeGaussianKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 
   delete queryTree;
   delete referenceTree;
@@ -339,7 +374,7 @@ BOOST_AUTO_TEST_CASE(OctreeGaussianKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
@@ -373,12 +408,12 @@ BOOST_AUTO_TEST_CASE(RTreeGaussianKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
  * Test Standard Cover Tree dual-tree implementation results against brute
- * force results.
+ * force results using Gaussian kernel.
  */
 BOOST_AUTO_TEST_CASE(StandardCoverTreeGaussianKDETest)
 {
@@ -408,7 +443,42 @@ BOOST_AUTO_TEST_CASE(StandardCoverTreeGaussianKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
+}
+
+/**
+ * Test Standard Cover Tree dual-tree implementation results against brute
+ * force results using Epanechnikov kernel.
+ */
+BOOST_AUTO_TEST_CASE(StandardCoverTreeEpanechnikovKDETest)
+{
+  arma::mat reference = arma::randu(2, 500);
+  arma::mat query = arma::randu(2, 200);
+  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  const double kernelBandwidth = 0.3;
+  const double relError = 0.01;
+
+  // Brute force KDE.
+  EpanechnikovKernel kernel(kernelBandwidth);
+  BruteForceKDE<EpanechnikovKernel>(reference,
+                                    query,
+                                    bfEstimations,
+                                    kernel);
+
+  // Optimized KDE.
+  metric::EuclideanDistance metric;
+  KDE<EpanechnikovKernel,
+      metric::EuclideanDistance,
+      arma::mat,
+      tree::StandardCoverTree>
+      kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
+  kde.Train(reference);
+  kde.Evaluate(query, treeEstimations);
+
+  // Check whether results are equal.
+  for (size_t i = 0; i < query.n_cols; ++i)
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
@@ -448,7 +518,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedReferenceSampleKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 
   delete queryTree;
   delete referenceTree;
@@ -482,7 +552,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedQuerySampleKDETest)
   kde.Evaluate(queryTree, oldFromNewQueries, estimations);
 
   // Check whether results are equal.
-  BOOST_REQUIRE_CLOSE(estimations[2], estimations[3], relError*100);
+  BOOST_REQUIRE_CLOSE(estimations[2], estimations[3], relError * 100);
 
   delete queryTree;
   delete referenceTree;
@@ -523,7 +593,7 @@ BOOST_AUTO_TEST_CASE(BreadthFirstKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
@@ -557,7 +627,7 @@ BOOST_AUTO_TEST_CASE(OneDimensionalTest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
@@ -766,9 +836,9 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
 
   for (size_t i = 0; i < query.n_cols; ++i)
   {
-    BOOST_REQUIRE_CLOSE(estimations[i], xmlEstimations[i], relError*100);
-    BOOST_REQUIRE_CLOSE(estimations[i], textEstimations[i], relError*100);
-    BOOST_REQUIRE_CLOSE(estimations[i], binEstimations[i], relError*100);
+    BOOST_REQUIRE_CLOSE(estimations[i], xmlEstimations[i], relError * 100);
+    BOOST_REQUIRE_CLOSE(estimations[i], textEstimations[i], relError * 100);
+    BOOST_REQUIRE_CLOSE(estimations[i], binEstimations[i], relError * 100);
   }
 }
 

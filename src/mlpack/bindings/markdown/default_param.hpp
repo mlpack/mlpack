@@ -18,6 +18,7 @@
 
 #include <mlpack/bindings/cli/default_param.hpp>
 #include <mlpack/bindings/python/default_param.hpp>
+#include <mlpack/bindings/julia/default_param.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -41,6 +42,16 @@ void DefaultParam(const util::ParamData& data,
   {
     *((std::string*) output) =
         python::DefaultParamImpl<typename std::remove_pointer<T>::type>(data);
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    *((std::string*) output) =
+        julia::DefaultParamImpl<typename std::remove_pointer<T>::type>(data);
+  }
+  else
+  {
+    throw std::invalid_argument("DefaultParam(): unknown "
+        "BindingInfo::Language() " + BindingInfo::Language() + "!");
   }
 }
 

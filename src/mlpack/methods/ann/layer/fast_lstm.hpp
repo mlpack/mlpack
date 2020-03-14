@@ -36,6 +36,10 @@ namespace ann /** Artificial Neural Network. */ {
  * Note that FastLSTM network layer does not use peephole connections between
  * the cell and gates.
  *
+ * Note also that if a FastLSTM layer is desired as the first layer of a neural
+ * network, an IdentityLayer should be added to the network as the first layer,
+ * and then the FastLSTM layer should be added.
+ *
  * For more information, see the following.
  *
  * @code
@@ -43,7 +47,8 @@ namespace ann /** Artificial Neural Network. */ {
  *   author  = {Hochreiter, Sepp and Schmidhuber, J\"{u}rgen},
  *   title   = {Long Short-term Memory},
  *   journal = {Neural Comput.},
- *   year    = {1997}
+ *   year    = {1997},
+ *   url     = {https://www.bioinf.jku.at/publications/older/2604.pdf}
  * }
  * @endcode
  *
@@ -87,7 +92,7 @@ class FastLSTM
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -99,9 +104,9 @@ class FastLSTM
    * @param g The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Backward(const InputType&& input,
-                ErrorType&& gy,
-                GradientType&& g);
+  void Backward(const InputType& input,
+                const ErrorType& gy,
+                GradientType& g);
 
   /*
    * Reset the layer parameter.
@@ -124,9 +129,9 @@ class FastLSTM
    * @param gradient The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Gradient(InputType&& input,
-                ErrorType&& error,
-                GradientType&& gradient);
+  void Gradient(const InputType& input,
+                const ErrorType& error,
+                GradientType& gradient);
 
   //! Get the maximum number of steps to backpropagate through time (BPTT).
   size_t Rho() const { return rho; }
@@ -167,7 +172,7 @@ class FastLSTM
    * @param sigmoid The matrix to store the sigmoid approximation into.
    */
   template<typename InputType, typename OutputType>
-  void FastSigmoid(InputType&& input, OutputType&& sigmoids)
+  void FastSigmoid(const InputType& input, OutputType& sigmoids)
   {
     for (size_t i = 0; i < input.n_elem; ++i)
       sigmoids(i) = FastSigmoid(input(i));

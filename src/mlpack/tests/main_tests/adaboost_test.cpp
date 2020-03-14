@@ -77,6 +77,43 @@ BOOST_AUTO_TEST_CASE(AdaBoostOutputDimensionTest)
 }
 
 /**
+ * Check that total number of rows of probabilities matrix is equal to total
+ * number of rows of input data and that each column of probabilities matrix sums
+ * up to 1.
+ */
+BOOST_AUTO_TEST_CASE(AdaBoostProbabilitiesTest)
+{
+  arma::mat trainData;
+  if (!data::Load("vc2.csv", trainData))
+    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Unable to load label dataset vc2_labels.txt!");
+
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData))
+    BOOST_FAIL("Unable to load test dataset vc2.csv!");
+
+  size_t testSize = testData.n_cols;
+
+  SetInputParam("training", std::move(trainData));
+  SetInputParam("labels", std::move(labels));
+
+  SetInputParam("test", std::move(testData));
+
+  mlpackMain();
+
+  arma::mat probabilities;
+  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
+
+  BOOST_REQUIRE_EQUAL(probabilities.n_cols, testSize);
+
+  for (size_t i = 0; i < testSize; i++)
+    BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
+}
+
+/**
  * Ensure that saved model can be used again.
  */
 BOOST_AUTO_TEST_CASE(AdaBoostModelReuseTest)

@@ -123,13 +123,17 @@ class LogisticRegression
    * parameters vector directly with Parameters() and modify it as desired.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error)
    */
-  template<typename OptimizerType = ens::L_BFGS>
+  template<typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>
   double Train(const MatType& predictors,
-               const arma::Row<size_t>& responses);
+               const arma::Row<size_t>& responses,
+               CallbackTypes&&... callbacks);
 
   /**
    * Train the LogisticRegression model with the given instantiated optimizer.
@@ -143,15 +147,20 @@ class LogisticRegression
    * optimizer.Function().GetInitialPoint() to the current parameters vector,
    * accessible via Parameters().
    *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer with instantiated error function.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error)
    */
-  template<typename OptimizerType>
+  template<typename OptimizerType, typename... CallbackTypes>
   double Train(const MatType& predictors,
                const arma::Row<size_t>& responses,
-               OptimizerType& optimizer);
+               OptimizerType& optimizer,
+               CallbackTypes&&... callbacks);
 
   //! Return the parameters (the b vector).
   const arma::rowvec& Parameters() const { return parameters; }

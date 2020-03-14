@@ -30,6 +30,8 @@ class ResetVisitor : public boost::static_visitor<void>
   template<typename LayerType>
   void operator()(LayerType* layer) const;
 
+  void operator()(MoreTypes layer) const;
+
  private:
   //! Execute the Reset() function for a module which implements the Reset()
   //! function.

@@ -25,6 +25,11 @@ inline double LossVisitor::operator()(LayerType* layer) const
   return LayerLoss(layer);
 }
 
+inline double LossVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     !HasLoss<T, double(T::*)()>::value &&

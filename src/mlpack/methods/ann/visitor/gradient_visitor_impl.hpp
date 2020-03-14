@@ -19,19 +19,21 @@ namespace mlpack {
 namespace ann {
 
 //! GradientVisitor visitor class.
-inline GradientVisitor::GradientVisitor(arma::mat&& input, arma::mat&& delta) :
-    input(std::move(input)),
-    delta(std::move(delta)),
+inline GradientVisitor::GradientVisitor(const arma::mat& input,
+                                        const arma::mat& delta) :
+    input(input),
+    delta(delta),
     index(0),
     hasIndex(false)
 {
   /* Nothing to do here. */
 }
 
-inline GradientVisitor::GradientVisitor(arma::mat&& input, arma::mat&& delta,
+inline GradientVisitor::GradientVisitor(const arma::mat& input,
+                                        const arma::mat& delta,
                                         const size_t index) :
-    input(std::move(input)),
-    delta(std::move(delta)),
+    input(input),
+    delta(delta),
     index(index),
     hasIndex(true)
 {
@@ -44,14 +46,18 @@ inline void GradientVisitor::operator()(LayerType* layer) const
   LayerGradients(layer, layer->OutputParameter());
 }
 
+inline void GradientVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     HasGradientCheck<T, arma::mat&(T::*)()>::value &&
     !HasRunCheck<T, bool&(T::*)(void)>::value, void>::type
 GradientVisitor::LayerGradients(T* layer, arma::mat& /* input */) const
 {
-  layer->Gradient(std::move(input), std::move(delta),
-      std::move(layer->Gradient()));
+  layer->Gradient(input, delta, layer->Gradient());
 }
 
 template<typename T>
@@ -62,13 +68,11 @@ GradientVisitor::LayerGradients(T* layer, arma::mat& /* input */) const
 {
   if (!hasIndex)
   {
-    layer->Gradient(std::move(input), std::move(delta),
-        std::move(layer->Gradient()));
+    layer->Gradient(input, delta, layer->Gradient());
   }
   else
   {
-    layer->Gradient(std::move(input), std::move(delta),
-        std::move(layer->Gradient()), index);
+    layer->Gradient(input, delta, layer->Gradient(), index);
   }
 }
 

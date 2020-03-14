@@ -40,6 +40,23 @@ static vector<string> stringEncodingInput = {
     "command-line programs and Python bindings."
 };
 
+//! Common UTF-8 input for some unicode tests.
+static vector<string> stringEncodingUtf8Input = {
+    "mlpack "
+    "\xE2\x93\x9C\xE2\x93\x9B\xE2\x93\x9F\xE2\x93\x90\xE2\x93\x92\xE2\x93\x9A",
+    "MLPACK "
+    "\xE2\x93\x82\xE2\x93\x81\xE2\x93\x85\xE2\x92\xB6\xE2\x92\xB8\xE2\x93\x80 "
+    "mlpack",
+    "\xF0\x9F\x84\xBC\xF0\x9F\x84\xBB\xF0\x9F\x84\xBF\xF0\x9F\x84\xB0"
+    "\xF0\x9F\x84\xB2\xF0\x9F\x84\xBA "
+    "\xE2\x93\x9C\xE2\x93\x9B\xE2\x93\x9F\xE2\x93\x90\xE2\x93\x92\xE2\x93\x9A "
+    "MLPACK "
+    "\xF0\x9F\x84\xBC\xF0\x9F\x84\xBB\xF0\x9F\x84\xBF\xF0\x9F\x84\xB0"
+    "\xF0\x9F\x84\xB2\xF0\x9F\x84\xBA "
+    "\xE2\x93\x82\xE2\x93\x81\xE2\x93\x85\xE2\x92\xB6\xE2\x92\xB8\xE2\x93\x80"
+};
+
+
 /**
  * Test the dictionary encoding algorithm.
  */
@@ -72,6 +89,40 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
       26, 27,  9, 10, 28,  6, 29, 30, 20, 31, 32, 33, 34,  9, 10, 35 },
     { 36, 37, 14, 38, 39,  8, 40,  1, 41, 42, 43, 44,  6, 45, 13,  0,  0,
        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 }
+  };
+
+  CheckMatrices(output, expected);
+}
+
+/**
+ * Test the dictionary encoding algorithm with unicode characters.
+ */
+BOOST_AUTO_TEST_CASE(UnicodeDictionaryEncodingTest)
+{
+  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+
+  arma::mat output;
+  DictionaryEncoding<SplitByAnyOf::TokenType> encoder;
+  SplitByAnyOf tokenizer(" .,\"");
+
+  encoder.Encode(stringEncodingUtf8Input, output, tokenizer);
+
+  const DictionaryType& dictionary = encoder.Dictionary();
+
+  // Checking that each token has a unique label.
+  std::unordered_map<size_t, size_t> keysCount;
+
+  for (auto& keyValue : dictionary.Mapping())
+  {
+    keysCount[keyValue.second]++;
+
+    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+  }
+
+  arma::mat expected = {
+    { 1, 2, 0, 0, 0 },
+    { 3, 4, 1, 0, 0 },
+    { 5, 2, 3, 5, 4 }
   };
 
   CheckMatrices(output, expected);
@@ -142,10 +193,6 @@ BOOST_AUTO_TEST_CASE(SplitByAnyOfTokenizerTest)
 }
 
 /**
-<<<<<<< HEAD
-* Test the CharExtract tokenizer.
-*/
-=======
  * Test the SplitByAnyOf tokenizer in case of unicode characters.
  */
 BOOST_AUTO_TEST_CASE(SplitByAnyOfTokenizerUnicodeTest)
@@ -180,7 +227,6 @@ BOOST_AUTO_TEST_CASE(SplitByAnyOfTokenizerUnicodeTest)
 /**
  * Test the CharExtract tokenizer.
  */
->>>>>>> 95f1ab19f... Style-fixes for New policy
 BOOST_AUTO_TEST_CASE(DictionaryEncodingIndividualCharactersTest)
 {
   vector<string> input = {

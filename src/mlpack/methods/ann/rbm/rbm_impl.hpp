@@ -91,16 +91,16 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename OptimizerType>
+template<typename OptimizerType, typename... CallbackType>
 double RBM<InitializationRuleType, DataType, PolicyType>::Train(
-    OptimizerType& optimizer)
+    OptimizerType& optimizer, CallbackType&&... callbacks)
 {
   if (!reset)
   {
     Reset();
   }
 
-  return optimizer.Optimize(*this, parameter);
+  return optimizer.Optimize(*this, parameter, callbacks...);
 }
 
 template<

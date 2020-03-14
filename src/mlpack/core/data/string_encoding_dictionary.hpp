@@ -22,7 +22,7 @@
 namespace mlpack {
 namespace data {
 
-/*
+/**
  * This class provides a dictionary interface for the purpose of string
  * encoding. It works like an adapter to the internal dictionary.
  *

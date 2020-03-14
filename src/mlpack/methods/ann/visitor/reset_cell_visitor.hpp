@@ -33,6 +33,8 @@ class ResetCellVisitor : public boost::static_visitor<void>
   template<typename LayerType>
   void operator()(LayerType* layer) const;
 
+  void operator()(MoreTypes layer) const;
+
  private:
   size_t size;
 

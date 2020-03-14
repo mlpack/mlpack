@@ -27,15 +27,17 @@ class GradientUpdateVisitor : public boost::static_visitor<size_t>
 {
  public:
   //! Update the gradient parameter given the gradient set.
-  GradientUpdateVisitor(arma::mat&& gradient, size_t offset = 0);
+  GradientUpdateVisitor(arma::mat& gradient, size_t offset = 0);
 
   //! Update the gradient parameter.
   template<typename LayerType>
   size_t operator()(LayerType* layer) const;
 
+  size_t operator()(MoreTypes layer) const;
+
  private:
   //! The gradient set.
-  arma::mat&& gradient;
+  arma::mat& gradient;
 
   //! The gradient offset.
   size_t offset;

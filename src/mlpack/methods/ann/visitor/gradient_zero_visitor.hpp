@@ -34,6 +34,8 @@ class GradientZeroVisitor : public boost::static_visitor<void>
   template<typename LayerType>
   void operator()(LayerType* layer) const;
 
+  void operator()(MoreTypes layer) const;
+
  private:
   //! Set the gradient to zero if the module implements the Gradient() function.
   template<typename T>

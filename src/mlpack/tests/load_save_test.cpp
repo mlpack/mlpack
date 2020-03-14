@@ -1972,8 +1972,10 @@ BOOST_AUTO_TEST_CASE(NonExistentFileARFFTest)
   arma::mat dataset;
   DatasetInfo info;
 
+  Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(data::LoadARFF("nonexistentfile.arff", dataset, info),
       std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 }
 
 /**

@@ -156,7 +156,6 @@ inline void CheckMatricesNotEqual(const arma::cube& a,
     BOOST_ERROR("The matrices are equal.");
 }
 
-
 // Filter typeinfo string to generate unique filenames for serialization tests.
 inline std::string FilterFileName(const std::string& inputString)
 {

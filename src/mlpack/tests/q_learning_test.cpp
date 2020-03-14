@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 
 //! Test DQN in Cart Pole task with Prioritized Replay.
 BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
-  {
+{
   // Set up the network.
   FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
       GaussianInitialization(0, 0.001));
@@ -400,25 +400,23 @@ BOOST_AUTO_TEST_CASE(MountainCarWithDQN)
 //! Test DQN in DoublePoleCart task.
 BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
 {
-  // We will allow three trials total.
+  // We will allow four trials total.
   bool success = false;
-  for (size_t trial = 0; trial < 3; trial++)
+  for (size_t trial = 0; trial < 4; trial++)
   {
     // Set up the network.
     FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
         GaussianInitialization(0, 0.001));
-    model.Add<Linear<>>(6, 128);
+    model.Add<Linear<>>(6, 256);
     model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(128, 32);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(32, 3);
+    model.Add<Linear<>>(256, 3);
 
     // Set up the policy and replay method.
     GreedyPolicy<DoublePoleCart> policy(1.0, 1000, 0.1, 0.99);
     RandomReplay<DoublePoleCart> replayMethod(20, 10000);
 
     TrainingConfig config;
-    config.StepSize() = 0.001;
+    config.StepSize() = 0.01;
     config.Discount() = 0.9;
     config.TargetNetworkSyncInterval() = 100;
     config.ExplorationSteps() = 100;
@@ -432,27 +430,25 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
 
     size_t episodes = 0;
     bool converged = true;
-    size_t successive = 0;
+    size_t episodeSuccesses = 0;
     while (true)
     {
       double episodeReturn = agent.Episode();
       episodes += 1;
 
-      if (episodes > 1000)
+      if (episodeReturn >= 280)
+        episodeSuccesses++;
+
+      if (episodes > 2000)
       {
-        Log::Debug << "Multiple Pole Cart with DQN failed." << std::endl;
+        Log::Debug << "Cart Pole with DQN failed." << std::endl;
         converged = false;
         break;
       }
 
-      if (episodeReturn >= 380)
-        successive++;
-      else if (successive)
-        successive = 0;
-
-      // If the model can solve the environment in two consecutive trials this
-      // is fine for a simple test.
-      if (successive >= 2)
+      // If the model can solve the environment in two trials this is fine for
+      // a simple test.
+      if (episodeSuccesses >= 2)
       {
         Log::Debug << "QLearning has succeeded in the multiple pole cart" <<
             " environment." << std::endl;

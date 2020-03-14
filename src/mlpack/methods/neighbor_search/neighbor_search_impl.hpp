@@ -115,7 +115,7 @@ SingleTreeTraversalType>::NeighborSearch(const NeighborSearchMode mode,
                                          const double epsilon,
                                          const MetricType metric) :
     referenceTree(NULL),
-    referenceSet(new MatType()), // Empty matrix.
+    referenceSet(mode == NAIVE_MODE ? new MatType() : NULL), // Empty matrix.
     searchMode(mode),
     epsilon(epsilon),
     metric(metric),
@@ -129,9 +129,8 @@ SingleTreeTraversalType>::NeighborSearch(const NeighborSearchMode mode,
   // Build the tree on the empty dataset, if necessary.
   if (mode != NAIVE_MODE)
   {
-    referenceTree = BuildTree<Tree>(std::move(*referenceSet),
+    referenceTree = BuildTree<Tree>(std::move(arma::mat()),
         oldFromNewReferences);
-    delete referenceSet;
     referenceSet = &referenceTree->Dataset();
   }
 }
@@ -277,8 +276,11 @@ NeighborSearch<SortPolicy,
   scores = other.scores;
   treeNeedsReset = other.treeNeedsReset;
 
-  // Reset the other object.
-  other.referenceTree = BuildTree<Tree>(*other.referenceSet,
+  // Reset the other object.  Clean memory if needed.
+  if (!other.referenceTree)
+    delete other.referenceSet;
+
+  other.referenceTree = BuildTree<Tree>(std::move(arma::mat()),
       other.oldFromNewReferences);
   other.referenceSet = &other.referenceTree->Dataset();
   other.searchMode = DUAL_TREE_MODE,

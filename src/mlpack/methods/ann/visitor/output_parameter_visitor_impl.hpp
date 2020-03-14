@@ -25,6 +25,11 @@ inline arma::mat& OutputParameterVisitor::operator()(LayerType *layer) const
   return layer->OutputParameter();
 }
 
+inline arma::mat& OutputParameterVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
+}
+
 } // namespace ann
 } // namespace mlpack
 

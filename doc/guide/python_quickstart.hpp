@@ -17,11 +17,11 @@ Installing the mlpack bindings for Python is straightforward.  It's easy to use
 conda or pip to do this:
 
 @code{.sh}
-pip install mlpack3
+pip install mlpack
 @endcode
 
 @code{.sh}
-conda install -c mlpack mlpack
+conda install -c conda-forge mlpack
 @endcode
 
 Otherwise, we can build the Python bindings from scratch, as follows.  First we
@@ -31,9 +31,9 @@ build and install mlpack.  You can copy-paste the commands into your shell.
 @code{.sh}
 sudo apt-get install libboost-all-dev g++ cmake libarmadillo-dev python-pip wget
 sudo pip install cython setuptools distutils numpy pandas
-wget https://www.mlpack.org/files/mlpack-3.1.1.tar.gz
-tar -xvzpf mlpack-3.1.1.tar.gz
-mkdir -p mlpack-3.1.1/build/ && cd mlpack-3.1.1/build/
+wget https://www.mlpack.org/files/mlpack-3.2.1.tar.gz
+tar -xvzpf mlpack-3.2.1.tar.gz
+mkdir -p mlpack-3.2.1/build/ && cd mlpack-3.2.1/build/
 cmake ../ && make -j4 && sudo make install
 @endcode
 

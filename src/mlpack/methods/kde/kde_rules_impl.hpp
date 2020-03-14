@@ -50,11 +50,15 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     kernel(kernel),
     monteCarlo(monteCarlo),
     sameSet(sameSet),
+    absErrorTol(absError / referenceSet.n_cols),
     lastQueryIndex(querySet.n_cols),
     lastReferenceIndex(referenceSet.n_cols),
     baseCases(0),
     scores(0)
 {
+  // Initialize accumError.
+  accumError = arma::vec(querySet.n_cols, arma::fill::zeros);
+
   // Initialize accumMCAlpha only if Monte Carlo estimations are available.
   if (monteCarlo && kernelIsGaussian)
     accumMCAlpha = arma::vec(querySet.n_cols, arma::fill::zeros);
@@ -79,7 +83,11 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
   // Calculations.
   const double distance = metric.Evaluate(querySet.col(queryIndex),
                                           referenceSet.col(referenceIndex));
-  densities(queryIndex) += kernel.Evaluate(distance);
+  const double kernelValue = kernel.Evaluate(distance);
+  densities(queryIndex) += kernelValue;
+
+  // Update accumulated relative error tolerance for single-tree pruning.
+  accumError(queryIndex) += 2 * relError * kernelValue;
 
   ++baseCases;
   lastQueryIndex = queryIndex;
@@ -94,7 +102,6 @@ inline double KDERules<MetricType, KernelType, TreeType>::
 Score(const size_t queryIndex, TreeType& referenceNode)
 {
   // Auxiliary variables.
-  kde::KDEStat& referenceStat = referenceNode.Stat();
   const arma::vec& queryPoint = querySet.unsafe_col(queryIndex);
   const size_t refNumDesc = referenceNode.NumDescendants();
   double score, minDistance, maxDistance, depthAlpha;
@@ -110,12 +117,13 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
       lastQueryIndex == queryIndex &&
       traversalInfo.LastReferenceNode() != NULL &&
-      traversalInfo.LastReferenceNode()->Point(0) == referenceNode.Point(0))
+      lastReferenceIndex == referenceNode.Point(0))
   {
     // Don't duplicate calculations.
     alreadyDidRefPoint0 = true;
     const double furthestDescDist = referenceNode.FurthestDescendantDistance();
-    minDistance = traversalInfo.LastBaseCase() - furthestDescDist;
+    minDistance = std::max(traversalInfo.LastBaseCase() - furthestDescDist,
+        0.0);
     maxDistance = traversalInfo.LastBaseCase() + furthestDescDist;
   }
   else
@@ -124,22 +132,38 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     const math::Range r = referenceNode.RangeDistance(queryPoint);
     minDistance = r.Lo();
     maxDistance = r.Hi();
+
+    // Check if we are a self-child.
+    if (tree::TreeTraits<TreeType>::HasSelfChildren &&
+        referenceNode.Parent() != NULL &&
+        referenceNode.Parent()->Point(0) == referenceNode.Point(0))
+    {
+      alreadyDidRefPoint0 = true;
+    }
   }
 
   const double maxKernel = kernel.Evaluate(minDistance);
   const double minKernel = kernel.Evaluate(maxDistance);
   const double bound = maxKernel - minKernel;
 
-  if (bound <= (absError + relError * minKernel) / referenceSet.n_cols)
-  {
-    // Estimate values.
-    double kernelValue;
+  // Error tolerance of the current combination of query point and reference
+  // node.
+  const double relErrorTol = relError * minKernel;
+  const double errorTolerance = absErrorTol + relErrorTol;
 
-    // Calculate kernel value based on reference node centroid.
-    if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
-      kernelValue = EvaluateKernel(queryIndex, referenceNode.Point(0));
-    else
-      kernelValue = EvaluateKernel(queryPoint, referenceStat.Centroid());
+  // We relax the bound for pruning by accumError(queryIndex), so that if there
+  // is any leftover error tolerance from the rest of the traversal, we can use
+  // it here to prune more.
+  double pointAccumErrorTol;
+  if (alreadyDidRefPoint0)
+    pointAccumErrorTol = accumError(queryIndex) / (refNumDesc - 1);
+  else
+    pointAccumErrorTol = accumError(queryIndex) / refNumDesc;
+
+  if (bound <= 2 * errorTolerance + pointAccumErrorTol)
+  {
+    // Estimate kernel value.
+    const double kernelValue = (maxKernel + minKernel) / 2.0;
 
     if (alreadyDidRefPoint0)
       densities(queryIndex) += (refNumDesc - 1) * kernelValue;
@@ -148,6 +172,13 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 
     // Don't explore this tree branch.
     score = DBL_MAX;
+
+    // Subtract used error tolerance or add extra available tolerace from this
+    // prune.
+    if (alreadyDidRefPoint0)
+      accumError(queryIndex) -= (refNumDesc - 1) * (bound - 2 * errorTolerance);
+    else
+      accumError(queryIndex) -= refNumDesc * (bound - 2 * errorTolerance);
 
     // Store not used alpha for Monte Carlo.
     if (kernelIsGaussian && monteCarlo)
@@ -167,7 +198,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     // Auxiliary variables.
     arma::vec sample;
     size_t m = initialSampleSize;
-    double meanSample;
+    double meanSample = 0;
     bool useMonteCarloPredictions = true;
 
     // Resample as long as confidence is not high enough.
@@ -238,7 +269,17 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   }
   else
   {
+    // Recurse.
     score = minDistance;
+
+    // Add accumulated unused absolute error tolerance.
+    if (referenceNode.IsLeaf())
+    {
+      if (alreadyDidRefPoint0)
+        accumError(queryIndex) += (refNumDesc - 1) * 2 * absErrorTol;
+      else
+        accumError(queryIndex) += refNumDesc * 2 * absErrorTol;
+    }
 
     // If node is going to be exactly computed, reclaim not used alpha for
     // Monte Carlo estimations.
@@ -267,7 +308,6 @@ template<typename MetricType, typename KernelType, typename TreeType>
 inline double KDERules<MetricType, KernelType, TreeType>::
 Score(TreeType& queryNode, TreeType& referenceNode)
 {
-  kde::KDEStat& referenceStat = referenceNode.Stat();
   kde::KDEStat& queryStat = queryNode.Stat();
   const size_t refNumDesc = referenceNode.NumDescendants();
   double score, minDistance, maxDistance, depthAlpha;
@@ -302,7 +342,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     const double refFurtDescDist = referenceNode.FurthestDescendantDistance();
     const double queryFurtDescDist = queryNode.FurthestDescendantDistance();
     const double sumFurtDescDist = refFurtDescDist + queryFurtDescDist;
-    minDistance = traversalInfo.LastBaseCase() - sumFurtDescDist;
+    minDistance = std::max(traversalInfo.LastBaseCase() - sumFurtDescDist, 0.0);
     maxDistance = traversalInfo.LastBaseCase() + sumFurtDescDist;
   }
   else
@@ -317,23 +357,21 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   const double minKernel = kernel.Evaluate(maxDistance);
   const double bound = maxKernel - minKernel;
 
-  // If possible, avoid some calculations because of the error tolerance.
-  if (bound <= (absError + relError * minKernel) / referenceSet.n_cols)
-  {
-    // Auxiliary variables.
-    double kernelValue;
+  // Error tolerance of the current combination of query node and reference
+  // node.
+  const double relErrorTol = relError * minKernel;
+  const double errorTolerance = absErrorTol + relErrorTol;
 
-    // If calculating a center is not required.
-    if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
-    {
-      kernelValue = EvaluateKernel(queryNode.Point(0), referenceNode.Point(0));
-    }
-    // Sadly, we have no choice but to calculate the center.
-    else
-    {
-      kernelValue = EvaluateKernel(queryStat.Centroid(),
-                                   referenceStat.Centroid());
-    }
+  // We relax the bound for pruning by queryStat.AccumError(), so that if there
+  // is any leftover error tolerance from the rest of the traversal, we can use
+  // it here to prune more.
+  const double pointAccumErrorTol = queryStat.AccumError() / refNumDesc;
+
+  // If possible, avoid some calculations because of the error tolerance.
+  if (bound <= 2 * errorTolerance + pointAccumErrorTol)
+  {
+    // Estimate kernel value.
+    const double kernelValue = (maxKernel + minKernel) / 2.0;
 
     // Sum up estimations.
     for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
@@ -346,6 +384,10 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
     // Prune.
     score = DBL_MAX;
+
+    // Subtract used error tolerance or add extra available tolerace from this
+    // prune.
+    queryStat.AccumError() -= refNumDesc * (bound - 2 * errorTolerance);
 
     // Store not used alpha for Monte Carlo.
     if (kernelIsGaussian && monteCarlo)
@@ -366,7 +408,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     arma::vec sample;
     arma::vec means = arma::zeros(queryNode.NumDescendants());
     size_t m;
-    double meanSample;
+    double meanSample = 0;
     bool useMonteCarloPredictions = true;
 
     // Pick a sample for every query node.
@@ -458,6 +500,10 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     // Recurse.
     score = minDistance;
 
+    // Add accumulated unused error tolerance.
+    if (referenceNode.IsLeaf() && queryNode.IsLeaf())
+      queryStat.AccumError() += refNumDesc * 2 * errorTolerance;
+
     // If node is going to be exactly computed, reclaim not used alpha for
     // Monte Carlo estimations.
     if (canReclaimAlpha)
@@ -543,6 +589,7 @@ double KDECleanRules<TreeType>::Score(const size_t /* queryIndex */,
                                       TreeType& referenceNode)
 {
   referenceNode.Stat().AccumAlpha() = 0;
+  referenceNode.Stat().AccumError() = 0;
   return 0;
 }
 
@@ -554,6 +601,10 @@ double KDECleanRules<TreeType>::Score(TreeType& queryNode,
 {
   queryNode.Stat().AccumAlpha() = 0;
   referenceNode.Stat().AccumAlpha() = 0;
+
+  queryNode.Stat().AccumError() = 0;
+  referenceNode.Stat().AccumError() = 0;
+
   return 0;
 }
 

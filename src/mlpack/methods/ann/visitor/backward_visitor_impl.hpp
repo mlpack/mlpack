@@ -19,25 +19,25 @@ namespace mlpack {
 namespace ann {
 
 //! BackwardVisitor visitor class.
-inline BackwardVisitor::BackwardVisitor(arma::mat&& input,
-                                        arma::mat&& error,
-                                        arma::mat&& delta) :
-  input(std::move(input)),
-  error(std::move(error)),
-  delta(std::move(delta)),
+inline BackwardVisitor::BackwardVisitor(const arma::mat& input,
+                                        const arma::mat& error,
+                                        arma::mat& delta) :
+  input(input),
+  error(error),
+  delta(delta),
   index(0),
   hasIndex(false)
 {
   /* Nothing to do here. */
 }
 
-inline BackwardVisitor::BackwardVisitor(arma::mat&& input,
-                                        arma::mat&& error,
-                                        arma::mat&& delta,
+inline BackwardVisitor::BackwardVisitor(const arma::mat& input,
+                                        const arma::mat& error,
+                                        arma::mat& delta,
                                         const size_t index) :
-  input(std::move(input)),
-  error(std::move(error)),
-  delta(std::move(delta)),
+  input(input),
+  error(error),
+  delta(delta),
   index(index),
   hasIndex(true)
 {
@@ -50,12 +50,17 @@ inline void BackwardVisitor::operator()(LayerType* layer) const
   LayerBackward(layer, layer->OutputParameter());
 }
 
+inline void BackwardVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     !HasRunCheck<T, bool&(T::*)(void)>::value, void>::type
 BackwardVisitor::LayerBackward(T* layer, arma::mat& /* input */) const
 {
-  layer->Backward(std::move(input), std::move(error), std::move(delta));
+  layer->Backward(input, error, delta);
 }
 
 template<typename T>
@@ -65,13 +70,11 @@ BackwardVisitor::LayerBackward(T* layer, arma::mat& /* input */) const
 {
   if (!hasIndex)
   {
-    layer->Backward(std::move(input), std::move(error),
-        std::move(delta));
+    layer->Backward(input, error, delta);
   }
   else
   {
-    layer->Backward(std::move(input), std::move(error),
-        std::move(delta), index);
+    layer->Backward(input, error, delta, index);
   }
 }
 

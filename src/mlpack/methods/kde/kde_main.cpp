@@ -37,7 +37,7 @@ PROGRAM_INFO("Kernel Density Estimation",
     "performance as it uses an approximate dual or single tree algorithm for "
     "acceleration."
     "\n\n"
-    "Dual or single tree optimization allows to avoid lots of barely relevant "
+    "Dual or single tree optimization avoids many barely relevant "
     "calculations (as kernel function values decrease with distance), so it is "
     "an approximate computation. You can specify the maximum relative error "
     "tolerance for each query value with " + PRINT_PARAM_STRING("rel_error") +
@@ -167,8 +167,7 @@ PARAM_INT_IN("initial_sample_size",
              KDEDefaultParams::initialSampleSize);
 PARAM_DOUBLE_IN("mc_entry_coef",
                 "Controls how much larger does the amount of node descendants "
-                "has to be compared to the " +
-                PRINT_PARAM_STRING("initial_sample_size") + " in order to be "
+                "has to be compared to the initial sample size in order to be "
                 "a candidate for Monte Carlo estimations.",
                 "C",
                 KDEDefaultParams::mcEntryCoef);
