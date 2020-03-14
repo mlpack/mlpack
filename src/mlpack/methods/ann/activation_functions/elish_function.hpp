@@ -3,7 +3,7 @@
  * @author Bisakh Mondal
  *
  * Definition and implementation of the ELiSH function as described by
- * Mina Basirat and Peter M. Roth
+ * Mina Basirat and Peter M. Roth.
  *
  * For more information see the following paper
  * 
