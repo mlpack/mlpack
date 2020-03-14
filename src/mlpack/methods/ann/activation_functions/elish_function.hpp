@@ -53,7 +53,7 @@ namespace ann /** Artificial Neural Network. */ {
 class ElishFunction
 {
  public:
- /**
+  /**
    * Computes the ELiSH function.
    *
    * @param x Input data.
