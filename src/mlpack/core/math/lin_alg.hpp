@@ -45,13 +45,6 @@ void WhitenUsingSVD(const arma::mat& x,
                     arma::mat& xWhitened,
                     arma::mat& whiteningMatrix);
 
-/**
- * Whitens a matrix using the eigendecomposition of the covariance matrix.
- * Whitening means the covariance matrix of the result is the identity matrix.
- */
-void WhitenUsingEig(const arma::mat& x,
-                    arma::mat& xWhitened,
-                    arma::mat& whiteningMatrix);
 
 /**
  * Overwrites a dimension-N vector to a random vector on the unit sphere in R^N.
