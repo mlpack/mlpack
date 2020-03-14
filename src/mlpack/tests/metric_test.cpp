@@ -11,6 +11,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <boost/test/unit_test.hpp>
+#include <mlpack/core/metrics/iou_metric.hpp>
 #include "test_tools.hpp"
 
 using namespace std;
@@ -18,6 +19,9 @@ using namespace mlpack::metric;
 
 BOOST_AUTO_TEST_SUITE(LMetricTest);
 
+/**
+ * Simple test for L-1 metric.
+ */
 BOOST_AUTO_TEST_CASE(L1MetricTest)
 {
   arma::vec a1(5);
@@ -41,6 +45,9 @@ BOOST_AUTO_TEST_CASE(L1MetricTest)
                       lMetric.Evaluate(a2, b2), 1e-5);
 }
 
+/**
+ * Simple test for L-2 metric.
+ */
 BOOST_AUTO_TEST_CASE(L2MetricTest)
 {
   arma::vec a1(5);
@@ -64,6 +71,9 @@ BOOST_AUTO_TEST_CASE(L2MetricTest)
                       lMetric.Evaluate(a2, b2), 1e-5);
 }
 
+/**
+ * Simple test for L-Infinity metric.
+ */
 BOOST_AUTO_TEST_CASE(LINFMetricTest)
 {
   arma::vec a1(5);
@@ -85,6 +95,18 @@ BOOST_AUTO_TEST_CASE(LINFMetricTest)
 
   BOOST_REQUIRE_CLOSE((double) arma::as_scalar(arma::max(arma::abs(a2 - b2))),
                       lMetric.Evaluate(a2, b2), 1e-5);
+}
+
+/**
+ * Simple test for IoU metric.
+ */
+BOOST_AUTO_TEST_CASE(IoUMetricTest)
+{
+  arma::vec bbox1(4), bbox2(4);
+  bbox1.zeros();
+  bbox2.zeros();
+
+  BOOST_REQUIRE_CLOSE(1.0, IoU<>::Evaluate(bbox1, bbox2), 1e-3);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
