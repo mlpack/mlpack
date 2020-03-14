@@ -3,7 +3,7 @@
  * @author Bisakh Mondal
  *
  * Definition and implementation of the ELiSH function as described by
- * Mina Basirat and Peter M. Roth
+ * Mina Basirat and Peter M. Roth.
  *
  * For more information see the following paper
  * 
@@ -61,9 +61,8 @@ class ElishFunction
    */
   static double Fn(const double x)
   {
-    if (x < 0.0) {
-        return (std::exp(x) - 1) / (1 + std::exp(-x));
-    }
+    if (x < 0.0)
+      return (std::exp(x) - 1) / (1 + std::exp(-x));
     return x / (1 + std::exp(-x));
   }
 
@@ -76,10 +75,9 @@ class ElishFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y.set_size(size(x));
-
-    for (size_t i = 0; i < x.n_elem; i++)
-      y(i) = Fn(x(i));
+    if (x < 0.0)
+      y = (arma::exp(x) - 1) / (1 + arma::exp(-x));
+    y = x / (1 + arma::exp(-x));
   }
 
   /**
@@ -91,11 +89,9 @@ class ElishFunction
   static double Deriv(const double y)
   {
     if (y < 0.0)
-    {
-      return std::exp(y) - 2 / (1 + std::exp(y)) + 
-                    2 / std::pow(1 + std::exp(y) , 2);  
-    }
-    return 1 / (1 + std::exp(-y)) + y * std::exp(-y) / 
+      return std::exp(y) - 2 / (1 + std::exp(y)) +
+                    2 / std::pow(1 + std::exp(y) , 2); 
+    return 1 / (1 + std::exp(-y)) + y * std::exp(-y) /
                          std::pow(1 + std::exp(-y) , 2);
   }
 
@@ -108,12 +104,11 @@ class ElishFunction
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& y, OutputVecType& x)
   {
-    x.set_size(size(y));
-
-    for (size_t i = 0; i < y.n_elem; i++)
-    {
-      x(i) = Deriv(y(i));
-    }
+    if (y < 0.0)
+      x = arma::exp(y) - 2 / (1 + arma::exp(y)) +
+                    2 / arma::pow(1 + arma::exp(y) , 2); 
+    x = 1 / (1 + arma::exp(-y)) + y % (arma::exp(-y) /
+                         arma::pow(1 + arma::exp(-y) , 2));
   }
 }; // class ElishFunction
 
