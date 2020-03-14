@@ -61,9 +61,8 @@ class ElishFunction
    */
   static double Fn(const double x)
   {
-    if (x < 0.0) {
-        return (std::exp(x) - 1) / (1 + std::exp(-x));
-    }
+    if (x < 0.0)
+      return (std::exp(x) - 1) / (1 + std::exp(-x));
     return x / (1 + std::exp(-x));
   }
 
