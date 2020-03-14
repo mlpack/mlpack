@@ -69,9 +69,8 @@
 
   * Change neural network types to avoid unnecessary use of rvalue references
     (#2259).
-=======
+
   * Add L1 Loss function (#2203)
->>>>>>> Adding changes in History.md
 
   * Bump minimum Boost version to 1.58 (#2305).
 
