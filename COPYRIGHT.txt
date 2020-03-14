@@ -127,6 +127,7 @@ Copyright:
   Copyright 2019, Kartik Dutt <kartikdutt@live.in>
   Copyright 2020, Sriram S K <sriramsk1999@gmail.com>
   Copyright 2020, Manoranjan Kumar Bharti ( Nakul Bharti ) <knakul853@gmail.com>
+  Copyright 2020, Saraansh Tandon <saraanshtandon1999@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.
