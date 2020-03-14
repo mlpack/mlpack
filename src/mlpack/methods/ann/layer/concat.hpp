@@ -204,9 +204,6 @@ class Concat
   //! Get the axis of concatenation.
   size_t const& ConcatAxis() const { return axis; }
 
-  //! Get the value of model parameter.
-  bool const& Model() const { return model; }
-
   /**
    * Serialize the layer
    */

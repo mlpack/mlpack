@@ -80,11 +80,11 @@ class ReinforceNormal
 
   //! Get the value of the reward parameter.
   double Reward() const { return reward; }
-  //! Modify the value of the deterministic parameter.
+  //! Modify the value of the reward parameter.
   double& Reward() { return reward; }
 
   //! Get the standard deviation used during forward and backward pass.
-  double const& StandardDeviation() const { return stdev; }
+  double StandardDeviation() const { return stdev; }
 
   /**
    * Serialize the layer

@@ -143,10 +143,10 @@ class LayerNorm
   OutputDataType Variance() { return variance; }
 
   //! Get the number of input units.
-  size_t const& InSize() const { return size; }
+  size_t InSize() const { return size; }
 
   //! Get the value of epsilon.
-  double const& Epsilon() const { return eps; }
+  double Epsilon() const { return eps; }
 
   /**
    * Serialize the layer.

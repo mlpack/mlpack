@@ -139,10 +139,10 @@ class BatchNorm
   OutputDataType TrainingVariance() { return runningVariance / count; }
 
   //! Get the number of input units.
-  size_t const& InSize() const { return size; }
+  size_t InputSize() const { return size; }
 
   //! Get the epsilon value.
-  double const& Epsilon() const { return eps; }
+  double Epsilon() const { return eps; }
 
   /**
    * Serialize the layer

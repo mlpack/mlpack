@@ -77,7 +77,7 @@ class Constant
   OutputDataType& Delta() { return delta; }
 
   //! Get the output size.
-  size_t const& OutSize() const { return outSize; }
+  size_t OutSize() const { return outSize; }
 
   /**
    * Serialize the layer.

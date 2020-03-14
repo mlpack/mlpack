@@ -141,7 +141,7 @@ class RecurrentAttention
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the module output size.
-  size_t const& OutSize() const { return outSize; }
+  size_t OutSize() const { return outSize; }
 
   //! Get the number of steps to backpropagate through time.
   size_t const& Rho() const { return rho; }

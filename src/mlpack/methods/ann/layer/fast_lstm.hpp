@@ -159,10 +159,10 @@ class FastLSTM
   OutputDataType& Gradient() { return grad; }
 
   //! Get the number of input units.
-  size_t const& InSize() const { return inSize; }
+  size_t InSize() const { return inSize; }
 
   //! Get the number of output units.
-  size_t const& OutSize() const { return outSize; }
+  size_t OutSize() const { return outSize; }
 
   /**
    * Serialize the layer

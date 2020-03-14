@@ -107,10 +107,10 @@ class VRClassReward
   std::vector<LayerTypes<> >& Model() { return network; }
 
   //! Get the value of parameter sizeAverage.
-  bool const& SizeAverage() const { return sizeAverage; }
+  bool SizeAverage() const { return sizeAverage; }
 
   //! Get the value of scale parameter.
-  double const& Scale() const { return scale; }
+  double Scale() const { return scale; }
 
   /**
    * Serialize the layer

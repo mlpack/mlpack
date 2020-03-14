@@ -122,13 +122,13 @@ class Reparametrization
   }
 
   //! Get the value of the stochastic parameter.
-  bool const& Stochastic() const { return stochastic; }
+  bool Stochastic() const { return stochastic; }
 
   //! Get the value of the includeKl parameter.
-  bool const& IncludeKL() const { return includeKl; }
+  bool IncludeKL() const { return includeKl; }
 
   //! Get the value of the beta hyperparameter.
-  double const& Beta() const { return beta; }
+  double Beta() const { return beta; }
 
   /**
    * Serialize the layer

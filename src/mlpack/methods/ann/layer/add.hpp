@@ -98,7 +98,7 @@ class Add
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the output size.
-  size_t const& OutputSize() const { return outSize; }
+  size_t OutputSize() const { return outSize; }
 
   /**
    * Serialize the layer

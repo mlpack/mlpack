@@ -173,9 +173,6 @@ class Sequential
   //! Modify the gradient.
   arma::mat& Gradient() { return gradient; }
 
-  //! Get the value of the model parameter.
-  bool const& Model() const { return model; }
-
   /**
    * Serialize the layer
    */
