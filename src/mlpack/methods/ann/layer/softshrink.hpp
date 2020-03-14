@@ -1,33 +1,41 @@
 /**
- * @file leaky_relu.hpp
- * @author Dhawal Arora
+ * @file softshrink.hpp
+ * @author Lakshya Ojha
  *
- * Definition of LeakyReLU layer first introduced in the acoustic model,
- * Andrew L. Maas, Awni Y. Hannun, Andrew Y. Ng,
- * "Rectifier Nonlinearities Improve Neural Network Acoustic Models", 2014
+ * The soft shrink function has threshold proportional to the noise level given
+ * by the user.
+ * The use of a Soft Shrink activation function provides adaptive denoising at
+ * various noise levels using a single CNN(Convolution Neural) without a
+ * requirement to train a unique CNN for each noise level.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_LEAKYRELU_HPP
-#define MLPACK_METHODS_ANN_LAYER_LEAKYRELU_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_SOFTSHRINK_HPP
+#define MLPACK_METHODS_ANN_LAYER_SOFTSHRINK_HPP
 
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
+namespace ann /** Artifical Neural Network. */ {
 
 /**
- * The LeakyReLU activation function, defined by
- *
+ * Soft Shrink operator is defined as,
  * @f{eqnarray*}{
- * f(x) &=& \max(x, alpha*x) \\
+ * f(x) &=& \left\{
+ *   \begin{array}{lr}
+ *     x - lambda & : x >  lambda \\
+ *     x + lambda & : x < -lambda \\
+ *     0 & : otherwise
+ *   \end{array} \\
+ * \right.
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
- *     1 & : x > 0 \\
- *     alpha & : x \le 0
+ *     1 & : x >  lambda \\
+ *     1 & : x < -lambda \\
+ *     0 & : otherwise
  *   \end{array}
  * \right.
  * @f}
@@ -41,24 +49,29 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class LeakyReLU
+class SoftShrink
 {
  public:
   /**
-   * Create the LeakyReLU object using the specified parameters.
-   * The non zero gradient can be adjusted by specifying the parameter
-   * alpha in the range 0 to 1. Default (alpha = 0.03)
+   * Create Soft Shrink object using specified hyperparameter lambda.
    *
-   * @param alpha Non zero gradient
+   * @param lambda The noise level of an image depends on settings of an
+   *        imaging device. The settings can be used to select appropriate
+   *        parameters for denoising methods. It is proportional to the noise
+   *        level entered by the user.
+   *        And it is calculated by multiplying the
+   *        noise level sigma of the input(noisy image) and a
+   *        coefficient 'a' which is one of the training parameters.
+   *        Default value of lambda is 0.5.
    */
-  LeakyReLU(const double alpha = 0.03);
+  SoftShrink(const double lambda = 0.5);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
-   *
-   * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
+   * 
+   * @param input Input data used for evaluating the Soft Shrink function.
+   * @param output Resulting output activation
    */
   template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output);
@@ -67,13 +80,15 @@ class LeakyReLU
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards through f. Using the results from the feed
    * forward pass.
-   *
-   * @param input The propagated input activation.
+   * 
+   * @param input The propagated input activation f(x).
    * @param gy The backpropagated error.
-   * @param g The calculated gradient.
+   * @param g The calculated gradient
    */
   template<typename DataType>
-  void Backward(const DataType& input, const DataType& gy, DataType& g);
+  void Backward(const DataType& input,
+                DataType& gy,
+                DataType& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -85,10 +100,10 @@ class LeakyReLU
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the non zero gradient.
-  double const& Alpha() const { return alpha; }
-  //! Modify the non zero gradient.
-  double& Alpha() { return alpha; }
+  //! Get the hyperparameter lambda.
+  double const& Lambda() const { return lambda; }
+  //! Modify the hyperparameter lambda.
+  double& Lambda() { return lambda; }
 
   /**
    * Serialize the layer.
@@ -103,14 +118,14 @@ class LeakyReLU
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Leakyness Parameter in the range 0 <alpha< 1
-  double alpha;
-}; // class LeakyReLU
+  //! Locally-stored hyperparamater lambda.
+  double lambda;
+}; // class SoftShrink
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "leaky_relu_impl.hpp"
+#include "softshrink_impl.hpp"
 
 #endif

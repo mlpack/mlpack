@@ -70,7 +70,7 @@ class BaseLayer
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output)
+  void Forward(const InputType& input, OutputType& output)
   {
     ActivationFunction::Fn(input, output);
   }
@@ -85,9 +85,9 @@ class BaseLayer
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g)
+  void Backward(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g)
   {
     arma::Mat<eT> derivative;
     ActivationFunction::Deriv(input, derivative);

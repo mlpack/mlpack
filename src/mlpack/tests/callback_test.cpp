@@ -253,6 +253,7 @@ BOOST_AUTO_TEST_CASE(RBMCallbackTest)
 
   // Call the train function with printloss callback.
   double objVal = model.Train(msgd, ens::ProgressBar(70, stream));
+  BOOST_REQUIRE(!std::isnan(objVal));
   BOOST_REQUIRE_GT(stream.str().length(), 0);
 }
 

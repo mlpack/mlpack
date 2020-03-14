@@ -31,7 +31,7 @@ HardTanH<InputDataType, OutputDataType>::HardTanH(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void HardTanH<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   output = input;
   for (size_t i = 0; i < input.n_elem; i++)
@@ -44,7 +44,7 @@ void HardTanH<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void HardTanH<InputDataType, OutputDataType>::Backward(
-    const DataType&& input, DataType&& gy, DataType&& g)
+    const DataType& input, const DataType& gy, DataType& g)
 {
   g = gy;
   for (size_t i = 0; i < input.n_elem; i++)
