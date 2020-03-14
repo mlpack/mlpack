@@ -153,9 +153,7 @@ class StringEncoding
    * 2. IsTokenEmpty() that accepts a token and returns true if the given
    *    token is empty.
    */
-  template<typename OutputType,
-           typename TokenizerType,
-           typename PolicyType>
+  template<typename OutputType, typename TokenizerType, typename PolicyType>
   void EncodeHelper(const std::vector<std::string>& input,
                     OutputType& output,
                     const TokenizerType& tokenizer,
@@ -182,8 +180,7 @@ class StringEncoding
    * 2. IsTokenEmpty() that accepts a token and returns true if the given
    *    token is empty.
    */
-  template<typename TokenizerType, typename PolicyType,
-  typename OutputType>
+  template<typename TokenizerType, typename PolicyType, typename OutputType>
   void EncodeHelper(const std::vector<std::string>& input,
                     std::vector<std::vector<OutputType>>& output,
                     const TokenizerType& tokenizer,

@@ -224,8 +224,8 @@ BOOST_AUTO_TEST_CASE(SplitByAnyOfTokenizerUnicodeTest)
 }
 
 /**
-* Test the CharExtract tokenizer.
-*/
+ * Test the CharExtract tokenizer.
+ */
 BOOST_AUTO_TEST_CASE(DictionaryEncodingIndividualCharactersTest)
 {
   vector<string> input = {
@@ -521,6 +521,9 @@ BOOST_AUTO_TEST_CASE(CharExtractDictionaryEncodingSerialization)
   CheckMatrices(output, xmlOutput, textOutput, binaryOutput);
 }
 
+/**
+ * Test for Bag of Words encoding algorithm.
+ */ 
 BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
@@ -532,12 +535,12 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
   encoder.Encode(stringEncodingInput, output, tokenizer);
   const DictionaryType& dictionary = encoder.Dictionary();
 
-  // Checking that everything is mapped to different numbers
+  // Checking that everything is mapped to different numbers.
   std::unordered_map<size_t, size_t> keysCount;
   for (auto& keyValue : dictionary.Mapping())
   {
     keysCount[keyValue.second]++;
-    // Every token should be mapped only once
+    // Every token should be mapped only once.
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
   arma::mat expected = {
@@ -552,8 +555,8 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
 }
 
 /**
-* Bag of Words encoding algorithm output saved in a vector.
-*/ 
+ * Bag of Words encoding algorithm output saved in a vector.
+ */ 
 BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingTest)
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
@@ -567,12 +570,12 @@ BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingTest)
 
   const DictionaryType& dictionary = encoder.Dictionary();
 
-  // Checking that everything is mapped to different numbers
+  // Checking that everything is mapped to different numbers.
   std::unordered_map<size_t, size_t> keysCount;
   for (auto& keyValue : dictionary.Mapping())
   {
     keysCount[keyValue.second]++;
-    // Every token should be mapped only once
+    // Every token should be mapped only once.
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
 
@@ -589,8 +592,8 @@ BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingTest)
 }
 
 /**
-* Test Bag of Words encoding for characters.
-*/
+ * Test Bag of Words encoding for characters.
+ */
 BOOST_AUTO_TEST_CASE(BagOfWordsEncodingIndividualCharactersTest)
 {
   vector<string> input = {
@@ -602,7 +605,7 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingIndividualCharactersTest)
   arma::mat output;
   BagOfWordsEncoding<CharExtract::TokenType> encoder;
 
-  // Passing a empty string to encode characters
+  // Passing a empty string to encode characters.
   encoder.Encode(input, output, CharExtract());
   arma::mat target = {
     { 1, 1, 1, 0, 0 },
@@ -628,7 +631,7 @@ BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingIndividualCharactersTest)
   vector<vector<size_t>> output;
   BagOfWordsEncoding<CharExtract::TokenType> encoder;
 
-  // Passing a empty string to encode characters
+  // Passing a empty string to encode characters.
   encoder.Encode(input, output, CharExtract());
 
   vector<vector<size_t>> expected = {
@@ -642,7 +645,7 @@ BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingIndividualCharactersTest)
 
 /**
  * Test the Tf-Idf Encoding using rawcount type and smoothidf as true,
- * which is the deafult values used for algorithim.
+ * which is the default value used for algorithm.
  */
 BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingTest)
 {
@@ -655,12 +658,12 @@ BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingTest)
   encoder.Encode(stringEncodingInput, output, tokenizer);
   const DictionaryType& dictionary = encoder.Dictionary();
 
-  // Checking that everything is mapped to different numbers
+  // Checking that everything is mapped to different numbers.
   std::unordered_map<size_t, size_t> keysCount;
   for (auto& keyValue : dictionary.Mapping())
   {
     keysCount[keyValue.second]++;
-    // Every token should be mapped only once
+    // Every token should be mapped only once.
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
   arma::mat expected = {
@@ -703,12 +706,12 @@ BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingTest)
 
   const DictionaryType& dictionary = encoder.Dictionary();
 
-  // Checking that everything is mapped to different numbers
+  // Checking that everything is mapped to different numbers.
   std::unordered_map<size_t, size_t> keysCount;
   for (auto& keyValue : dictionary.Mapping())
   {
     keysCount[keyValue.second]++;
-    // Every token should be mapped only once
+    // Every token should be mapped only once.
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
 
@@ -752,7 +755,7 @@ BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingIndividualCharactersTest)
   arma::mat output;
   TfIdfEncoding<CharExtract::TokenType> encoder;
 
-  // Passing a empty string to encode charactersrawcountsmoothidftrue
+  // Passing a empty string to encode characters.
   encoder.Encode(input, output, CharExtract());
   arma::mat target = {
     { 1.2876820724517808, 2, 2.5753641449035616, 0, 0 },
@@ -777,7 +780,7 @@ BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingIndividualCharactersTest)
   vector<vector<double>> output;
   TfIdfEncoding<CharExtract::TokenType> encoder;
 
-  // Passing a empty string to encode characters
+  // Passing a empty string to encode characters.
   encoder.Encode(input, output, CharExtract());
   vector<vector<double>> expected = {
     { 1.2876820724517808, 2, 2.5753641449035616, 0, 0 },
@@ -805,12 +808,12 @@ BOOST_AUTO_TEST_CASE(TfIdfRawCountEncodingTest)
 
   const DictionaryType& dictionary = encoder.Dictionary();
 
-  // Checking that everything is mapped to different numbers
+  // Checking that everything is mapped to different numbers.
   std::unordered_map<size_t, size_t> keysCount;
   for (auto& keyValue : dictionary.Mapping())
   {
     keysCount[keyValue.second]++;
-    // Every token should be mapped only once
+    // Every token should be mapped only once.
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
 
@@ -854,12 +857,12 @@ BOOST_AUTO_TEST_CASE(VectorTfIdfRawCountEncodingTest)
 
   const DictionaryType& dictionary = encoder.Dictionary();
 
-  // Checking that everything is mapped to different numbers
+  // Checking that everything is mapped to different numbers.
   std::unordered_map<size_t, size_t> keysCount;
   for (auto& keyValue : dictionary.Mapping())
   {
     keysCount[keyValue.second]++;
-    // Every token should be mapped only once
+    // Every token should be mapped only once.
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
 
@@ -904,7 +907,7 @@ BOOST_AUTO_TEST_CASE(RawcountTfIdfEncodingIndividualCharactersTest)
   TfIdfEncoding<CharExtract::TokenType>
       encoder(TfIdfEncodingPolicy::TfTypes::RAW_COUNT, false);
 
-  // Passing a empty string to encode charactersrawcountsmoothidftrue
+  // Passing a empty string to encode charactersrawcountsmoothidftrue.
   encoder.Encode(input, output, CharExtract());
   arma::mat target = {
     { 1.4054651081081644, 2, 2.8109302162163288, 0, 0 },
@@ -931,7 +934,7 @@ BOOST_AUTO_TEST_CASE(VectorRawcountEncodingIndividualCharactersTest)
   TfIdfEncoding<CharExtract::TokenType>
       encoder(TfIdfEncodingPolicy::TfTypes::RAW_COUNT, false);
 
-  // Passing a empty string to encode characters
+  // Passing a empty string to encode characters.
   encoder.Encode(input, output, CharExtract());
   vector<vector<double>> expected = {
     { 1.4054651081081644, 2, 2.8109302162163288, 0, 0 },
@@ -959,7 +962,7 @@ BOOST_AUTO_TEST_CASE(BinarySmoothIdfEncodingIndividualCharactersTest)
   TfIdfEncoding<CharExtract::TokenType>
       encoder(TfIdfEncodingPolicy::TfTypes::BINARY, true);
 
-  // Passing a empty string to encode charactersrawcountsmoothidftrue
+  // Passing a empty string to encode charactersrawcountsmoothidftrue.
   encoder.Encode(input, output, CharExtract());
   arma::mat target = {
     { 1.2876820724517808, 1, 1.2876820724517808, 0, 0 },
@@ -985,7 +988,7 @@ BOOST_AUTO_TEST_CASE(VectorBnarySmoothIdfEncodingIndividualCharactersTest)
   TfIdfEncoding<CharExtract::TokenType>
       encoder(TfIdfEncodingPolicy::TfTypes::BINARY, true);
 
-  // Passing a empty string to encode characters
+  // Passing a empty string to encode characters.
   encoder.Encode(input, output, CharExtract());
   vector<vector<double>> expected = {
     { 1.2876820724517808, 1, 1.2876820724517808, 0, 0 },
@@ -1013,7 +1016,7 @@ BOOST_AUTO_TEST_CASE(BinaryTfIdfEncodingIndividualCharactersTest)
   TfIdfEncoding<CharExtract::TokenType>
       encoder(TfIdfEncodingPolicy::TfTypes::BINARY, false);
 
-  // Passing a empty string to encode charactersrawcountsmoothidftrue
+  // Passing a empty string to encode charactersrawcountsmoothidftrue.
   encoder.Encode(input, output, CharExtract());
   arma::mat target = {
     { 1.4054651081081644, 1, 1.4054651081081644, 0, 0 },
@@ -1039,7 +1042,7 @@ BOOST_AUTO_TEST_CASE(SublinearSmoothIdfEncodingIndividualCharactersTest)
   TfIdfEncoding<CharExtract::TokenType>
       encoder(TfIdfEncodingPolicy::TfTypes::SUBLINEAR_TF, true);
 
-  // Passing a empty string to encode charactersrawcountsmoothidftrue
+  // Passing a empty string to encode charactersrawcountsmoothidftrue.
   encoder.Encode(input, output, CharExtract());
   arma::mat target = {
     { 1.2876820724517808, 1.6931471805599454, 2.1802352704293200, 0, 0 },
@@ -1066,7 +1069,7 @@ BOOST_AUTO_TEST_CASE(SublinearTfIdfEncodingIndividualCharactersTest)
   TfIdfEncoding<CharExtract::TokenType>
       encoder(TfIdfEncodingPolicy::TfTypes::SUBLINEAR_TF, false);
 
-  // Passing a empty string to encode charactersrawcountsmoothidftrue
+  // Passing a empty string to encode charactersrawcountsmoothidftrue.
   encoder.Encode(input, output, CharExtract());
   arma::mat target = {
     { 1.4054651081081644, 1.6931471805599454, 2.3796592851687173, 0, 0 },
@@ -1093,7 +1096,7 @@ BOOST_AUTO_TEST_CASE(TermFrequencySmoothIdfEncodingIndividualCharactersTest)
   TfIdfEncoding<CharExtract::TokenType>
       encoder(TfIdfEncodingPolicy::TfTypes::TERM_FREQUENCY, true);
 
-  // Passing a empty string to encode charactersrawcountsmoothidftrue
+  // Passing a empty string to encode charactersrawcountsmoothidftrue.
   encoder.Encode(input, output, CharExtract());
   arma::mat target = {
     { 0.2575364144903562, 0.4, 0.5150728289807124, 0, 0 },
@@ -1120,7 +1123,7 @@ BOOST_AUTO_TEST_CASE(TermFrequencyTfIdfEncodingIndividualCharactersTest)
   TfIdfEncoding<CharExtract::TokenType>
       encoder(TfIdfEncodingPolicy::TfTypes::TERM_FREQUENCY, false);
 
-  // Passing a empty string to encode charactersrawcountsmoothidftrue
+  // Passing a empty string to encode charactersrawcountsmoothidftrue.
   encoder.Encode(input, output, CharExtract());
   arma::mat target = {
     { 0.2810930216216329, 0.4, 0.5621860432432658, 0, 0 },

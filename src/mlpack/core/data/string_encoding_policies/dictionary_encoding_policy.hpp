@@ -31,17 +31,17 @@ class DictionaryEncodingPolicy
 {
  public:
   /**
-  * The function initializes the output matrix.
-  *
-  * @tparam MatType The output matrix type.
-  *
-  * @param output Output matrix to store the encoded results (sp_mat or mat).
-  * @param datasetSize The number of strings in the input dataset.
-  * @param maxNumTokens The maximum number of tokens in the strings of the 
-                        input dataset.
-  * @param dictionarySize The size of the dictionary (not used).
-  * @tparam MatType The type of output matrix.
-  */
+   * The function initializes the output matrix.
+   *
+   * @tparam MatType The output matrix type.
+   *
+   * @param output Output matrix to store the encoded results (sp_mat or mat).
+   * @param datasetSize The number of strings in the input dataset.
+   * @param maxNumTokens The maximum number of tokens in the strings of the 
+                         input dataset.
+   * @param dictionarySize The size of the dictionary (not used).
+   * @tparam MatType The type of output matrix.
+   */
   template<typename MatType>
   static void InitMatrix(MatType& output,
                          const size_t datasetSize,
@@ -52,17 +52,17 @@ class DictionaryEncodingPolicy
   }
 
   /** 
-  * The function performs the dictionary encoding algorithm i.e. it writes
-  * the encoded token to the ouput.
-  *
-  * @tparam MatType The output matrix type.
-  *
-  * @param output Output matrix to store the encoded results (sp_mat or mat).
-  * @param value The encoded token.
-  * @param row The row number at which the encoding is performed.
-  * @param col The token index in the row.
-  * @tparam MatType The type of output matrix.
-  */
+   * The function performs the dictionary encoding algorithm i.e. it writes
+   * the encoded token to the ouput.
+   *
+   * @tparam MatType The output matrix type.
+   *
+   * @param output Output matrix to store the encoded results (sp_mat or mat).
+   * @param value The encoded token.
+   * @param row The row number at which the encoding is performed.
+   * @param col The token index in the row.
+   * @tparam MatType The type of output matrix.
+   */
   template<typename MatType>
   static void Encode(MatType& output,
                      const size_t value,
@@ -88,12 +88,14 @@ class DictionaryEncodingPolicy
   }
 
   /**
-  * Empty function, Important for tf-idf encoding policy
-  *
-  * @param row The row number at which the encoding is performed.
-  * @param numToken The count of token parsed till now.
-  * @param value The encoded token.
-  */
+   * Empty function, Important for tf-idf encoding policy.
+   * This function has been only used in tf-idf encoding policy and has no
+   * relevance here.
+   *
+   * @param row The row number at which the encoding is performed.
+   * @param numToken The count of token parsed till now.
+   * @param value The encoded token.
+   */
   static void PreprocessToken(size_t /*row*/,
                               size_t /*numTokens*/,
                               size_t /*value*/) {}

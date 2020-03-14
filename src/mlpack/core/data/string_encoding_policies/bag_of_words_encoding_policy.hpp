@@ -18,6 +18,7 @@
 
 namespace mlpack {
 namespace data {
+
 /**
  * Definition of the BagOfWordsEncodingPolicy class.
  *
@@ -30,15 +31,15 @@ class BagOfWordsEncodingPolicy
 {
  public:
   /**
-  * The function initializes the output matrix.
-  *
-  * @param output Output matrix to store the encoded results (sp_mat or mat).
-  * @param datasetSize The number of strings in the input dataset.
-  * @param maxNumTokens The maximum number of tokens in the strings of the 
-                        input dataset (not used).
-  * @param dictionarySize The size of the dictionary.
-  * @tparam MatType The type of output matrix.
-  */
+   * The function initializes the output matrix.
+   *
+   * @param output Output matrix to store the encoded results (sp_mat or mat).
+   * @param datasetSize The number of strings in the input dataset.
+   * @param maxNumTokens The maximum number of tokens in the strings of the 
+                         input dataset (not used).
+   * @param dictionarySize The size of the dictionary.
+   * @tparam MatType The type of output matrix.
+   */
   template<typename MatType>
   static void InitMatrix(MatType& output,
                          size_t datasetSize,
@@ -49,64 +50,64 @@ class BagOfWordsEncodingPolicy
   }
 
   /**
-  * The function initializes the output matrix.
-  * Overloaded function to store result in vector<vector<OutputType>>
-  * 
-  * @param output Output matrix to store the encoded results.
-  * @param datasetSize The number of strings in the input dataset.
-  * @param maxNumTokens The maximum number of tokens in the strings of the 
-                        input dataset.
-  * @param dictionarySize The size of the dictionary (not used).
-  * @tparam OutputType The type of output vector.
-  */
+   * The function initializes the output matrix.
+   * Overloaded function to store result in vector<vector<OutputType>>
+   * 
+   * @param output Output matrix to store the encoded results.
+   * @param datasetSize The number of strings in the input dataset.
+   * @param maxNumTokens The maximum number of tokens in the strings of the 
+                         input dataset.
+   * @param dictionarySize The size of the dictionary (not used).
+   * @tparam OutputType The type of output vector.
+   */
   template<typename OutputType>
   static void InitMatrix(std::vector<std::vector<OutputType> >& output,
                          size_t datasetSize,
                          size_t /*maxNumTokens*/,
                          size_t dictionarySize)
   {
-    output.resize(datasetSize, std::vector<OutputType> (dictionarySize, 0));
+    output.resize(datasetSize, std::vector<OutputType>(dictionarySize, 0));
   }
 
   /** 
-  * The function performs the bag of words encoding algorithm i.e. it writes
-  * the encoded token to the ouput.
-  *
-  * @param output Output matrix to store the encoded results (sp_mat or mat).
-  * @param value The encoded token.
-  * @param row The row number at which the encoding is performed.
-  * @param col The row token number at which the encoding is performed.
-  * @tparam MatType The type of output matrix.
-  */
+   * The function performs the bag of words encoding algorithm i.e. it writes
+   * the encoded token to the output.
+   *
+   * @param output Output matrix to store the encoded results (sp_mat or mat).
+   * @param value The encoded token.
+   * @param row The row number at which the encoding is performed.
+   * @param col The row token number at which the encoding is performed.
+   * @tparam MatType The type of output matrix.
+   */
   template<typename MatType>
   static void Encode(MatType& output,
                      size_t value,
                      size_t row,
                      size_t /*col*/)
   {
-    // Important since Mapping of words,Dcitionary Encoding starts from 1,
+    // Important since Mapping of words, Dictionary Encoding starts from 1,
     // whereas allowed column value is 0.
     output(row, value - 1) = 1;
   }
 
   /** 
-  * The function performs the bag of words encoding algorithm i.e. it writes
-  * the encoded token to the ouput.
-  * Overload function to accepted vector<vector<OutputType>> as output type.
-  *
-  * @param output Output matrix to store the encoded results.
-  * @param value The encoded token.
-  * @param row The row number at which the encoding is performed.
-  * @param col The row token number at which the encoding is performed.
-  * @tparam OutputType The type of output vector.
-  */
+   * The function performs the bag of words encoding algorithm i.e. it writes
+   * the encoded token to the output.
+   * Overload function to accepted vector<vector<OutputType>> as output type.
+   *
+   * @param output Output matrix to store the encoded results.
+   * @param value The encoded token.
+   * @param row The row number at which the encoding is performed.
+   * @param col The row token number at which the encoding is performed.
+   * @tparam OutputType The type of output vector.
+   */
   template<typename OutputType>
   static void Encode(std::vector<std::vector<OutputType> >& output,
                      size_t value,
                      size_t row,
                      size_t /*col*/)
   {
-    // Important since Mapping of words,Dcitionary Encoding starts from 1,
+    // Important since Mapping of words in Dictionary Encoding starts from 1,
     // whereas allowed column value is 0.
     output[row][value - 1] = 1;
   }
@@ -121,12 +122,12 @@ class BagOfWordsEncodingPolicy
   }
 
   /**
-  * Empty function, Important for tf-idf encoding policy
-  *
-  * @param row The row number at which the encoding is performed.
-  * @param numToken The count of token parsed till now.
-  * @param value The encoded token.
-  */
+   * Empty function, Important for tf-idf encoding policy.
+   *
+   * @param row The row number at which the encoding is performed.
+   * @param numToken The count of token parsed till now.
+   * @param value The encoded token.
+   */
   static void PreprocessToken(size_t /*row*/,
                               size_t /*numTokens*/,
                               size_t /*value*/) { }
