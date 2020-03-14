@@ -1,5 +1,5 @@
 /**
- * @file td_idf_encoding_policy.hpp
+ * @file tf_idf_encoding_policy.hpp
  * @author Jeffin Sam
  *
  * Definition of the TfIdfEncodingPolicy class.
@@ -15,12 +15,14 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/data/string_encoding_policies/policy_traits.hpp>
 #include <mlpack/core/data/string_encoding.hpp>
+
 namespace mlpack {
 namespace data {
+
 /**
  * Definition of the TfIdfEncodingPolicy class.
  *
- * Tf-idf is weighing scheme that stands for term-frequency multiplied by
+ * Tf-idf is a weighting scheme that stands for term-frequency multiplied by
  * inverse document-frequency.
  * The goal of using tf-idf is to scale down the impact of tokens that occur
  * very frequently in a given corpus while using the type of Term-Frequency
@@ -35,15 +37,15 @@ class TfIdfEncodingPolicy
 {
  public:
   /**
-  * Enum class used to identify the type of tf encoding
-  *
-  * Follwing are the defination of the types
-  * BINARY : binary weighting scheme (0,1)
-  * RAW_COUNT : raw count weighting scheme (count of token for every row)
-  * TERM_FREQUENCY : term frequency weighting scheme (count / length(row))
-  * SUBLINEAR_TF : logarthimic weighting scheme (log(tf) + 1) 
-  * 
-  */
+   * Enum class used to identify the type of tf encoding.
+   *
+   * Following are the type definitions:
+   * BINARY : binary weighting scheme (0,1)
+   * RAW_COUNT : raw count weighting scheme (count of token for every row)
+   * TERM_FREQUENCY : term frequency weighting scheme (count / length(row))
+   * SUBLINEAR_TF : logarithmic weighting scheme (log(tf) + 1) 
+   * 
+   */
   enum class TfTypes
   {
     RAW_COUNT,
@@ -53,33 +55,34 @@ class TfIdfEncodingPolicy
   };
 
   /**
-  * A constructor for the class which is use to set the type of term frequency
-  * and also the value for somoothIdf.
-  *
-  * @param tfType The type of term frequency, The avialbale option are
-  *     RAW_COUNT : The count of a specific token
-  *     BINARY : 1 if token occurs in document and 0 otherwise;
-  *     TERM_FREQUENCY :  Raw_count ÷ (number of words in document)
-  *     SUBLINEAR_TF : log(Raw_Count) + 1
-  *
-  * @param smoothIdf Used to indicate whether to use smooth idf or not.
-  */
+   * A constructor for the class which is use to set the type of term frequency
+   * and also the value for smoothIdf.
+   *
+   * @param tfType The type of term frequency, The avialbale option are
+   *     RAW_COUNT : The count of a specific token
+   *     BINARY : 1 if token occurs in document and 0 otherwise;
+   *     TERM_FREQUENCY :  Raw_count ÷ (number of words in document)
+   *     SUBLINEAR_TF : log(Raw_Count) + 1
+   *
+   * @param smoothIdf Used to indicate whether to use smooth idf or not.
+   */
   TfIdfEncodingPolicy(TfTypes tfType = TfTypes::RAW_COUNT,
                       bool smoothIdf = true) :
                       tfType(tfType),
                       smoothIdf(smoothIdf)
   {
   }
+
   /**
-  * The function initializes the output matrix.
-  *
-  * @param output Output matrix to store the encoded results (sp_mat or mat).
-  * @param datasetSize The number of strings in the input dataset.
-  * @param maxNumTokens The maximum number of tokens in the strings of the 
+   * The function initializes the output matrix.
+   *
+   * @param output Output matrix to store the encoded results (sp_mat or mat).
+   * @param datasetSize The number of strings in the input dataset.
+   * @param maxNumTokens The maximum number of tokens in the strings of the 
                         input dataset.
-  * @param dictionarySize The size of the dictionary (not used).
-  * @tparam MatType The type of output matrix.
-  */
+   * @param dictionarySize The size of the dictionary (not used).
+   * @tparam MatType The type of output matrix.
+   */
   template<typename MatType>
   static void InitMatrix(MatType& output,
                          size_t datasetSize,
@@ -90,43 +93,41 @@ class TfIdfEncodingPolicy
   }
 
   /**
-  * The function initializes the output matrix.
-  * Overloaded function to store result in vector<vector<OutputType>>
-  * 
-  * @param output Output matrix to store the encoded results.
-  * @param datasetSize The number of strings in the input dataset.
-  * @param maxNumTokens The maximum number of tokens in the strings of the 
-                        input dataset.
-  * @param dictionarySize The size of the dictionary (not used).
-  * @tparam OutputType The type of output vector.
-  */
+   * The function initializes the output matrix.
+   * Overloaded function to store result in vector<vector<OutputType>>
+   * 
+   * @param output Output matrix to store the encoded results.
+   * @param datasetSize The number of strings in the input dataset.
+   * @param maxNumTokens The maximum number of tokens in the strings of the 
+                         input dataset.
+   * @param dictionarySize The size of the dictionary (not used).
+   * @tparam OutputType The type of output vector.
+   */
   template<typename OutputType>
   static void InitMatrix(std::vector<std::vector<OutputType> >& output,
                          size_t datasetSize,
                          size_t /*maxNumTokens*/,
                          size_t dictionarySize)
   {
-    output.resize(datasetSize, std::vector<OutputType> (dictionarySize, 0));
+    output.resize(datasetSize, std::vector<OutputType>(dictionarySize, 0));
   }
 
   /** 
-  * The function performs the TfIdf encoding algorithm i.e. it writes
-  * the encoded token to the ouput.
-  *
-  * @param output Output matrix to store the encoded results (sp_mat or mat).
-  * @param value The encoded token.
-  * @param row The row number at which the encoding is performed.
-  * @param col The row token number at which the encoding is performed.
-  * @tparam MatType The type of output matrix.
-  */
+   * The function performs the TfIdf encoding algorithm i.e. it writes
+   * the encoded token to the output.
+   *
+   * @param output Output matrix to store the encoded results (sp_mat or mat).
+   * @param value The encoded token.
+   * @param row The row number at which the encoding is performed.
+   * @param col The row token number at which the encoding is performed.
+   * @tparam MatType The type of output matrix.
+   */
   template<typename MatType>
   void Encode(MatType& output,
               size_t value,
               size_t row,
               size_t /*col*/)
   {
-    // Important since Mapping of words,Dcitionary Encoding starts from 1,
-    // whereas allowed column value is 0.
     double idf, tf;
     if (smoothIdf)
       idf = std::log((output.n_rows + 1) / (1 + idfdict[value - 1])) + 1;
@@ -142,29 +143,27 @@ class TfIdfEncodingPolicy
     else
       tf = tokenCount[row][value - 1];
 
-    output(row, value-1) =  tf * idf;
+    output(row, value - 1) =  tf * idf;
   }
 
   /** 
-  * The function performs the TfIdf encoding algorithm i.e. it writes
-  * the encoded token to the ouput.
-  * Overload function to accepted vector<vector<OutputType>> as output type.
-  *
-  * @param output Output matrix to store the encoded results.
-  * @param value The encoded token.
-  * @param row The row number at which the encoding is performed.
-  * @param col The row token number at which the encoding is performed.
-  * @tparam OutputType The type of output vector.
-  * @tparam OutputType The type of output vector.
-  */
+   * The function performs the TfIdf encoding algorithm i.e. it writes
+   * the encoded token to the output.
+   * Overload function to accepted vector<vector<OutputType>> as output type.
+   *
+   * @param output Output matrix to store the encoded results.
+   * @param value The encoded token.
+   * @param row The row number at which the encoding is performed.
+   * @param col The row token number at which the encoding is performed.
+   * @tparam OutputType The type of output vector.
+   * @tparam OutputType The type of output vector.
+   */
   template<typename OutputType>
   void Encode(std::vector<std::vector<OutputType> >& output,
               size_t value,
               size_t row,
               size_t /*col*/)
   {
-    // Important since Mapping of words,Dcitionary Encoding starts from 1,
-    // whereas allowed column value is 0.
     double idf, tf;
     if (smoothIdf)
       idf = std::log((output.size() + 1) / (1 + idfdict[value - 1])) + 1;
@@ -180,27 +179,27 @@ class TfIdfEncodingPolicy
     else
       tf = tokenCount[row][value - 1];
 
-    output[row][value-1] =  tf * idf;
+    output[row][value - 1] =  tf * idf;
   }
 
   /**
    * Serialize the class to the given archive.
    */
   template<typename Archive>
-  void serialize(Archive& ar , const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & BOOST_SERIALIZATION_NVP(tfType);
     ar & BOOST_SERIALIZATION_NVP(smoothIdf);
   }
 
   /*
-  * The function is used to create the datastrcutre will be important to find
-  * out idfvalue of words, and then wrtiting the output based on their count.
-  *
-  * @param row The row number at which the encoding is performed.
-  * @param numToken The count of token parsed till now.
-  * @param value The encoded token.
-  */
+   * The function is used to create the datastrcutre will be important to find
+   * out idfvalue of words, and then wrtiting the output based on their count.
+   *
+   * @param row The row number at which the encoding is performed.
+   * @param numToken The count of token parsed till now.
+   * @param value The encoded token.
+   */
   void PreprocessToken(size_t row,
                        size_t /*numTokens*/,
                        size_t value)
