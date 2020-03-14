@@ -101,9 +101,9 @@ inline std::string GetJuliaType(
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   // size_t matrices are special: we want to represent them in Julia as
-  // Array{Int64, X} not UInt64 because Julia displays UInt64s strangely.
+  // Array{Int, X} not UInt because Julia displays UInts strangely.
   if (std::is_same<typename T::elem_type, size_t>::value)
-    return std::string("Array{Int64, ") + (T::is_col || T::is_row ? "1" : "2")
+    return std::string("Array{Int, ") + (T::is_col || T::is_row ? "1" : "2")
         + "}";
   else
     return "Array{" + GetJuliaType<typename T::elem_type>() + ", "

@@ -29,7 +29,7 @@ KLDivergence<InputDataType, OutputDataType>::KLDivergence(const bool takeMean) :
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
 double KLDivergence<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, const TargetType&& target)
+    const InputType& input, const TargetType& target)
 {
   if (takeMean)
   {
@@ -45,9 +45,9 @@ double KLDivergence<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
 void KLDivergence<InputDataType, OutputDataType>::Backward(
-    const InputType&& input,
-    const TargetType&& target,
-    OutputType&& output)
+    const InputType& input,
+    const TargetType& target,
+    OutputType& output)
 {
   if (takeMean)
   {

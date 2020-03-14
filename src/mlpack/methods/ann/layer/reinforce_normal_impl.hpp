@@ -29,7 +29,7 @@ ReinforceNormal<InputDataType, OutputDataType>::ReinforceNormal(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void ReinforceNormal<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   if (!deterministic)
   {
@@ -49,7 +49,7 @@ void ReinforceNormal<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void ReinforceNormal<InputDataType, OutputDataType>::Backward(
-    const DataType&& input, DataType&& /* gy */, DataType&& g)
+    const DataType& input, const DataType& /* gy */, DataType& g)
 {
   g = (input - moduleInputParameter.back()) / std::pow(stdev, 2.0);
 
