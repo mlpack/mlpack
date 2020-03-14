@@ -12,10 +12,10 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-static const std::string testName = "LoadSaveImage";
+static const std::string testName = "ImageConverter";
 
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/methods/preprocess/load_save_image_main.cpp>
+#include <mlpack/methods/preprocess/image_converter_main.cpp>
 
 #include "test_helper.hpp"
 #include <boost/test/unit_test.hpp>
@@ -23,25 +23,27 @@ static const std::string testName = "LoadSaveImage";
 
 using namespace mlpack;
 
-struct LoadSaveImageTestFixture
+struct ImageConverterTestFixture
 {
  public:
-  LoadSaveImageTestFixture()
+  ImageConverterTestFixture()
   {
     // Cache in the options for this program.
     CLI::RestoreSettings(testName);
   }
 
-  ~LoadSaveImageTestFixture()
+  ~ImageConverterTestFixture()
   {
     // Clear the settings.
+    remove("test_image777.png");
+    remove("test_image999.png");
     bindings::tests::CleanMemory();
     CLI::ClearSettings();
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(LoadSaveImageMainTest,
-                         LoadSaveImageTestFixture);
+BOOST_FIXTURE_TEST_SUITE(ImageConverterMainTest,
+                         ImageConverterTestFixture);
 
 BOOST_AUTO_TEST_CASE(LoadImageTest)
 {
@@ -197,7 +199,7 @@ BOOST_AUTO_TEST_CASE(InvalidChannelTest)
 /**
  * Check for invalid input values.
  */
-BOOST_AUTO_TEST_CASE(EmptyinputTest)
+BOOST_AUTO_TEST_CASE(EmptyInputTest)
 {
   SetInputParam<vector<string>>("input", {});
   SetInputParam("height", 50);

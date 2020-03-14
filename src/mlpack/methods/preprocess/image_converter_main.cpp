@@ -1,5 +1,5 @@
 /**
- * @file load_save_image_main.cpp
+ * @file image_converter_main.cpp
  * @author Jeffin Sam
  *
  * A CLI executable to load and save a image dataset.
@@ -21,7 +21,7 @@ using namespace std;
 using namespace mlpack::data;
 
 
-PROGRAM_INFO("Load Save Image",
+PROGRAM_INFO("Image Converter",
     // Short description.
     "A utility to load an image or set of images into a single dataset that"
     "can then be used by other mlpack methods and utilities. This can also"
@@ -39,17 +39,17 @@ PROGRAM_INFO("Load Save Image",
     PRINT_PARAM_STRING("dataset") + " and " + PRINT_PARAM_STRING("save") +
     " as an parameter. An example to load an image : "  +
     "\n\n" +
-    PRINT_CALL("load_save_image", "input", "X", "height", 256, "width", 256,
+    PRINT_CALL("image_converter", "input", "X", "height", 256, "width", 256,
         "channel", 3, "output", "Y") +
     "\n\n" +
     " An example to save an image is :" +
     "\n\n" +
-    PRINT_CALL("load_save_image", "input", "X", "height", 256, "width", 256,
+    PRINT_CALL("image_converter", "input", "X", "height", 256, "width", 256,
         "channel", 3, "dataset", "Y", "save", true) +
     "\n\n" +
     " An example to load an image and also flipping it while loading is :"
     + "\n\n" +
-    PRINT_CALL("load_save_image", "input", "X", "height", 256, "width", 256,
+    PRINT_CALL("image_converter", "input", "X", "height", 256, "width", 256,
         "channel", 3, "output", "Y", "transpose", true),
     SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
     SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
@@ -76,8 +76,6 @@ PARAM_MATRIX_IN("dataset", "Input matrix to save as images.", "I");
 // Loading/saving of a Image Info model.
 PARAM_MODEL_IN(ImageInfo, "input_model", "Input Image Info model.", "m");
 PARAM_MODEL_OUT(ImageInfo, "output_model", "Output Image Info model.", "M");
-
-#ifdef HAS_STB // Compile this only if stb is present.
 
 static void mlpackMain()
 {
@@ -138,8 +136,4 @@ static void mlpackMain()
   if (CLI::HasParam("output_model"))
     CLI::GetParam<ImageInfo*> ("output_model") = info;
 }
-#else
 
-static void mlpackMain() {}
-
-#endif // HAS_STB.
