@@ -96,7 +96,7 @@ class ContinuousMountainCar
    * @param positionGoal Final target position.
    * @param velocityMin Minimum legal velocity.
    * @param velocityMax Maximum legal velocity.
-   * @param duration time duration for which force is apllied on the car.
+   * @param duration Time Duration for which force is applied on the car.
    * @param doneReward Reward recieved by the agent on success.
    * @param maxSteps The number of steps after which the episode
    *    terminates. If the value is 0, there is no limit.
