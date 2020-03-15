@@ -637,8 +637,8 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
   model.Add<Linear<> >(trainData.n_rows, 8);
   model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
-  std::cout<<trainData.n_cols;
 
+  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

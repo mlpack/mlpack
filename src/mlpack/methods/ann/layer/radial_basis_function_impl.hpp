@@ -58,10 +58,10 @@ void RBF<InputDataType, OutputDataType>::Forward(
 
   for (size_t i = 0; i < outSize; i++)
   {
-  distances.row(i) = arma::pow (arma::sum (
-                                arma::pow ((
-                                x.slice(i) - c.slice(i)),
-                                2), 1), 0.5).t() * sigmas(i);
+    distances.row(i) = arma::pow(arma::sum(
+                                 arma::pow((
+                                 x.slice(i) - c.slice(i)),
+                                 2), 1), 0.5).t() * sigmas(i);
   }
 
   output = distances;
