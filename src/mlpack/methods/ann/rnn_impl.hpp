@@ -68,7 +68,7 @@ typename std::enable_if<
       HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
       ::value, void>::type
 RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
-WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
+WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const
 {
   if (optimizer.MaxIterations() < samples &&
       optimizer.MaxIterations() != 0)
@@ -90,7 +90,7 @@ typename std::enable_if<
       !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
       ::value, void>::type
 RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
-WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
+WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const
 {
   return;
 }
