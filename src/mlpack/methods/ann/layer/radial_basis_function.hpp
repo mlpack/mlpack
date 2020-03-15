@@ -2,8 +2,7 @@
  * @file radial_basis_function.hpp
  * @author Hiamsnshu Pathak
  *
- * Definition of the Dropout class, which implements a regularizer that
- * randomly sets units to zero preventing units from co-adapting.
+ *
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -31,8 +30,10 @@ template<typename InputDataType = arma::mat,
 class RBF
 {
  public:
+  //! Create the Linear object.
   RBF();
- /**
+
+  /**
    * Create the Radial Basis Function layer object using the specified
    * parameters.
    *
@@ -40,7 +41,7 @@ class RBF
    * @param outSize The number of output units.
    */
   RBF(const size_t inSize,
-    const size_t outSize);
+      const size_t outSize);
 
   /**
    * Ordinary feed forward pass of the radial basis function.

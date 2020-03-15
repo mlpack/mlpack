@@ -630,7 +630,6 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
    * |     |
    * +-----+
    */
-  
 
   FFN<NegativeLogLikelihood<> > model;
   model.Add<RBF<> >(trainData.n_cols, 8);
@@ -640,31 +639,6 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
   model.Add<LogSoftMax<> >();
   std::cout<<trainData.n_cols;
 
-  // Vanilla neural net with logistic activation function.
-  // Because 92% of the patients are not hyperthyroid the neural
-  // network must be significant better than 92%.
-  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
-  arma::mat dataset;
-  dataset.load("mnist_first250_training_4s_and_9s.arm");
-
-  // Normalize each point since these are images.
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-  {
-    dataset.col(i) /= norm(dataset.col(i), 2);
-  }
-
-  arma::mat labels = arma::zeros(1, dataset.n_cols);
-  labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
-  labels += 1;
-
-  FFN<NegativeLogLikelihood<> > model1;
-  model1.Add<RBF<> >(dataset.n_cols, 10);
-  model1.Add<GaussianFunctionLayer<> >();
-  model1.Add<Linear<> >(dataset.n_rows, 10);
-  model.Add<Linear<> >(10, 2);
-  model1.Add<LogSoftMax<> >();
-  // Vanilla neural net with logistic activation function.
-  TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

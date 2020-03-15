@@ -2,7 +2,7 @@
  * @file gaussian_function.hpp
  * @author Himanshu Pathak
  *
- * Definition and implementation of the logistic function.
+ * Definition and implementation of the gaussian function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,12 +18,11 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The logistic function, defined by
+ * The gaussian function, defined by
  *
  * @f{eqnarray*}{
- * f(x) &=& \frac{1}{1 + e^{-x}} \\
- * f'(x) &=& f(x) * (1 - f(x)) \\
- * f^{-1}(y) &=& ln(\frac{y}{1-y})
+ * f(x) &=& \frac{1}{e^{-1 * x^2}} \\
+ * f'(x) &=& f(x) * -x * 2)
  * @f}
  */
 class GaussianFunction
@@ -54,7 +53,7 @@ class GaussianFunction
   }
 
   /**
-   * Computes the first derivative of the logistic function.
+   * Computes the first derivative of the gaussian function.
    *
    * @param x Input data.
    * @return f'(x)
@@ -65,7 +64,7 @@ class GaussianFunction
   }
 
   /**
-   * Computes the first derivatives of the logistic function.
+   * Computes the first derivatives of the gaussian function.
    *
    * @param y Input activations.
    * @param x The resulting derivatives.
