@@ -170,7 +170,7 @@ class Acrobot
 
     //! The value of angular velocity is bounded in min and max value.
     nextState.AngularVelocity1() = math::ClampRange(currentNextState[2],
-    		-maxVel1, maxVel1);
+        -maxVel1, maxVel1);
     nextState.AngularVelocity2() = math::ClampRange(currentNextState[3],
         -maxVel2, maxVel2);
 
