@@ -169,8 +169,10 @@ class Acrobot
     nextState.Theta2() = Wrap(currentNextState[1], -M_PI, M_PI);
 
     //! The value of angular velocity is bounded in min and max value.
-    nextState.AngularVelocity1() = math::ClampRange(currentNextState[2], -maxVel1, maxVel1);
-    nextState.AngularVelocity2() = math::ClampRange(currentNextState[3], -maxVel2, maxVel2);
+    nextState.AngularVelocity1() = math::ClampRange(currentNextState[2],
+    		-maxVel1, maxVel1);
+    nextState.AngularVelocity2() = math::ClampRange(currentNextState[3],
+        -maxVel2, maxVel2);
 
     // Check if the episode has terminated.
     bool done = IsTerminal(nextState);
