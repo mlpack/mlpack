@@ -96,20 +96,10 @@ set(SOURCES
   weight_norm_impl.hpp
   hardshrink.hpp
   hardshrink_impl.hpp
-<<<<<<< HEAD
-<<<<<<< HEAD
-  celu.hpp
-  celu_impl.hpp
-=======
-  softshrink.hpp
-  softshrink_impl.hpp
->>>>>>> master
-=======
   celu.hpp
   celu_impl.hpp
   softshrink.hpp
   softshrink_impl.hpp
->>>>>>> d08017385d7223c053645491275775a1a10e40bc
 )
 
 # Add directory name to sources.

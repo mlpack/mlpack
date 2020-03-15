@@ -878,11 +878,7 @@ BOOST_AUTO_TEST_CASE(SoftShrinkFunctionTest)
 }
 
 /**
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> d08017385d7223c053645491275775a1a10e40bc
- * Basic test of the CELU function.
+ * Basic test of the CELU activation function.
  */
 BOOST_AUTO_TEST_CASE(CELUFunctionTest)
 {
@@ -896,24 +892,5 @@ BOOST_AUTO_TEST_CASE(CELUFunctionTest)
   CheckCELUActivationCorrect(activationData, desiredActivations);
   CheckCELUDerivativeCorrect(desiredActivations, desiredDerivatives);
 }
-<<<<<<< HEAD
-=======
- * Basic test of the Soft Shrink function.
- */
-BOOST_AUTO_TEST_CASE(SoftShrinkFunctionTest)
-{
-  const arma::colvec desiredActivations("-1.5 2.7 4 -99.7 0.5 -0.5 1.5 0");
 
-  const arma::colvec desiredDerivatives("1 1 1 1 1 1 1 0");
-
-  CheckSoftShrinkActivationCorrect(activationData,
-                                   desiredActivations);
-  CheckSoftShrinkDerivativeCorrect(desiredActivations,
-                                   desiredDerivatives);
-}
-
->>>>>>> master
-=======
-
->>>>>>> d08017385d7223c053645491275775a1a10e40bc
 BOOST_AUTO_TEST_SUITE_END();
