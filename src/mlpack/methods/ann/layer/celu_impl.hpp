@@ -25,7 +25,7 @@ CELU<InputDataType, OutputDataType>::CELU(const double alpha) :
 {
   if (alpha == 0)
   {
-    Log::Fatal << "The value of alpha cannot be 0, "
+    Log::Fatal << "The value of alpha cannot be equal to 0, "
                << "terminating the program." << std::endl;
   }
 }
