@@ -151,7 +151,8 @@ class Pendulum
     double newAngularVelocity = angularVelocity + (-3.0 * gravity / (2 *
         length) * std::sin(theta + M_PI) + 3.0 / std::pow(mass * length, 2) *
         torque) * dt;
-    nextState.AngularVelocity() = math::ClampRange(newAngularVelocity, -maxAngularVelocity, maxAngularVelocity);
+    nextState.AngularVelocity() = math::ClampRange(newAngularVelocity,
+        -maxAngularVelocity, maxAngularVelocity);
     nextState.Theta() = theta + newAngularVelocity * dt;
 
     // Check if the episode has terminated
