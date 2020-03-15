@@ -83,7 +83,7 @@ class FFN
   //! Destructor to release allocated memory.
   ~FFN();
 
- /**
+  /**
    * Check if the optimizer has MaxIterations() parameter, if it does
    * then check if it's value is less than the number of datapoints
    * in the dataset.
@@ -98,7 +98,7 @@ class FFN
       ::value, void>::type
   WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 
- /**
+  /**
    * Check if the optimizer has MaxIterations() parameter, if it
    * doesn't then simply return from the function.
    *
