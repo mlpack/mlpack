@@ -53,17 +53,8 @@ void TestNetwork(ModelType& model,
         arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
   }
 
-  size_t error = 0;
-  for (size_t i = 0; i < testData.n_cols; i++)
-  {
-    if (int(arma::as_scalar(prediction.col(i))) ==
-        int(arma::as_scalar(testLabels.col(i))))
-    {
-      error++;
-    }
-  }
-
-  double classificationError = 1 - double(error) / testData.n_cols;
+  size_t correct = arma::accu(prediction == testLabels);
+  double classificationError = 1 - double(correct) / testData.n_cols;
   BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
 }
 
@@ -199,16 +190,7 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
             arma::max(currentResuls.col(i)) == currentResuls.col(i), 1)) + 1;
       }
 
-      size_t correct = 0;
-      for (size_t i = 0; i < currentLabels.n_cols; i++)
-      {
-        if (int(arma::as_scalar(prediction.col(i))) ==
-            int(arma::as_scalar(currentLabels.col(i))))
-        {
-          correct++;
-        }
-      }
-
+      size_t correct = arma::accu(prediction == currentLabels);
       error(1 - (double) correct / batchSize);
     }
     Log::Debug << "Current training error: " << error.mean() << std::endl;
