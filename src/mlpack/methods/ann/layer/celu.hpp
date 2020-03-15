@@ -11,6 +11,7 @@
  *   author  = {Jonathan T. Barron},
  *   title   = {Continuously Differentiable Exponential Linear Units},
  *   year    = {2017}
+ *   url     = {https://arxiv.org/pdf/1704.07483}
  * }
  * @endcode
  *

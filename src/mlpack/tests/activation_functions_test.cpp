@@ -219,7 +219,7 @@ void CheckLeakyReLUDerivativeCorrect(const arma::colvec input,
  * @param target Target data used to evaluate the ELU activation.
  */
 void CheckELUActivationCorrect(const arma::colvec input,
-                                     const arma::colvec target)
+                               const arma::colvec target)
 {
   // Initialize ELU object with alpha = 1.0.
   ELU<> lrf(1.0);
@@ -241,7 +241,7 @@ void CheckELUActivationCorrect(const arma::colvec input,
  * @param target Target data used to evaluate the ELU activation.
  */
 void CheckELUDerivativeCorrect(const arma::colvec input,
-                                     const arma::colvec target)
+                               const arma::colvec target)
 {
   // Initialize ELU object with alpha = 1.0.
   ELU<> lrf(1.0);
@@ -268,7 +268,7 @@ void CheckELUDerivativeCorrect(const arma::colvec input,
  * @param target Target data used to evaluate the PReLU activation.
  */
 void CheckPReLUActivationCorrect(const arma::colvec input,
-                                          const arma::colvec target)
+                                 const arma::colvec target)
 {
   PReLU<> prelu;
 
@@ -291,7 +291,7 @@ void CheckPReLUActivationCorrect(const arma::colvec input,
  * @param target Target data used to evaluate the PReLU activation.
  */
 void CheckPReLUDerivativeCorrect(const arma::colvec input,
-                                          const arma::colvec target)
+                                 const arma::colvec target)
 {
   PReLU<> prelu;
 
@@ -317,7 +317,7 @@ void CheckPReLUDerivativeCorrect(const arma::colvec input,
  * @param target Target data used to evaluate the PReLU gradient.
  */
 void CheckPReLUGradientCorrect(const arma::colvec input,
-                                        const arma::colvec target)
+                               const arma::colvec target)
 {
   PReLU<> prelu;
 
@@ -340,7 +340,7 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
  * @param target Target data used to evaluate the Hard Shrink activation.
  */
 void CheckHardShrinkActivationCorrect(const arma::colvec input,
-                                     const arma::colvec target)
+                                      const arma::colvec target)
 {
   HardShrink<> hardshrink;
 
@@ -362,7 +362,7 @@ void CheckHardShrinkActivationCorrect(const arma::colvec input,
  * @param target Target data used to evaluate the HardShrink activation.
  */
 void CheckHardShrinkDerivativeCorrect(const arma::colvec input,
-                                     const arma::colvec target)
+                                      const arma::colvec target)
 {
   HardShrink<> hardshrink;
 
@@ -505,7 +505,7 @@ BOOST_AUTO_TEST_CASE(SELUFunctionDerivativeTest)
  * @param target Target data used to evaluate the CELU activation.
  */
 void CheckCELUActivationCorrect(const arma::colvec input,
-                                     const arma::colvec target)
+                                const arma::colvec target)
 {
   // Initialize CELU object with alpha = 1.0.
   CELU<> lrf(1.0);
@@ -527,7 +527,7 @@ void CheckCELUActivationCorrect(const arma::colvec input,
  * @param target Target data used to evaluate the CELU activation.
  */
 void CheckCELUDerivativeCorrect(const arma::colvec input,
-                                     const arma::colvec target)
+                                const arma::colvec target)
 {
   // Initialize CELU object with alpha = 1.0.
   CELU<> lrf(1.0);
