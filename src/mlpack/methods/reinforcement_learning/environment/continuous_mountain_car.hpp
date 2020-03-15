@@ -18,6 +18,7 @@
 #define MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_MOUNTAIN_CAR_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/clamp.hpp>
 
 namespace mlpack {
 namespace rl {
@@ -136,16 +137,14 @@ class ContinuousMountainCar
     stepsPerformed++;
 
     // Calculate acceleration.
-    double force = std::min(std::max(action.action[0], -1.0), 1.0);
+    double force = math::ClampRange(action.action[0], -1.0, 1.0);
 
     // Update states.
     nextState.Velocity() = state.Velocity() + force * duration - 0.0025 *
         std::cos(3 * state.Position());
-    nextState.Velocity() = std::min(
-        std::max(nextState.Velocity(), velocityMin), velocityMax);
+    nextState.Velocity() = math::ClampRange(nextState.Velocity(), velocityMin, velocityMax);
     nextState.Position() = state.Position() + nextState.Velocity();
-    nextState.Position() = std::min(
-        std::max(nextState.Position(), positionMin), positionMax);
+    nextState.Position() = math::ClampRange(nextState.Position(), positionMin, positionMax);
     if (nextState.Position() == positionMin && nextState.Velocity() < 0)
       nextState.Velocity() = 0.0;
 
