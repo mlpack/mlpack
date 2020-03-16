@@ -538,11 +538,11 @@ BOOST_AUTO_TEST_CASE(HingeEmbeddingLossTest)
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 
-  // Test the Forward function. Loss should be 0.71999997.
+  // Test the Forward function. Loss should be 0.84.
   input = arma::mat("0.1 0.8 0.6 0.0 0.5");
-  target = arma::mat("0. 1.0 1.0 0. 0.");
+  target = arma::mat("0 1.0 1.0 0 0");
   loss = module.Forward(input, target);
-  BOOST_REQUIRE_CLOSE(loss, 0.71999997, 1e-3);
+  BOOST_REQUIRE_CLOSE(loss, 0.84, 1e-3);
 
   // Test the Backward function.
   module.Backward(input, target, output);

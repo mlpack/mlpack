@@ -30,7 +30,8 @@ template<typename InputType, typename TargetType>
 double HingeEmbeddingLoss<InputDataType, OutputDataType>::Forward(
     const InputType& input, const TargetType& target)
 {
-  return arma::accu(arma::max(1-input % target, 0.));
+  TargetType temp = target - (target == 0);
+  return (arma::accu(arma::max(1-input % temp, 0.))) / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -40,7 +41,8 @@ void HingeEmbeddingLoss<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     OutputType& output)
 {
-  output = (input < 1 / target) % -target;
+  TargetType temp = target - (target == 0);
+  output = (input < 1 / temp) % -temp;
 }
 
 template<typename InputDataType, typename OutputDataType>
