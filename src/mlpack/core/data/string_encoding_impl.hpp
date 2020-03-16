@@ -126,6 +126,7 @@ EncodeHelper(const std::vector<std::string>& input,
     {
       if (!dictionary.HasToken(token))
         dictionary.AddToken(std::move(token));
+
       policy.PreprocessToken(i, numTokens, dictionary.Value(token));
 
       token = tokenizer(strView);

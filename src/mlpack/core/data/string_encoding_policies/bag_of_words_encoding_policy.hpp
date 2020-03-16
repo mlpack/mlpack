@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_ENCODING_POLICIES_BAG_OF_WORDS_ENCODING_POLICY_HPP
-#define MLPACK_CORE_DATA_ENCODING_POLICIES_BAG_OF_WORDS_ENCODING_POLICY_HPP
+#ifndef MLPACK_CORE_DATA_STRING_ENCODING_POLICIES_BAG_OF_WORDS_ENCODING_POLICY_HPP
+#define MLPACK_CORE_DATA_STRING_ENCODING_POLICIES_BAG_OF_WORDS_ENCODING_POLICY_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/data/string_encoding_policies/policy_traits.hpp>
@@ -22,10 +22,12 @@ namespace data {
 /**
  * Definition of the BagOfWordsEncodingPolicy class.
  *
- * BagOfWords is used as a helper class for StringEncoding.
- * The encoder creates a vector of all the unique token and then assigns
- * 1 if the token is present in the document, 0 if not present. The tokens
- * are labeled in the order of their occurrence in the input dataset.
+ * BagOfWords is used as a helper class for StringEncoding. The encoder maps
+ * each dataset item to a vector of size N, where N is equal to the total number
+ * of tokens. If an item of the dataset has the i-th token, then the i-th
+ * coordinate of the corresponding vector is equal to 1, otherwise it's equal to
+ * zero. The order in which the tokens are labeled is defined by the dictionary
+ * used by the StringEncoding class.
  */
 class BagOfWordsEncodingPolicy
 {
@@ -33,18 +35,19 @@ class BagOfWordsEncodingPolicy
   /**
    * The function initializes the output matrix.
    *
+   * @tparam MatType The output matrix type.
+   *
    * @param output Output matrix to store the encoded results (sp_mat or mat).
    * @param datasetSize The number of strings in the input dataset.
    * @param maxNumTokens The maximum number of tokens in the strings of the 
                          input dataset (not used).
    * @param dictionarySize The size of the dictionary.
-   * @tparam MatType The type of output matrix.
    */
   template<typename MatType>
   static void InitMatrix(MatType& output,
-                         size_t datasetSize,
-                         size_t /*maxNumTokens*/,
-                         size_t dictionarySize)
+                         const size_t datasetSize,
+                         const size_t /* maxNumTokens */,
+                         const size_t dictionarySize)
   {
     output.zeros(datasetSize, dictionarySize);
   }
@@ -53,18 +56,19 @@ class BagOfWordsEncodingPolicy
    * The function initializes the output matrix.
    * Overloaded function to store result in vector<vector<OutputType>>
    * 
+   * @tparam OutputType Type of the output vector.
+   *
    * @param output Output matrix to store the encoded results.
    * @param datasetSize The number of strings in the input dataset.
    * @param maxNumTokens The maximum number of tokens in the strings of the 
-                         input dataset.
-   * @param dictionarySize The size of the dictionary (not used).
-   * @tparam OutputType The type of output vector.
+                         input dataset (not used).
+   * @param dictionarySize The size of the dictionary.
    */
   template<typename OutputType>
-  static void InitMatrix(std::vector<std::vector<OutputType> >& output,
-                         size_t datasetSize,
-                         size_t /*maxNumTokens*/,
-                         size_t dictionarySize)
+  static void InitMatrix(std::vector<std::vector<OutputType>>& output,
+                         const size_t datasetSize,
+                         const size_t /* maxNumTokens */,
+                         const size_t dictionarySize)
   {
     output.resize(datasetSize, std::vector<OutputType>(dictionarySize, 0));
   }
@@ -73,20 +77,20 @@ class BagOfWordsEncodingPolicy
    * The function performs the bag of words encoding algorithm i.e. it writes
    * the encoded token to the output.
    *
+   * @tparam MatType The output matrix type.
+   *
    * @param output Output matrix to store the encoded results (sp_mat or mat).
    * @param value The encoded token.
    * @param row The row number at which the encoding is performed.
-   * @param col The row token number at which the encoding is performed.
-   * @tparam MatType The type of output matrix.
+   * @param col The token index in the row.
    */
   template<typename MatType>
   static void Encode(MatType& output,
-                     size_t value,
-                     size_t row,
-                     size_t /*col*/)
+                     const size_t value,
+                     const size_t row,
+                     const size_t /* col */)
   {
-    // Important since Mapping of words, Dictionary Encoding starts from 1,
-    // whereas allowed column value is 0.
+    // The labels are assigned sequentially starting from one.
     output(row, value - 1) = 1;
   }
 
@@ -102,15 +106,26 @@ class BagOfWordsEncodingPolicy
    * @tparam OutputType The type of output vector.
    */
   template<typename OutputType>
-  static void Encode(std::vector<std::vector<OutputType> >& output,
-                     size_t value,
-                     size_t row,
-                     size_t /*col*/)
+  static void Encode(std::vector<std::vector<OutputType>>& output,
+                     const size_t value,
+                     const size_t row,
+                     const size_t /* col */)
   {
-    // Important since Mapping of words in Dictionary Encoding starts from 1,
-    // whereas allowed column value is 0.
+    // The labels are assigned sequentially starting from one.
     output[row][value - 1] = 1;
   }
+
+  /**
+   * The function is not used by the bag of words encoding policy.
+   *
+   * @param row The row number at which the encoding is performed.
+   * @param col The token sequence number in the row.
+   * @param value The encoded token.
+   */
+  static void PreprocessToken(size_t /* row */,
+                              size_t /* col */,
+                              size_t /* value */)
+  { }
 
   /**
    * Serialize the class to the given archive.
@@ -120,19 +135,14 @@ class BagOfWordsEncodingPolicy
   {
     // Nothing to serialize.
   }
-
-  /**
-   * Empty function, Important for tf-idf encoding policy.
-   *
-   * @param row The row number at which the encoding is performed.
-   * @param numToken The count of token parsed till now.
-   * @param value The encoded token.
-   */
-  static void PreprocessToken(size_t /*row*/,
-                              size_t /*numTokens*/,
-                              size_t /*value*/) { }
 };
 
+/**
+ * A convenient alias for the StringEncoding class with BagOfWordsEncodingPolicy
+ * and the default dictionary for the given token type.
+ *
+ * @tparam TokenType Type of the tokens.
+ */
 template<typename TokenType>
 using BagOfWordsEncoding = StringEncoding<BagOfWordsEncodingPolicy,
                                           StringEncodingDictionary<TokenType>>;

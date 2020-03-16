@@ -40,13 +40,12 @@ class DictionaryEncodingPolicy
    * @param maxNumTokens The maximum number of tokens in the strings of the 
                          input dataset.
    * @param dictionarySize The size of the dictionary (not used).
-   * @tparam MatType The type of output matrix.
    */
   template<typename MatType>
   static void InitMatrix(MatType& output,
                          const size_t datasetSize,
                          const size_t maxNumTokens,
-                         const size_t /*dictionarySize*/)
+                         const size_t /* dictionarySize */)
   {
     output.zeros(datasetSize, maxNumTokens);
   }
@@ -61,7 +60,6 @@ class DictionaryEncodingPolicy
    * @param value The encoded token.
    * @param row The row number at which the encoding is performed.
    * @param col The token index in the row.
-   * @tparam MatType The type of output matrix.
    */
   template<typename MatType>
   static void Encode(MatType& output,
@@ -77,9 +75,10 @@ class DictionaryEncodingPolicy
    * the encoded token to the ouput. This is an overload function which saves
    * the result into the given vector to avoid padding.
    *
+   * @tparam OutputType Type of the output vector.
+   *
    * @param output Output vector to store the encoded results.
    * @param value The encoded token.
-   * @tparam OutputType The type of output vector.
    */
   template<typename OutputType>
   static void Encode(std::vector<OutputType>& output, size_t value)
@@ -88,17 +87,16 @@ class DictionaryEncodingPolicy
   }
 
   /**
-   * Empty function, Important for tf-idf encoding policy.
-   * This function has been only used in tf-idf encoding policy and has no
-   * relevance here.
+   * The function is not used by the dictionary encoding policy.
    *
    * @param row The row number at which the encoding is performed.
-   * @param numToken The count of token parsed till now.
+   * @param col The token sequence number in the row.
    * @param value The encoded token.
    */
-  static void PreprocessToken(size_t /*row*/,
-                              size_t /*numTokens*/,
-                              size_t /*value*/) {}
+  static void PreprocessToken(const size_t /* row */,
+                              const size_t /* col */,
+                              const size_t /* value */)
+  { }
 
   /**
    * Serialize the class to the given archive.
