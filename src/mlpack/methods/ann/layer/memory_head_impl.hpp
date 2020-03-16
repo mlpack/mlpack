@@ -219,8 +219,14 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
     weightsBackwardIterator = --(--prevWeights.end());
   }
   else
+<<<<<<< HEAD
   {
     gy = gy + prevDW;
+=======
+  { arma::vec temp = arma::vec(gy);
+    temp += prevDW;
+    arma::vec(gy) = temp;
+>>>>>>> Changing memory_head_impl.hpp
   }
 
   // Load parameters.
