@@ -129,6 +129,29 @@ class Subview
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the width of each sample.
+  size_t InSize() const { return inSize; }
+
+  //! Get the starting row index of subview vector or matrix.
+  size_t const& BeginRow() const { return beginRow; }
+  //! Modify the width of each sample.
+  size_t& BeginRow() { return beginRow; }
+
+  //! Get the ending row index of subview vector or matrix.
+  size_t const& EndRow() const { return endRow; }
+  //! Modify the width of each sample.
+  size_t& EndRow() { return endRow; }
+
+  //! Get the starting column index of subview vector or matrix.
+  size_t const& BeginCol() const { return beginCol; }
+  //! Modify the width of each sample.
+  size_t& BeginCol() { return beginCol; }
+
+  //! Get the ending column index of subview vector or matrix.
+  size_t const& EndCol() const { return endCol; }
+  //! Modify the width of each sample.
+  size_t& EndCol() { return endCol; }
+
   /**
    * Serialize the layer.
    */
