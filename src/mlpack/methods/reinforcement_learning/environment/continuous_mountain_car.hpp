@@ -142,9 +142,11 @@ class ContinuousMountainCar
     // Update states.
     nextState.Velocity() = state.Velocity() + force * duration - 0.0025 *
         std::cos(3 * state.Position());
-    nextState.Velocity() = math::ClampRange(nextState.Velocity(), velocityMin, velocityMax);
+    nextState.Velocity() = math::ClampRange(nextState.Velocity(),
+      velocityMin, velocityMax);
     nextState.Position() = state.Position() + nextState.Velocity();
-    nextState.Position() = math::ClampRange(nextState.Position(), positionMin, positionMax);
+    nextState.Position() = math::ClampRange(nextState.Position(),
+      positionMin, positionMax);
     if (nextState.Position() == positionMin && nextState.Velocity() < 0)
       nextState.Velocity() = 0.0;
 
