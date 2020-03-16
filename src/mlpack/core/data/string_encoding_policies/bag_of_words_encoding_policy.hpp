@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_STRING_ENCODING_POLICIES_BAG_OF_WORDS_ENCODING_POLICY_HPP
-#define MLPACK_CORE_DATA_STRING_ENCODING_POLICIES_BAG_OF_WORDS_ENCODING_POLICY_HPP
+#ifndef MLPACK_CORE_DATA_STR_ENCODING_POLICIES_BAG_OF_WORDS_ENCODING_POLICY_HPP
+#define MLPACK_CORE_DATA_STR_ENCODING_POLICIES_BAG_OF_WORDS_ENCODING_POLICY_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/data/string_encoding_policies/policy_traits.hpp>
