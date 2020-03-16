@@ -60,8 +60,8 @@ MemoryHead<InputDataType, OutputDataType>::MemoryHead(
 
   allZeros = arma::zeros<arma::mat>(outSize, 1);
 
-  prevWeights.push_back(std::move(arma::mat(allZeros.memptr(),
-      allZeros.n_rows, allZeros.n_cols, false, true)));
+  prevWeights.push_back(arma::mat(allZeros.memptr(),
+      allZeros.n_rows, allZeros.n_cols, false, true));
 
   weightsBackwardIterator = prevWeights.end();
 
@@ -92,22 +92,22 @@ MemoryHead<InputDataType, OutputDataType>::~MemoryHead()
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void MemoryHead<InputDataType, OutputDataType>::Forward(
-    InputType&& input, OutputType&& output)
+    InputType& input, OutputType& output)
 {
   const arma::mat& memory = memoryHistory.back();
 
   // Pass the input through linear layer.
-  boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
-      boost::apply_visitor(outputParameterVisitor, inputLinear))),
+  boost::apply_visitor(ForwardVisitor(input,
+      boost::apply_visitor(outputParameterVisitor, inputLinear)),
       inputLinear);
 
   arma::mat& lOutput = boost::apply_visitor(outputParameterVisitor,
     inputLinear);
 
   // Build kT with non linearity.
-  boost::apply_visitor(ForwardVisitor(std::move(lOutput.submat(0, 0,
-      memSize - 1, 0)), std::move(boost::apply_visitor(outputParameterVisitor,
-      kTNonLinear))), kTNonLinear);
+  boost::apply_visitor(ForwardVisitor(lOutput.submat(0, 0,
+      memSize - 1, 0), boost::apply_visitor(outputParameterVisitor,
+      kTNonLinear)), kTNonLinear);
   const arma::mat& kT = boost::apply_visitor(outputParameterVisitor,
       kTNonLinear);
 
@@ -123,7 +123,7 @@ void MemoryHead<InputDataType, OutputDataType>::Forward(
   arma::vec temp = arma::exp(lOutput.submat(memSize + 2, 0,
     memSize + 2 + 2 * shiftSize, 0));
   temp = temp / arma::as_scalar(arma::sum(temp));
-  lSt.push_back(std::move(temp));
+  lSt.push_back(temp);
   const arma::vec& sT = lSt.back();
 
   // Build gammaT with non linearity
@@ -163,7 +163,7 @@ void MemoryHead<InputDataType, OutputDataType>::Forward(
   for (size_t colIndex = 0; colIndex < shiftMatrix.n_cols; colIndex++)
   {
     shiftMatrix.col(colIndex) = shiftVec.submat(0, 0, wG.n_rows - 1, 0);
-    shiftVec = arma::shift(std::move(shiftVec), 1);
+    shiftVec = arma::shift(shiftVec, 1);
   }
 
   lWTilde.push_back(arma::trans(arma::trans(wG) * shiftMatrix));
@@ -198,7 +198,7 @@ void MemoryHead<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename ErrorType, typename GradientType>
 void MemoryHead<InputDataType, OutputDataType>::Backward(
-  const InputType&& /* input */, ErrorType&& gy, GradientType&& g)
+  const InputType& /* input */, ErrorType& gy, GradientType& g)
 {
   if (bBt == lBt.end())
   {
@@ -220,7 +220,7 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   }
   else
   {
-    gy += prevDW;
+    gy = gy + prevDW;
   }
 
   // Load parameters.
@@ -238,7 +238,7 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   const arma::mat& memory = *bMemoryHistory;
 
   // Error of output
-  arma::mat& dW = gy;
+  OutputDataType dW = gy;
 
   // Error of wDash
   double sum1 = arma::as_scalar(arma::sum(wDash));
@@ -293,7 +293,7 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   {
     if (colIndex < 2 * shiftSize + 1)
     {
-      dSt = std::move(arma::shift(std::move(dSt), 1)) +
+      dSt = std::move(arma::shift(dSt, 1)) +
           dShiftMatrix.col(colIndex).submat(0, 0, 2 * shiftSize, 0);
     }
   }
@@ -368,18 +368,18 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   dKt = (dKt - (nKt * arma::as_scalar(arma::sum(nKt % dKt)))) / kTNorm;
 
   // Backward pass through Kt gate.
-  boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, kTNonLinear)), std::move(dKt),
-      std::move(boost::apply_visitor(deltaVisitor, kTNonLinear))),
+  boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+      outputParameterVisitor, kTNonLinear), dKt,
+      boost::apply_visitor(deltaVisitor, kTNonLinear)),
       kTNonLinear);
 
   prevError.submat(0, 0, memSize - 1, 0) = boost::apply_visitor(deltaVisitor,
       kTNonLinear);
 
   // Backward pass through linear gate.
-  boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, inputLinear)), std::move(prevError),
-      std::move(boost::apply_visitor(deltaVisitor, inputLinear))),
+  boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+      outputParameterVisitor, inputLinear), prevError,
+      boost::apply_visitor(deltaVisitor, inputLinear)),
       inputLinear);
 
   g = boost::apply_visitor(deltaVisitor, inputLinear);
@@ -404,9 +404,9 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename ErrorType, typename GradientType>
 void MemoryHead<InputDataType, OutputDataType>::Gradient(
-    InputType&& input, ErrorType&& /* error */, GradientType&& /* gradient */)
+    InputType& input, ErrorType& /* error */, GradientType& /* gradient */)
 {
-  boost::apply_visitor(GradientVisitor(std::move(input), std::move(prevError)),
+  boost::apply_visitor(GradientVisitor(input, prevError),
       inputLinear);
 }
 
@@ -415,8 +415,8 @@ void MemoryHead<InputDataType, OutputDataType>::ResetCell(const size_t /*size*/)
 {
   prevWeights.clear();
 
-  prevWeights.push_back(std::move(arma::mat(allZeros.memptr(),
-    allZeros.n_rows, allZeros.n_cols, false, true)));
+  prevWeights.push_back(arma::mat(allZeros.memptr(),
+    allZeros.n_rows, allZeros.n_cols, false, true));
 
   weightsBackwardIterator = prevWeights.end();
 

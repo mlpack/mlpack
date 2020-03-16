@@ -81,11 +81,7 @@ class MemoryHead
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(InputType&& input, OutputType&& output);
-<<<<<<< HEAD
-
-=======
->>>>>>> Some changes for inputypes
+  void Forward(InputType& input, OutputType& output);
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
@@ -99,9 +95,9 @@ class MemoryHead
    * @param g The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Backward(const InputType&& input,
-                ErrorType&& gy,
-                GradientType&& g);
+  void Backward(const InputType& input,
+                ErrorType& gy,
+                GradientType& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -111,9 +107,9 @@ class MemoryHead
    * @param gradient The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Gradient(InputType&& input,
-                ErrorType&& error,
-                GradientType&& gradient);
+  void Gradient(InputType& input,
+                ErrorType& error,
+                GradientType& gradient);
 
   /*
    * Resets the cell to accept a new input.
@@ -255,7 +251,7 @@ class MemoryHead
   std::list<double>::iterator bBt;
 
   //! Store the delta received with BPTT.
-  arma::vec prevDW;
+  OutputDataType prevDW;
 
   //! Dummy memoryHistory for deafult construction.
   std::list<arma::mat> dummyMemoryHistory;

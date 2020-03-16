@@ -93,7 +93,7 @@ class NeuralTuringMachine
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(InputType&& input, OutputType&& output);
+  void Forward(InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -105,9 +105,9 @@ class NeuralTuringMachine
    * @param g The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Backward(const InputType&& input,
-                ErrorType&& gy,
-                GradientType&& g);
+  void Backward(const InputType& input,
+                ErrorType& gy,
+                GradientType& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -117,9 +117,9 @@ class NeuralTuringMachine
    * @param gradient The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Gradient(InputType&& input,
-                ErrorType&& error,
-                GradientType&& gradient);
+  void Gradient(InputType& input,
+                ErrorType& error,
+                GradientType& gradient);
 
   /*
    * Resets the cell to accept a new input.

@@ -29,31 +29,11 @@ template<typename LayerType>
 inline void ResetCellVisitor::operator()(LayerType* layer) const
 {
   ResetCell(layer);
-  ResetCellModel(layer);
 }
 
 inline void ResetCellVisitor::operator()(MoreTypes layer) const
 {
   layer.apply_visitor(*this);
-}
-
-template<typename T>
-inline typename std::enable_if<
-      !HasModelCheck<std::vector<LayerTypes<>>&(T::*)()>::value, void>::type
-ResetCellVisitor::ResetCellModel(T* /* layer */) const
-{
-  /* Nothing to do here */
-}
-
-template<typename T>
-inline typename std::enable_if<
-      HasModelCheck<std::vector<LayerTypes<>>&(T::*)()>::value, void>::type
-ResetCellVisitor::ResetCellModel(T* layer) const
-{
-  for (auto l : layer->Model())
-  {
-    boost::apply_visitor(ResetCellVisitor(size), l);
-  }
 }
 
 template<typename T>
