@@ -10,7 +10,6 @@ set(SOURCES
   policy.hpp
   unordered_collections_load_imp.hpp
   unordered_collections_save_imp.hpp
-  unordered_map.hpp
   vector.hpp
   string_view.hpp
   string_view_fwd.hpp
