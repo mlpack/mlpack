@@ -11,8 +11,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "gamma_distribution.hpp"
-// This will include digamma and trigamma.
-#include <mlpack/core/boost_backport/boost_backport_math.hpp>
+#include <boost/math/special_functions/trigamma.hpp>
+#include <boost/math/special_functions/polygamma.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
