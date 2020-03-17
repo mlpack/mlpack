@@ -75,7 +75,7 @@ BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
       optimizer.MaxIterations() != 0)
   {
     Log::Warn << "The optimizer's maximum number of iterations "
-              << "is less than the size of the dataset, the "
+              << "is less than the size of the dataset; the "
               << "optimizer will not pass over the entire "
               << "dataset. To fix this, modify the maximum "
               << "number of iterations to be at least equal "
