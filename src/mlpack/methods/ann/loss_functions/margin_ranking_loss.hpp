@@ -23,7 +23,6 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-
 template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
@@ -44,36 +43,36 @@ class MarginRankingLoss
    * a value of 1 in the label means the first input should be ranked higher
    * and a value of -1 means the second input should be ranked higher.
    * 
-   * @param x1 First input data used for evaluating the specified function.
-   * @param x2 Second input data used for evaluating the specified function.
+   * @param input1 First input data used for evaluating the specified function.
+   * @param input2 Second input data used for evaluating the specified function.
    * @param y The label vector which contains -1 or 1 values.
    */
   template <
     typename FirstInputType,
     typename SecondInputType,
-    typename ThirdInputType
+    typename TargetType
   >
-  double Forward(const FirstInputType& x1,
-                 const SecondInputType& x2,
-                 const ThirdInputType& y);
+  double Forward(const FirstInputType& input1,
+                 const SecondInputType& input2,
+                 const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
    *
-   * @param x1 The propagated first input activation.
-   * @param x2 The propagated second input activation.
-   * @param y The label vector which contains -1 or 1 values.
+   * @param input1 The propagated first input activation.
+   * @param input2 The propagated second input activation.
+   * @param target The label vector which contains -1 or 1 values.
    * @param output The calculated error.
    */
   template <
     typename FirstInputType,
     typename SecondInputType,
-    typename ThirdInputType,
+    typename TargetType,
     typename OutputType
   >
-  void Backward(const FirstInputType& x1,
-                const SecondInputType& x2,
-                const ThirdInputType& y,
+  void Backward(const FirstInputType& input1,
+                const SecondInputType& input2,
+                const TargetType& target,
                 OutputType& output);
 
   //! Get the output parameter.
@@ -81,9 +80,9 @@ class MarginRankingLoss
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //! Get the output parameter.
+  //! Get the margin parameter.
   double Margin() const { return margin; }
-  //! Modify the output parameter.
+  //! Modify the margin parameter.
   double& Margin() { return margin; }
 
   /**
