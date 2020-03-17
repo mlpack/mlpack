@@ -53,9 +53,9 @@ class MarginRankingLoss
     typename SecondInputType,
     typename ThirdInputType
   >
-  double Forward(const FirstInputType&& x1,
-                 const SecondInputType&& x2,
-                 const ThirdInputType&& y);
+  double Forward(const FirstInputType& x1,
+                 const SecondInputType& x2,
+                 const ThirdInputType& y);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -71,10 +71,10 @@ class MarginRankingLoss
     typename ThirdInputType,
     typename OutputType
   >
-  void Backward(const FirstInputType&& x1,
-                const SecondInputType&& x2,
-                const ThirdInputType&& y,
-                OutputType&& output);
+  void Backward(const FirstInputType& x1,
+                const SecondInputType& x2,
+                const ThirdInputType& y,
+                OutputType& output);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
