@@ -89,10 +89,15 @@ class ElishFunction
   static double Deriv(const double y)
   {
     if (y < 0.0)
+    {
       return std::exp(y) - 2 / (1 + std::exp(y)) +
                     2 / std::pow(1 + std::exp(y) , 2);
-    return 1 / (1 + std::exp(-y)) + y * std::exp(-y) /
-                         std::pow(1 + std::exp(-y) , 2);
+    }
+    return
+    {
+      1 / (1 + std::exp(-y)) + y * std::exp(-y) /
+                         std::pow(1 + std::exp(-y) , 2)
+    };
   }
 
   /**
@@ -105,10 +110,15 @@ class ElishFunction
   static void Deriv(const InputVecType& y, OutputVecType& x)
   {
     if (y < 0.0)
+    {
       x = arma::exp(y) - 2 / (1 + arma::exp(y)) +
                     2 / arma::pow(1 + arma::exp(y) , 2);
-    x = 1 / (1 + arma::exp(-y)) + y % (arma::exp(-y) /
+    }
+    else
+    {
+      x = 1 / (1 + arma::exp(-y)) + y % (arma::exp(-y) /
                          arma::pow(1 + arma::exp(-y) , 2));
+    }
   }
 }; // class ElishFunction
 

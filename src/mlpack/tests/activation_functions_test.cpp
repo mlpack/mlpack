@@ -819,6 +819,7 @@ BOOST_AUTO_TEST_CASE(HardShrinkFunctionTest)
  */
 BOOST_AUTO_TEST_CASE(ElishFunctionTest)
 {
+  // Manually-calculated using python-numpy module.
   const arma::colvec desiredActivations("-0.10307056080762242 \
                                           3.0746696870503545 \
                                           4.450558758162331 \
