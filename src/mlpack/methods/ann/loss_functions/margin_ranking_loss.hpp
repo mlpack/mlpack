@@ -45,7 +45,7 @@ class MarginRankingLoss
    * 
    * @param input1 First input data used for evaluating the specified function.
    * @param input2 Second input data used for evaluating the specified function.
-   * @param y The label vector which contains -1 or 1 values.
+   * @param target The label vector which contains -1 or 1 values.
    */
   template <
     typename FirstInputType,
