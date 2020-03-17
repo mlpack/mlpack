@@ -514,6 +514,7 @@ BOOST_AUTO_TEST_CASE(LogCoshLossTest)
 
 /**
  * Simple test for the Hinge Embedding loss function.
+ *
  */
 BOOST_AUTO_TEST_CASE(HingeEmbeddingLossTest)
 {
