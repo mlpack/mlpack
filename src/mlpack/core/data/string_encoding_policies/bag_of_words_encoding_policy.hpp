@@ -49,7 +49,7 @@ class BagOfWordsEncodingPolicy
                          const size_t /* maxNumTokens */,
                          const size_t dictionarySize)
   {
-    output.zeros(datasetSize, dictionarySize);
+    output.zeros(dictionarySize, datasetSize);
   }
 
   /**
@@ -76,6 +76,7 @@ class BagOfWordsEncodingPolicy
   /** 
    * The function performs the bag of words encoding algorithm i.e. it writes
    * the encoded token to the output.
+   * Returns the encodings in column-major format.
    *
    * @tparam MatType The output matrix type.
    *
@@ -91,13 +92,14 @@ class BagOfWordsEncodingPolicy
                      const size_t /* col */)
   {
     // The labels are assigned sequentially starting from one.
-    output(row, value - 1) = 1;
+    output(value - 1, row) = 1;
   }
 
   /** 
    * The function performs the bag of words encoding algorithm i.e. it writes
    * the encoded token to the output.
    * Overload function to accepted vector<vector<OutputType>> as output type.
+   * Returns the encodings in row-major format.
    *
    * @param output Output matrix to store the encoded results.
    * @param value The encoded token.

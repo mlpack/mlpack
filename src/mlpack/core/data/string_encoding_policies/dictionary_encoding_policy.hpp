@@ -47,12 +47,13 @@ class DictionaryEncodingPolicy
                          const size_t maxNumTokens,
                          const size_t /* dictionarySize */)
   {
-    output.zeros(datasetSize, maxNumTokens);
+    output.zeros(maxNumTokens, datasetSize);
   }
 
   /** 
    * The function performs the dictionary encoding algorithm i.e. it writes
    * the encoded token to the ouput.
+   * Returns the encodings in column-major format.
    *
    * @tparam MatType The output matrix type.
    *
@@ -67,13 +68,14 @@ class DictionaryEncodingPolicy
                      const size_t row,
                      const size_t col)
   {
-    output(row, col) = value;
+    output(col, row) = value;
   }
 
   /** 
    * The function performs the dictionary encoding algorithm i.e. it writes
    * the encoded token to the ouput. This is an overload function which saves
    * the result into the given vector to avoid padding.
+   * Returns the encodings in row-major format.
    *
    * @tparam OutputType Type of the output vector.
    *

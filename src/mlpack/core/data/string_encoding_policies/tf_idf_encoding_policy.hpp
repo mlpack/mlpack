@@ -92,7 +92,7 @@ class TfIdfEncodingPolicy
                          const size_t /* maxNumTokens */,
                          const size_t dictionarySize)
   {
-    output.zeros(datasetSize, dictionarySize);
+    output.zeros(dictionarySize, datasetSize);
   }
 
   /**
@@ -119,6 +119,7 @@ class TfIdfEncodingPolicy
   /** 
    * The function performs the TfIdf encoding algorithm i.e. it writes
    * the encoded token to the output.
+   * Returns the encodings in column-major format.
    *
    * @tparam MatType The output matrix type.
    *
@@ -139,9 +140,9 @@ class TfIdfEncodingPolicy
 
     const typename MatType::elem_type idf =
         InverseDocumentFrequency<typename MatType::elem_type>(
-            output.n_rows, numContainingStrings[value]);
+            output.n_cols, numContainingStrings[value]);
 
-    output(row, value - 1) =  tf * idf;
+    output(value - 1, row) =  tf * idf;
   }
 
   /** 
@@ -149,6 +150,7 @@ class TfIdfEncodingPolicy
    * the encoded token to the output.
    * Overloaded function to accept vector<vector<OutputType>> as the output
    * type.
+   * Returns the encodings in row-major format.
    *
    * @tparam OutputType Type of the output vector.
    *

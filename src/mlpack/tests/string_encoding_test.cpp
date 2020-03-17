@@ -57,6 +57,17 @@ static vector<string> stringEncodingUtf8Input = {
 };
 
 /**
+ * Function used to compare two vectors.
+ */
+template<typename vectorType>
+void checkVector(vector<vector<vectorType>> A, vector<vector<vectorType>> B)
+{
+  for (size_t i = 0; i < A.size(); i++)
+    for (size_t j = 0; j < A[i].size(); j++)
+      BOOST_REQUIRE_CLOSE(A[i][j], B[i][j], 1e-12);
+}
+
+/**
  * Test the dictionary encoding algorithm.
  */
 BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
@@ -90,7 +101,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 }
   };
 
-  CheckMatrices(output, expected);
+  CheckMatrices(output, expected.t());
 }
 
 /**
@@ -124,7 +135,7 @@ BOOST_AUTO_TEST_CASE(UnicodeDictionaryEncodingTest)
     { 5, 2, 3, 5, 4 }
   };
 
-  CheckMatrices(output, expected);
+  CheckMatrices(output, expected.t());
 }
 
 /**
@@ -244,7 +255,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingIndividualCharactersTest)
     { 2, 4, 3, 2, 4, 3, 5 },
     { 1, 2, 4, 0, 0, 0, 0 }
   };
-  CheckMatrices(output, target);
+  CheckMatrices(output, target.t());
 }
 
 /**
@@ -551,7 +562,7 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
     {  1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
   };
-  CheckMatrices(output, expected);
+  CheckMatrices(output, expected.t());
 }
 
 /**
@@ -613,7 +624,7 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingIndividualCharactersTest)
     { 1, 1, 0, 1, 0 }
   };
 
-  CheckMatrices(output, target);
+  CheckMatrices(output, target.t());
 }
 
 /**
@@ -686,7 +697,7 @@ BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingTest)
        1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995,  1.69314718055995 }
   };
-  CheckMatrices(output, expected, 1e-12);
+  CheckMatrices(output, expected.t(), 1e-12);
 }
 
 /**
@@ -735,9 +746,7 @@ BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingTest)
        1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995,  1.69314718055995 }
   };
-  for (size_t i = 0; i < expected.size(); i++)
-    for (size_t j = 0; j < expected[i].size(); j++)
-      BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-12);
+  checkVector(output, expected);
 }
 
 /**
@@ -762,7 +771,7 @@ BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingIndividualCharactersTest)
     { 0, 2, 2.5753641449035616, 2.5753641449035616, 1.6931471805599454 },
     { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
   };
-  CheckMatrices(output, target, 1e-12);
+  CheckMatrices(output, target.t(), 1e-12);
 }
 
 /**
@@ -787,9 +796,7 @@ BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingIndividualCharactersTest)
     { 0, 2, 2.5753641449035616, 2.5753641449035616, 1.6931471805599454 },
     { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
   };
-  for (size_t i = 0; i < expected.size(); i++)
-    for (size_t j = 0; j < expected[i].size(); j++)
-      BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-12);
+  checkVector(output, expected);
 }
 
 /**
@@ -837,7 +844,7 @@ BOOST_AUTO_TEST_CASE(TfIdfRawCountEncodingTest)
        2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
        2.09861228866811, 2.09861228866811,  2.09861228866811 }
   };
-  CheckMatrices(output, expected, 1e-12);
+  CheckMatrices(output, expected.t(), 1e-12);
 }
 
 /**
@@ -886,9 +893,7 @@ BOOST_AUTO_TEST_CASE(VectorTfIdfRawCountEncodingTest)
        2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
        2.09861228866811, 2.09861228866811,  2.09861228866811 }
   };
-  for (size_t i = 0; i < expected.size(); i++)
-    for (size_t j = 0; j < expected[i].size(); j++)
-      BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-12);
+  checkVector(output, expected);
 }
 
 /**
@@ -914,7 +919,7 @@ BOOST_AUTO_TEST_CASE(RawcountTfIdfEncodingIndividualCharactersTest)
     { 0, 2, 2.8109302162163288, 2.8109302162163288, 2.0986122886681100 },
     { 1.4054651081081644, 1, 0, 1.4054651081081644, 0 }
   };
-  CheckMatrices(output, target, 1e-12);
+  CheckMatrices(output, target.t(), 1e-12);
 }
 
 /**
@@ -941,9 +946,7 @@ BOOST_AUTO_TEST_CASE(VectorRawcountEncodingIndividualCharactersTest)
     { 0, 2, 2.8109302162163288, 2.8109302162163288, 2.0986122886681100 },
     { 1.4054651081081644, 1, 0, 1.4054651081081644, 0 }
   };
-  for (size_t i = 0; i < expected.size(); i++)
-    for (size_t j = 0; j < expected[i].size(); j++)
-      BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-12);
+  checkVector(output, expected);
 }
 
 /**
@@ -969,7 +972,7 @@ BOOST_AUTO_TEST_CASE(BinarySmoothIdfEncodingIndividualCharactersTest)
     { 0, 1, 1.2876820724517808, 1.2876820724517808, 1.6931471805599454 },
     { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
   };
-  CheckMatrices(output, target, 1e-12);
+  CheckMatrices(output, target.t(), 1e-12);
 }
 
 /**
@@ -995,9 +998,7 @@ BOOST_AUTO_TEST_CASE(VectorBnarySmoothIdfEncodingIndividualCharactersTest)
     { 0, 1, 1.2876820724517808, 1.2876820724517808, 1.6931471805599454 },
     { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
   };
-  for (size_t i = 0; i < expected.size(); i++)
-    for (size_t j = 0; j < expected[i].size(); j++)
-      BOOST_REQUIRE_CLOSE(expected[i][j], output[i][j], 1e-12);
+  checkVector(output, expected);
 }
 
 /**
@@ -1023,7 +1024,7 @@ BOOST_AUTO_TEST_CASE(BinaryTfIdfEncodingIndividualCharactersTest)
     { 0, 1, 1.4054651081081644, 1.4054651081081644, 2.0986122886681100 },
     { 1.4054651081081644, 1, 0, 1.4054651081081644, 0 }
   };
-  CheckMatrices(output, target, 1e-12);
+  CheckMatrices(output, target.t(), 1e-12);
 }
 
 /**
@@ -1050,7 +1051,7 @@ BOOST_AUTO_TEST_CASE(SublinearSmoothIdfEncodingIndividualCharactersTest)
       1.6931471805599454 },
     { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
   };
-  CheckMatrices(output, target, 1e-12);
+  CheckMatrices(output, target.t(), 1e-12);
 }
 
 /**
@@ -1077,7 +1078,7 @@ BOOST_AUTO_TEST_CASE(SublinearTfIdfEncodingIndividualCharactersTest)
       2.0986122886681100 },
     { 1.4054651081081644, 1, 0, 1.4054651081081644, 0 }
   };
-  CheckMatrices(output, target, 1e-12);
+  CheckMatrices(output, target.t(), 1e-12);
 }
 
 /**
@@ -1104,7 +1105,7 @@ BOOST_AUTO_TEST_CASE(TermFrequencySmoothIdfEncodingIndividualCharactersTest)
       0.2418781686514208 },
     { 0.4292273574839269, 0.3333333333333333, 0, 0.4292273574839269, 0 }
   };
-  CheckMatrices(output, target, 1e-12);
+  CheckMatrices(output, target.t(), 1e-12);
 }
 
 /**
@@ -1131,7 +1132,7 @@ BOOST_AUTO_TEST_CASE(TermFrequencyTfIdfEncodingIndividualCharactersTest)
       0.2998017555240157 },
     { 0.4684883693693881, 0.3333333333333333, 0, 0.4684883693693881, 0 }
   };
-  CheckMatrices(output, target, 1e-12);
+  CheckMatrices(output, target.t(), 1e-12);
 }
 
 /**
