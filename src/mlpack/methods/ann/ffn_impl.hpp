@@ -701,7 +701,8 @@ void FFN<OutputLayerType, InitializationRuleType,
         boost::apply_visitor(outputParameterVisitor, network[i]))), network[i]);
   }
 
-  output = arma::mat(boost::apply_visitor(outputParameterVisitor, network.back()));
+  output = arma::mat(
+              boost::apply_visitor(outputParameterVisitor, network.back()));
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
