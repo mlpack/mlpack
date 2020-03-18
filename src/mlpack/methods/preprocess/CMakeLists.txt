@@ -42,7 +42,7 @@ add_cli_executable(preprocess_scale)
 add_python_binding(preprocess_scale)
 add_markdown_docs(preprocess_scale "cli;python" "preprocessing")
 
-if (HAS_STB)
+if (NOT HAS_STB)
   add_cli_executable(image_converter)
   add_python_binding(limage_converter)
   add_markdown_docs(image_converter "cli;python" "preprocessing")
