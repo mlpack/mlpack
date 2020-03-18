@@ -97,12 +97,12 @@ void CheckDuplication(const Row<size_t>& trainLabels,
 BOOST_AUTO_TEST_CASE(SplitShuffleDataResultMat)
 {
   mat input(2, 10);
-  size_t count = 0; // count for putting unique sequential values
+  size_t count = 0; // counter for unique sequential values
   input.imbue([&count] () { return ++count; });
 
   const auto value = Split(input, 0.2);
-  BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 8); // train data
-  BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, 2); // test data
+  BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 8); // Train data
+  BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, 2); // Test data
 
   mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
   CheckMatEqual(input, concat);
@@ -111,12 +111,12 @@ BOOST_AUTO_TEST_CASE(SplitShuffleDataResultMat)
 BOOST_AUTO_TEST_CASE(SplitDataResultMat)
 {
   mat input(2, 10);
-  size_t count = 0; // count for putting unique sequential values
+  size_t count = 0; // counter for unique sequential values
   input.imbue([&count] () { return ++count; });
 
   const auto value = Split(input, 0.2, false);
-  BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 8); // train data
-  BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, 2); // test data
+  BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 8); // Train data
+  BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, 2); // Test data
 
   mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
   // Order matters here.

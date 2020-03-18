@@ -44,7 +44,8 @@ namespace data {
  * @param trainLabel Vector to store training labels into.
  * @param testLabel Vector to store test labels into.
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
- * @param shuffleData True(Default) if you want to shuffle data.
+ * @param shuffleData If true, the sample order is shuffled; otherwise, each
+ *       sample is visited in linear order. (Default true).
  */
 template<typename T, typename U>
 void Split(const arma::Mat<T>& input,
@@ -65,11 +66,15 @@ void Split(const arma::Mat<T>& input,
 
   arma::Col<size_t> order;
   if (shuffleData)
+  {
     order = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
         input.n_cols - 1, input.n_cols));
+  }
   else
+  {
     order = arma::linspace<arma::Col<size_t>>(0, input.n_cols - 1,
         input.n_cols);
+  }
 
   for (size_t i = 0; i != trainSize; ++i)
   {
@@ -104,7 +109,8 @@ void Split(const arma::Mat<T>& input,
  * @param trainData Matrix to store training data into.
  * @param testData Matrix to store test data into.
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
- * @param shuffleData True(Default) if you want to shuffle data.
+ * @param shuffleData If true, the sample order is shuffled; otherwise, each
+ *       sample is visited in linear order. (Default true).
  */
 template<typename T>
 void Split(const arma::Mat<T>& input,
@@ -120,11 +126,15 @@ void Split(const arma::Mat<T>& input,
 
   arma::Col<size_t> order;
   if (shuffleData)
+  {
     order = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
         input.n_cols -1, input.n_cols));
+  }
   else
+  {
     order = arma::linspace<arma::Col<size_t>>(0, input.n_cols -1,
         input.n_cols);
+  }
 
   for (size_t i = 0; i != trainSize; ++i)
   {
@@ -152,7 +162,8 @@ void Split(const arma::Mat<T>& input,
  * @param input Input dataset to split.
  * @param label Input labels to split.
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
- * @param shuffleData True(Default) if you want to shuffle data.
+ * @param shuffleData If true, the sample order is shuffled; otherwise, each
+ *       sample is visited in linear order. (Default true).
  * @return std::tuple containing trainData (arma::Mat<T>), testData
  *      (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>).
  */
@@ -190,7 +201,8 @@ Split(const arma::Mat<T>& input,
  *
  * @param input Input dataset to split.
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
- * @param shuffleData True(Default) if you want to shuffle data.
+ * @param shuffleData If true, the sample order is shuffled; otherwise, each
+ *       sample is visited in linear order. (Default true).
  * @return std::tuple containing trainData (arma::Mat<T>)
  *      and testData (arma::Mat<T>).
  */
