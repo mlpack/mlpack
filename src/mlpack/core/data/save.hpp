@@ -129,7 +129,7 @@ bool Save(const std::vector<std::string>& files,
 bool SaveImage(const std::string& filename,
                arma::Mat<unsigned char>& image,
                ImageInfo& info,
-               const bool fatal);
+               const bool fatal = false);
 
 } // namespace data
 } // namespace mlpack
