@@ -57,6 +57,12 @@
   * Refactor STB support so HAS_STB macro is not needed when compiling against
     mlpack (#2312).
 
+  * Add Hard Shrink Activation Function (#2186).
+
+  * Add Soft Shrink Activation Function (#2174).
+
+  * Add Hinge Embedding Loss Function (#2229).
+
 ### mlpack 3.2.2
 ###### 2019-11-26
   * Add `valid` and `same` padding option in `Convolution` and `Atrous
