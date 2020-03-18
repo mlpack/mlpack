@@ -220,7 +220,7 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
 
   // Loop over every class.
   #pragma omp parallel for
-  for (size_t i = 0; i < means.n_cols; i++)
+  for (omp_size_t i = 0; i < means.n_cols; i++)
   {
     // This is an adaptation of gmm::phi() for the case where the covariance is
     // a diagonal matrix.
@@ -329,7 +329,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
 
   predictionProbs.set_size(arma::size(logLikelihoods));
   #pragma omp parallel for
-  for (size_t j = 0; j < data.n_cols; ++j)
+  for (omp_size_t j = 0; j < data.n_cols; ++j)
   {
     // The LogLikelihood() gives us the unnormalized log likelihood which is
     // Log(Prob(X|Y)) + Log(Prob(Y)), so we subtract the normalization term.
@@ -343,7 +343,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
 
   // Now calculate maximum probabilities for each point.
   #pragma omp parallel for 
-  for (size_t i = 0; i < data.n_cols; ++i)
+  for (omp_size_t i = 0; i < data.n_cols; ++i)
   {
     arma::uword maxIndex = 0;
     logLikelihoods.unsafe_col(i).max(maxIndex);
@@ -366,3 +366,4 @@ void NaiveBayesClassifier<ModelMatType>::serialize(
 } // namespace mlpack
 
 #endif
+
