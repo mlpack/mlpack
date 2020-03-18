@@ -52,6 +52,17 @@
   * Change neural network types to avoid unnecessary use of rvalue references
     (#2259).
 
+  * Bump minimum Boost version to 1.58 (#2305).
+
+  * Refactor STB support so HAS_STB macro is not needed when compiling against
+    mlpack (#2312).
+
+  * Add Hard Shrink Activation Function (#2186).
+
+  * Add Soft Shrink Activation Function (#2174).
+
+  * Add Hinge Embedding Loss Function (#2229).
+
 ### mlpack 3.2.2
 ###### 2019-11-26
   * Add `valid` and `same` padding option in `Convolution` and `Atrous

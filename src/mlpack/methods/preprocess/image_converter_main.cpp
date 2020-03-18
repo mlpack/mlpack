@@ -119,7 +119,7 @@ static void mlpackMain()
   arma::mat out;
   if (!CLI::HasParam("save"))
   {
-    Load(fileNames, out, *info, false, !CLI::HasParam("transpose"));
+    Load(fileNames, out, *info, true, !CLI::HasParam("transpose"));
     if (CLI::HasParam("output"))
       CLI::GetParam<arma::mat>("output") = std::move(out);
   }
@@ -130,7 +130,7 @@ static void mlpackMain()
       throw std::runtime_error("Please provide a input matrix to save "
           "images from");
     }
-    Save(fileNames, CLI::GetParam<arma::mat> ("dataset"), *info, false,
+    Save(fileNames, CLI::GetParam<arma::mat> ("dataset"), *info, true,
         !CLI::HasParam("transpose"));
   }
   if (CLI::HasParam("output_model"))

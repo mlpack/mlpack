@@ -283,8 +283,14 @@ bool Save(const std::string& filename,
   }
 }
 
-#ifdef HAS_STB
-// Image saving API.
+/**
+ * Save the given image to the given filename.
+ *
+ * @param filename Filename to save to.
+ * @param matrix Matrix containing image to be saved.
+ * @param info Information about the image (width/height/channels/etc.).
+ * @param fatal Whether an exception should be thrown on save failure.
+ */
 template<typename eT>
 bool Save(const std::string& filename,
           arma::Mat<eT>& matrix,
@@ -292,76 +298,11 @@ bool Save(const std::string& filename,
           const bool fatal,
           const bool transpose)
 {
-  Timer::Start("saving_image");
+  arma::Mat<unsigned char> tmpMatrix =
+      arma::conv_to<arma::Mat<unsigned char>>::from(matrix);
 
-  int tempWidth, tempHeight, tempChannels, tempQuality;
-
-  tempWidth = info.Width();
-  tempHeight = info.Height();
-  tempChannels = info.Channels();
-  tempQuality = info.Quality();
-
-  if (!ImageFormatSupported(filename, true))
-  {
-    std::ostringstream oss;
-    oss << "File type " << Extension(filename) << " not supported.\n";
-    oss << "Currently it supports ";
-    for (auto extension : saveFileTypes)
-      oss << ", " << extension;
-    oss << std::endl;
-    throw std::runtime_error(oss.str());
-    return false;
-  }
-  if (matrix.n_cols > 1)
-  {
-    std::cout << "Input Matrix contains more than 1 image." << std::endl;
-    std::cout << "Only the firstimage will be saved!" << std::endl;
-  }
-  stbi_flip_vertically_on_write(transpose);
-
-  bool status = false;
-  try
-  {
-    arma::Mat<unsigned char> temp = arma::conv_to<arma::Mat<unsigned char> >
-        ::from(matrix);
-    unsigned char* image = temp.memptr();
-
-    if ("png" == Extension(filename))
-    {
-      status = stbi_write_png(filename.c_str(), tempWidth, tempHeight,
-          tempChannels, image, tempWidth * tempChannels);
-    }
-    else if ("bmp" == Extension(filename))
-    {
-      status = stbi_write_bmp(filename.c_str(), tempWidth, tempHeight,
-          tempChannels, image);
-    }
-    else if ("tga" == Extension(filename))
-    {
-      status = stbi_write_tga(filename.c_str(), tempWidth, tempHeight,
-          tempChannels, image);
-    }
-    else if ("hdr" == Extension(filename))
-    {
-      status = stbi_write_hdr(filename.c_str(), tempWidth, tempHeight,
-          tempChannels, reinterpret_cast<float*>(image));
-    }
-    else if ("jpg" == Extension(filename))
-    {
-      status = stbi_write_jpg(filename.c_str(), tempWidth, tempHeight,
-          tempChannels, image, tempQuality);
-    }
-  }
-  catch (std::exception& e)
-  {
-    Timer::Stop("saving_image");
-    if (fatal)
-      Log::Fatal << e.what() << std::endl;
-    Log::Warn << e.what() << std::endl;
-    return false;
-  }
-  Timer::Stop("saving_image");
-  return status;
+  // Call out to .cpp implementation.
+  return SaveImage(filename, tmpMatrix, info, fatal, transpose);
 }
 
 // Image saving API for multiple files.
@@ -374,45 +315,32 @@ bool Save(const std::vector<std::string>& files,
 {
   if (files.size() == 0)
   {
-    std::ostringstream oss;
-    oss << "Files vector is empty." << std::endl;
+    if (fatal)
+    {
+      Log::Fatal << "Save(): vector of image files is empty; nothing to save."
+          << std::endl;
+    }
+    else
+    {
+      Log::Warn << "Save(): vector of image files is empty; nothing to save."
+          << std::endl;
+    }
 
-    throw std::runtime_error(oss.str());
     return false;
   }
 
+  arma::Mat<unsigned char> img;
   bool status = true;
+
   for (size_t i = 0; i < files.size() ; i++)
   {
     arma::Mat<eT> colImg(matrix.colptr(i), matrix.n_rows, 1,
         false, true);
     status &= Save(files[i], colImg, info, fatal, transpose);
   }
+
   return status;
 }
-#else
-template<typename eT>
-bool Save(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true)
-{
-  throw std::runtime_error("Save(): HAS_STB is not defined, "
-      "so STB is not available and images cannot be saved!");
-}
-
-template<typename eT>
-bool Save(const std::vector<std::string>& files,
-          arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true)
-{
-  throw std::runtime_error("Save(): HAS_STB is not defined, "
-      "so STB is not available and images cannot be saved!");
-}
-#endif // HAS_STB.
 
 } // namespace data
 } // namespace mlpack
