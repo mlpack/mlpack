@@ -52,6 +52,8 @@
   * Change neural network types to avoid unnecessary use of rvalue references
     (#2259).
 
+  * Bump minimum Boost version to 1.58 (#2305).
+
   * Add Hard Shrink Activation Function (#2186).
 
   * Add Soft Shrink Activation Function (#2174).
