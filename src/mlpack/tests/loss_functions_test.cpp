@@ -405,13 +405,13 @@ BOOST_AUTO_TEST_CASE(TripletMarginLossTest)
   arma::mat anchor, positive, negative, output;
   TripletMarginLoss<> module;
 
-  // Test the Forward function on a user generator input and compare it against
+  // Test the Forward function on a user generated input and compare it against
   // the manually calculated result.
   anchor = arma::mat("2 3 5");
   positive = arma::mat("10 12 13");
   negative = arma::mat("4 5 7");
-  double error = module.Forward(std::move(anchor),
-      std::move(positive), std::move(negative));
+  double error = module.Forward(anchor,
+      positive, negative);
   BOOST_REQUIRE_EQUAL(error, 66);
 
   // Test the Backward function.

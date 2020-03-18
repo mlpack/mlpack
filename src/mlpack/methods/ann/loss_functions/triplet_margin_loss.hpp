@@ -28,6 +28,28 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+/**
+ * The TripletMarginLoss function's objective is that the distance between
+ * the anchor sample and negative sample d(a, n) is greater than the distance
+ * between the anchor and positive sample d(a, p) by a given margin.
+ *
+ * For more information, see the following paper.
+ *
+ * @code
+ * @article{Janocha2017
+ *   title   = {FaceNet: A Unified Embedding for Face Recognition and Clustering},
+ *   author  = {Florian Schroff, Dmitry Kalenichenko, James Philbin},
+ *   url     = {https://arxiv.org/abs/1503.03832},
+ *   eprint  = {arXiv:1503.03832},
+ *   year    = {2015}
+ * }
+ * @endcode
+ *
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ */
 template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
