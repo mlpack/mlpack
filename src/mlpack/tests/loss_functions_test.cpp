@@ -25,6 +25,7 @@
 #include <mlpack/methods/ann/loss_functions/mean_bias_error.hpp>
 #include <mlpack/methods/ann/loss_functions/dice_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/log_cosh_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/hinge_embedding_loss.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -507,6 +508,45 @@ BOOST_AUTO_TEST_CASE(LogCoshLossTest)
   // Test the Backward function.
   module.Backward(input, target, output);
   BOOST_REQUIRE_CLOSE(arma::accu(output), 2.46962, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+}
+
+/**
+ * Simple test for the Hinge Embedding loss function.
+ */
+BOOST_AUTO_TEST_CASE(HingeEmbeddingLossTest)
+{
+  arma::mat input, target, output;
+  double loss;
+  HingeEmbeddingLoss<> module;
+
+  // Test the Forward function. Loss should be 0 if input = target.
+  input = arma::ones(10, 1);
+  target = arma::ones(10, 1);
+  loss = module.Forward(input, target);
+  BOOST_REQUIRE_EQUAL(loss, 0);
+
+  // Test the Backward function for input = target.
+  module.Backward(input, target, output);
+  for (double el : output)
+  {
+    // For input = target we should get 0.0 everywhere.
+    BOOST_REQUIRE_CLOSE(el, 0.0, 1e-5);
+  }
+
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+
+  // Test the Forward function. Loss should be 0.84.
+  input = arma::mat("0.1 0.8 0.6 0.0 0.5");
+  target = arma::mat("0 1.0 1.0 0 0");
+  loss = module.Forward(input, target);
+  BOOST_REQUIRE_CLOSE(loss, 0.84, 1e-3);
+
+  // Test the Backward function.
+  module.Backward(input, target, output);
+  BOOST_REQUIRE_CLOSE(arma::accu(output), -2, 1e-3);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 }
