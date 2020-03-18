@@ -121,6 +121,7 @@ void NaiveBayesClassifier<ModelMatType>::Train(
       arma::vec delta = data.col(j) - means.col(label);
       means.col(label) += delta / probabilities[label];
       variances.col(label) += delta % (data.col(j) - means.col(label));
+      // compute intensive statement ( i.e try to parallelize)
     }
 
     for (size_t i = 0; i < probabilities.n_elem; ++i)
@@ -160,6 +161,7 @@ void NaiveBayesClassifier<ModelMatType>::Train(
     {
       const size_t label = labels[j];
       variances.col(label) += square(data.col(j) - means.col(label));
+      // compute intensive statement ( i.e try to parallelize)
     }
 
     // Normalize variances.
@@ -217,6 +219,7 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
   // means.n_cols.
 
   // Loop over every class.
+  #pragma omp parallel for
   for (size_t i = 0; i < means.n_cols; i++)
   {
     // This is an adaptation of gmm::phi() for the case where the covariance is
@@ -224,9 +227,9 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
     ModelMatType diffs = data - arma::repmat(means.col(i), 1, data.n_cols);
     ModelMatType rhs = -0.5 * arma::diagmat(invVar.col(i)) * diffs;
     arma::Mat<ElemType> exponents = arma::sum(diffs % rhs, 0);
-
     logLikelihoods.row(i) += (data.n_rows / -2.0 * log(2 * M_PI) - 0.5 *
-        arma::accu(arma::log(variances.col(i))) + exponents);
+        arma::accu(arma::log(variances.col(i))) + exponents);  
+    
   }
 }
 
@@ -325,20 +328,21 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
   LogLikelihood(data, logLikelihoods);
 
   predictionProbs.set_size(arma::size(logLikelihoods));
-  double maxValue, logProbX;
+  #pragma omp parallel for
   for (size_t j = 0; j < data.n_cols; ++j)
   {
     // The LogLikelihood() gives us the unnormalized log likelihood which is
     // Log(Prob(X|Y)) + Log(Prob(Y)), so we subtract the normalization term.
     // Besides, to prevent underflow in log of sum of exp of x operation (where
     // x is a small negative value), we use logsumexp(x - max(x)) + max(x).
-    maxValue = arma::max(logLikelihoods.col(j));
-    logProbX = log(arma::accu(exp(logLikelihoods.col(j) -
+    double maxValue = arma::max(logLikelihoods.col(j));
+    double logProbX = log(arma::accu(exp(logLikelihoods.col(j) -
         maxValue))) + maxValue;
     predictionProbs.col(j) = arma::exp(logLikelihoods.col(j) - logProbX);
   }
 
   // Now calculate maximum probabilities for each point.
+  #pragma omp parallel for 
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     arma::uword maxIndex = 0;
