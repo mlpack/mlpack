@@ -7,6 +7,8 @@ set(SOURCES
   dice_loss_impl.hpp
   earth_mover_distance.hpp
   earth_mover_distance_impl.hpp
+  huber_loss.hpp
+  huber_loss_impl.hpp
   kl_divergence.hpp
   kl_divergence_impl.hpp
   mean_bias_error.hpp

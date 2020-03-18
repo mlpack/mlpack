@@ -15,6 +15,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/loss_functions/huber_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/kl_divergence.hpp>
 #include <mlpack/methods/ann/loss_functions/earth_mover_distance.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
@@ -37,6 +38,33 @@ using namespace mlpack;
 using namespace mlpack::ann;
 
 BOOST_AUTO_TEST_SUITE(LossFunctionsTest);
+
+/**
+ * Simple Huber Loss test.
+ */
+BOOST_AUTO_TEST_CASE(HuberLossTest)
+{
+  arma::mat input, target, output;
+  HuberLoss<> module;
+
+  // Test the Forward function.
+  input = arma::mat("17.45 12.91 13.63 29.01 7.12 15.47 31.52 31.97");
+  target = arma::mat("16.52 13.11 13.67 29.51 24.31 15.03 30.72 34.07");
+  double loss = module.Forward(input, target);
+  BOOST_REQUIRE_CLOSE_FRACTION(loss, 2.410631, 0.00001);
+
+  // Test the backward function.
+  module.Backward(input, target, output);
+
+  // Expected Output:
+  // [0.1162 -0.0250 -0.0050 -0.0625 -0.1250  0.0550  0.1000 -0.1250]
+  // Sum of Expected Output = -0.07125.
+  double expectedOutputSum = arma::accu(output);
+  BOOST_REQUIRE_CLOSE_FRACTION(expectedOutputSum, -0.07125, 0.00001);
+
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+}
 
 /**
  * Simple KL Divergence test.  The loss should be zero if input = target.
