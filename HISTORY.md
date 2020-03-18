@@ -52,6 +52,8 @@
   * Change neural network types to avoid unnecessary use of rvalue references
     (#2259).
 
+  * Bump minimum Boost version to 1.58 (#2305).
+
 ### mlpack 3.2.2
 ###### 2019-11-26
   * Add `valid` and `same` padding option in `Convolution` and `Atrous
