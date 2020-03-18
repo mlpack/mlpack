@@ -52,8 +52,10 @@
   * Change neural network types to avoid unnecessary use of rvalue references
     (#2259).
 
+  * Bump minimum Boost version to 1.58 (#2305).
+
   * Refactor STB support so HAS_STB macro is not needed when compiling against
-    mlpack (#????).
+    mlpack (#2312).
 
 ### mlpack 3.2.2
 ###### 2019-11-26
