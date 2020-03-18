@@ -272,8 +272,7 @@ class FFN
    * @param batchSize Number of points to be processed as a batch for objective
    *        function gradient evaluation.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& parameters,
+  void Gradient(const arma::mat& parameters,
                 const size_t begin,
                 arma::mat& gradient,
                 const size_t batchSize);
@@ -378,8 +377,8 @@ class FFN
   template<typename PredictorsType,
            typename TargetsType,
            typename GradientsType>
-  double Backward(const PredictorsType& inputs,
-                  const TargetsType& targets,
+  double Backward(PredictorsType& inputs,
+                  TargetsType& targets,
                   GradientsType& gradients);
 
   /**
@@ -389,8 +388,8 @@ class FFN
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
-  void Forward(InputType& input, OutputType& output);
+  template<typename eT>
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
@@ -400,10 +399,10 @@ class FFN
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename InputType, typename ErrorType, typename GradientType>
-  void Backward(InputType& input,
-                ErrorType& gy,
-                GradientType& g);
+  template<typename eT>
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -412,10 +411,10 @@ class FFN
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename InputType, typename ErrorType, typename GradientType>
-  void Gradient(InputType& input,
-                ErrorType& error,
-                GradientType& /* gradient */);
+  template<typename eT>
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
