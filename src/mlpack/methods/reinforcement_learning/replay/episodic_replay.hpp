@@ -34,7 +34,6 @@ class EpisodicReplay
 
   /**
   * Construct an instance of episode experience replay class.
-  *
   * @param capacity Total memory size in terms of number of episodes.
   * @param dimension The dimension of an encoded state.
   */
@@ -54,7 +53,6 @@ class EpisodicReplay
 
   /**
   * Store the given experience.
-  *
   * @param state Given state.
   * @param action Given action.
   * @param reward Given reward.
@@ -62,17 +60,18 @@ class EpisodicReplay
   * @param isEnd Whether next state is terminal state.
   */
   void Store(const StateType& state,
-	     ActionType action,
-	     double reward,
-	     const StateType& nextState,
-	     bool isEnd)
+             ActionType action,
+             double reward,
+             const StateType& nextState,
+             bool isEnd)
   {
     states[position].push_back(state.Encode());
     actions[position].push_back(action);
     rewards[position].push_back(reward);
     nextStates[position].push_back(nextState.Encode());
     isTerminal[position].push_back(isEnd);
-    if(isTerminal){
+    if(isTerminal)
+    {
       position++;
     }
     if (position == capacity)
@@ -83,8 +82,7 @@ class EpisodicReplay
   }
 
   /**
-  * Sample some episodes.
-  *
+  * Sample some episode.
   * @param sampledStates Sampled encoded states.
   * @param sampledActions Sampled actions.
   * @param sampledRewards Sampled rewards.
@@ -95,33 +93,39 @@ class EpisodicReplay
 
   void Random_Episode(arma::mat& episodeStates,
                       arma::icolvec& episodeActions,
-	              arma::colvec& episodeRewards,
-	              arma::mat& episodeNextStates,
-	              arma::icolvec& isTerminal)
+                      arma::colvec& episodeRewards,
+                      arma::mat& episodeNextStates,
+                      arma::icolvec& isTerminal)
   {
     size_t upperBound = full ? capacity : position;
     srand(time(NULL));
     int episodeNum = rand()%(upperBound);
-    vector<arma::colvec> temp = states[episodeNum];
-    int i=0;
-    for(auto state : temp){
-      if(i==0){
+    std::vector<arma::colvec> temp = states[episodeNum];
+    int i = 0;
+    for(auto state : temp)
+    {
+      if(i==0)
+      {
         episodeStates = state;
         i++;
-      }else{
-        episodeStates = arma::join_rows(episodeStates,state);
+      }else
+      {
+        episodeStates = arma::join_rows(episodeStates, state);
       }
     }
     episodeActions = arma::conv_to<arma::icolvec>::from(actions[episodeNum]);
     episodeRewards = arma::conv_to<arma::icolvec>::from(rewards[episodeNum]);
     temp = next_states[episodeNum];
-    int i=0;
-    for(auto state : temp){
-      if(i==0){
+    i = 0;
+    for(auto state : temp)
+    {
+      if(i==0)
+      {
         episodeNextStates = state;
         i++;
-      }else{
-        episodeNextStates = arma::join_rows(episodeStates,state);
+      }else
+      {
+        episodeNextStates = arma::join_rows(episodeStates, state);
       }
     }
     isTerminal = arma::conv_to<arma::icolvec>::from(this->isTerminal[episodeNum]);
@@ -141,7 +145,6 @@ class EpisodicReplay
 
   /**
   * Get the most recently added episode.
-  *
   * @param sampledStates Sampled encoded states.
   * @param sampledActions Sampled actions.
   * @param sampledRewards Sampled rewards.
@@ -156,26 +159,32 @@ class EpisodicReplay
                       arma::icolvec& isTerminal)
   {
     int episodeNum = position;
-    vector<arma::colvec> temp = states[episodeNum];
-    int i=0;
-    for(auto state : temp){
-      if(i==0){
+    std::vector<arma::colvec> temp = states[episodeNum];
+    int i = 0;
+    for(auto state : temp)
+    {
+      if(i==0)
+      {
         episodeStates = state;
         i++;
-      }else{
-        episodeStates = arma::join_rows(episodeStates,state);
+      }else
+      {
+        episodeStates = arma::join_rows(episodeStates, state);
       }
     }
     episodeActions = arma::conv_to<arma::icolvec>::from(actions[episodeNum]);
     episodeRewards = arma::conv_to<arma::icolvec>::from(rewards[episodeNum]);
     temp = next_states[episodeNum];
-    int i=0;
-    for(auto state : temp){
-      if(i==0){
+    i = 0;
+    for(auto state : temp)
+    {
+      if(i==0)
+      {
         episodeNextStates = state;
         i++;
-      }else{
-        episodeNextStates = arma::join_rows(episodeStates,state);
+      }else
+      {
+        episodeNextStates = arma::join_rows(episodeStates, state);
       }
     }
     isTerminal = arma::conv_to<arma::icolvec>::from(this->isTerminal[episodeNum]);	
