@@ -328,6 +328,7 @@ if (NOT STB_IMAGE_FOUND)
         install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
         install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
         add_definitions(-DHAS_STB)
+        set(HAS_STB 1)
         set(STB_AVAILABLE "1")
       else ()
         message(WARNING
