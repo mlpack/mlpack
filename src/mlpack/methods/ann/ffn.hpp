@@ -390,7 +390,7 @@ class FFN
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(InputType&& input1, OutputType&& output);
+  void Forward(InputType& input, OutputType& output);
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
@@ -401,9 +401,9 @@ class FFN
    * @param g The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Backward(const InputType&& input,
-                ErrorType&& gy,
-                GradientType&& g);
+  void Backward(InputType& input,
+                ErrorType& gy,
+                GradientType& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -413,9 +413,9 @@ class FFN
    * @param gradient The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Gradient(InputType&& input,
-                ErrorType&& error,
-                GradientType&& /* gradient */);
+  void Gradient(InputType& input,
+                ErrorType& error,
+                GradientType& /* gradient */);
 
   //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }

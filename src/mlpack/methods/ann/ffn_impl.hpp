@@ -689,16 +689,16 @@ template<typename OutputLayerType, typename InitializationRuleType,
 template<typename InputType, typename OutputType>
 void FFN<OutputLayerType, InitializationRuleType,
     CustomLayers...>::Forward(
-    InputType&& input, OutputType&& output){
-  boost::apply_visitor(ForwardVisitor(std::move(arma::mat(input)), std::move(
-      boost::apply_visitor(outputParameterVisitor, network.front()))),
+    InputType& input, OutputType& output){
+  boost::apply_visitor(ForwardVisitor(arma::mat(input),
+      boost::apply_visitor(outputParameterVisitor, network.front())),
       network.front());
 
   for (size_t i = 1; i < network.size(); ++i)
   {
-    boost::apply_visitor(ForwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, network[i - 1])), std::move(
-        boost::apply_visitor(outputParameterVisitor, network[i]))), network[i]);
+    boost::apply_visitor(ForwardVisitor(boost::apply_visitor(
+        outputParameterVisitor, network[i - 1]),
+        boost::apply_visitor(outputParameterVisitor, network[i])), network[i]);
   }
 
   output = arma::mat(
@@ -710,26 +710,26 @@ template<typename OutputLayerType, typename InitializationRuleType,
 template<typename InputType, typename ErrorType, typename GradientType>
 void FFN<OutputLayerType, InitializationRuleType,
     CustomLayers...>::Backward(
-  const InputType&& /* input */, ErrorType&& gy, GradientType&& g)
+  InputType& /* input */, ErrorType& gy, GradientType& g)
 {
-  boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, network.back())), std::move(gy),
-      std::move(boost::apply_visitor(deltaVisitor, network.back()))),
+  boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+      outputParameterVisitor, network.back()), gy,
+      boost::apply_visitor(deltaVisitor, network.back())),
       network.back());
 
   for (int i = network.size() - 2; i > 0; i--)
   {
-    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, network[i])),
-        std::move(boost::apply_visitor(deltaVisitor, network[i + 1])),
-        std::move(boost::apply_visitor(deltaVisitor, network[i]))),
+    boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+        outputParameterVisitor, network[i]),
+        boost::apply_visitor(deltaVisitor, network[i + 1]),
+        boost::apply_visitor(deltaVisitor, network[i])),
         network[i]);
   }
 
-  boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, network.front())),
-      std::move(boost::apply_visitor(deltaVisitor, network[1])),
-      std::move(g)),
+  boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+      outputParameterVisitor, network.front()),
+      boost::apply_visitor(deltaVisitor, network[1]),
+      g),
       network.front());
 }
 
@@ -737,22 +737,22 @@ template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename InputType, typename ErrorType, typename GradientType>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
-    InputType&& input, ErrorType&& /* error */, GradientType&& /* gradient */)
+    InputType& input, ErrorType& /* error */, GradientType& /* gradient */)
 {
-  boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, network[network.size() - 2])),
-      std::move(error)), network.back());
+  boost::apply_visitor(GradientVisitor(boost::apply_visitor(
+      outputParameterVisitor, network[network.size() - 2]),
+      error), network.back());
 
   for (size_t i = network.size() - 2; i > 0; i--)
   {
-    boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, network[i - 1])),
-        std::move(boost::apply_visitor(deltaVisitor, network[i + 1]))),
+    boost::apply_visitor(GradientVisitor(boost::apply_visitor(
+        outputParameterVisitor, network[i - 1]),
+        boost::apply_visitor(deltaVisitor, network[i + 1])),
         network[i]);
   }
 
-  boost::apply_visitor(GradientVisitor(std::move(input),
-      std::move(boost::apply_visitor(deltaVisitor, network[1]))),
+  boost::apply_visitor(GradientVisitor(input,
+      boost::apply_visitor(deltaVisitor, network[1])),
       network.front());
 }
 
