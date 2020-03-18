@@ -370,7 +370,12 @@ if (NOT ENSMALLEN_FOUND)
       # Get the name of the directory.
       file (GLOB ENS_DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
           "${CMAKE_BINARY_DIR}/deps/ensmallen-[0-9]*.[0-9]*.[0-9]*")
-      list(FILTER ENS_DIRECTORIES EXCLUDE REGEX "ensmallen-.*\.tar\.gz")
+      # list(FILTER) is not available on 3.5 or older, but try to keep
+      # configuring without filtering the list anyway (it might work if only
+      # the file ensmallen-latest.tar.gz is present.
+      if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
+        list(FILTER ENS_DIRECTORIES EXCLUDE REGEX "ensmallen-.*\.tar\.gz")
+      endif ()
       list(LENGTH ENS_DIRECTORIES ENS_DIRECTORIES_LEN)
       if (ENS_DIRECTORIES_LEN EQUAL 1)
         list(GET ENS_DIRECTORIES 0 ENSMALLEN_INCLUDE_DIR)
@@ -408,6 +413,9 @@ endif ()
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.72.0" "1.72"
+  "1.71.0" "1.71"
+  "1.70.0" "1.70"
   "1.69.0" "1.69"
   "1.68.0" "1.68"
   "1.67.0" "1.67"
@@ -419,23 +427,14 @@ set(Boost_ADDITIONAL_VERSIONS
   "1.61.1" "1.61.0" "1.61"
   "1.60.1" "1.60.0" "1.60"
   "1.59.1" "1.59.0" "1.59"
-  "1.58.1" "1.58.0" "1.58"
-  "1.57.1" "1.57.0" "1.57"
-  "1.56.1" "1.56.0" "1.56"
-  "1.55.1" "1.55.0" "1.55"
-  "1.54.1" "1.54.0" "1.54"
-  "1.53.1" "1.53.0" "1.53"
-  "1.52.1" "1.52.0" "1.52"
-  "1.51.1" "1.51.0" "1.51"
-  "1.50.1" "1.50.0" "1.50"
-  "1.49.1" "1.49.0" "1.49")
+  "1.58.1" "1.58.0" "1.58")
 # Disable forced config-mode CMake search for Boost, which only imports targets
 # and does not set the variables that we need.
 #
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
 set(Boost_NO_BOOST_CMAKE 1)
-find_package(Boost 1.49
+find_package(Boost 1.58
     COMPONENTS
       program_options
       unit_test_framework

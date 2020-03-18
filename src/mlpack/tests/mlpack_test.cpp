@@ -14,11 +14,6 @@
 
 #include <boost/version.hpp>
 
-// We only need to do this for old Boost versions.
-#if BOOST_VERSION < 103600
-  #define BOOST_AUTO_TEST_MAIN
-#endif
-
 #if BOOST_VERSION >= 105900
   #include <boost/test/tree/visitor.hpp>
   #include <boost/test/tree/traverse.hpp>
