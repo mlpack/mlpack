@@ -41,7 +41,7 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     numFunctions(0),
     deterministic(true)
 {
-  /* Nothing to do here. */
+  Add<IdentityLayer<>>();
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
