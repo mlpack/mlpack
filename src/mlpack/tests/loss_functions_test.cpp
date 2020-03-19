@@ -28,9 +28,12 @@
 #include <mlpack/methods/ann/loss_functions/dice_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/log_cosh_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/hinge_embedding_loss.hpp>
+<<<<<<< HEAD
 #include <mlpack/methods/ann/loss_functions/cosine_embedding_loss.hpp>
+=======
+#include <mlpack/methods/ann/loss_functions/l1_loss.hpp>
+>>>>>>> Solving rebase issues
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
-#include <mlpack/methods/ann/init_rules/l1_loss.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
 #include <boost/test/unit_test.hpp>
