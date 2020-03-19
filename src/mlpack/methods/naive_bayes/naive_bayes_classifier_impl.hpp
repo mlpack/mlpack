@@ -228,8 +228,7 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
     ModelMatType rhs = -0.5 * arma::diagmat(invVar.col(i)) * diffs;
     arma::Mat<ElemType> exponents = arma::sum(diffs % rhs, 0);
     logLikelihoods.row(i) += (data.n_rows / -2.0 * log(2 * M_PI) - 0.5 *
-        arma::accu(arma::log(variances.col(i))) + exponents);  
-    
+        arma::accu(arma::log(variances.col(i))) + exponents);
   }
 }
 
@@ -342,7 +341,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
   }
 
   // Now calculate maximum probabilities for each point.
-  #pragma omp parallel for 
+  #pragma omp parallel for
   for (omp_size_t i = 0; i < data.n_cols; ++i)
   {
     arma::uword maxIndex = 0;
