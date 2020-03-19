@@ -256,11 +256,7 @@ int main()
     Compute the error between predictions and testLabels, 
     now that we have the desired predictions.
   */
-  size_t correct = 0;
-  for (size_t i = 0; i < testData.n_cols; i++)
-  {
-    correct = arma::accu(prediction == testLabels);
-  } 
+  size_t correct = arma::accu(prediction == testLabels);
   double classificationError = 1 - double(correct) / testData.n_cols;
 
   // Print out the classification error for the testing dataset.
