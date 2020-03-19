@@ -29,7 +29,8 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   LayerNameVisitor()
   {
   }
-  /*
+
+  /**
    * Return the name of the given layer of type AdaptiveMaxPooling as string.
    * 
    * @param Given layer of type AdaptiveMaxPooling.
@@ -40,7 +41,7 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
     return "adaptivemaxpooling";
   }
 
-  /*
+  /**
    * Return the name of the given layer of type AdaptiveMeanPooling as string.
    * 
    * @param Given layer of type AdaptiveMeanPooling.

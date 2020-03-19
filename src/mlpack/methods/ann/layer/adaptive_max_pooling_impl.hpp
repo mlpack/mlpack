@@ -28,8 +28,7 @@ template <typename InputDataType, typename OutputDataType>
 AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
     const size_t outputWidth,
     const size_t outputHeight) :
-    outputWidth(outputWidth),
-    outputHeight(outputHeight)
+    AdaptiveMaxPooling(std::tuple<size_t, size_t>(outputWidth, outputHeight))
 {
   // Nothing to do here.
 }
@@ -38,9 +37,10 @@ template <typename InputDataType, typename OutputDataType>
 AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
     const std::tuple<size_t, size_t> outputShape):
     outputWidth(std::get<0>(outputShape)),
-    outputHeight(std::get<1>(outputShape))
+    outputHeight(std::get<1>(outputShape)),
+    reset(false)
 {
-  // Nothing to do here.
+  poolingLayer = ann::MaxPooling<>(0, 0);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -48,7 +48,12 @@ template<typename eT>
 void AdaptiveMaxPooling<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
-  IntializeAdaptivePadding();
+  if (!reset)
+  {
+    IntializeAdaptivePadding();
+    reset = true;
+  }
+
   poolingLayer.Forward(input, output);
 }
 
@@ -70,6 +75,7 @@ void AdaptiveMaxPooling<InputDataType, OutputDataType>::serialize(
 {
   ar & BOOST_SERIALIZATION_NVP(outputWidth);
   ar & BOOST_SERIALIZATION_NVP(outputHeight);
+  ar & BOOST_SERIALIZATION_NVP(reset);
 
   if (version > 0)
     ar & BOOST_SERIALIZATION_NVP(poolingLayer);

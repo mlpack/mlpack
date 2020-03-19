@@ -28,15 +28,7 @@ template <typename InputDataType, typename OutputDataType>
 AdaptiveMeanPooling<InputDataType, OutputDataType>::AdaptiveMeanPooling(
     const size_t outputWidth,
     const size_t outputHeight) :
-    inSize(0),
-    outSize(0),
-    inputWidth(0),
-    inputHeight(0),
-    outputWidth(outputWidth),
-    outputHeight(outputHeight),
-    reset(false),
-    deterministic(false),
-    batchSize(0)
+    AdaptiveMeanPooling(std::tuple<size_t, size_t>(outputWidth, outputHeight))
 {
   // Nothing to do here.
 }
@@ -44,76 +36,49 @@ AdaptiveMeanPooling<InputDataType, OutputDataType>::AdaptiveMeanPooling(
 template <typename InputDataType, typename OutputDataType>
 AdaptiveMeanPooling<InputDataType, OutputDataType>::AdaptiveMeanPooling(
     const std::tuple<size_t, size_t> outputShape):
-    inSize(0),
-    outSize(0),
-    inputWidth(0),
-    inputHeight(0),
     outputWidth(std::get<0>(outputShape)),
     outputHeight(std::get<1>(outputShape)),
-    reset(false),
-    deterministic(false),
-    batchSize(0)
+    reset(false)
 {
-  // Nothing to do here.
+  poolingLayer = ann::MeanPooling<>(0, 0);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void AdaptiveMeanPooling<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
-  IntializeAdaptivePadding();
-  batchSize = input.n_cols;
-  inSize = input.n_elem / (inputWidth * inputHeight);
-  inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
-      inputWidth, inputHeight, batchSize * inSize, false, false);
-  outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,
-      batchSize * inSize);
-  for (size_t s = 0; s < inputTemp.n_slices; s++)
-    Pooling(inputTemp.slice(s), outputTemp.slice(s));
+  if (!reset)
+  {
+    IntializeAdaptivePadding();
+    reset = true;
+  }
 
-  output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem / batchSize,
-      batchSize);
-
-  outSize = batchSize * inSize;
+  poolingLayer.Forward(input, output);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void AdaptiveMeanPooling<InputDataType, OutputDataType>::Backward(
-  const arma::Mat<eT>&& /* input */,
-  arma::Mat<eT>&& gy,
-  arma::Mat<eT>&& g)
+  const arma::Mat<eT>& input,
+  arma::Mat<eT>& gy,
+  arma::Mat<eT>& g)
 {
-  arma::cube mappedError = arma::cube(gy.memptr(), outputWidth,
-      outputHeight, outSize, false, false);
-
-  gTemp = arma::zeros<arma::cube>(inputTemp.n_rows,
-      inputTemp.n_cols, inputTemp.n_slices);
-
-  for (size_t s = 0; s < mappedError.n_slices; s++)
-  {
-    Unpooling(inputTemp.slice(s), mappedError.slice(s), gTemp.slice(s));
-  }
-
-  g = arma::mat(gTemp.memptr(), gTemp.n_elem / batchSize, batchSize);
+  poolingLayer.Backward(input, gy, g);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void AdaptiveMeanPooling<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const unsigned int version)
 {
-  ar & BOOST_SERIALIZATION_NVP(kernelWidth);
-  ar & BOOST_SERIALIZATION_NVP(kernelHeight);
-  ar & BOOST_SERIALIZATION_NVP(strideWidth);
-  ar & BOOST_SERIALIZATION_NVP(strideHeight);
-  ar & BOOST_SERIALIZATION_NVP(batchSize);
-  ar & BOOST_SERIALIZATION_NVP(inputWidth);
-  ar & BOOST_SERIALIZATION_NVP(inputHeight);
   ar & BOOST_SERIALIZATION_NVP(outputWidth);
   ar & BOOST_SERIALIZATION_NVP(outputHeight);
+  ar & BOOST_SERIALIZATION_NVP(reset);
+
+  if (version > 0)
+    ar & BOOST_SERIALIZATION_NVP(poolingLayer);
 }
 
 } // namespace ann

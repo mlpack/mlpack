@@ -87,25 +87,25 @@ class AdaptiveMaxPooling
   //! Modify the delta.
   OutputDataType& Delta() { return poolingLayer.Delta(); }
 
-  //! Get the width.
+  //! Get the input width.
   size_t InputWidth() const { return poolingLayer.InputWidth(); }
-  //! Modify the width.
+  //! Modify the input width.
   size_t& InputWidth() { return poolingLayer.InputWidth(); }
 
-  //! Get the height.
+  //! Get the input height.
   size_t InputHeight() const { return poolingLayer.InputHeight(); }
-  //! Modify the height.
+  //! Modify the input height.
   size_t& InputHeight() { return poolingLayer.InputHeight(); }
 
-  //! Get the width.
+  //! Get the output width.
   size_t OutputWidth() const { return outputWidth; }
-  //! Modify the width.
-  size_t& OutputWidth() { return outputHeight; }
+  //! Modify the output width.
+  size_t& OutputWidth() { return outputWidth; }
 
-  //! Get the height.
-  size_t OutputHeight() const { return poolingLayer.OutputHeight(); }
-  //! Modify the height.
-  size_t& OutputHeight() { return poolingLayer.OutputHeight(); }
+  //! Get the output height.
+  size_t OutputHeight() const { return outputHeight; }
+  //! Modify the output height.
+  size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size.
   size_t InputSize() const { return poolingLayer.InputSize(); }
@@ -130,16 +130,18 @@ class AdaptiveMaxPooling
     poolingLayer.StrideHeight() = std::floor(poolingLayer.InputHeight() /
         outputHeight);
 
-    poolingLayer.KernelWidth() = poolingLayer.InputWidth() - (outputWidth - 1) *
-        poolingLayer.StrideWidth();
-    poolingLayer.KernelHeight() = poolingLayer.InputHeight() - (outputHeight - 1) *
-        poolingLayer.StrideHeight();
+    poolingLayer.KernelWidth() = poolingLayer.InputWidth() -
+        (outputWidth - 1) * poolingLayer.StrideWidth();
+    poolingLayer.KernelHeight() = poolingLayer.InputHeight() -
+        (outputHeight - 1) * poolingLayer.StrideHeight();
 
-    if (poolingLayer.KernelHeight() < 0 || poolingLayer.KernelWidth() < 0)
+    if (poolingLayer.KernelHeight() <= 0 || poolingLayer.KernelWidth() <= 0 ||
+        poolingLayer.StrideWidth() <= 0 || poolingLayer.StrideHeight() <= 0)
     {
       Log::Fatal << "Given output shape (" << outputWidth << ", "
         << outputHeight << ") is not possible for given input shape ("
-        << poolingLayer.InputWidth() <<", "<< poolingLayer.InputHeight() << ")."<< std::endl;
+        << poolingLayer.InputWidth() << ", " << poolingLayer.InputHeight()
+        << ")." << std::endl;
     }
   }
 
@@ -152,7 +154,9 @@ class AdaptiveMaxPooling
   //! Locally-stored output height.
   size_t outputHeight;
 
-}; // class MaxPooling
+  //! Locally-stored reset parameter used to initialize the layer once.
+  bool reset;
+}; // class AdaptiveMaxPooling
 
 } // namespace ann
 } // namespace mlpack

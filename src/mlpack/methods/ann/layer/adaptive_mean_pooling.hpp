@@ -60,7 +60,7 @@ class AdaptiveMeanPooling
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -72,56 +72,53 @@ class AdaptiveMeanPooling
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& input,
+                arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   //! Get the output parameter.
-  OutputDataType const &OutputParameter() const { return outputParameter; }
+  const OutputDataType& OutputParameter() const
+  { return poolingLayer.OutputParameter(); }
+
   //! Modify the output parameter.
-  OutputDataType &OutputParameter() { return outputParameter; }
+  OutputDataType& OutputParameter() { return poolingLayer.OutputParameter(); }
 
   //! Get the delta.
-  OutputDataType const &Delta() const { return delta; }
+  const OutputDataType& Delta() const { return poolingLayer.Delta(); }
   //! Modify the delta.
-  OutputDataType &Delta() { return delta; }
+  OutputDataType& Delta() { return poolingLayer.Delta(); }
 
-  //! Get the width.
-  size_t const &InputWidth() const { return inputWidth; }
-  //! Modify the width.
-  size_t &InputWidth() { return inputWidth; }
+  //! Get the input width.
+  size_t InputWidth() const { return poolingLayer.InputWidth(); }
+  //! Modify the input width.
+  size_t& InputWidth() { return poolingLayer.InputWidth(); }
 
-  //! Get the height.
-  size_t const &InputHeight() const { return inputHeight; }
-  //! Modify the height.
-  size_t &InputHeight() { return inputHeight; }
+  //! Get the input height.
+  size_t InputHeight() const { return poolingLayer.InputHeight(); }
+  //! Modify the input height.
+  size_t& InputHeight() { return poolingLayer.InputHeight(); }
 
-  //! Get the width.
-  size_t const &OutputWidth() const { return outputWidth; }
-  //! Modify the width.
-  size_t &OutputWidth() { return outputWidth; }
+  //! Get the output width.
+  size_t OutputWidth() const { return outputWidth; }
+  //! Modify the output width.
+  size_t& OutputWidth() { return outputWidth; }
 
-  //! Get the height.
-  size_t const &OutputHeight() const { return outputHeight; }
-  //! Modify the height.
-  size_t &OutputHeight() { return outputHeight; }
+  //! Get the output height.
+  size_t OutputHeight() const { return outputHeight; }
+  //! Modify the output height.
+  size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size.
-  size_t InputSize() const { return inSize; }
+  size_t InputSize() const { return poolingLayer.InputSize(); }
 
   //! Get the output size.
-  size_t OutputSize() const { return outSize; }
-
-  //! Get the value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool &Deterministic() { return deterministic; }
+  size_t OutputSize() const { return poolingLayer.OutputSize(); }
 
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int version);
 
  private:
   /**
@@ -129,101 +126,28 @@ class AdaptiveMeanPooling
    */
   void IntializeAdaptivePadding()
   {
-    strideWidth = std::floor(inputWidth / outputWidth);
-    strideHeight = std::floor(inputHeight / outputHeight);
+    poolingLayer.StrideWidth() = std::floor(poolingLayer.InputWidth() /
+        outputWidth);
+    poolingLayer.StrideHeight() = std::floor(poolingLayer.InputHeight() /
+        outputHeight);
 
-    kernelWidth = inputWidth - (outputWidth - 1) * strideWidth;
-    kernelHeight = inputHeight - (outputHeight - 1) * strideHeight;
+    poolingLayer.KernelWidth() = poolingLayer.InputWidth() -
+        (outputWidth - 1) * poolingLayer.StrideWidth();
+    poolingLayer.KernelHeight() = poolingLayer.InputHeight() -
+        (outputHeight - 1) * poolingLayer.StrideHeight();
 
-    if (kernelHeight < 0 || kernelWidth < 0)
+    if (poolingLayer.KernelHeight() <= 0 || poolingLayer.KernelWidth() <= 0 ||
+        poolingLayer.StrideWidth() <= 0 || poolingLayer.StrideHeight() <= 0)
     {
       Log::Fatal << "Given output shape (" << outputWidth << ", "
         << outputHeight << ") is not possible for given input shape ("
-        << inputWidth <<", "<< inputHeight << ")."<< std::endl;
+        << poolingLayer.InputWidth() << ", " << poolingLayer.InputHeight()
+        << ")." << std::endl;
     }
   }
 
-  /**
-   * Apply pooling to the input and store the results.
-   *
-   * @param input The input to be apply the pooling rule.
-   * @param output The pooled result.
-   */
-  template<typename eT>
-  void Pooling(const arma::Mat<eT>& input, arma::Mat<eT>& output)
-  {
-    const size_t rStep = kernelWidth;
-    const size_t cStep = kernelHeight;
-
-    for (size_t j = 0, colidx = 0; j < output.n_cols;
-         ++j, colidx += strideHeight)
-    {
-      for (size_t i = 0, rowidx = 0; i < output.n_rows;
-           ++i, rowidx += strideWidth)
-      {
-        arma::mat subInput = input(
-            arma::span(rowidx, rowidx + rStep - 1),
-            arma::span(colidx, colidx + cStep - 1));
-
-        output(i, j) = arma::mean(arma::mean(subInput));
-      }
-    }
-  }
-
-  /**
-   * Apply unpooling to the input and store the results.
-   *
-   * @param input The input to be apply the unpooling rule.
-   * @param output The pooled result.
-   */
-  template<typename eT>
-  void Unpooling(const arma::Mat<eT>& input,
-                 const arma::Mat<eT>& error,
-                 arma::Mat<eT>& output)
-  {
-    const size_t rStep = input.n_rows / error.n_rows;
-    const size_t cStep = input.n_cols / error.n_cols;
-
-    arma::Mat<eT> unpooledError;
-    for (size_t j = 0; j < input.n_cols - cStep; j += cStep)
-    {
-      for (size_t i = 0; i < input.n_rows - rStep; i += rStep)
-      {
-        const arma::Mat<eT>& inputArea = input(arma::span(i, i + rStep - 1),
-            arma::span(j, j + cStep - 1));
-
-        unpooledError = arma::Mat<eT>(inputArea.n_rows, inputArea.n_cols);
-        unpooledError.fill(error(i / rStep, j / cStep) / inputArea.n_elem);
-
-        output(arma::span(i, i + rStep - 1),
-            arma::span(j, j + cStep - 1)) += unpooledError;
-      }
-    }
-  }
-
-  //! Locally-stored width of the pooling window.
-  size_t kernelWidth;
-
-  //! Locally-stored height of the pooling window.
-  size_t kernelHeight;
-
-  //! Locally-stored width of the stride operation.
-  size_t strideWidth;
-
-  //! Locally-stored height of the stride operation.
-  size_t strideHeight;
-
-  //! Locally-stored number of input channels.
-  size_t inSize;
-
-  //! Locally-stored number of output channels.
-  size_t outSize;
-
-  //! Locally-stored input width.
-  size_t inputWidth;
-
-  //! Locally-stored input height.
-  size_t inputHeight;
+  //! Locally stored MeanPooling Object.
+  ann::MeanPooling<> poolingLayer;
 
   //! Locally-stored output width.
   size_t outputWidth;
@@ -231,32 +155,8 @@ class AdaptiveMeanPooling
   //! Locally-stored output height.
   size_t outputHeight;
 
-  //! Locally-stored reset parameter used to initialize the module once.
+  //! Locally-stored reset parameter used to initialize the layer once.
   bool reset;
-
-  //! If true use maximum a posteriori during the forward pass.
-  bool deterministic;
-
-  //! Locally-stored number of input units.
-  size_t batchSize;
-
-  //! Locally-stored output parameter.
-  arma::cube outputTemp;
-
-  //! Locally-stored transformed input parameter.
-  arma::cube inputTemp;
-
-  //! Locally-stored transformed output parameter.
-  arma::cube gTemp;
-
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored gradient object.
-  OutputDataType gradient;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
 }; // class AdaptiveMeanPooling
 
 } // namespace ann
