@@ -171,6 +171,74 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
   BOOST_REQUIRE(converged);
 }
 
+//! Test DQN in Cart Pole task with Episodic Replay.
+BOOST_AUTO_TEST_CASE(CartPoleWithDQNEpisodicReplay)
+{
+  // Set up the network.
+  FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
+      GaussianInitialization(0, 0.001));
+  model.Add<Linear<>>(4, 128);
+  model.Add<ReLULayer<>>();
+  model.Add<Linear<>>(128, 128);
+  model.Add<ReLULayer<>>();
+  model.Add<Linear<>>(128, 2);
+
+  // Set up the policy and replay method.
+  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
+
+  TrainingConfig config;
+  config.StepSize() = 0.01;
+  config.Discount() = 0.9;
+  config.TargetNetworkSyncInterval() = 100;
+  config.ExplorationSteps() = 100;
+  config.DoubleQLearning() = false;
+  config.StepLimit() = 200;
+  EpisodicReplay<CartPole> replayMethod(10, config.StepLimit());
+
+  // Set up DQN agent.
+  QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy),
+      decltype(replayMethod)>
+      agent(std::move(config), std::move(model), std::move(policy),
+          std::move(replayMethod));
+
+  arma::running_stat<double> averageReturn;
+  size_t episodes = 0;
+  bool converged = true;
+  while (true)
+  {
+    double episodeReturn = agent.Episode();
+    averageReturn(episodeReturn);
+    episodes += 1;
+
+    if (episodes > 1000)
+    {
+      Log::Debug << "Cart Pole with DQN failed." << std::endl;
+      converged = false;
+      break;
+    }
+
+    /**
+     * Reaching running average return 35 is enough to show it works.
+     * For the speed of the test case, I didn't set high criterion.
+     */
+    Log::Debug << "Average return: " << averageReturn.mean()
+        << " Episode return: " << episodeReturn << std::endl;
+    if (averageReturn.mean() > 35)
+    {
+      agent.Deterministic() = true;
+      arma::running_stat<double> testReturn;
+      for (size_t i = 0; i < 10; ++i)
+        testReturn(agent.Episode());
+
+      Log::Debug << "Average return in deterministic test: "
+          << testReturn.mean() << std::endl;
+      break;
+    }
+  }
+
+  BOOST_REQUIRE(converged);
+}
+
 //! Test Double DQN in Cart Pole task.
 BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
 {

@@ -2,7 +2,7 @@
 #define MLPACK_METHODS_RL_REPLAY_EPISODIC_REPLAY_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <random>
+#include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
 namespace rl {
@@ -29,6 +29,7 @@ class EpisodicReplay
   EpisodicReplay():
       capacity(0),
       position(0),
+      max_episode_len(0),
       full(false)
   { /* Nothing to do here. */ }
 
@@ -39,16 +40,19 @@ class EpisodicReplay
   */
 
   EpisodicReplay(const size_t capacity,
+                 const size_t max_episode_len,
                  const size_t dimension = StateType::dimension) :
       capacity(capacity),
-      states.resize(capacity),
-      next_states.resize(capacity),
-      rewards.resize(capacity),
-      actions.resize(capacity),
-      isTerminal.resize(capacity),
+      max_episode_len(max_episode_len),
       position(0),
       full(false)
-  { /* Nothing to do here. */ }
+  {
+    states.resize(capacity);
+    next_states.resize(capacity);
+    rewards.resize(capacity);
+    actions.resize(capacity);
+    isTerminal.resize(capacity); 
+  }
 
 
   /**
@@ -68,9 +72,9 @@ class EpisodicReplay
     states[position].push_back(state.Encode());
     actions[position].push_back(action);
     rewards[position].push_back(reward);
-    nextStates[position].push_back(nextState.Encode());
+    next_states[position].push_back(nextState.Encode());
     isTerminal[position].push_back(isEnd);
-    if(isTerminal)
+    if(isEnd||isTerminal[position].size()==max_episode_len)
     {
       position++;
     }
@@ -98,8 +102,13 @@ class EpisodicReplay
                       arma::icolvec& isTerminal)
   {
     size_t upperBound = full ? capacity : position;
-    srand(time(NULL));
-    int episodeNum = rand()%(upperBound);
+    int lo = 0;
+    int high = upperBound;
+    if(!upperBound)
+    {
+      high = 1;
+    }
+    int episodeNum = math::RandInt(lo,high);
     std::vector<arma::colvec> temp = states[episodeNum];
     int i = 0;
     for(auto state : temp)
@@ -114,7 +123,7 @@ class EpisodicReplay
       }
     }
     episodeActions = arma::conv_to<arma::icolvec>::from(actions[episodeNum]);
-    episodeRewards = arma::conv_to<arma::icolvec>::from(rewards[episodeNum]);
+    episodeRewards = arma::conv_to<arma::colvec>::from(rewards[episodeNum]);
     temp = next_states[episodeNum];
     i = 0;
     for(auto state : temp)
@@ -125,7 +134,7 @@ class EpisodicReplay
         i++;
       }else
       {
-        episodeNextStates = arma::join_rows(episodeStates, state);
+        episodeNextStates = arma::join_rows(episodeNextStates, state);
       }
     }
     isTerminal = arma::conv_to<arma::icolvec>::from(this->isTerminal[episodeNum]);
@@ -152,13 +161,17 @@ class EpisodicReplay
   * @param isTerminal Indicate whether corresponding next state is terminal
   *        state.
   */
-  void Recent_Episode(arma::mat& episodeStates,
+  void Sample(arma::mat& episodeStates,
                       arma::icolvec& episodeActions,
                       arma::colvec& episodeRewards,
                       arma::mat& episodeNextStates,
                       arma::icolvec& isTerminal)
   {
-    int episodeNum = position;
+    int episodeNum=0;
+    if(states[position].size()==0)
+      episodeNum = position-1;
+    else
+      episodeNum = position;
     std::vector<arma::colvec> temp = states[episodeNum];
     int i = 0;
     for(auto state : temp)
@@ -173,7 +186,7 @@ class EpisodicReplay
       }
     }
     episodeActions = arma::conv_to<arma::icolvec>::from(actions[episodeNum]);
-    episodeRewards = arma::conv_to<arma::icolvec>::from(rewards[episodeNum]);
+    episodeRewards = arma::conv_to<arma::colvec>::from(rewards[episodeNum]);
     temp = next_states[episodeNum];
     i = 0;
     for(auto state : temp)
@@ -184,10 +197,18 @@ class EpisodicReplay
         i++;
       }else
       {
-        episodeNextStates = arma::join_rows(episodeStates, state);
+        episodeNextStates = arma::join_rows(episodeNextStates, state);
       }
     }
     isTerminal = arma::conv_to<arma::icolvec>::from(this->isTerminal[episodeNum]);	
+  }
+
+  void Update(arma::mat /* target */,
+              arma::icolvec /* sampledActions */,
+              arma::mat /* nextActionValues */,
+              arma::mat& /* gradients */)
+  {
+    /* Do nothing for random replay. */
   }
 
 
@@ -197,6 +218,8 @@ class EpisodicReplay
 
   //! Indicate the position to store new episode.
   size_t position;
+
+  size_t max_episode_len;
 
   //! Locally-stored encoded previous states.
   std::vector< std::vector< arma::colvec> > states;
