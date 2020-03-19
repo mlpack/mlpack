@@ -55,7 +55,7 @@ class NaiveKernelRule
       // Evaluate the kernel on these two points.
       kernelMatrix(i, j) = kernel.Evaluate(data.unsafe_col(i),
                                            data.unsafe_col(j));
-      kernelMatrix(j,i) = kernelMatrix(i, j);
+      kernelMatrix(j, i) = kernelMatrix(i, j);
       // Copy to the lower triangular part of the matrix.
     }
   }
@@ -94,4 +94,3 @@ class NaiveKernelRule
 } // namespace mlpack
 
 #endif
-
