@@ -306,18 +306,17 @@ BOOST_AUTO_TEST_CASE(EpisodicReplayTest)
   BOOST_REQUIRE_EQUAL(3, replay.Size());
 
   //! Sample several times, the original record shouldn't appear
-  // for (size_t i = 0; i < 30; ++i)
-  // {
-  //   replay.Random_Episode(sampledState, sampledAction, sampledReward, sampledNextState,
-  //       sampledTerminal);
+  for (size_t i = 0; i < 30; ++i)
+  {
+    replay.Random_Episode(sampledState, sampledAction, sampledReward, sampledNextState,
+        sampledTerminal);
 
-  //   CheckMatrices(state.Encode(), sampledNextState);
-  //   CheckMatrices(nextState.Encode(), sampledState);
-  //   BOOST_REQUIRE_EQUAL(true, arma::as_scalar(sampledTerminal));
-  // }
+    CheckMatrices(state.Encode(), sampledNextState);
+    CheckMatrices(nextState.Encode(), sampledState);
+    BOOST_REQUIRE_EQUAL(true, arma::as_scalar(sampledTerminal));
+  }
 
   // Adding one more episode with two transition and on Sample should recieve this episode back.
-  // also should get only 3 states back and not 5
   arma::mat sampledStates;
   arma::icolvec sampledActions(3);
   arma::colvec sampledRewards(3);
