@@ -318,18 +318,14 @@ BOOST_AUTO_TEST_CASE(EpisodicReplayTest)
 
   // Adding one more episode with two transition and on Sample should recieve this episode back.
   arma::mat sampledStates;
-  arma::icolvec sampledActions(3);
-  arma::colvec sampledRewards(3);
-  arma::mat sampledNextStates;
-  arma::icolvec sampledTerminals(3);
-  for (size_t i = 0; i < 3; ++i){
+  for (size_t i = 0; i < 3; ++i)
+  {
     replay.Store(nextState, action, reward, state, false);
-    sampledActions(i) = action;
-    sampledRewards(i) = reward;
-    sampledTerminals(i) = false;
-    if(i==0){
+    if(i==0)
+    {
       sampledStates = nextState.Encode();
-    }else if(i<3){
+    }else if(i<3)
+    {
       sampledStates = arma::join_rows(sampledStates,nextState.Encode());
     }
   }
