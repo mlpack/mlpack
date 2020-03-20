@@ -54,6 +54,9 @@
 
   * Bump minimum Boost version to 1.58 (#2305).
 
+  * Refactor STB support so HAS_STB macro is not needed when compiling against
+    mlpack (#2312).
+
   * Add Hard Shrink Activation Function (#2186).
 
   * Add Soft Shrink Activation Function (#2174).
