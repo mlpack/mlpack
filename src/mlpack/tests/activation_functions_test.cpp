@@ -133,7 +133,7 @@ void CheckHardTanHActivationCorrect(const arma::colvec input,
 
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
-  htf.Forward(std::move(input), std::move(activations));
+  htf.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
@@ -157,7 +157,7 @@ void CheckHardTanHDerivativeCorrect(const arma::colvec input,
 
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
-  htf.Backward(std::move(input), std::move(error), std::move(derivatives));
+  htf.Backward(input, error, derivatives);
 
   for (size_t i = 0; i < derivatives.n_elem; i++)
   {
@@ -179,7 +179,7 @@ void CheckLeakyReLUActivationCorrect(const arma::colvec input,
 
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
-  lrf.Forward(std::move(input), std::move(activations));
+  lrf.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
@@ -204,7 +204,7 @@ void CheckLeakyReLUDerivativeCorrect(const arma::colvec input,
 
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
-  lrf.Backward(std::move(input), std::move(error), std::move(derivatives));
+  lrf.Backward(input, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
@@ -226,7 +226,7 @@ void CheckELUActivationCorrect(const arma::colvec input,
 
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
-  lrf.Forward(std::move(input), std::move(activations));
+  lrf.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
@@ -251,9 +251,8 @@ void CheckELUDerivativeCorrect(const arma::colvec input,
 
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
-  lrf.Forward(std::move(input), std::move(activations));
-  lrf.Backward(std::move(activations), std::move(error),
-      std::move(derivatives));
+  lrf.Forward(input, activations);
+  lrf.Backward(activations, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
@@ -275,7 +274,7 @@ void CheckPReLUActivationCorrect(const arma::colvec input,
 
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
-  prelu.Forward(std::move(input), std::move(activations));
+  prelu.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
@@ -301,7 +300,7 @@ void CheckPReLUDerivativeCorrect(const arma::colvec input,
 
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
-  prelu.Backward(std::move(input), std::move(error), std::move(derivatives));
+  prelu.Backward(input, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
@@ -311,7 +310,7 @@ void CheckPReLUDerivativeCorrect(const arma::colvec input,
 /*
  * Implementation of the PReLU activation function gradient test.
  * The function is implemented as PReLU layer in the file
- * perametric_relu.hpp
+ * parametric_relu.hpp
  *
  * @param input Input data used for evaluating the PReLU activation
  *   function.
@@ -327,10 +326,102 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
 
   // This error vector will be set to 1 to get the gradient.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
-  prelu.Gradient(std::move(input), std::move(error), std::move(gradient));
+  prelu.Gradient(input, error, gradient);
   BOOST_REQUIRE_EQUAL(gradient.n_rows, 1);
   BOOST_REQUIRE_EQUAL(gradient.n_cols, 1);
   BOOST_REQUIRE_CLOSE(gradient(0), target(0), 1e-3);
+}
+
+/*
+ * Implementation of the Hard Shrink activation function test. The function is
+ * implemented as Hard Shrink layer in the file hardshrink.hpp
+ *
+ * @param input Input data used for evaluating the Hard Shrink activation function.
+ * @param target Target data used to evaluate the Hard Shrink activation.
+ */
+void CheckHardShrinkActivationCorrect(const arma::colvec input,
+                                     const arma::colvec target)
+{
+  HardShrink<> hardshrink;
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  hardshrink.Forward(input, activations);
+  for (size_t i = 0; i < activations.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
+  }
+}
+
+/*
+ * Implementation of the HardShrink activation function derivative test.
+ * The derivative function is implemented as HardShrink layer in the file
+ * hardshrink.hpp
+ *
+ * @param input Input data used for evaluating the HardShrink activation function.
+ * @param target Target data used to evaluate the HardShrink activation.
+ */
+void CheckHardShrinkDerivativeCorrect(const arma::colvec input,
+                                     const arma::colvec target)
+{
+  HardShrink<> hardshrink;
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  hardshrink.Backward(input, error, derivatives);
+  for (size_t i = 0; i < derivatives.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
+  }
+}
+
+/*
+ * Implementation of the Soft Shrink activation function test. The function is
+ * implemented as Soft Shrink layer in the file softshrink.hpp.
+ *
+ * @param input Input data used for evaluating the Soft Shrink activation function.
+ * @param target Target data used to evaluate the Soft Shrink activation.
+ */
+void CheckSoftShrinkActivationCorrect(const arma::colvec input,
+                                      const arma::colvec target)
+{
+  SoftShrink<> softshrink;
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  softshrink.Forward(input, activations);
+  for (size_t i = 0; i < activations.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
+  }
+}
+
+/*
+ * Implementation of the Soft Shrink activation function derivative test.
+ * The derivative function is implemented as Soft Shrink layer in the file
+ * softshrink.hpp
+ *
+ * @param input Input data used for evaluating the Soft Shrink activation function.
+ * @param target Target data used to evaluate the Soft Shrink activation.
+ */
+void CheckSoftShrinkDerivativeCorrect(const arma::colvec input,
+                                      const arma::colvec target)
+{
+  SoftShrink<> softshrink;
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  softshrink.Backward(input, error, derivatives);
+  for (size_t i = 0; i < derivatives.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
+  }
 }
 
 /*
@@ -345,7 +436,7 @@ BOOST_AUTO_TEST_CASE(SELUFunctionNormalizedTest)
 
   SELU selu;
 
-  selu.Forward(std::move(input), output);
+  selu.Forward(input, output);
 
   BOOST_REQUIRE_LE(arma::as_scalar(arma::abs(arma::mean(input) -
       arma::mean(output))), 0.1);
@@ -367,7 +458,7 @@ BOOST_AUTO_TEST_CASE(SELUFunctionUnnormalizedTest)
 
   SELU selu;
 
-  selu.Forward(std::move(input), output);
+  selu.Forward(input, output);
 
   BOOST_REQUIRE_GE(arma::as_scalar(arma::abs(arma::mean(input) -
       arma::mean(output))), 0.1);
@@ -391,18 +482,16 @@ BOOST_AUTO_TEST_CASE(SELUFunctionDerivativeTest)
 
   SELU selu;
 
-  selu.Forward(std::move(input), activations);
-  selu.Backward(std::move(activations), std::move(error),
-      std::move(derivatives));
+  selu.Forward(input, activations);
+  selu.Backward(activations, error, derivatives);
 
   BOOST_REQUIRE_LE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
       selu.Lambda())), 10e-4);
 
   input.fill(-1);
 
-  selu.Forward(std::move(input), activations);
-  selu.Backward(std::move(activations), std::move(error),
-      std::move(derivatives));
+  selu.Forward(input, activations);
+  selu.Backward(activations, error, derivatives);
 
   BOOST_REQUIRE_LE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
       selu.Lambda() * selu.Alpha() - arma::mean(activations))), 10e-4);
@@ -582,12 +671,11 @@ BOOST_AUTO_TEST_CASE(CReLUFunctionTest)
   CReLU<> crelu;
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
-  crelu.Forward(std::move(activationData), std::move(activations));
+  crelu.Forward(activationData, activations);
   arma::colvec derivatives;
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(desiredActivations.n_elem);
-  crelu.Backward(std::move(desiredActivations), std::move(error),
-        std::move(derivatives));
+  crelu.Backward(desiredActivations, error, derivatives);
   for (size_t i = 0; i < activations.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), desiredActivations.at(i), 1e-3);
@@ -676,9 +764,9 @@ BOOST_AUTO_TEST_CASE(LiSHTFunctionTest)
                                          1.1150033 0.0");
 
   CheckActivationCorrect<LiSHTFunction>(activationData,
-                                       desiredActivations);
+                                        desiredActivations);
   CheckDerivativeCorrect<LiSHTFunction>(desiredActivations,
-                                       desiredDerivatives);
+                                        desiredDerivatives);
 }
 
 /**
@@ -708,6 +796,36 @@ BOOST_AUTO_TEST_CASE(GELUFunctionTest)
                                        desiredActivations);
   CheckDerivativeCorrect<GELUFunction>(desiredActivations,
                                         desiredDerivatives);
+}
+
+/**
+ * Basic test of the Hard Shrink function.
+ */
+BOOST_AUTO_TEST_CASE(HardShrinkFunctionTest)
+{
+  const arma::colvec desiredActivations("-2 3.2 4.5 -100.2 1 -1 2 0");
+
+  const arma::colvec desiredDerivatives("1 1 1 1 1 1 1 0");
+
+  CheckHardShrinkActivationCorrect(activationData,
+                                   desiredActivations);
+  CheckHardShrinkDerivativeCorrect(desiredActivations,
+                                   desiredDerivatives);
+}
+
+/**
+ * Basic test of the Soft Shrink function.
+ */
+BOOST_AUTO_TEST_CASE(SoftShrinkFunctionTest)
+{
+  const arma::colvec desiredActivations("-1.5 2.7 4 -99.7 0.5 -0.5 1.5 0");
+
+  const arma::colvec desiredDerivatives("1 1 1 1 1 1 1 0");
+
+  CheckSoftShrinkActivationCorrect(activationData,
+                                   desiredActivations);
+  CheckSoftShrinkDerivativeCorrect(desiredActivations,
+                                   desiredDerivatives);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

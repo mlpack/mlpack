@@ -94,6 +94,7 @@ add_executable(mlpack_test
   regularized_svd_test.cpp
   reward_clipping_test.cpp
   rl_components_test.cpp
+  scaling_test.cpp
   serialization.cpp
   serialization.hpp
   serialization_test.cpp
@@ -104,6 +105,7 @@ add_executable(mlpack_test
   sparse_coding_test.cpp
   spill_tree_test.cpp
   split_data_test.cpp
+  string_encoding_test.cpp
   sumtree_test.cpp
   svd_batch_test.cpp
   svd_incremental_test.cpp
@@ -114,7 +116,6 @@ add_executable(mlpack_test
   timer_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
-  scaling_test.cpp
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
@@ -185,11 +186,11 @@ add_custom_command(TARGET mlpack_test
 )
 add_custom_command(TARGET mlpack_test
   POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E tar xjpf mnist_first250_training_4s_and_9s.tar.bz2
-  COMMAND ${CMAKE_COMMAND} -E tar xjpf digits_train.tar.bz2
-  COMMAND ${CMAKE_COMMAND} -E tar xjpf digits_test.tar.bz2
-  COMMAND ${CMAKE_COMMAND} -E tar xjpf digits_train_label.tar.bz2
-  COMMAND ${CMAKE_COMMAND} -E tar xjpf digits_test_label.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjf mnist_first250_training_4s_and_9s.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjf digits_train.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjf digits_test.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjf digits_train_label.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjf digits_test_label.tar.bz2
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 )
 

@@ -291,7 +291,6 @@ bool Load(const std::string& filename,
 /**
  * Image load/save interfaces.
  */
-#ifdef HAS_STB
 
 /**
  * Load the image file into the given matrix.
@@ -300,15 +299,13 @@ bool Load(const std::string& filename,
  * @param matrix Matrix to load the image into.
  * @param info An object of ImageInfo class.
  * @param fatal If an error should be reported as fatal (default false).
- * @param transpose If true, transpose the matrix after loading.
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true);
+          const bool fatal = false);
 
 /**
  * Load the image file into the given matrix.
@@ -324,10 +321,13 @@ template<typename eT>
 bool Load(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true);
+          const bool fatal = false);
 
-#endif // HAS_STB.
+// Implementation found in load_image.cpp.
+bool LoadImage(const std::string& filename,
+               arma::Mat<unsigned char>& matrix,
+               ImageInfo& info,
+               const bool fatal = false);
 
 } // namespace data
 } // namespace mlpack

@@ -330,39 +330,46 @@ mlpack's image saving/loading functionality is based on [stb/](https://github.co
 
 Image utilities supports loading and saving of images.
 
-It supports filetypes "jpg", "png", "tga","bmp", "psd", "gif", "hdr", "pic", "pnm" for loading and "jpg", "png", "tga", "bmp", "hdr" for saving.
+It supports filetypes "jpg", "png", "tga", "bmp", "psd", "gif", "hdr", "pic",
+"pnm" for loading and "jpg", "png", "tga", "bmp", "hdr" for saving.
 
-The datatype associated is unsigned char to support RGB values in the range 1-255. To feed data into the network typecast of `arma::Mat` may be required. Images are stored in matrix as (width * height * channels, NumberOfImages). Therefore imageMatrix.col(0) would be the first image if images are loaded in imageMatrix.
+The datatype associated is unsigned char to support RGB values in the range
+1-255. To feed data into the network typecast of `arma::Mat` may be required.
+Images are stored in the matrix as (width * height * channels, NumberOfImages).
+Therefore @c imageMatrix.col(0) would be the first image if images are loaded in
+@c imageMatrix.
 
 @section imageinfo_api_imagetut Accessing Metadata of Images: ImageInfo
 
 ImageInfo class contains the metadata of the images.
 @code
 ImageInfo(const size_t width,
-            const size_t height,
-            const size_t channels);
+          const size_t height,
+          const size_t channels,
+          const size_t quality = 90);
 @endcode
-Other public memebers include:
-  - flipVertical Flip the image vertical upon loading.
-  - quality Compression of the image if saved as jpg (0-100).
+
+The @c quality member denotes the compression of the image if it is saved as
+`jpg`; it takes values from 0 to 100.
 
 @section load_api_imagetut Loading Images in C++
 
-
 Standalone loading of images.
+
 @code
-   template<typename eT>
-   bool Load(const std::string& filename,
-             arma::Mat<eT>& matrix,
-             ImageInfo& info,
-             const bool fatal,
-             const bool transpose);
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal);
 @endcode
 
-Loading a test image. It also fills up the ImageInfo class object.
+The example below loads a test image. It also fills up the ImageInfo class
+object.
+
 @code
 data::ImageInfo info;
-data::Load("test_image.png", matrix, info, false, true);
+data::Load("test_image.png", matrix, info, false);
 @endcode
 
 ImageInfo requires height, width, number of channels of the image.
@@ -377,18 +384,17 @@ More than one image can be loaded into the same matrix.
 Loading multiple images:
 
 @code
-   template<typename eT>
-   bool Load(const std::vector<std::string>& files,
-             arma::Mat<eT>& matrix,
-             ImageInfo& info,
-             const bool fatal,
-             const bool transpose);
+template<typename eT>
+bool Load(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal);
 @endcode
 
 @code
-  data::ImageInfo info;
-  std::vector<std::string>> files{"test_image1.bmp","test_image2.bmp"};
-  data::load(files, matrix, info, false, true);
+data::ImageInfo info;
+std::vector<std::string>> files{"test_image1.bmp","test_image2.bmp"};
+data::Load(files, matrix, info, false);
 @endcode
 
 @section save_api_imagetut Saving Images in C++

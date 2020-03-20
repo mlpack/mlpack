@@ -7,18 +7,26 @@ set(SOURCES
   dice_loss_impl.hpp
   earth_mover_distance.hpp
   earth_mover_distance_impl.hpp
+  huber_loss.hpp
+  huber_loss_impl.hpp
   kl_divergence.hpp
   kl_divergence_impl.hpp
-  mean_squared_error.hpp
-  mean_squared_error_impl.hpp
   mean_bias_error.hpp
   mean_bias_error_impl.hpp
+  mean_squared_error.hpp
+  mean_squared_error_impl.hpp
+  mean_squared_logarithmic_error.hpp
+  mean_squared_logarithmic_error_impl.hpp
   negative_log_likelihood.hpp
   negative_log_likelihood_impl.hpp
+  log_cosh_loss.hpp
+  log_cosh_loss_impl.hpp
   reconstruction_loss.hpp
   reconstruction_loss_impl.hpp
   sigmoid_cross_entropy_error.hpp
   sigmoid_cross_entropy_error_impl.hpp
+  hinge_embedding_loss.hpp
+  hinge_embedding_loss_impl.hpp
 )
 
 # Add directory name to sources.

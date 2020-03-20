@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
     config.Discount() = 0.9;
     config.TargetNetworkSyncInterval() = 100;
     config.ExplorationSteps() = 100;
-    config.DoubleQLearning() = false;
+    config.DoubleQLearning() = true;
     config.StepLimit() = 200;
 
     // Set up the DQN agent.
@@ -215,7 +215,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
       averageReturn(episodeReturn);
 
       /**
-       * Reaching running average return 35 is enough to show it works.
+       * Reaching running average return 40 is enough to show it works.
        * For the speed of the test case, I didn't set high criterion.
        */
       Log::Debug << "Average return: " << averageReturn.mean()
