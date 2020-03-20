@@ -69,27 +69,7 @@ BOOST_AUTO_TEST_CASE(SaveImageAPITest)
   BOOST_REQUIRE_EQUAL(im1.n_rows, im2.n_rows);
   for (size_t i = 0; i < im1.n_elem; ++i)
     BOOST_REQUIRE_EQUAL(im1[i], im2[i]);
-}
-
-/**
- * Test if the image is saved correctly using API for transpose.
- */
-BOOST_AUTO_TEST_CASE(SaveImageTransposeAPITest)
-{
-  data::ImageInfo info(5, 5, 3, 90);
-
-  arma::Mat<unsigned char> im1;
-  size_t dimension = info.Width() * info.Height() * info.Channels();
-  im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
-  BOOST_REQUIRE(data::Save("APITest.bmp", im1, info, false, false) == true);
-
-  arma::Mat<unsigned char> im2;
-  BOOST_REQUIRE(data::Load("APITest.bmp", im2, info, false, false) == true);
-
-  BOOST_REQUIRE_EQUAL(im1.n_cols, im2.n_cols);
-  BOOST_REQUIRE_EQUAL(im1.n_rows, im2.n_rows);
-  for (size_t i = 0; i < im1.n_elem; ++i)
-    BOOST_REQUIRE_EQUAL(im1[i], im2[i]);
+  remove("APITest.bmp");
 }
 
 /**
@@ -101,32 +81,9 @@ BOOST_AUTO_TEST_CASE(LoadVectorImageAPITest)
   arma::Mat<unsigned char> matrix;
   data::ImageInfo info;
   std::vector<std::string> files = {"test_image.png", "test_image.png"};
-  BOOST_REQUIRE(data::Load(files, matrix, info, false,
-      true) == true);
+  BOOST_REQUIRE(data::Load(files, matrix, info, false) == true);
   BOOST_REQUIRE_EQUAL(matrix.n_rows, 50 * 50 * 3); // width * height * channels.
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 2);
-}
-
-/**
- * Test if the image is saved correctly using vector saving API for transpose.
- */
-BOOST_AUTO_TEST_CASE(SaveImageVectorAPITest)
-{
-  data::ImageInfo info(5, 5, 3);
-
-  arma::Mat<unsigned char> im1;
-  size_t dimension = info.Width() * info.Height() * info.Channels();
-  im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 2);
-  std::vector<std::string> files = {"APITest1.bmp", "APITest2.bmp"};
-  BOOST_REQUIRE(data::Save(files, im1, info, false, false) == true);
-
-  arma::Mat<unsigned char> im2;
-  BOOST_REQUIRE(data::Load(files, im2, info, false, false) == true);
-
-  BOOST_REQUIRE_EQUAL(im1.n_cols, im2.n_cols);
-  BOOST_REQUIRE_EQUAL(im1.n_rows, im2.n_rows);
-  for (size_t i = 0; i < im1.n_elem; ++i)
-    BOOST_REQUIRE_EQUAL(im1[i], im2[i]);
 }
 
 /**
@@ -140,15 +97,16 @@ BOOST_AUTO_TEST_CASE(SaveImageMatAPITest)
   size_t dimension = info.Width() * info.Height() * info.Channels();
   im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
   arma::mat input = arma::conv_to<arma::mat>::from(im1);
-  BOOST_REQUIRE(Save("APITest.bmp", input, info, false, false) == true);
+  BOOST_REQUIRE(Save("APITest.bmp", input, info, false) == true);
 
   arma::mat output;
-  BOOST_REQUIRE(Load("APITest.bmp", output, info, false, false) == true);
+  BOOST_REQUIRE(Load("APITest.bmp", output, info, false) == true);
 
   BOOST_REQUIRE_EQUAL(input.n_cols, output.n_cols);
   BOOST_REQUIRE_EQUAL(input.n_rows, output.n_rows);
   for (size_t i = 0; i < input.n_elem; ++i)
     BOOST_REQUIRE_CLOSE(input[i], output[i], 1e-5);
+  remove("APITest.bmp");
 }
 
 /**

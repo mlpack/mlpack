@@ -105,8 +105,7 @@ template<typename eT>
 bool Save(const std::string& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true);
+          const bool fatal = false);
 
 /**
  * Save the image file from the given matrix.
@@ -122,8 +121,7 @@ template<typename eT>
 bool Save(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true);
+          const bool fatal = false);
 
 /**
  * Helper function to save files.  Implementation in save_image.cpp.
@@ -131,8 +129,7 @@ bool Save(const std::vector<std::string>& files,
 bool SaveImage(const std::string& filename,
                arma::Mat<unsigned char>& image,
                ImageInfo& info,
-               const bool fatal = false,
-               const bool transpose = true);
+               const bool fatal = false);
 
 } // namespace data
 } // namespace mlpack

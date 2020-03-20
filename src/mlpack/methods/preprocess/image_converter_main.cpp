@@ -33,7 +33,7 @@ PROGRAM_INFO("Image Converter",
     PRINT_PARAM_STRING("channel") + " of the images that needs to be loaded. "
     "\n"
     "There are other options too, that can be specified such as " +
-    PRINT_PARAM_STRING("quality") + " and " + PRINT_PARAM_STRING("transpose")
+    PRINT_PARAM_STRING("quality")
     + ".\n\n" +
     "You can also provide a dataset and save them as images using " +
     PRINT_PARAM_STRING("dataset") + " and " + PRINT_PARAM_STRING("save") +
@@ -45,12 +45,7 @@ PROGRAM_INFO("Image Converter",
     " An example to save an image is :" +
     "\n\n" +
     PRINT_CALL("image_converter", "input", "X", "height", 256, "width", 256,
-        "channel", 3, "dataset", "Y", "save", true) +
-    "\n\n" +
-    " An example to load an image and also flipping it while loading is :"
-    + "\n\n" +
-    PRINT_CALL("image_converter", "input", "X", "height", 256, "width", 256,
-        "channel", 3, "output", "Y", "transpose", true),
+        "channel", 3, "dataset", "Y", "save", true),
     SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
     SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
     SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"));
@@ -67,7 +62,6 @@ PARAM_MATRIX_OUT("output", "Matrix to save images data to.", "o");
 PARAM_INT_IN("quality", "Compression of the image if saved as jpg (0-100).",
     "q", 90);
 
-PARAM_FLAG("transpose", "Loaded dataset to be transposed", "t");
 
 PARAM_INT_IN("height", "Height of the images", "H", 256);
 PARAM_FLAG("save", "Save a dataset as images", "s");
@@ -119,7 +113,7 @@ static void mlpackMain()
   arma::mat out;
   if (!CLI::HasParam("save"))
   {
-    Load(fileNames, out, *info, true, !CLI::HasParam("transpose"));
+    Load(fileNames, out, *info, true);
     if (CLI::HasParam("output"))
       CLI::GetParam<arma::mat>("output") = std::move(out);
   }
@@ -130,8 +124,7 @@ static void mlpackMain()
       throw std::runtime_error("Please provide a input matrix to save "
           "images from");
     }
-    Save(fileNames, CLI::GetParam<arma::mat> ("dataset"), *info, true,
-        !CLI::HasParam("transpose"));
+    Save(fileNames, CLI::GetParam<arma::mat> ("dataset"), *info, true);
   }
   if (CLI::HasParam("output_model"))
     CLI::GetParam<ImageInfo*> ("output_model") = info;

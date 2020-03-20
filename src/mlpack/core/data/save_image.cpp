@@ -22,8 +22,7 @@ namespace data {
 bool SaveImage(const std::string& filename,
                arma::Mat<unsigned char>& image,
                ImageInfo& info,
-               const bool fatal,
-               const bool transpose)
+               const bool fatal)
 {
   // Check to see if the file type is supported.
   if (!ImageFormatSupported(filename, true))
@@ -54,8 +53,6 @@ bool SaveImage(const std::string& filename,
         << std::endl;
     Log::Warn << "Only the first image will be saved!" << std::endl;
   }
-
-  stbi_flip_vertically_on_write(transpose);
 
   bool status = false;
   unsigned char* imageMem = image.memptr();
@@ -116,8 +113,7 @@ namespace data {
 bool SaveImage(const std::string& /* filename */,
                arma::Mat<unsigned char>& /* image */,
                ImageInfo& /* info */,
-               const bool fatal,
-               const bool transpose)
+               const bool fatal)
 {
   if (fatal)
   {

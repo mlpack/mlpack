@@ -305,8 +305,7 @@ template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true);
+          const bool fatal = false);
 
 /**
  * Load the image file into the given matrix.
@@ -322,15 +321,13 @@ template<typename eT>
 bool Load(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true);
+          const bool fatal = false);
 
 // Implementation found in load_image.cpp.
 bool LoadImage(const std::string& filename,
                arma::Mat<unsigned char>& matrix,
                ImageInfo& info,
-               const bool fatal = false,
-               const bool transpose = true);
+               const bool fatal = false);
 
 } // namespace data
 } // namespace mlpack

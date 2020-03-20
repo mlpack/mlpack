@@ -295,14 +295,13 @@ template<typename eT>
 bool Save(const std::string& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal,
-          const bool transpose)
+          const bool fatal)
 {
   arma::Mat<unsigned char> tmpMatrix =
       arma::conv_to<arma::Mat<unsigned char>>::from(matrix);
 
   // Call out to .cpp implementation.
-  return SaveImage(filename, tmpMatrix, info, fatal, transpose);
+  return SaveImage(filename, tmpMatrix, info, fatal);
 }
 
 // Image saving API for multiple files.
@@ -310,8 +309,7 @@ template<typename eT>
 bool Save(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal,
-          const bool transpose)
+          const bool fatal)
 {
   if (files.size() == 0)
   {
@@ -336,7 +334,7 @@ bool Save(const std::vector<std::string>& files,
   {
     arma::Mat<eT> colImg(matrix.colptr(i), matrix.n_rows, 1,
         false, true);
-    status &= Save(files[i], colImg, info, fatal, transpose);
+    status &= Save(files[i], colImg, info, fatal);
   }
 
   return status;

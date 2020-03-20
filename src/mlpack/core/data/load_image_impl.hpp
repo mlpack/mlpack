@@ -24,15 +24,14 @@ template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal,
-          const bool transpose)
+          const bool fatal)
 {
   Timer::Start("loading_image");
 
   // STB loads into unsigned char matrices, so we may have to convert once
   // loaded.
   arma::Mat<unsigned char> tempMatrix;
-  const bool result = LoadImage(filename, tempMatrix, info, fatal, transpose);
+  const bool result = LoadImage(filename, tempMatrix, info, fatal);
 
   // If fatal is true, then the program will have already thrown an exception.
   if (!result)
@@ -51,8 +50,7 @@ template<typename eT>
 bool Load(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal,
-          const bool transpose)
+          const bool fatal)
 {
   if (files.size() == 0)
   {
@@ -68,7 +66,7 @@ bool Load(const std::vector<std::string>& files,
   }
 
   arma::Mat<unsigned char> img;
-  bool status = LoadImage(files[0], img, info, fatal, transpose);
+  bool status = LoadImage(files[0], img, info, fatal);
 
   if (!status)
     return false;
@@ -82,7 +80,7 @@ bool Load(const std::vector<std::string>& files,
   {
     arma::Mat<unsigned char> colImg(tmpMatrix.colptr(i), tmpMatrix.n_rows, 1,
         false, true);
-    status = LoadImage(files[i], colImg, info, fatal, transpose);
+    status = LoadImage(files[i], colImg, info, fatal);
 
     if (!status)
       return false;

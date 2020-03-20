@@ -23,8 +23,7 @@ namespace data {
 bool LoadImage(const std::string& filename,
                arma::Mat<unsigned char>& matrix,
                ImageInfo& info,
-               const bool fatal,
-               const bool transpose)
+               const bool fatal)
 {
   unsigned char* image;
 
@@ -48,8 +47,6 @@ bool LoadImage(const std::string& filename,
 
     return false;
   }
-
-  stbi_set_flip_vertically_on_load(transpose);
 
   // Temporary variables needed as stb_image.h supports int parameters.
   int tempWidth, tempHeight, tempChannels;
@@ -106,8 +103,7 @@ namespace data {
 bool LoadImage(const std::string& /* filename */,
                arma::Mat<unsigned char>& /* matrix */,
                ImageInfo& /* info */,
-               const bool fatal,
-               const bool transpose)
+               const bool fatal)
 {
   if (fatal)
   {

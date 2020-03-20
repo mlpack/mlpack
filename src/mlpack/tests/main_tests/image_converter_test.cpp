@@ -112,31 +112,6 @@ BOOST_AUTO_TEST_CASE(SavedModelTest)
 }
 
 /**
- * Check transpose option give two different output.
- */
-BOOST_AUTO_TEST_CASE(TransposeTest)
-{
-  SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
-  SetInputParam("height", 50);
-  SetInputParam("width", 50);
-  SetInputParam("channel", 3);
-
-  mlpackMain();
-  arma::mat normalOutput = CLI::GetParam<arma::mat>("output");
-
-  SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
-  SetInputParam("input_model",
-                CLI::GetParam<ImageInfo*>("output_model"));
-  SetInputParam("transpose", true);
-  mlpackMain();
-  arma::mat transposeOutput = CLI::GetParam<arma::mat>("output");
-
-  CheckMatricesNotEqual(normalOutput, transposeOutput);
-  BOOST_REQUIRE_EQUAL(normalOutput.n_rows, transposeOutput.n_rows);
-  BOOST_REQUIRE_EQUAL(normalOutput.n_cols, transposeOutput.n_cols);
-}
-
-/**
  * Check whether binding throws error if height, width or channel are not
  * specified.
  */
