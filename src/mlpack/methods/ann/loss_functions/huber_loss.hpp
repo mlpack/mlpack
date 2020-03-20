@@ -1,17 +1,16 @@
 /**
- * @file log_cosh_loss.hpp
- * @author Kartik Dutt
+ * @file huber_loss.hpp
+ * @author Mrityunjay Tripathi
  *
- * Definition of the Log-Hyperbolic-Cosine loss function.
+ * Definition of the Huber loss function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
-#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTION_LOG_COSH_LOSS_HPP
-#define MLPACK_METHODS_ANN_LOSS_FUNCTION_LOG_COSH_LOSS_HPP
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTION_HUBER_LOSS_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTION_HUBER_LOSS_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -19,9 +18,11 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The Log-Hyperbolic-Cosine loss function is often used to improve
- * variational auto encoder. This function is the log of hyperbolic 
- * cosine of difference between true values and predicted values.
+ * The Huber loss is a loss function used in robust regression,
+ * that is less sensitive to outliers in data than the squared error loss.
+ * This function is quadratic for small values of \f$ y - f(x) \f$,
+ * and linear for large values, with equal values and slopes of the different
+ * sections at the two points where \f$ |y - f(x)| = delta \f$.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -29,30 +30,26 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
-        typename InputDataType = arma::mat,
-        typename OutputDataType = arma::mat
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
 >
-class LogCoshLoss
+class HuberLoss
 {
  public:
   /**
-   * Create the Log-Hyperbolic-Cosine object with the specified
-   * parameters.
+   * Create the HuberLoss object.
    *
-   * @param a A double type value for smoothening loss function.
-   *          It must be positive a real number, Sharpness of loss
-   *          function is directly proportional to a. It can also
-   *          act as a scaling factor hence making the loss
-   *          function more sensitive to small losses around the
-   *          origin. Default value = 1.0.
+   * @param delta The threshold value upto which squared error is followed and
+   *              after which absolute error is considered.
+   * @param mean If true then mean loss is computed otherwise sum.
    */
-  LogCoshLoss(const double a = 1.0);
+  HuberLoss(const double delta = 1.0, const bool mean = true);
 
   /**
-   * Computes the Log-Hyperbolic-Cosine loss function.
+   * Computes the Huber Loss function.
    *
    * @param input Input data used for evaluating the specified function.
-   * @param target Target data to compare with.
+   * @param target The target vector.
    */
   template<typename InputType, typename TargetType>
   double Forward(const InputType& input, const TargetType& target);
@@ -74,13 +71,18 @@ class LogCoshLoss
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //! Get the value of hyperparameter a.
-  double A() const { return a; }
-  //! Modify the value of hyperparameter a.
-  double& A() { return a; }
+  //! Get the value of delta.
+  double Delta() const { return delta; }
+  //! Set the value of delta.
+  double& Delta() { return delta; }
+
+  //! Get the value of reduction type.
+  bool Mean() const { return mean; }
+  //! Set the value of reduction type.
+  bool& Mean() { return mean; }
 
   /**
-   * Serialize the loss function.
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -89,14 +91,17 @@ class LogCoshLoss
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Hyperparameter a for smoothening function curve.
-  double a;
-}; // class LogCoshLoss
+  //! Hyperparameter `delta` defines the point upto which MSE is considered.
+  double delta;
+
+  //! Reduction type. If true, performs mean of loss else sum.
+  bool mean;
+}; // class HuberLoss
 
 } // namespace ann
 } // namespace mlpack
 
-// include implementation
-#include "log_cosh_loss_impl.hpp"
+// Include implementation.
+#include "huber_loss_impl.hpp"
 
 #endif

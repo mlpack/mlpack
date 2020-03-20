@@ -15,6 +15,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/loss_functions/huber_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/kl_divergence.hpp>
 #include <mlpack/methods/ann/loss_functions/earth_mover_distance.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
@@ -25,6 +26,7 @@
 #include <mlpack/methods/ann/loss_functions/mean_bias_error.hpp>
 #include <mlpack/methods/ann/loss_functions/dice_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/log_cosh_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/hinge_embedding_loss.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -36,6 +38,33 @@ using namespace mlpack;
 using namespace mlpack::ann;
 
 BOOST_AUTO_TEST_SUITE(LossFunctionsTest);
+
+/**
+ * Simple Huber Loss test.
+ */
+BOOST_AUTO_TEST_CASE(HuberLossTest)
+{
+  arma::mat input, target, output;
+  HuberLoss<> module;
+
+  // Test the Forward function.
+  input = arma::mat("17.45 12.91 13.63 29.01 7.12 15.47 31.52 31.97");
+  target = arma::mat("16.52 13.11 13.67 29.51 24.31 15.03 30.72 34.07");
+  double loss = module.Forward(input, target);
+  BOOST_REQUIRE_CLOSE_FRACTION(loss, 2.410631, 0.00001);
+
+  // Test the backward function.
+  module.Backward(input, target, output);
+
+  // Expected Output:
+  // [0.1162 -0.0250 -0.0050 -0.0625 -0.1250  0.0550  0.1000 -0.1250]
+  // Sum of Expected Output = -0.07125.
+  double expectedOutputSum = arma::accu(output);
+  BOOST_REQUIRE_CLOSE_FRACTION(expectedOutputSum, -0.07125, 0.00001);
+
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+}
 
 /**
  * Simple KL Divergence test.  The loss should be zero if input = target.
@@ -484,11 +513,11 @@ BOOST_AUTO_TEST_CASE(LogCoshLossTest)
   // Test the Forward function. Loss should be 0 if input = target.
   input = arma::ones(10, 1);
   target = arma::ones(10, 1);
-  loss = module.Forward(std::move(input), std::move(target));
+  loss = module.Forward(input, target);
   BOOST_REQUIRE_EQUAL(loss, 0);
 
   // Test the Backward function for input = target.
-  module.Backward(std::move(input), std::move(target), std::move(output));
+  module.Backward(input, target, output);
   for (double el : output)
   {
     // For input = target we should get 0.0 everywhere.
@@ -501,12 +530,51 @@ BOOST_AUTO_TEST_CASE(LogCoshLossTest)
   // Test the Forward function. Loss should be 0.546621.
   input = arma::mat("1 2 3 4 5");
   target = arma::mat("1 2.4 3.4 4.2 5.5");
-  loss = module.Forward(std::move(input), std::move(target));
+  loss = module.Forward(input, target);
   BOOST_REQUIRE_CLOSE(loss, 0.546621, 1e-3);
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(target), std::move(output));
+  module.Backward(input, target, output);
   BOOST_REQUIRE_CLOSE(arma::accu(output), 2.46962, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+}
+
+/**
+ * Simple test for the Hinge Embedding loss function.
+ */
+BOOST_AUTO_TEST_CASE(HingeEmbeddingLossTest)
+{
+  arma::mat input, target, output;
+  double loss;
+  HingeEmbeddingLoss<> module;
+
+  // Test the Forward function. Loss should be 0 if input = target.
+  input = arma::ones(10, 1);
+  target = arma::ones(10, 1);
+  loss = module.Forward(input, target);
+  BOOST_REQUIRE_EQUAL(loss, 0);
+
+  // Test the Backward function for input = target.
+  module.Backward(input, target, output);
+  for (double el : output)
+  {
+    // For input = target we should get 0.0 everywhere.
+    BOOST_REQUIRE_CLOSE(el, 0.0, 1e-5);
+  }
+
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+
+  // Test the Forward function. Loss should be 0.84.
+  input = arma::mat("0.1 0.8 0.6 0.0 0.5");
+  target = arma::mat("0 1.0 1.0 0 0");
+  loss = module.Forward(input, target);
+  BOOST_REQUIRE_CLOSE(loss, 0.84, 1e-3);
+
+  // Test the Backward function.
+  module.Backward(input, target, output);
+  BOOST_REQUIRE_CLOSE(arma::accu(output), -2, 1e-3);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 }
