@@ -42,7 +42,6 @@ class EpisodicReplay
   * @param capacity Total memory size in terms of number of episodes.
   * @param dimension The dimension of an encoded state.
   */
-
   EpisodicReplay(const size_t capacity,
                  const size_t max_episode_len,
                  const size_t dimension = StateType::dimension) :
@@ -73,7 +72,8 @@ class EpisodicReplay
              const StateType& nextState,
              bool isEnd)
   {
-    if(clear){
+    if(clear)
+    {
       states[position].clear();
       actions[position].clear();
       rewards[position].clear();
@@ -186,7 +186,8 @@ class EpisodicReplay
                       arma::icolvec& isTerminal)
   {
     int episodeNum=0;
-    if(states[position].size()==0 || clear==true){
+    if(states[position].size()==0 || clear==true)
+    {
       if(position==0)
         episodeNum = capacity-1;
       else
