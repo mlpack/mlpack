@@ -26,6 +26,10 @@ class EpisodicReplay
   //! Convenient typedef for state.
   using StateType = typename EnvironmentType::State;
 
+  /**
+  * Construct an instance of episode experience replay class.
+  * Everything initialized to 0
+  */
   EpisodicReplay():
       capacity(0),
       position(0),
@@ -43,8 +47,8 @@ class EpisodicReplay
                  const size_t max_episode_len,
                  const size_t dimension = StateType::dimension) :
       capacity(capacity),
-      max_episode_len(max_episode_len),
       position(0),
+      max_episode_len(max_episode_len),
       full(false)
   {
     states.resize(capacity);
@@ -69,14 +73,23 @@ class EpisodicReplay
              const StateType& nextState,
              bool isEnd)
   {
+    if(clear){
+      states[position].clear();
+      actions[position].clear();
+      rewards[position].clear();
+      next_states[position].clear();
+      isTerminal[position].clear();
+      clear = false;
+    }
     states[position].push_back(state.Encode());
     actions[position].push_back(action);
     rewards[position].push_back(reward);
     next_states[position].push_back(nextState.Encode());
     isTerminal[position].push_back(isEnd);
-    if(isEnd||isTerminal[position].size()==max_episode_len)
+    if(isEnd||states[position].size()==max_episode_len)
     {
       position++;
+      clear = true;
     }
     if (position == capacity)
     {
@@ -146,8 +159,13 @@ class EpisodicReplay
   * @return Actual used memory size
   */
 
-  const size_t& Size()
+  const size_t Size()
   {
+    if(states[position].size()==0){
+      return full ? capacity : position;  
+    }else{
+      return full ? capacity : (position+1);  
+    }
     return full ? capacity : position;
   }
 
@@ -168,8 +186,12 @@ class EpisodicReplay
                       arma::icolvec& isTerminal)
   {
     int episodeNum=0;
-    if(states[position].size()==0)
-      episodeNum = position-1;
+    if(states[position].size()==0 || clear==true){
+      if(position==0)
+        episodeNum = capacity-1;
+      else
+        episodeNum = position-1;
+    }
     else
       episodeNum = position;
     std::vector<arma::colvec> temp = states[episodeNum];
@@ -220,6 +242,8 @@ class EpisodicReplay
   size_t position;
 
   size_t max_episode_len;
+
+  bool clear;
 
   //! Locally-stored encoded previous states.
   std::vector< std::vector< arma::colvec> > states;

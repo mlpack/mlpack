@@ -21,6 +21,7 @@
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
 #include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
+#include <mlpack/methods/reinforcement_learning/replay/episodic_replay.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -261,6 +262,94 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
     CheckMatrices(nextState.Encode(), sampledState);
     BOOST_REQUIRE_EQUAL(true, arma::as_scalar(sampledTerminal));
   }
+}
+
+BOOST_AUTO_TEST_CASE(EpisodicReplayTest)
+{
+  EpisodicReplay<MountainCar> replay(3, 3);
+  MountainCar env;
+  MountainCar::State state = env.InitialSample();
+  MountainCar::Action action = MountainCar::Action::forward;
+  MountainCar::State nextState;
+  double reward = env.Sample(state, action, nextState);
+  replay.Store(state, action, reward, nextState, env.IsTerminal(nextState));
+  arma::mat sampledState;
+  arma::icolvec sampledAction;
+  arma::colvec sampledReward;
+  arma::mat sampledNextState;
+  arma::icolvec sampledTerminal;
+
+  //! So far there should be only one record in the memory
+  replay.Sample(sampledState, sampledAction, sampledReward, sampledNextState,
+      sampledTerminal);
+
+  CheckMatrices(state.Encode(), sampledState);
+  BOOST_REQUIRE_EQUAL(action, arma::as_scalar(sampledAction));
+  BOOST_REQUIRE_CLOSE(reward, arma::as_scalar(sampledReward), 1e-5);
+  CheckMatrices(nextState.Encode(), sampledNextState);
+  BOOST_REQUIRE_EQUAL(false, arma::as_scalar(sampledTerminal));
+  BOOST_REQUIRE_EQUAL(1, replay.Size());
+  
+  
+  replay.Random_Episode(sampledState, sampledAction, sampledReward, sampledNextState,
+      sampledTerminal);
+  CheckMatrices(state.Encode(), sampledState);
+  BOOST_REQUIRE_EQUAL(action, arma::as_scalar(sampledAction));
+  BOOST_REQUIRE_CLOSE(reward, arma::as_scalar(sampledReward), 1e-5);
+  CheckMatrices(nextState.Encode(), sampledNextState);
+  BOOST_REQUIRE_EQUAL(false, arma::as_scalar(sampledTerminal));
+
+  //! Overwrite the memory with a nonsense record and these will be stored in seperate episodes.
+  for (size_t i = 0; i < 5; ++i)
+    replay.Store(nextState, action, reward, state, true);
+
+  BOOST_REQUIRE_EQUAL(3, replay.Size());
+
+  //! Sample several times, the original record shouldn't appear
+  // for (size_t i = 0; i < 30; ++i)
+  // {
+  //   replay.Random_Episode(sampledState, sampledAction, sampledReward, sampledNextState,
+  //       sampledTerminal);
+
+  //   CheckMatrices(state.Encode(), sampledNextState);
+  //   CheckMatrices(nextState.Encode(), sampledState);
+  //   BOOST_REQUIRE_EQUAL(true, arma::as_scalar(sampledTerminal));
+  // }
+
+  // Adding one more episode with two transition and on Sample should recieve this episode back.
+  // also should get only 3 states back and not 5
+  arma::mat sampledStates;
+  arma::icolvec sampledActions(3);
+  arma::colvec sampledRewards(3);
+  arma::mat sampledNextStates;
+  arma::icolvec sampledTerminals(3);
+  for (size_t i = 0; i < 3; ++i){
+    replay.Store(nextState, action, reward, state, false);
+    sampledActions(i) = action;
+    sampledRewards(i) = reward;
+    sampledTerminals(i) = false;
+    if(i==0){
+      sampledStates = nextState.Encode();
+    }else if(i<3){
+      sampledStates = arma::join_rows(sampledStates,nextState.Encode());
+    }
+  }
+  arma::mat sampledStatetemp;
+  replay.Sample(sampledStatetemp, sampledAction, sampledReward, sampledNextState,
+      sampledTerminal);
+  CheckMatrices(sampledStates, sampledStatetemp);
+
+  // This addition should automatically go to next episode
+  replay.Store(nextState, action, reward, state, false);
+  replay.Sample(sampledState, sampledAction, sampledReward, sampledNextState,
+      sampledTerminal);
+
+  CheckMatrices(nextState.Encode(), sampledState);
+  BOOST_REQUIRE_EQUAL(action, arma::as_scalar(sampledAction));
+  BOOST_REQUIRE_CLOSE(reward, arma::as_scalar(sampledReward), 1e-5);
+  CheckMatrices(state.Encode(), sampledNextState);
+  BOOST_REQUIRE_EQUAL(false, arma::as_scalar(sampledTerminal));
+
 }
 
 /**
