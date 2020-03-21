@@ -199,8 +199,10 @@ template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename ErrorType, typename GradientType>
 void MemoryHead<InputDataType, OutputDataType>::Backward(
   const InputType& /* input */, ErrorType& gy, GradientType& g)
-{
-  if (bBt == lBt.end())
+{ 
+  double x = *lBt.end();
+  arma::vec temp = gy;
+  if (std::abs(*bBt - x)<0.000001)
   {
     bBt = (--lBt.end());
     bCosineT = (--lConsineT.end());
@@ -220,9 +222,7 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   }
   else
   { 
-    arma::vec temp = arma::vec(gy);
     temp += prevDW;
-    arma::vec(gy) = temp;
   }
 
   // Load parameters.
@@ -240,7 +240,7 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   const arma::mat& memory = *bMemoryHistory;
 
   // Error of output
-  OutputDataType dW = gy;
+  OutputDataType dW = temp;
 
   // Error of wDash
   double sum1 = arma::as_scalar(arma::sum(wDash));
@@ -254,7 +254,7 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   prevError(memSize + 2 + 2 * shiftSize + 1, 0) = gammaTNonLinear.Deriv(
     boost::apply_visitor(outputParameterVisitor, inputLinear)
     (memSize + 2 + 2 * shiftSize + 1, 0)) *
-    arma::as_scalar(arma::sum(dW % wDash % arma::log(wTilde)));
+    arma::accu(arma::sum(dW % wDash % arma::log(wTilde)));
 
   // Error of Wtilde
   dW %= (gammaT + 1) * arma::pow(wTilde, gammaT);
@@ -314,7 +314,7 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
 
   // Error of Gt.
   prevError(memSize + 1, 0) = gTNonLinear.Deriv(gT) *
-    arma::as_scalar(arma::sum(dW % (wC - *weightsBackwardIterator)));
+    arma::accu(arma::sum(dW % (wC - *weightsBackwardIterator)));
 
   // Error of wC.
   dW *= gT;
@@ -333,7 +333,7 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   // Error of Bt.
   prevError(memSize, 0) = bTNonLinear.Deriv(
     boost::apply_visitor(outputParameterVisitor, inputLinear)(memSize, 0)) *
-    arma::as_scalar(arma::sum(dW % consineT));
+    arma::accu(arma::sum(dW % consineT));
 
   // Error of cosine
   dW *= bT;
@@ -358,7 +358,7 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
     double n = arma::norm(memory.row(rowIndex));
     nMemory.row(rowIndex) /= n;
     dMemTemp.row(rowIndex) = (dMemTemp.row(rowIndex) - (nMemory.row(rowIndex) *
-        arma::as_scalar(arma::sum(nMemory.row(rowIndex) %
+        arma::accu(arma::sum(nMemory.row(rowIndex) %
         dMemTemp.row(rowIndex))))) / n;
   }
   dMem += dMemTemp;
@@ -367,7 +367,7 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   arma::mat dKt = arma::trans(nMemory) * dW;
 
   // // Error of Kt without normalization.
-  dKt = (dKt - (nKt * arma::as_scalar(arma::sum(nKt % dKt)))) / kTNorm;
+  dKt = (dKt - (nKt * arma::accu(arma::sum(nKt % dKt)))) / kTNorm;
 
   // Backward pass through Kt gate.
   boost::apply_visitor(BackwardVisitor(boost::apply_visitor(

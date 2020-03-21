@@ -739,7 +739,10 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
     const arma::Mat<eT>& input,
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
-{
+{ if (gradient.n_elem == 0){
+  gradient = arma::zeros<arma::mat>(input.n_rows, input.n_cols);
+  ResetGradients(gradient);
+}
   boost::apply_visitor(GradientVisitor(boost::apply_visitor(
       outputParameterVisitor, network[network.size() - 2]),
       error), network.back());
