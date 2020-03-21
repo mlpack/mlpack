@@ -861,7 +861,6 @@ BOOST_AUTO_TEST_CASE(HardShrinkFunctionTest)
                                    desiredDerivatives);
 }
 
-
 /**
  * Basic test of the Soft Shrink function.
  */
