@@ -6,18 +6,18 @@ include(CMake/CheckHash.cmake)
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
-option(DEBUG "Compile with debugging information." ON)
-option(PROFILE "Compile with profiling information." ON)
+option(DEBUG "Compile with debugging information." OFF)
+option(PROFILE "Compile with profiling information." OFF)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
-option(BUILD_TESTS "Build tests." OFF)
-option(BUILD_CLI_EXECUTABLES "Build command-line executables." OFF)
+option(BUILD_TESTS "Build tests." ON)
+option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
-option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." OFF)
-option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
-option(BUILD_JULIA_BINDINGS "Build Julia bindings." OFF)
+option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
+option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
+option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
 
 if (WIN32)
   option(BUILD_SHARED_LIBS
