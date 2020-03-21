@@ -3116,108 +3116,6 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
 }
 
 /**
- * Test that the padding options in Transposed Convolution layer.
- */
-BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
-{
-  arma::mat output, input, delta;
-
-  TransposedConvolution<> module1(1, 1, 3, 3, 1, 1, 0, 0, 4, 4, 6, 6, "VALID");
-  // Test the forward function.
-  // Valid Should give the same result.
-  input = arma::linspace<arma::colvec>(0, 15, 16);
-  module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
-  module1.Reset();
-  module1.Forward(std::move(input), std::move(output));
-  // Value calculated using tensorflow.nn.conv2d_transpose().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 0.0);
-
-  // Test the Backward Function.
-  module1.Backward(std::move(input), std::move(output), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
-
-  // Test Valid for non zero padding.
-  TransposedConvolution<> module2(1, 1, 3, 3, 2, 2,
-      std::tuple<size_t, size_t>(0, 0), std::tuple<size_t, size_t>(0, 0),
-      2, 2, 5, 5, "VALID");
-  // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 3, 4);
-  module2.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
-  module2.Parameters()(2) = 8.0;
-  module2.Parameters()(4) = 6.0;
-  module2.Parameters()(6) = 4.0;
-  module2.Parameters()(8) = 2.0;
-  module2.Reset();
-  module2.Forward(std::move(input), std::move(output));
-  // Value calculated using torch.nn.functional.conv_transpose2d().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 120.0);
-
-  // Test the Backward Function.
-  module2.Backward(std::move(input), std::move(output), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 960.0);
-
-  // Test for same padding type.
-  TransposedConvolution<> module3(1, 1, 3, 3, 2, 2, 0, 0, 3, 3, 3, 3, "SAME");
-  // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 8, 9);
-  module3.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
-  module3.Reset();
-  module3.Forward(std::move(input), std::move(output));
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
-  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
-
-  // Test the Backward Function.
-  module3.Backward(std::move(input), std::move(output), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
-
-  // Output shape should equal input.
-  TransposedConvolution<> module4(1, 1, 3, 3, 1, 1,
-    std::tuple<size_t, size_t>(2, 2), std::tuple<size_t, size_t>(2, 2),
-    5, 5, 5, 5, "SAME");
-  // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 24, 25);
-  module4.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
-  module4.Reset();
-  module4.Forward(std::move(input), std::move(output));
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
-  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
-
-  // Test the Backward Function.
-  module4.Backward(std::move(input), std::move(output), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
-
-  TransposedConvolution<> module5(1, 1, 3, 3, 2, 2, 0, 0, 2, 2, 2, 2, "SAME");
-  // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 3, 4);
-  module5.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
-  module5.Reset();
-  module5.Forward(std::move(input), std::move(output));
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
-  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
-
-  // Test the Backward Function.
-  module5.Backward(std::move(input), std::move(output), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
-
-  TransposedConvolution<> module6(1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 5, 5, "SAME");
-  // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 24, 25);
-  module6.Parameters() = arma::mat(16 + 1, 1, arma::fill::zeros);
-  module6.Reset();
-  module6.Forward(std::move(input), std::move(output));
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
-  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
-
-  // Test the Backward Function.
-  module6.Backward(std::move(input), std::move(output), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
-}
-
-/**
  * Test that the padding options are working correctly in MaxPooling layer.
  */
 BOOST_AUTO_TEST_CASE(MaxPoolingLayerPaddingTest)
@@ -3230,14 +3128,14 @@ BOOST_AUTO_TEST_CASE(MaxPoolingLayerPaddingTest)
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module1.Forward(std::move(input), std::move(output));
+  module1.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 72);
   BOOST_REQUIRE_EQUAL(output.n_rows, 4);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
-  module1.Backward(std::move(input), std::move(output), std::move(delta));
+  module1.Backward(input, output, delta);
 
   // Check "none" uneven padding option.
   MaxPooling<> module2(4, 3, 2, 1, true, 5, 4, std::tuple<size_t, size_t>(1, 2),
@@ -3245,14 +3143,14 @@ BOOST_AUTO_TEST_CASE(MaxPoolingLayerPaddingTest)
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 19, 20);
-  module2.Forward(std::move(input), std::move(output));
+  module2.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 240);
   BOOST_REQUIRE_EQUAL(output.n_rows, 27);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
-  module2.Backward(std::move(input), std::move(output), std::move(delta));
+  module2.Backward(input, output, delta);
 
   // Check "valid" even padding option.
   MaxPooling<> module3(4, 4, 2, 2, true, 5, 5, std::tuple<size_t, size_t>(1, 1),
@@ -3260,14 +3158,14 @@ BOOST_AUTO_TEST_CASE(MaxPoolingLayerPaddingTest)
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module3.Forward(std::move(input), std::move(output));
+  module3.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 18);
   BOOST_REQUIRE_EQUAL(output.n_rows, 1);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
-  module3.Backward(std::move(input), std::move(output), std::move(delta));
+  module3.Backward(input, output, delta);
 
   // Check "valid" uneven padding option.
   MaxPooling<> module4(4, 3, 2, 1, true, 5, 4, std::tuple<size_t, size_t>(1, 2),
@@ -3275,14 +3173,14 @@ BOOST_AUTO_TEST_CASE(MaxPoolingLayerPaddingTest)
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 19, 20);
-  module4.Forward(std::move(input), std::move(output));
+  module4.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 31);
   BOOST_REQUIRE_EQUAL(output.n_rows, 2);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
-  module4.Backward(std::move(input), std::move(output), std::move(delta));
+  module4.Backward(input, output, delta);
 
   // Check "same" even padding option.
   MaxPooling<> module5(4, 4, 2, 2, true, 5, 5, std::tuple<size_t, size_t>(1, 1),
@@ -3290,14 +3188,14 @@ BOOST_AUTO_TEST_CASE(MaxPoolingLayerPaddingTest)
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module5.Forward(std::move(input), std::move(output));
+  module5.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 240);
   BOOST_REQUIRE_EQUAL(output.n_rows, 25);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
-  module5.Backward(std::move(input), std::move(output), std::move(delta));
+  module5.Backward(input, output, delta);
 
   // Check "same" uneven padding option.
   MaxPooling<> module6(4, 3, 2, 1, true, 5, 4, std::tuple<size_t, size_t>(1, 2),
@@ -3305,14 +3203,14 @@ BOOST_AUTO_TEST_CASE(MaxPoolingLayerPaddingTest)
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 19, 20);
-  module6.Forward(std::move(input), std::move(output));
+  module6.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 220);
   BOOST_REQUIRE_EQUAL(output.n_rows, 20);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
-  module6.Backward(std::move(input), std::move(output), std::move(delta));
+  module6.Backward(input, output, delta);
 }
 
 /**
@@ -3329,14 +3227,14 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module1.Forward(std::move(input), std::move(output));
+  module1.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 34.125);
   BOOST_REQUIRE_EQUAL(output.n_rows, 4);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
-  module1.Backward(std::move(input), std::move(output), std::move(delta));
+  module1.Backward(input, output, delta);
 
   // Check "none" uneven padding option.
   MeanPooling<> module2(4, 3, 2, 1, true, 5, 4,
@@ -3345,14 +3243,14 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 19, 20);
-  module2.Forward(std::move(input), std::move(output));
+  module2.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 87.500000000000014);
   BOOST_REQUIRE_EQUAL(output.n_rows, 27);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
-  module2.Backward(std::move(input), std::move(output), std::move(delta));
+  module2.Backward(input, output, delta);
 
   // Check "valid" even padding option.
   MeanPooling<> module3(4, 4, 2, 2, true, 5, 5,
@@ -3361,14 +3259,14 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module3.Forward(std::move(input), std::move(output));
+  module3.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 9);
   BOOST_REQUIRE_EQUAL(output.n_rows, 1);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
-  module3.Backward(std::move(input), std::move(output), std::move(delta));
+  module3.Backward(input, output, delta);
 
   // Check "valid" uneven padding option.
   MeanPooling<> module4(4, 3, 2, 1, true, 5, 4,
@@ -3377,14 +3275,14 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 19, 20);
-  module4.Forward(std::move(input), std::move(output));
+  module4.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 18);
   BOOST_REQUIRE_EQUAL(output.n_rows, 2);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
-  module4.Backward(std::move(input), std::move(output), std::move(delta));
+  module4.Backward(input, output, delta);
 
   // Check "same" even padding option.
   MeanPooling<> module5(4, 4, 2, 2, true, 5, 5,
@@ -3393,146 +3291,14 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module5.Forward(std::move(input), std::move(output));
+  module5.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 9);
   BOOST_REQUIRE_EQUAL(output.n_rows, 1);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
-  module1.Backward(std::move(input), std::move(output), std::move(delta));
-
-  // Check same padding option.
-  MeanPooling<> module2(4, 4, 2, 2, true, std::tuple<size_t, size_t>(0, 0),
-      std::tuple<size_t, size_t>(0, 0), "same");
-
-  // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 24, 25);
-  module2.InputWidth() = 5;
-  module2.InputHeight() = 5;
-  module2.Forward(std::move(input), std::move(output));
-
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 34.125);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
-
-  // Test the backward function.
-  module2.Backward(std::move(input), std::move(output), std::move(delta));
-}
-
-/**
- * Test that the padding options are working correctly in MaxPooling layer.
- */
-BOOST_AUTO_TEST_CASE(MaxPoolingLayerPaddingTest)
-{
-  arma::mat output, input, delta;
-
-  // Check valid padding option.
-  MaxPooling<> module1(4, 4, 2, 2, true, std::tuple<size_t, size_t>(1, 1),
-      std::tuple<size_t, size_t>(1, 1), "valid");
-
-  // Test the Forward function.
-  input = arma::linspace<arma::colvec>(0, 24, 25);
-  module1.InputWidth() = 5;
-  module1.InputHeight() = 5;
-  module1.Forward(std::move(input), std::move(output));
-
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 18);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
-
-  // Test the Backward function.
-  module1.Backward(std::move(input), std::move(output), std::move(delta));
-
-  // Check same padding option.
-  MaxPooling<> module2(4, 4, 2, 2, true, std::tuple<size_t, size_t>(0, 0),
-      std::tuple<size_t, size_t>(0, 0), "same");
-
-  // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 24, 25);
-  module2.InputWidth() = 5;
-  module2.InputHeight() = 5;
-  module2.Forward(std::move(input), std::move(output));
-
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 72);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
-
-  // Test the backward function.
-  module2.Backward(std::move(input), std::move(output), std::move(delta));
-}
-
-/**
- * Test that the padding options are working correctly in MeanPooling layer.
- */
-BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
-{
-  arma::mat output, input, delta;
-
-  // Check valid padding option.
-  MeanPooling<> module1(4, 4, 2, 2, true, std::tuple<size_t, size_t>(1, 1),
-      std::tuple<size_t, size_t>(1, 1), "valid");
-
-  // Test the Forward function.
-  input = arma::linspace<arma::colvec>(0, 24, 25);
-  module1.InputWidth() = 5;
-  module1.InputHeight() = 5;
-  module1.Forward(std::move(input), std::move(output));
-
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 9);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
-
-  // Test the Backward function.
-  module1.Backward(std::move(input), std::move(output), std::move(delta));
-
-  // Check same padding option.
-  MeanPooling<> module2(4, 4, 2, 2, true, std::tuple<size_t, size_t>(0, 0),
-      std::tuple<size_t, size_t>(0, 0), "same");
-
-  // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 24, 25);
-  module2.InputWidth() = 5;
-  module2.InputHeight() = 5;
-  module2.Forward(std::move(input), std::move(output));
-
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 34.125);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
-
-  // Test the backward function.
-  module2.Backward(std::move(input), std::move(output), std::move(delta));
-
-  // Check same padding option.
-  MeanPooling<> module3(4, 4, 2, 1, true, std::tuple<size_t, size_t>(1, 2),
-      std::tuple<size_t, size_t>(3, 4));
-
-  // Test the forward function.
-  input = arma::linspace<arma::colvec>(0, 45, 6);
-  module3.InputWidth() = 2;
-  module3.InputHeight() = 3;
-  module3.Forward(std::move(input), std::move(output));
-
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 70);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 16);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
-
-  // Test the backward function.
-  module3.Backward(std::move(input), std::move(output), std::move(delta));
-}
-=======
-//   // Test the backward function.
-//   module3.Backward(std::move(input), std::move(output), std::move(delta));
-// }
->>>>>>> fix
-=======
->>>>>>> pwork
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 75);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 25);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
-
-  // Test the Backward function.
-  module5.Backward(std::move(input), std::move(output), std::move(delta));
+  module5.Backward(input, output, delta);
 
   // Check "same" uneven padding option.
   MeanPooling<> module6(4, 3, 2, 1, true, 5, 4,
@@ -3541,14 +3307,14 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 19, 20);
-  module6.Forward(std::move(input), std::move(output));
+  module6.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 79.166666666666657);
   BOOST_REQUIRE_EQUAL(output.n_rows, 20);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
-  module6.Backward(std::move(input), std::move(output), std::move(delta));
+  module6.Backward(input, output, delta);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
