@@ -51,7 +51,7 @@ template<typename InputType, typename OutputType>
 void ELU<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)
 {
-  output.set_size(arma::size(input));
+  output = arma::ones<OutputDataType>(arma::size(input));
   for (size_t i = 0; i < input.n_elem; i++)
   {
     if (input(i) < DBL_MAX)
@@ -59,8 +59,6 @@ void ELU<InputDataType, OutputDataType>::Forward(
       output(i) = (input(i) > 0) ? lambda * input(i) : lambda *
           alpha * (std::exp(input(i)) - 1);
     }
-    else
-      output(i) = 1.0;
   }
 
     if (!deterministic)
