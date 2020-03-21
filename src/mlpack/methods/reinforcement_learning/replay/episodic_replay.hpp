@@ -102,7 +102,7 @@ class EpisodicReplay
     next_states[position].push_back(nextState.Encode());
     isTerminal[position].push_back(isEnd);
 
-    if(isEnd || states[position].size()==max_episode_len)
+    if (isEnd || states[position].size()==max_episode_len)
     {
       position++;
       clear = true;
@@ -122,7 +122,7 @@ class EpisodicReplay
 
   const size_t Size()
   {
-    if(states[position].size()==0)
+    if (states[position].size()==0)
     {
       return full ? capacity : position;  
     }
@@ -151,23 +151,24 @@ class EpisodicReplay
   {
     
     int episodeNum=0;
-    if(random)
+    if (random)
     {
       size_t upperBound = full ? capacity : position;
       int lo = 0;
       int high = upperBound;
-      if(!upperBound)
+      if (!upperBound)
       {
         high = 1;
       }
-      episodeNum = math::RandInt(lo,high);
-    }else
+      episodeNum = math::RandInt(lo, high);
+    }
+    else
     {
-      if(states[position].size()==0 || clear==true)
+      if (states[position].size()==0 || clear==true)
       {
-        if(position==0)
+        if (position==0)
         {
-          if(full)
+          if (full)
             episodeNum = capacity-1;
         }
         else
@@ -177,13 +178,14 @@ class EpisodicReplay
         episodeNum = position;
     }
     int i = 0;
-    for(auto state : states[episodeNum])
+    for (auto state : states[episodeNum])
     {
-      if(i==0)
+      if (i==0)
       {
         episodeStates = state;
         i++;
-      }else
+      }
+      else
       {
         episodeStates = arma::join_rows(episodeStates, state);
       }
@@ -191,13 +193,14 @@ class EpisodicReplay
     episodeActions = arma::conv_to<arma::icolvec>::from(actions[episodeNum]);
     episodeRewards = arma::conv_to<arma::colvec>::from(rewards[episodeNum]);
     i = 0;
-    for(auto state : next_states[episodeNum])
+    for (auto state : next_states[episodeNum])
     {
-      if(i==0)
+      if (i==0)
       {
         episodeNextStates = state;
         i++;
-      }else
+      }
+      else
       {
         episodeNextStates = arma::join_rows(episodeNextStates, state);
       }
