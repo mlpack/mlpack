@@ -102,7 +102,7 @@ class EpisodicReplay
     next_states[position].push_back(nextState.Encode());
     isTerminal[position].push_back(isEnd);
 
-    if (isEnd || states[position].size()==max_episode_len)
+    if (isEnd || states[position].size() == max_episode_len)
     {
       position++;
       clear = true;
@@ -122,7 +122,7 @@ class EpisodicReplay
 
   const size_t Size()
   {
-    if (states[position].size()==0)
+    if (states[position].size() == 0)
     {
       return full ? capacity : position;  
     }
@@ -164,9 +164,9 @@ class EpisodicReplay
     }
     else
     {
-      if (states[position].size()==0 || clear==true)
+      if (states[position].size() == 0 || clear == true)
       {
-        if (position==0)
+        if (position == 0)
         {
           if (full)
             episodeNum = capacity-1;
@@ -180,7 +180,7 @@ class EpisodicReplay
     int i = 0;
     for (auto state : states[episodeNum])
     {
-      if (i==0)
+      if (i == 0)
       {
         episodeStates = state;
         i++;
@@ -195,7 +195,7 @@ class EpisodicReplay
     i = 0;
     for (auto state : next_states[episodeNum])
     {
-      if (i==0)
+      if (i == 0)
       {
         episodeNextStates = state;
         i++;
