@@ -115,60 +115,6 @@ class EpisodicReplay
   }
 
   /**
-  * Sample some episode.
-  *
-  * @param sampledStates Sampled encoded states.
-  * @param sampledActions Sampled actions.
-  * @param sampledRewards Sampled rewards.
-  * @param sampledNextStates Sampled encoded next states.
-  * @param isTerminal Indicate whether corresponding next state is terminal
-  *        state.
-  */
-
-  void Random_Episode(arma::mat& episodeStates,
-                      arma::icolvec& episodeActions,
-                      arma::colvec& episodeRewards,
-                      arma::mat& episodeNextStates,
-                      arma::icolvec& isTerminal)
-  {
-    size_t upperBound = full ? capacity : position;
-    int lo = 0;
-    int high = upperBound;
-    if(!upperBound)
-    {
-      high = 1;
-    }
-    int episodeNum = math::RandInt(lo,high);
-    int i = 0;
-    for(auto state : states[episodeNum])
-    {
-      if(i==0)
-      {
-        episodeStates = state;
-        i++;
-      }else
-      {
-        episodeStates = arma::join_rows(episodeStates, state);
-      }
-    }
-    episodeActions = arma::conv_to<arma::icolvec>::from(actions[episodeNum]);
-    episodeRewards = arma::conv_to<arma::colvec>::from(rewards[episodeNum]);
-    i = 0;
-    for(auto state : next_states[episodeNum])
-    {
-      if(i==0)
-      {
-        episodeNextStates = state;
-        i++;
-      }else
-      {
-        episodeNextStates = arma::join_rows(episodeNextStates, state);
-      }
-    }
-    isTerminal = arma::conv_to<arma::icolvec>::from(this->isTerminal[episodeNum]);
-  }
-
-  /**
   * Get the number of episodes in the memory.
   *
   * @return Actual used memory size
@@ -192,6 +138,8 @@ class EpisodicReplay
   * @param sampledNextStates Sampled encoded next states.
   * @param isTerminal Indicate whether corresponding next state is terminal
   *        state.
+  * @param random Whether episode is sampled random or most recent episode
+  *        is sampled
   */
   void Sample(arma::mat& episodeStates,
                       arma::icolvec& episodeActions,
