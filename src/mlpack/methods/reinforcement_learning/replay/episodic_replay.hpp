@@ -67,9 +67,8 @@ class EpisodicReplay
     next_states.resize(capacity);
     rewards.resize(capacity);
     actions.resize(capacity);
-    isTerminal.resize(capacity); 
+    isTerminal.resize(capacity);
   }
-
 
   /**
   * Store the given experience.
@@ -119,16 +118,14 @@ class EpisodicReplay
   *
   * @return Actual used memory size
   */
-
   const size_t Size()
   {
     if (states[position].size() == 0)
     {
       return full ? capacity : position;  
     }
-    return full ? capacity : (position+1);  
+    return full ? capacity : (position+1);
   }
-
 
   /**
   * Get the most recently added episode.
@@ -149,7 +146,6 @@ class EpisodicReplay
                       arma::icolvec& isTerminal,
                       bool random = false)
   {
-    
     int episodeNum = 0;
     if (random)
     {
@@ -205,7 +201,7 @@ class EpisodicReplay
         episodeNextStates = arma::join_rows(episodeNextStates, state);
       }
     }
-    isTerminal = arma::conv_to<arma::icolvec>::from(this->isTerminal[episodeNum]);	
+    isTerminal = arma::conv_to<arma::icolvec>::from(this->isTerminal[episodeNum]);
   }
 
   void Update(arma::mat /* target */,
@@ -215,7 +211,6 @@ class EpisodicReplay
   {
     /* Do nothing for random replay. */
   }
-
 
  private:
   //! Locally-stored total episode limit.
