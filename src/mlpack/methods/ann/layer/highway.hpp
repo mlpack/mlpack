@@ -171,16 +171,6 @@ class Highway
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
-  //! Get the input width.
-  size_t const& InputWidth() const { return width; }
-  //! Modify input the width.
-  size_t& InputWidth() { return width; }
-
-  //! Get the input height.
-  size_t const& InputHeight() const { return height; }
-  //! Modify the input height.
-  size_t& InputHeight() { return height; }
-
   //! Get the number of input units.
   size_t InSize() const { return inSize; }
 

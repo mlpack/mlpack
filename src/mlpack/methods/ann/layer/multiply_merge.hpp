@@ -135,11 +135,6 @@ class MultiplyMerge
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
-  //! Get the value of run parameter.
-  bool Run() const { return run; }
-  //! Modify the value of run parameter.
-  bool& Run() { return run; }
-
   /**
    * Serialize the layer.
    */
