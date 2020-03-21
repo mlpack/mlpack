@@ -177,10 +177,8 @@ class EpisodicReplay
   {
     if(states[position].size()==0){
       return full ? capacity : position;  
-    }else{
-      return full ? capacity : (position+1);  
     }
-    return full ? capacity : position;
+    return full ? capacity : (position+1);  
   }
 
 
