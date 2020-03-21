@@ -150,7 +150,7 @@ class EpisodicReplay
                       bool random = false)
   {
     
-    int episodeNum=0;
+    int episodeNum = 0;
     if (random)
     {
       size_t upperBound = full ? capacity : position;
