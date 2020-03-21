@@ -1,3 +1,14 @@
+/**
+ * @file episodic_replay.hpp
+ * @author Narayanan E R
+ *
+ * This file is an implementation of episodic experience replay.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #ifndef MLPACK_METHODS_RL_REPLAY_EPISODIC_REPLAY_HPP
 #define MLPACK_METHODS_RL_REPLAY_EPISODIC_REPLAY_HPP
 
@@ -14,6 +25,7 @@ namespace rl {
  * environment will be saved to a memory buffer. When necessary,
  * we can simply sample previous episodes or the most recent episode
  * from the buffer to train the agent.
+ *
  * @tparam EnvironmentType Desired task.
  */
 template <typename EnvironmentType>
@@ -28,7 +40,6 @@ class EpisodicReplay
 
   /**
   * Construct an instance of episode experience replay class.
-  * Everything initialized to 0
   */
   EpisodicReplay():
       capacity(0),
@@ -39,6 +50,7 @@ class EpisodicReplay
 
   /**
   * Construct an instance of episode experience replay class.
+  *
   * @param capacity Total memory size in terms of number of episodes.
   * @param dimension The dimension of an encoded state.
   */
@@ -60,6 +72,7 @@ class EpisodicReplay
 
   /**
   * Store the given experience.
+  *
   * @param state Given state.
   * @param action Given action.
   * @param reward Given reward.
@@ -81,11 +94,13 @@ class EpisodicReplay
       isTerminal[position].clear();
       clear = false;
     }
+
     states[position].push_back(state.Encode());
     actions[position].push_back(action);
     rewards[position].push_back(reward);
     next_states[position].push_back(nextState.Encode());
     isTerminal[position].push_back(isEnd);
+
     if(isEnd||states[position].size()==max_episode_len)
     {
       position++;
@@ -100,6 +115,7 @@ class EpisodicReplay
 
   /**
   * Sample some episode.
+  *
   * @param sampledStates Sampled encoded states.
   * @param sampledActions Sampled actions.
   * @param sampledRewards Sampled rewards.
@@ -122,9 +138,8 @@ class EpisodicReplay
       high = 1;
     }
     int episodeNum = math::RandInt(lo,high);
-    std::vector<arma::colvec> temp = states[episodeNum];
     int i = 0;
-    for(auto state : temp)
+    for(auto state : states[episodeNum])
     {
       if(i==0)
       {
@@ -137,9 +152,8 @@ class EpisodicReplay
     }
     episodeActions = arma::conv_to<arma::icolvec>::from(actions[episodeNum]);
     episodeRewards = arma::conv_to<arma::colvec>::from(rewards[episodeNum]);
-    temp = next_states[episodeNum];
     i = 0;
-    for(auto state : temp)
+    for(auto state : next_states[episodeNum])
     {
       if(i==0)
       {
@@ -151,7 +165,7 @@ class EpisodicReplay
       }
     }
     isTerminal = arma::conv_to<arma::icolvec>::from(this->isTerminal[episodeNum]);
-    }
+  }
 
   /**
   * Get the number of episodes in the memory.
@@ -172,6 +186,7 @@ class EpisodicReplay
 
   /**
   * Get the most recently added episode.
+  *
   * @param sampledStates Sampled encoded states.
   * @param sampledActions Sampled actions.
   * @param sampledRewards Sampled rewards.
@@ -183,21 +198,38 @@ class EpisodicReplay
                       arma::icolvec& episodeActions,
                       arma::colvec& episodeRewards,
                       arma::mat& episodeNextStates,
-                      arma::icolvec& isTerminal)
+                      arma::icolvec& isTerminal,
+                      bool random = false)
   {
+    
     int episodeNum=0;
-    if(states[position].size()==0 || clear==true)
+    if(random)
     {
-      if(position==0)
-        episodeNum = capacity-1;
+      size_t upperBound = full ? capacity : position;
+      int lo = 0;
+      int high = upperBound;
+      if(!upperBound)
+      {
+        high = 1;
+      }
+      episodeNum = math::RandInt(lo,high);
+    }else
+    {
+      if(states[position].size()==0 || clear==true)
+      {
+        if(position==0)
+        {
+          if(full)
+            episodeNum = capacity-1;
+        }
+        else
+          episodeNum = position-1;
+      }
       else
-        episodeNum = position-1;
+        episodeNum = position;
     }
-    else
-      episodeNum = position;
-    std::vector<arma::colvec> temp = states[episodeNum];
     int i = 0;
-    for(auto state : temp)
+    for(auto state : states[episodeNum])
     {
       if(i==0)
       {
@@ -210,9 +242,8 @@ class EpisodicReplay
     }
     episodeActions = arma::conv_to<arma::icolvec>::from(actions[episodeNum]);
     episodeRewards = arma::conv_to<arma::colvec>::from(rewards[episodeNum]);
-    temp = next_states[episodeNum];
     i = 0;
-    for(auto state : temp)
+    for(auto state : next_states[episodeNum])
     {
       if(i==0)
       {

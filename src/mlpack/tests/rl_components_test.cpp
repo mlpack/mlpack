@@ -291,8 +291,8 @@ BOOST_AUTO_TEST_CASE(EpisodicReplayTest)
   BOOST_REQUIRE_EQUAL(1, replay.Size());
   
   
-  replay.Random_Episode(sampledState, sampledAction, sampledReward, sampledNextState,
-      sampledTerminal);
+  replay.Sample(sampledState, sampledAction, sampledReward, sampledNextState,
+      sampledTerminal,true);
   CheckMatrices(state.Encode(), sampledState);
   BOOST_REQUIRE_EQUAL(action, arma::as_scalar(sampledAction));
   BOOST_REQUIRE_CLOSE(reward, arma::as_scalar(sampledReward), 1e-5);
@@ -308,8 +308,8 @@ BOOST_AUTO_TEST_CASE(EpisodicReplayTest)
   //! Sample several times, the original record shouldn't appear
   for (size_t i = 0; i < 30; ++i)
   {
-    replay.Random_Episode(sampledState, sampledAction, sampledReward, sampledNextState,
-        sampledTerminal);
+    replay.Sample(sampledState, sampledAction, sampledReward, sampledNextState,
+        sampledTerminal,true);
 
     CheckMatrices(state.Encode(), sampledNextState);
     CheckMatrices(nextState.Encode(), sampledState);
