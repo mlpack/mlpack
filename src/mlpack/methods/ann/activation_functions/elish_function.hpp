@@ -75,9 +75,10 @@ class ElishFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    if (x < 0.0)
-      y = (arma::exp(x) - 1) / (1 + arma::exp(-x));
-    y = x / (1 + arma::exp(-x));
+    y.set_size(arma::size(x));
+
+    for (size_t i = 0; i < x.n_elem; i++)
+      y(i) = Fn(x(i));
   }
 
   /**
@@ -109,16 +110,10 @@ class ElishFunction
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& y, OutputVecType& x)
   {
-    if (y < 0.0)
-    {
-      x = arma::exp(y) - 2 / (1 + arma::exp(y)) +
-                    2 / arma::pow(1 + arma::exp(y) , 2);
-    }
-    else
-    {
-      x = 1 / (1 + arma::exp(-y)) + y % (arma::exp(-y) /
-                         arma::pow(1 + arma::exp(-y) , 2));
-    }
+    x.set_size(arma::size(y));
+
+    for (size_t i = 0; i < y.n_elem; i++)
+      x(i) = Deriv(y(i));
   }
 }; // class ElishFunction
 
