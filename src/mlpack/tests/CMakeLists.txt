@@ -186,11 +186,11 @@ add_custom_command(TARGET mlpack_test
 )
 add_custom_command(TARGET mlpack_test
   POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E tar xjpf mnist_first250_training_4s_and_9s.tar.bz2
-  COMMAND ${CMAKE_COMMAND} -E tar xjpf digits_train.tar.bz2
-  COMMAND ${CMAKE_COMMAND} -E tar xjpf digits_test.tar.bz2
-  COMMAND ${CMAKE_COMMAND} -E tar xjpf digits_train_label.tar.bz2
-  COMMAND ${CMAKE_COMMAND} -E tar xjpf digits_test_label.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjf mnist_first250_training_4s_and_9s.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjf digits_train.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjf digits_test.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjf digits_train_label.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjf digits_test_label.tar.bz2
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 )
 
