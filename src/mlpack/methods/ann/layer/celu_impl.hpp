@@ -35,11 +35,9 @@ template<typename InputType, typename OutputType>
 void CELU<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)
 {
-  output.set_size(arma::size(input));
+  output = arma::ones<OutputDataType>(arma::size(input));
   for (size_t i = 0; i < input.n_elem; i++)
   {
-    output = arma::ones<OutputDataType>(arma::size(input));
-
     if (input(i) < DBL_MAX)
     {
       output(i) = (input(i) >= 0) ? input(i) : alpha *
