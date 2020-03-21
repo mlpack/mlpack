@@ -3395,10 +3395,6 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
   input = arma::linspace<arma::colvec>(0, 24, 25);
   module5.Forward(std::move(input), std::move(output));
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
   BOOST_REQUIRE_EQUAL(arma::accu(output), 9);
   BOOST_REQUIRE_EQUAL(output.n_rows, 1);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
@@ -3517,11 +3513,6 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
   module3.InputHeight() = 3;
   module3.Forward(std::move(input), std::move(output));
 
-  BOOST_TEST_MESSAGE( "input: " << input );
-  BOOST_TEST_MESSAGE( "output: " << output );
-  BOOST_TEST_MESSAGE( "outwidth: " << module3.OutputWidth() );
-  BOOST_TEST_MESSAGE( "outheight: " << module3.OutputHeight() );
-
   BOOST_REQUIRE_EQUAL(arma::accu(output), 70);
   BOOST_REQUIRE_EQUAL(output.n_rows, 16);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
@@ -3542,11 +3533,7 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
 
   // Test the Backward function.
   module5.Backward(std::move(input), std::move(output), std::move(delta));
-<<<<<<< HEAD
 
-=======
-
->>>>>>> pwork
   // Check "same" uneven padding option.
   MeanPooling<> module6(4, 3, 2, 1, true, 5, 4,
       std::tuple<size_t, size_t>(1, 2),
@@ -3563,14 +3550,5 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
   // Test the Backward function.
   module6.Backward(std::move(input), std::move(output), std::move(delta));
 }
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> fix
 
->>>>>>> pwork
 BOOST_AUTO_TEST_SUITE_END();
-=======
-BOOST_AUTO_TEST_SUITE_END();
-
->>>>>>> minor style issue
