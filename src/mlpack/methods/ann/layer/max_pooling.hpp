@@ -236,16 +236,14 @@ class MaxPooling
           if (isPadded)
           {
             subIndices = paddedIndices(arma::span(rowidx,
-            rowidx + kernelWidth - 1 - offset),
-            arma::span(colidx,
-                colidx + kernelHeight - 1 - offset));
+                rowidx + kernelWidth - 1 - offset),
+            arma::span(colidx, colidx + kernelHeight - 1 - offset));
           }
           else
           {
             subIndices = indices(arma::span(rowidx,
               rowidx + kernelWidth - 1 - offset),
-              arma::span(colidx,
-                  colidx + kernelHeight - 1 - offset));
+              arma::span(colidx, colidx + kernelHeight - 1 - offset));
           }
 
           poolingIndices(i, j) = subIndices(idx);
