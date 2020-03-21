@@ -592,4 +592,33 @@ BOOST_AUTO_TEST_CASE(FFNReturnModel)
   CheckMatrices(linearB->Parameters(), arma::zeros(3 * 4 + 4, 1));
 }
 
+/**
+ * Test to see if the FFN code compiles when the Optimizer
+ * doesn't have the MaxIterations() method.
+ */
+BOOST_AUTO_TEST_CASE(OptimizerTest)
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<CustomLayer<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
+
+  ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
+  model.Train(trainData, trainLabels, opt);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
