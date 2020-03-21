@@ -83,6 +83,9 @@ class ConcatPerformance
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the size of the input.
+  size_t InSize() const { return inSize; }
+
   /**
    * Serialize the layer
    */

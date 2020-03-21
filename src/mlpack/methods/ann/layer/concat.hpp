@@ -201,6 +201,9 @@ class Concat
   //! Modify the gradient.
   arma::mat& Gradient() { return gradient; }
 
+  //! Get the axis of concatenation.
+  size_t const& ConcatAxis() const { return axis; }
+
   /**
    * Serialize the layer
    */
