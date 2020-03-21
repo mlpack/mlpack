@@ -330,7 +330,7 @@ BOOST_AUTO_TEST_CASE(EpisodicReplayTest)
     }
   }
   arma::mat sampledStatetemp;
-  replay.Sample(sampledStatetemp, sampledAction, sampledReward, 
+  replay.Sample(sampledStatetemp, sampledAction, sampledReward,
       sampledNextState, sampledTerminal);
   CheckMatrices(sampledStates, sampledStatetemp);
 
