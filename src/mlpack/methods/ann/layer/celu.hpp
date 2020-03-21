@@ -127,7 +127,7 @@ class CELU
   //! Locally stored first derivative of the activation function.
   arma::mat derivative;
 
-  //! CELU Hyperparameter (alpha > 0)
+  //! CELU Hyperparameter (alpha > 0).
   double alpha;
 
   //! If true the derivative computation is disabled, see notes above.
