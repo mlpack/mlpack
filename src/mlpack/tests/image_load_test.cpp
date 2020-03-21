@@ -29,8 +29,10 @@ BOOST_AUTO_TEST_CASE(LoadInvalidExtensionFile)
 {
   arma::Mat<unsigned char> matrix;
   data::ImageInfo info;
+  Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(data::Load("invalidExtendion.p4ng", matrix, info,
-    false, true),  std::runtime_error);
+      true),  std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -40,8 +42,7 @@ BOOST_AUTO_TEST_CASE(LoadImageAPITest)
 {
   arma::Mat<unsigned char> matrix;
   data::ImageInfo info;
-  BOOST_REQUIRE(data::Load("test_image.png", matrix, info, false,
-      true) == true);
+  BOOST_REQUIRE(data::Load("test_image.png", matrix, info, false) == true);
   BOOST_REQUIRE_EQUAL(matrix.n_rows, 50 * 50 * 3); // width * height * channels.
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 1);
 }
@@ -56,10 +57,10 @@ BOOST_AUTO_TEST_CASE(SaveImageAPITest)
   arma::Mat<unsigned char> im1;
   size_t dimension = info.Width() * info.Height() * info.Channels();
   im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
-  BOOST_REQUIRE(data::Save("APITest.bmp", im1, info, false, true) == true);
+  BOOST_REQUIRE(data::Save("APITest.bmp", im1, info, false) == true);
 
   arma::Mat<unsigned char> im2;
-  BOOST_REQUIRE(data::Load("APITest.bmp", im2, info, false, true) == true);
+  BOOST_REQUIRE(data::Load("APITest.bmp", im2, info, false) == true);
 
   BOOST_REQUIRE_EQUAL(im1.n_cols, im2.n_cols);
   BOOST_REQUIRE_EQUAL(im1.n_rows, im2.n_rows);

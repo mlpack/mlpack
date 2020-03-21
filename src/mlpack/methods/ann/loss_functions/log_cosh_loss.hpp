@@ -55,7 +55,7 @@ class LogCoshLoss
    * @param target Target data to compare with.
    */
   template<typename InputType, typename TargetType>
-  double Forward(const InputType&& input, const TargetType&& target);
+  double Forward(const InputType& input, const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -65,9 +65,9 @@ class LogCoshLoss
    * @param output The calculated error.
    */
   template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType&& input,
-                const TargetType&& target,
-                OutputType&& output);
+  void Backward(const InputType& input,
+                const TargetType& target,
+                OutputType& output);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
@@ -75,9 +75,9 @@ class LogCoshLoss
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the value of hyperparameter a.
-  bool A() const { return a; }
+  double A() const { return a; }
   //! Modify the value of hyperparameter a.
-  bool& A() { return a; }
+  double& A() { return a; }
 
   /**
    * Serialize the loss function.

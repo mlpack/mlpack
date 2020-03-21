@@ -126,7 +126,8 @@ void PrintDocs(const std::string& bindingName,
       cout << "| ";
       cout << ParamString(it->second.name) << " | ";
       cout << ParamType(it->second) << " | ";
-      cout << it->second.desc; // just a string
+      string desc = boost::replace_all_copy(it->second.desc, "|", "\\|");
+      cout << desc; // just a string
       // Print whether or not it's a "special" language-only parameter.
       if (it->second.name == "copy_all_inputs" || it->second.name == "help" ||
           it->second.name == "info" || it->second.name == "version")
@@ -180,7 +181,9 @@ void PrintDocs(const std::string& bindingName,
     cout << "{: #" << languages[i] << "_" << bindingName
         << "_detailed-documentation }" << endl;
     cout << endl;
-    cout << programDoc.documentation() << endl;
+    string doc = boost::replace_all_copy(programDoc.documentation(),
+                                         "|", "\\|");
+    cout << doc << endl;
     cout << endl;
 
     cout << "### See also" << endl;

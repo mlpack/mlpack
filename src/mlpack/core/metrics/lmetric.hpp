@@ -63,7 +63,7 @@ template<int TPower, bool TTakeRoot = true>
 class LMetric
 {
  public:
-  /***
+  /**
    * Default constructor does nothing, but is required to satisfy the Metric
    * policy.
    */

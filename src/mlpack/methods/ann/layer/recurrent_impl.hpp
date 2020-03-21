@@ -143,26 +143,24 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void Recurrent<InputDataType, OutputDataType, CustomLayers...>::Forward(
-    arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   if (forwardStep == 0)
   {
-    boost::apply_visitor(ForwardVisitor(std::move(input), std::move(output)),
-        initialModule);
+    boost::apply_visitor(ForwardVisitor(input, output), initialModule);
   }
   else
   {
-    boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
-        boost::apply_visitor(outputParameterVisitor, inputModule))),
+    boost::apply_visitor(ForwardVisitor(input,
+        boost::apply_visitor(outputParameterVisitor, inputModule)),
         inputModule);
 
-    boost::apply_visitor(ForwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, transferModule)), std::move(
-        boost::apply_visitor(outputParameterVisitor, feedbackModule))),
+    boost::apply_visitor(ForwardVisitor(boost::apply_visitor(
+        outputParameterVisitor, transferModule),
+        boost::apply_visitor(outputParameterVisitor, feedbackModule)),
         feedbackModule);
 
-    boost::apply_visitor(ForwardVisitor(std::move(input), std::move(output)),
-        recurrentModule);
+    boost::apply_visitor(ForwardVisitor(input, output), recurrentModule);
   }
 
   output = boost::apply_visitor(outputParameterVisitor, transferModule);
@@ -190,7 +188,7 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void Recurrent<InputDataType, OutputDataType, CustomLayers...>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   if (!recurrentError.is_empty())
   {
@@ -203,26 +201,26 @@ void Recurrent<InputDataType, OutputDataType, CustomLayers...>::Backward(
 
   if (backwardStep < (rho - 1))
   {
-    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, recurrentModule)), std::move(recurrentError),
-        std::move(boost::apply_visitor(deltaVisitor, recurrentModule))),
+    boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+        outputParameterVisitor, recurrentModule), recurrentError,
+        boost::apply_visitor(deltaVisitor, recurrentModule)),
         recurrentModule);
 
-    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, inputModule)), std::move(
-        boost::apply_visitor(deltaVisitor, recurrentModule)), std::move(g)),
+    boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+        outputParameterVisitor, inputModule),
+        boost::apply_visitor(deltaVisitor, recurrentModule), g),
         inputModule);
 
-    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, feedbackModule)), std::move(
-        boost::apply_visitor(deltaVisitor, recurrentModule)), std::move(
-        boost::apply_visitor(deltaVisitor, feedbackModule))), feedbackModule);
+    boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+        outputParameterVisitor, feedbackModule),
+        boost::apply_visitor(deltaVisitor, recurrentModule),
+        boost::apply_visitor(deltaVisitor, feedbackModule)), feedbackModule);
   }
   else
   {
-    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, initialModule)), std::move(recurrentError),
-        std::move(g)), initialModule);
+    boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+        outputParameterVisitor, initialModule), recurrentError, g),
+        initialModule);
   }
 
   recurrentError = boost::apply_visitor(deltaVisitor, feedbackModule);
@@ -233,22 +231,21 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void Recurrent<InputDataType, OutputDataType, CustomLayers...>::Gradient(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& /* gradient */)
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& /* gradient */)
 {
   if (gradientStep < (rho - 1))
   {
-    boost::apply_visitor(GradientVisitor(std::move(input), std::move(error)),
-        recurrentModule);
+    boost::apply_visitor(GradientVisitor(input, error), recurrentModule);
 
-    boost::apply_visitor(GradientVisitor(std::move(input), std::move(
-        boost::apply_visitor(deltaVisitor, mergeModule))), inputModule);
+    boost::apply_visitor(GradientVisitor(input,
+        boost::apply_visitor(deltaVisitor, mergeModule)), inputModule);
 
-    boost::apply_visitor(GradientVisitor(std::move(
+    boost::apply_visitor(GradientVisitor(
         feedbackOutputParameter[feedbackOutputParameter.size() - 2 -
-        gradientStep]), std::move(boost::apply_visitor(deltaVisitor,
-        mergeModule))), feedbackModule);
+        gradientStep], boost::apply_visitor(deltaVisitor,
+        mergeModule)), feedbackModule);
   }
   else
   {
@@ -256,8 +253,8 @@ void Recurrent<InputDataType, OutputDataType, CustomLayers...>::Gradient(
     boost::apply_visitor(GradientZeroVisitor(), inputModule);
     boost::apply_visitor(GradientZeroVisitor(), feedbackModule);
 
-    boost::apply_visitor(GradientVisitor(std::move(input), std::move(
-        boost::apply_visitor(deltaVisitor, startModule))), initialModule);
+    boost::apply_visitor(GradientVisitor(input,
+        boost::apply_visitor(deltaVisitor, startModule)), initialModule);
   }
 
   gradientStep++;
