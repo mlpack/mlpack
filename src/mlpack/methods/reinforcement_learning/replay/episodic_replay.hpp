@@ -52,6 +52,7 @@ class EpisodicReplay
   * Construct an instance of episode experience replay class.
   *
   * @param capacity Total memory size in terms of number of episodes.
+  * @param max_episode_len The maximum episode length possible.
   * @param dimension The dimension of an encoded state.
   */
   EpisodicReplay(const size_t capacity,
@@ -85,7 +86,7 @@ class EpisodicReplay
              const StateType& nextState,
              bool isEnd)
   {
-    if(clear)
+    if (clear)
     {
       states[position].clear();
       actions[position].clear();
@@ -101,7 +102,7 @@ class EpisodicReplay
     next_states[position].push_back(nextState.Encode());
     isTerminal[position].push_back(isEnd);
 
-    if(isEnd||states[position].size()==max_episode_len)
+    if(isEnd || states[position].size()==max_episode_len)
     {
       position++;
       clear = true;
