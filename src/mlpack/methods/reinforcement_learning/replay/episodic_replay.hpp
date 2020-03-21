@@ -122,7 +122,7 @@ class EpisodicReplay
   {
     if (states[position].size() == 0)
     {
-      return full ? capacity : position;  
+      return full ? capacity : position;
     }
     return full ? capacity : (position+1);
   }
@@ -201,7 +201,8 @@ class EpisodicReplay
         episodeNextStates = arma::join_rows(episodeNextStates, state);
       }
     }
-    isTerminal = arma::conv_to<arma::icolvec>::from(this->isTerminal[episodeNum]);
+    isTerminal = arma::conv_to<arma::icolvec>::from(
+        this->isTerminal[episodeNum]);
   }
 
   void Update(arma::mat /* target */,
