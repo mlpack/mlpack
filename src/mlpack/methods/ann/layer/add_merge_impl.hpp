@@ -159,7 +159,15 @@ void AddMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
   ar & BOOST_SERIALIZATION_NVP(network);
   ar & BOOST_SERIALIZATION_NVP(model);
   ar & BOOST_SERIALIZATION_NVP(run);
-  ar & BOOST_SERIALIZATION_NVP(ownsLayers);
+
+  if (version >= 1)
+  {
+    ar & BOOST_SERIALIZATION_NVP(ownsLayers);
+  }
+  else if (Archive::is_loading::value)
+  {
+    ownsLayers = !model;
+  }
 }
 
 } // namespace ann
