@@ -188,6 +188,6 @@ static void mlpackMain()
   if (CLI::HasParam("output"))
     CLI::GetParam<arma::mat>("output") = std::move(output);
   Timer::Stop("feature_scaling");
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<ScalingModel*>("output_model") = m;
+
+  CLI::GetParam<ScalingModel*>("output_model") = m;
 }
