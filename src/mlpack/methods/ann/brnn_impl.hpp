@@ -64,6 +64,44 @@ template<typename OutputLayerType, typename MergeLayerType,
          typename MergeOutputType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename OptimizerType>
+typename std::enable_if<
+      HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
+    InitializationRuleType, CustomLayers...>::WarnMessageMaxIterations
+(OptimizerType& optimizer, size_t samples) const
+{
+  if (optimizer.MaxIterations() < samples &&
+      optimizer.MaxIterations() != 0)
+  {
+    Log::Warn << "The optimizer's maximum number of iterations "
+              << "is less than the size of the dataset; the "
+              << "optimizer will not pass over the entire "
+              << "dataset. To fix this, modify the maximum "
+              << "number of iterations to be at least equal "
+              << "to the number of points of your dataset "
+              << "(" << samples << ")." << std::endl;
+  }
+}
+
+template<typename OutputLayerType, typename MergeLayerType,
+         typename MergeOutputType, typename InitializationRuleType,
+         typename... CustomLayers>
+template<typename OptimizerType>
+typename std::enable_if<
+      !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
+    InitializationRuleType, CustomLayers...>::WarnMessageMaxIterations
+(OptimizerType& optimizer, size_t samples) const
+{
+  return;
+}
+
+template<typename OutputLayerType, typename MergeLayerType,
+         typename MergeOutputType, typename InitializationRuleType,
+         typename... CustomLayers>
+template<typename OptimizerType>
 double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::Train(
     arma::cube predictors,
@@ -82,6 +120,8 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
   {
     ResetParameters();
   }
+
+  WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
   Timer::Start("BRNN_optimization");
@@ -116,6 +156,8 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
   }
 
   OptimizerType optimizer;
+
+  WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
   const double out = optimizer.Optimize(*this, parameter);

@@ -183,7 +183,7 @@ class LARS
    * @param responses A vector of targets.
    * @param beta Vector to store the solution (the coefficients) in.
    * @param transposeData Set to false if the data is row-major.
-   * @return The final absolute maximum correlation.
+   * @return minimum cost error(||y-beta*X||2 is used to calculate error).
    */
   double Train(const arma::mat& data,
                const arma::rowvec& responses,
@@ -202,7 +202,7 @@ class LARS
    * @param responses A vector of targets.
    * @param transposeData Should be true if the input data is column-major and
    *     false otherwise.
-   * @return The final absolute maximum correlation.
+   * @return minimum cost error(||y-beta*X||2 is used to calculate error).
    */
   double Train(const arma::mat& data,
                const arma::rowvec& responses,
@@ -243,6 +243,22 @@ class LARS
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
+
+  /**
+   * Compute cost error of the given data matrix using the
+   * currently-trained LARS model. Only ||y-beta*X||2 is used to calculate
+   * cost error.
+   *
+   * @param data Column-major input data (or row-major input data if rowMajor =
+   *     true).
+   * @param responses A vector of targets.
+   * @param rowMajor Should be true if the data points matrix is row-major and
+   *   false otherwise.
+   * @return The minimum cost error.
+   */
+  double ComputeError(const arma::mat& matX,
+                      const arma::rowvec& y,
+                      const bool rowMajor = false);
 
  private:
   //! Gram matrix.
