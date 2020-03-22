@@ -61,29 +61,68 @@ class AtrousConvolution
    *
    * @param inSize The number of input maps.
    * @param outSize The number of output maps.
-   * @param kW Width of the filter/kernel.
-   * @param kH Height of the filter/kernel.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
+   * @param kernelWidth Width of the filter/kernel.
+   * @param kernelHeight Height of the filter/kernel.
+   * @param strideWidth Stride of filter application in the x direction.
+   * @param strideHeight Stride of filter application in the y direction.
    * @param padW Padding width of the input.
    * @param padH Padding height of the input.
    * @param inputWidth The widht of the input data.
    * @param inputHeight The height of the input data.
-   * @param dilationW The space between the cells of filters in x direction.
-   * @param dilationH The space between the cells of filters in y direction.
+   * @param dilationWidth The space between the cells of filters in x direction.
+   * @param dilationHeight The space between the cells of filters in y direction.
+   * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
   AtrousConvolution(const size_t inSize,
                     const size_t outSize,
-                    const size_t kW,
-                    const size_t kH,
-                    const size_t dW = 1,
-                    const size_t dH = 1,
+                    const size_t kernelWidth,
+                    const size_t kernelHeight,
+                    const size_t strideWidth = 1,
+                    const size_t strideHeight = 1,
                     const size_t padW = 0,
                     const size_t padH = 0,
                     const size_t inputWidth = 0,
                     const size_t inputHeight = 0,
-                    const size_t dilationW = 1,
-                    const size_t dilationH = 1);
+                    const size_t dilationWidth = 1,
+                    const size_t dilationHeight = 1,
+                    const std::string& paddingType = "None");
+
+  /**
+   * Create the AtrousConvolution object using the specified number of
+   * input maps, output maps, filter size, stride, dilation and
+   * padding parameter.
+   *
+   * @param inSize The number of input maps.
+   * @param outSize The number of output maps.
+   * @param kernelWidth Width of the filter/kernel.
+   * @param kernelHeight Height of the filter/kernel.
+   * @param strideWidth Stride of filter application in the x direction.
+   * @param strideHeight Stride of filter application in the y direction.
+   * @param padW A two-value tuple indicating padding widths of the input.
+   *             First value is padding at left side. Second value is padding on
+   *             right side.
+   * @param padH A two-value tuple indicating padding heights of the input.
+   *             First value is padding at top. Second value is padding on
+   *             bottom.
+   * @param inputWidth The widht of the input data.
+   * @param inputHeight The height of the input data.
+   * @param dilationWidth The space between the cells of filters in x direction.
+   * @param dilationHeight The space between the cells of filters in y direction.
+   * @param paddingType The type of padding (Valid/Same/None). Defaults to None.
+   */
+  AtrousConvolution(const size_t inSize,
+                    const size_t outSize,
+                    const size_t kernelWidth,
+                    const size_t kernelHeight,
+                    const size_t strideWidth,
+                    const size_t strideHeight,
+                    const std::tuple<size_t, size_t>& padW,
+                    const std::tuple<size_t, size_t>& padH,
+                    const size_t inputWidth = 0,
+                    const size_t inputHeight = 0,
+                    const size_t dilationWidth = 1,
+                    const size_t dilationHeight = 1,
+                    const std::string& paddingType = "None");
 
   /*
    * Set the weight and bias term.
@@ -98,7 +137,7 @@ class AtrousConvolution
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -110,9 +149,9 @@ class AtrousConvolution
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -122,55 +161,96 @@ class AtrousConvolution
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  const OutputDataType& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  const OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  const OutputDataType& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
+  const OutputDataType& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the input width.
-  size_t const& InputWidth() const { return inputWidth; }
+  const size_t& InputWidth() const { return inputWidth; }
   //! Modify input the width.
   size_t& InputWidth() { return inputWidth; }
 
   //! Get the input height.
-  size_t const& InputHeight() const { return inputHeight; }
+  const size_t& InputHeight() const { return inputHeight; }
   //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
   //! Get the output width.
-  size_t const& OutputWidth() const { return outputWidth; }
+  const size_t& OutputWidth() const { return outputWidth; }
   //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
   //! Get the output height.
-  size_t const& OutputHeight() const { return outputHeight; }
+  const size_t& OutputHeight() const { return outputHeight; }
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
+
+  //! Get the input size.
+  const size_t& InputSize() const { return inSize; }
+
+  //! Get the output size.
+  const size_t& OutputSize() const { return outSize; }
+
+  //! Get the kernel width.
+  size_t KernelWidth() const { return kernelWidth; }
+  //! Modify the kernel width.
+  size_t& KernelWidth() { return kernelWidth; }
+
+  //! Get the kernel height.
+  size_t KernelHeight() const { return kernelHeight; }
+  //! Modify the kernel height.
+  size_t& KernelHeight() { return kernelHeight; }
+
+  //! Get the stride width.
+  size_t StrideWidth() const { return strideWidth; }
+  //! Modify the stride width.
+  size_t& StrideWidth() { return strideWidth; }
+
+  //! Get the stride height.
+  size_t StrideHeight() const { return strideHeight; }
+  //! Modify the stride height.
+  size_t& StrideHeight() { return strideHeight; }
+
+  //! Get the dilation rate on the X axis.
+  size_t DilationWidth() const { return dilationWidth; }
+  //! Modify the dilation rate on the X axis.
+  size_t& DilationWidth() { return dilationWidth; }
+
+  //! Get the dilation rate on the Y axis.
+  size_t DilationHeight() const { return dilationHeight; }
+  //! Modify the dilation rate on the Y axis.
+  size_t& DilationHeight() { return dilationHeight; }
+
+  //! Get the internal Padding layer.
+  const ann::Padding<>& Padding() const { return padding; }
+  //! Modify the internal Padding layer.
+  ann::Padding<>& Padding() { return padding; }
 
   //! Modify the bias weights of the layer.
   arma::mat& Bias() { return bias; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -182,18 +262,28 @@ class AtrousConvolution
    * @param size The size of the input (row or column).
    * @param k The size of the filter (width or height).
    * @param s The stride size (x or y direction).
-   * @param p The size of the padding (width or height).
+   * @param pSideOne The size of the padding (width or height) on one side.
+   * @param pSideTwo The size of the padding (width or height) on another side.
    * @param d The dilation size.
    * @return The convolution output size.
    */
   size_t ConvOutSize(const size_t size,
-                      const size_t k,
-                      const size_t s,
-                      const size_t p,
-                      const size_t d)
+                     const size_t k,
+                     const size_t s,
+                     const size_t pSideOne,
+                     const size_t pSideTwo,
+                     const size_t d)
   {
-    return std::floor(size + p * 2 - d * (k - 1) - 1) / s + 1;
+    return std::floor(size + pSideOne + pSideTwo - d * (k - 1) - 1) / s + 1;
   }
+
+  /*
+   * Function to assign padding such that output size is same as input size.
+   */
+  void InitializeSamePadding(size_t& padWLeft,
+                             size_t& padWRight,
+                             size_t& padHBottom,
+                             size_t& padHTop) const;
 
   /*
    * Rotates a 3rd-order tensor counterclockwise by 180 degrees.
@@ -234,22 +324,16 @@ class AtrousConvolution
   size_t batchSize;
 
   //! Locally-stored filter/kernel width.
-  size_t kW;
+  size_t kernelWidth;
 
   //! Locally-stored filter/kernel height.
-  size_t kH;
+  size_t kernelHeight;
 
   //! Locally-stored stride of the filter in x-direction.
-  size_t dW;
+  size_t strideWidth;
 
   //! Locally-stored stride of the filter in y-direction.
-  size_t dH;
-
-  //! Locally-stored padding width.
-  size_t padW;
-
-  //! Locally-stored padding height.
-  size_t padH;
+  size_t strideHeight;
 
   //! Locally-stored weight object.
   OutputDataType weights;
@@ -273,10 +357,10 @@ class AtrousConvolution
   size_t outputHeight;
 
   //! Locally-stored width dilation factor.
-  size_t dilationW;
+  size_t dilationWidth;
 
   //! Locally-stored height dilation factor.
-  size_t dilationH;
+  size_t dilationHeight;
 
   //! Locally-stored transformed output parameter.
   arma::cube outputTemp;
@@ -294,7 +378,7 @@ class AtrousConvolution
   arma::cube gradientTemp;
 
   //! Locally-stored padding layer.
-  Padding<>* padding;
+  ann::Padding<> padding;
 
   //! Locally-stored delta object.
   OutputDataType delta;
@@ -309,7 +393,29 @@ class AtrousConvolution
 } // namespace ann
 } // namespace mlpack
 
-// Include implementation
+//! Set the serialization version of the AtrousConvolution class.
+namespace boost {
+namespace serialization {
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+struct version<
+    mlpack::ann::AtrousConvolution<ForwardConvolutionRule,
+        BackwardConvolutionRule, GradientConvolutionRule, InputDataType,
+        OutputDataType> >
+{
+  BOOST_STATIC_CONSTANT(int, value = 2);
+};
+
+} // namespace serialization
+} // namespace boost
+
+// Include implementation.
 #include "atrous_convolution_impl.hpp"
 
 #endif

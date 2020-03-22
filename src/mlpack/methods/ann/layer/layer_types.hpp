@@ -41,6 +41,8 @@
 #include <mlpack/methods/ann/layer/select.hpp>
 #include <mlpack/methods/ann/layer/subview.hpp>
 #include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
+#include <mlpack/methods/ann/layer/hardshrink.hpp>
+#include <mlpack/methods/ann/layer/softshrink.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
@@ -185,8 +187,7 @@ using MoreTypes = boost::variant<
         Sequential<arma::mat, arma::mat, true>*,
         Subview<arma::mat, arma::mat>*,
         VRClassReward<arma::mat, arma::mat>*,
-        VirtualBatchNorm<arma::mat, arma::mat>*,
-        WeightNorm<arma::mat, arma::mat>*
+        VirtualBatchNorm<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
@@ -213,7 +214,7 @@ using LayerTypes = boost::variant<
                 NaiveConvolution<FullConvolution>,
                 NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
     TransposedConvolution<NaiveConvolution<ValidConvolution>,
-            NaiveConvolution<FullConvolution>,
+            NaiveConvolution<ValidConvolution>,
             NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
     DropConnect<arma::mat, arma::mat>*,
     Dropout<arma::mat, arma::mat>*,
@@ -242,6 +243,7 @@ using LayerTypes = boost::variant<
     NegativeLogLikelihood<arma::mat, arma::mat>*,
     Padding<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
+    WeightNorm<arma::mat, arma::mat>*,
     MoreTypes,
     CustomLayers*...
 >;

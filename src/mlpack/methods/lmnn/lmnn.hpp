@@ -77,9 +77,13 @@ class LMNN
    * LearnDistance() is called with an outputMatrix with correct dimensions,
    * then that matrix will be used as the starting point for optimization.
    *
+   * @tparam CallbackTypes Types of Callback functions.
    * @param outputMatrix Covariance matrix of Mahalanobis distance.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    */
-  void LearnDistance(arma::mat& outputMatrix);
+  template<typename... CallbackTypes>
+  void LearnDistance(arma::mat& outputMatrix, CallbackTypes&&... callbacks);
 
 
   //! Get the dataset reference.

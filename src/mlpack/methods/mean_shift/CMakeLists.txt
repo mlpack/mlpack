@@ -16,4 +16,5 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(mean_shift)
 add_python_binding(mean_shift)
-add_markdown_docs(mean_shift "cli;python" "clustering")
+add_julia_binding(mean_shift)
+add_markdown_docs(mean_shift "cli;python;julia" "clustering")

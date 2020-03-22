@@ -40,6 +40,8 @@ if (NOT PY_PANDAS)
   not_found_return("pandas not found; not building Python bindings.")
 endif ()
 
+set(BUILDING_PYTHON_BINDINGS ON PARENT_SCOPE)
+
 # Nothing in this directory will be compiled into mlpack.
 set(BINDING_SOURCES
   default_param.hpp
@@ -105,6 +107,8 @@ endif ()
 
 add_custom_target(python ALL DEPENDS mlpack)
 add_custom_target(python_copy ALL DEPENDS mlpack)
+# The python_configure target is added later; this is a dummy target.
+add_custom_target(python_configured ALL)
 
 # Copy necessary files after making the mlpack/ directory.
 add_custom_command(TARGET python_copy PRE_BUILD
@@ -137,7 +141,7 @@ if (BUILD_TESTS)
 endif ()
 
 # Install any dependencies via setuptools automatically.
-add_custom_command(TARGET python_copy POST_BUILD
+add_custom_command(TARGET python_configured POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E env NO_BUILD=1 ${PYTHON_EXECUTABLE}
         ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py build
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
@@ -162,7 +166,7 @@ add_custom_command(TARGET python POST_BUILD
         ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/copy_artifacts.py
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
 
-add_dependencies(python python_copy)
+add_dependencies(python python_configured)
 
 # Configure installation script file.
 execute_process(COMMAND ${PYTHON_EXECUTABLE}
@@ -174,11 +178,31 @@ install(CODE "set(PYTHON_EXECUTABLE \"${PYTHON_EXECUTABLE}\")")
 install(CODE "set(CMAKE_BINARY_DIR \"${CMAKE_BINARY_DIR}\")")
 install(CODE "set(CMAKE_INSTALL_PREFIX \"${CMAKE_INSTALL_PREFIX}\")")
 install(CODE "execute_process(COMMAND mkdir -p $ENV{DESTDIR}${CMAKE_PYTHON_PATH})")
-install(SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/PythonInstall.cmake)
+install(SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/PythonInstall.cmake")
 
 # Prepare __init__.py for having all of the convenience imports appended to it.
 file(COPY mlpack/__init__.py DESTINATION
     ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
+
+if (WIN32)
+  # Copy all necessary DLLs to the Python build directory.
+  foreach (dir ${DLL_COPY_DIRS})
+    file(GLOB dll_dir_files "${dir}/*.dll")
+    file(COPY ${dll_dir_files} DESTINATION ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
+  endforeach ()
+
+  foreach (dll ${DLL_COPY_LIBS})
+    file(COPY ${dll} DESTINATION ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
+  endforeach ()
+
+  # We also need to copy the boost DLLs over.
+  file(GLOB boost_ser_dll_files "${Boost_LIBRARY_DIRS}/*serialization*.dll")
+  file(COPY ${boost_ser_dll_files} DESTINATION ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
+  file(GLOB boost_po_dll_files "${Boost_LIBRARY_DIRS}/*program*options*.dll")
+  file(COPY ${boost_po_dll_files} DESTINATION ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
+  file(GLOB boost_utf_dll_files "${Boost_LIBRARY_DIRS}/*unit*test*framework*.dll")
+  file(COPY ${boost_utf_dll_files} DESTINATION ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
+endif ()
 
 # Add a macro to build a python binding.
 macro (add_python_binding name)
@@ -191,8 +215,9 @@ if (BUILD_PYTHON_BINDINGS)
           -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
           -DPROGRAM_NAME=${name}
-          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGeneratePYX.cmake
-      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_pyx.cpp.in)
+          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake
+      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_pyx.cpp.in
+              ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake)
 
   add_executable(generate_pyx_${name}
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
@@ -203,7 +228,7 @@ if (BUILD_PYTHON_BINDINGS)
       -DBINDING_TYPE=BINDING_TYPE_PYX)
   add_custom_command(TARGET generate_pyx_${name} POST_BUILD
       COMMAND ${CMAKE_COMMAND}
-          -DPROGRAM=${CMAKE_BINARY_DIR}/bin/generate_pyx_${name}
+          -DPROGRAM=$<TARGET_FILE:generate_pyx_${name}>
           -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${name}.pyx
           -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake)
 
@@ -220,7 +245,7 @@ if (BUILD_PYTHON_BINDINGS)
 
   add_dependencies(python build_pyx_${name})
   add_dependencies(build_pyx_${name} generate_pyx_${name})
-  add_dependencies(generate_pyx_${name} python_copy)
+  add_dependencies(generate_pyx_${name} python_configured)
 
   # Add the convenience import to __init__.py.  Note that this happens during
   # configuration.

@@ -17,6 +17,7 @@
 
 #include <mlpack/bindings/cli/get_printable_type.hpp>
 #include <mlpack/bindings/python/get_printable_type.hpp>
+#include <mlpack/bindings/julia/get_printable_type.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -40,6 +41,11 @@ void GetPrintableType(const util::ParamData& data,
   {
     *((std::string*) output) =
         python::GetPrintableType<typename std::remove_pointer<T>::type>(data);
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    *((std::string*) output) =
+        julia::GetPrintableType<typename std::remove_pointer<T>::type>(data);
   }
   else
   {
