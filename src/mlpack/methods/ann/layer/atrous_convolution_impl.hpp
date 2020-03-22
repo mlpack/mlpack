@@ -51,6 +51,39 @@ AtrousConvolution<
     InputDataType,
     OutputDataType
 >::AtrousConvolution(
+  const AtrousConvolution& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    kernelWidth(layer.kernelWidth),
+    kernelHeight(layer.kernelHeight),
+    weights(layer.weights),
+    strideWidth(layer.strideWidth),
+    strideHeight(layer.strideHeight),
+    inputWidth(layer.inputWidth),
+    inputHeight(layer.inputHeight),
+    outputWidth(layer.outputWidth),
+    outputHeight(layer.outputHeight),
+    dilationWidth(layer.dilationWidth),
+    dilationHeight(layer.dilationHeight),
+    padding(layer.padding)
+{
+  // Nothing to do here.
+}
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+AtrousConvolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::AtrousConvolution(
     const size_t inSize,
     const size_t outSize,
     const size_t kernelWidth,

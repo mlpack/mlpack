@@ -26,6 +26,24 @@ LSTM<InputDataType, OutputDataType>::LSTM()
 
 template <typename InputDataType, typename OutputDataType>
 LSTM<InputDataType, OutputDataType>::LSTM(
+    const LSTM& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    rho(layer.rho),
+    weights(layer.weights),
+    forwardStep(layer.forwardStep),
+    backwardStep(layer.backwardStep),
+    gradientStep(layer.gradientStep),
+    batchSize(layer.batchSize),
+    batchStep(layer.batchStep),
+    rhoSize(layer.rhoSize),
+    bpttSteps(layer.bpttSteps)
+{
+  // Nothing to do here.
+}
+
+template <typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>::LSTM(
     const size_t inSize, const size_t outSize, const size_t rho) :
     inSize(inSize),
     outSize(outSize),

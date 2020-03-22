@@ -52,6 +52,9 @@ class TransposedConvolution
   //! Create the Transposed Convolution object.
   TransposedConvolution();
 
+  //! Copy constructor.
+  TransposedConvolution(const TransposedConvolution&);
+
   /**
    * Create the Transposed Convolution object using the specified number of
    * input maps, output maps, filter size, stride and padding parameter.

@@ -29,6 +29,17 @@ Lookup<InputDataType, OutputDataType>::Lookup(
   weights.set_size(outSize, inSize);
 }
 
+template <typename InputDataType, typename OutputDataType>
+Lookup<InputDataType, OutputDataType>::Lookup(
+    const Lookup& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    weights(layer.weights)
+{
+  // Nothing to do here.
+}
+
+
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Lookup<InputDataType, OutputDataType>::Forward(

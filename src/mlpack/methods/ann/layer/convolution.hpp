@@ -111,6 +111,9 @@ class Convolution
               const size_t inputHeight = 0,
               const std::string& paddingType = "None");
 
+  //! Copy constructor.
+  Convolution(const Convolution&);
+
   /*
    * Set the weight and bias term.
    */

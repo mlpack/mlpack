@@ -22,6 +22,23 @@ namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputDataType, typename OutputDataType>
 Glimpse<InputDataType, OutputDataType>::Glimpse(
+    const Glimpse& layer) :
+    inSize(layer.inSize),
+    size(layer.size),
+    depth(layer.depth),
+    scale(layer.scale),
+    inputWidth(layer.inputWidth),
+    inputHeight(layer.inputHeight),
+    outputWidth(layer.outputWidth),
+    outputHeight(layer.outputHeight),
+    inputDepth(layer.inputDepth),
+    deterministic(layer.deterministic)
+{
+  // Nothing to do here.
+}
+
+template <typename InputDataType, typename OutputDataType>
+Glimpse<InputDataType, OutputDataType>::Glimpse(
     const size_t inSize,
     const size_t size,
     const size_t depth,

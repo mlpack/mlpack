@@ -37,6 +37,19 @@ Sequential(const bool model) :
 template <typename InputDataType, typename OutputDataType, bool Residual,
           typename... CustomLayers>
 Sequential<InputDataType, OutputDataType, Residual, CustomLayers...>::
+Sequential(const Sequential& layer) :
+    model(layer.model),
+    reset(layer.reset),
+    width(layer.width),
+    height(layer.height),
+    ownsLayers(layer.ownsLayers)
+{
+  // Nothing to do here.
+}
+
+template <typename InputDataType, typename OutputDataType, bool Residual,
+          typename... CustomLayers>
+Sequential<InputDataType, OutputDataType, Residual, CustomLayers...>::
 Sequential(const bool model, const bool ownsLayers) :
     model(model), reset(false), width(0), height(0), ownsLayers(ownsLayers)
 {

@@ -14,6 +14,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_DROPCONNECT_HPP
 #define MLPACK_METHODS_ANN_LAYER_DROPCONNECT_HPP
 
+#include "../visitor/copy_visitor.hpp"
 #include <mlpack/prereqs.hpp>
 
 #include "layer_types.hpp"
@@ -58,13 +59,17 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template<
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename OutputDataType = arma::mat,
+    typename... CustomLayers
 >
 class DropConnect
 {
  public:
   //! Create the DropConnect object.
   DropConnect();
+
+  //! Copy constructor.
+  DropConnect(const DropConnect&);
 
   /**
    * Creates the DropConnect Layer as a Linear Object that takes input size,

@@ -64,11 +64,9 @@ namespace mlpack {
 namespace ann {
 
 template<typename InputDataType, typename OutputDataType> class BatchNorm;
-template<typename InputDataType, typename OutputDataType> class DropConnect;
 template<typename InputDataType, typename OutputDataType> class Glimpse;
 template<typename InputDataType, typename OutputDataType> class LayerNorm;
 template<typename InputDataType, typename OutputDataType> class LSTM;
-template<typename InputDataType, typename OutputDataType> class GRU;
 template<typename InputDataType, typename OutputDataType> class FastLSTM;
 template<typename InputDataType, typename OutputDataType> class VRClassReward;
 template<typename InputDataType, typename OutputDataType> class Concatenate;
@@ -146,6 +144,18 @@ template<
 >
 class Convolution;
 
+template<typename InputDataType,
+         typename OutputDataType,
+         typename... CustomLayers
+>
+class DropConnect;
+
+template<typename InputDataType,
+         typename OutputDataType,
+         typename... CustomLayers
+>
+class GRU;
+
 template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
@@ -166,9 +176,20 @@ class AtrousConvolution;
 
 template<
     typename InputDataType,
-    typename OutputDataType
+    typename OutputDataType,
+    typename... CustomLayers
 >
 class RecurrentAttention;
+
+template <typename InputDataType,
+          typename OutputDataType
+>
+class AdaptiveMaxPooling;
+
+template <typename InputDataType,
+          typename OutputDataType
+>
+class AdaptiveMeanPooling;
 
 template<typename InputDataType,
          typename OutputDataType,
@@ -181,16 +202,6 @@ template <typename InputDataType,
           typename... CustomLayers
 >
 class WeightNorm;
-
-template <typename InputDataType,
-          typename OutputDataType
->
-class AdaptiveMaxPooling;
-
-template <typename InputDataType,
-          typename OutputDataType
->
-class AdaptiveMeanPooling;
 
 using MoreTypes = boost::variant<
         Recurrent<arma::mat, arma::mat>*,
@@ -207,8 +218,6 @@ using MoreTypes = boost::variant<
 
 template <typename... CustomLayers>
 using LayerTypes = boost::variant<
-    AdaptiveMaxPooling<arma::mat, arma::mat>*,
-    AdaptiveMeanPooling<arma::mat, arma::mat>*,
     Add<arma::mat, arma::mat>*,
     AddMerge<arma::mat, arma::mat>*,
     AlphaDropout<arma::mat, arma::mat>*,

@@ -31,6 +31,18 @@ LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias() :
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias(
+  const LinearNoBias& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    weights(layer.weights),
+    regularizer(layer.regularizer)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias(
     const size_t inSize,
     const size_t outSize,
     RegularizerType regularizer) :

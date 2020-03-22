@@ -79,6 +79,14 @@ class BRNN
        MergeOutputType* mergeOutput = new MergeOutputType(),
        InitializationRuleType initializeRule = InitializationRuleType());
 
+  /**
+   * Copy the BRNN object.
+   *
+   * Warning: Copying BRNN is a memory-intensive task: two RNNs need to
+   * be copied.
+   */
+  BRNN(const BRNN&);
+
   ~BRNN();
 
   /**
@@ -393,7 +401,7 @@ class BRNN
   //! Locally-stored delete visitor.
   DeleteVisitor deleteVisitor;
 
-  //! Locally-stored delete visitor.
+  //! Locally-stored copy visitor.
   CopyVisitor<CustomLayers...> copyVisitor;
 
   //! The current evaluation mode (training or testing).

@@ -52,6 +52,28 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling(
 }
 
 template<typename InputDataType, typename OutputDataType>
+MaxPooling<InputDataType, OutputDataType>::MaxPooling(
+    const MaxPooling& layer) :
+    kernelWidth(layer.kernelWidth),
+    kernelHeight(layer.kernelHeight),
+    strideWidth(layer.strideWidth),
+    strideHeight(layer.strideHeight),
+    floor(layer.floor),
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    reset(layer.reset),
+    inputWidth(layer.inputWidth),
+    inputHeight(layer.inputHeight),
+    outputWidth(layer.outputWidth),
+    outputHeight(layer.outputHeight),
+    deterministic(layer.deterministic),
+    offset(layer.offset),
+    batchSize(layer.batchSize)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MaxPooling<InputDataType, OutputDataType>::Forward(
   const arma::Mat<eT>& input, arma::Mat<eT>& output)

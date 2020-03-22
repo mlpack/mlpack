@@ -67,6 +67,9 @@ class Concat
          const bool model = false,
          const bool run = true);
 
+  //! Copy constructor.
+  Concat(const Concat&);
+
   /**
    * Destroy the layers held by the model.
    */

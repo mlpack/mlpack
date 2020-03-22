@@ -32,6 +32,15 @@ FlexibleReLU<InputDataType, OutputDataType>::FlexibleReLU(
 }
 
 template<typename InputDataType, typename OutputDataType>
+FlexibleReLU<InputDataType, OutputDataType>::FlexibleReLU(
+    const FlexibleReLU& layer) :
+    userAlpha(layer.userAlpha)
+{
+  this->alpha.set_size(1, 1);
+  this->alpha(0) = userAlpha;
+}
+
+template<typename InputDataType, typename OutputDataType>
 void FlexibleReLU<InputDataType, OutputDataType>::Reset()
 {
   //! Set value of alpha to the one given by user.

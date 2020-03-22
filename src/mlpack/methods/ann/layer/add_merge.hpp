@@ -17,6 +17,7 @@
 
 #include "../visitor/delete_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
+#include "../visitor/copy_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
 
 #include "layer_types.hpp"
@@ -58,6 +59,9 @@ class AddMerge
    * @param ownsLayers Delete the layers when this is deallocated.
    */
   AddMerge(const bool model, const bool run, const bool ownsLayers);
+
+  //! Copy constructor.
+  AddMerge(const AddMerge&);
 
   //! Destructor to release allocated memory.
   ~AddMerge();

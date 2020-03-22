@@ -348,4 +348,75 @@ BOOST_AUTO_TEST_CASE(GANMemorySharingTest)
       trainData);
 }
 
+/*
+ * Create GAN network and copy of that GAN and
+ * check whether predictions are same or not.
+ */
+BOOST_AUTO_TEST_CASE(GANCopyTest)
+{
+  size_t generatorHiddenLayerSize = 8;
+  size_t discriminatorHiddenLayerSize = 8;
+  size_t generatorOutputSize = 1;
+  size_t discriminatorOutputSize = 1;
+  size_t discriminatorPreTrain = 0;
+  size_t batchSize = 8;
+  size_t noiseDim = 1;
+  size_t generatorUpdateStep = 1;
+  double multiplier = 1;
+  double eps = 1e-8;
+  double stepSize = 0.0003;
+  size_t numIterations = 8;
+  double tolerance = 1e-5;
+  bool shuffle = true;
+
+  arma::mat trainData(1, 10000);
+  trainData.imbue( [&]() { return arma::as_scalar(RandNormal(4, 0.5));});
+  trainData = arma::sort(trainData);
+
+  // Create the Discriminator network.
+  FFN<SigmoidCrossEntropyError<> > discriminator;
+  discriminator.Add<Linear<> > (
+      generatorOutputSize, discriminatorHiddenLayerSize * 2);
+  discriminator.Add<ReLULayer<> >();
+  discriminator.Add<Linear<> > (
+      discriminatorHiddenLayerSize * 2, discriminatorHiddenLayerSize * 2);
+  discriminator.Add<ReLULayer<> >();
+  discriminator.Add<Linear<> > (
+      discriminatorHiddenLayerSize * 2, discriminatorHiddenLayerSize * 2);
+  discriminator.Add<ReLULayer<> >();
+  discriminator.Add<Linear<> > (
+      discriminatorHiddenLayerSize * 2, discriminatorOutputSize);
+
+  // Create the Generator network.
+  FFN<SigmoidCrossEntropyError<> > generator;
+  generator.Add<Linear<> >(noiseDim, generatorHiddenLayerSize);
+  generator.Add<SoftPlusLayer<> >();
+  generator.Add<Linear<> >(generatorHiddenLayerSize, generatorOutputSize);
+
+  // Create GAN.
+  GaussianInitialization gaussian(0, 0.1);
+  ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
+      tolerance, shuffle);
+  std::function<double ()> noiseFunction = [](){ return math::Random(-8, 8) +
+      math::RandNormal(0, 1) * 0.01;};
+  GAN<FFN<SigmoidCrossEntropyError<> >,
+      GaussianInitialization,
+      std::function<double()> >* gan = new GAN<FFN<SigmoidCrossEntropyError<> >,
+      GaussianInitialization, std::function<double()> >(generator,
+      discriminator, gaussian, noiseFunction, noiseDim, batchSize,
+      generatorUpdateStep, discriminatorPreTrain, multiplier);
+
+  gan->Train(trainData, optimizer);
+  arma::mat predictions;
+  gan->Predict(trainData, predictions);
+
+  GAN<FFN<SigmoidCrossEntropyError<> >,
+      GaussianInitialization,
+      std::function<double()> >gan2(*gan);
+
+  delete gan;
+  arma::mat predictions1;
+  gan2.Predict(trainData, predictions1);
+  CheckMatrices(predictions, predictions1);
+}
 BOOST_AUTO_TEST_SUITE_END();

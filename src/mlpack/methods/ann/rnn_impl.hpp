@@ -51,6 +51,41 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::RNN(
   /* Nothing to do here */
 }
 
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::RNN(
+    const RNN& network) :
+    rho(network.rho),
+    initializeRule(network.initializeRule),
+    inputSize(network.inputSize),
+    outputLayer(network.outputLayer),
+    outputSize(network.outputSize),
+    targetSize(network.targetSize),
+    reset(network.reset),
+    single(network.single),
+    numFunctions(network.numFunctions),
+    deterministic(network.deterministic),
+    parameter(network.parameter)
+{
+  for (size_t i = 0; i < network.network.size(); ++i)
+  {
+    this->network.push_back(boost::apply_visitor(copyVisitor,
+        network.network[i]));
+  }
+
+  for (size_t i = 0; i < this->network.size(); ++i)
+  {
+    boost::apply_visitor(resetVisitor, this->network[i]);
+  }
+
+  ResetCells();
+  if (parameter.is_empty())
+  {
+    ResetParameters();
+  }
+}
+
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::~RNN()

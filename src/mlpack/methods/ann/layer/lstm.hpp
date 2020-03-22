@@ -65,6 +65,9 @@ class LSTM
   //! Create the LSTM object.
   LSTM();
 
+  //! Copy constructor.
+  LSTM(const LSTM&);
+
   /**
    * Create the LSTM layer object using the specified parameters.
    *

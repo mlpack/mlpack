@@ -146,6 +146,41 @@ template<
     typename InputDataType,
     typename OutputDataType
 >
+Convolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::Convolution(
+    const Convolution& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    kernelWidth(layer.kernelWidth),
+    kernelHeight(layer.kernelHeight),
+    strideWidth(layer.strideWidth),
+    strideHeight(layer.strideHeight),
+    padWLeft(layer.padWLeft),
+    padWRight(layer.padWRight),
+    padHBottom(layer.padHBottom),
+    padHTop(layer.padHTop),
+    weights(layer.weights),
+    inputWidth(layer.inputWidth),
+    inputHeight(layer.inputHeight),
+    outputWidth(layer.outputWidth),
+    outputHeight(layer.outputHeight),
+    padding(layer.padding)
+{
+  // Nothing to do here.
+}
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
 void Convolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,

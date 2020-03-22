@@ -88,6 +88,9 @@ template <
 class Glimpse
 {
  public:
+  //! Copy constructor.
+  Glimpse(const Glimpse&);
+
   /**
    * Create the GlimpseLayer object using the specified ratio and rescale
    * parameter.

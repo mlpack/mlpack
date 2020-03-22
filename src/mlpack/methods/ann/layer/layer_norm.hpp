@@ -76,6 +76,9 @@ class LayerNorm
    */
   LayerNorm(const size_t size, const double eps = 1e-8);
 
+  //! Copy constructor.
+  LayerNorm(const LayerNorm&);
+
   /**
    * Reset the layer parameters.
    */

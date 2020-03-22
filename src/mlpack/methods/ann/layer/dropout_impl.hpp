@@ -30,6 +30,16 @@ Dropout<InputDataType, OutputDataType>::Dropout(
 }
 
 template<typename InputDataType, typename OutputDataType>
+Dropout<InputDataType, OutputDataType>::Dropout(
+    const Dropout& layer) :
+    ratio(layer.ratio),
+    scale(layer.scale),
+    deterministic(layer.deterministic)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Dropout<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input,
