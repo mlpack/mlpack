@@ -30,9 +30,9 @@ namespace data {
  * @param labelsIn Input labels of arbitrary datatype.
  * @param output Binary matrix.
  */
-template<typename eT, typename RowType>
+template<class RowType, template <typename> class MatType, class eT>
 void OneHotEncoding(const RowType& labelsIn,
-                    arma::Mat<eT>& output)
+                    MatType<eT>& output)
 {
   arma::Row<size_t> labels;
   labels.set_size(labelsIn.n_elem);
@@ -56,14 +56,45 @@ void OneHotEncoding(const RowType& labelsIn,
     }
   }
   // Resize output matrix to necessary size, and fill it with zeros.
-  output.zeros(labelsIn.n_elem, curLabel);
+  output.zeros(curLabel, labelsIn.n_elem);
   // Fill ones in at the required places.
   for (size_t i = 0; i < labelsIn.n_elem; ++i)
   {
-    output(i, labels[i]) = 1;
+    output(labels[i], i) = 1;
   }
   labelMap.clear();
 }
+
+/**
+ * Overloaded function for the above function, which takes a matrix as input
+ * and also a vector of indices to encode and outputs a matrix.
+ *
+ * @param input Input dataset to be encoded.
+ * @param indices Index of rows to be encoded.
+ * @param output Encoded matrix.
+ */
+template<typename eT>
+void OneHotEncoding(arma::Mat<eT>& input,
+                    const arma::ucolvec indices,
+                    arma::Mat<eT>& output)
+{
+  output = input;
+  output.shed_rows(indices);
+  std::vector<arma::Mat<eT>> oheOutput(indices.n_elem);
+  for (size_t i = 0; i < indices.n_elem; i++)
+  {
+    // call OneHotEncoding() for each of the indeces
+    OneHotEncoding(input.row(indices.at(i)), oheOutput[i]);
+  }
+  size_t row = 0;
+  for (size_t i = 0; i < indices.n_elem; i++)
+  {
+    // calculating index
+    output.insert_rows(row + indices.at(i), oheOutput[i]);
+    row += oheOutput[i].n_rows - 1;
+  }
+}
+
 } // namespace data
 } // namespace mlpack
 

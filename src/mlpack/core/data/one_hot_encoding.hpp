@@ -28,8 +28,21 @@ namespace data {
  * @param labelsIn Input labels of arbitrary datatype.
  * @param output Binary matrix.
  */
-template<typename eT, typename RowType>
+template<class RowType, template <typename> class MatType, class eT>
 void OneHotEncoding(const RowType& labelsIn,
+                    MatType<eT>& output);
+
+/**
+ * Overloaded function for the above function, which takes a matrix as input
+ * and also a vector of indices to encode and outputs a matrix.
+ *
+ * @param input Input dataset to be encoded.
+ * @param indices Index of rows to be encoded.
+ * @param output Encoded matrix.
+ */
+template<typename eT>
+void OneHotEncoding(arma::Mat<eT>& input,
+                    const arma::colvec indices,
                     arma::Mat<eT>& output);
 
 } // namespace data

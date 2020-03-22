@@ -76,6 +76,7 @@ add_executable(mlpack_test
   nmf_test.cpp
   nystroem_method_test.cpp
   octree_test.cpp
+  one_hot_encoding_test.cpp
   pca_test.cpp
   perceptron_test.cpp
   prefixedoutstream_test.cpp
@@ -146,6 +147,7 @@ add_executable(mlpack_test
   main_tests/nbc_test.cpp
   main_tests/nca_test.cpp
   main_tests/nmf_test.cpp
+  main_tests/preprocess_one_hot_encode_test.cpp
   main_tests/pca_test.cpp
   main_tests/perceptron_test.cpp
   main_tests/preprocess_binarize_test.cpp
