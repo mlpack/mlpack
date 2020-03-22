@@ -36,10 +36,10 @@ double R2Score::Evaluate(MLAlgorithm& model,
   double mean_responses = arma::mean(responses);
 
   // Calculate the numerator i.e. residual sum of squares.
-  double ss_res = arma::accu(arma::square(responses, predictedResponses));
+  double ss_res = arma::accu(arma::square(responses - predictedResponses));
 
   // Calculate the denominator i.e.total sum of squares.
-  double ss_tot = arma::accu(arma::square(responses, mean_responses));
+  double ss_tot = arma::accu(arma::square(responses - mean_responses));
 
   // Handling undefined R2Score when both denominator and numerator is 0.0
   if (ss_res == 0.0)
@@ -48,7 +48,6 @@ double R2Score::Evaluate(MLAlgorithm& model,
       return 1.0;
     else
       return DBL_MIN;
-    
   }
 
   return 1 - ss_res/ss_tot;
