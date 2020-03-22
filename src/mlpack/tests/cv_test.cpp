@@ -17,6 +17,7 @@
 #include <mlpack/core/cv/metrics/mse.hpp>
 #include <mlpack/core/cv/metrics/precision.hpp>
 #include <mlpack/core/cv/metrics/recall.hpp>
+#include <mlpack/core/cv/metrics/r2_score.hpp>
 #include <mlpack/core/cv/simple_cv.hpp>
 #include <mlpack/core/cv/k_fold_cv.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
@@ -162,6 +163,29 @@ BOOST_AUTO_TEST_CASE(MSETest)
   double expectedMSE = (0 * 0 + 1 * 1 + 2 * 2) / 3.0;
 
   BOOST_REQUIRE_CLOSE(MSE::Evaluate(lr, data, responses), expectedMSE, 1e-5);
+}
+
+/**
+ * Test the R squared metric (R2Score).
+ */
+BOOST_AUTO_TEST_CASE(R2ScoreTest)
+{
+  // Making two points that define the linear function f(x) = x - 1
+  arma::mat trainingData("0 1");
+  arma::rowvec trainingResponses("-1 0");
+
+  LinearRegression lr(trainingData, trainingResponses);
+
+  // Making three responses that differ from the correct ones by 0, 1, and 2
+  // respectively. Original Responses mean (1 + 2 + 3) / 3 = 2
+  arma::mat data("2 3 4"); 
+  arma::rowvec responses("1 3 5");// Mean_responses= (1+ 3 + 5) /3 = 3
+
+  double ss_reg = (0 + 1 * 1 + 2 * 2);
+  double ss_tot = ((1 - 2) * (1- 2) + (2 -2) * (2 - 2) + (3 -2) * (3 - 2));
+  double expectedR2 = 1 - ss_reg / ss_tot;
+
+  BOOST_REQUIRE_CLOSE(R2Score::Evaluate(lr, data, responses), expectedR2, 1e-5);
 }
 
 /**
