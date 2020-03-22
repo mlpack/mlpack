@@ -27,7 +27,16 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
     const bool model, const bool run) :
-    model(model), run(run), ownsLayer(!model)
+    model(model), run(run), ownsLayers(!model)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
+    const bool model, const bool run, const bool ownsLayers) :
+    model(model), run(run), ownsLayers(ownsLayers)
 {
   // Nothing to do here.
 }
@@ -36,7 +45,7 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 AddMerge<InputDataType, OutputDataType, CustomLayers...>::~AddMerge()
 {
-  if (ownsLayer)
+  if (!model && ownsLayers)
   {
     std::for_each(network.begin(), network.end(),
         boost::apply_visitor(deleteVisitor));
@@ -150,7 +159,7 @@ void AddMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
   ar & BOOST_SERIALIZATION_NVP(network);
   ar & BOOST_SERIALIZATION_NVP(model);
   ar & BOOST_SERIALIZATION_NVP(run);
-  ar & BOOST_SERIALIZATION_NVP(ownsLayer);
+  ar & BOOST_SERIALIZATION_NVP(ownsLayers);
 }
 
 } // namespace ann

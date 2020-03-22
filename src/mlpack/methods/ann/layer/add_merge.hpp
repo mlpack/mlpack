@@ -50,6 +50,15 @@ class AddMerge
    */
   AddMerge(const bool model = false, const bool run = true);
 
+  /**
+   * Create the AddMerge object using the specified parameters.
+   *
+   * @param model Expose all the network modules.
+   * @param run Call the Forward/Backward method before the output is merged.
+   * @param ownsLayers Delete the layers when this is deallocated.
+   */
+  AddMerge(const bool model, const bool run, const bool ownsLayers);
+
   //! Destructor to release allocated memory.
   ~AddMerge();
 
@@ -184,8 +193,9 @@ class AddMerge
   //! before merging the output.
   bool run;
 
-  //! We need this to know whether we should delete the layer in the destructor.
-  bool ownsLayer;
+  //! We need this to know whether we should delete the internally-held layers
+  //! in the destructor.
+  bool ownsLayers;
 
   //! Locally-stored network modules.
   std::vector<LayerTypes<CustomLayers...> > network;
