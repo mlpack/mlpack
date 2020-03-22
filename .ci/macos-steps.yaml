@@ -12,10 +12,15 @@ steps:
 # Install Build Dependencies
 - script: |
     set -e
-    sudo xcode-select --switch /Applications/Xcode_10.1.app/Contents/Developer
+    sudo xcode-select --switch /Applications/Xcode_11.3.app/Contents/Developer
     unset BOOST_ROOT
     pip install cython numpy pandas zipp
+    brew update
     brew install openblas armadillo boost
+    brew unlink armadillo
+    brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/9620946e004a29744f9c5e4a27800cba6d6d6b9b/Formula/armadillo.rb
+    brew unlink hdf5
+    brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/7342a4cadf5191d8ae4e83a83e4fbbc3e96d434e/Formula/hdf5.rb
 
     if [ "a$(julia.version)" != "a" ]; then
       brew cask install julia
