@@ -131,6 +131,7 @@ static void mlpackMain()
   {
     m = new ScalingModel(CLI::GetParam<int>("min_value"),
         CLI::GetParam<int>("max_value"), CLI::GetParam<double>("epsilon"));
+
     if (scalerMethod == "standard_scaler")
     {
       m->ScalerType() = ScalingModel::ScalerTypes::STANDARD_SCALER;
@@ -155,8 +156,20 @@ static void mlpackMain()
     {
       m->ScalerType() = ScalingModel::ScalerTypes::PCA_WHITENING;
     }
-    m->Fit(input);
+
+    // Fit() can throw an exception on invalid inputs, so we have to catch that
+    // and clean the memory in that situation.
+    try
+    {
+      m->Fit(input);
+    }
+    catch (std::exception& e)
+    {
+      delete m;
+      throw;
+    }
   }
+
   if (!CLI::HasParam("inverse_scaling"))
   {
     m->Transform(input, output);
@@ -165,8 +178,8 @@ static void mlpackMain()
   {
     if (!CLI::HasParam("input_model"))
     {
-      delete(m);
-      throw std::runtime_error("Please provide a saved model");
+      delete m;
+      throw std::runtime_error("Please provide a saved model.");
     }
     m->InverseTransform(input, output);
   }
