@@ -56,8 +56,7 @@ class EpisodicReplay
   * @param dimension The dimension of an encoded state.
   */
   EpisodicReplay(const size_t capacity,
-                 const size_t maxEpisodeLen,
-                 const size_t dimension = StateType::dimension) :
+                 const size_t maxEpisodeLen) :
       capacity(capacity),
       position(0),
       maxEpisodeLen(maxEpisodeLen),
