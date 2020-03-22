@@ -73,9 +73,11 @@ class BRNN
   BRNN(const size_t rho,
        const bool single = false,
        OutputLayerType outputLayer = OutputLayerType(),
-       MergeLayerType mergeLayer = MergeLayerType(),
-       MergeOutputType mergeOutput = MergeOutputType(),
+       MergeLayerType* mergeLayer = new MergeLayerType(),
+       MergeOutputType* mergeOutput = new MergeOutputType(),
        InitializationRuleType initializeRule = InitializationRuleType());
+
+  ~BRNN();
 
   /**
    * Check if the optimizer has MaxIterations() parameter, if it does

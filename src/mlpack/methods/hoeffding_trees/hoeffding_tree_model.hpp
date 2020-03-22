@@ -188,30 +188,18 @@ class HoeffdingTreeModel
     data::DatasetInfo info;
     if (type == GINI_HOEFFDING)
     {
-      // Create fake tree to load into if needed.
-      if (Archive::is_loading::value)
-        giniHoeffdingTree = new GiniHoeffdingTreeType(info, 1, 1);
       ar & BOOST_SERIALIZATION_NVP(giniHoeffdingTree);
     }
     else if (type == GINI_BINARY)
     {
-      // Create fake tree to load into if needed.
-      if (Archive::is_loading::value)
-        giniBinaryTree = new GiniBinaryTreeType(info, 1, 1);
       ar & BOOST_SERIALIZATION_NVP(giniBinaryTree);
     }
     else if (type == INFO_HOEFFDING)
     {
-      // Create fake tree to load into if needed.
-      if (Archive::is_loading::value)
-        infoHoeffdingTree = new InfoHoeffdingTreeType(info, 1, 1);
       ar & BOOST_SERIALIZATION_NVP(infoHoeffdingTree);
     }
     else if (type == INFO_BINARY)
     {
-      // Create fake tree to load into if needed.
-      if (Archive::is_loading::value)
-        infoBinaryTree = new InfoBinaryTreeType(info, 1, 1);
       ar & BOOST_SERIALIZATION_NVP(infoBinaryTree);
     }
   }

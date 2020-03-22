@@ -39,13 +39,13 @@ BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     const size_t rho,
     const bool single,
     OutputLayerType outputLayer,
-    MergeLayerType mergeLayer,
-    MergeOutputType mergeOutput,
+    MergeLayerType* mergeLayer,
+    MergeOutputType* mergeOutput,
     InitializationRuleType initializeRule) :
     rho(rho),
     outputLayer(std::move(outputLayer)),
-    mergeLayer(new MergeLayerType(mergeLayer)),
-    mergeOutput(new MergeOutputType(mergeOutput)),
+    mergeLayer(mergeLayer),
+    mergeOutput(mergeOutput),
     initializeRule(std::move(initializeRule)),
     inputSize(0),
     outputSize(0),
@@ -58,6 +58,22 @@ BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     backwardRNN(rho, single, outputLayer, initializeRule)
 {
   /* Nothing to do here. */
+}
+
+template<typename OutputLayerType, typename MergeLayerType,
+         typename MergeOutputType, typename InitializationRuleType,
+         typename... CustomLayers>
+BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
+    InitializationRuleType, CustomLayers...>::~BRNN()
+{
+  // Remove mergeLayer from the forward and backward RNNs so it doesn't get
+  // deleted.  This assumes that mergeLayer is the last layer!
+  forwardRNN.network.pop_back();
+  backwardRNN.network.pop_back();
+
+  // Clean up layers that we allocated.
+  boost::apply_visitor(DeleteVisitor(), mergeLayer);
+  boost::apply_visitor(DeleteVisitor(), mergeOutput);
 }
 
 template<typename OutputLayerType, typename MergeLayerType,
@@ -230,7 +246,7 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
       boost::apply_visitor(LoadOutputParameterVisitor(results2),
           backwardRNN.network.back());
 
-      boost::apply_visitor(ForwardVisitor(std::move(input),
+      boost::apply_visitor(ForwardVisitor(input,
           boost::apply_visitor(outputParameterVisitor, mergeLayer)),
           mergeLayer);
       boost::apply_visitor(ForwardVisitor(
@@ -318,15 +334,15 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     boost::apply_visitor(LoadOutputParameterVisitor(results2),
         backwardRNN.network.back());
 
-    boost::apply_visitor(ForwardVisitor(std::move(input),
+    boost::apply_visitor(ForwardVisitor(input,
         boost::apply_visitor(outputParameterVisitor, mergeLayer)),
         mergeLayer);
     boost::apply_visitor(ForwardVisitor(
         boost::apply_visitor(outputParameterVisitor, mergeLayer),
         boost::apply_visitor(outputParameterVisitor, mergeOutput)),
         mergeOutput);
-    performance += outputLayer.Forward(std::move(
-        boost::apply_visitor(outputParameterVisitor, mergeOutput)),
+    performance += outputLayer.Forward(
+        boost::apply_visitor(outputParameterVisitor, mergeOutput),
         arma::mat(responses.slice(responseSeq).colptr(begin),
         responses.n_rows, batchSize, false, true));
   }
@@ -634,6 +650,8 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
 {
   if (!reset)
   {
+    // TODO: what if we call ResetParameters() multiple times?  Do we have to
+    // remove any existing mergeLayer?
     boost::apply_visitor(AddVisitor<CustomLayers...>(
         forwardRNN.network.back()), mergeLayer);
     boost::apply_visitor(AddVisitor<CustomLayers...>(
@@ -707,6 +725,8 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
   ar & BOOST_SERIALIZATION_NVP(parameter);
   ar & BOOST_SERIALIZATION_NVP(backwardRNN);
   ar & BOOST_SERIALIZATION_NVP(forwardRNN);
+
+  // TODO: are there more parameters to be serialized?
 }
 
 } // namespace ann
