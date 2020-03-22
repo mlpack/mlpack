@@ -519,7 +519,7 @@ void CheckCELUActivationCorrect(const arma::colvec input,
   }
 }
 
-/*
+/**
  * Implementation of the CELU activation function derivative test. The function
  * is implemented as CELU layer in the file celu.hpp
  *
