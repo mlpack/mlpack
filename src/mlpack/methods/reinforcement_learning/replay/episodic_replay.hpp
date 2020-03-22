@@ -44,7 +44,7 @@ class EpisodicReplay
   EpisodicReplay():
       capacity(0),
       position(0),
-      max_episode_len(0),
+      maxEpisodeLen(0),
       full(false)
   { /* Nothing to do here. */ }
 
@@ -52,15 +52,15 @@ class EpisodicReplay
   * Construct an instance of episode experience replay class.
   *
   * @param capacity Total memory size in terms of number of episodes.
-  * @param max_episode_len The maximum episode length possible.
+  * @param maxEpisode_len The maximum episode length possible.
   * @param dimension The dimension of an encoded state.
   */
   EpisodicReplay(const size_t capacity,
-                 const size_t max_episode_len,
+                 const size_t maxEpisodeLen,
                  const size_t dimension = StateType::dimension) :
       capacity(capacity),
       position(0),
-      max_episode_len(max_episode_len),
+      maxEpisodeLen(maxEpisodeLen),
       full(false)
   {
     states.resize(capacity);
@@ -101,7 +101,7 @@ class EpisodicReplay
     next_states[position].push_back(nextState.Encode());
     isTerminal[position].push_back(isEnd);
 
-    if (isEnd || states[position].size() == max_episode_len)
+    if (isEnd || states[position].size() == maxEpisodeLen)
     {
       position++;
       clear = true;
@@ -140,23 +140,18 @@ class EpisodicReplay
   *        is sampled
   */
   void Sample(arma::mat& episodeStates,
-                      arma::icolvec& episodeActions,
-                      arma::colvec& episodeRewards,
-                      arma::mat& episodeNextStates,
-                      arma::icolvec& isTerminal,
-                      bool random = false)
+              arma::icolvec& episodeActions,
+              arma::colvec& episodeRewards,
+              arma::mat& episodeNextStates,
+              arma::icolvec& isTerminal,
+              bool random = false)
   {
     int episodeNum = 0;
     if (random)
     {
       size_t upperBound = full ? capacity : position;
-      int lo = 0;
-      int high = upperBound;
-      if (!upperBound)
-      {
-        high = 1;
-      }
-      episodeNum = math::RandInt(lo, high);
+      int high = upperBound ? upperBound : 1;
+      episodeNum = math::RandInt(0, high);
     }
     else
     {
@@ -182,9 +177,7 @@ class EpisodicReplay
         i++;
       }
       else
-      {
         episodeStates = arma::join_rows(episodeStates, state);
-      }
     }
     episodeActions = arma::conv_to<arma::icolvec>::from(actions[episodeNum]);
     episodeRewards = arma::conv_to<arma::colvec>::from(rewards[episodeNum]);
@@ -197,9 +190,7 @@ class EpisodicReplay
         i++;
       }
       else
-      {
         episodeNextStates = arma::join_rows(episodeNextStates, state);
-      }
     }
     isTerminal = arma::conv_to<arma::icolvec>::from(
         this->isTerminal[episodeNum]);
@@ -210,7 +201,7 @@ class EpisodicReplay
               arma::mat /* nextActionValues */,
               arma::mat& /* gradients */)
   {
-    /* Do nothing for random replay. */
+    /* Do nothing for episodic replay. */
   }
 
  private:
@@ -220,8 +211,10 @@ class EpisodicReplay
   //! Indicate the position to store new episode.
   size_t position;
 
-  size_t max_episode_len;
+  //! Locally-stored maximum episode length
+  size_t maxEpisodeLen;
 
+  //! Locally-stored indicator whether to clear current position before storing
   bool clear;
 
   //! Locally-stored encoded previous states.
