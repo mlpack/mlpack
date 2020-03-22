@@ -134,8 +134,6 @@ static void mlpackMain()
   LocalCoordinateCoding* lcc;
   if (CLI::HasParam("input_model"))
     lcc = CLI::GetParam<LocalCoordinateCoding*>("input_model");
-  else
-    lcc = new LocalCoordinateCoding(0, 0.0);
 
   if (CLI::HasParam("training"))
   {
@@ -160,6 +158,8 @@ static void mlpackMain()
     RequireParamValue<double>("tolerance", [](double x) { return x > 0; }, 1,
         "Tolerance should be a positive real number");
 
+    lcc = new LocalCoordinateCoding(0, 0.0);
+
     lcc->Lambda() = CLI::GetParam<double>("lambda");
     lcc->Atoms() = (size_t) CLI::GetParam<int>("atoms");
     lcc->MaxIterations() = (size_t) CLI::GetParam<int>("max_iterations");
@@ -181,14 +181,21 @@ static void mlpackMain()
       // Validate the size of the initial dictionary.
       if (lcc->Dictionary().n_cols != lcc->Atoms())
       {
-        Log::Fatal << "The initial dictionary has " << lcc->Dictionary().n_cols
+        const size_t dictionarySize = lcc->Dictionary().n_cols;
+        const size_t atoms = lcc->Atoms();
+        if (!CLI::HasParam("input_model"))
+          delete lcc;
+        Log::Fatal << "The initial dictionary has " << dictionarySize
             << " atoms, but the number of atoms was specified to be "
-            << lcc->Atoms() << "!" << endl;
+            << atoms << "!" << endl;
       }
 
       if (lcc->Dictionary().n_rows != matX.n_rows)
       {
-        Log::Fatal << "The initial dictionary has " << lcc->Dictionary().n_rows
+        const size_t dictionaryDimension = lcc->Dictionary().n_rows;
+        if (!CLI::HasParam("input_model"))
+          delete lcc;
+        Log::Fatal << "The initial dictionary has " << dictionaryDimension
             << " dimensions, but the data has " << matX.n_rows << " dimensions!"
             << endl;
       }
@@ -209,10 +216,15 @@ static void mlpackMain()
     mat matY = std::move(CLI::GetParam<mat>("test"));
 
     if (matY.n_rows != lcc->Dictionary().n_rows)
+    {
+      const size_t dictionaryDimension = lcc->Dictionary().n_rows;
+      if (!CLI::HasParam("input_model"))
+        delete lcc;
       Log::Fatal << "Model was trained with a dimensionality of "
-          << lcc->Dictionary().n_rows << ", but data in test file "
+          << dictionaryDimension << ", but data in test file "
           << CLI::GetPrintableParam<mat>("test") << " has a dimensionality of "
           << matY.n_rows << "!" << endl;
+    }
 
     // Normalize each point if the user asked for it.
     if (CLI::HasParam("normalize"))
