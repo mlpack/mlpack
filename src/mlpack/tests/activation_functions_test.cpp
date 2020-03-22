@@ -497,7 +497,7 @@ BOOST_AUTO_TEST_CASE(SELUFunctionDerivativeTest)
       selu.Lambda() * selu.Alpha() - arma::mean(activations))), 10e-4);
 }
 
-/*
+/**
  * Implementation of the CELU activation function test. The function is
  * implemented as CELU layer in the file celu.hpp
  *
