@@ -38,6 +38,22 @@ DropConnect<InputDataType, OutputDataType>::DropConnect() :
 
 template<typename InputDataType, typename OutputDataType>
 DropConnect<InputDataType, OutputDataType>::DropConnect(
+  const DropConnect& network) :
+    ratio(network.ratio),
+    scale(network.scale),
+    deterministic(network.deterministic),
+    mask(network.mask),
+    network(network.network),
+    denoise(network.denoise),
+    baseLayer(network.baseLayer),
+    gradient(network.gradient),
+    delta(network.delta)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+DropConnect<InputDataType, OutputDataType>::DropConnect(
     const size_t inSize,
     const size_t outSize,
     const double ratio) :

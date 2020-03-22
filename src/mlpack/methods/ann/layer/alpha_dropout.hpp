@@ -59,6 +59,9 @@ class AlphaDropout
   AlphaDropout(const double ratio = 0.5,
                const double alphaDash = -alpha * lambda);
 
+  //! Copy constructor.
+  FFN(const FFN&);
+
   /**
    * Ordinary feed forward pass of the alpha_dropout layer.
    *

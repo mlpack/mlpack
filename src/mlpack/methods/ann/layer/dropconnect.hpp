@@ -66,6 +66,9 @@ class DropConnect
   //! Create the DropConnect object.
   DropConnect();
 
+  //! Copy constructor.
+  DropConnect(const DropConnect&);
+
   /**
    * Creates the DropConnect Layer as a Linear Object that takes input size,
    * output size and ratio as parameter.

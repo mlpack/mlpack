@@ -53,6 +53,9 @@ class LeakyReLU
    */
   LeakyReLU(const double alpha = 0.03);
 
+  //! Copy constructor.
+  LeakyReLU(const LeakyReLU&);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

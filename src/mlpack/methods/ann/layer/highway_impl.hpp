@@ -37,6 +37,30 @@ Highway<InputDataType, OutputDataType, CustomLayers...>::Highway() :
   // Nothing to do here.
 }
 
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+Highway<InputDataType, OutputDataType, CustomLayers...>::Highway(
+  const Highway& network) :
+    inSize(network.insize),
+    model(network.model),
+    reset(network.reset),
+    width(network.width),
+    height(network.height),
+    empty(network.empty),
+    gradient(network.gradient),
+    weights(network.weights),
+    transformBias(network.transformBias),
+    tranasformGate(network.tranasformGate),
+    transformWeight(network.transformWeight),
+    transformGateActivation(network.transformGateActivation),
+    transformGateError(network.transformGateError),
+    delta(network.delta),
+    networkOutput(network.networkOutput),
+    network(network.network)
+{
+  // Nothing to do here.
+}
+
 template<
     typename InputDataType, typename OutputDataType, typename... CustomLayers>
 Highway<InputDataType, OutputDataType, CustomLayers...>::Highway(

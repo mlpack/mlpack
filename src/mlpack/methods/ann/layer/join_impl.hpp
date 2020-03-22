@@ -27,6 +27,15 @@ Join<InputDataType, OutputDataType>::Join() :
 }
 
 template<typename InputDataType, typename OutputDataType>
+Join<InputDataType, OutputDataType>::Join(const Join& network) :
+    inSizeRows(network.inSizeRows),
+    inSizeCols(network.inSizeCols),
+    delta(network.delta)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void Join<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)

@@ -30,6 +30,18 @@ Dropout<InputDataType, OutputDataType>::Dropout(
 }
 
 template<typename InputDataType, typename OutputDataType>
+Dropout<InputDataType, OutputDataType>::Dropout(
+    const Dropout& network) :
+    ratio(network.ratio),
+    scale(network.scale),
+    deterministic(network.deterministic),
+    delta(network.delta),
+    mask(network.mask)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Dropout<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input,

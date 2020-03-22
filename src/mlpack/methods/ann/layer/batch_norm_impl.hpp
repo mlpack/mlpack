@@ -30,6 +30,27 @@ BatchNorm<InputDataType, OutputDataType>::BatchNorm() :
 {
   // Nothing to do here.
 }
+
+template<typename InputDataType, typename OutputDataType>
+BatchNorm<InputDataType, OutputDataType>::BatchNorm(
+  const BatchNorm& network) :
+    size(network.size),
+    eps(network.eps),
+    loading(network.loading),
+    deterministic(network.deterministic),
+    count(network.count),
+    beta(network.beta),
+    weights(network.weights),
+    gamma(network.gamma),
+    gradient(network.gradient),
+    runningMean(network.runningMean),
+    runningVariance(network.runningVariance),
+    normalized(network.normalized),
+    inputMean(network.inputMean),
+    variance(network.variance)
+{
+  // Nothing to do here.
+}
 template <typename InputDataType, typename OutputDataType>
 BatchNorm<InputDataType, OutputDataType>::BatchNorm(
     const size_t size, const double eps) :

@@ -29,6 +29,24 @@ LayerNorm<InputDataType, OutputDataType>::LayerNorm() :
   // Nothing to do here.
 }
 
+template<typename InputDataType, typename OutputDataType>
+LayerNorm<InputDataType, OutputDataType>::LayerNorm(const LayerNorm& network) :
+    size(network.size),
+    eps(network.eps),
+    loading(network.loading),
+    gamma(network.gamma),
+    beta(network.beta),
+    mean(network.mean),
+    weights(network.weights),
+    variance(network.variance),
+    gradient(network.gradient),
+    delta(network.delta),
+    normalized(network.normalized),
+    inputMean(network.inputMean)
+{
+  // Nothing to do here.
+}
+
 template <typename InputDataType, typename OutputDataType>
 LayerNorm<InputDataType, OutputDataType>::LayerNorm(
     const size_t size, const double eps) :

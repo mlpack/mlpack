@@ -316,6 +316,47 @@ template<
     typename InputDataType,
     typename OutputDataType
 >
+AtrousConvolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::AtrousConvolution(
+  const AtrousConvolution& network) :
+    inSize(network.inSize),
+    outSize(network.outSize),
+    KernelWidth(network.kernelWidth),
+    KernelHeigt(network.kernelHeight),
+    strideWidth(network.strideWidth),
+    strideHeight(network.strideHeight),
+    padW(network.padW),
+    padH(network.padH),
+    inputWidth(network.inputWidth),
+    inputHeight(network.inputHeight),
+    dilationWidth(network.dilationWidth),
+    dilationHeight(network.dilationHeight),
+    paddingType(network.paddingType),
+    gradient(network.gradient),
+    delta(network.delta),
+    padding(network.padding),
+    bias(network.bias),
+    inputTemp(network.inputTemp),
+    outputTemp(network.outputTemp),
+    inputPaddedTemp(network.inputPaddedTemp),
+    gTemp(network.gTemp),
+    gradientTemp(network.gradientTemp)
+{
+  // Nothing to do here.
+}
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
 template<typename eT>
 void AtrousConvolution<
     ForwardConvolutionRule,

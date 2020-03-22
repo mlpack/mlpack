@@ -74,6 +74,9 @@ class Highway
   //! Destroy the Highway object.
   ~Highway();
 
+  //! Copy constructor.
+  Highway(const Highway&);
+
   /**
    * Reset the layer parameter.
    */

@@ -59,6 +59,9 @@ class AddMerge
    */
   AddMerge(const bool model, const bool run, const bool ownsLayers);
 
+  //! Copy constructor.
+  AddMerge(const AddMerge&);
+
   //! Destructor to release allocated memory.
   ~AddMerge();
 

@@ -47,6 +47,17 @@ ELU<InputDataType, OutputDataType>::ELU(const double alpha) :
 }
 
 template<typename InputDataType, typename OutputDataType>
+ELU<InputDataType, OutputDataType>::ELU(const ELU& network) :
+    alpha(network.alpha),
+    lambda(network.lambda),
+    deterministic(network.deterministic),
+    delta(network.delta),
+    derivative(network.derivative)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void ELU<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)

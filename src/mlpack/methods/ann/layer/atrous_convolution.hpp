@@ -125,6 +125,9 @@ class AtrousConvolution
                     const size_t dilationHeight = 1,
                     const std::string& paddingType = "None");
 
+  //! Copy constructor.
+  AtrousConvolution(const AtrousConvolution&);
+
   /*
    * Set the weight and bias term.
    */

@@ -34,6 +34,17 @@ AlphaDropout<InputDataType, OutputDataType>::AlphaDropout(
 }
 
 template<typename InputDataType, typename OutputDataType>
+AlphaDropout<InputDataType, OutputDataType>::AlphaDropout(
+    const AlphaDropout& network) :
+    ratio(network.ratio),
+    alphaDash(network.alphaDash),
+    deterministic(network.deterministic),
+    mask(network.mask),
+    delta(network.delta),
+{
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void AlphaDropout<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)

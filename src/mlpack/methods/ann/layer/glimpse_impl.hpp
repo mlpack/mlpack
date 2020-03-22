@@ -42,6 +42,30 @@ Glimpse<InputDataType, OutputDataType>::Glimpse(
   // Nothing to do here.
 }
 
+template <typename InputDataType, typename OutputDataType>
+Glimpse<InputDataType, OutputDataType>::Glimpse(
+    const Glimpse& network) :
+    inSize(network.inSize),
+    size(network.size),
+    depth(network.depth),
+    scale(network.scale),
+    inputWidth(network.inputWidth),
+    inputHeight(network.inputHeight),
+    outputWidth(network.outputWidth),
+    outputHeight(network,outputHeight),
+    inputDepth(network.inputDepth),
+    deterministic(network.deterministic),
+    delta(network.delta),
+    inputTemp(network.inputTemp),
+    outputTemp(network.outputTemp),
+    location(network.location),
+    pooling(network.pooling),
+    locationParameter(network.locationParameter),
+    gTemp(network.gTemp)
+{
+  // Nothing to do here.
+}
+
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Glimpse<InputDataType, OutputDataType>::Forward(

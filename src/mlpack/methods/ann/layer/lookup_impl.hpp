@@ -29,6 +29,18 @@ Lookup<InputDataType, OutputDataType>::Lookup(
   weights.set_size(outSize, inSize);
 }
 
+template <typename InputDataType, typename OutputDataType>
+Lookup<InputDataType, OutputDataType>::Lookup(
+    const Lookup& network) :
+    inSize(network.inSize),
+    outSize(network.outSize),
+    weights(network.weights),
+    delta(network.delta),
+    gradient(network.gradient)
+{
+}
+
+
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Lookup<InputDataType, OutputDataType>::Forward(

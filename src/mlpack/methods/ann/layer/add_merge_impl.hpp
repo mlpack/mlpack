@@ -43,6 +43,20 @@ AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
+AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
+    const AddMerge& network) :
+    model(network.model),
+    run(network.run),
+    network(network.network),
+    gradient(network.gradient),
+    delta(network.delta),
+    weights(network.weights)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 AddMerge<InputDataType, OutputDataType, CustomLayers...>::~AddMerge()
 {
   if (!model && ownsLayers)

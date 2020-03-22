@@ -57,6 +57,9 @@ class BilinearInterpolation
                         const size_t outColSize,
                         const size_t depth);
 
+  //! Copy constructor.
+  BilinearInterpolation(const BilinearInterpolation&);
+
   /**
    * Forward pass through the layer. The layer interpolates
    * the matrix using the given Bilinear Interpolation method.

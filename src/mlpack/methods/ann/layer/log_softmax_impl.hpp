@@ -25,6 +25,14 @@ LogSoftMax<InputDataType, OutputDataType>::LogSoftMax()
 }
 
 template<typename InputDataType, typename OutputDataType>
+LogSoftMax<InputDataType, OutputDataType>::LogSoftMax(
+  const LogSoftmax& network) :
+  delta(network.delta)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void LogSoftMax<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)

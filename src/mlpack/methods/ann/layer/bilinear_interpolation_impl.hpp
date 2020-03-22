@@ -52,6 +52,20 @@ BilinearInterpolation(
 }
 
 template<typename InputDataType, typename OutputDataType>
+BilinearInterpolation<InputDataType, OutputDataType>::
+BilinearInterpolation(const BilinearInterpolation& network):
+    inRowSize(network.inRowSize),
+    inColSize(network.inColSize),
+    outRowSize(network.outRowSize),
+    outColSize(network.outColSize),
+    depth(network.depth),
+    batchSize(network.batchSize),
+    delta(network.delta)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)

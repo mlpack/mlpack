@@ -107,6 +107,9 @@ class Glimpse
           const size_t inputWidth = 0,
           const size_t inputHeight = 0);
 
+  //! Copy constructor.
+  Glimpse(const Glimpse&);
+
   /**
    * Ordinary feed forward pass of the glimpse layer.
    *

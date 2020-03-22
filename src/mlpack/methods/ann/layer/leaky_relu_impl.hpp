@@ -28,6 +28,15 @@ LeakyReLU<InputDataType, OutputDataType>::LeakyReLU(
 }
 
 template<typename InputDataType, typename OutputDataType>
+LeakyReLU<InputDataType, OutputDataType>::LeakyReLU(
+    const LeakyReLU& network) :
+     alpha(network.alpha),
+     delta(network.delta)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void LeakyReLU<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)

@@ -76,6 +76,9 @@ class LSTM
        const size_t outSize,
        const size_t rho = std::numeric_limits<size_t>::max());
 
+  //! Copy constructor.
+  LSTM(const LSTM&);
+
   /**
    * Ordinary feed-forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

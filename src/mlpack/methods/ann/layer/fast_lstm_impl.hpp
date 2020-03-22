@@ -46,6 +46,38 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(
       4 * outSize * inSize + 4 * outSize + 4 * outSize * outSize, 1);
 }
 
+template <typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>::FastLSTM(
+    const FastLSTM& network) :
+    inSize(network.inSize),
+    outSize(network.outSize),
+    rho(network.rho),
+    forwardStep(network.forwardStep),
+    backwardStep(network.backwardStep),
+    gradientStep(network.gradientStep),
+    batchSize(network.batchSize),
+    batchStep(network.batchStep),
+    gradientStepIdx(network.gradientStepIdx),
+    rhoSize(network.rho),
+    bpttSteps(network.bpttSteps),
+    gate(network.gate),
+    weights(network.weights),
+    gateActivation(network.gateActivation),
+    cell(network.cell),
+    cellActivation(network.cellActivation).
+    cellActivationError(network.cellActivationError),
+    prevOutput(network.prevOutput),
+    prevError(network.prevError),
+    output2GateWeight(network.output2GateWeight),
+    input2GateWeight(network.input2GateWeight),
+    stateActivation(network.stateActivation),
+    forgetGateError(network.forgetGateError),
+    rhoSize(network.rhoSize),
+    input2GateBias(network,input2GateBias),
+    grad(network.grad),
+{
+}
+
 template<typename InputDataType, typename OutputDataType>
 void FastLSTM<InputDataType, OutputDataType>::Reset()
 {
