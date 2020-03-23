@@ -264,7 +264,7 @@ struct version<mlpack::ann::Sequential<
     InputDataType, OutputDataType, Residual, CustomLayers...>>
 {
   BOOST_STATIC_CONSTANT(int, value = 1);
-}
+};
 
 } // namespace serialization
 } // namespace boost

@@ -244,7 +244,7 @@ struct version<mlpack::ann::AddMerge<
     InputDataType, OutputDataType, CustomLayers...>>
 {
   BOOST_STATIC_CONSTANT(int, value = 1);
-}
+};
 
 } // namespace serialization
 } // namespace boost
