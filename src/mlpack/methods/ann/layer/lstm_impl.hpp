@@ -26,6 +26,58 @@ LSTM<InputDataType, OutputDataType>::LSTM()
 
 template <typename InputDataType, typename OutputDataType>
 LSTM<InputDataType, OutputDataType>::LSTM(
+    const LSTM& network) :
+    inSize(network.inSize),
+    outSize(network.outSize),
+    rho(network.rho),
+    forwardStep(network.forwardStep),
+    backwardStep(network.backwardStep),
+    gradientStep(network.gradientStep),
+    batchSize(network.batchSize),
+    batchStep(network.batchStep),
+    gradientStepIdx(network.gradients),
+    rhoSize(network.rhoSize),
+    bpttSteps(network.bpttSteps),
+    gradientStepIdx(network.gradientStepIdx),
+    cellActivationError(network.cellActivationError),
+    delta(network.delta),
+    grad(network.grad),
+    output2GateInputWeight(network.output2GateInputWeight),
+    input2GateInputWeight(network.input2GateInputWeight),
+    input2GateInputBias(network.input2GateInputBias),
+    cell2GateInputWeight(network.cell2GateInputWeight),
+    output2GateForgetWeight(network.output2GateForgetWeight),
+    input2GateForgetWeight(network.input2GateForgetWeight),
+    input2GateForgetBias(network.input2GateForgetBias),
+    cell2GateForgetWeight(network.cell2GateForgetWeight),
+    output2GateOutputWeight(network.output2GateOutputWeight),
+    input2GateOutputWeight(network.input2GateOutputWeight),
+    input2GateOutputBias(network.input2GateOutputBias),
+    cell2GateOutputWeight(network.cell2GateOutputWeight),
+    inputGate(network.inputGate),
+    forgetGate(network.forgetGate),
+    hiddenLayer(network.hiddenLayer),
+    outputGate(network.outputGate),
+    inputGateActivation(network.inputGateActivation),
+    outputGateActivation(network.outputGateActivation),
+    forgetGateActivation(network.forgetGateActivation),
+    hiddenLayerActivation(network.hiddenLayerActivation),
+    input2HiddenWeight(network.input2HiddenWeight),
+    input2HiddenBias(network.input2HiddenBias),
+    output2HiddenWeight(network.output2HiddenWeight),
+    cell(network.cell),
+    cellActivation(network.cellActivation),
+    forgetGateError(network.forgetGateError),
+    outputGateError(network.outputGateError),
+    prevError(network.prevError),
+    inputCellError(network.inputCellError),
+    inputGateError(network.inputGateError),
+    hiddenError(network.hiddenError),
+{
+}
+
+template <typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>::LSTM(
     const size_t inSize, const size_t outSize, const size_t rho) :
     inSize(inSize),
     outSize(outSize),

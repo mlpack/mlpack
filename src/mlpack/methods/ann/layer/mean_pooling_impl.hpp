@@ -52,6 +52,34 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
 }
 
 template<typename InputDataType, typename OutputDataType>
+MaxPooling<InputDataType, OutputDataType>::MaxPooling(
+    const MaxPooling& network) :
+    kernelWidth(network.kernelWidth),
+    kernelHeight(network.kernelHeight),
+    strideWidth(network.strideWidth),
+    strideHeight(network.strideHeight),
+    floor(network.floor),
+    inSize(network.inSize),
+    outSize(network.outSize),
+    reset(network.reset),
+    inputWidth(network.inputWidth),
+    inputHeight(network.inputHeight),
+    outputWidth(network.outputWidth),
+    outputHeight(network.outputHeight),
+    deterministic(network.deterministic),
+    offset(network.offset),
+    batchSize(network.batchSize),
+    outputTemp(network.outputTemp),
+    inputTemp(network.inputTemp),
+    gTemp(network.gTemp),
+    pooling(network.pooling),
+    delta(network.delta),
+    gradient(network.gradient)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MeanPooling<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
