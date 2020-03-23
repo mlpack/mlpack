@@ -39,6 +39,13 @@ namespace ann /** Artificial Neural Network. */ {
  *  - IdentityLayer
  *  - ReLULayer
  *  - TanHLayer
+ *  - SoftplusLayer
+ *  - HardSigmoidLayer
+ *  - SwishLayer
+ *  - MishLayer
+ *  - LiSHTLayer
+ *  - GELULayer
+ *  - ELiSHLayer
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
