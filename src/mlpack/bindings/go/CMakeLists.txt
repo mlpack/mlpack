@@ -225,10 +225,13 @@ if (BUILD_GO_BINDINGS)
   set_target_properties(mlpack_go_${name} PROPERTIES
       LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/mlpack/)
 
+  install(DIRECTORY "${CMAKE_BINARY_DIR}/include/mlpack" DESTINATION
+      "${CMAKE_INSTALL_INCLUDEDIR}")
+
   install(TARGETS mlpack_go_${name}
-      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+      RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+      LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+      ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
   add_dependencies(mlpack_go_${name} generate_cpp_${name})
   add_dependencies(mlpack_go_${name} go_util)
