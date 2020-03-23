@@ -66,8 +66,9 @@ template<typename OutputLayerType, typename MergeLayerType,
 BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::~BRNN()
 {
-  // Remove mergeLayer from the forward and backward RNNs so it doesn't get
-  // deleted.  This assumes that mergeLayer is the last layer!
+  // Remove the last layers from the forward and backward RNNs, as they are held
+  // in mergeLayer.  So, when we use DeleteVisitor with mergeLayer, those two
+  // layers will be properly (and not doubly) freed.
   forwardRNN.network.pop_back();
   backwardRNN.network.pop_back();
 
