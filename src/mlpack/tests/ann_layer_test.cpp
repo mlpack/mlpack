@@ -3293,8 +3293,8 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
   input = arma::linspace<arma::colvec>(0, 24, 25);
   module5.Forward(input, output);
 
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 9);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 1);
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 75);
+  BOOST_REQUIRE_EQUAL(output.n_rows, 25);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
