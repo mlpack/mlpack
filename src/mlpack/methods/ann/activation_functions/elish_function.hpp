@@ -63,6 +63,7 @@ class ElishFunction
   {
     if (x < 0.0)
       return (std::exp(x) - 1) / (1 + std::exp(-x));
+
     return x / (1 + std::exp(-x));
   }
 
@@ -92,13 +93,11 @@ class ElishFunction
     if (y < 0.0)
     {
       return std::exp(y) - 2 / (1 + std::exp(y)) +
-                    2 / std::pow(1 + std::exp(y) , 2);
+          2 / std::pow(1 + std::exp(y) , 2);
     }
-    return
-    {
-      1 / (1 + std::exp(-y)) + y * std::exp(-y) /
-                         std::pow(1 + std::exp(-y) , 2)
-    };
+
+    return 1 / (1 + std::exp(-y)) + y * std::exp(-y) /
+        std::pow(1 + std::exp(-y) , 2);
   }
 
   /**
