@@ -184,16 +184,16 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQNEpisodicReplay)
   model.Add<Linear<>>(128, 2);
 
   // Set up the policy and replay method.
-  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
+  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
 
   TrainingConfig config;
   config.StepSize() = 0.01;
-  config.Discount() = 0.9;
+  config.Discount() = 0.99;
   config.TargetNetworkSyncInterval() = 100;
   config.ExplorationSteps() = 100;
   config.DoubleQLearning() = false;
   config.StepLimit() = 200;
-  EpisodicReplay<CartPole> replayMethod(10, config.StepLimit());
+  EpisodicReplay<CartPole> replayMethod(20, config.StepLimit());
 
   // Set up DQN agent.
   QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy),
