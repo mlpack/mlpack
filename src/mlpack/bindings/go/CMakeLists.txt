@@ -1,6 +1,6 @@
 if (BUILD_GO_BINDINGS)
   # We need to check here if Go is even available, since the tests will need it.
-  find_package(Go 1.11.0)
+  find_package(Go 1.10.0)
 
   if (NOT GO_FOUND)
     # We can't build anything, so define the macro to do nothing.
