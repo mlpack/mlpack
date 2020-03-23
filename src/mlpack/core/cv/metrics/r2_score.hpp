@@ -25,15 +25,18 @@ namespace cv {
  * well unseen samples are likely to be predicted by the model,
  * through the proportion of explained variance.
  * As R2Score is dataset dependent it can have wide range of values,
- * best possible score is @f$R^2 =1.0@f$, and it can be negative too for an
- * arbitraryly worse model. For a model which predicts exactly the expected
- * value of y, disregarding the input features, gets a R2Score equals to 0.0.
+ * best possible score is @f$R^2 =1.0@f$.arbitraryly worse model. Values
+ * of R2 outside the range 0 to 1 can occur when the model fits the data
+ * worse than a horizontal hyperplane. This would occur when the wrong model
+ * was chosen, or nonsensical constraints were applied by mistake. For a model
+ * which predicts exactly the expected value of y, disregarding the input
+ * features, gets a R2Score equals to 0.0.
  * If a model predicts @f$ \hat{y}_i $@f of the @f$ i $@f-th sample for a true
  * @f$ y_i $@f for total n samples, the R2Score is calculated by
  * @f{eqnarray*}{
  * R^{2} \left( y, \hat{y} \right) &=& 1-\frac{\sum_{i=1}^{n}
- * \left( y_i - \hat{y_i} \right)^2 }
- * {\sum_{i=1}^{n} \left( y_i - \bar{y}\right)^2}\\
+ *    \left( y_i - \hat{y_i} \right)^2 }
+ *    {\sum_{i=1}^{n} \left( y_i - \bar{y}\right)^2}\\
  * @f}
  * where @f$ \bar{y} = frac{1}{y}\sum_{i=1}^{n} y_i $@f.
  * For example, a model having R2Score = 0.85, explains 85 \% variability of

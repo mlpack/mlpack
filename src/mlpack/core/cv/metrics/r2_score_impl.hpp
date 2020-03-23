@@ -16,9 +16,10 @@ namespace mlpack {
 namespace cv {
 
 template<typename MLAlgorithm, typename DataType, typename ResponsesType>
-double R2Score::Evaluate(MLAlgorithm& model,
-                     const DataType& data,
-                     const ResponsesType& responses)
+double R2Score::Evaluate(
+    MLAlgorithm& model,
+    const DataType& data,
+    const ResponsesType& responses)
 {
   if (data.n_cols != responses.n_cols)
   {
@@ -44,13 +45,13 @@ double R2Score::Evaluate(MLAlgorithm& model,
   // Handling undefined R2Score when both denominator and numerator is 0.0
   if (ss_res == 0.0)
   {
-    if (ss_tot !=0.0)
+    if (ss_tot != 0.0)
       return 1.0;
     else
       return DBL_MIN;
   }
 
-  return 1 - ss_res/ss_tot;
+  return 1 - ss_res / ss_tot;
 }
 
 } // namespace cv

@@ -181,12 +181,13 @@ BOOST_AUTO_TEST_CASE(R2ScoreTest)
   // Mean Responses = (1 + 2 + 3 + 6 + 8)/5 = 4
   arma::mat data("2 3 4 7 9");
   arma::rowvec responses("1 2.005 3 6.005 8.005");
-  
-  double ss_reg = (0 * 0 + 0.005 * 0.005 + 0 * 0
-  			 + 0.005 * 0.005 + 0.005 *0.005);
+
+  double ss_reg = (0 * 0 + 0.005 * 0.005 + 0 * 0 +
+      0.005 * 0.005 + 0.005 *0.005);
   double ss_tot = ((1 - 4) * (1- 4) + (2.005 - 4) *
-  		(2.005 - 4) + (3 - 4) * (3 - 4) + (6.005 - 4) *
-  		(6.005 - 4) + (8.005 - 4) * (8.005 -4));
+      (2.005 - 4) + (3 - 4) * (3 - 4) + (6.005 - 4) *
+      (6.005 - 4) + (8.005 - 4) * (8.005 -4));
+
   double expectedR2 = 1 - ss_reg / ss_tot;
 
   BOOST_REQUIRE_CLOSE(R2Score::Evaluate(lr, data, responses), expectedR2, 1e-5);
