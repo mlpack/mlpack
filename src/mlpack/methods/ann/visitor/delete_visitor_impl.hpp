@@ -36,9 +36,7 @@ DeleteVisitor::operator()(LayerType* layer) const
   if (layer)
   {
     for (size_t i = 0; i < layer->Model().size(); ++i)
-    {
       boost::apply_visitor(DeleteVisitor(), layer->Model()[i]);
-    }
 
     delete layer;
   }
