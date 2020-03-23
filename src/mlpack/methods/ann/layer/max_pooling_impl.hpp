@@ -170,8 +170,7 @@ void MaxPooling<InputDataType, OutputDataType>::Forward(
 
     for (size_t i = 0; i < inputTemp.n_slices; ++i)
     {
-      padding.Forward(std::move(inputTemp.slice(i)),
-          std::move(inputPaddedTemp.slice(i)));
+      padding.Forward(inputTemp.slice(i), inputPaddedTemp.slice(i));
     }
   }
 
