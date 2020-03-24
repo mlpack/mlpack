@@ -25,7 +25,7 @@ namespace cv {
  * well unseen samples are likely to be predicted by the model,
  * through the proportion of explained variance.
  * As R2Score is dataset dependent it can have wide range of values,
- * best possible score is @f$R^2 =1.0@f$.arbitraryly worse model. Values
+ * best possible score is @f$R^2 =1.0@f$. Values
  * of R2 outside the range 0 to 1 can occur when the model fits the data
  * worse than a horizontal hyperplane. This would occur when the wrong model
  * was chosen, or nonsensical constraints were applied by mistake. For a model
