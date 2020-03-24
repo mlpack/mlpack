@@ -15,7 +15,6 @@ steps:
     sudo xcode-select --switch /Applications/Xcode_10.1.app/Contents/Developer
     unset BOOST_ROOT
     pip install cython numpy pandas zipp
-    brew update
     brew install openblas armadillo boost
 
     if [ "a$(julia.version)" != "a" ]; then

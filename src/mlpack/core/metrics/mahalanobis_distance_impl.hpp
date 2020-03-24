@@ -1,4 +1,4 @@
-/***
+/**
  * @file mahalanobis_distance_impl.hpp
  * @author Ryan Curtin
  *
