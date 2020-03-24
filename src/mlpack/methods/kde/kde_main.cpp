@@ -314,6 +314,5 @@ static void mlpackMain()
     CLI::GetParam<arma::vec>("predictions") = std::move(estimations);
 
   // Save model.
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<KDEModel*>("output_model") = kde;
+  CLI::GetParam<KDEModel*>("output_model") = kde;
 }
