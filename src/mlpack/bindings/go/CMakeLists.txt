@@ -83,7 +83,7 @@ if (BUILD_GO_SHLIB)
   add_custom_target(go_shlib ALL DEPENDS mlpack)
   add_custom_target(go_copy ALL DEPENDS mlpack)
 
-  if (BUILD_TESTS)
+  if (BUILD_TESTS OR BUILD_GO_SHLIB)
     foreach(test_file ${TEST_SOURCES})
       add_custom_command(TARGET go_copy PRE_BUILD
           COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
@@ -253,6 +253,6 @@ endif()
 
 endmacro ()
 
-if (BUILD_TESTS)
+if (BUILD_TESTS OR BUILD_GO_SHLIB)
   add_subdirectory(tests)
 endif ()
