@@ -73,11 +73,6 @@ class GRU
       const size_t rho = std::numeric_limits<size_t>::max());
 
   /**
-   * Delete the GRU and the layers it holds.
-   */
-  ~GRU();
-
-  /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *

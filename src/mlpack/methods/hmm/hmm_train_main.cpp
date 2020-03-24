@@ -515,16 +515,26 @@ static void mlpackMain()
   if (CLI::HasParam("input_model"))
   {
     hmm = CLI::GetParam<HMMModel*>("input_model");
+
+    hmm->PerformAction<Train, vector<mat>>(&trainSeq);
   }
   else
   {
     // We need to initialize the model.
     hmm = new HMMModel(typeId);
-    hmm->PerformAction<Init, vector<mat>>(&trainSeq);
-  }
 
-  // Train the model.
-  hmm->PerformAction<Train, vector<mat>>(&trainSeq);
+    // Catch any exceptions so that we can clean the model if needed.
+    try
+    {
+      hmm->PerformAction<Init, vector<mat>>(&trainSeq);
+      hmm->PerformAction<Train, vector<mat>>(&trainSeq);
+    }
+    catch (std::exception& e)
+    {
+      delete hmm;
+      throw;
+    }
+  }
 
   // If necessary, save the output.
   CLI::GetParam<HMMModel*>("output_model") = hmm;
