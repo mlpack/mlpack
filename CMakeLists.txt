@@ -19,6 +19,7 @@ option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
 option(BUILD_GO_BINDINGS "Build Go bindings." ON)
+option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 
 if (WIN32)
   option(BUILD_SHARED_LIBS
@@ -35,6 +36,7 @@ endif()
 # we should fail if Go isn't found.
 if (BUILD_GO_BINDINGS)
   set(FORCE_BUILD_GO_BINDINGS ON)
+  set(BUILD_GO_SHLIB ON)
 else()
   set(FORCE_BUILD_GO_BINDINGS OFF)
 endif()
