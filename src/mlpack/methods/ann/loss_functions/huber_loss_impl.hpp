@@ -63,10 +63,11 @@ void HuberLoss<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void HuberLoss<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
+    Archive& ar,
     const unsigned int /* version */)
 {
-  // Nothing to do here.
+  ar & BOOST_SERIALIZATION_NVP(delta);
+  ar & BOOST_SERIALIZATION_NVP(mean);
 }
 
 } // namespace ann
