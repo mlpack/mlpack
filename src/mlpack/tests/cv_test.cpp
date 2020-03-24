@@ -170,15 +170,15 @@ BOOST_AUTO_TEST_CASE(MSETest)
  */
 BOOST_AUTO_TEST_CASE(R2ScoreTest)
 {
-  // Making two points that define the linear function f(x) = x - 1
+  // Making two points that define the linear function f(x) = x - 1.
   arma::mat trainingData("0 1");
   arma::rowvec trainingResponses("-1 0");
 
   LinearRegression lr(trainingData, trainingResponses);
 
   // Making five responses that are the output of regression function f(x)
-  // with some responses having a slight deviation of 0.005
-  // Mean Responses = (1 + 2 + 3 + 6 + 8)/5 = 4
+  // with some responses having a slight deviation of 0.005.
+  // Mean Responses = (1 + 2 + 3 + 6 + 8)/5 = 4.
   arma::mat data("2 3 4 7 9");
   arma::rowvec responses("1 2.005 3 6.005 8.005");
 
