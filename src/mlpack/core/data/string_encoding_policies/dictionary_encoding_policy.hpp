@@ -25,13 +25,16 @@ namespace data {
  * The encoder assigns a positive integer number to each unique token and treats
  * the dataset as categorical. The numbers are assigned sequentially starting
  * from one. The order in which the tokens are labeled is defined by
- * the dictionary used by the StringEncoding class.
+ * the dictionary used by the StringEncoding class. The encoder writes data
+ * either in the column-major order or in the row-major order depending on
+ * the output data type.
  */
 class DictionaryEncodingPolicy
 {
  public:
   /**
-   * The function initializes the output matrix.
+   * The function initializes the output matrix. The encoder writes data
+   * in the column-major order.
    *
    * @tparam MatType The output matrix type.
    *
@@ -50,32 +53,32 @@ class DictionaryEncodingPolicy
     output.zeros(maxNumTokens, datasetSize);
   }
 
-  /** 
+  /**
    * The function performs the dictionary encoding algorithm i.e. it writes
-   * the encoded token to the ouput.
-   * Returns the encodings in column-major format.
+   * the encoded token to the ouput. The encoder writes data in the
+   * column-major order.
    *
    * @tparam MatType The output matrix type.
    *
    * @param output Output matrix to store the encoded results (sp_mat or mat).
    * @param value The encoded token.
-   * @param row The row number at which the encoding is performed.
-   * @param col The token index in the row.
+   * @param line The line number at which the encoding is performed.
+   * @param index The token index in the line.
    */
   template<typename MatType>
   static void Encode(MatType& output,
                      const size_t value,
-                     const size_t row,
-                     const size_t col)
+                     const size_t line,
+                     const size_t index)
   {
-    output(col, row) = value;
+    output(index, line) = value;
   }
 
-  /** 
+  /**
    * The function performs the dictionary encoding algorithm i.e. it writes
    * the encoded token to the ouput. This is an overload function which saves
-   * the result into the given vector to avoid padding.
-   * Returns the encodings in row-major format.
+   * the result into the given vector to avoid padding. The encoder writes data
+   * in the row-major order.
    *
    * @tparam OutputType Type of the output vector.
    *
@@ -91,12 +94,12 @@ class DictionaryEncodingPolicy
   /**
    * The function is not used by the dictionary encoding policy.
    *
-   * @param row The row number at which the encoding is performed.
-   * @param col The token sequence number in the row.
+   * @param line The line number at which the encoding is performed.
+   * @param index The token sequence number in the line.
    * @param value The encoded token.
    */
-  static void PreprocessToken(const size_t /* row */,
-                              const size_t /* col */,
+  static void PreprocessToken(const size_t /* line */,
+                              const size_t /* index */,
                               const size_t /* value */)
   { }
 

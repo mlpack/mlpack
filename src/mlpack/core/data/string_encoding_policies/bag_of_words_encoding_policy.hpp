@@ -27,13 +27,16 @@ namespace data {
  * of tokens. If an item of the dataset has the i-th token, then the i-th
  * coordinate of the corresponding vector is equal to 1, otherwise it's equal to
  * zero. The order in which the tokens are labeled is defined by the dictionary
- * used by the StringEncoding class.
+ * used by the StringEncoding class. The encoder writes data either in the
+ * column-major order or in the row-major order depending on the output data
+ * type.
  */
 class BagOfWordsEncodingPolicy
 {
  public:
   /**
-   * The function initializes the output matrix.
+   * The function initializes the output matrix. The encoder writes data
+   * in the column-major order.
    *
    * @tparam MatType The output matrix type.
    *
@@ -53,8 +56,10 @@ class BagOfWordsEncodingPolicy
   }
 
   /**
-   * The function initializes the output matrix.
-   * Overloaded function to store result in vector<vector<OutputType>>
+   * The function initializes the output matrix. The encoder writes data
+   * in the row-major order.
+   *
+   * Overloaded function to store result in vector<vector<OutputType>>.
    * 
    * @tparam OutputType Type of the output vector.
    *
@@ -73,59 +78,60 @@ class BagOfWordsEncodingPolicy
     output.resize(datasetSize, std::vector<OutputType>(dictionarySize, 0));
   }
 
-  /** 
+  /**
    * The function performs the bag of words encoding algorithm i.e. it writes
-   * the encoded token to the output.
-   * Returns the encodings in column-major format.
+   * the encoded token to the output. The encoder writes data in the
+   * column-major order.
    *
    * @tparam MatType The output matrix type.
    *
    * @param output Output matrix to store the encoded results (sp_mat or mat).
    * @param value The encoded token.
-   * @param row The row number at which the encoding is performed.
-   * @param col The token index in the row.
+   * @param line The line number at which the encoding is performed.
+   * @param index The token index in the line.
    */
   template<typename MatType>
   static void Encode(MatType& output,
                      const size_t value,
-                     const size_t row,
-                     const size_t /* col */)
+                     const size_t line,
+                     const size_t /* index */)
   {
     // The labels are assigned sequentially starting from one.
-    output(value - 1, row) = 1;
+    output(value - 1, line) = 1;
   }
 
-  /** 
+  /**
    * The function performs the bag of words encoding algorithm i.e. it writes
-   * the encoded token to the output.
+   * the encoded token to the output. The encoder writes data in the
+   * row-major order.
+   *
    * Overload function to accepted vector<vector<OutputType>> as output type.
-   * Returns the encodings in row-major format.
    *
    * @param output Output matrix to store the encoded results.
    * @param value The encoded token.
-   * @param row The row number at which the encoding is performed.
-   * @param col The row token number at which the encoding is performed.
+   * @param line The line number at which the encoding is performed.
+   * @param index The line token number at which the encoding is performed.
    * @tparam OutputType The type of output vector.
    */
   template<typename OutputType>
   static void Encode(std::vector<std::vector<OutputType>>& output,
                      const size_t value,
-                     const size_t row,
-                     const size_t /* col */)
+                     const size_t line,
+                     const size_t /* index */)
   {
     // The labels are assigned sequentially starting from one.
-    output[row][value - 1] = 1;
+    output[line][value - 1] = 1;
   }
 
   /**
    * The function is not used by the bag of words encoding policy.
    *
-   * @param row The row number at which the encoding is performed.
-   * @param col The token sequence number in the row.
+   * @param line The line number at which the encoding is performed.
+   * @param index The token sequence number in the line.
    * @param value The encoded token.
    */
-  static void PreprocessToken(size_t /* row */,
-                              size_t /* col */,
+  static void PreprocessToken(size_t /* line */,
+                              size_t /* index */,
                               size_t /* value */)
   { }
 

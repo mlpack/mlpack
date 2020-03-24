@@ -57,14 +57,22 @@ static vector<string> stringEncodingUtf8Input = {
 };
 
 /**
- * Function used to compare two vectors.
+ * Check the values of two 2D vectors.
  */
-template<typename vectorType>
-void checkVector(vector<vector<vectorType>> A, vector<vector<vectorType>> B)
+template<typename ValueType>
+void CheckVectors(const vector<vector<ValueType>>& a,
+                  const vector<vector<ValueType>>& b,
+                  const ValueType tolerance = 1e-5)
 {
-  for (size_t i = 0; i < A.size(); i++)
-    for (size_t j = 0; j < A[i].size(); j++)
-      BOOST_REQUIRE_CLOSE(A[i][j], B[i][j], 1e-12);
+  BOOST_REQUIRE_EQUAL(a.size(), b.size());
+
+  for (size_t i = 0; i < a.size(); i++)
+  {
+    BOOST_REQUIRE_EQUAL(a[i].size(), b[i].size());
+
+    for (size_t j = 0; j < a[i].size(); j++)
+      BOOST_REQUIRE_CLOSE(a[i][j], b[i][j], tolerance);
+  }
 }
 
 /**
@@ -746,7 +754,7 @@ BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingTest)
        1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
        1.69314718055995, 1.69314718055995,  1.69314718055995 }
   };
-  checkVector(output, expected);
+  CheckVectors(output, expected, 1e-12);
 }
 
 /**
@@ -796,7 +804,7 @@ BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingIndividualCharactersTest)
     { 0, 2, 2.5753641449035616, 2.5753641449035616, 1.6931471805599454 },
     { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
   };
-  checkVector(output, expected);
+  CheckVectors(output, expected, 1e-12);
 }
 
 /**
@@ -893,7 +901,7 @@ BOOST_AUTO_TEST_CASE(VectorTfIdfRawCountEncodingTest)
        2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
        2.09861228866811, 2.09861228866811,  2.09861228866811 }
   };
-  checkVector(output, expected);
+  CheckVectors(output, expected, 1e-12);
 }
 
 /**
@@ -946,7 +954,7 @@ BOOST_AUTO_TEST_CASE(VectorRawcountEncodingIndividualCharactersTest)
     { 0, 2, 2.8109302162163288, 2.8109302162163288, 2.0986122886681100 },
     { 1.4054651081081644, 1, 0, 1.4054651081081644, 0 }
   };
-  checkVector(output, expected);
+  CheckVectors(output, expected, 1e-12);
 }
 
 /**
@@ -998,7 +1006,7 @@ BOOST_AUTO_TEST_CASE(VectorBnarySmoothIdfEncodingIndividualCharactersTest)
     { 0, 1, 1.2876820724517808, 1.2876820724517808, 1.6931471805599454 },
     { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
   };
-  checkVector(output, expected);
+  CheckVectors(output, expected, 1e-12);
 }
 
 /**

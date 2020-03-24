@@ -28,7 +28,8 @@ namespace data {
  * multiplied by inverse document frequency (idf).
  * The encoder assigns the corresponding tf-idf value to each token. The order
  * in which the tokens are labeled is defined by the dictionary used by the
- * StringEncoding class.
+ * StringEncoding class. The encoder writes data either in the column-major
+ * order or in the row-major order depending on the output data type.
  */
 class TfIdfEncodingPolicy
 {
@@ -76,7 +77,8 @@ class TfIdfEncodingPolicy
   { }
 
   /**
-   * The function initializes the output matrix.
+   * The function initializes the output matrix. The encoder writes data
+   * in the row-major order.
    *
    * @tparam MatType The output matrix type.
    *
@@ -96,7 +98,9 @@ class TfIdfEncodingPolicy
   }
 
   /**
-   * The function initializes the output matrix.
+   * The function initializes the output matrix. The encoder writes data
+   * in the row-major order.
+   *
    * Overloaded function to store result in vector<vector<OutputType>>.
    * 
    * @tparam OutputType Type of the output vector.
@@ -118,86 +122,87 @@ class TfIdfEncodingPolicy
 
   /** 
    * The function performs the TfIdf encoding algorithm i.e. it writes
-   * the encoded token to the output.
-   * Returns the encodings in column-major format.
+   * the encoded token to the output. The encoder writes data in the
+   * column-major order.
    *
    * @tparam MatType The output matrix type.
    *
    * @param output Output matrix to store the encoded results (sp_mat or mat).
    * @param value The encoded token.
-   * @param row The row number at which the encoding is performed.
-   * @param col The token index in the row.
+   * @param line The line number at which the encoding is performed.
+   * @param index The token index in the line.
    */
   template<typename MatType>
   void Encode(MatType& output,
               const size_t value,
-              const size_t row,
-              const size_t /* col */)
+              const size_t line,
+              const size_t /* index */)
   {
     const typename MatType::elem_type tf =
         TermFrequency<typename MatType::elem_type>(
-            tokensFrequences[row][value], rowsSizes[row]);
+            tokensFrequences[line][value], linesSizes[line]);
 
     const typename MatType::elem_type idf =
         InverseDocumentFrequency<typename MatType::elem_type>(
             output.n_cols, numContainingStrings[value]);
 
-    output(value - 1, row) =  tf * idf;
+    output(value - 1, line) =  tf * idf;
   }
 
   /** 
    * The function performs the TfIdf encoding algorithm i.e. it writes
-   * the encoded token to the output.
+   * the encoded token to the output. The encoder writes data in the
+   * row-major order.
+   *
    * Overloaded function to accept vector<vector<OutputType>> as the output
    * type.
-   * Returns the encodings in row-major format.
    *
    * @tparam OutputType Type of the output vector.
    *
    * @param output Output matrix to store the encoded results.
    * @param value The encoded token.
-   * @param row The row number at which the encoding is performed.
-   * @param col The token index in the row.
+   * @param line The line number at which the encoding is performed.
+   * @param index The token index in the line.
    */
   template<typename OutputType>
   void Encode(std::vector<std::vector<OutputType> >& output,
               const size_t value,
-              const size_t row,
-              const size_t /* col */)
+              const size_t line,
+              const size_t /* index */)
   {
     const OutputType tf = TermFrequency<OutputType>(
-        tokensFrequences[row][value], rowsSizes[row]);
+        tokensFrequences[line][value], linesSizes[line]);
 
     const OutputType idf = InverseDocumentFrequency<OutputType>(
         output.size(), numContainingStrings[value]);
 
-    output[row][value - 1] =  tf * idf;
+    output[line][value - 1] =  tf * idf;
   }
 
   /*
    * The function calculates the necessary statistics for the purpose
    * of the tf-idf algorithm during the first pass through the dataset.
    *
-   * @param row The row number at which the encoding is performed.
-   * @param col The token sequence number in the row.
+   * @param line The line number at which the encoding is performed.
+   * @param index The token sequence number in the line.
    * @param value The encoded token.
    */
-  void PreprocessToken(const size_t row,
-                       const size_t /* col */,
+  void PreprocessToken(const size_t line,
+                       const size_t /* index */,
                        const size_t value)
   {
-    if (row >= tokensFrequences.size())
+    if (line >= tokensFrequences.size())
     {
-      rowsSizes.resize(row + 1);
-      tokensFrequences.resize(row + 1);
+      linesSizes.resize(line + 1);
+      tokensFrequences.resize(line + 1);
     }
 
-    tokensFrequences[row][value]++;
+    tokensFrequences[line][value]++;
 
-    if (tokensFrequences[row][value] == 1)
+    if (tokensFrequences[line][value] == 1)
       numContainingStrings[value]++;
 
-    rowsSizes[row]++;
+    linesSizes[line]++;
   }
 
   //! Return token frequencies.
@@ -221,10 +226,10 @@ class TfIdfEncodingPolicy
     return numContainingStrings;
   }
 
-  //! Return the rows sizes.
-  const std::vector<size_t>& RowsSizes() const { return rowsSizes; }
-  //! Modify the rows sizes.
-  std::vector<size_t>& RowsSizes() { return rowsSizes; }
+  //! Return the lines sizes.
+  const std::vector<size_t>& LinesSizes() const { return linesSizes; }
+  //! Modify the lines sizes.
+  std::vector<size_t>& LinesSizes() { return linesSizes; }
 
   //! Return the term frequency type.
   TfTypes TfType() const { return tfType; }
@@ -252,8 +257,9 @@ class TfIdfEncodingPolicy
    *
    * @tparam ValueType Type of the returned value.
    *
-   * @param numOccurrences The number of the given token occurrences in the row.
-   * @param numTokens The total number of tokens in the row.
+   * @param numOccurrences The number of the given token occurrences in
+   *                       the line.
+   * @param numTokens The total number of tokens in the line.
    */
   template<typename ValueType>
   ValueType TermFrequency(const size_t numOccurrences,
@@ -280,36 +286,36 @@ class TfIdfEncodingPolicy
    *
    * @tparam ValueType Type of the returned value.
    *
-   * @param totalNumRows The total number of strings in the input dataset.
+   * @param totalNumLines The total number of strings in the input dataset.
    * @param numOccurrences The number of strings in the input dataset
    *                       which contain the current token.
    */
   template<typename ValueType>
-  ValueType InverseDocumentFrequency(const size_t totalNumRows,
+  ValueType InverseDocumentFrequency(const size_t totalNumLines,
                                      const size_t numOccurrences)
   {
     if (smoothIdf)
     {
-      return std::log(static_cast<ValueType>(totalNumRows + 1) /
+      return std::log(static_cast<ValueType>(totalNumLines + 1) /
           (1 + numOccurrences)) + 1.0;
     }
     else
     {
-      return std::log(static_cast<ValueType>(totalNumRows) /
+      return std::log(static_cast<ValueType>(totalNumLines) /
           numOccurrences) + 1.0;
     }
   }
 
  private:
-  //! Used to store the total number of tokens for each row.
+  //! Used to store the total number of tokens for each line.
   std::vector<std::unordered_map<size_t, size_t>> tokensFrequences;
   /**
    * Used to store the number of strings which contain a token depending
    * on the given token.
    */
   std::unordered_map<size_t, size_t> numContainingStrings;
-  //! Used to store the number of tokens in each row.
-  std::vector<size_t> rowsSizes;
+  //! Used to store the number of tokens in each line.
+  std::vector<size_t> linesSizes;
   //! Type of the term frequency scheme.
   TfTypes tfType;
   //! Indicates whether the idf scheme is smooth or not.

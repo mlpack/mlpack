@@ -24,7 +24,8 @@ namespace data {
 
 /**
  * The class translates a set of strings into numbers using various encoding
- * algorithms.
+ * algorithms. The encoder writes data either in the column-major order or
+ * in the row-major order depending on the output data type.
  *
  * @tparam EncodingPolicyType Type of the encoding algorithm itself.
  * @tparam DictionaryType Type of the dictionary.
@@ -90,7 +91,13 @@ class StringEncoding
   void Clear();
 
   /**
-   * Encode the given text and write the result to the given output.
+   * Encode the given text and write the result to the given output. The encoder
+   * writes data in the column-major order or in the row-major order depending
+   * on the output data type.
+   *
+   * If the output type is either arma::mat or arma::sp_mat then the function
+   * writes it in the column-major order. If the output type is 2D std::vector
+   * then the function writes it in the row major order.
    *
    * @tparam OutputType Type of the output container. The function supports
    *                    the following types: arma::mat, arma::sp_mat,
@@ -132,7 +139,12 @@ class StringEncoding
  private:
   /**
    * A helper function to encode the given text and write the result to
-   * the given output.
+   * the given output. The encoder writes data in the column-major order or
+   * in the row-major order depending on the output data type.
+   *
+   * If the output type is either arma::mat or arma::sp_mat then the function
+   * writes it in the column-major order. If the output type is 2D std::vector
+   * then the function writes it in the row major order.
    *
    * @tparam OutputType Type of the output container. The function supports
    *                    the following types: arma::mat, arma::sp_mat,
@@ -162,7 +174,8 @@ class StringEncoding
   /**
    * A helper function to encode the given text and write the result to
    * the given output. This is an optimized overload for policies that support
-   * the one pass encoding algorithm.
+   * the one pass encoding algorithm. The encoder writes data in the row-major
+   * order.
    *
    * @tparam TokenizerType Type of the tokenizer.
    * @tparam PolicyType The type of the encoding policy. It has to be
