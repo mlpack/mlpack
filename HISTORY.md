@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added `EliSH` activation function (#2323).
+
   * Added `mean squared logarithmic error` loss function for neural networks
     (#2210).
 
