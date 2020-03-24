@@ -86,7 +86,7 @@ class ElishFunction
    * Computes the first derivatives of ELiSH function.
    *
    * @param y Input data.
-   * @return f'(x)
+   * @return f'(x).
    */
   static double Deriv(const double y)
   {
