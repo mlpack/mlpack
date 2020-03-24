@@ -52,7 +52,7 @@ void L1Loss<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
     const unsigned int /* version */)
 {
-  // Nothing to do here.
+  ar & BOOST_SERIALIZATION_NVP(mean);
 }
 
 } // namespace ann

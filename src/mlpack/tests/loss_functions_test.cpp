@@ -738,17 +738,15 @@ BOOST_AUTO_TEST_CASE(SimpleL1LossTest)
   // Test the Backward function.
   module.Backward(input1, target1, output);
   for (double el : output)
-  {
     BOOST_REQUIRE_EQUAL(el , 1);
-  }
+
   BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
 
   module.Backward(input2, target2, output);
   for (double el : output)
-  {
     BOOST_REQUIRE_EQUAL(el, 0);
-  }
+
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
 }
