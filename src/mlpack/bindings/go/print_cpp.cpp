@@ -42,7 +42,6 @@ void PrintCPP(const ProgramDoc& programInfo,
   typedef std::map<std::string, util::ParamData>::const_iterator ParamIter;
 
   // First, we must generate the header comment and namespace.
-  cout << "#include \"" << functionName << ".h\""<< endl;
   cout << "#include <" << mainFilename << ">" << endl;
   cout << "#include <mlpack/bindings/go/mlpack/capi/cli_util.hpp>" << endl;
   cout << endl;
