@@ -36,6 +36,13 @@
     #endif
 #endif
 
+// Force definition of old HDF5 API.  Thanks to Mike Roberts for helping find
+// this workaround.
+#if !defined(H5_USE_110_API)
+  #undef H5_USE_18_API
+  #define H5_USE_18_API
+#endif
+
 // Include everything we'll need for serialize().
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/nvp.hpp>
