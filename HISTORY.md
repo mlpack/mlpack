@@ -1,6 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * Added `R2Score` regression metric (#2323).
+  * Added `R2 Score` regression metric (#2323).
 
   * Added `mean squared logarithmic error` loss function for neural networks
     (#2210).

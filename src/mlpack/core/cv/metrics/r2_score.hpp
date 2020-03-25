@@ -18,26 +18,27 @@ namespace mlpack {
 namespace cv {
 
 /**
- * The R2Score is a metric of performance for regression algorithms
- * that represents the proportion of variance (of y) that has been
+ * The R2 Score is a metric of performance for regression algorithms
+ * that represents the proportion of variance (here y) that has been
  * explained by the independent variables in the model. It provides
  * an indication of goodness of fit and therefore a measure of how
  * well unseen samples are likely to be predicted by the model,
  * through the proportion of explained variance.
- * As R2Score is dataset dependent it can have wide range of values. The
+ * As R2 Score is dataset dependent it can have wide range of values. The
  * best possible score is @f$R^2 =1.0@f$. Values of R2 outside the range
  * 0 to 1 can occur when the model fits the data worse than a horizontal
  * hyperplane. This would occur when the wrong model was chosen, or
  * nonsensical constraints were applied by mistake. A model which
  * predicts exactly the expected value of y, disregarding the input
- * features, gets a R2Score equals to 0.0.
+ * features, gets a R2 Score equals to 0.0.
  * If a model predicts @f$ \hat{y}_i $@f of the @f$ i $@f-th sample for a true
- * @f$ y_i $@f for total n samples, the R2Score is calculated by
+ * @f$ y_i $@f for total n samples, the R2 Score is calculated by
  * @f{eqnarray*}{
  * R^{2} \left( y, \hat{y} \right) &=& 1-\frac{\sum_{i=1}^{n}
  *    \left( y_i - \hat{y_i} \right)^2 }
  *    {\sum_{i=1}^{n} \left( y_i - \bar{y}\right)^2}\\
  * @f}
+ * 
  * where @f$ \bar{y} = frac{1}{y}\sum_{i=1}^{n} y_i $@f.
  * For example, a model having R2Score = 0.85, explains 85 \% variability of
  * the response data around its mean.
@@ -52,6 +53,7 @@ class R2Score
    * @param data Column-major data containing test items.
    * @param responses Ground truth (correct) target values for the test items,
    *     should be either a row vector or a column-major matrix.
+   * @return calculated R2 Score.
    */
   template<typename MLAlgorithm, typename DataType, typename ResponsesType>
   static double Evaluate(MLAlgorithm& model,

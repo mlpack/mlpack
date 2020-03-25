@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(MSETest)
 }
 
 /**
- * Test the R squared metric (R2Score).
+ * Test the R squared metric (R2 Score).
  */
 BOOST_AUTO_TEST_CASE(R2ScoreTest)
 {
