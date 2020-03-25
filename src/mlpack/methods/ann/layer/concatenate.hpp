@@ -41,6 +41,9 @@ class Concatenate
    */
   Concatenate();
 
+  //! Copy constructor.
+  Concatenate(const Concatenate&);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

@@ -35,7 +35,6 @@ Dropout<InputDataType, OutputDataType>::Dropout(
     ratio(network.ratio),
     scale(network.scale),
     deterministic(network.deterministic),
-    delta(network.delta),
     mask(network.mask)
 {
   // Nothing to do here.

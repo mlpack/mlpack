@@ -34,14 +34,11 @@ Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
   const Linear& network) :
     inSize(network.inSize),
     outSize(network.outSize),
-    weights(network.weights),
+    regularizer(network.regularizer),
     weight(network.weight),
-    bias(network.bias),
-    delta(network.delta),
-    gradient(network.gradient),
-    regularizer(network.regularizer)
+    bias(network.bias)
 {
-  // Nothing to do here.
+  weights.set_size(outSize * inSize + outSize, 1);
 }
 
 template<typename InputDataType, typename OutputDataType,

@@ -27,6 +27,14 @@ MultiplyConstant<InputDataType, OutputDataType>::MultiplyConstant(
 }
 
 template<typename InputDataType, typename OutputDataType>
+MultiplyConstant<InputDataType, OutputDataType>::MultiplyConstant(
+    const MultiplyConstant& network) :
+    scalar(network.scalar)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void MultiplyConstant<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)

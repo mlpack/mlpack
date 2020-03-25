@@ -71,6 +71,9 @@ class FlexibleReLU
    */
   FlexibleReLU(const double alpha = 0);
 
+  //! Copy constructor.
+  FlexibleReLU(const FlexibleReLU&);
+
   /**
    * Reset the layer parameter.
    */

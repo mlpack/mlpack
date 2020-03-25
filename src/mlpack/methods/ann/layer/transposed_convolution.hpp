@@ -52,6 +52,9 @@ class TransposedConvolution
   //! Create the Transposed Convolution object.
   TransposedConvolution();
 
+  //! Copy constructor.
+  TransposedConvolution(const TransposedConvolution&);
+
   /**
    * Create the Transposed Convolution object using the specified number of
    * input maps, output maps, filter size, stride and padding parameter.
@@ -447,6 +450,9 @@ class TransposedConvolution
 
   //! Locally-stored padding layer for back propagation.
   ann::Padding<> paddingBackward;
+
+  //! Locally-stored paddingType
+  std::string paddingType;
 
   //! Locally-stored delta object.
   OutputDataType delta;

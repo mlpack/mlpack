@@ -516,11 +516,27 @@ arma::Mat<char> GenerateReberGrammarData(
   return transitions;
 }
 
+// network1 should be allocated with `new`, and trained on some data.
+template<typename MatType = arma::mat, typename ModelType>
+void CheckCopyFunction(ModelType* network1, MatType& inputs)
+{
+  ModelType network2(*network1);
+  arma::cube predictions1;
+  network1->Predict(inputs, predictions1);
+  delete network1;
+
+  // Deallocating all of network1's memory, so that
+  // network2 is not trying to use any of that memory.
+  arma::cube predictions2;
+  network2.Predict(inputs, predictions2);
+  CheckMatrices(predictions1, predictions2);
+}
+
 /**
  * Train the specified network and the construct a Reber grammar dataset.
  */
 template<typename ModelType>
-void ReberGrammarTestNetwork(ModelType& model,
+void ReberGrammarTestNetwork(ModelType* model,
                              const bool recursive = false,
                              const size_t averageRecursion = 3,
                              const size_t maxRecursion = 5,
@@ -567,10 +583,11 @@ void ReberGrammarTestNetwork(ModelType& model,
   size_t successes = 0;
   size_t offset = 0;
   const size_t inputSize = 7;
+  arma::cube input1;
   for (size_t trial = 0; trial < trials; ++trial)
   {
     // Reset model before using for next trial.
-    model.Reset();
+    model->Reset();
     MomentumSGD opt(0.06, 50, 2, -50000);
 
     arma::cube inputTemp, labelsTemp;
@@ -586,8 +603,8 @@ void ReberGrammarTestNetwork(ModelType& model,
         labelsTemp = arma::cube(trainLabels.at(0, j).memptr(), inputSize, 1,
             trainInput.at(0, j).n_elem / inputSize, false, true);
 
-        model.Rho() = inputTemp.n_elem / inputSize;
-        model.Train(inputTemp, labelsTemp, opt);
+        model->Rho() = inputTemp.n_elem / inputSize;
+        model->Train(inputTemp, labelsTemp, opt);
         opt.ResetPolicy() = false;
       }
     }
@@ -600,9 +617,10 @@ void ReberGrammarTestNetwork(ModelType& model,
       arma::cube prediction;
       arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
           testInput.at(0, i).n_elem / inputSize, false, true);
+      input1 = input;
 
-      model.Rho() = input.n_elem / inputSize;
-      model.Predict(input, prediction);
+      model->Rho() = input.n_elem / inputSize;
+      model->Predict(input, prediction);
 
       const size_t reberGrammerSize = 7;
       std::string inputReber = "";
@@ -644,6 +662,7 @@ void ReberGrammarTestNetwork(ModelType& model,
 
     offset += 3;
   }
+  CheckCopyFunction(model, input1);
 
   BOOST_REQUIRE_GE(successes, 1);
 }
@@ -653,11 +672,11 @@ void ReberGrammarTestNetwork(ModelType& model,
  */
 BOOST_AUTO_TEST_CASE(LSTMReberGrammarTest)
 {
-  RNN<MeanSquaredError<> > model(5);
-  model.Add<Linear<> >(7, 10);
-  model.Add<LSTM<> >(10, 10);
-  model.Add<Linear<> >(10, 7);
-  model.Add<SigmoidLayer<> >();
+  RNN<MeanSquaredError<> > *model = new RNN<MeanSquaredError<> >(5);
+  model->Add<Linear<> >(7, 10);
+  model->Add<LSTM<> >(10, 10);
+  model->Add<Linear<> >(10, 7);
+  model->Add<SigmoidLayer<> >();
   ReberGrammarTestNetwork(model, false);
 }
 
@@ -666,11 +685,11 @@ BOOST_AUTO_TEST_CASE(LSTMReberGrammarTest)
  */
 BOOST_AUTO_TEST_CASE(FastLSTMReberGrammarTest)
 {
-  RNN<MeanSquaredError<> > model(5);
-  model.Add<Linear<> >(7, 8);
-  model.Add<FastLSTM<> >(8, 8);
-  model.Add<Linear<> >(8, 7);
-  model.Add<SigmoidLayer<> >();
+  RNN<MeanSquaredError<> > *model = new RNN<MeanSquaredError<> >(5);
+  model->Add<Linear<> >(7, 8);
+  model->Add<FastLSTM<> >(8, 8);
+  model->Add<Linear<> >(8, 7);
+  model->Add<SigmoidLayer<> >();
   ReberGrammarTestNetwork(model, false);
 }
 
@@ -679,11 +698,11 @@ BOOST_AUTO_TEST_CASE(FastLSTMReberGrammarTest)
  */
 BOOST_AUTO_TEST_CASE(GRURecursiveReberGrammarTest)
 {
-  RNN<MeanSquaredError<> > model(5);
-  model.Add<Linear<> >(7, 16);
-  model.Add<GRU<> >(16, 16);
-  model.Add<Linear<> >(16, 7);
-  model.Add<SigmoidLayer<> >();
+  RNN<MeanSquaredError<> > *model = new RNN<MeanSquaredError<> >(5);
+  model->Add<Linear<> >(7, 16);
+  model->Add<GRU<> >(16, 16);
+  model->Add<Linear<> >(16, 7);
+  model->Add<SigmoidLayer<> >();
   ReberGrammarTestNetwork(model, true, 3, 5, 10, 7);
 }
 
@@ -692,10 +711,12 @@ BOOST_AUTO_TEST_CASE(GRURecursiveReberGrammarTest)
  */
 BOOST_AUTO_TEST_CASE(BRNNReberGrammarTest)
 {
-  BRNN<MeanSquaredError<>, AddMerge<>, SigmoidLayer<> > model(5);
-  model.Add<Linear<> >(7, 10);
-  model.Add<LSTM<> >(10, 10);
-  model.Add<Linear<> >(10, 7);
+  BRNN<MeanSquaredError<>,
+  AddMerge<>, SigmoidLayer<> > *model = new
+  BRNN<MeanSquaredError<>, AddMerge<>, SigmoidLayer<> >(5);
+  model->Add<Linear<> >(7, 10);
+  model->Add<LSTM<> >(10, 10);
+  model->Add<Linear<> >(10, 7);
   ReberGrammarTestNetwork(model, false, 3, 5, 1);
 }
 

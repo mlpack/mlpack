@@ -39,6 +39,20 @@ WeightNorm<InputDataType, OutputDataType, CustomLayers...>::WeightNorm(
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
+WeightNorm<InputDataType, OutputDataType, CustomLayers...>::WeightNorm(
+    const WeightNorm& network) :
+    layerWeightSize(network.layerWeightSize),
+    biasWeightSize(network.biasWeightSize),
+    vectorParameter(network.vectorParameter),
+    scalarParameter(network.scalarParameter),
+    layerWeights(network.layerWeights),
+    layerGradients(network.layerGradients)
+{
+  weights.set_size(layerWeightSize + 1, 1);
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 WeightNorm<InputDataType, OutputDataType, CustomLayers...>::~WeightNorm()
 {
   boost::apply_visitor(deleteVisitor, wrappedLayer);

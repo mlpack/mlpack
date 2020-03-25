@@ -68,20 +68,10 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling(
     outputHeight(network.outputHeight),
     deterministic(network.deterministic),
     offset(network.offset),
-    batchSize(network.batchSize),
-    outputTemp(network.outputTemp),
-    inputTemp(network.inputTemp),
-    gTemp(network.gTemp),
-    pooling(network.pooling),
-    delta(network.delta),
-    gradient(network.gradient),
-    indices(network.indices),
-    indicesCol(network.indicesCol),
-    poolingIndices(network.poolingIndices)
+    batchSize(network.batchSize)
 {
   // Nothing to do here.
 }
-
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>

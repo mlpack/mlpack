@@ -39,6 +39,22 @@ template<
     typename InputDataType,
     typename OutputDataType
 >
+ConcatPerformance<
+    OutputLayerType,
+    InputDataType,
+    OutputDataType
+>::ConcatPerformance(const ConcatPerformance& network) :
+    inSize(network.inSize),
+    outputLayer(network.outputLayer)
+{
+  // Nothing to do here.
+}
+
+template<
+    typename OutputLayerType,
+    typename InputDataType,
+    typename OutputDataType
+>
 template<typename eT>
 double ConcatPerformance<
     OutputLayerType,

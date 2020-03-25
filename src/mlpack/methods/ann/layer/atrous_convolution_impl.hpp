@@ -51,6 +51,65 @@ AtrousConvolution<
     InputDataType,
     OutputDataType
 >::AtrousConvolution(
+  const AtrousConvolution& network) :
+    inSize(network.inSize),
+    outSize(network.outSize),
+    kernelWidth(network.kernelWidth),
+    kernelHeight(network.kernelHeight),
+    strideWidth(network.strideWidth),
+    strideHeight(network.strideHeight),
+    inputWidth(network.inputWidth),
+    inputHeight(network.inputHeight),
+    outputWidth(network.outputWidth),
+    outputHeight(network.outputHeight),
+    dilationWidth(network.dilationWidth),
+    dilationHeight(network.dilationHeight),
+    weight(network.weight),
+    bias(network.bias),
+    paddingType(network.paddingType),
+    padH(network.padH),
+    padW(network.padW)
+{
+  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
+      1);
+
+  // Transform paddingType to lowercase.
+  std::string paddingTypeLow = paddingType;
+  util::ToLower(paddingType, paddingTypeLow);
+
+  size_t padWLeft = std::get<0>(padW);
+  size_t padWRight = std::get<1>(padW);
+  size_t padHTop = std::get<0>(padH);
+  size_t padHBottom = std::get<1>(padH);
+  if (paddingTypeLow == "valid")
+  {
+    padWLeft = 0;
+    padWRight = 0;
+    padHTop = 0;
+    padHBottom = 0;
+  }
+  else if (paddingTypeLow == "same")
+  {
+    InitializeSamePadding(padWLeft, padWRight, padHTop, padHBottom);
+  }
+
+  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+}
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+AtrousConvolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::AtrousConvolution(
     const size_t inSize,
     const size_t outSize,
     const size_t kernelWidth,
@@ -120,7 +179,10 @@ AtrousConvolution<
     outputWidth(0),
     outputHeight(0),
     dilationWidth(dilationWidth),
-    dilationHeight(dilationHeight)
+    dilationHeight(dilationHeight),
+    paddingType(paddingType),
+    padH(padH),
+    padW(padW)
 {
   weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
       1);
@@ -307,47 +369,6 @@ void AtrousConvolution<
       }
     }
   }
-}
-
-template<
-    typename ForwardConvolutionRule,
-    typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
->
-AtrousConvolution<
-    ForwardConvolutionRule,
-    BackwardConvolutionRule,
-    GradientConvolutionRule,
-    InputDataType,
-    OutputDataType
->::AtrousConvolution(
-  const AtrousConvolution& network) :
-    inSize(network.inSize),
-    outSize(network.outSize),
-    KernelWidth(network.kernelWidth),
-    KernelHeigt(network.kernelHeight),
-    strideWidth(network.strideWidth),
-    strideHeight(network.strideHeight),
-    padW(network.padW),
-    padH(network.padH),
-    inputWidth(network.inputWidth),
-    inputHeight(network.inputHeight),
-    dilationWidth(network.dilationWidth),
-    dilationHeight(network.dilationHeight),
-    paddingType(network.paddingType),
-    gradient(network.gradient),
-    delta(network.delta),
-    padding(network.padding),
-    bias(network.bias),
-    inputTemp(network.inputTemp),
-    outputTemp(network.outputTemp),
-    inputPaddedTemp(network.inputPaddedTemp),
-    gTemp(network.gTemp),
-    gradientTemp(network.gradientTemp)
-{
-  // Nothing to do here.
 }
 
 template<

@@ -29,6 +29,17 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization() :
   // Nothing to do here.
 }
 
+template<typename InputDataType, typename OutputDataType>
+Reparametrization<InputDataType, OutputDataType>::Reparametrization(
+  const Reparametrization& network) :
+    latentSize(network.latentSize),
+    stochastic(network.stochastic),
+    includeKl(network.includeKl),
+    beta(network.beta)
+{
+  // Nothing to do here.
+}
+
 template <typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>::Reparametrization(
     const size_t latentSize,

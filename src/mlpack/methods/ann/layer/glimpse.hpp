@@ -88,6 +88,9 @@ template <
 class Glimpse
 {
  public:
+  //! Copy constructor.
+  Glimpse(const Glimpse&);
+
   /**
    * Create the GlimpseLayer object using the specified ratio and rescale
    * parameter.
@@ -106,9 +109,6 @@ class Glimpse
           const size_t scale = 2,
           const size_t inputWidth = 0,
           const size_t inputHeight = 0);
-
-  //! Copy constructor.
-  Glimpse(const Glimpse&);
 
   /**
    * Ordinary feed forward pass of the glimpse layer.

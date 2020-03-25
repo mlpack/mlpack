@@ -81,31 +81,33 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   bool success = false;
   for (size_t trial = 0; trial < 5; ++trial)
   {
-    FFN<NegativeLogLikelihood<>, RandomInitialization> model;
+    FFN<NegativeLogLikelihood<>, RandomInitialization> *model = new FFN<
+                                                        NegativeLogLikelihood<>,
+                                                        RandomInitialization>();
 
-    model.Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
-    model.Add<ReLULayer<> >();
-    model.Add<MaxPooling<> >(8, 8, 2, 2);
-    model.Add<Convolution<> >(8, 12, 2, 2);
-    model.Add<ReLULayer<> >();
-    model.Add<MaxPooling<> >(2, 2, 2, 2);
-    model.Add<Linear<> >(192, 20);
-    model.Add<ReLULayer<> >();
-    model.Add<Linear<> >(20, 10);
-    model.Add<ReLULayer<> >();
-    model.Add<Linear<> >(10, 2);
-    model.Add<LogSoftMax<> >();
+    model->Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+    model->Add<ReLULayer<> >();
+    model->Add<MaxPooling<> >(8, 8, 2, 2);
+    model->Add<Convolution<> >(8, 12, 2, 2);
+    model->Add<ReLULayer<> >();
+    model->Add<MaxPooling<> >(2, 2, 2, 2);
+    model->Add<Linear<> >(192, 20);
+    model->Add<ReLULayer<> >();
+    model->Add<Linear<> >(20, 10);
+    model->Add<ReLULayer<> >();
+    model->Add<Linear<> >(10, 2);
+    model->Add<LogSoftMax<> >();
 
     // Train for only 8 epochs.
     ens::RMSProp opt(0.001, 1, 0.88, 1e-8, 8 * nPoints, -1);
 
-    double objVal = model.Train(X, Y, opt);
+    double objVal = model->Train(X, Y, opt);
 
     // Test that objective value returned by FFN::Train() is finite.
     BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
     arma::mat predictionTemp;
-    model.Predict(X, predictionTemp);
+    model->Predict(X, predictionTemp);
     arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp.n_cols);
 
     for (size_t i = 0; i < predictionTemp.n_cols; ++i)
@@ -121,6 +123,12 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
       success = true;
       break;
     }
+    // Test for copy constructor.
+    FFN<NegativeLogLikelihood<>, RandomInitialization> model1(*model);
+    arma::mat prediction1;
+    delete model;
+    model1.Predict(X, prediction1);
+    CheckMatrices(prediction1, predictionTemp);
   }
 
   BOOST_REQUIRE_EQUAL(success, true);

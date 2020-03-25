@@ -41,24 +41,27 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 Highway<InputDataType, OutputDataType, CustomLayers...>::Highway(
   const Highway& network) :
-    inSize(network.insize),
+    inSize(network.inSize),
     model(network.model),
     reset(network.reset),
     width(network.width),
     height(network.height),
-    empty(network.empty),
-    gradient(network.gradient),
-    weights(network.weights),
-    transformBias(network.transformBias),
-    tranasformGate(network.tranasformGate),
     transformWeight(network.transformWeight),
+    transformBias(network.transformBias),
     transformGateActivation(network.transformGateActivation),
     transformGateError(network.transformGateError),
-    delta(network.delta),
-    networkOutput(network.networkOutput),
-    network(network.network)
+    networkOwnerships(network.networkOwnerships),
+    networkOutput(network.networkOutput)
 {
-  // Nothing to do here.
+  weights.set_size(inSize * inSize + inSize, 1);
+  for (size_t i = 0; i < network.network.size(); ++i)
+  {
+    if (network.networkOwnerships[i])
+    {
+      this->network.push_back(boost::apply_visitor(copyVisitor,
+          network.network[i]));
+    }
+  }
 }
 
 template<

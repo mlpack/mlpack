@@ -23,14 +23,60 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-GRU<InputDataType, OutputDataType>::GRU()
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+GRU<InputDataType, OutputDataType, CustomLayers...>::GRU()
 {
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType>
-GRU<InputDataType, OutputDataType>::GRU(
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+GRU<InputDataType, OutputDataType, CustomLayers...>::GRU(
+    const GRU& network) :
+    inSize(network.inSize),
+    outSize(network.outSize),
+    rho(network.rho),
+    batchSize(network.batchSize),
+    forwardStep(network.forwardStep),
+    backwardStep(network.backwardStep),
+    gradientStep(network.gradientStep),
+    deterministic(network.deterministic),
+    prevError(network.prevError),
+    allZeros(network.allZeros),
+    outParameter(network.outParameter),
+    prevOutput(network.prevOutput),
+    backIterator(network.backIterator),
+    gradIterator(network.gradIterator)
+{
+  // Input specific linear layers(for zt, rt, ot).
+  input2GateModule = boost::apply_visitor(copyVisitor,
+      network.input2GateModule);
+
+  // Previous output gates (for zt and rt).
+  output2GateModule = boost::apply_visitor(copyVisitor,
+      network.output2GateModule);
+
+  // Previous output gate for ot.
+  outputHidden2GateModule = boost::apply_visitor(copyVisitor,
+      network.outputHidden2GateModule);
+
+  this->network.push_back(input2GateModule);
+  this->network.push_back(output2GateModule);
+  this->network.push_back(outputHidden2GateModule);
+
+  inputGateModule = new SigmoidLayer<>();
+  forgetGateModule = new SigmoidLayer<>();
+  hiddenStateModule = new TanHLayer<>();
+
+  this->network.push_back(inputGateModule);
+  this->network.push_back(hiddenStateModule);
+  this->network.push_back(forgetGateModule);
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+GRU<InputDataType, OutputDataType, CustomLayers...>::GRU(
     const size_t inSize,
     const size_t outSize,
     const size_t rho) :
@@ -76,9 +122,10 @@ GRU<InputDataType, OutputDataType>::GRU(
   gradIterator = outParameter.end();
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 template<typename eT>
-void GRU<InputDataType, OutputDataType>::Forward(
+void GRU<InputDataType, OutputDataType, CustomLayers...>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   if (input.n_cols != batchSize)
@@ -191,9 +238,10 @@ void GRU<InputDataType, OutputDataType>::Forward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 template<typename eT>
-void GRU<InputDataType, OutputDataType>::Backward(
+void GRU<InputDataType, OutputDataType, CustomLayers...>::Backward(
   const arma::Mat<eT>& input, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   if (input.n_cols != batchSize)
@@ -313,9 +361,10 @@ void GRU<InputDataType, OutputDataType>::Backward(
   g = boost::apply_visitor(deltaVisitor, input2GateModule);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 template<typename eT>
-void GRU<InputDataType, OutputDataType>::Gradient(
+void GRU<InputDataType, OutputDataType, CustomLayers...>::Gradient(
     const arma::Mat<eT>& input,
     const arma::Mat<eT>& /* error */,
     arma::Mat<eT>& /* gradient */)
@@ -362,8 +411,10 @@ void GRU<InputDataType, OutputDataType>::Gradient(
   gradIterator--;
 }
 
-template<typename InputDataType, typename OutputDataType>
-void GRU<InputDataType, OutputDataType>::ResetCell(const size_t /* size */)
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+void GRU<InputDataType, OutputDataType, CustomLayers...>::
+ResetCell(const size_t /* size */)
 {
   outParameter.clear();
   outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
@@ -377,9 +428,10 @@ void GRU<InputDataType, OutputDataType>::ResetCell(const size_t /* size */)
   backwardStep = 0;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 template<typename Archive>
-void GRU<InputDataType, OutputDataType>::serialize(
+void GRU<InputDataType, OutputDataType, CustomLayers...>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   // If necessary, clean memory from the old model.

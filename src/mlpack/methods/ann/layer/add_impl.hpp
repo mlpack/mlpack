@@ -66,15 +66,6 @@ void Add<InputDataType, OutputDataType>::serialize(
     weights.set_size(outSize, 1);
 }
 
-template<typename InputDataType, typename OutputDataType>
-Add<InputDataType, OutputDataType>::Add(const Add& network):
-    gradient(network.gradient),
-    delta(network.delta),
-    weights(network.weights),
-    outSize(network.outSize)
-{
-}
-
 } // namespace ann
 } // namespace mlpack
 

@@ -39,6 +39,53 @@ Concat<InputDataType, OutputDataType, CustomLayers...>::Concat(
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 Concat<InputDataType, OutputDataType, CustomLayers...>::Concat(
+    const Concat& network) :
+    inputSize(network.inputSize),
+    axis(network.axis),
+    useAxis(network.useAxis),
+    model(network.model),
+    run(network.run)
+{
+  parameters.set_size(0, 0);
+
+  // Parameters to help calculate the number of channels.
+  size_t oldColSize = 1, newColSize = 1;
+  // Axis is specified and useAxis is true.
+  if (useAxis)
+  {
+    // Axis is specified without input dimension.
+    // Throw an error.
+    if (inputSize.n_elem > 0)
+    {
+      // Calculate rowSize, newColSize based on the axis
+      // of concatenation. Finally concat along cols and
+      // reshape to original format i.e. (input, batch_size).
+      size_t i = std::min(axis + 1, (size_t) inputSize.n_elem);
+      for (; i < inputSize.n_elem; ++i)
+      {
+        newColSize *= inputSize[i];
+      }
+    }
+    else
+    {
+      throw std::logic_error("Input dimensions not specified.");
+    }
+  }
+  else
+  {
+    channels = 1;
+  }
+  if (newColSize <= 0)
+  {
+      throw std::logic_error("Col size is zero.");
+  }
+  channels = newColSize / oldColSize;
+  inputSize.clear();
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+Concat<InputDataType, OutputDataType, CustomLayers...>::Concat(
     arma::Row<size_t>& inputSize,
     const size_t axis,
     const bool model,

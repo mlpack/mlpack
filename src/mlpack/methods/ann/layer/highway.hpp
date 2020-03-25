@@ -258,6 +258,9 @@ class Highway
 
   //! Locally-stored output height visitor.
   OutputHeightVisitor outputHeightVisitor;
+
+  //! Locally-stored copy visitor
+  CopyVisitor<CustomLayers...> copyVisitor;
 }; // class Highway
 
 } // namespace ann

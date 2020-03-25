@@ -17,6 +17,7 @@
 
 #include "../visitor/delete_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
+#include "../visitor/copy_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
 
 #include "layer_types.hpp"
@@ -229,6 +230,9 @@ class AddMerge
 
   //! Locally-stored weight object.
   OutputDataType weights;
+
+  //! Locally-stored copy visitor
+  CopyVisitor<CustomLayers...> copyVisitor;
 }; // class AddMerge
 
 } // namespace ann

@@ -70,6 +70,14 @@ class RNN
       OutputLayerType outputLayer = OutputLayerType(),
       InitializationRuleType initializeRule = InitializationRuleType());
 
+  /**
+   * Copy the RNN object.
+   *
+   * Warning: Copying RNN is a memory-intensive task multiple layers as well
+   * as parameters needed to be copied.
+   */
+  RNN(const RNN&);
+
   //! Destructor to release allocated memory.
   ~RNN();
 
@@ -405,6 +413,9 @@ class RNN
 
   //! Locally-stored output parameter visitor.
   OutputParameterVisitor outputParameterVisitor;
+
+  //! Locally-stored copy visitor
+  CopyVisitor<CustomLayers...> copyVisitor;
 
   //! List of all module parameters for the backward pass (BBTT).
   std::vector<arma::mat> moduleOutputParameter;

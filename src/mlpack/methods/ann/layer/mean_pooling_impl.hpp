@@ -52,8 +52,8 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
 }
 
 template<typename InputDataType, typename OutputDataType>
-MaxPooling<InputDataType, OutputDataType>::MaxPooling(
-    const MaxPooling& network) :
+MeanPooling<InputDataType, OutputDataType>::MeanPooling(
+    const MeanPooling& network) :
     kernelWidth(network.kernelWidth),
     kernelHeight(network.kernelHeight),
     strideWidth(network.strideWidth),
@@ -68,13 +68,7 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling(
     outputHeight(network.outputHeight),
     deterministic(network.deterministic),
     offset(network.offset),
-    batchSize(network.batchSize),
-    outputTemp(network.outputTemp),
-    inputTemp(network.inputTemp),
-    gTemp(network.gTemp),
-    pooling(network.pooling),
-    delta(network.delta),
-    gradient(network.gradient)
+    batchSize(network.batchSize)
 {
   // Nothing to do here.
 }

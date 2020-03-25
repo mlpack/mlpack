@@ -43,6 +43,19 @@ MiniBatchDiscrimination<InputDataType, OutputDataType
   weights.set_size(A * B * C, 1);
 }
 
+template <typename InputDataType, typename OutputDataType>
+MiniBatchDiscrimination<InputDataType, OutputDataType
+>::MiniBatchDiscrimination(
+    const MiniBatchDiscrimination& network) :
+    A(network.A),
+    B(network.B),
+    C(network.C),
+    batchSize(network.batchSize),
+    weight(network.weight)
+{
+  weights.set_size(A * B * C, 1);
+}
+
 template<typename InputDataType, typename OutputDataType>
 void MiniBatchDiscrimination<InputDataType, OutputDataType>::Reset()
 {

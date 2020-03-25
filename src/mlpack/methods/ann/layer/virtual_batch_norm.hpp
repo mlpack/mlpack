@@ -49,6 +49,9 @@ class VirtualBatchNorm
   //! Create the VirtualBatchNorm object.
   VirtualBatchNorm();
 
+  //! Copy constructor.
+  VirtualBatchNorm(const VirtualBatchNorm&);
+
   /**
    * Create the VirtualBatchNorm layer object for a specified number of input units.
    *

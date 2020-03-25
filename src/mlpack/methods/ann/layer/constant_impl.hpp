@@ -31,6 +31,16 @@ Constant<InputDataType, OutputDataType>::Constant(
 }
 
 template<typename InputDataType, typename OutputDataType>
+Constant<InputDataType, OutputDataType>::Constant(
+    const Constant& network) :
+    inSize(network.inSize),
+    outSize(network.outSize),
+    constantOutput(network.constantOutput)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void Constant<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)

@@ -92,7 +92,12 @@ class GAN
       const double clippingParameter = 0.01,
       const double lambda = 10.0);
 
-  //! Copy constructor.
+  /**
+   * Copy the GAN object.
+   *
+   * Warning: Copying a GAN is a memory-intensive task Generator and Discriminator
+   * networks will be copied.
+   */
   GAN(const GAN&);
 
   //! Move constructor.

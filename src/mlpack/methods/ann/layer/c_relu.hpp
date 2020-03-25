@@ -55,9 +55,6 @@ class CReLU
    */
   CReLU();
 
-  //! Copy constructor.
-  CReLU(const CReLU&);
-
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

@@ -52,6 +52,7 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(
     inSize(network.inSize),
     outSize(network.outSize),
     rho(network.rho),
+    grad(network.grad),
     forwardStep(network.forwardStep),
     backwardStep(network.backwardStep),
     gradientStep(network.gradientStep),
@@ -60,22 +61,14 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(
     gradientStepIdx(network.gradientStepIdx),
     rhoSize(network.rho),
     bpttSteps(network.bpttSteps),
-    gate(network.gate),
-    weights(network.weights),
-    gateActivation(network.gateActivation),
-    cell(network.cell),
-    cellActivation(network.cellActivation).
-    cellActivationError(network.cellActivationError),
-    prevOutput(network.prevOutput),
-    prevError(network.prevError),
-    output2GateWeight(network.output2GateWeight),
     input2GateWeight(network.input2GateWeight),
-    stateActivation(network.stateActivation),
-    forgetGateError(network.forgetGateError),
-    rhoSize(network.rhoSize),
-    input2GateBias(network,input2GateBias),
-    grad(network.grad),
+    input2GateBias(network.input2GateBias),
+    output2GateWeight(network.output2GateWeight)
 {
+  // Weights for: input to gate layer (4 * outsize * inSize + 4 * outsize)
+  // and output to gate (4 * outSize).
+  weights.set_size(
+      4 * outSize * inSize + 4 * outSize + 4 * outSize * outSize, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>

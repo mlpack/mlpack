@@ -26,6 +26,15 @@ Concatenate<InputDataType, OutputDataType>::Concatenate()
 }
 
 template<typename InputDataType, typename OutputDataType>
+Concatenate<InputDataType, OutputDataType>::Concatenate(
+  const Concatenate& network) :
+  inRows(network.inRows),
+  concat(network.concat)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Concatenate<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)

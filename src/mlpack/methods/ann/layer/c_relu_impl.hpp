@@ -25,13 +25,6 @@ CReLU<InputDataType, OutputDataType>::CReLU()
 }
 
 template<typename InputDataType, typename OutputDataType>
-CReLU<InputDataType, OutputDataType>::CReLU(const CReLU& network):
-     delta(network.delta)
-{
-  // Nothing to do here.
-}
-
-template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void CReLU<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)

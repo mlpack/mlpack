@@ -59,8 +59,7 @@ BilinearInterpolation(const BilinearInterpolation& network):
     outRowSize(network.outRowSize),
     outColSize(network.outColSize),
     depth(network.depth),
-    batchSize(network.batchSize),
-    delta(network.delta)
+    batchSize(network.batchSize)
 {
   // Nothing to do here.
 }

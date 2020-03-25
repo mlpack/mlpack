@@ -39,18 +39,14 @@ BatchNorm<InputDataType, OutputDataType>::BatchNorm(
     loading(network.loading),
     deterministic(network.deterministic),
     count(network.count),
-    beta(network.beta),
-    weights(network.weights),
     gamma(network.gamma),
-    gradient(network.gradient),
-    runningMean(network.runningMean),
-    runningVariance(network.runningVariance),
-    normalized(network.normalized),
-    inputMean(network.inputMean),
-    variance(network.variance)
+    beta(network.beta)
 {
-  // Nothing to do here.
+  weights.set_size(size + size, 1);
+  runningMean.zeros(size, 1);
+  runningVariance.zeros(size, 1);
 }
+
 template <typename InputDataType, typename OutputDataType>
 BatchNorm<InputDataType, OutputDataType>::BatchNorm(
     const size_t size, const double eps) :

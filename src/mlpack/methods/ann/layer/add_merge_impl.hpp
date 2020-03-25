@@ -47,10 +47,7 @@ AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
     const AddMerge& network) :
     model(network.model),
     run(network.run),
-    network(network.network),
-    gradient(network.gradient),
-    delta(network.delta),
-    weights(network.weights)
+    ownsLayers(network.ownsLayers)
 {
   // Nothing to do here.
 }

@@ -114,8 +114,64 @@ Convolution<
     padHTop(std::get<0>(padH)),
     inputWidth(inputWidth),
     inputHeight(inputHeight),
+    paddingType(paddingType),
     outputWidth(0),
     outputHeight(0)
+{
+  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
+      1);
+
+  // Transform paddingType to lowercase.
+  std::string paddingTypeLow = paddingType;
+  util::ToLower(paddingType, paddingTypeLow);
+
+  if (paddingTypeLow == "valid")
+  {
+    padWLeft = 0;
+    padWRight = 0;
+    padHTop = 0;
+    padHBottom = 0;
+  }
+  else if (paddingTypeLow == "same")
+  {
+    InitializeSamePadding();
+  }
+
+  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+}
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+Convolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::Convolution(
+    const Convolution& network) :
+    inSize(network.inSize),
+    outSize(network.outSize),
+    kernelWidth(network.kernelWidth),
+    kernelHeight(network.kernelHeight),
+    strideWidth(network.strideWidth),
+    strideHeight(network.strideHeight),
+    padWLeft(network.padWLeft),
+    padWRight(network.padWRight),
+    padHBottom(network.padHBottom),
+    padHTop(network.padHTop),
+    inputWidth(network.inputWidth),
+    inputHeight(network.inputHeight),
+    outputWidth(network.outputWidth),
+    outputHeight(network.outputHeight),
+    paddingType(network.paddingType),
+    weight(network.weight),
+    bias(network.bias)
 {
   weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
       1);
@@ -158,40 +214,6 @@ void Convolution<
         outSize * inSize, false, false);
     bias = arma::mat(weights.memptr() + weight.n_elem,
         outSize, 1, false, false);
-}
-
-template<
-    typename ForwardConvolutionRule,
-    typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
->
-Convolution<
-    ForwardConvolutionRule,
-    BackwardConvolutionRule,
-    GradientConvolutionRule,
-    InputDataType,
-    OutputDataType
->::Convolution(
-    const Convolution& network) :
-    inSize(network.inSize),
-    outSize(network.outSize),
-    kernelWidth(network.kernelWidth),
-    kernelHeight(network.kernelHeight),
-    strideWidth(network.strideWidth),
-    strideHeight(network.strideHeight),
-    padWLeft(network.padWLeft),
-    padWRight(network.padWRight),
-    padHBottom(network.padHBottom),
-    padHTop(network.padHTop),
-    inputWidth(network.inputWidth),
-    inputHeight(network.inputHeight),
-    outputWidth(network.outputWidth),
-    outputHeight(network.outputHeight),
-    gradient(network.gradient),
-    weights(network.weights)
-{
 }
 
 template<

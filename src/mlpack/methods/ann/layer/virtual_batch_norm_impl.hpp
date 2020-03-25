@@ -29,6 +29,23 @@ VirtualBatchNorm<InputDataType, OutputDataType>::VirtualBatchNorm() :
 {
   // Nothing to do here.
 }
+
+template<typename InputDataType, typename OutputDataType>
+VirtualBatchNorm<InputDataType, OutputDataType>::VirtualBatchNorm(
+  const VirtualBatchNorm& network) :
+    size(network.size),
+    eps(network.eps),
+    loading(network.loading),
+    referenceBatchMean(network.referenceBatchMean),
+    referenceBatchMeanSquared(network.referenceBatchMeanSquared),
+    newCoefficient(network.newCoefficient),
+    oldCoefficient(network.oldCoefficient),
+    gamma(network.gamma),
+    beta(network.beta)
+{
+  weights.set_size(size + size, 1);
+}
+
 template <typename InputDataType, typename OutputDataType>
 template<typename eT>
 VirtualBatchNorm<InputDataType, OutputDataType>::VirtualBatchNorm(
