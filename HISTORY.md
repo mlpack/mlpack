@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Templated return type of `Forward function` of loss functions (#2339).
+
   * Added `mean squared logarithmic error` loss function for neural networks
     (#2210).
 

@@ -27,8 +27,10 @@ MeanSquaredLogarithmicError<InputDataType, OutputDataType>
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double MeanSquaredLogarithmicError<InputDataType, OutputDataType>::Forward(
-    const InputType& input, const TargetType& target)
+typename InputType::elem_type
+MeanSquaredLogarithmicError<InputDataType, OutputDataType>::Forward(
+    const InputType& input,
+    const TargetType& target)
 {
   return arma::accu(arma::square(arma::log(1. + target) -
       arma::log(1. + input))) / target.n_cols;
