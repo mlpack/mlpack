@@ -25,7 +25,7 @@ steps:
 
     if [ '$(python.version)' == '2.7' ]; then
       sudo apt-get install -y --allow-unauthenticated python-pip cython python-numpy python-pandas
-      sudo pip install --upgrade --ignore-installed setuptools cython
+      sudo pip install --upgrade --ignore-installed setuptools cython configparser
       sudo pip install "zipp<3.1"
     fi
 
