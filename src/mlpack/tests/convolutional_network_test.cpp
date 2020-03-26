@@ -32,7 +32,8 @@ BOOST_AUTO_TEST_SUITE(ConvolutionalNetworkTest);
 BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 {
   arma::mat X;
-  X.load("mnist_first250_training_4s_and_9s.arm");
+  //X.load("");
+  X.load("../mnist_first250_training_4s_and_9s.arm");
 
   // Normalize each point since these are images.
   arma::uword nPoints = X.n_cols;

@@ -86,10 +86,10 @@ class Subview
     if ((input.n_rows != ((endRow - beginRow + 1) *
         (endCol - beginCol + 1))) || (input.n_cols != batchSize))
     {
+      #pragma omp parallel for
       for (size_t i = 0; i < batchSize; i++)
       {
-        output.col(i) = arma::vectorise(
-            input.submat(beginRow, batchBegin, endRow, batchEnd));
+        output.col(i) = arma::vectorise( input.submat(beginRow, batchBegin, endRow, batchEnd) );
 
         // Move to next batch.
         batchBegin += inSize;

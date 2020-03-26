@@ -178,14 +178,15 @@ void Convolution<
 >::Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   batchSize = input.n_cols;
-  arma::cube inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(),
-      inputWidth, inputHeight, inSize * batchSize, false, false);
+  arma::cube inputTemp = arma::cube(const_cast<arma::Mat<eT>&>(input).memptr(),
+  inputWidth, inputHeight, inSize * batchSize, false, false);
 
   if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
   {
     inputPaddedTemp.set_size(inputTemp.n_rows + padWLeft + padWRight,
         inputTemp.n_cols + padHTop + padHBottom, inputTemp.n_slices);
 
+    #pragma omp parallel for
     for (size_t i = 0; i < inputTemp.n_slices; ++i)
     {
       padding.Forward(inputTemp.slice(i), inputPaddedTemp.slice(i));
@@ -198,40 +199,24 @@ void Convolution<
       padHBottom);
 
   output.set_size(wConv * hConv * outSize, batchSize);
-  outputTemp = arma::Cube<eT>(output.memptr(), wConv, hConv,
-      outSize * batchSize, false, false);
+  //output.zeros();
+  outputTemp = arma::Cube<eT>(output.memptr(), wConv, hConv, outSize * batchSize, false, false);
   outputTemp.zeros();
 
-  for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
-      outSize * batchSize; outMap++)
+  arma::Cube<eT> inp = (padWLeft | padWRight | padHTop | padHBottom) != 0 ? inputPaddedTemp : inputTemp;
+ 
+  #pragma omp parallel for
+  for (size_t outMap = 0; outMap < outSize * batchSize; outMap++)
   {
-    if (outMap != 0 && outMap % outSize == 0)
-    {
-      batchCount++;
-      outMapIdx = 0;
-    }
+    size_t outMapIdx = (outMap % outSize) * inSize, batchCount = outMap/outSize;
+    arma::Mat<eT> &curSlice = outputTemp.slice(outMap);
 
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
-      arma::Mat<eT> convOutput;
-
-      if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
-      {
-        ForwardConvolutionRule::Convolution(inputPaddedTemp.slice(inMap +
-            batchCount * inSize), weight.slice(outMapIdx), convOutput,
-            strideWidth, strideHeight);
-      }
-      else
-      {
-        ForwardConvolutionRule::Convolution(inputTemp.slice(inMap +
-            batchCount * inSize), weight.slice(outMapIdx), convOutput,
-            strideWidth, strideHeight);
-      }
-
-      outputTemp.slice(outMap) += convOutput;
+      ForwardConvolutionRule::Convolution(inp.slice(inMap + (batchCount*inSize)), weight.slice(outMapIdx), curSlice, strideWidth, strideHeight, 1, 1, true);
     }
-
-    outputTemp.slice(outMap) += bias(outMap % outSize);
+    
+    curSlice += bias(outMap % outSize);
   }
 
   outputWidth = outputTemp.n_rows;
@@ -253,44 +238,72 @@ void Convolution<
     InputDataType,
     OutputDataType
 >::Backward(
-    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
+    const arma::Mat<eT>& input, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   arma::cube mappedError(((arma::Mat<eT>&) gy).memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
+  arma::cube inputTemp(((arma::Mat<eT>&) input).memptr(), inputWidth,
+      inputHeight, inSize * batchSize, false, false);
 
-  g.set_size(inputWidth * inputHeight * inSize, batchSize);
-  gTemp = arma::Cube<eT>(g.memptr(), inputWidth, inputHeight,
-      inSize * batchSize, false, false);
+  g.set_size(inputTemp.n_rows * inputTemp.n_cols * inSize, batchSize);
+  gTemp = arma::Cube<eT>(g.memptr(), inputTemp.n_rows, inputTemp.n_cols, inputTemp.n_slices, false, false);
   gTemp.zeros();
-
-  for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
-      outSize * batchSize; outMap++)
+    
+  #pragma omp parallel
+  for (size_t outMapIdx = 0; outMapIdx < outSize; outMapIdx++)
   {
+    arma::Mat<eT> rotatedFilter;
+    Rotate180(weight.slice(outMapIdx), rotatedFilter);
+
+    for (size_t inMap = 0; inMap < inSize; inMap++)
+    {
+        #pragma omp for
+        for (size_t batchCount = 0; batchCount < batchSize;batchCount++) {
+            
+            arma::Mat<double> &errSlice = mappedError.slice(outMapIdx + batchCount*outSize);
+             
+            if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
+            {
+              arma::Mat<eT> output;
+              BackwardConvolutionRule::Convolution(errSlice, rotatedFilter, output, strideWidth, strideHeight);
+
+              arma::subview<eT> sm = output.submat(padWLeft, padHTop, padWLeft + gTemp.n_rows - 1, padHTop + gTemp.n_cols - 1);
+              gTemp.slice(inMap + batchCount*inSize) += sm;
+            } else {
+              BackwardConvolutionRule::Convolution(errSlice, rotatedFilter, gTemp.slice(inMap + batchCount*inSize), strideWidth, strideHeight, 1, 1, true);
+            }
+        }
+    }
+  }
+  /*for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap < outSize * batchSize; outMap++)
+  {
+   // size_t outMapIdx = (outMap % outSize)*inSize, batchCount = outMap/outSize;
     if (outMap != 0 && outMap % outSize == 0)
     {
       batchCount++;
       outMapIdx = 0;
     }
-
-    for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
+    //#pragma omp parallel for
+    for (size_t inMap = 0; inMap < inSize; inMap++)
     {
       arma::Mat<eT> output, rotatedFilter;
       Rotate180(weight.slice(outMapIdx), rotatedFilter);
 
-      BackwardConvolutionRule::Convolution(mappedError.slice(outMap),
-          rotatedFilter, output, strideWidth, strideHeight);
-
-      if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
-      {
-        gTemp.slice(inMap + batchCount * inSize) += output.submat(padWLeft,
-            padHTop, padWLeft + gTemp.n_rows - 1, padHTop + gTemp.n_cols - 1);
-      }
-      else
-      {
-        gTemp.slice(inMap + batchCount * inSize) += output;
-      }
+      BackwardConvolutionRule::Convolution(mappedError.slice(outMap), rotatedFilter, output, strideWidth, strideHeight);
+      
+        if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
+        {
+          gTemp.slice(inMap + batchCount*inSize) += output.submat(padWLeft,
+              padHTop, padWLeft + gTemp.n_rows - 1, padHTop + gTemp.n_cols - 1);
+        }
+        else
+        {
+          gTemp.slice(inMap + batchCount*inSize) += output;
+        }
+      
     }
-  }
+  }*/
+
 }
 
 template<
@@ -321,45 +334,62 @@ void Convolution<
   gradientTemp = arma::Cube<eT>(gradient.memptr(), weight.n_rows,
       weight.n_cols, weight.n_slices, false, false);
   gradientTemp.zeros();
-
-  for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
-      outSize * batchSize; outMap++)
+  
+  arma::Cube<eT> inp = (padWLeft | padWRight | padHTop | padHBottom) != 0 ? inputPaddedTemp : inputTemp;
+  
+  /*#pragma omp parallel for
+  for (size_t outMap = 0; outMap < outSize*batchSize; outMap++)
   {
-    if (outMap != 0 && outMap % outSize == 0)
-    {
-      batchCount++;
-      outMapIdx = 0;
-    }
-
+    size_t outMapIdx = outMap%outSize, batchCount = outMap/outSize;
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
-      arma::Mat<eT> inputSlice;
-      if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
+      arma::Mat<eT> &inputSlice = inp.slice(inMap + batchCount*inSize);
+      arma::Mat<eT> &deltaSlice = mappedError.slice(outMap);
+      arma::Mat<eT> output;
+
+      GradientConvolutionRule::Convolution(inputSlice, deltaSlice, output, strideWidth, strideHeight);
+
+      if (gradientTemp.n_rows < output.n_rows || gradientTemp.n_cols < output.n_cols)
       {
-        inputSlice = inputPaddedTemp.slice(inMap + batchCount * inSize);
+        gradientTemp.slice(outMapIdx) += output.submat(0, 0, gradientTemp.n_rows - 1, gradientTemp.n_cols - 1);
+      }
+      else if (gradientTemp.n_rows > output.n_rows || gradientTemp.n_cols > output.n_cols)
+      {
+        gradientTemp.slice(outMapIdx).submat(0, 0, output.n_rows - 1, output.n_cols - 1) += output;
       }
       else
       {
-        inputSlice = inputTemp.slice(inMap + batchCount * inSize);
+        gradientTemp.slice(outMapIdx) += output;
       }
+    }
+    gradient.submat(weight.n_elem+(outMap%outSize), 0, weight.n_elem+(outMap%outSize), 0) = arma::accu(mappedError.slice(outMap));
+  }*/
+  
+  for (size_t outMap = 0; outMap < outSize * batchSize; outMap++)
+  {
+      size_t outMapIdx = (outMap % outSize)*inSize, batchCount = outMap/outSize;
+    //if (outMap != 0 && outMap % outSize == 0)
+    //{
+      //batchCount++;
+      //outMapIdx = 0;
+    //}
 
-      arma::Mat<eT> deltaSlice = mappedError.slice(outMap);
-
+    for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
+    {
+      arma::Mat<eT> &inputSlice = inp.slice(inMap + (batchCount*inSize) );
+      arma::Mat<eT> &deltaSlice = mappedError.slice(outMap);
+      
       arma::Mat<eT> output;
       GradientConvolutionRule::Convolution(inputSlice, deltaSlice,
           output, strideWidth, strideHeight);
 
-      if (gradientTemp.n_rows < output.n_rows ||
-          gradientTemp.n_cols < output.n_cols)
+      if (gradientTemp.n_rows < output.n_rows || gradientTemp.n_cols < output.n_cols)
       {
-        gradientTemp.slice(outMapIdx) += output.submat(0, 0,
-            gradientTemp.n_rows - 1, gradientTemp.n_cols - 1);
+        gradientTemp.slice(outMapIdx) += output.submat(0, 0, gradientTemp.n_rows - 1, gradientTemp.n_cols - 1);
       }
-      else if (gradientTemp.n_rows > output.n_rows ||
-          gradientTemp.n_cols > output.n_cols)
+      else if (gradientTemp.n_rows > output.n_rows || gradientTemp.n_cols > output.n_cols)
       {
-        gradientTemp.slice(outMapIdx).submat(0, 0, output.n_rows - 1,
-            output.n_cols - 1) += output;
+        gradientTemp.slice(outMapIdx).submat(0, 0, output.n_rows - 1, output.n_cols - 1) += output;
       }
       else
       {
@@ -367,8 +397,7 @@ void Convolution<
       }
     }
 
-    gradient.submat(weight.n_elem + (outMap % outSize), 0, weight.n_elem +
-        (outMap % outSize), 0) = arma::accu(mappedError.slice(outMap));
+    gradient.submat(weight.n_elem+(outMap%outSize), 0, weight.n_elem+(outMap%outSize), 0) = arma::accu(mappedError.slice(outMap));
   }
 }
 
