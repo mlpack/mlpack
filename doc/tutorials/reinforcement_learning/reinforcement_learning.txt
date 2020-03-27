@@ -282,16 +282,15 @@ Now, we will create the "OneStepQLearning" agent. We could have used "NStepQLear
 here according to our requirement.
 
 @code
-OneStepQLearning<
-    CartPole, decltype(model), ens::AdamUpdate, decltype(policy)>
+OneStepQLearning<CartPole, decltype(model), ens::AdamUpdate, decltype(policy)>
     agent(std::move(config), std::move(model), std::move(policy));
 @endcode
 
 Here, unlike the Q-Learning example, instead of the entire while loop, we use the Train method of the Asynchronous
-Learning class inside a for loop which runs for 100 training episodes.
+Learning class inside a for loop. 100 training episodes will take around 50 seconds.
 
 @code
-for(int i=0;i<100;i++)
+for (int i = 0; i < 100; i++)
 {
   agent.Train(measure);
 }
@@ -315,8 +314,8 @@ auto measure = [&returns, &position, &episode](double episodeReturn)
   episode++;
 
   std::cout << "Episode No.: " << episode 
-        << "; Episode Return: " << episodeReturn 
-        << "; Average Return: " << arma::mean(returns) << endl;
+      << "; Episode Return: " << episodeReturn 
+      << "; Average Return: " << arma::mean(returns) << endl;
 };
 @endcode
 
@@ -324,7 +323,7 @@ This will train three different agents on three CPU threads asynchronously and u
 action value estimate.
 Voila, thats all there is to it. 
 
-Here is the full code, to try this right away:
+Here is the full code to try this right away:
 
 @code
 #include <mlpack/core.hpp>
@@ -393,8 +392,6 @@ int main()
   }
 }
 @endcode
-
-It will train for 100 episodes, which will take around 50 seconds.
 
 @section further_rltut Further documentation
 
