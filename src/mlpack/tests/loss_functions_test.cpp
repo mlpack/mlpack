@@ -402,7 +402,8 @@ BOOST_AUTO_TEST_CASE(DiceLossTest)
  */
 BOOST_AUTO_TEST_CASE(TripletMarginLossTest)
 {
-  arma::mat anchor, positive, negative, output;
+  arma::mat anchor, positive, negative;
+  arma::mat input, target, output;
   TripletMarginLoss<> module;
 
   // Test the Forward function on a user generated input and compare it against
@@ -410,13 +411,17 @@ BOOST_AUTO_TEST_CASE(TripletMarginLossTest)
   anchor = arma::mat("2 3 5");
   positive = arma::mat("10 12 13");
   negative = arma::mat("4 5 7");
-  double error = module.Forward(anchor,
-      positive, negative);
+
+  input = {
+            {2, 3, 5},
+            {10, 12, 13}
+          };
+
+  double error = module.Forward(input, negative);
   BOOST_REQUIRE_EQUAL(error, 66);
 
   // Test the Backward function.
-  module.Backward(std::move(anchor),
-      std::move(positive), std::move(negative), std::move(output));
+  module.Backward(input, negative, output);
   // According to the used backward formula:
   // output = 2 * (negative - positive) / anchor.n_cols,
   // output * nofColumns / 2 + positive should be equal to negative.
@@ -428,13 +433,16 @@ BOOST_AUTO_TEST_CASE(TripletMarginLossTest)
   anchor = arma::mat("4");
   positive = arma::mat("7");
   negative = arma::mat("1");
-  error = module.Forward(std::move(anchor),
-      std::move(positive), std::move(negative));
+
+  input = arma::mat(2, 1);
+  input[0] = 4;
+  input[1] = 7;
+
+  error = module.Forward(input, negative);
   BOOST_REQUIRE_EQUAL(error, 1.0);
 
   // Test the Backward function on a single input.
-  module.Backward(std::move(anchor),
-      std::move(positive), std::move(negative), std::move(output));
+  module.Backward(input, negative, output);
   // Test whether the output is negative.
   BOOST_REQUIRE_EQUAL(arma::accu(output), -12);
   BOOST_REQUIRE_EQUAL(output.n_elem, 1);
