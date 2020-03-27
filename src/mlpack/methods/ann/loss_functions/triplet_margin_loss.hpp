@@ -33,31 +33,25 @@ class TripletMarginLoss
   /**
    * Computes the Triplet Margin Loss function.
    *
-   * @param input The propagated input activation.
-   * @param target The target vector.
+   * @param input The propagated input activation. It should be
+   * concatenated anchor and positive samples.
+   * @param target The target vector. It should be negative samples.
    */
-  template<typename AnchorType, typename PositiveType, typename NegativeType>
-  double Forward(const AnchorType& anchor,
-                 const PositiveType& positive,
-                 const NegativeType& negative);
+  template<typename InputType, typename TargetType>
+  double Forward(const InputType& input, const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
    *
-   * @param input The propagated input activation.
-   * @param target The target vector.
+   * @param input The propagated input activation. It should be
+   * concatenated anchor and positive samples.
+   * @param target The target vector. It should be negative samples.
    * @param output The calculated error.
    */
-template <
-    typename AnchorType, 
-    typename PositiveType, 
-    typename NegativeType,
-    typename OutputType
-  >
-  void Backward(const AnchorType& anchor,
-                const PositiveType& positive,
-                const NegativeType& negative,
-                OutputType&& output);
+  template<typename InputType, typename TargetType, typename OutputType>
+  void Backward(const InputType& input,
+                const TargetType& target,
+                OutputType& output);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
