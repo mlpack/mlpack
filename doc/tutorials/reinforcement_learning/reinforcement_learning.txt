@@ -256,7 +256,7 @@ agent. Asynchronous learning involves training several agents simultaneously. He
 agents are referred to as "workers". Currently mlpack has One-Step Q-Learning worker, N-Step 
 Q-Learning worker and One-Step SARSA worker.
 
-Lets examine the sample code in chunks.
+Let's examine the sample code in chunks.
 
 Apart from the includes used for the q-learning example, two more have to be included:
 
