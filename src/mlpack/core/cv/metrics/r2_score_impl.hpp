@@ -44,9 +44,7 @@ double R2Score::Evaluate(MLAlgorithm& model,
 
   // Handling undefined R2 Score when both denominator and numerator is 0.0.
   if (residualSumSquared == 0.0)
-  {
     return totalSumSquared ? 1.0 : DBL_MIN;
-  }
 
   return 1 - residualSumSquared / totalSumSquared;
 }
