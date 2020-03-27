@@ -265,7 +265,7 @@ Apart from the includes used for the q-learning example, two more have to be inc
 #include <mlpack/methods/reinforcement_learning/policy/aggregated_policy.hpp>
 @endcode
 
-Here we don't use experience replay. And instead of a single policy, we use three different
+Here we don't use experience replay, and instead of a single policy, we use three different
 policies, each corresponding to its worker. Number of workers created, depends on the number of 
 policies given in the Aggregated Policy. The column vector contains the probability distribution 
 for each child policy. We should make sure its size is same as the number of policies and the sum
