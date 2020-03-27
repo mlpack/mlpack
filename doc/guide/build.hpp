@@ -79,7 +79,7 @@ system and have headers present:
 
  - Armadillo >= 8.400.0 (with LAPACK support)
  - Boost (math_c99, program_options, serialization, unit_test_framework, heap,
-          spirit) >= 1.49
+          spirit) >= 1.58
  - ensmallen >= 2.10.0 (will be downloaded if not found)
 
 In addition, mlpack has the following optional dependencies:

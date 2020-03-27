@@ -316,7 +316,7 @@ void CheckPReLUDerivativeCorrect(const arma::colvec input,
 /*
  * Implementation of the PReLU activation function gradient test.
  * The function is implemented as PReLU layer in the file
- * perametric_relu.hpp
+ * parametric_relu.hpp
  *
  * @param input Input data used for evaluating the PReLU activation
  *   function.

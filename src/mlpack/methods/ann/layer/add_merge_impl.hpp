@@ -27,7 +27,16 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
     const bool model, const bool run) :
-    model(model), run(run), ownsLayer(!model)
+    model(model), run(run), ownsLayers(!model)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
+    const bool model, const bool run, const bool ownsLayers) :
+    model(model), run(run), ownsLayers(ownsLayers)
 {
   // Nothing to do here.
 }
@@ -36,7 +45,7 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 AddMerge<InputDataType, OutputDataType, CustomLayers...>::~AddMerge()
 {
-  if (ownsLayer)
+  if (!model && ownsLayers)
   {
     std::for_each(network.begin(), network.end(),
         boost::apply_visitor(deleteVisitor));
@@ -141,7 +150,7 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void AddMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const unsigned int version)
 {
   // Be sure to clear other layers before loading.
   if (Archive::is_loading::value)
@@ -150,7 +159,11 @@ void AddMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
   ar & BOOST_SERIALIZATION_NVP(network);
   ar & BOOST_SERIALIZATION_NVP(model);
   ar & BOOST_SERIALIZATION_NVP(run);
-  ar & BOOST_SERIALIZATION_NVP(ownsLayer);
+
+  if (version >= 1)
+    ar & BOOST_SERIALIZATION_NVP(ownsLayers);
+  else if (Archive::is_loading::value)
+    ownsLayers = !model;
 }
 
 } // namespace ann

@@ -30,14 +30,15 @@ struct KDETestFixture
  public:
   KDETestFixture()
   {
-      // Cache in the options for this program.
-      CLI::RestoreSettings(testName);
+    // Cache in the options for this program.
+    CLI::RestoreSettings(testName);
   }
 
   ~KDETestFixture()
   {
-      // Clear the settings.
-      CLI::ClearSettings();
+    // Clear the settings.
+    bindings::tests::CleanMemory();
+    CLI::ClearSettings();
   }
 };
 
@@ -544,6 +545,8 @@ BOOST_AUTO_TEST_CASE(KDEMainMonteCarloFlag)
   // Compute estimations 1.
   mlpackMain();
   estimations1 = std::move(CLI::GetParam<arma::vec>("predictions"));
+
+  delete CLI::GetParam<KDEModel*>("output_model");
 
   // Compute estimations 2.
   SetInputParam("reference", reference);

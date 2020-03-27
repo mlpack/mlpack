@@ -1,8 +1,8 @@
 /**
- * @file log_cosh_loss_impl.hpp
- * @author Kartik Dutt
+ * @file hinge_embedding_loss_impl.hpp
+ * @author Lakshya Ojha
  *
- * Implementation of the Log-Hyperbolic-Cosine loss function.
+ * Implementation of the Hinge Embedding loss function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,47 +10,48 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTION_LOG_COSH_LOSS_IMPL_HPP
-#define MLPACK_METHODS_ANN_LOSS_FUNCTION_LOG_COSH_LOSS_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTION_HINGE_EMBEDDING_LOSS_IMPL_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTION_HINGE_EMBEDDING_LOSS_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "log_cosh_loss.hpp"
+#include "hinge_embedding_loss.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-LogCoshLoss<InputDataType, OutputDataType>::LogCoshLoss(const double a) :
-    a(a)
+HingeEmbeddingLoss<InputDataType, OutputDataType>::HingeEmbeddingLoss()
 {
-  Log::Assert(a > 0, "Hyper-Parameter \'a\' must be positive");
+  // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double LogCoshLoss<InputDataType, OutputDataType>::Forward(
+double HingeEmbeddingLoss<InputDataType, OutputDataType>::Forward(
     const InputType& input, const TargetType& target)
 {
-  return arma::accu(arma::log(arma::cosh(a * (target - input)))) / a;
+  TargetType temp = target - (target == 0);
+  return (arma::accu(arma::max(1-input % temp, 0.))) / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
-void LogCoshLoss<InputDataType, OutputDataType>::Backward(
+void HingeEmbeddingLoss<InputDataType, OutputDataType>::Backward(
     const InputType& input,
     const TargetType& target,
     OutputType& output)
 {
-  output = arma::tanh(a * (target - input));
+  TargetType temp = target - (target == 0);
+  output = (input < 1 / temp) % -temp;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void LogCoshLoss<InputDataType, OutputDataType>::serialize(
-    Archive& ar,
+void HingeEmbeddingLoss<InputDataType, OutputDataType>::serialize(
+    Archive& /* ar */,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(a);
+  // Nothing to do here.
 }
 
 } // namespace ann
