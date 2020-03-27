@@ -23,15 +23,15 @@ namespace rl {
 
 using namespace mlpack::ann;
 
-template <typename NetworkType = FFN<MeanSquaredError<>, GaussianInitialization>>
+template <typename NetworkType = FFN<MeanSquaredError<>,
+                                    GaussianInitialization>>
 class VanillaDQN
 {
  public:
-
   /**
    * Default constructor.
    */
-  VanillaDQN() : network() 
+  VanillaDQN() : network()
   { /* Nothing to do here. */ }
 
   /**
@@ -42,9 +42,9 @@ class VanillaDQN
    * @param hiddenDim2 number of neurons in hiddenlayer-2.
    * @param outputDim number of neurons in output layer.
    */
-  VanillaDQN(const int inputDim, 
-            const int hiddenDim1, 
-            const int hiddenDim2, 
+  VanillaDQN(const int inputDim,
+            const int hiddenDim1,
+            const int hiddenDim2,
             const int outputDim) : network()
   {
     FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
