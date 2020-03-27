@@ -204,7 +204,7 @@ void Convolution<
                               outSize * batchSize, false, false);
   outputTemp.zeros();
   #pragma omp parallel for
-  for (size_t outMap = 0; outMap < outSize * batchSize; outMap++)
+  for (omp_size_t outMap = 0; outMap < outSize * batchSize; outMap++)
   {
     size_t outMapIdx = (outMap % outSize) * inSize, batchCount = outMap/outSize;
     arma::Mat<eT> &curSlice = outputTemp.slice(outMap);
@@ -253,12 +253,12 @@ void Convolution<
   #pragma omp parallel
   for (size_t outMapIdx = 0; outMapIdx < outSize; outMapIdx++)
   {
-    arma::Mat<eT> rotatedFilter;
-    Rotate180(weight.slice(outMapIdx), rotatedFilter);
     for (size_t inMap = 0; inMap < inSize; inMap++)
     {
+      arma::Mat<eT> rotatedFilter;
+      Rotate180(weight.slice(outMapIdx+inMap), rotatedFilter);
       #pragma omp for
-      for (size_t batchCount = 0; batchCount < batchSize; batchCount++) {
+      for (omp_size_t batchCount = 0; batchCount < batchSize; batchCount++) {
         arma::Mat<double> &errSlice = mappedError.slice(outMapIdx +
                                                         batchCount*outSize);
 
@@ -318,7 +318,43 @@ void Convolution<
   gradientTemp = arma::Cube<eT>(gradient.memptr(), weight.n_rows,
       weight.n_cols, weight.n_slices, false, false);
   gradientTemp.zeros();
-  for (size_t outMap = 0; outMap < outSize * batchSize; outMap++)
+  #pragma omp parallel for
+  for (omp_size_t outMapIdx = 0; outMapIdx < outSize; outMapIdx++)
+  {
+    for (size_t inMap = 0; inMap < inSize; inMap++)
+    {
+      arma::Mat<eT> &curGradTemp = gradientTemp.slice(outMapIdx+inMap);
+      for (size_t batchCount = 0; batchCount < batchSize; batchCount++) {
+        size_t outMap = outMapIdx + batchCount*outSize;
+        arma::Mat<eT> &inputSlice = inputTemp.slice(inMap+(batchCount*inSize));
+        arma::Mat<eT> &deltaSlice = mappedError.slice(outMap);
+        arma::Mat<eT> output;
+        GradientConvolutionRule::Convolution(inputSlice, deltaSlice,
+                                            output, strideWidth, strideHeight);
+        if (gradientTemp.n_rows < output.n_rows ||
+           gradientTemp.n_cols < output.n_cols)
+        {
+         curGradTemp += output.submat(0, 0, gradientTemp.n_rows-1,
+                                      gradientTemp.n_cols-1);
+        }
+        else if (gradientTemp.n_rows > output.n_rows ||
+                gradientTemp.n_cols > output.n_cols)
+        {
+         curGradTemp.submat(0, 0, output.n_rows-1, output.n_cols-1) += output;
+        }
+        else
+        {
+         curGradTemp += output;
+        }
+        if (inMap == inSize-1) {
+          gradient.submat(weight.n_elem+(outMap%outSize), 0,
+                          weight.n_elem+(outMap%outSize),
+                          0) = arma::accu(mappedError.slice(outMap));
+        }
+      }
+    }
+  }
+  /*for (size_t outMap = 0; outMap < outSize * batchSize; outMap++)
   {
     size_t outMapIdx = (outMap % outSize) * inSize,
            batchCount = outMap/outSize;
@@ -353,7 +389,7 @@ void Convolution<
                     0,
                     weight.n_elem+(outMap%outSize),
                     0) = arma::accu(mappedError.slice(outMap));
-  }
+  }*/
 }
 
 template<
