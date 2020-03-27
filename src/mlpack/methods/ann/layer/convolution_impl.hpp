@@ -188,7 +188,7 @@ void Convolution<
         inputTemp.n_cols + padHTop + padHBottom, inputTemp.n_slices);
 
     #pragma omp parallel for
-    for (size_t i = 0; i < inputTemp.n_slices; ++i)
+    for (omp_size_t i = 0; i < inputTemp.n_slices; ++i)
     {
       padding.Forward(inputTemp.slice(i), inputPaddedTemp.slice(i));
     }

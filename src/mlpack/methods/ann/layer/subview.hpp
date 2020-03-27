@@ -87,7 +87,7 @@ class Subview
         (endCol - beginCol + 1))) || (input.n_cols != batchSize))
     {
       #pragma omp parallel for
-      for (size_t i = 0; i < batchSize; i++)
+      for (omp_size_t i = 0; i < batchSize; i++)
       {
         output.col(i) = arma::vectorise(input.submat(
                                                      beginRow, batchBegin,
