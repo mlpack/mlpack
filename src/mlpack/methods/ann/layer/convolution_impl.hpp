@@ -199,7 +199,6 @@ void Convolution<
       padWRight);
   size_t hConv = ConvOutSize(inputHeight, kernelHeight, strideHeight, padHTop,
       padHBottom);
-  
   output.set_size(wConv * hConv * outSize, batchSize);
   outputTemp = arma::Cube<eT>(output.memptr(), wConv, hConv,
                               outSize * batchSize, false, false);
@@ -276,7 +275,8 @@ void Convolution<
           gTemp.slice(inMap + batchCount*inSize) += sm;
         } else {
           BackwardConvolutionRule::Convolution(errSlice, rotatedFilter,
-                                               gTemp.slice(inMap + batchCount*inSize),
+                                               gTemp.slice(inMap +
+                                                           batchCount*inSize),
                                                strideWidth, strideHeight,
                                                1, 1, true);
         }
@@ -318,7 +318,6 @@ void Convolution<
   gradientTemp = arma::Cube<eT>(gradient.memptr(), weight.n_rows,
       weight.n_cols, weight.n_slices, false, false);
   gradientTemp.zeros();
-  
   for (size_t outMap = 0; outMap < outSize * batchSize; outMap++)
   {
     size_t outMapIdx = (outMap % outSize) * inSize,
@@ -327,29 +326,31 @@ void Convolution<
     {
       arma::Mat<eT> &inputSlice = inputTemp.slice(inMap+(batchCount*inSize));
       arma::Mat<eT> &deltaSlice = mappedError.slice(outMap);
-      
       arma::Mat<eT> output;
       GradientConvolutionRule::Convolution(inputSlice, deltaSlice,
                                            output, strideWidth, strideHeight);
 
-      if (gradientTemp.n_rows < output.n_rows || gradientTemp.n_cols < output.n_cols)
+      if (gradientTemp.n_rows < output.n_rows ||
+          gradientTemp.n_cols < output.n_cols)
       {
-        gradientTemp.slice(outMapIdx) += output.submat(0, 0, gradientTemp.n_rows - 1,
-                                                       gradientTemp.n_cols - 1);
+        gradientTemp.slice(outMapIdx) += output.submat(0, 0,
+                                                       gradientTemp.n_rows-1,
+                                                       gradientTemp.n_cols-1);
       }
-      else if (gradientTemp.n_rows > output.n_rows || gradientTemp.n_cols > output.n_cols)
+      else if (gradientTemp.n_rows > output.n_rows ||
+               gradientTemp.n_cols > output.n_cols)
       {
         gradientTemp.slice(outMapIdx).submat(0, 0,
-                                             output.n_rows - 1,
-                                             output.n_cols - 1) += output;
+                                             output.n_rows-1,
+                                             output.n_cols-1) += output;
       }
       else
       {
         gradientTemp.slice(outMapIdx) += output;
       }
     }
-    gradient.submat(weight.n_elem+(outMap%outSize),0,
-                    weight.n_elem+(outMap%outSize),0
+    gradient.submat(weight.n_elem+(outMap%outSize), 0,
+                    weight.n_elem+(outMap%outSize), 0
                     ) = arma::accu(mappedError.slice(outMap));
   }
 }

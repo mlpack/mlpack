@@ -96,7 +96,6 @@ void MaxPooling<InputDataType, OutputDataType>::Forward(
 
     reset = true;
   }
-  
   #pragma omp parallel for
   for (size_t s = 0; s < inputTemp.n_slices; s++)
   {
@@ -130,7 +129,6 @@ void MaxPooling<InputDataType, OutputDataType>::Backward(
 
   gTemp = arma::zeros<arma::cube>(inputTemp.n_rows,
       inputTemp.n_cols, inputTemp.n_slices);
-  
   #pragma omp parallel for
   for (size_t s = 0; s < mappedError.n_slices; s++)
   {
