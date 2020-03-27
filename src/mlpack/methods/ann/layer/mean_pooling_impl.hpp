@@ -82,7 +82,7 @@ void MeanPooling<InputDataType, OutputDataType>::Forward(
 
   outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,
       batchSize * inSize);
-
+  #pragma omp parallel for
   for (size_t s = 0; s < inputTemp.n_slices; s++)
     Pooling(inputTemp.slice(s), outputTemp.slice(s));
 
@@ -106,7 +106,7 @@ void MeanPooling<InputDataType, OutputDataType>::Backward(
 
   gTemp = arma::zeros<arma::cube>(inputTemp.n_rows,
       inputTemp.n_cols, inputTemp.n_slices);
-
+  #pragma omp parallel for
   for (size_t s = 0; s < mappedError.n_slices; s++)
   {
     Unpooling(inputTemp.slice(s), mappedError.slice(s), gTemp.slice(s));
