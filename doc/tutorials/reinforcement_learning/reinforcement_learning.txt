@@ -297,7 +297,7 @@ for(int i=0;i<100;i++)
 }
 @endcode
 
-What is "measure" here? It can be a lambda function which returns a boolean value(indicating the end of training)
+What is "measure" here? It is a lambda function which returns a boolean value (indicating the end of training)
 and accepts the episode return(total reward of a deterministic test episode) as parameter.
 So, lets create that.
 
