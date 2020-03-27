@@ -38,11 +38,8 @@ void CELU<InputDataType, OutputDataType>::Forward(
   output = arma::ones<OutputDataType>(arma::size(input));
   for (size_t i = 0; i < input.n_elem; i++)
   {
-    if (input(i) < DBL_MAX)
-    {
-      output(i) = (input(i) >= 0) ? input(i) : alpha *
-          (std::exp(input(i) / alpha) - 1);
-    }
+    output(i) = (input(i) >= 0) ? input(i) : alpha *
+                (std::exp(input(i) / alpha) - 1);
   }
 
   if (!deterministic)
