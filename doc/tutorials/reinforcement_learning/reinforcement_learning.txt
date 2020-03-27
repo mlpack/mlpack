@@ -344,8 +344,7 @@ using namespace mlpack::rl;
 int main()
 {
   // Set up the network.
-  FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
-      GaussianInitialization(0, 0.001));
+  FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(), GaussianInitialization(0, 0.001));
   model.Add<Linear<>>(4, 128);
   model.Add<ReLULayer<>>();
   model.Add<Linear<>>(128, 128);
@@ -365,9 +364,8 @@ int main()
   config.DoubleQLearning() = false;
   config.StepLimit() = 200;
 
-  OneStepQLearning<
-    CartPole, decltype(model), ens::VanillaUpdate, decltype(policy)>
-    agent(std::move(config), std::move(model), std::move(policy));
+  OneStepQLearning<CartPole, decltype(model), ens::VanillaUpdate, decltype(policy)>
+      agent(std::move(config), std::move(model), std::move(policy));
 
   arma::vec returns(20, arma::fill::zeros);
   size_t position = 0;
@@ -382,11 +380,11 @@ int main()
     episode++;
 
     std::cout << "Episode No.: "        << episode 
-          << "; Episode Return: " << episodeReturn 
-          << "; Average Return: " << arma::mean(returns) << endl;
+        << "; Episode Return: " << episodeReturn 
+        << "; Average Return: " << arma::mean(returns) << endl;
   };
 
-  for(int i=0;i<100;i++)
+  for (int i = 0; i < 100; i++)
   {
     agent.Train(measure);
   }
