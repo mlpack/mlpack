@@ -299,7 +299,7 @@ for(int i=0;i<100;i++)
 
 What is "measure" here? It is a lambda function which returns a boolean value (indicating the end of training)
 and accepts the episode return(total reward of a deterministic test episode) as parameter.
-So, lets create that.
+So, let's create that.
 
 @code
 arma::vec returns(20, arma::fill::zeros);
