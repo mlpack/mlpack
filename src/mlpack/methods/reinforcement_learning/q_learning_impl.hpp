@@ -49,8 +49,7 @@ QLearning<
     deterministic(false)
 {
   // Set up q-learning network.
-  if (learningNetwork.Parameters().is_empty())
-    learningNetwork.ResetParameters();
+  learningNetwork.ResetParametersIfEmpty();
 
   #if ENS_VERSION_MAJOR == 1
   this->updater.Initialize(learningNetwork.Parameters().n_rows,
