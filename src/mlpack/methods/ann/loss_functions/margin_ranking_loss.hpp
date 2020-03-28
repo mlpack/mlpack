@@ -43,35 +43,30 @@ class MarginRankingLoss
    * a value of 1 in the label means the first input should be ranked higher
    * and a value of -1 means the second input should be ranked higher.
    * 
-   * @param input1 First input data used for evaluating the specified function.
-   * @param input2 Second input data used for evaluating the specified function.
+   * @param input Concatenation of the two inputs for evaluating the specified
+   * function.
    * @param target The label vector which contains -1 or 1 values.
    */
   template <
-    typename FirstInputType,
-    typename SecondInputType,
+    typename InputType,
     typename TargetType
   >
-  double Forward(const FirstInputType& input1,
-                 const SecondInputType& input2,
+  double Forward(const InputType& input,
                  const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
    *
-   * @param input1 The propagated first input activation.
-   * @param input2 The propagated second input activation.
+   * @param input The propagated concatenated input activation.
    * @param target The label vector which contains -1 or 1 values.
    * @param output The calculated error.
    */
   template <
-    typename FirstInputType,
-    typename SecondInputType,
+    typename InputType,
     typename TargetType,
     typename OutputType
   >
-  void Backward(const FirstInputType& input1,
-                const SecondInputType& input2,
+  void Backward(const InputType& input1,
                 const TargetType& target,
                 OutputType& output);
 

@@ -27,13 +27,11 @@ MarginRankingLoss<InputDataType, OutputDataType>::MarginRankingLoss(
 
 template<typename InputDataType, typename OutputDataType>
 template <
-    typename FirstInputType,
-    typename SecondInputType,
+    typename InputType,
     typename TargetType
 >
 double MarginRankingLoss<InputDataType, OutputDataType>::Forward(
-    const FirstInputType& input1,
-    const SecondInputType& input2,
+    const InputType& input,
     const TargetType& target)
 {
   return arma::accu(arma::max(arma::zeros(size(target)),
