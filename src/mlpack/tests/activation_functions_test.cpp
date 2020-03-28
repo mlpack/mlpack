@@ -499,7 +499,7 @@ BOOST_AUTO_TEST_CASE(SELUFunctionDerivativeTest)
 
 /**
  * Implementation of the CELU activation function test. The function is
- * implemented as CELU layer in the file celu.hpp
+ * implemented as CELU layer in the file celu.hpp.
  *
  * @param input Input data used for evaluating the CELU activation function.
  * @param target Target data used to evaluate the CELU activation.
