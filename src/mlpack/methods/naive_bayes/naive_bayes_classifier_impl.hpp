@@ -112,15 +112,23 @@ void NaiveBayesClassifier<ModelMatType>::Train(
     // Use incremental algorithm.
     // Fist, de-normalize probabilities.
     probabilities *= trainingPoints;
-
-    for (size_t j = 0; j < data.n_cols; ++j)
+    #pragma omp parallel for
+    for (size_t j = 0; j < data.n_cols; j++)
     {
-      const size_t label = labels[j];
-      ++probabilities[label];
-
+      size_t label = labels[j];
       arma::vec delta = data.col(j) - means.col(label);
-      means.col(label) += delta / probabilities[label];
-      variances.col(label) += delta % (data.col(j) - means.col(label));
+      #pragma omp critical
+      {
+      probabilities[label]++;
+      means.col(label) += delta / probabilities[label];      
+      }
+
+
+      arma::vec varAdd = delta % (data.col(j) - means.col(label));
+      #pragma omp critical
+      {
+      variances.col(label) += varAdd;
+      }
       // compute intensive statement ( i.e try to parallelize)
     }
 
@@ -157,10 +165,16 @@ void NaiveBayesClassifier<ModelMatType>::Train(
         means.col(i) /= probabilities[i];
 
     // Calculate variances.
+    #pragma omp parallel for
     for (size_t j = 0; j < data.n_cols; ++j)
     {
       const size_t label = labels[j];
-      variances.col(label) += square(data.col(j) - means.col(label));
+      arma::vec varAdd = square(data.col(j) - means.col(label));
+      #pragma omp critical
+      {
+      variances.col(label) += varAdd;  
+      }
+      
       // compute intensive statement ( i.e try to parallelize)
     }
 
@@ -228,7 +242,8 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
     ModelMatType rhs = -0.5 * arma::diagmat(invVar.col(i)) * diffs;
     arma::Mat<ElemType> exponents = arma::sum(diffs % rhs, 0);
     logLikelihoods.row(i) += (data.n_rows / -2.0 * log(2 * M_PI) - 0.5 *
-        arma::accu(arma::log(variances.col(i))) + exponents);
+        arma::accu(arma::log(variances.col(i))) + exponents);  
+    
   }
 }
 
@@ -341,7 +356,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
   }
 
   // Now calculate maximum probabilities for each point.
-  #pragma omp parallel for
+  #pragma omp parallel for 
   for (omp_size_t i = 0; i < data.n_cols; ++i)
   {
     arma::uword maxIndex = 0;
@@ -365,4 +380,3 @@ void NaiveBayesClassifier<ModelMatType>::serialize(
 } // namespace mlpack
 
 #endif
-
