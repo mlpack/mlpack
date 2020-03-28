@@ -78,6 +78,15 @@ class Sequential
    */
   Sequential(const bool model = true);
 
+  /**
+   * Create the Sequential object using the specified parameters.
+   *
+   * @param model Expose all the network modules.
+   * @param ownsLayers If true, then this module will delete its layers when
+   *      deallocated.
+   */
+  Sequential(const bool model, const bool ownsLayers);
+
   //! Destroy the Sequential object.
   ~Sequential();
 
@@ -131,11 +140,6 @@ class Sequential
    * @param layer The Layer to be added to the model.
    */
   void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
-
-  /*
-   * Destroy all the modules added to the Sequential object.
-   */
-  void DeleteModules();
 
   //! Return the model modules.
   std::vector<LayerTypes<CustomLayers...> >& Model()
@@ -227,6 +231,9 @@ class Sequential
 
   //! The input height.
   size_t height;
+
+  //! Whether we are responsible for deleting the layers held in this module.
+  bool ownsLayers;
 }; // class Sequential
 
 /*
@@ -242,6 +249,25 @@ using Residual = Sequential<
 
 } // namespace ann
 } // namespace mlpack
+
+//! Set the serialization version of the Sequential class.
+namespace boost {
+namespace serialization {
+
+template <
+    typename InputDataType,
+    typename OutputDataType,
+    bool Residual,
+    typename... CustomLayers
+>
+struct version<mlpack::ann::Sequential<
+    InputDataType, OutputDataType, Residual, CustomLayers...>>
+{
+  BOOST_STATIC_CONSTANT(int, value = 1);
+};
+
+} // namespace serialization
+} // namespace boost
 
 // Include implementation.
 #include "sequential_impl.hpp"

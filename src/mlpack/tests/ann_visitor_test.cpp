@@ -51,6 +51,8 @@ BOOST_AUTO_TEST_CASE(BiasSetVisitorTest)
   boost::apply_visitor(ForwardVisitor(input, output), linear);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 55);
+
+  boost::apply_visitor(DeleteVisitor(), linear);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

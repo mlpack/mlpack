@@ -25,6 +25,9 @@
   * Add functions to access parameters of `Convolution` and `AtrousConvolution`
     layers (#1985).
 
+  * Add Compute Error function in lars regression and changing Train function to
+    return computed error (#2139).
+
   * Add Julia bindings (#1949).  Build settings can be controlled with the
     `BUILD_JULIA_BINDINGS=(ON/OFF)` and `JULIA_EXECUTABLE=/path/to/julia` CMake
     parameters.
@@ -53,6 +56,9 @@
     (#2259).
 
   * Bump minimum Boost version to 1.58 (#2305).
+
+  * Refactor STB support so HAS_STB macro is not needed when compiling against
+    mlpack (#2312).
 
   * Add Hard Shrink Activation Function (#2186).
 

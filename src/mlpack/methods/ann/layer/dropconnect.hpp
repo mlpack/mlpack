@@ -78,14 +78,12 @@ class DropConnect
               const size_t outSize,
               const double ratio = 0.5);
 
-  ~DropConnect();
-
   /**
-  * Ordinary feed forward pass of the DropConnect layer.
-  *
-  * @param input Input data used for evaluating the specified function.
-  * @param output Resulting output activation.
-  */
+   * Ordinary feed forward pass of the DropConnect layer.
+   *
+   * @param input Input data used for evaluating the specified function.
+   * @param output Resulting output activation.
+   */
   template<typename eT>
   void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
