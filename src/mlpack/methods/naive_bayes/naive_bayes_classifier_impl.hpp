@@ -356,7 +356,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
   }
 
   // Now calculate maximum probabilities for each point.
-  #pragma omp parallel for 
+  #pragma omp parallel for
   for (omp_size_t i = 0; i < data.n_cols; ++i)
   {
     arma::uword maxIndex = 0;
