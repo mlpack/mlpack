@@ -521,7 +521,7 @@ void CheckCELUActivationCorrect(const arma::colvec input,
 
 /**
  * Implementation of the CELU activation function derivative test. The function
- * is implemented as CELU layer in the file celu.hpp
+ * is implemented as CELU layer in the file celu.hpp.
  *
  * @param input Input data used for evaluating the CELU activation function.
  * @param target Target data used to evaluate the CELU activation.
