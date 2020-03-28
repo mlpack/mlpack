@@ -120,8 +120,8 @@ void NaiveBayesClassifier<ModelMatType>::Train(
       #pragma omp critical
       {
       probabilities[label]++;
-      means.col(label) += delta / probabilities[label];      
-      }
+      means.col(label) += delta / probabilities[label];
+    }
 
 
       arma::vec varAdd = delta % (data.col(j) - means.col(label));
@@ -172,9 +172,8 @@ void NaiveBayesClassifier<ModelMatType>::Train(
       arma::vec varAdd = square(data.col(j) - means.col(label));
       #pragma omp critical
       {
-      variances.col(label) += varAdd;  
+      variances.col(label) += varAdd;
       }
-      
       // compute intensive statement ( i.e try to parallelize)
     }
 
@@ -242,8 +241,7 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
     ModelMatType rhs = -0.5 * arma::diagmat(invVar.col(i)) * diffs;
     arma::Mat<ElemType> exponents = arma::sum(diffs % rhs, 0);
     logLikelihoods.row(i) += (data.n_rows / -2.0 * log(2 * M_PI) - 0.5 *
-        arma::accu(arma::log(variances.col(i))) + exponents);  
-    
+        arma::accu(arma::log(variances.col(i))) + exponents);    
   }
 }
 
