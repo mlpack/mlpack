@@ -113,7 +113,7 @@ void NaiveBayesClassifier<ModelMatType>::Train(
     // Fist, de-normalize probabilities.
     probabilities *= trainingPoints;
     #pragma omp parallel for
-    for (size_t j = 0; j < data.n_cols; j++)
+    for (omp_size_t j = 0; j < data.n_cols; j++)
     {
       size_t label = labels[j];
       arma::vec delta = data.col(j) - means.col(label);
@@ -166,7 +166,7 @@ void NaiveBayesClassifier<ModelMatType>::Train(
 
     // Calculate variances.
     #pragma omp parallel for
-    for (size_t j = 0; j < data.n_cols; ++j)
+    for (omp_size_t j = 0; j < data.n_cols; ++j)
     {
       const size_t label = labels[j];
       arma::vec varAdd = square(data.col(j) - means.col(label));
