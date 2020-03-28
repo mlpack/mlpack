@@ -34,23 +34,27 @@ double MarginRankingLoss<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     const TargetType& target)
 {
+  int input_rows = input.n_rows;
+  const InputType& input1 = input.rows(0, input_rows / 2 - 1);
+  const InputType& input2 = input.rows(input_rows / 2, input_rows - 1);
   return arma::accu(arma::max(arma::zeros(size(target)),
       -target % (input1 - input2) + margin)) / target.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template <
-    typename FirstInputType,
-    typename SecondInputType,
+    typename InputType,
     typename TargetType,
     typename OutputType
 >
 void MarginRankingLoss<InputDataType, OutputDataType>::Backward(
-    const FirstInputType& input1,
-    const SecondInputType& input2,
+    const InputType& input,
     const TargetType& target,
     OutputType& output)
 {
+  int input_rows = input.n_rows;
+  const InputType& input1 = input.rows(0, input_rows / 2 - 1);
+  const InputType& input2 = input.rows(input_rows / 2, input_rows - 1);
   output = -target % (input1 - input2) + margin;
   output.elem(arma::find(output >= 0)).ones();
   output.elem(arma::find(output < 0)).zeros();
