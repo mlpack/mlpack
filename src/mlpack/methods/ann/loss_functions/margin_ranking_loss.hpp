@@ -66,7 +66,7 @@ class MarginRankingLoss
     typename TargetType,
     typename OutputType
   >
-  void Backward(const InputType& input1,
+  void Backward(const InputType& input,
                 const TargetType& target,
                 OutputType& output);
 
