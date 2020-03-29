@@ -56,68 +56,68 @@ class LayerTraits
 };
 
 // This gives us a HasGradientCheck<T, U> type (where U is a function pointer)
-// we can use SFINAE to catch when a type has a Gradient(...) function.
+// we can use with SFINAE to catch when a type has a Gradient(...) function.
 HAS_MEM_FUNC(Gradient, HasGradientCheck);
 
 // This gives us a HasDeterministicCheck<T, U> type (where U is a function
-// pointer) we can use SFINAE to catch when a type has a Deterministic()
+// pointer) we can use with SFINAE to catch when a type has a Deterministic()
 // function.
 HAS_MEM_FUNC(Deterministic, HasDeterministicCheck);
 
 // This gives us a HasParametersCheck<T, U> type (where U is a function pointer)
-// we can use SFINAE to catch when a type has a Parameters() function.
+// we can use with SFINAE to catch when a type has a Parameters() function.
 HAS_MEM_FUNC(Parameters, HasParametersCheck);
 
 // This gives us a HasAddCheck<T, U> type (where U is a function pointer) we
-// can use SFINAE to catch when a type has a Add() function.
+// can use with SFINAE to catch when a type has a Add() function.
 HAS_MEM_FUNC(Add, HasAddCheck);
 
-// This gives us a HasModelCheck<T> type we can use SFINAE to catch when
+// This gives us a HasModelCheck<T> type we can use with SFINAE to catch when
 // a type has a function named Model.
 HAS_ANY_METHOD_FORM(Model, HasModelCheck);
 
 // This gives us a HasLocationCheck<T, U> type (where U is a function pointer)
-// we can use SFINAE to catch when a type has a Location() function.
+// we can use with SFINAE to catch when a type has a Location() function.
 HAS_MEM_FUNC(Location, HasLocationCheck);
 
 // This gives us a HasResetCheck<T, U> type (where U is a function pointer)
-// we can use SFINAE to catch when a type has a Reset() function.
+// we can use with SFINAE to catch when a type has a Reset() function.
 HAS_MEM_FUNC(Reset, HasResetCheck);
 
 // This gives us a HasResetCheck<T, U> type (where U is a function pointer)
-// we can use SFINAE to catch when a type has a ResetCell() function.
+// we can use with SFINAE to catch when a type has a ResetCell() function.
 HAS_MEM_FUNC(ResetCell, HasResetCellCheck);
 
 // This gives us a HasRewardCheck<T, U> type (where U is a function pointer) we
-// can use SFINAE to catch when a type has a Reward() function.
+// can use with SFINAE to catch when a type has a Reward() function.
 HAS_MEM_FUNC(Reward, HasRewardCheck);
 
 // This gives us a HasInputWidth<T, U> type (where U is a function pointer) we
-// can use SFINAE to catch when a type has a InputWidth() function.
+// can use with SFINAE to catch when a type has a InputWidth() function.
 HAS_MEM_FUNC(InputWidth, HasInputWidth);
 
 // This gives us a HasInputHeight<T, U> type (where U is a function pointer) we
-// can use SFINAE to catch when a type has a InputHeight() function.
+// can use with SFINAE to catch when a type has a InputHeight() function.
 HAS_MEM_FUNC(InputHeight, HasInputHeight);
 
 // This gives us a HasInputSize<T, U> type (where U is a function pointer) we
-// can use SFINAE to catch when a type has a InputSize() function.
+// can use with SFINAE to catch when a type has a InputSize() function.
 HAS_MEM_FUNC(InputSize, HasInputSize);
 
 // This gives us a HasRho<T, U> type (where U is a function pointer) we
-// can use SFINAE to catch when a type has a Rho() function.
+// can use with SFINAE to catch when a type has a Rho() function.
 HAS_MEM_FUNC(Rho, HasRho);
 
 // This gives us a HasLoss<T, U> type (where U is a function pointer) we
-// can use SFINAE to catch when a type has a Loss() function.
+// can use with SFINAE to catch when a type has a Loss() function.
 HAS_MEM_FUNC(Loss, HasLoss);
 
 // This gives us a HasRunCheck<T, U> type (where U is a function pointer) we
-// can use SFINAE to catch when a type has a Run() function.
+// can use with SFINAE to catch when a type has a Run() function.
 HAS_MEM_FUNC(Run, HasRunCheck);
 
 // This gives us a HasBiasCheck<T, U> type (where U is a function pointer) we
-// can use SFINAE to catch when a type has a Bias() function.
+// can use with SFINAE to catch when a type has a Bias() function.
 HAS_MEM_FUNC(Bias, HasBiasCheck);
 
 // This gives us a HasMaxIterationsC<T, U> type (where U is a function pointer)
