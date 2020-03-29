@@ -67,7 +67,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::ResetData(
 
   if (!reset)
   {
-    size = predictors.n_rows;
+    size = this->predictors.n_rows;
     ResetParameters();
   }
 }

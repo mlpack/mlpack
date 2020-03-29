@@ -26,6 +26,24 @@ LSTM<InputDataType, OutputDataType>::LSTM()
 
 template <typename InputDataType, typename OutputDataType>
 LSTM<InputDataType, OutputDataType>::LSTM(
+    const size_t outSize) :
+    inSize(0),
+    outSize(outSize),
+    rho(0),
+    forwardStep(0),
+    backwardStep(0),
+    gradientStep(0),
+    batchSize(0),
+    batchStep(0),
+    gradientStepIdx(0),
+    rhoSize(rho),
+    bpttSteps(0)
+{
+  // Nothing to do here.
+}
+
+template <typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>::LSTM(
     const size_t inSize, const size_t outSize, const size_t rho) :
     inSize(inSize),
     outSize(outSize),
@@ -39,8 +57,7 @@ LSTM<InputDataType, OutputDataType>::LSTM(
     rhoSize(rho),
     bpttSteps(0)
 {
-  weights.set_size(4 * outSize * inSize + 7 * outSize +
-      4 * outSize * outSize, 1);
+  // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -96,6 +113,9 @@ void LSTM<InputDataType, OutputDataType>::ResetCell(const size_t size)
 template<typename InputDataType, typename OutputDataType>
 void LSTM<InputDataType, OutputDataType>::Reset()
 {
+  weights.set_size(4 * outSize * inSize + 7 * outSize +
+      4 * outSize * outSize, 1);
+
   // Set the weight parameter for the output gate.
   input2GateOutputWeight = OutputDataType(weights.memptr(), outSize, inSize,
       false, false);

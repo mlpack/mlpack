@@ -77,6 +77,16 @@ class LSTM
        const size_t rho = std::numeric_limits<size_t>::max());
 
   /**
+   * Create the LSTM layer object using the specified number of output units.
+   * The input layer size will be automatically inferred. The maximum number
+   * of steps to backpropagate through time (BPTT) needs to be set with the
+   * Rho() method.
+   *
+   * @param outSize The number of output units.
+   */
+  LSTM(const size_t outSize);
+
+  /**
    * Ordinary feed-forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
@@ -115,12 +125,12 @@ class LSTM
                 const ErrorType& gy,
                 GradientType& g);
 
-  /*
+  /**
    * Reset the layer parameter.
    */
   void Reset();
 
-  /*
+  /**
    * Resets the cell to accept a new input. This breaks the BPTT chain starts a
    * new one.
    *
@@ -128,7 +138,7 @@ class LSTM
    */
   void ResetCell(const size_t size);
 
-  /*
+  /**
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The input parameter used for calculating the gradient.
@@ -154,6 +164,12 @@ class LSTM
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
+
+  //! Get the input size.
+  size_t& InputSize() { return inSize; }
+
+  //! Get the output size.
+  size_t& OutputSize() { return outSize; }
 
   //! Get the delta.
   OutputDataType const& Delta() const { return delta; }
