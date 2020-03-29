@@ -467,7 +467,6 @@ void FFN<OutputLayerType, InitializationRuleType,
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-template<typename InputType>
 void FFN<OutputLayerType, InitializationRuleType,
          CustomLayers...>::SetInputSize()
 {
@@ -486,6 +485,7 @@ void FFN<OutputLayerType, InitializationRuleType,
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+template<typename InputType>
 void FFN<OutputLayerType, InitializationRuleType,
          CustomLayers...>::Forward(const InputType& input)
 {
