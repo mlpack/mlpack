@@ -220,8 +220,11 @@ static void mlpackMain()
     if (trueNeighbors.n_rows != neighbors.n_rows ||
         trueNeighbors.n_cols != neighbors.n_cols)
     {
-        Log::Fatal << "The true neighbors file must have the same number of "
-            << "values as the set of neighbors being queried!" << endl;
+      // Delete the model if needed.
+      if (CLI::HasParam("reference"))
+        delete allkann;
+      Log::Fatal << "The true neighbors file must have the same number of "
+          << "values as the set of neighbors being queried!" << endl;
     }
 
     Log::Info << "Using true neighbor indices from '"

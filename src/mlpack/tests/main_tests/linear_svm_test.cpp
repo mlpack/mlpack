@@ -414,7 +414,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeEpochsTest)
 }
 
 /**
- * Ensuring that number classes must not be zero.
+ * Ensuring that number classes must not be one.
  */
 BOOST_AUTO_TEST_CASE(LinearSVMZeroNumberOfClassesTest)
 {
@@ -429,7 +429,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMZeroNumberOfClassesTest)
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
 
-  // Number of classes for optimizer is zero.
+  // Number of classes for optimizer is only one.
   // It should throw a invalid_argument error.
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::invalid_argument);

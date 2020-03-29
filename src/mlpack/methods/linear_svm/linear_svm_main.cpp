@@ -312,6 +312,13 @@ static void mlpackMain()
     model->svm.NumClasses() = numClasses;
     model->svm.FitIntercept() = intercept;
 
+    if (numClasses <= 1)
+    {
+      if (!CLI::HasParam("input_model"))
+        delete model;
+      throw std::invalid_argument("Given input data has only 1 class!");
+    }
+
     if (optimizerType == "lbfgs")
     {
       ens::L_BFGS lbfgsOpt;
@@ -369,6 +376,9 @@ static void mlpackMain()
     // Checking the dimensionality of the test data.
     if (testSet.n_rows != trainingDimensionality)
     {
+      // Clean memory if needed.
+      if (!CLI::HasParam("input_model"))
+        delete model;
       Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must "
           << "be the same as the dimensionality of the training data ("
           << trainingDimensionality << ")!" << endl;
@@ -398,6 +408,8 @@ static void mlpackMain()
 
       if (testSet.n_cols != testLabels.n_elem)
       {
+        if (!CLI::HasParam("input_model"))
+          delete model;
         Log::Fatal << "Test data given with " << PRINT_PARAM_STRING("test")
             << " has " << testSet.n_cols << " points, but labels in "
             << PRINT_PARAM_STRING("test_labels") << " have "

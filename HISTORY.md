@@ -2,9 +2,9 @@
 ###### ????-??-??
   * Added `mean squared logarithmic error` loss function for neural networks
     (#2210).
-    
+
   * Added `mean bias loss function` for neural networks (#2210).
-  
+
   * The DecisionStump class has been marked deprecated; use the `DecisionTree`
     class with `NoRecursion=true` or use `ID3DecisionStump` instead (#2099).
 
@@ -25,6 +25,9 @@
   * Add functions to access parameters of `Convolution` and `AtrousConvolution`
     layers (#1985).
 
+  * Add Compute Error function in lars regression and changing Train function to
+    return computed error (#2139).
+
   * Add Julia bindings (#1949).  Build settings can be controlled with the
     `BUILD_JULIA_BINDINGS=(ON/OFF)` and `JULIA_EXECUTABLE=/path/to/julia` CMake
     parameters.
@@ -42,10 +45,26 @@
 
   * Better error handling of eigendecompositions and Cholesky decompositions
     (#2088, #1840).
-  
+
   * Add LiSHT activation function (#2182).
 
   * Add Valid and Same Padding for Transposed Convolution layer (#2163).
+
+  * Add Log-Hyperbolic-Cosine Loss function (#2207)
+
+  * Change neural network types to avoid unnecessary use of rvalue references
+    (#2259).
+
+  * Bump minimum Boost version to 1.58 (#2305).
+
+  * Refactor STB support so HAS_STB macro is not needed when compiling against
+    mlpack (#2312).
+
+  * Add Hard Shrink Activation Function (#2186).
+
+  * Add Soft Shrink Activation Function (#2174).
+
+  * Add Hinge Embedding Loss Function (#2229).
 
 ### mlpack 3.2.2
 ###### 2019-11-26

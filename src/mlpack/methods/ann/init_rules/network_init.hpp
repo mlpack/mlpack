@@ -95,8 +95,8 @@ class NetworkInitialization
     // hold various other modules.
     for (size_t i = 0, offset = parameterOffset; i < network.size(); ++i)
     {
-      offset += boost::apply_visitor(WeightSetVisitor(std::move(parameter),
-          offset), network[i]);
+      offset += boost::apply_visitor(WeightSetVisitor(parameter, offset),
+          network[i]);
 
       boost::apply_visitor(resetVisitor, network[i]);
     }
