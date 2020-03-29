@@ -63,8 +63,8 @@ void TransposeTokens(std::vector<std::vector<std::string>> const &input,
 
 } // namespace details
 
-template<typename eT>
-bool inline inplace_transpose(arma::Mat<eT>& X)
+template <typename eT, template <typename> typename MatType>
+bool inline inplace_transpose(MatType<eT>& X)
 {
   try
   {
@@ -392,6 +392,38 @@ bool Load(const std::string& filename,
 
   return true;
 }
+
+// For loading data into sparse matrix
+template <typename eT>
+bool Load(const std::string& filename,
+          arma::SpMat<eT>& matrix,
+          const bool fatal,
+          const bool transpose)
+{
+  bool success;
+  Timer::Start("loading_data");
+  success = matrix.load(filename, arma::coord_ascii);
+
+  if (transpose)
+  {
+    inplace_transpose(matrix);
+  }
+  
+  if (!success)
+  {
+    Log::Info << std::endl;
+    Timer::Stop("loading_data");
+    if (fatal)
+      Log::Fatal << "Loading from '" << filename << "' failed." << std::endl;
+    else
+      Log::Warn << "Loading from '" << filename << "' failed." << std::endl;
+
+    return false;
+  }
+  Timer::Stop("loading_data");
+  return success;
+}
+
 
 } // namespace data
 } // namespace mlpack

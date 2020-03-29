@@ -76,6 +76,42 @@ BOOST_AUTO_TEST_CASE(LoadCSVTest)
   remove("test_file.csv");
 }
 
+BOOST_AUTO_TEST_CASE(LoadSparseCSVTest)
+{
+  fstream f;
+  f.open("test_sparse_file.csv", fstream::out);
+
+  f << "1, 2, 0.1" << endl;
+  f << "1, 3, 0.2" << endl;
+  f << "2, 6, 0.3" << endl;
+  f << "4, 6, 0.4" << endl;
+  f << "3, 4, 0.5" << endl;
+  f << "2, 2, 0.6" << endl;
+  f << "6, 6, 0.7" << endl;
+
+  f.close();
+
+  arma::sp_mat test;
+
+  BOOST_REQUIRE(data::Load("test_sparse_file.csv", test, true, false) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 7);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 1);
+
+  arma::sp_mat::const_iterator it = test.begin();
+  arma::sp_mat::const_iterator it_end = test.end();
+
+  double temp = 0.0;
+  for(; it != it_end; ++it, temp += 0.1)
+  {
+    double val = (*it);
+    BOOST_REQUIRE_CLOSE(val, temp, 1e-5);
+  }
+  // Remove the file.
+  
+  remove("test_sparse_file.csv");
+}
+
 /**
  * Make sure a TSV is loaded correctly.
  */

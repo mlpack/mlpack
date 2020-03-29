@@ -65,6 +65,12 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           const bool transpose = true);
 
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::SpMat<eT>& matrix,
+          const bool fatal = false,
+          const bool transpose = true);
+
 /**
  * Don't document these with doxygen; these declarations aren't helpful to
  * users.
@@ -100,6 +106,11 @@ extern template bool Load<float>(const std::string&,
 
 extern template bool Load<double>(const std::string&,
                                   arma::Mat<double>&,
+                                  const bool,
+                                  const bool);
+
+extern template bool Load<double>(const std::string&,
+                                  arma::SpMat<double>&,
                                   const bool,
                                   const bool);
 

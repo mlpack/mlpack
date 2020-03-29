@@ -45,6 +45,11 @@ template bool Load<double>(const std::string&,
                            const bool,
                            const bool);
 
+template bool Load<double>(const std::string&,
+                           arma::SpMat<double>&,
+                           const bool,
+                           const bool);
+
 template bool Load<int, IncrementPolicy>(const std::string&,
                                          arma::Mat<int>&,
                                          DatasetMapper<IncrementPolicy>&,
