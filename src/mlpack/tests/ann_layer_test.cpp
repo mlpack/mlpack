@@ -1148,7 +1148,9 @@ BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
  */
 BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
 {
-  GRU<> gru(3, 3, 5);
+  // This will make it easier to clean memory later.
+  GRU<>* gruAlloc = new GRU<>(3, 3, 5);
+  GRU<>& gru = *gruAlloc;
 
   // Initialize the weights to all ones.
   NetworkInitialization<ConstInitialization>
@@ -1194,6 +1196,9 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
   expectedOutput = z_t % expectedOutput + (arma::ones(3, 1) - z_t) % o_t;
 
   BOOST_REQUIRE_LE(arma::as_scalar(arma::trans(output) * expectedOutput), 1e-2);
+
+  LayerTypes<> layer(gruAlloc);
+  boost::apply_visitor(DeleteVisitor(), layer);
 }
 
 /**
@@ -2633,7 +2638,6 @@ BOOST_AUTO_TEST_CASE(GradientHighwayLayerTest)
 
     ~GradientFunction()
     {
-      highway->DeleteModules();
       delete model;
     }
 
@@ -2685,7 +2689,6 @@ BOOST_AUTO_TEST_CASE(GradientSequentialLayerTest)
 
     ~GradientFunction()
     {
-      sequential->DeleteModules();
       delete model;
     }
 

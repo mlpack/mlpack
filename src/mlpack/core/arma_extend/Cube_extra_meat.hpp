@@ -19,6 +19,9 @@ void Cube<eT>::serialize(Archive& ar, const unsigned int /* version */)
   // mem_state will always be 0 on load, so we don't need to save it.
   if (Archive::is_loading::value)
   {
+    // Clean any mat pointers.
+    delete_mat();
+
     // Don't free if local memory is being used.
     if (mem_state == 0 && mem != NULL && old_n_elem > arma_config::mat_prealloc)
     {

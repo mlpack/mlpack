@@ -155,14 +155,14 @@ static void mlpackMain()
   const bool singleMode = CLI::HasParam("single_mode");
   if (CLI::HasParam("reference"))
   {
-    rs = new RSModel();
-
     // Get all the parameters.
     const string treeType = CLI::GetParam<string>("tree_type");
     RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star",
         "ball", "x", "hilbert-r", "r-plus", "r-plus-plus", "vp", "rp", "max-rp",
         "ub", "oct" }, true, "unknown tree type");
     const bool randomBasis = CLI::HasParam("random_basis");
+
+    rs = new RSModel();
 
     RSModel::TreeTypes tree = RSModel::KD_TREE;
     if (treeType == "kd")

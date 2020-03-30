@@ -50,9 +50,6 @@ class Recurrent
    */
   Recurrent();
 
-  //! Destructor to release allocated memory.
-  ~Recurrent();
-
   //! Copy constructor.
   Recurrent(const Recurrent&);
 
