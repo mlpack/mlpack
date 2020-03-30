@@ -48,9 +48,6 @@ BOOST_FIXTURE_TEST_SUITE(ImageConverterMainTest,
 BOOST_AUTO_TEST_CASE(LoadImageTest)
 {
   SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
-  SetInputParam("height", 50);
-  SetInputParam("width", 50);
-  SetInputParam("channel", 3);
 
   mlpackMain();
   arma::mat output = CLI::GetParam<arma::mat>("output");
@@ -90,36 +87,19 @@ BOOST_AUTO_TEST_CASE(SaveImageTest)
 }
 
 /**
- * Check Saved model is working.
- */
-BOOST_AUTO_TEST_CASE(SavedModelTest)
-{
-  SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
-  SetInputParam("height", 50);
-  SetInputParam("width", 50);
-  SetInputParam("channel", 3);
-
-  mlpackMain();
-  arma::mat randomOutput = CLI::GetParam<arma::mat>("output");
-
-  SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
-  SetInputParam("input_model",
-                CLI::GetParam<ImageInfo*>("output_model"));
-
-  mlpackMain();
-  arma::mat savedOutput = CLI::GetParam<arma::mat>("output");
-  CheckMatrices(randomOutput, savedOutput);
-}
-
-/**
  * Check whether binding throws error if height, width or channel are not
  * specified.
  */
 BOOST_AUTO_TEST_CASE(IncompleteTest)
 {
-  SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
+  arma::mat testimage = arma::conv_to<arma::mat>::from(
+      arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
+  SetInputParam<vector<string>>("input", {"test_image777.png",
+      "test_image999.png"});
+  SetInputParam("save", true);
   SetInputParam("height", 50);
   SetInputParam("width", 50);
+  SetInputParam("dataset", testimage);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -131,7 +111,13 @@ BOOST_AUTO_TEST_CASE(IncompleteTest)
  */
 BOOST_AUTO_TEST_CASE(InvalidInputTest)
 {
-  SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
+  arma::mat testimage = arma::conv_to<arma::mat>::from(
+      arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
+  SetInputParam<vector<string>>("input", {"test_image777.png",
+      "test_image999.png"});
+  SetInputParam("save", true);
+  SetInputParam("dataset", testimage);
+
   SetInputParam("height", -50);
   SetInputParam("width", 50);
   SetInputParam("channel", 3);
@@ -146,7 +132,12 @@ BOOST_AUTO_TEST_CASE(InvalidInputTest)
  */
 BOOST_AUTO_TEST_CASE(InvalidWidthTest)
 {
-  SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
+  arma::mat testimage = arma::conv_to<arma::mat>::from(
+      arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
+  SetInputParam<vector<string>>("input", {"test_image777.png",
+      "test_image999.png"});
+  SetInputParam("save", true);
+  SetInputParam("dataset", testimage);
   SetInputParam("height", 50);
   SetInputParam("width", -50);
   SetInputParam("channel", 3);
@@ -161,7 +152,12 @@ BOOST_AUTO_TEST_CASE(InvalidWidthTest)
  */
 BOOST_AUTO_TEST_CASE(InvalidChannelTest)
 {
-  SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
+  arma::mat testimage = arma::conv_to<arma::mat>::from(
+      arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
+  SetInputParam<vector<string>>("input", {"test_image777.png",
+      "test_image999.png"});
+  SetInputParam("save", true);
+  SetInputParam("dataset", testimage);
   SetInputParam("height", 50);
   SetInputParam("width", 50);
   SetInputParam("channel", -1);
@@ -185,6 +181,5 @@ BOOST_AUTO_TEST_CASE(EmptyInputTest)
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
-
 
 BOOST_AUTO_TEST_SUITE_END();

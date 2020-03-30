@@ -28,9 +28,11 @@ PROGRAM_INFO("Image Converter",
     "unpack an image dataset into individual files.",
     // Long description.
     "This utility takes a image or an array of images and loads them to a"
-    " matrix. You can specify the height " + PRINT_PARAM_STRING("height") +
-    " width " + PRINT_PARAM_STRING("width") + " and channel " +
-    PRINT_PARAM_STRING("channel") + " of the images that needs to be loaded. "
+    " matrix. You can optionally specify the height " +
+    PRINT_PARAM_STRING("height") + " width " + PRINT_PARAM_STRING("width")
+    + " and channel " + PRINT_PARAM_STRING("channel") + " of the images that"
+    "needs to be loaded; otherwise, these parameters will be automatically"
+    "detected from the image."
     "\n"
     "There are other options too, that can be specified such as " +
     PRINT_PARAM_STRING("quality")
@@ -54,32 +56,32 @@ PROGRAM_INFO("Image Converter",
 PARAM_VECTOR_IN_REQ(string, "input", "Image filenames which have to "
     "be loaded/saved.", "i");
 
-PARAM_INT_IN("width", "Width of the image", "W", 256);
-PARAM_INT_IN("channel", "Number of channel", "C",  3);
+PARAM_INT_IN("width", "Width of the image.", "w", 256);
+PARAM_INT_IN("channel", "Number of channel.", "c",  3);
 
-PARAM_MATRIX_OUT("output", "Matrix to save images data to.", "o");
+PARAM_MATRIX_OUT("output", "Matrix to save images data to, Only"
+    "needed if you are specifing save option.", "o");
 
 PARAM_INT_IN("quality", "Compression of the image if saved as jpg (0-100).",
     "q", 90);
 
-
-PARAM_INT_IN("height", "Height of the images", "H", 256);
-PARAM_FLAG("save", "Save a dataset as images", "s");
+PARAM_INT_IN("height", "Height of the images.", "H", 256);
+PARAM_FLAG("save", "Save a dataset as images.", "s");
 PARAM_MATRIX_IN("dataset", "Input matrix to save as images.", "I");
-
-// Loading/saving of a Image Info model.
-PARAM_MODEL_IN(ImageInfo, "input_model", "Input Image Info model.", "m");
-PARAM_MODEL_OUT(ImageInfo, "output_model", "Output Image Info model.", "M");
 
 static void mlpackMain()
 {
-  // Parse command line options.
-  data::ImageInfo* info;
-
   Timer::Start("Loading/Saving Image");
-  if (CLI::HasParam("input_model"))
+  // Parse command line options.
+  const vector<string> fileNames = CLI::GetParam<vector<string> >("input");
+  arma::mat out;
+ 
+  if (!CLI::HasParam("save"))
   {
-    info = CLI::GetParam<ImageInfo*>("input_model");
+    data::ImageInfo info;
+    Load(fileNames, out, info, true);
+    if (CLI::HasParam("output"))
+      CLI::GetParam<arma::mat>("output") = std::move(out);
   }
   else
   {
@@ -102,31 +104,17 @@ static void mlpackMain()
     RequireParamValue<int>("quality", [](int x) { return x >= 0;}, true,
         "quality must be positive");
 
-    const size_t& height = CLI::GetParam<int>("height");
-    const size_t& width = CLI::GetParam<int>("width");
-    const size_t& channel = CLI::GetParam<int>("channel");
-    const size_t& quality = CLI::GetParam<int>("quality");
-    info = new data::ImageInfo(width, height, channel, quality);
-  }
-  const vector<string> fileNames =
-      CLI::GetParam<vector<string> >("input");
-  arma::mat out;
-  if (!CLI::HasParam("save"))
-  {
-    Load(fileNames, out, *info, true);
-    if (CLI::HasParam("output"))
-      CLI::GetParam<arma::mat>("output") = std::move(out);
-  }
-  if (CLI::HasParam("save"))
-  {
+    const size_t height = CLI::GetParam<int>("height");
+    const size_t width = CLI::GetParam<int>("width");
+    const size_t channel = CLI::GetParam<int>("channel");
+    const size_t quality = CLI::GetParam<int>("quality");
+    data::ImageInfo info(width, height, channel, quality);
     if (!CLI::HasParam("dataset"))
     {
       throw std::runtime_error("Please provide a input matrix to save "
           "images from");
     }
-    Save(fileNames, CLI::GetParam<arma::mat> ("dataset"), *info, true);
+    Save(fileNames, CLI::GetParam<arma::mat>("dataset"), info, true);
   }
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<ImageInfo*> ("output_model") = info;
 }
 

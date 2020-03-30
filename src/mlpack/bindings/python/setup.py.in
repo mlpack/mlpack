@@ -30,11 +30,6 @@ if not '${OpenMP_CXX_FLAGS}':
 else:
   extra_link_args=['${OpenMP_CXX_FLAGS}']
 
-if '${STB_AVAILABLE}':
-  extra_args = ['-DHAS_STB']
-else :
-  extra_args = []
-
 # Get list of library dirs.
 # Get list of library dirs.  Note that for the list of directories, any
 # directories with a (valid) space in the name will be given to us as '\ '; so,
@@ -61,11 +56,11 @@ else:
   cxx_flags = '${CMAKE_CXX_FLAGS}'.strip()
   cxx_flags = re.sub(' +', ' ', cxx_flags)
   if cxx_flags:
-    extra_args = extra_args + ['-DBINDING_TYPE=BINDING_TYPE_PYX',
+    extra_args = ['-DBINDING_TYPE=BINDING_TYPE_PYX',
                   '-std=c++11',
                   '${OpenMP_CXX_FLAGS}'] + cxx_flags.split(' ')
   else:
-    extra_args = extra_args + ['-DBINDING_TYPE=BINDING_TYPE_PYX',
+    extra_args = ['-DBINDING_TYPE=BINDING_TYPE_PYX',
                   '-std=c++11',
                   '${OpenMP_CXX_FLAGS}']
 

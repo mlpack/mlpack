@@ -46,7 +46,11 @@ BOOST_AUTO_TEST_CASE(LoadImageAPITest)
   arma::Mat<unsigned char> matrix;
   data::ImageInfo info;
   BOOST_REQUIRE(data::Load("test_image.png", matrix, info, false) == true);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, 50 * 50 * 3); // width * height * channels.
+  // width * height * channels.
+  BOOST_REQUIRE_EQUAL(matrix.n_rows, 50 * 50 * 3);
+  BOOST_REQUIRE_EQUAL(info.Height(), 50);
+  BOOST_REQUIRE_EQUAL(info.Width(), 50);
+  BOOST_REQUIRE_EQUAL(info.Channels(), 3);
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 1);
 }
 
@@ -82,7 +86,11 @@ BOOST_AUTO_TEST_CASE(LoadVectorImageAPITest)
   data::ImageInfo info;
   std::vector<std::string> files = {"test_image.png", "test_image.png"};
   BOOST_REQUIRE(data::Load(files, matrix, info, false) == true);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, 50 * 50 * 3); // width * height * channels.
+  // width * height * channels.
+  BOOST_REQUIRE_EQUAL(matrix.n_rows, 50 * 50 * 3);
+  BOOST_REQUIRE_EQUAL(info.Height(), 50);
+  BOOST_REQUIRE_EQUAL(info.Width(), 50);
+  BOOST_REQUIRE_EQUAL(info.Channels(), 3);
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 2);
 }
 
