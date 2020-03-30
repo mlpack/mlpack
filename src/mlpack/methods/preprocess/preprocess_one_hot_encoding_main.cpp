@@ -17,7 +17,7 @@
 
 PROGRAM_INFO("One Hot Encoding",
     // Short description.
-    "A utility to do one hot encoding on features of dataset",
+    "A utility to do one hot encoding on features of dataset.",
     // Long description.
     "This utility takes a dataset and a vector of indices and does one hot "
     "encoding of the respective features at those indices. "
