@@ -80,7 +80,7 @@ PARAM_DOUBLE_IN("test_ratio", "Ratio of test set; if not set,"
     "the ratio defaults to 0.2", "r", 0.2);
 
 PARAM_INT_IN("seed", "Random seed (0 for std::time(NULL)).", "s", 0);
-PARAM_FLAG("shuffle_data", "Avoid shuffling and spliting the data.", "S");
+PARAM_FLAG("shuffle_data", "Avoid shuffling and splitting the data.", "S");
 
 using namespace mlpack;
 using namespace mlpack::util;

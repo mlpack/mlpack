@@ -64,28 +64,28 @@ void Split(const arma::Mat<T>& input,
   trainLabel.set_size(trainSize);
   testLabel.set_size(testSize);
 
-  arma::Col<size_t> order;
   if (shuffleData)
   {
+    arma::Col<size_t> order;
     order = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
         input.n_cols - 1, input.n_cols));
+    for (size_t i = 0; i != trainSize; ++i)
+    {
+      trainData.col(i) = input.col(order[i]);
+      trainLabel(i) = inputLabel(order[i]);
+    }
+    for (size_t i = 0; i != testSize; ++i)
+    {
+      testData.col(i) = input.col(order[i + trainSize]);
+      testLabel(i) = inputLabel(order[i + trainSize]);
+    }
   }
   else
   {
-    order = arma::linspace<arma::Col<size_t>>(0, input.n_cols - 1,
-        input.n_cols);
-  }
-
-  for (size_t i = 0; i != trainSize; ++i)
-  {
-    trainData.col(i) = input.col(order[i]);
-    trainLabel(i) = inputLabel(order[i]);
-  }
-
-  for (size_t i = 0; i != testSize; ++i)
-  {
-    testData.col(i) = input.col(order[i + trainSize]);
-    testLabel(i) = inputLabel(order[i + trainSize]);
+    trainData = input.cols(0, trainSize - 1);
+    testData = input.cols(trainSize , input.n_cols - 1);
+    trainLabel = inputLabel.subvec(0, trainSize - 1);
+    testLabel = inputLabel.subvec(trainSize , input.n_cols - 1);
   }
 }
 
@@ -124,25 +124,24 @@ void Split(const arma::Mat<T>& input,
   trainData.set_size(input.n_rows, trainSize);
   testData.set_size(input.n_rows, testSize);
 
-  arma::Col<size_t> order;
   if (shuffleData)
   {
+    arma::Col<size_t> order;
     order = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
         input.n_cols -1, input.n_cols));
+    for (size_t i = 0; i != trainSize; ++i)
+    {
+      trainData.col(i) = input.col(order[i]);
+    }
+    for (size_t i = 0; i != testSize; ++i)
+    {
+      testData.col(i) = input.col(order[i + trainSize]);
+    }
   }
   else
   {
-    order = arma::linspace<arma::Col<size_t>>(0, input.n_cols -1,
-        input.n_cols);
-  }
-
-  for (size_t i = 0; i != trainSize; ++i)
-  {
-    trainData.col(i) = input.col(order[i]);
-  }
-  for (size_t i = 0; i != testSize; ++i)
-  {
-    testData.col(i) = input.col(order[i + trainSize]);
+    trainData = input.cols(0, trainSize - 1);
+    testData = input.cols(trainSize , input.n_cols - 1);
   }
 }
 
