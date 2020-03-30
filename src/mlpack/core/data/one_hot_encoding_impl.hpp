@@ -80,7 +80,7 @@ void OneHotEncoding(arma::Mat<eT>& input,
 {
   output = input;
   for (size_t i = 0; i < indices.n_elem; i++)
-    output.shed_rows(indices.at(i));
+    output.shed_row(indices.at(i));
 
   std::vector<arma::Mat<eT>> oheOutput(indices.n_elem);
   for (size_t i = 0; i < indices.n_elem; i++)
