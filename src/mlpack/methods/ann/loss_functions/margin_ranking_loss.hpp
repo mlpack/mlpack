@@ -40,7 +40,7 @@ class MarginRankingLoss
   /**
    * Computes the Margin Ranking Loss function.
    * Measures the loss between two inputs and a label with -1 and 1 values.
-   * a value of 1 in the label means the first input should be ranked higher
+   * A value of 1 in the label means the first input should be ranked higher
    * and a value of -1 means the second input should be ranked higher.
    * 
    * @param input Concatenation of the two inputs for evaluating the specified
