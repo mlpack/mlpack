@@ -45,7 +45,7 @@ class MarginRankingLoss
    * 
    * @param input Concatenation of the two inputs for evaluating the specified
    * function.
-   * @param target The label vector which contains -1 or 1 values.
+   * @param target The label vector which contains values of -1 or 1.
    */
   template <
     typename InputType,
