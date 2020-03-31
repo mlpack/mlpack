@@ -522,6 +522,7 @@ BOOST_AUTO_TEST_CASE(CharExtractDictionaryEncodingSerialization)
   EncoderType encoder;
   CharExtract tokenizer;
   arma::mat output;
+
   encoder.Encode(stringEncodingInput, output, tokenizer);
 
   EncoderType xmlEncoder, textEncoder, binaryEncoder;
@@ -541,7 +542,7 @@ BOOST_AUTO_TEST_CASE(CharExtractDictionaryEncodingSerialization)
 }
 
 /**
- * Test for Bag of Words encoding algorithm.
+ * Test the Bag of Words encoding algorithm.
  */ 
 BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
 {
@@ -552,29 +553,71 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
   SplitByAnyOf tokenizer(" ,.");
 
   encoder.Encode(stringEncodingInput, output, tokenizer);
+
   const DictionaryType& dictionary = encoder.Dictionary();
 
-  // Checking that everything is mapped to different numbers.
+  // Checking that each token has a unique label.
   std::unordered_map<size_t, size_t> keysCount;
+
   for (auto& keyValue : dictionary.Mapping())
   {
     keysCount[keyValue.second]++;
-    // Every token should be mapped only once.
+
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
+
+/* The expected values were obtained by the following Python script:
+
+  from sklearn.feature_extraction.text import CountVectorizer
+  from collections import OrderedDict
+  import re
+
+  string_encoding_input = [
+      "mlpack is an intuitive, fast, and flexible C++ machine learning library "
+      "with bindings to other languages. ",
+      "It is meant to be a machine learning analog to LAPACK, and aims to "
+      "implement a wide array of machine learning methods and functions "
+      "as a \"swiss army knife\" for machine learning researchers.",
+      "In addition to its powerful C++ interface, mlpack also provides "
+      "command-line programs and Python bindings."
+  ]
+
+  dictionary = OrderedDict()
+
+  count = 0
+  for line in string_encoding_input:
+      for word in re.split(' |,|\.', line):
+        if word and (not (word in dictionary)):
+            dictionary[word] = count
+            count += 1
+
+  def tokenizer(line):
+      return re.split(' |,|\.', line)
+
+  vectorizer = CountVectorizer(strip_accents=False, lowercase=False,
+      preprocessor=None, tokenizer=tokenizer, stop_words=None,
+      vocabulary=dictionary, binary=True)
+
+  X = vectorizer.fit_transform(string_encoding_input)
+
+  for row in X.toarray():
+      print("{ " + ", ".join(map(str, row)) + " },")
+*/
+
   arma::mat expected = {
-    {  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    {  0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    {  1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
   };
+
   CheckMatrices(output, expected.t());
 }
 
 /**
- * Bag of Words encoding algorithm output saved in a vector.
+ * Test the Bag of Words encoding algorithm. The output is saved into a vector.
  */ 
 BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingTest)
 {
@@ -589,29 +632,32 @@ BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingTest)
 
   const DictionaryType& dictionary = encoder.Dictionary();
 
-  // Checking that everything is mapped to different numbers.
+  // Checking that each token has a unique label.
   std::unordered_map<size_t, size_t> keysCount;
+
   for (auto& keyValue : dictionary.Mapping())
   {
     keysCount[keyValue.second]++;
-    // Every token should be mapped only once.
+
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
 
+  /* The expected values were obtained by the same script as in
+     BagOfWordsEncodingTest. */
   vector<vector<size_t>> expected = {
-    {  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    {  0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    {  1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
   };
 
   BOOST_REQUIRE(output == expected);
 }
 
 /**
- * Test Bag of Words encoding for characters.
+ * Test the Bag of Words algorithm for individual characters.
  */
 BOOST_AUTO_TEST_CASE(BagOfWordsEncodingIndividualCharactersTest)
 {
@@ -624,8 +670,8 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingIndividualCharactersTest)
   arma::mat output;
   BagOfWordsEncoding<CharExtract::TokenType> encoder;
 
-  // Passing a empty string to encode characters.
   encoder.Encode(input, output, CharExtract());
+
   arma::mat target = {
     { 1, 1, 1, 0, 0 },
     { 0, 1, 1, 1, 1 },
@@ -637,7 +683,7 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingIndividualCharactersTest)
 
 /**
  * Test the Bag of Words encoding algorithm in case of individual
- * character encoding, storing resulting in vector<vector<vectorType>>.
+ * characters encoding. The output type is vector<vector<size_t>>.
  */
 BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingIndividualCharactersTest)
 {
@@ -650,7 +696,6 @@ BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingIndividualCharactersTest)
   vector<vector<size_t>> output;
   BagOfWordsEncoding<CharExtract::TokenType> encoder;
 
-  // Passing a empty string to encode characters.
   encoder.Encode(input, output, CharExtract());
 
   vector<vector<size_t>> expected = {
@@ -663,8 +708,9 @@ BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingIndividualCharactersTest)
 }
 
 /**
- * Test the Tf-Idf Encoding using rawcount type and smoothidf as true,
- * which is the default value used for algorithm.
+ * Test the Tf-Idf encoding algorithm with the raw count term frequency type
+ * and the smooth inverse document frequency type. These parameters are
+ * the default ones.
  */
 BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingTest)
 {
@@ -677,40 +723,96 @@ BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingTest)
   encoder.Encode(stringEncodingInput, output, tokenizer);
   const DictionaryType& dictionary = encoder.Dictionary();
 
-  // Checking that everything is mapped to different numbers.
+  // Checking that each token has a unique label.
   std::unordered_map<size_t, size_t> keysCount;
+
   for (auto& keyValue : dictionary.Mapping())
   {
     keysCount[keyValue.second]++;
-    // Every token should be mapped only once.
+
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
+
+  /* The expected values were obtained by the following Python script:
+
+  from sklearn.feature_extraction.text import TfidfVectorizer
+  from collections import OrderedDict
+  import re
+
+  string_encoding_input = [
+      "mlpack is an intuitive, fast, and flexible C++ machine learning library "
+      "with bindings to other languages. ",
+      "It is meant to be a machine learning analog to LAPACK, and aims to "
+      "implement a wide array of machine learning methods and functions "
+      "as a \"swiss army knife\" for machine learning researchers.",
+      "In addition to its powerful C++ interface, mlpack also provides "
+      "command-line programs and Python bindings."
+  ]
+
+  smooth_idf = True
+  tf_type = 'raw_count'
+
+  dictionary = OrderedDict()
+
+  count = 0
+  for line in string_encoding_input:
+      for word in re.split(' |,|\.', line):
+          if word and (not (word in dictionary)):
+              dictionary[word] = count
+              count += 1
+
+  def tokenizer(line):
+      return re.split(' |,|\.', line)
+
+  if tf_type == 'raw_count':
+      binary = False
+      sublinear_tf = False
+  elif tf_type == 'binary':
+      binary = True
+      sublinear_tf = False
+  elif tf_type == 'sublinear_tf':
+      binary = False
+      sublinear_tf = True
+
+  vectorizer = TfidfVectorizer(strip_accents=False, lowercase=False,
+      preprocessor=None, tokenizer=tokenizer, stop_words=None,
+      vocabulary=dictionary, binary=binary, norm=None, smooth_idf=smooth_idf,
+      sublinear_tf=sublinear_tf)
+
+  X = vectorizer.fit_transform(string_encoding_input)
+
+  def format_result(value):
+      if value == int(value):
+          return str(int(value))
+      else:
+          return "{0:.8f}".format(value)
+
+  for row in X.toarray():
+      print("{ " + ", ".join(map(format_result, row)) + " },")
+  */
   arma::mat expected = {
-    {  1.28768207245178, 1.28768207245178, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1, 1.69314718055995, 1.28768207245178,
-       1.28768207245178, 1.28768207245178, 1.69314718055995, 1.69314718055995,
-       1.28768207245178, 1, 1.69314718055995, 1.69314718055995, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0 },
-    {  0, 1.28768207245178, 0, 0, 0, 2, 0, 0, 3.86304621735534,
-       3.86304621735534, 0, 0, 0, 3, 0, 0, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 5.07944154167984, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    {  1.28768207245178, 0, 0, 0, 0, 1, 0, 1.28768207245178, 0, 0, 0, 0,
-       1.28768207245178, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 1.69314718055995, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1.69314718055995,  1.69314718055995 }
+    { 1.28768207, 1.28768207, 1.69314718, 1.69314718, 1.69314718, 1, 1.69314718,
+      1.28768207, 1.28768207, 1.28768207, 1.69314718, 1.69314718, 1.28768207, 1,
+      1.69314718, 1.69314718, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 1.28768207, 0, 0, 0, 2, 0, 0, 3.86304622, 3.86304622, 0, 0, 0, 3, 0,
+      0, 1.69314718, 1.69314718, 1.69314718, 5.07944154, 1.69314718, 1.69314718,
+      1.69314718, 1.69314718, 1.69314718, 1.69314718, 1.69314718, 1.69314718,
+      1.69314718, 1.69314718, 1.69314718, 1.69314718, 1.69314718, 1.69314718,
+      1.69314718, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 1.28768207, 0, 0, 0, 0, 1, 0, 1.28768207, 0, 0, 0, 0, 1.28768207, 1, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1.69314718,
+      1.69314718, 1.69314718, 1.69314718, 1.69314718, 1.69314718, 1.69314718,
+      1.69314718, 1.69314718, 1.69314718 }
   };
-  CheckMatrices(output, expected.t(), 1e-12);
+
+  CheckMatrices(output, expected.t(), 1e-6);
 }
 
 /**
- * Test the TfIdf encoding algorithm, using rawcount as type of tf and smoothIdf
- * as true, storing the result in a vector<vecotr<vectorType>>.
+ * Test the Tf-Idf encoding algorithm with the raw count term frequency type
+ * and the smooth inverse document frequency type. These parameters are
+ * the default ones. The output type is vector<vector<double>>.
  */
 BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingTest)
 {
@@ -725,41 +827,40 @@ BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingTest)
 
   const DictionaryType& dictionary = encoder.Dictionary();
 
-  // Checking that everything is mapped to different numbers.
+  // Checking that each token has a unique label.
   std::unordered_map<size_t, size_t> keysCount;
+
   for (auto& keyValue : dictionary.Mapping())
   {
     keysCount[keyValue.second]++;
-    // Every token should be mapped only once.
+
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
 
+  /* The expected values were obtained by the same script as in
+     RawCountSmoothIdfEncodingTest. */
   vector<vector<double>> expected = {
-    {  1.28768207245178, 1.28768207245178, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1, 1.69314718055995, 1.28768207245178,
-       1.28768207245178, 1.28768207245178, 1.69314718055995, 1.69314718055995,
-       1.28768207245178, 1, 1.69314718055995, 1.69314718055995, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0 },
-    {  0, 1.28768207245178, 0, 0, 0, 2, 0, 0, 3.86304621735534,
-       3.86304621735534, 0, 0, 0, 3, 0, 0, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 5.07944154167984, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    {  1.28768207245178, 0, 0, 0, 0, 1, 0, 1.28768207245178, 0, 0, 0, 0,
-       1.28768207245178, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 1.69314718055995, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1.69314718055995, 1.69314718055995, 1.69314718055995,
-       1.69314718055995, 1.69314718055995,  1.69314718055995 }
+    { 1.28768207, 1.28768207, 1.69314718, 1.69314718, 1.69314718, 1, 1.69314718,
+      1.28768207, 1.28768207, 1.28768207, 1.69314718, 1.69314718, 1.28768207, 1,
+      1.69314718, 1.69314718, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 1.28768207, 0, 0, 0, 2, 0, 0, 3.86304622, 3.86304622, 0, 0, 0, 3, 0,
+      0, 1.69314718, 1.69314718, 1.69314718, 5.07944154, 1.69314718, 1.69314718,
+      1.69314718, 1.69314718, 1.69314718, 1.69314718, 1.69314718, 1.69314718,
+      1.69314718, 1.69314718, 1.69314718, 1.69314718, 1.69314718, 1.69314718,
+      1.69314718, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 1.28768207, 0, 0, 0, 0, 1, 0, 1.28768207, 0, 0, 0, 0, 1.28768207, 1, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1.69314718,
+      1.69314718, 1.69314718, 1.69314718, 1.69314718, 1.69314718, 1.69314718,
+      1.69314718, 1.69314718, 1.69314718 }
   };
-  CheckVectors(output, expected, 1e-12);
+  CheckVectors(output, expected, 1e-6);
 }
 
 /**
- * Test TFIDF encoding for characters, using rawcount as tf type and
- * smoothidf as true.
+ * Test the Tf-Idf encoding algorithm for individual characters with the
+ * raw count term frequency type and the smooth inverse document frequency type.
+ * These parameters are the default ones.
  */
 BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingIndividualCharactersTest)
 {
@@ -772,19 +873,75 @@ BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingIndividualCharactersTest)
   arma::mat output;
   TfIdfEncoding<CharExtract::TokenType> encoder;
 
-  // Passing a empty string to encode characters.
   encoder.Encode(input, output, CharExtract());
+
+  /* The expected values were obtained by the following Python script:
+
+  from sklearn.feature_extraction.text import TfidfVectorizer
+  from collections import OrderedDict
+  import re
+
+  input_string = [
+      "GACCA",
+      "ABCABCD",
+      "GAB"
+  ]
+
+  smooth_idf = True
+  tf_type = 'raw_count'
+
+  dictionary = OrderedDict()
+
+  count = 0
+  for line in input_string:
+      for word in list(line):
+          if word and (not (word in dictionary)):
+              dictionary[word] = count
+              count += 1
+
+  def tokenizer(line):
+      return list(line)
+
+  if tf_type == 'raw_count':
+      binary = False
+      sublinear_tf = False
+  elif tf_type == 'binary':
+      binary = True
+      sublinear_tf = False
+  elif tf_type == 'sublinear_tf':
+      binary = False
+      sublinear_tf = True
+
+  vectorizer = TfidfVectorizer(strip_accents=False, lowercase=False,
+      preprocessor=None, tokenizer=tokenizer, stop_words=None,
+      vocabulary=dictionary, binary=binary, norm=None, smooth_idf=smooth_idf,
+      sublinear_tf=sublinear_tf)
+
+  X = vectorizer.fit_transform(input_string)
+
+  def format_result(value):
+      if value == int(value):
+          return str(int(value))
+      else:
+          return "{0:.14f}".format(value)
+
+  for row in X.toarray():
+      print("{ " + ", ".join(map(format_result, row)) + " },")
+  */
   arma::mat target = {
-    { 1.2876820724517808, 2, 2.5753641449035616, 0, 0 },
-    { 0, 2, 2.5753641449035616, 2.5753641449035616, 1.6931471805599454 },
-    { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
+    { 1.28768207245178, 2, 2.57536414490356, 0, 0 },
+    { 0, 2, 2.57536414490356, 2.57536414490356, 1.69314718055995 },
+    { 1.28768207245178, 1, 0, 1.28768207245178, 0 }
   };
+
   CheckMatrices(output, target.t(), 1e-12);
 }
 
 /**
- * Test the Tf-Idf encoding algorithm to store result in vector
- * in case of individual character encoding using default values.
+ * Test the Tf-Idf encoding algorithm for individual characters with the
+ * raw count term frequency type and the smooth inverse document frequency type.
+ * These parameters are the default ones. The output type is
+ * vector<vector<double>>.
  */
 BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingIndividualCharactersTest)
 {
@@ -797,18 +954,22 @@ BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingIndividualCharactersTest)
   vector<vector<double>> output;
   TfIdfEncoding<CharExtract::TokenType> encoder;
 
-  // Passing a empty string to encode characters.
   encoder.Encode(input, output, CharExtract());
+
+  /* The expected values were obtained by the same script as in
+     RawCountSmoothIdfEncodingIndividualCharactersTest. */
   vector<vector<double>> expected = {
-    { 1.2876820724517808, 2, 2.5753641449035616, 0, 0 },
-    { 0, 2, 2.5753641449035616, 2.5753641449035616, 1.6931471805599454 },
-    { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
+    { 1.28768207245178, 2, 2.57536414490356, 0, 0 },
+    { 0, 2, 2.57536414490356, 2.57536414490356, 1.69314718055995 },
+    { 1.28768207245178, 1, 0, 1.28768207245178, 0 }
   };
+
   CheckVectors(output, expected, 1e-12);
 }
 
 /**
- * Test the Tf-Idf Encoding using rawcount type and smoothidf as false.
+ * Test the Tf-Idf encoding algorithm with the raw count term frequency type
+ * and the non-smooth inverse document frequency type.
  */
 BOOST_AUTO_TEST_CASE(TfIdfRawCountEncodingTest)
 {
@@ -816,49 +977,50 @@ BOOST_AUTO_TEST_CASE(TfIdfRawCountEncodingTest)
 
   arma::mat output;
   TfIdfEncoding<SplitByAnyOf::TokenType> encoder(
-      (TfIdfEncodingPolicy(TfIdfEncodingPolicy::TfTypes::RAW_COUNT, false)));
+      TfIdfEncodingPolicy(TfIdfEncodingPolicy::TfTypes::RAW_COUNT, false));
   SplitByAnyOf tokenizer(" ,.");
 
   encoder.Encode(stringEncodingInput, output, tokenizer);
 
   const DictionaryType& dictionary = encoder.Dictionary();
 
-  // Checking that everything is mapped to different numbers.
+  // Checking that each token has a unique label.
   std::unordered_map<size_t, size_t> keysCount;
+
   for (auto& keyValue : dictionary.Mapping())
   {
     keysCount[keyValue.second]++;
-    // Every token should be mapped only once.
+
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
 
+  /* The expected values were obtained by almost the same script as in
+     RawCountSmoothIdfEncodingTest. The only difference is smooth_idf equals
+     False. */
   arma::mat expected = {
-    {  1.40546510810816, 1.40546510810816, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 1, 2.09861228866811, 1.40546510810816,
-       1.40546510810816, 1.40546510810816, 2.09861228866811, 2.09861228866811,
-       1.40546510810816, 1, 2.09861228866811, 2.09861228866811, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0 },
-    {  0, 1.40546510810816, 0, 0, 0, 2, 0, 0, 4.21639532432449,
-       4.21639532432449, 0, 0, 0, 3, 0, 0, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 6.29583686600433, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    {  1.40546510810816, 0, 0, 0, 0, 1, 0, 1.40546510810816, 0, 0, 0, 0,
-       1.40546510810816, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 2.09861228866811, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 2.09861228866811,  2.09861228866811 }
+    { 1.40546511, 1.40546511, 2.09861229, 2.09861229, 2.09861229, 1, 2.09861229,
+      1.40546511, 1.40546511, 1.40546511, 2.09861229, 2.09861229, 1.40546511, 1,
+      2.09861229, 2.09861229, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 1.40546511, 0, 0, 0, 2, 0, 0, 4.21639532, 4.21639532, 0, 0, 0, 3, 0, 0,
+      2.09861229, 2.09861229, 2.09861229, 6.29583687, 2.09861229, 2.09861229,
+      2.09861229, 2.09861229, 2.09861229, 2.09861229, 2.09861229, 2.09861229,
+      2.09861229, 2.09861229, 2.09861229, 2.09861229, 2.09861229, 2.09861229,
+      2.09861229, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 1.40546511, 0, 0, 0, 0, 1, 0, 1.40546511, 0, 0, 0, 0, 1.40546511, 1, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2.09861229,
+      2.09861229, 2.09861229, 2.09861229, 2.09861229, 2.09861229, 2.09861229,
+      2.09861229, 2.09861229, 2.09861229 }
   };
-  CheckMatrices(output, expected.t(), 1e-12);
+
+  CheckMatrices(output, expected.t(), 1e-6);
 }
 
 /**
- * Test the TfIdf encoding algorithm for output type as vector, with rawcount
- * as type, but with smoothidf as false.
- */ 
+ * Test the Tf-Idf encoding algorithm with the raw count term frequency type
+ * and the non-smooth inverse document frequency type. The output type is
+ * vector<vector<double>>.
+ */
 BOOST_AUTO_TEST_CASE(VectorTfIdfRawCountEncodingTest)
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
@@ -872,43 +1034,42 @@ BOOST_AUTO_TEST_CASE(VectorTfIdfRawCountEncodingTest)
 
   const DictionaryType& dictionary = encoder.Dictionary();
 
-  // Checking that everything is mapped to different numbers.
+  // Checking that each token has a unique label.
   std::unordered_map<size_t, size_t> keysCount;
   for (auto& keyValue : dictionary.Mapping())
   {
     keysCount[keyValue.second]++;
-    // Every token should be mapped only once.
+
     BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
   }
 
+  /* The expected values were obtained by almost the same script as in
+     RawCountSmoothIdfEncodingTest. The only difference is smooth_idf equals
+     False. */
   vector<vector<double>> expected = {
-    {  1.40546510810816, 1.40546510810816, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 1, 2.09861228866811, 1.40546510810816,
-       1.40546510810816, 1.40546510810816, 2.09861228866811, 2.09861228866811,
-       1.40546510810816, 1, 2.09861228866811, 2.09861228866811, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0 },
-    {  0, 1.40546510810816, 0, 0, 0, 2, 0, 0, 4.21639532432449,
-       4.21639532432449, 0, 0, 0, 3, 0, 0, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 6.29583686600433, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    {  1.40546510810816, 0, 0, 0, 0, 1, 0, 1.40546510810816, 0, 0, 0, 0,
-       1.40546510810816, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 2.09861228866811, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 2.09861228866811, 2.09861228866811, 2.09861228866811,
-       2.09861228866811, 2.09861228866811,  2.09861228866811 }
+    { 1.40546511, 1.40546511, 2.09861229, 2.09861229, 2.09861229, 1, 2.09861229,
+      1.40546511, 1.40546511, 1.40546511, 2.09861229, 2.09861229, 1.40546511, 1,
+      2.09861229, 2.09861229, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 1.40546511, 0, 0, 0, 2, 0, 0, 4.21639532, 4.21639532, 0, 0, 0, 3, 0, 0,
+      2.09861229, 2.09861229, 2.09861229, 6.29583687, 2.09861229, 2.09861229,
+      2.09861229, 2.09861229, 2.09861229, 2.09861229, 2.09861229, 2.09861229,
+      2.09861229, 2.09861229, 2.09861229, 2.09861229, 2.09861229, 2.09861229,
+      2.09861229, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 1.40546511, 0, 0, 0, 0, 1, 0, 1.40546511, 0, 0, 0, 0, 1.40546511, 1, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2.09861229,
+      2.09861229, 2.09861229, 2.09861229, 2.09861229, 2.09861229, 2.09861229,
+      2.09861229, 2.09861229, 2.09861229 }
   };
-  CheckVectors(output, expected, 1e-12);
+  CheckVectors(output, expected, 1e-6);
 }
 
 /**
- * Test TFIDF encoding for characters, using rawcount as
- * tf type and smoothidf as false.
+ * Test the Tf-Idf encoding algorithm for individual characters with the
+ * raw count term frequency type and the non-smooth inverse document frequency
+ * type.
  */
-BOOST_AUTO_TEST_CASE(RawcountTfIdfEncodingIndividualCharactersTest)
+BOOST_AUTO_TEST_CASE(RawCountTfIdfEncodingIndividualCharactersTest)
 {
   vector<string> input = {
     "GACCA",
@@ -917,25 +1078,29 @@ BOOST_AUTO_TEST_CASE(RawcountTfIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType>
-      encoder(TfIdfEncodingPolicy::TfTypes::RAW_COUNT, false);
+  TfIdfEncoding<CharExtract::TokenType> encoder(
+      TfIdfEncodingPolicy::TfTypes::RAW_COUNT, false);
 
-  // Passing a empty string to encode charactersrawcountsmoothidftrue.
   encoder.Encode(input, output, CharExtract());
+
+  /* The expected values were obtained by almost the same script as in
+     RawCountSmoothIdfEncodingIndividualCharactersTest. The only difference is
+     smooth_idf equals False. */
   arma::mat target = {
-    { 1.4054651081081644, 2, 2.8109302162163288, 0, 0 },
-    { 0, 2, 2.8109302162163288, 2.8109302162163288, 2.0986122886681100 },
-    { 1.4054651081081644, 1, 0, 1.4054651081081644, 0 }
+    { 1.40546510810816, 2, 2.81093021621633, 0, 0 },
+    { 0, 2, 2.81093021621633, 2.81093021621633, 2.09861228866811 },
+    { 1.40546510810816, 1, 0, 1.40546510810816, 0 }
   };
+
   CheckMatrices(output, target.t(), 1e-12);
 }
 
 /**
- * Test the Tf Idf encoding algorithm to store result in vector
- * in case of individual character encoding, using raw count as type,
- * and smoothidf as false.
+ * Test the Tf-Idf encoding algorithm for individual characters with the
+ * raw count term frequency type and the non-smooth inverse document frequency
+ * type. The output type is vector<vector<double>>.
  */
-BOOST_AUTO_TEST_CASE(VectorRawcountEncodingIndividualCharactersTest)
+BOOST_AUTO_TEST_CASE(VectorRawCountTfIdfEncodingIndividualCharactersTest)
 {
   std::vector<string> input = {
     "GACCA",
@@ -944,22 +1109,26 @@ BOOST_AUTO_TEST_CASE(VectorRawcountEncodingIndividualCharactersTest)
   };
 
   vector<vector<double>> output;
-  TfIdfEncoding<CharExtract::TokenType>
-      encoder(TfIdfEncodingPolicy::TfTypes::RAW_COUNT, false);
+  TfIdfEncoding<CharExtract::TokenType> encoder(
+      TfIdfEncodingPolicy::TfTypes::RAW_COUNT, false);
 
-  // Passing a empty string to encode characters.
   encoder.Encode(input, output, CharExtract());
+
+  /* The expected values were obtained by almost the same script as in
+     RawCountSmoothIdfEncodingIndividualCharactersTest. The only difference is
+     smooth_idf equals False. */
   vector<vector<double>> expected = {
-    { 1.4054651081081644, 2, 2.8109302162163288, 0, 0 },
-    { 0, 2, 2.8109302162163288, 2.8109302162163288, 2.0986122886681100 },
-    { 1.4054651081081644, 1, 0, 1.4054651081081644, 0 }
+    { 1.40546510810816, 2, 2.81093021621633, 0, 0 },
+    { 0, 2, 2.81093021621633, 2.81093021621633, 2.09861228866811 },
+    { 1.40546510810816, 1, 0, 1.40546510810816, 0 }
   };
+
   CheckVectors(output, expected, 1e-12);
 }
 
 /**
- * Test TFIDF encoding for characters, using binary weighting scheme
- * for tf and smoothidf as true.
+ * Test the Tf-Idf encoding algorithm for individual characters with the
+ * binary term frequency type and the smooth inverse document frequency type.
  */
 BOOST_AUTO_TEST_CASE(BinarySmoothIdfEncodingIndividualCharactersTest)
 {
@@ -970,24 +1139,29 @@ BOOST_AUTO_TEST_CASE(BinarySmoothIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType>
-      encoder(TfIdfEncodingPolicy::TfTypes::BINARY, true);
+  TfIdfEncoding<CharExtract::TokenType> encoder(
+      TfIdfEncodingPolicy::TfTypes::BINARY, true);
 
-  // Passing a empty string to encode charactersrawcountsmoothidftrue.
   encoder.Encode(input, output, CharExtract());
+
+  /* The expected values were obtained by almost the same script as in
+     RawCountSmoothIdfEncodingIndividualCharactersTest. The only difference is
+     tf_type equals 'binary'. */
   arma::mat target = {
-    { 1.2876820724517808, 1, 1.2876820724517808, 0, 0 },
-    { 0, 1, 1.2876820724517808, 1.2876820724517808, 1.6931471805599454 },
-    { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
+    { 1.28768207245178, 1, 1.28768207245178, 0, 0 },
+    { 0, 1, 1.28768207245178, 1.28768207245178, 1.69314718055995 },
+    { 1.28768207245178, 1, 0, 1.28768207245178, 0 }
   };
+
   CheckMatrices(output, target.t(), 1e-12);
 }
 
 /**
- * Test TFIDF encoding for characters to store results in vector, using binary
- * weighting scheme for tf and smoothidf as true.
+ * Test the Tf-Idf encoding algorithm for individual characters with the
+ * binary term frequency type and the smooth inverse document frequency type.
+ * The output type is vector<vector<double>>.
  */
-BOOST_AUTO_TEST_CASE(VectorBnarySmoothIdfEncodingIndividualCharactersTest)
+BOOST_AUTO_TEST_CASE(VectorBinarySmoothIdfEncodingIndividualCharactersTest)
 {
   std::vector<string> input = {
     "GACCA",
@@ -999,19 +1173,24 @@ BOOST_AUTO_TEST_CASE(VectorBnarySmoothIdfEncodingIndividualCharactersTest)
   TfIdfEncoding<CharExtract::TokenType>
       encoder(TfIdfEncodingPolicy::TfTypes::BINARY, true);
 
-  // Passing a empty string to encode characters.
   encoder.Encode(input, output, CharExtract());
+
+  /* The expected values were obtained by almost the same script as in
+     RawCountSmoothIdfEncodingIndividualCharactersTest. The only difference is
+     tf_type equals 'binary'. */
   vector<vector<double>> expected = {
-    { 1.2876820724517808, 1, 1.2876820724517808, 0, 0 },
-    { 0, 1, 1.2876820724517808, 1.2876820724517808, 1.6931471805599454 },
-    { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
+    { 1.28768207245178, 1, 1.28768207245178, 0, 0 },
+    { 0, 1, 1.28768207245178, 1.28768207245178, 1.69314718055995 },
+    { 1.28768207245178, 1, 0, 1.28768207245178, 0 }
   };
+
   CheckVectors(output, expected, 1e-12);
 }
 
 /**
- * Test TFIDF encoding for characters, using binary
- * as weighting scheme and smoothidf as false.
+ * Test the Tf-Idf encoding algorithm for individual characters with the
+ * binary term frequency type and the non-smooth inverse document frequency
+ * type.
  */
 BOOST_AUTO_TEST_CASE(BinaryTfIdfEncodingIndividualCharactersTest)
 {
@@ -1022,22 +1201,27 @@ BOOST_AUTO_TEST_CASE(BinaryTfIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType>
-      encoder(TfIdfEncodingPolicy::TfTypes::BINARY, false);
+  TfIdfEncoding<CharExtract::TokenType> encoder(
+      TfIdfEncodingPolicy::TfTypes::BINARY, false);
 
-  // Passing a empty string to encode charactersrawcountsmoothidftrue.
   encoder.Encode(input, output, CharExtract());
+
+  /* The expected values were obtained by almost the same script as in
+     RawCountSmoothIdfEncodingIndividualCharactersTest. The only difference is
+     tf_type equals 'binary' and smooth_idf equals False. */
   arma::mat target = {
-    { 1.4054651081081644, 1, 1.4054651081081644, 0, 0 },
-    { 0, 1, 1.4054651081081644, 1.4054651081081644, 2.0986122886681100 },
-    { 1.4054651081081644, 1, 0, 1.4054651081081644, 0 }
+    { 1.40546510810816, 1, 1.40546510810816, 0, 0 },
+    { 0, 1, 1.40546510810816, 1.40546510810816, 2.09861228866811 },
+    { 1.40546510810816, 1, 0, 1.40546510810816, 0 }
   };
+
   CheckMatrices(output, target.t(), 1e-12);
 }
 
 /**
- * Test TFIDF encoding for characters, using sublinear
- * as weighting scheme and smoothidf as true.
+ * Test the Tf-Idf encoding algorithm for individual characters with the
+ * sublinear term frequency type and the smooth inverse document frequency
+ * type.
  */
 BOOST_AUTO_TEST_CASE(SublinearSmoothIdfEncodingIndividualCharactersTest)
 {
@@ -1048,23 +1232,28 @@ BOOST_AUTO_TEST_CASE(SublinearSmoothIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType>
-      encoder(TfIdfEncodingPolicy::TfTypes::SUBLINEAR_TF, true);
+  TfIdfEncoding<CharExtract::TokenType> encoder(
+      TfIdfEncodingPolicy::TfTypes::SUBLINEAR_TF, true);
 
-  // Passing a empty string to encode charactersrawcountsmoothidftrue.
   encoder.Encode(input, output, CharExtract());
+
+  /* The expected values were obtained by almost the same script as in
+     RawCountSmoothIdfEncodingIndividualCharactersTest. The only difference is
+     tf_type equals 'sublinear_tf'. */
   arma::mat target = {
-    { 1.2876820724517808, 1.6931471805599454, 2.1802352704293200, 0, 0 },
-    { 0, 1.6931471805599454, 2.1802352704293200, 2.1802352704293200,
-      1.6931471805599454 },
-    { 1.2876820724517808, 1, 0, 1.2876820724517808, 0 }
+    { 1.28768207245178, 1.69314718055995, 2.18023527042932, 0, 0 },
+    { 0, 1.69314718055995, 2.18023527042932, 2.18023527042932,
+      1.69314718055995 },
+    { 1.28768207245178, 1, 0, 1.28768207245178, 0 }
   };
+
   CheckMatrices(output, target.t(), 1e-12);
 }
 
 /**
- * Test TFIDF encoding for characters, using sublinear
- * as weighting scheme and smoothidf as false.
+ * Test the Tf-Idf encoding algorithm for individual characters with the
+ * sublinear term frequency type and the non-smooth inverse document frequency
+ * type.
  */
 BOOST_AUTO_TEST_CASE(SublinearTfIdfEncodingIndividualCharactersTest)
 {
@@ -1078,20 +1267,25 @@ BOOST_AUTO_TEST_CASE(SublinearTfIdfEncodingIndividualCharactersTest)
   TfIdfEncoding<CharExtract::TokenType>
       encoder(TfIdfEncodingPolicy::TfTypes::SUBLINEAR_TF, false);
 
-  // Passing a empty string to encode charactersrawcountsmoothidftrue.
+  /* The expected values were obtained by almost the same script as in
+     RawCountSmoothIdfEncodingIndividualCharactersTest. The only difference is
+     tf_type equals 'sublinear_tf' and smooth_idf equals False. */
   encoder.Encode(input, output, CharExtract());
+
   arma::mat target = {
-    { 1.4054651081081644, 1.6931471805599454, 2.3796592851687173, 0, 0 },
-    { 0, 1.6931471805599454, 2.3796592851687173, 2.3796592851687173,
-      2.0986122886681100 },
-    { 1.4054651081081644, 1, 0, 1.4054651081081644, 0 }
+    { 1.40546510810816, 1.69314718055995, 2.37965928516872, 0, 0 },
+    { 0, 1.69314718055995, 2.37965928516872, 2.37965928516872,
+      2.09861228866811 },
+    { 1.40546510810816, 1, 0, 1.40546510810816, 0 }
   };
+
   CheckMatrices(output, target.t(), 1e-12);
 }
 
 /**
- * Test TFIDF encoding for characters, using term
- * Frequency as weighting scheme and smoothidf as true.
+ * Test the Tf-Idf encoding algorithm for individual characters with the
+ * standard term frequency type and the smooth inverse document frequency
+ * type.
  */
 BOOST_AUTO_TEST_CASE(TermFrequencySmoothIdfEncodingIndividualCharactersTest)
 {
@@ -1102,23 +1296,77 @@ BOOST_AUTO_TEST_CASE(TermFrequencySmoothIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType>
-      encoder(TfIdfEncodingPolicy::TfTypes::TERM_FREQUENCY, true);
+  TfIdfEncoding<CharExtract::TokenType> encoder(
+      TfIdfEncodingPolicy::TfTypes::TERM_FREQUENCY, true);
 
-  // Passing a empty string to encode charactersrawcountsmoothidftrue.
   encoder.Encode(input, output, CharExtract());
+
+  /* The expected values were obtained by the following Python script:
+
+  from sklearn.feature_extraction.text import CountVectorizer
+  from sklearn.feature_extraction.text import TfidfTransformer
+  from collections import OrderedDict
+  import numpy as np
+  import re
+
+  input_string = [
+      "GACCA",
+      "ABCABCD",
+      "GAB"
+  ]
+
+  smooth_idf = True
+
+  dictionary = OrderedDict()
+
+  count = 0
+  for line in input_string:
+      for word in list(line):
+          if word and (not (word in dictionary)):
+              dictionary[word] = count
+              count += 1
+
+  def tokenizer(line):
+      return list(line)
+
+  vectorizer = CountVectorizer(strip_accents=False, lowercase=False,
+      preprocessor=None, tokenizer=tokenizer, stop_words=None,
+      vocabulary=dictionary, binary=False)
+
+  count = vectorizer.fit_transform(input_string)
+
+  lens = np.array(list(map(len, input_string))).reshape(len(input_string), 1)
+
+  tf = count.toarray() / lens
+
+  transformer = TfidfTransformer(norm=None, smooth_idf=smooth_idf,
+                                 sublinear_tf=False)
+
+  X = transformer.fit_transform(tf)
+
+  def format_result(value):
+      if value == int(value):
+          return str(int(value))
+      else:
+          return "{0:.16}".format(value)
+
+  for row in X.toarray():
+      print("{ " + ", ".join(map(format_result, row)) + " },")
+  */
   arma::mat target = {
     { 0.2575364144903562, 0.4, 0.5150728289807124, 0, 0 },
     { 0, 0.2857142857142857, 0.3679091635576516, 0.3679091635576516,
       0.2418781686514208 },
     { 0.4292273574839269, 0.3333333333333333, 0, 0.4292273574839269, 0 }
   };
+
   CheckMatrices(output, target.t(), 1e-12);
 }
 
 /**
- * Test TFIDF encoding for characters, using Term
- * Frequency as weighting scheme and smoothidf as false.
+ * Test the Tf-Idf encoding algorithm for individual characters with the
+ * standard term frequency type and the non-smooth inverse document frequency
+ * type.
  */
 BOOST_AUTO_TEST_CASE(TermFrequencyTfIdfEncodingIndividualCharactersTest)
 {
@@ -1129,22 +1377,26 @@ BOOST_AUTO_TEST_CASE(TermFrequencyTfIdfEncodingIndividualCharactersTest)
   };
 
   arma::mat output;
-  TfIdfEncoding<CharExtract::TokenType>
-      encoder(TfIdfEncodingPolicy::TfTypes::TERM_FREQUENCY, false);
+  TfIdfEncoding<CharExtract::TokenType> encoder(
+      TfIdfEncodingPolicy::TfTypes::TERM_FREQUENCY, false);
 
-  // Passing a empty string to encode charactersrawcountsmoothidftrue.
   encoder.Encode(input, output, CharExtract());
+
+  /* The expected values were obtained by almost the same script as in
+     TermFrequencySmoothIdfEncodingIndividualCharactersTest. The only difference
+     is smooth_idf equals False. */
   arma::mat target = {
     { 0.2810930216216329, 0.4, 0.5621860432432658, 0, 0 },
     { 0, 0.2857142857142857, 0.4015614594594755, 0.4015614594594755,
       0.2998017555240157 },
     { 0.4684883693693881, 0.3333333333333333, 0, 0.4684883693693881, 0 }
   };
+
   CheckMatrices(output, target.t(), 1e-12);
 }
 
 /**
- * Serialization test for the TF-IDF encoding algorithm with
+ * Serialization test for the Tf-Idf encoding algorithm with
  * the SplitByAnyOf tokenizer.
  */
 BOOST_AUTO_TEST_CASE(SplitByAnyOfTfIdfEncodingSerialization)

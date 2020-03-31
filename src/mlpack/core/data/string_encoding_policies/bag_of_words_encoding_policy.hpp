@@ -1,6 +1,7 @@
 /**
  * @file bag_of_words_encoding_policy.hpp
  * @author Jeffin Sam
+ * @author Mikhail Lozhnikov
  *
  * Definition of the BagOfWordsEncodingPolicy class.
  *

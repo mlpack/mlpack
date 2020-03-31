@@ -1,6 +1,7 @@
 /**
  * @file tf_idf_encoding_policy.hpp
  * @author Jeffin Sam
+ * @author Mikhail Lozhnikov
  *
  * Definition of the TfIdfEncodingPolicy class.
  *
