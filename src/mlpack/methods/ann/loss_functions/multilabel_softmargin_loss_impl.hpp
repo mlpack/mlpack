@@ -34,7 +34,11 @@ template<typename InputType, typename TargetType>
 double MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Forward(
     const InputType& input, const TargetType& target)
 {
-  // TO-DO
+  InputType logSigmoid = 1 / (1 + arma::exp(-input));
+  InputType logSigmoidNeg = 1 / (1 + arma::exp(input));
+  double loss = arma::accu(-(target % logSigmoid +
+      (1 - target) % logSigmoidNeg) * weight);
+  return reduction ? loss / input.n_elem : loss / input.n_rows;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -44,7 +48,10 @@ void MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     OutputType& output)
 {
-  // TO-DO
+  InputType expo = arma::exp(input);
+  output = (expo / arma::pow(1 + expo, 2)) %
+      ((target + 1) / arma::log(1 + expo) -
+      target / (input - arma::log(expo + 1))) * weight;
 }
 
 template<typename InputDataType, typename OutputDataType>
