@@ -34,9 +34,9 @@ double MarginRankingLoss<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     const TargetType& target)
 {
-  int input_rows = input.n_rows;
-  const InputType& input1 = input.rows(0, input_rows / 2 - 1);
-  const InputType& input2 = input.rows(input_rows / 2, input_rows - 1);
+  const int inputRows = input.n_rows;
+  const InputType& input1 = input.rows(0, inputRows / 2 - 1);
+  const InputType& input2 = input.rows(inputRows / 2, inputRows - 1);
   return arma::accu(arma::max(arma::zeros(size(target)),
       -target % (input1 - input2) + margin)) / target.n_cols;
 }
@@ -52,9 +52,9 @@ void MarginRankingLoss<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     OutputType& output)
 {
-  int input_rows = input.n_rows;
-  const InputType& input1 = input.rows(0, input_rows / 2 - 1);
-  const InputType& input2 = input.rows(input_rows / 2, input_rows - 1);
+  const int inputRows = input.n_rows;
+  const InputType& input1 = input.rows(0, inputRows / 2 - 1);
+  const InputType& input2 = input.rows(inputRows / 2, inputRows - 1);
   output = -target % (input1 - input2) + margin;
   output.elem(arma::find(output >= 0)).ones();
   output.elem(arma::find(output < 0)).zeros();

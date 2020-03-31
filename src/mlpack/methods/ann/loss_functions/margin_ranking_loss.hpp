@@ -18,6 +18,11 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
+ * Margin ranking loss measures the loss given inputs and a label vector with
+ * values of 1 or -1. If the label is 1 then the first input should be ranked
+ * higher than the second input at a distance larger than a margin, and vice-
+ * versa if the label is -1.
+ * 
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
@@ -39,9 +44,6 @@ class MarginRankingLoss
 
   /**
    * Computes the Margin Ranking Loss function.
-   * Measures the loss between two inputs and a label with -1 and 1 values.
-   * A value of 1 in the label means the first input should be ranked higher
-   * and a value of -1 means the second input should be ranked higher.
    * 
    * @param input Concatenation of the two inputs for evaluating the specified
    * function.
