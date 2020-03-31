@@ -30,7 +30,6 @@ if not '${OpenMP_CXX_FLAGS}':
 else:
   extra_link_args=['${OpenMP_CXX_FLAGS}']
 
-# Get list of library dirs.
 # Get list of library dirs.  Note that for the list of directories, any
 # directories with a (valid) space in the name will be given to us as '\ '; so,
 # in order to split these right, we first convert all spaces to ';', then

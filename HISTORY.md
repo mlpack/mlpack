@@ -31,6 +31,9 @@
 
   * CMake fix for finding STB include directory (#2145).
 
+  * Add bindings for Loading and Saving image (#2019); `mlpack_image_converter`
+    from the command-line, `mlpack_image_converter()` from Python.
+
   * Add normalization support for CF binding (#2136).
 
   * Add Mish activation function (#2158).

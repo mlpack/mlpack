@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(SaveImageTest)
       "test_image999.png"});
   SetInputParam("height", 5);
   SetInputParam("width", 5);
-  SetInputParam("channel", 3);
+  SetInputParam("channels", 3);
   SetInputParam("save", true);
   SetInputParam("dataset", testimage);
   mlpackMain();
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(SaveImageTest)
     "test_image999.png"});
   SetInputParam("height", 5);
   SetInputParam("width", 5);
-  SetInputParam("channel", 3);
+  SetInputParam("channels", 3);
 
   mlpackMain();
   arma::mat output = CLI::GetParam<arma::mat>("output");
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(InvalidInputTest)
 
   SetInputParam("height", -50);
   SetInputParam("width", 50);
-  SetInputParam("channel", 3);
+  SetInputParam("channels", 3);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(InvalidWidthTest)
   SetInputParam("dataset", testimage);
   SetInputParam("height", 50);
   SetInputParam("width", -50);
-  SetInputParam("channel", 3);
+  SetInputParam("channels", 3);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(InvalidChannelTest)
   SetInputParam("dataset", testimage);
   SetInputParam("height", 50);
   SetInputParam("width", 50);
-  SetInputParam("channel", -1);
+  SetInputParam("channels", -1);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -175,7 +175,7 @@ BOOST_AUTO_TEST_CASE(EmptyInputTest)
   SetInputParam<vector<string>>("input", {});
   SetInputParam("height", 50);
   SetInputParam("width", 50);
-  SetInputParam("channel", 50);
+  SetInputParam("channels", 50);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
