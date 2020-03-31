@@ -44,5 +44,4 @@ add_markdown_docs(preprocess_scale "cli;python" "preprocessing")
 
 add_cli_executable(preprocess_one_hot_encoding)
 add_python_binding(preprocess_one_hot_encoding)
-add_julia_binding(preprocess_one_hot_encoding)
-add_markdown_docs(preprocess_one_hot_encoding "cli;python;julia" "preprocessing")
+add_markdown_docs(preprocess_one_hot_encoding "cli;python" "preprocessing")
