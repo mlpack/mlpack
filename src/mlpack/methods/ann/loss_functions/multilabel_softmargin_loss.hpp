@@ -36,7 +36,7 @@ class MultiLabelSoftMarginLoss
    * @param weight A manual rescaling weight given to each class. Initialized to
    *               1 by default.
    * @param reduction Specifies the reduction to apply to the output. When true,
-   * 		      'mean' reduction is used, where sum of the output will be
+   * 		          'mean' reduction is used, where sum of the output will be
    *                  divided by the number of elements in the output. When
    *                  false, 'sum' reduction is used and the output will be
    *                  summed.
