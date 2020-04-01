@@ -12,7 +12,6 @@
 
 #include <mlpack/core.hpp>
 #include <boost/test/unit_test.hpp>
-#include <memory>
 #include "test_tools.hpp"
 #include "serialization.hpp"
 
@@ -74,6 +73,23 @@ BOOST_AUTO_TEST_CASE(SaveImageAPITest)
   for (size_t i = 0; i < im1.n_elem; ++i)
     BOOST_REQUIRE_EQUAL(im1[i], im2[i]);
   remove("APITest.bmp");
+}
+
+/**
+ * Test if an image with a wrong dimesion throws an expected
+ * exception while saving.
+ */
+BOOST_AUTO_TEST_CASE(SaveImageWrongInfo)
+{
+  data::ImageInfo info(5, 5, 3, 90);
+
+  arma::Mat<unsigned char> im1;
+  size_t dimension = info.Width() * info.Height() * info.Channels();
+  im1 = arma::randi<arma::Mat<unsigned char>>(24 * 25 * 7, 1);
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(data::Save("APITest.bmp", im1, info, false),
+      std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 }
 
 /**

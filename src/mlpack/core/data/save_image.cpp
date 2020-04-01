@@ -54,6 +54,11 @@ bool SaveImage(const std::string& filename,
     Log::Warn << "Only the first image will be saved!" << std::endl;
   }
 
+    if (info.Width() * info.Height() * info.Channels() != image.n_elem)
+  {
+    Log::Fatal << "The dimension given does not match the image dimesion. \n";
+  }
+
   bool status = false;
   unsigned char* imageMem = image.memptr();
 

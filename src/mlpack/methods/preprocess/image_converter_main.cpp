@@ -23,16 +23,16 @@ using namespace mlpack::data;
 PROGRAM_INFO("Image Converter",
     // Short description.
     "A utility to load an image or set of images into a single dataset that"
-    "can then be used by other mlpack methods and utilities. This can also"
-    "unpack an image dataset into individual files, for instance after mlpack"
-    "methods have been used.",
+    " can then be used by other mlpack methods and utilities. This can also"
+    " unpack an image dataset into individual files, for instance after mlpack"
+    " methods have been used.",
     // Long description.
-    "This utility takes a image or an array of images and loads them to a"
+    "This utility takes an image or an array of images and loads them to a"
     " matrix. You can optionally specify the height " +
     PRINT_PARAM_STRING("height") + " width " + PRINT_PARAM_STRING("width")
     + " and channel " + PRINT_PARAM_STRING("channels") + " of the images that"
-    "needs to be loaded; otherwise, these parameters will be automatically"
-    "detected from the image."
+    " needs to be loaded; otherwise, these parameters will be automatically"
+    " detected from the image."
     "\n"
     "There are other options too, that can be specified such as " +
     PRINT_PARAM_STRING("quality")
@@ -75,7 +75,7 @@ static void mlpackMain()
   // Parse command line options.
   const vector<string> fileNames = CLI::GetParam<vector<string> >("input");
   arma::mat out;
- 
+
   if (!CLI::HasParam("save"))
   {
     ReportIgnoredParam("width", "Width of image is determined from file.");
@@ -88,8 +88,8 @@ static void mlpackMain()
   }
   else
   {
-    RequireNoneOrAllPassed({ "save", "width", "height", "channels" }, true,
-    "image size information is needed when 'save' is specified!");
+    RequireNoneOrAllPassed({ "save", "width", "height", "channels", "dataset" }
+        , true, "Image size information is needed when 'save' is specified!");
     // Positive value for width.
     RequireParamValue<int>("width", [](int x) { return x >= 0;}, true,
         "width must be positive");
@@ -108,11 +108,6 @@ static void mlpackMain()
     const size_t channels = CLI::GetParam<int>("channels");
     const size_t quality = CLI::GetParam<int>("quality");
     data::ImageInfo info(width, height, channels, quality);
-    if (!CLI::HasParam("dataset"))
-    {
-      throw std::runtime_error("Please provide a input matrix to save "
-          "images from");
-    }
     Save(fileNames, CLI::GetParam<arma::mat>("dataset"), info, true);
   }
 }
