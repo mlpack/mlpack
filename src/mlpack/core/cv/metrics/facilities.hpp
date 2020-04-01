@@ -32,11 +32,9 @@ void AssertSizes(const DataType& data,
 {
   if (data.n_cols != labels.n_elem)
   {
-    std::ostringstream oss;
-    oss << callerDescription << ": number of points (" << data.n_cols << ") "
+    Log::Fatal << callerDescription << ": number of points (" << data.n_cols << ") "
         << "does not match number of labels (" << labels.n_elem << ")!"
         << std::endl;
-    throw std::invalid_argument(oss.str());
   }
 }
 
