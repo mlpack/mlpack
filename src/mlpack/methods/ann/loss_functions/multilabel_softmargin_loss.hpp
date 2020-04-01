@@ -32,29 +32,29 @@ class MultiLabelSoftMarginLoss
  public:
   /**
    * Create the MultiLabelSoftMarginLoss object.
-	 *
-	 * @param weight A manual rescaling weight given to each class. Initialized to
-	 *        1 by default.
-	 * @param reduction Specifies the reduction to apply to the output. When true,
-	 * 				'mean' reduction is used, where sum of the output will be divided by
-	 * 				the number of elements in the output. When false, 'sum' reduction is
-	 * 				used and the output will be summed.
+   *
+   * @param weight A manual rescaling weight given to each class. Initialized to
+   *               1 by default.
+   * @param reduction Specifies the reduction to apply to the output. When true,
+   * 		      'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. When
+   *                  false, 'sum' reduction is used and the output will be
+   *                  summed.
    */
-
   MultiLabelSoftMarginLoss(const double weight = 1.0,
                            const bool reduction = true);
 
   /**
    * Computes the Multi Label Soft Margin Loss function.
    * This criterion optimizes a multi-label one-versus-all loss based
-	 * on max-entropy, between input x and target y.
+   * on max-entropy, between input x and target y.
    *
    * @param input Input data used for evaluating the specified function.
    * @param target The target vector with same shape as input.
    */
-
   template<typename InputType, typename TargetType>
   double Forward(const InputType& input, const TargetType& target);
+
   /**
    * Ordinary feed backward pass of a neural network.
    *
@@ -62,7 +62,6 @@ class MultiLabelSoftMarginLoss
    * @param target The target vector.
    * @param output The calculated error.
    */
-
   template<typename InputType, typename TargetType, typename OutputType>
   void Backward(const InputType& input,
                 const TargetType& target,
