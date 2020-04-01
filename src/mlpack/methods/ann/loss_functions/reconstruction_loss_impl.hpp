@@ -30,7 +30,8 @@ ReconstructionLoss<
 
 template<typename InputDataType, typename OutputDataType, typename DistType>
 template<typename InputType, typename TargetType>
-double ReconstructionLoss<InputDataType, OutputDataType, DistType>::Forward(
+typename InputType::elem_type
+ReconstructionLoss<InputDataType, OutputDataType, DistType>::Forward(
     const InputType& input, const TargetType& target)
 {
   dist = DistType(input);
