@@ -44,6 +44,6 @@ add_markdown_docs(preprocess_scale "cli;python" "preprocessing")
 
 if (STB_AVAILABLE)
   add_cli_executable(image_converter)
-  add_python_binding(limage_converter)
+  add_python_binding(image_converter)
   add_markdown_docs(image_converter "cli;python" "preprocessing")
 endif ()
