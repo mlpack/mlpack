@@ -85,13 +85,13 @@ void OneHotEncoding(arma::Mat<eT>& input,
   std::vector<arma::Mat<eT>> oheOutput(indices.n_elem);
   for (size_t i = 0; i < indices.n_elem; i++)
   {
-    // call OneHotEncoding() for each of the indices.
+    // Call OneHotEncoding() for each of the indices.
     OneHotEncoding(input.row(indices.at(i)), oheOutput[i]);
   }
   size_t row = 0;
   for (size_t i = 0; i < indices.n_elem; i++)
   {
-    // calculating index at which the rows shoudl be inserted.
+    // Calculate the index at which the rows should be inserted.
     output.insert_rows(row + indices.at(i), oheOutput[i]);
     row += oheOutput[i].n_rows - 1;
   }

@@ -2,7 +2,7 @@
  * @file preprocess_one_hot_encoding_main.cpp
  * @author Jeffin Sam
  *
- * A CLI executable to do onehotencoding on features from a dataset.
+ * A CLI executable to do One-Hot Encoding on features from a dataset.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

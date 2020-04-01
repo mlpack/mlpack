@@ -2,7 +2,7 @@
  * @file one_hot_encoding_test.cpp
  * @author Jeffin Sam
  *
- * Tests for onehotencoding().
+ * Tests for the One-Hot Encoding method.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(OneHotEncodingTest)
            "1 0;"
            "0 1;"
            "1 0;";
-// Output matrix to save onehotencoding results.
+  // Output matrix to save one-hot encoding results.
   arma::Mat<size_t> output;
   matrix = matrix.t();
   arma::irowvec labels("-1 1 -1 -1 -1 -1 1 -1");
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(OneHotEncodingBigInputTest)
            "0 1 0 0 0 0 1 0;"
            "1 1 -1 -1 -1 -1 1 1;";
 
-  // Output matrix to save onehotencoding results.
+  // Output matrix to save one-hot encoding results.
   arma::Mat<int> output;
   arma::ucolvec indices("1 3");
   data::OneHotEncoding(input, indices, output);
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(OneHotEncodingVeryBigInputTest)
            "1 1 -1 -1 -1 -1 1 1;"
            "1 1 -1 -1 -1 -1 1 1;";
 
-// Output matrix to save onehotencoding results.
+  // Output matrix to save one-hot encoding results.
   arma::Mat<int> output;
   arma::ucolvec indices("1 4 7 8");
   data::OneHotEncoding(input, indices, output);
