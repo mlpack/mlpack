@@ -24,11 +24,9 @@ AddTask::AddTask(const size_t bitLen) : bitLen(bitLen)
 {
   if (bitLen <= 0)
   {
-    std::ostringstream oss;
-    oss << "AddTask::AddTask(): binary length (" << bitLen << ") "
+    Log::Fatal << "AddTask::AddTask(): binary length (" << bitLen << ") "
         << "is not positive!"
         << std::endl;
-    throw std::invalid_argument(oss.str());
   }
 }
 
@@ -104,12 +102,10 @@ void AddTask::Generate(arma::field<arma::mat>& input,
   Binarize(vecLabels, labels);
   if (input.n_rows != labels.n_rows)
   {
-      std::ostringstream oss;
-      oss << "AddTask::Generate(): sequences after application of "
+      Log::Fatal << "AddTask::Generate(): sequences after application of "
           << "Binarize() are not aligned ("
           << input.n_rows << " and " << labels.n_rows << ")"
           << std::endl;
-      throw std::logic_error(oss.str());
   }
   for (size_t i = 0; i < input.n_rows; ++i)
   {

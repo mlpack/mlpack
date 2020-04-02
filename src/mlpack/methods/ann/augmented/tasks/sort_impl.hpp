@@ -26,20 +26,16 @@ SortTask::SortTask(const size_t maxLength,
 {
   if (maxLength <= 1)
   {
-    std::ostringstream oss;
-    oss << "SortTask::SortTask(): maximum sequence length ("
+    Log::Fatal << "SortTask::SortTask(): maximum sequence length ("
         << maxLength << ") "
         << "should be at least 2!"
         << std::endl;
-    throw std::invalid_argument(oss.str());
   }
   if (bitLen <= 0)
   {
-    std::ostringstream oss;
-    oss << "SortTask::SortTask(): binary length (" << bitLen << ") "
+    Log::Fatal << "SortTask::SortTask(): binary length (" << bitLen << ") "
         << "is not positive!"
         << std::endl;
-    throw std::invalid_argument(oss.str());
   }
 }
 

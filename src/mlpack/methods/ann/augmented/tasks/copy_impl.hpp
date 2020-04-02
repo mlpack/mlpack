@@ -29,20 +29,16 @@ CopyTask::CopyTask(const size_t maxLength,
 {
   if (maxLength <= 1)
   {
-    std::ostringstream oss;
-    oss << "CopyTask::CopyTask(): maximum sequence length ("
+    Log::Fatal << "CopyTask::CopyTask(): maximum sequence length ("
         << maxLength << ") "
         << "should be at least 2!"
         << std::endl;
-    throw std::invalid_argument(oss.str());
   }
   if (nRepeats <= 0)
   {
-    std::ostringstream oss;
-    oss << "CopyTask::CopyTask(): repetition count (" << nRepeats << ") "
+    Log::Fatal << "CopyTask::CopyTask(): repetition count (" << nRepeats << ") "
         << "is not positive!"
         << std::endl;
-    throw std::invalid_argument(oss.str());
   }
   // Just storing task-specific parameters.
 }

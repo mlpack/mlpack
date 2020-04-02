@@ -29,13 +29,11 @@ double SequencePrecision(arma::field<MatType> trueOutputs,
   size_t testSize = trueOutputs.n_elem;
   if (trueOutputs.n_elem != predOutputs.n_elem)
   {
-    std::ostringstream oss;
-    oss << "SequencePrecision(): number of predicted sequences ("
+    Log::Fatal << "SequencePrecision(): number of predicted sequences ("
         << predOutputs.n_elem << ") should be equal to the number "
         << "of ground-truth sequences ("
         << trueOutputs.n_elem << ")"
         << std::endl;
-    throw std::invalid_argument(oss.str());
   }
 
   for (size_t i = 0; i < testSize; i++)
