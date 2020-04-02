@@ -25,9 +25,9 @@ namespace cv {
   * @param callerDescription A description of the caller that can be used for
   *     error generation.
   */
-template<typename DataType>
+template<typename DataType, typename LabelsType>
 void AssertSizes(const DataType& data,
-                 const arma::Row<size_t>& labels,
+                 const LabelsType& labels,
                  const std::string& callerDescription)
 {
   if (data.n_cols != labels.n_elem)
