@@ -80,13 +80,13 @@ class DictionaryEncodingPolicy
    * the result into the given vector to avoid padding. The encoder writes data
    * in the row-major order.
    *
-   * @tparam OutputType Type of the output vector.
+   * @tparam ElemType Type of the output values.
    *
-   * @param output Output vector to store the encoded results.
+   * @param output Output vector to store the encoded line.
    * @param value The encoded token.
    */
-  template<typename OutputType>
-  static void Encode(std::vector<OutputType>& output, size_t value)
+  template<typename ElemType>
+  static void Encode(std::vector<ElemType>& output, size_t value)
   {
     output.push_back(value);
   }

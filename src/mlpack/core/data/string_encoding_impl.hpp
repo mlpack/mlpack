@@ -153,10 +153,10 @@ EncodeHelper(const std::vector<std::string>& input,
 }
 
 template<typename EncodingPolicyType, typename DictionaryType>
-template<typename TokenizerType, typename PolicyType, typename OutputType>
+template<typename TokenizerType, typename PolicyType, typename ElemType>
 void StringEncoding<EncodingPolicyType, DictionaryType>::
 EncodeHelper(const std::vector<std::string>& input,
-             std::vector<std::vector<OutputType>>& output,
+             std::vector<std::vector<ElemType>>& output,
              const TokenizerType& tokenizer,
              PolicyType& policy,
              typename std::enable_if<StringEncodingPolicyTraits<

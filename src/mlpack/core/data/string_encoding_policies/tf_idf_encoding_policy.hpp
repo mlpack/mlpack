@@ -36,7 +36,7 @@ class TfIdfEncodingPolicy
 {
  public:
   /**
-   * Enum class used to identify the type of term frequency encoding.
+   * Enum class used to identify the type of the term frequency statistics.
    *
    * The present implementation supports the following types:
    * BINARY           Term frequency equals 1 if the row contains the encoded
@@ -58,8 +58,8 @@ class TfIdfEncodingPolicy
   };
 
   /**
-   * A constructor for the class which is use to set the type of term frequency
-   * and also the value for smoothIdf.
+   * Construct this using the term frequency type and the inverse document
+   * frequency type.
    *
    * @param tfType Type of the term frequency statistics.
    * @param smoothIdf Used to indicate whether to use smooth idf or not.
@@ -102,9 +102,9 @@ class TfIdfEncodingPolicy
    * The function initializes the output matrix. The encoder writes data
    * in the row-major order.
    *
-   * Overloaded function to store result in vector<vector<OutputType>>.
+   * Overloaded function to save the result in vector<vector<ElemType>>.
    * 
-   * @tparam OutputType Type of the output vector.
+   * @tparam ElemType Type of the output values.
    *
    * @param output Output matrix to store the encoded results.
    * @param datasetSize The number of strings in the input dataset.
@@ -112,13 +112,13 @@ class TfIdfEncodingPolicy
                          input dataset (not used).
    * @param dictionarySize The size of the dictionary.
    */
-  template<typename OutputType>
-  static void InitMatrix(std::vector<std::vector<OutputType>>& output,
+  template<typename ElemType>
+  static void InitMatrix(std::vector<std::vector<ElemType>>& output,
                          const size_t datasetSize,
                          const size_t /* maxNumTokens */,
                          const size_t dictionarySize)
   {
-    output.resize(datasetSize, std::vector<OutputType>(dictionarySize, 0));
+    output.resize(datasetSize, std::vector<ElemType>(dictionarySize));
   }
 
   /** 
@@ -155,26 +155,26 @@ class TfIdfEncodingPolicy
    * the encoded token to the output. The encoder writes data in the
    * row-major order.
    *
-   * Overloaded function to accept vector<vector<OutputType>> as the output
+   * Overloaded function to accept vector<vector<ElemType>> as the output
    * type.
    *
-   * @tparam OutputType Type of the output vector.
+   * @tparam ElemType Type of the output values.
    *
    * @param output Output matrix to store the encoded results.
    * @param value The encoded token.
    * @param line The line number at which the encoding is performed.
    * @param index The token index in the line.
    */
-  template<typename OutputType>
-  void Encode(std::vector<std::vector<OutputType> >& output,
+  template<typename ElemType>
+  void Encode(std::vector<std::vector<ElemType>>& output,
               const size_t value,
               const size_t line,
               const size_t /* index */)
   {
-    const OutputType tf = TermFrequency<OutputType>(
+    const ElemType tf = TermFrequency<ElemType>(
         tokensFrequences[line][value], linesSizes[line]);
 
-    const OutputType idf = InverseDocumentFrequency<OutputType>(
+    const ElemType idf = InverseDocumentFrequency<ElemType>(
         output.size(), numContainingStrings[value]);
 
     output[line][value - 1] =  tf * idf;

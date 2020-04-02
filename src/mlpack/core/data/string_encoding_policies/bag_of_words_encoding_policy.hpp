@@ -60,9 +60,9 @@ class BagOfWordsEncodingPolicy
    * The function initializes the output matrix. The encoder writes data
    * in the row-major order.
    *
-   * Overloaded function to store result in vector<vector<OutputType>>.
+   * Overloaded function to save the result in vector<vector<ElemType>>.
    * 
-   * @tparam OutputType Type of the output vector.
+   * @tparam ElemType Type of the output values.
    *
    * @param output Output matrix to store the encoded results.
    * @param datasetSize The number of strings in the input dataset.
@@ -70,13 +70,13 @@ class BagOfWordsEncodingPolicy
                          input dataset (not used).
    * @param dictionarySize The size of the dictionary.
    */
-  template<typename OutputType>
-  static void InitMatrix(std::vector<std::vector<OutputType>>& output,
+  template<typename ElemType>
+  static void InitMatrix(std::vector<std::vector<ElemType>>& output,
                          const size_t datasetSize,
                          const size_t /* maxNumTokens */,
                          const size_t dictionarySize)
   {
-    output.resize(datasetSize, std::vector<OutputType>(dictionarySize, 0));
+    output.resize(datasetSize, std::vector<ElemType>(dictionarySize));
   }
 
   /**
@@ -106,16 +106,18 @@ class BagOfWordsEncodingPolicy
    * the encoded token to the output. The encoder writes data in the
    * row-major order.
    *
-   * Overload function to accepted vector<vector<OutputType>> as output type.
+   * Overloaded function to accept vector<vector<ElemType>> as the output
+   * type.
+   *
+   * @tparam ElemType Type of the output values.
    *
    * @param output Output matrix to store the encoded results.
    * @param value The encoded token.
    * @param line The line number at which the encoding is performed.
    * @param index The line token number at which the encoding is performed.
-   * @tparam OutputType The type of output vector.
    */
-  template<typename OutputType>
-  static void Encode(std::vector<std::vector<OutputType>>& output,
+  template<typename ElemType>
+  static void Encode(std::vector<std::vector<ElemType>>& output,
                      const size_t value,
                      const size_t line,
                      const size_t /* index */)
