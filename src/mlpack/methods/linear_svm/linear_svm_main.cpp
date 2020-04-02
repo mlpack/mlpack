@@ -316,7 +316,7 @@ static void mlpackMain()
     {
       if (!CLI::HasParam("input_model"))
         delete model;
-      throw std::invalid_argument("Given input data has only 1 class!");
+      Log::Fatal << "Given input data has only 1 class!";
     }
 
     if (optimizerType == "lbfgs")

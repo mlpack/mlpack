@@ -251,8 +251,8 @@ void RangeSearch<MetricType, MatType, TreeType>::Train(
   Tree* referenceTree)
 {
   if (naive)
-    throw std::invalid_argument("cannot train on given reference tree when "
-        "naive search (without trees) is desired");
+    Log::Fatal << "cannot train on given reference tree when"
+        "naive search (without trees) is desired" << std::endl;
 
   if (treeOwner && referenceTree)
     delete this->referenceTree;
@@ -275,11 +275,9 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 {
   if (querySet.n_rows != referenceSet->n_rows)
   {
-    std::ostringstream oss;
-    oss << "RangeSearch::Search(): dimensionalities of query set ("
+    Log::Fatal << "RangeSearch::Search(): dimensionalities of query set ("
         << querySet.n_rows << ") and reference set (" << referenceSet->n_rows
-        << ") do not match!";
-    throw std::invalid_argument(oss.str());
+        << ") do not match!" << std::endl;
   }
 
   // If there are no points, there is no search to be done.
@@ -468,8 +466,8 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
   // Make sure we are in dual-tree mode.
   if (singleMode || naive)
-    throw std::invalid_argument("cannot call RangeSearch::Search() with a "
-        "query tree when naive or singleMode are set to true");
+    Log::Fatal << "cannot call RangeSearch::Search() with a"
+        "query tree when naive or singleMode are set to true" << std::endl;
 
   // We won't need to map query indices, but will we need to map distances?
   std::vector<std::vector<size_t>>* neighborPtr = &neighbors;

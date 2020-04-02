@@ -96,7 +96,7 @@ double LinearSVM<MatType>::Train(
 {
   if (numClasses <= 1)
   {
-    throw std::invalid_argument("LinearSVM dataset has 0 number of classes!");
+    Log::Fatal << "LinearSVM dataset has 0 number of classes!" << std::endl;
   }
 
   LinearSVMFunction<MatType> svm(data, labels, numClasses, lambda, delta,
@@ -125,7 +125,7 @@ double LinearSVM<MatType>::Train(
 {
   if (numClasses <= 1)
   {
-    throw std::invalid_argument("LinearSVM dataset has 0 number of classes!");
+    Log::Fatal << "LinearSVM dataset has 0 number of classes!" << std::endl;
   }
 
   LinearSVMFunction<MatType> svm(data, labels, numClasses, lambda, delta,
@@ -175,10 +175,9 @@ void LinearSVM<MatType>::Classify(
 {
   if (data.n_rows != FeatureSize())
   {
-    std::ostringstream oss;
-    oss << "LinearSVM::Classify(): dataset has " << data.n_rows
-        << " dimensions, but model has " << FeatureSize() << " dimensions!";
-    throw std::invalid_argument(oss.str());
+    Log::Fatal << "LinearSVM::Classify(): dataset has " << data.n_rows
+        << " dimensions, but model has " << FeatureSize() << " dimensions!"
+        << std::endl;
   }
 
   if (fitIntercept)
