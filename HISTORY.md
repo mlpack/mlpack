@@ -31,8 +31,8 @@
 
   * CMake fix for finding STB include directory (#2145).
 
-  * Add bindings for Loading and Saving image (#2019); `mlpack_image_converter`
-    from the command-line, `mlpack_image_converter()` from Python.
+  * Add bindings for loading and saving images (#2019); `mlpack_image_converter`
+    from the command-line, `mlpack.image_converter()` from Python.
 
   * Add normalization support for CF binding (#2136).
 
