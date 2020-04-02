@@ -40,7 +40,7 @@ PARAM_MATRIX_IN_REQ("input", "Matrix containing data.", "i");
 PARAM_MATRIX_OUT("output", "Matrix to save one hot encoded features "
     "data to.", "o");
 
-PARAM_VECTOR_IN_REQ(long long unsigned int, "indices", "Index of Column which"
+PARAM_VECTOR_IN_REQ(size_t, "indices", "Index of Column which"
     "need to be one hot encoded", "c");
 
 using namespace mlpack;
@@ -52,10 +52,13 @@ static void mlpackMain()
 {
   // Load the data.
   arma::mat& data = CLI::GetParam<arma::mat>("input");
-  vector<long long unsigned int> indices =
-    CLI::GetParam<vector<long long unsigned int> >("indices");
+  vector<size_t> indices =
+    CLI::GetParam<vector<size_t> >("indices");
+  vector<unsigned long long > copyIndices (indices.size());
+  for(size_t i = 0; i < indices.size(); i++)
+    copyIndices[i] = (unsigned long long)indices[i];
   arma::mat output;
-  data::OneHotEncoding(data, arma::uvec(indices), output);
+  data::OneHotEncoding(data, arma::uvec(copyIndices), output);
   if (CLI::HasParam("output"))
     CLI::GetParam<arma::mat>("output") = std::move(output);
 }
