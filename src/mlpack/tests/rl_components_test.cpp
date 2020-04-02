@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
   double reward = env.Sample(state, action, nextState);
   replay.Store(state, action, reward, nextState, env.IsTerminal(nextState));
   arma::mat sampledState;
-  arma::icolvec sampledAction;
+  std::vector<MountainCar::Action> sampledAction;
   arma::colvec sampledReward;
   arma::mat sampledNextState;
   arma::icolvec sampledTerminal;
@@ -239,7 +239,7 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
       sampledTerminal);
 
   CheckMatrices(state.Encode(), sampledState);
-  BOOST_REQUIRE_EQUAL(action, arma::as_scalar(sampledAction));
+  BOOST_REQUIRE_EQUAL(action, sampledAction[0]);
   BOOST_REQUIRE_CLOSE(reward, arma::as_scalar(sampledReward), 1e-5);
   CheckMatrices(nextState.Encode(), sampledNextState);
   BOOST_REQUIRE_EQUAL(false, arma::as_scalar(sampledTerminal));

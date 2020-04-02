@@ -93,7 +93,7 @@ class RandomReplay
              bool isEnd)
   {
     states.col(position) = state.Encode();
-    actions(position) = action;
+    actions[position] = action;
     rewards(position) = reward;
     nextStates.col(position) = nextState.Encode();
     isTerminal(position) = isEnd;
@@ -116,7 +116,7 @@ class RandomReplay
    *        state.
    */
   void Sample(arma::mat& sampledStates,
-              arma::icolvec& sampledActions,
+              std::vector<ActionType>& sampledActions,
               arma::colvec& sampledRewards,
               arma::mat& sampledNextStates,
               arma::icolvec& isTerminal)
@@ -126,7 +126,10 @@ class RandomReplay
         batchSize, arma::distr_param(0, upperBound - 1));
 
     sampledStates = states.cols(sampledIndices);
-    sampledActions = actions.elem(sampledIndices);
+    for (size_t t = 0; t < sampledIndices.n_rows; t ++)
+    {
+      sampledActions.push_back(actions[sampledIndices[t]]);
+    }
     sampledRewards = rewards.elem(sampledIndices);
     sampledNextStates = nextStates.cols(sampledIndices);
     isTerminal = this->isTerminal.elem(sampledIndices);
@@ -150,12 +153,21 @@ class RandomReplay
    * @param nextActionValues Agent's next action
    * @param gradients The model's gradients
    */
-  void Update(arma::mat /* target */,
-              arma::icolvec /* sampledActions */,
-              arma::mat /* nextActionValues */,
+  void Update(const arma::mat& /* target */,
+              const std::vector<ActionType>& /* sampledActions */,
+              const arma::mat& /* nextActionValues */,
               arma::mat& /* gradients */)
   {
     /* Do nothing for random replay. */
+  }
+
+  /**
+   * Clear all the transaction in the buffer.
+   */
+  void Clear()
+  {
+    full = false;
+    position = 0;
   }
 
  private:
@@ -172,7 +184,7 @@ class RandomReplay
   arma::mat states;
 
   //! Locally-stored previous actions.
-  arma::icolvec actions;
+  std::vector<ActionType> actions;
 
   //! Locally-stored previous rewards.
   arma::colvec rewards;
