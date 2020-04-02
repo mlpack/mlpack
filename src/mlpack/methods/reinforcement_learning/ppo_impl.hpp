@@ -153,7 +153,7 @@ void PPO<
                from(discountedRewards) - actionValues;
 
   // Update the critic.
-  criticNetwork.Backward(advantages, criticGradients);
+  criticNetwork.Backward(sampledStates, advantages, criticGradients);
   #if ENS_VERSION_MAJOR == 1
   criticUpdater.Update(criticNetwork.Parameters(), config.StepSize(),
                        criticGradients);
@@ -216,7 +216,7 @@ void PPO<
 
     arma::mat dLoss = arma::join_cols(dTanh, dSoftP);
 
-    actorNetwork.Backward(dLoss, actorGradients);
+    actorNetwork.Backward(sampledStates, dLoss, actorGradients);
 
     #if ENS_VERSION_MAJOR == 1
     actorUpdater.Update(actorNetwork.Parameters(), config.StepSize(),
