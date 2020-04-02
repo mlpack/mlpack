@@ -27,7 +27,8 @@ TripletMarginLoss<InputDataType, OutputDataType>::TripletMarginLoss(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double TripletMarginLoss<InputDataType, OutputDataType>::Forward(
+typename InputType::elem_type
+TripletMarginLoss<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     const TargetType& target)
 {
