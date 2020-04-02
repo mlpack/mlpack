@@ -42,7 +42,6 @@ void LeakyReLU<InputDataType, OutputDataType>::Backward(
 {
   DataType derivative;
   derivative.set_size(arma::size(input));
-  
   for (omp_size_t i = 0; i < input.n_elem; i++)
     derivative(i) = (input(i) >= 0) ? 1 : alpha;
 
