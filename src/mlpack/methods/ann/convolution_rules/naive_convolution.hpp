@@ -66,7 +66,7 @@ class NaiveConvolution
     const size_t o_cols = output.n_cols, o_rows = output.n_rows;
     const size_t f_cols = filter.n_cols, f_rows = filter.n_rows;
     // parallelize computation if the output is large enough
-    #pragma parallel omp for schedule(static) if (o_cols > 50)
+    #pragma omp parallel for schedule(static) if (input.n_cols >= 64)
     for (size_t j = 0; j < o_cols; ++j)
     {
       for (size_t i = 0; i < o_rows; ++i)
