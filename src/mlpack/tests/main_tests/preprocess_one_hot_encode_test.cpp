@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(PreprocessOneHotEncodingTest)
            "1 1 -1 -1 -1 -1 1 1;";
 
   SetInputParam("input", dataset);
-  SetInputParam<vector<long long unsigned int>>("indices", {1, 3});
+  SetInputParam<vector<size_t>>("indices", {1, 3});
   mlpackMain();
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
