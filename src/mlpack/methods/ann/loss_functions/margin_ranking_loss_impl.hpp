@@ -26,11 +26,9 @@ MarginRankingLoss<InputDataType, OutputDataType>::MarginRankingLoss(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template <
-    typename InputType,
-    typename TargetType
->
-double MarginRankingLoss<InputDataType, OutputDataType>::Forward(
+template<typename InputType, typename TargetType>
+typename InputType::elem_type
+MarginRankingLoss<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     const TargetType& target)
 {

@@ -49,12 +49,9 @@ class MarginRankingLoss
    * function.
    * @param target The label vector which contains values of -1 or 1.
    */
-  template <
-    typename InputType,
-    typename TargetType
-  >
-  double Forward(const InputType& input,
-                 const TargetType& target);
+  template<typename InputType, typename TargetType>
+  typename InputType::elem_type Forward(const InputType& input,
+                                        const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
