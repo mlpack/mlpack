@@ -247,8 +247,8 @@ void LSHSearch<SortPolicy>::Train(arma::mat referenceSet,
   }
   else // The user gave something wrong.
   {
-    throw std::invalid_argument("LSHSearch::Train(): number of projection "
-        "tables provided must be equal to numProj");
+    Log::Fatal << "LSHSearch::Train(): number of projection\
+        tables provided must be equal to numProj" << std::endl;
   }
 
   // We will store the second hash vectors in this matrix; the second hash
@@ -860,20 +860,16 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
   // Ensure the dimensionality of the query set is correct.
   if (querySet.n_rows != referenceSet.n_rows)
   {
-    std::ostringstream oss;
-    oss << "LSHSearch::Search(): dimensionality of query set ("
+    Log::Fatal << "LSHSearch::Search(): dimensionality of query set ("
         << querySet.n_rows << ") is not equal to the dimensionality the model "
         << "was trained on (" << referenceSet.n_rows << ")!" << std::endl;
-    throw std::invalid_argument(oss.str());
   }
 
   if (k > referenceSet.n_cols)
   {
-    std::ostringstream oss;
-    oss << "LSHSearch::Search(): requested " << k << " approximate nearest "
+    Log::Fatal << "LSHSearch::Search(): requested " << k << " approximate nearest "
         << "neighbors, but reference set has " << referenceSet.n_cols
         << " points!" << std::endl;
-    throw std::invalid_argument(oss.str());
   }
 
   // Set the size of the neighbor and distance matrices.
@@ -1010,8 +1006,8 @@ double LSHSearch<SortPolicy>::ComputeRecall(
 {
   if (foundNeighbors.n_rows != realNeighbors.n_rows ||
       foundNeighbors.n_cols != realNeighbors.n_cols)
-    throw std::invalid_argument("LSHSearch::ComputeRecall(): matrices provided"
-        " must have equal size");
+    Log::Fatal << "LSHSearch::ComputeRecall(): matrices provided\
+        must have equal size" << std::endl;
 
   const size_t queries = foundNeighbors.n_cols;
   const size_t neighbors = foundNeighbors.n_rows; // Should be equal to k.
