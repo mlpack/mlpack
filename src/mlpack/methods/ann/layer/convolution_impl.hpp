@@ -203,11 +203,16 @@ void Convolution<
   outputTemp = arma::Cube<eT>(output.memptr(), wConv, hConv,
                               outSize * batchSize, false, false);
   outputTemp.zeros();
+  // call slice first to cache slices, prevents data races
+  for (omp_size_t outMapIdx = 0; outMapIdx < outSize; outMapIdx++) {
+    weight.slice(outMapIdx);
+  }
   #pragma omp parallel for
   for (omp_size_t outMap = 0; outMap < outSize * batchSize; outMap++)
   {
-    size_t outMapIdx = (outMap % outSize) * inSize, batchCount = outMap/outSize;
-    arma::Mat<eT> &curSlice = outputTemp.slice(outMap);
+    size_t outMapIdx = (outMap % outSize) * inSize;
+    size_t batchCount = outMap / outSize;
+    arma::Mat<eT>& curSlice = outputTemp.slice(outMap);
 
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
@@ -250,14 +255,13 @@ void Convolution<
   gTemp = arma::Cube<eT>(g.memptr(), inputTemp.n_rows, inputTemp.n_cols,
                          inputTemp.n_slices, false, false);
   gTemp.zeros();
-  #pragma omp parallel
   for (size_t outMapIdx = 0; outMapIdx < outSize; outMapIdx++)
   {
     for (size_t inMap = 0; inMap < inSize; inMap++)
     {
       arma::Mat<eT> rotatedFilter;
       Rotate180(weight.slice(outMapIdx+inMap), rotatedFilter);
-      #pragma omp for
+      #pragma omp parallel for
       for (omp_size_t batchCount = 0; batchCount < batchSize; batchCount++) {
         arma::Mat<double> &errSlice = mappedError.slice(outMapIdx +
                                                         batchCount*outSize);
@@ -323,11 +327,11 @@ void Convolution<
   {
     for (size_t inMap = 0; inMap < inSize; inMap++)
     {
-      arma::Mat<eT> &curGradTemp = gradientTemp.slice(outMapIdx+inMap);
+      arma::Mat<eT>& curGradTemp = gradientTemp.slice(outMapIdx+inMap);
       for (size_t batchCount = 0; batchCount < batchSize; batchCount++) {
         size_t outMap = outMapIdx + batchCount*outSize;
-        arma::Mat<eT> &inputSlice = inputTemp.slice(inMap+(batchCount*inSize));
-        arma::Mat<eT> &deltaSlice = mappedError.slice(outMap);
+        arma::Mat<eT>& inputSlice = inputTemp.slice(inMap+(batchCount*inSize));
+        arma::Mat<eT>& deltaSlice = mappedError.slice(outMap);
         arma::Mat<eT> output;
         GradientConvolutionRule::Convolution(inputSlice, deltaSlice,
                                             output, strideWidth, strideHeight);
@@ -354,42 +358,6 @@ void Convolution<
       }
     }
   }
-  /*for (size_t outMap = 0; outMap < outSize * batchSize; outMap++)
-  {
-    size_t outMapIdx = (outMap % outSize) * inSize,
-           batchCount = outMap/outSize;
-    for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
-    {
-      arma::Mat<eT> &inputSlice = inputTemp.slice(inMap+(batchCount*inSize));
-      arma::Mat<eT> &deltaSlice = mappedError.slice(outMap);
-      arma::Mat<eT> output;
-      GradientConvolutionRule::Convolution(inputSlice, deltaSlice,
-                                           output, strideWidth, strideHeight);
-
-      if (gradientTemp.n_rows < output.n_rows ||
-          gradientTemp.n_cols < output.n_cols)
-      {
-        gradientTemp.slice(outMapIdx) += output.submat(0, 0,
-                                                       gradientTemp.n_rows-1,
-                                                       gradientTemp.n_cols-1);
-      }
-      else if (gradientTemp.n_rows > output.n_rows ||
-               gradientTemp.n_cols > output.n_cols)
-      {
-        gradientTemp.slice(outMapIdx).submat(0, 0,
-                                             output.n_rows-1,
-                                             output.n_cols-1) += output;
-      }
-      else
-      {
-        gradientTemp.slice(outMapIdx) += output;
-      }
-    }
-    gradient.submat(weight.n_elem+(outMap%outSize),
-                    0,
-                    weight.n_elem+(outMap%outSize),
-                    0) = arma::accu(mappedError.slice(outMap));
-  }*/
 }
 
 template<

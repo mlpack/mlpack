@@ -62,25 +62,22 @@ class NaiveConvolution
         (input.n_rows - (filter.n_rows - 1) * dilationW - 1) / dW + 1,
         (input.n_cols - (filter.n_cols - 1) * dilationH -  1) / dH + 1);
     }
-    // It seems to be about 3.5 times faster to use pointers instead of
-    // filter(ki, kj) * input(leftInput + ki, topInput + kj) and output(i, j).
     eT* outputPtr = output.memptr();
-    const eT *kernelPtr = filter.memptr(), *inputPtr;
-    size_t j, i, kj, ki;
     const size_t o_cols = output.n_cols, o_rows = output.n_rows;
     const size_t f_cols = filter.n_cols, f_rows = filter.n_rows;
-
-    for (j = 0; j < o_cols; ++j)
+    // parallelize computation if the output is large enough
+    #pragma parallel omp for schedule(static) if (o_cols > 50)
+    for (size_t j = 0; j < o_cols; ++j)
     {
-      for (i = 0; i < o_rows; ++i, outputPtr ++)
+      for (size_t i = 0; i < o_rows; ++i)
       {
-        for (kj = 0; kj < f_cols; ++kj)
+        const eT* kernelPtr = filter.memptr();
+        for (size_t kj = 0; kj < f_cols; ++kj)
         {
-          inputPtr = input.colptr(kj * dilationW + j * dW) + i * dH;
-          for (ki = 0; ki < f_rows; ++ki, ++kernelPtr, inputPtr += dilationH)
-            *outputPtr += *kernelPtr * (*inputPtr);
+         const eT* inputPtr = input.colptr(kj*dilationW + j*dW) + i*dH;
+         for (size_t ki = 0; ki < f_rows; ++ki, ++kernelPtr, inputPtr += dilationH)
+           outputPtr[j*o_rows + i] += *kernelPtr * (*inputPtr);
         }
-        kernelPtr -= f_rows*f_cols;
       }
     }
   }
