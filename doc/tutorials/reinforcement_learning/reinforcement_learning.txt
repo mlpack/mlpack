@@ -379,7 +379,7 @@ int main()
     position = position % returns.n_elem;
     episode++;
 
-    std::cout << "Episode No.: "        << episode 
+    std::cout << "Episode No.: " << episode 
         << "; Episode Return: " << episodeReturn 
         << "; Average Return: " << arma::mean(returns) << endl;
   };
