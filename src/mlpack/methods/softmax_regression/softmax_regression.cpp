@@ -93,10 +93,9 @@ void SoftmaxRegression::Classify(const arma::mat& dataset,
 {
   if (dataset.n_rows != FeatureSize())
   {
-    std::ostringstream oss;
-    oss << "SoftmaxRegression::Classify(): dataset has " << dataset.n_rows
-        << " dimensions, but model has " << FeatureSize() << " dimensions!";
-    throw std::invalid_argument(oss.str());
+    Log::Fatal << "SoftmaxRegression::Classify(): dataset has "
+        << dataset.n_rows << " dimensions, but model has " << FeatureSize()
+        << " dimensions!" << std::endl;
   }
 
   // Calculate the probabilities for each test input.
