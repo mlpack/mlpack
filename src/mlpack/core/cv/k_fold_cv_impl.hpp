@@ -138,7 +138,7 @@ KFoldCV<MLAlgorithm,
     k(k)
 {
   if (k < 2)
-    throw std::invalid_argument("KFoldCV: k should not be less than 2");
+    Log::Fatal << "KFoldCV: k should not be less than 2" << std::endl;
 
   Base::AssertDataConsistency(xs, ys);
 

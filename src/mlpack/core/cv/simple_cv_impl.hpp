@@ -228,17 +228,17 @@ size_t SimpleCV<MLAlgorithm,
     const double validationSize)
 {
   if (validationSize < 0.0 || validationSize > 1.0)
-    throw std::invalid_argument("SimpleCV: the validationSize parameter should "
-        "be more than 0 and less than 1");
+    Log::Fatal << "SimpleCV: the validationSize parameter should\
+        be more than 0 and less than 1" << std::endl;
 
   if (xs.n_cols < 2)
-    throw std::invalid_argument("SimpleCV: 2 or more data points are expected");
+    Log::Fatal << "SimpleCV: 2 or more data points are expected" << std::endl;
 
   size_t trainingPoints = round(xs.n_cols * (1.0 - validationSize));
 
   if (trainingPoints == 0 || trainingPoints == xs.n_cols)
-    throw std::invalid_argument("SimpleCV: the validationSize parameter is "
-        "either too small or too big");
+    Log::Fatal << "SimpleCV: the validationSize parameter is\
+        either too small or too big" << std::endl;
 
   return trainingPoints;
 }

@@ -106,11 +106,9 @@ void CVBase<MLAlgorithm,
 {
   if (xs.n_cols != ys.n_cols)
   {
-    std::ostringstream oss;
-    oss << "CVBase::AssertDataConsistency(): number of data points ("
+    Log::Fatal << "CVBase::AssertDataConsistency(): number of data points ("
         << xs.n_cols << ") does not match number of predictions (" << ys.n_cols
         << ")!" << std::endl;
-    throw std::invalid_argument(oss.str());
   }
 }
 
@@ -129,11 +127,9 @@ void CVBase<MLAlgorithm,
 
   if (weights.n_elem != xs.n_cols)
   {
-    std::ostringstream oss;
-    oss << "CVBase::AssertWeightsConsistency(): number of weights ("
+    Log::Fatal << "CVBase::AssertWeightsConsistency(): number of weights ("
         << weights.n_elem << ") does not match number of data points ("
         << xs.n_cols << ")!" << std::endl;
-    throw std::invalid_argument(oss.str());
   }
 }
 
@@ -305,8 +301,8 @@ MLAlgorithm CVBase<MLAlgorithm,
                                             const MLAlgorithmArgs&... args)
 {
   if (!isDatasetInfoPassed)
-    throw std::invalid_argument(
-        "The given MLAlgorithm requires a data::DatasetInfo parameter");
+    Log::Fatal << "The given MLAlgorithm requires a data::DatasetInfo\
+        parameter" << std::endl;
 
   return MLAlgorithm(xs, datasetInfo, ys, numClasses, args...);
 }
