@@ -57,7 +57,7 @@ bool SaveImage(const std::string& filename,
   if (info.Width() * info.Height() * info.Channels() != image.n_elem)
   {
     Log::Fatal << "data::Save(): The given image dimensions do not match the "
-        << "dimensions of the matrix to be saved!" << std::endl;    
+        << "dimensions of the matrix to be saved!" << std::endl;
   }
 
   bool status = false;
