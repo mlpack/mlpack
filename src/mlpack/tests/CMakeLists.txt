@@ -165,6 +165,7 @@ add_executable(mlpack_test
   main_tests/hmm_test_utils.hpp
   main_tests/kernel_pca_test.cpp
   main_tests/range_search_test.cpp
+  main_tests/preprocess_encoding_string_test.cpp
 )
 
 # Link dependencies of test executable.
