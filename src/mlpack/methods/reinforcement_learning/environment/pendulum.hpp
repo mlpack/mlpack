@@ -222,12 +222,6 @@ class Pendulum
           "being taken.";
       return true;
     }
-    else if (state.Theta() > M_PI - angleThreshold ||
-        state.Theta() < -M_PI + angleThreshold)
-    {
-      Log::Info << "Episode terminated due to agent succeeding.";
-      return true;
-    }
     return false;
   }
 
