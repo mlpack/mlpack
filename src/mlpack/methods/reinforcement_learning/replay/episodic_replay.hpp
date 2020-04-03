@@ -116,13 +116,13 @@ class EpisodicReplay
   /**
    * Get the number of episodes in the memory.
    *
-   * @return Actual used memory size
+   * @return Actual used memory size.
    */
   const size_t Size()
   {
     if (states[position].size() == 0)
       return full ? capacity : position;
-    return full ? capacity : (position+1);
+    return full ? capacity : (position + 1);
   }
 
   /**
@@ -135,7 +135,7 @@ class EpisodicReplay
    * @param isTerminal Indicate whether corresponding next state is terminal
    *        state.
    * @param random Whether episode is sampled random or most recent episode
-   *        is sampled
+   *        is sampled.
    */
   void Sample(arma::mat& episodeStates,
               arma::icolvec& episodeActions,
@@ -156,9 +156,9 @@ class EpisodicReplay
       if (states[position].size() == 0 || clear == true)
       {
         if (position == 0 && full)
-            episodeNum = capacity-1;
+            episodeNum = capacity - 1;
         else if (position != 0)
-          episodeNum = position-1;
+          episodeNum = position - 1;
       }
       else
         episodeNum = position;
