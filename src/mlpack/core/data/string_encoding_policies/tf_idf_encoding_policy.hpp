@@ -46,7 +46,7 @@ class TfIdfEncodingPolicy
    * TERM_FREQUENCY   Term frequency equals the number of times when the encoded
    *                  token occurs in the row divided by the row size.
    * SUBLINEAR_TF     Term frequency equals \f$ 1 + log(rawCount), \f$ where
-                      rawCount is equal to the number of times when the encoded
+   *                  rawCount is equal to the number of times when the encoded
    *                  token occurs in the row.
    */
   enum class TfTypes
@@ -86,7 +86,7 @@ class TfIdfEncodingPolicy
    * @param output Output matrix to store the encoded results (sp_mat or mat).
    * @param datasetSize The number of strings in the input dataset.
    * @param maxNumTokens The maximum number of tokens in the strings of the 
-                        input dataset (not used).
+   *                     input dataset (not used).
    * @param dictionarySize The size of the dictionary.
    */
   template<typename MatType>
@@ -109,7 +109,7 @@ class TfIdfEncodingPolicy
    * @param output Output matrix to store the encoded results.
    * @param datasetSize The number of strings in the input dataset.
    * @param maxNumTokens The maximum number of tokens in the strings of the 
-                         input dataset (not used).
+   *                     input dataset (not used).
    * @param dictionarySize The size of the dictionary.
    */
   template<typename ElemType>

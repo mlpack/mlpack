@@ -41,7 +41,7 @@ class DictionaryEncodingPolicy
    * @param output Output matrix to store the encoded results (sp_mat or mat).
    * @param datasetSize The number of strings in the input dataset.
    * @param maxNumTokens The maximum number of tokens in the strings of the 
-                         input dataset.
+   *                     input dataset.
    * @param dictionarySize The size of the dictionary (not used).
    */
   template<typename MatType>
@@ -55,7 +55,7 @@ class DictionaryEncodingPolicy
 
   /**
    * The function performs the dictionary encoding algorithm i.e. it writes
-   * the encoded token to the ouput. The encoder writes data in the
+   * the encoded token to the output. The encoder writes data in the
    * column-major order.
    *
    * @tparam MatType The output matrix type.
@@ -76,7 +76,7 @@ class DictionaryEncodingPolicy
 
   /**
    * The function performs the dictionary encoding algorithm i.e. it writes
-   * the encoded token to the ouput. This is an overload function which saves
+   * the encoded token to the output. This is an overload function which saves
    * the result into the given vector to avoid padding. The encoder writes data
    * in the row-major order.
    *

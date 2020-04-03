@@ -24,10 +24,10 @@ namespace data {
  * Definition of the BagOfWordsEncodingPolicy class.
  *
  * BagOfWords is used as a helper class for StringEncoding. The encoder maps
- * each dataset item to a vector of size N, where N is equal to the total number
- * of tokens. If an item of the dataset has the i-th token, then the i-th
- * coordinate of the corresponding vector is equal to 1, otherwise it's equal to
- * zero. The order in which the tokens are labeled is defined by the dictionary
+ * each dataset item to a vector of size N, where N is equal to the total unique
+ * number of tokens. The i-th coordinate of the output vector is equal to
+ * the number of times when the i-th token occurs in the corresponding dataset
+ * item. The order in which the tokens are labeled is defined by the dictionary
  * used by the StringEncoding class. The encoder writes data either in the
  * column-major order or in the row-major order depending on the output data
  * type.
@@ -44,7 +44,7 @@ class BagOfWordsEncodingPolicy
    * @param output Output matrix to store the encoded results (sp_mat or mat).
    * @param datasetSize The number of strings in the input dataset.
    * @param maxNumTokens The maximum number of tokens in the strings of the 
-                         input dataset (not used).
+   *                     input dataset (not used).
    * @param dictionarySize The size of the dictionary.
    */
   template<typename MatType>
@@ -67,7 +67,7 @@ class BagOfWordsEncodingPolicy
    * @param output Output matrix to store the encoded results.
    * @param datasetSize The number of strings in the input dataset.
    * @param maxNumTokens The maximum number of tokens in the strings of the 
-                         input dataset (not used).
+   *                     input dataset (not used).
    * @param dictionarySize The size of the dictionary.
    */
   template<typename ElemType>
@@ -98,7 +98,7 @@ class BagOfWordsEncodingPolicy
                      const size_t /* index */)
   {
     // The labels are assigned sequentially starting from one.
-    output(value - 1, line) = 1;
+    output(value - 1, line) += 1;
   }
 
   /**
@@ -123,7 +123,7 @@ class BagOfWordsEncodingPolicy
                      const size_t /* index */)
   {
     // The labels are assigned sequentially starting from one.
-    output[line][value - 1] = 1;
+    output[line][value - 1] += 1;
   }
 
   /**

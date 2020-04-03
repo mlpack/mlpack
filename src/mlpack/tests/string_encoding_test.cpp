@@ -596,7 +596,7 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
 
   vectorizer = CountVectorizer(strip_accents=False, lowercase=False,
       preprocessor=None, tokenizer=tokenizer, stop_words=None,
-      vocabulary=dictionary, binary=True)
+      vocabulary=dictionary, binary=False)
 
   X = vectorizer.fit_transform(string_encoding_input)
 
@@ -607,7 +607,7 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
   arma::mat expected = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+    { 0, 1, 0, 0, 0, 2, 0, 0, 3, 3, 0, 0, 0, 3, 0, 0, 1, 1, 1, 3, 1, 1, 1, 1,
       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
@@ -647,7 +647,7 @@ BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingTest)
   vector<vector<size_t>> expected = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+    { 0, 1, 0, 0, 0, 2, 0, 0, 3, 3, 0, 0, 0, 3, 0, 0, 1, 1, 1, 3, 1, 1, 1, 1,
       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
@@ -673,8 +673,8 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingIndividualCharactersTest)
   encoder.Encode(input, output, CharExtract());
 
   arma::mat target = {
-    { 1, 1, 1, 0, 0 },
-    { 0, 1, 1, 1, 1 },
+    { 1, 2, 2, 0, 0 },
+    { 0, 2, 2, 2, 1 },
     { 1, 1, 0, 1, 0 }
   };
 
@@ -699,8 +699,8 @@ BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingIndividualCharactersTest)
   encoder.Encode(input, output, CharExtract());
 
   vector<vector<size_t>> expected = {
-    { 1, 1, 1, 0, 0 },
-    { 0, 1, 1, 1, 1 },
+    { 1, 2, 2, 0, 0 },
+    { 0, 2, 2, 2, 1 },
     { 1, 1, 0, 1, 0 }
   };
 
