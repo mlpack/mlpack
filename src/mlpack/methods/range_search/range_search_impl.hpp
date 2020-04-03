@@ -251,7 +251,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Train(
   Tree* referenceTree)
 {
   if (naive)
-    Log::Fatal << "cannot train on given reference tree when"
+    Log::Fatal << "cannot train on given reference tree when "
         "naive search (without trees) is desired" << std::endl;
 
   if (treeOwner && referenceTree)

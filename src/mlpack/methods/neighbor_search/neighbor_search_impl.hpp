@@ -71,7 +71,7 @@ SingleTreeTraversalType>::NeighborSearch(MatType referenceSetIn,
     treeNeedsReset(false)
 {
   if (epsilon < 0)
-    throw std::invalid_argument("epsilon must be non-negative");
+    Log::Fatal << "epsilon must be non-negative";
 }
 
 // Construct the object.
@@ -98,7 +98,7 @@ SingleTreeTraversalType>::NeighborSearch(Tree referenceTree,
     treeNeedsReset(false)
 {
   if (epsilon < 0)
-    throw std::invalid_argument("epsilon must be non-negative");
+    Log::Fatal << "epsilon must be non-negative";
 }
 
 // Construct the object without a reference dataset.
@@ -124,7 +124,7 @@ SingleTreeTraversalType>::NeighborSearch(const NeighborSearchMode mode,
     treeNeedsReset(false)
 {
   if (epsilon < 0)
-    throw std::invalid_argument("epsilon must be non-negative");
+    Log::Fatal << "epsilon must be non-negative";
 
   // Build the tree on the empty dataset, if necessary.
   if (mode != NAIVE_MODE)
@@ -356,8 +356,8 @@ void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree referenceTree)
 {
   if (searchMode == NAIVE_MODE)
-    throw std::invalid_argument("cannot train on given reference tree when "
-        "naive search (without trees) is desired");
+    Log::Fatal << "cannot train on given reference tree when "
+        "naive search (without trees) is desired" << std::endl;
 
   if (this->referenceTree)
   {
@@ -394,10 +394,9 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
 {
   if (k > referenceSet->n_cols)
   {
-    std::stringstream ss;
-    ss << "Requested value of k (" << k << ") is greater than the number of "
-        << "points in the reference set (" << referenceSet->n_cols << ")";
-    throw std::invalid_argument(ss.str());
+    Log::Fatal << "Requested value of k (" << k << ") is greater than the "
+        "number of " << "points in the reference set (" << referenceSet->n_cols
+        << ")" << std::endl;
   }
 
   Timer::Start("computing_neighbors");
@@ -611,16 +610,15 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
 {
   if (k > referenceSet->n_cols)
   {
-    std::stringstream ss;
-    ss << "Requested value of k (" << k << ") is greater than the number of "
-        << "points in the reference set (" << referenceSet->n_cols << ")";
-    throw std::invalid_argument(ss.str());
+    Log::Fatal << "Requested value of k (" << k << ") is greater than the "
+        "number of " << "points in the reference set (" << referenceSet->n_cols
+        << ")" << std::endl;
   }
 
   // Make sure we are in dual-tree mode.
   if (searchMode != DUAL_TREE_MODE)
-    throw std::invalid_argument("cannot call NeighborSearch::Search() with a "
-        "query tree when naive or singleMode are set to true");
+    Log::Fatal << "cannot call NeighborSearch::Search() with a "
+        "query tree when naive or singleMode are set to true";
 
   Timer::Start("computing_neighbors");
 
@@ -694,18 +692,15 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
 {
   if (k > referenceSet->n_cols)
   {
-    std::stringstream ss;
-    ss << "Requested value of k (" << k << ") is greater than the number of "
-        << "points in the reference set (" << referenceSet->n_cols << ")";
-    throw std::invalid_argument(ss.str());
+    Log::Fatal << "Requested value of k (" << k << ") is greater than the"
+        " number of " << "points in the reference set (" <<
+        referenceSet->n_cols << ")" << std::endl;
   }
   if (k == referenceSet->n_cols)
   {
-    std::stringstream ss;
-    ss << "Requested value of k (" << k << ") is equal to the number of "
-        << "points in the reference set (" << referenceSet->n_cols << ") and "
-        << "no query set has been provided.";
-    throw std::invalid_argument(ss.str());
+    Log::Fatal << "Requested value of k (" << k << ") is equal to the number"
+        " of " << "points in the reference set (" << referenceSet->n_cols << ") and "
+        << "no query set has been provided." << std::endl;
   }
 
   Timer::Start("computing_neighbors");
@@ -881,7 +876,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::EffectiveError(
 {
   if (foundDistances.n_rows != realDistances.n_rows ||
       foundDistances.n_cols != realDistances.n_cols)
-    throw std::invalid_argument("matrices provided must have equal size");
+    Log::Fatal << "matrices provided must have equal size" << std::endl;
 
   double effectiveError = 0;
   size_t numCases = 0;
@@ -919,7 +914,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Recall(
 {
   if (foundNeighbors.n_rows != realNeighbors.n_rows ||
       foundNeighbors.n_cols != realNeighbors.n_cols)
-    throw std::invalid_argument("matrices provided must have equal size");
+    Log::Fatal << "matrices provided must have equal size" << std::endl;
 
   size_t found = 0;
   for (size_t col = 0; col < foundNeighbors.n_cols; ++col)
