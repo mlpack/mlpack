@@ -28,39 +28,38 @@ CosineEmbeddingLoss<InputDataType, OutputDataType>::CosineEmbeddingLoss(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double CosineEmbeddingLoss<InputDataType, OutputDataType>::Forward(
-    const InputType& input, const TargetType& target)
+typename InputType::elem_type
+CosineEmbeddingLoss<InputDataType, OutputDataType>::Forward(
+    const InputType& input,
+    const TargetType& target)
 {
+  typedef typename InputType::elem_type ElemType;
+
   const size_t cols = input.n_cols;
   const size_t batchSize = input.n_elem / cols;
   if (arma::size(input) != arma::size(target))
-  {
     Log::Fatal << "Input Tensors must have same dimensions." << std::endl;
-  }
 
   arma::colvec inputTemp1 = arma::vectorise(input);
   arma::colvec inputTemp2 = arma::vectorise(target);
-  double loss = 0.0;
+  ElemType loss = 0.0;
 
   for (size_t i = 0; i < inputTemp1.n_elem; i += cols)
   {
-    double cosDist = kernel::CosineDistance::Evaluate(inputTemp1(arma::span(i,
-         i + cols - 1)), inputTemp2(arma::span(i, i + cols - 1)));
+    const ElemType cosDist = kernel::CosineDistance::Evaluate(
+        inputTemp1(arma::span(i, i + cols - 1)), inputTemp2(arma::span(i,
+        i + cols - 1)));
     if (similarity)
-    {
       loss += 1 - cosDist;
-    }
     else
     {
-      double currentLoss = cosDist - margin;
+      const ElemType currentLoss = cosDist - margin;
       loss += currentLoss > 0 ? currentLoss : 0;
     }
   }
 
   if (takeMean)
-  {
-    loss = (double)loss / batchSize;
-  }
+    loss = (ElemType) loss / batchSize;
 
   return loss;
 }
@@ -72,12 +71,12 @@ void CosineEmbeddingLoss<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     OutputType& output)
 {
+  typedef typename InputType::elem_type ElemType;
+
   const size_t cols = input.n_cols;
   const size_t batchSize = input.n_elem / cols;
   if (arma::size(input) != arma::size(target))
-  {
     Log::Fatal << "Input Tensors must have same dimensions." << std::endl;
-  }
 
   arma::colvec inputTemp1 = arma::vectorise(input);
   arma::colvec inputTemp2 = arma::vectorise(target);
@@ -87,16 +86,14 @@ void CosineEmbeddingLoss<InputDataType, OutputDataType>::Backward(
       false, false);
   for (size_t i = 0; i < inputTemp1.n_elem; i += cols)
   {
-    double cosDist = kernel::CosineDistance::Evaluate(inputTemp1(arma::span(i,
-         i + cols -1)), inputTemp2(arma::span(i, i + cols -1)));
+    const ElemType cosDist = kernel::CosineDistance::Evaluate(inputTemp1(
+        arma::span(i, i + cols -1)), inputTemp2(arma::span(i, i + cols -1)));
 
     if (cosDist < margin && !similarity)
-    {
       outputTemp(arma::span(i, i + cols - 1)).zeros();
-    }
     else
     {
-      int multiplier = similarity ? 1 : -1;
+      const int multiplier = similarity ? 1 : -1;
       outputTemp(arma::span(i, i + cols -1)) = -1 * multiplier *
           (arma::normalise(inputTemp2(arma::span(i, i + cols - 1))) -
           cosDist * arma::normalise(inputTemp1(arma::span(i, i + cols -

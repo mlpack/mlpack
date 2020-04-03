@@ -621,7 +621,7 @@ BOOST_AUTO_TEST_CASE(CosineEmbeddingLossTest)
   input2(1) = 2;
   input2(2) = 2;
   loss = module.Forward(input1, input2);
-  // Caclulated using torch.nn.CosineEmbeddingLoss().
+  // Calculated using torch.nn.CosineEmbeddingLoss().
   BOOST_REQUIRE_CLOSE(loss, 2.897367, 1e-3);
 
   // Test the Backward function.
@@ -645,7 +645,7 @@ BOOST_AUTO_TEST_CASE(CosineEmbeddingLossTest)
   input4(9) = 2;
   input4(11) = 2;
   loss = module2.Forward(input3, input4);
-  // Caclulated using torch.nn.CosineEmbeddingLoss().
+  // Calculated using torch.nn.CosineEmbeddingLoss().
   BOOST_REQUIRE_CLOSE(loss, 0.55395, 1e-3);
 
   // Test the Backward function.

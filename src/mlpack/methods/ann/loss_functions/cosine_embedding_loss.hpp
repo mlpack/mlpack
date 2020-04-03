@@ -18,7 +18,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Cosine Embeddings Loss function is used for measuring whether two inputs are
+ * Cosine Embedding Loss function is used for measuring whether two inputs are
  * similar or dissimilar, using the cosine distance, and is typically used
  * for learning nonlinear embeddings or semi-supervised learning.
  *
@@ -51,8 +51,8 @@ class CosineEmbeddingLoss
    *                 to 0 and 1 respectively. Default value = 0.
    */
   CosineEmbeddingLoss(const double margin = 0.0,
-                       const bool similarity = true,
-                       const bool takeMean = false);
+                      const bool similarity = true,
+                      const bool takeMean = false);
 
   /**
    * Ordinary feed forward pass of a neural network.
@@ -61,7 +61,8 @@ class CosineEmbeddingLoss
    * @param target The target vector.
    */
   template <typename InputType, typename TargetType>
-  double Forward(const InputType& input, const TargetType& target);
+  typename InputType::elem_type Forward(const InputType& input,
+                                        const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -76,34 +77,34 @@ class CosineEmbeddingLoss
                 OutputType& output);
 
   //! Get the input parameter.
-  InputDataType &InputParameter() const { return inputParameter; }
+  InputDataType& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
-  InputDataType &InputParameter() { return inputParameter; }
+  InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType &OutputParameter() const { return outputParameter; }
+  OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType &OutputParameter() { return outputParameter; }
+  OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType &Delta() const { return delta; }
+  OutputDataType& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType &Delta() { return delta; }
+  OutputDataType& Delta() { return delta; }
 
   //! Get the value of takeMean.
   bool TakeMean() const { return takeMean; }
   //! Modify the value of takeMean.
-  bool &TakeMean() { return takeMean; }
+  bool& TakeMean() { return takeMean; }
 
   //! Get the value of margin.
   double Margin() const { return margin; }
   //! Modify the value of takeMean.
-  double &Margin() { return margin; }
+  double& Margin() { return margin; }
 
   //! Get the value of similarity hyperparameter.
   bool Similarity() const { return similarity; }
   //! Modify the value of takeMean.
-  bool &Similarity() { return similarity; }
+  bool& Similarity() { return similarity; }
 
   /**
    * Serialize the layer.
