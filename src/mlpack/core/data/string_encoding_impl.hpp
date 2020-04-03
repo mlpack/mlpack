@@ -107,6 +107,8 @@ EncodeHelper(const std::vector<std::string>& input,
 {
   size_t numColumns = 0;
 
+  policy.Reset();
+
   // The first pass adds the extracted tokens to the dictionary.
   for (size_t i = 0; i < input.size(); i++)
   {
@@ -132,6 +134,7 @@ EncodeHelper(const std::vector<std::string>& input,
       token = tokenizer(strView);
       numTokens++;
     }
+
     numColumns = std::max(numColumns, numTokens);
   }
   policy.InitMatrix(output, input.size(), numColumns, dictionary.Size());
@@ -162,6 +165,8 @@ EncodeHelper(const std::vector<std::string>& input,
              typename std::enable_if<StringEncodingPolicyTraits<
                  PolicyType>::onePassEncoding>::type*)
 {
+  policy.Reset();
+
   // The loop below extracts the tokens and writes the encoded values
   // at once.
   for (size_t i = 0; i < input.size(); i++)

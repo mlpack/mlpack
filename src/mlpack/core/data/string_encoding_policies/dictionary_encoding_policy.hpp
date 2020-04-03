@@ -33,6 +33,14 @@ class DictionaryEncodingPolicy
 {
  public:
   /**
+   * Clear the necessary internal variables.
+   */
+  static void Reset()
+  {
+    // Nothing to do.
+  }
+
+  /**
    * The function initializes the output matrix. The encoder writes data
    * in the column-major order.
    *

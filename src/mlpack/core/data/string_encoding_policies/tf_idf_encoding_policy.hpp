@@ -78,6 +78,16 @@ class TfIdfEncodingPolicy
   { }
 
   /**
+   * Clear the necessary internal variables.
+   */
+  void Reset()
+  {
+    tokensFrequences.clear();
+    numContainingStrings.clear();
+    linesSizes.clear();
+  }
+
+  /**
    * The function initializes the output matrix. The encoder writes data
    * in the row-major order.
    *

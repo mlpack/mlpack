@@ -1267,11 +1267,11 @@ BOOST_AUTO_TEST_CASE(SublinearTfIdfEncodingIndividualCharactersTest)
   TfIdfEncoding<CharExtract::TokenType>
       encoder(TfIdfEncodingPolicy::TfTypes::SUBLINEAR_TF, false);
 
+  encoder.Encode(input, output, CharExtract());
+
   /* The expected values were obtained by almost the same script as in
      RawCountSmoothIdfEncodingIndividualCharactersTest. The only difference is
      tf_type equals 'sublinear_tf' and smooth_idf equals False. */
-  encoder.Encode(input, output, CharExtract());
-
   arma::mat target = {
     { 1.40546510810816, 1.69314718055995, 2.37965928516872, 0, 0 },
     { 0, 1.69314718055995, 2.37965928516872, 2.37965928516872,
