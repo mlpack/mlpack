@@ -1641,6 +1641,47 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
       arma::mat("1.6487; 0.6487") - delta)), 1e-3);
 }
 
+/**
+ * Simple SoftMax module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleSoftMaxLayerTest)
+{
+  arma::mat input, output, gy, g;
+  SoftMax<> module;
+
+  // Test the forward function.
+  input = arma::mat("1.7; 3.6");
+  module.Forward(input, output);
+  BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
+    arma::mat("0.130108; 0.869892") - output)), 1e-4);
+
+  // Test the backward function.
+  gy = arma::zeros(input.n_rows, input.n_cols);
+  gy(0) = 1;
+  module.Backward(output, gy, g);
+  BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
+    arma::mat("0.11318; -0.11318") - g)), 1e-04);
+}
+
+/**
+ * Jacobian SoftMax module test.
+ */
+BOOST_AUTO_TEST_CASE(JacobianSoftMaxLayerTest)
+{
+  for (size_t i = 0; i < 5; i++)
+  {
+    const size_t inputElements = math::RandInt(2, 1000);
+
+    arma::mat input;
+    input.set_size(inputElements, 1);
+
+    SoftMax<> module;
+
+    double error = JacobianTest(module, input);
+    BOOST_REQUIRE_LE(error, 1e-5);
+  }
+}
+
 /*
  * Simple test for the BilinearInterpolation layer
  */
