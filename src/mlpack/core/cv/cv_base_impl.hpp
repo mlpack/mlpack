@@ -301,8 +301,8 @@ MLAlgorithm CVBase<MLAlgorithm,
                                             const MLAlgorithmArgs&... args)
 {
   if (!isDatasetInfoPassed)
-    Log::Fatal << "The given MLAlgorithm requires a data::DatasetInfo\
-        parameter" << std::endl;
+    Log::Fatal << "The given MLAlgorithm requires a data::DatasetInfo"
+        " parameter" << std::endl;
 
   return MLAlgorithm(xs, datasetInfo, ys, numClasses, args...);
 }
