@@ -737,7 +737,7 @@ BOOST_AUTO_TEST_CASE(RecallTestException)
   q4.set_size(2 * k, numQueries);
 
   BOOST_REQUIRE_THROW(LSHSearch<>::ComputeRecall(base, q4),
-      std::invalid_argument);
+      std::runtime_error);
 }
 
 BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
@@ -750,7 +750,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
   arma::mat distances;
   arma::Mat<size_t> neighbors;
   BOOST_REQUIRE_THROW(lsh.Search(dataset, 2, neighbors, distances),
-      std::invalid_argument);
+      std::runtime_error);
 
   // Now, train.
   lsh.Train(dataset, 4, 3, 3.0, 12, 4);

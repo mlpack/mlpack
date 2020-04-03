@@ -180,11 +180,11 @@ BOOST_AUTO_TEST_CASE(EmptySearchTest)
   arma::mat distances;
 
   BOOST_REQUIRE_THROW(empty.Search(dataset, 5, neighbors, distances),
-      std::invalid_argument);
+      std::runtime_error);
   BOOST_REQUIRE_THROW(empty.Search(5, neighbors, distances),
-      std::invalid_argument);
+      std::runtime_error);
   BOOST_REQUIRE_THROW(empty.Search(queryTree, 5, neighbors, distances),
-      std::invalid_argument);
+      std::runtime_error);
 }
 
 /**
@@ -281,7 +281,7 @@ BOOST_AUTO_TEST_CASE(NaiveTrainTreeTest)
   arma::mat dataset = arma::randu<arma::mat>(5, 100);
   KNN::Tree tree(dataset);
 
-  BOOST_REQUIRE_THROW(empty.Train(std::move(tree)), std::invalid_argument);
+  BOOST_REQUIRE_THROW(empty.Train(std::move(tree)), std::runtime_error);
 }
 
 /**

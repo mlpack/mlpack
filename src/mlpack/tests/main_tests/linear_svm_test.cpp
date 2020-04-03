@@ -430,9 +430,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMZeroNumberOfClassesTest)
   SetInputParam("labels", std::move(trainLabels));
 
   // Number of classes for optimizer is only one.
-  // It should throw a invalid_argument error.
+  // It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::invalid_argument);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 

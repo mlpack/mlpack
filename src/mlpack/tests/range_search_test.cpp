@@ -1069,7 +1069,7 @@ BOOST_AUTO_TEST_CASE(EmptySearchTest)
   arma::mat querySet = arma::randu<arma::mat>(3, 100);
 
   BOOST_REQUIRE_THROW(rs.Search(querySet, math::Range(0.0, 10.0), neighbors,
-      distances), std::invalid_argument);
+      distances), std::runtime_error);
 }
 
 /**
@@ -1161,7 +1161,7 @@ BOOST_AUTO_TEST_CASE(NaiveTrainTreeTest)
   arma::mat dataset = arma::randu<arma::mat>(5, 100);
   RangeSearch<>::Tree tree(dataset);
 
-  BOOST_REQUIRE_THROW(empty.Train(&tree), std::invalid_argument);
+  BOOST_REQUIRE_THROW(empty.Train(&tree), std::runtime_error);
 }
 
 /**
