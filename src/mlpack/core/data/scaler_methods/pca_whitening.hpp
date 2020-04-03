@@ -14,6 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/lin_alg.hpp>
+#include <mlpack/core/math/ccov.hpp>
 
 namespace mlpack {
 namespace data {

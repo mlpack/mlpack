@@ -15,6 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
+#include <mlpack/core/kernels/gaussian_kernel.hpp>
 
 #include "kde_stat.hpp"
 

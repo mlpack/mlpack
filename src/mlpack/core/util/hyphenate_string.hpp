@@ -20,11 +20,17 @@ namespace util {
  * amount of padding on each line.  This is used for option output.
  *
  * @param str String to hyphenate (splits are on ' ').
- * @param padding Amount of padding on the left for each new line.
+ * @param prefix Prefix to hyphenate a string with
+ * @throw std::invalid_argument if prefix.size() >= 80
  */
-inline std::string HyphenateString(const std::string& str, int padding)
+inline std::string HyphenateString(const std::string& str, const std::string& prefix)
 {
-  size_t margin = 80 - padding;
+  if (prefix.size() >= 80)
+  {
+    throw std::invalid_argument("Prefix size must be less than 80");
+  }
+
+  size_t margin = 80 - prefix.size();
   if (str.length() < margin)
     return str;
   std::string out("");
@@ -53,7 +59,7 @@ inline std::string HyphenateString(const std::string& str, int padding)
     if (splitpos < str.length())
     {
       out += '\n';
-      out += std::string(padding, ' ');
+      out += prefix;
     }
 
     pos = splitpos;
@@ -61,6 +67,18 @@ inline std::string HyphenateString(const std::string& str, int padding)
       pos++;
   }
   return out;
+}
+
+/**
+ * Hyphenate a string or split it onto multiple 80-character lines, with some
+ * amount of padding on each line.  This is used for option output.
+ *
+ * @param str String to hyphenate (splits are on ' ').
+ * @param padding Amount of padding on the left for each new line.
+ */
+inline std::string HyphenateString(const std::string& str, int padding)
+{
+  return HyphenateString(str, std::string(padding, ' '));
 }
 
 } // namespace util
