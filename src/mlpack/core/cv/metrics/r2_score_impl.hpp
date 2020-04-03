@@ -22,9 +22,9 @@ double R2Score::Evaluate(MLAlgorithm& model,
 {
   if (data.n_cols != responses.n_cols)
   {
-    Log::Fatal << "R2Score::Evaluate(): number of points (" << data.n_cols << ") "
-        << "does not match number of responses (" << responses.n_cols << ")!"
-        << std::endl;
+    Log::Fatal << "R2Score::Evaluate(): number of points (" << data.n_cols <<
+        ") " << "does not match number of responses (" << responses.n_cols <<
+        ")!" << std::endl;
   }
 
   ResponsesType predictedResponses;

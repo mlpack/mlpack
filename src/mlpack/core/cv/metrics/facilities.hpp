@@ -32,8 +32,8 @@ void AssertSizes(const DataType& data,
 {
   if (data.n_cols != labels.n_elem)
   {
-    Log::Fatal << callerDescription << ": number of points (" << data.n_cols << ") "
-        << "does not match number of labels (" << labels.n_elem << ")!"
+    Log::Fatal << callerDescription << ": number of points (" << data.n_cols <<
+        ") " << "does not match number of labels (" << labels.n_elem << ")!"
         << std::endl;
   }
 }

@@ -867,9 +867,9 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
 
   if (k > referenceSet.n_cols)
   {
-    Log::Fatal << "LSHSearch::Search(): requested " << k << " approximate nearest "
-        << "neighbors, but reference set has " << referenceSet.n_cols
-        << " points!" << std::endl;
+    Log::Fatal << "LSHSearch::Search(): requested " << k <<
+        " approximate nearest " << "neighbors, but reference"
+        " set has " << referenceSet.n_cols << " points!" << std::endl;
   }
 
   // Set the size of the neighbor and distance matrices.

@@ -699,8 +699,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   if (k == referenceSet->n_cols)
   {
     Log::Fatal << "Requested value of k (" << k << ") is equal to the number"
-        " of " << "points in the reference set (" << referenceSet->n_cols << ") and "
-        << "no query set has been provided." << std::endl;
+        " of " << "points in the reference set (" << referenceSet->n_cols <<
+        ") and " << "no query set has been provided." << std::endl;
   }
 
   Timer::Start("computing_neighbors");

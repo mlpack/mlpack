@@ -469,7 +469,7 @@ double DecisionTree<FitnessFunction,
     DimensionSelectionType dimensionSelector)
 {
   // Sanity check on data.
-  mlpack::cv::AssertSizes<MatType,LabelsType>(data, labels,
+  mlpack::cv::AssertSizes<MatType, LabelsType>(data, labels,
       "DecisionTree::Train()");
 
   using TrueMatType = typename std::decay<MatType>::type;
@@ -512,7 +512,7 @@ double DecisionTree<FitnessFunction,
     DimensionSelectionType dimensionSelector)
 {
   // Sanity check on data.
-  mlpack::cv::AssertSizes<MatType,LabelsType>(data, labels,
+  mlpack::cv::AssertSizes<MatType, LabelsType>(data, labels,
       "DecisionTree::Train()");
 
   using TrueMatType = typename std::decay<MatType>::type;
@@ -561,7 +561,7 @@ double DecisionTree<FitnessFunction,
         WeightsType>::type>::value>*)
 {
   // Sanity check on data.
-  mlpack::cv::AssertSizes<MatType,LabelsType>(data, labels,
+  mlpack::cv::AssertSizes<MatType, LabelsType>(data, labels,
       "DecisionTree::Train()");
 
   using TrueMatType = typename std::decay<MatType>::type;
@@ -610,7 +610,7 @@ double DecisionTree<FitnessFunction,
         WeightsType>::type>::value>*)
 {
   // Sanity check on data.
-  mlpack::cv::AssertSizes<MatType,LabelsType>(data, labels,
+  mlpack::cv::AssertSizes<MatType, LabelsType>(data, labels,
       "DecisionTree::Train()");
 
   using TrueMatType = typename std::decay<MatType>::type;
