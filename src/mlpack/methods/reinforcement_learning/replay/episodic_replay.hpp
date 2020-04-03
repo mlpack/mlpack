@@ -40,7 +40,7 @@ class EpisodicReplay
   using StateType = typename EnvironmentType::State;
 
   /**
-  * Construct an instance of episode experience replay class.
+  * Construct an instance of EpisodicReplay class.
   */
   EpisodicReplay():
       capacity(0),
@@ -50,9 +50,9 @@ class EpisodicReplay
   { /* Nothing to do here. */ }
 
   /**
-  * Construct an instance of episode experience replay class.
+  * Construct an instance of EpisodicReplay class.
   *
-  * @param capacity Total memory size in terms of number of episodes.
+  * @param capacity Maximum number of episodes.
   * @param maxEpisode_len The maximum episode length possible.
   * @param dimension The dimension of an encoded state.
   */
@@ -121,9 +121,7 @@ class EpisodicReplay
   const size_t Size()
   {
     if (states[position].size() == 0)
-    {
       return full ? capacity : position;
-    }
     return full ? capacity : (position+1);
   }
 
@@ -157,12 +155,9 @@ class EpisodicReplay
     {
       if (states[position].size() == 0 || clear == true)
       {
-        if (position == 0)
-        {
-          if (full)
+        if (position == 0 && full)
             episodeNum = capacity-1;
-        }
-        else
+        else if(position != 0)
           episodeNum = position-1;
       }
       else
