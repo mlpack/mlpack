@@ -247,8 +247,8 @@ void LSHSearch<SortPolicy>::Train(arma::mat referenceSet,
   }
   else // The user gave something wrong.
   {
-    Log::Fatal << "LSHSearch::Train(): number of projection\
-        tables provided must be equal to numProj" << std::endl;
+    Log::Fatal << "LSHSearch::Train(): number of projection "
+         "tables provided must be equal to numProj" << std::endl;
   }
 
   // We will store the second hash vectors in this matrix; the second hash
@@ -1006,8 +1006,8 @@ double LSHSearch<SortPolicy>::ComputeRecall(
 {
   if (foundNeighbors.n_rows != realNeighbors.n_rows ||
       foundNeighbors.n_cols != realNeighbors.n_cols)
-    Log::Fatal << "LSHSearch::ComputeRecall(): matrices provided\
-        must have equal size" << std::endl;
+    Log::Fatal << "LSHSearch::ComputeRecall(): matrices provided "
+        "must have equal size" << std::endl;
 
   const size_t queries = foundNeighbors.n_cols;
   const size_t neighbors = foundNeighbors.n_rows; // Should be equal to k.

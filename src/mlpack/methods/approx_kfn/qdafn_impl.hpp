@@ -26,9 +26,9 @@ template<typename MatType>
 QDAFN<MatType>::QDAFN(const size_t l, const size_t m) : l(l), m(m)
 {
   if (l == 0)
-    throw std::invalid_argument("QDAFN::QDAFN(): l must be greater than 0!");
+    Log::Fatal << "QDAFN::QDAFN(): l must be greater than 0!";
   if (m == 0)
-    throw std::invalid_argument("QDAFN::QDAFN(): m must be greater than 0!");
+    Log::Fatal << "QDAFN::QDAFN(): m must be greater than 0!";
 }
 
 // Constructor.
@@ -40,9 +40,9 @@ QDAFN<MatType>::QDAFN(const MatType& referenceSet,
     m(m)
 {
   if (l == 0)
-    throw std::invalid_argument("QDAFN::QDAFN(): l must be greater than 0!");
+    Log::Fatal << "QDAFN::QDAFN(): l must be greater than 0!";
   if (m == 0)
-    throw std::invalid_argument("QDAFN::QDAFN(): m must be greater than 0!");
+    Log::Fatal << "QDAFN::QDAFN(): m must be greater than 0!";
 
   Train(referenceSet);
 }
@@ -97,8 +97,8 @@ void QDAFN<MatType>::Search(const MatType& querySet,
                             arma::mat& distances)
 {
   if (k > m)
-    throw std::invalid_argument("QDAFN::Search(): requested k is greater than "
-        "value of m!");
+    Log::Fatal << "QDAFN::Search(): requested k is greater than "
+        "value of m!";
 
   neighbors.set_size(k, querySet.n_cols);
   neighbors.fill(size_t() - 1);

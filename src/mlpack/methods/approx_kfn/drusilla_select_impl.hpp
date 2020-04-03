@@ -35,11 +35,11 @@ DrusillaSelect<MatType>::DrusillaSelect(const MatType& referenceSet,
     m(m)
 {
   if (l == 0)
-    throw std::invalid_argument("DrusillaSelect::DrusillaSelect(): invalid "
-        "value of l; must be greater than 0!");
+    Log::Fatal << "DrusillaSelect::DrusillaSelect(): invalid "
+        "value of l; must be greater than 0!";
   else if (m == 0)
-    throw std::invalid_argument("DrusillaSelect::DrusillaSelect(): invalid "
-        "value of m; must be greater than 0!");
+    Log::Fatal << "DrusillaSelect::DrusillaSelect(): invalid "
+        "value of m; must be greater than 0!";
 
   Train(referenceSet, l, m);
 }
@@ -53,11 +53,11 @@ DrusillaSelect<MatType>::DrusillaSelect(const size_t l, const size_t m) :
     m(m)
 {
   if (l == 0)
-    throw std::invalid_argument("DrusillaSelect::DrusillaSelect(): invalid "
-        "value of l; must be greater than 0!");
+    Log::Fatal << "DrusillaSelect::DrusillaSelect(): invalid "
+        "value of l; must be greater than 0!";
   else if (m == 0)
-    throw std::invalid_argument("DrusillaSelect::DrusillaSelect(): invalid "
-        "value of m; must be greater than 0!");
+    Log::Fatal << "DrusillaSelect::DrusillaSelect(): invalid "
+        "value of m; must be greater than 0!";
 }
 
 // Train the model.
@@ -74,9 +74,9 @@ void DrusillaSelect<MatType>::Train(
     m = mIn;
 
   if ((l * m) > referenceSet.n_cols)
-    throw std::invalid_argument("DrusillaSelect::Train(): l and m are too "
+    Log::Fatal << "DrusillaSelect::Train(): l and m are too "
         "large!  Choose smaller values.  l*m must be smaller than the number "
-        "of points in the dataset.");
+        "of points in the dataset.";
 
   candidateSet.set_size(referenceSet.n_rows, l * m);
   candidateIndices.set_size(l * m);
@@ -172,12 +172,12 @@ void DrusillaSelect<MatType>::Search(const MatType& querySet,
                                      arma::mat& distances)
 {
   if (candidateSet.n_cols == 0)
-    throw std::runtime_error("DrusillaSelect::Search(): candidate set not "
-        "initialized!  Call Train() first.");
+    Log::Fatal << "DrusillaSelect::Search(): candidate set not "
+        "initialized!  Call Train() first.";
 
   if (k > (l * m))
-    throw std::invalid_argument("DrusillaSelect::Search(): requested k is "
-        "greater than number of points in candidate set!  Increase l or m.");
+    Log::Fatal << "DrusillaSelect::Search(): requested k is "
+        "greater than number of points in candidate set!  Increase l or m.";
 
   // We'll use the NeighborSearchRules class to perform our brute-force search.
   // Note that we aren't using trees for our search, so we can use 'int' as a

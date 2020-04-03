@@ -272,7 +272,7 @@ static void mlpackMain()
     if (trainingSet.n_cols != rawLabels.n_cols)
     {
       Log::Fatal << "The labels must have the same number of points as the "
-          << "training dataset." << endl;
+          << "training dataset." << std::endl;
     }
   }
   else if (CLI::HasParam("training"))
@@ -281,7 +281,7 @@ static void mlpackMain()
     if (trainingSet.n_rows < 2)
     {
       Log::Fatal << "Can't get labels from training data since it has less "
-          << "than 2 rows." << endl;
+          << "than 2 rows." << std::endl;
     }
 
     // The initial predictors for y, Nx1.
@@ -316,7 +316,7 @@ static void mlpackMain()
     {
       if (!CLI::HasParam("input_model"))
         delete model;
-      Log::Fatal << "Given input data has only 1 class!";
+      Log::Fatal << "Given input data has only 1 class!" << std::endl;
     }
 
     if (optimizerType == "lbfgs")
