@@ -40,8 +40,8 @@ class EpisodicReplay
   using StateType = typename EnvironmentType::State;
 
   /**
-  * Construct an instance of EpisodicReplay class.
-  */
+   * Construct an instance of EpisodicReplay class.
+   */
   EpisodicReplay():
       capacity(0),
       position(0),
@@ -50,12 +50,12 @@ class EpisodicReplay
   { /* Nothing to do here. */ }
 
   /**
-  * Construct an instance of EpisodicReplay class.
-  *
-  * @param capacity Maximum number of episodes.
-  * @param maxEpisode_len The maximum episode length possible.
-  * @param dimension The dimension of an encoded state.
-  */
+   * Construct an instance of EpisodicReplay class.
+   *
+   * @param capacity Maximum number of episodes.
+   * @param maxEpisode_len The maximum episode length possible.
+   * @param dimension The dimension of an encoded state.
+   */
   EpisodicReplay(const size_t capacity,
                  const size_t maxEpisodeLen) :
       capacity(capacity),
@@ -71,14 +71,14 @@ class EpisodicReplay
   }
 
   /**
-  * Store the given experience.
-  *
-  * @param state Given state.
-  * @param action Given action.
-  * @param reward Given reward.
-  * @param nextState Given next state.
-  * @param isEnd Whether next state is terminal state.
-  */
+   * Store the given experience.
+   *
+   * @param state Given state.
+   * @param action Given action.
+   * @param reward Given reward.
+   * @param nextState Given next state.
+   * @param isEnd Whether next state is terminal state.
+   */
   void Store(const StateType& state,
              ActionType action,
              double reward,
@@ -114,10 +114,10 @@ class EpisodicReplay
   }
 
   /**
-  * Get the number of episodes in the memory.
-  *
-  * @return Actual used memory size
-  */
+   * Get the number of episodes in the memory.
+   *
+   * @return Actual used memory size
+   */
   const size_t Size()
   {
     if (states[position].size() == 0)
@@ -126,17 +126,17 @@ class EpisodicReplay
   }
 
   /**
-  * Get the most recently added episode.
-  *
-  * @param sampledStates Sampled encoded states.
-  * @param sampledActions Sampled actions.
-  * @param sampledRewards Sampled rewards.
-  * @param sampledNextStates Sampled encoded next states.
-  * @param isTerminal Indicate whether corresponding next state is terminal
-  *        state.
-  * @param random Whether episode is sampled random or most recent episode
-  *        is sampled
-  */
+   * Get the most recently added episode.
+   *
+   * @param sampledStates Sampled encoded states.
+   * @param sampledActions Sampled actions.
+   * @param sampledRewards Sampled rewards.
+   * @param sampledNextStates Sampled encoded next states.
+   * @param isTerminal Indicate whether corresponding next state is terminal
+   *        state.
+   * @param random Whether episode is sampled random or most recent episode
+   *        is sampled
+   */
   void Sample(arma::mat& episodeStates,
               arma::icolvec& episodeActions,
               arma::colvec& episodeRewards,
@@ -207,10 +207,10 @@ class EpisodicReplay
   //! Indicate the position to store new episode.
   size_t position;
 
-  //! Locally-stored maximum episode length
+  //! Locally-stored maximum episode length.
   size_t maxEpisodeLen;
 
-  //! Locally-stored indicator whether to clear current position before storing
+  //! Locally-stored indicator whether to clear current position before storing.
   bool clear;
 
   //! Locally-stored encoded previous states.
@@ -228,7 +228,7 @@ class EpisodicReplay
   //! Locally-stored termination information of previous experience.
   std::vector< std::vector<int> > isTerminal;
 
-  //! Locally-stored indicator that whether the memory is full or not
+  //! Locally-stored indicator that whether the memory is full or not.
   bool full;
 };
 
