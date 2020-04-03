@@ -163,6 +163,7 @@ class EpisodicReplay
       else
         episodeNum = position;
     }
+
     int i = 0;
     for (auto state : states[episodeNum])
     {
