@@ -28,6 +28,7 @@ namespace rl {
  *
  * @tparam EnvironmentType Desired task.
  */
+
 template <typename EnvironmentType>
 class EpisodicReplay
 {
