@@ -28,19 +28,21 @@ namespace ann {
 class ForwardVisitor : public boost::static_visitor<void>
 {
  public:
-  //! Execute the Foward() function given the input and output parameter.
-  ForwardVisitor(arma::mat&& input, arma::mat&& output);
+  //! Execute the Forward() function given the input and output parameter.
+  ForwardVisitor(const arma::mat& input, arma::mat& output);
 
-  //! Execute the Foward() function.
+  //! Execute the Forward() function.
   template<typename LayerType>
   void operator()(LayerType* layer) const;
 
+  void operator()(MoreTypes layer) const;
+
  private:
   //! The input parameter set.
-  arma::mat&& input;
+  const arma::mat& input;
 
   //! The output parameter set.
-  arma::mat&& output;
+  arma::mat& output;
 };
 
 } // namespace ann

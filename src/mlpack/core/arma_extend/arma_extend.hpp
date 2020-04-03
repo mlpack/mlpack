@@ -36,9 +36,10 @@
     #endif
 #endif
 
-// Make sure that U64 and S64 support is enabled.
-#ifndef ARMA_USE_U64S64
-  #define ARMA_USE_U64S64
+// Force definition of old HDF5 API.  Thanks to Mike Roberts for helping find
+// this workaround.
+#if !defined(H5_USE_110_API)
+  #define H5_USE_110_API
 #endif
 
 // Include everything we'll need for serialize().
@@ -47,14 +48,5 @@
 #include <boost/serialization/array.hpp>
 
 #include <armadillo>
-
-namespace arma {
-  // u64/s64
-  #include "hdf5_misc.hpp"
-
-
-  // inplace_reshape()
-  #include "fn_inplace_reshape.hpp"
-};
 
 #endif

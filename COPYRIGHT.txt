@@ -113,7 +113,24 @@ Copyright:
   Copyright 2019, Dan Timson
   Copyright 2019, Miguel Canteras <mcanteras@gmail.com>
   Copyright 2019, Bishwa Karki <karkeebishwa1@gmail.com>
+  Copyright 2019, Mehul Kumar Nirala <mehulkumarnirala@gmail.com>
   Copyright 2019, Yashwant Singh Parihar <yashwantsingh.sngh@gmail.com>
+  Copyright 2019, Heet Sankesara <heetsankesara3@gmail.com>
+  Copyright 2019, Jeffin Sam <sam.jeffin@gmail.com>
+  Copyright 2019, Vikas S Shetty <shettyvikas209@gmail.com>
+  Copyright 2019, Khizir Siddiqui <khizirsiddiqui@gmail.com>
+  Copyright 2019, Tejasvi Tomar <tstomar@outlook.com>
+  Copyright 2019, Jai Agarwal <jai.bhageria@gmail.com>
+  Copyright 2019, Ziyang Jiang <zij004@alumni.stanford.edu>
+  Copyright 2019, Rohit Kartik <rohit.audrey@gmail.com>
+  Copyright 2019, Aditya Viki <adityaviki01@gmail.com>
+  Copyright 2019, Kartik Dutt <kartikdutt@live.in>
+  Copyright 2020, Sriram S K <sriramsk1999@gmail.com>
+  Copyright 2020, Manoranjan Kumar Bharti ( Nakul Bharti ) <knakul853@gmail.com>
+  Copyright 2020, Saraansh Tandon <saraanshtandon1999@gmail.com>
+  Copyright 2020, Gaurav Singh <gs8763076@gmail.com>
+  Copyright 2020, Lakshya Ojha <ojhalakshya@gmail.com>
+  Copyright 2020, Bisakh Mondal <bisakhmondal00@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.

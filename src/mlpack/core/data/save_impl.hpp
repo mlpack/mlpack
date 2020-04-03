@@ -283,6 +283,67 @@ bool Save(const std::string& filename,
   }
 }
 
+/**
+ * Save the given image to the given filename.
+ *
+ * @param filename Filename to save to.
+ * @param matrix Matrix containing image to be saved.
+ * @param info Information about the image (width/height/channels/etc.).
+ * @param fatal Whether an exception should be thrown on save failure.
+ */
+template<typename eT>
+bool Save(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal)
+{
+  arma::Mat<unsigned char> tmpMatrix =
+      arma::conv_to<arma::Mat<unsigned char>>::from(matrix);
+
+  // Call out to .cpp implementation.
+  return SaveImage(filename, tmpMatrix, info, fatal);
+}
+
+// Image saving API for multiple files.
+template<typename eT>
+bool Save(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal)
+{
+  if (files.size() == 0)
+  {
+    if (fatal)
+    {
+      Log::Fatal << "Save(): vector of image files is empty; nothing to save."
+          << std::endl;
+    }
+    else
+    {
+      Log::Warn << "Save(): vector of image files is empty; nothing to save."
+          << std::endl;
+    }
+
+    return false;
+  }
+
+  arma::Mat<unsigned char> img;
+  bool status = Save(files[0], img, info, fatal);
+
+  // Decide matrix dimension using the image height and width.
+  matrix.set_size(info.Width() * info.Height() * info.Channels(), files.size());
+  matrix.col(0) = img;
+
+  for (size_t i = 1; i < files.size() ; i++)
+  {
+    arma::Mat<unsigned char> colImg(matrix.colptr(i), matrix.n_rows, 1,
+        false, true);
+    status &= Save(files[i], colImg, info, fatal);
+  }
+
+  return status;
+}
+
 } // namespace data
 } // namespace mlpack
 

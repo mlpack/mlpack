@@ -1,5 +1,121 @@
-### mlpack 4.0.0
+### mlpack ?.?.?
 ###### ????-??-??
+  * Templated return type of `Forward function` of loss functions (#2339).
+  
+  * Added `R2 Score` regression metric (#2323).
+
+  * Added `mean squared logarithmic error` loss function for neural networks
+    (#2210).
+
+  * Added `mean bias loss function` for neural networks (#2210).
+
+  * The DecisionStump class has been marked deprecated; use the `DecisionTree`
+    class with `NoRecursion=true` or use `ID3DecisionStump` instead (#2099).
+
+  * Added `probabilities_file` parameter to get the probabilities matrix of
+    AdaBoost classifier (#2050).
+
+  * Fix STB header search paths (#2104).
+
+  * Add `DISABLE_DOWNLOADS` CMake configuration option (#2104).
+
+  * Add padding layer in TransposedConvolutionLayer (#2082).
+
+  * Fix pkgconfig generation on non-Linux systems (#2101).
+
+  * Use log-space to represent HMM initial state and transition probabilities
+    (#2081).
+
+  * Add functions to access parameters of `Convolution` and `AtrousConvolution`
+    layers (#1985).
+
+  * Add Compute Error function in lars regression and changing Train function to
+    return computed error (#2139).
+
+  * Add Julia bindings (#1949).  Build settings can be controlled with the
+    `BUILD_JULIA_BINDINGS=(ON/OFF)` and `JULIA_EXECUTABLE=/path/to/julia` CMake
+    parameters.
+
+  * CMake fix for finding STB include directory (#2145).
+
+  * Add normalization support for CF binding (#2136).
+
+  * Add Mish activation function (#2158).
+
+  * Update `init_rules` in AMF to allow users to merge two initialization
+    rules (#2151).
+
+  * Add GELU activation function (#2183).
+
+  * Better error handling of eigendecompositions and Cholesky decompositions
+    (#2088, #1840).
+
+  * Add LiSHT activation function (#2182).
+
+  * Add Valid and Same Padding for Transposed Convolution layer (#2163).
+  
+  * Add CELU activation function (#2191)
+
+  * Add Log-Hyperbolic-Cosine Loss function (#2207)
+
+  * Change neural network types to avoid unnecessary use of rvalue references
+    (#2259).
+
+  * Bump minimum Boost version to 1.58 (#2305).
+
+  * Refactor STB support so HAS_STB macro is not needed when compiling against
+    mlpack (#2312).
+
+  * Add Hard Shrink Activation Function (#2186).
+
+  * Add Soft Shrink Activation Function (#2174).
+
+  * Add Hinge Embedding Loss Function (#2229).
+
+### mlpack 3.2.2
+###### 2019-11-26
+  * Add `valid` and `same` padding option in `Convolution` and `Atrous
+    Convolution` layer (#1988).
+
+  * Add Model() to the FFN class to access individual layers (#2043).
+
+  * Update documentation for pip and conda installation packages (#2044).
+
+  * Add bindings for linear SVM (#1935); `mlpack_linear_svm` from the
+    command-line, `linear_svm()` from Python.
+
+  * Add support to return the layer name as `std::string` (#1987).
+
+  * Speed and memory improvements for the Transposed Convolution layer (#1493).
+
+  * Fix Windows Python build configuration (#1885).
+
+  * Validate md5 of STB library after download (#2087).
+
+  * Add `__version__` to `__init__.py` (#2092).
+
+  * Correctly handle RNN sequences that are shorter than the value of rho (#2102).
+
+### mlpack 3.2.1
+###### 2019-10-01
+  * Enforce CMake version check for ensmallen (#2032).
+
+  * Fix CMake check for Armadillo version (#2029).
+
+  * Better handling of when STB is not installed (#2033).
+
+  * Fix Naive Bayes classifier computations in high dimensions (#2022).
+
+### mlpack 3.2.0
+###### 2019-09-25
+  * Fix some potential infinity errors in Naive Bayes Classifier (#2022).
+
+  * Fix occasionally-failing RADICAL test (#1924).
+
+  * Fix gcc 9 OpenMP compilation issue (#1970).
+
+  * Added support for loading and saving of images (#1903).
+
   * Add Multiple Pole Balancing Environment (#1901, #1951).
 
   * Added functionality for scaling of data (#1876); see the command-line
@@ -11,12 +127,26 @@
   * Fix prediction output of softmax regression when test set accuracy is
     calculated (#1922).
 
-  * Action struct in continuous RL environments now stores the action as a 
-    `double` instead of `double[1]` (#1941, #1931).
-
   * Pendulum environment now checks for termination. All RL environments now
     have an option to terminate after a set number of time steps (no limit
     by default) (#1941).
+
+  * Add support for probabilistic KDE (kernel density estimation) error bounds
+    when using the Gaussian kernel (#1934).
+
+  * Fix negative distances for cover tree computation (#1979).
+
+  * Fix cover tree building when all pairwise distances are 0 (#1986).
+
+  * Improve KDE pruning by reclaiming not used error tolerance (#1954, #1984).
+
+  * Optimizations for sparse matrix accesses in z-score normalization for CF
+    (#1989).
+
+  * Add `kmeans_max_iterations` option to GMM training binding `gmm_train_main`.
+
+  * Bump minimum Armadillo version to 8.400.0 due to ensmallen dependency
+    requirement (#2015).
 
 ### mlpack 3.1.1
 ###### 2019-05-26

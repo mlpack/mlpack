@@ -11,9 +11,8 @@ environment:
   boost_serialization-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
   BOOST_UNIT_TEST : "C:/projects/mlpack/\
   boost_unit_test_framework-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
-  ARMADILLO_DOWNLOAD : "http://sourceforge.net/projects/arma/files/\
-  armadillo-7.800.2.tar.xz"
-  ARMADILLO_LIBRARY : "C:/projects/mlpack/armadillo-7.800.2/\
+  ARMADILLO_DOWNLOAD : "http://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz"
+  ARMADILLO_LIBRARY : "C:/projects/mlpack/armadillo-8.400.0/\
   build/Debug/armadillo.lib"
   BLAS_LIBRARY : "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/\
   libopenblas.dll.a"
@@ -25,8 +24,15 @@ environment:
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       VSVER: Visual Studio 14 2015 Win64
+      MSBUILD: C:\Program Files (x86)\MSBuild\14.0\bin\MSBuild.exe
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       VSVER: Visual Studio 15 2017 Win64
+      MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe
+# Currently, the VS2019 build seems to always time out.  This seems to be an
+# AppVeyor issue.
+#    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+#      VSVER: Visual Studio 16 2019
+#      MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe
 
 
 configuration: Release
@@ -62,28 +68,26 @@ build_script:
   - ps: cp ${env:BOOST_UNIT_TEST} C:\projects\mlpack\boost_libs\
   - echo TEST_ARMA is %ARMADILLO_DOWNLOAD%
   - >
-    if not exist armadillo.tar.xz
     appveyor DownloadFile %ARMADILLO_DOWNLOAD%
     -FileName armadillo.tar.xz
-  - 7z x armadillo.tar.xz -so | 7z x -si -ttar > nul
-  - cd armadillo-7.800.2 && mkdir build && cd build
+  - 7z x armadillo.tar.xz -so -txz | 7z x -si -ttar > nul
+  - cd armadillo-8.400.0 && mkdir build && cd build
   - >
-    cmake -G "Visual Studio 14 2015 Win64"
+    cmake -G "%VSVER%"
     -DBLAS_LIBRARY:FILEPATH=%BLAS_LIBRARY%
     -DLAPACK_LIBRARY:FILEPATH=%BLAS_LIBRARY%
     -DCMAKE_PREFIX:FILEPATH="%APPVEYOR_BUILD_FOLDER%/armadillo"
     -DBUILD_SHARED_LIBS=OFF
     -DCMAKE_BUILD_TYPE=Release ..
   - >
-    "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe"
-    "C:\projects\mlpack\armadillo-7.800.2\build\armadillo.sln"
+    "%MSBUILD%" "C:\projects\mlpack\armadillo-8.400.0\build\armadillo.sln"
     /m /verbosity:quiet /p:Configuration=Release;Platform=x64
   - cd C:\projects\mlpack && mkdir build && cd build
   - >
-    cmake -G "Visual Studio 14 2015 Win64"
-    -DBLAS_LIBRARY:FILEPATH=%BLAS_LIBRARY%
-    -DLAPACK_LIBRARY:FILEPATH=%BLAS_LIBRARY%
-    -DARMADILLO_INCLUDE_DIR="C:/projects/mlpack/armadillo-7.800.2/include"
+    cmake -G "%VSVER%"
+    -DBLAS_LIBRARIES:FILEPATH=%BLAS_LIBRARY%
+    -DLAPACK_LIBRARIES:FILEPATH=%BLAS_LIBRARY%
+    -DARMADILLO_INCLUDE_DIR="C:/projects/mlpack/armadillo-8.400.0/include"
     -DARMADILLO_LIBRARY:FILEPATH=%ARMADILLO_LIBRARY%
     -DBOOST_INCLUDEDIR:PATH=%BOOST_INCLUDE%
     -DBOOST_LIBRARYDIR:PATH="C:/projects/mlpack/boost_libs"
@@ -92,8 +96,7 @@ build_script:
     -DBUILD_PYTHON_BINDINGS=OFF
     -DCMAKE_BUILD_TYPE=Release ..
   - >
-    "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe"
-    "C:\projects\mlpack\build\mlpack.sln"
+    "%MSBUILD%" "C:\projects\mlpack\build\mlpack.sln"
     /m /verbosity:minimal /nologo /p:BuildInParallel=true
     /p:Configuration=Release;Platform=x64
   

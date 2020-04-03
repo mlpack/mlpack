@@ -26,7 +26,7 @@ namespace data {
  * \[z = x - average(x) / (max(x) - min(x))\]
  *
  * where x is an original value,z is the normalized value.
- * 
+ *
  * @code
  * arma::mat input;
  * Load("train.csv", input);
@@ -75,7 +75,7 @@ class MeanNormalization
     if (itemMean.is_empty() || scale.is_empty())
     {
       throw std::runtime_error("Call Fit() before Transform(), please"
-        " refer documentation.");
+        " refer to the documentation.");
     }
     output.copy_size(input);
     output = (input.each_col() - itemMean).each_col() / scale;

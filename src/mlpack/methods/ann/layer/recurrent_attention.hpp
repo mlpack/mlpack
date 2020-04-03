@@ -35,11 +35,12 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @code
  * @article{MnihHGK14,
- *   title={Recurrent Models of Visual Attention},
- *   author={Volodymyr Mnih, Nicolas Heess, Alex Graves, Koray Kavukcuoglu},
- *   journal={CoRR},
- *   volume={abs/1406.6247},
- *   year={2014}
+ *   title   = {Recurrent Models of Visual Attention},
+ *   author  = {Volodymyr Mnih, Nicolas Heess, Alex Graves, Koray Kavukcuoglu},
+ *   journal = {CoRR},
+ *   volume  = {abs/1406.6247},
+ *   year    = {2014},
+ *   url     = {https://arxiv.org/abs/1406.6247}
  * }
  * @endcode
  *
@@ -64,9 +65,9 @@ class RecurrentAttention
   /**
    * Create the RecurrentAttention object using the specified modules.
    *
-   * @param start The module output size.
-   * @param start The recurrent neural network module.
-   * @param start The action module.
+   * @param outSize The module output size.
+   * @param rnn The recurrent neural network module.
+   * @param action The action module.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
   template<typename RNNModuleType, typename ActionModuleType>
@@ -83,7 +84,7 @@ class RecurrentAttention
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -95,9 +96,9 @@ class RecurrentAttention
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -107,9 +108,9 @@ class RecurrentAttention
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& /* error */,
-                arma::Mat<eT>&& /* gradient */);
+  void Gradient(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& /* error */,
+                arma::Mat<eT>& /* gradient */);
 
   //! Get the model modules.
   std::vector<LayerTypes<>>& Model() { return network; }
@@ -154,19 +155,19 @@ class RecurrentAttention
     // Gradient of the action module.
     if (backwardStep == (rho - 1))
     {
-      boost::apply_visitor(GradientVisitor(std::move(initialInput),
-          std::move(actionError)), actionModule);
+      boost::apply_visitor(GradientVisitor(initialInput, actionError),
+          actionModule);
     }
     else
     {
-      boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, actionModule)), std::move(actionError)),
+      boost::apply_visitor(GradientVisitor(boost::apply_visitor(
+          outputParameterVisitor, actionModule), actionError),
           actionModule);
     }
 
     // Gradient of the recurrent module.
-    boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, rnnModule)), std::move(recurrentError)),
+    boost::apply_visitor(GradientVisitor(boost::apply_visitor(
+        outputParameterVisitor, rnnModule), recurrentError),
         rnnModule);
 
     attentionGradient += intermediateGradient;

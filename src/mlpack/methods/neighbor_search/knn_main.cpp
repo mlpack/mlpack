@@ -53,7 +53,8 @@ PROGRAM_INFO("k-Nearest-Neighbors Search",
     "in " + PRINT_DATASET("distances") + " and the neighbors in " +
     PRINT_DATASET("neighbors") + ": "
     "\n\n" +
-    PRINT_CALL("knn", "k", 5, "reference", "input", "neighbors", "neighbors") +
+    PRINT_CALL("knn", "k", 5, "reference", "input", "neighbors", "neighbors",
+        "distances", "distances") +
     "\n\n"
     "The output is organized such that row i and column j in the neighbors "
     "output matrix corresponds to the index of the point in the reference set "
@@ -199,8 +200,6 @@ static void mlpackMain()
 
   if (CLI::HasParam("reference"))
   {
-    knn = new KNNModel();
-
     // Get all the parameters.
     const string treeType = CLI::GetParam<string>("tree_type");
     const bool randomBasis = CLI::HasParam("random_basis");
@@ -209,6 +208,9 @@ static void mlpackMain()
     RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star",
         "ball", "x", "hilbert-r", "r-plus", "r-plus-plus", "spill", "vp", "rp",
         "max-rp", "ub", "oct" }, true, "unknown tree type");
+
+    knn = new KNNModel();
+
     if (treeType == "kd")
       tree = KNNModel::KD_TREE;
     else if (treeType == "cover")
@@ -289,6 +291,15 @@ static void mlpackMain()
       Log::Info << "Loaded query data from '"
           << CLI::GetPrintableParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
+      if (queryData.n_rows != knn->Dataset().n_rows)
+      {
+        // Clean memory if needed before crashing.
+        const size_t dimensions = knn->Dataset().n_rows;
+        if (CLI::HasParam("reference"))
+          delete knn;
+        Log::Fatal << "Query has invalid dimensions(" << queryData.n_rows <<
+            "); should be " << dimensions << "!" << endl;
+      }
     }
 
     // Sanity check on k value: must be greater than 0, must be less than or
@@ -296,18 +307,26 @@ static void mlpackMain()
     // we only test the upper bound.
     if (k > knn->Dataset().n_cols)
     {
+      // Clean memory if needed before crashing.
+      const size_t referencePoints = knn->Dataset().n_cols;
+      if (CLI::HasParam("reference"))
+        delete knn;
       Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less "
           << "than or equal to the number of reference points ("
-          << knn->Dataset().n_cols << ")." << endl;
+          << referencePoints << ")." << endl;
     }
 
     // Sanity check on k value: must not be equal to the number of reference
     // points when query data has not been provided.
     if (!CLI::HasParam("query") && k == knn->Dataset().n_cols)
     {
+      // Clean memory if needed before crashing.
+      const size_t referencePoints = knn->Dataset().n_cols;
+      if (CLI::HasParam("reference"))
+        delete knn;
       Log::Fatal << "Invalid k: " << k << "; must be less than the number of "
-          << "reference points (" << knn->Dataset().n_cols << ") "
-          << "if query data has not been provided." << endl;
+          << "reference points (" << referencePoints << ") if query data has "
+          << "not been provided." << endl;
     }
 
     // Now run the search.
@@ -319,10 +338,6 @@ static void mlpackMain()
     else
       knn->Search(k, neighbors, distances);
     Log::Info << "Search complete." << endl;
-
-    // Save output.
-    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
-    CLI::GetParam<arma::mat>("distances") = std::move(distances);
 
     // Calculate the effective error, if desired.
     if (CLI::HasParam("true_distances"))
@@ -337,8 +352,12 @@ static void mlpackMain()
 
       if (trueDistances.n_rows != distances.n_rows ||
           trueDistances.n_cols != distances.n_cols)
+      {
+        if (CLI::HasParam("reference"))
+          delete knn;
         Log::Fatal << "The true distances file must have the same number of "
             << "values than the set of distances being queried!" << endl;
+      }
 
       Log::Info << "Effective error: " << KNN::EffectiveError(distances,
           trueDistances) << endl;
@@ -357,11 +376,19 @@ static void mlpackMain()
 
       if (trueNeighbors.n_rows != neighbors.n_rows ||
           trueNeighbors.n_cols != neighbors.n_cols)
+      {
+        if (CLI::HasParam("reference"))
+          delete knn;
         Log::Fatal << "The true neighbors file must have the same number of "
             << "values than the set of neighbors being queried!" << endl;
+      }
 
       Log::Info << "Recall: " << KNN::Recall(neighbors, trueNeighbors) << endl;
     }
+
+    // Save output.
+    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    CLI::GetParam<arma::mat>("distances") = std::move(distances);
   }
 
   CLI::GetParam<KNNModel*>("output_model") = knn;

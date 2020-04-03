@@ -154,8 +154,9 @@ static void mlpackMain()
 
   // Sanity check on epsilon.
   double epsilon = CLI::GetParam<double>("epsilon");
-  RequireParamValue<double>("epsilon", [](double x) { return x >= 0.0; }, true,
-      "epsilon must be positive");
+  RequireParamValue<double>("epsilon", [](double x)
+      { return x >= 0.0 && x < 1; }, true,
+          "epsilon must be in the range [0, 1).");
 
   // Sanity check on percentage.
   const double percentage = CLI::GetParam<double>("percentage");
@@ -187,14 +188,14 @@ static void mlpackMain()
 
   if (CLI::HasParam("reference"))
   {
-    kfn = new KFNModel();
-
     // Get all the parameters.
     RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star",
         "ball", "x", "hilbert-r", "r-plus", "r-plus-plus", "vp", "rp", "max-rp",
         "ub", "oct" }, true, "unknown tree type");
     const string treeType = CLI::GetParam<string>("tree_type");
     const bool randomBasis = CLI::HasParam("random_basis");
+
+    kfn = new KFNModel();
 
     KFNModel::TreeTypes tree = KFNModel::KD_TREE;
     if (treeType == "kd")
@@ -271,6 +272,15 @@ static void mlpackMain()
       Log::Info << "Using query data from '"
           << CLI::GetPrintableParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
+      if (queryData.n_rows != kfn->Dataset().n_rows)
+      {
+        // Clean memory if needed.
+        const size_t dimensions = kfn->Dataset().n_rows;
+        if (CLI::HasParam("reference"))
+          delete kfn;
+        Log::Fatal << "Query has invalid dimensions (" << queryData.n_rows <<
+            "); should be " << dimensions << "!" << endl;
+      }
     }
 
     // Sanity check on k value: must be greater than 0, must be less than or
@@ -278,18 +288,26 @@ static void mlpackMain()
     // we only test the upper bound.
     if (k > kfn->Dataset().n_cols)
     {
+      // Clean memory if needed.
+      const size_t referencePoints = kfn->Dataset().n_cols;
+      if (CLI::HasParam("reference"))
+        delete kfn;
       Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less "
           << "than or equal to the number of reference points ("
-          << kfn->Dataset().n_cols << ")." << endl;
+          << referencePoints << ")." << endl;
     }
 
     // Sanity check on k value: must not be equal to the number of reference
     // points when query data has not been provided.
     if (!CLI::HasParam("query") && k == kfn->Dataset().n_cols)
     {
+      // Clean memory if needed.
+      const size_t referencePoints = kfn->Dataset().n_cols;
+      if (CLI::HasParam("reference"))
+        delete kfn;
       Log::Fatal << "Invalid k: " << k << "; must be less than the number of "
-          << "reference points (" << kfn->Dataset().n_cols << ") "
-          << "if query data has not been provided." << endl;
+          << "reference points (" << referencePoints << ") if query data has "
+          << "not been provided." << endl;
     }
 
     // Now run the search.
@@ -301,10 +319,6 @@ static void mlpackMain()
     else
       kfn->Search(k, neighbors, distances);
     Log::Info << "Search complete." << endl;
-
-    // Save output.
-    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
-    CLI::GetParam<arma::mat>("distances") = std::move(distances);
 
     // Calculate the effective error, if desired.
     if (CLI::HasParam("true_distances"))
@@ -319,8 +333,13 @@ static void mlpackMain()
 
       if (trueDistances.n_rows != distances.n_rows ||
           trueDistances.n_cols != distances.n_cols)
+      {
+        // Clean memory if needed.
+        if (CLI::HasParam("reference"))
+          delete kfn;
         Log::Fatal << "The true distances file must have the same number of "
             << "values than the set of distances being queried!" << endl;
+      }
 
       Log::Info << "Effective error: " << KFN::EffectiveError(distances,
           trueDistances) << endl;
@@ -339,11 +358,20 @@ static void mlpackMain()
 
       if (trueNeighbors.n_rows != neighbors.n_rows ||
           trueNeighbors.n_cols != neighbors.n_cols)
+      {
+        // Clean memory if needed.
+        if (CLI::HasParam("reference"))
+          delete kfn;
         Log::Fatal << "The true neighbors file must have the same number of "
             << "values than the set of neighbors being queried!" << endl;
+      }
 
       Log::Info << "Recall: " << KFN::Recall(neighbors, trueNeighbors) << endl;
     }
+
+    // Save output.
+    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    CLI::GetParam<arma::mat>("distances") = std::move(distances);
   }
 
   CLI::GetParam<KFNModel*>("output_model") = kfn;

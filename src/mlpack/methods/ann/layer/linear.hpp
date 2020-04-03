@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_ANN_LAYER_LINEAR_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
 
 #include "layer_types.hpp"
 
@@ -31,7 +32,8 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template <
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename OutputDataType = arma::mat,
+    typename RegularizerType = NoRegularizer
 >
 class Linear
 {
@@ -45,7 +47,9 @@ class Linear
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  Linear(const size_t inSize, const size_t outSize);
+  Linear(const size_t inSize,
+         const size_t outSize,
+         RegularizerType regularizer = RegularizerType());
 
   /*
    * Reset the layer parameter.
@@ -60,7 +64,7 @@ class Linear
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -72,9 +76,9 @@ class Linear
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -84,9 +88,9 @@ class Linear
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
@@ -108,10 +112,19 @@ class Linear
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
+
+  //! Get the output size.
+  size_t OutputSize() const { return outSize; }
+
   //! Get the gradient.
   OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
+
+  //! Modify the bias weights of the layer.
+  arma::mat& Bias() { return bias; }
 
   /**
    * Serialize the layer
@@ -146,6 +159,9 @@ class Linear
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Locally-stored regularizer object.
+  RegularizerType regularizer;
 }; // class Linear
 
 } // namespace ann

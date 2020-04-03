@@ -34,6 +34,8 @@ class SetInputHeightVisitor : public boost::static_visitor<bool>
   template<typename LayerType>
   bool operator()(LayerType* layer) const;
 
+  bool operator()(MoreTypes layer) const;
+
  private:
   //! The input height parameter.
   size_t inputHeight;

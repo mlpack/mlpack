@@ -58,16 +58,16 @@ class MaxPooling
   /**
    * Create the MaxPooling object using the specified number of units.
    *
-   * @param kW Width of the pooling window.
-   * @param kH Height of the pooling window.
-   * @param dW Width of the stride operation.
-   * @param dH Width of the stride operation.
+   * @param kernelWidth Width of the pooling window.
+   * @param kernelHeight Height of the pooling window.
+   * @param strideWidth Width of the stride operation.
+   * @param strideHeight Width of the stride operation.
    * @param floor Rounding operator (floor or ceil).
    */
-  MaxPooling(const size_t kW,
-             const size_t kH,
-             const size_t dW = 1,
-             const size_t dH = 1,
+  MaxPooling(const size_t kernelWidth,
+             const size_t kernelHeight,
+             const size_t strideWidth = 1,
+             const size_t strideHeight = 1,
              const bool floor = true);
 
   /**
@@ -78,7 +78,7 @@ class MaxPooling
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -90,39 +90,70 @@ class MaxPooling
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  const OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  const OutputDataType& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
   //! Get the width.
-  size_t const& InputWidth() const { return inputWidth; }
+  size_t InputWidth() const { return inputWidth; }
   //! Modify the width.
   size_t& InputWidth() { return inputWidth; }
 
   //! Get the height.
-  size_t const& InputHeight() const { return inputHeight; }
+  size_t InputHeight() const { return inputHeight; }
   //! Modify the height.
   size_t& InputHeight() { return inputHeight; }
 
   //! Get the width.
-  size_t const& OutputWidth() const { return outputWidth; }
+  size_t OutputWidth() const { return outputWidth; }
   //! Modify the width.
   size_t& OutputWidth() { return outputWidth; }
 
   //! Get the height.
-  size_t const& OutputHeight() const { return outputHeight; }
+  size_t OutputHeight() const { return outputHeight; }
   //! Modify the height.
   size_t& OutputHeight() { return outputHeight; }
+
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
+
+  //! Get the output size.
+  size_t OutputSize() const { return outSize; }
+
+  //! Get the kernel width.
+  size_t KernelWidth() const { return kernelWidth; }
+  //! Modify the kernel width.
+  size_t& KernelWidth() { return kernelWidth; }
+
+  //! Get the kernel height.
+  size_t KernelHeight() const { return kernelHeight; }
+  //! Modify the kernel height.
+  size_t& KernelHeight() { return kernelHeight; }
+
+  //! Get the stride width.
+  size_t StrideWidth() const { return strideWidth; }
+  //! Modify the stride width.
+  size_t& StrideWidth() { return strideWidth; }
+
+  //! Get the stride height.
+  size_t StrideHeight() const { return strideHeight; }
+  //! Modify the stride height.
+  size_t& StrideHeight() { return strideHeight; }
+
+  //! Get the value of the rounding operation.
+  bool Floor() const { return floor; }
+  //! Modify the value of the rounding operation.
+  bool& Floor() { return floor; }
 
   //! Get the value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
@@ -148,12 +179,15 @@ class MaxPooling
                         arma::Mat<eT>& output,
                         arma::Mat<eT>& poolingIndices)
   {
-    for (size_t j = 0, colidx = 0; j < output.n_cols; ++j, colidx += dW)
+    for (size_t j = 0, colidx = 0; j < output.n_cols;
+        ++j, colidx += strideHeight)
     {
-      for (size_t i = 0, rowidx = 0; i < output.n_rows; ++i, rowidx += dH)
+      for (size_t i = 0, rowidx = 0; i < output.n_rows;
+          ++i, rowidx += strideWidth)
       {
-        arma::mat subInput = input(arma::span(rowidx, rowidx + kW - 1 - offset),
-            arma::span(colidx, colidx + kH - 1 - offset));
+        arma::mat subInput = input(
+            arma::span(rowidx, rowidx + kernelWidth - 1 - offset),
+            arma::span(colidx, colidx + kernelHeight - 1 - offset));
 
         const size_t idx = pooling.Pooling(subInput);
         output(i, j) = subInput(idx);
@@ -161,8 +195,8 @@ class MaxPooling
         if (!deterministic)
         {
           arma::Mat<size_t> subIndices = indices(arma::span(rowidx,
-              rowidx + kW - 1 - offset),
-              arma::span(colidx, colidx + kH - 1 - offset));
+              rowidx + kernelWidth - 1 - offset),
+              arma::span(colidx, colidx + kernelHeight - 1 - offset));
 
           poolingIndices(i, j) = subIndices(idx);
         }
@@ -189,16 +223,16 @@ class MaxPooling
   }
 
   //! Locally-stored width of the pooling window.
-  size_t kW;
+  size_t kernelWidth;
 
   //! Locally-stored height of the pooling window.
-  size_t kH;
+  size_t kernelHeight;
 
   //! Locally-stored width of the stride operation.
-  size_t dW;
+  size_t strideWidth;
 
   //! Locally-stored height of the stride operation.
-  size_t dH;
+  size_t strideHeight;
 
   //! Rounding operation used.
   bool floor;

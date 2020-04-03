@@ -209,6 +209,20 @@ class SpillTree
    */
   SpillTree(SpillTree&& other);
 
+   /**
+   * Copy the given Spill Tree.
+   *
+   * @param other The tree to be copied.
+   */
+  SpillTree& operator=(const SpillTree& other);
+
+  /**
+   * Take ownership of the given Spill Tree.
+   *
+   * @param other The tree to take ownership of.
+   */
+  SpillTree& operator=(SpillTree&& other);
+
   /**
    * Initialize the tree from a boost::serialization archive.
    *

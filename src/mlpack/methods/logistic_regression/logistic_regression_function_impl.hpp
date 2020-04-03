@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "logistic_regression_function.hpp"
 
+#include <mlpack/core.hpp>
+
 namespace mlpack {
 namespace regression {
 

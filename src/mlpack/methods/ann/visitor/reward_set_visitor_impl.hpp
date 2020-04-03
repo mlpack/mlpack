@@ -30,6 +30,11 @@ inline void RewardSetVisitor::operator()(LayerType* layer) const
   LayerReward(layer);
 }
 
+inline void RewardSetVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     HasRewardCheck<T, double&(T::*)()>::value &&

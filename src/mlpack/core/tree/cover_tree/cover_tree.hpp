@@ -239,6 +239,20 @@ class CoverTree
   CoverTree(CoverTree&& other);
 
   /**
+   * Copy the given Cover Tree.
+   *
+   * @param other The tree to be copied.
+   */
+  CoverTree& operator=(const CoverTree& other);
+
+  /**
+   * Take ownership of the given Cover Tree.
+   *
+   * @param other The tree to take ownership of.
+   */
+  CoverTree& operator=(CoverTree&& other);
+
+  /**
    * Create a cover tree from a boost::serialization archive.
    */
   template<typename Archive>

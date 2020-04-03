@@ -25,6 +25,11 @@ inline void ResetVisitor::operator()(LayerType* layer) const
   ResetParameter(layer);
 }
 
+inline void ResetVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     HasResetCheck<T, void(T::*)()>::value &&

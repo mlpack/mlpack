@@ -67,20 +67,23 @@ LogisticRegression<MatType>::LogisticRegression(
 }
 
 template<typename MatType>
-template<typename OptimizerType>
-double LogisticRegression<MatType>::Train(const MatType& predictors,
-                                        const arma::Row<size_t>& responses)
+template<typename OptimizerType, typename... CallbackTypes>
+double LogisticRegression<MatType>::Train(
+        const MatType& predictors,
+        const arma::Row<size_t>& responses,
+        CallbackTypes&&... callbacks)
 {
   OptimizerType optimizer;
-  return Train(predictors, responses, optimizer);
+  return Train(predictors, responses, optimizer, callbacks...);
 }
 
 template<typename MatType>
-template<typename OptimizerType>
+template<typename OptimizerType, typename... CallbackTypes>
 double LogisticRegression<MatType>::Train(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
-    OptimizerType& optimizer)
+    OptimizerType& optimizer,
+    CallbackTypes&&... callbacks)
 {
   LogisticRegressionFunction<MatType> errorFunction(predictors,
                                                     responses,
@@ -88,7 +91,8 @@ double LogisticRegression<MatType>::Train(
   errorFunction.InitialPoint() = parameters;
 
   Timer::Start("logistic_regression_optimization");
-  const double out = optimizer.Optimize(errorFunction, parameters);
+  const double out = optimizer.Optimize(errorFunction, parameters,
+      callbacks...);
   Timer::Stop("logistic_regression_optimization");
 
   Log::Info << "LogisticRegression::LogisticRegression(): final objective of "

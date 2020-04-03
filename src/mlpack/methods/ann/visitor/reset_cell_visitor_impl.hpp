@@ -31,6 +31,11 @@ inline void ResetCellVisitor::operator()(LayerType* layer) const
   ResetCell(layer);
 }
 
+inline void ResetCellVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
+}
+
 template<typename T>
 inline typename std::enable_if<
     HasResetCellCheck<T, void(T::*)(const size_t)>::value, void>::type

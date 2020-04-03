@@ -2,10 +2,11 @@
 
 @section build_buildintro Introduction
 
-This document discusses how to build mlpack from source.  However, mlpack is in
-the repositories of many Linux distributions and so it may be easier to use the
-package manager for your system.  For example, on Ubuntu, you can install mlpack
-with the following command:
+This document discusses how to build mlpack from source. These build directions 
+will work for any Linux-like shell environment (for example Ubuntu, macOS,
+FreeBSD etc). However, mlpack is in the repositories of many Linux distributions 
+and so it may be easier to use the package manager for your system.  For example, 
+on Ubuntu, you can install mlpack with the following command:
 
 @code
 $ sudo apt-get install libmlpack-dev
@@ -29,7 +30,7 @@ to build mlpack on Windows, see \ref build_windows (alternatively, you can read
 is based on older versions).
 
 You can download the latest mlpack release from here:
-<a href="https://www.mlpack.org/files/mlpack-3.1.1.tar.gz">mlpack-3.1.1</a>
+<a href="https://www.mlpack.org/files/mlpack-3.2.2.tar.gz">mlpack-3.2.2</a>
 
 @section build_simple Simple Linux build instructions
 
@@ -37,9 +38,9 @@ Assuming all dependencies are installed in the system, you can run the commands
 below directly to build and install mlpack.
 
 @code
-$ wget https://www.mlpack.org/files/mlpack-3.1.1.tar.gz
-$ tar -xvzpf mlpack-3.1.1.tar.gz
-$ mkdir mlpack-3.1.1/build && cd mlpack-3.1.1/build
+$ wget https://www.mlpack.org/files/mlpack-3.2.2.tar.gz
+$ tar -xvzpf mlpack-3.2.2.tar.gz
+$ mkdir mlpack-3.2.2/build && cd mlpack-3.2.2/build
 $ cmake ../
 $ make -j4  # The -j is the number of cores you want to use for a build.
 $ sudo make install
@@ -64,8 +65,8 @@ configure mlpack.
 First we should unpack the mlpack source and create a build directory.
 
 @code
-$ tar -xvzpf mlpack-3.1.1.tar.gz
-$ cd mlpack-3.1.1
+$ tar -xvzpf mlpack-3.2.2.tar.gz
+$ cd mlpack-3.2.2
 $ mkdir build
 @endcode
 
@@ -76,9 +77,15 @@ The directory can have any name, not just 'build', but 'build' is sufficient.
 mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
 
- - Armadillo >= 6.500.0 (with LAPACK support)
+ - Armadillo >= 8.400.0 (with LAPACK support)
  - Boost (math_c99, program_options, serialization, unit_test_framework, heap,
-          spirit) >= 1.49
+          spirit) >= 1.58
+ - ensmallen >= 2.10.0 (will be downloaded if not found)
+
+In addition, mlpack has the following optional dependencies:
+
+ - STB: this will allow loading of images; the library is downloaded if not
+   found and the CMake variable DOWNLOAD_STB_IMAGE is set to ON (the default)
 
 For Python bindings, the following packages are required:
 
@@ -88,7 +95,8 @@ For Python bindings, the following packages are required:
  - pandas >= 0.15.0
  - pytest-runner
 
-In Ubuntu and Debian, you can get all of these dependencies through apt:
+In Ubuntu (>= 18.04) and Debian (>= 10) all of these dependencies can be 
+installed through apt:
 
 @code
 # apt-get install libboost-math-dev libboost-program-options-dev
@@ -96,16 +104,32 @@ In Ubuntu and Debian, you can get all of these dependencies through apt:
   python-pandas python-numpy cython python-setuptools
 @endcode
 
+If you are using Ubuntu 19.10 or newer, you can also install @c libensmallen-dev
+and @c libstb-dev, so that CMake does not need to automatically download those
+packages:
+
+@code
+# apt-get install libensmallen-dev libstb-dev
+@endcode
+
+@note For older versions of Ubuntu and Debian, Armadillo needs to be built from 
+source as apt installs an older version. So you need to omit 
+\c libarmadillo-dev from the code snippet above and instead use
+<a href="http://arma.sourceforge.net/download.html">this link</a>
+ to download the required file. Extract this file and follow the README in the 
+ uncompressed folder to build and install Armadillo.
+
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
 @code
 # dnf install boost-devel boost-test boost-program-options boost-math
   armadillo-devel binutils-devel python2-Cython python2-setuptools
-  python2-numpy python2-pandas
+  python2-numpy python2-pandas ensmallen-devel stbi-devel
 @endcode
 
 (It's also possible to use python3 packages from the package manager---mlpack
-will work with either.)
+will work with either.  Also, the ensmallen-devel package is only available in
+Fedora 29 or RHEL7 or newer.)
 
 @section build_config Configuring CMake
 
@@ -138,16 +162,21 @@ The full list of options mlpack allows:
        (default ON)
  - BUILD_PYTHON_BINDINGS=(ON/OFF): compile the bindings for Python, if the
        necessary Python libraries are available (default ON except on Windows)
- - MATLAB_BINDINGS=(ON/OFF): Compile MATLAB bindings if MATLAB is found
-       (default OFF)
+ - BUILD_JULIA_BINDINGS=(ON/OFF): compile Julia bindings, if Julia is found
+       (default ON)
  - BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
        static libraries (default ON)
  - TEST_VERBOSE=(ON/OFF): run test cases in \c mlpack_test with verbose output
        (default OFF)
+ - DISABLE_DOWNLOADS=(ON/OFF): Disable downloads of dependencies during build
+       (default OFF)
  - DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
        (default ON)
+ - DOWNLOAD_STB_IMAGE=(ON/OFF): If STB is not found, download it (default ON)
  - BUILD_WITH_COVERAGE=(ON/OFF): Build with support for code coverage tools
       (gcc only) (default OFF)
+ - PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
+ - JULIA_EXECUTABLE=(/path/to/julia): Path to specific Julia executable
  - BUILD_MARKDOWN_BINDINGS=(ON/OFF): Build Markdown bindings for website
        documentation (default OFF)
  - MATHJAX=(ON/OFF): use MathJax for generated Doxygen documentation (default
@@ -170,6 +199,8 @@ and libraries. These also use the '-D' flag.
  - BOOST_ROOT=(/path/to/boost/): path to root of boost installation
  - ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
        for ensmallen
+ - STB_IMAGE_INCLUDE_DIR=(/path/to/stb/include): path to include directory for
+      STB image library
  - MATHJAX_ROOT=(/path/to/mathjax): path to root of MathJax installation
 
 @section build_build Building mlpack
@@ -217,7 +248,7 @@ https://mlpack.org/
 
 https://github.com/mlpack/mlpack
 
-Alternately, mlpack help can be found in IRC at \#mlpack on irc.freenode.net.
+Alternately, mlpack help can be found in IRC at \#mlpack on chat.freenode.net.
 
 @section install Installing mlpack
 

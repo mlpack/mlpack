@@ -20,7 +20,7 @@ namespace ann {
 
 //! SaveOutputParameterVisitor visitor class.
 inline SaveOutputParameterVisitor::SaveOutputParameterVisitor(
-    std::vector<arma::mat>&& parameter) : parameter(std::move(parameter))
+    std::vector<arma::mat>& parameter) : parameter(parameter)
 {
   /* Nothing to do here. */
 }
@@ -29,6 +29,11 @@ template<typename LayerType>
 inline void SaveOutputParameterVisitor::operator()(LayerType* layer) const
 {
   OutputParameter(layer);
+}
+
+inline void SaveOutputParameterVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
 }
 
 template<typename T>
@@ -48,7 +53,7 @@ SaveOutputParameterVisitor::OutputParameter(T* layer) const
 
   for (size_t i = 0; i < layer->Model().size(); ++i)
   {
-    boost::apply_visitor(SaveOutputParameterVisitor(std::move(parameter)),
+    boost::apply_visitor(SaveOutputParameterVisitor(parameter),
         layer->Model()[i]);
   }
 }

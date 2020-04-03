@@ -56,7 +56,12 @@ KDE(const double relError,
     const double absError,
     KernelType kernel,
     const KDEMode mode,
-    MetricType metric) :
+    MetricType metric,
+    const bool monteCarlo,
+    const double mcProb,
+    const size_t initialSampleSize,
+    const double mcEntryCoef,
+    const double mcBreakCoef) :
     kernel(kernel),
     metric(metric),
     referenceTree(nullptr),
@@ -65,9 +70,14 @@ KDE(const double relError,
     absError(absError),
     ownsReferenceTree(false),
     trained(false),
-    mode(mode)
+    mode(mode),
+    monteCarlo(monteCarlo),
+    initialSampleSize(initialSampleSize)
 {
   CheckErrorValues(relError, absError);
+  MCProb(mcProb);
+  MCEntryCoef(mcEntryCoef);
+  MCBreakCoef(mcBreakCoef);
 }
 
 template<typename KernelType,
@@ -91,7 +101,12 @@ KDE(const KDE& other) :
     absError(other.absError),
     ownsReferenceTree(other.ownsReferenceTree),
     trained(other.trained),
-    mode(other.mode)
+    mode(other.mode),
+    monteCarlo(other.monteCarlo),
+    mcProb(other.mcProb),
+    initialSampleSize(other.initialSampleSize),
+    mcEntryCoef(other.mcEntryCoef),
+    mcBreakCoef(other.mcBreakCoef)
 {
   if (trained)
   {
@@ -132,14 +147,27 @@ KDE(KDE&& other) :
     absError(other.absError),
     ownsReferenceTree(other.ownsReferenceTree),
     trained(other.trained),
-    mode(other.mode)
+    mode(other.mode),
+    monteCarlo(other.monteCarlo),
+    mcProb(other.mcProb),
+    initialSampleSize(other.initialSampleSize),
+    mcEntryCoef(other.mcEntryCoef),
+    mcBreakCoef(other.mcBreakCoef)
 {
   other.kernel = std::move(KernelType());
   other.metric = std::move(MetricType());
   other.referenceTree = nullptr;
   other.oldFromNewReferences = nullptr;
+  other.relError = KDEDefaultParams::relError;
+  other.absError = KDEDefaultParams::absError;
   other.ownsReferenceTree = false;
   other.trained = false;
+  other.mode = KDEDefaultParams::mode;
+  other.monteCarlo = KDEDefaultParams::monteCarlo;
+  other.mcProb = KDEDefaultParams::mcProb;
+  other.initialSampleSize = KDEDefaultParams::initialSampleSize;
+  other.mcEntryCoef = KDEDefaultParams::mcEntryCoef;
+  other.mcBreakCoef = KDEDefaultParams::mcBreakCoef;
 }
 
 template<typename KernelType,
@@ -181,6 +209,11 @@ operator=(KDE other)
   this->ownsReferenceTree = other.ownsReferenceTree;
   this->trained = other.trained;
   this->mode = other.mode;
+  this->monteCarlo = other.monteCarlo;
+  this->mcProb = other.mcProb;
+  this->initialSampleSize = other.initialSampleSize;
+  this->mcEntryCoef = other.mcEntryCoef;
+  this->mcBreakCoef = other.mcBreakCoef;
 
   return *this;
 }
@@ -303,7 +336,16 @@ Evaluate(MatType querySet, arma::vec& estimations)
     std::vector<size_t> oldFromNewQueries;
     Tree* queryTree = BuildTree<Tree>(std::move(querySet), oldFromNewQueries);
     Timer::Stop("building_query_tree");
-    this->Evaluate(queryTree, oldFromNewQueries, estimations);
+    try
+    {
+      this->Evaluate(queryTree, oldFromNewQueries, estimations);
+    }
+    catch (std::exception& e)
+    {
+      // Make sure we delete the query tree.
+      delete queryTree;
+      throw;
+    }
     delete queryTree;
   }
   else if (mode == SINGLE_TREE_MODE)
@@ -344,8 +386,13 @@ Evaluate(MatType querySet, arma::vec& estimations)
                               estimations,
                               relError,
                               absError,
+                              mcProb,
+                              initialSampleSize,
+                              mcEntryCoef,
+                              mcBreakCoef,
                               metric,
                               kernel,
+                              monteCarlo,
                               false);
 
     // Create traverser.
@@ -418,6 +465,16 @@ Evaluate(Tree* queryTree,
                                 "dual-tree");
   }
 
+  // Clean accumulated alpha if Monte Carlo estimations are available.
+  if (monteCarlo && std::is_same<KernelType, kernel::GaussianKernel>::value)
+  {
+    Timer::Start("cleaning_query_tree");
+    KDECleanRules<Tree> cleanRules;
+    SingleTreeTraversalType<KDECleanRules<Tree>> cleanTraverser(cleanRules);
+    cleanTraverser.Traverse(0, *queryTree);
+    Timer::Stop("cleaning_query_tree");
+  }
+
   Timer::Start("computing_kde");
 
   // Evaluate.
@@ -427,8 +484,13 @@ Evaluate(Tree* queryTree,
                             estimations,
                             relError,
                             absError,
+                            mcProb,
+                            initialSampleSize,
+                            mcEntryCoef,
+                            mcBreakCoef,
                             metric,
                             kernel,
+                            monteCarlo,
                             false);
 
   // Create traverser.
@@ -472,6 +534,16 @@ Evaluate(arma::vec& estimations)
   estimations.set_size(referenceTree->Dataset().n_cols);
   estimations.fill(arma::fill::zeros);
 
+  // Clean accumulated alpha if Monte Carlo estimations are available.
+  if (monteCarlo && std::is_same<KernelType, kernel::GaussianKernel>::value)
+  {
+    Timer::Start("cleaning_query_tree");
+    KDECleanRules<Tree> cleanRules;
+    SingleTreeTraversalType<KDECleanRules<Tree>> cleanTraverser(cleanRules);
+    cleanTraverser.Traverse(0, *referenceTree);
+    Timer::Stop("cleaning_query_tree");
+  }
+
   Timer::Start("computing_kde");
 
   // Evaluate.
@@ -481,8 +553,13 @@ Evaluate(arma::vec& estimations)
                             estimations,
                             relError,
                             absError,
+                            mcProb,
+                            initialSampleSize,
+                            mcEntryCoef,
+                            mcBreakCoef,
                             metric,
                             kernel,
+                            monteCarlo,
                             true);
 
   if (mode == DUAL_TREE_MODE)
@@ -555,6 +632,79 @@ template<typename KernelType,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
+void KDE<KernelType,
+         MetricType,
+         MatType,
+         TreeType,
+         DualTreeTraversalType,
+         SingleTreeTraversalType>::
+MCProb(const double newProb)
+{
+  if (newProb < 0 || newProb >= 1)
+  {
+    throw std::invalid_argument("Monte Carlo probability must be a value "
+                                "greater than or equal to 0 and smaller than"
+                                "1");
+  }
+  mcProb = newProb;
+}
+
+template<typename KernelType,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+void KDE<KernelType,
+         MetricType,
+         MatType,
+         TreeType,
+         DualTreeTraversalType,
+         SingleTreeTraversalType>::
+MCEntryCoef(const double newCoef)
+{
+  if (newCoef < 1)
+  {
+    throw std::invalid_argument("Monte Carlo entry coefficient must be a value "
+                                "greater than or equal to 1");
+  }
+  mcEntryCoef = newCoef;
+}
+
+template<typename KernelType,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+void KDE<KernelType,
+         MetricType,
+         MatType,
+         TreeType,
+         DualTreeTraversalType,
+         SingleTreeTraversalType>::
+MCBreakCoef(const double newCoef)
+{
+  if (newCoef <= 0 || newCoef > 1)
+  {
+    throw std::invalid_argument("Monte Carlo break coefficient must be a value "
+                                "greater than 0 and less than or equal to 1");
+  }
+  mcBreakCoef = newCoef;
+}
+
+template<typename KernelType,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
 template<typename Archive>
 void KDE<KernelType,
          MetricType,
@@ -562,13 +712,32 @@ void KDE<KernelType,
          TreeType,
          DualTreeTraversalType,
          SingleTreeTraversalType>::
-serialize(Archive& ar, const unsigned int /* version */)
+serialize(Archive& ar, const unsigned int version)
 {
   // Serialize preferences.
   ar & BOOST_SERIALIZATION_NVP(relError);
   ar & BOOST_SERIALIZATION_NVP(absError);
   ar & BOOST_SERIALIZATION_NVP(trained);
   ar & BOOST_SERIALIZATION_NVP(mode);
+
+  // Backward compatibility: Old versions of KDE did not need to handle Monte
+  // Carlo parameters.
+  if (version > 0)
+  {
+    ar & BOOST_SERIALIZATION_NVP(monteCarlo);
+    ar & BOOST_SERIALIZATION_NVP(mcProb);
+    ar & BOOST_SERIALIZATION_NVP(initialSampleSize);
+    ar & BOOST_SERIALIZATION_NVP(mcEntryCoef);
+    ar & BOOST_SERIALIZATION_NVP(mcBreakCoef);
+  }
+  else if (Archive::is_loading::value)
+  {
+    monteCarlo = KDEDefaultParams::monteCarlo;
+    mcProb = KDEDefaultParams::mcProb;
+    initialSampleSize = KDEDefaultParams::initialSampleSize;
+    mcEntryCoef = KDEDefaultParams::mcEntryCoef;
+    mcBreakCoef = KDEDefaultParams::mcBreakCoef;
+  }
 
   // If we are loading, clean up memory if necessary.
   if (Archive::is_loading::value)
@@ -613,7 +782,7 @@ CheckErrorValues(const double relError, const double absError)
   if (absError < 0)
   {
     throw std::invalid_argument("Absolute error tolerance must be a value "
-                                "greater or equal to 0");
+                                "greater than or equal to 0");
   }
 }
 

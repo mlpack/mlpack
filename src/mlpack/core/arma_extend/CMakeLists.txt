@@ -2,8 +2,6 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   arma_extend.hpp
-  fn_inplace_reshape.hpp
-  hdf5_misc.hpp
   SpMat_extra_bones.hpp
   SpMat_extra_meat.hpp
   Mat_extra_bones.hpp

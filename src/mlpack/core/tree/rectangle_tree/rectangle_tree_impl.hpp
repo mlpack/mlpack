@@ -21,6 +21,25 @@
 namespace mlpack {
 namespace tree {
 
+// Build the statistics, bottom-up.
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
+BuildStatistics(RectangleTree* node)
+{
+  // Recurse first.
+  for (size_t i = 0; i < node->NumChildren(); ++i)
+    BuildStatistics(&node->Child(i));
+
+  // Now build the statistic.
+  node->Stat() = StatisticType(*node);
+}
+
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -52,13 +71,14 @@ RectangleTree(const MatType& data,
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
     auxiliaryInfo(this)
 {
-  stat = StatisticType(*this);
-
   // For now, just insert the points in order.
   RectangleTree* root = this;
 
   for (size_t i = firstDataIndex; i < data.n_cols; i++)
     root->InsertPoint(i);
+
+  // Initialize statistic recursively after tree construction is complete.
+  BuildStatistics(this);
 }
 
 template<typename MetricType,
@@ -92,13 +112,14 @@ RectangleTree(MatType&& data,
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
     auxiliaryInfo(this)
 {
-  stat = StatisticType(*this);
-
   // For now, just insert the points in order.
   RectangleTree* root = this;
 
   for (size_t i = firstDataIndex; i < dataset->n_cols; i++)
     root->InsertPoint(i);
+
+  // Initialize statistic recursively after tree construction is complete.
+  BuildStatistics(this);
 }
 
 template<typename MetricType,
@@ -131,7 +152,8 @@ RectangleTree(
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
     auxiliaryInfo(this)
 {
-  stat = StatisticType(*this);
+  // Initialize statistic.
+  BuildStatistics(this);
 }
 
 /**
@@ -161,6 +183,7 @@ RectangleTree(
     maxLeafSize(other.MaxLeafSize()),
     minLeafSize(other.MinLeafSize()),
     bound(other.bound),
+    stat(other.stat),
     parentDistance(other.ParentDistance()),
     dataset(deepCopy ?
         (parent ? parent->dataset : new MatType(*other.dataset)) :
@@ -181,6 +204,9 @@ RectangleTree(
     children = other.children;
 }
 
+/**
+ * Move constructor.
+ */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -201,6 +227,7 @@ RectangleTree(RectangleTree&& other) :
     maxLeafSize(other.MaxLeafSize()),
     minLeafSize(other.MinLeafSize()),
     bound(std::move(other.bound)),
+    stat(std::move(other.stat)),
     parentDistance(other.ParentDistance()),
     dataset(other.dataset),
     ownsDataset(other.ownsDataset),
@@ -220,6 +247,8 @@ RectangleTree(RectangleTree&& other) :
     for (size_t i = 0; i < numChildren; i++)
       children[i]->parent = this;
   }
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.
   other.maxNumChildren = 0;
   other.minNumChildren = 0;
   other.numChildren = 0;
@@ -232,6 +261,121 @@ RectangleTree(RectangleTree&& other) :
   other.parentDistance = 0;
   other.dataset = NULL;
   other.ownsDataset = false;
+}
+
+/**
+ * Copy assignment operator: copy the given other tree.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>&
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
+operator=(const RectangleTree& other)
+{
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  for (size_t i = 0; i < numChildren; i++)
+    delete children[i];
+
+  if (ownsDataset)
+    delete dataset;
+
+  maxNumChildren = other.MaxNumChildren();
+  minNumChildren = other.MinNumChildren();
+  numChildren = other.NumChildren();
+  children.resize(maxNumChildren + 1, NULL);
+  parent = NULL;
+  begin = other.Begin();
+  count = other.Count();
+  numDescendants = other.numDescendants;
+  maxLeafSize = other.MaxLeafSize();
+  minLeafSize = other.MinLeafSize();
+  bound = other.bound;
+  stat = other.stat;
+  parentDistance = other.ParentDistance();
+  dataset = new MatType(*other.dataset);
+  ownsDataset = true;
+  points = other.points;
+  auxiliaryInfo = AuxiliaryInfoType(other.auxiliaryInfo, this, true);
+
+  if (numChildren > 0)
+  {
+    for (size_t i = 0; i < numChildren; i++)
+      children[i] = new RectangleTree(other.Child(i), true, this);
+  }
+
+  return *this;
+}
+
+/**
+ * Move assignment operator: take ownership of the given tree.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>&
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
+operator=(RectangleTree&& other)
+{
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  for (size_t i = 0; i < numChildren; i++)
+    delete children[i];
+
+  if (ownsDataset)
+    delete dataset;
+
+  maxNumChildren = other.MaxNumChildren();
+  minNumChildren = other.MinNumChildren();
+  numChildren = other.NumChildren();
+  children = std::move(other.children);
+  parent = other.Parent();
+  begin = other.Begin();
+  count = other.Count();
+  numDescendants = other.numDescendants;
+  maxLeafSize = other.MaxLeafSize();
+  minLeafSize = other.MinLeafSize();
+  bound = std::move(other.bound);
+  stat = std::move(other.stat);
+  parentDistance = other.ParentDistance();
+  dataset = other.dataset;
+  ownsDataset = other.ownsDataset;
+  points = std::move(other.points);
+  auxiliaryInfo = std::move(other.auxiliaryInfo);
+
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.
+  other.maxNumChildren = 0;
+  other.minNumChildren = 0;
+  other.numChildren = 0;
+  other.parent = NULL;
+  other.begin = 0;
+  other.count = 0;
+  other.numDescendants = 0;
+  other.maxLeafSize = 0;
+  other.minLeafSize = 0;
+  other.parentDistance = 0;
+  other.dataset = NULL;
+  other.ownsDataset = false;
+
+  return *this;
 }
 
 /**

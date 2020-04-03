@@ -21,3 +21,4 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(kde)
 add_python_binding(kde)
+add_markdown_docs(kde "cli;python" "misc. / other")

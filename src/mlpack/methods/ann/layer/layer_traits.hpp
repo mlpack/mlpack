@@ -112,6 +112,14 @@ HAS_MEM_FUNC(Loss, HasLoss);
 // can use with SFINAE to catch when a type has a Run() function.
 HAS_MEM_FUNC(Run, HasRunCheck);
 
+// This gives us a HasBiasCheck<T, U> type (where U is a function pointer) we
+// can use with SFINAE to catch when a type has a Bias() function.
+HAS_MEM_FUNC(Bias, HasBiasCheck);
+
+// This gives us a HasMaxIterationsC<T, U> type (where U is a function pointer)
+// we can use with SFINAE to catch when a type has a MaxIterations() function.
+HAS_MEM_FUNC(MaxIterations, HasMaxIterations);
+
 } // namespace ann
 } // namespace mlpack
 

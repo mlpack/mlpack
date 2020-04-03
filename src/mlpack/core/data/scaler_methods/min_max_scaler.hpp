@@ -97,7 +97,7 @@ class MinMaxScaler
     if (scalerowmin.is_empty() || scale.is_empty())
     {
       throw std::runtime_error("Call Fit() before Transform(), please"
-        " refer documentation.");
+          " refer to the documentation.");
     }
     output.copy_size(input);
     output = (input.each_col() % scale).each_col() + scalerowmin;
@@ -123,9 +123,9 @@ class MinMaxScaler
   //! Get the Scale row vector.
   const arma::vec& Scale() const { return scale; }
   //! Get the upper range parameter.
-  const double ScaleMax() const { return scaleMax; }
+  double ScaleMax() const { return scaleMax; }
   //! Get the lower range parameter.
-  const double ScaleMin() const { return scaleMin; }
+  double ScaleMin() const { return scaleMin; }
 
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)

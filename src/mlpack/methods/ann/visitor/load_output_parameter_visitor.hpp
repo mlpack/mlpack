@@ -29,15 +29,17 @@ class LoadOutputParameterVisitor : public boost::static_visitor<void>
 {
  public:
   //! Restore the output parameter given a parameter set.
-  LoadOutputParameterVisitor(std::vector<arma::mat>&& parameter);
+  LoadOutputParameterVisitor(std::vector<arma::mat>& parameter);
 
   //! Restore the output parameter.
   template<typename LayerType>
   void operator()(LayerType* layer) const;
 
+  void operator()(MoreTypes layer) const;
+
  private:
   //! The parameter set.
-  std::vector<arma::mat>&& parameter;
+  std::vector<arma::mat>& parameter;
 
   //! Restore the output parameter for a module which doesn't implement the
   //! Model() function.

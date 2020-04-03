@@ -21,6 +21,18 @@
 namespace mlpack {
 namespace tree {
 
+// Build the statistics, bottom-up.
+template<typename TreeType, typename StatisticType>
+void BuildStatistics(TreeType* node)
+{
+  // Recurse first.
+  for (size_t i = 0; i < node->NumChildren(); ++i)
+    BuildStatistics<TreeType, StatisticType>(&node->Child(i));
+
+  // Now build the statistic.
+  node->Stat() = StatisticType(*node);
+}
+
 // Create the cover tree.
 template<
     typename MetricType,
@@ -88,9 +100,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     {
       children.push_back(&(old->Child(i)));
 
-      // Set its parent correctly, and rebuild the statistic.
+      // Set its parent correctly.
       old->Child(i).Parent() = this;
-      old->Child(i).Stat() = StatisticType(old->Child(i));
     }
 
     // Remove all the children so they don't get erased.
@@ -104,14 +115,19 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 
   // Use the furthest descendant distance to determine the scale of the root
-  // node.
-  if (furthestDescendantDistance == 0.0)
+  // node.  Note that if the root is a leaf, we can have scale INT_MIN, but if
+  // it *isn't* a leaf, we need to mark the scale as one higher than INT_MIN, so
+  // that the recursions don't fail.
+  if (furthestDescendantDistance == 0.0 && dataset.n_cols == 1)
     scale = INT_MIN;
+  else if (furthestDescendantDistance == 0.0)
+    scale = INT_MIN + 1;
   else
     scale = (int) ceil(log(furthestDescendantDistance) / log(base));
 
-  // Initialize statistic.
-  stat = StatisticType(*this);
+  // Initialize statistics recursively after the entire tree construction is
+  // complete.
+  BuildStatistics<CoverTree, StatisticType>(this);
 
   Log::Info << distanceComps << " distance computations during tree "
       << "construction." << std::endl;
@@ -181,8 +197,6 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
 
       // Set its parent correctly.
       old->Child(i).Parent() = this;
-      // Rebuild the statistic.
-      old->Child(i).Stat() = StatisticType(old->Child(i));
     }
 
     // Remove all the children so they don't get erased.
@@ -196,14 +210,19 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 
   // Use the furthest descendant distance to determine the scale of the root
-  // node.
-  if (furthestDescendantDistance == 0.0)
+  // node.  Note that if the root is a leaf, we can have scale INT_MIN, but if
+  // it *isn't* a leaf, we need to mark the scale as one higher than INT_MIN, so
+  // that the recursions don't fail.
+  if (furthestDescendantDistance == 0.0 && dataset.n_cols == 1)
     scale = INT_MIN;
+  else if (furthestDescendantDistance == 0.0)
+    scale = INT_MIN + 1;
   else
     scale = (int) ceil(log(furthestDescendantDistance) / log(base));
 
-  // Initialize statistic.
-  stat = StatisticType(*this);
+  // Initialize statistics recursively after the entire tree construction is
+  // complete.
+  BuildStatistics<CoverTree, StatisticType>(this);
 
   Log::Info << distanceComps << " distance computations during tree "
       << "construction." << std::endl;
@@ -272,9 +291,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     {
       children.push_back(&(old->Child(i)));
 
-      // Set its parent correctly, and rebuild the statistic.
+      // Set its parent correctly.
       old->Child(i).Parent() = this;
-      old->Child(i).Stat() = StatisticType(old->Child(i));
     }
 
     // Remove all the children so they don't get erased.
@@ -288,14 +306,19 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 
   // Use the furthest descendant distance to determine the scale of the root
-  // node.
-  if (furthestDescendantDistance == 0.0)
+  // node.  Note that if the root is a leaf, we can have scale INT_MIN, but if
+  // it *isn't* a leaf, we need to mark the scale as one higher than INT_MIN, so
+  // that the recursions don't fail.
+  if (furthestDescendantDistance == 0.0 && dataset->n_cols == 1)
     scale = INT_MIN;
+  else if (furthestDescendantDistance == 0.0)
+    scale = INT_MIN + 1;
   else
     scale = (int) ceil(log(furthestDescendantDistance) / log(base));
 
-  // Initialize statistic.
-  stat = StatisticType(*this);
+  // Initialize statistics recursively after the entire tree construction is
+  // complete.
+  BuildStatistics<CoverTree, StatisticType>(this);
 
   Log::Info << distanceComps << " distance computations during tree "
       << "construction." << std::endl;
@@ -363,9 +386,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     {
       children.push_back(&(old->Child(i)));
 
-      // Set its parent correctly, and rebuild the statistic.
+      // Set its parent correctly.
       old->Child(i).Parent() = this;
-      old->Child(i).Stat() = StatisticType(old->Child(i));
     }
 
     // Remove all the children so they don't get erased.
@@ -379,14 +401,19 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 
   // Use the furthest descendant distance to determine the scale of the root
-  // node.
-  if (furthestDescendantDistance == 0.0)
+  // node.  Note that if the root is a leaf, we can have scale INT_MIN, but if
+  // it *isn't* a leaf, we need to mark the scale as one higher than INT_MIN, so
+  // that the recursions don't fail.
+  if (furthestDescendantDistance == 0.0 && dataset->n_cols == 1)
     scale = INT_MIN;
+  else if (furthestDescendantDistance == 0.0)
+    scale = INT_MIN + 1;
   else
     scale = (int) ceil(log(furthestDescendantDistance) / log(base));
 
-  // Initialize statistic.
-  stat = StatisticType(*this);
+  // Initialize statistics recursively after the entire tree construction is
+  // complete.
+  BuildStatistics<CoverTree, StatisticType>(this);
 
   Log::Info << distanceComps << " distance computations during tree "
       << "construction." << std::endl;
@@ -429,15 +456,11 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   {
     this->scale = INT_MIN;
     numDescendants = 1;
-    stat = StatisticType(*this);
     return;
   }
 
   // Otherwise, create the children.
   CreateChildren(indices, distances, nearSetSize, farSetSize, usedSetSize);
-
-  // Initialize statistic.
-  stat = StatisticType(*this);
 }
 
 // Manually create a cover tree node.
@@ -472,11 +495,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   // If necessary, create a local metric.
   if (localMetric)
     this->metric = new MetricType();
-
-  // Initialize the statistic.
-  stat = StatisticType(*this);
 }
 
+// Copy Constructor.
 template<
     typename MetricType,
     typename StatisticType,
@@ -495,9 +516,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     parent(other.parent),
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
-    localMetric(false),
+    localMetric(other.localMetric),
     localDataset(other.parent == NULL && other.localDataset),
-    metric(other.metric),
+    metric((other.localMetric ? new MetricType() : other.metric)),
     distanceComps(0)
 {
   // Copy each child by hand.
@@ -527,6 +548,76 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 }
 
+// Copy assignment operator: copy the given other tree.
+template<
+    typename MetricType,
+    typename StatisticType,
+    typename MatType,
+    typename RootPointPolicy
+>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>&
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+operator=(const CoverTree& other)
+{
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  if (localDataset)
+    delete dataset;
+
+  if (localMetric)
+    delete metric;
+
+  for (size_t i = 0; i < children.size(); ++i)
+    delete children[i];
+  children.clear();
+
+  dataset = ((other.parent == NULL && other.localDataset) ?
+      new MatType(*other.dataset) : other.dataset);
+  point = other.point;
+  scale = other.scale;
+  base = other.base;
+  stat = other.stat;
+  numDescendants = other.numDescendants;
+  parent = other.parent;
+  parentDistance = other.parentDistance;
+  furthestDescendantDistance = other.furthestDescendantDistance;
+  localMetric = other.localMetric;
+  localDataset = (other.parent == NULL && other.localDataset);
+  metric = (other.localMetric ? new MetricType() : other.metric);
+  distanceComps = 0;
+
+  // Copy each child by hand.
+  for (size_t i = 0; i < other.NumChildren(); ++i)
+  {
+    children.push_back(new CoverTree(other.Child(i)));
+    children[i]->Parent() = this;
+  }
+
+  // Propagate matrix, but only if we are the root.
+  if (parent == NULL && localDataset)
+  {
+    std::queue<CoverTree*> queue;
+
+    for (size_t i = 0; i < NumChildren(); ++i)
+      queue.push(children[i]);
+
+    while (!queue.empty())
+    {
+      CoverTree* node = queue.front();
+      queue.pop();
+
+      node->dataset = dataset;
+      for (size_t i = 0; i < node->NumChildren(); ++i)
+        queue.push(node->children[i]);
+    }
+  }
+
+  return *this;
+}
+
+// Move Constructor.
 template<
     typename MetricType,
     typename StatisticType,
@@ -565,6 +656,64 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   other.localMetric = false;
   other.localDataset = false;
   other.metric = NULL;
+}
+
+// Move assignment operator: take ownership of the given tree.
+template<
+    typename MetricType,
+    typename StatisticType,
+    typename MatType,
+    typename RootPointPolicy
+>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>&
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
+operator=(CoverTree&& other)
+{
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  if (localDataset)
+    delete dataset;
+
+  if (localMetric)
+    delete metric;
+
+  for (size_t i = 0; i < children.size(); ++i)
+    delete children[i];
+
+  dataset = other.dataset;
+  point = other.point;
+  children = std::move(other.children);
+  scale = other.scale;
+  base = other.base;
+  stat = std::move(other.stat);
+  numDescendants = other.numDescendants;
+  parent = other.parent;
+  parentDistance = other.parentDistance;
+  furthestDescendantDistance = other.furthestDescendantDistance;
+  localMetric = other.localMetric;
+  localDataset = other.localDataset;
+  metric = other.metric;
+  distanceComps = other.distanceComps;
+
+  // Set proper parent pointer.
+  for (size_t i = 0; i < children.size(); ++i)
+    children[i]->Parent() = this;
+
+  other.dataset = NULL;
+  other.point = 0;
+  other.scale = INT_MIN;
+  other.base = 0;
+  other.numDescendants = 0;
+  other.parent = NULL;
+  other.parentDistance = 0;
+  other.furthestDescendantDistance = 0;
+  other.localMetric = false;
+  other.localDataset = false;
+  other.metric = NULL;
+
+  return *this;
 }
 
 // Construct from a boost::serialization archive.
@@ -907,8 +1056,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
       other.Dataset().col(other.Point()));
 
   math::RangeType<ElemType> result;
-  result.Lo() = distance - furthestDescendantDistance -
-      other.FurthestDescendantDistance();
+  result.Lo() = std::max(distance - furthestDescendantDistance -
+      other.FurthestDescendantDistance(), 0.0);
   result.Hi() = distance + furthestDescendantDistance +
       other.FurthestDescendantDistance();
 
@@ -930,8 +1079,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
                   const ElemType distance) const
 {
   math::RangeType<ElemType> result;
-  result.Lo() = distance - furthestDescendantDistance -
-      other.FurthestDescendantDistance();
+  result.Lo() = std::max(distance - furthestDescendantDistance -
+      other.FurthestDescendantDistance(), 0.0);
   result.Hi() = distance + furthestDescendantDistance +
       other.FurthestDescendantDistance();
 
@@ -952,8 +1101,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 {
   const ElemType distance = metric->Evaluate(dataset->col(point), other);
 
-  return math::RangeType<ElemType>(distance - furthestDescendantDistance,
-                     distance + furthestDescendantDistance);
+  return math::RangeType<ElemType>(
+      std::max(distance - furthestDescendantDistance, 0.0),
+      distance + furthestDescendantDistance);
 }
 
 //! Return the minimum and maximum distance to another point given that the
@@ -970,8 +1120,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     RangeDistance(const arma::vec& /* other */,
                   const ElemType distance) const
 {
-  return math::RangeType<ElemType>(distance - furthestDescendantDistance,
-                     distance + furthestDescendantDistance);
+  return math::RangeType<ElemType>(
+      std::max(distance - furthestDescendantDistance, 0.0),
+      distance + furthestDescendantDistance);
 }
 
 //! For a newly initialized node, create children using the near and far set.
@@ -1526,11 +1677,10 @@ inline void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     // Now take its child.
     children.push_back(&(old->Child(0)));
 
-    // Set its parent and parameters correctly, and rebuild the statistic.
+    // Set its parent and parameters correctly.
     old->Child(0).Parent() = this;
     old->Child(0).ParentDistance() = old->ParentDistance();
     old->Child(0).DistanceComps() = old->DistanceComps();
-    old->Child(0).Stat() = StatisticType(old->Child(0));
 
     // Remove its child (so it doesn't delete it).
     old->Children().erase(old->Children().begin() + old->Children().size() - 1);

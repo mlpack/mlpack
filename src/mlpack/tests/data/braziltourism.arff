@@ -33,7 +33,6 @@
 @attribute 'Active' {0,1,2,3,4,5,6}
 @attribute 'Passive' {0,1,2,3,4}
 @attribute 'Logged_income' REAL
-@attribute 'Trips' {0,1,2,3,4,5}
 
 @data
 41,0,2187.5,186.9,0,0,3,7.690514618

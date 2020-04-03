@@ -35,11 +35,11 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @f{eqnarray*}{
  * f(x) &=& \frac{x}{1 + |x|} \\
- * f'(x) &=& (1 - |x|)^2 \\
+ * f'(x) &=& (1 - |f(x)|)^2 \\
  * f(x) &=& \left\{
  *   \begin{array}{lr}
- *     -\frac{y}{y-1} & : x > 0 \\
- *     \frac{x}{1 + x} & : x \le 0
+ *     -\frac{x}{1 - x} & : x \le 0 \\
+ *     \frac{x}{1 + x} & : x > 0
  *   \end{array}
  * \right.
  * @f}

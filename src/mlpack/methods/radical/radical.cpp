@@ -59,7 +59,7 @@ double Radical::Vasicek(vec& z) const
   uword range = z.n_elem - m;
   for (uword i = 0; i < range; i++)
   {
-    sum += log(z(i + m) - z(i));
+    sum += log(max(z(i + m) - z(i), DBL_MIN));
   }
 
   return sum;

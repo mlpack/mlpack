@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
 
   Pendulum::State state = task.InitialSample();
   Pendulum::Action action;
-  action.action = math::Random(-2.0, 2.0);
+  action.action[0] = math::Random(-2.0, 2.0);
   double reward = task.Sample(state, action);
 
   // The reward is always negative. Check if not lower than lowest possible.
@@ -53,8 +53,10 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
   while (!task.IsTerminal(state))
     task.Sample(state, action, state);
 
-  // Check if the number of steps performed is the same as the maximum allowed.
-  BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
+  // Check if the number of steps performed is less or equal as the maximum
+  // allowed, since we use a random action there is no guarantee that we will
+  // reach the maximum number of steps.
+  BOOST_REQUIRE_LE(task.StepsPerformed(), 5);
 
   // The action is simply the torque. Check if dimension is 1.
   BOOST_REQUIRE_EQUAL(1, action.size);
@@ -71,7 +73,7 @@ BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
 
   ContinuousMountainCar::State state = task.InitialSample();
   ContinuousMountainCar::Action action;
-  action.action = math::Random(-1.0, 1.0);
+  action.action[0] = math::Random(-1.0, 1.0);
   double reward = task.Sample(state, action);
   // Maximum reward possible is 100.
   BOOST_REQUIRE(reward <= 100.0);
@@ -191,7 +193,7 @@ BOOST_AUTO_TEST_CASE(ContinuousDoublePoleCartTest)
 
   ContinuousDoublePoleCart::State state = task.InitialSample();
   ContinuousDoublePoleCart::Action action;
-  action.action = math::Random(-1.0, 1.0);
+  action.action[0] = math::Random(-1.0, 1.0);
   double reward = task.Sample(state, action);
 
   BOOST_REQUIRE_EQUAL(reward, 1.0);

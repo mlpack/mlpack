@@ -15,6 +15,8 @@
 // In case it hasn't been included already.
 #include "nca_softmax_error_function.hpp"
 
+#include <mlpack/core.hpp>
+
 namespace mlpack {
 namespace nca {
 
