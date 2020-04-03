@@ -157,7 +157,7 @@ class EpisodicReplay
       {
         if (position == 0 && full)
             episodeNum = capacity-1;
-        else if(position != 0)
+        else if (position != 0)
           episodeNum = position-1;
       }
       else
