@@ -55,7 +55,9 @@ PPO<
   #endif
   policy(std::move(policy)),
   replayMethod(std::move(replayMethod)),
-  environment(std::move(environment))
+  environment(std::move(environment)),
+  totalSteps(0),
+  deterministic(false)
 {
   // Set up actor and critic network.
   if (actorNetwork.Parameters().is_empty())
@@ -222,7 +224,7 @@ void PPO<
     actorUpdater.Update(actorNetwork.Parameters(), config.StepSize(),
                         actorGradients);
     #else
-    criticUpdatePolicy->Update(actorNetwork.Parameters(), config.StepSize(),
+    actorUpdatePolicy->Update(actorNetwork.Parameters(), config.StepSize(),
                                actorGradients);
     #endif
   }
@@ -316,6 +318,9 @@ double PPO<
   // Running until get to the terminal state.
   while (!environment.IsTerminal(state))
   {
+    if (config.StepLimit() && steps >= config.StepLimit())
+      break;
+
     totalReturn += Step();
 
     steps++;
@@ -329,9 +334,6 @@ double PPO<
       Update();
       replayMethod.Clear();
     }
-
-    if (config.StepLimit() && steps >= config.StepLimit())
-      break;
   }
 
   return totalReturn;
