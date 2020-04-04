@@ -412,10 +412,7 @@ BOOST_AUTO_TEST_CASE(TripletMarginLossTest)
   positive = arma::mat("10 12 13");
   negative = arma::mat("4 5 7");
 
-  input = {
-            {2, 3, 5},
-            {10, 12, 13}
-          };
+  input = { {2, 3, 5}, {10, 12, 13} };
 
   double error = module.Forward(input, negative);
   BOOST_REQUIRE_EQUAL(error, 66);
