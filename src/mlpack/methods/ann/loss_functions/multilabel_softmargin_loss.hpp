@@ -33,15 +33,17 @@ class MultiLabelSoftMarginLoss
   /**
    * Create the MultiLabelSoftMarginLoss object.
    *
-   * @param weight A manual rescaling weight given to each class. Initialized to
-   *               1 by default.
-   * @param reduction Specifies the reduction to apply to the output. When true,
-   * 		        'mean' reduction is used, where sum of the output will be
-   *                  divided by the number of elements in the output. When
-   *                  false, 'sum' reduction is used and the output will be
-   *                  summed.
+   * @param weight A manual rescaling weight given to each class. Initialized
+   *               with 1 by default. Weight is a 1xn vector where n is the
+   *               number of classes.
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If
+   *                  true, 'sum' reduction is used and the output will be
+   *                  summed. It is set to true by default.
    */
-  MultiLabelSoftMarginLoss(const double weight = 1.0,
+  MultiLabelSoftMarginLoss(arma::mat weight,
+                           const size_t num_classes,
                            const bool reduction = true);
 
   /**
@@ -53,7 +55,8 @@ class MultiLabelSoftMarginLoss
    * @param target The target vector with same shape as input.
    */
   template<typename InputType, typename TargetType>
-  double Forward(const InputType& input, const TargetType& target);
+  typename InputType::elem_type Forward(const InputType& input,
+                                        const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -77,15 +80,13 @@ class MultiLabelSoftMarginLoss
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //! Get the weight.
-  double Weight() const { return weight; }
-  //! Modify the weight.
-  double& Weight() { return weight; }
-
   //! Get the reduction.
   bool Reduction() const { return reduction; }
   //! Modify the reduction.
   bool& Reduction() { return reduction; }
+
+  //! Get the number of classes.
+  size_t const& NumClasses() const { return num_classes; }
 
   /**
    * Serialize the layer.
@@ -101,14 +102,14 @@ class MultiLabelSoftMarginLoss
   InputDataType inputParameter;
 
   //! The manual rescaling factor given to the loss.
-  double weight;
+  arma::mat class_weights;
 
-  //! The weight for positive examples.
-  double posWeight;
+  //! The number of classes.
+  size_t num_classes;
 
   //! The boolean value that tells if reduction is mean or sum.
   bool reduction;
-}; // class MarginRankingLoss
+}; // class MultiLabelSoftMarginLoss
 
 } // namespace ann
 } // namespace mlpack

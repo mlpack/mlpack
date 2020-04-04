@@ -21,24 +21,35 @@ namespace ann /** Artifical Neural Network. */ {
 template<typename InputDataType, typename OutputDataType>
 MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::
 MultiLabelSoftMarginLoss(
-    const double weight,
+    arma::mat weight,
+    const size_t num_classes,
     const bool reduction) :
-    weight(weight),
+    num_classes(num_classes),
     reduction(reduction)
 {
-  // Nothing to do here.
+  class_weights.ones(1,num_classes);
+  class_weights = weight;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Forward(
+typename InputType::elem_type
+MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Forward(
     const InputType& input, const TargetType& target)
 {
-  InputType logSigmoid = 1 / (1 + arma::exp(-input));
-  InputType logSigmoidNeg = 1 / (1 + arma::exp(input));
-  double loss = arma::accu(-(target % logSigmoid +
-      (1 - target) % logSigmoidNeg) * weight);
-  return reduction ? loss / input.n_elem : loss / input.n_rows;
+  InputType logSigmoid = arma::log((1 / (1 + arma::exp(-input))));
+  InputType logSigmoidNeg = arma::log(1 / (1 + arma::exp(input)));
+  InputType loss = arma::mean(arma::mean(-(target % logSigmoid +
+      (1 - target) % logSigmoidNeg), 1) * class_weights, 1);
+
+  if(reduction)
+  {
+    return arma::as_scalar(arma::sum(loss));
+  }
+  else
+  {
+    return arma::as_scalar(arma::mean(loss));
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -48,10 +59,21 @@ void MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     OutputType& output)
 {
-  InputType expo = arma::exp(input);
-  output = (expo / arma::pow(1 + expo, 2)) %
-      ((target + 1) / arma::log(1 + expo) -
-      target / (input - arma::log(expo + 1))) * weight;
+  InputType logSigmoiddiff = 1/logSigmoid % arma::exp(-input) /
+      arma::pow((1+arma::exp(-input)), 2);
+  InputType logSigmoidNegdiff = -1/logSigmoidNeg % arma::exp(input) /
+      arma::pow((1+arma::exp(input)), 2);
+  InputType temp = arma::mean(arma::mean(-(target % logSigmoiddiff +
+      (1-target) % logSigmoidNegdiff), 1) * class_weights, 1);
+
+  if(reduction)
+  {
+    output = arma::sum(temp);
+  }
+  else
+  {
+    output = arma::mean(temp);
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
