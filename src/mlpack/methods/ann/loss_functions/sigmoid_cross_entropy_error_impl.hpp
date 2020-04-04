@@ -29,10 +29,13 @@ SigmoidCrossEntropyError<InputDataType, OutputDataType>
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-inline double SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
-    const InputType& input, const TargetType& target)
+inline typename InputType::elem_type
+SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
+    const InputType& input,
+    const TargetType& target)
 {
-  double maximum = 0;
+  typedef typename InputType::elem_type ElemType;
+  ElemType maximum = 0;
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     maximum += std::max(input[i], 0.0) +

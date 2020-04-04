@@ -28,8 +28,9 @@ KLDivergence<InputDataType, OutputDataType>::KLDivergence(const bool takeMean) :
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double KLDivergence<InputDataType, OutputDataType>::Forward(
-    const InputType& input, const TargetType& target)
+typename InputType::elem_type
+KLDivergence<InputDataType, OutputDataType>::Forward(const InputType& input,
+                                                     const TargetType& target)
 {
   if (takeMean)
   {
