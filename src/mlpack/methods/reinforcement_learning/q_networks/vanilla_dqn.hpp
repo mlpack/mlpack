@@ -23,6 +23,9 @@ namespace rl {
 
 using namespace mlpack::ann;
 
+/**
+ * @tparam NetworkType The type of network used for simple dqn.
+ */
 template <typename NetworkType = FFN<MeanSquaredError<>,
                                     GaussianInitialization>>
 class VanillaDQN
@@ -37,23 +40,23 @@ class VanillaDQN
   /**
    * Construct an instance of VanillaDQN class.
    *
-   * @param inputDim number of inputs.
-   * @param hiddenDim1 Number of neurons in hiddenlayer-1.
-   * @param hiddenDim2 Number of neurons in hiddenlayer-2.
+   * @param inputDim Number of inputs.
+   * @param h1 Number of neurons in hiddenlayer-1.
+   * @param h2 Number of neurons in hiddenlayer-2.
    * @param outputDim Number of neurons in output layer.
    */
   VanillaDQN(const int inputDim,
-            const int hiddenDim1,
-            const int hiddenDim2,
+            const int h1,
+            const int h2,
             const int outputDim) : network()
   {
     FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
         GaussianInitialization(0, 0.001));
-    model.Add<Linear<>>(inputDim, hiddenDim1);
+    model.Add<Linear<>>(inputDim, h1);
     model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(hiddenDim1, hiddenDim2);
+    model.Add<Linear<>>(h1, h2);
     model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(hiddenDim2, outputDim);
+    model.Add<Linear<>>(h2, outputDim);
     network = model;
   }
 
@@ -71,8 +74,7 @@ class VanillaDQN
    * @param state Input state.
    * @param actionValue Matrix to put output action values of states input.
    */
-  void Predict(const arma::mat state,
-             arma::mat& actionValue)
+  void Predict(const arma::mat state, arma::mat& actionValue)
   {
     network.Predict(state, actionValue);
   }
@@ -83,8 +85,7 @@ class VanillaDQN
    * @param state The input state.
    * @param target The predicted target.
    */
-  void Forward(const arma::mat state,
-             arma::mat& target)
+  void Forward(const arma::mat state, arma::mat& target)
   {
     network.Forward(state, target);
   }
@@ -110,9 +111,8 @@ class VanillaDQN
    * @param target The training target.
    * @return gradient The gradient.
    */
-  void Backward(const arma::mat state,
-             arma::mat& target,
-             arma::mat& gradient)
+  void Backward(const arma::mat state, arma::mat& target,
+arma::mat& gradient)
   {
     network.Backward(state, target, gradient);
   }
