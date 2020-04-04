@@ -26,10 +26,13 @@ NegativeLogLikelihood<InputDataType, OutputDataType>::NegativeLogLikelihood()
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
-    const InputType& input, const TargetType& target)
+typename InputType::elem_type
+NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
+    const InputType& input,
+    const TargetType& target)
 {
-  double output = 0;
+  typedef typename InputType::elem_type ElemType;
+  ElemType output = 0;
   for (size_t i = 0; i < input.n_cols; ++i)
   {
     size_t currentTarget = target(i) - 1;
