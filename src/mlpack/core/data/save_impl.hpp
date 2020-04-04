@@ -197,7 +197,7 @@ bool Save(const std::string& filename,
   return true;
 }
 
-//Save a Sparse Matrix
+// Save a Sparse Matrix
 template<typename eT>
 bool Save(const std::string& filename,
           const arma::SpMat<eT>& matrix,
@@ -208,7 +208,7 @@ bool Save(const std::string& filename,
   arma::file_type saveType = arma::coord_ascii;
   std::string stringType = "CSV data";
   arma::SpMat<eT> tmp;
-  
+
   if (transpose)
     tmp = trans(matrix);
   else
@@ -219,7 +219,7 @@ bool Save(const std::string& filename,
       << std::endl;
 
   const bool success = tmp.quiet_save(filename, saveType);
-  
+
   if (!success)
     {
       Timer::Stop("saving_data");
