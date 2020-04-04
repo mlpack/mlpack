@@ -38,9 +38,9 @@ class VanillaDQN
    * Construct an instance of VanillaDQN class.
    *
    * @param inputDim number of inputs.
-   * @param hiddenDim1 number of neurons in hiddenlayer-1.
-   * @param hiddenDim2 number of neurons in hiddenlayer-2.
-   * @param outputDim number of neurons in output layer.
+   * @param hiddenDim1 Number of neurons in hiddenlayer-1.
+   * @param hiddenDim2 Number of neurons in hiddenlayer-2.
+   * @param outputDim Number of neurons in output layer.
    */
   VanillaDQN(const int inputDim,
             const int hiddenDim1,
