@@ -589,8 +589,8 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossSumReductionTest)
   arma::mat input, target, output;
   double loss;
   arma::mat weight;
-  weight.ones(1,3);
-  MultiLabelSoftMarginLoss<> module(weight,3,true);
+  weight.ones(1, 3);
+  MultiLabelSoftMarginLoss<> module(weight, 3, true);
 
   // Test the Forward function. Loss should be 2.14829.
   input << 0.1778 << 0.1203 << -0.2264 << endr
@@ -618,8 +618,8 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossMeanReductionTest)
   arma::mat input, target, output;
   double loss;
   arma::mat weight;
-  weight.ones(1,3);
-  MultiLabelSoftMarginLoss<> module(weight,3,true);
+  weight.ones(1, 3);
+  MultiLabelSoftMarginLoss<> module(weight, 3, false);
 
   // Test the Forward function. Loss should be 0.716095.
   input << 0.1778 << 0.1203 << -0.2264 << endr

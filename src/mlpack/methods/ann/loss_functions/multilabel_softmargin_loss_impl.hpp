@@ -27,7 +27,7 @@ MultiLabelSoftMarginLoss(
     num_classes(num_classes),
     reduction(reduction)
 {
-  class_weights.ones(1,num_classes);
+  class_weights.ones(1, num_classes);
   class_weights = weight;
 }
 
@@ -42,7 +42,7 @@ MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Forward(
   InputType loss = arma::mean(arma::mean(-(target % logSigmoid +
       (1 - target) % logSigmoidNeg), 1) * class_weights, 1);
 
-  if(reduction)
+  if (reduction)
   {
     return arma::as_scalar(arma::sum(loss));
   }
@@ -66,7 +66,7 @@ void MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Backward(
   InputType temp = arma::mean(arma::mean(-(target % logSigmoiddiff +
       (1-target) % logSigmoidNegdiff), 1) * class_weights, 1);
 
-  if(reduction)
+  if (reduction)
   {
     output = arma::sum(temp);
   }
