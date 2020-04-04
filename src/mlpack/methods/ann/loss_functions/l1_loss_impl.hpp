@@ -27,8 +27,10 @@ L1Loss<InputDataType, OutputDataType>::L1Loss(const bool mean):
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double L1Loss<InputDataType, OutputDataType>::Forward(
-    const InputType& input, const TargetType& target)
+typename InputType::elem_type
+L1Loss<InputDataType, OutputDataType>::Forward(
+    const InputType& input,
+    const TargetType& target)
 {
   if (mean)
     return arma::accu(arma::mean(input - target));
