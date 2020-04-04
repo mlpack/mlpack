@@ -1,16 +1,16 @@
 /**
- * @file vanilla_dqn.hpp
+ * @file simple_dqn.hpp
  * @author Nishant Kumar
  *
- * This file contains the implementation of the vanilla deep q network.
+ * This file contains the implementation of the simple deep q network.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_RL_VANILLA_DQN_HPP
-#define MLPACK_METHODS_RL_VANILLA_DQN_HPP
+#ifndef MLPACK_METHODS_RL_SIMPLE_DQN_HPP
+#define MLPACK_METHODS_RL_SIMPLE_DQN_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
@@ -28,24 +28,24 @@ using namespace mlpack::ann;
  */
 template <typename NetworkType = FFN<MeanSquaredError<>,
                                     GaussianInitialization>>
-class VanillaDQN
+class SimpleDQN
 {
  public:
   /**
    * Default constructor.
    */
-  VanillaDQN() : network()
+  SimpleDQN() : network()
   { /* Nothing to do here. */ }
 
   /**
-   * Construct an instance of VanillaDQN class.
+   * Construct an instance of SimpleDQN class.
    *
    * @param inputDim Number of inputs.
    * @param h1 Number of neurons in hiddenlayer-1.
    * @param h2 Number of neurons in hiddenlayer-2.
    * @param outputDim Number of neurons in output layer.
    */
-  VanillaDQN(const int inputDim,
+  SimpleDQN(const int inputDim,
             const int h1,
             const int h2,
             const int outputDim) : network()
@@ -60,7 +60,7 @@ class VanillaDQN
     network = model;
   }
 
-  VanillaDQN(NetworkType network) : network(std::move(network))
+  SimpleDQN(NetworkType network) : network(std::move(network))
   { /* Nothing to do here. */ }
 
   /**

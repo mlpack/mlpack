@@ -18,7 +18,7 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/reinforcement_learning/q_learning.hpp>
-#include <mlpack/methods/reinforcement_learning/q_networks/vanilla_dqn.hpp>
+#include <mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_SUITE(QLearningTest);
 BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 {
   // Set up the network.
-  VanillaDQN<> model(4, 128, 128, 2);
+  SimpleDQN<> model(4, 128, 128, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
 {
   // Set up the network.
-  VanillaDQN<> model(4, 128, 128, 2);
+  SimpleDQN<> model(4, 128, 128, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
   for (size_t trial = 0; trial < 4; ++trial)
   {
     // Set up the network.
-    VanillaDQN<> model(4, 20, 20, 2);
+    SimpleDQN<> model(4, 20, 20, 2);
 
     // Set up the policy and replay method.
     GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -234,7 +234,7 @@ BOOST_AUTO_TEST_CASE(AcrobotWithDQN)
   for (size_t trial = 0; trial < 3; ++trial)
   {
     // Set up the network.
-    VanillaDQN<> model(4, 64, 32, 3);
+    SimpleDQN<> model(4, 64, 32, 3);
 
     // Set up the policy and replay method.
     GreedyPolicy<Acrobot> policy(1.0, 1000, 0.1, 0.99);
@@ -305,7 +305,7 @@ BOOST_AUTO_TEST_CASE(MountainCarWithDQN)
   for (size_t trial = 0; trial < 3; trial++)
   {
     // Set up the network.
-    VanillaDQN<> model(2, 64, 32, 3);
+    SimpleDQN<> model(2, 64, 32, 3);
 
     // Set up the policy and replay method.
     GreedyPolicy<MountainCar> policy(1.0, 1000, 0.1, 0.99);
@@ -384,7 +384,7 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
     network.Add<Linear<>>(256, 3);
 
     // Create custom network type
-    VanillaDQN<decltype(network)> model(std::move(network));
+    SimpleDQN<decltype(network)> model(std::move(network));
 
     // Set up the policy and replay method.
     GreedyPolicy<DoublePoleCart> policy(1.0, 1000, 0.1, 0.99);
