@@ -137,6 +137,7 @@ EncodeHelper(const std::vector<std::string>& input,
 
     numColumns = std::max(numColumns, numTokens);
   }
+
   policy.InitMatrix(output, input.size(), numColumns, dictionary.Size());
 
   // The second pass writes the encoded values to the output.

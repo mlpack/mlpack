@@ -84,7 +84,7 @@ class DictionaryEncodingPolicy
 
   /**
    * The function performs the dictionary encoding algorithm i.e. it writes
-   * the encoded token to the output. This is an overload function which saves
+   * the encoded token to the output. This is an overloaded function which saves
    * the result into the given vector to avoid padding. The encoder writes data
    * in the row-major order.
    *

@@ -44,7 +44,8 @@ class TfIdfEncodingPolicy
    * RAW_COUNT        Term frequency equals the number of times when the encoded
    *                  token occurs in the row.
    * TERM_FREQUENCY   Term frequency equals the number of times when the encoded
-   *                  token occurs in the row divided by the row size.
+   *                  token occurs in the row divided by the total number of
+   *                  tokens in the row.
    * SUBLINEAR_TF     Term frequency equals \f$ 1 + log(rawCount), \f$ where
    *                  rawCount is equal to the number of times when the encoded
    *                  token occurs in the row.
