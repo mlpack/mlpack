@@ -408,7 +408,6 @@ bool Load(const std::string& filename,
   {
     inplace_transpose(matrix);
   }
-  
   if (!success)
   {
     Log::Info << std::endl;

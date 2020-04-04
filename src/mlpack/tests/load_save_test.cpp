@@ -102,13 +102,12 @@ BOOST_AUTO_TEST_CASE(LoadSparseCSVTest)
   arma::sp_mat::const_iterator it_end = test.end();
 
   double temp = 0.0;
-  for(; it != it_end; ++it, temp += 0.1)
+  for( ; it != it_end; ++it, temp += 0.1)
   {
     double val = (*it);
     BOOST_REQUIRE_CLOSE(val, temp, 1e-5);
   }
   // Remove the file.
-  
   remove("test_sparse_file.csv");
 }
 
