@@ -59,7 +59,7 @@ void MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     OutputType& output)
 {
-  output.set_size(size(x));
+  output.set_size(size(input));
   InputType Sigmoid = (1 / (1 + arma::exp(-input)));
   output = - (target % (1-Sigmoid) - (1-target) % Sigmoid) %
       arma::repmat(class_weights, target.n_rows, 1) / output.n_elem;
