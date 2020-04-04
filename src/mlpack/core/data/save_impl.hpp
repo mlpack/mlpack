@@ -197,6 +197,45 @@ bool Save(const std::string& filename,
   return true;
 }
 
+//Save a Sparse Matrix
+template<typename eT>
+bool Save(const std::string& filename,
+          const arma::SpMat<eT>& matrix,
+          const bool fatal,
+          bool transpose)
+{
+  Timer::Start("saving_data");
+  arma::file_type saveType = arma::coord_ascii;
+  std::string stringType = "CSV data";
+  arma::SpMat<eT> tmp;
+  
+  if (transpose)
+    tmp = trans(matrix);
+  else
+    tmp = matrix;
+
+  // Try to save the file.
+  Log::Info << "Saving " << stringType << " to '" << filename << "'."
+      << std::endl;
+
+  const bool success = tmp.quiet_save(filename, saveType);
+  
+  if (!success)
+    {
+      Timer::Stop("saving_data");
+      if (fatal)
+        Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
+      else
+        Log::Warn << "Save to '" << filename << "' failed." << std::endl;
+
+      return false;
+    }
+
+  Timer::Stop("saving_data");
+  // Finally return success.
+  return true;
+}
+
 //! Save a model to file.
 template<typename T>
 bool Save(const std::string& filename,

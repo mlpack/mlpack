@@ -76,6 +76,9 @@ BOOST_AUTO_TEST_CASE(LoadCSVTest)
   remove("test_file.csv");
 }
 
+/**
+ * Make sure a CSV is loaded correctly to a sparse matrix.
+ */
 BOOST_AUTO_TEST_CASE(LoadSparseCSVTest)
 {
   fstream f;
@@ -102,7 +105,7 @@ BOOST_AUTO_TEST_CASE(LoadSparseCSVTest)
   arma::sp_mat::const_iterator it_end = test.end();
 
   double temp = 0.0;
-  for( ; it != it_end; ++it, temp += 0.1)
+  for ( ; it != it_end; ++it, temp += 0.1)
   {
     double val = (*it);
     BOOST_REQUIRE_CLOSE(val, temp, 1e-5);
@@ -187,6 +190,39 @@ BOOST_AUTO_TEST_CASE(SaveCSVTest)
 
   // Remove the file.
   remove("test_file.csv");
+}
+
+/**
+ * Make sure a CSV is saved correctly for a sparse matrix
+ */
+BOOST_AUTO_TEST_CASE(SaveSparseCSVTest)
+{
+  arma::sp_mat test = "0.1 0 0;"
+                      "0.2 0 0;"
+                      "0.3 0 0;"
+                      "0 0.4 0;";
+
+  BOOST_REQUIRE(data::Save("test_sparse_file.csv", test, true, false) == true);
+
+  // Load it in and make sure it is the same.
+  arma::sp_mat test2;
+  BOOST_REQUIRE(data::Load("test_sparse_file.csv", test2, true, false) == true);
+
+  BOOST_REQUIRE_EQUAL(test2.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(test2.n_cols, 3);
+
+  arma::sp_mat::const_iterator it = test2.begin();
+  arma::sp_mat::const_iterator it_end = test2.end();
+
+  double temp = 0.1;
+  for ( ; it != it_end; ++it, temp += 0.1)
+  {
+    double val = (*it);
+    BOOST_REQUIRE_CLOSE(val, temp, 1e-5);
+  }
+
+  // Remove the file.
+  remove("test_sparse_file.csv");
 }
 
 /**

@@ -59,6 +59,12 @@ bool Save(const std::string& filename,
           const bool fatal = false,
           bool transpose = true);
 
+template<typename eT>
+bool Save(const std::string& filename,
+          const arma::SpMat<eT>& matrix,
+          const bool fatal = false,
+          bool transpose = true);
+
 /**
  * Saves a model to file, guessing the filetype from the extension, or,
  * optionally, saving the specified format.  If automatic extension detection is
