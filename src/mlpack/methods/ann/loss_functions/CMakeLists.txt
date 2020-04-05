@@ -3,6 +3,8 @@
 set(SOURCES
   cross_entropy_error.hpp
   cross_entropy_error_impl.hpp
+  cosine_embedding_loss.hpp
+  cosine_embedding_loss_impl.hpp
   dice_loss.hpp
   dice_loss_impl.hpp
   earth_mover_distance.hpp

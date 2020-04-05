@@ -78,6 +78,8 @@
 
   * Add Hinge Embedding Loss Function (#2229).
 
+  * Add Cosine Embedding Loss Function (#2209).
+
   * Add Margin Ranking Loss Function (#2264).
 
 ### mlpack 3.2.2
