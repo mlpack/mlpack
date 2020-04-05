@@ -43,13 +43,9 @@ MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Forward(
       (1 - target) % logSigmoidNeg), 1) * class_weights, 1);
 
   if (reduction)
-  {
     return arma::as_scalar(arma::sum(loss));
-  }
-  else
-  {
-    return arma::as_scalar(arma::mean(loss));
-  }
+
+  return arma::as_scalar(arma::mean(loss));
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -61,17 +57,11 @@ void MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Backward(
 {
   output.set_size(size(input));
   InputType Sigmoid = (1 / (1 + arma::exp(-input)));
-  if (reduction)
-  {
-    output = - ((target % (1-Sigmoid) - (1-target) % Sigmoid) %
-        arma::repmat(class_weights, target.n_rows, 1) / output.n_elem) *
-        num_classes;
-  }
-  else
-  {
-    output = - (target % (1-Sigmoid) - (1-target) % Sigmoid) %
+  output = - (target % (1-Sigmoid) - (1-target) % Sigmoid) %
         arma::repmat(class_weights, target.n_rows, 1) / output.n_elem;
-  }
+
+  if (reduction)
+    output = output * num_classes;
 }
 
 
