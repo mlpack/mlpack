@@ -64,8 +64,6 @@ void MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Backward(
     output = output * num_classes;
 }
 
-
-
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::serialize(
