@@ -1,7 +1,10 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added `Multi Label Soft Margin Loss` loss function for neural networks
+   (#2345).
+
   * Templated return type of `Forward function` of loss functions (#2339).
-  
+
   * Added `R2 Score` regression metric (#2323).
 
   * Added `mean squared logarithmic error` loss function for neural networks
@@ -53,7 +56,7 @@
   * Add LiSHT activation function (#2182).
 
   * Add Valid and Same Padding for Transposed Convolution layer (#2163).
-  
+
   * Add CELU activation function (#2191)
 
   * Add Log-Hyperbolic-Cosine Loss function (#2207)
