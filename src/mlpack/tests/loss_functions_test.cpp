@@ -16,6 +16,7 @@
 
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/huber_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/kl_divergence.hpp>
 #include <mlpack/methods/ann/loss_functions/earth_mover_distance.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
@@ -64,9 +65,51 @@ BOOST_AUTO_TEST_CASE(HuberLossTest)
   // Sum of Expected Output = -0.07125.
   double expectedOutputSum = arma::accu(output);
   BOOST_REQUIRE_CLOSE_FRACTION(expectedOutputSum, -0.07125, 0.00001);
+}
 
-  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+/**
+ * Poisson Negative Log Likelihood Loss function test.
+ */
+BOOST_AUTO_TEST_CASE(PoissonNLLLossTest)
+{
+  arma::mat input, target;
+  arma::mat output1, output2;
+  arma::mat expOutput1, expOutput2;
+  PoissonNLLLoss<> module1;
+  PoissonNLLLoss<> module2;
+  module2.Full() = true;
+  module2.Reduction() = false;
+
+  // Test the Forward function on a user generated input.
+  input = arma::mat("1.0 1.0 1.9 1.6 -1.9 3.7 -1.0 0.5");
+  target = arma::mat("1.0 3.0 1.0 2.0 1.0 4.0 2.0 1.0");
+
+  double loss1 = module1.Forward(input, target);
+  double loss2 = module2.Forward(input, target);
+  BOOST_REQUIRE_CLOSE_FRACTION(loss1, 4.8986, 0.0001);
+  BOOST_REQUIRE_CLOSE_FRACTION(loss2, 45.4139, 0.0001);
+
+  // Test the Backward function.
+  module1.Backward(input, target, output1);
+  module2.Backward(input, target, output2);
+
+  expOutput1 = arma::mat("0.214785 -0.0352148 0.710737 0.369129 \
+                         -0.106304 4.55591 -0.204015 0.0810902");
+  expOutput2 = arma::mat("1.71828 -0.281718 5.68589 2.95303\
+                         -0.850431 36.4473 -1.63212 0.648721");
+
+
+  BOOST_REQUIRE_EQUAL(output1.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output1.n_cols, input.n_cols);
+
+  BOOST_REQUIRE_EQUAL(output2.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output2.n_cols, input.n_cols);
+
+  for (size_t i = 0; i < expOutput1.n_elem; ++i)
+  {
+    BOOST_REQUIRE_CLOSE_FRACTION(output1[i], expOutput1[i], 0.0001);
+    BOOST_REQUIRE_CLOSE_FRACTION(output2[i], expOutput2[i], 0.0001);
+  }
 }
 
 /**

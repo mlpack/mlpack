@@ -27,6 +27,8 @@ set(SOURCES
   negative_log_likelihood_impl.hpp
   log_cosh_loss.hpp
   log_cosh_loss_impl.hpp
+  poisson_nll_loss.hpp
+  poisson_nll_loss_impl.hpp
   reconstruction_loss.hpp
   reconstruction_loss_impl.hpp
   sigmoid_cross_entropy_error.hpp
