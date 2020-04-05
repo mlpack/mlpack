@@ -624,4 +624,63 @@ BOOST_AUTO_TEST_CASE(MarginRankingLossTest)
       "-0.753830 1.336900 0.000000 0.000000 -0.207000 0.328810"), 1e-6);
 }
 
+/**
+ * Test for the multiLabel softmargin loss function, where loss is
+ * reduced to sum.
+ */
+BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossSumReductionTest)
+{
+  arma::mat input, target, output;
+  double loss;
+  arma::mat weight;
+  weight.ones(1, 3);
+  MultiLabelSoftMarginLoss<> module(weight, 3, true);
+
+  // Test the Forward function. Loss should be 2.14829.
+  input << 0.1778 << 0.1203 << -0.2264 << arma::endr
+      << 0.0957 << 0.2403 << -0.3400 << arma::endr
+      << 0.1397 << 0.1925 << -0.3336 << arma::endr;
+  target << 0 << 1 << 0 << arma::endr
+      << 1 << 0 << 0 << arma::endr
+      << 0 << 0 << 1 << arma::endr;
+
+  loss = module.Forward(input, target);
+  BOOST_REQUIRE_CLOSE(loss, 2.14829, 1e-3);
+
+  // Test the Backward function.
+  module.Backward(input, target, output);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 0.505909, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+}
+
+/**
+ * Test for the multiLabel softmargin loss function, where loss is
+ * reduced to mean.
+ */
+BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossMeanReductionTest)
+{
+  arma::mat input, target, output;
+  double loss;
+  arma::mat weight;
+  weight.ones(1, 3);
+  MultiLabelSoftMarginLoss<> module(weight, 3, false);
+
+  // Test the Forward function. Loss should be 0.716095.
+  input << 0.1778 << 0.1203 << -0.2264 << arma::endr
+      << 0.0957 << 0.2403 << -0.3400 << arma::endr
+      << 0.1397 << 0.1925 << -0.3336 << arma::endr;
+  target << 0 << 1 << 0 << arma::endr
+      << 1 << 0 << 0 << arma::endr
+      << 0 << 0 << 1 << arma::endr;
+
+  loss = module.Forward(input, target);
+  BOOST_REQUIRE_CLOSE(loss, 0.716095, 1e-3);
+
+  // Test the Backward function.
+  module.Backward(input, target, output);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 0.168636, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+}
 BOOST_AUTO_TEST_SUITE_END();
