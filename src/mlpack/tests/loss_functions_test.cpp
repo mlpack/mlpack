@@ -22,6 +22,7 @@
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_bias_error.hpp>
 #include <mlpack/methods/ann/loss_functions/dice_loss.hpp>
@@ -578,4 +579,48 @@ BOOST_AUTO_TEST_CASE(HingeEmbeddingLossTest)
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 }
+
+/*
+ * Simple test for the Margin Ranking Loss function.
+ */
+BOOST_AUTO_TEST_CASE(MarginRankingLossTest)
+{
+  arma::mat input, input1, input2, target, output;
+  MarginRankingLoss<> module;
+
+  // Test the Forward function on a user generator input and compare it against
+  // the manually calculated result.
+  input1 = arma::mat("1 2 5 7 -1 -3");
+  input2 = arma::mat("-1 3 -4 11 3 -3");
+  input = arma::join_cols(input1, input2);
+  target = arma::mat("1 -1 -1 1 -1 1");
+  double error = module.Forward(input, target);
+  // Computed using torch.nn.functional.margin_ranking_loss()
+  BOOST_REQUIRE_CLOSE(error, 2.66667, 1e-3);
+
+  // Test the Backward function.
+  module.Backward(input, target, output);
+
+  CheckMatrices(output, arma::mat("-0.000000 0.166667 -1.500000 0.666667 "
+      "0.000000 -0.000000"), 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, target.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, target.n_cols);
+
+  // Test the error function on another input.
+  input1 = arma::mat("0.4287 -1.6208 -1.5006 -0.4473 1.5208 -4.5184 9.3574 "
+      "-4.8090 4.3455 5.2070");
+  input2 = arma::mat("-4.5288 -9.2766 -0.5882 -5.6643 -6.0175 8.8506 3.4759 "
+      "-9.4886 2.2755 8.4951");
+  input = arma::join_cols(input1, input2);
+  target = arma::mat("1 1 -1 1 -1 1 1 1 -1 1");
+  error = module.Forward(input, target);
+  BOOST_REQUIRE_CLOSE(error, 3.03530, 1e-3);
+
+  // Test the Backward function on the second input.
+  module.Backward(input, target, output);
+
+  CheckMatrices(output, arma::mat("0.000000 0.000000 0.091240 0.000000 "
+      "-0.753830 1.336900 0.000000 0.000000 -0.207000 0.328810"), 1e-6);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

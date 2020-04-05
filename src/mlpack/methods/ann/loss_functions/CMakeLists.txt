@@ -11,6 +11,8 @@ set(SOURCES
   huber_loss_impl.hpp
   kl_divergence.hpp
   kl_divergence_impl.hpp
+  margin_ranking_loss.hpp
+  margin_ranking_loss_impl.hpp
   mean_bias_error.hpp
   mean_bias_error_impl.hpp
   mean_squared_error.hpp
