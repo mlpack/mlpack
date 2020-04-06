@@ -32,6 +32,7 @@
 #include "fast_lstm.hpp"
 #include "flexible_relu.hpp"
 #include "glimpse.hpp"
+#include "gru.hpp"
 #include "hard_tanh.hpp"
 #include "hardshrink.hpp"
 #include "highway.hpp"
@@ -63,6 +64,5 @@
 #include "virtual_batch_norm.hpp"
 #include "vr_class_reward.hpp"
 #include "weight_norm.hpp"
-#include "gru.hpp"
 
 #endif
