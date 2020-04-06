@@ -91,12 +91,11 @@ class SimpleDQN
   }
 
   /**
-   * Resets the parameters of the network when empty.
+   * Resets the parameters of the network.
    */
-  void ResetParametersIfEmpty()
+  void ResetParameters()
   {
-    if (network.Parameters().is_empty())
-      network.ResetParameters();
+    network.ResetParameters();
   }
 
   //! Return the Parameters.

@@ -375,16 +375,13 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
   bool success = false;
   for (size_t trial = 0; trial < 4; trial++)
   {
-    // Set up the network.
-    FFN<MeanSquaredError<>, GaussianInitialization>
-        network(MeanSquaredError<>(),
-                GaussianInitialization(0, 0.001));
-    network.Add<Linear<>>(6, 256);
-    network.Add<ReLULayer<>>();
-    network.Add<Linear<>>(256, 3);
-
-    // Create custom network type
-    SimpleDQN<decltype(network)> model(std::move(network));
+    // Set up the network. Note that we use a custom model here, and
+    // pass it directly into the agent, without using SimpleDQN.
+    FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
+        GaussianInitialization(0, 0.001));
+    model.Add<Linear<>>(6, 256);
+    model.Add<ReLULayer<>>();
+    model.Add<Linear<>>(256, 3);
 
     // Set up the policy and replay method.
     GreedyPolicy<DoublePoleCart> policy(1.0, 1000, 0.1, 0.99);
