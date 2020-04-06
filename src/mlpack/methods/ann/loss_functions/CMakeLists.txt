@@ -3,6 +3,8 @@
 set(SOURCES
   cross_entropy_error.hpp
   cross_entropy_error_impl.hpp
+  cosine_embedding_loss.hpp
+  cosine_embedding_loss_impl.hpp
   dice_loss.hpp
   dice_loss_impl.hpp
   earth_mover_distance.hpp
@@ -11,6 +13,8 @@ set(SOURCES
   huber_loss_impl.hpp
   kl_divergence.hpp
   kl_divergence_impl.hpp
+  margin_ranking_loss.hpp
+  margin_ranking_loss_impl.hpp
   mean_bias_error.hpp
   mean_bias_error_impl.hpp
   mean_squared_error.hpp
