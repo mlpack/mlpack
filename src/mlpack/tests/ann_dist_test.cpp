@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_SUITE(ANNDistTest);
 BOOST_AUTO_TEST_CASE(SimpleBernoulliDistributionTest)
 {
   arma::mat param = arma::mat("1 1 0");
-  BernoulliDistribution<> module(std::move(param), false);
+  BernoulliDistribution<> module(param, false);
 
   arma::mat sample = module.Sample();
   // As the probabilities are [1, 1, 0], the bernoulli samples should be
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(JacobianBernoulliDistributionTest)
     arma::mat target;
     target.randn(targetElements, 1);
 
-    BernoulliDistribution<> module(std::move(param), false);
+    BernoulliDistribution<> module(param, false);
 
     const double perturbation = 1e-6;
     double outputA, outputB, original;
@@ -66,16 +66,16 @@ BOOST_AUTO_TEST_CASE(JacobianBernoulliDistributionTest)
     {
       original = module.Probability()(j);
       module.Probability()(j) = original - perturbation;
-      outputA = module.LogProbability(std::move(target));
+      outputA = module.LogProbability(target);
       module.Probability()(j) = original + perturbation;
-      outputB = module.LogProbability(std::move(target));
+      outputB = module.LogProbability(target);
       module.Probability()(j) = original;
       outputB -= outputA;
       outputB /= 2 * perturbation;
       jacobianA(j) = outputB;
     }
 
-    module.LogProbBackward(std::move(target), std::move(jacobianB));
+    module.LogProbBackward(target, jacobianB);
     BOOST_REQUIRE_LE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))),
         1e-5);
   }
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(JacobianBernoulliDistributionLogisticTest)
     arma::mat target;
     target.randn(targetElements, 1);
 
-    BernoulliDistribution<> module(std::move(param));
+    BernoulliDistribution<> module(param);
 
     const double perturbation = 1e-6;
     double outputA, outputB, original;
@@ -110,10 +110,10 @@ BOOST_AUTO_TEST_CASE(JacobianBernoulliDistributionLogisticTest)
       original = module.Logits()(j);
       module.Logits()(j) = original - perturbation;
       LogisticFunction::Fn(module.Logits(), module.Probability());
-      outputA = module.LogProbability(std::move(target));
+      outputA = module.LogProbability(target);
       module.Logits()(j) = original + perturbation;
       LogisticFunction::Fn(module.Logits(), module.Probability());
-      outputB = module.LogProbability(std::move(target));
+      outputB = module.LogProbability(target);
       module.Logits()(j) = original;
       LogisticFunction::Fn(module.Logits(), module.Probability());
       outputB -= outputA;
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(JacobianBernoulliDistributionLogisticTest)
       jacobianA(j) = outputB;
     }
 
-    module.LogProbBackward(std::move(target), std::move(jacobianB));
+    module.LogProbBackward(target, jacobianB);
     BOOST_REQUIRE_LE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))),
         3e-5);
   }

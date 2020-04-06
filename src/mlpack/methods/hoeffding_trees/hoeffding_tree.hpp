@@ -121,6 +121,8 @@ class HoeffdingTree
    * @param dimensionMappings Mappings from dimension indices to positions in
    *      numeric and categorical split vectors.  If left NULL, a new one will
    *      be created.
+   * @param copyDatasetInfo If true, then a copy of the datasetInfo will be
+   *      made.
    */
   HoeffdingTree(const data::DatasetInfo& datasetInfo,
                 const size_t numClasses,
@@ -133,7 +135,8 @@ class HoeffdingTree
                 const NumericSplitType<FitnessFunction>& numericSplitIn =
                     NumericSplitType<FitnessFunction>(0),
                 std::unordered_map<size_t, std::pair<size_t, size_t>>*
-                    dimensionMappings = NULL);
+                    dimensionMappings = NULL,
+                const bool copyDatasetInfo = true);
 
   /**
    * Construct a Hoeffding tree with no data and no information.  Be sure to

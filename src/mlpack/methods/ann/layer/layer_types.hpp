@@ -42,6 +42,8 @@
 #include <mlpack/methods/ann/layer/subview.hpp>
 #include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
 #include <mlpack/methods/ann/layer/hardshrink.hpp>
+#include <mlpack/methods/ann/layer/celu.hpp>
+#include <mlpack/methods/ann/layer/softshrink.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
@@ -243,6 +245,7 @@ using LayerTypes = boost::variant<
     Padding<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
     WeightNorm<arma::mat, arma::mat>*,
+    CELU<arma::mat, arma::mat>*,
     MoreTypes,
     CustomLayers*...
 >;

@@ -58,10 +58,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
 
-  size_t countError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != predictedLabels(i))
-      countError++;
+  size_t countError = arma::accu(labels != predictedLabels);
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
@@ -96,10 +93,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
   Perceptron<> p(inputData, labels.row(0), numClasses, perceptronIter);
   p.Classify(inputData, perceptronPrediction);
 
-  size_t countWeakLearnerError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != perceptronPrediction(i))
-      countWeakLearnerError++;
+  size_t countWeakLearnerError = arma::accu(labels != perceptronPrediction);
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
@@ -110,10 +104,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
 
-  size_t countError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != predictedLabels(i))
-      countError++;
+  size_t countError = arma::accu(labels != predictedLabels);;
   double error = (double) countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
@@ -151,10 +142,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
 
-  size_t countError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != predictedLabels(i))
-      countError++;
+  size_t countError = arma::accu(labels != predictedLabels);
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
@@ -187,10 +175,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
   Perceptron<> p(inputData, labels.row(0), numClasses, perceptronIter);
   p.Classify(inputData, perceptronPrediction);
 
-  size_t countWeakLearnerError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != perceptronPrediction(i))
-      countWeakLearnerError++;
+  size_t countWeakLearnerError = arma::accu(labels != perceptronPrediction);
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
@@ -201,10 +186,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
 
-  size_t countError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != predictedLabels(i))
-      countError++;
+  size_t countError = arma::accu(labels != predictedLabels);
   double error = (double) countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
@@ -242,10 +224,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
 
-  size_t countError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != predictedLabels(i))
-      countError++;
+  size_t countError = arma::accu(labels == predictedLabels);
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
@@ -278,10 +257,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
   Perceptron<> p(inputData, labels.row(0), numClasses, perceptronIter);
   p.Classify(inputData, perceptronPrediction);
 
-  size_t countWeakLearnerError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != perceptronPrediction(i))
-      countWeakLearnerError++;
+  size_t countWeakLearnerError = arma::accu(labels != perceptronPrediction);
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
@@ -292,10 +268,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
 
-  size_t countError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != predictedLabels(i))
-      countError++;
+  size_t countError = arma::accu(labels != predictedLabels);
   double error = (double) countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
@@ -332,10 +305,7 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
 
-  size_t countError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != predictedLabels(i))
-      countError++;
+  size_t countError = arma::accu(labels != predictedLabels);
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
@@ -371,10 +341,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
   ID3DecisionStump ds(inputData, labelsvec, numClasses, inpBucketSize);
   ds.Classify(inputData, dsPrediction);
 
-  size_t countWeakLearnerError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != dsPrediction(i))
-      countWeakLearnerError++;
+  size_t countWeakLearnerError = arma::accu(labels != dsPrediction);
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
@@ -387,10 +354,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
 
-  size_t countError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != predictedLabels(i))
-      countError++;
+  size_t countError = arma::accu(labels != predictedLabels);
   double error = (double) countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
@@ -430,10 +394,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
 
-  size_t countError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != predictedLabels(i))
-      countError++;
+  size_t countError = arma::accu(labels != predictedLabels);
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
@@ -466,11 +427,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
   ID3DecisionStump ds(inputData, labelsvec, numClasses, inpBucketSize);
   ds.Classify(inputData, dsPrediction);
 
-  size_t countWeakLearnerError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != dsPrediction(i))
-      countWeakLearnerError++;
-
+  size_t countWeakLearnerError = arma::accu(labels != dsPrediction);
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
@@ -482,10 +439,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
 
-  size_t countError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != predictedLabels(i))
-      countError++;
+  size_t countError = arma::accu(labels != predictedLabels);
   double error = (double) countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
@@ -524,10 +478,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
 
-  size_t countError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != predictedLabels(i))
-      countError++;
+  size_t countError = arma::accu(labels != predictedLabels);
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
@@ -561,10 +512,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
   ID3DecisionStump ds(inputData, labelsvec, numClasses, inpBucketSize);
   ds.Classify(inputData, dsPrediction);
 
-  size_t countWeakLearnerError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != dsPrediction(i))
-      countWeakLearnerError++;
+  size_t countWeakLearnerError = arma::accu(labels != dsPrediction);
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
@@ -577,10 +525,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
 
-  size_t countError = 0;
-  for (size_t i = 0; i < labels.n_cols; i++)
-    if (labels(i) != predictedLabels(i))
-      countError++;
+  size_t countError = arma::accu(labels != predictedLabels);
   double error = (double) countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
@@ -650,11 +595,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
     BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
   }
 
-  size_t localError = 0;
-  for (size_t i = 0; i < trueTestLabels.n_cols; i++)
-    if (trueTestLabels(i) != predictedLabels1(i))
-      localError++;
-
+  size_t localError = arma::accu(trueTestLabels != predictedLabels1);
   double lError = (double) localError / trueTestLabels.n_cols;
   BOOST_REQUIRE_LE(lError, 0.30);
 }
@@ -722,11 +663,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
     BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
   }
 
-  size_t localError = 0;
-  for (size_t i = 0; i < trueTestLabels.n_cols; i++)
-    if (trueTestLabels(i) != predictedLabels1(i))
-      localError++;
-
+  size_t localError = arma::accu(trueTestLabels != predictedLabels1);
   double lError = (double) localError / trueTestLabels.n_cols;
   BOOST_REQUIRE_LE(lError, 0.30);
 }
@@ -793,10 +730,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
     BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
   }
 
-  size_t localError = 0;
-  for (size_t i = 0; i < trueTestLabels.n_cols; i++)
-    if (trueTestLabels(i) != predictedLabels1(i))
-      localError++;
+  size_t localError = arma::accu(trueTestLabels != predictedLabels1);
   double lError = (double) localError / labels.n_cols;
   BOOST_REQUIRE_LE(lError, 0.30);
 }
@@ -851,11 +785,7 @@ BOOST_AUTO_TEST_CASE(TrainTest)
   arma::Row<size_t> predictedLabels(testData.n_cols);
   a.Classify(testData, predictedLabels);
 
-  int localError = 0;
-  for (size_t i = 0; i < trueTestLabels.n_cols; i++)
-    if (trueTestLabels(i) != predictedLabels(i))
-      localError++;
-
+  int localError = arma::accu(trueTestLabels != predictedLabels);
   double lError = (double) localError / trueTestLabels.n_cols;
 
   BOOST_REQUIRE_LE(lError, 0.30);

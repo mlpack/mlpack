@@ -39,7 +39,8 @@ namespace ann /** Artificial Neural Network. */ {
  *              Xavier Glorot, Matthew Botvinick, Shakir Mohamed and
  *              Alexander Lerchner | Google DeepMind},
  *   journal = {2017 International Conference on Learning Representations(ICLR)},
- *   year    = {2017}
+ *   year    = {2017},
+ *   url     = {https://deepmind.com/research/publications/beta-VAE-Learning-Basic-Visual-Concepts-with-a-Constrained-Variational-Framework}
  * }
  * @endcode
  *
@@ -79,7 +80,7 @@ class Reparametrization
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -91,9 +92,9 @@ class Reparametrization
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }

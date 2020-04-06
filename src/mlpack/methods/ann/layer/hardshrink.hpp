@@ -66,7 +66,7 @@ class HardShrink
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -78,9 +78,9 @@ class HardShrink
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input,
-                DataType&& gy,
-                DataType&& g);
+  void Backward(const DataType& input,
+                DataType& gy,
+                DataType& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }

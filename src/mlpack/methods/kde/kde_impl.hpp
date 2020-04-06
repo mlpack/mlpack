@@ -336,7 +336,16 @@ Evaluate(MatType querySet, arma::vec& estimations)
     std::vector<size_t> oldFromNewQueries;
     Tree* queryTree = BuildTree<Tree>(std::move(querySet), oldFromNewQueries);
     Timer::Stop("building_query_tree");
-    this->Evaluate(queryTree, oldFromNewQueries, estimations);
+    try
+    {
+      this->Evaluate(queryTree, oldFromNewQueries, estimations);
+    }
+    catch (std::exception& e)
+    {
+      // Make sure we delete the query tree.
+      delete queryTree;
+      throw;
+    }
     delete queryTree;
   }
   else if (mode == SINGLE_TREE_MODE)
