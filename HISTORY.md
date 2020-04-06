@@ -38,6 +38,9 @@
 
   * CMake fix for finding STB include directory (#2145).
 
+  * Add bindings for loading and saving images (#2019); `mlpack_image_converter`
+    from the command-line, `mlpack.image_converter()` from Python.
+
   * Add normalization support for CF binding (#2136).
 
   * Add Mish activation function (#2158).
@@ -71,6 +74,10 @@
   * Add Soft Shrink Activation Function (#2174).
 
   * Add Hinge Embedding Loss Function (#2229).
+
+  * Add Cosine Embedding Loss Function (#2209).
+
+  * Add Margin Ranking Loss Function (#2264).
 
 ### mlpack 3.2.2
 ###### 2019-11-26
