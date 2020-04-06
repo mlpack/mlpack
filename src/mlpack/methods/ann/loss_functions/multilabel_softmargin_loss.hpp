@@ -3,6 +3,9 @@
  * @author Anjishnu Mukherjee
  *
  * Definition of the Multi Label Soft Margin Loss function.
+ * It is a criterion that optimizes a multi-label one-versus-all loss based on
+ * max-entropy, between input x and target y of size (N, C) where N is the
+ * batch size and C is the number of classes.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -33,9 +36,9 @@ class MultiLabelSoftMarginLoss
   /**
    * Create the MultiLabelSoftMarginLoss object.
    *
-   * @param weight A manual rescaling weight given to each class. Initialized
-   *               with 1 by default. Weight is a 1xn vector where n is the
-   *               number of classes.
+   * @param weight A manual rescaling weight given to each class. Weight is a
+   *               (1, C) vector where C is the number of classes.
+   * @param num_classes The number of classes, C.
    * @param reduction Specifies the reduction to apply to the output. If false,
    *                  'mean' reduction is used, where sum of the output will be
    *                  divided by the number of elements in the output. If
@@ -48,8 +51,6 @@ class MultiLabelSoftMarginLoss
 
   /**
    * Computes the Multi Label Soft Margin Loss function.
-   * This criterion optimizes a multi-label one-versus-all loss based
-   * on max-entropy, between input x and target y.
    *
    * @param input Input data used for evaluating the specified function.
    * @param target The target vector with same shape as input.
