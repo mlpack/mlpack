@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_SUITE(ActivationFunctionsTest);
 // Generate dataset for activation function tests.
 const arma::colvec activationData("-2 3.2 4.5 -100.2 1 -1 2 0");
 
-/*
+/**
  * Implementation of the activation function test.
  *
  * @param input Input data used for evaluating the activation function.
@@ -65,7 +65,7 @@ void CheckActivationCorrect(const arma::colvec input,
   }
 }
 
-/*
+/**
  * Implementation of the activation function derivative test.
  *
  * @param input Input data used for evaluating the activation function.
@@ -93,7 +93,7 @@ void CheckDerivativeCorrect(const arma::colvec input,
   }
 }
 
-/*
+/**
  * Implementation of the activation function inverse test.
  *
  * @param input Input data used for evaluating the activation function.
@@ -122,7 +122,7 @@ void CheckInverseCorrect(const arma::colvec input)
   }
 }
 
-/*
+/**
  * Implementation of the HardTanH activation function test. The function is
  * implemented as a HardTanH Layer in hard_tanh.hpp
  *
@@ -143,7 +143,7 @@ void CheckHardTanHActivationCorrect(const arma::colvec input,
   }
 }
 
-/*
+/**
  * Implementation of the HardTanH activation function derivative test. The
  * derivative is implemented as HardTanH Layer in hard_tanh.hpp
  *
@@ -169,7 +169,7 @@ void CheckHardTanHDerivativeCorrect(const arma::colvec input,
   }
 }
 
-/*
+/**
  * Implementation of the LeakyReLU activation function test. The function is
  * implemented as LeakyReLU layer in the file leaky_relu.hpp
  *
@@ -191,7 +191,7 @@ void CheckLeakyReLUActivationCorrect(const arma::colvec input,
   }
 }
 
-/*
+/**
  * Implementation of the LeakyReLU activation function derivative test.
  * The derivative function is implemented as LeakyReLU layer in the file
  * leaky_relu_layer.hpp
@@ -217,7 +217,7 @@ void CheckLeakyReLUDerivativeCorrect(const arma::colvec input,
   }
 }
 
-/*
+/**
  * Implementation of the ELU activation function test. The function is
  * implemented as ELU layer in the file elu.hpp
  *
@@ -239,7 +239,7 @@ void CheckELUActivationCorrect(const arma::colvec input,
   }
 }
 
-/*
+/**
  * Implementation of the ELU activation function derivative test. The function
  * is implemented as ELU layer in the file elu.hpp
  *
@@ -265,7 +265,7 @@ void CheckELUDerivativeCorrect(const arma::colvec input,
   }
 }
 
-/*
+/**
  * Implementation of the PReLU activation function test. The function
  * is implemented as PReLU layer in the file parametric_relu.hpp.
  *
@@ -287,7 +287,7 @@ void CheckPReLUActivationCorrect(const arma::colvec input,
   }
 }
 
-/*
+/**
  * Implementation of the PReLU activation function derivative test.
  * The function is implemented as PReLU layer in the file
  * parametric_relu.hpp
@@ -313,7 +313,7 @@ void CheckPReLUDerivativeCorrect(const arma::colvec input,
   }
 }
 
-/*
+/**
  * Implementation of the PReLU activation function gradient test.
  * The function is implemented as PReLU layer in the file
  * parametric_relu.hpp
@@ -338,7 +338,7 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
   BOOST_REQUIRE_CLOSE(gradient(0), target(0), 1e-3);
 }
 
-/*
+/**
  * Implementation of the Hard Shrink activation function test. The function is
  * implemented as Hard Shrink layer in the file hardshrink.hpp
  *
@@ -359,7 +359,7 @@ void CheckHardShrinkActivationCorrect(const arma::colvec input,
   }
 }
 
-/*
+/**
  * Implementation of the HardShrink activation function derivative test.
  * The derivative function is implemented as HardShrink layer in the file
  * hardshrink.hpp
@@ -385,7 +385,7 @@ void CheckHardShrinkDerivativeCorrect(const arma::colvec input,
   }
 }
 
-/*
+/**
  * Implementation of the Soft Shrink activation function test. The function is
  * implemented as Soft Shrink layer in the file softshrink.hpp.
  *
@@ -407,7 +407,7 @@ void CheckSoftShrinkActivationCorrect(const arma::colvec input,
   }
 }
 
-/*
+/**
  * Implementation of the Soft Shrink activation function derivative test.
  * The derivative function is implemented as Soft Shrink layer in the file
  * softshrink.hpp
@@ -433,7 +433,7 @@ void CheckSoftShrinkDerivativeCorrect(const arma::colvec input,
   }
 }
 
-/*
+/**
  * Simple SELU activation test to check whether the mean and variance remain
  * invariant after passing normalized inputs through the function.
  */
@@ -454,7 +454,7 @@ BOOST_AUTO_TEST_CASE(SELUFunctionNormalizedTest)
       arma::var(output))), 0.1);
 }
 
-/*
+/**
  * Simple SELU activation test to check whether the mean and variance
  * vary significantly after passing unnormalized inputs through the function.
  */
@@ -476,7 +476,7 @@ BOOST_AUTO_TEST_CASE(SELUFunctionUnnormalizedTest)
       arma::var(output))), 0.1);
 }
 
-/*
+/**
  * Simple SELU derivative test to check whether the derivatives
  * produced by the activation function are correct.
  *
@@ -832,22 +832,13 @@ BOOST_AUTO_TEST_CASE(LiSHTFunctionTest)
 BOOST_AUTO_TEST_CASE(GELUFunctionTest)
 {
   // Calculated using torch.nn.gelu().
-  const arma::colvec desiredActivations("-0.0454023 \
-                                         3.1981304 \
-                                         4.5 -0.0 \
-                                         0.84119199 \
-                                         -0.158808 \
-                                         1.954597694 \
-                                         0.0");
+  const arma::colvec desiredActivations("-0.0454023 3.1981304 \
+                                         4.5 -0.0 0.84119199 \
+                                         -0.158808 1.954597694 0.0");
 
-  const arma::colvec desiredDerivatives("0.4637992 \
-                                         1.0065302 \
-                                         1.0000293 \
-                                         0.5 \
-                                         1.03513446 \
-                                         0.37435387 \
-                                         1.090984 \
-                                         0.5");
+  const arma::colvec desiredDerivatives("0.4637992 1.0065302 \
+                                         1.0000293 0.5 1.03513446 \
+                                         0.37435387 1.090984 0.5");
 
   CheckActivationCorrect<GELUFunction>(activationData,
                                        desiredActivations);
@@ -876,20 +867,13 @@ BOOST_AUTO_TEST_CASE(HardShrinkFunctionTest)
 BOOST_AUTO_TEST_CASE(ElishFunctionTest)
 {
   // Manually-calculated using python-numpy module.
-  const arma::colvec desiredActivations("-0.10307056 \
-                                         3.0746696 \
-                                         4.4505587 \
-                                         -3.0457406e-44 \
-                                         0.731058578 \
-                                         -0.1700034 \
-                                         1.76159415 0.0 ");
+  const arma::colvec desiredActivations("-0.10307056 3.0746696 4.4505587 \
+                                         -3.0457406e-44 0.731058578 \
+                                         -0.1700034 1.76159415 0.0 ");
 
-  const arma::colvec desiredDerivatives("0.4033889 \
-                                         1.0856292 \
-                                         1.03921798 \
-                                         0.5 0.83540389 \
-                                         0.34725726 \
-                                         1.07378804 0.5");
+  const arma::colvec desiredDerivatives("0.4033889 1.0856292 \
+                                         1.03921798 0.5 0.83540389 \
+                                         0.34725726 1.07378804 0.5");
 
   CheckActivationCorrect<ElishFunction>(activationData,
                                         desiredActivations);

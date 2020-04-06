@@ -8,14 +8,14 @@
  * For more information see the following paper
  * 
  * @code
- * @misc{ELiSHActivation,
- *    title={The Quest for the Golden Activation Function},
- *    author={Mina Basirat and Peter M. Roth},
- *    year={2018},
- *    url={https://arxiv.org/pdf/1808.00783.pdf},
- *    eprint={1808.00783},
- *    archivePrefix={arXiv},
- *    primaryClass={cs.NE} }
+ * @misc{Basirat2018,
+ *    title = {The Quest for the Golden Activation Function},
+ *    author = {Mina Basirat and Peter M. Roth},
+ *    year = {2018},
+ *    url = {https://arxiv.org/pdf/1808.00783.pdf},
+ *    eprint = {1808.00783},
+ *    archivePrefix = {arXiv},
+ *    primaryClass = {cs.NE} }
  * @endcode
  * 
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -43,8 +43,8 @@ namespace ann /** Artificial Neural Network. */ {
  * \right \\
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
- *     \frac{1}{1+e^{-x}} + 
- *              \frac{xe^{-x}}{ \left(1+e^{-x}}\right)^2} & : x \ge 0 \\
+ *     \frac{1}{1+e^{-x}} +
+ *         \frac{xe^{-x}}{ \left(1+e^{-x}}\right)^2} & : x \ge 0 \\
  *     e^x-\frac{2}{1+e^x}+\frac{2}{\left(1+e^x}\right)^2} & : x < 0
  *   \end{array}
  * \right.
