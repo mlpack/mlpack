@@ -105,7 +105,7 @@ class Pendulum
            const double dt = 0.05,
            const double angleThreshold = M_PI / 12,
            const double doneReward = 0.0,
-           const size_t maxSteps = 0) :
+           const size_t maxSteps = 200) :
       maxAngularVelocity(maxAngularVelocity),
       maxTorque(maxTorque),
       dt(dt),
