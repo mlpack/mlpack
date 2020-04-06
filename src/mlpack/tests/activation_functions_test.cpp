@@ -832,21 +832,21 @@ BOOST_AUTO_TEST_CASE(LiSHTFunctionTest)
 BOOST_AUTO_TEST_CASE(GELUFunctionTest)
 {
   // Calculated using torch.nn.gelu().
-  const arma::colvec desiredActivations("-0.04540230591222 \
-                                         3.1981304348379158 \
-                                         4.5000 -0.0000 \
-                                         0.84119199060827676 \
-                                         -0.15880800939172329 \
-                                         1.954597694087775 \
-                                         0.0000");
+  const arma::colvec desiredActivations("-0.0454023 \
+                                         3.1981304 \
+                                         4.5 -0.0 \
+                                         0.84119199 \
+                                         -0.158808 \
+                                         1.954597694 \
+                                         0.0");
 
-  const arma::colvec desiredDerivatives("0.46379920685377229 \
-                                         1.0065302165778773 \
-                                         1.0000293221871797 \
+  const arma::colvec desiredDerivatives("0.4637992 \
+                                         1.0065302 \
+                                         1.0000293 \
                                          0.5 \
-                                         1.0351344625840642 \
-                                         0.37435387859861063 \
-                                         1.0909840032535403 \
+                                         1.03513446 \
+                                         0.37435387 \
+                                         1.090984 \
                                          0.5");
 
   CheckActivationCorrect<GELUFunction>(activationData,
@@ -876,20 +876,20 @@ BOOST_AUTO_TEST_CASE(HardShrinkFunctionTest)
 BOOST_AUTO_TEST_CASE(ElishFunctionTest)
 {
   // Manually-calculated using python-numpy module.
-  const arma::colvec desiredActivations("-0.10307056080762242 \
-                                         3.0746696870503545 \
-                                         4.450558758162331 \
-                                         -3.0457406053548387e-44 \
-                                         0.7310585786300049 \
-                                         -0.17000340156854793 \
-                                         1.7615941559557646 0.0 ");
+  const arma::colvec desiredActivations("-0.10307056 \
+                                         3.0746696 \
+                                         4.4505587 \
+                                         -3.0457406e-44 \
+                                         0.731058578 \
+                                         -0.1700034 \
+                                         1.76159415 0.0 ");
 
-  const arma::colvec desiredDerivatives("0.4033889157743519 \
-                                         1.0856292040894129 \
-                                         1.0392179837023456 \
-                                         0.5 0.835403899885462 \
-                                         0.3472572607652895 \
-                                         1.0737880406234939 0.5");
+  const arma::colvec desiredDerivatives("0.4033889 \
+                                         1.0856292 \
+                                         1.03921798 \
+                                         0.5 0.83540389 \
+                                         0.34725726 \
+                                         1.07378804 0.5");
 
   CheckActivationCorrect<ElishFunction>(activationData,
                                         desiredActivations);
