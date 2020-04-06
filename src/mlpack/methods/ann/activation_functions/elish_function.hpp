@@ -109,7 +109,7 @@ class ElishFunction
   {
     x = ((y < 0.0) % (arma::exp(y) - 2 / (1 + arma::exp(y)) + 2 / arma::pow(
         1 + arma::exp(y), 2))) + ((y >= 0.0) % (1 / (1 + arma::exp(-y)) + y %
-        arma::exp(-y) / arma::pow(1 + arma::exp(-y), 2))); 
+        arma::exp(-y) / arma::pow(1 + arma::exp(-y), 2)));
   }
 }; // class ElishFunction
 
