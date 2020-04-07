@@ -725,13 +725,13 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossSumReductionTest)
   MultiLabelSoftMarginLoss<> module(weight, 3, true);
 
   // Test the Forward function. Loss should be 2.14829.
-  input << 0.1778 << 0.1203 << -0.2264 << endr
-      << 0.0957 << 0.2403 << -0.3400 << endr
-      << 0.1397 << 0.1925 << -0.3336 << endr;
+  input << 0.1778 << 0.1203 << -0.2264 << arma::endr
+      << 0.0957 << 0.2403 << -0.3400 << arma::endr
+      << 0.1397 << 0.1925 << -0.3336 << arma::endr;
 
-  target << 0 << 1 << 0 << endr
-      << 1 << 0 << 0 << endr
-      << 0 << 0 << 1 << endr;
+  target << 0 << 1 << 0 << arma::endr
+      << 1 << 0 << 0 << arma::endr
+      << 0 << 0 << 1 << arma::endr;
 
   expectedOutput << 0.1814 << -0.1567 << 0.1479 << arma::endr
       << -0.1587 << 0.1866 << 0.1386 << arma::endr
@@ -761,13 +761,13 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossMeanReductionTest)
   MultiLabelSoftMarginLoss<> module(weight, 3, false);
 
   // Test the Forward function. Loss should be 0.716095.
-  input << 0.1778 << 0.1203 << -0.2264 << endr
-      << 0.0957 << 0.2403 << -0.3400 << endr
-      << 0.1397 << 0.1925 << -0.3336 << endr;
+  input << 0.1778 << 0.1203 << -0.2264 << arma::endr
+      << 0.0957 << 0.2403 << -0.3400 << arma::endr
+      << 0.1397 << 0.1925 << -0.3336 << arma::endr;
 
-  target << 0 << 1 << 0 << endr
-      << 1 << 0 << 0 << endr
-      << 0 << 0 << 1 << endr;
+  target << 0 << 1 << 0 << arma::endr
+      << 1 << 0 << 0 << arma::endr
+      << 0 << 0 << 1 << arma::endr;
 
   expectedOutput << 0.0605 << -0.0522 << 0.0493 << arma::endr
       << -0.0529 << 0.0622 << 0.0462 << arma::endr
