@@ -717,26 +717,21 @@ BOOST_AUTO_TEST_CASE(MarginRankingLossTest)
  */
 BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossSumReductionTest)
 {
-  arma::mat input, target, output;
+  arma::mat input, target, output, weight, expectedOutput;
   double loss;
-  arma::mat weight;
-  arma::mat expectedOutput;
   weight.ones(1, 3);
   MultiLabelSoftMarginLoss<> module(weight, 3, true);
 
+  input = arma::mat("0.1778 0.1203 -0.2264 0.0957 0.2403 -0.3400 0.1397 0.1925 "
+      "-0.3336");
+  target = arma::mat("0 1 0 1 0 0 0 0 1");
+  expectedOutput = arma::mat("0.1814 -0.1567 0.1479 -0.1587 0.1866 0.1386 "
+      "0.1783 0.1827 -0.1942");
+  input.reshape(3, 3);
+  target.reshape(3, 3);
+  expectedOutput.reshape(3, 3);
+
   // Test the Forward function. Loss should be 2.14829.
-  input << 0.1778 << 0.1203 << -0.2264 << arma::endr
-      << 0.0957 << 0.2403 << -0.3400 << arma::endr
-      << 0.1397 << 0.1925 << -0.3336 << arma::endr;
-
-  target << 0 << 1 << 0 << arma::endr
-      << 1 << 0 << 0 << arma::endr
-      << 0 << 0 << 1 << arma::endr;
-
-  expectedOutput << 0.1814 << -0.1567 << 0.1479 << arma::endr
-      << -0.1587 << 0.1866 << 0.1386 << arma::endr
-      << 0.1783 << 0.1827 << -0.1942 << arma::endr;
-
   loss = module.Forward(input, target);
   BOOST_REQUIRE_CLOSE(loss, 2.14829, 1e-3);
 
@@ -753,26 +748,21 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossSumReductionTest)
  */
 BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossMeanReductionTest)
 {
-  arma::mat input, target, output;
+  arma::mat input, target, output, weight, expectedOutput;
   double loss;
-  arma::mat weight;
-  arma::mat expectedOutput;
   weight.ones(1, 3);
   MultiLabelSoftMarginLoss<> module(weight, 3, false);
 
+  input = arma::mat("0.1778 0.1203 -0.2264 0.0957 0.2403 -0.3400 0.1397 0.1925 "
+      "-0.3336");
+  target = arma::mat("0 1 0 1 0 0 0 0 1");
+  expectedOutput = arma::mat("0.0605 -0.0522 0.0493 -0.0529 0.0622 0.0462 "
+      "0.0594 0.0609 -0.0647");
+  input.reshape(3, 3);
+  target.reshape(3, 3);
+  expectedOutput.reshape(3, 3);
+
   // Test the Forward function. Loss should be 0.716095.
-  input << 0.1778 << 0.1203 << -0.2264 << arma::endr
-      << 0.0957 << 0.2403 << -0.3400 << arma::endr
-      << 0.1397 << 0.1925 << -0.3336 << arma::endr;
-
-  target << 0 << 1 << 0 << arma::endr
-      << 1 << 0 << 0 << arma::endr
-      << 0 << 0 << 1 << arma::endr;
-
-  expectedOutput << 0.0605 << -0.0522 << 0.0493 << arma::endr
-      << -0.0529 << 0.0622 << 0.0462 << arma::endr
-      << 0.0594 << 0.0609 << -0.0647 << arma::endr;
-
   loss = module.Forward(input, target);
   BOOST_REQUIRE_CLOSE(loss, 0.716095, 1e-3);
 
