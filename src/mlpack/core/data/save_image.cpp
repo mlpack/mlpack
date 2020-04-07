@@ -8,13 +8,19 @@
 
 #ifdef HAS_STB
 
-#define STB_IMAGE_STATIC
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
+// The implementation of the functions is included directly, so we need to make
+// sure it doesn't get included twice.  This is to work around a bug in old
+// versions of STB where not all functions were correctly marked static.
 #define STB_IMAGE_WRITE_STATIC
-#define STB_IMAGE_WRITE_IMPLEMENTATION
+#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
+  #define STB_IMAGE_WRITE_IMPLEMENTATION
+#else
+  #undef STB_IMAGE_WRITE_IMPLEMENTATION
+#endif
 #include <stb_image_write.h>
+#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
+  #define STB_IMAGE_WRITE_IMPLEMENTATION
+#endif
 
 namespace mlpack {
 namespace data {
