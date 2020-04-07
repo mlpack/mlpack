@@ -37,8 +37,8 @@ class MultiLabelSoftMarginLoss
    * Create the MultiLabelSoftMarginLoss object.
    *
    * @param weight A manual rescaling weight given to each class. Weight is a
-   *               (1, C) vector where C is the number of classes.
-   * @param numClasses The number of classes, C.
+   *               (1, numClasses) vector.
+   * @param numClasses The number of classes.
    * @param reduction Specifies the reduction to apply to the output. If false,
    *                  'mean' reduction is used, where sum of the output will be
    *                  divided by the number of elements in the output. If
@@ -94,10 +94,7 @@ class MultiLabelSoftMarginLoss
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
-
-  //! The manual rescaling factor given to the loss.
+  //! A (1, numClasses) shaped vector with weights for each class.
   arma::mat classWeights;
 
   //! The number of classes.
