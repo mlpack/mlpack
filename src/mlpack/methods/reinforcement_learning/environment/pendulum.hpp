@@ -98,7 +98,7 @@ class Pendulum
    *    state is considered terminal.
    * @param doneReward The reward recieved by the agent on success.
    * @param maxSteps The number of steps after which the episode
-   *    terminates. If the value is 0, there is no limit.
+   *    terminates. If the value is 0, there is no limit (Default: 200 steps). 
    */
   Pendulum(const double maxAngularVelocity = 8,
            const double maxTorque = 2.0,
