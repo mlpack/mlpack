@@ -30,6 +30,7 @@
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
 #include <mlpack/methods/ann/layer/c_relu.hpp>
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
+#include <mlpack/methods/ann/layer/linear_no_bias.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
 #include <mlpack/methods/ann/layer/lookup.hpp>
 #include <mlpack/methods/ann/layer/multiply_constant.hpp>
