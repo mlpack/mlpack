@@ -3,6 +3,8 @@
   * Added `Multi Label Soft Margin Loss` loss function for neural networks
    (#2345).
 
+### mlpack 3.3.0
+###### 2020-04-07
   * Templated return type of `Forward function` of loss functions (#2339).
 
   * Added `R2 Score` regression metric (#2323).
@@ -69,7 +71,7 @@
 
   * Bump minimum Boost version to 1.58 (#2305).
 
-  * Refactor STB support so HAS_STB macro is not needed when compiling against
+  * Refactor STB support so `HAS_STB` macro is not needed when compiling against
     mlpack (#2312).
 
   * Add Hard Shrink Activation Function (#2186).
@@ -81,6 +83,9 @@
   * Add Cosine Embedding Loss Function (#2209).
 
   * Add Margin Ranking Loss Function (#2264).
+
+  * Bugfix for incorrect parameter vector sizes in logistic regression and
+    softmax regression (#2359).
 
 ### mlpack 3.2.2
 ###### 2019-11-26
