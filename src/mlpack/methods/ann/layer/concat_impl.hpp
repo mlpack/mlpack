@@ -90,9 +90,12 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 Concat<InputDataType, OutputDataType, CustomLayers...>::~Concat()
 {
-  // Clear memory.
-  std::for_each(network.begin(), network.end(),
-      boost::apply_visitor(deleteVisitor));
+  if (!model)
+  {
+    // Clear memory.
+    std::for_each(network.begin(), network.end(),
+        boost::apply_visitor(deleteVisitor));
+  }
 }
 
 template<typename InputDataType, typename OutputDataType,
