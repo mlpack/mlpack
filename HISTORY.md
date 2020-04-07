@@ -2,8 +2,10 @@
 ###### ????-??-??
   * Updated terminal state for Pendulum environment (#2354).
 
+### mlpack 3.3.0
+###### 2020-04-07
   * Templated return type of `Forward function` of loss functions (#2339).
-  
+
   * Added `R2 Score` regression metric (#2323).
 
   * Added `mean squared logarithmic error` loss function for neural networks
@@ -40,6 +42,9 @@
 
   * CMake fix for finding STB include directory (#2145).
 
+  * Add bindings for loading and saving images (#2019); `mlpack_image_converter`
+    from the command-line, `mlpack.image_converter()` from Python.
+
   * Add normalization support for CF binding (#2136).
 
   * Add Mish activation function (#2158).
@@ -55,7 +60,7 @@
   * Add LiSHT activation function (#2182).
 
   * Add Valid and Same Padding for Transposed Convolution layer (#2163).
-  
+
   * Add CELU activation function (#2191)
 
   * Add Log-Hyperbolic-Cosine Loss function (#2207)
@@ -65,7 +70,7 @@
 
   * Bump minimum Boost version to 1.58 (#2305).
 
-  * Refactor STB support so HAS_STB macro is not needed when compiling against
+  * Refactor STB support so `HAS_STB` macro is not needed when compiling against
     mlpack (#2312).
 
   * Add Hard Shrink Activation Function (#2186).
@@ -73,6 +78,13 @@
   * Add Soft Shrink Activation Function (#2174).
 
   * Add Hinge Embedding Loss Function (#2229).
+
+  * Add Cosine Embedding Loss Function (#2209).
+
+  * Add Margin Ranking Loss Function (#2264).
+
+  * Bugfix for incorrect parameter vector sizes in logistic regression and
+    softmax regression (#2359).
 
 ### mlpack 3.2.2
 ###### 2019-11-26

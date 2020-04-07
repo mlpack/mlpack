@@ -57,23 +57,6 @@ jobs:
   steps:
   - template: macos-steps.yaml
 
-- job: WindowsVS14
-  timeoutInMinutes: 360
-  displayName: Windows VS14
-  pool:
-    vmImage: vs2015-win2012r2
-  strategy:
-    matrix:
-      Plain:
-        CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF'
-        CMakeGenerator: '-G "Visual Studio 14 2015 Win64"'
-        MSBuildVersion: '14.0'
-        ArchiveNoLibs: 'mlpack-windows-vs14-no-libs.zip'
-        ArchiveLibs: 'mlpack-windows-vs14.zip'
-        ArchiveTests: 'mlpack_test-vs14.xml'
-  steps:
-  - template: windows-steps.yaml
-
 - job: WindowsVS15
   timeoutInMinutes: 360
   displayName: Windows VS15
