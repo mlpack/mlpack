@@ -82,7 +82,8 @@ struct IsVector<arma::subview_row<eT> >
 };
 
 
-#if ( (ARMA_VERSION_MAJOR >= 10) || ((ARMA_VERSION_MAJOR == 9) && (ARMA_VERSION_MINOR >= 869)) )
+#if ((ARMA_VERSION_MAJOR >= 10) || \
+    ((ARMA_VERSION_MAJOR == 9) && (ARMA_VERSION_MINOR >= 869)))
 
   // Armadillo 9.869+ has SpSubview_col and SpSubview_row
 
