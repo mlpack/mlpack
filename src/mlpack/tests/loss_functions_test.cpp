@@ -713,8 +713,7 @@ BOOST_AUTO_TEST_CASE(MarginRankingLossTest)
 }
 
 /**
- * Test for the multiLabel softmargin loss function, where loss is
- * reduced to sum.
+ * Simple test for the multiLabel softmargin loss function.
  */
 BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossSumReductionTest)
 {
@@ -725,12 +724,9 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossSumReductionTest)
   MultiLabelSoftMarginLoss<> module(weight, 3, true);
 
   // Test the Forward function. Loss should be 2.14829.
-  input << 0.1778 << 0.1203 << -0.2264 << arma::endr
-      << 0.0957 << 0.2403 << -0.3400 << arma::endr
-      << 0.1397 << 0.1925 << -0.3336 << arma::endr;
-  target << 0 << 1 << 0 << arma::endr
-      << 1 << 0 << 0 << arma::endr
-      << 0 << 0 << 1 << arma::endr;
+  input = arma::mat("0.1778 0.1203 -0.2264 0.0957 0.2403 -0.3400 0.1397 0.1925
+      -0.3336")
+  target = arma::mat("0 1 0 1 0 0 0 0 1");
 
   loss = module.Forward(input, target);
   BOOST_REQUIRE_CLOSE(loss, 2.14829, 1e-3);
@@ -740,11 +736,12 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossSumReductionTest)
   BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 0.505909, 1e-3);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  CheckMatrices(output, arma::mat("0.1814 -0.1567 0.1479 -0.1587 0.1866 0.1386
+      0.1783 0.1827 -0.1942"), 1e-3);
 }
 
 /**
- * Test for the multiLabel softmargin loss function, where loss is
- * reduced to mean.
+ * Simple test for the multiLabel softmargin loss function.
  */
 BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossMeanReductionTest)
 {
@@ -755,12 +752,9 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossMeanReductionTest)
   MultiLabelSoftMarginLoss<> module(weight, 3, false);
 
   // Test the Forward function. Loss should be 0.716095.
-  input << 0.1778 << 0.1203 << -0.2264 << arma::endr
-      << 0.0957 << 0.2403 << -0.3400 << arma::endr
-      << 0.1397 << 0.1925 << -0.3336 << arma::endr;
-  target << 0 << 1 << 0 << arma::endr
-      << 1 << 0 << 0 << arma::endr
-      << 0 << 0 << 1 << arma::endr;
+  input = arma::mat("0.1778 0.1203 -0.2264 0.0957 0.2403 -0.3400 0.1397 0.1925
+      -0.3336")
+  target = arma::mat("0 1 0 1 0 0 0 0 1");
 
   loss = module.Forward(input, target);
   BOOST_REQUIRE_CLOSE(loss, 0.716095, 1e-3);
@@ -770,5 +764,7 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossMeanReductionTest)
   BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 0.168636, 1e-3);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  CheckMatrices(output, arma::mat("0.0605 -0.0522 0.0493 -0.0529 0.0622 0.0462
+      0.0594 0.0609 -0.0647"), 1e-3);
 }
 BOOST_AUTO_TEST_SUITE_END();

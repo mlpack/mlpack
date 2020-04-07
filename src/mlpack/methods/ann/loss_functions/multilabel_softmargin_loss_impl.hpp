@@ -22,12 +22,12 @@ template<typename InputDataType, typename OutputDataType>
 MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::
 MultiLabelSoftMarginLoss(
     arma::mat weight,
-    const size_t num_classes,
+    const size_t numClasses,
     const bool reduction) :
-    num_classes(num_classes),
+    numClasses(numClasses),
     reduction(reduction)
 {
-  class_weights.ones(1, num_classes);
+  class_weights.ones(1, numClasses);
   class_weights = weight;
 }
 
@@ -61,7 +61,7 @@ void MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Backward(
         arma::repmat(class_weights, target.n_rows, 1) / output.n_elem;
 
   if (reduction)
-    output = output * num_classes;
+    output = output * numClasses;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -70,7 +70,9 @@ void MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  // Nothing to do here.
+  ar & BOOST_SERIALIZATION_NVP(weight);
+  ar & BOOST_SERIALIZATION_NVP(numClasses);
+  ar & BOOST_SERIALIZATION_NVP(reduction);
 }
 
 } // namespace ann

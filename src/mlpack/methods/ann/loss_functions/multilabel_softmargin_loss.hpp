@@ -38,7 +38,7 @@ class MultiLabelSoftMarginLoss
    *
    * @param weight A manual rescaling weight given to each class. Weight is a
    *               (1, C) vector where C is the number of classes.
-   * @param num_classes The number of classes, C.
+   * @param numClasses The number of classes, C.
    * @param reduction Specifies the reduction to apply to the output. If false,
    *                  'mean' reduction is used, where sum of the output will be
    *                  divided by the number of elements in the output. If
@@ -46,7 +46,7 @@ class MultiLabelSoftMarginLoss
    *                  summed. It is set to true by default.
    */
   MultiLabelSoftMarginLoss(arma::mat weight,
-                           const size_t num_classes,
+                           const size_t numClasses,
                            const bool reduction = true);
 
   /**
@@ -71,11 +71,6 @@ class MultiLabelSoftMarginLoss
                 const TargetType& target,
                 OutputType& output);
 
-  //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -87,7 +82,7 @@ class MultiLabelSoftMarginLoss
   bool& Reduction() { return reduction; }
 
   //! Get the number of classes.
-  size_t const& NumClasses() const { return num_classes; }
+  size_t const& NumClasses() const { return numClasses; }
 
   /**
    * Serialize the layer.
@@ -106,7 +101,7 @@ class MultiLabelSoftMarginLoss
   arma::mat class_weights;
 
   //! The number of classes.
-  size_t num_classes;
+  size_t numClasses;
 
   //! The boolean value that tells if reduction is mean or sum.
   bool reduction;
