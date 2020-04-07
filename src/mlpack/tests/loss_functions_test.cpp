@@ -725,7 +725,7 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossSumReductionTest)
 
   // Test the Forward function. Loss should be 2.14829.
   input = arma::mat("0.1778 0.1203 -0.2264 0.0957 0.2403 -0.3400 0.1397 0.1925
-      -0.3336")
+      -0.3336");
   target = arma::mat("0 1 0 1 0 0 0 0 1");
 
   loss = module.Forward(input, target);
@@ -753,7 +753,7 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossMeanReductionTest)
 
   // Test the Forward function. Loss should be 0.716095.
   input = arma::mat("0.1778 0.1203 -0.2264 0.0957 0.2403 -0.3400 0.1397 0.1925
-      -0.3336")
+      -0.3336");
   target = arma::mat("0 1 0 1 0 0 0 0 1");
 
   loss = module.Forward(input, target);

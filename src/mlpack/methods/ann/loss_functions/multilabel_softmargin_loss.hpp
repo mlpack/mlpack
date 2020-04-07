@@ -98,7 +98,7 @@ class MultiLabelSoftMarginLoss
   InputDataType inputParameter;
 
   //! The manual rescaling factor given to the loss.
-  arma::mat class_weights;
+  arma::mat classWeights;
 
   //! The number of classes.
   size_t numClasses;

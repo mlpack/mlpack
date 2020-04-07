@@ -27,8 +27,8 @@ MultiLabelSoftMarginLoss(
     numClasses(numClasses),
     reduction(reduction)
 {
-  class_weights.ones(1, numClasses);
-  class_weights = weight;
+  classWeights.ones(1, numClasses);
+  classWeights = weight;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -40,7 +40,7 @@ MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Forward(
   InputType logSigmoid = arma::log((1 / (1 + arma::exp(-input))));
   InputType logSigmoidNeg = arma::log(1 / (1 + arma::exp(input)));
   InputType loss = arma::mean(arma::mean(-(target % logSigmoid +
-      (1 - target) % logSigmoidNeg), 1) * class_weights, 1);
+      (1 - target) % logSigmoidNeg), 1) * classWeights, 1);
 
   if (reduction)
     return arma::as_scalar(arma::sum(loss));
@@ -58,7 +58,7 @@ void MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Backward(
   output.set_size(size(input));
   InputType Sigmoid = (1 / (1 + arma::exp(-input)));
   output = - (target % (1-Sigmoid) - (1-target) % Sigmoid) %
-        arma::repmat(class_weights, target.n_rows, 1) / output.n_elem;
+        arma::repmat(classWeights, target.n_rows, 1) / output.n_elem;
 
   if (reduction)
     output = output * numClasses;
@@ -70,7 +70,7 @@ void MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(weight);
+  ar & BOOST_SERIALIZATION_NVP(classWeights);
   ar & BOOST_SERIALIZATION_NVP(numClasses);
   ar & BOOST_SERIALIZATION_NVP(reduction);
 }
