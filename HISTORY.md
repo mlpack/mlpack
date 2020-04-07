@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Updated terminal state for Pendulum environment (#2354).
+
   * Templated return type of `Forward function` of loss functions (#2339).
   
   * Added `R2 Score` regression metric (#2323).
