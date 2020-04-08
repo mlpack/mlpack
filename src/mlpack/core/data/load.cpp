@@ -71,9 +71,9 @@ template bool Load<double>(const std::string&,
                            const bool);
 
 template bool Load<float>(const std::string&,
-                           arma::SpMat<float>&,
-                           const bool,
-                           const bool);
+                          arma::SpMat<float>&,
+                          const bool,
+                          const bool);
 
 template bool Load<int, IncrementPolicy>(const std::string&,
                                          arma::Mat<int>&,
