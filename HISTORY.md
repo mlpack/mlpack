@@ -2,6 +2,8 @@
 ###### ????-??-??
   * Added `EliSH` activation function (#2323).
 
+  * Add L1 Loss function (#2203).
+
 ### mlpack 3.3.0
 ###### 2020-04-07
   * Templated return type of `Forward function` of loss functions (#2339).
@@ -67,8 +69,6 @@
 
   * Change neural network types to avoid unnecessary use of rvalue references
     (#2259).
-
-  * Add L1 Loss function (#2203).
 
   * Bump minimum Boost version to 1.58 (#2305).
 
