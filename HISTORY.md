@@ -1,5 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added `EliSH` activation function (#2323).
 
 ### mlpack 3.3.0
 ###### 2020-04-07
