@@ -2,6 +2,8 @@
 ###### ????-??-??
   * Updated terminal state for Pendulum environment (#2354).
 
+  * Added `EliSH` activation function (#2323).
+
 ### mlpack 3.3.0
 ###### 2020-04-07
   * Templated return type of `Forward function` of loss functions (#2339).
