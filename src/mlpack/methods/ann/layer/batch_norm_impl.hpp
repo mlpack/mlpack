@@ -26,7 +26,8 @@ BatchNorm<InputDataType, OutputDataType>::BatchNorm() :
     eps(1e-8),
     loading(false),
     deterministic(false),
-    count(0)
+    count(0),
+    name("batchnorm")
 {
   // Nothing to do here.
 }
@@ -37,7 +38,8 @@ BatchNorm<InputDataType, OutputDataType>::BatchNorm(
     eps(eps),
     loading(false),
     deterministic(false),
-    count(0)
+    count(0),
+    name("batchnorm")
 {
   weights.set_size(size + size, 1);
   runningMean.zeros(size, 1);

@@ -84,9 +84,13 @@ class GELUFunction
         arma::pow(1 / arma::cosh(0.0356774 * arma::pow(y, 3) +
         0.797885 * y), 2) + 0.5;
   }
+
+  //! Locally-stored layer name.
+  static constexpr const char* name = "gelu";
 }; // class GELUFunction
 
 } // namespace ann
 } // namespace mlpack
+
 
 #endif

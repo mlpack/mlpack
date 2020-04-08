@@ -29,7 +29,8 @@ ConcatPerformance<
     OutputDataType
 >::ConcatPerformance(const size_t inSize, OutputLayerType&& outputLayer) :
     inSize(inSize),
-    outputLayer(std::move(outputLayer))
+    outputLayer(std::move(outputLayer)),
+    name("concatperformance")
 {
   // Nothing to do here.
 }

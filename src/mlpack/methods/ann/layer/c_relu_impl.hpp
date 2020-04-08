@@ -19,7 +19,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-CReLU<InputDataType, OutputDataType>::CReLU()
+CReLU<InputDataType, OutputDataType>::CReLU() : name("crelu")
 {
   // Nothing to do here.
 }

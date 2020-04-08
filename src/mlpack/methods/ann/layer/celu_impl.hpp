@@ -21,7 +21,8 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputDataType, typename OutputDataType>
 CELU<InputDataType, OutputDataType>::CELU(const double alpha) :
     alpha(alpha),
-    deterministic(false)
+    deterministic(false),
+    name("celu")
 {
   if (alpha == 0)
   {

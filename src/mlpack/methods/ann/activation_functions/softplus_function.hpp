@@ -119,6 +119,9 @@ class SoftplusFunction
     for (size_t i = 0; i < y.n_elem; i++)
       x(i) = Inv(y(i));
   }
+
+  //! Locally-stored layer name.
+  static constexpr const char* name = "softplus";
 }; // class SoftplusFunction
 
 } // namespace ann

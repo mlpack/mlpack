@@ -13,7 +13,7 @@
 #define MLPACK_METHODS_ANN_VISITOR_NAME_VISITOR_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "sname_visitor.hpp"
+#include "name_visitor.hpp"
 
 namespace mlpack {
 namespace ann {

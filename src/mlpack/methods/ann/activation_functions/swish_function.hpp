@@ -92,6 +92,9 @@ class SwishFunction
     x = y / (1 + arma::exp(-y)) + (1 - y / (1 + arma::exp(-y))) /
                                            (1 + arma::exp(-y));
   }
+
+  //! Locally-stored layer name.
+  static constexpr const char* name = "swish";
 }; // class SwishFunction
 
 } // namespace ann

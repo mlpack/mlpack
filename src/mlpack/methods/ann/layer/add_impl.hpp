@@ -21,7 +21,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 Add<InputDataType, OutputDataType>::Add(const size_t outSize) :
-    outSize(outSize)
+    outSize(outSize), name("add")
 {
   weights.set_size(outSize, 1);
 }

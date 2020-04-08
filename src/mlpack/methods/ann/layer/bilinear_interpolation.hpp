@@ -116,6 +116,9 @@ class BilinearInterpolation
   OutputDataType delta;
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Locally-stored layer name.
+  std::string name;
 }; // class BilinearInterpolation
 
 } // namespace ann

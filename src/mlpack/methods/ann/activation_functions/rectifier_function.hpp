@@ -107,6 +107,9 @@ class RectifierFunction
     for (size_t i = 0; i < y.n_elem; i++)
       x(i) = Deriv(y(i));
   }
+
+  //! Locally-stored layer name.
+  static constexpr const char* name = "rectifier";
 }; // class RectifierFunction
 
 } // namespace ann

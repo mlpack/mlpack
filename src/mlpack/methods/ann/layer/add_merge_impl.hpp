@@ -27,7 +27,7 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
     const bool model, const bool run) :
-    model(model), run(run), ownsLayers(!model)
+    model(model), run(run), ownsLayers(!model), name("addmerge")
 {
   // Nothing to do here.
 }

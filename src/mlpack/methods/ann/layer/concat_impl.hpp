@@ -31,7 +31,8 @@ Concat<InputDataType, OutputDataType, CustomLayers...>::Concat(
     useAxis(false),
     model(model),
     run(run),
-    channels(1)
+    channels(1),
+    name("concat")
 {
   parameters.set_size(0, 0);
 }

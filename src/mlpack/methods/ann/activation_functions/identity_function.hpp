@@ -86,6 +86,9 @@ class IdentityFunction
   {
     x.ones(y.n_rows, y.n_cols, y.n_slices);
   }
+
+  //! Locally-stored layer name.
+  static constexpr const char* name = "identity";
 }; // class IdentityFunction
 
 } // namespace ann

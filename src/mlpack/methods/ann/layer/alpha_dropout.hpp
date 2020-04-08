@@ -95,6 +95,11 @@ class AlphaDropout
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
+  //! Get the layer name.
+  const std::string& Name() const { return name; }
+  //! Modify the layer name.
+  std::string& Name() { return name; }
+
   //! The probability of setting a value to alphaDash.
   double Ratio() const { return ratio; }
 
@@ -155,6 +160,9 @@ class AlphaDropout
 
   //! Value to be added to a*x for affine transformation.
   double b;
+
+  //! Locally-stored layer name.
+  std::string name;
 }; // class AlphaDropout
 
 } // namespace ann

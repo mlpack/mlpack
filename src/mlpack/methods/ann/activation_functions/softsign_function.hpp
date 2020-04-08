@@ -126,6 +126,9 @@ class SoftsignFunction
     for (size_t i = 0; i < y.n_elem; i++)
       x(i) = Inv(y(i));
   }
+
+  //! Locally-stored layer name.
+  static constexpr const char* name = "softsign";
 }; // class SoftsignFunction
 
 } // namespace ann

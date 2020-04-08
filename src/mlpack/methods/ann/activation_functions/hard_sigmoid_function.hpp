@@ -91,6 +91,9 @@ class HardSigmoidFunction
       x(i) = Deriv(y(i));
     }
   }
+
+  //! Locally-stored layer name.
+  static constexpr const char* name = "hardsigmoid";
 }; // class HardSigmoidFunction
 
 } // namespace ann

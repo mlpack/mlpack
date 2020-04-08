@@ -87,6 +87,9 @@ class LiSHTFunction
   {
     x = arma::tanh(y) + y % (1 - arma::pow(arma::tanh(y), 2));
   }
+
+  //! Locally-stored layer name.
+  static constexpr const char* name = "lisht";
 }; // class LishtFunction
 
 } // namespace ann
