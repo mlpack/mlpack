@@ -6,6 +6,8 @@
 
   * Add L1 Loss function (#2203).
 
+  * Add Triplet Margin Loss function (#2208).
+
 ### mlpack 3.3.0
 ###### 2020-04-07
   * Templated return type of `Forward function` of loss functions (#2339).
