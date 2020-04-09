@@ -3402,8 +3402,8 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
 BOOST_AUTO_TEST_CASE(GlimpseLayerParametersTest)
 {
   // Parameter order : inSize, size, depth, scale, inputWidth, inputHeight
-  Glimpse<> layer1(1,2,3,4,5,6);
-  Glimpse<> layer2(1,2,3,4,6,7);
+  Glimpse<> layer1(1, 2, 3, 4, 5, 6);
+  Glimpse<> layer2(1, 2, 3, 4, 6, 7);
 
   // Make sure we can get the parameters successfully.
   BOOST_REQUIRE_EQUAL(layer1.InputHeight(), 6);
