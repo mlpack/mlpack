@@ -16,14 +16,7 @@
 #define MLPACK_CORE_BOOST_BACKPORT_SERIALIZATION_HPP
 
 #include <boost/version.hpp>
-
-#if BOOST_VERSION < 105600
-  // Backported unordered_map.
-  #include "mlpack/core/boost_backport/unordered_map.hpp"
-#else
-  // Boost's version.
-  #include <boost/serialization/unordered_map.hpp>
-#endif
+#include <boost/serialization/unordered_map.hpp>
 
 #if BOOST_VERSION == 105800
   /**

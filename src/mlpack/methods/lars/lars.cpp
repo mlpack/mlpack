@@ -361,7 +361,7 @@ double LARS::Train(const arma::mat& matX,
   beta = betaPath.back();
 
   Timer::Stop("lars_regression");
-  return maxCorr;
+  return ComputeError(matX, y, !transposeData);
 }
 
 double LARS::Train(const arma::mat& data,
@@ -536,5 +536,20 @@ void LARS::CholeskyDelete(const size_t colToKill)
     }
 
     matUtriCholFactor.shed_row(n);
+  }
+}
+
+double LARS::ComputeError(const arma::mat& matX,
+                          const arma::rowvec& y,
+                          const bool rowMajor)
+{
+  if (rowMajor)
+  {
+    return arma::accu(arma::pow(y - trans(matX * betaPath.back()), 2.0));
+  }
+
+  else
+  {
+    return arma::accu(arma::pow(y - betaPath.back().t() * matX, 2.0));
   }
 }

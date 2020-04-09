@@ -40,4 +40,12 @@ add_markdown_docs(preprocess_imputer "cli" "preprocessing")
 
 add_cli_executable(preprocess_scale)
 add_python_binding(preprocess_scale)
-add_markdown_docs(preprocess_scale "cli;python" "preprocessing")
+add_julia_binding(preprocess_scale)
+add_markdown_docs(preprocess_scale "cli;python;julia" "preprocessing")
+
+if (STB_AVAILABLE)
+  add_cli_executable(image_converter)
+  add_python_binding(image_converter)
+  add_julia_binding(image_converter)
+  add_markdown_docs(image_converter "cli;python;julia" "preprocessing")
+endif ()

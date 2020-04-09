@@ -64,7 +64,11 @@ class NystroemKernelRule
     G += arma::sum(colMean) / G.n_rows;
 
     // Eigendecompose the centered kernel matrix.
-    arma::eig_sym(eigval, eigvec, transformedData);
+    transformedData = arma::symmatu(transformedData);
+    if (!arma::eig_sym(eigval, eigvec, transformedData))
+    {
+      Log::Fatal << "Failed to construct the kernel matrix." << std::endl;
+    }
 
     // Swap the eigenvalues since they are ordered backwards (we need largest
     // to smallest).

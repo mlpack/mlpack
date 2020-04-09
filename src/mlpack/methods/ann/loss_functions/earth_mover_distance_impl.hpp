@@ -26,8 +26,10 @@ EarthMoverDistance<InputDataType, OutputDataType>::EarthMoverDistance()
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double EarthMoverDistance<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, const TargetType&& target)
+typename InputType::elem_type
+EarthMoverDistance<InputDataType, OutputDataType>::Forward(
+    const InputType& input,
+    const TargetType& target)
 {
   return -arma::accu(target % input);
 }
@@ -35,9 +37,9 @@ double EarthMoverDistance<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
 void EarthMoverDistance<InputDataType, OutputDataType>::Backward(
-    const InputType&& /* input */,
-    const TargetType&& target,
-    OutputType&& output)
+    const InputType& /* input */,
+    const TargetType& target,
+    OutputType& output)
 {
   output = -target;
 }

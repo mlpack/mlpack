@@ -60,43 +60,21 @@ Convolution<
     const size_t padH,
     const size_t inputWidth,
     const size_t inputHeight,
-    const std::string paddingType) :
-    inSize(inSize),
-    outSize(outSize),
-    kernelWidth(kernelWidth),
-    kernelHeight(kernelHeight),
-    strideWidth(strideWidth),
-    strideHeight(strideHeight),
-    padWLeft(padW),
-    padWRight(padW),
-    padHBottom(padH),
-    padHTop(padH),
-    inputWidth(inputWidth),
-    inputHeight(inputHeight),
-    outputWidth(0),
-    outputHeight(0)
+    const std::string& paddingType) :
+    Convolution(
+      inSize,
+      outSize,
+      kernelWidth,
+      kernelHeight,
+      strideWidth,
+      strideHeight,
+      std::tuple<size_t, size_t>(padW, padW),
+      std::tuple<size_t, size_t>(padH, padH),
+      inputWidth,
+      inputHeight,
+      paddingType)
 {
-  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
-      1);
-
-  // Transform paddingType to lowercase.
-  std::string paddingTypeLow = paddingType;
-  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
-      [](unsigned char c){ return std::tolower(c); });
-
-  if (paddingTypeLow == "valid")
-  {
-    padWLeft = 0;
-    padWRight = 0;
-    padHTop = 0;
-    padHBottom = 0;
-  }
-  else if (paddingTypeLow == "same")
-  {
-    InitializeSamePadding();
-  }
-
-  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+  // Nothing to do here.
 }
 
 template<
@@ -119,11 +97,11 @@ Convolution<
     const size_t kernelHeight,
     const size_t strideWidth,
     const size_t strideHeight,
-    const std::tuple<size_t, size_t> padW,
-    const std::tuple<size_t, size_t> padH,
+    const std::tuple<size_t, size_t>& padW,
+    const std::tuple<size_t, size_t>& padH,
     const size_t inputWidth,
     const size_t inputHeight,
-    const std::string paddingType) :
+    const std::string& paddingType) :
     inSize(inSize),
     outSize(outSize),
     kernelWidth(kernelWidth),
@@ -197,10 +175,10 @@ void Convolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+>::Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   batchSize = input.n_cols;
-  inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
+  arma::cube inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(),
       inputWidth, inputHeight, inSize * batchSize, false, false);
 
   if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
@@ -210,8 +188,7 @@ void Convolution<
 
     for (size_t i = 0; i < inputTemp.n_slices; ++i)
     {
-      padding.Forward(std::move(inputTemp.slice(i)),
-          std::move(inputPaddedTemp.slice(i)));
+      padding.Forward(inputTemp.slice(i), inputPaddedTemp.slice(i));
     }
   }
 
@@ -276,14 +253,14 @@ void Convolution<
     InputDataType,
     OutputDataType
 >::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
-  arma::cube mappedError(gy.memptr(), outputWidth, outputHeight,
-      outSize * batchSize, false, false);
+  arma::cube mappedError(((arma::Mat<eT>&) gy).memptr(), outputWidth,
+      outputHeight, outSize * batchSize, false, false);
 
-  g.set_size(inputTemp.n_rows * inputTemp.n_cols * inSize, batchSize);
-  gTemp = arma::Cube<eT>(g.memptr(), inputTemp.n_rows,
-      inputTemp.n_cols, inputTemp.n_slices, false, false);
+  g.set_size(inputWidth * inputHeight * inSize, batchSize);
+  gTemp = arma::Cube<eT>(g.memptr(), inputWidth, inputHeight,
+      inSize * batchSize, false, false);
   gTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
@@ -331,12 +308,14 @@ void Convolution<
     InputDataType,
     OutputDataType
 >::Gradient(
-    const arma::Mat<eT>&& /* input */,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
 {
-  arma::cube mappedError(error.memptr(), outputWidth,
+  arma::cube mappedError(((arma::Mat<eT>&) error).memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
+  arma::cube inputTemp(((arma::Mat<eT>&) input).memptr(), inputWidth,
+      inputHeight, inSize * batchSize, false, false);
 
   gradient.set_size(weights.n_elem, 1);
   gradientTemp = arma::Cube<eT>(gradient.memptr(), weight.n_rows,
