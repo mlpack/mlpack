@@ -17,6 +17,8 @@ set(SOURCES
   margin_ranking_loss_impl.hpp
   mean_bias_error.hpp
   mean_bias_error_impl.hpp
+  l1_loss.hpp
+  l1_loss_impl.hpp
   mean_squared_error.hpp
   mean_squared_error_impl.hpp
   mean_squared_logarithmic_error.hpp

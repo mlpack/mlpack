@@ -98,14 +98,14 @@ class Pendulum
    *    state is considered terminal.
    * @param doneReward The reward recieved by the agent on success.
    * @param maxSteps The number of steps after which the episode
-   *    terminates. If the value is 0, there is no limit.
+   *    terminates. If the value is 0, there is no limit (Default: 200 steps). 
    */
   Pendulum(const double maxAngularVelocity = 8,
            const double maxTorque = 2.0,
            const double dt = 0.05,
            const double angleThreshold = M_PI / 12,
            const double doneReward = 0.0,
-           const size_t maxSteps = 0) :
+           const size_t maxSteps = 200) :
       maxAngularVelocity(maxAngularVelocity),
       maxTorque(maxTorque),
       dt(dt),
@@ -220,12 +220,6 @@ class Pendulum
     {
       Log::Info << "Episode terminated due to the maximum number of steps"
           "being taken.";
-      return true;
-    }
-    else if (state.Theta() > M_PI - angleThreshold ||
-        state.Theta() < -M_PI + angleThreshold)
-    {
-      Log::Info << "Episode terminated due to agent succeeding.";
       return true;
     }
     return false;
