@@ -1,5 +1,6 @@
 /**
  * @file softmax_impl.hpp
+ * @author Mrityunjay Tripathi
  * @author Sreenik Seal
  *
  * Implementation of the Softmax class.
@@ -29,7 +30,7 @@ template<typename InputType, typename OutputType>
 void SoftMax<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)
 {
-  output.set_size(size(input));
+  output.set_size(arma::size(input));
 
   InputType inputMax = arma::repmat(arma::max(input, 0), input.n_rows, 1);
 

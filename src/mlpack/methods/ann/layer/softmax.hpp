@@ -1,5 +1,6 @@
 /**
  * @file softmax.hpp
+ * @author Mrityunjay Tripathi
  * @author Sreenik Seal
  *
  * Definition of the Softmax class.
