@@ -59,7 +59,7 @@ class TripletMarginLoss
    * Computes the Triplet Margin Loss function.
    *
    * @param input The propagated input activation. It should be
-   * concatenated anchor and positive samples.
+   *        concatenated anchor and positive samples.
    * @param target The target vector. It should be negative samples.
    */
   template<typename InputType, typename TargetType>
@@ -69,7 +69,7 @@ class TripletMarginLoss
    * Ordinary feed backward pass of a neural network.
    *
    * @param input The propagated input activation. It should be
-   * concatenated anchor and positive samples.
+   *        concatenated anchor and positive samples.
    * @param target The target vector. It should be negative samples.
    * @param output The calculated error.
    */

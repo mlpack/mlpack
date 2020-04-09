@@ -32,8 +32,8 @@ TripletMarginLoss<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     const TargetType& target)
 {
-  arma::mat anchor = input.submat(0, 0, input.n_rows / 2 - 1, input.n_cols - 1);
-  arma::mat positive = input.submat(input.n_rows / 2, 0, input.n_rows - 1,
+  InputType anchor = input.submat(0, 0, input.n_rows / 2 - 1, input.n_cols - 1);
+  InputType positive = input.submat(input.n_rows / 2, 0, input.n_rows - 1,
       input.n_cols - 1);
   return std::max(0.0, arma::accu(arma::pow(anchor - positive, 2)) -
       arma::accu(arma::pow(anchor - target, 2)) + margin) / anchor.n_cols;
@@ -50,7 +50,7 @@ void TripletMarginLoss<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     OutputType& output)
 {
-  arma::mat positive = input.submat(input.n_rows / 2, 0, input.n_rows - 1,
+  InputType positive = input.submat(input.n_rows / 2, 0, input.n_rows - 1,
       input.n_cols - 1);
   output = 2 * (target - positive) / target.n_cols;
 }
