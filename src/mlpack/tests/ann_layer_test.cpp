@@ -886,7 +886,7 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
  */
 BOOST_AUTO_TEST_CASE(LSTMLayerParametersTest)
 {
-  // Parameter order: inSize, outSize, rho
+  // Parameter order: inSize, outSize, rho.
   LSTM<> layer1(1, 2, 3);
   LSTM<> layer2(1, 2, 4);
 
