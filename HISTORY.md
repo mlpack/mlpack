@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Updated terminal state for Pendulum environment (#2354).
+
   * Added `EliSH` activation function (#2323).
 
   * Add L1 Loss function (#2203).
