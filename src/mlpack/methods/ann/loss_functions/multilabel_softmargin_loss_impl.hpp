@@ -21,7 +21,18 @@ namespace ann /** Artifical Neural Network. */ {
 template<typename InputDataType, typename OutputDataType>
 MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::
 MultiLabelSoftMarginLoss(
-    arma::mat weight,
+    const size_t numClasses,
+    const bool reduction) :
+    numClasses(numClasses),
+    reduction(reduction)
+{
+  classWeights.ones(1, numClasses);
+}
+
+template<typename InputDataType, typename OutputDataType>
+MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::
+MultiLabelSoftMarginLoss(
+    arma::rowvec weight,
     const size_t numClasses,
     const bool reduction) :
     numClasses(numClasses),

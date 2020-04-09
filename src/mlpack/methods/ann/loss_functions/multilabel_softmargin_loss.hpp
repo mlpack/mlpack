@@ -34,9 +34,24 @@ class MultiLabelSoftMarginLoss
 {
  public:
   /**
-   * Create the MultiLabelSoftMarginLoss object.
+   * Create the MultiLabelSoftMarginLoss object using the specified number of
+   * classes, a default weight of 1 for each class and a reduction method.
    *
-   * @param weight A manual rescaling weight given to each class. Weight is a
+   * @param numClasses The number of classes.
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If
+   *                  true, 'sum' reduction is used and the output will be
+   *                  summed. It is set to true by default.
+   */
+  MultiLabelSoftMarginLoss(const size_t numClasses,
+                           const bool reduction = true);
+
+  /**
+   * Create the MultiLabelSoftMarginLoss object using the specified number of
+   * classes, weight vector and a reduction method.
+   *
+   * @param weights A manual rescaling weight given to each class. It is a
    *               (1, numClasses) vector.
    * @param numClasses The number of classes.
    * @param reduction Specifies the reduction to apply to the output. If false,
@@ -45,7 +60,7 @@ class MultiLabelSoftMarginLoss
    *                  true, 'sum' reduction is used and the output will be
    *                  summed. It is set to true by default.
    */
-  MultiLabelSoftMarginLoss(arma::mat weight,
+  MultiLabelSoftMarginLoss(arma::rowvec weights,
                            const size_t numClasses,
                            const bool reduction = true);
 
@@ -95,7 +110,7 @@ class MultiLabelSoftMarginLoss
   OutputDataType outputParameter;
 
   //! A (1, numClasses) shaped vector with weights for each class.
-  arma::mat classWeights;
+  arma::rowvec classWeights;
 
   //! The number of classes.
   size_t numClasses;

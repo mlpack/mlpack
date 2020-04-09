@@ -713,14 +713,13 @@ BOOST_AUTO_TEST_CASE(MarginRankingLossTest)
 }
 
 /**
- * Simple test for the multiLabel softmargin loss function.
+ * Simple test for the MultiLabel Softmargin Loss function.
  */
 BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossSumReductionTest)
 {
-  arma::mat input, target, output, weight, expectedOutput;
+  arma::mat input, target, output, expectedOutput;
   double loss;
-  weight.ones(1, 3);
-  MultiLabelSoftMarginLoss<> module(weight, 3, true);
+  MultiLabelSoftMarginLoss<> module(3, true);
 
   input = arma::mat("0.1778 0.1203 -0.2264 0.0957 0.2403 -0.3400 0.1397 0.1925 "
       "-0.3336");
@@ -732,6 +731,7 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossSumReductionTest)
   expectedOutput.reshape(3, 3);
 
   // Test the Forward function. Loss should be 2.14829.
+  // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum')
   loss = module.Forward(input, target);
   BOOST_REQUIRE_CLOSE(loss, 2.14829, 1e-3);
 
@@ -744,14 +744,13 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossSumReductionTest)
 }
 
 /**
- * Simple test for the multiLabel softmargin loss function.
+ * Simple test for the MultiLabel Softmargin Loss function.
  */
 BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossMeanReductionTest)
 {
-  arma::mat input, target, output, weight, expectedOutput;
+  arma::mat input, target, output, expectedOutput;
   double loss;
-  weight.ones(1, 3);
-  MultiLabelSoftMarginLoss<> module(weight, 3, false);
+  MultiLabelSoftMarginLoss<> module(3, false);
 
   input = arma::mat("0.1778 0.1203 -0.2264 0.0957 0.2403 -0.3400 0.1397 0.1925 "
       "-0.3336");
@@ -763,6 +762,7 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossMeanReductionTest)
   expectedOutput.reshape(3, 3);
 
   // Test the Forward function. Loss should be 0.716095.
+  // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean')
   loss = module.Forward(input, target);
   BOOST_REQUIRE_CLOSE(loss, 0.716095, 1e-3);
 
