@@ -60,7 +60,7 @@ class MultiLabelSoftMarginLoss
    *                  true, 'sum' reduction is used and the output will be
    *                  summed. It is set to true by default.
    */
-  MultiLabelSoftMarginLoss(arma::rowvec weights,
+  MultiLabelSoftMarginLoss(const arma::rowvec& weights,
                            const size_t numClasses,
                            const bool reduction = true);
 

@@ -32,7 +32,7 @@ MultiLabelSoftMarginLoss(
 template<typename InputDataType, typename OutputDataType>
 MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::
 MultiLabelSoftMarginLoss(
-    arma::rowvec weights,
+    const arma::rowvec& weights,
     const size_t numClasses,
     const bool reduction) :
     numClasses(numClasses),
