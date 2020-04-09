@@ -101,7 +101,7 @@ class BilinearInterpolation
   //! Get the column size of the input.
   size_t const& InColSize() const { return inColSize; }
   //! Modify the column size of the input.
-  size_t& InColSizet() { return inColSize; }
+  size_t& InColSize() { return inColSize; }
 
   //! Get the row size of the output.
   size_t const& OutRowSize() const { return outRowSize; }
