@@ -69,6 +69,15 @@ class ImageInfo
   //! Modify the image quality.
   size_t& Quality() { return quality; }
 
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & BOOST_SERIALIZATION_NVP(width);
+    ar & BOOST_SERIALIZATION_NVP(channels);
+    ar & BOOST_SERIALIZATION_NVP(height);
+    ar & BOOST_SERIALIZATION_NVP(quality);
+  }
+
  private:
   // To store the image width.
   size_t width;
