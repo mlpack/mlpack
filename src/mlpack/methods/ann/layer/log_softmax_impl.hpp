@@ -19,7 +19,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-LogSoftMax<InputDataType, OutputDataType>::LogSoftMax()
+LogSoftMax<InputDataType, OutputDataType>::LogSoftMax() : deterministic(0)
 {
   // Nothing to do here.
 }
@@ -59,16 +59,21 @@ void LogSoftMax<InputDataType, OutputDataType>::Forward(
 
   maxInput.each_row() += arma::log(arma::sum(output));
   output = input - maxInput;
+
+  if (!deterministic)
+  {
+    y = output;
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void LogSoftMax<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& /* input */,
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
 {
-  g = arma::exp(input) + gy;
+  g = gy - arma::exp(y);
 }
 
 template<typename InputDataType, typename OutputDataType>

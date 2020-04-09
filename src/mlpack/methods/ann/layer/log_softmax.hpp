@@ -61,7 +61,7 @@ class LogSoftMax
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>& input,
+  void Backward(const arma::Mat<eT>& /* input */,
                 const arma::Mat<eT>& gy,
                 arma::Mat<eT>& g);
 
@@ -75,6 +75,11 @@ class LogSoftMax
   //! Modify the delta.
   InputDataType& Delta() { return delta; }
 
+  //! Get the value of deterministic.
+  InputDataType& Deterministic() const { return deterministic; }
+  //! Modify the value of deterministic.
+  InputDataType& Deterministic() { return deterministic; }
+
   /**
    * Serialize the layer.
    */
@@ -87,6 +92,12 @@ class LogSoftMax
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! If false, output of forward pass saved for derivative calculation.
+  bool deterministic;
+
+  //! Buffer for output of forward pass if non-deterministic.
+  arma::Mat<typename InputDataType::elem_type> y;
 }; // class LogSoftmax
 
 } // namespace ann

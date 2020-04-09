@@ -1498,7 +1498,23 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
   error(1, 0) = -1;
   module.Backward(input, error, delta);
   BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
-      arma::mat("1.6487; 0.6487") - delta)), 1e-3);
+      arma::mat("-0.5; -1.5") - delta)), 1e-3);
+}
+
+/**
+ * Jacobian LogSoftMax module test.
+ */
+BOOST_AUTO_TEST_CASE(JacobianLogSoftMaxLayerTest)
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t inputSize = math::RandInt(2, 100);
+    LogSoftMax<> module;
+
+    arma::mat input(inputSize, 1);
+    const double error = JacobianTest(module, input);
+    BOOST_CHECK_LE(error, 1e-04);
+  }
 }
 
 /*
