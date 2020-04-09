@@ -768,7 +768,7 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossSumReductionTest)
   expectedOutput.reshape(3, 3);
 
   // Test the Forward function. Loss should be 2.14829.
-  // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum')
+  // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum').
   loss = module.Forward(input, target);
   BOOST_REQUIRE_CLOSE(loss, 2.14829, 1e-3);
 
@@ -799,7 +799,7 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossMeanReductionTest)
   expectedOutput.reshape(3, 3);
 
   // Test the Forward function. Loss should be 0.716095.
-  // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean')
+  // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean').
   loss = module.Forward(input, target);
   BOOST_REQUIRE_CLOSE(loss, 0.716095, 1e-3);
 
