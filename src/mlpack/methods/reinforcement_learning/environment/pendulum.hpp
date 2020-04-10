@@ -205,7 +205,10 @@ class Pendulum
   double AngleNormalize(double theta) const
   {
     // Scale angle within [-pi, pi).
-    return double(fmod(theta + M_PI, 2 * M_PI) - M_PI);
+    double x = fmod(theta + M_PI, 2 * M_PI);
+    if (x < 0)
+      x += 2 * M_PI;
+    return x - M_PI;
   }
 
   /**
