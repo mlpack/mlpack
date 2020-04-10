@@ -40,7 +40,7 @@ class CrossEntropyError
    * @param eps The minimum value used for computing logarithms
    *            and denominators in a numerically stable way.
    */
-  CrossEntropyError(const double eps = 1e-10);
+  CrossEntropyError(const double eps = 1e-10, const size_t numClasses = 0);
 
   /**
    * Computes the cross-entropy function.
@@ -81,11 +81,17 @@ class CrossEntropyError
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+  //! Locally stored weights of the loss function.
+  arma::rowvec weights;
+
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
   //! The minimum value used for computing logarithms and denominators
   double eps;
+
+  //! The number of classes, to be specified only when using weighted loss.
+  size_t numClasses;
 }; // class CrossEntropyError
 
 } // namespace ann

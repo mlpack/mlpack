@@ -20,9 +20,12 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 CrossEntropyError<InputDataType, OutputDataType>::CrossEntropyError(
-    const double eps) : eps(eps)
+    const double eps, 
+    const size_t numClasses) :
+    eps(eps), 
+    numClasses(numClasses)
 {
-  // Nothing to do here.
+  weights.ones(numClasses);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -32,8 +35,19 @@ CrossEntropyError<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     const TargetType& target)
 {
-  return -arma::accu(target % arma::log(input + eps) +
-      (1. - target) % arma::log(1. - input + eps));
+  typedef typename InputType::elem_type ElemType;
+  InputType error = target % arma::log(input + eps) +
+      (1. - target) % arma::log(1. - input + eps);
+  // Not really happy with this implementation. I am going to change this.
+  // suggestions are welcome (Without using for loops). Will figure it out tomorrow then.
+  if (numClasses)
+  {
+    for (size_t i = 0; i < input.n_elem; i++)
+    {
+      error(i) *= weights(target(i));
+    }
+  }
+  return arma::accu(error);
 }
 
 template<typename InputDataType, typename OutputDataType>
