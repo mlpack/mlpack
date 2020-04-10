@@ -94,8 +94,6 @@ class Pendulum
    * @param maxAngularVelocity Maximum angular velocity.
    * @param maxTorque Maximum torque.
    * @param dt The differential value.
-   * @param angleThreshold The region about the upright position where the
-   *    state is considered terminal.
    * @param doneReward The reward recieved by the agent on success.
    * @param maxSteps The number of steps after which the episode
    *    terminates. If the value is 0, there is no limit (Default: 200 steps). 
@@ -103,13 +101,11 @@ class Pendulum
   Pendulum(const double maxAngularVelocity = 8,
            const double maxTorque = 2.0,
            const double dt = 0.05,
-           const double angleThreshold = M_PI / 12,
            const double doneReward = 0.0,
            const size_t maxSteps = 200) :
       maxAngularVelocity(maxAngularVelocity),
       maxTorque(maxTorque),
       dt(dt),
-      angleThreshold(angleThreshold),
       doneReward(doneReward),
       maxSteps(maxSteps),
       stepsPerformed(0)
@@ -191,7 +187,7 @@ class Pendulum
   State InitialSample()
   {
     State state;
-    state.Theta() = math::Random(-M_PI + angleThreshold, M_PI - angleThreshold);
+    state.Theta() = math::Random(-M_PI, M_PI);
     state.AngularVelocity() = math::Random(-1.0, 1.0);
     stepsPerformed = 0;
     return state;
@@ -245,9 +241,6 @@ class Pendulum
 
   //! Locally-stored dt.
   double dt;
-
-  //! Locally-stored angle threshold.
-  double angleThreshold;
 
   //! Locally-stored done reward.
   double doneReward;
