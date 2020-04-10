@@ -35,7 +35,7 @@ AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
 
 template <typename InputDataType, typename OutputDataType>
 AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
-    const std::tuple<size_t, size_t> outputShape):
+    const std::tuple<size_t, size_t>& outputShape):
     outputWidth(std::get<0>(outputShape)),
     outputHeight(std::get<1>(outputShape)),
     reset(false)
@@ -61,7 +61,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void AdaptiveMaxPooling<InputDataType, OutputDataType>::Backward(
   const arma::Mat<eT>& input,
-  arma::Mat<eT>& gy,
+  const arma::Mat<eT>& gy,
   arma::Mat<eT>& g)
 {
   poolingLayer.Backward(input, gy, g);

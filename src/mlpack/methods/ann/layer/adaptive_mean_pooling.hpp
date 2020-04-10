@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_ANN_LAYER_ADAPTIVE_MEAN_POOLING_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "layer_types.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -50,7 +51,7 @@ class AdaptiveMeanPooling
    *
    * @param outputShape A two-value tuple indicating width and height of the output.
    */
-  AdaptiveMeanPooling(const std::tuple<size_t, size_t> outputShape);
+  AdaptiveMeanPooling(const std::tuple<size_t, size_t>& outputShape);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -73,7 +74,7 @@ class AdaptiveMeanPooling
    */
   template<typename eT>
   void Backward(const arma::Mat<eT>& input,
-                arma::Mat<eT>& gy,
+                const arma::Mat<eT>& gy,
                 arma::Mat<eT>& g);
 
   //! Get the output parameter.
@@ -115,7 +116,7 @@ class AdaptiveMeanPooling
   size_t OutputSize() const { return poolingLayer.OutputSize(); }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int version);
@@ -147,7 +148,7 @@ class AdaptiveMeanPooling
   }
 
   //! Locally stored MeanPooling Object.
-  ann::MeanPooling<> poolingLayer;
+  MeanPooling<InputDataType, OutputDataType> poolingLayer;
 
   //! Locally-stored output width.
   size_t outputWidth;

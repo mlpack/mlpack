@@ -13,6 +13,8 @@
 #define MLPACK_METHODS_ANN_LAYER_LAYER_HPP
 
 #include "add.hpp"
+#include "adaptive_max_pooling.hpp"
+#include "adaptive_mean_pooling.hpp"
 #include "add_merge.hpp"
 #include "alpha_dropout.hpp"
 #include "atrous_convolution.hpp"

@@ -161,7 +161,7 @@ class MaxPooling
   bool& Deterministic() { return deterministic; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);

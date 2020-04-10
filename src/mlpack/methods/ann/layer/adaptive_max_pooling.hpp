@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_ANN_LAYER_ADAPTIVE_MAX_POOLING_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "layer_types.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -49,7 +50,7 @@ class AdaptiveMaxPooling
    *
    * @param outputShape A two-value tuple indicating width and height of the output.
    */
-  AdaptiveMaxPooling(const std::tuple<size_t, size_t> outputShape);
+  AdaptiveMaxPooling(const std::tuple<size_t, size_t>& outputShape);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -72,7 +73,7 @@ class AdaptiveMaxPooling
    */
   template<typename eT>
   void Backward(const arma::Mat<eT>& input,
-                arma::Mat<eT>& gy,
+                const arma::Mat<eT>& gy,
                 arma::Mat<eT>& g);
 
   //! Get the output parameter.
@@ -114,7 +115,7 @@ class AdaptiveMaxPooling
   size_t OutputSize() const { return poolingLayer.OutputSize(); }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int version);
@@ -146,7 +147,7 @@ class AdaptiveMaxPooling
   }
 
   //! Locally stored MaxPooling Object.
-  ann::MaxPooling<> poolingLayer;
+  MaxPooling<InputDataType, OutputDataType> poolingLayer;
 
   //! Locally-stored output width.
   size_t outputWidth;
