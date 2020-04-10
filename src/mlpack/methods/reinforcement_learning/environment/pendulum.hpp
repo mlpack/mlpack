@@ -149,11 +149,11 @@ class Pendulum
 
     // Calculate new state values and assign to the next state.
     double newAngularVelocity = angularVelocity + (-3.0 * gravity / (2 *
-        length) * std::sin(theta + M_PI) + 3.0 / std::pow(mass * length, 2) *
+        length) * std::sin(theta + M_PI) + 3.0 / (mass * std::pow(length, 2)) *
         torque) * dt;
+    nextState.Theta() = theta + newAngularVelocity * dt;
     nextState.AngularVelocity() = math::ClampRange(newAngularVelocity,
         -maxAngularVelocity, maxAngularVelocity);
-    nextState.Theta() = theta + newAngularVelocity * dt;
 
     // Check if the episode has terminated
     bool done = IsTerminal(nextState);
