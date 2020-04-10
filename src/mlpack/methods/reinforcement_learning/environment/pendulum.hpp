@@ -151,15 +151,6 @@ class Pendulum
     nextState.AngularVelocity() = math::ClampRange(newAngularVelocity,
         -maxAngularVelocity, maxAngularVelocity);
 
-    // Check if the episode has terminated
-    bool done = IsTerminal(nextState);
-
-    // Do not reward the agent if time ran out.
-    if (done && maxSteps != 0 && stepsPerformed >= maxSteps)
-      return 0;
-    else if (done)
-      return doneReward;
-
     // Return the reward of taking the action in current state.
     // The reward is simply the negative of cost incurred for the action.
     return -costs;
