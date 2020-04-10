@@ -6,7 +6,8 @@
 
   * Add L1 Loss function (#2203).
 
-  * Pass CMAKE_CXX_FLAGS (compilation options) correctly to Python build.
+  * Pass CMAKE_CXX_FLAGS (compilation options) correctly to Python build
+    (#2367).
 
 ### mlpack 3.3.0
 ###### 2020-04-07
