@@ -6,6 +6,8 @@
 
   * Add L1 Loss function (#2203).
 
+  * Pass CMAKE_CXX_FLAGS (compilation options) correctly to Python build.
+
 ### mlpack 3.3.0
 ###### 2020-04-07
   * Templated return type of `Forward function` of loss functions (#2339).
