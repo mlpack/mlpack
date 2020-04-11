@@ -758,23 +758,24 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossSumReductionTest)
   double loss;
   MultiLabelSoftMarginLoss<> module(3, true);
 
-  input = arma::mat("0.1778 0.1203 -0.2264 0.0957 0.2403 -0.3400 0.1397 0.1925 "
+  input = arma::mat("0.1778 0.0957 0.1397 0.1203 0.2403 0.1925 -0.2264 -0.3400 "
       "-0.3336");
   target = arma::mat("0 1 0 1 0 0 0 0 1");
-  expectedOutput = arma::mat("0.1814 -0.1567 0.1479 -0.1587 0.1866 0.1386 "
-      "0.1783 0.1827 -0.1942");
+  // Calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum').
+  expectedOutput = arma::mat("0.1814 -0.1587 0.1783 -0.1567 0.1866 0.1827 "
+      "0.1479 0.1386 -0.1942");
   input.reshape(3, 3);
   target.reshape(3, 3);
   expectedOutput.reshape(3, 3);
 
-  // Test the Forward function. Loss should be 2.14829.
+  // Test the Forward function. Loss should be 2.1483.
   // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum').
   loss = module.Forward(input, target);
-  BOOST_REQUIRE_CLOSE(loss, 2.14829, 1e-3);
+  BOOST_REQUIRE_CLOSE(loss, 2.1483, 0.1);
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 0.505909, 1e-3);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 0.5059, 0.1);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
@@ -789,23 +790,92 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossMeanReductionTest)
   double loss;
   MultiLabelSoftMarginLoss<> module(3, false);
 
-  input = arma::mat("0.1778 0.1203 -0.2264 0.0957 0.2403 -0.3400 0.1397 0.1925 "
+  input = arma::mat("0.1778 0.0957 0.1397 0.1203 0.2403 0.1925 -0.2264 -0.3400 "
       "-0.3336");
   target = arma::mat("0 1 0 1 0 0 0 0 1");
-  expectedOutput = arma::mat("0.0605 -0.0522 0.0493 -0.0529 0.0622 0.0462 "
-      "0.0594 0.0609 -0.0647");
+  // Calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean').
+  expectedOutput = arma::mat("0.0605 -0.0529 0.0594 -0.0522 0.0622 0.0609 "
+      "0.0493 0.0462 -0.0647");
   input.reshape(3, 3);
   target.reshape(3, 3);
   expectedOutput.reshape(3, 3);
 
-  // Test the Forward function. Loss should be 0.716095.
+  // Test the Forward function. Loss should be 0.7161.
   // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean').
   loss = module.Forward(input, target);
-  BOOST_REQUIRE_CLOSE(loss, 0.716095, 1e-3);
+  BOOST_REQUIRE_CLOSE(loss, 0.7161, 0.1);
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 0.168636, 1e-3);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 0.1686, 0.1);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
+}
+
+/**
+ * Simple test for the MultiLabel Softmargin Loss function.
+ */
+BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossWeightedSumReductionTest)
+{
+  arma::mat input, target, output, expectedOutput;
+  arma::rowvec weights;
+  double loss;
+  weights = arma::mat("1 2 3");
+  MultiLabelSoftMarginLoss<> module(weights, 3, true);
+
+  input = arma::mat("0.1778 0.0957 0.1397 0.2256 0.1203 0.2403 0.1925 0.3144 "
+      "-0.2264 -0.3400 -0.3336 -0.8695");
+  target = arma::mat("0 1 0 1 1 0 0 0 0 0 1 0");
+  // Calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum').
+  expectedOutput = arma::mat("0.1814 -0.1587 0.1783 -0.1479 -0.3133 0.3732 "
+      "0.3653 0.3853 0.4436 0.4158 -0.5826 0.2954");
+  input.reshape(4, 3);
+  target.reshape(4, 3);
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be 5.3506.
+  // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum').
+  loss = module.Forward(input, target);
+  BOOST_REQUIRE_CLOSE(loss, 5.3506, 0.1);
+
+  // Test the Backward function.
+  module.Backward(input, target, output);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 1.4358, 0.1);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
+}
+
+/**
+ * Simple test for the MultiLabel Softmargin Loss function.
+ */
+BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossWeightedMeanReductionTest)
+{
+  arma::mat input, target, output, expectedOutput;
+  arma::rowvec weights;
+  double loss;
+  weights = arma::mat("1 2 3");
+  MultiLabelSoftMarginLoss<> module(weights, 3, false);
+
+  input = arma::mat("0.1778 0.0957 0.1397 0.2256 0.1203 0.2403 0.1925 0.3144 "
+      "-0.2264 -0.3400 -0.3336 -0.8695");
+  target = arma::mat("0 1 0 1 1 0 0 0 0 0 1 0");
+  // Calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean').
+  expectedOutput = arma::mat("0.0454 -0.0397 0.0446 -0.0370 -0.0783 0.0933 "
+      "0.0913 0.0963 0.1109 0.1040 -0.1457 0.0738");
+  input.reshape(4, 3);
+  target.reshape(4, 3);
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be 1.3376.
+  // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean').
+  loss = module.Forward(input, target);
+  BOOST_REQUIRE_CLOSE(loss, 1.3376, 0.1);
+
+  // Test the Backward function.
+  module.Backward(input, target, output);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 0.3589, 0.1);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
