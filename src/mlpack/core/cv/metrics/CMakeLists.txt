@@ -6,7 +6,6 @@ set(SOURCES
   average_strategy.hpp
   f1.hpp
   f1_impl.hpp
-  facilities.hpp
   mse.hpp
   mse_impl.hpp
   precision.hpp
