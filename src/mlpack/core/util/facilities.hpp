@@ -3,8 +3,7 @@
  * @author Kirill Mishchenko
  * @author Bisakh Mondal
  *
- * Utility that is used for checking same size &  same dimensionality between
- * data & response.
+ * Utility for checking same size &  same dimensionality.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -33,9 +32,9 @@ namespace util {
   */
 template<typename DataType, typename LabelsType>
 inline void CheckSameSizes(const DataType& data,
-                          const LabelsType& labels,
-                          const std::string& callerDescription,
-                          const std::string& mode = "CE")
+                           const LabelsType& labels,
+                           const std::string& callerDescription,
+                           const std::string& mode = "CE")
 {
   if (mode == "CE")
   {
@@ -61,11 +60,56 @@ inline void CheckSameSizes(const DataType& data,
   }
   else
     //For development purpose, not intended for user.
+    Log::Fatal << "Ensure Providing Correct mode." << std::endl;
+
+}
+
+/**
+  * Check for if the given dataset dimension matches with the model's.
+  *
+  * @param data dataset.
+  * @param dimension Dimension of the model.
+  * @param callerDescription A description of the caller that can be used for
+  *     error generation.
+  * @param mode For nature of comparision(default "R").
+  *   types of mode:
+  *     "R" for comparision with number of rows of the dataset.
+  *     "C" for comparision with number of columns of the dataset.
+  */
+template<typename DataType>
+inline void CheckSameDimentionality(const DataType& data,
+                                    const size_t& dimension,
+                                    const std::string& callerDescription,
+                                    const std::string& mode = "R")
+{
+  if (mode == "R")
+  {
+    if (data.n_rows != dimension)
+    {
+      std::ostringstream oss;
+      oss << callerDescription << ": dataset has " << data.n_rows
+          << " dimensions, but model has " << dimension << " dimensions!";
+      throw std::invalid_argument(oss.str());
+    }
+  }
+  else if (mode == "C")
+  {
+    if (data.n_cols != dimension)
+    {
+      std::ostringstream oss;
+      oss << callerDescription << ": dataset has " << data.n_cols
+          << " dimensions, but model has " << dimension << " dimensions!";
+      throw std::invalid_argument(oss.str());
+    }
+  }
+  else
+    //For development purpose, not intended for user.
     Log::Fatal << "Ensure Providing Correct mode!!" << std::endl;
- 
+
 }
 
 } // namespace util
 } // namespace mlpack
 
 #endif
+
