@@ -33,6 +33,7 @@ set(SOURCES
   to_lower.hpp
   version.hpp
   version.cpp
+  facilities.hpp
 )
 
 # add directory name to sources
