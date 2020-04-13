@@ -77,7 +77,7 @@ inline void CheckSameSizes(const DataType& data,
   *     "C" for comparision with number of columns of the dataset.
   */
 template<typename DataType>
-inline void CheckSameDimentionality(const DataType& data,
+inline void CheckSameDimensionality(const DataType& data,
                                     const size_t& dimension,
                                     const std::string& callerDescription,
                                     const std::string& mode = "R")

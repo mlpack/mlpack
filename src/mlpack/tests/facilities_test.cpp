@@ -88,19 +88,19 @@ BOOST_AUTO_TEST_CASE(CheckSizeTest)
 /**
  * Test that CheckSameDimensionality() works in different cases.
  */
-BOOST_AUTO_TEST_CASE(CheckDimensioinality)
+BOOST_AUTO_TEST_CASE(CheckDimensionality)
 {
   arma::mat dataset = arma::randu<arma::mat>(20,30);
 
-  BOOST_REQUIRE_NO_THROW(CheckSameDimentionality(dataset,20,"TestingDim"));
-  BOOST_REQUIRE_NO_THROW(CheckSameDimentionality(dataset,30,"TestingDim",
+  BOOST_REQUIRE_NO_THROW(CheckSameDimensionality(dataset,20,"TestingDim"));
+  BOOST_REQUIRE_NO_THROW(CheckSameDimensionality(dataset,30,"TestingDim",
       "C"));
 
-  BOOST_REQUIRE_THROW(CheckSameDimentionality(dataset, 100, "TestingDim"),
+  BOOST_REQUIRE_THROW(CheckSameDimensionality(dataset, 100, "TestingDim"),
       std::invalid_argument);
-  BOOST_REQUIRE_THROW(CheckSameDimentionality(dataset, 50, "TestingDim", "C"),
+  BOOST_REQUIRE_THROW(CheckSameDimensionality(dataset, 50, "TestingDim", "C"),
       std::invalid_argument);
-  BOOST_REQUIRE_THROW(CheckSameDimentionality(dataset, 20, "TestingDim", "A"),
+  BOOST_REQUIRE_THROW(CheckSameDimensionality(dataset, 20, "TestingDim", "A"),
       std::runtime_error);
 }
 
