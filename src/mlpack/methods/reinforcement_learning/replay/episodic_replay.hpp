@@ -137,7 +137,7 @@ class EpisodicReplay
   * @param isTerminal Indicate whether corresponding next state is terminal
   *        state.
   * @param random Whether episode is sampled random or most recent episode
-  *        is sampled
+  *        is sampled.
   */
   void Sample(arma::mat& episodeStates,
               arma::icolvec& episodeActions,
@@ -168,8 +168,19 @@ class EpisodicReplay
       else
         episodeNum = position;
     }
+    episodeStates = combine_states(states[episodeNum]);
+    episodeActions = arma::conv_to<arma::icolvec>::from(actions[episodeNum]);
+    episodeRewards = arma::conv_to<arma::colvec>::from(rewards[episodeNum]);
+    episodeNextStates = combine_states(next_states[episodeNum]);
+    isTerminal = arma::conv_to<arma::icolvec>::from(
+        this->isTerminal[episodeNum]);
+  }
+
+  arma::mat combine_states(std::vector< arma::colvec> episode)
+  {
     int i = 0;
-    for (auto state : states[episodeNum])
+    arma::mat episodeStates;
+    for (auto state : episode)
     {
       if (i == 0)
       {
@@ -179,21 +190,7 @@ class EpisodicReplay
       else
         episodeStates = arma::join_rows(episodeStates, state);
     }
-    episodeActions = arma::conv_to<arma::icolvec>::from(actions[episodeNum]);
-    episodeRewards = arma::conv_to<arma::colvec>::from(rewards[episodeNum]);
-    i = 0;
-    for (auto state : next_states[episodeNum])
-    {
-      if (i == 0)
-      {
-        episodeNextStates = state;
-        i++;
-      }
-      else
-        episodeNextStates = arma::join_rows(episodeNextStates, state);
-    }
-    isTerminal = arma::conv_to<arma::icolvec>::from(
-        this->isTerminal[episodeNum]);
+    return episodeStates;
   }
 
   void Update(arma::mat /* target */,
