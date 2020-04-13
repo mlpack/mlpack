@@ -63,17 +63,24 @@ void TransposeTokens(std::vector<std::vector<std::string>> const &input,
 
 } // namespace details
 
-template <typename eT, template <typename> typename MatType>
-bool inline inplace_transpose(MatType<eT>& X)
+template <typename MatType>
+bool inline inplace_transpose(MatType& X, bool fatal)
 {
   try
   {
     X = arma::trans(X);
-    return false;
-  }
-  catch (std::bad_alloc&)
-  {
     return true;
+  }
+  catch (const std::exception& e)
+  {
+    if (fatal)
+      Log::Fatal << "\nTranspose Operation Failed.\n"
+          "Exception: " << e.what() << std::endl;
+    else
+      Log::Warn << "\nTranspose Operation Failed.\n"
+          "Exception: " << e.what() << std::endl;
+    
+    return false;
   }
 }
 
@@ -290,7 +297,9 @@ bool Load(const std::string& filename,
   // Now transpose the matrix, if necessary.
   if (transpose)
   {
-    inplace_transpose(matrix);
+    bool is_transposed = inplace_transpose(matrix, fatal);
+    if (!is_transposed)
+      return false;
   }
 
   Timer::Stop("loading_data");
@@ -358,7 +367,11 @@ bool Load(const std::string& filename,
 
       // We transpose by default.  So, un-transpose if necessary...
       if (!transpose)
-        inplace_transpose(matrix);
+      {
+        bool is_transposed = inplace_transpose(matrix, fatal);
+        if (!is_transposed)
+          return false;
+      }
     }
     catch (std::exception& e)
     {
@@ -406,7 +419,9 @@ bool Load(const std::string& filename,
 
   if (transpose)
   {
-    inplace_transpose(matrix);
+    bool is_transposed = inplace_transpose(matrix, fatal);
+    if (!is_transposed)
+      return false;
   }
   if (!success)
   {
