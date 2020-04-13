@@ -131,7 +131,7 @@ class EpisodicReplay
    *
    * @return Episode as a armadillo matrix.
    */
-  arma::mat combine_states(std::vector< arma::colvec> episode)
+  arma::mat combine_states(std::vector<arma::colvec> episode)
   {
     int i = 0;
     arma::mat episodeStates;
@@ -216,7 +216,7 @@ class EpisodicReplay
   bool clear;
 
   //! Locally-stored encoded previous states.
-  std::vector< std::vector< arma::colvec> > states;
+  std::vector< std::vector<arma::colvec> > states;
 
   //! Locally-stored previous actions.
   std::vector< std::vector<int> > actions;
@@ -225,7 +225,7 @@ class EpisodicReplay
   std::vector< std::vector<double> > rewards;
 
   //! Locally-stored encoded previous next states.
-  std::vector< std::vector< arma::colvec> > next_states;
+  std::vector< std::vector<arma::colvec> > next_states;
 
   //! Locally-stored termination information of previous experience.
   std::vector< std::vector<int> > isTerminal;

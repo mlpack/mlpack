@@ -279,7 +279,7 @@ BOOST_AUTO_TEST_CASE(EpisodicReplayTest)
   arma::mat sampledNextState;
   arma::icolvec sampledTerminal;
 
-  //! So far there should be only one record in the memory
+  //! So far there should be only one record in the memory.
   replay.Sample(sampledState, sampledAction, sampledReward, sampledNextState,
       sampledTerminal);
 
@@ -304,7 +304,7 @@ BOOST_AUTO_TEST_CASE(EpisodicReplayTest)
 
   BOOST_REQUIRE_EQUAL(3, replay.Size());
 
-  //! Sample several times, the original record shouldn't appear
+  //! Sample several times, the original record shouldn't appear.
   for (size_t i = 0; i < 30; ++i)
   {
     replay.Sample(sampledState, sampledAction, sampledReward, sampledNextState,
@@ -315,7 +315,7 @@ BOOST_AUTO_TEST_CASE(EpisodicReplayTest)
     BOOST_REQUIRE_EQUAL(true, arma::as_scalar(sampledTerminal));
   }
 
-  // Adding one episode with 3 transition and on Sample should recieve it back.
+  //! Adding one episode with 3 transition and on Sample should recieve it back.
   arma::mat sampledStates;
   for (size_t i = 0; i < 3; ++i)
   {
@@ -324,7 +324,7 @@ BOOST_AUTO_TEST_CASE(EpisodicReplayTest)
     {
       sampledStates = nextState.Encode();
     }
-    else if (i<3)
+    else if (i < 3)
     {
       sampledStates = arma::join_rows(sampledStates, nextState.Encode());
     }
@@ -334,7 +334,7 @@ BOOST_AUTO_TEST_CASE(EpisodicReplayTest)
       sampledNextState, sampledTerminal);
   CheckMatrices(sampledStates, sampledStatetemp);
 
-  // This addition should automatically go to next episode
+  //! This addition should automatically go to next episode.
   replay.Store(nextState, action, reward, state, false);
   replay.Sample(sampledState, sampledAction, sampledReward, sampledNextState,
       sampledTerminal);
