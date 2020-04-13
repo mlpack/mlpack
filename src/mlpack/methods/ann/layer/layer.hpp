@@ -50,6 +50,7 @@
 #include "max_pooling.hpp"
 #include "mean_pooling.hpp"
 #include "minibatch_discrimination.hpp"
+#include "multihead_attention.hpp"
 #include "multiply_constant.hpp"
 #include "multiply_merge.hpp"
 #include "noisylinear.hpp"

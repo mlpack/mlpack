@@ -4296,3 +4296,152 @@ TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
   REQUIRE(module.Parameters().n_rows
       == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
 }
+
+/**
+ * Simple Multihead Attention test.
+ */
+TEST_CASE("SimpleMultiheadAttentionTest", "[AttentionTest]")
+{
+  size_t tLen = 10;
+  size_t sLen = tLen;
+  size_t embedDim = 4;
+  size_t numHeads = 2;
+  size_t bsz = 4;
+
+  arma::mat query = 0.1 * arma::randu(embedDim * tLen, bsz);
+  arma::mat output;
+
+  arma::mat attnMask = arma::zeros(tLen, sLen);
+  for (size_t i = 0; i < tLen; ++i)
+  {
+    for (size_t j = 0; j < sLen; ++j)
+    {
+      if (i < j)
+        attnMask(i, j) = std::numeric_limits<double>::lowest();
+    }
+  }
+
+  arma::mat keyPaddingMask = arma::zeros(1, sLen);
+  keyPaddingMask(sLen - 1) = std::numeric_limits<double>::lowest();
+
+  MultiheadAttention<> module(embedDim, numHeads);
+  module.AttentionMask() = attnMask;
+  module.KeyPaddingMask() = keyPaddingMask;
+  module.Reset();
+  module.Parameters().randu();
+
+  //! Forward test.
+  module.Forward(query, output);
+  REQUIRE(output.n_rows == embedDim * tLen);
+  REQUIRE(output.n_cols == bsz);
+
+  //! Backward test.
+  arma::mat gy = 0.01 * arma::randu(embedDim * tLen, bsz);
+  arma::mat g;
+  module.Backward(query, gy, g);
+  REQUIRE(g.n_rows == query.n_rows);
+  REQUIRE(g.n_cols == query.n_cols);
+
+  //! Gradient test.
+  arma::mat error = 0.05 * arma::randu(embedDim * tLen, bsz);
+  arma::mat gradient;
+  module.Gradient(query, error, gradient);
+  REQUIRE(gradient.n_rows == module.Parameters().n_rows);
+  REQUIRE(gradient.n_cols == module.Parameters().n_cols);
+}
+
+/**
+ * Jacobian MultiheadAttention module test.
+ */
+TEST_CASE("JacobianMultiheadAttentionTest", "[AttentionTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t tgtSeqLen = 2;
+    const size_t srcSeqLen = math::RandInt(2, 10);
+    const size_t embedDim = 4;
+    const size_t nHeads = 2;
+    const size_t batchSize = 1;
+
+    arma::mat input;
+    input.set_size(embedDim * tgtSeqLen, batchSize);
+
+    MultiheadAttention<> module(embedDim, nHeads);
+    module.Key() = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
+    module.Value() = 0.045 * arma::randu(embedDim * srcSeqLen, batchSize);
+    module.Parameters().randu();
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
+
+/**
+ * Numerical gradient test for MultiheadAttention layer.
+ */
+TEST_CASE("GradientMultiheadAttentionTest", "[AttentionTest]")
+{
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(embedDim * tgtSeqLen, batchSize);
+      target = arma::zeros(vocabSize, batchSize);
+      for (size_t i = 0; i < target.n_elem; ++i)
+      {
+        const size_t label = mlpack::math::RandInt(1, vocabSize);
+        target(i) = label;
+      }
+
+      attnMask = arma::zeros(tgtSeqLen, srcSeqLen);
+      for (size_t i = 0; i < tgtSeqLen; ++i)
+      {
+        for (size_t j = 0; j < srcSeqLen; ++j)
+        {
+          if (i < j)
+            attnMask(i, j) = std::numeric_limits<double>::lowest();
+        }
+      }
+
+      keyPaddingMask = arma::zeros(1, srcSeqLen);
+      keyPaddingMask(srcSeqLen - 1) = std::numeric_limits<double>::lowest();
+
+      model = new FFN<NegativeLogLikelihood<>, XavierInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      attnModule = new MultiheadAttention<>(embedDim, nHeads);
+      attnModule->AttentionMask() = attnMask;
+      attnModule->KeyPaddingMask() = keyPaddingMask;
+      model->Add(attnModule);
+      model->Add<Linear<>>(embedDim * tgtSeqLen, vocabSize);
+      model->Add<LogSoftMax<>>();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, batchSize);
+      model->Gradient(model->Parameters(), 0, gradient, batchSize);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, XavierInitialization>* model;
+    MultiheadAttention<>* attnModule;
+
+    arma::mat input, target, attnMask, keyPaddingMask;
+    const size_t tgtSeqLen = 2;
+    const size_t srcSeqLen = 2;
+    const size_t embedDim = 4;
+    const size_t nHeads = 2;
+    const size_t vocabSize = 10;
+    const size_t batchSize = 2;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 1e-06);
+}
