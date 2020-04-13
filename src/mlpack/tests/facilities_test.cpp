@@ -66,22 +66,21 @@ TEST_CASE("PairwiseDistanceTest", "[FacilitiesTest]")
  */
 BOOST_AUTO_TEST_CASE(CheckSizeTest)
 {
-  arma::mat data = arma::randu<arma::mat>(20,30);
+  arma::mat data = arma::randu<arma::mat>(20, 30);
   arma::colvec firstLabels = arma::randu<arma::colvec>(20);
   arma::colvec secondLabels = arma::randu<arma::colvec>(30);
-  arma::mat thirdLabels = arma::randu<arma::mat>(20,30);
+  arma::mat thirdLabels = arma::randu<arma::mat>(20, 30);
 
-  BOOST_REQUIRE_THROW(CheckSameSizes(data,firstLabels,"TestChecking"),
+  BOOST_REQUIRE_THROW(CheckSameSizes(data, firstLabels, "TestChecking"),
       std::invalid_argument);
-  BOOST_REQUIRE_THROW(CheckSameSizes(data,firstLabels,"TestChecking","CC"),
+  BOOST_REQUIRE_THROW(CheckSameSizes(data, firstLabels, "TestChecking", "CC"),
       std::invalid_argument);
-  BOOST_REQUIRE_THROW(CheckSameSizes(data,firstLabels,"TestChecking","AB"),
+  BOOST_REQUIRE_THROW(CheckSameSizes(data, firstLabels, "TestChecking", "AB"),
       std::runtime_error);
 
-  BOOST_REQUIRE_NO_THROW(CheckSameSizes(data,secondLabels,"TestChecking"));
-  BOOST_REQUIRE_NO_THROW(CheckSameSizes(data,thirdLabels,"TestChecking",
+  BOOST_REQUIRE_NO_THROW(CheckSameSizes(data, secondLabels, "TestChecking"));
+  BOOST_REQUIRE_NO_THROW(CheckSameSizes(data, thirdLabels, "TestChecking",
       "CC"));
-
 }
 
 
@@ -90,10 +89,10 @@ BOOST_AUTO_TEST_CASE(CheckSizeTest)
  */
 BOOST_AUTO_TEST_CASE(CheckDimensionality)
 {
-  arma::mat dataset = arma::randu<arma::mat>(20,30);
+  arma::mat dataset = arma::randu<arma::mat>(20, 30);
 
-  BOOST_REQUIRE_NO_THROW(CheckSameDimensionality(dataset,20,"TestingDim"));
-  BOOST_REQUIRE_NO_THROW(CheckSameDimensionality(dataset,30,"TestingDim",
+  BOOST_REQUIRE_NO_THROW(CheckSameDimensionality(dataset, 20, "TestingDim"));
+  BOOST_REQUIRE_NO_THROW(CheckSameDimensionality(dataset, 30, "TestingDim",
       "C"));
 
   BOOST_REQUIRE_THROW(CheckSameDimensionality(dataset, 100, "TestingDim"),

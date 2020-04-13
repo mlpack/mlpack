@@ -59,9 +59,8 @@ inline void CheckSameSizes(const DataType& data,
     }
   }
   else
-    //For development purpose, not intended for user.
+    // For development purpose, not intended for user.
     Log::Fatal << "Ensure Providing Correct mode." << std::endl;
-
 }
 
 /**
@@ -103,9 +102,8 @@ inline void CheckSameDimensionality(const DataType& data,
     }
   }
   else
-    //For development purpose, not intended for user.
+    // For development purpose, not intended for user.
     Log::Fatal << "Ensure Providing Correct mode!!" << std::endl;
-
 }
 
 } // namespace util
