@@ -85,12 +85,12 @@ BOOST_AUTO_TEST_CASE(LoadSparseCSVTest)
   f.open("test_sparse_file.csv", fstream::out);
 
   f << "1, 2, 0.1" << endl;
-  f << "1, 3, 0.2" << endl;
-  f << "2, 6, 0.3" << endl;
-  f << "4, 6, 0.4" << endl;
-  f << "3, 4, 0.5" << endl;
-  f << "2, 2, 0.6" << endl;
-  f << "6, 6, 0.7" << endl;
+  f << "2, 3, 0.2" << endl;
+  f << "3, 4, 0.3" << endl;
+  f << "4, 5, 0.4" << endl;
+  f << "5, 6, 0.5" << endl;
+  f << "6, 7, 0.6" << endl;
+  f << "7, 8, 0.7" << endl;
 
   f.close();
 
@@ -98,17 +98,19 @@ BOOST_AUTO_TEST_CASE(LoadSparseCSVTest)
 
   BOOST_REQUIRE(data::Load("test_sparse_file.csv", test, true, false) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 7);
+  BOOST_REQUIRE_EQUAL(test.n_rows, 8);
   BOOST_REQUIRE_EQUAL(test.n_cols, 1);
 
   arma::sp_mat::const_iterator it = test.begin();
   arma::sp_mat::const_iterator it_end = test.end();
 
+  
   double temp = 0.0;
-  for ( ; it != it_end; ++it, temp += 0.1)
+  for (int i = 0; it != it_end; ++it, temp += 0.1, ++i)
   {
-    double val = (*it);
-    BOOST_REQUIRE_CLOSE(val, temp, 1e-5);
+    BOOST_REQUIRE_CLOSE((double)(*it), temp, 1e-5);
+    BOOST_REQUIRE_EQUAL((int)(it.row()), i + 1);
+    BOOST_REQUIRE_EQUAL((int)it.col(), i + 2);
   }
   // Remove the file.
   remove("test_sparse_file.csv");
@@ -197,10 +199,10 @@ BOOST_AUTO_TEST_CASE(SaveCSVTest)
  */
 BOOST_AUTO_TEST_CASE(SaveSparseCSVTest)
 {
-  arma::sp_mat test = "0.1 0 0;"
-                      "0.2 0 0;"
-                      "0.3 0 0;"
-                      "0 0.4 0;";
+  arma::sp_mat test = "0.1 0 0 0;"
+                      "0 0.2 0 0;"
+                      "0 0 0.3 0;"
+                      "0 0 0 0.4;";
 
   BOOST_REQUIRE(data::Save("test_sparse_file.csv", test, true, false) == true);
 
@@ -209,16 +211,18 @@ BOOST_AUTO_TEST_CASE(SaveSparseCSVTest)
   BOOST_REQUIRE(data::Load("test_sparse_file.csv", test2, true, false) == true);
 
   BOOST_REQUIRE_EQUAL(test2.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test2.n_cols, 3);
+  BOOST_REQUIRE_EQUAL(test2.n_cols, 4);
 
   arma::sp_mat::const_iterator it = test2.begin();
   arma::sp_mat::const_iterator it_end = test2.end();
 
   double temp = 0.1;
-  for ( ; it != it_end; ++it, temp += 0.1)
+  for (int i = 0; it != it_end; ++it, temp += 0.1, ++i)
   {
     double val = (*it);
     BOOST_REQUIRE_CLOSE(val, temp, 1e-5);
+    BOOST_REQUIRE_EQUAL((int)(it.row()), i);
+    BOOST_REQUIRE_EQUAL((int)it.col(), i);
   }
 
   // Remove the file.
