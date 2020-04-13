@@ -61,7 +61,7 @@ class SoftMax
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
+  void Backward(const arma::Mat<eT>& input,
                 const arma::Mat<eT>& gy,
                 arma::Mat<eT>& g);
 
@@ -75,11 +75,6 @@ class SoftMax
   //! Modify the delta.
   InputDataType& Delta() { return delta; }
 
-  //! Get the deterministic.
-  InputDataType& Deterministic() const { return deterministic; }
-  //! Modify the deterministic.
-  InputDataType& Deterministic() { return deterministic; }
-
   /**
    * Serialize the layer.
    */
@@ -92,15 +87,6 @@ class SoftMax
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
-  //! Locally-stored value of the axis along which softmax is calculated.
-  bool axis;
-
-  //! Value of deterministic parameter.
-  bool deterministic;
-
-  //! Values from forward pass will be stored in y if non-deterministic.
-  arma::Mat<typename InputDataType::elem_type> y;
 }; // class SoftMax
 
 } // namespace ann

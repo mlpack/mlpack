@@ -20,7 +20,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-SoftMax<InputDataType, OutputDataType>::SoftMax() : deterministic(0)
+SoftMax<InputDataType, OutputDataType>::SoftMax()
 {
   // Nothing to do here.
 }
@@ -37,21 +37,16 @@ void SoftMax<InputDataType, OutputDataType>::Forward(
   output = inputMax + arma::log(arma::repmat(
       arma::sum(arma::exp(input - inputMax), 0), input.n_rows, 1));
   output = arma::exp(input - output);
-
-  if (!deterministic)
-  {
-    y = output;
-  }
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void SoftMax<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& input,
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
 {
-  g = y % (gy - arma::repmat(gy.t() * y, gy.n_rows, gy.n_cols));
+  g = input % (gy - arma::repmat(gy.t() * input, gy.n_rows, gy.n_cols));
 }
 
 template<typename InputDataType, typename OutputDataType>

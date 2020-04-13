@@ -1663,25 +1663,6 @@ BOOST_AUTO_TEST_CASE(SimpleSoftMaxLayerTest)
     arma::mat("0.11318; -0.11318") - g)), 1e-04);
 }
 
-/**
- * Jacobian SoftMax module test.
- */
-BOOST_AUTO_TEST_CASE(JacobianSoftMaxLayerTest)
-{
-  for (size_t i = 0; i < 5; i++)
-  {
-    const size_t inputElements = math::RandInt(2, 1000);
-
-    arma::mat input;
-    input.set_size(inputElements, 1);
-
-    SoftMax<> module;
-
-    double error = JacobianTest(module, input);
-    BOOST_REQUIRE_LE(error, 1e-5);
-  }
-}
-
 /*
  * Simple test for the BilinearInterpolation layer
  */
