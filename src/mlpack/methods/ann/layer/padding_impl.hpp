@@ -76,6 +76,7 @@ void Padding<InputDataType, OutputDataType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(padWRight);
   ar & BOOST_SERIALIZATION_NVP(padHTop);
   ar & BOOST_SERIALIZATION_NVP(padHBottom);
+  ar & BOOST_SERIALIZATION_NVP(fillNum);
 }
 
 } // namespace ann
