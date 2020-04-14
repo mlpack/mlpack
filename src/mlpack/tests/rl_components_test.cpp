@@ -43,15 +43,18 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
   Pendulum::State state = task.InitialSample();
   Pendulum::Action action;
   action.action[0] = math::Random(-2.0, 2.0);
-  double reward;
+  double reward, minReward = 0.0;
 
   BOOST_REQUIRE(!task.IsTerminal(state));
 
   while (!task.IsTerminal(state))
+  {
     reward = task.Sample(state, action, state);
+    minReward = std::min(reward, minReward);
+  }
 
   // The reward is always negative. Check if not lower than lowest possible.
-  BOOST_REQUIRE(reward >= -(pow(M_PI, 2) + 6.404));
+  BOOST_REQUIRE(minReward >= -(pow(M_PI, 2) + 6.404));
 
   // Check if the number of steps performed is less or equal as the maximum
   // allowed, since we use a random action there is no guarantee that we will
