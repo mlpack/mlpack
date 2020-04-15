@@ -45,7 +45,7 @@ BOOST_FIXTURE_TEST_SUITE(BayesianRidgeMainTest, BRTestFixture);
 
 /**
  * Check the center and scale options.
-*/
+ */
 BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
 {
   int n = 50, m = 4;
