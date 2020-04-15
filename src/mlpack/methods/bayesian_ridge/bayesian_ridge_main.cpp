@@ -159,7 +159,7 @@ static void mlpackMain()
 
     arma::rowvec y = std::move(matY);
     arma::rowvec predictionsTrain;
-    // The Train method is ready to take data in colomn-major format.
+    // The Train method is ready to take data in column-major format.
     bayesRidge->Train(matX.t(), matY);
   }
   else // We must have --input_model_file.
