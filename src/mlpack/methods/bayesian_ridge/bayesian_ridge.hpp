@@ -6,6 +6,7 @@
  * bayesian linear regression. According to the armadillo standards,
  * all the functions consider data in column-major format.
 **/
+
 #ifndef MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_HPP
 #define  MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_HPP
 
