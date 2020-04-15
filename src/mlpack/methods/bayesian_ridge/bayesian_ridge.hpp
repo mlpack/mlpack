@@ -214,7 +214,7 @@ arma::colvec& Omega() const { return this->omega; }
    *
    * @return \f$ \beta \f$
    */
-  inline double Beta() const {return this->beta;}
+  double Beta() const { return this->beta; }
 
   /**
    * Get the estimated variance.
