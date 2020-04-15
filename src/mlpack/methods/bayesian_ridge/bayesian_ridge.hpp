@@ -221,7 +221,7 @@ arma::colvec& Omega() const { return this->omega; }
    *   
    * @return 1.0 / \f$ \beta \f$
    */
-  inline double Variance() const {return 1.0 / this->Beta();}
+  double Variance() const { return 1.0 / this->Beta(); }
 
   /**
    * Get the mean vector computed on the features over the training points.
