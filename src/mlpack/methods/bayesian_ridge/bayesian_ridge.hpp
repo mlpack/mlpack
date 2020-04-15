@@ -207,7 +207,7 @@ class BayesianRidge
    *
    * @return omega Solution vector.
    **/
-  inline arma::colvec Omega() const{return this->omega;}
+arma::colvec& Omega() const { return this->omega; }
 
   /**
    * Get the precesion (or inverse variance) beta of the model.
