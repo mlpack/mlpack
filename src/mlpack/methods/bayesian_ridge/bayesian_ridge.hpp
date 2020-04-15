@@ -229,7 +229,7 @@ arma::colvec& Omega() const { return this->omega; }
    *   
    * @return responsesOffset
    */
-  inline arma::colvec DataOffset() const {return this->dataOffset;}
+  arma::colvec& DataOffset() const { return this->dataOffset; }
 
   /**
    * Get the vector of standard deviations computed on the features over the 
