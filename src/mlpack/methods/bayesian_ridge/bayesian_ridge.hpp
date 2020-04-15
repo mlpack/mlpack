@@ -220,7 +220,7 @@ class BayesianRidge
    * Get the estimated variance.
    *   
    * @return 1.0 / \f$ \beta \f$
-   **/
+   */
   inline double Variance() const {return 1.0 / this->Beta();}
 
   /**
