@@ -54,7 +54,6 @@ BOOST_AUTO_TEST_CASE(BayesianRidgeRegressionTest)
   BOOST_REQUIRE_SMALL(estimator.Variance(), 1e-6);
 }
 
-
 // Verify fitIntercept and normalize equal false do not affect the solution.
 BOOST_AUTO_TEST_CASE(TestCenter0Normalize0)
 {
