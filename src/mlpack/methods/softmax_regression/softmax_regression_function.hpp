@@ -175,6 +175,11 @@ class SoftmaxRegressionFunction
   {
     return initialPoint.n_cols;
   }
+  /**
+   * Return the number of separable functions 
+      (the number of predictor points).
+   */
+  size_t NumFunctions() const { return data.n_cols; }
 
   //! Sets the regularization parameter.
   double& Lambda() { return lambda; }

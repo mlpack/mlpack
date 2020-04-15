@@ -76,7 +76,7 @@ class Convolution
               const size_t padH = 0,
               const size_t inputWidth = 0,
               const size_t inputHeight = 0,
-              const std::string paddingType = "None");
+              const std::string& paddingType = "None");
 
   /**
    * Create the Convolution object using the specified number of input maps,
@@ -104,11 +104,11 @@ class Convolution
               const size_t kernelHeight,
               const size_t strideWidth,
               const size_t strideHeight,
-              const std::tuple<size_t, size_t> padW,
-              const std::tuple<size_t, size_t> padH,
+              const std::tuple<size_t, size_t>& padW,
+              const std::tuple<size_t, size_t>& padH,
               const size_t inputWidth = 0,
               const size_t inputHeight = 0,
-              const std::string paddingType = "None");
+              const std::string& paddingType = "None");
 
   /*
    * Set the weight and bias term.
@@ -123,7 +123,7 @@ class Convolution
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -135,9 +135,9 @@ class Convolution
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -147,9 +147,9 @@ class Convolution
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the parameters.
   const OutputDataType& Parameters() const { return weights; }
@@ -361,9 +361,6 @@ class Convolution
 
   //! Locally-stored transformed output parameter.
   arma::cube outputTemp;
-
-  //! Locally-stored transformed input parameter.
-  arma::cube inputTemp;
 
   //! Locally-stored transformed padded input parameter.
   arma::cube inputPaddedTemp;

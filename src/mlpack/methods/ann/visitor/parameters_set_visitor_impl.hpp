@@ -19,8 +19,8 @@ namespace mlpack {
 namespace ann {
 
 //! ParametersSetVisitor visitor class.
-inline ParametersSetVisitor::ParametersSetVisitor(arma::mat&& parameters) :
-    parameters(std::move(parameters))
+inline ParametersSetVisitor::ParametersSetVisitor(arma::mat& parameters) :
+    parameters(parameters)
 {
   /* Nothing to do here. */
 }

@@ -3,7 +3,7 @@
  * @author Marcus Edel
  * @author Mehul Kumar Nirala
  *
- * Definition of the Concat class, which acts as a concatenation contain.
+ * Definition of the Concat class, which acts as a concatenation container.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -80,7 +80,7 @@ class Concat
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -92,9 +92,9 @@ class Concat
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /**
    * This is the overload of Backward() that runs only a specific layer with
@@ -106,9 +106,9 @@ class Concat
    * @param The index of the layer to run.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g,
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g,
                 const size_t index);
 
   /*
@@ -119,9 +119,9 @@ class Concat
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& /* gradient */);
+  void Gradient(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& /* gradient */);
 
   /*
    * This is the overload of Gradient() that runs a specific layer with the
@@ -133,9 +133,9 @@ class Concat
    * @param The index of the layer to run.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient,
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient,
                 const size_t index);
 
   /*

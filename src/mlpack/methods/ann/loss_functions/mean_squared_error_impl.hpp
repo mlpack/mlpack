@@ -26,8 +26,10 @@ MeanSquaredError<InputDataType, OutputDataType>::MeanSquaredError()
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double MeanSquaredError<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, const TargetType&& target)
+typename InputType::elem_type
+MeanSquaredError<InputDataType, OutputDataType>::Forward(
+    const InputType& input,
+    const TargetType& target)
 {
   return arma::accu(arma::square(input - target)) / target.n_cols;
 }
@@ -35,9 +37,9 @@ double MeanSquaredError<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
 void MeanSquaredError<InputDataType, OutputDataType>::Backward(
-    const InputType&& input,
-    const TargetType&& target,
-    OutputType&& output)
+    const InputType& input,
+    const TargetType& target,
+    OutputType& output)
 {
   output = 2 * (input - target) / target.n_cols;
 }

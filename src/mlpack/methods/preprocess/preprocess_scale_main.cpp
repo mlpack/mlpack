@@ -10,9 +10,10 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/math/random.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/math/ccov.hpp>
 #include <mlpack/core/data/scaler_methods/max_abs_scaler.hpp>
 #include <mlpack/core/data/scaler_methods/mean_normalization.hpp>
 #include <mlpack/core/data/scaler_methods/min_max_scaler.hpp>
@@ -131,6 +132,7 @@ static void mlpackMain()
   {
     m = new ScalingModel(CLI::GetParam<int>("min_value"),
         CLI::GetParam<int>("max_value"), CLI::GetParam<double>("epsilon"));
+
     if (scalerMethod == "standard_scaler")
     {
       m->ScalerType() = ScalingModel::ScalerTypes::STANDARD_SCALER;
@@ -155,8 +157,20 @@ static void mlpackMain()
     {
       m->ScalerType() = ScalingModel::ScalerTypes::PCA_WHITENING;
     }
-    m->Fit(input);
+
+    // Fit() can throw an exception on invalid inputs, so we have to catch that
+    // and clean the memory in that situation.
+    try
+    {
+      m->Fit(input);
+    }
+    catch (std::exception& e)
+    {
+      delete m;
+      throw;
+    }
   }
+
   if (!CLI::HasParam("inverse_scaling"))
   {
     m->Transform(input, output);
@@ -165,8 +179,8 @@ static void mlpackMain()
   {
     if (!CLI::HasParam("input_model"))
     {
-      delete(m);
-      throw std::runtime_error("Please provide a saved model");
+      delete m;
+      throw std::runtime_error("Please provide a saved model.");
     }
     m->InverseTransform(input, output);
   }
@@ -175,6 +189,6 @@ static void mlpackMain()
   if (CLI::HasParam("output"))
     CLI::GetParam<arma::mat>("output") = std::move(output);
   Timer::Stop("feature_scaling");
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<ScalingModel*>("output_model") = m;
+
+  CLI::GetParam<ScalingModel*>("output_model") = m;
 }

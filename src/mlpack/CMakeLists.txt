@@ -44,7 +44,7 @@ target_link_libraries(mlpack ${MLPACK_LIBRARIES})
 
 set_target_properties(mlpack
   PROPERTIES
-  VERSION 3.2
+  VERSION 3.3
   SOVERSION 3
 )
 
@@ -134,6 +134,7 @@ if (BUILDING_PYTHON_BINDINGS)
           -D OpenMP_CXX_FLAGS="${OpenMP_CXX_FLAGS}"
           -D DISABLE_CFLAGS="${DISABLE_CFLAGS}"
           -D CYTHON_INCLUDE_DIRECTORIES="${CYTHON_INCLUDE_DIRECTORIES}"
+          -D CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
           -D OUTPUT_DIR=${CMAKE_BINARY_DIR}
           -P "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/ConfigureSetup.cmake"
       BYPRODUCTS "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py"

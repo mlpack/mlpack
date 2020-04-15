@@ -50,6 +50,15 @@ class AddMerge
    */
   AddMerge(const bool model = false, const bool run = true);
 
+  /**
+   * Create the AddMerge object using the specified parameters.
+   *
+   * @param model Expose all the network modules.
+   * @param run Call the Forward/Backward method before the output is merged.
+   * @param ownsLayers Delete the layers when this is deallocated.
+   */
+  AddMerge(const bool model, const bool run, const bool ownsLayers);
+
   //! Destructor to release allocated memory.
   ~AddMerge();
 
@@ -61,7 +70,7 @@ class AddMerge
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(InputType&& /* input */, OutputType&& output);
+  void Forward(const InputType& /* input */, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -73,9 +82,9 @@ class AddMerge
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /**
    * This is the overload of Backward() that runs only a specific layer with
@@ -87,9 +96,9 @@ class AddMerge
    * @param The index of the layer to run.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g,
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g,
                 const size_t index);
 
   /*
@@ -100,9 +109,9 @@ class AddMerge
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   /*
    * This is the overload of Gradient() that runs a specific layer with the
@@ -114,9 +123,9 @@ class AddMerge
    * @param The index of the layer to run.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient,
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient,
                 const size_t index);
 
   /*
@@ -184,8 +193,9 @@ class AddMerge
   //! before merging the output.
   bool run;
 
-  //! We need this to know whether we should delete the layer in the destructor.
-  bool ownsLayer;
+  //! We need this to know whether we should delete the internally-held layers
+  //! in the destructor.
+  bool ownsLayers;
 
   //! Locally-stored network modules.
   std::vector<LayerTypes<CustomLayers...> > network;
@@ -220,6 +230,24 @@ class AddMerge
 
 } // namespace ann
 } // namespace mlpack
+
+//! Set the serialization version of the AddMerge class.
+namespace boost {
+namespace serialization {
+
+template<
+    typename InputDataType,
+    typename OutputDataType,
+    typename... CustomLayers
+>
+struct version<mlpack::ann::AddMerge<
+    InputDataType, OutputDataType, CustomLayers...>>
+{
+  BOOST_STATIC_CONSTANT(int, value = 1);
+};
+
+} // namespace serialization
+} // namespace boost
 
 // Include implementation.
 #include "add_merge_impl.hpp"
