@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
 
 /**
  * Check predictions of saved model and in code model are equal.
-*/
+ */
 BOOST_AUTO_TEST_CASE(BayesianRidgeSavedEqualCode)
 {
   int n = 10, m = 4;
