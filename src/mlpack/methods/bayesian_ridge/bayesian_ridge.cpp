@@ -169,7 +169,6 @@ double BayesianRidge::CenterScaleData(const arma::mat& data,
   return responsesOffset;
 }
 
-
 // Copy construcor.
 BayesianRidge::BayesianRidge(const BayesianRidge& other):
   centerData(other.centerData),
