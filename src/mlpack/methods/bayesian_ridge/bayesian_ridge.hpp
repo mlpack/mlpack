@@ -237,7 +237,7 @@ arma::colvec& Omega() const { return this->omega; }
    *  
    * return dataOffset
    */
-  inline arma::colvec DataScale() const {return this->dataScale;}
+  arma::colvec& DataScale() const { return this->dataScale; }
 
   /**
    * Get the mean value of the train responses.
