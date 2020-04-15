@@ -10,7 +10,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-
 #include <mlpack/core/data/load.hpp>
 #include <mlpack/methods/bayesian_ridge/bayesian_ridge.hpp>
 
