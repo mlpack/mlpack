@@ -228,7 +228,7 @@ arma::colvec& Omega() const { return this->omega; }
    * Vector of 0 if centerData is false.
    *   
    * @return responsesOffset
-   **/
+   */
   inline arma::colvec DataOffset() const {return this->dataOffset;}
 
   /**
