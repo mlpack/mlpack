@@ -236,7 +236,7 @@ arma::colvec& Omega() const { return this->omega; }
    * training points. Vector of 1 if scaleData is false.
    *  
    * return dataOffset
-   **/
+   */
   inline arma::colvec DataScale() const {return this->dataScale;}
 
   /**
