@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added `bce with logits` loss function (#2197).
+
   * Updated terminal state for Pendulum environment (#2354).
 
   * Added `EliSH` activation function (#2323).
@@ -64,7 +66,6 @@
   * Better error handling of eigendecompositions and Cholesky decompositions
     (#2088, #1840).
 
-<<<<<<< HEAD
   * Add LiSHT activation function (#2182).
 
   * Add Valid and Same Padding for Transposed Convolution layer (#2163).
@@ -93,9 +94,6 @@
 
   * Bugfix for incorrect parameter vector sizes in logistic regression and
     softmax regression (#2359).
-=======
-  * Added Binary Cross Entropy with Logits Loss function (#2197).
->>>>>>> b49118f3b... added to HISTORY.md
 
 ### mlpack 3.2.2
 ###### 2019-11-26
