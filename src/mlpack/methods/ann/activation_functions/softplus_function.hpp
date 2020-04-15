@@ -51,9 +51,10 @@ class SoftplusFunction
    */
   static double Fn(const double x)
   {
-    if (x < DBL_MAX)
-      return x > -DBL_MAX ? std::log(1 + std::exp(x)) : 0;
-    return 1.0;
+    if (x > 20.0)
+      return x;
+    else 
+      return std::log(1 + std::exp(x));
   }
 
   /**
