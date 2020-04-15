@@ -52,6 +52,10 @@ void Padding<InputDataType, OutputDataType>::Forward(
   {
     output.fill(fillNum);
   }
+  else if (paddingTypeLow == "reflective")
+  {
+    // Perform reflective padding.
+  }
   output.submat(padWLeft, padHTop, padWLeft + nRows - 1,
       padHTop + nCols - 1) = input;
 }
