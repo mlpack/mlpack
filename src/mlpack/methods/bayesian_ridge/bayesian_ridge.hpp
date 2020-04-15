@@ -90,7 +90,7 @@ class BayesianRidge
    * @param nIterMax Maximum number of iterations for convergency.
    * @param tol Level from which the solution is considered sufficientlly 
    *    stable.  
-   **/
+   */
   BayesianRidge(const bool centerData = true,
                 const bool scaleData = false,
                 const int nIterMax = 50,
