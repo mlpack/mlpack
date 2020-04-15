@@ -208,7 +208,7 @@ class BayesianRidge
    * Get the solution vector
    *
    * @return omega Solution vector.
-   **/
+   */
 arma::colvec& Omega() const { return this->omega; }
 
   /**
