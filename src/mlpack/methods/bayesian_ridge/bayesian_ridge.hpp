@@ -13,6 +13,7 @@
 
 namespace mlpack{
 namespace regression{
+
 /**
  * This class implements the bayesian linear regression. "Bayesian treatment
  * of linear regression, which will avoid the over-fitting problem of maximum
