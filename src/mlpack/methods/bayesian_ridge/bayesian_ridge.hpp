@@ -209,7 +209,7 @@ class BayesianRidge
    *
    * @return omega Solution vector.
    */
-arma::colvec& Omega() const { return this->omega; }
+  const arma::colvec& Omega() const { return this->omega; }
 
   /**
    * Get the precesion (or inverse variance) beta of the model.
@@ -231,7 +231,7 @@ arma::colvec& Omega() const { return this->omega; }
    *   
    * @return responsesOffset
    */
-  arma::colvec& DataOffset() const { return this->dataOffset; }
+  const arma::colvec& DataOffset() const { return this->dataOffset; }
 
   /**
    * Get the vector of standard deviations computed on the features over the 
@@ -239,7 +239,7 @@ arma::colvec& Omega() const { return this->omega; }
    *  
    * return dataOffset
    */
-  arma::colvec& DataScale() const { return this->dataScale; }
+  const arma::colvec& DataScale() const { return this->dataScale; }
 
   /**
    * Get the mean value of the train responses.
