@@ -117,7 +117,7 @@ class BayesianRidge
    * @param predictions y, Contains the  predicted values on completion.
    *
    * @return Root mean squared error computed on the train set.
-   **/
+   */
   void Predict(const arma::mat& points,
                arma::rowvec& predictions) const;
 
