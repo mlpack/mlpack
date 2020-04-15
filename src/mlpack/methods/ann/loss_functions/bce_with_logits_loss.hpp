@@ -59,7 +59,8 @@ class BCEWithLogitsLoss
    *              multi-class then target should be one-hot encoded.
    */
   template<typename InputType, typename TargetType>
-  double Forward(const InputType&& input, const TargetType&& target);
+  typename InputDataType::elem_type
+  Forward(const InputType&& input, const TargetType&& target);
 
   /**
    * Ordinary feed backward pass of a neural network.

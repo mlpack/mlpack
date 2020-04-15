@@ -32,26 +32,25 @@ BCEWithLogitsLoss<InputDataType, OutputDataType>::BCEWithLogitsLoss(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double BCEWithLogitsLoss<InputDataType, OutputDataType>::Forward(
+typename InputDataType::elem_type
+BCEWithLogitsLoss<InputDataType, OutputDataType>::Forward(
     const InputType&& input, const TargetType&& target)
 {
-  double lossThis;
-  double totalLossReduced = 0;
-  double m = input.max();
-  double logSigmoidX;
-  double logOneMinusSigmoidX;
+  typedef typename InputDataType::elem_type ElemType;
+  ElemType loss;
+  const ElemType m = input.max();
 
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    logSigmoidX = m - std::log(std::exp(m) + std::exp(m - input[i]));
-    logOneMinusSigmoidX = m - std::log(std::exp(m) + std::exp(m + input[i]));
+    const ElemType logSigmoidX = m - std::log(std::exp(m)
+        + std::exp(m - input[i]));
+    const ElemType logOneMinusSigmoidX = m - std::log(std::exp(m)
+        + std::exp(m + input[i]));
 
-    lossThis =  - weight * (posWeight * target[i] * logSigmoidX
+    loss +=  - weight * (posWeight * target[i] * logSigmoidX
         + (1 - target[i]) * logOneMinusSigmoidX);
-
-    totalLossReduced += lossThis;
   }
-  return reduction ? totalLossReduced / input.n_elem : totalLossReduced;
+  return reduction ? loss / input.n_elem : loss;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -61,12 +60,12 @@ void BCEWithLogitsLoss<InputDataType, OutputDataType>::Backward(
     const TargetType&& target,
     OutputType&& output)
 {
+  typedef typename InputDataType::elem_type ElemType;
   output.set_size(size(input));
-  double sigmoidX;
 
   for (size_t i = 0; i < output.n_elem; ++i)
   {
-    sigmoidX = 1 / (1 + std::exp(-input[i]));
+    const ElemType sigmoidX = 1 / (1 + std::exp(-input[i]));
 
     output[i] = - weight * (posWeight * target[i] * (1 - sigmoidX)
       - (1 - target[i]) * sigmoidX) / output.n_elem;
