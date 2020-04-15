@@ -243,8 +243,7 @@ arma::colvec& Omega() const { return this->omega; }
    * Get the mean value of the train responses.
    * @return responsesOffset
    */
-  inline double ResponsesOffset() const
-  {return this->responsesOffset;}
+  double ResponsesOffset() const { return this->responsesOffset; }
 
   /**
    * Serialize the BayesianRidge model.
