@@ -1,6 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * Updated terminal state for Pendulum environment (#2354).
+  * Updated terminal state and fixed bugs for Pendulum environment (#2354, #2369).
 
   * Added `EliSH` activation function (#2323).
 
