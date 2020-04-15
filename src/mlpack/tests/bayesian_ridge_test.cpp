@@ -128,7 +128,8 @@ BOOST_AUTO_TEST_CASE(PredictiveUncertainties)
   estimator.Predict(X, responses, std);
   const double estStd = sqrt(estimator.Variance());
 
-  for (size_t i = 0; i < X.n_cols; i++) BOOST_REQUIRE(std[i] > estStd);
+  for (size_t i = 0; i < X.n_cols; i++)
+    BOOST_REQUIRE(std[i] > estStd);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
