@@ -56,8 +56,7 @@ double BayesianRidge::Train(const arma::mat& data,
 
   if (arma::eig_sym(eigval, eigvec, phiphiT) == false)
   {
-    Log::Warn << "Eigen Decomposition failed as Eigen Value "
-              << "does not exists ." << std::endl;
+    Log::Warn << "BayesianRidge::Train(): Eigendecomposition of covariance failed!" << std::endl;
     return -1;
   }
 
