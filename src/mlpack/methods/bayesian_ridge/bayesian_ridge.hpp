@@ -213,7 +213,7 @@ class BayesianRidge
    * Get the precesion (or inverse variance) beta of the model.
    *
    * @return \f$ \beta \f$
-   **/
+   */
   inline double Beta() const {return this->beta;}
 
   /**
