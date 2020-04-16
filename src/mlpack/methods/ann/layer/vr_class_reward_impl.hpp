@@ -34,7 +34,7 @@ VRClassReward<InputDataType, OutputDataType>::VRClassReward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
 double VRClassReward<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, const TargetType&& target)
+    const InputType& input, const TargetType& target)
 {
   double output = 0;
   for (size_t i = 0; i < input.n_cols - 1; ++i)
@@ -66,9 +66,9 @@ double VRClassReward<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
 void VRClassReward<InputDataType, OutputDataType>::Backward(
-    const InputType&& input,
-    const TargetType&& target,
-    OutputType&& output)
+    const InputType& input,
+    const TargetType& target,
+    OutputType& output)
 {
   output = arma::zeros<OutputType>(input.n_rows, input.n_cols);
   for (size_t i = 0; i < (input.n_cols - 1); ++i)

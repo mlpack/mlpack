@@ -30,7 +30,7 @@ to build mlpack on Windows, see \ref build_windows (alternatively, you can read
 is based on older versions).
 
 You can download the latest mlpack release from here:
-<a href="https://www.mlpack.org/files/mlpack-3.2.1.tar.gz">mlpack-3.2.1</a>
+<a href="https://www.mlpack.org/files/mlpack-3.3.0.tar.gz">mlpack-3.3.0</a>
 
 @section build_simple Simple Linux build instructions
 
@@ -38,9 +38,9 @@ Assuming all dependencies are installed in the system, you can run the commands
 below directly to build and install mlpack.
 
 @code
-$ wget https://www.mlpack.org/files/mlpack-3.2.1.tar.gz
-$ tar -xvzpf mlpack-3.2.1.tar.gz
-$ mkdir mlpack-3.2.1/build && cd mlpack-3.2.1/build
+$ wget https://www.mlpack.org/files/mlpack-3.3.0.tar.gz
+$ tar -xvzpf mlpack-3.3.0.tar.gz
+$ mkdir mlpack-3.3.0/build && cd mlpack-3.3.0/build
 $ cmake ../
 $ make -j4  # The -j is the number of cores you want to use for a build.
 $ sudo make install
@@ -65,8 +65,8 @@ configure mlpack.
 First we should unpack the mlpack source and create a build directory.
 
 @code
-$ tar -xvzpf mlpack-3.2.1.tar.gz
-$ cd mlpack-3.2.1
+$ tar -xvzpf mlpack-3.3.0.tar.gz
+$ cd mlpack-3.3.0
 $ mkdir build
 @endcode
 
@@ -79,7 +79,7 @@ system and have headers present:
 
  - Armadillo >= 8.400.0 (with LAPACK support)
  - Boost (math_c99, program_options, serialization, unit_test_framework, heap,
-          spirit) >= 1.49
+          spirit) >= 1.58
  - ensmallen >= 2.10.0 (will be downloaded if not found)
 
 In addition, mlpack has the following optional dependencies:
@@ -95,14 +95,29 @@ For Python bindings, the following packages are required:
  - pandas >= 0.15.0
  - pytest-runner
 
-In Ubuntu and Debian, you can get all of these dependencies through apt:
+In Ubuntu (>= 18.04) and Debian (>= 10) all of these dependencies can be 
+installed through apt:
 
 @code
 # apt-get install libboost-math-dev libboost-program-options-dev
   libboost-test-dev libboost-serialization-dev libarmadillo-dev binutils-dev
-  python-pandas python-numpy cython python-setuptools libensmallen-dev
-  libstb-dev
+  python-pandas python-numpy cython python-setuptools
 @endcode
+
+If you are using Ubuntu 19.10 or newer, you can also install @c libensmallen-dev
+and @c libstb-dev, so that CMake does not need to automatically download those
+packages:
+
+@code
+# apt-get install libensmallen-dev libstb-dev
+@endcode
+
+@note For older versions of Ubuntu and Debian, Armadillo needs to be built from 
+source as apt installs an older version. So you need to omit 
+\c libarmadillo-dev from the code snippet above and instead use
+<a href="http://arma.sourceforge.net/download.html">this link</a>
+ to download the required file. Extract this file and follow the README in the 
+ uncompressed folder to build and install Armadillo.
 
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 

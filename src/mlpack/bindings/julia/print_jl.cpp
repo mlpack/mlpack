@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Implementation of utility PrintJL() function.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "print_jl.hpp"
 #include <mlpack/core/util/hyphenate_string.hpp>
@@ -62,7 +67,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   cout << endl;
 
   // We need to include utility functions.
-  cout << "using mlpack.util.cli" << endl;
+  cout << "using mlpack._Internal.cli" << endl;
   cout << endl;
 
   // Make sure the libraries we need are accessible.

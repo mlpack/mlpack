@@ -1,4 +1,4 @@
-# mlpack governance structure (DRAFT)
+# mlpack governance structure
 
 Revised Oct. 21st, 2019.
 
@@ -17,7 +17,7 @@ detailed in the "Governance Changes" section.
 
 mlpack aims to be an open and welcoming environment, and as such, we have a
 code of conduct that helps foster this environment.  See
-(here)[https://github.com/mlpack/mlpack/blob/master/CODE_OF_CONDUCT.md] for
+[here](https://github.com/mlpack/mlpack/blob/master/CODE_OF_CONDUCT.md) for
 more information.
 
 ## Teams & Roles

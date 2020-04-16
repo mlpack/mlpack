@@ -75,11 +75,6 @@ class Highway
   ~Highway();
 
   /**
-   * Destroy all the modules added to the Highway object.
-   */
-  void DeleteModules();
-
-  /**
    * Reset the layer parameter.
    */
   void Reset();
@@ -92,7 +87,7 @@ class Highway
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed-backward pass of a neural network, calculating the function
@@ -104,9 +99,9 @@ class Highway
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -116,9 +111,9 @@ class Highway
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   /**
    * Add a new module to the model.
@@ -126,14 +121,22 @@ class Highway
    * @param args The layer parameter.
    */
   template <class LayerType, class... Args>
-  void Add(Args... args) { network.push_back(new LayerType(args...)); }
+  void Add(Args... args)
+  {
+    network.push_back(new LayerType(args...));
+    networkOwnerships.push_back(true);
+  }
 
   /**
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
+  void Add(LayerTypes<CustomLayers...> layer)
+  {
+    network.push_back(layer);
+    networkOwnerships.push_back(false);
+  }
 
   //! Return the modules of the model.
   std::vector<LayerTypes<CustomLayers...> >& Model()
@@ -189,6 +192,9 @@ class Highway
 
   //! Locally-stored network modules.
   std::vector<LayerTypes<CustomLayers...> > network;
+
+  //! The list of network modules we are responsible for.
+  std::vector<bool> networkOwnerships;
 
   //! Locally-stored empty list of modules.
   std::vector<LayerTypes<CustomLayers...> > empty;
