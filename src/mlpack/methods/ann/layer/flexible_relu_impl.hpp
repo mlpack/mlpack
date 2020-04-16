@@ -25,7 +25,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 FlexibleReLU<InputDataType, OutputDataType>::FlexibleReLU(
-    const double alpha) : userAlpha(alpha)
+    const double alpha) : userAlpha(alpha), name("flexiblerelu")
 {
   this->alpha.set_size(1, 1);
   this->alpha(0) = userAlpha;

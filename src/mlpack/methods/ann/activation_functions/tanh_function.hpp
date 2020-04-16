@@ -98,8 +98,8 @@ class TanhFunction
     x = arma::atanh(y);
   }
 
-  //! Locally-stored layer name.
-  static constexpr const char* name = "tanh";
+  //! Get the layer name.
+  const static std::string Name() const { return "tanh"; }
 }; // class TanhFunction
 
 } // namespace ann

@@ -31,7 +31,8 @@ template<typename InputDataType, typename OutputDataType>
 DropConnect<InputDataType, OutputDataType>::DropConnect() :
     ratio(0.5),
     scale(2.0),
-    deterministic(true)
+    deterministic(true),
+    name("dropconnect")
 {
   // Nothing to do here.
 }

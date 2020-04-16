@@ -64,7 +64,7 @@ class BaseLayer
   /**
    * Create the BaseLayer object.
    */
-  BaseLayer() : name(ActivationFunction::name)
+  BaseLayer() : name(ActivationFunction::Name())
   {
     // Nothing to do here.
   }

@@ -149,6 +149,11 @@ class GRU
   //! Get the model modules.
   std::vector<LayerTypes<> >& Model() { return network; }
 
+  //! Get the layer name.
+  const std::string& Name() const { return name; }
+  //! Modify the layer name.
+  std::string& Name() { return name; }
+
   /**
    * Serialize the layer
    */
@@ -239,6 +244,9 @@ class GRU
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Locally-stored layer name.
+  std::string name;
 }; // class GRU
 
 } // namespace ann

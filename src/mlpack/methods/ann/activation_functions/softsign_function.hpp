@@ -127,8 +127,8 @@ class SoftsignFunction
       x(i) = Inv(y(i));
   }
 
-  //! Locally-stored layer name.
-  static constexpr const char* name = "softsign";
+  //! Get the layer name.
+  const static std::string Name() const { return "softsign"; }
 }; // class SoftsignFunction
 
 } // namespace ann

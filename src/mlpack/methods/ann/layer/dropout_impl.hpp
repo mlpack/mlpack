@@ -24,7 +24,8 @@ Dropout<InputDataType, OutputDataType>::Dropout(
     const double ratio) :
     ratio(ratio),
     scale(1.0 / (1.0 - ratio)),
-    deterministic(false)
+    deterministic(false),
+    name("dropout")
 {
   // Nothing to do here.
 }

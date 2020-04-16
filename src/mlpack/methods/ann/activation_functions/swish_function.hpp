@@ -93,8 +93,8 @@ class SwishFunction
                                            (1 + arma::exp(-y));
   }
 
-  //! Locally-stored layer name.
-  static constexpr const char* name = "swish";
+  //! Get the layer name.
+  const static std::string Name() const { return "swish"; }
 }; // class SwishFunction
 
 } // namespace ann

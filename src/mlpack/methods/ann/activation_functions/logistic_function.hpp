@@ -107,8 +107,8 @@ class LogisticFunction
     x = arma::trunc_log(y / (1 - y));
   }
 
-  //! Locally-stored layer name.
-  static constexpr const char* name = "logistic";
+  //! Get the layer name.
+  const static std::string Name() const { return "logistic"; }
 }; // class LogisticFunction
 
 } // namespace ann

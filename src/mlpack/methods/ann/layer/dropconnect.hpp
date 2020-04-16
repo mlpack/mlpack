@@ -150,6 +150,11 @@ class DropConnect
     scale = 1.0 / (1.0 - ratio);
   }
 
+  //! Get the layer name.
+  const std::string& Name() const { return name; }
+  //! Modify the layer name.
+  std::string& Name() { return name; }
+
   /**
    * Serialize the layer.
    */
@@ -189,6 +194,9 @@ class DropConnect
 
   //! Locally-stored network modules.
   std::vector<LayerTypes<> > network;
+
+  //! Locally-stored layer name.
+  std::string name;
 }; // class DropConnect.
 
 }  // namespace ann

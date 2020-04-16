@@ -30,7 +30,8 @@ template<typename InputDataType, typename OutputDataType>
 ELU<InputDataType, OutputDataType>::ELU() :
     alpha(1.6732632423543774),
     lambda(1.0507009873554802),
-    deterministic(false)
+    deterministic(false),
+    name("elu")
 {
   // Nothing to do here.
 }
@@ -41,7 +42,8 @@ template<typename InputDataType, typename OutputDataType>
 ELU<InputDataType, OutputDataType>::ELU(const double alpha) :
     alpha(alpha),
     lambda(1),
-    deterministic(false)
+    deterministic(false),
+    name("elu")
 {
   // Nothing to do here.
 }

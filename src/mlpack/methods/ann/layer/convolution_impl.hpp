@@ -31,7 +31,7 @@ Convolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::Convolution()
+>::Convolution() : name("convolution")
 {
   // Nothing to do here.
 }
@@ -115,7 +115,8 @@ Convolution<
     inputWidth(inputWidth),
     inputHeight(inputHeight),
     outputWidth(0),
-    outputHeight(0)
+    outputHeight(0),
+    name("convolution")
 {
   weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
       1);

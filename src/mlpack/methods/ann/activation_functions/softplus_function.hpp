@@ -120,8 +120,8 @@ class SoftplusFunction
       x(i) = Inv(y(i));
   }
 
-  //! Locally-stored layer name.
-  static constexpr const char* name = "softplus";
+  //! Get the layer name.
+  const static std::string Name() const { return "softplus"; }
 }; // class SoftplusFunction
 
 } // namespace ann

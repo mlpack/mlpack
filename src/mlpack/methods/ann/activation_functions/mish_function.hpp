@@ -92,8 +92,8 @@ class MishFunction
         arma::pow(arma::exp(2 * y) + 2 * arma::exp(y) + 2, 2);
   }
 
-  //! Locally-stored layer name.
-  static constexpr const char* name = "mish";
+  //! Get the layer name.
+  const static std::string Name() const { return "mish"; }
 }; // class MishFunction
 
 } // namespace ann

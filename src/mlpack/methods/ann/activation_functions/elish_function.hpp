@@ -111,6 +111,9 @@ class ElishFunction
         1 + arma::exp(y), 2))) + ((y >= 0.0) % (1 / (1 + arma::exp(-y)) + y %
         arma::exp(-y) / arma::pow(1 + arma::exp(-y), 2)));
   }
+  
+  //! Get the layer name.
+  const static std::string Name() const { return "elish"; }
 }; // class ElishFunction
 
 } // namespace ann

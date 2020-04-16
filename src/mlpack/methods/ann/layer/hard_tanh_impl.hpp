@@ -23,7 +23,8 @@ HardTanH<InputDataType, OutputDataType>::HardTanH(
     const double maxValue,
     const double minValue) :
     maxValue(maxValue),
-    minValue(minValue)
+    minValue(minValue),
+    name("hardtanh")
 {
   // Nothing to do here.
 }

@@ -85,8 +85,8 @@ class GELUFunction
         0.797885 * y), 2) + 0.5;
   }
 
-  //! Locally-stored layer name.
-  static constexpr const char* name = "gelu";
+  //! Get the layer name.
+  const static std::string Name() const { return "gelu"; }
 }; // class GELUFunction
 
 } // namespace ann
