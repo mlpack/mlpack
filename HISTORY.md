@@ -9,6 +9,8 @@
   * Pass CMAKE_CXX_FLAGS (compilation options) correctly to Python build
     (#2367).
 
+  * Expose ensmallen Callbacks for sparseautoencoder (#2198).
+
 ### mlpack 3.3.0
 ###### 2020-04-07
   * Templated return type of `Forward function` of loss functions (#2339).
