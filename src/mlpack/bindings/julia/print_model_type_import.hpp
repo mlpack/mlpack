@@ -58,7 +58,7 @@ void PrintModelTypeImport(
   // using <programName>_internal: <type>Ptr
 
   // First, print the struct definition.
-  std::cout << "using " << programName << "_internal: " << StripType(d.cppType)
+  std::cout << "using ." << programName << "_internal: " << StripType(d.cppType)
       << "Ptr" << std::endl;
 }
 
