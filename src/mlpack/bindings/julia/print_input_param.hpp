@@ -39,12 +39,12 @@ void PrintInputParam(const util::ParamData& d,
     // If it's required, then we need the type.
     if (d.required)
     {
-      std::cout << GetJuliaType<typename std::remove_pointer<T>::type>();
+      std::cout << GetJuliaType<typename std::remove_pointer<T>::type>(d);
     }
     else
     {
       std::cout << "Union{"
-          << GetJuliaType<typename std::remove_pointer<T>::type>()
+          << GetJuliaType<typename std::remove_pointer<T>::type>(d)
           << ", Missing} = missing";
     }
   }

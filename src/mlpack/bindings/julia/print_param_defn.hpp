@@ -56,35 +56,91 @@ void PrintParamDefn(
 {
   // We need to print something of the form below:
   //
-  // function CLIGetParam<Type>Ptr(paramName::String)
-  //   return ccall((:CLIGetParam<Type>Ptr, <programName>Library),
-  //       Ptr{Nothing}, (Cstring,), paramName)
+  // struct <Type>Ptr
+  //   ptr::Ptr{Nothing}
   // end
   //
-  // function CLISetParam<Type>Ptr(paramName::String, ptr::Ptr{Nothing})
-  //   ccall((:CLISetParam<Type>Ptr, <programName>Library), Nothing,
-  //       (Cstring, Ptr{Nothing}), paramName, ptr)
+  // function CLIGetParam<Type>Ptr(paramName::String)
+  //   <Type>Ptr(ccall((:CLIGetParam<Type>Ptr, <programName>Library),
+  //       Ptr{Nothing}, (Cstring,), paramName))
   // end
+  //
+  // function CLISetParam<Type>Ptr(paramName::String, model::<Type>Ptr)
+  //   ccall((:CLISetParam<Type>Ptr, <programName>Library), Nothing,
+  //       (Cstring, Ptr{Nothing}), paramName, model.ptr)
+  // end
+  //
+  // function serialize<Type>Ptr(stream::IO, model::<Type>Ptr)
+  //   buffer = ccall((:Serialize<Type>Ptr, <programName>Library),
+  //       Vector{UInt8}, (Ptr{Nothing},), model.ptr)
+  //   write(stream, buf)
+  // end
+  //
+  // function deserialize<Type>Ptr(stream::IO)::<Type>Ptr
+  //   buffer = read(stream)
+  //   <Type>Ptr(ccall((:Deserialize<Type>Ptr, <programName>Library),
+  //       Ptr{Nothing}, (Vector{UInt8}, UInt), buffer, length(buffer)))
+  // end
+
   std::string type = StripType(d.cppType);
-  std::cout << "\" Get the value of a model pointer parameter of type " << type
-      << ".\"" << std::endl;
-  std::cout << "function CLIGetParam" << type << "Ptr(paramName::String)"
-      << std::endl;
-  std::cout << "  return ccall((:CLI_GetParam" << type << "Ptr, "
-      << programName << "Library), Ptr{Nothing}, "
-      << "(Cstring,), paramName)" << std::endl;
+
+  // First, print the struct definition.
+  std::cout << "\"\"\"" << std::endl;
+  std::cout << "    " << type << "Ptr" << std::endl;
+  std::cout << std::endl;
+  std::cout << "This type represents a C++ " << type << " model pointer.  It "
+      << "can be " << std::endl << "serialized with the "
+      << "`Serialization.serialize()` function." << std::endl;
+  std::cout << "\"\"\"" << std::endl;
+  std::cout << "struct " << type << "Ptr" << std::endl;
+  std::cout << "  ptr::Ptr{Nothing}" << std::endl;
   std::cout << "end" << std::endl;
   std::cout << std::endl;
 
-  std::cout << "\" Set the value of a model pointer parameter of type " << type
-      << ".\"" << std::endl;
-  std::cout << "function CLISetParam" << type << "Ptr(paramName::String, "
-      << "ptr::Ptr{Nothing})" << std::endl;
-  std::cout << "  ccall((:CLI_SetParam" << type << "Ptr, "
-      << programName << "Library), Nothing, (Cstring, "
-      << "Ptr{Nothing}), paramName, ptr)" << std::endl;
+  // Now, CLIGetParam<Type>Ptr().
+  std::cout << "# Get the value of a model pointer parameter of type " << type
+      << "." << std::endl;
+  std::cout << "function CLIGetParam" << type << "Ptr(paramName::String)::"
+      << type << "Ptr" << std::endl;
+  std::cout << "  " << type << "Ptr(ccall((:CLI_GetParam" << type
+      << "Ptr, " << programName << "Library), Ptr{Nothing}, (Cstring,), "
+      << "paramName))" << std::endl;
   std::cout << "end" << std::endl;
   std::cout << std::endl;
+
+  // Next, CLISetParam<Type>Ptr().
+  std::cout << "# Set the value of a model pointer parameter of type " << type
+      << "." << std::endl;
+  std::cout << "function CLISetParam" << type << "Ptr(paramName::String, "
+      << "model::" << type << "Ptr)" << std::endl;
+  std::cout << "  ccall((:CLI_SetParam" << type << "Ptr, "
+      << programName << "Library), Nothing, (Cstring, "
+      << "Ptr{Nothing}), paramName, model.ptr)" << std::endl;
+  std::cout << "end" << std::endl;
+  std::cout << std::endl;
+
+  // Now the serialization functionality.
+  std::cout << "# Serialize a model to the given stream." << std::endl;
+  std::cout << "function serialize" << type << "Ptr(stream::IO, model::" << type
+      << "Ptr)" << std::endl;
+  std::cout << "  buf_len::UInt = 0" << std::endl;
+  std::cout << "  buf_ptr = ccall((:Serialize" << type << "Ptr, " << programName
+      << "Library), Ptr{UInt8}, (Ptr{Nothing}, Ref{UInt}), model.ptr, "
+      << "Ref(buf_len))" << std::endl;
+  std::cout << "  buf = Base.unsafe_wrap(buf_ptr, buf_len; own=true)"
+      << std::endl;
+  std::cout << "  write(stream, buf)" << std::endl;
+  std::cout << "end" << std::endl;
+
+  // And finally the deserialization functionality.
+  std::cout << "# Deserialize a model from the given stream." << std::endl;
+  std::cout << "function deserialize" << type << "Ptr(stream::IO)::" << type
+      << "Ptr" << std::endl;
+  std::cout << "  buffer = read(stream)" << std::endl;
+  std::cout << "  " << type << "Ptr(ccall((:Deserialize" << type << "Ptr, "
+      << programName << "Library), Ptr{Nothing}, (Vector{UInt8}, UInt), buffer,"
+      << " length(buffer)))" << std::endl;
+  std::cout << "end" << std::endl;
 }
 
 /**

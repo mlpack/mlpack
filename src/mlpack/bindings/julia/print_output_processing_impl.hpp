@@ -104,8 +104,9 @@ void PrintOutputProcessing(
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
-  std::cout << functionName << "_internal.CLIGetParam" << StripType(d.cppType)
-      << "Ptr(\"" << d.name << "\")";
+  std::string type = StripType(d.cppType);
+  std::cout << type << "Ptr(" << functionName << "_internal.CLIGetParam"
+      << type << "Ptr(\"" << d.name << "\"))";
 }
 
 /**

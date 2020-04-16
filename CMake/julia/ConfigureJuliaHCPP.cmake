@@ -61,6 +61,10 @@ if (${NUM_MODEL_TYPES} GREATER 0)
 void* CLI_GetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName);
 // Set the pointer to a ${MODEL_TYPE} parameter.
 void CLI_SetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName, void* ptr);
+// Serialize a ${MODEL_TYPE} pointer.
+const char* Serialize${MODEL_SAFE_TYPE}Ptr(void* ptr, size_t* length);
+// Deserialize a ${MODEL_TYPE} pointer.
+void* Deserialize${MODEL_SAFE_TYPE}Ptr(const char* buffer, const size_t length);
 ")
 
     # Generate the implementation.
@@ -78,6 +82,32 @@ void CLI_SetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName, void* ptr)
   CLI::SetPassed(paramName);
 }
 
+// Serialize a ${MODEL_TYPE} pointer.
+const char* Serialize${MODEL_SAFE_TYPE}Ptr(void* ptr, size_t* length)
+{
+  std::ostringstream oss;
+  {
+    boost::archive::binary_oarchive oa(oss);
+    oa << ((${MODEL_TYPE}*) ptr);
+  }
+
+  *length = oss.str().length();
+  return oss.str().data();
+}
+
+// Deserialize a ${MODEL_TYPE} pointer.
+void* Deserialize${MODEL_SAFE_TYPE}Ptr(const char* buffer, const size_t length)
+{
+  ${MODEL_TYPE}* t = new ${MODEL_TYPE}();
+
+  std::istringstream iss(std::string(buffer, length));
+  {
+    boost::archive::binary_iarchive ia(iss);
+    ia >> boost::serialization::make_nvp(\"${MODEL_SAFE_TYPE}\", *t);
+  }
+
+  return (void*) t;
+}
 ")
   endforeach ()
 endif()
