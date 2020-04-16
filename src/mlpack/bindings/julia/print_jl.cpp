@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "print_jl.hpp"
+#include "strip_type.hpp"
 #include <mlpack/core/util/hyphenate_string.hpp>
 
 using namespace mlpack;
@@ -117,6 +118,22 @@ void PrintJL(const util::ProgramDoc& programInfo,
 
   // End the module.
   cout << "end # module" << endl;
+  cout << endl;
+
+  // Import any types.
+  classNames.clear();
+  for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    const util::ParamData& d = it->second;
+    if (classNames.count(d.cppType) == 0)
+    {
+      CLI::GetSingleton().functionMap[d.tname]["PrintModelTypeImport"](d,
+          (void*) &functionName, NULL);
+
+      // Avoid adding this import again.
+      classNames.insert(d.cppType);
+    }
+  }
   cout << endl;
 
   // Print the documentation.

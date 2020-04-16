@@ -123,6 +123,7 @@ if (BUILD_JULIA_BINDINGS)
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_param_defn.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_type_doc.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_type_doc_impl.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_model_type_import.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param_impl.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/strip_type.hpp)
