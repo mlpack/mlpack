@@ -56,9 +56,7 @@ void PrintParamDefn(
 {
   // We need to print something of the form below:
   //
-  // struct <Type>Ptr
-  //   ptr::Ptr{Nothing}
-  // end
+  // import ...<Type>Ptr
   //
   // function CLIGetParam<Type>Ptr(paramName::String)
   //   <Type>Ptr(ccall((:CLIGetParam<Type>Ptr, <programName>Library),
@@ -84,17 +82,8 @@ void PrintParamDefn(
 
   std::string type = StripType(d.cppType);
 
-  // First, print the struct definition.
-  std::cout << "\"\"\"" << std::endl;
-  std::cout << "    " << type << "Ptr" << std::endl;
-  std::cout << std::endl;
-  std::cout << "This type represents a C++ " << type << " model pointer.  It "
-      << "can be " << std::endl << "serialized with the "
-      << "`Serialization.serialize()` function." << std::endl;
-  std::cout << "\"\"\"" << std::endl;
-  std::cout << "struct " << type << "Ptr" << std::endl;
-  std::cout << "  ptr::Ptr{Nothing}" << std::endl;
-  std::cout << "end" << std::endl;
+  // First, print the import of the struct.
+  std::cout << "import ..." << type << "Ptr" << std::endl;
   std::cout << std::endl;
 
   // Now, CLIGetParam<Type>Ptr().
