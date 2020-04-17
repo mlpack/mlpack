@@ -324,3 +324,33 @@ end
 
   @test bwOut == 20.0
 end
+
+# Test that we can serialize a model and then use it again.
+@testset "TestStreamSerialization" begin
+  _, _, _, _, _, _, modelOut, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         build_model=true)
+
+  stream = IOBuffer()
+  serialize(stream, modelOut)
+
+  newStream = IOBuffer(copy(stream.data))
+  newModel = deserialize(newStream, GaussianKernelPtr)
+
+  _, _, _, _, _, bwOut, _, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         model_in=newModel)
+end
+
+@testset "TestFileSerialization" begin
+  _, _, _, _, _, _, modelOut, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         build_model=true)
+
+  serialize(open("model.bin", "w"), modelOut)
+  newModel = deserialize(open("model.bin", "r"), GaussianKernelPtr)
+
+  _, _, _, _, _, bwOut, _, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         model_in=newModel)
+end
