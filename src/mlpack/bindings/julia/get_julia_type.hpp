@@ -144,7 +144,7 @@ inline std::string GetJuliaType(
   // wrapped in a struct.
   std::string type = StripType(d.cppType);
   std::ostringstream oss;
-  oss << type << "Ptr";
+  oss << type;
   return oss.str();
 }
 
