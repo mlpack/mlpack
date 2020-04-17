@@ -56,7 +56,9 @@ function(append_serialization SERIALIZATION_FILE PROGRAM_NAME PROGRAM_MAIN_FILE)
 
       # See if the model type already exists.
       file(READ "${TYPES_FILE}" TYPES_FILE_CONTENTS)
-      string(FIND "${TYPES_FILE_CONTENTS}" "struct ${MODEL_SAFE_TYPE}Ptr"
+      string(FIND
+          "${TYPES_FILE_CONTENTS}"
+          "serialize(stream::IO, model::${MODEL_SAFE_TYPE}Ptr)"
           FIND_OUT)
 
       # If it doesn't exist, append it.
