@@ -5,9 +5,7 @@
 using Pkg
 Pkg.activate(".")
 using Test
-using mlpack
-
-include(joinpath(pwd(), "src/test_julia_binding.jl"))
+using mlpack: test_julia_binding, GaussianKernelPtr, serialize, deserialize
 
 # The return order for the binding is this:
 #
@@ -347,8 +345,13 @@ end
       test_julia_binding(4.0, 12, "hello",
                          build_model=true)
 
-  serialize(open("model.bin", "w"), modelOut)
-  newModel = deserialize(open("model.bin", "r"), mlpack.GaussianKernelPtr)
+  open("model.bin", "w") do io
+    serialize(io, modelOut)
+  end
+
+  open("model.bin", "r") do io
+    newModel = deserialize(io, mlpack.GaussianKernelPtr)
+  end
 
   _, _, _, _, _, bwOut, _, _, _, _, _, _, _, _ =
       test_julia_binding(4.0, 12, "hello",
