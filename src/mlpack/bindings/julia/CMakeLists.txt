@@ -63,7 +63,21 @@ if (BUILD_JULIA_BINDINGS)
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/functions.jl"
       "# This file imports all of the mlpack functions into the mlpack module."
       "\n\n")
+
+  file(WRITE
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/types.jl"
+      "# This file defines all of the mlpack types."
+      "\n\n")
+
+  file(WRITE
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/serialization.jl"
+      "# This file imports all serialization and deserialization functions\n"
+      "# from internal modules."
+      "\n\n")
 endif ()
+
+include("${CMAKE_SOURCE_DIR}/CMake/julia/AppendType.cmake")
+include("${CMAKE_SOURCE_DIR}/CMake/julia/AppendSerialization.cmake")
 
 macro (add_julia_binding name)
 if (BUILD_JULIA_BINDINGS)
@@ -85,7 +99,18 @@ if (BUILD_JULIA_BINDINGS)
               ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.cpp.in
               ${CMAKE_SOURCE_DIR}/CMake/julia/ConfigureJuliaHCPP.cmake)
 
-  # 2. Build libmlpack_julia_${name}.so.
+  # 2. Append any types to the list of types and serialization imports (this is
+  # done immediately, not as a separate target).
+  append_type(
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/types.jl"
+      "${name}"
+      "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp")
+  append_serialization(
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/serialization.jl"
+      "${name}"
+      "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp")
+
+  # 3. Build libmlpack_julia_${name}.so.
   add_library(mlpack_julia_${name}
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.h
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.cpp)
@@ -93,7 +118,7 @@ if (BUILD_JULIA_BINDINGS)
   set_target_properties(mlpack_julia_${name} PROPERTIES
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/")
 
-  # 3. Generate ${name}.jl.
+  # 4. Generate ${name}.jl.
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/generate_jl_${name}.cpp
       COMMAND ${CMAKE_COMMAND}
           -DNAME=${name}

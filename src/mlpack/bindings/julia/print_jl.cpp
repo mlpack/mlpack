@@ -67,6 +67,22 @@ void PrintJL(const util::ProgramDoc& programInfo,
   cout << "export " << functionName << endl;
   cout << endl;
 
+  // Now import any types we might need.
+  set<string> classNames;
+  for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    const util::ParamData& d = it->second;
+    if (classNames.count(d.cppType) == 0)
+    {
+      CLI::GetSingleton().functionMap[d.tname]["PrintModelTypeImport"](d,
+          (void*) &functionName, NULL);
+
+      // Avoid adding this import again.
+      classNames.insert(d.cppType);
+    }
+  }
+  cout << endl;
+
   // We need to include utility functions.
   cout << "using mlpack._Internal.cli" << endl;
   cout << endl;
@@ -102,7 +118,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   cout << "  import .." << functionName << "Library" << endl;
   cout << endl;
 
-  set<string> classNames;
+  classNames.clear();
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
     const util::ParamData& d = it->second;
@@ -118,22 +134,6 @@ void PrintJL(const util::ProgramDoc& programInfo,
 
   // End the module.
   cout << "end # module" << endl;
-  cout << endl;
-
-  // Import any types.
-  classNames.clear();
-  for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
-  {
-    const util::ParamData& d = it->second;
-    if (classNames.count(d.cppType) == 0)
-    {
-      CLI::GetSingleton().functionMap[d.tname]["PrintModelTypeImport"](d,
-          (void*) &functionName, NULL);
-
-      // Avoid adding this import again.
-      classNames.insert(d.cppType);
-    }
-  }
   cout << endl;
 
   // Print the documentation.
