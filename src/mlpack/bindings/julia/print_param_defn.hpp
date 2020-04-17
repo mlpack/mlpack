@@ -130,8 +130,8 @@ void PrintParamDefn(
       << "Ptr" << std::endl;
   std::cout << "  buffer = read(stream)" << std::endl;
   std::cout << "  " << type << "Ptr(ccall((:Deserialize" << type << "Ptr, "
-      << programName << "Library), Ptr{Nothing}, (Vector{UInt8}, UInt), buffer,"
-      << " length(buffer)))" << std::endl;
+      << programName << "Library), Ptr{Nothing}, (Ptr{UInt8}, UInt), "
+      << "Base.pointer(buffer), length(buffer)))" << std::endl;
   std::cout << "end" << std::endl;
 }
 
