@@ -9,6 +9,9 @@
   * Pass CMAKE_CXX_FLAGS (compilation options) correctly to Python build
     (#2367).
 
+  * Add serialization support from Julia; use `mlpack.serialize()` and
+    `mlpack.deserialize()` to save and load from `IOBuffer`s.
+
 ### mlpack 3.3.0
 ###### 2020-04-07
   * Templated return type of `Forward function` of loss functions (#2339).
