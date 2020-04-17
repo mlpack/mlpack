@@ -119,8 +119,8 @@ void PrintParamDefn(
   std::cout << "  buf_ptr = ccall((:Serialize" << type << "Ptr, " << programName
       << "Library), Ptr{UInt8}, (Ptr{Nothing}, Ptr{UInt}), model.ptr, "
       << "Base.pointer(buf_len))" << std::endl;
-  std::cout << "  buf = Base.unsafe_wrap(buf_ptr, buf_len[1]; own=true)"
-      << std::endl;
+  std::cout << "  buf = Base.unsafe_wrap(Vector{UInt8}, buf_ptr, buf_len[1]; "
+      << "own=true)" << std::endl;
   std::cout << "  write(stream, buf)" << std::endl;
   std::cout << "end" << std::endl;
 
