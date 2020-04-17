@@ -139,7 +139,7 @@ void PrintInputProcessing(
   std::cout << indent << functionName << "_internal.CLISetParam" << type
       << "Ptr(\"" << d.name << "\", convert("
       << GetJuliaType<typename std::remove_pointer<T>::type>(d) << ", "
-      << juliaName << ").ptr)" << std::endl;
+      << juliaName << "))" << std::endl;
 
   if (!d.required)
   {
