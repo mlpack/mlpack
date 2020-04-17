@@ -74,8 +74,8 @@ void PrintJL(const util::ProgramDoc& programInfo,
     const util::ParamData& d = it->second;
     if (classNames.count(d.cppType) == 0)
     {
-      CLI::GetSingleton().functionMap[d.tname]["PrintModelTypeImport"](d,
-          (void*) &functionName, NULL);
+      CLI::GetSingleton().functionMap[d.tname]["PrintModelTypeImport"](d, NULL,
+          NULL);
 
       // Avoid adding this import again.
       classNames.insert(d.cppType);
