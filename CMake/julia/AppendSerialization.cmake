@@ -68,7 +68,7 @@ function(append_serialization SERIALIZATION_FILE PROGRAM_NAME PROGRAM_MAIN_FILE)
         file(APPEND
             "${SERIALIZATION_FILE}"
             "serialize(stream::IO, model::${MODEL_SAFE_TYPE}Ptr) =\n"
-            "    _Internal.${PROGRAM_NAME}_internal.serialize${MODEL_SAFE_TYPE}Ptr\n"
+            "    _Internal.${PROGRAM_NAME}_internal.serialize${MODEL_SAFE_TYPE}Ptr(stream, model)\n"
             "deserialize!(model::${MODEL_SAFE_TYPE}Ptr, stream::IO) =\n"
             "    model = _Internal.${PROGRAM_NAME}_internal.deserialize${MODEL_SAFE_TYPE}Ptr(stream)\n"
             "\n")
