@@ -99,7 +99,7 @@ if (BUILD_JULIA_BINDINGS)
       "type of the model manually with the `t` argument.  Example usage:\n"
       "\n"
       "```julia\n"
-      "lr_model = mlpack.deserialize_bin(stream, LogisticRegressionPtr)\n"
+      "lr_model = mlpack.deserialize_bin(stream, LogisticRegression)\n"
       "```\n"
       "\n"
       "Only use this if you have saved the model in the boost::serialization\n"

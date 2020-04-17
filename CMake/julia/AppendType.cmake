@@ -56,7 +56,7 @@ function(append_type TYPES_FILE PROGRAM_NAME PROGRAM_MAIN_FILE)
 
       # See if the model type already exists.
       file(READ "${TYPES_FILE}" TYPES_FILE_CONTENTS)
-      string(FIND "${TYPES_FILE_CONTENTS}" "struct ${MODEL_SAFE_TYPE}Ptr"
+      string(FIND "${TYPES_FILE_CONTENTS}" "struct ${MODEL_SAFE_TYPE}"
           FIND_OUT)
 
       # If it doesn't exist, append it.
@@ -65,7 +65,7 @@ function(append_type TYPES_FILE PROGRAM_NAME PROGRAM_MAIN_FILE)
         # function.
         file(APPEND
             "${TYPES_FILE}"
-            "struct ${MODEL_SAFE_TYPE}Ptr\n"
+            "struct ${MODEL_SAFE_TYPE}\n"
             "  ptr::Ptr{Nothing}\n"
             "end\n"
             "\n")

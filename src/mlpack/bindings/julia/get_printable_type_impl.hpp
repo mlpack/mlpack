@@ -110,11 +110,11 @@ std::string GetPrintableType(
   {
     // If this is true, then we are being called from the Markdown bindings.
     // This will be printed as the general documentation for model types.
-    return "<Model>Ptr (mlpack model)";
+    return "<Model> (mlpack model)";
   }
   else
   {
-    return type + "Ptr";
+    return type;
   }
 }
 

@@ -106,7 +106,7 @@ void PrintOutputProcessing(
 {
   std::string type = StripType(d.cppType);
   std::cout << functionName << "_internal.CLIGetParam"
-      << type << "Ptr(\"" << d.name << "\")";
+      << type << "(\"" << d.name << "\")";
 }
 
 /**

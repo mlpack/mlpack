@@ -157,7 +157,7 @@ std::string PrintTypeDoc(
     const typename boost::enable_if<data::HasSerialize<T>>::type*)
 {
   return "An mlpack model pointer.  `<Model>` refers to the type of model that "
-      "is being stored, so, e.g., for `CF()`, the type will be `CFModelPtr`. "
+      "is being stored, so, e.g., for `CF()`, the type will be `CFModel`. "
       "This type holds a pointer to C++ memory containing the mlpack model.  "
       "Note that this means the mlpack model itself cannot be easily inspected "
       "in Julia.  However, the pointer can be passed to subsequent calls to "

@@ -59,7 +59,7 @@ function(append_serialization SERIALIZATION_FILE PROGRAM_NAME PROGRAM_MAIN_FILE)
       file(READ "${SERIALIZATION_FILE}" SERIALIZATION_FILE_CONTENTS)
       string(FIND
           "${SERIALIZATION_FILE_CONTENTS}"
-          "serialize_bin(stream::IO, model::${MODEL_SAFE_TYPE}Ptr)"
+          "serialize_bin(stream::IO, model::${MODEL_SAFE_TYPE})"
           FIND_OUT)
 
       # If it doesn't exist, append it.
@@ -68,10 +68,10 @@ function(append_serialization SERIALIZATION_FILE PROGRAM_NAME PROGRAM_MAIN_FILE)
         # function.
         file(APPEND
             "${SERIALIZATION_FILE}"
-            "serialize_bin(stream::IO, model::${MODEL_SAFE_TYPE}Ptr) =\n"
-            "    _Internal.${PROGRAM_NAME}_internal.serialize${MODEL_SAFE_TYPE}Ptr(stream, model)\n"
-            "_deserialize_bin(stream::IO, ::Type{${MODEL_SAFE_TYPE}Ptr}) =\n"
-            "    _Internal.${PROGRAM_NAME}_internal.deserialize${MODEL_SAFE_TYPE}Ptr(stream)\n"
+            "serialize_bin(stream::IO, model::${MODEL_SAFE_TYPE}) =\n"
+            "    _Internal.${PROGRAM_NAME}_internal.serialize${MODEL_SAFE_TYPE}(stream, model)\n"
+            "_deserialize_bin(stream::IO, ::Type{${MODEL_SAFE_TYPE}}) =\n"
+            "    _Internal.${PROGRAM_NAME}_internal.deserialize${MODEL_SAFE_TYPE}(stream)\n"
             "\n")
       endif ()
     endforeach ()

@@ -5,7 +5,7 @@
 using Pkg
 Pkg.activate(".")
 using Test
-using mlpack: test_julia_binding, GaussianKernelPtr, serialize, deserialize
+using mlpack: test_julia_binding, GaussianKernel, serialize, deserialize
 using Serialization
 import Base.Filesystem
 
@@ -335,7 +335,7 @@ end
   serialize(stream, modelOut)
 
   newStream = IOBuffer(copy(stream.data))
-  newModel = deserialize(newStream, mlpack.GaussianKernelPtr)
+  newModel = deserialize(newStream, mlpack.GaussianKernel)
 
   _, _, _, _, _, bwOut, _, _, _, _, _, _, _, _ =
       test_julia_binding(4.0, 12, "hello",
@@ -352,7 +352,7 @@ end
   end
 
   open("model.bin", "r") do io
-    newModel = deserialize(io, mlpack.GaussianKernelPtr)
+    newModel = deserialize(io, mlpack.GaussianKernel)
   end
 
   _, _, _, _, _, bwOut, _, _, _, _, _, _, _, _ =

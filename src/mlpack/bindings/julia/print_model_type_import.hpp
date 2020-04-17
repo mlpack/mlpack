@@ -52,10 +52,10 @@ void PrintModelTypeImport(
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // We need to print, e.g.,
-  // import ..<type>Ptr
+  // import ..<type>
 
   // First, print the struct definition.
-  std::cout << "import .." << StripType(d.cppType) << "Ptr" << std::endl;
+  std::cout << "import .." << StripType(d.cppType) << std::endl;
 }
 
 /**
