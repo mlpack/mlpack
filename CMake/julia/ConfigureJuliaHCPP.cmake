@@ -88,7 +88,8 @@ char* Serialize${MODEL_SAFE_TYPE}Ptr(void* ptr, size_t* length)
   std::ostringstream oss;
   {
     boost::archive::binary_oarchive oa(oss);
-    oa << boost::serialization::make_nvp(\"${MODEL_SAFE_TYPE}\", ((${MODEL_TYPE}*) ptr));
+    ${MODEL_TYPE}* model = (${MODEL_TYPE}*) ptr;
+    oa << boost::serialization::make_nvp(\"${MODEL_SAFE_TYPE}\", model);
   }
 
   *length = oss.str().length();
