@@ -82,21 +82,6 @@ void PrintParamDefn(
   //   <Type>(ccall((:Deserialize<Type>Ptr, <programName>Library),
   //       Ptr{Nothing}, (Vector{UInt8}, UInt), buffer, length(buffer)))
   // end
-  //
-  // # Allow access from Julia's Serialization package.
-  // using Serialization
-  //
-  // function Serialization.serialize(s::AbstractSerializer, model::<Type>)
-  //   Serialization.writetag(s.io, Serialization.OBJECT_TAG)
-  //   Serialization.serialize(s, <Type>)
-  //   serialize<Type>(model)
-  //   return nothing
-  // end
-  //
-  // function Serialization.deserialize(s::AbstractSerializer,
-  //                                    ::Type{<Type>})
-  //   deserialize<Type>(s.io)
-  // end
 
   std::string type = StripType(d.cppType);
 
@@ -104,18 +89,18 @@ void PrintParamDefn(
   std::cout << "import ..." << type << std::endl;
   std::cout << std::endl;
 
-  // Now, CLIGetParam<Type>Ptr().
+  // Now, CLIGetParam<Type>().
   std::cout << "# Get the value of a model pointer parameter of type " << type
       << "." << std::endl;
   std::cout << "function CLIGetParam" << type << "(paramName::String)::"
       << type << std::endl;
-  std::cout << "  " << type << "Ptr(ccall((:CLI_GetParam" << type
+  std::cout << "  " << type << "(ccall((:CLI_GetParam" << type
       << "Ptr, " << programName << "Library), Ptr{Nothing}, (Cstring,), "
       << "paramName))" << std::endl;
   std::cout << "end" << std::endl;
   std::cout << std::endl;
 
-  // Next, CLISetParam<Type>Ptr().
+  // Next, CLISetParam<Type>().
   std::cout << "# Set the value of a model pointer parameter of type " << type
       << "." << std::endl;
   std::cout << "function CLISetParam" << type << "(paramName::String, "
@@ -147,25 +132,6 @@ void PrintParamDefn(
   std::cout << "  " << type << "(ccall((:Deserialize" << type << "Ptr, "
       << programName << "Library), Ptr{Nothing}, (Ptr{UInt8}, UInt), "
       << "Base.pointer(buffer), length(buffer)))" << std::endl;
-  std::cout << "end" << std::endl;
-
-  // Lastly, make wrappers for Julia's Serialization package.
-  std::cout << "# Allow access from Julia's Serialization package."
-      << std::endl;
-  std::cout << "using Serialization" << std::endl;
-  std::cout << std::endl;
-  std::cout << "function Serialization.serialize(s::AbstractSerializer, "
-      << "model::" << type << ")" << std::endl;
-  std::cout << "  Serialization.writetag(s.io, Serialization.OBJECT_TAG)"
-      << std::endl;
-  std::cout << "  Serialization.serialize(s, " << type << ")" << std::endl;
-  std::cout << "  serialize" << type << "(model)" << std::endl;
-  std::cout << "  return nothing" << std::endl;
-  std::cout << "end" << std::endl;
-  std::cout << std::endl;
-  std::cout << "function Serialization.deserialize(s::AbstractSerializer, "
-      << "::Type{" << type << "})" << std::endl;
-  std::cout << "  deserialize" << type << "(s.io)" << std::endl;
   std::cout << "end" << std::endl;
 }
 

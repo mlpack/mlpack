@@ -70,8 +70,20 @@ function(append_serialization SERIALIZATION_FILE PROGRAM_NAME PROGRAM_MAIN_FILE)
             "${SERIALIZATION_FILE}"
             "serialize_bin(stream::IO, model::${MODEL_SAFE_TYPE}) =\n"
             "    _Internal.${PROGRAM_NAME}_internal.serialize${MODEL_SAFE_TYPE}(stream, model)\n"
-            "_deserialize_bin(stream::IO, ::Type{${MODEL_SAFE_TYPE}}) =\n"
+            "deserialize_bin(stream::IO, ::Type{${MODEL_SAFE_TYPE}}) =\n"
             "    _Internal.${PROGRAM_NAME}_internal.deserialize${MODEL_SAFE_TYPE}(stream)\n"
+            "\n"
+            "function Serialization.serialize(s::AbstractSerializer,\n"
+            "                                 model::${MODEL_SAFE_TYPE})\n"
+            "  Serialization.writetag(s.io, Serialization.OBJECT_TAG)\n"
+            "  Serialization.serialize(s, ${MODEL_SAFE_TYPE})\n"
+            "  serialize_bin(s.io, model)\n"
+            "end\n"
+            "\n"
+            "function Serialization.deserialize(s::AbstractSerializer,\n"
+            "                                   ::Type{${MODEL_SAFE_TYPE}})\n"
+            "  deserialize_bin(s.io, Type{${MODEL_SAFE_TYPE}})\n"
+            "end\n"
             "\n")
       endif ()
     endforeach ()
