@@ -62,7 +62,7 @@ void* CLI_GetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName);
 // Set the pointer to a ${MODEL_TYPE} parameter.
 void CLI_SetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName, void* ptr);
 // Serialize a ${MODEL_TYPE} pointer.
-const char* Serialize${MODEL_SAFE_TYPE}Ptr(void* ptr, size_t* length);
+char* Serialize${MODEL_SAFE_TYPE}Ptr(void* ptr, size_t* length);
 // Deserialize a ${MODEL_TYPE} pointer.
 void* Deserialize${MODEL_SAFE_TYPE}Ptr(const char* buffer, const size_t length);
 ")
@@ -88,11 +88,16 @@ const char* Serialize${MODEL_SAFE_TYPE}Ptr(void* ptr, size_t* length)
   std::ostringstream oss;
   {
     boost::archive::binary_oarchive oa(oss);
-    oa << ((${MODEL_TYPE}*) ptr);
+    oa << boost::serialization::make_nvp(\"${MODEL_SAFE_TYPE}\", ((${MODEL_TYPE}*) ptr);
   }
 
   *length = oss.str().length();
-  return oss.str().data();
+
+  // Copy the string buffer so we can return one that won't get deallocated when
+  // we exit this function.  Julia will be responsible for freeing this.
+  char* buffer = new char[*length];
+  memcpy(buffer, oss.str().data(), *length);
+  return buffer;
 }
 
 // Deserialize a ${MODEL_TYPE} pointer.
@@ -103,9 +108,10 @@ void* Deserialize${MODEL_SAFE_TYPE}Ptr(const char* buffer, const size_t length)
   std::istringstream iss(std::string(buffer, length));
   {
     boost::archive::binary_iarchive ia(iss);
-    ia >> boost::serialization::make_nvp(\"${MODEL_SAFE_TYPE}\", *t);
+    ia >> boost::serialization::make_nvp(\"${MODEL_SAFE_TYPE}\", t);
   }
 
+  // Julia will be responsible for freeing this.
   return (void*) t;
 }
 ")

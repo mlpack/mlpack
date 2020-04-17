@@ -69,8 +69,11 @@ void PrintParamDefn(
   // end
   //
   // function serialize<Type>Ptr(stream::IO, model::<Type>Ptr)
+  //   buf_len = UInt[0]
   //   buffer = ccall((:Serialize<Type>Ptr, <programName>Library),
-  //       Vector{UInt8}, (Ptr{Nothing},), model.ptr)
+  //       Vector{UInt8}, (Ptr{Nothing}, Ptr{UInt8}), model.ptr,
+  //       Base.pointer(buf_len))
+  //   buf = Base.unsafe_wrap(buf_ptr, buf_len[0]; own=true)
   //   write(stream, buf)
   // end
   //
@@ -112,11 +115,11 @@ void PrintParamDefn(
   std::cout << "# Serialize a model to the given stream." << std::endl;
   std::cout << "function serialize" << type << "Ptr(stream::IO, model::" << type
       << "Ptr)" << std::endl;
-  std::cout << "  buf_len::UInt = 0" << std::endl;
+  std::cout << "  buf_len = UInt[0]" << std::endl;
   std::cout << "  buf_ptr = ccall((:Serialize" << type << "Ptr, " << programName
-      << "Library), Ptr{UInt8}, (Ptr{Nothing}, Ref{UInt}), model.ptr, "
-      << "Ref(buf_len))" << std::endl;
-  std::cout << "  buf = Base.unsafe_wrap(buf_ptr, buf_len; own=true)"
+      << "Library), Ptr{UInt8}, (Ptr{Nothing}, Ptr{UInt}), model.ptr, "
+      << "Base.pointer(buf_len))" << std::endl;
+  std::cout << "  buf = Base.unsafe_wrap(buf_ptr, buf_len[0]; own=true)"
       << std::endl;
   std::cout << "  write(stream, buf)" << std::endl;
   std::cout << "end" << std::endl;
