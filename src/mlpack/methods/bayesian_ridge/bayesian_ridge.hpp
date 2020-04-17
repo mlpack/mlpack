@@ -16,19 +16,23 @@ namespace mlpack{
 namespace regression{
 
 /**
- * This class implements Bayesian linear regression. "Bayesian treatment
- * of linear regression, which will avoid the over-fitting problem of maximum
- * likelihood, and which will also lead to automatic methods of determining
- * model complexity using the training data alone.", C.Bishop.
+ * A Bayesian approach to the maximum likelihood estimation of the parameters 
+ * \f$ \omega \f$ of the linear regression model. The Complexity is governed by 
+ * the addition of a gaussian isotropic prior of precision \f$ \alpha \f$ over 
+ * \f$ \omega \f$:  
  *
- * More details and description in :
- * Christopher Bishop (2006), Pattern Recognition and Machine Learning.
- * David J.C MacKay (1991), Bayesian Interpolation, Computation and Neural
- * systems.
- 
- * Model optimization is automatic and does not require cross validation
- * procedure to be optimized.
- *
+ * \f[
+ * p(\omega|\alpha) = \mathcal{N}(\omega|0, \alpha^{-1}I)
+ * \f]
+ * 
+ * The optimization procedure calculates the posterior distribution of 
+ * \f$ \omega \f$ knowing the data by maximizing an approximation of the log 
+ * marginal likelihood derived from a type II maximum likelihood approximation. 
+ * The determination of \f$ alpha \f$ and of the noise precision \f$ beta \f$
+ * is part of the optimization process, leading to an automatic determination of 
+ * w. The model being entirely based on probabilty distributions, uncertainties 
+ * are available and easly computed for both the parameters and the predictions.
+ * 
  * @code
  * @article{MacKay91bayesianinterpolation,
  *   author = {David J.C. MacKay},
