@@ -161,8 +161,9 @@ std::string PrintTypeDoc(
       "This type holds a pointer to C++ memory containing the mlpack model.  "
       "Note that this means the mlpack model itself cannot be easily inspected "
       "in Julia.  However, the pointer can be passed to subsequent calls to "
-      "mlpack functions, and can be serialized and deserialized via the "
-      "`mlpack.serialize()` and `mlpack.deserialize()` functions.";
+      "mlpack functions, and can be serialized and deserialized via either the "
+      "`Serialization` package, or the `mlpack.serialize_bin()` and "
+      "`mlpack.deserialize_bin()` functions.";
 }
 
 } // namespace julia

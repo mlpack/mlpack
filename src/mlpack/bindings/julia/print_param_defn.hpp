@@ -82,6 +82,21 @@ void PrintParamDefn(
   //   <Type>Ptr(ccall((:Deserialize<Type>Ptr, <programName>Library),
   //       Ptr{Nothing}, (Vector{UInt8}, UInt), buffer, length(buffer)))
   // end
+  //
+  // # Allow access from Julia's Serialization package.
+  // using Serialization
+  //
+  // function Serialization.serialize(s::AbstractSerializer, model::<Type>Ptr)
+  //   Serialization.writetag(s.io, Serialization.OBJECT_TAG)
+  //   Serialization.serialize(s, <Type>Ptr)
+  //   serialize<Type>Ptr(model)
+  //   return nothing
+  // end
+  //
+  // function Serialization.deserialize(s::AbstractSerializer,
+  //                                    ::Type{<Type>Ptr})
+  //   deserialize<Type>Ptr(s.io)
+  // end
 
   std::string type = StripType(d.cppType);
 
@@ -124,7 +139,7 @@ void PrintParamDefn(
   std::cout << "  write(stream, buf)" << std::endl;
   std::cout << "end" << std::endl;
 
-  // And finally the deserialization functionality.
+  // And the deserialization functionality.
   std::cout << "# Deserialize a model from the given stream." << std::endl;
   std::cout << "function deserialize" << type << "Ptr(stream::IO)::" << type
       << "Ptr" << std::endl;
@@ -132,6 +147,25 @@ void PrintParamDefn(
   std::cout << "  " << type << "Ptr(ccall((:Deserialize" << type << "Ptr, "
       << programName << "Library), Ptr{Nothing}, (Ptr{UInt8}, UInt), "
       << "Base.pointer(buffer), length(buffer)))" << std::endl;
+  std::cout << "end" << std::endl;
+
+  // Lastly, make wrappers for Julia's Serialization package.
+  std::cout << "# Allow access from Julia's Serialization package."
+      << std::endl;
+  std::cout << "using Serialization" << std::endl;
+  std::cout << std::endl;
+  std::cout << "function Serialization.serialize(s::AbstractSerializer, "
+      << "model::" << type << "Ptr)" << std::endl;
+  std::cout << "  Serialization.writetag(s.io, Serialization.OBJECT_TAG)"
+      << std::endl;
+  std::cout << "  Serialization.serialize(s, " << type << "Ptr)" << std::endl;
+  std::cout << "  serialize" << type << "Ptr(model)" << std::endl;
+  std::cout << "  return nothing" << std::endl;
+  std::cout << "end" << std::endl;
+  std::cout << std::endl;
+  std::cout << "function Serialization.deserialize(s::AbstractSerializer, "
+      << "::Type{" << type << "Ptr})" << std::endl;
+  std::cout << "  deserialize" << type << "Ptr(s.io)" << std::endl;
   std::cout << "end" << std::endl;
 }
 
