@@ -78,7 +78,7 @@ class SoftsignFunction
   /**
    * Computes the first derivative of the softsign function.
    *
-   * @param y Input data.
+   * @param y Input activation.
    * @return f'(x)
    */
   static double Deriv(const double y)

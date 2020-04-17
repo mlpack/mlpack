@@ -1,6 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * Updated terminal state for Pendulum environment (#2354).
+  * Updated terminal state and fixed bugs for Pendulum environment (#2354, #2369).
 
   * Added `EliSH` activation function (#2323).
 
@@ -8,6 +8,8 @@
 
   * Pass CMAKE_CXX_FLAGS (compilation options) correctly to Python build
     (#2367).
+
+  * Expose ensmallen Callbacks for sparseautoencoder (#2198).
 
   * Add serialization support from Julia; use `mlpack.serialize()` and
     `mlpack.deserialize()` to save and load from `IOBuffer`s.
