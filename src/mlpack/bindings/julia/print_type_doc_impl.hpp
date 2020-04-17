@@ -156,10 +156,13 @@ std::string PrintTypeDoc(
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::enable_if<data::HasSerialize<T>>::type*)
 {
-  return "An mlpack model pointer.  This type holds a pointer to C++ memory "
-      "containing the mlpack model.  Note that this means the mlpack model "
-      "itself cannot be easily inspected in Julia.  However, the pointer can "
-      "be passed to subsequent calls to mlpack functions.";
+  return "An mlpack model pointer.  `<Model>` refers to the type of model that "
+      "is being stored, so, e.g., for `CF()`, the type will be `CFModelPtr`. "
+      "This type holds a pointer to C++ memory containing the mlpack model.  "
+      "Note that this means the mlpack model itself cannot be easily inspected "
+      "in Julia.  However, the pointer can be passed to subsequent calls to "
+      "mlpack functions, and can be serialized and deserialized via the "
+      "`mlpack.serialize()` and `mlpack.deserialize()` functions.";
 }
 
 } // namespace julia
