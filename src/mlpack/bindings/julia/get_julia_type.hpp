@@ -125,7 +125,7 @@ inline std::string GetJuliaType(
 
 template<typename T>
 inline std::string GetJuliaType(
-    const util::ParamData& d,
+    const util::ParamData& /* d */,
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
