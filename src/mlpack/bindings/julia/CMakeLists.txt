@@ -95,13 +95,13 @@ if (BUILD_JULIA_BINDINGS)
       "type of the model manually with the `t` argument.  Example usage:\n"
       "\n"
       "```julia\n"
-      "lr_model = mlpack.deserialize(LogisticRegressionPtr, stream)\n"
+      "lr_model = mlpack.deserialize(stream, LogisticRegressionPtr)\n"
       "```\n"
       "\n"
       "Then, the returned model can be passed to appropriate mlpack functions\n"
       "for machine learning tasks.\n"
       "\"\"\"\n"
-      "deserialize(t::Type, stream::IO) = _deserialize_internal(t(0), stream)"
+      "deserialize(stream::IO, t::Type) = _deserialize_internal(t(0), stream)"
       "\n\n")
 endif ()
 
