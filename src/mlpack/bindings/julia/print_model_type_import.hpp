@@ -64,7 +64,7 @@ void PrintModelTypeImport(
  */
 template<typename T>
 void PrintModelTypeImport(const util::ParamData& d,
-                          const void* input,
+                          const void* /* input */,
                           void* /* output */)
 {
   PrintModelTypeImport<typename std::remove_pointer<T>::type>(d);
