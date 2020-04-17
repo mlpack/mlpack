@@ -6,6 +6,8 @@ using Pkg
 Pkg.activate(".")
 using Test
 using mlpack: test_julia_binding, GaussianKernelPtr, serialize, deserialize
+using Serialization
+import Base.Filesystem
 
 # The return order for the binding is this:
 #
@@ -356,4 +358,21 @@ end
   _, _, _, _, _, bwOut, _, _, _, _, _, _, _, _ =
       test_julia_binding(4.0, 12, "hello",
                          model_in=newModel)
+
+  Filesystem.rm("model.bin")
+end
+
+@testset "TestBaseSerialization" begin
+  _, _, _, _, _, _, modelOut, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         build_model=true)
+
+  serialize("model.bin", modelOut)
+  newModel = deserialize("model.bin")
+
+  _, _, _, _, _, bwOut, _, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         model_in=newModel)
+
+  Filesystem.rm("model.bin")
 end
