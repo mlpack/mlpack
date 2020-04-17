@@ -75,8 +75,7 @@ if (BUILD_JULIA_BINDINGS)
       "# from internal modules."
       "\n\n"
       "# Deserialize an mlpack model type.  This passes to other functions.\n"
-      "function deserialize(t::Type, stream::IO) = "
-      "_deserialize_internal(t(0), stream))"
+      "deserialize(t::Type, stream::IO) = _deserialize_internal(t(0), stream)"
       "\n\n")
 endif ()
 
