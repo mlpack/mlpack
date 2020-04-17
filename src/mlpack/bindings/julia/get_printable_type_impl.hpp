@@ -105,7 +105,7 @@ std::string GetPrintableType(
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::enable_if<data::HasSerialize<T>>::type*)
 {
-  std::string type = StripType(d.cppType);
+  std::string type = StripType(data.cppType);
   if (type == "mlpackModel")
   {
     // If this is true, then we are being called from the Markdown bindings.
