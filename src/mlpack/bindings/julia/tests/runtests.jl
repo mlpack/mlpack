@@ -335,7 +335,7 @@ end
   serialize(stream, modelOut)
 
   newStream = IOBuffer(copy(stream.data))
-  newModel = deserialize(newStream, GaussianKernelPtr)
+  newModel = deserialize(newStream, mlpack.GaussianKernelPtr)
 
   _, _, _, _, _, bwOut, _, _, _, _, _, _, _, _ =
       test_julia_binding(4.0, 12, "hello",
@@ -348,7 +348,7 @@ end
                          build_model=true)
 
   serialize(open("model.bin", "w"), modelOut)
-  newModel = deserialize(open("model.bin", "r"), GaussianKernelPtr)
+  newModel = deserialize(open("model.bin", "r"), mlpack.GaussianKernelPtr)
 
   _, _, _, _, _, bwOut, _, _, _, _, _, _, _, _ =
       test_julia_binding(4.0, 12, "hello",
