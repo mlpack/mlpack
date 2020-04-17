@@ -83,7 +83,7 @@ void CLI_SetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName, void* ptr)
 }
 
 // Serialize a ${MODEL_TYPE} pointer.
-const char* Serialize${MODEL_SAFE_TYPE}Ptr(void* ptr, size_t* length)
+char* Serialize${MODEL_SAFE_TYPE}Ptr(void* ptr, size_t* length)
 {
   std::ostringstream oss;
   {
