@@ -82,7 +82,7 @@ function(append_serialization SERIALIZATION_FILE PROGRAM_NAME PROGRAM_MAIN_FILE)
             "\n"
             "function Serialization.deserialize(s::AbstractSerializer,\n"
             "                                   ::Type{${MODEL_SAFE_TYPE}})\n"
-            "  deserialize_bin(s.io, Type{${MODEL_SAFE_TYPE}})\n"
+            "  deserialize_bin(s.io, ${MODEL_SAFE_TYPE})\n"
             "end\n"
             "\n")
       endif ()
