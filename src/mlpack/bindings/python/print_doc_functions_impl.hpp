@@ -241,7 +241,7 @@ inline std::string ProgramCall(const std::string& programName)
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
     if (!it->second.input || (it->second.persistent &&
-        it->second.name != "verbose" && it->second.name != "copy_all_inputs"))
+        it->second.name != "verbose"))
       continue;
 
     if (!first)
