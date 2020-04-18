@@ -136,13 +136,13 @@ double BayesianRidge::RMSE(const arma::mat& data,
 }
 
 double BayesianRidge::CenterScaleData(const arma::mat& data,
-                                    const arma::rowvec& responses,
-                                    bool centerData,
-                                    bool scaleData,
-                                    arma::mat& dataProc,
-                                    arma::rowvec& responsesProc,
-                                    arma::colvec& dataOffset,
-                                    arma::colvec& dataScale)
+                                      const arma::rowvec& responses,
+                                      bool centerData,
+                                      bool scaleData,
+                                      arma::mat& dataProc,
+                                      arma::rowvec& responsesProc,
+                                      arma::colvec& dataOffset,
+                                      arma::colvec& dataScale)
 {
   // Initialize the offsets to their neutral forms.
   dataOffset = arma::zeros<arma::colvec>(data.n_rows);
