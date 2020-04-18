@@ -92,7 +92,7 @@ double BayesianRidge::Train(const arma::mat& data,
     // Update alpha.
     eigvali = eigval * beta;
     gamma = sum(eigvali / (alpha + eigvali));
-    alpha = gamma / dot(omega.t(), omega);
+    alpha = gamma / dot(omega, omega);
 
     // Update beta.
     const arma::rowvec temp = t - omega.t() * phi;
