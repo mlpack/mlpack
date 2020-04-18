@@ -189,14 +189,14 @@ class LARS
    *
    * @param other LARS object to copy.
    */
-  LARS &operator=(const LARS& other);
+  LARS& operator=(const LARS& other);
 
   /**
    * Take ownership of the given LARS object.
    *
    * @param other LARS object to take ownership of.
    */
-  LARS &operator=(LARS&& other);
+  LARS& operator=(LARS&& other);
 
   /**
    * Run LARS.  The input matrix (like all mlpack matrices) should be

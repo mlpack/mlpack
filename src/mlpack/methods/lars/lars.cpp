@@ -109,9 +109,6 @@ LARS::LARS(LARS&& other) :
 {
   // Clean the other object to prevent to objects pointing
   // at the memory location.
-  if (other.matGram)
-    delete other.matGram;
-
   other.matGram = new arma::mat(other.matGramInternal);
   other.lambda1 = 0.0;
   other.lambda2 = 0.0;
@@ -122,10 +119,6 @@ LARS& LARS::operator=(const LARS& other)
 {
   if (&other == this)
     return *this;
-
-  // Clean the memory first.
-  if (matGram)
-    delete matGram;
 
   matGramInternal = other.matGramInternal;
   matGram = &matGramInternal;
@@ -151,10 +144,6 @@ LARS& LARS::operator=(LARS&& other)
   if (&other == this)
     return *this;
 
-  // Clean the memory first.
-  if (matGram)
-    delete matGram;
-
   matGramInternal = std::move(other.matGramInternal);
   matGram = other.matGram;
   matUtriCholFactor = std::move(other.matUtriCholFactor);
@@ -173,9 +162,6 @@ LARS& LARS::operator=(LARS&& other)
 
   // Clean the other object to prevent to objects pointing
   // at the memory location.
-  if (other.matGram)
-    delete other.matGram;
-
   other.matGram = new arma::mat(other.matGramInternal);
   other.lambda1 = 0.0;
   other.lambda2 = 0.0;
