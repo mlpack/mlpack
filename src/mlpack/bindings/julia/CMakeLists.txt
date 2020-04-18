@@ -73,7 +73,7 @@ if (BUILD_JULIA_BINDINGS)
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/serialization.jl"
       "# This file imports all serialization and deserialization functions\n"
       "# from internal modules.\n"
-      "using Serialization\n"
+      "import Serialization\n"
       "\n"
       "\"\"\"\n"
       "    serialize_bin(stream::IO, model)\n"
