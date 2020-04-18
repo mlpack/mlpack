@@ -67,7 +67,6 @@ double BayesianRidge::Train(const arma::mat& data,
   alpha = 1e-6;
   beta =  1 / (var(t) * 0.1);
 
-  unsigned short nIterMax = 50;
   unsigned short i = 0;
   double deltaAlpha = 1, deltaBeta = 1, crit = 1;
   arma::mat matA = arma::eye<arma::mat>(data.n_rows, data.n_rows);
