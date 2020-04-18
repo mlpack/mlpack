@@ -59,7 +59,7 @@ double BayesianRidge::Train(const arma::mat& data,
     Log::Warn << "BayesianRidge::Train(): Eigendecomposition "
               << "of covariance failed!"
               << std::endl;
-    return -1;
+    throw std::runtime_error("eig_sym() failed.");
   }
 
   // Initialize the hyperparameters and
@@ -106,7 +106,7 @@ double BayesianRidge::Train(const arma::mat& data,
     i++;
   }
   Timer::Stop("bayesian_ridge_regression");
-  return Rmse(data, responses);
+  return RMSE(data, responses);
 }
 
 void BayesianRidge::Predict(const arma::mat& points,
@@ -127,7 +127,7 @@ void BayesianRidge::Predict(const arma::mat& points,
   std = sqrt(Variance() + sum((X % (matCovariance * X)), 0));
 }
 
-double BayesianRidge::Rmse(const arma::mat& data,
+double BayesianRidge::RMSE(const arma::mat& data,
                            const arma::rowvec& responses) const
 {
   arma::rowvec predictions;
