@@ -210,6 +210,8 @@ BayesianRidge::BayesianRidge(BayesianRidge&& other):
     other.beta = 0.0;
     other.omega.reset();
     other.matCovariance.reset();
+    nIterMax = 0.0;
+    tol = 0.0;
   }
 }
 
@@ -228,6 +230,8 @@ BayesianRidge& BayesianRidge::operator=(const BayesianRidge& other)
   beta = other.beta;
   omega = other.omega;
   matCovariance = other.matCovariance;
+  nIterMax = other.nIterMax;
+  tol = other.tol;
   return *this;
 }
 
