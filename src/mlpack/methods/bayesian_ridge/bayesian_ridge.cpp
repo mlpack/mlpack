@@ -99,7 +99,7 @@ double BayesianRidge::Train(const arma::mat& data,
     const arma::rowvec temp = t - omega.t() * phi;
     beta = (data.n_cols - gamma) / dot(temp, temp);
 
-    // Comptute the stopping criterion.
+    // Compute the stopping criterion.
     deltaAlpha += alpha;
     deltaBeta += beta;
     crit = abs(deltaAlpha / alpha + deltaBeta / beta);
