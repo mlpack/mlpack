@@ -78,7 +78,7 @@ namespace regression{
  * estimator.Predict(Xtest, prediction);
  
  * arma::rowvec ytest; // Test target values.
- * estimator.Rmse(Xtest, ytest); // Evaluate using the RMSE score.
+ * estimator.RMSE(Xtest, ytest); // Evaluate using the RMSE score.
  
  * // Compute the standard deviations of the predictions.
  * arma::rowvec stds;
@@ -107,14 +107,12 @@ class BayesianRidge
                 const double tol = 1e-4);
 
   /**
-   * Run BayesianRidge regression. The input matrix (like all mlpack matrices)
-   * should be
+   * Run BayesianRidge. The input matrix (like all mlpack matrices) should be
    * column-major -- each column is an observation and each row is a dimension.
    * 
    * @param data Column-major input data
    * @param responses A vector of targets.
-   * @return score. Root Mean Square Error. Equal to -1 if two feature vectors 
-   *    or more are colinear.
+   * @return score. Root Mean Square Error.
    */
   double Train(const arma::mat& data,
                const arma::rowvec& responses);
