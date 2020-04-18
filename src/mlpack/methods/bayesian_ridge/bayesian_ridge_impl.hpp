@@ -1,6 +1,6 @@
 /**
  * @file bayesian_ridge_impl.hpp
- * @author Ryan Curtin/Clement Mercier
+ * @author Clement Mercier
  *
  * Implementation of templated BayesianRidge functions.
  *
@@ -33,6 +33,8 @@ void BayesianRidge::serialize(Archive& ar, const unsigned int /* version */)
   ar & BOOST_SERIALIZATION_NVP(gamma);
   ar & BOOST_SERIALIZATION_NVP(omega);
   ar & BOOST_SERIALIZATION_NVP(matCovariance);
+  ar & BOOST_SERIALIZATION_NVP(nIterMax);
+  ar & BOOST_SERIALIZATION_NVP(tol);
 }
 
 } // namespace regression
