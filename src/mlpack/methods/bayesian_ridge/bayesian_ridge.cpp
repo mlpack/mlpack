@@ -58,7 +58,7 @@ double BayesianRidge::Train(const arma::mat& data,
   {
     Log::Warn << "BayesianRidge::Train(): Eigendecomposition "
               << "of covariance failed!"
-	      << std::endl;
+              << std::endl;
     return -1;
   }
 
