@@ -32,7 +32,11 @@ namespace regression{
  * is part of the optimization process, leading to an automatic determination of 
  * w. The model being entirely based on probabilty distributions, uncertainties 
  * are available and easly computed for both the parameters and the predictions.
- * 
+ *
+ * The avantage over linear regression and ridge regression is that the 
+ * regularization is determined from all the training data alone without any
+ * require to an holdout method. 
+ *
  * @code
  * @article{MacKay91bayesianinterpolation,
  *   author = {David J.C. MacKay},
