@@ -297,8 +297,8 @@ bool Load(const std::string& filename,
   // Now transpose the matrix, if necessary.
   if (transpose)
   {
-    bool is_transposed = inplace_transpose(matrix, fatal);
-    if (!is_transposed)
+    bool isTransposed = inplace_transpose(matrix, fatal);
+    if (!isTransposed)
       return false;
   }
 
@@ -368,8 +368,8 @@ bool Load(const std::string& filename,
       // We transpose by default.  So, un-transpose if necessary...
       if (!transpose)
       {
-        bool is_transposed = inplace_transpose(matrix, fatal);
-        if (!is_transposed)
+        bool isTransposed = inplace_transpose(matrix, fatal);
+        if (!isTransposed)
           return false;
       }
     }
@@ -419,8 +419,8 @@ bool Load(const std::string& filename,
 
   if (transpose)
   {
-    bool is_transposed = inplace_transpose(matrix, fatal);
-    if (!is_transposed)
+    bool isTransposed = inplace_transpose(matrix, fatal);
+    if (!isTransposed)
       return false;
   }
   if (!success)
