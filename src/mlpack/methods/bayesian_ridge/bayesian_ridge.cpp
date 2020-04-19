@@ -78,17 +78,17 @@ double BayesianRidge::Train(const arma::mat& data,
 
     // Compute the posterior statistics.
     // with inv()
-    matA.diag().fill(alpha);
     // inv is used instead of solve because we need the covariance matrix to
     // compute the prediction uncertainties. If solve is used, matCovariance
     // must be comptuted at the end of the loop.
-    matCovariance = inv_sympd(matA + phiphiT * beta);
-    omega = (matCovariance * vecphitT) * beta;
+    // matA.diag().fill(alpha);
+    // matCovariance = inv_sympd(matA + phiphiT * beta);
+    // omega = (matCovariance * vecphitT) * beta;
 
     // // with solve()
-    // matA.diag().fill(alpha/ beta);
-    // omega = solve(matA + phiphiT, vecphitT);
-
+    matA.diag().fill(alpha / beta);
+    omega = solve(matA + phiphiT, vecphitT);
+    
     // Update alpha.
     eigvali = eigval * beta;
     gamma = sum(eigvali / (alpha + eigvali));
@@ -105,6 +105,10 @@ double BayesianRidge::Train(const arma::mat& data,
     i++;
   }
   Timer::Stop("bayesian_ridge_regression");
+
+  // Compute the covariance matrice for the uncertaities later.
+  matCovariance = inv_sympd(matA + phiphiT * beta);
+
   return RMSE(data, responses);
 }
 
