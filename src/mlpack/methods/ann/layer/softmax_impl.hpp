@@ -46,7 +46,14 @@ void SoftMax<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
 {
-  g = input % (gy - arma::repmat(gy.t() * input, gy.n_rows, gy.n_cols));
+  g.set_size(input.n_rows, input.n_cols);
+  for (size_t i = 0; i < input.n_cols; ++i)
+  {
+    const arma::Mat<eT> gyi = gy.col(i);
+    const arma::Mat<eT> xi = input.col(i);
+
+    g.col(i) = xi % (gyi - arma::repmat(gyi.t() * xi, gyi.n_rows, gyi.n_cols));
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
