@@ -25,6 +25,8 @@ void BayesianRidge::serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(centerData);
   ar & BOOST_SERIALIZATION_NVP(scaleData);
+  ar & BOOST_SERIALIZATION_NVP(nIterMax);
+  ar & BOOST_SERIALIZATION_NVP(tol);
   ar & BOOST_SERIALIZATION_NVP(dataOffset);
   ar & BOOST_SERIALIZATION_NVP(dataScale);
   ar & BOOST_SERIALIZATION_NVP(responsesOffset);
@@ -33,8 +35,6 @@ void BayesianRidge::serialize(Archive& ar, const unsigned int /* version */)
   ar & BOOST_SERIALIZATION_NVP(gamma);
   ar & BOOST_SERIALIZATION_NVP(omega);
   ar & BOOST_SERIALIZATION_NVP(matCovariance);
-  ar & BOOST_SERIALIZATION_NVP(nIterMax);
-  ar & BOOST_SERIALIZATION_NVP(tol);
 }
 
 } // namespace regression

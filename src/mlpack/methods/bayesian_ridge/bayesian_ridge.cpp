@@ -177,6 +177,8 @@ double BayesianRidge::CenterScaleData(const arma::mat& data,
 BayesianRidge::BayesianRidge(const BayesianRidge& other):
   centerData(other.centerData),
   scaleData(other.scaleData),
+  nIterMax(other.nIterMax),
+  tol(other.tol),
   dataOffset(other.dataOffset),
   dataScale(other.dataScale),
   responsesOffset(other.responsesOffset),
@@ -191,6 +193,8 @@ BayesianRidge::BayesianRidge(const BayesianRidge& other):
 BayesianRidge::BayesianRidge(BayesianRidge&& other):
   centerData(other.centerData),
   scaleData(other.scaleData),
+  nIterMax(other.nIterMax),
+  tol(other.tol),
   dataOffset(std::move(other.dataOffset)),
   dataScale(std::move(other.dataScale)),
   responsesOffset(other.responsesOffset),
@@ -205,6 +209,8 @@ BayesianRidge::BayesianRidge(BayesianRidge&& other):
   {
     other.centerData = false;
     other.scaleData = false;
+    other.nIterMax = 0.0;
+    other.tol = 0.0;
     other.dataOffset.reset();
     other.dataScale.reset();
     other.responsesOffset = 0.0;
@@ -213,8 +219,6 @@ BayesianRidge::BayesianRidge(BayesianRidge&& other):
     other.beta = 0.0;
     other.omega.reset();
     other.matCovariance.reset();
-    nIterMax = 0.0;
-    tol = 0.0;
   }
 }
 
@@ -225,6 +229,8 @@ BayesianRidge& BayesianRidge::operator=(const BayesianRidge& other)
 
   centerData = other.centerData;
   scaleData = other.scaleData;
+  nIterMax = other.nIterMax;
+  tol = other.tol;
   dataOffset = other.dataOffset;
   dataScale = other.dataScale;
   responsesOffset = other.responsesOffset;
@@ -233,8 +239,6 @@ BayesianRidge& BayesianRidge::operator=(const BayesianRidge& other)
   beta = other.beta;
   omega = other.omega;
   matCovariance = other.matCovariance;
-  nIterMax = other.nIterMax;
-  tol = other.tol;
   return *this;
 }
 
@@ -244,6 +248,8 @@ BayesianRidge& BayesianRidge::operator=(BayesianRidge&& other)
   {
     centerData = other.centerData;
     scaleData = other.scaleData;
+    nIterMax = other.nIterMax;
+    tol = other.tol;
     dataOffset = other.dataOffset;
     dataScale = other.dataScale;
     responsesOffset = other.responsesOffset;
@@ -256,6 +262,8 @@ BayesianRidge& BayesianRidge::operator=(BayesianRidge&& other)
     // Clear the other object.
     other.centerData = false;
     other.scaleData = false;
+    other.nIterMax = 0.0;
+    other.tol = 0.0;
     other.dataOffset.reset();
     other.dataScale.reset();
     other.responsesOffset = 0.0;
