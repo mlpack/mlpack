@@ -98,7 +98,7 @@ double BayesianRidge::Train(const arma::mat& data,
     const arma::rowvec temp = t - omega.t() * phi;
     beta = (data.n_cols - gamma) / dot(temp, temp);
 
-    // Comptute the stopping criterion.
+    // Compute the stopping criterion.
     deltaAlpha += alpha;
     deltaBeta += beta;
     crit = std::abs(deltaAlpha / alpha + deltaBeta / beta);
@@ -139,13 +139,13 @@ double BayesianRidge::RMSE(const arma::mat& data,
 }
 
 double BayesianRidge::CenterScaleData(const arma::mat& data,
-                                    const arma::rowvec& responses,
-                                    bool centerData,
-                                    bool scaleData,
-                                    arma::mat& dataProc,
-                                    arma::rowvec& responsesProc,
-                                    arma::colvec& dataOffset,
-                                    arma::colvec& dataScale)
+                                      const arma::rowvec& responses,
+                                      bool centerData,
+                                      bool scaleData,
+                                      arma::mat& dataProc,
+                                      arma::rowvec& responsesProc,
+                                      arma::colvec& dataOffset,
+                                      arma::colvec& dataScale)
 {
   // Initialize the offsets to their neutral forms.
   dataOffset = arma::zeros<arma::colvec>(data.n_rows);
