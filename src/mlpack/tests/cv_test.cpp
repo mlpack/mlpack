@@ -15,9 +15,9 @@
 #include <mlpack/core/cv/metrics/accuracy.hpp>
 #include <mlpack/core/cv/metrics/f1.hpp>
 #include <mlpack/core/cv/metrics/mse.hpp>
+#include <mlpack/core/cv/metrics/topk_accuracy.hpp> 
 #include <mlpack/core/cv/metrics/precision.hpp>
 #include <mlpack/core/cv/metrics/recall.hpp>
-#include <mlpack/core/cv/metrics/r2_score.hpp>
 #include <mlpack/core/cv/simple_cv.hpp>
 #include <mlpack/core/cv/k_fold_cv.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
@@ -166,25 +166,26 @@ BOOST_AUTO_TEST_CASE(MSETest)
 }
 
 /**
- * Test the R squared metric (R2 Score).
+ * Test the topK Accuracy metric (TopKAccuracy).
  */
-BOOST_AUTO_TEST_CASE(R2ScoreTest)
+BOOST_AUTO_TEST_CASE(topK_accuracy_scoreTest)
 {
-  // Making two points that define the linear function f(x) = x - 1.
-  arma::mat trainingData("0 1");
-  arma::rowvec trainingResponses("-1 0");
+  // Using the same data for training and testing.
+  arma::mat data = arma::linspace<arma::rowvec>(1.0, 10.0, 10);
+  // Labels that will be considered as "ground truth".
+  arma::Row<size_t> labels("0 1  0 2  1 2 2 2  3 3 3 3");
+  size_t numClasses = 4;
+  double int = 3;
 
-  LinearRegression lr(trainingData, trainingResponses);
+  // These labels should be predicted in response to the data since we use them
+  arma::Row<size_t> predictedLabels("0 0  0 1  2 2 2 2  3 3 3 3");
 
-  // Making five responses that are the output of regression function f(x)
-  // with some responses having a slight deviation of 0.005.
-  // Mean Responses = (1 + 2 + 3 + 6 + 8)/5 = 4.
-  arma::mat data("2 3 4 7 9");
-  arma::rowvec responses("1 2.005 3 6.005 8.005");
+  // Call Classification model
+  NaiveBayesClassifier<> nb(data, predictedLabels, numClasses);
 
-  double expectedR2 = 0.99999779;
-
-  BOOST_REQUIRE_CLOSE(R2Score::Evaluate(lr, data, responses), expectedR2, 1e-5);
+  // Assert that the Naive Bayes model really predicts the labels above in
+  // response to the data.
+  BOOST_REQUIRE_CLOSE(Accuracy::Evaluate(nb, data, predictedLabels), k);
 }
 
 /**
