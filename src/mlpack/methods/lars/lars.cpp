@@ -71,7 +71,8 @@ LARS::LARS(const arma::mat& data,
 // Copy Constructor.
 LARS::LARS(const LARS& other) :
     matGramInternal(other.matGramInternal),
-    matGram(&matGramInternal),
+    matGram(other.matGram != &other.matGramInternal ?
+        other.matGram : &matGramInternal),
     matUtriCholFactor(other.matUtriCholFactor),
     useCholesky(other.useCholesky),
     lasso(other.lasso),
@@ -92,7 +93,8 @@ LARS::LARS(const LARS& other) :
 // Move constructor.
 LARS::LARS(LARS&& other) :
     matGramInternal(std::move(other.matGramInternal)),
-    matGram(other.matGram),
+    matGram(other.matGram != &other.matGramInternal ?
+        other.matGram : &matGramInternal),
     matUtriCholFactor(std::move(other.matUtriCholFactor)),
     useCholesky(other.useCholesky),
     lasso(other.lasso),
@@ -107,11 +109,7 @@ LARS::LARS(LARS&& other) :
     ignoreSet(std::move(other.ignoreSet)),
     isIgnored(std::move(other.isIgnored))
 {
-  // Clean the other object to prevent to objects pointing
-  // at the memory location.
-  other.matGram = new arma::mat(other.matGramInternal);
-  other.lambda1 = 0.0;
-  other.lambda2 = 0.0;
+  // Nothing to do here.
 }
 
 // Copy operator.
@@ -121,7 +119,8 @@ LARS& LARS::operator=(const LARS& other)
     return *this;
 
   matGramInternal = other.matGramInternal;
-  matGram = &matGramInternal;
+  matGram = other.matGram != &other.matGramInternal ?
+      other.matGram : &matGramInternal;
   matUtriCholFactor = other.matUtriCholFactor;
   useCholesky = other.useCholesky;
   lasso = other.lasso;
@@ -145,7 +144,8 @@ LARS& LARS::operator=(LARS&& other)
     return *this;
 
   matGramInternal = std::move(other.matGramInternal);
-  matGram = other.matGram;
+  matGram = other.matGram != &other.matGramInternal ?
+      other.matGram : &matGramInternal;
   matUtriCholFactor = std::move(other.matUtriCholFactor);
   useCholesky = other.useCholesky;
   lasso = other.lasso;
@@ -159,12 +159,6 @@ LARS& LARS::operator=(LARS&& other)
   isActive = std::move(other.isActive);
   ignoreSet = std::move(other.ignoreSet);
   isIgnored = std::move(other.isIgnored);
-
-  // Clean the other object to prevent to objects pointing
-  // at the memory location.
-  other.matGram = new arma::mat(other.matGramInternal);
-  other.lambda1 = 0.0;
-  other.lambda2 = 0.0;
   return *this;
 }
 
