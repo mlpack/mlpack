@@ -8,7 +8,7 @@
 **/
 
 #ifndef MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_HPP
-#define  MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_HPP
+#define MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -35,7 +35,11 @@ namespace regression{
  *
  * The avantage over linear regression and ridge regression is that the 
  * regularization is determined from all the training data alone without any
- * require to an holdout method. 
+ * require to an hold out method. 
+ *
+ * The code below is an implementation of the maximization of the evidence 
+ * function described in the section 3.5.2 of the C.Bishop book, Pattern
+ * Recognition and Machine Learning.  
  *
  * @code
  * @article{MacKay91bayesianinterpolation,
@@ -63,26 +67,26 @@ namespace regression{
  * Example of use:
  *
  * @code
- * arma::mat Xtrain; // Train data matrix. Column-major.
- * arma::rowvec ytrain; // Train target values.
+ * arma::mat xTrain; // Train data matrix. Column-major.
+ * arma::rowvec yTrain; // Train target values.
  
  * // Train the model. Regularization strength is optimally tunned with the
  * // training data alone by applying the Train method.
  * BayesianRidge estimator(); // Instanciate the estimator with default option.
- * estimator.Train(Xtrain, ytrain);
+ * estimator.Train(xTrain, yTrain);
  
  * // Prediction on test points.
- * arma::mat Xtest; // Test data matrix. Column-major.
+ * arma::mat xTest; // Test data matrix. Column-major.
  * arma::rowvec predictions;
  
- * estimator.Predict(Xtest, prediction);
+ * estimator.Predict(xTest, prediction);
  
- * arma::rowvec ytest; // Test target values.
- * estimator.RMSE(Xtest, ytest); // Evaluate using the RMSE score.
+ * arma::rowvec yTest; // Test target values.
+ * estimator.RMSE(xTest, yTest); // Evaluate using the RMSE score.
  
  * // Compute the standard deviations of the predictions.
  * arma::rowvec stds;
- * estimator.Predict(Xtest, responses, stds)
+ * estimator.Predict(xTest, responses, stds)
  * @endcode
  */
 class BayesianRidge
