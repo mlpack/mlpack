@@ -126,9 +126,7 @@ AtrousConvolution<
       1);
 
   // Transform paddingType to lowercase.
-  std::string paddingTypeLow = paddingType;
-  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
-      [](unsigned char c){ return std::tolower(c); });
+  std::string paddingTypeLow = util::ToLower(paddingType);
 
   size_t padWLeft = std::get<0>(padW);
   size_t padWRight = std::get<1>(padW);
