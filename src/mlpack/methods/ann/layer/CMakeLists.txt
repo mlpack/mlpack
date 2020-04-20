@@ -100,6 +100,8 @@ set(SOURCES
   weight_norm_impl.hpp
   hardshrink.hpp
   hardshrink_impl.hpp
+  celu.hpp
+  celu_impl.hpp
   softshrink.hpp
   softshrink_impl.hpp
 )

@@ -96,7 +96,8 @@ typename std::enable_if<
       !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
       ::value, void>::type
 FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
-WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const
+WarnMessageMaxIterations(OptimizerType& /* optimizer */, size_t /* samples */)
+    const
 {
   return;
 }

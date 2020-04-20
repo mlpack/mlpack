@@ -81,7 +81,7 @@ class MishFunction
   /**
    * Computes the first derivatives of the Mish function.
    * 
-   * @param y Input activations.
+   * @param y Input data.
    * @param x The resulting derivatives.
    */
   template <typename InputVecType, typename OutputVecType>

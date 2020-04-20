@@ -87,6 +87,34 @@ class SparseAutoencoder
                     OptimizerType optimizer = OptimizerType());
 
   /**
+   * Construct the sparse autoencoder model with the given training data. This
+   * will train the model. The parameters 'lambda', 'beta' and 'rho' can be set
+   * optionally. Changing these parameters will have an effect on regularization
+   * and sparsity of the model.
+   *
+   * @tparam OptimizerType The optimizer to use.
+   * @tparam CallbackTypes Types of Callback Functions.
+   * @param data Input data with each column as one example.
+   * @param visibleSize Size of input vector expected at the visible layer.
+   * @param hiddenSize Size of input vector expected at the hidden layer.
+   * @param lambda L2-regularization parameter.
+   * @param beta KL divergence parameter.
+   * @param rho Sparsity parameter.
+   * @param optimizer Desired optimizer.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *        See https://www.ensmallen.org/docs.html#callback-documentation.
+   */
+  template<typename OptimizerType, typename... CallbackTypes>
+  SparseAutoencoder(const arma::mat& data,
+                    const size_t visibleSize,
+                    const size_t hiddenSize,
+                    const double lambda,
+                    const double beta,
+                    const double rho ,
+                    OptimizerType optimizer,
+                    CallbackTypes&&... callbacks);
+
+  /**
    * Transforms the provided data into the representation learned by the sparse
    * autoencoder. The function basically performs a feedforward computation
    * using the learned weights, and returns the hidden layer activations.

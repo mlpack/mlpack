@@ -23,7 +23,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-3.2.2.tar.gz">current stable version (3.2.2)</a>
+    <a href="https://www.mlpack.org/files/mlpack-3.3.0.tar.gz">current stable version (3.3.0)</a>
   </em>
 </p>
 
@@ -100,11 +100,11 @@ Citations are beneficial for the growth and improvement of mlpack.
 
 mlpack has the following dependencies:
 
-      Armadillo     >= 8.400.0
+      Armadillo      >= 8.400.0
       Boost (program_options, math_c99, unit_test_framework, serialization,
-             spirit)
-      CMake         >= 3.3.2
-      ensmallen     >= 2.10.0
+             spirit) >= 1.58.0
+      CMake          >= 3.3.2
+      ensmallen      >= 2.10.0
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
