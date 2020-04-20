@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Minor Julia and Python documentation fixes (#2373).
+
   * Updated terminal state and fixed bugs for Pendulum environment (#2354, #2369).
 
   * Added `EliSH` activation function (#2323).
