@@ -129,8 +129,9 @@ static void mlpackMain()
 
   RequireAtLeastOnePassed({ "output_predictions", "output_model" }, false,
       "no results will be saved");
-  // Is this line really rigth ? It comes from lars_main.hpp.
-  // ReportIgnoredParam({{ "test", true }}, "output_predictions");
+
+  // Ignore out_predictions unless test is specified.
+  ReportIgnoredParam({{"test", true }}, "output_predictions");
 
   BayesianRidge* bayesRidge;
   if (CLI::HasParam("input"))
