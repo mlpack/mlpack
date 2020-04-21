@@ -17,6 +17,8 @@
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
+#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 
@@ -1661,6 +1663,49 @@ BOOST_AUTO_TEST_CASE(SimpleSoftMaxLayerTest)
   module.Backward(output, gy, g);
   BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
     arma::mat("0.11318; -0.11318") - g)), 1e-04);
+}
+
+/**
+ * SoftMax layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientSoftMaxTest)
+{
+  // SoftMax function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::mat("1; 0");
+
+      model = new FFN<MeanSquaredError<>, RandomInitialization>;
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<Linear<> >(10, 10);
+      model->Add<ReLULayer<> >();
+      model->Add<Linear<> >(10, 2);
+      model->Add<SoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<MeanSquaredError<> >* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 /*
