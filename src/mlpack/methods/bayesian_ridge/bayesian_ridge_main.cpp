@@ -36,9 +36,9 @@ PROGRAM_INFO("BayesianRidge",
     "on the solution. "
     "\n"
     "Optimization is AUTOMATIC and does not require cross validation. "
-    "The optimization is performed by type II maximium likelihood. Parameters "
-    "are tunned during the maximization of the marginal likelihood. This "
-    "procedure includes the Ockham's razor that penalizes over complex "
+    "The optimization is performed by maximization of the evidence function. "
+    "Parameters are tunned during the maximization of the marginal likelihood. "
+    "This procedure includes the Ockham's razor that penalizes over complex "
     "solutions. "
     "\n\n"
     "This program is able to train a Baysian Ridge model or load a "
@@ -68,7 +68,9 @@ PROGRAM_INFO("BayesianRidge",
     "trained model or the given input model.  Test points can be specified with"
     " the " + PRINT_PARAM_STRING("test") + " parameter.  Predicted responses "
     "to the test points can be saved with the " +
-    PRINT_PARAM_STRING("output_predictions") + " output parameter."
+    PRINT_PARAM_STRING("output_predictions") + " output parameter. The "
+    "corresponding standard deviation can be save by precising the " +
+    PRINT_PARAM_STRING("output_std") + " parameter."  
     "\n\n"
     "For example, the following command trains a model on the data " +
     PRINT_DATASET("data") + " and responses " + PRINT_DATASET("responses") +
@@ -102,6 +104,10 @@ PARAM_MATRIX_IN("test", "Matrix containing points to regress on (test "
 
 PARAM_MATRIX_OUT("output_predictions", "If --test_file is specified, this "
                   "file is where the predicted responses will be saved.", "o");
+
+PARAM_MATRIX_OUT("output_std", "If --std_file is specified, this file is where "
+                 "the standard deviations of the predictive distribution will "
+                 "be saved.", "u");
 
 PARAM_INT_IN("center", "Center the data and fit the intercept. Set to 0 to "
             "disable",
@@ -174,9 +180,19 @@ static void mlpackMain()
     Log::Info << "Regressing on test points." << endl;
     // Load test points.
     mat testPoints = std::move(CLI::GetParam<arma::mat>("test"));
-
     arma::rowvec predictions;
-    bayesRidge->Predict(testPoints, predictions);
+
+    if (CLI::HasParam("output_std"))
+    {
+      arma::rowvec std;
+      bayesRidge->Predict(testPoints, predictions, std);
+      
+      // Save the standard deviation of the test points (one per line).
+      CLI::GetParam<arma::mat>("output_std") = std::move(std);
+    }
+    
+    else 
+      bayesRidge->Predict(testPoints, predictions);
 
     // Save test predictions (one per line).
     CLI::GetParam<arma::mat>("output_predictions") = std::move(predictions);
