@@ -16,7 +16,6 @@
 using namespace mlpack;
 using namespace mlpack::regression;
 
-
 BayesianRidge::BayesianRidge(const bool centerData,
                              const bool scaleData,
                              const int nIterMax,
@@ -104,10 +103,11 @@ double BayesianRidge::Train(const arma::mat& data,
     crit = std::abs(deltaAlpha / alpha + deltaBeta / beta);
     i++;
   }
-  Timer::Stop("bayesian_ridge_regression");
 
   // Compute the covariance matrice for the uncertaities later.
   matCovariance = inv_sympd(matA + phiphiT * beta);
+
+  Timer::Stop("bayesian_ridge_regression");
 
   return RMSE(data, responses);
 }
@@ -116,8 +116,9 @@ void BayesianRidge::Predict(const arma::mat& points,
                             arma::rowvec& predictions) const
 {
   // y_hat = w^T * (X - mu) / sigma + y_mean.
-  predictions = omega.t() *
-  ((points.each_col() - dataOffset).each_col() / dataScale) + responsesOffset;
+  predictions = omega.t() * ((points.each_col() - dataOffset).each_col()
+			     / dataScale);
+  predictions += responsesOffset;
 }
 
 void BayesianRidge::Predict(const arma::mat& points,
@@ -126,7 +127,8 @@ void BayesianRidge::Predict(const arma::mat& points,
 {
   // Center and scaleData the points before applying the model.
   const arma::mat X = (points.each_col() - dataOffset).each_col() / dataScale;
-  predictions = omega.t() * X + responsesOffset;
+  predictions = omega.t() * X;
+  predictions += responsesOffset;
   std = sqrt(Variance() + sum((X % (matCovariance * X)), 0));
 }
 
