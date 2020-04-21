@@ -2,8 +2,7 @@
 * @file topk_accuracy.hpp
 * @author Arunav Shandeelya
 *
-* The TopK Accuracy [target is in topk prediction] Classification metric
-
+* The TopK Accuracy [target is in topk prediction] Classification metric.
 
 * mlpack is free software; you may redistribute it and/or modify it under the
 * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -41,11 +40,11 @@ class TopK_Accuracy
    static double Evaluate(MLAlgorithms& model,
                         const DataType& data,
                         const ResponseType& labels,
-                        const TopK_Score& k);
+                        const topk_score& k);
     /**
-    normalization : bool, default= True
-    If `True`, return the fraction of correctly classified samples.
-    Otherwise, return the number of correctly classified samples.
+    * normalization : bool, default= True
+    * If `True`, return the fraction of correctly classified samples.
+    * Otherwise, return the number of correctly classified samples.
     */
     static const bool Normalization = true;
 };

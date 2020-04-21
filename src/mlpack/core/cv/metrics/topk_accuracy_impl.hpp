@@ -24,16 +24,17 @@ namespace cv {
         if(data.n_cols! = labels.n_cols)
         {
             std::ostringstream fp;
-            fp << "topK_accuracy_score::Evaluate(): number of inputs ("data.n_cols")" 
-            << "does not matches with number of target labels ("labels.n_cols")" <<std::endl;
+            fp << "topK_accuracy_score::Evaluate(): number of inputs ("<< data.n_cols <<")" 
+            << "does not matches with number of target labels ("<< labels.n_cols <<")" 
+            <<std::endl;
         throw std::invalid_argument(fp.str());
         }
         arma::Row<size_t> predictedLabels;
         // Taking Classification output from the model.
         model.Classify(data, predictedLabels)
-        // shape of the predicted values
+        // Shape of the predicted values.
         double predicted_class = predictedLabels.size();
-        // top 'K' label prediction class 
+        // Top 'K' label prediction class. 
         if (k<predicted_class[1]){
             const int idx = predicted_class[1] - k - 1;
         }
@@ -53,7 +54,7 @@ namespace cv {
                 c += 1;
             }
         }
-        //accuracy score of top k label predicted class.
+        // Accuracy Score of top k predicted class labels.
         return (double) c / predicted_class[0]
     }
 
