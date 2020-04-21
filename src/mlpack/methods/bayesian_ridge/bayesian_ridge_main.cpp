@@ -87,7 +87,7 @@ PROGRAM_INFO("BayesianRidge",
     PRINT_CALL("bayesian_ridge", "input_model", "bayesian_ridge_model", "test",
                "test", "output_predictions", "test_predictions"));
 
-PARAM_TMATRIX_IN("input", "Matrix of covariates (X).", "i");
+PARAM_MATRIX_IN("input", "Matrix of covariates (X).", "i");
 
 PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");
 
@@ -97,10 +97,10 @@ PARAM_MODEL_IN(BayesianRidge, "input_model", "Trained BayesianRidge model "
 PARAM_MODEL_OUT(BayesianRidge, "output_model", "Output BayesianRidge model.",
                 "M");
 
-PARAM_TMATRIX_IN("test", "Matrix containing points to regress on (test "
+PARAM_MATRIX_IN("test", "Matrix containing points to regress on (test "
                  "points).", "t");
 
-PARAM_TMATRIX_OUT("output_predictions", "If --test_file is specified, this "
+PARAM_MATRIX_OUT("output_predictions", "If --test_file is specified, this "
                   "file is where the predicted responses will be saved.", "o");
 
 PARAM_INT_IN("center", "Center the data and fit the intercept. Set to 0 to "
@@ -125,13 +125,13 @@ static void mlpackMain()
     RequireOnlyOnePassed({ "responses" }, true, "if input data is specified, "
         "responses must also be specified");
   }
-  ReportIgnoredParam({{"input", false }}, "responses");
+  ReportIgnoredParam({{ "input", false }}, "responses");
 
   RequireAtLeastOnePassed({ "output_predictions", "output_model" }, false,
       "no results will be saved");
 
   // Ignore out_predictions unless test is specified.
-  ReportIgnoredParam({{"test", true }}, "output_predictions");
+  ReportIgnoredParam({{ "test", true }}, "output_predictions");
 
   BayesianRidge* bayesRidge;
   if (CLI::HasParam("input"))
@@ -140,7 +140,8 @@ static void mlpackMain()
     // Initialize the object.
     bayesRidge = new BayesianRidge(center, scale);
 
-    // Load covariates.
+    // Load covariates.  We can avoid LARS transposing our data by choosing to
+    // not transpose this data (that's why we used PARAM_TMATRIX_IN).
     mat matX = std::move(CLI::GetParam<arma::mat>("input"));
 
     // Load responses.  The responses should be a one-dimensional vector, and it
@@ -154,14 +155,14 @@ static void mlpackMain()
     if (matY.n_rows > 1)
       Log::Fatal << "Only one column or row allowed in responses file!" << endl;
 
-    if (matY.n_elem != matX.n_rows)
+    if (matY.n_elem != matX.n_cols)
       Log::Fatal << "Number of responses must be equal to number of rows of X!"
           << endl;
 
     arma::rowvec y = std::move(matY);
     arma::rowvec predictionsTrain;
     // The Train method is ready to take data in column-major format.
-    bayesRidge->Train(matX.t(), matY);
+    bayesRidge->Train(matX, matY);
   }
   else // We must have --input_model_file.
   {
@@ -175,10 +176,10 @@ static void mlpackMain()
     mat testPoints = std::move(CLI::GetParam<arma::mat>("test"));
 
     arma::rowvec predictions;
-    bayesRidge->Predict(testPoints.t(), predictions);
+    bayesRidge->Predict(testPoints, predictions);
 
     // Save test predictions (one per line).
-    CLI::GetParam<arma::mat>("output_predictions") = std::move(predictions.t());
+    CLI::GetParam<arma::mat>("output_predictions") = std::move(predictions);
     Log::Info << predictions << std::endl;
   }
 
