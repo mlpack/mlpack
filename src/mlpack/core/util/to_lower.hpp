@@ -23,7 +23,7 @@ namespace util {
  */
 inline std::string ToLower(const std::string& str)
 {
-  std::string out;
+  std::string out = str;
 
   std::transform(str.begin(), str.end(), out.begin(),
       [](unsigned char c){ return std::tolower(c); });
