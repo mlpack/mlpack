@@ -12,6 +12,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/ann/dists/bernoulli_distribution.hpp>
+#include <mlpack/methods/ann/dists/normal_distribution.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -125,6 +126,42 @@ BOOST_AUTO_TEST_CASE(JacobianBernoulliDistributionLogisticTest)
     BOOST_REQUIRE_LE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))),
         3e-5);
   }
+}
+
+/**
+ * Normal Distribution module test.
+ */
+BOOST_AUTO_TEST_CASE(NormalDistributionTest)
+{
+  arma::vec mu = {1.1, 1.2, 1.5, 1.7};
+  arma::vec sigma = {0.1, 0.11, 0.5, 0.23};
+
+  ann::NormalDistribution normalDist =
+    ann::NormalDistribution(mu, sigma);
+
+  arma::vec x = {1.05, 1.1, 1.7, 2.5};
+
+  arma::vec prob;
+  normalDist.LogProbability(x, prob);
+  
+  // testing output of log probablity for some random mu, sigma and x.
+  BOOST_REQUIRE_CLOSE(prob[0], 1.2586464, 1e-3);
+  BOOST_REQUIRE_CLOSE(prob[1], 0.8751131, 1e-3);
+  BOOST_REQUIRE_CLOSE(prob[2], -0.30579138, 1e-3);
+  BOOST_REQUIRE_CLOSE(prob[3], -5.498411, 1e-3);
+
+  arma::vec dmu, dsigma;
+  normalDist.ProbBackward(x, dmu, dsigma);
+
+  // testing output of dmu and dsigma for some random mu, sigma and x.
+  BOOST_REQUIRE_CLOSE(dmu[0], -17.603287, 1e-3);
+  BOOST_REQUIRE_CLOSE(dsigma[0], -26.40487, 1e-3);
+  BOOST_REQUIRE_CLOSE(dmu[1], -19.827663, 1e-3);
+  BOOST_REQUIRE_CLOSE(dsigma[1], -3.7852707, 1e-3);
+  BOOST_REQUIRE_CLOSE(dmu[2], 0.5892323, 1e-3);
+  BOOST_REQUIRE_CLOSE(dsigma[2], -1.2373875, 1e-3);
+  BOOST_REQUIRE_CLOSE(dmu[3], 0.061901994, 1e-3);
+  BOOST_REQUIRE_CLOSE(dsigma[3], 0.19751444, 1e-3);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
