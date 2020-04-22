@@ -33,7 +33,7 @@ class NormalDistribution
  private:
   //! Mean of the distribution.
   arma::vec mean;
-  //! Variance of the distribution.
+  //! Standard deviation of the distribution.
   arma::vec sigma;
 
   // pi
@@ -99,14 +99,14 @@ class NormalDistribution
   arma::vec& Mean() { return mean; }
 
   /**
-   * Return the variance.
+   * Return the standard deviation.
    */
   const arma::vec& Sigma() const { return sigma; }
 
   /**
-   * Return a modifiable copy of the variance.
+   * Return a modifiable copy of the standard deviation.
    */
-  arma::vec& Variance() { return sigma; }
+  arma::vec& StandardDeviation() { return sigma; }
 
   //! Return the dimensionality of this distribution.
   size_t Dimensionality() const { return mean.n_elem; }
