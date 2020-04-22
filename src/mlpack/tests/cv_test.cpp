@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(TopK_AccuracyTest)
   // Labels that will be considered as "ground truth".
   arma::Row<size_t> labels("0 1  0 2  1 2 2 2  3 3 3 3");
   size_t numClasses = 4;
-  int k = 2;
+  const int k = 2;
 
   // These labels should be predicted in response to the data since we use them
   arma::Row<size_t> predictedLabels("0 0  0 1  2 2 2 2  3 3 3 3");
