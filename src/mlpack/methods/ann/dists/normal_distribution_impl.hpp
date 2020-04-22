@@ -50,10 +50,10 @@ void NormalDistribution::ProbBackward(
     arma::vec& dmu,
     arma::vec& dsigma) const
 {
-    dmu = (observation - mean) / (arma::square(sigma)) % Probability(observation);
-    dsigma = (- 1.0 / sigma +
-              (arma::square(observation - mean) / arma::pow(sigma, 3)))
-              % Probability(observation);
+  dmu = (observation - mean) / (arma::square(sigma)) % Probability(observation);
+  dsigma = (- 1.0 / sigma +
+            (arma::square(observation - mean) / arma::pow(sigma, 3)))
+            % Probability(observation);
 }
 
 } // namespace ann

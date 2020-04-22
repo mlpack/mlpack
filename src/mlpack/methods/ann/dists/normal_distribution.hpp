@@ -19,14 +19,10 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Multiple independent Bernoulli distributions.
+ * Implementation of the Normal Distribution function.
  *
- * Bernoulli distribution is the discrete probability distribution of a random
- * variable which takes the value 1 with probability p and the value 0 with
- * probability q = 1 - p.
- * In this implementation, the p values of the distributions are given by the
- * param matrix.
- *
+ * Normal distribution is a function which accepts a mean and a standard deviation
+ * term and creates a probablity distribution out of it.
  */
 class NormalDistribution
 {
