@@ -121,7 +121,8 @@ Convolution<
       1);
 
   // Transform paddingType to lowercase.
-  std::string paddingTypeLow = util::ToLower(paddingType);
+  std::string paddingTypeLow = paddingType;
+  util::ToLower(paddingType, paddingTypeLow);
 
   if (paddingTypeLow == "valid")
   {

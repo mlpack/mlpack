@@ -2,7 +2,7 @@
  * @file to_lower.hpp
  * @author Himanshu Pathak
  *
- * Convert a string to lower-case.
+ * Convert a string to lowercase.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -16,18 +16,15 @@ namespace mlpack {
 namespace util {
 
 /**
- * ToLower convert a string into a string of lower case characters
- * only.
+ * Convert a string to lowercase letters.
  *
- * @param str String to convert string.
+ * @param input The string to convert.
+ * @param output The string to be converted.
  */
-inline std::string ToLower(const std::string& str)
+inline void ToLower(const std::string& input, std::string& output)
 {
-  std::string out = str;
-
-  std::transform(str.begin(), str.end(), out.begin(),
+  std::transform(input.begin(), input.end(), output.begin(),
       [](unsigned char c){ return std::tolower(c); });
-  return out;
 }
 
 } // namespace util
