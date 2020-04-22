@@ -54,7 +54,7 @@ class SoftplusFunction
   {
     if (x > threshold)
       return x;
-    else 
+    else
       return std::log(1 + std::exp(x));
   }
 
