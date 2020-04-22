@@ -64,7 +64,7 @@ class LogisticFunction
   /**
    * Computes the first derivative of the logistic function.
    *
-   * @param x Input data.
+   * @param x Input activation.
    * @return f'(x)
    */
   static double Deriv(const double y)
