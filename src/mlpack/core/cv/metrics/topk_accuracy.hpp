@@ -37,10 +37,10 @@ class TopK_Accuracy
      * @params K, the top k label predicted class.
     */
    template<typename MLAlgorithm, typename DataType, typename ResponseType, typename TopK_Score>
-   static double Evaluate(MLAlgorithms& model,
+   static double Evaluate(MLAlgorithm& model,
                         const DataType& data,
                         const ResponseType& labels,
-                        const topk_score& k);
+                        const TopK_Score& k);
     /**
     * normalization : bool, default= True
     * If `True`, return the fraction of correctly classified samples.
