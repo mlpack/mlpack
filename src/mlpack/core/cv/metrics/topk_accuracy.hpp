@@ -39,7 +39,7 @@ class TopK_Accuracy
    template<typename MLAlgorithm, typename DataType, typename ResponseType, typename TopK_Score>
    static double Evaluate(MLAlgorithm& model,
                         const DataType& data,
-                        const ResponseType& labels,
+                        const arma::Row<size_t>& labels,
                         const TopK_Score& k);
     /**
     * normalization : bool, default= True

@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE(TopK_AccuracyTest)
 
   // Assert that the Naive Bayes model really predicts the labels above in
   // response to the data.
-  BOOST_REQUIRE_CLOSE(TopK_Accuracy::Evaluate(nb, data, predictedLabels), k, 1e-5);
+  BOOST_REQUIRE_CLOSE(TopK_Accuracy::Evaluate(nb, data, predictedLabels, k), 1e-5);
 }
 
 /**
