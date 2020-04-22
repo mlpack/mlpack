@@ -41,8 +41,19 @@ arma::vec NormalDistribution::LogProbability(
 {
   const arma::vec variance = arma::square(sigma);
   arma::vec v1 = arma::log(sigma) + std::log(std::sqrt(2 * pi));
-  arma::vec v2 = arma::square(observation - mu) / (2 * variance);
+  arma::vec v2 = arma::square(observation - mean) / (2 * variance);
   return  (-v1 - v2);
+}
+
+void NormalDistribution::ProbBackward(
+    const arma::vec& observation,
+    arma::vec& dmu,
+    arma::vec& dsigma) const
+{
+    dmu = (observation - mean) / (arma::square(sigma)) % Probability(observation);
+    dsigma = (- 1.0 / sigma +
+              (arma::square(observation - mean) / arma::pow(sigma, 3)))
+              % Probability(observation);
 }
 
 } // namespace ann

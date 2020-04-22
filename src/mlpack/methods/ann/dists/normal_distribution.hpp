@@ -69,6 +69,17 @@ class NormalDistribution
   arma::vec LogProbability(const arma::vec& observation) const;
 
   /**
+   * Stores the gradient of the probabilities of the observations
+   * with respect to mean and standard deviation.
+   *
+   * @param observation The observation matrix.
+   * @param dmu The gradient with respect to mean.
+   * @param dsigma The gradient with respect to standard deviation.
+   */
+  void ProbBackward(const arma::vec& observation, arma::vec& dmu,
+arma::vec& dsigma) const;
+
+  /**
    * Calculates the normal probability density function for each
    * data point (column) in the given matrix.
    *
@@ -78,6 +89,18 @@ class NormalDistribution
   void Probability(const arma::vec& x, arma::vec& probabilities) const
   {
     probabilities = Probability(x);
+  }
+
+  /**
+    * Calculates the log of normal probability density function for each
+    * data point (column) in the given matrix.
+    *
+    * @param x List of observations.
+    * @param log probabilities Output probabilities for each input observation.
+    */
+  void LogProbability(const arma::vec& x, arma::vec& probabilities) const
+  {
+    probabilities = LogProbability(x);
   }
 
   /**
