@@ -4,10 +4,18 @@
    (#2345).
 
   * Updated terminal state for Pendulum environment (#2354).
+  * Minor Julia and Python documentation fixes (#2373).
+
+  * Updated terminal state and fixed bugs for Pendulum environment (#2354, #2369).
 
   * Added `EliSH` activation function (#2323).
 
   * Add L1 Loss function (#2203).
+
+  * Pass CMAKE_CXX_FLAGS (compilation options) correctly to Python build
+    (#2367).
+
+  * Expose ensmallen Callbacks for sparseautoencoder (#2198).
 
 ### mlpack 3.3.0
 ###### 2020-04-07

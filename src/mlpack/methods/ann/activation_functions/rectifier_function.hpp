@@ -96,7 +96,7 @@ class RectifierFunction
   /**
    * Computes the first derivatives of the rectifier function.
    *
-   * @param y Input activations.
+   * @param y Input data.
    * @param x The resulting derivatives.
    */
   template<typename InputType, typename OutputType>
