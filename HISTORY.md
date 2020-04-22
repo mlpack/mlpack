@@ -2,6 +2,19 @@
 ###### ????-??-??
   * Add parameter to avoid shuffling of data in preprocess_split (#2293).
 
+  * Minor Julia and Python documentation fixes (#2373).
+
+  * Updated terminal state and fixed bugs for Pendulum environment (#2354, #2369).
+
+  * Added `EliSH` activation function (#2323).
+
+  * Add L1 Loss function (#2203).
+
+  * Pass CMAKE_CXX_FLAGS (compilation options) correctly to Python build
+    (#2367).
+
+  * Expose ensmallen Callbacks for sparseautoencoder (#2198).
+
 ### mlpack 3.3.0
 ###### 2020-04-07
   * Templated return type of `Forward function` of loss functions (#2339).
