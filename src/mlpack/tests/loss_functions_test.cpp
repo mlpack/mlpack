@@ -768,14 +768,14 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossSumReductionTest)
   target.reshape(3, 3);
   expectedOutput.reshape(3, 3);
 
-  // Test the Forward function. Loss should be 2.1483.
+  // Test the Forward function. Loss should be 2.14829.
   // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum').
   loss = module.Forward(input, target);
-  BOOST_REQUIRE_CLOSE(loss, 2.1483, 0.1);
+  BOOST_REQUIRE_CLOSE(loss, 2.14829, 1e-3);
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 0.5059, 0.1);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 0.505909, 1e-3);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
@@ -800,14 +800,14 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossMeanReductionTest)
   target.reshape(3, 3);
   expectedOutput.reshape(3, 3);
 
-  // Test the Forward function. Loss should be 0.7161.
+  // Test the Forward function. Loss should be 0.716095.
   // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean').
   loss = module.Forward(input, target);
-  BOOST_REQUIRE_CLOSE(loss, 0.7161, 0.1);
+  BOOST_REQUIRE_CLOSE(loss, 0.716095, 1e-3);
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 0.1686, 0.1);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 0.168636, 1e-3);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
@@ -834,14 +834,14 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossWeightedSumReductionTest)
   target.reshape(4, 3);
   expectedOutput.reshape(4, 3);
 
-  // Test the Forward function. Loss should be 5.3506.
+  // Test the Forward function. Loss should be 5.35057.
   // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum').
   loss = module.Forward(input, target);
-  BOOST_REQUIRE_CLOSE(loss, 5.3506, 0.1);
+  BOOST_REQUIRE_CLOSE(loss, 5.35057, 1e-3);
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 1.4358, 0.1);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 1.43577, 1e-3);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
@@ -868,14 +868,14 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossWeightedMeanReductionTest)
   target.reshape(4, 3);
   expectedOutput.reshape(4, 3);
 
-  // Test the Forward function. Loss should be 1.3376.
+  // Test the Forward function. Loss should be 1.33764.
   // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean').
   loss = module.Forward(input, target);
-  BOOST_REQUIRE_CLOSE(loss, 1.3376, 0.1);
+  BOOST_REQUIRE_CLOSE(loss, 1.33764, 1e-3);
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 0.3589, 0.1);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 0.358943, 1e-3);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
