@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(NormalDistributionTest)
 
   arma::vec prob;
   normalDist.LogProbability(x, prob);
-  
+
   // testing output of log probablity for some random mu, sigma and x.
   BOOST_REQUIRE_CLOSE(prob[0], 1.2586464, 1e-3);
   BOOST_REQUIRE_CLOSE(prob[1], 0.8751131, 1e-3);
