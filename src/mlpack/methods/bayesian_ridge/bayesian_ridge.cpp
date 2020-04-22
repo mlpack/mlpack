@@ -16,6 +16,7 @@
 using namespace mlpack;
 using namespace mlpack::regression;
 
+
 BayesianRidge::BayesianRidge(const bool centerData,
                              const bool scaleData,
                              const int nIterMax,
@@ -87,7 +88,7 @@ double BayesianRidge::Train(const arma::mat& data,
     // // with solve()
     matA.diag().fill(alpha / beta);
     omega = solve(matA + phiphiT, vecphitT);
-    
+
     // Update alpha.
     eigvali = eigval * beta;
     gamma = sum(eigvali / (alpha + eigvali));
@@ -103,7 +104,6 @@ double BayesianRidge::Train(const arma::mat& data,
     crit = std::abs(deltaAlpha / alpha + deltaBeta / beta);
     i++;
   }
-
   // Compute the covariance matrice for the uncertaities later.
   matCovariance = inv_sympd(matA + phiphiT * beta);
 
@@ -117,7 +117,7 @@ void BayesianRidge::Predict(const arma::mat& points,
 {
   // y_hat = w^T * (X - mu) / sigma + y_mean.
   predictions = omega.t() * ((points.each_col() - dataOffset).each_col()
-			     / dataScale);
+                            / dataScale);
   predictions += responsesOffset;
 }
 

@@ -70,7 +70,7 @@ PROGRAM_INFO("BayesianRidge",
     "to the test points can be saved with the " +
     PRINT_PARAM_STRING("output_predictions") + " output parameter. The "
     "corresponding standard deviation can be save by precising the " +
-    PRINT_PARAM_STRING("output_std") + " parameter."  
+    PRINT_PARAM_STRING("output_std") + " parameter."
     "\n\n"
     "For example, the following command trains a model on the data " +
     PRINT_DATASET("data") + " and responses " + PRINT_DATASET("responses") +
@@ -186,12 +186,12 @@ static void mlpackMain()
     {
       arma::rowvec std;
       bayesRidge->Predict(testPoints, predictions, std);
-      
+
       // Save the standard deviation of the test points (one per line).
       CLI::GetParam<arma::mat>("output_std") = std::move(std);
     }
-    
-    else 
+
+    else
       bayesRidge->Predict(testPoints, predictions);
 
     // Save test predictions (one per line).
