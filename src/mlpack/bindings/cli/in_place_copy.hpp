@@ -23,7 +23,9 @@ namespace cli {
  * This overload is called when nothing special needs to happen to make
  * something an in-place copy.
  *
- * @param d ParamData object to get parameter value from.
+ * @param d ParamData object to get parameter value from. (Unused.)
+ * @param input ParamData object that represents the option we are making a copy
+ *     of. (Unused.)
  */
 template<typename T>
 void InPlaceCopyInternal(
