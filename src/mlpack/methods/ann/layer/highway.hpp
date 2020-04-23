@@ -75,11 +75,6 @@ class Highway
   ~Highway();
 
   /**
-   * Destroy all the modules added to the Highway object.
-   */
-  void DeleteModules();
-
-  /**
    * Reset the layer parameter.
    */
   void Reset();
@@ -126,14 +121,22 @@ class Highway
    * @param args The layer parameter.
    */
   template <class LayerType, class... Args>
-  void Add(Args... args) { network.push_back(new LayerType(args...)); }
+  void Add(Args... args)
+  {
+    network.push_back(new LayerType(args...));
+    networkOwnerships.push_back(true);
+  }
 
   /**
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
+  void Add(LayerTypes<CustomLayers...> layer)
+  {
+    network.push_back(layer);
+    networkOwnerships.push_back(false);
+  }
 
   //! Return the modules of the model.
   std::vector<LayerTypes<CustomLayers...> >& Model()
@@ -189,6 +192,9 @@ class Highway
 
   //! Locally-stored network modules.
   std::vector<LayerTypes<CustomLayers...> > network;
+
+  //! The list of network modules we are responsible for.
+  std::vector<bool> networkOwnerships;
 
   //! Locally-stored empty list of modules.
   std::vector<LayerTypes<CustomLayers...> > empty;

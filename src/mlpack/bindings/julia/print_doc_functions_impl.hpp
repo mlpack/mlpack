@@ -475,7 +475,8 @@ inline std::string ProgramCall(const std::string& programName)
   size_t nonreqInputs = 0;
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
-    if (it->second.input && !it->second.required)
+    if (it->second.input && !it->second.required &&
+       (it->second.name == "verbose" || !it->second.persistent))
     {
       if (inputs == 0 && nonreqInputs == 0)
         result << " ; ";

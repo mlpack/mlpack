@@ -223,14 +223,14 @@ void ComputeRecommendations(CFModel* cf,
                             const size_t numRecs,
                             arma::Mat<size_t>& recommendations)
 {
-  //  Verifying the Interpolation algorithms
+  // Verify the Interpolation algorithms.
   RequireParamInSet<string>("interpolation", { "average",
       "regression", "similarity" }, true, "unknown interpolation algorithm");
 
-  //  Taking Interpolation Alternatives
+  // Taking Interpolation Alternatives
   const string interpolationAlgorithm = CLI::GetParam<string>("interpolation");
 
-  //  Determining the Interpolation Algorithm
+  // Determining the Interpolation Algorithm
   if (interpolationAlgorithm == "average")
   {
     ComputeRecommendations<NeighborSearchType, AverageInterpolation>
@@ -382,6 +382,11 @@ void PerformAction(arma::mat& dataset,
                    const double minResidue)
 {
   const size_t neighborhood = (size_t) CLI::GetParam<int>("neighborhood");
+
+  // Make sure the normalization strategy is valid.
+  RequireParamInSet<string>("normalization", { "overall_mean", "item_mean",
+      "user_mean", "z_score", "none" }, true, "unknown normalization type");
+
   CFModel* c = new CFModel();
 
   const string normalizationType = CLI::GetParam<string>("normalization");
@@ -390,7 +395,16 @@ void PerformAction(arma::mat& dataset,
       maxIterations, minResidue, CLI::HasParam("iteration_only_termination"),
       normalizationType);
 
-  PerformAction(c);
+  try
+  {
+    PerformAction(c);
+  }
+  catch (std::exception& e)
+  {
+    // Clean the memory before throwing completely.
+    delete c;
+    throw;
+  }
 }
 
 void AssembleFactorizerType(const std::string& algorithm,

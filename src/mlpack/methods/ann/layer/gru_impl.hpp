@@ -77,17 +77,6 @@ GRU<InputDataType, OutputDataType>::GRU(
 }
 
 template<typename InputDataType, typename OutputDataType>
-GRU<InputDataType, OutputDataType>::~GRU()
-{
-  boost::apply_visitor(deleteVisitor, input2GateModule);
-  boost::apply_visitor(deleteVisitor, output2GateModule);
-  boost::apply_visitor(deleteVisitor, outputHidden2GateModule);
-  boost::apply_visitor(deleteVisitor, inputGateModule);
-  boost::apply_visitor(deleteVisitor, forgetGateModule);
-  boost::apply_visitor(deleteVisitor, hiddenStateModule);
-}
-
-template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void GRU<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
