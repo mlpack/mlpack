@@ -79,7 +79,7 @@ bool inline inplace_transpose(MatType& X, bool fatal)
     else
       Log::Warn << "\nTranspose Operation Failed.\n"
           "Exception: " << e.what() << std::endl;
-    
+
     return false;
   }
 }
@@ -452,32 +452,36 @@ bool Load(const std::string& filename,
   {
     // Temporary CSV stream to store the values without commas
     std::ofstream csvstream(tempFileName);
-    if(!csvstream.is_open())
+    if ( !csvstream.is_open() )
     {
       if (fatal)
-      Log::Fatal << "Unable to create temporary file for processing."
-          << std::endl;
-    else
-      Log::Fatal << "Unable to create temporary file for processing."
-          << std::endl;
+      {
+        Log::Fatal << "Unable to create temporary file for processing."
+            << std::endl;
+      }
+      else
+      {
+        Log::Warn << "Unable to create temporary file for processing."
+            << std::endl;
+      }
 
       return false;
     }
 
-    //iterators to perform the comma with space replacement
+    // iterators to perform the comma with space replacement
     std::istreambuf_iterator<char> in_itr(stream);
     std::ostreambuf_iterator<char> out_itr(csvstream);
-    
-    //replacing comma with a space and storing to  
-    std::replace_copy(in_itr, 
-                      std::istreambuf_iterator<char>(), 
-                      out_itr, 
-                      ',', 
+
+    // replacing comma with a space and storing to csvstream
+    std::replace_copy(in_itr,
+                      std::istreambuf_iterator<char>(),
+                      out_itr,
+                      ',',
                       ' ');
-    
+
     loadType = arma::coord_ascii;
     stringType = "Coordinate Formatted Data for sparse matrix";
-    
+
     csvstream.close();
   }
   else if (extension == "tsv" || extension == "txt")
@@ -537,11 +541,11 @@ bool Load(const std::string& filename,
   else
     Log::Info << "Loading '" << filename << "' as " << stringType << ".  "
         << std::flush;
-  
+
   bool success;
 
-  // if it is a csv, 
-  // we use the temp_stream which loads a file from tempFileName  
+  // if it is a csv,
+  // we use the temp_stream which loads a file from tempFileName
   // This tempFileName has all the commas been replaced by spaces
   // as required by the loadType: arma::coord_ascii
   if (extension == "csv")
