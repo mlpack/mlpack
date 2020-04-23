@@ -24,8 +24,8 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
   if (data.n_cols != labels.n_cols)
   {
     std::ostringstream fpp;
-    fpp << "topK_accuracy_score::Evaluate(): number of inputs (" << data.n_cols << ")"
-        << "doesn't matches with number of target labels (" << labels.n_cols << ")!" 
+    fpp << "TopK_Accuracy::Evaluate(): number of points (" << data.n_cols << ")"
+        << "doesn't matches number of labels (" << labels.n_cols << ")!"
         << std::endl;
     throw std::invalid_argument(fpp.str());
   }
@@ -56,7 +56,6 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
   // Accuracy Score of top k predicted class labels.
   return (double) count / predictedClass[0];
 }
-
 } // namespace cv
 } // namespace mlpack
 
