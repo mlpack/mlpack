@@ -14,7 +14,7 @@
 
 namespace mlpack {
 namespace cv {
-    template<typename MLAlgorithm,typename DataType,typename ResponseType,typename TopK>
+    template<typename MLAlgorithm, typename DataType, typename ResponseType, typename TopK>
     double TopK_Accuracy::Evaluate(MLAlgorithm& model,
                                     const DataType& data,
                                     const arma::Row<size_t>& labels,
@@ -57,7 +57,6 @@ namespace cv {
         // Accuracy Score of top k predicted class labels.
         return (double) c / predicted_class[0]
     }
-
 } // namespace cv
 } // namespace mlpack
 

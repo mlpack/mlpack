@@ -36,7 +36,7 @@ class TopK_Accuracy
      * @params labels (Ground truth), target values for the test_items 
      * @params K, the top k label predicted class.
     */
-    template<typename MLAlgorithm,typename DataType,typename ResponseType,typename TopK>
+    template<typename MLAlgorithm, typename DataType, typename ResponseType, typename TopK>
     static double Evaluate(MLAlgorithm& model,
                         const DataType& data,
                         const arma::Row<size_t>& labels,
