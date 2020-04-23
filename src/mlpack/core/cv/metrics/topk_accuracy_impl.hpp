@@ -18,7 +18,7 @@ namespace cv {
     double TopK_Accuracy::Evaluate(MLAlgorithm& model,
                                     const DataType& data,
                                     const arma::Row<size_t>& labels,
-                                    const int TopK_Score& k)
+                                    const TopK_Score& k)
 
     {
         if(data.n_cols! = labels.n_cols)
