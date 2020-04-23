@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitUnityTestRatioTest)
 /**
  * Check shuffle_data flag is working as expected.
  */
-BOOST_AUTO_TEST_CASE(PreprocessSplitLabelSuffleDataTest)
+BOOST_AUTO_TEST_CASE(PreprocessSplitLabelShuffleDataTest)
 {
   // Load custom dataset.
   arma::mat inputData;
@@ -216,7 +216,7 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitLabelSuffleDataTest)
 
   // Input test_ratio.
   SetInputParam("test_ratio", (double) 0.1);
-  SetInputParam("shuffle_data", true);
+  SetInputParam("no_shuffle", true);
   mlpackMain();
 
   // Now check that the output has desired dimensions.

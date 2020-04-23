@@ -46,11 +46,11 @@ PROGRAM_INFO("Split Data",
         "X_test", "test_ratio", 0.4) +
     "\n\n"
     "Also by default the dataset is shuffled and splited, you can provide " +
-    PRINT_PARAM_STRING("shuffle_data") +" to avoid shuffling of the data, " +
+    PRINT_PARAM_STRING("no_shuffle") +" to avoid shuffling of the data, " +
     "an example to avoid shuffling of data is as"
     "\n\n" +
     PRINT_CALL("preprocess_split", "input", "X", "training", "X_train", "test",
-        "X_test", "test_ratio", 0.4 , "shuffle_data", true) +
+        "X_test", "test_ratio", 0.4 , "no_shuffle", true) +
     "\n\n"
     "If we had a dataset " + PRINT_DATASET("X") + " and associated labels " +
     PRINT_DATASET("y") + ", and we wanted to split these into " +
@@ -80,7 +80,7 @@ PARAM_DOUBLE_IN("test_ratio", "Ratio of test set; if not set,"
     "the ratio defaults to 0.2", "r", 0.2);
 
 PARAM_INT_IN("seed", "Random seed (0 for std::time(NULL)).", "s", 0);
-PARAM_FLAG("shuffle_data", "Avoid shuffling and splitting the data.", "S");
+PARAM_FLAG("no_shuffle", "Avoid shuffling and splitting the data.", "S");
 
 using namespace mlpack;
 using namespace mlpack::util;
@@ -91,7 +91,7 @@ static void mlpackMain()
 {
   // Parse command line options.
   const double testRatio = CLI::GetParam<double>("test_ratio");
-  const bool shuffleData = CLI::GetParam<bool>("shuffle_data");
+  const bool shuffleData = CLI::GetParam<bool>("no_shuffle");
 
   if (CLI::GetParam<int>("seed") == 0)
     mlpack::math::RandomSeed(std::time(NULL));

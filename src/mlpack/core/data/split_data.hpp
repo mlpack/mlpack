@@ -45,7 +45,7 @@ namespace data {
  * @param testLabel Vector to store test labels into.
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
  * @param shuffleData If true, the sample order is shuffled; otherwise, each
- *       sample is visited in linear order. (Default true).
+ *       sample is visited in linear order. (Default true.)
  */
 template<typename T, typename U>
 void Split(const arma::Mat<T>& input,
@@ -55,7 +55,7 @@ void Split(const arma::Mat<T>& input,
            arma::Row<U>& trainLabel,
            arma::Row<U>& testLabel,
            const double testRatio,
-           bool shuffleData = true)
+           const bool shuffleData = true)
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
@@ -66,19 +66,12 @@ void Split(const arma::Mat<T>& input,
 
   if (shuffleData)
   {
-    arma::Col<size_t> order;
-    order = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
-        input.n_cols - 1, input.n_cols));
-    for (size_t i = 0; i != trainSize; ++i)
-    {
-      trainData.col(i) = input.col(order[i]);
-      trainLabel(i) = inputLabel(order[i]);
-    }
-    for (size_t i = 0; i != testSize; ++i)
-    {
-      testData.col(i) = input.col(order[i + trainSize]);
-      testLabel(i) = inputLabel(order[i + trainSize]);
-    }
+    arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(
+        0, input.n_cols - 1, input.n_cols));
+    trainData = input.cols(order.subvec(0, trainSize - 1));
+    trainLabel = inputLabel.cols(order.subvec(0, trainSize - 1));
+    testData = input.cols(order.subvec(trainSize, input.n_cols - 1));
+    testLabel = inputLabel.cols(order.subvec(trainSize, input.n_cols - 1));
   }
   else
   {
@@ -117,7 +110,7 @@ void Split(const arma::Mat<T>& input,
            arma::Mat<T>& trainData,
            arma::Mat<T>& testData,
            const double testRatio,
-           bool shuffleData = true)
+           const bool shuffleData = true)
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
@@ -126,17 +119,10 @@ void Split(const arma::Mat<T>& input,
 
   if (shuffleData)
   {
-    arma::Col<size_t> order;
-    order = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
-        input.n_cols -1, input.n_cols));
-    for (size_t i = 0; i != trainSize; ++i)
-    {
-      trainData.col(i) = input.col(order[i]);
-    }
-    for (size_t i = 0; i != testSize; ++i)
-    {
-      testData.col(i) = input.col(order[i + trainSize]);
-    }
+    arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(
+        0, input.n_cols - 1, input.n_cols));
+    trainData = input.cols(order.subvec(0, trainSize - 1));
+    testData = input.cols(order.subvec(trainSize, input.n_cols - 1));
   }
   else
   {
@@ -171,7 +157,7 @@ std::tuple<arma::Mat<T>, arma::Mat<T>, arma::Row<U>, arma::Row<U>>
 Split(const arma::Mat<T>& input,
       const arma::Row<U>& inputLabel,
       const double testRatio,
-      bool shuffleData = true)
+      const bool shuffleData = true)
 {
   arma::Mat<T> trainData;
   arma::Mat<T> testData;
@@ -209,7 +195,7 @@ template<typename T>
 std::tuple<arma::Mat<T>, arma::Mat<T>>
 Split(const arma::Mat<T>& input,
       const double testRatio,
-      bool shuffleData = true)
+      const bool shuffleData = true)
 {
   arma::Mat<T> trainData;
   arma::Mat<T> testData;
