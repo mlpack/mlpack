@@ -1,6 +1,7 @@
 /**
  * @file normal_distribution_impl.hpp
  * @author xiaohong ji
+ * @author Nishant Kumar
  *
  * Implementation of the Normal distribution class.
  *
@@ -40,7 +41,7 @@ arma::vec NormalDistribution::LogProbability(
     const arma::vec& observation) const
 {
   const arma::vec variance = arma::square(sigma);
-  arma::vec v1 = arma::log(sigma) + std::log(std::sqrt(2 * pi));
+  arma::vec v1 = arma::log(sigma) + std::log(std::sqrt(2 * M_PI));
   arma::vec v2 = arma::square(observation - mean) / (2 * variance);
   return  (-v1 - v2);
 }

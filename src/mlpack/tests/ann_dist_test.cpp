@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(NormalDistributionTest)
   arma::vec prob;
   normalDist.LogProbability(x, prob);
 
-  // testing output of log probablity for some random mu, sigma and x.
+  // Testing output of log probability for some random mu, sigma and x.
   BOOST_REQUIRE_CLOSE(prob[0], 1.2586464, 1e-3);
   BOOST_REQUIRE_CLOSE(prob[1], 0.8751131, 1e-3);
   BOOST_REQUIRE_CLOSE(prob[2], -0.30579138, 1e-3);
@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE(NormalDistributionTest)
   arma::vec dmu, dsigma;
   normalDist.ProbBackward(x, dmu, dsigma);
 
-  // testing output of dmu and dsigma for some random mu, sigma and x.
+  // Testing output of dmu and dsigma for some random mu, sigma and x.
   BOOST_REQUIRE_CLOSE(dmu[0], -17.603287, 1e-3);
   BOOST_REQUIRE_CLOSE(dsigma[0], -26.40487, 1e-3);
   BOOST_REQUIRE_CLOSE(dmu[1], -19.827663, 1e-3);

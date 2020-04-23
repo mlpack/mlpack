@@ -1,6 +1,7 @@
 /**
  * @file normal_distribution.hpp
  * @author xiaohong ji
+ * @author Nishant Kumar
  *
  * Definition of the Normal distribution class.
  *
@@ -26,15 +27,6 @@ namespace ann /** Artificial Neural Network. */ {
  */
 class NormalDistribution
 {
- private:
-  //! Mean of the distribution.
-  arma::vec mean;
-  //! Standard deviation of the distribution.
-  arma::vec sigma;
-
-  // pi
-  static const constexpr double pi = 3.14159265358979323846264338327950288;
-
  public:
   /**
    * Default constructor, which creates a Normal distribution with zero
@@ -44,6 +36,9 @@ class NormalDistribution
 
   /**
    * Create a Normal distribution with the given mean and sigma.
+   *
+   * @param mean The mean of the normal distribution.
+   * @param sigma The standard deviation of the normal distribution.
    */
   NormalDistribution(const arma::vec& mean, const arma::vec& sigma);
 
@@ -72,8 +67,9 @@ class NormalDistribution
    * @param dmu The gradient with respect to mean.
    * @param dsigma The gradient with respect to standard deviation.
    */
-  void ProbBackward(const arma::vec& observation, arma::vec& dmu,
-arma::vec& dsigma) const;
+  void ProbBackward(const arma::vec& observation,
+                    arma::vec& dmu,
+                    arma::vec& dsigma) const;
 
   /**
    * Calculates the normal probability density function for each
@@ -140,6 +136,13 @@ arma::vec& dsigma) const;
     ar & BOOST_SERIALIZATION_NVP(mean);
     ar & BOOST_SERIALIZATION_NVP(sigma);
   }
+
+ private:
+  //! Mean of the distribution.
+  arma::vec mean;
+
+  //! Standard deviation of the distribution.
+  arma::vec sigma;
 }; // class NormalDistribution
 
 } // namespace ann
