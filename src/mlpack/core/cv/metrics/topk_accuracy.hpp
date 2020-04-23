@@ -27,7 +27,7 @@ namespace cv{
 
 class TopK_Accuracy
 {
-    public:
+ public:
     /**
      * Run Prediction and calculate the topk accuracy score.
      * 
@@ -36,11 +36,11 @@ class TopK_Accuracy
      * @params labels (Ground truth), target values for the test_items 
      * @params K, the top k label predicted class.
     */
-   template<typename MLAlgorithm, typename DataType, typename ResponseType, typename TopK_Score>
-   static double Evaluate(MLAlgorithm& model,
+    template<typename MLAlgorithm,typename DataType,typename ResponseType,typename TopK>
+    static double Evaluate(MLAlgorithm& model,
                         const DataType& data,
                         const arma::Row<size_t>& labels,
-                        const TopK_Score& k);
+                        const TopK& k);
     /**
     * normalization : bool, default= True
     * If `True`, return the fraction of correctly classified samples.
@@ -48,7 +48,6 @@ class TopK_Accuracy
     */
     static const bool Normalization = true;
 };
-
 } // namespace cv 
 } // namespace mlpack
 

@@ -14,11 +14,11 @@
 
 namespace mlpack {
 namespace cv {
-    template<typename MLAlgorithm, typename DataType, typename ResponseType, typename TopK_Score>
+    template<typename MLAlgorithm,typename DataType,typename ResponseType,typename TopK>
     double TopK_Accuracy::Evaluate(MLAlgorithm& model,
                                     const DataType& data,
                                     const arma::Row<size_t>& labels,
-                                    const TopK_Score& k)
+                                    const TopK& k)
 
     {
         if(data.n_cols! = labels.n_cols)
