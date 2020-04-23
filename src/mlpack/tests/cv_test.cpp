@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(R2ScoreTest)
 /**
  * Test the topK Accuracy metric (TopKAccuracy).
  */
-BOOST_AUTO_TEST_CASE(TopK_AccuracyTest)
+BOOST_AUTO_TEST_CASE(TopKAccuracyTest)
 {
   // Using the same data for training and testing.
   arma::mat data = arma::linspace<arma::rowvec>(1.0, 10.0, 10);
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(TopK_AccuracyTest)
 
   // Assert that the Naive Bayes model really predicts the labels above in
   // response to the data.
-  BOOST_REQUIRE_CLOSE(TopK_Accuracy::Evaluate(nb, data, labels, k), 1e-5);
+  BOOST_REQUIRE_CLOSE(TopKAccuracy::Evaluate(nb, data), labels, k, 1e-5);
 }
 
 /**

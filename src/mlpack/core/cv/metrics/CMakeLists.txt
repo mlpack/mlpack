@@ -15,8 +15,8 @@ set(SOURCES
   recall_impl.hpp
   r2_score.hpp
   r2_score_impl.hpp
-  topk_accuracy.hpp
-  topk_accuracy_impl.hpp
+  top_k_accuracy.hpp
+  top_k_accuracy_impl.hpp
 )
 
 # Add directory name to sources.
