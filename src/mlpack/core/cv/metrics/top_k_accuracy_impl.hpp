@@ -56,8 +56,6 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
   // Accuracy Score of top k predicted class labels.
   return (double) count / predictedClass[0];
 }
-
 } // namespace cv
 } // namespace mlpack
-
 #endif
