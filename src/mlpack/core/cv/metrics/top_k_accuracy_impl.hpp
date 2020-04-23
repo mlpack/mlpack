@@ -19,21 +19,20 @@ template<typename MLAlgorithm, typename DataType, typename TopK>
 double TopKAccuracy::Evaluate(MLAlgorithm& model,
                         const DataType& data,
                         const arma::Row<size_t> labels,
-                        const TopK& k);
-
+                        const TopK& k)
 {
   if(data.n_cols! = labels.n_cols)
   {
-    std::ostringstream fp;
-    fp << "topK_accuracy_score::Evaluate(): number of inputs ("<< data.n_cols <<")" 
-       << "does not matches with number of target labels ("<< labels.n_cols <<")" 
-       << std::endl;
-    throw std::invalid_argument(fp.str());
+    std::ostringstream fpp;
+    fpp << "topK_accuracy_score::Evaluate(): number of inputs ("<< data.n_cols <<")" 
+        << "does not matches with number of target labels ("<< labels.n_cols <<")" 
+        << std::endl;
+    throw std::invalid_argument(fpp.str());
   }
   
   arma::Row<size_t> predictedLabels;
   // Taking Classification output from the model.
-  model.Classify(data, predictedLabels)
+  model.Classify(data, predictedLabels);
   // Shape of the predicted values.
   double predictedClass = predictedLabels.size();
   // Top 'k' label prediction class. 
@@ -43,7 +42,7 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
   else
   {
     std::ostringstream fs;
-    fs << "There are less number of class for topK accuracy score" << std::endl;
+    fs << "There are less number of class for Top K Accuracy score" << std::endl;
   }
   size_t idx = predictedClass[1] - k - 1;
   const float count = 0;
@@ -56,7 +55,7 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
     }
   }
   // Accuracy Score of top k predicted class labels.
-  return (double) count / predictedClass[0]
+  return (double) count / predictedClass[0];
 }
 
 } // namespace cv
