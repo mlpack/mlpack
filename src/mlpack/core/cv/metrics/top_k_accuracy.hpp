@@ -47,11 +47,10 @@ class TopKAccuracy
    */
   static const bool Normalization = true;
 };
-}// namespace cv 
-}// namespace mlpack
+
+} // namespace cv
+} // namespace mlpack
 // Include implementation.
 #include "top_k_accuracy_impl.hpp"
 
 #endif
-
-

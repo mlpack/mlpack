@@ -24,8 +24,8 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
   if (data.n_cols != labels.n_cols)
   {
     std::ostringstream fpp;
-    fpp << "topK_accuracy_score::Evaluate(): number of inputs ("<< data.n_cols <<")"
-        << "does not matches with number of target labels ("<< labels.n_cols <<")" 
+    fpp << "topK_accuracy_score::Evaluate(): number of inputs (" << data.n_cols << ")"
+        << "doesn't matches with number of target labels (" << labels.n_cols << ")!" 
         << std::endl;
     throw std::invalid_argument(fpp.str());
   }
@@ -34,18 +34,18 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
   model.Classify(data, predictedLabels);
   // Shape of the predicted values.
   double predictedClass = predictedLabels.size();
-  // Top 'k' label prediction class. 
+  // Top 'k' label prediction class.
   if (k < predictedClass[1])
   {
-    const int idx = predictedClass[1] - k - 1;
+    size_t idx = predictedClass[1] - k - 1;
   else
   {
     std::ostringstream fs;
-    fs << "There are less number of class for Top K Accuracy score" << std::endl;
+    fs << "Less number of class for Top K Accuracy score" << std::endl;
   }
   size_t idx = predictedClass[1] - k - 1;
   float count = 0;
-  double srt = sort_index(predictedLabels);  
+  double srt = sort_index(predictedLabels);
   for (i = 1; i < predictedClass[0]; i++)
   {
     if (labels[i] != srt[i, idx+1:])
@@ -56,7 +56,8 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
   // Accuracy Score of top k predicted class labels.
   return (double) count / predictedClass[0];
 }
-}// namespace cv
-}// namespace mlpack
-#endif
 
+} // namespace cv
+} // namespace mlpack
+
+#endif
