@@ -205,22 +205,121 @@ bool Save(const std::string& filename,
           bool transpose)
 {
   Timer::Start("saving_data");
-  arma::file_type saveType = arma::coord_ascii;
-  std::string stringType = "CSV data";
-  arma::SpMat<eT> tmp;
 
-  if (transpose)
-    tmp = trans(matrix);
+  // First we will try to discriminate by file extension.
+  std::string extension = Extension(filename);
+  if (extension == "")
+  {
+    Timer::Stop("saving_data");
+    if (fatal)
+      Log::Fatal << "No extension given with filename '" << filename << "'; "
+          << "type unknown.  Save failed." << std::endl;
+    else
+      Log::Warn << "No extension given with filename '" << filename << "'; "
+          << "type unknown.  Save failed." << std::endl;
+
+    return false;
+  }
+
+  // Catch errors opening the file.
+  std::fstream stream;
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+  stream.open(filename.c_str(), std::fstream::out | std::fstream::binary);
+#else
+  stream.open(filename.c_str(), std::fstream::out);
+#endif
+  if (!stream.is_open())
+  {
+    Timer::Stop("saving_data");
+    if (fatal)
+      Log::Fatal << "Cannot open file '" << filename << "' for writing. "
+          << "Save failed." << std::endl;
+    else
+      Log::Warn << "Cannot open file '" << filename << "' for writing; save "
+          << "failed." << std::endl;
+
+    return false;
+  }
+
+  bool unknownType = false;
+  arma::file_type saveType;
+  std::string stringType;
+
+  if (extension == "csv")
+  {
+    saveType = arma::coord_ascii;
+    stringType = "CSV data";
+  }
+  else if (extension == "txt")
+  {
+    saveType = arma::coord_ascii;
+    stringType = "raw ASCII formatted data";
+  }
+  else if (extension == "bin")
+  {
+    saveType = arma::arma_binary;
+    stringType = "Armadillo binary formatted data";
+  }
+  else if (extension == "pgm")
+  {
+    saveType = arma::pgm_binary;
+    stringType = "PGM data";
+  }
+  else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
+           extension == "he5")
+  {
+#ifdef ARMA_USE_HDF5
+    saveType = arma::hdf5_binary;
+    stringType = "HDF5 data";
+#else
+    Timer::Stop("saving_data");
+    if (fatal)
+      Log::Fatal << "Attempted to save HDF5 data to '" << filename << "', but "
+          << "Armadillo was compiled without HDF5 support.  Save failed."
+          << std::endl;
+    else
+      Log::Warn << "Attempted to save HDF5 data to '" << filename << "', but "
+          << "Armadillo was compiled without HDF5 support.  Save failed."
+          << std::endl;
+
+    return false;
+#endif
+  }
   else
-    tmp = matrix;
+  {
+    unknownType = true;
+    saveType = arma::raw_binary; // Won't be used; prevent a warning.
+    stringType = "";
+  }
+
+  // Provide error if we don't know the type.
+  if (unknownType)
+  {
+    Timer::Stop("saving_data");
+    if (fatal)
+      Log::Fatal << "Unable to determine format to save to from filename '"
+          << filename << "'.  Save failed." << std::endl;
+    else
+      Log::Warn << "Unable to determine format to save to from filename '"
+          << filename << "'.  Save failed." << std::endl;
+
+    return false;
+  }
 
   // Try to save the file.
   Log::Info << "Saving " << stringType << " to '" << filename << "'."
       << std::endl;
 
-  const bool success = tmp.quiet_save(filename, saveType);
+  // Transpose the matrix.
+  if (transpose)
+  {
+    arma::SpMat<eT> tmp = trans(matrix);
 
-  if (!success)
+    // We can't save with streams for HDF5.
+    const bool success = (saveType == arma::hdf5_binary) ?
+        tmp.quiet_save(filename, saveType) :
+        tmp.quiet_save(stream, saveType);
+    if (!success)
     {
       Timer::Stop("saving_data");
       if (fatal)
@@ -230,11 +329,61 @@ bool Save(const std::string& filename,
 
       return false;
     }
+  }
+  else
+  {
+    // We can't save with streams for HDF5.
+    const bool success = (saveType == arma::hdf5_binary) ?
+        matrix.quiet_save(filename, saveType) :
+        matrix.quiet_save(stream, saveType);
+    if (!success)
+    {
+      Timer::Stop("saving_data");
+      if (fatal)
+        Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
+      else
+        Log::Warn << "Save to '" << filename << "' failed." << std::endl;
+
+      return false;
+    }
+  }
 
   Timer::Stop("saving_data");
+
   // Finally return success.
   return true;
 }
+  // Timer::Start("saving_data");
+  // arma::file_type saveType = arma::coord_ascii;
+  // std::string stringType = "CSV data";
+  // arma::SpMat<eT> tmp;
+
+  // if (transpose)
+  //   tmp = trans(matrix);
+  // else
+  //   tmp = matrix;
+
+  // // Try to save the file.
+  // Log::Info << "Saving " << stringType << " to '" << filename << "'."
+  //     << std::endl;
+
+  // const bool success = tmp.quiet_save(filename, saveType);
+
+  // if (!success)
+  //   {
+  //     Timer::Stop("saving_data");
+  //     if (fatal)
+  //       Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
+  //     else
+  //       Log::Warn << "Save to '" << filename << "' failed." << std::endl;
+
+  //     return false;
+  //   }
+
+  // Timer::Stop("saving_data");
+  // // Finally return success.
+  // return true;
+// }
 
 //! Save a model to file.
 template<typename T>
