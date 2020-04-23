@@ -21,15 +21,14 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
                         const arma::Row<size_t> labels,
                         const TopK& k)
 {
-  if(data.n_cols! = labels.n_cols)
+  if (data.n_cols != labels.n_cols)
   {
     std::ostringstream fpp;
-    fpp << "topK_accuracy_score::Evaluate(): number of inputs ("<< data.n_cols <<")" 
+    fpp << "topK_accuracy_score::Evaluate(): number of inputs ("<< data.n_cols <<")"
         << "does not matches with number of target labels ("<< labels.n_cols <<")" 
         << std::endl;
     throw std::invalid_argument(fpp.str());
   }
-  
   arma::Row<size_t> predictedLabels;
   // Taking Classification output from the model.
   model.Classify(data, predictedLabels);
@@ -47,9 +46,9 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
   size_t idx = predictedClass[1] - k - 1;
   float count = 0;
   double srt = sort_index(predictedLabels);  
-  for(i = 1; i < predictedClass[0]; i++)
+  for (i = 1; i < predictedClass[0]; i++)
   {
-    if(labels[i]! = srt[i, idx+1:])
+    if (labels[i] != srt[i, idx+1:])
     {
       count = count + 1;
     }
@@ -57,9 +56,7 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
   // Accuracy Score of top k predicted class labels.
   return (double) count / predictedClass[0];
 }
-
 } // namespace cv
 } // namespace mlpack
-
 #endif
 
