@@ -45,7 +45,7 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
     fs << "There are less number of class for Top K Accuracy score" << std::endl;
   }
   size_t idx = predictedClass[1] - k - 1;
-  const float count = 0;
+  float count = 0;
   double srt = sort_index(predictedLabels);  
   for(i = 1; i < predictedClass[0]; i++)
   {
