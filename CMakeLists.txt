@@ -771,8 +771,10 @@ if (PKG_CONFIG_FOUND)
 
   # Getting the absolute path, for some reason CMAKE gets confused, 
   # even with CMAKE_INSTALL_INCLUDEDIR
-  GNUInstallDirs_get_absolute_install_dir(MLPACK_LIBS_DIR CMAKE_INSTALL_LIBDIR)
-  GNUInstallDirs_get_absolute_install_dir(MLPACK_INCS_DIR CMAKE_INSTALL_INCLUDEDIR)
+  if (UNIX)
+    GNUInstallDirs_get_absolute_install_dir(MLPACK_LIBS_DIR CMAKE_INSTALL_LIBDIR)
+    GNUInstallDirs_get_absolute_install_dir(MLPACK_INCS_DIR CMAKE_INSTALL_INCLUDEDIR)
+  endif()
 
   # Generate the version, config and target files into the build directory.
   write_basic_package_version_file(
