@@ -11,11 +11,9 @@
   * Pass CMAKE_CXX_FLAGS (compilation options) correctly to Python build
     (#2367).
 
-<<<<<<< HEAD
   * Expose ensmallen Callbacks for sparseautoencoder (#2198).
-=======
+
   * Bugfix for LARS class causing invalid read (#2374).
->>>>>>> ca72bc21b... Updated copy and move constructors to check if matGram points to internally held matrix, Updated History.md
 
 ### mlpack 3.3.0
 ###### 2020-04-07
