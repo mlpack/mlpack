@@ -88,8 +88,6 @@ NeuralTuringMachine<InputDataType, OutputDataType>::NeuralTuringMachine(
 template <typename InputDataType, typename OutputDataType>
 NeuralTuringMachine<InputDataType, OutputDataType>::~NeuralTuringMachine()
 {
-  boost::apply_visitor(deleteVisitor, readHead);
-  boost::apply_visitor(deleteVisitor, writeHead);
   boost::apply_visitor(deleteVisitor, controller);
   boost::apply_visitor(deleteVisitor, inputToLinear);
   boost::apply_visitor(deleteVisitor, eraseGate);

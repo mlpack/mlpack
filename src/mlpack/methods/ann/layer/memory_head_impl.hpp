@@ -202,7 +202,7 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
 { 
   double x = *lBt.end();
   arma::vec temp = gy;
-  if (std::abs(*bBt - x)<0.000001)
+  if (std::abs(*bBt - x)<1)
   {
     bBt = (--lBt.end());
     bCosineT = (--lConsineT.end());
@@ -240,7 +240,7 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   const arma::mat& memory = *bMemoryHistory;
 
   // Error of output
-  OutputDataType dW = temp;
+  arma::vec dW = temp;
 
   // Error of wDash
   double sum1 = arma::as_scalar(arma::sum(wDash));
@@ -424,18 +424,6 @@ void MemoryHead<InputDataType, OutputDataType>::ResetCell(const size_t /*size*/)
 
   prevError = arma::zeros<arma::mat>((memSize) + (1) + (1) +
       (2 * shiftSize + 1) + (1), 1);
-
-  lWDash.clear();
-  lGammaT.clear();
-  lWTilde.clear();
-  lShiftMatrix.clear();
-  lWg.clear();
-  lSt.clear();
-  lGt.clear();
-  lWe.clear();
-  lWc.clear();
-  lBt.clear();
-  lConsineT.clear();
 
   bWdash = lWDash.end();
   bGammaT = lGammaT.end();
