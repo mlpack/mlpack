@@ -74,7 +74,7 @@ class SimpleDQN
    * @param state Input state.
    * @param actionValue Matrix to put output action values of states input.
    */
-  void Predict(const arma::mat state, arma::mat& actionValue)
+  void Predict(const arma::mat& state, arma::mat& actionValue)
   {
     network.Predict(state, actionValue);
   }
@@ -85,7 +85,7 @@ class SimpleDQN
    * @param state The input state.
    * @param target The predicted target.
    */
-  void Forward(const arma::mat state, arma::mat& target)
+  void Forward(const arma::mat& state, arma::mat& target)
   {
     network.Forward(state, target);
   }
@@ -110,7 +110,12 @@ class SimpleDQN
    * @param target The training target.
    * @param gradient The gradient.
    */
+<<<<<<< HEAD
   void Backward(const arma::mat state, arma::mat& target, arma::mat& gradient)
+=======
+  void Backward(const arma::mat& state, arma::mat& target,
+      arma::mat& gradient)
+>>>>>>> 7564d6a63... Fixed parameters and indentation
   {
     network.Backward(state, target, gradient);
   }
