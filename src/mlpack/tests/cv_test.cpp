@@ -200,14 +200,14 @@ BOOST_AUTO_TEST_CASE(TopKAccuracyTest)
   size_t numClasses = 4;
   size_t k = 3;
   // These labels should be predicted in response to the data since we use them
-  arma::Row<size_t> predictedLabels("0 0  0 1  2 2 2 2  3 3 3 3");
+  arma::Row<size_t> predicted("0 0  0 1  2 2 2 2  3 3 3 3");
 
   // Call Classification model
-  NaiveBayesClassifier<> nb(data, predictedLabels, numClasses);
+  NaiveBayesClassifier<> nb(data, predicted, numClasses);
 
   // Assert that the Naive Bayes model really predicts the labels above in
   // response to the data.
-  BOOST_REQUIRE_CLOSE(TopKAccuracy::Evaluate(nb, data, predictedLabels, k), 1e-5);
+  BOOST_REQUIRE_CLOSE(TopKAccuracy::Evaluate(nb, data, predicted, k), 1e-5);
 }
 
 /**
