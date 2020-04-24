@@ -18,7 +18,7 @@
 #include <mlpack/core/cv/metrics/precision.hpp>
 #include <mlpack/core/cv/metrics/recall.hpp>
 #include <mlpack/core/cv/metrics/r2_score.hpp>
-#include <mlpack/core/cv/metrics/topk_accuracy.hpp>
+#include <mlpack/core/cv/metrics/top_k_accuracy.hpp>
 #include <mlpack/core/cv/simple_cv.hpp>
 #include <mlpack/core/cv/k_fold_cv.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(TopKAccuracyTest)
   // Labels that will be considered as "ground truth".
   arma::Row<size_t> labels("0 1  0 2  1 2 2 2  3 3 3 3");
   size_t numClasses = 4;
-  size_t k = 2;
+  size_t k = 3;
   // These labels should be predicted in response to the data since we use them
   arma::Row<size_t> predictedLabels("0 0  0 1  2 2 2 2  3 3 3 3");
 
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(TopKAccuracyTest)
 
   // Assert that the Naive Bayes model really predicts the labels above in
   // response to the data.
-  BOOST_REQUIRE_CLOSE(TopKAccuracy::Evaluate(nb, data), labels, k, 1e-5);
+  BOOST_REQUIRE_CLOSE(TopKAccuracy::Evaluate(nb, data, predictedLabels, k), 1e-5);
 }
 
 /**
