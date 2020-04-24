@@ -48,7 +48,7 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
   double srt = sort_index(predictedLabels);
   for (i = 1; i < predictedClass[0]; i++)
   {
-    if (labels[i] != srt[i, idx+1:])
+    if (labels[i] != srt[i, idx + 1:])
     {
       count = count + 1;
     }
