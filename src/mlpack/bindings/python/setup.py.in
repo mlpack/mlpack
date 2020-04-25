@@ -30,9 +30,12 @@ if not '${OpenMP_CXX_FLAGS}':
 else:
   extra_link_args=['${OpenMP_CXX_FLAGS}']
 
-# Get list of library dirs.
+# Get list of library dirs.  Note that for the list of directories, any
+# directories with a (valid) space in the name will be given to us as '\ '; so,
+# in order to split these right, we first convert all spaces to ';', then
+# convert '\;' back to ' ', then split on ';'.
 library_dirs = list(filter(None, ['${MLPACK_LIBDIR}'] +
-    '${Boost_LIBRARY_DIRS}'.split(' ')))
+    '${Boost_LIBRARY_DIRS}'.replace(' ', ';').replace('\;', ' ').split(' ')))
 
 # We'll link with the exact paths to each library using extra_objects, instead
 # of linking with 'libraries' and 'library_dirs', because of differences in
@@ -73,7 +76,9 @@ else:
                   include_dirs=[ \
                       np.get_include(), \
                       '${OUTPUT_DIR}/src/mlpack/bindings/python/'] +
-                      '${CYTHON_INCLUDE_DIRECTORIES}'.split(' '),
+                      '${CYTHON_INCLUDE_DIRECTORIES}'.replace(' ', ';')
+                                                     .replace('\;', ' ')
+                                                     .split(';'),
                   library_dirs=library_dirs,
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
@@ -89,7 +94,9 @@ else:
                   include_dirs=[ \
                       np.get_include(), \
                       '${OUTPUT_DIR}/src/mlpack/bindings/python/'] +
-                      '${CYTHON_INCLUDE_DIRECTORIES}'.split(' '),
+                      '${CYTHON_INCLUDE_DIRECTORIES}'.replace(' ', ';')
+                                                     .replace('\;', ' ')
+                                                     .split(';'),
                   library_dirs=library_dirs,
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,

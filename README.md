@@ -17,12 +17,13 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
   <a href="http://ci.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/build.svg?jobUrl=http%3A%2F%2Fci.mlpack.org%2Fjob%2Fmlpack%2520-%2520git%2520commit%2520test%2F&label=Linux%20build&style=flat-square" alt="Jenkins"></a>
   <a href="https://coveralls.io/github/mlpack/mlpack?branch=master"><img src="https://img.shields.io/coveralls/mlpack/mlpack/master.svg?style=flat-square" alt="Coveralls"></a>
   <a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License"></a>
+  <a href="http://numfocus.org/donate-to-mlpack"><img src="https://img.shields.io/badge/sponsored%20by-NumFOCUS-orange.svg?style=flat-square&colorA=E1523D&colorB=007D8A" alt="NumFOCUS"></a>
 </p>
 
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-3.2.2.tar.gz">current stable version (3.2.2)</a>
+    <a href="https://www.mlpack.org/files/mlpack-3.3.0.tar.gz">current stable version (3.3.0)</a>
   </em>
 </p>
 
@@ -33,6 +34,8 @@ functions as a "swiss army knife" for machine learning researchers.  In addition
 to its powerful C++ interface, mlpack also provides command-line programs,
 Python bindings, and Julia bindings.
 
+[//]: # (numfocus-fiscal-sponsor-attribution)
+
 mlpack uses an [open governance model](./GOVERNANCE.md) and is fiscally
 sponsored by [NumFOCUS](https://numfocus.org/).  Consider making a
 [tax-deductible donation](https://numfocus.org/donate-to-mlpack) to help the
@@ -40,7 +43,7 @@ project pay for developer time, professional services, travel, workshops, and a
 variety of other needs.
 
 <div align="center">
-  <a href="https://numfocus.org/donate-to-mlpack">
+  <a href="https://numfocus.org/">
     <img height="60px"
          src="https://raw.githubusercontent.com/numfocus/templates/master/images/numfocus-logo.png"
          align="center">
@@ -97,11 +100,11 @@ Citations are beneficial for the growth and improvement of mlpack.
 
 mlpack has the following dependencies:
 
-      Armadillo     >= 8.400.0
+      Armadillo      >= 8.400.0
       Boost (program_options, math_c99, unit_test_framework, serialization,
-             spirit)
-      CMake         >= 3.3.2
-      ensmallen     >= 2.10.0
+             spirit) >= 1.58.0
+      CMake          >= 3.3.2
+      ensmallen      >= 2.10.0
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
@@ -115,6 +118,9 @@ following Python packages are installed:
       numpy
       pandas >= 0.15.0
 
+If you would like to build the Julia bindings, make sure that Julia >= 1.3.0 is
+installed.
+
 If the STB library headers are available, image loading support will be
 compiled.
 
@@ -122,10 +128,11 @@ If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
 ### 4. Building mlpack from source
 
-This section discusses how to build mlpack from source.  However, mlpack is in
-the repositories of many Linux distributions, so it may be easier to use the
-package manager for your system.  For example, on Ubuntu, you can install mlpack
-with the following command:
+This document discusses how to build mlpack from source. These build directions 
+will work for any Linux-like shell environment (for example Ubuntu, macOS,
+FreeBSD etc). However, mlpack is in the repositories of many Linux distributions 
+and so it may be easier to use the package manager for your system.  For example, 
+on Ubuntu, you can install mlpack with the following command:
 
     $ sudo apt-get install libmlpack-dev
 
@@ -216,7 +223,7 @@ and submit an issue. The mlpack developers will quickly help you figure it out:
 
 [mlpack on Github](https://www.github.com/mlpack/mlpack/)
 
-Alternately, mlpack help can be found in IRC at `#mlpack` on irc.freenode.net.
+Alternately, mlpack help can be found in IRC at `#mlpack` on chat.freenode.net.
 
 If you wish to install mlpack to `/usr/local/include/mlpack/`, `/usr/local/lib/`,
 and `/usr/local/bin/`, make sure you have root privileges (or write permissions 

@@ -55,7 +55,9 @@ PPO<
   #endif
   policy(std::move(policy)),
   replayMethod(std::move(replayMethod)),
-  environment(std::move(environment))
+  environment(std::move(environment)),
+  totalSteps(0),
+  deterministic(false)
 {
   // Set up actor and critic network.
   if (actorNetwork.Parameters().is_empty())
@@ -153,7 +155,7 @@ void PPO<
                from(discountedRewards) - actionValues;
 
   // Update the critic.
-  criticNetwork.Backward(advantages, criticGradients);
+  criticNetwork.Backward(sampledStates, advantages, criticGradients);
   #if ENS_VERSION_MAJOR == 1
   criticUpdater.Update(criticNetwork.Parameters(), config.StepSize(),
                        criticGradients);
@@ -193,36 +195,45 @@ void PPO<
 
     arma::mat ratio = arma::exp((prob - oldProb).t());
 
-    arma::mat surrogateLoss = arma::clamp(ratio, 1 - config.Epsilon(),
-                                          1 + config.Epsilon()) % advantages;
-    arma::mat loss = -arma::min(ratio % advantages, surrogateLoss);
+    arma::mat L1 = ratio % advantages;
+    arma::mat L2 = arma::clamp(ratio, 1 - config.Epsilon(),
+                              1 + config.Epsilon()) % advantages;
+    arma::mat surroLoss = -arma::min(L1, L2);
 
-    // backward the gradient
-    arma::mat dratio1 = -loss % (ratio % advantages <= surrogateLoss)
-                        % advantages;
-    arma::mat dsurro = -loss % (ratio % advantages >= surrogateLoss);
-    arma::mat dratio2 = (ratio >= (1 - config.Epsilon())) %
-                        (ratio <= (1 + config.Epsilon())) % advantages % dsurro;
+    // Calculates the gradient for Surrogate Loss
+    arma::mat dL1 = (L1 < L2) % advantages;
+    arma::mat dL2 = (L1 >= L2) % (ratio >= (1 - config.Epsilon())) %
+                        (ratio <= (1 + config.Epsilon())) % advantages;
+    arma::mat dSurroLoss = -(dL1 + dL2);
 
-    arma::mat dprob = (dratio1 + dratio2) % ratio;
-
-    arma::mat dmu = (observation.t() - mu) / (arma::square(sigma)) % dprob;
+    // Calculates the gradient for Normal Distribution (mu and sigma)
+    arma::mat dmu = (observation.t() - mu) / (arma::square(sigma)) % ratio;
     arma::mat dsigma = -1.0 / sigma +
-                       arma::square(observation.t() - mu) / arma::pow(sigma, 3);
+                       arma::square(observation.t() - mu) / arma::pow(sigma, 3)
+                       % ratio;
 
+    // Calculates the gradient for activations (tanh and softplus)
     arma::mat dTanh, dSoftP;
-    ann::TanhFunction::Deriv(dmu, dTanh);
-    ann::SoftplusFunction::Deriv(dsigma, dSoftP);
+    // in Tanh activation, the activation is provided as input in Deriv
+    ann::TanhFunction::Deriv(mu, dTanh);
+    // in Softplus activation, the input data is provided as input in Deriv
+    ann::SoftplusFunction::Deriv(actionParameter.row(1), dSoftP);
 
-    arma::mat dLoss = arma::join_cols(dTanh, dSoftP);
+    // calculation of final gradient using chain rule
+    arma::mat grad1, grad2;
+    grad1 = dTanh % dmu % dSurroLoss;
+    grad2 = dSoftP % dsigma % dSurroLoss;
+    arma::mat grad = arma::join_cols(grad1, grad2);
 
-    actorNetwork.Backward(dLoss, actorGradients);
+    // since empty loss is used, we give the gradient as input to Backward(),
+    // instead of target.
+    actorNetwork.Backward(sampledStates, grad, actorGradients);
 
     #if ENS_VERSION_MAJOR == 1
     actorUpdater.Update(actorNetwork.Parameters(), config.StepSize(),
                         actorGradients);
     #else
-    criticUpdatePolicy->Update(actorNetwork.Parameters(), config.StepSize(),
+    actorUpdatePolicy->Update(actorNetwork.Parameters(), config.StepSize(),
                                actorGradients);
     #endif
   }
@@ -316,6 +327,9 @@ double PPO<
   // Running until get to the terminal state.
   while (!environment.IsTerminal(state))
   {
+    if (config.StepLimit() && steps >= config.StepLimit())
+      break;
+
     totalReturn += Step();
 
     steps++;
@@ -329,9 +343,6 @@ double PPO<
       Update();
       replayMethod.Clear();
     }
-
-    if (config.StepLimit() && steps >= config.StepLimit())
-      break;
   }
 
   return totalReturn;

@@ -30,6 +30,7 @@
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
 #include <mlpack/methods/ann/layer/c_relu.hpp>
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
+#include <mlpack/methods/ann/layer/linear_no_bias.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
 #include <mlpack/methods/ann/layer/lookup.hpp>
 #include <mlpack/methods/ann/layer/multiply_constant.hpp>
@@ -41,6 +42,9 @@
 #include <mlpack/methods/ann/layer/select.hpp>
 #include <mlpack/methods/ann/layer/subview.hpp>
 #include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
+#include <mlpack/methods/ann/layer/hardshrink.hpp>
+#include <mlpack/methods/ann/layer/celu.hpp>
+#include <mlpack/methods/ann/layer/softshrink.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
@@ -242,6 +246,7 @@ using LayerTypes = boost::variant<
     Padding<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
     WeightNorm<arma::mat, arma::mat>*,
+    CELU<arma::mat, arma::mat>*,
     MoreTypes,
     CustomLayers*...
 >;

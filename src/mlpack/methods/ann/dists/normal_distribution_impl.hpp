@@ -40,8 +40,8 @@ arma::vec NormalDistribution::LogProbability(
     const arma::vec& observation) const
 {
   const arma::vec variance = arma::square(sigma);
-  arma::vec v1 = sigma + std::log(std::sqrt(2 * pi));
-  arma::vec v2 = arma::square(observation - sigma) / (2 * variance);
+  arma::vec v1 = arma::log(sigma) + std::log(std::sqrt(2 * pi));
+  arma::vec v2 = arma::square(observation - mean) / (2 * variance);
   return  (-v1 - v2);
 }
 
