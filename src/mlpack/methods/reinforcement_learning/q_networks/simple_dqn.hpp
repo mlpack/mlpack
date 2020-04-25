@@ -40,7 +40,7 @@ class SimpleDQN
   using NetworkType = FFN<OutputLayerType, InitializationRuleType>;
 
   //! Default constructor.
-  SimpleDQN()
+  SimpleDQN() : network()
   { /* Nothing to do here. */ }
 
   /**
@@ -54,7 +54,7 @@ class SimpleDQN
   SimpleDQN(const int inputDim,
             const int h1,
             const int h2,
-            const int outputDim)
+            const int outputDim) : network()
   {
     network.Add<Linear<>>(inputDim, h1);
     network.Add<ReLULayer<>>();
