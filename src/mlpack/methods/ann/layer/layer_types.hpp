@@ -248,7 +248,7 @@ using LayerTypes = boost::variant<
     Linear<arma::mat, arma::mat, NoRegularizer>*,
     LinearNoBias<arma::mat, arma::mat, NoRegularizer>*,
     LogSoftMax<arma::mat, arma::mat>*,
-    SoftMax<arma::mat, arma::mat>*,
+    Softmax<arma::mat, arma::mat>*,
     Lookup<arma::mat, arma::mat>*,
     LSTM<arma::mat, arma::mat>*,
     GRU<arma::mat, arma::mat>*,

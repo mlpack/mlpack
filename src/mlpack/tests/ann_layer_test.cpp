@@ -1644,12 +1644,12 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
 }
 
 /**
- * Simple SoftMax module test.
+ * Simple Softmax module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleSoftMaxLayerTest)
+BOOST_AUTO_TEST_CASE(SimpleSoftmaxLayerTest)
 {
   arma::mat input, output, gy, g;
-  SoftMax<> module;
+  Softmax<> module;
 
   // Test the forward function.
   input = arma::mat("1.7; 3.6");
@@ -1666,11 +1666,11 @@ BOOST_AUTO_TEST_CASE(SimpleSoftMaxLayerTest)
 }
 
 /**
- * SoftMax layer numerical gradient test.
+ * Softmax layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientSoftMaxTest)
+BOOST_AUTO_TEST_CASE(GradientSoftmaxTest)
 {
-  // SoftMax function gradient instantiation.
+  // Softmax function gradient instantiation.
   struct GradientFunction
   {
     GradientFunction()
@@ -1684,7 +1684,7 @@ BOOST_AUTO_TEST_CASE(GradientSoftMaxTest)
       model->Add<Linear<> >(10, 10);
       model->Add<ReLULayer<> >();
       model->Add<Linear<> >(10, 2);
-      model->Add<SoftMax<> >();
+      model->Add<Softmax<> >();
     }
 
     ~GradientFunction()

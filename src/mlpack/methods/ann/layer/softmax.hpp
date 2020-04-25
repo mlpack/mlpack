@@ -20,9 +20,11 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the softmax layer. The softmax loss layer computes
- * the multinomial logistic loss of the softmax of its inputs. It should be
- * used for inference only and not with NLL loss (use logsoftmax instead).
+ * Implementation of the Softmax layer. The softmax function takes as input a
+ * vector of K real numbers, and normalizes it into a probability distribution
+ * consisting of K probabilities proportional to the exponentials of the input
+ * numbers.. It should be used for inference only and not with NLL loss (use
+ * LogSoftMax instead).
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -33,13 +35,13 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class SoftMax
+class Softmax
 {
  public:
   /**
    * Create the Softmax object.
    */
-  SoftMax();
+  Softmax();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -87,7 +89,7 @@ class SoftMax
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class SoftMax
+}; // class Softmax
 
 } // namespace ann
 } // namespace mlpack

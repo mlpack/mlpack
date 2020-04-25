@@ -20,18 +20,16 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-SoftMax<InputDataType, OutputDataType>::SoftMax()
+Softmax<InputDataType, OutputDataType>::Softmax()
 {
   // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void SoftMax<InputDataType, OutputDataType>::Forward(
+void Softmax<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)
 {
-  output.set_size(arma::size(input));
-
   InputType inputMax = arma::repmat(arma::max(input, 0), input.n_rows, 1);
 
   output = inputMax + arma::log(arma::repmat(
@@ -41,7 +39,7 @@ void SoftMax<InputDataType, OutputDataType>::Forward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void SoftMax<InputDataType, OutputDataType>::Backward(
+void Softmax<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& input,
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
@@ -58,7 +56,7 @@ void SoftMax<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void SoftMax<InputDataType, OutputDataType>::serialize(
+void Softmax<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
     const unsigned int /* version */)
 {
