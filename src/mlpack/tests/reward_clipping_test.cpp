@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(RewardClippedAcrobotWithDQN)
   for (size_t trial = 0; trial < 3; ++trial)
   {
     // Set up the network.
-    SimpleDQN<> model(4, 64, 32, 3);
+    SimpleDQN<MeanSquaredError<>, GaussianInitialization> model(4, 64, 32, 3);
 
     // Set up the policy and replay method.
     GreedyPolicy<RewardClipping<Acrobot>> policy(1.0, 1000, 0.1, 0.99);

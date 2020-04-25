@@ -24,17 +24,23 @@ namespace rl {
 using namespace mlpack::ann;
 
 /**
- * @tparam NetworkType The type of network used for simple dqn.
+ * Implementation of simple linear Deep-Q-Learning model.
+ *
+ * @tparam OutputLayerType The output layer type used to evaluate the network.
+ * @tparam InitializationRuleType Rule used to initialize the weight matrix.
  */
-template <typename NetworkType = FFN<MeanSquaredError<>,
-                                    GaussianInitialization>>
+template<
+  typename OutputLayerType = MeanSquaredError<>,
+  typename InitializationRuleType = RandomInitialization
+>
 class SimpleDQN
 {
  public:
-  /**
-   * Default constructor.
-   */
-  SimpleDQN() : network()
+  //! Convenience typedef for the internal model construction.
+  using NetworkType = FFN<OutputLayerType, InitializationRuleType>;
+
+  //! Default constructor.
+  SimpleDQN()
   { /* Nothing to do here. */ }
 
   /**
@@ -48,16 +54,13 @@ class SimpleDQN
   SimpleDQN(const int inputDim,
             const int h1,
             const int h2,
-            const int outputDim) : network()
+            const int outputDim)
   {
-    FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
-        GaussianInitialization(0, 0.001));
-    model.Add<Linear<>>(inputDim, h1);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(h1, h2);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(h2, outputDim);
-    network = model;
+    network.Add<Linear<>>(inputDim, h1);
+    network.Add<ReLULayer<>>();
+    network.Add<Linear<>>(h1, h2);
+    network.Add<ReLULayer<>>();
+    network.Add<Linear<>>(h2, outputDim);
   }
 
   SimpleDQN(NetworkType network) : network(std::move(network))

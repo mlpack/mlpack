@@ -15,6 +15,7 @@
 
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
+#include <mlpack/methods/ann/init_rules/glorot_init.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/reinforcement_learning/q_learning.hpp>
@@ -42,7 +43,7 @@ BOOST_AUTO_TEST_SUITE(QLearningTest);
 BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 {
   // Set up the network.
-  SimpleDQN<> model(4, 128, 128, 2);
+  SimpleDQN<MeanSquaredError<>, GaussianInitialization> model(4, 128, 128, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -104,7 +105,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
 {
   // Set up the network.
-  SimpleDQN<> model(4, 128, 128, 2);
+  SimpleDQN<MeanSquaredError<>, GaussianInitialization> model(4, 128, 128, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
@@ -165,15 +166,13 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
 //! Test Double DQN in Cart Pole task.
 BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
 {
-  // It isn't guaranteed that the network will converge in the specified number
-  // of iterations using random weights. If this works 1 of 4 times, I'm fine
-  // with that.
+  // If this works 1 of 2 times, I'm fine with that.
   size_t episodes = 0;
   bool converged = false;
-  for (size_t trial = 0; trial < 4; ++trial)
+  for (size_t trial = 0; trial < 2; ++trial)
   {
     // Set up the network.
-    SimpleDQN<> model(4, 20, 20, 2);
+    SimpleDQN<MeanSquaredError<>, GaussianInitialization> model(4, 20, 20, 2);
 
     // Set up the policy and replay method.
     GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -230,13 +229,13 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
 //! Test DQN in Acrobot task.
 BOOST_AUTO_TEST_CASE(AcrobotWithDQN)
 {
-  // We will allow three trials, although it would be very uncommon for the test
+  // We will allow two trials, although it would be very uncommon for the test
   // to use more than one.
   bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 2; ++trial)
   {
     // Set up the network.
-    SimpleDQN<> model(4, 64, 32, 3);
+    SimpleDQN<MeanSquaredError<>, GaussianInitialization> model(4, 64, 32, 3);
 
     // Set up the policy and replay method.
     GreedyPolicy<Acrobot> policy(1.0, 1000, 0.1, 0.99);
@@ -304,10 +303,10 @@ BOOST_AUTO_TEST_CASE(MountainCarWithDQN)
 {
   // We will allow three trials total.
   bool success = false;
-  for (size_t trial = 0; trial < 3; trial++)
+  for (size_t trial = 0; trial < 2; trial++)
   {
     // Set up the network.
-    SimpleDQN<> model(2, 64, 32, 3);
+    SimpleDQN<MeanSquaredError<>, GlorotInitialization> model(2, 64, 32, 3);
 
     // Set up the policy and replay method.
     GreedyPolicy<MountainCar> policy(1.0, 1000, 0.1, 0.99);
