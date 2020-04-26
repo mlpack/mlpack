@@ -25,6 +25,7 @@ namespace ann /** Artificial Neural Network. */ {
  * Normal distribution is a function which accepts a mean and a standard deviation
  * term and creates a probablity distribution out of it.
  */
+template <typename DataType = arma::mat>
 class NormalDistribution
 {
  public:
@@ -40,14 +41,14 @@ class NormalDistribution
    * @param mean The mean of the normal distribution.
    * @param sigma The standard deviation of the normal distribution.
    */
-  NormalDistribution(const arma::vec& mean, const arma::vec& sigma);
+  NormalDistribution(const DataType& mean, const DataType& sigma);
 
   /**
    * Return the probabilities of the given matrix of observations.
    *
    * @param observation The observation matrix.
    */
-  arma::vec Probability(const arma::vec& observation) const
+  DataType Probability(const DataType& observation) const
   {
     return arma::exp(LogProbability(observation));
   }
@@ -57,7 +58,7 @@ class NormalDistribution
    *
    * @param observation The observation matrix.
    */
-  arma::vec LogProbability(const arma::vec& observation) const;
+  DataType LogProbability(const DataType& observation) const;
 
   /**
    * Stores the gradient of the probabilities of the observations
@@ -67,9 +68,9 @@ class NormalDistribution
    * @param dmu The gradient with respect to mean.
    * @param dsigma The gradient with respect to standard deviation.
    */
-  void ProbBackward(const arma::vec& observation,
-                    arma::vec& dmu,
-                    arma::vec& dsigma) const;
+  void ProbBackward(const DataType& observation,
+                    DataType& dmu,
+                    DataType& dsigma) const;
 
   /**
    * Calculates the normal probability density function for each
@@ -78,7 +79,7 @@ class NormalDistribution
    * @param x List of observations.
    * @param probabilities Output probabilities for each input observation.
    */
-  void Probability(const arma::vec& x, arma::vec& probabilities) const
+  void Probability(const DataType& x, DataType& probabilities) const
   {
     probabilities = Probability(x);
   }
@@ -90,7 +91,7 @@ class NormalDistribution
     * @param x List of observations.
     * @param log probabilities Output probabilities for each input observation.
     */
-  void LogProbability(const arma::vec& x, arma::vec& probabilities) const
+  void LogProbability(const DataType& x, DataType& probabilities) const
   {
     probabilities = LogProbability(x);
   }
@@ -101,27 +102,27 @@ class NormalDistribution
    *
    * @return Random observation from this Normal distribution.
    */
-  arma::vec Sample() const;
+  DataType Sample() const;
 
   /**
    * Return the mean.
    */
-  const arma::vec& Mean() const { return mean; }
+  const DataType& Mean() const { return mean; }
 
   /**
    * Return a modifiable copy of the mean.
    */
-  arma::vec& Mean() { return mean; }
+  DataType& Mean() { return mean; }
 
   /**
    * Return the standard deviation.
    */
-  const arma::vec& Sigma() const { return sigma; }
+  const DataType& StandardDeviation() const { return sigma; }
 
   /**
    * Return a modifiable copy of the standard deviation.
    */
-  arma::vec& StandardDeviation() { return sigma; }
+  DataType& StandardDeviation() { return sigma; }
 
   //! Return the dimensionality of this distribution.
   size_t Dimensionality() const { return mean.n_elem; }
@@ -139,10 +140,10 @@ class NormalDistribution
 
  private:
   //! Mean of the distribution.
-  arma::vec mean;
+  DataType mean;
 
   //! Standard deviation of the distribution.
-  arma::vec sigma;
+  DataType sigma;
 }; // class NormalDistribution
 
 } // namespace ann

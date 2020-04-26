@@ -19,37 +19,42 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-NormalDistribution::NormalDistribution()
+template<typename DataType>
+NormalDistribution<DataType>::NormalDistribution()
 {
   // Nothing to do here.
 }
 
-NormalDistribution::NormalDistribution(
-    const arma::vec& mean,
-    const arma::vec& sigma) :
+template<typename DataType>
+NormalDistribution<DataType>::NormalDistribution(
+    const DataType& mean,
+    const DataType& sigma) :
     mean(mean),
     sigma(sigma)
 {
 }
 
-arma::vec NormalDistribution::Sample() const
+template<typename DataType>
+DataType NormalDistribution<DataType>::Sample() const
 {
-  return sigma * arma::randn<arma::vec>(mean.n_elem) + mean;
+  return sigma * arma::randn<DataType>(mean.n_elem) + mean;
 }
 
-arma::vec NormalDistribution::LogProbability(
-    const arma::vec& observation) const
+template<typename DataType>
+DataType NormalDistribution<DataType>::LogProbability(
+    const DataType& observation) const
 {
-  const arma::vec variance = arma::square(sigma);
-  arma::vec v1 = arma::log(sigma) + std::log(std::sqrt(2 * M_PI));
-  arma::vec v2 = arma::square(observation - mean) / (2 * variance);
+  const DataType variance = arma::square(sigma);
+  DataType v1 = arma::log(sigma) + std::log(std::sqrt(2 * M_PI));
+  DataType v2 = arma::square(observation - mean) / (2 * variance);
   return  (-v1 - v2);
 }
 
-void NormalDistribution::ProbBackward(
-    const arma::vec& observation,
-    arma::vec& dmu,
-    arma::vec& dsigma) const
+template<typename DataType>
+void NormalDistribution<DataType>::ProbBackward(
+    const DataType& observation,
+    DataType& dmu,
+    DataType& dsigma) const
 {
   dmu = (observation - mean) / (arma::square(sigma)) % Probability(observation);
   dsigma = (- 1.0 / sigma +
