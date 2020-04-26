@@ -30,6 +30,7 @@
 #include "get_printable_param_value.hpp"
 #include "get_allocated_memory.hpp"
 #include "delete_allocated_memory.hpp"
+#include "in_place_copy.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -160,6 +161,7 @@ class CLIOption
         &GetAllocatedMemory<N>;
     CLI::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
         &DeleteAllocatedMemory<N>;
+    CLI::GetSingleton().functionMap[tname]["InPlaceCopy"] = &InPlaceCopy<N>;
   }
 };
 
