@@ -37,10 +37,10 @@ class SimpleDQN
 {
  public:
   //! Convenience typedef for the internal model construction.
-  using NetworkType = FFN<OutputLayerType, InitializationRuleType>;
+  using NetworkType = SimpleDQN<OutputLayerType, InitializationRuleType>;
 
   //! Default constructor.
-  SimpleDQN() : network()
+  SimpleDQN()
   { /* Nothing to do here. */ }
 
   /**
@@ -54,7 +54,7 @@ class SimpleDQN
   SimpleDQN(const int inputDim,
             const int h1,
             const int h2,
-            const int outputDim) : network()
+            const int outputDim)
   {
     network.Add<Linear<>>(inputDim, h1);
     network.Add<ReLULayer<>>();
@@ -113,17 +113,17 @@ class SimpleDQN
    * @param target The training target.
    * @param gradient The gradient.
    */
-<<<<<<< HEAD
-  void Backward(const arma::mat state, arma::mat& target, arma::mat& gradient)
-=======
   void Backward(const arma::mat& state, arma::mat& target,
       arma::mat& gradient)
->>>>>>> 7564d6a63... Fixed parameters and indentation
-  {
-    network.Backward(state, target, gradient);
-  }
 
  private:
+  //! Instantiated outputlayer used to evaluate the network.
+  OutputLayerType outputLayer;
+
+  //! Instantiated InitializationRule object for initializing the network
+  //! parameter.
+  InitializationRuleType initializeRule;
+
   //! Locally-stored network.
   NetworkType network;
 };
