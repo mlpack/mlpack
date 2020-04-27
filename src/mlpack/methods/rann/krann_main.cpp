@@ -191,12 +191,9 @@ static void mlpackMain()
     rann->TreeType() = tree;
     rann->RandomBasis() = randomBasis;
 
+    Log::Info << "Using reference data from "
+        << CLI::GetPrintableParam<arma::mat>("reference") << "." << endl;
     arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
-
-    Log::Info << "Using reference data from '"
-        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
-        << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
-        << endl;
 
     rann->BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode);
   }
@@ -234,10 +231,9 @@ static void mlpackMain()
     arma::mat queryData;
     if (CLI::HasParam("query"))
     {
+      Log::Info << "Using query data from "
+          << CLI::GetPrintableParam<arma::mat>("query") << "." << endl;
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
-      Log::Info << "Using query data from '"
-          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
-          << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
     // Sanity check on k value: must be greater than 0, must be less than the

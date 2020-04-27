@@ -24,7 +24,7 @@ void PrintDoc(const util::ParamData& d, const void* /* input */, void* output)
 
   std::ostringstream& oss = *((std::ostringstream*) output);
 
-  oss << "`" << juliaName << "::" << GetJuliaType<T>() << "`: " << d.desc;
+  oss << "`" << juliaName << "::" << GetJuliaType<T>(d) << "`: " << d.desc;
 
   // Print a default, if possible.  Defaults aren't printed for matrix or model
   // parameters.
