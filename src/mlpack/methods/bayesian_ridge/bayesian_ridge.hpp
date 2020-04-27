@@ -94,8 +94,8 @@ class BayesianRidge
  public:
   /**
    * Set the parameters of Bayesian Ridge regression object. The
-   *    regulariation parameter is automaticaly set to its optimal value by
-   *    maximmization of the marginal likelihood.
+   * regularization parameter is automatically set to its optimal value by
+   * maximization of the marginal likelihood.
    *
    * @param centerData Whether or not center the data according to the
    *    examples.
