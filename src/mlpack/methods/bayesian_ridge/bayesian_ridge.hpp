@@ -33,7 +33,7 @@ namespace regression{
  * w. The model being entirely based on probabilty distributions, uncertainties 
  * are available and easly computed for both the parameters and the predictions.
  *
- * The avantage over linear regression and ridge regression is that the 
+ * The advantage over linear regression and ridge regression is that the 
  * regularization is determined from all the training data alone without any
  * require to an hold out method. 
  *
