@@ -49,9 +49,9 @@ BOOST_FIXTURE_TEST_SUITE(BayesianRidgeMainTest, BRTestFixture);
 BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
 {
   int n = 50, m = 4;
-  arma::mat X = arma::randu<arma::mat>(n, m);
-  arma::colvec omega = arma::randu<arma::colvec>(m);
-  arma::mat y =  X * omega;
+  arma::mat X = arma::randu<arma::mat>(m, n);
+  arma::colvec omega = arma::randu<arma::rowvec>(m);
+  arma::mat y =  omega * X;
 
   SetInputParam("input", std::move(X));
   SetInputParam("responses", std::move(y));
@@ -74,16 +74,16 @@ BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
 BOOST_AUTO_TEST_CASE(BayesianRidgeSavedEqualCode)
 {
   int n = 10, m = 4;
-  arma::mat X = arma::randu<arma::mat>(n, m);
-  arma::mat Xtest = arma::randu<arma::mat>(2 * n, m);
-  const arma::colvec omega = arma::randu<arma::colvec>(m);
-  arma::mat y =  X * omega;
+  arma::mat X = arma::randu<arma::mat>(m, n);
+  arma::mat Xtest = arma::randu<arma::mat>(m, 2 * n);
+  const arma::colvec omega = arma::randu<arma::rowvec>(m);
+  arma::mat y =  omega * X;
 
   BayesianRidge model;
-  model.Train(X.t(), y.t());
+  model.Train(X, y);
 
   arma::rowvec responses;
-  model.Predict(Xtest.t(), responses);
+  model.Predict(Xtest, responses);
 
   SetInputParam("input", std::move(X));
   SetInputParam("responses", std::move(y));
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(BayesianRidgeSavedEqualCode)
 
   mlpackMain();
 
-  arma::mat ytest = std::move(responses).t();
+  arma::mat ytest = std::move(responses);
   // Check that initial output and output using saved model are same.
   CheckMatrices(ytest, CLI::GetParam<arma::mat>("output_predictions"));
 }
