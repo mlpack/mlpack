@@ -185,36 +185,6 @@ class BayesianRidge
                          arma::colvec& dataScale);
 
   /**
-   * Copy constructor. Construct the BayesianRidge object by copying the 
-   * given BayesianRidge object.
-   *
-   * @param other BayesianRidge to copy.
-   */
-  BayesianRidge(const BayesianRidge& other);
-
-  /**
-   * Move constructor. Construct the BayesianRidge object by taking ownership
-   * of the the  given BayesianRidge object.
-   *
-   * @param other BayesianRidge to take the ownership.
-   */
-  BayesianRidge(BayesianRidge&& other);
-
-  /**
-   * Copy the given BayesianRidge object.
-   *
-   * @param other BayesianRidge object to copy.
-   */
-  BayesianRidge& operator=(const BayesianRidge& other);
-
-  /**
-   * Take ownership of the given BayesianRidge object.
-   *
-   * @param other BayesianRidge object to copy.
-   */
-  BayesianRidge& operator=(BayesianRidge&& other);
-
-  /**
    * Get the solution vector
    *
    * @return omega Solution vector.
