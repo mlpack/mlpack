@@ -54,8 +54,8 @@ BOOST_AUTO_TEST_CASE(CheckDimensionality)
 
   BOOST_REQUIRE_THROW(CheckSameDimensionality(dataset, refSet2, "TestingDim"),
       std::invalid_argument);
-  BOOST_REQUIRE_NO_THROW(CheckSameDimensionality(dataset, refSet, "TestingDim"
-      ));
+  BOOST_REQUIRE_NO_THROW(CheckSameDimensionality(dataset, refSet,
+      "TestingDim"));
 }
 
 BOOST_AUTO_TEST_SUITE_END();

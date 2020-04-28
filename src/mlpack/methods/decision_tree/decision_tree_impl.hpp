@@ -511,14 +511,6 @@ double DecisionTree<FitnessFunction,
     DimensionSelectionType dimensionSelector)
 {
   // Sanity check on data.
-  // if (data.n_cols != labels.n_elem)
-  // {
-  //   std::ostringstream oss;
-  //   oss << "DecisionTree::Train(): number of points (" << data.n_cols << ") "
-  //       << "does not match number of labels (" << labels.n_elem << ")!"
-  //       << std::endl;
-  //   throw std::invalid_argument(oss.str());
-  // }
   util::CheckSameSizes(data, labels, "DecisionTree::Train()");
 
   using TrueMatType = typename std::decay<MatType>::type;
@@ -567,14 +559,6 @@ double DecisionTree<FitnessFunction,
         WeightsType>::type>::value>*)
 {
   // Sanity check on data.
-  // if (data.n_cols != labels.n_elem)
-  // {
-  //   std::ostringstream oss;
-  //   oss << "DecisionTree::Train(): number of points (" << data.n_cols << ") "
-  //       << "does not match number of labels (" << labels.n_elem << ")!"
-  //       << std::endl;
-  //   throw std::invalid_argument(oss.str());
-  // }
   util::CheckSameSizes(data, labels, "DecisionTree::Train()");
 
   using TrueMatType = typename std::decay<MatType>::type;
@@ -623,14 +607,6 @@ double DecisionTree<FitnessFunction,
         WeightsType>::type>::value>*)
 {
   // Sanity check on data.
-  // if (data.n_cols != labels.n_elem)
-  // {
-  //   std::ostringstream oss;
-  //   oss << "DecisionTree::Train(): number of points (" << data.n_cols << ") "
-  //       << "does not match number of labels (" << labels.n_elem << ")!"
-  //       << std::endl;
-  //   throw std::invalid_argument(oss.str());
-  // }
   util::CheckSameSizes(data, labels, "DecisionTree::Train()");
 
   using TrueMatType = typename std::decay<MatType>::type;
