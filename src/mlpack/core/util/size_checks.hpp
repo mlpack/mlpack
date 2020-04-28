@@ -1,0 +1,108 @@
+/**
+ * @file size_checks.hpp
+ * @author Kirill Mishchenko
+ * @author Bisakh Mondal
+ *
+ * Utility for checking same size &  same dimensionality.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+#ifndef MLPACK_UTIL_SIZE_CHECKS_HPP
+#define MLPACK_UTIL_SIZE_CHECKS_HPP
+
+#include <mlpack/core.hpp>
+
+namespace mlpack {
+namespace util {
+
+/**
+  * Check for if the given data points & labels have same size.
+  *
+  * @param data data.
+  * @param labels Labels.
+  * @param callerDescription A description of the caller that can be used for
+  *     error generation.
+  * @param mode For nature of comparision(default "CE").
+  *   types of mode:
+  *     "CE" equivalent to (data.n_cols, labels.n_elem).
+  *     "CC" equivalent to (data.n_cols, labels.n_cols).
+  * @param addInfo  An additional information about labels that can be used for
+  *	precise error generation. Default is "labels". Another e.g. weights
+  */
+template<typename DataType, typename LabelsType>
+inline void CheckSameSizes(const DataType& data,
+                           const LabelsType& labels,
+                           const std::string& callerDescription,
+                           const std::string& mode = "CE",
+                           const std::string& addInfo = "labels")
+{
+  if (mode != "CE" && mode != "CC")
+    // For development purpose, not intended for user.
+    Log::Fatal << "Ensure Providing Correct mode." << std::endl;
+
+  const size_t size1 = data.n_cols;
+  const size_t size2 = mode == "CE" ? labels.n_elem : labels.n_cols;
+
+  if (size1 != size2)
+  {
+    std::ostringstream oss;
+    oss << callerDescription << ": number of points (" << size1 << ") "
+        << "does not match number of " << addInfo << " (" << size2 << ")!"
+        << std::endl;
+    throw std::invalid_argument(oss.str());
+  }
+}
+
+/**
+  * Check for if the given dataset dimension matches with the model's.
+  *
+  * @param data dataset.
+  * @param dimension Dimension of the model.
+  * @param callerDescription A description of the caller that can be used for
+  *     error generation.
+  * @param addInfo  An additional information about data that can be used for
+  *	precise error generation. Default is "dataset". Another e.g. weights.
+  */
+template<typename DataType, typename DimType>
+inline void CheckSameDimensionality(const DataType& data,
+                                    const DimType& dimension,
+                                    const std::string& callerDescription,
+                                    const std::string& addInfo = "dataset")
+{
+  if (data.n_rows != dimension.n_rows)
+  {
+    std::ostringstream oss;
+    oss << callerDescription << ": dimensionality of " << addInfo << " ("
+        << data.n_rows << ") is not equal to the dimensionality of the model"
+        " (" << dimension.n_rows << ")!";
+
+    throw std::invalid_argument(oss.str());
+  }
+}
+
+// An overload of CheckSameDimensionality() where second param is unsigned
+//    long int.
+template<typename DataType>
+inline void CheckSameDimensionality(const DataType& data,
+                                    const size_t& dimension,
+                                    const std::string& callerDescription,
+                                    const std::string& addInfo = "dataset")
+{
+  if (data.n_rows != dimension)
+  {
+    std::ostringstream oss;
+    oss << callerDescription << ": dimensionality of " << addInfo << " ("
+        << data.n_rows << ") is not equal to the dimensionality of the model"
+        " (" << dimension << ")!";
+    throw std::invalid_argument(oss.str());
+  }
+}
+
+} // namespace util
+} // namespace mlpack
+
+#endif
+
