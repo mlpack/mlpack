@@ -68,6 +68,100 @@ LARS::LARS(const arma::mat& data,
   Train(data, responses, transposeData);
 }
 
+// Copy Constructor.
+LARS::LARS(const LARS& other) :
+    matGramInternal(other.matGramInternal),
+    matGram(other.matGram != &other.matGramInternal ?
+        other.matGram : &matGramInternal),
+    matUtriCholFactor(other.matUtriCholFactor),
+    useCholesky(other.useCholesky),
+    lasso(other.lasso),
+    lambda1(other.lambda1),
+    lambda2(other.lambda2),
+    elasticNet(other.elasticNet),
+    tolerance(other.tolerance),
+    betaPath(other.betaPath),
+    lambdaPath(other.lambdaPath),
+    activeSet(other.activeSet),
+    isActive(other.isActive),
+    ignoreSet(other.ignoreSet),
+    isIgnored(other.isIgnored)
+{
+  // Nothing to do here.
+}
+
+// Move constructor.
+LARS::LARS(LARS&& other) :
+    matGramInternal(std::move(other.matGramInternal)),
+    matGram(other.matGram != &other.matGramInternal ?
+        other.matGram : &matGramInternal),
+    matUtriCholFactor(std::move(other.matUtriCholFactor)),
+    useCholesky(other.useCholesky),
+    lasso(other.lasso),
+    lambda1(other.lambda1),
+    lambda2(other.lambda2),
+    elasticNet(other.elasticNet),
+    tolerance(other.tolerance),
+    betaPath(std::move(other.betaPath)),
+    lambdaPath(std::move(other.lambdaPath)),
+    activeSet(std::move(other.activeSet)),
+    isActive(std::move(other.isActive)),
+    ignoreSet(std::move(other.ignoreSet)),
+    isIgnored(std::move(other.isIgnored))
+{
+  // Nothing to do here.
+}
+
+// Copy operator.
+LARS& LARS::operator=(const LARS& other)
+{
+  if (&other == this)
+    return *this;
+
+  matGramInternal = other.matGramInternal;
+  matGram = other.matGram != &other.matGramInternal ?
+      other.matGram : &matGramInternal;
+  matUtriCholFactor = other.matUtriCholFactor;
+  useCholesky = other.useCholesky;
+  lasso = other.lasso;
+  lambda1 = other.lambda1;
+  lambda2 = other.lambda2;
+  elasticNet = other.elasticNet;
+  tolerance = other.tolerance;
+  betaPath = other.betaPath;
+  lambdaPath = other.lambdaPath;
+  activeSet = other.activeSet;
+  isActive = other.isActive;
+  ignoreSet = other.ignoreSet;
+  isIgnored = other.isIgnored;
+  return *this;
+}
+
+// Move Operator.
+LARS& LARS::operator=(LARS&& other)
+{
+  if (&other == this)
+    return *this;
+
+  matGramInternal = std::move(other.matGramInternal);
+  matGram = other.matGram != &other.matGramInternal ?
+      other.matGram : &matGramInternal;
+  matUtriCholFactor = std::move(other.matUtriCholFactor);
+  useCholesky = other.useCholesky;
+  lasso = other.lasso;
+  lambda1 = other.lambda1;
+  lambda2 = other.lambda2;
+  elasticNet = other.elasticNet;
+  tolerance = other.tolerance;
+  betaPath = std::move(other.betaPath);
+  lambdaPath = std::move(other.lambdaPath);
+  activeSet = std::move(other.activeSet);
+  isActive = std::move(other.isActive);
+  ignoreSet = std::move(other.ignoreSet);
+  isIgnored = std::move(other.isIgnored);
+  return *this;
+}
+
 double LARS::Train(const arma::mat& matX,
                    const arma::rowvec& y,
                    arma::vec& beta,
