@@ -106,14 +106,8 @@ void CVBase<MLAlgorithm,
             WeightsType>::AssertDataConsistency(const MatType& xs,
                                                 const PredictionsType& ys)
 {
-  if (xs.n_cols != ys.n_cols)
-  {
-    std::ostringstream oss;
-    oss << "CVBase::AssertDataConsistency(): number of data points ("
-        << xs.n_cols << ") does not match number of predictions (" << ys.n_cols
-        << ")!" << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
+  util::CheckSameSizes(xs, ys, "CVBase::AssertDataConsistency()", "CC",
+      "predictions");
 }
 
 template<typename MLAlgorithm,

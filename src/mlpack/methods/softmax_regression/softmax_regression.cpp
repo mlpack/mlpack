@@ -11,6 +11,7 @@
  */
 
 #include "softmax_regression.hpp"
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace regression {
@@ -91,13 +92,8 @@ void SoftmaxRegression::Classify(const arma::mat& dataset,
                                  arma::mat& probabilities)
     const
 {
-  if (dataset.n_rows != FeatureSize())
-  {
-    std::ostringstream oss;
-    oss << "SoftmaxRegression::Classify(): dataset has " << dataset.n_rows
-        << " dimensions, but model has " << FeatureSize() << " dimensions!";
-    throw std::invalid_argument(oss.str());
-  }
+  util::CheckSameDimensionality(dataset, FeatureSize(),
+      "SoftmaxRegression::Classify()");
 
   // Calculate the probabilities for each test input.
   arma::mat hypothesis;

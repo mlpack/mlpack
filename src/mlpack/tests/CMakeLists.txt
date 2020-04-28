@@ -30,8 +30,7 @@ add_executable(mlpack_test
   det_test.cpp
   distribution_test.cpp
   drusilla_select_test.cpp
-  emst_test.cpp
-  facilities_test.cpp
+  emst_test.cpp 
   fastmks_test.cpp
   feedforward_network_test.cpp
   gan_test.cpp
@@ -98,6 +97,7 @@ add_executable(mlpack_test
   reward_clipping_test.cpp
   rl_components_test.cpp
   scaling_test.cpp
+  size_checks_test.cpp
   serialization.cpp
   serialization.hpp
   serialization_test.cpp

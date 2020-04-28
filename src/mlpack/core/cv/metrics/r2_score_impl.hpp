@@ -21,14 +21,8 @@ double R2Score<AdjustedR2>::Evaluate(MLAlgorithm& model,
                                      const DataType& data,
                                      const ResponsesType& responses)
 {
-  if (data.n_cols != responses.n_cols)
-  {
-    std::ostringstream oss;
-    oss << "R2Score::Evaluate(): number of points (" << data.n_cols << ") "
-        << "does not match number of responses (" << responses.n_cols << ")!"
-        << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
+  util::CheckSameSizes(data, responses, "R2Score::Evaluate()", "CC",
+      "responses");
 
   ResponsesType predictedResponses;
   // Taking Predicted Output from the model.

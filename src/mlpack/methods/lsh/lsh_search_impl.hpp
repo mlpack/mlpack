@@ -865,14 +865,8 @@ void LSHSearch<SortPolicy, MatType>::Search(
     const size_t T)
 {
   // Ensure the dimensionality of the query set is correct.
-  if (querySet.n_rows != referenceSet.n_rows)
-  {
-    std::ostringstream oss;
-    oss << "LSHSearch::Search(): dimensionality of query set ("
-        << querySet.n_rows << ") is not equal to the dimensionality the model "
-        << "was trained on (" << referenceSet.n_rows << ")!" << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
+  util::CheckSameDimensionality(querySet, referenceSet, "LSHSearch::Search()",
+      "query set");
 
   if (k > referenceSet.n_cols)
   {
