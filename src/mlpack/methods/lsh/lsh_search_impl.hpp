@@ -14,6 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace neighbor {

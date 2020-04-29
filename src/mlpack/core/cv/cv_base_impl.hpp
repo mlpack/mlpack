@@ -12,6 +12,8 @@
 #ifndef MLPACK_CORE_CV_CV_BASE_IMPL_HPP
 #define MLPACK_CORE_CV_CV_BASE_IMPL_HPP
 
+#include <mlpack/core.hpp>
+
 namespace mlpack {
 namespace cv {
 

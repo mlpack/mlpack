@@ -17,6 +17,7 @@
 
 // The rules for traversal.
 #include "range_search_rules.hpp"
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace range {
