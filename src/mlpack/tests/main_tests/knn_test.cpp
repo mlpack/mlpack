@@ -683,6 +683,7 @@ BOOST_AUTO_TEST_CASE(KNNDifferentLeafSizes)
   BOOST_CHECK_EQUAL(output_model->LeafSize(), (int) 1);
   BOOST_CHECK_EQUAL(CLI::GetParam<KNNModel*>("output_model")->LeafSize(),
     (int) 10);
-  }
+  delete output_model;
+}
 
 BOOST_AUTO_TEST_SUITE_END();

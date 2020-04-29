@@ -1,3 +1,12 @@
+trigger:
+  branches:
+    include:
+    - '*'
+pr:
+  branches:
+    include:
+    - '*'
+
 jobs:
 - job: Linux
   timeoutInMinutes: 360
@@ -28,15 +37,12 @@ jobs:
 - job: macOS
   timeoutInMinutes: 360
   pool:
-    vmImage: macOS-10.13
+    vmImage: macOS-10.14
   strategy:
     matrix:
       Plain:
         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF'
         python.version: '2.7'
-      Python27:
-        python.version: '2.7'
-        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF'
       Python37:
         python.version: '3.7'
         CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF'
@@ -47,23 +53,6 @@ jobs:
 
   steps:
   - template: macos-steps.yaml
-
-- job: WindowsVS14
-  timeoutInMinutes: 360
-  displayName: Windows VS14
-  pool:
-    vmImage: vs2015-win2012r2
-  strategy:
-    matrix:
-      Plain:
-        CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF'
-        CMakeGenerator: '-G "Visual Studio 14 2015 Win64"'
-        MSBuildVersion: '14.0'
-        ArchiveNoLibs: 'mlpack-windows-vs14-no-libs.zip'
-        ArchiveLibs: 'mlpack-windows-vs14.zip'
-        ArchiveTests: 'mlpack_test-vs14.xml'
-  steps:
-  - template: windows-steps.yaml
 
 - job: WindowsVS15
   timeoutInMinutes: 360

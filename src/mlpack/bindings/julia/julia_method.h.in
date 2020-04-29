@@ -7,6 +7,8 @@
 #ifndef JULIA_${PROGRAM_NAME}_H
 #define JULIA_${PROGRAM_NAME}_H
 
+#include <stddef.h>
+
 #if defined(__cplusplus) || defined(c_plusplus)
 
 extern "C"

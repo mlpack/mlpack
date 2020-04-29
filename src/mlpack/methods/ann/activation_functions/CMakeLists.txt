@@ -11,7 +11,11 @@ set(SOURCES
   mish_function.hpp
   lisht_function.hpp
   gelu_function.hpp
+<<<<<<< HEAD
   elliot_function.hpp
+=======
+  elish_function.hpp
+>>>>>>> master
 )
 
 # Add directory name to sources.

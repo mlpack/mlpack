@@ -80,6 +80,9 @@ template<typename TMetricType, typename ElemType>
 HollowBallBound<TMetricType, ElemType>& HollowBallBound<TMetricType, ElemType>::
 operator=(const HollowBallBound& other)
 {
+  if (ownsMetric)
+    delete metric;
+
   radii = other.radii;
   center = other.center;
   hollowCenter = other.hollowCenter;

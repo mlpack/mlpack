@@ -57,16 +57,18 @@ BOOST_AUTO_TEST_CASE(TwoScalerTest)
   SetInputParam("scaler_method", method);
 
   mlpackMain();
-  arma::mat max_abs_scaler_output = CLI::GetParam<arma::mat>("output");
+  arma::mat maxAbsScalerOutput = CLI::GetParam<arma::mat>("output");
+
+  bindings::tests::CleanMemory();
 
   method = "standard_scaler";
   SetInputParam("input", dataset);
   SetInputParam("scaler_method", std::move(method));
 
   mlpackMain();
-  arma::mat standard_scaler_output = CLI::GetParam<arma::mat>("output");
+  arma::mat standardScalerOutput = CLI::GetParam<arma::mat>("output");
 
-  CheckMatricesNotEqual(standard_scaler_output, max_abs_scaler_output);
+  CheckMatricesNotEqual(standardScalerOutput, maxAbsScalerOutput);
 }
 
 /**
@@ -82,6 +84,8 @@ BOOST_AUTO_TEST_CASE(TwoOptionTest)
 
   mlpackMain();
   arma::mat output = CLI::GetParam<arma::mat>("output");
+
+  bindings::tests::CleanMemory();
 
   SetInputParam("input", dataset);
   SetInputParam("scaler_method", std::move(method));
@@ -106,6 +110,8 @@ BOOST_AUTO_TEST_CASE(UnrelatedOptionTest)
 
   mlpackMain();
   arma::mat scaled = CLI::GetParam<arma::mat>("output");
+
+  bindings::tests::CleanMemory();
 
   SetInputParam("input", dataset);
   SetInputParam("scaler_method", std::move(method));
@@ -176,6 +182,8 @@ BOOST_AUTO_TEST_CASE(EpsilonTest)
 
   mlpackMain();
   arma::mat scaled = CLI::GetParam<arma::mat>("output");
+
+  bindings::tests::CleanMemory();
 
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("input", dataset);

@@ -124,7 +124,7 @@ inline std::string CreateInputArguments(const std::string& paramName,
                d.cppType == "arma::Col<size_t>")
       {
         oss << "julia> " << value << " = CSV.read(\"" << value
-            << ".csv\"; type=Int64)" << std::endl;
+            << ".csv\"; type=Int)" << std::endl;
       }
     }
 
@@ -375,6 +375,9 @@ inline std::string ProgramCall(const std::string& programName, Args... args)
 {
   std::ostringstream oss;
 
+  // The code should appear in a Markdown code block.
+  oss << "```julia" << std::endl;
+
   // Print any input argument definitions.  The only input argument definitions
   // will be the definitions of matrices, which use the CSV.jl package, so we
   // should also include a `using CSV` in there too.
@@ -400,6 +403,9 @@ inline std::string ProgramCall(const std::string& programName, Args... args)
 
   // Since `julia> ` is 8 characters, let's indent 12 otherwise it looks weird.
   oss << util::HyphenateString(ossCall.str(), 12);
+
+  // Close the Markdown code block.
+  oss << std::endl << "```";
 
   return oss.str();
 }
@@ -469,7 +475,8 @@ inline std::string ProgramCall(const std::string& programName)
   size_t nonreqInputs = 0;
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
-    if (it->second.input && !it->second.required)
+    if (it->second.input && !it->second.required &&
+       (it->second.name == "verbose" || !it->second.persistent))
     {
       if (inputs == 0 && nonreqInputs == 0)
         result << " ; ";

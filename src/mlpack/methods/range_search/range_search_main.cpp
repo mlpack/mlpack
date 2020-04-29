@@ -155,14 +155,14 @@ static void mlpackMain()
   const bool singleMode = CLI::HasParam("single_mode");
   if (CLI::HasParam("reference"))
   {
-    rs = new RSModel();
-
     // Get all the parameters.
     const string treeType = CLI::GetParam<string>("tree_type");
     RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star",
         "ball", "x", "hilbert-r", "r-plus", "r-plus-plus", "vp", "rp", "max-rp",
         "ub", "oct" }, true, "unknown tree type");
     const bool randomBasis = CLI::HasParam("random_basis");
+
+    rs = new RSModel();
 
     RSModel::TreeTypes tree = RSModel::KD_TREE;
     if (treeType == "kd")
@@ -197,11 +197,10 @@ static void mlpackMain()
     rs->TreeType() = tree;
     rs->RandomBasis() = randomBasis;
 
-    arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
+    Log::Info << "Using reference data from "
+        << CLI::GetPrintableParam<arma::mat>("reference") << "." << endl;
 
-    Log::Info << "Using reference data from '"
-        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
-        << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
+    arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
     const size_t leafSize = size_t(lsInt);
 
@@ -235,10 +234,9 @@ static void mlpackMain()
     arma::mat queryData;
     if (CLI::HasParam("query"))
     {
+      Log::Info << "Using query data from "
+          << CLI::GetPrintableParam<arma::mat>("query") << "." << endl;
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
-      Log::Info << "Using query data from '"
-          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
-          << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
     // Naive mode overrides single mode.

@@ -41,21 +41,21 @@ BOOST_AUTO_TEST_CASE(SimpleAddLayerTest)
 
   // Test the Forward function.
   input = arma::zeros(10, 1);
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
   BOOST_REQUIRE_EQUAL(arma::accu(module.Parameters()), arma::accu(output));
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(output), std::move(delta));
+  module.Backward(input, output, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(delta));
 
   // Test the forward function.
   input = arma::ones(10, 1);
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
   BOOST_REQUIRE_CLOSE(10 + arma::accu(module.Parameters()),
       arma::accu(output), 1e-3);
 
   // Test the backward function.
-  module.Backward(std::move(input), std::move(output), std::move(delta));
+  module.Backward(input, output, delta);
   BOOST_REQUIRE_CLOSE(arma::accu(output), arma::accu(delta), 1e-3);
 }
 
@@ -131,20 +131,20 @@ BOOST_AUTO_TEST_CASE(SimpleConstantLayerTest)
 
   // Test the Forward function.
   input = arma::zeros(10, 1);
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
   BOOST_REQUIRE_EQUAL(arma::accu(output), 30.0);
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(output), std::move(delta));
+  module.Backward(input, output, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
 
   // Test the forward function.
   input = arma::ones(10, 1);
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
   BOOST_REQUIRE_EQUAL(arma::accu(output), 30.0);
 
   // Test the backward function.
-  module.Backward(std::move(input), std::move(output), std::move(delta));
+  module.Backward(input, output, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
 }
 
@@ -183,19 +183,19 @@ BOOST_AUTO_TEST_CASE(SimpleDropoutLayerTest)
 
   // Test the Forward function.
   arma::mat output;
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
   BOOST_REQUIRE_LE(
       arma::as_scalar(arma::abs(arma::mean(output) - (1 - p))), 0.05);
 
   // Test the Backward function.
   arma::mat delta;
-  module.Backward(std::move(input), std::move(input), std::move(delta));
+  module.Backward(input, input, delta);
   BOOST_REQUIRE_LE(
       arma::as_scalar(arma::abs(arma::mean(delta) - (1 - p))), 0.05);
 
   // Test the Forward function.
   module.Deterministic() = true;
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
   BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(output));
 }
 
@@ -219,7 +219,7 @@ BOOST_AUTO_TEST_CASE(DropoutProbabilityTest)
       module.Deterministic() = false;
 
       arma::mat output;
-      module.Forward(std::move(input), std::move(output));
+      module.Forward(input, output);
 
       // Return a column vector containing the indices of elements of X that
       // are non-zero, we just need the number of non-zero values.
@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_CASE(NoDropoutTest)
   module.Deterministic() = false;
 
   arma::mat output;
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(input));
 }
@@ -267,7 +267,7 @@ BOOST_AUTO_TEST_CASE(SimpleAlphaDropoutLayerTest)
 
   // Test the Forward function when training phase.
   arma::mat output;
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
   // Check whether mean remains nearly same.
   BOOST_REQUIRE_LE(
       arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))), 0.1);
@@ -278,13 +278,13 @@ BOOST_AUTO_TEST_CASE(SimpleAlphaDropoutLayerTest)
 
   // Test the Backward function when training phase.
   arma::mat delta;
-  module.Backward(std::move(input), std::move(input), std::move(delta));
+  module.Backward(input, input, delta);
   BOOST_REQUIRE_LE(
       arma::as_scalar(arma::abs(arma::mean(delta) - 0)), 0.05);
 
   // Test the Forward function when testing phase.
   module.Deterministic() = true;
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
   BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(output));
 }
 
@@ -308,7 +308,7 @@ BOOST_AUTO_TEST_CASE(AlphaDropoutProbabilityTest)
       module.Deterministic() = false;
 
       arma::mat output;
-      module.Forward(std::move(input), std::move(output));
+      module.Forward(input, output);
 
       // Return a column vector containing the indices of elements of X
       // that are not alphaDash, we just need the number of
@@ -336,7 +336,7 @@ BOOST_AUTO_TEST_CASE(NoAlphaDropoutTest)
   module.Deterministic() = false;
 
   arma::mat output;
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(input));
 }
@@ -353,13 +353,13 @@ BOOST_AUTO_TEST_CASE(SimpleLinearLayerTest)
 
   // Test the Forward function.
   input = arma::zeros(10, 1);
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
   BOOST_REQUIRE_CLOSE(arma::accu(
       module.Parameters().submat(100, 0, module.Parameters().n_elem - 1, 0)),
       arma::accu(output), 1e-3);
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(input), std::move(delta));
+  module.Backward(input, input, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
 }
 
@@ -439,11 +439,11 @@ BOOST_AUTO_TEST_CASE(SimpleLinearNoBiasLayerTest)
 
   // Test the Forward function.
   input = arma::zeros(10, 1);
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
   BOOST_REQUIRE_EQUAL(0, arma::accu(output));
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(input), std::move(delta));
+  module.Backward(input, input, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
 }
 
@@ -457,13 +457,13 @@ BOOST_AUTO_TEST_CASE(SimplePaddingLayerTest)
 
   // Test the Forward function.
   input = arma::randu(10, 1);
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
   BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(output));
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows + 3);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols + 7);
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(output), std::move(delta));
+  module.Backward(input, output, delta);
   CheckMatrices(delta, input);
 }
 
@@ -688,20 +688,20 @@ BOOST_AUTO_TEST_CASE(SimpleSelectLayerTest)
 
   // Test the Forward function.
   Select<> moduleA(3);
-  moduleA.Forward(std::move(input), std::move(outputA));
+  moduleA.Forward(input, outputA);
   BOOST_REQUIRE_EQUAL(30, arma::accu(outputA));
 
   // Test the Forward function.
   Select<> moduleB(3, 5);
-  moduleB.Forward(std::move(input), std::move(outputB));
+  moduleB.Forward(input, outputB);
   BOOST_REQUIRE_EQUAL(15, arma::accu(outputB));
 
   // Test the Backward function.
-  moduleA.Backward(std::move(input), std::move(outputA), std::move(delta));
+  moduleA.Backward(input, outputA, delta);
   BOOST_REQUIRE_EQUAL(30, arma::accu(delta));
 
   // Test the Backward function.
-  moduleB.Backward(std::move(input), std::move(outputA), std::move(delta));
+  moduleB.Backward(input, outputA, delta);
   BOOST_REQUIRE_EQUAL(15, arma::accu(delta));
 }
 
@@ -715,14 +715,14 @@ BOOST_AUTO_TEST_CASE(SimpleJoinLayerTest)
 
   // Test the Forward function.
   Join<> module;
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
   BOOST_REQUIRE_EQUAL(50, arma::accu(output));
 
   bool b = output.n_rows == 1 || output.n_cols == 1;
   BOOST_REQUIRE_EQUAL(b, true);
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(output), std::move(delta));
+  module.Backward(input, output, delta);
   BOOST_REQUIRE_EQUAL(50, arma::accu(delta));
 
   b = delta.n_rows == input.n_rows && input.n_cols;
@@ -744,18 +744,17 @@ BOOST_AUTO_TEST_CASE(SimpleAddMergeLayerTest)
     for (size_t m = 0; m < numMergeModules; ++m)
     {
       IdentityLayer<> identityLayer;
-      identityLayer.Forward(std::move(input),
-          std::move(identityLayer.OutputParameter()));
+      identityLayer.Forward(input, identityLayer.OutputParameter());
 
       module.Add<IdentityLayer<> >(identityLayer);
     }
 
     // Test the Forward function.
-    module.Forward(std::move(input), std::move(output));
+    module.Forward(input, output);
     BOOST_REQUIRE_EQUAL(10 * numMergeModules, arma::accu(output));
 
     // Test the Backward function.
-    module.Backward(std::move(input), std::move(output), std::move(delta));
+    module.Backward(input, output, delta);
     BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(delta));
   }
 }
@@ -961,9 +960,9 @@ BOOST_AUTO_TEST_CASE(ReadCellStateParamLSTMLayerTest)
           input.n_rows, input.n_cols, false, true);
 
       // Apply Forward() on LSTM layer.
-      lstm.Forward(std::move(stepData), // Input.
-                   std::move(outLstm),  // Output.
-                   std::move(cellLstm), // Cell state.
+      lstm.Forward(stepData, // Input.
+                   outLstm,  // Output.
+                   cellLstm, // Cell state.
                    false); // Don't write into the cell state.
 
       // Compute the value of cell state and output.
@@ -1043,9 +1042,9 @@ BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
       }
 
       // Apply Forward() on the LSTM layer.
-      lstm.Forward(std::move(stepData), // Input.
-                   std::move(outLstm),  // Output.
-                   std::move(cellLstm), // Cell state.
+      lstm.Forward(stepData, // Input.
+                   outLstm,  // Output.
+                   cellLstm, // Cell state.
                    true);  // Write into cell state.
 
       // Compute the value of cell state and output.
@@ -1081,18 +1080,18 @@ BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
   arma::mat stepData(input.slice(0).memptr(),
       input.n_rows, input.n_cols, false, true);
 
-  lstm.Forward(std::move(stepData), // Input.
-                   std::move(outLstm),  // Output.
-                   std::move(cellLstm), // Cell state.
-                   true); // Write into cell state.
+  lstm.Forward(stepData, // Input.
+               outLstm,  // Output.
+               cellLstm, // Cell state.
+               true); // Write into cell state.
 
   for (size_t seqNum = 1; seqNum < rho; ++seqNum)
   {
     arma::mat empty;
     // Should throw error.
-    BOOST_REQUIRE_THROW(lstm.Forward(std::move(stepData), // Input.
-                                     std::move(outLstm),  // Output.
-                                     std::move(empty), // Cell state.
+    BOOST_REQUIRE_THROW(lstm.Forward(stepData, // Input.
+                                     outLstm,  // Output.
+                                     empty, // Cell state.
                                      true),  // Write into cell state.
                                      std::runtime_error);
   }
@@ -1149,7 +1148,9 @@ BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
  */
 BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
 {
-  GRU<> gru(3, 3, 5);
+  // This will make it easier to clean memory later.
+  GRU<>* gruAlloc = new GRU<>(3, 3, 5);
+  GRU<>& gru = *gruAlloc;
 
   // Initialize the weights to all ones.
   NetworkInitialization<ConstInitialization>
@@ -1160,7 +1161,7 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
   arma::mat input = arma::ones(3, 1);
   arma::mat output;
 
-  gru.Forward(std::move(input), std::move(output));
+  gru.Forward(input, output);
 
   // Compute the z_t gate output.
   arma::mat expectedOutput = arma::ones(3, 1);
@@ -1175,7 +1176,7 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
 
   expectedOutput = output;
 
-  gru.Forward(std::move(input), std::move(output));
+  gru.Forward(input, output);
 
   double s = arma::as_scalar(arma::sum(expectedOutput));
 
@@ -1195,6 +1196,9 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
   expectedOutput = z_t % expectedOutput + (arma::ones(3, 1) - z_t) % o_t;
 
   BOOST_REQUIRE_LE(arma::as_scalar(arma::trans(output) * expectedOutput), 1e-2);
+
+  LayerTypes<> layer(gruAlloc);
+  boost::apply_visitor(DeleteVisitor(), layer);
 }
 
 /**
@@ -1218,7 +1222,7 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
 
   // Test the Forward function.
   input = arma::zeros(10, 1);
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
   BOOST_REQUIRE_CLOSE(arma::accu(
       moduleA.Parameters().submat(100, 0, moduleA.Parameters().n_elem - 1, 0)) +
       arma::accu(moduleB.Parameters().submat(100, 0,
@@ -1227,7 +1231,7 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
 
   // Test the Backward function.
   error = arma::zeros(20, 1);
-  module.Backward(std::move(input), std::move(error), std::move(delta));
+  module.Backward(input, error, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
 }
 
@@ -1260,8 +1264,8 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
   moduleB.Parameters().randu();
 
   // Compute output of each layer.
-  moduleA.Forward(std::move(input), std::move(outputA));
-  moduleB.Forward(std::move(input), std::move(outputB));
+  moduleA.Forward(input, outputA);
+  moduleB.Forward(input, outputB);
 
   arma::cube A(outputA.memptr(), outputWidth, outputHeight, outputChannel);
   arma::cube B(outputB.memptr(), outputWidth, outputHeight, outputChannel);
@@ -1305,7 +1309,7 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
     Concat<> module(inputSize, axis);
     module.Add(moduleA);
     module.Add(moduleB);
-    module.Forward(std::move(input), std::move(output));
+    module.Forward(input, output);
     arma::cube concatOut(output.memptr(), x * outputWidth,
         y * outputHeight, z * outputChannel);
 
@@ -1374,12 +1378,12 @@ BOOST_AUTO_TEST_CASE(SimpleConcatenateLayerTest)
   module.Concat() = arma::ones(5, 1) * 0.5;
 
   // Test the Forward function.
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 7.5);
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(output), std::move(delta));
+  module.Backward(input, output, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 5);
 }
 
@@ -1447,7 +1451,7 @@ BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
   input(0) = 1;
   input(1) = 3;
 
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
 
   // The Lookup module uses index - 1 for the cols.
   const double outputSum = arma::accu(module.Parameters().col(0)) +
@@ -1456,7 +1460,7 @@ BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
   BOOST_REQUIRE_CLOSE(outputSum, arma::accu(output), 1e-3);
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(input), std::move(delta));
+  module.Backward(input, input, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(input));
 
   // Test the Gradient function.
@@ -1464,7 +1468,7 @@ BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
   error = error.t();
   error.col(1) *= 0.5;
 
-  module.Gradient(std::move(input), std::move(error), std::move(gradient));
+  module.Gradient(input, error, gradient);
 
   // The Lookup module uses index - 1 for the cols.
   const double gradientSum = arma::accu(gradient.col(0)) +
@@ -1484,7 +1488,7 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
 
   // Test the Forward function.
   input = arma::mat("0.5; 0.5");
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
   BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
     arma::mat("-0.6931; -0.6931") - output)), 1e-3);
 
@@ -1492,7 +1496,7 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
   error = arma::zeros(input.n_rows, input.n_cols);
   // Assume LogSoftmax layer is always associated with NLL output layer.
   error(1, 0) = -1;
-  module.Backward(std::move(input), std::move(error), std::move(delta));
+  module.Backward(input, error, delta);
   BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
       arma::mat("1.6487; 0.6487") - delta)), 1e-3);
 }
@@ -1521,13 +1525,12 @@ BOOST_AUTO_TEST_CASE(SimpleBilinearInterpolationLayerTest)
       2.0000 2.4000 2.8000 3.0000 3.0000 \
       2.0000 2.4000 2.8000 3.0000 3.0000");
   expectedOutput.reshape(25, 1);
-  layer.Forward(std::move(input), std::move(output));
+  layer.Forward(input, output);
   CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-12);
 
   expectedOutput = arma::mat("1.0000 1.9000 1.9000 2.8000");
   expectedOutput.reshape(4, 1);
-  layer.Backward(std::move(output), std::move(output),
-      std::move(unzoomedOutput));
+  layer.Backward(output, output, unzoomedOutput);
   CheckMatrices(unzoomedOutput - expectedOutput,
       arma::zeros(input.n_rows), 1e-12);
 }
@@ -1549,7 +1552,7 @@ BOOST_AUTO_TEST_CASE(BatchNormTest)
 
   // Non-Deteministic Forward Pass Test.
   model.Deterministic() = false;
-  model.Forward(std::move(input), std::move(output));
+  model.Forward(input, output);
   arma::mat result;
   result << 1.1658 << 0.1100 << -1.2758 << arma::endr
          << 1.2579 << -0.0699 << -1.1880 << arma::endr
@@ -1576,7 +1579,7 @@ BOOST_AUTO_TEST_CASE(BatchNormTest)
   result.clear();
 
   model.Deterministic() = true;
-  model.Forward(std::move(input), std::move(output));
+  model.Forward(input, output);
 
   result << 1.1658 << 0.1100 << -1.2757 << arma::endr
          << 1.2579 << -0.0699 << -1.1880 << arma::endr
@@ -1733,12 +1736,12 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module1.Parameters()(0) = 1.0;
   module1.Parameters()(8) = 2.0;
   module1.Reset();
-  module1.Forward(std::move(input), std::move(output));
+  module1.Forward(input, output);
   // Value calculated using tensorflow.nn.conv2d_transpose()
   BOOST_REQUIRE_EQUAL(arma::accu(output), 360.0);
 
   // Test the backward function.
-  module1.Backward(std::move(input), std::move(output), std::move(delta));
+  module1.Backward(input, output, delta);
   // Value calculated using tensorflow.nn.conv2d()
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 720.0);
 
@@ -1753,12 +1756,12 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module2.Parameters()(12) = 1.0;
   module2.Parameters()(15) = 2.0;
   module2.Reset();
-  module2.Forward(std::move(input), std::move(output));
+  module2.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
   BOOST_REQUIRE_EQUAL(arma::accu(output), 1512.0);
 
   // Test the backward function.
-  module2.Backward(std::move(input), std::move(output), std::move(delta));
+  module2.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 6504.0);
 
@@ -1771,12 +1774,12 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module3.Parameters()(3) = 3.0;
   module3.Parameters()(8) = 1.0;
   module3.Reset();
-  module3.Forward(std::move(input), std::move(output));
+  module3.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
   BOOST_REQUIRE_EQUAL(arma::accu(output), 2370.0);
 
   // Test the backward function.
-  module3.Backward(std::move(input), std::move(output), std::move(delta));
+  module3.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 19154.0);
 
@@ -1789,12 +1792,12 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module4.Parameters()(6) = 6.0;
   module4.Parameters()(8) = 8.0;
   module4.Reset();
-  module4.Forward(std::move(input), std::move(output));
+  module4.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
   BOOST_REQUIRE_EQUAL(arma::accu(output), 6000.0);
 
   // Test the backward function.
-  module4.Backward(std::move(input), std::move(output), std::move(delta));
+  module4.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 86208.0);
 
@@ -1807,12 +1810,12 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module5.Parameters()(6) = 4.0;
   module5.Parameters()(8) = 2.0;
   module5.Reset();
-  module5.Forward(std::move(input), std::move(output));
+  module5.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
   BOOST_REQUIRE_EQUAL(arma::accu(output), 120.0);
 
   // Test the backward function.
-  module5.Backward(std::move(input), std::move(output), std::move(delta));
+  module5.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 960.0);
 
@@ -1825,12 +1828,12 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module6.Parameters()(6) = 2.0;
   module6.Parameters()(8) = 4.0;
   module6.Reset();
-  module6.Forward(std::move(input), std::move(output));
+  module6.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
   BOOST_REQUIRE_EQUAL(arma::accu(output), 410.0);
 
   // Test the backward function.
-  module6.Backward(std::move(input), std::move(output), std::move(delta));
+  module6.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 4444.0);
 
@@ -1843,11 +1846,11 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module7.Parameters()(4) = 2.0;
   module7.Parameters()(8) = 4.0;
   module7.Reset();
-  module7.Forward(std::move(input), std::move(output));
+  module7.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
   BOOST_REQUIRE_EQUAL(arma::accu(output), 606.0);
 
-  module7.Backward(std::move(input), std::move(output), std::move(delta));
+  module7.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 7732.0);
 }
@@ -1919,18 +1922,17 @@ BOOST_AUTO_TEST_CASE(SimpleMultiplyMergeLayerTest)
     for (size_t m = 0; m < numMergeModules; ++m)
     {
       IdentityLayer<> identityLayer;
-      identityLayer.Forward(std::move(input),
-          std::move(identityLayer.OutputParameter()));
+      identityLayer.Forward(input, identityLayer.OutputParameter());
 
       module.Add<IdentityLayer<> >(identityLayer);
     }
 
     // Test the Forward function.
-    module.Forward(std::move(input), std::move(output));
+    module.Forward(input, output);
     BOOST_REQUIRE_EQUAL(10, arma::accu(output));
 
     // Test the Backward function.
-    module.Backward(std::move(input), std::move(output), std::move(delta));
+    module.Backward(input, output, delta);
     BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(delta));
   }
 }
@@ -1949,12 +1951,12 @@ BOOST_AUTO_TEST_CASE(SimpleAtrousConvolutionLayerTest)
   module1.Parameters()(0) = 1.0;
   module1.Parameters()(8) = 2.0;
   module1.Reset();
-  module1.Forward(std::move(input), std::move(output));
+  module1.Forward(input, output);
   // Value calculated using tensorflow.nn.atrous_conv2d()
   BOOST_REQUIRE_EQUAL(arma::accu(output), 792.0);
 
   // Test the Backward function.
-  module1.Backward(std::move(input), std::move(output), std::move(delta));
+  module1.Backward(input, output, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 2376);
 
   AtrousConvolution<> module2(1, 1, 3, 3, 2, 2, 0, 0, 7, 7, 2, 2);
@@ -1965,12 +1967,12 @@ BOOST_AUTO_TEST_CASE(SimpleAtrousConvolutionLayerTest)
   module2.Parameters()(3) = 1.0;
   module2.Parameters()(6) = 1.0;
   module2.Reset();
-  module2.Forward(std::move(input), std::move(output));
+  module2.Forward(input, output);
   // Value calculated using tensorflow.nn.conv2d()
   BOOST_REQUIRE_EQUAL(arma::accu(output), 264.0);
 
   // Test the backward function.
-  module2.Backward(std::move(input), std::move(output), std::move(delta));
+  module2.Backward(input, output, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 792.0);
 }
 
@@ -2094,14 +2096,14 @@ BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerPaddingTest)
   input = arma::linspace<arma::colvec>(0, 48, 49);
   module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module1.Reset();
-  module1.Forward(std::move(input), std::move(output));
+  module1.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, 9);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
-  module1.Backward(std::move(input), std::move(output), std::move(delta));
+  module1.Backward(input, output, delta);
 
   // Check same padding option.
   AtrousConvolution<> module2(1, 1, 3, 3, 1, 1,
@@ -2112,14 +2114,14 @@ BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerPaddingTest)
   input = arma::linspace<arma::colvec>(0, 48, 49);
   module2.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module2.Reset();
-  module2.Forward(std::move(input), std::move(output));
+  module2.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, 49);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the backward function.
-  module2.Backward(std::move(input), std::move(output), std::move(delta));
+  module2.Backward(input, output, delta);
 }
 
 /**
@@ -2135,7 +2137,7 @@ BOOST_AUTO_TEST_CASE(LayerNormTest)
   LayerNorm<> model(input.n_rows);
   model.Reset();
 
-  model.Forward(std::move(input), std::move(output));
+  model.Forward(input, output);
   arma::mat result;
   result << 1.2247 << 1.2978 << arma::endr
          << 0 << -1.1355 << arma::endr
@@ -2218,13 +2220,13 @@ BOOST_AUTO_TEST_CASE(AddMergeRunTest)
   linear->Reset();
 
   input = arma::zeros(10, 1);
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
 
   double parameterSum = arma::accu(linear->Parameters().submat(
       100, 0, linear->Parameters().n_elem - 1, 0));
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(input), std::move(delta));
+  module.Backward(input, input, delta);
 
   // Clean up before we break,
   delete linear;
@@ -2250,13 +2252,13 @@ BOOST_AUTO_TEST_CASE(MultiplyMergeRunTest)
   linear->Reset();
 
   input = arma::zeros(10, 1);
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
 
   double parameterSum = arma::accu(linear->Parameters().submat(
       100, 0, linear->Parameters().n_elem - 1, 0));
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(input), std::move(delta));
+  module.Backward(input, input, delta);
 
   // Clean up before we break,
   delete linear;
@@ -2275,19 +2277,19 @@ BOOST_AUTO_TEST_CASE(SimpleSubviewLayerTest)
 
   // Test the Forward function for a vector.
   input = arma::ones(20, 1);
-  moduleRow.Forward(std::move(input), std::move(output));
+  moduleRow.Forward(input, output);
   BOOST_REQUIRE_EQUAL(output.n_rows, 10);
 
   Subview<> moduleMat(4, 3, 6, 0, 2);
 
   // Test the Forward function for a matrix.
   input = arma::ones(20, 8);
-  moduleMat.Forward(std::move(input), std::move(outputMat));
+  moduleMat.Forward(input, outputMat);
   BOOST_REQUIRE_EQUAL(outputMat.n_rows, 12);
   BOOST_REQUIRE_EQUAL(outputMat.n_cols, 2);
 
   // Test the Backward function.
-  moduleMat.Backward(std::move(input), std::move(input), std::move(delta));
+  moduleMat.Backward(input, input, delta);
   BOOST_REQUIRE_EQUAL(accu(delta), 160);
   BOOST_REQUIRE_EQUAL(delta.n_rows, 20);
 }
@@ -2304,21 +2306,21 @@ BOOST_AUTO_TEST_CASE(SubviewIndexTest)
   Subview<> moduleStart(1, 0, 9);
   arma::mat subStart = arma::linspace<arma::vec>(1, 10, 10);
 
-  moduleStart.Forward(std::move(input), std::move(outputStart));
+  moduleStart.Forward(input, outputStart);
   CheckMatrices(outputStart, subStart);
 
   // Slicing from the mid indices.
   Subview<> moduleMid(1, 6, 15);
   arma::mat subMid = arma::linspace<arma::vec>(7, 16, 10);
 
-  moduleMid.Forward(std::move(input), std::move(outputMid));
+  moduleMid.Forward(input, outputMid);
   CheckMatrices(outputMid, subMid);
 
   // Slicing from the end indices.
   Subview<> moduleEnd(1, 10, 19);
   arma::mat subEnd = arma::linspace<arma::vec>(11, 20, 10);
 
-  moduleEnd.Forward(std::move(input), std::move(outputEnd));
+  moduleEnd.Forward(input, outputEnd);
   CheckMatrices(outputEnd, subEnd);
 }
 
@@ -2334,14 +2336,14 @@ BOOST_AUTO_TEST_CASE(SubviewBatchTest)
 
   // Test with inSize 1.
   input = arma::ones(20, 8);
-  moduleCol.Forward(std::move(input), std::move(outputCol));
+  moduleCol.Forward(input, outputCol);
   CheckMatrices(outputCol, input);
 
   // Few rows and columns selected.
   Subview<> moduleMat(4, 3, 6, 0, 2);
 
   // Test with inSize greater than 1.
-  moduleMat.Forward(std::move(input), std::move(outputMat));
+  moduleMat.Forward(input, outputMat);
   output = arma::ones(12, 2);
   CheckMatrices(outputMat, output);
 
@@ -2349,7 +2351,7 @@ BOOST_AUTO_TEST_CASE(SubviewBatchTest)
   Subview<> moduleDef(4, 1, 6, 0, 4);
 
   // Test with inSize greater than 1 and endCol >= inSize.
-  moduleDef.Forward(std::move(input), std::move(outputDef));
+  moduleDef.Forward(input, outputDef);
   output = arma::ones(24, 2);
   CheckMatrices(outputDef, output);
 }
@@ -2367,12 +2369,12 @@ BOOST_AUTO_TEST_CASE(SimpleReparametrizationLayerTest)
   // output should be small enough.
   input = join_cols(arma::ones<arma::mat>(5, 1) * -15,
       arma::zeros<arma::mat>(5, 1));
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
   BOOST_REQUIRE_LE(arma::accu(output), 1e-5);
 
   // Test the Backward function.
   arma::mat gy = arma::zeros<arma::mat>(5, 1);
-  module.Backward(std::move(input), std::move(gy), std::move(delta));
+  module.Backward(input, gy, delta);
   BOOST_REQUIRE(arma::accu(delta) != 0); // klBackward will be added.
 }
 
@@ -2388,8 +2390,8 @@ BOOST_AUTO_TEST_CASE(ReparametrizationLayerStochasticTest)
       arma::zeros<arma::mat>(5, 1));
 
   // Test if two forward passes generate same output.
-  module.Forward(std::move(input), std::move(outputA));
-  module.Forward(std::move(input), std::move(outputB));
+  module.Forward(input, outputA);
+  module.Forward(input, outputB);
 
   CheckMatrices(outputA, outputB);
 }
@@ -2404,14 +2406,14 @@ BOOST_AUTO_TEST_CASE(ReparametrizationLayerIncludeKlTest)
 
   input = join_cols(arma::ones<arma::mat>(5, 1),
       arma::zeros<arma::mat>(5, 1));
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
 
   // As KL divergence is not included, with the above inputs, the delta
   // matrix should be all zeros.
   gy = arma::zeros(output.n_rows, output.n_cols);
-  module.Backward(std::move(output), std::move(gy), std::move(delta));
+  module.Backward(output, gy, delta);
 
-  BOOST_REQUIRE_EQUAL(arma::accu(std::move(delta)), 0);
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
 }
 
 /**
@@ -2549,14 +2551,14 @@ BOOST_AUTO_TEST_CASE(SimpleResidualLayerTest)
 
   // Test the Forward function (pass the same input to both).
   input = arma::randu(10, 1);
-  sequential->Forward(std::move(input), std::move(outputA));
-  residual->Forward(std::move(input), std::move(outputB));
+  sequential->Forward(input, outputA);
+  residual->Forward(input, outputB);
 
   CheckMatrices(outputA, outputB - input);
 
   // Test the Backward function (pass the same error to both).
-  sequential->Backward(std::move(input), std::move(input), std::move(deltaA));
-  residual->Backward(std::move(input), std::move(input), std::move(deltaB));
+  sequential->Backward(input, input, deltaA);
+  residual->Backward(input, input, deltaB);
 
   CheckMatrices(deltaA, deltaB - input);
 
@@ -2593,8 +2595,8 @@ BOOST_AUTO_TEST_CASE(SimpleHighwayLayerTest)
 
   // Test the Forward function (pass the same input to both).
   input = arma::randu(10, 1);
-  sequential->Forward(std::move(input), std::move(outputA));
-  highway->Forward(std::move(input), std::move(outputB));
+  sequential->Forward(input, outputA);
+  highway->Forward(input, outputB);
 
   CheckMatrices(outputB, input * 0.5 + outputA * 0.5);
 
@@ -2636,7 +2638,6 @@ BOOST_AUTO_TEST_CASE(GradientHighwayLayerTest)
 
     ~GradientFunction()
     {
-      highway->DeleteModules();
       delete model;
     }
 
@@ -2688,7 +2689,6 @@ BOOST_AUTO_TEST_CASE(GradientSequentialLayerTest)
 
     ~GradientFunction()
     {
-      sequential->DeleteModules();
       delete model;
     }
 
@@ -2774,10 +2774,10 @@ BOOST_AUTO_TEST_CASE(WeightNormRunTest)
   linear->Bias().zeros();
 
   input = arma::zeros(10, 1);
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
 
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(input), std::move(delta));
+  module.Backward(input, input, delta);
 
   BOOST_REQUIRE_EQUAL(0, arma::accu(output));
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
@@ -2904,14 +2904,14 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerPaddingTest)
   input = arma::linspace<arma::colvec>(0, 48, 49);
   module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module1.Reset();
-  module1.Forward(std::move(input), std::move(output));
+  module1.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, 25);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the Backward function.
-  module1.Backward(std::move(input), std::move(output), std::move(delta));
+  module1.Backward(input, output, delta);
 
   // Check same padding option.
   Convolution<> module2(1, 1, 3, 3, 1, 1, std::tuple<size_t, size_t>(0, 0),
@@ -2921,14 +2921,14 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerPaddingTest)
   input = arma::linspace<arma::colvec>(0, 48, 49);
   module2.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module2.Reset();
-  module2.Forward(std::move(input), std::move(output));
+  module2.Forward(input, output);
 
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, 49);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 
   // Test the backward function.
-  module2.Backward(std::move(input), std::move(output), std::move(delta));
+  module2.Backward(input, output, delta);
 }
 
 /**
@@ -2944,12 +2944,12 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   input = arma::linspace<arma::colvec>(0, 15, 16);
   module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module1.Reset();
-  module1.Forward(std::move(input), std::move(output));
+  module1.Forward(input, output);
   // Value calculated using tensorflow.nn.conv2d_transpose().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0.0);
 
   // Test the Backward Function.
-  module1.Backward(std::move(input), std::move(output), std::move(delta));
+  module1.Backward(input, output, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
 
   // Test Valid for non zero padding.
@@ -2964,12 +2964,12 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   module2.Parameters()(6) = 4.0;
   module2.Parameters()(8) = 2.0;
   module2.Reset();
-  module2.Forward(std::move(input), std::move(output));
+  module2.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 120.0);
 
   // Test the Backward Function.
-  module2.Backward(std::move(input), std::move(output), std::move(delta));
+  module2.Backward(input, output, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 960.0);
 
   // Test for same padding type.
@@ -2978,13 +2978,13 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   input = arma::linspace<arma::colvec>(0, 8, 9);
   module3.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module3.Reset();
-  module3.Forward(std::move(input), std::move(output));
+  module3.Forward(input, output);
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 
   // Test the Backward Function.
-  module3.Backward(std::move(input), std::move(output), std::move(delta));
+  module3.Backward(input, output, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
 
   // Output shape should equal input.
@@ -2995,13 +2995,13 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   input = arma::linspace<arma::colvec>(0, 24, 25);
   module4.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module4.Reset();
-  module4.Forward(std::move(input), std::move(output));
+  module4.Forward(input, output);
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 
   // Test the Backward Function.
-  module4.Backward(std::move(input), std::move(output), std::move(delta));
+  module4.Backward(input, output, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
 
   TransposedConvolution<> module5(1, 1, 3, 3, 2, 2, 0, 0, 2, 2, 2, 2, "SAME");
@@ -3009,13 +3009,13 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   input = arma::linspace<arma::colvec>(0, 3, 4);
   module5.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
   module5.Reset();
-  module5.Forward(std::move(input), std::move(output));
+  module5.Forward(input, output);
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 
   // Test the Backward Function.
-  module5.Backward(std::move(input), std::move(output), std::move(delta));
+  module5.Backward(input, output, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
 
   TransposedConvolution<> module6(1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 5, 5, "SAME");
@@ -3023,13 +3023,98 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   input = arma::linspace<arma::colvec>(0, 24, 25);
   module6.Parameters() = arma::mat(16 + 1, 1, arma::fill::zeros);
   module6.Reset();
-  module6.Forward(std::move(input), std::move(output));
+  module6.Forward(input, output);
   BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 
   // Test the Backward Function.
-  module6.Backward(std::move(input), std::move(output), std::move(delta));
+  module6.Backward(input, output, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
+}
+
+/**
+ * Simple test for Max Pooling layer.
+ */
+BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
+{
+  // For rectangular input to pooling layers.
+  arma::mat input = arma::mat(12, 1);
+  arma::mat output;
+  input.zeros();
+  input(0) = 1;
+  input(1) = 2;
+  input(2) = 3;
+  input(3) = input(8) = 7;
+  input(4) = 4;
+  input(5) = 5;
+  input(6) = input(7) = 6;
+  input(10) = 8;
+  input(11) = 9;
+  // Output-Size should be 2 x 2.
+  // Square output.
+  MaxPooling<> module1(2, 2, 2, 1);
+  module1.InputHeight() = 3;
+  module1.InputWidth() = 4;
+  module1.Forward(input, output);
+  // Calculated using torch.nn.MaxPool2d().
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 28);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 4);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+
+  // For Square input.
+  input = arma::mat(9, 1);
+  input.zeros();
+  input(0) = 6;
+  input(1) = 3;
+  input(2) = 9;
+  input(3) = 3;
+  input(6) = 3;
+  // Output-Size should be 1 x 2.
+  // Rectangular output.
+  MaxPooling<> module2(3, 2, 3, 1);
+  module2.InputHeight() = 3;
+  module2.InputWidth() = 3;
+  module2.Forward(input, output);
+  // Calculated using torch.nn.MaxPool2d().
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 12.0);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 2);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+
+  // For Square input.
+  input = arma::mat(16, 1);
+  input.zeros();
+  input(0) = 6;
+  input(1) = 3;
+  input(2) = 9;
+  input(4) = 3;
+  input(8) = 3;
+  // Output-Size should be 3 x 3.
+  // Square output.
+  MaxPooling<> module3(2, 2, 1, 1);
+  module3.InputHeight() = 4;
+  module3.InputWidth() = 4;
+  module3.Forward(input, output);
+  // Calculated using torch.nn.MaxPool2d().
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 30.0);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 9);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+
+  // For Rectangular input.
+  input = arma::mat(6, 1);
+  input.zeros();
+  input(0) = 1;
+  input(1) = 1;
+  input(3) = 1;
+  // Output-Size should be 2 x 2.
+  // Square output.
+  MaxPooling<> module4(2, 1, 1, 1);
+  module4.InputHeight() = 2;
+  module4.InputWidth() = 3;
+  module4.Forward(input, output);
+  // Calculated using torch.nn.MaxPool2d().
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 3);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 4);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 }
 BOOST_AUTO_TEST_SUITE_END();

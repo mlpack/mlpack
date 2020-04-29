@@ -16,6 +16,7 @@ set(SOURCES
   get_printable_param_name_impl.hpp
   get_printable_param_value.hpp
   get_printable_param_value_impl.hpp
+  in_place_copy.hpp
   map_parameter_name.hpp
   output_param.hpp
   output_param_impl.hpp

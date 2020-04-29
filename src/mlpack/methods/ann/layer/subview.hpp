@@ -66,7 +66,7 @@ class Subview
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(InputType&& input, OutputType&& output)
+  void Forward(const InputType& input, OutputType& output)
   {
     size_t batchSize = input.n_cols / inSize;
 
@@ -112,9 +112,9 @@ class Subview
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g)
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g)
   {
     g = gy;
   }
