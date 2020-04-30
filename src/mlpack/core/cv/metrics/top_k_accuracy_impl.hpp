@@ -19,6 +19,7 @@ template<typename MLAlgorithm, typename DataType, typename TopK>
 double TopKAccuracy::Evaluate(MLAlgorithm& model,
                         const DataType& data,
                         const arma::Row<size_t> labels,
+                        const arma::Row<size_t> predsprob
                         const TopK& k)
 {
   if (data.n_cols != labels.n_cols)
@@ -29,24 +30,23 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
         << std::endl;
     throw std::invalid_argument(fpp.str());
   }
-  arma::Row<size_t> predictedLabels;
+  arma::Row<size_t> predictionProbs;
   // Taking Classification output from the model.
-  model.Classify(data, predictedLabels);
-  // Shape of the predicted values.
-  double predictedClass = predictedLabels.size();
-  // Top 'k' label prediction class.
-  if (k < predictedClass[1])
+  model.Classify(data, predictionProbs);
+  // Shape of the predicted probabilities.
+  double predictedProb = predictionProbs.size();
+  // Top 'k' label prediction probabilities.
+  if (k < predictedProb[1])
   {
-    size_t idx = predictedClass[1] - k - 1;
+    size_t idx = predictedProb[1] - k - 1;
   else
   {
     std::ostringstream fs;
     fs << "Less number of class for Top K Accuracy score" << std::endl;
   }
-  size_t idx = predictedClass[1] - k - 1;
   float count = 0;
-  double srt = sort_index(predictedLabels);
-  for (i = 1; i < predictedClass[0]; i++)
+  double srt = arma::sort_index(predictionProbs);
+  for (size_t i = 1; i < predictedProb[0]; i++)
   {
     if (labels[i] != srt[i, idx + 1:])
     {
@@ -54,7 +54,7 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
     }
   }
   // Accuracy Score of top k predicted class labels.
-  return (double) count / predictedClass[0];
+  return (double) count / predictedProb[0];
 }
 
 } // namespace cv

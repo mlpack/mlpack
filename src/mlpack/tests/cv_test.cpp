@@ -197,17 +197,16 @@ BOOST_AUTO_TEST_CASE(TopKAccuracyTest)
   arma::mat data = arma::linspace<arma::rowvec>(1.0, 10.0, 10);
   // Labels that will be considered as "ground truth".
   arma::Row<size_t> labels("0 1  0 2  1 2 2 2  3 3 3 3");
-  size_t numClasses = 4;
+  // prediction probabilities for each class
+  arma::Row<size_t> predsprob("0 0  0 1  2.005 2.005 2.005 2.005  3 3 3 3");
   size_t k = 3;
-  // These labels should be predicted in response to the data since we use them
-  arma::Row<size_t> predicted("0 0  0 1  2 2 2 2  3 3 3 3");
 
   // Call Classification model
-  NaiveBayesClassifier<> nb(data, predicted, numClasses);
+  NaiveBayesClassifier<> nb(data, labels, predsprob);
 
   // Assert that the Naive Bayes model really predicts the labels above in
   // response to the data.
-  BOOST_REQUIRE_CLOSE(TopKAccuracy::Evaluate(nb, data, predicted, k), 1e-5);
+  BOOST_REQUIRE_CLOSE(TopKAccuracy::Evaluate(nb, data, predsprob, k), 1e-5);
 }
 
 /**

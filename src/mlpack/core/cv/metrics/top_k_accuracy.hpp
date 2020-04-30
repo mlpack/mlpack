@@ -16,7 +16,7 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace cv{
+namespace cv {
 
 /**
  * The Top K Accuracy is a metric for classification algorithms
