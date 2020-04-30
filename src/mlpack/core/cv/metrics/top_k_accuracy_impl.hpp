@@ -19,7 +19,7 @@ template<typename MLAlgorithm, typename DataType, typename TopK>
 double TopKAccuracy::Evaluate(MLAlgorithm& model,
                         const DataType& data,
                         const arma::Row<size_t> labels,
-                        const arma::Row<size_t> predsprob
+                        const arma::Row<size_t> predsprob,
                         const TopK& k)
 {
   if (data.n_cols != labels.n_cols)
@@ -56,7 +56,6 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
   // Accuracy Score of top k predicted class labels.
   return (double) count / predictedProb[0];
 }
-
 } // namespace cv
 } // namespace mlpack
 

@@ -39,6 +39,7 @@ class TopKAccuracy
   static double Evaluate(MLAlgorithm& model,
                          const DataType& data,
                          const arma::Row<size_t>& labels,
+                         const arma::Row<size_t>& predsprob,
                          const TopK& k);
   /**
    * normalization : bool, default= True
