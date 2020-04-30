@@ -104,6 +104,7 @@ double BayesianRidge::Train(const arma::mat& data,
     i++;
   }
   // Compute the covariance matrice for the uncertaities later.
+  matA.diag().fill(alpha);
   matCovariance = inv_sympd(matA + phiphiT * beta);
 
   Timer::Stop("bayesian_ridge_regression");
