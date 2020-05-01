@@ -47,6 +47,7 @@ namespace ann /** Artificial Neural Network. */ {
  *  - LiSHTLayer
  *  - GELULayer
  *  - ELiSHLayer
+ *  - ElliotLayer
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,

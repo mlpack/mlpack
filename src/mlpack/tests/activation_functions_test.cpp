@@ -877,9 +877,9 @@ BOOST_AUTO_TEST_CASE(ElliotFunctionTest)
                                          0.44444444 0.36 1.0 ");
 
   CheckActivationCorrect<ElliotFunction>(activationData,
-                                        desiredActivations);
+                                         desiredActivations);
   CheckDerivativeCorrect<ElliotFunction>(desiredActivations,
-                                        desiredDerivatives);
+                                         desiredDerivatives);
 }
 
 /**
