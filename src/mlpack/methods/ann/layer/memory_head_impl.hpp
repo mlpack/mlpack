@@ -417,18 +417,6 @@ void MemoryHead<InputDataType, OutputDataType>::ResetCell(const size_t /*size*/)
   prevError = arma::zeros<arma::mat>((memSize) + (1) + (1) +
       (2 * shiftSize + 1) + (1), 1);
 
-  lWDash.clear();
-  lGammaT.clear();
-  lWTilde.clear();
-  lShiftMatrix.clear();
-  lWg.clear();
-  lSt.clear();
-  lGt.clear();
-  lWe.clear();
-  lWc.clear();
-  lBt.clear();
-  lConsineT.clear();
-
   bWdash = lWDash.end();
   bGammaT = lGammaT.end();
   bWTilde = lWTilde.end();
