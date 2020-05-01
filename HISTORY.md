@@ -1,5 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Add adaptive max pooling and adaptive mean pooling layers (#2195).
 
 ### mlpack 3.3.1
 ###### 2020-04-29
@@ -11,7 +12,6 @@
 
   * Add L1 Loss function (#2203).
 
-<<<<<<< HEAD
   * Pass CMAKE_CXX_FLAGS (compilation options) correctly to Python build
     (#2367).
 
@@ -21,9 +21,6 @@
 
   * Add serialization support from Julia; use `mlpack.serialize()` and
     `mlpack.deserialize()` to save and load from `IOBuffer`s.
-=======
-  * Add adaptive max pooling and adaptive mean pooling layers (#2195).
->>>>>>> df2354a79... Finished new definition as wrapper and added tests
 
 ### mlpack 3.3.0
 ###### 2020-04-07
