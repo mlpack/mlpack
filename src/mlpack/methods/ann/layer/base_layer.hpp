@@ -24,11 +24,8 @@
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
-<<<<<<< HEAD
 #include <mlpack/methods/ann/activation_functions/elliot_function.hpp>
-=======
 #include <mlpack/methods/ann/activation_functions/elish_function.hpp>
->>>>>>> master
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
