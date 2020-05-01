@@ -1,5 +1,9 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Addition of `Elliot` activation function (#2268).
+
+### mlpack 3.3.1
+###### 2020-04-29
   * Minor Julia and Python documentation fixes (#2373).
 
   * Updated terminal state and fixed bugs for Pendulum environment (#2354, #2369).

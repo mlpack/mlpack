@@ -3,7 +3,7 @@
  * @author Bisakh Mondal
  *
  * Definition and implementation of the Elliot Activation function as described 
- * by D.L. Elliott
+ * by D.L. Elliott.
  *
  * For more information, see the following paper.
  *
@@ -60,14 +60,14 @@ class ElliotFunction
   template <typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType &x, OutputVecType &y)
   {
-      y = x / (1.0 + arma::abs(x));
+    y = x / (1.0 + arma::abs(x));
   }
 
   /**
    * Computes the first derivative of the Elliot function.
    *
    * @param y Input data.
-   * @return f'(x)
+   * @return f'(x).
    */
   static double Deriv(const double y)
   {

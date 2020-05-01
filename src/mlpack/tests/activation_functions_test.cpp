@@ -24,11 +24,8 @@
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
-<<<<<<< HEAD
 #include <mlpack/methods/ann/activation_functions/elliot_function.hpp>
-=======
 #include <mlpack/methods/ann/activation_functions/elish_function.hpp>
->>>>>>> master
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -866,7 +863,6 @@ BOOST_AUTO_TEST_CASE(HardShrinkFunctionTest)
 }
 
 /**
-<<<<<<< HEAD
  * Basic test of the Elliot function.
  */
 BOOST_AUTO_TEST_CASE(ElliotFunctionTest)
@@ -886,7 +882,7 @@ BOOST_AUTO_TEST_CASE(ElliotFunctionTest)
                                         desiredDerivatives);
 }
 
-=======
+/**
  * Basic test of the EliSH function.
  */
 BOOST_AUTO_TEST_CASE(ElishFunctionTest)
@@ -906,7 +902,7 @@ BOOST_AUTO_TEST_CASE(ElishFunctionTest)
                                         desiredDerivatives);
 }
 
- /** 
+/** 
  * Basic test of the Soft Shrink function.
  */
 BOOST_AUTO_TEST_CASE(SoftShrinkFunctionTest)
@@ -937,5 +933,4 @@ BOOST_AUTO_TEST_CASE(CELUFunctionTest)
   CheckCELUDerivativeCorrect(desiredActivations, desiredDerivatives);
 }
 
->>>>>>> master
 BOOST_AUTO_TEST_SUITE_END();

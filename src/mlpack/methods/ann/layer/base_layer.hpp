@@ -240,6 +240,7 @@ template <
 >
 using GELUFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
+
 /**
  * Standard Elliot-Layer using the Elliot activation function.
  */
