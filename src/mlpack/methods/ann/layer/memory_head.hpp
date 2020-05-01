@@ -68,11 +68,6 @@ class MemoryHead
              arma::mat& dMem);
 
   /**
-   * Delete the MemoryHead and the layers it holds.
-   */
-  ~MemoryHead();
-
-  /**
    * Feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward given the current memory content.
    * Current memory content is taken from memoryHistory.

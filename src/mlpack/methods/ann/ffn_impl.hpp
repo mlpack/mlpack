@@ -687,22 +687,22 @@ FFN<OutputLayerType, InitializationRuleType,
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename eT>
-void FFN<OutputLayerType, InitializationRuleType,
-    CustomLayers...>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output){
-  boost::apply_visitor(ForwardVisitor(arma::mat(input),
-      boost::apply_visitor(outputParameterVisitor, network.front())),
-      network.front());
+void FFN<OutputLayerType, InitializationRuleType,CustomLayers...>::
+Forward(
+    const arma::Mat<eT>& input,
+    arma::Mat<eT>& output)
+{
+  if (parameter.is_empty())
+    ResetParameters();
 
-  for (size_t i = 1; i < network.size(); ++i)
+  if (!deterministic)
   {
-    boost::apply_visitor(ForwardVisitor(boost::apply_visitor(
-        outputParameterVisitor, network[i - 1]),
-        boost::apply_visitor(outputParameterVisitor, network[i])), network[i]);
+    deterministic = true;
+    ResetDeterministic();
   }
 
-  output = arma::mat(
-              boost::apply_visitor(outputParameterVisitor, network.back()));
+  Forward(input);
+  output = boost::apply_visitor(outputParameterVisitor, network.back());
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
@@ -717,20 +717,17 @@ void FFN<OutputLayerType, InitializationRuleType,
       boost::apply_visitor(deltaVisitor, network.back())),
       network.back());
 
-  for (int i = network.size() - 2; i > 0; i--)
+  for (size_t i = 2; i < network.size() + 1; ++i)
   {
     boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
-        outputParameterVisitor, network[i]),
-        boost::apply_visitor(deltaVisitor, network[i + 1]),
-        boost::apply_visitor(deltaVisitor, network[i])),
-        network[i]);
+        outputParameterVisitor, network[network.size() - i]),
+        boost::apply_visitor(deltaVisitor, network[network.size() - i + 1]),
+        boost::apply_visitor(deltaVisitor, network[network.size() - i])),
+        network[network.size() - i]);
   }
 
-  boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
-      outputParameterVisitor, network.front()),
-      boost::apply_visitor(deltaVisitor, network[1]),
-      g),
-      network.front());
+  g = boost::apply_visitor(deltaVisitor, network.front());
+
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
@@ -740,25 +737,22 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
     const arma::Mat<eT>& input,
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
-{ if (gradient.n_elem == 0){
-  gradient = arma::zeros<arma::mat>(input.n_rows, input.n_cols);
+{
   ResetGradients(gradient);
-}
   boost::apply_visitor(GradientVisitor(boost::apply_visitor(
-      outputParameterVisitor, network[network.size() - 2]),
-      error), network.back());
+      outputParameterVisitor, network[network.size() - 2]), error),
+      network.back());
 
-  for (size_t i = network.size() - 2; i > 0; i--)
+  for (size_t i = 2; i < network.size(); ++i)
   {
     boost::apply_visitor(GradientVisitor(boost::apply_visitor(
-        outputParameterVisitor, network[i - 1]),
-        boost::apply_visitor(deltaVisitor, network[i + 1])),
-        network[i]);
+        outputParameterVisitor, network[network.size() - i - 1]),
+        boost::apply_visitor(deltaVisitor, network[network.size() - i + 1])),
+        network[network.size() - i]);
   }
 
   boost::apply_visitor(GradientVisitor(input,
-      boost::apply_visitor(deltaVisitor, network[1])),
-      network.front());
+      boost::apply_visitor(deltaVisitor, network[1])), network.front());
 }
 
 } // namespace ann

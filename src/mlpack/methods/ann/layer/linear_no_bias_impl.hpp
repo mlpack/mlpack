@@ -54,8 +54,6 @@ template<typename eT>
 void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
-	if (weight.n_elem == 0)
-		Reset();
   output = weight * input;
 }
 
