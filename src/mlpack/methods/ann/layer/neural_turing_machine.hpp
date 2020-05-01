@@ -81,11 +81,6 @@ class NeuralTuringMachine
                       LayerTypes<> controller);
 
   /**
-   * Delete the NeuralTuringMachine and the layers it holds.
-   */
-  ~NeuralTuringMachine();
-
-  /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *

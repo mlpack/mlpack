@@ -61,7 +61,6 @@ NeuralTuringMachine<InputDataType, OutputDataType>::NeuralTuringMachine(
   network.push_back(inputToLinear);
   network.push_back(addGate);
   network.push_back(eraseGate);
-  network.push_back(writeHead);
 
   dWriteHead.set_size(numMem, 1);
   linearError.set_size(2 * memSize, 1);
@@ -83,15 +82,6 @@ NeuralTuringMachine<InputDataType, OutputDataType>::NeuralTuringMachine(
   forwardStep = 0;
   backwardStep = 0;
   gradientStep = 0;
-}
-
-template <typename InputDataType, typename OutputDataType>
-NeuralTuringMachine<InputDataType, OutputDataType>::~NeuralTuringMachine()
-{
-  boost::apply_visitor(deleteVisitor, controller);
-  boost::apply_visitor(deleteVisitor, inputToLinear);
-  boost::apply_visitor(deleteVisitor, eraseGate);
-  boost::apply_visitor(deleteVisitor, addGate);
 }
 
 template<typename InputDataType, typename OutputDataType>

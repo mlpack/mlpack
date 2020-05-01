@@ -56,8 +56,6 @@ template<typename eT>
 void Linear<InputDataType, OutputDataType, RegularizerType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
-  if (weight.n_elem == 0)
-    Reset();
   output = weight * input;
   output.each_col() += bias;
 }
@@ -68,8 +66,6 @@ template<typename eT>
 void Linear<InputDataType, OutputDataType, RegularizerType>::Backward(
     const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
-  if (weight.n_elem == 0)
-    Reset();
   g = weight.t() * gy;
 }
 
@@ -81,8 +77,6 @@ void Linear<InputDataType, OutputDataType, RegularizerType>::Gradient(
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
 {
-  if (weight.n_elem == 0)
-    Reset();
   gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
       error * input.t());
   gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) =

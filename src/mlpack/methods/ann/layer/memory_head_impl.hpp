@@ -82,13 +82,6 @@ MemoryHead<InputDataType, OutputDataType>::MemoryHead(
   bMemoryHistory = memoryHistory.end();
 }
 
-template <typename InputDataType, typename OutputDataType>
-MemoryHead<InputDataType, OutputDataType>::~MemoryHead()
-{
-  boost::apply_visitor(deleteVisitor, inputLinear);
-  boost::apply_visitor(deleteVisitor, kTNonLinear);
-}
-
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void MemoryHead<InputDataType, OutputDataType>::Forward(
@@ -199,10 +192,9 @@ template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename ErrorType, typename GradientType>
 void MemoryHead<InputDataType, OutputDataType>::Backward(
   const InputType& /* input */, ErrorType& gy, GradientType& g)
-{ 
-  double x = *lBt.end();
+{
   arma::vec temp = gy;
-  if (std::abs(*bBt - x)<1)
+  if (bBt == lBt.end())
   {
     bBt = (--lBt.end());
     bCosineT = (--lConsineT.end());
@@ -417,13 +409,25 @@ void MemoryHead<InputDataType, OutputDataType>::ResetCell(const size_t /*size*/)
 {
   prevWeights.clear();
 
-  prevWeights.push_back(arma::mat(allZeros.memptr(),
-    allZeros.n_rows, allZeros.n_cols, false, true));
+  prevWeights.push_back(std::move(arma::mat(allZeros.memptr(),
+    allZeros.n_rows, allZeros.n_cols, false, true)));
 
   weightsBackwardIterator = prevWeights.end();
 
   prevError = arma::zeros<arma::mat>((memSize) + (1) + (1) +
       (2 * shiftSize + 1) + (1), 1);
+
+  lWDash.clear();
+  lGammaT.clear();
+  lWTilde.clear();
+  lShiftMatrix.clear();
+  lWg.clear();
+  lSt.clear();
+  lGt.clear();
+  lWe.clear();
+  lWc.clear();
+  lBt.clear();
+  lConsineT.clear();
 
   bWdash = lWDash.end();
   bGammaT = lGammaT.end();
