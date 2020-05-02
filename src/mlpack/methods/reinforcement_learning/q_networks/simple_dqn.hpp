@@ -2,7 +2,7 @@
  * @file methods/reinforcement_learning/q_networks/simple_dqn.hpp
  * @author Nishant Kumar
  *
- * This file contains the implementation of the simple deep q network.
+ * This file contains the definition of the simple deep q network.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -40,8 +40,7 @@ class SimpleDQN
   using NetworkType = FFN<OutputLayerType, InitializationRuleType>;
 
   //! Default constructor.
-  SimpleDQN() : network(OutputLayerType(), InitializationRuleType())
-  { /* Nothing to do here. */ }
+  SimpleDQN();
 
   /**
    * Construct an instance of SimpleDQN class.
@@ -54,17 +53,15 @@ class SimpleDQN
   SimpleDQN(const int inputDim,
             const int h1,
             const int h2,
-            const int outputDim) : network(OutputLayerType(), InitializationRuleType())
-  {
-    network.Add<Linear<>>(inputDim, h1);
-    network.Add<ReLULayer<>>();
-    network.Add<Linear<>>(h1, h2);
-    network.Add<ReLULayer<>>();
-    network.Add<Linear<>>(h2, outputDim);
-  }
+            const int outputDim);
 
-  SimpleDQN(NetworkType& network) : network(std::move(network))
-  { /* Nothing to do here. */ }
+  /**
+   * Constructor for using a user-defined network.
+   *
+   * @param network User-defined Feed Forward network to be used for Deep
+   *                Q-Learning.
+   */
+  SimpleDQN(NetworkType& network);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -77,10 +74,7 @@ class SimpleDQN
    * @param state Input state.
    * @param actionValue Matrix to put output action values of states input.
    */
-  void Predict(const arma::mat& state, arma::mat& actionValue)
-  {
-    network.Predict(state, actionValue);
-  }
+  void Predict(const arma::mat& state, arma::mat& actionValue);
 
   /**
    * Perform the forward pass of the states in real batch mode.
@@ -88,23 +82,7 @@ class SimpleDQN
    * @param state The input state.
    * @param target The predicted target.
    */
-  void Forward(const arma::mat& state, arma::mat& target)
-  {
-    network.Forward(state, target);
-  }
-
-  /**
-   * Resets the parameters of the network.
-   */
-  void ResetParameters()
-  {
-    network.ResetParameters();
-  }
-
-  //! Return the Parameters.
-  const arma::mat& Parameters() const { return network.Parameters(); }
-  //! Modify the Parameters.
-  arma::mat& Parameters() { return network.Parameters(); }
+  void Forward(const arma::mat& state, arma::mat& target);
 
   /**
    * Perform the backward pass of the state in real batch mode.
@@ -113,8 +91,24 @@ class SimpleDQN
    * @param target The training target.
    * @param gradient The gradient.
    */
+<<<<<<< HEAD
   void Backward(const arma::mat& state, arma::mat& target,
       arma::mat& gradient)
+=======
+  void Backward(const arma::mat& state,
+                const arma::mat& target,
+                arma::mat& gradient);
+
+  /**
+   * Resets the parameters of the network.
+   */
+  void ResetParameters();
+
+  //! Return the Parameters.
+  const arma::mat& Parameters() const { return network.Parameters(); }
+  //! Modify the Parameters.
+  arma::mat& Parameters() { return network.Parameters(); }
+>>>>>>> 8e7600689... Seperate Files
 
  private:
   //! Locally-stored network.
@@ -123,5 +117,8 @@ class SimpleDQN
 
 } // namespace rl
 } // namespace mlpack
+
+// Include implementation.
+#include "simple_dqn_impl.hpp"
 
 #endif
