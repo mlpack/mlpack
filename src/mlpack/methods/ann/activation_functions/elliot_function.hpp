@@ -11,7 +11,7 @@
  * @techreport{Elliott1993,
  *   title = {A better activation function for artificial neural networks},
  *   author = {Elliott, David L},
- *   url = {https://drum.lib.umd.edu/bitstream/handle/1903/5355/TR\_93-8.pdf}
+ *   url = {https://drum.lib.umd.edu/bitstream/handle/1903/5355/TR_93-8.pdf}
  *   year = {1993}
  * }
  * @endcode
