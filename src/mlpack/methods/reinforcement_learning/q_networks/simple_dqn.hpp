@@ -40,24 +40,22 @@ class SimpleDQN
   using NetworkType = FFN<OutputLayerType, InitializationRuleType>;
 
   //! Default constructor.
-  SimpleDQN()
+  SimpleDQN() : network(OutputLayerType(), InitializationRuleType())
   { /* Nothing to do here. */ }
 
   /**
    * Construct an instance of SimpleDQN class.
    *
    * @param inputDim Number of inputs.
-   * @param h1 Number of neurons in hiddenlayer-1.
-   * @param h2 Number of neurons in hiddenlayer-2.
+   * @param h1 Number of neurons in hidden layer-1.
+   * @param h2 Number of neurons in hidden layer-2.
    * @param outputDim Number of neurons in output layer.
    */
   SimpleDQN(const int inputDim,
             const int h1,
             const int h2,
-            const int outputDim)
+            const int outputDim) : network(OutputLayerType(), InitializationRuleType())
   {
-    this->ResetParameters();
-    network.Add<IdentityLayer<>>();
     network.Add<Linear<>>(inputDim, h1);
     network.Add<ReLULayer<>>();
     network.Add<Linear<>>(h1, h2);
