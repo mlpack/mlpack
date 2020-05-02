@@ -33,10 +33,10 @@ SimpleDQN<OutputLayerType, InitializationRuleType>::SimpleDQN()
 
 template<typename OutputLayerType, typename InitializationRuleType>
 SimpleDQN<OutputLayerType, InitializationRuleType>::SimpleDQN(
-    const int inputDim,
-    const int h1,
-    const int h2,
-    const int outputDim)
+    const size_t inputDim,
+    const size_t h1,
+    const size_t h2,
+    const size_t outputDim)
 {
   network.Add<Linear<>>(inputDim, h1);
   network.Add<ReLULayer<>>();
@@ -83,4 +83,5 @@ void SimpleDQN<OutputLayerType, InitializationRuleType>::ResetParameters()
 
 } // namespace rl
 } // namespace mlpack
+
 #endif

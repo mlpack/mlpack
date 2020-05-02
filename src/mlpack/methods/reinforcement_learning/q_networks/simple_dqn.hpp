@@ -50,10 +50,10 @@ class SimpleDQN
    * @param h2 Number of neurons in hidden layer-2.
    * @param outputDim Number of neurons in output layer.
    */
-  SimpleDQN(const int inputDim,
-            const int h1,
-            const int h2,
-            const int outputDim);
+  SimpleDQN(const size_t inputDim,
+            const size_t h1,
+            const size_t h2,
+            const size_t outputDim);
 
   /**
    * Constructor for using a user-defined network.
