@@ -68,17 +68,29 @@ void Split(const arma::Mat<T>& input,
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(
         0, input.n_cols - 1, input.n_cols));
-    trainData = input.cols(order.subvec(0, trainSize - 1));
-    trainLabel = inputLabel.cols(order.subvec(0, trainSize - 1));
+    if (trainSize > 0)
+    {
+      trainData = input.cols(order.subvec(0, trainSize - 1));
+      trainLabel = inputLabel.cols(order.subvec(0, trainSize - 1));
+    }
+    if (trainSize < input.n_cols)
+    {
     testData = input.cols(order.subvec(trainSize, input.n_cols - 1));
     testLabel = inputLabel.cols(order.subvec(trainSize, input.n_cols - 1));
+    }
   }
   else
   {
-    trainData = input.cols(0, trainSize - 1);
-    testData = input.cols(trainSize , input.n_cols - 1);
-    trainLabel = inputLabel.subvec(0, trainSize - 1);
-    testLabel = inputLabel.subvec(trainSize , input.n_cols - 1);
+    if (trainSize > 0)
+    {
+      trainData = input.cols(0, trainSize - 1);
+      trainLabel = inputLabel.subvec(0, trainSize - 1);
+    }
+    if (trainSize < input.n_cols)
+    {
+      testData = input.cols(trainSize , input.n_cols - 1);
+      testLabel = inputLabel.subvec(trainSize , input.n_cols - 1);
+    }
   }
 }
 
@@ -121,13 +133,22 @@ void Split(const arma::Mat<T>& input,
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(
         0, input.n_cols - 1, input.n_cols));
-    trainData = input.cols(order.subvec(0, trainSize - 1));
-    testData = input.cols(order.subvec(trainSize, input.n_cols - 1));
+
+    if (trainSize > 0)
+      trainData = input.cols(order.subvec(0, trainSize - 1));
+
+    if (trainSize < input.n_cols)    
+      testData = input.cols(order.subvec(trainSize, input.n_cols - 1));
+
   }
   else
   {
-    trainData = input.cols(0, trainSize - 1);
-    testData = input.cols(trainSize , input.n_cols - 1);
+
+    if (trainSize > 0)
+      trainData = input.cols(0, trainSize - 1);
+
+    if (trainSize < input.n_cols)
+      testData = input.cols(trainSize , input.n_cols - 1);
   }
 }
 
