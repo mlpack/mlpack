@@ -60,12 +60,13 @@ double BayesianRidge::Train(const arma::mat& data,
               << std::endl;
     throw std::runtime_error("eig_sym() failed.");
   }
+  const arma::mat eigvecInv = inv(eigvec);
 
   // Initialize the hyperparameters and
   // begin with an infinitely broad prior.
   alpha = 1e-6;
   beta =  1 / (var(t, 1) * 0.1);
-
+  
   unsigned short i = 0;
   double deltaAlpha = 1.0, deltaBeta = 1.0, crit = 1.0;
   arma::mat matA = arma::eye<arma::mat>(data.n_rows, data.n_rows);
@@ -75,18 +76,15 @@ double BayesianRidge::Train(const arma::mat& data,
     deltaAlpha = -alpha;
     deltaBeta = -beta;
 
-    // Compute the posterior statistics.
-    // with inv()
-    // inv is used instead of solve because we need the covariance matrix to
-    // compute the prediction uncertainties. If solve is used, matCovariance
-    // must be comptuted at the end of the loop.
-    // matA.diag().fill(alpha);
-    // matCovariance = inv_sympd(matA + phiphiT * beta);
-    // omega = (matCovariance * vecphitT) * beta;
+    const double lambda = alpha / beta;
+    omega= 1 / (eigval + lambda);
+    omega *= lambda;
+    omega = (eigvec * diagmat(omega)) * eigvecInv * vecphitT;
+    omega /= lambda;
 
     // // with solve()
-    matA.diag().fill(alpha / beta);
-    omega = solve(matA + phiphiT, vecphitT);
+    // matA.diag().fill(alpha/beta);
+    // omega = solve(matA + phiphiT, vecphitT);
 
     // Update alpha.
     eigvali = eigval * beta;
