@@ -137,7 +137,7 @@ static void mlpackMain()
       "no results will be saved");
 
   // Ignore out_predictions unless test is specified.
-  ReportIgnoredParam({{ "test", true }}, "output_predictions");
+  ReportIgnoredParam({{ "test", false }}, "output_predictions");
 
   BayesianRidge* bayesRidge;
   if (CLI::HasParam("input"))
@@ -196,7 +196,6 @@ static void mlpackMain()
 
     // Save test predictions (one per line).
     CLI::GetParam<arma::mat>("output_predictions") = std::move(predictions);
-    Log::Info << predictions << std::endl;
   }
 
   CLI::GetParam<BayesianRidge*>("output_model") = bayesRidge;
