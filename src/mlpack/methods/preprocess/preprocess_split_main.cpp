@@ -45,12 +45,12 @@ PROGRAM_INFO("Split Data",
     PRINT_CALL("preprocess_split", "input", "X", "training", "X_train", "test",
         "X_test", "test_ratio", 0.4) +
     "\n\n"
-    "Also by default the dataset is shuffled and splited, you can provide " +
-    PRINT_PARAM_STRING("no_shuffle") +" to avoid shuffling of the data, " +
-    "an example to avoid shuffling of data is as"
+    "Also by default the dataset is shuffled and split; you can provide the " +
+    PRINT_PARAM_STRING("no_shuffle") + " option to avoid shuffling the "
+    "data; an example to avoid shuffling of data is:"
     "\n\n" +
     PRINT_CALL("preprocess_split", "input", "X", "training", "X_train", "test",
-        "X_test", "test_ratio", 0.4 , "no_shuffle", true) +
+        "X_test", "test_ratio", 0.4, "no_shuffle", true) +
     "\n\n"
     "If we had a dataset " + PRINT_DATASET("X") + " and associated labels " +
     PRINT_DATASET("y") + ", and we wanted to split these into " +
