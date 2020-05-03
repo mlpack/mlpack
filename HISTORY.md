@@ -1,7 +1,11 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Add adaptive max pooling and adaptive mean pooling layers (#2195).
+
   * Add parameter to avoid shuffling of data in preprocess_split (#2293).
 
+### mlpack 3.3.1
+###### 2020-04-29
   * Minor Julia and Python documentation fixes (#2373).
 
   * Updated terminal state and fixed bugs for Pendulum environment (#2354, #2369).
@@ -14,6 +18,11 @@
     (#2367).
 
   * Expose ensmallen Callbacks for sparseautoencoder (#2198).
+
+  * Bugfix for LARS class causing invalid read (#2374).
+
+  * Add serialization support from Julia; use `mlpack.serialize()` and
+    `mlpack.deserialize()` to save and load from `IOBuffer`s.
 
 ### mlpack 3.3.0
 ###### 2020-04-07
@@ -76,7 +85,7 @@
 
   * Add CELU activation function (#2191)
 
-  * Add Log-Hyperbolic-Cosine Loss function (#2207)
+  * Add Log-Hyperbolic-Cosine Loss function (#2207).
 
   * Change neural network types to avoid unnecessary use of rvalue references
     (#2259).

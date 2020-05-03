@@ -336,7 +336,7 @@ static void mlpackMain()
 
   if (CLI::HasParam("test"))
   {
-    testSet = std::move(CLI::GetParam<arma::mat>("test"));
+    const arma::mat& testSet = CLI::GetParam<arma::mat>("test");
 
     // Checking the dimensionality of the test data.
     if (testSet.n_rows != model->Parameters().n_cols - 1)

@@ -171,6 +171,34 @@ class LARS
        const double tolerance = 1e-16);
 
   /**
+   * Construct the LARS object by copying the given LARS object.
+   *
+   * @param other LARS object to copy.
+   */
+  LARS(const LARS& other);
+
+  /**
+   * Construct the LARS object by taking ownership of the given LARS object.
+   *
+   * @param other LARS object to take ownership of.
+   */
+  LARS(LARS&& other);
+
+  /**
+   * Copy the given LARS object.
+   *
+   * @param other LARS object to copy.
+   */
+  LARS& operator=(const LARS& other);
+
+  /**
+   * Take ownership of the given LARS object.
+   *
+   * @param other LARS object to take ownership of.
+   */
+  LARS& operator=(LARS&& other);
+
+  /**
    * Run LARS.  The input matrix (like all mlpack matrices) should be
    * column-major -- each column is an observation and each row is a dimension.
    * However, because LARS is more efficient on a row-major matrix, this method
