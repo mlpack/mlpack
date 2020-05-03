@@ -99,8 +99,12 @@ double BayesianRidge::Train(const arma::mat& data,
     i++;
   }
   // Compute the covariance matrice for the uncertaities later.
+<<<<<<< HEAD
   matCovariance = eigvec;
   matCovariance *= diagmat(1 / (beta * eigval + alpha));
+=======
+  matCovariance = eigvec * diagmat(1 / (beta * eigval + alpha));
+>>>>>>> 8ccb94c4cfc24ee267f9bd337fcac1f0bb25eb76
   matCovariance *= eigvecInv;
   
   // with solve()
