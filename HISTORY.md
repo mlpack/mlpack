@@ -1,5 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Add adaptive max pooling and adaptive mean pooling layers (#2195).
 
 ### mlpack 3.3.1
 ###### 2020-04-29
@@ -82,7 +83,7 @@
 
   * Add CELU activation function (#2191)
 
-  * Add Log-Hyperbolic-Cosine Loss function (#2207)
+  * Add Log-Hyperbolic-Cosine Loss function (#2207).
 
   * Change neural network types to avoid unnecessary use of rvalue references
     (#2259).
