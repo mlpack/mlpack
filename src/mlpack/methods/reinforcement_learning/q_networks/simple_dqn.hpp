@@ -104,6 +104,10 @@ class SimpleDQN
    */
   void ResetParameters();
 
+  //! Serialize the model.
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */);
+
   //! Return the Parameters.
   const arma::mat& Parameters() const { return network.Parameters(); }
   //! Modify the Parameters.

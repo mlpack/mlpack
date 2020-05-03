@@ -20,6 +20,8 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 
+#include <boost/serialization/variant.hpp>
+
 namespace mlpack {
 namespace rl {
 
@@ -79,6 +81,14 @@ template<typename OutputLayerType, typename InitializationRuleType>
 void SimpleDQN<OutputLayerType, InitializationRuleType>::ResetParameters()
 {
   network.ResetParameters();
+}
+
+template <typename OutputLayerType, typename InitializationRuleType>
+template<typename Archive>
+void SimpleDQN<OutputLayerType, InitializationRuleType>::serialize(
+    Archive& ar, const unsigned int /* version */)
+{
+  ar & BOOST_SERIALIZATION_NVP(network);
 }
 
 } // namespace rl
