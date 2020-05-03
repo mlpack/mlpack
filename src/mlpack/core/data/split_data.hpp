@@ -137,13 +137,11 @@ void Split(const arma::Mat<T>& input,
     if (trainSize > 0)
       trainData = input.cols(order.subvec(0, trainSize - 1));
 
-    if (trainSize < input.n_cols)    
+    if (trainSize < input.n_cols)
       testData = input.cols(order.subvec(trainSize, input.n_cols - 1));
-
   }
   else
   {
-
     if (trainSize > 0)
       trainData = input.cols(0, trainSize - 1);
 
