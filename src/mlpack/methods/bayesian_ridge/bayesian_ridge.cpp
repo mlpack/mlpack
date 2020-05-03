@@ -76,11 +76,8 @@ double BayesianRidge::Train(const arma::mat& data,
     deltaAlpha = -alpha;
     deltaBeta = -beta;
 
-    const double lambda = alpha / beta;
-    omega= 1 / (eigval + lambda);
-    omega *= lambda;
+    omega = 1 / (eigval + (alpha / beta));
     omega = (eigvec * diagmat(omega)) * eigvecInv * vecphitT;
-    omega /= lambda;
 
     // // with solve()
     // matA.diag().fill(alpha/beta);
@@ -102,8 +99,13 @@ double BayesianRidge::Train(const arma::mat& data,
     i++;
   }
   // Compute the covariance matrice for the uncertaities later.
-  matA.diag().fill(alpha);
-  matCovariance = inv_sympd(matA + phiphiT * beta);
+  matCovariance = eigvec;
+  matCovariance *= diagmat(1 / (beta * eigval + alpha));
+  matCovariance *= eigvecInv;
+  
+  // with solve()
+  // matA.diag().fill(alpha);
+  // matCovariance = inv_sympd(matA + phiphiT * beta);
 
   Timer::Stop("bayesian_ridge_regression");
 
