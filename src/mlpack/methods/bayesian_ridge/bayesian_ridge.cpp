@@ -34,8 +34,7 @@ double BayesianRidge::Train(const arma::mat& data,
   arma::mat phi;
   arma::rowvec t;
   arma::colvec eigval;
-  arma::mat eigvec;
-  arma::colvec eigvali;
+  arma::mat V;
 
   // Preprocess the data. Center and scale.
   responsesOffset = CenterScaleData(data,
@@ -47,45 +46,37 @@ double BayesianRidge::Train(const arma::mat& data,
                                     dataOffset,
                                     dataScale);
 
-  // Compute this quantities once and for all.
-  const arma::colvec vecphitT = phi * t.t();
-
-  // Enforce symmetry of the covariance matrix before eig_sym.
-  const arma::mat phiphiT =  arma::symmatu(phi * phi.t());
-
-  if (arma::eig_sym(eigval, eigvec, phiphiT) == false)
+  if (arma::eig_sym(eigval, V, arma::symmatu(phi * phi.t())) == false)
   {
     Log::Warn << "BayesianRidge::Train(): Eigendecomposition "
               << "of covariance failed!"
               << std::endl;
     throw std::runtime_error("eig_sym() failed.");
   }
-  const arma::mat eigvecInv = inv(eigvec);
+
+  // Compute this quantiies once and for all.
+  const arma::mat Vinv = inv(V);
+  const arma::colvec VinvPhitT = Vinv * phi * t.t();
 
   // Initialize the hyperparameters and
   // begin with an infinitely broad prior.
   alpha = 1e-6;
   beta =  1 / (var(t, 1) * 0.1);
-  
+
   unsigned short i = 0;
   double deltaAlpha = 1.0, deltaBeta = 1.0, crit = 1.0;
-  arma::mat matA = arma::eye<arma::mat>(data.n_rows, data.n_rows);
 
   while ((crit > tol) && (i < nIterMax))
   {
     deltaAlpha = -alpha;
     deltaBeta = -beta;
 
+    // Update the solution.
     omega = 1 / (eigval + (alpha / beta));
-    omega = (eigvec * diagmat(omega)) * eigvecInv * vecphitT;
-
-    // // with solve()
-    // matA.diag().fill(alpha/beta);
-    // omega = solve(matA + phiphiT, vecphitT);
+    omega = V * diagmat(omega) * VinvPhitT;
 
     // Update alpha.
-    eigvali = eigval * beta;
-    gamma = sum(eigvali / (alpha + eigvali));
+    gamma = sum(eigval / (alpha / beta + eigval));
     alpha = gamma / dot(omega, omega);
 
     // Update beta.
@@ -99,13 +90,9 @@ double BayesianRidge::Train(const arma::mat& data,
     i++;
   }
   // Compute the covariance matrice for the uncertaities later.
-  matCovariance = eigvec;
+  matCovariance = std::move(V);
   matCovariance *= diagmat(1 / (beta * eigval + alpha));
-  matCovariance *= eigvecInv;
-  
-  // with solve()
-  // matA.diag().fill(alpha);
-  // matCovariance = inv_sympd(matA + phiphiT * beta);
+  matCovariance *= Vinv;
 
   Timer::Stop("bayesian_ridge_regression");
 
