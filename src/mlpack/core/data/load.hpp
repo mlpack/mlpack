@@ -89,7 +89,7 @@ bool Load(const std::string& filename,
  * value of 'true'.
  *
  * @param filename Name of file to load.
- * @param matrix Sparse Matrix to load contents of file into.
+ * @param matrix Sparse matrix to load contents of file into.
  * @param fatal If an error should be reported as fatal (default false).
  * @param transpose If true, transpose the matrix after loading (default true).
  * @return Boolean value indicating success or failure of load.
@@ -142,7 +142,7 @@ extern template bool Load<int>(const std::string&,
                                arma::Mat<int>&,
                                const bool,
                                const bool);
-                               
+
 extern template bool Load<unsigned int>(const std::string&,
                                         arma::SpMat<unsigned int>&,
                                         const bool,
