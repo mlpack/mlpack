@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Print Julia code to handle input arguments.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_BINDINGS_JULIA_PRINT_INPUT_PROCESSING_IMPL_HPP
 #define MLPACK_BINDINGS_JULIA_PRINT_INPUT_PROCESSING_IMPL_HPP
@@ -48,7 +53,7 @@ void PrintInputProcessing(
     // end
     std::cout << "  if !ismissing(" << juliaName << ")" << std::endl;
     std::cout << "    CLISetParam(\"" << d.name << "\", convert("
-        << GetJuliaType<T>() << ", " << juliaName << "))" << std::endl;
+        << GetJuliaType<T>(d) << ", " << juliaName << "))" << std::endl;
     std::cout << "  end" << std::endl;
   }
 }
@@ -132,8 +137,8 @@ void PrintInputProcessing(
   std::string indent(extraIndent + 2, ' ');
   std::string type = StripType(d.cppType);
   std::cout << indent << functionName << "_internal.CLISetParam" << type
-      << "Ptr(\"" << d.name << "\", convert("
-      << GetJuliaType<typename std::remove_pointer<T>::type>() << ", "
+      << "(\"" << d.name << "\", convert("
+      << GetJuliaType<typename std::remove_pointer<T>::type>(d) << ", "
       << juliaName << "))" << std::endl;
 
   if (!d.required)
@@ -164,7 +169,7 @@ void PrintInputProcessing(
     //
     // CLISetParam("<param_name>", convert(<type>, <paramName>))
     std::cout << "  CLISetParam(\"" << d.name << "\", convert("
-        << GetJuliaType<T>() << ", " << juliaName << "), points_are_rows)"
+        << GetJuliaType<T>(d) << ", " << juliaName << "), points_are_rows)"
         << std::endl;
   }
   else
@@ -176,7 +181,7 @@ void PrintInputProcessing(
     // end
     std::cout << "  if !ismissing(" << juliaName << ")" << std::endl;
     std::cout << "    CLISetParam(\"" << d.name << "\", convert("
-        << GetJuliaType<T>() << ", " << juliaName << "), points_are_rows)"
+        << GetJuliaType<T>(d) << ", " << juliaName << "), points_are_rows)"
         << std::endl;
     std::cout << "  end" << std::endl;
   }

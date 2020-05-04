@@ -27,8 +27,9 @@ MeanBiasError<InputDataType, OutputDataType>::MeanBiasError()
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double MeanBiasError<InputDataType, OutputDataType>::Forward(
-    const InputType& input, const TargetType& target)
+typename InputType::elem_type
+MeanBiasError<InputDataType, OutputDataType>::Forward(const InputType& input,
+                                                      const TargetType& target)
 {
   return arma::accu(target - input) / target.n_cols;
 }

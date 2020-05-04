@@ -78,7 +78,7 @@ class HardSigmoidFunction
   /**
    * Computes the first derivatives of the hard sigmoid function.
    *
-   * @param y Input activations.
+   * @param y Input data.
    * @param x The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType>

@@ -214,6 +214,18 @@ class CLI
   static T& GetRawParam(const std::string& identifier);
 
   /**
+   * Given two (matrix) parameters, ensure that the first is an in-place copy of
+   * the second.  This will generally do nothing (as the bindings already do
+   * this automatically), except for command-line bindings, where we need to
+   * ensure that the output filename is the same as the input filename.
+   *
+   * @param outputParamName Name of output (matrix) parameter.
+   * @param inputParamName Name of input (matrix) parameter.
+   */
+  static void MakeInPlaceCopy(const std::string& outputParamName,
+                              const std::string& inputParamName);
+
+  /**
    * Retrieve the singleton.  As an end user, if you are just using the CLI
    * object, you should not need to use this function---the other static
    * functions should be sufficient.

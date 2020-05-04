@@ -33,14 +33,14 @@ using namespace std;
  *     information; each pair is <description, url>.
  */
 ProgramDoc::ProgramDoc(
-    const std::string& programName,
-    const std::string& shortDocumentation,
-    const std::function<std::string()>& documentation,
-    const std::vector<std::pair<std::string, std::string>>& seeAlso) :
-    programName(programName),
-    shortDocumentation(shortDocumentation),
-    documentation(documentation),
-    seeAlso(seeAlso)
+    const std::string programName,
+    const std::string shortDocumentation,
+    const std::function<std::string()> documentation,
+    const std::vector<std::pair<std::string, std::string>> seeAlso) :
+    programName(std::move(programName)),
+    shortDocumentation(std::move(shortDocumentation)),
+    documentation(std::move(documentation)),
+    seeAlso(std::move(seeAlso))
 {
   // Register this with CLI.
   CLI::RegisterProgramDoc(this);

@@ -65,7 +65,7 @@ class IdentityFunction
   /**
    * Computes the first derivatives of the identity function.
    *
-   * @param y Input activations.
+   * @param y Input data/activation.
    * @param x The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType>

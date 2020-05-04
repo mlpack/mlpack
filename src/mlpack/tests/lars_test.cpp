@@ -421,4 +421,46 @@ BOOST_AUTO_TEST_CASE(LARSTestComputeError)
   BOOST_REQUIRE_EQUAL(cost == train1, true);
 }
 
+/**
+ * Simple test for LARS copy constructor.
+ */
+BOOST_AUTO_TEST_CASE(LARSCopyConstructorTest)
+{
+  arma::mat features, Y;
+  arma::rowvec targets;
+
+  // Load training input and predictions for testing.
+  data::Load("lars_dependent_x.csv", features);
+  data::Load("lars_dependent_y.csv", Y);
+  targets = Y.row(0);
+
+  // Check if the copy is accessible even after deleting the pointer to the
+  // object.
+  mlpack::regression::LARS* glm1 = new mlpack::regression::LARS(false, .1, .1);
+  arma::rowvec predictions, predictionsFromCopiedModel;
+  std::vector<mlpack::regression::LARS> models;
+  glm1->Train(features, targets);
+  glm1->Predict(features, predictions);
+  models.emplace_back(*glm1); // Call the copy constructor.
+  delete glm1; // Free LARS internal memory.
+  models[0].Predict(features, predictionsFromCopiedModel);
+  // The output of both models should be the same.
+  CheckMatrices(predictions, predictionsFromCopiedModel);
+  // Check if we can train the model again.
+  BOOST_REQUIRE_NO_THROW(models[0].Train(features, targets));
+
+  // Check if we can train the copied model.
+  mlpack::regression::LARS glm2(false, 0.1, 0.1);
+  models.emplace_back(glm2); // Call the copy constructor.
+  BOOST_REQUIRE_NO_THROW(glm2.Train(features, targets));
+  BOOST_REQUIRE_NO_THROW(models[1].Train(features, targets));
+
+  // Create a copy using assignment operator.
+  mlpack::regression::LARS glm3 = glm2;
+  models[1].Predict(features, predictions);
+  glm3.Predict(features, predictionsFromCopiedModel);
+  // The output of both models should be the same.
+  CheckMatrices(predictions, predictionsFromCopiedModel);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

@@ -27,8 +27,10 @@ CrossEntropyError<InputDataType, OutputDataType>::CrossEntropyError(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double CrossEntropyError<InputDataType, OutputDataType>::Forward(
-    const InputType& input, const TargetType& target)
+typename InputType::elem_type
+CrossEntropyError<InputDataType, OutputDataType>::Forward(
+    const InputType& input,
+    const TargetType& target)
 {
   return -arma::accu(target % arma::log(input + eps) +
       (1. - target) % arma::log(1. - input + eps));
