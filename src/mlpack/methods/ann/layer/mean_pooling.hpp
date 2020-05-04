@@ -84,24 +84,24 @@ class MeanPooling
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the width.
+  //! Get the intput width.
   size_t const& InputWidth() const { return inputWidth; }
-  //! Modify the width.
+  //! Modify the input width.
   size_t& InputWidth() { return inputWidth; }
 
-  //! Get the height.
+  //! Get the input height.
   size_t const& InputHeight() const { return inputHeight; }
-  //! Modify the height.
+  //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
-  //! Get the width.
+  //! Get the output width.
   size_t const& OutputWidth() const { return outputWidth; }
-  //! Modify the width.
+  //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
-  //! Get the height.
+  //! Get the output height.
   size_t const& OutputHeight() const { return outputHeight; }
-  //! Modify the height.
+  //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size.
@@ -141,7 +141,7 @@ class MeanPooling
   bool& Deterministic() { return deterministic; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
