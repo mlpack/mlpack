@@ -297,9 +297,7 @@ bool Load(const std::string& filename,
   // Now transpose the matrix, if necessary.
   if (transpose)
   {
-    bool isTransposed = inplace_transpose(matrix, fatal);
-    if (!isTransposed)
-      return false;
+    success = inplace_transpose(matrix, fatal);
   }
 
   Timer::Stop("loading_data");
@@ -368,9 +366,7 @@ bool Load(const std::string& filename,
       // We transpose by default.  So, un-transpose if necessary...
       if (!transpose)
       {
-        bool isTransposed = inplace_transpose(matrix, fatal);
-        if (!isTransposed)
-          return false;
+        return inplace_transpose(matrix, fatal);
       }
     }
     catch (std::exception& e)
@@ -441,53 +437,10 @@ bool Load(const std::string& filename,
   arma::file_type loadType;
   std::string stringType;
 
-  // a temporary file to handle CSV.
-  std::string tempFileName = "temp.txt";
-
-  // if is it a csv,
-  // the target format of the type: arma::coord_ascii expects
-  // values without commas
-  // so we remove the commas and store them in a tempFileName
-  if (extension == "csv")
-  {
-    // Temporary CSV stream to store the values without commas
-    std::ofstream csvstream(tempFileName);
-    if ( !csvstream.is_open() )
-    {
-      if (fatal)
-      {
-        Log::Fatal << "Unable to create temporary file for processing."
-            << std::endl;
-      }
-      else
-      {
-        Log::Warn << "Unable to create temporary file for processing."
-            << std::endl;
-      }
-
-      return false;
-    }
-
-    // iterators to perform the comma with space replacement
-    std::istreambuf_iterator<char> in_itr(stream);
-    std::ostreambuf_iterator<char> out_itr(csvstream);
-
-    // replacing comma with a space and storing to csvstream
-    std::replace_copy(in_itr,
-                      std::istreambuf_iterator<char>(),
-                      out_itr,
-                      ',',
-                      ' ');
-
-    loadType = arma::coord_ascii;
-    stringType = "Coordinate Formatted Data for sparse matrix";
-
-    csvstream.close();
-  }
-  else if (extension == "tsv" || extension == "txt")
+  if (extension == "tsv" || extension == "txt")
   {
     loadType = arma::coord_ascii;
-    stringType = "Coordinate Formatted Data for sparse matrix";
+    stringType = "Coordinate Formatted Data for Sparse Matrix";
   }
   else if (extension == "bin")
   {
@@ -544,19 +497,7 @@ bool Load(const std::string& filename,
 
   bool success;
 
-  // if it is a csv,
-  // we use the temp_stream which loads a file from tempFileName
-  // This tempFileName has all the commas been replaced by spaces
-  // as required by the loadType: arma::coord_ascii
-  if (extension == "csv")
-  {
-    std::fstream temp_stream(tempFileName);
-    success = matrix.load(temp_stream, loadType);
-    temp_stream.close();
-  }
-  // else simply load from stream
-  else
-    success = matrix.load(stream, loadType);
+  success = matrix.load(stream, loadType);
 
   if (!success)
   {
@@ -576,9 +517,7 @@ bool Load(const std::string& filename,
   // Now transpose the matrix, if necessary.
   if (transpose)
   {
-    bool isTransposed = inplace_transpose(matrix, fatal);
-    if (!isTransposed)
-      return false;
+    success = inplace_transpose(matrix, fatal);
   }
 
   Timer::Stop("loading_data");

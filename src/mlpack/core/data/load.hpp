@@ -56,7 +56,7 @@ namespace data /** Functions to load and save matrices and models. */ {
  * @param filename Name of file to load.
  * @param matrix Matrix to load contents of file into.
  * @param fatal If an error should be reported as fatal (default false).
- * @param transpose If true, transpose the matrix after loading.
+ * @param transpose If true, transpose the matrix after loading (default true).
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
@@ -65,6 +65,35 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           const bool transpose = true);
 
+/**
+ * Loads a sparse matrix from file, using arma::coord_ascii format.  This
+ * will transpose the matrix at load time (unless the transpose parameter is set
+ * to false).  If the filetype cannot be determined, an error will be given.
+ *
+ * The supported types of files are the same as found in Armadillo:
+ *
+ *  - TSV (coord_ascii), denoted by .tsv or .txt
+ *  - TXT (coord_ascii), denoted by .txt
+ *  - Raw binary (raw_binary), denoted by .bin
+ *  - Armadillo binary (arma_binary), denoted by .bin
+ *
+ * If the file extension is not one of those types, an error will be given.
+ * This is preferable to Armadillo's default behavior of loading an unknown
+ * filetype as raw_binary, which can have very confusing effects.
+ *
+ * If the parameter 'fatal' is set to true, a std::runtime_error exception will
+ * be thrown if the matrix does not load successfully.  The parameter
+ * 'transpose' controls whether or not the matrix is transposed after loading.
+ * In most cases, because data is generally stored in a row-major format and
+ * mlpack requires column-major matrices, this should be left at its default
+ * value of 'true'.
+ *
+ * @param filename Name of file to load.
+ * @param matrix Sparse Matrix to load contents of file into.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @param transpose If true, transpose the matrix after loading (default true).
+ * @return Boolean value indicating success or failure of load.
+ */
 template<typename eT>
 bool Load(const std::string& filename,
           arma::SpMat<eT>& matrix,
