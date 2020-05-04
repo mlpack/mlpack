@@ -12,6 +12,7 @@
 
 #include <mlpack/core/data/load.hpp>
 #include <mlpack/methods/bayesian_ridge/bayesian_ridge.hpp>
+#include <mlpack/methods/linear_regression/linear_regression.hpp>
 
 #include <boost/test/unit_test.hpp>
 
@@ -130,6 +131,25 @@ BOOST_AUTO_TEST_CASE(PredictiveUncertainties)
 
   for (size_t i = 0; i < X.n_cols; i++)
     BOOST_REQUIRE(std[i] > estStd);
+}
+
+// Check the solution is equal to the classical ridge.
+BOOST_AUTO_TEST_CASE(EqualtoRidge)
+{
+  arma::mat X;
+  arma::rowvec y;
+
+  GenerateProblem(X, y, 100, 10, 1);
+
+  BayesianRidge bayesRidge(false, false);
+  bayesRidge.Train(X, y);
+
+  LinearRegression classicalRidge(X,
+				  y,
+				  bayesRidge.Alpha() / bayesRidge.Beta(),
+				  false);
+  double equalSol = arma::sum(bayesRidge.Omega() - classicalRidge.Parameters());
+  BOOST_REQUIRE(equalSol < 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

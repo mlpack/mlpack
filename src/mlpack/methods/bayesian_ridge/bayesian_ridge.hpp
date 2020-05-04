@@ -192,6 +192,13 @@ class BayesianRidge
   const arma::colvec& Omega() const { return omega; }
 
   /**
+   * Get the precision (or inverse variance) of the gaussian prior.
+   *
+   * @return \f$ \alpha \f$
+   */
+  double Alpha() const { return alpha; }
+
+  /**
    * Get the precesion (or inverse variance) beta of the model.
    *
    * @return \f$ \beta \f$
