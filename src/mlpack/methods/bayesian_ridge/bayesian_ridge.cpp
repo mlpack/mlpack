@@ -54,7 +54,7 @@ double BayesianRidge::Train(const arma::mat& data,
     throw std::runtime_error("eig_sym() failed.");
   }
 
-  // Compute this quantiies once and for all.
+  // Compute this quantities once and for all.
   const arma::mat Vinv = inv(V);
   const arma::colvec VinvPhitT = Vinv * phi * t.t();
 
