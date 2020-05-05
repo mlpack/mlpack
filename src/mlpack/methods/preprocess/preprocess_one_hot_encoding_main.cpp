@@ -10,9 +10,9 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/core/math/random.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core.hpp>
 #include <mlpack/core/data/one_hot_encoding.hpp>
 
 PROGRAM_INFO("One Hot Encoding",
@@ -54,8 +54,8 @@ static void mlpackMain()
   arma::mat& data = CLI::GetParam<arma::mat>("input");
   vector<size_t> indices =
     CLI::GetParam<vector<size_t> >("indices");
-  vector<unsigned long long > copyIndices (indices.size());
-  for(size_t i = 0; i < indices.size(); i++)
+  vector<unsigned long long >copyIndices (indices.size());
+  for (size_t i = 0; i < indices.size(); i++)
     copyIndices[i] = (unsigned long long)indices[i];
   arma::mat output;
   data::OneHotEncoding(data, arma::uvec(copyIndices), output);
