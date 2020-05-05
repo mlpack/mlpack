@@ -26,7 +26,7 @@ MultiLabelSoftMarginLoss(
     reduction(reduction),
     weighted(false)
 {
-  if(weights.n_elem)
+  if (weights.n_elem)
   {
     classWeights = weights;
     weighted = true;
@@ -39,7 +39,7 @@ typename InputType::elem_type
 MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Forward(
     const InputType& input, const TargetType& target)
 {
-  if(!weighted)
+  if (!weighted)
     classWeights.ones(1, input.n_cols);
 
   InputType logSigmoid = arma::log((1 / (1 + arma::exp(-input))));
