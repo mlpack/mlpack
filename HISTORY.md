@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Addition of `Elliot` activation function (#2268).
+
   * Add adaptive max pooling and adaptive mean pooling layers (#2195).
 
 ### mlpack 3.3.1
