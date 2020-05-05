@@ -756,7 +756,7 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossSumReductionTest)
 {
   arma::mat input, target, output, expectedOutput;
   double loss;
-  MultiLabelSoftMarginLoss<> module(3, true);
+  MultiLabelSoftMarginLoss<> module;
 
   input = arma::mat("0.1778 0.0957 0.1397 0.1203 0.2403 0.1925 -0.2264 -0.3400 "
       "-0.3336");
@@ -788,7 +788,7 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossMeanReductionTest)
 {
   arma::mat input, target, output, expectedOutput;
   double loss;
-  MultiLabelSoftMarginLoss<> module(3, false);
+  MultiLabelSoftMarginLoss<> module(false);
 
   input = arma::mat("0.1778 0.0957 0.1397 0.1203 0.2403 0.1925 -0.2264 -0.3400 "
       "-0.3336");
@@ -822,7 +822,7 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossWeightedSumReductionTest)
   arma::rowvec weights;
   double loss;
   weights = arma::mat("1 2 3");
-  MultiLabelSoftMarginLoss<> module(weights, 3, true);
+  MultiLabelSoftMarginLoss<> module(true, weights);
 
   input = arma::mat("0.1778 0.0957 0.1397 0.2256 0.1203 0.2403 0.1925 0.3144 "
       "-0.2264 -0.3400 -0.3336 -0.8695");
@@ -856,7 +856,7 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossWeightedMeanReductionTest)
   arma::rowvec weights;
   double loss;
   weights = arma::mat("1 2 3");
-  MultiLabelSoftMarginLoss<> module(weights, 3, false);
+  MultiLabelSoftMarginLoss<> module(false, weights);
 
   input = arma::mat("0.1778 0.0957 0.1397 0.2256 0.1203 0.2403 0.1925 0.3144 "
       "-0.2264 -0.3400 -0.3336 -0.8695");
@@ -880,4 +880,5 @@ BOOST_AUTO_TEST_CASE(MultiLabelSoftMarginLossWeightedMeanReductionTest)
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
 }
+
 BOOST_AUTO_TEST_SUITE_END();

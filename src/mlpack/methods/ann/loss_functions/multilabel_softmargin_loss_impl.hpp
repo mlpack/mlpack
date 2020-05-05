@@ -21,25 +21,16 @@ namespace ann /** Artifical Neural Network. */ {
 template<typename InputDataType, typename OutputDataType>
 MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::
 MultiLabelSoftMarginLoss(
-    const size_t numClasses,
-    const bool reduction) :
-    numClasses(numClasses),
-    reduction(reduction)
+    const bool reduction,
+    const arma::rowvec& weights) :
+    reduction(reduction),
+    weighted(false)
 {
-  classWeights.ones(1, numClasses);
-}
-
-template<typename InputDataType, typename OutputDataType>
-MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::
-MultiLabelSoftMarginLoss(
-    const arma::rowvec& weights,
-    const size_t numClasses,
-    const bool reduction) :
-    numClasses(numClasses),
-    reduction(reduction)
-{
-  classWeights.ones(1, numClasses);
-  classWeights = weights;
+  if(weights.n_elem)
+  {
+    classWeights = weights;
+    weighted = true;
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -48,6 +39,9 @@ typename InputType::elem_type
 MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Forward(
     const InputType& input, const TargetType& target)
 {
+  if(!weighted)
+    classWeights.ones(1, input.n_cols);
+
   InputType logSigmoid = arma::log((1 / (1 + arma::exp(-input))));
   InputType logSigmoidNeg = arma::log(1 / (1 + arma::exp(input)));
   InputType loss = arma::mean(arma::sum(-(target % logSigmoid +
@@ -82,7 +76,6 @@ void MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::serialize(
     const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(classWeights);
-  ar & BOOST_SERIALIZATION_NVP(numClasses);
   ar & BOOST_SERIALIZATION_NVP(reduction);
 }
 
