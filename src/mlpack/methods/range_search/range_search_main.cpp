@@ -197,11 +197,10 @@ static void mlpackMain()
     rs->TreeType() = tree;
     rs->RandomBasis() = randomBasis;
 
-    arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
+    Log::Info << "Using reference data from "
+        << CLI::GetPrintableParam<arma::mat>("reference") << "." << endl;
 
-    Log::Info << "Using reference data from '"
-        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
-        << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
+    arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
     const size_t leafSize = size_t(lsInt);
 
@@ -235,10 +234,9 @@ static void mlpackMain()
     arma::mat queryData;
     if (CLI::HasParam("query"))
     {
+      Log::Info << "Using query data from "
+          << CLI::GetPrintableParam<arma::mat>("query") << "." << endl;
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
-      Log::Info << "Using query data from '"
-          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
-          << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
     // Naive mode overrides single mode.

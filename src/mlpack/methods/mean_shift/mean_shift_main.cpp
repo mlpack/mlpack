@@ -125,11 +125,8 @@ static void mlpackMain()
 
     dataset.insert_rows(dataset.n_rows, trans(converted));
 
-    // Save the dataset.  This takes a little trickery, because we have to set
-    // the output matrix parameter to have the same filename associated with it
-    // as the input.
-    CLI::GetPrintableParam<arma::mat>("output") =
-        CLI::GetPrintableParam<arma::mat>("input");
+    // Save the dataset.
+    CLI::MakeInPlaceCopy("output", "input");
     CLI::GetParam<arma::mat>("output") = std::move(dataset);
   }
   else if (CLI::HasParam("output"))
