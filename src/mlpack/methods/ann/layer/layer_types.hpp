@@ -186,6 +186,16 @@ template<
 >
 class RecurrentAttention;
 
+template <typename InputDataType,
+          typename OutputDataType
+>
+class AdaptiveMaxPooling;
+
+template <typename InputDataType,
+          typename OutputDataType
+>
+class AdaptiveMeanPooling;
+
 template<typename InputDataType,
          typename OutputDataType,
          typename... CustomLayers
