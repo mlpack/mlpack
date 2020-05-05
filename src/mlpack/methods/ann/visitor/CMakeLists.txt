@@ -57,6 +57,8 @@ set(SOURCES
   weight_set_visitor_impl.hpp
   weight_size_visitor.hpp
   weight_size_visitor_impl.hpp
+  name_visitor.hpp
+  name_visitor_impl.hpp
 )
 
 # Add directory name to sources.

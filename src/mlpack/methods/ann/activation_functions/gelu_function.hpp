@@ -84,9 +84,13 @@ class GELUFunction
         arma::pow(1 / arma::cosh(0.0356774 * arma::pow(y, 3) +
         0.797885 * y), 2) + 0.5;
   }
+
+  //! Get the layer name.
+  const static std::string Name() const { return "gelu"; }
 }; // class GELUFunction
 
 } // namespace ann
 } // namespace mlpack
+
 
 #endif

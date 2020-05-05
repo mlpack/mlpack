@@ -201,6 +201,11 @@ class Concat
   //! Modify the gradient.
   arma::mat& Gradient() { return gradient; }
 
+  //! Get the layer name.
+  const std::string& Name() const { return name; }
+  //! Modify the layer name.
+  std::string& Name() { return name; }
+
   /**
    * Serialize the layer
    */
@@ -256,6 +261,9 @@ class Concat
 
   //! Locally-stored gradient object.
   arma::mat gradient;
+
+  //! Locally-stored layer name.
+  std::string name;
 }; // class Concat
 
 } // namespace ann

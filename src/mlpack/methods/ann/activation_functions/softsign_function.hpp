@@ -126,6 +126,9 @@ class SoftsignFunction
     for (size_t i = 0; i < y.n_elem; i++)
       x(i) = Inv(y(i));
   }
+
+  //! Get the layer name.
+  const static std::string Name() const { return "softsign"; }
 }; // class SoftsignFunction
 
 } // namespace ann

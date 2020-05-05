@@ -138,6 +138,11 @@ class BatchNorm
   //! Get the variance over the training data.
   OutputDataType TrainingVariance() { return runningVariance / count; }
 
+  //! Get the layer name.
+  const std::string& Name() const { return name; }
+  //! Modify the layer name.
+  std::string& Name() { return name; }
+
   /**
    * Serialize the layer
    */
@@ -198,6 +203,9 @@ class BatchNorm
 
   //! Locally-stored zero mean input.
   OutputDataType inputMean;
+
+  //! Locally-stored layer name.
+  std::string name;
 }; // class BatchNorm
 
 } // namespace ann

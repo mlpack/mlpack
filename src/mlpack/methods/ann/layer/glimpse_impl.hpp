@@ -37,7 +37,8 @@ Glimpse<InputDataType, OutputDataType>::Glimpse(
     outputWidth(size),
     outputHeight(size),
     inputDepth(0),
-    deterministic(true)
+    deterministic(true),
+    name("glimpse")
 {
   // Nothing to do here.
 }

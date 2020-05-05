@@ -20,7 +20,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-Concatenate<InputDataType, OutputDataType>::Concatenate()
+Concatenate<InputDataType, OutputDataType>::Concatenate() :
+    name("concatenate")
 {
   // Nothing to do here.
 }

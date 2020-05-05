@@ -28,7 +28,8 @@ BilinearInterpolation():
     outRowSize(0),
     outColSize(0),
     depth(0),
-    batchSize(0)
+    batchSize(0),
+    name("bilinearinterpolation")
 {
   // Nothing to do here.
 }
@@ -46,7 +47,8 @@ BilinearInterpolation(
     outRowSize(outRowSize),
     outColSize(outColSize),
     depth(depth),
-    batchSize(0)
+    batchSize(0),
+    name("bilinearinterpolation")
 {
   // Nothing to do here.
 }

@@ -158,6 +158,11 @@ class FastLSTM
   //! Modify the gradient.
   OutputDataType& Gradient() { return grad; }
 
+  //! Get the layer name.
+  const std::string& Name() const { return name; }
+  //! Modify the layer name.
+  std::string& Name() { return name; }
+
   /**
    * Serialize the layer
    */
@@ -295,6 +300,9 @@ class FastLSTM
 
   //! Current backpropagate through time steps.
   size_t bpttSteps;
+
+  //! Locally-stored layer name.
+  std::string name;
 }; // class FastLSTM
 
 } // namespace ann

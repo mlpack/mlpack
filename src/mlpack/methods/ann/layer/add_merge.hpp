@@ -179,6 +179,11 @@ class AddMerge
   //! Modify the value of run parameter.
   bool& Run() { return run; }
 
+  //! Get the layer name.
+  const std::string& Name() const { return name; }
+  //! Modify the layer name.
+  std::string& Name() { return name; }
+
   /**
    * Serialize the layer.
    */
@@ -226,6 +231,9 @@ class AddMerge
 
   //! Locally-stored weight object.
   OutputDataType weights;
+
+  //! Locally-stored layer name.
+  std::string name;
 }; // class AddMerge
 
 } // namespace ann

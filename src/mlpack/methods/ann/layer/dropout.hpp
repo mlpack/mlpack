@@ -106,6 +106,11 @@ class Dropout
     scale = 1.0 / (1.0 - ratio);
   }
 
+  //! Get the layer name.
+  const std::string& Name() const { return name; }
+  //! Modify the layer name.
+  std::string& Name() { return name; }
+
   /**
    * Serialize the layer.
    */
@@ -130,6 +135,9 @@ class Dropout
 
   //! If true dropout and scaling is disabled, see notes above.
   bool deterministic;
+
+  //! Locally-stored layer name.
+  std::string name;
 }; // class Dropout
 
 } // namespace ann

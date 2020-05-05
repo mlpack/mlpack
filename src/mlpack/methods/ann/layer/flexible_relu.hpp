@@ -135,6 +135,11 @@ class FlexibleReLU
   //! Modify the parameter controlling the range of the relu function.
   double& Alpha() { return alpha; }
 
+  //! Get the layer name.
+  const std::string& Name() const { return name; }
+  //! Modify the layer name.
+  std::string& Name() { return name; }
+
   /**
    * Serialize the layer.
    */
@@ -156,6 +161,9 @@ class FlexibleReLU
 
   //! Parameter controlling the range of the rectifier function
   double userAlpha;
+
+  //! Locally-stored layer name.
+  std::string name;
 }; // class FlexibleReLU
 
 } // namespace ann

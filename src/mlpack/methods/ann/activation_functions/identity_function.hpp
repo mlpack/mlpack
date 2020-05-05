@@ -86,6 +86,9 @@ class IdentityFunction
   {
     x.ones(y.n_rows, y.n_cols, y.n_slices);
   }
+
+  //! Get the layer name.
+  const static std::string Name() const { return "identity"; }
 }; // class IdentityFunction
 
 } // namespace ann

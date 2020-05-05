@@ -32,7 +32,7 @@ AtrousConvolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::AtrousConvolution()
+>::AtrousConvolution() : name("atrousconvolution")
 {
   // Nothing to do here.
 }
@@ -120,7 +120,8 @@ AtrousConvolution<
     outputWidth(0),
     outputHeight(0),
     dilationWidth(dilationWidth),
-    dilationHeight(dilationHeight)
+    dilationHeight(dilationHeight),
+    name("atrousconvolution")
 {
   weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
       1);

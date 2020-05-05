@@ -24,7 +24,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-GRU<InputDataType, OutputDataType>::GRU()
+GRU<InputDataType, OutputDataType>::GRU() : name("gru")
 {
   // Nothing to do here.
 }
@@ -41,7 +41,8 @@ GRU<InputDataType, OutputDataType>::GRU(
     forwardStep(0),
     backwardStep(0),
     gradientStep(0),
-    deterministic(false)
+    deterministic(false),
+    name("gru")
 {
   // Input specific linear layers(for zt, rt, ot).
   input2GateModule = new Linear<>(inSize, 3 * outSize);

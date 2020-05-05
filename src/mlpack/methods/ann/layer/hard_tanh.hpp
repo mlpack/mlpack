@@ -103,6 +103,11 @@ class HardTanH
   //! Modify the minimum value.
   double& MinValue() { return minValue; }
 
+  //! Get the layer name.
+  const std::string& Name() const { return name; }
+  //! Modify the layer name.
+  std::string& Name() { return name; }
+
   /**
    * Serialize the layer.
    */
@@ -121,6 +126,9 @@ class HardTanH
 
   //! Minimum value for the HardTanH function.
   double minValue;
+
+  //! Locally-stored layer name.
+  std::string name;
 }; // class HardTanH
 
 } // namespace ann

@@ -20,7 +20,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-FastLSTM<InputDataType, OutputDataType>::FastLSTM()
+FastLSTM<InputDataType, OutputDataType>::FastLSTM() :
+    name("fastlstm")
 {
   // Nothing to do here.
 }
@@ -38,7 +39,8 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(
     batchStep(0),
     gradientStepIdx(0),
     rhoSize(rho),
-    bpttSteps(0)
+    bpttSteps(0),
+    name("fastlstm")
 {
   // Weights for: input to gate layer (4 * outsize * inSize + 4 * outsize)
   // and output to gate (4 * outSize).

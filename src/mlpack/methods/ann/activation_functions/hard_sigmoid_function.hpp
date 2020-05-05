@@ -91,6 +91,9 @@ class HardSigmoidFunction
       x(i) = Deriv(y(i));
     }
   }
+  
+  //! Get the layer name.
+  const static std::string Name() const { return "hardsigmoid"; }
 }; // class HardSigmoidFunction
 
 } // namespace ann

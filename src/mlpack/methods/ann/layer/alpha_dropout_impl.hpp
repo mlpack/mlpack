@@ -28,7 +28,8 @@ AlphaDropout<InputDataType, OutputDataType>::AlphaDropout(
     const double alphaDash) :
     ratio(ratio),
     alphaDash(alphaDash),
-    deterministic(false)
+    deterministic(false),
+    name("alphadropout")
 {
   Ratio(ratio);
 }

@@ -97,6 +97,9 @@ class TanhFunction
   {
     x = arma::atanh(y);
   }
+
+  //! Get the layer name.
+  const static std::string Name() const { return "tanh"; }
 }; // class TanhFunction
 
 } // namespace ann

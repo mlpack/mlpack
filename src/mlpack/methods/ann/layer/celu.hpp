@@ -111,6 +111,11 @@ class CELU
   //! Modify the value of deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
+  //! Get the layer name.
+  const std::string& Name() const { return name; }
+  //! Modify the layer name.
+  std::string& Name() { return name; }
+
   /**
    * Serialize the layer.
    */
@@ -132,6 +137,9 @@ class CELU
 
   //! If true the derivative computation is disabled, see notes above.
   bool deterministic;
+
+  //! Locally-stored layer name.
+  std::string name;
 }; // class CELU
 
 } // namespace ann

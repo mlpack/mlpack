@@ -170,6 +170,11 @@ class Glimpse
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
+  //! Get the layer name.
+  const std::string& Name() const { return name; }
+  //! Modify the layer name.
+  std::string& Name() { return name; }
+
   /**
    * Serialize the layer.
    */
@@ -415,6 +420,9 @@ class Glimpse
 
   //! If true use maximum a posteriori during the forward pass.
   bool deterministic;
+
+  //! Locally-stored layer name.
+  std::string name;
 }; // class GlimpseLayer
 
 } // namespace ann

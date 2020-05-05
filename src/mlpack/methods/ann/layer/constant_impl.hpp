@@ -24,7 +24,8 @@ Constant<InputDataType, OutputDataType>::Constant(
     const size_t outSize,
     const double scalar) :
     inSize(0),
-    outSize(outSize)
+    outSize(outSize),
+    name("constant")
 {
   constantOutput = OutputDataType(outSize, 1);
   constantOutput.fill(scalar);

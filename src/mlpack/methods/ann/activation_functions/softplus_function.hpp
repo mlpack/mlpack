@@ -119,6 +119,9 @@ class SoftplusFunction
     for (size_t i = 0; i < y.n_elem; i++)
       x(i) = Inv(y(i));
   }
+
+  //! Get the layer name.
+  const static std::string Name() const { return "softplus"; }
 }; // class SoftplusFunction
 
 } // namespace ann

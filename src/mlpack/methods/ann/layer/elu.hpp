@@ -173,6 +173,11 @@ class ELU
   //! Get the lambda parameter.
   double const& Lambda() const { return lambda; }
 
+  //! Get the layer name.
+  const std::string& Name() const { return name; }
+  //! Modify the layer name.
+  std::string& Name() { return name; }
+
   /**
    * Serialize the layer.
    */
@@ -201,6 +206,9 @@ class ELU
 
   //! If true the derivative computation is disabled, see notes above.
   bool deterministic;
+
+  //! Locally-stored layer name.
+  std::string name;
 }; // class ELU
 
 // Template alias for SELU using ELU class.

@@ -250,6 +250,11 @@ class AtrousConvolution
   //! Modify the bias weights of the layer.
   arma::mat& Bias() { return bias; }
 
+  //! Get the layer name.
+  const std::string& Name() const { return name; }
+  //! Modify the layer name.
+  std::string& Name() { return name; }
+
   /**
    * Serialize the layer.
    */
@@ -386,6 +391,9 @@ class AtrousConvolution
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Locally-stored layer name.
+  std::string name;
 }; // class AtrousConvolution
 
 } // namespace ann

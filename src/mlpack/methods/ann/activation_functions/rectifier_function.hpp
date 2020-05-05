@@ -107,6 +107,9 @@ class RectifierFunction
     for (size_t i = 0; i < y.n_elem; i++)
       x(i) = Deriv(y(i));
   }
+
+  //! Get the layer name.
+  const static std::string Name() const { return "rectifier"; }
 }; // class RectifierFunction
 
 } // namespace ann

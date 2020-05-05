@@ -85,6 +85,11 @@ class Concatenate
   //! Modify the delta.
   OutputDataType& Concat() { return concat; }
 
+  //! Get the layer name.
+  const std::string& Name() const { return name; }
+  //! Modify the layer name.
+  std::string& Name() { return name; }
+
   /**
    * Serialize the layer
    */
@@ -109,6 +114,9 @@ class Concatenate
 
   //! Locally-stored matrix to be concatenated to input.
   OutputDataType concat;
+
+  //! Locally-stored layer name.
+  std::string name;
 }; // class Concatenate
 
 } // namespace ann
