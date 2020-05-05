@@ -188,7 +188,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     generator.Predictors() = noise;
     generator.Backward();
     generator.ResetGradients(gradientGenerator);
-    generator.Gradient(generator.Predictors().cols(0, batchSize - 1));
+    generator.UpdateGradient(generator.Predictors().cols(0, batchSize - 1));
 
     gradientGenerator *= multiplier;
   }

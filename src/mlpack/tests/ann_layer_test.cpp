@@ -1138,7 +1138,6 @@ BOOST_AUTO_TEST_CASE(GradientNTMTest)
     double Gradient(arma::mat& gradient) const
     {
       arma::mat output;
-
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;

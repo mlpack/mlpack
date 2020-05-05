@@ -699,6 +699,30 @@ BOOST_AUTO_TEST_CASE(BRNNReberGrammarTest)
   ReberGrammarTestNetwork(model, false, 3, 5, 1);
 }
 
+/**
+ * Train the specified networks on an embedded Reber grammar dataset.
+ */
+BOOST_AUTO_TEST_CASE(NTMReberGrammerTest)
+{
+  size_t hiddenSize = 4;
+  size_t numMem = 3;
+  size_t memSize = 5;
+  size_t shiftSize = 1;
+
+  Sequential<>* controller = new Sequential<>();
+  controller->Add(new Linear<>(hiddenSize + memSize, hiddenSize));
+  controller->Add(new GRU<>(hiddenSize, hiddenSize));
+
+  RNN<MeanSquaredError<> > model(5);
+  model.Add<Linear<> >(7, 4);
+  model.Add<NeuralTuringMachine<> >(hiddenSize, hiddenSize, numMem, memSize,
+      shiftSize, controller);
+  model.Add<Linear<> >(4, 7);
+  model.Add<SigmoidLayer<> >();
+
+  ReberGrammarTestNetwork(model, false, 3, 5, 20);
+}
+
 /*
  * This sample is a simplified version of Derek D. Monner's Distracted Sequence
  * Recall task, which involves 10 symbols:
