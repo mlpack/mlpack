@@ -3,6 +3,7 @@
  * @author Anjishnu Mukherjee
  *
  * Definition of the Multi Label Soft Margin Loss function.
+ *
  * It is a criterion that optimizes a multi-label one-versus-all loss based on
  * max-entropy, between input x and target y of size (N, C) where N is the
  * batch size and C is the number of classes.
