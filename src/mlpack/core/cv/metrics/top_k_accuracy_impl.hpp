@@ -19,7 +19,7 @@ template<typename MLAlgorithm, typename DataType, typename TopK>
 double TopKAccuracy::Evaluate(MLAlgorithm& model,
                         const DataType& data,
                         const arma::Row<size_t> labels,
-                        const arma::Row<size_t> predsprob,
+                        const DataType& predsprob,
                         const TopK& k)
 {
   if (data.n_cols != labels.n_cols)
@@ -30,13 +30,12 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
         << std::endl;
     throw std::invalid_argument(fpp.str());
   }
-  arma::Row<size_t> predictionProbs;
   // Taking Classification output from the model.
-  model.Classify(data, predictionProbs);
+  model.Classify(data, predsprob);
   // Shape of the predicted probabilities.
-  double predictedProb = predictionProbs.size();
+  double predictedProb = predsprob.size();
   // Top 'k' label prediction probabilities.
-  if (k < predictedProb[1])
+  if (k < predsprob[1])
   {
     size_t idx = predictedProb[1] - k - 1;
   else
