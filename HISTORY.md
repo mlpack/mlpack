@@ -4,6 +4,9 @@
 
   * Add adaptive max pooling and adaptive mean pooling layers (#2195).
 
+  * Add `MatType` parameter to `LSHSearch`, allowing sparse matrices to be used
+    for search.
+
 ### mlpack 3.3.1
 ###### 2020-04-29
   * Minor Julia and Python documentation fixes (#2373).
