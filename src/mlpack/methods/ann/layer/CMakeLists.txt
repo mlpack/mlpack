@@ -5,6 +5,10 @@ set(SOURCES
   add_impl.hpp
   add_merge.hpp
   add_merge_impl.hpp
+  adaptive_max_pooling.hpp
+  adaptive_max_pooling_impl.hpp
+  adaptive_mean_pooling.hpp
+  adaptive_mean_pooling_impl.hpp
   alpha_dropout.hpp
   alpha_dropout_impl.hpp
   atrous_convolution.hpp
