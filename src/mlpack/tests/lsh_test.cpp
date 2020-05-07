@@ -925,8 +925,6 @@ BOOST_AUTO_TEST_CASE(MoveOperatorTest)
  */
 BOOST_AUTO_TEST_CASE(SparseLSHTest)
 {
-  mlpack::math::RandomSeed(std::time(NULL));
-
   // kNN and LSH parameters (use LSH default parameters).
   const int k = 5;
   const int numTables = 5;
