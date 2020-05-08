@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE(JacobianConstantLayerTest)
  */
 BOOST_AUTO_TEST_CASE(ConstantLayerParametersTest)
 {
-  // Parameter : outSize
+  // Parameter : outSize.
   Constant<> layer(7);
 
   // Make sure we can get the parameter successfully.
@@ -737,7 +737,7 @@ BOOST_AUTO_TEST_CASE(SimpleSelectLayerTest)
  */
 BOOST_AUTO_TEST_CASE(SelectLayerParametersTest)
 {
-  // Parameter order : index, elements
+  // Parameter order : index, elements.
   Select<> layer(3, 5);
 
   // Make sure we can get the parameters successfully.
@@ -886,7 +886,7 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
  */
 BOOST_AUTO_TEST_CASE(LSTMLayerParametersTest)
 {
-  // Parameter order: inSize, outSize, rho.
+  // Parameter order : inSize, outSize, rho.
   LSTM<> layer1(1, 2, 3);
   LSTM<> layer2(1, 2, 4);
 
@@ -994,7 +994,7 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
  */
 BOOST_AUTO_TEST_CASE(FastLSTMLayerParametersTest)
 {
-  // Parameter order: inSize, outSize, rho.
+  // Parameter order : inSize, outSize, rho.
   FastLSTM<> layer1(1, 2, 3);
   FastLSTM<> layer2(1, 2, 4);
 
@@ -1191,7 +1191,7 @@ BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
  */
 BOOST_AUTO_TEST_CASE(GRULayerParametersTest)
 {
-  // Parameter order: inSize, outSize, rho.
+  // Parameter order : inSize, outSize, rho.
   GRU<> layer1(1, 2, 3);
   GRU<> layer2(1, 2, 4);
 
@@ -1681,7 +1681,7 @@ BOOST_AUTO_TEST_CASE(SimpleBilinearInterpolationLayerTest)
  */
 BOOST_AUTO_TEST_CASE(BilinearInterpolationLayerParametersTest)
 {
-  // Parameter order: inRowSize, inColSize, outRowSize, outColSize, depth.
+  // Parameter order : inRowSize, inColSize, outRowSize, outColSize, depth.
   BilinearInterpolation<> layer1(1, 2, 3, 4, 5);
   BilinearInterpolation<> layer2(2, 3, 4, 5, 6);
 
@@ -1811,7 +1811,7 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormTest)
  */
 BOOST_AUTO_TEST_CASE(BatchNormLayerParametersTest)
 {
-  // Parameter order: size, eps.
+  // Parameter order : size, eps.
   BatchNorm<> layer(7, 1e-3);
 
   // Make sure we can get the parameters successfully.
@@ -1874,7 +1874,7 @@ BOOST_AUTO_TEST_CASE(VirtualBatchNormLayerParametersTest)
   arma::mat input = arma::randn(5, 256);
   arma::mat referenceBatch = arma::mat(input.memptr(), input.n_rows, 16);
 
-  // Parameter order : referenceBatch, size, eps
+  // Parameter order : referenceBatch, size, eps.
   VirtualBatchNorm<> layer(referenceBatch, 5, 1e-3);
 
   // Make sure we can get the parameters successfully.
@@ -2579,7 +2579,7 @@ BOOST_AUTO_TEST_CASE(SubviewBatchTest)
  */
 BOOST_AUTO_TEST_CASE(SubviewLayerParametersTest)
 {
-  // Parameter order : inSize, beginRow, endRow, beginCol, endCol
+  // Parameter order : inSize, beginRow, endRow, beginCol, endCol.
   Subview<> layer1(1, 2, 3, 4, 5);
   Subview<> layer2(1, 3, 4, 5, 6);
 
@@ -2778,7 +2778,7 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerBetaTest)
  */
 BOOST_AUTO_TEST_CASE(ReparametrizationLayerParametersTest)
 {
-  // Parameter order : latentSize, stochastic, includeKL, beta
+  // Parameter order : latentSize, stochastic, includeKL, beta.
   Reparametrization<> layer(5, false, false, 2);
 
   // Make sure we can get the parameters successfully.
@@ -2876,7 +2876,7 @@ BOOST_AUTO_TEST_CASE(SimpleHighwayLayerTest)
  */
 BOOST_AUTO_TEST_CASE(HighwayLayerParametersTest)
 {
-  // Parameter order: inSize, model
+  // Parameter order : inSize, model.
   Highway<> layer(1, true);
 
   // Make sure we can get the parameter successfully.
@@ -3401,7 +3401,7 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
  */
 BOOST_AUTO_TEST_CASE(GlimpseLayerParametersTest)
 {
-  // Parameter order : inSize, size, depth, scale, inputWidth, inputHeight
+  // Parameter order : inSize, size, depth, scale, inputWidth, inputHeight.
   Glimpse<> layer1(1, 2, 3, 4, 5, 6);
   Glimpse<> layer2(1, 2, 3, 4, 6, 7);
 
@@ -3432,7 +3432,7 @@ BOOST_AUTO_TEST_CASE(GlimpseLayerParametersTest)
  */
 BOOST_AUTO_TEST_CASE(ReinforceNormalLayerParametersTest)
 {
-  // Parameter : stdev
+  // Parameter : stdev.
   ReinforceNormal<> layer(4.0);
 
   // Make sure we can get the parameter successfully.
