@@ -34,6 +34,8 @@ set(SOURCES
   dropout_impl.hpp
   elu.hpp
   elu_impl.hpp
+  embedding.hpp
+  embedding_impl.hpp
   fast_lstm.hpp
   fast_lstm_impl.hpp
   flexible_relu.hpp

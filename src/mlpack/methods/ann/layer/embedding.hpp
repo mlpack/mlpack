@@ -20,7 +20,10 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Description.
+ * Word Embeddings, a featurized word-level representation capable of capturing
+ * the semantic meanings of words. It stores embeddings of a dictionary and can
+ * be retreived using their indices. It can only be used as first layer in an
+ * artificial neural network.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
