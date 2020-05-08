@@ -33,8 +33,7 @@ namespace ann /** Artificial Neural Network. */ {
 template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat,
-    typename InitializerType = RandomInitialization,
-    typename RegularizerType = NoRegularizer
+    typename InitializerType = RandomInitialization
 >
 class Embedding
 {

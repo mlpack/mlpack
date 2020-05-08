@@ -19,16 +19,16 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType,
-         typename InitializerType, typename RegularizerType>
-Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
+         typename InitializerType>
+Embedding<InputDataType, OutputDataType, InitializerType>
 ::Embedding()
 {
   // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType,
-         typename InitializerType, typename RegularizerType>
-Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
+         typename InitializerType>
+Embedding<InputDataType, OutputDataType, InitializerType>
 ::Embedding(const size_t dictionarySize,
     const size_t embeddingDim,
     const int paddingIndex,
@@ -58,8 +58,8 @@ Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
 }
 
 template<typename InputDataType, typename OutputDataType,
-         typename InitializerType, typename RegularizerType>
-void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
+         typename InitializerType>
+void Embedding<InputDataType, OutputDataType, InitializerType>
 ::ResetParameters()
 {
   typedef typename InputDataType::elem_type ElemType;
@@ -71,9 +71,9 @@ void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
 }
 
 template<typename InputDataType, typename OutputDataType,
-         typename InitializerType, typename RegularizerType>
+         typename InitializerType>
 template<typename InputType, typename OutputType>
-void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
+void Embedding<InputDataType, OutputDataType, InitializerType>
 ::Forward(const InputType& input, OutputType& output)
 {
   output.set_size(input.n_cols * embeddingDim, input.n_rows);
@@ -84,9 +84,9 @@ void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
 }
 
 template<typename InputDataType, typename OutputDataType,
-         typename InitializerType, typename RegularizerType>
+         typename InitializerType>
 template<typename eT>
-void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
+void Embedding<InputDataType, OutputDataType, InitializerType>
 ::Backward(const arma::Mat<eT>& input,
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
@@ -95,9 +95,9 @@ void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
 }
 
 template<typename InputDataType, typename OutputDataType,
-         typename InitializerType, typename RegularizerType>
+         typename InitializerType>
 template<typename eT>
-void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
+void Embedding<InputDataType, OutputDataType, InitializerType>
 ::Gradient(const arma::Mat<eT>& input,
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
@@ -108,9 +108,9 @@ void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
 }
 
 template<typename InputDataType, typename OutputDataType,
-         typename InitializerType, typename RegularizerType>
+         typename InitializerType>
 template<typename Archive>
-void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
+void Embedding<InputDataType, OutputDataType, InitializerType>
 ::serialize(Archive& /* ar */, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(dictionarySize);
