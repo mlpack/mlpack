@@ -32,14 +32,12 @@ Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
 ::Embedding(const size_t dictionarySize,
     const size_t embeddingDim,
     const int paddingIndex,
-    const InitializerType initializer,
-    const RegularizerType regularizer,
-    const RegularizerType activationRegularizer :
+    const bool freeze,
+    const InitializerType initializer) :
     dictionarySize(dictionarySize),
     embeddingDim(embeddingDim),
-    initializer(initializer),
-    regularizer(regularizer),
-    activationRegularizer(activationRegularizer)
+    freeze(freeze),
+    initializer(initializer)
 {
   typedef typename InputDataType::elem_type ElemType;
   if (paddingIndex)
@@ -70,33 +68,6 @@ void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
   {
     weights[paddingIndex] = arma::zeros<arma::Row<ElemType>>(weights.n_cols);
   }
-}
-
-template<typename InputDataType, typename OutputDataType,
-         typename InitializerType, typename RegularizerType>
-template<typename MatType>
-void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
-::LoadPretrained(const MatType weights,
-    const bool deterministic,
-    const int paddingIndex)
-{
-  this->dictionarySize = weights.n_rows;
-  this->embeddingDim = weights.n_cols;
-  this->weights = weights;
-  this->deterministic = deterministic;
-  if (paddingIndex)
-  {
-    if (paddingIndex > 0)
-      Log::Assert(paddingIndex < this->embeddingDim,
-          'paddingIndex must be less than embeddingDim');
-    else
-    {
-      Log::Assert(paddingIndex >= - this->embeddingDim,
-          'paddingIndex must be less than embeddingDim');
-      paddingIndex += this->embeddingDim;
-    }
-  }
-  this->paddingIndex = paddingIndex;
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -132,7 +103,8 @@ void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
     arma::Mat<eT>& gradient)
 {
   gradient = arma::zeros<arma::Mat<eT>>(weights.n_rows, weights.n_cols);
-  gradient.cols(input) = error;
+  if (!freeze)
+    gradient.cols(input) = error;
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -144,7 +116,7 @@ void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
   ar & BOOST_SERIALIZATION_NVP(dictionarySize);
   ar & BOOST_SERIALIZATION_NVP(embeddingDim);
   ar & BOOST_SERIALIZATION_NVP(paddingIndex);
-  ar & BOOST_SERIALIZATION_NVP(deterministic);
+  ar & BOOST_SERIALIZATION_NVP(freeze);
 }
 
 } // namespace ann

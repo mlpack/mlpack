@@ -52,34 +52,20 @@ class Embedding
    * @param embeddingDim The size of each embedding vector.
    * @param paddingIndex Whenever it encounters `paddingIndex`, it pads the
    *        output with embedding vector with zeros.
+   * @param freeze Specifies whether to update weight matrix after each forward
+   *        pass.
    * @param initializer The initialization rule for embedding matrix.
-   * @param regularizer The regularization rule for embedding matrix.
-   * @param activationRegularizer The regularization rule for the output of
-   *        embedding layer i.e. activation of embedding layer.
    */
   Embedding(const size_t dictionarySize,
             const size_t embeddingDim,
             const int paddingIndex = NULL,
-            const InitializerType initializer = RandomInitialization,
-            const RegularizerType regularizer = RegularizerType(),
-            const RegularizerType activationRegularizer = RegularizerType());
+            const bool freeze = false,
+            const InitializerType initializer = RandomInitialization);
 
   /**
    * Reset the layer parameters.
    */
   void ResetParameters();
-
-  /**
-   * Load pretrained weights for embedding layer.
-   *
-   * @param weights The pre-trained weight matrix.
-   * @param deterministic Whether to calculate gradients of embedding layer.
-   * @param paddingIndex
-   */
-  template <typename MatType>
-  void LoadPretrained(const MatType weights,
-                      const bool deterministic = true,
-                      const int paddingIndex = NULL);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -132,11 +118,6 @@ class Embedding
   //! Modify the paddingIndex.
   OutputDataType& PaddingIndex() { return paddingIndex; }
 
-  //! Get the value of deterministic.
-  OutputDataType& Deterministic() const { return deterministic; }
-  //! Modify the deterministic.
-  OutputDataType& Deterministic() { return deterministic; }
-
   //! Get the parameters.
   OutputDataType& Parameters() const { return weights; }
   //! Modify the parameters.
@@ -173,17 +154,11 @@ class Embedding
   //! Locally-stored value of padding index.
   int paddingIndex;
 
-  //!
-  bool deterministic;
+  //! Specifies whether to update weight matrix after each forward pass.
+  bool freeze;
 
   //! Locally-stored initialization rule.
   InitializerType initializer;
-
-  //! Locally-stored regularizer type.
-  RegularizerType regularizer;
-
-  //! Locally-stored regularizer type for the output of embedding layer.
-  RegularizerType activationRegularizer;
 
   //! Locally-stored weight object.
   OutputDataType weights;
