@@ -93,7 +93,11 @@ template<typename InputType, typename OutputType>
 void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
 ::Forward(const InputType& input, OutputType& output)
 {
-
+  output.set_size(input.n_cols * embeddingDim, input.n_rows);
+  for (size_t i = 0; i < input.n_rows; ++i)
+  {
+    output.col(i) = arma::vectorise(weights.elem(input[i]));
+  }
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -104,17 +108,19 @@ void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
 {
-
+  g = gy % input;
 }
 
 template<typename InputDataType, typename OutputDataType,
          typename InitializerType, typename RegularizerType>
 template<typename Archive>
-void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>::serialize(
-    Archive& /* ar */,
-    const unsigned int /* version */)
+void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
+::serialize(Archive& /* ar */, const unsigned int /* version */)
 {
-  // Nothing to do here.
+  ar & BOOST_SERIALIZATION_NVP(dictionarySize);
+  ar & BOOST_SERIALIZATION_NVP(embeddingDim);
+  ar & BOOST_SERIALIZATION_NVP(paddingIndex);
+  ar & BOOST_SERIALIZATION_NVP(deterministic);
 }
 
 } // namespace ann
