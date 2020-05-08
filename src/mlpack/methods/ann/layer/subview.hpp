@@ -142,7 +142,7 @@ class Subview
   //! Modify the width of each sample.
   size_t& EndRow() { return endRow; }
 
-  //! Get the starting column index of subview vector or matrix.
+  //! Get the width of each sample.
   size_t const& BeginCol() const { return beginCol; }
   //! Modify the width of each sample.
   size_t& BeginCol() { return beginCol; }

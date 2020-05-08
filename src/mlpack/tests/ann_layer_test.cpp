@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(GradientAddLayerTest)
  */
 BOOST_AUTO_TEST_CASE(AddLayerParametersTest)
 {
-  // Parameter: outSize.
+  // Parameter : outSize.
   Add<> layer(7);
 
   // Make sure we can get the parameter successfully.
@@ -994,7 +994,7 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
  */
 BOOST_AUTO_TEST_CASE(FastLSTMLayerParametersTest)
 {
-  // Parameter order: inSize, outSize, rho
+  // Parameter order: inSize, outSize, rho.
   FastLSTM<> layer1(1, 2, 3);
   FastLSTM<> layer2(1, 2, 4);
 
@@ -1191,7 +1191,7 @@ BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
  */
 BOOST_AUTO_TEST_CASE(GRULayerParametersTest)
 {
-  // Parameter order: inSize, outSize, rho
+  // Parameter order: inSize, outSize, rho.
   GRU<> layer1(1, 2, 3);
   GRU<> layer2(1, 2, 4);
 
@@ -1610,7 +1610,7 @@ BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
  */
 BOOST_AUTO_TEST_CASE(LookupLayerParametersTest)
 {
-  // Parameter order : inSize, outSize
+  // Parameter order : inSize, outSize.
   Lookup<> layer(5, 7);
 
   // Make sure we can get the parameters successfully.
@@ -3445,7 +3445,7 @@ BOOST_AUTO_TEST_CASE(ReinforceNormalLayerParametersTest)
  */
 BOOST_AUTO_TEST_CASE(VRClassRewardLayerParametersTest)
 {
-  // Parameter order : scale, sizeAverage
+  // Parameter order : scale, sizeAverage.
   VRClassReward<> layer(2, false);
 
   // Make sure we can get the parameters successfully.
