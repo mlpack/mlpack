@@ -104,24 +104,16 @@ class NormalDistribution
    */
   DataType Sample() const;
 
-  /**
-   * Return the mean.
-   */
+  //! Get the mean.
   const DataType& Mean() const { return mean; }
 
-  /**
-   * Return a modifiable copy of the mean.
-   */
+  //! Modify the mean.
   DataType& Mean() { return mean; }
 
-  /**
-   * Return the standard deviation.
-   */
+  //! Get the standard deviation.
   const DataType& StandardDeviation() const { return sigma; }
 
-  /**
-   * Return a modifiable copy of the standard deviation.
-   */
+  //! Modify the standard deviation.
   DataType& StandardDeviation() { return sigma; }
 
   //! Return the dimensionality of this distribution.
@@ -132,11 +124,6 @@ class NormalDistribution
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
-  {
-    // We just need to serialize each of the members.
-    ar & BOOST_SERIALIZATION_NVP(mean);
-    ar & BOOST_SERIALIZATION_NVP(sigma);
-  }
 
  private:
   //! Mean of the distribution.
