@@ -77,13 +77,25 @@ template<typename InputDataType, typename OutputDataType,
 template<typename MatType>
 void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
 ::LoadPretrained(const MatType weights,
-    const bool deterministic = false,
-    const int paddingIndex = NULL)
+    const bool deterministic,
+    const int paddingIndex)
 {
   this->dictionarySize = weights.n_rows;
   this->embeddingDim = weights.n_cols;
   this->weights = weights;
   this->deterministic = deterministic;
+  if (paddingIndex)
+  {
+    if (paddingIndex > 0)
+      Log::Assert(paddingIndex < this->embeddingDim,
+          'paddingIndex must be less than embeddingDim');
+    else
+    {
+      Log::Assert(paddingIndex >= - this->embeddingDim,
+          'paddingIndex must be less than embeddingDim');
+      paddingIndex += this->embeddingDim;
+    }
+  }
   this->paddingIndex = paddingIndex;
 }
 
@@ -108,7 +120,19 @@ void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
 {
-  g = gy % input;
+  g = gy;
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename InitializerType, typename RegularizerType>
+template<typename eT>
+void Embedding<InputDataType, OutputDataType, InitializerType, RegularizerType>
+::Gradient(const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
+{
+  gradient = arma::zeros<arma::Mat<eT>>(weights.n_rows, weights.n_cols);
+  gradient.cols(input) = error;
 }
 
 template<typename InputDataType, typename OutputDataType,
