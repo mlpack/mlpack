@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE(NormalDistributionTest)
 }
 
 /**
- * Jacobian Normal distribution module test for mean.
+ * Jacobian Normal Distribution module test for mean.
  */
 BOOST_AUTO_TEST_CASE(JacobianNormalDistributionMeanTest)
 {
@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_CASE(JacobianNormalDistributionMeanTest)
 }
 
 /**
- * Jacobian Normal distribution module test for standard deviation.
+ * Jacobian Normal Distribution module test for standard deviation.
  */
 BOOST_AUTO_TEST_CASE(JacobianNormalDistributionStandardDeviationTest)
 {

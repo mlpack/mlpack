@@ -69,7 +69,7 @@ class NormalDistribution
    *
    * @param observation The observation matrix.
    * @param dmu The gradient with respect to mean.
-   * @param dsigma The gradient with respect to standard deviation.
+   * @param dsigma The gradient with respect to the standard deviation.
    */
   void ProbBackward(const DataType& observation,
                     DataType& dmu,
@@ -79,7 +79,7 @@ class NormalDistribution
    * Calculates the normal probability density function for each
    * data point (column) in the given matrix.
    *
-   * @param x List of observations.
+   * @param x The observation matrix.
    * @param probabilities Output probabilities for each input observation.
    */
   void Probability(const DataType& x, DataType& probabilities) const
@@ -91,8 +91,8 @@ class NormalDistribution
     * Calculates the log of normal probability density function for each
     * data point (column) in the given matrix.
     *
-    * @param x List of observations.
-    * @param log probabilities Output probabilities for each input observation.
+    * @param x The observation matrix.
+    * @param probabilities Output log probabilities for each input observation.
     */
   void LogProbability(const DataType& x, DataType& probabilities) const
   {
@@ -126,7 +126,7 @@ class NormalDistribution
    * Serialize the distribution.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Mean of the distribution.

@@ -3,7 +3,7 @@
  * @author xiaohong ji
  * @author Nishant Kumar
  *
- * Implementation of the Normal distribution class.
+ * Implementation of the Normal Distribution class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -32,6 +32,7 @@ NormalDistribution<DataType>::NormalDistribution(
     mean(mean),
     sigma(sigma)
 {
+  // Nothing to do here.
 }
 
 template<typename DataType>
@@ -44,9 +45,9 @@ template<typename DataType>
 DataType NormalDistribution<DataType>::LogProbability(
     const DataType& observation) const
 {
-  const DataType variance = arma::square(sigma);
-  DataType v1 = arma::log(sigma) + std::log(std::sqrt(2 * M_PI));
-  DataType v2 = arma::square(observation - mean) / (2 * variance);
+  const DataType v1 = arma::log(sigma) + std::log(std::sqrt(2 * M_PI));
+  const DataType v2 = arma::square(observation - mean) /
+                      (2 * arma::square(sigma));
   return  (-v1 - v2);
 }
 
