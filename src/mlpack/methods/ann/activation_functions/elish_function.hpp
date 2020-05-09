@@ -6,7 +6,7 @@
  * Mina Basirat and Peter M. Roth.
  *
  * For more information see the following paper
- * 
+ *
  * @code
  * @misc{Basirat2018,
  *    title = {The Quest for the Golden Activation Function},
@@ -17,7 +17,7 @@
  *    archivePrefix = {arXiv},
  *    primaryClass = {cs.NE} }
  * @endcode
- * 
+ *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -35,19 +35,20 @@ namespace ann /** Artificial Neural Network. */ {
  * The ELiSH function, defined by
  *
  * @f{eqnarray*}{
- * f(x) &=& \left\{
- *   \begin{array}{lr}
- *     \frac{x}{1+e^{-x}} & : x \ge 0 \\
- *     \frac{e^x-1}{1+e^{-x}} & : x < 0
- *   \end{array}
- * \right \\
- * f'(x) &=& \left\{
- *   \begin{array}{lr}
- *     \frac{1}{1+e^{-x}} +
- *         \frac{xe^{-x}}{ \left(1+e^{-x}}\right)^2} & : x \ge 0 \\
- *     e^x-\frac{2}{1+e^x}+\frac{2}{\left(1+e^x}\right)^2} & : x < 0
- *   \end{array}
- * \right.
+ * \begin{equation}
+ *   y(x)=
+ *   \begin{cases}
+ *      x / (1 + e^{-x}) & x \geq 0\\
+ *     (e^{x} - 1) / (1 + e^{-x}) & x < 0.\\
+ *   \end{cases}
+ * \end{equation}
+ * \begin{equation}
+ *   y(x)=
+ *   \begin{cases}
+ *      1 / (1 + e^{-y}) + y * e^{-y} / (1 + e^{-y})^2 & x \geq 0\\
+ *      e^y - 2 / (1 + e^y) + 2 / (1 + e^y)^2 & x < 0.\\
+ *   \end{cases}
+ * \end{equation}
  * @f}
  */
 class ElishFunction
