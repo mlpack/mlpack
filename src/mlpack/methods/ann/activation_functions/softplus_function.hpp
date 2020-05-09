@@ -47,15 +47,15 @@ class SoftplusFunction
    * Computes the softplus function.
    *
    * @param x Input data.
-   * @param threshold The threshold value above which softplus behaves linear.
    * @return f(x).
    */
-  static double Fn(const double x, const double threshold = 40.0)
+  static double Fn(const double x)
   {
-    if (x > threshold)
-      return x;
-    else
-      return std::log(1 + std::exp(x));
+    const double val = std::log(1 + std::exp(x));
+    if (x < DBL_MAX)
+      return x > -DBL_MAX ? (std::isnan(val) || std::isinf(val) ? x : val)
+                          : 0;
+    return 1.0;
   }
 
   /**
@@ -63,16 +63,14 @@ class SoftplusFunction
    *
    * @param x Input data.
    * @param y The resulting output activation.
-   * @param threshold The threshold value above which softplus behaves linear.
    */
   template<typename InputType, typename OutputType>
-  static void Fn(const InputType& x, OutputType& y,
-                  const double threshold = 40.0)
+  static void Fn(const InputType& x, OutputType& y)
   {
     y.set_size(arma::size(x));
 
     for (size_t i = 0; i < x.n_elem; i++)
-      y(i) = Fn(x(i), threshold);
+      y(i) = Fn(x(i));
   }
 
   /**
