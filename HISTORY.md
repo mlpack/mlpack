@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added accessor methods for ANN layers (#2321).
+
   * Addition of `Elliot` activation function (#2268).
 
   * Add adaptive max pooling and adaptive mean pooling layers (#2195).
