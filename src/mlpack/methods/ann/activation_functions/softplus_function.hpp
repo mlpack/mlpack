@@ -54,7 +54,7 @@ class SoftplusFunction
     const double val = std::log(1 + std::exp(x));
     if (x < DBL_MAX)
       return x > -DBL_MAX ? (std::isnan(val) || std::isinf(val) ? x : val)
-                          : 0;
+          : 0;
     return 1.0;
   }
 
@@ -104,7 +104,9 @@ class SoftplusFunction
    */
   static double Inv(const double y)
   {
-    return y > 0 ? arma::trunc_log(arma::trunc_exp(y) - 1) : 0;
+    const double val = std::log(std::exp(y) - 1);
+    return y > 0 ? (std::isnan(val) || std::isinf(val) ? y : val)
+        : 0;
   }
 
   /**
