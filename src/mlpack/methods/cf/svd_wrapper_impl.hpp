@@ -32,7 +32,7 @@ double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
 }
 
 template<>
-double mlpack::cf::SVDWrapper<DummyClass>::Apply(const arma::mat& V,
+double mlpack::cf::SVDWrapper<mlpack::cf::DummyClass>::Apply(const arma::mat& V,
                                      arma::mat& W,
                                      arma::mat& sigma,
                                      arma::mat& H) const
