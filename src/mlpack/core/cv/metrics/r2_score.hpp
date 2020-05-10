@@ -38,7 +38,7 @@ namespace cv {
  *    \left( y_i - \hat{y_i} \right)^2 }
  *    {\sum_{i=1}^{n} \left( y_i - \bar{y}\right)^2}\\
  * @f}
- * 
+ *
  * where @f$ \bar{y} = frac{1}{y}\sum_{i=1}^{n} y_i $@f.
  * For example, a model having R2Score = 0.85, explains 85 \% variability of
  * the response data around its mean.

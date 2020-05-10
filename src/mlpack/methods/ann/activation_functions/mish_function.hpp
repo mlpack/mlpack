@@ -80,7 +80,7 @@ class MishFunction
 
   /**
    * Computes the first derivatives of the Mish function.
-   * 
+   *
    * @param y Input data.
    * @param x The resulting derivatives.
    */
