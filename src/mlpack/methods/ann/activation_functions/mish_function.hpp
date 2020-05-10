@@ -35,7 +35,7 @@ namespace ann /** Artificial Neural Network. */ {
  * @f{eqnarray*}{
  * f(x) = x * tanh(ln(1+e^x))
  * f'(x) = tanh(ln(1+e^x)) + x * ((1 - tanh^2(ln(1+e^x))) * frac{1}{1 + e^{-x}})
- * }
+ * @f}
  */
 class MishFunction
 {
