@@ -196,9 +196,9 @@ BOOST_AUTO_TEST_CASE(TopKAccuracyTest)
   // Using the same data for training and testing.
   arma::mat data = arma::linspace<arma::rowvec>(1.0, 10.0, 10);
   // Labels that will be considered as "ground truth".
-  arma::Row<size_t> labels("0 1  0 2  1 2 2 2  3 3 3 3");
+  arma::Row<size_t> labels("0 1 0 2 1 2 2 2 3 3 3 3");
   // prediction probabilities for each class
-  arma::rowvec predsprob("0 0  0 1  2.005 2.005 2.005 2.005  3 3 3 3");
+  arma::rowvec predsprob("0 0 0 1 2.005 2.005 2.005 2.005 3 3 3 3");
   size_t k = 3;
 
   // Call Classification model
