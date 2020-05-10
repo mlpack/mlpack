@@ -1,5 +1,5 @@
 /**
- * @file default_param.hpp
+ * @file julia/default_param.hpp
  * @author Ryan Curtin
  *
  * Return the default value of a parameter, depending on its type.

@@ -1,5 +1,5 @@
 /**
- * @file map_parameter_name.hpp
+ * @file cli/map_parameter_name.hpp
  * @author Ryan Curtin
  *
  * Map a parameter name to what it seen by boost::program_options using template

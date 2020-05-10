@@ -1,5 +1,5 @@
 /**
- * @file clean_memory.cpp
+ * @file tests/clean_memory.cpp
  * @author Ryan Curtin
  *
  * Delete any pointers held by the CLI object.

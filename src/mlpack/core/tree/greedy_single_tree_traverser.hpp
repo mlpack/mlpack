@@ -1,5 +1,5 @@
 /**
- * @file greedy_single_tree_traverser_impl.hpp
+ * @file greedy_single_tree_traverser.hpp
  * @author Marcos Pividori
  *
  * A simple greedy traverser which always chooses the child with the best score

@@ -1,5 +1,5 @@
 /**
- * @file rp_tree_max_split.hpp
+ * @file binary_space_tree/rp_tree_max_split.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of class (RPTreeMaxSplit) to split a binary space partition

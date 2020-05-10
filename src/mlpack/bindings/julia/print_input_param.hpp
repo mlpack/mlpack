@@ -1,5 +1,5 @@
 /**
- * @file print_input_param.hpp
+ * @file julia/print_input_param.hpp
  * @author Ryan Curtin
  *
  * Print the declaration of an input parameter as part of a line in a Julia

@@ -1,5 +1,5 @@
 /**
- * @file get_printable_param.hpp
+ * @file python/get_printable_param.hpp
  * @author Ryan Curtin
  *
  * Get a printable version of parameters.

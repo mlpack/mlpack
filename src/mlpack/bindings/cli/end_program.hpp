@@ -1,5 +1,5 @@
 /**
- * @file end_program.hpp
+ * @file cli/end_program.hpp
  * @author Ryan Curtin
  * @author Matthew Amidon
  *

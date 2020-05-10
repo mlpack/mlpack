@@ -1,5 +1,5 @@
 /**
- * @file get_param.hpp
+ * @file tests/get_param.hpp
  * @author Ryan Curtin
  *
  * Use template metaprogramming to get the right type of parameter.

@@ -1,5 +1,5 @@
 /**
- * @file cv_function.hpp
+ * @file hpt/cv_function.hpp
  * @author Kirill Mishchenko
  *
  * A cross-validation wrapper for optimizers.

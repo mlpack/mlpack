@@ -1,5 +1,5 @@
 /**
- * @file fixed.hpp
+ * @file hpt/fixed.hpp
  * @author Kirill Mishchenko
  *
  * Facilities for supporting fixed arguments.

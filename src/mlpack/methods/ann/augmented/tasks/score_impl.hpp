@@ -1,5 +1,5 @@
 /**
- * @file score_impl.hpp
+ * @file tasks/score_impl.hpp
  * @author Konstantin Sidorov
  *
  * Implementation of scoring functions

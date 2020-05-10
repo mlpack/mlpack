@@ -1,6 +1,6 @@
 /*! @page elem The ElemType policy in mlpack
 
-@section Overview
+@section ElemTypeOverview
 
 \b mlpack algorithms should be as generic as possible.  Often this means
 allowing arbitrary metrics or kernels to be used, but this also means allowing

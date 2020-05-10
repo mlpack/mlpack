@@ -1,5 +1,5 @@
 /**
- * @file get_numpy_type_char.hpp
+ * @file python/get_numpy_type_char.hpp
  * @author Ryan Curtin
  *
  * Given a matrix type, return the letter we should append to get the right

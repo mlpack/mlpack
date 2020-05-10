@@ -1,5 +1,5 @@
 /**
- * @file print_docs.hpp
+ * @file markdown/print_docs.hpp
  * @author Ryan Curtin
  *
  * Functions to generate Markdown for documentation of bindings.

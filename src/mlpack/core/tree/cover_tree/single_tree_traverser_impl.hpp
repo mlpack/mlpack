@@ -1,5 +1,5 @@
 /**
- * @file single_tree_traverser_impl.hpp
+ * @file cover_tree/single_tree_traverser_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the single tree traverser for cover trees, which implements

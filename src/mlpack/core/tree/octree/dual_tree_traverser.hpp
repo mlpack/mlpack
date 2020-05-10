@@ -1,5 +1,5 @@
 /**
- * @file dual_tree_traverser.hpp
+ * @file octree/dual_tree_traverser.hpp
  * @author Ryan Curtin
  *
  * Define the dual-tree traverser for the Octree.

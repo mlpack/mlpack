@@ -1,5 +1,5 @@
 /**
- * @file mult_div_update_rules.hpp
+ * @file nmf_mult_div.hpp
  * @author Mohan Rajendran
  *
  * Update rules for the Non-negative Matrix Factorization.

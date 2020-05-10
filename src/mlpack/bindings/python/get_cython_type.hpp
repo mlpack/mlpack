@@ -1,5 +1,5 @@
 /**
- * @file get_cython_type.hpp
+ * @file python/get_cython_type.hpp
  * @author Ryan Curtin
  *
  * Template metaprogramming to return the string representation of the Cython

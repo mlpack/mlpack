@@ -1,5 +1,5 @@
 /**
- * @file traits.hpp
+ * @file spill_tree/traits.hpp
  * @author Ryan Curtin
  * @author Marcos Pividori
  *

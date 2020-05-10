@@ -1,5 +1,5 @@
 /**
- * @file typedef.hpp
+ * @file spill_tree/typedef.hpp
  * @author Ryan Curtin
  * @author Marcos Pividori
  *

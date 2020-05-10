@@ -1,5 +1,5 @@
 /**
- * @file ub_tree_split.hpp
+ * @file binary_space_tree/ub_tree_split.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of UBTreeSplit, a class that splits the space according

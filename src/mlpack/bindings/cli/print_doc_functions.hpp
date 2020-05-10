@@ -1,5 +1,5 @@
 /**
- * @file print_doc_functions.hpp
+ * @file cli/print_doc_functions.hpp
  * @author Ryan Curtin
  *
  * This will generate a string representing what a user should type to invoke a

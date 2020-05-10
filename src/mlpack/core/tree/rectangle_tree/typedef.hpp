@@ -1,5 +1,5 @@
 /**
- * @file typedef.hpp
+ * @file rectangle_tree/typedef.hpp
  * @author Ryan Curtin
  *
  * Typedefs of RectangleTrees, for use by classes that require trees matching

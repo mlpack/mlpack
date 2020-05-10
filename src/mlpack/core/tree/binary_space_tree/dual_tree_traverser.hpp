@@ -1,5 +1,5 @@
 /**
- * @file dual_tree_traverser.hpp
+ * @file binary_space_tree/dual_tree_traverser.hpp
  * @author Ryan Curtin
  *
  * Defines the DualTreeTraverser for the BinarySpaceTree tree type.  This is a
@@ -96,4 +96,3 @@ class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 #include "dual_tree_traverser_impl.hpp"
 
 #endif // MLPACK_CORE_TREE_BINARY_SPACE_TREE_DUAL_TREE_TRAVERSER_HPP
-

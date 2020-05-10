@@ -1,5 +1,5 @@
 /**
- * @file c_relu_impl.hpp
+ * @file c_relu.hpp
  * @author Jeffin Sam
  *
  * Implementation of CReLU layer.

@@ -1,5 +1,5 @@
 /**
- * @file midpoing_space_split.hpp
+ * @file midpoint_space_split.hpp
  * @author Marcos Pividori
  *
  * Definition of MidpointSpaceSplit, to create a splitting hyperplane

@@ -1,5 +1,5 @@
 /**
- * @file rectangle_tree.hpp
+ * @file rectangle_tree/rectangle_tree.hpp
  * @author Andrew Wells
  *
  * Definition of generalized rectangle type trees (r_tree, r_star_tree, x_tree,

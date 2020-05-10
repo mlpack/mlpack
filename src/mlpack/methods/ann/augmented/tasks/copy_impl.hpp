@@ -1,5 +1,5 @@
 /**
- * @file copy_impl.hpp
+ * @file tasks/copy_impl.hpp
  * @author Konstantin Sidorov
  *
  * Implementation of CopyTask class

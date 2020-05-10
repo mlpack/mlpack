@@ -1,5 +1,5 @@
 /**
- * @file get_printable_type_impl.hpp
+ * @file python/get_printable_type_impl.hpp
  * @author Ryan Curtin
  *
  * Template metaprogramming to return the string representation of the Python

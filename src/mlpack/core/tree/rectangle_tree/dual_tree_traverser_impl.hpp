@@ -1,5 +1,5 @@
 /**
- * @file dual_tree_traverser_impl.hpp
+ * @file rectangle_tree/dual_tree_traverser_impl.hpp
  * @author Andrew Wells
  *
  * A class for traversing rectangle type trees with a given set of rules

@@ -1,5 +1,5 @@
 /**
- * @file clean_memory.hpp
+ * @file tests/clean_memory.hpp
  * @author Ryan Curtin
  *
  * Delete any unique pointers that are held by the CLI object.  This is similar

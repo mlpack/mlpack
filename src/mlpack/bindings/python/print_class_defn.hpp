@@ -1,5 +1,5 @@
 /**
- * @file print_class_defn.hpp
+ * @file python/print_class_defn.hpp
  * @author Ryan Curtin
  *
  * Print the class definition for generating a .pyx binding.

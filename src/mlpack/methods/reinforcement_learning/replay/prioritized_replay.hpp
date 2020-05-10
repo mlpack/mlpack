@@ -1,5 +1,5 @@
 /**
- * @file prioritized_experience_replay.hpp
+ * @file prioritized_replay.hpp
  * @author Xiaohong
  *
  * This file is an implementation of prioritized experience replay.

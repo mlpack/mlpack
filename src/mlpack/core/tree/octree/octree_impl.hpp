@@ -1,5 +1,5 @@
 /**
- * @file octree_impl.hpp
+ * @file octree/octree_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of generalized octree (Octree).

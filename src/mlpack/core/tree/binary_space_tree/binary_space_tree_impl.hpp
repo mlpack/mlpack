@@ -1,5 +1,5 @@
 /**
- * @file binary_space_tree_impl.hpp
+ * @file binary_space_tree/binary_space_tree_impl.hpp
  *
  * Implementation of generalized space partitioning tree.
  *

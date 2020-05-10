@@ -85,10 +85,10 @@ class SVDWrapper
 //! add simple typedefs
 typedef SVDWrapper<DummyClass> ArmaSVDFactorizer;
 
-//! include the implementation
-#include "svd_wrapper_impl.hpp"
-
 } // namespace cf
 } // namespace mlpack
+
+//! include the implementation
+#include "svd_wrapper_impl.hpp"
 
 #endif

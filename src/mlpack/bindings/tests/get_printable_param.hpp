@@ -1,5 +1,5 @@
 /**
- * @file get_printable_param.hpp
+ * @file tests/get_printable_param.hpp
  * @author Ryan Curtin
  *
  * Print the parameter to stdout, using template metaprogramming to enforce

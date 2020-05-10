@@ -1,5 +1,5 @@
 /**
- * @file breadth_first_dual_tree_traverser.hpp
+ * @file binary_space_tree/breadth_first_dual_tree_traverser.hpp
  * @author Ryan Curtin
  *
  * Defines the BreadthFirstDualTreeTraverser for the BinarySpaceTree tree type.

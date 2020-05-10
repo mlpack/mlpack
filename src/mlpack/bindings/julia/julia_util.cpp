@@ -1,5 +1,5 @@
 /**
- * @file julia_util.cpp
+ * @file julia/julia_util.cpp
  * @author Ryan Curtin
  *
  * Implementations of Julia binding functionality.

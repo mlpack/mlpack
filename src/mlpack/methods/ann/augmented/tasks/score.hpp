@@ -1,5 +1,5 @@
 /**
- * @file score.hpp
+ * @file tasks/score.hpp
  * @author Konstantin Sidorov
  *
  * Definition of scoring functions for sequence prediction problems.

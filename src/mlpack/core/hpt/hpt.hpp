@@ -1,5 +1,5 @@
 /**
- * @file hpt.hpp
+ * @file hpt/hpt.hpp
  * @author Kirill Mishchenko
  *
  * Hyper-parameter tuning.

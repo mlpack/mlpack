@@ -1,5 +1,5 @@
 /**
- * @file nystroem_method.hpp
+ * @file nystroem_method/nystroem_method.hpp
  * @author Ryan Curtin
  * @author Marcus Edel
  *

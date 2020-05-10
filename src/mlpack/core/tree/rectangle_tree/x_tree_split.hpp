@@ -1,5 +1,5 @@
 /**
- * @file x_tre_split.hpp
+ * @file x_tree_split.hpp
  * @author Andrew Wells
  *
  * Definition of the XTreeSplit class, a class that splits the nodes of an X

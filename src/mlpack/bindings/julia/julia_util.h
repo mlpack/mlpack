@@ -1,5 +1,5 @@
 /**
- * @file julia_util.h
+ * @file julia/julia_util.h
  * @author Ryan Curtin
  *
  * Some utility functions in C that can be called from Julia with ccall() in

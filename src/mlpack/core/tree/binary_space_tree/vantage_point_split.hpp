@@ -1,5 +1,5 @@
 /**
- * @file vantage_point_split.hpp
+ * @file binary_space_tree/vantage_point_split.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of class VantagePointSplit, a class that splits a vantage point

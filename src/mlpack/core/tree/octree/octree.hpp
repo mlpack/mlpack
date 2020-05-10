@@ -1,5 +1,5 @@
 /**
- * @file octree.hpp
+ * @file octree/octree.hpp
  * @author Ryan Curtin
  *
  * Definition of generalized octree (Octree).

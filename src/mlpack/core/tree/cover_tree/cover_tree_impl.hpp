@@ -1,5 +1,5 @@
 /**
- * @file cover_tree_impl.hpp
+ * @file cover_tree/cover_tree_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of CoverTree class.
