@@ -95,7 +95,7 @@ double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
 }
 
 template<>
-double mlpack::cf::SVDWrapper<DummyClass>::Apply(const arma::mat& V,
+double mlpack::cf::SVDWrapper<mlpack::cf::DummyClass>::Apply(const arma::mat& V,
                                      size_t r,
                                      arma::mat& W,
                                      arma::mat& H) const
