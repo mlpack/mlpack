@@ -147,6 +147,8 @@ class SVDPlusPlusFunction
 } // namespace svd
 } // namespace mlpack
 
+// \cond DO_NOT_DOCUMENT
+
 namespace ens {
 
   /**
@@ -168,6 +170,8 @@ namespace ens {
       arma::mat& parameters);
 
 } // namespace ens
+
+// \endcond
 
 #include "svdplusplus_function_impl.hpp"
 

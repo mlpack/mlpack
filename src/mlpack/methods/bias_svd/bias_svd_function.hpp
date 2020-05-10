@@ -139,6 +139,8 @@ class BiasSVDFunction
 } // namespace svd
 } // namespace mlpack
 
+// \cond DO_NOT_DOCUMENT
+
 namespace ens {
 
   /**
@@ -160,6 +162,8 @@ namespace ens {
       arma::mat& parameters);
 
 } // namespace ens
+
+// \endcond
 
 #include "bias_svd_function_impl.hpp"
 
