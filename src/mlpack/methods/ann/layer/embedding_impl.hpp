@@ -69,7 +69,7 @@ void Embedding<InputDataType, OutputDataType, InitializerType>
   init.Initialize(weights, weights.n_rows, weights.n_cols);
   if (paddingIndex)
   {
-    weights[paddingIndex] = arma::zeros<arma::Row<ElemType>>(weights.n_cols);
+    weights.row(paddingIndex) = arma::zeros<arma::Row<ElemType>>(weights.n_cols);
   }
 }
 
@@ -82,7 +82,8 @@ void Embedding<InputDataType, OutputDataType, InitializerType>
   output.set_size(input.n_cols * embeddingDim, input.n_rows);
   for (size_t i = 0; i < input.n_rows; ++i)
   {
-    output.col(i) = arma::vectorise(weights.elem(input[i]));
+    output.col(i) = arma::vectorise(weights.rows(
+        arma::conv_to<arma::uvec>::from(input.row(i))));
   }
 }
 
