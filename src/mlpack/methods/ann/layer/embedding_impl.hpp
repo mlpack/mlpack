@@ -32,27 +32,29 @@ Embedding<InputDataType, OutputDataType, InitializerType>
 ::Embedding(const size_t dictionarySize,
     const size_t embeddingDim,
     const int paddingIndex,
-    const bool freeze,
-    const InitializerType initializer) :
+    const bool freeze) :
     dictionarySize(dictionarySize),
     embeddingDim(embeddingDim),
-    freeze(freeze),
-    initializer(initializer)
+    freeze(freeze)
 {
   typedef typename InputDataType::elem_type ElemType;
   if (paddingIndex)
   {
     if (paddingIndex > 0)
+    {
       Log::Assert(paddingIndex < this->embeddingDim,
-          'paddingIndex must be less than embeddingDim');
+          "paddingIndex must be less than embeddingDim");
+      this->paddingIndex = paddingIndex;
+    }
     else
     {
       Log::Assert(paddingIndex >= - this->embeddingDim,
-          'paddingIndex must be less than embeddingDim');
-      paddingIndex += this->embeddingDim;
+          "paddingIndex must be less than embeddingDim");
+      this->paddingIndex = paddingIndex + this->embeddingDim;
     }
   }
-  this->paddingIndex = paddingIndex;
+  else
+    this->paddingIndex = paddingIndex;
   this->weights.set_size(dictionarySize, embeddingDim);
   ResetParameters();
 }
@@ -63,7 +65,8 @@ void Embedding<InputDataType, OutputDataType, InitializerType>
 ::ResetParameters()
 {
   typedef typename InputDataType::elem_type ElemType;
-  InitializerType::Initialize(weights, weights.n_rows, weights.n_cols);
+  InitializerType init;
+  init.Initialize(weights, weights.n_rows, weights.n_cols);
   if (paddingIndex)
   {
     weights[paddingIndex] = arma::zeros<arma::Row<ElemType>>(weights.n_cols);
@@ -87,7 +90,7 @@ template<typename InputDataType, typename OutputDataType,
          typename InitializerType>
 template<typename eT>
 void Embedding<InputDataType, OutputDataType, InitializerType>
-::Backward(const arma::Mat<eT>& input,
+::Backward(const arma::Mat<eT>& /* input */,
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
 {
@@ -111,7 +114,7 @@ template<typename InputDataType, typename OutputDataType,
          typename InitializerType>
 template<typename Archive>
 void Embedding<InputDataType, OutputDataType, InitializerType>
-::serialize(Archive& /* ar */, const unsigned int /* version */)
+::serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(dictionarySize);
   ar & BOOST_SERIALIZATION_NVP(embeddingDim);

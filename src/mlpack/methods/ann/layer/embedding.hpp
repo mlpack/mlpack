@@ -51,15 +51,13 @@ class Embedding
    * @param embeddingDim The size of each embedding vector.
    * @param paddingIndex Whenever it encounters `paddingIndex`, it pads the
    *        output with embedding vector with zeros.
-   * @param freeze Specifies whether to update weight matrix after each forward
-   *        pass.
-   * @param initializer The initialization rule for embedding matrix.
+   * @param freeze Specifies whether to update weight matrix of embedding layer
+   *        after each forward pass.
    */
   Embedding(const size_t dictionarySize,
             const size_t embeddingDim,
             const int paddingIndex = NULL,
-            const bool freeze = false,
-            const InitializerType initializer = RandomInitialization);
+            const bool freeze = false);
 
   /**
    * Reset the layer parameters.
@@ -86,7 +84,7 @@ class Embedding
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>& input,
+  void Backward(const arma::Mat<eT>& /* input */,
                 const arma::Mat<eT>& gy,
                 arma::Mat<eT>& g);
 
@@ -141,7 +139,7 @@ class Embedding
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored size of the vocabulary.
@@ -155,9 +153,6 @@ class Embedding
 
   //! Specifies whether to update weight matrix after each forward pass.
   bool freeze;
-
-  //! Locally-stored initialization rule.
-  InitializerType initializer;
 
   //! Locally-stored weight object.
   OutputDataType weights;
