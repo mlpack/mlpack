@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(TopKAccuracyTest)
   arma::rowvec predsprob("0 0 0 1 2.005 2.005 2.005 2.005 3 3 3 3");
   size_t k = 3;
 
-  // Call Classification model
+  // Call Classification model.
   NaiveBayesClassifier<> nb(data, labels, predsprob);
 
   // Assert that the Naive Bayes model really predicts the labels above in
