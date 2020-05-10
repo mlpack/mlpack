@@ -35,20 +35,14 @@ namespace ann /** Artificial Neural Network. */ {
  * The ELiSH function, defined by
  *
  * @f{eqnarray*}{
- * \begin{equation}
- *   f(x)=
- *   \begin{cases}
+ *   f(x) &=& \begin{cases}
  *      x / (1 + e^{-x}) & x \geq 0\\
  *     (e^{x} - 1) / (1 + e^{-x}) & x < 0.\\
- *   \end{cases}
- * \end{equation}
- * \begin{equation}
- *   f'(x)=
- *   \begin{cases}
+ *   \end{cases} \\
+ *   f'(x) &=& \begin{cases}
  *      1 / (1 + e^{-y}) + y * e^{-y} / (1 + e^{-y})^2 & x \geq 0\\
  *      e^y - 2 / (1 + e^y) + 2 / (1 + e^y)^2 & x < 0.\\
  *   \end{cases}
- * \end{equation}
  * @f}
  */
 class ElishFunction
