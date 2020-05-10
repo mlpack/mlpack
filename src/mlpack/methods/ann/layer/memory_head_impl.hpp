@@ -115,12 +115,12 @@ void MemoryHead<InputDataType, OutputDataType>::Forward(
   // Build sT with non linearity
   arma::vec temp = arma::exp(lOutput.submat(memSize + 2, 0,
     memSize + 2 + 2 * shiftSize, 0));
-  temp = temp / arma::as_scalar(arma::sum(temp));
+  temp = temp / arma::accu(arma::sum(temp));
   lSt.push_back(temp);
   const arma::vec& sT = lSt.back();
 
   // Build gammaT with non linearity
-  lGammaT.push_back(gammaTNonLinear.Fn(arma::as_scalar(
+  lGammaT.push_back(gammaTNonLinear.Fn(arma::accu(
     lOutput.submat(memSize + 2 + 2 * shiftSize + 1, 0,
     memSize + 2 + 2 * shiftSize + 1, 0))));
   const double& gammaT = lGammaT.back();
@@ -133,11 +133,11 @@ void MemoryHead<InputDataType, OutputDataType>::Forward(
   lWe.push_back(arma::exp(bT * cosSimilarity));
   const arma::vec& wE = lWe.back();
 
-  lWc.push_back(wE / arma::as_scalar(arma::sum(wE)));
+  lWc.push_back(wE / arma::accu(arma::sum(wE)));
   const arma::vec& wC = lWc.back();
 
   // Build wG with gT
-  lWg.push_back(prevWeights.back() + arma::as_scalar(gT) *
+  lWg.push_back(prevWeights.back() + arma::accu(gT) *
     (wC - prevWeights.back()));
   const arma::vec& wG = lWg.back();
 
@@ -166,7 +166,7 @@ void MemoryHead<InputDataType, OutputDataType>::Forward(
   lWDash.push_back(arma::pow(wTilde, gammaT + 1));
   const arma::vec& wDash = lWDash.back();
 
-  output = wDash / arma::as_scalar(arma::sum(wDash));
+  output = wDash / arma::accu(arma::sum(wDash));
 
   if (!deterministic)
   {
@@ -235,8 +235,8 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   arma::vec dW = temp;
 
   // Error of wDash
-  double sum1 = arma::as_scalar(arma::sum(wDash));
-  double sum2 = arma::as_scalar(arma::sum(dW % wDash)) / (sum1 * sum1);
+  double sum1 = arma::accu(arma::sum(wDash));
+  double sum2 = arma::accu(arma::sum(dW % wDash)) / (sum1 * sum1);
   dW.for_each([&] (double& val)
   {
     val = (val / sum1) - sum2;
@@ -294,7 +294,7 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
 
   // Error of St
   dSt = arma::flipud(dSt) % sT;
-  sum1 = arma::as_scalar(arma::sum(dSt));
+  sum1 = arma::accu(arma::sum(dSt));
   dSt -= sum1 * sT;
   prevError.submat(memSize + 2, 0, memSize + 2 + 2 * shiftSize, 0) = dSt;
 
@@ -312,8 +312,8 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   dW *= gT;
 
   // Error of We
-  sum1 = arma::as_scalar(arma::sum(wE));
-  sum2 = arma::as_scalar(arma::sum(wE % dW));
+  sum1 = arma::accu(arma::sum(wE));
+  sum2 = arma::accu(arma::sum(wE % dW));
   dW.for_each([&] (double& val)
   {
     val = (val / sum1) - (sum2 / (sum1 * sum1));
