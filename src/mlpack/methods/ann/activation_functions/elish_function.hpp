@@ -36,14 +36,14 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @f{eqnarray*}{
  * \begin{equation}
- *   y(x)=
+ *   f(x)=
  *   \begin{cases}
  *      x / (1 + e^{-x}) & x \geq 0\\
  *     (e^{x} - 1) / (1 + e^{-x}) & x < 0.\\
  *   \end{cases}
  * \end{equation}
  * \begin{equation}
- *   y(x)=
+ *   f'(x)=
  *   \begin{cases}
  *      1 / (1 + e^{-y}) + y * e^{-y} / (1 + e^{-y})^2 & x \geq 0\\
  *      e^y - 2 / (1 + e^y) + 2 / (1 + e^y)^2 & x < 0.\\
