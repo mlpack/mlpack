@@ -91,7 +91,7 @@ class LecunNormalInitialization
    * @param W Weight matrix to initialize.
    * @param rows Number of rows.
    * @param cols Number of columns.
-   * @param slice Numbers of slices.
+   * @param slices Number of slices.
    */
   void Initialize(arma::cube & W,
                   const size_t rows,

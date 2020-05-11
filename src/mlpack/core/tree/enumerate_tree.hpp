@@ -49,6 +49,7 @@ void EnumerateTreeImpl(TreeType* tree, Walker& walker, bool root)
  * Enter(TreeType* node, TreeType* parent);
  * Leave(TreeType* node, TreeType* parent);
  *
+ * @param tree The tree to traverse.
  * @param walker An instance of custom class, receiver of the enumeration.
  */
 template <class TreeType, class Walker>

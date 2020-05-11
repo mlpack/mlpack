@@ -56,7 +56,7 @@ std::string MapParameterName(
  * Map the parameter name to the name seen by boost::program_options.
  *
  * @param d Parameter data.
- * @param input Unused parameter.
+ * @param * (input) Unused parameter.
  * @param output Pointer to std::string that will hold the mapped name.
  */
 template<typename T>

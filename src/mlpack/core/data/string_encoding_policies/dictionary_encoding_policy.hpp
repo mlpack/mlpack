@@ -48,9 +48,9 @@ class DictionaryEncodingPolicy
    *
    * @param output Output matrix to store the encoded results (sp_mat or mat).
    * @param datasetSize The number of strings in the input dataset.
-   * @param maxNumTokens The maximum number of tokens in the strings of the 
+   * @param maxNumTokens The maximum number of tokens in the strings of the
    *                     input dataset.
-   * @param dictionarySize The size of the dictionary (not used).
+   * @param * (dictionarySize) The size of the dictionary (not used).
    */
   template<typename MatType>
   static void InitMatrix(MatType& output,
@@ -102,9 +102,9 @@ class DictionaryEncodingPolicy
   /**
    * The function is not used by the dictionary encoding policy.
    *
-   * @param line The line number at which the encoding is performed.
-   * @param index The token sequence number in the line.
-   * @param value The encoded token.
+   * @param * (line) The line number at which the encoding is performed.
+   * @param * (index) The token sequence number in the line.
+   * @param * (value) The encoded token.
    */
   static void PreprocessToken(const size_t /* line */,
                               const size_t /* index */,

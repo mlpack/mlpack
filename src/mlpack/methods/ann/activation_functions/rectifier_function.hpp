@@ -88,9 +88,9 @@ class RectifierFunction
    * @param x Input data.
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double x)
   {
-    return (double)(y > 0);
+    return (double)(x > 0);
   }
 
   /**

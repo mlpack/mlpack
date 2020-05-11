@@ -91,7 +91,7 @@ void SetParam(
  *
  * @param d Parameter information.
  * @param input Unused parameter.
- * @param output Place to store pointer to value.
+ * @param * (output) Place to store pointer to value.
  */
 template<typename T>
 void SetParam(const util::ParamData& d, const void* input, void* /* output */)

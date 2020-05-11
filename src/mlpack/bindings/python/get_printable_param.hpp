@@ -107,7 +107,7 @@ std::string GetPrintableParam(
  * pointer.
  *
  * @param data Parameter data struct.
- * @param input Unused parameter.
+ * @param * (input) Unused parameter.
  * @param output Output storage for the string.
  */
 template<typename T>

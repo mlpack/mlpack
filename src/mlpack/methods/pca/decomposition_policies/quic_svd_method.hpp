@@ -48,7 +48,7 @@ class QUICSVDPolicy
    * @param transformedData Matrix to put results of PCA into.
    * @param eigVal Vector to put eigenvalues into.
    * @param eigvec Matrix to put eigenvectors (loadings) into.
-   * @param rank Rank of the decomposition.
+   * @param * (rank) Rank of the decomposition.
    */
   void Apply(const arma::mat& data,
              const arma::mat& centeredData,

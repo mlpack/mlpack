@@ -25,6 +25,7 @@ namespace kmeans {
  * clusters those solutions to select refined initial cluster assignments.  It
  * is an implementation of the following paper:
  *
+ * @code
  * @inproceedings{bradley1998refining,
  *   title={Refining initial points for k-means clustering},
  *   author={Bradley, Paul S and Fayyad, Usama M},
@@ -33,6 +34,7 @@ namespace kmeans {
  *   volume={66},
  *   year={1998}
  * }
+ * @endcode
  */
 class RefinedStart
 {

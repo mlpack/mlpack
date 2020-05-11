@@ -76,6 +76,7 @@ class SparseAutoencoder
    * @param lambda L2-regularization parameter.
    * @param beta KL divergence parameter.
    * @param rho Sparsity parameter.
+   * @param optimizer Desired optimizer.
    */
   template<typename OptimizerType = ens::L_BFGS>
   SparseAutoencoder(const arma::mat& data,
@@ -129,6 +130,7 @@ class SparseAutoencoder
    * function of a real number 'x' is [1 / (1 + exp(-x))].
    *
    * @param x Matrix of real values for which we require the sigmoid activation.
+   * @param output Output matrix.
    */
   void Sigmoid(const arma::mat& x, arma::mat& output) const
   {

@@ -54,10 +54,10 @@ class IdentityFunction
   /**
    * Computes the first derivative of the identity function.
    *
-   * @param x Input data.
+   * @param * (x) Input data.
    * @return f'(x)
    */
-  static double Deriv(const double /* unused */)
+  static double Deriv(const double /* x */)
   {
     return 1.0;
   }

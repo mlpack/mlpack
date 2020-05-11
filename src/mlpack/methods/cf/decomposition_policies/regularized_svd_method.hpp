@@ -59,11 +59,11 @@ class RegSVDPolicy
    *
    * @param data Data matrix: dense matrix (coordinate lists)
    *    or sparse matrix(cleaned).
-   * @param cleanedData item user table in form of sparse matrix.
+   * @param * (cleanedData) item user table in form of sparse matrix.
    * @param rank Rank parameter for matrix factorization.
    * @param maxIterations Maximum number of iterations.
-   * @param minResidue Residue required to terminate.
-   * @param mit Whether to terminate only when maxIterations is reached.
+   * @param * (minResidue) Residue required to terminate.
+   * @param * (mit) Whether to terminate only when maxIterations is reached.
    */
   void Apply(const arma::mat& data,
              const arma::sp_mat& /* cleanedData */,

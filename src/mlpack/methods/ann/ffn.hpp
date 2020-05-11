@@ -192,8 +192,6 @@ class FFN
    * is usually called by the optimizer to train the model.
    *
    * @param parameters Matrix model parameters.
-   * @param deterministic Whether or not to train or test the model. Note some
-   *        layer act differently in training or testing mode.
    */
   double Evaluate(const arma::mat& parameters);
 
@@ -372,6 +370,7 @@ class FFN
    * for advanced users. User should try to use Predict and Train unless those
    * two functions can't satisfy some special requirements.
    *
+   * @param inputs Inputs of current pass.
    * @param targets The training target.
    * @param gradients Computed gradients.
    * @return Training error of the current pass.

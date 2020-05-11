@@ -46,8 +46,8 @@ class NMFPolicy
   /**
    * Apply Collaborative Filtering to the provided dataset using NMF method.
    *
-   * @param data Data matrix: dense matrix (coordinate lists) 
-   *    or sparse matrix(cleaned).
+   * @param * (data) Data matrix: dense matrix (coordinate lists)
+   *    or sparse matrix (cleaned).
    * @param cleanedData item user table in form of sparse matrix.
    * @param rank Rank parameter for matrix factorization.
    * @param maxIterations Maximum number of iterations.

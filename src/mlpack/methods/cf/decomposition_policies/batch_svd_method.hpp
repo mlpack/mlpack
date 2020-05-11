@@ -47,7 +47,7 @@ class BatchSVDPolicy
    * Apply Collaborative Filtering to the provided data set using the
    * batch SVD method.
    *
-   * @param data Data matrix: dense matrix (coordinate lists) 
+   * @param * (data) Data matrix: dense matrix (coordinate lists) 
    *    or sparse matrix(cleaned).
    * @param cleanedData item user table in form of sparse matrix.
    * @param rank Rank parameter for matrix factorization.

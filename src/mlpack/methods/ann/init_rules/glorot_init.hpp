@@ -82,7 +82,7 @@ class GlorotInitializationType
    * @param W Weight matrix to initialize.
    * @param rows Number of rows.
    * @param cols Number of columns.
-   * @param slice Numbers of slices.
+   * @param slices Number of slices.
    */
   template<typename eT>
   void Initialize(arma::Cube<eT>& W,

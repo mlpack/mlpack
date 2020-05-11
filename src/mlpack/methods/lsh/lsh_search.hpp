@@ -180,7 +180,7 @@ class LSHSearch
    *     the maximum number of points that can be hashed into single bucket.  A
    *     value of 0 indicates that there is no limit (so the second hash table
    *     can be arbitrarily large---be careful!).
-   * @param projections Cube of projection tables. For a cube of size (a, b, c)
+   * @param projection Cube of projection tables. For a cube of size (a, b, c)
    *     we set numProj = a, numTables = c. b is the reference set
    *     dimensionality.
    */
@@ -237,6 +237,7 @@ class LSHSearch
    *     available without having to build hashing for every table size.
    *     By default, this is set to zero in which case all tables are
    *     considered.
+   * @param T Number of probing bins.
    */
   void Search(const size_t k,
               arma::Mat<size_t>& resultingNeighbors,
@@ -260,6 +261,7 @@ class LSHSearch
    * Serialize the LSH model.
    *
    * @param ar Archive to serialize to.
+   * @param version Version number.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int version);

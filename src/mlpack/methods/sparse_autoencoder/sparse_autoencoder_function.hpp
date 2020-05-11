@@ -75,6 +75,7 @@ class SparseAutoencoderFunction
    * function of a real number 'x' is [1 / (1 + exp(-x))].
    *
    * @param x Matrix of real values for which we require the sigmoid activation.
+   * @param output Output matrix.
    */
   void Sigmoid(const arma::mat& x, arma::mat& output) const
   {

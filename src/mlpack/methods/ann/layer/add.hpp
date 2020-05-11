@@ -56,7 +56,7 @@ class Add
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -68,7 +68,7 @@ class Add
   /**
    * Calculate the gradient using the output delta and the input activation.
    *
-   * @param input The propagated input.
+   * @param * (input) The propagated input.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */

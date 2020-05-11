@@ -57,7 +57,6 @@ class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
    *
    * @param queryNode The query node to be traversed.
    * @param referenceNode The reference node to be traversed.
-   * @param score The score of the current node combination.
    */
   void Traverse(BinarySpaceTree& queryNode,
                 BinarySpaceTree& referenceNode);

@@ -38,7 +38,7 @@ namespace data {
  * @endcode
  *
  * @param input Input dataset to split.
- * @param label Input labels to split.
+ * @param inputLabel Input labels to split.
  * @param trainData Matrix to store training data into.
  * @param testData Matrix to store test data into.
  * @param trainLabel Vector to store training labels into.
@@ -138,7 +138,7 @@ void Split(const arma::Mat<T>& input,
  * @endcode
  *
  * @param input Input dataset to split.
- * @param label Input labels to split.
+ * @param inputLabel Input labels to split.
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
  * @return std::tuple containing trainData (arma::Mat<T>), testData
  *      (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>).

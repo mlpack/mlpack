@@ -54,6 +54,7 @@ class InformationGain
    *
    * @param labels Labels of the dataset.
    * @param numClasses Number of classes in the dataset.
+   * @param weights Weights associated with labels.
    */
   template<bool UseWeights>
   static double Evaluate(const arma::Row<size_t>& labels,

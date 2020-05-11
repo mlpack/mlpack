@@ -125,6 +125,7 @@ class RangeType
    * Scale the bounds by the given double.
    *
    * @param d Scaling factor.
+   * @param r Bounds range.
    */
   template<typename TT>
   friend inline RangeType<TT> operator*(const TT d, const RangeType<TT>& r);

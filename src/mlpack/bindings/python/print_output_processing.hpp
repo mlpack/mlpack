@@ -292,7 +292,7 @@ void PrintOutputProcessing(
  *
  * @param d Parameter data struct.
  * @param input Pointer to size_t holding the indentation.
- * @param output Unused parameter.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void PrintOutputProcessing(const util::ParamData& d,

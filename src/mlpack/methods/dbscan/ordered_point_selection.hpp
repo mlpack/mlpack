@@ -26,8 +26,8 @@ class OrderedPointSelection
   /**
    * Select the next point to use, sequentially.
    *
-   * @param unvisited Bitset indicating which points are unvisited.
-   * @param data Unused data.
+   * @param point unvisited Bitset indicating which points are unvisited.
+   * @param * (data) Unused data.
    */
   template<typename MatType>
   static size_t Select(const size_t point,

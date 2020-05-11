@@ -43,6 +43,7 @@ class MeanPooling
    * @param kernelHeight Height of the pooling window.
    * @param strideWidth Width of the stride operation.
    * @param strideHeight Width of the stride operation.
+   * @param floor Set to true to use floor method.
    */
   MeanPooling(const size_t kernelWidth,
               const size_t kernelHeight,
@@ -65,7 +66,7 @@ class MeanPooling
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */

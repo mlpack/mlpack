@@ -50,6 +50,7 @@ class TrainVisitor;
  * stratified manner in the tree as mentioned in the algorithms in Figure 2 of
  * the following paper:
  *
+ * @code
  * @inproceedings{ram2009rank,
  *   title={{Rank-Approximate Nearest Neighbor Search: Retaining Meaning and
  *       Speed in High Dimensions}},
@@ -57,6 +58,7 @@ class TrainVisitor;
  *   booktitle={{Advances of Neural Information Processing Systems}},
  *   year={2009}
  * }
+ * @endcode
  *
  * RASearch is currently known to not work with ball trees (#356).
  *
@@ -162,7 +164,6 @@ class RASearch
    * Tree-building may (at least with BinarySpaceTree) modify the ordering
    * of a matrix, so be aware that the results you get from Search() will
    * correspond to the modified matrix.
-   * @endnote
    *
    * @param referenceTree Pre-built tree for reference points.
    * @param singleMode Whether single-tree computation should be used (as
@@ -274,7 +275,6 @@ class RASearch
    * If the tree type you are using modifies the data matrix, be aware that the
    * results returned from this function will be with respect to the modified
    * data matrix.
-   * @endnote
    *
    * @param queryTree Tree built on query points.
    * @param k Number of neighbors to search for.

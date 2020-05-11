@@ -103,8 +103,8 @@ class DropConnect
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The propagated input.
-   * @param d The calculated error.
-   * @param g The calculated gradient.
+   * @param error The calculated error.
+   * @param * (gradient) The calculated gradient.
    */
   template<typename eT>
   void Gradient(const arma::Mat<eT>& input,

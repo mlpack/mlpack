@@ -54,7 +54,7 @@ class Imputer
   * overwrites the result into the input matrix.
   *
   * @param input Input dataset to apply imputation.
-  * @oaran missingValue User defined missing value; it can be anything.
+  * @param missingValue User defined missing value; it can be anything.
   * @param dimension Dimension to apply the imputation.
   */
   void Impute(arma::Mat<T>& input,

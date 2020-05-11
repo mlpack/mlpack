@@ -71,7 +71,7 @@ class AlphaDropout
   /**
    * Ordinary feed backward pass of the alpha_dropout layer.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */

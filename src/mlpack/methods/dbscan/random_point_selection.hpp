@@ -26,7 +26,7 @@ class RandomPointSelection
   /**
    * Select the next point to use, randomly.
    *
-   * @param point Unused data.
+   * @param * (point) Unused data.
    * @param data Dataset to cluster.
    */
   template<typename MatType>

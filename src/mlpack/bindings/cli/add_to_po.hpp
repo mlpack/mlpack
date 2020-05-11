@@ -81,7 +81,7 @@ void AddToPO(const std::string& boostName,
  * used in the CLI function map.
  *
  * @param d Parameter data.
- * @param input Unused void pointer.
+ * @param * (input) Unused void pointer.
  * @param output Void pointer to options_description object.
  */
 template<typename T>

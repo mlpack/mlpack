@@ -36,8 +36,8 @@ class NoRegularizer
    * Calculate the gradient for regularization.
    *
    * @tparam MatType Type of weight matrix.
-   * @param weight The weight matrix to be regularized.
-   * @param gradient The calculated gradient.
+   * @param * (weight) The weight matrix to be regularized.
+   * @param * (gradient) The calculated gradient.
    */
   template<typename MatType>
   void Evaluate(const MatType& /* weight */, MatType& /* gradient */)

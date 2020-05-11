@@ -76,7 +76,8 @@ class MissingPolicy
    * @param string String to find/create mapping for.
    * @param dimension Index of the dimension of the string.
    * @param maps Unordered map given by the DatasetMapper.
-   * @param types Vector containing the type information about each dimensions.
+   * @param * (types) Vector containing the type information about each
+   *          dimensions.
    */
   template<typename MapType, typename T>
   T MapString(const std::string& string,

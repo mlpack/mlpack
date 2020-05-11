@@ -46,7 +46,7 @@ class BiasSVDPolicy
    *
    * @param maxIterations Number of iterations.
    * @param alpha Learning rate for optimization.
-   * @param Regularization parameter for optimization.
+   * @param lambda parameter for optimization.
    */
   BiasSVDPolicy(const size_t maxIterations = 10,
                 const double alpha = 0.02,
@@ -62,13 +62,13 @@ class BiasSVDPolicy
    * Apply Collaborative Filtering to the provided data set using the
    * bias SVD.
    *
-   * @param data Data matrix: dense matrix (coordinate lists) 
+   * @param data Data matrix: dense matrix (coordinate lists)
    *    or sparse matrix(cleaned).
-   * @param cleanedData item user table in form of sparse matrix.
+   * @param * (cleanedData) item user table in form of sparse matrix.
    * @param rank Rank parameter for matrix factorization.
    * @param maxIterations Maximum number of iterations.
-   * @param minResidue Residue required to terminate.
-   * @param mit Whether to terminate only when maxIterations is reached.
+   * @param * (minResidue) Residue required to terminate.
+   * @param * (mit) Whether to terminate only when maxIterations is reached.
    */
   void Apply(const arma::mat& data,
              const arma::sp_mat& /* cleanedData */,

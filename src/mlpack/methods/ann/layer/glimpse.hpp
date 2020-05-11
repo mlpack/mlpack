@@ -119,7 +119,7 @@ class Glimpse
   /**
    * Ordinary feed backward pass of the glimpse layer.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */

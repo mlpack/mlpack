@@ -108,7 +108,7 @@ class SimpleDQN
    *
    * @param state The input state.
    * @param target The training target.
-   * @return gradient The gradient.
+   * @param gradient The gradient.
    */
   void Backward(const arma::mat state, arma::mat& target,
 arma::mat& gradient)

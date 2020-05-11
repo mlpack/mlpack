@@ -42,7 +42,6 @@ class RectangleTree<MetricType, StatisticType, MatType, SplitType,
    *
    * @param queryNode The query node to be traversed.
    * @param referenceNode The reference node to be traversed.
-   * @param score The score of the current node combination.
    */
   void Traverse(RectangleTree& queryNode, RectangleTree& referenceNode);
 

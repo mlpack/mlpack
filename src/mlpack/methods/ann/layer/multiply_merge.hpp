@@ -57,7 +57,7 @@ class MultiplyMerge
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
-   * @param input Input data used for evaluating the specified function.
+   * @param * (input) Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
@@ -68,7 +68,7 @@ class MultiplyMerge
    * f(x) by propagating x backwards trough f, using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */

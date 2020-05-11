@@ -61,13 +61,13 @@ class RandomizedSVDPolicy
    * Apply Collaborative Filtering to the provided data set using the
    * randomized SVD.
    *
-   * @param data Data matrix: dense matrix (coordinate lists)
+   * @param * (data) Data matrix: dense matrix (coordinate lists)
    *    or sparse matrix(cleaned).
    * @param cleanedData item user table in form of sparse matrix.
    * @param rank Rank parameter for matrix factorization.
    * @param maxIterations Maximum number of iterations.
-   * @param minResidue Residue required to terminate.
-   * @param mit Whether to terminate only when maxIterations is reached.
+   * @param * (minResidue) Residue required to terminate.
+   * @param * (mit) Whether to terminate only when maxIterations is reached.
    */
   template<typename MatType>
   void Apply(const MatType& /* data */,

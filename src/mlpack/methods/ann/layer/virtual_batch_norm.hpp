@@ -81,7 +81,7 @@ class VirtualBatchNorm
   /**
    * Backward pass through the layer.
    *
-   * @param input The input activations.
+   * @param * (input) The input activations.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -93,7 +93,7 @@ class VirtualBatchNorm
   /**
    * Calculate the gradient using the output delta and the input activations.
    *
-   * @param input The input activations.
+   * @param * (input) The input activations.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */

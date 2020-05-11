@@ -35,7 +35,7 @@ class LinearSVMFunction
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
-   * @paran delta Margin of difference between correct class and other classes.
+   * @param delta Margin of difference between correct class and other classes.
    * @param fitIntercept Intercept term flag.
    */
   LinearSVMFunction(const MatType& dataset,
@@ -77,7 +77,7 @@ class LinearSVMFunction
   /**
    * Evaluate the hinge loss function for all the datapoints
    *
-   * @param paramters The parameters of the SVM.
+   * @param parameters The parameters of the SVM.
    * @return The value of the loss function for the entire dataset.
    */
   double Evaluate(const arma::mat& parameters);

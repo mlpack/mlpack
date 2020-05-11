@@ -87,6 +87,8 @@ class HoeffdingTree
    *      in batch training mode.
    * @param minSamples If the node has seen this many points or fewer, no split
    *      will be allowed.
+   * @param categoricalSplitIn - Categorical Split into.
+   * @param numericSplitIn - Numeric Split into.
    */
   template<typename MatType>
   HoeffdingTree(const MatType& data,
@@ -109,7 +111,6 @@ class HoeffdingTree
    * this node does not create its own dimensionMappings object (for instance,
    * if this is a child of another node in the tree).
    *
-   * @param dimensionality Dimensionality of the dataset.
    * @param numClasses Number of classes in the dataset.
    * @param datasetInfo Information on the dataset (types of each feature).
    * @param successProbability Probability of success required in Hoeffding
@@ -123,6 +124,8 @@ class HoeffdingTree
    *      be created.
    * @param copyDatasetInfo If true, then a copy of the datasetInfo will be
    *      made.
+   * @param categoricalSplitIn - Categorical Split into.
+   * @param numericSplitIn - Numeric Split into.
    */
   HoeffdingTree(const data::DatasetInfo& datasetInfo,
                 const size_t numClasses,
@@ -162,7 +165,7 @@ class HoeffdingTree
    * the given labels.
    *
    * @param data Data points to train on.
-   * @param label Labels of data points.
+   * @param labels Labels of data points.
    * @param batchTraining If true, perform training in batch.
    */
   template<typename MatType>

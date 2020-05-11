@@ -46,6 +46,7 @@ class Linear
    *
    * @param inSize The number of input units.
    * @param outSize The number of output units.
+   * @param regularizer The regularizer to use, optional.
    */
   Linear(const size_t inSize,
          const size_t outSize,
@@ -71,7 +72,7 @@ class Linear
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */

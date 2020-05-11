@@ -67,6 +67,7 @@ class SVDWrapper
    * CF module.
    *
    * @param V input matrix
+   * @param r rank
    * @param W first unitary matrix
    * @param H second unitary matrix
    *

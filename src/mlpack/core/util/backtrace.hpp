@@ -46,15 +46,21 @@ namespace mlpack {
 class Backtrace
 {
  public:
+
+#ifdef HAS_BFD_DL
   /**
    * Constructor initialize fields and call GetAddress to retrieve addresses
    * for each frame of backtrace.
    *
    * @param maxDepth Maximum depth of backtrace. Default 32 steps.
    */
-#ifdef HAS_BFD_DL
   Backtrace(int maxDepth = 32);
 #else
+  /**
+   * Constructor initialize fields and call GetAddress to retrieve addresses
+   * for each frame of backtrace.
+   *
+   */
   Backtrace();
 #endif
   //! Returns string of backtrace.

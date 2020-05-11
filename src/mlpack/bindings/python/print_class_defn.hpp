@@ -59,20 +59,20 @@ void PrintClassDefn(
   /**
    * This will produce code like:
    *
-   * cdef class <ModelType>Type:
-   *   cdef <ModelType>* modelptr
+   * cdef class <ModelType\>Type:
+   *   cdef \<ModelType\>* modelptr
    *
    *   def __cinit__(self):
-   *     self.modelptr = new <ModelType>()
+   *     self.modelptr = new \<ModelType\>()
    *
    *   def __dealloc__(self):
    *     del self.modelptr
    *
    *   def __getstate__(self):
-   *     return SerializeOut(self.modelptr, "<ModelType>")
+   *     return SerializeOut(self.modelptr, "\<ModelType\>")
    *
    *   def __setstate__(self, state):
-   *     SerializeIn(self.modelptr, state, "<ModelType>")
+   *     SerializeIn(self.modelptr, state, "\<ModelType\>")
    *
    *   def __reduce_ex__(self):
    *     return (self.__class__, (), self.__getstate__())
@@ -105,8 +105,8 @@ void PrintClassDefn(
  * different class definition, so anything else does nothing.
  *
  * @param d Parameter data.
- * @param input Unused parameter.
- * @param output Unused parameter.
+ * @param * (input) Unused parameter.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void PrintClassDefn(const util::ParamData& d,

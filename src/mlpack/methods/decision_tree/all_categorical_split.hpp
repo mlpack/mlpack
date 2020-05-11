@@ -45,10 +45,12 @@ class AllCategoricalSplit
    * @param numCategories Number of categories in the categorical data.
    * @param labels Labels for each point.
    * @param numClasses Number of classes in the dataset.
+   * @param weights Weights associated with labels.
    * @param minimumLeafSize Minimum number of points in a leaf node for
    *      splitting.
    * @param classProbabilities Class probabilities vector, which may be filled
    *      with split information a successful split.
+   * @param minimumGainSplit Minimum  gain split.
    * @param aux Auxiliary split information, which may be modified on a
    *      successful split.
    */
@@ -69,7 +71,7 @@ class AllCategoricalSplit
    * Return the number of children in the split.
    *
    * @param classProbabilities Auxiliary information for the split.
-   * @param aux (Unused) auxiliary information for the split.
+   * @param * (aux) Auxiliary information for the split (Unused).
    */
   template<typename ElemType>
   static size_t NumChildren(const arma::Col<ElemType>& classProbabilities,
@@ -78,8 +80,10 @@ class AllCategoricalSplit
   /**
    * Calculate the direction a point should percolate to.
    *
+   * @param point the Point to use.
    * @param classProbabilities Auxiliary information for the split.
-   * @param aux (Unused) auxiliary information for the split.
+   * @param classProbabilities Column Vector of class probabilities.
+   * @param * (aux) Auxiliary information for the split (Unused).
    */
   template<typename ElemType>
   static size_t CalculateDirection(
@@ -95,4 +99,3 @@ class AllCategoricalSplit
 #include "all_categorical_split_impl.hpp"
 
 #endif
-

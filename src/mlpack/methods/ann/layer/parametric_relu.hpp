@@ -51,7 +51,7 @@ class PReLU
    * alpha in the range 0 to 1. Default (alpha = 0.03). This parameter
    * is trainable.
    *
-   * @param alpha Non zero gradient
+   * @param userAlpha Non zero gradient
    */
   PReLU(const double userAlpha = 0.03);
 

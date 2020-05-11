@@ -66,6 +66,7 @@ class CopyTask
    * @param input The variable to store input sequences.
    * @param labels The variable to store output sequences.
    * @param batchSize The dataset size.
+   * @param fixedLength Set to true to denoted fixed length dataset.
    */
   void Generate(arma::field<arma::mat>& input,
                 arma::field<arma::mat>& labels,

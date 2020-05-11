@@ -124,7 +124,6 @@ class NeighborSearch
    * when this constructor is used, so if the tree type you are using maps
    * points (like BinarySpaceTree), then you will have to perform the re-mapping
    * manually.
-   * @endnote
    *
    * @param referenceTree Pre-built tree for reference points.
    * @param mode Neighbor search mode.
@@ -239,7 +238,7 @@ class NeighborSearch
    * Note that if you are calling Search() multiple times with a single query
    * tree, you need to reset the bounds in the statistic of each query node,
    * otherwise the result may be wrong!  You can do this by calling
-   * TreeType::Stat()::Reset() on each node in the query tree.
+   * "TreeType::Stat()::Reset()" on each node in the query tree.
    *
    * @param queryTree Tree built on query points.
    * @param k Number of neighbors to search for.

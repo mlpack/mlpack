@@ -112,7 +112,7 @@ class RBM
   /**
    * This function calculates the free energy of the BinaryRBM.
    * The free energy is given by:
-   * $-b^Tv - \sum_{i=1}^M log(1 + e^{c_j+v^TW_j})$.
+   * @f$ -b^Tv - \sum_{i=1}^M log(1 + e^{c_j+v^TW_j}) @f$.
    *
    * @param input The visible neurons.
    */
@@ -123,10 +123,10 @@ class RBM
   /**
    * This function calculates the free energy of the SpikeSlabRBM.
    * The free energy is given by:
-   * $v^t$$\Delta$v - $\sum_{i=1}^N$
-   * $\log{ \sqrt{\frac{(-2\pi)^K}{\prod_{m=1}^{K}(\alpha_i)_m}}}$ -
-   * $\sum_{i=1}^N \log(1+\exp( b_i +
-   * \sum_{m=1}^k \frac{(v(w_i)_m^t)^2}{2(\alpha_i)_m})$
+   * @f$ v^t$$\Delta$v - $\sum_{i=1}^N @f$
+   * @f$ \log{ \sqrt{\frac{(-2\pi)^K}{\prod_{m=1}^{K}(\alpha_i)_m}}} @f$ -
+   * @f$ \sum_{i=1}^N \log(1+\exp( b_i +
+   * \sum_{m=1}^k \frac{(v(w_i)_m^t)^2}{2(\alpha_i)_m}) @f$
    *
    * @param input The visible layer neurons.
    */
@@ -169,9 +169,9 @@ class RBM
   /**
    * This function samples the slab outputs from the Normal distribution with
    * mean given by:
-   * $h_i*\alpha^{-1}*W_i^T*v$
+   * @f$ h_i*\alpha^{-1}*W_i^T*v @f$
    * and variance:
-   * $\alpha&{-1}$
+   * @f$ \alpha&{-1} @f$
    *
    * @param input Consists of both visible and spike variables.
    * @param output Sampled slab neurons.

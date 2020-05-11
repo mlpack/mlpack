@@ -193,7 +193,7 @@ class Acrobot
    *
    * @param state The current State.
    * @param action The action taken.
-   * @param nextState The next state.
+   * @return nextState The next state.
    */
   double Sample(const State& state, const Action& action)
   {
@@ -311,7 +311,7 @@ class Acrobot
    * This function calculates the torque for a particular action.
    * 0 : negative torque, 1 : zero torque, 2 : positive torque.
    *
-   * @param Action action taken.
+   * @param action Action taken.
    */
   double Torque(const Action& action) const
   {

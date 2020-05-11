@@ -63,7 +63,7 @@ class CLIOption
    * @param input Whether or not the option is an input option.
    * @param noTranspose If the parameter is a matrix and this is true, then the
    *      matrix will not be transposed on loading.
-   * @param testName Is not used and added for compatibility reasons.
+   * @param * (testName) Is not used and added for compatibility reasons.
    */
   CLIOption(const N defaultValue,
             const std::string& identifier,

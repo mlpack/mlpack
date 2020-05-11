@@ -24,6 +24,7 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * For more information see the following.
  *
+ * @code
  * @article{Milletari2016,
  *   author    = {Fausto Milletari and Nassir Navab and Seyed{-}Ahmad Ahmadi},
  *   title     = {V-Net: Fully Convolutional Neural Networks for
@@ -35,6 +36,7 @@ namespace ann /** Artificial Neural Network. */ {
  *   archivePrefix = {arXiv},
  *   eprint    = {1606.04797},
  * }
+ * @endcode
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).

@@ -73,7 +73,7 @@ T*& GetRawParam(
  * here!
  *
  * @param d Parameter information.
- * @param input Unused parameter.
+ * @param * (input) Unused parameter.
  * @param output Place to store pointer to value.
  */
 template<typename T>

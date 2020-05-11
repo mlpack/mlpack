@@ -51,7 +51,7 @@ class SoftmaxErrorFunction
    *
    * @param dataset Matrix containing the dataset.
    * @param labels Vector of class labels for each point in the dataset.
-   * @param kernel Instantiated kernel (optional).
+   * @param metric Instantiated metric (optional).
    */
   SoftmaxErrorFunction(const arma::mat& dataset,
                        const arma::Row<size_t>& labels,
@@ -74,7 +74,7 @@ class SoftmaxErrorFunction
   /**
    * Evaluate the softmax objective function for the given covariance matrix on
    * the given batch size from a given inital point of the dataset.
-   * This is the separable implementation, where the objective 
+   * This is the separable implementation, where the objective
    * function is decomposed into the sum of many objective
    * functions, and here, only one of those constituent objective functions is
    * returned.

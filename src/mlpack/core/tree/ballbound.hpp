@@ -157,7 +157,8 @@ class BallBound
   /**
    * Calculates minimum and maximum bound-to-point distance.
    *
-   * @param point Point to which the minimum and maximum distances are
+   * @param other Bound to check the condition.
+   * @param * Point to which the minimum and maximum distances are
    *     requested.
    */
   template<typename OtherVecType>

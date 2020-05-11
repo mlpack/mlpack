@@ -66,7 +66,9 @@ class BRNN
    *
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    * @param single Predict only the last element of the input sequence.
+   * @param mergeLayer Merge layer to be used to evaluate the network.
    * @param outputLayer Output layer used to evaluate the network.
+   * @param mergeOutput Output Merge layer to be used.
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
