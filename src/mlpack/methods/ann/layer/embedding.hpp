@@ -120,9 +120,9 @@ class Embedding
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
-  //! Get the iutput parameter.
+  //! Get the input parameter.
   OutputDataType& InputParameter() const { return inputParameter; }
-  //! Modify the iutput parameter.
+  //! Modify the input parameter.
   OutputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
