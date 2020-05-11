@@ -16,10 +16,8 @@
 // In case it hasn't yet been included.
 #include "svd_wrapper.hpp"
 
-namespace mlpack
-{
-namespace cf
-{
+namespace mlpack {
+namespace cf {
 
 template<class Factorizer>
 double SVDWrapper<Factorizer>::Apply(const arma::mat& V,
