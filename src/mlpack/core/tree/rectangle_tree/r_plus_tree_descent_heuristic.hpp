@@ -37,8 +37,8 @@ class RPlusTreeDescentHeuristic
    * with minimum largest Hilbert value is greater than the largest
    * Hilbert value of the point being inserted.
    *
-   * @param node The node that is being evaluated.
-   * @param insertedNode The node that is being inserted.
+   * @param * (node) The node that is being evaluated.
+   * @param * (insertedNode) The node that is being inserted.
    */
   template<typename TreeType>
   static size_t ChooseDescentNode(const TreeType* /* node */,
