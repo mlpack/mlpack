@@ -124,7 +124,7 @@ class HollowBallBound
   /**
    * Determines if a point is within this bound.
    *
-   * @param point Point to check the condition.   
+   * @param point Point to check the condition.
    */
   template<typename VecType>
   bool Contains(const VecType& point) const;
@@ -145,8 +145,8 @@ class HollowBallBound
   void Center(VecType& center) const { center = this->center; }
 
   /**
-   * Calculates minimum bound-to-point squared distance
-   *.
+   * Calculates minimum bound-to-point squared distance.
+   *
    * @param point Point to which the minimum distance is requested.
    */
   template<typename VecType>

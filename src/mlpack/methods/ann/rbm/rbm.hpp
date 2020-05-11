@@ -194,9 +194,9 @@ class RBM
   /**
    * Sample Hidden function samples the slab outputs from the Normal
    * distribution with mean given by:
-   * $h_i*\alpha^{-1}*W_i^T*v$
+   * @f$ h_i*\alpha^{-1}*W_i^T*v @f$
    * and variance:
-   * $\alpha&{-1}$
+   * @f$ \alpha&{-1} @f$
    *
    * @param input Hidden layer of the network.
    * @param output The sampled visible layer.
@@ -218,7 +218,7 @@ class RBM
   /**
    * The function calculates the mean of the Normal distribution of P(v|s, h).
    * The mean is given by:
-   * $\Lambda^{-1} \sum_{i=1}^N W_i * s_i * h_i$
+   * @f$ \Lambda^{-1} \sum_{i=1}^N W_i * s_i * h_i @f$
    *
    * @param input Consists of both the spike and slab variables.
    * @param output Mean of the of the Normal distribution.
@@ -240,9 +240,9 @@ class RBM
   /**
    * The function calculates the mean of the Normal distribution of P(s|v, h).
    * The mean is given by:
-   * $h_i*\alpha^{-1}*W_i^T*v$
+   * @f$ h_i*\alpha^{-1}*W_i^T*v @f$
    * The variance is given by:
-   * $\alpha^{-1}$
+   * @f$ \alpha^{-1} @f$
    *
    * @param input Visible layer neurons.
    * @param output Consists of both the spike samples and slab samples.
@@ -254,7 +254,7 @@ class RBM
   /**
    * The function calculates the mean of the distribution P(h|v),
    * where mean is given by:
-   * $sigm(v^T*W_i*\alpha_i^{-1}*W_i^T*v + b_i)$
+   * @f$ sigm(v^T*W_i*\alpha_i^{-1}*W_i^T*v + b_i) @f$
    *
    * @param visible The visible layer neurons.
    * @param spikeMean Indicates P(h|v).
@@ -275,7 +275,7 @@ class RBM
   /**
    * The function calculates the mean of Normal distribution of P(s|v, h),
    * where the mean is given by:
-   * $h_i*\alpha^{-1}*W_i^T*v$
+   * @f$ h_i*\alpha^{-1}*W_i^T*v @f$
    *
    * @param visible The visible layer neurons.
    * @param spike The spike variables from hidden layer.
@@ -288,9 +288,9 @@ class RBM
   /**
    * The function samples from the Normal distribution of P(s|v, h),
    * where the mean is given by:
-   * $h_i*\alpha^{-1}*W_i^T*v$
+   * @f$ h_i*\alpha^{-1}*W_i^T*v @f$
    * and variance is given by:
-   * $\alpha^{-1}$
+   * @f$ \alpha^{-1} @f$
    *
    * @param slabMean Mean of the Normal distribution of the slab neurons.
    * @param slab Sampled slab variable from the Normal distribution.

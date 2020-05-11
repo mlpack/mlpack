@@ -419,7 +419,7 @@ not work; this example exists for its API, not its implementation.
 Note that layer sometimes have different properties. These properties are
 known at compile-time through the mlpack::ann::LayerTraits class, and some
 properties may imply the existence (or non-existence) of certain functions.
-Refer to the LayerTraits @ref LayerTraits for more documentation on that.
+Refer to the LayerTraits @ref layer_traits.hpp for more documentation on that.
 
 The two template parameters below must be template parameters to the layer, in
 the order given below. More template parameters are fine, but they must come
@@ -661,10 +661,10 @@ $ cat model.xml
 </boost_serialization>
 @endcode
 
-As you can see, the \c <parameter> section of \c model.xml contains the trained
+As you can see, the \c \<parameter\> section of \c model.xml contains the trained
 network weights.  We can see that this section also contains the network input
 size, which is 66 rows and 1 column. Note that in this example, we used three
-different layers, as can be seen by looking at the \c <network> section. Each
+different layers, as can be seen by looking at the \c \<network\> section. Each
 node has a unique id that is used to reconstruct the model when loading.
 
 The models can also be saved as \c .bin or \c .txt; the \c .xml format provides

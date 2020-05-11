@@ -1,4 +1,4 @@
-namespace mlpack {
+ens::namespace mlpack {
 namespace hpt {
 
 /*! @page hpt Hyper-Parameter Tuning
@@ -32,7 +32,7 @@ The interface of the hyper-parameter tuning module is quite similar to the
 interface of the @ref cv "cross-validation module". To construct a \c
 HyperParameterTuner object you need to specify as template parameters what
 machine learning algorithm, cross-validation strategy, performance measure, and
-optimization strategy (\ref optimization::GridSearch "GridSearch" will be used by
+optimization strategy (\ref ens::GridSearch "GridSearch" will be used by
 default) you are going to use.  Then, you must pass the same arguments as for
 the cross-validation classes: the data and labels (or responses) to use are
 given to the constructor, and the possible hyperparameter values are given to
@@ -68,7 +68,7 @@ computation time.
   std::tie(bestLambda) = hpt.Optimize(lambdas);
 @endcode
 
-In this example we have used \ref optimization::GridSearch "GridSearch" (the
+In this example we have used \ref ens::GridSearch "GridSearch" (the
 default optimizer) to find a good value for the \c lambda hyper-parameter.  For
 that we have specified what values should be tried.
 
@@ -121,7 +121,7 @@ real-valued hyperparameters, but wish to further tune those values.
 In this case, we can use a gradient-based optimizer for hyperparameter search.
 In the following example, we try to optimize the \c lambda1 and \c lambda2
 hyper-parameters for \ref regression::LARS "LARS" with the
-\ref optimization::GradientDescent "GradientDescent" optimizer.
+\ref ens::GradientDescent "GradientDescent" optimizer.
 
 @code
   HyperParameterTuner<LARS, MSE, SimpleCV, GradientDescent> hpt3(validationSize,
@@ -190,7 +190,7 @@ HyperParameterTuner<LinearRegression, MSE, SimpleCV> hpt(0.2, dataset,
 @endcode
 
 Next, we must set up the hyperparameters to be optimized.  If we are doing a
-grid search with the \ref optimization::GridSearch "GridSearch" optimizer (the
+grid search with the \ref ens::GridSearch "GridSearch" optimizer (the
 default), then we only need to pass a `std::vector` (for non-numeric
 hyperparameters) or an `arma::vec` (for numeric hyperparameters) containing all
 of the possible choices that we wish to search over.

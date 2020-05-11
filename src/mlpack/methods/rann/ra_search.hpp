@@ -7,6 +7,7 @@
  *
  * The details of this method can be found in the following paper:
  *
+ * @code
  * @inproceedings{ram2009rank,
  *   title={{Rank-Approximate Nearest Neighbor Search: Retaining Meaning and
  *       Speed in High Dimensions}},
@@ -14,6 +15,7 @@
  *   booktitle={{Advances of Neural Information Processing Systems}},
  *   year={2009}
  * }
+ * @endcode
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

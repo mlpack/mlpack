@@ -9,6 +9,7 @@
  *
  * The details of this method can be found in the following paper:
  *
+ * @code
  * @inproceedings{datar2004locality,
  *  title={Locality-sensitive hashing scheme based on p-stable distributions},
  *  author={Datar, M. and Immorlica, N. and Indyk, P. and Mirrokni, V.S.},
@@ -18,11 +19,13 @@
  *  year={2004},
  *  organization={ACM}
  * }
+ * @endcode
  *
  * Additionally, the class implements Multiprobe LSH, which improves
  * approximation results during the search for approximate nearest neighbors.
  * The Multiprobe LSH algorithm was presented in the paper:
  *
+ * @code
  * @inproceedings{Lv2007multiprobe,
  *  tile={Multi-probe LSH: efficient indexing for high-dimensional similarity
  *  search},
@@ -33,6 +36,7 @@
  *  year={2007},
  *  pages={950--961}
  * }
+ * @endcode
  *
  *
  * mlpack is free software; you may redistribute it and/or modify it under the

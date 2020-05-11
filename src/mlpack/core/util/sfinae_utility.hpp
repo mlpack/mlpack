@@ -248,7 +248,6 @@ struct NAME                                                                  \
  *
  * @param METHOD The name of the method to check for.
  * @param NAME The name of the struct to construct.
- * @param MAXN The maximum number of additional arguments.
  */
 #define HAS_METHOD_FORM(METHOD, NAME) \
     HAS_METHOD_FORM_BASE(SINGLE_ARG(METHOD), SINGLE_ARG(NAME), 7)
@@ -282,7 +281,6 @@ struct NAME                                                                  \
  *
  * @param METHOD The name of the method to check for.
  * @param NAME The name of the struct to construct.
- * @param MAXN The maximum number of additional arguments.
  */
 #define HAS_EXACT_METHOD_FORM(METHOD, NAME) \
     HAS_METHOD_FORM_BASE(SINGLE_ARG(METHOD), SINGLE_ARG(NAME), 0)
