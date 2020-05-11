@@ -173,11 +173,9 @@ static void mlpackMain()
   if (CLI::HasParam("reference"))
   {
     allkann = new LSHSearch<>();
+    Log::Info << "Using reference data from "
+        << CLI::GetPrintableParam<arma::mat>("reference") << "." << endl;
     referenceData = std::move(CLI::GetParam<arma::mat>("reference"));
-    Log::Info << "Using reference data from '"
-        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
-        << referenceData.n_rows << " x " << referenceData.n_cols << ")."
-        << endl;
 
     Timer::Start("hash_building");
     allkann->Train(std::move(referenceData), numProj, numTables, hashWidth,
@@ -195,10 +193,9 @@ static void mlpackMain()
         << endl;
     if (CLI::HasParam("query"))
     {
+      Log::Info << "Loaded query data from "
+          << CLI::GetPrintableParam<arma::mat>("query") << "." << endl;
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
-      Log::Info << "Loaded query data from '"
-          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
-          << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
 
       allkann->Search(queryData, k, neighbors, distances, 0, numProbes);
     }
@@ -213,6 +210,10 @@ static void mlpackMain()
   // Compute recall, if desired.
   if (CLI::HasParam("true_neighbors"))
   {
+    Log::Info << "Using true neighbor indices from '"
+        << CLI::GetPrintableParam<arma::Mat<size_t>>("true_neighbors") << "'."
+        << endl;
+
     // Load the true neighbors.
     arma::Mat<size_t> trueNeighbors =
         std::move(CLI::GetParam<arma::Mat<size_t>>("true_neighbors"));
@@ -220,13 +221,12 @@ static void mlpackMain()
     if (trueNeighbors.n_rows != neighbors.n_rows ||
         trueNeighbors.n_cols != neighbors.n_cols)
     {
-        Log::Fatal << "The true neighbors file must have the same number of "
-            << "values as the set of neighbors being queried!" << endl;
+      // Delete the model if needed.
+      if (CLI::HasParam("reference"))
+        delete allkann;
+      Log::Fatal << "The true neighbors file must have the same number of "
+          << "values as the set of neighbors being queried!" << endl;
     }
-
-    Log::Info << "Using true neighbor indices from '"
-        << CLI::GetPrintableParam<arma::Mat<size_t>>("true_neighbors") << "'."
-        << endl;
 
     // Compute recall and print it.
     double recallPercentage = 100 * allkann->ComputeRecall(neighbors,

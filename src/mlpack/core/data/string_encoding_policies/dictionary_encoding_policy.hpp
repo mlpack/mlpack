@@ -25,64 +25,91 @@ namespace data {
  * The encoder assigns a positive integer number to each unique token and treats
  * the dataset as categorical. The numbers are assigned sequentially starting
  * from one. The order in which the tokens are labeled is defined by
- * the dictionary used by the StringEncoding class.
+ * the dictionary used by the StringEncoding class. The encoder writes data
+ * either in the column-major order or in the row-major order depending on
+ * the output data type.
  */
 class DictionaryEncodingPolicy
 {
  public:
   /**
-  * The function initializes the output matrix.
-  *
-  * @tparam MatType The output matrix type.
-  *
-  * @param output Output matrix to store the encoded results (sp_mat or mat).
-  * @param datasetSize The number of strings in the input dataset.
-  * @param maxNumTokens The maximum number of tokens in the strings of the 
-                        input dataset.
-  * @param dictionarySize The size of the dictionary (not used).
-  */
+   * Clear the necessary internal variables.
+   */
+  static void Reset()
+  {
+    // Nothing to do.
+  }
+
+  /**
+   * The function initializes the output matrix. The encoder writes data
+   * in the column-major order.
+   *
+   * @tparam MatType The output matrix type.
+   *
+   * @param output Output matrix to store the encoded results (sp_mat or mat).
+   * @param datasetSize The number of strings in the input dataset.
+   * @param maxNumTokens The maximum number of tokens in the strings of the 
+   *                     input dataset.
+   * @param dictionarySize The size of the dictionary (not used).
+   */
   template<typename MatType>
   static void InitMatrix(MatType& output,
                          const size_t datasetSize,
                          const size_t maxNumTokens,
-                         const size_t /*dictionarySize*/)
+                         const size_t /* dictionarySize */)
   {
-    output.zeros(datasetSize, maxNumTokens);
+    output.zeros(maxNumTokens, datasetSize);
   }
 
-  /** 
-  * The function performs the dictionary encoding algorithm i.e. it writes
-  * the encoded token to the ouput.
-  *
-  * @tparam MatType The output matrix type.
-  *
-  * @param output Output matrix to store the encoded results (sp_mat or mat).
-  * @param value The encoded token.
-  * @param row The row number at which the encoding is performed.
-  * @param col The token index in the row.
-  */
+  /**
+   * The function performs the dictionary encoding algorithm i.e. it writes
+   * the encoded token to the output. The encoder writes data in the
+   * column-major order.
+   *
+   * @tparam MatType The output matrix type.
+   *
+   * @param output Output matrix to store the encoded results (sp_mat or mat).
+   * @param value The encoded token.
+   * @param line The line number at which the encoding is performed.
+   * @param index The token index in the line.
+   */
   template<typename MatType>
   static void Encode(MatType& output,
                      const size_t value,
-                     const size_t row,
-                     const size_t col)
+                     const size_t line,
+                     const size_t index)
   {
-    output(row, col) = value;
+    output(index, line) = value;
   }
 
-  /** 
+  /**
    * The function performs the dictionary encoding algorithm i.e. it writes
-   * the encoded token to the ouput. This is an overload function which saves
-   * the result into the given vector to avoid padding.
+   * the encoded token to the output. This is an overloaded function which saves
+   * the result into the given vector to avoid padding. The encoder writes data
+   * in the row-major order.
    *
-   * @param output Output vector to store the encoded results.
+   * @tparam ElemType Type of the output values.
+   *
+   * @param output Output vector to store the encoded line.
    * @param value The encoded token.
    */
-  static void Encode(std::vector<size_t>& output,
-                     const size_t value)
+  template<typename ElemType>
+  static void Encode(std::vector<ElemType>& output, size_t value)
   {
     output.push_back(value);
   }
+
+  /**
+   * The function is not used by the dictionary encoding policy.
+   *
+   * @param line The line number at which the encoding is performed.
+   * @param index The token sequence number in the line.
+   * @param value The encoded token.
+   */
+  static void PreprocessToken(const size_t /* line */,
+                              const size_t /* index */,
+                              const size_t /* value */)
+  { }
 
   /**
    * Serialize the class to the given archive.

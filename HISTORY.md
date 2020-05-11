@@ -1,5 +1,40 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added accessor methods for ANN layers (#2321).
+
+  * Addition of `Elliot` activation function (#2268).
+
+  * Add adaptive max pooling and adaptive mean pooling layers (#2195).
+
+  * Add `MatType` parameter to `LSHSearch`, allowing sparse matrices to be used
+    for search (#2395).
+
+### mlpack 3.3.1
+###### 2020-04-29
+  * Minor Julia and Python documentation fixes (#2373).
+
+  * Updated terminal state and fixed bugs for Pendulum environment (#2354, #2369).
+
+  * Added `EliSH` activation function (#2323).
+
+  * Add L1 Loss function (#2203).
+
+  * Pass CMAKE_CXX_FLAGS (compilation options) correctly to Python build
+    (#2367).
+
+  * Expose ensmallen Callbacks for sparseautoencoder (#2198).
+
+  * Bugfix for LARS class causing invalid read (#2374).
+
+  * Add serialization support from Julia; use `mlpack.serialize()` and
+    `mlpack.deserialize()` to save and load from `IOBuffer`s.
+
+### mlpack 3.3.0
+###### 2020-04-07
+  * Templated return type of `Forward function` of loss functions (#2339).
+
+  * Added `R2 Score` regression metric (#2323).
+
   * Added `mean squared logarithmic error` loss function for neural networks
     (#2210).
 
@@ -25,11 +60,17 @@
   * Add functions to access parameters of `Convolution` and `AtrousConvolution`
     layers (#1985).
 
+  * Add Compute Error function in lars regression and changing Train function to
+    return computed error (#2139).
+
   * Add Julia bindings (#1949).  Build settings can be controlled with the
     `BUILD_JULIA_BINDINGS=(ON/OFF)` and `JULIA_EXECUTABLE=/path/to/julia` CMake
     parameters.
 
   * CMake fix for finding STB include directory (#2145).
+
+  * Add bindings for loading and saving images (#2019); `mlpack_image_converter`
+    from the command-line, `mlpack.image_converter()` from Python.
 
   * Add normalization support for CF binding (#2136).
 
@@ -47,14 +88,16 @@
 
   * Add Valid and Same Padding for Transposed Convolution layer (#2163).
 
-  * Add Log-Hyperbolic-Cosine Loss function (#2207)
+  * Add CELU activation function (#2191)
+
+  * Add Log-Hyperbolic-Cosine Loss function (#2207).
 
   * Change neural network types to avoid unnecessary use of rvalue references
     (#2259).
 
   * Bump minimum Boost version to 1.58 (#2305).
 
-  * Refactor STB support so HAS_STB macro is not needed when compiling against
+  * Refactor STB support so `HAS_STB` macro is not needed when compiling against
     mlpack (#2312).
 
   * Add Hard Shrink Activation Function (#2186).
@@ -62,6 +105,13 @@
   * Add Soft Shrink Activation Function (#2174).
 
   * Add Hinge Embedding Loss Function (#2229).
+
+  * Add Cosine Embedding Loss Function (#2209).
+
+  * Add Margin Ranking Loss Function (#2264).
+
+  * Bugfix for incorrect parameter vector sizes in logistic regression and
+    softmax regression (#2359).
 
 ### mlpack 3.2.2
 ###### 2019-11-26

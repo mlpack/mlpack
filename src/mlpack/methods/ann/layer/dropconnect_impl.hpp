@@ -48,12 +48,6 @@ DropConnect<InputDataType, OutputDataType>::DropConnect(
   network.push_back(baseLayer);
 }
 
-template <typename InputDataType, typename OutputDataType>
-DropConnect<InputDataType, OutputDataType>::~DropConnect()
-{
-  boost::apply_visitor(DeleteVisitor(), baseLayer);
-}
-
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void DropConnect<InputDataType, OutputDataType>::Forward(

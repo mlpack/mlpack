@@ -83,11 +83,14 @@ class ReinforceNormal
   //! Modify the value of the deterministic parameter.
   double& Reward() { return reward; }
 
+  //! Get the standard deviation used during forward and backward pass.
+  double StandardDeviation() const { return stdev; }
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Standard deviation used during the forward and backward pass.

@@ -37,19 +37,6 @@ Recurrent<InputDataType, OutputDataType, CustomLayers...>::Recurrent() :
   // Nothing to do.
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-Recurrent<InputDataType, OutputDataType, CustomLayers...>::~Recurrent()
-{
-  if (ownsLayer)
-  {
-    boost::apply_visitor(DeleteVisitor(), recurrentModule);
-    boost::apply_visitor(DeleteVisitor(), initialModule);
-    boost::apply_visitor(DeleteVisitor(), startModule);
-    network.clear();
-  }
-}
-
 template <typename InputDataType, typename OutputDataType,
           typename... CustomLayers>
 template<
@@ -76,8 +63,8 @@ Recurrent<InputDataType, OutputDataType, CustomLayers...>::Recurrent(
     ownsLayer(true)
 {
   initialModule = new Sequential<>();
-  mergeModule = new AddMerge<>(false, false);
-  recurrentModule = new Sequential<>(false);
+  mergeModule = new AddMerge<>(false, false, false);
+  recurrentModule = new Sequential<>(false, false);
 
   boost::apply_visitor(AddVisitor<CustomLayers...>(inputModule),
                        initialModule);
@@ -116,8 +103,8 @@ Recurrent<InputDataType, OutputDataType, CustomLayers...>::Recurrent(
   feedbackModule = boost::apply_visitor(copyVisitor, network.feedbackModule);
   transferModule = boost::apply_visitor(copyVisitor, network.transferModule);
   initialModule = new Sequential<>();
-  mergeModule = new AddMerge<>(false, false);
-  recurrentModule = new Sequential<>(false);
+  mergeModule = new AddMerge<>(false, false, false);
+  recurrentModule = new Sequential<>(false, false);
 
   boost::apply_visitor(AddVisitor<CustomLayers...>(inputModule),
                        initialModule);
@@ -292,8 +279,8 @@ void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
   if (Archive::is_loading::value)
   {
     initialModule = new Sequential<>();
-    mergeModule = new AddMerge<>(false, false);
-    recurrentModule = new Sequential<>(false);
+    mergeModule = new AddMerge<>(false, false, false);
+    recurrentModule = new Sequential<>(false, false);
 
     boost::apply_visitor(AddVisitor<CustomLayers...>(inputModule),
                          initialModule);

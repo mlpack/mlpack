@@ -19,6 +19,7 @@
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
+#include <mlpack/core/util/to_lower.hpp>
 
 #include "layer_types.hpp"
 #include "padding.hpp"
@@ -364,9 +365,6 @@ class AtrousConvolution
 
   //! Locally-stored transformed output parameter.
   arma::cube outputTemp;
-
-  //! Locally-stored transformed input parameter.
-  arma::cube inputTemp;
 
   //! Locally-stored transformed padded input parameter.
   arma::cube inputPaddedTemp;

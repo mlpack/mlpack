@@ -68,6 +68,100 @@ LARS::LARS(const arma::mat& data,
   Train(data, responses, transposeData);
 }
 
+// Copy Constructor.
+LARS::LARS(const LARS& other) :
+    matGramInternal(other.matGramInternal),
+    matGram(other.matGram != &other.matGramInternal ?
+        other.matGram : &matGramInternal),
+    matUtriCholFactor(other.matUtriCholFactor),
+    useCholesky(other.useCholesky),
+    lasso(other.lasso),
+    lambda1(other.lambda1),
+    elasticNet(other.elasticNet),
+    lambda2(other.lambda2),
+    tolerance(other.tolerance),
+    betaPath(other.betaPath),
+    lambdaPath(other.lambdaPath),
+    activeSet(other.activeSet),
+    isActive(other.isActive),
+    ignoreSet(other.ignoreSet),
+    isIgnored(other.isIgnored)
+{
+  // Nothing to do here.
+}
+
+// Move constructor.
+LARS::LARS(LARS&& other) :
+    matGramInternal(std::move(other.matGramInternal)),
+    matGram(other.matGram != &other.matGramInternal ?
+        other.matGram : &matGramInternal),
+    matUtriCholFactor(std::move(other.matUtriCholFactor)),
+    useCholesky(other.useCholesky),
+    lasso(other.lasso),
+    lambda1(other.lambda1),
+    elasticNet(other.elasticNet),
+    lambda2(other.lambda2),
+    tolerance(other.tolerance),
+    betaPath(std::move(other.betaPath)),
+    lambdaPath(std::move(other.lambdaPath)),
+    activeSet(std::move(other.activeSet)),
+    isActive(std::move(other.isActive)),
+    ignoreSet(std::move(other.ignoreSet)),
+    isIgnored(std::move(other.isIgnored))
+{
+  // Nothing to do here.
+}
+
+// Copy operator.
+LARS& LARS::operator=(const LARS& other)
+{
+  if (&other == this)
+    return *this;
+
+  matGramInternal = other.matGramInternal;
+  matGram = other.matGram != &other.matGramInternal ?
+      other.matGram : &matGramInternal;
+  matUtriCholFactor = other.matUtriCholFactor;
+  useCholesky = other.useCholesky;
+  lasso = other.lasso;
+  lambda1 = other.lambda1;
+  elasticNet = other.elasticNet;
+  lambda2 = other.lambda2;
+  tolerance = other.tolerance;
+  betaPath = other.betaPath;
+  lambdaPath = other.lambdaPath;
+  activeSet = other.activeSet;
+  isActive = other.isActive;
+  ignoreSet = other.ignoreSet;
+  isIgnored = other.isIgnored;
+  return *this;
+}
+
+// Move Operator.
+LARS& LARS::operator=(LARS&& other)
+{
+  if (&other == this)
+    return *this;
+
+  matGramInternal = std::move(other.matGramInternal);
+  matGram = other.matGram != &other.matGramInternal ?
+      other.matGram : &matGramInternal;
+  matUtriCholFactor = std::move(other.matUtriCholFactor);
+  useCholesky = other.useCholesky;
+  lasso = other.lasso;
+  lambda1 = other.lambda1;
+  elasticNet = other.elasticNet;
+  lambda2 = other.lambda2;
+  tolerance = other.tolerance;
+  betaPath = std::move(other.betaPath);
+  lambdaPath = std::move(other.lambdaPath);
+  activeSet = std::move(other.activeSet);
+  isActive = std::move(other.isActive);
+  ignoreSet = std::move(other.ignoreSet);
+  isIgnored = std::move(other.isIgnored);
+  return *this;
+}
+
 double LARS::Train(const arma::mat& matX,
                    const arma::rowvec& y,
                    arma::vec& beta,
@@ -361,7 +455,7 @@ double LARS::Train(const arma::mat& matX,
   beta = betaPath.back();
 
   Timer::Stop("lars_regression");
-  return maxCorr;
+  return ComputeError(matX, y, !transposeData);
 }
 
 double LARS::Train(const arma::mat& data,
@@ -536,5 +630,20 @@ void LARS::CholeskyDelete(const size_t colToKill)
     }
 
     matUtriCholFactor.shed_row(n);
+  }
+}
+
+double LARS::ComputeError(const arma::mat& matX,
+                          const arma::rowvec& y,
+                          const bool rowMajor)
+{
+  if (rowMajor)
+  {
+    return arma::accu(arma::pow(y - trans(matX * betaPath.back()), 2.0));
+  }
+
+  else
+  {
+    return arma::accu(arma::pow(y - betaPath.back().t() * matX, 2.0));
   }
 }

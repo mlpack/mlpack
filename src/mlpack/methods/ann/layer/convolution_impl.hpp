@@ -122,8 +122,7 @@ Convolution<
 
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
-  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
-      [](unsigned char c){ return std::tolower(c); });
+  util::ToLower(paddingType, paddingTypeLow);
 
   if (paddingTypeLow == "valid")
   {
@@ -178,7 +177,7 @@ void Convolution<
 >::Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   batchSize = input.n_cols;
-  inputTemp = arma::cube(const_cast<arma::Mat<eT>&>(input).memptr(),
+  arma::cube inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(),
       inputWidth, inputHeight, inSize * batchSize, false, false);
 
   if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
@@ -258,9 +257,9 @@ void Convolution<
   arma::cube mappedError(((arma::Mat<eT>&) gy).memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
 
-  g.set_size(inputTemp.n_rows * inputTemp.n_cols * inSize, batchSize);
-  gTemp = arma::Cube<eT>(g.memptr(), inputTemp.n_rows,
-      inputTemp.n_cols, inputTemp.n_slices, false, false);
+  g.set_size(inputWidth * inputHeight * inSize, batchSize);
+  gTemp = arma::Cube<eT>(g.memptr(), inputWidth, inputHeight,
+      inSize * batchSize, false, false);
   gTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
@@ -308,12 +307,14 @@ void Convolution<
     InputDataType,
     OutputDataType
 >::Gradient(
-    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& input,
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
 {
   arma::cube mappedError(((arma::Mat<eT>&) error).memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
+  arma::cube inputTemp(((arma::Mat<eT>&) input).memptr(), inputWidth,
+      inputHeight, inSize * batchSize, false, false);
 
   gradient.set_size(weights.n_elem, 1);
   gradientTemp = arma::Cube<eT>(gradient.memptr(), weight.n_rows,

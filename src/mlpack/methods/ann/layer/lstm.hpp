@@ -165,6 +165,12 @@ class LSTM
   //! Modify the gradient.
   OutputDataType& Gradient() { return grad; }
 
+  //! Get the number of input units.
+  size_t InSize() const { return inSize; }
+
+  //! Get the number of output units.
+  size_t OutSize() const { return outSize; }
+
   /**
    * Serialize the layer
    */

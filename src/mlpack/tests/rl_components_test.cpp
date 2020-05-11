@@ -38,25 +38,28 @@ BOOST_AUTO_TEST_SUITE(RLComponentsTest)
 BOOST_AUTO_TEST_CASE(SimplePendulumTest)
 {
   Pendulum task = Pendulum();
-  task.MaxSteps() = 5;
+  task.MaxSteps() = 20;
 
   Pendulum::State state = task.InitialSample();
   Pendulum::Action action;
   action.action[0] = math::Random(-2.0, 2.0);
-  double reward = task.Sample(state, action);
-
-  // The reward is always negative. Check if not lower than lowest possible.
-  BOOST_REQUIRE(reward >= -(pow(M_PI, 2) + 6.404));
+  double reward, minReward = 0.0;
 
   BOOST_REQUIRE(!task.IsTerminal(state));
 
   while (!task.IsTerminal(state))
-    task.Sample(state, action, state);
+  {
+    reward = task.Sample(state, action, state);
+    minReward = std::min(reward, minReward);
+  }
+
+  // The reward is always negative. Check if not lower than lowest possible.
+  BOOST_REQUIRE(minReward >= -(pow(M_PI, 2) + 6.404));
 
   // Check if the number of steps performed is less or equal as the maximum
   // allowed, since we use a random action there is no guarantee that we will
   // reach the maximum number of steps.
-  BOOST_REQUIRE_LE(task.StepsPerformed(), 5);
+  BOOST_REQUIRE_LE(task.StepsPerformed(), 20);
 
   // The action is simply the torque. Check if dimension is 1.
   BOOST_REQUIRE_EQUAL(1, action.size);

@@ -50,9 +50,6 @@ class Recurrent
    */
   Recurrent();
 
-  //! Destructor to release allocated memory.
-  ~Recurrent();
-
   //! Copy constructor.
   Recurrent(const Recurrent&);
 
@@ -138,6 +135,9 @@ class Recurrent
   OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
+
+  //! Get the number of steps to backpropagate through time.
+  size_t const& Rho() const { return rho; }
 
   /**
    * Serialize the layer

@@ -29,6 +29,7 @@ set(SOURCES
   singletons.cpp
   timers.hpp
   timers.cpp
+  to_lower.hpp
   version.hpp
   version.cpp
 )
