@@ -46,7 +46,7 @@ class BiasSVDPolicy
    *
    * @param maxIterations Number of iterations.
    * @param alpha Learning rate for optimization.
-   * @param lambda parameter for optimization.
+   * @param lambda Regularization parameter for optimization.
    */
   BiasSVDPolicy(const size_t maxIterations = 10,
                 const double alpha = 0.02,
