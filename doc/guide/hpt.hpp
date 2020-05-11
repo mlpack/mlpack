@@ -1,7 +1,7 @@
 ens::namespace mlpack {
 namespace hpt {
 
-/*! @page hpt Hyper-Parameter Tuning
+/*! @page hpt_guide Hyper-Parameter Tuning
 
 @section hptintro Introduction
 
