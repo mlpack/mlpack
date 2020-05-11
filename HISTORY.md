@@ -1,8 +1,15 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added accessor methods for ANN layers (#2321).
+
+  * Addition of `Elliot` activation function (#2268).
+
   * Add adaptive max pooling and adaptive mean pooling layers (#2195).
 
   * Add parameter to avoid shuffling of data in preprocess_split (#2293).
+
+  * Add `MatType` parameter to `LSHSearch`, allowing sparse matrices to be used
+    for search (#2395).
 
 ### mlpack 3.3.1
 ###### 2020-04-29
