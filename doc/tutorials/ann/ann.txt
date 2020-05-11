@@ -79,9 +79,8 @@ have a number of methods in common:
 
 @note
 To be able to optimize the network, both classes implement the OptimizerFunction
-API; see \ref optimizertutorial "Optimizer API" for more information. In short,
-the \c FNN and \c RNN class implement two methods: \c Evaluate() and \c
-Gradient().  This enables the optimization given some learner and some
+API. In short, the \c FNN and \c RNN class implement two methods: \c Evaluate()
+and \c Gradient().  This enables the optimization given some learner and some
 performance measure.
 
 Similar to the existing layer infrastructure, the \c FFN and \c RNN classes are
@@ -230,13 +229,13 @@ int main()
   arma::mat predictionTemp;
   model.Predict(testData, predictionTemp);
 
-  /* 
-    Since the predictionsTemp is of dimensions (3 x number_of_data_points) 
-    with continuous values, we first need to reduce it to a dimension of 
+  /*
+    Since the predictionsTemp is of dimensions (3 x number_of_data_points)
+    with continuous values, we first need to reduce it to a dimension of
     (1 x number_of_data_points) with scalar values, to be able to compare with
     testLabels.
 
-    The first step towards doing this is to create a matrix of zeros with the 
+    The first step towards doing this is to create a matrix of zeros with the
     desired dimensions (1 x number_of_data_points).
 
     In predictionsTemp, the 3 dimensions for each data point correspond to the
@@ -252,8 +251,8 @@ int main()
         arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
   }
 
-  /* 
-    Compute the error between predictions and testLabels, 
+  /*
+    Compute the error between predictions and testLabels,
     now that we have the desired predictions.
   */
   size_t correct = arma::accu(prediction == testLabels);
@@ -266,7 +265,7 @@ int main()
 @endcode
 
 Now, the matrix prediction holds the classification of each point in the
-dataset. Subsequently, we find the classification error by comparing it 
+dataset. Subsequently, we find the classification error by comparing it
 with testLabels.
 
 In the next example, we create simple noisy sine sequences, which are trained
