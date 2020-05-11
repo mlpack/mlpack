@@ -9,8 +9,11 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+
+using namespace mlpack::cf;
+
 template<class Factorizer>
-double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
+double SVDWrapper<Factorizer>::Apply(const arma::mat& V,
                          arma::mat& W,
                          arma::mat& sigma,
                          arma::mat& H) const
@@ -32,7 +35,7 @@ double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
 }
 
 template<>
-double mlpack::cf::SVDWrapper<mlpack::cf::DummyClass>::Apply(const arma::mat& V,
+double SVDWrapper<DummyClass>::Apply(const arma::mat& V,
                                      arma::mat& W,
                                      arma::mat& sigma,
                                      arma::mat& H) const
@@ -54,7 +57,7 @@ double mlpack::cf::SVDWrapper<mlpack::cf::DummyClass>::Apply(const arma::mat& V,
 }
 
 template<class Factorizer>
-double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
+double SVDWrapper<Factorizer>::Apply(const arma::mat& V,
                          size_t r,
                          arma::mat& W,
                          arma::mat& H) const
@@ -95,7 +98,7 @@ double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
 }
 
 template<>
-double mlpack::cf::SVDWrapper<mlpack::cf::DummyClass>::Apply(const arma::mat& V,
+double SVDWrapper<DummyClass>::Apply(const arma::mat& V,
                                      size_t r,
                                      arma::mat& W,
                                      arma::mat& H) const

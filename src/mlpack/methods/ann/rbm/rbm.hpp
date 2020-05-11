@@ -89,7 +89,7 @@ class RBM
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @tparam CallbackTypes Types of Callback functions.
    * @param optimizer Optimizer type.
-   * @param callbacks Callback Functions for ensmallen optimizer 
+   * @param callbacks Callback Functions for ensmallen optimizer
    *      `OptimizerType`.
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error).
@@ -123,7 +123,7 @@ class RBM
   /**
    * This function calculates the free energy of the SpikeSlabRBM.
    * The free energy is given by:
-   * $v^t$$\Delta$v - $\sum_{i=1}^N$ 
+   * $v^t$$\Delta$v - $\sum_{i=1}^N$
    * $\log{ \sqrt{\frac{(-2\pi)^K}{\prod_{m=1}^{K}(\alpha_i)_m}}}$ -
    * $\sum_{i=1}^N \log(1+\exp( b_i +
    * \sum_{m=1}^k \frac{(v(w_i)_m^t)^2}{2(\alpha_i)_m})$
@@ -137,7 +137,7 @@ class RBM
 
   /**
    * Calculates the gradient of the RBM network on the provided input.
-   * 
+   *
    * @param input The provided input data.
    * @param gradient Stores the gradient of the RBM network.
    */
@@ -147,7 +147,7 @@ class RBM
 
   /**
    * Calculates the gradient of the RBM network on the provided input.
-   * 
+   *
    * @param input The provided input data.
    * @param gradient Stores the gradient of the RBM network.
    */
@@ -172,7 +172,7 @@ class RBM
    * $h_i*\alpha^{-1}*W_i^T*v$
    * and variance:
    * $\alpha&{-1}$
-   * 
+   *
    * @param input Consists of both visible and spike variables.
    * @param output Sampled slab neurons.
    */
@@ -219,7 +219,7 @@ class RBM
    * The function calculates the mean of the Normal distribution of P(v|s, h).
    * The mean is given by:
    * $\Lambda^{-1} \sum_{i=1}^N W_i * s_i * h_i$
-   * 
+   *
    * @param input Consists of both the spike and slab variables.
    * @param output Mean of the of the Normal distribution.
    */
@@ -243,7 +243,7 @@ class RBM
    * $h_i*\alpha^{-1}*W_i^T*v$
    * The variance is given by:
    * $\alpha^{-1}$
-   * 
+   *
    * @param input Visible layer neurons.
    * @param output Consists of both the spike samples and slab samples.
    */
@@ -276,7 +276,7 @@ class RBM
    * The function calculates the mean of Normal distribution of P(s|v, h),
    * where the mean is given by:
    * $h_i*\alpha^{-1}*W_i^T*v$
-   * 
+   *
    * @param visible The visible layer neurons.
    * @param spike The spike variables from hidden layer.
    * @param slabMean The mean of the Normal distribution of slab neurons.
