@@ -21,9 +21,9 @@ namespace cf {
 
 template<class Factorizer>
 double SVDWrapper<Factorizer>::Apply(const arma::mat& V,
-                         arma::mat& W,
-                         arma::mat& sigma,
-                         arma::mat& H) const
+                                     arma::mat& W,
+                                     arma::mat& sigma,
+                                     arma::mat& H) const
 {
   // get svd factorization
   arma::vec E;
