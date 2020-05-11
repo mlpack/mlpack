@@ -46,7 +46,6 @@ namespace mlpack {
 class Backtrace
 {
  public:
-
 #ifdef HAS_BFD_DL
   /**
    * Constructor initialize fields and call GetAddress to retrieve addresses
