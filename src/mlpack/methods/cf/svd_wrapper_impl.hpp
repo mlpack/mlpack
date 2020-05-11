@@ -35,7 +35,7 @@ double SVDWrapper<Factorizer>::Apply(const arma::mat& V,
 }
 
 template<>
-double SVDWrapper<DummyClass>::Apply(const arma::mat& V,
+double mlpack::cf::SVDWrapper<DummyClass>::Apply(const arma::mat& V,
                                      arma::mat& W,
                                      arma::mat& sigma,
                                      arma::mat& H) const
@@ -57,7 +57,7 @@ double SVDWrapper<DummyClass>::Apply(const arma::mat& V,
 }
 
 template<class Factorizer>
-double SVDWrapper<Factorizer>::Apply(const arma::mat& V,
+double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
                          size_t r,
                          arma::mat& W,
                          arma::mat& H) const
@@ -98,7 +98,7 @@ double SVDWrapper<Factorizer>::Apply(const arma::mat& V,
 }
 
 template<>
-double SVDWrapper<DummyClass>::Apply(const arma::mat& V,
+double mlpack::cf::SVDWrapper<DummyClass>::Apply(const arma::mat& V,
                                      size_t r,
                                      arma::mat& W,
                                      arma::mat& H) const
