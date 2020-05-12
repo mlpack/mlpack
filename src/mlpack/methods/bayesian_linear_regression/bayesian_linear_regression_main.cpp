@@ -62,7 +62,7 @@ PROGRAM_INFO("BayesianLinearRegression",
     "and " + PRINT_PARAM_STRING("scale") + " parameters control the "
     "centering and the normalizing options. A trained model can be saved with "
     "the " + PRINT_PARAM_STRING("output_model") + ". If no training is desired "
-    "at all, a model can be passed via the " + 
+    "at all, a model can be passed via the " +
     PRINT_PARAM_STRING("input_model") + " parameter."
     "\n\n"
     "The program can also provide predictions for test data using either the "

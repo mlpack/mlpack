@@ -148,7 +148,8 @@ BOOST_AUTO_TEST_CASE(EqualtoRidge)
                                   y,
                                   bayesLinReg.Alpha() / bayesLinReg.Beta(),
                                   false);
-  double equalSol = arma::sum(bayesLinReg.Omega() - classicalRidge.Parameters());
+  double equalSol = arma::sum(bayesLinReg.Omega()
+			      - classicalRidge.Parameters());
   BOOST_REQUIRE(equalSol < 1e-5);
 }
 

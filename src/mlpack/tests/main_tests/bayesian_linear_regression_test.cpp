@@ -59,7 +59,8 @@ BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
 
   mlpackMain();
 
-  BayesianLinearRegression* estimator = CLI::GetParam<BayesianLinearRegression*>("output_model");
+  BayesianLinearRegression* estimator = 
+  CLI::GetParam<BayesianLinearRegression*>("output_model");
 
   const arma::colvec dataScale = estimator->DataScale();
   const arma::colvec dataOffset = estimator->DataOffset();
@@ -93,7 +94,8 @@ BOOST_AUTO_TEST_CASE(BayesianLinearRegressionSavedEqualCode)
   CLI::GetSingleton().Parameters()["input"].wasPassed = false;
   CLI::GetSingleton().Parameters()["responses"].wasPassed = false;
 
-  SetInputParam("input_model", CLI::GetParam<BayesianLinearRegression*>("output_model"));
+  SetInputParam("input_model",
+                CLI::GetParam<BayesianLinearRegression*>("output_model"));
   SetInputParam("test", std::move(Xtest));
 
   mlpackMain();
