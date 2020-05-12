@@ -6,6 +6,8 @@
 
   * Add adaptive max pooling and adaptive mean pooling layers (#2195).
 
+  * Add parameter to avoid shuffling of data in preprocess_split (#2293).
+
   * Add `MatType` parameter to `LSHSearch`, allowing sparse matrices to be used
     for search (#2395).
 
@@ -105,7 +107,6 @@
   * Add Soft Shrink Activation Function (#2174).
 
   * Add Hinge Embedding Loss Function (#2229).
-
   * Add Cosine Embedding Loss Function (#2209).
 
   * Add Margin Ranking Loss Function (#2264).

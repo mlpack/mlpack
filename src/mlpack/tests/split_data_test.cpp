@@ -94,18 +94,63 @@ void CheckDuplication(const Row<size_t>& trainLabels,
     BOOST_REQUIRE_EQUAL(counts[i], 1);
 }
 
-BOOST_AUTO_TEST_CASE(SplitDataResultMat)
+BOOST_AUTO_TEST_CASE(SplitShuffleDataResultMat)
 {
   mat input(2, 10);
-  size_t count = 0; // count for putting unique sequential values
+  size_t count = 0; // Counter for unique sequential values.
   input.imbue([&count] () { return ++count; });
 
   const auto value = Split(input, 0.2);
-  BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 8); // train data
-  BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, 2); // test data
+  BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 8); // Train data.
+  BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, 2); // Test data.
 
   mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
   CheckMatEqual(input, concat);
+}
+
+BOOST_AUTO_TEST_CASE(SplitDataResultMat)
+{
+  mat input(2, 10);
+  size_t count = 0; // Counter for unique sequential values.
+  input.imbue([&count] () { return ++count; });
+
+  const auto value = Split(input, 0.2, false);
+  BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 8); // Train data.
+  BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, 2); // Test data.
+
+  mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
+  // Order matters here.
+  CheckMatrices(input, concat);
+}
+
+BOOST_AUTO_TEST_CASE(ZeroRatioSplitData)
+{
+  mat input(2, 10);
+  size_t count = 0; // Counter for unique sequential values.
+  input.imbue([&count] () { return ++count; });
+
+  const auto value = Split(input, 0, false);
+  BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 10); // Train data.
+  BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, 0); // Test data.
+
+  mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
+  // Order matters here.
+  CheckMatrices(input, concat);
+}
+
+BOOST_AUTO_TEST_CASE(TotalRatioSplitData)
+{
+  mat input(2, 10);
+  size_t count = 0; // Counter for unique sequential values.
+  input.imbue([&count] () { return ++count; });
+
+  const auto value = Split(input, 1, false);
+  BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 0); // Train data.
+  BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, 10); // Test data.
+
+  mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
+  // Order matters here.
+  CheckMatrices(input, concat);
 }
 
 BOOST_AUTO_TEST_CASE(SplitLabeledDataResultMat)
