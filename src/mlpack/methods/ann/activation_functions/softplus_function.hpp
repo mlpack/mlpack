@@ -52,20 +52,9 @@ class SoftplusFunction
   static double Fn(const double x)
   {
     const double val = std::log(1 + std::exp(x));
-    if (x < DBL_MAX)
-    {
-      if (x > -DBL_MAX)
-      {
-        if (std::isfinite(val))
-          return val;
-        else
-          return x;
-      }
-      else
-        return 0;
-    }
-    else
-      return 1.0;
+    if (std::isfinite(val))
+      return val;
+    return x;
   }
 
   /**
@@ -115,15 +104,9 @@ class SoftplusFunction
   static double Inv(const double y)
   {
     const double val = std::log(std::exp(y) - 1);
-    if (y > 0)
-    {
-      if (std::isfinite(val))
-        return val;
-      else
-        return y;
-    }
-    else
-      return 0;
+    if (std::isfinite(val))
+      return val;
+    return y;
   }
 
   /**
