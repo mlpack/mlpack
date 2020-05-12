@@ -1,5 +1,5 @@
 /**
- * @file bayesian_ridge.hpp
+ * @file bayesian_linear_regression.hpp
  * @author Clement Mercier
  *
  * Definition of the BayesianRidge class, which performs the
@@ -7,8 +7,8 @@
  * all the functions consider data in column-major format.
 **/
 
-#ifndef MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_HPP
-#define MLPACK_METHODS_BAYESIAN_RIDGE_BAYESIAN_RIDGE_HPP
+#ifndef MLPACK_METHODS_BAYESIAN_LINEAR_REGRESSION_HPP
+#define MLPACK_METHODS_BAYESIAN_LINEAR_REGRESSION_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -72,7 +72,7 @@ namespace regression{
  
  * // Train the model. Regularization strength is optimally tunned with the
  * // training data alone by applying the Train method.
- * BayesianRidge estimator(); // Instanciate the estimator with default option.
+ * BayesianLinearRegression estimator(); // Instanciate the estimator with default option.
  * estimator.Train(xTrain, yTrain);
  
  * // Prediction on test points.
@@ -89,7 +89,7 @@ namespace regression{
  * estimator.Predict(xTest, responses, stds)
  * @endcode
  */
-class BayesianRidge
+class BayesianLinearRegression
 {
  public:
   /**
@@ -105,13 +105,13 @@ class BayesianRidge
    * @param tol Level from which the solution is considered sufficientlly 
    *    stable.  
    */
-  BayesianRidge(const bool centerData = true,
+  BayesianLinearRegression(const bool centerData = true,
                 const bool scaleData = false,
                 const int nIterMax = 50,
                 const double tol = 1e-4);
 
   /**
-   * Run BayesianRidge. The input matrix (like all mlpack matrices) should be
+   * Run BayesianLinearRegression. The input matrix (like all mlpack matrices) should be
    * column-major -- each column is an observation and each row is a dimension.
    * 
    * @param data Column-major input data
@@ -235,7 +235,7 @@ class BayesianRidge
   double ResponsesOffset() const { return responsesOffset; }
 
   /**
-   * Serialize the BayesianRidge model.
+   * Serialize the BayesianLinearRegression model.
    **/
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -281,6 +281,6 @@ class BayesianRidge
 } // namespace mlpack
 
 // Include implementation of serialize.
-#include "bayesian_ridge_impl.hpp"
+#include "bayesian_linear_regression_impl.hpp"
 
 #endif

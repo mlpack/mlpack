@@ -1,35 +1,35 @@
 /**
- * @file bayesian_ridge.cpp
+ * @file bayesian_linear_regression.cpp
  * @author Clement Mercier 
  *
- * Implementation of Bayesian Ridge regression.
+ * Implementation of Bayesian linear regression.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "bayesian_ridge.hpp"
+#include "bayesian_linear_regression.hpp"
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/timers.hpp>
 
 using namespace mlpack;
 using namespace mlpack::regression;
 
-BayesianRidge::BayesianRidge(const bool centerData,
-                             const bool scaleData,
-                             const int nIterMax,
-                             const double tol) :
+BayesianLinearRegression::BayesianLinearRegression(const bool centerData,
+                                                   const bool scaleData,
+                                                   const int nIterMax,
+                                                   const double tol) :
   centerData(centerData),
   scaleData(scaleData),
   nIterMax(nIterMax),
   tol(tol)
 {/* Nothing to do */}
 
-double BayesianRidge::Train(const arma::mat& data,
-                            const arma::rowvec& responses)
+double BayesianLinearRegression::Train(const arma::mat& data,
+                                       const arma::rowvec& responses)
 {
-  Timer::Start("bayesian_ridge_regression");
+  Timer::Start("bayesian_linear_regression");
 
   arma::mat phi;
   arma::rowvec t;
@@ -48,7 +48,7 @@ double BayesianRidge::Train(const arma::mat& data,
 
   if (arma::eig_sym(eigval, V, arma::symmatu(phi * phi.t())) == false)
   {
-    Log::Warn << "BayesianRidge::Train(): Eigendecomposition "
+    Log::Warn << "BayesianLinearRegression::Train(): Eigendecomposition "
               << "of covariance failed!"
               << std::endl;
     throw std::runtime_error("eig_sym() failed.");
@@ -94,13 +94,13 @@ double BayesianRidge::Train(const arma::mat& data,
   matCovariance *= diagmat(1 / (beta * eigval + alpha));
   matCovariance *= Vinv;
 
-  Timer::Stop("bayesian_ridge_regression");
+  Timer::Stop("bayesian_linear_regression");
 
   return RMSE(data, responses);
 }
 
-void BayesianRidge::Predict(const arma::mat& points,
-                            arma::rowvec& predictions) const
+void BayesianLinearRegression::Predict(const arma::mat& points,
+                                       arma::rowvec& predictions) const
 {
   // y_hat = w^T * (X - mu) / sigma + y_mean.
   predictions = omega.t() * ((points.each_col() - dataOffset).each_col()
@@ -108,9 +108,9 @@ void BayesianRidge::Predict(const arma::mat& points,
   predictions += responsesOffset;
 }
 
-void BayesianRidge::Predict(const arma::mat& points,
-                            arma::rowvec& predictions,
-                            arma::rowvec& std) const
+void BayesianLinearRegression::Predict(const arma::mat& points,
+                                       arma::rowvec& predictions,
+                                       arma::rowvec& std) const
 {
   // Center and scaleData the points before applying the model.
   const arma::mat X = (points.each_col() - dataOffset).each_col() / dataScale;
@@ -119,22 +119,22 @@ void BayesianRidge::Predict(const arma::mat& points,
   std = sqrt(Variance() + sum((X % (matCovariance * X)), 0));
 }
 
-double BayesianRidge::RMSE(const arma::mat& data,
-                           const arma::rowvec& responses) const
+double BayesianLinearRegression::RMSE(const arma::mat& data,
+                                      const arma::rowvec& responses) const
 {
   arma::rowvec predictions;
   Predict(data, predictions);
   return sqrt(mean(square(responses - predictions)));
 }
 
-double BayesianRidge::CenterScaleData(const arma::mat& data,
-                                      const arma::rowvec& responses,
-                                      bool centerData,
-                                      bool scaleData,
-                                      arma::mat& dataProc,
-                                      arma::rowvec& responsesProc,
-                                      arma::colvec& dataOffset,
-                                      arma::colvec& dataScale)
+double BayesianLinearRegression::CenterScaleData(const arma::mat& data,
+                                                 const arma::rowvec& responses,
+                                                 bool centerData,
+                                                 bool scaleData,
+                                                 arma::mat& dataProc,
+                                                 arma::rowvec& responsesProc,
+                                                 arma::colvec& dataOffset,
+                                                 arma::colvec& dataScale)
 {
   // Initialize the offsets to their neutral forms.
   dataOffset = arma::zeros<arma::colvec>(data.n_rows);

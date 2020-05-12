@@ -1,9 +1,9 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into the output library
 set(SOURCES
-  bayesian_ridge.hpp
-  bayesian_ridge_impl.hpp
-  bayesian_ridge.cpp
+  bayesian_linear_regression.hpp
+  bayesian_linear_regression_impl.hpp
+  bayesian_linear_regression.cpp
 )
 
 # add directory name to sources

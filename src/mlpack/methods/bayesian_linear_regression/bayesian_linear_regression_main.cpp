@@ -1,8 +1,8 @@
 /**
- * @file bayesian_ridge_main.cpp
+ * @file bayesian_linear_regression_main.cpp
  * @author Clement Mercier
  *
- * Executable for BayesianRidge.
+ * Executable for BayesianLinearRegression.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -13,7 +13,7 @@
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
-#include "bayesian_ridge.hpp"
+#include "bayesian_linear_regression.hpp"
 
 using namespace arma;
 using namespace std;
@@ -21,16 +21,17 @@ using namespace mlpack;
 using namespace mlpack::regression;
 using namespace mlpack::util;
 
-PROGRAM_INFO("BayesianRidge",
+PROGRAM_INFO("BayesianLinearRegression",
     // Short description.
     "An implementation of the bayesian linear regression, also known "
-    "as the Bayesian Ridge regression. This can train a Bayesian Ridge model "
-    "and use that model or a pre-trained model to output regression "
+    "as the Bayesian linear regression. This can train a Bayesian linear "
+    "regression model and use that model or a pre-trained model to output "
+    "regression "
     "predictions for a test set.",
     // Long description.
     "An implementation of the bayesian linear regression, also known"
-    "as the Bayesian Ridge regression.\n "
-    "This is a probabilistic view and implementation of the Ridge regression. "
+    "as the Bayesian linear regression.\n "
+    "This is a probabilistic view and implementation of the linear regression. "
     "Final solution is obtained by comptuting a posterior distribution from "
     "gaussian likelihood and a zero mean gaussian isotropic prior distribution "
     "on the solution. "
@@ -41,27 +42,27 @@ PROGRAM_INFO("BayesianRidge",
     "This procedure includes the Ockham's razor that penalizes over complex "
     "solutions. "
     "\n\n"
-    "This program is able to train a Baysian Ridge model or load a "
+    "This program is able to train a Bayesian linear regression model or load a "
     "model from file, output regression predictions for a test set, and save "
-    "the trained model to a file. The Bayesian Ridge algorithm is described "
-    "in more detail below:"
+    "the trained model to a file. The Bayesian linear regression algorithm is "
+    "described in more detail below:"
     "\n\n"
     "Let X be a matrix where each row is a point and each column is a "
     "dimension, t is a vector of targets, alpha is the precision of the "
     "gaussian prior distribtion of w, and w is solution to determine. "
     "\n\n"
-    "The Bayesian Ridge comptutes the posterior distribution of the parameters "
-    "by the Bayes's rule : "
+    "The Bayesian linear regression comptutes the posterior distribution of the "
+    "parameters by the Bayes's rule : "
     "\n\n"
     " p(w|X) = p(X,t|w) * p(w|alpha) / p(X)"
     "\n\n"
-    "To train a BayesianRidge model, the " +
+    "To train a BayesianLinearRegression model, the " +
     PRINT_PARAM_STRING("input") + " and " + PRINT_PARAM_STRING("responses") +
     "parameters must be given. The " + PRINT_PARAM_STRING("center") +
     "and " + PRINT_PARAM_STRING("scale") + " parameters control the "
     "centering and the normalizing options. A trained model can be saved with "
     "the " + PRINT_PARAM_STRING("output_model") + ". If no training is desired "
-    "at all, a model can be passed via the "+ PRINT_PARAM_STRING("input_model")+
+    "at all, a model can be passed via the "+ PRINT_PARAM_STRING("input_model") +
     " parameter."
     "\n\n"
     "The program can also provide predictions for test data using either the "
@@ -75,29 +76,31 @@ PROGRAM_INFO("BayesianRidge",
     "For example, the following command trains a model on the data " +
     PRINT_DATASET("data") + " and responses " + PRINT_DATASET("responses") +
     "with center set to true and scale set to false (so, Bayesian "
-    "Ridge is being solved, and then the model is saved to " +
-    PRINT_MODEL("bayesian_ridge_model") + ":"
+    "linear regression is being solved, and then the model is saved to " +
+    PRINT_MODEL("bayesian_linear_regression_model") + ":"
     "\n\n" +
-    PRINT_CALL("bayesian_ridge", "input", "data", "responses", "responses",
-               "center", 1, "scale", 0, "output_model",
-               "bayesian_ridge_model") +
+    PRINT_CALL("bayesian_linear_regression", "input", "data", "responses",
+               "responses", "center", 1, "scale", 0, "output_model",
+               "bayesian_linear_regression_model") +
     "\n\n"
-    "The following command uses the " + PRINT_MODEL("bayesian_ridge_model") +
-    " to provide predicted responses for the data " + PRINT_DATASET("test") +
-    " and save those responses to " + PRINT_DATASET("test_predictions") + ": "
+    "The following command uses the " +
+    PRINT_MODEL("bayesian_linear_regression_model") + " to provide predicted " +
+    " responses for the data " + PRINT_DATASET("test") + " and save those " +
+    " responses to " + PRINT_DATASET("test_predictions") + ": "
     "\n\n" +
-    PRINT_CALL("bayesian_ridge", "input_model", "bayesian_ridge_model", "test",
-               "test", "output_predictions", "test_predictions"));
+    PRINT_CALL("bayesian_linear_regression", "input_model",
+               "bayesian_linear_regression_model", "test", "test", 
+               "output_predictions", "test_predictions"));
 
 PARAM_MATRIX_IN("input", "Matrix of covariates (X).", "i");
 
 PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");
 
-PARAM_MODEL_IN(BayesianRidge, "input_model", "Trained BayesianRidge model "
-               "to use.", "m");
+PARAM_MODEL_IN(BayesianLinearRegression, "input_model", "Trained "
+	       "BayesianLinearRegression model to use.", "m");
 
-PARAM_MODEL_OUT(BayesianRidge, "output_model", "Output BayesianRidge model.",
-                "M");
+PARAM_MODEL_OUT(BayesianLinearRegression, "output_model", "Output "
+		"BayesianLinearRegression model.", "M");
 
 PARAM_MATRIX_IN("test", "Matrix containing points to regress on (test "
                  "points).", "t");
@@ -139,12 +142,12 @@ static void mlpackMain()
   // Ignore out_predictions unless test is specified.
   ReportIgnoredParam({{ "test", false }}, "output_predictions");
 
-  BayesianRidge* bayesRidge;
+  BayesianLinearRegression* bayesLinReg;
   if (CLI::HasParam("input"))
   {
     Log::Info << "input detected " << std::endl;
     // Initialize the object.
-    bayesRidge = new BayesianRidge(center, scale);
+    bayesLinReg = new BayesianLinearRegression(center, scale);
 
     // Load covariates.  We can avoid LARS transposing our data by choosing to
     // not transpose this data (that's why we used PARAM_TMATRIX_IN).
@@ -163,16 +166,16 @@ static void mlpackMain()
 
     if (matY.n_elem != matX.n_cols)
       Log::Fatal << "Number of responses must be equal to number of rows of X!"
-          << endl;
+                 << endl;
 
     arma::rowvec y = std::move(matY);
     arma::rowvec predictionsTrain;
     // The Train method is ready to take data in column-major format.
-    bayesRidge->Train(matX, matY);
+    bayesLinReg->Train(matX, matY);
   }
   else // We must have --input_model_file.
   {
-    bayesRidge = CLI::GetParam<BayesianRidge*>("input_model");
+    bayesLinReg = CLI::GetParam<BayesianLinearRegression*>("input_model");
   }
 
   if (CLI::HasParam("test"))
@@ -185,18 +188,18 @@ static void mlpackMain()
     if (CLI::HasParam("output_std"))
     {
       arma::rowvec std;
-      bayesRidge->Predict(testPoints, predictions, std);
+      bayesLinReg->Predict(testPoints, predictions, std);
 
       // Save the standard deviation of the test points (one per line).
       CLI::GetParam<arma::mat>("output_std") = std::move(std);
     }
 
     else
-      bayesRidge->Predict(testPoints, predictions);
+      bayesLinReg->Predict(testPoints, predictions);
 
     // Save test predictions (one per line).
     CLI::GetParam<arma::mat>("output_predictions") = std::move(predictions);
   }
 
-  CLI::GetParam<BayesianRidge*>("output_model") = bayesRidge;
+  CLI::GetParam<BayesianLinearRegression*>("output_model") = bayesLinReg;
 }

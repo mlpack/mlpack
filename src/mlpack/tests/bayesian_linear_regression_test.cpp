@@ -1,8 +1,8 @@
 /**
- * @file bayesian_ridge_test.cpp
+ * @file bayesian_linear_regression_test.cpp
  * @author Clement Mercier
  *
- * Test for BayesianRidge.
+ * Test for BayesianLinearRegression.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -11,7 +11,7 @@
  */
 
 #include <mlpack/core/data/load.hpp>
-#include <mlpack/methods/bayesian_ridge/bayesian_ridge.hpp>
+#include <mlpack/methods/bayesian_linear_regression/bayesian_linear_regression.hpp>
 #include <mlpack/methods/linear_regression/linear_regression.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -19,7 +19,7 @@
 using namespace mlpack::regression;
 using namespace mlpack::data;
 
-BOOST_AUTO_TEST_SUITE(BayesianRidgeTest);
+BOOST_AUTO_TEST_SUITE(BayesianLinearRegressionTest);
 
 void GenerateProblem(arma::mat& X,
                      arma::rowvec& y,
@@ -35,7 +35,7 @@ void GenerateProblem(arma::mat& X,
 
 // Ensure that predictions are close enough to the target
 // for a free noise dataset.
-BOOST_AUTO_TEST_CASE(BayesianRidgeRegressionTest)
+BOOST_AUTO_TEST_CASE(BayesianLinearRegressionRegressionTest)
 {
   arma::mat X;
   arma::rowvec y, predictions;
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(BayesianRidgeRegressionTest)
   GenerateProblem(X, y, 200, 10);
 
   // Instanciate and train the estimator.
-  BayesianRidge estimator(true);
+  BayesianLinearRegression estimator(true);
   estimator.Train(X, y);
   estimator.Predict(X, predictions);
 
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(TestCenter0Normalize0)
 
   GenerateProblem(X, y, nPoints, nDims, 0.5);
 
-  BayesianRidge estimator(false, false);
+  BayesianLinearRegression estimator(false, false);
 
   estimator.Train(X, y);
 
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(TestCenter1Normalize1)
   size_t nDims = 30, nPoints = 100;
   GenerateProblem(X, y, nPoints, nDims, 0.5);
 
-  BayesianRidge estimator(true, true);
+  BayesianLinearRegression estimator(true, true);
   estimator.Train(X, y);
 
   arma::colvec xMean = arma::mean(X, 1);
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(SingularMatix)
   // Now the first and the second rows are indentical.
   X.row(1) = X.row(0);
 
-  BayesianRidge estimator;
+  BayesianLinearRegression estimator;
   double singular = estimator.Train(X, y);
   BOOST_REQUIRE(singular != -1);
 }
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(PredictiveUncertainties)
 
   GenerateProblem(X, y, 100, 10, 1);
 
-  BayesianRidge estimator(true, true);
+  BayesianLinearRegression estimator(true, true);
   estimator.Train(X, y);
 
   arma::rowvec responses, std;
@@ -141,14 +141,14 @@ BOOST_AUTO_TEST_CASE(EqualtoRidge)
 
   GenerateProblem(X, y, 100, 10, 1);
 
-  BayesianRidge bayesRidge(false, false);
-  bayesRidge.Train(X, y);
+  BayesianLinearRegression bayesLinReg(false, false);
+  bayesLinReg.Train(X, y);
 
   LinearRegression classicalRidge(X,
-				  y,
-				  bayesRidge.Alpha() / bayesRidge.Beta(),
-				  false);
-  double equalSol = arma::sum(bayesRidge.Omega() - classicalRidge.Parameters());
+                                  y,
+                                  bayesLinReg.Alpha() / bayesLinReg.Beta(),
+                                  false);
+  double equalSol = arma::sum(bayesLinReg.Omega() - classicalRidge.Parameters());
   BOOST_REQUIRE(equalSol < 1e-5);
 }
 

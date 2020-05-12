@@ -1,5 +1,5 @@
 /**
- * @file bayesian_ridge_test.cpp
+ * @file bayesian_linear_regression_test.cpp
  * @author Clement Mercier
  *
  * Test mlpackMain() of pca_main.cpp.
@@ -12,12 +12,12 @@
 #include <string>
 
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "BayesianRidge";
+static const std::string testName = "BayesianLinearRegression";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "test_helper.hpp"
-#include <mlpack/methods/bayesian_ridge/bayesian_ridge_main.cpp>
+#include <mlpack/methods/bayesian_linear_regression/bayesian_linear_regression_main.cpp>
 
 #include <boost/test/unit_test.hpp>
 #include "../test_tools.hpp"
@@ -41,7 +41,7 @@ struct BRTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(BayesianRidgeMainTest, BRTestFixture);
+BOOST_FIXTURE_TEST_SUITE(BayesianLinearRegressionMainTest, BRTestFixture);
 
 /**
  * Check the center and scale options.
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
 
   mlpackMain();
 
-  BayesianRidge* estimator = CLI::GetParam<BayesianRidge*>("output_model");
+  BayesianLinearRegression* estimator = CLI::GetParam<BayesianLinearRegression*>("output_model");
 
   const arma::colvec dataScale = estimator->DataScale();
   const arma::colvec dataOffset = estimator->DataOffset();
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
 /**
  * Check predictions of saved model and in code model are equal.
  */
-BOOST_AUTO_TEST_CASE(BayesianRidgeSavedEqualCode)
+BOOST_AUTO_TEST_CASE(BayesianLinearRegressionSavedEqualCode)
 {
   int n = 10, m = 4;
   arma::mat X = arma::randu<arma::mat>(m, n);
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(BayesianRidgeSavedEqualCode)
   const arma::colvec omega = arma::randu<arma::rowvec>(m);
   arma::mat y =  omega * X;
 
-  BayesianRidge model;
+  BayesianLinearRegression model;
   model.Train(X, y);
 
   arma::rowvec responses;
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(BayesianRidgeSavedEqualCode)
   CLI::GetSingleton().Parameters()["input"].wasPassed = false;
   CLI::GetSingleton().Parameters()["responses"].wasPassed = false;
 
-  SetInputParam("input_model", CLI::GetParam<BayesianRidge*>("output_model"));
+  SetInputParam("input_model", CLI::GetParam<BayesianLinearRegression*>("output_model"));
   SetInputParam("test", std::move(Xtest));
 
   mlpackMain();
