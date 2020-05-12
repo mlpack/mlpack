@@ -151,7 +151,7 @@ double QLearning<
 
   // Sample from previous experience.
   arma::mat sampledStates;
-  arma::icolvec sampledActions;
+  std::vector<ActionType> sampledActions;
   arma::colvec sampledRewards;
   arma::mat sampledNextStates;
   arma::icolvec isTerminal;
@@ -189,11 +189,11 @@ double QLearning<
   {
     if (isTerminal[i])
     {
-      target(sampledActions(i), i) = sampledRewards(i);
+      target(sampledActions[i], i) = sampledRewards(i);
     }
     else
     {
-      target(sampledActions(i), i) = sampledRewards(i) + config.Discount() *
+      target(sampledActions[i], i) = sampledRewards(i) + config.Discount() *
           nextActionValues(bestActions(i), i);
     }
   }
