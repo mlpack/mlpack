@@ -18,6 +18,16 @@ option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
+option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
+option(BUILD_EMBEDDED "Build binaries for embedded devices." OFF)
+set(BOARD_NAME "" CACHE STRING "Enter the board name to compile mlpack for.")
+
+if (BUILD_EMBEDDED AND (BOARD_NAME STREQUAL ""))
+  message(FATAL_ERROR "Please enter the board name")
+elseif(BUILD_EMBEDDED AND (BOARD_NAME STREQUAL "rpi3"))
+  include(board/rpi-config.cmake)
+  RPI(BOARD_NAME)
+endif()
 
 if (WIN32)
   option(BUILD_SHARED_LIBS
@@ -25,7 +35,10 @@ if (WIN32)
 
   set(DLL_COPY_DIRS "" CACHE STRING "List of directories (separated by ';') containing DLLs to copy for runtime.")
   set(DLL_COPY_LIBS "" CACHE STRING "List of DLLs (separated by ';') that should be copied for runtime.")
-else ()
+elseif(BUILD_EMBEDDED)
+  option(BUILD_SHARED_LIBS
+      "Compile shared libraries (if OFF, static libraries are compiled)." OFF)
+else()
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 endif()
