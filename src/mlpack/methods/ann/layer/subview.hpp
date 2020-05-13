@@ -1,5 +1,5 @@
 /**
- * @file subview.hpp
+ * @file methods/ann/layer/subview.hpp
  * @author Haritha Nair
  *
  * Definition of the Subview class, which modifies the input as necessary.

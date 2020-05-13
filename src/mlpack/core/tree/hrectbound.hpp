@@ -1,5 +1,5 @@
 /**
- * @file hrectbound.hpp
+ * @file core/tree/hrectbound.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
  *

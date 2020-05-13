@@ -1,5 +1,5 @@
 /**
- * @file kernel_pca/kernel_rules/naive_method.hpp
+ * @file methods/kernel_pca/kernel_rules/naive_method.hpp
  * @author Ajinkya Kale
  *
  * Use the naive method to construct the kernel matrix.

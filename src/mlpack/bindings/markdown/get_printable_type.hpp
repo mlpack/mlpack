@@ -1,5 +1,5 @@
 /**
- * @file markdown/get_printable_type.hpp
+ * @file bindings/markdown/get_printable_type.hpp
  * @author Ryan Curtin
  *
  * Get the printable type of the parameter.  This depends on

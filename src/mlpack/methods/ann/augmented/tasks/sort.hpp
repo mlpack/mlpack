@@ -1,5 +1,5 @@
 /**
- * @file tasks/sort.hpp
+ * @file methods/ann/augmented/tasks/sort.hpp
  * @author Konstantin Sidorov
  *
  * Definition of the SortTask class, which implements a generator of

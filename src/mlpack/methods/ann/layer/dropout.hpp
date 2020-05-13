@@ -1,5 +1,5 @@
 /**
- * @file dropout.hpp
+ * @file methods/ann/layer/dropout.hpp
  * @author Marcus Edel
  *
  * Definition of the Dropout class, which implements a regularizer that

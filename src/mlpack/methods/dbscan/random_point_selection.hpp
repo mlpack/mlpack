@@ -1,5 +1,5 @@
 /**
- * @file random_point_selection.hpp
+ * @file methods/dbscan/random_point_selection.hpp
  * @author Ryan Curtin
  *
  * Randomly select the next point for DBSCAN.

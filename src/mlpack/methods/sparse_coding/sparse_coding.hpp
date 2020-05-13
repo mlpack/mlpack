@@ -1,5 +1,5 @@
 /**
- * @file sparse_coding.hpp
+ * @file methods/sparse_coding/sparse_coding.hpp
  * @author Nishant Mehta
  *
  * Definition of the SparseCoding class, which performs L1 (LASSO) or

@@ -1,5 +1,5 @@
 /**
- * @file ann/init_rules/random_init.hpp
+ * @file methods/ann/init_rules/random_init.hpp
  * @author Marcus Edel
  *
  * Intialization rule for the neural networks. This simple initialization is

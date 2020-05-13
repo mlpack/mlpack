@@ -1,5 +1,5 @@
 /**
- * @file activation_functions_test.cpp
+ * @file tests/activation_functions_test.cpp
  * @author Marcus Edel
  * @author Dhawal Arora
  *

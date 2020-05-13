@@ -1,5 +1,5 @@
 /**
- * @file lsh_search_impl.hpp
+ * @file methods/lsh/lsh_search_impl.hpp
  * @author Parikshit Ram
  *
  * Implementation of the LSHSearch class.

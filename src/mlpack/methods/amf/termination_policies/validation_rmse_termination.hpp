@@ -1,5 +1,5 @@
 /**
- * @file validation_rmse_termination.hpp
+ * @file methods/amf/termination_policies/validation_rmse_termination.hpp
  * @author Sumedh Ghaisas
  *
  * Termination policy used in AMF (Alternating Matrix Factorization).

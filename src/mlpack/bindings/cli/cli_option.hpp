@@ -1,5 +1,5 @@
 /**
- * @file cli_option.hpp
+ * @file bindings/cli/cli_option.hpp
  * @author Matthew Amidon
  *
  * Definition of the Option class, which is used to define parameters which are

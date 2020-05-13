@@ -1,5 +1,5 @@
 /**
- * @file cli/parameter_type.hpp
+ * @file bindings/cli/parameter_type.hpp
  * @author Ryan Curtin
  *
  * Template metaprogramming structures to find the type (as seen by

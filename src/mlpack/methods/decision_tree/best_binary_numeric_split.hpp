@@ -1,5 +1,5 @@
 /**
- * @file best_binary_numeric_split.hpp
+ * @file methods/decision_tree/best_binary_numeric_split.hpp
  * @author Ryan Curtin
  *
  * A tree splitter that finds the best binary numeric split.

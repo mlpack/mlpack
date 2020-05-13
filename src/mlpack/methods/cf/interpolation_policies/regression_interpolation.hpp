@@ -1,5 +1,5 @@
 /**
- * @file regression_interpolation.hpp
+ * @file methods/cf/interpolation_policies/regression_interpolation.hpp
  * @author Wenhao Huang
  *
  * Definition of RegressionInterpolation class.

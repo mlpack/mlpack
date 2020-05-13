@@ -1,5 +1,5 @@
 /**
- * @file python/get_numpy_type.hpp
+ * @file bindings/python/get_numpy_type.hpp
  * @author Ryan Curtin
  *
  * Given a C++ type, return the Python numpy dtype associated with that type.

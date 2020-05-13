@@ -1,5 +1,5 @@
 /**
- * @file bilinear_interpolation_impl.hpp
+ * @file methods/ann/layer/bilinear_interpolation_impl.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *

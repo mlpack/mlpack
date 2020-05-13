@@ -1,5 +1,5 @@
 /**
- * @file example_tree.hpp
+ * @file core/tree/example_tree.hpp
  * @author Ryan Curtin
  *
  * An example tree.  This contains all the functions that mlpack trees must

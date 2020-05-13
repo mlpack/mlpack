@@ -1,5 +1,5 @@
 /**
- * @file transposed_convolution.hpp
+ * @file methods/ann/layer/transposed_convolution.hpp
  * @author Shikhar Jaiswal
  * @author Marcus Edel
  *

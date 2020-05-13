@@ -1,5 +1,5 @@
 /**
- * @file multiply_constant.hpp
+ * @file methods/ann/layer/multiply_constant.hpp
  * @author Marcus Edel
  *
  * Definition of the MultiplyConstantLayer class, which multiplies the input by

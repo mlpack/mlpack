@@ -1,5 +1,5 @@
 /**
- * @file binary_space_tree/mean_split.hpp
+ * @file core/tree/binary_space_tree/mean_split.hpp
  * @author Yash Vadalia
  * @author Ryan Curtin
  *

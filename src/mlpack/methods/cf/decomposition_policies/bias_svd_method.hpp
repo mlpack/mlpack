@@ -1,5 +1,5 @@
 /**
- * @file bias_svd_method.hpp
+ * @file methods/cf/decomposition_policies/bias_svd_method.hpp
  * @author Wenhao Huang
  *
  * Implementation of the bias svd method for use in the Collaborative

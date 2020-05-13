@@ -1,5 +1,5 @@
 /**
- * @file local_coordinate_coding_test.cpp
+ * @file tests/main_tests/local_coordinate_coding_test.cpp
  * @author Bhavya Bahl
  *
  * Test mlpackMain() of local_coordinate_coding_main.cpp.

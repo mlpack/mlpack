@@ -1,5 +1,5 @@
 /**
- * @file gmm_generate_main.cpp
+ * @file methods/gmm/gmm_generate_main.cpp
  * @author Ryan Curtin
  *
  * Load a GMM from file, then generate samples from it.

@@ -1,5 +1,5 @@
 /**
- * @file julia/get_printable_type.hpp
+ * @file bindings/julia/get_printable_type.hpp
  * @author Ryan Curtin
  *
  * Get the printable type of a parameter.  This type is not the C++ type but

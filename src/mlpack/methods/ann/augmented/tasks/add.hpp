@@ -1,5 +1,5 @@
 /**
- * @file tasks/add.hpp
+ * @file methods/ann/augmented/tasks/add.hpp
  * @author Konstantin Sidorov
  *
  * Definition of the AddTask class, which implements a generator of

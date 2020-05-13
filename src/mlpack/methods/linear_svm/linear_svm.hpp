@@ -1,5 +1,5 @@
 /**
- * @file linear_svm.hpp
+ * @file methods/linear_svm/linear_svm.hpp
  * @author Ayush Chamoli
  *
  * An implementation of Linear SVM.

@@ -1,5 +1,5 @@
 /**
- * @file columns_to_blocks.hpp
+ * @file core/math/columns_to_blocks.hpp
  * @author Tham Ngap Wei
  *
  * A helper class that could be useful for visualizing the output of

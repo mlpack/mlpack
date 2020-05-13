@@ -1,5 +1,5 @@
 /**
- * @file svd_complete_incremental_learning.hpp
+ * @file methods/amf/update_rules/svd_complete_incremental_learning.hpp
  * @author Sumedh Ghaisas
  *
  * SVD factorizer used in AMF (Alternating Matrix Factorization).

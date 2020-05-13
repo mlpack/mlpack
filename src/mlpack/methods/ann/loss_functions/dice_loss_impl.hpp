@@ -1,5 +1,5 @@
 /**
- * @file dice_loss_impl.hpp
+ * @file methods/ann/loss_functions/dice_loss_impl.hpp
  * @author N Rajiv Vaidyanathan
  *
  * Implementation of the dice loss function.

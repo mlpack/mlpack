@@ -1,5 +1,5 @@
 /**
- * @file dt_utils.hpp
+ * @file methods/det/dt_utils.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  *
  * This file implements functions to perform different tasks with the Density

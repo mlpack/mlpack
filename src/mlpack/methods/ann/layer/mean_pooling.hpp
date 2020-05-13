@@ -1,5 +1,5 @@
 /**
- * @file mean_pooling.hpp
+ * @file methods/ann/layer/mean_pooling.hpp
  * @author Marcus Edel
  * @author Nilay Jain
  *

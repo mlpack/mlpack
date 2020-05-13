@@ -1,5 +1,5 @@
 /**
- * @file fft_convolution.hpp
+ * @file methods/ann/convolution_rules/fft_convolution.hpp
  * @author Shangtong Zhang
  * @author Marcus Edel
  *

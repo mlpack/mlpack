@@ -1,5 +1,5 @@
 /**
- * @file load.hpp
+ * @file core/data/load.hpp
  * @author Ryan Curtin
  *
  * Load an Armadillo matrix from file.  This is necessary because Armadillo does

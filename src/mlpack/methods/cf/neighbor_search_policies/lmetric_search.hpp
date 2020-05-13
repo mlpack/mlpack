@@ -1,5 +1,5 @@
 /**
- * @file lmetric_search.hpp
+ * @file methods/cf/neighbor_search_policies/lmetric_search.hpp
  * @author Wenhao Huang
  *
  * Nearest neighbor search with L_p distance.

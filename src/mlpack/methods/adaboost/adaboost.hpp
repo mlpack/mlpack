@@ -1,5 +1,5 @@
 /**
- * @file adaboost.hpp
+ * @file methods/adaboost/adaboost.hpp
  * @author Udit Saxena
  *
  * The AdaBoost class.  AdaBoost is a boosting algorithm, meaning that it

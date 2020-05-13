@@ -1,5 +1,5 @@
 /**
- * @file layer.hpp
+ * @file methods/ann/layer/layer.hpp
  * @author Marcus Edel
  *
  * This includes various layers to construct a model.

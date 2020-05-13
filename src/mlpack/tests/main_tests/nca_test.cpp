@@ -1,5 +1,5 @@
 /**
- * @file nca_test.cpp
+ * @file tests/main_tests/nca_test.cpp
  * @author Yasmine Dumouchel
  *
  * Test mlpackMain() of nca_main.cpp.

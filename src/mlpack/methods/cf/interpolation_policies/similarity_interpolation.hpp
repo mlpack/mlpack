@@ -1,5 +1,5 @@
 /**
- * @file similarity_interpolation.hpp
+ * @file methods/cf/interpolation_policies/similarity_interpolation.hpp
  * @author Wenhao Huang
  *
  * Definition of SimilarityInterpolation class.

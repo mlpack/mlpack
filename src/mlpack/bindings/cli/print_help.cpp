@@ -1,5 +1,5 @@
 /**
- * @file cli/print_help.cpp
+ * @file bindings/cli/print_help.cpp
  * @author Matthew Amidon
  * @author Ryan Curtin
  *

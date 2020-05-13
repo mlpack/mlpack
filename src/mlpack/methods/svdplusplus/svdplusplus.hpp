@@ -1,5 +1,5 @@
 /**
- * @file svdplusplus.hpp
+ * @file methods/svdplusplus/svdplusplus.hpp
  * @author Siddharth Agrawal
  * @author Wenhao Huang
  *

@@ -1,5 +1,5 @@
 /**
- * @file all_categorical_split.hpp
+ * @file methods/decision_tree/all_categorical_split.hpp
  * @author Ryan Curtin
  *
  * This file defines a tree splitter that split a categorical feature into all

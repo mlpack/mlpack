@@ -1,5 +1,5 @@
 /**
- * @file ordered_selection.hpp
+ * @file methods/nystroem_method/ordered_selection.hpp
  * @author Ryan Curtin
  *
  * Select the first points of the dataset for use in the Nystroem method of

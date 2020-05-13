@@ -1,5 +1,5 @@
 /**
- * @file overall_mean_normalization.hpp
+ * @file methods/cf/normalization/overall_mean_normalization.hpp
  * @author Wenhao Huang
  *
  * This class performs overall mean normalization on raw ratings. In another

@@ -1,5 +1,5 @@
 /**
- * @file kde_model.hpp
+ * @file methods/kde/kde_model.hpp
  * @author Roberto Hueso
  *
  * Model for KDE. It abstracts different types of tree, kernels, etc.

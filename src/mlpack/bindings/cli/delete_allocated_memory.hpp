@@ -1,5 +1,5 @@
 /**
- * @file cli/delete_allocated_memory.hpp
+ * @file bindings/cli/delete_allocated_memory.hpp
  * @author Ryan Curtin
  *
  * If any memory has been allocated by the parameter, delete it.

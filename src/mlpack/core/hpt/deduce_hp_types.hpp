@@ -1,5 +1,5 @@
 /**
- * @file hpt/deduce_hp_types.hpp
+ * @file core/hpt/deduce_hp_types.hpp
  * @author Kirill Mishchenko
  *
  * Tools to deduce types of hyper-parameters from types of arguments in the

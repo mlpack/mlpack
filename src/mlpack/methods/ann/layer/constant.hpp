@@ -1,5 +1,5 @@
 /**
- * @file constant.hpp
+ * @file methods/ann/layer/constant.hpp
  * @author Marcus Edel
  *
  * Definition of the Constant class, which outputs a constant value given

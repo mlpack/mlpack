@@ -1,5 +1,5 @@
 /**
- * @file hardshrink.hpp
+ * @file methods/ann/layer/hardshrink.hpp
  * @author Lakshya Ojha
  *
  * Same as soft thresholding, if its amplitude is smaller than a predefined

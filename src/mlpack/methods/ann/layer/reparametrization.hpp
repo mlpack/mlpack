@@ -1,5 +1,5 @@
 /**
- * @file reparametrization.hpp
+ * @file methods/ann/layer/reparametrization.hpp
  * @author Atharva Khandait
  *
  * Definition of the Reparametrization layer class which samples from a gaussian

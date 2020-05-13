@@ -1,5 +1,5 @@
 /**
- * @file gmm_train_test.cpp
+ * @file tests/main_tests/gmm_train_test.cpp
  * @author Yashwant Singh
  *
  * Test mlpackMain() of gmm_train_main.cpp.

@@ -1,5 +1,5 @@
 /**
- * @file python/print_input_processing.hpp
+ * @file bindings/python/print_input_processing.hpp
  * @author Ryan Curtin
  * @author Yashwant Singh
  *

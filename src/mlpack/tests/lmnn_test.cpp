@@ -1,5 +1,5 @@
 /**
- * @file lmnn_test.cpp
+ * @file tests/lmnn_test.cpp
  * @author Marcus Edel
  * @author Ryan Curtin
  * @author Manish Kumar

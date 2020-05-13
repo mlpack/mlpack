@@ -1,5 +1,5 @@
 /**
- * @file mean_shift.hpp
+ * @file methods/mean_shift/mean_shift.hpp
  * @author Shangtong Zhang
  *
  * Mean Shift clustering

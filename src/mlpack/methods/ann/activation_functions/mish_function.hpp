@@ -1,5 +1,5 @@
 /**
- * @file mish_function.hpp
+ * @file methods/ann/activation_functions/mish_function.hpp
  * @author Kartik Dutt
  *
  * Definition and implementation of the Mish function as described by

@@ -1,5 +1,5 @@
 /**
- * @file nca_softmax_error_function.hpp
+ * @file methods/nca/nca_softmax_error_function.hpp
  * @author Ryan Curtin
  *
  * Implementation of the stochastic neighbor assignment probability error

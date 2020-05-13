@@ -1,5 +1,5 @@
 /**
- * @file image_load_test.cpp
+ * @file tests/image_load_test.cpp
  * @author Mehul Kumar Nirala
  *
  * Tests for loading and saving images.

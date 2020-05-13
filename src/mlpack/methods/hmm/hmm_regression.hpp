@@ -1,5 +1,5 @@
 /**
- * @file hmm_regression.hpp
+ * @file methods/hmm/hmm_regression.hpp
  * @author Michael Fox
  *
  * Definition of HMMRegression class.

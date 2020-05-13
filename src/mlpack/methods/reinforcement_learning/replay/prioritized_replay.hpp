@@ -1,5 +1,5 @@
 /**
- * @file prioritized_replay.hpp
+ * @file methods/reinforcement_learning/replay/prioritized_replay.hpp
  * @author Xiaohong
  *
  * This file is an implementation of prioritized experience replay.

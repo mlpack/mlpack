@@ -1,5 +1,5 @@
 /**
- * @file gaussian_init.hpp
+ * @file methods/ann/init_rules/gaussian_init.hpp
  * @author Kris Singh
  *
  * Intialization rule for the neural networks. This simple initialization is

@@ -1,5 +1,5 @@
 /**
- * @file markdown/get_param.hpp
+ * @file bindings/markdown/get_param.hpp
  * @author Ryan Curtin
  *
  * Get a parameter for a Markdown binding.

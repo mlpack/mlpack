@@ -1,5 +1,5 @@
 /**
- * @file param_checks.hpp
+ * @file core/util/param_checks.hpp
  * @author Ryan Curtin
  *
  * A set of utility functions to check parameter values for mlpack programs.

@@ -1,5 +1,5 @@
 /**
- * @file lars_test.cpp
+ * @file tests/lars_test.cpp
  * @author Nishant Mehta
  *
  * Test for LARS.

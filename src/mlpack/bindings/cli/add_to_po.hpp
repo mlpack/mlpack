@@ -1,5 +1,5 @@
 /**
- * @file cli/add_to_po.hpp
+ * @file bindings/cli/add_to_po.hpp
  * @author Ryan Curtin
  *
  * Utility functions to add options to boost::program_options based on their

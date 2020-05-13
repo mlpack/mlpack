@@ -1,5 +1,5 @@
 /**
- * @file no_auxiliary_information.hpp
+ * @file core/tree/rectangle_tree/x_tree_auxiliary_information.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the XTreeAuxiliaryInformation class, a class that provides

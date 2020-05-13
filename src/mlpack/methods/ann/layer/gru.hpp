@@ -1,5 +1,5 @@
 /**
- * @file gru.hpp
+ * @file methods/ann/layer/gru.hpp
  * @author Sumedh Ghaisas
  *
  * Definition of the GRU layer.

@@ -1,5 +1,5 @@
 /**
- * @file markdown/binding_info.hpp
+ * @file bindings/markdown/binding_info.hpp
  * @author Ryan Curtin
  *
  * This file defines the BindingInfo singleton class that is used specifically

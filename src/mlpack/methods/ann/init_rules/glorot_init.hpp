@@ -1,5 +1,5 @@
 /**
- * @file glorot_init.hpp
+ * @file methods/ann/init_rules/glorot_init.hpp
  * @author Prabhat Sharma
  *
  * Definition and implementation of the Glorot initialization method. This

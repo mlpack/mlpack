@@ -1,5 +1,5 @@
 /**
- * @file nmf_main.cpp
+ * @file methods/nmf/nmf_main.cpp
  * @author Mohan Rajendran
  *
  * Main executable to run NMF.

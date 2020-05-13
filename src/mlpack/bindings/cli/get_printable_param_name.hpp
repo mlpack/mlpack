@@ -1,5 +1,5 @@
 /**
- * @file cli/get_printable_param_name.hpp
+ * @file bindings/cli/get_printable_param_name.hpp
  * @author Ryan Curtin
  *
  * Return the parameter name that the user would specify on the command line,

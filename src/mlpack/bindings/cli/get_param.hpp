@@ -1,5 +1,5 @@
 /**
- * @file cli/get_param.hpp
+ * @file bindings/cli/get_param.hpp
  * @author Ryan Curtin
  *
  * Use template metaprogramming to get the right type of parameter.

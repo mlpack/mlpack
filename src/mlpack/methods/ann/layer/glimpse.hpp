@@ -1,5 +1,5 @@
 /**
- * @file glimpse.hpp
+ * @file methods/ann/layer/glimpse.hpp
  * @author Marcus Edel
  *
  * Definition of the GlimpseLayer class, which takes an input image and a

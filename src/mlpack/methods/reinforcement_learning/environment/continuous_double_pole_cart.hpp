@@ -1,5 +1,5 @@
 /**
- * @file continuous_double_pole_cart.hpp
+ * @file methods/reinforcement_learning/environment/continuous_double_pole_cart.hpp
  * @author Rahul Ganesh Prabhu
  *
  * This file is an implementation of Continuous Double Pole Cart Balancing

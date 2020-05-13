@@ -1,5 +1,5 @@
 /**
- * @file no_normalization.hpp
+ * @file methods/cf/normalization/no_normalization.hpp
  * @author Wenhao Huang
  *
  * This class performs no normalization. It is used as default type of

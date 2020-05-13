@@ -1,5 +1,5 @@
 /**
- * @file ffn.hpp
+ * @file methods/ann/ffn.hpp
  * @author Marcus Edel
  * @author Shangtong Zhang
  *

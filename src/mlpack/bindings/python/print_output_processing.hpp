@@ -1,5 +1,5 @@
 /**
- * @file python/print_output_processing.hpp
+ * @file bindings/python/print_output_processing.hpp
  * @author Ryan Curtin
  *
  * Print the output processing in a Python binding .pyx file for a given

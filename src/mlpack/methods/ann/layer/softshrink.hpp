@@ -1,5 +1,5 @@
 /**
- * @file softshrink.hpp
+ * @file methods/ann/layer/softshrink.hpp
  * @author Lakshya Ojha
  *
  * The soft shrink function has threshold proportional to the noise level given

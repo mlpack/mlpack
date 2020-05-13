@@ -1,5 +1,5 @@
 /**
- * @file dtree.hpp
+ * @file methods/det/dtree.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  *
  * Density Estimation Tree class

@@ -1,5 +1,5 @@
 /**
- * @file julia/get_julia_type.hpp
+ * @file bindings/julia/get_julia_type.hpp
  * @author Ryan Curtin
  *
  * Get the Julia-named type of an mlpack C++ type.

@@ -1,5 +1,5 @@
 /**
- * @file lsh_test.cpp
+ * @file tests/lsh_test.cpp
  *
  * Unit tests for the 'LSHSearch' class.
  *

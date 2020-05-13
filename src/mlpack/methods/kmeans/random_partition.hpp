@@ -1,5 +1,5 @@
 /**
- * @file random_partition.hpp
+ * @file methods/kmeans/random_partition.hpp
  * @author Ryan Curtin
  *
  * Very simple partitioner which partitions the data randomly into the number of

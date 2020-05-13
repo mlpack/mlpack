@@ -1,5 +1,5 @@
 /**
- * @file perceptron_test.cpp
+ * @file tests/perceptron_test.cpp
  * @author Udit Saxena
  *
  * Tests for perceptron.

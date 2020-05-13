@@ -1,5 +1,5 @@
 /**
- * @file kernel_pca_test.cpp
+ * @file tests/main_tests/kernel_pca_test.cpp
  * @author Saksham Bansal
  *
  * Test mlpackMain() of kernel_pca_main.cpp.

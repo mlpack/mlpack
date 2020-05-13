@@ -1,5 +1,5 @@
 /**
- * @file average_interpolation.hpp
+ * @file methods/cf/interpolation_policies/average_interpolation.hpp
  * @author Wenhao Huang
  *
  * Definition of AverageInterpolation class.

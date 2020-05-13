@@ -1,5 +1,5 @@
 /**
- * @file no_regularizer.hpp
+ * @file methods/ann/regularizer/no_regularizer.hpp
  * @author Saksham Bansal
  *
  * Definition of the NoRegularizer class.

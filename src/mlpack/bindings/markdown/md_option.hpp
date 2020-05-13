@@ -1,5 +1,5 @@
 /**
- * @file markdown/md_option.hpp
+ * @file bindings/markdown/md_option.hpp
  * @author Ryan Curtin
  *
  * The Markdown option type.

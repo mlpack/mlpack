@@ -1,5 +1,5 @@
 /**
- * @file pearson_search.hpp
+ * @file methods/cf/neighbor_search_policies/pearson_search.hpp
  * @author Wenhao Huang
  *
  * Nearest neighbor search with pearson distance.

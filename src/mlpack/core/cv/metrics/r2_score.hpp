@@ -1,5 +1,5 @@
 /**
- * @file r2_score.hpp
+ * @file core/cv/metrics/r2_score.hpp
  * @author Bisakh Mondal
  *
  * The R^2 (Coefficient of determination) regression metric.

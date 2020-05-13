@@ -1,5 +1,5 @@
 /**
- * @file markdown/get_printable_param_value.hpp
+ * @file bindings/markdown/get_printable_param_value.hpp
  * @author Ryan Curtin
  *
  * Given a parameter value, print what the user might actually specify on the

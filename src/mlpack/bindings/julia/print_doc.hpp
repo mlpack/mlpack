@@ -1,5 +1,5 @@
 /**
- * @file julia/print_doc.hpp
+ * @file bindings/julia/print_doc.hpp
  * @author Ryan Curtin
  *
  * Print inline documentation for a single option.

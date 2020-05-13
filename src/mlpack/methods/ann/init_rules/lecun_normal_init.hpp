@@ -1,5 +1,5 @@
 /**
- * @file lecun_normal_init.hpp
+ * @file methods/ann/init_rules/lecun_normal_init.hpp
  * @author Dakshit Agrawal
  * @author Prabhat Sharma
  *

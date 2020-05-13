@@ -1,5 +1,5 @@
 /**
- * @file preprocess_split_test.cpp
+ * @file tests/main_tests/preprocess_split_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of preprocess_split_main.cpp.

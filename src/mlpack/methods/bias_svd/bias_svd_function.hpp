@@ -1,5 +1,5 @@
 /**
- * @file bias_svd_function.hpp
+ * @file methods/bias_svd/bias_svd_function.hpp
  * @author Siddharth Agrawal
  * @author Wenhao Huang
  *

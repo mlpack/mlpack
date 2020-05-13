@@ -1,5 +1,5 @@
 /**
- * @file tree_test.cpp
+ * @file tests/tree_test.cpp
  *
  * Tests for tree-building methods.
  *

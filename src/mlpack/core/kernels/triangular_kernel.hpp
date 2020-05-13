@@ -1,5 +1,5 @@
 /**
- * @file triangular_kernel.hpp
+ * @file core/kernels/triangular_kernel.hpp
  * @author Ryan Curtin
  *
  * Definition and implementation of the trivially simple triangular kernel.

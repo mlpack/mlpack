@@ -1,5 +1,5 @@
 /**
- * @file split_data.hpp
+ * @file core/data/split_data.hpp
  * @author Tham Ngap Wei, Keon Kim
  *
  * Defines Split(), a utility function to split a dataset into a

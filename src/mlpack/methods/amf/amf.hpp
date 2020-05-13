@@ -1,5 +1,5 @@
 /**
- * @file amf.hpp
+ * @file methods/amf/amf.hpp
  * @author Sumedh Ghaisas
  * @author Mohan Rajendran
  * @author Ryan Curtin

@@ -1,5 +1,5 @@
 /**
- * @file kathirvalavakumar_subavathi_init.hpp
+ * @file methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the initialization method by T.

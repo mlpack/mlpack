@@ -1,5 +1,5 @@
 /**
- * @file q_learning_test.hpp
+ * @file tests/q_learning_test.cpp
  * @author Shangtong Zhang
  * @author Rohan Raj
  *

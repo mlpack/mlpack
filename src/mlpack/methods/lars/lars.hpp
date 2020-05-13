@@ -1,5 +1,5 @@
 /**
- * @file lars.hpp
+ * @file methods/lars/lars.hpp
  * @author Nishant Mehta (niche)
  *
  * Definition of the LARS class, which performs Least Angle Regression and the

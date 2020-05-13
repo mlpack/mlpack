@@ -1,5 +1,5 @@
 /**
- * @file simple_dqn.hpp
+ * @file methods/reinforcement_learning/q_networks/simple_dqn.hpp
  * @author Nishant Kumar
  *
  * This file contains the implementation of the simple deep q network.

@@ -1,5 +1,5 @@
 /**
- * @file pca.hpp
+ * @file methods/pca/pca.hpp
  * @author Ajinkya Kale
  * @author Ryan Curtin
  * @author Marcus Edel

@@ -1,5 +1,5 @@
 /**
- * @file join.hpp
+ * @file methods/ann/layer/join.hpp
  * @author Marcus Edel
  *
  * Definition of the Join module.

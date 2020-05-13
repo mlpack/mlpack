@@ -1,5 +1,5 @@
 /**
- * @file tests/test_option.hpp
+ * @file bindings/tests/test_option.hpp
  * @author Ryan Curtin
  *
  * Definition of the TestOption class, which is used to define parameters for

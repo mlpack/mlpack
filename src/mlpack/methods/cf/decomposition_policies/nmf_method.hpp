@@ -1,5 +1,5 @@
 /**
- * @file nmf_method.hpp
+ * @file methods/cf/decomposition_policies/nmf_method.hpp
  * @author Haritha Nair
  *
  * Implementation of the exact svd method for use in Collaborative Filtering.

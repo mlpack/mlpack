@@ -1,5 +1,5 @@
 /**
- * @file log.cpp
+ * @file core/util/log.cpp
  * @author Matthew Amidon
  *
  * Implementation of the Log class.

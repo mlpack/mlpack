@@ -1,5 +1,5 @@
 /**
- * @file tasks/copy.hpp
+ * @file methods/ann/augmented/tasks/copy.hpp
  * @author Konstantin Sidorov
  *
  * Definition of the CopyTask class, which implements a generator of

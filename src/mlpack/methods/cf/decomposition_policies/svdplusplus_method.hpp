@@ -1,5 +1,5 @@
 /**
- * @file svdplusplus_method.hpp
+ * @file methods/cf/decomposition_policies/svdplusplus_method.hpp
  * @author Wenhao Huang
  *
  * Implementation of the svdplusplus method for use in the Collaborative

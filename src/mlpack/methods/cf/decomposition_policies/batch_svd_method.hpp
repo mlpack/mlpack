@@ -1,5 +1,5 @@
 /**
- * @file batch_svd_method.hpp
+ * @file methods/cf/decomposition_policies/batch_svd_method.hpp
  * @author Haritha Nair
  *
  * Implementation of the batch SVD method for use in Collaborative Filtering.

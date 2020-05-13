@@ -1,5 +1,5 @@
 /**
- * @file statistic.hpp
+ * @file core/tree/statistic.hpp
  *
  * Definition of the policy type for the statistic class.
  *

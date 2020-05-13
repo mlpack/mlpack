@@ -1,5 +1,5 @@
 /**
- * @file nca.hpp
+ * @file methods/nca/nca.hpp
  * @author Ryan Curtin
  *
  * Declaration of NCA class (Neighborhood Components Analysis).

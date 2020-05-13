@@ -1,5 +1,5 @@
 /**
- * @file max_variance_new_cluster.hpp
+ * @file methods/kmeans/max_variance_new_cluster.hpp
  * @author Ryan Curtin
  *
  * An implementation of the EmptyClusterPolicy policy class for K-Means.  When

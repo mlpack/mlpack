@@ -1,5 +1,5 @@
 /**
- * @file image_info.hpp
+ * @file core/data/image_info.hpp
  * @author Mehul Kumar Nirala
  *
  * An image information holder.

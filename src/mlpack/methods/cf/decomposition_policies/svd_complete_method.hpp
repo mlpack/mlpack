@@ -1,5 +1,5 @@
 /**
- * @file svd_complete_method.hpp
+ * @file methods/cf/decomposition_policies/svd_complete_method.hpp
  * @author Haritha Nair
  *
  * Implementation of the SVD complete incremental method for use in the

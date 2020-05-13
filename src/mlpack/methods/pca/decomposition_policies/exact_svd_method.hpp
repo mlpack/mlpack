@@ -1,5 +1,5 @@
 /**
- * @file exact_svd_method.hpp
+ * @file methods/pca/decomposition_policies/exact_svd_method.hpp
  * @author Ajinkya Kale
  * @author Ryan Curtin
  * @author Marcus Edel

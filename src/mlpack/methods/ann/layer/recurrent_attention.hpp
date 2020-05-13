@@ -1,5 +1,5 @@
 /**
- * @file recurrent_attention.hpp
+ * @file methods/ann/layer/recurrent_attention.hpp
  * @author Marcus Edel
  *
  * Definition of the RecurrentAttention class.

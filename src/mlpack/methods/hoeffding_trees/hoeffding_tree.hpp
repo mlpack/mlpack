@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_tree.hpp
+ * @file methods/hoeffding_trees/hoeffding_tree.hpp
  * @author Ryan Curtin
  *
  * An implementation of the standard Hoeffding tree by Pedro Domingos and Geoff

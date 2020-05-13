@@ -1,5 +1,5 @@
 /**
- * @file select.hpp
+ * @file methods/ann/layer/select.hpp
  * @author Marcus Edel
  *
  * Definition of the Select module.

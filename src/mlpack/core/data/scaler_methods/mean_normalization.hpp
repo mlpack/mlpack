@@ -1,5 +1,5 @@
 /**
- * @file mean_normalization.hpp
+ * @file core/data/scaler_methods/mean_normalization.hpp
  * @author Jeffin Sam
  *
  * MeanNormalization class to scale features.

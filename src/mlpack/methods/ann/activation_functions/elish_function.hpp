@@ -1,5 +1,5 @@
 /**
- * @file elish_function.hpp
+ * @file methods/ann/activation_functions/elish_function.hpp
  * @author Bisakh Mondal
  *
  * Definition and implementation of the ELiSH function as described by

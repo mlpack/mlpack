@@ -1,5 +1,5 @@
 /**
- * @file ra_search.hpp
+ * @file methods/rann/ra_search.hpp
  * @author Parikshit Ram
  *
  * Defines the RASearch class, which performs an abstract rank-approximate

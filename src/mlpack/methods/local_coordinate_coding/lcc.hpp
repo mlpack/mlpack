@@ -1,5 +1,5 @@
 /**
- * @file lcc.hpp
+ * @file methods/local_coordinate_coding/lcc.hpp
  * @author Nishant Mehta
  *
  * Definition of the LocalCoordinateCoding class, which performs the Local

@@ -1,5 +1,5 @@
 /**
- * @file ann_dist_test.cpp
+ * @file tests/ann_dist_test.cpp
  * @author Atharva Khandait
  *
  * Tests the ann distributions.

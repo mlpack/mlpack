@@ -1,5 +1,5 @@
 /**
- * @file log_cosh_loss.hpp
+ * @file methods/ann/loss_functions/log_cosh_loss.hpp
  * @author Kartik Dutt
  *
  * Definition of the Log-Hyperbolic-Cosine loss function.

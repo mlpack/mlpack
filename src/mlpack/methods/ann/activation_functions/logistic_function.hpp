@@ -1,5 +1,5 @@
 /**
- * @file logistic_function.hpp
+ * @file methods/ann/activation_functions/logistic_function.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the logistic function.

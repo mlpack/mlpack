@@ -1,5 +1,5 @@
 /**
- * @file quic_svd_method.hpp
+ * @file methods/pca/decomposition_policies/quic_svd_method.hpp
  * @author Marcus Edel
  *
  * Implementation of the QUIC-SVD policy for use in the Principal Components

@@ -1,5 +1,5 @@
 /**
- * @file example_kernel.hpp
+ * @file core/kernels/example_kernel.hpp
  * @author Ryan Curtin
  *
  * This is an example kernel.  If you are making your own kernel, follow the

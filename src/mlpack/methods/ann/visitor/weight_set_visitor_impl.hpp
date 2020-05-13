@@ -1,5 +1,5 @@
 /**
- * @file weight_set_visitor_impl.hpp
+ * @file methods/ann/visitor/weight_set_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Weight() function layer abstraction.

@@ -1,5 +1,5 @@
 /**
- * @file diagonal_gaussian_distribution.hpp
+ * @file core/dists/diagonal_gaussian_distribution.hpp
  * @author Kim SangYeon
  *
  * Implementation of the Gaussian distribution with diagonal covariance.

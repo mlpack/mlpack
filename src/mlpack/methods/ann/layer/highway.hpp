@@ -1,5 +1,5 @@
 /**
- * @file highway.hpp
+ * @file methods/ann/layer/highway.hpp
  * @author Konstantin Sidorov
  * @author Saksham Bansal
  *

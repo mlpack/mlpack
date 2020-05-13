@@ -1,5 +1,5 @@
 /**
- * @file no_auxiliary_information.hpp
+ * @file core/tree/rectangle_tree/no_auxiliary_information.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the NoAuxiliaryInformation class, a class that provides

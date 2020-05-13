@@ -1,5 +1,5 @@
 /**
- * @file hyperplane.hpp
+ * @file core/tree/space_split/hyperplane.hpp
  * @author Marcos Pividori
  *
  * Definition of Hyperplane and AxisOrthogonalHyperplane.

@@ -1,5 +1,5 @@
 /**
- * @file julia/get_param.hpp
+ * @file bindings/julia/get_param.hpp
  * @author Ryan Curtin
  *
  * Get a parameter for a Julia binding.

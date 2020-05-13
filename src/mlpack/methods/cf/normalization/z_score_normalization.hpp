@@ -1,5 +1,5 @@
 /**
- * @file z_score_normalization.hpp
+ * @file methods/cf/normalization/z_score_normalization.hpp
  * @author Wenhao Huang
  *
  * This class performs z-score normalization on raw ratings.

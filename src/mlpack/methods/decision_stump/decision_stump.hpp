@@ -1,5 +1,5 @@
 /**
- * @file decision_stump.hpp
+ * @file methods/decision_stump/decision_stump.hpp
  * @author Udit Saxena
  *
  * Definition of decision stumps.

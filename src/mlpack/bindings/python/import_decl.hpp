@@ -1,5 +1,5 @@
 /**
- * @file python/import_decl.hpp
+ * @file bindings/python/import_decl.hpp
  * @author Ryan Curtin
  *
  * For a serializable model, print the class import.

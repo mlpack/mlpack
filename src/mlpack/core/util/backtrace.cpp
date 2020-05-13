@@ -1,5 +1,5 @@
 /**
- * @file backtrace.cpp
+ * @file core/util/backtrace.cpp
  * @author Grzegorz Krajewski
  *
  * Implementation of the Backtrace class.

@@ -1,5 +1,5 @@
 /**
- * @file range_search.hpp
+ * @file methods/range_search/range_search.hpp
  * @author Ryan Curtin
  *
  * Defines the RangeSearch class, which performs a generalized range search on

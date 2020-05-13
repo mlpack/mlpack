@@ -1,5 +1,5 @@
 /**
- * @file emst_test.cpp
+ * @file tests/main_tests/emst_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of emst_main.cpp.

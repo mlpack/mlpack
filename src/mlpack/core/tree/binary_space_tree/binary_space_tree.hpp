@@ -1,5 +1,5 @@
 /**
- * @file binary_space_tree/binary_space_tree.hpp
+ * @file core/tree/binary_space_tree/binary_space_tree.hpp
  *
  * Definition of generalized binary space partitioning tree (BinarySpaceTree).
  *

@@ -1,5 +1,5 @@
 /**
- * @file get_binding_name.hpp
+ * @file bindings/markdown/get_binding_name.hpp
  * @author Ryan Curtin
  *
  * Given the name of a binding as it appears in CMake, return the corresponding

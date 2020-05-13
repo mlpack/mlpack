@@ -1,5 +1,5 @@
 /**
- * @file param.hpp
+ * @file core/util/param.hpp
  * @author Matthew Amidon
  * @author Ryan Curtin
  *

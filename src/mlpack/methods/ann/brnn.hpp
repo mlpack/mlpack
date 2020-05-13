@@ -1,5 +1,5 @@
 /**
- * @file brnn.hpp
+ * @file methods/ann/brnn.hpp
  * @author Saksham Bansal
  *
  * Definition of the BRNN class, which implements bidirectional recurrent

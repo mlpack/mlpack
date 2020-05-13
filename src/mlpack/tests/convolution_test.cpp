@@ -1,5 +1,5 @@
 /**
- * @file convolution_test.cpp
+ * @file tests/convolution_test.cpp
  * @author Shangtong Zhang
  * @author Marcus Edel
  *

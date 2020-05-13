@@ -1,5 +1,5 @@
 /**
- * @file cosine_search.hpp
+ * @file methods/cf/neighbor_search_policies/cosine_search.hpp
  * @author Wenhao Huang
  *
  * Nearest neighbor search with cosine distance.

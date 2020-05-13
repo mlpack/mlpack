@@ -1,5 +1,5 @@
 /**
- * @file acrobot.hpp
+ * @file methods/reinforcement_learning/environment/acrobot.hpp
  * @author Rohan Raj
  *
  * This file is an implementation of Acrobot task:

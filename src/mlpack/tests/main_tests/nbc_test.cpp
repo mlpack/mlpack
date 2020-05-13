@@ -1,5 +1,5 @@
 /**
- * @file nbc_test.cpp
+ * @file tests/main_tests/nbc_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of nbc_main.cpp.

@@ -1,5 +1,5 @@
 /**
- * @file recurrent.hpp
+ * @file methods/ann/layer/recurrent.hpp
  * @author Marcus Edel
  *
  * Definition of the LinearLayer class also known as fully-connected layer or

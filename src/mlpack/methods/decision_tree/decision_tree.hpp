@@ -1,5 +1,5 @@
 /**
- * @file decision_tree.hpp
+ * @file methods/decision_tree/decision_tree.hpp
  * @author Ryan Curtin
  *
  * A generic decision tree learner.  Its behavior can be controlled via template

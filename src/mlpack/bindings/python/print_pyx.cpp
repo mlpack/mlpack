@@ -1,5 +1,5 @@
 /**
- * @file python/print_pyx.cpp
+ * @file bindings/python/print_pyx.cpp
  * @author Ryan Curtin
  *
  * Implementation of function to generate a .pyx file given a list of parameters

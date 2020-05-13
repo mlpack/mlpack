@@ -1,5 +1,5 @@
 /**
- * @file julia/julia_option.hpp
+ * @file bindings/julia/julia_option.hpp
  * @author Ryan Curtin
  *
  * The Julia option type.

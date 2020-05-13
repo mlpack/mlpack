@@ -1,5 +1,5 @@
 /**
- * @file lstm_impl.hpp
+ * @file methods/ann/layer/lstm_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the LSTM class, which implements a lstm network layer.

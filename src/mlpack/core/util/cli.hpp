@@ -1,5 +1,5 @@
 /**
- * @file cli.hpp
+ * @file core/util/cli.hpp
  * @author Matthew Amidon
  *
  * This file implements the CLI subsystem which is intended to replace FX.

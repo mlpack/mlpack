@@ -1,5 +1,5 @@
 /**
- * @file qdafn_test.cpp
+ * @file tests/qdafn_test.cpp
  * @author Ryan Curtin
  *
  * Test the QDAFN functionality.

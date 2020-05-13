@@ -1,5 +1,5 @@
 /**
- * @file julia/get_printable_param.hpp
+ * @file bindings/julia/get_printable_param.hpp
  * @author Ryan Curtin
  *
  * Get a printable version of parameters.

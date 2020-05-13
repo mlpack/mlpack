@@ -1,5 +1,5 @@
 /**
- * @file binary_space_tree/ub_tree_split_impl.hpp
+ * @file core/tree/binary_space_tree/ub_tree_split_impl.hpp
  * @author Mikhail Lozhnikov
  *
  * Implementation of UBTreeSplit, a class that splits a node according

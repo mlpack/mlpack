@@ -1,5 +1,5 @@
 /**
- * @file cf/decomposition_policies/regularized_svd_method.hpp
+ * @file methods/cf/decomposition_policies/regularized_svd_method.hpp
  * @author Haritha Nair
  *
  * Implementation of the regularized svd method for use in the Collaborative

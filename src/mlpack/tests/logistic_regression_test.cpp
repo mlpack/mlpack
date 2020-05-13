@@ -1,5 +1,5 @@
 /**
- * @file logistic_regression_test.cpp
+ * @file tests/logistic_regression_test.cpp
  * @author Ryan Curtin
  * @author Arun Reddy
  *

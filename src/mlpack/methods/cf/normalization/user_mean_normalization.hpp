@@ -1,5 +1,5 @@
 /**
- * @file user_mean_normalization.hpp
+ * @file methods/cf/normalization/user_mean_normalization.hpp
  * @author Wenhao Huang
  *
  * This class performs user mean normalization on raw ratings. In another

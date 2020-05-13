@@ -1,5 +1,5 @@
 /**
- * @file linear.hpp
+ * @file methods/ann/layer/linear_no_bias.hpp
  * @author Marcus Edel
  *
  * Definition of the LinearNoBias class also known as fully-connected layer or

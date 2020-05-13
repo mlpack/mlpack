@@ -1,5 +1,5 @@
 /**
- * @file python/py_option.hpp
+ * @file bindings/python/py_option.hpp
  * @author Ryan Curtin
  *
  * The Python option type.

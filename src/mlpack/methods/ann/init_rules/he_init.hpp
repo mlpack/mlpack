@@ -1,5 +1,5 @@
 /**
- * @file he_init.hpp
+ * @file methods/ann/init_rules/he_init.hpp
  * @author Dakshit Agrawal
  * @author Prabhat Sharma
  *

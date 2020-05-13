@@ -1,5 +1,5 @@
 /**
- * @file octree/traits.hpp
+ * @file core/tree/octree/traits.hpp
  * @author Ryan Curtin
  *
  * Specialization of the TreeTraits class for the Octree class.

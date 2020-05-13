@@ -1,5 +1,5 @@
 /**
- * @file allow_empty_clusters.hpp
+ * @file methods/kmeans/kill_empty_clusters.hpp
  * @author Ryan Curtin
  *
  * This very simple policy is used when K-Means is allowed to return empty

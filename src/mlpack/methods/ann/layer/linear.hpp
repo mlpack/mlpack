@@ -1,5 +1,5 @@
 /**
- * @file linear.hpp
+ * @file methods/ann/layer/linear.hpp
  * @author Marcus Edel
  *
  * Definition of the Linear layer class also known as fully-connected layer or

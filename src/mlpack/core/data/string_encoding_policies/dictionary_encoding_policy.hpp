@@ -1,5 +1,5 @@
 /**
- * @file dictionary_encoding_policy.hpp
+ * @file core/data/string_encoding_policies/dictionary_encoding_policy.hpp
  * @author Jeffin Sam
  * @author Mikhail Lozhnikov
  *

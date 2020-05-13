@@ -1,5 +1,5 @@
 /**
- * @file reward_set_visitor_impl.hpp
+ * @file methods/ann/visitor/reward_set_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Reward() function layer abstraction.

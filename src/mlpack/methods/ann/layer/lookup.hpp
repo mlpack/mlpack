@@ -1,5 +1,5 @@
 /**
- * @file lookup.hpp
+ * @file methods/ann/layer/lookup.hpp
  * @author Marcus Edel
  *
  * Definition of the Lookup class a particular convolution, where the width of

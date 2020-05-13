@@ -1,5 +1,5 @@
 /**
- * @file cover_tree/cover_tree.hpp
+ * @file core/tree/cover_tree/cover_tree.hpp
  * @author Ryan Curtin
  *
  * Definition of CoverTree, which can be used in place of the BinarySpaceTree.

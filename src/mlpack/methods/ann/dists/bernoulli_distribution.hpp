@@ -1,5 +1,5 @@
 /**
- * @file bernoulli_distribution.hpp
+ * @file methods/ann/dists/bernoulli_distribution.hpp
  * @author Atharva Khandait
  *
  * Definition of the Bernoulli distribution class.

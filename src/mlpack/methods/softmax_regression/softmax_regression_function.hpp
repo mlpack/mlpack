@@ -1,5 +1,5 @@
 /**
- * @file softmax_regression_function.hpp
+ * @file methods/softmax_regression/softmax_regression_function.hpp
  * @author Siddharth Agrawal
  *
  * The function to be optimized for softmax regression. Any mlpack optimizer

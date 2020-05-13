@@ -1,5 +1,5 @@
 /**
- * @file range.hpp
+ * @file core/math/range.hpp
  *
  * Definition of the Range class, which represents a simple range with a lower
  * and upper bound.

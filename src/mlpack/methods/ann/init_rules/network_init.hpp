@@ -1,5 +1,5 @@
 /**
- * @file network_init.hpp
+ * @file methods/ann/init_rules/network_init.hpp
  * @author Marcus Edel
  *
  * Intialization of a given network with a given initialization rule

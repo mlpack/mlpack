@@ -1,5 +1,5 @@
 /**
- * @file lsh_search.hpp
+ * @file methods/lsh/lsh_search.hpp
  * @author Parikshit Ram
  *
  * Defines the LSHSearch class, which performs an approximate

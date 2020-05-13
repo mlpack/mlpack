@@ -1,5 +1,5 @@
 /**
- * @file svd_wrapper.hpp
+ * @file methods/cf/svd_wrapper.hpp
  * @author Sumedh Ghaisas
  *
  * Wrapper class for SVD factorizers used for Collaborative Filtering.

@@ -1,5 +1,5 @@
 /**
- * @file ordered_point_selection.hpp
+ * @file methods/dbscan/ordered_point_selection.hpp
  * @author Kim SangYeon
  *
  * Sequentially select the next point for DBSCAN.

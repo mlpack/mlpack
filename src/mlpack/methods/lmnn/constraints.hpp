@@ -1,5 +1,5 @@
 /**
- * @file constraints.hpp
+ * @file methods/lmnn/constraints.hpp
  * @author Manish Kumar
  *
  * Declaration of the Constraints class.

@@ -1,5 +1,5 @@
 /**
- * @file item_mean_normalization.hpp
+ * @file methods/cf/normalization/item_mean_normalization.hpp
  * @author Wenhao Huang
  *
  * This class performs item mean normalization on raw ratings. In another

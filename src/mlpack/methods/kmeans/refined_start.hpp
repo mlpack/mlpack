@@ -1,5 +1,5 @@
 /**
- * @file refined_start.hpp
+ * @file methods/kmeans/refined_start.hpp
  * @author Ryan Curtin
  *
  * An implementation of Bradley and Fayyad's "Refining Initial Points for

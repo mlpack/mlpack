@@ -1,5 +1,5 @@
 /**
- * @file init_rules_traits.hpp
+ * @file methods/ann/init_rules/init_rules_traits.hpp
  * @author Marcus Edel
  *
  * This provides the InitTraits class, a template class to get information

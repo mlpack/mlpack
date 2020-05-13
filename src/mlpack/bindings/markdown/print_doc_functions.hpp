@@ -1,5 +1,5 @@
 /**
- * @file markdown/print_doc_functions.hpp
+ * @file bindings/markdown/print_doc_functions.hpp
  * @author Ryan Curtin
  *
  * This file wraps the different printing functionality of different binding

@@ -1,5 +1,5 @@
 /**
- * @file random_replay.hpp
+ * @file methods/reinforcement_learning/replay/random_replay.hpp
  * @author Shangtong Zhang
  *
  * This file is an implementation of random experience replay.

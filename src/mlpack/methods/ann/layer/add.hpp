@@ -1,5 +1,5 @@
 /**
- * @file layer/add.hpp
+ * @file methods/ann/layer/add.hpp
  * @author Marcus Edel
  *
  * Definition of the Add class that applies a bias term to the incoming data.

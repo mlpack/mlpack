@@ -1,5 +1,5 @@
 /**
- * @file neighbor_search/typedef.hpp
+ * @file methods/neighbor_search/typedef.hpp
  * @author Ryan Curtin
  *
  * Simple typedefs describing template instantiations of the NeighborSearch

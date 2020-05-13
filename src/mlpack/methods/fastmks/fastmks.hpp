@@ -1,5 +1,5 @@
 /**
- * @file fastmks.hpp
+ * @file methods/fastmks/fastmks.hpp
  * @author Ryan Curtin
  *
  * Definition of the FastMKS class, which implements fast exact max-kernel

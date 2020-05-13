@@ -1,5 +1,5 @@
 /**
- * @file cli/in_place_copy.hpp
+ * @file bindings/cli/in_place_copy.hpp
  * @author Ryan Curtin
  *
  * Use template metaprogramming to set filenames correctly for in-place copy

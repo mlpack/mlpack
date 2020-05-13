@@ -1,5 +1,5 @@
 /**
- * @file identity_function.hpp
+ * @file methods/ann/activation_functions/identity_function.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the identity function.

@@ -1,5 +1,5 @@
 /**
- * @file const_init.hpp
+ * @file methods/ann/init_rules/const_init.hpp
  * @author Sumedh Ghaisas
  *
  * Intialization rule for the neural networks. This simple initialization is

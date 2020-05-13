@@ -1,5 +1,5 @@
 /**
- * @file sequential.hpp
+ * @file methods/ann/layer/sequential.hpp
  * @author Marcus Edel
  *
  * Definition of the Sequential class, which acts as a feed-forward fully

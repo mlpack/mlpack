@@ -1,5 +1,5 @@
 /**
- * @file softmax_regression_function.cpp
+ * @file methods/softmax_regression/softmax_regression_function.cpp
  * @author Siddharth Agrawal
  *
  * Implementation of function to be optimized for softmax regression.

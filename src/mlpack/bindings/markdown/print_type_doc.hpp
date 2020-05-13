@@ -1,5 +1,5 @@
 /**
- * @file markdown/print_type_doc.hpp
+ * @file bindings/markdown/print_type_doc.hpp
  * @author Ryan Curtin
  *
  * Print documentation for a given type, depending on the current language (as

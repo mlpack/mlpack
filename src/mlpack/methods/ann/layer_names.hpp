@@ -1,5 +1,5 @@
 /**
- * @file layer_names.hpp
+ * @file methods/ann/layer_names.hpp
  * @author Sreenik Seal
  *
  * Implementation of a class that converts a given ann layer to string format.

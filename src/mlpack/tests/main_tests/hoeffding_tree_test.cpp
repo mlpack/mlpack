@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_tree_test.cpp
+ * @file tests/main_tests/hoeffding_tree_test.cpp
  * @author Haritha Nair
  *
  * Test mlpackMain() of hoeffding_tree_main.cpp.

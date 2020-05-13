@@ -1,5 +1,5 @@
 /**
- * @file lin_alg_test.cpp
+ * @file tests/lin_alg_test.cpp
  * @author Ryan Curtin
  *
  * Simple tests for things in the linalg__private namespace.

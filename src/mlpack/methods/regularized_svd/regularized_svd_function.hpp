@@ -1,5 +1,5 @@
 /**
- * @file regularized_svd_function.hpp
+ * @file methods/regularized_svd/regularized_svd_function.hpp
  * @author Siddharth Agrawal
  *
  * An implementation of the RegularizedSVDFunction class.

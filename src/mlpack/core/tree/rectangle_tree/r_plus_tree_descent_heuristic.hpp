@@ -1,5 +1,5 @@
 /**
- * @file r_plus_tree_descent_heuristic.hpp
+ * @file core/tree/rectangle_tree/r_plus_tree_descent_heuristic.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of RPlusTreeDescentHeuristic, a class that chooses the best child

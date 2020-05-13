@@ -1,5 +1,5 @@
 /**
- * @file matrix_completion_impl.hpp
+ * @file methods/matrix_completion/matrix_completion.cpp
  * @author Stephen Tu
  *
  * Implementation of MatrixCompletion class.

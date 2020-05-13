@@ -1,5 +1,5 @@
 /**
- * @file virtual_batch_norm.hpp
+ * @file methods/ann/layer/virtual_batch_norm.hpp
  * @author Saksham Bansal
  *
  * Definition of the VirtualBatchNorm layer class.

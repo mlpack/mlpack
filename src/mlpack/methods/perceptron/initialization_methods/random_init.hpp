@@ -1,5 +1,5 @@
 /**
- * @file perceptron/initialization_methods/random_init.hpp
+ * @file methods/perceptron/initialization_methods/random_init.hpp
  * @author Udit Saxena
  *
  * Random initialization for perceptron weights.

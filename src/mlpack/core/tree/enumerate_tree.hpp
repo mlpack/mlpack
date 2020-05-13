@@ -1,5 +1,5 @@
 /**
- * @file enumerate_tree.hpp
+ * @file core/tree/enumerate_tree.hpp
  * @author Ivan (Jonan) Georgiev
  *
  * This file contains function that performs a simple depth-first walk on the tree

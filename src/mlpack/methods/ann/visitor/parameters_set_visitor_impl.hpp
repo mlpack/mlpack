@@ -1,5 +1,5 @@
 /**
- * @file parameters_set_visitor_impl.hpp
+ * @file methods/ann/visitor/parameters_set_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Parameters() function layer abstraction.

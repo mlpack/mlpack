@@ -1,5 +1,5 @@
 /**
- * @file python/print_pyx.hpp
+ * @file bindings/python/print_pyx.hpp
  * @author Ryan Curtin
  *
  * Given a list of ParamData structures, emit a .pyx file defining the Cython

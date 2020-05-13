@@ -1,5 +1,5 @@
 /**
- * @file adaboost_main.cpp
+ * @file methods/adaboost/adaboost_main.cpp
  * @author Udit Saxena
  *
  * Implementation of the AdaBoost main program.

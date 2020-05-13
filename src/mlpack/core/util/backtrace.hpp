@@ -1,5 +1,5 @@
 /**
- * @file backtrace.hpp
+ * @file core/util/backtrace.hpp
  * @author Grzegorz Krajewski
  *
  * Definition of the Backtrace class.

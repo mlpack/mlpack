@@ -1,5 +1,5 @@
 /**
- * @file hpt/cv_function_impl.hpp
+ * @file core/hpt/cv_function_impl.hpp
  * @author Kirill Mishchenko
  *
  * The implementation of the class CVFunction.

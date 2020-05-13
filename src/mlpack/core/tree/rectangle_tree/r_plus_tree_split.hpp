@@ -1,5 +1,5 @@
 /**
- * @file r_plus_tree_split.hpp
+ * @file core/tree/rectangle_tree/r_plus_tree_split.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the RPlusTreeSplit class, a class that splits the nodes of an

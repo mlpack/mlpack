@@ -1,5 +1,5 @@
 /**
- * @file octree_test.cpp
+ * @file tests/octree_test.cpp
  * @author Ryan Curtin
  *
  * Test various properties of the Octree.

@@ -1,5 +1,5 @@
 /**
- * @file spill_dual_tree_traverser.hpp
+ * @file core/tree/spill_tree/spill_dual_tree_traverser.hpp
  * @author Ryan Curtin
  * @author Marcos Pividori
  *

@@ -1,5 +1,5 @@
 /**
- * @file cli/default_param_impl.hpp
+ * @file bindings/cli/default_param_impl.hpp
  * @author Ryan Curtin
  *
  * Return the default value of a parameter, depending on its type.

@@ -1,5 +1,5 @@
 /**
- * @file r_plus_plus_tree_auxiliary_information.hpp
+ * @file core/tree/rectangle_tree/r_plus_plus_tree_auxiliary_information.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the RPlusPlusTreeAuxiliaryInformation class,

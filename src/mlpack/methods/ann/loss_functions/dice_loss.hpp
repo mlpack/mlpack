@@ -1,5 +1,5 @@
 /**
- * @file dice_loss.hpp
+ * @file methods/ann/loss_functions/dice_loss.hpp
  * @author N Rajiv Vaidyanathan
  *
  * Definition of the dice loss function.

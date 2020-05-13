@@ -1,5 +1,5 @@
 /**
- * @file randomized_svd.hpp
+ * @file methods/randomized_svd/randomized_svd.hpp
  * @author Marcus Edel
  *
  * An implementation of the randomized SVD method.

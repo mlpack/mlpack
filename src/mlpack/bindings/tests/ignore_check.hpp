@@ -1,5 +1,5 @@
 /**
- * @file tests/ignore_check.hpp
+ * @file bindings/tests/ignore_check.hpp
  * @author Ryan Curtin
  *
  * Implementation of IgnoreCheck() for Python bindings.

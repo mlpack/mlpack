@@ -1,5 +1,5 @@
 /**
- * @file dtb.hpp
+ * @file methods/emst/dtb.hpp
  * @author Bill March (march@gatech.edu)
  *
  * Contains an implementation of the DualTreeBoruvka algorithm for finding a

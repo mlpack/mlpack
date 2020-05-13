@@ -1,5 +1,5 @@
 /**
- * @file python/get_arma_type.hpp
+ * @file bindings/python/get_arma_type.hpp
  * @author Ryan Curtin
  *
  * Return "mat", "col", or "row" depending on the type of the given Armadillo

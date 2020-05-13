@@ -1,5 +1,5 @@
 /**
- * @file reinforce_normal.hpp
+ * @file methods/ann/layer/reinforce_normal.hpp
  * @author Marcus Edel
  *
  * Definition of the ReinforceNormalLayer class, which implements the REINFORCE

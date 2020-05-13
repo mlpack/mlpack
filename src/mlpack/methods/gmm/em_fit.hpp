@@ -1,5 +1,5 @@
 /**
- * @file em_fit.hpp
+ * @file methods/gmm/em_fit.hpp
  * @author Ryan Curtin
  * @author Michael Fox
  *

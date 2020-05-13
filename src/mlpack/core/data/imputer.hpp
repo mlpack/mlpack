@@ -1,5 +1,5 @@
 /**
- * @file imputer.hpp
+ * @file core/data/imputer.hpp
  * @author Keon Kim
  *
  * Defines Imputer class a utility function to replace missing variables in a

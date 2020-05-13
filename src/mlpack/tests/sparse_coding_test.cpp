@@ -1,5 +1,5 @@
 /**
- * @file sparse_coding_test.cpp
+ * @file tests/sparse_coding_test.cpp
  *
  * Test for Sparse Coding
  *

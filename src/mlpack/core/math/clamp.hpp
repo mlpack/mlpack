@@ -1,5 +1,5 @@
 /**
- * @file clamp.hpp
+ * @file core/math/clamp.hpp
  *
  * Miscellaneous math clamping routines.
  *
