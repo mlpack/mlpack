@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
 
   mlpackMain();
 
-  BayesianLinearRegression* estimator = 
+  BayesianLinearRegression* estimator =
   CLI::GetParam<BayesianLinearRegression*>("output_model");
 
   const arma::colvec dataScale = estimator->DataScale();
