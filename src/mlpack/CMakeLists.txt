@@ -102,21 +102,22 @@ install(TARGETS mlpack
 
 add_dependencies(mlpack mlpack_headers)
 
+# Extract the version number.
+file(READ "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/version.hpp"
+  VERSION_HPP_CONTENTS)
+string(REGEX REPLACE ".*#define MLPACK_VERSION_MAJOR ([0-9]+).*" "\\1"
+  MLPACK_VERSION_MAJOR "${VERSION_HPP_CONTENTS}")
+string(REGEX REPLACE ".*#define MLPACK_VERSION_MINOR ([0-9]+).*" "\\1"
+  MLPACK_VERSION_MINOR "${VERSION_HPP_CONTENTS}")
+string(REGEX REPLACE ".*#define MLPACK_VERSION_PATCH [\"]?([0-9x]+)[\"]?.*"
+  "\\1" MLPACK_VERSION_PATCH "${VERSION_HPP_CONTENTS}")
+
+set(PACKAGE_VERSION
+  "${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}")
+
 # If we are building Python bindings, we have to configure setup.py but only
 # after we've recursed into methods/.
 if (BUILDING_PYTHON_BINDINGS)
-  # Extract the version number.
-  file(READ "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/version.hpp"
-      VERSION_HPP_CONTENTS)
-  string(REGEX REPLACE ".*#define MLPACK_VERSION_MAJOR ([0-9]+).*" "\\1"
-      MLPACK_VERSION_MAJOR "${VERSION_HPP_CONTENTS}")
-  string(REGEX REPLACE ".*#define MLPACK_VERSION_MINOR ([0-9]+).*" "\\1"
-      MLPACK_VERSION_MINOR "${VERSION_HPP_CONTENTS}")
-  string(REGEX REPLACE ".*#define MLPACK_VERSION_PATCH [\"]?([0-9x]+)[\"]?.*"
-      "\\1" MLPACK_VERSION_PATCH "${VERSION_HPP_CONTENTS}")
-
-  set(PACKAGE_VERSION
-      "${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}")
 
   get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       PROPERTY INCLUDE_DIRECTORIES)
@@ -158,3 +159,80 @@ endif ()
 # If we are building Markdown documentation, we have to run some setup after we
 # recurse into methods/.  If not, this function is empty.
 post_markdown_setup()
+
+# Installing CMake Helper
+
+# Joins arguments and places the results in ${result_var}.
+function(join result_var)
+set(result )
+foreach (arg ${ARGN})
+  set(result "${result}${arg}")
+endforeach ()
+set(${result_var} "${result}" PARENT_SCOPE)
+endfunction()
+
+# Sets a cache variable with a docstring joined from multiple arguments:
+#   set(<variable> <value>... CACHE <type> <docstring>...)
+# This allows splitting a long docstring for readability.
+function(set_verbose)
+cmake_parse_arguments(SET_VERBOSE "" "" "CACHE" ${ARGN})
+list(GET SET_VERBOSE_CACHE 0 type)
+list(REMOVE_AT SET_VERBOSE_CACHE 0)
+join(doc ${SET_VERBOSE_CACHE})
+set(${SET_VERBOSE_UNPARSED_ARGUMENTS} CACHE ${type} ${doc})
+endfunction()
+
+include(CMakePackageConfigHelpers)
+
+set_verbose(MLPACK_CMAKE_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/mlpack CACHE STRING
+          "Installation directory for cmake files, relative to "
+          "${CMAKE_INSTALL_PREFIX}.")
+set(version_config ${PROJECT_BINARY_DIR}/mlpack-config-version.cmake)
+set(project_config ${PROJECT_BINARY_DIR}/mlpack-config.cmake)
+set(targets_export_name mlpack-targets)
+
+set(INSTALL_TARGETS mlpack)
+
+set_verbose(MLPACK_LIBS_DIR ${CMAKE_INSTALL_LIBDIR} CACHE STRING
+          "Installation directory for libraries, relative to "
+          "${CMAKE_INSTALL_PREFIX}.")
+
+set_verbose(MLPACK_INCS_DIR ${CMAKE_INSTALL_INCLUDEDIR} CACHE STRING
+          "Installation directory for include files, relative to "
+          "${CMAKE_INSTALL_PREFIX}.")
+
+# Getting the absolute path, for some reason CMAKE gets confused, 
+# even with CMAKE_INSTALL_INCLUDEDIR
+if (UNIX)
+GNUInstallDirs_get_absolute_install_dir(MLPACK_LIBS_DIR CMAKE_INSTALL_LIBDIR)
+GNUInstallDirs_get_absolute_install_dir(MLPACK_INCS_DIR CMAKE_INSTALL_INCLUDEDIR)
+endif()
+
+# Generate the version, config and target files into the build directory.
+write_basic_package_version_file(
+${version_config}
+VERSION ${PACKAGE_VERSION}
+COMPATIBILITY SameMajorVersion)
+
+configure_package_config_file(
+${PROJECT_SOURCE_DIR}/CMake/mlpack-config.cmake.in
+${project_config}
+INSTALL_DESTINATION ${MLPACK_CMAKE_DIR}
+PATH_VARS MLPACK_INCS_DIR)
+# Use a namespace because CMake provides better diagnostics for namespaced
+# imported targets.
+export(TARGETS ${INSTALL_TARGETS} NAMESPACE mlpack::
+     FILE ${PROJECT_BINARY_DIR}/${targets_export_name}.cmake)
+
+# Install version, config and target files.
+install(FILES ${project_config} ${version_config} 
+      DESTINATION ${MLPACK_CMAKE_DIR})
+
+install(EXPORT ${targets_export_name}
+      DESTINATION ${MLPACK_CMAKE_DIR} NAMESPACE mlpack::)
+
+# Install the library and headers.
+install(TARGETS ${INSTALL_TARGETS} EXPORT ${targets_export_name}
+      LIBRARY DESTINATION ${MLPACK_LIBS_DIR}
+      ARCHIVE DESTINATION ${MLPACK_LIBS_DIR}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
