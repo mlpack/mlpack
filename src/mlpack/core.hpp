@@ -53,6 +53,7 @@
  *  - @ref sample
  *  - @ref sample_ml_app
  *  - @ref cv
+ *  - @ref hpt_guide
  *  - @ref verinfo
  *
  * @section remarks Final Remarks
