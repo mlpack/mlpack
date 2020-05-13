@@ -20,7 +20,7 @@ as input and returns some sort of similarity value.  The specific details and
 properties of kernels are outside the scope of this documentation; for a better
 introduction to kernels and kernel methods, there are numerous better resources
 available, including
-<a href="http://www.eric-kim.net/eric-kim-net/posts/1/kernel_trick.html>"Eric Kim's tutorial"</a>
+<a href="http://www.eric-kim.net/eric-kim-net/posts/1/kernel_trick.html>Eric Kim's tutorial</a>
 
 mlpack implements a number of kernel methods and, accordingly, each of these
 methods allows arbitrary kernels to be used via the \c KernelType template

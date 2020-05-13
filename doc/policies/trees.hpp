@@ -54,6 +54,7 @@ R.R. Curtin, W.B. March, P. Ram, D.V. Anderson, A.G. Gray, and C.L. Isbell Jr.,
 International Conference on Machine Learning (ICML '13), pp. 1435--1443, 2013.
 @endquote
 @endcode
+
 The definition is:
 
 A **space tree** on a dataset \f$ S \in \mathcal{R}^{N \times d} \f$ is an

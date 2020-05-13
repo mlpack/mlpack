@@ -87,8 +87,8 @@ class HoeffdingTree
    *      in batch training mode.
    * @param minSamples If the node has seen this many points or fewer, no split
    *      will be allowed.
-   * @param categoricalSplitIn - Categorical Split into.
-   * @param numericSplitIn - Numeric Split into.
+   * @param categoricalSplitIn Optional instantiated categorical split object.
+   * @param numericSplitIn Optional instantiated numeric split object.
    */
   template<typename MatType>
   HoeffdingTree(const MatType& data,
@@ -124,8 +124,8 @@ class HoeffdingTree
    *      be created.
    * @param copyDatasetInfo If true, then a copy of the datasetInfo will be
    *      made.
-   * @param categoricalSplitIn - Categorical Split into.
-   * @param numericSplitIn - Numeric Split into.
+   * @param categoricalSplitIn Optional instantiated categorical split object.
+   * @param numericSplitIn Optional instantiated numeric split object.
    */
   HoeffdingTree(const data::DatasetInfo& datasetInfo,
                 const size_t numClasses,

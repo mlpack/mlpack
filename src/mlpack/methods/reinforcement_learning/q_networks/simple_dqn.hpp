@@ -110,8 +110,7 @@ class SimpleDQN
    * @param target The training target.
    * @param gradient The gradient.
    */
-  void Backward(const arma::mat state, arma::mat& target,
-arma::mat& gradient)
+  void Backward(const arma::mat state, arma::mat& target, arma::mat& gradient)
   {
     network.Backward(state, target, gradient);
   }
