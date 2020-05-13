@@ -238,7 +238,7 @@ class NeighborSearch
    * Note that if you are calling Search() multiple times with a single query
    * tree, you need to reset the bounds in the statistic of each query node,
    * otherwise the result may be wrong!  You can do this by calling
-   * "TreeType::Stat()::Reset()" on each node in the query tree.
+   * \c TreeType::Stat().Reset() on each node in the query tree.
    *
    * @param queryTree Tree built on query points.
    * @param k Number of neighbors to search for.
