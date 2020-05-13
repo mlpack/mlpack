@@ -25,7 +25,7 @@ if (BUILD_EMBEDDED AND (BOARD_NAME STREQUAL ""))
   message(FATAL_ERROR "Please enter the board name")
 elseif(BUILD_EMBEDDED AND (BOARD_NAME STREQUAL "rpi3"))
   include(board/rpi-config.cmake)
-  RPI(BOARD_NAME)
+  RPI(${BOARD_NAME})
 endif()
 
 if (WIN32)
