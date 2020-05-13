@@ -133,7 +133,7 @@ class RegularizedSVDFunction
 } // namespace svd
 } // namespace mlpack
 
-// \cond DO_NOT_DOCUMENT
+// \cond NO_DOXYGEN
 
 namespace ens {
 
