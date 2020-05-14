@@ -3595,7 +3595,9 @@ BOOST_AUTO_TEST_CASE(MeanPoolingLayerPaddingTest)
 
   // Test the Backward function.
   module6.Backward(input, output, delta);
+}
 
+/**
  * Test that the functions that can modify and access the parameters of the
  * Glimpse layer work.
  */
