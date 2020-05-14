@@ -27,6 +27,30 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling()
 
 template<typename InputDataType, typename OutputDataType>
 MeanPooling<InputDataType, OutputDataType>::MeanPooling(
+    const arma::vec& poolSize,
+    const arma::vec& strides,
+    const bool floor) :
+    kernelWidth(poolSize(0)),
+    kernelHeight(poolSize(1)),
+    strideWidth(strides(0)),
+    strideHeight(strides(1)),
+    floor(floor),
+    inSize(0),
+    outSize(0),
+    inputWidth(0),
+    inputHeight(0),
+    outputWidth(0),
+    outputHeight(0),
+    reset(false),
+    deterministic(false),
+    offset(0),
+    batchSize(0)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+MeanPooling<InputDataType, OutputDataType>::MeanPooling(
     const size_t kernelWidth,
     const size_t kernelHeight,
     const size_t strideWidth,

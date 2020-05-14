@@ -17,6 +17,7 @@
 
 #include "visitor/load_output_parameter_visitor.hpp"
 #include "visitor/save_output_parameter_visitor.hpp"
+#include "visitor/set_input_size_visitor.hpp"
 #include "visitor/forward_visitor.hpp"
 #include "visitor/backward_visitor.hpp"
 #include "visitor/reset_cell_visitor.hpp"
@@ -40,6 +41,7 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::RNN(
     rho(rho),
     outputLayer(std::move(outputLayer)),
     initializeRule(std::move(initializeRule)),
+    size(0),
     inputSize(0),
     outputSize(0),
     targetSize(0),
@@ -114,6 +116,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   if (!reset)
   {
+    size = this->predictors.n_rows;
     ResetParameters();
   }
 
@@ -158,6 +161,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   if (!reset)
   {
+    size = this->predictors.n_rows;
     ResetParameters();
   }
 
@@ -184,6 +188,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
 
   if (parameter.is_empty())
   {
+    size = predictors.n_rows;
     ResetParameters();
   }
 
@@ -233,6 +238,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
 {
   if (parameter.is_empty())
   {
+    size = predictors.n_rows;
     ResetParameters();
   }
 
@@ -307,6 +313,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   {
     if (parameter.is_empty())
     {
+      size = predictors.n_rows;
       ResetParameters();
     }
 
@@ -444,6 +451,8 @@ void RNN<OutputLayerType, InitializationRuleType,
 {
   ResetDeterministic();
 
+  SetInputSize();
+
   // Reset the network parameter with the given initialization rule.
   NetworkInitialization<InitializationRuleType,
                         CustomLayers...> networkInit(initializeRule);
@@ -482,6 +491,24 @@ void RNN<OutputLayerType, InitializationRuleType,
   for (LayerTypes<CustomLayers...>& layer : network)
   {
     offset += boost::apply_visitor(GradientSetVisitor(gradient, offset), layer);
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+void RNN<OutputLayerType, InitializationRuleType,
+         CustomLayers...>::SetInputSize()
+{
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    // Set the input size.
+    boost::apply_visitor(SetInputSizeVisitor(size), network[i]);
+
+    // Get the output size.
+    if (boost::apply_visitor(outputSizeVisitor, network[i]) != 0)
+    {
+      size = boost::apply_visitor(outputSizeVisitor, network[i]);
+    }
   }
 }
 
@@ -555,6 +582,12 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
   ar & BOOST_SERIALIZATION_NVP(outputSize);
   ar & BOOST_SERIALIZATION_NVP(targetSize);
 
+  // Earlier versions didn't have the size parameter.
+  if (version > 1)
+  {
+    ar & BOOST_SERIALIZATION_NVP(size);
+  }
+
   // Earlier versions of the RNN code did not serialize the 'reset' variable.
   if (version > 0)
   {
@@ -577,6 +610,11 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     // reset on load.
     if (version == 0)
       reset = false;
+
+    // The earlier versions didn't have the size parameter. We set it to a
+    // default value that will be inferred later.
+    if (version <= 1)
+    size = 0;
 
     size_t offset = 0;
     for (LayerTypes<CustomLayers...>& layer : network)

@@ -27,6 +27,24 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM()
 
 template <typename InputDataType, typename OutputDataType>
 FastLSTM<InputDataType, OutputDataType>::FastLSTM(
+    const size_t outSize) :
+    inSize(0),
+    outSize(outSize),
+    rho(0),
+    forwardStep(0),
+    backwardStep(0),
+    gradientStep(0),
+    batchSize(0),
+    batchStep(0),
+    gradientStepIdx(0),
+    rhoSize(rho),
+    bpttSteps(0)
+{
+  // Nothing to do here.
+}
+
+template <typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>::FastLSTM(
     const size_t inSize, const size_t outSize, const size_t rho) :
     inSize(inSize),
     outSize(outSize),
@@ -40,15 +58,17 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(
     rhoSize(rho),
     bpttSteps(0)
 {
-  // Weights for: input to gate layer (4 * outsize * inSize + 4 * outsize)
-  // and output to gate (4 * outSize).
-  weights.set_size(
-      4 * outSize * inSize + 4 * outSize + 4 * outSize * outSize, 1);
+  // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
 void FastLSTM<InputDataType, OutputDataType>::Reset()
 {
+  // Weights for: input to gate layer (4 * outsize * inSize + 4 * outsize)
+  // and output to gate (4 * outSize).
+  weights.set_size(
+      4 * outSize * inSize + 4 * outSize + 4 * outSize * outSize, 1);
+
   // Set the weight parameter for the input to gate layer (linear layer) using
   // the overall layer parameter matrix.
   input2GateWeight = OutputDataType(weights.memptr(),

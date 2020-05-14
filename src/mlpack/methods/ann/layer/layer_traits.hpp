@@ -100,6 +100,10 @@ HAS_MEM_FUNC(InputWidth, HasInputWidth);
 // can use with SFINAE to catch when a type has a InputHeight() function.
 HAS_MEM_FUNC(InputHeight, HasInputHeight);
 
+// This gives us a HasInputSize<T, U> type (where U is a function pointer) we
+// can use with SFINAE to catch when a type has a InputSize() function.
+HAS_MEM_FUNC(InputSize, HasInputSize);
+
 // This gives us a HasRho<T, U> type (where U is a function pointer) we
 // can use with SFINAE to catch when a type has a Rho() function.
 HAS_MEM_FUNC(Rho, HasRho);

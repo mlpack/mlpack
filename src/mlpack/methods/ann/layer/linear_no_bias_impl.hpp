@@ -38,13 +38,25 @@ LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias(
     outSize(outSize),
     regularizer(regularizer)
 {
-  weights.set_size(outSize * inSize, 1);
+  // Nothing to do here.
+}
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias(
+    const size_t layerSize,
+    RegularizerType regularizer) :
+    inSize(0),
+    outSize(layerSize),
+    regularizer(regularizer)
+{
+  // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::Reset()
 {
+  weights.set_size(outSize * inSize, 1);
   weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
 }
 

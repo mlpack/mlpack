@@ -91,6 +91,59 @@ Convolution<
     InputDataType,
     OutputDataType
 >::Convolution(
+    const size_t filter,
+    const arma::vec& kernelSize,
+    const arma::vec& strides,
+    const std::string& paddingType) :
+    inSize(0),
+    outSize(filter),
+    kernelWidth(kernelSize(0)),
+    kernelHeight(kernelSize(1)),
+    strideWidth(strides(0)),
+    strideHeight(strides(0)),
+    padWLeft(0),
+    padWRight(0),
+    padHBottom(0),
+    padHTop(0),
+    inputWidth(0),
+    inputHeight(0),
+    outputWidth(0),
+    outputHeight(0)
+{
+  // Transform paddingType to lowercase.
+  std::string paddingTypeLow = paddingType;
+  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
+      [](unsigned char c){ return std::tolower(c); });
+
+  if (paddingTypeLow == "valid")
+  {
+    padWLeft = 0;
+    padWRight = 0;
+    padHTop = 0;
+    padHBottom = 0;
+  }
+  else if (paddingTypeLow == "same")
+  {
+    InitializeSamePadding();
+  }
+
+  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+}
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+Convolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::Convolution(
     const size_t inSize,
     const size_t outSize,
     const size_t kernelWidth,
@@ -117,9 +170,6 @@ Convolution<
     outputWidth(0),
     outputHeight(0)
 {
-  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
-      1);
-
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
   util::ToLower(paddingType, paddingTypeLow);
@@ -154,10 +204,12 @@ void Convolution<
     OutputDataType
 >::Reset()
 {
-    weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
-        outSize * inSize, false, false);
-    bias = arma::mat(weights.memptr() + weight.n_elem,
-        outSize, 1, false, false);
+  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) +
+      outSize, 1);
+  weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
+      outSize * inSize, false, false);
+  bias = arma::mat(weights.memptr() + weight.n_elem,
+      outSize, 1, false, false);
 }
 
 template<

@@ -17,6 +17,7 @@
 #include "visitor/delete_visitor.hpp"
 #include "visitor/delta_visitor.hpp"
 #include "visitor/output_parameter_visitor.hpp"
+#include "visitor/output_size_visitor.hpp"
 #include "visitor/reset_visitor.hpp"
 
 #include "init_rules/network_init.hpp"
@@ -329,6 +330,12 @@ class RNN
   void Forward(const InputType& input);
 
   /**
+   * Set the input sizes of the layers in the network and initializes their
+   * weights.
+   */
+  void SetInputSize();
+
+  /**
    * Reset the state of RNN cells in the network for new input sequence.
    */
   void ResetCells();
@@ -366,6 +373,9 @@ class RNN
   //! Instantiated InitializationRule object for initializing the network
   //! parameter.
   InitializationRuleType initializeRule;
+
+  //! The input size.
+  size_t size;
 
   //! The input size.
   size_t inputSize;
@@ -409,6 +419,9 @@ class RNN
   //! List of all module parameters for the backward pass (BBTT).
   std::vector<arma::mat> moduleOutputParameter;
 
+  //! Locally-stored output size visitor.
+  OutputSizeVisitor outputSizeVisitor;
+
   //! Locally-stored weight size visitor.
   WeightSizeVisitor weightSizeVisitor;
 
@@ -449,7 +462,7 @@ template<typename OutputLayerType,
 struct version<
     mlpack::ann::RNN<OutputLayerType, InitializationRuleType, CustomLayer...>>
 {
-  BOOST_STATIC_CONSTANT(int, value = 1);
+  BOOST_STATIC_CONSTANT(int, value = 2);
 };
 
 } // namespace serialization

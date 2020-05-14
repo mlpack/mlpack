@@ -22,6 +22,7 @@
 #include "visitor/gradient_visitor.hpp"
 #include "visitor/set_input_height_visitor.hpp"
 #include "visitor/set_input_width_visitor.hpp"
+#include "visitor/set_input_size_visitor.hpp"
 
 #include <boost/serialization/variant.hpp>
 
@@ -35,6 +36,7 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     OutputLayerType outputLayer, InitializationRuleType initializeRule) :
     outputLayer(std::move(outputLayer)),
     initializeRule(std::move(initializeRule)),
+    size(0),
     width(0),
     height(0),
     reset(false),
@@ -64,7 +66,10 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::ResetData(
   ResetDeterministic();
 
   if (!reset)
+  {
+    size = this->predictors.n_rows;
     ResetParameters();
+  }
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
@@ -156,7 +161,10 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Forward(
     const PredictorsType& inputs, ResponsesType& results)
 {
   if (parameter.is_empty())
+  {
+    size = inputs.n_rows;
     ResetParameters();
+  }
 
   if (!deterministic)
   {
@@ -226,7 +234,10 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::mat predictors, arma::mat& results)
 {
   if (parameter.is_empty())
+  {
+    size = predictors.n_rows;
     ResetParameters();
+  }
 
   if (!deterministic)
   {
@@ -301,7 +312,10 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
     const bool deterministic)
 {
   if (parameter.is_empty())
+  {
+    size = predictors.n_rows;
     ResetParameters();
+  }
 
   if (deterministic != this->deterministic)
   {
@@ -355,7 +369,10 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   if (gradient.is_empty())
   {
     if (parameter.is_empty())
+    {
+      size = predictors.n_rows;
       ResetParameters();
+    }
 
     gradient = arma::zeros<arma::mat>(parameter.n_rows, parameter.n_cols);
   }
@@ -417,6 +434,8 @@ void FFN<OutputLayerType, InitializationRuleType,
 {
   ResetDeterministic();
 
+  SetInputSize();
+
   // Reset the network parameter with the given initialization rule.
   NetworkInitialization<InitializationRuleType,
                         CustomLayers...> networkInit(initializeRule);
@@ -443,6 +462,24 @@ void FFN<OutputLayerType, InitializationRuleType,
   {
     offset += boost::apply_visitor(GradientSetVisitor(gradient, offset),
         network[i]);
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+void FFN<OutputLayerType, InitializationRuleType,
+         CustomLayers...>::SetInputSize()
+{
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    // Set the input size.
+    boost::apply_visitor(SetInputSizeVisitor(size), network[i]);
+
+    // Get the output size.
+    if (boost::apply_visitor(outputSizeVisitor, network[i]) != 0)
+    {
+      size = boost::apply_visitor(outputSizeVisitor, network[i]);
+    }
   }
 }
 
@@ -560,6 +597,12 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     ar & BOOST_SERIALIZATION_NVP(currentInput);
   }
 
+  // Earlier versions didn't have the size parameter.
+  if (version > 1)
+  {
+    ar & BOOST_SERIALIZATION_NVP(size);
+  }
+
   // Earlier versions of the FFN code did not serialize whether or not the model
   // was reset.
   if (version > 0)
@@ -585,6 +628,11 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     if (version == 0)
       reset = false;
 
+    // The earlier versions didn't have the size parameter. We set it to a
+    // default value that will be inferred later.
+    if (version <= 1)
+      size = 0;
+
     size_t offset = 0;
     for (size_t i = 0; i < network.size(); ++i)
     {
@@ -606,6 +654,7 @@ void FFN<OutputLayerType, InitializationRuleType,
 {
   std::swap(outputLayer, network.outputLayer);
   std::swap(initializeRule, network.initializeRule);
+  std::swap(size, network.size);
   std::swap(width, network.width);
   std::swap(height, network.height);
   std::swap(reset, network.reset);
@@ -628,6 +677,7 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     const FFN& network):
     outputLayer(network.outputLayer),
     initializeRule(network.initializeRule),
+    size(network.size),
     width(network.width),
     height(network.height),
     reset(network.reset),
@@ -656,6 +706,7 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     FFN&& network):
     outputLayer(std::move(network.outputLayer)),
     initializeRule(std::move(network.initializeRule)),
+    size(network.size),
     width(network.width),
     height(network.height),
     reset(network.reset),

@@ -37,7 +37,7 @@ class MeanPooling
   MeanPooling();
 
   /**
-   * Create the MeanPooling object using the specified number of units.
+   * Create the MeanPooling object using the specified parameter.
    *
    * @param kernelWidth Width of the pooling window.
    * @param kernelHeight Height of the pooling window.
@@ -48,6 +48,17 @@ class MeanPooling
               const size_t kernelHeight,
               const size_t strideWidth = 1,
               const size_t strideHeight = 1,
+              const bool floor = true);
+
+  /**
+   * Create the MeanPooling object using the specified parameter.
+   *
+   * @param poolSize Factors by which to downscale;
+   * @param strides The height and width of the stride.
+   * @param floor Rounding operator (floor or ceil).
+   */
+  MeanPooling(const arma::vec& poolSize,
+              const arma::vec& strides = arma::vec({1, 1}),
               const bool floor = true);
 
   /**
@@ -105,10 +116,10 @@ class MeanPooling
   size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size.
-  size_t InputSize() const { return inSize; }
+  size_t& InputSize() { return inSize; }
 
   //! Get the output size.
-  size_t OutputSize() const { return outSize; }
+  size_t& OutputSize() { return outSize; }
 
   //! Get the kernel width.
   size_t KernelWidth() const { return kernelWidth; }
