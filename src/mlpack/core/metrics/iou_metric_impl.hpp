@@ -18,20 +18,29 @@
 namespace mlpack {
 namespace metric {
 
-template<bool useCoordinates>
+template<bool UseCoordinates>
 template <typename VecTypeA, typename VecTypeB>
-typename VecTypeA::elem_type IoU<useCoordinates>::Evaluate(
+typename VecTypeA::elem_type IoU<UseCoordinates>::Evaluate(
     const VecTypeA& a,
     const VecTypeB& b)
 {
   Log::Assert(a.n_elem == b.n_elem && a.n_elem == 4, "Incorrect \
       shape for bounding boxes. They must contain 4 elements either be \
-      (x0, y0, x1, y1) or (x0, y0, h, w). Refer to the documentation \
+      {x0, y0, x1, y1} or {x0, y0, h, w}. Refer to the documentation \
       for more information.");
 
-  // Bounding boxes represented as (x0, y0, x1, y1).
-  if (useCoordinates)
+  // Bounding boxes represented as {x0, y0, x1, y1}.
+  if (UseCoordinates)
   {
+    // Check the correctness of bounding box.
+    if (a(0) >= a(2) || a(1) >= a(3) || b(0) >= b(2) || b(1) >= b(3))
+    {
+        Log::Fatal << "Check the correctness of bounding boxes i.e. " <<
+            "{x0, y0} must represent lower left coordinates and " <<
+            "{x1, y1} must represent upper right coordinates of bounding" <<
+            "box." << std::endl;
+    }
+
     typename VecTypeA::elem_type interSectionArea = std::max(0.0,
         std::min(a(2), b(2)) - std::max(a(0), b(0)) + 1) * std::max(0.0,
         std::min(a(3), b(3)) - std::max(a(1), b(1)) + 1);
@@ -42,7 +51,11 @@ typename VecTypeA::elem_type IoU<useCoordinates>::Evaluate(
         (b(2) - b(0) + 1) * (b(3) - b(1) + 1) - interSectionArea));
   }
 
-  // Bounding boxes represented as (x0, y0, h, w).
+  // Bounding boxes represented as {x0, y0, h, w}.
+  // Check correctness of bounding box.
+  Log::Assert(a(2) > 0 && b(2) > 0 && a(3) > 0 && b(3) > 0, "Height and width \
+      of bounding boxes must be greater than zero.");
+
   typename VecTypeA::elem_type interSectionArea = std::max(0.0,
       std::min(a(0) + a(2), b(0) + b(2)) - std::max(a(0), b(0)) + 1)
       * std::max(0.0, std::min(a(1) + a(3), b(1) + b(3)) - std::max(a(1),
@@ -50,6 +63,14 @@ typename VecTypeA::elem_type IoU<useCoordinates>::Evaluate(
 
   return interSectionArea / (1.0 * ((a(2) + 1) * (a(3) + 1) + (b(2) + 1) *
       (b(3) + 1) - interSectionArea));
+}
+template<bool UseCoordinates>
+template<typename Archive>
+void IoU<UseCoordinates>::serialize(
+    Archive& ar,
+    const unsigned int /* version */)
+{
+  ar & BOOST_SERIALIZATION_NVP(useCoordinates);
 }
 
 } // namespace metric

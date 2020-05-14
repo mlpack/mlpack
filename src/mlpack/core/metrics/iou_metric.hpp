@@ -35,7 +35,7 @@ namespace metric {
  *                        in the formate x0, y0, x1, y1. Else the bounding box is
  *                        represented as x0, y0, h, w.
  */
-template<bool useCoordinates = false>
+template<bool UseCoordinates = false>
 class IoU
 {
  public:
@@ -59,14 +59,11 @@ class IoU
   static typename VecTypeA::elem_type Evaluate(const VecTypeA& a,
                                                const VecTypeB& b);
 
-  static const bool UseCoordinates = useCoordinates;
+  static const bool useCoordinates = UseCoordinates;
 
   //! Serialize the metric.
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */)
-  {
-    // Nothing to do here.
-  }
+  void serialize(Archive& ar, const unsigned int /* version */);
 }; // class IoU
 
 } // namespace metric
