@@ -124,12 +124,12 @@ class Linear
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the weight of the layer.
-  InputDataType const& Weight() { return weight; }
+  InputDataType const& Weight() const { return weight; }
   //! Modify the weight of the layer.
   InputDataType& Weight() { return weight; }
 
   //! Get the bias of the layer.
-  InputDataType const& Bias() { return bias; }
+  InputDataType const& Bias() const { return bias; }
   //! Modify the bias weights of the layer.
   InputDataType& Bias() { return bias; }
 
