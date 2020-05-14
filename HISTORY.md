@@ -33,6 +33,8 @@
 
 ### mlpack 3.3.0
 ###### 2020-04-07
+  * Added `Normal Distribution` to `ann/dists` (#2382).
+
   * Templated return type of `Forward function` of loss functions (#2339).
 
   * Added `R2 Score` regression metric (#2323).
