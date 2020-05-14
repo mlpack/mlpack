@@ -32,7 +32,13 @@ RBF<InputDataType, OutputDataType>::RBF(
     inSize(inSize),
     outSize(outSize)
 {
-  // Nothing to do here.
+  centres = arma::mat(inSize, outSize, arma::fill::randu);
+}
+
+template<typename InputDataType, typename OutputDataType>
+void RBF<InputDataType, OutputDataType>::Reset()
+{
+  centres = arma::normcdf(centres, 0, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -41,16 +47,14 @@ void RBF<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input,
     arma::Mat<eT>& output)
 {
-  centres = arma::mat(input.n_rows, outSize, arma::fill::randu);
-  centres = arma::normcdf(centres, 0, 1);
-  arma::cube x = arma::cube(input.n_rows, outSize, input.n_cols);
+  arma::cube x = arma::cube(inSize, outSize, input.n_cols);
 
   for (size_t i = 0; i < input.n_cols; i++)
   {
     x.slice(i).each_col() = input.col(i);
   }
 
-  distances = arma::mat(input.n_rows, input.n_cols);
+  distances = arma::mat(inSize, input.n_cols);
 
   for (size_t i = 0; i < input.n_cols; i++)
   {

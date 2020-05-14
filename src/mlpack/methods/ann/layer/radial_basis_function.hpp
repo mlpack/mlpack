@@ -2,6 +2,7 @@
  * @file radial_basis_function.hpp
  * @author Himanshu Pathak
  *
+ * Definition of the Radial Basis Function module class.
  *
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -19,6 +20,11 @@ namespace ann /** Artificial Neural Network. */ {
 
 
 /**
+/**
+ * Implementation of the Radial Basis Function layer. The RBF class when use with a 
+ * non-linear activation function acts as a Radial Basis Function which can be used
+ * with Feed-Forward neural network.
+ *
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -42,6 +48,11 @@ class RBF
    */
   RBF(const size_t inSize,
       const size_t outSize);
+
+  /**
+   * Reset the layer parameter.
+   */
+  void Reset();
 
   /**
    * Ordinary feed forward pass of the radial basis function.
