@@ -394,21 +394,15 @@ BOOST_AUTO_TEST_CASE(SimpleLinearLayerTest)
  */
 BOOST_AUTO_TEST_CASE(LinearLayerWeightInitializationTest)
 {
-  size_t inSize = 10, outSize = 10;
+  size_t inSize = 10, outSize = 4;
   Linear<>* linear = new Linear<>(inSize, outSize);
   linear->Reset();
   RandomInitialization().Initialize(linear->Weight(), outSize, inSize);
   linear->Bias().ones();
 
-  arma::colvec expectedParameters = { 0.5736, -0.4990, 0.4213, 0.8933, -0.9615,
-      -0.1902, -0.4974, -0.9546, 0.0413, -0.3107, -0.4516, 0.1221, -0.7199,
-      0.0877, 0.0438, 0.7142, 1.0000, 1.0000, 1.0000, 1.0000 };
-
-  for (size_t i = 0; i < linear->Parameters().size(); ++i)
-  {
-    BOOST_REQUIRE_CLOSE_FRACTION(linear->Parameters()[i], expectedParameters[i],
-        1e-04);
-  }
+  BOOST_REQUIRE_EQUAL(linear->Weight().n_rows, outSize);
+  BOOST_REQUIRE_EQUAL(linear->Weight().n_cols, inSize);
+  BOOST_REQUIRE_EQUAL(linear->Bias().n_rows, outSize);
 }
 
 /**
