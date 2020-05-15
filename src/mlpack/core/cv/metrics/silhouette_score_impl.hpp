@@ -22,62 +22,79 @@ double SilhouetteScore::Overall(const DataType& X,
                                 const arma::Row<size_t>& labels,
                                 const Metric& metric)
 {
-  AssertSizes(data, labels, "SilhouetteScore::Overall()");
-  DataType distances = PairwiseDistances(X, metric);
-  return arma::mean(SamplesScore(distances, labels, metric));
+  AssertSizes(X, labels, "SilhouetteScore::Overall()");
+  return arma::mean(SamplesScore(X, labels, metric));
 }
 
-template<typename DataType, typename Metric>
+template<typename DataType>
 arma::rowvec SilhouetteScore::SamplesScore(const DataType& distances,
-                                const arma::Row<size_t>& labels,
-                                const Metric& metric)
+                                           const arma::Row<size_t>& labels)
 {
-  AssertSizes(data, labels, "SilhouetteScore::SamplesScore()");
+  AssertSizes(distances, labels, "SilhouetteScore::SamplesScore()");
 
   // Stores the silhouette scores of individual samples
   arma::rowvec sampleScores(distances.n_rows);
   // Finds one index per cluster.
-  arma::ucolvec clusterLabels = arma::find_unique(labels);
-  double interClusterDistance, intraClusterDistance;
-  double minIntraClusterDistance = DBL_MAX;
+  arma::ucolvec clusterLabels = arma::find_unique(labels, false);
+
   for (size_t i = 0; i < distances.n_rows; i++)
   {
-    for (size_t j = 0; j < clusterLabels; j++)
+    double interClusterDistance = DBL_MAX, intraClusterDistance = 0;
+    double minInterClusterDistance = DBL_MAX;    
+    for (size_t j = 0; j < clusterLabels.n_elem; j++)
     {
-      if (labels(i) != clusterLabels(i) {
-        intraClusterDistance = DistanceFromCluster(
-          distances.col(i), labels, clusterLabels(i), metric, false
+      size_t clusterLabel = labels(clusterLabels(j));
+      if (labels(i) != clusterLabel) {
+        interClusterDistance = MeanDistanceFromCluster(
+          distances.col(i), labels, clusterLabel, false
         );
-        if (intraClusterDistance < minIntraClusterDistance) {
-          minIntraClusterDistance = intraClusterDistance;
+        if (interClusterDistance < minInterClusterDistance) {
+          minInterClusterDistance = interClusterDistance;
         }
       }
       else {
-        interClusterDistance = DistanceFromCluster(
-          distances.col(i), labels, clusterLabels(i), metric, true
+        intraClusterDistance = MeanDistanceFromCluster(
+          distances.col(i), labels, clusterLabel, true
         );
+        if (intraClusterDistance == 0) {
+          // s(i) = 0, no more calculation needed.
+          break;
+        }
       }
     }
-    sampleScores(i) = minIntraClusterDistance - interClusterDistance;
-    sampleScores(i) /= std::max(intraClusterDistance, minIntraClusterDistance);
+    if (intraClusterDistance == 0) {
+      // i is the only element in the cluster.
+      sampleScores(i) = 0.0;
+    }
+    else {
+      sampleScores(i) = minInterClusterDistance - intraClusterDistance;
+      sampleScores(i) /= std::max(intraClusterDistance, minInterClusterDistance);
+    }
   }
-  
   return sampleScores;
 }
 
 template<typename DataType, typename Metric>
-double SilhouetteScore::DistanceFromCluster(const arma::rowvec& distances,
-                                                  const arma::Row<size_t>& labels,
-                                                  const size_t& elemLabel,
-                                                  const Metric& metric,
-                                                  const bool& sameCluster)
+arma::rowvec SilhouetteScore::SamplesScore(const DataType& X,
+                                           const arma::Row<size_t>& labels,
+                                           const Metric& metric)
 {
-  AssertSizes(distances, labels, "SilhouetteScore::DistanceFromCluster()");
+  AssertSizes(X, labels, "SilhouetteScore::SamplesScore()");
+  DataType distances = PairwiseDistances(X, metric);
+  return SamplesScore(distances, labels);
+}
 
-  // Find indices of elements with same label as subject element.
+double SilhouetteScore::MeanDistanceFromCluster(const arma::colvec& distances,
+                                                const arma::Row<size_t>& labels,
+                                                const size_t& elemLabel,
+                                                const bool& sameCluster)
+{
+  // Find indices of elements with same label as elemLabel.
   arma::uvec sameClusterIndices = arma::find(labels == elemLabel);
+
+  // Numver of elements in the given cluster.
   size_t numSameCluster = sameClusterIndices.n_elem;
-  if (sameCluster == true && numSameCluster == 1)
+  if ((sameCluster == true) && (numSameCluster == 1))
   {
     // Return 0 if subject element is the only element in cluster.
     return 0.0;
