@@ -400,9 +400,18 @@ BOOST_AUTO_TEST_CASE(LinearLayerWeightInitializationTest)
   RandomInitialization().Initialize(linear->Weight(), outSize, inSize);
   linear->Bias().ones();
 
+  BOOST_CHECK_EQUAL_COLLECTIONS(linear->Weight().begin(),
+      linear->Weight().end(), linear->Parameters().begin(),
+      linear->Parameters().end() - outSize);
+
+  BOOST_CHECK_EQUAL_COLLECTIONS(linear->Bias().begin(),
+      linear->Bias().end(), linear->Parameters().begin() + inSize * outSize,
+      linear->Parameters().end());
+
   BOOST_REQUIRE_EQUAL(linear->Weight().n_rows, outSize);
   BOOST_REQUIRE_EQUAL(linear->Weight().n_cols, inSize);
   BOOST_REQUIRE_EQUAL(linear->Bias().n_rows, outSize);
+  BOOST_REQUIRE_EQUAL(linear->Parameters().n_rows, inSize * outSize + outSize);
 }
 
 /**
