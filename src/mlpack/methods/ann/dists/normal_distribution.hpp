@@ -1,5 +1,5 @@
 /**
- * @file normal_distribution.hpp
+ * @file methods/ann/dists/normal_distribution.hpp
  * @author xiaohong ji
  * @author Nishant Kumar
  *
