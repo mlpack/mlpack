@@ -174,6 +174,9 @@ class Highway
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the number of input units.
+  size_t InSize() const { return inSize; }
+
   /**
    * Serialize the layer.
    */

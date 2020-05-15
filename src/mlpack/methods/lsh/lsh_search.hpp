@@ -63,8 +63,12 @@ namespace neighbor {
  * queries.
  *
  * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
+ * @tparam MatType Type of matrix to use to store the data.
  */
-template<typename SortPolicy = NearestNeighborSort>
+template<
+    typename SortPolicy = NearestNeighborSort,
+    typename MatType = arma::mat
+>
 class LSHSearch
 {
  public:
@@ -90,7 +94,7 @@ class LSHSearch
    *     value of 0 indicates that there is no limit (so the second hash table
    *     can be arbitrarily large---be careful!).
    */
-  LSHSearch(arma::mat referenceSet,
+  LSHSearch(MatType referenceSet,
             const arma::cube& projections,
             const double hashWidth = 0.0,
             const size_t secondHashSize = 99901,
@@ -118,7 +122,7 @@ class LSHSearch
    *     value of 0 indicates that there is no limit (so the second hash table
    *     can be arbitrarily large---be careful!).
    */
-  LSHSearch(arma::mat referenceSet,
+  LSHSearch(MatType referenceSet,
             const size_t numProj,
             const size_t numTables,
             const double hashWidth = 0.0,
@@ -184,7 +188,7 @@ class LSHSearch
    *     we set numProj = a, numTables = c. b is the reference set
    *     dimensionality.
    */
-  void Train(arma::mat referenceSet,
+  void Train(MatType referenceSet,
              const size_t numProj,
              const size_t numTables,
              const double hashWidth = 0.0,
@@ -213,7 +217,7 @@ class LSHSearch
    * @param T The number of additional probing bins to examine with multiprobe
    *     LSH. If T = 0, classic single-probe LSH is run (default).
    */
-  void Search(const arma::mat& querySet,
+  void Search(const MatType& querySet,
               const size_t k,
               arma::Mat<size_t>& resultingNeighbors,
               arma::mat& distances,
@@ -359,7 +363,7 @@ class LSHSearch
   void BaseCase(const size_t queryIndex,
                 const arma::uvec& referenceIndices,
                 const size_t k,
-                const arma::mat& querySet,
+                const MatType& querySet,
                 arma::Mat<size_t>& neighbors,
                 arma::mat& distances) const;
 
@@ -421,7 +425,7 @@ class LSHSearch
   bool PerturbationValid(const std::vector<bool>& A) const;
 
   //! Reference dataset.
-  arma::mat referenceSet;
+  MatType referenceSet;
 
   //! The number of projections.
   size_t numProj;

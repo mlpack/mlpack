@@ -142,6 +142,12 @@ class LayerNorm
   //! Get the variance across single training data.
   OutputDataType Variance() { return variance; }
 
+  //! Get the number of input units.
+  size_t InSize() const { return size; }
+
+  //! Get the value of epsilon.
+  double Epsilon() const { return eps; }
+
   /**
    * Serialize the layer.
    */
