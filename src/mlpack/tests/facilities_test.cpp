@@ -36,7 +36,8 @@ BOOST_AUTO_TEST_CASE(AssertSizesTest)
   arma::Row<size_t> labels;
   data::Load("iris_test_labels.csv", labels);
 
-  BOOST_REQUIRE_THROW(AssertSizes(dataset, labels, "test"), std::invalid_argument);
+  BOOST_REQUIRE_THROW(
+    AssertSizes(dataset, labels, "test"), std::invalid_argument);
 }
 
 

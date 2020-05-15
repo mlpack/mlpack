@@ -40,22 +40,19 @@ arma::rowvec SilhouetteScore::SamplesScore(const DataType& distances,
   for (size_t i = 0; i < distances.n_rows; i++)
   {
     double interClusterDistance = DBL_MAX, intraClusterDistance = 0;
-    double minInterClusterDistance = DBL_MAX;    
+    double minInterClusterDistance = DBL_MAX;
     for (size_t j = 0; j < clusterLabels.n_elem; j++)
     {
       size_t clusterLabel = labels(clusterLabels(j));
       if (labels(i) != clusterLabel) {
         interClusterDistance = MeanDistanceFromCluster(
-          distances.col(i), labels, clusterLabel, false
-        );
+          distances.col(i), labels, clusterLabel, false);
         if (interClusterDistance < minInterClusterDistance) {
           minInterClusterDistance = interClusterDistance;
         }
-      }
-      else {
+      } else {
         intraClusterDistance = MeanDistanceFromCluster(
-          distances.col(i), labels, clusterLabel, true
-        );
+          distances.col(i), labels, clusterLabel, true);
         if (intraClusterDistance == 0) {
           // s(i) = 0, no more calculation needed.
           break;
@@ -65,10 +62,10 @@ arma::rowvec SilhouetteScore::SamplesScore(const DataType& distances,
     if (intraClusterDistance == 0) {
       // i is the only element in the cluster.
       sampleScores(i) = 0.0;
-    }
-    else {
+    } else {
       sampleScores(i) = minInterClusterDistance - intraClusterDistance;
-      sampleScores(i) /= std::max(intraClusterDistance, minInterClusterDistance);
+      sampleScores(i) /= std::max(
+        intraClusterDistance, minInterClusterDistance);
     }
   }
   return sampleScores;
@@ -98,9 +95,7 @@ double SilhouetteScore::MeanDistanceFromCluster(const arma::colvec& distances,
   {
     // Return 0 if subject element is the only element in cluster.
     return 0.0;
-  }
-  else
-  {
+  } else {
     double distance = arma::accu(distances.elem(sameClusterIndices));
     distance /= (numSameCluster - sameCluster);
     return distance;
