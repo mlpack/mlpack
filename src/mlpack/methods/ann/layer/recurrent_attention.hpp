@@ -140,6 +140,12 @@ class RecurrentAttention
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the module output size.
+  size_t OutSize() const { return outSize; }
+
+  //! Get the number of steps to backpropagate through time.
+  size_t const& Rho() const { return rho; }
+
   /**
    * Serialize the layer
    */

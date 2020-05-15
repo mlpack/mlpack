@@ -213,9 +213,7 @@ static void mlpackMain()
   // Now, do we have any matrix to encode?
   if (CLI::HasParam("test"))
   {
-    mat matY = std::move(CLI::GetParam<mat>("test"));
-
-    if (matY.n_rows != lcc->Dictionary().n_rows)
+    if (CLI::GetParam<mat>("test").n_rows != lcc->Dictionary().n_rows)
     {
       const size_t dictionaryDimension = lcc->Dictionary().n_rows;
       if (!CLI::HasParam("input_model"))
@@ -223,8 +221,10 @@ static void mlpackMain()
       Log::Fatal << "Model was trained with a dimensionality of "
           << dictionaryDimension << ", but data in test file "
           << CLI::GetPrintableParam<mat>("test") << " has a dimensionality of "
-          << matY.n_rows << "!" << endl;
+          << CLI::GetParam<mat>("test").n_rows << "!" << endl;
     }
+
+    mat matY = std::move(CLI::GetParam<mat>("test"));
 
     // Normalize each point if the user asked for it.
     if (CLI::HasParam("normalize"))

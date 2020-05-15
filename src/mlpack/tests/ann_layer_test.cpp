@@ -122,6 +122,19 @@ BOOST_AUTO_TEST_CASE(GradientAddLayerTest)
 }
 
 /**
+ * Test that the function that can access the outSize parameter of
+ * the Add layer works.
+ */
+BOOST_AUTO_TEST_CASE(AddLayerParametersTest)
+{
+  // Parameter : outSize.
+  Add<> layer(7);
+
+  // Make sure we can get the parameter successfully.
+  BOOST_REQUIRE_EQUAL(layer.OutputSize(), 7);
+}
+
+/**
  * Simple constant module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleConstantLayerTest)
@@ -164,6 +177,19 @@ BOOST_AUTO_TEST_CASE(JacobianConstantLayerTest)
     double error = JacobianTest(module, input);
     BOOST_REQUIRE_LE(error, 1e-5);
   }
+}
+
+/**
+ * Test that the function that can access the outSize parameter of the
+ * Constant layer works.
+ */
+BOOST_AUTO_TEST_CASE(ConstantLayerParametersTest)
+{
+  // Parameter : outSize.
+  Constant<> layer(7);
+
+  // Make sure we can get the parameter successfully.
+  BOOST_REQUIRE_EQUAL(layer.OutSize(), 7);
 }
 
 /**
@@ -706,6 +732,20 @@ BOOST_AUTO_TEST_CASE(SimpleSelectLayerTest)
 }
 
 /**
+ * Test that the functions that can access the parameters of the
+ * Select layer work.
+ */
+BOOST_AUTO_TEST_CASE(SelectLayerParametersTest)
+{
+  // Parameter order : index, elements.
+  Select<> layer(3, 5);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer.Index(), 3);
+  BOOST_REQUIRE_EQUAL(layer.NumElements(), 5);
+}
+
+/**
  * Simple join module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleJoinLayerTest)
@@ -841,6 +881,30 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
 }
 
 /**
+ * Test that the functions that can modify and access the parameters of the
+ * LSTM layer work.
+ */
+BOOST_AUTO_TEST_CASE(LSTMLayerParametersTest)
+{
+  // Parameter order : inSize, outSize, rho.
+  LSTM<> layer1(1, 2, 3);
+  LSTM<> layer2(1, 2, 4);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), 1);
+  BOOST_REQUIRE_EQUAL(layer1.OutSize(), 2);
+  BOOST_REQUIRE_EQUAL(layer1.Rho(), 3);
+
+  // Now modify the parameters to match the second layer.
+  layer1.Rho() = 4;
+
+  // Now ensure all the results are the same.
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), layer2.InSize());
+  BOOST_REQUIRE_EQUAL(layer2.OutSize(), layer2.OutSize());
+  BOOST_REQUIRE_EQUAL(layer1.Rho(), layer2.Rho());
+}
+
+/**
  * Test the FastLSTM layer with a user defined rho parameter and without.
  */
 BOOST_AUTO_TEST_CASE(FastLSTMRrhoTest)
@@ -922,6 +986,30 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
   // approximation of the sigmoid function the estimated gradient is not
   // correct.
   BOOST_REQUIRE_LE(CheckGradient(function), 0.2);
+}
+
+/**
+ * Test that the functions that can modify and access the parameters of the
+ * Fast LSTM layer work.
+ */
+BOOST_AUTO_TEST_CASE(FastLSTMLayerParametersTest)
+{
+  // Parameter order : inSize, outSize, rho.
+  FastLSTM<> layer1(1, 2, 3);
+  FastLSTM<> layer2(1, 2, 4);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), 1);
+  BOOST_REQUIRE_EQUAL(layer1.OutSize(), 2);
+  BOOST_REQUIRE_EQUAL(layer1.Rho(), 3);
+
+  // Now modify the parameters to match the second layer.
+  layer1.Rho() = 4;
+
+  // Now ensure all the results are the same.
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), layer2.InSize());
+  BOOST_REQUIRE_EQUAL(layer2.OutSize(), layer2.OutSize());
+  BOOST_REQUIRE_EQUAL(layer1.Rho(), layer2.Rho());
 }
 
 /**
@@ -1095,6 +1183,30 @@ BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
                                      true),  // Write into cell state.
                                      std::runtime_error);
   }
+}
+
+/**
+ * Test that the functions that can modify and access the parameters of the
+ * GRU layer work.
+ */
+BOOST_AUTO_TEST_CASE(GRULayerParametersTest)
+{
+  // Parameter order : inSize, outSize, rho.
+  GRU<> layer1(1, 2, 3);
+  GRU<> layer2(1, 2, 4);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), 1);
+  BOOST_REQUIRE_EQUAL(layer1.OutSize(), 2);
+  BOOST_REQUIRE_EQUAL(layer1.Rho(), 3);
+
+  // Now modify the parameters to match the second layer.
+  layer1.Rho() = 4;
+
+  // Now ensure all the results are the same.
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), layer2.InSize());
+  BOOST_REQUIRE_EQUAL(layer2.OutSize(), layer2.OutSize());
+  BOOST_REQUIRE_EQUAL(layer1.Rho(), layer2.Rho());
 }
 
 /**
@@ -1319,6 +1431,20 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
 }
 
 /**
+ * Test that the function that can access the axis parameter of the
+ * Concat layer works.
+ */
+BOOST_AUTO_TEST_CASE(ConcatLayerParametersTest)
+{
+  // Parameter order : inputSize{width, height, channels}, axis, model, run.
+  arma::Row<size_t> inputSize{128, 128, 3};
+  Concat<> layer(inputSize, 2, false, true);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer.ConcatAxis(), 2);
+}
+
+/**
  * Concat layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
@@ -1479,6 +1605,20 @@ BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
 }
 
 /**
+ * Test that the functions that can access the parameters of the
+ * Lookup layer work.
+ */
+BOOST_AUTO_TEST_CASE(LookupLayerParametersTest)
+{
+  // Parameter order : inSize, outSize.
+  Lookup<> layer(5, 7);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer.InSize(), 5);
+  BOOST_REQUIRE_EQUAL(layer.OutSize(), 7);
+}
+
+/**
  * Simple LogSoftMax module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
@@ -1533,6 +1673,38 @@ BOOST_AUTO_TEST_CASE(SimpleBilinearInterpolationLayerTest)
   layer.Backward(output, output, unzoomedOutput);
   CheckMatrices(unzoomedOutput - expectedOutput,
       arma::zeros(input.n_rows), 1e-12);
+}
+
+/**
+ * Test that the functions that can modify and access the parameters of the
+ * Bilinear Interpolation layer work.
+ */
+BOOST_AUTO_TEST_CASE(BilinearInterpolationLayerParametersTest)
+{
+  // Parameter order : inRowSize, inColSize, outRowSize, outColSize, depth.
+  BilinearInterpolation<> layer1(1, 2, 3, 4, 5);
+  BilinearInterpolation<> layer2(2, 3, 4, 5, 6);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer1.InRowSize(), 1);
+  BOOST_REQUIRE_EQUAL(layer1.InColSize(), 2);
+  BOOST_REQUIRE_EQUAL(layer1.OutRowSize(), 3);
+  BOOST_REQUIRE_EQUAL(layer1.OutColSize(), 4);
+  BOOST_REQUIRE_EQUAL(layer1.InDepth(), 5);
+
+  // Now modify the parameters to match the second layer.
+  layer1.InRowSize() = 2;
+  layer1.InColSize() = 3;
+  layer1.OutRowSize() = 4;
+  layer1.OutColSize() = 5;
+  layer1.InDepth() = 6;
+
+  // Now ensure all results are the same.
+  BOOST_REQUIRE_EQUAL(layer1.InRowSize(), layer2.InRowSize());
+  BOOST_REQUIRE_EQUAL(layer1.InColSize(), layer2.InColSize());
+  BOOST_REQUIRE_EQUAL(layer1.OutRowSize(), layer2.OutRowSize());
+  BOOST_REQUIRE_EQUAL(layer1.OutColSize(), layer2.OutColSize());
+  BOOST_REQUIRE_EQUAL(layer1.InDepth(), layer2.InDepth());
 }
 
 /**
@@ -1634,6 +1806,20 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormTest)
 }
 
 /**
+ * Test that the functions that can access the parameters of the
+ * Batch Norm layer work.
+ */
+BOOST_AUTO_TEST_CASE(BatchNormLayerParametersTest)
+{
+  // Parameter order : size, eps.
+  BatchNorm<> layer(7, 1e-3);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer.InputSize(), 7);
+  BOOST_REQUIRE_EQUAL(layer.Epsilon(), 1e-3);
+}
+
+/**
  * VirtualBatchNorm layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientVirtualBatchNormTest)
@@ -1677,6 +1863,23 @@ BOOST_AUTO_TEST_CASE(GradientVirtualBatchNormTest)
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * Test that the functions that can modify and access the parameters of the
+ * Virtual Batch Norm layer work.
+ */
+BOOST_AUTO_TEST_CASE(VirtualBatchNormLayerParametersTest)
+{
+  arma::mat input = arma::randn(5, 256);
+  arma::mat referenceBatch = arma::mat(input.memptr(), input.n_rows, 16);
+
+  // Parameter order : referenceBatch, size, eps.
+  VirtualBatchNorm<> layer(referenceBatch, 5, 1e-3);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer.InSize(), 5);
+  BOOST_REQUIRE_EQUAL(layer.Epsilon(), 1e-3);
 }
 
 /**
@@ -2204,6 +2407,20 @@ BOOST_AUTO_TEST_CASE(GradientLayerNormTest)
 }
 
 /**
+ * Test that the functions that can access the parameters of the
+ * Layer Norm layer work.
+ */
+BOOST_AUTO_TEST_CASE(LayerNormLayerParametersTest)
+{
+  // Parameter order : size, eps.
+  LayerNorm<> layer(5, 1e-3);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer.InSize(), 5);
+  BOOST_REQUIRE_EQUAL(layer.Epsilon(), 1e-3);
+}
+
+/**
  * Test if the AddMerge layer is able to forward the
  * Forward/Backward/Gradient calls.
  */
@@ -2354,6 +2571,37 @@ BOOST_AUTO_TEST_CASE(SubviewBatchTest)
   moduleDef.Forward(input, outputDef);
   output = arma::ones(24, 2);
   CheckMatrices(outputDef, output);
+}
+
+/**
+ * Test that the functions that can modify and access the parameters of the
+ * Subview layer work.
+ */
+BOOST_AUTO_TEST_CASE(SubviewLayerParametersTest)
+{
+  // Parameter order : inSize, beginRow, endRow, beginCol, endCol.
+  Subview<> layer1(1, 2, 3, 4, 5);
+  Subview<> layer2(1, 3, 4, 5, 6);
+
+  // Make sure we can get the parameters correctly.
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), 1);
+  BOOST_REQUIRE_EQUAL(layer1.BeginRow(), 2);
+  BOOST_REQUIRE_EQUAL(layer1.EndRow(), 3);
+  BOOST_REQUIRE_EQUAL(layer1.BeginCol(), 4);
+  BOOST_REQUIRE_EQUAL(layer1.EndCol(), 5);
+
+  // Now modify the parameters to match the second layer.
+  layer1.BeginRow() = 3;
+  layer1.EndRow() = 4;
+  layer1.BeginCol() = 5;
+  layer1.EndCol() = 6;
+
+  // Now ensure all results are the same.
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), layer2.InSize());
+  BOOST_REQUIRE_EQUAL(layer1.BeginRow(), layer2.BeginRow());
+  BOOST_REQUIRE_EQUAL(layer1.EndRow(), layer2.EndRow());
+  BOOST_REQUIRE_EQUAL(layer1.BeginCol(), layer2.BeginCol());
+  BOOST_REQUIRE_EQUAL(layer1.EndCol(), layer2.EndCol());
 }
 
 /*
@@ -2525,6 +2773,22 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerBetaTest)
 }
 
 /**
+ * Test that the functions that can access the parameters of the
+ * Reparametrization layer work.
+ */
+BOOST_AUTO_TEST_CASE(ReparametrizationLayerParametersTest)
+{
+  // Parameter order : latentSize, stochastic, includeKL, beta.
+  Reparametrization<> layer(5, false, false, 2);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer.OutputSize(), 5);
+  BOOST_REQUIRE_EQUAL(layer.Stochastic(), false);
+  BOOST_REQUIRE_EQUAL(layer.IncludeKL(), false);
+  BOOST_REQUIRE_EQUAL(layer.Beta(), 2);
+}
+
+/**
  * Simple residual module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleResidualLayerTest)
@@ -2604,6 +2868,19 @@ BOOST_AUTO_TEST_CASE(SimpleHighwayLayerTest)
   delete highway;
   delete linearA;
   delete linearB;
+}
+
+/**
+ * Test that the function that can access the inSize parameter of the
+ * Highway layer works.
+ */
+BOOST_AUTO_TEST_CASE(HighwayLayerParametersTest)
+{
+  // Parameter order : inSize, model.
+  Highway<> layer(1, true);
+
+  // Make sure we can get the parameter successfully.
+  BOOST_REQUIRE_EQUAL(layer.InSize(), 1);
 }
 
 /**
@@ -3117,4 +3394,259 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
   BOOST_REQUIRE_EQUAL(output.n_elem, 4);
   BOOST_REQUIRE_EQUAL(output.n_cols, 1);
 }
+
+/**
+ * Test that the functions that can modify and access the parameters of the
+ * Glimpse layer work.
+ */
+BOOST_AUTO_TEST_CASE(GlimpseLayerParametersTest)
+{
+  // Parameter order : inSize, size, depth, scale, inputWidth, inputHeight.
+  Glimpse<> layer1(1, 2, 3, 4, 5, 6);
+  Glimpse<> layer2(1, 2, 3, 4, 6, 7);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), 6);
+  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), 5);
+  BOOST_REQUIRE_EQUAL(layer1.Scale(), 4);
+  BOOST_REQUIRE_EQUAL(layer1.Depth(), 3);
+  BOOST_REQUIRE_EQUAL(layer1.GlimpseSize(), 2);
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), 1);
+
+  // Now modify the parameters to match the second layer.
+  layer1.InputHeight() = 7;
+  layer1.InputWidth() = 6;
+
+  // Now ensure that all the results are the same.
+  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), layer2.InputHeight());
+  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), layer2.InputWidth());
+  BOOST_REQUIRE_EQUAL(layer1.Scale(), layer2.Scale());
+  BOOST_REQUIRE_EQUAL(layer1.Depth(), layer2.Depth());
+  BOOST_REQUIRE_EQUAL(layer1.GlimpseSize(), layer2.GlimpseSize());
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), layer2.InSize());
+}
+
+/**
+ * Test that the function that can access the stdev parameter of the
+ * Reinforce Normal layer works.
+ */
+BOOST_AUTO_TEST_CASE(ReinforceNormalLayerParametersTest)
+{
+  // Parameter : stdev.
+  ReinforceNormal<> layer(4.0);
+
+  // Make sure we can get the parameter successfully.
+  BOOST_REQUIRE_EQUAL(layer.StandardDeviation(), 4.0);
+}
+
+/**
+ * Test that the function that can access the parameters of the
+ * VR Class Reward layer works.
+ */
+BOOST_AUTO_TEST_CASE(VRClassRewardLayerParametersTest)
+{
+  // Parameter order : scale, sizeAverage.
+  VRClassReward<> layer(2, false);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer.Scale(), 2);
+  BOOST_REQUIRE_EQUAL(layer.SizeAverage(), false);
+}
+
+/**
+ * Simple test for Adaptive pooling for Max Pooling layer.
+ */
+BOOST_AUTO_TEST_CASE(AdaptiveMaxPoolingTestCase)
+{
+  // For rectangular input.
+  arma::mat input = arma::mat(12, 1);
+  arma::mat output, delta;
+
+  input.zeros();
+  input(0) = 1;
+  input(1) = 2;
+  input(2) = 3;
+  input(3) = input(8) = 7;
+  input(4) = 4;
+  input(5) = 5;
+  input(6) = input(7) = 6;
+  input(10) = 8;
+  input(11) = 9;
+  // Output-Size should be 2 x 2.
+  // Square output.
+  AdaptiveMaxPooling<> module1(2, 2);
+  module1.InputHeight() = 3;
+  module1.InputWidth() = 4;
+  module1.Forward(input, output);
+  // Calculated using torch.nn.AdaptiveMaxPool2d().
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 28);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 4);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  // Test the Backward Function.
+  module1.Backward(input, output, delta);
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 28.0);
+
+  // For Square input.
+  input = arma::mat(9, 1);
+  input.zeros();
+  input(0) = 6;
+  input(1) = 3;
+  input(2) = 9;
+  input(3) = 3;
+  input(6) = 3;
+  // Output-Size should be 1 x 2.
+  // Rectangular output.
+  AdaptiveMaxPooling<> module2(2, 1);
+  module2.InputHeight() = 3;
+  module2.InputWidth() = 3;
+  module2.Forward(input, output);
+  // Calculated using torch.nn.AdaptiveMaxPool2d().
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 15.0);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 2);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  // Test the Backward Function.
+  module2.Backward(input, output, delta);
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 15.0);
+
+  // For Square input.
+  input = arma::mat(16, 1);
+  input.zeros();
+  input(0) = 6;
+  input(1) = 3;
+  input(2) = 9;
+  input(4) = 3;
+  input(8) = 3;
+  // Output-Size should be 3 x 3.
+  // Square output.
+  AdaptiveMaxPooling<> module3(std::tuple<size_t, size_t>(3, 3));
+  module3.InputHeight() = 4;
+  module3.InputWidth() = 4;
+  module3.Forward(input, output);
+  // Calculated using torch.nn.AdaptiveMaxPool2d().
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 30.0);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 9);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  // Test the Backward Function.
+  module3.Backward(input, output, delta);
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 30.0);
+
+  // For Rectangular input.
+  input = arma::mat(20, 1);
+  input.zeros();
+  input(0) = 1;
+  input(1) = 1;
+  input(3) = 1;
+  // Output-Size should be 2 x 2.
+  // Square output.
+  AdaptiveMaxPooling<> module4(std::tuple<size_t, size_t>(2, 2));
+  module4.InputHeight() = 4;
+  module4.InputWidth() = 5;
+  module4.Forward(input, output);
+  // Calculated using torch.nn.AdaptiveMaxPool2d().
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 2);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 4);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  // Test the Backward Function.
+  module4.Backward(input, output, delta);
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 2.0);
+}
+
+/**
+ * Simple test for Adaptive pooling for Mean Pooling layer.
+ */
+BOOST_AUTO_TEST_CASE(AdaptiveMeanPoolingTestCase)
+{
+  // For rectangular input.
+  arma::mat input = arma::mat(12, 1);
+  arma::mat output, delta;
+
+  input.zeros();
+  input(0) = 1;
+  input(1) = 2;
+  input(2) = 3;
+  input(3) = input(8) = 7;
+  input(4) = 4;
+  input(5) = 5;
+  input(6) = input(7) = 6;
+  input(10) = 8;
+  input(11) = 9;
+  // Output-Size should be 2 x 2.
+  // Square output.
+  AdaptiveMeanPooling<> module1(2, 2);
+  module1.InputHeight() = 3;
+  module1.InputWidth() = 4;
+  module1.Forward(input, output);
+  // Calculated using torch.nn.AdaptiveAvgPool2d().
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 19.75);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 4);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  // Test the Backward Function.
+  module1.Backward(input, output, delta);
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 7.0);
+
+  // For Square input.
+  input = arma::mat(9, 1);
+  input.zeros();
+  input(0) = 6;
+  input(1) = 3;
+  input(2) = 9;
+  input(3) = 3;
+  input(6) = 3;
+  // Output-Size should be 1 x 2.
+  // Rectangular output.
+  AdaptiveMeanPooling<> module2(1, 2);
+  module2.InputHeight() = 3;
+  module2.InputWidth() = 3;
+  module2.Forward(input, output);
+  // Calculated using torch.nn.AdaptiveAvgPool2d().
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 4.5);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 2);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  // Test the Backward Function.
+  module2.Backward(input, output, delta);
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
+
+  // For Square input.
+  input = arma::mat(16, 1);
+  input.zeros();
+  input(0) = 6;
+  input(1) = 3;
+  input(2) = 9;
+  input(4) = 3;
+  input(8) = 3;
+  // Output-Size should be 3 x 3.
+  // Square output.
+  AdaptiveMeanPooling<> module3(std::tuple<size_t, size_t>(3, 3));
+  module3.InputHeight() = 4;
+  module3.InputWidth() = 4;
+  module3.Forward(input, output);
+  // Calculated using torch.nn.AdaptiveAvgPool2d().
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 10.5);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 9);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  // Test the Backward Function.
+  module3.Backward(input, output, delta);
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 10.5);
+
+  // For Rectangular input.
+  input = arma::mat(24, 1);
+  input.zeros();
+  input(0) = 3;
+  input(1) = 3;
+  input(4) = 3;
+  // Output-Size should be 3 x 3.
+  // Square output.
+  AdaptiveMeanPooling<> module4(std::tuple<size_t, size_t>(3, 3));
+  module4.InputHeight() = 4;
+  module4.InputWidth() = 6;
+  module4.Forward(input, output);
+  // Calculated using torch.nn.AdaptiveAvgPool2d().
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 2.25);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 9);
+  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  // Test the Backward Function.
+  module4.Backward(input, output, delta);
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 1.5);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
