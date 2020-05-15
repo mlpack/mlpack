@@ -415,6 +415,96 @@ BOOST_AUTO_TEST_CASE(LinearLayerWeightInitializationTest)
 }
 
 /**
+ * Atrous Convolution module weight initialization test.
+ */
+BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerWeightInitializationTest)
+{
+  size_t inSize = 1, outSize = 1;
+  size_t kernelWidth = 3, kernelHeight = 3;
+  AtrousConvolution<>* module = new AtrousConvolution<>(inSize, outSize,
+      kernelWidth, kernelHeight);
+  module->Reset();
+  RandomInitialization().Initialize(module->Weight(), kernelWidth, kernelHeight,
+      inSize * outSize);
+  module->Bias().ones();
+
+  BOOST_CHECK_EQUAL_COLLECTIONS(module->Weight().begin(),
+      module->Weight().end(), module->Parameters().begin(),
+      module->Parameters().end() - outSize);
+
+  BOOST_CHECK_EQUAL_COLLECTIONS(module->Bias().begin(),
+      module->Bias().end(), module->Parameters().end() - outSize,
+      module->Parameters().end());
+
+  BOOST_REQUIRE_EQUAL(module->Weight().n_rows, kernelWidth);
+  BOOST_REQUIRE_EQUAL(module->Weight().n_cols, kernelHeight);
+  BOOST_REQUIRE_EQUAL(module->Weight().n_slices, inSize * outSize);
+  BOOST_REQUIRE_EQUAL(module->Bias().n_rows, outSize);
+  BOOST_REQUIRE_EQUAL(module->Parameters().n_rows,
+      (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
+
+/**
+ * Convolution module weight initialization test.
+ */
+BOOST_AUTO_TEST_CASE(ConvolutionLayerWeightInitializationTest)
+{
+  size_t inSize = 2, outSize = 2;
+  size_t kernelWidth = 3, kernelHeight = 3;
+  Convolution<>* module = new Convolution<>(inSize, outSize,
+      kernelWidth, kernelHeight);
+  module->Reset();
+  RandomInitialization().Initialize(module->Weight(), kernelWidth, kernelHeight,
+      inSize * outSize);
+  module->Bias().ones();
+
+  BOOST_CHECK_EQUAL_COLLECTIONS(module->Weight().begin(),
+      module->Weight().end(), module->Parameters().begin(),
+      module->Parameters().end() - outSize);
+
+  BOOST_CHECK_EQUAL_COLLECTIONS(module->Bias().begin(),
+      module->Bias().end(), module->Parameters().end() - outSize,
+      module->Parameters().end());
+
+  BOOST_REQUIRE_EQUAL(module->Weight().n_rows, kernelWidth);
+  BOOST_REQUIRE_EQUAL(module->Weight().n_cols, kernelHeight);
+  BOOST_REQUIRE_EQUAL(module->Weight().n_slices, inSize * outSize);
+  BOOST_REQUIRE_EQUAL(module->Bias().n_rows, outSize);
+  BOOST_REQUIRE_EQUAL(module->Parameters().n_rows,
+      (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
+
+/**
+ * Transposed Convolution module weight initialization test.
+ */
+BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerWeightInitializationTest)
+{
+  size_t inSize = 1, outSize = 1;
+  size_t kernelWidth = 3, kernelHeight = 3;
+  TransposedConvolution<>* module = new TransposedConvolution<>(inSize, outSize,
+      kernelWidth, kernelHeight);
+  module->Reset();
+  RandomInitialization().Initialize(module->Weight(), kernelWidth, kernelHeight,
+      inSize * outSize);
+  module->Bias().ones();
+
+  BOOST_CHECK_EQUAL_COLLECTIONS(module->Weight().begin(),
+      module->Weight().end(), module->Parameters().begin(),
+      module->Parameters().end() - outSize);
+
+  BOOST_CHECK_EQUAL_COLLECTIONS(module->Bias().begin(),
+      module->Bias().end(), module->Parameters().end() - outSize,
+      module->Parameters().end());
+
+  BOOST_REQUIRE_EQUAL(module->Weight().n_rows, kernelWidth);
+  BOOST_REQUIRE_EQUAL(module->Weight().n_cols, kernelHeight);
+  BOOST_REQUIRE_EQUAL(module->Weight().n_slices, inSize * outSize);
+  BOOST_REQUIRE_EQUAL(module->Bias().n_rows, outSize);
+  BOOST_REQUIRE_EQUAL(module->Parameters().n_rows,
+      (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
+
+/**
  * Jacobian linear module test.
  */
 BOOST_AUTO_TEST_CASE(JacobianLinearLayerTest)

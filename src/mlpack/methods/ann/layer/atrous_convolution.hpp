@@ -171,6 +171,16 @@ class AtrousConvolution
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
+  //! Get the weight of the layer.
+  arma::cube const& Weight() const { return weight; }
+  //! Modify the weight of the layer.
+  arma::cube& Weight() { return weight; }
+
+  //! Get the bias of the layer.
+  arma::mat const& Bias() const { return bias; }
+  //! Modify the bias of the layer.
+  arma::mat& Bias() { return bias; }
+
   //! Get the output parameter.
   const OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.

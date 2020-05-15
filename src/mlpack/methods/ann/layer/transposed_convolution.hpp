@@ -178,6 +178,16 @@ class TransposedConvolution
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
+  //! Get the weight of the layer.
+  const arma::cube& Weight() const { return weight; }
+  //! Modify the weight of the layer.
+  arma::cube& Weight() { return weight; }
+
+  //! Get the bias of the layer.
+  const arma::mat& Bias() const { return bias; }
+  //! Modify the bias of the layer.
+  arma::mat& Bias() { return bias; }
+
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
