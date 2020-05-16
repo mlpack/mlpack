@@ -107,6 +107,11 @@ class RBF
   //! Locally-stored the outeput distances of the shape.
   OutputDataType distances;
 
+  //! Locally-stored weight object.
+  OutputDataType weights;
+
+  bool reset;
+
   //! Locally-stored number of input units.
   size_t inSize;
 

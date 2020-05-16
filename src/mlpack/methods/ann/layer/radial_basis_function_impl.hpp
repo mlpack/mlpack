@@ -20,7 +20,8 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputDataType, typename OutputDataType>
 RBF<InputDataType, OutputDataType>::RBF() :
     inSize(0),
-    outSize(0)
+    outSize(0),
+    reset(false)
 {
   // Nothing to do here.
 }
@@ -30,15 +31,18 @@ RBF<InputDataType, OutputDataType>::RBF(
     const size_t inSize,
     const size_t outSize) :
     inSize(inSize),
-    outSize(outSize)
+    outSize(outSize),
+    reset(false)
 {
-  centres = arma::mat(inSize, outSize, arma::fill::randu);
+  weights.set_size(outSize * inSize + outSize, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
 void RBF<InputDataType, OutputDataType>::Reset()
 {
-  centres = arma::normcdf(centres, 0, 1);
+  centres = arma::mat(weights.memptr(), inSize, outSize, false, false);
+  sigmas = arma::mat(weights.memptr() + centres.n_elem,
+      1, outSize, false, false);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -47,24 +51,23 @@ void RBF<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input,
     arma::Mat<eT>& output)
 {
-  arma::cube x = arma::cube(inSize, outSize, input.n_cols);
-
-  for (size_t i = 0; i < input.n_cols; i++)
+  if(!reset)
   {
-    x.slice(i).each_col() = input.col(i);
+    centres = arma::normcdf(centres, 0,1);
+    sigmas.ones();
+    sigmas = sigmas / outSize;
+    reset = true;
   }
-
-  distances = arma::mat(inSize, input.n_cols);
+  distances = arma::mat(outSize, input.n_cols);
 
   for (size_t i = 0; i < input.n_cols; i++)
   {
+    arma::mat temp = centres.each_col() - input.col(i);
     distances.col(i) = arma::pow(arma::sum(
-                                 arma::pow((
-                                 x.slice(i) - centres),
-                                 2), 1), 0.5);
+                                 arma::pow((temp),
+                                 2), 0), 0.5).t();
   }
-
-  output = distances;
+  output = distances.each_col() % sigmas.t();
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -74,7 +77,7 @@ void RBF<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
 {
-  g = distances.t() * gy;
+  g = centres.t() * gy;
 }
 
 template<typename InputDataType, typename OutputDataType>
