@@ -12,10 +12,14 @@
 
   * Add `MatType` parameter to `LSHSearch`, allowing sparse matrices to be used
     for search (#2395).
-    
+
   * Documentation fixes to resolve Doxygen warnings and issues (#2400).
-  
+
   * Add Load and Save of Sparse Matrix (#2344).
+
+  * Add Intersection over Union (IoU) metric for bounding boxes (#2402).
+
+  * Add Non Maximal Supression (NMS) metric for bounding boxes (#2410).
 
 ### mlpack 3.3.1
 ###### 2020-04-29
