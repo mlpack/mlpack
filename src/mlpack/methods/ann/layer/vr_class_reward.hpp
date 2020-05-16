@@ -1,5 +1,5 @@
 /**
- * @file vr_class_reward.hpp
+ * @file methods/ann/layer/vr_class_reward.hpp
  * @author Marcus Edel
  *
  * Definition of the VRClassReward class, which implements the variance

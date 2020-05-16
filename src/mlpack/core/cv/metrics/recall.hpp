@@ -1,5 +1,5 @@
 /**
- * @file recall.hpp
+ * @file core/cv/metrics/recall.hpp
  * @author Kirill Mishchenko
  *
  * The recall metric.

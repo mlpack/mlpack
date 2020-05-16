@@ -1,5 +1,5 @@
 /**
- * @file decision_stump_impl.hpp
+ * @file methods/decision_stump/decision_stump_impl.hpp
  * @author Udit Saxena
  *
  * Implementation of DecisionStump class.

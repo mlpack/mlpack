@@ -1,5 +1,5 @@
 /**
- * @file example_kernel.hpp
+ * @file core/kernels/example_kernel.hpp
  * @author Ryan Curtin
  *
  * This is an example kernel.  If you are making your own kernel, follow the
@@ -72,7 +72,6 @@ namespace kernel {
  * generalization, mlpack methods expect all kernels to require state and hence
  * must store instantiated kernel functions; this is why a default constructor
  * is necessary.
- * @endnote
  */
 class ExampleKernel
 {
@@ -94,8 +93,8 @@ class ExampleKernel
    * @tparam VecTypeA Type of first vector (arma::vec, arma::sp_vec should be
    *      expected).
    * @tparam VecTypeB Type of second vector (arma::vec, arma::sp_vec).
-   * @param a First vector.
-   * @param b Second vector.
+   * @param * (a) First vector.
+   * @param * (b) Second vector.
    * @return K(a, b).
    */
   template<typename VecTypeA, typename VecTypeB>
@@ -119,8 +118,8 @@ class ExampleKernel
    * @tparam VecTypeA Type of first vector (arma::vec, arma::sp_vec should be
    *      expected).
    * @tparam VecTypeB Type of second vector (arma::vec, arma::sp_vec).
-   * @param a First vector.
-   * @param b Second vector.
+   * @param * (a) First vector.
+   * @param * (b) Second vector.
    * @return the convolution integral value.
    */
   template<typename VecTypeA, typename VecTypeB>
@@ -134,7 +133,6 @@ class ExampleKernel
    * cannot be declared static, see the GaussianKernel, which stores an internal
    * parameter.
    *
-   * @param dimension the dimension of the space.
    * @return the normalization constant.
    */
   static double Normalizer() { return 0; }

@@ -1,5 +1,5 @@
 /**
- * @file load.hpp
+ * @file core/data/load.hpp
  * @author Ryan Curtin
  *
  * Load an Armadillo matrix from file.  This is necessary because Armadillo does
@@ -130,7 +130,7 @@ extern template bool Load<double>(const std::string&,
  * be thrown if the matrix does not load successfully.
  *
  * @param filename Name of file to load.
- * @param colvec Column vector to load contents of file into.
+ * @param vec Column vector to load contents of file into.
  * @param fatal If an error should be reported as fatal (default false).
  * @return Boolean value indicating success or failure of load.
  */
@@ -162,7 +162,7 @@ bool Load(const std::string& filename,
  * be thrown if the matrix does not load successfully.
  *
  * @param filename Name of file to load.
- * @param colvec Column vector to load contents of file into.
+ * @param rowvec Row vector to load contents of file into.
  * @param fatal If an error should be reported as fatal (default false).
  * @return Boolean value indicating success or failure of load.
  */
@@ -314,7 +314,6 @@ bool Load(const std::string& filename,
  * @param matrix Matrix to save the image from.
  * @param info An object of ImageInfo class.
  * @param fatal If an error should be reported as fatal (default false).
- * @param transpose If true, transpose the matrix after loading.
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>

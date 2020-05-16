@@ -1,5 +1,5 @@
 /**
- * @file linear_svm_test.cpp
+ * @file tests/main_tests/linear_svm_test.cpp
  * @author Yashwant Singh Parihar
  *
  * Test mlpackMain() of logistic_regression_main.cpp

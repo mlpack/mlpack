@@ -1,5 +1,5 @@
 /**
- * @file local_coordinate_coding_main.cpp
+ * @file methods/local_coordinate_coding/local_coordinate_coding_main.cpp
  * @author Nishant Mehta
  *
  * Executable for Local Coordinate Coding.

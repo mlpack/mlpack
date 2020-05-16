@@ -1,5 +1,5 @@
 /**
- * @file cart_pole.hpp
+ * @file methods/reinforcement_learning/environment/cart_pole.hpp
  * @author Shangtong Zhang
  *
  * This file is an implementation of Cart Pole task:

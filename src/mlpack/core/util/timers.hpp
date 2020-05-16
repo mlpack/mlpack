@@ -1,5 +1,5 @@
 /**
- * @file timers.hpp
+ * @file core/util/timers.hpp
  * @author Matthew Amidon
  * @author Marcus Edel
  * @author Ryan Curtin

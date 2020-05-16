@@ -1,5 +1,5 @@
 /**
- * @file max_pooling.hpp
+ * @file methods/ann/layer/max_pooling.hpp
  * @author Marcus Edel
  * @author Nilay Jain
  *
@@ -85,7 +85,7 @@ class MaxPooling
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */

@@ -1,5 +1,5 @@
 /**
- * @file metric_test.cpp
+ * @file tests/metric_test.cpp
  *
  * Unit tests for the various metrics.
  *

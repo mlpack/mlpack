@@ -1,5 +1,5 @@
 /**
- * @file lisht_function.hpp
+ * @file methods/ann/activation_functions/lisht_function.hpp
  * @author Kartik Dutt
  *
  * Definition and implementation of the LiSHT function as described by

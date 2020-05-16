@@ -1,5 +1,5 @@
 /**
- * @file range_search_rules_impl.hpp
+ * @file methods/range_search/range_search_rules_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of rules for range search with generic trees.

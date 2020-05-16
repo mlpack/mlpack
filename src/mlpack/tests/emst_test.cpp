@@ -1,5 +1,5 @@
 /**
- * @file emst_test.cpp
+ * @file tests/emst_test.cpp
  *
  * Test file for EMST methods.
  *

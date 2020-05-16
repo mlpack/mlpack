@@ -1,5 +1,5 @@
 /**
- * @file random_forest_test.cpp
+ * @file tests/main_tests/random_forest_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of random_forest_main.cpp.

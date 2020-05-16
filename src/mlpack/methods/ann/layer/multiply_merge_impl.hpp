@@ -1,5 +1,5 @@
 /**
- * @file multiply_merge_impl.hpp
+ * @file methods/ann/layer/multiply_merge_impl.hpp
  * @author Haritha Nair
  *
  * Definition of the MultiplyMerge module which multiplies the output of the

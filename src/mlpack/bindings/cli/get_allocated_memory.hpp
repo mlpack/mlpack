@@ -1,5 +1,5 @@
 /**
- * @file get_allocated_memory.hpp
+ * @file bindings/cli/get_allocated_memory.hpp
  * @author Ryan Curtin
  *
  * If the parameter has a type that may need to be deleted, return the address

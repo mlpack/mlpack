@@ -1,5 +1,5 @@
 /**
- * @file split_data_test.cpp
+ * @file tests/split_data_test.cpp
  * @author Tham Ngap Wei
  *
  * Test the SplitData method.

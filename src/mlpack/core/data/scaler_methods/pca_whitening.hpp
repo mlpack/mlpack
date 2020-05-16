@@ -1,5 +1,5 @@
 /**
- * @file pca_whitening.hpp
+ * @file core/data/scaler_methods/pca_whitening.hpp
  * @author Jeffin Sam
  *
  * Whitening scaling to scale features, Using PCA Whitening.

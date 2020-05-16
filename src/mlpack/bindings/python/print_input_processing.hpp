@@ -1,5 +1,5 @@
 /**
- * @file print_input_processing.hpp
+ * @file bindings/python/print_input_processing.hpp
  * @author Ryan Curtin
  * @author Yashwant Singh
  *
@@ -57,8 +57,8 @@ void PrintInputProcessing(
    * # Detect if the parameter was passed; set if so.
    * if param_name is not None:
    *   if isinstance(param_name, int):
-   *     SetParam[int](<const string> 'param_name', param_name)
-   *     CLI.SetPassed(<const string> 'param_name')
+   *     SetParam[int](\<const string\> 'param_name', param_name)
+   *     CLI.SetPassed(\<const string\> 'param_name')
    *   else:
    *     raise TypeError("'param_name' must have type 'list'!")
    */
@@ -178,8 +178,8 @@ void PrintInputProcessing(
    *    if isinstance(param_name, list):
    *      if len(param_name) > 0:
    *        if isinstance(param_name[0], str):
-   *          SetParam[vector[string]](<const string> 'param_name', param_name)
-   *          CLI.SetPassed(<const string> 'param_name')
+   *          SetParam[vector[string]](\<const string\> 'param_name', param_name)
+   *          CLI.SetPassed(\<const string\> 'param_name')
    *        else:
    *          raise TypeError("'param_name' must have type 'list of strs'!")
    *    else:
@@ -267,8 +267,8 @@ void PrintInputProcessing(
    *     param_name_tuple[0].shape = (param_name_tuple[0].size,)
    *   param_name_mat = arma_numpy.numpy_to_mat_s(param_name_tuple[0],
    *       param_name_tuple[1])
-   *   SetParam[mat](<const string> 'param_name', dereference(param_name_mat))
-   *   CLI.SetPassed(<const string> 'param_name')
+   *   SetParam[mat](\<const string\> 'param_name', dereference(param_name_mat))
+   *   CLI.SetPassed(\<const string\> 'param_name')
    *
    */
   std::cout << prefix << "# Detect if the parameter was passed; set if so."
@@ -388,15 +388,15 @@ void PrintInputProcessing(
    * # Detect if the parameter was passed; set if so.
    * if param_name is not None:
    *   try:
-   *     SetParamPtr[Model]('param_name', (<ModelType?> param_name).modelptr,
+   *     SetParamPtr[Model]('param_name', (\<ModelType?\> param_name).modelptr,
    *         CLI.HasParam('copy_all_inputs'))
    *   except TypeError as e:
    *     if type(param_name).__name__ == "ModelType":
-   *       SetParamPtr[Model]('param_name', (<ModelType> param_name).modelptr,
+   *       SetParamPtr[Model]('param_name', (\<ModelType\> param_name).modelptr,
    *           CLI.HasParam('copy_all_inputs'))
    *     else:
    *       raise e
-   *   CLI.SetPassed(<const string> 'param_name')
+   *   CLI.SetPassed(\<const string\> 'param_name')
    */
   std::cout << prefix << "# Detect if the parameter was passed; set if so."
       << std::endl;
@@ -459,9 +459,9 @@ void PrintInputProcessing(
    *   if len(param_name_tuple[0].shape) < 2:
    *     param_name_tuple[0].shape = (param_name_tuple[0].size,)
    *   param_name_mat = arma_numpy.numpy_to_matrix_d(param_name_tuple[0])
-   *   SetParamWithInfo[mat](<const string> 'param_name',
+   *   SetParamWithInfo[mat](\<const string\> 'param_name',
    *       dereference(param_name_mat), &param_name_tuple[1][0])
-   *   CLI.SetPassed(<const string> 'param_name')
+   *   CLI.SetPassed(\<const string\> 'param_name')
    */
   std::cout << prefix << "cdef np.ndarray " << d.name << "_dims" << std::endl;
   std::cout << prefix << "# Detect if the parameter was passed; set if so."
@@ -519,7 +519,7 @@ void PrintInputProcessing(
  *
  * @param d Parameter data struct.
  * @param input Pointer to size_t holding the indentation.
- * @param output Unused parameter.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void PrintInputProcessing(const util::ParamData& d,

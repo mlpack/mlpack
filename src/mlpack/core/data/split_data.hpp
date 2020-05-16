@@ -1,5 +1,5 @@
 /**
- * @file split_data.hpp
+ * @file core/data/split_data.hpp
  * @author Tham Ngap Wei, Keon Kim
  *
  * Defines Split(), a utility function to split a dataset into a
@@ -38,7 +38,7 @@ namespace data {
  * @endcode
  *
  * @param input Input dataset to split.
- * @param label Input labels to split.
+ * @param inputLabel Input labels to split.
  * @param trainData Matrix to store training data into.
  * @param testData Matrix to store test data into.
  * @param trainLabel Vector to store training labels into.
@@ -164,7 +164,7 @@ void Split(const arma::Mat<T>& input,
  * @endcode
  *
  * @param input Input dataset to split.
- * @param label Input labels to split.
+ * @param inputLabel Input labels to split.
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
  * @param shuffleData If true, the sample order is shuffled; otherwise, each
  *       sample is visited in linear order. (Default true).

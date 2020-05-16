@@ -1,5 +1,5 @@
 /**
- * @file mean_shift_main.cpp
+ * @file methods/mean_shift/mean_shift_main.cpp
  * @author Shangtong Zhang
  *
  * Executable for running Mean Shift.

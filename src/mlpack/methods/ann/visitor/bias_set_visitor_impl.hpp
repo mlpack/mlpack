@@ -1,5 +1,5 @@
 /**
- * @file bias_set_visitor_impl.hpp
+ * @file methods/ann/visitor/bias_set_visitor_impl.hpp
  * @author Toshal Agrawal
  *
  * Implementation of the Bias() function layer abstraction.

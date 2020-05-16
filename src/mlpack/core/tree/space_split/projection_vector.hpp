@@ -1,5 +1,5 @@
 /**
- * @file projection_vector.hpp
+ * @file core/tree/space_split/projection_vector.hpp
  * @author Marcos Pividori
  *
  * Definition of ProjVector and AxisParallelProjVector.

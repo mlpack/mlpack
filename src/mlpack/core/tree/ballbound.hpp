@@ -1,5 +1,5 @@
 /**
- * @file ballbound.hpp
+ * @file core/tree/ballbound.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
  * Interface to a ball bound that works in arbitrary metric spaces.
@@ -157,7 +157,7 @@ class BallBound
   /**
    * Calculates minimum and maximum bound-to-point distance.
    *
-   * @param point Point to which the minimum and maximum distances are
+   * @param other Point to which the minimum and maximum distances are
    *     requested.
    */
   template<typename OtherVecType>

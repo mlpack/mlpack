@@ -1,5 +1,5 @@
 /**
- * @file random.hpp
+ * @file core/math/random.hpp
  *
  * Miscellaneous math random-related routines.
  *

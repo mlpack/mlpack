@@ -1,5 +1,5 @@
 /**
- * @file random.cpp
+ * @file core/math/random.cpp
  *
  * Declarations of global random number generators.
  *

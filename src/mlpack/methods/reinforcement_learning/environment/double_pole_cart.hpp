@@ -1,5 +1,5 @@
 /**
- * @file double_pole_cart.hpp
+ * @file methods/reinforcement_learning/environment/double_pole_cart.hpp
  * @author Rahul Ganesh Prabhu
  *
  * This file is an implementation of Double Pole Cart Balancing Task.
@@ -106,7 +106,6 @@ class DoublePoleCart
    * @param l2 The length of the second pole.
    * @param gravity The gravity constant.
    * @param massCart The mass of the cart.
-   * @param length The length of the pole.
    * @param forceMag The magnitude of the applied force.
    * @param tau The time interval.
    * @param thetaThresholdRadians The maximum angle.

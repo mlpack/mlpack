@@ -1,5 +1,5 @@
 /**
- * @file softmax_regression_impl.hpp
+ * @file methods/softmax_regression/softmax_regression_impl.hpp
  * @author Siddharth Agrawal
  *
  * Implementation of softmax regression.

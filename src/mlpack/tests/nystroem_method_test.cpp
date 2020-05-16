@@ -1,5 +1,5 @@
 /**
- * @file nystroem_method_test.cpp
+ * @file tests/nystroem_method_test.cpp
  * @author Ryan Curtin
  *
  * Test the NystroemMethod class and ensure that the reconstructed kernel matrix

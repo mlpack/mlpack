@@ -1,5 +1,5 @@
 /**
- * @file binarize_test.cpp
+ * @file tests/binarize_test.cpp
  * @author Keon Kim
  *
  * Test the Binarize method.

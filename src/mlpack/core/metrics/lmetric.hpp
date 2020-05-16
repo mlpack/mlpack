@@ -1,5 +1,5 @@
 /**
- * @file lmetric.hpp
+ * @file core/metrics/lmetric.hpp
  * @author Ryan Curtin
  *
  * Generalized L-metric, allowing both squared distances to be returned as well

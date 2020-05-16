@@ -1,5 +1,5 @@
 /**
- * @file typedef.hpp
+ * @file core/tree/cover_tree/typedef.hpp
  * @author Ryan Curtin
  *
  * Typedef of cover tree to match TreeType API.

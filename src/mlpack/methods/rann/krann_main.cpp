@@ -1,5 +1,5 @@
 /**
- * @file allkrann_main.cpp
+ * @file methods/rann/krann_main.cpp
  * @author Parikshit Ram
  *
  * Implementation of the kRANN executable.  Allows some number of standard

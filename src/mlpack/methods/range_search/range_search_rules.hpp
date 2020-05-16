@@ -1,5 +1,5 @@
 /**
- * @file range_search_rules.hpp
+ * @file methods/range_search/range_search_rules.hpp
  * @author Ryan Curtin
  *
  * Rules for range search, so that it can be done with arbitrary tree types.

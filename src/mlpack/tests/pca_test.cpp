@@ -1,5 +1,5 @@
 /**
- * @file pca_test.cpp
+ * @file tests/pca_test.cpp
  * @author Ajinkya Kale
  * @author Marcus Edel
  *

@@ -1,5 +1,5 @@
 /**
- * @file q_learning_impl.hpp
+ * @file methods/reinforcement_learning/q_learning_impl.hpp
  * @author Shangtong Zhang
  *
  * This file is the implementation of QLearning class.

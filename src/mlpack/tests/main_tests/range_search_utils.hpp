@@ -1,5 +1,5 @@
 /**
- * @file range_search_utils.hpp
+ * @file tests/main_tests/range_search_utils.hpp
  * @author Niteya Shah
  *
  * Helper functions used in the execution of the Range Search test.

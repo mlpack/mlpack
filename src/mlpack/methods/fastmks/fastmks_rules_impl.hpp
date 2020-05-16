@@ -1,5 +1,5 @@
 /**
- * @file fastmks_rules_impl.hpp
+ * @file methods/fastmks/fastmks_rules_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of FastMKSRules for cover tree search.

@@ -1,5 +1,5 @@
 /**
- * @file traits.hpp
+ * @file core/tree/cover_tree/traits.hpp
  * @author Ryan Curtin
  *
  * This file contains the specialization of the TreeTraits class for the

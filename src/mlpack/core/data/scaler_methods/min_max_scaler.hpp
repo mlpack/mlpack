@@ -1,5 +1,5 @@
 /**
- * @file min_max_scaler.hpp
+ * @file core/data/scaler_methods/min_max_scaler.hpp
  * @author Jeffin Sam
  *
  * MinMaxScaler class to scale features.

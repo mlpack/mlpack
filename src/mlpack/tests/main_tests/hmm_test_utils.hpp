@@ -1,5 +1,5 @@
 /**
- * @file hmm_test_utils.hpp
+ * @file tests/main_tests/hmm_test_utils.hpp
  * @author Daivik Nema
  *
  * Structs for initializing and training HMMs (either of Discrete, Gaussian,

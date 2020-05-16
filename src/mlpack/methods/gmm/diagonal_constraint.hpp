@@ -1,5 +1,5 @@
 /**
- * @file diagonal_constraint.hpp
+ * @file methods/gmm/diagonal_constraint.hpp
  * @author Ryan Curtin
  *
  * Constrain a covariance matrix to be diagonal.

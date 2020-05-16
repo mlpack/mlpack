@@ -1,5 +1,5 @@
 /**
- * @file hmm_generate_test.cpp
+ * @file tests/main_tests/hmm_generate_test.cpp
  * @author Daivik Nema
  *
  * Test mlpackMain() of hmm_generate_main.cpp

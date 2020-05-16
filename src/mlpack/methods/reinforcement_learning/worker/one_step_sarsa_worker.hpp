@@ -1,5 +1,5 @@
 /**
- * @file one_step_sarsa_worker.hpp
+ * @file methods/reinforcement_learning/worker/one_step_sarsa_worker.hpp
  * @author Shangtong Zhang
  *
  * This file is the definition of OneStepSarsaWorker class,

@@ -1,5 +1,5 @@
 /**
- * @file transposed_convolution.hpp
+ * @file methods/ann/layer/transposed_convolution.hpp
  * @author Shikhar Jaiswal
  * @author Marcus Edel
  *
@@ -152,7 +152,7 @@ class TransposedConvolution
    * f(x) by propagating x backwards through f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -164,7 +164,7 @@ class TransposedConvolution
   /*
    * Calculate the gradient using the output delta and the input activation.
    *
-   * @param input The input parameter used for calculating the gradient.
+   * @param * (input) The input parameter used for calculating the gradient.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */

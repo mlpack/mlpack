@@ -1,5 +1,5 @@
 /**
- * @file cellbound.hpp
+ * @file core/tree/cellbound.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the CellBound class. The class describes a bound that consists

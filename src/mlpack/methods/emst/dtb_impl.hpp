@@ -1,5 +1,5 @@
 /**
- * @file dtb_impl.hpp
+ * @file methods/emst/dtb_impl.hpp
  * @author Bill March (march@gatech.edu)
  *
  * Implementation of DTB.

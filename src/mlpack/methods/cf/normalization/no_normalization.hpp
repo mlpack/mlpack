@@ -1,5 +1,5 @@
 /**
- * @file no_normalization.hpp
+ * @file methods/cf/normalization/no_normalization.hpp
  * @author Wenhao Huang
  *
  * This class performs no normalization. It is used as default type of
@@ -31,7 +31,7 @@ class NoNormalization
   /**
    * Do nothing.
    *
-   * @param data Input dataset.
+   * @param * (data) Input dataset.
    */
   template<typename MatType>
   inline void Normalize(const MatType& /* data */) const { }
@@ -39,8 +39,8 @@ class NoNormalization
   /**
    * Do nothing.
    *
-   * @param user User ID.
-   * @param item Item ID.
+   * @param * (user) User ID.
+   * @param * (item) Item ID.
    * @param rating Computed rating before denormalization.
    */
   inline double Denormalize(const size_t /* user */,
@@ -53,8 +53,8 @@ class NoNormalization
   /**
    * Do nothing.
    *
-   * @param combinations User/Item combinations.
-   * @param predictions Predicted ratings for each user/item combination.
+   * @param * (combinations) User/Item combinations.
+   * @param * (predictions) Predicted ratings for each user/item combination.
    */
   inline void Denormalize(const arma::Mat<size_t>& /* combinations */,
                           const arma::vec& /* predictions */) const

@@ -1,5 +1,5 @@
 /**
- * @file kmeans.hpp
+ * @file methods/kmeans/kmeans.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  *
  * K-Means clustering.

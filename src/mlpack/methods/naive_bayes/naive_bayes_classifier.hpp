@@ -1,5 +1,5 @@
 /**
- * @file naive_bayes_classifier.hpp
+ * @file methods/naive_bayes/naive_bayes_classifier.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Shihao Jing (shihao.jing810@gmail.com)
  *
