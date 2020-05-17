@@ -17,8 +17,9 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-RBF<InputDataType, OutputDataType>::RBF() :
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+RBF<InputDataType, OutputDataType, RegularizerType>::RBF() :
     inSize(0),
     outSize(0),
     reset(false)
@@ -26,28 +27,33 @@ RBF<InputDataType, OutputDataType>::RBF() :
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-RBF<InputDataType, OutputDataType>::RBF(
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+RBF<InputDataType, OutputDataType, RegularizerType>::RBF(
     const size_t inSize,
-    const size_t outSize) :
+    const size_t outSize,
+    RegularizerType regularizer) :
     inSize(inSize),
     outSize(outSize),
+    regularizer(regularizer),
     reset(false)
 {
   weights.set_size(outSize * inSize + outSize, 1);
 }
 
-template<typename InputDataType, typename OutputDataType>
-void RBF<InputDataType, OutputDataType>::Reset()
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+void RBF<InputDataType, OutputDataType, RegularizerType>::Reset()
 {
   centres = arma::mat(weights.memptr(), inSize, outSize, false, false);
   sigmas = arma::mat(weights.memptr() + centres.n_elem,
       1, outSize, false, false);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 template<typename eT>
-void RBF<InputDataType, OutputDataType>::Forward(
+void RBF<InputDataType, OutputDataType, RegularizerType>::Forward(
     const arma::Mat<eT>& input,
     arma::Mat<eT>& output)
 {
@@ -70,9 +76,10 @@ void RBF<InputDataType, OutputDataType>::Forward(
   output = distances.each_col() % sigmas.t();
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 template<typename eT>
-void RBF<InputDataType, OutputDataType>::Backward(
+void RBF<InputDataType, OutputDataType, RegularizerType>::Backward(
     const arma::Mat<eT>& /* input */,
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
@@ -80,9 +87,25 @@ void RBF<InputDataType, OutputDataType>::Backward(
   g = centres.t() * gy;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+template<typename eT>
+void RBF<InputDataType, OutputDataType, RegularizerType>::Gradient(
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
+{
+  gradient.submat(0, 0, centres.n_elem - 1, 0) = arma::vectorise(
+      error * input.t());
+  gradient.submat(centres.n_elem, 0, gradient.n_elem - 1, 0) =
+      arma::sum(error, 1);
+  regularizer.Evaluate(weights, gradient);
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 template<typename Archive>
-void RBF<InputDataType, OutputDataType>::serialize(
+void RBF<InputDataType, OutputDataType, RegularizerType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {

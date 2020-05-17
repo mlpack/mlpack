@@ -14,6 +14,9 @@
 #define MLPACK_METHODS_ANN_LAYER_RBF_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
+
+#include "layer_types.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -31,8 +34,12 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template<typename InputDataType = arma::mat,
-         typename OutputDataType = arma::mat>
+
+template <
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat,
+    typename RegularizerType = NoRegularizer
+>
 class RBF
 {
  public:
@@ -47,7 +54,8 @@ class RBF
    * @param outSize The number of output units.
    */
   RBF(const size_t inSize,
-      const size_t outSize);
+      const size_t outSize,
+      RegularizerType regularizer = RegularizerType());
 
   /**
    * Reset the layer parameter.
@@ -75,6 +83,18 @@ class RBF
                 const arma::Mat<eT>& gy,
                 arma::Mat<eT>& g);
 
+  /*
+   * Calculate the gradient using the output delta and the input activation.
+   *
+   * @param input The input parameter used for calculating the gradient.
+   * @param error The calculated error.
+   * @param gradient The calculated gradient.
+   */
+  template<typename eT>
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
+
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -99,6 +119,14 @@ class RBF
   OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
+
+  //! Get the gradient.
+  OutputDataType const& Gradient() const { return gradient; }
+  //! Modify the gradient.
+  OutputDataType& Gradient() { return gradient; }
+
+  //! Modify the bias weights of the layer.
+  arma::mat& Sigmas() { return sigmas; }
 
   /**
    * Serialize the layer.
@@ -128,6 +156,9 @@ class RBF
   //! Locally-stored weight object.
   OutputDataType weights;
 
+  //! Locally-stored gradient object.
+  OutputDataType gradient;
+
   //! Locally-stored reset parameter used to initialize the layer once.
   bool reset;
 
@@ -136,6 +167,9 @@ class RBF
 
   //! Locally-stored number of output units.
   size_t outSize;
+
+  //! Locally-stored regularizer object.
+  RegularizerType regularizer;
 }; // class RBF
 
 } // namespace ann
