@@ -45,6 +45,36 @@ template bool Load<double>(const std::string&,
                            const bool,
                            const bool);
 
+template bool Load<int>(const std::string&,
+                        arma::SpMat<int>&,
+                        const bool,
+                        const bool);
+
+template bool Load<unsigned int>(const std::string&,
+                                 arma::SpMat<unsigned int>&,
+                                 const bool,
+                                 const bool);
+
+template bool Load<unsigned long>(const std::string&,
+                                  arma::SpMat<unsigned long>&,
+                                  const bool,
+                                  const bool);
+
+template bool Load<unsigned long long>(const std::string&,
+                                       arma::SpMat<unsigned long long>&,
+                                       const bool,
+                                       const bool);
+
+template bool Load<double>(const std::string&,
+                           arma::SpMat<double>&,
+                           const bool,
+                           const bool);
+
+template bool Load<float>(const std::string&,
+                          arma::SpMat<float>&,
+                          const bool,
+                          const bool);
+
 template bool Load<int, IncrementPolicy>(const std::string&,
                                          arma::Mat<int>&,
                                          DatasetMapper<IncrementPolicy>&,

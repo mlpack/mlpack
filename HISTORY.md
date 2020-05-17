@@ -10,6 +10,10 @@
 
   * Add `MatType` parameter to `LSHSearch`, allowing sparse matrices to be used
     for search (#2395).
+    
+  * Documentation fixes to resolve Doxygen warnings and issues (#2400).
+  
+  * Add Load and Save of Sparse Matrix (#2344).
 
 ### mlpack 3.3.1
 ###### 2020-04-29
@@ -109,6 +113,7 @@
   * Add Soft Shrink Activation Function (#2174).
 
   * Add Hinge Embedding Loss Function (#2229).
+
   * Add Cosine Embedding Loss Function (#2209).
 
   * Add Margin Ranking Loss Function (#2264).
