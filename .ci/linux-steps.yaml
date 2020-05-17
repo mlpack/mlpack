@@ -50,6 +50,12 @@ steps:
 
 # Build mlpack
 - script: cd build && make
+  condition: eq(variables['CMakeArgs'], '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF')
+  displayName: 'Build'
+
+# Build mlpack
+- script: cd build && make -j2
+  condition: ne(variables['CMakeArgs'], '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF')
   displayName: 'Build'
 
 # Run tests via ctest.
