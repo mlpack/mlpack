@@ -65,6 +65,10 @@
   * Add Soft Shrink Activation Function (#2174).
 
   * Add Hinge Embedding Loss Function (#2229).
+  
+  * Documentation fixes to resolve Doxygen warnings and issues (#2400).
+  
+  * Add Load and Save of Sparse Matrix (#2344).
 
 ### mlpack 3.2.2
 ###### 2019-11-26
