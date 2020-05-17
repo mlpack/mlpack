@@ -1,5 +1,5 @@
 /**
- * @file feedforward_network_test.cpp
+ * @file tests/feedforward_network_test.cpp
  * @author Marcus Edel
  * @author Palash Ahuja
  *
@@ -300,7 +300,7 @@ BOOST_AUTO_TEST_CASE(HighwayNetworkTest)
   Highway<>* highway = new Highway<>(10, true);
   highway->Add<Linear<> >(10, 10);
   highway->Add<SigmoidLayer<> >();
-  model.Add(highway);
+  model.Add(highway); // This takes ownership of the memory.
   model.Add<Linear<> >(10, 2);
   model.Add<LogSoftMax<> >();
   TestNetwork<>(model, dataset, labels, dataset, labels, 10, 0.2);

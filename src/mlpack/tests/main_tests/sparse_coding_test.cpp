@@ -1,5 +1,5 @@
 /**
- * @file sparse_coding_test.cpp
+ * @file tests/main_tests/sparse_coding_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of sparse_coding_main.cpp.

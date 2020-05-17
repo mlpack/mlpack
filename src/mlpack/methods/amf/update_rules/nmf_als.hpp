@@ -1,5 +1,5 @@
 /**
- * @file nmf_als.hpp
+ * @file methods/amf/update_rules/nmf_als.hpp
  * @author Mohan Rajendran
  *
  * Update rules for the Non-negative Matrix Factorization.

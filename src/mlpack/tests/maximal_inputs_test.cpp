@@ -1,5 +1,5 @@
 /**
- * @file maximal_inputs_test.cpp
+ * @file tests/maximal_inputs_test.cpp
  * @author Ngap Wei Tham
  *
  * Test the MaximalInputs and ColumnsToBlocks functions.

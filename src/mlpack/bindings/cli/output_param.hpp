@@ -1,5 +1,5 @@
 /**
- * @file output_param.hpp
+ * @file bindings/cli/output_param.hpp
  * @author Ryan Curtin
  *
  * Output a parameter of different types using template metaprogramming.

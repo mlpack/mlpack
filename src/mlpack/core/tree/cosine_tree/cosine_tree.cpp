@@ -1,5 +1,5 @@
 /**
- * @file cosine_tree_impl.hpp
+ * @file core/tree/cosine_tree/cosine_tree.cpp
  * @author Siddharth Agrawal
  *
  * Implementation of cosine tree.

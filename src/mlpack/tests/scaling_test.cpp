@@ -1,5 +1,5 @@
 /**
- * @file scaling_test.cpp
+ * @file tests/scaling_test.cpp
  *
  * Tests for Scaling of dataset.
  *

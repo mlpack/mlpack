@@ -1,5 +1,5 @@
 /**
- * @file diagonal_gaussian_distribution.hpp
+ * @file core/dists/diagonal_gaussian_distribution.hpp
  * @author Kim SangYeon
  *
  * Implementation of the Gaussian distribution with diagonal covariance.
@@ -40,7 +40,7 @@ class DiagonalGaussianDistribution
   /**
    * Create a Gaussian Distribution with zero mean and diagonal covariance
    * with the given dimensionality.
-   * 
+   *
    * @param dimension Number of dimensions.
    */
   DiagonalGaussianDistribution(const size_t dimension) :
@@ -53,7 +53,7 @@ class DiagonalGaussianDistribution
   /**
    * Create a Gaussian distribution with the given mean and diagonal
    * covariance.
-   * 
+   *
    * @param mean Mean of distribution.
    * @param covariance Covariance of distribution.
    */
@@ -75,7 +75,7 @@ class DiagonalGaussianDistribution
   /**
    * Calculate the multivariate Gaussian probability density function for each
    * data point (column) in the given matrix.
-   * 
+   *
    * @param x Matrix of observations.
    * @param probabilities Output probabilities for each input observation.
    */
@@ -91,7 +91,7 @@ class DiagonalGaussianDistribution
    * each data point (column) in the given matrix.
    *
    * @param observations Matrix of observations.
-   * @param probabilities Output log probabilities for each input observation.
+   * @param logProbabilities Output log probabilities for each observation.
    */
   void LogProbability(const arma::mat& observations,
                       arma::vec& logProbabilities) const;
@@ -99,14 +99,14 @@ class DiagonalGaussianDistribution
   /**
    * Return a randomly generated observation according to the probability
    * distribution defined by this object.
-   * 
+   *
    * @return Random observation from this Diagonal Gaussian distribution.
    */
   arma::vec Random() const;
 
   /**
    * Estimate the Gaussian distribution directly from the given observations.
-   * 
+   *
    * @param observations Matrix of observations.
    */
   void Train(const arma::mat& observations);
@@ -115,7 +115,7 @@ class DiagonalGaussianDistribution
    * Estimate the Gaussian distribution from the given observations,
    * taking into account the probability of each observation actually being
    * from this distribution.
-   * 
+   *
    * @param observations Matrix of observations.
    * @param probabilities List of probability of the each observation being
    * from this distribution.

@@ -1,5 +1,5 @@
 /**
- * @file ra_model.hpp
+ * @file methods/rann/ra_model.hpp
  * @author Ryan Curtin
  *
  * This is a model for rank-approximate nearest neighbor search.  It provides an

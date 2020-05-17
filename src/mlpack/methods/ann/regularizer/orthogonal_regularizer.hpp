@@ -1,5 +1,5 @@
 /**
- * @file orthogonal_regularizer.hpp
+ * @file methods/ann/regularizer/orthogonal_regularizer.hpp
  * @author Saksham Bansal
  *
  * Definition of the OrthogonalRegularizer class.

@@ -1,5 +1,5 @@
 /**
- * @file set_input_height_visitor.hpp
+ * @file methods/ann/visitor/set_input_height_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the InputHeight() function for different

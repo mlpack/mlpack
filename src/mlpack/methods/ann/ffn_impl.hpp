@@ -1,5 +1,5 @@
 /**
- * @file ffn_impl.hpp
+ * @file methods/ann/ffn_impl.hpp
  * @author Marcus Edel
  *
  * Definition of the FFN class, which implements feed forward neural networks.
@@ -96,7 +96,8 @@ typename std::enable_if<
       !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
       ::value, void>::type
 FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
-WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const
+WarnMessageMaxIterations(OptimizerType& /* optimizer */, size_t /* samples */)
+    const
 {
   return;
 }

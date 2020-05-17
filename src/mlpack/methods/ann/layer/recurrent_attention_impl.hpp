@@ -1,5 +1,5 @@
 /**
- * @file recurrent_attention_impl.hpp
+ * @file methods/ann/layer/recurrent_attention_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the RecurrentAttention class.

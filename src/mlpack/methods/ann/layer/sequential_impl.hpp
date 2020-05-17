@@ -1,5 +1,5 @@
 /**
- * @file sequential_impl.hpp
+ * @file methods/ann/layer/sequential_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Sequential class, which acts as a feed-forward fully
@@ -27,9 +27,18 @@ namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputDataType, typename OutputDataType, bool Residual,
           typename... CustomLayers>
-Sequential<
-    InputDataType, OutputDataType, Residual, CustomLayers...>::Sequential(
-        const bool model) : model(model), reset(false), width(0), height(0)
+Sequential<InputDataType, OutputDataType, Residual, CustomLayers...>::
+Sequential(const bool model) :
+    model(model), reset(false), width(0), height(0), ownsLayers(!model)
+{
+  // Nothing to do here.
+}
+
+template <typename InputDataType, typename OutputDataType, bool Residual,
+          typename... CustomLayers>
+Sequential<InputDataType, OutputDataType, Residual, CustomLayers...>::
+Sequential(const bool model, const bool ownsLayers) :
+    model(model), reset(false), width(0), height(0), ownsLayers(ownsLayers)
 {
   // Nothing to do here.
 }
@@ -39,7 +48,7 @@ template <typename InputDataType, typename OutputDataType, bool Residual,
 Sequential<
     InputDataType, OutputDataType, Residual, CustomLayers...>::~Sequential()
 {
-  if (!model)
+  if (!model && ownsLayers)
   {
     for (LayerTypes<CustomLayers...>& layer : network)
       boost::apply_visitor(deleteVisitor, layer);
@@ -175,26 +184,12 @@ Gradient(const arma::Mat<eT>& input,
       boost::apply_visitor(deltaVisitor, network[1])), network.front());
 }
 
-template <typename InputDataType, typename OutputDataType, bool Residual,
-          typename... CustomLayers>
-void Sequential<
-    InputDataType, OutputDataType, Residual, CustomLayers...>::DeleteModules()
-{
-  if (model == true)
-  {
-    for (LayerTypes<CustomLayers...>& layer : network)
-    {
-      boost::apply_visitor(deleteVisitor, layer);
-    }
-  }
-}
-
 template<typename InputDataType, typename OutputDataType, bool Residual,
          typename... CustomLayers>
 template<typename Archive>
 void Sequential<
     InputDataType, OutputDataType, Residual, CustomLayers...>::serialize(
-        Archive& ar, const unsigned int /* version */)
+        Archive& ar, const unsigned int version)
 {
   // If loading, delete the old layers.
   if (Archive::is_loading::value)
@@ -207,6 +202,11 @@ void Sequential<
 
   ar & BOOST_SERIALIZATION_NVP(model);
   ar & BOOST_SERIALIZATION_NVP(network);
+
+  if (version >= 1)
+    ar & BOOST_SERIALIZATION_NVP(ownsLayers);
+  else if (Archive::is_loading::value)
+    ownsLayers = !model;
 }
 
 } // namespace ann

@@ -1,5 +1,5 @@
 /**
- * @file generate_markdown.binding.hpp.in
+ * @file markdown/generate_markdown.binding.hpp.in
  * @author Ryan Curtin
  *
  * Print Markdown for a specific binding.  This provides two utility

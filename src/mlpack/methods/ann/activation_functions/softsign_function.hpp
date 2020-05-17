@@ -1,5 +1,5 @@
 /**
- * @file softsign_function.hpp
+ * @file methods/ann/activation_functions/softsign_function.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the softsign function as described by
@@ -78,7 +78,7 @@ class SoftsignFunction
   /**
    * Computes the first derivative of the softsign function.
    *
-   * @param y Input data.
+   * @param y Input activation.
    * @return f'(x)
    */
   static double Deriv(const double y)

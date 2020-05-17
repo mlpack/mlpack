@@ -5,9 +5,9 @@
 using Pkg
 Pkg.activate(".")
 using Test
-using mlpack
-
-include(joinpath(pwd(), "src/test_julia_binding.jl"))
+using mlpack: test_julia_binding, GaussianKernel, serialize_bin, deserialize_bin
+using Serialization
+import Base.Filesystem
 
 # The return order for the binding is this:
 #
@@ -323,4 +323,57 @@ end
                          model_in=modelOut)
 
   @test bwOut == 20.0
+end
+
+# Test that we can serialize a model and then use it again.
+@testset "TestStreamSerialization" begin
+  _, _, _, _, _, _, modelOut, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         build_model=true)
+
+  stream = IOBuffer()
+  serialize_bin(stream, modelOut)
+
+  newStream = IOBuffer(copy(stream.data))
+  newModel = deserialize_bin(newStream, GaussianKernel)
+
+  _, _, _, _, _, bwOut, _, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         model_in=newModel)
+end
+
+@testset "TestFileSerialization" begin
+  _, _, _, _, _, _, modelOut, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         build_model=true)
+
+  open("model.bin", "w") do io
+    serialize_bin(io, modelOut)
+  end
+
+  local newModel
+  open("model.bin", "r") do io
+    newModel = deserialize_bin(io, GaussianKernel)
+  end
+
+  _, _, _, _, _, bwOut, _, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         model_in=newModel)
+
+  Filesystem.rm("model.bin")
+end
+
+@testset "TestBaseSerialization" begin
+  _, _, _, _, _, _, modelOut, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         build_model=true)
+
+  serialize("model.bin", modelOut)
+  newModel = deserialize("model.bin")
+
+  _, _, _, _, _, bwOut, _, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         model_in=newModel)
+
+  Filesystem.rm("model.bin")
 end

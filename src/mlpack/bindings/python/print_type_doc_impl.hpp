@@ -1,5 +1,5 @@
 /**
- * @file print_type_doc_impl.hpp
+ * @file bindings/python/print_type_doc_impl.hpp
  * @author Ryan Curtin
  *
  * Print documentation for a given type.

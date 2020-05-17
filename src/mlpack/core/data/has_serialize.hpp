@@ -1,5 +1,5 @@
 /**
- * @file has_serialize.hpp
+ * @file core/data/has_serialize.hpp
  * @author Ryan Curtin
  *
  * This file contains the HasSerialize struct, which can be used to detect

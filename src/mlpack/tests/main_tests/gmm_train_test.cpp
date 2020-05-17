@@ -1,5 +1,5 @@
 /**
- * @file gmm_train_test.cpp
+ * @file tests/main_tests/gmm_train_test.cpp
  * @author Yashwant Singh
  *
  * Test mlpackMain() of gmm_train_main.cpp.
@@ -249,6 +249,8 @@ BOOST_AUTO_TEST_CASE(GmmTrainNoiseTest)
   GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
 
   BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
+
+  delete gmm;
 }
 
 // Ensure that Trials affects the final result.
@@ -273,7 +275,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
 
     mlpackMain();
 
-    GMM* gmm = std::move(CLI::GetParam<GMM*>("output_model"));
+    GMM* gmm = CLI::GetParam<GMM*>("output_model");
 
     ResetGmmTrainSetting();
 
@@ -290,10 +292,12 @@ BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
     GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
 
     success = CheckDifferent(gmm, gmm1);
+
+    delete gmm;
+
     if (success)
       break;
 
-    delete gmm;
     bindings::tests::CleanMemory();
   }
 
@@ -332,6 +336,8 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiffMaxIterationsTest)
   GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
 
   BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
+
+  delete gmm;
 }
 
 // Ensure that the maximum number of k-means iterations affects the result.
@@ -375,10 +381,13 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiffKmeansMaxIterationsTest)
     ResetGmmTrainSetting();
 
     success = CheckDifferent(gmm, gmm1);
+
+    delete gmm;
+    delete gmm1;
+
     if (success)
       break;
 
-    delete gmm;
     bindings::tests::CleanMemory();
   }
 
@@ -419,6 +428,8 @@ BOOST_AUTO_TEST_CASE(GmmTrainPercentageTest)
   GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
 
   BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
+
+  delete gmm;
 }
 
 // Ensure that Sampling affects the final result when refined_start is true.
@@ -455,6 +466,8 @@ BOOST_AUTO_TEST_CASE(GmmTrainSamplingsTest)
   GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
 
   BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
+
+  delete gmm;
 }
 
 // Ensure that tolerance affects the final result.
@@ -487,6 +500,8 @@ BOOST_AUTO_TEST_CASE(GmmTrainToleranceTest)
   GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
 
   BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
+
+  delete gmm;
 }
 
 // Ensure that saved model can be used again.

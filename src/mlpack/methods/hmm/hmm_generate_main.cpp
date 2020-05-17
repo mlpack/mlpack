@@ -1,5 +1,5 @@
 /**
- * @file hmm_generate_main.cpp
+ * @file methods/hmm/hmm_generate_main.cpp
  * @author Ryan Curtin
  * @author Michael Fox
  *

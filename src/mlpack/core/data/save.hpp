@@ -1,5 +1,5 @@
 /**
- * @file save.hpp
+ * @file core/data/save.hpp
  * @author Ryan Curtin
  *
  * Save an Armadillo matrix to file.  This is necessary because Armadillo does
@@ -129,7 +129,6 @@ bool Save(const std::string& filename,
  * @param matrix Matrix to save the image from.
  * @param info An object of ImageInfo class.
  * @param fatal If an error should be reported as fatal (default false).
- * @param transpose If true, transpose the matrix after loading.
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
@@ -145,7 +144,6 @@ bool Save(const std::string& filename,
  * @param matrix Matrix to save the image from.
  * @param info An object of ImageInfo class.
  * @param fatal If an error should be reported as fatal (default false).
- * @param transpose If true, transpose the matrix after loading.
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>

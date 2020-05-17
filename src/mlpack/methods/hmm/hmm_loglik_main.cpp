@@ -1,5 +1,5 @@
 /**
- * @file hmm_loglik_main.cpp
+ * @file methods/hmm/hmm_loglik_main.cpp
  * @author Ryan Curtin
  *
  * Compute the log-likelihood of a given sequence for a given HMM.

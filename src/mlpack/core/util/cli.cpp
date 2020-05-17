@@ -1,5 +1,5 @@
 /**
- * @file cli.cpp
+ * @file core/util/cli.cpp
  * @author Matthew Amidon
  *
  * Implementation of the CLI module for parsing parameters.
@@ -117,6 +117,43 @@ bool CLI::HasParam(const std::string& key)
   const std::string& checkKey = usedKey;
 
   return (parameters.at(checkKey).wasPassed > 0);
+}
+
+/**
+ * Given two (matrix) parameters, ensure that the first is an in-place copy of
+ * the second.  This will generally do nothing (as the bindings already do
+ * this automatically), except for command-line bindings, where we need to
+ * ensure that the output filename is the same as the input filename.
+ *
+ * @param outputParamName Name of output (matrix) parameter.
+ * @param inputParamName Name of input (matrix) parameter.
+ */
+void CLI::MakeInPlaceCopy(const std::string& outputParamName,
+                          const std::string& inputParamName)
+{
+  std::map<std::string, util::ParamData>& parameters =
+      GetSingleton().parameters;
+
+  if (!parameters.count(outputParamName))
+    Log::Fatal << "Unknown parameter '" << outputParamName << "'!" << std::endl;
+  if (!parameters.count(inputParamName))
+    Log::Fatal << "Unknown parameter '" << inputParamName << "'!" << std::endl;
+
+  util::ParamData& output = parameters[outputParamName];
+  util::ParamData& input = parameters[inputParamName];
+
+  if (output.cppType != input.cppType)
+  {
+    Log::Fatal << "Cannot call MakeInPlaceCopy() with different types ("
+        << output.cppType << " and " << input.cppType << ")!" << std::endl;
+  }
+
+  // Is there a function to do this?
+  if (CLI::GetSingleton().functionMap[output.tname].count("InPlaceCopy") != 0)
+  {
+    CLI::GetSingleton().functionMap[output.tname]["InPlaceCopy"](output, (void*)
+        &input, NULL);
+  }
 }
 
 // Returns the sole instance of this class.

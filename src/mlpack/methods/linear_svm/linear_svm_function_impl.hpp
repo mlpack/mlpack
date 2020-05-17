@@ -1,5 +1,5 @@
 /**
- * @file linear_svm_function_impl.hpp
+ * @file methods/linear_svm/linear_svm_function_impl.hpp
  * @author Shikhar Bhardwaj
  * @author Ayush Chamoli
  *

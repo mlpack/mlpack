@@ -1,5 +1,5 @@
 /**
- * @file neighbor_search_rules_impl.hpp
+ * @file methods/neighbor_search/neighbor_search_rules_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of NeighborSearchRules.

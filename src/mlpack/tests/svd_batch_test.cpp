@@ -1,5 +1,5 @@
 /**
- * @file svd_batch_test.cpp
+ * @file tests/svd_batch_test.cpp
  * @author Sumedh Ghaisas
  *
  * Test the SVDBatchLearning class for AMF.

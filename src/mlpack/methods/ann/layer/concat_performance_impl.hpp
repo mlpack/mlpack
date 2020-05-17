@@ -1,5 +1,5 @@
 /**
- * @file concat_performance_impl.hpp
+ * @file methods/ann/layer/concat_performance_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the ConcatPerformance class.
@@ -102,9 +102,9 @@ void ConcatPerformance<
     OutputLayerType,
     InputDataType,
     OutputDataType
->::serialize(Archive& /* ar */, const unsigned int /* version */)
+>::serialize(Archive& ar, const unsigned int /* version */)
 {
-  // Nothing to do here.
+  ar & BOOST_SERIALIZATION_NVP(inSize);
 }
 
 } // namespace ann

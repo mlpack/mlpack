@@ -1,5 +1,5 @@
 /**
- * @file randomized_svd_method.hpp
+ * @file methods/pca/decomposition_policies/randomized_svd_method.hpp
  * @author Marcus Edel
  *
  * Implementation of the randomized svd method for use in the Principal

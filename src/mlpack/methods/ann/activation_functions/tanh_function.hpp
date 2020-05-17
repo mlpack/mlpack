@@ -1,5 +1,5 @@
 /**
- * @file tanh_function.hpp
+ * @file methods/ann/activation_functions/tanh_function.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the Tangens Hyperbolic function.
@@ -55,7 +55,7 @@ class TanhFunction
   /**
    * Computes the first derivative of the tanh function.
    *
-   * @param y Input data.
+   * @param y Input activation.
    * @return f'(x)
    */
   static double Deriv(const double y)
@@ -66,7 +66,7 @@ class TanhFunction
   /**
    * Computes the first derivatives of the tanh function.
    *
-   * @param y Input data.
+   * @param y Input activations.
    * @param x The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType>

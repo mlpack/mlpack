@@ -1,5 +1,5 @@
 /**
- * @file softmax_regression_test.cpp
+ * @file tests/softmax_regression_test.cpp
  * @author Siddharth Agrawal
  *
  * Test the SoftmaxRegression class.

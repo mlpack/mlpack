@@ -1,5 +1,5 @@
 /**
- * @file linear_impl.hpp
+ * @file methods/ann/layer/linear_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Linear layer class also known as fully-connected layer

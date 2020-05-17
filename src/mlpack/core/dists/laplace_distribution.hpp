@@ -1,5 +1,5 @@
 /*
- * @file laplace.hpp
+ * @file core/dists/laplace_distribution.hpp
  * @author Zhihao Lou
  * @author Rohan Raj
  *

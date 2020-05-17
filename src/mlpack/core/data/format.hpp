@@ -1,5 +1,5 @@
 /**
- * @file formats.hpp
+ * @file core/data/format.hpp
  * @author Ryan Curtin
  *
  * Define the formats that can be used by mlpack's Load() and Save() mechanisms

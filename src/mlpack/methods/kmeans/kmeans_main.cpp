@@ -1,5 +1,5 @@
 /**
- * @file kmeans_main.cpp
+ * @file methods/kmeans/kmeans_main.cpp
  * @author Ryan Curtin
  *
  * Executable for running K-Means.
@@ -308,10 +308,8 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
 
       dataset.insert_rows(dataset.n_rows, converted);
 
-      // Save the dataset.  We have to do a little trickery to get it to save
-      // the input file correctly.
-      CLI::GetPrintableParam<arma::mat>("output") =
-          CLI::GetPrintableParam<arma::mat>("input");
+      // Save the dataset.
+      CLI::MakeInPlaceCopy("output", "input");
       CLI::GetParam<arma::mat>("output") = std::move(dataset);
     }
     else

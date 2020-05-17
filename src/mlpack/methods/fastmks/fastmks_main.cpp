@@ -1,5 +1,5 @@
 /**
- * @file fastmks_main.cpp
+ * @file methods/fastmks/fastmks_main.cpp
  * @author Ryan Curtin
  *
  * Main executable for maximum inner product search.
@@ -128,6 +128,12 @@ static void mlpackMain()
         "number of maximum kernels must be greater than 0");
   }
 
+  if (CLI::HasParam("base"))
+  {
+    RequireParamValue<double>("base", [](double x) { return x > 1.0; }, true,
+        "base must be greater than or equal to 1!");
+  }
+
   // Naive mode overrides single mode.
   ReportIgnoredParam({{ "naive", true }}, "single");
 
@@ -223,12 +229,32 @@ static void mlpackMain()
       Log::Info << "Loaded query data (" << queryData.n_rows << " x "
           << queryData.n_cols << ")." << endl;
 
-      model->Search(queryData, (size_t) CLI::GetParam<int>("k"), indices,
-          kernels, base);
+      try
+      {
+        model->Search(queryData, (size_t) CLI::GetParam<int>("k"), indices,
+            kernels, base);
+      }
+      catch (std::invalid_argument& e)
+      {
+        // Delete the memory, if needed.
+        if (CLI::HasParam("reference"))
+          delete model;
+        throw;
+      }
     }
     else
     {
-      model->Search((size_t) CLI::GetParam<int>("k"), indices, kernels);
+      try
+      {
+        model->Search((size_t) CLI::GetParam<int>("k"), indices, kernels);
+      }
+      catch (std::invalid_argument& e)
+      {
+        // Delete the memory, if needed.
+        if (CLI::HasParam("reference"))
+          delete model;
+        throw e;
+      }
     }
 
     // Save output.

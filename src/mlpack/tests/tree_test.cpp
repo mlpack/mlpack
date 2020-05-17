@@ -1,5 +1,5 @@
 /**
- * @file tree_test.cpp
+ * @file tests/tree_test.cpp
  *
  * Tests for tree-building methods.
  *
@@ -2129,12 +2129,15 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeCopyConstructor)
   TreeType b(data);
   b.Begin() = 10;
   b.Count() = 50;
+
   b.Left() = new TreeType(data);
   b.Left()->Begin() = 10;
   b.Left()->Count() = 30;
+  b.Left()->Parent() = &b;
   b.Right() = new TreeType(data);
   b.Right()->Begin() = 40;
   b.Right()->Count() = 20;
+  b.Right()->Parent() = &b;
 
   // Copy the tree.
   TreeType c(b);
@@ -2159,6 +2162,11 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeCopyConstructor)
   BOOST_REQUIRE_EQUAL(b.Right()->Left(), c.Right()->Left());
   BOOST_REQUIRE_EQUAL(b.Right()->Right(), (TreeType*) NULL);
   BOOST_REQUIRE_EQUAL(b.Right()->Right(), c.Right()->Right());
+
+  // Clean memory (we built the tree by hand, so this is what we have to do
+  // since the destructor won't free the children's datasets).
+  delete &b.Left()->Dataset();
+  delete &b.Right()->Dataset();
 }
 
 //! Count the number of leaves under this node.

@@ -1,5 +1,5 @@
 /**
- * @file exact_svd_method.hpp
+ * @file methods/pca/decomposition_policies/exact_svd_method.hpp
  * @author Ajinkya Kale
  * @author Ryan Curtin
  * @author Marcus Edel
@@ -36,7 +36,7 @@ class ExactSVDPolicy
    * @param transformedData Matrix to put results of PCA into.
    * @param eigVal Vector to put eigenvalues into.
    * @param eigvec Matrix to put eigenvectors (loadings) into.
-   * @param rank Rank of the decomposition.
+   * @param * (rank) Rank of the decomposition.
    */
   void Apply(const arma::mat& data,
              const arma::mat& centeredData,

@@ -1,6 +1,6 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
- * @file nbc_main.cpp
+ * @file methods/naive_bayes/nbc_main.cpp
  *
  * This program runs the Simple Naive Bayes Classifier.
  *

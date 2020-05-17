@@ -1,5 +1,5 @@
 /**
- * @file dropconnect_impl.hpp
+ * @file methods/ann/layer/dropconnect_impl.hpp
  * @author Palash Ahuja
  * @author Marcus Edel
  *
@@ -46,12 +46,6 @@ DropConnect<InputDataType, OutputDataType>::DropConnect(
     baseLayer(new Linear<InputDataType, OutputDataType>(inSize, outSize))
 {
   network.push_back(baseLayer);
-}
-
-template <typename InputDataType, typename OutputDataType>
-DropConnect<InputDataType, OutputDataType>::~DropConnect()
-{
-  boost::apply_visitor(DeleteVisitor(), baseLayer);
 }
 
 template<typename InputDataType, typename OutputDataType>

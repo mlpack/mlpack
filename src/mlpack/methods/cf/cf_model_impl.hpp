@@ -1,5 +1,5 @@
 /**
- * @file cf_model_impl.cpp
+ * @file methods/cf/cf_model_impl.hpp
  * @author Wenhao Huang
  *
  * A serializable CF model, used by the main program.

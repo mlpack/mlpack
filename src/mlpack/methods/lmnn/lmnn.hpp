@@ -1,5 +1,5 @@
 /**
- * @file lmnn.hpp
+ * @file methods/lmnn/lmnn.hpp
  * @author Manish Kumar
  *
  * Declaration of Large Margin Nearest Neighbor class.

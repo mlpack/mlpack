@@ -1,5 +1,5 @@
 /**
- * @file normalize_labels_impl.hpp
+ * @file core/data/normalize_labels_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of label normalization functions; these are useful for mapping

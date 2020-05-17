@@ -1,5 +1,5 @@
 /**
- * @file binary_numeric_split_info.hpp
+ * @file methods/hoeffding_trees/binary_numeric_split_info.hpp
  * @author Ryan Curtin
  *
  * After a binary numeric split has been made, this holds information on the

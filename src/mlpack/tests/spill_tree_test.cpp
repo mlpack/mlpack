@@ -1,5 +1,5 @@
 /**
- * @file spill_tree_test.cpp
+ * @file tests/spill_tree_test.cpp
  * @author Marcos Pividori
  *
  * Tests for the SpillTree class.  This should ensure that the class works

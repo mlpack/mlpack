@@ -1,5 +1,5 @@
 /**
- * @file spike_slab_rbm_impl.hpp
+ * @file methods/ann/rbm/spike_slab_rbm_impl.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *
