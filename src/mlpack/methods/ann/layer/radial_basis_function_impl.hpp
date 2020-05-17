@@ -89,6 +89,11 @@ void RBF<InputDataType, OutputDataType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(distances);
   ar & BOOST_SERIALIZATION_NVP(sigmas);
   ar & BOOST_SERIALIZATION_NVP(centres);
+
+  // This is inefficient, but we have to allocate this memory so that
+  // WeightSetVisitor gets the right size.
+  if (Archive::is_loading::value)
+    weights.set_size(outSize * inSize + outSize, 1);
 }
 
 } // namespace ann

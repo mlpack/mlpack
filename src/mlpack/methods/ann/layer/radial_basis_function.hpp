@@ -79,6 +79,21 @@ class RBF
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
+  //! Get the parameters.
+  OutputDataType const& Parameters() const { return weights; }
+  //! Modify the parameters.
+  OutputDataType& Parameters() { return weights; }
+
+  //! Get the input parameter.
+  InputDataType const& InputParameter() const { return inputParameter; }
+  //! Modify the input parameter.
+  InputDataType& InputParameter() { return inputParameter; }
+
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
+
+  //! Get the output size.
+  size_t OutputSize() const { return outSize; }
 
   //! Get the detla.
   OutputDataType const& Delta() const { return delta; }
@@ -104,12 +119,16 @@ class RBF
   //! Locally-stored the learnable scaling factor of the shape.
   InputDataType sigmas;
 
-  //! Locally-stored the outeput distances of the shape.
+  //! Locally-stored input parameter object.
+  InputDataType inputParameter;
+
+  //! Locally-stored the output distances of the shape.
   OutputDataType distances;
 
   //! Locally-stored weight object.
   OutputDataType weights;
 
+  //! Locally-stored reset parameter used to initialize the layer once.
   bool reset;
 
   //! Locally-stored number of input units.
