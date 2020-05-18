@@ -14,7 +14,7 @@
 #   set(CMAKE_SYSTEM_PROCESSOR BCM2711)
 # endif()
 
-function(FLAGS BOARD_NAME)
+function(flags BOARD_NAME)
   # Set all minimization flags for all platforms
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -0s -flto")
 
