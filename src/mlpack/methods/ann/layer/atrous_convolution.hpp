@@ -257,9 +257,6 @@ class AtrousConvolution
   //! Modify the internal Padding layer.
   ann::Padding<>& Padding() { return padding; }
 
-  //! Modify the bias weights of the layer.
-  arma::mat& Bias() { return bias; }
-
   /**
    * Serialize the layer.
    */

@@ -253,9 +253,6 @@ class Convolution
   //! Modify the right padding width.
   size_t& PadWRight() { return padWRight; }
 
-  //! Modify the bias weights of the layer.
-  arma::mat& Bias() { return bias; }
-
   /**
    * Serialize the layer.
    */
