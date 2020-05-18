@@ -1,5 +1,5 @@
 /**
- * @file softmax.hpp
+ * @file methods/ann/layer/softmax.hpp
  * @author Mrityunjay Tripathi
  * @author Sreenik Seal
  *
