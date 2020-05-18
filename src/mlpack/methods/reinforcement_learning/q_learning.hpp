@@ -111,8 +111,6 @@ class QLearning
   //! Get the state of the agent.
   const StateType& State() const { return state; }
 
-  //! Modify the action of the agent.
-  ActionType& Action() { return action; }
   //! Get the action of the agent.
   const ActionType& Action() const { return action; }
 
