@@ -55,7 +55,7 @@ class Softmax
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards trough f. Using the results from the feed
+   * f(x) by propagating x backwards through f. Using the results from the feed
    * forward pass.
    *
    * @param input The propagated input activation.
