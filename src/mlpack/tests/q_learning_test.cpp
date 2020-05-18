@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
       break;
     }
   }
-  // to check if the action returned by the agent is not nan and is finite
+  // To check if the action returned by the agent is not nan and is finite.
   BOOST_REQUIRE(std::isfinite(double(agent.Action())));
   BOOST_REQUIRE(converged);
 }
