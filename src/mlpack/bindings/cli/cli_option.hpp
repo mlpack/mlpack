@@ -1,5 +1,5 @@
 /**
- * @file option.hpp
+ * @file bindings/cli/cli_option.hpp
  * @author Matthew Amidon
  *
  * Definition of the Option class, which is used to define parameters which are
@@ -63,7 +63,7 @@ class CLIOption
    * @param input Whether or not the option is an input option.
    * @param noTranspose If the parameter is a matrix and this is true, then the
    *      matrix will not be transposed on loading.
-   * @param testName Is not used and added for compatibility reasons.
+   * @param * (testName) Is not used and added for compatibility reasons.
    */
   CLIOption(const N defaultValue,
             const std::string& identifier,

@@ -1,5 +1,5 @@
 /**
- * @file r_plus_plus_tree_auxiliary_information.hpp
+ * @file core/tree/rectangle_tree/r_plus_plus_tree_auxiliary_information.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the RPlusPlusTreeAuxiliaryInformation class,
@@ -35,7 +35,7 @@ class RPlusPlusTreeAuxiliaryInformation
   /**
    * Construct this as an auxiliary information for the given node.
    *
-   * @param node The node that stores this auxiliary information.
+   * @param * (node) The node that stores this auxiliary information.
    */
   RPlusPlusTreeAuxiliaryInformation(const TreeType* /* node */);
 
@@ -45,7 +45,7 @@ class RPlusPlusTreeAuxiliaryInformation
    * @param other Another auxiliary information object from which the
    *    information will be copied.
    * @param tree The node that holds the auxiliary information.
-   * @param deepCopy If false, the new object uses the same memory
+   * @param * (deepCopy) If false, the new object uses the same memory
    *    (not used here).
    */
   RPlusPlusTreeAuxiliaryInformation(
@@ -68,8 +68,8 @@ class RPlusPlusTreeAuxiliaryInformation
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
    *
-   * @param node The node in which the point is being inserted.
-   * @param point The global number of the point being inserted.
+   * @param * (node) The node in which the point is being inserted.
+   * @param * (point) The global number of the point being inserted.
    */
   bool HandlePointInsertion(TreeType* /* node */, const size_t /* point */);
 
@@ -80,9 +80,9 @@ class RPlusPlusTreeAuxiliaryInformation
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
    *
-   * @param node The node in which the nodeToInsert is being inserted.
-   * @param nodeToInsert The node being inserted.
-   * @param insertionLevel The level of the tree at which the nodeToInsert
+   * @param * (node) The node in which the nodeToInsert is being inserted.
+   * @param * (nodeToInsert) The node being inserted.
+   * @param * (insertionLevel) The level of the tree at which the nodeToInsert
    *        should be inserted.
    */
   bool HandleNodeInsertion(TreeType* /* node */,
@@ -96,8 +96,8 @@ class RPlusPlusTreeAuxiliaryInformation
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
    *
-   * @param node The node from which the point is being deleted.
-   * @param localIndex The local index of the point being deleted.
+   * @param * (node) The node from which the point is being deleted.
+   * @param * (localIndex) The local index of the point being deleted.
    */
   bool HandlePointDeletion(TreeType* /* node */, const size_t /* localIndex */);
 
@@ -108,8 +108,8 @@ class RPlusPlusTreeAuxiliaryInformation
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
    *
-   * @param node The node from which the node is being deleted.
-   * @param nodeIndex The local index of the node being deleted.
+   * @param * (node) The node from which the node is being deleted.
+   * @param * (nodeIndex) The local index of the node being deleted.
    */
   bool HandleNodeRemoval(TreeType* /* node */, const size_t /* nodeIndex */);
 
@@ -119,7 +119,7 @@ class RPlusPlusTreeAuxiliaryInformation
    * This method should return false if this is not the case. If true is
    * returned, the update will be propagated upward.
    *
-   * @param node The node in which the auxiliary information being update.
+   * @param * (node) The node in which the auxiliary information being update.
    */
   bool UpdateAuxiliaryInfo(TreeType* /* node */);
 

@@ -1,5 +1,5 @@
 /**
- * @file get_param.hpp
+ * @file bindings/cli/get_param.hpp
  * @author Ryan Curtin
  *
  * Use template metaprogramming to get the right type of parameter.
@@ -125,7 +125,7 @@ T*& GetParam(
  * here!
  *
  * @param d Parameter information.
- * @param input Unused parameter.
+ * @param * (input) Unused parameter.
  * @param output Place to store pointer to value.
  */
 template<typename T>

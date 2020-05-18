@@ -1,6 +1,6 @@
 /**
  * @author Parikshit Ram
- * @file gmm_train_main.cpp
+ * @file methods/gmm/gmm_train_main.cpp
  *
  * This program trains a mixture of Gaussians on a given data matrix.
  *

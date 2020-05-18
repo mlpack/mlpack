@@ -1,5 +1,5 @@
 /**
- * @file det_test.cpp
+ * @file tests/det_test.cpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  *
  * Unit tests for the functions of the class DTree and the utility functions

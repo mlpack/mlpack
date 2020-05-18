@@ -1,5 +1,5 @@
 /**
- * @file activation_functions_test.cpp
+ * @file tests/activation_functions_test.cpp
  * @author Marcus Edel
  * @author Dhawal Arora
  *
@@ -684,13 +684,15 @@ BOOST_AUTO_TEST_CASE(ELUFunctionTest)
  */
 BOOST_AUTO_TEST_CASE(SoftplusFunctionTest)
 {
+  const arma::colvec activationData("-2 3.2 4.5 -100.2 1 -1 2 0 1000 10000");
+
   const arma::colvec desiredActivations("0.12692801 3.23995333 4.51104774 \
                                          0 1.31326168 0.31326168 2.12692801 \
-                                         0.69314718");
+                                         0.69314718 1000 10000");
 
   const arma::colvec desiredDerivatives("0.53168946 0.96231041 0.98913245 \
                                          0.5 0.78805844 0.57768119 0.89349302\
-                                         0.66666666");
+                                         0.66666666 1 1");
 
   CheckActivationCorrect<SoftplusFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<SoftplusFunction>(desiredActivations,

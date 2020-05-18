@@ -1,5 +1,5 @@
 /**
- * @file epanechnikov_kernel.hpp
+ * @file core/kernels/epanechnikov_kernel.hpp
  * @author Neil Slagle
  *
  * Definition of the Epanechnikov kernel.

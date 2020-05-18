@@ -1,5 +1,5 @@
 /**
- * @file epanechnikov_kernel_impl.hpp
+ * @file core/kernels/epanechnikov_kernel_impl.hpp
  * @author Neil Slagle
  *
  * Implementation of template-based Epanechnikov kernel functions.

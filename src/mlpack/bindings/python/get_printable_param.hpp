@@ -1,5 +1,5 @@
 /**
- * @file get_printable_param.hpp
+ * @file bindings/python/get_printable_param.hpp
  * @author Ryan Curtin
  *
  * Get a printable version of parameters.
@@ -107,7 +107,7 @@ std::string GetPrintableParam(
  * pointer.
  *
  * @param data Parameter data struct.
- * @param input Unused parameter.
+ * @param * (input) Unused parameter.
  * @param output Output storage for the string.
  */
 template<typename T>

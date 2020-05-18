@@ -1,5 +1,5 @@
 /**
- * @file lars.hpp
+ * @file methods/lars/lars.hpp
  * @author Nishant Mehta (niche)
  *
  * Definition of the LARS class, which performs Least Angle Regression and the
@@ -277,9 +277,9 @@ class LARS
    * currently-trained LARS model. Only ||y-beta*X||2 is used to calculate
    * cost error.
    *
-   * @param data Column-major input data (or row-major input data if rowMajor =
+   * @param matX Column-major input data (or row-major input data if rowMajor =
    *     true).
-   * @param responses A vector of targets.
+   * @param y responses A vector of targets.
    * @param rowMajor Should be true if the data points matrix is row-major and
    *   false otherwise.
    * @return The minimum cost error.

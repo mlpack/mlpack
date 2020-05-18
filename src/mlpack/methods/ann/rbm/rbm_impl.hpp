@@ -1,5 +1,5 @@
 /**
- * @file rbm_impl.hpp
+ * @file methods/ann/rbm/rbm_impl.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *

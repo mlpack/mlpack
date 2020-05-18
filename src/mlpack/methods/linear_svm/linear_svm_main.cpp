@@ -1,5 +1,5 @@
 /**
- * @file linear_svm_main.cpp
+ * @file methods/linear_svm/linear_svm_main.cpp
  * @author Yashwant Singh Parihar
  *
  * Main executable for linear svm.

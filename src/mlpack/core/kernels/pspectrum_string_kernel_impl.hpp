@@ -1,5 +1,5 @@
 /**
- * @file pspectrum_string_kernel_impl.hpp
+ * @file core/kernels/pspectrum_string_kernel_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the p-spectrum string kernel, created for use with FastMKS.

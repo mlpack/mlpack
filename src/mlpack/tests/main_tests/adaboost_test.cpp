@@ -1,5 +1,5 @@
 /**
- * @file adaboost_test.cpp
+ * @file tests/main_tests/adaboost_test.cpp
  * @author Nikhil Goel
  *
  * Test mlpackMain() of adaboost_main.cpp.

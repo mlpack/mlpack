@@ -1,5 +1,5 @@
 /**
- * @file minibatch_discrimination_impl.hpp
+ * @file methods/ann/layer/minibatch_discrimination_impl.hpp
  * @author Saksham Bansal
  *
  * Implementation of the MiniBatchDiscrimination layer class.

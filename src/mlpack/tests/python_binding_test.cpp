@@ -1,5 +1,5 @@
 /**
- * @file python_binding_test.cpp
+ * @file tests/python_binding_test.cpp
  * @author Ryan Curtin
  *
  * Test the components of the Python bindings.

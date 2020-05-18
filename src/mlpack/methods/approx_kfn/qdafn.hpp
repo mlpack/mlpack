@@ -1,5 +1,5 @@
 /**
- * @file qdafn.hpp
+ * @file methods/approx_kfn/qdafn.hpp
  * @author Ryan Curtin
  *
  * An implementation of the query-dependent approximate furthest neighbor

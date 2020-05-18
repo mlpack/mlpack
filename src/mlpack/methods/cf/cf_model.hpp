@@ -1,5 +1,5 @@
 /**
- * @file cf_model.hpp
+ * @file methods/cf/cf_model.hpp
  * @author Wenhao Huang
  * @author Khizir Siddiqui
  *

@@ -1,5 +1,5 @@
 /**
- * @file parametric_relu_impl.hpp
+ * @file methods/ann/layer/parametric_relu_impl.hpp
  * @author Prasanna Patil
  *
  * Definition of PReLU layer first introduced in the,

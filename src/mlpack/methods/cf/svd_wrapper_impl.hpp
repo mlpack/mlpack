@@ -1,5 +1,5 @@
 /**
- * @file svd_wrapper_impl.hpp
+ * @file methods/cf/svd_wrapper_impl.hpp
  * @author Sumedh Ghaisas
  *
  * Implementation of the SVD wrapper class.
@@ -9,11 +9,21 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+
+#ifndef MLPACK_METHODS_SVDWRAPPER_IMPL_HPP
+#define MLPACK_METHODS_SVDWRAPPER_IMPL_HPP
+
+// In case it hasn't yet been included.
+#include "svd_wrapper.hpp"
+
+namespace mlpack {
+namespace cf {
+
 template<class Factorizer>
-double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
-                         arma::mat& W,
-                         arma::mat& sigma,
-                         arma::mat& H) const
+double SVDWrapper<Factorizer>::Apply(const arma::mat& V,
+                                     arma::mat& W,
+                                     arma::mat& sigma,
+                                     arma::mat& H) const
 {
   // get svd factorization
   arma::vec E;
@@ -32,7 +42,7 @@ double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
 }
 
 template<>
-double mlpack::cf::SVDWrapper<DummyClass>::Apply(const arma::mat& V,
+double SVDWrapper<DummyClass>::Apply(const arma::mat& V,
                                      arma::mat& W,
                                      arma::mat& sigma,
                                      arma::mat& H) const
@@ -54,7 +64,7 @@ double mlpack::cf::SVDWrapper<DummyClass>::Apply(const arma::mat& V,
 }
 
 template<class Factorizer>
-double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
+double SVDWrapper<Factorizer>::Apply(const arma::mat& V,
                          size_t r,
                          arma::mat& W,
                          arma::mat& H) const
@@ -95,7 +105,7 @@ double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
 }
 
 template<>
-double mlpack::cf::SVDWrapper<DummyClass>::Apply(const arma::mat& V,
+double SVDWrapper<DummyClass>::Apply(const arma::mat& V,
                                      size_t r,
                                      arma::mat& W,
                                      arma::mat& H) const
@@ -134,3 +144,8 @@ double mlpack::cf::SVDWrapper<DummyClass>::Apply(const arma::mat& V,
   // return the normalized frobenius norm
   return arma::norm(V - V_rec, "fro") / arma::norm(V, "fro");
 }
+
+} // namespace cf
+} // namespace mlpack
+
+#endif

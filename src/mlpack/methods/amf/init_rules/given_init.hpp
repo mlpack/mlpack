@@ -1,5 +1,5 @@
 /**
- * @file given_init.hpp
+ * @file methods/amf/init_rules/given_init.hpp
  * @author Ryan Curtin
  *
  * Initialization rule for alternating matrix factorization (AMF). This simple

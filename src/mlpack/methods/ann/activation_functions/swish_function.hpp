@@ -1,5 +1,5 @@
 /**
- * @file swish_function.hpp
+ * @file methods/ann/activation_functions/swish_function.hpp
  * @author Vivek Pal
  *
  * Definition and implementation of the Swish function as described by

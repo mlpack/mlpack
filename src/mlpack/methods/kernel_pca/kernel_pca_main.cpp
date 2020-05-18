@@ -1,5 +1,5 @@
 /**
- * @file kernel_pca_main.cpp
+ * @file methods/kernel_pca/kernel_pca_main.cpp
  * @author Ajinkya Kale <kaleajinkya@gmail.com>
  *
  * Executable for Kernel PCA.

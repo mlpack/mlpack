@@ -1,5 +1,5 @@
 /**
- * @file dtb_impl.hpp
+ * @file methods/emst/dtb_rules_impl.hpp
  * @author Bill March (march@gatech.edu)
  *
  * Tree traverser rules for the DualTreeBoruvka algorithm.

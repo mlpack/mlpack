@@ -1,5 +1,5 @@
 /**
- * @file kmeans_test.cpp
+ * @file tests/kmeans_test.cpp
  * @author Ryan Curtin
  *
  * mlpack is free software; you may redistribute it and/or modify it under the

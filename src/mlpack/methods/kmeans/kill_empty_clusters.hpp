@@ -1,5 +1,5 @@
 /**
- * @file allow_empty_clusters.hpp
+ * @file methods/kmeans/kill_empty_clusters.hpp
  * @author Ryan Curtin
  *
  * This very simple policy is used when K-Means is allowed to return empty
@@ -33,15 +33,15 @@ class KillEmptyClusters
    * (i.e. an invalid "dead" cluster).
    *
    * @tparam MatType Type of data (arma::mat or arma::spmat).
-   * @param data Dataset on which clustering is being performed.
+   * @param * (data) Dataset on which clustering is being performed.
    * @param emptyCluster Index of cluster which is empty.
-   * @param oldCentroids Centroids of each cluster (one per column) at the start
+   * @param * (oldCentroids) Centroids of each cluster (one per column) at the start
    *      of the iteration.
    * @param newCentroids Centroids of each cluster (one per column) at the end
    *      of the iteration.
    * @param clusterCounts Number of points in each cluster.
-   * @param assignments Cluster assignments of each point.
-   * @param iteration Number of iteration.
+   * @param * (metric) The Metric to use.
+   * @param * (iteration) Number of iteration.
    *
    * @return Number of points changed (0).
    */

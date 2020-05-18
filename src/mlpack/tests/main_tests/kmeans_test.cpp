@@ -1,5 +1,5 @@
 /**
- * @file kmeans_test.cpp
+ * @file tests/main_tests/kmeans_test.cpp
  * @author Prabhat Sharma
  *
  * Test mlpackMain() of kmeans_main.cpp

@@ -1,5 +1,5 @@
 /**
- * @file softplus_function.hpp
+ * @file methods/ann/activation_functions/softplus_function.hpp
  * @author Vivek Pal
  *
  * Definition and implementation of the softplus function as described by
@@ -51,9 +51,10 @@ class SoftplusFunction
    */
   static double Fn(const double x)
   {
-    if (x < DBL_MAX)
-      return x > -DBL_MAX ? std::log(1 + std::exp(x)) : 0;
-    return 1.0;
+    const double val = std::log(1 + std::exp(x));
+    if (std::isfinite(val))
+      return val;
+    return x;
   }
 
   /**
@@ -102,7 +103,10 @@ class SoftplusFunction
    */
   static double Inv(const double y)
   {
-    return y > 0 ? arma::trunc_log(arma::trunc_exp(y) - 1) : 0;
+    const double val = std::log(std::exp(y) - 1);
+    if (std::isfinite(val))
+      return val;
+    return y;
   }
 
   /**

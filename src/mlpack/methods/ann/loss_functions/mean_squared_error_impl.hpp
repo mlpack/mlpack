@@ -1,5 +1,5 @@
 /**
- * @file mean_squared_error_impl.hpp
+ * @file methods/ann/loss_functions/mean_squared_error_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the mean squared error performance function.

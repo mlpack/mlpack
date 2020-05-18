@@ -1,5 +1,5 @@
 /**
- * @file print_defn.hpp
+ * @file bindings/python/print_defn.hpp
  * @author Ryan Curtin
  *
  * Print the definition of a Python parameter.

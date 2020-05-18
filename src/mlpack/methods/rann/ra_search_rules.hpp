@@ -1,5 +1,5 @@
 /**
- * @file ra_search_rules.hpp
+ * @file methods/rann/ra_search_rules.hpp
  * @author Parikshit Ram
  *
  * Defines the pruning rules and base case rules necessary to perform a

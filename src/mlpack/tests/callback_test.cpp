@@ -1,5 +1,5 @@
 /**
- * @file linear_svm_test.cpp
+ * @file tests/callback_test.cpp
  *
  * Test the Linear SVM class.
  *

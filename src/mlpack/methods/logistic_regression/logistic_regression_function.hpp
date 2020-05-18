@@ -1,5 +1,5 @@
 /**
- * @file logistic_regression_function.hpp
+ * @file methods/logistic_regression/logistic_regression_function.hpp
  * @author Sumedh Ghaisas
  *
  * Implementation of the logistic regression function, which is meant to be

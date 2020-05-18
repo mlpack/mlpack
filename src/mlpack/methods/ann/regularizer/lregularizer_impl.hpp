@@ -1,5 +1,5 @@
 /**
- * @file lregularization_impl.hpp
+ * @file methods/ann/regularizer/lregularizer_impl.hpp
  * @author Saksham Bansal
  *
  * Implementation of template specializations of LRegularizer class.

@@ -1,5 +1,5 @@
 /**
- * @file continuous_mountain_car.hpp
+ * @file methods/reinforcement_learning/environment/continuous_mountain_car.hpp
  * @author Rohan Raj
  * @author Shashank Shekhar
  *

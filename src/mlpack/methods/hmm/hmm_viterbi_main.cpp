@@ -1,5 +1,5 @@
 /**
- * @file hmm_viterbi_main.cpp
+ * @file methods/hmm/hmm_viterbi_main.cpp
  * @author Ryan Curtin
  *
  * Compute the most probably hidden state sequence of a given observation

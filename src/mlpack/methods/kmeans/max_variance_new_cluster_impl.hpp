@@ -1,5 +1,5 @@
 /**
- * @file max_variance_new_cluster_impl.hpp
+ * @file methods/kmeans/max_variance_new_cluster_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of MaxVarianceNewCluster class.

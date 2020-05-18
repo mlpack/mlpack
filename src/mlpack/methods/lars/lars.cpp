@@ -1,5 +1,5 @@
 /**
- * @file lars.cpp
+ * @file methods/lars/lars.cpp
  * @author Nishant Mehta (niche)
  *
  * Implementation of LARS and LASSO.

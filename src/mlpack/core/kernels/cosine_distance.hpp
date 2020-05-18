@@ -1,5 +1,5 @@
 /**
- * @file cosine_distance.hpp
+ * @file core/kernels/cosine_distance.hpp
  * @author Ryan Curtin
  *
  * This implements the cosine distance (or cosine similarity) between two

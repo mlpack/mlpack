@@ -1,5 +1,5 @@
 /**
- * @file bernoulli_distribution.hpp
+ * @file methods/ann/dists/bernoulli_distribution.hpp
  * @author Atharva Khandait
  *
  * Definition of the Bernoulli distribution class.
@@ -55,7 +55,7 @@ class BernoulliDistribution
    *
    * @param param The matrix of probabilities or pre probabilities of
    *        the multiple distributions.
-   * @param applyLogsitic If true, we apply Logistic function to the param
+   * @param applyLogistic If true, we apply Logistic function to the param
    *        matrix (pre probability) to get probability.
    * @param eps The minimum value used for computing logarithms and
    *        denominators.

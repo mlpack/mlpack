@@ -1,5 +1,5 @@
 /**
- * @file sequential_impl.hpp
+ * @file methods/ann/layer/sequential_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Sequential class, which acts as a feed-forward fully

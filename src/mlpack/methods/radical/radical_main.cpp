@@ -1,5 +1,5 @@
 /**
- * @file radical_main.cpp
+ * @file methods/radical/radical_main.cpp
  * @author Nishant Mehta
  *
  * Executable for RADICAL. RADICAL is Robust, Accurate, Direct ICA

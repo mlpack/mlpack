@@ -1,5 +1,5 @@
 /**
- * @file boost_backport.hpp
+ * @file core/boost_backport/boost_backport_serialization.hpp
  * @author Yannis Mentekidis
  *
  * Centralized control of what boost files to include. We have backported the

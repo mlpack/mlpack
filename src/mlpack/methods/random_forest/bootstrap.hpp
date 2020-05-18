@@ -1,5 +1,5 @@
 /**
- * @file bootstrap.hpp
+ * @file methods/random_forest/bootstrap.hpp
  * @author Ryan Curtin
  *
  * Implementation of the Bootstrap() function, which creates a bootstrapped

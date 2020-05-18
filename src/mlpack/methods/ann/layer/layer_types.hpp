@@ -1,5 +1,5 @@
 /**
- * @file layer_types.hpp
+ * @file methods/ann/layer/layer_types.hpp
  * @author Marcus Edel
  *
  * This provides a list of all modules that can be used to construct a model.

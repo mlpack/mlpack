@@ -1,5 +1,5 @@
 /**
- * @file kde_rules.hpp
+ * @file methods/kde/kde_rules.hpp
  * @author Roberto Hueso
  *
  * Rules for Kernel Density Estimation, so that it can be done with arbitrary

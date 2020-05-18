@@ -1,5 +1,5 @@
 /**
- * @file similarity_interpolation.hpp
+ * @file methods/cf/interpolation_policies/similarity_interpolation.hpp
  * @author Wenhao Huang
  *
  * Definition of SimilarityInterpolation class.
@@ -56,11 +56,11 @@ class SimilarityInterpolation
    *
    * @param weights Resulting interpolation weights. The size of weights should
    *     be set to the number of neighbors before calling GetWeights().
-   * @param decomposition Decomposition object.
-   * @param queryUser Queried user.
+   * @param * (decomposition) Decomposition object.
+   * @param * (queryUser) Queried user.
    * @param neighbors Neighbors of queried user.
-   * @param similarities Similarites between query user and neighbors.
-   * @param cleanedData Sparse rating matrix.
+   * @param similarities Similarities between query user and neighbors.
+   * @param * (cleanedData) Sparse rating matrix.
    */
   template <typename VectorType,
             typename DecompositionPolicy>

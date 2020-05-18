@@ -1,5 +1,5 @@
 /**
- * @file softmax_regression_test.cpp
+ * @file tests/main_tests/softmax_regression_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of softmax_regression_main.cpp.

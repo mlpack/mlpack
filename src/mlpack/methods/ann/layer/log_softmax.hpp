@@ -1,5 +1,5 @@
 /**
- * @file log_softmax.hpp
+ * @file methods/ann/layer/log_softmax.hpp
  * @author Marcus Edel
  *
  * Definition of the LogSoftmax class.

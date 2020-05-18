@@ -1,5 +1,5 @@
 /**
- * @file rs_model_impl.hpp
+ * @file methods/range_search/rs_model_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of serialize() and inline functions for RSModel.

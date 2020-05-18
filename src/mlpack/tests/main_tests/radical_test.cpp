@@ -1,5 +1,5 @@
 /**
- * @file radical_test.cpp
+ * @file tests/main_tests/radical_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of radical_main.cpp.

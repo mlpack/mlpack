@@ -1,5 +1,5 @@
 /**
- * @file lsh_main.cpp
+ * @file methods/lsh/lsh_main.cpp
  * @author Parikshit Ram
  *
  * This file computes the approximate nearest-neighbors using 2-stable

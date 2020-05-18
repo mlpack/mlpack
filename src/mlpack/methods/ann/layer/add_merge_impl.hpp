@@ -1,5 +1,5 @@
 /**
- * @file add_merge_impl.hpp
+ * @file methods/ann/layer/add_merge_impl.hpp
  * @author Marcus Edel
  *
  * Definition of the AddMerge module which accumulates the output of the given

@@ -1,5 +1,5 @@
 /**
- * @file fastmks_main.cpp
+ * @file methods/fastmks/fastmks_main.cpp
  * @author Ryan Curtin
  *
  * Main executable for maximum inner product search.

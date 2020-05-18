@@ -1,5 +1,5 @@
 /**
- * @file union_find_test.cpp
+ * @file tests/union_find_test.cpp
  * @author Bill March (march@gatech.edu)
  *
  * Unit tests for the Union-Find data structure.

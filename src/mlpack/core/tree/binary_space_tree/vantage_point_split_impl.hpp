@@ -1,5 +1,5 @@
 /**
- * @file vantage_point_split_impl.hpp
+ * @file core/tree/binary_space_tree/vantage_point_split_impl.hpp
  * @author Mikhail Lozhnikov
  *
  * Implementation of class (VantagePointSplit) to split a vantage point
