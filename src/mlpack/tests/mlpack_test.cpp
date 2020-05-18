@@ -1,5 +1,5 @@
 /**
- * @file mlpack_test.cpp
+ * @file tests/mlpack_test.cpp
  *
  * Simple file defining the name of the overall test for mlpack, and set up
  * global test fixture for each test. Each individual test is contained in

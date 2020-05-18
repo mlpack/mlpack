@@ -1,5 +1,5 @@
 /**
- * @file q_learning.hpp
+ * @file methods/reinforcement_learning/q_learning.hpp
  * @author Shangtong Zhang
  *
  * This file is the definition of QLearning class,

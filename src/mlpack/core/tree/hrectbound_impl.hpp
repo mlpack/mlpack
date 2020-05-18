@@ -1,5 +1,5 @@
 /**
- * @file hrectbound_impl.hpp
+ * @file core/tree/hrectbound_impl.hpp
  *
  * Implementation of hyper-rectangle bound policy class.
  * Template parameter Power is the metric to use; use 2 for Euclidean (L2).

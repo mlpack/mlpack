@@ -1,5 +1,5 @@
 /**
- * @file kfn_main.cpp
+ * @file methods/neighbor_search/kfn_main.cpp
  * @author Ryan Curtin
  *
  * Implementation of the KFN executable.  Allows some number of standard
@@ -230,11 +230,10 @@ static void mlpackMain()
     kfn->TreeType() = tree;
     kfn->RandomBasis() = randomBasis;
 
-    arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
+    Log::Info << "Using reference data from "
+        << CLI::GetPrintableParam<arma::mat>("reference") << "." << endl;
 
-    Log::Info << "Using reference data from '"
-        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
-        << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
+    arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
     kfn->BuildModel(std::move(referenceSet), size_t(lsInt), searchMode,
         epsilon);
@@ -268,10 +267,9 @@ static void mlpackMain()
     arma::mat queryData;
     if (CLI::HasParam("query"))
     {
+      Log::Info << "Using query data from "
+          << CLI::GetPrintableParam<arma::mat>("query") << "." << endl;
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
-      Log::Info << "Using query data from '"
-          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
-          << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
       if (queryData.n_rows != kfn->Dataset().n_rows)
       {
         // Clean memory if needed.

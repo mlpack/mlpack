@@ -1,5 +1,5 @@
 /**
- * @file drusilla_select_impl.hpp
+ * @file methods/approx_kfn/drusilla_select_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of DrusillaSelect class methods.

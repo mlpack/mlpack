@@ -137,6 +137,7 @@ add_executable(mlpack_test
   main_tests/kfn_test.cpp
   main_tests/knn_test.cpp
   main_tests/linear_regression_test.cpp
+  main_tests/image_converter_test.cpp
   main_tests/linear_svm_test.cpp
   main_tests/logistic_regression_test.cpp
   main_tests/local_coordinate_coding_test.cpp

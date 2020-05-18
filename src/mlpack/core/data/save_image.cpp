@@ -1,20 +1,31 @@
 /**
- * @file save_image.cpp
+ * @file core/data/save_image.cpp
  * @author Mehul Kumar Nirala
  *
  * Implementation of image saving functionality via STB.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "save.hpp"
 
 #ifdef HAS_STB
 
-#define STB_IMAGE_STATIC
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
+// The implementation of the functions is included directly, so we need to make
+// sure it doesn't get included twice.  This is to work around a bug in old
+// versions of STB where not all functions were correctly marked static.
 #define STB_IMAGE_WRITE_STATIC
-#define STB_IMAGE_WRITE_IMPLEMENTATION
+#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
+  #define STB_IMAGE_WRITE_IMPLEMENTATION
+#else
+  #undef STB_IMAGE_WRITE_IMPLEMENTATION
+#endif
 #include <stb_image_write.h>
+#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
+  #define STB_IMAGE_WRITE_IMPLEMENTATION
+#endif
 
 namespace mlpack {
 namespace data {
@@ -52,6 +63,12 @@ bool SaveImage(const std::string& filename,
     Log::Warn << "Save(): given input image matrix contains more than 1 image."
         << std::endl;
     Log::Warn << "Only the first image will be saved!" << std::endl;
+  }
+
+  if (info.Width() * info.Height() * info.Channels() != image.n_elem)
+  {
+    Log::Fatal << "data::Save(): The given image dimensions do not match the "
+        << "dimensions of the matrix to be saved!" << std::endl;
   }
 
   bool status = false;

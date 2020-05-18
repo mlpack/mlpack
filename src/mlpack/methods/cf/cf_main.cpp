@@ -1,5 +1,5 @@
 /**
- * @file cf_main.hpp
+ * @file methods/cf/cf_main.cpp
  * @author Mudit Raj Gupta
  *
  * Main executable to run CF.

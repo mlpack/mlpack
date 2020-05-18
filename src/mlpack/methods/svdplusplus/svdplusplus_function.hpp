@@ -1,5 +1,5 @@
 /**
- * @file svdplusplus_function.hpp
+ * @file methods/svdplusplus/svdplusplus_function.hpp
  * @author Siddharth Agrawal
  * @author Wenhao Huang
  *
@@ -147,6 +147,8 @@ class SVDPlusPlusFunction
 } // namespace svd
 } // namespace mlpack
 
+// \cond NO_DOXYGEN
+
 namespace ens {
 
   /**
@@ -168,6 +170,8 @@ namespace ens {
       arma::mat& parameters);
 
 } // namespace ens
+
+// \endcond
 
 #include "svdplusplus_function_impl.hpp"
 

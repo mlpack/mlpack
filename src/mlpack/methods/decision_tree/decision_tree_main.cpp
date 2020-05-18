@@ -1,5 +1,5 @@
 /**
- * @file decision_tree_main.cpp
+ * @file methods/decision_tree/decision_tree_main.cpp
  * @author Ryan Curtin
  *
  * A command-line program to build a decision tree.

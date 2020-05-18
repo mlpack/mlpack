@@ -30,7 +30,7 @@ to build mlpack on Windows, see \ref build_windows (alternatively, you can read
 is based on older versions).
 
 You can download the latest mlpack release from here:
-<a href="https://www.mlpack.org/files/mlpack-3.2.2.tar.gz">mlpack-3.2.2</a>
+<a href="https://www.mlpack.org/files/mlpack-3.3.1.tar.gz">mlpack-3.3.1</a>
 
 @section build_simple Simple Linux build instructions
 
@@ -38,9 +38,9 @@ Assuming all dependencies are installed in the system, you can run the commands
 below directly to build and install mlpack.
 
 @code
-$ wget https://www.mlpack.org/files/mlpack-3.2.2.tar.gz
-$ tar -xvzpf mlpack-3.2.2.tar.gz
-$ mkdir mlpack-3.2.2/build && cd mlpack-3.2.2/build
+$ wget https://www.mlpack.org/files/mlpack-3.3.1.tar.gz
+$ tar -xvzpf mlpack-3.3.1.tar.gz
+$ mkdir mlpack-3.3.1/build && cd mlpack-3.3.1/build
 $ cmake ../
 $ make -j4  # The -j is the number of cores you want to use for a build.
 $ sudo make install
@@ -65,8 +65,8 @@ configure mlpack.
 First we should unpack the mlpack source and create a build directory.
 
 @code
-$ tar -xvzpf mlpack-3.2.2.tar.gz
-$ cd mlpack-3.2.2
+$ tar -xvzpf mlpack-3.3.1.tar.gz
+$ cd mlpack-3.3.1
 $ mkdir build
 @endcode
 

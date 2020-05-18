@@ -1,5 +1,5 @@
 /**
- * @file augmented_rnns_tasks.cpp
+ * @file tests/augmented_rnns_tasks_test.cpp
  * @author Konstantin Sidorov
  *
  * Tests the rtasks for augmented network models.

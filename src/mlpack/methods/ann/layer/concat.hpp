@@ -1,5 +1,5 @@
 /**
- * @file concat.hpp
+ * @file methods/ann/layer/concat.hpp
  * @author Marcus Edel
  * @author Mehul Kumar Nirala
  *
@@ -87,7 +87,7 @@ class Concat
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -100,10 +100,10 @@ class Concat
    * This is the overload of Backward() that runs only a specific layer with
    * the given input.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
-   * @param The index of the layer to run.
+   * @param index The index of the layer to run.
    */
   template<typename eT>
   void Backward(const arma::Mat<eT>& /* input */,
@@ -200,6 +200,9 @@ class Concat
   arma::mat const& Gradient() const { return gradient; }
   //! Modify the gradient.
   arma::mat& Gradient() { return gradient; }
+
+  //! Get the axis of concatenation.
+  size_t const& ConcatAxis() const { return axis; }
 
   /**
    * Serialize the layer

@@ -1,5 +1,5 @@
 /**
- * @file program_doc.hpp
+ * @file core/util/program_doc.hpp
  * @author Matthew Amidon
  *
  * The structure used to store a program's name and documentation.
@@ -41,10 +41,10 @@ class ProgramDoc
    * @param seeAlso A set of pairs of strings with useful "see also"
    *     information; each pair is <description, url>.
    */
-  ProgramDoc(const std::string& programName,
-             const std::string& shortDocumentation,
-             const std::function<std::string()>& documentation,
-             const std::vector<std::pair<std::string, std::string>>& seeAlso);
+  ProgramDoc(const std::string programName,
+             const std::string shortDocumentation,
+             const std::function<std::string()> documentation,
+             const std::vector<std::pair<std::string, std::string>> seeAlso);
 
   /**
    * Construct an empty ProgramDoc object.  (This is not meant to be used!)

@@ -1,5 +1,5 @@
 /**
- * @file earth_mover_distance_impl.hpp
+ * @file methods/ann/loss_functions/earth_mover_distance_impl.hpp
  * @author Shikhar Jaiswal
  *
  * Implementation of the earth mover distance function.

@@ -1,5 +1,5 @@
 /**
- * @file alpha_dropout_impl.hpp
+ * @file methods/ann/layer/alpha_dropout_impl.hpp
  * @author Dakshit Agrawal
  *
  * Definition of the Alpha-Dropout class, which implements a regularizer that

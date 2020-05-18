@@ -1,5 +1,5 @@
 /**
- * @file output_param_impl.hpp
+ * @file bindings/cli/output_param_impl.hpp
  * @author Ryan Curtin
  *
  * Implementations of functions to output parameters of different types.

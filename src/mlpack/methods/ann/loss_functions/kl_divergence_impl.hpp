@@ -1,5 +1,5 @@
 /**
- * @file kl_divergence_impl.hpp
+ * @file methods/ann/loss_functions/kl_divergence_impl.hpp
  * @author Dakshit Agrawal
  *
  * Implementation of the Kullback–Leibler Divergence error function.

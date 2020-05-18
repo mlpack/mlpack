@@ -1,5 +1,5 @@
 /**
- * @file fastmks_test.cpp
+ * @file tests/main_tests/fastmks_test.cpp
  * @author Yashwant Singh
  * @author Prabhat Sharma
  *

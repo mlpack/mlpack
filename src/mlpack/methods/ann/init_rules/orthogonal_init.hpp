@@ -1,5 +1,5 @@
 /**
- * @file orthogonal_init.hpp
+ * @file methods/ann/init_rules/orthogonal_init.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the orthogonal matrix initialization method.

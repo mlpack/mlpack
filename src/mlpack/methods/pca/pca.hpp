@@ -1,5 +1,5 @@
 /**
- * @file pca.hpp
+ * @file methods/pca/pca.hpp
  * @author Ajinkya Kale
  * @author Ryan Curtin
  * @author Marcus Edel
@@ -38,6 +38,7 @@ class PCA
    * dimension by standard deviation when PCA is performed.
    *
    * @param scaleData Whether or not to scale the data.
+   * @param decomposition Decomposition policy to use.
    */
   PCA(const bool scaleData = false,
       const DecompositionPolicy& decomposition = DecompositionPolicy());
@@ -48,7 +49,7 @@ class PCA
    *
    * @param data Data matrix.
    * @param transformedData Matrix to put results of PCA into.
-   * @param eigval Vector to put eigenvalues into.
+   * @param eigVal Vector to put eigenvalues into.
    * @param eigvec Matrix to put eigenvectors (loadings) into.
    */
   void Apply(const arma::mat& data,

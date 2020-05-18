@@ -1,5 +1,5 @@
 /**
- * @file preprocess_scale_main.cpp
+ * @file methods/preprocess/preprocess_scale_main.cpp
  * @author jeffin sam
  *
  * A CLI executable to scale a dataset.
@@ -10,9 +10,10 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/math/random.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/math/ccov.hpp>
 #include <mlpack/core/data/scaler_methods/max_abs_scaler.hpp>
 #include <mlpack/core/data/scaler_methods/mean_normalization.hpp>
 #include <mlpack/core/data/scaler_methods/min_max_scaler.hpp>

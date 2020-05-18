@@ -1,5 +1,5 @@
 /**
- * @file max_abs_scaler.hpp
+ * @file core/data/scaler_methods/max_abs_scaler.hpp
  * @author Jeffin Sam
  *
  * MaxAbsScaler class to scale features.

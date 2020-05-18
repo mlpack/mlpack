@@ -1,5 +1,5 @@
 /**
- * @file feedforward_network_test.cpp
+ * @file tests/feedforward_network_test.cpp
  * @author Marcus Edel
  * @author Palash Ahuja
  *

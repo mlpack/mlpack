@@ -1,5 +1,5 @@
 /**
- * @file inception_score_impl.hpp
+ * @file methods/ann/gan/metrics/inception_score_impl.hpp
  * @author Saksham Bansal
  *
  * Definition of Inception Score for Generative Adversarial Networks.

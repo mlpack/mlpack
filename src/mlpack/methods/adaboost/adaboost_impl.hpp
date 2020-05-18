@@ -1,5 +1,5 @@
 /*
- * @file adaboost_impl.hpp
+ * @file methods/adaboost/adaboost_impl.hpp
  * @author Udit Saxena
  *
  * Implementation of the AdaBoost class.

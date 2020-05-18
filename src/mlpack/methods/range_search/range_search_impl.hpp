@@ -1,5 +1,5 @@
 /**
- * @file range_search_impl.hpp
+ * @file methods/range_search/range_search_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the RangeSearch class.

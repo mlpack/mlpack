@@ -1,5 +1,5 @@
 /**
- * @file lisht_function.hpp
+ * @file methods/ann/activation_functions/lisht_function.hpp
  * @author Kartik Dutt
  *
  * Definition and implementation of the LiSHT function as described by
@@ -79,7 +79,7 @@ class LiSHTFunction
   /**
    * Computes the first derivatives of the LiSHT function.
    * 
-   * @param y Input activations.
+   * @param y Input data.
    * @param x The resulting derivatives.
    */
   template <typename InputVecType, typename OutputVecType>

@@ -1,5 +1,5 @@
 /**
- * @file rectangle_tree.hpp
+ * @file core/tree/rectangle_tree/rectangle_tree.hpp
  * @author Andrew Wells
  *
  * Definition of generalized rectangle type trees (r_tree, r_star_tree, x_tree,
@@ -173,6 +173,7 @@ class RectangleTree
    *
    * @param other The tree to be copied.
    * @param deepCopy If false, the children are not recursively copied.
+   * @param newParent Set a new parent as applicable, default NULL.
    */
   RectangleTree(const RectangleTree& other,
                 const bool deepCopy = true,
@@ -595,6 +596,8 @@ class RectangleTree
    * @param usePoint True if we use the optimized version of the algorithm that
    *      is possible when we now what point was deleted.  False otherwise (eg.
    *      if we deleted a node instead of a point).
+   * @param relevels The levels that have been reinserted to on this top level
+   *      insertion.
    */
   void CondenseTree(const arma::vec& point,
                     std::vector<bool>& relevels,
@@ -612,7 +615,7 @@ class RectangleTree
   /**
    * Shrink the bound object of this node for the removal of a child node.
    *
-   * @param bound The HRectBound<>& of the bound that was removed to reqire this
+   * @param changedBound The HRectBound<>& of the bound that was removed to reqire this
    *      shrinking.
    * @return true if the bound needed to be changed, false if it did not.
    */

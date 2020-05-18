@@ -1,5 +1,5 @@
 /**
- * @file space_split_impl.hpp
+ * @file core/tree/space_split/space_split_impl.hpp
  * @author Marcos Pividori
  *
  * Implementation of SpaceSplit, to create a projection vector based on a given

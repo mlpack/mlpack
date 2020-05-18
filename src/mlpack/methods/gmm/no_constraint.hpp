@@ -1,5 +1,5 @@
 /**
- * @file no_constraint.hpp
+ * @file methods/gmm/no_constraint.hpp
  * @author Ryan Curtin
  *
  * No constraint on the covariance matrix.

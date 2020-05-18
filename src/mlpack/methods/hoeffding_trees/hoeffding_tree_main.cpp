@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_tree_main.cpp
+ * @file methods/hoeffding_trees/hoeffding_tree_main.cpp
  * @author Ryan Curtin
  *
  * A command-line executable that can build a streaming decision tree.

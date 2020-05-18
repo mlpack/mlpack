@@ -1,5 +1,5 @@
 /**
- * @file hollow_ball_bound_impl.hpp
+ * @file core/tree/hollow_ball_bound_impl.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
  * Implementation of HollowBallBound ball bound metric policy class.

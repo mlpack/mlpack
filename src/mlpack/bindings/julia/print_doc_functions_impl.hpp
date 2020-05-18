@@ -1,5 +1,5 @@
 /**
- * @file print_doc_functions_impl.hpp
+ * @file bindings/julia/print_doc_functions_impl.hpp
  * @author Ryan Curtin
  *
  * This file contains functions useful for printing documentation strings
@@ -475,7 +475,8 @@ inline std::string ProgramCall(const std::string& programName)
   size_t nonreqInputs = 0;
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
-    if (it->second.input && !it->second.required)
+    if (it->second.input && !it->second.required &&
+       (it->second.name == "verbose" || !it->second.persistent))
     {
       if (inputs == 0 && nonreqInputs == 0)
         result << " ; ";

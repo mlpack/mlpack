@@ -1,5 +1,5 @@
 /**
- * @file cli_binding_test.cpp
+ * @file tests/cli_binding_test.cpp
  * @author Ryan Curtin
  *
  * Test the components of the CLI bindings.

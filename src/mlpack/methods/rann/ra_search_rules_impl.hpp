@@ -1,5 +1,5 @@
 /**
- * @file ra_search_rules_impl.hpp
+ * @file methods/rann/ra_search_rules_impl.hpp
  * @author Parikshit Ram
  *
  * Implementation of RASearchRules.

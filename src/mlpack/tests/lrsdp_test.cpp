@@ -1,5 +1,5 @@
 /**
- * @file lrsdp_test.cpp
+ * @file tests/lrsdp_test.cpp
  * @author Ryan Curtin
  *
  * Tests for LR-SDP (core/optimizers/sdp/).

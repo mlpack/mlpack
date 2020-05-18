@@ -1,5 +1,5 @@
 /**
- * @file binding_info.cpp
+ * @file bindings/markdown/binding_info.cpp
  * @author Ryan Curtin
  *
  * Implementation of BindingInfo functions.

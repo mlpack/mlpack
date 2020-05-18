@@ -1,5 +1,5 @@
 /**
- * @file transposed_convolution_impl.hpp
+ * @file methods/ann/layer/transposed_convolution_impl.hpp
  * @author Shikhar Jaiswal
  * @author Marcus Edel
  *
@@ -128,8 +128,7 @@ TransposedConvolution<
       1);
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
-  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
-      [](unsigned char c){ return std::tolower(c); });
+  util::ToLower(paddingType, paddingTypeLow);
 
   if (paddingTypeLow == "valid")
   {

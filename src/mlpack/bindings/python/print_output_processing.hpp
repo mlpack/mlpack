@@ -1,5 +1,5 @@
 /**
- * @file print_output_processing.hpp
+ * @file bindings/python/print_output_processing.hpp
  * @author Ryan Curtin
  *
  * Print the output processing in a Python binding .pyx file for a given
@@ -292,7 +292,7 @@ void PrintOutputProcessing(
  *
  * @param d Parameter data struct.
  * @param input Pointer to size_t holding the indentation.
- * @param output Unused parameter.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void PrintOutputProcessing(const util::ParamData& d,

@@ -1,5 +1,5 @@
 /**
- * @file em_fit.hpp
+ * @file methods/gmm/em_fit.hpp
  * @author Ryan Curtin
  * @author Michael Fox
  *
@@ -75,8 +75,7 @@ class EMFit
    * option.
    *
    * @param observations List of observations to train on.
-   * @param means Vector to store trained means in.
-   * @param covariances Vector to store trained covariances in.
+   * @param dists Distributions to store model in.
    * @param weights Vector to store a priori weights in.
    * @param useInitialModel If true, the given model is used for the initial
    *      clustering.
@@ -97,8 +96,7 @@ class EMFit
    *
    * @param observations List of observations to train on.
    * @param probabilities Probability of each point being from this model.
-   * @param means Vector to store trained means in.
-   * @param covariances Vector to store trained covariances in.
+   * @param dists Distributions to store model in.
    * @param weights Vector to store a priori weights in.
    * @param useInitialModel If true, the given model is used for the initial
    *      clustering.
@@ -141,7 +139,7 @@ class EMFit
    *
    * @param observations List of observations.
    * @param means Vector to store means in.
-   * @param covariances Vector to store covariances in.
+   * @param dists Distributions to store model in.
    * @param weights Vector to store a priori weights in.
    */
   void InitialClustering(
@@ -156,7 +154,7 @@ class EMFit
    *
    * @param data Data matrix.
    * @param means Vector of means.
-   * @param covariances Vector of covariance matrices.
+   * @param dists Distributions to store model in.
    * @param weights Vector of a priori weights.
    */
   double LogLikelihood(

@@ -1,5 +1,5 @@
 /**
- * @file hmm_train_main.cpp
+ * @file methods/hmm/hmm_train_main.cpp
  * @author Ryan Curtin
  *
  * Executable which trains an HMM and saves the trained HMM to file.

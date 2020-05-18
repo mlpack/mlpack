@@ -1,5 +1,5 @@
 /**
- * @file glimpse.hpp
+ * @file methods/ann/layer/glimpse.hpp
  * @author Marcus Edel
  *
  * Definition of the GlimpseLayer class, which takes an input image and a
@@ -119,7 +119,7 @@ class Glimpse
   /**
    * Ordinary feed backward pass of the glimpse layer.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -169,6 +169,18 @@ class Glimpse
   bool Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
+
+  //! Get the number of patches to crop per glimpse.
+  size_t const& Depth() const { return depth; }
+
+  //! Get the scale fraction.
+  size_t const& Scale() const { return scale; }
+
+  //! Get the size of the input units.
+  size_t InSize() const { return inSize; }
+
+  //! Get the used glimpse size (height = width).
+  size_t GlimpseSize() const { return size;}
 
   /**
    * Serialize the layer.

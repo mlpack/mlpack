@@ -1,5 +1,5 @@
 /**
- * @file convolution.hpp
+ * @file methods/ann/layer/convolution.hpp
  * @author Marcus Edel
  *
  * Definition of the Convolution module class.
@@ -18,6 +18,7 @@
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
+#include <mlpack/core/util/to_lower.hpp>
 
 #include "layer_types.hpp"
 #include "padding.hpp"
@@ -130,7 +131,7 @@ class Convolution
    * f(x) by propagating x backwards through f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */

@@ -1,5 +1,5 @@
 /**
- * @file address.hpp
+ * @file core/tree/address.hpp
  * @author Mikhail Lozhnikov
  *
  * This file contains a series of functions for translating points to addresses

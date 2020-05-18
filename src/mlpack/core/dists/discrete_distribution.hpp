@@ -1,5 +1,5 @@
 /**
- * @file discrete_distribution.hpp
+ * @file core/dists/discrete_distribution.hpp
  * @author Ryan Curtin
  * @author Rohan Raj
  *
@@ -41,7 +41,6 @@ namespace distribution /** Probability distributions. */ {
  * (size_t) as observations, these can be converted to doubles (which is what
  * arma::vec holds).  This distribution internally converts those doubles back
  * into size_t before comparisons.
- * @endnote
  */
 class DiscreteDistribution
 {

@@ -1,5 +1,5 @@
 /**
- * @file range_search_test.cpp
+ * @file tests/range_search_test.cpp
  * @author Ryan Curtin
  *
  * Test file for RangeSearch<> class.

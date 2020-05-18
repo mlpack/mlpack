@@ -1,5 +1,5 @@
 /**
- * @file math_test.cpp
+ * @file tests/math_test.cpp
  * @author Ryan Curtin
  *
  * Tests for everything in the math:: namespace.

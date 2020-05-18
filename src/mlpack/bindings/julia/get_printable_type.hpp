@@ -1,9 +1,14 @@
 /**
- * @file get_printable_type.hpp
+ * @file bindings/julia/get_printable_type.hpp
  * @author Ryan Curtin
  *
  * Get the printable type of a parameter.  This type is not the C++ type but
  * instead the Julia type that a user would use.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_BINDINGS_JULIA_GET_PRINTABLE_TYPE_HPP
 #define MLPACK_BINDINGS_JULIA_GET_PRINTABLE_TYPE_HPP
