@@ -111,6 +111,11 @@ class QLearning
   //! Get the state of the agent.
   const StateType& State() const { return state; }
 
+  //! Modify the action of the agent.
+  ActionType& Action() { return action; }
+  //! Get the action of the agent.
+  const ActionType& Action() const { return action; }
+
   //! Modify the environment in which the agent is.
   EnvironmentType& Environment() { return environment; }
   //! Get the environment in which the agent is.
@@ -163,6 +168,9 @@ class QLearning
 
   //! Locally-stored current state of the agent.
   StateType state;
+
+  //! Locally-stored action of the agent.
+  ActionType action;
 
   //! Locally-stored flag indicating training mode or test mode.
   bool deterministic;
