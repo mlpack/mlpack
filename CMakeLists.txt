@@ -19,11 +19,14 @@ option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
 set(BOARD_NAME "" CACHE STRING "Enter the board name to compile mlpack for.")
+set(ARMADILLO_INCLUDE_DIR "" CACHE STRING "Path for Armadillo headers.")
+set(ARMADILLO_SUPPORT_LIBRARIES "" CACHE STRING "Path for OpenBlas library.")
 
-if (CMAKE_CROSSCOMPILING AND BOARD_NAME STREQUAL ""))
+if (CMAKE_CROSSCOMPILING AND (BOARD_NAME STREQUAL ""))
   message(FATAL_ERROR "Please enter the board name")
 elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER ""))
-  include(board/rpi-config.cmake)
+  message(STATUS "Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}.")
+  include(board/flags-config.cmake)
   flags(${BOARD_NAME})
 endif()
 
@@ -259,48 +262,22 @@ endif()
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
 
-find_package(Armadillo 8.400.0 REQUIRED)
-
-# If Armadillo was compiled without ARMA_64BIT_WORD and we are on a 64-bit
-# system (where size_t will be 64 bits), suggest to the user that they should
-# compile Armadillo with 64-bit words.  Note that with Armadillo 5.000.0 and
-# newer, ARMA_64BIT_WORD is enabled by default.
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  # Check the version, to see if ARMA_64BIT_WORD is enabled by default.
-  set(ARMA_HAS_64BIT_WORD 0)
-  if(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
-    set(ARMA_HAS_64BIT_WORD 1)
-  else()
-    # Can we open the configuration file?  If not, issue a warning.
-    if(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
-      message(WARNING "Armadillo configuration file "
-          "(${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp) does not exist!")
-    else()
-      # We are on a 64-bit system.  Does Armadillo have ARMA_64BIT_WORD enabled?
-      file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp" ARMA_CONFIG)
-      string(REGEX MATCH
-          "[\r\n][ ]*#define ARMA_64BIT_WORD"
-          ARMA_HAS_64BIT_WORD_PRE
-          "${ARMA_CONFIG}")
-
-      string(LENGTH "${ARMA_HAS_64BIT_WORD_PRE}" ARMA_HAS_64BIT_WORD)
-    endif()
-  endif()
-
-  if(ARMA_HAS_64BIT_WORD EQUAL 0)
-    message(WARNING "This is a 64-bit system, but Armadillo was compiled "
-        "without 64-bit index support.  Consider recompiling Armadillo with "
-        "ARMA_64BIT_WORD to enable 64-bit indices (large matrix support). "
-        "mlpack will still work without ARMA_64BIT_WORD defined, but will not "
-        "scale to matrices with more than 4 billion elements.")
-  endif()
+# Remove support for older 32bit system, if we need to have 32bit system
+# we will just cross-compile, this would be much easier
+# Since we are cross compiling we are not looking for armadillo,
+# We will just tell cmake where to find the downloaded version
+if (CMAKE_CROSSCOMPILING AND (ARMADILLO_INCLUDE_DIR STREQUAL ""))
+  message(FATAL_ERROR "Please enter the path for armadillo libraries")
+  # Since Armadillo is a wrapper to OpenBlas. Set Armadillo libraies to
+  # the link against OpenBlas
+elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER ""))
+  set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})  
+  set(ARMADILLO_LIBRARIES ${ARMADILLO_SUPPORT_LIBRARIES})
+  # Just to get the Major version
+  file(STRINGS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp" _ARMA_HEADER_CONTENTS REGEX "#define ARMA_VERSION_[A-Z]+ ")
+  string(REGEX REPLACE ".*#define ARMA_VERSION_MAJOR ([0-9]+).*" "\\1" ARMADILLO_VERSION_MAJOR "${_ARMA_HEADER_CONTENTS}")
 else()
-  # If we are on a 32-bit system, we must manually specify the size of the word
-  # to be 32 bits, since otherwise Armadillo will produce a warning that it is
-  # disabling 64-bit support.
-  if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    add_definitions(-DARMA_32BIT_WORD)
-  endif ()
+  find_package(Armadillo 8.400.0 REQUIRED)
 endif()
 
 # Include directories for the previous dependencies.
@@ -447,15 +424,17 @@ set(Boost_ADDITIONAL_VERSIONS
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
 set(Boost_NO_BOOST_CMAKE 1)
-find_package(Boost 1.58
-    COMPONENTS
-      program_options
-      unit_test_framework
-      serialization
-    REQUIRED
-)
+if (NOT CMAKE_CROSSCOMPILING)
+  find_package(Boost 1.58
+        COMPONENTS
+        program_options
+        unit_test_framework
+        serialization
+        REQUIRED
+  )
 
-link_directories(${Boost_LIBRARY_DIRS})
+  link_directories(${Boost_LIBRARY_DIRS})
+endif()
 
 # In Visual Studio, automatic linking is performed, so we don't need to worry
 # about it.  Clear the list of libraries to link against and let Visual Studio
@@ -475,6 +454,8 @@ set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS} ${Boost_LIBRARY_DIRS})
 # This specifies to Boost that we are dynamically linking to the Boost test
 # library.
 add_definitions(-DBOOST_TEST_DYN_LINK)
+
+# Leave OpenMP for later, just without it now
 
 # Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
 # to compile with OpenMP are returned and added and the HAS_OPENMP definition
@@ -572,7 +553,6 @@ endif ()
 # Create a target to generate arma_config.hpp, which is used to warn the user
 # when they are doing something stupid when linking something against mlpack.
 include(CMake/CreateArmaConfigInfo.cmake)
-
 add_custom_target(mlpack_arma_config ALL
     COMMAND ${CMAKE_COMMAND}
         -D ARMADILLO_INCLUDE_DIR="${ARMADILLO_INCLUDE_DIR}"
