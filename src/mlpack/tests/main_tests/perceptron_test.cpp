@@ -1,5 +1,5 @@
 /**
- * @file perceptron_test.cpp
+ * @file tests/main_tests/perceptron_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of perceptron_main.cpp.

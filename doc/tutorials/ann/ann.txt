@@ -79,9 +79,8 @@ have a number of methods in common:
 
 @note
 To be able to optimize the network, both classes implement the OptimizerFunction
-API; see \ref optimizertutorial "Optimizer API" for more information. In short,
-the \c FNN and \c RNN class implement two methods: \c Evaluate() and \c
-Gradient().  This enables the optimization given some learner and some
+API. In short, the \c FNN and \c RNN class implement two methods: \c Evaluate()
+and \c Gradient().  This enables the optimization given some learner and some
 performance measure.
 
 Similar to the existing layer infrastructure, the \c FFN and \c RNN classes are
@@ -204,17 +203,17 @@ using namespace mlpack::ann;
 
 int main()
 {
-  // Load the training set.
-  arma::mat dataset;
-  data::Load("thyroid_train.csv", dataset, true);
+  // Load the training set and testing set.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
 
-  // Split the labels from the training set.
-  arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
-      dataset.n_cols - 1);
-
-  // Split the data from the training set.
-  arma::mat trainLabels = dataset.submat(dataset.n_rows - 3, 0,
-      dataset.n_rows - 1, dataset.n_cols - 1);
+  // Split the labels from the training set and testing set respectively.
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
 
   // Initialize the network.
   FFN<> model;
@@ -226,14 +225,48 @@ int main()
   // Train the model.
   model.Train(trainData, trainLabels);
 
-  // Use the Predict method to get the assignments.
-  arma::mat assignments;
-  model.Predict(trainData, assignments);
+  // Use the Predict method to get the predictions.
+  arma::mat predictionTemp;
+  model.Predict(testData, predictionTemp);
+
+  /*
+    Since the predictionsTemp is of dimensions (3 x number_of_data_points)
+    with continuous values, we first need to reduce it to a dimension of
+    (1 x number_of_data_points) with scalar values, to be able to compare with
+    testLabels.
+
+    The first step towards doing this is to create a matrix of zeros with the
+    desired dimensions (1 x number_of_data_points).
+
+    In predictionsTemp, the 3 dimensions for each data point correspond to the
+    probabilities of belonging to the three possible classes.
+  */
+  arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp.n_cols);
+
+  // Find index of max prediction for each data point and store in "prediction"
+  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+  {
+    // we add 1 to the max index, so that it matches the actual test labels.
+    prediction(i) = arma::as_scalar(arma::find(
+        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+  }
+
+  /*
+    Compute the error between predictions and testLabels,
+    now that we have the desired predictions.
+  */
+  size_t correct = arma::accu(prediction == testLabels);
+  double classificationError = 1 - double(correct) / testData.n_cols;
+
+  // Print out the classification error for the testing dataset.
+  std::cout << "Classification Error for the Test set: " << classificationError << std::endl;
+  return 0;
 }
 @endcode
 
-Now, the matrix assignments holds the classification of each point in the
-dataset.
+Now, the matrix prediction holds the classification of each point in the
+dataset. Subsequently, we find the classification error by comparing it
+with testLabels.
 
 In the next example, we create simple noisy sine sequences, which are trained
 later on, using the RNN class in the `RNNModel()` method.
@@ -328,7 +361,7 @@ implementation of a \c Forward() method. The interface looks like:
 
 @code
 template<typename eT>
-void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 @endcode
 
 The method should calculate the output of the layer given the input matrix and
@@ -339,9 +372,9 @@ through f:
 
 @code
 template<typename eT>
-void Backward(const arma::Mat<eT>&& input,
-              arma::Mat<eT>&& gy,
-              arma::Mat<eT>&& g);
+void Backward(const arma::Mat<eT>& input,
+              const arma::Mat<eT>& gy,
+              arma::Mat<eT>& g);
 @endcode
 
 Finally, if the layer is differentiable, the layer must also implement
@@ -349,9 +382,9 @@ a Gradient() method:
 
 @code
 template<typename eT>
-void Gradient(const arma::Mat<eT>&& input,
-              arma::Mat<eT>&& error,
-              arma::Mat<eT>&& gradient);
+void Gradient(const arma::Mat<eT>& input,
+              const arma::Mat<eT>& error,
+              arma::Mat<eT>& gradient);
 @endcode
 
 The Gradient function should calculate the gradient with respect to the input
@@ -386,7 +419,7 @@ not work; this example exists for its API, not its implementation.
 Note that layer sometimes have different properties. These properties are
 known at compile-time through the mlpack::ann::LayerTraits class, and some
 properties may imply the existence (or non-existence) of certain functions.
-Refer to the LayerTraits @ref LayerTraits for more documentation on that.
+Refer to the LayerTraits @ref layer_traits.hpp for more documentation on that.
 
 The two template parameters below must be template parameters to the layer, in
 the order given below. More template parameters are fine, but they must come
@@ -434,21 +467,21 @@ API, so we must implement some additional functions.
 
 @code
 template<typename InputType, typename OutputType>
-void Forward(const InputType&& input, OutputType&& output)
+void Forward(const InputType& input, OutputType& output)
 {
   output = arma::ones(input.n_rows, input.n_cols);
 }
 
 template<typename InputType, typename ErrorType, typename GradientType>
-void Backward(const InputType&& input, ErrorType&& gy, GradientType&& g)
+void Backward(const InputType& input, const ErrorType& gy, GradientType& g)
 {
   g = arma::zeros(gy.n_rows, gy.n_cols) + gy;
 }
 
 template<typename InputType, typename ErrorType, typename GradientType>
-void Gradient(const InputType&& input,
-              ErrorType&& error,
-              GradientType&& gradient)
+void Gradient(const InputType& input,
+              ErrorType& error,
+              GradientType& gradient)
 {
   gradient = arma::zeros(input.n_rows, input.n_cols) * error;
 }
@@ -628,10 +661,10 @@ $ cat model.xml
 </boost_serialization>
 @endcode
 
-As you can see, the \c <parameter> section of \c model.xml contains the trained
+As you can see, the \c \<parameter\> section of \c model.xml contains the trained
 network weights.  We can see that this section also contains the network input
 size, which is 66 rows and 1 column. Note that in this example, we used three
-different layers, as can be seen by looking at the \c <network> section. Each
+different layers, as can be seen by looking at the \c \<network\> section. Each
 node has a unique id that is used to reconstruct the model when loading.
 
 The models can also be saved as \c .bin or \c .txt; the \c .xml format provides

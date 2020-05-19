@@ -1,5 +1,5 @@
 /**
- * @file det_main.cpp
+ * @file methods/det/det_main.cpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  *
  * This file runs density estimation trees.

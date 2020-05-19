@@ -1,5 +1,5 @@
 /**
- * @file user_mean_normalization.hpp
+ * @file methods/cf/normalization/user_mean_normalization.hpp
  * @author Wenhao Huang
  *
  * This class performs user mean normalization on raw ratings. In another
@@ -124,7 +124,7 @@ class UserMeanNormalization
    * Denormalize computed rating by adding user mean.
    *
    * @param user User ID.
-   * @param item Item ID.
+   * @param * (item) Item ID.
    * @param rating Computed rating before denormalization.
    */
   double Denormalize(const size_t user,

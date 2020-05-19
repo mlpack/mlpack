@@ -284,4 +284,83 @@ BOOST_AUTO_TEST_CASE(NMFMaxIterationTest)
   BOOST_REQUIRE_GT(arma::norm(h1 - h2), 1e-5);
 }
 
+/**
+ * Test NMF with given initial_w and initial_h.
+ */
+BOOST_AUTO_TEST_CASE(NMFWHGivenInitTest)
+{
+  mat v = arma::randu(10, 10);
+  mat initialW = arma::randu(10, 5);
+  mat initialH = arma::randu(5, 10);
+  int r = 5;
+
+  SetInputParam("input", v);
+  SetInputParam("rank", r);
+  SetInputParam("initial_w", initialW);
+  SetInputParam("initial_h", initialH);
+
+  mlpackMain();
+
+  const mat w = CLI::GetParam<mat>("w");
+  const mat h = CLI::GetParam<mat>("h");
+
+  // Check the shapes of W and H.
+  BOOST_REQUIRE_EQUAL(w.n_rows, 10);
+  BOOST_REQUIRE_EQUAL(w.n_cols, 5);
+  BOOST_REQUIRE_EQUAL(h.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(h.n_cols, 10);
+}
+
+/**
+ * Test NMF with given initial_w.
+ */
+BOOST_AUTO_TEST_CASE(NMFWGivenInitTest)
+{
+  mat v = arma::randu(10, 10);
+  mat initialW = arma::randu(10, 5);
+  int r = 5;
+
+  SetInputParam("input", v);
+  SetInputParam("rank", r);
+  SetInputParam("initial_w", initialW);
+
+  mlpackMain();
+
+  const mat w = CLI::GetParam<mat>("w");
+  const mat h = CLI::GetParam<mat>("h");
+
+  // Check the shapes of W and H.
+  BOOST_REQUIRE_EQUAL(w.n_rows, 10);
+  BOOST_REQUIRE_EQUAL(w.n_cols, 5);
+  BOOST_REQUIRE_EQUAL(h.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(h.n_cols, 10);
+}
+
+/**
+ * Test NMF with given initial_h.
+ */
+BOOST_AUTO_TEST_CASE(NMFHGivenInitTest)
+{
+  mat v = arma::randu(10, 10);
+  mat initialH = arma::randu(5, 10);
+  int r = 5;
+
+  SetInputParam("input", v);
+  SetInputParam("rank", r);
+  SetInputParam("initial_h", initialH);
+
+  mlpackMain();
+
+  const mat w = CLI::GetParam<mat>("w");
+  const mat h = CLI::GetParam<mat>("h");
+
+  // Check the shapes of W and H.
+  BOOST_REQUIRE_EQUAL(w.n_rows, 10);
+  BOOST_REQUIRE_EQUAL(w.n_cols, 5);
+  BOOST_REQUIRE_EQUAL(h.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(h.n_cols, 10);
+}
+
+
 BOOST_AUTO_TEST_SUITE_END();
+

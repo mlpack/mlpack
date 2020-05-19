@@ -1,5 +1,5 @@
 /**
- * @file weight_set_visitor_impl.hpp
+ * @file methods/ann/visitor/weight_set_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Weight() function layer abstraction.
@@ -19,9 +19,9 @@ namespace mlpack {
 namespace ann {
 
 //! WeightSetVisitor visitor class.
-inline WeightSetVisitor::WeightSetVisitor(arma::mat&& weight,
+inline WeightSetVisitor::WeightSetVisitor(arma::mat& weight,
                                           const size_t offset) :
-    weight(std::move(weight)),
+    weight(weight),
     offset(offset)
 {
   /* Nothing to do here. */
@@ -30,7 +30,7 @@ inline WeightSetVisitor::WeightSetVisitor(arma::mat&& weight,
 template<typename LayerType>
 inline size_t WeightSetVisitor::operator()(LayerType* layer) const
 {
-  return LayerSize(layer, std::move(layer->OutputParameter()));
+  return LayerSize(layer, layer->OutputParameter());
 }
 
 inline size_t WeightSetVisitor::operator()(MoreTypes layer) const
@@ -57,7 +57,7 @@ WeightSetVisitor::LayerSize(T* layer, P&& /*output */) const
   for (size_t i = 0; i < layer->Model().size(); ++i)
   {
     modelOffset += boost::apply_visitor(WeightSetVisitor(
-        std::move(weight), modelOffset + offset), layer->Model()[i]);
+        weight, modelOffset + offset), layer->Model()[i]);
   }
 
   return modelOffset;
@@ -88,7 +88,7 @@ WeightSetVisitor::LayerSize(T* layer, P&& /* output */) const
   for (size_t i = 0; i < layer->Model().size(); ++i)
   {
     modelOffset += boost::apply_visitor(WeightSetVisitor(
-        std::move(weight), modelOffset + offset), layer->Model()[i]);
+        weight, modelOffset + offset), layer->Model()[i]);
   }
 
   return modelOffset;

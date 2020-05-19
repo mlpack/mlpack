@@ -1,5 +1,5 @@
 /**
- * @file gmm_test.cpp
+ * @file tests/gmm_test.cpp
  * @author Ryan Curtin
  * @author Michael Fox
  *
@@ -1034,7 +1034,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussiansWithProbability)
 
   for (size_t i = 0; i < 3; i++)
     BOOST_REQUIRE_CLOSE(g.Component(sortedIndices[0]).Mean()[i],
-        d1.Mean()[i], 10.0);
+        d1.Mean()[i], 13.0);
 
   for (size_t i = 0; i < 3; i++)
   {
@@ -1047,7 +1047,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussiansWithProbability)
 
   for (size_t i = 0; i < 3; i++)
     BOOST_REQUIRE_CLOSE(g.Component(sortedIndices[1]).Mean()[i],
-        d2.Mean()[i], 10.0);
+        d2.Mean()[i], 13.0);
 
   for (size_t i = 0; i < 3; i++)
   {
@@ -1060,7 +1060,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussiansWithProbability)
 
   for (size_t i = 0; i < 3; ++i)
     BOOST_REQUIRE_CLOSE(g.Component(sortedIndices[2]).Mean()[i],
-        d3.Mean()[i], 10.0);
+        d3.Mean()[i], 13.0);
 
   for (size_t i = 0; i < 3; i++)
   {

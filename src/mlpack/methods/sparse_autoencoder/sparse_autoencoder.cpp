@@ -1,5 +1,5 @@
 /**
- * @file sparse_autoencoder_impl.hpp
+ * @file methods/sparse_autoencoder/sparse_autoencoder.cpp
  * @author Siddharth Agrawal
  *
  * Implementation of sparse autoencoders.

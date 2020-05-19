@@ -1,5 +1,5 @@
 /**
- * @file decision_stump_main.cpp
+ * @file methods/decision_stump/decision_stump_main.cpp
  * @author Udit Saxena
  *
  * Main executable for the decision stump.
@@ -124,6 +124,11 @@ static void mlpackMain()
       "bucket size must be positive");
 
   ReportIgnoredParam({{ "test", false }}, "predictions");
+
+  Log::Warn << "DecisionStump is deprecated and will be removed in mlpack "
+            << "4.0.0. Please use DecisionTree instead with the maximum tree "
+            << "depth option set to 1 (that will produce a stump)."
+            << std::endl;
 
   // We must either load a model, or train a new stump.
   DSModel* model;

@@ -1,5 +1,5 @@
 /**
- * @file mountain_car.hpp
+ * @file methods/reinforcement_learning/environment/mountain_car.hpp
  * @author Shangtong Zhang
  *
  * This file is an implementation of Mountain Car task:
@@ -17,6 +17,7 @@
 #define MLPACK_METHODS_RL_ENVIRONMENT_MOUNTAIN_CAR_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/clamp.hpp>
 
 namespace mlpack {
 namespace rl {
@@ -134,13 +135,13 @@ class MountainCar
     int direction = action - 1;
     nextState.Velocity() = state.Velocity() + 0.001 * direction - 0.0025 *
         std::cos(3 * state.Position());
-    nextState.Velocity() = std::min(
-        std::max(nextState.Velocity(), velocityMin), velocityMax);
+    nextState.Velocity() = math::ClampRange(nextState.Velocity(),
+        velocityMin, velocityMax);
 
     // Update states.
     nextState.Position() = state.Position() + nextState.Velocity();
-    nextState.Position() = std::min(
-        std::max(nextState.Position(), positionMin), positionMax);
+    nextState.Position() = math::ClampRange(nextState.Position(),
+        positionMin, positionMax);
 
     if (nextState.Position() == positionMin && nextState.Velocity() < 0)
       nextState.Velocity() = 0.0;

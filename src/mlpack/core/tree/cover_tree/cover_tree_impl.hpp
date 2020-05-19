@@ -1,5 +1,5 @@
 /**
- * @file cover_tree_impl.hpp
+ * @file core/tree/cover_tree/cover_tree_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of CoverTree class.
@@ -548,7 +548,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 }
 
-// Copy Assignment.
+// Copy assignment operator: copy the given other tree.
 template<
     typename MetricType,
     typename StatisticType,
@@ -658,7 +658,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   other.metric = NULL;
 }
 
-// Move Assignment.
+// Move assignment operator: take ownership of the given tree.
 template<
     typename MetricType,
     typename StatisticType,

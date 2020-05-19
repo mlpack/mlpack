@@ -1,5 +1,5 @@
 /**
- * @file string_type_param.hpp
+ * @file bindings/cli/string_type_param.hpp
  * @author Ryan Curtin
  *
  * Given a util::ParamData object, return a string containing the type of the input

@@ -1,5 +1,5 @@
 /**
- * @file max_pooling.hpp
+ * @file methods/ann/layer/max_pooling.hpp
  * @author Marcus Edel
  * @author Nilay Jain
  *
@@ -78,21 +78,21 @@ class MaxPooling
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   //! Get the output parameter.
   const OutputDataType& OutputParameter() const { return outputParameter; }
@@ -104,24 +104,24 @@ class MaxPooling
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the width.
+  //! Get the input width.
   size_t InputWidth() const { return inputWidth; }
-  //! Modify the width.
+  //! Modify the input width.
   size_t& InputWidth() { return inputWidth; }
 
-  //! Get the height.
+  //! Get the input height.
   size_t InputHeight() const { return inputHeight; }
-  //! Modify the height.
+  //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
-  //! Get the width.
+  //! Get the output width.
   size_t OutputWidth() const { return outputWidth; }
-  //! Modify the width.
+  //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
-  //! Get the height.
+  //! Get the output height.
   size_t OutputHeight() const { return outputHeight; }
-  //! Modify the height.
+  //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size.
@@ -161,7 +161,7 @@ class MaxPooling
   bool& Deterministic() { return deterministic; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -180,10 +180,10 @@ class MaxPooling
                         arma::Mat<eT>& poolingIndices)
   {
     for (size_t j = 0, colidx = 0; j < output.n_cols;
-         ++j, colidx += strideWidth)
+        ++j, colidx += strideHeight)
     {
       for (size_t i = 0, rowidx = 0; i < output.n_rows;
-           ++i, rowidx += strideHeight)
+          ++i, rowidx += strideWidth)
       {
         arma::mat subInput = input(
             arma::span(rowidx, rowidx + kernelWidth - 1 - offset),

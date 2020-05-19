@@ -1,5 +1,5 @@
 /**
- * @file padding_impl.hpp
+ * @file methods/ann/layer/padding_impl.hpp
  * @author Saksham Bansal
  *
  * Implementation of the Padding class that adds padding to the incoming
@@ -38,7 +38,7 @@ Padding<InputDataType, OutputDataType>::Padding(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Padding<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   nRows = input.n_rows;
   nCols = input.n_cols;
@@ -51,9 +51,9 @@ void Padding<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Padding<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */,
-    const arma::Mat<eT>&& gy,
-    arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
   g = gy.submat(padWLeft, padHTop, padWLeft + nRows - 1,
       padHTop + nCols - 1);

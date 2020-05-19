@@ -3,6 +3,8 @@
 set(SOURCES
   ip_metric.hpp
   ip_metric_impl.hpp
+  iou_metric.hpp
+  iou_metric_impl.hpp
   lmetric.hpp
   lmetric_impl.hpp
   mahalanobis_distance.hpp

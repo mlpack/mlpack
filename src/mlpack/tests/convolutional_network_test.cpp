@@ -1,5 +1,5 @@
 /**
- * @file convolutional_network_test.cpp
+ * @file tests/convolutional_network_test.cpp
  * @author Marcus Edel
  * @author Abhinav Moudgil
  *
@@ -114,13 +114,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
             arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
     }
 
-    size_t correct = 0;
-    for (size_t i = 0; i < X.n_cols; i++)
-    {
-      if (prediction(i) == Y(i))
-        correct++;
-    }
-
+    size_t correct = arma::accu(prediction == Y);
     double classificationError = 1 - double(correct) / X.n_cols;
     if (classificationError <= 0.25)
     {

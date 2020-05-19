@@ -1,5 +1,5 @@
 /**
- * @file neighbor_search.hpp
+ * @file methods/neighbor_search/neighbor_search_stat.hpp
  * @author Ryan Curtin
  *
  * Defines the NeighborSearch class, which performs an abstract

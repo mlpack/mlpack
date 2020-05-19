@@ -1,5 +1,5 @@
 /**
- * @file mean_pooling_impl.hpp
+ * @file methods/ann/layer/mean_pooling_impl.hpp
  * @author Marcus Edel
  * @author Nilay Jain
  *
@@ -54,11 +54,11 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MeanPooling<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   batchSize = input.n_cols;
   inSize = input.n_elem / (inputWidth * inputHeight * batchSize);
-  inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
+  inputTemp = arma::cube(const_cast<arma::Mat<eT>&>(input).memptr(),
       inputWidth, inputHeight, batchSize * inSize, false, false);
 
   if (floor)
@@ -97,12 +97,12 @@ void MeanPooling<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MeanPooling<InputDataType, OutputDataType>::Backward(
-  const arma::Mat<eT>&& /* input */,
-  arma::Mat<eT>&& gy,
-  arma::Mat<eT>&& g)
+  const arma::Mat<eT>& /* input */,
+  const arma::Mat<eT>& gy,
+  arma::Mat<eT>& g)
 {
-  arma::cube mappedError = arma::cube(gy.memptr(), outputWidth,
-      outputHeight, outSize, false, false);
+  arma::cube mappedError = arma::cube(((arma::Mat<eT>&) gy).memptr(),
+      outputWidth, outputHeight, outSize, false, false);
 
   gTemp = arma::zeros<arma::cube>(inputTemp.n_rows,
       inputTemp.n_cols, inputTemp.n_slices);

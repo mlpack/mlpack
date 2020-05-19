@@ -1,5 +1,5 @@
 /**
- * @file range_search_test.cpp
+ * @file tests/main_tests/range_search_test.cpp
  * @author Niteya Shah
  *
  * Test mlpackMain() of range_search_main.cpp.
@@ -278,7 +278,7 @@ BOOST_AUTO_TEST_CASE(ModelCheck)
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
 
-  RSModel* outputModel = move(CLI::GetParam<RSModel*>("output_model"));
+  RSModel* outputModel = CLI::GetParam<RSModel*>("output_model");
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
 
   SetInputParam("input_model", outputModel);
@@ -293,7 +293,7 @@ BOOST_AUTO_TEST_CASE(ModelCheck)
   CheckMatrices(distances, distancetemp);
 
   BOOST_REQUIRE_EQUAL(ModelToString(outputModel),
-                   ModelToString(CLI::GetParam<RSModel*>("output_model")));
+                      ModelToString(CLI::GetParam<RSModel*>("output_model")));
 
   remove(neighborsFile.c_str());
   remove(distanceFile.c_str());
@@ -351,7 +351,12 @@ BOOST_AUTO_TEST_CASE(LeafValueTesting)
 
     BOOST_REQUIRE_NE(ModelToString(outputModel1),
                      ModelToString(CLI::GetParam<RSModel*>("output_model")));
+
+    if (i != leafSizes.size() - 1)
+      delete CLI::GetParam<RSModel*>("output_model");
   }
+
+  delete outputModel1;
 
   remove(neighborsFile.c_str());
   remove(distanceFile.c_str());
@@ -419,7 +424,12 @@ BOOST_AUTO_TEST_CASE(TreeTypeTesting)
     CheckMatrices(distances, distancestemp);
     BOOST_REQUIRE_NE(ModelToString(outputModel1),
                      ModelToString(CLI::GetParam<RSModel*>("output_model")));
+
+    if (i != trees.size() - 1)
+      delete CLI::GetParam<RSModel*>("output_model");
   }
+
+  delete outputModel1;
 
   remove(neighborsFile.c_str());
   remove(distanceFile.c_str());
@@ -462,6 +472,8 @@ BOOST_AUTO_TEST_CASE(RandomBasisTesting)
 
   BOOST_REQUIRE_NE(ModelToString(outputModel),
                    ModelToString(CLI::GetParam<RSModel*>("output_model")));
+
+  delete outputModel;
 
   remove(neighborsFile.c_str());
   remove(distanceFile.c_str());
@@ -515,6 +527,8 @@ BOOST_AUTO_TEST_CASE(NaiveModeTest)
   BOOST_REQUIRE_NE(ModelToString(outputModel),
                    ModelToString(CLI::GetParam<RSModel*>("output_model")));
 
+  delete outputModel;
+
   remove(neighborsFile.c_str());
   remove(distanceFile.c_str());
 }
@@ -565,6 +579,8 @@ BOOST_AUTO_TEST_CASE(SingleModeTest)
   CheckMatrices(distances, distancestemp);
   BOOST_REQUIRE_NE(ModelToString(outputModel),
                    ModelToString(CLI::GetParam<RSModel*>("output_model")));
+
+  delete outputModel;
 
   remove(neighborsFile.c_str());
   remove(distanceFile.c_str());

@@ -1,5 +1,5 @@
 /**
- * @file timers.cpp
+ * @file core/util/timers.cpp
  * @author Matthew Amidon
  * @author Marcus Edel
  * @author Ryan Curtin

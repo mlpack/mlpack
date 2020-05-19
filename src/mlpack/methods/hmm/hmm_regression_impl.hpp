@@ -1,5 +1,5 @@
 /**
- * @file hmm_regression_impl.hpp
+ * @file methods/hmm/hmm_regression_impl.hpp
  * @author Ryan Curtin
  * @author Tran Quoc Long
  * @author Michael Fox

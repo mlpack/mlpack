@@ -9,6 +9,10 @@ set(SOURCES
   softplus_function.hpp
   swish_function.hpp
   mish_function.hpp
+  lisht_function.hpp
+  gelu_function.hpp
+  elliot_function.hpp
+  elish_function.hpp
 )
 
 # Add directory name to sources.

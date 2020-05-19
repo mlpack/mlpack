@@ -1,5 +1,5 @@
 /**
- * @file lmnn_main.cpp
+ * @file methods/lmnn/lmnn_main.cpp
  * @author Manish Kumar
  *
  * Executable for Large Margin Nearest Neighbors.

@@ -1,5 +1,5 @@
 /**
- * @file mlpack_test.cpp
+ * @file tests/mlpack_test.cpp
  *
  * Simple file defining the name of the overall test for mlpack, and set up
  * global test fixture for each test. Each individual test is contained in
@@ -13,11 +13,6 @@
 #define BOOST_TEST_MODULE mlpackTest
 
 #include <boost/version.hpp>
-
-// We only need to do this for old Boost versions.
-#if BOOST_VERSION < 103600
-  #define BOOST_AUTO_TEST_MAIN
-#endif
 
 #if BOOST_VERSION >= 105900
   #include <boost/test/tree/visitor.hpp>

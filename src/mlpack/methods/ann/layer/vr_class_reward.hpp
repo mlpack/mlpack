@@ -1,5 +1,5 @@
 /**
- * @file vr_class_reward.hpp
+ * @file methods/ann/layer/vr_class_reward.hpp
  * @author Marcus Edel
  *
  * Definition of the VRClassReward class, which implements the variance
@@ -55,7 +55,7 @@ class VRClassReward
    *        between 1 and the number of classes.
    */
   template<typename InputType, typename TargetType>
-  double Forward(const InputType&& input, const TargetType&& target);
+  double Forward(const InputType& input, const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network. The negative log
@@ -69,9 +69,9 @@ class VRClassReward
    * @param output The calculated error.
    */
   template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType&& input,
-                const TargetType&& target,
-                OutputType&& output);
+  void Backward(const InputType& input,
+                const TargetType& target,
+                OutputType& output);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const {return outputParameter; }
@@ -102,6 +102,15 @@ class VRClassReward
    * @param layer The Layer to be added to the model.
    */
   void Add(LayerTypes<> layer) { network.push_back(layer); }
+
+  //! Get the network modules.
+  std::vector<LayerTypes<> >& Model() { return network; }
+
+  //! Get the value of parameter sizeAverage.
+  bool SizeAverage() const { return sizeAverage; }
+
+  //! Get the value of scale parameter.
+  double Scale() const { return scale; }
 
   /**
    * Serialize the layer

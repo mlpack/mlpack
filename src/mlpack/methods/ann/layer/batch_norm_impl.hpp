@@ -1,5 +1,5 @@
 /**
- * @file batch_norm_impl.hpp
+ * @file methods/ann/layer/batch_norm_impl.hpp
  * @author Praveen Ch
  * @author Manthan-R-Sheth
  *
@@ -63,7 +63,7 @@ void BatchNorm<InputDataType, OutputDataType>::Reset()
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   // Mean and variance over the entire training set will be used to compute
   // the forward pass when deterministic is set to true.
@@ -106,7 +106,7 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& input, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
@@ -130,9 +130,9 @@ void BatchNorm<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>&& /* input */,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
 {
   gradient.set_size(size + size, 1);
 

@@ -1,5 +1,5 @@
 /**
- * @file reinforce_normal.hpp
+ * @file methods/ann/layer/reinforce_normal.hpp
  * @author Marcus Edel
  *
  * Definition of the ReinforceNormalLayer class, which implements the REINFORCE
@@ -49,7 +49,7 @@ class ReinforceNormal
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -57,11 +57,11 @@ class ReinforceNormal
    * forward pass.
    *
    * @param input The propagated input activation.
-   * @param gy The backpropagated error.
+   * @param * (gy) The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input, DataType&& /* gy */, DataType&& g);
+  void Backward(const DataType& input, const DataType& /* gy */, DataType& g);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
@@ -83,11 +83,14 @@ class ReinforceNormal
   //! Modify the value of the deterministic parameter.
   double& Reward() { return reward; }
 
+  //! Get the standard deviation used during forward and backward pass.
+  double StandardDeviation() const { return stdev; }
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Standard deviation used during the forward and backward pass.

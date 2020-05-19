@@ -1,5 +1,5 @@
 /**
- * @file string_type_param_impl.hpp
+ * @file bindings/cli/string_type_param_impl.hpp
  * @author Ryan Curtin
  *
  * Implementations of StringTypeParam().

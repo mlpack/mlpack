@@ -1,5 +1,5 @@
 /**
- * @file brnn_impl.hpp
+ * @file methods/ann/brnn_impl.hpp
  * @author Saksham Bansal
  *
  * Definition of the BRNN class, which implements bidirectional recurrent
@@ -39,13 +39,13 @@ BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     const size_t rho,
     const bool single,
     OutputLayerType outputLayer,
-    MergeLayerType mergeLayer,
-    MergeOutputType mergeOutput,
+    MergeLayerType* mergeLayer,
+    MergeOutputType* mergeOutput,
     InitializationRuleType initializeRule) :
     rho(rho),
     outputLayer(std::move(outputLayer)),
-    mergeLayer(new MergeLayerType(mergeLayer)),
-    mergeOutput(new MergeOutputType(mergeOutput)),
+    mergeLayer(mergeLayer),
+    mergeOutput(mergeOutput),
     initializeRule(std::move(initializeRule)),
     inputSize(0),
     outputSize(0),
@@ -58,6 +58,61 @@ BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     backwardRNN(rho, single, outputLayer, initializeRule)
 {
   /* Nothing to do here. */
+}
+
+template<typename OutputLayerType, typename MergeLayerType,
+         typename MergeOutputType, typename InitializationRuleType,
+         typename... CustomLayers>
+BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
+    InitializationRuleType, CustomLayers...>::~BRNN()
+{
+  // Remove the last layers from the forward and backward RNNs, as they are held
+  // in mergeLayer.  So, when we use DeleteVisitor with mergeLayer, those two
+  // layers will be properly (and not doubly) freed.
+  forwardRNN.network.pop_back();
+  backwardRNN.network.pop_back();
+
+  // Clean up layers that we allocated.
+  boost::apply_visitor(DeleteVisitor(), mergeLayer);
+  boost::apply_visitor(DeleteVisitor(), mergeOutput);
+}
+
+template<typename OutputLayerType, typename MergeLayerType,
+         typename MergeOutputType, typename InitializationRuleType,
+         typename... CustomLayers>
+template<typename OptimizerType>
+typename std::enable_if<
+      HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
+    InitializationRuleType, CustomLayers...>::WarnMessageMaxIterations
+(OptimizerType& optimizer, size_t samples) const
+{
+  if (optimizer.MaxIterations() < samples &&
+      optimizer.MaxIterations() != 0)
+  {
+    Log::Warn << "The optimizer's maximum number of iterations "
+              << "is less than the size of the dataset; the "
+              << "optimizer will not pass over the entire "
+              << "dataset. To fix this, modify the maximum "
+              << "number of iterations to be at least equal "
+              << "to the number of points of your dataset "
+              << "(" << samples << ")." << std::endl;
+  }
+}
+
+template<typename OutputLayerType, typename MergeLayerType,
+         typename MergeOutputType, typename InitializationRuleType,
+         typename... CustomLayers>
+template<typename OptimizerType>
+typename std::enable_if<
+      !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
+    InitializationRuleType, CustomLayers...>::WarnMessageMaxIterations
+(OptimizerType& optimizer, size_t samples) const
+{
+  return;
 }
 
 template<typename OutputLayerType, typename MergeLayerType,
@@ -82,6 +137,8 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
   {
     ResetParameters();
   }
+
+  WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
   Timer::Start("BRNN_optimization");
@@ -116,6 +173,8 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
   }
 
   OptimizerType optimizer;
+
+  WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
   const double out = optimizer.Optimize(*this, parameter);
@@ -166,34 +225,34 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
         size_t(predictors.n_cols - begin));
     for (size_t seqNum = 0; seqNum < rho; ++seqNum)
     {
-      forwardRNN.Forward(std::move(arma::mat(
+      forwardRNN.Forward(arma::mat(
           predictors.slice(seqNum).colptr(begin),
-          predictors.n_rows, effectiveBatchSize, false, true)));
+          predictors.n_rows, effectiveBatchSize, false, true));
       backwardRNN.Forward(std::move(arma::mat(
           predictors.slice(rho - seqNum - 1).colptr(begin),
           predictors.n_rows, effectiveBatchSize, false, true)));
 
-      boost::apply_visitor(SaveOutputParameterVisitor(
-          std::move(results1)), forwardRNN.network.back());
-      boost::apply_visitor(SaveOutputParameterVisitor(
-          std::move(results2)), backwardRNN.network.back());
+      boost::apply_visitor(SaveOutputParameterVisitor(results1),
+          forwardRNN.network.back());
+      boost::apply_visitor(SaveOutputParameterVisitor(results2),
+          backwardRNN.network.back());
     }
     reverse(results1.begin(), results1.end());
 
     // Forward outputs from both RNN's through merge layer for each time step.
     for (size_t seqNum = 0; seqNum < rho; ++seqNum)
     {
-      boost::apply_visitor(LoadOutputParameterVisitor(
-          std::move(results1)), forwardRNN.network.back());
-      boost::apply_visitor(LoadOutputParameterVisitor(
-          std::move(results2)), backwardRNN.network.back());
+      boost::apply_visitor(LoadOutputParameterVisitor(results1),
+          forwardRNN.network.back());
+      boost::apply_visitor(LoadOutputParameterVisitor(results2),
+          backwardRNN.network.back());
 
-      boost::apply_visitor(ForwardVisitor(std::move(input),
-          std::move(boost::apply_visitor(outputParameterVisitor, mergeLayer))),
+      boost::apply_visitor(ForwardVisitor(input,
+          boost::apply_visitor(outputParameterVisitor, mergeLayer)),
           mergeLayer);
       boost::apply_visitor(ForwardVisitor(
-          std::move(boost::apply_visitor(outputParameterVisitor, mergeLayer)),
-          std::move(boost::apply_visitor(outputParameterVisitor, mergeOutput))),
+          boost::apply_visitor(outputParameterVisitor, mergeLayer),
+          boost::apply_visitor(outputParameterVisitor, mergeOutput)),
           mergeOutput);
       results.slice(seqNum).submat(0, begin, results.n_rows - 1, begin +
           effectiveBatchSize - 1) =
@@ -243,17 +302,17 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
   std::vector<arma::mat> results1, results2;
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
-    forwardRNN.Forward(std::move(arma::mat(
+    forwardRNN.Forward(arma::mat(
         predictors.slice(seqNum).colptr(begin),
-        predictors.n_rows, batchSize, false, true)));
-    backwardRNN.Forward(std::move(arma::mat(
+        predictors.n_rows, batchSize, false, true));
+    backwardRNN.Forward(arma::mat(
         predictors.slice(rho - seqNum - 1).colptr(begin),
-        predictors.n_rows, batchSize, false, true)));
+        predictors.n_rows, batchSize, false, true));
 
-    boost::apply_visitor(SaveOutputParameterVisitor(
-        std::move(results1)), forwardRNN.network.back());
-    boost::apply_visitor(SaveOutputParameterVisitor(
-        std::move(results2)), backwardRNN.network.back());
+    boost::apply_visitor(SaveOutputParameterVisitor(results1),
+        forwardRNN.network.back());
+    boost::apply_visitor(SaveOutputParameterVisitor(results2),
+        backwardRNN.network.back());
   }
   if (outputSize == 0)
   {
@@ -271,22 +330,22 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     {
       responseSeq = seqNum;
     }
-    boost::apply_visitor(LoadOutputParameterVisitor(
-        std::move(results1)), forwardRNN.network.back());
-    boost::apply_visitor(LoadOutputParameterVisitor(
-        std::move(results2)), backwardRNN.network.back());
+    boost::apply_visitor(LoadOutputParameterVisitor(results1),
+        forwardRNN.network.back());
+    boost::apply_visitor(LoadOutputParameterVisitor(results2),
+        backwardRNN.network.back());
 
-    boost::apply_visitor(ForwardVisitor(std::move(input),
-        std::move(boost::apply_visitor(outputParameterVisitor, mergeLayer))),
+    boost::apply_visitor(ForwardVisitor(input,
+        boost::apply_visitor(outputParameterVisitor, mergeLayer)),
         mergeLayer);
     boost::apply_visitor(ForwardVisitor(
-        std::move(boost::apply_visitor(outputParameterVisitor, mergeLayer)),
-        std::move(boost::apply_visitor(outputParameterVisitor, mergeOutput))),
-        mergeOutput);
-    performance += outputLayer.Forward(std::move(
+        boost::apply_visitor(outputParameterVisitor, mergeLayer),
         boost::apply_visitor(outputParameterVisitor, mergeOutput)),
-        std::move(arma::mat(responses.slice(responseSeq).colptr(begin),
-        responses.n_rows, batchSize, false, true)));
+        mergeOutput);
+    performance += outputLayer.Forward(
+        boost::apply_visitor(outputParameterVisitor, mergeOutput),
+        arma::mat(responses.slice(responseSeq).colptr(begin),
+        responses.n_rows, batchSize, false, true));
   }
   return performance;
 }
@@ -361,24 +420,24 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   std::vector<arma::mat> results1, results2;
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
-    forwardRNN.Forward(std::move(arma::mat(
+    forwardRNN.Forward(arma::mat(
         predictors.slice(seqNum).colptr(begin),
-        predictors.n_rows, batchSize, false, true)));
-    backwardRNN.Forward(std::move(arma::mat(
+        predictors.n_rows, batchSize, false, true));
+    backwardRNN.Forward(arma::mat(
         predictors.slice(rho - seqNum - 1).colptr(begin),
-        predictors.n_rows, batchSize, false, true)));
+        predictors.n_rows, batchSize, false, true));
 
     for (size_t l = 0; l < networkSize; ++l)
     {
       boost::apply_visitor(SaveOutputParameterVisitor(
-          std::move(forwardRNNOutputParameter)), forwardRNN.network[l]);
+          forwardRNNOutputParameter), forwardRNN.network[l]);
       boost::apply_visitor(SaveOutputParameterVisitor(
-          std::move(backwardRNNOutputParameter)), backwardRNN.network[l]);
+          backwardRNNOutputParameter), backwardRNN.network[l]);
     }
-    boost::apply_visitor(SaveOutputParameterVisitor(
-        std::move(results1)), forwardRNN.network.back());
-    boost::apply_visitor(SaveOutputParameterVisitor(
-        std::move(results2)), backwardRNN.network.back());
+    boost::apply_visitor(SaveOutputParameterVisitor(results1),
+        forwardRNN.network.back());
+    boost::apply_visitor(SaveOutputParameterVisitor(results2),
+        backwardRNN.network.back());
   }
   if (outputSize == 0)
   {
@@ -410,18 +469,18 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
       responseSeq = seqNum;
     }
     boost::apply_visitor(LoadOutputParameterVisitor(
-          std::move(results1)), forwardRNN.network.back());
+          results1), forwardRNN.network.back());
     boost::apply_visitor(LoadOutputParameterVisitor(
-          std::move(results2)), backwardRNN.network.back());
-    boost::apply_visitor(ForwardVisitor(std::move(input),
-        std::move(boost::apply_visitor(outputParameterVisitor, mergeLayer))),
+          results2), backwardRNN.network.back());
+    boost::apply_visitor(ForwardVisitor(input,
+        boost::apply_visitor(outputParameterVisitor, mergeLayer)),
         mergeLayer);
     boost::apply_visitor(ForwardVisitor(
-        std::move(boost::apply_visitor(outputParameterVisitor, mergeLayer)),
-        std::move(results.slice(seqNum))), mergeOutput);
-    performance += outputLayer.Forward(std::move(results.slice(seqNum)),
-        std::move(arma::mat(responses.slice(responseSeq).colptr(begin),
-        responses.n_rows, batchSize, false, true)));
+        boost::apply_visitor(outputParameterVisitor, mergeLayer),
+        results.slice(seqNum)), mergeOutput);
+    performance += outputLayer.Forward(results.slice(seqNum),
+        arma::mat(responses.slice(responseSeq).colptr(begin),
+        responses.n_rows, batchSize, false, true));
   }
 
   // Calculate and storing delta parameters from output for t = 1 to T.
@@ -436,25 +495,25 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     }
     else if (single && seqNum == 0)
     {
-      outputLayer.Backward(std::move(results.slice(seqNum)),
-          std::move(arma::mat(responses.slice(0).colptr(begin),
-          responses.n_rows, batchSize, false, true)), std::move(error));
+      outputLayer.Backward(results.slice(seqNum),
+          arma::mat(responses.slice(0).colptr(begin),
+          responses.n_rows, batchSize, false, true), error);
     }
     else
     {
-      outputLayer.Backward(std::move(results.slice(seqNum)),
-          std::move(arma::mat(responses.slice(seqNum).colptr(begin),
-          responses.n_rows, batchSize, false, true)), std::move(error));
+      outputLayer.Backward(results.slice(seqNum),
+          arma::mat(responses.slice(seqNum).colptr(begin),
+          responses.n_rows, batchSize, false, true), error);
     }
 
-    boost::apply_visitor(BackwardVisitor(std::move(results.slice(seqNum)),
-        std::move(error), std::move(delta)), mergeOutput);
+    boost::apply_visitor(BackwardVisitor(results.slice(seqNum), error, delta),
+        mergeOutput);
     allDelta.push_back(arma::mat(delta));
   }
 
   // BPTT ForwardRNN from t = T to 1.
   totalGradient = arma::mat(gradient.memptr(),
-      parameter.n_elem/2, 1, false, false);
+      parameter.n_elem / 2, 1, false, false);
 
   forwardGradient.zeros();
   forwardRNN.ResetGradients(forwardGradient);
@@ -467,32 +526,32 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     for (size_t l = 0; l < networkSize; ++l)
     {
       boost::apply_visitor(LoadOutputParameterVisitor(
-          std::move(forwardRNNOutputParameter)),
+          forwardRNNOutputParameter),
           forwardRNN.network[networkSize - 1 - l]);
     }
-    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, forwardRNN.network.back())),
-        std::move(allDelta[rho - seqNum - 1]), std::move(delta), 0),
+    boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+        outputParameterVisitor, forwardRNN.network.back()),
+        allDelta[rho - seqNum - 1], delta, 0),
         mergeLayer);
 
     for (size_t i = 2; i < networkSize; ++i)
     {
       boost::apply_visitor(BackwardVisitor(
-          std::move(boost::apply_visitor(outputParameterVisitor,
-          forwardRNN.network[networkSize - i])),
-          std::move(boost::apply_visitor(deltaVisitor,
-          forwardRNN.network[networkSize - i + 1])), std::move(
+          boost::apply_visitor(outputParameterVisitor,
+          forwardRNN.network[networkSize - i]),
           boost::apply_visitor(deltaVisitor,
-          forwardRNN.network[networkSize - i]))),
+          forwardRNN.network[networkSize - i + 1]),
+          boost::apply_visitor(deltaVisitor,
+          forwardRNN.network[networkSize - i])),
           forwardRNN.network[networkSize - i]);
     }
-    forwardRNN.Gradient(std::move(
+    forwardRNN.Gradient(
         arma::mat(predictors.slice(rho - seqNum - 1).colptr(begin),
-        predictors.n_rows, batchSize, false, true)));
+        predictors.n_rows, batchSize, false, true));
     boost::apply_visitor(GradientVisitor(
-        std::move(boost::apply_visitor(outputParameterVisitor,
-        forwardRNN.network[networkSize - 2])),
-        std::move(allDelta[rho - seqNum - 1]), 0), mergeLayer);
+        boost::apply_visitor(outputParameterVisitor,
+        forwardRNN.network[networkSize - 2]),
+        allDelta[rho - seqNum - 1], 0), mergeLayer);
     totalGradient += forwardGradient;
   }
 
@@ -506,31 +565,31 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     for (size_t l = 0; l < networkSize; ++l)
     {
       boost::apply_visitor(LoadOutputParameterVisitor(
-          std::move(backwardRNNOutputParameter)),
+          backwardRNNOutputParameter),
           backwardRNN.network[networkSize - 1 - l]);
     }
-    boost::apply_visitor(BackwardVisitor(std::move(
+    boost::apply_visitor(BackwardVisitor(
         boost::apply_visitor(outputParameterVisitor,
-        backwardRNN.network.back())),
-        std::move(allDelta[seqNum]), std::move(delta), 1), mergeLayer);
+        backwardRNN.network.back()),
+        allDelta[seqNum], delta, 1), mergeLayer);
     for (size_t i = 2; i < networkSize; ++i)
     {
       boost::apply_visitor(BackwardVisitor(
-        std::move(boost::apply_visitor(outputParameterVisitor,
-        backwardRNN.network[networkSize - i])), std::move(boost::apply_visitor(
-        deltaVisitor, backwardRNN.network[networkSize - i + 1])), std::move(
+        boost::apply_visitor(outputParameterVisitor,
+        backwardRNN.network[networkSize - i]), boost::apply_visitor(
+        deltaVisitor, backwardRNN.network[networkSize - i + 1]),
         boost::apply_visitor(deltaVisitor,
-        backwardRNN.network[networkSize - i]))),
+        backwardRNN.network[networkSize - i])),
         backwardRNN.network[networkSize - i]);
     }
 
-    backwardRNN.Gradient(std::move(
+    backwardRNN.Gradient(
         arma::mat(predictors.slice(seqNum).colptr(begin),
-        predictors.n_rows, batchSize, false, true)));
+        predictors.n_rows, batchSize, false, true));
     boost::apply_visitor(GradientVisitor(
         std::move(boost::apply_visitor(outputParameterVisitor,
         backwardRNN.network[networkSize - 2])),
-        std::move(allDelta[seqNum]), 1), mergeLayer);
+        allDelta[seqNum], 1), mergeLayer);
     totalGradient += backwardGradient;
   }
   return performance;
@@ -592,6 +651,8 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
 {
   if (!reset)
   {
+    // TODO: what if we call ResetParameters() multiple times?  Do we have to
+    // remove any existing mergeLayer?
     boost::apply_visitor(AddVisitor<CustomLayers...>(
         forwardRNN.network.back()), mergeLayer);
     boost::apply_visitor(AddVisitor<CustomLayers...>(
@@ -665,6 +726,8 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
   ar & BOOST_SERIALIZATION_NVP(parameter);
   ar & BOOST_SERIALIZATION_NVP(backwardRNN);
   ar & BOOST_SERIALIZATION_NVP(forwardRNN);
+
+  // TODO: are there more parameters to be serialized?
 }
 
 } // namespace ann

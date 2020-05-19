@@ -1,5 +1,5 @@
 /**
- * @file q_learning_impl.hpp
+ * @file methods/reinforcement_learning/q_learning_impl.hpp
  * @author Shangtong Zhang
  *
  * This file is the implementation of QLearning class.
@@ -131,7 +131,7 @@ double QLearning<
   learningNetwork.Predict(state.Encode(), actionValue);
 
   // Select an action according to the behavior policy.
-  ActionType action = policy.Sample(actionValue, deterministic);
+  action = policy.Sample(actionValue, deterministic);
 
   // Interact with the environment to advance to next state.
   StateType nextState;
@@ -179,6 +179,7 @@ double QLearning<
   // Compute the update target.
   arma::mat target;
   learningNetwork.Forward(sampledStates, target);
+
   /**
    * If the agent is at a terminal state, then we don't need to add the
    * discounted reward. At terminal state, the agent wont perform any
@@ -199,7 +200,7 @@ double QLearning<
 
   // Learn from experience.
   arma::mat gradients;
-  learningNetwork.Backward(target, gradients);
+  learningNetwork.Backward(sampledStates, target, gradients);
 
   replayMethod.Update(target, sampledActions, nextActionValues, gradients);
 

@@ -1,5 +1,5 @@
 /**
- * @file kernel_test.cpp
+ * @file tests/kernel_test.cpp
  * @author Ryan Curtin
  * @author Ajinkya Kale
  *

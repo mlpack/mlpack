@@ -1,5 +1,5 @@
 /**
- * @file nca_test.cpp
+ * @file tests/nca_test.cpp
  * @author Ryan Curtin
  *
  * Unit tests for Neighborhood Components Analysis and related code (including

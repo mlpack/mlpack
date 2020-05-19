@@ -1,5 +1,5 @@
 /**
- * @file tree_traits_test.cpp
+ * @file tests/rectangle_tree_test.cpp
  * @author Andrew Wells
  *
  * Tests for the RectangleTree class.  This should ensure that the class works

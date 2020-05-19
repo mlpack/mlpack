@@ -1,5 +1,5 @@
 /**
- * @file q_learning.hpp
+ * @file methods/reinforcement_learning/q_learning.hpp
  * @author Shangtong Zhang
  *
  * This file is the definition of QLearning class,
@@ -111,6 +111,9 @@ class QLearning
   //! Get the state of the agent.
   const StateType& State() const { return state; }
 
+  //! Get the action of the agent.
+  const ActionType& Action() const { return action; }
+
   //! Modify the environment in which the agent is.
   EnvironmentType& Environment() { return environment; }
   //! Get the environment in which the agent is.
@@ -163,6 +166,9 @@ class QLearning
 
   //! Locally-stored current state of the agent.
   StateType state;
+
+  //! Locally-stored action of the agent.
+  ActionType action;
 
   //! Locally-stored flag indicating training mode or test mode.
   bool deterministic;

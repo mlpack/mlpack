@@ -1,5 +1,5 @@
 /**
- * @file julia_option.hpp
+ * @file bindings/julia/julia_option.hpp
  * @author Ryan Curtin
  *
  * The Julia option type.
@@ -20,6 +20,7 @@
 #include "print_input_processing.hpp"
 #include "print_output_processing.hpp"
 #include "print_doc.hpp"
+#include "print_model_type_import.hpp"
 #include "default_param.hpp"
 
 namespace mlpack {
@@ -96,6 +97,8 @@ class JuliaOption
     CLI::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
         &PrintInputProcessing<T>;
     CLI::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
+    CLI::GetSingleton().functionMap[data.tname]["PrintModelTypeImport"] =
+        &PrintModelTypeImport<T>;
 
     // This is needed for the Markdown binding output.
     CLI::GetSingleton().functionMap[data.tname]["DefaultParam"] =

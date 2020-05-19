@@ -1,5 +1,5 @@
 /**
- * @file matrix_completion_test.cpp
+ * @file tests/matrix_completion_test.cpp
  * @author Stephen Tu
  *
  * Tests for matrix completion

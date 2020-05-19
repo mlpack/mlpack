@@ -1,5 +1,5 @@
 /**
- * @file lin_alg.cpp
+ * @file core/math/lin_alg.cpp
  * @author Nishant Mehta
  *
  * Linear algebra utilities.
@@ -70,32 +70,6 @@ void mlpack::math::WhitenUsingSVD(const arma::mat& x,
 
   whiteningMatrix = v * invSMatrix * trans(u);
 
-  xWhitened = whiteningMatrix * x;
-}
-
-/**
- * Whitens a matrix using the eigendecomposition of the covariance matrix.
- * Whitening means the covariance matrix of the result is the identity matrix.
- */
-void mlpack::math::WhitenUsingEig(const arma::mat& x,
-                                  arma::mat& xWhitened,
-                                  arma::mat& whiteningMatrix)
-{
-  arma::mat diag, eigenvectors;
-  arma::vec eigenvalues;
-
-  // Get eigenvectors of covariance of input matrix.
-  eig_sym(eigenvalues, eigenvectors, mlpack::math::ColumnCovariance(x));
-
-  // Generate diagonal matrix using 1 / sqrt(eigenvalues) for each value.
-  VectorPower(eigenvalues, -0.5);
-  diag.zeros(eigenvalues.n_elem, eigenvalues.n_elem);
-  diag.diag() = eigenvalues;
-
-  // Our whitening matrix is diag(1 / sqrt(eigenvectors)) * eigenvalues.
-  whiteningMatrix = diag * trans(eigenvectors);
-
-  // Now apply the whitening matrix.
   xWhitened = whiteningMatrix * x;
 }
 

@@ -135,6 +135,12 @@ void HoeffdingTreeModel::BuildModel(
     const size_t bins,
     const size_t observationsBeforeBinning)
 {
+  // Clean memory, if needed.
+  delete giniHoeffdingTree;
+  delete giniBinaryTree;
+  delete infoHoeffdingTree;
+  delete infoBinaryTree;
+
   // Depending on the type, create the tree.
   switch (type)
   {

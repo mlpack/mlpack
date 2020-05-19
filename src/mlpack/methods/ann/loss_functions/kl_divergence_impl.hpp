@@ -1,5 +1,5 @@
 /**
- * @file kl_divergence_impl.hpp
+ * @file methods/ann/loss_functions/kl_divergence_impl.hpp
  * @author Dakshit Agrawal
  *
  * Implementation of the Kullback–Leibler Divergence error function.
@@ -28,8 +28,9 @@ KLDivergence<InputDataType, OutputDataType>::KLDivergence(const bool takeMean) :
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double KLDivergence<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, const TargetType&& target)
+typename InputType::elem_type
+KLDivergence<InputDataType, OutputDataType>::Forward(const InputType& input,
+                                                     const TargetType& target)
 {
   if (takeMean)
   {
@@ -45,9 +46,9 @@ double KLDivergence<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
 void KLDivergence<InputDataType, OutputDataType>::Backward(
-    const InputType&& input,
-    const TargetType&& target,
-    OutputType&& output)
+    const InputType& input,
+    const TargetType& target,
+    OutputType& output)
 {
   if (takeMean)
   {
@@ -62,10 +63,10 @@ void KLDivergence<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void KLDivergence<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
+    Archive& ar,
     const unsigned int /* version */)
 {
-  // Nothing to do here.
+  ar & BOOST_SERIALIZATION_NVP(takeMean);
 }
 
 } // namespace ann

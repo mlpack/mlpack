@@ -1,5 +1,5 @@
 /**
- * @file perceptron_main.cpp
+ * @file methods/perceptron/perceptron_main.cpp
  * @author Udit Saxena
  *
  * This program runs the Simple Perceptron Classifier.
@@ -177,8 +177,12 @@ static void mlpackMain()
   // Next, load the training data and labels (if they have been given).
   if (CLI::HasParam("training"))
   {
-    Log::Info << "Training perceptron on dataset '"
-        << CLI::GetPrintableParam<mat>("training");
+    // Get and cache the value of GetPrintableParam<mat>("training").
+    std::ostringstream oss;
+    oss << CLI::GetPrintableParam<mat>("training");
+    std::string trainingOutput = oss.str();
+
+    Log::Info << "Training perceptron on dataset '" << trainingOutput;
     if (CLI::HasParam("labels"))
     {
       Log::Info << "' with labels in '"
@@ -255,8 +259,7 @@ static void mlpackMain()
         Log::Fatal << "Perceptron from '"
             << CLI::GetPrintableParam<PerceptronModel*>("input_model")
             << "' is built on data with " << p->P().Weights().n_rows
-            << " dimensions, but data in '"
-            << CLI::GetPrintableParam<arma::mat>("training") << "' has "
+            << " dimensions, but data in '" << trainingOutput << "' has "
             << trainingData.n_rows << "dimensions!" << endl;
       }
 

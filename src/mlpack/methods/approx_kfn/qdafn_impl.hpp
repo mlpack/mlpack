@@ -1,5 +1,5 @@
 /**
- * @file qdafn_impl.hpp
+ * @file methods/approx_kfn/qdafn_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of QDAFN class methods.

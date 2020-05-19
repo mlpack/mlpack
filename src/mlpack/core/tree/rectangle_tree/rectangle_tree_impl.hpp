@@ -1,5 +1,5 @@
 /**
- * @file rectangle_tree_impl.hpp
+ * @file core/tree/rectangle_tree/rectangle_tree_impl.hpp
  * @author Andrew Wells
  *
  * Implementation of generalized rectangle tree.
@@ -183,6 +183,7 @@ RectangleTree(
     maxLeafSize(other.MaxLeafSize()),
     minLeafSize(other.MinLeafSize()),
     bound(other.bound),
+    stat(other.stat),
     parentDistance(other.ParentDistance()),
     dataset(deepCopy ?
         (parent ? parent->dataset : new MatType(*other.dataset)) :
@@ -203,6 +204,9 @@ RectangleTree(
     children = other.children;
 }
 
+/**
+ * Move constructor.
+ */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -223,6 +227,7 @@ RectangleTree(RectangleTree&& other) :
     maxLeafSize(other.MaxLeafSize()),
     minLeafSize(other.MinLeafSize()),
     bound(std::move(other.bound)),
+    stat(std::move(other.stat)),
     parentDistance(other.ParentDistance()),
     dataset(other.dataset),
     ownsDataset(other.ownsDataset),
@@ -242,6 +247,8 @@ RectangleTree(RectangleTree&& other) :
     for (size_t i = 0; i < numChildren; i++)
       children[i]->parent = this;
   }
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.
   other.maxNumChildren = 0;
   other.minNumChildren = 0;
   other.numChildren = 0;
@@ -256,6 +263,9 @@ RectangleTree(RectangleTree&& other) :
   other.ownsDataset = false;
 }
 
+/**
+ * Copy assignment operator: copy the given other tree.
+ */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -272,6 +282,7 @@ operator=(const RectangleTree& other)
   if (this == &other)
     return *this;
 
+  // Freeing memory that will not be used anymore.
   for (size_t i = 0; i < numChildren; i++)
     delete children[i];
 
@@ -289,6 +300,7 @@ operator=(const RectangleTree& other)
   maxLeafSize = other.MaxLeafSize();
   minLeafSize = other.MinLeafSize();
   bound = other.bound;
+  stat = other.stat;
   parentDistance = other.ParentDistance();
   dataset = new MatType(*other.dataset);
   ownsDataset = true;
@@ -304,6 +316,9 @@ operator=(const RectangleTree& other)
   return *this;
 }
 
+/**
+ * Move assignment operator: take ownership of the given tree.
+ */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -320,6 +335,7 @@ operator=(RectangleTree&& other)
   if (this == &other)
     return *this;
 
+  // Freeing memory that will not be used anymore.
   for (size_t i = 0; i < numChildren; i++)
     delete children[i];
 
@@ -337,11 +353,27 @@ operator=(RectangleTree&& other)
   maxLeafSize = other.MaxLeafSize();
   minLeafSize = other.MinLeafSize();
   bound = std::move(other.bound);
+  stat = std::move(other.stat);
   parentDistance = other.ParentDistance();
   dataset = other.dataset;
   ownsDataset = other.ownsDataset;
   points = std::move(other.points);
   auxiliaryInfo = std::move(other.auxiliaryInfo);
+
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.
+  other.maxNumChildren = 0;
+  other.minNumChildren = 0;
+  other.numChildren = 0;
+  other.parent = NULL;
+  other.begin = 0;
+  other.count = 0;
+  other.numDescendants = 0;
+  other.maxLeafSize = 0;
+  other.minLeafSize = 0;
+  other.parentDistance = 0;
+  other.dataset = NULL;
+  other.ownsDataset = false;
 
   return *this;
 }

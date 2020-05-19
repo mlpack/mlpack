@@ -1,5 +1,5 @@
 /**
- * @file svd_convolution.hpp
+ * @file methods/ann/convolution_rules/svd_convolution.hpp
  * @author Marcus Edel
  *
  * Implementation of the convolution using the singular value decomposition to

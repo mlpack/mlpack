@@ -1,5 +1,5 @@
 /**
- * @file multiply_constant_impl.hpp
+ * @file methods/ann/layer/multiply_constant_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the MultiplyConstantLayer class, which multiplies the
@@ -29,7 +29,7 @@ MultiplyConstant<InputDataType, OutputDataType>::MultiplyConstant(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void MultiplyConstant<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   output = input * scalar;
 }
@@ -37,7 +37,7 @@ void MultiplyConstant<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void MultiplyConstant<InputDataType, OutputDataType>::Backward(
-    const DataType&& /* input */, DataType&& gy, DataType&& g)
+    const DataType& /* input */, const DataType& gy, DataType& g)
 {
   g = gy * scalar;
 }

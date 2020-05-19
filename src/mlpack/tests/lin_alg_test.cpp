@@ -1,5 +1,5 @@
 /**
- * @file lin_alg_test.cpp
+ * @file tests/lin_alg_test.cpp
  * @author Ryan Curtin
  *
  * Simple tests for things in the linalg__private namespace.
@@ -76,37 +76,6 @@ BOOST_AUTO_TEST_CASE(TestCenterB)
   for (int row = 0; row < 5; row++)
     for (int col = 0; col < 6; col++)
       BOOST_REQUIRE_CLOSE(tmp_out(row, col), (double) (col - 2.5) * row, 1e-5);
-}
-
-BOOST_AUTO_TEST_CASE(TestWhitenUsingEig)
-{
-  // After whitening using eigendecomposition, the covariance of
-  // our matrix will be I (or something very close to that).
-  // We are loading a matrix from an external file... bad choice.
-  mat tmp, tmp_centered, whitened, whitening_matrix;
-
-  data::Load("trainSet.csv", tmp);
-  Center(tmp, tmp_centered);
-  WhitenUsingEig(tmp_centered, whitened, whitening_matrix);
-
-  mat newcov = mlpack::math::ColumnCovariance(whitened);
-  for (int row = 0; row < 5; row++)
-  {
-    for (int col = 0; col < 5; col++)
-    {
-      if (row == col)
-      {
-        // diagonal will be 0 in the case of any zero-valued eigenvalues
-        // (rank-deficient covariance case)
-        if (std::abs(newcov(row, col)) > 1e-10)
-          BOOST_REQUIRE_CLOSE(newcov(row, col), 1.0, 1e-10);
-      }
-      else
-      {
-        BOOST_REQUIRE_SMALL(newcov(row, col), 1e-10);
-      }
-    }
-  }
 }
 
 BOOST_AUTO_TEST_CASE(TestOrthogonalize)

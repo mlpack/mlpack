@@ -1,5 +1,5 @@
 /**
- * @file kde_main.cpp
+ * @file methods/kde/kde_main.cpp
  * @author Roberto Hueso
  *
  * Executable for running Kernel Density Estimation.
@@ -314,6 +314,5 @@ static void mlpackMain()
     CLI::GetParam<arma::vec>("predictions") = std::move(estimations);
 
   // Save model.
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<KDEModel*>("output_model") = kde;
+  CLI::GetParam<KDEModel*>("output_model") = kde;
 }

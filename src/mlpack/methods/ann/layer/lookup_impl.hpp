@@ -1,5 +1,5 @@
 /**
- * @file lookup_impl.hpp
+ * @file methods/ann/layer/lookup_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Lookup class a particular convolution, where the width
@@ -32,7 +32,7 @@ Lookup<InputDataType, OutputDataType>::Lookup(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Lookup<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   output = weights.cols(arma::conv_to<arma::uvec>::from(input) - 1);
 }
@@ -40,9 +40,9 @@ void Lookup<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Lookup<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */,
-    const arma::Mat<eT>&& gy,
-    arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
   g = gy;
 }
@@ -50,9 +50,9 @@ void Lookup<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Lookup<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>&& input,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
 {
   gradient = arma::zeros<arma::Mat<eT> >(weights.n_rows, weights.n_cols);
   gradient.cols(arma::conv_to<arma::uvec>::from(input) - 1) = error;

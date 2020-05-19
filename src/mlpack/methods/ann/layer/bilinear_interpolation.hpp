@@ -1,5 +1,5 @@
 /**
- * @file bilinear_interpolation.hpp
+ * @file methods/ann/layer/bilinear_interpolation.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *
@@ -65,7 +65,7 @@ class BilinearInterpolation
    * @param output The resulting interpolated output matrix.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -74,14 +74,14 @@ class BilinearInterpolation
    * we just have to down-sample the gradient to make its size compatible with
    * the input size.
    *
-   * @param input The input matrix.
+   * @param * (input) The input matrix.
    * @param gradient The computed backward gradient.
    * @param output The resulting down-sampled output.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /*input*/,
-                arma::Mat<eT>&& gradient,
-                arma::Mat<eT>&& output);
+  void Backward(const arma::Mat<eT>& /*input*/,
+                const arma::Mat<eT>& gradient,
+                arma::Mat<eT>& output);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -92,6 +92,31 @@ class BilinearInterpolation
   OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
+
+  //! Get the row size of the input.
+  size_t const& InRowSize() const { return inRowSize; }
+  //! Modify the row size of the input.
+  size_t& InRowSize() { return inRowSize; }
+
+  //! Get the column size of the input.
+  size_t const& InColSize() const { return inColSize; }
+  //! Modify the column size of the input.
+  size_t& InColSize() { return inColSize; }
+
+  //! Get the row size of the output.
+  size_t const& OutRowSize() const { return outRowSize; }
+  //! Modify the row size of the output.
+  size_t& OutRowSize() { return outRowSize; }
+
+  //! Get the column size of the output.
+  size_t const& OutColSize() const { return outColSize; }
+  //! Modify the column size of the output.
+  size_t& OutColSize() { return outColSize; }
+
+  //! Get the depth of the input.
+  size_t const& InDepth() const { return depth; }
+  //! Modify the depth of the input.
+  size_t& InDepth() { return depth; }
 
   /**
    * Serialize the layer.

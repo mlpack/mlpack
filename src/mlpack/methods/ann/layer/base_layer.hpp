@@ -1,5 +1,5 @@
 /**
- * @file base_layer.hpp
+ * @file methods/ann/layer/base_layer.hpp
  * @author Marcus Edel
  *
  * Definition of the BaseLayer class, which attaches various functions to the
@@ -22,6 +22,10 @@
 #include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
+#include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
+#include <mlpack/methods/ann/activation_functions/elliot_function.hpp>
+#include <mlpack/methods/ann/activation_functions/elish_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -36,6 +40,14 @@ namespace ann /** Artificial Neural Network. */ {
  *  - IdentityLayer
  *  - ReLULayer
  *  - TanHLayer
+ *  - SoftplusLayer
+ *  - HardSigmoidLayer
+ *  - SwishLayer
+ *  - MishLayer
+ *  - LiSHTLayer
+ *  - GELULayer
+ *  - ELiSHLayer
+ *  - ElliotLayer
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -67,7 +79,7 @@ class BaseLayer
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output)
+  void Forward(const InputType& input, OutputType& output)
   {
     ActivationFunction::Fn(input, output);
   }
@@ -82,9 +94,9 @@ class BaseLayer
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g)
+  void Backward(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g)
   {
     arma::Mat<eT> derivative;
     ActivationFunction::Deriv(input, derivative);
@@ -206,6 +218,50 @@ template <
     typename OutputDataType = arma::mat
 >
 using MishFunctionLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard LiSHT-Layer using the LiSHT activation function.
+ */
+template <
+    class ActivationFunction = LiSHTFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using LiSHTFunctionLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard GELU-Layer using the GELU activation function.
+ */
+template <
+    class ActivationFunction = GELUFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using GELUFunctionLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard Elliot-Layer using the Elliot activation function.
+ */
+template <
+    class ActivationFunction = ElliotFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using ElliotFunctionLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard ELiSH-Layer using the ELiSH activation function.
+ */
+template <
+    class ActivationFunction = ElishFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using ElishFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 } // namespace ann

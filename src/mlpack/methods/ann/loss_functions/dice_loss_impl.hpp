@@ -1,5 +1,5 @@
 /**
- * @file dice_loss_impl.hpp
+ * @file methods/ann/loss_functions/dice_loss_impl.hpp
  * @author N Rajiv Vaidyanathan
  *
  * Implementation of the dice loss function.
@@ -27,8 +27,9 @@ DiceLoss<InputDataType, OutputDataType>::DiceLoss(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double DiceLoss<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, const TargetType&& target)
+typename InputType::elem_type DiceLoss<InputDataType, OutputDataType>::Forward(
+    const InputType& input,
+    const TargetType& target)
 {
   return 1 - ((2 * arma::accu(target % input) + smooth) /
     (arma::accu(target % target) + arma::accu(
@@ -38,9 +39,9 @@ double DiceLoss<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
 void DiceLoss<InputDataType, OutputDataType>::Backward(
-    const InputType&& input,
-    const TargetType&& target,
-    OutputType&& output)
+    const InputType& input,
+    const TargetType& target,
+    OutputType& output)
 {
   output = -2 * (target * (arma::accu(input % input) +
     arma::accu(target % target) + smooth) - input *

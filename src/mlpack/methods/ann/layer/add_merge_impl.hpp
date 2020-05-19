@@ -1,5 +1,5 @@
 /**
- * @file add_merge_impl.hpp
+ * @file methods/ann/layer/add_merge_impl.hpp
  * @author Marcus Edel
  *
  * Definition of the AddMerge module which accumulates the output of the given
@@ -27,7 +27,16 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
     const bool model, const bool run) :
-    model(model), run(run), ownsLayer(!model)
+    model(model), run(run), ownsLayers(!model)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
+    const bool model, const bool run, const bool ownsLayers) :
+    model(model), run(run), ownsLayers(ownsLayers)
 {
   // Nothing to do here.
 }
@@ -36,7 +45,7 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 AddMerge<InputDataType, OutputDataType, CustomLayers...>::~AddMerge()
 {
-  if (ownsLayer)
+  if (!model && ownsLayers)
   {
     std::for_each(network.begin(), network.end(),
         boost::apply_visitor(deleteVisitor));
@@ -47,14 +56,14 @@ template <typename InputDataType, typename OutputDataType,
           typename... CustomLayers>
 template<typename InputType, typename OutputType>
 void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Forward(
-    InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   if (run)
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
-          boost::apply_visitor(outputParameterVisitor, network[i]))),
+      boost::apply_visitor(ForwardVisitor(input,
+          boost::apply_visitor(outputParameterVisitor, network[i])),
           network[i]);
     }
   }
@@ -70,15 +79,17 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
   if (run)
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, network[i])), std::move(gy), std::move(
-          boost::apply_visitor(deltaVisitor, network[i]))), network[i]);
+      boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+          outputParameterVisitor, network[i]), gy,
+          boost::apply_visitor(deltaVisitor, network[i])), network[i]);
     }
 
     g = boost::apply_visitor(deltaVisitor, network[0]);
@@ -95,12 +106,14 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g,
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g,
     const size_t index)
 {
-  boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, network[index])), std::move(gy), std::move(
-      boost::apply_visitor(deltaVisitor, network[index]))), network[index]);
+  boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+      outputParameterVisitor, network[index]), gy,
+      boost::apply_visitor(deltaVisitor, network[index])), network[index]);
   g = boost::apply_visitor(deltaVisitor, network[index]);
 }
 
@@ -108,16 +121,15 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Gradient(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& /* gradient */ )
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& /* gradient */ )
 {
   if (run)
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      boost::apply_visitor(GradientVisitor(std::move(input), std::move(error)),
-          network[i]);
+      boost::apply_visitor(GradientVisitor(input, error), network[i]);
     }
   }
 }
@@ -126,20 +138,19 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Gradient(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& /* gradient */,
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& /* gradient */,
     const size_t index)
 {
-  boost::apply_visitor(GradientVisitor(std::move(input), std::move(error)),
-      network[index]);
+  boost::apply_visitor(GradientVisitor(input, error), network[index]);
 }
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void AddMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const unsigned int version)
 {
   // Be sure to clear other layers before loading.
   if (Archive::is_loading::value)
@@ -148,7 +159,11 @@ void AddMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
   ar & BOOST_SERIALIZATION_NVP(network);
   ar & BOOST_SERIALIZATION_NVP(model);
   ar & BOOST_SERIALIZATION_NVP(run);
-  ar & BOOST_SERIALIZATION_NVP(ownsLayer);
+
+  if (version >= 1)
+    ar & BOOST_SERIALIZATION_NVP(ownsLayers);
+  else if (Archive::is_loading::value)
+    ownsLayers = !model;
 }
 
 } // namespace ann

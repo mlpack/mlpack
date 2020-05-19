@@ -1,5 +1,5 @@
 /**
- * @file preprocess_split_main.cpp
+ * @file methods/preprocess/preprocess_split_main.cpp
  * @author Keon Kim
  *
  * A CLI executable to split a dataset.
@@ -45,6 +45,13 @@ PROGRAM_INFO("Split Data",
     PRINT_CALL("preprocess_split", "input", "X", "training", "X_train", "test",
         "X_test", "test_ratio", 0.4) +
     "\n\n"
+    "Also by default the dataset is shuffled and split; you can provide the " +
+    PRINT_PARAM_STRING("no_shuffle") + " option to avoid shuffling the "
+    "data; an example to avoid shuffling of data is:"
+    "\n\n" +
+    PRINT_CALL("preprocess_split", "input", "X", "training", "X_train", "test",
+        "X_test", "test_ratio", 0.4, "no_shuffle", true) +
+    "\n\n"
     "If we had a dataset " + PRINT_DATASET("X") + " and associated labels " +
     PRINT_DATASET("y") + ", and we wanted to split these into " +
     PRINT_DATASET("X_train") + ", " + PRINT_DATASET("y_train") + ", " +
@@ -73,6 +80,7 @@ PARAM_DOUBLE_IN("test_ratio", "Ratio of test set; if not set,"
     "the ratio defaults to 0.2", "r", 0.2);
 
 PARAM_INT_IN("seed", "Random seed (0 for std::time(NULL)).", "s", 0);
+PARAM_FLAG("no_shuffle", "Avoid shuffling and splitting the data.", "S");
 
 using namespace mlpack;
 using namespace mlpack::util;
@@ -83,6 +91,7 @@ static void mlpackMain()
 {
   // Parse command line options.
   const double testRatio = CLI::GetParam<double>("test_ratio");
+  const bool shuffleData = CLI::GetParam<bool>("no_shuffle");
 
   if (CLI::GetParam<int>("seed") == 0)
     mlpack::math::RandomSeed(std::time(NULL));
@@ -129,7 +138,7 @@ static void mlpackMain()
         CLI::GetParam<arma::Mat<size_t>>("input_labels");
     arma::Row<size_t> labelsRow = labels.row(0);
 
-    const auto value = data::Split(data, labelsRow, testRatio);
+    const auto value = data::Split(data, labelsRow, testRatio, !shuffleData);
     Log::Info << "Training data contains " << get<0>(value).n_cols << " points."
         << endl;
     Log::Info << "Test data contains " << get<1>(value).n_cols << " points."
@@ -148,7 +157,7 @@ static void mlpackMain()
   }
   else // We have no labels, so just split the dataset.
   {
-    const auto value = data::Split(data, testRatio);
+    const auto value = data::Split(data, testRatio, !shuffleData);
     Log::Info << "Training data contains " << get<0>(value).n_cols << " points."
         << endl;
     Log::Info << "Test data contains " << get<1>(value).n_cols << " points."

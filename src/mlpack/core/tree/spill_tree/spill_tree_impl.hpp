@@ -1,5 +1,5 @@
 /**
- * @file spill_tree_impl.hpp
+ * @file core/tree/spill_tree/spill_tree_impl.hpp
  *
  * Implementation of generalized hybrid spill tree (SpillTree).
  *
@@ -193,7 +193,7 @@ SpillTree(const SpillTree& other) :
 }
 
 /**
- * Copy Assignment.
+ * Copy assignment operator: copy the given other tree.
  */
 template<typename MetricType,
          typename StatisticType,
@@ -320,7 +320,7 @@ SpillTree(SpillTree&& other) :
 }
 
 /**
- * Move Assignment.
+ * Move assignment operator: take ownership of the given tree.
  */
 template<typename MetricType,
          typename StatisticType,

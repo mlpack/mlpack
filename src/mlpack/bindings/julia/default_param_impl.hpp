@@ -1,5 +1,5 @@
 /**
- * @file default_param_impl.hpp
+ * @file bindings/julia/default_param_impl.hpp
  * @author Ryan Curtin
  *
  * Return the default value of a parameter, depending on its type.
@@ -116,11 +116,11 @@ std::string DefaultParamImpl(
   else if (std::is_same<T, arma::Col<size_t>>::value ||
            std::is_same<T, arma::Row<size_t>>::value)
   {
-    return "Int64[]";
+    return "Int[]";
   }
   else if (std::is_same<T, arma::Mat<size_t>>::value)
   {
-    return "zeros(Int64, 0, 0)";
+    return "zeros(Int, 0, 0)";
   }
   else
   {

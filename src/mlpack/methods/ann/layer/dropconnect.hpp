@@ -1,5 +1,5 @@
 /**
- * @file dropconnect.hpp
+ * @file methods/ann/layer/dropconnect.hpp
  * @author Palash Ahuja
  * @author Marcus Edel
  *
@@ -46,7 +46,8 @@ namespace ann /** Artificial Neural Network. */ {
  *                Learning(ICML - 13)},
  *   author = {Li Wan and Matthew Zeiler and Sixin Zhang and Yann L. Cun and
  *             Rob Fergus},
- *   year = {2013}
+ *   year = {2013},
+ *   url  = {http://proceedings.mlr.press/v28/wan13.pdf}
  * }
  * @endcode
  *
@@ -77,16 +78,14 @@ class DropConnect
               const size_t outSize,
               const double ratio = 0.5);
 
-  ~DropConnect();
-
   /**
-  * Ordinary feed forward pass of the DropConnect layer.
-  *
-  * @param input Input data used for evaluating the specified function.
-  * @param output Resulting output activation.
-  */
+   * Ordinary feed forward pass of the DropConnect layer.
+   *
+   * @param input Input data used for evaluating the specified function.
+   * @param output Resulting output activation.
+   */
   template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of the DropConnect layer.
@@ -96,21 +95,21 @@ class DropConnect
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The propagated input.
-   * @param d The calculated error.
-   * @param g The calculated gradient.
+   * @param error The calculated error.
+   * @param * (gradient) The calculated gradient.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& /* gradient */);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& /* gradient */);
 
   //! Get the model modules.
   std::vector<LayerTypes<> >& Model() { return network; }

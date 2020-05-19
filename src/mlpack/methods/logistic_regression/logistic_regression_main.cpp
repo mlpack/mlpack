@@ -1,5 +1,5 @@
 /**
- * @file logistic_regression_main.cpp
+ * @file methods/logistic_regression/logistic_regression_main.cpp
  * @author Ryan Curtin
  *
  * Main executable for logistic regression.
@@ -336,7 +336,7 @@ static void mlpackMain()
 
   if (CLI::HasParam("test"))
   {
-    testSet = std::move(CLI::GetParam<arma::mat>("test"));
+    const arma::mat& testSet = CLI::GetParam<arma::mat>("test");
 
     // Checking the dimensionality of the test data.
     if (testSet.n_rows != model->Parameters().n_cols - 1)

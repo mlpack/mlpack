@@ -1,5 +1,5 @@
 /**
- * @file flexible_relu_impl.hpp
+ * @file methods/ann/layer/flexible_relu_impl.hpp
  * @author Aarush Gupta
  * @author Manthan-R-Sheth
  *
@@ -41,7 +41,7 @@ void FlexibleReLU<InputDataType, OutputDataType>::Reset()
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void FlexibleReLU<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   output = arma::clamp(input, 0.0, DBL_MAX) + alpha(0);
 }
@@ -49,7 +49,7 @@ void FlexibleReLU<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void FlexibleReLU<InputDataType, OutputDataType>::Backward(
-    const DataType&& input, DataType&& gy, DataType&& g)
+    const DataType& input, const DataType& gy, DataType& g)
 {
   //! Compute the first derivative of FlexibleReLU function.
   g = gy % arma::clamp(arma::sign(input), 0.0, 1.0);
@@ -58,9 +58,9 @@ void FlexibleReLU<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void FlexibleReLU<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>&& input,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
 {
   if (gradient.n_elem == 0)
   {

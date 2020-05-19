@@ -1,5 +1,5 @@
 /**
- * @file mean_pooling.hpp
+ * @file methods/ann/layer/mean_pooling.hpp
  * @author Marcus Edel
  * @author Nilay Jain
  *
@@ -43,6 +43,7 @@ class MeanPooling
    * @param kernelHeight Height of the pooling window.
    * @param strideWidth Width of the stride operation.
    * @param strideHeight Width of the stride operation.
+   * @param floor Set to true to use floor method.
    */
   MeanPooling(const size_t kernelWidth,
               const size_t kernelHeight,
@@ -58,21 +59,21 @@ class MeanPooling
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -84,24 +85,24 @@ class MeanPooling
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the width.
+  //! Get the intput width.
   size_t const& InputWidth() const { return inputWidth; }
-  //! Modify the width.
+  //! Modify the input width.
   size_t& InputWidth() { return inputWidth; }
 
-  //! Get the height.
+  //! Get the input height.
   size_t const& InputHeight() const { return inputHeight; }
-  //! Modify the height.
+  //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
-  //! Get the width.
+  //! Get the output width.
   size_t const& OutputWidth() const { return outputWidth; }
-  //! Modify the width.
+  //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
-  //! Get the height.
+  //! Get the output height.
   size_t const& OutputHeight() const { return outputHeight; }
-  //! Modify the height.
+  //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size.
@@ -141,7 +142,7 @@ class MeanPooling
   bool& Deterministic() { return deterministic; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -156,9 +157,6 @@ class MeanPooling
   template<typename eT>
   void Pooling(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
-    const size_t rStep = kernelWidth;
-    const size_t cStep = kernelHeight;
-
     for (size_t j = 0, colidx = 0; j < output.n_cols;
          ++j, colidx += strideHeight)
     {
@@ -166,8 +164,8 @@ class MeanPooling
            ++i, rowidx += strideWidth)
       {
         arma::mat subInput = input(
-            arma::span(rowidx, rowidx + rStep - 1 - offset),
-            arma::span(colidx, colidx + cStep - 1 - offset));
+            arma::span(rowidx, rowidx + kernelWidth - 1 - offset),
+            arma::span(colidx, colidx + kernelHeight - 1 - offset));
 
         output(i, j) = arma::mean(arma::mean(subInput));
       }

@@ -1,5 +1,5 @@
 /**
- * @file decision_stump_test.cpp
+ * @file tests/main_tests/decision_stump_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of decision_stump_main.cpp.

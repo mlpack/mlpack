@@ -1,5 +1,5 @@
 /**
- * @file nbc_test.cpp
+ * @file tests/nbc_test.cpp
  *
  * Test for the Naive Bayes classifier.
  *

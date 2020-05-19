@@ -1,5 +1,5 @@
 /**
- * @file minibatch_discrimination_impl.hpp
+ * @file methods/ann/layer/minibatch_discrimination_impl.hpp
  * @author Saksham Bansal
  *
  * Implementation of the MiniBatchDiscrimination layer class.
@@ -52,7 +52,7 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Reset()
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MiniBatchDiscrimination<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   batchSize = input.n_cols;
   tempM = weight * input;
@@ -88,7 +88,7 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MiniBatchDiscrimination<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   g = gy.head_rows(A);
   arma::Mat<eT> gM = gy.tail_rows(B);
@@ -117,9 +117,9 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MiniBatchDiscrimination<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>&& input,
-    arma::Mat<eT>&& /* error */,
-    arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& /* error */,
+    arma::Mat<eT>& gradient)
 {
   gradient = arma::vectorise(deltaTemp * input.t());
 }

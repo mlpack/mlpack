@@ -1,5 +1,5 @@
 /**
- * @file softmax_regression_main.cpp
+ * @file methods/softmax_regression/softmax_regression_main.cpp
  *
  * Main program for softmax regression.
  *
@@ -273,6 +273,5 @@ Model* TrainSoftmax(const size_t maxIterations)
     sm = new Model(trainData, trainLabels, numClasses,
         CLI::GetParam<double>("lambda"), intercept, std::move(optimizer));
   }
-
   return sm;
 }

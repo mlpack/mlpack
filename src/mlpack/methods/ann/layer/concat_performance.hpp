@@ -1,5 +1,5 @@
 /**
- * @file concat_performance.hpp
+ * @file methods/ann/layer/concat_performance.hpp
  * @author Marcus Edel
  *
  * Definition of the ConcatPerformance class.
@@ -55,7 +55,8 @@ class ConcatPerformance
    * @param output Resulting output activation.
    */
   template<typename eT>
-  double Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& target);
+  double Forward(const arma::Mat<eT>& input, arma::Mat<eT>& target);
+
   /**
    * Ordinary feed backward pass of a neural network. The negative log
    * likelihood layer expectes that the input contains log-probabilities for
@@ -68,9 +69,9 @@ class ConcatPerformance
    * @param output The calculated error.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
-                const arma::Mat<eT>&& target,
-                arma::Mat<eT>&& output);
+  void Backward(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& target,
+                arma::Mat<eT>& output);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
@@ -81,6 +82,9 @@ class ConcatPerformance
   OutputDataType& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
+
+  //! Get the number of inputs.
+  size_t InSize() const { return inSize; }
 
   /**
    * Serialize the layer

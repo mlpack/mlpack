@@ -1,5 +1,5 @@
 /**
- * @file gmm.cpp
+ * @file methods/gmm/gmm.cpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Ryan Curtin
  * @author Michael Fox
@@ -117,7 +117,12 @@ arma::vec GMM::Random() const
     }
   }
 
-  return trans(chol(dists[gaussian].Covariance())) *
+  arma::mat cholDecomp;
+  if (!arma::chol(cholDecomp, dists[gaussian].Covariance()))
+  {
+    Log::Fatal << "Cholesky decomposition failed." << std::endl;
+  }
+  return trans(cholDecomp) *
       arma::randn<arma::vec>(dimensionality) + dists[gaussian].Mean();
 }
 

@@ -1,5 +1,5 @@
 /**
- * @file feedforward_network_test.cpp
+ * @file tests/feedforward_network_test.cpp
  * @author Marcus Edel
  * @author Palash Ahuja
  *
@@ -53,17 +53,8 @@ void TestNetwork(ModelType& model,
         arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
   }
 
-  size_t error = 0;
-  for (size_t i = 0; i < testData.n_cols; i++)
-  {
-    if (int(arma::as_scalar(prediction.col(i))) ==
-        int(arma::as_scalar(testLabels.col(i))))
-    {
-      error++;
-    }
-  }
-
-  double classificationError = 1 - double(error) / testData.n_cols;
+  size_t correct = arma::accu(prediction == testLabels);
+  double classificationError = 1 - double(correct) / testData.n_cols;
   BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
 }
 
@@ -183,7 +174,7 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
       arma::mat currentResuls;
       model.Forward(currentData, currentResuls);
       arma::mat gradients;
-      model.Backward(currentLabels, gradients);
+      model.Backward(currentData, currentLabels, gradients);
       #if ENS_VERSION_MAJOR == 1
       opt.Update(model.Parameters(), stepSize, gradients);
       #else
@@ -199,16 +190,7 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
             arma::max(currentResuls.col(i)) == currentResuls.col(i), 1)) + 1;
       }
 
-      size_t correct = 0;
-      for (size_t i = 0; i < currentLabels.n_cols; i++)
-      {
-        if (int(arma::as_scalar(prediction.col(i))) ==
-            int(arma::as_scalar(currentLabels.col(i))))
-        {
-          correct++;
-        }
-      }
-
+      size_t correct = arma::accu(prediction == currentLabels);
       error(1 - (double) correct / batchSize);
     }
     Log::Debug << "Current training error: " << error.mean() << std::endl;
@@ -318,7 +300,7 @@ BOOST_AUTO_TEST_CASE(HighwayNetworkTest)
   Highway<>* highway = new Highway<>(10, true);
   highway->Add<Linear<> >(10, 10);
   highway->Add<SigmoidLayer<> >();
-  model.Add(highway);
+  model.Add(highway); // This takes ownership of the memory.
   model.Add<Linear<> >(10, 2);
   model.Add<LogSoftMax<> >();
   TestNetwork<>(model, dataset, labels, dataset, labels, 10, 0.2);
@@ -600,16 +582,43 @@ BOOST_AUTO_TEST_CASE(FFNReturnModel)
   // Get the layer parameter from layer A and layer B and store them in
   // parameterA and parameterB.
   arma::mat parameterA, parameterB;
-  boost::apply_visitor(ParametersVisitor(std::move(parameterA)),
-      model.Model()[0]);
-  boost::apply_visitor(ParametersVisitor(std::move(parameterB)),
-      model.Model()[1]);
+  boost::apply_visitor(ParametersVisitor(parameterA), model.Model()[0]);
+  boost::apply_visitor(ParametersVisitor(parameterB), model.Model()[1]);
 
   CheckMatrices(parameterA, arma::ones(3 * 3 + 3, 1));
   CheckMatrices(parameterB, arma::zeros(3 * 4 + 4, 1));
 
   CheckMatrices(linearA->Parameters(), arma::ones(3 * 3 + 3, 1));
   CheckMatrices(linearB->Parameters(), arma::zeros(3 * 4 + 4, 1));
+}
+
+/**
+ * Test to see if the FFN code compiles when the Optimizer
+ * doesn't have the MaxIterations() method.
+ */
+BOOST_AUTO_TEST_CASE(OptimizerTest)
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<CustomLayer<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
+
+  ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
+  model.Train(trainData, trainLabels, opt);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
