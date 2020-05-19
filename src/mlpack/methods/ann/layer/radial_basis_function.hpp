@@ -55,6 +55,7 @@ class RBF
    */
   RBF(const size_t inSize,
       const size_t outSize,
+      arma::mat& centres,
       RegularizerType regularizer = RegularizerType());
 
   /**
@@ -120,11 +121,6 @@ class RBF
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
-
   //! Modify the bias weights of the layer.
   arma::mat& Sigmas() { return sigmas; }
 
@@ -155,9 +151,6 @@ class RBF
 
   //! Locally-stored weight object.
   OutputDataType weights;
-
-  //! Locally-stored gradient object.
-  OutputDataType gradient;
 
   //! Locally-stored reset parameter used to initialize the layer once.
   bool reset;

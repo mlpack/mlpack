@@ -653,10 +653,12 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
    * +-----+       +--+--+       +-----+       +-----+
    */
 
+  arma::mat centroids;
+  mlpack::kmeans::KMeans<> kmeans1;
+  kmeans.Cluster(trainData, 8, centroids);
+
   FFN<NegativeLogLikelihood<> > model;
-  model.Add<RBF<> >(trainData.n_cols, 8);
-  model.Add<GaussianFunctionLayer<> >();
-  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<RBF<> >(trainData.n_rows, 8, centroids); 
   model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
 
@@ -674,10 +676,14 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
   labels += 1;
 
+  
+  arma::mat centroids1;
+  arma::Row<size_t> assignments;
+  mlpack::kmeans::KMeans<> kmeans1;
+  kmeans1.Cluster(dataset, 10, centroids1);
+
   FFN<NegativeLogLikelihood<> > model1;
-  model1.Add<RBF<> >(dataset.n_cols, 10);
-  model1.Add<GaussianFunctionLayer<> >();
-  model1.Add<Linear<> >(dataset.n_rows, 10);
+  model1.Add<RBF<> >(dataset.n_rows, 10, centroids1);
   model.Add<Linear<> >(10, 2);
   model1.Add<LogSoftMax<> >();
   // Vanilla neural net with logistic activation function.

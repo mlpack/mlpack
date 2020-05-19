@@ -32,9 +32,11 @@ template<typename InputDataType, typename OutputDataType,
 RBF<InputDataType, OutputDataType, RegularizerType>::RBF(
     const size_t inSize,
     const size_t outSize,
+    arma::mat& centres,
     RegularizerType regularizer) :
     inSize(inSize),
     outSize(outSize),
+    centres(centres),
     regularizer(regularizer),
     reset(false)
 {
@@ -45,9 +47,6 @@ template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 void RBF<InputDataType, OutputDataType, RegularizerType>::Reset()
 {
-  centres = arma::mat(weights.memptr(), inSize, outSize, false, false);
-  sigmas = arma::mat(weights.memptr() + centres.n_elem,
-      1, outSize, false, false);
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -59,7 +58,7 @@ void RBF<InputDataType, OutputDataType, RegularizerType>::Forward(
 {
   if(!reset)
   {
-    centres = arma::normcdf(centres, 0,1);
+    arma::mat sigmas = arma::mat(1, outSize);
     sigmas.ones();
     sigmas = sigmas / outSize;
     reset = true;
@@ -73,7 +72,12 @@ void RBF<InputDataType, OutputDataType, RegularizerType>::Forward(
                                  arma::pow((temp),
                                  2), 0), 0.5).t();
   }
-  output = distances.each_col() % sigmas.t();
+
+  sigmas = arma::mean(distances, 1);
+  arma::mat betas = 1 / 2 * arma::pow(sigmas, 2);
+  distances = arma::pow(distances, 2);
+  distances = distances.each_col() % betas;
+  output = arma::exp(-1 * distances);
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -85,21 +89,6 @@ void RBF<InputDataType, OutputDataType, RegularizerType>::Backward(
     arma::Mat<eT>& g)
 {
   g = centres.t() * gy;
-}
-
-template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
-template<typename eT>
-void RBF<InputDataType, OutputDataType, RegularizerType>::Gradient(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& error,
-    arma::Mat<eT>& gradient)
-{
-  gradient.submat(0, 0, centres.n_elem - 1, 0) = arma::vectorise(
-      error * input.t());
-  gradient.submat(centres.n_elem, 0, gradient.n_elem - 1, 0) =
-      arma::sum(error, 1);
-  regularizer.Evaluate(weights, gradient);
 }
 
 template<typename InputDataType, typename OutputDataType,
