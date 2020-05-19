@@ -46,6 +46,7 @@ set(DIRS
   rann
   regularized_svd
   reinforcement_learning
+  rvm_regression
   softmax_regression
   sparse_autoencoder
   sparse_coding
