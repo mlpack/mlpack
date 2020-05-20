@@ -21,6 +21,9 @@ option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
 set(BOARD_NAME "" CACHE STRING "Enter the board name to compile mlpack for.")
 set(ARMADILLO_INCLUDE_DIR "" CACHE STRING "Path for Armadillo headers.")
 set(ARMADILLO_SUPPORT_LIBRARIES "" CACHE STRING "Path for OpenBlas library.")
+set(BOOST_ROOT "" CACHE STRING "Path for boost.")
+set(BOOST_INCLUDE_DIR "" CACHE STRING "Path for boost headers.")
+set(BOOST_LIBRARIES "" CACHE STRING "Path for boost libraries.")
 
 if (CMAKE_CROSSCOMPILING AND (BOARD_NAME STREQUAL ""))
   message(FATAL_ERROR "Please enter the board name")
@@ -263,14 +266,15 @@ endif()
 #   MATHJAX_ROOT - root of MathJax installation
 
 # Remove support for older 32bit system, if we need to have 32bit system
-# we will just cross-compile, this would be much easier
+# we will just cross-compile, this would be much easier.
 # Since we are cross compiling we are not looking for armadillo,
 # We will just tell cmake where to find the downloaded version
-if (CMAKE_CROSSCOMPILING AND (ARMADILLO_INCLUDE_DIR STREQUAL ""))
+if (CMAKE_CROSSCOMPILING AND (ARMADILLO_INCLUDE_DIR STREQUAL "") AND 
+    (ARMADILLO_SUPPORT_LIBRARIES STREQUAL ""))
   message(FATAL_ERROR "Please enter the path for armadillo libraries")
   # Since Armadillo is a wrapper to OpenBlas. Set Armadillo libraies to
   # the link against OpenBlas
-elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER ""))
+elseif(CMAKE_CROSSCOMPILING AND (ARMADILLO_INCLUDE_DIR STRGREATER ""))
   set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})  
   set(ARMADILLO_LIBRARIES ${ARMADILLO_SUPPORT_LIBRARIES})
 else()
@@ -400,6 +404,7 @@ endif ()
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.73.0" "1.73"
   "1.72.0" "1.72"
   "1.71.0" "1.71"
   "1.70.0" "1.70"
@@ -420,8 +425,13 @@ set(Boost_ADDITIONAL_VERSIONS
 #
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
-set(Boost_NO_BOOST_CMAKE 1)
-if (NOT CMAKE_CROSSCOMPILING)
+#set(Boost_NO_BOOST_CMAKE 1)
+if (CMAKE_CROSSCOMPILING)
+  # Here we will set paths as we have done for armadillo.
+  set(Boost_INCLUDE_DIRS ${BOOST_INCLUDE_DIR})
+  set(Boost_LIBRARIES  ${BOOST_LIBRARIES})
+ # Otherwise just find Boost in the system
+else()
   find_package(Boost 1.58
         COMPONENTS
         program_options
@@ -436,6 +446,8 @@ endif()
 # In Visual Studio, automatic linking is performed, so we don't need to worry
 # about it.  Clear the list of libraries to link against and let Visual Studio
 # handle it.
+
+# I am not sure what to do if we want to cross-compile from MSVC, is this possible?
 if (MSVC)
   link_directories(${Boost_LIBRARY_DIRS})
   set(CMAKE_MSVCIDE_RUN_PATH ${CMAKE_MSVCIDE_RUN_PATH} ${Boost_LIBRARY_DIRS})
