@@ -49,7 +49,7 @@ PROGRAM_INFO("BayesianLinearRegression",
     "\n\n"
     "Let X be a matrix where each row is a point and each column is a "
     "dimension, t is a vector of targets, alpha is the precision of the "
-    "gaussian prior distribtion of w, and w is solution to determine. "
+    "gaussian prior distribtion of w, and w is the solution to determine. "
     "\n\n"
     "The Bayesian linear regression comptutes the posterior distribution of "
     "the parameters by the Bayes's rule : "
