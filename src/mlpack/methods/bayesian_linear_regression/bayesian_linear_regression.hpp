@@ -12,8 +12,8 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack{
-namespace regression{
+namespace mlpack {
+namespace regression {
 
 /**
  * A Bayesian approach to the maximum likelihood estimation of the parameters 
