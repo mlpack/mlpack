@@ -106,9 +106,9 @@ class BayesianLinearRegression
    *    stable.  
    */
   BayesianLinearRegression(const bool centerData = true,
-                const bool scaleData = false,
-                const int nIterMax = 50,
-                const double tol = 1e-4);
+                           const bool scaleData = false,
+                           const int nIterMax = 50,
+                           const double tol = 1e-4);
 
   /**
    * Run BayesianLinearRegression. The input matrix (like all mlpack matrices) should be
