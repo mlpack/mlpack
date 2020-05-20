@@ -37,8 +37,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template <
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
-    typename RegularizerType = NoRegularizer
+    typename OutputDataType = arma::mat
 >
 class RBF
 {
@@ -55,8 +54,7 @@ class RBF
    */
   RBF(const size_t inSize,
       const size_t outSize,
-      arma::mat& centres,
-      RegularizerType regularizer = RegularizerType());
+      arma::mat& centres);
 
   /**
    * Reset the layer parameter.
@@ -101,9 +99,6 @@ class RBF
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
-  //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
@@ -120,9 +115,6 @@ class RBF
   OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
-
-  //! Modify the bias weights of the layer.
-  arma::mat& Sigmas() { return sigmas; }
 
   /**
    * Serialize the layer.
@@ -149,9 +141,6 @@ class RBF
   //! Locally-stored the output distances of the shape.
   OutputDataType distances;
 
-  //! Locally-stored weight object.
-  OutputDataType weights;
-
   //! Locally-stored reset parameter used to initialize the layer once.
   bool reset;
 
@@ -161,8 +150,6 @@ class RBF
   //! Locally-stored number of output units.
   size_t outSize;
 
-  //! Locally-stored regularizer object.
-  RegularizerType regularizer;
 }; // class RBF
 
 } // namespace ann

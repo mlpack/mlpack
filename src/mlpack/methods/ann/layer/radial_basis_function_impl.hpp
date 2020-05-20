@@ -17,9 +17,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
-RBF<InputDataType, OutputDataType, RegularizerType>::RBF() :
+template<typename InputDataType, typename OutputDataType>
+RBF<InputDataType, OutputDataType>::RBF() :
     inSize(0),
     outSize(0),
     reset(false)
@@ -27,32 +26,26 @@ RBF<InputDataType, OutputDataType, RegularizerType>::RBF() :
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
-RBF<InputDataType, OutputDataType, RegularizerType>::RBF(
+template<typename InputDataType, typename OutputDataType>
+RBF<InputDataType, OutputDataType>::RBF(
     const size_t inSize,
     const size_t outSize,
-    arma::mat& centres,
-    RegularizerType regularizer) :
+    arma::mat& centres) :
     inSize(inSize),
     outSize(outSize),
     centres(centres),
-    regularizer(regularizer),
     reset(false)
 {
-  weights.set_size(outSize * inSize + outSize, 1);
 }
 
-template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
-void RBF<InputDataType, OutputDataType, RegularizerType>::Reset()
+template<typename InputDataType, typename OutputDataType>
+void RBF<InputDataType, OutputDataType>::Reset()
 {
 }
 
-template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void RBF<InputDataType, OutputDataType, RegularizerType>::Forward(
+void RBF<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input,
     arma::Mat<eT>& output)
 {
@@ -73,17 +66,12 @@ void RBF<InputDataType, OutputDataType, RegularizerType>::Forward(
                                  2), 0), 0.5).t();
   }
 
-  sigmas = arma::mean(distances, 1);
-  arma::mat betas = 1 / 2 * arma::pow(sigmas, 2);
-  distances = arma::pow(distances, 2);
-  distances = distances.each_col() % betas;
-  output = arma::exp(-1 * distances);
+  output = distances;
 }
 
-template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void RBF<InputDataType, OutputDataType, RegularizerType>::Backward(
+void RBF<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& /* input */,
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
@@ -91,21 +79,15 @@ void RBF<InputDataType, OutputDataType, RegularizerType>::Backward(
   g = centres.t() * gy;
 }
 
-template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void RBF<InputDataType, OutputDataType, RegularizerType>::serialize(
+void RBF<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(distances);
   ar & BOOST_SERIALIZATION_NVP(sigmas);
   ar & BOOST_SERIALIZATION_NVP(centres);
-
-  // This is inefficient, but we have to allocate this memory so that
-  // WeightSetVisitor gets the right size.
-  if (Archive::is_loading::value)
-    weights.set_size(outSize * inSize + outSize, 1);
 }
 
 } // namespace ann

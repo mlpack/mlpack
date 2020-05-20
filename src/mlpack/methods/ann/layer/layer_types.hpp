@@ -82,8 +82,7 @@ template<typename InputDataType,
 class Linear;
 
 template<typename InputDataType,
-         typename OutputDataType,
-         typename RegularizerType>
+         typename OutputDataType>
 class RBF;
 
 template<typename InputDataType,
@@ -216,7 +215,7 @@ using MoreTypes = boost::variant<
         Subview<arma::mat, arma::mat>*,
         VRClassReward<arma::mat, arma::mat>*,
         VirtualBatchNorm<arma::mat, arma::mat>*,
-        RBF<arma::mat, arma::mat, NoRegularizer>*
+        RBF<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
