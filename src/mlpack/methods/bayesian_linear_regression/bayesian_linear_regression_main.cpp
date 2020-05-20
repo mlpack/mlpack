@@ -32,7 +32,7 @@ PROGRAM_INFO("BayesianLinearRegression",
     "An implementation of the bayesian linear regression, also known"
     "as the Bayesian linear regression.\n "
     "This is a probabilistic view and implementation of the linear regression. "
-    "Final solution is obtained by comptuting a posterior distribution from "
+    "The final solution is obtained by computing a posterior distribution from "
     "gaussian likelihood and a zero mean gaussian isotropic prior distribution "
     "on the solution. "
     "\n"
