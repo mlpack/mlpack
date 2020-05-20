@@ -46,7 +46,7 @@ double BayesianLinearRegression::Train(const arma::mat& data,
                                     dataOffset,
                                     dataScale);
 
-  if (arma::eig_sym(eigval, V, arma::symmatu(phi * phi.t())) == false)
+  if (!arma::eig_sym(eigval, V, arma::symmatu(phi * phi.t())))
   {
     Log::Warn << "BayesianLinearRegression::Train(): Eigendecomposition "
               << "of covariance failed!"
@@ -161,4 +161,3 @@ double BayesianLinearRegression::CenterScaleData(const arma::mat& data,
 
   return responsesOffset;
 }
-
