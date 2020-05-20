@@ -199,7 +199,7 @@ class BayesianLinearRegression
   double Alpha() const { return alpha; }
 
   /**
-   * Get the precesion (or inverse variance) beta of the model.
+   * Get the precision (or inverse variance) beta of the model.
    *
    * @return \f$ \beta \f$
    */
