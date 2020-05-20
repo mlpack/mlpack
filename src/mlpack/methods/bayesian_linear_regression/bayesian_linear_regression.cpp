@@ -112,7 +112,7 @@ void BayesianLinearRegression::Predict(const arma::mat& points,
                                        arma::rowvec& predictions,
                                        arma::rowvec& std) const
 {
-  // Center and scaleData the points before applying the model.
+  // Center and scale the points before applying the model.
   const arma::mat X = (points.each_col() - dataOffset).each_col() / dataScale;
   predictions = omega.t() * X;
   predictions += responsesOffset;
