@@ -159,8 +159,8 @@ class BayesianLinearRegression
               const arma::rowvec& responses) const;
 
   /**
-   * Center and scaleData the data. The last four arguments
-   * allow future modifation of new points.
+   * Center and scale the data. The last four arguments
+   * allow future modification of new points.
    *
    * @param data Design matrix in column-major format, dim(P,N).
    * @param responses A vector of targets.
