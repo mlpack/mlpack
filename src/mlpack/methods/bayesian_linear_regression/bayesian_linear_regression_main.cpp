@@ -51,7 +51,7 @@ PROGRAM_INFO("BayesianLinearRegression",
     "dimension, t is a vector of targets, alpha is the precision of the "
     "gaussian prior distribtion of w, and w is the solution to determine. "
     "\n\n"
-    "The Bayesian linear regression comptutes the posterior distribution of "
+    "The Bayesian linear regression computes the posterior distribution of "
     "the parameters by the Bayes's rule : "
     "\n\n"
     " p(w|X) = p(X,t|w) * p(w|alpha) / p(X)"
