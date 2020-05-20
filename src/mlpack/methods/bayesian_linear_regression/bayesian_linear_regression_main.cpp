@@ -193,9 +193,10 @@ static void mlpackMain()
       // Save the standard deviation of the test points (one per line).
       CLI::GetParam<arma::mat>("output_std") = std::move(std);
     }
-
     else
+    {
       bayesLinReg->Predict(testPoints, predictions);
+    }
 
     // Save test predictions (one per line).
     CLI::GetParam<arma::mat>("output_predictions") = std::move(predictions);
