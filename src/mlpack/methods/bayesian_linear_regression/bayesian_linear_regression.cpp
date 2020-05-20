@@ -89,7 +89,7 @@ double BayesianLinearRegression::Train(const arma::mat& data,
     crit = std::abs(deltaAlpha / alpha + deltaBeta / beta);
     i++;
   }
-  // Compute the covariance matrice for the uncertaities later.
+  // Compute the covariance matrix for the uncertainties later.
   matCovariance = std::move(V);
   matCovariance *= diagmat(1 / (beta * eigval + alpha));
   matCovariance *= Vinv;
