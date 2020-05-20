@@ -15,6 +15,7 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/kmeans/kmeans.hpp>
 
 #include <ensmallen.hpp>
 
@@ -25,6 +26,7 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
+using namespace mlpack::kmeans;
 
 BOOST_AUTO_TEST_SUITE(FeedForwardNetworkTest);
 
@@ -654,7 +656,7 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
    */
 
   arma::mat centroids;
-  mlpack::kmeans::KMeans<> kmeans1;
+  KMeans<> kmeans;
   kmeans.Cluster(trainData, 8, centroids);
 
   FFN<NegativeLogLikelihood<> > model;
@@ -679,7 +681,7 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
   
   arma::mat centroids1;
   arma::Row<size_t> assignments;
-  mlpack::kmeans::KMeans<> kmeans1;
+  KMeans<> kmeans1;
   kmeans1.Cluster(dataset, 10, centroids1);
 
   FFN<NegativeLogLikelihood<> > model1;
