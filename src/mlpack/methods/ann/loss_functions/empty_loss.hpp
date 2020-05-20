@@ -1,9 +1,10 @@
 /**
- * @file Empty_loss.hpp
+ * @file methods/ann/loss_functions/empty_loss.hpp
  * @author Xiaohong Ji
  *
- * Definition of empty loss function. Sometime, user may want to calculate the
- * loss outside of the model, so we create an empty loss that do nothing.
+ * Definition of empty loss function. Sometimes, the user may want to calculate
+ * the loss outside of the model, so we have created an empty loss that does
+ * nothing.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,7 +20,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The empty loss do nothing, let the user to calculate the loss outside
+ * The empty loss does nothing, letting the user to calculate the loss outside
  * the model.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,

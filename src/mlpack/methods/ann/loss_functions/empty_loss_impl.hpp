@@ -2,8 +2,9 @@
  * @file Empty_loss_impl.hpp
  * @author Xiaohong Ji
  *
- * Definition of empty loss function. Sometime, user may want to calculate the
- * loss outside of the model, so we create an empty loss that do nothing.
+ * Implementation of empty loss function. Sometimes, the user may want to
+ * calculate the loss outside of the model, so we have created an empty loss
+ * that does nothing.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
