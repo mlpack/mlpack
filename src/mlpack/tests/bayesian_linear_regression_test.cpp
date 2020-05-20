@@ -21,31 +21,31 @@ using namespace mlpack::data;
 
 BOOST_AUTO_TEST_SUITE(BayesianLinearRegressionTest);
 
-void GenerateProblem(arma::mat& X,
+void GenerateProblem(arma::mat& matX,
                      arma::rowvec& y,
                      size_t nPoints,
                      size_t nDims,
                      float sigma = 0.0)
 {
-  X = arma::randn(nDims, nPoints);
+  matX = arma::randn(nDims, nPoints);
   arma::colvec omega = arma::randn(nDims);
   // Compute y and add noise.
-  y = omega.t() * X + arma::randn(nPoints).t() * sigma;
+  y = omega.t() * matX + arma::randn(nPoints).t() * sigma;
 }
 
 // Ensure that predictions are close enough to the target
 // for a free noise dataset.
 BOOST_AUTO_TEST_CASE(BayesianLinearRegressionRegressionTest)
 {
-  arma::mat X;
+  arma::mat matX;
   arma::rowvec y, predictions;
 
-  GenerateProblem(X, y, 200, 10);
+  GenerateProblem(matX, y, 200, 10);
 
   // Instanciate and train the estimator.
   BayesianLinearRegression estimator(true);
-  estimator.Train(X, y);
-  estimator.Predict(X, predictions);
+  estimator.Train(matX, y);
+  estimator.Predict(matX, predictions);
 
   // Check the predictions are close enough to the targets in a free noise case.
   for (size_t i = 0; i < y.size(); i++)
@@ -58,15 +58,15 @@ BOOST_AUTO_TEST_CASE(BayesianLinearRegressionRegressionTest)
 // Verify fitIntercept and normalize equal false do not affect the solution.
 BOOST_AUTO_TEST_CASE(TestCenter0Normalize0)
 {
-  arma::mat X;
+  arma::mat matX;
   arma::rowvec y;
   size_t nDims = 30, nPoints = 100;
 
-  GenerateProblem(X, y, nPoints, nDims, 0.5);
+  GenerateProblem(matX, y, nPoints, nDims, 0.5);
 
   BayesianLinearRegression estimator(false, false);
 
-  estimator.Train(X, y);
+  estimator.Train(matX, y);
 
   // To be neutral dataOffset must be all 0.
   BOOST_REQUIRE(sum(estimator.DataOffset()) == 0.0);
@@ -81,16 +81,16 @@ BOOST_AUTO_TEST_CASE(TestCenter0Normalize0)
 // Verify that centering and normalization are correct.
 BOOST_AUTO_TEST_CASE(TestCenter1Normalize1)
 {
-  arma::mat X;
+  arma::mat matX;
   arma::rowvec y;
   size_t nDims = 30, nPoints = 100;
-  GenerateProblem(X, y, nPoints, nDims, 0.5);
+  GenerateProblem(matX, y, nPoints, nDims, 0.5);
 
   BayesianLinearRegression estimator(true, true);
-  estimator.Train(X, y);
+  estimator.Train(matX, y);
 
-  arma::colvec xMean = arma::mean(X, 1);
-  arma::colvec xStd = arma::stddev(X, 0, 1);
+  arma::colvec xMean = arma::mean(matX, 1);
+  arma::colvec xStd = arma::stddev(matX, 0, 1);
   double yMean = arma::mean(y);
 
   BOOST_REQUIRE_SMALL((double) abs(sum(estimator.DataOffset() - xMean)), 1e-6);
@@ -101,15 +101,15 @@ BOOST_AUTO_TEST_CASE(TestCenter1Normalize1)
 // Check that Train() does not fail with two colinear vectors.
 BOOST_AUTO_TEST_CASE(SingularMatix)
 {
-  arma::mat X;
+  arma::mat matX;
   arma::rowvec y;
 
-  GenerateProblem(X, y, 200, 10);
+  GenerateProblem(matX, y, 200, 10);
   // Now the first and the second rows are indentical.
-  X.row(1) = X.row(0);
+  matX.row(1) = matX.row(0);
 
   BayesianLinearRegression estimator;
-  double singular = estimator.Train(X, y);
+  double singular = estimator.Train(matX, y);
   BOOST_REQUIRE(singular != -1);
 }
 
@@ -117,34 +117,34 @@ BOOST_AUTO_TEST_CASE(SingularMatix)
 // estimated predictive variance.
 BOOST_AUTO_TEST_CASE(PredictiveUncertainties)
 {
-  arma::mat X;
+  arma::mat matX;
   arma::rowvec y;
 
-  GenerateProblem(X, y, 100, 10, 1);
+  GenerateProblem(matX, y, 100, 10, 1);
 
   BayesianLinearRegression estimator(true, true);
-  estimator.Train(X, y);
+  estimator.Train(matX, y);
 
   arma::rowvec responses, std;
-  estimator.Predict(X, responses, std);
+  estimator.Predict(matX, responses, std);
   const double estStd = sqrt(estimator.Variance());
 
-  for (size_t i = 0; i < X.n_cols; i++)
+  for (size_t i = 0; i < matX.n_cols; i++)
     BOOST_REQUIRE(std[i] > estStd);
 }
 
 // Check the solution is equal to the classical ridge.
 BOOST_AUTO_TEST_CASE(EqualtoRidge)
 {
-  arma::mat X;
+  arma::mat matX;
   arma::rowvec y;
 
-  GenerateProblem(X, y, 100, 10, 1);
+  GenerateProblem(matX, y, 100, 10, 1);
 
   BayesianLinearRegression bayesLinReg(false, false);
-  bayesLinReg.Train(X, y);
+  bayesLinReg.Train(matX, y);
 
-  LinearRegression classicalRidge(X,
+  LinearRegression classicalRidge(matX,
                                   y,
                                   bayesLinReg.Alpha() / bayesLinReg.Beta(),
                                   false);

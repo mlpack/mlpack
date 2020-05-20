@@ -48,10 +48,8 @@ double BayesianLinearRegression::Train(const arma::mat& data,
 
   if (!arma::eig_sym(eigVal, eigVec, arma::symmatu(phi * phi.t())))
   {
-    Log::Warn << "BayesianLinearRegression::Train(): Eigendecomposition "
-              << "of covariance failed!"
-              << std::endl;
-    throw std::runtime_error("eig_sym() failed.");
+    Log::Fatal << "BayesianLinearRegression::Train(): Eigendecomposition "
+               << "of covariance failed!";
   }
 
   // Compute this quantities once and for all.
@@ -110,10 +108,11 @@ void BayesianLinearRegression::Predict(const arma::mat& points,
                                        arma::rowvec& std) const
 {
   // Center and scale the points before applying the model.
-  const arma::mat X = (points.each_col() - dataOffset).each_col() / dataScale;
-  predictions = omega.t() * X;
+  const arma::mat matX = (points.each_col() - dataOffset).each_col() 
+                      / dataScale;
+  predictions = omega.t() * matX;
   predictions += responsesOffset;
-  std = sqrt(Variance() + sum((X % (matCovariance * X)), 0));
+  std = sqrt(Variance() + sum((matX % (matCovariance * matX)), 0));
 }
 
 double BayesianLinearRegression::RMSE(const arma::mat& data,

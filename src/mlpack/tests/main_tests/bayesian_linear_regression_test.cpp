@@ -49,11 +49,11 @@ BOOST_FIXTURE_TEST_SUITE(BayesianLinearRegressionMainTest, BRTestFixture);
 BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
 {
   int n = 50, m = 4;
-  arma::mat X = arma::randu<arma::mat>(m, n);
-  arma::colvec omega = arma::randu<arma::rowvec>(m);
-  arma::mat y =  omega * X;
+  arma::mat matX = arma::randu<arma::mat>(m, n);
+  arma::rowvec omega = arma::randu<arma::rowvec>(m);
+  arma::mat y =  omega * matX;
 
-  SetInputParam("input", std::move(X));
+  SetInputParam("input", std::move(matX));
   SetInputParam("responses", std::move(y));
   SetInputParam("center", 0);
 
@@ -75,18 +75,18 @@ BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
 BOOST_AUTO_TEST_CASE(BayesianLinearRegressionSavedEqualCode)
 {
   int n = 10, m = 4;
-  arma::mat X = arma::randu<arma::mat>(m, n);
-  arma::mat Xtest = arma::randu<arma::mat>(m, 2 * n);
+  arma::mat matX = arma::randu<arma::mat>(m, n);
+  arma::mat matXtest = arma::randu<arma::mat>(m, 2 * n);
   const arma::colvec omega = arma::randu<arma::rowvec>(m);
-  arma::mat y =  omega * X;
+  arma::mat y =  omega * matX;
 
   BayesianLinearRegression model;
-  model.Train(X, y);
+  model.Train(matX, y);
 
   arma::rowvec responses;
-  model.Predict(Xtest, responses);
+  model.Predict(matXtest, responses);
 
-  SetInputParam("input", std::move(X));
+  SetInputParam("input", std::move(matX));
   SetInputParam("responses", std::move(y));
 
   mlpackMain();
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(BayesianLinearRegressionSavedEqualCode)
 
   SetInputParam("input_model",
                 CLI::GetParam<BayesianLinearRegression*>("output_model"));
-  SetInputParam("test", std::move(Xtest));
+  SetInputParam("test", std::move(matXtest));
 
   mlpackMain();
 
