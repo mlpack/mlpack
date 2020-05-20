@@ -38,7 +38,7 @@ PROGRAM_INFO("BayesianLinearRegression",
     "\n"
     "Optimization is AUTOMATIC and does not require cross validation. "
     "The optimization is performed by maximization of the evidence function. "
-    "Parameters are tunned during the maximization of the marginal likelihood. "
+    "Parameters are tuned during the maximization of the marginal likelihood. "
     "This procedure includes the Ockham's razor that penalizes over complex "
     "solutions. "
     "\n\n"
