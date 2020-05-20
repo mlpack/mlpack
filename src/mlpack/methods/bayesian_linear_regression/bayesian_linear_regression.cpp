@@ -33,8 +33,8 @@ double BayesianLinearRegression::Train(const arma::mat& data,
 
   arma::mat phi;
   arma::rowvec t;
-  arma::colvec eigval;
-  arma::mat V;
+  arma::colvec eigVal;
+  arma::mat eigVec;
 
   // Preprocess the data. Center and scale.
   responsesOffset = CenterScaleData(data,
@@ -46,7 +46,7 @@ double BayesianLinearRegression::Train(const arma::mat& data,
                                     dataOffset,
                                     dataScale);
 
-  if (!arma::eig_sym(eigval, V, arma::symmatu(phi * phi.t())))
+  if (!arma::eig_sym(eigVal, eigVec, arma::symmatu(phi * phi.t())))
   {
     Log::Warn << "BayesianLinearRegression::Train(): Eigendecomposition "
               << "of covariance failed!"
@@ -55,8 +55,8 @@ double BayesianLinearRegression::Train(const arma::mat& data,
   }
 
   // Compute this quantities once and for all.
-  const arma::mat Vinv = inv(V);
-  const arma::colvec VinvPhitT = Vinv * phi * t.t();
+  const arma::mat eigVecInv = inv(eigVec);
+  const arma::colvec eigVecInvPhitT = eigVecInv * phi * t.t();
 
   // Initialize the hyperparameters and
   // begin with an infinitely broad prior.
@@ -72,11 +72,10 @@ double BayesianLinearRegression::Train(const arma::mat& data,
     deltaBeta = -beta;
 
     // Update the solution.
-    omega = 1 / (eigval + (alpha / beta));
-    omega = V * diagmat(omega) * VinvPhitT;
+    omega = eigVec * diagmat(1 / (eigVal + (alpha / beta))) * eigVecInvPhitT;
 
     // Update alpha.
-    gamma = sum(eigval / (alpha / beta + eigval));
+    gamma = sum(eigVal / (alpha / beta + eigVal));
     alpha = gamma / dot(omega, omega);
 
     // Update beta.
@@ -90,9 +89,7 @@ double BayesianLinearRegression::Train(const arma::mat& data,
     i++;
   }
   // Compute the covariance matrix for the uncertainties later.
-  matCovariance = std::move(V);
-  matCovariance *= diagmat(1 / (beta * eigval + alpha));
-  matCovariance *= Vinv;
+  matCovariance = eigVec * diagmat(1 / (beta * eigVal + alpha)) * eigVecInv;
 
   Timer::Stop("bayesian_linear_regression");
 
