@@ -16,4 +16,5 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(bayesian_linear_regression)
 add_python_binding(bayesian_linear_regression)
-add_markdown_docs(bayesian_linear_regression "cli;python" "regression")
+add_julia_binding(bayesian_linear_regression)
+add_markdown_docs(bayesian_linear_regression "cli;python;julia" "regression")
