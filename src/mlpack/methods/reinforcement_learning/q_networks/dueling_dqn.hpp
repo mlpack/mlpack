@@ -37,6 +37,33 @@ class DuelingDQN
   DuelingDQN() : featureNetwork(), advantageNetwork(), valueNetwork()
   { /* Nothing to do here. */ }
 
+  /**
+   * Construct an instance of DuelingDQN class.
+   *
+   * @param inputDim Number of inputs.
+   * @param h1 Number of neurons in hiddenlayer-1.
+   * @param h2 Number of neurons in hiddenlayer-2.
+   * @param outputDim Number of neurons in output layer.
+   */
+  DuelingDQN(const int inputDim,
+            const int h1,
+            const int h2,
+            const int outputDim):
+      featureNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001)),
+      advantageNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001)),
+      valueNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001))
+  {
+    featureNetwork.Add<Linear<>>(inputDim, h1);
+    featureNetwork.Add<ReLULayer<>>();
+
+    advantageNetwork.Add<Linear<>>(h1, h2);
+    advantageNetwork.Add<ReLULayer<>>();
+    advantageNetwork.Add<Linear<>>(h2, outputDim);
+
+    valueNetwork.Add<Linear<>>(h1, h2);
+    valueNetwork.Add<Linear<>>(h2, 1);
+  }
+
   DuelingDQN(NetworkType featureNetwork,
              NetworkType advantageNetwork,
              NetworkType valueNetwork):
@@ -77,7 +104,7 @@ class DuelingDQN
     featureNetwork.Forward(state, features);
     advantageNetwork.Forward(features, advantage);
     valueNetwork.Forward(features, value);
-    actionValue = advantage.each_col() + (value - arma::mean(advantage, 1));
+    target = advantage.each_col() + (value - arma::mean(advantage, 1));
   }
 
   /**
