@@ -1,5 +1,5 @@
 /**
- * @file hmm_util_impl.hpp
+ * @file methods/hmm/hmm_util_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of HMM utilities to load arbitrary HMM types.

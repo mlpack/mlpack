@@ -1,5 +1,5 @@
 /**
- * @file perceptron.hpp
+ * @file methods/perceptron/perceptron.hpp
  * @author Udit Saxena
  *
  * Definition of Perceptron class.

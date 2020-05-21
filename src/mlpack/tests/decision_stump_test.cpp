@@ -1,5 +1,5 @@
 /**
- * @file decision_stump_test.cpp
+ * @file tests/decision_stump_test.cpp
  * @author Udit Saxena
  *
  * Tests for DecisionStump class.

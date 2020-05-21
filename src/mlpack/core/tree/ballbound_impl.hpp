@@ -1,5 +1,5 @@
 /**
- * @file ballbound_impl.hpp
+ * @file core/tree/ballbound_impl.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
  * Implementation of BallBound ball bound metric policy class.

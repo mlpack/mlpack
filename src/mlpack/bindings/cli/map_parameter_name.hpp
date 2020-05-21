@@ -1,5 +1,5 @@
 /**
- * @file map_parameter_name.hpp
+ * @file bindings/cli/map_parameter_name.hpp
  * @author Ryan Curtin
  *
  * Map a parameter name to what it seen by boost::program_options using template
@@ -56,7 +56,7 @@ std::string MapParameterName(
  * Map the parameter name to the name seen by boost::program_options.
  *
  * @param d Parameter data.
- * @param input Unused parameter.
+ * @param * (input) Unused parameter.
  * @param output Pointer to std::string that will hold the mapped name.
  */
 template<typename T>

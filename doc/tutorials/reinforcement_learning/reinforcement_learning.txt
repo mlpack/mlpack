@@ -1,5 +1,5 @@
 /*!
-@file rl.txt
+@file reinforcement_learning.txt
 @author Sriram S K
 @author Joel Joseph
 @brief Tutorial for how to use the Reinforcement Learning module in mlpack.
@@ -8,17 +8,17 @@
 
 @section intro_rltut Introduction
 
-Reinforcement Learning is one of the hottest topics right now, with 
-interest surging after DeepMind published their article on training 
+Reinforcement Learning is one of the hottest topics right now, with
+interest surging after DeepMind published their article on training
 deep neural networks to play Atari games to great success. mlpack
 implements a complete end-to-end framework for Reinforcement Learning,
-featuring multiple environments, policies and methods. Of course, 
+featuring multiple environments, policies and methods. Of course,
 custom environments and policies can be used and plugged into the
 existing framework with no runtime overhead.
 
 mlpack implements typical benchmark environments (Acrobot, Mountain car etc.),
 commonly used policies, replay methods and supports asynchronous
-learning as well. In addition, it can [communicate](https://github.com/zoq/gym_tcp_api) 
+learning as well. In addition, it can [communicate](https://github.com/zoq/gym_tcp_api)
 with the OpenAI Gym toolkit for more environments.
 
 @section toc_rltut Table of Contents
@@ -37,45 +37,45 @@ This tutorial is split into the following sections:
 
 mlpack implements a number of the most popular environments used for testing
 RL agents and algorithms. These include the Cart Pole, Acrobot, Mountain Car
-and their variations. Of course, as mentioned above, you can communicate with 
+and their variations. Of course, as mentioned above, you can communicate with
 OpenAI Gym for other environments, like the Atari video games.
 
 A key component of mlpack is its extensibility. It is a simple process to create
-your own custom environments, specific to your needs, and use it with mlpack's 
-RL framework. All the environments implement a few specific methods and classes 
-which are used by the agents while learning. 
+your own custom environments, specific to your needs, and use it with mlpack's
+RL framework. All the environments implement a few specific methods and classes
+which are used by the agents while learning.
 
 - \c State: The State class is a representation of the environment. For the CartPole,
    this would involve storing the position, velocity, angle and angular velocity.
 
 - \c Action: It is an enum naming all the possible actions the agent can take in the
-   environment. Continuing with the CartPole example, the Action enum would simply 
+   environment. Continuing with the CartPole example, the Action enum would simply
    contain the two possible actions, backward and forward.
 
 - \c Sample: This method is perhaps the heart of the environment, providing rewards to
    the agent depending on the state and the action taken, and updates the state based on
-   the action taken as well.  
+   the action taken as well.
 
 Of course, your custom environment will most likely make use of a number of helper methods, depending
-on your application, such as the \c Dsdt method in the \c Acrobot environment, used in the \c RK4 
+on your application, such as the \c Dsdt method in the \c Acrobot environment, used in the \c RK4
 iterative method (also another helper method) to estimate the next state.
 
 @section agent_components_rltut Components of an RL Agent
 
 A Reinforcement Learning agent, in general, takes actions in an environment in order
-to maximize a cumulative reward. To that end, it requires a way to choose actions (\b policy) 
+to maximize a cumulative reward. To that end, it requires a way to choose actions (\b policy)
 and a way to sample previous experiences (\b replay).
 
 An example of a simple policy would be an epsilon-greedy policy. Using such a policy, the agent
 will choose actions greedily with some probability epsilon. This probability is slowly decreased
-over time, balancing the line between exploration and exploitation. 
+over time, balancing the line between exploration and exploitation.
 
-Similarly, an example of a simple replay would be a random replay. At each time step, the 
+Similarly, an example of a simple replay would be a random replay. At each time step, the
 interactions between the agent and the environment are saved to a memory buffer and previous
 experiences are sampled from the buffer to train the agent.
 
-Instantiating the components of an agent can be easily done by passing the Environment as 
-a templated argument and the parameters of the policy/replay to the constructor. 
+Instantiating the components of an agent can be easily done by passing the Environment as
+a templated argument and the parameters of the policy/replay to the constructor.
 
 To create a Greedy Policy and Prioritized Replay for the CartPole environment, we would do the
 following:
@@ -86,14 +86,14 @@ PrioritizedReplay<CartPole> replayMethod(10, 10000, 0.6);
 @endcode
 
 The arguments to `policy` are the initial epsilon values, the interval of decrease in its value
-and the value at which epsilon bottoms out and won't be reduced further. The arguments to 
-`replayMethod` are size of the batch returned, the number of examples stored in memory, and the 
+and the value at which epsilon bottoms out and won't be reduced further. The arguments to
+`replayMethod` are size of the batch returned, the number of examples stored in memory, and the
 degree of prioritization.
 
 In addition to the above components, an RL agent requires many hyperparameters to be tuned during
- it's training period. These parameters include everything from the discount rate of the future 
-reward to whether Double Q-learning should be used or not. The `TrainingConfig` class can be 
-instantiated and configured as follows: 
+ it's training period. These parameters include everything from the discount rate of the future
+reward to whether Double Q-learning should be used or not. The `TrainingConfig` class can be
+instantiated and configured as follows:
 
 @code
   TrainingConfig config;
@@ -105,9 +105,9 @@ instantiated and configured as follows:
   config.StepLimit() = 200;
 @endcode
 
-The object `config` describes an RL agent, using a step size of 0.01 for the optimization process, 
+The object `config` describes an RL agent, using a step size of 0.01 for the optimization process,
 a discount factor of 0.9, sync interval of 200 episodes. This agent only starts learning after storing
-100 exploration steps, has a step limit of 200, and does not utilize double q-learning. 
+100 exploration steps, has a step limit of 200, and does not utilize double q-learning.
 
 In this way, we can easily configure an RL agent with the desired hyperparameters.
 
@@ -150,16 +150,16 @@ int main()
 
 @endcode
 
-The first step in setting our Q-learning agent is to setup the network for it to use. Here, 
+The first step in setting our Q-learning agent is to setup the network for it to use. Here,
 we use mlpack's ann module to setup a simple FFN network, consisting of a single hidden layer.
 
 @note
 The network constructed here has an input shape of 4 and output shape of 2. This corresponds to
-the structure of the CartPole environment, where each state is represented as a column vector with 
-4 data members (position, velocity, angle, angular velocity). Similarly, the output shape is represented 
+the structure of the CartPole environment, where each state is represented as a column vector with
+4 data members (position, velocity, angle, angular velocity). Similarly, the output shape is represented
 by the number of possible actions, which in this case, is only 2 (foward and backward).
 
-The next step would be to setup the other components of the Q-learning agent, namely its policy, replay 
+The next step would be to setup the other components of the Q-learning agent, namely its policy, replay
 method and hyperparameters.
 
 @code
@@ -176,7 +176,7 @@ method and hyperparameters.
   config.StepLimit() = 200;
 @endcode
 
-And now, we get to the heart of the program, declaring a Q-Learning agent. 
+And now, we get to the heart of the program, declaring a Q-Learning agent.
 
 @code
   QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy)>
@@ -184,12 +184,12 @@ And now, we get to the heart of the program, declaring a Q-Learning agent.
       std::move(replayMethod));
 @endcode
 
-Here, we call the `QLearning` constructor, passing in the type of environment, 
-network, updater, policy and replay. We use `decltype(var)` as a shorthand for 
+Here, we call the `QLearning` constructor, passing in the type of environment,
+network, updater, policy and replay. We use `decltype(var)` as a shorthand for
 the variable, saving us the trouble of copying the lengthy templated type.
 
-Similarly, `std::move` is called for convenience, moving the components instead of 
-duplicating them and copying them over. 
+Similarly, `std::move` is called for convenience, moving the components instead of
+duplicating them and copying them over.
 
 We have our Q-Learning agent `agent` ready to be trained on the Cart Pole environment.
 
@@ -225,17 +225,17 @@ We have our Q-Learning agent `agent` ready to be trained on the Cart Pole enviro
 }
 @endcode
 
-We set up a loop to train the agent. The exit condition is determined by the average 
-reward which can be computed with `arma::running_stat`. It is used for storing running 
-statistics of scalars, which in this case is the reward signal. The agent can be said 
-to have converged when the average return reaches a predetermined value (i.e. > 35).  
+We set up a loop to train the agent. The exit condition is determined by the average
+reward which can be computed with `arma::running_stat`. It is used for storing running
+statistics of scalars, which in this case is the reward signal. The agent can be said
+to have converged when the average return reaches a predetermined value (i.e. > 35).
 
-Conversely, if the average return does not go beyond that amount even after a thousand 
+Conversely, if the average return does not go beyond that amount even after a thousand
 episodes, we can conclude that the agent will not converge and exit the training loop.
 
 @section async_learning_rltut
 
-In 2016, Researchers at Deepmind and University of Montreal published their paper 
+In 2016, Researchers at Deepmind and University of Montreal published their paper
 "Asynchronous Methods for Deep Reinforcement Learning". In it they described asynchronous
 variants of four standard reinforcement learning algorithms:
 	- One-Step SARSA
@@ -245,7 +245,7 @@ variants of four standard reinforcement learning algorithms:
 
 Online RL algorithms and Deep Neural Networks make an unstable combination because of the
 non-stationary and correlated nature of online updates. Although this is solved by Experience Replay,
-it has several drawbacks: it uses more memory and computation per real interaction; and it requires 
+it has several drawbacks: it uses more memory and computation per real interaction; and it requires
 off-policy learning algorithms.
 
 Asynchronous methods, instead of experience replay, asynchronously executes multiple agents
@@ -253,7 +253,7 @@ in parallel, on multiple instances of the environment, which solves all the abov
 
 Here, we demonstrate Asynchronous Learning methods in mlpack through the training of an async
 agent. Asynchronous learning involves training several agents simultaneously. Here, each of the
-agents are referred to as "workers". Currently mlpack has One-Step Q-Learning worker, N-Step 
+agents are referred to as "workers". Currently mlpack has One-Step Q-Learning worker, N-Step
 Q-Learning worker and One-Step SARSA worker.
 
 Let's examine the sample code in chunks.
@@ -266,8 +266,8 @@ Apart from the includes used for the q-learning example, two more have to be inc
 @endcode
 
 Here we don't use experience replay, and instead of a single policy, we use three different
-policies, each corresponding to its worker. Number of workers created, depends on the number of 
-policies given in the Aggregated Policy. The column vector contains the probability distribution 
+policies, each corresponding to its worker. Number of workers created, depends on the number of
+policies given in the Aggregated Policy. The column vector contains the probability distribution
 for each child policy. We should make sure its size is same as the number of policies and the sum
 of its elements is equal to 1.
 
@@ -313,15 +313,15 @@ auto measure = [&returns, &position, &episode](double episodeReturn)
   position = position % returns.n_elem;
   episode++;
 
-  std::cout << "Episode No.: " << episode 
-      << "; Episode Return: " << episodeReturn 
+  std::cout << "Episode No.: " << episode
+      << "; Episode Return: " << episodeReturn
       << "; Average Return: " << arma::mean(returns) << endl;
 };
 @endcode
 
 This will train three different agents on three CPU threads asynchronously and use this data to update the
 action value estimate.
-Voila, thats all there is to it. 
+Voila, thats all there is to it.
 
 Here is the full code to try this right away:
 
@@ -379,8 +379,8 @@ int main()
     position = position % returns.n_elem;
     episode++;
 
-    std::cout << "Episode No.: " << episode 
-        << "; Episode Return: " << episodeReturn 
+    std::cout << "Episode No.: " << episode
+        << "; Episode Return: " << episodeReturn
         << "; Average Return: " << arma::mean(returns) << endl;
   };
 

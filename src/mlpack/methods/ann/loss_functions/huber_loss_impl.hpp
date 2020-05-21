@@ -1,5 +1,5 @@
 /**
- * @file huber_loss_impl.hpp
+ * @file methods/ann/loss_functions/huber_loss_impl.hpp
  * @author Mrityunjay Tripathi
  *
  * Implementation of the Huber loss function.

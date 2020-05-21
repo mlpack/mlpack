@@ -1,5 +1,5 @@
 /**
- * @file distribution_test.cpp
+ * @file tests/distribution_test.cpp
  * @author Ryan Curtin
  * @author Yannis Mentekidis
  * @author Rohan Raj

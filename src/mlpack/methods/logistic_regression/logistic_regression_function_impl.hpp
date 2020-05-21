@@ -1,5 +1,5 @@
 /**
- * @file logistic_regression_function.cpp
+ * @file methods/logistic_regression/logistic_regression_function_impl.hpp
  * @author Sumedh Ghaisas
  *
  * Implementation of the LogisticRegressionFunction class.

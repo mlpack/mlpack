@@ -1,5 +1,5 @@
 /**
- * @file adaboost_model.cpp
+ * @file methods/adaboost/adaboost_model.cpp
  * @author Ryan Curtin
  *
  * A serializable AdaBoost model, used by the main program.

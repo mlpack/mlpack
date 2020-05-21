@@ -1,5 +1,5 @@
 /**
- * @file hmm_training_tests.cpp
+ * @file tests/main_tests/hmm_train_test.cpp
  * @author Daivik Nema
  *
  * Test mlpackMain() of hmm_train_main.cpp.

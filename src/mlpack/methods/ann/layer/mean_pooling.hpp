@@ -1,5 +1,5 @@
 /**
- * @file mean_pooling.hpp
+ * @file methods/ann/layer/mean_pooling.hpp
  * @author Marcus Edel
  * @author Nilay Jain
  *
@@ -45,7 +45,7 @@ class MeanPooling
    * @param kernelHeight Height of the pooling window.
    * @param strideWidth Width of the stride operation.
    * @param strideHeight Width of the stride operation.
-   * @param floor Rounding operator (floor or ceil).
+   * @param floor Rounding operator (true for floor, else ceil).
    * @param padW Padding width of the input.
    * @param padH Padding height of the input.
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
@@ -103,7 +103,7 @@ class MeanPooling
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */

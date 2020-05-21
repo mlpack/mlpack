@@ -1,5 +1,5 @@
 /**
- * @file reward_clipping_test.hpp
+ * @file tests/reward_clipping_test.cpp
  * @author Shashank Shekhar
  *
  * Test for the reward clipping wrapper for reinforcement learning environments.

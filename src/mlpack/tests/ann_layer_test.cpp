@@ -1,5 +1,5 @@
 /**
- * @file ann_layer_test.cpp
+ * @file tests/ann_layer_test.cpp
  * @author Marcus Edel
  * @author Praveen Ch
  *
@@ -17,6 +17,7 @@
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 
@@ -1639,6 +1640,71 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
   module.Backward(input, error, delta);
   BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
       arma::mat("1.6487; 0.6487") - delta)), 1e-3);
+}
+
+/**
+ * Simple Softmax module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleSoftmaxLayerTest)
+{
+  arma::mat input, output, gy, g;
+  Softmax<> module;
+
+  // Test the forward function.
+  input = arma::mat("1.7; 3.6");
+  module.Forward(input, output);
+  BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
+    arma::mat("0.130108; 0.869892") - output)), 1e-4);
+
+  // Test the backward function.
+  gy = arma::zeros(input.n_rows, input.n_cols);
+  gy(0) = 1;
+  module.Backward(output, gy, g);
+  BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
+    arma::mat("0.11318; -0.11318") - g)), 1e-04);
+}
+
+/**
+ * Softmax layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientSoftmaxTest)
+{
+  // Softmax function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::mat("1; 0");
+
+      model = new FFN<MeanSquaredError<>, RandomInitialization>;
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<Linear<> >(10, 10);
+      model->Add<ReLULayer<> >();
+      model->Add<Linear<> >(10, 2);
+      model->Add<Softmax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<MeanSquaredError<> >* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 /*

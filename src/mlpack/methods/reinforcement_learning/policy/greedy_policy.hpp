@@ -1,5 +1,5 @@
 /**
- * @file greedy_policy.hpp
+ * @file methods/reinforcement_learning/policy/greedy_policy.hpp
  * @author Shangtong Zhang
  * @author Abhinav Sagar
  *

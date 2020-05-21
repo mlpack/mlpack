@@ -1,5 +1,5 @@
 /**
- * @file random_point_selection.hpp
+ * @file methods/dbscan/random_point_selection.hpp
  * @author Ryan Curtin
  *
  * Randomly select the next point for DBSCAN.
@@ -26,7 +26,7 @@ class RandomPointSelection
   /**
    * Select the next point to use, randomly.
    *
-   * @param point Unused data.
+   * @param * (point) Unused data.
    * @param data Dataset to cluster.
    */
   template<typename MatType>

@@ -1,5 +1,5 @@
 /**
- * @file lmnn_function_impl.cpp
+ * @file methods/lmnn/lmnn_function_impl.hpp
  * @author Manish Kumar
  *
  * An implementation of the LMNNFunction class.

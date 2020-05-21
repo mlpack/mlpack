@@ -1,5 +1,5 @@
 /**
- * @file random_acol_init.hpp
+ * @file methods/amf/init_rules/random_acol_init.hpp
  * @author Mohan Rajendran
  *
  * Initialization rule for Alternating Matrix Factorization.

@@ -1,5 +1,5 @@
 /**
- * @file print_type_doc.hpp
+ * @file bindings/julia/print_type_doc.hpp
  * @author Ryan Curtin
  *
  * Print documentation for a given type, detailing what the type actually is to

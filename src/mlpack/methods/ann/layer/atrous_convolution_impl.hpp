@@ -1,5 +1,5 @@
 /**
- * @file atrous_convolution_impl.hpp
+ * @file methods/ann/layer/atrous_convolution_impl.hpp
  * @author Aarush Gupta
  * @author Shikhar Jaiswal
  *

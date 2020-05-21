@@ -1,5 +1,5 @@
 /**
- * @file preprocess_scale_test.cpp
+ * @file tests/main_tests/preprocess_scale_test.cpp
  * @author Jeffin Sam
  *
  * Test mlpackMain() of preprocess_scale_main.cpp.

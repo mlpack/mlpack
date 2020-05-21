@@ -1,5 +1,5 @@
 /**
- * @file minimal_splits_number_sweep.hpp
+ * @file core/tree/rectangle_tree/minimal_splits_number_sweep.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the MinimalSplitsNumberSweep class, a class that finds a

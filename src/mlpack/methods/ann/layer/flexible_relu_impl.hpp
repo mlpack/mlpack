@@ -1,5 +1,5 @@
 /**
- * @file flexible_relu_impl.hpp
+ * @file methods/ann/layer/flexible_relu_impl.hpp
  * @author Aarush Gupta
  * @author Manthan-R-Sheth
  *

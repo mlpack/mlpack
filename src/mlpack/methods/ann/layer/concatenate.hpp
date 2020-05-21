@@ -1,5 +1,5 @@
 /**
- * @file concatenate.hpp
+ * @file methods/ann/layer/concatenate.hpp
  * @author Atharva Khandait
  *
  * Definition of the Concatenate class that concatenate a constant matrix to
@@ -56,7 +56,7 @@ class Concatenate
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */

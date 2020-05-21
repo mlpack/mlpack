@@ -1,5 +1,5 @@
 /**
- * @file rl_environment_test.hpp
+ * @file tests/rl_components_test.cpp
  * @author Shangtong Zhang
  * @author Rohan Raj
  *

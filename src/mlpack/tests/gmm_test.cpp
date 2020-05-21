@@ -1,5 +1,5 @@
 /**
- * @file gmm_test.cpp
+ * @file tests/gmm_test.cpp
  * @author Ryan Curtin
  * @author Michael Fox
  *

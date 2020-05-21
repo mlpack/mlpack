@@ -1,5 +1,5 @@
 /**
- * @file fast_lstm_impl.hpp
+ * @file methods/ann/layer/fast_lstm_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Fast LSTM class, which implements a fast lstm network

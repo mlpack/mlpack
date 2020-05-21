@@ -1,5 +1,5 @@
 /**
- * @file celu.hpp
+ * @file methods/ann/layer/celu.hpp
  * @author Gaurav Singh
  *
  * Definition of the CELU activation function as described by Jonathan T. Barron.

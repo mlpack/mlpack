@@ -1,5 +1,5 @@
 /**
- * @file dataset_mapper_impl.hpp
+ * @file core/data/dataset_mapper_impl.hpp
  * @author Ryan Curtin
  * @author Keon Kim
  *

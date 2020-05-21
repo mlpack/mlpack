@@ -1,5 +1,5 @@
 /**
- * @file image_converter_main.cpp
+ * @file methods/preprocess/image_converter_main.cpp
  * @author Jeffin Sam
  *
  * A CLI executable to load and save a image dataset.

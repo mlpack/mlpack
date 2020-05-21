@@ -1,5 +1,5 @@
 /**
- * @file gamma_distribution.cpp
+ * @file core/dists/gamma_distribution.cpp
  * @author Yannis Mentekidis
  * @author Rohan Raj
  *

@@ -1,5 +1,5 @@
 /**
- * @file approx_kfn_main.cpp
+ * @file methods/approx_kfn/approx_kfn_main.cpp
  * @author Ryan Curtin
  *
  * Command-line program for various furthest neighbor search algorithms.

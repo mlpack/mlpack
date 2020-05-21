@@ -1,5 +1,5 @@
 /**
- * @file naive_kmeans_impl.hpp
+ * @file methods/kmeans/naive_kmeans_impl.hpp
  * @author Ryan Curtin
  * @author Shikhar Bhardwaj
  *

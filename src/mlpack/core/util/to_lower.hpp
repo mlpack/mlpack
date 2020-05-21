@@ -1,5 +1,5 @@
 /**
- * @file to_lower.hpp
+ * @file core/util/to_lower.hpp
  * @author Himanshu Pathak
  *
  * Convert a string to lowercase.

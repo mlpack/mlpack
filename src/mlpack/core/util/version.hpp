@@ -1,5 +1,5 @@
 /**
- * @file version.hpp
+ * @file core/util/version.hpp
  * @author Ryan Curtin
  *
  * The current version of mlpack, available as macros and as a string.

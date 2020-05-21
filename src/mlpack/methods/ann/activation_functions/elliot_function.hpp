@@ -1,5 +1,5 @@
 /**
- * @file elliot_function.hpp
+ * @file methods/ann/activation_functions/elliot_function.hpp
  * @author Bisakh Mondal
  *
  * Definition and implementation of the Elliot Activation function as described 

@@ -1,5 +1,5 @@
 /**
- * @file kde_main.cpp
+ * @file methods/kde/kde_main.cpp
  * @author Roberto Hueso
  *
  * Executable for running Kernel Density Estimation.

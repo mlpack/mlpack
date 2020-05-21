@@ -1,5 +1,5 @@
 /**
- * @file print_doc.hpp
+ * @file bindings/python/print_doc.hpp
  * @author Ryan Curtin
  *
  * Print documentation (as part of a docstring) for a Python binding parameter.
@@ -30,7 +30,7 @@ namespace python {
  *
  * @param d Parameter data struct.
  * @param input Pointer to size_t containing indent.
- * @param output Unused parameter.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void PrintDoc(const util::ParamData& d,

@@ -1,5 +1,5 @@
 /**
- * @file AdaBoost_test.cpp
+ * @file tests/adaboost_test.cpp
  * @author Udit Saxena
  *
  * Tests for AdaBoost class.

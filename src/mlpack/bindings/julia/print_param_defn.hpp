@@ -1,5 +1,5 @@
 /**
- * @file print_param_defn.hpp
+ * @file bindings/julia/print_param_defn.hpp
  * @author Ryan Curtin
  *
  * If the type is serializable, we need to define a special utility function to

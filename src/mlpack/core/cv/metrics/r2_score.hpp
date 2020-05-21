@@ -1,5 +1,5 @@
 /**
- * @file r2_score.hpp
+ * @file core/cv/metrics/r2_score.hpp
  * @author Bisakh Mondal
  *
  * The R^2 (Coefficient of determination) regression metric.
@@ -31,15 +31,15 @@ namespace cv {
  * nonsensical constraints were applied by mistake. A model which
  * predicts exactly the expected value of y, disregarding the input
  * features, gets a R2 Score equals to 0.0.
- * If a model predicts @f$ \hat{y}_i $@f of the @f$ i $@f-th sample for a true
- * @f$ y_i $@f for total n samples, the R2 Score is calculated by
+ * If a model predicts @f$ \hat{y}_i @f$ of the @f$ i @f$-th sample for a true
+ * @f$ y_i @f$ for total n samples, the R2 Score is calculated by
  * @f{eqnarray*}{
  * R^{2} \left( y, \hat{y} \right) &=& 1-\frac{\sum_{i=1}^{n}
  *    \left( y_i - \hat{y_i} \right)^2 }
  *    {\sum_{i=1}^{n} \left( y_i - \bar{y}\right)^2}\\
  * @f}
- * 
- * where @f$ \bar{y} = frac{1}{y}\sum_{i=1}^{n} y_i $@f.
+ *
+ * where @f$ \bar{y} = frac{1}{y}\sum_{i=1}^{n} y_i @f$.
  * For example, a model having R2Score = 0.85, explains 85 \% variability of
  * the response data around its mean.
  */

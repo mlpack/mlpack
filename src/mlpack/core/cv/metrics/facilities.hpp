@@ -1,5 +1,5 @@
 /**
- * @file facilities.hpp
+ * @file core/cv/metrics/facilities.hpp
  * @author Kirill Mishchenko
  *
  * Functionality that is used more than in one metric.

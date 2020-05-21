@@ -1,5 +1,5 @@
 /**
- * @file radical.cpp
+ * @file methods/radical/radical.cpp
  * @author Nishant Mehta
  *
  * Implementation of Radical class

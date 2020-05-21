@@ -1,5 +1,5 @@
 /**
- * @file max_pooling_impl.hpp
+ * @file methods/ann/layer/max_pooling_impl.hpp
  * @author Marcus Edel
  * @author Nilay Jain
  *

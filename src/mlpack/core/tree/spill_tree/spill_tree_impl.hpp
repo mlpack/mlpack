@@ -1,5 +1,5 @@
 /**
- * @file spill_tree_impl.hpp
+ * @file core/tree/spill_tree/spill_tree_impl.hpp
  *
  * Implementation of generalized hybrid spill tree (SpillTree).
  *

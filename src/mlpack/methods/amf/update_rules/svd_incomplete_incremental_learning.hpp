@@ -1,5 +1,5 @@
 /**
- * @file svd_incomplete_incremental_learning.hpp
+ * @file methods/amf/update_rules/svd_incomplete_incremental_learning.hpp
  * @author Sumedh Ghaisas
  *
  * SVD factorizer used in AMF (Alternating Matrix Factorization).
@@ -63,8 +63,8 @@ class SVDIncompleteIncrementalLearning
    * before a new factorization.  This simply sets the column being considered
    * to 0, so the input matrix and rank are not used.
    *
-   * @param dataset Input matrix to be factorized.
-   * @param rank rank of factorization
+   * @param * (dataset) Input matrix to be factorized.
+   * @param * (rank) of factorization
    */
   template<typename MatType>
   void Initialize(const MatType& /* dataset */, const size_t /* rank */)

@@ -1,5 +1,5 @@
 /**
- * @file multiply_constant_impl.hpp
+ * @file methods/ann/layer/multiply_constant_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the MultiplyConstantLayer class, which multiplies the

@@ -1,5 +1,5 @@
 /**
- * @file convolution_impl.hpp
+ * @file methods/ann/layer/convolution_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Convolution module class.

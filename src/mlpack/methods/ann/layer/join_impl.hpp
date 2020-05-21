@@ -1,5 +1,5 @@
 /**
- * @file join_impl.hpp
+ * @file methods/ann/layer/join_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Join module.

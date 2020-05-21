@@ -1,5 +1,5 @@
 /**
- * @file first_point_is_root.hpp
+ * @file core/tree/cover_tree/first_point_is_root.hpp
  * @author Ryan Curtin
  *
  * A very simple policy for the cover tree; the first point in the dataset is

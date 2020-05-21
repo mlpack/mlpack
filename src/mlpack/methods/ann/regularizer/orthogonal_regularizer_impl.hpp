@@ -1,5 +1,5 @@
 /**
- * @file orthogonal_regularizer_impl.hpp
+ * @file methods/ann/regularizer/orthogonal_regularizer_impl.hpp
  * @author Saksham Bansal
  *
  * Implementation of OrthogonalRegularizer class.

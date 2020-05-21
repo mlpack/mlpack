@@ -1,5 +1,5 @@
 /**
- * @file elu.hpp
+ * @file methods/ann/layer/elu.hpp
  * @author Vivek Pal
  * @author Dakshit Agrawal
  *
