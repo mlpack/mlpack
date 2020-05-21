@@ -12,10 +12,13 @@
 
   * Add `MatType` parameter to `LSHSearch`, allowing sparse matrices to be used
     for search (#2395).
-    
+
   * Documentation fixes to resolve Doxygen warnings and issues (#2400).
-  
+
   * Add Load and Save of Sparse Matrix (#2344).
+
+  * Fix `no_intercept` and probability computation for linear SVM bindings
+    (#2419).
 
 ### mlpack 3.3.1
 ###### 2020-04-29
