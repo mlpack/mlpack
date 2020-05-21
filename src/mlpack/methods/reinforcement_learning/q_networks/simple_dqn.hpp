@@ -51,11 +51,11 @@ class SimpleDQN
             const int outputDim) : network(MeanSquaredError<>(),
                 GaussianInitialization(0, 0.001))
   {
-    network.Add<Linear<>>(inputDim, h1);
-    network.Add<ReLULayer<>>();
-    network.Add<Linear<>>(h1, h2);
-    network.Add<ReLULayer<>>();
-    network.Add<Linear<>>(h2, outputDim);
+    network.Add(new Linear<>(inputDim, h1));
+    network.Add(new ReLULayer<>());
+    network.Add(new Linear<>(h1, h2));
+    network.Add(new ReLULayer<>());
+    network.Add(new Linear<>(h2, outputDim));
   }
 
   SimpleDQN(NetworkType network) : network(std::move(network))

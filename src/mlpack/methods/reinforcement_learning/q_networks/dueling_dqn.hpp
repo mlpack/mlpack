@@ -17,6 +17,7 @@
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
+#include <mlpack/methods/ann/loss_functions/empty_loss.hpp>
 
 namespace mlpack {
 namespace rl {
@@ -53,15 +54,15 @@ class DuelingDQN
       advantageNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001)),
       valueNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001))
   {
-    featureNetwork.Add<Linear<>>(inputDim, h1);
-    featureNetwork.Add<ReLULayer<>>();
+    featureNetwork.Add(new Linear<>(inputDim, h1));
+    featureNetwork.Add(new ReLULayer<>());
 
-    advantageNetwork.Add<Linear<>>(h1, h2);
-    advantageNetwork.Add<ReLULayer<>>();
-    advantageNetwork.Add<Linear<>>(h2, outputDim);
+    advantageNetwork.Add(new Linear<>(h1, h2));
+    advantageNetwork.Add(new ReLULayer<>());
+    advantageNetwork.Add(new Linear<>(h2, outputDim));
 
-    valueNetwork.Add<Linear<>>(h1, h2);
-    valueNetwork.Add<Linear<>>(h2, 1);
+    valueNetwork.Add(new Linear<>(h1, h2));
+    valueNetwork.Add(new Linear<>(h2, 1));
   }
 
   DuelingDQN(NetworkType featureNetwork,
@@ -89,22 +90,23 @@ class DuelingDQN
     featureNetwork.Predict(state, features);
     advantageNetwork.Predict(features, advantage);
     valueNetwork.Predict(features, value);
-    actionValue = advantage.each_col() + (value - arma::mean(advantage, 1));
+    actionValue = advantage.each_row() + (value - arma::mean(arma::mean(advantage)));
   }
 
   /**
    * Perform the forward pass of the states in real batch mode.
    *
    * @param state The input state.
-   * @param target The predicted target.
+   * @param output The predicted output.
    */
-  void Forward(const arma::mat state, arma::mat& target)
+  void Forward(const arma::mat state, arma::mat& output)
   {
-    arma::mat features, advantage, value;
+    arma::mat advantage, value;
     featureNetwork.Forward(state, features);
     advantageNetwork.Forward(features, advantage);
     valueNetwork.Forward(features, value);
-    target = advantage.each_col() + (value - arma::mean(advantage, 1));
+    output = advantage.each_row() + (value - arma::mean(arma::mean(advantage)));
+    networkOutput = output;
   }
 
   /**
@@ -116,7 +118,16 @@ class DuelingDQN
    */
   void Backward(const arma::mat state, arma::mat& target, arma::mat& gradient)
   {
-    featureNetwork.Backward(state, target, gradient);
+    arma::mat gradError;
+    lossFunction.Backward(networkOutput, target, gradError);
+
+    arma::mat gradValue, gradAdvantage;
+    // valueNetwork.Backward(state, gradError, gradValue);
+    advantageNetwork.Backward(features, gradError, gradAdvantage);
+
+    arma::mat gradSum;
+    gradSum = gradAdvantage; // + gradValue
+    featureNetwork.Backward(state, gradSum, gradient);
   }
 
   /**
@@ -143,6 +154,15 @@ class DuelingDQN
 
   //! Locally-stored value network.
   NetworkType valueNetwork;
+
+  //! Locally-stored value network.
+  arma::mat networkOutput;
+
+  //! Locally-stored features of the network.
+  arma::mat features;
+
+  //! Locally-stored loss function.
+  MeanSquaredError<> lossFunction;
 };
 
 } // namespace rl

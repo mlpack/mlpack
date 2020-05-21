@@ -29,7 +29,7 @@ EmptyLoss<InputDataType, OutputDataType>::EmptyLoss()
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
 double EmptyLoss<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, const TargetType&& target)
+    const InputType& input, const TargetType& target)
 {
   return 0;
 }
@@ -37,11 +37,11 @@ double EmptyLoss<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
 void EmptyLoss<InputDataType, OutputDataType>::Backward(
-    const InputType&& input,
-    const TargetType&& target,
-    OutputType&& output)
+    const InputType& input,
+    const TargetType& target,
+    OutputType& output)
 {
-  output = input;
+  output = target;
 }
 
 template<typename InputDataType, typename OutputDataType>
