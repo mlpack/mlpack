@@ -20,6 +20,11 @@ option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
 set(BOARD_NAME "" CACHE STRING "Enter the board name to compile mlpack for.")
+set(ARMADILLO_INCLUDE_DIR "" CACHE STRING "Path for Armadillo headers.")
+set(OPENBLAS_LIBRARIES "" CACHE STRING "Path for OpenBlas library.")
+set(BOOST_ROOT "" CACHE STRING "Path for boost.")
+set(BOOST_INCLUDE_DIR "" CACHE STRING "Path for boost headers.")
+set(BOOST_LIBRARYDIR "" CACHE STRING "Path for boost libraries.")
 
 if (CMAKE_CROSSCOMPILING AND BOARD_NAME STREQUAL ""))
   message(FATAL_ERROR "Please enter the board name")
@@ -282,7 +287,23 @@ endif()
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
-find_package(Armadillo 8.400.0 REQUIRED)
+
+# Remove support for older 32bit system, if we need to have 32bit system
+# we will just cross-compile, this would be much easier.
+# Since we are cross compiling we are not looking for armadillo,
+# We will just tell cmake where to find the downloaded version
+if (CMAKE_CROSSCOMPILING AND (ARMADILLO_INCLUDE_DIR STREQUAL "") AND 
+    (ARMADILLO_SUPPORT_LIBRARIES STREQUAL ""))
+  message(FATAL_ERROR "Please enter the path for armadillo libraries")
+  # Since Armadillo is a wrapper to OpenBlas. Set Armadillo libraies to
+  # the link against OpenBlas
+elseif(CMAKE_CROSSCOMPILING AND (ARMADILLO_INCLUDE_DIR STRGREATER ""))
+  set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})
+  set(ARMADILLO_SUPPORT_LIBRARIES ${OPENBLAS_LIBRARIES} /usr/aarch64-linux-gnu/lib64/libgfortran.a)
+  set(ARMADILLO_LIBRARIES ${ARMADILLO_SUPPORT_LIBRARIES})
+else()
+  find_package(Armadillo 8.400.0 REQUIRED)
+endif()
 
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
@@ -427,16 +448,16 @@ set(Boost_ADDITIONAL_VERSIONS
 #
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
-set(Boost_NO_BOOST_CMAKE 1)
-find_package(Boost 1.58
-    COMPONENTS
-      unit_test_framework
-      serialization
-    REQUIRED
-)
+
+#set(Boost_NO_BOOST_CMAKE 1)
+if (CMAKE_CROSSCOMPILING)
+  # Here we will set paths as we have done for armadillo.
+  set(Boost_INCLUDE_DIRS ${BOOST_INCLUDE_DIR})
+  set(Boost_LIBRARY_DIRS  ${BOOST_LIBRARYDIR})
+  set(Boost_LIBRARIES ${BOOST_PROGRAM_OPTIONS} ${BOOST_SERIALIZATION})
+endif()
 
 link_directories(${Boost_LIBRARY_DIRS})
-
 # In Visual Studio, automatic linking is performed, so we don't need to worry
 # about it.  Clear the list of libraries to link against and let Visual Studio
 # handle it.
