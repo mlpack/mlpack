@@ -14,6 +14,7 @@ steps:
     set -e
     unset BOOST_ROOT
     pip install cython numpy pandas zipp configparser
+    brew install libomp
     brew install openblas armadillo boost
 
     if [ "a$(julia.version)" != "a" ]; then

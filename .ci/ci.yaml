@@ -37,7 +37,7 @@ jobs:
 - job: macOS
   timeoutInMinutes: 360
   pool:
-    vmImage: macOS-10.14
+    vmImage: macOS-10.15
   strategy:
     matrix:
       Plain:
