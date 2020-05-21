@@ -35,6 +35,11 @@ void NMS<UseCoordinates>::Evaluate(
       box either in {x1, y1, x2, y2} or {x1, y1, h, w} format.\
       Refer to the documentation for more information.");
 
+  Log::Assert(confidenceScores.n_cols != boundingBoxes.n_cols, "Each \
+      bounding box must correspond to atleast and only 1 bounding box. \
+      Found " + std::to_string(confidenceScores.n_cols) + " confidence \
+      scores for " + std::to_string(boundingBoxes.n_cols) + " bounding boxes.");
+
   // Clear selected bounding boxes.
   selectedIndices.clear();
 
@@ -51,7 +56,7 @@ void NMS<UseCoordinates>::Evaluate(
   }
   else
   {
-    area = (boundingBoxes.row(2)) % (boundingBoxes.row(3));
+    area = boundingBoxes.row(2) % boundingBoxes.row(3);
   }
 
   while (sortedIndices.n_elem > 0)
@@ -71,40 +76,44 @@ void NMS<UseCoordinates>::Evaluate(
     sortedIndices = sortedIndices(arma::span(0, sortedIndices.n_rows - 2),
         arma::span());
 
-    // Calculate IoU of remaining boxes with the last bounding box with
-    // the highest confidence score.
-    BoundingBoxesType intersectionArea;
-    if (UseCoordinates)
+    // Get x and y coordinates for remaining bounding boxes.
+    BoundingBoxesType x2 = boundingBoxes.submat(arma::uvec(1).fill(2),
+        sortedIndices);
+
+    BoundingBoxesType x1 = boundingBoxes.submat(arma::uvec(1).fill(0),
+        sortedIndices);;
+
+    BoundingBoxesType y2 = boundingBoxes.submat(arma::uvec(1).fill(3),
+        sortedIndices);
+
+    BoundingBoxesType y1 = boundingBoxes.submat(arma::uvec(1).fill(1),
+        sortedIndices);
+
+    size_t selectedX2 = boundingBoxes(2, selectedIndex);
+    size_t selectedY2 = boundingBoxes(3, selectedIndex);
+    size_t selectedX1 = boundingBoxes(0, selectedIndex);
+    size_t selectedY1 = boundingBoxes(1, selectedIndex);
+
+    if (!UseCoordinates)
     {
-      intersectionArea = arma::clamp(arma::clamp(
-          boundingBoxes.submat(arma::uvec(1).fill(2), sortedIndices), DBL_MIN,
-          boundingBoxes(2, selectedIndex)) - arma::clamp(
-          boundingBoxes.submat(arma::uvec(1).fill(0), sortedIndices),
-          boundingBoxes(0, selectedIndex), DBL_MAX), 0.0, DBL_MAX) %
-          arma::clamp(arma::clamp(boundingBoxes.submat(arma::uvec(1).fill(3),
-          sortedIndices), DBL_MIN, boundingBoxes(3, selectedIndex)) -
-          arma::clamp(boundingBoxes.submat(arma::uvec(1).fill(1),
-          sortedIndices), boundingBoxes(1, selectedIndex), DBL_MAX),
-          0.0, DBL_MAX);
-    }
-    else
-    {
-      intersectionArea = arma::clamp(arma::clamp(
-          boundingBoxes.submat(arma::uvec(1).fill(2), sortedIndices) +
-          boundingBoxes.submat(arma::uvec(1).fill(0), sortedIndices), DBL_MIN,
-          boundingBoxes(2, selectedIndex) + boundingBoxes(0, selectedIndex)) -
-          arma::clamp(boundingBoxes.submat(arma::uvec(1).fill(0),
-          sortedIndices), boundingBoxes(0, selectedIndex), DBL_MAX), 0.0,
-          DBL_MAX) % arma::clamp(arma::clamp(
-          boundingBoxes.submat(arma::uvec(1).fill(3), sortedIndices) +
-          boundingBoxes.submat(arma::uvec(1).fill(1),
-          sortedIndices), DBL_MIN, boundingBoxes(3, selectedIndex) +
-          boundingBoxes(1, selectedIndex)) -
-          arma::clamp(boundingBoxes.submat(arma::uvec(1).fill(1),
-          sortedIndices), boundingBoxes(1, selectedIndex), DBL_MAX),
-          0.0, DBL_MAX);
+      selectedX2 = selectedX2 + selectedX1;
+      selectedY2 = selectedY2 + selectedY1;
+      x2 = x2 + x1;
+      y2 = y2 + y1;
     }
 
+    // Calculate points of intersection between the bounding box with
+    // highest confidence score and remaining bounding boxes.
+    x2 = arma::clamp(x2, DBL_MIN, selectedX2);
+    y2 = arma::clamp(y2, DBL_MIN, selectedY2);
+    x1 = arma::clamp(x1, selectedX1, DBL_MAX);
+    y1 = arma::clamp(y1, selectedY1, DBL_MAX);
+
+    BoundingBoxesType intersectionArea = arma::clamp(x2 - x1, 0.0, DBL_MAX) %
+          arma::clamp(y2 - y1, 0.0, DBL_MAX);
+
+    // Calculate IoU of remaining boxes with the last bounding box with
+    // the highest confidence score.
     BoundingBoxesType calculateIoU = intersectionArea /
         (area(sortedIndices).t() - intersectionArea + area(selectedIndex));
 
@@ -120,7 +129,7 @@ void NMS<UseCoordinates>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(useCoordinates);
+  // Nothing to do here.
 }
 
 } // namespace metric

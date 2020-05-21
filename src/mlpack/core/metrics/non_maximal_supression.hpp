@@ -36,9 +36,7 @@ namespace metric {
  *                        in the formate x0, y0, x1, y1. Else the bounding box is
  *                        represented as x0, y0, h, w.
  */
-template<
-    bool UseCoordinates = false
->
+template<bool UseCoordinates = false>
 class NMS
 {
  public:
