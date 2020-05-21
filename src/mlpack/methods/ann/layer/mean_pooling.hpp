@@ -46,6 +46,8 @@ class MeanPooling
    * @param strideWidth Width of the stride operation.
    * @param strideHeight Width of the stride operation.
    * @param floor Rounding operator (true for floor, else ceil).
+   * @param inputWidth Width of input.
+   * @param inputHeight Height of input.
    * @param padW Padding width of the input.
    * @param padH Padding height of the input.
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
@@ -69,6 +71,8 @@ class MeanPooling
    * @param strideWidth Width of the stride operation.
    * @param strideHeight Width of the stride operation.
    * @param floor Rounding operator (floor or ceil).
+   * @param inputWidth Width of input.
+   * @param inputHeight Height of input.
    * @param padW A two-value tuple indicating padding widths of the input.
    *             First value is padding at left side. Second value is padding on
    *             right side.
