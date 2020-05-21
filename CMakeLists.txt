@@ -20,10 +20,15 @@ option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
 set(BOARD_NAME "" CACHE STRING "Enter the board name to compile mlpack for.")
 set(ARMADILLO_INCLUDE_DIR "" CACHE STRING "Path for Armadillo headers.")
-set(ARMADILLO_SUPPORT_LIBRARIES "" CACHE STRING "Path for OpenBlas library.")
+set(OPENBLAS_LIBRARIES "" CACHE STRING "Path for OpenBlas library.")
+set(BLAS_LIBRARIES "" CACHE STRING "Path for Blas library.")
+set(LAPACK_LIBRARIES "" CACHE STRING "Path for lapack library")
+set(F2C_LIBRARY "" CACHE STRING "Path for library")
 set(BOOST_ROOT "" CACHE STRING "Path for boost.")
 set(BOOST_INCLUDE_DIR "" CACHE STRING "Path for boost headers.")
-set(BOOST_LIBRARIES "" CACHE STRING "Path for boost libraries.")
+set(BOOST_LIBRARYDIR "" CACHE STRING "Path for boost libraries.")
+set(BOOST_PROGRAM_OPTIONS "" CACHE STRING "Path for boost libraries.")
+set(BOOST_SERIALIZATION "" CACHE STRING "Path for boost libraries.")
 
 if (CMAKE_CROSSCOMPILING AND (BOARD_NAME STREQUAL ""))
   message(FATAL_ERROR "Please enter the board name")
@@ -275,7 +280,8 @@ if (CMAKE_CROSSCOMPILING AND (ARMADILLO_INCLUDE_DIR STREQUAL "") AND
   # Since Armadillo is a wrapper to OpenBlas. Set Armadillo libraies to
   # the link against OpenBlas
 elseif(CMAKE_CROSSCOMPILING AND (ARMADILLO_INCLUDE_DIR STRGREATER ""))
-  set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})  
+  set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})
+  set(ARMADILLO_SUPPORT_LIBRARIES ${OPENBLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${BLAS_LIBRARIES} /usr/aarch64-linux-gnu/lib64/libgfortran.a ${F2C_LIBRARY})
   set(ARMADILLO_LIBRARIES ${ARMADILLO_SUPPORT_LIBRARIES})
 else()
   find_package(Armadillo 8.400.0 REQUIRED)
@@ -429,8 +435,9 @@ set(Boost_ADDITIONAL_VERSIONS
 if (CMAKE_CROSSCOMPILING)
   # Here we will set paths as we have done for armadillo.
   set(Boost_INCLUDE_DIRS ${BOOST_INCLUDE_DIR})
-  set(Boost_LIBRARIES  ${BOOST_LIBRARIES})
- # Otherwise just find Boost in the system
+  set(Boost_LIBRARY_DIRS  ${BOOST_LIBRARYDIR})
+  set(Boost_LIBRARIES ${BOOST_PROGRAM_OPTIONS} ${BOOST_SERIALIZATION})
+# Otherwise just find Boost in the system
 else()
   find_package(Boost 1.58
         COMPONENTS
@@ -439,10 +446,9 @@ else()
         serialization
         REQUIRED
   )
-
-  link_directories(${Boost_LIBRARY_DIRS})
 endif()
 
+link_directories(${Boost_LIBRARY_DIRS})
 # In Visual Studio, automatic linking is performed, so we don't need to worry
 # about it.  Clear the list of libraries to link against and let Visual Studio
 # handle it.
