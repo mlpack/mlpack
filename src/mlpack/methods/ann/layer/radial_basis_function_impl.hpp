@@ -1,5 +1,5 @@
 /**
- * @file radial_basis_impl.hpp
+ * @file radial_basis_function_impl.hpp
  * @author Himanshu Pathak
  *
  *
@@ -12,50 +12,58 @@
 #define MLPACK_METHODS_ANN_LAYER_RBF_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "dropout.hpp"
+#include "radial_basis_function.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-RBF<InputDataType, OutputDataType>::RBF() :
+template<typename InputDataType, typename OutputDataType,
+         typename Activation>
+RBF<InputDataType, OutputDataType, Activation>::RBF() :
     inSize(0),
     outSize(0),
-    reset(false)
+    sigmas(0),
+    betas(0)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-RBF<InputDataType, OutputDataType>::RBF(
+template<typename InputDataType, typename OutputDataType,
+         typename Activation>
+RBF<InputDataType, OutputDataType, Activation>::RBF(
     const size_t inSize,
     const size_t outSize,
-    arma::mat& centres) :
+    arma::mat& centres,
+    double betas) :
     inSize(inSize),
     outSize(outSize),
-    centres(centres),
-    reset(false)
+    betas(betas),
+    centres(centres)
 {
+  sigmas = 0;
+  if (betas == 0)
+  {
+    for (size_t i = 0; i < centres.n_cols; i++)
+    {
+      double max_dis = 0;
+      arma::mat temp = centres.each_col() - centres.col(i);
+      max_dis = arma::accu(arma::max(arma::pow(arma::sum(
+                                        arma::pow((temp),
+                                        2), 0), 0.5).t()));
+      if (max_dis > sigmas)
+        sigmas = max_dis;
+    }
+    this->betas = std::pow(2 * outSize, 0.5) / sigmas ;
+  }
 }
 
-template<typename InputDataType, typename OutputDataType>
-void RBF<InputDataType, OutputDataType>::Reset()
-{
-}
-
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+         typename Activation>
 template<typename eT>
-void RBF<InputDataType, OutputDataType>::Forward(
+void RBF<InputDataType, OutputDataType, Activation>::Forward(
     const arma::Mat<eT>& input,
     arma::Mat<eT>& output)
 {
-  if(!reset)
-  {
-    arma::mat sigmas = arma::mat(1, outSize);
-    sigmas.ones();
-    sigmas = sigmas / outSize;
-    reset = true;
-  }
   distances = arma::mat(outSize, input.n_cols);
 
   for (size_t i = 0; i < input.n_cols; i++)
@@ -65,28 +73,29 @@ void RBF<InputDataType, OutputDataType>::Forward(
                                  arma::pow((temp),
                                  2), 0), 0.5).t();
   }
-
-  output = distances;
+  Activation::Fn(distances * std::pow(betas, 0.5),
+                                  output);
 }
 
-template<typename InputDataType, typename OutputDataType>
+
+template<typename InputDataType, typename OutputDataType,
+         typename Activation>
 template<typename eT>
-void RBF<InputDataType, OutputDataType>::Backward(
+void RBF<InputDataType, OutputDataType, Activation>::Backward(
     const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& gy,
-    arma::Mat<eT>& g)
+    const arma::Mat<eT>& /* gy */,
+    arma::Mat<eT>& /* g */)
 {
-  g = centres.t() * gy;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+         typename Activation>
 template<typename Archive>
-void RBF<InputDataType, OutputDataType>::serialize(
+void RBF<InputDataType, OutputDataType, Activation>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(distances);
-  ar & BOOST_SERIALIZATION_NVP(sigmas);
   ar & BOOST_SERIALIZATION_NVP(centres);
 }
 

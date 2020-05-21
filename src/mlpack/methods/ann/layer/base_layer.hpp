@@ -267,7 +267,7 @@ using ElishFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 /**
- * Standard ELiSH-Layer using the ELiSH activation function.
+ * Standard Gaussian-Layer using the Gaussian activation function.
  */
 template <
     class ActivationFunction = GaussianFunction,

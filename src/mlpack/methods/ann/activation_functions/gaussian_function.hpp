@@ -21,8 +21,8 @@ namespace ann /** Artificial Neural Network. */ {
  * The gaussian function, defined by
  *
  * @f{eqnarray*}{
- * f(x) &=& \frac{1}{e^{-1 * x^2}} \\
- * f'(x) &=& f(x) * -x * 2)
+ * f(x) = e^{-1 * x^2}
+ * f'(x) = 2 * -x * f(x) 
  * @f}
  */
 class GaussianFunction
@@ -55,7 +55,7 @@ class GaussianFunction
   /**
    * Computes the first derivative of the gaussian function.
    *
-   * @param x Input data.
+   * @param y Input data.
    * @return f'(x)
    */
   static double Deriv(const double y)

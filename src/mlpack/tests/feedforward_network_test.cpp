@@ -628,12 +628,19 @@ BOOST_AUTO_TEST_CASE(OptimizerTest)
  */
 BOOST_AUTO_TEST_CASE(RBFNetworkTest)
 {
+  mlpack::math::RandomSeed(std::time(NULL));
   // Load the dataset.
   arma::mat trainData;
   data::Load("thyroid_train.csv", trainData, true);
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
+
+  arma::mat trainLabels1 = arma::zeros(3, trainData.n_cols);
+  for(size_t i = 0; i < trainData.n_cols; i++)
+  {
+    trainLabels1.col(i).row((trainLabels(i) - 1)) = 1;
+  }
 
   arma::mat testData;
   data::Load("thyroid_test.csv", testData, true);
@@ -659,12 +666,13 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
   KMeans<> kmeans;
   kmeans.Cluster(trainData, 8, centroids);
 
-  FFN<NegativeLogLikelihood<> > model;
-  model.Add<RBF<> >(trainData.n_rows, 8, centroids); 
+  FFN<MeanSquaredError<> > model;
+  model.Add<RBF<> >(trainData.n_rows, 8, centroids);
   model.Add<Linear<> >(8, 3);
-  model.Add<LogSoftMax<> >();
 
-  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  // RBFN neural net with MeanSquaredError.
+  TestNetwork<>(model, trainData, trainLabels1, testData, testLabels, 10, 0.1);
+
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
@@ -676,20 +684,26 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
 
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
+
+  arma::mat labels1 = arma::zeros(2, dataset.n_cols);
+  for(size_t i = 0; i < dataset.n_cols; i++)
+  {
+    labels1.col(i).row(labels(i)) = 1;
+  }
   labels += 1;
 
-  
+
   arma::mat centroids1;
   arma::Row<size_t> assignments;
   KMeans<> kmeans1;
-  kmeans1.Cluster(dataset, 10, centroids1);
+  kmeans1.Cluster(dataset, 140, centroids1);
 
-  FFN<NegativeLogLikelihood<> > model1;
-  model1.Add<RBF<> >(dataset.n_rows, 10, centroids1);
-  model.Add<Linear<> >(10, 2);
-  model1.Add<LogSoftMax<> >();
-  // Vanilla neural net with logistic activation function.
-  TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.3);
+  FFN<MeanSquaredError<> > model1;
+  model1.Add<RBF<> >(dataset.n_rows, 140, centroids1, 4.1);
+  model1.Add<Linear<> >(140, 2);
+
+  // RBFN neural net with MeanSquaredError.
+  TestNetwork<>(model1, dataset, labels1, dataset, labels, 10, 0.1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
