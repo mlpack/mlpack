@@ -31,12 +31,19 @@ binary=$4
 #       make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=aarch64-linux-gnu-gcc NOFORTRAN=1 libs &&\
 #       cd ../ &&\
 
+# echo "Download and build armadillo as a header"
+# wget --no-check-certificate \
+#     http://sourceforge.net/projects/arma/files/armadillo-9.880.1.tar.xz && \
+#     tar xvf armadillo-9.880.1.tar.xz && \
+#     rm -f armadillo-9.880.1.tar.xz && \
+#     cd  armadillo-9.880.1
+
 echo "Download and build armadillo as a header"
 wget --no-check-certificate \
-    http://sourceforge.net/projects/arma/files/armadillo-9.880.1.tar.xz && \
-    tar xvf armadillo-9.880.1.tar.xz && \
-    rm -f armadillo-9.880.1.tar.xz && \
-    cd  armadillo-9.880.1
-    mkdir build && cd build
-    cmake -DCMAKE_TOOLCHAIN_FILE=../../arm-64bit-toolchain.cmake ../
-    
+    https://github.com/Reference-LAPACK/lapack/archive/v3.9.0.tar.gz && \
+    tar xvf v3.9.0.tar.gz && \
+    rm -f v3.9.0.tar.xz && \
+    cp fortran/make.inc lapack-3.9.0
+    cd lapack-3.9.0
+    make lapacklib -j32
+
