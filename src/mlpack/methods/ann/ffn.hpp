@@ -74,7 +74,7 @@ class FFN
   /**
    * Copy the FFN object.
    *
-   * Warning: Copying FFN is a memory-intensive task multiple layers as well
+   * Warning: Copying FFN is a memory-intensive task: multiple layers as well
    * as parameters needed to be copied.
    */
   FFN(const FFN&);

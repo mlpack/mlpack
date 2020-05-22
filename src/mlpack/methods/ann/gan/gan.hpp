@@ -95,7 +95,7 @@ class GAN
   /**
    * Copy the GAN object.
    *
-   * Warning: Copying a GAN is a memory-intensive task Generator and Discriminator
+   * Warning: Copying a GAN is a memory-intensive task: the Generator and Discriminator
    * networks will be copied.
    */
   GAN(const GAN&);

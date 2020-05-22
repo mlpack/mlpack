@@ -82,7 +82,7 @@ class BRNN
   /**
    * Copy the BRNN object.
    *
-   * Warning: Copying BRNN is a memory-intensive task two RNN are needed to
+   * Warning: Copying BRNN is a memory-intensive task: two RNNs need to
    * be copied.
    */
   BRNN(const BRNN&);

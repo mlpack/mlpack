@@ -114,7 +114,6 @@ Convolution<
     padHTop(std::get<0>(padH)),
     inputWidth(inputWidth),
     inputHeight(inputHeight),
-    paddingType(paddingType),
     outputWidth(0),
     outputHeight(0)
 {
@@ -169,7 +168,6 @@ Convolution<
     inputHeight(layer.inputHeight),
     outputWidth(layer.outputWidth),
     outputHeight(layer.outputHeight),
-    paddingType(layer.paddingType),
     weight(layer.weight),
     bias(layer.bias),
     padding(layer.padding)
