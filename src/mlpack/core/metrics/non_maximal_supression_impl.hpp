@@ -96,10 +96,11 @@ void NMS<UseCoordinates>::Evaluate(
 
     if (!UseCoordinates)
     {
-      selectedX2 = selectedX2 + selectedX1;
-      selectedY2 = selectedY2 + selectedY1;
+      // Change height - width representation to coordinate represention.
       x2 = x2 + x1;
       y2 = y2 + y1;
+      selectedX2 = selectedX2 + selectedX1;
+      selectedY2 = selectedY2 + selectedY1;
     }
 
     // Calculate points of intersection between the bounding box with

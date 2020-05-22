@@ -70,7 +70,6 @@ class NMS
                        OutputType& selectedIndices,
                        const double threshold = 0.5);
 
-
   static const bool useCoordinates = UseCoordinates;
 
   //! Serialize the metric.
