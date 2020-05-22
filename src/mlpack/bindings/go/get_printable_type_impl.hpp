@@ -1,5 +1,5 @@
 /**
- * @file get_printable_type_impl.hpp
+ * @file bindings/go/get_printable_type_impl.hpp
  * @author Yashwant Singh
  *
  * Template metaprogramming to return the string representation of the Go

@@ -1,5 +1,5 @@
 /**
- * @file go_option.hpp
+ * @file bindings/go/go_option.hpp
  * @author Yasmine Dumouchel
  *
  * The Go option type.

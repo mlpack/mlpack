@@ -1,5 +1,5 @@
 /**
- * @file default_param.hpp
+ * @file bindings/go/default_param.hpp
  * @author Yashwant Singh
  *
  * Return the default value of a parameter, depending on its type.

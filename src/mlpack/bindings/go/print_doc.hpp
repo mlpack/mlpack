@@ -1,5 +1,5 @@
 /**
- * @file print_doc.hpp
+ * @file bindings/go/print_doc.hpp
  * @author Yashwant Singh
  * @author Yasmine Dumouchel
  *

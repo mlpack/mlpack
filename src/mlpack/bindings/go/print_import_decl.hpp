@@ -1,5 +1,5 @@
 /**
- * @file import_decl.hpp
+ * @file bindings/go/print_import_decl.hpp
  * @author Yasmine Dumouchel
  *
  * Print the necessary imports for go bindings.
@@ -68,8 +68,8 @@ void ImportDecl(
  * non-serializable type.
  *
  * @param d Parameter info struct.
- * @param input Pointer to size_t indicating indent.
- * @param output Unused parameter.
+ * @param indent Pointer to size_t indicating indent.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void ImportDecl(const util::ParamData& d,

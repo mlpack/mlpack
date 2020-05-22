@@ -1,5 +1,5 @@
 /**
- * @file print_type_doc_impl.hpp
+ * @file bindings/go/print_type_doc_impl.hpp
  * @author Yashwant Singh
  *
  * Print documentation for a given type.

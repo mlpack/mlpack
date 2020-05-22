@@ -1,5 +1,5 @@
 /**
- * @file camel_case.hpp
+ * @file bindings/go/camel_case.hpp
  * @author Yashwant Singh
  *
  * Given a C++ typename that may have template parameters, return stripped and

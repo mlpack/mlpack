@@ -1,5 +1,5 @@
 /**
- * @file cli_util.h
+ * @file bindings/go/mlpack/capi/cli_util.h
  * @author Yasmine Dumouchel
  * @author Yashwant Singh
  *

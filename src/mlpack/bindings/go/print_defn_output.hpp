@@ -1,5 +1,5 @@
 /**
- * @file print_defn_output.hpp
+ * @file bindings/go/print_defn_output.hpp
  * @author Yasmine Dumouchel
  *
  * Print the output for the definition in a Go binding .go file for a given
@@ -86,8 +86,8 @@ void PrintDefnOutput(
  * representing whether or not this is the only output parameter.
  *
  * @param d Parameter data struct.
- * @param input Pointer to size_t holding the indentation.
- * @param output Unused parameter.
+ * @param * (input) Pointer to size_t holding the indentation.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void PrintDefnOutput(const util::ParamData& d,

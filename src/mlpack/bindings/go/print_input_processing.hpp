@@ -1,5 +1,5 @@
 /**
- * @file print_input_processing.hpp
+ * @file bindings/go/print_input_processing.hpp
  * @author Yasmine Dumouchel
  *
  * Print input processing for a Go binding option.
@@ -314,7 +314,7 @@ void PrintInputProcessing(
  *
  * @param d Parameter data struct.
  * @param input Pointer to size_t holding the indentation.
- * @param output Unused parameter.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void PrintInputProcessing(const util::ParamData& d,

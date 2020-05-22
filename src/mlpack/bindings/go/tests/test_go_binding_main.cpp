@@ -1,5 +1,5 @@
 /**
- * @file julia_binding_test.cpp
+ * @file bindings/go/tests/test_go_binding_main.cpp
  * @author Yashwant Singh
  *
  * A binding test for Golang.

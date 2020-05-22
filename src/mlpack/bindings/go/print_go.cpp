@@ -1,5 +1,5 @@
 /**
- * @file print_go.cpp
+ * @file bindings/go/print_go.cpp
  * @author Yasmine Dumouchel
  *
  * Implementation of function to generate a .go file given a list of parameters
@@ -27,7 +27,6 @@ namespace go {
  * Given a list of parameter definition and program documentation, print a
  * generated .go file to stdout.
  *
- * @param parameters List of parameters the program will use (from CLI).
  * @param programInfo Documentation for the program.
  * @param functionName Name of the function (i.e. "pca").
  */
