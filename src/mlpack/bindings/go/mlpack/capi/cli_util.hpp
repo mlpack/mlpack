@@ -1,5 +1,5 @@
 /**
- * @file cli_util.hpp
+ * @file bindings/go/mlpack/capi/cli_util.hpp
  * @author Yasmine Dumouchel
  * @author Yashwant Singh
  *
@@ -36,7 +36,6 @@ inline void SetParam(const std::string& identifier, T& value)
  *
  * @param identifier Name of parameter.
  * @param value Value to set parameter to.
- * @param copy Whether or not the object should be copied.
  */
 template<typename T>
 inline void SetParamPtr(const std::string& identifier,

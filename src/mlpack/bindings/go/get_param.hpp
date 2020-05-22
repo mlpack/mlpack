@@ -1,5 +1,5 @@
 /**
- * @file get_param.hpp
+ * @file bindings/go/get_param.hpp
  * @author Yashwant Singh
  *
  * Get a parameter for a Go binding.

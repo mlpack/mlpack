@@ -1,5 +1,5 @@
 /*
- * @file generate_go_${PROGRAM_NAME}.cpp
+ * @file bindings/go/generate_go_${PROGRAM_NAME}.cpp
  * @author Yasmine Dumouchel
  *
  * This is an automatically-generated file that is used to generate the .go

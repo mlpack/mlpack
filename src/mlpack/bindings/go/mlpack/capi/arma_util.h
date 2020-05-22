@@ -1,5 +1,5 @@
 /**
- * @file arma_util.h
+ * @file bindings/go/mlpack/capi/arma_util.h
  * @author Yasmine Dumouchl
  * @author Yashwant Singh
  *

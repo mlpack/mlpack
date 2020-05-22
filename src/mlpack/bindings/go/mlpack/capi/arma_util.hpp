@@ -1,5 +1,5 @@
 /**
- * @file arma_util.hpp
+ * @file bindings/go/mlpack/capi/arma_util.hpp
  * @author Ryan Curtin
  *
  * Utility function for Go to get memory pointer of an Armadillo Object.

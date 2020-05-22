@@ -1,5 +1,5 @@
 /**
- * @file get_go_type.hpp
+ * @file bindings/go/get_go_type.hpp
  * @author Yasmine Dumouchel
  * @author Yashwant Singh
  *

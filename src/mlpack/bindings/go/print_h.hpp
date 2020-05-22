@@ -1,5 +1,5 @@
 /**
- * @file print_h.hpp
+ * @file bindings/go/print_h.hpp
  * @author Yasmine Dumouchel
  *
  * Given a list of ParamData structures, emit a .h file defining the
@@ -23,7 +23,6 @@ namespace go {
  * Given a list of parameter definition and program documentation, print a
  * generated .h file to stdout.
  *
- * @param parameters List of parameters the program will use (from CLI).
  * @param programInfo Documentation for the program.
  * @param functionName Name of the function (i.e. "pca").
  */

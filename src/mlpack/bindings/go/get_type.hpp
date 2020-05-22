@@ -1,5 +1,5 @@
 /**
- * @file get_type.hpp
+ * @file bindings/go/get_type.hpp
  * @author Yasmine Dumouchel
  *
  * Template metaprogramming to return the string representation of the type
@@ -132,8 +132,8 @@ inline std::string GetType(
  * what's returned isn't exactly the Go native type used for that parameter
  * type.
  *
- * @param data Parameter data struct.
- * @param input Unused parameter.
+ * @param d Parameter data struct.
+ * @param * (input) Unused parameter.
  * @param output Output storage for the string.
  */
 template<typename T>

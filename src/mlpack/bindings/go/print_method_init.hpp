@@ -1,5 +1,5 @@
 /**
- * @file print_method_init.hpp
+ * @file bindings/go/print_method_init.hpp
  * @author Yasmine Dumouchel
  *
  * Print a config struct initialization function for the optional
@@ -186,7 +186,7 @@ void PrintMethodInit(
  *
  * @param d Parameter data struct.
  * @param input Pointer to size_t holding the indentation.
- * @param output Unused parameter.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void PrintMethodInit(const util::ParamData& d,

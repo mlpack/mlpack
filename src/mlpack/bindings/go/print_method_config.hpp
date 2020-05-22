@@ -1,5 +1,5 @@
 /**
- * @file print_method_config.hpp
+ * @file bindings/go/print_method_config.hpp
  * @author Yashwant Singh
  *
  * Print configuration struct for optional parameter type of a method for a
@@ -164,7 +164,7 @@ void PrintMethodConfig(
  *
  * @param d Parameter data struct.
  * @param input Pointer to size_t holding the indentation.
- * @param output Unused parameter.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void PrintMethodConfig(const util::ParamData& d,

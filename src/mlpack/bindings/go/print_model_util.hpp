@@ -1,5 +1,5 @@
 /**
- * @file print_model_util.hpp
+ * @file bindings/go/print_model_util.hpp
  * @author Yasmine Dumouchel
  *
  * Print the functions and structs associated with serializable model.
@@ -73,12 +73,12 @@ void PrintModelUtilCPP(
   /**
    * This gives us code like:
    *
-   *  extern "C" void mlpackSet<Type>Ptr(
+   *  extern "C" void mlpackSet\<Type\>Ptr(
    *                 const char* identifier,
    *                 void *value)
    *  {
-   *    SetParamPtr<Type>(identifier,
-   *                      static_cast<Type<T>*(value));
+   *    SetParamPtr\<Type\>(identifier,
+   *                      static_cast\<Type\>*(value));
    *  }
    *
    */
@@ -97,9 +97,9 @@ void PrintModelUtilCPP(
   /**
    * This gives us code like:
    *
-   *  extern "C" void *mlpackGet<Type>Ptr(const char* identifier)
+   *  extern "C" void *mlpackGet\<Type\>Ptr(const char* identifier)
    *  {
-   *    <Type> *modelptr = GetParamPtr<Type>(identifier);
+   *    \<Type\> *modelptr = GetParamPtr\<Type\>(identifier);
    *    return modelptr;
    *  }
    *
@@ -118,8 +118,8 @@ void PrintModelUtilCPP(
  * Print the function to set and get serialization models from Go to mlpack.
  *
  * @param d Parameter data.
- * @param input Unused parameter.
- * @param output Unused parameter.
+ * @param * (input) Unused parameter.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void PrintModelUtilCPP(const util::ParamData& d,
@@ -186,7 +186,7 @@ void PrintModelUtilH(
   /**
    * This gives us code like:
    *
-   *  extern void *mlpackSet<Type>Ptr(const char* identifier, void* value);
+   *  extern void *mlpackSet\<Type\>Ptr(const char* identifier, void* value);
    *
    */
   std::cout << "extern void mlpackSet" << strippedType
@@ -196,7 +196,7 @@ void PrintModelUtilH(
   /**
    * This gives us code like:
    *
-   *  extern void *mlpackGet<Type>Ptr(const char* identifier);
+   *  extern void *mlpackGet\<Type\>Ptr(const char* identifier);
    *
    */
   std::cout << "extern void *mlpackGet" << strippedType
@@ -208,8 +208,8 @@ void PrintModelUtilH(
  * Print the function to set and get serialization models from Go to mlpack.
  *
  * @param d Parameter data.
- * @param input Unused parameter.
- * @param output Unused parameter.
+ * @param * (input) Unused parameter.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void PrintModelUtilH(const util::ParamData& d,
@@ -274,7 +274,7 @@ void PrintModelUtilGo(
   /**
    * This gives us code like:
    *
-   *  type <Type> struct {
+   *  type \<Type\> struct {
    *    mem unsafe.Pointer
    *  }
    *
@@ -287,8 +287,8 @@ void PrintModelUtilGo(
   /**
    * This gives us code like:
    *
-   *  func (m *<Type>) alloc<Type>(identifier string) {
-   *    m.mem = C.mlpackGet<Type>Ptr(C.CString(identifier))
+   *  func (m *\<Type\>) alloc\<Type\>(identifier string) {
+   *    m.mem = C.mlpackGet\<Type\>Ptr(C.CString(identifier))
    *    runtime.KeepAlive(m)
    *  }
    *
@@ -304,8 +304,8 @@ void PrintModelUtilGo(
   /**
    * This gives us code like:
    *
-   *  func (m *<Type>) get<Type>(identifier string) {
-   *    m.alloc<Type>(identifier)
+   *  func (m *\<Type\>) get\<Type\>(identifier string) {
+   *    m.alloc\<Type\>(identifier)
    *  }
    *
    */
@@ -331,8 +331,8 @@ void PrintModelUtilGo(
  * set and get methods.
  *
  * @param d Parameter data.
- * @param input Unused parameter.
- * @param output Unused parameter.
+ * @param * (input) Unused parameter.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void PrintModelUtilGo(const util::ParamData& d,

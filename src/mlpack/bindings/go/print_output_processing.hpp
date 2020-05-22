@@ -1,5 +1,5 @@
 /**
- * @file print_output_processing.hpp
+ * @file bindings/go/print_output_processing.hpp
  * @author Yasmine Dumouchel
  *
  * Print the output processing in a Go binding .go file for a given
@@ -39,7 +39,7 @@ void PrintOutputProcessing(
   /**
    * This gives us code like:
    *
-   *  <paramName> := GetParam<Type>("paramName")
+   *  \<paramName\> := GetParam\<Type\>("paramName")
    *
    */
 
@@ -65,8 +65,8 @@ void PrintOutputProcessing(
   /**
    * This gives us code like:
    *
-   *  var <paramName>Ptr mlpackArma
-   *  <paramName> := <paramName>_ptr.ArmaToGonum_<Type>("paramName")
+   *  var \<paramName\>Ptr mlpackArma
+   *  \<paramName\> := \<paramName\>_ptr.ArmaToGonum_\<Type\>("paramName")
    *
    */
   std::string name = d.name;
@@ -91,8 +91,8 @@ void PrintOutputProcessing(
   /**
    * This gives us code like:
    *
-   *  var <paramName>_ptr mlpackArma
-   *  <paramName> := <paramName>Ptr.ArmaToGonumWithInfo<Type>("paramName")
+   *  var \<paramName\>_ptr mlpackArma
+   *  \<paramName\> := \<paramName\>Ptr.ArmaToGonumWithInfo\<Type\>("paramName")
    *
    */
   std::string name = d.name;
@@ -121,8 +121,8 @@ void PrintOutputProcessing(
   /**
    * This gives us code like:
    *
-   *  var modelOut <Type>
-   *  modelOut.get<Type>("paramName")
+   *  var modelOut \<Type\>
+   *  modelOut.get\<Type\>("paramName")
    *
    */
 
@@ -135,8 +135,8 @@ void PrintOutputProcessing(
 
 /**
  * @param d Parameter data struct.
- * @param input Unused parameter.
- * @param output Unused parameter.
+ * @param * (input) Unused parameter.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void PrintOutputProcessing(const util::ParamData& d,

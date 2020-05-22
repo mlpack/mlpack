@@ -1,5 +1,5 @@
 /**
- * @file strip_type.hpp
+ * @file bindings/go/strip_type.hpp
  * @author Yasmine Dumouchel
  *
  * Given a C++ typename that may have template parameters, return stripped and
@@ -25,7 +25,7 @@ namespace go {
  * template parameters (e.g. "LogisticRegression"), printedType will be a
  * printable type with the template parameters (e.g. "LogisticRegression<>"),
  * and defaultsType will be a printable type with a default template parameter
- * (e.g. "LogisticRegression<T>") that can be used for class definitions.
+ * (e.g. "LogisticRegression\<T\>") that can be used for class definitions.
  */
 inline void StripType(const std::string& inputType,
                       std::string& goStrippedType,
