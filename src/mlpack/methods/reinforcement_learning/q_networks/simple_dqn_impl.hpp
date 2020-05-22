@@ -40,11 +40,11 @@ SimpleDQN<OutputLayerType, InitializationRuleType>::SimpleDQN(
     const size_t h2,
     const size_t outputDim)
 {
-  network.Add<Linear<>>(inputDim, h1);
-  network.Add<ReLULayer<>>();
-  network.Add<Linear<>>(h1, h2);
-  network.Add<ReLULayer<>>();
-  network.Add<Linear<>>(h2, outputDim);
+  network.Add(new Linear<>(inputDim, h1));
+  network.Add(new ReLULayer<>());
+  network.Add(new Linear<>(h1, h2));
+  network.Add(new ReLULayer<>());
+  network.Add(new Linear<>(h2, outputDim));
   this->ResetParameters();
 }
 
