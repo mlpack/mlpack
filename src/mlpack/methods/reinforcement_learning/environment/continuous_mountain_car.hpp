@@ -1,5 +1,5 @@
 /**
- * @file methods/reinforcement_learning/environment/continuous_mountain_car.hpp
+ * @file continuous_mountain_car.hpp
  * @author Rohan Raj
  * @author Shashank Shekhar
  *
@@ -19,6 +19,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/clamp.hpp>
+#include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
 namespace rl {
@@ -86,7 +87,35 @@ class ContinuousMountainCar
   {
     double action[1];
     // Storing degree of freedom
-    const int size = 1;
+    static constexpr int size = 1;
+
+      Action() = default;
+
+      Action(const arma::colvec& actionValue)
+      {
+          std::copy(actionValue.begin(), actionValue.end(), action);
+      }
+
+      arma::colvec data()
+      {
+          return arma::colvec(action,size);
+      }
+
+      static Action Sample()
+      {
+          Action r;
+
+          r.action[0]=math::Random()*2-1;//range: [-1,1]
+
+          return r;
+      }
+
+      static Action Zero()
+      {
+          Action r={};
+          std::fill(r.action, r.action + size, 0);
+          return r;
+      }
   };
 
   /**
@@ -140,7 +169,9 @@ class ContinuousMountainCar
     double force = math::ClampRange(action.action[0], -1.0, 1.0);
 
     // Update states.
-    nextState.Velocity() = state.Velocity() + force * duration - 0.0025 *
+    nextState.Velocity() = state.Velocity() + force * duration -
+            //0.0025 *
+            0.0014*//for the simulation to be theoretically able to reach the end goal, this value must be less than the value of duration
         std::cos(3 * state.Position());
     nextState.Velocity() = math::ClampRange(nextState.Velocity(),
       velocityMin, velocityMax);
@@ -159,7 +190,10 @@ class ContinuousMountainCar
     else if (done)
       return doneReward;
 
-    return std::pow(action.action[0], 2) * 0.1;
+    //std::cout<<"["<<force<<","<<nextState.Velocity()<<","<<nextState.Position()<<"]"<<std::endl;
+
+    auto r= std::pow(force, 2) * 0.1;
+    return r;
   }
 
   /**
