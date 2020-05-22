@@ -21,6 +21,9 @@
 
   * Add Non Maximal Supression (NMS) metric for bounding boxes (#2410).
 
+  * Fix `no_intercept` and probability computation for linear SVM bindings
+    (#2419).
+
 ### mlpack 3.3.1
 ###### 2020-04-29
   * Minor Julia and Python documentation fixes (#2373).

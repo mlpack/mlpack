@@ -727,4 +727,5 @@ if (PKG_CONFIG_FOUND)
 
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc"
       DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
+
 endif ()
