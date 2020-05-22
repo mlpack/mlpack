@@ -1,5 +1,5 @@
 /**
- * @file methods/reinforcement_learning/async_learning.hpp
+ * @file async_learning.hpp
  * @author Shangtong Zhang
  *
  * This file is the definition of AsyncLearning class,
@@ -16,6 +16,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include "worker/one_step_q_learning_worker.hpp"
+#include "worker/one_step_continuous_q_learning_worker.hpp"
 #include "worker/one_step_sarsa_worker.hpp"
 #include "worker/n_step_q_learning_worker.hpp"
 #include "training_config.hpp"
@@ -193,6 +194,17 @@ template <
   typename PolicyType
 >
 using OneStepQLearning = AsyncLearning<OneStepQLearningWorker<EnvironmentType,
+    NetworkType, UpdaterType, PolicyType>, EnvironmentType, NetworkType,
+    UpdaterType, PolicyType>;
+
+
+template <
+    typename EnvironmentType,
+    typename NetworkType,
+    typename UpdaterType,
+    typename PolicyType
+>
+using OneStepContinuousQLearning = AsyncLearning<OneStepContinuousQLearningWorker<EnvironmentType,
     NetworkType, UpdaterType, PolicyType>, EnvironmentType, NetworkType,
     UpdaterType, PolicyType>;
 
