@@ -1,18 +1,18 @@
 /**
- * @file greedy_policy.hpp
+ * @file exp_decaay_greedy_policy.hpp
  * @author Shangtong Zhang
  * @author Abhinav Sagar
  * @author Arsen Zahray
  *
- * This file is an implementation of epsilon greedy policy.
+ * This file is an implementation of epsilon greedy policy with exponential decay.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_RL_POLICY_GREEDY_POLICY_HPP
-#define MLPACK_METHODS_RL_POLICY_GREEDY_POLICY_HPP
+#ifndef MLPACK_METHODS_RL_POLICY_EXP_DECAY_GREEDY_POLICY_HPP
+#define MLPACK_METHODS_RL_POLICY_EXP_DECAY_GREEDY_POLICY_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <type_traits>
@@ -30,7 +30,7 @@ namespace rl {
  * @tparam EnvironmentType The reinforcement learning task.
  */
 template <typename EnvironmentType>
-class GreedyPolicy
+class ExponentiallyDecayingGreedyPolicy
 {
  public:
   //! Convenient typedef for action.
@@ -41,19 +41,15 @@ class GreedyPolicy
    *
    * @param initialEpsilon The initial probability to explore
    *        (select a random action).
-   * @param annealInterval The steps during which the probability to explore
-   *        will anneal.
    * @param minEpsilon Epsilon will never be less than this value.
-   * @param decayRate How much to change the model in response to the
-   *        estimated error each time the model weights are updated.
+   * @param decayRate at each step, probability of selecting random action will decrease by `1-decayRate`
    */
-  GreedyPolicy(const double initialEpsilon,
-               const size_t annealInterval,
+  ExponentiallyDecayingGreedyPolicy(const double initialEpsilon,
                const double minEpsilon,
-               const double decayRate = 1.0) :
+               const double decayRate = 1e-10) :
       epsilon(initialEpsilon),
       minEpsilon(minEpsilon),
-      delta(((initialEpsilon - minEpsilon) * decayRate) / annealInterval)
+      delta(1-decayRate)
   {
       //we are using static_cast in the Sample method. This means, we have to check at compile time that the ActionType can be used in this maner
       static_assert(std::is_enum<ActionType>::value, "ActionType must be an enum type. For non-enum types, use Cuntinuous policy");
@@ -68,19 +64,19 @@ class GreedyPolicy
    */
   ActionType Sample(const arma::colvec& actionValue, bool deterministic = false)
   {
-      // Select the action randomly.
-      if (!deterministic )
-      {
-          double exploration = math::Random();
-          if(exploration < epsilon)
-          {
-              return static_cast<ActionType>(math::RandInt(ActionType::size));
-          }
-      }
+    // Select the action randomly.
+    if (!deterministic )
+    {
+        double exploration = math::Random();
+        if(exploration < epsilon)
+        {
+            return static_cast<ActionType>(math::RandInt(ActionType::size));
+        }
+    }
 
-      // Select the action greedily.
-      return static_cast<ActionType>(
-              arma::as_scalar(arma::find(actionValue == actionValue.max(), 1)));
+    // Select the action greedily.
+    return static_cast<ActionType>(
+        arma::as_scalar(arma::find(actionValue == actionValue.max(), 1)));
   }
 
   /**
@@ -88,7 +84,7 @@ class GreedyPolicy
    */
   void Anneal()
   {
-    epsilon -= delta;
+    epsilon *= delta;
     epsilon = std::max(minEpsilon, epsilon);
   }
 
