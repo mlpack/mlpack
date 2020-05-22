@@ -91,10 +91,6 @@ class SimpleDQN
    * @param target The training target.
    * @param gradient The gradient.
    */
-<<<<<<< HEAD
-  void Backward(const arma::mat& state, arma::mat& target,
-      arma::mat& gradient)
-=======
   void Backward(const arma::mat& state,
                 const arma::mat& target,
                 arma::mat& gradient);
@@ -112,7 +108,6 @@ class SimpleDQN
   const arma::mat& Parameters() const { return network.Parameters(); }
   //! Modify the Parameters.
   arma::mat& Parameters() { return network.Parameters(); }
->>>>>>> 8e7600689... Seperate Files
 
  private:
   //! Locally-stored network.
