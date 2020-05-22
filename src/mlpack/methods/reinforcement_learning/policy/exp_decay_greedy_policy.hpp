@@ -1,5 +1,5 @@
 /**
- * @file exp_decaay_greedy_policy.hpp
+ * @file methods/reinforcement_learning/policy/exp_decay_greedy_policy.hpp
  * @author Shangtong Zhang
  * @author Abhinav Sagar
  * @author Arsen Zahray
