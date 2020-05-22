@@ -160,7 +160,7 @@ endif ()
 # recurse into methods/.  If not, this function is empty.
 post_markdown_setup()
 
-# Installing CMake Helper Files
+# Installing CMake Helper Files for mlpack-config.cmake
 
 include(${PROJECT_SOURCE_DIR}/CMake/CMakeExtras.cmake)
 
