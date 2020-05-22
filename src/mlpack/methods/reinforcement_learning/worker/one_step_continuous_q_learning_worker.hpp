@@ -34,9 +34,9 @@ template <
   typename UpdaterType,
   typename PolicyType
 >
-class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, NetworkType, UpdaterType, PolicyType, QLearningWorkerTransitionType<typename EnvironmentType::State,typename EnvironmentType::Action>>
+class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, NetworkType, UpdaterType, PolicyType, QLearningWorkerTransitionType<typename EnvironmentType::State,arma::colvec>>
 {
-    using base = WorkerBase< EnvironmentType, NetworkType, UpdaterType, PolicyType, QLearningWorkerTransitionType<typename EnvironmentType::State,typename EnvironmentType::Action>>;
+    using base = WorkerBase< EnvironmentType, NetworkType, UpdaterType, PolicyType, QLearningWorkerTransitionType<typename EnvironmentType::State,arma::colvec>>;
     //using qWorkerType = QLearningWorkerTransitionType<EnvironmentType>;
  public:
      using StateType = typename EnvironmentType::State;
@@ -155,7 +155,7 @@ class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, Netwo
     #pragma omp atomic
     totalSteps++;
 
-    this->pending[this->pendingIndex] = { this->state, action, reward, nextState };
+    this->pending[this->pendingIndex] = { this->state, action.data(), reward, nextState };
     this->pendingIndex++;
 
     if (terminal || this->pendingIndex >= this->config.UpdateInterval())
@@ -173,7 +173,7 @@ class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, Netwo
         arma::colvec actionValue;
         if (i<this->pending.size()-1)
         {
-            actionValue=this->pending[i+1].action.data();
+            actionValue=this->pending[i+1].action;
         }
         else
         {
