@@ -202,14 +202,14 @@ double QLearning<
   arma::mat gradients;
   learningNetwork.Backward(sampledStates, target, gradients);
 
-  replayMethod.Update(target, sampledActions, nextActionValues, gradients);
+  // replayMethod.Update(target, sampledActions, nextActionValues, gradients);
 
-  #if ENS_VERSION_MAJOR == 1
-  updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
-  #else
-  updatePolicy->Update(learningNetwork.Parameters(), config.StepSize(),
-      gradients);
-  #endif
+  // #if ENS_VERSION_MAJOR == 1
+  // updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
+  // #else
+  // updatePolicy->Update(learningNetwork.Parameters(), config.StepSize(),
+  //     gradients);
+  // #endif
 
   return reward;
 }

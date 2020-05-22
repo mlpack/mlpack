@@ -27,8 +27,11 @@ using namespace mlpack::ann;
 /**
  * @tparam NetworkType The type of network used for dueling dqn.
  */
-template <typename NetworkType = FFN<EmptyLoss<>,
-                                    GaussianInitialization>>
+template <
+  typename FeatureNetworkType = FFN<EmptyLoss<>, GaussianInitialization>,
+  typename AdvantageNetworkType = Sequential<>,
+  typename ValueNetworkType = Sequential<>
+>
 class DuelingDQN
 {
  public:
@@ -51,27 +54,38 @@ class DuelingDQN
             const int h2,
             const int outputDim):
       featureNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001)),
-      advantageNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001)),
-      valueNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001))
+      valueNetwork(),
+      advantageNetwork()
   {
-    featureNetwork.Add(new Linear<>(inputDim, h1));
-    featureNetwork.Add(new ReLULayer<>());
+    valueNetwork.Add(new Linear<>(h1, h2));
+    valueNetwork.Add(new ReLULayer<>());
+    valueNetwork.Add(new Linear<>(h2, 1));
 
     advantageNetwork.Add(new Linear<>(h1, h2));
     advantageNetwork.Add(new ReLULayer<>());
-    advantageNetwork.Add(new Linear<>(h2, outputDim));
+    advantageNetwork.Add(new Linear<>(h1, outputDim));
 
-    valueNetwork.Add(new Linear<>(h1, h2));
-    valueNetwork.Add(new Linear<>(h2, 1));
+    Concat<> concat = new Concat<>();
+    concat.Add<Sequential<>>(valueNetwork);
+    concat.Add<Sequential<>>(advantageNetwork);
+
+    featureNetwork.Add(new Linear<>(inputDim, h1));
+    featureNetwork.Add(new ReLULayer<>());
+    featureNetwork.Add(concat);
   }
 
-  DuelingDQN(NetworkType featureNetwork,
-             NetworkType advantageNetwork,
-             NetworkType valueNetwork):
+  DuelingDQN(FeatureNetworkType featureNetwork,
+             AdvantageNetworkType advantageNetwork,
+             ValueNetworkType valueNetwork):
       featureNetwork(std::move(featureNetwork)),
       advantageNetwork(std::move(advantageNetwork)),
       valueNetwork(std::move(valueNetwork))
-  { /* Nothing to do here. */ }
+  {
+    Concat<> concat = new Concat<>();
+    concat.Add<Sequential<>>(valueNetwork);
+    concat.Add<Sequential<>>(advantageNetwork);
+    featureNetwork.Add(concat);
+  }
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -86,11 +100,10 @@ class DuelingDQN
    */
   void Predict(const arma::mat state, arma::mat& actionValue)
   {
-    arma::mat features, advantage, value;
-    featureNetwork.Predict(state, features);
-    advantageNetwork.Predict(features, advantage);
-    valueNetwork.Predict(features, value);
-    actionValue = advantage.each_row() + (value - arma::mean(arma::mean(advantage)));
+    // arma::mat output, advantage, value;
+    // featureNetwork.Predict(state, output);
+    // actionValue = advantage.each_row() +
+    //     (value - arma::mean(arma::mean(advantage)));
   }
 
   /**
@@ -101,12 +114,12 @@ class DuelingDQN
    */
   void Forward(const arma::mat state, arma::mat& output)
   {
-    arma::mat advantage, value;
-    featureNetwork.Forward(state, features);
-    advantageNetwork.Forward(features, advantage);
-    valueNetwork.Forward(features, value);
-    output = advantage.each_row() + (value - arma::mean(arma::mean(advantage)));
-    networkOutput = output;
+    // arma::mat output, advantage, value;
+    // featureNetwork.Forward(state, output);
+    // actionValue = advantage.each_row() +
+    //     (value - arma::mean(arma::mean(advantage)));
+    
+    // networkOutput = output;
   }
 
   /**
@@ -118,16 +131,18 @@ class DuelingDQN
    */
   void Backward(const arma::mat state, arma::mat& target, arma::mat& gradient)
   {
-    arma::mat gradError;
-    lossFunction.Backward(networkOutput, target, gradError);
+    // arma::mat gradLoss;
+    // lossFunction.Backward(networkOutput, target, gradLoss);
 
-    arma::mat gradValue, gradAdvantage;
-    // valueNetwork.Backward(state, gradError, gradValue);
-    advantageNetwork.Backward(features, gradError, gradAdvantage);
+    // arma::mat gradValue, gradAdvantage;
+    // // valueNetwork.Backward(state, gradLoss, gradValue);
+    // advantageNetwork.Backward(features, gradLoss, gradAdvantage);
+    // std::cout << advantageNetwork.Model()[2];
+    // gradAdvantage = gradAdvantage.submat(0, 0, 1279, 0);
 
-    arma::mat gradSum;
-    gradSum = gradAdvantage; // + gradValue
-    featureNetwork.Backward(state, gradSum, gradient);
+    // arma::mat gradSum;
+    // gradSum = gradAdvantage; // + gradValue
+    // featureNetwork.Backward(state, gradSum, gradient);
   }
 
   /**
@@ -147,13 +162,13 @@ class DuelingDQN
 
  private:
   //! Locally-stored feature network.
-  NetworkType featureNetwork;
+  FeatureNetworkType featureNetwork;
 
   //! Locally-stored advantage network.
-  NetworkType advantageNetwork;
+  AdvantageNetworkType advantageNetwork;
 
   //! Locally-stored value network.
-  NetworkType valueNetwork;
+  ValueNetworkType valueNetwork;
 
   //! Locally-stored value network.
   arma::mat networkOutput;
