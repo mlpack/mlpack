@@ -48,22 +48,22 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(
 
 template <typename InputDataType, typename OutputDataType>
 FastLSTM<InputDataType, OutputDataType>::FastLSTM(
-    const FastLSTM& network) :
-    inSize(network.inSize),
-    outSize(network.outSize),
-    rho(network.rho),
-    grad(network.grad),
-    forwardStep(network.forwardStep),
-    backwardStep(network.backwardStep),
-    gradientStep(network.gradientStep),
-    batchSize(network.batchSize),
-    batchStep(network.batchStep),
-    gradientStepIdx(network.gradientStepIdx),
-    rhoSize(network.rho),
-    bpttSteps(network.bpttSteps),
-    input2GateWeight(network.input2GateWeight),
-    input2GateBias(network.input2GateBias),
-    output2GateWeight(network.output2GateWeight)
+    const FastLSTM& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    rho(layer.rho),
+    grad(layer.grad),
+    forwardStep(layer.forwardStep),
+    backwardStep(layer.backwardStep),
+    gradientStep(layer.gradientStep),
+    batchSize(layer.batchSize),
+    batchStep(layer.batchStep),
+    gradientStepIdx(layer.gradientStepIdx),
+    rhoSize(layer.rho),
+    bpttSteps(layer.bpttSteps),
+    input2GateWeight(layer.input2GateWeight),
+    input2GateBias(layer.input2GateBias),
+    output2GateWeight(layer.output2GateWeight)
 {
   // Weights for: input to gate layer (4 * outsize * inSize + 4 * outsize)
   // and output to gate (4 * outSize).

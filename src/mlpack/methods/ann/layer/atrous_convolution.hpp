@@ -318,12 +318,6 @@ class AtrousConvolution
     output = arma::fliplr(arma::flipud(input));
   }
 
-  //! Locally-stored number of padding width.
-  std::tuple<size_t, size_t> padW;
-
-  //! Locally-stored number of padding height.
-  std::tuple<size_t, size_t> padH;
-
   //! Locally-stored number of input channels.
   size_t inSize;
 
@@ -383,9 +377,6 @@ class AtrousConvolution
 
   //! Locally-stored transformed gradient parameter.
   arma::cube gradientTemp;
-
-  //! Locally-stored paddingType
-  std::string paddingType;
 
   //! Locally-stored padding layer.
   ann::Padding<> padding;

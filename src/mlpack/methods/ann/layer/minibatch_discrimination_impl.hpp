@@ -46,12 +46,12 @@ MiniBatchDiscrimination<InputDataType, OutputDataType
 template <typename InputDataType, typename OutputDataType>
 MiniBatchDiscrimination<InputDataType, OutputDataType
 >::MiniBatchDiscrimination(
-    const MiniBatchDiscrimination& network) :
-    A(network.A),
-    B(network.B),
-    C(network.C),
-    batchSize(network.batchSize),
-    weight(network.weight)
+    const MiniBatchDiscrimination& layer) :
+    A(layer.A),
+    B(layer.B),
+    C(layer.C),
+    batchSize(layer.batchSize),
+    weight(layer.weight)
 {
   weights.set_size(A * B * C, 1);
 }

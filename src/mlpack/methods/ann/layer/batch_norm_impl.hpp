@@ -33,14 +33,14 @@ BatchNorm<InputDataType, OutputDataType>::BatchNorm() :
 
 template<typename InputDataType, typename OutputDataType>
 BatchNorm<InputDataType, OutputDataType>::BatchNorm(
-  const BatchNorm& network) :
-    size(network.size),
-    eps(network.eps),
-    loading(network.loading),
-    deterministic(network.deterministic),
-    count(network.count),
-    gamma(network.gamma),
-    beta(network.beta)
+  const BatchNorm& layer) :
+    size(layer.size),
+    eps(layer.eps),
+    loading(layer.loading),
+    deterministic(layer.deterministic),
+    count(layer.count),
+    gamma(layer.gamma),
+    beta(layer.beta)
 {
   weights.set_size(size + size, 1);
   runningMean.zeros(size, 1);

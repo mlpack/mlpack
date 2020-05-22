@@ -154,45 +154,28 @@ Convolution<
     InputDataType,
     OutputDataType
 >::Convolution(
-    const Convolution& network) :
-    inSize(network.inSize),
-    outSize(network.outSize),
-    kernelWidth(network.kernelWidth),
-    kernelHeight(network.kernelHeight),
-    strideWidth(network.strideWidth),
-    strideHeight(network.strideHeight),
-    padWLeft(network.padWLeft),
-    padWRight(network.padWRight),
-    padHBottom(network.padHBottom),
-    padHTop(network.padHTop),
-    inputWidth(network.inputWidth),
-    inputHeight(network.inputHeight),
-    outputWidth(network.outputWidth),
-    outputHeight(network.outputHeight),
-    paddingType(network.paddingType),
-    weight(network.weight),
-    bias(network.bias)
+    const Convolution& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    kernelWidth(layer.kernelWidth),
+    kernelHeight(layer.kernelHeight),
+    strideWidth(layer.strideWidth),
+    strideHeight(layer.strideHeight),
+    padWLeft(layer.padWLeft),
+    padWRight(layer.padWRight),
+    padHBottom(layer.padHBottom),
+    padHTop(layer.padHTop),
+    inputWidth(layer.inputWidth),
+    inputHeight(layer.inputHeight),
+    outputWidth(layer.outputWidth),
+    outputHeight(layer.outputHeight),
+    paddingType(layer.paddingType),
+    weight(layer.weight),
+    bias(layer.bias),
+    padding(layer.padding)
 {
   weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
       1);
-
-  // Transform paddingType to lowercase.
-  std::string paddingTypeLow = paddingType;
-  util::ToLower(paddingType, paddingTypeLow);
-
-  if (paddingTypeLow == "valid")
-  {
-    padWLeft = 0;
-    padWRight = 0;
-    padHTop = 0;
-    padHBottom = 0;
-  }
-  else if (paddingTypeLow == "same")
-  {
-    InitializeSamePadding();
-  }
-
-  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 }
 
 template<

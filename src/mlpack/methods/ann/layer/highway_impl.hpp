@@ -40,26 +40,26 @@ Highway<InputDataType, OutputDataType, CustomLayers...>::Highway() :
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 Highway<InputDataType, OutputDataType, CustomLayers...>::Highway(
-  const Highway& network) :
-    inSize(network.inSize),
-    model(network.model),
-    reset(network.reset),
-    width(network.width),
-    height(network.height),
-    transformWeight(network.transformWeight),
-    transformBias(network.transformBias),
-    transformGateActivation(network.transformGateActivation),
-    transformGateError(network.transformGateError),
-    networkOwnerships(network.networkOwnerships),
-    networkOutput(network.networkOutput)
+  const Highway& layer) :
+    inSize(layer.inSize),
+    model(layer.model),
+    reset(layer.reset),
+    width(layer.width),
+    height(layer.height),
+    transformWeight(layer.transformWeight),
+    transformBias(layer.transformBias),
+    transformGateActivation(layer.transformGateActivation),
+    transformGateError(layer.transformGateError),
+    networkOwnerships(layer.networkOwnerships),
+    networkOutput(layer.networkOutput)
 {
   weights.set_size(inSize * inSize + inSize, 1);
-  for (size_t i = 0; i < network.network.size(); ++i)
+  for (size_t i = 0; i < layer.network.size(); ++i)
   {
-    if (network.networkOwnerships[i])
+    if (layer.networkOwnerships[i])
     {
       this->network.push_back(boost::apply_visitor(copyVisitor,
-          network.network[i]));
+          layer.network[i]));
     }
   }
 }

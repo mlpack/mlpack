@@ -31,11 +31,11 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization() :
 
 template<typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>::Reparametrization(
-  const Reparametrization& network) :
-    latentSize(network.latentSize),
-    stochastic(network.stochastic),
-    includeKl(network.includeKl),
-    beta(network.beta)
+  const Reparametrization& layer) :
+    latentSize(layer.latentSize),
+    stochastic(layer.stochastic),
+    includeKl(layer.includeKl),
+    beta(layer.beta)
 {
   // Nothing to do here.
 }

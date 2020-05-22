@@ -31,11 +31,11 @@ LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias() :
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias(
-  const LinearNoBias& network) :
-    inSize(network.inSize),
-    outSize(network.outSize),
-    regularizer(network.regularizer),
-    weight(network.weight)
+  const LinearNoBias& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    regularizer(layer.regularizer),
+    weight(layer.weight)
 {
   weights.set_size(outSize * inSize, 1);
 }

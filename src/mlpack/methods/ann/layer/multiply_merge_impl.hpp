@@ -35,10 +35,10 @@ MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::MultiplyMerge(
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::MultiplyMerge(
-    const MultiplyMerge& network) :
-    model(network.model),
-    run(network.run),
-    ownsLayer(network.ownsLayer)
+    const MultiplyMerge& layer) :
+    model(layer.model),
+    run(layer.run),
+    ownsLayer(layer.ownsLayer)
 {
   // Nothing to do here.
 }

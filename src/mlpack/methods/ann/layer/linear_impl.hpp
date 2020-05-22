@@ -31,12 +31,12 @@ Linear<InputDataType, OutputDataType, RegularizerType>::Linear() :
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
-  const Linear& network) :
-    inSize(network.inSize),
-    outSize(network.outSize),
-    regularizer(network.regularizer),
-    weight(network.weight),
-    bias(network.bias)
+  const Linear& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    regularizer(layer.regularizer),
+    weight(layer.weight),
+    bias(layer.bias)
 {
   weights.set_size(outSize * inSize + outSize, 1);
 }

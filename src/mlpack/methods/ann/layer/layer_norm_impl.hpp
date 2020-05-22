@@ -30,12 +30,12 @@ LayerNorm<InputDataType, OutputDataType>::LayerNorm() :
 }
 
 template<typename InputDataType, typename OutputDataType>
-LayerNorm<InputDataType, OutputDataType>::LayerNorm(const LayerNorm& network) :
-    size(network.size),
-    eps(network.eps),
-    loading(network.loading),
-    gamma(network.gamma),
-    beta(network.beta)
+LayerNorm<InputDataType, OutputDataType>::LayerNorm(const LayerNorm& layer) :
+    size(layer.size),
+    eps(layer.eps),
+    loading(layer.loading),
+    gamma(layer.gamma),
+    beta(layer.beta)
 {
   weights.set_size(size + size, 1);
 }

@@ -32,10 +32,10 @@ Constant<InputDataType, OutputDataType>::Constant(
 
 template<typename InputDataType, typename OutputDataType>
 Constant<InputDataType, OutputDataType>::Constant(
-    const Constant& network) :
-    inSize(network.inSize),
-    outSize(network.outSize),
-    constantOutput(network.constantOutput)
+    const Constant& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    constantOutput(layer.constantOutput)
 {
   // Nothing to do here.
 }

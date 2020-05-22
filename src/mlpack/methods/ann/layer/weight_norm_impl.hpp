@@ -40,13 +40,13 @@ WeightNorm<InputDataType, OutputDataType, CustomLayers...>::WeightNorm(
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 WeightNorm<InputDataType, OutputDataType, CustomLayers...>::WeightNorm(
-    const WeightNorm& network) :
-    layerWeightSize(network.layerWeightSize),
-    biasWeightSize(network.biasWeightSize),
-    vectorParameter(network.vectorParameter),
-    scalarParameter(network.scalarParameter),
-    layerWeights(network.layerWeights),
-    layerGradients(network.layerGradients)
+    const WeightNorm& layer) :
+    layerWeightSize(layer.layerWeightSize),
+    biasWeightSize(layer.biasWeightSize),
+    vectorParameter(layer.vectorParameter),
+    scalarParameter(layer.scalarParameter),
+    layerWeights(layer.layerWeights),
+    layerGradients(layer.layerGradients)
 {
   weights.set_size(layerWeightSize + 1, 1);
 }

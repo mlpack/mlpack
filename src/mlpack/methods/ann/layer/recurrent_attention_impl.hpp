@@ -42,15 +42,15 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 RecurrentAttention<InputDataType, OutputDataType, CustomLayers...>::
 RecurrentAttention(
-    const RecurrentAttention& network) :
-    outSize(network.outSize),
-    rho(network.rho),
-    forwardStep(network.forwardStep),
-    backwardStep(network.backwardStep),
-    deterministic(network.deterministic)
+    const RecurrentAttention& layer) :
+    outSize(layer.outSize),
+    rho(layer.rho),
+    forwardStep(layer.forwardStep),
+    backwardStep(layer.backwardStep),
+    deterministic(layer.deterministic)
 {
-  rnnModule = boost::apply_visitor(copyVisitor, network.rnnModule);
-  actionModule = boost::apply_visitor(copyVisitor, network.actionModule);
+  rnnModule = boost::apply_visitor(copyVisitor, layer.rnnModule);
+  actionModule = boost::apply_visitor(copyVisitor, layer.actionModule);
 
   this->network.push_back(rnnModule);
   this->network.push_back(actionModule);

@@ -44,10 +44,10 @@ AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
-    const AddMerge& network) :
-    model(network.model),
-    run(network.run),
-    ownsLayers(network.ownsLayers)
+    const AddMerge& layer) :
+    model(layer.model),
+    run(layer.run),
+    ownsLayers(layer.ownsLayers)
 {
   // Nothing to do here.
 }

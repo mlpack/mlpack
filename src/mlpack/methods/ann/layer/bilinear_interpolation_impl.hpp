@@ -53,13 +53,13 @@ BilinearInterpolation(
 
 template<typename InputDataType, typename OutputDataType>
 BilinearInterpolation<InputDataType, OutputDataType>::
-BilinearInterpolation(const BilinearInterpolation& network):
-    inRowSize(network.inRowSize),
-    inColSize(network.inColSize),
-    outRowSize(network.outRowSize),
-    outColSize(network.outColSize),
-    depth(network.depth),
-    batchSize(network.batchSize)
+BilinearInterpolation(const BilinearInterpolation& layer):
+    inRowSize(layer.inRowSize),
+    inColSize(layer.inColSize),
+    outRowSize(layer.outRowSize),
+    outColSize(layer.outColSize),
+    depth(layer.depth),
+    batchSize(layer.batchSize)
 {
   // Nothing to do here.
 }

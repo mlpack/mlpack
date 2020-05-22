@@ -26,32 +26,32 @@ LSTM<InputDataType, OutputDataType>::LSTM()
 
 template <typename InputDataType, typename OutputDataType>
 LSTM<InputDataType, OutputDataType>::LSTM(
-    const LSTM& network) :
-    inSize(network.inSize),
-    outSize(network.outSize),
-    rho(network.rho),
-    forwardStep(network.forwardStep),
-    backwardStep(network.backwardStep),
-    gradientStep(network.gradientStep),
-    batchSize(network.batchSize),
-    batchStep(network.batchStep),
-    rhoSize(network.rhoSize),
-    bpttSteps(network.bpttSteps),
-    input2GateOutputWeight(network.input2GateOutputWeight),
-    input2GateOutputBias(network.input2GateOutputBias),
-    input2GateForgetWeight(network.input2GateForgetWeight),
-    input2GateForgetBias(network.input2GateForgetBias),
-    input2GateInputWeight(network.input2GateInputWeight),
-    input2GateInputBias(network.input2GateInputBias),
-    input2HiddenWeight(network.input2HiddenWeight),
-    input2HiddenBias(network.input2HiddenBias),
-    output2GateOutputWeight(network.output2GateOutputWeight),
-    output2GateForgetWeight(network.output2GateForgetWeight),
-    output2GateInputWeight(network.output2GateInputWeight),
-    output2HiddenWeight(network.output2HiddenWeight),
-    cell2GateOutputWeight(network.cell2GateOutputWeight),
-    cell2GateForgetWeight(network.cell2GateForgetWeight),
-    cell2GateInputWeight(network.cell2GateInputWeight)
+    const LSTM& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    rho(layer.rho),
+    forwardStep(layer.forwardStep),
+    backwardStep(layer.backwardStep),
+    gradientStep(layer.gradientStep),
+    batchSize(layer.batchSize),
+    batchStep(layer.batchStep),
+    rhoSize(layer.rhoSize),
+    bpttSteps(layer.bpttSteps),
+    input2GateOutputWeight(layer.input2GateOutputWeight),
+    input2GateOutputBias(layer.input2GateOutputBias),
+    input2GateForgetWeight(layer.input2GateForgetWeight),
+    input2GateForgetBias(layer.input2GateForgetBias),
+    input2GateInputWeight(layer.input2GateInputWeight),
+    input2GateInputBias(layer.input2GateInputBias),
+    input2HiddenWeight(layer.input2HiddenWeight),
+    input2HiddenBias(layer.input2HiddenBias),
+    output2GateOutputWeight(layer.output2GateOutputWeight),
+    output2GateForgetWeight(layer.output2GateForgetWeight),
+    output2GateInputWeight(layer.output2GateInputWeight),
+    output2HiddenWeight(layer.output2HiddenWeight),
+    cell2GateOutputWeight(layer.cell2GateOutputWeight),
+    cell2GateForgetWeight(layer.cell2GateForgetWeight),
+    cell2GateInputWeight(layer.cell2GateInputWeight)
 {
     weights.set_size(4 * outSize * inSize + 7 * outSize +
         4 * outSize * outSize, 1);

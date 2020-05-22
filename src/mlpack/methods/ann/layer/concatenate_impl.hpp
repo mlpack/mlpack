@@ -27,9 +27,9 @@ Concatenate<InputDataType, OutputDataType>::Concatenate()
 
 template<typename InputDataType, typename OutputDataType>
 Concatenate<InputDataType, OutputDataType>::Concatenate(
-  const Concatenate& network) :
-  inRows(network.inRows),
-  concat(network.concat)
+  const Concatenate& layer) :
+  inRows(layer.inRows),
+  concat(layer.concat)
 {
   // Nothing to do here.
 }

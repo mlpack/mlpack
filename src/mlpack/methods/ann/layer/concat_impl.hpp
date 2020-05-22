@@ -39,12 +39,12 @@ Concat<InputDataType, OutputDataType, CustomLayers...>::Concat(
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 Concat<InputDataType, OutputDataType, CustomLayers...>::Concat(
-    const Concat& network) :
-    inputSize(network.inputSize),
-    axis(network.axis),
-    useAxis(network.useAxis),
-    model(network.model),
-    run(network.run)
+    const Concat& layer) :
+    inputSize(layer.inputSize),
+    axis(layer.axis),
+    useAxis(layer.useAxis),
+    model(layer.model),
+    run(layer.run)
 {
   parameters.set_size(0, 0);
 

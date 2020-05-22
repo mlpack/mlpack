@@ -53,22 +53,22 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
 
 template<typename InputDataType, typename OutputDataType>
 MeanPooling<InputDataType, OutputDataType>::MeanPooling(
-    const MeanPooling& network) :
-    kernelWidth(network.kernelWidth),
-    kernelHeight(network.kernelHeight),
-    strideWidth(network.strideWidth),
-    strideHeight(network.strideHeight),
-    floor(network.floor),
-    inSize(network.inSize),
-    outSize(network.outSize),
-    reset(network.reset),
-    inputWidth(network.inputWidth),
-    inputHeight(network.inputHeight),
-    outputWidth(network.outputWidth),
-    outputHeight(network.outputHeight),
-    deterministic(network.deterministic),
-    offset(network.offset),
-    batchSize(network.batchSize)
+    const MeanPooling& layer) :
+    kernelWidth(layer.kernelWidth),
+    kernelHeight(layer.kernelHeight),
+    strideWidth(layer.strideWidth),
+    strideHeight(layer.strideHeight),
+    floor(layer.floor),
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    reset(layer.reset),
+    inputWidth(layer.inputWidth),
+    inputHeight(layer.inputHeight),
+    outputWidth(layer.outputWidth),
+    outputHeight(layer.outputHeight),
+    deterministic(layer.deterministic),
+    offset(layer.offset),
+    batchSize(layer.batchSize)
 {
   // Nothing to do here.
 }

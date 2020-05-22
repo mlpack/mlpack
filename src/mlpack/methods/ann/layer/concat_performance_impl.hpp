@@ -43,9 +43,9 @@ ConcatPerformance<
     OutputLayerType,
     InputDataType,
     OutputDataType
->::ConcatPerformance(const ConcatPerformance& network) :
-    inSize(network.inSize),
-    outputLayer(network.outputLayer)
+>::ConcatPerformance(const ConcatPerformance& layer) :
+    inSize(layer.inSize),
+    outputLayer(layer.outputLayer)
 {
   // Nothing to do here.
 }

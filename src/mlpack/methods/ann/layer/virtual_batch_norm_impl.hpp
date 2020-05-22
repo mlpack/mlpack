@@ -32,16 +32,16 @@ VirtualBatchNorm<InputDataType, OutputDataType>::VirtualBatchNorm() :
 
 template<typename InputDataType, typename OutputDataType>
 VirtualBatchNorm<InputDataType, OutputDataType>::VirtualBatchNorm(
-  const VirtualBatchNorm& network) :
-    size(network.size),
-    eps(network.eps),
-    loading(network.loading),
-    referenceBatchMean(network.referenceBatchMean),
-    referenceBatchMeanSquared(network.referenceBatchMeanSquared),
-    newCoefficient(network.newCoefficient),
-    oldCoefficient(network.oldCoefficient),
-    gamma(network.gamma),
-    beta(network.beta)
+  const VirtualBatchNorm& layer) :
+    size(layer.size),
+    eps(layer.eps),
+    loading(layer.loading),
+    referenceBatchMean(layer.referenceBatchMean),
+    referenceBatchMeanSquared(layer.referenceBatchMeanSquared),
+    newCoefficient(layer.newCoefficient),
+    oldCoefficient(layer.oldCoefficient),
+    gamma(layer.gamma),
+    beta(layer.beta)
 {
   weights.set_size(size + size, 1);
 }

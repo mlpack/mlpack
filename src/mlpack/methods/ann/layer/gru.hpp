@@ -249,9 +249,6 @@ class GRU
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
-  //! Locally-stored copy visitor
-  CopyVisitor<CustomLayers...> copyVisitor;
 }; // class GRU
 
 } // namespace ann

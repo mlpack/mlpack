@@ -51,49 +51,25 @@ AtrousConvolution<
     InputDataType,
     OutputDataType
 >::AtrousConvolution(
-  const AtrousConvolution& network) :
-    inSize(network.inSize),
-    outSize(network.outSize),
-    kernelWidth(network.kernelWidth),
-    kernelHeight(network.kernelHeight),
-    strideWidth(network.strideWidth),
-    strideHeight(network.strideHeight),
-    inputWidth(network.inputWidth),
-    inputHeight(network.inputHeight),
-    outputWidth(network.outputWidth),
-    outputHeight(network.outputHeight),
-    dilationWidth(network.dilationWidth),
-    dilationHeight(network.dilationHeight),
-    weight(network.weight),
-    bias(network.bias),
-    paddingType(network.paddingType),
-    padH(network.padH),
-    padW(network.padW)
+  const AtrousConvolution& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    kernelWidth(layer.kernelWidth),
+    kernelHeight(layer.kernelHeight),
+    strideWidth(layer.strideWidth),
+    strideHeight(layer.strideHeight),
+    inputWidth(layer.inputWidth),
+    inputHeight(layer.inputHeight),
+    outputWidth(layer.outputWidth),
+    outputHeight(layer.outputHeight),
+    dilationWidth(layer.dilationWidth),
+    dilationHeight(layer.dilationHeight),
+    weight(layer.weight),
+    bias(layer.bias),
+    padding(layer.padding)
 {
   weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
       1);
-
-  // Transform paddingType to lowercase.
-  std::string paddingTypeLow = paddingType;
-  util::ToLower(paddingType, paddingTypeLow);
-
-  size_t padWLeft = std::get<0>(padW);
-  size_t padWRight = std::get<1>(padW);
-  size_t padHTop = std::get<0>(padH);
-  size_t padHBottom = std::get<1>(padH);
-  if (paddingTypeLow == "valid")
-  {
-    padWLeft = 0;
-    padWRight = 0;
-    padHTop = 0;
-    padHBottom = 0;
-  }
-  else if (paddingTypeLow == "same")
-  {
-    InitializeSamePadding(padWLeft, padWRight, padHTop, padHBottom);
-  }
-
-  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 }
 
 template<
@@ -135,8 +111,7 @@ AtrousConvolution<
       inputWidth,
       inputHeight,
       dilationWidth,
-      dilationHeight,
-      paddingType)
+      dilationHeight)
 {
   // Nothing to do here.
 }
@@ -179,10 +154,7 @@ AtrousConvolution<
     outputWidth(0),
     outputHeight(0),
     dilationWidth(dilationWidth),
-    dilationHeight(dilationHeight),
-    paddingType(paddingType),
-    padH(padH),
-    padW(padW)
+    dilationHeight(dilationHeight)
 {
   weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
       1);

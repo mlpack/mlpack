@@ -31,11 +31,11 @@ Dropout<InputDataType, OutputDataType>::Dropout(
 
 template<typename InputDataType, typename OutputDataType>
 Dropout<InputDataType, OutputDataType>::Dropout(
-    const Dropout& network) :
-    ratio(network.ratio),
-    scale(network.scale),
-    deterministic(network.deterministic),
-    mask(network.mask)
+    const Dropout& layer) :
+    ratio(layer.ratio),
+    scale(layer.scale),
+    deterministic(layer.deterministic),
+    mask(layer.mask)
 {
   // Nothing to do here.
 }

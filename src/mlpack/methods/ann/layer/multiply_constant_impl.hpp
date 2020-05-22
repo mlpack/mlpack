@@ -28,8 +28,8 @@ MultiplyConstant<InputDataType, OutputDataType>::MultiplyConstant(
 
 template<typename InputDataType, typename OutputDataType>
 MultiplyConstant<InputDataType, OutputDataType>::MultiplyConstant(
-    const MultiplyConstant& network) :
-    scalar(network.scalar)
+    const MultiplyConstant& layer) :
+    scalar(layer.scalar)
 {
   // Nothing to do here.
 }

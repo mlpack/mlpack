@@ -33,33 +33,35 @@ GRU<InputDataType, OutputDataType, CustomLayers...>::GRU()
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 GRU<InputDataType, OutputDataType, CustomLayers...>::GRU(
-    const GRU& network) :
-    inSize(network.inSize),
-    outSize(network.outSize),
-    rho(network.rho),
-    batchSize(network.batchSize),
-    forwardStep(network.forwardStep),
-    backwardStep(network.backwardStep),
-    gradientStep(network.gradientStep),
-    deterministic(network.deterministic),
-    prevError(network.prevError),
-    allZeros(network.allZeros),
-    outParameter(network.outParameter),
-    prevOutput(network.prevOutput),
-    backIterator(network.backIterator),
-    gradIterator(network.gradIterator)
+    const GRU& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    rho(layer.rho),
+    batchSize(layer.batchSize),
+    forwardStep(layer.forwardStep),
+    backwardStep(layer.backwardStep),
+    gradientStep(layer.gradientStep),
+    deterministic(layer.deterministic),
+    prevError(layer.prevError),
+    allZeros(layer.allZeros),
+    outParameter(layer.outParameter),
+    prevOutput(layer.prevOutput),
+    backIterator(layer.backIterator),
+    gradIterator(layer.gradIterator)
 {
+  CopyVisitor<CustomLayers...> copyVisitor;
+
   // Input specific linear layers(for zt, rt, ot).
   input2GateModule = boost::apply_visitor(copyVisitor,
-      network.input2GateModule);
+      layer.input2GateModule);
 
   // Previous output gates (for zt and rt).
   output2GateModule = boost::apply_visitor(copyVisitor,
-      network.output2GateModule);
+      layer.output2GateModule);
 
   // Previous output gate for ot.
   outputHidden2GateModule = boost::apply_visitor(copyVisitor,
-      network.outputHidden2GateModule);
+      layer.outputHidden2GateModule);
 
   this->network.push_back(input2GateModule);
   this->network.push_back(output2GateModule);

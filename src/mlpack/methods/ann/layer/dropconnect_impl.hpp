@@ -54,12 +54,14 @@ DropConnect<InputDataType, OutputDataType, CustomLayers...>::DropConnect(
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 DropConnect<InputDataType, OutputDataType, CustomLayers...>::DropConnect(
-    const DropConnect& network) :
-    ratio(network.ratio),
-    scale(network.scale),
-    deterministic(network.deterministic)
+    const DropConnect& layer) :
+    ratio(layer.ratio),
+    scale(layer.scale),
+    deterministic(layer.deterministic)
 {
-  baseLayer = boost::apply_visitor(copyVisitor, network.baseLayer);
+  CopyVisitor<CustomLayers...> copyVisitor;
+
+  baseLayer = boost::apply_visitor(copyVisitor, layer.baseLayer);
   this->network.push_back(baseLayer);
 }
 

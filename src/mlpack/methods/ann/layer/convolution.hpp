@@ -342,9 +342,6 @@ class Convolution
   //! Locally-stored top padding height.
   size_t padHTop;
 
-  //! Locally-stored paddingType
-  std::string paddingType;
-
   //! Locally-stored weight object.
   OutputDataType weights;
 

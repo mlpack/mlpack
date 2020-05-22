@@ -168,9 +168,6 @@ class DropConnect
   //! The scale fraction.
   double scale;
 
-  //! Locally-stored copy visitor
-  CopyVisitor<CustomLayers...> copyVisitor;
-
   //! Locally-stored weight object.
   OutputDataType parameters;
 
