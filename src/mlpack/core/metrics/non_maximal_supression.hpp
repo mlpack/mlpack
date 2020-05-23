@@ -1,5 +1,5 @@
 /**
- * @file non_maximal_supression.hpp
+ * @file core/metrics/non_maximal_supression.hpp
  * @author Kartik Dutt
  *
  * Definition of Non Maximal Supression metric.

@@ -1,5 +1,5 @@
 /**
- * @file iou_metric_impl.hpp
+ * @file core/metrics/iou_metric_impl.hpp
  * @author Kartik Dutt
  *
  * Implementation of Intersection Over Union metric.
