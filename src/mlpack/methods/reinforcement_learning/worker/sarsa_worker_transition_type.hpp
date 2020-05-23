@@ -8,7 +8,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#include <mlpack/methods/reinforcement_learning/worker/q_learning_worker_transition_type.hpp>
 #ifndef SARSA_WORKER_TRANSITION_TYPE
 #define SARSA_WORKER_TRANSITION_TYPE
 namespace mlpack {
@@ -16,17 +16,32 @@ namespace rl {
 template<
     typename EnvironmentType
 >
-struct SarsaWorkerTransitionType
+struct SarsaWorkerTransitionType:
+        public QLearningWorkerTransitionType<
+                typename EnvironmentType::State,
+                typename EnvironmentType::Action>
 {
+    using base=QLearningWorkerTransitionType<
+            typename EnvironmentType::State,
+            typename EnvironmentType::Action>;
     using StateType = typename EnvironmentType::State;
     using ActionType = typename EnvironmentType::Action;
 
-    StateType state;
-    ActionType action, nextAction;
-    double reward;
-    StateType nextState;
+    ActionType nextAction;
 
     SarsaWorkerTransitionType() = default;
+
+    SarsaWorkerTransitionType(
+            const SarsaWorkerTransitionType&) = default;
+
+    SarsaWorkerTransitionType(
+            SarsaWorkerTransitionType&&) = default;
+
+    SarsaWorkerTransitionType& operator =
+            (const SarsaWorkerTransitionType&) = default;
+
+    SarsaWorkerTransitionType& operator =
+            (SarsaWorkerTransitionType&&) = default;
 
     SarsaWorkerTransitionType(
             const StateType &state,
@@ -34,10 +49,7 @@ struct SarsaWorkerTransitionType
             const double reward,
             const StateType &nextState,
             const ActionType &nextAction):
-        state(state),
-        action(action),
-        reward(reward),
-        nextState(nextState),
+        base(state,action,reward,nextState),
         nextAction(nextAction)
     {  }
 
@@ -48,10 +60,7 @@ struct SarsaWorkerTransitionType
                     double,
                     StateType,
                     ActionType> &tp):
-        state(std::get<0>(tp)),
-        action(std::get<1>(tp)),
-        reward(std::get<2>(tp)),
-        nextState(std::get<3>(tp)),
+        base(tp),
         nextAction(std::get<4>(tp))
     {  }
 };

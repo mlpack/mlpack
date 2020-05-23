@@ -27,6 +27,17 @@ struct QLearningWorkerTransitionType
     QLearningWorkerTransitionType() = default;
 
     QLearningWorkerTransitionType(
+            const QLearningWorkerTransitionType&) = default;
+
+    QLearningWorkerTransitionType(
+             QLearningWorkerTransitionType&&) = default;
+
+    QLearningWorkerTransitionType &operator = (
+            const QLearningWorkerTransitionType&) = default;
+    QLearningWorkerTransitionType &operator =
+            (QLearningWorkerTransitionType&&) = default;
+
+    QLearningWorkerTransitionType(
             const StateType &state,
             const ActionType &action,
             const double reward,
