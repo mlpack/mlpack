@@ -121,7 +121,7 @@ class OneStepQLearningWorker:public WorkerBase<
     }
 
 
-	
+
   /**
    * The agent will execute one step.
    *
