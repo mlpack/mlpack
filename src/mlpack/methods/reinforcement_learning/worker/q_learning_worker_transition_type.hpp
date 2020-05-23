@@ -42,7 +42,7 @@ struct QLearningWorkerTransitionType
             nextState(std::get<3>(tp))
     { }
 };
-}//namespace rl
-}//namespace mlpack
+} // namespace rl
+} // namespace mlpack
 #endif // !Q_LEARNING_WORKER_TRANSITION_TYPE
 
