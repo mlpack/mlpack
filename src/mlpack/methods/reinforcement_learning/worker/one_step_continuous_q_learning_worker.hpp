@@ -212,7 +212,7 @@ class OneStepContinuousQLearningWorker:
             this->config.Discount() * actionValue;
 
         // Compute the training target for current state.
-	    auto input = transition.state.Encode();
+        auto input = transition.state.Encode();
 
         // Compute gradient.
         arma::mat gradients;
@@ -233,8 +233,10 @@ class OneStepContinuousQLearningWorker:
 
       // Perform async update of the global network.
       #if ENS_VERSION_MAJOR == 1
-      this->updater.Update(learningNetwork.Parameters(), this->config.StepSize(),
-          totalGradients);
+      this->updater.Update(
+              learningNetwork.Parameters(),
+              this->config.StepSize(),
+              totalGradients);
       #else
       this->updatePolicy->Update(
               learningNetwork.Parameters(),
@@ -266,7 +268,6 @@ class OneStepContinuousQLearningWorker:
     this->state = nextState;
     return false;
   }
-
 };
 } // namespace rl
 } // namespace mlpack
