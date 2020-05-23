@@ -21,7 +21,7 @@ struct SarsaWorkerTransitionType:
                 typename EnvironmentType::State,
                 typename EnvironmentType::Action>
 {
-    using base=QLearningWorkerTransitionType<
+    using base = QLearningWorkerTransitionType<
             typename EnvironmentType::State,
             typename EnvironmentType::Action>;
     using StateType = typename EnvironmentType::State;
@@ -49,7 +49,7 @@ struct SarsaWorkerTransitionType:
             const double reward,
             const StateType &nextState,
             const ActionType &nextAction):
-        base(state,action,reward,nextState),
+        base(state, action, reward, nextState),
         nextAction(nextAction)
     {  }
 
