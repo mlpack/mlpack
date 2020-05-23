@@ -98,21 +98,21 @@ class ContinuousMountainCar
 
       arma::colvec data()
       {
-          return arma::colvec(action,size);
+          return arma::colvec(action, size);
       }
 
       static Action Sample()
       {
           Action r;
 
-          r.action[0]=math::Random()*2-1;//range: [-1,1]
+          r.action[0] = math::Random()*2-1; //range: [-1,1]
 
           return r;
       }
 
       static Action Zero()
       {
-          Action r={};
+          Action r = {};
           std::fill(r.action, r.action + size, 0);
           return r;
       }
@@ -138,7 +138,8 @@ class ContinuousMountainCar
                         const double velocityMax = 0.07,
                         const double duration = 0.0015,
                         const double doneReward = 100,
-                        const size_t maxSteps = 0) :
+                        const size_t maxSteps = 0,
+                        const double deceleration=0.0014) :
       positionMin(positionMin),
       positionMax(positionMax),
       positionGoal(positionGoal),
@@ -147,7 +148,8 @@ class ContinuousMountainCar
       duration(duration),
       doneReward(doneReward),
       maxSteps(maxSteps),
-      stepsPerformed(0)
+      stepsPerformed(0),
+      deceleration(deceleration)
   { /* Nothing to do here */ }
 
   /**
@@ -170,9 +172,7 @@ class ContinuousMountainCar
 
     // Update states.
     nextState.Velocity() = state.Velocity() + force * duration -
-            //0.0025 *
-            0.0014*//for the simulation to be theoretically able to reach the end goal, this value must be less than the value of duration
-        std::cos(3 * state.Position());
+            deceleration*std::cos(3 * state.Position());
     nextState.Velocity() = math::ClampRange(nextState.Velocity(),
       velocityMin, velocityMax);
     nextState.Position() = state.Position() + nextState.Velocity();
@@ -190,10 +190,7 @@ class ContinuousMountainCar
     else if (done)
       return doneReward;
 
-    //std::cout<<"["<<force<<","<<nextState.Velocity()<<","<<nextState.Position()<<"]"<<std::endl;
-
-    auto r= std::pow(force, 2) * 0.1;
-    return r;
+    return std::pow(force, 2) * 0.1;
   }
 
   /**
@@ -282,6 +279,8 @@ class ContinuousMountainCar
 
   //! Locally-stored number of steps performed.
   size_t stepsPerformed;
+
+  double deceleration;
 };
 
 } // namespace rl
