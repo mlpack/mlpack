@@ -15,7 +15,6 @@ steps:
     sudo xcode-select --switch /Applications/Xcode_10.1.app/Contents/Developer
     unset BOOST_ROOT
     pip install cython numpy pandas zipp configparser
-    go get -u gonum.org/v1/gonum/mat
     brew install openblas armadillo boost
 
     if [ "a$(julia.version)" != "a" ]; then
@@ -30,7 +29,7 @@ steps:
     unset BOOST_ROOT
     mkdir build && cd build
     export GOPATH=$PWD
-    go get -u -t gonum.org/v1/gonum/mat
+    go get -u -t gonum.org/v1/gonum/...
     export PYPATH=$(which python)
     cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=$PYPATH ..
   displayName: 'CMake'
