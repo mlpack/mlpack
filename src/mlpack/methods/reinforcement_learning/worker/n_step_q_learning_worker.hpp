@@ -169,7 +169,14 @@ class NStepQLearningWorker : public WorkerBase<
     #pragma omp atomic
     totalSteps++;
 
-    this->pending[this->pendingIndex] = { this->state, action,reward,nextState };
+    this->pending[this->pendingIndex] =
+            {
+                this->state,
+                action,
+                reward,
+                nextState
+            };
+
     this->pendingIndex++;
 
     if (terminal || this->pendingIndex >= this->config.UpdateInterval())
@@ -213,7 +220,8 @@ class NStepQLearningWorker : public WorkerBase<
       totalGradients.transform(
           [&](double gradient)
           {
-                return std::min(std::max(gradient, -this->config.GradientLimit()),
+                return std::min(
+                    std::max(gradient, -this->config.GradientLimit()),
                     this->config.GradientLimit());
           });
 
