@@ -118,7 +118,7 @@ class DuelingDQN
     // featureNetwork.Forward(state, output);
     // actionValue = advantage.each_row() +
     //     (value - arma::mean(arma::mean(advantage)));
-    
+
     // networkOutput = output;
   }
 

@@ -36,6 +36,7 @@
 #include <mlpack/methods/ann/layer/multiply_constant.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
+#include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
 #include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
@@ -82,6 +83,10 @@ template<typename InputDataType,
          typename OutputDataType,
          typename RegularizerType>
 class LinearNoBias;
+
+template<typename InputDataType,
+         typename OutputDataType>
+class NoisyLinear;
 
 template<typename InputDataType,
          typename OutputDataType
@@ -257,6 +262,7 @@ using LayerTypes = boost::variant<
     MultiplyConstant<arma::mat, arma::mat>*,
     MultiplyMerge<arma::mat, arma::mat>*,
     NegativeLogLikelihood<arma::mat, arma::mat>*,
+    NoisyLinear<arma::mat, arma::mat>*,
     Padding<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
     WeightNorm<arma::mat, arma::mat>*,
