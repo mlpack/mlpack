@@ -1,5 +1,5 @@
 /**
- * @file serialization_test.cpp
+ * @file tests/serialization_test.cpp
  * @author Ryan Curtin
  *
  * Test serialization of mlpack objects.

@@ -1,5 +1,5 @@
 /**
- * @file cauchy_kernel.hpp
+ * @file core/kernels/cauchy_kernel.hpp
  * @author Tommi Laivamaa
  *
  * Implementation of the Cauchy kernel (CauchyKernel),

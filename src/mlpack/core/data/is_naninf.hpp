@@ -1,5 +1,5 @@
 /**
- * @file is_naninf.hpp
+ * @file core/data/is_naninf.hpp
  * @author Ryan Curtin
  *
  * This is an adapted version of Conrad Sanderson's implementation of

@@ -1,5 +1,5 @@
 /**
- * @file preprocess_scale_main.cpp
+ * @file methods/preprocess/preprocess_scale_main.cpp
  * @author jeffin sam
  *
  * A CLI executable to scale a dataset.

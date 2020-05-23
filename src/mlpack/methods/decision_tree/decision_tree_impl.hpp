@@ -1,5 +1,5 @@
 /**
- * @file decision_tree_impl.hpp
+ * @file methods/decision_tree/decision_tree_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of generic decision tree class.

@@ -1,5 +1,5 @@
 /**
- * @file spill_tree.hpp
+ * @file core/tree/spill_tree/spill_tree.hpp
  *
  * Definition of generalized hybrid spill tree (SpillTree).
  *

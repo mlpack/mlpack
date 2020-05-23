@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_tree_test.cpp
+ * @file tests/hoeffding_tree_test.cpp
  * @author Ryan Curtin
  *
  * Test file for Hoeffding trees.

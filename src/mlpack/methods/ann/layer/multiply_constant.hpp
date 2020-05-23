@@ -1,5 +1,5 @@
 /**
- * @file multiply_constant.hpp
+ * @file methods/ann/layer/multiply_constant.hpp
  * @author Marcus Edel
  *
  * Definition of the MultiplyConstantLayer class, which multiplies the input by
@@ -53,7 +53,7 @@ class MultiplyConstant
    * Ordinary feed backward pass of a neural network. The backward pass
    * multiplies the error with the specified constant scalar value.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */

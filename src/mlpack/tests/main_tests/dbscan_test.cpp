@@ -1,5 +1,5 @@
 /**
- * @file dbscan_test.cpp
+ * @file tests/main_tests/dbscan_test.cpp
  * @author Nikhil Goel
  *
  * Test mlpackMain() of dbscan_main.cpp.

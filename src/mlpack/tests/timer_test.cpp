@@ -1,5 +1,5 @@
 /**
- * @file timer_test.cpp
+ * @file tests/timer_test.cpp
  * @author Matthew Amidon, Ryan Curtin
  *
  * Test for the timer class

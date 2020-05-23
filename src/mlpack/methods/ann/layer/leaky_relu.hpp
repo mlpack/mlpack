@@ -1,5 +1,5 @@
 /**
- * @file leaky_relu.hpp
+ * @file methods/ann/layer/leaky_relu.hpp
  * @author Dhawal Arora
  *
  * Definition of LeakyReLU layer first introduced in the acoustic model,

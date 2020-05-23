@@ -1,5 +1,5 @@
 /**
- * @file complete_incremental_termination.hpp
+ * @file methods/amf/termination_policies/complete_incremental_termination.hpp
  * @author Sumedh Ghaisas
  *
  * Termination policy used in AMF (Alternating Matrix Factorization).

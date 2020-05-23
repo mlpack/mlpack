@@ -1,5 +1,5 @@
 /**
- * @file statistic.hpp
+ * @file core/tree/statistic.hpp
  *
  * Definition of the policy type for the statistic class.
  *
@@ -32,7 +32,7 @@ class EmptyStatistic
    * node is finished, and its children are finished, but it is not
    * necessarily true that the statistics of other nodes are initialized yet.
    *
-   * @param node Node which this corresponds to.
+   * @param * (node) Node which this corresponds to.
    */
   template<typename TreeType>
   EmptyStatistic(TreeType& /* node */) { }

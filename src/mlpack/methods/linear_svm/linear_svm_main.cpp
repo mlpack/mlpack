@@ -1,5 +1,5 @@
 /**
- * @file linear_svm_main.cpp
+ * @file methods/linear_svm/linear_svm_main.cpp
  * @author Yashwant Singh Parihar
  *
  * Main executable for linear svm.
@@ -172,7 +172,7 @@ static void mlpackMain()
   const double delta = CLI::GetParam<double>("delta");
   const string optimizerType = CLI::GetParam<string>("optimizer");
   const double tolerance = CLI::GetParam<double>("tolerance");
-  const bool intercept = CLI::HasParam("no_intercept");
+  const bool intercept = !CLI::HasParam("no_intercept");
   const size_t epochs = (size_t) CLI::GetParam<int>("epochs");
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
 

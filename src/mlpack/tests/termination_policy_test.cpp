@@ -1,5 +1,5 @@
 /**
- * @file termination_policy_test.cpp
+ * @file tests/termination_policy_test.cpp
  * @author Ryan Curtin
  *
  * Tests for AMF termination policies.

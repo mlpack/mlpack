@@ -1,5 +1,5 @@
 /**
- * @file wgan_test.cpp
+ * @file tests/wgan_test.cpp
  * @author Shikhar Jaiswal
  *
  * Tests the WGAN network.

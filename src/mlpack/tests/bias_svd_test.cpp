@@ -1,5 +1,5 @@
 /**
- * @file bias_svd_test.cpp
+ * @file tests/bias_svd_test.cpp
  * @author Siddharth Agrawal
  * @author Wenhao Huang
  *

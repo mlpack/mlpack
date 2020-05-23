@@ -1,5 +1,5 @@
 /**
- * @file option.cpp
+ * @file core/util/program_doc.cpp
  * @author Ryan Curtin
  *
  * Implementation of the ProgramDoc class.  The class registers itself with CLI

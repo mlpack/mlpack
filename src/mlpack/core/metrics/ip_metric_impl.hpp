@@ -1,5 +1,5 @@
 /**
- * @file ip_metric_impl.hpp
+ * @file core/metrics/ip_metric_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the IPMetric.

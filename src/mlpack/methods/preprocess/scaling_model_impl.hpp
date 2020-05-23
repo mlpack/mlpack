@@ -1,5 +1,5 @@
 /**
- * @file scaling_model_impl.hpp
+ * @file methods/preprocess/scaling_model_impl.hpp
  * @author Jeffin Sam
  *
  * A serializable scaling model, used by the main program.

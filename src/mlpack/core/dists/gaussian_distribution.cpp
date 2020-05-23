@@ -1,5 +1,5 @@
 /**
- * @file gaussian_distribution.cpp
+ * @file core/dists/gaussian_distribution.cpp
  * @author Ryan Curtin
  * @author Michael Fox
  *

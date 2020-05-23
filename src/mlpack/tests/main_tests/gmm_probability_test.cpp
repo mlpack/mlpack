@@ -1,5 +1,5 @@
 /**
- * @file gmm_probability_test.cpp
+ * @file tests/main_tests/gmm_probability_test.cpp
  * @author Yashwant Singh
  *
  * Test mlpackMain() of gmm_probability_main.cpp.

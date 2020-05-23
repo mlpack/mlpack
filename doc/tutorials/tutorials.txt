@@ -55,7 +55,7 @@ mlpack.
 
  - \ref bindings
  - \ref cv
- - \ref hpt
+ - \ref hpt_guide
 
 @section policy_tut Policy Class Documentation
 

@@ -1,5 +1,5 @@
 /**
- * @file margin_ranking_loss_impl.hpp
+ * @file methods/ann/loss_functions/margin_ranking_loss_impl.hpp
  * @author Andrei Mihalea
  *
  * Implementation of the Margin Ranking Loss function.

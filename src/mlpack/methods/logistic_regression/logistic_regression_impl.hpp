@@ -1,5 +1,5 @@
 /**
- * @file logistic_regression_impl.hpp
+ * @file methods/logistic_regression/logistic_regression_impl.hpp
  * @author Sumedh Ghaisas
  * @author Arun Reddy
  *

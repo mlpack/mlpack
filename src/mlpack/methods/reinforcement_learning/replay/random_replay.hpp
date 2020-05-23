@@ -1,5 +1,5 @@
 /**
- * @file random_replay.hpp
+ * @file methods/reinforcement_learning/replay/random_replay.hpp
  * @author Shangtong Zhang
  *
  * This file is an implementation of random experience replay.
@@ -145,10 +145,10 @@ class RandomReplay
   /**
    * Update the priorities of transitions and Update the gradients.
    *
-   * @param target The learned value
-   * @param sampledActions Agent's sampled action
-   * @param nextActionValues Agent's next action
-   * @param gradients The model's gradients
+   * @param * (target) The learned value
+   * @param * (sampledActions) Agent's sampled action
+   * @param * (nextActionValues) Agent's next action
+   * @param * (gradients) The model's gradients
    */
   void Update(arma::mat /* target */,
               arma::icolvec /* sampledActions */,

@@ -1,5 +1,5 @@
 /**
- * @file decision_stump.hpp
+ * @file methods/decision_stump/decision_stump.hpp
  * @author Udit Saxena
  *
  * Definition of decision stumps.
@@ -25,7 +25,8 @@ namespace decision_stump {
  * The stump is parameterized by a splitting dimension (the dimension on which
  * points are split), a vector of bin split values, and a vector of labels for
  * each bin.  Bin i is specified by the range [split[i], split[i + 1]).  The
- * last bin has range up to \infty (split[i + 1] does not exist in that case).
+ * last bin has range up to @f$ \infty @f$ (split[i + 1] does not exist in that
+ * case).
  * Points that are below the first bin will take the label of the first bin.
  *
  * @note
@@ -61,6 +62,7 @@ class DecisionStump
    *      which we copy the values.
    * @param data The data on which to train this object on.
    * @param labels The labels of data.
+   * @param numClasses The number of classes.
    * @param weights Weight vector to use while training. For boosting purposes.
    */
   mlpack_deprecated DecisionStump(const DecisionStump<>& other,

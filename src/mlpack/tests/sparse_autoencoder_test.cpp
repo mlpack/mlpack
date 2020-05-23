@@ -1,5 +1,5 @@
 /**
- * @file sparse_autoencoder_test.cpp
+ * @file tests/sparse_autoencoder_test.cpp
  * @author Siddharth Agrawal
  *
  * Test the SparseAutoencoder class.

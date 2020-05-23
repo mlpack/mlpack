@@ -1,5 +1,5 @@
 /**
- * @file print_class_defn.hpp
+ * @file bindings/python/print_class_defn.hpp
  * @author Ryan Curtin
  *
  * Print the class definition for generating a .pyx binding.
@@ -59,6 +59,7 @@ void PrintClassDefn(
   /**
    * This will produce code like:
    *
+   * @code
    * cdef class <ModelType>Type:
    *   cdef <ModelType>* modelptr
    *
@@ -76,6 +77,7 @@ void PrintClassDefn(
    *
    *   def __reduce_ex__(self):
    *     return (self.__class__, (), self.__getstate__())
+   * @endcode
    */
   std::cout << "cdef class " << strippedType << "Type:" << std::endl;
   std::cout << "  cdef " << printedType << "* modelptr" << std::endl;
@@ -105,8 +107,8 @@ void PrintClassDefn(
  * different class definition, so anything else does nothing.
  *
  * @param d Parameter data.
- * @param input Unused parameter.
- * @param output Unused parameter.
+ * @param * (input) Unused parameter.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void PrintClassDefn(const util::ParamData& d,

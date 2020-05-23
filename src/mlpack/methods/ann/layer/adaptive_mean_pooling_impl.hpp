@@ -1,5 +1,5 @@
 /**
- * @file adaptive_mean_pooling_impl.hpp
+ * @file methods/ann/layer/adaptive_mean_pooling_impl.hpp
  * @author Kartik Dutt
  *
  * Implementation of the Adaptive Mean Pooling layer class.

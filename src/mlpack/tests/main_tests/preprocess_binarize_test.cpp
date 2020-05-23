@@ -1,5 +1,5 @@
 /**
- * @file preprocess_binarize_test.cpp
+ * @file tests/main_tests/preprocess_binarize_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of preprocess_binarize_main.cpp.

@@ -1,5 +1,5 @@
 /**
- * @file decision_tree_test.cpp
+ * @file tests/main_tests/decision_tree_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of decision_tree_main.cpp.

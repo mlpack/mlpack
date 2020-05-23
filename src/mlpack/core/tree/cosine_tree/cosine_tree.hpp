@@ -1,5 +1,5 @@
 /**
- * @file cosine_tree.hpp
+ * @file core/tree/cosine_tree/cosine_tree.hpp
  * @author Siddharth Agrawal
  *
  * Definition of Cosine Tree.

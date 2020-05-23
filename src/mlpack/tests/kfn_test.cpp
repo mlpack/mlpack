@@ -1,5 +1,5 @@
 /**
- * @file kfn_test.cpp
+ * @file tests/kfn_test.cpp
  *
  * Tests for KFN (k-furthest-neighbors).
  *

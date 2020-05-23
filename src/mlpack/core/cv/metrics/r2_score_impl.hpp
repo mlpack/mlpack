@@ -1,5 +1,5 @@
 /**
- * @file r2_score_impl.hpp
+ * @file core/cv/metrics/r2_score_impl.hpp
  * @author Bisakh Mondal
  *
  * The implementation of the class R2Score.

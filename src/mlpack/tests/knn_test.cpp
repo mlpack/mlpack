@@ -1,5 +1,5 @@
 /**
- * @file knn_test.cpp
+ * @file tests/knn_test.cpp
  *
  * Test file for KNN class.
  *

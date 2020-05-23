@@ -1,5 +1,5 @@
 /**
- * @file lmetric_impl.hpp
+ * @file core/metrics/lmetric_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of template specializations of LMetric class.

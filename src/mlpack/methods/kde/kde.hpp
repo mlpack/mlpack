@@ -1,5 +1,5 @@
 /**
- * @file kde.hpp
+ * @file methods/kde/kde.hpp
  * @author Roberto Hueso
  *
  * Kernel Density Estimation.

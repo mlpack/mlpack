@@ -1,5 +1,5 @@
 /**
- * @file neighbor_search_impl.hpp
+ * @file methods/neighbor_search/neighbor_search_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of Neighbor-Search class to perform all-nearest-neighbors on

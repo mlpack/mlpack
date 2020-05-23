@@ -1,5 +1,5 @@
 /**
- * @file training_config.hpp
+ * @file methods/reinforcement_learning/training_config.hpp
  * @author Shangtong Zhang
  *
  * This file is the implementation of TrainingConfig class,

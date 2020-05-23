@@ -1,5 +1,5 @@
 /**
- * @file cross_entropy_error.hpp
+ * @file methods/ann/loss_functions/cross_entropy_error.hpp
  * @author Konstantin Sidorov
  *
  * Definition of the cross-entropy performance function.

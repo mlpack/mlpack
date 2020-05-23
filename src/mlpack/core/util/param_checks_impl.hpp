@@ -1,5 +1,5 @@
 /**
- * @file param_checks_impl.hpp
+ * @file core/util/param_checks_impl.hpp
  * @author Ryan Curtin
  *
  * Utility function implementation for checking arguments, and so forth.

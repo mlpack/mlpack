@@ -1,5 +1,5 @@
 /**
- * @file gaussian_kernel.hpp
+ * @file core/kernels/gaussian_kernel.hpp
  * @author Wei Guan
  * @author James Cline
  * @author Ryan Curtin

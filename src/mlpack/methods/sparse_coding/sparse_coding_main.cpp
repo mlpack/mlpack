@@ -1,5 +1,5 @@
 /**
- * @file sparse_coding_main.cpp
+ * @file methods/sparse_coding/sparse_coding_main.cpp
  * @author Nishant Mehta
  *
  * Executable for Sparse Coding.

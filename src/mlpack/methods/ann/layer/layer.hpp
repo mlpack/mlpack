@@ -1,5 +1,5 @@
 /**
- * @file layer.hpp
+ * @file methods/ann/layer/layer.hpp
  * @author Marcus Edel
  *
  * This includes various layers to construct a model.
@@ -61,6 +61,7 @@
 #include "select.hpp"
 #include "sequential.hpp"
 #include "softshrink.hpp"
+#include "softmax.hpp"
 #include "subview.hpp"
 #include "transposed_convolution.hpp"
 #include "virtual_batch_norm.hpp"

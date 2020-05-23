@@ -1,5 +1,5 @@
 /**
- * @file sumtree.hpp
+ * @file methods/reinforcement_learning/replay/sumtree.hpp
  * @author Xiaohong
  *
  * This file is an implementation of sumtree. Based on:

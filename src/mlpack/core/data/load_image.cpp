@@ -1,5 +1,5 @@
 /**
- * @file load_image.cpp
+ * @file core/data/load_image.cpp
  * @author Mehul Kumar Nirala
  *
  * Implementation of image loading functionality via STB.

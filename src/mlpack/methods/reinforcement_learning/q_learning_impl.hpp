@@ -1,5 +1,5 @@
 /**
- * @file q_learning_impl.hpp
+ * @file methods/reinforcement_learning/q_learning_impl.hpp
  * @author Shangtong Zhang
  *
  * This file is the implementation of QLearning class.
@@ -131,7 +131,7 @@ double QLearning<
   learningNetwork.Predict(state.Encode(), actionValue);
 
   // Select an action according to the behavior policy.
-  ActionType action = policy.Sample(actionValue, deterministic);
+  action = policy.Sample(actionValue, deterministic);
 
   // Interact with the environment to advance to next state.
   StateType nextState;

@@ -1,5 +1,5 @@
 /**
- * @file cosine_embedding_loss.hpp
+ * @file methods/ann/loss_functions/cosine_embedding_loss.hpp
  * @author Kartik Dutt
  *
  * Definition of the Cosine Embedding loss function.

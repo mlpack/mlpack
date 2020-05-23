@@ -1,5 +1,5 @@
 /**
- * @file nca_softmax_impl.h
+ * @file methods/nca/nca_softmax_error_function_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the Softmax error function.

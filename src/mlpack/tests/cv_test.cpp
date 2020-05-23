@@ -1,5 +1,5 @@
 /**
- * @file cv_test.cpp
+ * @file tests/cv_test.cpp
  *
  * Unit tests for the cross-validation module.
  *

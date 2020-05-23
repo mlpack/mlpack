@@ -1,5 +1,5 @@
 /**
- * @file hmm_loglik_test.cpp
+ * @file tests/main_tests/hmm_loglik_test.cpp
  * @author Daivik Nema
  *
  * Test mlpackMain() of hmm_loglik_main.cpp

@@ -1,5 +1,5 @@
 /**
- * @file decision_tree_test.cpp
+ * @file tests/decision_tree_test.cpp
  * @author Ryan Curtin
  *
  * Tests for the DecisionTree class and related classes.

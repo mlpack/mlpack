@@ -1,5 +1,5 @@
 /**
- * @file bilinear_interpolation.hpp
+ * @file methods/ann/layer/bilinear_interpolation.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *
@@ -74,7 +74,7 @@ class BilinearInterpolation
    * we just have to down-sample the gradient to make its size compatible with
    * the input size.
    *
-   * @param input The input matrix.
+   * @param * (input) The input matrix.
    * @param gradient The computed backward gradient.
    * @param output The resulting down-sampled output.
    */

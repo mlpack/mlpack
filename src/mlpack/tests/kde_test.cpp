@@ -1,5 +1,5 @@
 /**
- * @file kde_test.cpp
+ * @file tests/kde_test.cpp
  * @author Roberto Hueso
  *
  * mlpack is free software; you may redistribute it and/or modify it under the

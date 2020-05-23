@@ -1,5 +1,5 @@
 /**
- * @file parse_command_line.hpp
+ * @file bindings/cli/parse_command_line.hpp
  * @author Ryan Curtin
  * @author Matthew Amidon
  *

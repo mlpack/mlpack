@@ -1,5 +1,5 @@
 /**
- * @file base_layer.hpp
+ * @file methods/ann/layer/base_layer.hpp
  * @author Marcus Edel
  *
  * Definition of the BaseLayer class, which attaches various functions to the

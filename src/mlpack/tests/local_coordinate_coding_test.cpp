@@ -1,5 +1,5 @@
 /**
- * @file local_coordinate_coding_test.cpp
+ * @file tests/local_coordinate_coding_test.cpp
  * @author Nishant Mehta
  *
  * Test for Local Coordinate Coding.

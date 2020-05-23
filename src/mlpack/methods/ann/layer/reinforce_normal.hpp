@@ -1,5 +1,5 @@
 /**
- * @file reinforce_normal.hpp
+ * @file methods/ann/layer/reinforce_normal.hpp
  * @author Marcus Edel
  *
  * Definition of the ReinforceNormalLayer class, which implements the REINFORCE
@@ -57,7 +57,7 @@ class ReinforceNormal
    * forward pass.
    *
    * @param input The propagated input activation.
-   * @param gy The backpropagated error.
+   * @param * (gy) The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename DataType>

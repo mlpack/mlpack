@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_tree_model.hpp
+ * @file methods/hoeffding_trees/hoeffding_tree_model.hpp
  * @author Ryan Curtin
  *
  * A serializable model for the mlpack_hoeffding_tree command-line program.

@@ -140,7 +140,7 @@ last iteration when the cluster was not empty.
 $ mlpack_kmeans -c 5 -i dataset.csv -v -e -o assignments.csv -C centroids.csv
 @endcode
 
-@subsection cli_ex3_kmtut Killing empty clusters
+@subsection cli_ex3a_kmtut Killing empty clusters
 
 If you would like to kill empty clusters , instead of reinitializing
 them, simply specify the \c -E (\c --kill_empty_clusters) option.  Note that

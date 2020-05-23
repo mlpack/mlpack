@@ -1,5 +1,5 @@
 /**
- * @file dbscan_main.cpp
+ * @file methods/dbscan/dbscan_main.cpp
  * @author Ryan Curtin
  *
  * Implementation of program to run DBSCAN.

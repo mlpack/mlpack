@@ -1,5 +1,5 @@
 /**
- * @file random_forest_main.cpp
+ * @file methods/random_forest/random_forest_main.cpp
  * @author Ryan Curtin
  *
  * A program to build and evaluate random forests.

@@ -1,5 +1,5 @@
 /**
- * @file gmm_impl.hpp
+ * @file methods/gmm/gmm_impl.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Ryan Curtin
  * @author Michael Fox
