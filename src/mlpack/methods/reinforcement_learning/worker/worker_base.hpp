@@ -36,7 +36,6 @@ class WorkerBase
  public:
     using StateType = typename EnvironmentType::State;
     using ActionType = typename EnvironmentType::Action;
-    //using TransitionType = typename Subclass::TransitionType;
 
     /**
      * Construct one step Q-Learning worker with the given parameters and
