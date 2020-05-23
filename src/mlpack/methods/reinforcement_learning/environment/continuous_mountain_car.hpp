@@ -105,7 +105,7 @@ class ContinuousMountainCar
       {
           Action r;
 
-          r.action[0] = math::Random()*2-1; //range: [-1,1]
+          r.action[0] = math::Random()*2-1; // range: [-1,1]
 
           return r;
       }
@@ -139,7 +139,7 @@ class ContinuousMountainCar
                         const double duration = 0.0015,
                         const double doneReward = 100,
                         const size_t maxSteps = 0,
-                        const double deceleration=0.0014) :
+                        const double deceleration = 0.0014) :
       positionMin(positionMin),
       positionMax(positionMax),
       positionGoal(positionGoal),
