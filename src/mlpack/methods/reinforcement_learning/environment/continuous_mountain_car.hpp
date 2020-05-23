@@ -130,6 +130,7 @@ class ContinuousMountainCar
    * @param doneReward Reward recieved by the agent on success.
    * @param maxSteps The number of steps after which the episode
    *    terminates. If the value is 0, there is no limit.
+   * @param deceleration is a meaasure of how hard it is to go uphill
    */
   ContinuousMountainCar(const double positionMin = -1.2,
                         const double positionMax = 0.6,
