@@ -1,5 +1,5 @@
 /**
- * @file sarsa_worker_transition_type.hpp
+ * @file q_learning_worker_transition_type.hpp
  * @author Arsen Zahray
  * this file contains definition of QLearningWorkerTransitionType class; QLearningWorkerTransitionType is data type used by Worker class to store training data
  *
