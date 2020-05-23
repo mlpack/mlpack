@@ -1,5 +1,5 @@
 /**
- * @file nms_metric_impl.hpp
+ * @file core/metrics/nms_metric_impl.hpp
  * @author Kartik Dutt
  *
  * Implementation of Non Maximal Supression metric.
