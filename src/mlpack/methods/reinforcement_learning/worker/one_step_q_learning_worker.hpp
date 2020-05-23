@@ -34,10 +34,23 @@ template <
   typename UpdaterType,
   typename PolicyType
 >
-class OneStepQLearningWorker:public WorkerBase< EnvironmentType, NetworkType, UpdaterType, PolicyType, QLearningWorkerTransitionType<typename EnvironmentType::State,typename EnvironmentType::Action>>
+class OneStepQLearningWorker:public WorkerBase<
+        EnvironmentType,
+        NetworkType,
+        UpdaterType,
+        PolicyType,
+        QLearningWorkerTransitionType<
+                typename EnvironmentType::State,
+                typename EnvironmentType::Action>>
 {
-    using base = WorkerBase< EnvironmentType, NetworkType, UpdaterType, PolicyType, QLearningWorkerTransitionType<typename EnvironmentType::State,typename EnvironmentType::Action>>;
-    //using qWorkerType = QLearningWorkerTransitionType<EnvironmentType>;
+    using base = WorkerBase<
+            EnvironmentType,
+            NetworkType,
+            UpdaterType,
+            PolicyType,
+            QLearningWorkerTransitionType<
+                    typename EnvironmentType::State,
+                    typename EnvironmentType::Action>>;
  public:
      using StateType = typename EnvironmentType::State;
      using ActionType = typename EnvironmentType::Action;
@@ -56,7 +69,7 @@ class OneStepQLearningWorker:public WorkerBase< EnvironmentType, NetworkType, Up
         const EnvironmentType& environment,
         const TrainingConfig& config,
         bool deterministic)
-		: base(updater,environment,config,deterministic)
+        : base(updater, environment, config, deterministic)
     { }
 
     /**
@@ -155,7 +168,14 @@ class OneStepQLearningWorker:public WorkerBase< EnvironmentType, NetworkType, Up
     #pragma omp atomic
     totalSteps++;
 
-    this->pending[this->pendingIndex] = { this->state, action, reward, nextState };
+    this->pending[this->pendingIndex] =
+            {
+                this->state,
+                action,
+                reward,
+                nextState
+            };
+
     this->pendingIndex++;
 
     if (terminal || this->pendingIndex >= this->config.UpdateInterval())
@@ -183,13 +203,12 @@ class OneStepQLearningWorker:public WorkerBase< EnvironmentType, NetworkType, Up
             this->config.Discount() * targetActionValue;
 
         // Compute the training target for current state.
-        auto input=transition.state.Encode();
+        auto input = transition.state.Encode();
         this->network.Forward(input, actionValue);
         actionValue[transition.action] = targetActionValue;
 
         // Compute gradient.
         arma::mat gradients;
-        //this->network.Backward(actionValue, gradients);
         this->network.Backward(input, actionValue, gradients);
 
         // Accumulate gradients.
@@ -199,15 +218,18 @@ class OneStepQLearningWorker:public WorkerBase< EnvironmentType, NetworkType, Up
       // Clamp the accumulated gradients.
       totalGradients.transform(
           [&](double gradient)
-          { 
-		  	return std::min(std::max(gradient, -this->config.GradientLimit()),
-              this->config.GradientLimit()); 
-	      });
+          {
+            return std::min(
+                std::max(gradient, -this->config.GradientLimit()),
+                this->config.GradientLimit());
+          });
 
       // Perform async update of the global network.
       #if ENS_VERSION_MAJOR == 1
-      this->updater.Update(learningNetwork.Parameters(), this->config.StepSize(),
-          totalGradients);
+      this->updater.Update(
+              learningNetwork.Parameters(),
+              this->config.StepSize(),
+              totalGradients);
       #else
       this->updatePolicy->Update(learningNetwork.Parameters(),
           this->config.StepSize(), totalGradients);
@@ -237,9 +259,7 @@ class OneStepQLearningWorker:public WorkerBase< EnvironmentType, NetworkType, Up
     this->state = nextState;
     return false;
   }
-
 };
-
 } // namespace rl
 } // namespace mlpack
 

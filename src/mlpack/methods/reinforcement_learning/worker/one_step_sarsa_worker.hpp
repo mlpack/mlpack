@@ -35,9 +35,19 @@ template <
   typename PolicyType
 >
 class OneStepSarsaWorker
-    :public WorkerBase< EnvironmentType, NetworkType, UpdaterType, PolicyType, SarsaWorkerTransitionType<EnvironmentType>>
+    :public WorkerBase<
+        EnvironmentType,
+        NetworkType,
+        UpdaterType,
+        PolicyType,
+        SarsaWorkerTransitionType<EnvironmentType>>
 {
-    using base = WorkerBase< EnvironmentType, NetworkType, UpdaterType, PolicyType, SarsaWorkerTransitionType<EnvironmentType>>;
+    using base = WorkerBase<
+            EnvironmentType,
+            NetworkType,
+            UpdaterType,
+            PolicyType,
+            SarsaWorkerTransitionType<EnvironmentType>>;
  public:
   using StateType = typename EnvironmentType::State;
   using ActionType = typename EnvironmentType::Action;
@@ -57,7 +67,7 @@ class OneStepSarsaWorker
       const EnvironmentType& environment,
       const TrainingConfig& config,
       bool deterministic):
-      base(updater,environment,config, deterministic)
+      base(updater, environment, config, deterministic)
   { }
 
   /**
@@ -68,9 +78,7 @@ class OneStepSarsaWorker
   OneStepSarsaWorker(const OneStepSarsaWorker& other) :
       base(std::forward<const OneStepSarsaWorker&>(other)),
       action(other.action)
-  {
-    
-  }
+  {  }
 
   /**
    * Take ownership of another OneStepSarsaWorker.
@@ -93,8 +101,7 @@ class OneStepSarsaWorker
       return *this;
 
     action = other.action;
-
-    base::operator=(std::forward(other));  	
+    base::operator=(std::forward(other));
 
     return *this;
   }
@@ -110,7 +117,7 @@ class OneStepSarsaWorker
       return *this;
 
     action = std::move(other.action);
-    base::operator=(std::forward(other));    
+    base::operator=(std::forward(other));
 
     return *this;
   }
@@ -170,7 +177,14 @@ class OneStepSarsaWorker
     #pragma omp atomic
     totalSteps++;
 
-    this->pending[this->pendingIndex++] = { this->state, action, reward, nextState, nextAction };
+    this->pending[this->pendingIndex++] =
+            {
+                this->state,
+                action,
+                reward,
+                nextState,
+                nextAction
+            };
 
     if (terminal || this->pendingIndex >= this->config.UpdateInterval())
     {
@@ -195,7 +209,7 @@ class OneStepSarsaWorker
             this->config.Discount() * targetActionValue;
 
         // Compute the training target for current state.
-	auto input=transition.state.Encode();
+        auto input = transition.state.Encode();
         this->network.Forward(transition.state.Encode(), actionValue);
         actionValue[transition.action] = targetActionValue;
 
@@ -254,11 +268,10 @@ class OneStepSarsaWorker
    */
   void Reset() override
   {
-		base::Reset();
-		action = ActionType::size;
+    base::Reset();
+    action = ActionType::size;
   }
 
-  
   //! Current action of the agent.
   ActionType action;
 };

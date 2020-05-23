@@ -12,33 +12,37 @@
 #ifndef Q_LEARNING_WORKER_TRANSITION_TYPE
 #define Q_LEARNING_WORKER_TRANSITION_TYPE
 namespace mlpack {
-    namespace rl {
-        template<
-            typename StateType,
-            typename ActionType
-        >
-        struct QLearningWorkerTransitionType
-        {
-            /*using StateType = typename EnvironmentType::State;
-            using ActionType = typename EnvironmentType::Action;*/
-        
-            StateType state;
-            ActionType action;
-            double reward;
-            StateType nextState;
+namespace rl {
+template<
+    typename StateType,
+    typename ActionType
+>
+struct QLearningWorkerTransitionType
+{
+    StateType state;
+    ActionType action;
+    double reward;
+    StateType nextState;
 
-            QLearningWorkerTransitionType() = default;
+    QLearningWorkerTransitionType() = default;
 
-            QLearningWorkerTransitionType(StateType state, ActionType action, double reward, StateType nextState)
-                :state(state), action(action), reward(reward), nextState(nextState)
-            {  }
+    QLearningWorkerTransitionType(
+            const StateType &state,
+            const ActionType &action,
+            const double reward,
+            const StateType &nextState)
+        :state(state), action(action), reward(reward), nextState(nextState)
+    { }
 
-            QLearningWorkerTransitionType(std::tuple<StateType, ActionType, double, StateType> tp)
-                :state(std::get<0>(tp)), action(std::get<1>(tp)), reward(std::get<2>(tp)), nextState(std::get<3>(tp))
-            {  }
-        };
-    }
-}
+    QLearningWorkerTransitionType(
+            const std::tuple<StateType, ActionType, double, StateType> &tp):
+            state(std::get<0>(tp)),
+            action(std::get<1>(tp)),
+            reward(std::get<2>(tp)),
+            nextState(std::get<3>(tp))
+    { }
+};
+}//namespace rl
+}//namespace mlpack
 #endif // !Q_LEARNING_WORKER_TRANSITION_TYPE
-
 

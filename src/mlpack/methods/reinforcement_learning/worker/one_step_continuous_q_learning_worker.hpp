@@ -34,10 +34,25 @@ template <
   typename UpdaterType,
   typename PolicyType
 >
-class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, NetworkType, UpdaterType, PolicyType, QLearningWorkerTransitionType<typename EnvironmentType::State,arma::colvec>>
+class OneStepContinuousQLearningWorker:
+        public WorkerBase<
+            EnvironmentType,
+            NetworkType,
+            UpdaterType,
+            PolicyType,
+            QLearningWorkerTransitionType<
+                    typename EnvironmentType::State,
+                    arma::colvec>>
 {
-    using base = WorkerBase< EnvironmentType, NetworkType, UpdaterType, PolicyType, QLearningWorkerTransitionType<typename EnvironmentType::State,arma::colvec>>;
-    //using qWorkerType = QLearningWorkerTransitionType<EnvironmentType>;
+    using base = WorkerBase<
+            EnvironmentType,
+            NetworkType,
+            UpdaterType,
+            PolicyType,
+            QLearningWorkerTransitionType<
+                    typename EnvironmentType::State,
+                    arma::colvec>>;
+
  public:
      using StateType = typename EnvironmentType::State;
      using ActionType = typename EnvironmentType::Action;
@@ -56,7 +71,7 @@ class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, Netwo
         const EnvironmentType& environment,
         const TrainingConfig& config,
         bool deterministic)
-		: base(updater,environment,config,deterministic)
+        : base(updater, environment, config, deterministic)
     { }
 
     /**
@@ -64,7 +79,8 @@ class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, Netwo
      *
      * @param other OneStepQLearningWorker to copy.
      */
-    OneStepContinuousQLearningWorker(const OneStepContinuousQLearningWorker& other) :
+    OneStepContinuousQLearningWorker(
+            const OneStepContinuousQLearningWorker& other) :
         base(std::forward<const OneStepContinuousQLearningWorker&>(other))
     {}
 
@@ -73,7 +89,8 @@ class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, Netwo
      *
      * @param other OneStepQLearningWorker to take ownership of.
      */
-    OneStepContinuousQLearningWorker(OneStepContinuousQLearningWorker&& other) :
+    OneStepContinuousQLearningWorker(
+            OneStepContinuousQLearningWorker&& other) :
         base(std::forward<OneStepContinuousQLearningWorker&&>(other))
     {}
 
@@ -82,7 +99,8 @@ class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, Netwo
      *
      * @param other OneStepQLearningWorker to copy.
      */
-    OneStepContinuousQLearningWorker& operator=(const OneStepContinuousQLearningWorker& other)
+    OneStepContinuousQLearningWorker& operator=(
+            const OneStepContinuousQLearningWorker& other)
     {
         if (&other == this)
             return *this;
@@ -97,7 +115,8 @@ class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, Netwo
      *
      * @param other OneStepQLearningWorker to take ownership of.
      */
-    OneStepContinuousQLearningWorker& operator=(OneStepContinuousQLearningWorker&& other)
+    OneStepContinuousQLearningWorker& operator=(
+            OneStepContinuousQLearningWorker&& other)
     {
         if (&other == this)
             return *this;
@@ -108,7 +127,6 @@ class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, Netwo
     }
 
 
-	
   /**
    * The agent will execute one step.
    *
@@ -155,7 +173,13 @@ class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, Netwo
     #pragma omp atomic
     totalSteps++;
 
-    this->pending[this->pendingIndex] = { this->state, action.data(), reward, nextState };
+    this->pending[this->pendingIndex] =
+            {
+                this->state,
+                action.data(),
+                reward,
+                nextState
+            };
     this->pendingIndex++;
 
     if (terminal || this->pendingIndex >= this->config.UpdateInterval())
@@ -163,7 +187,6 @@ class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, Netwo
       // Initialize the gradient storage.
       arma::mat totalGradients(learningNetwork.Parameters().n_rows,
           learningNetwork.Parameters().n_cols, arma::fill::zeros);
-
 
       for (size_t i = 0; i < this->pending.size(); ++i)
       {
@@ -173,13 +196,15 @@ class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, Netwo
         arma::colvec actionValue;
         if (i<this->pending.size()-1)
         {
-            actionValue=this->pending[i+1].action;
+            actionValue = this->pending[i+1].action;
         }
         else
         {
             #pragma omp critical
             {
-                targetNetwork.Predict(transition.nextState.Encode(), actionValue);
+                targetNetwork.Predict(
+                        transition.nextState.Encode(),
+                        actionValue);
             };
         }
 
@@ -187,9 +212,7 @@ class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, Netwo
             this->config.Discount() * actionValue;
 
         // Compute the training target for current state.
-	    auto input=transition.state.Encode();
-        //this->network.Forward(input, actionValue);
-        //actionValue[transition.action] = targetActionValue;
+	    auto input = transition.state.Encode();
 
         // Compute gradient.
         arma::mat gradients;
@@ -202,18 +225,21 @@ class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, Netwo
       // Clamp the accumulated gradients.
       totalGradients.transform(
           [&](double gradient)
-          { 
-		  	return std::min(std::max(gradient, -this->config.GradientLimit()),
-              this->config.GradientLimit()); 
-	      });
+          {
+                return std::min(
+                    std::max(gradient, -this->config.GradientLimit()),
+                    this->config.GradientLimit());
+          });
 
       // Perform async update of the global network.
       #if ENS_VERSION_MAJOR == 1
       this->updater.Update(learningNetwork.Parameters(), this->config.StepSize(),
           totalGradients);
       #else
-      this->updatePolicy->Update(learningNetwork.Parameters(),
-          this->config.StepSize(), totalGradients);
+      this->updatePolicy->Update(
+              learningNetwork.Parameters(),
+              this->config.StepSize(),
+              totalGradients);
       #endif
 
       // Sync the local network with the global network.
@@ -242,7 +268,6 @@ class OneStepContinuousQLearningWorker:public WorkerBase< EnvironmentType, Netwo
   }
 
 };
-
 } // namespace rl
 } // namespace mlpack
 
