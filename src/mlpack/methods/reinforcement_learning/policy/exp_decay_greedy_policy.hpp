@@ -1,5 +1,5 @@
 /**
- * @file methods/reinforcement_learning/policy/exp_decay_greedy_policy.hpp
+ * @file exp_decaay_greedy_policy.hpp
  * @author Shangtong Zhang
  * @author Abhinav Sagar
  * @author Arsen Zahray
@@ -42,7 +42,8 @@ class ExponentiallyDecayingGreedyPolicy
    * @param initialEpsilon The initial probability to explore
    *        (select a random action).
    * @param minEpsilon Epsilon will never be less than this value.
-   * @param decayRate at each step, probability of selecting random action will decrease by `1-decayRate`
+   * @param decayRate at each step, probability of selecting random
+   *        action will decrease by `1-decayRate`
    */
   ExponentiallyDecayingGreedyPolicy(const double initialEpsilon,
                const double minEpsilon,
@@ -51,8 +52,12 @@ class ExponentiallyDecayingGreedyPolicy
       minEpsilon(minEpsilon),
       delta(1-decayRate)
   {
-      //we are using static_cast in the Sample method. This means, we have to check at compile time that the ActionType can be used in this maner
-      static_assert(std::is_enum<ActionType>::value, "ActionType must be an enum type. For non-enum types, use Cuntinuous policy");
+      // We are using static_cast in the Sample method.
+      // This means, we have to check at compile time that the ActionType
+      // can be used in this maner
+      static_assert(std::is_enum<ActionType>::value,
+              "ActionType must be an enum type. For non-enum types, use"
+              " Cuntinuous policy");
   }
 
   /**
@@ -68,7 +73,7 @@ class ExponentiallyDecayingGreedyPolicy
     if (!deterministic )
     {
         double exploration = math::Random();
-        if(exploration < epsilon)
+        if (exploration < epsilon)
         {
             return static_cast<ActionType>(math::RandInt(ActionType::size));
         }

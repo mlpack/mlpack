@@ -55,8 +55,12 @@ class GreedyPolicy
       minEpsilon(minEpsilon),
       delta(((initialEpsilon - minEpsilon) * decayRate) / annealInterval)
   {
-      //we are using static_cast in the Sample method. This means, we have to check at compile time that the ActionType can be used in this maner
-      static_assert(std::is_enum<ActionType>::value, "ActionType must be an enum type. For non-enum types, use Cuntinuous policy");
+      // we are using static_cast in the Sample method.
+      // This means, we have to check at compile time that
+      // the ActionType can be used in this maner
+      static_assert(std::is_enum<ActionType>::value,
+              "ActionType must be an enum type. For non-enum types, "
+              "use Cuntinuous policy");
   }
 
   /**
@@ -72,7 +76,7 @@ class GreedyPolicy
       if (!deterministic )
       {
           double exploration = math::Random();
-          if(exploration < epsilon)
+          if (exploration < epsilon)
           {
               return static_cast<ActionType>(math::RandInt(ActionType::size));
           }

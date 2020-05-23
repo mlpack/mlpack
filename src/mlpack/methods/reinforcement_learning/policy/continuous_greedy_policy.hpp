@@ -18,78 +18,78 @@
 #include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
-    namespace rl {
-        template <typename EnvironmentType>
-        class ContinuousGreedyPolicy
-        {
-        public:
-            //! Convenient typedef for action.
-            using ActionType = typename EnvironmentType::Action;
+namespace rl {
+template <typename EnvironmentType>
+class ContinuousGreedyPolicy
+{
+public:
+    //! Convenient typedef for action.
+    using ActionType = typename EnvironmentType::Action;
 
-            /**
-           * Constructor for continuous epsilon greedy policy class.
-           *
-           * @param initialEpsilon The initial probability to explore
-           *        (select a random action).
-           * @param minEpsilon Epsilon will never be less than this value.
-           * @param decayRate at each step, probability of selecting random action will decrease by `1-decayRate`
-           */
-            ContinuousGreedyPolicy(const double initialEpsilon,
-                                              const double minEpsilon,
-                                              const double decayRate = 1e-10) :
-                    epsilon(initialEpsilon),
-                    minEpsilon(minEpsilon),
-                    delta(1-decayRate)
-            { /* Nothing to do here. */
-            }
-
-            /**
-             * Sample an action based on given action values.
-             *
-             * @param actionValue Values for each action.
-             * @param deterministic Always select the action greedily.
-             * @return Sampled action.
-             */
-            ActionType Sample(const arma::colvec& actionValue, bool deterministic = false)
-            {
-                // Select the action randomly.
-                if (!deterministic)
-                {
-                    double exploration = math::Random();
-                    if (exploration < epsilon)
-                    {
-                        return ActionType::Sample();
-                    }
-                }
-
-                // Select the action greedily.
-                return ActionType(actionValue);
-            }
-
-            /**
-             * Exploration probability will anneal at each step.
-             */
-            void Anneal()
-            {
-                epsilon *= delta;
-                epsilon = std::max(minEpsilon, epsilon);
-            }
-
-            /**
-             * @return Current possibility to explore.
-             */
-            const double& Epsilon() const { return epsilon; }
-
-        private:
-            //! Locally-stored probability to explore.
-            double epsilon;
-
-            //! Locally-stored lower bound for epsilon.
-            double minEpsilon;
-
-            //! Locally-stored stride for epsilon to anneal.
-            double delta;
-        };
+    /**
+   * Constructor for continuous epsilon greedy policy class.
+   *
+   * @param initialEpsilon The initial probability to explore
+   *        (select a random action).
+   * @param minEpsilon Epsilon will never be less than this value.
+   * @param decayRate at each step, probability of selecting random action will decrease by `1-decayRate`
+   */
+    ContinuousGreedyPolicy(const double initialEpsilon,
+                                      const double minEpsilon,
+                                      const double decayRate = 1e-10) :
+            epsilon(initialEpsilon),
+            minEpsilon(minEpsilon),
+            delta(1-decayRate)
+    { /* Nothing to do here. */
     }
-}
+
+    /**
+     * Sample an action based on given action values.
+     *
+     * @param actionValue Values for each action.
+     * @param deterministic Always select the action greedily.
+     * @return Sampled action.
+     */
+    ActionType Sample(const arma::colvec& actionValue, bool deterministic = false)
+    {
+        // Select the action randomly.
+        if (!deterministic)
+        {
+            double exploration = math::Random();
+            if (exploration < epsilon)
+            {
+                return ActionType::Sample();
+            }
+        }
+
+        // Select the action greedily.
+        return ActionType(actionValue);
+    }
+
+    /**
+     * Exploration probability will anneal at each step.
+     */
+    void Anneal()
+    {
+        epsilon *= delta;
+        epsilon = std::max(minEpsilon, epsilon);
+    }
+
+    /**
+     * @return Current possibility to explore.
+     */
+    const double& Epsilon() const { return epsilon; }
+
+private:
+    //! Locally-stored probability to explore.
+    double epsilon;
+
+    //! Locally-stored lower bound for epsilon.
+    double minEpsilon;
+
+    //! Locally-stored stride for epsilon to anneal.
+    double delta;
+};
+}//namespacec rl
+}//namespace mlpack
 #endif
