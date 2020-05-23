@@ -1,5 +1,5 @@
 /**
- * @file greedy_policy.hpp
+ * @file continuous_greedy_policy.hpp
  * @author Shangtong Zhang
  * @author Abhinav Sagar
  * @author Arsen Zahray
