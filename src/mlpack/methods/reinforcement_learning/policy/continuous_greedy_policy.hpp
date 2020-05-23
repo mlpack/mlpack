@@ -22,7 +22,7 @@ namespace rl {
 template <typename EnvironmentType>
 class ContinuousGreedyPolicy
 {
-public:
+ public:
     //! Convenient typedef for action.
     using ActionType = typename EnvironmentType::Action;
 
@@ -50,7 +50,9 @@ public:
      * @param deterministic Always select the action greedily.
      * @return Sampled action.
      */
-    ActionType Sample(const arma::colvec& actionValue, bool deterministic = false)
+    ActionType Sample(
+            const arma::colvec& actionValue,
+            bool deterministic = false)
     {
         // Select the action randomly.
         if (!deterministic)
@@ -80,7 +82,7 @@ public:
      */
     const double& Epsilon() const { return epsilon; }
 
-private:
+ private:
     //! Locally-stored probability to explore.
     double epsilon;
 
@@ -90,6 +92,6 @@ private:
     //! Locally-stored stride for epsilon to anneal.
     double delta;
 };
-}//namespacec rl
-}//namespace mlpack
+} // namespacec rl
+} // namespace mlpack
 #endif
