@@ -17,6 +17,10 @@
 
   * Add Load and Save of Sparse Matrix (#2344).
 
+  * Add Intersection over Union (IoU) metric for bounding boxes (#2402).
+
+  * Add Non Maximal Supression (NMS) metric for bounding boxes (#2410).
+
   * Fix `no_intercept` and probability computation for linear SVM bindings
     (#2419).
 

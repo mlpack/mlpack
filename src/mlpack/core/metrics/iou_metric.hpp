@@ -1,5 +1,5 @@
 /**
- * @file iou_metric.hpp
+ * @file core/metrics/iou_metric.hpp
  * @author Kartik Dutt
  *
  * Definition of Intersection Over Union metric. It is defined as intersection
