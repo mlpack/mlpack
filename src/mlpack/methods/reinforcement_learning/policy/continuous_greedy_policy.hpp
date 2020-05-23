@@ -92,6 +92,6 @@ class ContinuousGreedyPolicy
     //! Locally-stored stride for epsilon to anneal.
     double delta;
 };
-} // namespacec rl
+} // namespace rl
 } // namespace mlpack
 #endif
