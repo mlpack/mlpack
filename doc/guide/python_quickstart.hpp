@@ -9,7 +9,8 @@
 This page describes how you can quickly get started using mlpack from Python and
 gives a few examples of usage, and pointers to deeper documentation.
 
-This quickstart guide is also available for @ref cli_quickstart "the command-line".
+This quickstart guide is also available for 
+@ref cli_quickstart "the command-line" and @ref julia_quickstart "Julia"..
 
 @section python_quickstart_install Installing mlpack
 
