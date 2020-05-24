@@ -59,7 +59,7 @@ class SplineFunction
    */
   static double Deriv(const double y)
   {
-    return  2 * x * std::log(1 + x) + x / (1 + x);
+    return  2 * y * std::log(1 + y) + y / (1 + y);
   }
 
   /**

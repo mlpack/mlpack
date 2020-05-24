@@ -26,6 +26,9 @@
 #include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
 #include <mlpack/methods/ann/activation_functions/elliot_function.hpp>
 #include <mlpack/methods/ann/activation_functions/elish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/inverse_quadratic_function.hpp>
+#include <mlpack/methods/ann/activation_functions/quadratic_function.hpp>
+#include <mlpack/methods/ann/activation_functions/spline_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -933,6 +936,44 @@ BOOST_AUTO_TEST_CASE(CELUFunctionTest)
 
   CheckCELUActivationCorrect(activationData, desiredActivations);
   CheckCELUDerivativeCorrect(desiredActivations, desiredDerivatives);
+}
+
+/**
+ * Basic test of the inverse quadratic function.
+ */
+BOOST_AUTO_TEST_CASE(InverseQuadraticFunctionTest)
+{
+  // Hand-calculated values.
+  const arma::colvec desiredActivations("0.2 0.088968 0.0470588 \
+                                         9.95913e-05 0.5 0.5 \
+                                         0.2 1");
+
+  const arma::colvec desiredDerivatives("-0.369822 -0.175152 -0.0937021 \
+                                         -0.000199183 -0.64 -0.64 -0.369822\
+                                         -0.5");
+
+  CheckActivationCorrect<InvQuadFunction>(activationData, desiredActivations);
+  CheckDerivativeCorrect<InvQuadFunction>(desiredActivations,
+                                        desiredDerivatives);
+}
+
+/**
+ * Basic test of the quadratic function.
+ */
+BOOST_AUTO_TEST_CASE(QuadraticFunctionTest)
+{
+  // Hand-calculated values using Python interpreter.
+  const arma::colvec desiredActivations("4 10.24 20.25 \
+                                         10040 1 1 \
+                                         4 0");
+
+  const arma::colvec desiredDerivatives("8 20.48 40.50 \
+                                         20080 2 2 \
+                                         8 0");
+
+  CheckActivationCorrect<QUADFunction>(activationData, desiredActivations);
+  CheckDerivativeCorrect<QUADFunction>(desiredActivations,
+                                       desiredDerivatives);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

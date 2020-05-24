@@ -36,7 +36,7 @@ class InvQuadFunction
    */
   static double Fn(const double x)
   {
-    return 1 / 1 + x * X;
+    return 1 /( 1 + x * x);
   }
 
   /**
@@ -48,7 +48,7 @@ class InvQuadFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = 1 / 1 + arma::pow(x, 2);
+    y = 1 /(1 + arma::pow(x, 2));
   }
 
   /**
@@ -59,7 +59,7 @@ class InvQuadFunction
    */
   static double Deriv(const double y)
   {
-    return  - 2 / std::pow(1 + std::pow(y, 2), 2);
+    return  - 2 * y / std::pow(1 + std::pow(y, 2), 2);
   }
 
   /**
@@ -71,7 +71,7 @@ class InvQuadFunction
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& x, OutputVecType& y)
   {
-    y = - 2 / arma::pow(1 + arma::pow(y, 2), 2);
+    y = - 2 * x/ arma::pow(1 + arma::pow(x, 2), 2);
   }
 }; // class SplineFunction
 

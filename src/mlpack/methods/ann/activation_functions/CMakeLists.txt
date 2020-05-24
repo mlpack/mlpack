@@ -13,6 +13,9 @@ set(SOURCES
   gelu_function.hpp
   elliot_function.hpp
   elish_function.hpp
+  inverse_quadratic_function.hpp
+  quadratic_function.hpp
+  spline_function.hpp
 )
 
 # Add directory name to sources.
