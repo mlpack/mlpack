@@ -27,7 +27,7 @@ double SSIMIndex::Evaluate(DataType const& image,
  {
   for ( int column = 0; column<11; column++)
   {
-   gaussianWindow(row, column) = gaussianKernel.Evaluate(row - 5, column - 5);
+   gaussianWindow(row, column) = gaussianKernel.Evaluate(arma::vec(row - 5), arma::vec(column - 5));
   }
  }
  arma::mat meanReference = arma::conv2(reference, gaussianWindow, "same"); 
