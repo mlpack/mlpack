@@ -1,8 +1,16 @@
-if (BUILD_GO_SHLIB)
-  # We need to check here if Go is even available, since the tests will need it.
-  find_package(Go 1.10.0)
+if (BUILD_GO_BINDINGS)
+  ## We need to check here if Golang is even available.  Although actually
+  ## technically, I'm not sure if we even need to know!  For the tests though we
+  ## do.  So it's probably a good idea to check.
+  if (FORCE_BUILD_GO_BINDINGS)
+    find_package(Go 1.11.0 REQUIRED)
+    find_package(Gonum REQUIRED)
+  else ()
+    find_package(Go 1.11.0)
+    find_package(Gonum)
+  endif ()
 
-  if (NOT GO_FOUND)
+  if (NOT GO_FOUND OR NOT GONUM_FOUND)
     # We can't build anything, so define the macro to do nothing.
     macro (add_go_binding name)
       # Do nothing.
@@ -11,14 +19,10 @@ if (BUILD_GO_SHLIB)
     return ()
   endif ()
 
-  find_package(Gonum)
-  if (NOT GONUM_FOUND)
-    # We can't build anything, so define the macro to do nothing.
-    macro (add_go_binding name)
-      # Do nothing.
-    endmacro ()
-  endif ()
+  add_custom_target(go)
+endif()
 
+if (BUILD_GO_SHLIB)
 
   # Nothing in this directory will be compiled into mlpack.
   set(BINDING_SOURCES
@@ -134,10 +138,6 @@ if (BUILD_GO_SHLIB)
       RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
       LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
-endif()
-
-if (BUILD_GO_BINDINGS)
-  add_custom_target(go)
 endif()
 
 # Add a macro to build a go binding.

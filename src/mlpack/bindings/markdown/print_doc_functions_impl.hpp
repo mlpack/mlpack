@@ -531,7 +531,7 @@ std::string ProgramCall(const std::string& programName, Args... args)
   }
   else if (BindingInfo::Language() == "go")
   {
-    s += "go\n";
+    s += "```go\n";
     s += go::ProgramCall(programName, args...);
   }
   else

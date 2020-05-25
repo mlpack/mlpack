@@ -132,7 +132,7 @@ inline std::string GetPrintableType(
 {
   std::string goStrippedType, strippedType, printedType, defaultsType;
   StripType(d.cppType, goStrippedType, strippedType, printedType, defaultsType);
-  return goStrippedType + "Type";
+  return goStrippedType;
 }
 
 } // namespace go
