@@ -59,7 +59,7 @@ class Poisson1Function
    */
   static double Deriv(const double y)
   {
-    return  x * std::exp(-x) + (1 - x) * std::exp(-x);
+    return  std::exp(-y) + (1 - y) * std::exp(-y);
   }
 
   /**
@@ -71,7 +71,7 @@ class Poisson1Function
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& x, OutputVecType& y)
   {
-    y = x % arma::exp(-x) + (1 - x) % arma::exp(-x);
+    y = arma::exp(-x) + (1 - x) % arma::exp(-x);
   }
 }; // class Poisson1Function
 

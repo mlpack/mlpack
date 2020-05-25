@@ -28,7 +28,9 @@
 #include <mlpack/methods/ann/activation_functions/elish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/inverse_quadratic_function.hpp>
 #include <mlpack/methods/ann/activation_functions/quadratic_function.hpp>
+#include <mlpack/methods/ann/activation_functions/multi_quadratic_function.hpp>
 #include <mlpack/methods/ann/activation_functions/spline_function.hpp>
+#include <mlpack/methods/ann/activation_functions/poisson1_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -974,6 +976,68 @@ BOOST_AUTO_TEST_CASE(QuadraticFunctionTest)
   CheckActivationCorrect<QUADFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<QUADFunction>(desiredActivations,
                                        desiredDerivatives);
+}
+
+/**
+ * Basic test of the Spline function.
+ */
+BOOST_AUTO_TEST_CASE(SplineFunctionTest)
+{
+  const arma::colvec activationData1("2 3.2 4.5 100.2 1 1 2 0");
+
+  // Hand-calculated values.
+  const arma::colvec desiredActivations("4.39445 14.6953 34.5211 \
+                                         46355.9 0.693147 0.693147 \
+                                         4.39445 0");
+
+  const arma::colvec desiredDerivatives("15.6272 81.8592 247.461 \
+                                         996108 1.13939 1.13939 \
+                                         15.6272 0");
+
+  CheckActivationCorrect<SplineFunction>(activationData1, desiredActivations);
+  CheckDerivativeCorrect<SplineFunction>(desiredActivations,
+                                          desiredDerivatives);
+}
+
+/**
+ * Basic test of the multi quadratic function.
+ */
+BOOST_AUTO_TEST_CASE(MultiquadFunctionTest)
+{
+  // Hand-calculated values.
+  const arma::colvec desiredActivations("2.23607 3.35261 4.60977 \
+                                         100.205 1.41421 1.41421 \
+                                         2.23607 1");
+
+  const arma::colvec desiredDerivatives("0.912871 0.95828 0.97727 \
+                                         0.99995 0.816496 0.816496 \
+                                         0.707107 0.999201");
+
+  CheckActivationCorrect<MultiquadFunction>(activationData, desiredActivations);
+  CheckDerivativeCorrect<MultiquadFunction>(desiredActivations,
+                                          desiredDerivatives);
+}
+
+
+/**
+ * Basic test of the Poisson one function.
+ */
+BOOST_AUTO_TEST_CASE(Poisson1FunctionTest)
+{
+  const arma::colvec activationData1("-2 3.2 4.5 5 1 -1 2 0");
+
+  // Hand-calculated values.
+  const arma::colvec desiredActivations("-22.1672 0.0896768 0.0388815 \
+                                         0.0269518 0 -5.43656 \
+                                         0.135335 -1");
+
+  const arma::colvec desiredDerivatives("1.02404e+11 1.74647 1.88633 \
+                                         1.92058 2 1707.81 \
+                                         1.62864 8.15485");
+
+  CheckActivationCorrect<Poisson1Function>(activationData1, desiredActivations);
+  CheckDerivativeCorrect<Poisson1Function>(desiredActivations,
+                                          desiredDerivatives);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

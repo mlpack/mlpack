@@ -48,7 +48,7 @@ class MultiquadFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = arma::pow(1 + arma::pow(x, 2), 2);
+    y = arma::pow((1 + arma::pow(x, 2)), 0.5);
   }
 
   /**
@@ -59,7 +59,7 @@ class MultiquadFunction
    */
   static double Deriv(const double y)
   {
-    return  -x / std::pow(1 + x * x, 0.5);
+    return  y / std::pow(1 + y * y, 0.5);
   }
 
   /**
@@ -71,9 +71,9 @@ class MultiquadFunction
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& x, OutputVecType& y)
   {
-    y = -x / arma::pow(1 + arma::pow(x, 2), 2);
+    y = x / arma::pow((1 + arma::pow(x, 2)), 0.5);
   }
-}; // class MultiFunction
+}; // class MultiquadFunction
 
 } // namespace ann
 } // namespace mlpack

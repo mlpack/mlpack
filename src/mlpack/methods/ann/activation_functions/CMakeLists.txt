@@ -16,6 +16,8 @@ set(SOURCES
   inverse_quadratic_function.hpp
   quadratic_function.hpp
   spline_function.hpp
+  multi_quadratic_function.hpp
+  poisson1_function.hpp
 )
 
 # Add directory name to sources.
