@@ -147,9 +147,8 @@ class BayesianLinearRegression
                arma::rowvec& std) const;
 
    /**
-   * Compute the Root Mean Square Error
-   * between the predictions returned by the model
-   * and the true repsonses.
+   * Compute the Root Mean Square Error between the predictions returned by the
+   * model and the true repsonses.
    *
    * @param Points Data points to predict
    * @param responses A vector of targets.
@@ -157,32 +156,6 @@ class BayesianLinearRegression
    **/
   double RMSE(const arma::mat& data,
               const arma::rowvec& responses) const;
-
-  /**
-   * Center and scale the data. The last four arguments
-   * allow future modification of new points.
-   *
-   * @param data Design matrix in column-major format, dim(P,N).
-   * @param responses A vector of targets.
-   * @param centerData If true data will be centred according to the points.
-   * @param centerData If true data will be scales by the standard deviations
-   *     of the features computed according to the points.
-   * @param dataProc data processed, dim(N,P).
-   * @param responsesProc responses processed, dim(N).
-   * @param dataOffset Mean vector of the design matrix according to the 
-   *     points, dim(P).
-   * @param dataScale Vector containg the standard deviations of the features
-   *     dim(P).
-   * @return reponsesOffset Mean of responses.
-   */
-  double CenterScaleData(const arma::mat& data,
-                         const arma::rowvec& responses,
-                         const bool centerData,
-                         const bool scaleData,
-                         arma::mat& dataProc,
-                         arma::rowvec& responsesProc,
-                         arma::colvec& dataOffset,
-                         arma::colvec& dataScale);
 
   /**
    * Get the solution vector
@@ -276,6 +249,33 @@ class BayesianLinearRegression
 
   //! Covariance matrix of the solution vector omega.
   arma::mat matCovariance;
+
+  /**
+   * Center and scale the data. The last four arguments
+   * allow future modification of new points.
+   *
+   * @param data Design matrix in column-major format, dim(P,N).
+   * @param responses A vector of targets.
+   * @param centerData If true data will be centred according to the points.
+   * @param centerData If true data will be scales by the standard deviations
+   *     of the features computed according to the points.
+   * @param dataProc data processed, dim(N,P).
+   * @param responsesProc responses processed, dim(N).
+   * @param dataOffset Mean vector of the design matrix according to the 
+   *     points, dim(P).
+   * @param dataScale Vector containg the standard deviations of the features
+   *     dim(P).
+   * @return reponsesOffset Mean of responses.
+   */
+  double CenterScaleData(const arma::mat& data,
+                         const arma::rowvec& responses,
+                         const bool centerData,
+                         const bool scaleData,
+                         arma::mat& dataProc,
+                         arma::rowvec& responsesProc,
+                         arma::colvec& dataOffset,
+                         arma::colvec& dataScale);
+
 };
 } // namespace regression
 } // namespace mlpack
