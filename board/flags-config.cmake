@@ -16,7 +16,7 @@
 
 function(flags BOARD_NAME)
   # Set all minimization flags for all platforms
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -fomit-frame-pointer -fno-unwind-tables -fno-asynchronous-unwind-tables")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=gold -Os -fomit-frame-pointer -fno-unwind-tables -fno-asynchronous-unwind-tables -flto")
 
   # Set the CMAKE CXX flags
   if(BOARD_NAME STREQUAL "rpi0" OR BOARD_NAME STREQUAL "rpi1")
