@@ -22,10 +22,14 @@ double SSIMIndex::Evaluate(DataType const& image,
  }
 
  kernel::GaussianKernel gaussianKernel = kernel::GaussianKernel(1.5);
- DataType gaussianWindow = gaussianKernel.Evaluate(arma::regspace(-5, 5),
-                                                   arma::regspace(-5, 5));
-
-
+ arma::mat gaussianWindow(11, 11);
+ for ( int row = 0; row < 11; row++)
+ {
+  for ( int column = 0; column<11; column++)
+  {
+   gaussianWindow(row, column) = gaussianKernel.Evaluate(row - 5, column - 5);
+  }
+ }
  arma::mat meanReference = arma::conv2(reference, gaussianWindow, "same"); 
 
  arma::mat meanImage =  arma::conv2(image, gaussianWindow, "same");
@@ -42,7 +46,7 @@ double SSIMIndex::Evaluate(DataType const& image,
                                                   gaussianWindow, "same") -
                                                  meanReference%meanImage;
 
- double dynamicRange = image.max - image.min;
+ double dynamicRange = image.max() - image.min();
 
  double regularisationConstant1 = 0.0001 * dynamicRange * dynamicRange;
 
@@ -55,7 +59,7 @@ double SSIMIndex::Evaluate(DataType const& image,
                         (varianceReference + varianceImage +
                          regularisationConstant2));
 
- double meanSSIM = arma::mean(localSSIM);
+ double meanSSIM = arma::mean(arma::mean(localSSIM));
  return meanSSIM;
 
 }
