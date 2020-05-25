@@ -85,10 +85,10 @@ class ContinuousMountainCar
    */
   struct Action
   {
-	static const int size = 1;
-    double action[size];
+    static const int size = 1;
+    double action[1];
     // Storing degree of freedom
-    
+
 
       Action() = default;
 
