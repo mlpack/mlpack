@@ -23,11 +23,9 @@ using namespace mlpack::util;
 
 PROGRAM_INFO("BayesianLinearRegression",
     // Short description.
-    "An implementation of the bayesian linear regression, also known "
-    "as the Bayesian linear regression. This can train a Bayesian linear "
-    "regression model and use that model or a pre-trained model to output "
-    "regression "
-    "predictions for a test set.",
+    "An implementation of the bayesian linear regression. This can train a "
+    "Bayesian linear regression model and use that model or a pre-trained "
+    "model to output regression predictions for a test set.",
     // Long description.
     "An implementation of the bayesian linear regression, also known"
     "as the Bayesian linear regression.\n "
@@ -44,17 +42,7 @@ PROGRAM_INFO("BayesianLinearRegression",
     "\n\n"
     "This program is able to train a Bayesian linear regression model or load "
     "a model from file, output regression predictions for a test set, and save "
-    "the trained model to a file. The Bayesian linear regression algorithm is "
-    "described in more detail below:"
-    "\n\n"
-    "Let X be a matrix where each row is a point and each column is a "
-    "dimension, t is a vector of targets, alpha is the precision of the "
-    "gaussian prior distribtion of w, and w is the solution to determine. "
-    "\n\n"
-    "The Bayesian linear regression computes the posterior distribution of "
-    "the parameters by the Bayes's rule : "
-    "\n\n"
-    " p(w|X) = p(X,t|w) * p(w|alpha) / p(X)"
+    "the trained model to a file." 
     "\n\n"
     "To train a BayesianLinearRegression model, the " +
     PRINT_PARAM_STRING("input") + " and " + PRINT_PARAM_STRING("responses") +
@@ -90,7 +78,16 @@ PROGRAM_INFO("BayesianLinearRegression",
     "\n\n" +
     PRINT_CALL("bayesian_linear_regression", "input_model",
                "bayesian_linear_regression_model", "test", "test",
-               "output_predictions", "test_predictions"));
+               "output_predictions", "test_predictions") +
+    "\n\n"
+    "Because the estimator computes a predictive distribution instead of simple "
+    "point estimate, the " + PRINT_PARAM_STRING("output_std") + " parameter "
+    "allows to save the prediction uncertainties with one standard deviation "
+    "from the mean :" 
+    "\n\n" +
+    PRINT_CALL("bayesian_linear_regression", "input_model",
+               "bayesian_linear_regression_model", "test", "test",
+               "output_predictions", "test_predictions", "output_std", "stds"));
 
 PARAM_MATRIX_IN("input", "Matrix of covariates (X).", "i");
 
