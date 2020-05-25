@@ -55,8 +55,8 @@ BOOST_AUTO_TEST_CASE(BayesianLinearRegressionRegressionTest)
   BOOST_REQUIRE_SMALL(estimator.Variance(), 1e-6);
 }
 
-// Verify fitIntercept and normalize equal false do not affect the solution.
-BOOST_AUTO_TEST_CASE(TestCenter0Normalize0)
+// Verify centerData and scaleData equal false do not affect the solution.
+BOOST_AUTO_TEST_CASE(TestCenter0ScaleData0)
 {
   arma::mat matX;
   arma::rowvec y;
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(TestCenter0Normalize0)
 }
 
 // Verify that centering and normalization are correct.
-BOOST_AUTO_TEST_CASE(TestCenter1Normalize1)
+BOOST_AUTO_TEST_CASE(TestCenterDataTrueScaleDataTrue)
 {
   arma::mat matX;
   arma::rowvec y;
@@ -109,8 +109,7 @@ BOOST_AUTO_TEST_CASE(SingularMatix)
   matX.row(1) = matX.row(0);
 
   BayesianLinearRegression estimator;
-  double singular = estimator.Train(matX, y);
-  BOOST_REQUIRE(singular != -1);
+  estimator.Train(matX, y);
 }
 
 // Check that std are well computed/coherent. At least higher than the

@@ -51,11 +51,11 @@ BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
   int n = 50, m = 4;
   arma::mat matX = arma::randu<arma::mat>(m, n);
   arma::rowvec omega = arma::randu<arma::rowvec>(m);
-  arma::mat y =  omega * matX;
+  arma::rowvec y =  omega * matX;
 
   SetInputParam("input", std::move(matX));
   SetInputParam("responses", std::move(y));
-  SetInputParam("center", 0);
+  SetInputParam("center", false);
 
   mlpackMain();
 
@@ -77,8 +77,8 @@ BOOST_AUTO_TEST_CASE(BayesianLinearRegressionSavedEqualCode)
   int n = 10, m = 4;
   arma::mat matX = arma::randu<arma::mat>(m, n);
   arma::mat matXtest = arma::randu<arma::mat>(m, 2 * n);
-  const arma::colvec omega = arma::randu<arma::rowvec>(m);
-  arma::mat y =  omega * matX;
+  const arma::rowvec omega = arma::randu<arma::rowvec>(m);
+  arma::rowvec y =  omega * matX;
 
   BayesianLinearRegression model;
   model.Train(matX, y);
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(BayesianLinearRegressionSavedEqualCode)
 
   arma::mat ytest = std::move(responses);
   // Check that initial output and output using saved model are same.
-  CheckMatrices(ytest, CLI::GetParam<arma::mat>("output_predictions"));
+  CheckMatrices(ytest, CLI::GetParam<arma::mat>("predictions"));
 }
 
 BOOST_AUTO_TEST_SUITE_END();
