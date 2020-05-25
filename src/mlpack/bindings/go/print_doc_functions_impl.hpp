@@ -340,10 +340,10 @@ std::string ProgramCall(const std::string& programName, Args... args)
   // Initialize the method parameter structure
   std::ostringstream oss;
   std::ostringstream ossInital;
-  ossInital << "// Initialize optional parameters for " << goProgramName << "()."
-            << "\n";
+  ossInital << "// Initialize optional parameters for " << goProgramName
+            << "()." << "\n";
   oss << util::HyphenateString(ossInital.str(), 4);
-  
+
   std::ostringstream ossOptions;
   ossOptions << "param := mlpack." << goProgramName << "Options()\n";
   oss << util::HyphenateString(ossOptions.str(), 4);
@@ -403,8 +403,8 @@ inline std::string ProgramCall(const std::string& programName)
   std::ostringstream ossInital;
   // Determine if we have any output options.
   const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
-  ossInital << "// Initialize optional parameters for " << goProgramName << "()."
-            << "\n";
+  ossInital << "// Initialize optional parameters for " << goProgramName
+            << "()." << "\n";
   oss << util::HyphenateString(ossInital.str(), 4);
   std::ostringstream ossOptions;
   ossOptions << "param := mlpack." << goProgramName << "Options()\n";
