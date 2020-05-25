@@ -94,8 +94,8 @@ BOOST_AUTO_TEST_CASE(TestCenterDataTrueScaleDataTrue)
   double yMean = arma::mean(y);
 
   BOOST_REQUIRE_SMALL((double) abs(sum(estimator.DataOffset() - xMean)), 1e-6);
-  BOOST_REQUIRE_SMALL((double) abs(estimator.ResponsesOffset() - yMean), 1e-6);
   BOOST_REQUIRE_SMALL((double) abs(sum(estimator.DataScale() - xStd)), 1e-6);
+  BOOST_REQUIRE_CLOSE(estimator.ResponsesOffset(), yMean, 1e-6);
 }
 
 // Check that Train() does not fail with two colinear vectors.
