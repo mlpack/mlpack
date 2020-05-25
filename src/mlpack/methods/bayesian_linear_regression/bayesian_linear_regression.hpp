@@ -158,28 +158,30 @@ class BayesianLinearRegression
               const arma::rowvec& responses) const;
 
   /**
-   * Get the solution vector
+   * Get the solution vector. 
    *
    * @return omega Solution vector.
    */
   const arma::colvec& Omega() const { return omega; }
 
   /**
-   * Get the precision (or inverse variance) of the gaussian prior.
+   * Get the precision (or inverse variance) of the gaussian prior. Train()
+   * must be called before.
    *
    * @return \f$ \alpha \f$
    */
   double Alpha() const { return alpha; }
 
   /**
-   * Get the precision (or inverse variance) beta of the model.
+   * Get the precision (or inverse variance) beta of the model. Train() must be
+   * called before.
    *
    * @return \f$ \beta \f$
    */
   double Beta() const { return beta; }
 
   /**
-   * Get the estimated variance.
+   * Get the estimated variance. Train() must be called before.
    *   
    * @return 1.0 / \f$ \beta \f$
    */
