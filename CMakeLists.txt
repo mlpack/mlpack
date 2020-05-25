@@ -485,6 +485,7 @@ if (OPENMP_FOUND)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
   if(OpenMP_CXX_FOUND)
     set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OpenMP_CXX_LIBRARIES})
+  endif ()
 else ()
   # Disable warnings for all the unknown OpenMP pragmas.
   if (NOT MSVC)
