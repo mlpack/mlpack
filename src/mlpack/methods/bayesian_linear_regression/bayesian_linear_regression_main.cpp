@@ -91,7 +91,7 @@ PROGRAM_INFO("BayesianLinearRegression",
 
 PARAM_MATRIX_IN("input", "Matrix of covariates (X).", "i");
 
-PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");
+PARAM_ROW_IN("responses", "Matrix of responses/observations (y).", "r");
 
 PARAM_MODEL_IN(BayesianLinearRegression, "input_model", "Trained "
                "BayesianLinearRegression model to use.", "m");
@@ -128,7 +128,7 @@ static void mlpackMain()
   }
   ReportIgnoredParam({{ "input", false }}, "responses");
 
-  RequireAtLeastOnePassed({ "predictions", "output_model" }, false,
+  RequireAtLeastOnePassed({ "predictions", "output_model", "stds" }, false,
       "no results will be saved");
 
   // Ignore out_predictions unless test is specified.
@@ -148,22 +148,18 @@ static void mlpackMain()
     // Load responses.  The responses should be a one-dimensional vector, and it
     // seems more likely that these will be stored with one response per line
     // (one per row). So we should not transpose upon loading.
-    mat matY = std::move(CLI::GetParam<arma::mat>("responses"));
+    arma::rowvec responses = std::move(CLI::GetParam<arma::rowvec>("responses"));
 
-    // Make sure y is oriented the right way.
-    if (matY.n_cols == 1)
-      matY = trans(matY);
-    if (matY.n_rows > 1)
-      Log::Fatal << "Only one column or row allowed in responses file!" << endl;
-
-    if (matY.n_elem != matX.n_cols)
+    if (responses.n_elem != matX.n_cols)
+    {
+      delete bayesLinReg;
       Log::Fatal << "Number of responses must be equal to number of rows of X!"
                  << endl;
+    }
 
-    arma::rowvec y = std::move(matY);
     arma::rowvec predictionsTrain;
     // The Train method is ready to take data in column-major format.
-    bayesLinReg->Train(matX, matY);
+    bayesLinReg->Train(matX, responses);
   }
   else // We must have --input_model_file.
   {
