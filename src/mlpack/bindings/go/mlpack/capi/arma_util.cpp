@@ -125,8 +125,7 @@ void* mlpackArmaPtrUmat(const char* identifier)
   arma::Mat<size_t>& m = CLI::GetParam<arma::Mat<size_t>>(identifier);
 
   // Advanced constructor.
-  arma::Mat<double> output(arma::conv_to<arma::Mat<double>>::from(m).memptr(),
-                              m.n_rows, m.n_cols, false, true);
+  arma::mat output = arma::conv_to<arma::mat>::from(m);
   if (output.is_empty())
   {
     return NULL;
@@ -157,8 +156,7 @@ void* mlpackArmaPtrUrow(const char* identifier)
   arma::Row<size_t>& m = CLI::GetParam<arma::Row<size_t>>(identifier);
 
   // Advanced constructor.
-  arma::Row<double> output(arma::conv_to<arma::Row<double>>::from(m).memptr(),
-                              m.n_elem, false, true);
+  arma::Row<double> output = arma::conv_to<arma::Row<double>>::from(m);
   if (output.is_empty())
   {
     return NULL;
@@ -189,8 +187,7 @@ void* mlpackArmaPtrUcol(const char* identifier)
   arma::Col<size_t>& m = CLI::GetParam<arma::Col<size_t>>(identifier);
 
   // Advanced constructor.
-  arma::Col<double> output(arma::conv_to<arma::Col<double>>::from(m).memptr(),
-                              m.n_elem, false, true);
+  arma::Col<double> output = arma::conv_to<arma::Col<double>>::from(m);
   if (output.is_empty())
   {
     return NULL;

@@ -37,7 +37,7 @@ inline std::string GetBindingName(const std::string& bindingName)
 inline std::string PrintImport()
 {
   return "import (\n"
-      "  \"mlpack/build/src/mlpack/bindings/go/mlpack\"\n"
+      "  \"mlpack.org/v1/mlpack\"\n"
       "  \"gonum.org/v1/gonum/mat\"\n"
       ")\n";
 }
@@ -204,7 +204,7 @@ std::string PrintInputOptions(const std::string& paramName,
       {
         oss << PrintValue(value, d.tname == TYPENAME(std::string));
       }
-      result = oss.str();
+      result = util::HyphenateString(oss.str(), 4);
     }
   }
   else
@@ -339,9 +339,14 @@ std::string ProgramCall(const std::string& programName, Args... args)
 
   // Initialize the method parameter structure
   std::ostringstream oss;
-  oss << "    // Initialize optional parameters for " << goProgramName << "()."
-      << "\n";
-  oss << "param := mlpack." << goProgramName << "Options()\n";
+  std::ostringstream ossInital;
+  ossInital << "// Initialize optional parameters for " << goProgramName << "()."
+            << "\n";
+  oss << util::HyphenateString(ossInital.str(), 4);
+  
+  std::ostringstream ossOptions;
+  ossOptions << "param := mlpack." << goProgramName << "Options()\n";
+  oss << util::HyphenateString(ossOptions.str(), 4);
   result = oss.str();
   oss.str(""); // Reset it.
 
@@ -351,23 +356,18 @@ std::string ProgramCall(const std::string& programName, Args... args)
   oss.str(""); // Reset it.
 
   // Now process each output parameters.
-  oss << PrintOutputOptions(args...);
-  result = result + oss.str();
-  oss.str(""); // Reset it.
+  std::ostringstream ossOutputs;
+  ossOutputs << PrintOutputOptions(args...);
 
-  oss << " := mlpack." << goProgramName << "(";
-  result = result + oss.str();
-  oss.str(""); // Reset it.
+  ossOutputs << " := mlpack." << goProgramName << "(";
 
   // Now process each required input parameter.
   oss << PrintInputOptions(args...);
   std::string input = oss.str();
   if (input != "")
-    result = result + input + ", ";
-  oss.str(""); // Reset it.
-  result = result + "param";
-  result = result + ")";
-  result = util::HyphenateString(result, 4);
+    ossOutputs << input << ", ";
+  ossOutputs << "param)";
+  result = result + util::HyphenateString(ossOutputs.str(), 4);
 
   return result;
 }
@@ -400,12 +400,15 @@ inline std::string ProgramCall(const std::string& programName)
   std::ostringstream oss;
   std::string goProgramName = CamelCase(programName, false);
 
+  std::ostringstream ossInital;
   // Determine if we have any output options.
   const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
-  oss << "    // Initialize optional parameters for " << goProgramName << "()."
-      << "\n";
-  oss << "param := mlpack." << goProgramName << "Options()\n";
-
+  ossInital << "// Initialize optional parameters for " << goProgramName << "()."
+            << "\n";
+  oss << util::HyphenateString(ossInital.str(), 4);
+  std::ostringstream ossOptions;
+  ossOptions << "param := mlpack." << goProgramName << "Options()\n";
+  oss << util::HyphenateString(ossOptions.str(), 4);
   std::vector<std::string> outputOptions;
   for (auto it = CLI::Parameters().begin(); it != CLI::Parameters().end(); ++it)
   {
@@ -415,6 +418,7 @@ inline std::string ProgramCall(const std::string& programName)
   }
   std::string result = oss.str();
   oss.str("");
+  std::ostringstream ossInputs;
   std::string param = "";
   // Now iterate over every optional input option.
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
@@ -422,12 +426,14 @@ inline std::string ProgramCall(const std::string& programName)
     if (it->second.input && !it->second.required && !it->second.persistent)
     {
       // Print the input option.
-      oss << "param." << CamelCase(it->second.name, false) << " = ";
+      ossInputs << "param." << CamelCase(it->second.name, false) << " = ";
       std::string value;
       CLI::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
           it->second, NULL, (void*) &value);
-      oss << value;
-      oss << "\n";
+      ossInputs << value;
+      ossInputs << "\n";
+      oss << util::HyphenateString(ossInputs.str(), 4);
+      ossInputs.str("");
       param = oss.str();
     }
   }
@@ -438,6 +444,7 @@ inline std::string ProgramCall(const std::string& programName)
   oss << result;
 
   // Now print output lines.
+  std::ostringstream ossOutputs;
   size_t outputs = 0;
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
@@ -445,31 +452,31 @@ inline std::string ProgramCall(const std::string& programName)
     {
       if (outputs > 0)
       {
-        oss << ", ";
-        oss << it->second.name;
+        ossOutputs << ", ";
+        ossOutputs << it->second.name;
       }
       else
       {
-        oss << it->second.name;
+        ossOutputs << it->second.name;
       }
       ++outputs;
     }
   }
 
-  oss << " := mlpack." << goProgramName << "(";
+  ossOutputs << " := mlpack." << goProgramName << "(";
   for (auto i = parameters.begin(); i != parameters.end(); ++i)
   {
     if (i->second.input && i->second.required && i != parameters.end())
-      oss << CamelCase(i->second.name, true) << ", ";
+      ossOutputs << CamelCase(i->second.name, true) << ", ";
     else if (i == parameters.end())
-      oss << CamelCase(i->second.name, true);
+      ossOutputs << CamelCase(i->second.name, true);
   }
   if (param != "")
-    oss << "param";
-  oss << ")";
+    ossOutputs << "param";
+  ossOutputs << ")";
 
-  result = util::HyphenateString(oss.str(), 4);
-
+  oss << util::HyphenateString(ossOutputs.str(), 4);
+  result = oss.str();
   oss.str("");
   oss << result;
 

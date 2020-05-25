@@ -48,11 +48,6 @@ func (m *mlpackArma) allocArmaPtrMat(identifier string) {
   runtime.KeepAlive(m)
 }
 
-// Function free is used to free memory when the object leaves Go's scope.
-func freeMat(m *mlpackArma) {
-  C.free(unsafe.Pointer(m.mem))
-}
-
 // Allocates a C memory Pointer via cgo and registers the finalizer
 // in order to free the C memory once the input has been registered in Go.
 func (m *mlpackArma) allocArmaPtrUmat(identifier string) {

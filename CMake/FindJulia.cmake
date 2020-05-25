@@ -29,3 +29,7 @@ find_package_handle_standard_args(
     VERSION_VAR JULIA_VERSION_STRING
     FAIL_MESSAGE "Julia not found"
 )
+
+if (NOT JULIA_FOUND)
+  unset(BUILD_JULIA_BINDINGS CACHE)
+endif()

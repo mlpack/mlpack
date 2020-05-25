@@ -44,10 +44,8 @@ steps:
     unset BOOST_ROOT
     mkdir build && cd build
     export GOPATH=$PWD
-    go get -u -t gonum.org/v1/gonum/mat
-    cd src/gonum.org/v1/gonum
-    git checkout release-v0.6
-    cd $GOPATH
+    go get -u -t gonum.org/v1/gonum/...
+
     cmake $(CMakeArgs) ..
   displayName: 'CMake'
 
