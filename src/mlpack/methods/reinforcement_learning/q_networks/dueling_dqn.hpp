@@ -29,8 +29,8 @@ using namespace mlpack::ann;
  */
 template <
   typename FeatureNetworkType = FFN<EmptyLoss<>, GaussianInitialization>,
-  typename AdvantageNetworkType = Sequential<>,
-  typename ValueNetworkType = Sequential<>
+  typename AdvantageNetworkType = Sequential<>*,
+  typename ValueNetworkType = Sequential<>*
 >
 class DuelingDQN
 {
@@ -57,21 +57,24 @@ class DuelingDQN
       valueNetwork(),
       advantageNetwork()
   {
-    valueNetwork.Add(new Linear<>(h1, h2));
-    valueNetwork.Add(new ReLULayer<>());
-    valueNetwork.Add(new Linear<>(h2, 1));
+    valueNetwork = new Sequential<>();
+    valueNetwork->Add(new Linear<>(h1, h2));
+    valueNetwork->Add(new ReLULayer<>());
+    valueNetwork->Add(new Linear<>(h2, 1));
 
-    advantageNetwork.Add(new Linear<>(h1, h2));
-    advantageNetwork.Add(new ReLULayer<>());
-    advantageNetwork.Add(new Linear<>(h1, outputDim));
+    advantageNetwork = new Sequential<>();
+    advantageNetwork->Add(new Linear<>(h1, h2));
+    advantageNetwork->Add(new ReLULayer<>());
+    advantageNetwork->Add(new Linear<>(h2, outputDim));
 
-    Concat<> concat = new Concat<>();
-    concat.Add<Sequential<>>(valueNetwork);
-    concat.Add<Sequential<>>(advantageNetwork);
+    Concat<>* concat = new Concat<>(true);
+    concat->Add(valueNetwork);
+    concat->Add(advantageNetwork);
 
     featureNetwork.Add(new Linear<>(inputDim, h1));
     featureNetwork.Add(new ReLULayer<>());
     featureNetwork.Add(concat);
+    this->ResetParameters();
   }
 
   DuelingDQN(FeatureNetworkType featureNetwork,
@@ -81,10 +84,11 @@ class DuelingDQN
       advantageNetwork(std::move(advantageNetwork)),
       valueNetwork(std::move(valueNetwork))
   {
-    Concat<> concat = new Concat<>();
-    concat.Add<Sequential<>>(valueNetwork);
-    concat.Add<Sequential<>>(advantageNetwork);
+    Concat<>* concat = new Concat<>(true);
+    concat->Add(valueNetwork);
+    concat->Add(advantageNetwork);
     featureNetwork.Add(concat);
+    this->ResetParameters();
   }
 
   /**
@@ -114,12 +118,12 @@ class DuelingDQN
    */
   void Forward(const arma::mat state, arma::mat& output)
   {
-    // arma::mat output, advantage, value;
-    // featureNetwork.Forward(state, output);
+    arma::mat advantage, value;
+    featureNetwork.Forward(state, output);
     // actionValue = advantage.each_row() +
     //     (value - arma::mean(arma::mean(advantage)));
 
-    // networkOutput = output;
+    networkOutput = output;
   }
 
   /**
@@ -151,8 +155,6 @@ class DuelingDQN
   void ResetParameters()
   {
     featureNetwork.ResetParameters();
-    advantageNetwork.ResetParameters();
-    valueNetwork.ResetParameters();
   }
 
   //! Return the Parameters.
