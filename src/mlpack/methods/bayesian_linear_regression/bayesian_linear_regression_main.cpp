@@ -57,9 +57,9 @@ PROGRAM_INFO("BayesianLinearRegression",
     "trained model or the given input model.  Test points can be specified "
     "with the " + PRINT_PARAM_STRING("test") + " parameter.  Predicted "
     "responses to the test points can be saved with the " +
-    PRINT_PARAM_STRING("output_predictions") + " output parameter. The "
+    PRINT_PARAM_STRING("predictions") + " output parameter. The "
     "corresponding standard deviation can be save by precising the " +
-    PRINT_PARAM_STRING("output_std") + " parameter."
+    PRINT_PARAM_STRING("stds") + " parameter."
     "\n\n"
     "For example, the following command trains a model on the data " +
     PRINT_DATASET("data") + " and responses " + PRINT_DATASET("responses") +
@@ -78,16 +78,16 @@ PROGRAM_INFO("BayesianLinearRegression",
     "\n\n" +
     PRINT_CALL("bayesian_linear_regression", "input_model",
                "bayesian_linear_regression_model", "test", "test",
-               "output_predictions", "test_predictions") +
+               "predictions", "test_predictions") +
     "\n\n"
     "Because the estimator computes a predictive distribution instead of simple "
-    "point estimate, the " + PRINT_PARAM_STRING("output_std") + " parameter "
+    "point estimate, the " + PRINT_PARAM_STRING("stds") + " parameter "
     "allows to save the prediction uncertainties with one standard deviation "
     "from the mean :" 
     "\n\n" +
     PRINT_CALL("bayesian_linear_regression", "input_model",
                "bayesian_linear_regression_model", "test", "test",
-               "output_predictions", "test_predictions", "output_std", "stds"));
+               "predictions", "test_predictions", "stds", "stds"));
 
 PARAM_MATRIX_IN("input", "Matrix of covariates (X).", "i");
 
@@ -102,10 +102,10 @@ PARAM_MODEL_OUT(BayesianLinearRegression, "output_model", "Output "
 PARAM_MATRIX_IN("test", "Matrix containing points to regress on (test "
                 "points).", "t");
 
-PARAM_MATRIX_OUT("output_predictions", "If --test_file is specified, this "
+PARAM_MATRIX_OUT("predictions", "If --test_file is specified, this "
                   "file is where the predicted responses will be saved.", "o");
 
-PARAM_MATRIX_OUT("output_std", "If --std_file is specified, this file is where "
+PARAM_MATRIX_OUT("stds", "If --std_file is specified, this file is where "
                  "the standard deviations of the predictive distribution will "
                  "be saved.", "u");
 
@@ -133,11 +133,11 @@ static void mlpackMain()
   }
   ReportIgnoredParam({{ "input", false }}, "responses");
 
-  RequireAtLeastOnePassed({ "output_predictions", "output_model" }, false,
+  RequireAtLeastOnePassed({ "predictions", "output_model" }, false,
       "no results will be saved");
 
   // Ignore out_predictions unless test is specified.
-  ReportIgnoredParam({{ "test", false }}, "output_predictions");
+  ReportIgnoredParam({{ "test", false }}, "predictions");
 
   BayesianLinearRegression* bayesLinReg;
   if (CLI::HasParam("input"))
@@ -182,13 +182,13 @@ static void mlpackMain()
     mat testPoints = std::move(CLI::GetParam<arma::mat>("test"));
     arma::rowvec predictions;
 
-    if (CLI::HasParam("output_std"))
+    if (CLI::HasParam("stds"))
     {
       arma::rowvec std;
       bayesLinReg->Predict(testPoints, predictions, std);
 
       // Save the standard deviation of the test points (one per line).
-      CLI::GetParam<arma::mat>("output_std") = std::move(std);
+      CLI::GetParam<arma::mat>("stds") = std::move(std);
     }
     else
     {
@@ -196,7 +196,7 @@ static void mlpackMain()
     }
 
     // Save test predictions (one per line).
-    CLI::GetParam<arma::mat>("output_predictions") = std::move(predictions);
+    CLI::GetParam<arma::mat>("predictions") = std::move(predictions);
   }
 
   CLI::GetParam<BayesianLinearRegression*>("output_model") = bayesLinReg;
