@@ -109,20 +109,15 @@ PARAM_MATRIX_OUT("stds", "If --std_file is specified, this file is where "
                  "the standard deviations of the predictive distribution will "
                  "be saved.", "u");
 
-PARAM_INT_IN("center", "Center the data and fit the intercept. Set to 0 to "
-            "disable",
-            "c",
-            1);
+PARAM_FLAG("center", "Center the data and fit the intercept if enabled.", "c");
 
-PARAM_INT_IN("scale", "Scale each feature by their standard deviations. "
-             "set to 1 to scale.",
-             "s",
-             0);
+PARAM_FLAG("scale", "Scale each feature by their standard deviations if "
+	   "enabled.", "s");
 
 static void mlpackMain()
 {
-  int center = CLI::GetParam<int>("center");
-  int scale = CLI::GetParam<int>("scale");
+  bool center = CLI::GetParam<bool>("center");
+  bool scale = CLI::GetParam<bool>("scale");
 
   // Check parameters -- make sure everything given makes sense.
   RequireOnlyOnePassed({ "input", "input_model" }, true);
