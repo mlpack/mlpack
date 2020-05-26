@@ -990,9 +990,9 @@ BOOST_AUTO_TEST_CASE(SplineFunctionTest)
                                          46355.9 0.693147 0.693147 \
                                          4.39445 0");
 
-  const arma::colvec desiredDerivatives("15.6272 81.8592 247.461 \
-                                         996108 1.13939 1.13939 \
-                                         15.6272 0");
+  const arma::colvec desiredDerivatives("18.3923 94.6819 280.03866 \
+                                         1042462.1078 1.0137702 1.0137702 \
+                                         18.3923 0");
 
   CheckActivationCorrect<SplineFunction>(activationData1, desiredActivations);
   CheckDerivativeCorrect<SplineFunction>(desiredActivations,
@@ -1011,7 +1011,7 @@ BOOST_AUTO_TEST_CASE(MultiquadFunctionTest)
 
   const arma::colvec desiredDerivatives("0.912871 0.95828 0.97727 \
                                          0.99995 0.816496 0.816496 \
-                                         0.707107 0.999201");
+                                         0.912871 0.707107");
 
   CheckActivationCorrect<MultiquadFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<MultiquadFunction>(desiredActivations,

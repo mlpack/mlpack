@@ -21,8 +21,8 @@ namespace ann /** Artificial Neural Network. */ {
  * The Inverse Quadratic function, defined by
  *
  * @f{eqnarray*}{
- * f(x) = x^2 \\
- * f'(x) = 2*x \\
+ * f(x) = 1 / (1 + x^2) \\
+ * f'(x) = -2*x /(1 + x^2)^2 \\
  * @f}
  */
 class InvQuadFunction
@@ -36,11 +36,11 @@ class InvQuadFunction
    */
   static double Fn(const double x)
   {
-    return 1 /( 1 + x * x);
+    return 1 / ( 1 + x * x);
   }
 
   /**
-   * Computes the Spline function.
+   * Computes the Inverse Quadratic function.
    *
    * @param x Input data.
    * @param y The resulting output activation.
@@ -48,11 +48,11 @@ class InvQuadFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = 1 /(1 + arma::pow(x, 2));
+    y = 1 / (1 + arma::pow(x, 2));
   }
 
   /**
-   * Computes the first derivative of the Spline function.
+   * Computes the first derivative of the Inverse Quadratic function.
    *
    * @param y Input data.
    * @return f'(x)
@@ -63,7 +63,7 @@ class InvQuadFunction
   }
 
   /**
-   * Computes the first derivatives of the Spline function.
+   * Computes the first derivatives of the Inverse Quadratic function.
    *
    * @param y Input data.
    * @param x The resulting derivatives.
@@ -71,9 +71,9 @@ class InvQuadFunction
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& x, OutputVecType& y)
   {
-    y = - 2 * x/ arma::pow(1 + arma::pow(x, 2), 2);
+    y = - 2 * x / arma::pow(1 + arma::pow(x, 2), 2);
   }
-}; // class SplineFunction
+}; // class InvQuadFunction
 
 } // namespace ann
 } // namespace mlpack

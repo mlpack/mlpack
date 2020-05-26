@@ -21,8 +21,8 @@ namespace ann /** Artificial Neural Network. */ {
  * The Poisson one function, defined by
  *
  * @f{eqnarray*}{
- * f(x) = x^2 \\
- * f'(x) = 2*x \\
+ * f(x) = (x - 1) * e^-x \\
+ * f'(x) = e^-x + (1 - x) * e^-x \\
  * @f}
  */
 class Poisson1Function

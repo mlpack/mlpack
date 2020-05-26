@@ -21,8 +21,8 @@ namespace ann /** Artificial Neural Network. */ {
  * The Multi Quadratic function, defined by
  *
  * @f{eqnarray*}{
- * f(x) = x^2 \\
- * f'(x) = 2*x \\
+ * f(x) = √(1 + x^2) \\
+ * f'(x) = x/f(x) \\
  * @f}
  */
 class MultiquadFunction

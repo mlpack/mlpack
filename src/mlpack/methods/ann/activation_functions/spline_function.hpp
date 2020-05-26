@@ -21,8 +21,8 @@ namespace ann /** Artificial Neural Network. */ {
  * The Spline function, defined by
  *
  * @f{eqnarray*}{
- * f(x) = x^2 \\
- * f'(x) = 2*x \\
+ * f(x) = x^2 * log(1 + x) \\
+ * f'(x) = 2*x * log(1 + x) + x^2/(1 + x)\\
  * @f}
  */
 class SplineFunction
@@ -59,7 +59,7 @@ class SplineFunction
    */
   static double Deriv(const double y)
   {
-    return  2 * y * std::log(1 + y) + y / (1 + y);
+    return  2 * y * std::log(1 + y) + std::pow(y, 2) / (1 + y);
   }
 
   /**
@@ -71,7 +71,7 @@ class SplineFunction
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& x, OutputVecType& y)
   {
-    y = 2 * x % arma::log(1 + x) + x / (1 + x);
+    y = 2 * x % arma::log(1 + x) + arma::pow(x, 2) / (1 + x);
   }
 }; // class SplineFunction
 
