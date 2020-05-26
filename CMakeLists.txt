@@ -43,12 +43,15 @@ option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
 # we should fail if Go isn't found.
 if (BUILD_GO_BINDINGS)
   set(FORCE_BUILD_GO_BINDINGS ON)
-  set(BUILD_GO_SHLIB ON)
 else()
   set(FORCE_BUILD_GO_BINDINGS OFF)
-  set(BUILD_GO_SHLIB ON)
 endif()
 option(BUILD_GO_BINDINGS "Build Go bindings." ON)
+
+# If building Go bindings then build go shared libraries.    
+if (BUILD_GO_BINDINGS)
+  set(BUILD_GO_SHLIB ON)
+endif()
 
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.

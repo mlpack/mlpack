@@ -2,7 +2,6 @@ if (BUILD_JULIA_BINDINGS)
   ## We need to check here if Julia is even available.  Although actually
   ## technically, I'm not sure if we even need to know!  For the tests though we
   ## do.  So it's probably a good idea to check.
-  unset(BUILD_JULIA_BINDINGS CACHE)
   if (FORCE_BUILD_JULIA_BINDINGS)
     find_package(Julia 0.7.0 REQUIRED)
   else ()

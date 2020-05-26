@@ -45,7 +45,6 @@ steps:
     mkdir build && cd build
     export GOPATH=$PWD
     go get -u -t gonum.org/v1/gonum/...
-
     cmake $(CMakeArgs) ..
   displayName: 'CMake'
 

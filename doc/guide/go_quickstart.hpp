@@ -37,9 +37,9 @@ print the accuracy of the random forest on the test dataset.
 You can copy-paste this code directly into main.go to run it.
 @code{.go}
 package main
-  
+
 import (
-  "github.com/Yashwants19/v1/mlpack"
+  "github.com/mlpack.org/v1/mlpack"
   "fmt"
   "os"
 )
@@ -50,14 +50,14 @@ func main() {
                       "data.csv.gz")
   mlpack.DownloadFile("https://www.mlpack.org/datasets/covertype-small.labels.csv.gz",
                       "labels.csv.gz")
- 
+
   // Extract/Unzip the dataset.
   mlpack.UnZip("data.csv.gz", "data.csv")
   f1, _ := os.Open("data.csv")
   defer f1.Close()
   data := mlpack.NewReader(f1)
   dataset, _ := data.ReadAll()
-  
+
   mlpack.UnZip("labels.csv.gz", "labels.csv")
   f2, _ := os.Open("labels.csv")
   defer f2.Close()
@@ -71,7 +71,7 @@ func main() {
   params.Verbose = true
   test, test_labels, train, train_labels :=
       mlpack.PreprocessSplit(dataset, params)
-      
+
   // Train a random forest.
   rf_params := mlpack.RandomForestOptions()
   rf_params.NumTrees = 10
@@ -139,7 +139,7 @@ package main
 
 import (
   "github.com/frictionlessdata/tableschema-go/csv"
-  "github.com/Yashwants19/v1/mlpack"
+  "github.com/mlpack.org/v1/mlpack"
   "gonum.org/v1/gonum/mat"
   "fmt"
   "os"
