@@ -104,26 +104,29 @@ class DuelingDQN
    */
   void Predict(const arma::mat state, arma::mat& actionValue)
   {
-    // arma::mat output, advantage, value;
-    // featureNetwork.Predict(state, output);
-    // actionValue = advantage.each_row() +
-    //     (value - arma::mean(arma::mean(advantage)));
+    arma::mat advantage, value, networkOutput;
+    featureNetwork.Predict(state, networkOutput);
+    value = networkOutput.row(0);
+    advantage = networkOutput.rows(1, networkOutput.n_rows - 1);
+    actionValue = advantage.each_row() +
+        (value - arma::mean(advantage));
   }
 
   /**
    * Perform the forward pass of the states in real batch mode.
    *
    * @param state The input state.
-   * @param output The predicted output.
+   * @param actionValue Matrix to put output action values of states input.
    */
-  void Forward(const arma::mat state, arma::mat& output)
+  void Forward(const arma::mat state, arma::mat& actionValue)
   {
-    arma::mat advantage, value;
-    featureNetwork.Forward(state, output);
-    // actionValue = advantage.each_row() +
-    //     (value - arma::mean(arma::mean(advantage)));
-
-    networkOutput = output;
+    arma::mat advantage, value, networkOutput;
+    featureNetwork.Forward(state, networkOutput);
+    value = networkOutput.row(0);
+    advantage = networkOutput.rows(1, networkOutput.n_rows - 1);
+    actionValue = advantage.each_row() +
+        (value - arma::mean(advantage));
+    this->actionValues = actionValue;
   }
 
   /**
@@ -135,18 +138,14 @@ class DuelingDQN
    */
   void Backward(const arma::mat state, arma::mat& target, arma::mat& gradient)
   {
-    // arma::mat gradLoss;
-    // lossFunction.Backward(networkOutput, target, gradLoss);
+    arma::mat gradLoss;
+    lossFunction.Backward(this->actionValues, target, gradLoss);
 
-    // arma::mat gradValue, gradAdvantage;
-    // // valueNetwork.Backward(state, gradLoss, gradValue);
-    // advantageNetwork.Backward(features, gradLoss, gradAdvantage);
-    // std::cout << advantageNetwork.Model()[2];
-    // gradAdvantage = gradAdvantage.submat(0, 0, 1279, 0);
+    arma::mat gradValue = arma::sum(gradLoss);
+    arma::mat gradAdvantage = gradLoss.each_row() - arma::mean(gradLoss);
 
-    // arma::mat gradSum;
-    // gradSum = gradAdvantage; // + gradValue
-    // featureNetwork.Backward(state, gradSum, gradient);
+    arma::mat grad = arma::join_cols(gradValue, gradAdvantage);
+    featureNetwork.Backward(state, grad, gradient);
   }
 
   /**
@@ -172,11 +171,8 @@ class DuelingDQN
   //! Locally-stored value network.
   ValueNetworkType valueNetwork;
 
-  //! Locally-stored value network.
-  arma::mat networkOutput;
-
-  //! Locally-stored features of the network.
-  arma::mat features;
+  //! Locally-stored actionValues of the network.
+  arma::mat actionValues;
 
   //! Locally-stored loss function.
   MeanSquaredError<> lossFunction;
