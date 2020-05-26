@@ -19,6 +19,10 @@ if (GO_EXECUTABLE)
     endif()
 endif()
 
+if (NOT GO_EXECUTABLE)
+  unset(BUILD_GO_BINDINGS CACHE)
+endif()
+
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
     Go
@@ -26,7 +30,3 @@ find_package_handle_standard_args(
     VERSION_VAR GO_VERSION_STRING
     FAIL_MESSAGE "Go not found"
 )
-
-if (NOT GO_FOUND)
-  unset(BUILD_GO_BINDINGS CACHE)
-endif()
