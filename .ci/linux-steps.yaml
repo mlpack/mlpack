@@ -7,7 +7,7 @@ steps:
 # Set python version
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '$(python.version)'
+    versionSpec: '3.7'
 
 # Install build dependencies
 - script: |
@@ -23,15 +23,11 @@ steps:
 
     sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost1.70-dev libarmadillo-dev xz-utils
 
-    if [ '$(python.version)' == '2.7' ]; then
-      sudo apt-get install -y --allow-unauthenticated python-pip cython python-numpy python-pandas
-      sudo pip install --upgrade --ignore-installed setuptools cython
-      sudo pip install "zipp<3.1"
-    fi
-
-    if [ '$(python.version)' == '3.7' ]; then
-      sudo apt-get install -y --allow-unauthenticated python3-pip cython3 python3-numpy
-      sudo pip3 install --upgrade --ignore-installed setuptools cython pandas
+    if [ 'a$(python.version)' != 'a']; then
+      sudo apt-get install -y --allow-unauthenticated python3-pip python3-numpy
+      sudo pip3 install "Cython>0.24"
+      sudo pip3 install --upgrade --ignore-installed setuptools
+      sudo pip3 install pandas==0.24.2
     fi
 
     if [ 'a$(julia.version)' != 'a' ]; then
