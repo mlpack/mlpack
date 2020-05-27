@@ -19,10 +19,6 @@ if (GO_EXECUTABLE)
     endif()
 endif()
 
-if (NOT GO_EXECUTABLE)
-  unset(BUILD_GO_BINDINGS CACHE)
-endif()
-
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
     Go

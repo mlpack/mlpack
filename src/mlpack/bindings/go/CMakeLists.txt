@@ -1,4 +1,9 @@
 if (BUILD_GO_BINDINGS)
+
+  if (NOT GO_EXECUTABLE)
+    unset(BUILD_GO_BINDINGS CACHE)
+  endif()
+
   ## We need to check here if Golang is even available.  Although actually
   ## technically, I'm not sure if we even need to know!  For the tests though we
   ## do.  So it's probably a good idea to check.
@@ -61,6 +66,7 @@ if (BUILD_GO_SHLIB)
     mlpack/arma_util.go
     mlpack/cli_util.go
     mlpack/doc.go
+    mlpack/numcsv.go
   )
 
   # These are all the files we need to compile Go bindings for mlpack that are
