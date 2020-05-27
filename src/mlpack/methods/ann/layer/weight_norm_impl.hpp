@@ -43,8 +43,8 @@ WeightNorm<InputDataType, OutputDataType, CustomLayers...>::WeightNorm(
     const WeightNorm& layer) :
     layerWeightSize(layer.layerWeightSize),
     layerGradients(layer.layerGradients),
-    layerWeights(layer.layerWeights),
-    weights(layer.weights)
+    weights(layer.weights),
+    layerWeights(layer.layerWeights)
 {
   Reset();
 }

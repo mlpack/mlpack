@@ -42,13 +42,13 @@ template<typename InputDataType, typename OutputDataType,
 Highway<InputDataType, OutputDataType, CustomLayers...>::Highway(
   const Highway& layer) :
     inSize(layer.inSize),
+    networkOwnerships(layer.networkOwnerships),
     model(layer.model),
+    weights(layer.weights),
     reset(layer.reset),
     width(layer.width),
-    weights(layer.weights),
-    networkOwnerships(layer.networkOwnerships),
-    networkOutput(layer.networkOutput),
-    height(layer.height)
+    height(layer.height),
+    networkOutput(layer.networkOutput)
 {
   for (size_t i = 0; i < layer.network.size(); ++i)
   {

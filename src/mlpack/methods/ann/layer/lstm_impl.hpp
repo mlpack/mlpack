@@ -30,14 +30,14 @@ LSTM<InputDataType, OutputDataType>::LSTM(
     inSize(layer.inSize),
     outSize(layer.outSize),
     rho(layer.rho),
+    weights(layer.weights),
     forwardStep(layer.forwardStep),
     backwardStep(layer.backwardStep),
     gradientStep(layer.gradientStep),
     batchSize(layer.batchSize),
     batchStep(layer.batchStep),
     rhoSize(layer.rhoSize),
-    bpttSteps(layer.bpttSteps),
-    weights(layer.weights)
+    bpttSteps(layer.bpttSteps)
 {
   Reset();
 }

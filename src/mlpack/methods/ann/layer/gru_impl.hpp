@@ -43,11 +43,11 @@ GRU<InputDataType, OutputDataType, CustomLayers...>::GRU(
     gradientStep(layer.gradientStep),
     outParameter(layer.outParameter),
     allZeros(layer.allZeros),
-    prevError(layer.prevError),
     prevOutput(layer.prevOutput),
-    deterministic(layer.deterministic),
     backIterator(layer.backIterator),
-    gradIterator(layer.gradIterator)
+    gradIterator(layer.gradIterator),
+    prevError(layer.prevError),
+    deterministic(layer.deterministic)
 {
   CopyVisitor<CustomLayers...> copyVisitor;
 

@@ -52,15 +52,15 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(
     inSize(layer.inSize),
     outSize(layer.outSize),
     rho(layer.rho),
+    weights(layer.weights),
     forwardStep(layer.forwardStep),
-    grad(layer.grad),
     backwardStep(layer.backwardStep),
     gradientStep(layer.gradientStep),
+    grad(layer.grad),
     batchSize(layer.batchSize),
     batchStep(layer.batchStep),
     gradientStepIdx(layer.gradientStepIdx),
     rhoSize(layer.rho),
-    weights(layer.weights),
     bpttSteps(layer.bpttSteps)
 {
   Reset();

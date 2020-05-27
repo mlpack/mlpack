@@ -188,6 +188,7 @@ TransposedConvolution<
     const TransposedConvolution& layer) :
     inSize(layer.inSize),
     outSize(layer.outSize),
+    weights(layer.weights),
     kernelWidth(layer.kernelWidth),
     kernelHeight(layer.kernelHeight),
     strideWidth(layer.strideWidth),
@@ -198,7 +199,6 @@ TransposedConvolution<
     padHTop(layer.padHTop),
     inputWidth(layer.inputWidth),
     inputHeight(layer.inputHeight),
-    weights(layer.weights),
     paddingForward(layer.paddingForward),
     paddingBackward(layer.paddingBackward),
     outputWidth(layer.outputWidth),
