@@ -36,16 +36,16 @@ double SSIMIndex::Evaluate(DataType const& image,
   arma::mat meanImage =  arma::conv2(image, gaussianWindow, "same");
 
   arma::mat varianceReference = arma::conv2(arma::square(reference),
-      gaussianWindow, "same") -
-    arma::square(meanReference);
+                                            gaussianWindow, "same") -
+                                            arma::square(meanReference);
 
   arma::mat varianceImage = arma::conv2(arma::square(image),
-      gaussianWindow, "same") -
-    arma::square(meanImage);
+                                        gaussianWindow, "same") -
+                                        arma::square(meanImage);
 
   arma::mat covarianceReferenceImage = arma::conv2(reference%image,
-      gaussianWindow, "same") -
-    meanReference%meanImage;
+                                                   gaussianWindow, "same") -
+                                                   meanReference%meanImage;
 
   double dynamicRange = image.max() - image.min();
 
@@ -54,11 +54,11 @@ double SSIMIndex::Evaluate(DataType const& image,
   double regularisationConstant2 = 0.0009 * dynamicRange * dynamicRange;
 
   arma::mat localSSIM = ((2*meanReference%meanImage + regularisationConstant1)%
-      (2*covarianceReferenceImage + regularisationConstant2))/
-    ((arma::square(meanReference)+arma::square(meanImage)+
-      regularisationConstant1)%
-     (varianceReference + varianceImage +
-      regularisationConstant2));
+                        (2*covarianceReferenceImage + regularisationConstant2))/
+                        ((arma::square(meanReference)+arma::square(meanImage)+
+                         regularisationConstant1)%
+                        (varianceReference + varianceImage +
+                         regularisationConstant2));
 
   double meanSSIM = arma::mean(arma::mean(localSSIM));
   return meanSSIM;
