@@ -25,12 +25,16 @@ namespace rl {
 using namespace mlpack::ann;
 
 /**
- * @tparam NetworkType The type of network used for dueling dqn.
+ * @tparam CompleteNetworkType The type of network used for full dueling dqn.
+ * @tparam FeatureNetworkType The type of network used for feature network.
+ * @tparam AdvantageNetworkType The type of network used for advantage network.
+ * @tparam ValueNetworkType The type of network used for value network.
  */
 template <
-  typename FeatureNetworkType = FFN<EmptyLoss<>, GaussianInitialization>,
-  typename AdvantageNetworkType = Sequential<>*,
-  typename ValueNetworkType = Sequential<>*
+  typename CompleteNetworkType = FFN<EmptyLoss<>, GaussianInitialization>,
+  typename FeatureNetworkType = Sequential<>,
+  typename AdvantageNetworkType = Sequential<>,
+  typename ValueNetworkType = Sequential<>
 >
 class DuelingDQN
 {
@@ -38,8 +42,55 @@ class DuelingDQN
   /**
    * Default constructor.
    */
-  DuelingDQN() : featureNetwork(), advantageNetwork(), valueNetwork()
+  DuelingDQN()
   { /* Nothing to do here. */ }
+
+  //! Copy constructor.
+  DuelingDQN(const DuelingDQN& model):
+      featureNetwork(model.featureNetwork),
+      advantageNetwork(model.advantageNetwork),
+      valueNetwork(model.valueNetwork),
+      actionValues(model.actionValues)
+  {
+    std::cout << "copyConstructor" << '\n';
+    
+    concat = new Concat<>(true);
+    concat.Add(&valueNetwork);
+    concat.Add(&advantageNetwork);
+
+    completeNetwork.Add(new IdentityLayer<>());
+    completeNetwork.Add(&featureNetwork);
+    completeNetwork.Add(&concat);
+    completeNetwork.Parameters() = model.completeNetwork.Parameters();
+  };
+
+  //! Move constructor.
+  DuelingDQN(DuelingDQN&& model):
+      featureNetwork(std::move(model.featureNetwork)),
+      advantageNetwork(std::move(model.advantageNetwork)),
+      valueNetwork(std::move(model.valueNetwork)),
+      actionValues(std::move(model.actionValues))
+  {
+    std::cout << "move Constructor" << '\n';
+
+    concat = new Concat<>(true);
+    concat.Add(&valueNetwork);
+    concat.Add(&advantageNetwork);
+
+    completeNetwork.Add(new IdentityLayer<>());
+    completeNetwork.Add(&featureNetwork);
+    completeNetwork.Add(&concat);
+    completeNetwork.Parameters() = model.completeNetwork.Parameters();
+  }
+
+  DuelingDQN& operator = (DuelingDQN model)
+  {
+    std::swap(this->completeNetwork, model.completeNetwork);
+    std::swap(featureNetwork, model.featureNetwork);
+    std::swap(valueNetwork, model.valueNetwork);
+    std::swap(advantageNetwork, model.advantageNetwork);
+    return *this;
+  };
 
   /**
    * Construct an instance of DuelingDQN class.
@@ -53,41 +104,46 @@ class DuelingDQN
             const int h1,
             const int h2,
             const int outputDim):
-      featureNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001)),
-      valueNetwork(),
-      advantageNetwork()
+      completeNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001))
   {
-    valueNetwork = new Sequential<>();
-    valueNetwork->Add(new Linear<>(h1, h2));
-    valueNetwork->Add(new ReLULayer<>());
-    valueNetwork->Add(new Linear<>(h2, 1));
-
-    advantageNetwork = new Sequential<>();
-    advantageNetwork->Add(new Linear<>(h1, h2));
-    advantageNetwork->Add(new ReLULayer<>());
-    advantageNetwork->Add(new Linear<>(h2, outputDim));
-
-    Concat<>* concat = new Concat<>(true);
-    concat->Add(valueNetwork);
-    concat->Add(advantageNetwork);
-
+    featureNetwork = new Sequential<>();
     featureNetwork.Add(new Linear<>(inputDim, h1));
     featureNetwork.Add(new ReLULayer<>());
-    featureNetwork.Add(concat);
+
+    valueNetwork = new Sequential<>();
+    valueNetwork.Add(new Linear<>(h1, h2));
+    valueNetwork.Add(new ReLULayer<>());
+    valueNetwork.Add(new Linear<>(h2, 1));
+
+    advantageNetwork = new Sequential<>();
+    advantageNetwork.Add(new Linear<>(h1, h2));
+    advantageNetwork.Add(new ReLULayer<>());
+    advantageNetwork.Add(new Linear<>(h2, outputDim));
+
+    concat = new Concat<>(true);
+    concat.Add(&valueNetwork);
+    concat.Add(&advantageNetwork);
+
+    completeNetwork.Add(new IdentityLayer<>());
+    completeNetwork.Add(&featureNetwork);
+    completeNetwork.Add(&concat);
     this->ResetParameters();
   }
 
   DuelingDQN(FeatureNetworkType featureNetwork,
              AdvantageNetworkType advantageNetwork,
              ValueNetworkType valueNetwork):
+      completeNetwork(std::move(completeNetwork)),
       featureNetwork(std::move(featureNetwork)),
       advantageNetwork(std::move(advantageNetwork)),
       valueNetwork(std::move(valueNetwork))
   {
-    Concat<>* concat = new Concat<>(true);
-    concat->Add(valueNetwork);
-    concat->Add(advantageNetwork);
-    featureNetwork.Add(concat);
+    concat = new Concat<>(true);
+    concat.Add(&valueNetwork);
+    concat.Add(&advantageNetwork);
+    completeNetwork.Add(new IdentityLayer<>());
+    completeNetwork.Add(&featureNetwork);
+    completeNetwork.Add(&concat);
     this->ResetParameters();
   }
 
@@ -105,7 +161,7 @@ class DuelingDQN
   void Predict(const arma::mat state, arma::mat& actionValue)
   {
     arma::mat advantage, value, networkOutput;
-    featureNetwork.Predict(state, networkOutput);
+    completeNetwork.Predict(state, networkOutput);
     value = networkOutput.row(0);
     advantage = networkOutput.rows(1, networkOutput.n_rows - 1);
     actionValue = advantage.each_row() +
@@ -121,7 +177,7 @@ class DuelingDQN
   void Forward(const arma::mat state, arma::mat& actionValue)
   {
     arma::mat advantage, value, networkOutput;
-    featureNetwork.Forward(state, networkOutput);
+    completeNetwork.Forward(state, networkOutput);
     value = networkOutput.row(0);
     advantage = networkOutput.rows(1, networkOutput.n_rows - 1);
     actionValue = advantage.each_row() +
@@ -145,7 +201,7 @@ class DuelingDQN
     arma::mat gradAdvantage = gradLoss.each_row() - arma::mean(gradLoss);
 
     arma::mat grad = arma::join_cols(gradValue, gradAdvantage);
-    featureNetwork.Backward(state, grad, gradient);
+    completeNetwork.Backward(state, grad, gradient);
   }
 
   /**
@@ -153,15 +209,21 @@ class DuelingDQN
    */
   void ResetParameters()
   {
-    featureNetwork.ResetParameters();
+    completeNetwork.ResetParameters();
   }
 
   //! Return the Parameters.
-  const arma::mat& Parameters() const { return featureNetwork.Parameters(); }
+  const arma::mat& Parameters() const { return completeNetwork.Parameters(); }
   //! Modify the Parameters.
-  arma::mat& Parameters() { return featureNetwork.Parameters(); }
+  arma::mat& Parameters() { return completeNetwork.Parameters(); }
 
  private:
+  //! Locally-stored complete network.
+  CompleteNetworkType completeNetwork;
+
+  //! Locally-stored concat network.
+  Concat<> concat;
+
   //! Locally-stored feature network.
   FeatureNetworkType featureNetwork;
 
