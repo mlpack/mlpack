@@ -3,6 +3,7 @@ package main
 import (
 	"mlpack/bindings/go/mlpack"
 	"testing"
+	"os"
 
 	"gonum.org/v1/gonum/mat"
 )
@@ -593,4 +594,83 @@ func TestModel(t *testing.T) {
   if ModelBwOut != 20.0 {
     t.Errorf("Error. Wrong model.")
   }
+}
+
+func TestLoadSaveMatrix(t *testing.T) {
+  t.Log("Test that the matrix should be save and load properly.")
+  x := mat.NewDense(3, 5, []float64{
+    1, 2, 3, 4, 5,
+    6, 7, 8, 9, 10,
+    11, 12, 13, 14, 15,
+  })
+  mlpack.Save("test_matrix.csv", x)
+  y, _ := mlpack.Load("test_matrix.csv")
+
+  rows, cols := y.Dims()
+  if rows != 3 || cols != 5 {
+    panic("error shape")
+  }
+
+  var z mat.Dense
+  z.Sub(y, x)
+  for i := 0; i < rows; i++ {
+    for j := 0; j < cols; j++ {
+      if val := z.At(i, j); val != 0 {
+        t.Errorf("Error. Value at [i,j] : %v", val)
+      }
+    }
+  }
+  os.Remove("test_matrix.csv")
+}
+
+func TestLoadSaveColumn(t *testing.T) {
+  t.Log("Test that the column should be save and load properly.")
+  x := mat.NewDense(1, 9, []float64{
+    1, 2, 3, 4, 5, 6, 7, 8, 9,
+  })
+  
+  mlpack.Save("test_column.csv", x)
+  y, _ := mlpack.Load("test_column.csv")
+
+  rows, cols := y.Dims()
+  if rows != 1 || cols != 9 {
+    panic("error shape")
+  }
+
+  var z mat.Dense
+  z.Sub(y, x)
+  for i := 0; i < rows; i++ {
+    for j := 0; j < cols; j++ {
+      if val := z.At(i, j); val != 0 {
+        t.Errorf("Error. Value at [i,j] : %v", val)
+      }
+    }
+  }
+  os.Remove("test_column.csv")
+}
+
+func TestLoadSaveRow(t *testing.T) {
+  t.Log("Test that the row should be save and load properly.")
+  x := mat.NewDense(9, 1, []float64{
+    1, 2, 3, 4, 5, 6, 7, 8, 9,
+  })
+  
+  mlpack.Save("test_row.csv", x)
+  y, _ := mlpack.Load("test_row.csv")
+
+  rows, cols := y.Dims()
+  if rows != 9 || cols != 1 {
+    panic("error shape")
+  }
+
+  var z mat.Dense
+  z.Sub(y, x)
+  for i := 0; i < rows; i++ {
+    for j := 0; j < cols; j++ {
+      if val := z.At(i, j); val != 0 {
+        t.Errorf("Error. Value at [i,j] : %v", val)
+      }
+    }
+  }
+  os.Remove("test_row.csv")
 }
