@@ -25,7 +25,8 @@ double SSIMIndex::Evaluate(DataType const& image,
  {
   for ( int column = 0; column<11; column++)
   {
-   gaussianWindow(row, column) = gaussianKernel.Evaluate(arma::linspace(-6, row - 5, 1), arma::linspace(-6, column - 5, 1));
+   gaussianWindow(row, column) = gaussianKernel.Evaluate(arma::linspace(-6, row - 5, 1),
+                                                         more stylearma::linspace(-6, column - 5, 1));
   }
  }
  arma::mat meanReference = arma::conv2(reference, gaussianWindow, "same"); 
@@ -52,6 +53,6 @@ double SSIMIndex::Evaluate(DataType const& image,
  return meanSSIM;
 }
 
-}//namespace cv
-}//namespace mlpack
+}// namespace cv
+}// namespace mlpack
 #endif
