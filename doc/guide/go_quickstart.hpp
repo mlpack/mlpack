@@ -15,7 +15,8 @@ and @ref julia_quickstart "Julia".
 
 @section go_quickstart_install Installing mlpack
 
-Installing the mlpack bindings for Go is somewhat ticker; you can download
+Installing the mlpack bindings for Go is somewhat time-consuming as the library
+must be built; you can run the following code:
 
 @code{.sh}
 go get -d mlpack.org/v1/mlpack
@@ -53,16 +54,10 @@ func main() {
 
   // Extract/Unzip the dataset.
   mlpack.UnZip("data.csv.gz", "data.csv")
-  f1, _ := os.Open("data.csv")
-  defer f1.Close()
-  data := mlpack.NewReader(f1)
-  dataset, _ := data.ReadAll()
+  dataset, _ := mlpack.Load("data.csv")
 
   mlpack.UnZip("labels.csv.gz", "labels.csv")
-  f2, _ := os.Open("labels.csv")
-  defer f2.Close()
-  labels_data := mlpack.NewReader(f2)
-  labels, _ := labels_data.ReadAll()
+  labels, _ := mlpack.Load("labels.csv")
 
   // Split the dataset using mlpack.
   params := mlpack.PreprocessSplitOptions()
@@ -154,11 +149,7 @@ func main() {
 
   // Extract dataset.
   mlpack.UnZip("ratings-only.csv.gz", "ratings-only.csv")
-  f1, _ := os.Open("ratings-only.csv")
-  defer f1.Close()
-  data := mlpack.NewReader(f1)
-  _, _ = data.ReadHeading()
-  ratings, _ := data.ReadAll()
+  ratings, _ := mlpack.Load("ratings-only.csv")
 
   mlpack.UnZip("movies.csv.gz", "movies.csv")
   table, _ := csv.NewTable(csv.FromFile("movies.csv"), csv.LoadHeaders())
@@ -168,8 +159,7 @@ func main() {
   params := mlpack.PreprocessSplitOptions()
   params.TestRatio = 0.1
   params.Verbose = true
-  ratings_test, _, ratings_train, _ :=
-      mlpack.PreprocessSplit(ratings, params)
+  ratings_test, _, ratings_train, _ := mlpack.PreprocessSplit(ratings, params)
 
   // Train the model.  Change the rank to increase/decrease the complexity of the
   // model.
