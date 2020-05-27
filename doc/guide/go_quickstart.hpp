@@ -43,7 +43,6 @@ package main
 import (
   "github.com/mlpack.org/v1/mlpack"
   "fmt"
-  "os"
 )
 func main() {
 
@@ -138,7 +137,6 @@ import (
   "github.com/mlpack.org/v1/mlpack"
   "gonum.org/v1/gonum/mat"
   "fmt"
-  "os"
 )
 func main() {
 
