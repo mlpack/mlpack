@@ -36,5 +36,8 @@ add_markdown_docs(knn "cli;python;julia;go" "geometry")
 add_cli_executable(kfn)
 add_python_binding(kfn)
 add_julia_binding(kfn)
+
 add_go_binding(kfn)
 add_markdown_docs(kfn "cli;python;julia;go" "geometry")
+add_cli_executable(knn_low_resource)
+
