@@ -1,5 +1,5 @@
 /**
- * @file Empty_loss_impl.hpp
+ * @file methods/ann/loss_functions/empty_loss_impl.hpp
  * @author Xiaohong Ji
  *
  * Implementation of empty loss function. Sometimes, the user may want to
