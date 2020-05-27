@@ -423,8 +423,8 @@ BOOST_AUTO_TEST_CASE(LinearLayerWeightInitializationTest)
  */
 BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerWeightInitializationTest)
 {
-  size_t inSize = 1, outSize = 1;
-  size_t kernelWidth = 3, kernelHeight = 3;
+  size_t inSize = 2, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 5;
   AtrousConvolution<>* module = new AtrousConvolution<>(inSize, outSize,
       kernelWidth, kernelHeight);
   module->Reset();
@@ -456,8 +456,8 @@ BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerWeightInitializationTest)
  */
 BOOST_AUTO_TEST_CASE(ConvolutionLayerWeightInitializationTest)
 {
-  size_t inSize = 2, outSize = 2;
-  size_t kernelWidth = 3, kernelHeight = 3;
+  size_t inSize = 2, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 5;
   Convolution<>* module = new Convolution<>(inSize, outSize,
       kernelWidth, kernelHeight);
   module->Reset();
