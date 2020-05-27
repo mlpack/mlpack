@@ -13,7 +13,7 @@ double SSIMIndex::Evaluate(DataType const& image,
   if (arma::size(reference) != arma::size(image))
   {
     std::ostringstream oss;
-    oss << "SSIMIndex::Evaluate(): size of reference (" 
+    oss << "SSIMIndex::Evaluate(): size of reference ("
       <<reference.n_cols<<"X"<<reference.n_rows
       <<") does not match size of image ("
       <<image.n_cols<<"X"<<image.n_rows<<")!"
@@ -27,11 +27,12 @@ double SSIMIndex::Evaluate(DataType const& image,
   {
     for ( double column = 0; column<11; column+=1)
     {
-      gaussianWindow(row, column) = gaussianKernel.Evaluate(arma::linspace(-6, row - 5, 1),
-                                                            arma::linspace(-6, column - 5, 1));
+      gaussianWindow(row, column) = gaussianKernel.Evaluate(
+                                    arma::linspace(-6, row - 5, 1),
+                                    arma::linspace(-6, column - 5, 1));
     }
   }
-  arma::mat meanReference = arma::conv2(reference, gaussianWindow, "same"); 
+  arma::mat meanReference = arma::conv2(reference, gaussianWindow, "same");
 
   arma::mat meanImage =  arma::conv2(image, gaussianWindow, "same");
 
@@ -62,9 +63,8 @@ double SSIMIndex::Evaluate(DataType const& image,
 
   double meanSSIM = arma::mean(arma::mean(localSSIM));
   return meanSSIM;
-
 }
 
-}// namespace cv
-}// namespace mlpack
+} // namespace cv
+} // namespace mlpack
 #endif
