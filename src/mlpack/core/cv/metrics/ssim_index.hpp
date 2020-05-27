@@ -20,15 +20,14 @@ namespace cv {
 class SSIMIndex
 {
  public:
-
   template<typename DataType>
   static double Evaluate(DataType const& image,
                          DataType const& reference);
 
   static const bool NeedsMinimization = false;
-}; //class SSIMIndex
-} //namespace cv
-} //namespace mlpack
+}; // class SSIMIndex
+} // namespace cv
+} // namespace mlpack
 
 #include "ssim_index_impl.hpp"
 
