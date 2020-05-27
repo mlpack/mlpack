@@ -412,7 +412,10 @@ BOOST_AUTO_TEST_CASE(LinearLayerWeightInitializationTest)
   BOOST_REQUIRE_EQUAL(linear->Weight().n_rows, outSize);
   BOOST_REQUIRE_EQUAL(linear->Weight().n_cols, inSize);
   BOOST_REQUIRE_EQUAL(linear->Bias().n_rows, outSize);
+  BOOST_REQUIRE_EQUAL(linear->Bias().n_cols, 1);
   BOOST_REQUIRE_EQUAL(linear->Parameters().n_rows, inSize * outSize + outSize);
+
+  delete linear;
 }
 
 /**
@@ -441,8 +444,11 @@ BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerWeightInitializationTest)
   BOOST_REQUIRE_EQUAL(module->Weight().n_cols, kernelHeight);
   BOOST_REQUIRE_EQUAL(module->Weight().n_slices, inSize * outSize);
   BOOST_REQUIRE_EQUAL(module->Bias().n_rows, outSize);
+  BOOST_REQUIRE_EQUAL(module->Bias().n_cols, 1);
   BOOST_REQUIRE_EQUAL(module->Parameters().n_rows,
       (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+
+  delete module;
 }
 
 /**
@@ -471,8 +477,11 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerWeightInitializationTest)
   BOOST_REQUIRE_EQUAL(module->Weight().n_cols, kernelHeight);
   BOOST_REQUIRE_EQUAL(module->Weight().n_slices, inSize * outSize);
   BOOST_REQUIRE_EQUAL(module->Bias().n_rows, outSize);
+  BOOST_REQUIRE_EQUAL(module->Bias().n_cols, 1);
   BOOST_REQUIRE_EQUAL(module->Parameters().n_rows,
       (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+
+  delete module;
 }
 
 /**
@@ -501,8 +510,11 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerWeightInitializationTest)
   BOOST_REQUIRE_EQUAL(module->Weight().n_cols, kernelHeight);
   BOOST_REQUIRE_EQUAL(module->Weight().n_slices, inSize * outSize);
   BOOST_REQUIRE_EQUAL(module->Bias().n_rows, outSize);
+  BOOST_REQUIRE_EQUAL(module->Bias().n_rows, 1);
   BOOST_REQUIRE_EQUAL(module->Parameters().n_rows,
       (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+
+  delete module;
 }
 
 /**
