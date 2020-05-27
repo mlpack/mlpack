@@ -198,15 +198,13 @@ TransposedConvolution<
     padHTop(layer.padHTop),
     inputWidth(layer.inputWidth),
     inputHeight(layer.inputHeight),
-    outputWidth(layer.outputWidth),
-    outputHeight(layer.outputHeight),
-    weight(layer.weight),
-    bias(layer.bias),
+    weights(layer.weights),
     paddingForward(layer.paddingForward),
-    paddingBackward(layer.paddingBackward)
+    paddingBackward(layer.paddingBackward),
+    outputWidth(layer.outputWidth),
+    outputHeight(layer.outputHeight)
 {
-  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
-      1);
+  Reset();
 }
 
 template<

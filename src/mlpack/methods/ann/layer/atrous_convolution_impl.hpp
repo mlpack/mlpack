@@ -60,16 +60,14 @@ AtrousConvolution<
     strideHeight(layer.strideHeight),
     inputWidth(layer.inputWidth),
     inputHeight(layer.inputHeight),
+    weights(layer.weights),
     outputWidth(layer.outputWidth),
     outputHeight(layer.outputHeight),
     dilationWidth(layer.dilationWidth),
     dilationHeight(layer.dilationHeight),
-    weight(layer.weight),
-    bias(layer.bias),
     padding(layer.padding)
 {
-  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
-      1);
+  Reset();
 }
 
 template<
@@ -111,7 +109,8 @@ AtrousConvolution<
       inputWidth,
       inputHeight,
       dilationWidth,
-      dilationHeight)
+      dilationHeight,
+      paddingType)
 {
   // Nothing to do here.
 }

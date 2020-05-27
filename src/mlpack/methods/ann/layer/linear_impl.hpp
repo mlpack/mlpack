@@ -34,11 +34,10 @@ Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
   const Linear& layer) :
     inSize(layer.inSize),
     outSize(layer.outSize),
-    regularizer(layer.regularizer),
-    weight(layer.weight),
-    bias(layer.bias)
+    weights(layer.weights),
+    regularizer(layer.regularizer)
 {
-  weights.set_size(outSize * inSize + outSize, 1);
+  Reset();
 }
 
 template<typename InputDataType, typename OutputDataType,

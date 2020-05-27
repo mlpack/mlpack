@@ -52,23 +52,18 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(
     inSize(layer.inSize),
     outSize(layer.outSize),
     rho(layer.rho),
-    grad(layer.grad),
     forwardStep(layer.forwardStep),
+    grad(layer.grad),
     backwardStep(layer.backwardStep),
     gradientStep(layer.gradientStep),
     batchSize(layer.batchSize),
     batchStep(layer.batchStep),
     gradientStepIdx(layer.gradientStepIdx),
     rhoSize(layer.rho),
-    bpttSteps(layer.bpttSteps),
-    input2GateWeight(layer.input2GateWeight),
-    input2GateBias(layer.input2GateBias),
-    output2GateWeight(layer.output2GateWeight)
+    weights(layer.weights),
+    bpttSteps(layer.bpttSteps)
 {
-  // Weights for: input to gate layer (4 * outsize * inSize + 4 * outsize)
-  // and output to gate (4 * outSize).
-  weights.set_size(
-      4 * outSize * inSize + 4 * outSize + 4 * outSize * outSize, 1);
+  Reset();
 }
 
 template<typename InputDataType, typename OutputDataType>

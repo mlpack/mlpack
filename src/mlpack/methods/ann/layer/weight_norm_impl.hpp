@@ -42,13 +42,11 @@ template<typename InputDataType, typename OutputDataType,
 WeightNorm<InputDataType, OutputDataType, CustomLayers...>::WeightNorm(
     const WeightNorm& layer) :
     layerWeightSize(layer.layerWeightSize),
-    biasWeightSize(layer.biasWeightSize),
-    vectorParameter(layer.vectorParameter),
-    scalarParameter(layer.scalarParameter),
+    layerGradients(layer.layerGradients),
     layerWeights(layer.layerWeights),
-    layerGradients(layer.layerGradients)
+    weights(layer.weights)
 {
-  weights.set_size(layerWeightSize + 1, 1);
+  Reset();
 }
 
 template<typename InputDataType, typename OutputDataType,

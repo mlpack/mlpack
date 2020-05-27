@@ -49,15 +49,7 @@ AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
     run(layer.run),
     ownsLayers(layer.ownsLayers)
 {
-  if (!model && ownsLayers)
-  {
-    // Build new layers according to source network
-    for (size_t i = 0; i < layer.network.size(); ++i)
-    {
-      this->network.push_back(boost::apply_visitor(copyVisitor,
-          layer.network[i]));
-    }
-  }
+  // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType,

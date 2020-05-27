@@ -45,15 +45,11 @@ Highway<InputDataType, OutputDataType, CustomLayers...>::Highway(
     model(layer.model),
     reset(layer.reset),
     width(layer.width),
-    height(layer.height),
-    transformWeight(layer.transformWeight),
-    transformBias(layer.transformBias),
-    transformGateActivation(layer.transformGateActivation),
-    transformGateError(layer.transformGateError),
+    weights(layer.weights),
     networkOwnerships(layer.networkOwnerships),
-    networkOutput(layer.networkOutput)
+    networkOutput(layer.networkOutput),
+    height(layer.height)
 {
-  weights.set_size(inSize * inSize + inSize, 1);
   for (size_t i = 0; i < layer.network.size(); ++i)
   {
     if (layer.networkOwnerships[i])
@@ -62,6 +58,7 @@ Highway<InputDataType, OutputDataType, CustomLayers...>::Highway(
           layer.network[i]));
     }
   }
+  Reset();
 }
 
 template<

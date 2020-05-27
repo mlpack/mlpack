@@ -58,8 +58,7 @@ BilinearInterpolation(const BilinearInterpolation& layer):
     inColSize(layer.inColSize),
     outRowSize(layer.outRowSize),
     outColSize(layer.outColSize),
-    depth(layer.depth),
-    batchSize(layer.batchSize)
+    depth(layer.depth)
 {
   // Nothing to do here.
 }

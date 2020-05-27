@@ -51,9 +51,9 @@ MiniBatchDiscrimination<InputDataType, OutputDataType
     B(layer.B),
     C(layer.C),
     batchSize(layer.batchSize),
-    weight(layer.weight)
+    weights(layer.weights)
 {
-  weights.set_size(A * B * C, 1);
+  Reset();
 }
 
 template<typename InputDataType, typename OutputDataType>

@@ -230,9 +230,6 @@ class AddMerge
 
   //! Locally-stored weight object.
   OutputDataType weights;
-
-  //! Locally-stored copy visitor
-  CopyVisitor<CustomLayers...> copyVisitor;
 }; // class AddMerge
 
 } // namespace ann

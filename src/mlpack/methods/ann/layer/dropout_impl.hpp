@@ -34,8 +34,7 @@ Dropout<InputDataType, OutputDataType>::Dropout(
     const Dropout& layer) :
     ratio(layer.ratio),
     scale(layer.scale),
-    deterministic(layer.deterministic),
-    mask(layer.mask)
+    deterministic(layer.deterministic)
 {
   // Nothing to do here.
 }

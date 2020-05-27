@@ -37,24 +37,9 @@ LSTM<InputDataType, OutputDataType>::LSTM(
     batchStep(layer.batchStep),
     rhoSize(layer.rhoSize),
     bpttSteps(layer.bpttSteps),
-    input2GateOutputWeight(layer.input2GateOutputWeight),
-    input2GateOutputBias(layer.input2GateOutputBias),
-    input2GateForgetWeight(layer.input2GateForgetWeight),
-    input2GateForgetBias(layer.input2GateForgetBias),
-    input2GateInputWeight(layer.input2GateInputWeight),
-    input2GateInputBias(layer.input2GateInputBias),
-    input2HiddenWeight(layer.input2HiddenWeight),
-    input2HiddenBias(layer.input2HiddenBias),
-    output2GateOutputWeight(layer.output2GateOutputWeight),
-    output2GateForgetWeight(layer.output2GateForgetWeight),
-    output2GateInputWeight(layer.output2GateInputWeight),
-    output2HiddenWeight(layer.output2HiddenWeight),
-    cell2GateOutputWeight(layer.cell2GateOutputWeight),
-    cell2GateForgetWeight(layer.cell2GateForgetWeight),
-    cell2GateInputWeight(layer.cell2GateInputWeight)
+    weights(layer.weights)
 {
-    weights.set_size(4 * outSize * inSize + 7 * outSize +
-        4 * outSize * outSize, 1);
+  Reset();
 }
 
 template <typename InputDataType, typename OutputDataType>

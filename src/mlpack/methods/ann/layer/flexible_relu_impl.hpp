@@ -34,8 +34,7 @@ FlexibleReLU<InputDataType, OutputDataType>::FlexibleReLU(
 template<typename InputDataType, typename OutputDataType>
 FlexibleReLU<InputDataType, OutputDataType>::FlexibleReLU(
     const FlexibleReLU& layer) :
-    userAlpha(layer.userAlpha),
-    alpha(layer.alpha)
+    userAlpha(layer.userAlpha)
 {
   this->alpha.set_size(1, 1);
   this->alpha(0) = userAlpha;

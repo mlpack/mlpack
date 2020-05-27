@@ -41,11 +41,11 @@ GRU<InputDataType, OutputDataType, CustomLayers...>::GRU(
     forwardStep(layer.forwardStep),
     backwardStep(layer.backwardStep),
     gradientStep(layer.gradientStep),
-    deterministic(layer.deterministic),
-    prevError(layer.prevError),
-    allZeros(layer.allZeros),
     outParameter(layer.outParameter),
+    allZeros(layer.allZeros),
+    prevError(layer.prevError),
     prevOutput(layer.prevOutput),
+    deterministic(layer.deterministic),
     backIterator(layer.backIterator),
     gradIterator(layer.gradIterator)
 {

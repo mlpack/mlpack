@@ -36,14 +36,13 @@ VirtualBatchNorm<InputDataType, OutputDataType>::VirtualBatchNorm(
     size(layer.size),
     eps(layer.eps),
     loading(layer.loading),
+    weights(layer.weights),
     referenceBatchMean(layer.referenceBatchMean),
     referenceBatchMeanSquared(layer.referenceBatchMeanSquared),
-    newCoefficient(layer.newCoefficient),
     oldCoefficient(layer.oldCoefficient),
-    gamma(layer.gamma),
-    beta(layer.beta)
+    newCoefficient(layer.newCoefficient)
 {
-  weights.set_size(size + size, 1);
+  Reset();
 }
 
 template <typename InputDataType, typename OutputDataType>

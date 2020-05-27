@@ -34,10 +34,9 @@ LayerNorm<InputDataType, OutputDataType>::LayerNorm(const LayerNorm& layer) :
     size(layer.size),
     eps(layer.eps),
     loading(layer.loading),
-    gamma(layer.gamma),
-    beta(layer.beta)
+    weights(layer.weights)
 {
-  weights.set_size(size + size, 1);
+  Reset();
 }
 
 template <typename InputDataType, typename OutputDataType>

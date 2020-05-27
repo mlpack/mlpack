@@ -36,15 +36,14 @@ BatchNorm<InputDataType, OutputDataType>::BatchNorm(
   const BatchNorm& layer) :
     size(layer.size),
     eps(layer.eps),
-    loading(layer.loading),
-    deterministic(layer.deterministic),
-    count(layer.count),
     gamma(layer.gamma),
-    beta(layer.beta)
+    beta(layer.beta),
+    weights(layer.weights),
+    count(layer.count),
+    runningMean(layer.runningMean),
+    runningVariance(layer.runningVariance)
 {
-  weights.set_size(size + size, 1);
-  runningMean.zeros(size, 1);
-  runningVariance.zeros(size, 1);
+  Reset();
 }
 
 template <typename InputDataType, typename OutputDataType>

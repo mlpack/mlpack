@@ -164,16 +164,14 @@ Convolution<
     padWRight(layer.padWRight),
     padHBottom(layer.padHBottom),
     padHTop(layer.padHTop),
+    weights(layer.weights),
     inputWidth(layer.inputWidth),
     inputHeight(layer.inputHeight),
     outputWidth(layer.outputWidth),
     outputHeight(layer.outputHeight),
-    weight(layer.weight),
-    bias(layer.bias),
     padding(layer.padding)
 {
-  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
-      1);
+  Reset();
 }
 
 template<

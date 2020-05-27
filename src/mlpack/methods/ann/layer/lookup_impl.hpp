@@ -33,9 +33,10 @@ template <typename InputDataType, typename OutputDataType>
 Lookup<InputDataType, OutputDataType>::Lookup(
     const Lookup& layer) :
     inSize(layer.inSize),
-    outSize(layer.outSize)
+    outSize(layer.outSize),
+    weights(layer.weights)
 {
-  weights.set_size(outSize, inSize);
+  // Nothing to do here.
 }
 
 
