@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(ApproxVsExact1)
     arma::mat distancesApprox;
     aknn->Search(dataset, 15, neighborsApprox, distancesApprox);
 
-    for (size_t i = 0; i < neighborsApprox.n_elem; i++)
+    for (size_t i = 0; i < neighborsApprox.n_elem; ++i)
       REQUIRE_RELATIVE_ERR(distancesApprox(i), distancesExact(i), epsilon);
 
     // Clean the memory.
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(ApproxVsExact2)
   arma::mat distancesApprox;
   aknn.Search(15, neighborsApprox, distancesApprox);
 
-  for (size_t i = 0; i < neighborsApprox.n_elem; i++)
+  for (size_t i = 0; i < neighborsApprox.n_elem; ++i)
     REQUIRE_RELATIVE_ERR(distancesApprox(i), distancesExact(i), 0.05);
 }
 
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeApproxVsExact)
   arma::mat distancesApprox;
   aknn.Search(15, neighborsApprox, distancesApprox);
 
-  for (size_t i = 0; i < neighborsApprox.n_elem; i++)
+  for (size_t i = 0; i < neighborsApprox.n_elem; ++i)
     REQUIRE_RELATIVE_ERR(distancesApprox[i], distancesExact[i], 0.05);
 }
 

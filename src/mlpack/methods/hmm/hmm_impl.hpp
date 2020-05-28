@@ -166,7 +166,7 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
           {
             // Estimate of T_ij (probability of transition from state j to state
             // i).  We postpone multiplication of the old T_ij until later.
-            for (size_t i = 0; i < logTransition.n_rows; i++)
+            for (size_t i = 0; i < logTransition.n_rows; ++i)
             {
               newLogTransition(i, j) = math::LogAdd(newLogTransition(i, j),
                   forwardLog(j, t) + backwardLog(i, t + 1) +
@@ -204,7 +204,7 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
     logTransition += newLogTransition;
 
     // Now we normalize the transition matrix.
-    for (size_t i = 0; i < logTransition.n_cols; i++)
+    for (size_t i = 0; i < logTransition.n_cols; ++i)
     {
       const double sum = math::AccuLog(logTransition.col(i));
       if (std::isfinite(sum))
@@ -309,7 +309,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
     if (emissionList[state].size() > 0)
     {
       arma::mat emissions(dimensionality, emissionList[state].size());
-      for (size_t i = 0; i < emissions.n_cols; i++)
+      for (size_t i = 0; i < emissions.n_cols; ++i)
       {
         emissions.col(i) = dataSeq[emissionList[state][i].first].col(
             emissionList[state][i].second);
@@ -544,7 +544,7 @@ void HMM<Distribution>::Filter(const arma::mat& dataSeq,
   // Compute expected emissions.
   // Will not work for distributions without a Mean() function.
   filterSeq.zeros(dimensionality, dataSeq.n_cols);
-  for (size_t i = 0; i < emission.size(); i++)
+  for (size_t i = 0; i < emission.size(); ++i)
     filterSeq += emission[i].Mean() * forwardProb.row(i);
 }
 
@@ -566,7 +566,7 @@ void HMM<Distribution>::Smooth(const arma::mat& dataSeq,
   // Compute expected emissions.
   // Will not work for distributions without a Mean() function.
   smoothSeq.zeros(dimensionality, dataSeq.n_cols);
-  for (size_t i = 0; i < emission.size(); i++)
+  for (size_t i = 0; i < emission.size(); ++i)
     smoothSeq += emission[i].Mean() * exp(stateLogProb.row(i));
 }
 

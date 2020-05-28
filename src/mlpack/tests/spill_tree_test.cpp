@@ -143,7 +143,7 @@ void SpillTreeHyperplaneTestAux()
           // Let's check that points in the left child are projected to values
           // in the range: (-inf, tau]
           size_t numDesc = node->Left()->NumDescendants();
-          for (size_t i = 0; i < numDesc; i++)
+          for (size_t i = 0; i < numDesc; ++i)
           {
             size_t descIndex = node->Left()->Descendant(i);
             BOOST_REQUIRE_LE(
@@ -156,7 +156,7 @@ void SpillTreeHyperplaneTestAux()
           // Let's check that points in the right child are projected to values
           // in the range: (-tau, inf)
           size_t numDesc = node->Right()->NumDescendants();
-          for (size_t i = 0; i < numDesc; i++)
+          for (size_t i = 0; i < numDesc; ++i)
           {
             size_t descIndex = node->Right()->Descendant(i);
             BOOST_REQUIRE_GT(
@@ -173,7 +173,7 @@ void SpillTreeHyperplaneTestAux()
           // Let's check that points in the left child are considered to the
           // left by the splitting hyperplane.
           size_t numDesc = node->Left()->NumDescendants();
-          for (size_t i = 0; i < numDesc; i++)
+          for (size_t i = 0; i < numDesc; ++i)
           {
             size_t descIndex = node->Left()->Descendant(i);
             BOOST_REQUIRE(
@@ -185,7 +185,7 @@ void SpillTreeHyperplaneTestAux()
           // Let's check that points in the right child are considered to the
           // right by the splitting hyperplane.
           size_t numDesc = node->Right()->NumDescendants();
-          for (size_t i = 0; i < numDesc; i++)
+          for (size_t i = 0; i < numDesc; ++i)
           {
             size_t descIndex = node->Right()->Descendant(i);
             BOOST_REQUIRE(

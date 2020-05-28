@@ -105,7 +105,7 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
 
     // We sort the children of the reference node by their scores.
     std::vector<NodeAndScore> nodesAndScores(referenceNode.NumChildren());
-    for (size_t i = 0; i < referenceNode.NumChildren(); i++)
+    for (size_t i = 0; i < referenceNode.NumChildren(); ++i)
     {
       rule.TraversalInfo() = traversalInfo;
       nodesAndScores[i].node = &(referenceNode.Child(i));
@@ -116,7 +116,7 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
     std::sort(nodesAndScores.begin(), nodesAndScores.end(), nodeComparator);
     numScores += nodesAndScores.size();
 
-    for (size_t i = 0; i < nodesAndScores.size(); i++)
+    for (size_t i = 0; i < nodesAndScores.size(); ++i)
     {
       rule.TraversalInfo() = nodesAndScores[i].travInfo;
       if (rule.Rescore(queryNode, *(nodesAndScores[i].node),
@@ -140,7 +140,7 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
     {
       // We sort the children of the reference node by their scores.
       std::vector<NodeAndScore> nodesAndScores(referenceNode.NumChildren());
-      for (size_t i = 0; i < referenceNode.NumChildren(); i++)
+      for (size_t i = 0; i < referenceNode.NumChildren(); ++i)
       {
         rule.TraversalInfo() = traversalInfo;
         nodesAndScores[i].node = &(referenceNode.Child(i));
@@ -151,7 +151,7 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
       std::sort(nodesAndScores.begin(), nodesAndScores.end(), nodeComparator);
       numScores += nodesAndScores.size();
 
-      for (size_t i = 0; i < nodesAndScores.size(); i++)
+      for (size_t i = 0; i < nodesAndScores.size(); ++i)
       {
         rule.TraversalInfo() = nodesAndScores[i].travInfo;
         if (rule.Rescore(queryNode.Child(j), *(nodesAndScores[i].node),

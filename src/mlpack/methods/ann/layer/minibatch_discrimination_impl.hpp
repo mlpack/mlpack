@@ -60,7 +60,7 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Forward(
   distances.set_size(B, batchSize, batchSize);
   output.set_size(B, batchSize);
 
-  for (size_t i = 0; i < M.n_slices; i++)
+  for (size_t i = 0; i < M.n_slices; ++i)
   {
     output.col(i).ones();
     for (size_t j = 0; j < M.n_slices; j++)
@@ -94,7 +94,7 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Backward(
   arma::Mat<eT> gM = gy.tail_rows(B);
   deltaM.zeros(B, C, batchSize);
 
-  for (size_t i = 0; i < M.n_slices; i++)
+  for (size_t i = 0; i < M.n_slices; ++i)
   {
     for (size_t j = 0; j < M.n_slices; j++)
     {

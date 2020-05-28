@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   size_t dim = std::sqrt(trainData.n_rows);
   arma::mat generatedData(2 * dim, dim * numSamples);
 
-  for (size_t i = 0; i < numSamples; i++)
+  for (size_t i = 0; i < numSamples; ++i)
   {
     arma::mat samples;
     noise.imbue( [&]() { return noiseFunction(); } );
@@ -292,7 +292,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   size_t dim = std::sqrt(trainData.n_rows);
   arma::mat generatedData(2 * dim, dim * numSamples);
 
-  for (size_t i = 0; i < numSamples; i++)
+  for (size_t i = 0; i < numSamples; ++i)
   {
     arma::mat samples;
     noise.imbue( [&]() { return noiseFunction(); } );
@@ -448,7 +448,7 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
   size_t dim = std::sqrt(trainData.n_rows);
   arma::mat generatedData(2 * dim, dim * numSamples);
 
-  for (size_t i = 0; i < numSamples; i++)
+  for (size_t i = 0; i < numSamples; ++i)
   {
     arma::mat samples;
     noise.imbue( [&]() { return noiseFunction(); } );

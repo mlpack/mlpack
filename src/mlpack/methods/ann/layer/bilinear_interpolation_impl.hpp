@@ -77,7 +77,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
   double scaleCol = (double) inColSize / (double) outColSize;
 
   arma::mat22 coeffs;
-  for (size_t i = 0; i < outRowSize; i++)
+  for (size_t i = 0; i < outRowSize; ++i)
   {
     size_t rOrigin = (size_t) std::floor(i * scaleRow);
     if (rOrigin > inRowSize - 2)
@@ -144,7 +144,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
     double scaleCol = (double)(outColSize) / inColSize;
 
     arma::mat22 coeffs;
-    for (size_t i = 0; i < inRowSize; i++)
+    for (size_t i = 0; i < inRowSize; ++i)
     {
       size_t rOrigin = (size_t) std::floor(i * scaleRow);
       if (rOrigin > outRowSize - 2)

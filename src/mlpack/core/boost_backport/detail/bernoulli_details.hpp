@@ -308,7 +308,7 @@ public:
          BOOST_MATH_INSTRUMENT_VARIABLE(tn[1]);
       }
 
-      for(std::size_t i = std::max<size_t>(2, prev_size); i < m; i++)
+      for(std::size_t i = std::max<size_t>(2, prev_size); i < m; ++i)
       {
          bool overflow_check = false;
          if(i >= min_overflow_index && (boost::math::tools::max_value<T>() / (i-1) < m_intermediates[1]) )
@@ -360,7 +360,7 @@ public:
 
       T power_two(ldexp(T(1), static_cast<int>(2 * old_size)));
 
-      for(std::size_t i = old_size; i < m; i++)
+      for(std::size_t i = old_size; i < m; ++i)
       {
          T b(static_cast<T>(i * 2));
          //

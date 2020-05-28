@@ -67,7 +67,7 @@ class SoftplusFunction
   {
     y.set_size(arma::size(x));
 
-    for (size_t i = 0; i < x.n_elem; i++)
+    for (size_t i = 0; i < x.n_elem; ++i)
       y(i) = Fn(x(i));
   }
 
@@ -116,7 +116,7 @@ class SoftplusFunction
   {
     x.set_size(arma::size(y));
 
-    for (size_t i = 0; i < y.n_elem; i++)
+    for (size_t i = 0; i < y.n_elem; ++i)
       x(i) = Inv(y(i));
   }
 }; // class SoftplusFunction

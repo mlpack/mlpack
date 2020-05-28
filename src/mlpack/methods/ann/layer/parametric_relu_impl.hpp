@@ -53,7 +53,7 @@ void PReLU<InputDataType, OutputDataType>::Backward(
 {
   DataType derivative;
   derivative.set_size(arma::size(input));
-  for (size_t i = 0; i < input.n_elem; i++)
+  for (size_t i = 0; i < input.n_elem; ++i)
   {
     derivative(i) = (input(i) >= 0) ? 1 : alpha(0);
   }

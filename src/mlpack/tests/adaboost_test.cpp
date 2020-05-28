@@ -587,7 +587,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
   arma::colvec pRow;
   arma::uword maxIndex = 0;
 
-  for (size_t i = 0; i < predictedLabels1.n_cols; i++)
+  for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
   {
     pRow = probabilities.unsafe_col(i);
     pRow.max(maxIndex);
@@ -655,7 +655,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
   arma::colvec pRow;
   arma::uword maxIndex = 0;
 
-  for (size_t i = 0; i < predictedLabels1.n_cols; i++)
+  for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
   {
     pRow = probabilities.unsafe_col(i);
     pRow.max(maxIndex);
@@ -722,7 +722,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
   arma::colvec pRow;
   arma::uword maxIndex = 0;
 
-  for (size_t i = 0; i < predictedLabels1.n_cols; i++)
+  for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
   {
     pRow = probabilities.unsafe_col(i);
     pRow.max(maxIndex);

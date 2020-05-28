@@ -67,7 +67,7 @@ bool SpaceSplit<MetricType, MatType>::GetProjVector(
   size_t snd = points[0];
   double max = metric.Evaluate(data.col(fst), data.col(snd));
 
-  for (size_t i = 1; i < points.n_elem; i++)
+  for (size_t i = 1; i < points.n_elem; ++i)
   {
     double dist = metric.Evaluate(data.col(fst), data.col(points[i]));
     if (dist > max)
@@ -79,7 +79,7 @@ bool SpaceSplit<MetricType, MatType>::GetProjVector(
 
   std::swap(fst, snd);
 
-  for (size_t i = 0; i < points.n_elem; i++)
+  for (size_t i = 0; i < points.n_elem; ++i)
   {
     double dist = metric.Evaluate(data.col(fst), data.col(points[i]));
     if (dist > max)

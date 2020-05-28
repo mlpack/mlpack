@@ -60,7 +60,7 @@ void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky)
   arma::mat X;
   arma::rowvec y;
 
-  for (size_t i = 0; i < 100; i++)
+  for (size_t i = 0; i < 100; ++i)
   {
     GenerateProblem(X, y, nPoints, nDims);
 

@@ -66,7 +66,7 @@ void CheckVectors(const vector<vector<ValueType>>& a,
 {
   BOOST_REQUIRE_EQUAL(a.size(), b.size());
 
-  for (size_t i = 0; i < a.size(); i++)
+  for (size_t i = 0; i < a.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(a[i].size(), b[i].size());
 
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(SplitByAnyOfTokenizerTest)
 
   BOOST_REQUIRE_EQUAL(tokens.size(), expected.size());
 
-  for (size_t i = 0; i < tokens.size(); i++)
+  for (size_t i = 0; i < tokens.size(); ++i)
     BOOST_REQUIRE_EQUAL(tokens[i], expected[i]);
 }
 
@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE(SplitByAnyOfTokenizerUnicodeTest)
 
   BOOST_REQUIRE_EQUAL(tokens.size(), expectedUtf8Tokens.size());
 
-  for (size_t i = 0; i < tokens.size(); i++)
+  for (size_t i = 0; i < tokens.size(); ++i)
     BOOST_REQUIRE_EQUAL(tokens[i], expectedUtf8Tokens[i]);
 }
 
@@ -417,7 +417,7 @@ void CheckDictionaries(
   BOOST_REQUIRE_EQUAL(mapping.size(), expectedMapping.size());
   BOOST_REQUIRE_EQUAL(mapping.size(), tokens.size());
 
-  for (size_t i = 0; i < tokens.size(); i++)
+  for (size_t i = 0; i < tokens.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(tokens[i], expectedTokens[i]);
     BOOST_REQUIRE_EQUAL(expectedMapping.at(tokens[i]), mapping.at(tokens[i]));
@@ -440,7 +440,7 @@ void CheckDictionaries(const StringEncodingDictionary<int>& expected,
 
   BOOST_REQUIRE_EQUAL(expected.Size(), obtained.Size());
 
-  for (size_t i = 0; i < mapping.size(); i++)
+  for (size_t i = 0; i < mapping.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(mapping[i], expectedMapping[i]);
   }

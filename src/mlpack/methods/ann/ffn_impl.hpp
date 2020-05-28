@@ -242,7 +242,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
   results = arma::mat(resultsTemp.n_elem, predictors.n_cols);
   results.col(0) = resultsTemp.col(0);
 
-  for (size_t i = 1; i < predictors.n_cols; i++)
+  for (size_t i = 1; i < predictors.n_cols; ++i)
   {
     Forward(arma::mat(predictors.colptr(i), predictors.n_rows, 1, false, true));
 

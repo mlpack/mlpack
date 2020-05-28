@@ -52,7 +52,7 @@ inline HRectBound<MetricType, ElemType>::HRectBound(
     minWidth(other.MinWidth())
 {
   // Copy other bounds over.
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
     bounds[i] = other[i];
 }
 
@@ -76,7 +76,7 @@ inline HRectBound<
   }
 
   // Now copy each of the bound values.
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
     bounds[i] = other[i];
 
   minWidth = other.MinWidth();
@@ -116,7 +116,7 @@ inline HRectBound<MetricType, ElemType>::~HRectBound()
 template<typename MetricType, typename ElemType>
 inline void HRectBound<MetricType, ElemType>::Clear()
 {
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
     bounds[i] = math::RangeType<ElemType>();
   minWidth = 0;
 }
@@ -134,7 +134,7 @@ inline void HRectBound<MetricType, ElemType>::Center(
   if (!(center.n_elem == dim))
     center.set_size(dim);
 
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
     center(i) = bounds[i].Mid();
 }
 
@@ -516,7 +516,7 @@ HRectBound<MetricType, ElemType>::operator|=(const MatType& data)
   arma::Col<ElemType> maxs(max(data, 1));
 
   minWidth = std::numeric_limits<ElemType>::max();
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
   {
     bounds[i] |= math::RangeType<ElemType>(mins[i], maxs[i]);
     const ElemType width = bounds[i].Width();
@@ -537,7 +537,7 @@ HRectBound<MetricType, ElemType>::operator|=(const HRectBound& other)
   assert(other.dim == dim);
 
   minWidth = std::numeric_limits<ElemType>::max();
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
   {
     bounds[i] |= other.bounds[i];
     const ElemType width = bounds[i].Width();
@@ -556,7 +556,7 @@ template<typename VecType>
 inline bool HRectBound<MetricType, ElemType>::Contains(
     const VecType& point) const
 {
-  for (size_t i = 0; i < point.n_elem; i++)
+  for (size_t i = 0; i < point.n_elem; ++i)
   {
     if (!bounds[i].Contains(point(i)))
       return false;
@@ -572,7 +572,7 @@ template<typename MetricType, typename ElemType>
 inline bool HRectBound<MetricType, ElemType>::Contains(
     const HRectBound& bound) const
 {
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
   {
     const math::RangeType<ElemType>& r_a = bounds[i];
     const math::RangeType<ElemType>& r_b = bound.bounds[i];

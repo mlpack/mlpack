@@ -106,7 +106,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
   arma::Row<size_t> finalH(predictedLabels.n_cols);
 
   // Now, start the boosting rounds.
-  for (size_t i = 0; i < iterations; i++)
+  for (size_t i = 0; i < iterations; ++i)
   {
     // Initialized to zero in every round.  rt is used for calculation of
     // alphat; it is the weighted error.
@@ -230,7 +230,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
   probabilities.zeros(numClasses, test.n_cols);
   predictedLabels.set_size(test.n_cols);
 
-  for (size_t i = 0; i < wl.size(); i++)
+  for (size_t i = 0; i < wl.size(); ++i)
   {
     wl[i].Classify(test, tempPredictedLabels);
 
@@ -241,7 +241,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
   arma::colvec pRow;
   arma::uword maxIndex = 0;
 
-  for (size_t i = 0; i < predictedLabels.n_cols; i++)
+  for (size_t i = 0; i < predictedLabels.n_cols; ++i)
   {
     probabilities.col(i) /= arma::accu(probabilities.col(i));
     pRow = probabilities.unsafe_col(i);

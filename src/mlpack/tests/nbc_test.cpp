@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
   size_t dimension = nbcTest.Means().n_rows;
   calcMat.zeros(2 * dimension + 1, classes);
 
-  for (size_t i = 0; i < dimension; i++)
+  for (size_t i = 0; i < dimension; ++i)
   {
     for (size_t j = 0; j < classes; j++)
     {
@@ -52,10 +52,10 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
     }
   }
 
-  for (size_t i = 0; i < classes; i++)
+  for (size_t i = 0; i < classes; ++i)
     calcMat(2 * dimension, i) = nbcTest.Probabilities()(i);
 
-  for (size_t i = 0; i < calcMat.n_rows; i++)
+  for (size_t i = 0; i < calcMat.n_rows; ++i)
     for (size_t j = 0; j < classes; j++)
       BOOST_REQUIRE_CLOSE(trainRes(i, j) + .00001, calcMat(i, j), 0.01);
 
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
 
   nbcTest.Classify(testData, calcVec, calcProbs);
 
-  for (size_t i = 0; i < testData.n_cols; i++)
+  for (size_t i = 0; i < testData.n_cols; ++i)
     BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
 
   for (size_t i = 0; i < testResProbs.n_cols; ++i)
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
   size_t dimension = nbcTest.Means().n_rows;
   calcMat.zeros(2 * dimension + 1, classes);
 
-  for (size_t i = 0; i < dimension; i++)
+  for (size_t i = 0; i < dimension; ++i)
   {
     for (size_t j = 0; j < classes; j++)
     {
@@ -120,10 +120,10 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
     }
   }
 
-  for (size_t i = 0; i < classes; i++)
+  for (size_t i = 0; i < classes; ++i)
     calcMat(2 * dimension, i) = nbcTest.Probabilities()(i);
 
-  for (size_t i = 0; i < calcMat.n_cols; i++)
+  for (size_t i = 0; i < calcMat.n_cols; ++i)
     for (size_t j = 0; j < classes; j++)
       BOOST_REQUIRE_CLOSE(trainRes(j, i) + .00001, calcMat(j, i), 0.01);
 
@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
 
   nbcTest.Classify(testData, calcVec, calcProbs);
 
-  for (size_t i = 0; i < testData.n_cols; i++)
+  for (size_t i = 0; i < testData.n_cols; ++i)
     BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
 
   for (size_t i = 0; i < testResProba.n_cols; ++i)
@@ -351,7 +351,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierHighDimensionsTest)
   nbcTest.Classify(testData, calcVec, calcProbs);
 
   // Check the results.
-  for (size_t i = 0; i < calcVec.n_cols; i++)
+  for (size_t i = 0; i < calcVec.n_cols; ++i)
     BOOST_REQUIRE_EQUAL(calcVec(i), testLabels(i));
 }
 

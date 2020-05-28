@@ -59,7 +59,7 @@ double DiagonalGMM::LogProbability(const arma::vec& observation) const
   // Sum the probability for each Gaussian in our mixture (and we have to
   // multiply by the prior for each Gaussian too).
   double sum = -std::numeric_limits<double>::infinity();
-  for (size_t i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; ++i)
   {
     sum = math::LogAdd(sum, log(weights[i]) +
         dists[i].LogProbability(observation));
@@ -163,7 +163,7 @@ double DiagonalGMM::LogLikelihood(
   arma::vec phis;
   arma::mat likelihoods(gaussians, observations.n_cols);
 
-  for (size_t i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; ++i)
   {
     dists[i].Probability(observations, phis);
     likelihoods.row(i) = weights(i) * trans(phis);

@@ -29,7 +29,7 @@ size_t MinimalSplitsNumberSweep<SplitPolicy>::SweepNonLeafNode(
 
   std::vector<std::pair<ElemType, size_t>> sorted(node->NumChildren());
 
-  for (size_t i = 0; i < node->NumChildren(); i++)
+  for (size_t i = 0; i < node->NumChildren(); ++i)
   {
     sorted[i].first = SplitPolicy::Bound(node->Child(i))[axis].Hi();
     sorted[i].second = i;
@@ -46,7 +46,7 @@ size_t MinimalSplitsNumberSweep<SplitPolicy>::SweepNonLeafNode(
   size_t minCost = SIZE_MAX;
 
   // Find a split with the minimal cost.
-  for (size_t i = 0; i < sorted.size(); i++)
+  for (size_t i = 0; i < sorted.size(); ++i)
   {
     size_t numTreeOneChildren = 0;
     size_t numTreeTwoChildren = 0;

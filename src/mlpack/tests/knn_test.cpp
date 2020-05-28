@@ -383,7 +383,7 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
 
   KNN knn(std::move(tree));
 
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; ++i)
   {
     switch (i)
     {
@@ -678,7 +678,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
   arma::mat distancesNaive;
   naive.Search(dataset, 15, neighborsNaive, distancesNaive);
 
-  for (size_t i = 0; i < neighborsTree.n_elem; i++)
+  for (size_t i = 0; i < neighborsTree.n_elem; ++i)
   {
     BOOST_REQUIRE_EQUAL(neighborsTree(i), neighborsNaive(i));
     BOOST_REQUIRE_CLOSE(distancesTree(i), distancesNaive(i), 1e-5);
@@ -713,7 +713,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
   arma::mat distancesNaive;
   naive.Search(15, neighborsNaive, distancesNaive);
 
-  for (size_t i = 0; i < neighborsTree.n_elem; i++)
+  for (size_t i = 0; i < neighborsTree.n_elem; ++i)
   {
     BOOST_REQUIRE_EQUAL(neighborsTree[i], neighborsNaive[i]);
     BOOST_REQUIRE_CLOSE(distancesTree[i], distancesNaive[i], 1e-5);
@@ -748,7 +748,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
   arma::mat distancesNaive;
   naive.Search(15, neighborsNaive, distancesNaive);
 
-  for (size_t i = 0; i < neighborsTree.n_elem; i++)
+  for (size_t i = 0; i < neighborsTree.n_elem; ++i)
   {
     BOOST_REQUIRE_EQUAL(neighborsTree[i], neighborsNaive[i]);
     BOOST_REQUIRE_CLOSE(distancesTree[i], distancesNaive[i], 1e-5);

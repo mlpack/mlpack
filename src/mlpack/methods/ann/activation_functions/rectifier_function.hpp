@@ -104,7 +104,7 @@ class RectifierFunction
   {
     x.set_size(arma::size(y));
 
-    for (size_t i = 0; i < y.n_elem; i++)
+    for (size_t i = 0; i < y.n_elem; ++i)
       x(i) = Deriv(y(i));
   }
 }; // class RectifierFunction

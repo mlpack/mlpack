@@ -74,7 +74,7 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
 
   // It's quicker to do this now than one point at a time later.
   stretchedDataset = coordinates * dataset;
-  for (size_t i = begin; i < begin + batchSize; i++)
+  for (size_t i = begin; i < begin + batchSize; ++i)
   {
     for (size_t k = 0; k < dataset.n_cols; ++k)
     {
@@ -129,7 +129,7 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
   //     (p_i p_ik + p_k p_ki) x_ik x_ik^T
   arma::mat sum;
   sum.zeros(stretchedDataset.n_rows, stretchedDataset.n_rows);
-  for (size_t i = 0; i < stretchedDataset.n_cols; i++)
+  for (size_t i = 0; i < stretchedDataset.n_cols; ++i)
   {
     for (size_t k = (i + 1); k < stretchedDataset.n_cols; k++)
     {
@@ -174,7 +174,7 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
 
   // Compute the stretched dataset.
   stretchedDataset = coordinates * dataset;
-  for (size_t i = begin; i < begin + batchSize; i++)
+  for (size_t i = begin; i < begin + batchSize; ++i)
   {
     numerator = 0;
     denominator = 0;
@@ -265,7 +265,7 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
   // order of O((n * (n + 1)) / 2), which really isn't all that great.
   p.zeros(stretchedDataset.n_cols);
   denominators.zeros(stretchedDataset.n_cols);
-  for (size_t i = 0; i < stretchedDataset.n_cols; i++)
+  for (size_t i = 0; i < stretchedDataset.n_cols; ++i)
   {
     for (size_t j = (i + 1); j < stretchedDataset.n_cols; j++)
     {
@@ -290,7 +290,7 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
   p /= denominators;
 
   // Clean up any bad values.
-  for (size_t i = 0; i < stretchedDataset.n_cols; i++)
+  for (size_t i = 0; i < stretchedDataset.n_cols; ++i)
   {
     if (denominators[i] == 0.0)
     {

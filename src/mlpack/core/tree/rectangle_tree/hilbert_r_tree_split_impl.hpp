@@ -218,7 +218,7 @@ RedistributeNodesEvenly(const TreeType *parent,
   size_t numChildren = 0;
   size_t numChildrenPerNode, numRestChildren;
 
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
     numChildren += parent->Child(i).NumChildren();
 
   numChildrenPerNode = numChildren / (lastSibling - firstSibling + 1);
@@ -228,7 +228,7 @@ RedistributeNodesEvenly(const TreeType *parent,
 
   // Copy children's children in order to redistribute them.
   size_t iChild = 0;
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
   {
     for (size_t j = 0; j < parent->Child(i).NumChildren(); j++)
     {
@@ -238,7 +238,7 @@ RedistributeNodesEvenly(const TreeType *parent,
   }
 
   iChild = 0;
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
   {
     // Since we redistribute children of a sibling we should recalculate the
     // bound.
@@ -286,7 +286,7 @@ RedistributePointsEvenly(TreeType* parent,
   size_t numPoints = 0;
   size_t numPointsPerNode, numRestPoints;
 
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
     numPoints += parent->Child(i).NumPoints();
 
   numPointsPerNode = numPoints / (lastSibling - firstSibling + 1);
@@ -296,14 +296,14 @@ RedistributePointsEvenly(TreeType* parent,
 
   // Copy children's points in order to redistribute them.
   size_t iPoint = 0;
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
   {
     for (size_t j = 0; j < parent->Child(i).NumPoints(); j++)
       points[iPoint++] = parent->Child(i).Point(j);
   }
 
   iPoint = 0;
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
   {
     // Since we redistribute points of a sibling we should recalculate the
     // bound.

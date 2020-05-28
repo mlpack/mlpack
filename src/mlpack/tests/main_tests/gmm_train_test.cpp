@@ -557,7 +557,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiagCovariance)
   for (size_t k = 0; k < sortedIndices.n_elem; k++)
   {
     arma::mat diagCov(gmm->Component(sortedIndices[k]).Covariance());
-      for (size_t i = 0; i < diagCov.n_rows; i++)
+      for (size_t i = 0; i < diagCov.n_rows; ++i)
         for (size_t j = 0; j < diagCov.n_cols; j++)
           if (i != j && diagCov(i, j) != (double) 0)
             BOOST_FAIL("Covariance is not diagonal");

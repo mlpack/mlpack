@@ -368,13 +368,13 @@ void AtrousConvolution<
 
       if (dilationHeight > 1)
       {
-        for (size_t i = 1; i < output.n_cols; i++){
+        for (size_t i = 1; i < output.n_cols; ++i){
           output.shed_cols(i, i + dilationHeight - 2);
         }
       }
       if (dilationWidth > 1)
       {
-        for (size_t i = 1; i < output.n_rows; i++){
+        for (size_t i = 1; i < output.n_rows; ++i){
           output.shed_rows(i, i + dilationWidth - 2);
         }
       }

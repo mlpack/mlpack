@@ -74,7 +74,7 @@ inline CellBound<MetricType, ElemType>::CellBound(
     minWidth(other.MinWidth())
 {
   // Copy other bounds over.
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
     bounds[i] = other.bounds[i];
 }
 
@@ -102,7 +102,7 @@ inline CellBound<
   hiAddress = other.hiAddress;
 
   // Now copy each of the bound values.
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
     bounds[i] = other.bounds[i];
 
   minWidth = other.MinWidth();
@@ -171,7 +171,7 @@ inline void CellBound<MetricType, ElemType>::Center(
   if (!(center.n_elem == dim))
     center.set_size(dim);
 
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
     center(i) = bounds[i].Mid();
 }
 
@@ -193,7 +193,7 @@ void CellBound<MetricType, ElemType>::AddBound(
     hiBound(k, numBounds) = std::numeric_limits<ElemType>::lowest();
   }
 
-  for (size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; ++i)
   {
     size_t k = 0;
     // Check if the point is contained in the hyperrectangle.
@@ -415,7 +415,7 @@ void CellBound<MetricType, ElemType>::UpdateAddressBounds(const MatType& data)
   // If the high address is equal to the lower address.
   if (row == hiAddress.n_elem)
   {
-    for (size_t i = 0; i < dim; i++)
+    for (size_t i = 0; i < dim; ++i)
     {
       loBound(i, 0) = bounds[i].Lo();
       hiBound(i, 0) = bounds[i].Hi();
@@ -434,7 +434,7 @@ void CellBound<MetricType, ElemType>::UpdateAddressBounds(const MatType& data)
   if ((row == hiAddress.n_elem - 1) && (bit == order - 1))
   {
     // If the addresses differ in the last bit.
-    for (size_t i = 0; i < dim; i++)
+    for (size_t i = 0; i < dim; ++i)
     {
       loBound(i, 0) = bounds[i].Lo();
       hiBound(i, 0) = bounds[i].Hi();
@@ -454,7 +454,7 @@ void CellBound<MetricType, ElemType>::UpdateAddressBounds(const MatType& data)
   if (numBounds == 0)
   {
     // I think this should never happen.
-    for (size_t i = 0; i < dim; i++)
+    for (size_t i = 0; i < dim; ++i)
     {
       loBound(i, 0) = bounds[i].Lo();
       hiBound(i, 0) = bounds[i].Hi();
@@ -479,7 +479,7 @@ inline ElemType CellBound<MetricType, ElemType>::MinDistance(
 
   ElemType lower, higher;
 
-  for (size_t i = 0; i < numBounds; i++)
+  for (size_t i = 0; i < numBounds; ++i)
   {
     ElemType sum = 0;
 
@@ -549,7 +549,7 @@ ElemType CellBound<MetricType, ElemType>::MinDistance(const CellBound& other)
 
   ElemType lower, higher;
 
-  for (size_t i = 0; i < numBounds; i++)
+  for (size_t i = 0; i < numBounds; ++i)
     for (size_t j = 0; j < other.numBounds; j++)
     {
       ElemType sum = 0;
@@ -616,7 +616,7 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
 
   Log::Assert(point.n_elem == dim);
 
-  for (size_t i = 0; i < numBounds; i++)
+  for (size_t i = 0; i < numBounds; ++i)
   {
     ElemType sum = 0;
     for (size_t d = 0; d < dim; d++)
@@ -663,7 +663,7 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
   Log::Assert(dim == other.dim);
 
   ElemType v;
-  for (size_t i = 0; i < numBounds; i++)
+  for (size_t i = 0; i < numBounds; ++i)
     for (size_t j = 0; j < other.numBounds; j++)
     {
       ElemType sum = 0;
@@ -714,7 +714,7 @@ CellBound<MetricType, ElemType>::RangeDistance(
 
   ElemType v1, v2, vLo, vHi;
 
-  for (size_t i = 0; i < numBounds; i++)
+  for (size_t i = 0; i < numBounds; ++i)
     for (size_t j = 0; j < other.numBounds; j++)
     {
       ElemType loSum = 0;
@@ -793,7 +793,7 @@ CellBound<MetricType, ElemType>::RangeDistance(
   Log::Assert(point.n_elem == dim);
 
   ElemType v1, v2, vLo, vHi;
-  for (size_t i = 0; i < numBounds; i++)
+  for (size_t i = 0; i < numBounds; ++i)
   {
     ElemType loSum = 0;
     ElemType hiSum = 0;
@@ -876,7 +876,7 @@ CellBound<MetricType, ElemType>::operator|=(const MatType& data)
   arma::Col<ElemType> maxs(arma::max(data, 1));
 
   minWidth = std::numeric_limits<ElemType>::max();
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
   {
     bounds[i] |= math::RangeType<ElemType>(mins[i], maxs[i]);
     const ElemType width = bounds[i].Width();
@@ -902,7 +902,7 @@ CellBound<MetricType, ElemType>::operator|=(const CellBound& other)
   assert(other.dim == dim);
 
   minWidth = std::numeric_limits<ElemType>::max();
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
   {
     bounds[i] |= other.bounds[i];
     const ElemType width = bounds[i].Width();
@@ -918,7 +918,7 @@ CellBound<MetricType, ElemType>::operator|=(const CellBound& other)
 
   if (loAddress[0] > hiAddress[0])
   {
-    for (size_t i = 0; i < dim; i++)
+    for (size_t i = 0; i < dim; ++i)
     {
       loBound(i, 0) = bounds[i].Lo();
       hiBound(i, 0) = bounds[i].Hi();
@@ -936,7 +936,7 @@ template<typename VecType>
 inline bool CellBound<MetricType, ElemType>::Contains(
     const VecType& point) const
 {
-  for (size_t i = 0; i < point.n_elem; i++)
+  for (size_t i = 0; i < point.n_elem; ++i)
   {
     if (!bounds[i].Contains(point(i)))
       return false;

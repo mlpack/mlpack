@@ -76,7 +76,7 @@ class DiscreteDistribution
    */
   DiscreteDistribution(const arma::Col<size_t>& numObservations)
   {
-    for (size_t i = 0; i < numObservations.n_elem; i++)
+    for (size_t i = 0; i < numObservations.n_elem; ++i)
     {
       const size_t numObs = size_t(numObservations[i]);
       if (numObs <= 0)
@@ -98,7 +98,7 @@ class DiscreteDistribution
    */
   DiscreteDistribution(const std::vector<arma::vec>& probabilities)
   {
-    for (size_t i = 0; i < probabilities.size(); i++)
+    for (size_t i = 0; i < probabilities.size(); ++i)
     {
       arma::vec temp = probabilities[i];
       double sum = accu(temp);
@@ -180,7 +180,7 @@ class DiscreteDistribution
   void Probability(const arma::mat& x, arma::vec& probabilities) const
   {
     probabilities.set_size(x.n_cols);
-    for (size_t i = 0; i < x.n_cols; i++)
+    for (size_t i = 0; i < x.n_cols; ++i)
       probabilities(i) = Probability(x.unsafe_col(i));
   }
 
@@ -195,7 +195,7 @@ class DiscreteDistribution
   void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const
   {
     logProbabilities.set_size(x.n_cols);
-    for (size_t i = 0; i < x.n_cols; i++)
+    for (size_t i = 0; i < x.n_cols; ++i)
       logProbabilities(i) = log(Probability(x.unsafe_col(i)));
   }
 

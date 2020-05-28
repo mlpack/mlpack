@@ -23,7 +23,7 @@ using namespace math;
  */
 void mlpack::math::VectorPower(arma::vec& vec, const double power)
 {
-  for (size_t i = 0; i < vec.n_elem; i++)
+  for (size_t i = 0; i < vec.n_elem; ++i)
   {
     if (std::abs(vec(i)) > 1e-12)
       vec(i) = (vec(i) > 0) ? std::pow(vec(i), (double) power) :
@@ -197,7 +197,7 @@ void mlpack::math::Svec(const arma::mat& input, arma::vec& output)
   output.zeros(n2bar);
 
   size_t idx = 0;
-  for (size_t i = 0; i < n; i++)
+  for (size_t i = 0; i < n; ++i)
   {
     for (size_t j = i; j < n; j++)
     {
@@ -238,7 +238,7 @@ void mlpack::math::Smat(const arma::vec& input, arma::mat& output)
   output.zeros(n, n);
 
   size_t idx = 0;
-  for (size_t i = 0; i < n; i++)
+  for (size_t i = 0; i < n; ++i)
   {
     for (size_t j = i; j < n; j++)
     {
@@ -259,7 +259,7 @@ void mlpack::math::SymKronId(const arma::mat& A, arma::mat& op)
   op.zeros(n2bar, n2bar);
 
   size_t idx = 0;
-  for (size_t i = 0; i < n; i++)
+  for (size_t i = 0; i < n; ++i)
   {
     for (size_t j = i; j < n; j++)
     {

@@ -408,7 +408,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
  */
 BOOST_AUTO_TEST_CASE(HRectBoundRangeDistanceBound)
 {
-  for (int i = 0; i < 50; i++)
+  for (int i = 0; i < 50; ++i)
   {
     size_t dim = math::RandInt(20);
 
@@ -459,7 +459,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundRangeDistanceBound)
  */
 BOOST_AUTO_TEST_CASE(HRectBoundRangeDistancePoint)
 {
-  for (int i = 0; i < 20; i++)
+  for (int i = 0; i < 20; ++i)
   {
     size_t dim = math::RandInt(20);
 
@@ -931,7 +931,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundRootMaxDistanceBound)
  */
 BOOST_AUTO_TEST_CASE(HRectBoundRootRangeDistanceBound)
 {
-  for (int i = 0; i < 50; i++)
+  for (int i = 0; i < 50; ++i)
   {
     size_t dim = math::RandInt(20);
 
@@ -982,7 +982,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundRootRangeDistanceBound)
  */
 BOOST_AUTO_TEST_CASE(HRectBoundRootRangeDistancePoint)
 {
-  for (int i = 0; i < 20; i++)
+  for (int i = 0; i < 20; ++i)
   {
     size_t dim = math::RandInt(20);
 
@@ -1322,7 +1322,7 @@ BOOST_AUTO_TEST_CASE(KdTreeTest)
     BOOST_REQUIRE_EQUAL(root.Count(), size);
 
     // Check the forward and backward mappings for correctness.
-    for (size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < size; ++i)
     {
       for (size_t j = 0; j < dimensions; j++)
       {
@@ -1343,7 +1343,7 @@ BOOST_AUTO_TEST_CASE(KdTreeTest)
     // Compare each peer against every other peer.
     while (depth < v.size())
     {
-      for (size_t i = depth; i < 2 * depth && i < v.size(); i++)
+      for (size_t i = depth; i < 2 * depth && i < v.size(); ++i)
         for (size_t j = i + 1; j < 2 * depth && j < v.size(); j++)
           if (v[i] != NULL && v[j] != NULL)
             BOOST_REQUIRE(!v[i]->Bound().Contains(v[j]->Bound()));
@@ -1391,7 +1391,7 @@ BOOST_AUTO_TEST_CASE(MaxRPTreeTest)
     BOOST_REQUIRE_EQUAL(root.Count(), size);
 
     // Check the forward and backward mappings for correctness.
-    for (size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < size; ++i)
     {
       for (size_t j = 0; j < dimensions; j++)
       {
@@ -1424,7 +1424,7 @@ bool CheckHyperplaneSplit(const TreeType& tree)
   // The hyperplane splits the node if the expression takes on opposite
   // values on node's children.
 
-  for (size_t i = 0; i < tree.Left()->NumDescendants(); i++)
+  for (size_t i = 0; i < tree.Left()->NumDescendants(); ++i)
   {
     for (size_t k = 0; k < dataset.n_rows; k++)
       mat(k, i) = - dataset(k, tree.Left()->Descendant(i));
@@ -1432,7 +1432,7 @@ bool CheckHyperplaneSplit(const TreeType& tree)
     mat(dataset.n_rows, i) = -1;
   }
 
-  for (size_t i = 0; i < tree.Right()->NumDescendants(); i++)
+  for (size_t i = 0; i < tree.Right()->NumDescendants(); ++i)
   {
     for (size_t k = 0; k < dataset.n_rows; k++)
       mat(k, i + tree.Left()->NumDescendants()) =
@@ -1533,7 +1533,7 @@ BOOST_AUTO_TEST_CASE(RPTreeTest)
     BOOST_REQUIRE_EQUAL(root.Count(), size);
 
     // Check the forward and backward mappings for correctness.
-    for (size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < size; ++i)
     {
       for (size_t j = 0; j < dimensions; j++)
       {
@@ -1648,7 +1648,7 @@ BOOST_AUTO_TEST_CASE(BallTreeTest)
     BOOST_REQUIRE_EQUAL(root.NumDescendants(), size);
 
     // Check the forward and backward mappings for correctness.
-    for (size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < size; ++i)
     {
       for (size_t j = 0; j < dimensions; j++)
       {
@@ -1753,7 +1753,7 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
     BOOST_REQUIRE_EQUAL(root.Count(), size);
 
     // Check the forward and backward mappings for correctness.
-    for (size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < size; ++i)
     {
       for (size_t j = 0; j < dimensions; j++)
       {
@@ -1774,7 +1774,7 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
     // Compare each peer against every other peer.
     while (depth < v.size())
     {
-      for (size_t i = depth; i < 2 * depth && i < v.size(); i++)
+      for (size_t i = depth; i < 2 * depth && i < v.size(); ++i)
         for (size_t j = i + 1; j < 2 * depth && j < v.size(); j++)
           if (v[i] != NULL && v[j] != NULL)
             BOOST_REQUIRE(!v[i]->Bound().Contains(v[j]->Bound()));

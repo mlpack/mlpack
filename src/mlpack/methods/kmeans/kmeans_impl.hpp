@@ -222,7 +222,7 @@ Cluster(const MatType& data,
 
     // If we are not allowing empty clusters, then check that all of our
     // clusters have points.
-    for (size_t i = 0; i < counts.n_elem; i++)
+    for (size_t i = 0; i < counts.n_elem; ++i)
     {
       if (counts[i] == 0)
       {

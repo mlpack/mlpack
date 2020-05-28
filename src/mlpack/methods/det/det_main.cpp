@@ -173,7 +173,7 @@ static void mlpackMain()
       // Compute density estimates for each point in the training set.
       arma::rowvec trainingDensities(trainingData.n_cols);
       Timer::Start("det_estimation_time");
-      for (size_t i = 0; i < trainingData.n_cols; i++)
+      for (size_t i = 0; i < trainingData.n_cols; ++i)
         trainingDensities[i] = tree->ComputeValue(trainingData.unsafe_col(i));
       Timer::Stop("det_estimation_time");
 
@@ -197,7 +197,7 @@ static void mlpackMain()
       Timer::Start("det_test_set_estimation");
       arma::rowvec testDensities(testData.n_cols);
 
-      for (size_t i = 0; i < testData.n_cols; i++)
+      for (size_t i = 0; i < testData.n_cols; ++i)
         testDensities[i] = tree->ComputeValue(testData.unsafe_col(i));
 
       Timer::Stop("det_test_set_estimation");
@@ -252,7 +252,7 @@ static void mlpackMain()
       PathCacher path(theFormat, tree);
       counters.zeros(path.NumNodes());
 
-      for (size_t i = 0; i < estimationData.n_cols; i++)
+      for (size_t i = 0; i < estimationData.n_cols; ++i)
       {
         int tag = tree->FindBucket(estimationData.unsafe_col(i));
 
@@ -281,7 +281,7 @@ static void mlpackMain()
       int numLeaves = tree->TagTree();
       counters.zeros(numLeaves);
 
-      for (size_t i = 0; i < estimationData.n_cols; i++)
+      for (size_t i = 0; i < estimationData.n_cols; ++i)
       {
         const int tag = tree->FindBucket(estimationData.unsafe_col(i));
 

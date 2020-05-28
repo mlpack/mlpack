@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(AddressTest)
   arma::Col<ElemType> point(dataset.n_rows);
 
   // Ensure that this is one-to-one transform.
-  for (size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     addr::PointToAddress(address, dataset.col(i));
     addr::AddressToPoint(point, address);
@@ -69,7 +69,7 @@ void CheckSplit(const TreeType& tree)
   arma::Col<AddressElemType> address(tree.Bound().Dim());
 
   // Find the highest address of the left node.
-  for (size_t i = 0; i < tree.Left()->NumDescendants(); i++)
+  for (size_t i = 0; i < tree.Left()->NumDescendants(); ++i)
   {
     addr::PointToAddress(address,
         tree.Dataset().col(tree.Left()->Descendant(i)));
@@ -79,7 +79,7 @@ void CheckSplit(const TreeType& tree)
   }
 
   // Find the lowest address of the right node.
-  for (size_t i = 0; i < tree.Right()->NumDescendants(); i++)
+  for (size_t i = 0; i < tree.Right()->NumDescendants(); ++i)
   {
     addr::PointToAddress(address,
         tree.Dataset().col(tree.Right()->Descendant(i)));
@@ -110,7 +110,7 @@ template<typename TreeType>
 void CheckBound(const TreeType& tree)
 {
   typedef typename TreeType::ElemType ElemType;
-  for (size_t i = 0; i < tree.NumDescendants(); i++)
+  for (size_t i = 0; i < tree.NumDescendants(); ++i)
   {
     arma::Col<ElemType> point = tree.Dataset().col(tree.Descendant(i));
 
@@ -178,7 +178,7 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
       const arma::Col<ElemType>& point = tree.  Dataset().col(j);
       ElemType maxDist = 0;
       ElemType minDist = std::numeric_limits<ElemType>::max();
-      for (size_t i = 0; i < tree.NumDescendants(); i++)
+      for (size_t i = 0; i < tree.NumDescendants(); ++i)
       {
         ElemType dist = MetricType::Evaluate(
             tree.Dataset().col(tree.Descendant(i)),
@@ -215,7 +215,7 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
     {
       ElemType maxDist = 0;
       ElemType minDist = std::numeric_limits<ElemType>::max();
-      for (size_t i = 0; i < tree.NumDescendants(); i++)
+      for (size_t i = 0; i < tree.NumDescendants(); ++i)
         for (size_t j = 0; j < node->NumDescendants(); j++)
         {
           ElemType dist = MetricType::Evaluate(
@@ -292,7 +292,7 @@ BOOST_AUTO_TEST_CASE(UBTreeTest)
     BOOST_REQUIRE_EQUAL(root.NumDescendants(), size);
 
     // Check the forward and backward mappings for correctness.
-    for (size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < size; ++i)
     {
       for (size_t j = 0; j < dimensions; j++)
       {
@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
 
   knn2.Search(5, neighbors2, distances2);
 
-  for (size_t i = 0; i < neighbors1.size(); i++)
+  for (size_t i = 0; i < neighbors1.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
     BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
@@ -350,7 +350,7 @@ BOOST_AUTO_TEST_CASE(DualTreeTraverserTest)
 
   knn2.Search(5, neighbors2, distances2);
 
-  for (size_t i = 0; i < neighbors1.size(); i++)
+  for (size_t i = 0; i < neighbors1.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
     BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);

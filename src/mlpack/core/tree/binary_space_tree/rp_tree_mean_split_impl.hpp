@@ -70,7 +70,7 @@ GetAveragePointDistance(
 {
   ElemType dist = 0;
 
-  for (size_t i = 0; i < samples.n_elem; i++)
+  for (size_t i = 0; i < samples.n_elem; ++i)
     for (size_t j = i + 1; j < samples.n_elem; j++)
       dist += metric::SquaredEuclideanDistance::Evaluate(data.col(samples[i]),
           data.col(samples[j]));
