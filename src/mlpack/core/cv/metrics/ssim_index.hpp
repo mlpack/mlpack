@@ -39,7 +39,7 @@ namespace cv {
 */
 class SSIMIndex
 {
- public
+ public:
   /**
    * @tparam DataType The type of image matrix
    * @param image The processed image
