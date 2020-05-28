@@ -141,6 +141,14 @@ class Concat
   /*
    * Add a new module to the model.
    *
+   * @param layer The Layer to be added to the model.
+   */
+  template<typename LayerType>
+  void Add(const LayerType& layer) { network.push_back(new LayerType(layer)); }
+
+  /*
+   * Add a new module to the model.
+   *
    * @param args The layer parameter.
    */
   template <class LayerType, class... Args>
@@ -151,7 +159,8 @@ class Concat
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
+  template<typename LayerType>
+  void Add(LayerType* layer) { network.push_back(layer); }
 
   //! Return the model modules.
   std::vector<LayerTypes<CustomLayers...> >& Model()

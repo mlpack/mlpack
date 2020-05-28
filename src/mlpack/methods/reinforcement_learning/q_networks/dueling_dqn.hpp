@@ -53,7 +53,7 @@ class DuelingDQN
       actionValues(model.actionValues)
   {
     std::cout << "copyConstructor" << '\n';
-    
+
     concat = new Concat<>(true);
     concat.Add(&valueNetwork);
     concat.Add(&advantageNetwork);
