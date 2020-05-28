@@ -78,7 +78,7 @@ class SimpleToleranceTermination
     size_t m = V->n_cols;
     double sum = 0;
     size_t count = 0;
-    for (size_t i = 0; i < n; i++)
+    for (size_t i = 0; i < n; ++i)
     {
         for (size_t j = 0; j < m; j++)
         {

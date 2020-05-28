@@ -100,7 +100,7 @@ class SVDBatchLearning
     // Compute the step.
     arma::mat deltaW;
     deltaW.zeros(n, r);
-    for (size_t i = 0; i < n; i++)
+    for (size_t i = 0; i < n; ++i)
     {
       for (size_t j = 0; j < m; j++)
       {
@@ -147,7 +147,7 @@ class SVDBatchLearning
     deltaH.zeros(r, m);
     for (size_t j = 0; j < m; j++)
     {
-      for (size_t i = 0; i < n; i++)
+      for (size_t i = 0; i < n; ++i)
       {
         const double val = V(i, j);
         if (val != 0)

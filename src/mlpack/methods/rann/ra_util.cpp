@@ -145,7 +145,7 @@ double mlpack::neighbor::RAUtil::SuccessProbability(const size_t n,
       else
         jTrans = m - j;
 
-      for (size_t i = 2; i <= jTrans; i++)
+      for (size_t i = 2; i <= jTrans; ++i)
       {
         mCj *= (double) (m - (i - 1));
         mCj /= (double) i;

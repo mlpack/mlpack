@@ -213,7 +213,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive)
   BOOST_REQUIRE_EQUAL(dualResults.n_cols, naiveResults.n_cols);
   BOOST_REQUIRE_EQUAL(dualResults.n_rows, naiveResults.n_rows);
 
-  for (size_t i = 0; i < dualResults.n_cols; i++)
+  for (size_t i = 0; i < dualResults.n_cols; ++i)
   {
     BOOST_REQUIRE_EQUAL(dualResults(0, i), naiveResults(0, i));
     BOOST_REQUIRE_EQUAL(dualResults(1, i), naiveResults(1, i));
@@ -241,7 +241,7 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
   bst.ComputeMST(bstResults);
   ct.ComputeMST(coverResults);
 
-  for (size_t i = 0; i < bstResults.n_cols; i++)
+  for (size_t i = 0; i < bstResults.n_cols; ++i)
   {
     BOOST_REQUIRE_EQUAL(bstResults(0, i), coverResults(0, i));
     BOOST_REQUIRE_EQUAL(bstResults(1, i), coverResults(1, i));
@@ -270,7 +270,7 @@ BOOST_AUTO_TEST_CASE(BallTreeTest)
   bst.ComputeMST(bstResults);
   ballt.ComputeMST(ballResults);
 
-  for (size_t i = 0; i < bstResults.n_cols; i++)
+  for (size_t i = 0; i < bstResults.n_cols; ++i)
   {
     BOOST_REQUIRE_EQUAL(bstResults(0, i), ballResults(0, i));
     BOOST_REQUIRE_EQUAL(bstResults(1, i), ballResults(1, i));

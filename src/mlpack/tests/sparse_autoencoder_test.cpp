@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRandomEvaluate)
   SparseAutoencoderFunction saf(data, vSize, hSize, 0, 0);
 
   // Run a number of trials.
-  for (size_t i = 0; i < trials; i++)
+  for (size_t i = 0; i < trials; ++i)
   {
     // Create a random set of parameters.
     arma::mat parameters;
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRegularizationEvaluate)
   SparseAutoencoderFunction safBigReg(data, vSize, hSize, 20, 0);
 
   // Run a number of trials.
-  for (size_t i = 0; i < trials; i++)
+  for (size_t i = 0; i < trials; ++i)
   {
     // Create a random set of parameters.
     arma::mat parameters;
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionKLDivergenceEvaluate)
   SparseAutoencoderFunction safBigDiv(data, vSize, hSize, 0, 20, rho);
 
   // Run a number of trials.
-  for (size_t i = 0; i < trials; i++)
+  for (size_t i = 0; i < trials; ++i)
   {
     // Create a random set of parameters.
     arma::mat parameters;
@@ -236,7 +236,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionGradient)
   double costPlus3, costMinus3, numGradient3;
 
   // For each parameter.
-  for (size_t i = 0; i <= l3; i++)
+  for (size_t i = 0; i <= l3; ++i)
   {
     for (size_t j = 0; j <= l2; j++)
     {

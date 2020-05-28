@@ -55,7 +55,7 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
 
   arma::uvec samples;
   //  Evaluate each candidate
-  for (size_t i = 0; i < vantagePointCandidates.n_elem; i++)
+  for (size_t i = 0; i < vantagePointCandidates.n_elem; ++i)
   {
     // Get no more than min(MaxNumSamples, count) random samples
     math::ObtainDistinctSamples(begin, begin + count, MaxNumSamples, samples);

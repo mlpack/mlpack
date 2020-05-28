@@ -130,7 +130,7 @@ class NMFMultiplicativeDivergenceUpdate
     arma::colvec t2;
 
     t1 = W * H;
-    for (size_t i = 0; i < H.n_rows; i++)
+    for (size_t i = 0; i < H.n_rows; ++i)
     {
       for (size_t j = 0; j < H.n_cols; j++)
       {

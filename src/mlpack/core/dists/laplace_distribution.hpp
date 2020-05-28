@@ -113,7 +113,7 @@ class LaplaceDistribution
   void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const
   {
     logProbabilities.set_size(x.n_cols);
-    for (size_t i = 0; i < x.n_cols; i++)
+    for (size_t i = 0; i < x.n_cols; ++i)
     {
       logProbabilities(i) = LogProbability(x.unsafe_col(i));
     }

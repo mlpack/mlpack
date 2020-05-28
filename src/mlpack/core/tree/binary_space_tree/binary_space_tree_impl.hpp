@@ -72,7 +72,7 @@ BinarySpaceTree(
 {
   // Initialize oldFromNew correctly.
   oldFromNew.resize(data.n_cols);
-  for (size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; ++i)
     oldFromNew[i] = i; // Fill with unharmed indices.
 
   // Now do the actual splitting.
@@ -106,7 +106,7 @@ BinarySpaceTree(
 {
   // Initialize the oldFromNew vector correctly.
   oldFromNew.resize(data.n_cols);
-  for (size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; ++i)
     oldFromNew[i] = i; // Fill with unharmed indices.
 
   // Now do the actual splitting.
@@ -118,7 +118,7 @@ BinarySpaceTree(
 
   // Map the newFromOld indices correctly.
   newFromOld.resize(data.n_cols);
-  for (size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; ++i)
     newFromOld[oldFromNew[i]] = i;
 }
 
@@ -169,7 +169,7 @@ BinarySpaceTree(
 {
   // Initialize oldFromNew correctly.
   oldFromNew.resize(dataset->n_cols);
-  for (size_t i = 0; i < dataset->n_cols; i++)
+  for (size_t i = 0; i < dataset->n_cols; ++i)
     oldFromNew[i] = i; // Fill with unharmed indices.
 
   // Now do the actual splitting.
@@ -203,7 +203,7 @@ BinarySpaceTree(
 {
   // Initialize the oldFromNew vector correctly.
   oldFromNew.resize(dataset->n_cols);
-  for (size_t i = 0; i < dataset->n_cols; i++)
+  for (size_t i = 0; i < dataset->n_cols; ++i)
     oldFromNew[i] = i; // Fill with unharmed indices.
 
   // Now do the actual splitting.
@@ -215,7 +215,7 @@ BinarySpaceTree(
 
   // Map the newFromOld indices correctly.
   newFromOld.resize(dataset->n_cols);
-  for (size_t i = 0; i < dataset->n_cols; i++)
+  for (size_t i = 0; i < dataset->n_cols; ++i)
     newFromOld[oldFromNew[i]] = i;
 }
 
@@ -315,7 +315,7 @@ BinarySpaceTree(
 
   // Map the newFromOld indices correctly.
   newFromOld.resize(dataset->n_cols);
-  for (size_t i = 0; i < dataset->n_cols; i++)
+  for (size_t i = 0; i < dataset->n_cols; ++i)
     newFromOld[oldFromNew[i]] = i;
 }
 

@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusEvaluate)
   // Make a SVDPlusPlusFunction with zero regularization.
   SVDPlusPlusFunction<arma::mat> svdPPFunc(data, implicitData, rank, 0);
 
-  for (size_t i = 0; i < numTrials; i++)
+  for (size_t i = 0; i < numTrials; ++i)
   {
     arma::mat parameters = arma::randu(rank + 1, numUsers + 2 * numItems);
 
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionRegularizationEvaluate)
       0.5);
   SVDPlusPlusFunction<arma::mat> svdPPFuncBigReg(data, implicitData, rank, 20);
 
-  for (size_t i = 0; i < numTrials; i++)
+  for (size_t i = 0; i < numTrials; ++i)
   {
     arma::mat parameters = arma::randu(rank + 1, numUsers + 2 * numItems);
 
@@ -219,7 +219,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionGradient)
   double costPlus1, costMinus1, numGradient1;
   double costPlus2, costMinus2, numGradient2;
 
-  for (size_t i = 0; i < rank; i++)
+  for (size_t i = 0; i < rank; ++i)
   {
     for (size_t j = 0; j < numUsers + numItems; j++)
     {
@@ -311,7 +311,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusCleanDataTest)
     }
     else
     {
-      i++;
+      ++i;
     }
   }
 
@@ -327,7 +327,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusCleanDataTest)
   BOOST_REQUIRE_EQUAL(cleanedData.n_nonzero, implicitData.n_cols);
 
   // Make sure all implicitData are in cleanedData.
-  for (size_t i = 0; i < implicitData.n_cols; i++)
+  for (size_t i = 0; i < implicitData.n_cols; ++i)
   {
     double value = cleanedData(implicitData(1, i), implicitData(0, i));
     BOOST_REQUIRE_GT(std::fabs(value), 0);
@@ -361,7 +361,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionOptimize)
   arma::sp_mat implicitData = arma::sprandu(numItems, numUsers, 0.05);
 
   // Make rating entries based on the parameters.
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
@@ -399,7 +399,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionOptimize)
 
   // Get predicted ratings from optimized parameters.
   arma::mat predictedData(1, numRatings);
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
@@ -468,7 +468,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionParallelOptimize)
   arma::sp_mat implicitData = arma::sprandu(numItems, numUsers, 0.05);
 
   // Make rating entries based on the parameters.
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
@@ -513,7 +513,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionParallelOptimize)
 
   // Get predicted ratings from optimized parameters.
   arma::mat predictedData(1, numRatings);
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;

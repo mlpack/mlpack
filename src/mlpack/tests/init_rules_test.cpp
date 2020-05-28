@@ -61,14 +61,14 @@ BOOST_AUTO_TEST_CASE(OrthogonalInitTest)
   arma::mat orthogonalWeights = arma::eye<arma::mat>(100, 100);
   weights *= weights.t();
 
-  for (size_t i = 0; i < weights.n_rows; i++)
+  for (size_t i = 0; i < weights.n_rows; ++i)
     for (size_t j = 0; j < weights.n_cols; j++)
       BOOST_REQUIRE_SMALL(weights.at(i, j) - orthogonalWeights.at(i, j), 1e-3);
 
   orthogonalInit.Initialize(weights, 200, 100);
   weights = weights.t() * weights;
 
-  for (size_t i = 0; i < weights.n_rows; i++)
+  for (size_t i = 0; i < weights.n_rows; ++i)
     for (size_t j = 0; j < weights.n_cols; j++)
       BOOST_REQUIRE_SMALL(weights.at(i, j) - orthogonalWeights.at(i, j), 1e-3);
 }
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(OrthogonalInitGainTest)
   orthogonalWeights *= (gain * gain);
   weights *= weights.t();
 
-  for (size_t i = 0; i < weights.n_rows; i++)
+  for (size_t i = 0; i < weights.n_rows; ++i)
     for (size_t j = 0; j < weights.n_cols; j++)
       BOOST_REQUIRE_SMALL(weights.at(i, j) - orthogonalWeights.at(i, j), 1e-3);
 }

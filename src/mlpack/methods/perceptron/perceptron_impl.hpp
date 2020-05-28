@@ -110,7 +110,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
   arma::uword maxIndex = 0;
 
   // Could probably be faster if done in batch.
-  for (size_t i = 0; i < test.n_cols; i++)
+  for (size_t i = 0; i < test.n_cols; ++i)
   {
     tempLabelMat = weights.t() * test.col(i) + biases;
     tempLabelMat.max(maxIndex);
@@ -159,7 +159,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
   {
     // This outer loop is for each iteration, and we use the 'converged'
     // variable for noting whether or not convergence has been reached.
-    i++;
+    ++i;
     converged = true;
 
     // Now this inner loop is for going through the dataset in each iteration.

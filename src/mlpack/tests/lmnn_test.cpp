@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(LMNNTargetNeighborsTest)
 
   // Calculate norm of datapoints.
   arma::vec norm(dataset.n_cols);
-  for (size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     norm(i) = arma::norm(dataset.col(i));
   }
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(LMNNImpostorsTest)
 
   // Calculate norm of datapoints.
   arma::vec norm(dataset.n_cols);
-  for (size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     norm(i) = arma::norm(dataset.col(i));
   }
@@ -409,7 +409,7 @@ double KnnAccuracy(const arma::mat& dataset,
   // Keep count.
   size_t count = 0.0;
 
-  for (size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     arma::vec Map;
     Map.zeros(uniqueLabels.n_cols);

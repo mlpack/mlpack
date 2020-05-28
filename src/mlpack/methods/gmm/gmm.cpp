@@ -59,7 +59,7 @@ double GMM::LogProbability(const arma::vec& observation) const
   // Sum the probability for each Gaussian in our mixture (and we have to
   // multiply by the prior for each Gaussian too).
   double sum = -std::numeric_limits<double>::infinity();
-  for (size_t i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; ++i)
     sum = math::LogAdd(sum, log(weights[i]) +
         dists[i].LogProbability(observation));
 
@@ -169,7 +169,7 @@ double GMM::LogLikelihood(
   arma::mat logLikelihoods(gaussians, data.n_cols);
 
   // It has to be LogProbability() otherwise Probability() would overflow easily
-  for (size_t i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; ++i)
   {
     distsL[i].LogProbability(data, logPhis);
     logLikelihoods.row(i) = log(weightsL(i)) + trans(logPhis);

@@ -33,7 +33,7 @@ void SortResults(const vector<vector<size_t>>& neighbors,
                  vector<vector<pair<double, size_t>>>& output)
 {
   output.resize(neighbors.size());
-  for (size_t i = 0; i < neighbors.size(); i++)
+  for (size_t i = 0; i < neighbors.size(); ++i)
   {
     output[i].resize(neighbors[i].size());
     for (size_t j = 0; j < neighbors[i].size(); j++)
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
   std::vector<size_t> oldFromNew;
   std::vector<size_t> newFromOld;
   TreeType* tree = new TreeType(data, oldFromNew, newFromOld, 1);
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; ++i)
   {
     RangeSearch<>* rs;
 
@@ -485,7 +485,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
   vector<vector<pair<double, size_t>>> sortedNaive;
   SortResults(neighborsNaive, distancesNaive, sortedNaive);
 
-  for (size_t i = 0; i < sortedTree.size(); i++)
+  for (size_t i = 0; i < sortedTree.size(); ++i)
   {
     BOOST_REQUIRE(sortedTree[i].size() == sortedNaive[i].size());
 
@@ -534,7 +534,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
   vector<vector<pair<double, size_t>>> sortedNaive;
   SortResults(neighborsNaive, distancesNaive, sortedNaive);
 
-  for (size_t i = 0; i < sortedTree.size(); i++)
+  for (size_t i = 0; i < sortedTree.size(); ++i)
   {
     BOOST_REQUIRE(sortedTree[i].size() == sortedNaive[i].size());
 
@@ -583,7 +583,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
   vector<vector<pair<double, size_t>>> sortedNaive;
   SortResults(neighborsNaive, distancesNaive, sortedNaive);
 
-  for (size_t i = 0; i < sortedTree.size(); i++)
+  for (size_t i = 0; i < sortedTree.size(); ++i)
   {
     BOOST_REQUIRE(sortedTree[i].size() == sortedNaive[i].size());
 

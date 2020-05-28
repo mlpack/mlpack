@@ -35,7 +35,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
     // If its children are leaf nodes, use minimum overlap to choose.
     size_t bestIndex = 0;
 
-    for (size_t i = 0; i < node->NumChildren(); i++)
+    for (size_t i = 0; i < node->NumChildren(); ++i)
     {
       ElemType sc = 0;
       for (size_t j = 0; j < node->NumChildren(); j++)
@@ -89,7 +89,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
   if (tiedOne)
   {
     // If the first heuristic was tied, we need to eliminate garbage values.
-    for (size_t i = 0; i < scores.size(); i++)
+    for (size_t i = 0; i < scores.size(); ++i)
       scores[i] = std::numeric_limits<ElemType>::max();
   }
 
@@ -98,7 +98,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
   size_t bestIndex = 0;
   bool tied = false;
 
-  for (size_t i = 0; i < node->NumChildren(); i++)
+  for (size_t i = 0; i < node->NumChildren(); ++i)
   {
     if (!tiedOne || originalScores[i] == origMinScore)
     {
@@ -136,7 +136,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
     // We break ties by choosing the smallest bound.
     ElemType minVol = std::numeric_limits<ElemType>::max();
     bestIndex = 0;
-    for (size_t i = 0; i < scores.size(); i++)
+    for (size_t i = 0; i < scores.size(); ++i)
     {
       if (scores[i] == minScore)
       {
@@ -173,7 +173,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
   size_t bestIndex = 0;
   bool tied = false;
 
-  for (size_t i = 0; i < node->NumChildren(); i++)
+  for (size_t i = 0; i < node->NumChildren(); ++i)
   {
     ElemType v1 = 1.0;
     ElemType v2 = 1.0;
@@ -209,7 +209,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
     // We break ties by choosing the smallest bound.
     ElemType minVol = std::numeric_limits<ElemType>::max();
     bestIndex = 0;
-    for (size_t i = 0; i < scores.size(); i++)
+    for (size_t i = 0; i < scores.size(); ++i)
     {
       if (scores[i] == minScore)
       {

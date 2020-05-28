@@ -44,7 +44,7 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
 
   // Calculate and store norm of datapoints.
   norm.set_size(dataset.n_cols);
-  for (size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     norm(i) = arma::norm(dataset.col(i));
   }
@@ -115,7 +115,7 @@ void LMNNFunction<MetricType>::Shuffle()
   lastTransformationIndices = newlastTransformationIndices.elem(ordering);
   norm = newNorm.elem(ordering);
 
-  for (size_t i = 0; i < ordering.n_elem; i++)
+  for (size_t i = 0; i < ordering.n_elem; ++i)
   {
     evalOld.slice(i) = newEvalOld.slice(ordering(i));
   }
@@ -231,7 +231,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
       // Track number of data points to use for impostors calculatiom.
       size_t numPoints = 0;
 
-      for (size_t i = 0; i < dataset.n_cols; i++)
+      for (size_t i = 0; i < dataset.n_cols; ++i)
       {
         if (transformationDiff * (2 * norm(i) + norm(impostors(k - 1, i)) +
             norm(impostors(k, i))) > distance(k, i) - distance(k - 1, i))
@@ -257,7 +257,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
     constraint.Impostors(impostors, distance, transformedDataset, labels, norm);
   }
 
-  for (size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     for (size_t j = 0; j < k ; j++)
     {
@@ -356,7 +356,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
     // Track number of data points to use for impostors calculatiom.
     size_t numPoints = 0;
 
-    for (size_t i = begin; i < begin + batchSize; i++)
+    for (size_t i = begin; i < begin + batchSize; ++i)
     {
       if (lastTransformationIndices(i))
       {
@@ -384,7 +384,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
         norm, begin, batchSize);
   }
 
-  for (size_t i = begin; i < begin + batchSize; i++)
+  for (size_t i = begin; i < begin + batchSize; ++i)
   {
     for (size_t j = 0; j < k ; j++)
     {
@@ -485,7 +485,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
       // Track number of data points to use for impostors calculatiom.
       size_t numPoints = 0;
 
-      for (size_t i = 0; i < dataset.n_cols; i++)
+      for (size_t i = 0; i < dataset.n_cols; ++i)
       {
         if (transformationDiff * (2 * norm(i) + norm(impostors(k - 1, i)) +
             norm(impostors(k, i))) > distance(k, i) - distance(k - 1, i))
@@ -520,7 +520,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
   // Calculate gradient due to impostors.
   arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
 
-  for (size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     for (int j = k - 1; j >= 0; j--)
     {
@@ -616,7 +616,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
     // Track number of data points to use for impostors calculatiom.
     size_t numPoints = 0;
 
-    for (size_t i = begin; i < begin + batchSize; i++)
+    for (size_t i = begin; i < begin + batchSize; ++i)
     {
       if (lastTransformationIndices(i))
       {
@@ -649,7 +649,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
   arma::mat cij = arma::zeros(dataset.n_rows, dataset.n_rows);
   arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
 
-  for (size_t i = begin; i < begin + batchSize; i++)
+  for (size_t i = begin; i < begin + batchSize; ++i)
   {
     for (size_t j = 0; j < k ; j++)
     {
@@ -760,7 +760,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
       // Track number of data points to use for impostors calculatiom.
       size_t numPoints = 0;
 
-      for (size_t i = 0; i < dataset.n_cols; i++)
+      for (size_t i = 0; i < dataset.n_cols; ++i)
       {
         if (transformationDiff * (2 * norm(i) + norm(impostors(k - 1, i)) +
             norm(impostors(k, i))) > distance(k, i) - distance(k - 1, i))
@@ -795,7 +795,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   // Calculate gradient due to impostors.
   arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
 
-  for (size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     for (size_t j = 0; j < k ; j++)
     {
@@ -898,7 +898,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
     // Track number of data points to use for impostors calculatiom.
     size_t numPoints = 0;
 
-    for (size_t i = begin; i < begin + batchSize; i++)
+    for (size_t i = begin; i < begin + batchSize; ++i)
     {
       if (lastTransformationIndices(i))
       {
@@ -931,7 +931,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   arma::mat cij = arma::zeros(dataset.n_rows, dataset.n_rows);
   arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
 
-  for (size_t i = begin; i < begin + batchSize; i++)
+  for (size_t i = begin; i < begin + batchSize; ++i)
   {
     for (size_t j = 0; j < k ; j++)
     {
@@ -1020,7 +1020,7 @@ inline void LMNNFunction<MetricType>::Precalculate()
 {
   pCij.zeros(dataset.n_rows, dataset.n_rows);
 
-  for (size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     for (size_t j = 0; j < k ; j++)
     {

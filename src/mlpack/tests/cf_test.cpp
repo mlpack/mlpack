@@ -132,7 +132,7 @@ void GetRecommendationsQueriedUser()
 
   // Create dummy query set.
   arma::Col<size_t> users = arma::zeros<arma::Col<size_t> >(numUsers, 1);
-  for (size_t i = 0; i < numUsers; i++)
+  for (size_t i = 0; i < numUsers; ++i)
     users(i) = i;
 
   // Matrix to save recommendations into.

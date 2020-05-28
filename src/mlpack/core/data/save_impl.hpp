@@ -330,7 +330,7 @@ bool Save(const std::vector<std::string>& files,
   arma::Mat<unsigned char> img;
   bool status = true;
 
-  for (size_t i = 0; i < files.size() ; i++)
+  for (size_t i = 0; i < files.size() ; ++i)
   {
     arma::Mat<eT> colImg(matrix.colptr(i), matrix.n_rows, 1,
         false, true);

@@ -480,7 +480,7 @@ arma::Mat<char> GenerateReberGrammarData(
   arma::colvec translation;
 
   // Generate the training data.
-  for (size_t i = 0; i < trainReberGrammarCount; i++)
+  for (size_t i = 0; i < trainReberGrammarCount; ++i)
   {
     if (recursive)
       GenerateRecursiveReber(transitions, 3, 5, trainReber);
@@ -498,7 +498,7 @@ arma::Mat<char> GenerateReberGrammarData(
   }
 
   // Generate the test data.
-  for (size_t i = 0; i < testReberGrammarCount; i++)
+  for (size_t i = 0; i < testReberGrammarCount; ++i)
   {
     if (recursive)
       GenerateRecursiveReber(transitions, averageRecursion, maxRecursion,
@@ -595,7 +595,7 @@ void ReberGrammarTestNetwork(ModelType& model,
     double error = 0;
 
     // Ask the network to predict the next Reber grammar in the given sequence.
-    for (size_t i = 0; i < testReberGrammarCount; i++)
+    for (size_t i = 0; i < testReberGrammarCount; ++i)
     {
       arma::cube prediction;
       arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
@@ -736,14 +736,14 @@ void GenerateDistractedSequence(arma::mat& input, arma::mat& output)
 
   // Set the target in the input sequence and the corresponding targets in the
   // output sequence by following the correct order.
-  for (size_t i = 0; i < 2; i++)
+  for (size_t i = 0; i < 2; ++i)
   {
     size_t idx = rand() % 2;
     input(idx, index(i)) = 1;
     output(idx, index(i) > index(i == 0) ? 9 : 8) = 1;
   }
 
-  for (size_t i = 2; i < 8; i++)
+  for (size_t i = 2; i < 8; ++i)
     input(2 + rand() % 6, index(i)) = 1;
 
   // Set the prompts which direct the network to give an answer.
@@ -771,11 +771,11 @@ void DistractedSequenceRecallTestNetwork(
   arma::field<arma::mat> testLabels(1, testDistractedSequenceCount);
 
   // Generate the training data.
-  for (size_t i = 0; i < trainDistractedSequenceCount; i++)
+  for (size_t i = 0; i < trainDistractedSequenceCount; ++i)
     GenerateDistractedSequence(trainInput(0, i), trainLabels(0, i));
 
   // Generate the test data.
-  for (size_t i = 0; i < testDistractedSequenceCount; i++)
+  for (size_t i = 0; i < testDistractedSequenceCount; ++i)
     GenerateDistractedSequence(testInput(0, i), testLabels(0, i));
 
   /*
@@ -835,7 +835,7 @@ void DistractedSequenceRecallTestNetwork(
 
     // Ask the network to predict the targets in the given sequence at the
     // prompts.
-    for (size_t i = 0; i < testDistractedSequenceCount; i++)
+    for (size_t i = 0; i < testDistractedSequenceCount; ++i)
     {
       arma::cube output;
       arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
@@ -1122,7 +1122,7 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
     double error = 0;
 
     // Ask the network to predict the next Reber grammar in the given sequence.
-    for (size_t i = 0; i < testReberGrammarCount; i++)
+    for (size_t i = 0; i < testReberGrammarCount; ++i)
     {
       arma::cube prediction;
       arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
@@ -1233,7 +1233,7 @@ void GenerateNoisySinRNN(arma::cube& data,
 
   x.for_each([&i, gain, freq, phase, noisePercent, interval]
     (arma::colvec::elem_type& val) {
-    double t = interval * (i++);
+    double t = interval * (++i);
     val = gain * ::sin(2 * M_PI * freq * t + phase) +
         (noisePercent * gain / 100 * Random(0.0, 0.1));
   });

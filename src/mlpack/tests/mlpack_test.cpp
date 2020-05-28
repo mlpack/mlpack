@@ -107,7 +107,7 @@ struct GlobalFixture
     #endif
 
     for (int i = 0; i < boost::unit_test::framework::master_test_suite().argc;
-        i++)
+        ++i)
     {
       std::string argument(
           boost::unit_test::framework::master_test_suite().argv[i]);

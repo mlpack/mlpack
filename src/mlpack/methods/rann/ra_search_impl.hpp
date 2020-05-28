@@ -379,7 +379,7 @@ Search(const MatType& querySet,
       neighbors.set_size(k, querySet.n_cols);
       distances.set_size(k, querySet.n_cols);
 
-      for (size_t i = 0; i < distances.n_cols; i++)
+      for (size_t i = 0; i < distances.n_cols; ++i)
       {
         // Map distances (copy a column).
         distances.col(oldFromNewQueries[i]) = distancePtr->col(i);
@@ -420,7 +420,7 @@ Search(const MatType& querySet,
       neighbors.set_size(k, querySet.n_cols);
 
       // Map indices of neighbors.
-      for (size_t i = 0; i < neighbors.n_cols; i++)
+      for (size_t i = 0; i < neighbors.n_cols; ++i)
         for (size_t j = 0; j < neighbors.n_rows; j++)
           neighbors(j, i) = oldFromNewReferences[(*neighborPtr)(j, i)];
 
@@ -481,7 +481,7 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
     neighbors.set_size(k, querySet.n_cols);
 
     // Map indices of neighbors.
-    for (size_t i = 0; i < neighbors.n_cols; i++)
+    for (size_t i = 0; i < neighbors.n_cols; ++i)
       for (size_t j = 0; j < neighbors.n_rows; j++)
         neighbors(j, i) = oldFromNewReferences[(*neighborPtr)(j, i)];
 
@@ -593,7 +593,7 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::ResetQueryTree(
   queryNode->Stat().Bound() = SortPolicy::WorstDistance();
   queryNode->Stat().NumSamplesMade() = 0;
 
-  for (size_t i = 0; i < queryNode->NumChildren(); i++)
+  for (size_t i = 0; i < queryNode->NumChildren(); ++i)
     ResetQueryTree(&queryNode->Child(i));
 }
 

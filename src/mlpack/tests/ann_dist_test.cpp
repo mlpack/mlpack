@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(SimpleBernoulliDistributionTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianBernoulliDistributionTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t targetElements = math::RandInt(2, 1000);
 
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(JacobianBernoulliDistributionTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianBernoulliDistributionLogisticTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t targetElements = math::RandInt(2, 1000);
 

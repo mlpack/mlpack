@@ -49,7 +49,7 @@ inline void Constraints<MetricType>::ReorderResults(
 
   // Just a simple loop over the results---we want to make sure that the
   // largest-norm point with identical distance has the last location.
-  for (size_t i = 0; i < neighbors.n_cols; i++)
+  for (size_t i = 0; i < neighbors.n_cols; ++i)
   {
     for (size_t start = 0; start < neighbors.n_rows - 1; start++)
     {
@@ -93,7 +93,7 @@ void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
+  for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
     // Perform KNN search with same class points as both reference
     // set and query set.
@@ -138,7 +138,7 @@ void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
   // Vectors to store indices.
   arma::uvec subIndexSame;
 
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
+  for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
     // Calculate Target Neighbors.
     subIndexSame = arma::find(sublabels == uniqueLabels[i]);
@@ -177,7 +177,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
+  for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
     // Perform KNN search with differently labeled points as reference
     // set and  same class points as query set.
@@ -215,7 +215,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
+  for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
     // Perform KNN search with differently labeled points as reference
     // set and  same class points as query set.
@@ -261,7 +261,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
   // Vectors to store indices.
   arma::uvec subIndexSame;
 
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
+  for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
     // Calculate impostors.
     subIndexSame = arma::find(sublabels == uniqueLabels[i]);
@@ -310,7 +310,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   // Vectors to store indices.
   arma::uvec subIndexSame;
 
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
+  for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
     // Calculate impostors.
     subIndexSame = arma::find(sublabels == uniqueLabels[i]);
@@ -357,7 +357,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   // Vectors to store indices.
   arma::uvec subIndexSame;
 
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
+  for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
     // Calculate impostors.
     subIndexSame = arma::find(labels.cols(points.head(numPoints)) ==
@@ -404,7 +404,7 @@ void Constraints<MetricType>::Triplets(arma::Mat<size_t>& outputMatrix,
 
   outputMatrix = arma::Mat<size_t>(3, k * k * N , arma::fill::zeros);
 
-  for (size_t i = 0, r = 0; i < N; i++)
+  for (size_t i = 0, r = 0; i < N; ++i)
   {
     for (size_t j = 0; j < k; j++)
     {
@@ -432,7 +432,7 @@ inline void Constraints<MetricType>::Precalculate(
   indexSame.resize(uniqueLabels.n_elem);
   indexDiff.resize(uniqueLabels.n_elem);
 
-  for (size_t i = 0; i < uniqueLabels.n_elem; i++)
+  for (size_t i = 0; i < uniqueLabels.n_elem; ++i)
   {
     // Store same and diff indices.
     indexSame[i] = arma::find(labels == uniqueLabels[i]);

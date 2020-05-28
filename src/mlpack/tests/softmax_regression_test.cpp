@@ -34,14 +34,14 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionEvaluate)
 
   // Create random class labels.
   arma::Row<size_t> labels(points);
-  for (size_t i = 0; i < points; i++)
+  for (size_t i = 0; i < points; ++i)
     labels(i) = math::RandInt(0, numClasses);
 
   // Create a SoftmaxRegressionFunction. Regularization term ignored.
   SoftmaxRegressionFunction srf(data, labels, numClasses, 0);
 
   // Run a number of trials.
-  for (size_t i = 0; i < trials; i++)
+  for (size_t i = 0; i < trials; ++i)
   {
     // Create a random set of parameters.
     arma::mat parameters;
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionRegularizationEvaluate)
 
   // Create random class labels.
   arma::Row<size_t> labels(points);
-  for (size_t i = 0; i < points; i++)
+  for (size_t i = 0; i < points; ++i)
     labels(i) = math::RandInt(0, numClasses);
 
   // 3 objects for comparing regularization costs.
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionRegularizationEvaluate)
   SoftmaxRegressionFunction srfBigReg(data, labels, numClasses, 20);
 
   // Run a number of trials.
-  for (size_t i = 0; i < trials; i++)
+  for (size_t i = 0; i < trials; ++i)
   {
     // Create a random set of parameters.
     arma::mat parameters;
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionGradient)
 
   // Create random class labels.
   arma::Row<size_t> labels(points);
-  for (size_t i = 0; i < points; i++)
+  for (size_t i = 0; i < points; ++i)
     labels(i) = math::RandInt(0, numClasses);
 
   // 2 objects for 2 terms in the cost function. Each term contributes towards
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionGradient)
   double costPlus2, costMinus2, numGradient2;
 
   // For each parameter.
-  for (size_t i = 0; i < numClasses; i++)
+  for (size_t i = 0; i < numClasses; ++i)
   {
     for (size_t j = 0; j < inputSize; j++)
     {
@@ -185,12 +185,12 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
 
-  for (size_t i = 0; i < points / 2; i++)
+  for (size_t i = 0; i < points / 2; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 2; i < points; i++)
+  for (size_t i = points / 2; i < points; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
@@ -204,12 +204,12 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
   BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 2; i++)
+  for (size_t i = 0; i < points / 2; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) =  0;
   }
-  for (size_t i = points / 2; i < points; i++)
+  for (size_t i = points / 2; i < points; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
@@ -282,27 +282,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
 
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -316,27 +316,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
   BOOST_REQUIRE_CLOSE(acc, 100.0, 2.0);
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -428,27 +428,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionClassifySinglePointTest)
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
 
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -458,27 +458,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionClassifySinglePointTest)
   SoftmaxRegression sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -510,27 +510,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesTest)
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
 
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -540,27 +540,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesTest)
   SoftmaxRegression sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -596,27 +596,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesAndLabelsTest)
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
 
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -626,27 +626,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesAndLabelsTest)
   SoftmaxRegression sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;

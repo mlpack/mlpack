@@ -35,7 +35,7 @@ bool MeanSpaceSplit<MetricType, MatType>::SplitSpace(
     return false;
 
   double splitVal = 0.0;
-  for (size_t i = 0; i < points.n_elem; i++)
+  for (size_t i = 0; i < points.n_elem; ++i)
     splitVal += projVector.Project(data.col(points[i]));
   splitVal /= points.n_elem;
 

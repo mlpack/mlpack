@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestCodingStep)
   uword nPoints = X.n_cols;
 
   // normalize each point since these are images
-  for (uword i = 0; i < nPoints; i++)
+  for (uword i = 0; i < nPoints; ++i)
   {
     X.col(i) /= norm(X.col(i), 2);
   }
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestCodingStep)
 
   mat D = lcc.Dictionary();
 
-  for (uword i = 0; i < nPoints; i++)
+  for (uword i = 0; i < nPoints; ++i)
   {
     vec sqDists = vec(nAtoms);
     for (uword j = 0; j < nAtoms; j++)
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestDictionaryStep)
   uword nPoints = X.n_cols;
 
   // normalize each point since these are images
-  for (uword i = 0; i < nPoints; i++)
+  for (uword i = 0; i < nPoints; ++i)
   {
     X.col(i) /= norm(X.col(i), 2);
   }
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestDictionaryStep)
   mat D = lcc.Dictionary();
 
   mat grad = zeros(D.n_rows, D.n_cols);
-  for (uword i = 0; i < nPoints; i++)
+  for (uword i = 0; i < nPoints; ++i)
   {
     grad += (D - repmat(X.unsafe_col(i), 1, nAtoms)) *
         diagmat(abs(Z.unsafe_col(i)));
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTrainReturnObjective)
   uword nPoints = X.n_cols;
 
   // Normalize each point since these are images.
-  for (uword i = 0; i < nPoints; i++)
+  for (uword i = 0; i < nPoints; ++i)
   {
     X.col(i) /= norm(X.col(i), 2);
   }

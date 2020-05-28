@@ -58,7 +58,7 @@ FastMKSRules<KernelType, TreeType>::FastMKSRules(
 
   CandidateList pqueue;
   pqueue.reserve(k);
-  for (size_t i = 0; i < k; i++)
+  for (size_t i = 0; i < k; ++i)
     pqueue.push(def);
   std::vector<CandidateList> tmp(querySet.n_cols, pqueue);
   candidates.swap(tmp);
@@ -72,7 +72,7 @@ void FastMKSRules<KernelType, TreeType>::GetResults(
   indices.set_size(k, querySet.n_cols);
   products.set_size(k, querySet.n_cols);
 
-  for (size_t i = 0; i < querySet.n_cols; i++)
+  for (size_t i = 0; i < querySet.n_cols; ++i)
   {
     CandidateList& pqueue = candidates[i];
     for (size_t j = 1; j <= k; j++)

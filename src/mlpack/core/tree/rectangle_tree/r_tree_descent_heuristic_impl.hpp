@@ -29,7 +29,7 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
   int bestIndex = 0;
   ElemType bestVol = 0.0;
 
-  for (size_t i = 0; i < node->NumChildren(); i++)
+  for (size_t i = 0; i < node->NumChildren(); ++i)
   {
     ElemType v1 = 1.0;
     ElemType v2 = 1.0;
@@ -73,7 +73,7 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(
   int bestIndex = 0;
   ElemType bestVol = 0.0;
 
-  for (size_t i = 0; i < node->NumChildren(); i++)
+  for (size_t i = 0; i < node->NumChildren(); ++i)
   {
     ElemType v1 = 1.0;
     ElemType v2 = 1.0;

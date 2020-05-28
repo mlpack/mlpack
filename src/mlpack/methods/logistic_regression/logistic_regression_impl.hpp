@@ -161,7 +161,7 @@ double LogisticRegression<MatType>::ComputeAccuracy(
 
   // Count the number of responses that were correct.
   size_t count = 0;
-  for (size_t i = 0; i < responses.n_elem; i++)
+  for (size_t i = 0; i < responses.n_elem; ++i)
   {
     if (responses(i) == tempResponses(i))
       count++;

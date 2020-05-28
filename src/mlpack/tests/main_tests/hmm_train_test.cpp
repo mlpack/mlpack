@@ -64,7 +64,7 @@ inline void CheckMatricesDiffer(arma::mat& a, arma::mat& b, double tolerance)
   bool valsEqual = true;
   if (dimsEqual)
   {
-    for (size_t i=0; i<a.n_elem; i++)
+    for (size_t i=0; i<a.n_elem; ++i)
     {
       if (std::abs(a[i]) < tolerance / 2)
         valsEqual = valsEqual && (std::abs(b[i]) < tolerance / 2);
@@ -101,7 +101,7 @@ inline void ApproximatelyEqual(HMMModel& h1,
     BOOST_REQUIRE_EQUAL(d1.size(), d2.size());
 
     size_t states = d1.size();
-    for (size_t i = 0; i < states; i++)
+    for (size_t i = 0; i < states; ++i)
       for (size_t j = 0; j < d1[i].Dimensionality(); j++)
         CheckMatrices(d1[i].Probabilities(j)*100,
             d2[i].Probabilities(j)*100,
@@ -126,7 +126,7 @@ inline void ApproximatelyEqual(HMMModel& h1,
     BOOST_REQUIRE_EQUAL(d1.size(), d2.size());
 
     size_t states = d1.size();
-    for (size_t i=0; i < states; i++)
+    for (size_t i=0; i < states; ++i)
     {
       CheckMatrices(d1[i].Mean()*100, d2[i].Mean()*100, tolerance);
       CheckMatrices(d1[i].Covariance()*100, d2[i].Covariance()*100, tolerance);
@@ -149,7 +149,7 @@ inline void ApproximatelyEqual(HMMModel& h1,
     BOOST_REQUIRE_EQUAL(d1.size(), d2.size());
 
     size_t states = d1.size();
-    for (size_t i=0; i < states; i++)
+    for (size_t i=0; i < states; ++i)
     {
       BOOST_REQUIRE_EQUAL(d1[i].Gaussians(), d2[i].Gaussians());
       size_t gaussians = d1[i].Gaussians();
@@ -183,7 +183,7 @@ inline void ApproximatelyEqual(HMMModel& h1,
 
     // Check if gaussian, mean, covariance and weights are equal.
     size_t states = d1.size();
-    for (size_t i = 0; i < states; i++)
+    for (size_t i = 0; i < states; ++i)
     {
       BOOST_REQUIRE_EQUAL(d1[i].Gaussians(), d2[i].Gaussians());
       size_t gaussians = d1[i].Gaussians();

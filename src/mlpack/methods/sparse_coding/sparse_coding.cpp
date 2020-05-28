@@ -127,7 +127,7 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
 
   // vec dualVars = diagvec(solve(dictionary, data * trans(codes))
   //    - codes * trans(codes));
-  // for (size_t i = 0; i < dualVars.n_elem; i++)
+  // for (size_t i = 0; i < dualVars.n_elem; ++i)
   //   if (dualVars(i) < 0)
   //     dualVars(i) = 0;
 

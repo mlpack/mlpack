@@ -51,7 +51,7 @@ void Convolution2DMethodTest(const arma::mat input,
   const double* outputPtr = output.memptr();
   const double* convOutputPtr = convOutput.memptr();
 
-  for (size_t i = 0; i < output.n_elem; i++, outputPtr++, convOutputPtr++)
+  for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
     BOOST_REQUIRE_CLOSE(*outputPtr, *convOutputPtr, 1e-3);
 }
 
@@ -82,7 +82,7 @@ void Convolution3DMethodTest(const arma::cube input,
   const double* outputPtr = output.memptr();
   const double* convOutputPtr = convOutput.memptr();
 
-  for (size_t i = 0; i < output.n_elem; i++, outputPtr++, convOutputPtr++)
+  for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
     BOOST_REQUIRE_CLOSE(*outputPtr, *convOutputPtr, 1e-3);
 }
 
@@ -114,7 +114,7 @@ void ConvolutionMethodBatchTest(const arma::mat input,
   const double* outputPtr = output.memptr();
   const double* convOutputPtr = convOutput.memptr();
 
-  for (size_t i = 0; i < output.n_elem; i++, outputPtr++, convOutputPtr++)
+  for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
     BOOST_REQUIRE_CLOSE(*outputPtr, *convOutputPtr, 1e-3);
 }
 
