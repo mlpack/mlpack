@@ -29,3 +29,5 @@ endforeach()
 # Append sources (with directory name) to list of all mlpack sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+add_cli_executable(ann_low_resource)
