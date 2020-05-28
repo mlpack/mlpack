@@ -358,17 +358,12 @@ NSModel<SortPolicy>::~NSModel()
 //! Serialize the kNN model.
 template<typename SortPolicy>
 template<typename Archive>
-void NSModel<SortPolicy>::serialize(Archive& ar, const unsigned int version)
+void NSModel<SortPolicy>::serialize(Archive& ar)
 {
   ar & BOOST_SERIALIZATION_NVP(treeType);
-  // Backward compatibility: older versions of NSModel didn't include these
-  // parameters.
-  if (version > 0)
-  {
-    ar & BOOST_SERIALIZATION_NVP(leafSize);
-    ar & BOOST_SERIALIZATION_NVP(tau);
-    ar & BOOST_SERIALIZATION_NVP(rho);
-  }
+  ar & BOOST_SERIALIZATION_NVP(leafSize);
+  ar & BOOST_SERIALIZATION_NVP(tau);
+  ar & BOOST_SERIALIZATION_NVP(rho);
   ar & BOOST_SERIALIZATION_NVP(randomBasis);
   ar & BOOST_SERIALIZATION_NVP(q);
 
