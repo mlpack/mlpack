@@ -33,6 +33,7 @@ double SSIMIndex::Evaluate(DataType const& image,
   }
   // Instantitating a Gaussian Kernel with bandwidth 1.5
   kernel::GaussianKernel gaussianKernel = kernel::GaussianKernel(1.5);
+  
   // Gaussian Window of size 11X11.
   arma::mat gaussianWindow(11, 11);
   for ( double row = 0; row < 11; row+=1)
