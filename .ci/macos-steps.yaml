@@ -29,6 +29,7 @@ steps:
     unset BOOST_ROOT
     mkdir build && cd build
     export PYPATH=$(which python)
+    export OMP_NUM_THREADS=1
     cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=$PYPATH ..
   displayName: 'CMake'
 
