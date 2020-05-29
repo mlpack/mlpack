@@ -22,17 +22,6 @@ if (JULIA_EXECUTABLE)
   endif ()
 endif ()
 
-# If force Julia binding fails then it must not effect Go bindings
-# in next "cmake ../".
-if (NOT JULIA_EXECUTABLE AND FORCE_BUILD_JULIA_BINDINGS)
-  unset(BUILD_GO_BINDINGS CACHE)
-endif()
-
-if (NOT JULIA_EXECUTABLE)
-  unset(BUILD_JULIA_BINDINGS CACHE)
-  unset(FORCE_BUILD_JULIA_BINDINGS CACHE)
-endif()
-
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
     Julia

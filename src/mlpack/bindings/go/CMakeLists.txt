@@ -1,22 +1,43 @@
+macro (not_found_return message)
+  message(STATUS "${message}")
+  macro (add_go_binding name)
+    # Do nothing.
+  endmacro ()
+
+  return()
+endmacro ()
+
+# If we are not supposed to make Go bindings, define the macro so it does
+# nothing and leave this file.
+if (NOT BUILD_GO_BINDINGS)
+  not_found_return("Not building Go bindings.")
+endif ()
+
 if (BUILD_GO_BINDINGS)
   ## We need to check here if Golang is even available.  Although actually
   ## technically, I'm not sure if we even need to know!  For the tests though we
   ## do.  So it's probably a good idea to check.
   if (FORCE_BUILD_GO_BINDINGS)
-    find_package(Go 1.11.0 REQUIRED)
-    find_package(Gonum REQUIRED)
+    find_package(Go 1.11.0)
+    find_package(Gonum)
+    if (NOT GO_FOUND OR NOT GONUM_FOUND)
+      unset(BUILD_GO_BINDINGS CACHE)
+      message(FATAL_ERROR "Could not Build Go Bindings")
+    endif()
   else ()
     find_package(Go 1.11.0)
     find_package(Gonum)
+    if (NOT GO_FOUND OR NOT GONUM_FOUND)
+      unset(BUILD_GO_BINDINGS CACHE)
+    endif()
   endif ()
 
-  if (NOT GO_FOUND OR NOT GONUM_FOUND)
-    # We can't build anything, so define the macro to do nothing.
-    macro (add_go_binding name)
-      # Do nothing.
-    endmacro ()
+  if (NOT GO_FOUND)
+    not_found_return("Go not found; not building Go bindings.")
+  endif ()
 
-    return ()
+  if (NOT GONUM_FOUND)
+    not_found_return("Gonum not found; not building Go bindings.")
   endif ()
 
   add_custom_target(go)
