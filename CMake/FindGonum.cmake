@@ -15,10 +15,6 @@ if (GO_EXECUTABLE)
   endif()
 endif()
 
-if (RESULT EQUAL 1)
-  unset(BUILD_GO_BINDINGS CACHE)
-endif()
-
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
   Gonum

@@ -16,7 +16,6 @@ get started with mlpack in different languages.
   - \ref julia_quickstart
   - \ref go_quickstart
 
-
 @section introd_tut Introductory Tutorials
 
 These tutorials introduce the basic concepts of working with mlpack, aimed at

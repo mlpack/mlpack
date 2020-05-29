@@ -1,20 +1,37 @@
+macro (not_found_return message)
+  message(STATUS "${message}")
+  macro (add_julia_binding name)
+    # Do nothing.
+  endmacro ()
+
+  return()
+endmacro ()
+
+# If we are not supposed to make Julia bindings, define the macro so it does
+# nothing and leave this file.
+if (NOT BUILD_JULIA_BINDINGS)
+  not_found_return("Not building Julia bindings.")
+endif ()
+
 if (BUILD_JULIA_BINDINGS)
   ## We need to check here if Julia is even available.  Although actually
   ## technically, I'm not sure if we even need to know!  For the tests though we
   ## do.  So it's probably a good idea to check.
   if (FORCE_BUILD_JULIA_BINDINGS)
-    find_package(Julia 0.7.0 REQUIRED)
+    find_package(Julia 0.7.0)
+    if (NOT JULIA_FOUND)
+      unset(BUILD_JULIA_BINDINGS CACHE)
+      message(FATAL_ERROR "Could not Build Julia Bindings")
+    endif()
   else ()
     find_package(Julia 0.7.0)
+    if (NOT JULIA_FOUND)
+      unset(BUILD_JULIA_BINDINGS CACHE)
+    endif()
   endif ()
 
   if (NOT JULIA_FOUND)
-    # We can't build anything, so define the macro to do nothing.
-    macro (add_julia_binding name)
-      # Do nothing.
-    endmacro ()
-
-    return ()
+      not_found_return("Julia not found; not building Julia bindings.")
   endif ()
 
   add_custom_target(julia ALL)
