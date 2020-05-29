@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Add Go bindings (#1884).
+
   * Added Dueling DQN to q_networks, Noisy linear layer to ann/layer
     and Empty loss to ann/loss_functions (#2414).
 

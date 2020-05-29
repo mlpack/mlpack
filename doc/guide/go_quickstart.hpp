@@ -19,7 +19,7 @@ Installing the mlpack bindings for Go is somewhat time-consuming as the library
 must be built; you can run the following code:
 
 @code{.sh}
-go get -d mlpack.org/v1/mlpack
+go get -u -d mlpack.org/v1/mlpack
 cd ${GOPATH}/src/mlpack.org/v1/mlpack
 make install
 @endcode

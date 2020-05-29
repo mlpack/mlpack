@@ -1,17 +1,16 @@
 package mlpack
 
 import (
-	"encoding/csv"
-	"io"
-	"os"
-	"strconv"
-	"net/http"
-	"compress/gzip"
-
-        "gonum.org/v1/gonum/mat"
+    "encoding/csv"
+    "io"
+    "os"
+    "strconv"
+    "net/http"
+    "compress/gzip"
+    "gonum.org/v1/gonum/mat"
 )
 
-// Load reads all of the numeric records from the CSV.
+// Load() reads all of the numeric records from the CSV.
 func Load(filename string) (*mat.Dense, error) {
   var elements int
   var rows int
@@ -49,7 +48,7 @@ func Load(filename string) (*mat.Dense, error) {
   return output, nil
 }
 
-// Save writes all of the records to the CSV.
+// Save() writes all of the records to the CSV.
 func Save(filename string, mat *mat.Dense) error {
   // Create the file
   file, err := os.Create(filename)
@@ -78,7 +77,7 @@ func Save(filename string, mat *mat.Dense) error {
   return nil
 }
 
-// Unizp unzips the given input to the given the output file.
+// UnZip() unzips the given input to the given the output file.
 func UnZip(input string, output string) error {
     // Create the file
     out, err := os.Create(output)
@@ -109,7 +108,8 @@ func UnZip(input string, output string) error {
     return nil
 }
 
-// DownloadFile downloads the file from the given url and save it to the given filename.
+// DownloadFile() downloads the file from the given url and
+// save it to the given filename.
 func DownloadFile (url string, filename string) error {
     // Create the file
     out, err := os.Create(filename)
