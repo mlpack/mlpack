@@ -92,8 +92,8 @@ func main() {
       sum = sum + 1
     }
   }
-  fmt.Println(sum, " correct of ", rows, "(", (float64(sum) / float64(rows)) *
-              100, "%)")
+  fmt.Print(sum, " correct out of ", rows, " (",
+      (float64(sum) / float64(rows)) * 100, "%).\n")
 }
 @endcode
 
