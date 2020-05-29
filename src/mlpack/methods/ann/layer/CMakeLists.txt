@@ -91,6 +91,8 @@ set(SOURCES
   select_impl.hpp
   sequential.hpp
   sequential_impl.hpp
+  softmax_impl.hpp
+  softmax.hpp
   subview.hpp
   transposed_convolution.hpp
   transposed_convolution_impl.hpp

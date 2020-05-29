@@ -9,6 +9,8 @@ set(SOURCES
   lmetric_impl.hpp
   mahalanobis_distance.hpp
   mahalanobis_distance_impl.hpp
+  non_maximal_supression.hpp
+  non_maximal_supression_impl.hpp
 )
 
 # add directory name to sources
