@@ -964,7 +964,7 @@ BOOST_AUTO_TEST_CASE(InverseQuadraticFunctionTest)
  */
 BOOST_AUTO_TEST_CASE(QuadraticFunctionTest)
 {
-  // Hand-calculated values using Python interpreter.
+  // Hand-calculated values.
   const arma::colvec desiredActivations("4 10.24 20.25 \
                                          10040 1 1 \
                                          4 0");
@@ -973,8 +973,8 @@ BOOST_AUTO_TEST_CASE(QuadraticFunctionTest)
                                          20080 2 2 \
                                          8 0");
 
-  CheckActivationCorrect<QUADFunction>(activationData, desiredActivations);
-  CheckDerivativeCorrect<QUADFunction>(desiredActivations,
+  CheckActivationCorrect<QuadFunction>(activationData, desiredActivations);
+  CheckDerivativeCorrect<QuadFunction>(desiredActivations,
                                        desiredDerivatives);
 }
 
@@ -1013,8 +1013,8 @@ BOOST_AUTO_TEST_CASE(MultiquadFunctionTest)
                                          0.99995 0.816496 0.816496 \
                                          0.912871 0.707107");
 
-  CheckActivationCorrect<MultiquadFunction>(activationData, desiredActivations);
-  CheckDerivativeCorrect<MultiquadFunction>(desiredActivations,
+  CheckActivationCorrect<MultiQuadFunction>(activationData, desiredActivations);
+  CheckDerivativeCorrect<MultiQuadFunction>(desiredActivations,
                                           desiredDerivatives);
 }
 

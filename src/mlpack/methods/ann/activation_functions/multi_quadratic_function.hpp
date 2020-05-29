@@ -25,7 +25,7 @@ namespace ann /** Artificial Neural Network. */ {
  * f'(x) = x/f(x) \\
  * @f}
  */
-class MultiquadFunction
+class MultiQuadFunction
 {
  public:
   /**

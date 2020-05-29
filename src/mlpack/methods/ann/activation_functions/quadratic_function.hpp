@@ -25,7 +25,7 @@ namespace ann /** Artificial Neural Network. */ {
  * f'(x) = 2*x \\
  * @f}
  */
-class QUADFunction
+class QuadFunction
 {
  public:
   /**
