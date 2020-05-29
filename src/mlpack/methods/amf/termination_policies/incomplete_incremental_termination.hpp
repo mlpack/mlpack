@@ -17,7 +17,7 @@
 namespace mlpack {
 namespace amf {
 
-/**
+/** trigger the static ci job
  * This class acts as a wrapper for basic termination policies to be used by
  * SVDIncompleteIncrementalLearning. This class calls the wrapped class functions
  * after every n calls to main class functions where n is the number of rows.
