@@ -67,11 +67,9 @@ class KDEStat
 
   //! Serialize the statistic to/from an archive.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version)
+  void serialize(Archive& ar)
   {
-    // Backward compatibility: Old versions of KDEStat needed to handle obsolete
-    // values.
-    if (version == 0 && Archive::is_loading::value)
+    if (Archive::is_loading::value)
     {
       // Placeholders.
       arma::vec centroid;
@@ -81,16 +79,12 @@ class KDEStat
       ar & BOOST_SERIALIZATION_NVP(validCentroid);
     }
 
-    // Backward compatibility: Old versions of KDEStat did not need to handle
-    // alpha values.
-    if (version > 0)
-    {
-      ar & BOOST_SERIALIZATION_NVP(mcBeta);
-      ar & BOOST_SERIALIZATION_NVP(mcAlpha);
-      ar & BOOST_SERIALIZATION_NVP(accumAlpha);
-      ar & BOOST_SERIALIZATION_NVP(accumError);
-    }
-    else if (Archive::is_loading::value)
+    ar & BOOST_SERIALIZATION_NVP(mcBeta);
+    ar & BOOST_SERIALIZATION_NVP(mcAlpha);
+    ar & BOOST_SERIALIZATION_NVP(accumAlpha);
+    ar & BOOST_SERIALIZATION_NVP(accumError);
+
+    if (Archive::is_loading::value)
     {
       mcBeta = -1;
       mcAlpha = -1;

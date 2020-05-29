@@ -539,25 +539,20 @@ KDEMode& KDEModel::Mode()
 
 // Serialize the model.
 template<typename Archive>
-void KDEModel::serialize(Archive& ar, const unsigned int version)
+void KDEModel::serialize(Archive& ar)
 {
   ar & BOOST_SERIALIZATION_NVP(bandwidth);
   ar & BOOST_SERIALIZATION_NVP(relError);
   ar & BOOST_SERIALIZATION_NVP(absError);
   ar & BOOST_SERIALIZATION_NVP(kernelType);
   ar & BOOST_SERIALIZATION_NVP(treeType);
-
-  // Backward compatibility: Old versions of KDEModel did not need to handle
-  // Monte Carlo parameters.
-  if (version > 0)
-  {
-    ar & BOOST_SERIALIZATION_NVP(monteCarlo);
-    ar & BOOST_SERIALIZATION_NVP(mcProb);
-    ar & BOOST_SERIALIZATION_NVP(initialSampleSize);
-    ar & BOOST_SERIALIZATION_NVP(mcEntryCoef);
-    ar & BOOST_SERIALIZATION_NVP(mcBreakCoef);
-  }
-  else if (Archive::is_loading::value)
+  ar & BOOST_SERIALIZATION_NVP(monteCarlo);
+  ar & BOOST_SERIALIZATION_NVP(mcProb);
+  ar & BOOST_SERIALIZATION_NVP(initialSampleSize);
+  ar & BOOST_SERIALIZATION_NVP(mcEntryCoef);
+  ar & BOOST_SERIALIZATION_NVP(mcBreakCoef);
+ 
+  if (Archive::is_loading::value)
   {
     monteCarlo = KDEDefaultParams::monteCarlo;
     mcProb = KDEDefaultParams::mcProb;

@@ -546,7 +546,7 @@ template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename Archive>
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int version)
+    Archive& ar)
 {
   ar & BOOST_SERIALIZATION_NVP(parameter);
   ar & BOOST_SERIALIZATION_NVP(rho);
@@ -554,12 +554,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
   ar & BOOST_SERIALIZATION_NVP(inputSize);
   ar & BOOST_SERIALIZATION_NVP(outputSize);
   ar & BOOST_SERIALIZATION_NVP(targetSize);
-
-  // Earlier versions of the RNN code did not serialize the 'reset' variable.
-  if (version > 0)
-  {
-    ar & BOOST_SERIALIZATION_NVP(reset);
-  }
+  ar & BOOST_SERIALIZATION_NVP(reset);
 
   if (Archive::is_loading::value)
   {
@@ -573,11 +568,6 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)
   {
-    // Earlier versions of the RNN code assumed that the weights needed to be
-    // reset on load.
-    if (version == 0)
-      reset = false;
-
     size_t offset = 0;
     for (LayerTypes<CustomLayers...>& layer : network)
     {
