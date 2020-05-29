@@ -47,10 +47,23 @@ class NoisyLinear
   NoisyLinear(const size_t inSize,
          const size_t outSize);
 
+  //! Copy constructor.
+  NoisyLinear(const NoisyLinear&);
+
   /*
    * Reset the layer parameter.
    */
   void Reset();
+
+  /*
+   * Reset the noise parameters(epsilons).
+   */
+  void ResetNoise();
+
+  /*
+   * Reset the values of layer parameters (factorized gaussian noise).
+   */
+  void ResetParameters();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -141,8 +154,26 @@ class NoisyLinear
   //! Locally-stored weight parameters.
   OutputDataType weight;
 
-  //! Locally-stored bias term parameters.
+  //! Locally-stored weight-mean parameters.
+  OutputDataType weightMu;
+
+  //! Locally-stored weight-standard-deviation parameters.
+  OutputDataType weightSigma;
+
+  //! Locally-stored weight-epsilon parameters.
+  OutputDataType weightEpsilon;
+
+  //! Locally-stored bias parameters.
   OutputDataType bias;
+
+  //! Locally-stored bias-mean parameters.
+  OutputDataType biasMu;
+
+  //! Locally-stored bias-standard-deviation parameters.
+  OutputDataType biasSigma;
+
+  //! Locally-stored bias-epsilon parameters.
+  OutputDataType biasEpsilon;
 
   //! Locally-stored delta object.
   OutputDataType delta;
