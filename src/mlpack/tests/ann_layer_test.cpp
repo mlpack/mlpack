@@ -1321,13 +1321,13 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
 {
   arma::mat output, input, delta, error;
 
-  Linear<> moduleA(10, 10);
-  moduleA.Parameters().randu();
-  moduleA.Reset();
+  Linear<>* moduleA = new Linear<>(10, 10);
+  moduleA->Parameters().randu();
+  moduleA->Reset();
 
-  Linear<> moduleB(10, 10);
-  moduleB.Parameters().randu();
-  moduleB.Reset();
+  Linear<>* moduleB = new Linear<>(10, 10);
+  moduleB->Parameters().randu();
+  moduleB->Reset();
 
   Concat<> module;
   module.Add(moduleA);
@@ -1337,9 +1337,9 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
   input = arma::zeros(10, 1);
   module.Forward(input, output);
   BOOST_REQUIRE_CLOSE(arma::accu(
-      moduleA.Parameters().submat(100, 0, moduleA.Parameters().n_elem - 1, 0)) +
-      arma::accu(moduleB.Parameters().submat(100, 0,
-      moduleB.Parameters().n_elem - 1, 0)),
+      moduleA->Parameters().submat(100, 0, moduleA->Parameters().n_elem - 1, 0)) +
+      arma::accu(moduleB->Parameters().submat(100, 0,
+      moduleB->Parameters().n_elem - 1, 0)),
       arma::accu(output.col(0)), 1e-3);
 
   // Test the Backward function.
@@ -1366,19 +1366,19 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
 
   input = arma::ones(inputWidth * inputHeight * inputChannel, batch);
 
-  Convolution<> moduleA(inputChannel, outputChannel, kW, kH, 1, 1, 0, 0,
-      inputWidth, inputHeight);
-  Convolution<> moduleB(inputChannel, outputChannel, kW, kH, 1, 1, 0, 0,
-      inputWidth, inputHeight);
+  Convolution<>* moduleA = new Convolution<>(inputChannel, outputChannel,
+      kW, kH, 1, 1, 0, 0, inputWidth, inputHeight);
+  Convolution<>* moduleB = new Convolution<>(inputChannel, outputChannel,
+      kW, kH, 1, 1, 0, 0, inputWidth, inputHeight);
 
-  moduleA.Reset();
-  moduleA.Parameters().randu();
-  moduleB.Reset();
-  moduleB.Parameters().randu();
+  moduleA->Reset();
+  moduleA->Parameters().randu();
+  moduleB->Reset();
+  moduleB->Parameters().randu();
 
   // Compute output of each layer.
-  moduleA.Forward(input, outputA);
-  moduleB.Forward(input, outputB);
+  moduleA->Forward(input, outputA);
+  moduleB->Forward(input, outputB);
 
   arma::cube A(outputA.memptr(), outputWidth, outputHeight, outputChannel);
   arma::cube B(outputB.memptr(), outputWidth, outputHeight, outputChannel);
