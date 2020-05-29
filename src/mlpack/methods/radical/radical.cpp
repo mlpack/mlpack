@@ -142,7 +142,7 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
 
     for (size_t i = 0; i < nDims - 1; ++i)
     {
-      for (size_t j = i + 1; j < nDims; j++)
+      for (size_t j = i + 1; j < nDims; ++j)
       {
         Log::Debug << "RADICAL 2D on dimensions " << i << " and " << j << "."
             << std::endl;

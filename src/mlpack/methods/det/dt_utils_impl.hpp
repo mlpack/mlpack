@@ -231,7 +231,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
     {
       // Compute test values for this state of the tree.
       double cvVal = 0.0;
-      for (size_t j = 0; j < test.n_cols; j++)
+      for (size_t j = 0; j < test.n_cols; ++j)
       {
         arma::vec testPoint = test.unsafe_col(j);
         cvVal += cvDTree.ComputeValue(testPoint);

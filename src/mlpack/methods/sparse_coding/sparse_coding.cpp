@@ -242,7 +242,7 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
 // Project each atom of the dictionary back into the unit ball (if necessary).
 void SparseCoding::ProjectDictionary()
 {
-  for (size_t j = 0; j < atoms; j++)
+  for (size_t j = 0; j < atoms; ++j)
   {
     double atomNorm = arma::norm(dictionary.col(j), 2);
     if (atomNorm > 1)

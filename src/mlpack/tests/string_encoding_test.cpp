@@ -70,7 +70,7 @@ void CheckVectors(const vector<vector<ValueType>>& a,
   {
     BOOST_REQUIRE_EQUAL(a[i].size(), b[i].size());
 
-    for (size_t j = 0; j < a[i].size(); j++)
+    for (size_t j = 0; j < a[i].size(); ++j)
       BOOST_REQUIRE_CLOSE(a[i][j], b[i][j], tolerance);
   }
 }

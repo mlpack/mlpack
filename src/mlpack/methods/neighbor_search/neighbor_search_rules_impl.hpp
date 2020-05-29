@@ -70,7 +70,7 @@ void NeighborSearchRules<SortPolicy, MetricType, TreeType>::GetResults(
   for (size_t i = 0; i < querySet.n_cols; ++i)
   {
     CandidateList& pqueue = candidates[i];
-    for (size_t j = 1; j <= k; j++)
+    for (size_t j = 1; j <= k; ++j)
     {
       neighbors(k - j, i) = pqueue.top().second;
       distances(k - j, i) = pqueue.top().first;

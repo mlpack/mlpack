@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRandomEvaluate)
     double reconstructionError = 0;
 
     // Compute error for each training example.
-    for (size_t j = 0; j < points; j++)
+    for (size_t j = 0; j < points; ++j)
     {
       arma::mat hiddenLayer, outputLayer, diff;
 
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionKLDivergenceEvaluate)
     rhoCap.zeros(hSize, 1);
 
     // Compute hidden layer activations for each example.
-    for (size_t j = 0; j < points; j++)
+    for (size_t j = 0; j < points; ++j)
     {
       arma::mat hiddenLayer;
 
@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionGradient)
   // For each parameter.
   for (size_t i = 0; i <= l3; ++i)
   {
-    for (size_t j = 0; j <= l2; j++)
+    for (size_t j = 0; j <= l2; ++j)
     {
       // Perturb parameter with a positive constant and get costs.
       parameters(i, j) += epsilon;

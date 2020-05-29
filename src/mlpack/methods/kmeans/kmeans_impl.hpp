@@ -321,7 +321,7 @@ Cluster(const MatType& data,
     double minDistance = std::numeric_limits<double>::infinity();
     size_t closestCluster = centroids.n_cols; // Invalid value.
 
-    for (size_t j = 0; j < centroids.n_cols; j++)
+    for (size_t j = 0; j < centroids.n_cols; ++j)
     {
       const double distance = metric.Evaluate(data.col(i), centroids.col(j));
 

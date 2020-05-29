@@ -446,7 +446,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
         }
       }
 
-      for (size_t j = 1; j <= k; j++)
+      for (size_t j = 1; j <= k; ++j)
       {
         indices(k - j, q) = pqueue.top().second;
         kernels(k - j, q) = pqueue.top().first;
@@ -586,7 +586,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
         }
       }
 
-      for (size_t j = 1; j <= k; j++)
+      for (size_t j = 1; j <= k; ++j)
       {
         indices(k - j, q) = pqueue.top().second;
         kernels(k - j, q) = pqueue.top().first;

@@ -36,7 +36,7 @@ void SortResults(const vector<vector<size_t>>& neighbors,
   for (size_t i = 0; i < neighbors.size(); ++i)
   {
     output[i].resize(neighbors[i].size());
-    for (size_t j = 0; j < neighbors[i].size(); j++)
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
       output[i][j] = make_pair(distances[i][j], neighbors[i][j]);
 
     // Now that it's constructed, sort it.
@@ -489,7 +489,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
   {
     BOOST_REQUIRE(sortedTree[i].size() == sortedNaive[i].size());
 
-    for (size_t j = 0; j < sortedTree[i].size(); j++)
+    for (size_t j = 0; j < sortedTree[i].size(); ++j)
     {
       BOOST_REQUIRE(sortedTree[i][j].second == sortedNaive[i][j].second);
       BOOST_REQUIRE_CLOSE(sortedTree[i][j].first, sortedNaive[i][j].first,
@@ -538,7 +538,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
   {
     BOOST_REQUIRE(sortedTree[i].size() == sortedNaive[i].size());
 
-    for (size_t j = 0; j < sortedTree[i].size(); j++)
+    for (size_t j = 0; j < sortedTree[i].size(); ++j)
     {
       BOOST_REQUIRE(sortedTree[i][j].second == sortedNaive[i][j].second);
       BOOST_REQUIRE_CLOSE(sortedTree[i][j].first, sortedNaive[i][j].first,
@@ -587,7 +587,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
   {
     BOOST_REQUIRE(sortedTree[i].size() == sortedNaive[i].size());
 
-    for (size_t j = 0; j < sortedTree[i].size(); j++)
+    for (size_t j = 0; j < sortedTree[i].size(); ++j)
     {
       BOOST_REQUIRE(sortedTree[i][j].second == sortedNaive[i][j].second);
       BOOST_REQUIRE_CLOSE(sortedTree[i][j].first, sortedNaive[i][j].first,

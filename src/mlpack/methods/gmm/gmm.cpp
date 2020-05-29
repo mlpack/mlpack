@@ -176,7 +176,7 @@ double GMM::LogLikelihood(
   }
 
   // Now sum over every point.
-  for (size_t j = 0; j < data.n_cols; j++)
+  for (size_t j = 0; j < data.n_cols; ++j)
     loglikelihood += mlpack::math::AccuLog(logLikelihoods.col(j));
   return loglikelihood;
 }

@@ -259,7 +259,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
 
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    for (size_t j = 0; j < k ; j++)
+    for (size_t j = 0; j < k ; ++j)
     {
       // Calculate cost due to distance between target neighbors & data point.
       double eval = metric.Evaluate(transformedDataset.col(i),
@@ -386,7 +386,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
 
   for (size_t i = begin; i < begin + batchSize; ++i)
   {
-    for (size_t j = 0; j < k ; j++)
+    for (size_t j = 0; j < k ; ++j)
     {
       // Calculate cost due to distance between target neighbors & data point.
       double eval = metric.Evaluate(transformedDataset.col(i),
@@ -651,7 +651,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
 
   for (size_t i = begin; i < begin + batchSize; ++i)
   {
-    for (size_t j = 0; j < k ; j++)
+    for (size_t j = 0; j < k ; ++j)
     {
       // Calculate gradient due to target neighbors.
       arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
@@ -797,7 +797,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
 
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    for (size_t j = 0; j < k ; j++)
+    for (size_t j = 0; j < k ; ++j)
     {
       // Calculate cost due to distance between target neighbors & data point.
       double eval = metric.Evaluate(transformedDataset.col(i),
@@ -933,7 +933,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
 
   for (size_t i = begin; i < begin + batchSize; ++i)
   {
-    for (size_t j = 0; j < k ; j++)
+    for (size_t j = 0; j < k ; ++j)
     {
       // Calculate cost due to distance between target neighbors & data point.
       double eval = metric.Evaluate(transformedDataset.col(i),
@@ -1022,7 +1022,7 @@ inline void LMNNFunction<MetricType>::Precalculate()
 
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    for (size_t j = 0; j < k ; j++)
+    for (size_t j = 0; j < k ; ++j)
     {
       // Calculate gradient due to target neighbors.
       arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));

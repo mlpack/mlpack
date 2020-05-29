@@ -230,7 +230,7 @@ RedistributeNodesEvenly(const TreeType *parent,
   size_t iChild = 0;
   for (size_t i = firstSibling; i <= lastSibling; ++i)
   {
-    for (size_t j = 0; j < parent->Child(i).NumChildren(); j++)
+    for (size_t j = 0; j < parent->Child(i).NumChildren(); ++j)
     {
       children[iChild] = parent->Child(i).children[j];
       iChild++;
@@ -245,7 +245,7 @@ RedistributeNodesEvenly(const TreeType *parent,
     parent->Child(i).Bound().Clear();
     parent->Child(i).numDescendants = 0;
 
-    for (size_t j = 0; j < numChildrenPerNode; j++)
+    for (size_t j = 0; j < numChildrenPerNode; ++j)
     {
       parent->Child(i).Bound() |= children[iChild]->Bound();
       parent->Child(i).numDescendants += children[iChild]->numDescendants;
@@ -298,7 +298,7 @@ RedistributePointsEvenly(TreeType* parent,
   size_t iPoint = 0;
   for (size_t i = firstSibling; i <= lastSibling; ++i)
   {
-    for (size_t j = 0; j < parent->Child(i).NumPoints(); j++)
+    for (size_t j = 0; j < parent->Child(i).NumPoints(); ++j)
       points[iPoint++] = parent->Child(i).Point(j);
   }
 
@@ -310,7 +310,7 @@ RedistributePointsEvenly(TreeType* parent,
     parent->Child(i).Bound().Clear();
 
     size_t j;
-    for (j = 0; j < numPointsPerNode; j++)
+    for (j = 0; j < numPointsPerNode; ++j)
     {
       parent->Child(i).Bound() |= parent->Dataset().col(points[iPoint]);
       parent->Child(i).Point(j) = points[iPoint];

@@ -127,7 +127,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     // buildClassificationMatrix(ht, predictedLabels);
 
     // Now, calculate alpha(t) using ht.
-    for (size_t j = 0; j < D.n_cols; j++) // instead of D, ht
+    for (size_t j = 0; j < D.n_cols; ++j) // instead of D, ht
     {
       if (predictedLabels(j) == labels(j))
         rt += arma::accu(D.col(j));
@@ -157,12 +157,12 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     wl.push_back(w);
 
     // Now start modifying the weights.
-    for (size_t j = 0; j < D.n_cols; j++)
+    for (size_t j = 0; j < D.n_cols; ++j)
     {
       const double expo = exp(alphat);
       if (predictedLabels(j) == labels(j))
       {
-        for (size_t k = 0; k < D.n_rows; k++)
+        for (size_t k = 0; k < D.n_rows; ++k)
         {
           // We calculate zt, the normalization constant.
           D(k, j) /= expo;
@@ -178,7 +178,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
       }
       else
       {
-        for (size_t k = 0; k < D.n_rows; k++)
+        for (size_t k = 0; k < D.n_rows; ++k)
         {
           // We calculate zt, the normalization constant.
           D(k, j) *= expo;
@@ -234,7 +234,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
   {
     wl[i].Classify(test, tempPredictedLabels);
 
-    for (size_t j = 0; j < tempPredictedLabels.n_cols; j++)
+    for (size_t j = 0; j < tempPredictedLabels.n_cols; ++j)
       probabilities(tempPredictedLabels(j), j) += alpha[i];
   }
 

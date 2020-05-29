@@ -1472,7 +1472,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianUnlabeledTrainingTest)
 
   // Check the transition probability matrix.
   for (size_t i = 0; i < 2; ++i)
-    for (size_t j = 0; j < 2; j++)
+    for (size_t j = 0; j < 2; ++j)
       BOOST_REQUIRE_SMALL(hmm.Transition()(i, j) - transProbs(i, j), 0.08);
 
   // Check the estimated weights of the each emission distribution.
@@ -1554,7 +1554,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianLabeledTrainingTest)
 
   // Check the transition probability matrix.
   for (size_t i = 0; i < 3; ++i)
-    for (size_t j = 0; j < 3; j++)
+    for (size_t j = 0; j < 3; ++j)
       BOOST_REQUIRE_SMALL(hmm.Transition()(i, j) - transProbs(i, j), 0.03);
 
   // Check the estimated weights of the each emission distribution.
@@ -1633,7 +1633,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest)
 
   // Check the transition probability matrix.
   for (size_t i = 0; i < 2; ++i)
-    for (size_t j = 0; j < 2; j++)
+    for (size_t j = 0; j < 2; ++j)
       BOOST_REQUIRE_SMALL(hmm.Transition()(i, j) - transProbs(i, j), 0.08);
 
   // Sort by the estimated weights of the first emission distribution.
@@ -1737,7 +1737,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest)
 
   // Check the transition probability matrix.
   for (size_t i = 0; i < 2; ++i)
-    for (size_t j = 0; j < 2; j++)
+    for (size_t j = 0; j < 2; ++j)
       BOOST_REQUIRE_SMALL(hmm.Transition()(i, j) - transProbs(i, j), 0.03);
 
   // Sort by the estimated weights of the first emission distribution.
@@ -1792,7 +1792,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLoadSaveTest)
   HMM<DiagonalGMM> hmm(3, DiagonalGMM(4, 3));
 
   // Generate intial random values.
-  for (size_t j = 0; j < hmm.Emission().size(); j++)
+  for (size_t j = 0; j < hmm.Emission().size(); ++j)
   {
     hmm.Emission()[j].Weights().randu();
     for (size_t i = 0; i < hmm.Emission()[j].Gaussians(); ++i)
@@ -1824,7 +1824,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLoadSaveTest)
   // Remove clutter.
   remove("test-hmm-save.xml");
 
-  for (size_t j = 0; j < hmm.Emission().size(); j++)
+  for (size_t j = 0; j < hmm.Emission().size(); ++j)
   {
     // Check the number of Gaussians.
     BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Gaussians(),

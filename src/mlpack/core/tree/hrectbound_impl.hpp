@@ -594,7 +594,7 @@ HRectBound<MetricType, ElemType>::operator&(const HRectBound& bound) const
 {
   HRectBound<MetricType, ElemType> result(dim);
 
-  for (size_t k = 0; k < dim; k++)
+  for (size_t k = 0; k < dim; ++k)
   {
     result[k].Lo() = std::max(bounds[k].Lo(), bound.bounds[k].Lo());
     result[k].Hi() = std::min(bounds[k].Hi(), bound.bounds[k].Hi());
@@ -609,7 +609,7 @@ template<typename MetricType, typename ElemType>
 inline HRectBound<MetricType, ElemType>&
 HRectBound<MetricType, ElemType>::operator&=(const HRectBound& bound)
 {
-  for (size_t k = 0; k < dim; k++)
+  for (size_t k = 0; k < dim; ++k)
   {
     bounds[k].Lo() = std::max(bounds[k].Lo(), bound.bounds[k].Lo());
     bounds[k].Hi() = std::min(bounds[k].Hi(), bound.bounds[k].Hi());
@@ -626,7 +626,7 @@ inline ElemType HRectBound<MetricType, ElemType>::Overlap(
 {
   ElemType volume = 1.0;
 
-  for (size_t k = 0; k < dim; k++)
+  for (size_t k = 0; k < dim; ++k)
   {
     ElemType lo = std::max(bounds[k].Lo(), bound.bounds[k].Lo());
     ElemType hi = std::min(bounds[k].Hi(), bound.bounds[k].Hi());

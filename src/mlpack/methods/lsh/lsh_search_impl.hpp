@@ -320,7 +320,7 @@ void LSHSearch<SortPolicy, MatType>::Train(MatType referenceSet,
   {
     // Insert the point in the corresponding row to its bucket in the
     // 'secondHashTable'.
-    for (size_t j = 0; j < secondHashVectors.n_cols; j++)
+    for (size_t j = 0; j < secondHashVectors.n_cols; ++j)
     {
       // This is the bucket number.
       size_t hashInd = (size_t) secondHashVectors(i, j);
@@ -388,7 +388,7 @@ void LSHSearch<SortPolicy, MatType>::BaseCase(
     }
   }
 
-  for (size_t j = 1; j <= k; j++)
+  for (size_t j = 1; j <= k; ++j)
   {
     neighbors(k - j, queryIndex) = pqueue.top().second;
     distances(k - j, queryIndex) = pqueue.top().first;
@@ -431,7 +431,7 @@ void LSHSearch<SortPolicy, MatType>::BaseCase(
     }
   }
 
-  for (size_t j = 1; j <= k; j++)
+  for (size_t j = 1; j <= k; ++j)
   {
     neighbors(k - j, queryIndex) = pqueue.top().second;
     distances(k - j, queryIndex) = pqueue.top().first;

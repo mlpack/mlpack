@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_CASE(TestSvecSmat)
   BOOST_REQUIRE_EQUAL(Xtest.n_rows, 3);
   BOOST_REQUIRE_EQUAL(Xtest.n_cols, 3);
   for (size_t i = 0; i < 3; ++i)
-    for (size_t j = 0; j < 3; j++)
+    for (size_t j = 0; j < 3; ++j)
       BOOST_REQUIRE_CLOSE(X(i, j), Xtest(i, j), 1e-7);
 }
 
@@ -227,7 +227,7 @@ BOOST_AUTO_TEST_CASE(TestSymKronIdSimple)
   Svec(Rhs, rhs);
 
   BOOST_REQUIRE_EQUAL(lhs.n_elem, rhs.n_elem);
-  for (size_t j = 0; j < lhs.n_elem; j++)
+  for (size_t j = 0; j < lhs.n_elem; ++j)
     BOOST_REQUIRE_CLOSE(lhs(j), rhs(j), 1e-5);
 }
 
@@ -253,7 +253,7 @@ BOOST_AUTO_TEST_CASE(TestSymKronId)
     Svec(Rhs, rhs);
 
     BOOST_REQUIRE_EQUAL(lhs.n_elem, rhs.n_elem);
-    for (size_t j = 0; j < lhs.n_elem; j++)
+    for (size_t j = 0; j < lhs.n_elem; ++j)
       BOOST_REQUIRE_CLOSE(lhs(j), rhs(j), 1e-5);
   }
 }

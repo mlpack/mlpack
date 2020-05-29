@@ -703,7 +703,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     }
 
     bool contains = true;
-    for (size_t j = 0; j < node->Bound().Dim(); j++)
+    for (size_t j = 0; j < node->Bound().Dim(); ++j)
       contains &= Child(i).Bound()[j].Contains(node->Bound()[j]);
 
     if (contains)
@@ -1125,7 +1125,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
           root->AuxiliaryInfo().UpdateAuxiliaryInfo(root);
 
        // Reinsert the points at the root node.
-        for (size_t j = 0; j < count; j++)
+        for (size_t j = 0; j < count; ++j)
           root->InsertPoint(points[j], relevels);
 
         // This will check the minFill of the parent.
@@ -1144,7 +1144,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     if (parent != NULL)
     {
       // The normal case.  We need to be careful with the root.
-      for (size_t j = 0; j < parent->NumChildren(); j++)
+      for (size_t j = 0; j < parent->NumChildren(); ++j)
       {
         if (parent->children[j] == this)
         {
@@ -1269,7 +1269,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       if (bound[i].Lo() == point[i])
       {
         ElemType min = std::numeric_limits<ElemType>::max();
-        for (size_t j = 0; j < count; j++)
+        for (size_t j = 0; j < count; ++j)
         {
           if (dataset->col(points[j])[i] < min)
             min = dataset->col(points[j])[i];
@@ -1288,7 +1288,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       else if (bound[i].Hi() == point[i])
       {
         ElemType max = std::numeric_limits<ElemType>::lowest();
-        for (size_t j = 0; j < count; j++)
+        for (size_t j = 0; j < count; ++j)
         {
           if (dataset->col(points[j])[i] > max)
             max = dataset->col(points[j])[i];
@@ -1313,7 +1313,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       if (bound[i].Lo() == point[i])
       {
         ElemType min = std::numeric_limits<ElemType>::max();
-        for (size_t j = 0; j < numChildren; j++)
+        for (size_t j = 0; j < numChildren; ++j)
         {
           if (children[j]->Bound()[i].Lo() < min)
             min = children[j]->Bound()[i].Lo();
@@ -1328,7 +1328,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       else if (bound[i].Hi() == point[i])
       {
         ElemType max = std::numeric_limits<ElemType>::lowest();
-        for (size_t j = 0; j < numChildren; j++)
+        for (size_t j = 0; j < numChildren; ++j)
         {
           if (children[j]->Bound()[i].Hi() > max)
             max = children[j]->Bound()[i].Hi();

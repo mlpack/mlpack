@@ -132,7 +132,7 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
   }
 
   // Set the minimum and the maximum addresses.
-  for (size_t k = 0; k < bound.Dim(); k++)
+  for (size_t k = 0; k < bound.Dim(); ++k)
   {
     bound.LoAddress()[k] = addresses[begin].first[k];
     bound.HiAddress()[k] = addresses[begin + count - 1].first[k];

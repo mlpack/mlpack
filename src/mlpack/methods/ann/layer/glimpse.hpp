@@ -198,9 +198,9 @@ class Glimpse
   {
     arma::mat t = w;
 
-    for (size_t i = 0, k = 0; i < w.n_elem; k++)
+    for (size_t i = 0, k = 0; i < w.n_elem; ++k)
     {
-      for (size_t j = 0; j < w.n_cols; j++, ++i)
+      for (size_t j = 0; j < w.n_cols; ++j, ++i)
       {
         w(k, j) = t(i);
       }

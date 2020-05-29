@@ -130,7 +130,7 @@ class RegressionInterpolation
     {
       // Calculate coefficient.
       arma::vec iPrediction;
-      for (size_t j = i; j < neighborNum; j++)
+      for (size_t j = i; j < neighborNum; ++j)
       {
         if (a(neighbors(i), neighbors(j)) != 0)
         {

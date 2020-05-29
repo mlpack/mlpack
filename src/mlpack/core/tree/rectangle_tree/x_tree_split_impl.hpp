@@ -148,7 +148,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
   // See if we can use a new dimension.
   for (size_t i = lastDim + 1; i < axes.size(); ++i)
   {
-    for (size_t j = 0; j < tree->NumChildren(); j++)
+    for (size_t j = 0; j < tree->NumChildren(); ++j)
       axes[i] = axes[i] &
           tree->Child(j).AuxiliaryInfo().SplitHistory().history[i];
     if (axes[i] == true)
@@ -163,7 +163,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
     for (size_t i = 0; i < lastDim + 1; ++i)
     {
       axes[i] = true;
-      for (size_t j = 0; j < tree->NumChildren(); j++)
+      for (size_t j = 0; j < tree->NumChildren(); ++j)
         axes[i] = axes[i] &
                   tree->Child(j).AuxiliaryInfo().SplitHistory().history[i];
       if (axes[i] == true)
@@ -190,7 +190,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
   ElemType overlapBestAreaAxis = 0;
   ElemType areaBestAreaAxis = 0;
 
-  for (size_t j = 0; j < tree->Bound().Dim(); j++)
+  for (size_t j = 0; j < tree->Bound().Dim(); ++j)
   {
     ElemType axisScore = 0.0;
 
@@ -239,7 +239,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
       ElemType area2 = bound2.Volume();
       ElemType oArea = bound1.Overlap(bound2);
 
-      for (size_t k = 0; k < bound1.Dim(); k++)
+      for (size_t k = 0; k < bound1.Dim(); ++k)
         margins[i] += bound1[k].Width() + bound2[k].Width();
 
       areas[i] += area1 + area2;
@@ -296,7 +296,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
   }
 
   // Now we do the same thing using Bound().Hi() and choose the best of the two.
-  for (size_t j = 0; j < tree->Bound().Dim(); j++)
+  for (size_t j = 0; j < tree->Bound().Dim(); ++j)
   {
     ElemType axisScore = 0.0;
 
@@ -344,7 +344,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
       ElemType area2 = bound2.Volume();
       ElemType oArea = bound1.Overlap(bound2);
 
-      for (size_t k = 0; k < bound1.Dim(); k++)
+      for (size_t k = 0; k < bound1.Dim(); ++k)
         margins[i] += bound1[k].Width() + bound2[k].Width();
 
 

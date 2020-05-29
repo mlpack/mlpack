@@ -247,7 +247,7 @@ CalculateValue(const VecType& pt,
   arma::Col<HilbertElemType> rearrangedResult(pt.n_rows, arma::fill::zeros);
 
   for (size_t i = 0; i < order; ++i)
-    for (size_t j = 0; j < pt.n_rows; j++)
+    for (size_t j = 0; j < pt.n_rows; ++j)
     {
       size_t bit = (i * pt.n_rows + j) % order;
       size_t row = (i * pt.n_rows + j) / order;
@@ -485,7 +485,7 @@ void DiscreteHilbertValue<TreeElemType>::RedistributeHilbertValues(
     DiscreteHilbertValue<TreeElemType> &value =
         parent->Child(i).AuxiliaryInfo().HilbertValue();
 
-    for (size_t j = 0; j < value.NumValues(); j++)
+    for (size_t j = 0; j < value.NumValues(); ++j)
     {
       tmp.col(iPoint) = value.LocalHilbertValues()->col(j);
       iPoint++;
@@ -501,7 +501,7 @@ void DiscreteHilbertValue<TreeElemType>::RedistributeHilbertValues(
     DiscreteHilbertValue<TreeElemType> &value =
         parent->Child(i).AuxiliaryInfo().HilbertValue();
 
-    for (size_t j = 0; j < parent->Child(i).NumPoints(); j++)
+    for (size_t j = 0; j < parent->Child(i).NumPoints(); ++j)
     {
       value.LocalHilbertValues()->col(j) = tmp.col(iPoint);
       iPoint++;

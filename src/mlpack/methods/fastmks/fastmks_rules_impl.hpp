@@ -75,7 +75,7 @@ void FastMKSRules<KernelType, TreeType>::GetResults(
   for (size_t i = 0; i < querySet.n_cols; ++i)
   {
     CandidateList& pqueue = candidates[i];
-    for (size_t j = 1; j <= k; j++)
+    for (size_t j = 1; j <= k; ++j)
     {
       indices(k - j, i) = pqueue.top().second;
       products(k - j, i) = pqueue.top().first;

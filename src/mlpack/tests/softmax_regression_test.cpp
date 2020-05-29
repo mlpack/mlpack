@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionEvaluate)
     double logLikelihood = 0;
 
     // Compute error for each training example.
-    for (size_t j = 0; j < points; j++)
+    for (size_t j = 0; j < points; ++j)
     {
       arma::mat hypothesis, probabilities;
 
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionGradient)
   // For each parameter.
   for (size_t i = 0; i < numClasses; ++i)
   {
-    for (size_t j = 0; j < inputSize; j++)
+    for (size_t j = 0; j < inputSize; ++j)
     {
       // Perturb parameter with a positive constant and get costs.
       parameters(i, j) += epsilon;

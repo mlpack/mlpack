@@ -1170,7 +1170,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMLoadSaveTest)
 
   for (size_t i = 0; i < gmm.Gaussians(); ++i)
   {
-    for (size_t j = 0; j < gmm.Dimensionality(); j++)
+    for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
       BOOST_REQUIRE_CLOSE(gmm.Component(i).Mean()[j],
           gmm2.Component(i).Mean()[j], 1e-3);

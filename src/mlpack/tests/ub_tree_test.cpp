@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(AddressTest)
     addr::PointToAddress(address, dataset.col(i));
     addr::AddressToPoint(point, address);
 
-    for (size_t k = 0; k < dataset.n_rows; k++)
+    for (size_t k = 0; k < dataset.n_rows; ++k)
       BOOST_REQUIRE_CLOSE(dataset(k, i), point[k], 1e-13);
   }
 }
@@ -122,10 +122,10 @@ void CheckBound(const TreeType& tree)
 
     // Ensure that there is a hyperrectangle that contains the point.
     bool success = false;
-    for (size_t j = 0; j < tree.Bound().NumBounds(); j++)
+    for (size_t j = 0; j < tree.Bound().NumBounds(); ++j)
     {
       success = true;
-      for (size_t k = 0; k < loBound.n_rows; k++)
+      for (size_t k = 0; k < loBound.n_rows; ++k)
       {
         if (point[k] < loBound(k, j) - 1e-14 * std::fabs(loBound(k, j)) ||
             point[k] > hiBound(k, j) + 1e-14 * std::fabs(hiBound(k, j)))
@@ -173,7 +173,7 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
 
     CheckDistance<TreeType, MetricType>(tree, node);
 
-    for (size_t j = 0; j < tree.Dataset().n_cols; j++)
+    for (size_t j = 0; j < tree.Dataset().n_cols; ++j)
     {
       const arma::Col<ElemType>& point = tree.  Dataset().col(j);
       ElemType maxDist = 0;
@@ -216,7 +216,7 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
       ElemType maxDist = 0;
       ElemType minDist = std::numeric_limits<ElemType>::max();
       for (size_t i = 0; i < tree.NumDescendants(); ++i)
-        for (size_t j = 0; j < node->NumDescendants(); j++)
+        for (size_t j = 0; j < node->NumDescendants(); ++j)
         {
           ElemType dist = MetricType::Evaluate(
               tree.Dataset().col(tree.Descendant(i)),
@@ -294,7 +294,7 @@ BOOST_AUTO_TEST_CASE(UBTreeTest)
     // Check the forward and backward mappings for correctness.
     for (size_t i = 0; i < size; ++i)
     {
-      for (size_t j = 0; j < dimensions; j++)
+      for (size_t j = 0; j < dimensions; ++j)
       {
         BOOST_REQUIRE_EQUAL(treeset(j, i), dataset(j, newToOld[i]));
         BOOST_REQUIRE_EQUAL(treeset(j, oldToNew[i]), dataset(j, i));

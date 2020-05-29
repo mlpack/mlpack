@@ -689,7 +689,7 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
       {
         arma::mat queryCopy(queryData);
         models[i].Search(std::move(queryCopy), 1, neighbors, distances);
-        for (size_t k = 0; k < queryData.n_cols; k++)
+        for (size_t k = 0; k < queryData.n_cols; ++k)
           if (qrRanks(k, neighbors(0, k)) < expectedRankErrorUB)
             numSuccessRounds[k]++;
 
@@ -702,7 +702,7 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
       size_t threshold = floor(numRounds *
           (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
       size_t numQueriesFail = 0;
-      for (size_t k = 0; k < queryData.n_cols; k++)
+      for (size_t k = 0; k < queryData.n_cols; ++k)
         if (numSuccessRounds[k] < threshold)
           numQueriesFail++;
 

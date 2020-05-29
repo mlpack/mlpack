@@ -53,7 +53,7 @@ size_t MinimalSplitsNumberSweep<SplitPolicy>::SweepNonLeafNode(
     size_t numSplits = 0;
 
     // Calculate the number of splits.
-    for (size_t j = 0; j < node->NumChildren(); j++)
+    for (size_t j = 0; j < node->NumChildren(); ++j)
     {
       const TreeType& child = node->Child(j);
       int policy = SplitPolicy::GetSplitPolicy(child, axis, sorted[i].first);

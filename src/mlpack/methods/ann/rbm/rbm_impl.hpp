@@ -247,7 +247,7 @@ void RBM<InitializationRuleType, DataType, PolicyType>::Gibbs(
     SampleVisible(std::move(gibbsTemporary), std::move(output));
   }
 
-  for (size_t j = 1; j < this->steps; j++)
+  for (size_t j = 1; j < this->steps; ++j)
   {
     SampleHidden(std::move(output), std::move(gibbsTemporary));
     SampleVisible(std::move(gibbsTemporary), std::move(output));

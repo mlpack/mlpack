@@ -105,12 +105,12 @@ BOOST_AUTO_TEST_CASE(RectangleTreeConstructionRepeatTest)
   std::vector<arma::vec*> allPoints = GetAllPointsInTree(tree);
   for (size_t i = 0; i < allPoints.size(); ++i)
   {
-    for (size_t j = i + 1; j < allPoints.size(); j++)
+    for (size_t j = i + 1; j < allPoints.size(); ++j)
     {
       arma::vec v1 = *(allPoints[i]);
       arma::vec v2 = *(allPoints[j]);
       bool same = true;
-      for (size_t k = 0; k < v1.n_rows; k++)
+      for (size_t k = 0; k < v1.n_rows; ++k)
         same &= (v1[k] == v2[k]);
 
       BOOST_REQUIRE_NE(same, true);
@@ -141,7 +141,7 @@ void CheckContainment(const TreeType& tree)
   {
     for (size_t i = 0; i < tree.NumChildren(); ++i)
     {
-      for (size_t j = 0; j < tree.Bound().Dim(); j++)
+      for (size_t j = 0; j < tree.Bound().Dim(); ++j)
       {
         //  All children should be covered by the parent node.
         //  Some children can be empty (only in case of the R++ tree)
@@ -171,7 +171,7 @@ void CheckExactContainment(const TreeType& tree)
     {
       double min = DBL_MAX;
       double max = -1.0 * DBL_MAX;
-      for (size_t j = 0; j < tree.Count(); j++)
+      for (size_t j = 0; j < tree.Count(); ++j)
       {
         if (tree.Dataset().col(tree.Point(j))[i] < min)
           min = tree.Dataset().col(tree.Point(j))[i];
@@ -188,7 +188,7 @@ void CheckExactContainment(const TreeType& tree)
     {
       double min = DBL_MAX;
       double max = -1.0 * DBL_MAX;
-      for (size_t j = 0; j < tree.NumChildren(); j++)
+      for (size_t j = 0; j < tree.NumChildren(); ++j)
       {
         if (tree.Child(j).Bound()[i].Lo() < min)
           min = tree.Child(j).Bound()[i].Lo();
@@ -396,12 +396,12 @@ BOOST_AUTO_TEST_CASE(PointDeletion)
   std::vector<arma::vec*> allPoints = GetAllPointsInTree(tree);
   for (size_t i = 0; i < allPoints.size(); ++i)
   {
-    for (size_t j = i + 1; j < allPoints.size(); j++)
+    for (size_t j = i + 1; j < allPoints.size(); ++j)
     {
       arma::vec v1 = *(allPoints[i]);
       arma::vec v2 = *(allPoints[j]);
       bool same = true;
-      for (size_t k = 0; k < v1.n_rows; k++)
+      for (size_t k = 0; k < v1.n_rows; ++k)
         same &= (v1[k] == v2[k]);
 
       BOOST_REQUIRE(!same);
@@ -480,12 +480,12 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd)
   std::vector<arma::vec*> allPoints = GetAllPointsInTree(tree);
   for (size_t i = 0; i < allPoints.size(); ++i)
   {
-    for (size_t j = i + 1; j < allPoints.size(); j++)
+    for (size_t j = i + 1; j < allPoints.size(); ++j)
     {
       arma::vec v1 = *(allPoints[i]);
       arma::vec v2 = *(allPoints[j]);
       bool same = true;
-      for (size_t k = 0; k < v1.n_rows; k++)
+      for (size_t k = 0; k < v1.n_rows; ++k)
         same &= (v1[k] == v2[k]);
 
       BOOST_REQUIRE(!same);
@@ -958,7 +958,7 @@ void CheckOverlap(const TreeType& tree)
   {
     success = true;
 
-    for (size_t j = 0; j < tree.NumChildren(); j++)
+    for (size_t j = 0; j < tree.NumChildren(); ++j)
     {
       if (j == i)
         continue;
@@ -1050,7 +1050,7 @@ void CheckRPlusPlusTreeBound(const TreeType& tree)
   bool success = true;
 
   // Ensure that the maximum bounding rectangle contains all children.
-  for (size_t k = 0; k < tree.Bound().Dim(); k++)
+  for (size_t k = 0; k < tree.Bound().Dim(); ++k)
   {
     BOOST_REQUIRE_LE(tree.Bound()[k].Hi(),
         tree.AuxiliaryInfo().OuterBound()[k].Hi());
@@ -1075,7 +1075,7 @@ void CheckRPlusPlusTreeBound(const TreeType& tree)
     const Bound& bound1 = tree.Child(i).AuxiliaryInfo().OuterBound();
     success = true;
 
-    for (size_t j = 0; j < tree.NumChildren(); j++)
+    for (size_t j = 0; j < tree.NumChildren(); ++j)
     {
       if (j == i)
         continue;

@@ -51,7 +51,7 @@ inline CellBound<MetricType, ElemType>::CellBound(const size_t dimension) :
     hiAddress(dim),
     minWidth(0)
 {
-  for (size_t k = 0; k < dim ; k++)
+  for (size_t k = 0; k < dim ; ++k)
   {
     loAddress[k] = std::numeric_limits<AddressElemType>::max();
     hiAddress[k] = 0;
@@ -147,7 +147,7 @@ inline CellBound<MetricType, ElemType>::~CellBound()
 template<typename MetricType, typename ElemType>
 inline void CellBound<MetricType, ElemType>::Clear()
 {
-  for (size_t k = 0; k < dim; k++)
+  for (size_t k = 0; k < dim; ++k)
   {
     bounds[k] = math::RangeType<ElemType>();
 
@@ -187,7 +187,7 @@ void CellBound<MetricType, ElemType>::AddBound(
   assert(loCorner.n_elem == dim);
   assert(hiCorner.n_elem == dim);
 
-  for (size_t k = 0; k < dim; k++)
+  for (size_t k = 0; k < dim; ++k)
   {
     loBound(k, numBounds) = std::numeric_limits<ElemType>::max();
     hiBound(k, numBounds) = std::numeric_limits<ElemType>::lowest();
@@ -197,7 +197,7 @@ void CellBound<MetricType, ElemType>::AddBound(
   {
     size_t k = 0;
     // Check if the point is contained in the hyperrectangle.
-    for (k = 0; k < dim; k++)
+    for (k = 0; k < dim; ++k)
       if (data(k, i) < loCorner[k] || data(k, i) > hiCorner[k])
         break;
 
@@ -205,14 +205,14 @@ void CellBound<MetricType, ElemType>::AddBound(
       continue; // The point is not contained in the hyperrectangle.
 
     // Shrink the bound.
-    for (k = 0; k < dim; k++)
+    for (k = 0; k < dim; ++k)
     {
       loBound(k, numBounds) = std::min(loBound(k, numBounds), data(k, i));
       hiBound(k, numBounds) = std::max(hiBound(k, numBounds), data(k, i));
     }
   }
 
-  for (size_t k = 0; k < dim; k++)
+  for (size_t k = 0; k < dim; ++k)
     if (loBound(k, numBounds) > hiBound(k, numBounds))
       return; // The hyperrectangle does not contain points.
 
@@ -550,7 +550,7 @@ ElemType CellBound<MetricType, ElemType>::MinDistance(const CellBound& other)
   ElemType lower, higher;
 
   for (size_t i = 0; i < numBounds; ++i)
-    for (size_t j = 0; j < other.numBounds; j++)
+    for (size_t j = 0; j < other.numBounds; ++j)
     {
       ElemType sum = 0;
       for (size_t d = 0; d < dim; d++)
@@ -664,7 +664,7 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
 
   ElemType v;
   for (size_t i = 0; i < numBounds; ++i)
-    for (size_t j = 0; j < other.numBounds; j++)
+    for (size_t j = 0; j < other.numBounds; ++j)
     {
       ElemType sum = 0;
       for (size_t d = 0; d < dim; d++)
@@ -715,7 +715,7 @@ CellBound<MetricType, ElemType>::RangeDistance(
   ElemType v1, v2, vLo, vHi;
 
   for (size_t i = 0; i < numBounds; ++i)
-    for (size_t j = 0; j < other.numBounds; j++)
+    for (size_t j = 0; j < other.numBounds; ++j)
     {
       ElemType loSum = 0;
       ElemType hiSum = 0;
