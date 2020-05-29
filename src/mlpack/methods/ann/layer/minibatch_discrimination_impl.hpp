@@ -63,7 +63,7 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Forward(
   for (size_t i = 0; i < M.n_slices; ++i)
   {
     output.col(i).ones();
-    for (size_t j = 0; j < M.n_slices; j++)
+    for (size_t j = 0; j < M.n_slices; ++j)
     {
       if (j < i)
       {
@@ -96,7 +96,7 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Backward(
 
   for (size_t i = 0; i < M.n_slices; ++i)
   {
-    for (size_t j = 0; j < M.n_slices; j++)
+    for (size_t j = 0; j < M.n_slices; ++j)
     {
       if (i == j)
       {

@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionRandomEvaluate)
 
     // Calculate cost by summing up cost of each example.
     double cost = 0;
-    for (size_t j = 0; j < numRatings; j++)
+    for (size_t j = 0; j < numRatings; ++j)
     {
       const size_t user = data(0, j);
       const size_t item = data(1, j) + numUsers;
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionRegularizationEvaluate)
     // each rating and sum them up.
     double smallRegTerm = 0;
     double bigRegTerm = 0;
-    for (size_t j = 0; j < numRatings; j++)
+    for (size_t j = 0; j < numRatings; ++j)
     {
       const size_t user = data(0, j);
       const size_t item = data(1, j) + numUsers;
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionGradient)
 
   for (size_t i = 0; i < rank; ++i)
   {
-    for (size_t j = 0; j < numUsers + numItems; j++)
+    for (size_t j = 0; j < numUsers + numItems; ++j)
     {
       // Perturb parameter with a positive constant and get costs.
       parameters(i, j) += epsilon;

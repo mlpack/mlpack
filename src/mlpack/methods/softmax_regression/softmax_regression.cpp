@@ -42,7 +42,7 @@ void SoftmaxRegression::Classify(const arma::mat& dataset,
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     // For each class.
-    for (size_t j = 0; j < numClasses; j++)
+    for (size_t j = 0; j < numClasses; ++j)
     {
       // If a higher class probability is encountered, change prediction.
       if (probabilities(j, i) > maxProbability)
@@ -72,7 +72,7 @@ void SoftmaxRegression::Classify(const arma::mat& dataset,
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     // For each class.
-    for (size_t j = 0; j < numClasses; j++)
+    for (size_t j = 0; j < numClasses; ++j)
     {
       // If a higher class probability is encountered, change prediction.
       if (probabilities(j, i) > maxProbability)

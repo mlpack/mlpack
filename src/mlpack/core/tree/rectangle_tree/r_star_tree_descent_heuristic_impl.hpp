@@ -38,13 +38,13 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
     for (size_t i = 0; i < node->NumChildren(); ++i)
     {
       ElemType sc = 0;
-      for (size_t j = 0; j < node->NumChildren(); j++)
+      for (size_t j = 0; j < node->NumChildren(); ++j)
       {
         if (j != i)
         {
           ElemType overlap = 1.0;
           ElemType newOverlap = 1.0;
-          for (size_t k = 0; k < node->Bound().Dim(); k++)
+          for (size_t k = 0; k < node->Bound().Dim(); ++k)
           {
             ElemType newHigh = std::max(node->Dataset().col(point)[k],
                 node->Child(i).Bound()[k].Hi());
@@ -104,7 +104,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
     {
       ElemType v1 = 1.0;
       ElemType v2 = 1.0;
-      for (size_t j = 0; j < node->Bound().Dim(); j++)
+      for (size_t j = 0; j < node->Bound().Dim(); ++j)
       {
         v1 *= node->Child(i).Bound()[j].Width();
         v2 *= node->Child(i).Bound()[j].Contains(
@@ -177,7 +177,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
   {
     ElemType v1 = 1.0;
     ElemType v2 = 1.0;
-    for (size_t j = 0; j < node->Child(i).Bound().Dim(); j++)
+    for (size_t j = 0; j < node->Child(i).Bound().Dim(); ++j)
     {
       v1 *= node->Child(i).Bound()[j].Width();
       v2 *= node->Child(i).Bound()[j].Contains(insertedNode->Bound()[j]) ?

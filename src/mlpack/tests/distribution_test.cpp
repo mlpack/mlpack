@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionDistributionConstructor)
     BOOST_REQUIRE_CLOSE(d.Mean()[i], mean[i], 1e-5);
 
   for (size_t i = 0; i < 3; ++i)
-    for (size_t j = 0; j < 3; j++)
+    for (size_t j = 0; j < 3; ++j)
       BOOST_REQUIRE_CLOSE(d.Covariance()(i, j), covariance(i, j), 1e-5);
 }
 
@@ -505,7 +505,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainTest)
     BOOST_REQUIRE_SMALL(d.Mean()[i] - actualMean[i], 1e-5);
 
   for (size_t i = 0; i < 4; ++i)
-    for (size_t j = 0; j < 4; j++)
+    for (size_t j = 0; j < 4; ++j)
       BOOST_REQUIRE_SMALL(d.Covariance()(i, j) - actualCov(i, j), 1e-5);
 }
 
@@ -605,7 +605,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithTwoDistProbabilitiesTest)
 
   // Fill even numbered columns with random points from dist1 and odd numbered
   // columns with random points from dist2.
-  for (size_t j = 0; j < N; j++)
+  for (size_t j = 0; j < N; ++j)
   {
     if (j % 2 == 0)
       rdata.col(j) = dist1.Random();
@@ -696,7 +696,7 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainWithProbabilitiesTest)
   size_t d = 2;
   arma::mat rdata(d, N);
 
-  for (size_t j = 0; j < d; j++)
+  for (size_t j = 0; j < d; ++j)
     for (size_t i = 0; i < N; ++i)
       rdata(j, i) = dist(math::randGen);
 
@@ -740,7 +740,7 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainAllProbabilities1Test)
   size_t d = 2;
   arma::mat rdata(d, N);
 
-  for (size_t j = 0; j < d; j++)
+  for (size_t j = 0; j < d; ++j)
     for (size_t i = 0; i < N; ++i)
       rdata(j, i) = dist(math::randGen);
 
@@ -785,7 +785,7 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainTwoDistProbabilities1Test)
   arma::vec probabilities(N);
 
   // Draw points alternately from the two different distributions.
-  for (size_t j = 0; j < d; j++)
+  for (size_t j = 0; j < d; ++j)
   {
     for (size_t i = 0; i < N; ++i)
     {

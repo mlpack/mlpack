@@ -317,7 +317,7 @@ public:
             break;
          }
          m_intermediates[1] = m_intermediates[1] * (i-1);
-         for(std::size_t j = 2; j <= i; j++)
+         for(std::size_t j = 2; j <= i; ++j)
          {
             overflow_check =
                   (i >= min_overflow_index) && (

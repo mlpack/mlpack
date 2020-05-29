@@ -170,7 +170,7 @@ double DiagonalGMM::LogLikelihood(
   }
 
   // Now sum over every point.
-  for (size_t j = 0; j < observations.n_cols; j++)
+  for (size_t j = 0; j < observations.n_cols; ++j)
   {
     if (accu(likelihoods.col(j)) == 0)
       Log::Info << "Likelihood of point " << j << " is 0!  It is probably an "

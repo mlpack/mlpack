@@ -325,7 +325,7 @@ double LARS::Train(const arma::mat& matX,
     {
       arma::mat matGramActive = arma::mat(activeSet.size(), activeSet.size());
       for (size_t i = 0; i < activeSet.size(); ++i)
-        for (size_t j = 0; j < activeSet.size(); j++)
+        for (size_t j = 0; j < activeSet.size(); ++j)
           matGramActive(i, j) = (*matGram)(activeSet[i], activeSet[j]);
 
       // Check for singularity.
@@ -614,7 +614,7 @@ void LARS::CholeskyDelete(const size_t colToKill)
     matUtriCholFactor.shed_col(colToKill); // remove column colToKill
     n--;
 
-    for (size_t k = colToKill; k < n; k++)
+    for (size_t k = colToKill; k < n; ++k)
     {
       arma::mat matG;
       arma::vec::fixed<2> rotatedVec;

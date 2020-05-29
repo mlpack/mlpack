@@ -136,7 +136,7 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
     // We need to traverse down both the reference and the query trees.
     // We loop through all of the query nodes, and for each of them, we
     // loop through the reference nodes to see where we need to descend.
-    for (size_t j = 0; j < queryNode.NumChildren(); j++)
+    for (size_t j = 0; j < queryNode.NumChildren(); ++j)
     {
       // We sort the children of the reference node by their scores.
       std::vector<NodeAndScore> nodesAndScores(referenceNode.NumChildren());

@@ -48,7 +48,7 @@ inline void CheckMatrices(std::vector<std::vector<double>>& vec1,
     BOOST_REQUIRE_EQUAL(vec1[i].size(), vec2[i].size());
     std::sort(vec1[i].begin(), vec1[i].end());
     std::sort(vec2[i].begin(), vec2[i].end());
-    for (size_t j = 0 ; j < vec1[i].size(); j++)
+    for (size_t j = 0 ; j < vec1[i].size(); ++j)
     {
       BOOST_REQUIRE_CLOSE(vec1[i][j], vec2[i][j], tolerance);
     }
@@ -70,7 +70,7 @@ inline void CheckMatrices(std::vector<std::vector<size_t>>& vec1,
     BOOST_REQUIRE_EQUAL(vec1[i].size(), vec2[i].size());
     std::sort(vec1[i].begin(), vec1[i].end());
     std::sort(vec2[i].begin(), vec2[i].end());
-    for (size_t j = 0; j < vec1[i].size(); j++)
+    for (size_t j = 0; j < vec1[i].size(); ++j)
     {
       BOOST_REQUIRE_EQUAL(vec1[i][j], vec2[i][j]);
     }

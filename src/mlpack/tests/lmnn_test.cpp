@@ -414,7 +414,7 @@ double KnnAccuracy(const arma::mat& dataset,
     arma::vec Map;
     Map.zeros(uniqueLabels.n_cols);
 
-    for (size_t j = 0; j < k; j++)
+    for (size_t j = 0; j < k; ++j)
       Map(labels(neighbors(j, i))) +=
           1 / std::pow(distances(j, i) + 1, 2);
 

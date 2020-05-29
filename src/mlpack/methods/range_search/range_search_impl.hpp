@@ -398,7 +398,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
         // Copy each neighbor individually, because we need to map it.
         neighbors[queryMapping].resize(distances[queryMapping].size());
-        for (size_t j = 0; j < distances[queryMapping].size(); j++)
+        for (size_t j = 0; j < distances[queryMapping].size(); ++j)
           neighbors[queryMapping][j] =
               oldFromNewReferences[(*neighborPtr)[i][j]];
       }
@@ -436,7 +436,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
       for (size_t i = 0; i < neighbors.size(); ++i)
       {
         neighbors[i].resize((*neighborPtr)[i].size());
-        for (size_t j = 0; j < neighbors[i].size(); j++)
+        for (size_t j = 0; j < neighbors[i].size(); ++j)
           neighbors[i][j] = oldFromNewReferences[(*neighborPtr)[i][j]];
       }
 
@@ -508,7 +508,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     for (size_t i = 0; i < neighbors.size(); ++i)
     {
       neighbors[i].resize((*neighborPtr)[i].size());
-      for (size_t j = 0; j < neighbors[i].size(); j++)
+      for (size_t j = 0; j < neighbors[i].size(); ++j)
         neighbors[i][j] = oldFromNewReferences[(*neighborPtr)[i][j]];
     }
 
@@ -606,7 +606,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
       // Copy each neighbor individually, because we need to map it.
       neighbors[refMapping].resize(distances[refMapping].size());
-      for (size_t j = 0; j < distances[refMapping].size(); j++)
+      for (size_t j = 0; j < distances[refMapping].size(); ++j)
       {
         neighbors[refMapping][j] = oldFromNewReferences[(*neighborPtr)[i][j]];
       }

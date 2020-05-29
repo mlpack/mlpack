@@ -132,7 +132,7 @@ double mlpack::neighbor::RAUtil::SuccessProbability(const size_t n,
       sum = std::pow(eps, (double) m);
     }
 
-    for (size_t j = lb; j < ub; j++)
+    for (size_t j = lb; j < ub; ++j)
     {
       // Compute Choose(m, j).
       double mCj = (double) m;

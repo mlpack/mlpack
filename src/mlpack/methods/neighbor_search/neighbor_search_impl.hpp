@@ -548,7 +548,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
         distances.col(oldFromNewQueries[i]) = distancePtr->col(i);
 
         // Map indices of neighbors.
-        for (size_t j = 0; j < distances.n_rows; j++)
+        for (size_t j = 0; j < distances.n_rows; ++j)
         {
           neighbors(j, oldFromNewQueries[i]) =
               oldFromNewReferences[(*neighborPtr)(j, i)];
@@ -584,7 +584,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
 
       // Map indices of neighbors.
       for (size_t i = 0; i < neighbors.n_cols; ++i)
-        for (size_t j = 0; j < neighbors.n_rows; j++)
+        for (size_t j = 0; j < neighbors.n_rows; ++j)
           neighbors(j, i) = oldFromNewReferences[(*neighborPtr)(j, i)];
 
       // Finished with temporary matrix.
@@ -670,7 +670,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
 
     // Map indices of neighbors.
     for (size_t i = 0; i < neighbors.n_cols; ++i)
-      for (size_t j = 0; j < neighbors.n_rows; j++)
+      for (size_t j = 0; j < neighbors.n_rows; ++j)
         neighbors(j, i) = oldFromNewReferences[(*neighborPtr)(j, i)];
 
     // Finished with temporary matrix.

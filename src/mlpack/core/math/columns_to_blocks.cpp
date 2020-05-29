@@ -77,7 +77,7 @@ void ColumnsToBlocks::Transform(const arma::mat& maximalInputs,
       const size_t maxCol = j * colOffset + blockWidth;
 
       output.submat(minRow, minCol, maxRow, maxCol) =
-          arma::reshape(maximalInputs.col(k++), blockHeight, blockWidth);
+          arma::reshape(maximalInputs.col(++k), blockHeight, blockWidth);
 
       if (k >= maxSize)
         break;

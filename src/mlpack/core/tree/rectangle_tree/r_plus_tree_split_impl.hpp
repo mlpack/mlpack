@@ -342,7 +342,7 @@ PartitionNode(const TreeType* node, size_t& minCutAxis,
   minCutAxis = node->Bound().Dim();
 
   // Find the sweep with a minimal cost.
-  for (size_t k = 0; k < node->Bound().Dim(); k++)
+  for (size_t k = 0; k < node->Bound().Dim(); ++k)
   {
     typename TreeType::ElemType cut;
     SweepCostType cost;

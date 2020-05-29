@@ -105,7 +105,7 @@ void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
     ReorderResults(distances, neighbors, norms);
 
     // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
+    for (size_t j = 0; j < neighbors.n_elem; ++j)
       neighbors(j) = indexSame[i].at(neighbors(j));
 
     // Store target neihbors.
@@ -153,7 +153,7 @@ void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
     ReorderResults(distances, neighbors, norms);
 
     // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
+    for (size_t j = 0; j < neighbors.n_elem; ++j)
       neighbors(j) = indexSame[i].at(neighbors(j));
 
     // Store target neighbors.
@@ -189,7 +189,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
     ReorderResults(distances, neighbors, norms);
 
     // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
+    for (size_t j = 0; j < neighbors.n_elem; ++j)
       neighbors(j) = indexDiff[i].at(neighbors(j));
 
     // Store impostors.
@@ -227,7 +227,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
     ReorderResults(distances, neighbors, norms);
 
     // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
+    for (size_t j = 0; j < neighbors.n_elem; ++j)
       neighbors(j) = indexDiff[i].at(neighbors(j));
 
     // Store impostors.
@@ -276,7 +276,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
     ReorderResults(distances, neighbors, norms);
 
     // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
+    for (size_t j = 0; j < neighbors.n_elem; ++j)
       neighbors(j) = indexDiff[i].at(neighbors(j));
 
     // Store impostors.
@@ -325,7 +325,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
     ReorderResults(distances, neighbors, norms);
 
     // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
+    for (size_t j = 0; j < neighbors.n_elem; ++j)
       neighbors(j) = indexDiff[i].at(neighbors(j));
 
     // Store impostors.
@@ -374,7 +374,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
     ReorderResults(distances, neighbors, norms);
 
     // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
+    for (size_t j = 0; j < neighbors.n_elem; ++j)
       neighbors(j) = indexDiff[i].at(neighbors(j));
 
     // Store impostors.
@@ -406,7 +406,7 @@ void Constraints<MetricType>::Triplets(arma::Mat<size_t>& outputMatrix,
 
   for (size_t i = 0, r = 0; i < N; ++i)
   {
-    for (size_t j = 0; j < k; j++)
+    for (size_t j = 0; j < k; ++j)
     {
       for (size_t l = 0; l < k; l++, r++)
       {

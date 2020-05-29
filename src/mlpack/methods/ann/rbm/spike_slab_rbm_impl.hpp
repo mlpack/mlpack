@@ -161,7 +161,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
   VisibleMean(std::move(input), std::move(visibleMean));
   output.set_size(visibleSize, 1);
 
-  for (k = 0; k < numMaxTrials; k++)
+  for (k = 0; k < numMaxTrials; ++k)
   {
     for (size_t i = 0; i < visibleSize; ++i)
     {
@@ -297,7 +297,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleSlab(
 {
   for (size_t i = 0; i < hiddenSize; ++i)
   {
-    for (size_t j = 0; j < poolSize; j++)
+    for (size_t j = 0; j < poolSize; ++j)
     {
       slab(j, i) = math::RandNormal(slabMean(j, i), 1.0 / slabPenalty);
     }

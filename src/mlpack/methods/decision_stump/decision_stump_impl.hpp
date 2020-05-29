@@ -477,13 +477,13 @@ double DecisionStump<MatType>::CalculateEntropy(
 
   if (UseWeights)
   {
-    for (j = 0; j < labels.n_elem; j++)
+    for (j = 0; j < labels.n_elem; ++j)
     {
       numElem(labels(j)) += weights(j);
       accWeight += weights(j);
     }
 
-    for (j = 0; j < numClasses; j++)
+    for (j = 0; j < numClasses; ++j)
     {
       const double p1 = ((double) numElem(j) / accWeight);
 
@@ -495,10 +495,10 @@ double DecisionStump<MatType>::CalculateEntropy(
   }
   else
   {
-    for (j = 0; j < labels.n_elem; j++)
+    for (j = 0; j < labels.n_elem; ++j)
       numElem(labels(j))++;
 
-    for (j = 0; j < numClasses; j++)
+    for (j = 0; j < numClasses; ++j)
     {
       const double p1 = ((double) numElem(j) / labels.n_elem);
 

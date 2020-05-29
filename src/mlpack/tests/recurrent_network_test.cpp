@@ -487,7 +487,7 @@ arma::Mat<char> GenerateReberGrammarData(
     else
       GenerateReber(transitions, trainReber);
 
-    for (size_t j = 0; j < trainReber.length() - 1; j++)
+    for (size_t j = 0; j < trainReber.length() - 1; ++j)
     {
       ReberTranslation(trainReber[j], translation);
       trainInput(0, i) = arma::join_cols(trainInput(0, i), translation);
@@ -506,7 +506,7 @@ arma::Mat<char> GenerateReberGrammarData(
     else
       GenerateReber(transitions, testReber);
 
-    for (size_t j = 0; j < testReber.length() - 1; j++)
+    for (size_t j = 0; j < testReber.length() - 1; ++j)
     {
       ReberTranslation(testReber[j], translation);
       testInput(0, i) = arma::join_cols(testInput(0, i), translation);
@@ -576,7 +576,7 @@ void ReberGrammarTestNetwork(ModelType& model,
     arma::cube inputTemp, labelsTemp;
     for (size_t iteration = 0; iteration < (iterations + offset); iteration++)
     {
-      for (size_t j = 0; j < trainReberGrammarCount; j++)
+      for (size_t j = 0; j < trainReberGrammarCount; ++j)
       {
         // Each sequence may be a different length, so we need to extract them
         // manually.  We will reshape them into a cube with each slice equal to
@@ -609,7 +609,7 @@ void ReberGrammarTestNetwork(ModelType& model,
 
       size_t reberError = 0;
 
-      for (size_t j = 0; j < (prediction.n_elem / reberGrammerSize); j++)
+      for (size_t j = 0; j < (prediction.n_elem / reberGrammerSize); ++j)
       {
         char predictedSymbol, inputSymbol;
         std::string reberChoices;
@@ -820,7 +820,7 @@ void DistractedSequenceRecallTestNetwork(
     arma::cube inputTemp, labelsTemp;
     for (size_t iteration = 0; iteration < (9 + offset); iteration++)
     {
-      for (size_t j = 0; j < trainDistractedSequenceCount; j++)
+      for (size_t j = 0; j < trainDistractedSequenceCount; ++j)
       {
         inputTemp = arma::cube(trainInput.at(0, j).memptr(), inputSize, 1,
             trainInput.at(0, j).n_elem / inputSize, false, true);
@@ -1103,7 +1103,7 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
     arma::cube inputTemp, labelsTemp;
     for (size_t iteration = 0; iteration < (iterations + offset); iteration++)
     {
-      for (size_t j = 0; j < trainReberGrammarCount; j++)
+      for (size_t j = 0; j < trainReberGrammarCount; ++j)
       {
         // Each sequence may be a different length, so we need to extract them
         // manually.  We will reshape them into a cube with each slice equal to
@@ -1136,7 +1136,7 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
 
       size_t reberError = 0;
 
-      for (size_t j = 0; j < (prediction.n_elem / reberGrammerSize); j++)
+      for (size_t j = 0; j < (prediction.n_elem / reberGrammerSize); ++j)
       {
         char predictedSymbol, inputSymbol;
         std::string reberChoices;

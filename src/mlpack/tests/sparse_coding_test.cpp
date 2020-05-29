@@ -30,7 +30,7 @@ void SCVerifyCorrectness(vec beta, vec errCorr, double lambda)
 {
   const double tol = 1e-12;
   size_t nDims = beta.n_elem;
-  for (size_t j = 0; j < nDims; j++)
+  for (size_t j = 0; j < nDims; ++j)
   {
     if (beta(j) == 0)
     {

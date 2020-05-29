@@ -94,7 +94,7 @@ void RStarTreeSplit::PickLeafSplit(TreeType* tree,
   /**
    * Check each dimension, to find which dimension is best to split on.
    */
-  for (size_t j = 0; j < tree->Bound().Dim(); j++)
+  for (size_t j = 0; j < tree->Bound().Dim(); ++j)
   {
     ElemType axisScore = 0.0;
 
@@ -130,7 +130,7 @@ void RStarTreeSplit::PickLeafSplit(TreeType* tree,
       areas[i] = bound1.Volume() + bound2.Volume();
       overlaps[i] = bound1.Overlap(bound2);
 
-      for (size_t k = 0; k < bound1.Dim(); k++)
+      for (size_t k = 0; k < bound1.Dim(); ++k)
         margins[i] += bound1[k].Width() + bound2[k].Width();
 
       axisScore += margins[i];
@@ -289,7 +289,7 @@ bool RStarTreeSplit::SplitNonLeafNode(
   /**
    * Check over each dimension to see which is best to use for splitting.
    */
-  for (size_t j = 0; j < tree->Bound().Dim(); j++)
+  for (size_t j = 0; j < tree->Bound().Dim(); ++j)
   {
     ElemType axisLoScore = 0.0;
     ElemType axisHiScore = 0.0;
@@ -347,7 +347,7 @@ bool RStarTreeSplit::SplitNonLeafNode(
       overlaps[2 * i + 1] = hb1.Overlap(hb2);
 
       // Now calculate margins for each.
-      for (size_t k = 0; k < lb1.Dim(); k++)
+      for (size_t k = 0; k < lb1.Dim(); ++k)
       {
         margins[2 * i]     += lb1[k].Width() + lb2[k].Width();
         margins[2 * i + 1] += hb1[k].Width() + hb2[k].Width();

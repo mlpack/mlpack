@@ -131,7 +131,7 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
   sum.zeros(stretchedDataset.n_rows, stretchedDataset.n_rows);
   for (size_t i = 0; i < stretchedDataset.n_cols; ++i)
   {
-    for (size_t k = (i + 1); k < stretchedDataset.n_cols; k++)
+    for (size_t k = (i + 1); k < stretchedDataset.n_cols; ++k)
     {
       // Calculate p_ik and p_ki first.
       double eval = exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
@@ -267,7 +267,7 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
   denominators.zeros(stretchedDataset.n_cols);
   for (size_t i = 0; i < stretchedDataset.n_cols; ++i)
   {
-    for (size_t j = (i + 1); j < stretchedDataset.n_cols; j++)
+    for (size_t j = (i + 1); j < stretchedDataset.n_cols; ++j)
     {
       // Evaluate exp(-d(x_i, x_j)).
       double eval = exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),

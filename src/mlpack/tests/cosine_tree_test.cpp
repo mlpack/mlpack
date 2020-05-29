@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
       for (i = 0; i < leftIndices.size(); ++i)
         cosines(i) = arma::norm_dot(data.col(leftIndices[i]), splitPoint);
 
-      for (j = 0, k = i; j < rightIndices.size(); j++, k++)
+      for (j = 0, k = i; j < rightIndices.size(); ++j, ++k)
         cosines(k) = arma::norm_dot(data.col(rightIndices[j]), splitPoint);
 
       // Check if the columns assigned to the children agree with the splitting
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
           BOOST_REQUIRE_LT(cosineMax - cosines(i),
                            cosines(i) - cosineMin + precision);
 
-        for (j = 0, k = i; j < rightIndices.size(); j++, k++)
+        for (j = 0, k = i; j < rightIndices.size(); ++j, ++k)
           BOOST_REQUIRE_GT(cosineMax - cosines(k),
                            cosines(k) - cosineMin - precision);
       }
@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
           if (cosineMax - cosines(i) >= cosines(i) - cosineMin + precision)
             numMax1Errors++;
 
-        for (j = 0, k = i; j < rightIndices.size(); j++, k++)
+        for (j = 0, k = i; j < rightIndices.size(); ++j, ++k)
           if (cosineMax - cosines(k) <= cosines(k) - cosineMin - precision)
             numMax1Errors++;
 
@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
           if (cosineMax2 - cosines(i) >= cosines(i) - cosineMin + precision)
             numMax2Errors++;
 
-        for (j = 0, k = i; j < rightIndices.size(); j++, k++)
+        for (j = 0, k = i; j < rightIndices.size(); ++j, ++k)
           if (cosineMax2 - cosines(k) <= cosines(k) - cosineMin - precision)
             numMax2Errors++;
 
@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(CosineTreeModifiedGramSchmidt)
     CosineNodeQueue::const_iterator j = basisQueue.begin();
     CosineTree* currentNode;
 
-    for (; j != basisQueue.end(); j++)
+    for (; j != basisQueue.end(); ++j)
     {
       currentNode = *j;
       BOOST_REQUIRE_SMALL(arma::dot(currentNode->BasisVector(), newBasisVector),

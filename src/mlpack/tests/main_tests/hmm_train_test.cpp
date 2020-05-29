@@ -102,7 +102,7 @@ inline void ApproximatelyEqual(HMMModel& h1,
 
     size_t states = d1.size();
     for (size_t i = 0; i < states; ++i)
-      for (size_t j = 0; j < d1[i].Dimensionality(); j++)
+      for (size_t j = 0; j < d1[i].Dimensionality(); ++j)
         CheckMatrices(d1[i].Probabilities(j)*100,
             d2[i].Probabilities(j)*100,
             tolerance);
@@ -153,7 +153,7 @@ inline void ApproximatelyEqual(HMMModel& h1,
     {
       BOOST_REQUIRE_EQUAL(d1[i].Gaussians(), d2[i].Gaussians());
       size_t gaussians = d1[i].Gaussians();
-      for (size_t j=0; j<gaussians; j++)
+      for (size_t j=0; j<gaussians; ++j)
       {
         CheckMatrices(d1[i].Component(j).Mean()*100,
             d2[i].Component(j).Mean()*100,
@@ -187,7 +187,7 @@ inline void ApproximatelyEqual(HMMModel& h1,
     {
       BOOST_REQUIRE_EQUAL(d1[i].Gaussians(), d2[i].Gaussians());
       size_t gaussians = d1[i].Gaussians();
-      for (size_t j = 0; j < gaussians; j++)
+      for (size_t j = 0; j < gaussians; ++j)
       {
         CheckMatrices(d1[i].Component(j).Mean()*100,
             d2[i].Component(j).Mean()*100,

@@ -441,7 +441,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
 
     size_t k = 0;
     // Compute the projection of the sampled vector onto the existing subspace.
-    for ( ; j != treeQueue.end(); j++, k++)
+    for ( ; j != treeQueue.end(); ++j, ++k)
     {
       currentNode = *j;
 
@@ -451,7 +451,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
     // If two additional vectors are passed, take their projections.
     if (addBasisVector1 && addBasisVector2)
     {
-      projection(k++) = arma::dot(dataset.col(sampledIndices[i]),
+      projection(++k) = arma::dot(dataset.col(sampledIndices[i]),
                                   *addBasisVector1);
       projection(k) = arma::dot(dataset.col(sampledIndices[i]),
                                 *addBasisVector2);
@@ -497,7 +497,7 @@ void CosineTree::ConstructBasis(CosineNodeQueue& treeQueue)
 
   // Transfer basis vectors from the queue to the basis matrix.
   size_t j = 0;
-  for ( ; i != treeQueue.end(); ++i, j++)
+  for ( ; i != treeQueue.end(); ++i, ++j)
   {
     currentNode = *i;
     basis.col(j) = currentNode->BasisVector();

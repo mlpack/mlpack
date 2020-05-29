@@ -129,7 +129,7 @@ void PointToAddress(AddressType& address, const VecType& point)
   // Interleave the bits of the new representation across all the elements
   // in the address vector.
   for (size_t i = 0; i < order; ++i)
-    for (size_t j = 0; j < point.n_elem; j++)
+    for (size_t j = 0; j < point.n_elem; ++j)
     {
       size_t bit = (i * point.n_elem + j) % order;
       size_t row = (i * point.n_elem + j) / order;
@@ -177,7 +177,7 @@ void AddressToPoint(VecType& point, const AddressType& address)
   const int numMantBits = order - numExpBits - 1;
 
   for (size_t i = 0; i < order; ++i)
-    for (size_t j = 0; j < address.n_elem; j++)
+    for (size_t j = 0; j < address.n_elem; ++j)
     {
       size_t bit = (i * address.n_elem + j) % order;
       size_t row = (i * address.n_elem + j) / order;

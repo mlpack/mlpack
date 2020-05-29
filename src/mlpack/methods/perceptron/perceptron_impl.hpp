@@ -163,7 +163,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
     converged = true;
 
     // Now this inner loop is for going through the dataset in each iteration.
-    for (j = 0; j < data.n_cols; j++)
+    for (j = 0; j < data.n_cols; ++j)
     {
       // Multiply for each variable and check whether the current weight vector
       // correctly classifies this.

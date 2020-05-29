@@ -172,7 +172,7 @@ void RTreeSplit::GetPointSeeds(const TreeType *tree, int& iRet, int& jRet)
   typename TreeType::ElemType worstPairScore = -1.0;
   for (size_t i = 0; i < tree->Count(); ++i)
   {
-    for (size_t j = i + 1; j < tree->Count(); j++)
+    for (size_t j = i + 1; j < tree->Count(); ++j)
     {
       const typename TreeType::ElemType score = arma::prod(arma::abs(
           tree->Dataset().col(tree->Point(i)) -
@@ -201,10 +201,10 @@ void RTreeSplit::GetBoundSeeds(const TreeType *tree, int& iRet, int& jRet)
   ElemType worstPairScore = -1.0;
   for (size_t i = 0; i < tree->NumChildren(); ++i)
   {
-    for (size_t j = i + 1; j < tree->NumChildren(); j++)
+    for (size_t j = i + 1; j < tree->NumChildren(); ++j)
     {
       ElemType score = 1.0;
-      for (size_t k = 0; k < tree->Bound().Dim(); k++)
+      for (size_t k = 0; k < tree->Bound().Dim(); ++k)
       {
         const ElemType hiMax = std::max(tree->Child(i).Bound()[k].Hi(),
                                         tree->Child(j).Bound()[k].Hi());
@@ -375,7 +375,7 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
   assert(intI != intJ);
 
   for (size_t i = 0; i < oldTree->NumChildren(); ++i)
-    for (size_t j = i + 1; j < oldTree->NumChildren(); j++)
+    for (size_t j = i + 1; j < oldTree->NumChildren(); ++j)
       assert(oldTree->children[i] != oldTree->children[j]);
 
   InsertNodeIntoTree(treeOne, oldTree->children[intI]);
@@ -398,7 +398,7 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
   assert(treeTwo->NumChildren() == 1);
 
   for (size_t i = 0; i < end; ++i)
-    for (size_t j = i + 1; j < end; j++)
+    for (size_t j = i + 1; j < end; ++j)
       assert(oldTree->children[i] != oldTree->children[j]);
 
   for (size_t i = 0; i < end; ++i)
@@ -512,11 +512,11 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
   }
 
   for (size_t i = 0; i < treeOne->NumChildren(); ++i)
-    for (size_t j = i + 1; j < treeOne->NumChildren(); j++)
+    for (size_t j = i + 1; j < treeOne->NumChildren(); ++j)
       assert(treeOne->children[i] != treeOne->children[j]);
 
   for (size_t i = 0; i < treeTwo->NumChildren(); ++i)
-    for (size_t j = i + 1; j < treeTwo->NumChildren(); j++)
+    for (size_t j = i + 1; j < treeTwo->NumChildren(); ++j)
       assert(treeTwo->children[i] != treeTwo->children[j]);
 }
 

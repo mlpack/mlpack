@@ -29,7 +29,7 @@ void VerifyCorrectness(const vec& beta, const vec& errCorr, double lambda)
 {
   const double tol = 0.1;
   size_t nDims = beta.n_elem;
-  for (size_t j = 0; j < nDims; j++)
+  for (size_t j = 0; j < nDims; ++j)
   {
     if (beta(j) == 0)
     {
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestCodingStep)
   for (uword i = 0; i < nPoints; ++i)
   {
     vec sqDists = vec(nAtoms);
-    for (uword j = 0; j < nAtoms; j++)
+    for (uword j = 0; j < nAtoms; ++j)
     {
       sqDists[j] = arma::norm(D.col(j) - X.col(i));
     }

@@ -486,7 +486,7 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
     // Assemble the state probability for this element.
     // Given that we are in state j, we use state with the highest probability
     // of being the previous state.
-    for (size_t j = 0; j < logTransition.n_rows; j++)
+    for (size_t j = 0; j < logTransition.n_rows; ++j)
     {
       arma::vec prob = logStateProb.col(t - 1) + logTransition.row(j).t();
       logStateProb(j, t) = prob.max(index) +
@@ -606,7 +606,7 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
   // Now compute the probabilities for each successive observation.
   for (size_t t = 1; t < dataSeq.n_cols; t++)
   {
-    for (size_t j = 0; j < logTransition.n_rows; j++)
+    for (size_t j = 0; j < logTransition.n_rows; ++j)
     {
       // The forward probability of state j at time t is the sum over all states
       // of the probability of the previous state transitioning to the current
@@ -639,7 +639,7 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
   // Now step backwards through all other observations.
   for (size_t t = dataSeq.n_cols - 2; t + 1 > 0; t--)
   {
-    for (size_t j = 0; j < logTransition.n_rows; j++)
+    for (size_t j = 0; j < logTransition.n_rows; ++j)
     {
       // The backward probability of state j at time t is the sum over all state
       // of the probability of the next state having been a transition from the

@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
 
   for (size_t i = 0; i < dimension; ++i)
   {
-    for (size_t j = 0; j < classes; j++)
+    for (size_t j = 0; j < classes; ++j)
     {
       calcMat(i, j) = nbcTest.Means()(i, j);
       calcMat(i + dimension, j) = nbcTest.Variances()(i, j);
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
     calcMat(2 * dimension, i) = nbcTest.Probabilities()(i);
 
   for (size_t i = 0; i < calcMat.n_rows; ++i)
-    for (size_t j = 0; j < classes; j++)
+    for (size_t j = 0; j < classes; ++j)
       BOOST_REQUIRE_CLOSE(trainRes(i, j) + .00001, calcMat(i, j), 0.01);
 
   arma::mat testData;
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
 
   for (size_t i = 0; i < dimension; ++i)
   {
-    for (size_t j = 0; j < classes; j++)
+    for (size_t j = 0; j < classes; ++j)
     {
       calcMat(i, j) = nbcTest.Means()(i, j);
       calcMat(i + dimension, j) = nbcTest.Variances()(i, j);
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
     calcMat(2 * dimension, i) = nbcTest.Probabilities()(i);
 
   for (size_t i = 0; i < calcMat.n_cols; ++i)
-    for (size_t j = 0; j < classes; j++)
+    for (size_t j = 0; j < classes; ++j)
       BOOST_REQUIRE_CLOSE(trainRes(j, i) + .00001, calcMat(j, i), 0.01);
 
   arma::mat testData;

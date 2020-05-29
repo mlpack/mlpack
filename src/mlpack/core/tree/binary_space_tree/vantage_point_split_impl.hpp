@@ -64,7 +64,7 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
     // candidate using these random samples.
     distances.set_size(samples.n_elem);
 
-    for (size_t j = 0; j < samples.n_elem; j++)
+    for (size_t j = 0; j < samples.n_elem; ++j)
       distances[j] = metric.Evaluate(data.col(vantagePointCandidates[i]),
           data.col(samples[j]));
 
