@@ -39,6 +39,7 @@
 #include <mlpack/methods/lsh/lsh_search.hpp>
 #include <mlpack/methods/decision_stump/decision_stump.hpp>
 #include <mlpack/methods/lars/lars.hpp>
+#include <mlpack/methods/bayesian_linear_regression/bayesian_linear_regression.hpp>
 #include <mlpack/methods/ann/rbm/rbm.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 
@@ -1602,6 +1603,36 @@ BOOST_AUTO_TEST_CASE(ssRBMTest)
   CheckMatrices(Rbm.Weight(), RbmXml.Weight());
   CheckMatrices(Rbm.Weight(), RbmText.Weight());
   CheckMatrices(Rbm.Weight(), RbmBinary.Weight());
+}
+
+// Make sure serialization works for BayesianLinearRegression.
+BOOST_AUTO_TEST_CASE(BayesianLinearRegressionTest)
+{
+  using namespace mlpack::regression;
+
+  // Create a dataset.
+  arma::mat X = arma::randn(75, 250);
+  arma::vec omega = arma::randn(75, 1);
+  arma::rowvec y = omega.t() * X;
+
+  BayesianLinearRegression blr(false, false);
+  blr.Train(X, y);
+  arma::vec omegaOpt = blr.Omega();
+
+  // Now, serialize.
+  BayesianLinearRegression xmlBlr(false, false), binaryBlr(false, false),
+    textBlr(false, false);
+
+  SerializeObjectAll(blr, xmlBlr, binaryBlr, textBlr);
+
+  // Now, check that predictions are the same.
+  arma::rowvec pred, xmlPred, textPred, binaryPred;
+  blr.Predict(X, pred);
+  xmlBlr.Predict(X, xmlPred);
+  textBlr.Predict(X, textPred);
+  binaryBlr.Predict(X, binaryPred);
+
+  CheckMatrices(pred, xmlPred, textPred, binaryPred);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

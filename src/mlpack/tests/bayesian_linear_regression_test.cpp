@@ -130,9 +130,9 @@ BOOST_AUTO_TEST_CASE(PredictiveUncertainties)
 
   for (size_t i = 0; i < matX.n_cols; i++)
     BOOST_REQUIRE_GT(std[i], estStd);
-  
+
   // Check that the estimated variance is close to 1.
-  BOOST_REQUIRE_CLOSE(estStd, 1, 10);
+  BOOST_REQUIRE_CLOSE(estStd, 1, 20);
 }
 
 // Check the solution is equal to the classical ridge.
