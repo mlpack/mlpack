@@ -1611,12 +1611,12 @@ BOOST_AUTO_TEST_CASE(BayesianLinearRegressionTest)
   using namespace mlpack::regression;
 
   // Create a dataset.
-  arma::mat X = arma::randn(75, 250);
+  arma::mat matX = arma::randn(75, 250);
   arma::vec omega = arma::randn(75, 1);
-  arma::rowvec y = omega.t() * X;
+  arma::rowvec y = omega.t() * matX;
 
   BayesianLinearRegression blr(false, false);
-  blr.Train(X, y);
+  blr.Train(matX, y);
   arma::vec omegaOpt = blr.Omega();
 
   // Now, serialize.
@@ -1627,10 +1627,10 @@ BOOST_AUTO_TEST_CASE(BayesianLinearRegressionTest)
 
   // Now, check that predictions are the same.
   arma::rowvec pred, xmlPred, textPred, binaryPred;
-  blr.Predict(X, pred);
-  xmlBlr.Predict(X, xmlPred);
-  textBlr.Predict(X, textPred);
-  binaryBlr.Predict(X, binaryPred);
+  blr.Predict(matX, pred);
+  xmlBlr.Predict(matX, xmlPred);
+  textBlr.Predict(matX, textPred);
+  binaryBlr.Predict(matX, binaryPred);
 
   CheckMatrices(pred, xmlPred, textPred, binaryPred);
 }

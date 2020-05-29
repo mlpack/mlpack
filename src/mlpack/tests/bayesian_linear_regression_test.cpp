@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(TestCenterDataTrueScaleDataTrue)
 {
   arma::mat matX;
   arma::rowvec y;
-  size_t nDims = 30, nPoints = 100;
+  size_t nDims = 5, nPoints = 100;
   GenerateProblem(matX, y, nPoints, nDims, 0.5);
 
   BayesianLinearRegression estimator(true, true);
@@ -96,6 +96,28 @@ BOOST_AUTO_TEST_CASE(TestCenterDataTrueScaleDataTrue)
   BOOST_REQUIRE_SMALL((double) abs(sum(estimator.DataOffset() - xMean)), 1e-6);
   BOOST_REQUIRE_SMALL((double) abs(sum(estimator.DataScale() - xStd)), 1e-6);
   BOOST_REQUIRE_CLOSE(estimator.ResponsesOffset(), yMean, 1e-6);
+}
+
+// Make sure a model with center ans scale option set is different than a model
+// without it set.
+BOOST_AUTO_TEST_CASE(OptionsMakeModelDifferent)
+{
+  arma::mat matX;
+  arma::rowvec y;
+  size_t nDims = 10, nPoints = 100;
+  GenerateProblem(matX, y, nPoints, nDims, 0.5);
+
+  BayesianLinearRegression blr(false, false), blrC(true, false),
+      blrCS(true, true);
+  
+  blr.Train(matX, y);
+  blrC.Train(matX, y);
+  blrCS.Train(matX, y);
+  
+  for (size_t i = 0; i < nDims; ++i)
+    BOOST_REQUIRE((blr.Omega()(i) != blrC.Omega()(i)) && 
+                  (blr.Omega()(i) != blrCS.Omega()(i)) &&
+                  (blrC.Omega()(i) != blrCS.Omega()(i)));
 }
 
 // Check that Train() does not fail with two colinear vectors.
@@ -143,16 +165,21 @@ BOOST_AUTO_TEST_CASE(EqualtoRidge)
 
   GenerateProblem(matX, y, 100, 10, 1);
 
-  BayesianLinearRegression bayesLinReg(false, false);
-  bayesLinReg.Train(matX, y);
+  BayesianLinearRegression blr(false, false);
+  blr.Train(matX, y);
 
-  LinearRegression classicalRidge(matX,
-                                  y,
-                                  bayesLinReg.Alpha() / bayesLinReg.Beta(),
-                                  false);
-  double equalSol = arma::sum(bayesLinReg.Omega()
-                              - classicalRidge.Parameters());
-  BOOST_REQUIRE(equalSol < 1e-5);
+  LinearRegression ridge(matX,
+                         y,
+                         blr.Alpha() / blr.Beta(),
+                         false);
+
+  arma::rowvec blrPred, ridgePred;
+  blr.Predict(matX, blrPred);
+  ridge.Predict(matX, ridgePred);
+
+  // Check the predictions are close enough between ridge an or tested model.
+  for (size_t i = 0; i < y.size(); ++i)
+    BOOST_REQUIRE_CLOSE(blrPred[i], ridgePred[i], 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
