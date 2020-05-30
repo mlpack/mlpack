@@ -360,23 +360,18 @@ template<typename SortPolicy>
 template<typename Archive>
 void NSModel<SortPolicy>::serialize(Archive& ar, const unsigned int version)
 {
-  ar & BOOST_SERIALIZATION_NVP(treeType);
-  // Backward compatibility: older versions of NSModel didn't include these
-  // parameters.
-  if (version > 0)
-  {
-    ar & BOOST_SERIALIZATION_NVP(leafSize);
-    ar & BOOST_SERIALIZATION_NVP(tau);
-    ar & BOOST_SERIALIZATION_NVP(rho);
-  }
-  ar & BOOST_SERIALIZATION_NVP(randomBasis);
-  ar & BOOST_SERIALIZATION_NVP(q);
+  ar(CEREAL_NVP(treeType));
+  ar(CEREAL_NVP(leafSize));
+  ar(CEREAL_NVP(tau));
+  ar(CEREAL_NVP(rho));
+  ar(CEREAL_NVP(randomBasis));
+  ar(CEREAL_NVP(q));
 
   // This should never happen, but just in case, be clean with memory.
   if (Archive::is_loading::value)
     boost::apply_visitor(DeleteVisitor(), nSearch);
 
-  ar & BOOST_SERIALIZATION_NVP(nSearch);
+  ar(CEREAL_NVP(nSearch));
 }
 
 //! Expose the dataset.
