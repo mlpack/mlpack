@@ -44,7 +44,6 @@ class MaxVarianceNewCluster
    * @param metric The Metric to use.
    * @param iteration Number of iteration.
    *
-   * @return Number of points changed.
    */
   template<typename MetricType, typename MatType>
   void EmptyCluster(const MatType& data,
