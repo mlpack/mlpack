@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 
   // Set up DQN agent.
   QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy)>
-      agent(std::move(config), std::move(model), std::move(policy),
+      agent(std::move(config), model, std::move(policy),
       std::move(replayMethod));
 
   arma::running_stat<double> averageReturn;
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
   // Set up DQN agent.
   QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy),
       decltype(replayMethod)>
-      agent(std::move(config), std::move(model), std::move(policy),
+      agent(std::move(config), model, std::move(policy),
           std::move(replayMethod));
 
   arma::running_stat<double> averageReturn;
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
 
     // Set up the DQN agent.
     QLearning<CartPole, decltype(model), RMSPropUpdate, decltype(policy)>
-        agent(std::move(config), std::move(model), std::move(policy),
+        agent(std::move(config), model, std::move(policy),
         std::move(replayMethod));
 
     arma::running_stat<double> averageReturn;
@@ -252,7 +252,7 @@ BOOST_AUTO_TEST_CASE(AcrobotWithDQN)
 
     // Set up DQN agent.
     QLearning<Acrobot, decltype(model), AdamUpdate, decltype(policy)>
-        agent(std::move(config), std::move(model), std::move(policy),
+        agent(std::move(config), model, std::move(policy),
         std::move(replayMethod));
 
     arma::running_stat<double> averageReturn;
@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE(MountainCarWithDQN)
 
     // Set up DQN agent.
     QLearning<MountainCar, decltype(model), AdamUpdate, decltype(policy)>
-        agent(std::move(config), std::move(model), std::move(policy),
+        agent(std::move(config), model, std::move(policy),
         std::move(replayMethod));
 
     arma::running_stat<double> averageReturn;
@@ -399,7 +399,7 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
 
     // Set up DQN agent.
     QLearning<DoublePoleCart, decltype(model), AdamUpdate, decltype(policy)>
-        agent(std::move(config), std::move(model), std::move(policy),
+        agent(std::move(config), model, std::move(policy),
         std::move(replayMethod));
 
     size_t episodes = 0;
