@@ -1,10 +1,12 @@
 macro (not_found_return message)
   message(STATUS "${message}")
-  macro (add_go_binding name)
-    # Do nothing.
-  endmacro ()
+  if (NOT BUILD_GO_SHLIB)
+    macro (add_go_binding name)
+      # Do nothing.
+    endmacro ()
 
-  return()
+    return()
+  endif()
 endmacro ()
 
 # If we are not supposed to make Go bindings, define the macro so it does

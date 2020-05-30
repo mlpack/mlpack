@@ -123,7 +123,7 @@ mlpack.
 @section go_quickstart_movierecs Using mlpack for movie recommendations
 
 In this example, we'll train a collaborative filtering model using mlpack's
-<tt><a href="https://www.mlpack.org/doc/mlpack-git/go_documentation.html#cf">cf()</a></tt> method.  We'll train this on the MovieLens dataset from
+<tt><a href="https://www.mlpack.org/doc/mlpack-git/go_documentation.html#cf">Cf()</a></tt> method.  We'll train this on the MovieLens dataset from
 https://grouplens.org/datasets/movielens/, and then we'll use the model that we
 train to give recommendations.
 
