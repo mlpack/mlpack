@@ -88,7 +88,7 @@ PROGRAM_INFO(
  PARAM_UMATRIX_OUT("neighbors", "Matrix to output neighbors into.", "n");
 
  // The option exists to load or save models.
-// PARAM_MODEL_IN(KNNModel, "input_model", "Pre-trained kNN model.", "m");
+  PARAM_MODEL_IN(KNNModel, "input_model", "Pre-trained kNN model.", "m");
 
  // The user may specify a query file of query points and a number of nearest
  // neighbors to search for.
@@ -117,11 +117,10 @@ mlpackMain()
   // ReportIgnoredParam({ { "k", false } }, "neighbors");
   // ReportIgnoredParam({ { "k", false } }, "distances");
   // ReportIgnoredParam({ { "k", false } }, "query");
- 
-    KNNModel* knn = new KNNModel();
+  KNNModel* knn;
 
   // Load the model from file.
-  // knn = CLI::GetParam<KNNModel*>("input_model");
+//  knn = CLI::GetParam<KNNModel*>("input_model");
 
   // // Adjust search mode.
   // // Use the dual tree mode as a default mode  

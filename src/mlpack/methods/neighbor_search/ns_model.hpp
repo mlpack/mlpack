@@ -23,6 +23,10 @@
 #include <boost/variant.hpp>
 #include "neighbor_search.hpp"
 
+#include <cereal/cereal.hpp>
+#include <cereal/archives/xml.hpp>
+#include <cereal/archives/binary.hpp>
+
 namespace mlpack {
 namespace neighbor {
 
@@ -315,21 +319,21 @@ class NSModel
    * @param randomBasis Whether or not to project the points onto a random basis
    *      before searching.
    */
-  NSModel(TreeTypes treeType = TreeTypes::KD_TREE, bool randomBasis = false);
+  explicit NSModel(TreeTypes treeType = TreeTypes::KD_TREE, bool randomBasis = false);
 
   /**
    * Copy the given NSModel.
    *
    * @param other Model to copy.
    */
-  NSModel(const NSModel& other);
+  explicit NSModel(const NSModel& other);
 
   /**
    * Take ownership of the given NSModel.
    *
    * @param other Model to take ownership of.
    */
-  NSModel(NSModel&& other);
+ explicit NSModel(NSModel&& other);
 
   /**
    * Copy the given NSModel.
