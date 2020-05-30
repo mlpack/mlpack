@@ -31,13 +31,13 @@ QLearning<
   PolicyType,
   ReplayType
 >::QLearning(TrainingConfig config,
-             NetworkType network,
+             NetworkType& network,
              PolicyType policy,
              ReplayType replayMethod,
              UpdaterType updater,
              EnvironmentType environment):
     config(std::move(config)),
-    learningNetwork(std::move(network)),
+    learningNetwork(network),
     updater(std::move(updater)),
     #if ENS_VERSION_MAJOR >= 2
     updatePolicy(NULL),

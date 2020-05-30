@@ -78,7 +78,7 @@ class QLearning
    * @param environment Reinforcement learning task.
    */
   QLearning(TrainingConfig config,
-            NetworkType network,
+            NetworkType& network,
             PolicyType policy,
             ReplayType replayMethod,
             UpdaterType updater = UpdaterType(),
@@ -141,7 +141,7 @@ class QLearning
   TrainingConfig config;
 
   //! Locally-stored learning network.
-  NetworkType learningNetwork;
+  NetworkType& learningNetwork;
 
   //! Locally-stored target network.
   NetworkType targetNetwork;

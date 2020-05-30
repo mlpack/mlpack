@@ -58,6 +58,27 @@ Sequential(const bool model, const bool ownsLayers) :
 
 template <typename InputDataType, typename OutputDataType, bool Residual,
           typename... CustomLayers>
+void Sequential<InputDataType, OutputDataType, Residual, CustomLayers...>::
+operator = (const Sequential& layer)
+{
+  model = layer.model;
+  reset = layer.reset;
+  width = layer.width;
+  height = layer.height;
+  ownsLayers = layer.ownsLayers;
+  parameters = layer.parameters;
+  network.clear();
+  // Build new layers according to source network.
+  for (size_t i = 0; i < layer.network.size(); ++i)
+  {
+    this->network.push_back(boost::apply_visitor(copyVisitor,
+        layer.network[i]));
+  }
+}
+
+
+template <typename InputDataType, typename OutputDataType, bool Residual,
+          typename... CustomLayers>
 Sequential<
     InputDataType, OutputDataType, Residual, CustomLayers...>::~Sequential()
 {

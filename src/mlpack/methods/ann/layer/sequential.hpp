@@ -90,6 +90,9 @@ class Sequential
   //! Copy constructor.
   Sequential(const Sequential&);
 
+  //! Copy assignment operator.
+  void operator = (const Sequential& layer);
+
   //! Destroy the Sequential object.
   ~Sequential();
 
@@ -228,6 +231,9 @@ class Sequential
 
   //! Locally-stored output height visitor.
   OutputHeightVisitor outputHeightVisitor;
+
+  //! Locally-stored copy visitor
+  CopyVisitor<CustomLayers...> copyVisitor;
 
   //! The input width.
   size_t width;
