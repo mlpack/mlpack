@@ -16,6 +16,10 @@
 #include <mlpack/core/util/sfinae_utility.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <boost/archive/xml_oarchive.hpp>
+
+#include <cereal/archives/xml.hpp>
+#include <cereal/cereal.hpp>
+
 #include <type_traits>
 
 namespace mlpack {
@@ -30,12 +34,16 @@ HAS_EXACT_METHOD_FORM(serialize, HasSerializeCheck);
 template<typename T>
 struct HasSerializeFunction
 {
+  // template<typename C>
+  // using NonStaticSerialize = void(C::*)(boost::archive::xml_oarchive&,
+  //                                       const unsigned int);
+  // template<typename /* C */>
+  // using StaticSerialize = void(*)(boost::archive::xml_oarchive&,
+  //                                 const unsigned int);
   template<typename C>
-  using NonStaticSerialize = void(C::*)(boost::archive::xml_oarchive&,
-                                        const unsigned int);
+  using NonStaticSerialize = void(C::*)(cereal::XMLOutputArchive&);
   template<typename /* C */>
-  using StaticSerialize = void(*)(boost::archive::xml_oarchive&,
-                                  const unsigned int);
+  using StaticSerialize = void(*)(cereal::XMLOutputArchive&);
 
   static const bool value = HasSerializeCheck<T, NonStaticSerialize>::value ||
                             HasSerializeCheck<T, StaticSerialize>::value;
