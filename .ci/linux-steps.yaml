@@ -23,8 +23,9 @@ steps:
 
     sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost1.70-dev libarmadillo-dev xz-utils
 
-    sudo apt update
     sudo add-apt-repository ppa:deadsnakes/ppa
+    sudo apt-get update
+    sudo apt update
     sudo apt install python3.7
     sudo apt-get install -y --allow-unauthenticated python3-pip python3-numpy
 
