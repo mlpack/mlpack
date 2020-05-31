@@ -22,7 +22,7 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @f{eqnarray*}{
  * f(x) = 1 / (1 + x^2) \\
- * f'(x) = -2*x /(1 + x^2)^2 \\
+ * f'(x) = -2 * x / (1 + x^2)^2 \\
  * @f}
  */
 class InvQuadFunction

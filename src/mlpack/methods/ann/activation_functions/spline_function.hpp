@@ -22,7 +22,7 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @f{eqnarray*}{
  * f(x) = x^2 * log(1 + x) \\
- * f'(x) = 2*x * log(1 + x) + x^2/(1 + x)\\
+ * f'(x) = 2 * x * log(1 + x) + x^2 / (1 + x)\\
  * @f}
  */
 class SplineFunction

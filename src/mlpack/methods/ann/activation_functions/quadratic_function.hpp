@@ -22,10 +22,10 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @f{eqnarray*}{
  * f(x) = x^2 \\
- * f'(x) = 2*x \\
+ * f'(x) = 2 * x \\
  * @f}
  */
-class QuadFunction
+class QuadraticFunction
 {
  public:
   /**

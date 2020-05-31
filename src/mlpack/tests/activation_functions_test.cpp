@@ -956,7 +956,7 @@ BOOST_AUTO_TEST_CASE(InverseQuadraticFunctionTest)
 
   CheckActivationCorrect<InvQuadFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<InvQuadFunction>(desiredActivations,
-                                        desiredDerivatives);
+                                          desiredDerivatives);
 }
 
 /**
@@ -973,8 +973,8 @@ BOOST_AUTO_TEST_CASE(QuadraticFunctionTest)
                                          20080 2 2 \
                                          8 0");
 
-  CheckActivationCorrect<QuadFunction>(activationData, desiredActivations);
-  CheckDerivativeCorrect<QuadFunction>(desiredActivations,
+  CheckActivationCorrect<QuadraticFunction>(activationData, desiredActivations);
+  CheckDerivativeCorrect<QuadraticFunction>(desiredActivations,
                                        desiredDerivatives);
 }
 
@@ -996,7 +996,7 @@ BOOST_AUTO_TEST_CASE(SplineFunctionTest)
 
   CheckActivationCorrect<SplineFunction>(activationData1, desiredActivations);
   CheckDerivativeCorrect<SplineFunction>(desiredActivations,
-                                          desiredDerivatives);
+                                         desiredDerivatives);
 }
 
 /**
@@ -1015,7 +1015,7 @@ BOOST_AUTO_TEST_CASE(MultiquadFunctionTest)
 
   CheckActivationCorrect<MultiQuadFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<MultiQuadFunction>(desiredActivations,
-                                          desiredDerivatives);
+                                            desiredDerivatives);
 }
 
 
@@ -1037,7 +1037,7 @@ BOOST_AUTO_TEST_CASE(Poisson1FunctionTest)
 
   CheckActivationCorrect<Poisson1Function>(activationData1, desiredActivations);
   CheckDerivativeCorrect<Poisson1Function>(desiredActivations,
-                                          desiredDerivatives);
+                                           desiredDerivatives);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
