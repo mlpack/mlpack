@@ -3715,4 +3715,28 @@ BOOST_AUTO_TEST_CASE(AdaptiveMeanPoolingTestCase)
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 1.5);
 }
 
+BOOST_AUTO_TEST_CASE(VAEModelTest)
+{
+  Sequential<>* decoder = new Sequential<>();
+
+    decoder->Add<Linear<>>(20, 10 * 10 * 24);
+    decoder->Add<LeakyReLU<>>();
+
+    decoder->Add<TransposedConvolution<>>(
+        24,  // Number of input activation maps.
+        16,  // Number of output activation maps.
+        5,   // Filter width.
+        5,   // Filter height.
+        1,   // Stride along width.
+        1,   // Stride along height.
+        0,   // Padding width.
+        0,   // Padding height.
+        10,  // Input width.
+        10); // Input height.
+
+    decoder->Add<LeakyReLU<>>();
+    decoder->Add<TransposedConvolution<>>(16, 1, 15, 15,
+        1, 1, 1, 1, 14, 14);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
