@@ -74,7 +74,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
     {
       std::string estr = "FNN::";
                   estr += functionName;
-                  estr += "(): the first layer of the network expects ";
+                  estr += ": the first layer of the network expects ";
                   estr += std::to_string(layerInSize);
                   estr += " rows, but the input has ";
                   estr += std::to_string(numRows);
@@ -170,7 +170,7 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::mat responses,
     CallbackTypes&&... callbacks)
 {
-  #ifndef NDEBUG
+  #ifdef DEBUG
   CheckInputDim(predictors.n_rows, "Train()");
   #endif
 
@@ -266,7 +266,7 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::mat predictors, arma::mat& results)
 {
-  #ifndef NDEBUG
+  #ifdef DEBUG
   CheckInputDim(predictors.n_rows, "Predict()");
   #endif
 

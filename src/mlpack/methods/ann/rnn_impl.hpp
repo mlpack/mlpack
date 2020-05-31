@@ -82,11 +82,12 @@ WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const
               << "number of iterations to be at least equal "
               << "to the number of points of your dataset "
               << "(" << samples << ")." << std::endl;
-    }
   }
 }
 
 
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
     CheckInputDim(size_t numRows, const char *functionName)
 {
@@ -105,7 +106,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
     {
       std::string estr = "RNN::";
                   estr += functionName;
-                  estr += "(): the first layer of the network expects ";
+                  estr += ": the first layer of the network expects ";
                   estr += std::to_string(layerInSize);
                   estr += " rows, but the input has ";
                   estr += std::to_string(numRows);
@@ -138,7 +139,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 {
   numFunctions = responses.n_cols;
 
-  #ifndef NDEBUG
+  #ifdef DEBUG
   CheckInputDim(predictors.n_rows, "Train()");
   #endif
 
@@ -185,7 +186,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 {
   numFunctions = responses.n_cols;
 
-  #ifndef NDEBUG
+  #ifdef DEBUG
   CheckInputDim(predictors.n_rows, "Train()");
   #endif
 
@@ -219,7 +220,7 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::cube predictors, arma::cube& results, const size_t batchSize)
 {
-  #ifndef NDEBUG
+  #ifdef DEBUG
   CheckInputDim(predictors.n_rows, "Predict()");
   #endif
 
