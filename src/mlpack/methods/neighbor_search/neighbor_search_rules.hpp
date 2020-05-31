@@ -139,6 +139,24 @@ class NeighborSearchRules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
+  /**
+   * Checks whether all the neighbors of the given query point have been found.
+   * This is usefull when the leaf size of the spill tree is less than the the
+   * number of nearest neighbors to be found.
+   *
+   * @param queryIndex Index of query point.
+   */
+  bool HasFoundAllNeighbors(const size_t queryIndex);
+
+  /**
+   * See if reference point is already present in the neighbor list of the 
+   * query point.
+   *
+   * @param queryIndex Index of query point.
+   * @param referencePoint Index of the reference point.
+   */
+  bool InNeighborList(const size_t queryIndex, const size_t referencePoint);
+
   //! Get the number of base cases that have been performed.
   size_t BaseCases() const { return baseCases; }
   //! Modify the number of base cases that have been performed.

@@ -52,7 +52,14 @@ SpillSingleTreeTraverser<RuleType, Defeatist>::Traverse(
   if (referenceNode.IsLeaf())
   {
     for (size_t i = 0; i < referenceNode.NumPoints(); ++i)
-      rule.BaseCase(queryIndex, referenceNode.Point(i));
+    {
+      size_t referenceIndex = referenceNode.Point(i);
+
+      // Don't run the basecase for the reference point if it is already present in
+      // the neighbor list of the querypoint.
+      if(!rule.InNeighborList(queryIndex, referenceIndex))
+        rule.BaseCase(queryIndex, referenceIndex);
+    }
   }
   else
   {
@@ -61,7 +68,14 @@ SpillSingleTreeTraverser<RuleType, Defeatist>::Traverse(
       // If referenceNode is a overlapping node we do defeatist search.
       size_t bestChild = rule.GetBestChild(queryIndex, referenceNode);
       Traverse(queryIndex, referenceNode.Child(bestChild));
-      ++numPrunes;
+
+      // If All the neighbors have not been found recurse into the other child.
+      // This is the case when leaf size is less than the number of nearest
+      // neighbors to be found.
+      if(!rule.HasFoundAllNeighbors(queryIndex))
+        Traverse(queryIndex, referenceNode.Child(!bestChild));
+      else
+        ++numPrunes;
     }
     else
     {
