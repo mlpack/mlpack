@@ -3,6 +3,8 @@
   * Added `Multi Label Soft Margin Loss` loss function for neural networks
    (#2345).
 
+  * Storing and adding accessor method for action in q_learning (#2413).
+
   * Added accessor methods for ANN layers (#2321).
 
   * Addition of `Elliot` activation function (#2268).
@@ -17,6 +19,13 @@
   * Documentation fixes to resolve Doxygen warnings and issues (#2400).
 
   * Add Load and Save of Sparse Matrix (#2344).
+
+  * Add Intersection over Union (IoU) metric for bounding boxes (#2402).
+
+  * Add Non Maximal Supression (NMS) metric for bounding boxes (#2410).
+
+  * Fix `no_intercept` and probability computation for linear SVM bindings
+    (#2419).
 
 ### mlpack 3.3.1
 ###### 2020-04-29

@@ -124,8 +124,8 @@ static void mlpackMain()
       "no results will be saved");
   if (CLI::HasParam("k"))
   {
-    RequireAtLeastOnePassed({ "query", "reference" }, true, "must pass set to "
-        "search");
+    RequireAtLeastOnePassed({ "query", "reference", "input_model" }, true,
+        "must pass set to search");
   }
 
   if (CLI::HasParam("input_model") && CLI::HasParam("k") &&
@@ -167,7 +167,7 @@ static void mlpackMain()
         numTables << " tables (L) with default hash width." << endl;
   else
     Log::Info << "Using LSH with " << numProj << " projections (K) and " <<
-        numTables << " tables (L) with hash width(r): " << hashWidth << endl;
+        numTables << " tables (L) with hash width (r): " << hashWidth << endl;
 
   LSHSearch<>* allkann;
   if (CLI::HasParam("reference"))

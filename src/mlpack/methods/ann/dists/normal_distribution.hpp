@@ -23,7 +23,7 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the Normal Distribution function.
  *
  * Normal distribution is a function which accepts a mean and a standard deviation
- * term and creates a probablity distribution out of it.
+ * term and creates a probability distribution out of it.
  * 
  * @tparam DataType Type of the input data. (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
