@@ -60,7 +60,7 @@ double SSIMIndex::Evaluate(DataType const& image,
       gaussianWindow, "same") - arma::square(meanImage);
   
   // Calulate covariance of image and reference.
-  arma::mat covarianceReferenceImage = arma::conv2(reference%image,
+  arma::mat covarianceReferenceImage = arma::conv2(reference % image,
       gaussianWindow, "same") - meanReference%meanImage;
 
   // Calculate Dynamic Range.
