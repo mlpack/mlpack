@@ -73,8 +73,8 @@ double SSIMIndex::Evaluate(DataType const& image,
   double regularisationConstant2 = 0.0009 * dynamicRange * dynamicRange;
 
   // Calculate local SSIM index.
-  arma::mat localSSIM = ((2*meanReference%meanImage + regularisationConstant1) %
-      (2*covarianceReferenceImage + regularisationConstant2)) /
+  arma::mat localSSIM = ((2 * meanReference%meanImage + regularisationConstant1) %
+      (2 * covarianceReferenceImage + regularisationConstant2)) /
       ((arma::square(meanReference) + arma::square(meanImage) +
        regularisationConstant1) % (varianceReference + varianceImage +
       regularisationConstant2));
