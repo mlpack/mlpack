@@ -1,5 +1,5 @@
 /**
- * @file multilabel_softmargin_loss_impl.hpp
+ * @file methods/ann/loss_functions/multilabel_softmargin_loss_impl.hpp
  * @author Anjishnu Mukherjee
  *
  * Implementation of the Multi Label Soft Margin Loss function.
