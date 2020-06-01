@@ -1419,7 +1419,7 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
 
     // Compute output of Concat<> layer.
     arma::Row<size_t> inputSize{outputWidth, outputHeight, outputChannel};
-    Concat<> module(inputSize, axis);
+    Concat<> module(inputSize, axis, false);
     module.Add(moduleA);
     module.Add(moduleB);
     module.Forward(input, output);
@@ -1429,6 +1429,8 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
     // Verify if the output reshaped to cubes are similar.
     CheckMatrices(concatOut, calculatedOut, 1e-12);
   }
+  delete moduleA;
+  delete moduleB;
 }
 
 /**
