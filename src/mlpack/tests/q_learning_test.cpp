@@ -19,6 +19,7 @@
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/reinforcement_learning/q_learning.hpp>
 #include <mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp>
+#include <mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
@@ -440,5 +441,131 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
 
   BOOST_REQUIRE_EQUAL(success, true);
 }
+
+//! Test Dueling DQN in Cart Pole task.
+BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQN)
+{
+  // Set up the network.
+  DuelingDQN<> model(4, 64, 64, 2);
+
+  // Set up the policy and replay method.
+  GreedyPolicy<CartPole> policy(1.0, 2000, 0.1, 0.99);
+  RandomReplay<CartPole> replayMethod(32, 10000);
+
+  TrainingConfig config;
+  config.StepSize() = 0.01;
+  config.Discount() = 0.99;
+  config.TargetNetworkSyncInterval() = 100;
+  config.ExplorationSteps() = 100;
+  config.DoubleQLearning() = false;
+  config.StepLimit() = 200;
+
+  // Set up DQN agent.
+  QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy)>
+      agent(std::move(config), model, std::move(policy),
+      std::move(replayMethod));
+
+  arma::running_stat<double> averageReturn;
+  size_t episodes = 0;
+  bool converged = true;
+  while (true)
+  {
+    double episodeReturn = agent.Episode();
+    averageReturn(episodeReturn);
+    episodes += 1;
+
+    if (episodes > 1000)
+    {
+      Log::Debug << "Cart Pole with Dueling DQN failed." << std::endl;
+      converged = false;
+      break;
+    }
+
+    /**
+     * Reaching running average return 40 is enough to show it works.
+     * For the speed of the test case, a high criterion is not set.
+     */
+    Log::Debug << "Average return: " << averageReturn.mean()
+        << " Episode return: " << episodeReturn << std::endl;
+    if (averageReturn.mean() > 40)
+    {
+      agent.Deterministic() = true;
+      arma::running_stat<double> testReturn;
+      for (size_t i = 0; i < 10; ++i)
+        testReturn(agent.Episode());
+
+      Log::Debug << "Average return in deterministic test: "
+          << testReturn.mean() << std::endl;
+      break;
+    }
+  }
+  // To check if the action returned by the agent is not nan and is finite.
+  BOOST_REQUIRE(std::isfinite(double(agent.Action())));
+  BOOST_REQUIRE(converged);
+}
+
+
+//! Test Dueling DQN in Cart Pole task with Prioritized Replay.
+BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQNPrioritizedReplay)
+{
+  // Set up the network.
+  DuelingDQN<> model(4, 64, 64, 2);
+
+  // Set up the policy and replay method.
+  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
+  PrioritizedReplay<CartPole> replayMethod(32, 10000, 0.6);
+
+  TrainingConfig config;
+  config.StepSize() = 0.01;
+  config.Discount() = 0.99;
+  config.TargetNetworkSyncInterval() = 100;
+  config.ExplorationSteps() = 100;
+  config.DoubleQLearning() = false;
+  config.StepLimit() = 200;
+
+  // Set up DQN agent.
+  QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy),
+      decltype(replayMethod)>
+      agent(std::move(config), model, std::move(policy),
+          std::move(replayMethod));
+
+  arma::running_stat<double> averageReturn;
+  size_t episodes = 0;
+  bool converged = true;
+  while (true)
+  {
+    double episodeReturn = agent.Episode();
+    averageReturn(episodeReturn);
+    episodes += 1;
+
+    if (episodes > 1000)
+    {
+      Log::Debug << "Cart Pole with Dueling DQN failed." << std::endl;
+      converged = false;
+      break;
+    }
+
+    /**
+     * Reaching running average return 40 is enough to show it works.
+     * For the speed of the test case, I didn't set high criterion.
+     */
+    Log::Debug << "Average return: " << averageReturn.mean()
+        << " Episode return: " << episodeReturn << std::endl;
+    if (averageReturn.mean() > 40)
+    {
+      agent.Deterministic() = true;
+      arma::running_stat<double> testReturn;
+      for (size_t i = 0; i < 10; ++i)
+        testReturn(agent.Episode());
+
+      Log::Debug << "Average return in deterministic test: "
+          << testReturn.mean() << std::endl;
+      break;
+    }
+  }
+
+  BOOST_REQUIRE(converged);
+}
+
 
 BOOST_AUTO_TEST_SUITE_END();
