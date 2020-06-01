@@ -1419,7 +1419,7 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
 
     // Compute output of Concat<> layer.
     arma::Row<size_t> inputSize{outputWidth, outputHeight, outputChannel};
-    Concat<> module(inputSize, axis, false);
+    Concat<> module(inputSize, axis, true);
     module.Add(moduleA);
     module.Add(moduleB);
     module.Forward(input, output);
