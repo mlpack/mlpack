@@ -40,7 +40,10 @@ MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Forward(
     const InputType& input, const TargetType& target)
 {
   if (!weighted)
+  {
     classWeights.ones(1, input.n_cols);
+    weighted = true;
+  }
 
   InputType logSigmoid = arma::log((1 / (1 + arma::exp(-input))));
   InputType logSigmoidNeg = arma::log(1 / (1 + arma::exp(input)));
