@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added Dueling DQN to q_networks, Noisy linear layer to ann/layer
+    and Empty loss to ann/loss_functions (#2414).
+
   * Storing and adding accessor method for action in q_learning (#2413).
 
   * Added accessor methods for ANN layers (#2321).
