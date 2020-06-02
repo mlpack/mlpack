@@ -528,6 +528,50 @@ TEST_CASE("GradientNoisyLinearLayerTest", "[ANNLayerTest]")
 }
 
 /**
+ * Linear3D layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientLinear3DLayerTest)
+{
+  // Linear3D function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      size_t nSeq = 10, nF = 16;
+      size_t inSize = nF, outSize = 8;
+      input = arma::randu(nSeq * nF, 1);
+      target = arma::ones(1, 1);
+
+      model = new FFN<MeanSquaredError<>, RandomInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear3D<> >(inSize, outSize);
+      model->Add<Softmax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<MeanSquaredError<>, RandomInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
  * Simple linear no bias module test.
  */
 TEST_CASE("SimpleLinearNoBiasLayerTest", "[ANNLayerTest]")

@@ -44,6 +44,7 @@
 #include "leaky_relu.hpp"
 #include "linear.hpp"
 #include "linear_no_bias.hpp"
+#include "linear3d.hpp"
 #include "log_softmax.hpp"
 #include "lookup.hpp"
 #include "lstm.hpp"
