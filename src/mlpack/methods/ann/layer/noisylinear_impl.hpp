@@ -65,18 +65,24 @@ void NoisyLinear<InputDataType, OutputDataType>::Reset()
 template<typename InputDataType, typename OutputDataType>
 void NoisyLinear<InputDataType, OutputDataType>::ResetNoise()
 {
-  // TODO: Resets noise parameters.
-  weightEpsilon.randu();
-  biasEpsilon.randu();
+  arma::mat epsilonIn = arma::randn<arma::mat>(inSize, 1);
+  epsilonIn = arma::sign(epsilonIn) % arma::sqrt(arma::abs(epsilonIn));
+  arma::mat epsilonOut = arma::randn<arma::mat>(outSize, 1);
+  epsilonOut = arma::sign(epsilonOut) % arma::sqrt(arma::abs(epsilonOut));
+  weightEpsilon = epsilonOut * epsilonIn.t();
+  biasEpsilon = epsilonOut;
 }
 
 template<typename InputDataType, typename OutputDataType>
 void NoisyLinear<InputDataType, OutputDataType>::ResetParameters()
 {
-  /*
-  * TODO: Reset network parameters according to factorized gaussion 
-  * initialization
-  */
+  double muRange = 1 / std::sqrt(inSize);
+  weightMu.randu();
+  weightMu = muRange * (weightMu * 2 - 1);
+  biasMu.randu();
+  biasMu = muRange * (biasMu * 2 - 1);
+  weightSigma.fill(0.5 / std::sqrt(inSize));
+  biasSigma.fill(0.5 / std::sqrt(outSize));
 }
 
 template<typename InputDataType, typename OutputDataType>

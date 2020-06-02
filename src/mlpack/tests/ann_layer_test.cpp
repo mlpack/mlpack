@@ -455,6 +455,82 @@ BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
 }
 
 /**
+ * Simple noisy linear module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleNoisyLinearLayerTest)
+{
+  arma::mat output, input, delta;
+  NoisyLinear<> module(10, 10);
+  module.Parameters().randu();
+  module.Reset();
+
+  // Test the Backward function.
+  module.Backward(input, input, delta);
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+}
+
+/**
+ * Jacobian noisy linear module test.
+ */
+BOOST_AUTO_TEST_CASE(JacobianNoisyLinearLayerTest)
+{
+  const size_t inputElements = math::RandInt(2, 1000);
+  const size_t outputElements = math::RandInt(2, 1000);
+
+  arma::mat input;
+  input.set_size(inputElements, 1);
+
+  NoisyLinear<> module(inputElements, outputElements);
+  module.Parameters().randu();
+
+  double error = JacobianTest(module, input);
+  BOOST_REQUIRE_LE(error, 1e-5);
+}
+
+/**
+ * Noisy Linear layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientNoisyLinearLayerTest)
+{
+  // Noisy linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<NoisyLinear<> >(10, 10);
+      model->Add<NoisyLinear<> >(10, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
  * Simple linear no bias module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleLinearNoBiasLayerTest)
