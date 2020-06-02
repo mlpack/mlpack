@@ -446,17 +446,17 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
 BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQN)
 {
   // Set up the network.
-  DuelingDQN<> model(4, 64, 64, 2);
+  DuelingDQN<> model(4, 128, 64, 2);
 
   // Set up the policy and replay method.
-  GreedyPolicy<CartPole> policy(1.0, 2000, 0.1, 0.99);
-  RandomReplay<CartPole> replayMethod(32, 10000);
+  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
+  RandomReplay<CartPole> replayMethod(32, 2000);
 
   TrainingConfig config;
   config.StepSize() = 0.01;
   config.Discount() = 0.99;
   config.TargetNetworkSyncInterval() = 100;
-  config.ExplorationSteps() = 100;
+  config.ExplorationSteps() = 50;
   config.DoubleQLearning() = false;
   config.StepLimit() = 200;
 
@@ -474,7 +474,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQN)
     averageReturn(episodeReturn);
     episodes += 1;
 
-    if (episodes > 1000)
+    if (episodes > 2000)
     {
       Log::Debug << "Cart Pole with Dueling DQN failed." << std::endl;
       converged = false;
@@ -509,17 +509,17 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQN)
 BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQNPrioritizedReplay)
 {
   // Set up the network.
-  DuelingDQN<> model(4, 64, 64, 2);
+  DuelingDQN<> model(4, 128, 64, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
-  PrioritizedReplay<CartPole> replayMethod(32, 10000, 0.6);
+  PrioritizedReplay<CartPole> replayMethod(32, 2000, 0.6);
 
   TrainingConfig config;
   config.StepSize() = 0.01;
   config.Discount() = 0.99;
   config.TargetNetworkSyncInterval() = 100;
-  config.ExplorationSteps() = 100;
+  config.ExplorationSteps() = 50;
   config.DoubleQLearning() = false;
   config.StepLimit() = 200;
 
@@ -538,7 +538,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQNPrioritizedReplay)
     averageReturn(episodeReturn);
     episodes += 1;
 
-    if (episodes > 1000)
+    if (episodes > 2000)
     {
       Log::Debug << "Cart Pole with Dueling DQN failed." << std::endl;
       converged = false;
