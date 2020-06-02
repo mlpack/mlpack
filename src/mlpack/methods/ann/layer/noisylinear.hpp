@@ -45,7 +45,7 @@ class NoisyLinear
    * @param outSize The number of output units.
    */
   NoisyLinear(const size_t inSize,
-         const size_t outSize);
+              const size_t outSize);
 
   //! Copy constructor.
   NoisyLinear(const NoisyLinear&);

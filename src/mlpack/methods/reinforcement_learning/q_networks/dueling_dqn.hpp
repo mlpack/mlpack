@@ -25,6 +25,20 @@ namespace rl {
 using namespace mlpack::ann;
 
 /**
+ * Implementation of the Dueling Deep Q-Learning network.
+ * For more information, see the following.
+ *
+ * @code
+ * @misc{wang2015dueling,
+ *   author  = {Ziyu Wang, Tom Schaul, Matteo Hessel,Hado van Hasselt,
+ *              Marc Lanctot, Nando de Freitas},
+ *   title   = {Dueling Network Architectures for Deep Reinforcement Learning},
+ *   year    = {2015},
+ *   url     = {https://arxiv.org/abs/1511.06581}
+ * }
+ * @endcode
+ * 
+ * 
  * @tparam CompleteNetworkType The type of network used for full dueling dqn.
  * @tparam FeatureNetworkType The type of network used for feature network.
  * @tparam AdvantageNetworkType The type of network used for advantage network.

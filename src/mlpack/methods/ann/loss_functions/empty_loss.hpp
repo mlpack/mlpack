@@ -20,7 +20,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The empty loss does nothing, letting the user to calculate the loss outside
+ * The empty loss does nothing, letting the user calculate the loss outside
  * the model.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -61,22 +61,6 @@ class EmptyLoss
   void Backward(const InputType& input,
                 const TargetType& target,
                 OutputType& output);
-
-
-  //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  /**
-   * Serialize the layer
-   */
-  template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
-
- private:
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
 }; // class EmptyLoss
 
 } // namespace ann
