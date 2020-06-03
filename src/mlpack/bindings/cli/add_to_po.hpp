@@ -17,7 +17,9 @@
 #include <mlpack/core/util/is_std_vector.hpp>
 #include "map_parameter_name.hpp"
 
-#include <CLI/CLI.hpp>
+namespace CLI11 {
+  #include <CLI/CLI.hpp>
+}
 
 namespace mlpack {
 namespace bindings {
@@ -33,7 +35,7 @@ namespace cli {
 template<typename T>
 void AddToPO(const std::string& cliName,
              const std::string& descr,
-             CLI::App& app,
+             CLI11::CLI::App& app,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
@@ -52,7 +54,7 @@ void AddToPO(const std::string& cliName,
 template<typename T>
 void AddToPO(const std::string& cliName,
              const std::string& descr,
-             CLI::App& app
+             CLI11::CLI::App& app
              const typename boost::enable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
@@ -70,7 +72,7 @@ void AddToPO(const std::string& cliName,
 template<typename T>
 void AddToPO(const std::string& cliName,
              const std::string& descr,
-             CLI::App& app,
+             CLI11::CLI::App& app,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
 {
@@ -91,7 +93,7 @@ void AddToPO(const util::ParamData& d,
              void* output)
 {
   // Cast CLI::App object.
-  CLI::App* app = (CLI::App*) output;
+  CLI11::CLI::App* app = (CLI11::CLI::App*) output;
 
   // Generate the name to be given to CLI11.
   const std::string mappedName =
