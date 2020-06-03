@@ -19,7 +19,7 @@
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::bindings;
-using namespace mlpack::bindings::cli;
+using namespace mlpack::bindings::cmd;
 using namespace mlpack::kernel;
 
 BOOST_AUTO_TEST_SUITE(CMDBindingTest);

@@ -17,7 +17,7 @@ namespace mlpack {
 namespace util {
 
 template<typename T>
-using Option = mlpack::bindings::cli::CMDOption<T>;
+using Option = mlpack::bindings::cmd::CMDOption<T>;
 
 } // namespace util
 } // namespace mlpack
@@ -35,7 +35,7 @@ using namespace mlpack;
 using namespace mlpack::util;
 using namespace mlpack::kernel;
 using namespace mlpack::data;
-using namespace mlpack::bindings::cli;
+using namespace mlpack::bindings::cmd;
 using namespace std;
 
 // When we run these tests, we have to nuke the existing CMD object that's
