@@ -27,6 +27,7 @@ set(BOOST_LIBRARYDIR "" CACHE STRING "Path for boost libraries.")
 set(BOOST_PROGRAM_OPTIONS "" CACHE STRING "Path for boost libraries.")
 set(BOOST_SERIALIZATION "" CACHE STRING "Path for boost libraries.")
 set(CEREAL "" CACHE STRING "Path for cereal.")
+set(CLI "" CACHE STRING "Path for CLI.")
 
 if (CMAKE_CROSSCOMPILING AND (BOARD_NAME STREQUAL ""))
   message(FATAL_ERROR "Please enter the board name")
@@ -286,7 +287,7 @@ else()
 endif()
 
 # Include directories for the previous dependencies.
-set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS} ${CEREAL})
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS} ${CEREAL} ${CLI})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
 # Find stb_image.h and stb_image_write.h.
