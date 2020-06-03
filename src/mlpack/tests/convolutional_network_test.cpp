@@ -82,8 +82,8 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   for (size_t trial = 0; trial < 5; ++trial)
   {
     FFN<NegativeLogLikelihood<>, RandomInitialization> *model = new FFN<
-                                                        NegativeLogLikelihood<>,
-                                                        RandomInitialization>();
+        NegativeLogLikelihood<>,
+        RandomInitialization>();
 
     model->Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
     model->Add<ReLULayer<> >();
