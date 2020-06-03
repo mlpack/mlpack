@@ -35,7 +35,7 @@ class MDOption
  public:
   /**
    * Construct an MDOption object.  When constructed, it will register itself
-   * with CLI. The testName parameter is not used and added for compatibility
+   * with CMD. The testName parameter is not used and added for compatibility
    * reasons.
    */
   MDOption(const T defaultValue,
@@ -48,7 +48,7 @@ class MDOption
            const bool noTranspose = false,
            const std::string& bindingName = "")
   {
-    // Create the ParamData object to give to CLI.
+    // Create the ParamData object to give to CMD.
     util::ParamData data;
 
     data.desc = description;
@@ -60,7 +60,7 @@ class MDOption
     data.required = required;
     data.input = input;
     data.loaded = false;
-    // Several options from Python and CLI bindings are persistent.
+    // Several options from Python and CMD bindings are persistent.
     if (identifier == "verbose" || identifier == "copy_all_inputs" ||
         identifier == "help" || identifier == "info" || identifier == "version")
       data.persistent = true;
@@ -73,32 +73,32 @@ class MDOption
 
     // Restore the parameters for this program.
     if (identifier != "verbose" && identifier != "copy_all_inputs")
-      CLI::RestoreSettings(bindingName, false);
+      CMD::RestoreSettings(bindingName, false);
 
     // Set the function pointers that we'll need.  Most of these simply delegate
     // to the current binding type's implementation.  Any new language will need
     // to have all of these implemented, and the Markdown implementation will
     // need to properly delegate.
-    CLI::GetSingleton().functionMap[data.tname]["DefaultParam"] =
+    CMD::GetSingleton().functionMap[data.tname]["DefaultParam"] =
         &DefaultParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
+    CMD::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
+    CMD::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
         &GetPrintableParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetPrintableParamName"] =
+    CMD::GetSingleton().functionMap[data.tname]["GetPrintableParamName"] =
         &GetPrintableParamName<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetPrintableParamValue"] =
+    CMD::GetSingleton().functionMap[data.tname]["GetPrintableParamValue"] =
         &GetPrintableParamValue<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetPrintableType"] =
+    CMD::GetSingleton().functionMap[data.tname]["GetPrintableType"] =
         &GetPrintableType<T>;
-    CLI::GetSingleton().functionMap[data.tname]["IsSerializable"] =
+    CMD::GetSingleton().functionMap[data.tname]["IsSerializable"] =
         &IsSerializable<T>;
 
     // Add the option.
-    CLI::Add(std::move(data));
+    CMD::Add(std::move(data));
     if (identifier != "verbose" && identifier != "copy_all_inputs" &&
         identifier != "help" && identifier != "info" && identifier != "version")
-      CLI::StoreSettings(bindingName);
-    CLI::ClearSettings();
+      CMD::StoreSettings(bindingName);
+    CMD::ClearSettings();
   }
 };
 

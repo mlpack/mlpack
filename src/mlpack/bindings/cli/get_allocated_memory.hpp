@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CLI_GET_ALLOCATED_MEMORY_HPP
-#define MLPACK_BINDINGS_CLI_GET_ALLOCATED_MEMORY_HPP
+#ifndef MLPACK_BINDINGS_CMD_GET_ALLOCATED_MEMORY_HPP
+#define MLPACK_BINDINGS_CMD_GET_ALLOCATED_MEMORY_HPP
 
 #include <mlpack/core/util/param_data.hpp>
 

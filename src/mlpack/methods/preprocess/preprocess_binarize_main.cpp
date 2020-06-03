@@ -2,7 +2,7 @@
  * @file preprocess_binarize_main.cpp
  * @author Keon Kim
  *
- * binarize CLI executable
+ * binarize CMD executable
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -65,18 +65,18 @@ using namespace std;
 
 static void mlpackMain()
 {
-  const size_t dimension = (size_t) CLI::GetParam<int>("dimension");
-  const double threshold = CLI::GetParam<double>("threshold");
+  const size_t dimension = (size_t) CMD::GetParam<int>("dimension");
+  const double threshold = CMD::GetParam<double>("threshold");
 
   // Check on data parameters.
-  if (!CLI::HasParam("dimension"))
+  if (!CMD::HasParam("dimension"))
   {
     Log::Warn << "You did not specify " << PRINT_PARAM_STRING("dimension")
         << ", so the program will perform binarization on every dimension."
         << endl;
   }
 
-  if (!CLI::HasParam("threshold"))
+  if (!CMD::HasParam("threshold"))
   {
     Log::Warn << "You did not specify " << PRINT_PARAM_STRING("threshold")
         << ", so the threshold will be automatically set to '0.0'." << endl;
@@ -85,7 +85,7 @@ static void mlpackMain()
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
   // Load the data.
-  arma::mat input = std::move(CLI::GetParam<arma::mat>("input"));
+  arma::mat input = std::move(CMD::GetParam<arma::mat>("input"));
   arma::mat output;
 
   RequireParamValue<int>("dimension", [](int x) { return x >= 0; }, true,
@@ -97,7 +97,7 @@ static void mlpackMain()
       [input](int x) { return size_t(x) < input.n_rows; }, true, error.str());
 
   Timer::Start("binarize");
-  if (CLI::HasParam("dimension"))
+  if (CMD::HasParam("dimension"))
   {
     data::Binarize<double>(input, output, threshold, dimension);
   }
@@ -108,6 +108,6 @@ static void mlpackMain()
   }
   Timer::Stop("binarize");
 
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(output);
+  if (CMD::HasParam("output"))
+    CMD::GetParam<arma::mat>("output") = std::move(output);
 }

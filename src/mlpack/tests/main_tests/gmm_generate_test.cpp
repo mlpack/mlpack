@@ -28,13 +28,13 @@ struct GmmGenerateTestFixture
   GmmGenerateTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    CMD::RestoreSettings(testName);
   }
 
   ~GmmGenerateTestFixture()
   {
     // Clear the settings.
-    CLI::ClearSettings();
+    CMD::ClearSettings();
   }
 };
 
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(GmmGenerateDimensionality)
 
   mlpackMain();
 
-  arma::mat output = std::move(CLI::GetParam<arma::mat>("output"));
+  arma::mat output = std::move(CMD::GetParam<arma::mat>("output"));
 
   BOOST_REQUIRE_EQUAL(output.n_rows, gmm.Dimensionality());
   BOOST_REQUIRE_EQUAL(output.n_cols, (int) 10);

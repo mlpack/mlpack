@@ -46,7 +46,7 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 # that the file with main() is in <name>_main.cpp, and produces an output
 # program with the name mlpack_<name>.
 macro (add_cli_executable name)
-if (BUILD_CLI_EXECUTABLES)
+if (BUILD_CMD_EXECUTABLES)
   add_executable(mlpack_${name}
     ${name}_main.cpp
   )
@@ -69,7 +69,7 @@ if (BUILD_CLI_EXECUTABLES)
   # Make sure that we set BINDING_TYPE to cli so the command-line program is
   # compiled with the correct int main() call.
   set_target_properties(mlpack_${name} PROPERTIES COMPILE_FLAGS
-      -DBINDING_TYPE=BINDING_TYPE_CLI)
+      -DBINDING_TYPE=BINDING_TYPE_CMD)
   install(TARGETS mlpack_${name} RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
   # If man documentation is being generated, make sure this is a dependency.

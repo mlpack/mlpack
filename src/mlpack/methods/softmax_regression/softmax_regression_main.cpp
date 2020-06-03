@@ -131,11 +131,11 @@ Model* TrainSoftmax(const size_t maxIterations);
 
 static void mlpackMain()
 {
-  const int maxIterations = CLI::GetParam<int>("max_iterations");
+  const int maxIterations = CMD::GetParam<int>("max_iterations");
 
   // One of inputFile and modelFile must be specified.
   RequireOnlyOnePassed({ "input_model", "training" }, true);
-  if (CLI::HasParam("training"))
+  if (CMD::HasParam("training"))
   {
     RequireAtLeastOnePassed({ "labels" }, true, "if training data is specified,"
         " labels must also be specified");
@@ -162,7 +162,7 @@ static void mlpackMain()
 
   TestClassifyAcc(sm->NumClasses(), *sm);
 
-  CLI::GetParam<SoftmaxRegression*>("output_model") = sm;
+  CMD::GetParam<SoftmaxRegression*>("output_model") = sm;
 }
 
 size_t CalculateNumberOfClasses(const size_t numClasses,
@@ -186,7 +186,7 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
   using namespace mlpack;
 
   // If there is no test set, there is nothing to test on.
-  if (!CLI::HasParam("test"))
+  if (!CMD::HasParam("test"))
   {
     ReportIgnoredParam({{ "test", false }}, "test_labels");
     ReportIgnoredParam({{ "test", false }}, "predictions");
@@ -195,16 +195,16 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
   }
 
   // Get the test dataset, and get predictions.
-  arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
+  arma::mat testData = std::move(CMD::GetParam<arma::mat>("test"));
 
   arma::Row<size_t> predictLabels;
   model.Classify(testData, predictLabels);
 
   // Calculate accuracy, if desired.
-  if (CLI::HasParam("test_labels"))
+  if (CMD::HasParam("test_labels"))
   {
     arma::Row<size_t> testLabels =
-      std::move(CLI::GetParam<arma::Row<size_t>>("test_labels"));
+      std::move(CMD::GetParam<arma::Row<size_t>>("test_labels"));
 
     if (testData.n_cols != testLabels.n_elem)
     {
@@ -239,8 +239,8 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
         << totalBingo << " of " << predictLabels.n_elem << ")." << endl;
   }
   // Save predictions, if desired.
-  if (CLI::HasParam("predictions"))
-    CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictLabels);
+  if (CMD::HasParam("predictions"))
+    CMD::GetParam<arma::Row<size_t>>("predictions") = std::move(predictLabels);
 }
 
 template<typename Model>
@@ -249,29 +249,29 @@ Model* TrainSoftmax(const size_t maxIterations)
   using namespace mlpack;
 
   Model* sm;
-  if (CLI::HasParam("input_model"))
+  if (CMD::HasParam("input_model"))
   {
-    sm = CLI::GetParam<Model*>("input_model");
+    sm = CMD::GetParam<Model*>("input_model");
   }
   else
   {
-    arma::mat trainData = std::move(CLI::GetParam<arma::mat>("training"));
+    arma::mat trainData = std::move(CMD::GetParam<arma::mat>("training"));
     arma::Row<size_t> trainLabels =
-        std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+        std::move(CMD::GetParam<arma::Row<size_t>>("labels"));
 
     if (trainData.n_cols != trainLabels.n_elem)
       Log::Fatal << "Samples of input_data should same as the size of "
           << "input_label." << endl;
 
     const size_t numClasses = CalculateNumberOfClasses(
-        (size_t) CLI::GetParam<int>("number_of_classes"), trainLabels);
+        (size_t) CMD::GetParam<int>("number_of_classes"), trainLabels);
 
-    const bool intercept = CLI::HasParam("no_intercept") ? false : true;
+    const bool intercept = CMD::HasParam("no_intercept") ? false : true;
 
     const size_t numBasis = 5;
     ens::L_BFGS optimizer(numBasis, maxIterations);
     sm = new Model(trainData, trainLabels, numClasses,
-        CLI::GetParam<double>("lambda"), intercept, std::move(optimizer));
+        CMD::GetParam<double>("lambda"), intercept, std::move(optimizer));
   }
   return sm;
 }

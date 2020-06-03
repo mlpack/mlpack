@@ -30,14 +30,14 @@ struct ApproxKFNTestFixture
   ApproxKFNTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    CMD::RestoreSettings(testName);
   }
 
   ~ApproxKFNTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    CMD::ClearSettings();
   }
 };
 
@@ -98,12 +98,12 @@ BOOST_AUTO_TEST_CASE(ApproxKFNOutputDimensionTest)
   mlpackMain();
 
   // Check the neighbors matrix has 10 points for each of the 80 input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_rows, 10);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_cols, 80);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Mat<size_t>>("neighbors").n_rows, 10);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Mat<size_t>>("neighbors").n_cols, 80);
 
   // Check the distances matrix has 10 points for each of the 80 input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("distances").n_rows, 10);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("distances").n_cols, 80);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("distances").n_rows, 10);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("distances").n_cols, 80);
 }
 
 /**
@@ -210,16 +210,16 @@ BOOST_AUTO_TEST_CASE(ApproxKFNModelReuseTest)
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
-  neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
-  distances = std::move(CLI::GetParam<arma::mat>("distances"));
+  neighbors = std::move(CMD::GetParam<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(CMD::GetParam<arma::mat>("distances"));
   ApproxKFNModel* model =
-      new ApproxKFNModel(*CLI::GetParam<ApproxKFNModel*>("output_model"));
+      new ApproxKFNModel(*CMD::GetParam<ApproxKFNModel*>("output_model"));
 
   bindings::tests::CleanMemory();
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["query"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["query"].wasPassed = false;
 
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("input_model", model);
@@ -229,8 +229,8 @@ BOOST_AUTO_TEST_CASE(ApproxKFNModelReuseTest)
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  CheckMatrices(neighbors, CLI::GetParam<arma::Mat<size_t>>("neighbors"));
-  CheckMatrices(distances, CLI::GetParam<arma::mat>("distances"));
+  CheckMatrices(neighbors, CMD::GetParam<arma::Mat<size_t>>("neighbors"));
+  CheckMatrices(distances, CMD::GetParam<arma::mat>("distances"));
 }
 
 /**
@@ -253,12 +253,12 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumTablesChangeTest)
 
   // Get the distances matrix after first training.
   arma::mat firstOutputDistances =
-      std::move(CLI::GetParam<arma::mat>("distances"));
+      std::move(CMD::GetParam<arma::mat>("distances"));
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  CMD::ClearSettings();
+  CMD::RestoreSettings(testName);
 
   // Second setting.
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumTablesChangeTest)
 
   // Get the distances matrix after second training.
   arma::mat secondOutputDistances =
-      std::move(CLI::GetParam<arma::mat>("distances"));
+      std::move(CMD::GetParam<arma::mat>("distances"));
 
   // Check that the size of distance matrices (FirstOutputDistances and
   // SecondOutputDistances) are not equal which ensures num_tables changes
@@ -302,12 +302,12 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumProjectionsChangeTest)
 
   // Get the distances matrix after first training.
   arma::mat firstOutputDistances =
-      std::move(CLI::GetParam<arma::mat>("distances"));
+      std::move(CMD::GetParam<arma::mat>("distances"));
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  CMD::ClearSettings();
+  CMD::RestoreSettings(testName);
   // Second setting.
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
   SetInputParam("reference", std::move(referenceData));
@@ -322,7 +322,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumProjectionsChangeTest)
 
   // Get the distances matrix after second training.
   arma::mat secondOutputDistances =
-      std::move(CLI::GetParam<arma::mat>("distances"));
+      std::move(CMD::GetParam<arma::mat>("distances"));
 
   // Check that the size of distance matrices (FirstOutputDistances and
   // SecondOutputDistances) are not equal which ensures num_tables changes
@@ -374,14 +374,14 @@ BOOST_AUTO_TEST_CASE(ApproxKFNDifferentAlgoTest)
 
   // Get the distances and neighbors matrix after first training.
   arma::mat firstOutputDistances =
-  std::move(CLI::GetParam<arma::mat>("distances"));
+  std::move(CMD::GetParam<arma::mat>("distances"));
   arma::Mat<size_t> firstOutputNeighbors =
-    std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+    std::move(CMD::GetParam<arma::Mat<size_t>>("neighbors"));
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  CMD::ClearSettings();
+  CMD::RestoreSettings(testName);
 
   // Second solution.
   SetInputParam("reference", std::move(referenceData));
@@ -391,9 +391,9 @@ BOOST_AUTO_TEST_CASE(ApproxKFNDifferentAlgoTest)
 
   // Get the distances and neighbors matrix after second training.
   arma::mat secondOutputDistances =
-      std::move(CLI::GetParam<arma::mat>("distances"));
+      std::move(CMD::GetParam<arma::mat>("distances"));
   arma::Mat<size_t> secondOutputNeighbors =
-      std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+      std::move(CMD::GetParam<arma::Mat<size_t>>("neighbors"));
 
   // Check that the distance matrices (firstOutputDistances and
   // secondOutputDistances) and neighbor matrices (firstOutputNeighbors and

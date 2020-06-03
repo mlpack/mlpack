@@ -30,14 +30,14 @@ struct SparseCodingTestFixture
   SparseCodingTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    CMD::RestoreSettings(testName);
   }
 
   ~SparseCodingTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    CMD::ClearSettings();
   }
 };
 
@@ -78,18 +78,18 @@ BOOST_AUTO_TEST_CASE(SparseCodingOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output dictionary points are equals number of atoms.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("dictionary").n_cols, 2);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("dictionary").n_cols, 2);
 
   // Check that number of output dictionary rows equal number of input rows
   // which equal 4 for each data point.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("dictionary").n_rows, 4);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("dictionary").n_rows, 4);
 
   // Check that number of output points are equal to number of test points.
   // Test file contains 63 data points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("codes").n_cols, 63);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("codes").n_cols, 63);
 
   // Check that number of output codes rows equal number of atoms.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("codes").n_rows, 2);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("codes").n_rows, 2);
 }
 
 /**
@@ -117,15 +117,15 @@ BOOST_AUTO_TEST_CASE(SparseCodingNormalizationTest)
   mlpackMain();
 
   // Store outputs.
-  arma::mat dictionary = CLI::GetParam<arma::mat>("dictionary");
+  arma::mat dictionary = CMD::GetParam<arma::mat>("dictionary");
   arma::mat codes =
-      std::move(CLI::GetParam<arma::mat>("codes"));
+      std::move(CMD::GetParam<arma::mat>("codes"));
 
   // Train for normalization set to false.
 
   // Reset passed parameters.
   bindings::tests::CleanMemory();
-  CLI::GetSingleton().Parameters()["normalize"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["normalize"].wasPassed = false;
 
   // Normalize train dataset.
   for (size_t i = 0; i < inputData.n_cols; ++i)
@@ -146,8 +146,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingNormalizationTest)
 
   // Check that initial outputs and final outputs
   // using two models model are same.
-  CheckMatrices(dictionary, CLI::GetParam<arma::mat>("dictionary"));
-  CheckMatrices(codes, CLI::GetParam<arma::mat>("codes"));
+  CheckMatrices(dictionary, CMD::GetParam<arma::mat>("dictionary"));
+  CheckMatrices(codes, CMD::GetParam<arma::mat>("codes"));
 }
 
 /**
@@ -366,41 +366,41 @@ BOOST_AUTO_TEST_CASE(SparseCodingModelReuseTest)
 
   // Store outputs.
   arma::mat dictionary =
-      std::move(CLI::GetParam<arma::mat>("dictionary"));
+      std::move(CMD::GetParam<arma::mat>("dictionary"));
   arma::mat codes =
-      std::move(CLI::GetParam<arma::mat>("codes"));
+      std::move(CMD::GetParam<arma::mat>("codes"));
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["training"].wasPassed = false;
 
   // Test the correctness of trained model.
 
   // Input data.
   SetInputParam("max_iterations", (int) 100);
-  SetInputParam("input_model", CLI::GetParam<SparseCoding*>("output_model"));
+  SetInputParam("input_model", CMD::GetParam<SparseCoding*>("output_model"));
   SetInputParam("normalize", (bool) true);
   SetInputParam("test", std::move(testData));
 
   mlpackMain();
 
   // Check that number of output dictionary points are equals number of atoms.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("dictionary").n_cols, 2);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("dictionary").n_cols, 2);
 
   // Check that number of output dictionary rows equal number of input rows
   // which equal 4 for each data point.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("dictionary").n_rows, 4);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("dictionary").n_rows, 4);
 
   // Check that number of output points are equal to number of test points.
   // Test file contains 63 data points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("codes").n_cols, 63);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("codes").n_cols, 63);
 
   // Check that number of output codes rows equal number of atoms.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("codes").n_rows, 2);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("codes").n_rows, 2);
 
   // Check that initial outputs and final outputs
   // using two models model are same.
-  CheckMatrices(dictionary, CLI::GetParam<arma::mat>("dictionary"));
-  CheckMatrices(codes, CLI::GetParam<arma::mat>("codes"));
+  CheckMatrices(dictionary, CMD::GetParam<arma::mat>("dictionary"));
+  CheckMatrices(codes, CMD::GetParam<arma::mat>("codes"));
 }
 
 /**
@@ -428,9 +428,9 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffMaxItrTest)
   mlpackMain();
 
   // Store outputs.
-  arma::mat dictionary = CLI::GetParam<arma::mat>("dictionary");
+  arma::mat dictionary = CMD::GetParam<arma::mat>("dictionary");
   arma::mat codes =
-      std::move(CLI::GetParam<arma::mat>("codes"));
+      std::move(CMD::GetParam<arma::mat>("codes"));
 
   // Train for max_iterations equals to 100.
 
@@ -448,10 +448,10 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffMaxItrTest)
   // Check that initial outputs and final outputs
   // using two models model are different.
   BOOST_REQUIRE_LT(arma::accu(dictionary ==
-      CLI::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
+      CMD::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
 
   BOOST_REQUIRE_LT(arma::accu(codes ==
-      CLI::GetParam<arma::mat>("codes")), codes.n_elem);
+      CMD::GetParam<arma::mat>("codes")), codes.n_elem);
 }
 
 /**
@@ -477,9 +477,9 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffObjToleranceTest)
   mlpackMain();
 
   // Store outputs.
-  arma::mat dictionary = CLI::GetParam<arma::mat>("dictionary");
+  arma::mat dictionary = CMD::GetParam<arma::mat>("dictionary");
   arma::mat codes =
-      std::move(CLI::GetParam<arma::mat>("codes"));
+      std::move(CMD::GetParam<arma::mat>("codes"));
 
   // Train for objective_tolerance equals to 10000.0.
 
@@ -496,10 +496,10 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffObjToleranceTest)
   // Check that initial outputs and final outputs
   // using two models model are different.
   BOOST_REQUIRE_LT(arma::accu(dictionary ==
-      CLI::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
+      CMD::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
 
   BOOST_REQUIRE_LT(arma::accu(codes ==
-      CLI::GetParam<arma::mat>("codes")), codes.n_elem);
+      CMD::GetParam<arma::mat>("codes")), codes.n_elem);
 }
 
 /**
@@ -525,9 +525,9 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffNewtonToleranceTest)
   mlpackMain();
 
   // Store outputs.
-  arma::mat dictionary = CLI::GetParam<arma::mat>("dictionary");
+  arma::mat dictionary = CMD::GetParam<arma::mat>("dictionary");
   arma::mat codes =
-      std::move(CLI::GetParam<arma::mat>("codes"));
+      std::move(CMD::GetParam<arma::mat>("codes"));
 
   // Train for newton_tolerance equals to 10000.0.
 
@@ -544,10 +544,10 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffNewtonToleranceTest)
   // Check that initial outputs and final outputs
   // using two models model are different.
   BOOST_REQUIRE_LT(arma::accu(dictionary ==
-      CLI::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
+      CMD::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
 
   BOOST_REQUIRE_LT(arma::accu(codes ==
-      CLI::GetParam<arma::mat>("codes")), codes.n_elem);
+      CMD::GetParam<arma::mat>("codes")), codes.n_elem);
 }
 
 /**
@@ -573,9 +573,9 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffL1Test)
   mlpackMain();
 
   // Store outputs.
-  arma::mat dictionary = CLI::GetParam<arma::mat>("dictionary");
+  arma::mat dictionary = CMD::GetParam<arma::mat>("dictionary");
   arma::mat codes =
-      std::move(CLI::GetParam<arma::mat>("codes"));
+      std::move(CMD::GetParam<arma::mat>("codes"));
 
   // Train for lambda1 equals to 10000.0.
 
@@ -592,10 +592,10 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffL1Test)
   // Check that initial outputs and final outputs
   // using two models model are different.
   BOOST_REQUIRE_LT(arma::accu(dictionary ==
-      CLI::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
+      CMD::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
 
   BOOST_REQUIRE_LT(arma::accu(codes ==
-      CLI::GetParam<arma::mat>("codes")), codes.n_elem);
+      CMD::GetParam<arma::mat>("codes")), codes.n_elem);
 }
 
 /**
@@ -621,9 +621,9 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffL2Test)
   mlpackMain();
 
   // Store outputs.
-  arma::mat dictionary = CLI::GetParam<arma::mat>("dictionary");
+  arma::mat dictionary = CMD::GetParam<arma::mat>("dictionary");
   arma::mat codes =
-      std::move(CLI::GetParam<arma::mat>("codes"));
+      std::move(CMD::GetParam<arma::mat>("codes"));
 
   // Train for lambda2 equals to 10000.0.
 
@@ -640,10 +640,10 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffL2Test)
   // Check that initial outputs and final outputs
   // using two models model are different.
   BOOST_REQUIRE_LT(arma::accu(dictionary ==
-      CLI::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
+      CMD::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
 
   BOOST_REQUIRE_LT(arma::accu(codes ==
-      CLI::GetParam<arma::mat>("codes")), codes.n_elem);
+      CMD::GetParam<arma::mat>("codes")), codes.n_elem);
 }
 
 /**
@@ -670,9 +670,9 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffL1L2Test)
   mlpackMain();
 
   // Store outputs.
-  arma::mat dictionary = CLI::GetParam<arma::mat>("dictionary");
+  arma::mat dictionary = CMD::GetParam<arma::mat>("dictionary");
   arma::mat codes =
-      std::move(CLI::GetParam<arma::mat>("codes"));
+      std::move(CMD::GetParam<arma::mat>("codes"));
 
   // Train for lambda1 EQUALS 0.0 & lambda2 equals to 10000.0.
 
@@ -690,10 +690,10 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffL1L2Test)
   // Check that initial outputs and final outputs
   // using two models model are different.
   BOOST_REQUIRE_LT(arma::accu(dictionary ==
-      CLI::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
+      CMD::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
 
   BOOST_REQUIRE_LT(arma::accu(codes ==
-      CLI::GetParam<arma::mat>("codes")), codes.n_elem);
+      CMD::GetParam<arma::mat>("codes")), codes.n_elem);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

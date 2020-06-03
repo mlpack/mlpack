@@ -2,7 +2,7 @@
  * @file add_to_po.hpp
  * @author Ryan Curtin
  *
- * Utility functions to add options to CLI11 based on their
+ * Utility functions to add options to CMD11 based on their
  * type.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -10,15 +10,15 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CLI_ADD_TO_PO_HPP
-#define MLPACK_BINDINGS_CLI_ADD_TO_PO_HPP
+#ifndef MLPACK_BINDINGS_CMD_ADD_TO_PO_HPP
+#define MLPACK_BINDINGS_CMD_ADD_TO_PO_HPP
 
 #include <mlpack/core/util/param_data.hpp>
 #include <mlpack/core/util/is_std_vector.hpp>
 #include "map_parameter_name.hpp"
 
-namespace CLI11 {
-  #include <CLI/CLI.hpp>
+namespace CMD11 {
+  #include <CMD/CMD.hpp>
 }
 
 namespace mlpack {
@@ -26,16 +26,16 @@ namespace bindings {
 namespace cmd {
 
 /**
- * Add a non-vector option to CLI11.
+ * Add a non-vector option to CMD11.
  *
- * @param boostName The name of the option to add to CLI11.
+ * @param boostName The name of the option to add to CMD11.
  * @param descr Description string for parameter.
  * @param desc Options description to add parameter to.
  */
 template<typename T>
 void AddToPO(const std::string& cliName,
              const std::string& descr,
-             CLI11::CLI::App& app,
+             CMD11::CMD::App& app,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
@@ -44,17 +44,17 @@ void AddToPO(const std::string& cliName,
 }
 
 /**
- * Add a vector option to CLI11.  This overload will use the
+ * Add a vector option to CMD11.  This overload will use the
  * multitoken() option.
  *
- * @param boostName The name of the option to add to CLI11.
+ * @param boostName The name of the option to add to CMD11.
  * @param descr Description string for parameter.
  * @param desc Options description to add parameter to.
  */
 template<typename T>
 void AddToPO(const std::string& cliName,
              const std::string& descr,
-             CLI11::CLI::App& app
+             CMD11::CMD::App& app
              const typename boost::enable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
@@ -63,16 +63,16 @@ void AddToPO(const std::string& cliName,
 }
 
 /**
- * Add a boolean option to CLI11.
+ * Add a boolean option to CMD11.
  *
- * @param boostName The name of the option to add to CLI11.
+ * @param boostName The name of the option to add to CMD11.
  * @param descr Description string for parameter.
  * @param desc Options description to add parameter to.
  */
 template<typename T>
 void AddToPO(const std::string& cliName,
              const std::string& descr,
-             CLI11::CLI::App& app,
+             CMD11::CMD::App& app,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
 {
@@ -80,8 +80,8 @@ void AddToPO(const std::string& cliName,
 }
 
 /**
- * Add an option to CLI11.  This is the function meant to be
- * used in the CLI function map.
+ * Add an option to CMD11.  This is the function meant to be
+ * used in the CMD function map.
  *
  * @param d Parameter data.
  * @param input Unused void pointer.
@@ -92,10 +92,10 @@ void AddToPO(const util::ParamData& d,
              const void* /* input */,
              void* output)
 {
-  // Cast CLI::App object.
-  CLI11::CLI::App* app = (CLI11::CLI::App*) output;
+  // Cast CMD::App object.
+  CMD11::CMD::App* app = (CMD11::CMD::App*) output;
 
-  // Generate the name to be given to CLI11.
+  // Generate the name to be given to CMD11.
   const std::string mappedName =
       MapParameterName<typename std::remove_pointer<T>::type>(d.name);
   std::string boostName = (d.alias != '\0') ? mappedName + "," +

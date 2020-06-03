@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CLI_OUTPUT_PARAM_HPP
-#define MLPACK_BINDINGS_CLI_OUTPUT_PARAM_HPP
+#ifndef MLPACK_BINDINGS_CMD_OUTPUT_PARAM_HPP
+#define MLPACK_BINDINGS_CMD_OUTPUT_PARAM_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/param_data.hpp>
@@ -67,7 +67,7 @@ void OutputParamImpl(
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0);
 
 /**
- * Output an option.  This is the function that will be called by the CLI
+ * Output an option.  This is the function that will be called by the CMD
  * module.
  */
 template<typename T>

@@ -2,7 +2,7 @@
  * @file cli.cpp
  * @author Matthew Amidon
  *
- * Implementation of the CLI module for parsing parameters.
+ * Implementation of the CMD module for parsing parameters.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -32,21 +32,21 @@ static ProgramDoc emptyProgramDoc = ProgramDoc("", "", []() { return ""; },
 
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
-CLI::CLI() : didParse(false), doc(&emptyProgramDoc)
+CMD::CMD() : didParse(false), doc(&emptyProgramDoc)
 {
   return;
 }
 
 // Private copy constructor; don't want copies floating around.
-CLI::CLI(const CLI& /* other */) : didParse(false), doc(&emptyProgramDoc)
+CMD::CMD(const CMD& /* other */) : didParse(false), doc(&emptyProgramDoc)
 {
   return;
 }
 
 // Private copy operator; don't want copies floating around.
-CLI& CLI::operator=(const CLI& /* other */) { return *this; }
+CMD& CMD::operator=(const CMD& /* other */) { return *this; }
 
-void CLI::Add(ParamData&& data)
+void CMD::Add(ParamData&& data)
 {
   // Temporarily define color code escape sequences.
   #ifndef _WIN32
@@ -95,7 +95,7 @@ void CLI::Add(ParamData&& data)
  *
  * @param identifier The name of the parameter in question.
  */
-bool CLI::HasParam(const std::string& key)
+bool CMD::HasParam(const std::string& key)
 {
   std::string usedKey = key;
   const std::map<std::string, util::ParamData>& parameters =
@@ -128,7 +128,7 @@ bool CLI::HasParam(const std::string& key)
  * @param outputParamName Name of output (matrix) parameter.
  * @param inputParamName Name of input (matrix) parameter.
  */
-void CLI::MakeInPlaceCopy(const std::string& outputParamName,
+void CMD::MakeInPlaceCopy(const std::string& outputParamName,
                           const std::string& inputParamName)
 {
   std::map<std::string, util::ParamData>& parameters =
@@ -149,17 +149,17 @@ void CLI::MakeInPlaceCopy(const std::string& outputParamName,
   }
 
   // Is there a function to do this?
-  if (CLI::GetSingleton().functionMap[output.tname].count("InPlaceCopy") != 0)
+  if (CMD::GetSingleton().functionMap[output.tname].count("InPlaceCopy") != 0)
   {
-    CLI::GetSingleton().functionMap[output.tname]["InPlaceCopy"](output, (void*)
+    CMD::GetSingleton().functionMap[output.tname]["InPlaceCopy"](output, (void*)
         &input, NULL);
   }
 }
 
 // Returns the sole instance of this class.
-CLI& CLI::GetSingleton()
+CMD& CMD::GetSingleton()
 {
-  static CLI singleton;
+  static CMD singleton;
   return singleton;
 }
 
@@ -169,7 +169,7 @@ CLI& CLI::GetSingleton()
  *
  * @param doc Pointer to the ProgramDoc object.
  */
-void CLI::RegisterProgramDoc(ProgramDoc* doc)
+void CMD::RegisterProgramDoc(ProgramDoc* doc)
 {
   // Only register the doc if it is not the dummy object we created at the
   // beginning of the file (as a default value in case this is never called).
@@ -177,30 +177,30 @@ void CLI::RegisterProgramDoc(ProgramDoc* doc)
     GetSingleton().doc = doc;
 }
 
-// Get the parameters that the CLI object knows about.
-std::map<std::string, ParamData>& CLI::Parameters()
+// Get the parameters that the CMD object knows about.
+std::map<std::string, ParamData>& CMD::Parameters()
 {
   return GetSingleton().parameters;
 }
 
-// Get the parameters that the CLI object knows about.
-std::map<char, std::string>& CLI::Aliases()
+// Get the parameters that the CMD object knows about.
+std::map<char, std::string>& CMD::Aliases()
 {
   return GetSingleton().aliases;
 }
 
 // Get the program name as set by PROGRAM_INFO().
-std::string CLI::ProgramName()
+std::string CMD::ProgramName()
 {
   return GetSingleton().doc->programName;
 }
 
 // Set a particular parameter as passed.
-void CLI::SetPassed(const std::string& name)
+void CMD::SetPassed(const std::string& name)
 {
   if (GetSingleton().parameters.count(name) == 0)
   {
-    throw std::invalid_argument("CLI::SetPassed(): parameter " + name +
+    throw std::invalid_argument("CMD::SetPassed(): parameter " + name +
         " not known!");
   }
 
@@ -209,7 +209,7 @@ void CLI::SetPassed(const std::string& name)
 }
 
 // Store settings.
-void CLI::StoreSettings(const std::string& name)
+void CMD::StoreSettings(const std::string& name)
 {
   // Take all of the parameters and put them in the map.  Clear anything old
   // first.
@@ -221,7 +221,7 @@ void CLI::StoreSettings(const std::string& name)
 }
 
 // Restore settings.
-void CLI::RestoreSettings(const std::string& name, const bool fatal)
+void CMD::RestoreSettings(const std::string& name, const bool fatal)
 {
   if (GetSingleton().storageMap.count(name) == 0 && fatal)
   {
@@ -242,7 +242,7 @@ void CLI::RestoreSettings(const std::string& name, const bool fatal)
 }
 
 // Clear settings.
-void CLI::ClearSettings()
+void CMD::ClearSettings()
 {
   // Check for any parameters we need to keep.
   std::map<std::string, util::ParamData> persistent;

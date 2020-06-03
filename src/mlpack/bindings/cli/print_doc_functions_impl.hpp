@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CLI_PRINT_DOC_FUNCTIONS_IMPL_HPP
-#define MLPACK_BINDINGS_CLI_PRINT_DOC_FUNCTIONS_IMPL_HPP
+#ifndef MLPACK_BINDINGS_CMD_PRINT_DOC_FUNCTIONS_IMPL_HPP
+#define MLPACK_BINDINGS_CMD_PRINT_DOC_FUNCTIONS_IMPL_HPP
 
 #include <mlpack/core/util/hyphenate_string.hpp>
 
@@ -30,7 +30,7 @@ inline std::string GetBindingName(const std::string& bindingName)
 }
 
 /**
- * Print any imports for CLI (there are none, so this returns an empty string).
+ * Print any imports for CMD (there are none, so this returns an empty string).
  */
 inline std::string PrintImport(const std::string& /* bindingName */)
 {
@@ -65,13 +65,13 @@ inline std::string PrintValue(const T& value, bool quotes)
  */
 inline std::string PrintDefault(const std::string& paramName)
 {
-  if (CLI::Parameters().count(paramName) == 0)
+  if (CMD::Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter " + paramName + "!");
 
-  const util::ParamData& d = CLI::Parameters()[paramName];
+  const util::ParamData& d = CMD::Parameters()[paramName];
 
   std::string defaultValue;
-  CLI::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL,
+  CMD::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL,
       (void*) &defaultValue);
 
   return defaultValue;
@@ -106,19 +106,19 @@ std::string ProcessOptions(const std::string& paramName,
 {
   // See if it is part of the program.
   std::string result = "";
-  if (CLI::Parameters().count(paramName) > 0)
+  if (CMD::Parameters().count(paramName) > 0)
   {
-    const util::ParamData& d = CLI::Parameters()[paramName];
+    const util::ParamData& d = CMD::Parameters()[paramName];
 
     std::string name;
-    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](d, NULL,
+    CMD::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](d, NULL,
         (void*) &name);
 
     std::ostringstream ossValue;
     ossValue << value;
     std::string rawValue = ossValue.str();
     std::string fullValue;
-    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParamValue"](d,
+    CMD::GetSingleton().functionMap[d.tname]["GetPrintableParamValue"](d,
         (void*) &rawValue, (void*) &fullValue);
 
     std::ostringstream oss;
@@ -163,7 +163,7 @@ inline std::string ProgramCall(const std::string& programName)
   oss << "$ " << GetBindingName(programName);
 
   // Handle all options---first input options, then output options.
-  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+  const std::map<std::string, util::ParamData>& parameters = CMD::Parameters();
 
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
@@ -172,11 +172,11 @@ inline std::string ProgramCall(const std::string& programName)
 
     // Otherwise, print the name and the default value.
     std::string name;
-    CLI::GetSingleton().functionMap[it->second.tname]["GetPrintableParamName"](
+    CMD::GetSingleton().functionMap[it->second.tname]["GetPrintableParamName"](
         it->second, NULL, (void*) &name);
 
     std::string value;
-    CLI::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
+    CMD::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
         it->second, NULL, (void*) &value);
     if (value == "''")
       value = "<string>";
@@ -201,11 +201,11 @@ inline std::string ProgramCall(const std::string& programName)
 
     // Otherwise, print the name and the default value.
     std::string name;
-    CLI::GetSingleton().functionMap[it->second.tname]["GetPrintableParamName"](
+    CMD::GetSingleton().functionMap[it->second.tname]["GetPrintableParamName"](
         it->second, NULL, (void*) &name);
 
     std::string value;
-    CLI::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
+    CMD::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
         it->second, NULL, (void*) &value);
     if (value == "''")
       value = "<string>";
@@ -221,19 +221,19 @@ inline std::string ProgramCall(const std::string& programName)
 
 /**
  * Print what a user would type to invoke the given option name.  Note that the
- * name *must* exist in the CLI module.  (Note that because of the way
+ * name *must* exist in the CMD module.  (Note that because of the way
  * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()
  * declarataions need to come before the PROGRAM_INFO() declaration.)
  */
 inline std::string ParamString(const std::string& paramName)
 {
   // Return the correct parameter name.
-  if (CLI::Parameters().count(paramName) > 0)
+  if (CMD::Parameters().count(paramName) > 0)
   {
-    util::ParamData& d = CLI::Parameters()[paramName];
+    util::ParamData& d = CMD::Parameters()[paramName];
 
     std::string output;
-    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](d, NULL,
+    CMD::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](d, NULL,
         (void*) &output);
     // Is there an alias?
     std::string alias = "";

@@ -39,7 +39,7 @@ class JuliaOption
  public:
   /**
    * Construct a JuliaOption object.  When constructed, it will register itself
-   * with CLI. The testName parameter is not used and added for compatibility
+   * with CMD. The testName parameter is not used and added for compatibility
    * reasons.
    */
   JuliaOption(const T defaultValue,
@@ -52,7 +52,7 @@ class JuliaOption
               const bool noTranspose = false,
               const std::string& /* testName */ = "")
   {
-    // Create the ParamData object to give to CLI.
+    // Create the ParamData object to give to CMD.
     util::ParamData data;
 
     data.desc = description;
@@ -77,40 +77,40 @@ class JuliaOption
 
     // Restore the parameters for this program.
     if (identifier != "verbose")
-      CLI::RestoreSettings(programName, false);
+      CMD::RestoreSettings(programName, false);
 
     // Set the function pointers that we'll need.  All of these function
     // pointers will be used by both the program that generates the pyx, and
     // also the binding itself.  (The binding itself will only use GetParam,
     // GetPrintableParam, and GetRawParam.)
-    CLI::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
+    CMD::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
+    CMD::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
         &GetPrintableParam<T>;
 
     // These are used by the jl generator.
-    CLI::GetSingleton().functionMap[data.tname]["PrintParamDefn"] =
+    CMD::GetSingleton().functionMap[data.tname]["PrintParamDefn"] =
         &PrintParamDefn<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintInputParam"] =
+    CMD::GetSingleton().functionMap[data.tname]["PrintInputParam"] =
         &PrintInputParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
+    CMD::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
         &PrintOutputProcessing<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
+    CMD::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
         &PrintInputProcessing<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintModelTypeImport"] =
+    CMD::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
+    CMD::GetSingleton().functionMap[data.tname]["PrintModelTypeImport"] =
         &PrintModelTypeImport<T>;
 
     // This is needed for the Markdown binding output.
-    CLI::GetSingleton().functionMap[data.tname]["DefaultParam"] =
+    CMD::GetSingleton().functionMap[data.tname]["DefaultParam"] =
         &DefaultParam<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
-    // import more than one .so that uses CLI, so we have to keep the options
+    // import more than one .so that uses CMD, so we have to keep the options
     // separate.  programName is a global variable from mlpack_main.hpp.
-    CLI::Add(std::move(data));
+    CMD::Add(std::move(data));
     if (identifier != "verbose")
-      CLI::StoreSettings(programName);
-    CLI::ClearSettings();
+      CMD::StoreSettings(programName);
+    CMD::ClearSettings();
   }
 };
 

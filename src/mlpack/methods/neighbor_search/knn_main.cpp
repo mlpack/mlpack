@@ -117,8 +117,8 @@ PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate nearest neighbor "
 
 static void mlpackMain()
 {
-  if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (CMD::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) CMD::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
@@ -129,7 +129,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "input_model", true }}, "random_basis");
   ReportIgnoredParam({{ "input_model", true }}, "tau");
   ReportIgnoredParam({{ "input_model", true }}, "rho");
-  if (CLI::HasParam("input_model") && CLI::HasParam("leaf_size"))
+  if (CMD::HasParam("input_model") && CMD::HasParam("leaf_size"))
   {
     Log::Warn << PRINT_PARAM_STRING("leaf_size") << " will only be considered"
         << " for the query tree, because --input_model_file is specified."
@@ -141,7 +141,7 @@ static void mlpackMain()
       "no results will be saved");
 
   // If the user specifies k but no output files, they should be warned.
-  if (CLI::HasParam("k"))
+  if (CMD::HasParam("k"))
   {
     RequireAtLeastOnePassed({ "neighbors", "distances" }, false,
         "nearest neighbor search results will not be saved");
@@ -157,34 +157,34 @@ static void mlpackMain()
   // Sanity check on leaf size.
   RequireParamValue<int>("leaf_size", [](int x) { return x > 0; },
       true, "leaf size must be positive");
-  const int lsInt = CLI::GetParam<int>("leaf_size");
+  const int lsInt = CMD::GetParam<int>("leaf_size");
 
   // Sanity check on tau.
   RequireParamValue<double>("tau", [](double x) { return x >= 0.0; },
       true, "tau must be positive");
-  const double tau = CLI::GetParam<double>("tau");
+  const double tau = CMD::GetParam<double>("tau");
 
 
   // Sanity check on rho.
-  const double rho = CLI::GetParam<double>("rho");
+  const double rho = CMD::GetParam<double>("rho");
   RequireParamValue<double>("rho",
       [](double x) { return x >= 0.0 && x <= 1.0; }, true,
       "rho must be in the range [0, 1]");
-  if (CLI::GetParam<string>("tree_type") != "spill")
+  if (CMD::GetParam<string>("tree_type") != "spill")
   {
     ReportIgnoredParam("tau", "spill trees are not being used");
     ReportIgnoredParam("rho", "spill trees are not being used");
   }
 
   // Sanity check on epsilon.
-  const double epsilon = CLI::GetParam<double>("epsilon");
+  const double epsilon = CMD::GetParam<double>("epsilon");
   RequireParamValue<double>("epsilon", [](double x) { return x >= 0.0; }, true,
       "epsilon must be positive");
 
   // We either have to load the reference data, or we have to load the model.
   KNNModel* knn;
 
-  const string algorithm = CLI::GetParam<string>("algorithm");
+  const string algorithm = CMD::GetParam<string>("algorithm");
   RequireParamInSet<string>("algorithm", { "naive", "single_tree", "dual_tree",
       "greedy" }, true, "unknown neighbor search algorithm");
   NeighborSearchMode searchMode = DUAL_TREE_MODE;
@@ -198,11 +198,11 @@ static void mlpackMain()
   else if (algorithm == "greedy")
     searchMode = GREEDY_SINGLE_TREE_MODE;
 
-  if (CLI::HasParam("reference"))
+  if (CMD::HasParam("reference"))
   {
     // Get all the parameters.
-    const string treeType = CLI::GetParam<string>("tree_type");
-    const bool randomBasis = CLI::HasParam("random_basis");
+    const string treeType = CMD::GetParam<string>("tree_type");
+    const bool randomBasis = CMD::HasParam("random_basis");
 
     KNNModel::TreeTypes tree = KNNModel::KD_TREE;
     RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star",
@@ -249,9 +249,9 @@ static void mlpackMain()
     knn->Rho() = rho;
 
     Log::Info << "Using reference data from "
-        << CLI::GetPrintableParam<arma::mat>("reference") << "." << endl;
+        << CMD::GetPrintableParam<arma::mat>("reference") << "." << endl;
 
-    arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
+    arma::mat referenceSet = std::move(CMD::GetParam<arma::mat>("reference"));
 
     knn->BuildModel(std::move(referenceSet), size_t(lsInt), searchMode,
         epsilon);
@@ -259,7 +259,7 @@ static void mlpackMain()
   else
   {
     // Load the model from file.
-    knn = CLI::GetParam<KNNModel*>("input_model");
+    knn = CMD::GetParam<KNNModel*>("input_model");
 
     // Adjust search mode.
     knn->SearchMode() = searchMode;
@@ -268,31 +268,31 @@ static void mlpackMain()
     // If leaf_size wasn't provided, let's consider the current value in the
     // loaded model.  Else, update it (only considered when building the query
     // tree).
-    if (CLI::HasParam("leaf_size"))
+    if (CMD::HasParam("leaf_size"))
       knn->LeafSize() = size_t(lsInt);
 
     Log::Info << "Loaded kNN model from '"
-        << CLI::GetPrintableParam<KNNModel*>("input_model") << "' (trained on "
+        << CMD::GetPrintableParam<KNNModel*>("input_model") << "' (trained on "
         << knn->Dataset().n_rows << "x" << knn->Dataset().n_cols
         << " dataset)." << endl;
   }
 
   // Perform search, if desired.
-  if (CLI::HasParam("k"))
+  if (CMD::HasParam("k"))
   {
-    const size_t k = (size_t) CLI::GetParam<int>("k");
+    const size_t k = (size_t) CMD::GetParam<int>("k");
 
     arma::mat queryData;
-    if (CLI::HasParam("query"))
+    if (CMD::HasParam("query"))
     {
       Log::Info << "Using query data from "
-          << CLI::GetPrintableParam<arma::mat>("query") << "." << endl;
-      queryData = std::move(CLI::GetParam<arma::mat>("query"));
+          << CMD::GetPrintableParam<arma::mat>("query") << "." << endl;
+      queryData = std::move(CMD::GetParam<arma::mat>("query"));
       if (queryData.n_rows != knn->Dataset().n_rows)
       {
         // Clean memory if needed before crashing.
         const size_t dimensions = knn->Dataset().n_rows;
-        if (CLI::HasParam("reference"))
+        if (CMD::HasParam("reference"))
           delete knn;
         Log::Fatal << "Query has invalid dimensions(" << queryData.n_rows <<
             "); should be " << dimensions << "!" << endl;
@@ -306,7 +306,7 @@ static void mlpackMain()
     {
       // Clean memory if needed before crashing.
       const size_t referencePoints = knn->Dataset().n_cols;
-      if (CLI::HasParam("reference"))
+      if (CMD::HasParam("reference"))
         delete knn;
       Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less "
           << "than or equal to the number of reference points ("
@@ -315,11 +315,11 @@ static void mlpackMain()
 
     // Sanity check on k value: must not be equal to the number of reference
     // points when query data has not been provided.
-    if (!CLI::HasParam("query") && k == knn->Dataset().n_cols)
+    if (!CMD::HasParam("query") && k == knn->Dataset().n_cols)
     {
       // Clean memory if needed before crashing.
       const size_t referencePoints = knn->Dataset().n_cols;
-      if (CLI::HasParam("reference"))
+      if (CMD::HasParam("reference"))
         delete knn;
       Log::Fatal << "Invalid k: " << k << "; must be less than the number of "
           << "reference points (" << referencePoints << ") if query data has "
@@ -330,14 +330,14 @@ static void mlpackMain()
     arma::Mat<size_t> neighbors;
     arma::mat distances;
 
-    if (CLI::HasParam("query"))
+    if (CMD::HasParam("query"))
       knn->Search(std::move(queryData), k, neighbors, distances);
     else
       knn->Search(k, neighbors, distances);
     Log::Info << "Search complete." << endl;
 
     // Calculate the effective error, if desired.
-    if (CLI::HasParam("true_distances"))
+    if (CMD::HasParam("true_distances"))
     {
       if (knn->TreeType() != KNNModel::SPILL_TREE && knn->Epsilon() == 0)
         Log::Warn << PRINT_PARAM_STRING("true_distances") << "specified, but "
@@ -345,12 +345,12 @@ static void mlpackMain()
             << "error!" << endl;
 
       arma::mat trueDistances =
-          std::move(CLI::GetParam<arma::mat>("true_distances"));
+          std::move(CMD::GetParam<arma::mat>("true_distances"));
 
       if (trueDistances.n_rows != distances.n_rows ||
           trueDistances.n_cols != distances.n_cols)
       {
-        if (CLI::HasParam("reference"))
+        if (CMD::HasParam("reference"))
           delete knn;
         Log::Fatal << "The true distances file must have the same number of "
             << "values than the set of distances being queried!" << endl;
@@ -361,7 +361,7 @@ static void mlpackMain()
     }
 
     // Calculate the recall, if desired.
-    if (CLI::HasParam("true_neighbors"))
+    if (CMD::HasParam("true_neighbors"))
     {
       if (knn->TreeType() != KNNModel::SPILL_TREE && knn->Epsilon() == 0)
         Log::Warn << PRINT_PARAM_STRING("true_neighbors") << " specified, but "
@@ -369,12 +369,12 @@ static void mlpackMain()
             << "recall!" << endl;
 
       arma::Mat<size_t> trueNeighbors =
-          std::move(CLI::GetParam<arma::Mat<size_t>>("true_neighbors"));
+          std::move(CMD::GetParam<arma::Mat<size_t>>("true_neighbors"));
 
       if (trueNeighbors.n_rows != neighbors.n_rows ||
           trueNeighbors.n_cols != neighbors.n_cols)
       {
-        if (CLI::HasParam("reference"))
+        if (CMD::HasParam("reference"))
           delete knn;
         Log::Fatal << "The true neighbors file must have the same number of "
             << "values than the set of neighbors being queried!" << endl;
@@ -384,9 +384,9 @@ static void mlpackMain()
     }
 
     // Save output.
-    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
-    CLI::GetParam<arma::mat>("distances") = std::move(distances);
+    CMD::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    CMD::GetParam<arma::mat>("distances") = std::move(distances);
   }
 
-  CLI::GetParam<KNNModel*>("output_model") = knn;
+  CMD::GetParam<KNNModel*>("output_model") = knn;
 }

@@ -52,7 +52,7 @@ inline void RandomSeed(const size_t seed)
  * Set the random seed to a fixed number.
  * This function is used in binding tests to set a fixed random seed before
  * calling mlpack(). In this way we can test whether a certain parameter makes
- * a difference to execution of CLI binding.
+ * a difference to execution of CMD binding.
  * Refer to pull request #1306 for discussion on this function.
  */
 #if (BINDING_TYPE == BINDING_TYPE_TEST)

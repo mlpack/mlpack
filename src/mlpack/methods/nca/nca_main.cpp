@@ -139,14 +139,14 @@ using namespace std;
 
 static void mlpackMain()
 {
-  if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (CMD::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) CMD::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
-  const string optimizerType = CLI::GetParam<string>("optimizer");
+  const string optimizerType = CMD::GetParam<string>("optimizer");
   RequireParamInSet<string>("optimizer", { "sgd", "lbfgs" },
       true, "unknown optimizer type");
 
@@ -169,27 +169,27 @@ static void mlpackMain()
     ReportIgnoredParam("batch_size", "SGD optimizer is not being used");
   }
 
-  const double stepSize = CLI::GetParam<double>("step_size");
-  const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
-  const double tolerance = CLI::GetParam<double>("tolerance");
-  const bool normalize = CLI::HasParam("normalize");
-  const bool shuffle = !CLI::HasParam("linear_scan");
-  const int numBasis = CLI::GetParam<int>("num_basis");
-  const double armijoConstant = CLI::GetParam<double>("armijo_constant");
-  const double wolfe = CLI::GetParam<double>("wolfe");
-  const int maxLineSearchTrials = CLI::GetParam<int>("max_line_search_trials");
-  const double minStep = CLI::GetParam<double>("min_step");
-  const double maxStep = CLI::GetParam<double>("max_step");
-  const size_t batchSize = (size_t) CLI::GetParam<int>("batch_size");
+  const double stepSize = CMD::GetParam<double>("step_size");
+  const size_t maxIterations = (size_t) CMD::GetParam<int>("max_iterations");
+  const double tolerance = CMD::GetParam<double>("tolerance");
+  const bool normalize = CMD::HasParam("normalize");
+  const bool shuffle = !CMD::HasParam("linear_scan");
+  const int numBasis = CMD::GetParam<int>("num_basis");
+  const double armijoConstant = CMD::GetParam<double>("armijo_constant");
+  const double wolfe = CMD::GetParam<double>("wolfe");
+  const int maxLineSearchTrials = CMD::GetParam<int>("max_line_search_trials");
+  const double minStep = CMD::GetParam<double>("min_step");
+  const double maxStep = CMD::GetParam<double>("max_step");
+  const size_t batchSize = (size_t) CMD::GetParam<int>("batch_size");
 
   // Load data.
-  arma::mat data = std::move(CLI::GetParam<arma::mat>("input"));
+  arma::mat data = std::move(CMD::GetParam<arma::mat>("input"));
 
   // Do we want to load labels separately?
   arma::Row<size_t> rawLabels(data.n_cols);
-  if (CLI::HasParam("labels"))
+  if (CMD::HasParam("labels"))
   {
-    rawLabels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+    rawLabels = std::move(CMD::GetParam<arma::Row<size_t>>("labels"));
 
     if (rawLabels.n_elem != data.n_cols)
     {
@@ -259,6 +259,6 @@ static void mlpackMain()
   }
 
   // Save the output.
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(distance);
+  if (CMD::HasParam("output"))
+    CMD::GetParam<arma::mat>("output") = std::move(distance);
 }

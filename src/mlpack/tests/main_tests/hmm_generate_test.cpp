@@ -34,14 +34,14 @@ struct HMMGenerateTestFixture
   HMMGenerateTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    CMD::RestoreSettings(testName);
   }
 
   ~HMMGenerateTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    CMD::ClearSettings();
   }
 };
 
@@ -72,14 +72,14 @@ BOOST_AUTO_TEST_CASE(HMMGenerateDiscreteHMMCheckDimensionsTest)
 
   // Get the generated observation sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
-  arma::mat obsSeq = CLI::GetParam<arma::mat>("output");
+  arma::mat obsSeq = CMD::GetParam<arma::mat>("output");
   BOOST_REQUIRE_EQUAL(obsSeq.n_cols, (size_t)length);
   BOOST_REQUIRE_EQUAL(obsSeq.n_rows, (size_t)1);
   BOOST_REQUIRE_EQUAL(obsSeq.n_elem, (size_t)length);
 
   // Get the generated state sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
-  arma::Mat<size_t> stateSeq = CLI::GetParam<arma::Mat<size_t>>("state");
+  arma::Mat<size_t> stateSeq = CMD::GetParam<arma::Mat<size_t>>("state");
   BOOST_REQUIRE_EQUAL(stateSeq.n_cols, (size_t)length);
   BOOST_REQUIRE_EQUAL(stateSeq.n_rows, (size_t)1);
   BOOST_REQUIRE_EQUAL(stateSeq.n_elem, (size_t)length);
@@ -110,14 +110,14 @@ BOOST_AUTO_TEST_CASE(HMMGenerateGaussianHMMCheckDimensionsTest)
 
   // Get the generated observation sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
-  arma::mat obsSeq = CLI::GetParam<arma::mat>("output");
+  arma::mat obsSeq = CMD::GetParam<arma::mat>("output");
   BOOST_REQUIRE_EQUAL(obsSeq.n_cols, (size_t)length);
   BOOST_REQUIRE_EQUAL(obsSeq.n_rows, (size_t)1);
   BOOST_REQUIRE_EQUAL(obsSeq.n_elem, (size_t)length);
 
   // Get the generated state sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
-  arma::Mat<size_t> stateSeq = CLI::GetParam<arma::Mat<size_t>>("state");
+  arma::Mat<size_t> stateSeq = CMD::GetParam<arma::Mat<size_t>>("state");
   BOOST_REQUIRE_EQUAL(stateSeq.n_cols, (size_t)length);
   BOOST_REQUIRE_EQUAL(stateSeq.n_rows, (size_t)1);
   BOOST_REQUIRE_EQUAL(stateSeq.n_elem, (size_t)length);
@@ -158,14 +158,14 @@ BOOST_AUTO_TEST_CASE(HMMGenerateGMMHMMCheckDimensionsTest)
 
   // Get the generated observation sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
-  arma::mat obsSeq = CLI::GetParam<arma::mat>("output");
+  arma::mat obsSeq = CMD::GetParam<arma::mat>("output");
   BOOST_REQUIRE_EQUAL(obsSeq.n_cols, (size_t) length);
   BOOST_REQUIRE_EQUAL(obsSeq.n_rows, (size_t) 2);
   BOOST_REQUIRE_EQUAL(obsSeq.n_elem, (size_t) length * 2);
 
   // Get the generated state sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
-  arma::Mat<size_t> stateSeq = CLI::GetParam<arma::Mat<size_t>>("state");
+  arma::Mat<size_t> stateSeq = CMD::GetParam<arma::Mat<size_t>>("state");
   BOOST_REQUIRE_EQUAL(stateSeq.n_cols, (size_t) length);
   BOOST_REQUIRE_EQUAL(stateSeq.n_rows, (size_t) 1);
   BOOST_REQUIRE_EQUAL(stateSeq.n_elem, (size_t) length);
@@ -206,14 +206,14 @@ BOOST_AUTO_TEST_CASE(HMMGenerateDiagonalGMMHMMCheckDimensionsTest)
 
   // Get the generated observation sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
-  arma::mat obsSeq = CLI::GetParam<arma::mat>("output");
+  arma::mat obsSeq = CMD::GetParam<arma::mat>("output");
   BOOST_REQUIRE_EQUAL(obsSeq.n_cols, (size_t) length);
   BOOST_REQUIRE_EQUAL(obsSeq.n_rows, (size_t) 2);
   BOOST_REQUIRE_EQUAL(obsSeq.n_elem, (size_t) length * 2);
 
   // Get the generated state sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
-  arma::Mat<size_t> stateSeq = CLI::GetParam<arma::Mat<size_t>>("state");
+  arma::Mat<size_t> stateSeq = CMD::GetParam<arma::Mat<size_t>>("state");
   BOOST_REQUIRE_EQUAL(stateSeq.n_cols, (size_t) length);
   BOOST_REQUIRE_EQUAL(stateSeq.n_rows, (size_t) 1);
   BOOST_REQUIRE_EQUAL(stateSeq.n_elem, (size_t) length);

@@ -23,7 +23,7 @@ namespace python {
  * Given a list of parameter definition and program documentation, print a
  * generated .pyx file to stdout.
  *
- * @param parameters List of parameters the program will use (from CLI).
+ * @param parameters List of parameters the program will use (from CMD).
  * @param programInfo Documentation for the program.
  * @param mainFilename Filename of the main program (i.e.
  *      "/path/to/pca_main.cpp").

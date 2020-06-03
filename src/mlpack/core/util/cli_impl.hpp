@@ -2,15 +2,15 @@
  * @file cli_impl.hpp
  * @author Matthew Amidon
  *
- * Implementation of templated functions of the CLI class.
+ * Implementation of templated functions of the CMD class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_UTIL_CLI_IMPL_HPP
-#define MLPACK_CORE_UTIL_CLI_IMPL_HPP
+#ifndef MLPACK_CORE_UTIL_CMD_IMPL_HPP
+#define MLPACK_CORE_UTIL_CMD_IMPL_HPP
 
 // In case it has not already been included.
 #include "cli.hpp"
@@ -29,11 +29,11 @@ namespace mlpack {
  * @tparam T The type of the parameter.
  * @param identifier The full name of the parameter.
  *
- * @return The value of the parameter.  Use CLI::CheckValue to determine if it's
+ * @return The value of the parameter.  Use CMD::CheckValue to determine if it's
  *     valid.
  */
 template<typename T>
-T& CLI::GetParam(const std::string& identifier)
+T& CMD::GetParam(const std::string& identifier)
 {
   // Only use the alias if the parameter does not exist as given.
   std::string key =
@@ -54,10 +54,10 @@ T& CLI::GetParam(const std::string& identifier)
         << std::endl;
 
   // Do we have a special mapped function?
-  if (CLI::GetSingleton().functionMap[d.tname].count("GetParam") != 0)
+  if (CMD::GetSingleton().functionMap[d.tname].count("GetParam") != 0)
   {
     T* output = NULL;
-    CLI::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL,
+    CMD::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL,
         (void*) &output);
     return *output;
   }
@@ -75,7 +75,7 @@ T& CLI::GetParam(const std::string& identifier)
  * @param identifier The name of the parameter in question.
  */
 template<typename T>
-std::string CLI::GetPrintableParam(const std::string& identifier)
+std::string CMD::GetPrintableParam(const std::string& identifier)
 {
   // Only use the alias if the parameter does not exist as given.
   std::string key = ((GetSingleton().parameters.count(identifier) == 0) &&
@@ -96,10 +96,10 @@ std::string CLI::GetPrintableParam(const std::string& identifier)
         << std::endl;
 
   // Do we have a special mapped function?
-  if (CLI::GetSingleton().functionMap[d.tname].count("GetPrintableParam") != 0)
+  if (CMD::GetSingleton().functionMap[d.tname].count("GetPrintableParam") != 0)
   {
     std::string output;
-    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParam"](d, NULL,
+    CMD::GetSingleton().functionMap[d.tname]["GetPrintableParam"](d, NULL,
         (void*) &output);
     return output;
   }
@@ -113,7 +113,7 @@ std::string CLI::GetPrintableParam(const std::string& identifier)
 }
 
 template<typename T>
-T& CLI::GetRawParam(const std::string& identifier)
+T& CMD::GetRawParam(const std::string& identifier)
 {
   // Only use the alias if the parameter does not exist as given.
   std::string key =
@@ -134,10 +134,10 @@ T& CLI::GetRawParam(const std::string& identifier)
         << std::endl;
 
   // Do we have a special mapped function?
-  if (CLI::GetSingleton().functionMap[d.tname].count("GetRawParam") != 0)
+  if (CMD::GetSingleton().functionMap[d.tname].count("GetRawParam") != 0)
   {
     T* output = NULL;
-    CLI::GetSingleton().functionMap[d.tname]["GetRawParam"](d, NULL,
+    CMD::GetSingleton().functionMap[d.tname]["GetRawParam"](d, NULL,
         (void*) &output);
     return *output;
   }

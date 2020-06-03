@@ -75,8 +75,8 @@ using namespace arma;
 static void mlpackMain()
 {
   // Set random seed.
-  if (CLI::GetParam<int>("seed") != 0)
-    RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (CMD::GetParam<int>("seed") != 0)
+    RandomSeed((size_t) CMD::GetParam<int>("seed"));
   else
     RandomSeed((size_t) std::time(NULL));
 
@@ -95,13 +95,13 @@ static void mlpackMain()
       "number of sweeps must be 0 or greater");
 
   // Load the data.
-  mat matX = std::move(CLI::GetParam<mat>("input"));
+  mat matX = std::move(CMD::GetParam<mat>("input"));
 
   // Load parameters.
-  double noiseStdDev = CLI::GetParam<double>("noise_std_dev");
-  size_t nReplicates = CLI::GetParam<int>("replicates");
-  size_t nAngles = CLI::GetParam<int>("angles");
-  size_t nSweeps = CLI::GetParam<int>("sweeps");
+  double noiseStdDev = CMD::GetParam<double>("noise_std_dev");
+  size_t nReplicates = CMD::GetParam<int>("replicates");
+  size_t nAngles = CMD::GetParam<int>("angles");
+  size_t nSweeps = CMD::GetParam<int>("sweeps");
 
   if (nSweeps == 0)
   {
@@ -115,13 +115,13 @@ static void mlpackMain()
   rad.DoRadical(matX, matY, matW);
 
   // Save results.
-  if (CLI::HasParam("output_ic"))
-    CLI::GetParam<mat>("output_ic") = std::move(matY);
+  if (CMD::HasParam("output_ic"))
+    CMD::GetParam<mat>("output_ic") = std::move(matY);
 
-  if (CLI::HasParam("output_unmixing"))
-    CLI::GetParam<mat>("output_unmixing") = std::move(matW);
+  if (CMD::HasParam("output_unmixing"))
+    CMD::GetParam<mat>("output_unmixing") = std::move(matW);
 
-  if (CLI::HasParam("objective"))
+  if (CMD::HasParam("objective"))
   {
     // Compute and print objective.
     mat matYT = trans(matY);

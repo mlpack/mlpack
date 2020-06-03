@@ -176,14 +176,14 @@ static void mlpackMain()
       "unknown algorithm");
 
   // If we are searching, we need a set to search in.
-  if (CLI::HasParam("k"))
+  if (CMD::HasParam("k"))
   {
     RequireAtLeastOnePassed({ "reference", "query" }, true,
         "if search is being performed, at least one set must be specified");
   }
 
   // Validate parameters.
-  if (CLI::HasParam("k"))
+  if (CMD::HasParam("k"))
   {
     RequireParamValue<int>("k", [](int x) { return x > 0; }, true,
         "number of neighbors to search for must be positive");
@@ -199,35 +199,35 @@ static void mlpackMain()
   ReportIgnoredParam({{ "k", false }}, "calculate_error");
   ReportIgnoredParam({{ "calculate_error", false }}, "exact_distances");
 
-  if (CLI::HasParam("calculate_error"))
+  if (CMD::HasParam("calculate_error"))
   {
     RequireAtLeastOnePassed({ "exact_distances", "reference" }, true,
         "if error is to be calculated, either precalculated exact distances or "
         "the reference set must be passed");
   }
 
-  if (CLI::HasParam("k") && CLI::HasParam("reference") &&
-      ((size_t) CLI::GetParam<int>("k")) >
-          CLI::GetParam<arma::mat>("reference").n_cols)
+  if (CMD::HasParam("k") && CMD::HasParam("reference") &&
+      ((size_t) CMD::GetParam<int>("k")) >
+          CMD::GetParam<arma::mat>("reference").n_cols)
   {
     Log::Fatal << "Number of neighbors to search for ("
-        << CLI::GetParam<int>("k") << ") must be less than the number of "
+        << CMD::GetParam<int>("k") << ") must be less than the number of "
         << "reference points ("
-        << CLI::GetParam<arma::mat>("reference").n_cols << ")." << std::endl;
+        << CMD::GetParam<arma::mat>("reference").n_cols << ")." << std::endl;
   }
 
   // Do the building of a model, if necessary.
   ApproxKFNModel* m;
   arma::mat referenceSet; // This may be used at query time.
-  if (CLI::HasParam("reference"))
+  if (CMD::HasParam("reference"))
   {
-    referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
+    referenceSet = std::move(CMD::GetParam<arma::mat>("reference"));
     m = new ApproxKFNModel();
 
-    const size_t numTables = (size_t) CLI::GetParam<int>("num_tables");
+    const size_t numTables = (size_t) CMD::GetParam<int>("num_tables");
     const size_t numProjections =
-        (size_t) CLI::GetParam<int>("num_projections");
-    const string algorithm = CLI::GetParam<string>("algorithm");
+        (size_t) CMD::GetParam<int>("num_projections");
+    const string algorithm = CMD::GetParam<string>("algorithm");
 
     if (algorithm == "ds")
     {
@@ -250,21 +250,21 @@ static void mlpackMain()
   else
   {
     // We must load the model from what was passed.
-    m = CLI::GetParam<ApproxKFNModel*>("input_model");
+    m = CMD::GetParam<ApproxKFNModel*>("input_model");
   }
 
   // Now, do we need to do any queries?
-  if (CLI::HasParam("k"))
+  if (CMD::HasParam("k"))
   {
     arma::mat querySet; // This may or may not be used.
-    const size_t k = (size_t) CLI::GetParam<int>("k");
+    const size_t k = (size_t) CMD::GetParam<int>("k");
 
     arma::Mat<size_t> neighbors;
     arma::mat distances;
 
-    arma::mat& set = CLI::HasParam("query") ? querySet : referenceSet;
-    if (CLI::HasParam("query"))
-      querySet = std::move(CLI::GetParam<arma::mat>("query"));
+    arma::mat& set = CMD::HasParam("query") ? querySet : referenceSet;
+    if (CMD::HasParam("query"))
+      querySet = std::move(CMD::GetParam<arma::mat>("query"));
 
     if (m->type == 0)
     {
@@ -285,13 +285,13 @@ static void mlpackMain()
     Log::Info << "Search complete." << endl;
 
     // Should we calculate error?
-    if (CLI::HasParam("calculate_error"))
+    if (CMD::HasParam("calculate_error"))
     {
       arma::mat exactDistances;
-      if (CLI::HasParam("exact_distances"))
+      if (CMD::HasParam("exact_distances"))
       {
         // Check the exact distances matrix has the right dimensions.
-        exactDistances = std::move(CLI::GetParam<arma::mat>("exact_distances"));
+        exactDistances = std::move(CMD::GetParam<arma::mat>("exact_distances"));
 
         if (exactDistances.n_rows != k)
         {
@@ -333,9 +333,9 @@ static void mlpackMain()
     }
 
     // Save results, if desired.
-    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
-    CLI::GetParam<arma::mat>("distances") = std::move(distances);
+    CMD::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    CMD::GetParam<arma::mat>("distances") = std::move(distances);
   }
 
-  CLI::GetParam<ApproxKFNModel*>("output_model") = m;
+  CMD::GetParam<ApproxKFNModel*>("output_model") = m;
 }

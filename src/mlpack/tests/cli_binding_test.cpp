@@ -2,7 +2,7 @@
  * @file cli_binding_test.cpp
  * @author Ryan Curtin
  *
- * Test the components of the CLI bindings.
+ * Test the components of the CMD bindings.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -22,44 +22,44 @@ using namespace mlpack::bindings;
 using namespace mlpack::bindings::cli;
 using namespace mlpack::kernel;
 
-BOOST_AUTO_TEST_SUITE(CLIBindingTest);
+BOOST_AUTO_TEST_SUITE(CMDBindingTest);
 
 /**
- * Ensure that we can construct a CLIOption object, and that it will add itself
- * to the CLI instance.
+ * Ensure that we can construct a CMDOption object, and that it will add itself
+ * to the CMD instance.
  */
-BOOST_AUTO_TEST_CASE(CLIOptionTest)
+BOOST_AUTO_TEST_CASE(CMDOptionTest)
 {
-  CLI::ClearSettings();
-  CLIOption<double> co1(0.0, "test", "test2", "t", "double", false, true,
+  CMD::ClearSettings();
+  CMDOption<double> co1(0.0, "test", "test2", "t", "double", false, true,
       false);
 
-  // Now check that it's in CLI.
-  BOOST_REQUIRE_GT(CLI::Parameters().count("test"), 0);
-  BOOST_REQUIRE_GT(CLI::Aliases().count('t'), 0);
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].desc, "test2");
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].name, "test");
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].alias, 't');
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].noTranspose, false);
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].required, false);
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].input, true);
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].cppType, "double");
+  // Now check that it's in CMD.
+  BOOST_REQUIRE_GT(CMD::Parameters().count("test"), 0);
+  BOOST_REQUIRE_GT(CMD::Aliases().count('t'), 0);
+  BOOST_REQUIRE_EQUAL(CMD::Parameters()["test"].desc, "test2");
+  BOOST_REQUIRE_EQUAL(CMD::Parameters()["test"].name, "test");
+  BOOST_REQUIRE_EQUAL(CMD::Parameters()["test"].alias, 't');
+  BOOST_REQUIRE_EQUAL(CMD::Parameters()["test"].noTranspose, false);
+  BOOST_REQUIRE_EQUAL(CMD::Parameters()["test"].required, false);
+  BOOST_REQUIRE_EQUAL(CMD::Parameters()["test"].input, true);
+  BOOST_REQUIRE_EQUAL(CMD::Parameters()["test"].cppType, "double");
 
-  CLIOption<arma::mat> co2(arma::mat(), "mat", "mat2", "m", "arma::mat", true,
+  CMDOption<arma::mat> co2(arma::mat(), "mat", "mat2", "m", "arma::mat", true,
       true, true);
 
-  // Now check that it's in CLI.
-  BOOST_REQUIRE_GT(CLI::Parameters().count("mat"), 0);
-  BOOST_REQUIRE_GT(CLI::Aliases().count('m'), 0);
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["mat"].desc, "mat2");
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["mat"].name, "mat");
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["mat"].alias, 'm');
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["mat"].noTranspose, true);
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["mat"].required, true);
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["mat"].input, true);
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["mat"].cppType, "arma::mat");
+  // Now check that it's in CMD.
+  BOOST_REQUIRE_GT(CMD::Parameters().count("mat"), 0);
+  BOOST_REQUIRE_GT(CMD::Aliases().count('m'), 0);
+  BOOST_REQUIRE_EQUAL(CMD::Parameters()["mat"].desc, "mat2");
+  BOOST_REQUIRE_EQUAL(CMD::Parameters()["mat"].name, "mat");
+  BOOST_REQUIRE_EQUAL(CMD::Parameters()["mat"].alias, 'm');
+  BOOST_REQUIRE_EQUAL(CMD::Parameters()["mat"].noTranspose, true);
+  BOOST_REQUIRE_EQUAL(CMD::Parameters()["mat"].required, true);
+  BOOST_REQUIRE_EQUAL(CMD::Parameters()["mat"].input, true);
+  BOOST_REQUIRE_EQUAL(CMD::Parameters()["mat"].cppType, "arma::mat");
 
-  CLI::ClearSettings();
+  CMD::ClearSettings();
 }
 
 /**

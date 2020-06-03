@@ -66,7 +66,7 @@ struct Loglik
   static void Apply(HMMType& hmm, void* /* extraInfo */)
   {
     // Load the data sequence.
-    mat dataSeq = std::move(CLI::GetParam<mat>("input"));
+    mat dataSeq = std::move(CMD::GetParam<mat>("input"));
 
     // Detect if we need to transpose the data, in the case where the input data
     // has one dimension.
@@ -86,12 +86,12 @@ struct Loglik
 
     const double loglik = hmm.LogLikelihood(dataSeq);
 
-    CLI::GetParam<double>("log_likelihood") = loglik;
+    CMD::GetParam<double>("log_likelihood") = loglik;
   }
 };
 
 static void mlpackMain()
 {
   // Load model, and calculate the log-likelihood of the sequence.
-  CLI::GetParam<HMMModel*>("input_model")->PerformAction<Loglik>((void*) NULL);
+  CMD::GetParam<HMMModel*>("input_model")->PerformAction<Loglik>((void*) NULL);
 }

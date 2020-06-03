@@ -2,7 +2,7 @@
  * @file preprocess_describe_main.cpp
  * @author Keon Kim
  *
- * Descriptive Statistics Class and CLI executable.
+ * Descriptive Statistics Class and CMD executable.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -163,14 +163,14 @@ double StandardError(const size_t size, const double& fStd)
 
 static void mlpackMain()
 {
-  const size_t dimension = static_cast<size_t>(CLI::GetParam<int>("dimension"));
-  const size_t precision = static_cast<size_t>(CLI::GetParam<int>("precision"));
-  const size_t width = static_cast<size_t>(CLI::GetParam<int>("width"));
-  const bool population = CLI::HasParam("population");
-  const bool rowMajor = CLI::HasParam("row_major");
+  const size_t dimension = static_cast<size_t>(CMD::GetParam<int>("dimension"));
+  const size_t precision = static_cast<size_t>(CMD::GetParam<int>("precision"));
+  const size_t width = static_cast<size_t>(CMD::GetParam<int>("width"));
+  const bool population = CMD::HasParam("population");
+  const bool rowMajor = CMD::HasParam("row_major");
 
   // Load the data.
-  arma::mat& data = CLI::GetParam<arma::mat>("input");
+  arma::mat& data = CMD::GetParam<arma::mat>("input");
 
   // Generate boost format recipe.
   const string widthPrecision("%-" + to_string(width) + "." +
@@ -225,7 +225,7 @@ static void mlpackMain()
 
   // If the user specified dimension, describe statistics of the given
   // dimension. If a dimension is not specified, describe all dimensions.
-  if (CLI::HasParam("dimension"))
+  if (CMD::HasParam("dimension"))
   {
     PrintStatResults(dimension, rowMajor);
   }

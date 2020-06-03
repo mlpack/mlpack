@@ -2,7 +2,7 @@
  * @file image_converter_main.cpp
  * @author Jeffin Sam
  *
- * A CLI executable to load and save a image dataset.
+ * A CMD executable to load and save a image dataset.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -73,18 +73,18 @@ static void mlpackMain()
 {
   Timer::Start("Loading/Saving Image");
   // Parse command line options.
-  const vector<string> fileNames = CLI::GetParam<vector<string> >("input");
+  const vector<string> fileNames = CMD::GetParam<vector<string> >("input");
   arma::mat out;
 
-  if (!CLI::HasParam("save"))
+  if (!CMD::HasParam("save"))
   {
     ReportIgnoredParam("width", "Width of image is determined from file.");
     ReportIgnoredParam("height", "Height of image is determined from file.");
     ReportIgnoredParam("channels", "Number of channels determined from file.");
     data::ImageInfo info;
     Load(fileNames, out, info, true);
-    if (CLI::HasParam("output"))
-      CLI::GetParam<arma::mat>("output") = std::move(out);
+    if (CMD::HasParam("output"))
+      CMD::GetParam<arma::mat>("output") = std::move(out);
   }
   else
   {
@@ -103,12 +103,12 @@ static void mlpackMain()
     RequireParamValue<int>("quality", [](int x) { return x >= 0;}, true,
         "quality must be positive");
 
-    const size_t height = CLI::GetParam<int>("height");
-    const size_t width = CLI::GetParam<int>("width");
-    const size_t channels = CLI::GetParam<int>("channels");
-    const size_t quality = CLI::GetParam<int>("quality");
+    const size_t height = CMD::GetParam<int>("height");
+    const size_t width = CMD::GetParam<int>("width");
+    const size_t channels = CMD::GetParam<int>("channels");
+    const size_t quality = CMD::GetParam<int>("quality");
     data::ImageInfo info(width, height, channels, quality);
-    Save(fileNames, CLI::GetParam<arma::mat>("dataset"), info, true);
+    Save(fileNames, CMD::GetParam<arma::mat>("dataset"), info, true);
   }
 }
 

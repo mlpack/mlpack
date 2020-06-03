@@ -192,11 +192,11 @@ void ComputeRecommendations(CFModel* cf,
                             arma::Mat<size_t>& recommendations)
 {
   // Reading users.
-  if (CLI::HasParam("query"))
+  if (CMD::HasParam("query"))
   {
     // User matrix.
     arma::Mat<size_t> users =
-        std::move(CLI::GetParam<arma::Mat<size_t>>("query"));
+        std::move(CMD::GetParam<arma::Mat<size_t>>("query"));
     if (users.n_rows > 1)
       users = users.t();
     if (users.n_rows > 1)
@@ -228,7 +228,7 @@ void ComputeRecommendations(CFModel* cf,
       "regression", "similarity" }, true, "unknown interpolation algorithm");
 
   // Taking Interpolation Alternatives
-  const string interpolationAlgorithm = CLI::GetParam<string>("interpolation");
+  const string interpolationAlgorithm = CMD::GetParam<string>("interpolation");
 
   // Determining the Interpolation Algorithm
   if (interpolationAlgorithm == "average")
@@ -257,7 +257,7 @@ void ComputeRecommendations(CFModel* cf,
       "euclidean", "pearson" }, true, "unknown neighbor search algorithm");
 
   //  Taking Neighbor Search alternatives
-  const string neighborSearchAlgorithm = CLI::GetParam<string>
+  const string neighborSearchAlgorithm = CMD::GetParam<string>
       ("neighbor_search");
 
 
@@ -281,7 +281,7 @@ template <typename NeighborSearchType,
 void ComputeRMSE(CFModel* cf)
 {
   // Now, compute each test point.
-  arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
+  arma::mat testData = std::move(CMD::GetParam<arma::mat>("test"));
 
   // Assemble the combination matrix to get RMSE value.
   arma::Mat<size_t> combinations(2, testData.n_cols);
@@ -314,7 +314,7 @@ void ComputeRMSE(CFModel* cf)
       "regression", "similarity" }, true, "unknown interpolation algorithm");
 
   //  Taking Interpolation Alternatives
-  const string interpolationAlgorithm = CLI::GetParam<string>("interpolation");
+  const string interpolationAlgorithm = CMD::GetParam<string>("interpolation");
 
   if (interpolationAlgorithm == "average")
   {
@@ -337,7 +337,7 @@ void ComputeRMSE(CFModel* cf)
       "euclidean", "pearson" }, true, "unknown neighbor search algorithm");
 
   //  Taking Neighbor Search alternatives
-  const string neighborSearchAlgorithm = CLI::GetParam<string>
+  const string neighborSearchAlgorithm = CMD::GetParam<string>
     ("neighbor_search");
 
   if (neighborSearchAlgorithm == "cosine")
@@ -356,23 +356,23 @@ void ComputeRMSE(CFModel* cf)
 
 void PerformAction(CFModel* c)
 {
-  if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
+  if (CMD::HasParam("query") || CMD::HasParam("all_user_recommendations"))
   {
     // Get parameters for generating recommendations.
-    const size_t numRecs = (size_t) CLI::GetParam<int>("recommendations");
+    const size_t numRecs = (size_t) CMD::GetParam<int>("recommendations");
 
     // Get the recommendations.
     arma::Mat<size_t> recommendations;
     ComputeRecommendations(c, numRecs, recommendations);
 
     // Save the output.
-    CLI::GetParam<arma::Mat<size_t>>("output") = recommendations;
+    CMD::GetParam<arma::Mat<size_t>>("output") = recommendations;
   }
 
-  if (CLI::HasParam("test"))
+  if (CMD::HasParam("test"))
     ComputeRMSE(c);
 
-  CLI::GetParam<CFModel*>("output_model") = c;
+  CMD::GetParam<CFModel*>("output_model") = c;
 }
 
 template<typename DecompositionPolicy>
@@ -381,7 +381,7 @@ void PerformAction(arma::mat& dataset,
                    const size_t maxIterations,
                    const double minResidue)
 {
-  const size_t neighborhood = (size_t) CLI::GetParam<int>("neighborhood");
+  const size_t neighborhood = (size_t) CMD::GetParam<int>("neighborhood");
 
   // Make sure the normalization strategy is valid.
   RequireParamInSet<string>("normalization", { "overall_mean", "item_mean",
@@ -389,10 +389,10 @@ void PerformAction(arma::mat& dataset,
 
   CFModel* c = new CFModel();
 
-  const string normalizationType = CLI::GetParam<string>("normalization");
+  const string normalizationType = CMD::GetParam<string>("normalization");
 
   c->template Train<DecompositionPolicy>(dataset, neighborhood, rank,
-      maxIterations, minResidue, CLI::HasParam("iteration_only_termination"),
+      maxIterations, minResidue, CMD::HasParam("iteration_only_termination"),
       normalizationType);
 
   try
@@ -411,8 +411,8 @@ void AssembleFactorizerType(const std::string& algorithm,
                             arma::mat& dataset,
                             const size_t rank)
 {
-  const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
-  const double minResidue = CLI::GetParam<double>("min_residue");
+  const size_t maxIterations = (size_t) CMD::GetParam<int>("max_iterations");
+  const double minResidue = CMD::GetParam<double>("min_residue");
 
   if (algorithm == "NMF")
   {
@@ -460,21 +460,21 @@ void AssembleFactorizerType(const std::string& algorithm,
 
 static void mlpackMain()
 {
-  if (CLI::GetParam<int>("seed") == 0)
+  if (CMD::GetParam<int>("seed") == 0)
     math::RandomSeed(std::time(NULL));
   else
-    math::RandomSeed(CLI::GetParam<int>("seed"));
+    math::RandomSeed(CMD::GetParam<int>("seed"));
 
   // Validate parameters.
   RequireOnlyOnePassed({ "training", "input_model" }, true);
 
   // Check that nothing stupid is happening.
-  if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
+  if (CMD::HasParam("query") || CMD::HasParam("all_user_recommendations"))
     RequireOnlyOnePassed({ "query", "all_user_recommendations" }, true);
 
   RequireAtLeastOnePassed({ "output", "output_model" }, false,
       "no output will be saved");
-  if (!CLI::HasParam("query") && !CLI::HasParam("all_user_recommendations"))
+  if (!CMD::HasParam("query") && !CMD::HasParam("all_user_recommendations"))
     ReportIgnoredParam("output", "no recommendations requested");
 
   RequireParamInSet<string>("algorithm", { "NMF", "BatchSVD",
@@ -487,7 +487,7 @@ static void mlpackMain()
         "recommendations must be positive");
 
   // Either load from a model, or train a model.
-  if (CLI::HasParam("training"))
+  if (CMD::HasParam("training"))
   {
     // Train a model.
     // Validate Parameters.
@@ -502,7 +502,7 @@ static void mlpackMain()
         "neighborhood must be positive");
 
     // Read from the input file.
-    arma::mat dataset = std::move(CLI::GetParam<arma::mat>("training"));
+    arma::mat dataset = std::move(CMD::GetParam<arma::mat>("training"));
 
     RequireParamValue<int>("neighborhood",
         [&dataset](int x) { return x <= max(dataset.row(0)) + 1; }, true,
@@ -512,12 +512,12 @@ static void mlpackMain()
     arma::Mat<size_t> recommendations;
 
     // Get parameters.
-    const size_t rank = (size_t) CLI::GetParam<int>("rank");
+    const size_t rank = (size_t) CMD::GetParam<int>("rank");
 
     // Perform decomposition to prepare for recommendations.
     Log::Info << "Performing CF matrix decomposition on dataset..." << endl;
 
-    const string algo = CLI::GetParam<string>("algorithm");
+    const string algo = CMD::GetParam<string>("algorithm");
 
     // Perform the factorization and do whatever the user wanted.
     AssembleFactorizerType(algo, dataset, rank);
@@ -529,7 +529,7 @@ static void mlpackMain()
         "test" }, true);
 
     // Load an input model.
-    CFModel* c = std::move(CLI::GetParam<CFModel*>("input_model"));
+    CFModel* c = std::move(CMD::GetParam<CFModel*>("input_model"));
 
     PerformAction(c);
   }

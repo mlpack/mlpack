@@ -10,15 +10,15 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CLI_PARSE_COMMAND_LINE_HPP
-#define MLPACK_BINDINGS_CLI_PARSE_COMMAND_LINE_HPP
+#ifndef MLPACK_BINDINGS_CMD_PARSE_COMMAND_LINE_HPP
+#define MLPACK_BINDINGS_CMD_PARSE_COMMAND_LINE_HPP
 
 #include <mlpack/core.hpp>
 #include <boost/program_options.hpp>
 #include "print_help.hpp"
 
-namespace CLI11 {
-  #include <CLI/CLI.hpp>
+namespace CMD11 {
+  #include <CMD/CMD.hpp>
 }
 
 namespace mlpack {
@@ -33,34 +33,34 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 PARAM_FLAG("version", "Display the version of mlpack.", "V");
 
 /**
- * Parse the command line, setting all of the options inside of the CLI object
+ * Parse the command line, setting all of the options inside of the CMD object
  * to their appropriate given values.
  */
 void ParseCommandLine(int argc, char** argv)
 {
   // First, we need to build the boost::program_options variables for parsing.
-  CLI11::CLI::App app;
+  CMD11::CMD::App app;
 
   // Go through list of options in order to add them.
-  std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+  std::map<std::string, util::ParamData>& parameters = CMD::Parameters();
   typedef std::map<std::string, util::ParamData>::const_iterator IteratorType;
   std::map<std::string, std::string> boostNameMap;
   for (IteratorType it = parameters.begin(); it != parameters.end(); ++it)
   {
     // Add the parameter to desc.
     const util::ParamData& d = it->second;
-    CLI::GetSingleton().functionMap[d.tname]["AddToPO"](d, NULL,
+    CMD::GetSingleton().functionMap[d.tname]["AddToPO"](d, NULL,
         (void*) &app);
 
     // Generate the name the user passes on the command line.
     std::string boostName;
-    CLI::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
+    CMD::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
         (void*) &boostName);
     boostNameMap[boostName] = d.name;
   }
 
   // Mark that we did parsing.
-  CLI::GetSingleton().didParse = true;
+  CMD::GetSingleton().didParse = true;
 
   // Parse the command line, then place the values in the right place.
   try
@@ -105,7 +105,7 @@ void ParseCommandLine(int argc, char** argv)
     // }
 
   }
-  catch (const CLI11::CLI::ParseError& pe)
+  catch (const CMD11::CMD::ParseError& pe)
   {
     Log::Fatal << "Caught exception from parsing command line: " << pe.what()
         << std::endl;
@@ -122,7 +122,7 @@ void ParseCommandLine(int argc, char** argv)
   //   const std::string identifier = boostNameMap[i->first];
   //   util::ParamData& param = parameters[identifier];
   //   param.wasPassed = true;
-  //   CLI::GetSingleton().functionMap[param.tname]["SetParam"](param,
+  //   CMD::GetSingleton().functionMap[param.tname]["SetParam"](param,
   //       (void*) &vmap[i->first].value(), NULL);
   // }
 
@@ -130,15 +130,15 @@ void ParseCommandLine(int argc, char** argv)
   // --info), handle those.
 
   // --version is prioritized over --help.
-  if (CLI::HasParam("version"))
+  if (CMD::HasParam("version"))
   {
-    std::cout << CLI::GetSingleton().ProgramName() << ": part of "
+    std::cout << CMD::GetSingleton().ProgramName() << ": part of "
         << util::GetVersion() << "." << std::endl;
     exit(0); // Don't do anything else.
   }
 
   // Default help message.
-  if (CLI::HasParam("help"))
+  if (CMD::HasParam("help"))
   {
     Log::Info.ignoreInput = false;
     PrintHelp();
@@ -146,10 +146,10 @@ void ParseCommandLine(int argc, char** argv)
   }
 
   // Info on a specific parameter.
-  if (CLI::HasParam("info"))
+  if (CMD::HasParam("info"))
   {
     Log::Info.ignoreInput = false;
-    std::string str = CLI::GetParam<std::string>("info");
+    std::string str = CMD::GetParam<std::string>("info");
 
     // The info node should always be there, but the user may not have specified
     // anything.
@@ -168,7 +168,7 @@ void ParseCommandLine(int argc, char** argv)
   // if we have not compiled in debugging mode.
   Log::Debug << "Compiled with debugging symbols." << std::endl;
 
-  if (CLI::HasParam("verbose"))
+  if (CMD::HasParam("verbose"))
   {
     // Give [INFO ] output.
     Log::Info.ignoreInput = false;
@@ -182,7 +182,7 @@ void ParseCommandLine(int argc, char** argv)
     if (d.required)
     {
       const std::string boostName;
-      CLI::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
+      CMD::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
           (void*) &boostName);
 
       if (!app.count(boostName))

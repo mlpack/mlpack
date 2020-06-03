@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_RL_ENVIRONMENT_REWARD_CLIPPING_HPP
-#define MLPACK_METHODS_RL_ENVIRONMENT_REWARD_CLIPPING_HPP
+#ifndef MLPACK_METHODS_RL_ENVIRONMENT_REWARD_CMDPPING_HPP
+#define MLPACK_METHODS_RL_ENVIRONMENT_REWARD_CMDPPING_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/clamp.hpp>

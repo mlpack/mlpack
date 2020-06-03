@@ -24,11 +24,11 @@ void PrintHelp(const std::string& param)
 {
   std::string usedParam = param;
   const std::map<std::string, util::ParamData>& parameters =
-      CLI::Parameters();
-  const std::map<char, std::string>& aliases = CLI::Aliases();
+      CMD::Parameters();
+  const std::map<char, std::string>& aliases = CMD::Aliases();
 
   std::map<std::string, util::ParamData>::const_iterator iter;
-  const util::ProgramDoc& docs = *CLI::GetSingleton().doc;
+  const util::ProgramDoc& docs = *CMD::GetSingleton().doc;
 
   // If we pass a single param, alias it if necessary.
   if (usedParam.length() == 1 && aliases.count(usedParam[0]))
@@ -43,7 +43,7 @@ void PrintHelp(const std::string& param)
 
     // Figure out the name of the type.
     std::string printableType;
-    CLI::GetSingleton().functionMap[data.tname]["StringTypeParam"](data, NULL,
+    CMD::GetSingleton().functionMap[data.tname]["StringTypeParam"](data, NULL,
         (void*) &printableType);
     std::string type = " [" + printableType + "]";
 
@@ -85,7 +85,7 @@ void PrintHelp(const std::string& param)
     {
       const util::ParamData& data = iter->second;
       const std::string key;
-      CLI::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
+      CMD::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
           NULL, (void*) &key);
 
       std::string desc = data.desc;
@@ -125,14 +125,14 @@ void PrintHelp(const std::string& param)
                         data.cppType == "std::vector<std::string>"))
       {
         std::string defaultValue;
-        CLI::GetSingleton().functionMap[data.tname]["DefaultParam"](data,
+        CMD::GetSingleton().functionMap[data.tname]["DefaultParam"](data,
             NULL, (void*) &defaultValue);
         desc += "  Default value " + defaultValue + ".";
       }
 
       // Now, print the descriptions.
       std::string printableType;
-      CLI::GetSingleton().functionMap[data.tname]["StringTypeParam"](data,
+      CMD::GetSingleton().functionMap[data.tname]["StringTypeParam"](data,
           NULL, (void*) &printableType);
       std::string type = " [" + printableType + "]";
       std::string fullDesc = "  --" + key + alias + type + "  ";
