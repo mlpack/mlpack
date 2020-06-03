@@ -17,9 +17,7 @@
 #include <boost/program_options.hpp>
 #include "print_help.hpp"
 
-namespace CMD11 {
-  #include <CMD/CMD.hpp>
-}
+#include <CLI/CLI.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -39,7 +37,7 @@ PARAM_FLAG("version", "Display the version of mlpack.", "V");
 void ParseCommandLine(int argc, char** argv)
 {
   // First, we need to build the boost::program_options variables for parsing.
-  CMD11::CMD::App app;
+  CLI::App app;
 
   // Go through list of options in order to add them.
   std::map<std::string, util::ParamData>& parameters = CMD::Parameters();
@@ -105,7 +103,7 @@ void ParseCommandLine(int argc, char** argv)
     // }
 
   }
-  catch (const CMD11::CMD::ParseError& pe)
+  catch (const CLI::ParseError& pe)
   {
     Log::Fatal << "Caught exception from parsing command line: " << pe.what()
         << std::endl;
