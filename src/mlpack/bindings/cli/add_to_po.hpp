@@ -2,7 +2,7 @@
  * @file add_to_po.hpp
  * @author Ryan Curtin
  *
- * Utility functions to add options to boost::program_options based on their
+ * Utility functions to add options to CLI11 based on their
  * type.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -14,70 +14,71 @@
 #define MLPACK_BINDINGS_CLI_ADD_TO_PO_HPP
 
 #include <mlpack/core/util/param_data.hpp>
-#include <boost/program_options.hpp>
 #include <mlpack/core/util/is_std_vector.hpp>
 #include "map_parameter_name.hpp"
+
+#include <CLI/CLI.hpp>
 
 namespace mlpack {
 namespace bindings {
 namespace cli {
 
 /**
- * Add a non-vector option to boost::program_options.
+ * Add a non-vector option to CLI11.
  *
- * @param boostName The name of the option to add to boost::program_options.
+ * @param boostName The name of the option to add to CLI11.
  * @param descr Description string for parameter.
  * @param desc Options description to add parameter to.
  */
 template<typename T>
-void AddToPO(const std::string& boostName,
+void AddToPO(const std::string& cliName,
              const std::string& descr,
-             boost::program_options::options_description& desc,
+             CLI::App& app,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
-  desc.add_options()(boostName.c_str(), boost::program_options::value<T>(),
-      descr.c_str());
+  T value;
+  app.add_option(cliName.c_str(), value, descr.c_str());
 }
 
 /**
- * Add a vector option to boost::program_options.  This overload will use the
+ * Add a vector option to CLI11.  This overload will use the
  * multitoken() option.
  *
- * @param boostName The name of the option to add to boost::program_options.
+ * @param boostName The name of the option to add to CLI11.
  * @param descr Description string for parameter.
  * @param desc Options description to add parameter to.
  */
 template<typename T>
-void AddToPO(const std::string& boostName,
+void AddToPO(const std::string& cliName,
              const std::string& descr,
-             boost::program_options::options_description& desc,
+             CLI::App& app
              const typename boost::enable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
-  desc.add_options()(boostName.c_str(),
-      boost::program_options::value<T>()->multitoken(), descr.c_str());
+  T container;
+  app.add_option(cliName.c_str(), container, descr.c_str());
 }
 
 /**
- * Add a boolean option to boost::program_options.
+ * Add a boolean option to CLI11.
  *
- * @param boostName The name of the option to add to boost::program_options.
+ * @param boostName The name of the option to add to CLI11.
  * @param descr Description string for parameter.
  * @param desc Options description to add parameter to.
  */
 template<typename T>
-void AddToPO(const std::string& boostName,
+void AddToPO(const std::string& cliName,
              const std::string& descr,
-             boost::program_options::options_description& desc,
+             CLI::App& app,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
 {
-  desc.add_options()(boostName.c_str(), descr.c_str());
+  app.add_flag(cliName.c_str(), descr.c_str());
 }
 
 /**
- * Add an option to boost::program_options.  This is the function meant to be
+ * Add an option to CLI11.  This is the function meant to be
  * used in the CLI function map.
  *
  * @param d Parameter data.
@@ -89,11 +90,10 @@ void AddToPO(const util::ParamData& d,
              const void* /* input */,
              void* output)
 {
-  // Cast boost::program_options::options_description object.
-  boost::program_options::options_description* desc =
-      (boost::program_options::options_description*) output;
+  // Cast CLI::App object.
+  CLI::App* app = (CLI::App*) output;
 
-  // Generate the name to be given to boost::program_options.
+  // Generate the name to be given to CLI11.
   const std::string mappedName =
       MapParameterName<typename std::remove_pointer<T>::type>(d.name);
   std::string boostName = (d.alias != '\0') ? mappedName + "," +
