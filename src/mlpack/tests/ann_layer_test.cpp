@@ -3737,6 +3737,8 @@ BOOST_AUTO_TEST_CASE(VAEModelTest)
     decoder->Add<LeakyReLU<>>();
     decoder->Add<TransposedConvolution<>>(16, 1, 15, 15,
         1, 1, 1, 1, 14, 14);
+
+    delete decoder;
 }
 
 BOOST_AUTO_TEST_SUITE_END();
