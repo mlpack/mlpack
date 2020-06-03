@@ -64,57 +64,6 @@ template<typename OutputLayerType, typename MergeLayerType,
          typename MergeOutputType, typename InitializationRuleType,
          typename... CustomLayers>
 BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
-    InitializationRuleType, CustomLayers...>::BRNN(
-    const BRNN& network) :
-    rho(network.rho),
-    outputLayer(network.outputLayer),
-    initializeRule(network.initializeRule),
-    inputSize(network.inputSize),
-    outputSize(network.outputSize),
-    targetSize(network.targetSize),
-    reset(network.reset),
-    single(network.single),
-    numFunctions(network.numFunctions),
-    deterministic(network.deterministic),
-    parameter(network.parameter),
-    predictors(network.predictors),
-    responses(network.responses),
-    forwardRNN(network.rho, network.single, network.outputLayer,
-        network.initializeRule),
-    backwardRNN(network.rho, network.single, network.outputLayer,
-        network.initializeRule)
-{
-  mergeLayer = boost::apply_visitor(copyVisitor, network.mergeLayer);
-  mergeOutput = boost::apply_visitor(copyVisitor, network.mergeOutput);
-
-  // Build new layers according to source network.
-  for (size_t i = 0; i < network.forwardRNN.network.size(); ++i)
-  {
-    this->forwardRNN.network.push_back(boost::apply_visitor(copyVisitor,
-        network.forwardRNN.network[i]));
-  }
-
-  // Build new layers according to source network.
-  for (size_t i = 0; i < network.backwardRNN.network.size(); ++i)
-  {
-    this->backwardRNN.network.push_back(boost::apply_visitor(copyVisitor,
-        network.backwardRNN.network[i]));
-  }
-
-  boost::apply_visitor(AddVisitor<CustomLayers...>(
-      forwardRNN.network.back()), mergeLayer);
-  boost::apply_visitor(AddVisitor<CustomLayers...>(
-      backwardRNN.network.back()), mergeLayer);
-  boost::apply_visitor(RunSetVisitor(false), mergeLayer);
-
-  forwardRNN.Parameters() = network.forwardRNN.Parameters();
-  backwardRNN.Parameters() = network.backwardRNN.Parameters();
-}
-
-template<typename OutputLayerType, typename MergeLayerType,
-         typename MergeOutputType, typename InitializationRuleType,
-         typename... CustomLayers>
-BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::~BRNN()
 {
   // Remove the last layers from the forward and backward RNNs, as they are held

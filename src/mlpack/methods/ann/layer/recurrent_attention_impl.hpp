@@ -26,10 +26,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-RecurrentAttention<InputDataType, OutputDataType, CustomLayers...>::
-RecurrentAttention() :
+template<typename InputDataType, typename OutputDataType>
+RecurrentAttention<InputDataType, OutputDataType>::RecurrentAttention() :
     rho(0),
     forwardStep(0),
     backwardStep(0),
@@ -38,29 +36,9 @@ RecurrentAttention() :
   // Nothing to do.
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-RecurrentAttention<InputDataType, OutputDataType, CustomLayers...>::
-RecurrentAttention(
-    const RecurrentAttention& layer) :
-    outSize(layer.outSize),
-    rho(layer.rho),
-    forwardStep(layer.forwardStep),
-    backwardStep(layer.backwardStep),
-    deterministic(layer.deterministic)
-{
-  rnnModule = boost::apply_visitor(copyVisitor, layer.rnnModule);
-  actionModule = boost::apply_visitor(copyVisitor, layer.actionModule);
-
-  this->network.push_back(rnnModule);
-  this->network.push_back(actionModule);
-}
-
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
+template <typename InputDataType, typename OutputDataType>
 template<typename RNNModuleType, typename ActionModuleType>
-RecurrentAttention<InputDataType, OutputDataType, CustomLayers...>::
-RecurrentAttention(
+RecurrentAttention<InputDataType, OutputDataType>::RecurrentAttention(
     const size_t outSize,
     const RNNModuleType& rnn,
     const ActionModuleType& action,
@@ -77,11 +55,9 @@ RecurrentAttention(
   network.push_back(actionModule);
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void RecurrentAttention<InputDataType, OutputDataType, CustomLayers...>::
-Forward(
+void RecurrentAttention<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   // Initialize the action input.
@@ -134,11 +110,9 @@ Forward(
   backwardStep = 0;
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void RecurrentAttention<InputDataType, OutputDataType, CustomLayers...>::
-Backward(
+void RecurrentAttention<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& /* input */,
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
@@ -216,11 +190,10 @@ Backward(
     IntermediateGradient();
   }
 }
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
+
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void RecurrentAttention<InputDataType, OutputDataType, CustomLayers...>::
-Gradient(
+void RecurrentAttention<InputDataType, OutputDataType>::Gradient(
     const arma::Mat<eT>& /* input */,
     const arma::Mat<eT>& /* error */,
     arma::Mat<eT>& /* gradient */)
@@ -232,11 +205,9 @@ Gradient(
       attentionGradient, offset), actionModule);
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void RecurrentAttention<InputDataType, OutputDataType, CustomLayers...>::
-serialize(
+void RecurrentAttention<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(rho);

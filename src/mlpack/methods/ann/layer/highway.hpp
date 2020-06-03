@@ -74,9 +74,6 @@ class Highway
   //! Destroy the Highway object.
   ~Highway();
 
-  //! Copy constructor.
-  Highway(const Highway&);
-
   /**
    * Reset the layer parameter.
    */
@@ -258,9 +255,6 @@ class Highway
 
   //! Locally-stored output height visitor.
   OutputHeightVisitor outputHeightVisitor;
-
-  //! Locally-stored copy visitor
-  CopyVisitor<CustomLayers...> copyVisitor;
 }; // class Highway
 
 } // namespace ann

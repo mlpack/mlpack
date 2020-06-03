@@ -48,9 +48,6 @@ class ConcatPerformance
   ConcatPerformance(const size_t inSize = 0,
                     OutputLayerType&& outputLayer = OutputLayerType());
 
-  //! Copy constructor.
-  ConcatPerformance(const ConcatPerformance&);
-
   /*
    * Computes the Negative log likelihood.
    *

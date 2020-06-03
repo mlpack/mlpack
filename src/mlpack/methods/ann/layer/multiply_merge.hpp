@@ -50,9 +50,6 @@ class MultiplyMerge
    */
   MultiplyMerge(const bool model = false, const bool run = true);
 
-  //! Copy constructor.
-  MultiplyMerge(const MultiplyMerge&);
-
   //! Destructor to release allocated memory.
   ~MultiplyMerge();
 

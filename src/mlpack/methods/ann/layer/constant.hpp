@@ -43,9 +43,6 @@ class Constant
    */
   Constant(const size_t outSize = 0, const double scalar = 0.0);
 
-  //! Copy constructor.
-  Constant(const Constant&);
-
   /**
    * Ordinary feed forward pass of a neural network. The forward pass fills the
    * output with the specified constant parameter.

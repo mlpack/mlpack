@@ -51,9 +51,6 @@ class LinearNoBias
                const size_t outSize,
                RegularizerType regularizer = RegularizerType());
 
-  //! Copy constructor.
-  LinearNoBias(const LinearNoBias&);
-
   /*
    * Reset the layer parameter.
    */

@@ -46,26 +46,6 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(
       4 * outSize * inSize + 4 * outSize + 4 * outSize * outSize, 1);
 }
 
-template <typename InputDataType, typename OutputDataType>
-FastLSTM<InputDataType, OutputDataType>::FastLSTM(
-    const FastLSTM& layer) :
-    inSize(layer.inSize),
-    outSize(layer.outSize),
-    rho(layer.rho),
-    weights(layer.weights),
-    forwardStep(layer.forwardStep),
-    backwardStep(layer.backwardStep),
-    gradientStep(layer.gradientStep),
-    grad(layer.grad),
-    batchSize(layer.batchSize),
-    batchStep(layer.batchStep),
-    gradientStepIdx(layer.gradientStepIdx),
-    rhoSize(layer.rho),
-    bpttSteps(layer.bpttSteps)
-{
-  Reset();
-}
-
 template<typename InputDataType, typename OutputDataType>
 void FastLSTM<InputDataType, OutputDataType>::Reset()
 {

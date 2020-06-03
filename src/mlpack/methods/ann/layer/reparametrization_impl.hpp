@@ -29,17 +29,6 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization() :
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-Reparametrization<InputDataType, OutputDataType>::Reparametrization(
-  const Reparametrization& layer) :
-    latentSize(layer.latentSize),
-    stochastic(layer.stochastic),
-    includeKl(layer.includeKl),
-    beta(layer.beta)
-{
-  // Nothing to do here.
-}
-
 template <typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>::Reparametrization(
     const size_t latentSize,

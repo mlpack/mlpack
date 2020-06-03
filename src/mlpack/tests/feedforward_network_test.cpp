@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_SUITE(FeedForwardNetworkTest);
  * Train and evaluate a model with the specified structure.
  */
 template<typename MatType = arma::mat, typename ModelType>
-void TestNetwork(ModelType* model,
+void TestNetwork(ModelType& model,
                  MatType& trainData,
                  MatType& trainLabels,
                  MatType& testData,
@@ -41,10 +41,10 @@ void TestNetwork(ModelType* model,
                  const double classificationErrorThreshold)
 {
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
-  model->Train(trainData, trainLabels, opt);
+  model.Train(trainData, trainLabels, opt);
 
   MatType predictionTemp;
-  model->Predict(testData, predictionTemp);
+  model.Predict(testData, predictionTemp);
   MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
 
   for (size_t i = 0; i < predictionTemp.n_cols; ++i)
@@ -56,22 +56,6 @@ void TestNetwork(ModelType* model,
   size_t correct = arma::accu(prediction == testLabels);
   double classificationError = 1 - double(correct) / testData.n_cols;
   BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
-}
-
-// network1 should be allocated with `new`, and trained on some data.
-template<typename MatType = arma::mat, typename ModelType>
-void CheckCopyFunction(ModelType* network1, MatType& inputs)
-{
-  FFN<> network2(*network1);
-  arma::mat predictions1;
-  network1->Predict(inputs, predictions1);
-  delete network1;
-
-  // Deallocating all of network1's memory, so that
-  // if network2 is trying to use any of that memory.
-  arma::mat predictions2;
-  network2.Predict(inputs, predictions2);
-  CheckMatrices(predictions1, predictions2);
 }
 
 /**
@@ -114,17 +98,16 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
    * +-----+       +-----+
    */
 
-  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >();
-  model->Add<Linear<> >(trainData.n_rows, 8);
-  model->Add<SigmoidLayer<> >();
-  model->Add<Linear<> >(8, 3);
-  model->Add<LogSoftMax<> >();
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<SigmoidLayer<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
 
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
   TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
-  CheckCopyFunction(model, testData);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
@@ -137,14 +120,13 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
   labels += 1;
 
-  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >();
-  model1->Add<Linear<> >(dataset.n_rows, 10);
-  model1->Add<SigmoidLayer<> >();
-  model1->Add<Linear<> >(10, 2);
-  model1->Add<LogSoftMax<> >();
+  FFN<NegativeLogLikelihood<> > model1;
+  model1.Add<Linear<> >(dataset.n_rows, 10);
+  model1.Add<SigmoidLayer<> >();
+  model1.Add<Linear<> >(10, 2);
+  model1.Add<LogSoftMax<> >();
   // Vanilla neural net with logistic activation function.
   TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
-  CheckCopyFunction(model1, dataset);
 }
 
 BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
@@ -263,19 +245,17 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
    * +-----+
    */
 
-  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >();
-  model->Add<Linear<> >(trainData.n_rows, 8);
-  model->Add<SigmoidLayer<> >();
-  model->Add<Dropout<> >();
-  model->Add<Linear<> >(8, 3);
-  model->Add<LogSoftMax<> >();
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<SigmoidLayer<> >();
+  model.Add<Dropout<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
 
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
   TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
-  CheckCopyFunction(model, testData);
-
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
@@ -289,20 +269,18 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
   labels += 1;
 
-  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >();
-  model1->Add<Linear<> >(dataset.n_rows, 10);
-  model1->Add<SigmoidLayer<> >();
-  model1->Add<Dropout<> >();
-  model1->Add<Linear<> >(10, 2);
-  model1->Add<LogSoftMax<> >();
+  FFN<NegativeLogLikelihood<> > model1;
+  model1.Add<Linear<> >(dataset.n_rows, 10);
+  model1.Add<SigmoidLayer<> >();
+  model.Add<Dropout<> >();
+  model1.Add<Linear<> >(10, 2);
+  model1.Add<LogSoftMax<> >();
   // Vanilla neural net with logistic activation function.
   TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
-  CheckCopyFunction(model1, dataset);
 }
 
 /**
  * Train the highway network on a larger dataset.
- *
  */
 BOOST_AUTO_TEST_CASE(HighwayNetworkTest)
 {
@@ -317,16 +295,15 @@ BOOST_AUTO_TEST_CASE(HighwayNetworkTest)
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
   labels += 1;
 
-  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >();
-  model->Add<Linear<> >(dataset.n_rows, 10);
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(dataset.n_rows, 10);
   Highway<>* highway = new Highway<>(10, true);
   highway->Add<Linear<> >(10, 10);
   highway->Add<SigmoidLayer<> >();
-  model->Add(highway); // This takes ownership of the memory.
-  model->Add<Linear<> >(10, 2);
-  model->Add<LogSoftMax<> >();
+  model.Add(highway); // This takes ownership of the memory.
+  model.Add<Linear<> >(10, 2);
+  model.Add<LogSoftMax<> >();
   TestNetwork<>(model, dataset, labels, dataset, labels, 10, 0.2);
-  CheckCopyFunction(model, dataset);
 }
 
 /**
@@ -371,17 +348,16 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
   *
   */
 
-  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >();
-  model->Add<Linear<> >(trainData.n_rows, 8);
-  model->Add<SigmoidLayer<> >();
-  model->Add<DropConnect<> >(8, 3);
-  model->Add<LogSoftMax<> >();
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<SigmoidLayer<> >();
+  model.Add<DropConnect<> >(8, 3);
+  model.Add<LogSoftMax<> >();
 
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
   TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
-  CheckCopyFunction(model, testData);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
@@ -394,14 +370,13 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
   labels += 1;
 
-  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >();
-  model1->Add<Linear<> >(dataset.n_rows, 10);
-  model1->Add<SigmoidLayer<> >();
-  model1->Add<DropConnect<> >(10, 2);
-  model1->Add<LogSoftMax<> >();
+  FFN<NegativeLogLikelihood<> > model1;
+  model1.Add<Linear<> >(dataset.n_rows, 10);
+  model1.Add<SigmoidLayer<> >();
+  model1.Add<DropConnect<> >(10, 2);
+  model1.Add<LogSoftMax<> >();
   // Vanilla neural net with logistic activation function.
   TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
-  CheckCopyFunction(model1, dataset);
 }
 
 /**

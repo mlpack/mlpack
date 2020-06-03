@@ -18,7 +18,6 @@
 #include "dropconnect.hpp"
 
 #include "../visitor/delete_visitor.hpp"
-#include "../visitor/copy_visitor.hpp"
 #include "../visitor/forward_visitor.hpp"
 #include "../visitor/backward_visitor.hpp"
 #include "../visitor/gradient_visitor.hpp"
@@ -28,9 +27,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-DropConnect<InputDataType, OutputDataType, CustomLayers...>::DropConnect() :
+template<typename InputDataType, typename OutputDataType>
+DropConnect<InputDataType, OutputDataType>::DropConnect() :
     ratio(0.5),
     scale(2.0),
     deterministic(true)
@@ -38,9 +36,8 @@ DropConnect<InputDataType, OutputDataType, CustomLayers...>::DropConnect() :
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-DropConnect<InputDataType, OutputDataType, CustomLayers...>::DropConnect(
+template<typename InputDataType, typename OutputDataType>
+DropConnect<InputDataType, OutputDataType>::DropConnect(
     const size_t inSize,
     const size_t outSize,
     const double ratio) :
@@ -51,24 +48,9 @@ DropConnect<InputDataType, OutputDataType, CustomLayers...>::DropConnect(
   network.push_back(baseLayer);
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-DropConnect<InputDataType, OutputDataType, CustomLayers...>::DropConnect(
-    const DropConnect& layer) :
-    ratio(layer.ratio),
-    scale(layer.scale),
-    deterministic(layer.deterministic)
-{
-  CopyVisitor<CustomLayers...> copyVisitor;
-
-  baseLayer = boost::apply_visitor(copyVisitor, layer.baseLayer);
-  this->network.push_back(baseLayer);
-}
-
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void DropConnect<InputDataType, OutputDataType, CustomLayers...>::Forward(
+void DropConnect<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input,
     arma::Mat<eT>& output)
 {
@@ -97,10 +79,9 @@ void DropConnect<InputDataType, OutputDataType, CustomLayers...>::Forward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void DropConnect<InputDataType, OutputDataType, CustomLayers...>::Backward(
+void DropConnect<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& input,
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
@@ -108,10 +89,9 @@ void DropConnect<InputDataType, OutputDataType, CustomLayers...>::Backward(
   boost::apply_visitor(BackwardVisitor(input, gy, g), baseLayer);
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void DropConnect<InputDataType, OutputDataType, CustomLayers...>::Gradient(
+void DropConnect<InputDataType, OutputDataType>::Gradient(
     const arma::Mat<eT>& input,
     const arma::Mat<eT>& error,
     arma::Mat<eT>& /* gradient */)
@@ -123,10 +103,9 @@ void DropConnect<InputDataType, OutputDataType, CustomLayers...>::Gradient(
   boost::apply_visitor(ParametersSetVisitor(denoise), baseLayer);
 }
 
-template<typename InputDataType, typename OutputDataType,
-        typename... CustomLayers>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void DropConnect<InputDataType, OutputDataType, CustomLayers...>::serialize(
+void DropConnect<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {

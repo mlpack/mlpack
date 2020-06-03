@@ -73,9 +73,6 @@ class FastLSTM
   //! Create the Fast LSTM object.
   FastLSTM();
 
-  //! Copy constructor.
-  FastLSTM(const FastLSTM&);
-
   /**
    * Create the Fast LSTM layer object using the specified parameters.
    *
@@ -290,7 +287,7 @@ class FastLSTM
   //! Locally-stored cell activation error.
   OutputDataType cellActivation;
 
-  //! Locally-stored forget gate error.
+  //! Locally-stored foget gate error.
   OutputDataType forgetGateError;
 
   //! Locally-stored previous error.

@@ -59,9 +59,6 @@ class Reparametrization
   //! Create the Reparametrization object.
   Reparametrization();
 
-  //! Copy constructor.
-  Reparametrization(const Reparametrization&);
-
   /**
    * Create the Reparametrization layer object using the specified sample vector size.
    *

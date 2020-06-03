@@ -67,9 +67,6 @@ class BatchNorm
    */
   BatchNorm(const size_t size, const double eps = 1e-8);
 
-  //! Copy constructor.
-  BatchNorm(const BatchNorm&);
-
   /**
    * Reset the layer parameters
    */

@@ -44,9 +44,6 @@ class Lookup
    */
   Lookup(const size_t inSize = 0, const size_t outSize = 0);
 
-  //! Copy constructor.
-  Lookup(const Lookup&);
-
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

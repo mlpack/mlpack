@@ -52,19 +52,6 @@ BilinearInterpolation(
 }
 
 template<typename InputDataType, typename OutputDataType>
-BilinearInterpolation<InputDataType, OutputDataType>::
-BilinearInterpolation(const BilinearInterpolation& layer):
-    inRowSize(layer.inRowSize),
-    inColSize(layer.inColSize),
-    outRowSize(layer.outRowSize),
-    outColSize(layer.outColSize),
-    depth(layer.depth),
-    batchSize(layer.batchSize)
-{
-  // Nothing to do here.
-}
-
-template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)

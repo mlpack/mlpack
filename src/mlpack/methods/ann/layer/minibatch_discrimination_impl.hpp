@@ -43,19 +43,6 @@ MiniBatchDiscrimination<InputDataType, OutputDataType
   weights.set_size(A * B * C, 1);
 }
 
-template <typename InputDataType, typename OutputDataType>
-MiniBatchDiscrimination<InputDataType, OutputDataType
->::MiniBatchDiscrimination(
-    const MiniBatchDiscrimination& layer) :
-    A(layer.A),
-    B(layer.B),
-    C(layer.C),
-    batchSize(layer.batchSize),
-    weights(layer.weights)
-{
-  Reset();
-}
-
 template<typename InputDataType, typename OutputDataType>
 void MiniBatchDiscrimination<InputDataType, OutputDataType>::Reset()
 {

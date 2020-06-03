@@ -16,7 +16,6 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 
 #include "../visitor/delta_visitor.hpp"
-#include "../visitor/copy_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
 #include "../visitor/reset_visitor.hpp"
 #include "../visitor/weight_size_visitor.hpp"
@@ -52,8 +51,7 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template <
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
-    typename... CustomLayers
+    typename OutputDataType = arma::mat
 >
 class RecurrentAttention
 {
@@ -63,9 +61,6 @@ class RecurrentAttention
    * so be sure to set all the parameters before use.
    */
   RecurrentAttention();
-
-  //! Copy constructor.
-  RecurrentAttention(const RecurrentAttention&);
 
   /**
    * Create the RecurrentAttention object using the specified modules.
@@ -213,9 +208,6 @@ class RecurrentAttention
 
   //! Locally-stored weight size visitor.
   WeightSizeVisitor weightSizeVisitor;
-
-  //! Locally-stored copy visitor
-  CopyVisitor<CustomLayers...> copyVisitor;
 
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;

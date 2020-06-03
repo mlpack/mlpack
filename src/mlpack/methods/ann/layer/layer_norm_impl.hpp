@@ -29,16 +29,6 @@ LayerNorm<InputDataType, OutputDataType>::LayerNorm() :
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-LayerNorm<InputDataType, OutputDataType>::LayerNorm(const LayerNorm& layer) :
-    size(layer.size),
-    eps(layer.eps),
-    loading(layer.loading),
-    weights(layer.weights)
-{
-  Reset();
-}
-
 template <typename InputDataType, typename OutputDataType>
 LayerNorm<InputDataType, OutputDataType>::LayerNorm(
     const size_t size, const double eps) :

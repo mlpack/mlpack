@@ -30,22 +30,6 @@ BatchNorm<InputDataType, OutputDataType>::BatchNorm() :
 {
   // Nothing to do here.
 }
-
-template<typename InputDataType, typename OutputDataType>
-BatchNorm<InputDataType, OutputDataType>::BatchNorm(
-  const BatchNorm& layer) :
-    size(layer.size),
-    eps(layer.eps),
-    gamma(layer.gamma),
-    beta(layer.beta),
-    weights(layer.weights),
-    count(layer.count),
-    runningMean(layer.runningMean),
-    runningVariance(layer.runningVariance)
-{
-  Reset();
-}
-
 template <typename InputDataType, typename OutputDataType>
 BatchNorm<InputDataType, OutputDataType>::BatchNorm(
     const size_t size, const double eps) :

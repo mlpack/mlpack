@@ -56,9 +56,6 @@ class MiniBatchDiscrimination
   //! Create the MiniBatchDiscrimination object.
   MiniBatchDiscrimination();
 
-  //! Copy constructor.
-  MiniBatchDiscrimination(const MiniBatchDiscrimination&);
-
   /**
    * Create the MiniBatchDiscrimination layer object using the specified
    * number of units.

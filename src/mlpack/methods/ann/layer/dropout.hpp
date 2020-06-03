@@ -60,9 +60,6 @@ class Dropout
    */
   Dropout(const double ratio = 0.5);
 
-  //! Copy constructor.
-  Dropout(const Dropout&);
-
   /**
    * Ordinary feed forward pass of the dropout layer.
    *

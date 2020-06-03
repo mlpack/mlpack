@@ -71,12 +71,7 @@ class FFN
   FFN(OutputLayerType outputLayer = OutputLayerType(),
       InitializationRuleType initializeRule = InitializationRuleType());
 
-  /**
-   * Copy the FFN object.
-   *
-   * Warning: Copying FFN is a memory-intensive task: multiple layers as well
-   * as parameters needed to be copied.
-   */
+  //! Copy constructor.
   FFN(const FFN&);
 
   //! Move constructor.

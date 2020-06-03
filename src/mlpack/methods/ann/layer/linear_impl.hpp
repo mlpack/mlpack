@@ -31,18 +31,6 @@ Linear<InputDataType, OutputDataType, RegularizerType>::Linear() :
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
-  const Linear& layer) :
-    inSize(layer.inSize),
-    outSize(layer.outSize),
-    weights(layer.weights),
-    regularizer(layer.regularizer)
-{
-  Reset();
-}
-
-template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
-Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
     const size_t inSize,
     const size_t outSize,
     RegularizerType regularizer) :

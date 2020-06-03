@@ -53,8 +53,7 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template <
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
-    typename... CustomLayers
+    typename OutputDataType = arma::mat
 >
 class GRU
 {
@@ -72,9 +71,6 @@ class GRU
   GRU(const size_t inSize,
       const size_t outSize,
       const size_t rho = std::numeric_limits<size_t>::max());
-
-  //! Copy constructor.
-  GRU(const GRU&);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

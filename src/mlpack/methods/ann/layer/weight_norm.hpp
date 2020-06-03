@@ -68,9 +68,6 @@ class WeightNorm
    */
   WeightNorm(LayerTypes<CustomLayers...> layer = LayerTypes<CustomLayers...>());
 
-  //! Copy constructor.
-  WeightNorm(const WeightNorm&);
-
   //! Destructor to release allocated memory.
   ~WeightNorm();
 
@@ -161,9 +158,6 @@ class WeightNorm
 
   //! Locally-stored gradient object.
   OutputDataType gradient;
-
-  //! Locally-stored copy visitor
-  CopyVisitor<CustomLayers...> copyVisitor;
 
   //! Locally-stored wrapped layer.
   LayerTypes<CustomLayers...> wrappedLayer;
