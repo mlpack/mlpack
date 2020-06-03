@@ -2,7 +2,7 @@
  * @file add_to_po.hpp
  * @author Ryan Curtin
  *
- * Utility functions to add options to CMD11 based on their
+ * Utility functions to add options to CLI11 based on their
  * type.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -24,9 +24,9 @@ namespace bindings {
 namespace cmd {
 
 /**
- * Add a non-vector option to CMD11.
+ * Add a non-vector option to CLI11.
  *
- * @param boostName The name of the option to add to CMD11.
+ * @param boostName The name of the option to add to CLI11.
  * @param descr Description string for parameter.
  * @param desc Options description to add parameter to.
  */
@@ -42,17 +42,17 @@ void AddToPO(const std::string& cliName,
 }
 
 /**
- * Add a vector option to CMD11.  This overload will use the
+ * Add a vector option to CLI11.  This overload will use the
  * multitoken() option.
  *
- * @param boostName The name of the option to add to CMD11.
+ * @param boostName The name of the option to add to CLI11.
  * @param descr Description string for parameter.
  * @param desc Options description to add parameter to.
  */
 template<typename T>
 void AddToPO(const std::string& cliName,
              const std::string& descr,
-             CLI::App& app
+             CLI::App& app,
              const typename boost::enable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
@@ -61,9 +61,9 @@ void AddToPO(const std::string& cliName,
 }
 
 /**
- * Add a boolean option to CMD11.
+ * Add a boolean option to CLI11.
  *
- * @param boostName The name of the option to add to CMD11.
+ * @param boostName The name of the option to add to CLI11.
  * @param descr Description string for parameter.
  * @param desc Options description to add parameter to.
  */
@@ -74,11 +74,13 @@ void AddToPO(const std::string& cliName,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
 {
-  app.add_flag(cliName.c_str(), descr.c_str());
+  bool flag; // Seems to be the prefered way,
+  // Template substitution fais without it, why??
+  app.add_flag(cliName.c_str(), flag, descr.c_str());
 }
 
 /**
- * Add an option to CMD11.  This is the function meant to be
+ * Add an option to CLI11.  This is the function meant to be
  * used in the CMD function map.
  *
  * @param d Parameter data.
@@ -93,7 +95,7 @@ void AddToPO(const util::ParamData& d,
   // Cast CMD::App object.
   CLI::App* app = (CLI::App*) output;
 
-  // Generate the name to be given to CMD11.
+  // Generate the name to be given to CLI11.
   const std::string mappedName =
       MapParameterName<typename std::remove_pointer<T>::type>(d.name);
   std::string boostName = (d.alias != '\0') ? mappedName + "," +
@@ -102,7 +104,7 @@ void AddToPO(const util::ParamData& d,
   // Note that we have to add the option as type equal to the mapped type, not
   // the true type of the option.
   AddToPO<typename ParameterType<typename std::remove_pointer<T>::type>::type>(
-      boostName, d.desc, *desc);
+      boostName, d.desc, *app);
 }
 
 } // namespace cmd
