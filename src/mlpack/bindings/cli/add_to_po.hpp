@@ -17,9 +17,7 @@
 #include <mlpack/core/util/is_std_vector.hpp>
 #include "map_parameter_name.hpp"
 
-namespace CMD11 {
-  #include <CMD/CMD.hpp>
-}
+#include <CLI/CLI.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -35,7 +33,7 @@ namespace cmd {
 template<typename T>
 void AddToPO(const std::string& cliName,
              const std::string& descr,
-             CMD11::CMD::App& app,
+             CLI::App& app,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
@@ -54,7 +52,7 @@ void AddToPO(const std::string& cliName,
 template<typename T>
 void AddToPO(const std::string& cliName,
              const std::string& descr,
-             CMD11::CMD::App& app
+             CLI::App& app
              const typename boost::enable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
@@ -72,7 +70,7 @@ void AddToPO(const std::string& cliName,
 template<typename T>
 void AddToPO(const std::string& cliName,
              const std::string& descr,
-             CMD11::CMD::App& app,
+             CLI::App& app,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
 {
@@ -93,7 +91,7 @@ void AddToPO(const util::ParamData& d,
              void* output)
 {
   // Cast CMD::App object.
-  CMD11::CMD::App* app = (CMD11::CMD::App*) output;
+  CLI::App* app = (CLI::App*) output;
 
   // Generate the name to be given to CMD11.
   const std::string mappedName =
