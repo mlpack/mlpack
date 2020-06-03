@@ -18,6 +18,7 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 
 #include "../visitor/delete_visitor.hpp"
+#include "../visitor/copy_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_height_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
