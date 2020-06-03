@@ -46,7 +46,7 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 # that the file with main() is in <name>_main.cpp, and produces an output
 # program with the name mlpack_<name>.
 macro (add_cli_executable name)
-if (BUILD_CMD_EXECUTABLES)
+if (BUILD_CLI_EXECUTABLES)
   add_executable(mlpack_${name}
     ${name}_main.cpp
   )
