@@ -18,7 +18,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 /**
  * Output an option (print to stdout).
@@ -78,7 +78,7 @@ void OutputParam(const util::ParamData& data,
   OutputParamImpl<typename std::remove_pointer<T>::type>(data);
 }
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack
 

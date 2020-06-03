@@ -18,7 +18,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 /**
  * Return the default value of an option.  This is for regular types.
@@ -85,7 +85,7 @@ void DefaultParam(const util::ParamData& data,
   *outstr = DefaultParamImpl<typename std::remove_pointer<T>::type>(data);
 }
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack
 

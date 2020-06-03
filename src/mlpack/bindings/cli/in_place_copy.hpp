@@ -17,7 +17,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 /**
  * This overload is called when nothing special needs to happen to make
@@ -83,7 +83,7 @@ void InPlaceCopy(const util::ParamData& d,
       const_cast<util::ParamData&>(d), *((const util::ParamData*) input));
 }
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack
 

@@ -16,7 +16,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 /**
  * Return a string representing the command-line type of an option.
@@ -171,7 +171,7 @@ std::string PrintTypeDoc(
       "format can be significantly more compact and quicker to load and save.";
 }
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack
 

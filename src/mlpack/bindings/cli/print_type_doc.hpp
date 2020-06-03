@@ -17,7 +17,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 /**
  * Return a string representing the command-line type of an option.
@@ -77,7 +77,7 @@ void PrintTypeDoc(const util::ParamData& data,
       PrintTypeDoc<typename std::remove_pointer<T>::type>(data);
 }
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack
 

@@ -17,7 +17,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 /**
  * Handle command-line program termination.  If --help or --info was passed, we
@@ -105,7 +105,7 @@ inline void EndProgram()
   }
 }
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack
 
