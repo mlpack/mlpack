@@ -77,10 +77,10 @@ class QLearning
    * @param updater How to apply gradients when training.
    * @param environment Reinforcement learning task.
    */
-  QLearning(TrainingConfig config,
+  QLearning(TrainingConfig& config,
             NetworkType& network,
-            PolicyType policy,
-            ReplayType replayMethod,
+            PolicyType& policy,
+            ReplayType& replayMethod,
             UpdaterType updater = UpdaterType(),
             EnvironmentType environment = EnvironmentType());
 
@@ -138,7 +138,7 @@ class QLearning
   arma::Col<size_t> BestAction(const arma::mat& actionValues);
 
   //! Locally-stored hyper-parameters.
-  TrainingConfig config;
+  TrainingConfig& config;
 
   //! Locally-stored learning network.
   NetworkType& learningNetwork;
@@ -153,10 +153,10 @@ class QLearning
   #endif
 
   //! Locally-stored behavior policy.
-  PolicyType policy;
+  PolicyType& policy;
 
   //! Locally-stored experience method.
-  ReplayType replayMethod;
+  ReplayType& replayMethod;
 
   //! Locally-stored reinforcement learning task.
   EnvironmentType environment;

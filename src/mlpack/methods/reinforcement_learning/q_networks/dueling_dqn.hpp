@@ -77,9 +77,9 @@ class DuelingDQN
    * @param outputDim Number of neurons in output layer.
    */
   DuelingDQN(const int inputDim,
-            const int h1,
-            const int h2,
-            const int outputDim):
+             const int h1,
+             const int h2,
+             const int outputDim):
       completeNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001))
   {
     featureNetwork = new Sequential<>();

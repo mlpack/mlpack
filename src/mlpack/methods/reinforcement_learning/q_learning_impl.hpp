@@ -30,20 +30,20 @@ QLearning<
   UpdaterType,
   PolicyType,
   ReplayType
->::QLearning(TrainingConfig config,
+>::QLearning(TrainingConfig& config,
              NetworkType& network,
-             PolicyType policy,
-             ReplayType replayMethod,
+             PolicyType& policy,
+             ReplayType& replayMethod,
              UpdaterType updater,
              EnvironmentType environment):
-    config(std::move(config)),
+    config(config),
     learningNetwork(network),
+    policy(policy),
+    replayMethod(replayMethod),
     updater(std::move(updater)),
     #if ENS_VERSION_MAJOR >= 2
     updatePolicy(NULL),
     #endif
-    policy(std::move(policy)),
-    replayMethod(std::move(replayMethod)),
     environment(std::move(environment)),
     totalSteps(0),
     deterministic(false)

@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_SUITE(QLearningTest);
 BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 {
   // Set up the network.
-  SimpleDQN<> model(4, 128, 128, 2);
+  SimpleDQN<> network(4, 128, 128, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -58,9 +58,8 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
   config.StepLimit() = 200;
 
   // Set up DQN agent.
-  QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy)>
-      agent(std::move(config), model, std::move(policy),
-      std::move(replayMethod));
+  QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
+      agent(config, network, policy, replayMethod);
 
   arma::running_stat<double> averageReturn;
   size_t episodes = 0;
@@ -105,7 +104,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
 {
   // Set up the network.
-  SimpleDQN<> model(4, 128, 128, 2);
+  SimpleDQN<> network(4, 128, 128, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
@@ -120,10 +119,9 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
   config.StepLimit() = 200;
 
   // Set up DQN agent.
-  QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy),
+  QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy),
       decltype(replayMethod)>
-      agent(std::move(config), model, std::move(policy),
-          std::move(replayMethod));
+      agent(config, network, policy, replayMethod);
 
   arma::running_stat<double> averageReturn;
   size_t episodes = 0;
@@ -174,7 +172,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
   for (size_t trial = 0; trial < 4; ++trial)
   {
     // Set up the network.
-    SimpleDQN<> model(4, 20, 20, 2);
+    SimpleDQN<> network(4, 20, 20, 2);
 
     // Set up the policy and replay method.
     GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -189,9 +187,8 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
     config.StepLimit() = 200;
 
     // Set up the DQN agent.
-    QLearning<CartPole, decltype(model), RMSPropUpdate, decltype(policy)>
-        agent(std::move(config), model, std::move(policy),
-        std::move(replayMethod));
+    QLearning<CartPole, decltype(network), RMSPropUpdate, decltype(policy)>
+        agent(config, network, policy, replayMethod);
 
     arma::running_stat<double> averageReturn;
 
@@ -237,7 +234,7 @@ BOOST_AUTO_TEST_CASE(AcrobotWithDQN)
   for (size_t trial = 0; trial < 3; ++trial)
   {
     // Set up the network.
-    SimpleDQN<> model(4, 64, 32, 3);
+    SimpleDQN<> network(4, 64, 32, 3);
 
     // Set up the policy and replay method.
     GreedyPolicy<Acrobot> policy(1.0, 1000, 0.1, 0.99);
@@ -252,9 +249,8 @@ BOOST_AUTO_TEST_CASE(AcrobotWithDQN)
     config.StepLimit() = 400;
 
     // Set up DQN agent.
-    QLearning<Acrobot, decltype(model), AdamUpdate, decltype(policy)>
-        agent(std::move(config), model, std::move(policy),
-        std::move(replayMethod));
+    QLearning<Acrobot, decltype(network), AdamUpdate, decltype(policy)>
+        agent(config, network, policy, replayMethod);
 
     arma::running_stat<double> averageReturn;
     size_t episodes = 0;
@@ -308,7 +304,7 @@ BOOST_AUTO_TEST_CASE(MountainCarWithDQN)
   for (size_t trial = 0; trial < 3; trial++)
   {
     // Set up the network.
-    SimpleDQN<> model(2, 64, 32, 3);
+    SimpleDQN<> network(2, 64, 32, 3);
 
     // Set up the policy and replay method.
     GreedyPolicy<MountainCar> policy(1.0, 1000, 0.1, 0.99);
@@ -323,9 +319,8 @@ BOOST_AUTO_TEST_CASE(MountainCarWithDQN)
     config.StepLimit() = 400;
 
     // Set up DQN agent.
-    QLearning<MountainCar, decltype(model), AdamUpdate, decltype(policy)>
-        agent(std::move(config), model, std::move(policy),
-        std::move(replayMethod));
+    QLearning<MountainCar, decltype(network), AdamUpdate, decltype(policy)>
+        agent(config, network, policy, replayMethod);
 
     arma::running_stat<double> averageReturn;
     size_t episodes = 0;
@@ -378,13 +373,13 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
   bool success = false;
   for (size_t trial = 0; trial < 4; trial++)
   {
-    // Set up the network. Note that we use a custom model here, and
+    // Set up the network. Note that we use a custom network here, and
     // pass it directly into the agent, without using SimpleDQN.
-    FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
+    FFN<MeanSquaredError<>, GaussianInitialization> network(MeanSquaredError<>(),
         GaussianInitialization(0, 0.001));
-    model.Add<Linear<>>(6, 256);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(256, 3);
+    network.Add<Linear<>>(6, 256);
+    network.Add<ReLULayer<>>();
+    network.Add<Linear<>>(256, 3);
 
     // Set up the policy and replay method.
     GreedyPolicy<DoublePoleCart> policy(1.0, 1000, 0.1, 0.99);
@@ -399,9 +394,8 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
     config.StepLimit() = 600;
 
     // Set up DQN agent.
-    QLearning<DoublePoleCart, decltype(model), AdamUpdate, decltype(policy)>
-        agent(std::move(config), model, std::move(policy),
-        std::move(replayMethod));
+    QLearning<DoublePoleCart, decltype(network), AdamUpdate, decltype(policy)>
+        agent(config, network, policy, replayMethod);
 
     size_t episodes = 0;
     bool converged = true;
@@ -421,7 +415,7 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
         break;
       }
 
-      // If the model can solve the environment in two trials this is fine for
+      // If the network can solve the environment in two trials this is fine for
       // a simple test.
       if (episodeSuccesses >= 2)
       {
@@ -446,7 +440,7 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
 BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQN)
 {
   // Set up the network.
-  DuelingDQN<> model(4, 128, 64, 2);
+  DuelingDQN<> network(4, 128, 64, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -461,9 +455,8 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQN)
   config.StepLimit() = 200;
 
   // Set up DQN agent.
-  QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy)>
-      agent(std::move(config), model, std::move(policy),
-      std::move(replayMethod));
+  QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
+      agent(config, network, policy, replayMethod);
 
   arma::running_stat<double> averageReturn;
   size_t episodes = 0;
@@ -499,8 +492,6 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQN)
       break;
     }
   }
-  // To check if the action returned by the agent is not nan and is finite.
-  BOOST_REQUIRE(std::isfinite(double(agent.Action())));
   BOOST_REQUIRE(converged);
 }
 
@@ -509,7 +500,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQN)
 BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQNPrioritizedReplay)
 {
   // Set up the network.
-  DuelingDQN<> model(4, 128, 64, 2);
+  DuelingDQN<> network(4, 128, 64, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
@@ -524,10 +515,9 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQNPrioritizedReplay)
   config.StepLimit() = 200;
 
   // Set up DQN agent.
-  QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy),
+  QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy),
       decltype(replayMethod)>
-      agent(std::move(config), model, std::move(policy),
-          std::move(replayMethod));
+      agent(config, network, policy, replayMethod);
 
   arma::running_stat<double> averageReturn;
   size_t episodes = 0;
