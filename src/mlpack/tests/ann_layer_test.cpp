@@ -528,6 +528,52 @@ TEST_CASE("GradientNoisyLinearLayerTest", "[ANNLayerTest]")
 }
 
 /**
+ * Simple Linear3D module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleLinear3DLayerTest)
+{
+  const size_t inSize = 10, outSize = 10;
+  const size_t additionalDim = 4;
+  arma::mat output, input, delta;
+  Linear3D<> module(inSize, outSize);
+  module.Parameters().randu();
+  module.Reset();
+
+  // Test the Forward function.
+  input = arma::zeros(inSize * additionalDim, 1);
+  module.Forward(input, output);
+  BOOST_REQUIRE_CLOSE(arma::accu(
+      module.Parameters().submat(inSize * outSize, 0, module.Parameters().n_elem - 1, 0)),
+      arma::accu(output), 1e-3);
+
+  // Test the Backward function.
+  module.Backward(input, input, delta);
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+}
+
+/**
+ * Jacobian Linear3D module test.
+ */
+BOOST_AUTO_TEST_CASE(JacobianLinear3DLayerTest)
+{
+  for (size_t i = 0; i < 5; i++)
+  {
+    const size_t inSize = math::RandInt(2, 1000);
+    const size_t outSize = math::RandInt(2, 1000);
+    const size_t additionalDim = math::RandInt(2, 1000);
+
+    arma::mat input;
+    input.set_size(inSize * additionalDim, 1);
+
+    Linear3D<> module(inSize, outSize);
+    module.Parameters().randu();
+
+    double error = JacobianTest(module, input);
+    BOOST_REQUIRE_LE(error, 1e-5);
+  }
+}
+
+/**
  * Linear3D layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientLinear3DLayerTest)

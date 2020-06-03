@@ -97,6 +97,11 @@ template<typename InputDataType,
 class NoisyLinear;
 
 template<typename InputDataType,
+         typename OutputDataType,
+         typename RegularizerType>
+class Linear3D;
+
+template<typename InputDataType,
          typename OutputDataType
 >
 class VirtualBatchNorm;
@@ -205,6 +210,7 @@ template <typename InputDataType,
 class AdaptiveMeanPooling;
 
 using MoreTypes = boost::variant<
+        Linear3D<arma::mat, arma::mat, NoRegularizer>*,
         Glimpse<arma::mat, arma::mat>*,
         Highway<arma::mat, arma::mat>*,
         Recurrent<arma::mat, arma::mat>*,
@@ -261,7 +267,6 @@ using LayerTypes = boost::variant<
     LeakyReLU<arma::mat, arma::mat>*,
     Linear<arma::mat, arma::mat, NoRegularizer>*,
     LinearNoBias<arma::mat, arma::mat, NoRegularizer>*,
-    Linear3D<arma::mat, arma::mat, NoRegularizer>*,
     LogSoftMax<arma::mat, arma::mat>*,
     Lookup<arma::mat, arma::mat>*,
     LSTM<arma::mat, arma::mat>*,

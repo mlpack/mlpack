@@ -20,7 +20,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
-Linear3D<InputDataType, OutputDataType, RegularizerType>::Linear() :
+Linear3D<InputDataType, OutputDataType, RegularizerType>::Linear3D() :
     inSize(0),
     outSize(0)
 {
@@ -29,7 +29,7 @@ Linear3D<InputDataType, OutputDataType, RegularizerType>::Linear() :
 
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
-Linear3D<InputDataType, OutputDataType, RegularizerType>::Linear(
+Linear3D<InputDataType, OutputDataType, RegularizerType>::Linear3D(
     const size_t inSize,
     const size_t outSize,
     RegularizerType regularizer) :
@@ -56,15 +56,19 @@ void Linear3D<InputDataType, OutputDataType, RegularizerType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   Log::Assert(input.n_rows % inSize == 0);
-  output.set_size(outSize * input.n_rows / inSize, input.n_cols);
-  arma::Cube<eT> inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(), inSize,
-      input.n_rows / inSize, input.n_cols, false, false);
 
-  #pragma omp parallel for
-  for (omp_size_t i = 0; i < (omp_size_t) inputTemp.n_slices; ++i)
+  const size_t nPoints = input.n_rows / inSize;
+  const size_t batchSize = input.n_cols;
+
+  output.set_size(outSize * nPoints, batchSize);
+
+  arma::Cube<eT> inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(), inSize,
+      nPoints, batchSize, true, false);
+
+  for (size_t i = 0; i < batchSize; ++i)
   {
-    output.col(i) = arma::vectorise(weight * inputTemp.slice(i) +
-        arma::repmat(bias, 1, input.n_rows / inSize));
+    output.col(i) = arma::vectorise(weight * inputTemp.slice(i)
+        + arma::repmat(bias, 1, nPoints));
   }
 }
 
@@ -72,15 +76,20 @@ template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 template<typename eT>
 void Linear3D<InputDataType, OutputDataType, RegularizerType>::Backward(
-    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
   Log::Assert(gy.n_rows % inSize == 0);
-  g.set_size(outSize * gy.n_rows / inSize, batchSize);
-  arma::Cube<eT> gyTemp(const_cast<arma::Mat<eT>&>(gy).memptr(),
-      outSize, gy.n_rows / inSize, batchSize, false, false);
 
-  #pragma omp parallel for
-  for (omp_size_t i = 0; i < (omp_size_t) gyTemp.n_slices; ++i)
+  const size_t nPoints = gy.n_rows / outSize;
+  const size_t batchSize = gy.n_cols;
+  g.set_size(inSize * nPoints, batchSize);
+
+  arma::Cube<eT> gyTemp(const_cast<arma::Mat<eT>&>(gy).memptr(), outSize,
+      nPoints, batchSize, false, false);
+
+  for (size_t i = 0; i < gyTemp.n_slices; ++i)
   {
     g.col(i) = arma::vectorise(weight.t() * gyTemp.slice(i));
   }
@@ -94,24 +103,29 @@ void Linear3D<InputDataType, OutputDataType, RegularizerType>::Gradient(
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
 {
-  Log::Assert(input.n_cols == error.n_cols);
   Log::Assert(input.n_rows % inSize == 0);
-  arma::Cube<eT> inputTemp(const_cast<arma::mat<eT>&>(input).memptr(), inSize,
-      input.n_rows / inSize, input.n_cols, false, false);
-  arma::Cube<eT> errorTemp(const_cast<arma::mat<eT>&>(error).memptr(), outSize,
-      input.n_rows / inSize, error.n_cols, false, false);
 
-  arma::Cube<eT> dW(outSize, inSize, input.n_cols);
-  #pragma omp parallel for
-  for (omp_size_t i = 0; i < (omp_size_t) input.n_cols; ++i)
+  const size_t nPoints = input.n_rows / inSize;
+  const size_t batchSize = input.n_cols;
+
+  arma::Cube<eT> inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(), inSize,
+      nPoints, batchSize, false, false);
+  arma::Cube<eT> errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(), outSize,
+      nPoints, batchSize, false, false);
+
+  arma::Cube<eT> dW(outSize, inSize, batchSize);
+  for (size_t i = 0; i < batchSize; ++i)
   {
     dW.slice(i) = errorTemp.slice(i) * inputTemp.slice(i).t();
   }
 
-  gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
-      arma::sum(dW, 2) / inputTemp.n_slices);
-  gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) =
-      arma::sum(arma::sum(errorTemp, 2), 1) / erroTemp.n_slices;
+  gradient.set_size(arma::size(weights));
+
+  gradient.submat(0, 0, weight.n_elem - 1, 0)
+      = arma::vectorise(arma::mean(dW, 2));
+  gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0)
+      = arma::vectorise(arma::sum(arma::mean(errorTemp, 2), 1));
+
   regularizer.Evaluate(weights, gradient);
 }
 

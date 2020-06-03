@@ -13,9 +13,8 @@
 #define MLPACK_METHODS_ANN_LAYER_LINEAR3D_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
-
-#include "layer_types.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
