@@ -23,7 +23,7 @@ namespace CLI11 {
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 // Add default parameters that are included in every program.
 PARAM_FLAG("help", "Default help info.", "h");
@@ -194,7 +194,7 @@ void ParseCommandLine(int argc, char** argv)
   }
 }
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack
 

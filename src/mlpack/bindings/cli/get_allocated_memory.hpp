@@ -17,7 +17,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 template<typename T>
 void* GetAllocatedMemory(
@@ -57,7 +57,7 @@ void GetAllocatedMemory(const util::ParamData& d,
       GetAllocatedMemory<typename std::remove_pointer<T>::type>(d);
 }
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack
 

@@ -18,7 +18,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 /**
  * Given the name of a binding, print its command-line name (this returns
@@ -256,7 +256,7 @@ inline std::string ParamString(const std::string& paramName)
   }
 }
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack
 

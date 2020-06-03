@@ -18,7 +18,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 //! Output an option.
 template<typename T>
@@ -107,7 +107,7 @@ void OutputParamImpl(
     data::Save(filename, matrix, false, !data.noTranspose);
 }
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack
 

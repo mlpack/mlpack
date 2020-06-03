@@ -17,7 +17,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 /* Prints the descriptions of the current hierarchy. */
 void PrintHelp(const std::string& param)
@@ -158,6 +158,6 @@ void PrintHelp(const std::string& param)
 }
 
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack

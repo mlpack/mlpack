@@ -19,7 +19,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 /**
  * Print an option.
@@ -74,7 +74,7 @@ void GetPrintableParam(const util::ParamData& data,
       GetPrintableParam<typename std::remove_pointer<T>::type>(data);
 }
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack
 

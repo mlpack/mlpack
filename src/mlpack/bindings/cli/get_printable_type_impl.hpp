@@ -17,7 +17,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 /**
  * Return a string representing the command-line type of an option.
@@ -107,7 +107,7 @@ std::string GetPrintableType(
   return data.cppType + " file";
 }
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack
 

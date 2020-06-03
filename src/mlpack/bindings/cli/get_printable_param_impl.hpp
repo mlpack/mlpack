@@ -17,7 +17,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 //! Print an option.
 template<typename T>
@@ -113,7 +113,7 @@ std::string GetPrintableParam(
   return oss.str();
 }
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack
 

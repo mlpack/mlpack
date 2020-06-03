@@ -18,7 +18,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 /**
  * Get the parameter name for a type that has no special handling.
@@ -73,7 +73,7 @@ void GetPrintableParamName(
       GetPrintableParamName<typename std::remove_pointer<T>::type>(d);
 }
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack
 

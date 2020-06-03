@@ -23,7 +23,7 @@ namespace CLI11 {
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 /**
  * Add a non-vector option to CLI11.
@@ -107,7 +107,7 @@ void AddToPO(const util::ParamData& d,
       boostName, d.desc, *desc);
 }
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack
 

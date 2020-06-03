@@ -34,7 +34,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace cmd {
 
 /**
  * A static object whose constructor registers a parameter with the CLI class.
@@ -194,7 +194,7 @@ class ProgramDoc
   std::string documentation;
 };
 
-} // namespace cli
+} // namespace cmd
 } // namespace bindings
 } // namespace mlpack
 
