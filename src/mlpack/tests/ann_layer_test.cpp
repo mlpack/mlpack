@@ -3721,10 +3721,10 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionalLayerOptionalParameterTest)
 
   // Check if we can create an object without specifying output.
   BOOST_REQUIRE_NO_THROW(decoder->Add<TransposedConvolution<>>(24, 16,
-      5, 5, 1, 1, 0, 0, 10, 10), std::runtime_error);
+      5, 5, 1, 1, 0, 0, 10, 10));
 
     BOOST_REQUIRE_NO_THROW(decoder->Add<TransposedConvolution<>>(16, 1,
-        15, 15, 1, 1, 1, 1, 14, 14), std::runtime_error);
+        15, 15, 1, 1, 1, 1, 14, 14));
 
     delete decoder;
 }
