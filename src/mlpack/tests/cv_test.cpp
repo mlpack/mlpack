@@ -164,6 +164,7 @@ BOOST_AUTO_TEST_CASE(MSETest)
 
   BOOST_REQUIRE_CLOSE(MSE::Evaluate(lr, data, responses), expectedMSE, 1e-5);
 }
+
 /**
  * Test the R squared metric (R2 Score).
  */
