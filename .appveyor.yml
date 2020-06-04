@@ -11,7 +11,7 @@ environment:
   boost_serialization-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
   BOOST_UNIT_TEST : "C:/projects/mlpack/\
   boost_unit_test_framework-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
-  ARMADILLO_DOWNLOAD : "http://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz"
+  ARMADILLO_DOWNLOAD : "https://data.kurg.org/armadillo-8.400.0.tar.xz"
   ARMADILLO_LIBRARY : "C:/projects/mlpack/armadillo-8.400.0/\
   build/Debug/armadillo.lib"
   BLAS_LIBRARY : "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/\
