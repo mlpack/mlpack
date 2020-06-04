@@ -24,7 +24,6 @@ set(OPENBLAS_LIBRARIES "" CACHE STRING "Path for OpenBlas library.")
 set(BOOST_ROOT "" CACHE STRING "Path for boost.")
 set(BOOST_INCLUDE_DIR "" CACHE STRING "Path for boost headers.")
 set(BOOST_LIBRARYDIR "" CACHE STRING "Path for boost libraries.")
-set(BOOST_PROGRAM_OPTIONS "" CACHE STRING "Path for boost libraries.")
 set(BOOST_SERIALIZATION "" CACHE STRING "Path for boost libraries.")
 set(CEREAL "" CACHE STRING "Path for cereal.")
 set(CLI "" CACHE STRING "Path for CLI.")
@@ -435,7 +434,7 @@ if (CMAKE_CROSSCOMPILING)
   # Here we will set paths as we have done for armadillo.
   set(Boost_INCLUDE_DIRS ${BOOST_INCLUDE_DIR})
   set(Boost_LIBRARY_DIRS  ${BOOST_LIBRARYDIR})
-  set(Boost_LIBRARIES ${BOOST_PROGRAM_OPTIONS} ${BOOST_SERIALIZATION})
+  set(Boost_LIBRARIES  ${BOOST_SERIALIZATION})
 # Otherwise just find Boost in the system
 else()
   find_package(Boost 1.58
