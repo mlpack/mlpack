@@ -39,12 +39,8 @@ double BayesianLinearRegression::Train(const arma::mat& data,
   // Preprocess the data. Center and scale.
   responsesOffset = CenterScaleData(data,
                                     responses,
-                                    centerData,
-                                    scaleData,
                                     phi,
-                                    t,
-                                    dataOffset,
-                                    dataScale);
+                                    t);
 
   if (!arma::eig_sym(eigVal, eigVec, arma::symmatu(phi * phi.t())))
   {
@@ -97,10 +93,10 @@ double BayesianLinearRegression::Train(const arma::mat& data,
 void BayesianLinearRegression::Predict(const arma::mat& points,
                                        arma::rowvec& predictions) const
 {
-  // y_hat = w^T * (X - mu) / sigma + y_mean.
-  predictions = omega.t() * ((points.each_col() - dataOffset).each_col()
-                            / dataScale);
-  predictions += responsesOffset;
+  // Center and scale the points before applying the model.
+  arma::mat matX;
+  CenterScaleDataPred(points, matX);
+  predictions = omega.t() * matX + responsesOffset;
 }
 
 void BayesianLinearRegression::Predict(const arma::mat& points,
@@ -108,10 +104,10 @@ void BayesianLinearRegression::Predict(const arma::mat& points,
                                        arma::rowvec& std) const
 {
   // Center and scale the points before applying the model.
-  const arma::mat matX = (points.each_col() - dataOffset).each_col() 
-                      / dataScale;
-  predictions = omega.t() * matX;
-  predictions += responsesOffset;
+  arma::mat matX;
+  CenterScaleDataPred(points, matX);
+  predictions = omega.t() * matX + responsesOffset;
+  // Compute the standard deviation dor each points.
   std = sqrt(Variance() + sum((matX % (matCovariance * matX)), 0));
 }
 
@@ -125,35 +121,56 @@ double BayesianLinearRegression::RMSE(const arma::mat& data,
 
 double BayesianLinearRegression::CenterScaleData(const arma::mat& data,
                                                  const arma::rowvec& responses,
-                                                 bool centerData,
-                                                 bool scaleData,
                                                  arma::mat& dataProc,
-                                                 arma::rowvec& responsesProc,
-                                                 arma::colvec& dataOffset,
-                                                 arma::colvec& dataScale)
+                                                 arma::rowvec& responsesProc)
 {
   // Initialize the offsets to their neutral forms.
-  dataOffset = arma::zeros<arma::colvec>(data.n_rows);
-  dataScale = arma::ones<arma::colvec>(data.n_rows);
   responsesOffset = 0.0;
+  if (!centerData && !scaleData)
+  {  
+    dataProc = data;
+    responsesProc = responses;
+  }
 
-  if (centerData)
+  else if (centerData && !scaleData)
   {
     dataOffset = mean(data, 1);
     responsesOffset = mean(responses);
+    dataProc = data.each_col() - dataOffset;
+    responsesProc = responses - responsesOffset;
   }
 
-  if (scaleData)
+  else if (!centerData && scaleData)
+  {
     dataScale = stddev(data, 0, 1);
+    dataProc = data.each_col() / dataScale;
+  }
 
-  // Copy data and response before the processing.
-  dataProc = data;
-  // Center the data.
-  dataProc.each_col() -= dataOffset;
-  // Scale the data.
-  dataProc.each_col() /= dataScale;
-  // Center the responses.
-  responsesProc = responses - responsesOffset;
-
+  else
+  {
+    dataOffset = mean(data, 1);
+    dataScale = stddev(data, 1, 1);
+    responsesOffset = mean(responses);
+    dataProc = (data.each_col() - dataOffset).each_col() / dataScale;
+    responsesProc = responses - responsesOffset;
+  }
   return responsesOffset;
 }
+
+void BayesianLinearRegression::CenterScaleDataPred(
+    const arma::mat& data,
+    arma::mat& dataProc) const
+{
+  if (!centerData && !scaleData)
+  dataProc = data;
+  
+  else if (centerData && !scaleData)
+    dataProc = data.each_col() - dataOffset;
+
+  else if (!centerData && scaleData)
+    dataProc = data.each_col() / dataScale;
+
+  else 
+    dataProc = (data.each_col() - dataOffset).each_col() / dataScale;
+}
+

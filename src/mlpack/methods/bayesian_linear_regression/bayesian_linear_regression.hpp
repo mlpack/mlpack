@@ -271,12 +271,15 @@ class BayesianLinearRegression
    */
   double CenterScaleData(const arma::mat& data,
                          const arma::rowvec& responses,
-                         const bool centerData,
-                         const bool scaleData,
                          arma::mat& dataProc,
-                         arma::rowvec& responsesProc,
-                         arma::colvec& dataOffset,
-                         arma::colvec& dataScale);
+                         arma::rowvec& responsesProc);
+
+  /**
+   * Add the documentation
+  */ 
+  void CenterScaleDataPred(const arma::mat& data, 
+                           arma::mat& dataProc) const;
+
 
 };
 } // namespace regression

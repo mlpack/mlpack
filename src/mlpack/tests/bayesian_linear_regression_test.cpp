@@ -68,14 +68,14 @@ BOOST_AUTO_TEST_CASE(TestCenter0ScaleData0)
 
   estimator.Train(matX, y);
 
-  // To be neutral dataOffset must be all 0.
-  BOOST_REQUIRE(sum(estimator.DataOffset()) == 0.0);
+  // Check dataOffset is empty.
+  BOOST_REQUIRE(estimator.DataOffset().n_elem == 0);
 
   // To be neutral responseOffset must be 0.
   BOOST_REQUIRE(estimator.ResponsesOffset() == 0);
 
-  // To be neutral dataScale must be all 1.
-  BOOST_REQUIRE(sum(estimator.DataScale()) == nDims);
+  // Check dataScale is empty.
+  BOOST_REQUIRE(estimator.DataScale().n_elem == 0);
 }
 
 // Verify that centering and normalization are correct.

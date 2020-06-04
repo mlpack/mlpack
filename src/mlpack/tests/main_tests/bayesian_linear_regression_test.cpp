@@ -62,11 +62,8 @@ BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
   BayesianLinearRegression* estimator =
       CLI::GetParam<BayesianLinearRegression*>("output_model");
 
-  const arma::colvec dataScale = estimator->DataScale();
-  const arma::colvec dataOffset = estimator->DataOffset();
-
-  BOOST_REQUIRE(sum(dataOffset) == 0);
-  BOOST_REQUIRE(sum(dataScale) == m);
+  BOOST_REQUIRE(estimator->DataOffset().n_elem == 0);
+  BOOST_REQUIRE(estimator->DataScale().n_elem == 0);
 }
 
 /**
