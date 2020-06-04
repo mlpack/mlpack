@@ -198,6 +198,8 @@ template <typename InputDataType,
 class AdaptiveMeanPooling;
 
 using MoreTypes = boost::variant<
+        Glimpse<arma::mat, arma::mat>*,
+        Highway<arma::mat, arma::mat>*,
         Recurrent<arma::mat, arma::mat>*,
         RecurrentAttention<arma::mat, arma::mat>*,
         ReinforceNormal<arma::mat, arma::mat>*,
@@ -243,10 +245,8 @@ using LayerTypes = boost::variant<
     ELU<arma::mat, arma::mat>*,
     FastLSTM<arma::mat, arma::mat>*,
     FlexibleReLU<arma::mat, arma::mat>*,
-    Glimpse<arma::mat, arma::mat>*,
     GRU<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
-    Highway<arma::mat, arma::mat>*,
     Join<arma::mat, arma::mat>*,
     LayerNorm<arma::mat, arma::mat>*,
     LeakyReLU<arma::mat, arma::mat>*,

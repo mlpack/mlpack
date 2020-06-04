@@ -88,9 +88,6 @@ class Sequential
    */
   Sequential(const bool model, const bool ownsLayers);
 
-  //! Copy constructor.
-  Sequential(const Sequential&);
-
   //! Copy assignment operator.
   void operator = (const Sequential& layer);
 
