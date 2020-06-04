@@ -109,7 +109,6 @@ class DuelingDQN
   DuelingDQN(FeatureNetworkType featureNetwork,
              AdvantageNetworkType advantageNetwork,
              ValueNetworkType valueNetwork):
-      completeNetwork(std::move(completeNetwork)),
       featureNetwork(std::move(featureNetwork)),
       advantageNetwork(std::move(advantageNetwork)),
       valueNetwork(std::move(valueNetwork))
