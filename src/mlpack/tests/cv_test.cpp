@@ -33,7 +33,6 @@
 #include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/core/data/confusion_matrix.hpp>
-#include <mlpack/core/cv/metrics/ssim_index.hpp>
 #include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -164,22 +163,6 @@ BOOST_AUTO_TEST_CASE(MSETest)
   double expectedMSE = (0 * 0 + 1 * 1 + 2 * 2) / 3.0;
 
   BOOST_REQUIRE_CLOSE(MSE::Evaluate(lr, data, responses), expectedMSE, 1e-5);
-}
-/**
-* Test the Structural Similarity metric (SSIMIndex).
-*/
-BOOST_AUTO_TEST_CASE(SSIMIndexTest)
-{
-  arma::mat reference1(11, 11, arma::fill::ones);
-  arma::mat image1(11, 11);
-  image1.fill(0.8);
-  double expectedSSIM = 0.9518143962;
-  BOOST_REQUIRE_CLOSE(SSIMIndex::Evaluate(reference1, image1), expectedSSIM, 1e-5);
-  // Check for non square image.
-  arma::mat reference2(30, 25, arma::fill::ones);
-  arma::mat image2(30, 25);
-  image2.fill(0.8);
-  BOOST_REQUIRE_CLOSE(SSIMIndex::Evaluate(reference2, image2), expectedSSIM, 1e-5);
 }
 /**
  * Test the R squared metric (R2 Score).
