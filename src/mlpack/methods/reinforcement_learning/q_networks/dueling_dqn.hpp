@@ -122,6 +122,10 @@ class DuelingDQN
     this->ResetParameters();
   }
 
+  //! Copy constructor.
+  DuelingDQN(const DuelingDQN& model)
+  { /* Nothing to do here. */ }
+
   //! Copy assignment operator.
   void operator = (const DuelingDQN& model)
   {

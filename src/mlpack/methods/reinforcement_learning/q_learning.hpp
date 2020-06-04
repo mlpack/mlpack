@@ -146,17 +146,17 @@ class QLearning
   //! Locally-stored target network.
   NetworkType targetNetwork;
 
-  //! Locally-stored updater.
-  UpdaterType updater;
-  #if ENS_VERSION_MAJOR >= 2
-  typename UpdaterType::template Policy<arma::mat, arma::mat>* updatePolicy;
-  #endif
-
   //! Locally-stored behavior policy.
   PolicyType& policy;
 
   //! Locally-stored experience method.
   ReplayType& replayMethod;
+
+  //! Locally-stored updater.
+  UpdaterType updater;
+  #if ENS_VERSION_MAJOR >= 2
+  typename UpdaterType::template Policy<arma::mat, arma::mat>* updatePolicy;
+  #endif
 
   //! Locally-stored reinforcement learning task.
   EnvironmentType environment;
