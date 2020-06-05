@@ -31,10 +31,3 @@ wget --no-check-certificate \
       make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=aarch64-linux-gnu-gcc FC=aarch64-linux-gnu-gfortran netlib &&\
       cd ../ &&\
 
-echo "Download and build armadillo as a header"
-wget --no-check-certificate \
-    http://sourceforge.net/projects/arma/files/armadillo-9.880.1.tar.xz && \
-    tar xvf armadillo-9.880.1.tar.xz && \
-    rm -f armadillo-9.880.1.tar.xz && \
-    cd  armadillo-9.880.1
-
