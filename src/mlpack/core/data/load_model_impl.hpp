@@ -20,42 +20,16 @@
 
 #include "extension.hpp"
 
-#include <boost/serialization/serialization.hpp>
+#include <boost/tokenizer.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
 
 #include <cereal/archives/xml.hpp>
 #include <cereal/archives/binary.hpp>
 #include <cereal/archives/json.hpp>
 
-#include <boost/tokenizer.hpp>
-#include <boost/algorithm/string.hpp>
-
 namespace mlpack {
 namespace data {
-
-template<typename T>
-void loadXML(std::ifstream& ifs, const std::string& name, T& t)
-{
-     cereal::XMLInputArchive ar(ifs);
-     ar(cereal::make_nvp(name.c_str(), t));
-}
-
-template<typename T>
-void loadJSON(std::ifstream& ifs, const std::string& name, T& t)
-{
-  cereal::JSONInputArchive ar(ifs);
-  ar(cereal::make_nvp(name.c_str(), t));
-}
-
-template<typename T>
-void loadBinary(std::ifstream& ifs, const std::string& name, T& t)
-{
-  cereal::BinaryInputArchive ar(ifs);
-  ar(cereal::make_nvp(name.c_str(), t));    
-}
 
 // Load a model from file.
 template<typename T>
@@ -115,23 +89,19 @@ bool Load(const std::string& filename,
   {
     if (f == format::xml)
     {
-      // boost::archive::xml_iarchive ar(ifs);
-      // ar >> boost::serialization::make_nvp(name.c_str(), t);
-      loadXML(ifs, name, t);
+      cereal::XMLInputArchive ar(ifs);
+      ar(cereal::make_nvp(name.c_str(), t));
     }
 
     else if (f == format::text)
     {
-      // boost::archive::text_iarchive ar(ifs);
-      // ar >> boost::serialization::make_nvp(name.c_str(), t);
-      loadJSON(ifs, name, t);
+     cereal::JSONInputArchive ar(ifs);
+     ar(cereal::make_nvp(name.c_str(), t));
     }
     else if (f == format::binary)
     {
-      // boost::archive::binary_iarchive ar(ifs);
-      // ar >> boost::serialization::make_nvp(name.c_str(), t);
-
-    loadBinary(ifs, name, t);
+      cereal::BinaryInputArchive ar(ifs);
+      ar(cereal::make_nvp(name.c_str(), t));
     }
 
     return true;
@@ -146,8 +116,6 @@ bool Load(const std::string& filename,
     return false;
   }
 }
-
-
 
 } // namespace data
 } // namespace mlpack

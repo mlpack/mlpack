@@ -16,11 +16,6 @@
 #include "save.hpp"
 #include "extension.hpp"
 
-#include <boost/serialization/serialization.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-
 #include <cereal/archives/xml.hpp>
 #include <cereal/archives/json.hpp>
 #include <cereal/archives/binary.hpp>
@@ -43,31 +38,6 @@ bool Save(const std::string& filename,
           const bool fatal)
 {
   return Save(filename, rowvec, fatal, true);
-}
-
-
-template<typename T>
-void saveXML(std::ofstream& ofs, const std::string& name, T& t)
-{
-
-      cereal::XMLOutputArchive ar(ofs);
-      ar(cereal::make_nvp(name.c_str(), t));
-}
-
-template<typename T>
-void saveJSON(std::ofstream& ofs, const std::string& name, T& t)
-{
-
-      cereal::JSONOutputArchive ar(ofs);
-      ar(cereal::make_nvp(name.c_str(), t));
-}
-
-template<typename T>
-void saveBinary(std::ofstream& ofs, const std::string& name, T& t)
-{
-
-      cereal::BinaryOutputArchive ar(ofs);
-      ar(cereal::make_nvp(name.c_str(), t));
 }
 
 template<typename eT>
@@ -285,22 +255,18 @@ bool Save(const std::string& filename,
   {
     if (f == format::xml)
     {
-      saveXML(ofs, name, t);
-  
-     // boost::archive::xml_oarchive ar(ofs);
-     //  ar << boost::serialization::make_nvp(name.c_str(), t);
+      cereal::XMLOutputArchive ar(ofs);
+      ar(cereal::make_nvp(name.c_str(), t));
     }
     else if (f == format::text)
     {
-      saveJSON(ofs, name, t); 
-      //       boost::archive::text_oarchive ar(ofs);
-      // ar << boost::serialization::make_nvp(name.c_str(), t);
+      cereal::JSONOutputArchive ar(ofs);
+      ar(cereal::make_nvp(name.c_str(), t));    
     }
     else if (f == format::binary)
     {
-      saveBinary(ofs, name, t);       
-      // boost::archive::binary_oarchive ar(ofs);
-      // ar << boost::serialization::make_nvp(name.c_str(), t);
+      cereal::BinaryOutputArchive ar(ofs);
+      ar(cereal::make_nvp(name.c_str(), t));
     }
 
     return true;
