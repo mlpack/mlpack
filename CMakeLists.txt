@@ -393,6 +393,122 @@ endif ()
 
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
+#find_package(Cereal 1.3.0) I am not sure if we need to find the package, maybe it is better to dowload it all the time
+if (NOT CEREAL_FOUND)
+  if (DOWNLOAD_CEREAL)
+    file(DOWNLOAD https://github.com/USCiLab/cereal/archive/v1.3.0.tar.gz
+         "${CMAKE_BINARY_DIR}/deps/1.3.0.tar.gz"
+        STATUS CEREAL_DOWNLOAD_STATUS_LIST LOG CEREAL_DOWNLOAD_LOG
+        SHOW_PROGRESS)
+    list(GET CEREAL_DOWNLOAD_STATUS_LIST 0 CEREAL_DOWNLOAD_STATUS)
+    if (CEREAL_DOWNLOAD_STATUS EQUAL 0)
+      execute_process(COMMAND ${CMAKE_COMMAND} -E
+          tar xzf "${CMAKE_BINARY_DIR}/deps/1.3.0.tar.gz"
+          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
+
+      # Get the name of the directory.
+      file (GLOB CEREAL_DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
+          "${CMAKE_BINARY_DIR}/deps/cereal-[0-9]*.[0-9]*.[0-9]*")
+      # list(FILTER) is not available on 3.5 or older, but try to keep
+      # configuring without filtering the list anyway (it might work if only
+      # the file cereal-latest.tar.gz is present.
+      if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
+        list(FILTER CEREAL_DIRECTORIES EXCLUDE REGEX "cereal-.*\.tar\.gz")
+      endif ()
+      list(LENGTH CEREAL_DIRECTORIES CEREAL_DIRECTORIES_LEN)
+      if (CEREAL_DIRECTORIES_LEN EQUAL 1)
+        list(GET CEREAL_DIRECTORIES 0 CEREAL_INCLUDE_DIR)
+        set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+            "${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/include")
+        message(STATUS
+            "Successfully downloaded cereal into ${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/")
+
+        # Now we have to also ensure these header files get installed.
+        install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+      else ()
+        message(FATAL_ERROR "Problem unpacking cereal!  Expected only one directory cereal-x.y.z/; found ${CEREAL_DIRECTORIES}. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
+      endif ()
+    else ()
+      list(GET CEREAL_DOWNLOAD_STATUS_LIST 1 CEREAL_DOWNLOAD_ERROR)
+      message(FATAL_ERROR
+          "Could not download cereal! Error code ${CEREAL_DOWNLOAD_STATUS}: ${CEREAL_DOWNLOAD_ERROR}!  Error log: ${CEREAL_DOWNLOAD_LOG}")
+    endif ()
+  ## We will see what to do later if cereal is already installed, at this time download it
+  # else ()
+    # Release versions will have ensmallen packaged with the release so we can
+    # just reference that.
+  #   if (EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen/ensmallen.hpp")
+  #     set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS}
+  #         "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen")
+  #   else ()
+  #     message(FATAL_ERROR
+  #         "Cannot find ensmallen headers!  Try setting ENSMALLEN_INCLUDE_DIR!")
+  #   endif ()
+  endif ()
+else ()
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${CEREAL_INCLUDE_DIR}")
+endif ()
+
+# There are several possibility for CLI, either we compile it and generate on
+# header file, or we include it as follows:
+
+#find_package(CLI11 1.9.0)
+#if (NOT CLI_FOUND)
+if(CMAKE_CROSSCOMPILING)
+  if (DOWNLOAD_CLI)
+    file(DOWNLOAD https://github.com/CLIUtils/CLI11/archive/v1.9.0.tar.gz
+        "${CMAKE_BINARY_DIR}/deps/v1.9.0.tar.gz"
+        STATUS CLI_DOWNLOAD_STATUS_LIST LOG CLI_DOWNLOAD_LOG
+        SHOW_PROGRESS)
+    list(GET CLI_DOWNLOAD_STATUS_LIST 0 CLI_DOWNLOAD_STATUS)
+    if (CLI_DOWNLOAD_STATUS EQUAL 0)
+      execute_process(COMMAND ${CMAKE_COMMAND} -E
+          tar xzf "${CMAKE_BINARY_DIR}/deps/v1.9.0.tar.gz"
+          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
+
+      # Get the name of the directory.
+      file (GLOB CLI_DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
+          "${CMAKE_BINARY_DIR}/deps/CLI11-[0-9]*.[0-9]*.[0-9]*")
+      # list(FILTER) is not available on 3.5 or older, but try to keep
+      # configuring without filtering the list anyway (it might work if only
+      # the file .tar.gz is present.
+      if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
+        list(FILTER CLI_DIRECTORIES EXCLUDE REGEX ".*\.tar\.gz")
+      endif ()
+      list(LENGTH CLI_DIRECTORIES CLI_DIRECTORIES_LEN)
+      if (CLI_DIRECTORIES_LEN EQUAL 1)
+        list(GET CLI_DIRECTORIES 0 CLI_INCLUDE_DIR)
+        set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+            "${CMAKE_BINARY_DIR}/deps/${CLI_INCLUDE_DIR}/include")
+        message(STATUS
+            "Successfully downloaded CLI11 into ${CMAKE_BINARY_DIR}/deps/${CLI_INCLUDE_DIR}/")
+
+        # Now we have to also ensure these header files get installed.
+        install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${CLI_INCLUDE_DIR}/include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+      else ()
+        message(FATAL_ERROR "Problem unpacking CLI11! Expected only one directory CLI-x.y.z/; found ${CLI_DIRECTORIES}. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
+      endif ()
+    else ()
+      list(GET CLI_DOWNLOAD_STATUS_LIST 1 CLI_DOWNLOAD_ERROR)
+      message(FATAL_ERROR
+          "Could not download CLI11! Error code ${CLI_DOWNLOAD_STATUS}: ${CLI_DOWNLOAD_ERROR}!  Error log: ${CLI_DOWNLOAD_LOG}")
+    endif ()
+  else ()
+  #  Similar as cereal, I do not know what to do know 
+  #   if (EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen/ensmallen.hpp")
+  #     set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS}
+  #         "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen")
+  #   else ()
+  #     message(FATAL_ERROR
+  #         "Cannot find ensmallen headers!  Try setting ENSMALLEN_INCLUDE_DIR!")
+  #   endif ()
+  endif ()
+else ()
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${CLI_INCLUDE_DIR}")
+endif ()
+
+#Unfortunately this configuration variable is necessary and will need to be
+#updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
   "1.72.0" "1.72"
   "1.71.0" "1.71"
