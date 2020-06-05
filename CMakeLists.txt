@@ -16,6 +16,8 @@ option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
+option(DOWNLOAD_CEREAL "If Cereal not found, download it" ON)
+option(DOWNLOAD_CLI "If CLI11 not found, download it" ON)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
 set(BOARD_NAME "" CACHE STRING "Enter the board name to compile mlpack for.")
@@ -23,9 +25,7 @@ set(ARMADILLO_INCLUDE_DIR "" CACHE STRING "Path for Armadillo headers.")
 set(OPENBLAS_LIBRARIES "" CACHE STRING "Path for OpenBlas library.")
 set(BOOST_ROOT "" CACHE STRING "Path for boost.")
 set(BOOST_INCLUDE_DIR "" CACHE STRING "Path for boost headers.")
-set(BOOST_LIBRARYDIR "" CACHE STRING "Path for boost libraries.")
 set(BOOST_SERIALIZATION "" CACHE STRING "Path for boost libraries.")
-set(CEREAL "" CACHE STRING "Path for cereal.")
 set(CLI "" CACHE STRING "Path for CLI.")
 
 if (CMAKE_CROSSCOMPILING AND (BOARD_NAME STREQUAL ""))
@@ -286,7 +286,7 @@ else()
 endif()
 
 # Include directories for the previous dependencies.
-set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS} ${CEREAL} ${CLI})
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS} ${CLI})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
 # Find stb_image.h and stb_image_write.h.
@@ -344,7 +344,6 @@ else ()
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${STB_IMAGE_INCLUDE_DIR})
   set(STB_AVAILABLE "1")
 endif ()
-
 
 # Find ensmallen.
 # Once ensmallen is readily available in package repos, the automatic downloader
@@ -405,6 +404,119 @@ else ()
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 endif ()
 
+#find_package(Cereal 1.3.0) I am not sure if we need to find the package, maybe it is better to dowload it all the time
+if (NOT CEREAL_FOUND)
+  if (DOWNLOAD_CEREAL)
+    file(DOWNLOAD https://github.com/USCiLab/cereal/archive/v1.3.0.tar.gz
+         "${CMAKE_BINARY_DIR}/deps/1.3.0.tar.gz"
+        STATUS CEREAL_DOWNLOAD_STATUS_LIST LOG CEREAL_DOWNLOAD_LOG
+        SHOW_PROGRESS)
+    list(GET CEREAL_DOWNLOAD_STATUS_LIST 0 CEREAL_DOWNLOAD_STATUS)
+    if (CEREAL_DOWNLOAD_STATUS EQUAL 0)
+      execute_process(COMMAND ${CMAKE_COMMAND} -E
+          tar xzf "${CMAKE_BINARY_DIR}/deps/1.3.0.tar.gz"
+          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
+
+      # Get the name of the directory.
+      file (GLOB CEREAL_DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
+          "${CMAKE_BINARY_DIR}/deps/cereal-[0-9]*.[0-9]*.[0-9]*")
+      # list(FILTER) is not available on 3.5 or older, but try to keep
+      # configuring without filtering the list anyway (it might work if only
+      # the file cereal-latest.tar.gz is present.
+      if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
+        list(FILTER CEREAL_DIRECTORIES EXCLUDE REGEX "cereal-.*\.tar\.gz")
+      endif ()
+      list(LENGTH CEREAL_DIRECTORIES CEREAL_DIRECTORIES_LEN)
+      if (CEREAL_DIRECTORIES_LEN EQUAL 1)
+        list(GET CEREAL_DIRECTORIES 0 CEREAL_INCLUDE_DIR)
+        set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+            "${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/include")
+        message(STATUS
+            "Successfully downloaded cereal into ${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/")
+
+        # Now we have to also ensure these header files get installed.
+        install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+      else ()
+        message(FATAL_ERROR "Problem unpacking cereal!  Expected only one directory cereal-x.y.z/; found ${CEREAL_DIRECTORIES}. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
+      endif ()
+    else ()
+      list(GET CEREAL_DOWNLOAD_STATUS_LIST 1 CEREAL_DOWNLOAD_ERROR)
+      message(FATAL_ERROR
+          "Could not download cereal! Error code ${CEREAL_DOWNLOAD_STATUS}: ${CEREAL_DOWNLOAD_ERROR}!  Error log: ${CEREAL_DOWNLOAD_LOG}")
+    endif ()
+  ## We will see what to do later if cereal is already installed, at this time download it
+  # else ()
+    # Release versions will have ensmallen packaged with the release so we can
+    # just reference that.
+  #   if (EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen/ensmallen.hpp")
+  #     set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS}
+  #         "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen")
+  #   else ()
+  #     message(FATAL_ERROR
+  #         "Cannot find ensmallen headers!  Try setting ENSMALLEN_INCLUDE_DIR!")
+  #   endif ()
+  endif ()
+else ()
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${CEREAL_INCLUDE_DIR}")
+endif ()
+
+
+# find_package(CLI11 1.9.0)
+# if (NOT CLI_FOUND)
+#   if (DOWNLOAD_CLI)
+#     file(DOWNLOAD https://github.com/CLIUtils/CLI11/archive/v1.9.0.tar.gz
+#         "${CMAKE_BINARY_DIR}/deps/cli-latest.tar.gz"
+#         STATUS CLI_DOWNLOAD_STATUS_LIST LOG CLI_DOWNLOAD_LOG
+#         SHOW_PROGRESS)
+#     list(GET CLI_DOWNLOAD_STATUS_LIST 0 CLI_DOWNLOAD_STATUS)
+#     if (CLI_DOWNLOAD_STATUS EQUAL 0)
+#       execute_process(COMMAND ${CMAKE_COMMAND} -E
+#           tar xzf "${CMAKE_BINARY_DIR}/deps/cli-latest.tar.gz"
+#           WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
+
+#       # Get the name of the directory.
+#       file (GLOB ENS_DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
+#           "${CMAKE_BINARY_DIR}/deps/cli-[0-9]*.[0-9]*.[0-9]*")
+#       # list(FILTER) is not available on 3.5 or older, but try to keep
+#       # configuring without filtering the list anyway (it might work if only
+#       # the file -latest.tar.gz is present.
+#       if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
+#         list(FILTER CLI_DIRECTORIES EXCLUDE REGEX "cli-.*\.tar\.gz")
+#       endif ()
+#       list(LENGTH CLI_DIRECTORIES CLI_DIRECTORIES_LEN)
+#       if (CLI_DIRECTORIES_LEN EQUAL 1)
+#         list(GET CLI_DIRECTORIES 0 CLI_INCLUDE_DIR)
+#         set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+#             "${CMAKE_BINARY_DIR}/deps/${CLI_INCLUDE_DIR}/include")
+#         message(STATUS
+#             "Successfully downloaded CLI11 into ${CMAKE_BINARY_DIR}/deps/${CLI_INCLUDE_DIR}/")
+
+#         # Now we have to also ensure these header files get installed.
+#         install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen_bits/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ensmallen_bits")
+#         install(FILES "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen.hpp" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+#       else ()
+#         message(FATAL_ERROR "Problem unpacking CLI11!  Expected only one directory cli-x.y.z/; found ${CLI_DIRECTORIES}. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
+#       endif ()
+#     else ()
+#       list(GET CLI_DOWNLOAD_STATUS_LIST 1 CLI_DOWNLOAD_ERROR)
+#       message(FATAL_ERROR
+#           "Could not download CLI11! Error code ${CLI_DOWNLOAD_STATUS}: ${CLI_DOWNLOAD_ERROR}!  Error log: ${CLI_DOWNLOAD_LOG}")
+#     endif ()
+#   else ()
+#     # Release versions will have ensmallen packaged with the release so we can
+#     # just reference that.
+#     if (EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen/ensmallen.hpp")
+#       set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS}
+#           "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen")
+#     else ()
+#       message(FATAL_ERROR
+#           "Cannot find ensmallen headers!  Try setting ENSMALLEN_INCLUDE_DIR!")
+#     endif ()
+#   endif ()
+# else ()
+#   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
+# endif ()
+
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
@@ -433,7 +545,6 @@ set(Boost_ADDITIONAL_VERSIONS
 if (CMAKE_CROSSCOMPILING)
   # Here we will set paths as we have done for armadillo.
   set(Boost_INCLUDE_DIRS ${BOOST_INCLUDE_DIR})
-  set(Boost_LIBRARY_DIRS  ${BOOST_LIBRARYDIR})
   set(Boost_LIBRARIES  ${BOOST_SERIALIZATION})
 # Otherwise just find Boost in the system
 else()
