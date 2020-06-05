@@ -326,7 +326,7 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidAlphaTest)
   CLI::GetSingleton().Parameters()["alpha"].wasPassed = false;
   
   SetInputParam("reference", std::move(referenceData));
-  SetInputParam("alpha", (int) -1);
+  SetInputParam("alpha", (double) -1);
 
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
