@@ -76,7 +76,7 @@ void NoisyLinear<InputDataType, OutputDataType>::ResetNoise()
 template<typename InputDataType, typename OutputDataType>
 void NoisyLinear<InputDataType, OutputDataType>::ResetParameters()
 {
-  double muRange = 1 / std::sqrt(inSize);
+  const double muRange = 1 / std::sqrt(inSize);
   weightMu.randu();
   weightMu = muRange * (weightMu * 2 - 1);
   biasMu.randu();
@@ -114,13 +114,12 @@ void NoisyLinear<InputDataType, OutputDataType>::Gradient(
   // Locally stored to prevent multiplication twice.
   arma::mat weightGrad = error * input.t();
 
-  // Gradients for mu values
-  gradient.rows(0, weight.n_elem - 1)
-      = arma::vectorise(weightGrad);
+  // Gradients for mu values.
+  gradient.rows(0, weight.n_elem - 1) = arma::vectorise(weightGrad);
   gradient.rows(weight.n_elem, weight.n_elem + bias.n_elem - 1)
       = arma::sum(error, 1);
 
-  // Gradients for sigma values
+  // Gradients for sigma values.
   gradient.rows(weight.n_elem + bias.n_elem, gradient.n_elem - bias.n_elem - 1)
       = arma::vectorise(weightGrad % weightEpsilon);
   gradient.rows(gradient.n_elem - bias.n_elem, gradient.n_elem - 1)
