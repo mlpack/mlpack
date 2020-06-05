@@ -22,10 +22,7 @@ option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
 set(BOARD_NAME "" CACHE STRING "Enter the board name to compile mlpack for.")
 set(OPENBLAS_LIBRARIES "" CACHE STRING "Path for OpenBlas library.")
-set(BOOST_ROOT "" CACHE STRING "Path for boost.")
 set(BOOST_INCLUDE_DIR "" CACHE STRING "Path for boost headers.")
-set(BOOST_SERIALIZATION "" CACHE STRING "Path for boost libraries.")
-set(CLI "" CACHE STRING "Path for CLI.")
 
 if (CMAKE_CROSSCOMPILING AND (BOARD_NAME STREQUAL ""))
   message(FATAL_ERROR "Please enter the board name")
@@ -313,8 +310,10 @@ else()
 endif()
 
 # Include directories for the previous dependencies.
-set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS} ${CLI})
-set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
+set(ARMADILLO_SUPPORT_LIBRARIES ${OPENBLAS_LIBRARIES} /usr/aarch64-linux-gnu/lib64/libgfortran.a)
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
+set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES} ${ARMADILLO_SUPPORT_LIBRARIES})
+
 
 # Find stb_image.h and stb_image_write.h.
 find_package(StbImage)
@@ -574,7 +573,6 @@ if (CMAKE_CROSSCOMPILING)
   # Here we will set paths as we have done for armadillo.
   set(Boost_INCLUDE_DIRS ${BOOST_INCLUDE_DIR})
   set(Boost_LIBRARIES  ${BOOST_SERIALIZATION})
-  set(ARMADILLO_SUPPORT_LIBRARIES ${OPENBLAS_LIBRARIES} /usr/aarch64-linux-gnu/lib64/libgfortran.a)
 # Otherwise just find Boost in the system
 else()
   find_package(Boost 1.58
