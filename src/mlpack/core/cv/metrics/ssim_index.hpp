@@ -24,12 +24,14 @@ namespace cv {
  * Two images are exaclty x and y are exactly similar if
  * @f$\operatorname{SSIM}(x, y) = 1@f$. An SSIM index value 0 implies no
  * structural similarity.
+ *
  * The SSIM index tries to quatify the similarity a human eye would percieve
  * between two images. Since, in reality, our eye can focus on a small part
  * of the image only, in practice, we use a sliding Gaussian window of size
  * 11x11, to calculate the value locally and then take its average. We use
  * a Gaussian Window because even when we look at a part of the entire
  * image, our focus is sharpest at the center.
+ *
  * The formula to calculate the SSIM index for two images is
  * @f$\operatorname{SSIM}(x, y)=\frac{\left(2 \mu_{x} \mu_{y}+c_{1}\right)
  * \left(2 \sigma_{x y}+c_{2}\right)}{\left(\mu_{x}^{2}+\mu_{y}^{2}+c_{1}
@@ -41,23 +43,25 @@ class SSIMIndex
 {
  public:
   /**
-   * @tparam DataType The type of image matrix
-   * @param image The processed image
-   * @param reference The distortion free reference image
-   * @return The mean value of local SSIM Index
+   * Accept the reference and processed image and evaluate the SSIM Index.
+   *
+   * @tparam DataType The type of image matrix.
+   * @param image The processed image.
+   * @param reference The distortion free reference image.
+   * @return The mean value of local SSIM Index.
    */
   template<typename DataType>
-  static double Evaluate(DataType const& image,
-                         DataType const& reference);
+  static double Evaluate(const DataType& image,
+                         const DataType& reference);
 
   /**
    * Information for hyper-parameter tuning code. It indicates that we want
    * to maximize the measurement.
    */
   static const bool NeedsMinimization = false;
-}; // class SSIMIndex
-} // namespace cv
-} // namespace mlpack
+}; // class SSIMIndex.
+} // namespace cv.
+} // namespace mlpack.
 // Include implementation.
 #include "ssim_index_impl.hpp"
 
