@@ -826,7 +826,6 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- * @param T Default value of the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
