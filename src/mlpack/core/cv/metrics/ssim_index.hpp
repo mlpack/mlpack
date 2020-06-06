@@ -35,7 +35,7 @@ namespace cv {
  * \left(2 \sigma_{x y}+c_{2}\right)}{\left(\mu_{x}^{2}+\mu_{y}^{2}+c_{1}
  * \right)\left(\sigma_{x}^{2}+\sigma_{y}^{2}+c_{2}\right)}@f$
  * where @f$\mu@f$ denotes average, @f$\\sigma^{2}@f$ denotes variance and
- * @f$\sigma_{x y}@f$ deontes covariance of x and y.
+ * @f$\sigma_{x y}@f$ denotes covariance of x and y.
 */
 class SSIMIndex
 {
