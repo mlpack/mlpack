@@ -373,13 +373,15 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
   bool success = false;
   for (size_t trial = 0; trial < 4; trial++)
   {
-    // Set up the network. Note that we use a custom network here, and
-    // pass it directly into the agent, without using SimpleDQN.
-    FFN<MeanSquaredError<>, GaussianInitialization> network(MeanSquaredError<>(),
+    // Set up the module. Note that we use a custom network here.
+    FFN<MeanSquaredError<>, GaussianInitialization> module(MeanSquaredError<>(),
         GaussianInitialization(0, 0.001));
-    network.Add<Linear<>>(6, 256);
-    network.Add<ReLULayer<>>();
-    network.Add<Linear<>>(256, 3);
+    module.Add<Linear<>>(6, 256);
+    module.Add<ReLULayer<>>();
+    module.Add<Linear<>>(256, 3);
+
+    // Adding the module to the SimpleDQN network containing required functions.
+    SimpleDQN<> network(module);
 
     // Set up the policy and replay method.
     GreedyPolicy<DoublePoleCart> policy(1.0, 1000, 0.1, 0.99);
@@ -417,6 +419,7 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
 
       // If the network can solve the environment in two trials this is fine for
       // a simple test.
+      Log::Debug << " Episode return: " << episodeReturn << std::endl;
       if (episodeSuccesses >= 2)
       {
         Log::Debug << "QLearning has succeeded in the multiple pole cart" <<
@@ -557,5 +560,123 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQNPrioritizedReplay)
   BOOST_REQUIRE(converged);
 }
 
+//! Test Noisy DQN in Cart Pole task.
+BOOST_AUTO_TEST_CASE(CartPoleWithNoisyDQN)
+{
+  // Set up the policy and replay method.
+  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
+  RandomReplay<CartPole> replayMethod(32, 2000);
+
+  TrainingConfig config;
+  config.StepSize() = 0.01;
+  config.Discount() = 0.99;
+  config.TargetNetworkSyncInterval() = 50;
+  config.DoubleQLearning() = false;
+  config.StepLimit() = 200;
+  config.NoisyQLearning() = true;
+
+  // Set up the network with a flag to enable noisy layers.
+  SimpleDQN<> network(4, 64, 32, 2, config.NoisyQLearning());
+
+  // Set up DQN agent.
+  QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
+      agent(config, network, policy, replayMethod);
+
+  arma::running_stat<double> averageReturn;
+  size_t episodes = 0;
+  bool converged = true;
+  while (true)
+  {
+    double episodeReturn = agent.Episode();
+    averageReturn(episodeReturn);
+    episodes += 1;
+
+    if (episodes > 1000)
+    {
+      Log::Debug << "Cart Pole with Noisy DQN failed." << std::endl;
+      converged = false;
+      break;
+    }
+
+    /**
+     * Reaching running average return 35 is enough to show it works.
+     * For the speed of the test case, I didn't set high criterion.
+     */
+    Log::Debug << "Average return: " << averageReturn.mean()
+        << " Episode return: " << episodeReturn << std::endl;
+    if (averageReturn.mean() > 35)
+    {
+      agent.Deterministic() = true;
+      arma::running_stat<double> testReturn;
+      for (size_t i = 0; i < 10; ++i)
+        testReturn(agent.Episode());
+
+      Log::Debug << "Average return in deterministic test: "
+          << testReturn.mean() << std::endl;
+      break;
+    }
+  }
+  BOOST_REQUIRE(converged);
+}
+
+//! Test Dueling-Double-Noisy DQN in Cart Pole task.
+BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDoubleNoisyDQN)
+{
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights.
+  size_t episodes = 0;
+  bool converged = false;
+  for (size_t trial = 0; trial < 5; ++trial)
+  {
+    Log::Debug << "Trail number: " << trial << std::endl;
+
+    // Set up the policy and replay method.
+    GreedyPolicy<CartPole> policy(1.0, 2000, 0.1, 0.99);
+    RandomReplay<CartPole> replayMethod(32, 4000);
+
+    TrainingConfig config;
+    config.StepSize() = 0.01;
+    config.Discount() = 0.99;
+    config.TargetNetworkSyncInterval() = 50;
+    config.DoubleQLearning() = true;
+    config.StepLimit() = 200;
+    config.NoisyQLearning() = true;
+
+    // Set up the network with a flag to enable noisy layers.
+    DuelingDQN<> network(4, 64, 64, 2, config.NoisyQLearning());
+
+    // Set up DQN agent.
+    QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
+        agent(config, network, policy, replayMethod);
+
+    arma::running_stat<double> averageReturn;
+    for(episodes = 0; episodes < 400; episodes++)
+    {
+      double episodeReturn = agent.Episode();
+      averageReturn(episodeReturn);
+
+      /**
+       * Reaching running average return 35 is enough to show it works.
+       * For the speed of the test case, a high criterion is not set.
+       */
+      Log::Debug << "Average return: " << averageReturn.mean()
+          << " Episode return: " << episodeReturn << std::endl;
+      if (averageReturn.mean() > 35)
+      {
+        converged = true;
+        agent.Deterministic() = true;
+        arma::running_stat<double> testReturn;
+        for (size_t i = 0; i < 10; ++i)
+          testReturn(agent.Episode());
+        Log::Debug << "Average return in deterministic test: "
+            << testReturn.mean() << std::endl;
+        break;
+      }
+    }
+    if (converged)
+      break;
+  }
+  BOOST_REQUIRE(converged);
+}
 
 BOOST_AUTO_TEST_SUITE_END();
