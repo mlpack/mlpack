@@ -946,61 +946,61 @@ template<typename SortPolicy,
 template<typename Archive>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::serialize(
-    Archive& ar)
+    Archive& ar, const unsigned int /* version*/)
 {
   // Serialize preferences for search.
-  ar(CEREAL_NVP(searchMode));
-  ar(CEREAL_NVP(treeNeedsReset));
+  // ar(CEREAL_NVP(searchMode));
+  // ar(CEREAL_NVP(treeNeedsReset));
 
   // If we are doing naive search, we serialize the dataset.  Otherwise we
   // serialize the tree.
-  if (searchMode == NAIVE_MODE)
-  {
-    // Delete the current reference set, if necessary and if we are loading.
-    if (Archive::is_loading::value && referenceSet)
-    {
-      delete referenceSet;
-    }
+  // if (searchMode == NAIVE_MODE)
+  // {
+  //   // Delete the current reference set, if necessary and if we are loading.
+  //   if (Archive::is_loading::value && referenceSet)
+  //   {
+  //     delete referenceSet;
+  //   }
 
-    ar(CEREAL_NVP(referenceSet));
-    ar(CEREAL_NVP(metric));
+  //   ar(CEREAL_NVP(referenceSet));
+  //   ar(CEREAL_NVP(metric));
 
-    // If we are loading, set the tree to NULL and clean up memory if necessary.
-    if (Archive::is_loading::value)
-    {
-      if (referenceTree)
-        delete referenceTree;
+  //   // If we are loading, set the tree to NULL and clean up memory if necessary.
+  //   if (Archive::is_loading::value)
+  //   {
+  //     if (referenceTree)
+  //       delete referenceTree;
 
-      referenceTree = NULL;
-      oldFromNewReferences.clear();
-    }
-  }
-  else
-  {
-    // Delete the current reference tree, if necessary and if we are loading.
-    if (Archive::is_loading::value && referenceTree)
-    {
-      delete referenceTree;
-    }
+  //     referenceTree = NULL;
+  //     oldFromNewReferences.clear();
+  //   }
+  // }
+  // else
+  // {
+  //   // Delete the current reference tree, if necessary and if we are loading.
+  //   if (Archive::is_loading::value && referenceTree)
+  //   {
+  //     delete referenceTree;
+  //   }
 
-    ar(CEREAL_NVP(referenceTree));
-    ar(CEREAL_NVP(oldFromNewReferences));
+  //   ar(CEREAL_NVP(referenceTree));
+  //   ar(CEREAL_NVP(oldFromNewReferences));
 
-    // If we are loading, set the dataset accordingly and clean up memory if
-    // necessary.
-    if (Archive::is_loading::value)
-    {
-      referenceSet = &referenceTree->Dataset();
-      metric = referenceTree->Metric(); // Get the metric from the tree.
-    }
-  }
+  //   // If we are loading, set the dataset accordingly and clean up memory if
+  //   // necessary.
+  //   if (Archive::is_loading::value)
+  //   {
+  //     referenceSet = &referenceTree->Dataset();
+  //     metric = referenceTree->Metric(); // Get the metric from the tree.
+  //   }
+  // }
 
-  // Reset base cases and scores.
-  if (Archive::is_loading::value)
-  {
-    baseCases = 0;
-    scores = 0;
-  }
+  // // Reset base cases and scores.
+  // if (Archive::is_loading::value)
+  // {
+  //   baseCases = 0;
+  //   scores = 0;
+  // }
 }
 
 } // namespace neighbor

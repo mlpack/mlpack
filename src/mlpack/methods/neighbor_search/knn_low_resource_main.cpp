@@ -88,7 +88,7 @@ PROGRAM_INFO(
  PARAM_UMATRIX_OUT("neighbors", "Matrix to output neighbors into.", "n");
 
  // // The option exists to load or save models.
- //  PARAM_MODEL_IN(KNNModel, "input_model", "Pre-trained kNN model.", "m");
+//PARAM_MODEL_IN(KNNModel, "input_model", "Pre-trained kNN model.", "m");
 
  // The user may specify a query file of query points and a number of nearest
  // neighbors to search for.

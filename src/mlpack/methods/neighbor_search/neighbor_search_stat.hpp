@@ -92,12 +92,12 @@ class NeighborSearchStat
 
   //! Serialize the statistic to/from an archive.
   template<typename Archive>
-  void serialize(Archive& ar)
+  void serialize(Archive& ar, const unsigned int /* version*/)
   {
-    ar(CEREAL_NVP(firstBound));
-    ar(CEREAL_NVP(secondBound));
-    ar(CEREAL_NVP(auxBound));
-    ar(CEREAL_NVP(lastDistance));
+    // ar(CEREAL_NVP(firstBound));
+    // ar(CEREAL_NVP(secondBound));
+    // ar(CEREAL_NVP(auxBound));
+    // ar(CEREAL_NVP(lastDistance));
   }
 };
 
