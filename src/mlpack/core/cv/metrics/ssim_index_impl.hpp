@@ -25,10 +25,10 @@ double SSIMIndex::Evaluate(DataType const& image,
   {
     std::ostringstream oss;
     oss << "SSIMIndex::Evaluate(): size of reference ("
-      << reference.n_cols << "X" << reference.n_rows
-      << ") does not match size of image ("
-      << image.n_cols << "X" << image.n_rows << ")!"
-      << std::endl;
+        << reference.n_cols << "X" << reference.n_rows
+        << ") does not match size of image ("
+        << image.n_cols << "X" << image.n_rows << ")!"
+        << std::endl;
     throw std::invalid_argument(oss.str());
   }
   // Instantitating a Gaussian Kernel with bandwidth 1.5.
@@ -36,9 +36,9 @@ double SSIMIndex::Evaluate(DataType const& image,
   
   // Gaussian Window of size 11x11.
   arma::mat gaussianWindow(11, 11);
-  for ( double row = 0; row < 11; row+=1)
+  for ( size_t row = 0; row < 11; row+=1)
   {
-    for ( double column = 0; column<11; column+=1)
+    for ( size_t column = 0; column<11; column+=1)
     {
       gaussianWindow(row, column) = gaussianKernel.Evaluate(
                                     arma::linspace(-6, row - 5, 1),
