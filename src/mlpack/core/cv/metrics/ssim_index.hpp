@@ -22,7 +22,7 @@ namespace cv {
  * images. It is a full reference metric, i.e. it measures the quality of a
  * processed image based on an initial distortion free image as reference.
  * Two images are exaclty x and y are exactly similar if
- * @f$\operatorname{SSIM}(x, y)=1@f$. An SSIM index value 0 impies no
+ * @f$\operatorname{SSIM}(x, y) = 1@f$. An SSIM index value 0 implies no
  * structural similarity.
  * The SSIM index tries to quatify the similarity a human eye would percieve
  * between two images. Since, in reality, our eye can focus on a small part
