@@ -78,22 +78,41 @@ class DuelingDQN
   DuelingDQN(const int inputDim,
              const int h1,
              const int h2,
-             const int outputDim):
-      completeNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001))
+             const int outputDim,
+             const bool isNoisy = false):
+      completeNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001)),
+      isNoisy(isNoisy)
   {
     featureNetwork = new Sequential<>();
     featureNetwork->Add(new Linear<>(inputDim, h1));
     featureNetwork->Add(new ReLULayer<>());
 
     valueNetwork = new Sequential<>();
-    valueNetwork->Add(new Linear<>(h1, h2));
-    valueNetwork->Add(new ReLULayer<>());
-    valueNetwork->Add(new Linear<>(h2, 1));
-
     advantageNetwork = new Sequential<>();
-    advantageNetwork->Add(new Linear<>(h1, h2));
-    advantageNetwork->Add(new ReLULayer<>());
-    advantageNetwork->Add(new Linear<>(h2, outputDim));
+
+    if(isNoisy)
+    { 
+      noisyLayers.push_back(new NoisyLinear<>(h1, h2));
+      valueNetwork->Add(noisyLayers.back());
+      valueNetwork->Add(new ReLULayer<>());
+      noisyLayers.push_back(new NoisyLinear<>(h2, 1));
+      valueNetwork->Add(noisyLayers.back());
+      noisyLayers.push_back(new NoisyLinear<>(h1, h2));
+      advantageNetwork->Add(noisyLayers.back());
+      advantageNetwork->Add(new ReLULayer<>());
+      noisyLayers.push_back(new NoisyLinear<>(h2, outputDim));
+      advantageNetwork->Add(noisyLayers.back());
+    }
+    else
+    {
+      valueNetwork->Add(new Linear<>(h1, h2));
+      valueNetwork->Add(new ReLULayer<>());
+      valueNetwork->Add(new Linear<>(h2, 1));
+
+      advantageNetwork->Add(new Linear<>(h1, h2));
+      advantageNetwork->Add(new ReLULayer<>());
+      advantageNetwork->Add(new Linear<>(h2, outputDim));
+    }
 
     concat = new Concat<>(true);
     concat->Add(valueNetwork);
@@ -198,6 +217,15 @@ class DuelingDQN
     completeNetwork.ResetParameters();
   }
 
+  /**
+   * Resets noise of the network, is the network is of type noisy.
+   */
+  void ResetNoise()
+  {
+    for(size_t i = 0; i < noisyLayers.size(); i++)
+      noisyLayers[i]->ResetNoise();
+  }
+
   //! Return the Parameters.
   const arma::mat& Parameters() const { return completeNetwork.Parameters(); }
   //! Modify the Parameters.
@@ -218,6 +246,12 @@ class DuelingDQN
 
   //! Locally-stored value network.
   ValueNetworkType* valueNetwork;
+
+  //! Locally-stored check for noisy network.
+  bool isNoisy;
+
+  //! Locally-stored noisy modules.
+  std::vector<NoisyLinear<>*> noisyLayers;
 
   //! Locally-stored actionValues of the network.
   arma::mat actionValues;

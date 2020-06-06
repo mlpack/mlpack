@@ -48,14 +48,27 @@ class SimpleDQN
   SimpleDQN(const int inputDim,
             const int h1,
             const int h2,
-            const int outputDim) : network(MeanSquaredError<>(),
-                GaussianInitialization(0, 0.001))
+            const int outputDim,
+            const bool isNoisy = false):
+      network(MeanSquaredError<>(), GaussianInitialization(0, 0.001)),
+      isNoisy(isNoisy)
   {
     network.Add(new Linear<>(inputDim, h1));
     network.Add(new ReLULayer<>());
-    network.Add(new Linear<>(h1, h2));
-    network.Add(new ReLULayer<>());
-    network.Add(new Linear<>(h2, outputDim));
+    if(isNoisy)
+    { 
+      noisyLayers.push_back(new NoisyLinear<>(h1, h2));
+      network.Add(noisyLayers.back());
+      network.Add(new ReLULayer<>());
+      noisyLayers.push_back(new NoisyLinear<>(h2, outputDim));
+      network.Add(noisyLayers.back());
+    }
+    else
+    {
+      network.Add(new Linear<>(h1, h2));
+      network.Add(new ReLULayer<>());
+      network.Add(new Linear<>(h2, outputDim));
+    }
   }
 
   SimpleDQN(NetworkType network) : network(std::move(network))
@@ -96,6 +109,15 @@ class SimpleDQN
     network.ResetParameters();
   }
 
+  /**
+   * Resets noise of the network, is the network is of type noisy.
+   */
+  void ResetNoise()
+  {
+    for(size_t i = 0; i < noisyLayers.size(); i++)
+      noisyLayers[i]->ResetNoise();
+  }
+
   //! Return the Parameters.
   const arma::mat& Parameters() const { return network.Parameters(); }
   //! Modify the Parameters.
@@ -116,6 +138,12 @@ class SimpleDQN
  private:
   //! Locally-stored network.
   NetworkType network;
+
+  //! Locally-stored check for noisy network.
+  bool isNoisy;
+
+  //! Locally-stored noisy modules.
+  std::vector<NoisyLinear<>*> noisyLayers;
 };
 
 } // namespace rl
