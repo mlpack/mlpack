@@ -1,5 +1,5 @@
 /**
- * @file ssim_index.hpp
+ * @file core/cv/metrics/ssim_index.hpp
  * @author Utkarsh Rai
  *
  * The SSIM (Structural Similarity) metric.
