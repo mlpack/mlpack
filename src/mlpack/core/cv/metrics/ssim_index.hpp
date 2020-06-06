@@ -26,7 +26,7 @@ namespace cv {
  * structural similarity.
  * The SSIM index tries to quatify the similarity a human eye would percieve
  * between two images. Since, in reality, our eye can focus on a small part
- * of the image only, in practice, we use a sliding Gaussian Window of size
+ * of the image only, in practice, we use a sliding Gaussian window of size
  * 11X11, to calculate the value locally and then take its average. We use
  * a Gaussian Window beacause even when we look at a part of the entire
  * image, our focus is sharpest at the center.
