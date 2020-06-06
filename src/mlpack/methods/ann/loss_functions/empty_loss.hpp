@@ -37,7 +37,6 @@ class EmptyLoss
  public:
   /**
    * Create the EmptyLoss object.
-   *
    */
   EmptyLoss();
 

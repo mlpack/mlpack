@@ -38,7 +38,6 @@ using namespace mlpack::ann;
  * }
  * @endcode
  * 
- * 
  * @tparam CompleteNetworkType The type of network used for full dueling dqn.
  * @tparam FeatureNetworkType The type of network used for feature network.
  * @tparam AdvantageNetworkType The type of network used for advantage network.
