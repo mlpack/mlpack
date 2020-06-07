@@ -59,6 +59,7 @@ class GreedyPolicy
    *
    * @param actionValue Values for each action.
    * @param deterministic Always select the action greedily.
+   * @param isNoisy Specifies whether the network used is noisy.
    * @return Sampled action.
    */
   ActionType Sample(const arma::colvec& actionValue,

@@ -74,6 +74,7 @@ class DuelingDQN
    * @param h1 Number of neurons in hiddenlayer-1.
    * @param h2 Number of neurons in hiddenlayer-2.
    * @param outputDim Number of neurons in output layer.
+   * @param isNoisy Specifies whether the network needs to be of type noisy.
    */
   DuelingDQN(const int inputDim,
              const int h1,
