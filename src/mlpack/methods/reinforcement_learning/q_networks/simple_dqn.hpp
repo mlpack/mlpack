@@ -34,7 +34,7 @@ class SimpleDQN
   /**
    * Default constructor.
    */
-  SimpleDQN() : network()
+  SimpleDQN() : network(), isNoisy(false)
   { /* Nothing to do here. */ }
 
   /**
@@ -58,11 +58,11 @@ class SimpleDQN
     network.Add(new ReLULayer<>());
     if(isNoisy)
     { 
-      noisyLayers.push_back(new NoisyLinear<>(h1, h2));
-      network.Add(noisyLayers.back());
+      noisyLayerIndex.push_back(network.Model().size());
+      network.Add(new NoisyLinear<>(h1, h2));
       network.Add(new ReLULayer<>());
-      noisyLayers.push_back(new NoisyLinear<>(h2, outputDim));
-      network.Add(noisyLayers.back());
+      noisyLayerIndex.push_back(network.Model().size());
+      network.Add(new NoisyLinear<>(h2, outputDim));
     }
     else
     {
@@ -72,7 +72,9 @@ class SimpleDQN
     }
   }
 
-  SimpleDQN(NetworkType network) : network(std::move(network))
+  SimpleDQN(NetworkType network, const bool isNoisy = false):
+      network(std::move(network)),
+      isNoisy(isNoisy)
   { /* Nothing to do here. */ }
 
   /**
@@ -115,8 +117,11 @@ class SimpleDQN
    */
   void ResetNoise()
   {
-    for(size_t i = 0; i < noisyLayers.size(); i++)
-      noisyLayers[i]->ResetNoise();
+    for(size_t i = 0; i < noisyLayerIndex.size(); i++)
+    {
+      boost::get<NoisyLinear<>*>
+          (network.Model()[noisyLayerIndex[i]])->ResetNoise();
+    }
   }
 
   //! Return the Parameters.
@@ -143,8 +148,8 @@ class SimpleDQN
   //! Locally-stored check for noisy network.
   bool isNoisy;
 
-  //! Locally-stored noisy modules.
-  std::vector<NoisyLinear<>*> noisyLayers;
+  //! Locally-stored indexes of noisy layers in the network.
+  std::vector<size_t> noisyLayerIndex;
 };
 
 } // namespace rl

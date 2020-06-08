@@ -53,7 +53,7 @@ class DuelingDQN
 {
  public:
   //! Default constructor.
-  DuelingDQN()
+  DuelingDQN() : isNoisy(false)
   {
     featureNetwork = new Sequential<>();
     valueNetwork = new Sequential<>();
@@ -127,10 +127,12 @@ class DuelingDQN
 
   DuelingDQN(FeatureNetworkType featureNetwork,
              AdvantageNetworkType advantageNetwork,
-             ValueNetworkType valueNetwork):
+             ValueNetworkType valueNetwork,
+             const bool isNoisy = false):
       featureNetwork(std::move(featureNetwork)),
       advantageNetwork(std::move(advantageNetwork)),
-      valueNetwork(std::move(valueNetwork))
+      valueNetwork(std::move(valueNetwork)),
+      isNoisy(isNoisy)
   {
     concat = new Concat<>(true);
     concat->Add(valueNetwork);
@@ -151,6 +153,7 @@ class DuelingDQN
     *valueNetwork = *model.valueNetwork;
     *advantageNetwork = *model.advantageNetwork;
     *featureNetwork = *model.featureNetwork;
+    isNoisy = model.isNoisy;
   }
 
   /**
