@@ -3,29 +3,25 @@ cmake_minimum_required(VERSION 3.1.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-## Specify your project's name
-project(po)
+
+project(range_search)
 
 set( SOURCES  
-  knn_low_resource_main.cpp
+  range_search_low_resource_main.cpp
   )
 
-# Specify include directories
+
 include_directories(
  
   )
 
-#set(boost_lib_program_options "/usr/lib/libboost_program_options.a")
-
-add_executable(po
+add_executable(range_search
   
  ${SOURCES}  
-  # ... any other source files
+
   )
 
-target_link_libraries(po
-
- # ${boost_lib_program_options}
+target_link_libraries(range_search
 
   )
 
