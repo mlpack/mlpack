@@ -18,6 +18,8 @@
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include "range_search_stat.hpp"
 
+#include <cereal/archives/json.hpp> 
+
 namespace mlpack {
 namespace range /** Range-search routines. */ {
 
