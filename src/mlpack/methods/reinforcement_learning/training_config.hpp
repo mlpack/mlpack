@@ -22,8 +22,11 @@ class TrainingConfig
   TrainingConfig() :
       numWorkers(1),
       updateInterval(1),
+      targetNetworkSyncInterval(100),
       stepLimit(0),
       explorationSteps(1),
+      stepSize(0.01),
+      discount(0.99),
       gradientLimit(40),
       doubleQLearning(false),
       noisyQLearning(false)

@@ -92,17 +92,17 @@ class DuelingDQN
     advantageNetwork = new Sequential<>();
 
     if(isNoisy)
-    { 
-      noisyLayers.push_back(new NoisyLinear<>(h1, h2));
-      valueNetwork->Add(noisyLayers.back());
+    {
+      noisyLayerIndex.push_back(valueNetwork->Model().size());
+      valueNetwork->Add(new NoisyLinear<>(h1, h2));
+      advantageNetwork->Add(new NoisyLinear<>(h1, h2));
+
       valueNetwork->Add(new ReLULayer<>());
-      noisyLayers.push_back(new NoisyLinear<>(h2, 1));
-      valueNetwork->Add(noisyLayers.back());
-      noisyLayers.push_back(new NoisyLinear<>(h1, h2));
-      advantageNetwork->Add(noisyLayers.back());
       advantageNetwork->Add(new ReLULayer<>());
-      noisyLayers.push_back(new NoisyLinear<>(h2, outputDim));
-      advantageNetwork->Add(noisyLayers.back());
+
+      noisyLayerIndex.push_back(valueNetwork->Model().size());
+      valueNetwork->Add(new NoisyLinear<>(h2, 1));
+      advantageNetwork->Add(new NoisyLinear<>(h2, outputDim));
     }
     else
     {
@@ -154,6 +154,7 @@ class DuelingDQN
     *advantageNetwork = *model.advantageNetwork;
     *featureNetwork = *model.featureNetwork;
     isNoisy = model.isNoisy;
+    noisyLayerIndex = model.noisyLayerIndex;
   }
 
   /**
@@ -226,8 +227,13 @@ class DuelingDQN
    */
   void ResetNoise()
   {
-    for(size_t i = 0; i < noisyLayers.size(); i++)
-      noisyLayers[i]->ResetNoise();
+    for(size_t i = 0; i < noisyLayerIndex.size(); i++)
+    {
+      boost::get<NoisyLinear<>*>
+          (valueNetwork->Model()[noisyLayerIndex[i]])->ResetNoise();
+      boost::get<NoisyLinear<>*>
+          (advantageNetwork->Model()[noisyLayerIndex[i]])->ResetNoise();
+    }
   }
 
   //! Return the Parameters.
@@ -254,8 +260,8 @@ class DuelingDQN
   //! Locally-stored check for noisy network.
   bool isNoisy;
 
-  //! Locally-stored noisy modules.
-  std::vector<NoisyLinear<>*> noisyLayers;
+  //! Locally-stored indexes of noisy layers in the network.
+  std::vector<size_t> noisyLayerIndex;
 
   //! Locally-stored actionValues of the network.
   arma::mat actionValues;
