@@ -181,11 +181,11 @@ class GaussianDistribution
   void serialize(Archive& ar, const unsigned int /* version */)
   {
     // We just need to serialize each of the members.
-    ar & BOOST_SERIALIZATION_NVP(mean);
-    ar & BOOST_SERIALIZATION_NVP(covariance);
-    ar & BOOST_SERIALIZATION_NVP(covLower);
-    ar & BOOST_SERIALIZATION_NVP(invCov);
-    ar & BOOST_SERIALIZATION_NVP(logDetCov);
+    ar & CEREAL_NVP(mean);
+    ar & CEREAL_NVP(covariance);
+    ar & CEREAL_NVP(covLower);
+    ar & CEREAL_NVP(invCov);
+    ar & CEREAL_NVP(logDetCov);
   }
 
  private:
