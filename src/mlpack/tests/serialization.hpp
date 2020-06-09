@@ -43,7 +43,7 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
 
     try
     {
-      o << BOOST_SERIALIZATION_NVP(x);
+      o << CEREAL_NVP(x);
     }
     catch (boost::archive::archive_exception& e)
     {
@@ -64,7 +64,7 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
 
     try
     {
-      i >> BOOST_SERIALIZATION_NVP(x);
+      i >> CEREAL_NVP(x);
     }
     catch (boost::archive::archive_exception& e)
     {
@@ -129,7 +129,7 @@ void TestArmadilloSerialization(MatType& x)
 
     try
     {
-      o << BOOST_SERIALIZATION_NVP(x);
+      o << CEREAL_NVP(x);
     }
     catch (boost::archive::archive_exception& e)
     {
@@ -150,7 +150,7 @@ void TestArmadilloSerialization(MatType& x)
 
     try
     {
-      i >> BOOST_SERIALIZATION_NVP(x);
+      i >> CEREAL_NVP(x);
     }
     catch (boost::archive::archive_exception& e)
     {
@@ -201,7 +201,7 @@ void SerializeObject(T& t, T& newT)
 
     try
     {
-      o << BOOST_SERIALIZATION_NVP(t);
+      o << CEREAL_NVP(t);
     }
     catch (boost::archive::archive_exception& e)
     {
@@ -220,7 +220,7 @@ void SerializeObject(T& t, T& newT)
 
     try
     {
-      i >> BOOST_SERIALIZATION_NVP(newT);
+      i >> CEREAL_NVP(newT);
     }
     catch (boost::archive::archive_exception& e)
     {
@@ -259,7 +259,7 @@ void SerializePointerObject(T* t, T*& newT)
     OArchiveType o(ofs);
     try
     {
-      o << BOOST_SERIALIZATION_NVP(t);
+      o << CEREAL_NVP(t);
     }
     catch (boost::archive::archive_exception& e)
     {
@@ -278,7 +278,7 @@ void SerializePointerObject(T* t, T*& newT)
 
     try
     {
-      i >> BOOST_SERIALIZATION_NVP(newT);
+      i >> CEREAL_NVP(newT);
     }
     catch (std::exception& e)
     {
