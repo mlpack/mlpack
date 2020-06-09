@@ -203,8 +203,8 @@ template<typename T>
 template<typename Archive>
 void RangeType<T>::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(hi);
-  ar & BOOST_SERIALIZATION_NVP(lo);
+  ar & CEREAL_NVP(hi);
+  ar & CEREAL_NVP(lo);
 }
 
 } // namespace math
