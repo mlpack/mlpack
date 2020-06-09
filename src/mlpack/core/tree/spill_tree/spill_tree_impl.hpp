@@ -852,7 +852,7 @@ bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   return false;
 }
 
-// Default constructor (private), for boost::serialization.
+// Default constructor (private), for cereal.
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -918,7 +918,7 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   if (Archive::is_loading::value)
     localDataset = true;
 
-  // Save children last; otherwise boost::serialization gets confused.
+  // Save children last; otherwise cereal gets confused.
   bool hasLeft = (left != NULL);
   bool hasRight = (right != NULL);
 

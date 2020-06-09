@@ -299,7 +299,7 @@ class BinarySpaceTree
   BinarySpaceTree& operator=(BinarySpaceTree&& other);
 
   /**
-   * Initialize the tree from a boost::serialization archive.
+   * Initialize the tree from a cereal archive.
    *
    * @param ar Archive to load tree from.  Must be an iarchive, not an oarchive.
    */
@@ -549,7 +549,7 @@ class BinarySpaceTree
  protected:
   /**
    * A default constructor.  This is meant to only be used with
-   * boost::serialization, which is allowed with the friend declaration below.
+   * cereal, which is allowed with the friend declaration below.
    * This does not return a valid tree!  The method must be protected, so that
    * the serialization shim can work with the default constructor.
    */

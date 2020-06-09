@@ -379,7 +379,7 @@ operator=(RectangleTree&& other)
 }
 
 /**
- * Construct the tree from a boost::serialization archive.
+ * Construct the tree from a cereal archive.
  */
 template<typename MetricType,
          typename StatisticType,
@@ -1037,7 +1037,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   }
 }
 
-//! Default constructor for boost::serialization.
+//! Default constructor for cereal.
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -1049,7 +1049,7 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 RectangleTree() :
     maxNumChildren(0), // Try to give sensible defaults, but it shouldn't matter
     minNumChildren(0), // because this tree isn't valid anyway and is only used
-    numChildren(0),    // by boost::serialization.
+    numChildren(0),    // by cereal.
     parent(NULL),
     begin(0),
     count(0),
@@ -1436,7 +1436,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   {
     std::ostringstream oss;
     oss << "children" << i;
-    ar & boost::serialization::make_nvp(oss.str().c_str(), children[i]);
+    ar & cereal::make_nvp(oss.str().c_str(), children[i]);
 
     if (Archive::is_loading::value)
       children[i]->parent = this;

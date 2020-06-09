@@ -1033,7 +1033,7 @@ UpdateBound(bound::HollowBallBound<MetricType>& boundToUpdate)
     boundToUpdate |= dataset->cols(begin, begin + count - 1);
 }
 
-// Default constructor (private), for boost::serialization.
+// Default constructor (private), for cereal.
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -1092,7 +1092,7 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   ar & CEREAL_NVP(furthestDescendantDistance);
   ar & CEREAL_NVP(dataset);
 
-  // Save children last; otherwise boost::serialization gets confused.
+  // Save children last; otherwise cereal gets confused.
   bool hasLeft = (left != NULL);
   bool hasRight = (right != NULL);
 
