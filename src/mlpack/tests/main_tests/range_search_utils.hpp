@@ -18,7 +18,7 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 
 /**
- * Convert a model to a string using the text_oarchive of boost::serialization.
+ * Convert a model to a string using the text_oarchive of cereal.
  *
  * @param model RSModel to be converted to string.
  */

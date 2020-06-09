@@ -58,7 +58,7 @@ using namespace mlpack::ann;
 using namespace arma;
 using namespace boost;
 using namespace boost::archive;
-using namespace boost::serialization;
+using namespace cereal;
 using namespace std;
 
 BOOST_AUTO_TEST_SUITE(SerializationTest);
