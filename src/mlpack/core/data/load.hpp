@@ -262,9 +262,9 @@ extern template bool Load<double, IncrementPolicy>(
  * is used and the filetype cannot be determined, an error will be given.
  *
  * The supported types of files are the same as what is supported by the
- * boost::serialization library:
+ * cereal library:
  *
- *  - text, denoted by .txt
+ *  - json, denoted by .json
  *  - xml, denoted by .xml
  *  - binary, denoted by .bin
  *

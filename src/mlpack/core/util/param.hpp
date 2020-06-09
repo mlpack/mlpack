@@ -922,18 +922,6 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * --model_file model.bin
  * @endcode
  *
- * Note that the first parameter of this model is the type (the class name) of
- * the model to be loaded.  This model type must have a Serialize() function; a
- * compilation error (a very long and complex one) will result if the model type
- * does not have the following function:
- *
- * @code
- * template<typename Archive>
- * void Serialize(Archive& ar, const unsigned int version);
- * @endcode
- *
- * This is the boost::serialization serialize() function, just with a capital s
- * for Serialize() (see src/mlpack/core/data/serialization_shim.hpp).
  *
  * @param TYPE Type of the model to be loaded.
  * @param ID Name of the parameter.
@@ -955,19 +943,6 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @code
  * --model_file model.bin
  * @endcode
- *
- * Note that the first parameter of this model is the type (the class name) of
- * the model to be loaded.  This model type must have a Serialize() function; a
- * compilation error (a very long and complex one) will result if the model type
- * does not have the following function:
- *
- * @code
- * template<typename Archive>
- * void Serialize(Archive& ar, const unsigned int version);
- * @endcode
- *
- * This is the boost::serialization serialize() function, just with a capital s
- * for Serialize() (see src/mlpack/core/data/serialization_shim.hpp).
  *
  * @param TYPE Type of the model to be loaded.
  * @param ID Name of the parameter.
