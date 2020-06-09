@@ -1419,10 +1419,7 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
   const double sumModuleB = arma::accu(
       moduleB->Parameters().submat(
       100, 0, moduleB->Parameters().n_elem - 1, 0));
-  BOOST_REQUIRE_CLOSE(sumModuleA + sumModuleB,
-      arma::accu(moduleB->Parameters().submat(100, 0,
-      moduleB->Parameters().n_elem - 1, 0)),
-      arma::accu(output.col(0)), 1e-3);
+  BOOST_REQUIRE_CLOSE(sumModuleA + sumModuleB, arma::accu(output.col(0)), 1e-3);
 
   // Test the Backward function.
   error = arma::zeros(20, 1);
