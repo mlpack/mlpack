@@ -489,7 +489,7 @@ Octree<MetricType, StatisticType, MatType>::Octree(
     Octree() // Create an empty tree.
 {
   // De-serialize the tree into this object.
-  ar >> BOOST_SERIALIZATION_NVP(*this);
+  ar >> CEREAL_NVP(*this);
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>
@@ -725,16 +725,16 @@ void Octree<MetricType, StatisticType, MatType>::serialize(
     parent = NULL;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(begin);
-  ar & BOOST_SERIALIZATION_NVP(count);
-  ar & BOOST_SERIALIZATION_NVP(bound);
-  ar & BOOST_SERIALIZATION_NVP(stat);
-  ar & BOOST_SERIALIZATION_NVP(parentDistance);
-  ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
-  ar & BOOST_SERIALIZATION_NVP(metric);
-  ar & BOOST_SERIALIZATION_NVP(dataset);
+  ar & CEREAL_NVP(begin);
+  ar & CEREAL_NVP(count);
+  ar & CEREAL_NVP(bound);
+  ar & CEREAL_NVP(stat);
+  ar & CEREAL_NVP(parentDistance);
+  ar & CEREAL_NVP(furthestDescendantDistance);
+  ar & CEREAL_NVP(metric);
+  ar & CEREAL_NVP(dataset);
 
-  ar & BOOST_SERIALIZATION_NVP(children);
+  ar & CEREAL_NVP(children);
 
   if (Archive::is_loading::value)
   {

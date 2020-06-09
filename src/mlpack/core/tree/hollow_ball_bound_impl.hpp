@@ -429,9 +429,9 @@ void HollowBallBound<TMetricType, ElemType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(radii);
-  ar & BOOST_SERIALIZATION_NVP(center);
-  ar & BOOST_SERIALIZATION_NVP(hollowCenter);
+  ar & CEREAL_NVP(radii);
+  ar & CEREAL_NVP(center);
+  ar & CEREAL_NVP(hollowCenter);
 
   if (Archive::is_loading::value)
   {
@@ -440,8 +440,8 @@ void HollowBallBound<TMetricType, ElemType>::serialize(
       delete metric;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(metric);
-  ar & BOOST_SERIALIZATION_NVP(ownsMetric);
+  ar & CEREAL_NVP(metric);
+  ar & CEREAL_NVP(ownsMetric);
 }
 
 } // namespace bound

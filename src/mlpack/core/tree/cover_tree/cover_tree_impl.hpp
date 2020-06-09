@@ -1745,18 +1745,18 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
     parent = NULL;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(dataset);
-  ar & BOOST_SERIALIZATION_NVP(point);
-  ar & BOOST_SERIALIZATION_NVP(scale);
-  ar & BOOST_SERIALIZATION_NVP(base);
-  ar & BOOST_SERIALIZATION_NVP(stat);
-  ar & BOOST_SERIALIZATION_NVP(numDescendants);
+  ar & CEREAL_NVP(dataset);
+  ar & CEREAL_NVP(point);
+  ar & CEREAL_NVP(scale);
+  ar & CEREAL_NVP(base);
+  ar & CEREAL_NVP(stat);
+  ar & CEREAL_NVP(numDescendants);
 
   bool hasParent = (parent != NULL);
-  ar & BOOST_SERIALIZATION_NVP(hasParent);
-  ar & BOOST_SERIALIZATION_NVP(parentDistance);
-  ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
-  ar & BOOST_SERIALIZATION_NVP(metric);
+  ar & CEREAL_NVP(hasParent);
+  ar & CEREAL_NVP(parentDistance);
+  ar & CEREAL_NVP(furthestDescendantDistance);
+  ar & CEREAL_NVP(metric);
 
   if (Archive::is_loading::value && !hasParent)
   {
@@ -1765,7 +1765,7 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
   }
 
   // Lastly, serialize the children.
-  ar & BOOST_SERIALIZATION_NVP(children);
+  ar & CEREAL_NVP(children);
 
   if (Archive::is_loading::value && parent == NULL)
   {
