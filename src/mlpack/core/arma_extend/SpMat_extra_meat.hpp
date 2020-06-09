@@ -16,16 +16,14 @@ template<typename eT>
 template<typename Archive>
 void SpMat<eT>::serialize(Archive& ar, const unsigned int /* version */)
 {
-  using boost::serialization::make_nvp;
-  using boost::serialization::make_array;
-
   // This is accurate from Armadillo 3.6.0 onwards.
   // We can't use BOOST_SERIALIZATION_NVP() because of the access::rw() call.
-  ar & make_nvp("n_rows", access::rw(n_rows));
-  ar & make_nvp("n_cols", access::rw(n_cols));
-  ar & make_nvp("n_elem", access::rw(n_elem));
-  ar & make_nvp("n_nonzero", access::rw(n_nonzero));
-  ar & make_nvp("vec_state", access::rw(vec_state));
+  // We need to check on this access::rw
+  ar(cereal::make_nvp("n_rows", access::rw(n_rows)));
+  ar(cereal::make_nvp("n_cols", access::rw(n_cols)));
+  ar(cereal::make_nvp("n_elem", access::rw(n_elem)));
+  ar(cereal::make_nvp("n_nonzero", access::rw(n_nonzero)));
+  ar(cereal::make_nvp("vec_state", access::rw(vec_state)));
 
   // Now we have to serialize the values, row indices, and column pointers.
   // If we are loading, we need to initialize space for these things.
@@ -38,7 +36,7 @@ void SpMat<eT>::serialize(Archive& ar, const unsigned int /* version */)
     // column pointers, if necessary, so we don't need to worry about them.
   }
 
-  ar & make_array(access::rwp(values), n_nonzero);
-  ar & make_array(access::rwp(row_indices), n_nonzero);
-  ar & make_array(access::rwp(col_ptrs), n_cols + 1);
+  ar(cereal::make_array(access::rwp(values), n_nonzero));
+  ar(cereal::make_array(access::rwp(row_indices), n_nonzero));
+  ar(cereal::make_array(access::rwp(col_ptrs), n_cols + 1));
 }
