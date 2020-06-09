@@ -71,8 +71,8 @@ class PolynomialKernel
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(degree);
-    ar & BOOST_SERIALIZATION_NVP(offset);
+    ar & CEREAL_NVP(degree);
+    ar & CEREAL_NVP(offset);
   }
 
  private:

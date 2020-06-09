@@ -76,8 +76,8 @@ class HyperbolicTangentKernel
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(scale);
-    ar & BOOST_SERIALIZATION_NVP(offset);
+    ar & CEREAL_NVP(scale);
+    ar & CEREAL_NVP(offset);
   }
 
  private:

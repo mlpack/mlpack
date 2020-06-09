@@ -81,8 +81,8 @@ template<typename Archive>
 void EpanechnikovKernel::serialize(Archive& ar,
                                    const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(bandwidth);
-  ar & BOOST_SERIALIZATION_NVP(inverseBandwidthSquared);
+  ar & CEREAL_NVP(bandwidth);
+  ar & CEREAL_NVP(inverseBandwidthSquared);
 }
 
 } // namespace kernel
