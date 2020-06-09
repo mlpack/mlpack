@@ -674,7 +674,7 @@ void HRectBound<MetricType, ElemType>::serialize(
   }
 
   // We can't serialize a raw array directly, so wrap it.
-  auto boundsArray = boost::serialization::make_array(bounds, dim);
+  auto boundsArray = cereal::make_array(bounds, dim);
   ar & CEREAL_NVP(boundsArray);
   ar & CEREAL_NVP(minWidth);
   ar & CEREAL_NVP(metric);

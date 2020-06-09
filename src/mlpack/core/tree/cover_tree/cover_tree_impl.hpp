@@ -716,7 +716,7 @@ operator=(CoverTree&& other)
   return *this;
 }
 
-// Construct from a boost::serialization archive.
+// Construct from a cereal archive.
 template<
     typename MetricType,
     typename StatisticType,
@@ -730,7 +730,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     CoverTree() // Create an empty CoverTree.
 {
   // Now, serialize to our empty tree.
-  ar >> boost::serialization::make_nvp("this", *this);
+  ar >> cereal::make_nvp("this", *this);
 }
 
 
@@ -1691,7 +1691,7 @@ inline void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 }
 
 /**
- * Default constructor, only for use with boost::serialization.
+ * Default constructor, only for use with cereal.
  */
 template<
     typename MetricType,
@@ -1717,7 +1717,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree() :
 }
 
 /**
- * Serialize to/from a boost::serialization archive.
+ * Serialize to/from a cereal archive.
  */
 template<
     typename MetricType,
