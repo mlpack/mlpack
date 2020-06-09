@@ -96,7 +96,7 @@ void IPMetric<KernelType>::serialize(Archive& ar,
     kernelOwner = true;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(kernel);
+  ar & CEREAL_NVP(kernel);
 }
 
 // A specialization for the linear kernel, which actually just turns out to be

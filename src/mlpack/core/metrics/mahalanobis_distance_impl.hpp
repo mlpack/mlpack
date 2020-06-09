@@ -53,7 +53,7 @@ template<typename Archive>
 void MahalanobisDistance<TakeRoot>::serialize(Archive& ar,
                                               const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(covariance);
+  ar & CEREAL_NVP(covariance);
 }
 
 } // namespace metric
