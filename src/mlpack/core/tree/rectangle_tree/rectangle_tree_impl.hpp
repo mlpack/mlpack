@@ -396,7 +396,7 @@ RectangleTree(
     RectangleTree() // Use default constructor.
 {
   // Now serialize.
-  ar >> BOOST_SERIALIZATION_NVP(*this);
+  ar >> CEREAL_NVP(*this);
 }
 
 /**
@@ -1410,25 +1410,25 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     parent = NULL;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(maxNumChildren);
-  ar & BOOST_SERIALIZATION_NVP(minNumChildren);
-  ar & BOOST_SERIALIZATION_NVP(numChildren);
+  ar & CEREAL_NVP(maxNumChildren);
+  ar & CEREAL_NVP(minNumChildren);
+  ar & CEREAL_NVP(numChildren);
   if (Archive::is_loading::value)
     children.resize(maxNumChildren + 1);
 
-  ar & BOOST_SERIALIZATION_NVP(begin);
-  ar & BOOST_SERIALIZATION_NVP(count);
-  ar & BOOST_SERIALIZATION_NVP(numDescendants);
-  ar & BOOST_SERIALIZATION_NVP(maxLeafSize);
-  ar & BOOST_SERIALIZATION_NVP(minLeafSize);
-  ar & BOOST_SERIALIZATION_NVP(bound);
-  ar & BOOST_SERIALIZATION_NVP(stat);
-  ar & BOOST_SERIALIZATION_NVP(parentDistance);
-  ar & BOOST_SERIALIZATION_NVP(dataset);
-  ar & BOOST_SERIALIZATION_NVP(ownsDataset);
+  ar & CEREAL_NVP(begin);
+  ar & CEREAL_NVP(count);
+  ar & CEREAL_NVP(numDescendants);
+  ar & CEREAL_NVP(maxLeafSize);
+  ar & CEREAL_NVP(minLeafSize);
+  ar & CEREAL_NVP(bound);
+  ar & CEREAL_NVP(stat);
+  ar & CEREAL_NVP(parentDistance);
+  ar & CEREAL_NVP(dataset);
+  ar & CEREAL_NVP(ownsDataset);
 
-  ar & BOOST_SERIALIZATION_NVP(points);
-  ar & BOOST_SERIALIZATION_NVP(auxiliaryInfo);
+  ar & CEREAL_NVP(points);
+  ar & CEREAL_NVP(auxiliaryInfo);
 
   // Since we may or may not be holding children, we need to serialize _only_
   // numChildren children.

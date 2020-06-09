@@ -182,7 +182,7 @@ void HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(hilbertValue);
+  ar & CEREAL_NVP(hilbertValue);
 }
 
 

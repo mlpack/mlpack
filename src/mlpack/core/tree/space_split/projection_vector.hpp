@@ -80,7 +80,7 @@ class AxisParallelProjVector
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(dim);
+    ar & CEREAL_NVP(dim);
   };
 };
 
@@ -144,7 +144,7 @@ class ProjVector
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(projVect);
+    ar & CEREAL_NVP(projVect);
   };
 };
 

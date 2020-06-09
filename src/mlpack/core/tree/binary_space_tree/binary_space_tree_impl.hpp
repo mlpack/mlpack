@@ -560,7 +560,7 @@ BinarySpaceTree(
 {
   // We've delegated to the constructor which gives us an empty tree, and now we
   // can serialize from it.
-  ar >> BOOST_SERIALIZATION_NVP(*this);
+  ar >> CEREAL_NVP(*this);
 }
 
 /**
@@ -1083,25 +1083,25 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
     right = NULL;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(begin);
-  ar & BOOST_SERIALIZATION_NVP(count);
-  ar & BOOST_SERIALIZATION_NVP(bound);
-  ar & BOOST_SERIALIZATION_NVP(stat);
+  ar & CEREAL_NVP(begin);
+  ar & CEREAL_NVP(count);
+  ar & CEREAL_NVP(bound);
+  ar & CEREAL_NVP(stat);
 
-  ar & BOOST_SERIALIZATION_NVP(parentDistance);
-  ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
-  ar & BOOST_SERIALIZATION_NVP(dataset);
+  ar & CEREAL_NVP(parentDistance);
+  ar & CEREAL_NVP(furthestDescendantDistance);
+  ar & CEREAL_NVP(dataset);
 
   // Save children last; otherwise boost::serialization gets confused.
   bool hasLeft = (left != NULL);
   bool hasRight = (right != NULL);
 
-  ar & BOOST_SERIALIZATION_NVP(hasLeft);
-  ar & BOOST_SERIALIZATION_NVP(hasRight);
+  ar & CEREAL_NVP(hasLeft);
+  ar & CEREAL_NVP(hasRight);
   if (hasLeft)
-    ar & BOOST_SERIALIZATION_NVP(left);
+    ar & CEREAL_NVP(left);
   if (hasRight)
-    ar & BOOST_SERIALIZATION_NVP(right);
+    ar & CEREAL_NVP(right);
 
   if (Archive::is_loading::value)
   {

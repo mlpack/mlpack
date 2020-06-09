@@ -990,14 +990,14 @@ void CellBound<MetricType, ElemType>::serialize(
   }
 
   auto boundsArray = boost::serialization::make_array(bounds, dim);
-  ar & BOOST_SERIALIZATION_NVP(boundsArray);
-  ar & BOOST_SERIALIZATION_NVP(minWidth);
-  ar & BOOST_SERIALIZATION_NVP(loBound);
-  ar & BOOST_SERIALIZATION_NVP(hiBound);
-  ar & BOOST_SERIALIZATION_NVP(numBounds);
-  ar & BOOST_SERIALIZATION_NVP(loAddress);
-  ar & BOOST_SERIALIZATION_NVP(hiAddress);
-  ar & BOOST_SERIALIZATION_NVP(metric);
+  ar & CEREAL_NVP(boundsArray);
+  ar & CEREAL_NVP(minWidth);
+  ar & CEREAL_NVP(loBound);
+  ar & CEREAL_NVP(hiBound);
+  ar & CEREAL_NVP(numBounds);
+  ar & CEREAL_NVP(loAddress);
+  ar & CEREAL_NVP(hiAddress);
+  ar & CEREAL_NVP(metric);
 }
 
 } // namespace bound

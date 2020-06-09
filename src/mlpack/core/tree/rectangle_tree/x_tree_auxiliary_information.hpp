@@ -199,8 +199,8 @@ class XTreeAuxiliaryInformation
     template<typename Archive>
     void serialize(Archive& ar, const unsigned int /* version */)
     {
-      ar & BOOST_SERIALIZATION_NVP(lastDimension);
-      ar & BOOST_SERIALIZATION_NVP(history);
+      ar & CEREAL_NVP(lastDimension);
+      ar & CEREAL_NVP(history);
     }
   } SplitHistoryStruct;
 
@@ -226,8 +226,8 @@ class XTreeAuxiliaryInformation
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(normalNodeMaxNumChildren);
-    ar & BOOST_SERIALIZATION_NVP(splitHistory);
+    ar & CEREAL_NVP(normalNodeMaxNumChildren);
+    ar & CEREAL_NVP(splitHistory);
   }
 };
 
