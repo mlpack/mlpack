@@ -259,8 +259,8 @@ class TfIdfEncodingPolicy
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(tfType);
-    ar & BOOST_SERIALIZATION_NVP(smoothIdf);
+    ar & CEREAL_NVP(tfType);
+    ar & CEREAL_NVP(smoothIdf);
   }
 
  private:

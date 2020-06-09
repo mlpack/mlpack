@@ -104,7 +104,7 @@ class ZCAWhitening
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(pca);
+    ar & CEREAL_NVP(pca);
   }
 
  private:

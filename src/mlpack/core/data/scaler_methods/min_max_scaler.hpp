@@ -130,12 +130,12 @@ class MinMaxScaler
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(itemMin);
-    ar & BOOST_SERIALIZATION_NVP(itemMax);
-    ar & BOOST_SERIALIZATION_NVP(scale);
-    ar & BOOST_SERIALIZATION_NVP(scaleMin);
-    ar & BOOST_SERIALIZATION_NVP(scaleMax);
-    ar & BOOST_SERIALIZATION_NVP(scalerowmin);
+    ar & CEREAL_NVP(itemMin);
+    ar & CEREAL_NVP(itemMax);
+    ar & CEREAL_NVP(scale);
+    ar & CEREAL_NVP(scaleMin);
+    ar & CEREAL_NVP(scaleMax);
+    ar & CEREAL_NVP(scalerowmin);
   }
 
  private:
