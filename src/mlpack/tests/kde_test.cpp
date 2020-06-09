@@ -25,7 +25,7 @@ using namespace mlpack::metric;
 using namespace mlpack::tree;
 using namespace mlpack::kernel;
 
-using namespace boost::serialization;
+using namespace cereal;
 
 BOOST_AUTO_TEST_SUITE(KDETest);
 
