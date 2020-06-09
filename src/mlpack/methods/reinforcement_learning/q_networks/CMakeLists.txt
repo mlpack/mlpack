@@ -3,7 +3,6 @@
 set(SOURCES
   simple_dqn.hpp
   dueling_dqn.hpp
-  categorical_dqn.hpp
 )
 
 # Add directory name to sources.
