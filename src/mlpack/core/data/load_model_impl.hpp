@@ -48,7 +48,7 @@ bool Load(const std::string& filename,
     else if (extension == "bin")
       f = format::binary;
     else if (extension == "txt")
-      f = format::text;
+      f = format::json;
     else
     {
       if (fatal)
@@ -93,7 +93,7 @@ bool Load(const std::string& filename,
       ar(cereal::make_nvp(name.c_str(), t));
     }
 
-    else if (f == format::text)
+    else if (f == format::json)
     {
      cereal::JSONInputArchive ar(ifs);
      ar(cereal::make_nvp(name.c_str(), t));

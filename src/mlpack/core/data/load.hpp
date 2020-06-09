@@ -334,7 +334,7 @@ extern template bool Load<double, IncrementPolicy>(
  *  - binary, denoted by .bin
  *
  * The format parameter can take any of the values in the 'format' enum:
- * 'format::autodetect', 'format::text', 'format::xml', and 'format::binary'.
+ * 'format::autodetect', 'format::json', 'format::xml', and 'format::binary'.
  * The autodetect functionality operates on the file extension (so, "file.txt"
  * would be autodetected as text).
  *

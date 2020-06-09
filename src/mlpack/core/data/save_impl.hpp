@@ -330,7 +330,7 @@ bool Save(const std::string& filename,
     else if (extension == "bin")
       f = format::binary;
     else if (extension == "txt")
-      f = format::text;
+      f = format::json;
     else
     {
       if (fatal)
@@ -375,7 +375,7 @@ bool Save(const std::string& filename,
       cereal::XMLOutputArchive ar(ofs);
       ar(cereal::make_nvp(name.c_str(), t));
     }
-    else if (f == format::text)
+    else if (f == format::json)
     {
       cereal::JSONOutputArchive ar(ofs);
       ar(cereal::make_nvp(name.c_str(), t));    
