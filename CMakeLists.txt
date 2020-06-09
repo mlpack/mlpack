@@ -572,14 +572,11 @@ set(Boost_ADDITIONAL_VERSIONS
 if (CMAKE_CROSSCOMPILING)
   # Here we will set paths as we have done for armadillo.
   set(Boost_INCLUDE_DIRS ${BOOST_INCLUDE_DIR})
-  set(Boost_LIBRARIES  ${BOOST_SERIALIZATION})
 # Otherwise just find Boost in the system
 else()
   find_package(Boost 1.58
         COMPONENTS
-        program_options
         unit_test_framework
-        serialization
         REQUIRED
   )
 endif()
