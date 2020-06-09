@@ -723,9 +723,9 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::serialize(
     Archive& ar, const unsigned int version)
 {
-  ar & BOOST_SERIALIZATION_NVP(parameter);
-  ar & BOOST_SERIALIZATION_NVP(backwardRNN);
-  ar & BOOST_SERIALIZATION_NVP(forwardRNN);
+  ar & CEREAL_NVP(parameter);
+  ar & CEREAL_NVP(backwardRNN);
+  ar & CEREAL_NVP(forwardRNN);
 
   // TODO: are there more parameters to be serialized?
 }

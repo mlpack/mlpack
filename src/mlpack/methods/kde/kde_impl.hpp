@@ -715,15 +715,15 @@ void KDE<KernelType,
 serialize(Archive& ar)
 {
   // Serialize preferences.
-  ar & BOOST_SERIALIZATION_NVP(relError);
-  ar & BOOST_SERIALIZATION_NVP(absError);
-  ar & BOOST_SERIALIZATION_NVP(trained);
-  ar & BOOST_SERIALIZATION_NVP(mode);
-  ar & BOOST_SERIALIZATION_NVP(monteCarlo);
-  ar & BOOST_SERIALIZATION_NVP(mcProb);
-  ar & BOOST_SERIALIZATION_NVP(initialSampleSize);
-  ar & BOOST_SERIALIZATION_NVP(mcEntryCoef);
-  ar & BOOST_SERIALIZATION_NVP(mcBreakCoef);
+  ar & CEREAL_NVP(relError);
+  ar & CEREAL_NVP(absError);
+  ar & CEREAL_NVP(trained);
+  ar & CEREAL_NVP(mode);
+  ar & CEREAL_NVP(monteCarlo);
+  ar & CEREAL_NVP(mcProb);
+  ar & CEREAL_NVP(initialSampleSize);
+  ar & CEREAL_NVP(mcEntryCoef);
+  ar & CEREAL_NVP(mcBreakCoef);
 
   if (Archive::is_loading::value)
   {
@@ -747,10 +747,10 @@ serialize(Archive& ar)
   }
 
   // Serialize the rest of values.
-  ar & BOOST_SERIALIZATION_NVP(kernel);
-  ar & BOOST_SERIALIZATION_NVP(metric);
-  ar & BOOST_SERIALIZATION_NVP(referenceTree);
-  ar & BOOST_SERIALIZATION_NVP(oldFromNewReferences);
+  ar & CEREAL_NVP(kernel);
+  ar & CEREAL_NVP(metric);
+  ar & CEREAL_NVP(referenceTree);
+  ar & CEREAL_NVP(oldFromNewReferences);
 }
 
 template<typename KernelType,

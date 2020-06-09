@@ -67,7 +67,7 @@ void Dropout<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(ratio);
+  ar & CEREAL_NVP(ratio);
 
   // Reset scale.
   scale = 1.0 / (1.0 - ratio);

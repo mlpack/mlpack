@@ -118,10 +118,10 @@ void MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
   if (Archive::is_loading::value)
     network.clear();
 
-  ar & BOOST_SERIALIZATION_NVP(network);
-  ar & BOOST_SERIALIZATION_NVP(model);
-  ar & BOOST_SERIALIZATION_NVP(run);
-  ar & BOOST_SERIALIZATION_NVP(ownsLayer);
+  ar & CEREAL_NVP(network);
+  ar & CEREAL_NVP(model);
+  ar & CEREAL_NVP(run);
+  ar & CEREAL_NVP(ownsLayer);
 }
 
 } // namespace ann

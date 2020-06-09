@@ -54,7 +54,7 @@ template<typename Archive>
 void LRegularizer<Power>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(factor);
+  ar & CEREAL_NVP(factor);
 }
 
 } // namespace ann

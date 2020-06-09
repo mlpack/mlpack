@@ -99,8 +99,8 @@ struct DSModel
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(mappings);
-    ar & BOOST_SERIALIZATION_NVP(stump);
+    ar & CEREAL_NVP(mappings);
+    ar & CEREAL_NVP(stump);
   }
 };
 

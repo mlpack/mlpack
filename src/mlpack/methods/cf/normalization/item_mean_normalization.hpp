@@ -161,7 +161,7 @@ class ItemMeanNormalization
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(itemMean);
+    ar & CEREAL_NVP(itemMean);
   }
 
  private:

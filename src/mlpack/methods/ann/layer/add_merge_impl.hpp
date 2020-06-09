@@ -156,12 +156,12 @@ void AddMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
   if (Archive::is_loading::value)
     network.clear();
 
-  ar & BOOST_SERIALIZATION_NVP(network);
-  ar & BOOST_SERIALIZATION_NVP(model);
-  ar & BOOST_SERIALIZATION_NVP(run);
+  ar & CEREAL_NVP(network);
+  ar & CEREAL_NVP(model);
+  ar & CEREAL_NVP(run);
 
   if (version >= 1)
-    ar & BOOST_SERIALIZATION_NVP(ownsLayers);
+    ar & CEREAL_NVP(ownsLayers);
   else if (Archive::is_loading::value)
     ownsLayers = !model;
 }

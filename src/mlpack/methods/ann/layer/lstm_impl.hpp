@@ -469,25 +469,25 @@ template<typename Archive>
 void LSTM<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(weights);
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
-  ar & BOOST_SERIALIZATION_NVP(rho);
-  ar & BOOST_SERIALIZATION_NVP(bpttSteps);
-  ar & BOOST_SERIALIZATION_NVP(batchSize);
-  ar & BOOST_SERIALIZATION_NVP(batchStep);
-  ar & BOOST_SERIALIZATION_NVP(forwardStep);
-  ar & BOOST_SERIALIZATION_NVP(backwardStep);
-  ar & BOOST_SERIALIZATION_NVP(gradientStep);
-  ar & BOOST_SERIALIZATION_NVP(gradientStepIdx);
-  ar & BOOST_SERIALIZATION_NVP(cell);
-  ar & BOOST_SERIALIZATION_NVP(inputGateActivation);
-  ar & BOOST_SERIALIZATION_NVP(forgetGateActivation);
-  ar & BOOST_SERIALIZATION_NVP(outputGateActivation);
-  ar & BOOST_SERIALIZATION_NVP(hiddenLayerActivation);
-  ar & BOOST_SERIALIZATION_NVP(cellActivation);
-  ar & BOOST_SERIALIZATION_NVP(prevError);
-  ar & BOOST_SERIALIZATION_NVP(outParameter);
+  ar & CEREAL_NVP(weights);
+  ar & CEREAL_NVP(inSize);
+  ar & CEREAL_NVP(outSize);
+  ar & CEREAL_NVP(rho);
+  ar & CEREAL_NVP(bpttSteps);
+  ar & CEREAL_NVP(batchSize);
+  ar & CEREAL_NVP(batchStep);
+  ar & CEREAL_NVP(forwardStep);
+  ar & CEREAL_NVP(backwardStep);
+  ar & CEREAL_NVP(gradientStep);
+  ar & CEREAL_NVP(gradientStepIdx);
+  ar & CEREAL_NVP(cell);
+  ar & CEREAL_NVP(inputGateActivation);
+  ar & CEREAL_NVP(forgetGateActivation);
+  ar & CEREAL_NVP(outputGateActivation);
+  ar & CEREAL_NVP(hiddenLayerActivation);
+  ar & CEREAL_NVP(cellActivation);
+  ar & CEREAL_NVP(prevError);
+  ar & CEREAL_NVP(outParameter);
 }
 
 } // namespace ann

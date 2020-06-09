@@ -64,8 +64,8 @@ class RAQueryStat
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(bound);
-    ar & BOOST_SERIALIZATION_NVP(numSamplesMade);
+    ar & CEREAL_NVP(bound);
+    ar & CEREAL_NVP(numSamplesMade);
   }
 
  private:

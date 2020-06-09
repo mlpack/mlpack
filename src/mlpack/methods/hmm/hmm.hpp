@@ -367,7 +367,7 @@ class HMM
   template<typename Archive>
   void save(Archive& ar, const unsigned int version) const;
 
-  BOOST_SERIALIZATION_SPLIT_MEMBER();
+  CEREAL_SPLIT_MEMBER();
 
 
  protected:

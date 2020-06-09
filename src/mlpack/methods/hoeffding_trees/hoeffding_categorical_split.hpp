@@ -110,7 +110,7 @@ class HoeffdingCategoricalSplit
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(sufficientStatistics);
+    ar & CEREAL_NVP(sufficientStatistics);
   }
 
  private:

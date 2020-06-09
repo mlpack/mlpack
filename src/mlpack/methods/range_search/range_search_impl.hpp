@@ -629,8 +629,8 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
     const unsigned int /* version */)
 {
   // Serialize preferences for search.
-  ar & BOOST_SERIALIZATION_NVP(naive);
-  ar & BOOST_SERIALIZATION_NVP(singleMode);
+  ar & CEREAL_NVP(naive);
+  ar & CEREAL_NVP(singleMode);
 
   // Reset base cases and scores if we are loading.
   if (Archive::is_loading::value)
@@ -649,8 +649,8 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
         delete referenceSet;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceSet);
-    ar & BOOST_SERIALIZATION_NVP(metric);
+    ar & CEREAL_NVP(referenceSet);
+    ar & CEREAL_NVP(metric);
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
     if (Archive::is_loading::value)
@@ -675,8 +675,8 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
       treeOwner = true;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceTree);
-    ar & BOOST_SERIALIZATION_NVP(oldFromNewReferences);
+    ar & CEREAL_NVP(referenceTree);
+    ar & CEREAL_NVP(oldFromNewReferences);
 
     // If we are loading, set the dataset accordingly and clean up memory if
     // necessary.

@@ -268,12 +268,12 @@ void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
     network.clear();
   }
 
-  ar & BOOST_SERIALIZATION_NVP(startModule);
-  ar & BOOST_SERIALIZATION_NVP(inputModule);
-  ar & BOOST_SERIALIZATION_NVP(feedbackModule);
-  ar & BOOST_SERIALIZATION_NVP(transferModule);
-  ar & BOOST_SERIALIZATION_NVP(rho);
-  ar & BOOST_SERIALIZATION_NVP(ownsLayer);
+  ar & CEREAL_NVP(startModule);
+  ar & CEREAL_NVP(inputModule);
+  ar & CEREAL_NVP(feedbackModule);
+  ar & CEREAL_NVP(transferModule);
+  ar & CEREAL_NVP(rho);
+  ar & CEREAL_NVP(ownsLayer);
 
   // Set up the network.
   if (Archive::is_loading::value)

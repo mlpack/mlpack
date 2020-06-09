@@ -110,13 +110,13 @@ class AdaBoostModel
       pBoost = NULL;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(mappings);
-    ar & BOOST_SERIALIZATION_NVP(weakLearnerType);
+    ar & CEREAL_NVP(mappings);
+    ar & CEREAL_NVP(weakLearnerType);
     if (weakLearnerType == WeakLearnerTypes::DECISION_STUMP)
-      ar & BOOST_SERIALIZATION_NVP(dsBoost);
+      ar & CEREAL_NVP(dsBoost);
     else if (weakLearnerType == WeakLearnerTypes::PERCEPTRON)
-      ar & BOOST_SERIALIZATION_NVP(pBoost);
-    ar & BOOST_SERIALIZATION_NVP(dimensionality);
+      ar & CEREAL_NVP(pBoost);
+    ar & CEREAL_NVP(dimensionality);
   }
 };
 

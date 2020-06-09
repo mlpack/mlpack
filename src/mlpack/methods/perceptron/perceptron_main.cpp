@@ -115,8 +115,8 @@ class PerceptronModel
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(p);
-    ar & BOOST_SERIALIZATION_NVP(map);
+    ar & CEREAL_NVP(p);
+    ar & CEREAL_NVP(map);
   }
 };
 

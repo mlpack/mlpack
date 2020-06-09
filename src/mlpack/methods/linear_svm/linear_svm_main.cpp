@@ -139,8 +139,8 @@ class LinearSVMModel
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(mappings);
-    ar & BOOST_SERIALIZATION_NVP(svm);
+    ar & CEREAL_NVP(mappings);
+    ar & CEREAL_NVP(svm);
   }
 };
 

@@ -228,8 +228,8 @@ void Highway<InputDataType, OutputDataType, CustomLayers...>::serialize(
     weights.set_size(inSize * inSize + inSize, 1);
   }
 
-  ar & BOOST_SERIALIZATION_NVP(model);
-  ar & BOOST_SERIALIZATION_NVP(network);
+  ar & CEREAL_NVP(model);
+  ar & CEREAL_NVP(network);
 }
 
 } // namespace ann

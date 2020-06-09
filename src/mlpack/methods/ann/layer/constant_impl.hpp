@@ -56,7 +56,7 @@ template<typename Archive>
 void Constant<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(constantOutput);
+  ar & CEREAL_NVP(constantOutput);
 }
 
 } // namespace ann

@@ -149,8 +149,8 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::serialize(
     boost::apply_visitor(deleteVisitor, wrappedLayer);
   }
 
-  ar & BOOST_SERIALIZATION_NVP(wrappedLayer);
-  ar & BOOST_SERIALIZATION_NVP(layerWeightSize);
+  ar & CEREAL_NVP(wrappedLayer);
+  ar & CEREAL_NVP(layerWeightSize);
 
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)

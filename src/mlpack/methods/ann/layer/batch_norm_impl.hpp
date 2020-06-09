@@ -149,7 +149,7 @@ template<typename Archive>
 void BatchNorm<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(size);
+  ar & CEREAL_NVP(size);
 
   if (Archive::is_loading::value)
   {
@@ -157,12 +157,12 @@ void BatchNorm<InputDataType, OutputDataType>::serialize(
     loading = false;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(eps);
-  ar & BOOST_SERIALIZATION_NVP(gamma);
-  ar & BOOST_SERIALIZATION_NVP(beta);
-  ar & BOOST_SERIALIZATION_NVP(count);
-  ar & BOOST_SERIALIZATION_NVP(runningMean);
-  ar & BOOST_SERIALIZATION_NVP(runningVariance);
+  ar & CEREAL_NVP(eps);
+  ar & CEREAL_NVP(gamma);
+  ar & CEREAL_NVP(beta);
+  ar & CEREAL_NVP(count);
+  ar & CEREAL_NVP(runningMean);
+  ar & CEREAL_NVP(runningVariance);
 }
 
 } // namespace ann

@@ -541,16 +541,16 @@ KDEMode& KDEModel::Mode()
 template<typename Archive>
 void KDEModel::serialize(Archive& ar)
 {
-  ar & BOOST_SERIALIZATION_NVP(bandwidth);
-  ar & BOOST_SERIALIZATION_NVP(relError);
-  ar & BOOST_SERIALIZATION_NVP(absError);
-  ar & BOOST_SERIALIZATION_NVP(kernelType);
-  ar & BOOST_SERIALIZATION_NVP(treeType);
-  ar & BOOST_SERIALIZATION_NVP(monteCarlo);
-  ar & BOOST_SERIALIZATION_NVP(mcProb);
-  ar & BOOST_SERIALIZATION_NVP(initialSampleSize);
-  ar & BOOST_SERIALIZATION_NVP(mcEntryCoef);
-  ar & BOOST_SERIALIZATION_NVP(mcBreakCoef);
+  ar & CEREAL_NVP(bandwidth);
+  ar & CEREAL_NVP(relError);
+  ar & CEREAL_NVP(absError);
+  ar & CEREAL_NVP(kernelType);
+  ar & CEREAL_NVP(treeType);
+  ar & CEREAL_NVP(monteCarlo);
+  ar & CEREAL_NVP(mcProb);
+  ar & CEREAL_NVP(initialSampleSize);
+  ar & CEREAL_NVP(mcEntryCoef);
+  ar & CEREAL_NVP(mcBreakCoef);
  
   if (Archive::is_loading::value)
   {
@@ -564,7 +564,7 @@ void KDEModel::serialize(Archive& ar)
   if (Archive::is_loading::value)
     boost::apply_visitor(DeleteVisitor(), kdeModel);
 
-  ar & BOOST_SERIALIZATION_NVP(kdeModel);
+  ar & CEREAL_NVP(kdeModel);
 }
 
 // Modify model kernel bandwidth.

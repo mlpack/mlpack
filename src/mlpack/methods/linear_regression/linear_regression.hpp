@@ -142,9 +142,9 @@ class LinearRegression
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(parameters);
-    ar & BOOST_SERIALIZATION_NVP(lambda);
-    ar & BOOST_SERIALIZATION_NVP(intercept);
+    ar & CEREAL_NVP(parameters);
+    ar & CEREAL_NVP(lambda);
+    ar & CEREAL_NVP(intercept);
   }
 
  private:

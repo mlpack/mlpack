@@ -173,15 +173,15 @@ template<typename MatType>
 template<typename Archive>
 void QDAFN<MatType>::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(l);
-  ar & BOOST_SERIALIZATION_NVP(m);
-  ar & BOOST_SERIALIZATION_NVP(lines);
-  ar & BOOST_SERIALIZATION_NVP(projections);
-  ar & BOOST_SERIALIZATION_NVP(sIndices);
-  ar & BOOST_SERIALIZATION_NVP(sValues);
+  ar & CEREAL_NVP(l);
+  ar & CEREAL_NVP(m);
+  ar & CEREAL_NVP(lines);
+  ar & CEREAL_NVP(projections);
+  ar & CEREAL_NVP(sIndices);
+  ar & CEREAL_NVP(sValues);
   if (Archive::is_loading::value)
     candidateSet.clear();
-  ar & BOOST_SERIALIZATION_NVP(candidateSet);
+  ar & CEREAL_NVP(candidateSet);
 }
 
 } // namespace neighbor

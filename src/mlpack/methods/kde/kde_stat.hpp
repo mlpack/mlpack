@@ -75,14 +75,14 @@ class KDEStat
       arma::vec centroid;
       bool validCentroid;
 
-      ar & BOOST_SERIALIZATION_NVP(centroid);
-      ar & BOOST_SERIALIZATION_NVP(validCentroid);
+      ar & CEREAL_NVP(centroid);
+      ar & CEREAL_NVP(validCentroid);
     }
 
-    ar & BOOST_SERIALIZATION_NVP(mcBeta);
-    ar & BOOST_SERIALIZATION_NVP(mcAlpha);
-    ar & BOOST_SERIALIZATION_NVP(accumAlpha);
-    ar & BOOST_SERIALIZATION_NVP(accumError);
+    ar & CEREAL_NVP(mcBeta);
+    ar & CEREAL_NVP(mcAlpha);
+    ar & CEREAL_NVP(accumAlpha);
+    ar & CEREAL_NVP(accumError);
 
     if (Archive::is_loading::value)
     {

@@ -411,10 +411,6 @@ class NSModel
 } // namespace neighbor
 } // namespace mlpack
 
-//! Set the serialization version of the NSModel cla const unsigned int /* version *ss.
-BOOST_TEMPLATE_CLASS_VERSION(template<typename SortPolicy>,
-    mlpack::neighbor::NSModel<SortPolicy>, 1);
-
 // Include implementation.
 #include "ns_model_impl.hpp"
 

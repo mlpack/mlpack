@@ -549,10 +549,10 @@ template<typename Archive>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     Archive& ar)
 {
-  ar & BOOST_SERIALIZATION_NVP(parameter);
-  ar & BOOST_SERIALIZATION_NVP(width);
-  ar & BOOST_SERIALIZATION_NVP(height);
-  ar & BOOST_SERIALIZATION_NVP(reset);
+  ar & CEREAL_NVP(parameter);
+  ar & CEREAL_NVP(width);
+  ar & CEREAL_NVP(height);
+  ar & CEREAL_NVP(reset);
 
   // Be sure to clear other layers before loading.
   if (Archive::is_loading::value)
@@ -562,7 +562,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     network.clear();
   }
 
-  ar & BOOST_SERIALIZATION_NVP(network);
+  ar & CEREAL_NVP(network);
 
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)
