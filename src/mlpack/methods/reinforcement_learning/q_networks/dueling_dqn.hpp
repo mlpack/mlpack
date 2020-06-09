@@ -144,7 +144,7 @@ class DuelingDQN
   }
 
   //! Copy constructor.
-  DuelingDQN(const DuelingDQN& model)
+  DuelingDQN(const DuelingDQN& model) : isNoisy(false)
   { /* Nothing to do here. */ }
 
   //! Copy assignment operator.
