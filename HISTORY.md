@@ -27,6 +27,8 @@
   * Fix `no_intercept` and probability computation for linear SVM bindings
     (#2419).
 
+  * Fix serialization of kernels with state for FastMKS (#2452).
+
 ### mlpack 3.3.1
 ###### 2020-04-29
   * Minor Julia and Python documentation fixes (#2373).
