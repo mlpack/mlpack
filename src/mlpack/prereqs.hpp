@@ -67,24 +67,13 @@ using enable_if_t = typename enable_if<B, T>::type;
 #define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
 #define BOOST_MPL_LIMIT_LIST_SIZE 50
 
-// We'll need the necessary cereal features, as well as what we
-// use with mlpack.  In Boost 1.59 and newer, the BOOST_PFTO code is no longer
-// defined, but we still need to define it (as nothing) so that the mlpack
-// serialization shim compiles.
-#include <boost/serialization/serialization.hpp>
-// We are not including boost/serialization/vector.hpp here. It is included in
-// mlpack/core/boost_backport/boost_backport_serialization.hpp because of
-// different behaviors of vector serialization in different versions of boost.
-// #include <boost/serialization/vector.hpp>
-#include <boost/serialization/map.hpp>
-// boost_backport.hpp handles the version and backporting of serialization (and
-// other) features.
+#include <cereal/archives/binary.hpp>
+#include <cereal/archives/portable_binary.hpp>
+#include <cereal/archives/xml.hpp>
+#include <cereal/archives/json.hpp>
 
-// Boost 1.59 and newer don't use BOOST_PFTO, but our shims do.  We can resolve
-// any issue by setting BOOST_PFTO to nothing.
-#ifndef BOOST_PFTO
-  #define BOOST_PFTO
-#endif
+#include <mlpack/core/cereal/array_wrapper.hpp>
+
 #include <mlpack/core/data/has_serialize.hpp>
 #include <mlpack/core/data/serialization_template_version.hpp>
 
