@@ -15,8 +15,8 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 
-#include "range_search.hpp"
-#include "rs_model.hpp"
+#include <mlpack/methods/range_search/range_search.hpp>
+#include <mlpack/methods/range_search/rs_model.hpp>
 
 #include <cereal/archives/binary.hpp>
 
@@ -150,7 +150,7 @@ int main()
   //     "leaf size must be greater than 0");
 
   // We either have to load the reference data, or we have to load the model.
-  std::shared_ptr<RSModel> rs = std::make_shared<RSModel>();
+  RSModel rs;
   std::ifstream in("out.bin", std::ios::binary);  
   // Load the model from file.
   cereal::BinaryInputArchive ar(in);

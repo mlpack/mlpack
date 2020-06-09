@@ -12,7 +12,7 @@ set( SOURCES
 
 
 include_directories(
- 
+  /meta/mlpack/build/include/
   )
 
 add_executable(range_search
