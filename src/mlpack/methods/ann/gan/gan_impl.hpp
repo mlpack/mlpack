@@ -489,12 +489,12 @@ template<typename Archive>
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::
 serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(parameter);
-  ar & BOOST_SERIALIZATION_NVP(generator);
-  ar & BOOST_SERIALIZATION_NVP(discriminator);
-  ar & BOOST_SERIALIZATION_NVP(reset);
-  ar & BOOST_SERIALIZATION_NVP(genWeights);
-  ar & BOOST_SERIALIZATION_NVP(discWeights);
+  ar & CEREAL_NVP(parameter);
+  ar & CEREAL_NVP(generator);
+  ar & CEREAL_NVP(discriminator);
+  ar & CEREAL_NVP(reset);
+  ar & CEREAL_NVP(genWeights);
+  ar & CEREAL_NVP(discWeights);
 
   if (Archive::is_loading::value)
   {

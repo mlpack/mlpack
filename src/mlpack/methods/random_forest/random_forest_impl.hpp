@@ -429,13 +429,13 @@ void RandomForest<
   else
     numTrees = trees.size();
 
-  ar & BOOST_SERIALIZATION_NVP(numTrees);
+  ar & CEREAL_NVP(numTrees);
 
   // Allocate space if needed.
   if (Archive::is_loading::value)
     trees.resize(numTrees);
 
-  ar & BOOST_SERIALIZATION_NVP(trees);
+  ar & CEREAL_NVP(trees);
 }
 
 template<

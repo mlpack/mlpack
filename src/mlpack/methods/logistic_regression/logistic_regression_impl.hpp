@@ -176,8 +176,8 @@ void LogisticRegression<MatType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(parameters);
-  ar & BOOST_SERIALIZATION_NVP(lambda);
+  ar & CEREAL_NVP(parameters);
+  ar & CEREAL_NVP(lambda);
 }
 
 } // namespace regression

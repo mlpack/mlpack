@@ -213,7 +213,7 @@ void CFModel::serialize(Archive& ar, const unsigned int /* version */)
   if (Archive::is_loading::value)
     boost::apply_visitor(DeleteVisitor(), cf);
 
-  ar & BOOST_SERIALIZATION_NVP(cf);
+  ar & CEREAL_NVP(cf);
 }
 
 #endif

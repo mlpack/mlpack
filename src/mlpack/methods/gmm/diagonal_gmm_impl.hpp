@@ -193,10 +193,10 @@ double DiagonalGMM::Train(const arma::mat& observations,
 template<typename Archive>
 void DiagonalGMM::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(gaussians);
-  ar & BOOST_SERIALIZATION_NVP(dimensionality);
-  ar & BOOST_SERIALIZATION_NVP(dists);
-  ar & BOOST_SERIALIZATION_NVP(weights);
+  ar & CEREAL_NVP(gaussians);
+  ar & CEREAL_NVP(dimensionality);
+  ar & CEREAL_NVP(dists);
+  ar & CEREAL_NVP(weights);
 }
 
 } // namespace gmm

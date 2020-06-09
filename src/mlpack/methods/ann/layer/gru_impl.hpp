@@ -393,16 +393,16 @@ void GRU<InputDataType, OutputDataType>::serialize(
     boost::apply_visitor(deleteVisitor, hiddenStateModule);
   }
 
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
-  ar & BOOST_SERIALIZATION_NVP(rho);
+  ar & CEREAL_NVP(inSize);
+  ar & CEREAL_NVP(outSize);
+  ar & CEREAL_NVP(rho);
 
-  ar & BOOST_SERIALIZATION_NVP(input2GateModule);
-  ar & BOOST_SERIALIZATION_NVP(output2GateModule);
-  ar & BOOST_SERIALIZATION_NVP(outputHidden2GateModule);
-  ar & BOOST_SERIALIZATION_NVP(inputGateModule);
-  ar & BOOST_SERIALIZATION_NVP(forgetGateModule);
-  ar & BOOST_SERIALIZATION_NVP(hiddenStateModule);
+  ar & CEREAL_NVP(input2GateModule);
+  ar & CEREAL_NVP(output2GateModule);
+  ar & CEREAL_NVP(outputHidden2GateModule);
+  ar & CEREAL_NVP(inputGateModule);
+  ar & CEREAL_NVP(forgetGateModule);
+  ar & CEREAL_NVP(hiddenStateModule);
 }
 
 } // namespace ann

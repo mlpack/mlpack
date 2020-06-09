@@ -795,19 +795,19 @@ void HoeffdingTree<
     CategoricalSplitType
 >::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(splitDimension);
+  ar & CEREAL_NVP(splitDimension);
 
   // Clear memory for the mappings if necessary.
   if (Archive::is_loading::value && ownsMappings && dimensionMappings)
     delete dimensionMappings;
 
-  ar & BOOST_SERIALIZATION_NVP(dimensionMappings);
+  ar & CEREAL_NVP(dimensionMappings);
 
   // Special handling for const object.
   data::DatasetInfo* d = NULL;
   if (Archive::is_saving::value)
     d = const_cast<data::DatasetInfo*>(datasetInfo);
-  ar & BOOST_SERIALIZATION_NVP(d);
+  ar & CEREAL_NVP(d);
   if (Archive::is_loading::value)
   {
     if (datasetInfo && ownsInfo)
@@ -823,18 +823,18 @@ void HoeffdingTree<
     children.clear();
   }
 
-  ar & BOOST_SERIALIZATION_NVP(majorityClass);
-  ar & BOOST_SERIALIZATION_NVP(majorityProbability);
+  ar & CEREAL_NVP(majorityClass);
+  ar & CEREAL_NVP(majorityProbability);
 
   // Depending on whether or not we have split yet, we may need to save
   // different things.
   if (splitDimension == size_t(-1))
   {
     // We have not yet split.  So we have to serialize the splits.
-    ar & BOOST_SERIALIZATION_NVP(numSamples);
-    ar & BOOST_SERIALIZATION_NVP(numClasses);
-    ar & BOOST_SERIALIZATION_NVP(maxSamples);
-    ar & BOOST_SERIALIZATION_NVP(successProbability);
+    ar & CEREAL_NVP(numSamples);
+    ar & CEREAL_NVP(numClasses);
+    ar & CEREAL_NVP(maxSamples);
+    ar & CEREAL_NVP(successProbability);
 
     // Serialize the splits, but not if we haven't seen any samples yet (in
     // which case we can just reinitialize).
@@ -865,21 +865,21 @@ void HoeffdingTree<
       return;
 
     // Serialize numeric splits.
-    ar & BOOST_SERIALIZATION_NVP(numericSplits);
+    ar & CEREAL_NVP(numericSplits);
 
     // Serialize categorical splits.
-    ar & BOOST_SERIALIZATION_NVP(categoricalSplits);
+    ar & CEREAL_NVP(categoricalSplits);
   }
   else
   {
     // We have split, so we only need to save the split and the children.
     if (datasetInfo->Type(splitDimension) == data::Datatype::categorical)
-      ar & BOOST_SERIALIZATION_NVP(categoricalSplit);
+      ar & CEREAL_NVP(categoricalSplit);
     else
-      ar & BOOST_SERIALIZATION_NVP(numericSplit);
+      ar & CEREAL_NVP(numericSplit);
 
     // Serialize the children, because we have split.
-    ar & BOOST_SERIALIZATION_NVP(children);
+    ar & CEREAL_NVP(children);
 
     if (Archive::is_loading::value)
     {

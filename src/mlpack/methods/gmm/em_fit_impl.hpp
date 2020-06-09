@@ -414,10 +414,10 @@ template<typename Archive>
 void EMFit<InitialClusteringType, CovarianceConstraintPolicy, Distribution>::
 serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(maxIterations);
-  ar & BOOST_SERIALIZATION_NVP(tolerance);
-  ar & BOOST_SERIALIZATION_NVP(clusterer);
-  ar & BOOST_SERIALIZATION_NVP(constraint);
+  ar & CEREAL_NVP(maxIterations);
+  ar & CEREAL_NVP(tolerance);
+  ar & CEREAL_NVP(clusterer);
+  ar & CEREAL_NVP(constraint);
 }
 
 template<typename InitialClusteringType,

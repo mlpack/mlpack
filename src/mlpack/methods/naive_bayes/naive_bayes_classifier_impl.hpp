@@ -353,9 +353,9 @@ void NaiveBayesClassifier<ModelMatType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(means);
-  ar & BOOST_SERIALIZATION_NVP(variances);
-  ar & BOOST_SERIALIZATION_NVP(probabilities);
+  ar & CEREAL_NVP(means);
+  ar & CEREAL_NVP(variances);
+  ar & CEREAL_NVP(probabilities);
 }
 
 } // namespace naive_bayes

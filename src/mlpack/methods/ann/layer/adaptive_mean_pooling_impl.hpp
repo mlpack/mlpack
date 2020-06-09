@@ -73,12 +73,12 @@ void AdaptiveMeanPooling<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int version)
 {
-  ar & BOOST_SERIALIZATION_NVP(outputWidth);
-  ar & BOOST_SERIALIZATION_NVP(outputHeight);
-  ar & BOOST_SERIALIZATION_NVP(reset);
+  ar & CEREAL_NVP(outputWidth);
+  ar & CEREAL_NVP(outputHeight);
+  ar & CEREAL_NVP(reset);
 
   if (version > 0)
-    ar & BOOST_SERIALIZATION_NVP(poolingLayer);
+    ar & CEREAL_NVP(poolingLayer);
 }
 
 } // namespace ann

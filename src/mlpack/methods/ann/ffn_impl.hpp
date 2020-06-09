@@ -549,22 +549,22 @@ template<typename Archive>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     Archive& ar, const unsigned int version)
 {
-  ar & BOOST_SERIALIZATION_NVP(parameter);
-  ar & BOOST_SERIALIZATION_NVP(width);
-  ar & BOOST_SERIALIZATION_NVP(height);
+  ar & CEREAL_NVP(parameter);
+  ar & CEREAL_NVP(width);
+  ar & CEREAL_NVP(height);
 
   // Early versions used the currentInput member, which is now no longer needed.
   if (version < 2)
   {
     arma::mat currentInput; // Temporary matrix to output.
-    ar & BOOST_SERIALIZATION_NVP(currentInput);
+    ar & CEREAL_NVP(currentInput);
   }
 
   // Earlier versions of the FFN code did not serialize whether or not the model
   // was reset.
   if (version > 0)
   {
-    ar & BOOST_SERIALIZATION_NVP(reset);
+    ar & CEREAL_NVP(reset);
   }
 
   // Be sure to clear other layers before loading.
@@ -575,7 +575,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     network.clear();
   }
 
-  ar & BOOST_SERIALIZATION_NVP(network);
+  ar & CEREAL_NVP(network);
 
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)

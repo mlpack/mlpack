@@ -1143,12 +1143,12 @@ void DecisionTree<FitnessFunction,
   }
 
   // Serialize the children first.
-  ar & BOOST_SERIALIZATION_NVP(children);
+  ar & CEREAL_NVP(children);
 
   // Now serialize the rest of the object.
-  ar & BOOST_SERIALIZATION_NVP(splitDimension);
-  ar & BOOST_SERIALIZATION_NVP(dimensionTypeOrMajorityClass);
-  ar & BOOST_SERIALIZATION_NVP(classProbabilities);
+  ar & CEREAL_NVP(splitDimension);
+  ar & CEREAL_NVP(dimensionTypeOrMajorityClass);
+  ar & CEREAL_NVP(classProbabilities);
 }
 
 template<typename FitnessFunction,

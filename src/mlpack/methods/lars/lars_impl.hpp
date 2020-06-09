@@ -28,27 +28,27 @@ void LARS::serialize(Archive& ar, const unsigned int /* version */)
   if (Archive::is_loading::value)
   {
     matGram = &matGramInternal;
-    ar & BOOST_SERIALIZATION_NVP(matGramInternal);
+    ar(CEREAL_NVP(matGramInternal));
   }
   else
   {
-    ar & boost::serialization::make_nvp("matGramInternal",
+    ar & cereal::make_nvp("matGramInternal",
         (const_cast<arma::mat&>(*matGram)));
   }
 
-  ar & BOOST_SERIALIZATION_NVP(matUtriCholFactor);
-  ar & BOOST_SERIALIZATION_NVP(useCholesky);
-  ar & BOOST_SERIALIZATION_NVP(lasso);
-  ar & BOOST_SERIALIZATION_NVP(lambda1);
-  ar & BOOST_SERIALIZATION_NVP(elasticNet);
-  ar & BOOST_SERIALIZATION_NVP(lambda2);
-  ar & BOOST_SERIALIZATION_NVP(tolerance);
-  ar & BOOST_SERIALIZATION_NVP(betaPath);
-  ar & BOOST_SERIALIZATION_NVP(lambdaPath);
-  ar & BOOST_SERIALIZATION_NVP(activeSet);
-  ar & BOOST_SERIALIZATION_NVP(isActive);
-  ar & BOOST_SERIALIZATION_NVP(ignoreSet);
-  ar & BOOST_SERIALIZATION_NVP(isIgnored);
+  ar(CEREAL_NVP(matUtriCholFactor));
+  ar(CEREAL_NVP(useCholesky));
+  ar(CEREAL_NVP(lasso));
+  ar(CEREAL_NVP(lambda1));
+  ar(CEREAL_NVP(elasticNet));
+  ar(CEREAL_NVP(lambda2));
+  ar(CEREAL_NVP(tolerance));
+  ar(CEREAL_NVP(betaPath));
+  ar(CEREAL_NVP(lambdaPath));
+  ar(CEREAL_NVP(activeSet));
+  ar(CEREAL_NVP(isActive));
+  ar(CEREAL_NVP(ignoreSet));
+  ar(CEREAL_NVP(isIgnored));
 }
 
 } // namespace regression

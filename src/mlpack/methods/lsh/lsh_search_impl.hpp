@@ -1042,9 +1042,9 @@ template<typename Archive>
 void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar,
                                                const unsigned int version)
 {
-  ar & BOOST_SERIALIZATION_NVP(referenceSet);
-  ar & BOOST_SERIALIZATION_NVP(numProj);
-  ar & BOOST_SERIALIZATION_NVP(numTables);
+  ar & CEREAL_NVP(referenceSet);
+  ar & CEREAL_NVP(numProj);
+  ar & CEREAL_NVP(numTables);
 
   // Delete existing projections, if necessary.
   if (Archive::is_loading::value)
@@ -1055,7 +1055,7 @@ void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar,
   if (version == 0)
   {
     std::vector<arma::mat> tmpProj;
-    ar & BOOST_SERIALIZATION_NVP(tmpProj);
+    ar & CEREAL_NVP(tmpProj);
 
     projections.set_size(tmpProj[0].n_rows, tmpProj[0].n_cols, tmpProj.size());
     for (size_t i = 0; i < tmpProj.size(); ++i)
@@ -1063,14 +1063,14 @@ void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar,
   }
   else
   {
-    ar & BOOST_SERIALIZATION_NVP(projections);
+    ar & CEREAL_NVP(projections);
   }
 
-  ar & BOOST_SERIALIZATION_NVP(offsets);
-  ar & BOOST_SERIALIZATION_NVP(hashWidth);
-  ar & BOOST_SERIALIZATION_NVP(secondHashSize);
-  ar & BOOST_SERIALIZATION_NVP(secondHashWeights);
-  ar & BOOST_SERIALIZATION_NVP(bucketSize);
+  ar & CEREAL_NVP(offsets);
+  ar & CEREAL_NVP(hashWidth);
+  ar & CEREAL_NVP(secondHashSize);
+  ar & CEREAL_NVP(secondHashWeights);
+  ar & CEREAL_NVP(bucketSize);
   // needs specific handling for new version
 
   // Backward compatibility: in older versions of LSHSearch, the secondHashTable
@@ -1079,7 +1079,7 @@ void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar,
   if (version == 0)
   {
     arma::Mat<size_t> tmpSecondHashTable;
-    ar & BOOST_SERIALIZATION_NVP(tmpSecondHashTable);
+    ar & CEREAL_NVP(tmpSecondHashTable);
 
     // The old secondHashTable was stored in row-major format, so we transpose
     // it.
@@ -1107,7 +1107,7 @@ void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar,
     size_t tables;
     if (Archive::is_saving::value)
       tables = secondHashTable.size();
-    ar & BOOST_SERIALIZATION_NVP(tables);
+    ar & CEREAL_NVP(tables);
 
     // Set size of second hash table if needed.
     if (Archive::is_loading::value)
@@ -1116,7 +1116,7 @@ void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar,
       secondHashTable.resize(tables);
     }
 
-    ar & BOOST_SERIALIZATION_NVP(secondHashTable);
+    ar & CEREAL_NVP(secondHashTable);
   }
 
   // Backward compatibility: old versions of LSHSearch held bucketContentSize
@@ -1128,8 +1128,8 @@ void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar,
     // it.  But we can't do that until we have bucketRowInHashTable, so we also
     // have to load that.
     arma::Col<size_t> tmpBucketContentSize;
-    ar & BOOST_SERIALIZATION_NVP(tmpBucketContentSize);
-    ar & BOOST_SERIALIZATION_NVP(bucketRowInHashTable);
+    ar & CEREAL_NVP(tmpBucketContentSize);
+    ar & CEREAL_NVP(bucketRowInHashTable);
 
     // Compress into a smaller vector by just dropping all of the zeros.
     bucketContentSize.set_size(secondHashTable.size());
@@ -1139,11 +1139,11 @@ void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar,
   }
   else
   {
-    ar & BOOST_SERIALIZATION_NVP(bucketContentSize);
-    ar & BOOST_SERIALIZATION_NVP(bucketRowInHashTable);
+    ar & CEREAL_NVP(bucketContentSize);
+    ar & CEREAL_NVP(bucketRowInHashTable);
   }
 
-  ar & BOOST_SERIALIZATION_NVP(distanceEvaluations);
+  ar & CEREAL_NVP(distanceEvaluations);
 }
 
 } // namespace neighbor

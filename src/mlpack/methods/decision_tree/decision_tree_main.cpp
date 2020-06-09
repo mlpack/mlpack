@@ -132,8 +132,8 @@ class DecisionTreeModel
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(tree);
-    ar & BOOST_SERIALIZATION_NVP(info);
+    ar & CEREAL_NVP(tree);
+    ar & CEREAL_NVP(info);
   }
 };
 

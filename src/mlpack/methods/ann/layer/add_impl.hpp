@@ -60,7 +60,7 @@ template<typename Archive>
 void Add<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar & CEREAL_NVP(outSize);
 
   if (Archive::is_loading::value)
     weights.set_size(outSize, 1);

@@ -40,7 +40,7 @@ class NumericSplitInfo
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(splitPoints);
+    ar & CEREAL_NVP(splitPoints);
   }
 
  private:

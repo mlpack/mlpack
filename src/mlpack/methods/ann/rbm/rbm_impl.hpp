@@ -307,22 +307,22 @@ template<typename Archive>
 void RBM<InitializationRuleType, DataType, PolicyType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(parameter);
-  ar & BOOST_SERIALIZATION_NVP(visibleSize);
-  ar & BOOST_SERIALIZATION_NVP(hiddenSize);
-  ar & BOOST_SERIALIZATION_NVP(state);
-  ar & BOOST_SERIALIZATION_NVP(numFunctions);
-  ar & BOOST_SERIALIZATION_NVP(numSteps);
-  ar & BOOST_SERIALIZATION_NVP(negSteps);
-  ar & BOOST_SERIALIZATION_NVP(persistence);
-  ar & BOOST_SERIALIZATION_NVP(poolSize);
-  ar & BOOST_SERIALIZATION_NVP(visibleBias);
-  ar & BOOST_SERIALIZATION_NVP(hiddenBias);
-  ar & BOOST_SERIALIZATION_NVP(weight);
-  ar & BOOST_SERIALIZATION_NVP(spikeBias);
-  ar & BOOST_SERIALIZATION_NVP(slabPenalty);
-  ar & BOOST_SERIALIZATION_NVP(radius);
-  ar & BOOST_SERIALIZATION_NVP(visiblePenalty);
+  ar & CEREAL_NVP(parameter);
+  ar & CEREAL_NVP(visibleSize);
+  ar & CEREAL_NVP(hiddenSize);
+  ar & CEREAL_NVP(state);
+  ar & CEREAL_NVP(numFunctions);
+  ar & CEREAL_NVP(numSteps);
+  ar & CEREAL_NVP(negSteps);
+  ar & CEREAL_NVP(persistence);
+  ar & CEREAL_NVP(poolSize);
+  ar & CEREAL_NVP(visibleBias);
+  ar & CEREAL_NVP(hiddenBias);
+  ar & CEREAL_NVP(weight);
+  ar & CEREAL_NVP(spikeBias);
+  ar & CEREAL_NVP(slabPenalty);
+  ar & CEREAL_NVP(radius);
+  ar & CEREAL_NVP(visiblePenalty);
 
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)

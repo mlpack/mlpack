@@ -64,10 +64,10 @@ template<typename Archive>
 void Padding<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(padWLeft);
-  ar & BOOST_SERIALIZATION_NVP(padWRight);
-  ar & BOOST_SERIALIZATION_NVP(padHTop);
-  ar & BOOST_SERIALIZATION_NVP(padHBottom);
+  ar & CEREAL_NVP(padWLeft);
+  ar & CEREAL_NVP(padWRight);
+  ar & CEREAL_NVP(padHTop);
+  ar & CEREAL_NVP(padHBottom);
 }
 
 } // namespace ann

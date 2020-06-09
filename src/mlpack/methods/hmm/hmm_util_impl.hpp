@@ -67,7 +67,7 @@ void LoadHMMAndPerformActionHelper(const std::string& modelFile,
 
   // Read in the unsigned integer that denotes the type of the model.
   char type;
-  ar >> BOOST_SERIALIZATION_NVP(type);
+  ar >> CEREAL_NVP(type);
 
   using namespace mlpack::distribution;
 
@@ -106,7 +106,7 @@ void DeserializeHMMAndPerformAction(ArchiveType& ar, ExtraInfoType* x)
 {
   // Extract the HMM and perform the action.
   HMMType hmm;
-  ar >> BOOST_SERIALIZATION_NVP(hmm);
+  ar >> CEREAL_NVP(hmm);
   ActionType::Apply(hmm, x);
 }
 
@@ -148,8 +148,8 @@ void SaveHMMHelper(HMMType& hmm, const std::string& modelFile)
   if (type == char(-1))
     Log::Fatal << "Unknown HMM type given to SaveHMM()!" << std::endl;
 
-  ar << BOOST_SERIALIZATION_NVP(type);
-  ar << BOOST_SERIALIZATION_NVP(hmm);
+  ar << CEREAL_NVP(type);
+  ar << CEREAL_NVP(hmm);
 }
 
 // Utility functions to turn a type into something we can store.

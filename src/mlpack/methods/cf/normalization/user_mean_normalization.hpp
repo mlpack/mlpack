@@ -161,7 +161,7 @@ class UserMeanNormalization
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(userMean);
+    ar & CEREAL_NVP(userMean);
   }
 
  private:

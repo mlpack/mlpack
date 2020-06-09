@@ -112,22 +112,22 @@ class ScalingModel
       zcascale = NULL;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(scalerType);
-    ar & BOOST_SERIALIZATION_NVP(epsilon);
-    ar & BOOST_SERIALIZATION_NVP(minValue);
-    ar & BOOST_SERIALIZATION_NVP(maxValue);
+    ar & CEREAL_NVP(scalerType);
+    ar & CEREAL_NVP(epsilon);
+    ar & CEREAL_NVP(minValue);
+    ar & CEREAL_NVP(maxValue);
     if (scalerType == ScalerTypes::MIN_MAX_SCALER)
-      ar & BOOST_SERIALIZATION_NVP(minmaxscale);
+      ar & CEREAL_NVP(minmaxscale);
     else if (scalerType == ScalerTypes::MEAN_NORMALIZATION)
-      ar & BOOST_SERIALIZATION_NVP(meanscale);
+      ar & CEREAL_NVP(meanscale);
     else if (scalerType == ScalerTypes::MAX_ABS_SCALER)
-      ar & BOOST_SERIALIZATION_NVP(maxabsscale);
+      ar & CEREAL_NVP(maxabsscale);
     else if (scalerType == ScalerTypes::STANDARD_SCALER)
-      ar & BOOST_SERIALIZATION_NVP(standardscale);
+      ar & CEREAL_NVP(standardscale);
     else if (scalerType == ScalerTypes::PCA_WHITENING)
-      ar & BOOST_SERIALIZATION_NVP(pcascale);
+      ar & CEREAL_NVP(pcascale);
     else if (scalerType == ScalerTypes::ZCA_WHITENING)
-      ar & BOOST_SERIALIZATION_NVP(zcascale);
+      ar & CEREAL_NVP(zcascale);
   }
 };
 

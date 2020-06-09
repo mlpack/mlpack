@@ -97,8 +97,8 @@ struct NBCModel
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(nbc);
-    ar & BOOST_SERIALIZATION_NVP(mappings);
+    ar & CEREAL_NVP(nbc);
+    ar & CEREAL_NVP(mappings);
   }
 };
 

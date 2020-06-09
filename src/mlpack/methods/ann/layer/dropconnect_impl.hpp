@@ -115,9 +115,9 @@ void DropConnect<InputDataType, OutputDataType>::serialize(
     boost::apply_visitor(DeleteVisitor(), baseLayer);
   }
 
-  ar & BOOST_SERIALIZATION_NVP(ratio);
-  ar & BOOST_SERIALIZATION_NVP(scale);
-  ar & BOOST_SERIALIZATION_NVP(baseLayer);
+  ar & CEREAL_NVP(ratio);
+  ar & CEREAL_NVP(scale);
+  ar & CEREAL_NVP(baseLayer);
 
   if (Archive::is_loading::value)
   {

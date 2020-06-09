@@ -258,15 +258,15 @@ template<typename Archive>
 void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
                                                    const unsigned int version)
 {
-  ar & BOOST_SERIALIZATION_NVP(numClasses);
-  ar & BOOST_SERIALIZATION_NVP(tolerance);
+  ar & CEREAL_NVP(numClasses);
+  ar & CEREAL_NVP(tolerance);
   if (version == 0 && Archive::is_loading::value)
   {
     // Load unused ztProduct double and forget it.
     double tmpZtProduct = 0.0;
-    ar & BOOST_SERIALIZATION_NVP(tmpZtProduct);
+    ar & CEREAL_NVP(tmpZtProduct);
   }
-  ar & BOOST_SERIALIZATION_NVP(alpha);
+  ar & CEREAL_NVP(alpha);
 
   // Now serialize each weak learner.
   if (Archive::is_loading::value)
@@ -274,7 +274,7 @@ void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
     wl.clear();
     wl.resize(alpha.size());
   }
-  ar & BOOST_SERIALIZATION_NVP(wl);
+  ar & CEREAL_NVP(wl);
 }
 
 } // namespace adaboost

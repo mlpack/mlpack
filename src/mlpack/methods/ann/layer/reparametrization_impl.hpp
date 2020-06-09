@@ -92,9 +92,9 @@ template<typename Archive>
 void Reparametrization<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(latentSize);
-  ar & BOOST_SERIALIZATION_NVP(stochastic);
-  ar & BOOST_SERIALIZATION_NVP(includeKl);
+  ar & CEREAL_NVP(latentSize);
+  ar & CEREAL_NVP(stochastic);
+  ar & CEREAL_NVP(includeKl);
 }
 
 } // namespace ann

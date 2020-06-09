@@ -109,9 +109,9 @@ void CosineEmbeddingLoss<InputDataType, OutputDataType>::serialize(
     Archive&  ar ,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(margin);
-  ar & BOOST_SERIALIZATION_NVP(similarity);
-  ar & BOOST_SERIALIZATION_NVP(takeMean);
+  ar & CEREAL_NVP(margin);
+  ar & CEREAL_NVP(similarity);
+  ar & CEREAL_NVP(takeMean);
 }
 
 } // namespace ann
