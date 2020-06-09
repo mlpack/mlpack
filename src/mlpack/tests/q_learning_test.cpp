@@ -375,8 +375,8 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
   {
     // Set up the network. Note that we use a custom network here, and
     // pass it directly into the agent, without using SimpleDQN.
-    FFN<MeanSquaredError<>, GaussianInitialization> network(MeanSquaredError<>(),
-        GaussianInitialization(0, 0.001));
+    FFN<MeanSquaredError<>, GaussianInitialization> network(
+        MeanSquaredError<>(), GaussianInitialization(0, 0.001));
     network.Add<Linear<>>(6, 256);
     network.Add<ReLULayer<>>();
     network.Add<Linear<>>(256, 3);

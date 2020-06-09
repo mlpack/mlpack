@@ -62,8 +62,8 @@ Sequential<InputDataType, OutputDataType, Residual, CustomLayers...>&
 Sequential<InputDataType, OutputDataType, Residual, CustomLayers...>::
 operator = (const Sequential& layer)
 {
-  if(this != &layer) 
-  { 
+  if (this != &layer) 
+  {
     model = layer.model;
     reset = layer.reset;
     width = layer.width;

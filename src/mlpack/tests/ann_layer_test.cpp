@@ -1412,11 +1412,14 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
   // Test the Forward function.
   input = arma::zeros(10, 1);
   module.Forward(input, output);
-  BOOST_REQUIRE_CLOSE(arma::accu(
-      moduleA->Parameters().submat(100, 0, moduleA->Parameters().n_elem - 1, 0)) +
-      arma::accu(moduleB->Parameters().submat(100, 0,
-      moduleB->Parameters().n_elem - 1, 0)),
-      arma::accu(output.col(0)), 1e-3);
+
+  const double sumModuleA = arma::accu(
+      moduleA->Parameters().submat(
+      100, 0, moduleA->Parameters().n_elem - 1, 0));
+  const double sumModuleB = arma::accu(
+      moduleB->Parameters().submat(
+      100, 0, moduleB->Parameters().n_elem - 1, 0));
+  BOOST_REQUIRE_CLOSE(sumModuleA + sumModuleB, arma::accu(output.col(0)), 1e-3);
 
   // Test the Backward function.
   error = arma::zeros(20, 1);
