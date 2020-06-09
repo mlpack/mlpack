@@ -77,8 +77,8 @@ class RegressionDistribution
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(rf);
-    ar & BOOST_SERIALIZATION_NVP(err);
+    ar & CEREAL_NVP(rf);
+    ar & CEREAL_NVP(err);
   }
 
   //! Return regression function.
