@@ -34,16 +34,12 @@ HAS_EXACT_METHOD_FORM(serialize, HasSerializeCheck);
 template<typename T>
 struct HasSerializeFunction
 {
-  // template<typename C>
-  // using NonStaticSerialize = void(C::*)(boost::archive::xml_oarchive&,
-  //                                       const unsigned int);
-  // template<typename /* C */>
-  // using StaticSerialize = void(*)(boost::archive::xml_oarchive&,
-  //                                 const unsigned int);
   template<typename C>
-  using NonStaticSerialize = void(C::*)(cereal::XMLOutputArchive&);
+  using NonStaticSerialize = void(C::*)(cereal::XMLOutputArchive&,
+                                        const unsigned int);
   template<typename /* C */>
-  using StaticSerialize = void(*)(cereal::XMLOutputArchive&);
+  using StaticSerialize = void(*)(cereal::XMLOutputArchive&,
+                                  const unsigned int);
 
   static const bool value = HasSerializeCheck<T, NonStaticSerialize>::value ||
                             HasSerializeCheck<T, StaticSerialize>::value;
