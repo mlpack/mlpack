@@ -573,7 +573,7 @@ class RectangleTree
   RectangleTree();
 
   //! Friend access is given for the default constructor.
-  friend class boost::serialization::access;
+  friend class cereal::access;
 
   //! Give friend access for DescentType.
   friend DescentType;
