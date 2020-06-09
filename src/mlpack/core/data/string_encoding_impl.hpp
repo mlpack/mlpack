@@ -201,8 +201,8 @@ template<typename Archive>
 void StringEncoding<EncodingPolicyType, DictionaryType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(encodingPolicy);
-  ar & BOOST_SERIALIZATION_NVP(dictionary);
+  ar & CEREAL_NVP(encodingPolicy);
+  ar & CEREAL_NVP(dictionary);
 }
 
 } // namespace data

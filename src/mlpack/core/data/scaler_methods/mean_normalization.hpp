@@ -106,10 +106,10 @@ class MeanNormalization
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(itemMin);
-    ar & BOOST_SERIALIZATION_NVP(itemMax);
-    ar & BOOST_SERIALIZATION_NVP(scale);
-    ar & BOOST_SERIALIZATION_NVP(itemMean);
+    ar & CEREAL_NVP(itemMin);
+    ar & CEREAL_NVP(itemMax);
+    ar & CEREAL_NVP(scale);
+    ar & CEREAL_NVP(itemMean);
   }
 
  private:

@@ -122,10 +122,10 @@ class PCAWhitening
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(eigenValues);
-    ar & BOOST_SERIALIZATION_NVP(eigenVectors);
-    ar & BOOST_SERIALIZATION_NVP(itemMean);
-    ar & BOOST_SERIALIZATION_NVP(epsilon);
+    ar & CEREAL_NVP(eigenValues);
+    ar & CEREAL_NVP(eigenVectors);
+    ar & CEREAL_NVP(itemMean);
+    ar & CEREAL_NVP(epsilon);
   }
 
  private:
