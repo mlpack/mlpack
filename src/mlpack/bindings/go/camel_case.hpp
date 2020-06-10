@@ -25,7 +25,7 @@ namespace go {
  * @param lower is of bool type. If lower is true then output must be
  *     lowerCamelCase else UpperCamelCase.
  */
-inline std::string CamelCase(const std::string& s, bool lower)
+inline std::string CamelCase(std::string s, bool lower)
 {
   if (!lower)
     s[0] = std::toupper(s[0]);
