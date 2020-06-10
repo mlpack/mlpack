@@ -23,31 +23,31 @@ namespace go {
  *
  * @param s input string.
  * @param lower is of bool type. If lower is true then output must be
- * lowerCamelCase else UpperCamelCase.
+ *     lowerCamelCase else UpperCamelCase.
  */
-inline std::string CamelCase(std::string s, bool lower)
+inline std::string CamelCase(const std::string& s, bool lower)
 {
   if (!lower)
     s[0] = std::toupper(s[0]);
   else
     s[0] = std::tolower(s[0]);
   size_t n = s.length();
-  size_t res_ind = 0;
+  size_t resInd = 0;
   for (size_t i = 0; i < n; i++)
   {
-    // check for spaces in the sentence
+    // Check for spaces in the sentence.
     if (s[i] == '_')
     {
-      // conversion into upper case
+      // Conversion into upper case.
       s[i + 1] = toupper(s[i + 1]);
       continue;
     }
-    // If not space, copy character
+    // If not space, copy character.
     else
-      s[res_ind++] = s[i];
+      s[resInd++] = s[i];
   }
-  // return string to main
-  return s.substr(0, res_ind);
+  // Return string to main.
+  return s.substr(0, resInd);
 }
 
 } // namespace go

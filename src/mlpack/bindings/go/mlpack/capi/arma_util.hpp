@@ -19,30 +19,6 @@
 namespace mlpack {
 
 /**
- * Set the memory state of the given Armadillo object.
- */
-template<typename T>
-void SetMemState(T& t, int state)
-{
-  const_cast<arma::uhword&>(t.mem_state) = state;
-}
-
-
-/**
- * Get the memory state of the given Armadillo object.
- */
-template<typename T>
-size_t GetMemState(T& t)
-{
-  // Fake the memory state if we are using preallocated memory---since we will
-  // end up copying that memory, NumPy can own it.
-  if (t.mem && t.n_elem <= arma::arma_config::mat_prealloc)
-    return 0;
-
-  return (size_t) t.mem_state;
-}
-
-/**
  * Return the matrix's allocated memory pointer, unless the matrix is using its
  * internal preallocated memory, in which case we copy that and return a
  * pointer to the memory we just made.
@@ -64,7 +40,6 @@ inline typename T::elem_type* GetMemory(T& m)
     return m.memptr();
   }
 }
-
 
 } // namespace mlpack
 

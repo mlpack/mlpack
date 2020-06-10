@@ -25,45 +25,45 @@ extern "C" {
  * Pass Gonum Dense poconst size_t er and wrap an Armadillo mat around it.
  */
 void mlpackToArmaMat(const char* identifier,
-                            double* mat,
-                            const size_t row,
-                            const size_t col);
+                     double* mat,
+                     const size_t row,
+                     const size_t col);
 
 /**
  * Pass Gonum Dense poconst size_t er and wrap an Armadillo mat around it.
  */
 void mlpackToArmaUmat(const char* identifier,
-                             double* mat,
-                             const size_t row,
-                             const size_t col);
+                      double* mat,
+                      const size_t row,
+                      const size_t col);
 
 /**
  * Pass Gonum VecDense poconst size_t er and wrap an Armadillo rowvec around it.
  */
 void mlpackToArmaRow(const char* identifier,
-                            double* rowvec,
-                            const size_t elem);
+                     double* rowvec,
+                     const size_t elem);
 
 /**
  * Pass Gonum VecDense poconst size_t er and wrap an Armadillo rowvec around it.
  */
 void mlpackToArmaUrow(const char* identifier,
-                             double* rowvec,
-                             const size_t elem);
+                      double* rowvec,
+                      const size_t elem);
 
 /**
  * Pass Gonum VecDense poconst size_t er and wrap an Armadillo colvec around it.
  */
 void mlpackToArmaCol(const char* identifier,
-                            double* colvec,
-                            const size_t elem);
+                     double* colvec,
+                     const size_t elem);
 
 /**
  * Pass Gonum VecDense poconst size_t er and wrap an Armadillo colvec around it.
  */
 void mlpackToArmaUcol(const char* identifier,
-                             double* colvec,
-                             const size_t elem);
+                      double* colvec,
+                      const size_t elem);
 
 /**
  * Return the memory poconst size_t er of an Armadillo mat object.
@@ -149,10 +149,10 @@ int mlpackNumElemUcol(const char* identifier);
  * Call CLI::SetParam<std::tuple<data::DatasetInfo, arma::mat>>().
  */
 void mlpackToArmaMatWithInfo(const char* identifier,
-                                    const bool* dimensions,
-                                    double* memptr,
-                                    const size_t rows,
-                                    const size_t cols);
+                             const bool* dimensions,
+                             double* memptr,
+                             const size_t rows,
+                             const size_t cols);
 
 /**
  * Get the number of elements in a matrix with DatasetInfo parameter.

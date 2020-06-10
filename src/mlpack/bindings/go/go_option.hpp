@@ -45,6 +45,19 @@ class GoOption
    * Construct a GoOption object.  When constructed, it will register itself
    * with CLI. The testName parameter is not used and added for compatibility
    * reasons.
+   *
+   * @param defaultValue Default value this parameter will be initialized to
+   *      (for flags, this should be false, for instance).
+   * @param identifier The name of the option (no dashes in front; for --help,
+   *      we would pass "help").
+   * @param description A short string describing the option.
+   * @param alias Short name of the parameter. "" for no alias.
+   * @param cppName Name of the C++ type of this parameter (i.e. "int").
+   * @param required Whether or not the option is required at runtime.
+   * @param input Whether or not the option is an input option.
+   * @param noTranspose If the parameter is a matrix and this is true, then the
+   *      matrix will not be transposed on loading.
+   * @param * (testName) Is not used and added for compatibility reasons.
    */
   GoOption(const T defaultValue,
            const std::string& identifier,

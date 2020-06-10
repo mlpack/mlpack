@@ -43,7 +43,6 @@ void mlpackToArmaUmat(const char* identifier, double* mat,
   // Advanced constructor.
   arma::mat m(mat, row, col, false, true);
 
-  // Advanced constructor
   arma::Mat<size_t> matr = arma::conv_to<arma::Mat<size_t>>::from(m);
 
   // Set input parameter with corresponding matrix in CLI.
@@ -70,7 +69,6 @@ void mlpackToArmaUrow(const char* identifier, double* rowvec, const size_t elem)
   // Advanced constructor.
   arma::rowvec m(rowvec, elem, false, true);
 
-  // Advanced constructor
   arma::Row<size_t> matr = arma::conv_to<arma::Row<size_t>>::from(m);
 
   // Set input parameter with corresponding row in CLI.
@@ -97,7 +95,6 @@ void mlpackToArmaUcol(const char* identifier, double* colvec, const size_t elem)
   // Advanced constructor.
   arma::colvec m(colvec, elem, false, true);
 
-  // Advanced constructor
   arma::Col<size_t> matr = arma::conv_to<arma::Col<size_t>>::from(m);
 
   // Set input parameter with corresponding column in CLI.
@@ -124,7 +121,6 @@ void* mlpackArmaPtrUmat(const char* identifier)
 {
   arma::Mat<size_t>& m = CLI::GetParam<arma::Mat<size_t>>(identifier);
 
-  // Advanced constructor.
   arma::mat output = arma::conv_to<arma::mat>::from(m);
   if (output.is_empty())
   {
@@ -155,7 +151,6 @@ void* mlpackArmaPtrUrow(const char* identifier)
 {
   arma::Row<size_t>& m = CLI::GetParam<arma::Row<size_t>>(identifier);
 
-  // Advanced constructor.
   arma::Row<double> output = arma::conv_to<arma::Row<double>>::from(m);
   if (output.is_empty())
   {
@@ -186,7 +181,6 @@ void* mlpackArmaPtrUcol(const char* identifier)
 {
   arma::Col<size_t>& m = CLI::GetParam<arma::Col<size_t>>(identifier);
 
-  // Advanced constructor.
   arma::Col<double> output = arma::conv_to<arma::Col<double>>::from(m);
   if (output.is_empty())
   {
