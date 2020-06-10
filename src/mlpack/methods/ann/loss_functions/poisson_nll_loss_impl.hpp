@@ -23,7 +23,7 @@ template<typename InputDataType, typename OutputDataType>
 PoissonNLLLoss<InputDataType, OutputDataType>::PoissonNLLLoss(
     const bool logInput,
     const bool full,
-    const double eps,
+    const ElemType eps,
     const bool reduction):
     logInput(logInput),
     full(full),
