@@ -2,7 +2,7 @@
  * @file methods/ann/loss_functions/poisson_nll_loss.hpp
  * @author Mrityunjay Tripathi
  *
- * Definition of the Poisson Negative Log Likelihood class.
+ * Definition of the PoissonNLLLoss class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
