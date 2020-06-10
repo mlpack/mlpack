@@ -38,8 +38,8 @@ class PoissonNLLLoss
   /**
    * Create the PoissonNLLLoss object.
    *
-   * @param logInput If true the loss is computed as exp(input) - target*input,
-   *        if false then the loss is input - target * log(input + eps).
+   * @param logInput If true the loss is computed as \f$ \exp(input) - target \cdot input \f$,
+   *        if false then the loss is \f$ input - target \cdot \log(input + eps) \f$.
    * @param full Boolean value that determines whether to include Stirling's
    *        approximation term.
    * @param eps A small value to prevent 0 in denominators and logarithms.
