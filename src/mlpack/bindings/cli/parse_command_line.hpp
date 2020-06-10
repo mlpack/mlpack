@@ -118,19 +118,11 @@ void ParseCommandLine(int argc, char** argv)
    const std::string identifier = boostNameMap[option->get_name()];
     util::ParamData& param = parameters[identifier];
     param.wasPassed = true;
-    // CMD::GetSingleton().functionMap[param.tname]["SetParam"](param,
-    //     (void*) app.count(option->get_name()), NULL);
+    auto value = app.count(option->get_name());
+    CMD::GetSingleton().functionMap[param.tname]["SetParam"](param,
+        (void*) &value, NULL);
   }
   
-  // for (std::size_t i = 0; i < app.count_all(); ++i)
-  // {
-  //   // There is not a possibility of an unknown option, since
-  //   // boost::program_options would have already thrown an exception.  Because
-  //   // some names may be mapped, we have to look through each ParamData object
-  //   // and get its boost name.
- 
-  // }
-
   // If the user specified any of the default options (--help, --version, or
   // --info), handle those.
 
