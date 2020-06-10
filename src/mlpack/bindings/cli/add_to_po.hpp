@@ -98,8 +98,8 @@ void AddToPO(const util::ParamData& d,
   // Generate the name to be given to CLI11.
   const std::string mappedName =
       MapParameterName<typename std::remove_pointer<T>::type>(d.name);
-  std::string boostName = (d.alias != '\0') ? mappedName + "," +
-      std::string(1, d.alias) : mappedName;
+  std::string boostName = (d.alias != '\0') ?
+  "-" + std::string(1, d.alias) + ",--" + mappedName : "--" + mappedName;
 
   // Note that we have to add the option as type equal to the mapped type, not
   // the true type of the option.
