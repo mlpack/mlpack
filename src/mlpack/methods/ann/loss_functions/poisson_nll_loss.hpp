@@ -89,24 +89,32 @@ class PoissonNLLLoss
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //! Get the value of logInput.
+  //! Get the value of logInput. logInput is a boolean value that tells if
+  //! logits are given as input.
   bool LogInput() const { return logInput; }
-  //! Modify the value of logInput.
+  //! Modify the value of logInput. logInput is a boolean value that tells if
+  //! logits are given as input.
   bool& LogInput() { return logInput; }
 
-  //! Get the value of full.
+  //! Get the value of full. full is a boolean value that determines whether to
+  //! include Stirling's approximation term.
   bool Full() const { return full; }
-  //! Modify the value of full.
+  //! Modify the value of full. full is a boolean value that determines whether
+  //! to include Stirling's approximation term.
   bool& Full() { return full; }
 
-  //! Get the value of eps.
+  //! Get the value of eps. eps is a small value required to prevent 0 in
+  //! logarithms and denominators.
   typename InputDataType::elem_type Eps() const { return eps; }
-  //! Modify the value of eps.
+  //! Modify the value of eps. eps is a small value required to prevent 0 in
+  //! logarithms and denominators.
   typename InputDataType::elem_type& Eps() { return eps; }
 
-  //! Get the value of reduction.
+  //! Get the value of reduction. reduction is a boolean value that tells if
+  //! mean of the total loss has to be taken.
   bool Reduction() const { return reduction; }
-  //! Modify the value of reduction.
+  //! Modify the value of reduction. reduction is a boolean value that tells if
+  //! mean of the total loss has to be taken.
   bool& Reduction() { return reduction; }
 
   /**
@@ -129,10 +137,10 @@ class PoissonNLLLoss
   // approximation term.
   bool full;
 
-  //! Small value required to prevent 0 in logarithms and denominators.
+  //! eps is a small value required to prevent 0 in logarithms and denominators.
   typename InputDataType::elem_type eps;
 
-  //! Boolean value that tells if mean has to be taken.
+  //! Boolean value that tells if mean of the total loss has to be taken.
   bool reduction;
 }; // class PoissonNLLLoss
 
