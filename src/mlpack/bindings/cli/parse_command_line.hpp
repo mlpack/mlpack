@@ -25,9 +25,9 @@ namespace cmd {
 
 // Add default parameters that are included in every program.
 // PARAM_FLAG("help", "Default help info.", "h");
-// PARAM_STRING_IN("info", "Print help on a specific option.", "", "");
-// PARAM_FLAG("verbose", "Display informational messages and the full list of "
-//     "parameters and timers at the end of execution.", "v");
+PARAM_STRING_IN("info", "Print help on a specific option.", "", "");
+PARAM_FLAG("verbose", "Display informational messages and the full list of "
+     "parameters and timers at the end of execution.", "v");
 PARAM_FLAG("version", "Display the version of mlpack.", "");
 
 /**
@@ -41,12 +41,11 @@ void ParseCommandLine(int argc, char** argv)
 
   // Go through list of options in order to add them.
   std::map<std::string, util::ParamData>& parameters = CMD::Parameters();
-  typedef std::map<std::string, util::ParamData>::const_iterator IteratorType;
   std::map<std::string, std::string> boostNameMap;
-  for (IteratorType it = parameters.begin(); it != parameters.end(); ++it)
+  for (const auto it : parameters)
   {
     // Add the parameter to desc.
-    const util::ParamData& d = it->second;
+    const util::ParamData& d = it.second;
     CMD::GetSingleton().functionMap[d.tname]["AddToPO"](d, NULL,
         (void*) &app);
 
@@ -111,17 +110,25 @@ void ParseCommandLine(int argc, char** argv)
 
   // Now iterate through the filled vmap, and overwrite default values with
   // anything that's found on the command line.
-  // for (variables_map::iterator i = vmap.begin(); i != vmap.end(); ++i)
+
+  std::cout << "App size: " << app.count_all() << std::endl;
+  for (auto option : app.get_options()) 
+  {
+    std::cout << "Options: " << option->get_name() << std::endl;
+   const std::string identifier = boostNameMap[option->get_name()];
+    util::ParamData& param = parameters[identifier];
+    param.wasPassed = true;
+    // CMD::GetSingleton().functionMap[param.tname]["SetParam"](param,
+    //     (void*) app.count(option->get_name()), NULL);
+  }
+  
+  // for (std::size_t i = 0; i < app.count_all(); ++i)
   // {
   //   // There is not a possibility of an unknown option, since
   //   // boost::program_options would have already thrown an exception.  Because
   //   // some names may be mapped, we have to look through each ParamData object
   //   // and get its boost name.
-  //   const std::string identifier = boostNameMap[i->first];
-  //   util::ParamData& param = parameters[identifier];
-  //   param.wasPassed = true;
-  //   CMD::GetSingleton().functionMap[param.tname]["SetParam"](param,
-  //       (void*) &vmap[i->first].value(), NULL);
+ 
   // }
 
   // If the user specified any of the default options (--help, --version, or
