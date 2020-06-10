@@ -5,7 +5,6 @@
 // This functionality exist only in boost::serialization.
 // Most part of this code are copied from array_wrapper in boost::serialization
 
-
 #include <cereal/archives/binary.hpp>
 #include <cereal/archives/portable_binary.hpp>
 #include <cereal/archives/xml.hpp>
@@ -17,14 +16,14 @@ template<class T>
 class array_wrapper
 {
 private:
-    array_wrapper & operator=(const array_wrapper & rhs);
+    array_wrapper & operator=(array_wrapper & rhs);
     // note: I would like to make the copy constructor private but this breaks
     // make_array.  So I make make_array a friend
     template<class Tx, class S>
     friend const cereal::array_wrapper<Tx> make_array(Tx * t, S s);
 public:
 
-    array_wrapper(const array_wrapper & rhs) :
+    array_wrapper(array_wrapper & rhs) :
         m_t(rhs.m_t),
         m_element_count(rhs.m_element_count)
     {}
@@ -41,7 +40,7 @@ public:
     // Some verification needed...
     // default implementation
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
+    void serialize(Archive &ar, const unsigned int /*version*/)
     {
      // default implemention does the loop
       std::size_t c = count();
@@ -67,8 +66,8 @@ private:
 
 template<class T, class S>
 inline
-const array_wrapper< T > make_array(T* t, S s){
-    const array_wrapper< T > a(t, s);
+array_wrapper< T > make_array(T* t, S s){
+    array_wrapper< T > a(t, s);
     return a;
 }
 
