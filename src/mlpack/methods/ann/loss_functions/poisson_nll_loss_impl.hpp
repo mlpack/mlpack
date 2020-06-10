@@ -23,7 +23,7 @@ template<typename InputDataType, typename OutputDataType>
 PoissonNLLLoss<InputDataType, OutputDataType>::PoissonNLLLoss(
     const bool logInput,
     const bool full,
-    const ElemType eps,
+    const typename InputDataType::elem_type eps,
     const bool reduction):
     logInput(logInput),
     full(full),
@@ -35,7 +35,8 @@ PoissonNLLLoss<InputDataType, OutputDataType>::PoissonNLLLoss(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-ElemType PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
+typename InputDataType::elem_type
+PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     const TargetType& target)
 {

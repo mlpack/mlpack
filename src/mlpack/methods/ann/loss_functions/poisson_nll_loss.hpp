@@ -36,9 +36,6 @@ template <
 class PoissonNLLLoss
 {
  public:
-  //! Data type of each element of InputDataType.
-  typedef typename InputDataType::elem_type ElemType;
-
   /**
    * Create the PoissonNLLLoss object.
    *
@@ -52,7 +49,7 @@ class PoissonNLLLoss
    */
   PoissonNLLLoss(const bool logInput = true,
                  const bool full = false,
-                 const ElemType eps = 1e-08,
+                 const typename InputDataType::elem_type eps = 1e-08,
                  const bool reduction = true);
 
   /**
@@ -63,8 +60,8 @@ class PoissonNLLLoss
    *        between 1 and the number of classes.
    */
   template<typename InputType, typename TargetType>
-  ElemType Forward(const InputType& input,
-                   const TargetType& target);
+  typename InputDataType::elem_type Forward(const InputType& input,
+                                            const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network. The Poisson Negative Log
@@ -103,9 +100,9 @@ class PoissonNLLLoss
   bool& Full() { return full; }
 
   //! Get the value of eps.
-  ElemType Eps() const { return eps; }
+  typename InputDataType::elem_type Eps() const { return eps; }
   //! Modify the value of eps.
-  ElemType& Eps() { return eps; }
+  typename InputDataType::elem_type& Eps() { return eps; }
 
   //! Get the value of reduction.
   bool Reduction() const { return reduction; }
@@ -133,7 +130,7 @@ class PoissonNLLLoss
   bool full;
 
   //! Small value required to prevent 0 in logarithms and denominators.
-  ElemType eps;
+  typename InputDataType::elem_type eps;
 
   //! Boolean value that tells if mean has to be taken.
   bool reduction;
