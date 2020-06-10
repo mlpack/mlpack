@@ -232,8 +232,8 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
   for (size_t trial = 0; trial < 4; trial++)
   {
     // Set up the module. Note that we use a custom network here.
-    FFN<MeanSquaredError<>, GaussianInitialization> module(MeanSquaredError<>(),
-        GaussianInitialization(0, 0.001));
+    FFN<MeanSquaredError<>, GaussianInitialization> module(
+        MeanSquaredError<>(), GaussianInitialization(0, 0.001));
     module.Add<Linear<>>(6, 256);
     module.Add<ReLULayer<>>();
     module.Add<Linear<>>(256, 3);

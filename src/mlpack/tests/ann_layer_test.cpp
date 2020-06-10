@@ -1412,11 +1412,14 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
   // Test the Forward function.
   input = arma::zeros(10, 1);
   module.Forward(input, output);
-  BOOST_REQUIRE_CLOSE(arma::accu(
-      moduleA->Parameters().submat(100, 0, moduleA->Parameters().n_elem - 1, 0)) +
-      arma::accu(moduleB->Parameters().submat(100, 0,
-      moduleB->Parameters().n_elem - 1, 0)),
-      arma::accu(output.col(0)), 1e-3);
+
+  const double sumModuleA = arma::accu(
+      moduleA->Parameters().submat(
+      100, 0, moduleA->Parameters().n_elem - 1, 0));
+  const double sumModuleB = arma::accu(
+      moduleB->Parameters().submat(
+      100, 0, moduleB->Parameters().n_elem - 1, 0));
+  BOOST_REQUIRE_CLOSE(sumModuleA + sumModuleB, arma::accu(output.col(0)), 1e-3);
 
   // Test the Backward function.
   error = arma::zeros(20, 1);
@@ -3791,6 +3794,20 @@ BOOST_AUTO_TEST_CASE(AdaptiveMeanPoolingTestCase)
   // Test the Backward Function.
   module4.Backward(input, output, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 1.5);
+}
+
+BOOST_AUTO_TEST_CASE(TransposedConvolutionalLayerOptionalParameterTest)
+{
+  Sequential<>* decoder = new Sequential<>();
+
+  // Check if we can create an object without specifying output.
+  BOOST_REQUIRE_NO_THROW(decoder->Add<TransposedConvolution<>>(24, 16,
+      5, 5, 1, 1, 0, 0, 10, 10));
+
+  BOOST_REQUIRE_NO_THROW(decoder->Add<TransposedConvolution<>>(16, 1,
+      15, 15, 1, 1, 1, 1, 14, 14));
+
+    delete decoder;
 }
 
 BOOST_AUTO_TEST_SUITE_END();
