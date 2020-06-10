@@ -1,5 +1,5 @@
 /**
- * @file kmeans_main.cpp
+ * @file methods/kmeans/kmeans_main.cpp
  * @author Ryan Curtin
  *
  * Executable for running K-Means.

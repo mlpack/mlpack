@@ -1,5 +1,5 @@
 /**
- * @file layer.hpp
+ * @file methods/ann/layer/layer.hpp
  * @author Marcus Edel
  *
  * This includes various layers to construct a model.
@@ -52,6 +52,7 @@
 #include "minibatch_discrimination.hpp"
 #include "multiply_constant.hpp"
 #include "multiply_merge.hpp"
+#include "noisylinear.hpp"
 #include "padding.hpp"
 #include "parametric_relu.hpp"
 #include "recurrent_attention.hpp"
@@ -61,6 +62,7 @@
 #include "select.hpp"
 #include "sequential.hpp"
 #include "softshrink.hpp"
+#include "softmax.hpp"
 #include "subview.hpp"
 #include "transposed_convolution.hpp"
 #include "virtual_batch_norm.hpp"

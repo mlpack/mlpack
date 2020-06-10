@@ -1,5 +1,5 @@
 /**
- * @file svd_incremental_test.cpp
+ * @file tests/svd_incremental_test.cpp
  * @author Sumedh Ghaisas
  *
  * Tests for SVDIncompleteIncrementalLearning and

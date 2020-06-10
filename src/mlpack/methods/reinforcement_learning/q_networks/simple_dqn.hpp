@@ -1,5 +1,5 @@
 /**
- * @file simple_dqn.hpp
+ * @file methods/reinforcement_learning/q_networks/simple_dqn.hpp
  * @author Nishant Kumar
  *
  * This file contains the implementation of the simple deep q network.
@@ -48,16 +48,14 @@ class SimpleDQN
   SimpleDQN(const int inputDim,
             const int h1,
             const int h2,
-            const int outputDim) : network()
+            const int outputDim) : network(MeanSquaredError<>(),
+                GaussianInitialization(0, 0.001))
   {
-    FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
-        GaussianInitialization(0, 0.001));
-    model.Add<Linear<>>(inputDim, h1);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(h1, h2);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(h2, outputDim);
-    network = model;
+    network.Add(new Linear<>(inputDim, h1));
+    network.Add(new ReLULayer<>());
+    network.Add(new Linear<>(h1, h2));
+    network.Add(new ReLULayer<>());
+    network.Add(new Linear<>(h2, outputDim));
   }
 
   SimpleDQN(NetworkType network) : network(std::move(network))
@@ -108,10 +106,9 @@ class SimpleDQN
    *
    * @param state The input state.
    * @param target The training target.
-   * @return gradient The gradient.
+   * @param gradient The gradient.
    */
-  void Backward(const arma::mat state, arma::mat& target,
-arma::mat& gradient)
+  void Backward(const arma::mat state, arma::mat& target, arma::mat& gradient)
   {
     network.Backward(state, target, gradient);
   }

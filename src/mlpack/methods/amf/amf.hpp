@@ -1,5 +1,5 @@
 /**
- * @file amf.hpp
+ * @file methods/amf/amf.hpp
  * @author Sumedh Ghaisas
  * @author Mohan Rajendran
  * @author Ryan Curtin
@@ -86,9 +86,9 @@ class AMF
    * in W and H.  Once the residue goes below the specified minimum residue, the
    * algorithm terminates.
    *
-   * @param initializationRule Optional instantiated InitializationRule object
+   * @param initializeRule Optional instantiated InitializationRule object
    *      for initializing the W and H matrices.
-   * @param updateRule Optional instantiated UpdateRule object; this parameter
+   * @param update Optional instantiated UpdateRule object; this parameter
    *      is useful when the update rule for the W and H vector has state that
    *      it needs to store (i.e. HUpdate() and WUpdate() are not static
    *      functions).
@@ -190,4 +190,3 @@ using SVDCompleteIncrementalFactorizer = amf::AMF<
 #include "amf_impl.hpp"
 
 #endif // MLPACK_METHODS_AMF_AMF_HPP
-

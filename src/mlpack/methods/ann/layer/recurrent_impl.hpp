@@ -1,5 +1,5 @@
 /**
- * @file recurrent_impl.hpp
+ * @file methods/ann/layer/recurrent_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the LinearLayer class also known as fully-connected layer

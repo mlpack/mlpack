@@ -1,5 +1,5 @@
 /**
- * @file lsh_search.hpp
+ * @file methods/lsh/lsh_search.hpp
  * @author Parikshit Ram
  *
  * Defines the LSHSearch class, which performs an approximate
@@ -9,6 +9,7 @@
  *
  * The details of this method can be found in the following paper:
  *
+ * @code
  * @inproceedings{datar2004locality,
  *  title={Locality-sensitive hashing scheme based on p-stable distributions},
  *  author={Datar, M. and Immorlica, N. and Indyk, P. and Mirrokni, V.S.},
@@ -18,11 +19,13 @@
  *  year={2004},
  *  organization={ACM}
  * }
+ * @endcode
  *
  * Additionally, the class implements Multiprobe LSH, which improves
  * approximation results during the search for approximate nearest neighbors.
  * The Multiprobe LSH algorithm was presented in the paper:
  *
+ * @code
  * @inproceedings{Lv2007multiprobe,
  *  tile={Multi-probe LSH: efficient indexing for high-dimensional similarity
  *  search},
@@ -33,6 +36,7 @@
  *  year={2007},
  *  pages={950--961}
  * }
+ * @endcode
  *
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -180,7 +184,7 @@ class LSHSearch
    *     the maximum number of points that can be hashed into single bucket.  A
    *     value of 0 indicates that there is no limit (so the second hash table
    *     can be arbitrarily large---be careful!).
-   * @param projections Cube of projection tables. For a cube of size (a, b, c)
+   * @param projection Cube of projection tables. For a cube of size (a, b, c)
    *     we set numProj = a, numTables = c. b is the reference set
    *     dimensionality.
    */
@@ -237,6 +241,7 @@ class LSHSearch
    *     available without having to build hashing for every table size.
    *     By default, this is set to zero in which case all tables are
    *     considered.
+   * @param T Number of probing bins.
    */
   void Search(const size_t k,
               arma::Mat<size_t>& resultingNeighbors,
@@ -260,6 +265,7 @@ class LSHSearch
    * Serialize the LSH model.
    *
    * @param ar Archive to serialize to.
+   * @param version Version number.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int version);
@@ -270,7 +276,7 @@ class LSHSearch
   size_t& DistanceEvaluations() { return distanceEvaluations; }
 
   //! Return the reference dataset.
-  const arma::mat& ReferenceSet() const { return referenceSet; }
+  const MatType& ReferenceSet() const { return referenceSet; }
 
   //! Get the number of projections.
   size_t NumProjections() const { return projections.n_slices; }

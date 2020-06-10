@@ -1,5 +1,5 @@
 /**
- * @file constraints_impl.h
+ * @file methods/lmnn/constraints_impl.hpp
  * @author Manish Kumar
  *
  * Implementation of the Constraints class.

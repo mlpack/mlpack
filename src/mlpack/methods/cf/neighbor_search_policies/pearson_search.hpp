@@ -1,5 +1,5 @@
 /**
- * @file pearson_search.hpp
+ * @file methods/cf/neighbor_search_policies/pearson_search.hpp
  * @author Wenhao Huang
  *
  * Nearest neighbor search with pearson distance.
@@ -52,7 +52,7 @@ class PearsonSearch
    * x, we first subtract mean(x) from each element in x. Then, we normalize
    * the vector to unit length.
    *
-   * @param Set of reference points.
+   * @param referenceSet Set of reference points.
    */
   PearsonSearch(const arma::mat& referenceSet)
   {
@@ -73,7 +73,7 @@ class PearsonSearch
    * @param query A set of query points.
    * @param k Number of neighbors to search.
    * @param neighbors Nearest neighbors.
-   * @param similarites Similarities between query point and its neighbors.
+   * @param similarities Similarities between query point and its neighbors.
    */
   void Search(const arma::mat& query, const size_t k,
               arma::Mat<size_t>& neighbors, arma::mat& similarities)

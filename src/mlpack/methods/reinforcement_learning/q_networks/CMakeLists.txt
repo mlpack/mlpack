@@ -2,6 +2,7 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   simple_dqn.hpp
+  dueling_dqn.hpp
 )
 
 # Add directory name to sources.

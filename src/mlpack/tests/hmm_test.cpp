@@ -1,5 +1,5 @@
 /**
- * @file hmm_test.cpp
+ * @file tests/hmm_test.cpp
  *
  * Test file for HMMs.
  *

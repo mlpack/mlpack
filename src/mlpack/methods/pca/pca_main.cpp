@@ -1,5 +1,5 @@
 /**
- * @file pca_main.cpp
+ * @file methods/pca/pca_main.cpp
  * @author Ryan Curtin
  * @author Marcus Edel
  *

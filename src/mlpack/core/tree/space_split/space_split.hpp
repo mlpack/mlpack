@@ -1,5 +1,5 @@
 /**
- * @file space_split.hpp
+ * @file core/tree/space_split/space_split.hpp
  * @author Marcos Pividori
  *
  * Definition of SpaceSplit, implementing some methods to create a projection

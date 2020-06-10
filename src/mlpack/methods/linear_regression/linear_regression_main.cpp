@@ -1,5 +1,5 @@
 /**
- * @file linear_regression_main.cpp
+ * @file methods/linear_regression/linear_regression_main.cpp
  * @author James Cline
  *
  * Main function for least-squares linear regression.

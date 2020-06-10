@@ -1,5 +1,5 @@
 /**
- * @file best_binary_numeric_split.hpp
+ * @file methods/decision_tree/best_binary_numeric_split.hpp
  * @author Ryan Curtin
  *
  * A tree splitter that finds the best binary numeric split.
@@ -40,11 +40,12 @@ class BestBinaryNumericSplit
    * @param bestGain Best gain seen so far (we'll only split if we find gain
    *      better than this).
    * @param data The dimension of data points to check for a split in.
-   * @param numCategories Number of categories in the categorical data.
    * @param labels Labels for each point.
    * @param numClasses Number of classes in the dataset.
+   * @param weights Weights associated with labels.
    * @param minimumLeafSize Minimum number of points in a leaf node for
    *      splitting.
+   * @param minimumGainSplit Minimum gain split.
    * @param classProbabilities Class probabilities vector, which may be filled
    *      with split information a successful split.
    * @param aux Auxiliary split information, which may be modified on a
@@ -77,7 +78,7 @@ class BestBinaryNumericSplit
    *
    * @param point Point to calculate direction of.
    * @param classProbabilities Auxiliary information for the split.
-   * @param aux (Unused) auxiliary information for the split.
+   * @param * (aux) Auxiliary information for the split (Unused).
    */
   template<typename ElemType>
   static size_t CalculateDirection(

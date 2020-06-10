@@ -1,5 +1,5 @@
 /**
- * @file softsign_function.hpp
+ * @file methods/ann/activation_functions/softsign_function.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the softsign function as described by

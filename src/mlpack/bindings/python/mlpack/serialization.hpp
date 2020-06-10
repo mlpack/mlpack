@@ -1,5 +1,5 @@
 /**
- * @serialization.hpp
+ * @file bindings/python/mlpack/serialization.hpp
  * @author Ryan Curtin
  *
  * Simple utilities for boost::serialization.

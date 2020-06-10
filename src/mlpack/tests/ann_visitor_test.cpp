@@ -1,5 +1,5 @@
 /**
- * @file ann_visitor_test.cpp
+ * @file tests/ann_visitor_test.cpp
  *
  * Tests for testing visitors in ANN's of mlpack.
  *

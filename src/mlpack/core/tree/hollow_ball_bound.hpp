@@ -1,5 +1,5 @@
 /**
- * @file hollow_ball_bound.hpp
+ * @file core/tree/hollow_ball_bound.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
  * Interface to a ball bound that works in arbitrary metric spaces.
@@ -124,7 +124,7 @@ class HollowBallBound
   /**
    * Determines if a point is within this bound.
    *
-   * @param point Point to check the condition.   
+   * @param point Point to check the condition.
    */
   template<typename VecType>
   bool Contains(const VecType& point) const;
@@ -145,8 +145,8 @@ class HollowBallBound
   void Center(VecType& center) const { center = this->center; }
 
   /**
-   * Calculates minimum bound-to-point squared distance
-   *.
+   * Calculates minimum bound-to-point squared distance.
+   *
    * @param point Point to which the minimum distance is requested.
    */
   template<typename VecType>
@@ -181,7 +181,7 @@ class HollowBallBound
   /**
    * Calculates minimum and maximum bound-to-point distance.
    *
-   * @param point Point to which the minimum and maximum distances are
+   * @param other Point to which the minimum and maximum distances are
    *     requested.
    */
   template<typename VecType>

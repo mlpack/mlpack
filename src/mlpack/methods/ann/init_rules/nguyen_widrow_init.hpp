@@ -1,5 +1,5 @@
 /**
- * @file nguyen_widrow_init.hpp
+ * @file methods/ann/init_rules/nguyen_widrow_init.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the Nguyen-Widrow method. This

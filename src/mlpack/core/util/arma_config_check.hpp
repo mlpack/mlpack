@@ -1,5 +1,5 @@
 /**
- * @file arma_config_check.hpp
+ * @file core/util/arma_config_check.hpp
  * @author Ryan Curtin
  *
  * Using the contents of arma_config.hpp, try to catch the condition where the

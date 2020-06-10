@@ -1,5 +1,5 @@
 /**
- * @file lstm.hpp
+ * @file methods/ann/layer/lstm.hpp
  * @author Marcus Edel
  *
  * Definition of the LSTM class, which implements a LSTM network layer.

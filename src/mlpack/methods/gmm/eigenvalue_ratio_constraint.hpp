@@ -1,5 +1,5 @@
 /**
- * @file eigenvalue_ratio_constraint.hpp
+ * @file methods/gmm/eigenvalue_ratio_constraint.hpp
  * @author Ryan Curtin
  *
  * Constrain a covariance matrix to have a certain ratio of eigenvalues.

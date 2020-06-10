@@ -1,5 +1,5 @@
 /**
- * @file zca_whitening.hpp
+ * @file core/data/scaler_methods/zca_whitening.hpp
  * @author Jeffin Sam
  *
  * Whitening scaling to scale features, Using ZCA Whitening.

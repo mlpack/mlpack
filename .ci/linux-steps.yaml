@@ -40,7 +40,7 @@ steps:
     fi
 
     # Install armadillo.
-    curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*
+    curl https://data.kurg.org/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*
     cmake . && make && sudo make install && cd ..
   displayName: 'Install Build Dependencies'
 
@@ -49,7 +49,13 @@ steps:
   displayName: 'CMake'
 
 # Build mlpack
+- script: cd build && make
+  condition: eq(variables['CMakeArgs'], '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF')
+  displayName: 'Build'
+
+# Build mlpack
 - script: cd build && make -j2
+  condition: ne(variables['CMakeArgs'], '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF')
   displayName: 'Build'
 
 # Run tests via ctest.

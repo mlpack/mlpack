@@ -1,5 +1,5 @@
 /**
- * @file softplus_function.hpp
+ * @file methods/ann/activation_functions/softplus_function.hpp
  * @author Vivek Pal
  *
  * Definition and implementation of the softplus function as described by

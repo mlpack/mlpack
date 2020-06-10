@@ -1,5 +1,5 @@
 /**
- * @file knn_test.cpp
+ * @file tests/main_tests/knn_test.cpp
  * @author Atharva Khandait
  * @author Heet Sankesara
  *

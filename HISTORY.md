@@ -1,5 +1,10 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added Dueling DQN to q_networks, Noisy linear layer to ann/layer
+    and Empty loss to ann/loss_functions (#2414).
+
+  * Storing and adding accessor method for action in q_learning (#2413).
+
   * Added accessor methods for ANN layers (#2321).
 
   * Addition of `Elliot` activation function (#2268).
@@ -10,6 +15,17 @@
 
   * Add `MatType` parameter to `LSHSearch`, allowing sparse matrices to be used
     for search (#2395).
+
+  * Documentation fixes to resolve Doxygen warnings and issues (#2400).
+
+  * Add Load and Save of Sparse Matrix (#2344).
+
+  * Add Intersection over Union (IoU) metric for bounding boxes (#2402).
+
+  * Add Non Maximal Supression (NMS) metric for bounding boxes (#2410).
+
+  * Fix `no_intercept` and probability computation for linear SVM bindings
+    (#2419).
 
 ### mlpack 3.3.1
 ###### 2020-04-29
@@ -113,6 +129,7 @@
   * Add Soft Shrink Activation Function (#2174).
 
   * Add Hinge Embedding Loss Function (#2229).
+
   * Add Cosine Embedding Loss Function (#2209).
 
   * Add Margin Ranking Loss Function (#2264).

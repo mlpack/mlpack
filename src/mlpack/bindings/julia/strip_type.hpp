@@ -1,5 +1,5 @@
 /**
- * @filename strip_type.hpp
+ * @file bindings/julia/strip_type.hpp
  * @author Ryan Curtin
  *
  * Given a C++ type name, turn it into something that has no special characters

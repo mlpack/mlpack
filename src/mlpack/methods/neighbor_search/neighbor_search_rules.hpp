@@ -1,5 +1,5 @@
 /**
- * @file neighbor_search_rules.hpp
+ * @file methods/neighbor_search/neighbor_search_rules.hpp
  * @author Ryan Curtin
  *
  * Defines the pruning rules and base case rules necessary to perform a

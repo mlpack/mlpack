@@ -1,5 +1,5 @@
 /**
- * @file range_search_stat.hpp
+ * @file methods/range_search/range_search_stat.hpp
  * @author Ryan Curtin
  *
  * Statistic class for RangeSearch, which just holds the last visited node and

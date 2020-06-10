@@ -1,5 +1,5 @@
 /**
- * @file cosine_tree_test.cpp
+ * @file tests/cosine_tree_test.cpp
  * @author Siddharth Agrawal
  *
  * Test file for CosineTree class.

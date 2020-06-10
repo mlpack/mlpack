@@ -75,6 +75,8 @@ set(SOURCES
   multiply_constant_impl.hpp
   multiply_merge.hpp
   multiply_merge_impl.hpp
+  noisylinear.hpp
+  noisylinear_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
   recurrent.hpp
@@ -89,6 +91,8 @@ set(SOURCES
   select_impl.hpp
   sequential.hpp
   sequential_impl.hpp
+  softmax_impl.hpp
+  softmax.hpp
   subview.hpp
   transposed_convolution.hpp
   transposed_convolution_impl.hpp

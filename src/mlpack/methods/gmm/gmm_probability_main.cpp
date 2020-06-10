@@ -1,5 +1,5 @@
 /**
- * @file gmm_probability_main.cpp
+ * @file methods/gmm/gmm_probability_main.cpp
  * @author Ryan Curtin
  *
  * Given a GMM, calculate the probability of points coming from it.

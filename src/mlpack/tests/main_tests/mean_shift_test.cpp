@@ -1,5 +1,5 @@
 /**
- * @file mean_shift_test.cpp
+ * @file tests/main_tests/mean_shift_test.cpp
  * @author Tan Jun An
  *
  * Test mlpackMain() of mean_shift_main.cpp.

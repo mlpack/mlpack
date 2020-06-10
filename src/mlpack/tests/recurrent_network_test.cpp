@@ -1,5 +1,5 @@
 /**
- * @file recurrent_network_test.cpp
+ * @file tests/recurrent_network_test.cpp
  * @author Marcus Edel
  *
  * Tests the recurrent network.

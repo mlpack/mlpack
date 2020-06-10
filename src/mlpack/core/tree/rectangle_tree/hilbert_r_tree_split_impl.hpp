@@ -1,5 +1,5 @@
 /**
- * @file hilbert_r_tree_split_impl.hpp
+ * @file core/tree/rectangle_tree/hilbert_r_tree_split_impl.hpp
  * @author Mikhail Lozhnikov
  *
  * Implementation of class (HilbertRTreeSplit) to split a RectangleTree.

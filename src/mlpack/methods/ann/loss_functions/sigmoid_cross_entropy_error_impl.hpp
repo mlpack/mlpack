@@ -1,5 +1,5 @@
 /**
- * @file sigmoid_cross_entropy_error_impl.hpp
+ * @file methods/ann/loss_functions/sigmoid_cross_entropy_error_impl.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *

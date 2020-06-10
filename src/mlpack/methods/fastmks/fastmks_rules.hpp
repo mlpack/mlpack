@@ -1,5 +1,5 @@
 /**
- * @file fastmks_rules.hpp
+ * @file methods/fastmks/fastmks_rules.hpp
  * @author Ryan Curtin
  *
  * Rules for the single or dual tree traversal for fast max-kernel search.

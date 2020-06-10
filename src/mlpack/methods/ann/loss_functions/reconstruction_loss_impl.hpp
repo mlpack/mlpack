@@ -1,5 +1,5 @@
 /**
- * @file reconstruction_loss_impl.hpp
+ * @file methods/ann/loss_functions/reconstruction_loss_impl.hpp
  * @author Atharva Khandait
  *
  * Implementation of the reconstruction loss performance function.

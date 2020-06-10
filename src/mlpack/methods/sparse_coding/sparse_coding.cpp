@@ -1,5 +1,5 @@
 /**
- * @file sparse_coding.cpp
+ * @file methods/sparse_coding/sparse_coding.cpp
  * @author Nishant Mehta
  *
  * Implementation of Sparse Coding with Dictionary Learning using l1 (LASSO) or

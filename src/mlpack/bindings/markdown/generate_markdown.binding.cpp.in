@@ -1,5 +1,5 @@
 /**
- * @file generate_markdown.binding.cpp.in
+ * @file markdown/generate_markdown.binding.cpp.in
  * @author Ryan Curtin
  *
  * Print Markdown for a specific binding.  This provides two utility

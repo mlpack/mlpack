@@ -1,5 +1,5 @@
 /**
- * @file loss_functions_test.cpp
+ * @file tests/loss_functions_test.cpp
  * @author Dakshit Agrawal
  * @author Sourabh Varshney
  * @author Atharva Khandait

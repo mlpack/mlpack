@@ -1,5 +1,5 @@
 /**
- * @file simple_tolerance_termination.hpp
+ * @file methods/amf/termination_policies/simple_tolerance_termination.hpp
  * @author Sumedh Ghaisas
  *
  * Termination policy used in AMF (Alternating Matrix Factorization).

@@ -1,5 +1,5 @@
 /**
- * @file layer_norm_impl.hpp
+ * @file methods/ann/layer/layer_norm_impl.hpp
  * @author Shikhar Jaiswal
  *
  * Implementation of the Layer Normalization class.

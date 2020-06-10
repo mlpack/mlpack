@@ -1,5 +1,5 @@
 /**
- * @file add_impl.hpp
+ * @file methods/ann/layer/add_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Add class that applies a bias term to the incoming

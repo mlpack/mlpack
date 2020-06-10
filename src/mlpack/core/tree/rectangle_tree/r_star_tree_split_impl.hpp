@@ -1,5 +1,5 @@
 /**
- * @file r_star_tree_split_impl.hpp
+ * @file core/tree/rectangle_tree/r_star_tree_split_impl.hpp
  * @author Andrew Wells
  *
  * Implementation of class (RStarTreeSplit) to split a RectangleTree.

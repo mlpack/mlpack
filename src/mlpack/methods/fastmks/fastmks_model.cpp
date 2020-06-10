@@ -1,5 +1,5 @@
 /**
- * @file fastmks_model.cpp
+ * @file methods/fastmks/fastmks_model.cpp
  * @author Ryan Curtin
  *
  * Implementation of non-templatized functions of FastMKSModel.

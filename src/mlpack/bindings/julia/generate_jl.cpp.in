@@ -1,5 +1,5 @@
 /**
- * @file generate_jl.cpp.in
+ * @file julia/generate_jl.cpp.in
  * @author Ryan Curtin
  *
  * This is a template file to call the PrintJL() function for a given binding.

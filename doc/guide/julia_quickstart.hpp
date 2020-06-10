@@ -54,8 +54,7 @@ df = CSV.read(ZlibInflateInputStream(open(download(
 labels = df[!, :label][:]
 dataset = select!(df, Not(:label))
 
-# Split the dataset using mlpack.  The output comes back as a dictionary,
-# which we'll unpack for clarity of code.
+# Split the dataset using mlpack.
 test, test_labels, train, train_labels = mlpack.preprocess_split(
     input=dataset,
     input_labels=labels,

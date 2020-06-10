@@ -1,5 +1,5 @@
 /**
- * @file q_learning_impl.hpp
+ * @file methods/reinforcement_learning/q_learning_impl.hpp
  * @author Shangtong Zhang
  *
  * This file is the implementation of QLearning class.
@@ -30,20 +30,20 @@ QLearning<
   UpdaterType,
   PolicyType,
   ReplayType
->::QLearning(TrainingConfig config,
-             NetworkType network,
-             PolicyType policy,
-             ReplayType replayMethod,
+>::QLearning(TrainingConfig& config,
+             NetworkType& network,
+             PolicyType& policy,
+             ReplayType& replayMethod,
              UpdaterType updater,
              EnvironmentType environment):
-    config(std::move(config)),
-    learningNetwork(std::move(network)),
+    config(config),
+    learningNetwork(network),
+    policy(policy),
+    replayMethod(replayMethod),
     updater(std::move(updater)),
     #if ENS_VERSION_MAJOR >= 2
     updatePolicy(NULL),
     #endif
-    policy(std::move(policy)),
-    replayMethod(std::move(replayMethod)),
     environment(std::move(environment)),
     totalSteps(0),
     deterministic(false)
@@ -131,7 +131,7 @@ double QLearning<
   learningNetwork.Predict(state.Encode(), actionValue);
 
   // Select an action according to the behavior policy.
-  ActionType action = policy.Sample(actionValue, deterministic);
+  action = policy.Sample(actionValue, deterministic);
 
   // Interact with the environment to advance to next state.
   StateType nextState;

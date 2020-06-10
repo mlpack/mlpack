@@ -1,5 +1,5 @@
 /**
- * @file convolutional_network_test.cpp
+ * @file tests/convolutional_network_test.cpp
  * @author Marcus Edel
  * @author Abhinav Moudgil
  *

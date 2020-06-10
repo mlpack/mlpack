@@ -1,5 +1,5 @@
 /**
- * @file pca_test.cpp
+ * @file tests/main_tests/pca_test.cpp
  * @author Ryan Curtin
  *
  * Test mlpackMain() of pca_main.cpp.

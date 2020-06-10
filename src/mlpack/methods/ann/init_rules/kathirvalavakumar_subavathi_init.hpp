@@ -1,5 +1,5 @@
 /**
- * @file kathirvalavakumar_subavathi_init.hpp
+ * @file methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the initialization method by T.
@@ -97,6 +97,7 @@ class KathirvalavakumarSubavathiInitialization
    * @param W Weight matrix to initialize.
    * @param rows Number of rows.
    * @param cols Number of columns.
+   * @param slices Number of slices
    */
   template<typename eT>
   void Initialize(arma::Cube<eT>& W,

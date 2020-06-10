@@ -1,5 +1,5 @@
 /**
- * @file celu_impl.hpp
+ * @file methods/ann/layer/celu_impl.hpp
  * @author Gaurav Singh
  *
  * Implementation of the CELU activation function as described by Jonathan T. Barron.

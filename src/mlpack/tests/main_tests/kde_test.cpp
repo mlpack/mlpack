@@ -1,5 +1,5 @@
 /**
- * @file kde_test.cpp
+ * @file tests/main_tests/kde_test.cpp
  * @author Roberto Hueso
  *
  * Test mlpackMain() of kde_main.cpp

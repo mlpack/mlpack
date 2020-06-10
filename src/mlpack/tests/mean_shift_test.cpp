@@ -1,5 +1,5 @@
 /**
- * @file mean_shift_test.cpp
+ * @file tests/mean_shift_test.cpp
  * @author Shangtong Zhang
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
