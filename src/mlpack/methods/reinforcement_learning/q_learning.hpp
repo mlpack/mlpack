@@ -95,6 +95,11 @@ class QLearning
   void TrainAgent();
 
   /**
+   * Trains the DQN agent of categorical type.
+   */
+  void TrainCategoricalAgent();
+
+  /**
    * Execute a step in an episode.
    * @return Reward for the step.
    */

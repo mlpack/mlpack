@@ -193,6 +193,110 @@ template <
   typename BehaviorPolicyType,
   typename ReplayType
 >
+void QLearning<
+  EnvironmentType,
+  NetworkType,
+  UpdaterType,
+  BehaviorPolicyType,
+  ReplayType
+>::TrainCategoricalAgent()
+{
+  // Start experience replay.
+
+  // Sample from previous experience.
+  arma::mat sampledStates;
+  arma::icolvec sampledActions;
+  arma::colvec sampledRewards;
+  arma::mat sampledNextStates;
+  arma::icolvec isTerminal;
+
+  replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
+      sampledNextStates, isTerminal);
+
+  double vMin = 0, vMax = 200.0;
+  size_t atomSize = 51;
+  arma::rowvec support = arma::linspace<arma::rowvec>(vMin, vMax, atomSize);
+
+  size_t batchSize = sampledNextStates.n_cols;
+
+  // Compute action value for next state with target network.
+  arma::mat nextActionValues;
+  targetNetwork.Predict(sampledNextStates, nextActionValues);
+
+  arma::Col<size_t> nextAction;
+  if (config.DoubleQLearning())
+  {
+    // If use double Q-Learning, use learning network to select the best action.
+    arma::mat nextActionValues;
+    learningNetwork.Predict(sampledNextStates, nextActionValues);
+    nextAction = BestAction(nextActionValues);
+  }
+  else
+  {
+    nextAction = BestAction(nextActionValues);
+  }
+
+  arma::mat nextDists, nextDist(atomSize, batchSize);
+  targetNetwork.Forward(sampledNextStates, nextDists);
+  for (size_t i = 0; i < batchSize; ++i)
+  {
+    nextDist.col(i) = nextDists(nextAction(i) * atomSize, i,
+        arma::size(atomSize, 1));
+  }
+
+  arma::mat tZ = (arma::conv_to<arma::mat>::from(config.Discount() *
+      ((1 - isTerminal) * support)).each_col() + sampledRewards).t();
+  tZ = arma::clamp(tZ, vMin, vMax);
+  arma::mat b = (tZ - vMin) / (vMax - vMin) * (atomSize - 1);
+  arma::mat l = arma::floor(b);
+  arma::mat u = arma::ceil(b);
+  // arma::umat offset(atomSize, batchSize);
+  // offset.each_row() = arma::linspace<arma::urowvec>(0, (batchSize - 1) *
+  //   atomSize, batchSize);
+  
+  arma::mat projDistUpper = nextDist % (u - b);
+  arma::mat projDistLower = nextDist % (b - l);
+
+  arma::mat projDist = arma::zeros<arma::mat>(arma::size(nextDist));
+  for (size_t batchNo = 0; batchNo < batchSize; batchNo++)
+  {
+    for (size_t j = 0; j < atomSize; j++)
+    {
+      projDist(l(j, batchNo), batchNo) += projDistUpper(j, batchNo);
+      projDist(u(j, batchNo), batchNo) += projDistLower(j, batchNo);
+    }
+  }
+  arma::mat dists;
+  learningNetwork.Forward(sampledStates, dists);
+  arma::mat lossGradients = arma::zeros<arma::mat>(arma::size(dists));
+  for (size_t i = 0; i < batchSize; ++i)
+  {
+    lossGradients(sampledActions(i) * atomSize, i, arma::size(atomSize, 1)) =
+        - (projDist.col(i) / (1e-10 + dists(sampledActions(i) * atomSize, i,
+        arma::size(atomSize, 1))));
+  }
+  // Learn from experience.
+  arma::mat gradients;
+  learningNetwork.Backward(sampledStates, lossGradients, gradients);
+
+  // TODO: verify for PER
+  replayMethod.Update(lossGradients, sampledActions, nextActionValues, gradients);
+
+  #if ENS_VERSION_MAJOR == 1
+  updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
+  #else
+  updatePolicy->Update(learningNetwork.Parameters(), config.StepSize(),
+      gradients);
+  #endif
+}
+
+template <
+  typename EnvironmentType,
+  typename NetworkType,
+  typename UpdaterType,
+  typename BehaviorPolicyType,
+  typename ReplayType
+>
 double QLearning<
   EnvironmentType,
   NetworkType,
@@ -222,7 +326,10 @@ double QLearning<
   if (deterministic || totalSteps < config.ExplorationSteps())
     return reward;
 
-  TrainAgent();
+  if (config.IsCategorical())
+    TrainCategoricalAgent();
+  else
+    TrainAgent();
 
   if (config.NoisyQLearning() == true)
   {

@@ -29,7 +29,8 @@ class TrainingConfig
       discount(0.99),
       gradientLimit(40),
       doubleQLearning(false),
-      noisyQLearning(false)
+      noisyQLearning(false),
+      isCategorical(false)
   { /* Nothing to do here. */ }
 
   TrainingConfig(
@@ -42,7 +43,8 @@ class TrainingConfig
       double discount,
       double gradientLimit,
       bool doubleQLearning,
-      bool noisyQLearning) :
+      bool noisyQLearning,
+      bool isCategorical) :
       numWorkers(numWorkers),
       updateInterval(updateInterval),
       targetNetworkSyncInterval(targetNetworkSyncInterval),
@@ -52,7 +54,8 @@ class TrainingConfig
       discount(discount),
       gradientLimit(gradientLimit),
       doubleQLearning(doubleQLearning),
-      noisyQLearning(noisyQLearning)
+      noisyQLearning(noisyQLearning),
+      isCategorical(isCategorical)
   { /* Nothing to do here. */ }
 
   //! Get the amount of workers.
@@ -108,6 +111,11 @@ class TrainingConfig
   bool NoisyQLearning() const { return noisyQLearning; }
   //! Modify the indicator of double q-learning.
   bool& NoisyQLearning() { return noisyQLearning; }
+
+  //! Get the indicator of categorical q-learning.
+  bool IsCategorical() const { return isCategorical; }
+  //! Modify the indicator of categorical q-learning.
+  bool& IsCategorical() { return isCategorical; }
 
  private:
   /**
@@ -172,6 +180,12 @@ class TrainingConfig
    * This is valid only for q-learning agent.
    */
   bool noisyQLearning;
+
+  /**
+   * Locally-stored indicator for categorical q-learning.
+   * This is valid only for q-learning agent.
+   */
+  bool isCategorical;
 };
 
 } // namespace rl

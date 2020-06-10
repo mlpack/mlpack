@@ -51,7 +51,7 @@ class CategoricalDQN
             const int outputDim,
             const bool isNoisy = false,
             const size_t atomSize = 51):
-      network(EmptyLoss<>(), GaussianInitialization(0, 0.001)),
+      network(EmptyLoss<>(), GaussianInitialization(0, 0.05)),
       isNoisy(isNoisy),
       atomSize(atomSize)
   {
@@ -94,7 +94,7 @@ class CategoricalDQN
   {
     arma::mat q_atoms, activations;
     network.Predict(state, q_atoms);
-    activations.set_size(q_atoms.n_rows, q_atoms.n_cols);
+    activations.copy_size(q_atoms);
     actionValue.set_size(q_atoms.n_rows / atomSize, q_atoms.n_cols);
     arma::rowvec support = arma::linspace<arma::rowvec>(0, 200, atomSize);
     for(size_t i = 0; i < q_atoms.n_rows; i += atomSize)
@@ -111,22 +111,20 @@ class CategoricalDQN
    * Perform the forward pass of the states in real batch mode.
    *
    * @param state The input state.
-   * @param target The predicted target.
+   * @param dist The predicted distributions.
    */
-  void Forward(const arma::mat state, arma::mat& target)
+  void Forward(const arma::mat state, arma::mat& dist)
   {
-    arma::mat q_atoms, activations;
+    arma::mat q_atoms;
     network.Forward(state, q_atoms);
-    activations.set_size(q_atoms.n_rows, q_atoms.n_cols);
-    target.set_size(q_atoms.n_rows / atomSize, q_atoms.n_cols);
+    dist.copy_size(q_atoms);
     arma::rowvec support = arma::linspace<arma::rowvec>(0, 200, atomSize);
     for(size_t i = 0; i < q_atoms.n_rows; i += atomSize)
     {
-      arma::mat activation = arma::mat(activations.memptr() +
+      arma::mat activation = arma::mat(dist.memptr() +
           i * q_atoms.n_cols, atomSize, q_atoms.n_cols, false, false);
       arma::mat input = q_atoms.rows(i, i + atomSize - 1);
       softMax.Forward(input, activation);
-      target.row(i/atomSize) = support * activation;
     } 
   }
 
