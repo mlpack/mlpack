@@ -154,7 +154,7 @@ void QDAFN<MatType>::Search(const MatType& querySet,
       }
     }
 
-    // Extract the results and deduplicate.
+    // Extract the results and deduplicate them.
     size_t extracted = 1;
     neighbors(0, q) = resultsQueue.top().second;
     distances(0, q) = resultsQueue.top().first;
