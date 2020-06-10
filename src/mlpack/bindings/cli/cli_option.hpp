@@ -104,15 +104,15 @@ class CMDOption
     }
 
     const std::string tname = data.tname;
-    const std::string boostName = MapParameterName<
+    const std::string cliName = MapParameterName<
         typename std::remove_pointer<N>::type>(identifier);
-    std::string progOptId = (alias[0] != '\0') ? boostName + ","
-        + std::string(1, alias[0]) : boostName;
+    std::string progOptId = (alias[0] != '\0') ?
+     "-" + std::string(1, alias[0]) + ",--" + cliName : "--" + cliName;
 
     // Do a check to ensure that the boost name isn't already in use.
     const std::map<std::string, util::ParamData>& parameters =
         CMD::Parameters();
-    if (parameters.count(boostName) > 0)
+    if (parameters.count(cliName) > 0)
     {
       // Create a fake Log::Fatal since it may not yet be initialized.
       // Temporarily define color code escape sequences.
@@ -131,7 +131,7 @@ class CMDOption
       #undef BASH_RED
       #undef BASH_CLEAR
 
-      outstr << "Parameter --" << boostName << " (" << data.alias << ") "
+      outstr << "Parameter --" << cliName << " (" << data.alias << ") "
              << "is defined multiple times with the same identifiers."
              << std::endl;
     }
