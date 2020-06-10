@@ -23,10 +23,6 @@
 #include <boost/variant.hpp>
 #include "neighbor_search.hpp"
 
-#include <cereal/cereal.hpp>
-#include <cereal/archives/xml.hpp>
-#include <cereal/archives/binary.hpp>
-
 namespace mlpack {
 namespace neighbor {
 
