@@ -1,5 +1,5 @@
 /**
- * @file poisson_nll_loss.hpp
+ * @file methods/ann/loss_functions/poisson_nll_loss.hpp
  * @author Mrityunjay Tripathi
  *
  * Definition of the Poisson Negative Log Likelihood class.
