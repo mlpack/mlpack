@@ -2,7 +2,8 @@
  * @file methods/ann/loss_functions/poisson_nll_loss.hpp
  * @author Mrityunjay Tripathi
  *
- * Definition of the PoissonNLLLoss class.
+ * Definition of the PoissonNLLLoss class. It is the negative log likelihood of
+ * the Poisson distribution.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,7 +19,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the Poisson Negative Log Likelihood loss. This loss
+ * Implementation of the Poisson negative log likelihood loss. This loss
  * function expects input for each class. It also expects a class index,
  * in the range between 1 and the number of classes, as target when calling
  * the Forward function.
@@ -35,11 +36,15 @@ template <
 class PoissonNLLLoss
 {
  public:
+  //! Data type of each element of InputDataType.
+  typedef typename InputDataType::elem_type ElemType;
+
   /**
    * Create the PoissonNLLLoss object.
    *
-   * @param logInput If true the loss is computed as \f$ \exp(input) - target \cdot input \f$,
-   *        if false then the loss is \f$ input - target \cdot \log(input + eps) \f$.
+   * @param logInput If true the loss is computed as
+   *        \f$ \exp(input) - target \cdot input \f$, if false then the loss is
+   *        \f$ input - target \cdot \log(input + eps) \f$.
    * @param full Boolean value that determines whether to include Stirling's
    *        approximation term.
    * @param eps A small value to prevent 0 in denominators and logarithms.
@@ -47,19 +52,19 @@ class PoissonNLLLoss
    */
   PoissonNLLLoss(const bool logInput = true,
                  const bool full = false,
-                 const double eps = 1e-08,
+                 const ElemType eps = 1e-08,
                  const bool reduction = true);
 
   /**
-   * Computes the Poisson Negative log likelihood.
+   * Computes the Poisson negative log likelihood Loss.
    *
    * @param input Input data used for evaluating the specified function.
    * @param target The target vector, that contains the class index in the range
    *        between 1 and the number of classes.
    */
   template<typename InputType, typename TargetType>
-  typename InputType::elem_type Forward(const InputType& input,
-                                        const TargetType& target);
+  ElemType Forward(const InputType& input,
+                   const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network. The Poisson Negative Log
@@ -98,9 +103,9 @@ class PoissonNLLLoss
   bool& Full() { return full; }
 
   //! Get the value of eps.
-  double Eps() const { return eps; }
+  ElemType Eps() const { return eps; }
   //! Modify the value of eps.
-  double& Eps() { return eps; }
+  ElemType& Eps() { return eps; }
 
   //! Get the value of reduction.
   bool Reduction() const { return reduction; }
@@ -128,7 +133,7 @@ class PoissonNLLLoss
   bool full;
 
   //! Small value required to prevent 0 in logarithms and denominators.
-  double eps;
+  ElemType eps;
 
   //! Boolean value that tells if mean has to be taken.
   bool reduction;

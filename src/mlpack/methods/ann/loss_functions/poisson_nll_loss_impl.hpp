@@ -1,8 +1,8 @@
 /**
- * @file poisson_nll_loss_impl.hpp
+ * @file methods/ann/loss_functions/poisson_nll_loss_impl.hpp
  * @author Mrityunjay Tripathi
  *
- * Implementation of the Poisson Negative Log Likelihood class.
+ * Implementation of the PoissonNLLLoss class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -30,18 +30,16 @@ PoissonNLLLoss<InputDataType, OutputDataType>::PoissonNLLLoss(
     eps(eps),
     reduction(reduction)
 {
-  // Nothing to do here.
+  Log::Assert(eps >= 0, "Epsilon (eps) must be greater than or equal to zero.");
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-typename InputType::elem_type
-PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
+ElemType PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     const TargetType& target)
 {
-  InputType loss;
-  loss.set_size(size(input));
+  InputType loss(arma::size(input));
 
   if (logInput)
     loss = arma::exp(input) - target % input;
