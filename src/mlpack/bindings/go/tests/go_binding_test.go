@@ -479,7 +479,7 @@ func TestGonumWrongCol(t *testing.T) {
 }
 
 func TestRunIntVector(t *testing.T) {
-  t.Log("Test a int vector input paramter.")
+  t.Log("Test a int vector input parameter.")
   param := mlpack.TestGoBindingOptions()
   x := []int{
     1, 2, 3, 4, 5, 6,
@@ -507,7 +507,7 @@ func TestRunIntVector(t *testing.T) {
 }
 
 func TestRunStringVector(t *testing.T) {
-  t.Log("Test a string vector input paramter.")
+  t.Log("Test a string vector input parameter.")
   param := mlpack.TestGoBindingOptions()
   x := []string{
     "1", "2", "3", "4", "5", "6",

@@ -49,8 +49,7 @@ void mlpackSetParamString(const char* identifier, const char* value);
 /**
  * Set the parameter to the given value, given that the type is a pointer.
  */
-void mlpackSetParamPtr(const char* identifier,
-                              const double* ptr);
+void mlpackSetParamPtr(const char* identifier, const double* ptr);
 
 /**
  * Set the int vector parameter to the given value.
