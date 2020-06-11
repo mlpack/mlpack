@@ -38,6 +38,7 @@ void ParseCommandLine(int argc, char** argv)
 {
   // First, we need to build the boost::program_options variables for parsing.
   CLI::App app;
+  app.set_help_flag();
 
   // Go through list of options in order to add them.
   std::map<std::string, util::ParamData>& parameters = CMD::Parameters();
