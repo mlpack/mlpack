@@ -1,5 +1,5 @@
 /**
- * @file methods/reinforcement_learning/environment/continuous_mountain_car.hpp
+ * @file continuous_mountain_car.hpp
  * @author Rohan Raj
  * @author Shashank Shekhar
  *
@@ -19,6 +19,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/clamp.hpp>
+#include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
 namespace rl {
@@ -84,9 +85,38 @@ class ContinuousMountainCar
    */
   struct Action
   {
+    static const int size = 1;
     double action[1];
     // Storing degree of freedom
-    const int size = 1;
+
+
+      Action() = default;
+
+      Action(const arma::colvec& actionValue)
+      {
+          std::copy(actionValue.begin(), actionValue.end(), action);
+      }
+
+      arma::colvec data()
+      {
+          return arma::colvec(action, size);
+      }
+
+      static Action Sample()
+      {
+          Action r;
+
+          r.action[0] = math::Random()*2-1; // range: [-1,1]
+
+          return r;
+      }
+
+      static Action Zero()
+      {
+          Action r = {};
+          std::fill(r.action, r.action + size, 0);
+          return r;
+      }
   };
 
   /**
@@ -101,6 +131,7 @@ class ContinuousMountainCar
    * @param doneReward Reward recieved by the agent on success.
    * @param maxSteps The number of steps after which the episode
    *    terminates. If the value is 0, there is no limit.
+   * @param deceleration is a meaasure of how hard it is to go uphill
    */
   ContinuousMountainCar(const double positionMin = -1.2,
                         const double positionMax = 0.6,
@@ -109,7 +140,8 @@ class ContinuousMountainCar
                         const double velocityMax = 0.07,
                         const double duration = 0.0015,
                         const double doneReward = 100,
-                        const size_t maxSteps = 0) :
+                        const size_t maxSteps = 0,
+                        const double deceleration = 0.0014) :
       positionMin(positionMin),
       positionMax(positionMax),
       positionGoal(positionGoal),
@@ -118,7 +150,8 @@ class ContinuousMountainCar
       duration(duration),
       doneReward(doneReward),
       maxSteps(maxSteps),
-      stepsPerformed(0)
+      stepsPerformed(0),
+      deceleration(deceleration)
   { /* Nothing to do here */ }
 
   /**
@@ -140,8 +173,8 @@ class ContinuousMountainCar
     double force = math::ClampRange(action.action[0], -1.0, 1.0);
 
     // Update states.
-    nextState.Velocity() = state.Velocity() + force * duration - 0.0025 *
-        std::cos(3 * state.Position());
+    nextState.Velocity() = state.Velocity() + force * duration -
+            deceleration*std::cos(3 * state.Position());
     nextState.Velocity() = math::ClampRange(nextState.Velocity(),
       velocityMin, velocityMax);
     nextState.Position() = state.Position() + nextState.Velocity();
@@ -159,7 +192,7 @@ class ContinuousMountainCar
     else if (done)
       return doneReward;
 
-    return std::pow(action.action[0], 2) * 0.1;
+    return std::pow(force, 2) * 0.1;
   }
 
   /**
@@ -248,6 +281,8 @@ class ContinuousMountainCar
 
   //! Locally-stored number of steps performed.
   size_t stepsPerformed;
+
+  double deceleration;
 };
 
 } // namespace rl

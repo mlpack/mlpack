@@ -1,18 +1,18 @@
 /**
- * @file n_step_q_learning_worker.hpp
+ * @file one_step_q_learning_worker.hpp
  * @author Shangtong Zhang
  * @author Arsen Zahray
  *
- * This file is the definition of NStepQLearningWorker class,
- * which implements an episode for async n step Q-Learning algorithm.
+ * This file is the definition of OneStepQLearningWorker class,
+ * which implements an episode for async one step Q-Learning algorithm.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_RL_WORKER_N_STEP_Q_LEARNING_WORKER_HPP
-#define MLPACK_METHODS_RL_WORKER_N_STEP_Q_LEARNING_WORKER_HPP
+#ifndef MLPACK_METHODS_RL_WORKER_ONE_STEP_CONTINUOUS_Q_LEARNING_WORKER_HPP
+#define MLPACK_METHODS_RL_WORKER_ONE_STEP_CONTINUOUS_Q_LEARNING_WORKER_HPP
 
 #include <mlpack/methods/reinforcement_learning/worker/worker_base.hpp>
 #include <mlpack/methods/reinforcement_learning/worker/q_learning_worker_transition_type.hpp>
@@ -21,12 +21,12 @@ namespace mlpack {
 namespace rl {
 
 /**
- * N-step Q-Learning worker.
+ * One step Q-Learning worker.
  *
  * @tparam EnvironmentType The type of the reinforcement learning task.
  * @tparam NetworkType The type of the network model.
  * @tparam UpdaterType The type of the optimizer.
- * @tparam PolicyType The type of the behavior policy.
+ * @tparam PolicyType The type of the behavior policy. *
  */
 template <
   typename EnvironmentType,
@@ -34,14 +34,15 @@ template <
   typename UpdaterType,
   typename PolicyType
 >
-class NStepQLearningWorker : public WorkerBase<
-        EnvironmentType,
-        NetworkType,
-        UpdaterType,
-        PolicyType,
-        QLearningWorkerTransitionType<
-                typename EnvironmentType::State,
-                typename EnvironmentType::Action>>
+class OneStepContinuousQLearningWorker:
+        public WorkerBase<
+            EnvironmentType,
+            NetworkType,
+            UpdaterType,
+            PolicyType,
+            QLearningWorkerTransitionType<
+                    typename EnvironmentType::State,
+                    arma::colvec>>
 {
     using base = WorkerBase<
             EnvironmentType,
@@ -50,15 +51,14 @@ class NStepQLearningWorker : public WorkerBase<
             PolicyType,
             QLearningWorkerTransitionType<
                     typename EnvironmentType::State,
-                    typename EnvironmentType::Action>>;
+                    arma::colvec>>;
 
  public:
      using StateType = typename EnvironmentType::State;
      using ActionType = typename EnvironmentType::Action;
 
-
-  /**
-   * Construct N-step Q-Learning worker with the given parameters and
+    /**
+   * Construct one step Q-Learning worker with the given parameters and
    * environment.
    *
    * @param updater The optimizer.
@@ -66,61 +66,65 @@ class NStepQLearningWorker : public WorkerBase<
    * @param config Hyper-parameters.
    * @param deterministic Whether it should be deterministic.
    */
-  NStepQLearningWorker(
-      const UpdaterType& updater,
-      const EnvironmentType& environment,
-      const TrainingConfig& config,
-      bool deterministic):
-      base(updater, environment, config, deterministic)
-  {}
+     OneStepContinuousQLearningWorker(
+        const UpdaterType& updater,
+        const EnvironmentType& environment,
+        const TrainingConfig& config,
+        bool deterministic)
+        : base(updater, environment, config, deterministic)
+    { }
 
-  /**
-   * Copy another NStepQLearningWorker.
-   *
-   * @param other NStepQLearningWorker to copy.
-   */
-  NStepQLearningWorker(const NStepQLearningWorker& other) :
-      base(std::forward<const NStepQLearningWorker&>(other))
-  { }
+    /**
+     * Copy another OneStepQLearningWorker.
+     *
+     * @param other OneStepQLearningWorker to copy.
+     */
+    OneStepContinuousQLearningWorker(
+            const OneStepContinuousQLearningWorker& other) :
+        base(std::forward<const OneStepContinuousQLearningWorker&>(other))
+    {}
 
-  /**
-   * Take ownership of another NStepQLearningWorker.
-   *
-   * @param other NStepQLearningWorker to take ownership of.
-   */
-  NStepQLearningWorker(NStepQLearningWorker&& other) :
-      base(std::forward<NStepQLearningWorker&&>(other))
-  {  }
+    /**
+     * Take ownership of another OneStepQLearningWorker.
+     *
+     * @param other OneStepQLearningWorker to take ownership of.
+     */
+    OneStepContinuousQLearningWorker(
+            OneStepContinuousQLearningWorker&& other) :
+        base(std::forward<OneStepContinuousQLearningWorker&&>(other))
+    {}
 
-  /**
-   * Copy another NStepQLearningWorker.
-   *
-   * @param other NStepQLearningWorker to copy.
-   */
-  NStepQLearningWorker& operator=(const NStepQLearningWorker& other)
-  {
-    if (&other == this)
-      return *this;
+    /**
+     * Copy another OneStepQLearningWorker.
+     *
+     * @param other OneStepQLearningWorker to copy.
+     */
+    OneStepContinuousQLearningWorker& operator=(
+            const OneStepContinuousQLearningWorker& other)
+    {
+        if (&other == this)
+            return *this;
 
-    base::operator=(std::forward(other));
+        base::operator=(std::forward(other));
 
-    return *this;
-  }
+        return *this;
+    }
 
-  /**
-   * Take ownership of another NStepQLearningWorker.
-   *
-   * @param other NStepQLearningWorker to take ownership of.
-   */
-  NStepQLearningWorker& operator=(NStepQLearningWorker&& other)
-  {
-    if (&other == this)
-      return *this;
+    /**
+     * Take ownership of another OneStepQLearningWorker.
+     *
+     * @param other OneStepQLearningWorker to take ownership of.
+     */
+    OneStepContinuousQLearningWorker& operator=(
+            OneStepContinuousQLearningWorker&& other)
+    {
+        if (&other == this)
+            return *this;
 
-    base::operator=(std::forward(other));
+        base::operator=(std::forward(other));
 
-    return *this;
-  }
+        return *this;
+    }
 
 
   /**
@@ -172,11 +176,10 @@ class NStepQLearningWorker : public WorkerBase<
     this->pending[this->pendingIndex] =
             {
                 this->state,
-                action,
+                action.data(),
                 reward,
                 nextState
             };
-
     this->pendingIndex++;
 
     if (terminal || this->pendingIndex >= this->config.UpdateInterval())
@@ -185,28 +188,31 @@ class NStepQLearningWorker : public WorkerBase<
       arma::mat totalGradients(learningNetwork.Parameters().n_rows,
           learningNetwork.Parameters().n_cols, arma::fill::zeros);
 
-      // Bootstrap from the value of next state.
-      arma::colvec actionValue;
-      double target = 0;
-      if (!terminal)
-      {
-        #pragma omp critical
-        {
-            targetNetwork.Predict(nextState.Encode(), actionValue);
-        };
-        target = actionValue.max();
-      }
-
-      // Update in reverse order.
-      for (int i = this->pending.size() - 1; i >= 0; --i)
+      for (size_t i = 0; i < this->pending.size(); ++i)
       {
         auto &transition = this->pending[i];
-        target = this->config.Discount() * target + transition.reward;
+
+        // Compute the target state-action value.
+        arma::colvec actionValue;
+        if (i<this->pending.size()-1)
+        {
+            actionValue = this->pending[i+1].action;
+        }
+        else
+        {
+            #pragma omp critical
+            {
+                targetNetwork.Predict(
+                        transition.nextState.Encode(),
+                        actionValue);
+            };
+        }
+
+        actionValue = std::exp(- transition.reward) +
+            this->config.Discount() * actionValue;
 
         // Compute the training target for current state.
         auto input = transition.state.Encode();
-        this->network.Forward(input, actionValue);
-        actionValue[transition.action] = target;
 
         // Compute gradient.
         arma::mat gradients;
@@ -228,12 +234,14 @@ class NStepQLearningWorker : public WorkerBase<
       // Perform async update of the global network.
       #if ENS_VERSION_MAJOR == 1
       this->updater.Update(
-            learningNetwork.Parameters(),
-            this->config.StepSize(),
-            totalGradients);
+              learningNetwork.Parameters(),
+              this->config.StepSize(),
+              totalGradients);
       #else
-      this->updatePolicy->Update(learningNetwork.Parameters(),
-          this->config.StepSize(), totalGradients);
+      this->updatePolicy->Update(
+              learningNetwork.Parameters(),
+              this->config.StepSize(),
+              totalGradients);
       #endif
 
       // Sync the local network with the global network.
@@ -261,7 +269,6 @@ class NStepQLearningWorker : public WorkerBase<
     return false;
   }
 };
-
 } // namespace rl
 } // namespace mlpack
 

@@ -204,8 +204,7 @@ template <
     typename UpdaterType,
     typename PolicyType
 >
-using OneStepContinuousQLearning = AsyncLearning<
-    OneStepContinuousQLearningWorker<EnvironmentType,
+using OneStepContinuousQLearning = AsyncLearning<OneStepContinuousQLearningWorker<EnvironmentType,
     NetworkType, UpdaterType, PolicyType>, EnvironmentType, NetworkType,
     UpdaterType, PolicyType>;
 
