@@ -83,8 +83,8 @@ inline std::string PrintInputOptions(/* option */);
  */
 template<typename T, typename... Args>
 std::string PrintOptionalInputs(const std::string& paramName,
-                              const T& value,
-                              Args... args);
+                                const T& value,
+                                Args... args);
 
 /**
  * Print an input option.  This will throw an exception if the parameter does

@@ -30,7 +30,6 @@ void ImportDecl(
 {
   /**
    * This will give output of the form:
-   *
    */
   const std::string prefix = std::string(indent, ' ');
   // Now import all the necessary packages.

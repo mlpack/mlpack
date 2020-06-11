@@ -16,7 +16,7 @@ func Load(filename string) (*mat.Dense, error) {
   var rows int
   var numbers []float64
 
-  // Open the file
+  // Open the file.
   file, err := os.Open(filename)
   if err != nil {
     return nil, err
@@ -50,7 +50,7 @@ func Load(filename string) (*mat.Dense, error) {
 
 // Save() writes all of the records to the CSV.
 func Save(filename string, mat *mat.Dense) error {
-  // Create the file
+  // Create the file.
   file, err := os.Create(filename)
   if err != nil {
     return err
@@ -77,30 +77,30 @@ func Save(filename string, mat *mat.Dense) error {
   return nil
 }
 
-// UnZip() unzips the given input to the given the output file.
+// UnZip() unzips the given input to the given output file.
 func UnZip(input string, output string) error {
-    // Create the file
+    // Create the file.
     out, err := os.Create(output)
     if err != nil {
         return err
     }
     defer out.Close()
 
-    // Open the file
+    // Open the file.
     in, err := os.Open(input)
     if err != nil {
         return err
     }
     defer in.Close()
     
-    // Unzip the data
+    // Unzip the data.
     resp, err := gzip.NewReader(in)
     if err != nil {
         return err
     }
     defer resp.Close()
 
-    // Write the body to file
+    // Write the body to file.
     _, err = io.Copy(out, resp)
     if err != nil {
         return err
@@ -111,21 +111,21 @@ func UnZip(input string, output string) error {
 // DownloadFile() downloads the file from the given url and
 // save it to the given filename.
 func DownloadFile (url string, filename string) error {
-    // Create the file
+    // Create the file.
     out, err := os.Create(filename)
     if err != nil {
         return err
     }
     defer out.Close()
 
-    // Get the data
+    // Get the data.
     resp, err := http.Get(url)
     if err != nil {
         return err
     }
     defer resp.Body.Close()
 
-    // Write the body to file
+    // Write the body to file.
     _, err = io.Copy(out, resp.Body)
     if err != nil {
         return err
