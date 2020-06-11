@@ -63,8 +63,8 @@ class GreedyPolicy
    * @return Sampled action.
    */
   ActionType Sample(const arma::colvec& actionValue,
-      bool deterministic = false,
-      const bool isNoisy = false)
+                    bool deterministic = false,
+                    const bool isNoisy = false)
   {
     double exploration = math::Random();
 

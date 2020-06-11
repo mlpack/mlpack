@@ -56,7 +56,7 @@ class SimpleDQN
   {
     network.Add(new Linear<>(inputDim, h1));
     network.Add(new ReLULayer<>());
-    if(isNoisy)
+    if (isNoisy)
     { 
       noisyLayerIndex.push_back(network.Model().size());
       network.Add(new NoisyLinear<>(h1, h2));
@@ -113,11 +113,11 @@ class SimpleDQN
   }
 
   /**
-   * Resets noise of the network, is the network is of type noisy.
+   * Resets noise of the network, if the network is of type noisy.
    */
   void ResetNoise()
   {
-    for(size_t i = 0; i < noisyLayerIndex.size(); i++)
+    for (size_t i = 0; i < noisyLayerIndex.size(); i++)
     {
       boost::get<NoisyLinear<>*>
           (network.Model()[noisyLayerIndex[i]])->ResetNoise();

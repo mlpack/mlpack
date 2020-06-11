@@ -340,7 +340,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithNoisyDQN)
   bool converged = false;
   for (size_t trial = 0; trial < 3; ++trial)
   {
-    Log::Debug << "Trail number: " << trial << std::endl;
+    Log::Debug << "Trial number: " << trial << std::endl;
 
     // Set up the policy and replay method.
     GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -373,7 +373,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDoubleNoisyDQN)
   bool converged = false;
   for (size_t trial = 0; trial < 5; ++trial)
   {
-    Log::Debug << "Trail number: " << trial << std::endl;
+    Log::Debug << "Trial number: " << trial << std::endl;
 
     // Set up the policy and replay method.
     GreedyPolicy<CartPole> policy(1.0, 2000, 0.1, 0.99);

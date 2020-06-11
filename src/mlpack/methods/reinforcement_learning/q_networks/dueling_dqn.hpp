@@ -91,7 +91,7 @@ class DuelingDQN
     valueNetwork = new Sequential<>();
     advantageNetwork = new Sequential<>();
 
-    if(isNoisy)
+    if (isNoisy)
     {
       noisyLayerIndex.push_back(valueNetwork->Model().size());
       valueNetwork->Add(new NoisyLinear<>(h1, h2));
@@ -223,11 +223,11 @@ class DuelingDQN
   }
 
   /**
-   * Resets noise of the network, is the network is of type noisy.
+   * Resets noise of the network, if the network is of type noisy.
    */
   void ResetNoise()
   {
-    for(size_t i = 0; i < noisyLayerIndex.size(); i++)
+    for (size_t i = 0; i < noisyLayerIndex.size(); i++)
     {
       boost::get<NoisyLinear<>*>
           (valueNetwork->Model()[noisyLayerIndex[i]])->ResetNoise();
