@@ -298,7 +298,7 @@ class CMD
   //! Map for functions and types.
   //! Use as functionMap["typename"]["functionName"].
   typedef std::map<std::string, std::map<std::string,
-      void (*)(const util::ParamData&, const void*, void*)>> FunctionMapType;
+      void (*)(util::ParamData&, const void*, void*)>> FunctionMapType;
   FunctionMapType functionMap;
 
  private:
