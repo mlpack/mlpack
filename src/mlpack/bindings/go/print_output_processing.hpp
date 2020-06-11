@@ -125,7 +125,6 @@ void PrintOutputProcessing(
    *  modelOut.get\<Type\>("paramName")
    *
    */
-
   std::string name = d.name;
   name = CamelCase(name, true);
   std::cout << prefix << "var " << name << " " << goStrippedType << std::endl;
