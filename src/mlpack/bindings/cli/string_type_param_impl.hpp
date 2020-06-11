@@ -52,7 +52,7 @@ std::string StringTypeParamImpl(
 
 //! Return "int".
 template<>
-inline void StringTypeParam<int>(const util::ParamData& /* data */,
+inline void StringTypeParam<int>(util::ParamData& /* data */,
                                  const void* /* input */,
                                  void* output)
 {
@@ -62,7 +62,7 @@ inline void StringTypeParam<int>(const util::ParamData& /* data */,
 
 //! Return "bool".
 template<>
-inline void StringTypeParam<bool>(const util::ParamData& /* data */,
+inline void StringTypeParam<bool>(util::ParamData& /* data */,
                                   const void* /* input */,
                                   void* output)
 {
@@ -72,7 +72,7 @@ inline void StringTypeParam<bool>(const util::ParamData& /* data */,
 
 //! Return "string".
 template<>
-inline void StringTypeParam<std::string>(const util::ParamData& /* data */,
+inline void StringTypeParam<std::string>(util::ParamData& /* data */,
                                          const void* /* input */,
                                          void* output)
 {
@@ -82,7 +82,7 @@ inline void StringTypeParam<std::string>(const util::ParamData& /* data */,
 
 //! Return "double".
 template<>
-inline void StringTypeParam<double>(const util::ParamData& /* data */,
+inline void StringTypeParam<double>(util::ParamData& /* data */,
                                     const void* /* input */,
                                     void* output)
 {
@@ -93,7 +93,7 @@ inline void StringTypeParam<double>(const util::ParamData& /* data */,
 //! Return "string";
 template<>
 inline void StringTypeParam<std::tuple<mlpack::data::DatasetInfo, arma::mat>>(
-    const util::ParamData& /* data */,
+    util::ParamData& /* data */,
     const void* /* input */,
     void* output)
 {

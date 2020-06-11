@@ -22,7 +22,7 @@ namespace cmd {
 //! Print an option.
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
@@ -37,7 +37,7 @@ std::string GetPrintableParam(
 //! Print a vector option.
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<util::IsStdVector<T>::value>::type*
         /* junk */)
 {
@@ -73,7 +73,7 @@ std::string GetMatrixSize(
 //! Print a matrix/tuple option (this just prints the filename).
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<arma::is_arma_type<T>::value ||
                                   std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
@@ -100,7 +100,7 @@ std::string GetPrintableParam(
 //! Print a model option (this just prints the filename).
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
 {

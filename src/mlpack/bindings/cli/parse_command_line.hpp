@@ -42,10 +42,10 @@ void ParseCommandLine(int argc, char** argv)
   // Go through list of options in order to add them.
   std::map<std::string, util::ParamData>& parameters = CMD::Parameters();
   std::map<std::string, std::string> boostNameMap;
-  for (const auto it : parameters)
+  for (auto it : parameters)
   {
     // Add the parameter to desc.
-    const util::ParamData& d = it.second;
+    util::ParamData& d = it.second;
     CMD::GetSingleton().functionMap[d.tname]["AddToPO"](d, NULL,
         (void*) &app);
 
@@ -104,24 +104,23 @@ void ParseCommandLine(int argc, char** argv)
   }
   catch (const CLI::ParseError& pe)
   {
-    Log::Fatal << "Caught exception from parsing command line: " << pe.what()
-        << std::endl;
+    app.exit(pe);
   }
 
   // Now iterate through the filled vmap, and overwrite default values with
   // anything that's found on the command line.
 
-  std::cout << "App size: " << app.count_all() << std::endl;
-  for (auto option : app.get_options()) 
-  {
-    std::cout << "Options: " << option->get_name() << std::endl;
-   const std::string identifier = boostNameMap[option->get_name()];
-    util::ParamData& param = parameters[identifier];
-    param.wasPassed = true;
-    auto value = app.count(option->get_name());
-    CMD::GetSingleton().functionMap[param.tname]["SetParam"](param,
-        (void*) &value, NULL);
-  }
+  // std::cout << "App size: " << app.count_all() << std::endl;
+  // for (auto option : app.get_options()) 
+  // {
+  //   std::cout << "Options: " << option->get_name() << std::endl;
+  //  const std::string identifier = boostNameMap[option->get_name()];
+  //   util::ParamData& param = parameters[identifier];
+  //   param.wasPassed = true;
+  //   auto value = app.count(option->get_name());
+  //   CMD::GetSingleton().functionMap[param.tname]["SetParam"](param,
+  //       (void*) &value, NULL);
+  // }
   
   // If the user specified any of the default options (--help, --version, or
   // --info), handle those.
@@ -175,7 +174,7 @@ void ParseCommandLine(int argc, char** argv)
   for (std::map<std::string, util::ParamData>::const_iterator iter =
        parameters.begin(); iter != parameters.end(); ++iter)
   {
-    const util::ParamData d = iter->second;
+    util::ParamData d = iter->second;
     if (d.required)
     {
       const std::string boostName;

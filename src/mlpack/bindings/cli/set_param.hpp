@@ -94,7 +94,7 @@ void SetParam(
  * @param output Place to store pointer to value.
  */
 template<typename T>
-void SetParam(const util::ParamData& d, const void* input, void* /* output */)
+void SetParam(util::ParamData& d, const void* input, void* /* output */)
 {
   SetParam<typename std::remove_pointer<T>::type>(
       const_cast<util::ParamData&>(d), *((boost::any*) input));

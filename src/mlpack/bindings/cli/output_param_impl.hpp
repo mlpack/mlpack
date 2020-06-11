@@ -23,7 +23,7 @@ namespace cmd {
 //! Output an option.
 template<typename T>
 void OutputParamImpl(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
@@ -37,7 +37,7 @@ void OutputParamImpl(
 //! Output a vector option.
 template<typename T>
 void OutputParamImpl(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::enable_if<util::IsStdVector<T>>::type* /* junk */)
 {
   std::cout << data.name << ": ";
@@ -50,7 +50,7 @@ void OutputParamImpl(
 //! Output a matrix option (this saves it to file).
 template<typename T>
 void OutputParamImpl(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* /* junk */)
 {
   typedef std::tuple<T, std::string> TupleType;
@@ -70,7 +70,7 @@ void OutputParamImpl(
 //! Output a model option (this saves it to file).
 template<typename T>
 void OutputParamImpl(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
 {
@@ -90,7 +90,7 @@ void OutputParamImpl(
 //! Output a mapped dataset.
 template<typename T>
 void OutputParamImpl(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
 {
