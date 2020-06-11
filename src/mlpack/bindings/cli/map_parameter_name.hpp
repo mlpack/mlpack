@@ -53,14 +53,16 @@ std::string MapParameterName(
 }
 
 /**
- * Map the parameter name to the name seen by boost::program_options.
- *
+ * Map the parameter name to the name seen by CLI instead of boost.
+ *  
+ * Not sure if we will keep this funtion since there is not boost 
+ * 
  * @param d Parameter data.
  * @param * (input) Unused parameter.
  * @param output Pointer to std::string that will hold the mapped name.
  */
 template<typename T>
-void MapParameterName(const util::ParamData& d,
+void MapParameterName(util::ParamData& d,
                       const void* /* input */,
                       void* output)
 {

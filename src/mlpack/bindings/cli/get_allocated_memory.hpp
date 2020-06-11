@@ -21,7 +21,7 @@ namespace cmd {
 
 template<typename T>
 void* GetAllocatedMemory(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0)
 {
@@ -30,7 +30,7 @@ void* GetAllocatedMemory(
 
 template<typename T>
 void* GetAllocatedMemory(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
   return NULL;
@@ -38,7 +38,7 @@ void* GetAllocatedMemory(
 
 template<typename T>
 void* GetAllocatedMemory(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {
@@ -49,7 +49,7 @@ void* GetAllocatedMemory(
 }
 
 template<typename T>
-void GetAllocatedMemory(const util::ParamData& d,
+void GetAllocatedMemory(util::ParamData& d,
                         const void* /* input */,
                         void* output)
 {

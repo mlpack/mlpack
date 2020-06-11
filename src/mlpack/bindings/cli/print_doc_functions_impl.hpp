@@ -75,7 +75,7 @@ inline std::string PrintDefault(const std::string& paramName)
   if (CMD::Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter " + paramName + "!");
 
-  const util::ParamData& d = CMD::Parameters()[paramName];
+  util::ParamData& d = CMD::Parameters()[paramName];
 
   std::string defaultValue;
   CMD::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL,
@@ -115,7 +115,7 @@ std::string ProcessOptions(const std::string& paramName,
   std::string result = "";
   if (CMD::Parameters().count(paramName) > 0)
   {
-    const util::ParamData& d = CMD::Parameters()[paramName];
+    util::ParamData& d = CMD::Parameters()[paramName];
 
     std::string name;
     CMD::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](d, NULL,
@@ -170,55 +170,55 @@ inline std::string ProgramCall(const std::string& programName)
   oss << "$ " << GetBindingName(programName);
 
   // Handle all options---first input options, then output options.
-  const std::map<std::string, util::ParamData>& parameters = CMD::Parameters();
+  std::map<std::string, util::ParamData>& parameters = CMD::Parameters();
 
-  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  for (auto it : parameters)
   {
-    if (!it->second.input || it->second.persistent)
+    if (!it.second.input || it.second.persistent)
       continue;
 
     // Otherwise, print the name and the default value.
     std::string name;
-    CMD::GetSingleton().functionMap[it->second.tname]["GetPrintableParamName"](
-        it->second, NULL, (void*) &name);
+    CMD::GetSingleton().functionMap[it.second.tname]["GetPrintableParamName"](
+        it.second, NULL, (void*) &name);
 
     std::string value;
-    CMD::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
-        it->second, NULL, (void*) &value);
+    CMD::GetSingleton().functionMap[it.second.tname]["DefaultParam"](
+        it.second, NULL, (void*) &value);
     if (value == "''")
       value = "<string>";
 
     oss << " ";
-    if (!it->second.required)
+    if (!it.second.required)
       oss << "[";
 
     oss << name;
-    if (it->second.cppType != "bool")
+    if (it.second.cppType != "bool")
       oss << " " << value;
 
-    if (!it->second.required)
+    if (!it.second.required)
       oss << "]";
   }
 
   // Now get the output options.
-  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  for (auto it : parameters)
   {
-    if (it->second.input)
+    if (it.second.input)
       continue;
 
     // Otherwise, print the name and the default value.
     std::string name;
-    CMD::GetSingleton().functionMap[it->second.tname]["GetPrintableParamName"](
-        it->second, NULL, (void*) &name);
+    CMD::GetSingleton().functionMap[it.second.tname]["GetPrintableParamName"](
+        it.second, NULL, (void*) &name);
 
     std::string value;
-    CMD::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
-        it->second, NULL, (void*) &value);
+    CMD::GetSingleton().functionMap[it.second.tname]["DefaultParam"](
+        it.second, NULL, (void*) &value);
     if (value == "''")
       value = "<string>";
 
     oss << " [" << name;
-    if (it->second.cppType != "bool")
+    if (it.second.cppType != "bool")
       oss << " " << value;
     oss << "]";
   }
