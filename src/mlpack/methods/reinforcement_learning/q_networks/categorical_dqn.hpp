@@ -51,7 +51,7 @@ class CategoricalDQN
             const int outputDim,
             const bool isNoisy = false,
             const size_t atomSize = 51):
-      network(EmptyLoss<>(), GaussianInitialization(0, 0.05)),
+      network(EmptyLoss<>(), GaussianInitialization(0, 0.001)),
       isNoisy(isNoisy),
       atomSize(atomSize)
   {
@@ -96,7 +96,8 @@ class CategoricalDQN
     network.Predict(state, q_atoms);
     activations.copy_size(q_atoms);
     actionValue.set_size(q_atoms.n_rows / atomSize, q_atoms.n_cols);
-    arma::rowvec support = arma::linspace<arma::rowvec>(0, 200, atomSize);
+    double vMin = 0, vMax = 200.0;
+    arma::rowvec support = arma::linspace<arma::rowvec>(vMin, vMax, atomSize);
     for(size_t i = 0; i < q_atoms.n_rows; i += atomSize)
     {
       arma::mat activation = activations.rows(i, i + atomSize - 1);
@@ -104,7 +105,7 @@ class CategoricalDQN
       softMax.Forward(input, activation);
       activations.rows(i, i + atomSize - 1) = activation;
       actionValue.row(i/atomSize) = support * activation;
-    } 
+    }
   }
 
   /**
