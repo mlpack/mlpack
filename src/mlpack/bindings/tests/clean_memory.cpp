@@ -25,11 +25,11 @@ void CleanMemory()
   // If we are holding any pointers, then we "own" them.  But we may hold the
   // same pointer twice, so we have to be careful to not delete it multiple
   // times.
-  std::unordered_map<void*, const util::ParamData*> memoryAddresses;
+  std::unordered_map<void*, util::ParamData*> memoryAddresses;
   auto it = CMD::Parameters().begin();
   while (it != CMD::Parameters().end())
   {
-    const util::ParamData& data = it->second;
+    util::ParamData& data = it->second;
 
     void* result;
     CMD::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
@@ -41,11 +41,11 @@ void CleanMemory()
   }
 
   // Now we have all the unique addresses that need to be deleted.
-  std::unordered_map<void*, const util::ParamData*>::const_iterator it2;
+  std::unordered_map<void*, util::ParamData*>::const_iterator it2;
   it2 = memoryAddresses.begin();
   while (it2 != memoryAddresses.end())
   {
-    const util::ParamData& data = *(it2->second);
+    util::ParamData& data = *(it2->second);
 
     CMD::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
         NULL, NULL);
