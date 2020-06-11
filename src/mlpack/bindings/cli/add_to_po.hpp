@@ -37,9 +37,9 @@ void AddToPO(const std::string& cliName,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
-  app.add_option(cliName.c_str(), [param](const T& value){
-    param.value = value;
-    param.wasPassed = true;
+  app.add_option_function<T>(cliName.c_str(), [&param](const T& value){
+     param.value = boost::any_cast<T>(value);
+     param.wasPassed = true;
   }, param.desc.c_str());
 }
 
@@ -58,9 +58,9 @@ void AddToPO(const std::string& cliName,
              const typename boost::enable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
-  app.add_option_function(cliName.c_str(), [param](const T& value){
-    param.value = value;
-    param.wasPassed = true;
+  app.add_option_function<T>(cliName.c_str(), [&param](const T& value){
+   param.value = boost::any_cast<T>(value);
+   param.wasPassed = true;
   }, param.desc.c_str());
 }
 
@@ -78,8 +78,8 @@ void AddToPO(const std::string& cliName,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
 {
-  app.add_flag_function(cliName.c_str(), [param](const T& value){
-    param.value = value;
+  app.add_flag_function(cliName.c_str(), [&param](const T& value){
+    param.value = boost::any_cast<T>(value);
     param.wasPassed = true;
   }, param.desc.c_str());
 }
