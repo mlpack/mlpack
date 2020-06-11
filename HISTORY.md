@@ -27,6 +27,9 @@
   * Fix `no_intercept` and probability computation for linear SVM bindings
     (#2419).
 
+  * Fix incorrect neighbors for `k > 1` searches in `approx_kfn` binding, for
+    the `QDAFN` algorithm (#2448).
+
 ### mlpack 3.3.1
 ###### 2020-04-29
   * Minor Julia and Python documentation fixes (#2373).
