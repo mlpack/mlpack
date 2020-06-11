@@ -92,17 +92,17 @@ class CategoricalDQN
    */
   void Predict(const arma::mat state, arma::mat& actionValue)
   {
-    arma::mat q_atoms, activations;
+    arma::mat q_atoms;
     network.Predict(state, q_atoms);
     activations.copy_size(q_atoms);
     actionValue.set_size(q_atoms.n_rows / atomSize, q_atoms.n_cols);
     arma::rowvec support = arma::linspace<arma::rowvec>(0, 200, atomSize);
     for(size_t i = 0; i < q_atoms.n_rows; i += atomSize)
     {
-      arma::mat activation = arma::mat(activations.memptr() +
-          i * q_atoms.n_cols, atomSize, q_atoms.n_cols, false, false);
+      arma::mat activation = activations.rows(i, i + atomSize - 1);
       arma::mat input = q_atoms.rows(i, i + atomSize - 1);
       softMax.Forward(input, activation);
+      activations.rows(i, i + atomSize - 1) = activation;
       actionValue.row(i/atomSize) = support * activation;
     } 
   }
@@ -117,15 +117,15 @@ class CategoricalDQN
   {
     arma::mat q_atoms;
     network.Forward(state, q_atoms);
-    dist.copy_size(q_atoms);
-    arma::rowvec support = arma::linspace<arma::rowvec>(0, 200, atomSize);
+    activations.copy_size(q_atoms);
     for(size_t i = 0; i < q_atoms.n_rows; i += atomSize)
     {
-      arma::mat activation = arma::mat(dist.memptr() +
-          i * q_atoms.n_cols, atomSize, q_atoms.n_cols, false, false);
+      arma::mat activation = activations.rows(i, i + atomSize - 1);
       arma::mat input = q_atoms.rows(i, i + atomSize - 1);
       softMax.Forward(input, activation);
-    } 
+      activations.rows(i, i + atomSize - 1) = activation;
+    }
+    dist = activations;
   }
 
   /**
@@ -157,12 +157,21 @@ class CategoricalDQN
    * Perform the backward pass of the state in real batch mode.
    *
    * @param state The input state.
-   * @param target The training target.
+   * @param lossGardients The loss gradients.
    * @param gradient The gradient.
    */
-  void Backward(const arma::mat state, arma::mat& target, arma::mat& gradient)
+  void Backward(const arma::mat state, arma::mat& lossGradients, arma::mat& gradient)
   {
-    network.Backward(state, target, gradient);
+    arma::mat activationGradients(arma::size(activations));
+    for(size_t i = 0; i < activations.n_rows; i += atomSize)
+    {
+      arma::mat activationGrad;
+      arma::mat lossGrad = lossGradients.rows(i, i + atomSize - 1);
+      arma::mat activation = activations.rows(i, i + atomSize - 1);
+      softMax.Backward(activation, lossGrad, activationGrad);
+      activationGradients.rows(i, i + atomSize - 1) = activationGrad;
+    }
+    network.Backward(state, activationGradients, gradient);
   }
 
  private:
@@ -180,6 +189,9 @@ class CategoricalDQN
 
   //! Locally-stored softmax activation function.
   Softmax<> softMax;
+
+  //! Locally-stored activations from softMax.
+  arma::mat activations;
 };
 
 } // namespace rl

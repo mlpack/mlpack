@@ -253,7 +253,7 @@ void QLearning<
   // arma::umat offset(atomSize, batchSize);
   // offset.each_row() = arma::linspace<arma::urowvec>(0, (batchSize - 1) *
   //   atomSize, batchSize);
-  
+    
   arma::mat projDistUpper = nextDist % (u - b);
   arma::mat projDistLower = nextDist % (b - l);
 
