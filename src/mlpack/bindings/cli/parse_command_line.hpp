@@ -24,7 +24,7 @@ namespace bindings {
 namespace cmd {
 
 // Add default parameters that are included in every program.
-// PARAM_FLAG("help", "Default help info.", "h");
+PARAM_FLAG("help", "Default help info.", "h");
 PARAM_STRING_IN("info", "Print help on a specific option.", "", "");
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
      "parameters and timers at the end of execution.", "v");
@@ -38,6 +38,7 @@ void ParseCommandLine(int argc, char** argv)
 {
   // First, we need to build the boost::program_options variables for parsing.
   CLI::App app;
+  app.set_help_flag();
 
   // Go through list of options in order to add them.
   std::map<std::string, util::ParamData>& parameters = CMD::Parameters();
