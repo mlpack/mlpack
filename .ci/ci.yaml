@@ -16,7 +16,7 @@ jobs:
     matrix:
       Plain:
         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF'
-      Python37:
+      Python:
         python.version: '3.7'
         CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DPYTHON_EXECUTABLE=/opt/hostedtoolcache/Python/3.7.7/x64/bin/python3'
       Julia:
@@ -37,7 +37,7 @@ jobs:
       Plain:
         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF'
         python.version: '2.7'
-      Python37:
+      Python:
         python.version: '3.7'
         CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF'
       Julia:
