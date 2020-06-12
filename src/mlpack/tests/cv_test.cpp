@@ -170,16 +170,12 @@ BOOST_AUTO_TEST_CASE(MSETest)
  */
 BOOST_AUTO_TEST_CASE(SSIMIndexTest)
 {
-  arma::mat reference1(11, 11, arma::fill::ones);
-  arma::mat image1(11, 11);
-  image1.fill(0.8);
-  double expectedSSIM = 0.9518143962;
-  BOOST_REQUIRE_CLOSE(SSIMIndex::Evaluate(reference1, image1), expectedSSIM, 1e-5);
-  // Check for non square image.
-  arma::mat reference2(30, 25, arma::fill::ones);
-  arma::mat image2(30, 25);
-  image2.fill(0.8);
-  BOOST_REQUIRE_CLOSE(SSIMIndex::Evaluate(reference2, image2), expectedSSIM, 1e-5);
+  arma::mat reference3;
+  reference3.load("ssim-demo.pgm", arma::pgm_binary);
+  arma::mat image3;
+  image3.load("ssim-demo-processed.pgm", arma::pgm_binary);
+  double expectedSSIM = 0.6939910097;
+  BOOST_REQUIRE_CLOSE(SSIMIndex::Evaluate(image3, reference3), expectedSSIM, 1e-5);
 }
 /**
  * Test the R squared metric (R2 Score).
