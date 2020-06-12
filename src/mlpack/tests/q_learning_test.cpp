@@ -28,6 +28,7 @@
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
 
 #include <ensmallen.hpp>
+#include <numeric>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
