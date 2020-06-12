@@ -59,44 +59,6 @@ void ParseCommandLine(int argc, char** argv)
   try
   {
     app.parse(argc, argv);
-
-    // Iterate over all the options, looking for duplicate parameters.  If we
-    // find any, remove the duplicates.  Note that vector options can have
-    // duplicates, so we check for those with max_tokens().
-
-    // I am not sure of the API names, do not check now
-    // for (size_t i = 0; i < bpo.options.size(); ++i)
-    // {
-    //   for (size_t j = i + 1; j < bpo.options.size(); ++j)
-    //   {
-    //     if ((bpo.options[i].string_key == bpo.options[j].string_key) &&
-    //         (desc.find(bpo.options[i].string_key,
-    //                    false).semantic()->max_tokens() <= 1))
-    //     {
-    //       // If a duplicate is found, check to see if either one has a value.
-    //       if (bpo.options[i].value.size() == 0 &&
-    //           bpo.options[j].value.size() == 0)
-    //       {
-    //         // If neither has a value, we'll consider it a duplicate flag and
-    //         // remove the duplicate.  It's important to not break out of this
-    //         // loop because there might be another duplicate later on in the
-    //         // vector.
-    //         bpo.options.erase(bpo.options.begin() + j);
-    //         --j; // Fix the index.
-    //       }
-    //       else
-    //       {
-    //         // If one or both has a value, produce an error and politely
-    //         // terminate.  We pull the name from the original_tokens, rather
-    //         // than from the string_key, because the string_key is the parameter
-    //         // after aliases have been expanded.
-    //         Log::Fatal << "\"" << bpo.options[j].original_tokens[0] << "\" is "
-    //             << "defined multiple times." << std::endl;
-    //       }
-    //     }
-    //   }
-    // }
-
   }
   catch (const CLI::ParseError& pe)
   {
