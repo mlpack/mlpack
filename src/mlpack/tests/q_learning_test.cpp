@@ -42,28 +42,32 @@ BOOST_AUTO_TEST_SUITE(QLearningTest);
 template<typename AgentType>
 bool testAgent(AgentType& agent,
                const double rewardThreshold,
-               const size_t noOfEpisodes)
+               const size_t noOfEpisodes,
+               const size_t consecutiveEpisodesTest = 50)
 {
   bool converged = false;
-  arma::running_stat<double> averageReturn;
+  std::vector<double> returnList;
   size_t episodes = 0;
   while (true)
   {
     double episodeReturn = agent.Episode();
-    averageReturn(episodeReturn);
     episodes += 1;
+    returnList.push_back(episodeReturn);
 
-    if (episodes > noOfEpisodes)
-    {
-      Log::Debug << "Agent failed." << std::endl;
-      break;
-    }
+    if (returnList.size() <= consecutiveEpisodesTest)
+      continue;
+    else
+      returnList.erase(returnList.begin());
+    
+    double averageReturn = std::accumulate(returnList.begin(),
+        returnList.end(), 0.0) / returnList.size();
 
-    Log::Debug << "Average return: " << averageReturn.mean()
+    Log::Debug << "Average return in last " << consecutiveEpisodesTest
+        << " consecutive episodes: " << averageReturn
         << " Episode return: " << episodeReturn << std::endl;
 
     // For the speed of the test case, a high criterion should not be set.
-    if (averageReturn.mean() > rewardThreshold)
+    if (averageReturn > rewardThreshold)
     {
       converged = true;
       agent.Deterministic() = true;
@@ -73,6 +77,12 @@ bool testAgent(AgentType& agent,
 
       Log::Debug << "Average return in deterministic test: "
           << testReturn.mean() << std::endl;
+      break;
+    }
+
+    if (episodes > noOfEpisodes)
+    {
+      Log::Debug << "Agent failed." << std::endl;
       break;
     }
   }
@@ -102,7 +112,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
   QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
       agent(config, network, policy, replayMethod);
 
-  bool converged = testAgent<decltype(agent)>(agent, 35, 1000);
+  bool converged = testAgent<decltype(agent)>(agent, 40, 1000);
 
   // To check if the action returned by the agent is not nan and is finite.
   BOOST_REQUIRE(std::isfinite(double(agent.Action())));
@@ -128,7 +138,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
       decltype(replayMethod)>
       agent(config, network, policy, replayMethod);
 
-  bool converged = testAgent<decltype(agent)>(agent, 35, 1000);
+  bool converged = testAgent<decltype(agent)>(agent, 45, 1000);
   BOOST_REQUIRE(converged);
 }
 
@@ -157,7 +167,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
     QLearning<CartPole, decltype(network), RMSPropUpdate, decltype(policy)>
         agent(config, network, policy, replayMethod);
 
-    converged = testAgent<decltype(agent)>(agent, 40, 1000);
+    converged = testAgent<decltype(agent)>(agent, 45, 1000);
     if (converged)
       break;
   }
@@ -304,7 +314,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQN)
   QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
       agent(config, network, policy, replayMethod);
 
-  bool converged = testAgent<decltype(agent)>(agent, 40, 2000);
+  bool converged = testAgent<decltype(agent)>(agent, 45, 2000);
   BOOST_REQUIRE(converged);
 }
 
@@ -328,7 +338,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQNPrioritizedReplay)
       decltype(replayMethod)>
       agent(config, network, policy, replayMethod);
 
-  bool converged = testAgent<decltype(agent)>(agent, 40, 2000);
+  bool converged = testAgent<decltype(agent)>(agent, 50, 2000);
   BOOST_REQUIRE(converged);
 }
 
@@ -357,7 +367,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithNoisyDQN)
     QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
         agent(config, network, policy, replayMethod);
 
-    converged = testAgent<decltype(agent)>(agent, -35, 1000);
+    converged = testAgent<decltype(agent)>(agent, 45, 500, 30);
     if (converged)
       break;
   }
@@ -391,7 +401,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDoubleNoisyDQN)
     QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
         agent(config, network, policy, replayMethod);
 
-    converged = testAgent<decltype(agent)>(agent, 35, 400);
+    converged = testAgent<decltype(agent)>(agent, 45, 500, 30);
     if (converged)
       break;
   }
