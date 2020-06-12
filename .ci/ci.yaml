@@ -18,7 +18,7 @@ jobs:
         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF'
       Python37:
         python.version: '3.7'
-        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DPYTHON_EXECUTABLE=/opt/hostedtoolcache/Python/3.7.7/x64/bin/python3 -DCYTHON_EXECUTABLE=/opt/hostedtoolcache/Python/3.7.7/x64/lib/python3.7/site-packages/Cython'
+        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DPYTHON_EXECUTABLE=/usr/bin/python3'
       Julia:
         julia.version: '1.3.0'
         CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=ON -DJULIA_EXECUTABLE=/opt/julia-1.3.0/bin/julia'
