@@ -42,19 +42,14 @@ void ParseCommandLine(int argc, char** argv)
 
   // Go through list of options in order to add them.
   std::map<std::string, util::ParamData>& parameters = CMD::Parameters();
-  std::map<std::string, std::string> boostNameMap;
-  for (auto it : parameters)
+  using ItType = std::map<std::string, util::ParamData>::iterator;
+
+  for (ItType it = parameters.begin(); it != parameters.end(); ++it)
   {
     // Add the parameter to desc.
-    util::ParamData& d = it.second;
+    util::ParamData& d = it->second;
     CMD::GetSingleton().functionMap[d.tname]["AddToPO"](d, NULL,
         (void*) &app);
-
-    // Generate the name the user passes on the command line.
-    std::string boostName;
-    CMD::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
-        (void*) &boostName);
-    boostNameMap[boostName] = d.name;
   }
 
   // Mark that we did parsing.
@@ -107,21 +102,6 @@ void ParseCommandLine(int argc, char** argv)
   {
     app.exit(pe);
   }
-
-  // Now iterate through the filled vmap, and overwrite default values with
-  // anything that's found on the command line.
-
-  // std::cout << "App size: " << app.count_all() << std::endl;
-  // for (auto option : app.get_options()) 
-  // {
-  //   std::cout << "Options: " << option->get_name() << std::endl;
-  //  const std::string identifier = boostNameMap[option->get_name()];
-  //   util::ParamData& param = parameters[identifier];
-  //   param.wasPassed = true;
-  //   auto value = app.count(option->get_name());
-  //   CMD::GetSingleton().functionMap[param.tname]["SetParam"](param,
-  //       (void*) &value, NULL);
-  // }
   
   // If the user specified any of the default options (--help, --version, or
   // --info), handle those.
