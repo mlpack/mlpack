@@ -423,10 +423,11 @@ BOOST_AUTO_TEST_CASE(LinearLayerWeightInitializationTest)
  */
 BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerWeightInitializationTest)
 {
-  size_t inSize = 1, outSize = 1;
-  size_t kernelWidth = 3, kernelHeight = 3;
+  size_t inSize = 2, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 5;
   AtrousConvolution<>* module = new AtrousConvolution<>(inSize, outSize,
-      kernelWidth, kernelHeight);
+      kernelWidth, kernelHeight, 6, 7, std::make_tuple(8, 9),
+      std::make_tuple(10, 11), 12, 13, 14, 15);
   module->Reset();
   RandomInitialization().Initialize(module->Weight(), kernelWidth, kernelHeight,
       inSize * outSize);
@@ -456,10 +457,11 @@ BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerWeightInitializationTest)
  */
 BOOST_AUTO_TEST_CASE(ConvolutionLayerWeightInitializationTest)
 {
-  size_t inSize = 2, outSize = 2;
-  size_t kernelWidth = 3, kernelHeight = 3;
+  size_t inSize = 2, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 5;
   Convolution<>* module = new Convolution<>(inSize, outSize,
-      kernelWidth, kernelHeight);
+      kernelWidth, kernelHeight, 6, 7, std::tuple<size_t, size_t>(8, 9),
+      std::tuple<size_t, size_t>(10, 11), 12, 13, "none");
   module->Reset();
   RandomInitialization().Initialize(module->Weight(), kernelWidth, kernelHeight,
       inSize * outSize);
