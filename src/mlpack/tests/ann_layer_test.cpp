@@ -510,7 +510,7 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerWeightInitializationTest)
   BOOST_REQUIRE_EQUAL(module->Weight().n_cols, kernelHeight);
   BOOST_REQUIRE_EQUAL(module->Weight().n_slices, inSize * outSize);
   BOOST_REQUIRE_EQUAL(module->Bias().n_rows, outSize);
-  BOOST_REQUIRE_EQUAL(module->Bias().n_rows, 1);
+  BOOST_REQUIRE_EQUAL(module->Bias().n_cols, 1);
   BOOST_REQUIRE_EQUAL(module->Parameters().n_rows,
       (outSize * inSize * kernelWidth * kernelHeight) + outSize);
 
