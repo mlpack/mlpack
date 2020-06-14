@@ -628,7 +628,6 @@ BOOST_AUTO_TEST_CASE(OptimizerTest)
  */
 BOOST_AUTO_TEST_CASE(RBFNetworkTest)
 {
-  mlpack::math::RandomSeed(std::time(NULL));
   // Load the dataset.
   arma::mat trainData;
   data::Load("thyroid_train.csv", trainData, true);
@@ -661,7 +660,6 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
    * |     |       |     |       |     |       |     |
    * +-----+       +--+--+       +-----+       +-----+
    */
-
   arma::mat centroids;
   KMeans<> kmeans;
   kmeans.Cluster(trainData, 8, centroids);
@@ -691,7 +689,6 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
     labels1.col(i).row(labels(i)) = 1;
   }
   labels += 1;
-
 
   arma::mat centroids1;
   arma::Row<size_t> assignments;

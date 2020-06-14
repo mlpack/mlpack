@@ -74,7 +74,7 @@ class GaussianFunction
   {
     x = 2 * -y % arma::exp(-1 * arma::pow(y, 2));
   }
-}; // class LogisticFunction
+}; // class GaussianFunction
 
 } // namespace ann
 } // namespace mlpack
