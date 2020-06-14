@@ -211,7 +211,7 @@ double QLearning<
       gradients);
   #endif
 
-  if(config.NoisyQLearning() == true)
+  if (config.NoisyQLearning() == true)
   {
     learningNetwork.ResetNoise();
     targetNetwork.ResetNoise();
@@ -273,4 +273,3 @@ double QLearning<
 } // namespace mlpack
 
 #endif
-
