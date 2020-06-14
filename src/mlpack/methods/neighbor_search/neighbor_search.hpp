@@ -24,8 +24,6 @@
 #include "neighbor_search_stat.hpp"
 #include "sort_policies/nearest_neighbor_sort.hpp"
 #include "neighbor_search_rules.hpp"
-#include <cereal/archives/xml.hpp>
-#include <cereal/cereal.hpp>
 
 namespace mlpack {
 // Neighbor-search routines. These include all-nearest-neighbors and
