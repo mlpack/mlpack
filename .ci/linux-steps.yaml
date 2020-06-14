@@ -40,17 +40,22 @@ steps:
   displayName: 'Install Build Dependencies'
 
 # Configure mlpack (CMake)
-- script: unset BOOST_ROOT && mkdir build && cd build && cmake $(CMakeArgs) ..
+- script: |
+    unset BOOST_ROOT
+    mkdir build && cd build
+    export GOPATH=$PWD
+    go get -u -t gonum.org/v1/gonum/...
+    cmake $(CMakeArgs) ..
   displayName: 'CMake'
 
 # Build mlpack
 - script: cd build && make
-  condition: eq(variables['CMakeArgs'], '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF')
+  condition: eq(variables['CMakeArgs'], '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF')
   displayName: 'Build'
 
 # Build mlpack
 - script: cd build && make -j2
-  condition: ne(variables['CMakeArgs'], '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF')
+  condition: ne(variables['CMakeArgs'], '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF')
   displayName: 'Build'
 
 # Run tests via ctest.

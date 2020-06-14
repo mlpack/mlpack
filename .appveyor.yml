@@ -94,12 +94,13 @@ build_script:
     -DDEBUG=OFF
     -DPROFILE=OFF
     -DBUILD_PYTHON_BINDINGS=OFF
+    -DBUILD_GO_BINDINGS=OFF
     -DCMAKE_BUILD_TYPE=Release ..
   - >
     "%MSBUILD%" "C:\projects\mlpack\build\mlpack.sln"
     /m /verbosity:minimal /nologo /p:BuildInParallel=true
     /p:Configuration=Release;Platform=x64
-  
+
   # Zip Artifacts.
   - >
     7z a mlpack-windows-no-libs.zip
@@ -108,7 +109,7 @@ build_script:
     7z a mlpack-windows.zip
     "%APPVEYOR_BUILD_FOLDER%\build\Release\*.*"
     "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/*.*"
-  
+
   # Pulling documentation for the installer.
   - ps: >
       try{(new-object net.webclient).DownloadFile(${env:JENKINS_DOC_DOWNLOAD},
@@ -119,7 +120,7 @@ build_script:
       [System.IO.Compression.ZipFile]::ExtractToDirectory(${env:JENKINS_DOC},
       'C:\projects\mlpack\dist\win-installer\staging\doc')}
       catch{Write-Output "Unable to add doc to installer, skipping!"}
-  
+
   # Preparing installer staging.
   - cd C:\projects\mlpack\dist\win-installer\staging && mkdir lib
   - ps: >
@@ -149,7 +150,7 @@ build_script:
   - ps: >
       cp C:\projects\mlpack\src\mlpack\tests\data\german.csv
       C:\projects\mlpack\dist\win-installer\staging\examples\sample-ml-app\sample-ml-app\data\
-  
+
   # Checking current gitversion or mlpack version.
   - ps: >
       $ver = (Get-Content
@@ -221,7 +222,7 @@ build_script:
 artifacts:
   - path: 'build\*.zip'
     name: mlpack-windows-zip
-  
+
   - path: 'dist\win-installer\mlpack-win-installer\bin\x64\Release\*.msi'
     name: mlpack-windows-installer
 
