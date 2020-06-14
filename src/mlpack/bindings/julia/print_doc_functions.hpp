@@ -36,6 +36,11 @@ inline std::string PrintImport(const std::string& bindingName);
 inline std::string PrintOutputOptionInfo();
 
 /**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo();
+
+/**
  * Print documentation for each of the types.
  */
 inline std::string PrintTypeDocs();

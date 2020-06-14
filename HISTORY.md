@@ -2,6 +2,8 @@
 ###### ????-??-??
   * Added Noisy DQN to q_networks (#2446).
 
+  * Add Go bindings (#1884).
+
   * Added Dueling DQN to q_networks, Noisy linear layer to ann/layer
     and Empty loss to ann/loss_functions (#2414).
 
@@ -28,6 +30,9 @@
 
   * Fix `no_intercept` and probability computation for linear SVM bindings
     (#2419).
+
+  * Fix incorrect neighbors for `k > 1` searches in `approx_kfn` binding, for
+    the `QDAFN` algorithm (#2448).
 
 ### mlpack 3.3.1
 ###### 2020-04-29
