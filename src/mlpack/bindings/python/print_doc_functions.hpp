@@ -30,6 +30,11 @@ inline std::string GetBindingName(const std::string& bindingName);
 inline std::string PrintImport(const std::string& bindingName);
 
 /**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo();
+
+/**
  * Print any special information about output options.
  */
 inline std::string PrintOutputOptionInfo();
