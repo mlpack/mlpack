@@ -28,6 +28,7 @@
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
 
 #include <ensmallen.hpp>
+#include <numeric>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -39,6 +40,56 @@ using namespace mlpack::rl;
 
 BOOST_AUTO_TEST_SUITE(QLearningTest);
 
+template<typename AgentType>
+bool testAgent(AgentType& agent,
+               const double rewardThreshold,
+               const size_t noOfEpisodes,
+               const size_t consecutiveEpisodesTest = 50)
+{
+  bool converged = false;
+  std::vector<double> returnList;
+  size_t episodes = 0;
+  while (true)
+  {
+    double episodeReturn = agent.Episode();
+    episodes += 1;
+    returnList.push_back(episodeReturn);
+
+    if (returnList.size() <= consecutiveEpisodesTest)
+      continue;
+    else
+      returnList.erase(returnList.begin());
+    
+    double averageReturn = std::accumulate(returnList.begin(),
+        returnList.end(), 0.0) / returnList.size();
+
+    Log::Debug << "Average return in last " << consecutiveEpisodesTest
+        << " consecutive episodes: " << averageReturn
+        << " Episode return: " << episodeReturn << std::endl;
+
+    // For the speed of the test case, a high criterion should not be set.
+    if (averageReturn > rewardThreshold)
+    {
+      converged = true;
+      agent.Deterministic() = true;
+      arma::running_stat<double> testReturn;
+      for (size_t i = 0; i < 10; ++i)
+        testReturn(agent.Episode());
+
+      Log::Debug << "Average return in deterministic test: "
+          << testReturn.mean() << std::endl;
+      break;
+    }
+
+    if (episodes > noOfEpisodes)
+    {
+      Log::Debug << "Agent failed." << std::endl;
+      break;
+    }
+  }
+  return converged;
+}
+
 //! Test DQN in Cart Pole task.
 BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 {
@@ -49,6 +100,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
   RandomReplay<CartPole> replayMethod(10, 10000);
 
+  // Setting all training hyperparameters.
   TrainingConfig config;
   config.StepSize() = 0.01;
   config.Discount() = 0.9;
@@ -61,40 +113,8 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
   QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
       agent(config, network, policy, replayMethod);
 
-  arma::running_stat<double> averageReturn;
-  size_t episodes = 0;
-  bool converged = true;
-  while (true)
-  {
-    double episodeReturn = agent.Episode();
-    averageReturn(episodeReturn);
-    episodes += 1;
+  bool converged = testAgent<decltype(agent)>(agent, 40, 1000);
 
-    if (episodes > 1000)
-    {
-      Log::Debug << "Cart Pole with DQN failed." << std::endl;
-      converged = false;
-      break;
-    }
-
-    /**
-     * Reaching running average return 35 is enough to show it works.
-     * For the speed of the test case, I didn't set high criterion.
-     */
-    Log::Debug << "Average return: " << averageReturn.mean()
-        << " Episode return: " << episodeReturn << std::endl;
-    if (averageReturn.mean() > 35)
-    {
-      agent.Deterministic() = true;
-      arma::running_stat<double> testReturn;
-      for (size_t i = 0; i < 10; ++i)
-        testReturn(agent.Episode());
-
-      Log::Debug << "Average return in deterministic test: "
-          << testReturn.mean() << std::endl;
-      break;
-    }
-  }
   // To check if the action returned by the agent is not nan and is finite.
   BOOST_REQUIRE(std::isfinite(double(agent.Action())));
   BOOST_REQUIRE(converged);
@@ -111,11 +131,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
   PrioritizedReplay<CartPole> replayMethod(10, 10000, 0.6);
 
   TrainingConfig config;
-  config.StepSize() = 0.01;
-  config.Discount() = 0.9;
-  config.TargetNetworkSyncInterval() = 100;
   config.ExplorationSteps() = 100;
-  config.DoubleQLearning() = false;
   config.StepLimit() = 200;
 
   // Set up DQN agent.
@@ -123,41 +139,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
       decltype(replayMethod)>
       agent(config, network, policy, replayMethod);
 
-  arma::running_stat<double> averageReturn;
-  size_t episodes = 0;
-  bool converged = true;
-  while (true)
-  {
-    double episodeReturn = agent.Episode();
-    averageReturn(episodeReturn);
-    episodes += 1;
-
-    if (episodes > 1000)
-    {
-      Log::Debug << "Cart Pole with DQN failed." << std::endl;
-      converged = false;
-      break;
-    }
-
-    /**
-     * Reaching running average return 35 is enough to show it works.
-     * For the speed of the test case, I didn't set high criterion.
-     */
-    Log::Debug << "Average return: " << averageReturn.mean()
-        << " Episode return: " << episodeReturn << std::endl;
-    if (averageReturn.mean() > 35)
-    {
-      agent.Deterministic() = true;
-      arma::running_stat<double> testReturn;
-      for (size_t i = 0; i < 10; ++i)
-        testReturn(agent.Episode());
-
-      Log::Debug << "Average return in deterministic test: "
-          << testReturn.mean() << std::endl;
-      break;
-    }
-  }
-
+  bool converged = testAgent<decltype(agent)>(agent, 45, 1000);
   BOOST_REQUIRE(converged);
 }
 
@@ -167,7 +149,6 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights. If this works 1 of 4 times, I'm fine
   // with that.
-  size_t episodes = 0;
   bool converged = false;
   for (size_t trial = 0; trial < 4; ++trial)
   {
@@ -179,9 +160,6 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
     RandomReplay<CartPole> replayMethod(10, 10000);
 
     TrainingConfig config;
-    config.StepSize() = 0.01;
-    config.Discount() = 0.9;
-    config.TargetNetworkSyncInterval() = 100;
     config.ExplorationSteps() = 100;
     config.DoubleQLearning() = true;
     config.StepLimit() = 200;
@@ -190,38 +168,10 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
     QLearning<CartPole, decltype(network), RMSPropUpdate, decltype(policy)>
         agent(config, network, policy, replayMethod);
 
-    arma::running_stat<double> averageReturn;
-
-    for (episodes = 0; episodes <= 1000; ++episodes)
-    {
-      double episodeReturn = agent.Episode();
-      averageReturn(episodeReturn);
-
-      /**
-       * Reaching running average return 40 is enough to show it works.
-       * For the speed of the test case, I didn't set high criterion.
-       */
-      Log::Debug << "Average return: " << averageReturn.mean()
-          << " Episode return: " << episodeReturn << std::endl;
-      if (averageReturn.mean() > 40)
-      {
-        agent.Deterministic() = true;
-        arma::running_stat<double> testReturn;
-        for (size_t i = 0; i < 10; ++i)
-          testReturn(agent.Episode());
-        Log::Debug << "Average return in deterministic test: "
-            << testReturn.mean() << std::endl;
-        break;
-      }
-    }
-
-    if (episodes < 1000)
-    {
-      converged = true;
+    converged = testAgent<decltype(agent)>(agent, 45, 1000);
+    if (converged)
       break;
-    }
   }
-
   BOOST_REQUIRE(converged);
 }
 
@@ -230,7 +180,7 @@ BOOST_AUTO_TEST_CASE(AcrobotWithDQN)
 {
   // We will allow three trials, although it would be very uncommon for the test
   // to use more than one.
-  bool success = false;
+  bool converged = false;
   for (size_t trial = 0; trial < 3; ++trial)
   {
     // Set up the network.
@@ -241,67 +191,26 @@ BOOST_AUTO_TEST_CASE(AcrobotWithDQN)
     RandomReplay<Acrobot> replayMethod(20, 10000);
 
     TrainingConfig config;
-    config.StepSize() = 0.01;
-    config.Discount() = 0.99;
-    config.TargetNetworkSyncInterval() = 100;
     config.ExplorationSteps() = 100;
-    config.DoubleQLearning() = false;
     config.StepLimit() = 400;
 
     // Set up DQN agent.
     QLearning<Acrobot, decltype(network), AdamUpdate, decltype(policy)>
         agent(config, network, policy, replayMethod);
 
-    arma::running_stat<double> averageReturn;
-    size_t episodes = 0;
-    bool converged = true;
-    while (true)
-    {
-      double episodeReturn = agent.Episode();
-      averageReturn(episodeReturn);
-      episodes += 1;
-
-      if (episodes > 1000)
-      {
-        Log::Debug << "Acrobot with DQN failed." << std::endl;
-        converged = false;
-        break;
-      }
-
-      /**
-       * I am using a threshold of -380 to check convergence.
-       */
-      Log::Debug << "Average return: " << averageReturn.mean()
-          << " Episode return: " << episodeReturn << std::endl;
-      if (averageReturn.mean() > -380.00)
-      {
-        agent.Deterministic() = true;
-        arma::running_stat<double> testReturn;
-        for (size_t i = 0; i < 20; ++i)
-          testReturn(agent.Episode());
-
-        Log::Debug << "Average return in deterministic test: "
-            << testReturn.mean() << std::endl;
-        break;
-      }
-    }
-
+    converged = testAgent<decltype(agent)>(agent, -380, 1000);
     if (converged)
-    {
-      success = true;
       break;
-    }
   }
-
-  BOOST_REQUIRE_EQUAL(success, true);
+  BOOST_REQUIRE(converged);
 }
 
 //! Test DQN in Mountain Car task.
 BOOST_AUTO_TEST_CASE(MountainCarWithDQN)
 {
-  // We will allow three trials total.
-  bool success = false;
-  for (size_t trial = 0; trial < 3; trial++)
+  // We will allow five trials total.
+  bool converged = false;
+  for (size_t trial = 0; trial < 5; trial++)
   {
     // Set up the network.
     SimpleDQN<> network(2, 64, 32, 3);
@@ -312,85 +221,43 @@ BOOST_AUTO_TEST_CASE(MountainCarWithDQN)
 
     TrainingConfig config;
     config.StepSize() = 0.0001;
-    config.Discount() = 0.9;
-    config.TargetNetworkSyncInterval() = 100;
     config.ExplorationSteps() = 100;
-    config.DoubleQLearning() = false;
     config.StepLimit() = 400;
 
     // Set up DQN agent.
     QLearning<MountainCar, decltype(network), AdamUpdate, decltype(policy)>
         agent(config, network, policy, replayMethod);
 
-    arma::running_stat<double> averageReturn;
-    size_t episodes = 0;
-    bool converged = true;
-    while (true)
-    {
-      double episodeReturn = agent.Episode();
-      averageReturn(episodeReturn);
-      episodes += 1;
-
-      if (episodes > 1000)
-      {
-        Log::Debug << "Mountain Car with DQN failed." << std::endl;
-        converged = false;
-        break;
-      }
-
-      /**
-       * Set a threshold of -370 to check convergence.
-       */
-      Log::Debug << "Average return: " << averageReturn.mean()
-          << " Episode return: " << episodeReturn << std::endl;
-      if (averageReturn.mean() > -370)
-      {
-        agent.Deterministic() = true;
-        arma::running_stat<double> testReturn;
-        for (size_t i = 0; i < 10; ++i)
-          testReturn(agent.Episode());
-
-        Log::Debug << "Average return in deterministic test: "
-            << testReturn.mean() << std::endl;
-        break;
-      }
-    }
-
+    converged = testAgent<decltype(agent)>(agent, -380, 1000);
     if (converged)
-    {
-      success = true;
       break;
-    }
   }
-
-  BOOST_REQUIRE_EQUAL(success, true);
+  BOOST_REQUIRE(converged);
 }
 
 //! Test DQN in DoublePoleCart task.
 BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
 {
+  bool converged = false;
   // We will allow four trials total.
-  bool success = false;
   for (size_t trial = 0; trial < 4; trial++)
   {
-    // Set up the network. Note that we use a custom network here, and
-    // pass it directly into the agent, without using SimpleDQN.
-    FFN<MeanSquaredError<>, GaussianInitialization> network(
+    // Set up the module. Note that we use a custom network here.
+    FFN<MeanSquaredError<>, GaussianInitialization> module(
         MeanSquaredError<>(), GaussianInitialization(0, 0.001));
-    network.Add<Linear<>>(6, 256);
-    network.Add<ReLULayer<>>();
-    network.Add<Linear<>>(256, 3);
+    module.Add<Linear<>>(6, 256);
+    module.Add<ReLULayer<>>();
+    module.Add<Linear<>>(256, 3);
+
+    // Adding the module to the SimpleDQN network containing required functions.
+    SimpleDQN<> network(module);
 
     // Set up the policy and replay method.
     GreedyPolicy<DoublePoleCart> policy(1.0, 1000, 0.1, 0.99);
     RandomReplay<DoublePoleCart> replayMethod(20, 10000);
 
     TrainingConfig config;
-    config.StepSize() = 0.01;
-    config.Discount() = 0.9;
-    config.TargetNetworkSyncInterval() = 100;
     config.ExplorationSteps() = 100;
-    config.DoubleQLearning() = false;
     config.StepLimit() = 600;
 
     // Set up DQN agent.
@@ -398,7 +265,6 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
         agent(config, network, policy, replayMethod);
 
     size_t episodes = 0;
-    bool converged = true;
     size_t episodeSuccesses = 0;
     while (true)
     {
@@ -410,30 +276,25 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
 
       if (episodes > 2000)
       {
-        Log::Debug << "Cart Pole with DQN failed." << std::endl;
-        converged = false;
+        Log::Debug << "Agent failed." << std::endl;
         break;
       }
 
       // If the network can solve the environment in two trials this is fine for
       // a simple test.
+      Log::Debug << " Episode return: " << episodeReturn << std::endl;
       if (episodeSuccesses >= 2)
       {
+        converged = true;
         Log::Debug << "QLearning has succeeded in the multiple pole cart" <<
             " environment." << std::endl;
-        converged = true;
         break;
       }
     }
-
     if (converged)
-    {
-      success = true;
       break;
-    }
   }
-
-  BOOST_REQUIRE_EQUAL(success, true);
+  BOOST_REQUIRE(converged);
 }
 
 //! Test Dueling DQN in Cart Pole task.
@@ -447,51 +308,14 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQN)
   RandomReplay<CartPole> replayMethod(32, 2000);
 
   TrainingConfig config;
-  config.StepSize() = 0.01;
-  config.Discount() = 0.99;
-  config.TargetNetworkSyncInterval() = 100;
   config.ExplorationSteps() = 50;
-  config.DoubleQLearning() = false;
   config.StepLimit() = 200;
 
   // Set up DQN agent.
   QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
       agent(config, network, policy, replayMethod);
 
-  arma::running_stat<double> averageReturn;
-  size_t episodes = 0;
-  bool converged = true;
-  while (true)
-  {
-    double episodeReturn = agent.Episode();
-    averageReturn(episodeReturn);
-    episodes += 1;
-
-    if (episodes > 2000)
-    {
-      Log::Debug << "Cart Pole with Dueling DQN failed." << std::endl;
-      converged = false;
-      break;
-    }
-
-    /**
-     * Reaching running average return 40 is enough to show it works.
-     * For the speed of the test case, a high criterion is not set.
-     */
-    Log::Debug << "Average return: " << averageReturn.mean()
-        << " Episode return: " << episodeReturn << std::endl;
-    if (averageReturn.mean() > 40)
-    {
-      agent.Deterministic() = true;
-      arma::running_stat<double> testReturn;
-      for (size_t i = 0; i < 10; ++i)
-        testReturn(agent.Episode());
-
-      Log::Debug << "Average return in deterministic test: "
-          << testReturn.mean() << std::endl;
-      break;
-    }
-  }
+  bool converged = testAgent<decltype(agent)>(agent, 45, 2000);
   BOOST_REQUIRE(converged);
 }
 
@@ -507,11 +331,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQNPrioritizedReplay)
   PrioritizedReplay<CartPole> replayMethod(32, 2000, 0.6);
 
   TrainingConfig config;
-  config.StepSize() = 0.01;
-  config.Discount() = 0.99;
-  config.TargetNetworkSyncInterval() = 100;
   config.ExplorationSteps() = 50;
-  config.DoubleQLearning() = false;
   config.StepLimit() = 200;
 
   // Set up DQN agent.
@@ -519,43 +339,74 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQNPrioritizedReplay)
       decltype(replayMethod)>
       agent(config, network, policy, replayMethod);
 
-  arma::running_stat<double> averageReturn;
-  size_t episodes = 0;
-  bool converged = true;
-  while (true)
-  {
-    double episodeReturn = agent.Episode();
-    averageReturn(episodeReturn);
-    episodes += 1;
-
-    if (episodes > 2000)
-    {
-      Log::Debug << "Cart Pole with Dueling DQN failed." << std::endl;
-      converged = false;
-      break;
-    }
-
-    /**
-     * Reaching running average return 40 is enough to show it works.
-     * For the speed of the test case, I didn't set high criterion.
-     */
-    Log::Debug << "Average return: " << averageReturn.mean()
-        << " Episode return: " << episodeReturn << std::endl;
-    if (averageReturn.mean() > 40)
-    {
-      agent.Deterministic() = true;
-      arma::running_stat<double> testReturn;
-      for (size_t i = 0; i < 10; ++i)
-        testReturn(agent.Episode());
-
-      Log::Debug << "Average return in deterministic test: "
-          << testReturn.mean() << std::endl;
-      break;
-    }
-  }
-
+  bool converged = testAgent<decltype(agent)>(agent, 50, 2000);
   BOOST_REQUIRE(converged);
 }
 
+//! Test Noisy DQN in Cart Pole task.
+BOOST_AUTO_TEST_CASE(CartPoleWithNoisyDQN)
+{
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights.
+  bool converged = false;
+  for (size_t trial = 0; trial < 3; ++trial)
+  {
+    Log::Debug << "Trial number: " << trial << std::endl;
+
+    // Set up the policy and replay method.
+    GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
+    RandomReplay<CartPole> replayMethod(32, 2000);
+
+    TrainingConfig config;
+    config.StepLimit() = 200;
+    config.NoisyQLearning() = true;
+
+    // Set up the network with a flag to enable noisy layers.
+    SimpleDQN<> network(4, 64, 32, 2, config.NoisyQLearning());
+
+    // Set up DQN agent.
+    QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
+        agent(config, network, policy, replayMethod);
+
+    converged = testAgent<decltype(agent)>(agent, 45, 500, 30);
+    if (converged)
+      break;
+  }
+  BOOST_REQUIRE(converged);
+}
+
+
+//! Test Dueling-Double-Noisy DQN in Cart Pole task.
+BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDoubleNoisyDQN)
+{
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights.
+  bool converged = false;
+  for (size_t trial = 0; trial < 5; ++trial)
+  {
+    Log::Debug << "Trial number: " << trial << std::endl;
+
+    // Set up the policy and replay method.
+    GreedyPolicy<CartPole> policy(1.0, 2000, 0.1, 0.99);
+    RandomReplay<CartPole> replayMethod(32, 4000);
+
+    TrainingConfig config;
+    config.DoubleQLearning() = true;
+    config.StepLimit() = 200;
+    config.NoisyQLearning() = true;
+
+    // Set up the network with a flag to enable noisy layers.
+    DuelingDQN<> network(4, 64, 64, 2, config.NoisyQLearning());
+
+    // Set up DQN agent.
+    QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
+        agent(config, network, policy, replayMethod);
+
+    converged = testAgent<decltype(agent)>(agent, 45, 500, 30);
+    if (converged)
+      break;
+  }
+  BOOST_REQUIRE(converged);
+}
 
 BOOST_AUTO_TEST_SUITE_END();

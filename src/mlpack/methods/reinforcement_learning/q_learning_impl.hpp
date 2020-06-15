@@ -131,7 +131,7 @@ double QLearning<
   learningNetwork.Predict(state.Encode(), actionValue);
 
   // Select an action according to the behavior policy.
-  action = policy.Sample(actionValue, deterministic);
+  action = policy.Sample(actionValue, deterministic, config.NoisyQLearning());
 
   // Interact with the environment to advance to next state.
   StateType nextState;
@@ -211,6 +211,12 @@ double QLearning<
       gradients);
   #endif
 
+  if (config.NoisyQLearning() == true)
+  {
+    learningNetwork.ResetNoise();
+    targetNetwork.ResetNoise();
+  }
+
   return reward;
 }
 
@@ -267,4 +273,3 @@ double QLearning<
 } // namespace mlpack
 
 #endif
-

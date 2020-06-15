@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added Noisy DQN to q_networks (#2446).
+
   * Add Go bindings (#1884).
 
   * Added Dueling DQN to q_networks, Noisy linear layer to ann/layer
