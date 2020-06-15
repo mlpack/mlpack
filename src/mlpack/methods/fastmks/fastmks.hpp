@@ -1,5 +1,5 @@
 /**
- * @file fastmks.hpp
+ * @file methods/fastmks/fastmks.hpp
  * @author Ryan Curtin
  *
  * Definition of the FastMKS class, which implements fast exact max-kernel
@@ -96,7 +96,7 @@ class FastMKS
    *
    * @param referenceSet Reference set of data for FastMKS.
    * @param kernel Initialized kernel.
-   * @param single Whether or not to run single-tree search.
+   * @param singleMode Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
   FastMKS(const MatType& referenceSet,
@@ -127,7 +127,7 @@ class FastMKS
    *
    * @param referenceSet Reference set of data for FastMKS.
    * @param kernel Initialized kernel.
-   * @param single Whether or not to run single-tree search.
+   * @param singleMode Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
   FastMKS(MatType&& referenceSet,
@@ -143,8 +143,7 @@ class FastMKS
    * constructor since a tree is given (use one of the other constructors).
    *
    * @param referenceTree Tree built on reference data.
-   * @param single Whether or not to run single-tree search.
-   * @param naive Whether or not to run brute-force (naive) search.
+   * @param singleMode Whether or not to run single-tree search.
    */
   FastMKS(Tree* referenceTree,
           const bool singleMode = false);
@@ -209,7 +208,7 @@ class FastMKS
    * of the tree, so you do not need to delete it!  This will throw an exception
    * if the model is searching in naive mode (i.e. if Naive() == true).
    *
-   * @param tree Tree to use as reference data.
+   * @param referenceTree Tree to use as reference data.
    */
   void Train(Tree* referenceTree);
 
@@ -255,7 +254,7 @@ class FastMKS
    * here are with respect to the modified input matrix (that is,
    * queryTree->Dataset()).
    *
-   * @param queryTree Tree built on query points.
+   * @param querySet Tree built on query points.
    * @param k The number of maximum kernels to find.
    * @param indices Matrix to store resulting indices of max-kernel search in.
    * @param kernels Matrix to store resulting max-kernel values in.

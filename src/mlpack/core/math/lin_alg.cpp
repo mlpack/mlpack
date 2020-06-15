@@ -1,5 +1,5 @@
 /**
- * @file lin_alg.cpp
+ * @file core/math/lin_alg.cpp
  * @author Nishant Mehta
  *
  * Linear algebra utilities.

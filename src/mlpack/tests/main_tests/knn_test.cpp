@@ -1,5 +1,5 @@
 /**
- * @file knn_test.cpp
+ * @file tests/main_tests/knn_test.cpp
  * @author Atharva Khandait
  * @author Heet Sankesara
  *
@@ -683,6 +683,7 @@ BOOST_AUTO_TEST_CASE(KNNDifferentLeafSizes)
   BOOST_CHECK_EQUAL(output_model->LeafSize(), (int) 1);
   BOOST_CHECK_EQUAL(CLI::GetParam<KNNModel*>("output_model")->LeafSize(),
     (int) 10);
-  }
+  delete output_model;
+}
 
 BOOST_AUTO_TEST_SUITE_END();

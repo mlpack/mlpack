@@ -1,5 +1,5 @@
 /**
- * @file sparse_coding.hpp
+ * @file methods/sparse_coding/sparse_coding.hpp
  * @author Nishant Mehta
  *
  * Definition of the SparseCoding class, which performs L1 (LASSO) or
@@ -140,6 +140,7 @@ class SparseCoding
    *     will terminate.
    * @param newtonTolerance Tolerance for the Newton's method dictionary
    *     optimization step.
+   * @param initializer The initializer to use.
    */
   template<typename DictionaryInitializer = DataDependentRandomInitializer>
   SparseCoding(const arma::mat& data,

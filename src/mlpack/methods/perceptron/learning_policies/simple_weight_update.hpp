@@ -1,5 +1,5 @@
 /**
- * @file simple_weight_update.hpp
+ * @file methods/perceptron/learning_policies/simple_weight_update.hpp
  * @author Udit Saxena
  *
  * Simple weight update rule for the perceptron.

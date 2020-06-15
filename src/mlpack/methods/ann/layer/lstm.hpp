@@ -1,5 +1,5 @@
 /**
- * @file lstm.hpp
+ * @file methods/ann/layer/lstm.hpp
  * @author Marcus Edel
  *
  * Definition of the LSTM class, which implements a LSTM network layer.
@@ -164,6 +164,12 @@ class LSTM
   OutputDataType const& Gradient() const { return grad; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return grad; }
+
+  //! Get the number of input units.
+  size_t InSize() const { return inSize; }
+
+  //! Get the number of output units.
+  size_t OutSize() const { return outSize; }
 
   /**
    * Serialize the layer

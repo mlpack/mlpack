@@ -1,5 +1,5 @@
 /**
- * @file radical_main.cpp
+ * @file tests/radical_test.cpp
  * @author Nishant Mehta
  *
  * Test for RADICAL.

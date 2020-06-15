@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_numeric_split.hpp
+ * @file methods/hoeffding_trees/hoeffding_numeric_split.hpp
  * @author Ryan Curtin
  *
  * A numeric feature split for Hoeffding trees.  This is a very simple

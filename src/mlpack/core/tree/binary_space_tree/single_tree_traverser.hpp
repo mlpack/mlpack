@@ -1,5 +1,5 @@
 /**
- * @file single_tree_traverser.hpp
+ * @file core/tree/binary_space_tree/single_tree_traverser.hpp
  * @author Ryan Curtin
  *
  * A nested class of BinarySpaceTree which traverses the entire tree with a

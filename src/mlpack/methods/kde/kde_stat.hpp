@@ -1,5 +1,5 @@
 /**
- * @file kde_stat.hpp
+ * @file methods/kde/kde_stat.hpp
  * @author Roberto Hueso
  *
  * Defines TreeStatType for KDE.

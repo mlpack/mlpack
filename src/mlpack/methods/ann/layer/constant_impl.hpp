@@ -1,5 +1,5 @@
 /**
- * @file constant_impl.hpp
+ * @file methods/ann/layer/constant_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Constant class, which outputs a constant value given

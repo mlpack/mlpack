@@ -1,5 +1,5 @@
 /**
- * @file hyperbolic_tangent_kernel.hpp
+ * @file core/kernels/hyperbolic_tangent_kernel.hpp
  * @author Ajinkya Kale <kaleajinkya@gmail.com>
  *
  * Implementation of the hyperbolic tangent kernel.

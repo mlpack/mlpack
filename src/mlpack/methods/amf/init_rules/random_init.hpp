@@ -1,5 +1,5 @@
 /**
- * @file random_init.hpp
+ * @file methods/amf/init_rules/random_init.hpp
  * @author Mohan Rajendran
  *
  * Initialization rule for alternating matrix factorization (AMF). This simple

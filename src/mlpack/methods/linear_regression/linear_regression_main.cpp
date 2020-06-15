@@ -1,5 +1,5 @@
 /**
- * @file linear_regression_main.cpp
+ * @file methods/linear_regression/linear_regression_main.cpp
  * @author James Cline
  *
  * Main function for least-squares linear regression.
@@ -174,10 +174,16 @@ static void mlpackMain()
   // Did we want to predict, too?
   if (computePrediction)
   {
-    // Load the test file data.
+    // Cache the output of GetPrintableParam before we std::move() the test
+    // matrix.  Loading actually will happen during GetPrintableParam() since
+    // that needs to load to print the size.
     Timer::Start("load_test_points");
-    mat points = std::move(CLI::GetParam<mat>("test"));
+    std::ostringstream oss;
+    oss << CLI::GetPrintableParam<mat>("test");
+    std::string testOutput = oss.str();
     Timer::Stop("load_test_points");
+
+    mat points = std::move(CLI::GetParam<mat>("test"));
 
     // Ensure that test file data has the right number of features.
     if ((lr->Parameters().n_elem - 1) != points.n_rows)
@@ -188,9 +194,8 @@ static void mlpackMain()
         delete lr;
 
       Log::Fatal << "The model was trained on " << dimensions << "-dimensional "
-          << "data, but the test points in '"
-          << CLI::GetPrintableParam<mat>("test") << "' are " << points.n_rows
-          << "-dimensional!" << endl;
+          << "data, but the test points in '" << testOutput << "' are "
+          << points.n_rows << "-dimensional!" << endl;
     }
 
     // Perform the predictions using our model.

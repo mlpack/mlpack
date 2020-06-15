@@ -1,5 +1,5 @@
 /**
- * @file perceptron_impl.hpp
+ * @file methods/perceptron/perceptron_impl.hpp
  * @author Udit Saxena
  *
  * Implementation of Perceptron class.

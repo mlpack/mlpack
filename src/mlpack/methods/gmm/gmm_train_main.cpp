@@ -1,6 +1,6 @@
 /**
  * @author Parikshit Ram
- * @file gmm_train_main.cpp
+ * @file methods/gmm/gmm_train_main.cpp
  *
  * This program trains a mixture of Gaussians on a given data matrix.
  *
@@ -188,10 +188,6 @@ static void mlpackMain()
           << " model (given with " << PRINT_PARAM_STRING("input_model")
           << " has dimensionality " << gmm->Dimensionality() << "!" << endl;
   }
-  else
-  {
-    gmm = new GMM(size_t(gaussians), dataPoints.n_rows);
-  }
 
   // Gather parameters for EMFit object.
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
@@ -211,6 +207,11 @@ static void mlpackMain()
     RequireParamValue<double>("percentage", [](double x) {
         return x > 0.0 && x <= 1.0; }, true, "percentage to sample must be "
         "be greater than 0.0 and less than or equal to 1.0");
+
+    // Initialize the GMM if needed.  (We didn't do this earlier, because
+    // RequireParamValue() would leak the memory if the check failed.)
+    if (!CLI::HasParam("input_model"))
+      gmm = new GMM(size_t(gaussians), dataPoints.n_rows);
 
     const int samplings = CLI::GetParam<int>("samplings");
     const double percentage = CLI::GetParam<double>("percentage");
@@ -274,6 +275,10 @@ static void mlpackMain()
   }
   else
   {
+    // Initialize the GMM if needed.
+    if (!CLI::HasParam("input_model"))
+      gmm = new GMM(size_t(gaussians), dataPoints.n_rows);
+
     // Depending on the value of forcePositive and diagonalCovariance, we have
     // to use different types.
     if (diagonalCovariance)

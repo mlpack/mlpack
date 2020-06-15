@@ -1,5 +1,5 @@
 /**
- * @file softmax_regression_main.cpp
+ * @file methods/softmax_regression/softmax_regression_main.cpp
  *
  * Main program for softmax regression.
  *

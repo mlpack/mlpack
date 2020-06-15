@@ -1,5 +1,5 @@
 /**
- * @file r_star_tree_descent_heuristic_impl.hpp
+ * @file core/tree/rectangle_tree/r_star_tree_descent_heuristic_impl.hpp
  * @author Andrew Wells
  *
  * Implementation of RStarTreeDescentHeuristic, a class that chooses the best child of a node in

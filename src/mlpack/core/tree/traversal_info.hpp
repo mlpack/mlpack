@@ -1,5 +1,5 @@
 /**
- * @file traversal_info.hpp
+ * @file core/tree/traversal_info.hpp
  * @author Ryan Curtin
  *
  * This class will hold the traversal information for dual-tree traversals.  A

@@ -1,5 +1,5 @@
 /**
- * @file f1_impl.hpp
+ * @file core/cv/metrics/f1_impl.hpp
  * @author Kirill Mishchenko
  *
  * Implementation of the class F1.

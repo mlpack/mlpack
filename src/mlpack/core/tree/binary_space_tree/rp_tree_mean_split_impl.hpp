@@ -1,5 +1,5 @@
 /**
- * @file rp_tree_mean_split_impl.hpp
+ * @file core/tree/binary_space_tree/rp_tree_mean_split_impl.hpp
  * @author Mikhail Lozhnikov
  *
  * Implementation of class (RPTreeMeanSplit) to split a binary space partition

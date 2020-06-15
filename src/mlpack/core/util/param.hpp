@@ -1,5 +1,5 @@
 /**
- * @file param.hpp
+ * @file core/util/param.hpp
  * @author Matthew Amidon
  * @author Ryan Curtin
  *
@@ -40,7 +40,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * - A page anchor for documentation, referencing another binding by its CMake
  *      binding name, i.e. "#knn".
  * - A link to a Doxygen page, using the mangled Doxygen name after a
- *      '@doxygen/', i.e., "@doxygen/mlpack1_1_adaboost1_1_AdaBoost".
+ *      '\@doxygen/', i.e., "@doxygen/mlpack1_1_adaboost1_1_AdaBoost".
  */
 #define SEE_ALSO(DESCRIPTION, LINK) {DESCRIPTION, LINK}
 
@@ -64,7 +64,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *     care of by CLI (however, you can explicitly specify newlines to denote
  *     new paragraphs).  You can also use printing macros like
  *     PRINT_PARAM_STRING(), PRINT_DATASET(), and others.
- * @param SEE_ALSOS A set of SEE_ALSO() macros that are used for generating
+ * @param ... A set of SEE_ALSO() macros that are used for generating
  *     documentation.  See the SEE_ALSO() macro.  This is a varargs argument, so
  *     you can add as many SEE_ALSO()s as you like.
  */
@@ -820,12 +820,12 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * The parameter can then be specified on the command line with
  * --ID=value1,value2,value3.
  *
+ * @param T Type of the parameter.
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- * @param DEF Default value of the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -853,10 +853,12 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * If the parameter is not set by the end of the program, a fatal runtime error
  * will be issued.
  *
+ * @param T Type of the parameter.
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
+ * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -923,17 +925,14 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * Note that the first parameter of this model is the type (the class name) of
- * the model to be loaded.  This model type must have a Serialize() function; a
+ * the model to be loaded.  This model type must have a serialize() function; a
  * compilation error (a very long and complex one) will result if the model type
  * does not have the following function:
  *
  * @code
  * template<typename Archive>
- * void Serialize(Archive& ar, const unsigned int version);
+ * void serialize(Archive& ar, const unsigned int version);
  * @endcode
- *
- * This is the boost::serialization serialize() function, just with a capital s
- * for Serialize() (see src/mlpack/core/data/serialization_shim.hpp).
  *
  * @param TYPE Type of the model to be loaded.
  * @param ID Name of the parameter.
@@ -957,17 +956,14 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * Note that the first parameter of this model is the type (the class name) of
- * the model to be loaded.  This model type must have a Serialize() function; a
+ * the model to be loaded.  This model type must have a serialize() function; a
  * compilation error (a very long and complex one) will result if the model type
  * does not have the following function:
  *
  * @code
  * template<typename Archive>
- * void Serialize(Archive& ar, const unsigned int version);
+ * void serialize(Archive& ar, const unsigned int version);
  * @endcode
- *
- * This is the boost::serialization serialize() function, just with a capital s
- * for Serialize() (see src/mlpack/core/data/serialization_shim.hpp).
  *
  * @param TYPE Type of the model to be loaded.
  * @param ID Name of the parameter.
@@ -1082,6 +1078,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * The parameter must then be specified on the command line with
  * --ID=value1,value2,value3.
  *
+ * @param T Type of the parameter.
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others

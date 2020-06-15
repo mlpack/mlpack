@@ -1,5 +1,5 @@
 /**
- * @file allkrann_main.cpp
+ * @file methods/rann/krann_main.cpp
  * @author Parikshit Ram
  *
  * Implementation of the kRANN executable.  Allows some number of standard
@@ -191,12 +191,9 @@ static void mlpackMain()
     rann->TreeType() = tree;
     rann->RandomBasis() = randomBasis;
 
+    Log::Info << "Using reference data from "
+        << CLI::GetPrintableParam<arma::mat>("reference") << "." << endl;
     arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
-
-    Log::Info << "Using reference data from '"
-        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
-        << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
-        << endl;
 
     rann->BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode);
   }
@@ -206,7 +203,7 @@ static void mlpackMain()
     rann = CLI::GetParam<RANNModel*>("input_model");
 
     Log::Info << "Using rank-approximate kNN model from '"
-        << CLI::GetPrintableParam<RANNModel>("input_model") << "' (trained on "
+        << CLI::GetPrintableParam<RANNModel*>("input_model") << "' (trained on "
         << rann->Dataset().n_rows << "x" << rann->Dataset().n_cols
         << " dataset)." << endl;
 
@@ -234,10 +231,9 @@ static void mlpackMain()
     arma::mat queryData;
     if (CLI::HasParam("query"))
     {
+      Log::Info << "Using query data from "
+          << CLI::GetPrintableParam<arma::mat>("query") << "." << endl;
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
-      Log::Info << "Using query data from '"
-          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
-          << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
     // Sanity check on k value: must be greater than 0, must be less than the

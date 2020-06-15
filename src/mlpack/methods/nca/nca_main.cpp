@@ -1,5 +1,5 @@
 /**
- * @file nca_main.cpp
+ * @file methods/nca/nca_main.cpp
  * @author Ryan Curtin
  *
  * Executable for Neighborhood Components Analysis.

@@ -1,5 +1,5 @@
 /**
- * @file lsh_test.cpp
+ * @file tests/lsh_test.cpp
  *
  * Unit tests for the 'LSHSearch' class.
  *
@@ -915,6 +915,74 @@ BOOST_AUTO_TEST_CASE(MoveOperatorTest)
 
   CheckMatrices(neighbors, neighbors2);
   CheckMatrices(distances, distances2);
+}
+
+/**
+ * Run LSH on (identical) dense and sparse data, making sure that we get the
+ * same results.  Note that the sparse data we are using isn't really
+ * sparse---the idea is to test that the class works correctly when the type is
+ * arma::sp_mat.
+ */
+BOOST_AUTO_TEST_CASE(SparseLSHTest)
+{
+  // kNN and LSH parameters (use LSH default parameters).
+  const int k = 5;
+  const int numTables = 5;
+  const int numProj = 2;
+  const double hashWidth = 50.0;
+  const int secondHashSize = 99901;
+  const int bucketSize = 500;
+
+  // Read iris training and testing data as reference and query sets.
+  const string trainSet = "iris_train.csv";
+  const string testSet = "iris_test.csv";
+  arma::mat rdata;
+  arma::mat qdata;
+  data::Load(trainSet, rdata, true);
+  data::Load(testSet, qdata, true);
+
+  // Run on dense data.
+  LSHSearch<> denseLSH(
+      rdata,
+      numProj,
+      numTables,
+      hashWidth,
+      secondHashSize,
+      bucketSize);
+
+  arma::Mat<size_t> denseNeighbors;
+  arma::mat denseDistances;
+  denseLSH.Search(qdata, k, denseNeighbors, denseDistances);
+
+  // Now create and run on sparse data.
+  arma::sp_mat sparseRData(rdata);
+  arma::sp_mat sparseQData(qdata);
+
+  LSHSearch<NearestNeighborSort, arma::sp_mat> sparseLSH(
+      sparseRData,
+      denseLSH.Projections(),
+      hashWidth,
+      secondHashSize,
+      bucketSize);
+
+  arma::Mat<size_t> sparseNeighbors;
+  arma::mat sparseDistances;
+  sparseLSH.Search(sparseQData, k, sparseNeighbors, sparseDistances);
+
+  BOOST_REQUIRE_EQUAL(denseNeighbors.n_rows, sparseNeighbors.n_rows);
+  BOOST_REQUIRE_EQUAL(denseNeighbors.n_cols, sparseNeighbors.n_cols);
+  BOOST_REQUIRE_EQUAL(denseDistances.n_rows, sparseDistances.n_rows);
+  BOOST_REQUIRE_EQUAL(denseDistances.n_cols, sparseDistances.n_cols);
+
+  // Make sure that sparse LSH distances aren't garbage.
+  for (size_t i = 0; i < sparseNeighbors.n_elem; ++i)
+  {
+    BOOST_REQUIRE_GE(sparseNeighbors[i], 0);
+    BOOST_REQUIRE_LT(sparseNeighbors[i], rdata.n_cols);
+    BOOST_REQUIRE_GE(sparseDistances[i], 0.0);
+    BOOST_REQUIRE(!std::isinf(sparseDistances[i]));
+    BOOST_REQUIRE(!std::isnan(sparseDistances[i]));
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

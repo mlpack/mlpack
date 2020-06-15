@@ -1,5 +1,5 @@
 /**
- * @file hyperplane.hpp
+ * @file core/tree/space_split/hyperplane.hpp
  * @author Marcos Pividori
  *
  * Definition of Hyperplane and AxisOrthogonalHyperplane.
@@ -105,7 +105,7 @@ class HyperplaneBase
   /**
    * Determine if the given bound is to the left of the hyperplane.
    *
-   * @param point Bound to be analyzed.
+   * @param bound Bound to be analyzed.
    */
   bool Left(const BoundType& bound) const
   {
@@ -117,7 +117,7 @@ class HyperplaneBase
   /**
    * Determine if the given bound is to the right of the hyperplane.
    *
-   * @param point Bound to be analyzed.
+   * @param bound Bound to be analyzed.
    */
   bool Right(const BoundType& bound) const
   {

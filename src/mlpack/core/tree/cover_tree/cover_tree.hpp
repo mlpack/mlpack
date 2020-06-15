@@ -1,5 +1,5 @@
 /**
- * @file cover_tree.hpp
+ * @file core/tree/cover_tree/cover_tree.hpp
  * @author Ryan Curtin
  *
  * Definition of CoverTree, which can be used in place of the BinarySpaceTree.
@@ -113,6 +113,7 @@ class CoverTree
    *
    * @param dataset Reference to the dataset to build a tree on.
    * @param base Base to use during tree building (default 2.0).
+   * @param metric Metric to use (default NULL).
    */
   CoverTree(const MatType& dataset,
             const ElemType base = 2.0,
@@ -183,6 +184,7 @@ class CoverTree
    * @param farSetSize Size of the far set; may be modified (if this node uses
    *     any points in the far set).
    * @param usedSetSize The number of points used will be added to this number.
+   * @param metric Metric to use (default NULL).
    */
   CoverTree(const MatType& dataset,
             const ElemType base,

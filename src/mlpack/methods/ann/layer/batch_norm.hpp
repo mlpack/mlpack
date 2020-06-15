@@ -1,5 +1,5 @@
 /**
- * @file batch_norm.hpp
+ * @file methods/ann/layer/batch_norm.hpp
  * @author Praveen Ch
  * @author Manthan-R-Sheth
  *
@@ -62,7 +62,7 @@ class BatchNorm
   /**
    * Create the BatchNorm layer object for a specified number of input units.
    *
-   * @param size The number of input units.
+   * @param size The number of input units / channels.
    * @param eps The epsilon added to variance to ensure numerical stability.
    */
   BatchNorm(const size_t size, const double eps = 1e-8);
@@ -137,6 +137,12 @@ class BatchNorm
 
   //! Get the variance over the training data.
   OutputDataType TrainingVariance() { return runningVariance / count; }
+
+  //! Get the number of input units.
+  size_t InputSize() const { return size; }
+
+  //! Get the epsilon value.
+  double Epsilon() const { return eps; }
 
   /**
    * Serialize the layer

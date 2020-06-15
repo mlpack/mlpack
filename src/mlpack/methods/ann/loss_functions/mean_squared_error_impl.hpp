@@ -1,5 +1,5 @@
 /**
- * @file mean_squared_error_impl.hpp
+ * @file methods/ann/loss_functions/mean_squared_error_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the mean squared error performance function.
@@ -26,8 +26,10 @@ MeanSquaredError<InputDataType, OutputDataType>::MeanSquaredError()
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double MeanSquaredError<InputDataType, OutputDataType>::Forward(
-    const InputType& input, const TargetType& target)
+typename InputType::elem_type
+MeanSquaredError<InputDataType, OutputDataType>::Forward(
+    const InputType& input,
+    const TargetType& target)
 {
   return arma::accu(arma::square(input - target)) / target.n_cols;
 }

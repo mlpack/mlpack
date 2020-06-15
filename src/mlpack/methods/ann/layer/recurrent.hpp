@@ -1,5 +1,5 @@
 /**
- * @file recurrent.hpp
+ * @file methods/ann/layer/recurrent.hpp
  * @author Marcus Edel
  *
  * Definition of the LinearLayer class also known as fully-connected layer or
@@ -50,9 +50,6 @@ class Recurrent
    */
   Recurrent();
 
-  //! Destructor to release allocated memory.
-  ~Recurrent();
-
   //! Copy constructor.
   Recurrent(const Recurrent&);
 
@@ -90,7 +87,7 @@ class Recurrent
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -138,6 +135,9 @@ class Recurrent
   OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
+
+  //! Get the number of steps to backpropagate through time.
+  size_t const& Rho() const { return rho; }
 
   /**
    * Serialize the layer

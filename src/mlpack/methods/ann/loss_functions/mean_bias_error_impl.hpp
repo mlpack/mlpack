@@ -1,5 +1,5 @@
 /**
- * @file mean_bias_error_impl.hpp
+ * @file methods/ann/loss_functions/mean_bias_error_impl.hpp
  * @author Saksham Rastogi
  *
  * Implementation of the mean bias error performance function.
@@ -27,8 +27,9 @@ MeanBiasError<InputDataType, OutputDataType>::MeanBiasError()
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double MeanBiasError<InputDataType, OutputDataType>::Forward(
-    const InputType& input, const TargetType& target)
+typename InputType::elem_type
+MeanBiasError<InputDataType, OutputDataType>::Forward(const InputType& input,
+                                                      const TargetType& target)
 {
   return arma::accu(target - input) / target.n_cols;
 }

@@ -1,5 +1,5 @@
 /**
- * @file approx_kfn_main.cpp
+ * @file methods/approx_kfn/approx_kfn_main.cpp
  * @author Ryan Curtin
  *
  * Command-line program for various furthest neighbor search algorithms.
@@ -54,6 +54,10 @@ PROGRAM_INFO("Approximate furthest neighbor search",
     " may be specified with " + PRINT_PARAM_STRING("algorithm") + ".  Also "
     "specify the number of neighbors to search for with " +
     PRINT_PARAM_STRING("k") + "."
+    "\n\n"
+    "Note that for 'qdafn' in lower dimensions, " +
+    PRINT_PARAM_STRING("num_projections") + " may need to be set to a high "
+    "value in order to return results for each query point."
     "\n\n"
     "If no query set is specified, the reference set will be used as the "
     "query set.  The " + PRINT_PARAM_STRING("output_model") + " output "

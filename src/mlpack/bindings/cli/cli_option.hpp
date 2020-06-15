@@ -1,5 +1,5 @@
 /**
- * @file option.hpp
+ * @file bindings/cli/cli_option.hpp
  * @author Matthew Amidon
  *
  * Definition of the Option class, which is used to define parameters which are
@@ -30,6 +30,7 @@
 #include "get_printable_param_value.hpp"
 #include "get_allocated_memory.hpp"
 #include "delete_allocated_memory.hpp"
+#include "in_place_copy.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -62,7 +63,7 @@ class CLIOption
    * @param input Whether or not the option is an input option.
    * @param noTranspose If the parameter is a matrix and this is true, then the
    *      matrix will not be transposed on loading.
-   * @param testName Is not used and added for compatibility reasons.
+   * @param * (testName) Is not used and added for compatibility reasons.
    */
   CLIOption(const N defaultValue,
             const std::string& identifier,
@@ -160,6 +161,7 @@ class CLIOption
         &GetAllocatedMemory<N>;
     CLI::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
         &DeleteAllocatedMemory<N>;
+    CLI::GetSingleton().functionMap[tname]["InPlaceCopy"] = &InPlaceCopy<N>;
   }
 };
 

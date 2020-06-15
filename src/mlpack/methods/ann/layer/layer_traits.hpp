@@ -1,5 +1,5 @@
 /**
- * @file layer_traits.hpp
+ * @file methods/ann/layer/layer_traits.hpp
  * @author Marcus Edel
  *
  * This provides the LayerTraits class, a template class to get information

@@ -1,5 +1,5 @@
 /**
- * @file emst_main.cpp
+ * @file methods/emst/emst_main.cpp
  * @author Bill March (march@gatech.edu)
  *
  * Calls the DualTreeBoruvka algorithm from dtb.hpp.

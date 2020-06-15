@@ -1,5 +1,5 @@
 /**
- * @file cli_test.cpp
+ * @file tests/cli_test.cpp
  * @author Matthew Amidon, Ryan Curtin
  *
  * Test for the CLI input parameter system.
@@ -850,7 +850,7 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
   const char* argv[9];
   argv[0] = "./test";
   argv[1] = "--matrix_file";
-  argv[2] = "file1.csv";
+  argv[2] = "test_data_3_1000.csv";
   argv[3] = "-M";
   argv[4] = "file2.csv";
   argv[5] = "-k";
@@ -863,9 +863,12 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // Now check that we can get unmapped parameters.
-  BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<arma::mat>("matrix"), "file1.csv");
+  BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<arma::mat>("matrix"),
+      "'test_data_3_1000.csv' (3x1000 matrix)");
+  // This will have size 0x0 since it's an output parameter, and it hasn't been
+  // set since ParseCommandLine() was called.
   BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<arma::mat>("matrix2"),
-      "file2.csv");
+      "'file2.csv' (0x0 matrix)");
   BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<GaussianKernel*>("kernel"),
       "kernel.txt");
   BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<GaussianKernel*>("kernel2"),

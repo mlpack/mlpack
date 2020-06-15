@@ -1,5 +1,5 @@
 /**
- * @file layer_types.hpp
+ * @file methods/ann/layer/layer_types.hpp
  * @author Marcus Edel
  *
  * This provides a list of all modules that can be used to construct a model.
@@ -30,18 +30,24 @@
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
 #include <mlpack/methods/ann/layer/c_relu.hpp>
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
+#include <mlpack/methods/ann/layer/linear_no_bias.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
 #include <mlpack/methods/ann/layer/lookup.hpp>
 #include <mlpack/methods/ann/layer/multiply_constant.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
+#include <mlpack/methods/ann/layer/noisylinear.hpp>
+#include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
+#include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
 #include <mlpack/methods/ann/layer/reparametrization.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
+#include <mlpack/methods/ann/layer/softmax.hpp>
 #include <mlpack/methods/ann/layer/subview.hpp>
 #include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
 #include <mlpack/methods/ann/layer/hardshrink.hpp>
+#include <mlpack/methods/ann/layer/celu.hpp>
 #include <mlpack/methods/ann/layer/softshrink.hpp>
 
 // Convolution modules.
@@ -78,6 +84,10 @@ template<typename InputDataType,
          typename OutputDataType,
          typename RegularizerType>
 class LinearNoBias;
+
+template<typename InputDataType,
+         typename OutputDataType>
+class NoisyLinear;
 
 template<typename InputDataType,
          typename OutputDataType
@@ -177,7 +187,19 @@ template <typename InputDataType,
 >
 class WeightNorm;
 
+template <typename InputDataType,
+          typename OutputDataType
+>
+class AdaptiveMaxPooling;
+
+template <typename InputDataType,
+          typename OutputDataType
+>
+class AdaptiveMeanPooling;
+
 using MoreTypes = boost::variant<
+        Glimpse<arma::mat, arma::mat>*,
+        Highway<arma::mat, arma::mat>*,
         Recurrent<arma::mat, arma::mat>*,
         RecurrentAttention<arma::mat, arma::mat>*,
         ReinforceNormal<arma::mat, arma::mat>*,
@@ -192,8 +214,11 @@ using MoreTypes = boost::variant<
 
 template <typename... CustomLayers>
 using LayerTypes = boost::variant<
+    AdaptiveMaxPooling<arma::mat, arma::mat>*,
+    AdaptiveMeanPooling<arma::mat, arma::mat>*,
     Add<arma::mat, arma::mat>*,
     AddMerge<arma::mat, arma::mat>*,
+    AlphaDropout<arma::mat, arma::mat>*,
     AtrousConvolution<NaiveConvolution<ValidConvolution>,
                       NaiveConvolution<FullConvolution>,
                       NaiveConvolution<ValidConvolution>,
@@ -205,6 +230,7 @@ using LayerTypes = boost::variant<
     BaseLayer<SoftplusFunction, arma::mat, arma::mat>*,
     BatchNorm<arma::mat, arma::mat>*,
     BilinearInterpolation<arma::mat, arma::mat>*,
+    CELU<arma::mat, arma::mat>*,
     Concat<arma::mat, arma::mat>*,
     Concatenate<arma::mat, arma::mat>*,
     ConcatPerformance<NegativeLogLikelihood<arma::mat, arma::mat>,
@@ -213,36 +239,35 @@ using LayerTypes = boost::variant<
     Convolution<NaiveConvolution<ValidConvolution>,
                 NaiveConvolution<FullConvolution>,
                 NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
-    TransposedConvolution<NaiveConvolution<ValidConvolution>,
-            NaiveConvolution<ValidConvolution>,
-            NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
+    CReLU<arma::mat, arma::mat>*,
     DropConnect<arma::mat, arma::mat>*,
     Dropout<arma::mat, arma::mat>*,
-    AlphaDropout<arma::mat, arma::mat>*,
     ELU<arma::mat, arma::mat>*,
+    FastLSTM<arma::mat, arma::mat>*,
     FlexibleReLU<arma::mat, arma::mat>*,
-    Glimpse<arma::mat, arma::mat>*,
+    GRU<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
-    Highway<arma::mat, arma::mat>*,
     Join<arma::mat, arma::mat>*,
     LayerNorm<arma::mat, arma::mat>*,
     LeakyReLU<arma::mat, arma::mat>*,
-    CReLU<arma::mat, arma::mat>*,
     Linear<arma::mat, arma::mat, NoRegularizer>*,
     LinearNoBias<arma::mat, arma::mat, NoRegularizer>*,
     LogSoftMax<arma::mat, arma::mat>*,
     Lookup<arma::mat, arma::mat>*,
     LSTM<arma::mat, arma::mat>*,
-    GRU<arma::mat, arma::mat>*,
-    FastLSTM<arma::mat, arma::mat>*,
     MaxPooling<arma::mat, arma::mat>*,
     MeanPooling<arma::mat, arma::mat>*,
     MiniBatchDiscrimination<arma::mat, arma::mat>*,
     MultiplyConstant<arma::mat, arma::mat>*,
     MultiplyMerge<arma::mat, arma::mat>*,
     NegativeLogLikelihood<arma::mat, arma::mat>*,
+    NoisyLinear<arma::mat, arma::mat>*,
     Padding<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
+    Softmax<arma::mat, arma::mat>*,
+    TransposedConvolution<NaiveConvolution<ValidConvolution>,
+            NaiveConvolution<ValidConvolution>,
+            NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
     WeightNorm<arma::mat, arma::mat>*,
     MoreTypes,
     CustomLayers*...

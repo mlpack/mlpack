@@ -1,5 +1,5 @@
 /**
- * @file deterministic_set_visitor_impl.hpp
+ * @file methods/ann/visitor/deterministic_set_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Deterministic() function layer abstraction.

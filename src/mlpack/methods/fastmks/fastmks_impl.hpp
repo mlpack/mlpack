@@ -1,5 +1,5 @@
 /**
- * @file fastmks_impl.hpp
+ * @file methods/fastmks/fastmks_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the FastMKS class (fast max-kernel search).

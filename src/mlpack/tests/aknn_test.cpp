@@ -1,5 +1,5 @@
 /**
- * @file aknn_test.cpp
+ * @file tests/aknn_test.cpp
  *
  * Test file for KNN class with different values of epsilon.
  *

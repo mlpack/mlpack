@@ -1,5 +1,5 @@
 /**
- * @file select.hpp
+ * @file methods/ann/layer/select.hpp
  * @author Marcus Edel
  *
  * Definition of the Select module.
@@ -55,7 +55,7 @@ class Select
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -73,6 +73,12 @@ class Select
   OutputDataType& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
+
+  //! Get the column index.
+  size_t const& Index() const { return index; }
+
+  //! Get the number of elements selected.
+  size_t const& NumElements() const { return elements; }
 
   /**
    * Serialize the layer

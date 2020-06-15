@@ -1,12 +1,12 @@
 /**
- * @file softshrink.hpp
+ * @file methods/ann/layer/softshrink.hpp
  * @author Lakshya Ojha
  *
  * The soft shrink function has threshold proportional to the noise level given
- * by the user.
- * The use of a Soft Shrink activation function provides adaptive denoising at
- * various noise levels using a single CNN(Convolution Neural) without a
- * requirement to train a unique CNN for each noise level.
+ * by the user. The use of a Soft Shrink activation function provides adaptive
+ * denoising at various noise levels using a single
+ * CNN (Convolution Neural Network) without a requirement to train a unique CNN
+ * for each noise level.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -23,22 +23,20 @@ namespace ann /** Artifical Neural Network. */ {
 
 /**
  * Soft Shrink operator is defined as,
- * @f{eqnarray*}{
- * f(x) &=& \left\{
- *   \begin{array}{lr}
- *     x - lambda & : x >  lambda \\
- *     x + lambda & : x < -lambda \\
- *     0 & : otherwise
- *   \end{array} \\
- * \right.
- * f'(x) &=& \left\{
- *   \begin{array}{lr}
- *     1 & : x >  lambda \\
- *     1 & : x < -lambda \\
- *     0 & : otherwise
- *   \end{array}
- * \right.
- * @f}
+ * \f{eqnarray*}{
+ *   f(x) &=&
+ *   \begin{cases}
+ *     x - \lambda & : x >  \lambda \\
+ *     x + \lambda & : x < -\lambda \\
+ *     0 & : otherwise. \\
+ *   \end{cases} \\
+ *   f'(x) &=&
+ *   \begin{cases}
+ *     1 & : x >  \lambda \\
+ *     1 & : x < -\lambda \\
+ *     0 & : otherwise.
+ *   \end{cases}
+ * \f}
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -69,7 +67,7 @@ class SoftShrink
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
-   * 
+   *
    * @param input Input data used for evaluating the Soft Shrink function.
    * @param output Resulting output activation
    */
@@ -80,7 +78,7 @@ class SoftShrink
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards through f. Using the results from the feed
    * forward pass.
-   * 
+   *
    * @param input The propagated input activation f(x).
    * @param gy The backpropagated error.
    * @param g The calculated gradient

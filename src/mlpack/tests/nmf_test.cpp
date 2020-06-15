@@ -1,5 +1,5 @@
 /**
- * @file nmf_test.cpp
+ * @file tests/nmf_test.cpp
  * @author Mohan Rajendran
  *
  * Test file for NMF class.

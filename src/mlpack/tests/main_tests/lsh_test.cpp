@@ -1,5 +1,5 @@
 /**
- * @file lsh_test.cpp
+ * @file tests/main_tests/lsh_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of lsh_main.cpp.
