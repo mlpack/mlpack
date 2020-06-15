@@ -84,6 +84,7 @@ class SilhouetteScore
    * @param distances colvec containing distances from other elements.
    * @param labels Labels assigned to data by clustering.
    * @param label label of the target cluster.
+   * @param sameCluster true if calculating mean distance from same cluster.
    * @return (double) distance from the cluster.
    */
   static double MeanDistanceFromCluster(const arma::colvec& distances,
