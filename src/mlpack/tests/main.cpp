@@ -25,7 +25,14 @@ int main(int argc, char** argv)
   //size_t seed = std::time(NULL);
   //srand((unsigned int) seed);
   //arma::arma_rng::set_seed(seed);
+  #ifndef TEST_VERBOSE
+    #ifdef DEBUG
+    mlpack::Log::Debug.ignoreInput = true;
+    #endif
 
+    mlpack::Log::Info.ignoreInput = true;
+    mlpack::Log::Warn.ignoreInput = true;
+  #endif
   std::cout << "run test using Catch2"  << std::endl;
 
 
