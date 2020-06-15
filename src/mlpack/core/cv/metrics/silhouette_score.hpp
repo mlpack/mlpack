@@ -28,13 +28,13 @@ namespace cv {
  * Smaller values of Silhouette Score indicate poor clustering.
  *  Negative values would occur when a wrong label was put on the element.
  *  Values near zero indicate overlapping clusters.
- * For an element i @f$ a(i) $@f is within cluster average dissimilarity
- * and @f$ b(i) $@f is minimum of average dissimilarity from other clusters.
- * the Silhouette Score @f$ s(i) $@f of a Sample is calculated by
+ * For an element i @f$ a(i) @f$ is within cluster average dissimilarity
+ * and @f$ b(i) @f$ is minimum of average dissimilarity from other clusters.
+ * the Silhouette Score @f$ s(i) @f$ of a Sample is calculated by
  * @f{eqnarray*}{
  * s(i)  &=& \frac{b(i) - a(i)}{max\{b(i), a(i)\}}
  * @f}
- * 
+ *
  * The Overall Silhouette Score is the mean of individual silhoutte scores.
  */
 class SilhouetteScore
@@ -67,7 +67,7 @@ class SilhouetteScore
   /**
    * Find silhouette score of all individual elements.
    * (Distance not precomputed).
-   * 
+   *
    * @param X Column-major data used for clustering.
    * @param labels Labels assigned to data by clustering.
    * @param metric Metric to be used to calculate dissimilarity.
@@ -80,7 +80,7 @@ class SilhouetteScore
 
   /**
    * Find mean distance of element from a given cluster.
-   * 
+   *
    * @param distances colvec containing distances from other elements.
    * @param labels Labels assigned to data by clustering.
    * @param label label of the target cluster.
