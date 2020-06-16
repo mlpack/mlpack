@@ -269,4 +269,3 @@ endforeach()
 # Use RUN_SERIAL for long running parallel tests
 set_tests_properties(${parallel_tests} PROPERTIES RUN_SERIAL TRUE)
 
-add_test(NAME mlpack_catch_tests COMMAND mlpack_catch_tests)
