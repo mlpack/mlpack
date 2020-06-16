@@ -36,6 +36,8 @@
 
   * Fix serialization of kernels with state for FastMKS (#2452).
 
+  * Add `RBF` layer in ann module to make `RBFN` architecture (#2261).
+
 ### mlpack 3.3.1
 ###### 2020-04-29
   * Minor Julia and Python documentation fixes (#2373).
