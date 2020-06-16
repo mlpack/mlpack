@@ -81,16 +81,15 @@ void PrintGo(const util::ProgramDoc& programInfo,
   cout << endl;
 
   // Then we must print the import of the gonum package.
-  cout << "import (" << endl;
-  cout << "  " << "\"gonum.org/v1/gonum/mat\" " << endl;
-  for (size_t i = 0; i < inputOptions.size(); ++i)
+  for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = parameters.at(inputOptions[i]);
-    size_t indent = 2;
-    CLI::GetSingleton().functionMap[d.tname]["ImportDecl"](d,
-        (void*) &indent, NULL);
+    const util::ParamData& d = it->second;
+    if ((d.cppType).compare(0, 6, "arma::") == 0)
+    {
+      std::cout << "import \"gonum.org/v1/gonum/mat\" " << std::endl;
+      break;
+    }
   }
-  cout << ")" << endl;
   cout << endl;
   std::string goFunctionName = CamelCase(functionName, false);
 

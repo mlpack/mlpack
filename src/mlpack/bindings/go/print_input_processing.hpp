@@ -296,8 +296,8 @@ void PrintInputProcessing(
   {
     goParamName = CamelCase(goParamName, true);
     // Print function call to set the given parameter into the cli.
-    std::cout << prefix << "set" << strippedType << "(\"" << goParamName
-              << "\", " << paramName << ")" << std::endl;
+    std::cout << prefix << "set" << strippedType << "(\"" << d.name
+              << "\", " << goParamName << ")" << std::endl;
 
     // Print function call to set the given parameter as passed.
     std::cout << prefix << "setPassed(\"" << d.name << "\")" << std::endl;
