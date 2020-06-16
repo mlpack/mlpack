@@ -25,7 +25,7 @@ namespace svm {
  *
  * @tparam MatType Type of data matrix.
  */
-template <typename MatType = arma::mat>
+template <typename MatType = arma::mat, typename KernelType = >
 class KernelSVM
 {
  public:
