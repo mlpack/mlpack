@@ -198,7 +198,7 @@ class BayesianLinearRegression
    * Get the vector of standard deviations computed on the features over the 
    * training points. Vector of 1 if scaleData is false.
    *  
-   * return dataOffset
+   * @return dataOffset
    */
   const arma::colvec& DataScale() const { return dataScale; }
 
