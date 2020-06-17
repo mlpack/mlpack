@@ -189,10 +189,10 @@ if (BUILD_GO_BINDINGS)
   add_custom_command(OUTPUT
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/capi/${name}.h
       COMMAND ${CMAKE_COMMAND}
-          -DPROGRAM_NAME="${name}"
-          -DPROGRAM_MAIN_FILE="${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp"
-          -DGO_IN="${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/go_method.h.in"
-          -DGO_OUT="${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/capi/${name}.h"
+          -DPROGRAM_NAME=${name}
+          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DGO_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/go_method.h.in
+          -DGO_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/capi/${name}.h
           -P ${CMAKE_SOURCE_DIR}/CMake/go/ConfigureGoHCPP.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/go_method.h.in
               ${CMAKE_SOURCE_DIR}/CMake/go/ConfigureGoHCPP.cmake)
@@ -230,10 +230,10 @@ if(BUILD_GO_SHLIB)
   add_custom_command(OUTPUT
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp
       COMMAND ${CMAKE_COMMAND}
-          -DPROGRAM_NAME="${name}"
-          -DPROGRAM_MAIN_FILE="${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp"
-          -DGO_IN="${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/go_method.cpp.in"
-          -DGO_OUT="${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp"
+          -DPROGRAM_NAME=${name}
+          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DGO_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/go_method.cpp.in
+          -DGO_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp
           -P ${CMAKE_SOURCE_DIR}/CMake/go/ConfigureGoHCPP.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/go_method.cpp.in
               ${CMAKE_SOURCE_DIR}/CMake/go/ConfigureGoHCPP.cmake)
