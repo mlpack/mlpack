@@ -127,7 +127,6 @@ class BayesianLinearRegression
    *
    * @param points The data points to apply the model.
    * @param predictions y, Contains the  predicted values on completion.
-   *
    * @return Root mean squared error computed on the train set.
    */
   void Predict(const arma::mat& points,
@@ -256,12 +255,12 @@ class BayesianLinearRegression
    * Center and scale the data. The last four arguments
    * allow future modification of new points.
    *
-   * @param data Design matrix in column-major format, dim(P,N).
+   * @param data Design matrix in column-major format, dim(P, N).
    * @param responses A vector of targets.
    * @param centerData If true data will be centred according to the points.
    * @param centerData If true data will be scales by the standard deviations
    *     of the features computed according to the points.
-   * @param dataProc data processed, dim(N,P).
+   * @param dataProc data processed, dim(P, N).
    * @param responsesProc responses processed, dim(N).
    * @param dataOffset Mean vector of the design matrix according to the 
    *     points, dim(P).
@@ -275,11 +274,13 @@ class BayesianLinearRegression
                          arma::rowvec& responsesProc);
 
   /**
-   * Add the documentation
+   * Center and scale the points before prediction.
+   * 
+   * @param data Design matrix in column-major format, dim(P, N).
+   * @param responsesProc responses processed, dim(N).
   */ 
   void CenterScaleDataPred(const arma::mat& data, 
                            arma::mat& dataProc) const;
-
 
 };
 } // namespace regression

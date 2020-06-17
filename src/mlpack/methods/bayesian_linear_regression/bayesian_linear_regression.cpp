@@ -149,7 +149,7 @@ double BayesianLinearRegression::CenterScaleData(const arma::mat& data,
   else
   {
     dataOffset = mean(data, 1);
-    dataScale = stddev(data, 1, 1);
+    dataScale = stddev(data, 0, 1);
     responsesOffset = mean(responses);
     dataProc = (data.each_col() - dataOffset).each_col() / dataScale;
     responsesProc = responses - responsesOffset;
