@@ -66,6 +66,7 @@ class PrioritizedReplay
       maxPriority(0),
       initialBeta(0),
       beta(0),
+      replayBetaIters(0),
       nSteps(0)
   { /* Nothing to do here. */ }
 
@@ -86,17 +87,17 @@ class PrioritizedReplay
       batchSize(batchSize),
       capacity(capacity),
       position(0),
+      full(false),
+      alpha(alpha),
+      maxPriority(1.0),
+      initialBeta(0.6),
+      replayBetaIters(10000),
+      nSteps(nSteps),
       states(dimension, capacity),
       actions(capacity),
       rewards(capacity),
       nextStates(dimension, capacity),
-      isTerminal(capacity),
-      full(false),
-      alpha(alpha),
-      nSteps(nSteps),
-      maxPriority(1.0),
-      initialBeta(0.6),
-      replayBetaIters(10000)
+      isTerminal(capacity)
   {
     size_t size = 1;
     while (size < capacity)
@@ -317,21 +318,6 @@ class PrioritizedReplay
   //! Indicate the position to store new transition.
   size_t position;
 
-  //! Locally-stored encoded previous states.
-  arma::mat states;
-
-  //! Locally-stored previous actions.
-  arma::icolvec actions;
-
-  //! Locally-stored previous rewards.
-  arma::colvec rewards;
-
-  //! Locally-stored encoded previous next states.
-  arma::mat nextStates;
-
-  //! Locally-stored termination information of previous experience.
-  arma::icolvec isTerminal;
-
   //! Locally-stored indicator that whether the memory is full or not.
   bool full;
 
@@ -365,6 +351,21 @@ class PrioritizedReplay
 
   //! Locally-stored buffer containing n consecutive steps.
   std::vector<Transition> nStepBuffer;
+
+  //! Locally-stored encoded previous states.
+  arma::mat states;
+
+  //! Locally-stored previous actions.
+  arma::icolvec actions;
+
+  //! Locally-stored previous rewards.
+  arma::colvec rewards;
+
+  //! Locally-stored encoded previous next states.
+  arma::mat nextStates;
+
+  //! Locally-stored termination information of previous experience.
+  arma::icolvec isTerminal;
 };
 
 } // namespace rl

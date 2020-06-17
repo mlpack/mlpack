@@ -425,6 +425,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithNStepDQN)
 
   // Setting all training hyperparameters.
   TrainingConfig config;
+  config.ExplorationSteps() = 50;
   config.StepLimit() = 200;
 
   // Set up DQN agent.
@@ -451,6 +452,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithNStepPrioritizedDQN)
 
   // Setting all training hyperparameters.
   TrainingConfig config;
+  config.ExplorationSteps() = 50;
   config.StepLimit() = 200;
 
   // Set up DQN agent.

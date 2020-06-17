@@ -81,14 +81,14 @@ class RandomReplay
                const size_t dimension = StateType::dimension) :
       batchSize(batchSize),
       capacity(capacity),
-      nSteps(nSteps),
       position(0),
+      full(false),
+      nSteps(nSteps),
       states(dimension, capacity),
       actions(capacity),
       rewards(capacity),
       nextStates(dimension, capacity),
-      isTerminal(capacity),
-      full(false)
+      isTerminal(capacity)
   { /* Nothing to do here. */ }
 
   /**
@@ -238,6 +238,15 @@ class RandomReplay
   //! Indicate the position to store new transition.
   size_t position;
 
+  //! Locally-stored indicator that whether the memory is full or not
+  bool full;
+
+  //! Locally-stored number of steps to look into the future.
+  size_t nSteps;
+
+  //! Locally-stored buffer containing n consecutive steps.
+  std::vector<Transition> nStepBuffer;
+
   //! Locally-stored encoded previous states.
   arma::mat states;
 
@@ -252,15 +261,6 @@ class RandomReplay
 
   //! Locally-stored termination information of previous experience.
   arma::icolvec isTerminal;
-
-  //! Locally-stored indicator that whether the memory is full or not
-  bool full;
-
-  //! Locally-stored number of steps to look into the future.
-  size_t nSteps;
-
-  //! Locally-stored buffer containing n consecutive steps.
-  std::vector<Transition> nStepBuffer;
 };
 
 } // namespace rl
