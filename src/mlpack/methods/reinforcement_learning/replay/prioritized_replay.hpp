@@ -45,10 +45,28 @@ class PrioritizedReplay
   //! Convenient typedef for state.
   using StateType = typename EnvironmentType::State;
 
+  struct Transition
+  {
+    StateType state;
+    ActionType action;
+    double reward;
+    StateType nextState;
+    bool isEnd;
+  };
+
   /**
    * Default constructor.
    */
-  PrioritizedReplay()
+  PrioritizedReplay():
+      batchSize(0),
+      capacity(0),
+      position(0),
+      full(false),
+      alpha(0),
+      maxPriority(0),
+      initialBeta(0),
+      beta(0),
+      nSteps(0)
   { /* Nothing to do here. */ }
 
   /**
@@ -57,11 +75,13 @@ class PrioritizedReplay
    * @param batchSize Number of examples returned at each sample.
    * @param capacity Total memory size in terms of number of examples.
    * @param alpha How much prioritization is used.
+   * @param nSteps Number of steps to look in the future.
    * @param dimension The dimension of an encoded state.
    */
   PrioritizedReplay(const size_t batchSize,
                     const size_t capacity,
                     const double alpha,
+                    const size_t nSteps = 1,
                     const size_t dimension = StateType::dimension) :
       batchSize(batchSize),
       capacity(capacity),
@@ -73,6 +93,7 @@ class PrioritizedReplay
       isTerminal(capacity),
       full(false),
       alpha(alpha),
+      nSteps(nSteps),
       maxPriority(1.0),
       initialBeta(0.6),
       replayBetaIters(10000)
@@ -95,13 +116,33 @@ class PrioritizedReplay
    * @param reward Given reward.
    * @param nextState Given next state.
    * @param isEnd Whether next state is terminal state.
+   * @param discount The discount parameter.
    */
-  void Store(const StateType& state,
+  void Store(StateType state,
              ActionType action,
              double reward,
-             const StateType& nextState,
-             bool isEnd)
+             StateType nextState,
+             bool isEnd,
+             const double& discount)
   {
+    nStepBuffer.push_back({state, action, reward, nextState, isEnd});
+
+    // Single step transition is not ready.
+    if(nStepBuffer.size() < nSteps)
+      return;
+
+    // To keep the queue size fixed to nSteps.
+    if(nStepBuffer.size() > nSteps)
+      nStepBuffer.erase(nStepBuffer.begin());
+
+    // Before moving ahead, lets confirm if our fixed size buffer works.
+    assert(nStepBuffer.size() == nSteps);
+    
+    // Make a n-step transition.
+    GetNStepInfo(reward, nextState, isEnd, discount);
+
+    state = nStepBuffer.front().state;
+    action = nStepBuffer.front().action;
     states.col(position) = state.Encode();
     actions(position) = action;
     rewards(position) = reward;
@@ -115,6 +156,38 @@ class PrioritizedReplay
     {
       full = true;
       position = 0;
+    }
+  }
+
+  /**
+   * Get the reward, next state and terminal boolean for nth step.
+   *
+   * @param reward Given reward.
+   * @param nextState Given next state.
+   * @param isEnd Whether next state is terminal state.
+   * @param discount The discount parameter.
+   */
+  void GetNStepInfo(double& reward,
+                    StateType& nextState,
+                    bool& isEnd,
+                    const double& discount)
+  {
+    reward = nStepBuffer.back().reward;
+    nextState = nStepBuffer.back().nextState;
+    isEnd = nStepBuffer.back().isEnd;
+
+    // Should start from the second last transition in buffer.
+    for (int i = nStepBuffer.size() - 2; i >= 0; i--)
+    {
+      double r = nStepBuffer[i].reward;
+      StateType nS = nStepBuffer[i].nextState;
+      bool iE = nStepBuffer[i].isEnd;
+      reward = r + discount * reward * (1 - iE);
+      if(iE)
+      {
+        nextState = nS;
+        isEnd = iE;
+      }
     }
   }
 
@@ -231,6 +304,8 @@ class PrioritizedReplay
     gradients = arma::mean(weights) * gradients;
   }
 
+  //! Get the number of steps for n-step agent.
+  const size_t& NSteps() const { return nSteps; }
 
  private:
   //! Locally-stored number of examples of each sample.
@@ -284,6 +359,12 @@ class PrioritizedReplay
 
   //! Locally-stored the weights of sampled transitions.
   arma::rowvec weights;
+
+  //! Locally-stored number of steps to look into the future.
+  size_t nSteps;
+
+  //! Locally-stored buffer containing n consecutive steps.
+  std::vector<Transition> nStepBuffer;
 };
 
 } // namespace rl
