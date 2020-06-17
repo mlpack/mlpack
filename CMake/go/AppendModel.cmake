@@ -1,4 +1,4 @@
-# AppendModel.cmake: append model defination and gettter setter methods for
+# AppendModel.cmake: append model definition and gettter setter methods for
 # mlpack model types to the existing file of models.go.
 
 # This function depends on the following variables being set:
@@ -52,14 +52,14 @@ function(append_model SERIALIZATION_FILE PROGRAM_MAIN_FILE)
     foreach (INDEX RANGE ${LOOP_MAX})
       list(GET MODEL_TYPES ${INDEX} MODEL_TYPE)
       list(GET MODEL_SAFE_TYPES ${INDEX} MODEL_SAFE_TYPE)
-      # Convert the model type similar to goStrippedType.
+
+      # Convert the model type similar to goStrippedType(bindings/go/strip_type.hpp).
       string(LENGTH ${MODEL_SAFE_TYPE} NUM_MODEL_CHAR)
       if (${NUM_MODEL_CHAR} GREATER 0)
         math(EXPR LAST_CHAR_INDEX "${NUM_MODEL_CHAR}-1")
         set(BREAK 0)
         foreach (INDEX RANGE ${LAST_CHAR_INDEX})
-          if ("${MODEL_SAFE_TYPE}" MATCHES "[^A-Z]")
-          else ()
+          if (NOT "${MODEL_SAFE_TYPE}" MATCHES "[^A-Z]")
             string(TOLOWER ${MODEL_SAFE_TYPE} GOMODEL_SAFE_TYPE)
             break()
           endif()

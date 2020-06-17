@@ -44,7 +44,8 @@ if (BUILD_GO_BINDINGS)
 
   add_custom_target(go)
 
-  # Create model.go with package defination.
+  # Create model.go with package definition.
+  # All the bindings will build under "src/mlpack.org/v1/mlpack".
   file(WRITE
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/models.go"
       "package mlpack"
@@ -65,8 +66,6 @@ if (BUILD_GO_SHLIB)
     mlpack/cli_util.h
     mlpack/cli_util.hpp
     print_class_defn.hpp
-    print_cpp.cpp
-    print_cpp.hpp
     print_defn_input.hpp
     print_defn_output.hpp
     print_doc.hpp
@@ -74,8 +73,6 @@ if (BUILD_GO_SHLIB)
     print_doc_functions_impl.hpp
     print_go.hpp
     print_go.cpp
-    print_h.hpp
-    print_h.cpp
     print_input_processing.hpp
     print_method_config.hpp
     print_method_init.hpp
@@ -188,40 +185,31 @@ if (BUILD_GO_BINDINGS)
   # Append content to the list.
   set_property(GLOBAL APPEND PROPERTY GO_MODELS ${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp)
 
-  # Create .h file for C API, e.g. pca.h.
-  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/generate_h_${name}.cpp
-     COMMAND ${CMAKE_COMMAND}
-         -DGENERATE_BINDING_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/generate_h.cpp.in
-         -DGENERATE_BINDING_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/generate_h_${name}.cpp
-         -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
-         -DPROGRAM_NAME=${name}
-         -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGoHCPP.cmake
-     DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/generate_h.cpp.in)
-
-  add_executable(generate_h_${name}
-      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/generate_h_${name}.cpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/print_h.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/print_h.cpp)
-  target_link_libraries(generate_h_${name} mlpack ${MLPACK_LIBRARIES})
-  set_target_properties(generate_h_${name} PROPERTIES COMPILE_FLAGS
-      -DBINDING_TYPE=BINDING_TYPE_GO)
-  add_custom_command(TARGET generate_h_${name} POST_BUILD
+  # Create ${name}.h.
+  add_custom_command(OUTPUT
+      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/capi/${name}.h
       COMMAND ${CMAKE_COMMAND}
-          -DGENERATE_BINDING_PROGRAM=${CMAKE_BINARY_DIR}/bin/generate_h_${name}
-          -DBINDING_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/capi/${name}.h
-          -P ${CMAKE_SOURCE_DIR}/CMake/GenerateGoBinding.cmake)
+          -DPROGRAM_NAME="${name}"
+          -DPROGRAM_MAIN_FILE="${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp"
+          -DGO_IN="${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/go_method.h.in"
+          -DGO_OUT="${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/capi/${name}.h"
+          -P ${CMAKE_SOURCE_DIR}/CMake/go/ConfigureGoHCPP.cmake
+      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/go_method.h.in
+              ${CMAKE_SOURCE_DIR}/CMake/go/ConfigureGoHCPP.cmake)
 
   # Create .go file, pca.go.
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/generate_go_${name}.cpp
      COMMAND ${CMAKE_COMMAND}
-         -DGENERATE_BINDING_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/generate_go.cpp.in
-         -DGENERATE_BINDING_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/generate_go_${name}.cpp
+         -DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/generate_go.cpp.in
+         -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/generate_go_${name}.cpp
          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
          -DPROGRAM_NAME=${name}
-         -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGoHCPP.cmake
-     DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/generate_go.cpp.in)
+         -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake
+     DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/generate_go.cpp.in
+             ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake)
 
   add_executable(generate_go_${name}
+      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/capi/${name}.h
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/generate_go_${name}.cpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/print_go.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/print_go.cpp)
@@ -234,57 +222,41 @@ if (BUILD_GO_BINDINGS)
           -DBINDING_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/${name}.go
           -P ${CMAKE_SOURCE_DIR}/CMake/GenerateGoBinding.cmake)
 
-  add_dependencies(generate_h_${name} generate_go_${name})
-  add_dependencies(go generate_h_${name})
+  add_dependencies(go generate_go_${name})
 endif ()
 
 if(BUILD_GO_SHLIB)
-  # Create .cpp file for C API, e.g. pca.cpp.
-  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/generate_cpp_${name}.cpp
-     COMMAND ${CMAKE_COMMAND}
-         -DGENERATE_BINDING_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/generate_cpp.cpp.in
-         -DGENERATE_BINDING_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/generate_cpp_${name}.cpp
-         -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
-         -DPROGRAM_NAME=${name}
-         -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGoHCPP.cmake
-     DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/generate_cpp.cpp.in)
-
-  add_executable(generate_cpp_${name}
-      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/generate_cpp_${name}.cpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/print_cpp.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/print_cpp.cpp)
-  target_link_libraries(generate_cpp_${name} mlpack ${MLPACK_LIBRARIES})
-  set_target_properties(generate_cpp_${name} PROPERTIES COMPILE_FLAGS
-      -DBINDING_TYPE=BINDING_TYPE_GO)
-  add_custom_command(TARGET generate_cpp_${name} POST_BUILD
+  # Create ${name}.cpp.
+  add_custom_command(OUTPUT
+      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp
       COMMAND ${CMAKE_COMMAND}
-          -DGENERATE_BINDING_PROGRAM=${CMAKE_BINARY_DIR}/bin/generate_cpp_${name}
-          -DBINDING_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp
-          -P ${CMAKE_SOURCE_DIR}/CMake/GenerateGoBinding.cmake)
+          -DPROGRAM_NAME="${name}"
+          -DPROGRAM_MAIN_FILE="${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp"
+          -DGO_IN="${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/go_method.cpp.in"
+          -DGO_OUT="${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp"
+          -P ${CMAKE_SOURCE_DIR}/CMake/go/ConfigureGoHCPP.cmake
+      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/go_method.cpp.in
+              ${CMAKE_SOURCE_DIR}/CMake/go/ConfigureGoHCPP.cmake)
 
-  add_dependencies(generate_cpp_${name} go_copy)
-
-  # Create, e.g., libmlpack_go_pca.so.
+  # Build libmlpack_go_${name}.so.
   add_library(mlpack_go_${name} SHARED
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp)
-  set_source_files_properties(${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp
-      PROPERTIES GENERATED TRUE)
-  target_link_libraries(mlpack_go_${name} mlpack ${MLPACK_LIBRARIES})
-  target_compile_definitions(mlpack_go_${name} PUBLIC "BINDING_TYPE=BINDING_TYPE_GO")
+  target_link_libraries(mlpack_go_${name} mlpack go_util)
   set_target_properties(mlpack_go_${name} PROPERTIES
-      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/)
+      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/")
+
 
   install(TARGETS mlpack_go_${name}
       RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
       LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
-  add_dependencies(mlpack_go_${name} generate_cpp_${name})
+  add_dependencies(mlpack_go_${name} go_copy)
   add_dependencies(mlpack_go_${name} go_util)
   add_dependencies(go_shlib mlpack_go_${name})
 
   if (BUILD_GO_BINDINGS)
-    add_dependencies(mlpack_go_${name} generate_h_${name})
+    add_dependencies(mlpack_go_${name} generate_go_${name})
     add_dependencies(go mlpack_go_${name})
   endif()
 endif()

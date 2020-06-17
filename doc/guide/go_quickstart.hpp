@@ -41,7 +41,7 @@ You can copy-paste this code directly into main.go to run it.
 package main
 
 import (
-  "github.com/mlpack.org/v1/mlpack"
+  "mlpack.org/v1/mlpack"
   "fmt"
 )
 func main() {
@@ -134,7 +134,7 @@ package main
 
 import (
   "github.com/frictionlessdata/tableschema-go/csv"
-  "github.com/mlpack.org/v1/mlpack"
+  "mlpack.org/v1/mlpack"
   "gonum.org/v1/gonum/mat"
   "fmt"
 )

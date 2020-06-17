@@ -122,15 +122,6 @@ void PrintGo(const util::ProgramDoc& programInfo,
   cout << "}" << endl;
   cout << endl;
 
-  // Then we must print utility function for model type parameters if needed.
-  for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
-  {
-    const util::ParamData& d = it->second;
-    if (d.input)
-      CLI::GetSingleton().functionMap[d.tname]["PrintModelUtilGo"](d,
-                                                NULL, NULL);
-  }
-
   // Print the comment describing the function and its parameters.
   cout << "/*" << endl;
   cout << "  " << HyphenateString(programInfo.documentation(), 2) << endl;
