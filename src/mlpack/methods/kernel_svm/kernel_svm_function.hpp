@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_FUNCTION_HPP
-#define MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_FUNCTION_HPP
+#ifndef MLPACK_METHODS_KERNEL_SVM_KERNEL_SVM_FUNCTION_HPP
+#define MLPACK_METHODS_KERNEL_SVM_KERNEL_SVM_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
 

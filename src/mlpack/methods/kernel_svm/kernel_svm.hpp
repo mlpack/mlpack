@@ -53,7 +53,7 @@ class KernelSVM
             CallbackTypes&&... callbacks);
 
   /**
-   * Construct the KernelSVM class with the provided data and labels.
+   * Construct the Kernel SVM class with the provided data and labels.
    *
    * @tparam OptimizerType Desired differentiable separable optimizer
    * @param data Input training features. Each column associate with one sample
