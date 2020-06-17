@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(CheckParamsPassed)
   arma::rowvec responses;
   model.Predict(matXtest, responses);
 
-  // Check that std::runtime_error is thrown if neither input or input_model 
+  // Check that std::runtime_error is thrown if neither input or input_model
   // is specified.
   SetInputParam("responses", std::move(y));
 

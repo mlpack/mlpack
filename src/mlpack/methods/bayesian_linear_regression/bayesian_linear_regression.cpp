@@ -127,7 +127,7 @@ double BayesianLinearRegression::CenterScaleData(const arma::mat& data,
   // Initialize the offsets to their neutral forms.
   responsesOffset = 0.0;
   if (!centerData && !scaleData)
-  {  
+  {
     dataProc = data;
     responsesProc = responses;
   }
@@ -163,14 +163,13 @@ void BayesianLinearRegression::CenterScaleDataPred(
 {
   if (!centerData && !scaleData)
   dataProc = data;
-  
+
   else if (centerData && !scaleData)
     dataProc = data.each_col() - dataOffset;
 
   else if (!centerData && scaleData)
     dataProc = data.each_col() / dataScale;
 
-  else 
+  else
     dataProc = (data.each_col() - dataOffset).each_col() / dataScale;
 }
-

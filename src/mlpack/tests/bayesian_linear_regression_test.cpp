@@ -109,13 +109,13 @@ BOOST_AUTO_TEST_CASE(OptionsMakeModelDifferent)
 
   BayesianLinearRegression blr(false, false), blrC(true, false),
       blrCS(true, true);
-  
+
   blr.Train(matX, y);
   blrC.Train(matX, y);
   blrCS.Train(matX, y);
-  
+
   for (size_t i = 0; i < nDims; ++i)
-    BOOST_REQUIRE((blr.Omega()(i) != blrC.Omega()(i)) && 
+    BOOST_REQUIRE((blr.Omega()(i) != blrC.Omega()(i)) &&
                   (blr.Omega()(i) != blrCS.Omega()(i)) &&
                   (blrC.Omega()(i) != blrCS.Omega()(i)));
 }

@@ -42,7 +42,7 @@ PROGRAM_INFO("BayesianLinearRegression",
     "\n\n"
     "This program is able to train a Bayesian linear regression model or load "
     "a model from file, output regression predictions for a test set, and save "
-    "the trained model to a file." 
+    "the trained model to a file."
     "\n\n"
     "To train a BayesianLinearRegression model, the " +
     PRINT_PARAM_STRING("input") + " and " + PRINT_PARAM_STRING("responses") +
@@ -80,10 +80,10 @@ PROGRAM_INFO("BayesianLinearRegression",
                "bayesian_linear_regression_model", "test", "test",
                "predictions", "test_predictions") +
     "\n\n"
-    "Because the estimator computes a predictive distribution instead of simple "
-    "point estimate, the " + PRINT_PARAM_STRING("stds") + " parameter "
+    "Because the estimator computes a predictive distribution instead of "
+    "simple point estimate, the " + PRINT_PARAM_STRING("stds") + " parameter "
     "allows to save the prediction uncertainties with one standard deviation "
-    "from the mean :" 
+    "from the mean :"
     "\n\n" +
     PRINT_CALL("bayesian_linear_regression", "input_model",
                "bayesian_linear_regression_model", "test", "test",
@@ -112,7 +112,7 @@ PARAM_MATRIX_OUT("stds", "If --std_file is specified, this file is where "
 PARAM_FLAG("center", "Center the data and fit the intercept if enabled.", "c");
 
 PARAM_FLAG("scale", "Scale each feature by their standard deviations if "
-	   "enabled.", "s");
+           "enabled.", "s");
 
 static void mlpackMain()
 {
@@ -148,7 +148,8 @@ static void mlpackMain()
     // Load responses.  The responses should be a one-dimensional vector, and it
     // seems more likely that these will be stored with one response per line
     // (one per row). So we should not transpose upon loading.
-    arma::rowvec responses = std::move(CLI::GetParam<arma::rowvec>("responses"));
+    arma::rowvec responses = std::move(
+        CLI::GetParam<arma::rowvec>("responses"));
 
     if (responses.n_elem != matX.n_cols)
     {
