@@ -79,7 +79,7 @@ include(FindPackageHandleStandardArgs)
 # If _ARMA_USE_WRAPPER is set, then we just link to armadillo, but if it's not then we need support libraries instead
 set(_ARMA_SUPPORT_LIBRARIES)
 
-if(_ARMA_USE_WRAPPER AND NOT MSVC)
+if(_ARMA_USE_WRAPPER)
   # UNIX paths are standard, no need to write.
   find_library(ARMADILLO_LIBRARY
     NAMES armadillo
@@ -89,6 +89,8 @@ if(_ARMA_USE_WRAPPER AND NOT MSVC)
 else()
   # don't link to armadillo in this case
   set(ARMADILLO_LIBRARY "")
+endif()
+if(NOT _ARMA_USE_WRAPPER OR MSVC)
   if(_ARMA_USE_LAPACK)
     if(ARMADILLO_FIND_QUIETLY OR NOT ARMADILLO_FIND_REQUIRED)
       find_package(LAPACK QUIET)
