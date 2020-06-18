@@ -398,7 +398,7 @@ BOOST_AUTO_TEST_CASE(LinearLayerWeightInitializationTest)
   size_t inSize = 10, outSize = 4;
   Linear<>* linear = new Linear<>(inSize, outSize);
   linear->Reset();
-  RandomInitialization().Initialize(linear->Weight(), outSize, inSize);
+  RandomInitialization().Initialize(linear->Weight());
   linear->Bias().ones();
 
   BOOST_CHECK_EQUAL_COLLECTIONS(linear->Weight().begin(),
@@ -429,8 +429,7 @@ BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerWeightInitializationTest)
       kernelWidth, kernelHeight, 6, 7, std::make_tuple(8, 9),
       std::make_tuple(10, 11), 12, 13, 14, 15);
   module->Reset();
-  RandomInitialization().Initialize(module->Weight(), kernelWidth, kernelHeight,
-      inSize * outSize);
+  RandomInitialization().Initialize(module->Weight());
   module->Bias().ones();
 
   BOOST_CHECK_EQUAL_COLLECTIONS(module->Weight().begin(),
@@ -463,8 +462,7 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerWeightInitializationTest)
       kernelWidth, kernelHeight, 6, 7, std::tuple<size_t, size_t>(8, 9),
       std::tuple<size_t, size_t>(10, 11), 12, 13, "none");
   module->Reset();
-  RandomInitialization().Initialize(module->Weight(), kernelWidth, kernelHeight,
-      inSize * outSize);
+  RandomInitialization().Initialize(module->Weight());
   module->Bias().ones();
 
   BOOST_CHECK_EQUAL_COLLECTIONS(module->Weight().begin(),
@@ -496,8 +494,7 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerWeightInitializationTest)
   TransposedConvolution<>* module = new TransposedConvolution<>(inSize, outSize,
       kernelWidth, kernelHeight, 1, 1, 1, 1, 5, 5, 6, 6);
   module->Reset();
-  RandomInitialization().Initialize(module->Weight(), kernelWidth, kernelHeight,
-      inSize * outSize);
+  RandomInitialization().Initialize(module->Weight());
   module->Bias().ones();
 
   BOOST_CHECK_EQUAL_COLLECTIONS(module->Weight().begin(),
