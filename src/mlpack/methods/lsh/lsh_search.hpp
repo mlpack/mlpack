@@ -276,7 +276,7 @@ class LSHSearch
   size_t& DistanceEvaluations() { return distanceEvaluations; }
 
   //! Return the reference dataset.
-  const arma::mat& ReferenceSet() const { return referenceSet; }
+  const MatType& ReferenceSet() const { return referenceSet; }
 
   //! Get the number of projections.
   size_t NumProjections() const { return projections.n_slices; }

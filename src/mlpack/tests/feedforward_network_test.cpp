@@ -15,6 +15,7 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/kmeans/kmeans.hpp>
 
 #include <ensmallen.hpp>
 
@@ -25,6 +26,7 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
+using namespace mlpack::kmeans;
 
 BOOST_AUTO_TEST_SUITE(FeedForwardNetworkTest);
 
@@ -619,6 +621,86 @@ BOOST_AUTO_TEST_CASE(OptimizerTest)
 
   ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
   model.Train(trainData, trainLabels, opt);
+}
+
+/**
+ * Train the RBF network on a larger dataset.
+ */
+BOOST_AUTO_TEST_CASE(RBFNetworkTest)
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  arma::mat trainLabels1 = arma::zeros(3, trainData.n_cols);
+  for(size_t i = 0; i < trainData.n_cols; i++)
+  {
+    trainLabels1.col(i).row((trainLabels(i) - 1)) = 1;
+  }
+
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+   * network structure looks like:
+   *
+   *  Input         RBF          Activation    Output
+   *  Layer         Layer         Layer        Layer
+   * +-----+       +-----+       +-----+       +-----+
+   * |     |       |     |       |     |       |     |
+   * |     +------>|     +------>|     +------>|     |
+   * |     |       |     |       |     |       |     |
+   * +-----+       +--+--+       +-----+       +-----+
+   */
+  arma::mat centroids;
+  KMeans<> kmeans;
+  kmeans.Cluster(trainData, 8, centroids);
+
+  FFN<MeanSquaredError<> > model;
+  model.Add<RBF<> >(trainData.n_rows, 8, centroids);
+  model.Add<Linear<> >(8, 3);
+
+  // RBFN neural net with MeanSquaredError.
+  TestNetwork<>(model, trainData, trainLabels1, testData, testLabels, 10, 0.1);
+
+  arma::mat dataset;
+  dataset.load("mnist_first250_training_4s_and_9s.arm");
+
+  // Normalize each point since these are images.
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+  {
+    dataset.col(i) /= norm(dataset.col(i), 2);
+  }
+
+  arma::mat labels = arma::zeros(1, dataset.n_cols);
+  labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
+
+  arma::mat labels1 = arma::zeros(2, dataset.n_cols);
+  for(size_t i = 0; i < dataset.n_cols; i++)
+  {
+    labels1.col(i).row(labels(i)) = 1;
+  }
+  labels += 1;
+
+  arma::mat centroids1;
+  arma::Row<size_t> assignments;
+  KMeans<> kmeans1;
+  kmeans1.Cluster(dataset, 140, centroids1);
+
+  FFN<MeanSquaredError<> > model1;
+  model1.Add<RBF<> >(dataset.n_rows, 140, centroids1, 4.1);
+  model1.Add<Linear<> >(140, 2);
+
+  // RBFN neural net with MeanSquaredError.
+  TestNetwork<>(model1, dataset, labels1, dataset, labels, 10, 0.1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

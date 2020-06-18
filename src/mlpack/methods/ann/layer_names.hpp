@@ -174,6 +174,17 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /**
+   * Return the name of the given layer of type NoisyLinear as a string.
+   *
+   * @param * Given layer of type NoisyLinear.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(NoisyLinear<>* /*layer*/) const
+  {
+    return "noisylinear";
+  }
+
+  /**
    * Return the name of the given layer of type MaxPooling as a string.
    *
    * @param * Given layer of type MaxPooling.

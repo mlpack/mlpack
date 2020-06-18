@@ -17,7 +17,7 @@ option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
-option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
+option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 
 if (WIN32)
   option(BUILD_SHARED_LIBS
@@ -28,6 +28,29 @@ if (WIN32)
 else ()
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." ON)
+endif()
+
+# Detect whether the user passed BUILD_JULIA_BINDINGS in order to determine if
+# we should fail if Julia isn't found.
+if (BUILD_JULIA_BINDINGS)
+  set(FORCE_BUILD_JULIA_BINDINGS ON)
+else()
+  set(FORCE_BUILD_JULIA_BINDINGS OFF)
+endif()
+option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
+
+# Detect whether the user passed BUILD_GO_BINDINGS in order to determine if
+# we should fail if Go isn't found.
+if (BUILD_GO_BINDINGS)
+  set(FORCE_BUILD_GO_BINDINGS ON)
+else()
+  set(FORCE_BUILD_GO_BINDINGS OFF)
+endif()
+option(BUILD_GO_BINDINGS "Build Go bindings." ON)
+
+# If building Go bindings then build go shared libraries.    
+if (BUILD_GO_BINDINGS)
+  set(BUILD_GO_SHLIB ON)
 endif()
 
 # Build Markdown bindings for documentation.  This is used as part of website
@@ -727,4 +750,5 @@ if (PKG_CONFIG_FOUND)
 
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc"
       DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
+
 endif ()

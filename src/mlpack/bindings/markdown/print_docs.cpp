@@ -101,6 +101,9 @@ void PrintDocs(const std::string& bindingName,
     // Now, iterate through each of the input options.
     cout << endl;
     cout << "### Input options" << endl;
+    string inputInfo = PrintInputOptionInfo();
+    if (inputInfo.size() > 0)
+      cout << inputInfo << endl;
     cout << endl;
 
     cout << "| ***name*** | ***type*** | ***description*** | ***default*** |"
@@ -124,7 +127,25 @@ void PrintDocs(const std::string& bindingName,
 
       // Print name, type, description, default.
       cout << "| ";
-      cout << ParamString(it->second.name) << " | ";
+      // We need special processing if the language is go then the required
+      // parameter will be lowerCamelCase.
+      if (languages[i] == "go")
+      {
+        if (!it->second.required)
+        {
+          cout << ParamString(it->second.name) << " | ";
+        }
+        else
+        {
+          std::string name = ParamString(it->second.name);
+          name[1] = std::tolower(name[1]);
+          cout << name << " | ";
+        }
+      }
+      else
+      {
+        cout << ParamString(it->second.name) << " | ";
+      }
       cout << ParamType(it->second) << " | ";
       string desc = boost::replace_all_copy(it->second.desc, "|", "\\|");
       cout << desc; // just a string
@@ -162,7 +183,18 @@ void PrintDocs(const std::string& bindingName,
 
       // Print name, type, description.
       cout << "| ";
-      cout << ParamString(it->second.name) << " | ";
+      // We need special processing if the language is go then the output
+      // parameter will be lowerCamelCase.
+      if (languages[i] == "go")
+      {
+        std::string name = ParamString(it->second.name);
+        name[1] = std::tolower(name[1]);
+        cout << name << " | ";
+      }
+      else
+      {
+        cout << ParamString(it->second.name) << " | ";
+      }
       cout << ParamType(it->second) << " | ";
       cout << it->second.desc;
       // Print whether or not it's a "special" language-only parameter.
