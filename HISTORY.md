@@ -1,8 +1,5 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-
-### mlpack 3.3.2
-###### 2020-06-18
   * Added Noisy DQN to q_networks (#2446).
 
   * Add Go bindings (#1884).
