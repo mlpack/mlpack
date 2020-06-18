@@ -90,7 +90,7 @@ else()
   # don't link to armadillo in this case
   set(ARMADILLO_LIBRARY "")
 endif()
-# Link to support libraries in either case on MSVC
+# Link to support libraries in either case on MSVC.
 if(NOT _ARMA_USE_WRAPPER OR MSVC)
   if(_ARMA_USE_LAPACK)
     if(ARMADILLO_FIND_QUIETLY OR NOT ARMADILLO_FIND_REQUIRED)
