@@ -39,6 +39,8 @@
 
   * Add `RBF` layer in ann module to make `RBFN` architecture (#2261).
 
+  * Add Silhoutte Score metric and Pairwise Distances (#2406).
+
 ### mlpack 3.3.1
 ###### 2020-04-29
   * Minor Julia and Python documentation fixes (#2373).
