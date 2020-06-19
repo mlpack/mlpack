@@ -67,8 +67,6 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     delta(delta),
     fitIntercept(fitIntercept)
 {
-  KernelSVMFunction<MatType, KernelType>::InitializeWeights(parameters, inputSize,
-      numClasses, fitIntercept);
 }
 
 template <typename MatType, typename KernelType>
@@ -99,8 +97,6 @@ double KernelSVM<MatType, KernelType>::Train(
     throw std::invalid_argument("LinearSVM dataset has 0 number of classes!");
   }
 
-  KernelSVMFunction<MatType, KernelType> svm(data, labels, numClasses, lambda, delta,
-      fitIntercept);
   if (parameters.is_empty())
     parameters = svm.InitialPoint();
 
@@ -128,8 +124,6 @@ double KernelSVM<MatType, KernelType>::Train(
     throw std::invalid_argument("LinearSVM dataset has 0 number of classes!");
   }
 
-  KernelSVMFunction<MatType, KernelType> svm(data, labels, numClasses, lambda, delta,
-      fitIntercept);
   if (parameters.is_empty())
     parameters = svm.InitialPoint();
 
