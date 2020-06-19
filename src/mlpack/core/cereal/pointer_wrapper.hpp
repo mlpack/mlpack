@@ -20,14 +20,10 @@ template<class T>
 class pointer_wrapper
 {
 public:
+  pointer_wrapper(T*& pointer)
+    : localPointer(pointer)
+  {}
 
-   pointer_wrapper(T * pointer)
-    {  
-        localPointer = std::move(pointer);
-        std::cout << "address of local ptr" << localPointer << std::endl;
-        std::cout << "address of  pointer" << pointer << std::endl;
-    }
-    
   template<class Archive>
   void save(Archive& ar, const unsigned int /*version*/) const
   {
@@ -38,17 +34,15 @@ public:
   template<class Archive>
   void load(Archive& ar, const unsigned int /*version*/)
   {
-      std::unique_ptr<T> smartPointer;
-      ar(CEREAL_NVP(smartPointer));
-      this->localPointer = smartPointer.release();
-      std::cout << "The value of localPointer is : " << *localPointer << std::endl;
-      std::cout << "The addresss of localPointer is : " << &localPointer << std::endl;
+    std::unique_ptr<T> smartPointer;
+    ar(CEREAL_NVP(smartPointer));
+    localPointer = smartPointer.release();
   }
 
+  T*& release() { return localPointer; }
+
 private:
-  T* localPointer;
-
-
+  T*& localPointer;
 };
 
 template<class T>
