@@ -1,15 +1,6 @@
 #include "pointer_wrapper.hpp"
 #include <fstream>
 
-void ref_to_pointer(double*& p)
-{
-  if(p == nullptr) {
-    p = new double;
-  }
-  std::cout << "address of  pointer" << p << std::endl;
-  
-}
-
 int main(int argc, char* argv[])
 {
 
@@ -20,16 +11,21 @@ int main(int argc, char* argv[])
   // cereal::XMLOutputArchive archive(is);
   
   double data = 40;
-  double* d = nullptr;
+  double* z = nullptr;
 
   //ref_to_pointer(d); 
 
-  archive(cereal::make_pointer(d));
+  cereal::pointer_wrapper<double> d = cereal::make_pointer(z);
+  archive(d);
+  z = d.release();
 
-  if ( d == NULL ) {
-    std::cout << "d is still NULL" << std::endl;
+  std::cout << "The address of z is: " << z << std::endl;
+
+  if ( z == nullptr ) {
+    std::cout << "z is still NULL" << std::endl;
   } else {
 
-    std::cout << "d value is : " << *d << std::endl;
+    std::cout << "z value is : " << *z<< std::endl;
   }
+ delete z;
 }
