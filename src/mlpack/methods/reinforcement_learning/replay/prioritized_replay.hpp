@@ -129,12 +129,12 @@ class PrioritizedReplay
     nStepBuffer.push_back({state, action, reward, nextState, isEnd});
 
     // Single step transition is not ready.
-    if(nStepBuffer.size() < nSteps)
+    if (nStepBuffer.size() < nSteps)
       return;
 
     // To keep the queue size fixed to nSteps.
-    if(nStepBuffer.size() > nSteps)
-      nStepBuffer.erase(nStepBuffer.begin());
+    if (nStepBuffer.size() > nSteps)
+      nStepBuffer.pop_front();
 
     // Before moving ahead, lets confirm if our fixed size buffer works.
     assert(nStepBuffer.size() == nSteps);
@@ -180,13 +180,11 @@ class PrioritizedReplay
     // Should start from the second last transition in buffer.
     for (int i = nStepBuffer.size() - 2; i >= 0; i--)
     {
-      double r = nStepBuffer[i].reward;
-      StateType nS = nStepBuffer[i].nextState;
       bool iE = nStepBuffer[i].isEnd;
-      reward = r + discount * reward * (1 - iE);
-      if(iE)
+      reward = nStepBuffer[i].reward + discount * reward * (1 - iE);
+      if (iE)
       {
-        nextState = nS;
+        nextState = nStepBuffer[i].nextState;
         isEnd = iE;
       }
     }
@@ -350,7 +348,7 @@ class PrioritizedReplay
   size_t nSteps;
 
   //! Locally-stored buffer containing n consecutive steps.
-  std::vector<Transition> nStepBuffer;
+  std::deque<Transition> nStepBuffer;
 
   //! Locally-stored encoded previous states.
   arma::mat states;

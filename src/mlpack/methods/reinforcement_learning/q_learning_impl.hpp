@@ -159,7 +159,7 @@ void QLearning<
   arma::mat target;
   learningNetwork.Forward(sampledStates, target);
 
-  double discount = pow(config.Discount(), replayMethod.NSteps());
+  double discount = std::pow(config.Discount(), replayMethod.NSteps());
 
   /**
    * If the agent is at a terminal state, then we don't need to add the
