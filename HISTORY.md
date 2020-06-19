@@ -1,4 +1,4 @@
-### mlpack 3.3.3
+### mlpack ?.?.?
 ###### ????-??-??
   * Add Silhoutte Score metric and Pairwise Distances (#2406).
 
