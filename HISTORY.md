@@ -1,5 +1,6 @@
-### mlpack ?.?.?
+### mlpack 3.3.3
 ###### ????-??-??
+  * Add Silhoutte Score metric and Pairwise Distances (#2406).
 
 ### mlpack 3.3.2
 ###### 2020-06-18
@@ -38,8 +39,6 @@
     the `QDAFN` algorithm (#2448).
 
   * Add `RBF` layer in ann module to make `RBFN` architecture (#2261).
-
-  * Add Silhoutte Score metric and Pairwise Distances (#2406).
 
 ### mlpack 3.3.1
 ###### 2020-04-29
