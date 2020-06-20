@@ -2,7 +2,7 @@
  * @file methods/preprocess/preprocess_scale_main.cpp
  * @author jeffin sam
  *
- * A CMD executable to scale a dataset.
+ * A binding to scale a dataset.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
