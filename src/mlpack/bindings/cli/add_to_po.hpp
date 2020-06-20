@@ -2,8 +2,7 @@
  * @file bindings/cli/add_to_po.hpp
  * @author Ryan Curtin
  *
- * Utility functions to add options to CLI11 based on their
- * type.
+ * Utility functions to add options to CLI11 based on their type.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
