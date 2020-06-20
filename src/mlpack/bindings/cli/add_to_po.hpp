@@ -36,10 +36,13 @@ void AddToPO(const std::string& cliName,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
-  app.add_option_function<T>(cliName.c_str(), [&param](const T& value){
+  app.add_option_function<T>(cliName.c_str(), 
+  [&param](const T& value)
+  {
      param.value = value;
      param.wasPassed = true;
-  }, param.desc.c_str());
+  }, 
+  param.desc.c_str());
 }
 
 /**
@@ -57,10 +60,13 @@ void AddToPO(const std::string& cliName,
              const typename boost::enable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
-  app.add_option_function<T>(cliName.c_str(), [&param](const T& value){
-   param.value = value;
-   param.wasPassed = true;
-  }, param.desc.c_str());
+  app.add_option_function<T>(cliName.c_str(), 
+  [&param](const T& value)
+  {
+     param.value = value;
+     param.wasPassed = true;
+  }, 
+  param.desc.c_str());
 }
 
 /**
@@ -77,10 +83,13 @@ void AddToPO(const std::string& cliName,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
 {
-  app.add_flag_function(cliName.c_str(), [&param](const T& value){
+  app.add_flag_function(cliName.c_str(), 
+  [&param](const T& value)
+  {
     param.value = value;
     param.wasPassed = true;
-  }, param.desc.c_str());
+  }, 
+  param.desc.c_str());
 }
 
 /**
@@ -103,7 +112,7 @@ void AddToPO(util::ParamData& param,
   const std::string mappedName =
       MapParameterName<typename std::remove_pointer<T>::type>(param.name);
   std::string cliName = (param.alias != '\0') ?
-  "-" + std::string(1, param.alias) + ",--" + mappedName : "--" + mappedName;
+      "-" + std::string(1, param.alias) + ",--" + mappedName : "--" + mappedName;
 
   // Note that we have to add the option as type equal to the mapped type, not
   // the true type of the option.
