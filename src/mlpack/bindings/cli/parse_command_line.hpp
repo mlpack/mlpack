@@ -14,10 +14,9 @@
 #define MLPACK_BINDINGS_CMD_PARSE_COMMAND_LINE_HPP
 
 #include <mlpack/core.hpp>
-#include <boost/program_options.hpp>
 #include "print_help.hpp"
 
-#include <CLI/CLI.hpp>
+#include <mlpack/third_party/CLI/CLI11.hpp>
 
 namespace mlpack {
 namespace bindings {
