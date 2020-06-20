@@ -46,10 +46,9 @@ void AddToPO(const std::string& cliName,
 }
 
 /**
- * Add a vector option to CLI11.  This overload will use the
- * multitoken() option.
- *
- * @param boostName The name of the option to add to CLI11.
+ * Add a vector option to CLI11.
+ * 
+ *  @param boostName The name of the option to add to CLI11.
  * @param descr Description string for parameter.
  * @param desc Options description to add parameter to.
  */
