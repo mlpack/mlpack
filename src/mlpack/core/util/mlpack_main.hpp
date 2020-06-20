@@ -18,7 +18,7 @@
 #ifndef MLPACK_CORE_UTIL_MLPACK_MAIN_HPP
 #define MLPACK_CORE_UTIL_MLPACK_MAIN_HPP
 
-#define BINDING_TYPE_IO 0
+#define BINDING_TYPE_CLI 0
 #define BINDING_TYPE_TEST 1
 #define BINDING_TYPE_PYX 2
 #define BINDING_TYPE_JL 3
@@ -30,7 +30,7 @@
 #define BINDING_TYPE BINDING_TYPE_UNKNOWN
 #endif
 
-#if (BINDING_TYPE == BINDING_TYPE_IO) // This is a command-line executable.
+#if (BINDING_TYPE == BINDING_TYPE_CLI) // This is a command-line executable.
 
 // Matrices are transposed on load/save.
 #define BINDING_MATRIX_TRANSPOSED true
