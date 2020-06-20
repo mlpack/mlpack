@@ -146,16 +146,9 @@ class NeighborSearchRules
    *
    * @param queryIndex Index of query point.
    */
-  bool HasFoundAllNeighbors(const size_t queryIndex);
 
-  /**
-   * See if reference point is already present in the neighbor list of the 
-   * query point.
-   *
-   * @param queryIndex Index of query point.
-   * @param referencePoint Index of the reference point.
-   */
-  bool InNeighborList(const size_t queryIndex, const size_t referencePoint);
+  //! Get the minimum number of basecases to be performed.
+  size_t MinBaseCases() const { return k; }
 
   //! Get the number of base cases that have been performed.
   size_t BaseCases() const { return baseCases; }

@@ -226,6 +226,8 @@ class RASearchRules
                  TreeType& referenceNode,
                  const double oldScore);
 
+  //! Get the minimum number of basecases to be performed.
+  size_t MinBaseCases() const { return k; }
 
   size_t NumDistComputations() { return numDistComputations; }
   size_t NumEffectiveSamples()

@@ -509,37 +509,6 @@ InsertNeighbor(
   }
 }
 
-  
-// Checks whether all the neighbors of the given query point have been found.
-// This is usefull when the leaf size of the spill tree is less than the the
-// number of nearest neighbors to be found.
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline bool NeighborSearchRules<SortPolicy, MetricType, TreeType>::
-HasFoundAllNeighbors(const size_t queryIndex)
-{
-  CandidateList& pqueue = candidates[queryIndex];
-  return pqueue.top().first != DBL_MAX;
-}
-
-// See if reference point is already present in the neighbor list of the 
-// query point.
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline bool NeighborSearchRules<SortPolicy, MetricType, TreeType>::
-InNeighborList(const size_t queryIndex, const size_t referencePoint)
-{
-  CandidateList pqueue = candidates[queryIndex];
-
-  while(!pqueue.empty())
-  {
-    if(pqueue.top().second == referencePoint)
-      return true;
-
-    pqueue.pop();
-  }
-
-  return false;
-}
-
 } // namespace neighbor
 } // namespace mlpack
 

@@ -109,6 +109,9 @@ class FastMKSRules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
+ //! Get the minimum number of basecases to be performed.
+  size_t MinBaseCases() const { return k; }
+
   //! Get the number of times BaseCase() was called.
   size_t BaseCases() const { return baseCases; }
   //! Modify the number of times BaseCase() was called.

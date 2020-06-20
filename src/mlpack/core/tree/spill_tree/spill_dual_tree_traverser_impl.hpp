@@ -113,8 +113,18 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
       size_t bestChild = rule.GetBestChild(queryNode, referenceNode);
       if (bestChild < referenceNode.NumChildren())
       {
-        Traverse(queryNode, referenceNode.Child(bestChild));
-        ++numPrunes;
+        // If the bestchild node has less number of points than the minimum
+        // basecases to be run, recurse into other node as well.
+        if (referenceNode.Child(bestChild).NumPoints() <= rule.MinBaseCases())
+        {
+          Traverse(queryNode, referenceNode.Child(bestChild));
+          Traverse(queryNode, referenceNode.Child(!bestChild));
+        }
+        else
+        {
+          Traverse(queryNode, referenceNode.Child(bestChild));
+          ++numPrunes;
+        }
       }
       else
       {
@@ -224,8 +234,18 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
       size_t bestChild = rule.GetBestChild(*queryNode.Left(), referenceNode);
       if (bestChild < referenceNode.NumChildren())
       {
-        Traverse(*queryNode.Left(), referenceNode.Child(bestChild));
-        ++numPrunes;
+        // If the bestchild node has less number of points than the minimum
+        // basecases to be run, recurse into other node as well.
+        if (referenceNode.Child(bestChild).NumPoints() <= rule.MinBaseCases())
+        {
+          Traverse(*queryNode.Left(), referenceNode.Child(bestChild));
+          Traverse(*queryNode.Left(), referenceNode.Child(!bestChild));
+        }
+        else
+        {
+          Traverse(*queryNode.Left(), referenceNode.Child(bestChild));
+          ++numPrunes;
+        }
       }
       else
       {
@@ -238,8 +258,18 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
       bestChild = rule.GetBestChild(*queryNode.Right(), referenceNode);
       if (bestChild < referenceNode.NumChildren())
       {
-        Traverse(*queryNode.Right(), referenceNode.Child(bestChild));
-        ++numPrunes;
+        // If the bestchild node has less number of points than the minimum
+        // basecases to be run, recurse into other node as well.
+        if (referenceNode.Child(bestChild).NumPoints() <= rule.MinBaseCases())
+        {
+          Traverse(*queryNode.Right(), referenceNode.Child(bestChild));
+          Traverse(*queryNode.Right(), referenceNode.Child(!bestChild));
+        }
+        else
+        {
+          Traverse(*queryNode.Right(), referenceNode.Child(bestChild));
+          ++numPrunes;
+        }
       }
       else
       {
