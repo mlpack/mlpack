@@ -119,13 +119,13 @@ void ParseCommandLine(int argc, char** argv)
     util::ParamData d = iter->second;
     if (d.required)
     {
-      const std::string boostName;
+      const std::string cliName;
       CMD::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
-          (void*) &boostName);
+          (void*) &cliName);
 
-      if (!app.count(boostName))
+      if (!app.count(cliName))
       {
-        Log::Fatal << "Required option --" << boostName << " is undefined."
+        Log::Fatal << "Required option --" << cliName << " is undefined."
             << std::endl;
       }
     }

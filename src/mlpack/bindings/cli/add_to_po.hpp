@@ -48,7 +48,7 @@ void AddToPO(const std::string& cliName,
 /**
  * Add a boolean option to CLI11.
  *
- * @param boostName The name of the option to add to CLI11.
+ * @param cliName The name of the option to add to CLI11.
  * @param descr Description string for parameter.
  * @param desc Options description to add parameter to.
  */
