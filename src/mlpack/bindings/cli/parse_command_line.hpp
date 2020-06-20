@@ -35,7 +35,7 @@ PARAM_FLAG("version", "Display the version of mlpack.", "V");
  */
 void ParseCommandLine(int argc, char** argv)
 {
-  // First, we need to build the boost::program_options variables for parsing.
+  // First, we need to build the CLI11 variables for parsing.
   CLI::App app;
   app.set_help_flag();
 

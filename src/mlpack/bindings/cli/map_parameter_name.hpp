@@ -2,7 +2,7 @@
  * @file bindings/cli/map_parameter_name.hpp
  * @author Ryan Curtin
  *
- * Map a parameter name to what it seen by boost::program_options using template
+ * Map a parameter name to what it seen by CLI11 using template
  * metaprogramming.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -21,7 +21,7 @@ namespace cmd {
 
 /**
  * If needed, map the parameter name to the name that is used by
- * boost::program_options.  This overload simply returns the same name, so it is
+ * CLI11.  This overload simply returns the same name, so it is
  * used for primitive types.
  */
 template<typename T>
@@ -36,7 +36,7 @@ std::string MapParameterName(
 }
 
 /**
- * Map the parameter name to the name that is used by boost::program_options.
+ * Map the parameter name to the name that is used by CLI11.
  * This overload addresses matrices and models, where the parameter name has
  * "_file" appended to it (since a filename will be provided).
  */
