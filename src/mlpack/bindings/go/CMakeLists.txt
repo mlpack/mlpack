@@ -44,8 +44,10 @@ if (BUILD_GO_BINDINGS)
 
   add_custom_target(go)
 
+  # All the bindings will build under "src/mlpack.org/v1/mlpack";  So if user build
+  # go-bindings from source, then he/she can use the same import path as documented
+  # on "mlpack.org" by setting GOPATH=/path/to/mlpack/build/src/mlpack/bindings/go.
   # Create model.go with package definition.
-  # All the bindings will build under "src/mlpack.org/v1/mlpack".
   file(WRITE
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/models.go"
       "package mlpack"
