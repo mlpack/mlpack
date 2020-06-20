@@ -19,25 +19,6 @@ namespace mlpack {
 namespace svm {
 
 template <typename MatType, typename KernelType>
-template <typename OptimizerType, typename... CallbackTypes>
-KernelSVM<MatType, KernelType>::KernelSVM(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    const double lambda,
-    const double delta,
-    const bool fitIntercept,
-    OptimizerType optimizer,
-    CallbackTypes&&... callbacks) :
-    numClasses(numClasses),
-    lambda(lambda),
-    delta(delta),
-    fitIntercept(fitIntercept)
-{
-  Train(data, labels, numClasses, optimizer, callbacks...);
-}
-
-template <typename MatType, typename KernelType>
 template <typename OptimizerType>
 KernelSVM<MatType, KernelType>::KernelSVM(
     const MatType& data,
@@ -92,51 +73,64 @@ double KernelSVM<MatType, KernelType>::Train(
     OptimizerType optimizer,
     CallbackTypes&&... callbacks)
 {
-  if (numClasses <= 1)
+  arma::vec alpha = arma::zeros(data.n_cols);
+  size_t count = 0;
+
+  while(true)
   {
-    throw std::invalid_argument("LinearSVM dataset has 0 number of classes!");
+    arma::vec alpha_prev = arma::vec(alpha);
+
+    for(size_t j = 0; j < data.n_cols; j++)
+    {
+      size_t i = rand()%((data.n_cols - 1) + 1);
+      double k_ij = KernelType::Evaluate(data.col(i), data.col(i)) +
+                    KernelType::Evaluate(data.col(j), data.col(j)) -
+                    2 * KernelType::Evaluate(data.col(i), data.col(j));
+      if (k_ij == 0)
+        continue;
+      double alpha_prime_j = alpha(j);
+      double alpha_prime_i = alpha(i);
+      double L = ComputeL(alpha_prime_j, alpha_prime_i, labels(j), labels(i));
+      double H = ComputeH(alpha_prime_j, alpha_prime_i, labels(j), labels(i));
+      // Compute model parameters
+      arma::mat w = calc_w(alpha, y, X)
+      arma::mat b = calc_b(X, y, self.w)
+
+      // Compute E_i, E_j
+      E_i = E(x_i, y_i, self.w, self.b)
+      E_j = E(x_j, y_j, self.w, self.b)
+
+      // Set new alpha values
+      alpha(j) = alpha_prime_j + float(labels(j) * (E_i - E_j))/k_ij;
+      alpha(j) = max(alpha(j), L);
+      alpha(j) = min(alpha(j), H);
+
+      alpha(i) = alpha_prime_i + labels(i)*labels(j) * (alpha_prime_j - alpha(j));
+    }
+
+    // Check convergence
+    arma::mat diff = arma::norm(alpha - alpha_prev);
+    if (diff < epsilon)
+      break;
+
+    if (count >= max_iter)
+    {
+      std::LOG<<"Iteration number exceeded the max iterations" <<max_iter;
+      return;
+    }
+  // Compute final model parameters
+  b = calc_b(data, labels, w)
+  if (kernel_type == 'linear')
+    w = calc_w(alpha, labels, data);
+  // Get support vectors
+  arma::mat alpha_idx = where(alpha > 0)[0];
+  arma::mat support_vectors;
+  return count
+    }
+
   }
-
-  if (parameters.is_empty())
-    parameters = svm.InitialPoint();
-
-  // Train the model.
-  Timer::Start("linear_svm_optimization");
-  const double out = optimizer.Optimize(svm, parameters, callbacks...);
-  Timer::Stop("linear_svm_optimization");
-
-  Log::Info << "LinearSVM::LinearSVM(): final objective of "
-            << "trained model is " << out << "." << std::endl;
-
-  return out;
 }
 
-template <typename MatType, typename KernelType>
-template <typename OptimizerType>
-double KernelSVM<MatType, KernelType>::Train(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    OptimizerType optimizer)
-{
-  if (numClasses <= 1)
-  {
-    throw std::invalid_argument("LinearSVM dataset has 0 number of classes!");
-  }
-
-  if (parameters.is_empty())
-    parameters = svm.InitialPoint();
-
-  // Train the model.
-  Timer::Start("linear_svm_optimization");
-  const double out = optimizer.Optimize(svm, parameters);
-  Timer::Stop("linear_svm_optimization");
-
-  Log::Info << "LinearSVM::LinearSVM(): final objective of "
-            << "trained model is " << out << "." << std::endl;
-
-  return out;
-}
 
 template <typename MatType, typename KernelType>
 void KernelSVM<MatType, KernelType>::Classify(
