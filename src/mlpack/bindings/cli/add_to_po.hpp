@@ -16,7 +16,7 @@
 #include <mlpack/core/util/is_std_vector.hpp>
 #include "map_parameter_name.hpp"
 
-#include <CLI/CLI.hpp>
+#include <mlpack/third_party/CLI/CLI11.hpp>
 
 namespace mlpack {
 namespace bindings {
