@@ -23,7 +23,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-3.3.1.tar.gz">current stable version (3.3.1)</a>
+    <a href="https://www.mlpack.org/files/mlpack-3.2.2.tar.gz">current stable version (3.2.2)</a>
   </em>
 </p>
 
@@ -103,7 +103,7 @@ mlpack has the following dependencies:
       Armadillo      >= 8.400.0
       Boost (program_options, math_c99, unit_test_framework, serialization,
              spirit) >= 1.58.0
-      CMake          >= 3.3.1
+      CMake          >= 3.2.2
       ensmallen      >= 2.10.0
 
 All of those should be available in your distribution's package manager.  If
@@ -118,7 +118,7 @@ following Python packages are installed:
       numpy
       pandas >= 0.15.0
 
-If you would like to build the Julia bindings, make sure that Julia >= 3.3.1 is
+If you would like to build the Julia bindings, make sure that Julia >= 3.2.2 is
 installed.
 
 If the STB library headers are available, image loading support will be
@@ -138,7 +138,7 @@ on Ubuntu, you can install mlpack with the following command:
 
 Note: Older Ubuntu versions may not have the most recent version of mlpack
 available---for instance, at the time of this writing, Ubuntu 16.04 only has
-mlpack 3.3.1 available.  Options include upgrading your Ubuntu version, finding
+mlpack 3.2.2 available.  Options include upgrading your Ubuntu version, finding
 a PPA or other non-official sources, or installing with a manual build.
 
 There are some useful pages to consult in addition to this section:

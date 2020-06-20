@@ -55,6 +55,10 @@ PROGRAM_INFO("Approximate furthest neighbor search",
     "specify the number of neighbors to search for with " +
     PRINT_PARAM_STRING("k") + "."
     "\n\n"
+    "Note that for 'qdafn' in lower dimensions, " +
+    PRINT_PARAM_STRING("num_projections") + " may need to be set to a high "
+    "value in order to return results for each query point."
+    "\n\n"
     "If no query set is specified, the reference set will be used as the "
     "query set.  The " + PRINT_PARAM_STRING("output_model") + " output "
     "parameter may be used to store the built model, and an input model may be "

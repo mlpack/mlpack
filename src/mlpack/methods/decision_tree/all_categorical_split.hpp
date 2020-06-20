@@ -81,7 +81,6 @@ class AllCategoricalSplit
    * Calculate the direction a point should percolate to.
    *
    * @param point the Point to use.
-   * @param classProbabilities Auxiliary information for the split.
    * @param classProbabilities Column Vector of class probabilities.
    * @param * (aux) Auxiliary information for the split (Unused).
    */
