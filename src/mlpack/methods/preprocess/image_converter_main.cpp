@@ -2,7 +2,7 @@
  * @file methods/preprocess/image_converter_main.cpp
  * @author Jeffin Sam
  *
- * A CMD executable to load and save a image dataset.
+ * A binding to load and save a image dataset.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -111,4 +111,3 @@ static void mlpackMain()
     Save(fileNames, CMD::GetParam<arma::mat>("dataset"), info, true);
   }
 }
-
