@@ -2,9 +2,8 @@
  * @file core/util/cli.hpp
  * @author Matthew Amidon
  *
- * This file implements the CMD subsystem which is intended to replace FX.
- * This can be used more or less regardless of context.  In the future,
- * it might be expanded to include file I/O.
+ * This file implements the CMD subsystem which is a global singleton
+ * intended to handle parameter passing for different binding types.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
