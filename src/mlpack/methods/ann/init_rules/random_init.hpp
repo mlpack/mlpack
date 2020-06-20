@@ -85,7 +85,7 @@ class RandomInitialization
                   const size_t cols,
                   const size_t slices)
   {
-    W = arma::Cube<eT>(rows, cols, slices);
+    W.set_size(rows, cols, slices);
 
     for (size_t i = 0; i < slices; i++)
       Initialize(W.slice(i), rows, cols);
