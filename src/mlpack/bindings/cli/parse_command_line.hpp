@@ -48,8 +48,7 @@ void ParseCommandLine(int argc, char** argv)
   {
     // Add the parameter to desc.
     util::ParamData& d = it->second;
-    CMD::GetSingleton().functionMap[d.tname]["AddToPO"](d, NULL,
-        (void*) &app);
+    CMD::GetSingleton().functionMap[d.tname]["AddToPO"](d, NULL, (void*) &app);
   }
 
   // Mark that we did parsing.
