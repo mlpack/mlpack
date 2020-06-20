@@ -2,7 +2,7 @@
  * @file methods/preprocess/preprocess_split_main.cpp
  * @author Keon Kim
  *
- * A CMD executable to split a dataset.
+ * A binding to split a dataset.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
