@@ -2,7 +2,7 @@
  * @file methods/preprocess/preprocess_describe_main.cpp
  * @author Keon Kim
  *
- * Descriptive Statistics Class and CMD executable.
+ * Descriptive Statistics Class and binding.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -239,4 +239,3 @@ static void mlpackMain()
   }
   Timer::Stop("statistics");
 }
-
