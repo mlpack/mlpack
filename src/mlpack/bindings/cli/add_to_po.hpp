@@ -23,32 +23,9 @@ namespace bindings {
 namespace cmd {
 
 /**
- * Add a non-vector option to CLI11.
- *
- * @param boostName The name of the option to add to CLI11.
- * @param descr Description string for parameter.
- * @param desc Options description to add parameter to.
- */
-template<typename T>
-void AddToPO(const std::string& cliName,
-             util::ParamData& param,
-             CLI::App& app,
-             const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
-             const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
-{
-  app.add_option_function<T>(cliName.c_str(), 
-  [&param](const T& value)
-  {
-     param.value = value;
-     param.wasPassed = true;
-  }, 
-  param.desc.c_str());
-}
-
-/**
  * Add a vector option to CLI11.
  * 
- *  @param boostName The name of the option to add to CLI11.
+ * @param cliName The name of the option to add to CLI11.
  * @param descr Description string for parameter.
  * @param desc Options description to add parameter to.
  */
