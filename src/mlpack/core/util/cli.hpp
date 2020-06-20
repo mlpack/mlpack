@@ -13,8 +13,8 @@
 #ifndef MLPACK_CORE_UTIL_CMD_HPP
 #define MLPACK_CORE_UTIL_CMD_HPP
 
-#include <list>
 #include <iostream>
+#include <list>
 #include <map>
 #include <string>
 
@@ -27,6 +27,9 @@
 #include "version.hpp"
 
 #include "param_data.hpp"
+
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
 
 namespace mlpack {
 namespace util {

@@ -16,9 +16,6 @@
 #include "cli.hpp"
 #include "prefixedoutstream.hpp"
 
-#include <mlpack/core/data/load.hpp>
-#include <mlpack/core/data/save.hpp>
-
 namespace mlpack {
 
 /**

@@ -9,19 +9,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <list>
-#include <boost/program_options.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <iostream>
 
 #include "cli.hpp"
 #include "log.hpp"
 #include "hyphenate_string.hpp"
-
-#include "version.hpp"
-
-#include <mlpack/core/data/load.hpp>
-#include <mlpack/core/data/save.hpp>
 
 using namespace mlpack;
 using namespace mlpack::util;
