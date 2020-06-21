@@ -179,12 +179,12 @@ class TransposedConvolution
   OutputDataType& Parameters() { return weights; }
 
   //! Get the weight of the layer.
-  const arma::cube& Weight() const { return weight; }
+  arma::cube const& Weight() const { return weight; }
   //! Modify the weight of the layer.
   arma::cube& Weight() { return weight; }
 
   //! Get the bias of the layer.
-  const arma::mat& Bias() const { return bias; }
+  arma::mat const& Bias() const { return bias; }
   //! Modify the bias of the layer.
   arma::mat& Bias() { return bias; }
 
@@ -209,22 +209,22 @@ class TransposedConvolution
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the input width.
-  size_t const& InputWidth() const { return inputWidth; }
+  size_t InputWidth() const { return inputWidth; }
   //! Modify input the width.
   size_t& InputWidth() { return inputWidth; }
 
   //! Get the input height.
-  size_t const& InputHeight() const { return inputHeight; }
+  size_t InputHeight() const { return inputHeight; }
   //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
   //! Get the output width.
-  size_t const& OutputWidth() const { return outputWidth; }
+  size_t OutputWidth() const { return outputWidth; }
   //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
   //! Get the output height.
-  size_t const& OutputHeight() const { return outputHeight; }
+  size_t OutputHeight() const { return outputHeight; }
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 

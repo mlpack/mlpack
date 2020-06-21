@@ -197,22 +197,22 @@ class AtrousConvolution
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the input width.
-  size_t const& InputWidth() const { return inputWidth; }
+  size_t InputWidth() const { return inputWidth; }
   //! Modify input the width.
   size_t& InputWidth() { return inputWidth; }
 
   //! Get the input height.
-  size_t const& InputHeight() const { return inputHeight; }
+  size_t InputHeight() const { return inputHeight; }
   //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
   //! Get the output width.
-  size_t const& OutputWidth() const { return outputWidth; }
+  size_t OutputWidth() const { return outputWidth; }
   //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
   //! Get the output height.
-  size_t const& OutputHeight() const { return outputHeight; }
+  size_t OutputHeight() const { return outputHeight; }
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
