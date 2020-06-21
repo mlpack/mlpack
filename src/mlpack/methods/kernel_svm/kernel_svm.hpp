@@ -157,6 +157,28 @@ class KernelSVM
   double ComputeAccuracy(const MatType& testData,
                          const arma::Row<size_t>& testLabels) const;
 
+  double ComputeL(const double prime_i,
+                  const double prime_j,
+                  const size_t label1,
+                  const size_t label2) const;
+
+  double ComputeH(const double prime_i,
+                  const double prime_j,
+                  const size_t label1,
+                  const size_t label2) const;
+
+  arma::mat calc_w(const arma::vec& alpha,
+                   const arma::Row<size_t>& labels,
+                   const MatType& data);
+
+  arma::mat calc_b(const MatType& data,
+                   const arma::Row<size_t>& labels,
+                   const MatType& w);
+
+  size_t E(const arma::vec& sample,
+           const size_t label,
+           const arma::mat& w,
+           const arma::mat& b) const;
   /**
    * Train the Kernel SVM with the given training data.
    *
@@ -237,8 +259,14 @@ class KernelSVM
   double lambda;
   //! The margin between the correct class and all other classes.
   double delta;
+
+  double C;
   //! Intercept term flag.
   bool fitIntercept;
+  //! Locally saved W parameter.
+  arma::mat w;
+  //! Locally saved b parameter.
+  arma::mat b;
 };
 
 } // namespace svm

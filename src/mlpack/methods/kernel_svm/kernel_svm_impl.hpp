@@ -93,12 +93,12 @@ double KernelSVM<MatType, KernelType>::Train(
       double L = ComputeL(alpha_prime_j, alpha_prime_i, labels(j), labels(i));
       double H = ComputeH(alpha_prime_j, alpha_prime_i, labels(j), labels(i));
       // Compute model parameters
-      arma::mat w = calc_w(alpha, y, X)
-      arma::mat b = calc_b(X, y, self.w)
+      w = calc_w(alpha, labels, data)
+      b = calc_b(data, labels, w)
 
       // Compute E_i, E_j
-      E_i = E(x_i, y_i, self.w, self.b)
-      E_j = E(x_j, y_j, self.w, self.b)
+      E_i = E(data.col(i), labels(i), w, b);
+      E_j = E(data.col(j), labels(j), w, b);
 
       // Set new alpha values
       alpha(j) = alpha_prime_j + float(labels(j) * (E_i - E_j))/k_ij;
@@ -131,6 +131,59 @@ double KernelSVM<MatType, KernelType>::Train(
   }
 }
 
+template <typename MatType, typename KernelType>
+double KernelSVM<MatType, KernelType>::ComputeL(
+    const double prime_i,
+    const double prime_j,
+    const size_t label1,
+    const size_t label2) const
+{
+  if(label1 != label2)
+    return max(0, alpha_prime_j - alpha_prime_i);
+  else
+    return max(0, alpha_prime_i + alpha_prime_j - C);
+}
+
+template <typename MatType, typename KernelType>
+double KernelSVM<MatType, KernelType>::ComputeH(
+    const double prime_i,
+    const double prime_j,
+    const size_t label1,
+    const size_t label2) const
+{
+  if(y_i != y_j)
+    return min(C, C - alpha_prime_i + alpha_prime_j);
+  else
+    return min(C, alpha_prime_i + alpha_prime_j);
+}
+
+template <typename MatType, typename KernelType>
+arma::mat KernelSVM<MatType, KernelType>::calc_b(
+  const MatType& data,
+  const arma::Row<size_t>& labels,
+  const MatType& w)
+{
+  arma::mat temp = y - arma::dot(data, w);
+  return temp;
+}
+
+template <typename MatType, typename KernelType>
+double KernelSVM<MatType, KernelType>::ComputeH(
+    const arma::vec& sample,
+    const size_t label,
+    const arma::mat& w,
+    const arma::mat& b) const
+{
+
+}
+template <typename MatType, typename KernelType>
+arma::mat KernelSVM<MatType, KernelType>::calc_w(
+  const arma::vec& alpha,
+  const arma::Row<size_t>& labels,
+  const MatType& data)
+{
+  return arma::dot(data, labels * alpha);
+}
 
 template <typename MatType, typename KernelType>
 void KernelSVM<MatType, KernelType>::Classify(
@@ -161,24 +214,7 @@ void KernelSVM<MatType, KernelType>::Classify(
     const MatType& data,
     arma::mat& scores) const
 {
-  if (data.n_rows != FeatureSize())
-  {
-    std::ostringstream oss;
-    oss << "LinearSVM::Classify(): dataset has " << data.n_rows
-        << " dimensions, but model has " << FeatureSize() << " dimensions!";
-    throw std::invalid_argument(oss.str());
-  }
-
-  if (fitIntercept)
-  {
-    scores = parameters.rows(0, parameters.n_rows - 2).t() * data
-        + arma::repmat(parameters.row(parameters.n_rows - 1).t(), 1,
-        data.n_cols);
-  }
-  else
-  {
-    scores = parameters.t() * data;
-  }
+  scores = arma::sign(arma::dot(w, data) + b);
 }
 
 template <typename MatType, typename KernelType>
