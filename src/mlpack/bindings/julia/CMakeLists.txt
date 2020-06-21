@@ -148,7 +148,7 @@ if (BUILD_JULIA_BINDINGS)
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.h
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.cpp
       COMMAND ${CMAKE_COMMAND}
-          -DPROGRAM_NAME="${name}"
+          -DPROGRAM_NAME=${name}
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
           -DJULIA_H_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.h.in
           -DJULIA_H_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.h
@@ -218,7 +218,7 @@ if (BUILD_JULIA_BINDINGS)
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/bin/")
   add_custom_command(TARGET generate_jl_${name} POST_BUILD
       COMMAND ${CMAKE_COMMAND}
-          -DGENERATE_BINDING_PROGRAM="${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/bin/generate_jl_${name}"
+          -DGENERATE_BINDING_PROGRAM=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/bin/generate_jl_${name}
           -DBINDING_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/${name}.jl
           -P ${CMAKE_SOURCE_DIR}/CMake/GenerateBinding.cmake)
 
