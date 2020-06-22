@@ -11,7 +11,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/data/load_impl.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/data/imputer.hpp>
 #include <mlpack/core/data/dataset_mapper.hpp>
