@@ -10,13 +10,6 @@ else()
   set(OLD_FILE_CONTENTS "")
 endif()
 
-
-# I will set this variable to 0 when cross compile for 386
-# or an embedded system with 32bit, otherwise everything is 64
-# set(ARMA_HAS_64BIT_WORD 0) 
-
-set(ARMA_HAS_64BIT_WORD 1)
-
 # Now use the value we gathered to generate the new file contents.
 if(ARMA_HAS_64BIT_WORD EQUAL 0)
   set(ARMA_64BIT_WORD_DEFINE "#define MLPACK_ARMA_NO64BIT_WORD")
