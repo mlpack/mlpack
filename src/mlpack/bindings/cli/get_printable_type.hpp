@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_IO_GET_PRINTABLE_TYPE_HPP
-#define MLPACK_BINDINGS_IO_GET_PRINTABLE_TYPE_HPP
+#ifndef MLPACK_BINDINGS_CLI_GET_PRINTABLE_TYPE_HPP
+#define MLPACK_BINDINGS_CLI_GET_PRINTABLE_TYPE_HPP
 
 namespace mlpack {
 namespace bindings {

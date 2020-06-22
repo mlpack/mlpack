@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_IO_IN_PLACE_COPY_HPP
-#define MLPACK_BINDINGS_IO_IN_PLACE_COPY_HPP
+#ifndef MLPACK_BINDINGS_CLI_IN_PLACE_COPY_HPP
+#define MLPACK_BINDINGS_CLI_IN_PLACE_COPY_HPP
 
 #include <mlpack/prereqs.hpp>
 

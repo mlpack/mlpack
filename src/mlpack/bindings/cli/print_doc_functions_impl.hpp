@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_IO_PRINT_DOC_FUNCTIONS_IMPL_HPP
-#define MLPACK_BINDINGS_IO_PRINT_DOC_FUNCTIONS_IMPL_HPP
+#ifndef MLPACK_BINDINGS_CLI_PRINT_DOC_FUNCTIONS_IMPL_HPP
+#define MLPACK_BINDINGS_CLI_PRINT_DOC_FUNCTIONS_IMPL_HPP
 
 #include <mlpack/core/util/hyphenate_string.hpp>
 
