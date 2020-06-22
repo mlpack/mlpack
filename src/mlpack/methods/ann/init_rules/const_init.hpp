@@ -63,6 +63,17 @@ class ConstInitialization
     W.fill(initVal);
   }
 
+  /**
+   * Initialize the elements of the specified weight (3rd order tensor).
+   *
+   * @param W Weight matrix to initialize.
+   */
+  template<typename eT>
+  void Initialize(arma::Cube<eT>& W)
+  {
+    W.fill(initVal);
+  }
+
   //! Get the initialization value.
   double const& InitValue() const { return initVal; }
   //! Modify the initialization value.

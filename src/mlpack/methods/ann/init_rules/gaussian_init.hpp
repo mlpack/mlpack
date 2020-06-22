@@ -60,6 +60,21 @@ class GaussianInitialization
   }
 
   /**
+   * Initialize the elements weight matrix using a Gaussian Distribution.
+   *
+   * @param W Weight matrix to initialize.
+   */
+  template<typename eT>
+  void Initialize(arma::Mat<eT>& W)
+  {
+    if (W.is_empty())
+    {
+      Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
+    }
+    W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
+  }
+
+  /**
    * Initialize randomly the elements of the specified weight 3rd order tensor.
    *
    * @param W Weight matrix to initialize.
@@ -75,8 +90,24 @@ class GaussianInitialization
   {
     W = arma::Cube<eT>(rows, cols, slices);
 
-    for (size_t i = 0; i < slices; i++)
+    for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
+  }
+
+  /**
+   * Initialize randomly the elements of the specified weight 3rd order tensor.
+   *
+   * @param W Weight matrix to initialize.
+   */
+  template<typename eT>
+  void Initialize(arma::Cube<eT> & W)
+  {
+    if (W.is_empty())
+    {
+      Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
+    }
+    for (size_t i = 0; i < W.n_slices; ++i)
+      Initialize(W.slice(i));
   }
 
  private:

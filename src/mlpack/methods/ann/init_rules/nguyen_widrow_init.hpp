@@ -83,6 +83,22 @@ class NguyenWidrowInitialization
   }
 
   /**
+   * Initialize the elements of the specified weight matrix with the
+   * Nguyen-Widrow method.
+   *
+   * @param W Weight matrix to initialize.
+   */
+  template<typename eT>
+  void Initialize(arma::Mat<eT>& W)
+  {
+    RandomInitialization randomInit(lowerBound, upperBound);
+    randomInit.Initialize(W);
+
+    double beta = 0.7 * std::pow(W.n_cols, 1 / W.n_rows);
+    W *= (beta / arma::norm(W));
+  }
+
+  /**
    * Initialize the elements of the specified weight 3rd order tensor with the
    * Nguyen-Widrow method.
    *
@@ -99,8 +115,24 @@ class NguyenWidrowInitialization
   {
     W = arma::Cube<eT>(rows, cols, slices);
 
-    for (size_t i = 0; i < slices; i++)
+    for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
+  }
+
+  /**
+   * Initialize the elements of the specified weight 3rd order tensor with the
+   * Nguyen-Widrow method.
+   *
+   * @param W Weight matrix to initialize.
+   */
+  template<typename eT>
+  void Initialize(arma::Cube<eT>& W)
+  {
+    if (W.is_empty())
+      Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
+
+    for (size_t i = 0; i < W.n_slices; ++i)
+      Initialize(W.slice(i));
   }
 
  private:

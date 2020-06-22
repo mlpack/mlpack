@@ -87,7 +87,7 @@ class RandomInitialization
   {
     W.set_size(rows, cols, slices);
 
-    for (size_t i = 0; i < slices; i++)
+    for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
   }
 
@@ -99,7 +99,7 @@ class RandomInitialization
   template<typename eT>
   void Initialize(arma::Cube<eT>& W)
   {
-    for (size_t i = 0; i < W.n_slices; i++)
+    for (size_t i = 0; i < W.n_slices; ++i)
       Initialize(W.slice(i));
   }
 

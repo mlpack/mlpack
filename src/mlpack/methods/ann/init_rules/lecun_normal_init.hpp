@@ -85,6 +85,27 @@ class LecunNormalInitialization
   }
 
   /**
+   * Initialize the elements of the weight matrix with the Lecun
+   * Normal initialization rule.
+   *
+   * @param W Weight matrix to initialize.
+   */
+  void Initialize(arma::mat& W)
+  {
+    // He initialization rule says to initialize weights with random
+    // values taken from a gaussian distribution with mean = 0 and
+    // standard deviation = sqrt(1 / rows), i.e. variance = (1 / rows).
+    const double variance = 1.0 / ((double) W.n_rows);
+
+    if (W.is_empty())
+      Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
+
+    // Multipling a random variable X with variance V(X) by some factor c,
+    // then the variance V(cX) = (c ^ 2) * V(X).
+    W.imbue( [&]() { return sqrt(variance) * arma::randn(); } );
+  }
+
+  /**
    * Initialize the elements of the specified weight 3rd order tensor
    * with Lecun Normal initialization rule.
    *
@@ -101,8 +122,23 @@ class LecunNormalInitialization
     if (W.is_empty())
       W.set_size(rows, cols, slices);
 
-    for (size_t i = 0; i < slices; i++)
+    for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
+  }
+
+  /**
+   * Initialize the elements of the specified weight 3rd order tensor
+   * with Lecun Normal initialization rule.
+   *
+   * @param W Weight matrix to initialize.
+   */
+  void Initialize(arma::cube & W)
+  {
+    if (W.is_empty())
+      Log::Fatal << "Cannot initialize an empty cube." << std::endl;
+
+    for (size_t i = 0; i < W.n_slices; ++i)
+      Initialize(W.slice(i));
   }
 }; // class LecunNormalInitialization
 
