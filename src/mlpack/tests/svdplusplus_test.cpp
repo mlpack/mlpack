@@ -1,5 +1,5 @@
 /**
- * @file svdplusplus_test.cpp
+ * @file tests/svdplusplus_test.cpp
  * @author Siddharth Agrawal
  * @author Wenhao Huang
  *

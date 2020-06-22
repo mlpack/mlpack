@@ -1,5 +1,5 @@
 /**
- * @file hmm_viterbi_test.cpp
+ * @file tests/main_tests/hmm_viterbi_test.cpp
  * @author Daivik Nema
  *
  * Test mlpackMain() of hmm_viterbi_main.cpp

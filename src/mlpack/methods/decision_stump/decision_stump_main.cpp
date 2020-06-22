@@ -1,5 +1,5 @@
 /**
- * @file decision_stump_main.cpp
+ * @file methods/decision_stump/decision_stump_main.cpp
  * @author Udit Saxena
  *
  * Main executable for the decision stump.

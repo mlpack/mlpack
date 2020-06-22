@@ -1,5 +1,5 @@
 /**
- * @file decision_tree.hpp
+ * @file methods/decision_tree/decision_tree.hpp
  * @author Ryan Curtin
  *
  * A generic decision tree learner.  Its behavior can be controlled via template
@@ -139,7 +139,7 @@ class DecisionTree :
           typename std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
-   * Take ownership of another decision tree and train on the given data and 
+   * Take ownership of another decision tree and train on the given data and
    * labels with weights, where the data can be both numeric and categorical.
    * Setting minimumLeafSize and minimumGainSplit too small may cause the
    * tree to overfit, but setting them too large may cause it to underfit.
@@ -201,8 +201,8 @@ class DecisionTree :
 
   /**
    * Take ownership of another decision tree and train on the given data and labels
-   * with weights, assuming that the data is all of the numeric type. Setting 
-   * minimumLeafSize and minimumGainSplit too small may cause the tree to 
+   * with weights, assuming that the data is all of the numeric type. Setting
+   * minimumLeafSize and minimumGainSplit too small may cause the tree to
    * overfit, but setting them too large may cause it to underfit.
    *
    * Use std::move if data, labels or weights are no longer needed to avoid
@@ -287,7 +287,6 @@ class DecisionTree :
    * @param datasetInfo Type information for each dimension.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
-   * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
@@ -316,7 +315,6 @@ class DecisionTree :
    * @param data Dataset to train on.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
-   * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.

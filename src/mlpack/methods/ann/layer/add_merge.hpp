@@ -1,5 +1,5 @@
 /**
- * @file add_merge.hpp
+ * @file methods/ann/layer/add_merge.hpp
  * @author Marcus Edel
  *
  * Definition of the AddMerge module which accumulates the output of the given
@@ -66,7 +66,7 @@ class AddMerge
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
-   * @param input Input data used for evaluating the specified function.
+   * @param * (input) Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
@@ -77,7 +77,7 @@ class AddMerge
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -90,10 +90,10 @@ class AddMerge
    * This is the overload of Backward() that runs only a specific layer with
    * the given input.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
-   * @param The index of the layer to run.
+   * @param index The index of the layer to run.
    */
   template<typename eT>
   void Backward(const arma::Mat<eT>& /* input */,

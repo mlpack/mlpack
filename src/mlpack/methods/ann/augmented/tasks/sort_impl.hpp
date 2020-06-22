@@ -1,5 +1,5 @@
 /**
- * @file sort_impl.hpp
+ * @file methods/ann/augmented/tasks/sort_impl.hpp
  * @author Konstantin Sidorov
  *
  * Implementation of SortTask class.

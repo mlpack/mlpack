@@ -1,5 +1,5 @@
 /**
- * @file nearest_neighbor_sort_impl.hpp
+ * @file methods/neighbor_search/sort_policies/nearest_neighbor_sort_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of templated methods for the NearestNeighborSort SortPolicy

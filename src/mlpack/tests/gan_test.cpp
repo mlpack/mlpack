@@ -1,5 +1,5 @@
 /**
- * @file gan_test.cpp
+ * @file tests/gan_test.cpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *

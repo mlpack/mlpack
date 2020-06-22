@@ -1,7 +1,7 @@
 namespace mlpack {
 namespace hpt {
 
-/*! @page hpt Hyper-Parameter Tuning
+/*! @page hpt_guide Hyper-Parameter Tuning
 
 @section hptintro Introduction
 
@@ -32,7 +32,7 @@ The interface of the hyper-parameter tuning module is quite similar to the
 interface of the @ref cv "cross-validation module". To construct a \c
 HyperParameterTuner object you need to specify as template parameters what
 machine learning algorithm, cross-validation strategy, performance measure, and
-optimization strategy (\ref optimization::GridSearch "GridSearch" will be used by
+optimization strategy (\c ens::GridSearch will be used by
 default) you are going to use.  Then, you must pass the same arguments as for
 the cross-validation classes: the data and labels (or responses) to use are
 given to the constructor, and the possible hyperparameter values are given to
@@ -68,7 +68,7 @@ computation time.
   std::tie(bestLambda) = hpt.Optimize(lambdas);
 @endcode
 
-In this example we have used \ref optimization::GridSearch "GridSearch" (the
+In this example we have used \c ens::GridSearch (the
 default optimizer) to find a good value for the \c lambda hyper-parameter.  For
 that we have specified what values should be tried.
 
@@ -121,7 +121,7 @@ real-valued hyperparameters, but wish to further tune those values.
 In this case, we can use a gradient-based optimizer for hyperparameter search.
 In the following example, we try to optimize the \c lambda1 and \c lambda2
 hyper-parameters for \ref regression::LARS "LARS" with the
-\ref optimization::GradientDescent "GradientDescent" optimizer.
+\c ens::GradientDescent optimizer.
 
 @code
   HyperParameterTuner<LARS, MSE, SimpleCV, GradientDescent> hpt3(validationSize,
@@ -147,7 +147,7 @@ hyper-parameters for \ref regression::LARS "LARS" with the
 
 The \c HyperParameterTuner class is very similar to the
 \ref cv::KFoldCV "KFoldCV" and \ref cv::SimpleCV "SimpleCV" classes (see the
-@ref "cross-validation tutorial" for more information on those two classes), but
+\ref cv "cross-validation tutorial" for more information on those two classes), but
 there are a few important differences.
 
 First, the \c HyperParameterTuner accepts five different hyperparameters; only
@@ -190,7 +190,7 @@ HyperParameterTuner<LinearRegression, MSE, SimpleCV> hpt(0.2, dataset,
 @endcode
 
 Next, we must set up the hyperparameters to be optimized.  If we are doing a
-grid search with the \ref optimization::GridSearch "GridSearch" optimizer (the
+grid search with the \c ens::GridSearch optimizer (the
 default), then we only need to pass a `std::vector` (for non-numeric
 hyperparameters) or an `arma::vec` (for numeric hyperparameters) containing all
 of the possible choices that we wish to search over.
@@ -222,7 +222,7 @@ Alternately, the \c Fixed() method (detailed in the @ref hptfixed
 "Fixed arguments" section) can be used to fix the values of some parameters.
 
 For continuous optimizers like
-\ref optimization::GradientDescent "GradientDescent", a range does not need to
+\c ens::GradientDescent, a range does not need to
 be specified but instead only a single value.  See the
 \ref hptgradient "Gradient-Based Optimization" section for more details.
 

@@ -1,5 +1,5 @@
 /**
- * @file mountain_car.hpp
+ * @file methods/reinforcement_learning/environment/mountain_car.hpp
  * @author Shangtong Zhang
  *
  * This file is an implementation of Mountain Car task:

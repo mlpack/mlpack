@@ -1,5 +1,5 @@
 /**
- * @file log_cosh_loss_impl.hpp
+ * @file methods/ann/loss_functions/log_cosh_loss_impl.hpp
  * @author Kartik Dutt
  *
  * Implementation of the Log-Hyperbolic-Cosine loss function.
@@ -28,8 +28,9 @@ LogCoshLoss<InputDataType, OutputDataType>::LogCoshLoss(const double a) :
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double LogCoshLoss<InputDataType, OutputDataType>::Forward(
-    const InputType& input, const TargetType& target)
+typename InputType::elem_type
+LogCoshLoss<InputDataType, OutputDataType>::Forward(const InputType& input,
+                                                    const TargetType& target)
 {
   return arma::accu(arma::log(arma::cosh(a * (target - input)))) / a;
 }

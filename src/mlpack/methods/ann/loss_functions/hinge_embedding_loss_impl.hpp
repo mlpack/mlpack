@@ -1,5 +1,5 @@
 /**
- * @file hinge_embedding_loss_impl.hpp
+ * @file methods/ann/loss_functions/hinge_embedding_loss_impl.hpp
  * @author Lakshya Ojha
  *
  * Implementation of the Hinge Embedding loss function.
@@ -27,8 +27,10 @@ HingeEmbeddingLoss<InputDataType, OutputDataType>::HingeEmbeddingLoss()
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double HingeEmbeddingLoss<InputDataType, OutputDataType>::Forward(
-    const InputType& input, const TargetType& target)
+typename InputType::elem_type
+HingeEmbeddingLoss<InputDataType, OutputDataType>::Forward(
+    const InputType& input,
+    const TargetType& target)
 {
   TargetType temp = target - (target == 0);
   return (arma::accu(arma::max(1-input % temp, 0.))) / target.n_elem;

@@ -1,5 +1,5 @@
 /**
- * @file bag_of_words_encoding_policy.hpp
+ * @file core/data/string_encoding_policies/bag_of_words_encoding_policy.hpp
  * @author Jeffin Sam
  * @author Mikhail Lozhnikov
  *
@@ -36,6 +36,14 @@ class BagOfWordsEncodingPolicy
 {
  public:
   /**
+   * Clear the necessary internal variables.
+   */
+  static void Reset()
+  {
+    // Nothing to do.
+  }
+
+  /**
    * The function initializes the output matrix. The encoder writes data
    * in the column-major order.
    *
@@ -43,7 +51,7 @@ class BagOfWordsEncodingPolicy
    *
    * @param output Output matrix to store the encoded results (sp_mat or mat).
    * @param datasetSize The number of strings in the input dataset.
-   * @param maxNumTokens The maximum number of tokens in the strings of the 
+   * @param * (maxNumTokens) The maximum number of tokens in the strings of the
    *                     input dataset (not used).
    * @param dictionarySize The size of the dictionary.
    */
@@ -61,12 +69,12 @@ class BagOfWordsEncodingPolicy
    * in the row-major order.
    *
    * Overloaded function to save the result in vector<vector<ElemType>>.
-   * 
+   *
    * @tparam ElemType Type of the output values.
    *
    * @param output Output matrix to store the encoded results.
    * @param datasetSize The number of strings in the input dataset.
-   * @param maxNumTokens The maximum number of tokens in the strings of the 
+   * @param * (maxNumTokens) The maximum number of tokens in the strings of the
    *                     input dataset (not used).
    * @param dictionarySize The size of the dictionary.
    */
@@ -89,7 +97,7 @@ class BagOfWordsEncodingPolicy
    * @param output Output matrix to store the encoded results (sp_mat or mat).
    * @param value The encoded token.
    * @param line The line number at which the encoding is performed.
-   * @param index The token index in the line.
+   * @param * (index) The token index in the line.
    */
   template<typename MatType>
   static void Encode(MatType& output,
@@ -114,7 +122,7 @@ class BagOfWordsEncodingPolicy
    * @param output Output matrix to store the encoded results.
    * @param value The encoded token.
    * @param line The line number at which the encoding is performed.
-   * @param index The line token number at which the encoding is performed.
+   * @param * (index) The line token number at which the encoding is performed.
    */
   template<typename ElemType>
   static void Encode(std::vector<std::vector<ElemType>>& output,
@@ -129,9 +137,9 @@ class BagOfWordsEncodingPolicy
   /**
    * The function is not used by the bag of words encoding policy.
    *
-   * @param line The line number at which the encoding is performed.
-   * @param index The token sequence number in the line.
-   * @param value The encoded token.
+   * @param * (line) The line number at which the encoding is performed.
+   * @param * (index) The token sequence number in the line.
+   * @param * (value) The encoded token.
    */
   static void PreprocessToken(size_t /* line */,
                               size_t /* index */,

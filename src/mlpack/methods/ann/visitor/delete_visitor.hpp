@@ -1,5 +1,5 @@
 /**
- * @file delete_visitor.hpp
+ * @file methods/ann/visitor/delete_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Delete() function for different

@@ -1,5 +1,5 @@
 /**
- * @file print_doc_functions.hpp
+ * @file bindings/python/print_doc_functions.hpp
  * @author Ryan Curtin
  *
  * This file contains functions useful for printing documentation strings
@@ -28,6 +28,11 @@ inline std::string GetBindingName(const std::string& bindingName);
  * Print any import information for the Python binding.
  */
 inline std::string PrintImport(const std::string& bindingName);
+
+/**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo();
 
 /**
  * Print any special information about output options.

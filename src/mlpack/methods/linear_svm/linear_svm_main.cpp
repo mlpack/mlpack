@@ -1,5 +1,5 @@
 /**
- * @file linear_svm_main.cpp
+ * @file methods/linear_svm/linear_svm_main.cpp
  * @author Yashwant Singh Parihar
  *
  * Main executable for linear svm.
@@ -172,7 +172,7 @@ static void mlpackMain()
   const double delta = CLI::GetParam<double>("delta");
   const string optimizerType = CLI::GetParam<string>("optimizer");
   const double tolerance = CLI::GetParam<double>("tolerance");
-  const bool intercept = CLI::HasParam("no_intercept");
+  const bool intercept = !CLI::HasParam("no_intercept");
   const size_t epochs = (size_t) CLI::GetParam<int>("epochs");
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
 
@@ -358,6 +358,12 @@ static void mlpackMain()
   }
   if (CLI::HasParam("test"))
   {
+    // Cache the value of GetPrintableParam for the test matrix before we
+    // std::move() it.
+    std::ostringstream oss;
+    oss << CLI::GetPrintableParam<arma::mat>("test");
+    std::string testOutput = oss.str();
+
     if (!CLI::HasParam("training"))
     {
       numClasses = model->svm.NumClasses();
@@ -387,8 +393,8 @@ static void mlpackMain()
     // Save class probabilities, if desired.
     if (CLI::HasParam("probabilities"))
     {
-      Log::Info << "Calculating class probabilities of points in "
-          << CLI::GetPrintableParam<arma::mat>("test") << "." << endl;
+      Log::Info << "Calculating class probabilities of points in " << testOutput
+          << "." << endl;
       arma::mat probabilities;
       model->svm.Classify(testSet, probabilities);
       CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
@@ -451,8 +457,8 @@ static void mlpackMain()
     // Save predictions, if desired.
     if (CLI::HasParam("predictions"))
     {
-      Log::Info << "Predicting classes of points in '"
-          << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
+      Log::Info << "Predicting classes of points in '" << testOutput << "'."
+          << endl;
       CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
     }
   }

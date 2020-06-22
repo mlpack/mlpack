@@ -1,5 +1,5 @@
 /**
- * @file atrous_convolution_impl.hpp
+ * @file methods/ann/layer/atrous_convolution_impl.hpp
  * @author Aarush Gupta
  * @author Shikhar Jaiswal
  *
@@ -127,8 +127,7 @@ AtrousConvolution<
 
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
-  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
-      [](unsigned char c){ return std::tolower(c); });
+  util::ToLower(paddingType, paddingTypeLow);
 
   size_t padWLeft = std::get<0>(padW);
   size_t padWRight = std::get<1>(padW);

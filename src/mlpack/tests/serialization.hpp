@@ -1,5 +1,5 @@
 /**
- * @file serialization.hpp
+ * @file tests/serialization.hpp
  * @author Ryan Curtin
  *
  * Miscellaneous utility functions for serialization tests.

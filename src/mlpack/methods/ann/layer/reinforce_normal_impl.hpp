@@ -1,5 +1,5 @@
 /**
- * @file reinforce_normal_impl.hpp
+ * @file methods/ann/layer/reinforce_normal_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the ReinforceNormalLayer class, which implements the

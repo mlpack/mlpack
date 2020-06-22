@@ -1,5 +1,5 @@
 /**
- * @file dropconnect_impl.hpp
+ * @file methods/ann/layer/dropconnect_impl.hpp
  * @author Palash Ahuja
  * @author Marcus Edel
  *

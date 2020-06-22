@@ -1,21 +1,25 @@
 /**
- * @file load_image.cpp
+ * @file core/data/load_image.cpp
  * @author Mehul Kumar Nirala
  *
  * Implementation of image loading functionality via STB.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "load.hpp"
 #include "image_info.hpp"
 
 #ifdef HAS_STB
 
+// The definition of STB_IMAGE_IMPLEMENTATION means that the implementation will
+// be included here directly.
 #define STB_IMAGE_STATIC
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
 
-#define STB_IMAGE_WRITE_STATIC
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <stb_image_write.h>
+#include <stb_image.h>
 
 namespace mlpack {
 namespace data {

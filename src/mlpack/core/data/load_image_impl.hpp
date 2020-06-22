@@ -1,5 +1,5 @@
 /**
- * @file load_image_impl.hpp
+ * @file core/data/load_image_impl.hpp
  * @author Mehul Kumar Nirala
  *
  * An image loading utility implementation.

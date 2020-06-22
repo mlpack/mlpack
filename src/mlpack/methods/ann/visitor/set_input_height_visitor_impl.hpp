@@ -1,5 +1,5 @@
 /**
- * @file set_input_height_visitor_impl.hpp
+ * @file methods/ann/visitor/set_input_height_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the InputHeight() function layer abstraction.

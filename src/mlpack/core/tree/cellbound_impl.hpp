@@ -1,5 +1,5 @@
 /**
- * @file cellbound_impl.hpp
+ * @file core/tree/cellbound_impl.hpp
  * @author Mikhail Lozhnikov
  *
  * Implementation of the CellBound class. The class describes a bound that

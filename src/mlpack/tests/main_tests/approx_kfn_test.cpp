@@ -1,5 +1,5 @@
 /**
- * @file approx_kfn_test.cpp
+ * @file tests/main_tests/approx_kfn_test.cpp
  * @author Namrata Mukhija
  *
  * Test mlpackMain() of approx_kfn_main.cpp.

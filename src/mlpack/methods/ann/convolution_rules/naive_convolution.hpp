@@ -1,5 +1,5 @@
 /**
- * @file naive_convolution.hpp
+ * @file methods/ann/convolution_rules/naive_convolution.hpp
  * @author Shangtong Zhang
  * @author Marcus Edel
  *

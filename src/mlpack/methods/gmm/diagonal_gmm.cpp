@@ -1,5 +1,5 @@
 /**
- * @file diagonal_gmm.cpp
+ * @file methods/gmm/diagonal_gmm.cpp
  * @author Kim SangYeon
  *
  * Implementation of template-based GMM methods.

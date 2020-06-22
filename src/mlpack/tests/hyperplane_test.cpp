@@ -1,5 +1,5 @@
 /**
- * @file hyperplane_test.cpp
+ * @file tests/hyperplane_test.cpp
  *
  * Tests for Hyperplane and ProjVector implementations.
  *

@@ -11,6 +11,14 @@ set(SOURCES
   mish_function.hpp
   lisht_function.hpp
   gelu_function.hpp
+  elliot_function.hpp
+  elish_function.hpp
+  inverse_quadratic_function.hpp
+  quadratic_function.hpp
+  spline_function.hpp
+  multi_quadratic_function.hpp
+  poisson1_function.hpp
+  gaussian_function.hpp
 )
 
 # Add directory name to sources.

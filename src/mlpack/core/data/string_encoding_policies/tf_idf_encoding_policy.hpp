@@ -1,5 +1,5 @@
 /**
- * @file tf_idf_encoding_policy.hpp
+ * @file core/data/string_encoding_policies/tf_idf_encoding_policy.hpp
  * @author Jeffin Sam
  * @author Mikhail Lozhnikov
  *
@@ -44,7 +44,8 @@ class TfIdfEncodingPolicy
    * RAW_COUNT        Term frequency equals the number of times when the encoded
    *                  token occurs in the row.
    * TERM_FREQUENCY   Term frequency equals the number of times when the encoded
-   *                  token occurs in the row divided by the row size.
+   *                  token occurs in the row divided by the total number of
+   *                  tokens in the row.
    * SUBLINEAR_TF     Term frequency equals \f$ 1 + log(rawCount), \f$ where
    *                  rawCount is equal to the number of times when the encoded
    *                  token occurs in the row.
@@ -78,6 +79,16 @@ class TfIdfEncodingPolicy
   { }
 
   /**
+   * Clear the necessary internal variables.
+   */
+  void Reset()
+  {
+    tokensFrequences.clear();
+    numContainingStrings.clear();
+    linesSizes.clear();
+  }
+
+  /**
    * The function initializes the output matrix. The encoder writes data
    * in the row-major order.
    *
@@ -85,7 +96,7 @@ class TfIdfEncodingPolicy
    *
    * @param output Output matrix to store the encoded results (sp_mat or mat).
    * @param datasetSize The number of strings in the input dataset.
-   * @param maxNumTokens The maximum number of tokens in the strings of the 
+   * @param * (maxNumTokens) The maximum number of tokens in the strings of the
    *                     input dataset (not used).
    * @param dictionarySize The size of the dictionary.
    */
@@ -103,12 +114,12 @@ class TfIdfEncodingPolicy
    * in the row-major order.
    *
    * Overloaded function to save the result in vector<vector<ElemType>>.
-   * 
+   *
    * @tparam ElemType Type of the output values.
    *
    * @param output Output matrix to store the encoded results.
    * @param datasetSize The number of strings in the input dataset.
-   * @param maxNumTokens The maximum number of tokens in the strings of the 
+   * @param * (maxNumTokens) The maximum number of tokens in the strings of the
    *                     input dataset (not used).
    * @param dictionarySize The size of the dictionary.
    */
@@ -121,7 +132,7 @@ class TfIdfEncodingPolicy
     output.resize(datasetSize, std::vector<ElemType>(dictionarySize));
   }
 
-  /** 
+  /**
    * The function performs the TfIdf encoding algorithm i.e. it writes
    * the encoded token to the output. The encoder writes data in the
    * column-major order.
@@ -131,7 +142,7 @@ class TfIdfEncodingPolicy
    * @param output Output matrix to store the encoded results (sp_mat or mat).
    * @param value The encoded token.
    * @param line The line number at which the encoding is performed.
-   * @param index The token index in the line.
+   * @param * (index) The token index in the line.
    */
   template<typename MatType>
   void Encode(MatType& output,
@@ -150,7 +161,7 @@ class TfIdfEncodingPolicy
     output(value - 1, line) =  tf * idf;
   }
 
-  /** 
+  /**
    * The function performs the TfIdf encoding algorithm i.e. it writes
    * the encoded token to the output. The encoder writes data in the
    * row-major order.
@@ -163,7 +174,7 @@ class TfIdfEncodingPolicy
    * @param output Output matrix to store the encoded results.
    * @param value The encoded token.
    * @param line The line number at which the encoding is performed.
-   * @param index The token index in the line.
+   * @param * (index) The token index in the line.
    */
   template<typename ElemType>
   void Encode(std::vector<std::vector<ElemType>>& output,

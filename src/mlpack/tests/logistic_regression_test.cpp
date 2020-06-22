@@ -1,5 +1,5 @@
 /**
- * @file logistic_regression_test.cpp
+ * @file tests/logistic_regression_test.cpp
  * @author Ryan Curtin
  * @author Arun Reddy
  *
@@ -1000,6 +1000,27 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTrainReturnObjective)
   objVal = lr4.Train(data, responses, sgdOpt);
 
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+}
+
+/**
+ * Test that construction *then* training works fine.  Thanks @Trento89 for the
+ * test case (see #2358).
+ */
+BOOST_AUTO_TEST_CASE(ConstructionThenTraining)
+{
+  arma::mat myMatrix;
+
+  // Four points, three dimensions.
+  myMatrix << 0.555950 << 0.274690 << 0.540605 << 0.798938 << arma::endr
+           << 0.948014 << 0.973234 << 0.216504 << 0.883152 << arma::endr
+           << 0.023787 << 0.675382 << 0.231751 << 0.450332 << arma::endr;
+
+  arma::Row<size_t> myTargets("1 0 1 0");
+
+  regression::LogisticRegression<> lr;
+
+  // Make sure that training doesn't crash with invalid parameter sizes.
+  BOOST_REQUIRE_NO_THROW(lr.Train(myMatrix, myTargets));
 }
 
 BOOST_AUTO_TEST_SUITE_END();

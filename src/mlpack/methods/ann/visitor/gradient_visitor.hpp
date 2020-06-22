@@ -1,5 +1,5 @@
 /**
- * @file gradient_visitor.hpp
+ * @file methods/ann/visitor/gradient_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Gradient() function for different
