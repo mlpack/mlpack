@@ -23,8 +23,7 @@ namespace cmd {
 void PrintHelp(const std::string& param)
 {
   std::string usedParam = param;
-  std::map<std::string, util::ParamData>& parameters =
-      IO::Parameters();
+  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
   const std::map<char, std::string>& aliases = IO::Aliases();
   util::ProgramDoc& docs = *IO::GetSingleton().doc;
 
