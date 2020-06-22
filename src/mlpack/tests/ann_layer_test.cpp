@@ -489,7 +489,7 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerWeightInitializationTest)
  */
 BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerWeightInitializationTest)
 {
-  size_t inSize = 1, outSize = 1;
+  size_t inSize = 3, outSize = 3;
   size_t kernelWidth = 4, kernelHeight = 4;
   TransposedConvolution<>* module = new TransposedConvolution<>(inSize, outSize,
       kernelWidth, kernelHeight, 1, 1, 1, 1, 5, 5, 6, 6);
