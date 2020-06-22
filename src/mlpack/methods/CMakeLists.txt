@@ -20,6 +20,7 @@ set(DIRS
   hoeffding_trees
   kde
   kernel_pca
+  kernel_svm
   kmeans
   lars
   linear_regression
