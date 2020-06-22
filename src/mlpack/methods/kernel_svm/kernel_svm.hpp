@@ -179,25 +179,6 @@ class KernelSVM
            const size_t label,
            const arma::mat& w,
            const arma::mat& b) const;
-  /**
-   * Train the Kernel SVM with the given training data.
-   *
-   * @tparam OptimizerType Desired optimizer.
-   * @tparam CallbackTypes Types of Callback Functions.
-   * @param data Input training features. Each column associate with one sample.
-   * @param labels Labels associated with the feature data.
-   * @param numClasses Number of classes for classification.
-   * @param optimizer Desired optimizer.
-   * @param callbacks Callback Functions.
-   *      See https://www.ensmallen.org/docs.html#callback-documentation.
-   * @return Objective value of the final point.
-   */
-  template <typename OptimizerType, typename... CallbackTypes>
-  double Train(const MatType& data,
-               const arma::Row<size_t>& labels,
-               const size_t numClasses,
-               OptimizerType optimizer,
-               CallbackTypes&&... callbacks);
 
   /**
    * Train the Kernel SVM with the given training data.
@@ -212,8 +193,7 @@ class KernelSVM
   template <typename OptimizerType = ens::L_BFGS>
   double Train(const MatType& data,
                const arma::Row<size_t>& labels,
-               const size_t numClasses = 2,
-               OptimizerType optimizer = OptimizerType());
+               const size_t numClasses = 2);
 
 
   //! Sets the number of classes.
@@ -264,9 +244,11 @@ class KernelSVM
   //! Intercept term flag.
   bool fitIntercept;
   //! Locally saved W parameter.
-  arma::mat w;
+  MatType w;
   //! Locally saved b parameter.
-  arma::mat b;
+  MatType b;
+  //! Locally saved support vectors.
+  MatType support_vectors;
 };
 
 } // namespace svm

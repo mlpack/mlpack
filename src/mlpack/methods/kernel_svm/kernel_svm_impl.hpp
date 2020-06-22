@@ -33,7 +33,7 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     delta(delta),
     fitIntercept(fitIntercept)
 {
-  Train(data, labels, numClasses, optimizer);
+  Train(data, labels, numClasses);
 }
 
 template <typename MatType, typename KernelType>
@@ -65,13 +65,10 @@ KernelSVM<MatType, KernelType>::KernelSVM(
 }
 
 template <typename MatType, typename KernelType>
-template <typename OptimizerType, typename... CallbackTypes>
 double KernelSVM<MatType, KernelType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    OptimizerType optimizer,
-    CallbackTypes&&... callbacks)
+    const size_t numClasses)
 {
   arma::vec alpha = arma::zeros(data.n_cols);
   size_t count = 0;
@@ -123,8 +120,16 @@ double KernelSVM<MatType, KernelType>::Train(
   if (kernel_type == 'linear')
     w = calc_w(alpha, labels, data);
   // Get support vectors
-  arma::mat alpha_idx = where(alpha > 0)[0];
-  arma::mat support_vectors;
+  arma::vec alpha_idx;
+  for (size_t i = 0; i < alpha.n_elem; i++)
+  {
+    if (alpha(i)>0)
+      alpha_idx.push_back(i);
+  }
+  for (size_t i = 0; i < alpha_idx.n_elem; i++)
+  {
+    support_vectors.push_back(data.col(alpha_idx(i)));
+  }
   return count
     }
 
