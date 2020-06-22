@@ -423,7 +423,6 @@ find_package(Boost 1.58
     REQUIRED
 )
 
-
 link_directories(${Boost_LIBRARY_DIRS})
 
 # In Visual Studio, automatic linking is performed, so we don't need to worry
