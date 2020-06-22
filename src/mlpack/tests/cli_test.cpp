@@ -40,12 +40,12 @@ using namespace std;
 
 // When we run these tests, we have to nuke the existing CLI object that's
 // created by default.
-struct IOTestDestroyer
+struct CLITestDestroyer
 {
-  IOTestDestroyer() { CLI::ClearSettings(); }
+  CLITestDestroyer() { CLI::ClearSettings(); }
 };
 
-BOOST_FIXTURE_TEST_SUITE(IOTest, IOTestDestroyer);
+BOOST_FIXTURE_TEST_SUITE(CLITest, CLITestDestroyer);
 
 /**
  * Before running a test that uses the CLI options, we have to add the default
@@ -71,7 +71,7 @@ void AddRequiredCLIOptions()
  * Tests that CLI works as intended, namely that CLI::Add propagates
  * successfully.
  */
-BOOST_AUTO_TEST_CASE(TestIOAdd)
+BOOST_AUTO_TEST_CASE(TestCLIAdd)
 {
   AddRequiredCLIOptions();
 
@@ -878,7 +878,7 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
 }
 
 /**
- * Test that we can serialize a model and then deserialize it through the IO
+ * Test that we can serialize a model and then deserialize it through the CLI
  * interface.
  */
 BOOST_AUTO_TEST_CASE(SerializationTest)
