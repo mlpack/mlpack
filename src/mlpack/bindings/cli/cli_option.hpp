@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_BINDINGS_IO_IO_OPTION_HPP
-#define MLPACK_CORE_BINDINGS_IO_IO_OPTION_HPP
+#ifndef MLPACK_CORE_BINDINGS_CLI_OPTION_HPP
+#define MLPACK_CORE_BINDINGS_CLI_OPTION_HPP
 
 #include <string>
 
