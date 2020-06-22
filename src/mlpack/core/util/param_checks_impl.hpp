@@ -185,12 +185,12 @@ void RequireParamInSet(const std::string& name,
   if (BINDING_IGNORE_CHECK(name))
     return;
 
-  if (std::find(set.begin(), set.end(), CLI::GetParam<T>(name)) == set.end())
+  if (std::find(set.begin(), set.end(), IO::GetParam<T>(name)) == set.end())
   {
     // The item was not found in the set.
     util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
     stream << "Invalid value of " << PRINT_PARAM_STRING(name) << " specified ("
-        << PRINT_PARAM_VALUE(CLI::GetParam<T>(name), true) << "); ";
+        << PRINT_PARAM_VALUE(IO::GetParam<T>(name), true) << "); ";
     if (!errorMessage.empty())
       stream << errorMessage << "; ";
     stream << "must be one of ";
@@ -211,13 +211,13 @@ void RequireParamValue(const std::string& name,
     return;
 
   // We need to make sure that the condition holds.
-  bool condition = conditional(CLI::GetParam<T>(name));
+  bool condition = conditional(IO::GetParam<T>(name));
   if (!condition)
   {
     // The condition failed.
     util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
     stream << "Invalid value of " << PRINT_PARAM_STRING(name) << " specified ("
-        << PRINT_PARAM_VALUE(CLI::GetParam<T>(name), false) << "); "
+        << PRINT_PARAM_VALUE(IO::GetParam<T>(name), false) << "); "
         << errorMessage << "!" << std::endl;
   }
 }
