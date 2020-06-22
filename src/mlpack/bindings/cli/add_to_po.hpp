@@ -37,12 +37,12 @@ void AddToPO(const std::string& cliName,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
   app.add_option_function<T>(cliName.c_str(), 
-  [&param](const T& value)
-  {
-     param.value = value;
-     param.wasPassed = true;
-  }, 
-  param.desc.c_str());
+      [&param](const T& value)
+      {
+       param.value = value;
+       param.wasPassed = true;
+      }, 
+      param.desc.c_str());
 }
 
 /**
