@@ -16,7 +16,7 @@ from libcpp.string cimport string
 from libcpp cimport bool
 
 cdef extern from "<mlpack/core/util/cli.hpp>" namespace "mlpack" nogil:
-  cdef cppclass IO:
+  cdef cppclass CLI:
     @staticmethod
     (T&) GetParam[T](string) nogil except +
 

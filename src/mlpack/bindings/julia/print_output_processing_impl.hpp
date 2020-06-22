@@ -53,7 +53,7 @@ void PrintOutputProcessing(
   if (std::is_same<T, std::string>::value)
     std::cout << "Base.unsafe_string(";
 
-  std::cout << "IOGetParam" << type << "(\"" << d.name << "\")";
+  std::cout << "CLIGetParam" << type << "(\"" << d.name << "\")";
 
   if (std::is_same<T, std::string>::value)
     std::cout << ")";
@@ -88,7 +88,7 @@ void PrintOutputProcessing(
     extra = ", points_are_rows";
   }
 
-  std::cout << "IOGetParam" << uChar << matTypeSuffix << "(\"" << d.name
+  std::cout << "CLIGetParam" << uChar << matTypeSuffix << "(\"" << d.name
       << "\"" << extra << ")";
 }
 
@@ -105,7 +105,7 @@ void PrintOutputProcessing(
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   std::string type = StripType(d.cppType);
-  std::cout << functionName << "_internal.IOGetParam"
+  std::cout << functionName << "_internal.CLIGetParam"
       << type << "(\"" << d.name << "\")";
 }
 
@@ -119,7 +119,7 @@ void PrintOutputProcessing(
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
-  std::cout << "IOGetParamMatWithInfo(\"" << d.name << "\")";
+  std::cout << "CLIGetParamMatWithInfo(\"" << d.name << "\")";
 }
 
 } // namespace julia

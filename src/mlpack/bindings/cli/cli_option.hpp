@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_BINDINGS_CLI_OPTION_HPP
-#define MLPACK_CORE_BINDINGS_CLI_OPTION_HPP
+#ifndef MLPACK_CORE_BINDINGS_CLI_CLI_OPTION_HPP
+#define MLPACK_CORE_BINDINGS_CLI_CLI_OPTION_HPP
 
 #include <string>
 
@@ -65,7 +65,7 @@ class CLIOption
    *      matrix will not be transposed on loading.
    * @param * (testName) Is not used and added for compatibility reasons.
    */
-  IOOption(const N defaultValue,
+  CLIOption(const N defaultValue,
             const std::string& identifier,
             const std::string& description,
             const std::string& alias,

@@ -1,29 +1,29 @@
 module cli
 
-export IORestoreSettings
-export IOSetParam
-export IOSetParamMat
-export IOSetParamUMat
-export IOSetParamRow
-export IOSetParamCol
-export IOSetParamURow
-export IOSetParamUCol
-export IOGetParamBool
-export IOGetParamInt
-export IOGetParamDouble
-export IOGetParamString
-export IOGetParamVectorStr
-export IOGetParamVectorInt
-export IOGetParamMat
-export IOGetParamUMat
-export IOGetParamCol
-export IOGetParamRow
-export IOGetParamUCol
-export IOGetParamURow
-export IOGetParamMatWithInfo
-export IOEnableVerbose
-export IODisableVerbose
-export IOSetPassed
+export CLIRestoreSettings
+export CLISetParam
+export CLISetParamMat
+export CLISetParamUMat
+export CLISetParamRow
+export CLISetParamCol
+export CLISetParamURow
+export CLISetParamUCol
+export CLIGetParamBool
+export CLIGetParamInt
+export CLIGetParamDouble
+export CLIGetParamString
+export CLIGetParamVectorStr
+export CLIGetParamVectorInt
+export CLIGetParamMat
+export CLIGetParamUMat
+export CLIGetParamCol
+export CLIGetParamRow
+export CLIGetParamUCol
+export CLIGetParamURow
+export CLIGetParamMatWithInfo
+export CLIEnableVerbose
+export CLIDisableVerbose
+export CLISetPassed
 
 const library = joinpath(@__DIR__, "libmlpack_julia_util${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
@@ -61,31 +61,31 @@ function to_vector(input, T::Type)
   end
 end
 
-function IORestoreSettings(programName::String)
+function CLIRestoreSettings(programName::String)
   ccall((:CLI_RestoreSettings, library), Nothing, (Cstring,), programName);
 end
 
-function IOSetParam(paramName::String, paramValue::Int)
+function CLISetParam(paramName::String, paramValue::Int)
   ccall((:CLI_SetParamInt, library), Nothing, (Cstring, Cint), paramName,
       Cint(paramValue));
 end
 
-function IOSetParam(paramName::String, paramValue::Float64)
+function CLISetParam(paramName::String, paramValue::Float64)
   ccall((:CLI_SetParamDouble, library), Nothing, (Cstring, Float64), paramName,
       paramValue);
 end
 
-function IOSetParam(paramName::String, paramValue::Bool)
+function CLISetParam(paramName::String, paramValue::Bool)
   ccall((:CLI_SetParamBool, library), Nothing, (Cstring, Bool), paramName,
       paramValue);
 end
 
-function IOSetParam(paramName::String, paramValue::String)
+function CLISetParam(paramName::String, paramValue::String)
   ccall((:CLI_SetParamString, library), Nothing, (Cstring, Cstring), paramName,
       paramValue);
 end
 
-function IOSetParamMat(paramName::String,
+function CLISetParamMat(paramName::String,
                         paramValue,
                         pointsAsRows::Bool)
   paramMat = to_matrix(paramValue, Float64)
@@ -94,7 +94,7 @@ function IOSetParamMat(paramName::String,
       size(paramMat, 2), pointsAsRows);
 end
 
-function IOSetParamUMat(paramName::String,
+function CLISetParamUMat(paramName::String,
                          paramValue,
                          pointsAsRows::Bool)
   paramMat = to_matrix(paramValue, Int)
@@ -111,7 +111,7 @@ function IOSetParamUMat(paramName::String,
       size(paramValue, 2), pointsAsRows);
 end
 
-function IOSetParam(paramName::String,
+function CLISetParam(paramName::String,
                      vector::Vector{String})
   # For this we have to set the size of the vector then each string
   # sequentially.  I am not sure if this is fully necessary but I have some
@@ -125,14 +125,14 @@ function IOSetParam(paramName::String,
   end
 end
 
-function IOSetParam(paramName::String,
+function CLISetParam(paramName::String,
                      vector::Vector{Int})
   cint_vec = convert(Vector{Cint}, vector)
   ccall((:CLI_SetParamVectorInt, library), Nothing, (Cstring, Ptr{Cint},
       Csize_t), paramName, Base.pointer(cint_vec), size(cint_vec, 1));
 end
 
-function IOSetParam(paramName::String,
+function CLISetParam(paramName::String,
                      matWithInfo::Tuple{Array{Bool, 1}, Array{Float64, 2}},
                      pointsAsRows::Bool)
   ccall((:CLI_SetParamMatWithInfo, library), Nothing, (Cstring, Ptr{Bool},
@@ -141,21 +141,21 @@ function IOSetParam(paramName::String,
       size(matWithInfo[2], 1), size(matWithInfo[2], 2), pointsAsRows);
 end
 
-function IOSetParamRow(paramName::String,
+function CLISetParamRow(paramName::String,
                         paramValue)
   paramVec = to_vector(paramValue, Float64)
   ccall((:CLI_SetParamRow, library), Nothing, (Cstring, Ptr{Float64}, Csize_t),
       paramName, Base.pointer(paramVec), size(paramVec, 1));
 end
 
-function IOSetParamCol(paramName::String,
+function CLISetParamCol(paramName::String,
                         paramValue)
   paramVec = to_vector(paramValue, Float64)
   ccall((:CLI_SetParamCol, library), Nothing, (Cstring, Ptr{Float64}, Csize_t),
       paramName, Base.pointer(paramVec), size(paramVec, 1));
 end
 
-function IOSetParamURow(paramName::String,
+function CLISetParamURow(paramName::String,
                          paramValue)
   paramVec = to_vector(paramValue, Int)
 
@@ -170,7 +170,7 @@ function IOSetParamURow(paramName::String,
       paramName, Base.pointer(m), size(paramValue, 1));
 end
 
-function IOSetParamUCol(paramName::String,
+function CLISetParamUCol(paramName::String,
                          paramValue)
   paramVec = to_vector(paramValue, Int)
 
@@ -185,23 +185,23 @@ function IOSetParamUCol(paramName::String,
       paramName, Base.pointer(m), size(paramValue, 1));
 end
 
-function IOGetParamBool(paramName::String)
+function CLIGetParamBool(paramName::String)
   return ccall((:CLI_GetParamBool, library), Bool, (Cstring,), paramName)
 end
 
-function IOGetParamInt(paramName::String)
+function CLIGetParamInt(paramName::String)
   return Int(ccall((:CLI_GetParamInt, library), Cint, (Cstring,), paramName))
 end
 
-function IOGetParamDouble(paramName::String)
+function CLIGetParamDouble(paramName::String)
   return ccall((:CLI_GetParamDouble, library), Float64, (Cstring,), paramName)
 end
 
-function IOGetParamString(paramName::String)
+function CLIGetParamString(paramName::String)
   return ccall((:CLI_GetParamString, library), Cstring, (Cstring,), paramName)
 end
 
-function IOGetParamVectorStr(paramName::String)
+function CLIGetParamVectorStr(paramName::String)
   local size::Csize_t
   local ptr::Ptr{String}
 
@@ -218,7 +218,7 @@ function IOGetParamVectorStr(paramName::String)
   return out
 end
 
-function IOGetParamVectorInt(paramName::String)
+function CLIGetParamVectorInt(paramName::String)
   local size::Csize_t
   local ptr::Ptr{Cint}
 
@@ -233,7 +233,7 @@ function IOGetParamVectorInt(paramName::String)
       own=true))
 end
 
-function IOGetParamMat(paramName::String, pointsAsRows::Bool)
+function CLIGetParamMat(paramName::String, pointsAsRows::Bool)
   # Can we return different return types?  For now let's restrict to a matrix to
   # make it easy...
   local ptr::Ptr{Float64}
@@ -254,7 +254,7 @@ function IOGetParamMat(paramName::String, pointsAsRows::Bool)
   end
 end
 
-function IOGetParamUMat(paramName::String, pointsAsRows::Bool)
+function CLIGetParamUMat(paramName::String, pointsAsRows::Bool)
   # Can we return different return types?  For now let's restrict to a matrix to
   # make it easy...
   local ptr::Ptr{Csize_t}
@@ -276,7 +276,7 @@ function IOGetParamUMat(paramName::String, pointsAsRows::Bool)
   end
 end
 
-function IOGetParamCol(paramName::String)
+function CLIGetParamCol(paramName::String)
   local ptr::Ptr{Float64};
   local rows::Csize_t;
 
@@ -286,7 +286,7 @@ function IOGetParamCol(paramName::String)
   return Base.unsafe_wrap(Array{Float64, 1}, ptr, rows, own=true);
 end
 
-function IOGetParamRow(paramName::String)
+function CLIGetParamRow(paramName::String)
   local ptr::Ptr{Float64};
   local cols::Csize_t;
 
@@ -296,7 +296,7 @@ function IOGetParamRow(paramName::String)
   return Base.unsafe_wrap(Array{Float64, 1}, ptr, cols, own=true);
 end
 
-function IOGetParamUCol(paramName::String)
+function CLIGetParamUCol(paramName::String)
   local ptr::Ptr{Csize_t};
   local rows::Csize_t;
 
@@ -307,7 +307,7 @@ function IOGetParamUCol(paramName::String)
   return convert(Array{Int, 1}, m .+ 1)
 end
 
-function IOGetParamURow(paramName::String)
+function CLIGetParamURow(paramName::String)
   local ptr::Ptr{Csize_t};
   local cols::Csize_t;
 
@@ -318,7 +318,7 @@ function IOGetParamURow(paramName::String)
   return convert(Array{Int, 1}, m .+ 1)
 end
 
-function IOGetParamMatWithInfo(paramName::String, pointsAsRows::Bool)
+function CLIGetParamMatWithInfo(paramName::String, pointsAsRows::Bool)
   local ptrBool::Ptr{Bool};
   local ptrData::Ptr{Float64};
   local rows::Csize_t;
@@ -345,15 +345,15 @@ function IOGetParamMatWithInfo(paramName::String, pointsAsRows::Bool)
   end
 end
 
-function IOEnableVerbose()
+function CLIEnableVerbose()
   ccall((:CLI_EnableVerbose, library), Nothing, ());
 end
 
-function IODisableVerbose()
+function CLIDisableVerbose()
   ccall((:CLI_DisableVerbose, library), Nothing, ());
 end
 
-function IOSetPassed(paramName::String)
+function CLISetPassed(paramName::String)
   ccall((:CLI_SetPassed, library), Nothing, (Cstring,), paramName);
 end
 

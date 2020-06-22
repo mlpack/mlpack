@@ -34,14 +34,14 @@ void PrintInputProcessing(
   // "type" is a reserved keyword or function.
   const std::string juliaName = (d.name == "type") ? "type_" : d.name;
 
-  // Here we can just call IOSetParam() directly; we don't need a separate
+  // Here we can just call CLISetParam() directly; we don't need a separate
   // overload.
   if (d.required)
   {
     // This gives us code like the following:
     //
-    // IOSetParam("<param_name>", <paramName>)
-    std::cout << "  IOSetParam(\"" << d.name << "\", " << juliaName << ")"
+    // CLISetParam("<param_name>", <paramName>)
+    std::cout << "  CLISetParam(\"" << d.name << "\", " << juliaName << ")"
         << std::endl;
   }
   else
@@ -49,10 +49,10 @@ void PrintInputProcessing(
     // This gives us code like the following:
     //
     // if !ismissing(<param_name>)
-    //   IOSetParam("<param_name>", convert(<type>, <param_name>))
+    //   CLISetParam("<param_name>", convert(<type>, <param_name>))
     // end
     std::cout << "  if !ismissing(" << juliaName << ")" << std::endl;
-    std::cout << "    IOSetParam(\"" << d.name << "\", convert("
+    std::cout << "    CLISetParam(\"" << d.name << "\", convert("
         << GetJuliaType<T>(d) << ", " << juliaName << "))" << std::endl;
     std::cout << "  end" << std::endl;
   }
@@ -101,8 +101,8 @@ void PrintInputProcessing(
     extra = ", points_are_rows";
   }
 
-  // Now print the IOSetParam call.
-  std::cout << indent << "IOSetParam" << uChar << matTypeModifier << "(\""
+  // Now print the CLISetParam call.
+  std::cout << indent << "CLISetParam" << uChar << matTypeModifier << "(\""
       << d.name << "\", " << juliaName << extra << ")" << std::endl;
 
   if (!d.required)
@@ -136,7 +136,7 @@ void PrintInputProcessing(
 
   std::string indent(extraIndent + 2, ' ');
   std::string type = StripType(d.cppType);
-  std::cout << indent << functionName << "_internal.IOSetParam" << type
+  std::cout << indent << functionName << "_internal.CLISetParam" << type
       << "(\"" << d.name << "\", convert("
       << GetJuliaType<typename std::remove_pointer<T>::type>(d) << ", "
       << juliaName << "))" << std::endl;
@@ -161,14 +161,14 @@ void PrintInputProcessing(
   // "type" is a reserved keyword or function.
   const std::string juliaName = (d.name == "type") ? "type_" : d.name;
 
-  // Here we can just call IOSetParam() directly; we don't need a separate
+  // Here we can just call CLISetParam() directly; we don't need a separate
   // overload.  But we do have to pass in points_are_rows.
   if (d.required)
   {
     // This gives us code like the following:
     //
-    // IOSetParam("<param_name>", convert(<type>, <paramName>))
-    std::cout << "  IOSetParam(\"" << d.name << "\", convert("
+    // CLISetParam("<param_name>", convert(<type>, <paramName>))
+    std::cout << "  CLISetParam(\"" << d.name << "\", convert("
         << GetJuliaType<T>(d) << ", " << juliaName << "), points_are_rows)"
         << std::endl;
   }
@@ -177,10 +177,10 @@ void PrintInputProcessing(
     // This gives us code like the following:
     //
     // if !ismissing(<param_name>)
-    //   IOSetParam("<param_name>", convert(<type>, <param_name>))
+    //   CLISetParam("<param_name>", convert(<type>, <param_name>))
     // end
     std::cout << "  if !ismissing(" << juliaName << ")" << std::endl;
-    std::cout << "    IOSetParam(\"" << d.name << "\", convert("
+    std::cout << "    CLISetParam(\"" << d.name << "\", convert("
         << GetJuliaType<T>(d) << ", " << juliaName << "), points_are_rows)"
         << std::endl;
     std::cout << "  end" << std::endl;

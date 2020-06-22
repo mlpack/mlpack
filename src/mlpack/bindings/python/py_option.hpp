@@ -101,7 +101,7 @@ class PyOption
     CLI::GetSingleton().functionMap[data.tname]["ImportDecl"] = &ImportDecl<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
-    // import more than one .so that uses IO, so we have to keep the options
+    // import more than one .so that uses CLI, so we have to keep the options
     // separate.  programName is a global variable from mlpack_main.hpp.
     CLI::Add(std::move(data));
     if (identifier != "verbose" && identifier != "copy_all_inputs")

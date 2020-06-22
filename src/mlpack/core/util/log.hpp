@@ -51,7 +51,7 @@ namespace mlpack {
  * mode.  Messages to Log::Info will only be shown when the --verbose flag is
  * given to the program (or rather, the CLI class).
  *
- * @see PrefixedOutStream, NullOutStream, IO
+ * @see PrefixedOutStream, NullOutStream, CLI
  */
 class Log
 {

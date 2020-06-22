@@ -63,7 +63,7 @@ inline std::string PrintLanguage(const std::string& language)
 {
   if (language == "cli")
   {
-    return "IO";
+    return "CLI";
   }
   else if (language == "python")
   {

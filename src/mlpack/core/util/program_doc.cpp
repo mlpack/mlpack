@@ -2,7 +2,7 @@
  * @file core/util/program_doc.cpp
  * @author Ryan Curtin
  *
- * Implementation of the ProgramDoc class.  The class registers itself with IO
+ * Implementation of the ProgramDoc class.  The class registers itself with CLI
  * when constructed.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the

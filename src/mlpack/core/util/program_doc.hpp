@@ -28,7 +28,7 @@ class ProgramDoc
  public:
   /**
    * Construct a ProgramDoc object.  When constructed, it will register itself
-   * with IO, and when the user calls --help (or whatever the option is named
+   * with CLI, and when the user calls --help (or whatever the option is named
    * for the given binding type), the given function that returns a std::string
    * will be returned.
    *

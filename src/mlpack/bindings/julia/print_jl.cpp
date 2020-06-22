@@ -246,7 +246,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   cout << endl;
 
   // Restore CLI settings.
-  cout << "  IORestoreSettings(\"" << programName << "\")" << endl;
+  cout << "  CLIRestoreSettings(\"" << programName << "\")" << endl;
   cout << endl;
 
   // Handle each input argument's processing before calling mlpackMain().
@@ -264,9 +264,9 @@ void PrintJL(const util::ProgramDoc& programInfo,
 
   // Special handling for verbose output.
   cout << "  if verbose !== nothing && verbose === true" << endl;
-  cout << "    IOEnableVerbose()" << endl;
+  cout << "    CLIEnableVerbose()" << endl;
   cout << "  else" << endl;
-  cout << "    IODisableVerbose()" << endl;
+  cout << "    CLIDisableVerbose()" << endl;
   cout << "  end" << endl;
   cout << endl;
 
@@ -274,7 +274,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   for (const string& opt : outputOptions)
   {
     const util::ParamData& d = parameters.at(opt);
-    cout << "  IOSetPassed(\"" << d.name << "\")" << endl;
+    cout << "  CLISetPassed(\"" << d.name << "\")" << endl;
   }
 
   // Call the program.

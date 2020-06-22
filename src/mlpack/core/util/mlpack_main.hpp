@@ -406,7 +406,7 @@ using Option = mlpack::bindings::markdown::MDOption<T>;
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
 
-// IO-specific parameters.
+// CLI-specific parameters.
 PARAM_FLAG("help", "Default help info.", "h");
 PARAM_STRING_IN("info", "Print help on a specific option.", "", "");
 PARAM_FLAG("version", "Display the version of mlpack.", "V");

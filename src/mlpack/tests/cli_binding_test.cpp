@@ -19,19 +19,19 @@
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::bindings;
-using namespace mlpack::bindings::cmd;
+using namespace mlpack::bindings::cli;
 using namespace mlpack::kernel;
 
-BOOST_AUTO_TEST_SUITE(IOBindingTest);
+BOOST_AUTO_TEST_SUITE(CLIBindingTest);
 
 /**
- * Ensure that we can construct a IOOption object, and that it will add itself
+ * Ensure that we can construct a CLIOption object, and that it will add itself
  * to the CLI instance.
  */
-BOOST_AUTO_TEST_CASE(IOOptionTest)
+BOOST_AUTO_TEST_CASE(CLIOptionTest)
 {
   CLI::ClearSettings();
-  IOOption<double> co1(0.0, "test", "test2", "t", "double", false, true,
+  CLIOption<double> co1(0.0, "test", "test2", "t", "double", false, true,
       false);
 
   // Now check that it's in CLI.
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(IOOptionTest)
   BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].input, true);
   BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].cppType, "double");
 
-  IOOption<arma::mat> co2(arma::mat(), "mat", "mat2", "m", "arma::mat", true,
+  CLIOption<arma::mat> co2(arma::mat(), "mat", "mat2", "m", "arma::mat", true,
       true, true);
 
   // Now check that it's in CLI.

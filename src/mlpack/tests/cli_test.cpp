@@ -10,14 +10,14 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-// We'll use IOOptions.
+// We'll use CLIOptions.
 #include <mlpack/bindings/cli/cli_option.hpp>
 
 namespace mlpack {
 namespace util {
 
 template<typename T>
-using Option = mlpack::bindings::cli::IOOption<T>;
+using Option = mlpack::bindings::cli::CLIOption<T>;
 
 } // namespace util
 } // namespace mlpack
@@ -35,7 +35,7 @@ using namespace mlpack;
 using namespace mlpack::util;
 using namespace mlpack::kernel;
 using namespace mlpack::data;
-using namespace mlpack::bindings::cmd;
+using namespace mlpack::bindings::cli;
 using namespace std;
 
 // When we run these tests, we have to nuke the existing CLI object that's
@@ -52,18 +52,18 @@ BOOST_FIXTURE_TEST_SUITE(IOTest, IOTestDestroyer);
  * options that are required for CLI to function, since it will be destroyed at
  * the end of every test that uses CLI in this test suite.
  */
-void AddRequiredIOOptions()
+void AddRequiredCLIOptions()
 {
   CLI::ClearSettings();
 
   // These will register with CLI immediately.
-  IOOption<bool> help(false, "help", "Default help info.", "h", "bool");
-  IOOption<string> info("", "info", "Get help on a specific module or option.",
+  CLIOption<bool> help(false, "help", "Default help info.", "h", "bool");
+  CLIOption<string> info("", "info", "Get help on a specific module or option.",
       "", "string");
-  IOOption<bool> verbose(false, "verbose", "Display information messages and "
+  CLIOption<bool> verbose(false, "verbose", "Display information messages and "
       "the full list of parameters and timers at the end of execution.", "v",
       "bool");
-  IOOption<bool> version(false, "version", "Display the version of mlpack.",
+  CLIOption<bool> version(false, "version", "Display the version of mlpack.",
       "V", "bool");
 }
 
@@ -73,11 +73,11 @@ void AddRequiredIOOptions()
  */
 BOOST_AUTO_TEST_CASE(TestIOAdd)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // Check that the CLI::HasParam returns false if no value has been specified
   // on the commandline and ignores any programmatical assignments.
-  IOOption<bool> b(false, "global/bool", "True or false.", "a", "bool");
+  CLIOption<bool> b(false, "global/bool", "True or false.", "a", "bool");
 
   // CLI::HasParam should return false here.
   BOOST_REQUIRE(!CLI::HasParam("global/bool"));
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(TestIOAdd)
  */
 BOOST_AUTO_TEST_CASE(TestOption)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // This test will involve creating an option, and making sure CLI reflects
   // this.
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(TestOption)
  */
 BOOST_AUTO_TEST_CASE(TestDuplicateFlag)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_FLAG("test", "test", "t");
 
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(TestDuplicateFlag)
  */
 BOOST_AUTO_TEST_CASE(TestDuplicateParam)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   int argc = 5;
   const char* argv[5];
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(TestDuplicateParam)
  */
 BOOST_AUTO_TEST_CASE(TestBooleanOption)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_FLAG("flag_test", "flag test description", "");
 
@@ -176,7 +176,7 @@ BOOST_AUTO_TEST_CASE(TestBooleanOption)
  */
 BOOST_AUTO_TEST_CASE(TestVectorOption)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_VECTOR_IN(size_t, "test_vec", "test description", "t");
 
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(TestVectorOption)
  */
 BOOST_AUTO_TEST_CASE(TestVectorOption2)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_VECTOR_IN(size_t, "test2_vec", "test description", "T");
 
@@ -237,7 +237,7 @@ BOOST_AUTO_TEST_CASE(TestVectorOption2)
 
 BOOST_AUTO_TEST_CASE(InputColVectorParamTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_COL_IN("vector", "Test vector", "l");
 
@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(InputColVectorParamTest)
 
 BOOST_AUTO_TEST_CASE(InputUnsignedColVectorParamTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_UCOL_IN("vector", "Test vector", "l");
 
@@ -311,7 +311,7 @@ BOOST_AUTO_TEST_CASE(InputUnsignedColVectorParamTest)
 
 BOOST_AUTO_TEST_CASE(InputRowVectorParamTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_ROW_IN("row", "Test vector", "l");
 
@@ -348,7 +348,7 @@ BOOST_AUTO_TEST_CASE(InputRowVectorParamTest)
 
 BOOST_AUTO_TEST_CASE(InputUnsignedRowVectorParamTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_UROW_IN("row", "Test vector", "l");
 
@@ -385,7 +385,7 @@ BOOST_AUTO_TEST_CASE(InputUnsignedRowVectorParamTest)
 
 BOOST_AUTO_TEST_CASE(OutputColParamTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // --vector is an output parameter.
   PARAM_COL_OUT("vector", "Test vector", "l");
@@ -416,7 +416,7 @@ BOOST_AUTO_TEST_CASE(OutputColParamTest)
   // Write the file.
   EndProgram();
   CLI::ClearSettings();
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // Now load the vector back and make sure it was saved correctly.
   arma::vec dataset2;
@@ -432,7 +432,7 @@ BOOST_AUTO_TEST_CASE(OutputColParamTest)
 
 BOOST_AUTO_TEST_CASE(OutputUnsignedColParamTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // --vector is an output parameter.
   PARAM_UCOL_OUT("vector", "Test vector", "l");
@@ -463,7 +463,7 @@ BOOST_AUTO_TEST_CASE(OutputUnsignedColParamTest)
   // Write the file.
   EndProgram();
   CLI::ClearSettings();
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // Now load the vector back and make sure it was saved correctly.
   arma::Col<size_t> dataset2;
@@ -479,7 +479,7 @@ BOOST_AUTO_TEST_CASE(OutputUnsignedColParamTest)
 
 BOOST_AUTO_TEST_CASE(OutputRowParamTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // --row is an output parameter.
   PARAM_ROW_OUT("row", "Test vector", "l");
@@ -510,7 +510,7 @@ BOOST_AUTO_TEST_CASE(OutputRowParamTest)
   // Write the file.
   EndProgram();
   CLI::ClearSettings();
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // Now load the row vector back and make sure it was saved correctly.
   arma::rowvec dataset2;
@@ -526,7 +526,7 @@ BOOST_AUTO_TEST_CASE(OutputRowParamTest)
 
 BOOST_AUTO_TEST_CASE(OutputUnsignedRowParamTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // --row is an output parameter.
   PARAM_UROW_OUT("row", "Test vector", "l");
@@ -557,7 +557,7 @@ BOOST_AUTO_TEST_CASE(OutputUnsignedRowParamTest)
   // Write the file.
   EndProgram();
   CLI::ClearSettings();
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // Now load the row vector back and make sure it was saved correctly.
   arma::Row<size_t> dataset2;
@@ -573,7 +573,7 @@ BOOST_AUTO_TEST_CASE(OutputUnsignedRowParamTest)
 
 BOOST_AUTO_TEST_CASE(InputMatrixParamTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // --matrix is an input parameter; it won't be transposed.
   PARAM_MATRIX_IN("matrix", "Test matrix", "m");
@@ -613,7 +613,7 @@ BOOST_AUTO_TEST_CASE(InputMatrixParamTest)
 
 BOOST_AUTO_TEST_CASE(InputMatrixNoTransposeParamTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // --matrix is a non-transposed input parameter.
   PARAM_TMATRIX_IN("matrix", "Test matrix", "m");
@@ -651,7 +651,7 @@ BOOST_AUTO_TEST_CASE(InputMatrixNoTransposeParamTest)
 
 BOOST_AUTO_TEST_CASE(OutputMatrixParamTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // --matrix is an output parameter.
   PARAM_MATRIX_OUT("matrix", "Test matrix", "m");
@@ -682,7 +682,7 @@ BOOST_AUTO_TEST_CASE(OutputMatrixParamTest)
   // Write the file.
   EndProgram();
   CLI::ClearSettings();
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // Now load the matrix back and make sure it was saved correctly.
   arma::mat dataset2;
@@ -699,7 +699,7 @@ BOOST_AUTO_TEST_CASE(OutputMatrixParamTest)
 
 BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // --matrix is an output parameter.
   PARAM_TMATRIX_OUT("matrix", "Test matrix", "m");
@@ -730,7 +730,7 @@ BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
   // Write the file.
   EndProgram();
   CLI::ClearSettings();
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // Now load the matrix back and make sure it was saved correctly.
   arma::mat dataset2;
@@ -747,7 +747,7 @@ BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
 
 BOOST_AUTO_TEST_CASE(IntParamTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_INT_IN("int", "Test int", "i", 0);
 
@@ -766,7 +766,7 @@ BOOST_AUTO_TEST_CASE(IntParamTest)
 
 BOOST_AUTO_TEST_CASE(StringParamTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_STRING_IN("string", "Test string", "s", "");
 
@@ -785,7 +785,7 @@ BOOST_AUTO_TEST_CASE(StringParamTest)
 
 BOOST_AUTO_TEST_CASE(DoubleParamTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_DOUBLE_IN("double", "Test double", "d", 0.0);
 
@@ -804,7 +804,7 @@ BOOST_AUTO_TEST_CASE(DoubleParamTest)
 
 BOOST_AUTO_TEST_CASE(RequiredOptionTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_DOUBLE_IN_REQ("double", "Required test double", "d");
 
@@ -821,7 +821,7 @@ BOOST_AUTO_TEST_CASE(RequiredOptionTest)
 
 BOOST_AUTO_TEST_CASE(UnknownOptionTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   const char* argv[2];
   argv[0] = "./test";
@@ -840,7 +840,7 @@ BOOST_AUTO_TEST_CASE(UnknownOptionTest)
  */
 BOOST_AUTO_TEST_CASE(UnmappedParamTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_MATRIX_IN("matrix", "Test matrix", "m");
   PARAM_MATRIX_OUT("matrix2", "Test matrix", "M");
@@ -883,7 +883,7 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
  */
 BOOST_AUTO_TEST_CASE(SerializationTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_MODEL_OUT(GaussianKernel, "kernel", "Test kernel", "k");
 
@@ -906,7 +906,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   CLI::ClearSettings();
 
   // Now create a new CLI object and load it.
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_MODEL_IN(GaussianKernel, "kernel", "Test kernel", "k");
 
@@ -929,7 +929,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
  */
 BOOST_AUTO_TEST_CASE(RequiredModelTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_MODEL_IN_REQ(GaussianKernel, "kernel", "Test kernel", "k");
 
@@ -950,7 +950,7 @@ BOOST_AUTO_TEST_CASE(RequiredModelTest)
  */
 BOOST_AUTO_TEST_CASE(MatrixAndDatasetInfoTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // Write test file to load.
   fstream f;
@@ -1023,7 +1023,7 @@ BOOST_AUTO_TEST_CASE(MatrixAndDatasetInfoTest)
  */
 BOOST_AUTO_TEST_CASE(RawIntegralParameter)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   PARAM_DOUBLE_IN("double", "Test double", "d", 0.0);
 
@@ -1046,7 +1046,7 @@ BOOST_AUTO_TEST_CASE(RawIntegralParameter)
  */
 BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // Create the ARFF that we will read.
   fstream f;
@@ -1116,7 +1116,7 @@ BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
  */
 BOOST_AUTO_TEST_CASE(CppNameTest)
 {
-  AddRequiredIOOptions();
+  AddRequiredCLIOptions();
 
   // Add a few parameters.
   PARAM_MATRIX_IN("matrix", "Test matrix", "m");
