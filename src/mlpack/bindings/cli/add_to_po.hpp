@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_IO_ADD_TO_PO_HPP
-#define MLPACK_BINDINGS_IO_ADD_TO_PO_HPP
+#ifndef MLPACK_BINDINGS_CLI_ADD_TO_PO_HPP
+#define MLPACK_BINDINGS_CLI_ADD_TO_PO_HPP
 
 #include <mlpack/core/util/param_data.hpp>
 #include <mlpack/core/util/is_std_vector.hpp>
