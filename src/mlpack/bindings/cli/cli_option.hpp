@@ -42,7 +42,7 @@ namespace cli {
  * PARAM_FLAG(), PARAM_DOUBLE(), PARAM_INT(), PARAM_STRING(), or other similar
  * macros to declare these objects instead of declaring them directly.
  *
- * @see core/util/cli.hpp, mlpack::IO
+ * @see core/util/cli.hpp, mlpack::CLI
  */
 template<typename N>
 class CLIOption
@@ -170,7 +170,7 @@ class CLIOption
  * the PROGRAM_INFO() macro to declare these objects.  Only one ProgramDoc
  * object should ever exist.
  *
- * @see core/util/cli.hpp, mlpack::IO
+ * @see core/util/cli.hpp, mlpack::CLI
  */
 class ProgramDoc
 {

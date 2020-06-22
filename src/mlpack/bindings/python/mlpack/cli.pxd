@@ -2,7 +2,7 @@
 """
 cli.pyx: Cython functionality for mlpack::CLI.
 
-This file imports the GetParam() function from mlpack::IO, plus a utility
+This file imports the GetParam() function from mlpack::CLI, plus a utility
 SetParam() function because Cython can't seem to support lvalue references.
 
 mlpack is free software; you may redistribute it and/or modify it under the
