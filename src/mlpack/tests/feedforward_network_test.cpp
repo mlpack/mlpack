@@ -636,7 +636,7 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
   trainData.shed_row(trainData.n_rows - 1);
 
   arma::mat trainLabels1 = arma::zeros(3, trainData.n_cols);
-  for(size_t i = 0; i < trainData.n_cols; i++)
+  for (size_t i = 0; i < trainData.n_cols; i++)
   {
     trainLabels1.col(i).row((trainLabels(i) - 1)) = 1;
   }
@@ -684,7 +684,7 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
 
   arma::mat labels1 = arma::zeros(2, dataset.n_cols);
-  for(size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; i++)
   {
     labels1.col(i).row(labels(i)) = 1;
   }

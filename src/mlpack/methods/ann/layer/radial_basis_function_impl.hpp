@@ -53,7 +53,7 @@ RBF<InputDataType, OutputDataType, Activation>::RBF(
       if (max_dis > sigmas)
         sigmas = max_dis;
     }
-    this->betas = std::pow(2 * outSize, 0.5) / sigmas ;
+    this->betas = std::pow(2 * outSize, 0.5) / sigmas;
   }
 }
 
