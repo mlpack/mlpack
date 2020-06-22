@@ -75,7 +75,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   // Now import all the necessary packages.
   cout << "cimport arma" << endl;
   cout << "cimport arma_numpy" << endl;
-  cout << "from cli cimport IO" << endl;
+  cout << "from cli cimport CLI" << endl;
   cout << "from cli cimport SetParam, SetParamPtr, SetParamWithInfo, "
       << "GetParamPtr" << endl;
   cout << "from cli cimport EnableVerbose, DisableVerbose, DisableBacktrace, "
