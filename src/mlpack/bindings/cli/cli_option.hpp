@@ -45,7 +45,7 @@ namespace cmd {
  * @see core/util/cli.hpp, mlpack::IO
  */
 template<typename N>
-class IOOption
+class CLIOption
 {
  public:
   /**
