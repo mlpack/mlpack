@@ -49,7 +49,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * present in your program!  Therefore, use it in the main.cpp
  * (or corresponding executable) in your program.
  *
- * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
+ * @see mlpack::CLI, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
  * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
  * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),
  * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
@@ -61,7 +61,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *     how it can be used and what it should be used for.
  * @param DESC Long string describing what the program does and possibly a
  *     simple usage example.  Newlines should not be used here; this is taken
- *     care of by IO (however, you can explicitly specify newlines to denote
+ *     care of by CLI (however, you can explicitly specify newlines to denote
  *     new paragraphs).  You can also use printing macros like
  *     PRINT_PARAM_STRING(), PRINT_DATASET(), and others.
  * @param ... A set of SEE_ALSO() macros that are used for generating
@@ -82,7 +82,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::CLI, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -108,7 +108,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::CLI, PROGRAM_INFO()
  *
  * @bug
 // Use a forward declaration of the class.
@@ -139,7 +139,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::CLI, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -165,7 +165,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::CLI, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -195,7 +195,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::CLI, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -222,7 +222,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::CLI, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -253,7 +253,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::CLI, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -827,7 +827,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::CLI, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -860,7 +860,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::CLI, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -899,7 +899,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS One-character string representing the alias of the parameter.
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::CLI, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1011,7 +1011,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::CLI, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1035,7 +1035,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::CLI, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1059,7 +1059,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::CLI, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1085,7 +1085,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::CLI, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global

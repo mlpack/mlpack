@@ -95,41 +95,41 @@ template<typename RangeSearchType, typename PointSelectionPolicy>
 void RunDBSCAN(RangeSearchType rs,
                PointSelectionPolicy pointSelector = PointSelectionPolicy())
 {
-  if (IO::HasParam("single_mode"))
+  if (CLI::HasParam("single_mode"))
     rs.SingleMode() = true;
 
   // Load dataset.
-  arma::mat dataset = std::move(IO::GetParam<arma::mat>("input"));
-  const double epsilon = IO::GetParam<double>("epsilon");
-  const size_t minSize = (size_t) IO::GetParam<int>("min_size");
+  arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
+  const double epsilon = CLI::GetParam<double>("epsilon");
+  const size_t minSize = (size_t) CLI::GetParam<int>("min_size");
   arma::Row<size_t> assignments;
 
   DBSCAN<RangeSearchType, PointSelectionPolicy> d(epsilon, minSize,
-      !IO::HasParam("single_mode"), rs, pointSelector);
+      !CLI::HasParam("single_mode"), rs, pointSelector);
 
   // If possible, avoid the overhead of calculating centroids.
-  if (IO::HasParam("centroids"))
+  if (CLI::HasParam("centroids"))
   {
     arma::mat centroids;
 
     d.Cluster(dataset, assignments, centroids);
 
-    IO::GetParam<arma::mat>("centroids") = std::move(centroids);
+    CLI::GetParam<arma::mat>("centroids") = std::move(centroids);
   }
   else
   {
     d.Cluster(dataset, assignments);
   }
 
-  if (IO::HasParam("assignments"))
-    IO::GetParam<arma::Row<size_t>>("assignments") = std::move(assignments);
+  if (CLI::HasParam("assignments"))
+    CLI::GetParam<arma::Row<size_t>>("assignments") = std::move(assignments);
 }
 
 // Choose the point selection policy.
 template<typename RangeSearchType>
 void ChoosePointSelectionPolicy(RangeSearchType rs = RangeSearchType())
 {
-  const string selectionType = IO::GetParam<string>("selection_type");
+  const string selectionType = CLI::GetParam<string>("selection_type");
 
   if (selectionType == "ordered")
     RunDBSCAN<RangeSearchType, OrderedPointSelection>(rs);
@@ -157,14 +157,14 @@ static void mlpackMain()
       true, "invalid value of min_size specified");
 
   // Fire off naive search if needed.
-  if (IO::HasParam("naive"))
+  if (CLI::HasParam("naive"))
   {
     RangeSearch<> rs(true);
     ChoosePointSelectionPolicy(rs);
   }
   else
   {
-    const string treeType = IO::GetParam<string>("tree_type");
+    const string treeType = CLI::GetParam<string>("tree_type");
     if (treeType == "kd")
     {
       ChoosePointSelectionPolicy<RangeSearch<>>();

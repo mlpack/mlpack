@@ -86,8 +86,8 @@ PARAM_DOUBLE_IN("radius", "If the distance between two centroids is less than "
 
 static void mlpackMain()
 {
-  const double radius = IO::GetParam<double>("radius");
-  const int maxIterations = IO::GetParam<int>("max_iterations");
+  const double radius = CLI::GetParam<double>("radius");
+  const int maxIterations = CLI::GetParam<int>("max_iterations");
 
   RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
       "maximum iterations must be greater than or equal to 0");
@@ -99,7 +99,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "in_place", true }}, "output");
   ReportIgnoredParam({{ "in_place", true }}, "labels_only");
 
-  arma::mat dataset = std::move(IO::GetParam<arma::mat>("input"));
+  arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
   arma::mat centroids;
   arma::Row<size_t> assignments;
 
@@ -108,14 +108,14 @@ static void mlpackMain()
   Timer::Start("clustering");
   Log::Info << "Performing mean shift clustering..." << endl;
   meanShift.Cluster(dataset, assignments, centroids,
-    IO::HasParam("force_convergence"));
+    CLI::HasParam("force_convergence"));
   Timer::Stop("clustering");
 
   Log::Info << "Found " << centroids.n_cols << " centroids." << endl;
   if (radius <= 0.0)
     Log::Info << "Estimated radius was " << meanShift.Radius() << ".\n";
 
-  if (IO::HasParam("in_place"))
+  if (CLI::HasParam("in_place"))
   {
     // Add the column of assignments to the dataset; but we have to convert them
     // to type double first.
@@ -126,12 +126,12 @@ static void mlpackMain()
     dataset.insert_rows(dataset.n_rows, trans(converted));
 
     // Save the dataset.
-    IO::MakeInPlaceCopy("output", "input");
-    IO::GetParam<arma::mat>("output") = std::move(dataset);
+    CLI::MakeInPlaceCopy("output", "input");
+    CLI::GetParam<arma::mat>("output") = std::move(dataset);
   }
-  else if (IO::HasParam("output"))
+  else if (CLI::HasParam("output"))
   {
-    if (!IO::HasParam("labels_only"))
+    if (!CLI::HasParam("labels_only"))
     {
       // Convert the assignments to doubles.
       arma::vec converted(assignments.n_elem);
@@ -141,18 +141,18 @@ static void mlpackMain()
       dataset.insert_rows(dataset.n_rows, trans(converted));
 
       // Now save, in the different file.
-      IO::GetParam<arma::mat>("output") = std::move(dataset);
+      CLI::GetParam<arma::mat>("output") = std::move(dataset);
     }
     else
     {
       // TODO: figure out how to output as an arma::Mat<size_t> so that files
       // aren't way larger than needed.
-      IO::GetParam<arma::mat>("output") =
+      CLI::GetParam<arma::mat>("output") =
           arma::conv_to<arma::mat>::from(assignments);
     }
   }
 
   // Should we write the centroids to a file?
-  if (IO::HasParam("centroid"))
-    IO::GetParam<arma::mat>("centroid") = std::move(centroids);
+  if (CLI::HasParam("centroid"))
+    CLI::GetParam<arma::mat>("centroid") = std::move(centroids);
 }

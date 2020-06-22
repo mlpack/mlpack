@@ -65,18 +65,18 @@ using namespace std;
 
 static void mlpackMain()
 {
-  const size_t dimension = (size_t) IO::GetParam<int>("dimension");
-  const double threshold = IO::GetParam<double>("threshold");
+  const size_t dimension = (size_t) CLI::GetParam<int>("dimension");
+  const double threshold = CLI::GetParam<double>("threshold");
 
   // Check on data parameters.
-  if (!IO::HasParam("dimension"))
+  if (!CLI::HasParam("dimension"))
   {
     Log::Warn << "You did not specify " << PRINT_PARAM_STRING("dimension")
         << ", so the program will perform binarization on every dimension."
         << endl;
   }
 
-  if (!IO::HasParam("threshold"))
+  if (!CLI::HasParam("threshold"))
   {
     Log::Warn << "You did not specify " << PRINT_PARAM_STRING("threshold")
         << ", so the threshold will be automatically set to '0.0'." << endl;
@@ -85,7 +85,7 @@ static void mlpackMain()
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
   // Load the data.
-  arma::mat input = std::move(IO::GetParam<arma::mat>("input"));
+  arma::mat input = std::move(CLI::GetParam<arma::mat>("input"));
   arma::mat output;
 
   RequireParamValue<int>("dimension", [](int x) { return x >= 0; }, true,
@@ -97,7 +97,7 @@ static void mlpackMain()
       [input](int x) { return size_t(x) < input.n_rows; }, true, error.str());
 
   Timer::Start("binarize");
-  if (IO::HasParam("dimension"))
+  if (CLI::HasParam("dimension"))
   {
     data::Binarize<double>(input, output, threshold, dimension);
   }
@@ -108,6 +108,6 @@ static void mlpackMain()
   }
   Timer::Stop("binarize");
 
-  if (IO::HasParam("output"))
-    IO::GetParam<arma::mat>("output") = std::move(output);
+  if (CLI::HasParam("output"))
+    CLI::GetParam<arma::mat>("output") = std::move(output);
 }

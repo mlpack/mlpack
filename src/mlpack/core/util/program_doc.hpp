@@ -17,11 +17,11 @@ namespace util {
 
 /**
  * A static object whose constructor registers program documentation with the
- * IO class.  This should not be used outside of IO itself, and you should use
+ * CLI class.  This should not be used outside of CLI itself, and you should use
  * the PROGRAM_INFO() macro to declare these objects.  Only one ProgramDoc
  * object should ever exist.
  *
- * @see core/util/cli.hpp, mlpack::IO
+ * @see core/util/cli.hpp, mlpack::CLI
  */
 class ProgramDoc
 {
@@ -37,7 +37,7 @@ class ProgramDoc
    *     what it does, and what it is useful for.
    * @param documentation Long string containing documentation on how to use the
    *     program and what it is.  No newline characters are necessary; this is
-   *     taken care of by IO later.
+   *     taken care of by CLI later.
    * @param seeAlso A set of pairs of strings with useful "see also"
    *     information; each pair is <description, url>.
    */

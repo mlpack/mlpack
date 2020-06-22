@@ -152,8 +152,8 @@ PARAM_MODEL_OUT(RandomForestModel, "output_model", "Model to save trained "
 static void mlpackMain()
 {
   // Initialize random seed if needed.
-  if (IO::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) IO::GetParam<int>("seed"));
+  if (CLI::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
@@ -166,7 +166,7 @@ static void mlpackMain()
   RequireAtLeastOnePassed({ "test", "output_model", "print_training_accuracy" },
       false, "the trained forest model will not be used or saved");
 
-  if (IO::HasParam("training"))
+  if (CLI::HasParam("training"))
   {
     RequireAtLeastOnePassed({ "labels" }, true, "must pass labels when training"
         " set given");
@@ -192,29 +192,29 @@ static void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "minimum_leaf_size");
 
   RandomForestModel* rfModel;
-  if (IO::HasParam("training"))
+  if (CLI::HasParam("training"))
   {
     Timer::Start("rf_training");
     rfModel = new RandomForestModel();
 
     // Train the model on the given input data.
-    arma::mat data = std::move(IO::GetParam<arma::mat>("training"));
+    arma::mat data = std::move(CLI::GetParam<arma::mat>("training"));
     arma::Row<size_t> labels =
-        std::move(IO::GetParam<arma::Row<size_t>>("labels"));
+        std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
 
     // Make sure the subspace dimensionality is valid.
     RequireParamValue<int>("subspace_dim",
         [data](int x) { return (size_t) x <= data.n_rows; }, true, "subspace "
         "dimensionality must not be greater than data dimensionality");
 
-    const size_t numTrees = (size_t) IO::GetParam<int>("num_trees");
+    const size_t numTrees = (size_t) CLI::GetParam<int>("num_trees");
     const size_t minimumLeafSize =
-        (size_t) IO::GetParam<int>("minimum_leaf_size");
-    const size_t maxDepth = (size_t) IO::GetParam<int>("maximum_depth");
-    const double minimumGainSplit = IO::GetParam<double>("minimum_gain_split");
-    const size_t randomDims = (IO::GetParam<int>("subspace_dim") == 0) ?
+        (size_t) CLI::GetParam<int>("minimum_leaf_size");
+    const size_t maxDepth = (size_t) CLI::GetParam<int>("maximum_depth");
+    const double minimumGainSplit = CLI::GetParam<double>("minimum_gain_split");
+    const size_t randomDims = (CLI::GetParam<int>("subspace_dim") == 0) ?
         (size_t) std::sqrt(data.n_rows) :
-        (size_t) IO::GetParam<int>("subspace_dim");
+        (size_t) CLI::GetParam<int>("subspace_dim");
     MultipleRandomDimensionSelect mrds(randomDims);
 
     Log::Info << "Training random forest with " << numTrees << " trees..."
@@ -228,7 +228,7 @@ static void mlpackMain()
     Timer::Stop("rf_training");
 
     // Did we want training accuracy?
-    if (IO::HasParam("print_training_accuracy"))
+    if (CLI::HasParam("print_training_accuracy"))
     {
       Timer::Start("rf_prediction");
       arma::Row<size_t> predictions;
@@ -245,12 +245,12 @@ static void mlpackMain()
   else
   {
     // Then we must be loading a model.
-    rfModel = IO::GetParam<RandomForestModel*>("input_model");
+    rfModel = CLI::GetParam<RandomForestModel*>("input_model");
   }
 
-  if (IO::HasParam("test"))
+  if (CLI::HasParam("test"))
   {
-    arma::mat testData = std::move(IO::GetParam<arma::mat>("test"));
+    arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
     Timer::Start("rf_prediction");
 
     // Get predictions and probabilities.
@@ -259,10 +259,10 @@ static void mlpackMain()
     rfModel->rf.Classify(testData, predictions, probabilities);
 
     // Did we want to calculate test accuracy?
-    if (IO::HasParam("test_labels"))
+    if (CLI::HasParam("test_labels"))
     {
       arma::Row<size_t> testLabels =
-          std::move(IO::GetParam<arma::Row<size_t>>("test_labels"));
+          std::move(CLI::GetParam<arma::Row<size_t>>("test_labels"));
 
       const size_t correct = arma::accu(predictions == testLabels);
 
@@ -273,10 +273,10 @@ static void mlpackMain()
     }
 
     // Save the outputs.
-    IO::GetParam<arma::mat>("probabilities") = std::move(probabilities);
-    IO::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
+    CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
+    CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
   }
 
   // Save the output model.
-  IO::GetParam<RandomForestModel*>("output_model") = rfModel;
+  CLI::GetParam<RandomForestModel*>("output_model") = rfModel;
 }

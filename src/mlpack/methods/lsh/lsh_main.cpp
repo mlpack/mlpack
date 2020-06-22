@@ -99,13 +99,13 @@ PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 static void mlpackMain()
 {
-  if (IO::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) IO::GetParam<int>("seed"));
+  if (CLI::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) time(NULL));
 
   // Get all the parameters after checking them.
-  if (IO::HasParam("k"))
+  if (CLI::HasParam("k"))
   {
     RequireParamValue<int>("k", [](int x) { return x > 0; }, true,
         "k must be greater than 0");
@@ -115,25 +115,25 @@ static void mlpackMain()
   RequireParamValue<int>("bucket_size", [](int x) { return x > 0; }, true,
       "bucket size must be greater than 0");
 
-  size_t k = IO::GetParam<int>("k");
-  size_t secondHashSize = IO::GetParam<int>("second_hash_size");
-  size_t bucketSize = IO::GetParam<int>("bucket_size");
+  size_t k = CLI::GetParam<int>("k");
+  size_t secondHashSize = CLI::GetParam<int>("second_hash_size");
+  size_t bucketSize = CLI::GetParam<int>("bucket_size");
 
   RequireOnlyOnePassed({ "input_model", "reference" }, true);
   RequireAtLeastOnePassed({ "neighbors", "distances", "output_model" }, false,
       "no results will be saved");
-  if (IO::HasParam("k"))
+  if (CLI::HasParam("k"))
   {
     RequireAtLeastOnePassed({ "query", "reference", "input_model" }, true,
         "must pass set to search");
   }
 
-  if (IO::HasParam("input_model") && IO::HasParam("k") &&
-      !IO::HasParam("query"))
+  if (CLI::HasParam("input_model") && CLI::HasParam("k") &&
+      !CLI::HasParam("query"))
   {
     Log::Info << "Performing LSH-based approximate nearest neighbor search on "
         << "the reference dataset in the model stored in '"
-        << IO::GetPrintableParam<LSHSearch<>>("input_model") << "'." << endl;
+        << CLI::GetPrintableParam<LSHSearch<>>("input_model") << "'." << endl;
   }
 
   ReportIgnoredParam({{ "k", false }}, "neighbors");
@@ -143,7 +143,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "reference", false }}, "second_hash_size");
   ReportIgnoredParam({{ "reference", false }}, "hash_width");
 
-  if (IO::HasParam("input_model") && !IO::HasParam("k"))
+  if (CLI::HasParam("input_model") && !CLI::HasParam("k"))
   {
     Log::Warn << PRINT_PARAM_STRING("k") << " not passed; no search will be "
         << "performed!" << std::endl;
@@ -154,10 +154,10 @@ static void mlpackMain()
   arma::mat queryData;
 
   // Pick up the LSH-specific parameters.
-  const size_t numProj = IO::GetParam<int>("projections");
-  const size_t numTables = IO::GetParam<int>("tables");
-  const double hashWidth = IO::GetParam<double>("hash_width");
-  const size_t numProbes = (size_t) IO::GetParam<int>("num_probes");
+  const size_t numProj = CLI::GetParam<int>("projections");
+  const size_t numTables = CLI::GetParam<int>("tables");
+  const double hashWidth = CLI::GetParam<double>("hash_width");
+  const size_t numProbes = (size_t) CLI::GetParam<int>("num_probes");
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -170,12 +170,12 @@ static void mlpackMain()
         numTables << " tables (L) with hash width (r): " << hashWidth << endl;
 
   LSHSearch<>* allkann;
-  if (IO::HasParam("reference"))
+  if (CLI::HasParam("reference"))
   {
     allkann = new LSHSearch<>();
     Log::Info << "Using reference data from "
-        << IO::GetPrintableParam<arma::mat>("reference") << "." << endl;
-    referenceData = std::move(IO::GetParam<arma::mat>("reference"));
+        << CLI::GetPrintableParam<arma::mat>("reference") << "." << endl;
+    referenceData = std::move(CLI::GetParam<arma::mat>("reference"));
 
     Timer::Start("hash_building");
     allkann->Train(std::move(referenceData), numProj, numTables, hashWidth,
@@ -184,18 +184,18 @@ static void mlpackMain()
   }
   else // We must have an input model.
   {
-    allkann = IO::GetParam<LSHSearch<>*>("input_model");
+    allkann = CLI::GetParam<LSHSearch<>*>("input_model");
   }
 
-  if (IO::HasParam("k"))
+  if (CLI::HasParam("k"))
   {
     Log::Info << "Computing " << k << " distance approximate nearest neighbors."
         << endl;
-    if (IO::HasParam("query"))
+    if (CLI::HasParam("query"))
     {
       Log::Info << "Loaded query data from "
-          << IO::GetPrintableParam<arma::mat>("query") << "." << endl;
-      queryData = std::move(IO::GetParam<arma::mat>("query"));
+          << CLI::GetPrintableParam<arma::mat>("query") << "." << endl;
+      queryData = std::move(CLI::GetParam<arma::mat>("query"));
 
       allkann->Search(queryData, k, neighbors, distances, 0, numProbes);
     }
@@ -208,21 +208,21 @@ static void mlpackMain()
   }
 
   // Compute recall, if desired.
-  if (IO::HasParam("true_neighbors"))
+  if (CLI::HasParam("true_neighbors"))
   {
     Log::Info << "Using true neighbor indices from '"
-        << IO::GetPrintableParam<arma::Mat<size_t>>("true_neighbors") << "'."
+        << CLI::GetPrintableParam<arma::Mat<size_t>>("true_neighbors") << "'."
         << endl;
 
     // Load the true neighbors.
     arma::Mat<size_t> trueNeighbors =
-        std::move(IO::GetParam<arma::Mat<size_t>>("true_neighbors"));
+        std::move(CLI::GetParam<arma::Mat<size_t>>("true_neighbors"));
 
     if (trueNeighbors.n_rows != neighbors.n_rows ||
         trueNeighbors.n_cols != neighbors.n_cols)
     {
       // Delete the model if needed.
-      if (IO::HasParam("reference"))
+      if (CLI::HasParam("reference"))
         delete allkann;
       Log::Fatal << "The true neighbors file must have the same number of "
           << "values as the set of neighbors being queried!" << endl;
@@ -236,10 +236,10 @@ static void mlpackMain()
   }
 
   // Save output, if we did a search..
-  if (IO::HasParam("k"))
+  if (CLI::HasParam("k"))
   {
-    IO::GetParam<arma::mat>("distances") = std::move(distances);
-    IO::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    CLI::GetParam<arma::mat>("distances") = std::move(distances);
+    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
   }
-  IO::GetParam<LSHSearch<>*>("output_model") = allkann;
+  CLI::GetParam<LSHSearch<>*>("output_model") = allkann;
 }

@@ -94,10 +94,10 @@ static void mlpackMain()
   const double testRatio = CLI::GetParam<double>("test_ratio");
   const bool shuffleData = CLI::GetParam<bool>("no_shuffle");
 
-  if (IO::GetParam<int>("seed") == 0)
+  if (CLI::GetParam<int>("seed") == 0)
     mlpack::math::RandomSeed(std::time(NULL));
   else
-    mlpack::math::RandomSeed((size_t) IO::GetParam<int>("seed"));
+    mlpack::math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
 
   // Make sure the user specified output filenames.
   RequireAtLeastOnePassed({ "training" }, false, "no training set will be "
@@ -105,7 +105,7 @@ static void mlpackMain()
   RequireAtLeastOnePassed({ "test" }, false, "no test set will be saved");
 
   // Check on label parameters.
-  if (IO::HasParam("input_labels"))
+  if (CLI::HasParam("input_labels"))
   {
     RequireAtLeastOnePassed({ "training_labels" }, false, "no training set "
         "labels will be saved");
@@ -123,20 +123,20 @@ static void mlpackMain()
       [](double x) { return x >= 0.0 && x <= 1.0; }, true,
       "test ratio must be between 0.0 and 1.0");
 
-  if (!IO::HasParam("test_ratio")) // If test_ratio is not set, warn the user.
+  if (!CLI::HasParam("test_ratio")) // If test_ratio is not set, warn the user.
   {
     Log::Warn << "You did not specify " << PRINT_PARAM_STRING("test_ratio")
         << ", so it will be automatically set to 0.2." << endl;
   }
 
   // Load the data.
-  arma::mat& data = IO::GetParam<arma::mat>("input");
+  arma::mat& data = CLI::GetParam<arma::mat>("input");
 
   // If parameters for labels exist, we must split the labels too.
-  if (IO::HasParam("input_labels"))
+  if (CLI::HasParam("input_labels"))
   {
     arma::Mat<size_t>& labels =
-        IO::GetParam<arma::Mat<size_t>>("input_labels");
+        CLI::GetParam<arma::Mat<size_t>>("input_labels");
     arma::Row<size_t> labelsRow = labels.row(0);
 
     const auto value = data::Split(data, labelsRow, testRatio, !shuffleData);
@@ -145,15 +145,15 @@ static void mlpackMain()
     Log::Info << "Test data contains " << get<1>(value).n_cols << " points."
         << endl;
 
-    if (IO::HasParam("training"))
-      IO::GetParam<arma::mat>("training") = std::move(get<0>(value));
-    if (IO::HasParam("test"))
-      IO::GetParam<arma::mat>("test") = std::move(get<1>(value));
-    if (IO::HasParam("training_labels"))
-      IO::GetParam<arma::Mat<size_t>>("training_labels") =
+    if (CLI::HasParam("training"))
+      CLI::GetParam<arma::mat>("training") = std::move(get<0>(value));
+    if (CLI::HasParam("test"))
+      CLI::GetParam<arma::mat>("test") = std::move(get<1>(value));
+    if (CLI::HasParam("training_labels"))
+      CLI::GetParam<arma::Mat<size_t>>("training_labels") =
           std::move(get<2>(value));
-    if (IO::HasParam("test_labels"))
-      IO::GetParam<arma::Mat<size_t>>("test_labels") =
+    if (CLI::HasParam("test_labels"))
+      CLI::GetParam<arma::Mat<size_t>>("test_labels") =
           std::move(get<3>(value));
   }
   else // We have no labels, so just split the dataset.
@@ -164,9 +164,9 @@ static void mlpackMain()
     Log::Info << "Test data contains " << get<1>(value).n_cols << " points."
         << endl;
 
-    if (IO::HasParam("training"))
-      IO::GetParam<arma::mat>("training") = std::move(get<0>(value));
-    if (IO::HasParam("test"))
-      IO::GetParam<arma::mat>("test") = std::move(get<1>(value));
+    if (CLI::HasParam("training"))
+      CLI::GetParam<arma::mat>("training") = std::move(get<0>(value));
+    if (CLI::HasParam("test"))
+      CLI::GetParam<arma::mat>("test") = std::move(get<1>(value));
   }
 }

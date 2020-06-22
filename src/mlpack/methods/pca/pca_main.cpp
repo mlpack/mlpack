@@ -92,9 +92,9 @@ void RunPCA(arma::mat& dataset,
   Log::Info << "Performing PCA on dataset..." << endl;
   double varRetained;
 
-  if (IO::HasParam("var_to_retain"))
+  if (CLI::HasParam("var_to_retain"))
   {
-    if (IO::HasParam("new_dimensionality"))
+    if (CLI::HasParam("new_dimensionality"))
       Log::Warn << "New dimensionality (-d) ignored because --var_to_retain "
           << "(-r) was specified." << endl;
 
@@ -112,7 +112,7 @@ void RunPCA(arma::mat& dataset,
 static void mlpackMain()
 {
   // Load input dataset.
-  arma::mat& dataset = IO::GetParam<arma::mat>("input");
+  arma::mat& dataset = CLI::GetParam<arma::mat>("input");
 
   // Issue a warning if the user did not specify an output file.
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
@@ -135,13 +135,13 @@ static void mlpackMain()
   RequireParamValue<double>("var_to_retain",
       [](double x) { return x >= 0.0 && x <= 1.0; }, true,
       "variance retained must be between 0 and 1");
-  size_t newDimension = (IO::GetParam<int>("new_dimensionality") == 0) ?
-      dataset.n_rows : IO::GetParam<int>("new_dimensionality");
+  size_t newDimension = (CLI::GetParam<int>("new_dimensionality") == 0) ?
+      dataset.n_rows : CLI::GetParam<int>("new_dimensionality");
 
   // Get the options for running PCA.
-  const bool scale = IO::HasParam("scale");
-  const double varToRetain = IO::GetParam<double>("var_to_retain");
-  const string decompositionMethod = IO::GetParam<string>(
+  const bool scale = CLI::HasParam("scale");
+  const double varToRetain = CLI::GetParam<double>("var_to_retain");
+  const string decompositionMethod = CLI::GetParam<string>(
       "decomposition_method");
 
   // Perform PCA.
@@ -164,6 +164,6 @@ static void mlpackMain()
   }
 
   // Now save the results.
-  if (IO::HasParam("output"))
-    IO::GetParam<arma::mat>("output") = std::move(dataset);
+  if (CLI::HasParam("output"))
+    CLI::GetParam<arma::mat>("output") = std::move(dataset);
 }

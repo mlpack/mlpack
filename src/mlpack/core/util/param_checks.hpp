@@ -21,11 +21,11 @@ namespace util {
 
 /**
  * Require that only one of the given parameters in the constraints set was
- * passed to the IO object; otherwise, issue a warning or fatal error,
+ * passed to the CLI object; otherwise, issue a warning or fatal error,
  * optionally with the given custom error message.
  *
  * This uses the correct binding type name for each parameter (i.e.
- * '--parameter' for IO bindings, 'parameter' for Python bindings).
+ * '--parameter' for CLI bindings, 'parameter' for Python bindings).
  *
  * If you use a custom error message, be aware that the given output will be
  * similar to, for example:
@@ -51,11 +51,11 @@ void RequireOnlyOnePassed(
 
 /**
  * Require that at least one of the given parameters in the constraints set was
- * passed to the IO object; otherwise, issue a warning or fatal error,
+ * passed to the CLI object; otherwise, issue a warning or fatal error,
  * optionally with the given custom error message.
  *
  * This uses the correct binding type name for each parameter (i.e.
- * '--parameter' for IO bindings, 'parameter' for Python bindings).
+ * '--parameter' for CLI bindings, 'parameter' for Python bindings).
  *
  * This can be used with a set of only one constraint and the output is still
  * sensible.
@@ -84,11 +84,11 @@ void RequireAtLeastOnePassed(
 
 /**
  * Require that either none or all of the given parameters in the constraints
- * set were passed to the IO object; otherwise, issue a warning or fatal error,
+ * set were passed to the CLI object; otherwise, issue a warning or fatal error,
  * optionally with the given custom error message.
  *
  * This uses the correct binding type name for each parameter (i.e.
- * '--parameter' for IO bindings, 'parameter' for Python bindings).
+ * '--parameter' for CLI bindings, 'parameter' for Python bindings).
  *
  * If you use a custom error message, be aware that the given output will be
  * similar to, for example:
