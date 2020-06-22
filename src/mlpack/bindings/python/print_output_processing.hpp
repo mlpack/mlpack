@@ -44,7 +44,7 @@ void PrintOutputProcessing(
      *
      * result = CLI.GetParam[int]('param_name')
      */
-    std::cout << prefix << "result = " << "IO.GetParam[" << GetCythonType<T>(d)
+    std::cout << prefix << "result = " << "CLI.GetParam[" << GetCythonType<T>(d)
         << "](\"" << d.name << "\")";
     if (GetCythonType<T>(d) == "string")
     {
@@ -95,12 +95,12 @@ void PrintOutputProcessing(
     /**
      * This gives us code like:
      *
-     * result = arma_numpy.mat_to_numpy_X(IO.GetParam[mat]("name"))
+     * result = arma_numpy.mat_to_numpy_X(CLI.GetParam[mat]("name"))
      *
      * where X indicates the type to convert to.
      */
     std::cout << prefix << "result = arma_numpy." << GetArmaType<T>()
-        << "_to_numpy_" << GetNumpyTypeChar<T>() << "(IO.GetParam["
+        << "_to_numpy_" << GetNumpyTypeChar<T>() << "(CLI.GetParam["
         << GetCythonType<T>(d) << "](\"" << d.name << "\"))" << std::endl;
   }
   else
@@ -109,13 +109,13 @@ void PrintOutputProcessing(
      * This gives us code like:
      *
      * result['param_name'] =
-     *     arma_numpy.mat_to_numpy_X(IO.GetParam[mat]('name')
+     *     arma_numpy.mat_to_numpy_X(CLI.GetParam[mat]('name')
      *
      * where X indicates the type to convert to.
      */
     std::cout << prefix << "result['" << d.name
         << "'] = arma_numpy." << GetArmaType<T>() << "_to_numpy_"
-        << GetNumpyTypeChar<T>() << "(IO.GetParam[" << GetCythonType<T>(d)
+        << GetNumpyTypeChar<T>() << "(CLI.GetParam[" << GetCythonType<T>(d)
         << "]('" << d.name << "'))" << std::endl;
   }
 }

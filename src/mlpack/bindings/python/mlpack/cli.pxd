@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-cli.pyx: Cython functionality for mlpack::IO.
+cli.pyx: Cython functionality for mlpack::CLI.
 
 This file imports the GetParam() function from mlpack::IO, plus a utility
 SetParam() function because Cython can't seem to support lvalue references.

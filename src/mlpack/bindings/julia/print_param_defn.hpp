@@ -94,7 +94,7 @@ void PrintParamDefn(
       << "." << std::endl;
   std::cout << "function IOGetParam" << type << "(paramName::String)::"
       << type << std::endl;
-  std::cout << "  " << type << "(ccall((:IO_GetParam" << type
+  std::cout << "  " << type << "(ccall((:CLI_GetParam" << type
       << "Ptr, " << programName << "Library), Ptr{Nothing}, (Cstring,), "
       << "paramName))" << std::endl;
   std::cout << "end" << std::endl;
@@ -105,7 +105,7 @@ void PrintParamDefn(
       << "." << std::endl;
   std::cout << "function IOSetParam" << type << "(paramName::String, "
       << "model::" << type << ")" << std::endl;
-  std::cout << "  ccall((:IO_SetParam" << type << "Ptr, "
+  std::cout << "  ccall((:CLI_SetParam" << type << "Ptr, "
       << programName << "Library), Nothing, (Cstring, "
       << "Ptr{Nothing}), paramName, model.ptr)" << std::endl;
   std::cout << "end" << std::endl;
