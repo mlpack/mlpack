@@ -152,7 +152,6 @@ class CLIOption
     IO::GetSingleton().functionMap[tname]["AddToPO"] = &AddToPO<N>;
     IO::GetSingleton().functionMap[tname]["MapParameterName"] =
         &MapParameterName<N>;
-    IO::GetSingleton().functionMap[tname]["SetParam"] = &SetParam<N>;
     IO::GetSingleton().functionMap[tname]["GetPrintableParamName"] =
         &GetPrintableParamName<N>;
     IO::GetSingleton().functionMap[tname]["GetPrintableParamValue"] =
