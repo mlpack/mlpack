@@ -987,7 +987,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * The model will be saved at the termination of the program.  If you use a
- * parameter of this type, you must call CLI::Destroy() at the end of your
+ * parameter of this type, you must call IO::Destroy() at the end of your
  * program.
  *
  * @param TYPE Type of the model to be saved.

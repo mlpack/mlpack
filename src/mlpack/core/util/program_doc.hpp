@@ -21,7 +21,7 @@ namespace util {
  * the PROGRAM_INFO() macro to declare these objects.  Only one ProgramDoc
  * object should ever exist.
  *
- * @see core/util/cli.hpp, mlpack::CLI
+ * @see core/util/io.hpp, mlpack::IO
  */
 class ProgramDoc
 {

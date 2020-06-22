@@ -10,7 +10,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "cli.hpp"
+#include "io.hpp"
 #include "program_doc.hpp"
 
 #include <string>
@@ -43,7 +43,7 @@ ProgramDoc::ProgramDoc(
     seeAlso(std::move(seeAlso))
 {
   // Register this with CLI.
-  CLI::RegisterProgramDoc(this);
+  IO::RegisterProgramDoc(this);
 }
 
 /**
@@ -51,5 +51,5 @@ ProgramDoc::ProgramDoc(
  */
 ProgramDoc::ProgramDoc()
 {
-  CLI::RegisterProgramDoc(this);
+  IO::RegisterProgramDoc(this);
 }

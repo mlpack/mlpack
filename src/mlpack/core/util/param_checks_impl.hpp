@@ -29,7 +29,7 @@ inline void RequireOnlyOnePassed(
   size_t set = 0;
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (CLI::HasParam(constraints[i]))
+    if (IO::HasParam(constraints[i]))
       ++set;
   }
 
@@ -99,7 +99,7 @@ inline void RequireAtLeastOnePassed(
   size_t set = 0;
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (CLI::HasParam(constraints[i]))
+    if (IO::HasParam(constraints[i]))
       ++set;
   }
 
@@ -145,7 +145,7 @@ inline void RequireNoneOrAllPassed(
   size_t set = 0;
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (CLI::HasParam(constraints[i]))
+    if (IO::HasParam(constraints[i]))
       ++set;
   }
 
@@ -233,7 +233,7 @@ inline void ReportIgnoredParam(
   bool condition = true;
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (CLI::HasParam(constraints[i].first) != constraints[i].second)
+    if (IO::HasParam(constraints[i].first) != constraints[i].second)
     {
       condition = false;
       break;
@@ -242,7 +242,7 @@ inline void ReportIgnoredParam(
 
   // If the condition is satisfied, then report that the parameter is ignored
   // (if the user passed it).
-  if (condition && CLI::HasParam(paramName))
+  if (condition && IO::HasParam(paramName))
   {
     // The output will be different depending on whether there are 1, 2, or more
     // constraints.
@@ -291,7 +291,7 @@ inline void ReportIgnoredParam(const std::string& paramName,
                                const std::string& reason)
 {
   // If the argument was passed, we need to print the reason.
-  if (CLI::HasParam(paramName))
+  if (IO::HasParam(paramName))
   {
     Log::Warn << PRINT_PARAM_STRING(paramName) << " ignored because "
         << reason << "!" << std::endl;

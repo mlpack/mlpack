@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include "cli.hpp"
+#include "io.hpp"
 #include "log.hpp"
 #include "hyphenate_string.hpp"
 
