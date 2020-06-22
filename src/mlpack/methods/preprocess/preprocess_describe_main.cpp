@@ -163,14 +163,14 @@ double StandardError(const size_t size, const double& fStd)
 
 static void mlpackMain()
 {
-  const size_t dimension = static_cast<size_t>(CLI::GetParam<int>("dimension"));
-  const size_t precision = static_cast<size_t>(CLI::GetParam<int>("precision"));
-  const size_t width = static_cast<size_t>(CLI::GetParam<int>("width"));
-  const bool population = CLI::HasParam("population");
-  const bool rowMajor = CLI::HasParam("row_major");
+  const size_t dimension = static_cast<size_t>(IO::GetParam<int>("dimension"));
+  const size_t precision = static_cast<size_t>(IO::GetParam<int>("precision"));
+  const size_t width = static_cast<size_t>(IO::GetParam<int>("width"));
+  const bool population = IO::HasParam("population");
+  const bool rowMajor = IO::HasParam("row_major");
 
   // Load the data.
-  arma::mat& data = CLI::GetParam<arma::mat>("input");
+  arma::mat& data = IO::GetParam<arma::mat>("input");
 
   // Generate boost format recipe.
   const string widthPrecision("%-" + to_string(width) + "." +
@@ -225,7 +225,7 @@ static void mlpackMain()
 
   // If the user specified dimension, describe statistics of the given
   // dimension. If a dimension is not specified, describe all dimensions.
-  if (CLI::HasParam("dimension"))
+  if (IO::HasParam("dimension"))
   {
     PrintStatResults(dimension, rowMajor);
   }

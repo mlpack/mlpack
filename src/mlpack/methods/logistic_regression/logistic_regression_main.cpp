@@ -163,20 +163,20 @@ PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
 static void mlpackMain()
 {
   // Collect command-line options.
-  const double lambda = CLI::GetParam<double>("lambda");
-  const string optimizerType = CLI::GetParam<string>("optimizer");
-  const double tolerance = CLI::GetParam<double>("tolerance");
-  const double stepSize = CLI::GetParam<double>("step_size");
-  const size_t batchSize = (size_t) CLI::GetParam<int>("batch_size");
-  const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
-  const double decisionBoundary = CLI::GetParam<double>("decision_boundary");
+  const double lambda = IO::GetParam<double>("lambda");
+  const string optimizerType = IO::GetParam<string>("optimizer");
+  const double tolerance = IO::GetParam<double>("tolerance");
+  const double stepSize = IO::GetParam<double>("step_size");
+  const size_t batchSize = (size_t) IO::GetParam<int>("batch_size");
+  const size_t maxIterations = (size_t) IO::GetParam<int>("max_iterations");
+  const double decisionBoundary = IO::GetParam<double>("decision_boundary");
 
   // One of training and input_model must be specified.
   RequireAtLeastOnePassed({ "training", "input_model" }, true);
 
   // If no output file is given, the user should know that the model will not be
   // saved, but only if a model is being trained.
-  if (CLI::HasParam("training"))
+  if (IO::HasParam("training"))
   {
     RequireAtLeastOnePassed({ "output_model" }, false, "trained model will not "
         "be saved");
@@ -224,12 +224,12 @@ static void mlpackMain()
 
   if (optimizerType != "sgd")
   {
-    if (CLI::HasParam("step_size"))
+    if (IO::HasParam("step_size"))
     {
       Log::Warn << PRINT_PARAM_STRING("step_size") << " ignored because "
           << "optimizer type is not 'sgd'." << std::endl;
     }
-    if (CLI::HasParam("batch_size"))
+    if (IO::HasParam("batch_size"))
     {
       Log::Warn << PRINT_PARAM_STRING("batch_size") << " ignored because "
           << "optimizer type is not 'sgd'." << std::endl;
@@ -243,45 +243,45 @@ static void mlpackMain()
   arma::Row<size_t> predictions;
 
   // Load data matrix.
-  if (CLI::HasParam("training"))
-    regressors = std::move(CLI::GetParam<arma::mat>("training"));
+  if (IO::HasParam("training"))
+    regressors = std::move(IO::GetParam<arma::mat>("training"));
 
   // Load the model, if necessary.
   LogisticRegression<>* model;
-  if (CLI::HasParam("input_model"))
-    model = CLI::GetParam<LogisticRegression<>*>("input_model");
+  if (IO::HasParam("input_model"))
+    model = IO::GetParam<LogisticRegression<>*>("input_model");
   else
   {
     model = new LogisticRegression<>(0, 0);
 
     // Set the size of the parameters vector, if necessary.
-    if (!CLI::HasParam("labels"))
+    if (!IO::HasParam("labels"))
       model->Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows);
     else
       model->Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows + 1);
   }
 
   // Check if the responses are in a separate file.
-  if (CLI::HasParam("training") && CLI::HasParam("labels"))
+  if (IO::HasParam("training") && IO::HasParam("labels"))
   {
-    responses = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+    responses = std::move(IO::GetParam<arma::Row<size_t>>("labels"));
     if (responses.n_cols != regressors.n_cols)
     {
       // Clean memory if needed.
-      if (!CLI::HasParam("input_model"))
+      if (!IO::HasParam("input_model"))
         delete model;
 
       Log::Fatal << "The labels must have the same number of points as the "
           << "training dataset." << endl;
     }
   }
-  else if (CLI::HasParam("training"))
+  else if (IO::HasParam("training"))
   {
     // Checking the size of training data if no labels are passed.
     if (regressors.n_rows < 2)
     {
       // Clean memory if needed.
-      if (!CLI::HasParam("input_model"))
+      if (!IO::HasParam("input_model"))
         delete model;
 
       Log::Fatal << "Can't get responses from training data since it has less "
@@ -295,10 +295,10 @@ static void mlpackMain()
   }
 
   // Verify the labels.
-  if (CLI::HasParam("training") && max(responses) > 1)
+  if (IO::HasParam("training") && max(responses) > 1)
   {
     // Clean memory if needed.
-    if (!CLI::HasParam("input_model"))
+    if (!IO::HasParam("input_model"))
       delete model;
 
     Log::Fatal << "The labels must be either 0 or 1, not " << max(responses)
@@ -306,7 +306,7 @@ static void mlpackMain()
   }
 
   // Now, do the training.
-  if (CLI::HasParam("training"))
+  if (IO::HasParam("training"))
   {
     model->Lambda() = lambda;
 
@@ -334,16 +334,16 @@ static void mlpackMain()
     }
   }
 
-  if (CLI::HasParam("test"))
+  if (IO::HasParam("test"))
   {
-    const arma::mat& testSet = CLI::GetParam<arma::mat>("test");
+    const arma::mat& testSet = IO::GetParam<arma::mat>("test");
 
     // Checking the dimensionality of the test data.
     if (testSet.n_rows != model->Parameters().n_cols - 1)
     {
       // Clean memory if needed.
       const size_t trainingDimensionality = model->Parameters().n_cols - 1;
-      if (!CLI::HasParam("input_model"))
+      if (!IO::HasParam("input_model"))
         delete model;
 
       Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must "
@@ -353,36 +353,36 @@ static void mlpackMain()
 
     // We must perform predictions on the test set.  Training (and the
     // optimizer) are irrelevant here; we'll pass in the model we have.
-    if (CLI::HasParam("predictions") || CLI::HasParam("output"))
+    if (IO::HasParam("predictions") || IO::HasParam("output"))
     {
       Log::Info << "Predicting classes of points in '"
-          << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
+          << IO::GetPrintableParam<arma::mat>("test") << "'." << endl;
       model->Classify(testSet, predictions, decisionBoundary);
 
       // The CLI param "output" is deprecated and replaced by "predictions"
       // "output" parameter will be removed in mlpack 4.
-      if (CLI::HasParam("predictions"))
-        CLI::GetParam<arma::Row<size_t>>("predictions") = predictions;
-      if (CLI::HasParam("output"))
-        CLI::GetParam<arma::Row<size_t>>("output") = std::move(predictions);
+      if (IO::HasParam("predictions"))
+        IO::GetParam<arma::Row<size_t>>("predictions") = predictions;
+      if (IO::HasParam("output"))
+        IO::GetParam<arma::Row<size_t>>("output") = std::move(predictions);
     }
 
     // The CLI param "output_probabilities" is deprecated
     // and replaced by "probabilities"
     // "output_probabilities" parameter will be removed in mlpack 4.
-    if (CLI::HasParam("output_probabilities") || CLI::HasParam("probabilities"))
+    if (IO::HasParam("output_probabilities") || IO::HasParam("probabilities"))
     {
       Log::Info << "Calculating class probabilities of points in '"
-          << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
+          << IO::GetPrintableParam<arma::mat>("test") << "'." << endl;
       arma::mat probabilities;
       model->Classify(testSet, probabilities);
 
-      if (CLI::HasParam("output_probabilities"))
-        CLI::GetParam<arma::mat>("output_probabilities") = probabilities;
-      if (CLI::HasParam("probabilities"))
-        CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
+      if (IO::HasParam("output_probabilities"))
+        IO::GetParam<arma::mat>("output_probabilities") = probabilities;
+      if (IO::HasParam("probabilities"))
+        IO::GetParam<arma::mat>("probabilities") = std::move(probabilities);
     }
   }
 
-  CLI::GetParam<LogisticRegression<>*>("output_model") = model;
+  IO::GetParam<LogisticRegression<>*>("output_model") = model;
 }

@@ -180,13 +180,13 @@ static void mlpackMain()
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
   // Load input dataset.
-  mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
+  mat dataset = std::move(IO::GetParam<arma::mat>("input"));
 
   // Get the new dimensionality, if it is necessary.
   size_t newDim = dataset.n_rows;
-  if (CLI::GetParam<int>("new_dimensionality") != 0)
+  if (IO::GetParam<int>("new_dimensionality") != 0)
   {
-    newDim = CLI::GetParam<int>("new_dimensionality");
+    newDim = IO::GetParam<int>("new_dimensionality");
 
     if (newDim > dataset.n_rows)
     {
@@ -200,11 +200,11 @@ static void mlpackMain()
   RequireParamInSet<string>("kernel", { "linear", "gaussian", "polynomial",
       "hyptan", "laplacian", "epanechnikov", "cosine" }, true,
       "unknown kernel type");
-  const string kernelType = CLI::GetParam<string>("kernel");
+  const string kernelType = IO::GetParam<string>("kernel");
 
-  const bool centerTransformedData = CLI::HasParam("center");
-  const bool nystroem = CLI::HasParam("nystroem_method");
-  const string sampling = CLI::GetParam<string>("sampling");
+  const bool centerTransformedData = IO::HasParam("center");
+  const bool nystroem = IO::HasParam("nystroem_method");
+  const string sampling = IO::GetParam<string>("sampling");
 
   if (kernelType == "linear")
   {
@@ -214,7 +214,7 @@ static void mlpackMain()
   }
   else if (kernelType == "gaussian")
   {
-    const double bandwidth = CLI::GetParam<double>("bandwidth");
+    const double bandwidth = IO::GetParam<double>("bandwidth");
 
     GaussianKernel kernel(bandwidth);
     RunKPCA<GaussianKernel>(dataset, centerTransformedData, nystroem, newDim,
@@ -222,8 +222,8 @@ static void mlpackMain()
   }
   else if (kernelType == "polynomial")
   {
-    const double degree = CLI::GetParam<double>("degree");
-    const double offset = CLI::GetParam<double>("offset");
+    const double degree = IO::GetParam<double>("degree");
+    const double offset = IO::GetParam<double>("offset");
 
     PolynomialKernel kernel(degree, offset);
     RunKPCA<PolynomialKernel>(dataset, centerTransformedData, nystroem,
@@ -231,8 +231,8 @@ static void mlpackMain()
   }
   else if (kernelType == "hyptan")
   {
-    const double scale = CLI::GetParam<double>("kernel_scale");
-    const double offset = CLI::GetParam<double>("offset");
+    const double scale = IO::GetParam<double>("kernel_scale");
+    const double offset = IO::GetParam<double>("offset");
 
     HyperbolicTangentKernel kernel(scale, offset);
     RunKPCA<HyperbolicTangentKernel>(dataset, centerTransformedData, nystroem,
@@ -240,7 +240,7 @@ static void mlpackMain()
   }
   else if (kernelType == "laplacian")
   {
-    const double bandwidth = CLI::GetParam<double>("bandwidth");
+    const double bandwidth = IO::GetParam<double>("bandwidth");
 
     LaplacianKernel kernel(bandwidth);
     RunKPCA<LaplacianKernel>(dataset, centerTransformedData, nystroem, newDim,
@@ -248,7 +248,7 @@ static void mlpackMain()
   }
   else if (kernelType == "epanechnikov")
   {
-    const double bandwidth = CLI::GetParam<double>("bandwidth");
+    const double bandwidth = IO::GetParam<double>("bandwidth");
 
     EpanechnikovKernel kernel(bandwidth);
     RunKPCA<EpanechnikovKernel>(dataset, centerTransformedData, nystroem,
@@ -262,6 +262,6 @@ static void mlpackMain()
   }
 
   // Save the output dataset.
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(dataset);
+  if (IO::HasParam("output"))
+    IO::GetParam<arma::mat>("output") = std::move(dataset);
 }
