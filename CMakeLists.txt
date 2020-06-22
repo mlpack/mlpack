@@ -392,8 +392,8 @@ else ()
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 endif ()
 
-#Unfortunately this configuration variable is necessary and will need to be
-#updated as time goes on and new versions are released.
+# Unfortunately this configuration variable is necessary and will need to be
+# updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
   "1.72.0" "1.72"
   "1.71.0" "1.71"
