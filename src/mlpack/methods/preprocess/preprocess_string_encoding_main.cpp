@@ -139,26 +139,29 @@ static void mlpackMain()
   else
     columnDelimiter = data::ColumnDelimiterType(filename);
 
-  // Handling Dimension vector
-  vector<string> tempDimension =
-      CLI::GetParam<vector<string> >("dimension");
-  unordered_set<size_t> dimensions = data::GetColumnIndices(tempDimension);
+  // Parsing the given dimensions.
+  vector<string> dimensionsParam = CLI::GetParam<vector<string>>("dimensions");
+  vector<size_t> dimensions = data::GetColumnIndices(dimensionsParam);
   vector<vector<string>> dataset = data::CreateDataset(filename,
       columnDelimiter[0]);
+
   for (auto colIndex : dimensions)
   {
     if (colIndex >= dataset.back().size())
-      Log::Fatal << "The index given is out of range, please verify" << endl;
+    {
+      Log::Fatal << "The given index (" << colIndex << ") is out of range!"
+                 << endl;
+    }
   }
 
   // Preparing the input dataset on which string manipulation has to be done.
   // vector<vector<string>> nonNumericInput(dimension.size());
-  unordered_map<size_t , vector<string>> nonNumericInput;
+  unordered_map<size_t , vector<string>> textInput;
 
-  for (size_t i = 0; i < dataset.size(); i++)
+  for (vector<string>& row : dataset)
   {
-    for (auto& datasetCol : dimensions)
-      nonNumericInput[datasetCol].push_back(move(dataset[i][datasetCol]));
+    for (size_t column : dimensions)
+      textInput[column].push_back(move(row[column]));
   }
 
   unordered_map<size_t , arma::mat> encodedResult;

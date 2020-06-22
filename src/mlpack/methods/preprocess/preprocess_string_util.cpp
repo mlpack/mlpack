@@ -50,76 +50,69 @@ vector<vector<string>> CreateDataset(const string& filename,
 }
 
 /**
- * Function to check whether the given colum has only digits.
+ * Function to check whether the given column contains only digits or not.
  *
- * @param column The column no
+ * @param column Column index to check.
  */
 bool IsNumber(const string& column)
 {
+  if (column.empty())
+    return false;
+
   for (auto i : column)
   {
     if (!isdigit(i))
       return false;
   }
+
   return true;
 }
 
 /**
- * Function used to get the columns which has non numeric dataset.
+ * The function parses the given column indices and ranges.
  *
- * @param tempDimesnion A vector of string passed which has column number or
- *    column ranges.
+ * @param dimensions A vector of column indices or column ranges.
  */
-unordered_set<size_t> GetColumnIndices(const vector<string>& tempDimension)
+vector<size_t> GetColumnIndices(const vector<string>& dimensions)
 {
-  unordered_set<size_t> dimensions;
-  int columnstartindex, columnendindex;
-  size_t found;
-  for (size_t i = 0; i < tempDimension.size(); i++)
+  vector<size_t> result;
+
+  for (const string& elem : dimensions)
   {
-    found = tempDimension[i].find('-');
-    if ( found != string::npos)
+    const size_t found = elem.find('-');
+
+    if (found != string::npos)
     {
-      try
+      // Trying to parse an indices range.
+      string firstSubstring = elem.substr(0, found);
+      string secondSubstring = elem.substr(found + 1);
+
+      if (!IsNumber(firstSubstring) || !IsNumber(secondSubstring))
       {
-        // Has a range include, something of type a-b.
-        string subStringStart = tempDimension[i].substr(0, found);
-        string subStringEnd = tempDimension[i].substr(found + 1,
-            tempDimension[i].length());
-        if (!IsNumber(subStringStart) || !IsNumber(subStringEnd))
-        {
-          Log::Fatal << "Dimension value accepts only digits, characters"
-              " encountered, please recheck" << endl;
-        }
-        columnstartindex = stoi(subStringStart);
-        columnendindex = stoi(subStringEnd);
-        for (int i = columnstartindex; i <= columnendindex; i++)
-          dimensions.insert(i);
+        Log::Fatal << "Can't parse column indices range '" << elem << "'!"
+                   << endl;
       }
-      catch (const exception& e)
-      {
-        Log::Fatal << "Dimension value not clear, either negatve or can't "
-        "parse the range. Usage a-b" << endl;
-      }
+
+      const size_t lowerBound = stoi(firstSubstring);
+      const size_t upperBound = stoi(secondSubstring);
+
+      for (size_t i = lowerBound; i <= upperBound; i++)
+        result.push_back(i);
     }
     else
     {
-      try
-      {
-        if (!IsNumber(tempDimension[i]))
-        {
-          Log::Fatal << "Dimension value accepts only digits, characters"
-              " encountered, please recheck" << endl;
-        }
-        dimensions.insert(stoi(tempDimension[i]));
-      }
-      catch (const exception& e)
-      {
-        Log::Fatal << "Dimension value not appropriate " << endl;
-      }
+      // Trying to parse a column index.
+
+      if (!IsNumber(elem))
+        Log::Fatal << "Can't parse column index '" << elem << "'!" << endl;
+
+      result.push_back(stoi(elem));
     }
   }
-  return dimensions;
+
+  result.erase(unique(result.begin(), result.end()), result.end());
+
+  return result;
 }
 
 /**

@@ -31,20 +31,18 @@ namespace data {
 std::vector<std::vector<std::string>> CreateDataset(const std::string& filename,
                                                     char columnDelimiter);
 /**
- * Function to check whether the given colum has only digits.
+ * Function to check whether the given column contains only digits or not.
  *
- * @param column The column no
+ * @param column Column index to check.
  */
-bool IsNumber(const std::string& column);
+bool IsNumber(const string& column);
 
 /**
- * Function used to get the columns which has non numeric dataset.
+ * The function parses the given column indices and ranges.
  *
- * @param tempDimesnion A vector of string passed which has column number or
- *    column ranges.
+ * @param dimensions A vector of column indices or column ranges.
  */
-std::unordered_set<size_t> GetColumnIndices
-    (const std::vector<std::string>& tempDimension);
+std::vector<size_t> GetColumnIndices(const std::vector<string>& dimensions);
 
 /**
  * Function to get the type of column delimiter base on file extension.

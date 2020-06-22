@@ -52,7 +52,9 @@ add_markdown_docs(preprocess_scale "cli;python;julia;go" "preprocessing")
 
 add_cli_executable(preprocess_string_encoding)
 add_python_binding(preprocess_string_encoding)
-add_markdown_docs(preprocess_string_encoding "cli;python" "preprocessing")
+add_julia_binding(preprocess_string_encoding)
+add_go_binding(preprocess_string_encoding)
+add_markdown_docs(preprocess_string_encoding "cli;python;julia;go" "preprocessing")
 
 if (STB_AVAILABLE)
   add_cli_executable(image_converter)
