@@ -111,7 +111,7 @@ void PrintDocs(const std::string& bindingName,
     cout << "|------------|------------|-------------------|---------------|"
         << endl;
     map<string, ParamData>& parameters = CLI::Parameters();
-    for (map<string, ParamData>::const_iterator it = parameters.begin();
+    for (map<string, ParamData>::iterator it = parameters.begin();
          it != parameters.end(); ++it)
     {
       if (!it->second.input)
@@ -175,7 +175,7 @@ void PrintDocs(const std::string& bindingName,
     cout << endl;
     cout << "| ***name*** | ***type*** | ***description*** |" << endl;
     cout << "|------------|------------|-------------------|" << endl;
-    for (map<string, ParamData>::const_iterator it = parameters.begin();
+    for (map<string, ParamData>::iterator it = parameters.begin();
          it != parameters.end(); ++it)
     {
       if (it->second.input)
