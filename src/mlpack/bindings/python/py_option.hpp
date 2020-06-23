@@ -39,7 +39,7 @@ class PyOption
  public:
   /**
    * Construct a PyOption object.  When constructed, it will register itself
-   * with CLI. The testName parameter is not used and added for compatibility
+   * with IO. The testName parameter is not used and added for compatibility
    * reasons.
    */
   PyOption(const T defaultValue,
@@ -52,7 +52,7 @@ class PyOption
            const bool noTranspose = false,
            const std::string& /*testName*/ = "")
   {
-    // Create the ParamData object to give to CLI.
+    // Create the ParamData object to give to IO.
     util::ParamData data;
 
     data.desc = description;
@@ -76,37 +76,37 @@ class PyOption
 
     // Restore the parameters for this program.
     if (identifier != "verbose" && identifier != "copy_all_inputs")
-      CLI::RestoreSettings(programName, false);
+      IO::RestoreSettings(programName, false);
 
     // Set the function pointers that we'll need.  All of these function
     // pointers will be used by both the program that generates the pyx, and
     // also the binding itself.  (The binding itself will only use GetParam,
     // GetPrintableParam, and GetRawParam.)
-    CLI::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
+    IO::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
+    IO::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
         &GetPrintableParam<T>;
 
-    CLI::GetSingleton().functionMap[data.tname]["DefaultParam"] =
+    IO::GetSingleton().functionMap[data.tname]["DefaultParam"] =
         &DefaultParam<T>;
 
     // These are used by the pyx generator.
-    CLI::GetSingleton().functionMap[data.tname]["PrintClassDefn"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintClassDefn"] =
         &PrintClassDefn<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintDefn"] = &PrintDefn<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintDefn"] = &PrintDefn<T>;
+    IO::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
+    IO::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
         &PrintOutputProcessing<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
         &PrintInputProcessing<T>;
-    CLI::GetSingleton().functionMap[data.tname]["ImportDecl"] = &ImportDecl<T>;
+    IO::GetSingleton().functionMap[data.tname]["ImportDecl"] = &ImportDecl<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
     // import more than one .so that uses CLI, so we have to keep the options
     // separate.  programName is a global variable from mlpack_main.hpp.
-    CLI::Add(std::move(data));
+    IO::Add(std::move(data));
     if (identifier != "verbose" && identifier != "copy_all_inputs")
-      CLI::StoreSettings(programName);
-    CLI::ClearSettings();
+      IO::StoreSettings(programName);
+    IO::ClearSettings();
   }
 };
 

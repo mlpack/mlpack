@@ -58,7 +58,7 @@ void PrintInputProcessing(
    * if param_name is not None:
    *   if isinstance(param_name, int):
    *     SetParam[int](\<const string\> 'param_name', param_name)
-   *     CLI.SetPassed(\<const string\> 'param_name')
+   *     IO.SetPassed(\<const string\> 'param_name')
    *   else:
    *     raise TypeError("'param_name' must have type 'list'!")
    */
@@ -88,7 +88,7 @@ void PrintInputProcessing(
     else
       std::cout << name;
     std::cout << ")" << std::endl;
-    std::cout << prefix << "    CLI.SetPassed(<const string> '" << d.name
+    std::cout << prefix << "    IO.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
 
     // If this parameter is "verbose", then enable verbose output.
@@ -136,7 +136,7 @@ void PrintInputProcessing(
     else
       std::cout << name;
     std::cout << ")" << std::endl;
-    std::cout << prefix << "    CLI.SetPassed(<const string> '"
+    std::cout << prefix << "    IO.SetPassed(<const string> '"
         << d.name << "')" << std::endl;
 
     if (GetPrintableType<T>(d) == "bool")
@@ -179,7 +179,7 @@ void PrintInputProcessing(
    *      if len(param_name) > 0:
    *        if isinstance(param_name[0], str):
    *          SetParam[vector[string]](\<const string\> 'param_name', param_name)
-   *          CLI.SetPassed(\<const string\> 'param_name')
+   *          IO.SetPassed(\<const string\> 'param_name')
    *        else:
    *          raise TypeError("'param_name' must have type 'list of strs'!")
    *    else:
@@ -206,7 +206,7 @@ void PrintInputProcessing(
     else
       std::cout << d.name;
     std::cout << ")" << std::endl;
-    std::cout << prefix << "        CLI.SetPassed(<const string> '" << d.name
+    std::cout << prefix << "        IO.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
     std::cout << prefix << "      else:" << std::endl;
     std::cout << prefix << "        raise TypeError(" <<"\"'"<< d.name
@@ -232,7 +232,7 @@ void PrintInputProcessing(
     else
       std::cout << d.name;
     std::cout << ")" << std::endl;
-    std::cout << prefix << "      CLI.SetPassed(<const string> '" << d.name
+    std::cout << prefix << "      IO.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
     std::cout << prefix << "    else:" << std::endl;
     std::cout << prefix << "      raise TypeError(" <<"\"'"<< d.name
@@ -268,7 +268,7 @@ void PrintInputProcessing(
    *   param_name_mat = arma_numpy.numpy_to_mat_s(param_name_tuple[0],
    *       param_name_tuple[1])
    *   SetParam[mat](\<const string\> 'param_name', dereference(param_name_mat))
-   *   CLI.SetPassed(\<const string\> 'param_name')
+   *   IO.SetPassed(\<const string\> 'param_name')
    *
    */
   std::cout << prefix << "# Detect if the parameter was passed; set if so."
@@ -280,7 +280,7 @@ void PrintInputProcessing(
       std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
       std::cout << prefix << "  " << d.name << "_tuple = to_matrix("
           << d.name << ", dtype=" << GetNumpyType<typename T::elem_type>()
-          << ", copy=CLI.HasParam('copy_all_inputs'))" << std::endl;
+          << ", copy=IO.HasParam('copy_all_inputs'))" << std::endl;
       std::cout << prefix << "  if len(" << d.name << "_tuple[0].shape) > 1:"
           << std::endl;
       std::cout << prefix << "    if " << d.name << "_tuple[0]"
@@ -294,7 +294,7 @@ void PrintInputProcessing(
       std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
           << "](<const string> '" << d.name << "', dereference("
           << d.name << "_mat))"<< std::endl;
-      std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name
+      std::cout << prefix << "  IO.SetPassed(<const string> '" << d.name
           << "')" << std::endl;
       std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
     }
@@ -303,7 +303,7 @@ void PrintInputProcessing(
       std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
       std::cout << prefix << "  " << d.name << "_tuple = to_matrix("
           << d.name << ", dtype=" << GetNumpyType<typename T::elem_type>()
-          << ", copy=CLI.HasParam('copy_all_inputs'))" << std::endl;
+          << ", copy=IO.HasParam('copy_all_inputs'))" << std::endl;
       std::cout << prefix << "  if len(" << d.name << "_tuple[0].shape"
           << ") < 2:" << std::endl;
       std::cout << prefix << "    " << d.name << "_tuple[0].shape = (" << d.name
@@ -314,7 +314,7 @@ void PrintInputProcessing(
       std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
           << "](<const string> '" << d.name << "', dereference("
           << d.name << "_mat))"<< std::endl;
-      std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name
+      std::cout << prefix << "  IO.SetPassed(<const string> '" << d.name
           << "')" << std::endl;
       std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
     }
@@ -325,7 +325,7 @@ void PrintInputProcessing(
     {
       std::cout << prefix << d.name << "_tuple = to_matrix(" << d.name
           << ", dtype=" << GetNumpyType<typename T::elem_type>()
-          << ", copy=CLI.HasParam('copy_all_inputs'))" << std::endl;
+          << ", copy=IO.HasParam('copy_all_inputs'))" << std::endl;
       std::cout << prefix << "if len(" << d.name << "_tuple[0].shape) > 1:"
           << std::endl;
       std::cout << prefix << "  if " << d.name << "_tuple[0].shape[0] == 1 or "
@@ -338,7 +338,7 @@ void PrintInputProcessing(
       std::cout << prefix << "SetParam[" << GetCythonType<T>(d)
           << "](<const string> '" << d.name << "', dereference("
           << d.name << "_mat))"<< std::endl;
-      std::cout << prefix << "CLI.SetPassed(<const string> '" << d.name << "')"
+      std::cout << prefix << "IO.SetPassed(<const string> '" << d.name << "')"
           << std::endl;
       std::cout << prefix << "del " << d.name << "_mat" << std::endl;
     }
@@ -346,7 +346,7 @@ void PrintInputProcessing(
     {
       std::cout << prefix << d.name << "_tuple = to_matrix(" << d.name
           << ", dtype=" << GetNumpyType<typename T::elem_type>()
-          << ", copy=CLI.HasParam('copy_all_inputs'))" << std::endl;
+          << ", copy=IO.HasParam('copy_all_inputs'))" << std::endl;
       std::cout << prefix << "if len(" << d.name << "_tuple[0].shape) > 2:"
           << std::endl;
       std::cout << prefix << "  " << d.name << "_tuple[0].shape = (" << d.name
@@ -357,7 +357,7 @@ void PrintInputProcessing(
       std::cout << prefix << "SetParam[" << GetCythonType<T>(d)
           << "](<const string> '" << d.name << "', dereference(" << d.name
           << "_mat))" << std::endl;
-      std::cout << prefix << "CLI.SetPassed(<const string> '" << d.name << "')"
+      std::cout << prefix << "IO.SetPassed(<const string> '" << d.name << "')"
           << std::endl;
       std::cout << prefix << "del " << d.name << "_mat" << std::endl;
     }
@@ -389,14 +389,14 @@ void PrintInputProcessing(
    * if param_name is not None:
    *   try:
    *     SetParamPtr[Model]('param_name', (\<ModelType?\> param_name).modelptr,
-   *         CLI.HasParam('copy_all_inputs'))
+   *         IO.HasParam('copy_all_inputs'))
    *   except TypeError as e:
    *     if type(param_name).__name__ == "ModelType":
    *       SetParamPtr[Model]('param_name', (\<ModelType\> param_name).modelptr,
-   *           CLI.HasParam('copy_all_inputs'))
+   *           IO.HasParam('copy_all_inputs'))
    *     else:
    *       raise e
-   *   CLI.SetPassed(\<const string\> 'param_name')
+   *   IO.SetPassed(\<const string\> 'param_name')
    */
   std::cout << prefix << "# Detect if the parameter was passed; set if so."
       << std::endl;
@@ -406,16 +406,16 @@ void PrintInputProcessing(
     std::cout << prefix << "  try:" << std::endl;
     std::cout << prefix << "    SetParamPtr[" << strippedType << "]('" << d.name
         << "', (<" << strippedType << "Type?> " << d.name << ").modelptr, "
-        << "CLI.HasParam('copy_all_inputs'))" << std::endl;
+        << "IO.HasParam('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "  except TypeError as e:" << std::endl;
     std::cout << prefix << "    if type(" << d.name << ").__name__ == '"
         << strippedType << "Type':" << std::endl;
     std::cout << prefix << "      SetParamPtr[" << strippedType << "]('"
         << d.name << "', (<" << strippedType << "Type> " << d.name
-        << ").modelptr, CLI.HasParam('copy_all_inputs'))" << std::endl;
+        << ").modelptr, IO.HasParam('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "    else:" << std::endl;
     std::cout << prefix << "      raise e" << std::endl;
-    std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name << "')"
+    std::cout << prefix << "  IO.SetPassed(<const string> '" << d.name << "')"
         << std::endl;
   }
   else
@@ -423,16 +423,16 @@ void PrintInputProcessing(
     std::cout << prefix << "try:" << std::endl;
     std::cout << prefix << "  SetParamPtr[" << strippedType << "]('" << d.name
         << "', (<" << strippedType << "Type?> " << d.name << ").modelptr, "
-        << "CLI.HasParam('copy_all_inputs'))" << std::endl;
+        << "IO.HasParam('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "except TypeError as e:" << std::endl;
     std::cout << prefix << "  if type(" << d.name << ").__name__ == '"
         << strippedType << "Type':" << std::endl;
     std::cout << prefix << "    SetParamPtr[" << strippedType << "]('" << d.name
         << "', (<" << strippedType << "Type> " << d.name << ").modelptr, "
-        << "CLI.HasParam('copy_all_inputs'))" << std::endl;
+        << "IO.HasParam('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "  else:" << std::endl;
     std::cout << prefix << "    raise e" << std::endl;
-    std::cout << prefix << "CLI.SetPassed(<const string> '" << d.name << "')"
+    std::cout << prefix << "IO.SetPassed(<const string> '" << d.name << "')"
         << std::endl;
   }
   std::cout << std::endl;
@@ -461,7 +461,7 @@ void PrintInputProcessing(
    *   param_name_mat = arma_numpy.numpy_to_matrix_d(param_name_tuple[0])
    *   SetParamWithInfo[mat](\<const string\> 'param_name',
    *       dereference(param_name_mat), &param_name_tuple[1][0])
-   *   CLI.SetPassed(\<const string\> 'param_name')
+   *   IO.SetPassed(\<const string\> 'param_name')
    */
   std::cout << prefix << "cdef np.ndarray " << d.name << "_dims" << std::endl;
   std::cout << prefix << "# Detect if the parameter was passed; set if so."
@@ -470,7 +470,7 @@ void PrintInputProcessing(
   {
     std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
     std::cout << prefix << "  " << d.name << "_tuple = to_matrix_with_info("
-        << d.name << ", dtype=np.double, copy=CLI.HasParam('copy_all_inputs'))"
+        << d.name << ", dtype=np.double, copy=IO.HasParam('copy_all_inputs'))"
         << std::endl;
     std::cout << prefix << "  if len(" << d.name << "_tuple[0].shape"
         << ") < 2:" << std::endl;
@@ -483,14 +483,14 @@ void PrintInputProcessing(
     std::cout << prefix << "  SetParamWithInfo[arma.Mat[double]](<const "
         << "string> '" << d.name << "', dereference(" << d.name << "_mat), "
         << "<const cbool*> " << d.name << "_dims.data)" << std::endl;
-    std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name
+    std::cout << prefix << "  IO.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
     std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
   }
   else
   {
     std::cout << prefix << d.name << "_tuple = to_matrix_with_info(" << d.name
-        << ", dtype=np.double, copy=CLI.HasParam('copy_all_inputs'))"
+        << ", dtype=np.double, copy=IO.HasParam('copy_all_inputs'))"
         << std::endl;
     std::cout << prefix << "if len(" << d.name << "_tuple[0].shape"
         << ") < 2:" << std::endl;
@@ -503,7 +503,7 @@ void PrintInputProcessing(
     std::cout << prefix << "SetParamWithInfo[arma.Mat[double]](<const "
         << "string> '" << d.name << "', dereference(" << d.name << "_mat), "
         << "<const cbool*> " << d.name << "_dims.data)" << std::endl;
-    std::cout << prefix << "CLI.SetPassed(<const string> '" << d.name << "')"
+    std::cout << prefix << "IO.SetPassed(<const string> '" << d.name << "')"
         << std::endl;
     std::cout << prefix << "del " << d.name << "_mat" << std::endl;
   }

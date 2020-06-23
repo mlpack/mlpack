@@ -42,9 +42,9 @@ void PrintOutputProcessing(
     /**
      * This gives us code like:
      *
-     * result = CLI.GetParam[int]('param_name')
+     * result = IO.GetParam[int]('param_name')
      */
-    std::cout << prefix << "result = " << "CLI.GetParam[" << GetCythonType<T>(d)
+    std::cout << prefix << "result = " << "IO.GetParam[" << GetCythonType<T>(d)
         << "](\"" << d.name << "\")";
     if (GetCythonType<T>(d) == "string")
     {
@@ -61,9 +61,9 @@ void PrintOutputProcessing(
     /**
      * This gives us code like:
      *
-     * result['param_name'] = CLI.GetParam[int]('param_name')
+     * result['param_name'] = IO.GetParam[int]('param_name')
      */
-    std::cout << prefix << "result['" << d.name << "'] = CLI.GetParam["
+    std::cout << prefix << "result['" << d.name << "'] = IO.GetParam["
         << GetCythonType<T>(d) << "](\"" << d.name << "\")" << std::endl;
     if (GetCythonType<T>(d) == "string")
     {
@@ -95,12 +95,12 @@ void PrintOutputProcessing(
     /**
      * This gives us code like:
      *
-     * result = arma_numpy.mat_to_numpy_X(CLI.GetParam[mat]("name"))
+     * result = arma_numpy.mat_to_numpy_X(IO.GetParam[mat]("name"))
      *
      * where X indicates the type to convert to.
      */
     std::cout << prefix << "result = arma_numpy." << GetArmaType<T>()
-        << "_to_numpy_" << GetNumpyTypeChar<T>() << "(CLI.GetParam["
+        << "_to_numpy_" << GetNumpyTypeChar<T>() << "(IO.GetParam["
         << GetCythonType<T>(d) << "](\"" << d.name << "\"))" << std::endl;
   }
   else
@@ -109,13 +109,13 @@ void PrintOutputProcessing(
      * This gives us code like:
      *
      * result['param_name'] =
-     *     arma_numpy.mat_to_numpy_X(CLI.GetParam[mat]('name')
+     *     arma_numpy.mat_to_numpy_X(IO.GetParam[mat]('name')
      *
      * where X indicates the type to convert to.
      */
     std::cout << prefix << "result['" << d.name
         << "'] = arma_numpy." << GetArmaType<T>() << "_to_numpy_"
-        << GetNumpyTypeChar<T>() << "(CLI.GetParam[" << GetCythonType<T>(d)
+        << GetNumpyTypeChar<T>() << "(IO.GetParam[" << GetCythonType<T>(d)
         << "]('" << d.name << "'))" << std::endl;
   }
 }
@@ -198,7 +198,7 @@ void PrintOutputProcessing(
      * So we need to loop through all input parameters that have the same type,
      * and double-check.
      */
-    std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+    std::map<std::string, util::ParamData>& parameters = IO::Parameters();
     for (auto it = parameters.begin(); it != parameters.end(); ++it)
     {
       // Is it an input parameter of the same type?
@@ -247,7 +247,7 @@ void PrintOutputProcessing(
      * So we need to loop through all input parameters that have the same type,
      * and double-check.
      */
-    std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+    std::map<std::string, util::ParamData>& parameters = IO::Parameters();
     for (auto it = parameters.begin(); it != parameters.end(); ++it)
     {
       // Is it an input parameter of the same type?
