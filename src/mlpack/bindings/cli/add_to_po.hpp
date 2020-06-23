@@ -71,7 +71,7 @@ void AddToPO(const std::string& cliName,
 
 /**
  * Add an option to CLI11.  This is the function meant to be
- * used in the IO function map.
+ * used in the CLI function map.
  *
  * @param d Parameter data.
  * @param * (input) Unused void pointer.

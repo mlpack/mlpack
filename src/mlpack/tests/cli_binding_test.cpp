@@ -2,7 +2,7 @@
  * @file tests/cli_binding_test.cpp
  * @author Ryan Curtin
  *
- * Test the components of the IO bindings.
+ * Test the components of the CLI bindings.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_SUITE(IOBindingTest);
 
 /**
  * Ensure that we can construct a IOOption object, and that it will add itself
- * to the IO instance.
+ * to the CLI instance.
  */
 BOOST_AUTO_TEST_CASE(IOOptionTest)
 {
@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(IOOptionTest)
   IOOption<double> co1(0.0, "test", "test2", "t", "double", false, true,
       false);
 
-  // Now check that it's in IO.
+  // Now check that it's in CLI.
   BOOST_REQUIRE_GT(CLI::Parameters().count("test"), 0);
   BOOST_REQUIRE_GT(CLI::Aliases().count('t'), 0);
   BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].desc, "test2");
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(IOOptionTest)
   IOOption<arma::mat> co2(arma::mat(), "mat", "mat2", "m", "arma::mat", true,
       true, true);
 
-  // Now check that it's in IO.
+  // Now check that it's in CLI.
   BOOST_REQUIRE_GT(CLI::Parameters().count("mat"), 0);
   BOOST_REQUIRE_GT(CLI::Aliases().count('m'), 0);
   BOOST_REQUIRE_EQUAL(CLI::Parameters()["mat"].desc, "mat2");

@@ -74,7 +74,7 @@ std::string DefaultParamImpl(
 
 /**
  * Return the default value of an option.  This is the function that will be
- * placed into the IO functionMap.
+ * placed into the CLI functionMap.
  */
 template<typename T>
 void DefaultParam(util::ParamData& data,

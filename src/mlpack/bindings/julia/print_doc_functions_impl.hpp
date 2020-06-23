@@ -28,7 +28,7 @@ inline std::string GetBindingName(const std::string& bindingName)
 }
 
 /**
- * Print any imports for IO (there are none, so this returns an empty string).
+ * Print any imports for CLI (there are none, so this returns an empty string).
  */
 inline std::string PrintImport(const std::string& bindingName)
 {

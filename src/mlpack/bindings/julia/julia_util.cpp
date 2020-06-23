@@ -576,7 +576,7 @@ void IO_ResetTimers()
 }
 
 /**
- * Set an argument as passed to the IO object.
+ * Set an argument as passed to the CLI object.
  */
 void IO_SetPassed(const char* paramName)
 {

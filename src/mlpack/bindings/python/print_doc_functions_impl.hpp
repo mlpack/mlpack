@@ -104,7 +104,7 @@ std::string PrintInputOptions() { return ""; }
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
- * not exist in IO.  For a parameter 'x' with value '5', this will print
+ * not exist in CLI.  For a parameter 'x' with value '5', this will print
  * something like x=5.
  */
 template<typename T, typename... Args>

@@ -30,7 +30,7 @@ inline std::string GetBindingName(const std::string& bindingName)
 }
 
 /**
- * Print any imports for IO (there are none, so this returns an empty string).
+ * Print any imports for CLI (there are none, so this returns an empty string).
  */
 inline std::string PrintImport(const std::string& /* bindingName */)
 {
@@ -228,7 +228,7 @@ inline std::string ProgramCall(const std::string& programName)
 
 /**
  * Print what a user would type to invoke the given option name.  Note that the
- * name *must* exist in the IO module.  (Note that because of the way
+ * name *must* exist in the CLI module.  (Note that because of the way
  * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()
  * declarataions need to come before the PROGRAM_INFO() declaration.)
  */

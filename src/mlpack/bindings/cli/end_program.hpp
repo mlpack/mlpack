@@ -25,7 +25,7 @@ namespace cli {
  */
 inline void EndProgram()
 {
-  // Stop the IO timers.
+  // Stop the CLI timers.
   CLI::GetSingleton().timer.StopAllTimers();
 
   // Print any output.

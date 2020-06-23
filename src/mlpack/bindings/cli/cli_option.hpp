@@ -3,7 +3,7 @@
  * @author Matthew Amidon
  *
  * Definition of the Option class, which is used to define parameters which are
- * used by IO.  The ProgramDoc class also resides here.
+ * used by CLI.  The ProgramDoc class also resides here.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -37,8 +37,8 @@ namespace bindings {
 namespace cli {
 
 /**
- * A static object whose constructor registers a parameter with the IO class.
- * This should not be used outside of IO itself, and you should use the
+ * A static object whose constructor registers a parameter with the CLI class.
+ * This should not be used outside of CLI itself, and you should use the
  * PARAM_FLAG(), PARAM_DOUBLE(), PARAM_INT(), PARAM_STRING(), or other similar
  * macros to declare these objects instead of declaring them directly.
  *
@@ -50,7 +50,7 @@ class CLIOption
  public:
   /**
    * Construct an Option object.  When constructed, it will register
-   * itself with IO.
+   * itself with CLI.
    *
    * @param defaultValue Default value this parameter will be initialized to
    *      (for flags, this should be false, for instance).
@@ -75,7 +75,7 @@ class CLIOption
             const bool noTranspose = false,
             const std::string& /*testName*/ = "")
   {
-    // Create the ParamData object to give to IO.
+    // Create the ParamData object to give to CLI.
     util::ParamData data;
 
     data.desc = description;
@@ -87,7 +87,7 @@ class CLIOption
     data.required = required;
     data.input = input;
     data.loaded = false;
-    data.persistent = false; // All IO parameters are not persistent.
+    data.persistent = false; // All CLI parameters are not persistent.
     data.cppType = cppName;
 
     // Apply default value.
@@ -166,7 +166,7 @@ class CLIOption
 
 /**
  * A static object whose constructor registers program documentation with the
- * IO class.  This should not be used outside of IO itself, and you should use
+ * CLI class.  This should not be used outside of CLI itself, and you should use
  * the PROGRAM_INFO() macro to declare these objects.  Only one ProgramDoc
  * object should ever exist.
  *
@@ -177,12 +177,12 @@ class ProgramDoc
  public:
   /**
    * Construct a ProgramDoc object.  When constructed, it will register itself
-   * with IO.
+   * with CLI.
    *
    * @param programName Short string representing the name of the program.
    * @param documentation Long string containing documentation on how to use the
    *     program and what it is.  No newline characters are necessary; this is
-   *     taken care of by IO later.
+   *     taken care of by CLI later.
    */
   ProgramDoc(const std::string& programName,
              const std::string& documentation);

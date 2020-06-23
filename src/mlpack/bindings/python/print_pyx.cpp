@@ -184,7 +184,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "  DisableVerbose()" << endl;
 
   // Restore the parameters.
-  cout << "  IO.RestoreSettings(\"" << programInfo.programName << "\")"
+  cout << "  CLI.RestoreSettings(\"" << programInfo.programName << "\")"
       << endl;
 
   // Determine whether or not we need to copy parameters.
@@ -192,7 +192,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "    if copy_all_inputs:" << endl;
   cout << "      SetParam[cbool](<const string> 'copy_all_inputs', "
       << "copy_all_inputs)" << endl;
-  cout << "      IO.SetPassed(<const string> 'copy_all_inputs')" << endl;
+  cout << "      CLI.SetPassed(<const string> 'copy_all_inputs')" << endl;
   cout << "  else:" << endl;
   cout << "    raise TypeError(" <<"\"'copy_all_inputs\' must have type "
       << "\'bool'!\")" << endl;
@@ -213,7 +213,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     const util::ParamData& d = parameters.at(outputOptions[i]);
-    cout << "  IO.SetPassed(<const string> '" << d.name << "')" << endl;
+    cout << "  CLI.SetPassed(<const string> '" << d.name << "')" << endl;
   }
 
   // Call the method.
@@ -236,7 +236,7 @@ void PrintPYX(const ProgramDoc& programInfo,
 
   // Clear the parameters.
   cout << endl;
-  cout << "  IO.ClearSettings()" << endl;
+  cout << "  CLI.ClearSettings()" << endl;
   cout << endl;
 
   cout << "  return result" << endl;

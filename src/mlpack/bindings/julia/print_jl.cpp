@@ -109,7 +109,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   cout << endl;
 
   // If we have any model types, we need to define functions to set and get
-  // their values from the IO object.  We do this with the PrintParamDefn()
+  // their values from the CLI object.  We do this with the PrintParamDefn()
   // function.  We'll gather all names of classes we've done this with, so that
   // we don't print any duplicates.  This should all be done inside of an
   // internal module.
@@ -245,7 +245,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
       << endl;
   cout << endl;
 
-  // Restore IO settings.
+  // Restore CLI settings.
   cout << "  IORestoreSettings(\"" << programName << "\")" << endl;
   cout << endl;
 

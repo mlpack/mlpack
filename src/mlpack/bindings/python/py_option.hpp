@@ -52,7 +52,7 @@ class PyOption
            const bool noTranspose = false,
            const std::string& /*testName*/ = "")
   {
-    // Create the ParamData object to give to IO.
+    // Create the ParamData object to give to CLI.
     util::ParamData data;
 
     data.desc = description;

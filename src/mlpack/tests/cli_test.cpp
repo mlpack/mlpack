@@ -2,7 +2,7 @@
  * @file tests/cli_test.cpp
  * @author Matthew Amidon, Ryan Curtin
  *
- * Test for the IO input parameter system.
+ * Test for the CLI input parameter system.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -38,7 +38,7 @@ using namespace mlpack::data;
 using namespace mlpack::bindings::cmd;
 using namespace std;
 
-// When we run these tests, we have to nuke the existing IO object that's
+// When we run these tests, we have to nuke the existing CLI object that's
 // created by default.
 struct IOTestDestroyer
 {
@@ -48,15 +48,15 @@ struct IOTestDestroyer
 BOOST_FIXTURE_TEST_SUITE(IOTest, IOTestDestroyer);
 
 /**
- * Before running a test that uses the IO options, we have to add the default
- * options that are required for IO to function, since it will be destroyed at
- * the end of every test that uses IO in this test suite.
+ * Before running a test that uses the CLI options, we have to add the default
+ * options that are required for CLI to function, since it will be destroyed at
+ * the end of every test that uses CLI in this test suite.
  */
 void AddRequiredIOOptions()
 {
   CLI::ClearSettings();
 
-  // These will register with IO immediately.
+  // These will register with CLI immediately.
   IOOption<bool> help(false, "help", "Default help info.", "h", "bool");
   IOOption<string> info("", "info", "Get help on a specific module or option.",
       "", "string");
@@ -68,7 +68,7 @@ void AddRequiredIOOptions()
 }
 
 /**
- * Tests that IO works as intended, namely that CLI::Add propagates
+ * Tests that CLI works as intended, namely that CLI::Add propagates
  * successfully.
  */
 BOOST_AUTO_TEST_CASE(TestIOAdd)
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(TestOption)
 {
   AddRequiredIOOptions();
 
-  // This test will involve creating an option, and making sure IO reflects
+  // This test will involve creating an option, and making sure CLI reflects
   // this.
   PARAM_IN(int, "test_parent/test", "test desc", "", 42, false);
 
@@ -156,7 +156,7 @@ BOOST_AUTO_TEST_CASE(TestBooleanOption)
 
   BOOST_REQUIRE_EQUAL(CLI::HasParam("flag_test"), false);
 
-  // Now check that IO reflects that it is false by default.
+  // Now check that CLI reflects that it is false by default.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("flag_test"), false);
 
   // Now, if we specify this flag, it should be true.
@@ -905,7 +905,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   EndProgram();
   CLI::ClearSettings();
 
-  // Now create a new IO object and load it.
+  // Now create a new CLI object and load it.
   AddRequiredIOOptions();
 
   PARAM_MODEL_IN(GaussianKernel, "kernel", "Test kernel", "k");

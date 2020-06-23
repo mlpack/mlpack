@@ -595,7 +595,7 @@ inline std::string ProgramCall(const std::string& programName)
 
 /**
  * Print what a user would type to invoke the given option name.  Note that the
- * name *must* exist in the IO module.  (Note that because of the way
+ * name *must* exist in the CLI module.  (Note that because of the way
  * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()
  * declarataions need to come before the PROGRAM_INFO() declaration.)
  */
@@ -606,7 +606,7 @@ inline std::string ParamString(const std::string& paramName)
   std::string s;
   if (BindingInfo::Language() == "cli")
   {
-    // The IO bindings put a '' around the parameter, so skip that...
+    // The CLI bindings put a '' around the parameter, so skip that...
     s = cli::ParamString(paramName);
   }
   else if (BindingInfo::Language() == "python")

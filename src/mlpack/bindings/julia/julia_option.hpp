@@ -39,7 +39,7 @@ class JuliaOption
  public:
   /**
    * Construct a JuliaOption object.  When constructed, it will register itself
-   * with IO. The testName parameter is not used and added for compatibility
+   * with CLI. The testName parameter is not used and added for compatibility
    * reasons.
    */
   JuliaOption(const T defaultValue,
@@ -52,7 +52,7 @@ class JuliaOption
               const bool noTranspose = false,
               const std::string& /* testName */ = "")
   {
-    // Create the ParamData object to give to IO.
+    // Create the ParamData object to give to CLI.
     util::ParamData data;
 
     data.desc = description;

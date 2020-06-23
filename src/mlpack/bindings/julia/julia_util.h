@@ -3,7 +3,7 @@
  * @author Ryan Curtin
  *
  * Some utility functions in C that can be called from Julia with ccall() in
- * order to interact with the IO interface.
+ * order to interact with the CLI interface.
  */
 #ifndef MLPACK_BINDINGS_JULIA_JULIA_UTIL_H
 #define MLPACK_BINDINGS_JULIA_JULIA_UTIL_H
@@ -284,7 +284,7 @@ void IO_DisableVerbose();
 void IO_ResetTimers();
 
 /**
- * Set an argument as passed to the IO object.
+ * Set an argument as passed to the CLI object.
  */
 void IO_SetPassed(const char* paramName);
 

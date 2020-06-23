@@ -359,7 +359,7 @@ static void mlpackMain()
           << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
       model->Classify(testSet, predictions, decisionBoundary);
 
-      // The IO param "output" is deprecated and replaced by "predictions"
+      // The CLI param "output" is deprecated and replaced by "predictions"
       // "output" parameter will be removed in mlpack 4.
       if (CLI::HasParam("predictions"))
         CLI::GetParam<arma::Row<size_t>>("predictions") = predictions;
@@ -367,7 +367,7 @@ static void mlpackMain()
         CLI::GetParam<arma::Row<size_t>>("output") = std::move(predictions);
     }
 
-    // The IO param "output_probabilities" is deprecated
+    // The CLI param "output_probabilities" is deprecated
     // and replaced by "probabilities"
     // "output_probabilities" parameter will be removed in mlpack 4.
     if (CLI::HasParam("output_probabilities") || CLI::HasParam("probabilities"))

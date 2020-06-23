@@ -42,7 +42,7 @@ void PrintOutputProcessing(
     /**
      * This gives us code like:
      *
-     * result = IO.GetParam[int]('param_name')
+     * result = CLI.GetParam[int]('param_name')
      */
     std::cout << prefix << "result = " << "IO.GetParam[" << GetCythonType<T>(d)
         << "](\"" << d.name << "\")";
@@ -61,9 +61,9 @@ void PrintOutputProcessing(
     /**
      * This gives us code like:
      *
-     * result['param_name'] = IO.GetParam[int]('param_name')
+     * result['param_name'] = CLI.GetParam[int]('param_name')
      */
-    std::cout << prefix << "result['" << d.name << "'] = IO.GetParam["
+    std::cout << prefix << "result['" << d.name << "'] = CLI.GetParam["
         << GetCythonType<T>(d) << "](\"" << d.name << "\")" << std::endl;
     if (GetCythonType<T>(d) == "string")
     {

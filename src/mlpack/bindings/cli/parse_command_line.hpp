@@ -30,7 +30,7 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 PARAM_FLAG("version", "Display the version of mlpack.", "V");
 
 /**
- * Parse the command line, setting all of the options inside of the IO object
+ * Parse the command line, setting all of the options inside of the CLI object
  * to their appropriate given values.
  */
 void ParseCommandLine(int argc, char** argv)

@@ -88,7 +88,7 @@ void PrintInputProcessing(
     else
       std::cout << name;
     std::cout << ")" << std::endl;
-    std::cout << prefix << "    IO.SetPassed(<const string> '" << d.name
+    std::cout << prefix << "    CLI.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
 
     // If this parameter is "verbose", then enable verbose output.
@@ -136,7 +136,7 @@ void PrintInputProcessing(
     else
       std::cout << name;
     std::cout << ")" << std::endl;
-    std::cout << prefix << "    IO.SetPassed(<const string> '"
+    std::cout << prefix << "    CLI.SetPassed(<const string> '"
         << d.name << "')" << std::endl;
 
     if (GetPrintableType<T>(d) == "bool")
@@ -206,7 +206,7 @@ void PrintInputProcessing(
     else
       std::cout << d.name;
     std::cout << ")" << std::endl;
-    std::cout << prefix << "        IO.SetPassed(<const string> '" << d.name
+    std::cout << prefix << "        CLI.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
     std::cout << prefix << "      else:" << std::endl;
     std::cout << prefix << "        raise TypeError(" <<"\"'"<< d.name
@@ -232,7 +232,7 @@ void PrintInputProcessing(
     else
       std::cout << d.name;
     std::cout << ")" << std::endl;
-    std::cout << prefix << "      IO.SetPassed(<const string> '" << d.name
+    std::cout << prefix << "      CLI.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
     std::cout << prefix << "    else:" << std::endl;
     std::cout << prefix << "      raise TypeError(" <<"\"'"<< d.name
@@ -294,7 +294,7 @@ void PrintInputProcessing(
       std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
           << "](<const string> '" << d.name << "', dereference("
           << d.name << "_mat))"<< std::endl;
-      std::cout << prefix << "  IO.SetPassed(<const string> '" << d.name
+      std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name
           << "')" << std::endl;
       std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
     }
@@ -314,7 +314,7 @@ void PrintInputProcessing(
       std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
           << "](<const string> '" << d.name << "', dereference("
           << d.name << "_mat))"<< std::endl;
-      std::cout << prefix << "  IO.SetPassed(<const string> '" << d.name
+      std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name
           << "')" << std::endl;
       std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
     }
@@ -412,10 +412,10 @@ void PrintInputProcessing(
         << strippedType << "Type':" << std::endl;
     std::cout << prefix << "      SetParamPtr[" << strippedType << "]('"
         << d.name << "', (<" << strippedType << "Type> " << d.name
-        << ").modelptr, IO.HasParam('copy_all_inputs'))" << std::endl;
+        << ").modelptr, CLI.HasParam('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "    else:" << std::endl;
     std::cout << prefix << "      raise e" << std::endl;
-    std::cout << prefix << "  IO.SetPassed(<const string> '" << d.name << "')"
+    std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name << "')"
         << std::endl;
   }
   else
@@ -483,7 +483,7 @@ void PrintInputProcessing(
     std::cout << prefix << "  SetParamWithInfo[arma.Mat[double]](<const "
         << "string> '" << d.name << "', dereference(" << d.name << "_mat), "
         << "<const cbool*> " << d.name << "_dims.data)" << std::endl;
-    std::cout << prefix << "  IO.SetPassed(<const string> '" << d.name
+    std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
     std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
   }

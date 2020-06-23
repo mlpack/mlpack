@@ -35,7 +35,7 @@ class MDOption
  public:
   /**
    * Construct an MDOption object.  When constructed, it will register itself
-   * with IO. The testName parameter is not used and added for compatibility
+   * with CLI. The testName parameter is not used and added for compatibility
    * reasons.
    */
   MDOption(const T defaultValue,
@@ -48,7 +48,7 @@ class MDOption
            const bool noTranspose = false,
            const std::string& bindingName = "")
   {
-    // Create the ParamData object to give to IO.
+    // Create the ParamData object to give to CLI.
     util::ParamData data;
 
     data.desc = description;
@@ -60,7 +60,7 @@ class MDOption
     data.required = required;
     data.input = input;
     data.loaded = false;
-    // Several options from Python and IO bindings are persistent.
+    // Several options from Python and CLI bindings are persistent.
     if (identifier == "verbose" || identifier == "copy_all_inputs" ||
         identifier == "help" || identifier == "info" || identifier == "version")
       data.persistent = true;
