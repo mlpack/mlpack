@@ -52,8 +52,7 @@ double BayesianLinearRegression::Train(const arma::mat& data,
   const arma::mat eigVecInv = inv(eigVec);
   const arma::colvec eigVecInvPhitT = eigVecInv * phi * t.t();
 
-  // Initialize the hyperparameters and
-  // begin with an infinitely broad prior.
+  // Initialize the hyperparameters and begin with an infinitely broad prior.
   alpha = 1e-6;
   beta =  1 / (var(t, 1) * 0.1);
 
