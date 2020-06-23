@@ -32,13 +32,15 @@ namespace cmd {
  */
 template<typename T>
 void AddToPO(const std::string& cliName,
-             const std::string& descr,
+             util::ParamData& param,
              CLI::App& app,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
-  T value;
-  app.add_option(cliName.c_str(), value, descr.c_str());
+  app.add_option(cliName.c_str(), [param](const T& value){
+    param.value = value;
+    param.wasPassed = true;
+  }, param.desc.c_str());
 }
 
 /**
@@ -51,13 +53,15 @@ void AddToPO(const std::string& cliName,
  */
 template<typename T>
 void AddToPO(const std::string& cliName,
-             const std::string& descr,
+             util::ParamData& param,
              CLI::App& app,
              const typename boost::enable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
-  T container;
-  app.add_option(cliName.c_str(), container, descr.c_str());
+  app.add_option_function(cliName.c_str(), [param](const T& value){
+    param.value = value;
+    param.wasPassed = true;
+  }, param.desc.c_str());
 }
 
 /**
@@ -69,14 +73,15 @@ void AddToPO(const std::string& cliName,
  */
 template<typename T>
 void AddToPO(const std::string& cliName,
-             const std::string& descr,
+             util::ParamData& param,
              CLI::App& app,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
 {
-  bool flag; // Seems to be the prefered way,
-  // Template substitution fais without it, why??
-  app.add_flag(cliName.c_str(), flag, descr.c_str());
+  app.add_flag_function(cliName.c_str(), [param](const T& value){
+    param.value = value;
+    param.wasPassed = true;
+  }, param.desc.c_str());
 }
 
 /**
@@ -88,7 +93,7 @@ void AddToPO(const std::string& cliName,
  * @param output Void pointer to options_description object.
  */
 template<typename T>
-void AddToPO(const util::ParamData& d,
+void AddToPO(util::ParamData& param,
              const void* /* input */,
              void* output)
 {
@@ -97,14 +102,14 @@ void AddToPO(const util::ParamData& d,
 
   // Generate the name to be given to CLI11.
   const std::string mappedName =
-      MapParameterName<typename std::remove_pointer<T>::type>(d.name);
-  std::string boostName = (d.alias != '\0') ?
-  "-" + std::string(1, d.alias) + ",--" + mappedName : "--" + mappedName;
+      MapParameterName<typename std::remove_pointer<T>::type>(param.name);
+  std::string cliName = (param.alias != '\0') ?
+  "-" + std::string(1, param.alias) + ",--" + mappedName : "--" + mappedName;
 
   // Note that we have to add the option as type equal to the mapped type, not
   // the true type of the option.
   AddToPO<typename ParameterType<typename std::remove_pointer<T>::type>::type>(
-      boostName, d.desc, *app);
+      cliName, param, *app);
 }
 
 } // namespace cmd
