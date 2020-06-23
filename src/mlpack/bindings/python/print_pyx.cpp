@@ -47,7 +47,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   vector<string> inputOptions, outputOptions;
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (d.input && d.required)
     {
       // Ignore some parameters.
@@ -63,7 +63,7 @@ void PrintPYX(const ProgramDoc& programInfo,
 
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (d.input && !d.required &&
         d.name != "help" && d.name != "info" &&
         d.name != "version")
@@ -103,7 +103,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   std::set<std::string> classes;
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (classes.count(d.cppType) == 0)
     {
       const size_t indent = 2;
@@ -120,7 +120,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   // Print any extra class definitions we might need.
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (d.input)
       IO::GetSingleton().functionMap[d.tname]["PrintClassDefn"](d, NULL, NULL);
   }
@@ -130,7 +130,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   size_t indent = 4 /* 'def ' */ + functionName.size() + 1 /* '(' */;
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(inputOptions[i]);
+    util::ParamData& d = parameters.at(inputOptions[i]);
 
     if (i != 0)
       cout << "," << endl << std::string(indent, ' ');
@@ -151,7 +151,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << endl;
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(inputOptions[i]);
+    util::ParamData& d = parameters.at(inputOptions[i]);
 
     cout << "  ";
     size_t indent = 4;
@@ -164,7 +164,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << endl;
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(outputOptions[i]);
+    util::ParamData& d = parameters.at(outputOptions[i]);
 
     cout << "  ";
     size_t indent = 4;
@@ -201,7 +201,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   // Do any input processing.
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(inputOptions[i]);
+    util::ParamData& d = parameters.at(inputOptions[i]);
 
     size_t indent = 2;
     IO::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
@@ -212,7 +212,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "  # Mark all output options as passed." << endl;
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(outputOptions[i]);
+    util::ParamData& d = parameters.at(outputOptions[i]);
     cout << "  IO.SetPassed(<const string> '" << d.name << "')" << endl;
   }
 
@@ -227,7 +227,7 @@ void PrintPYX(const ProgramDoc& programInfo,
 
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(outputOptions[i]);
+    util::ParamData& d = parameters.at(outputOptions[i]);
 
     std::tuple<size_t, bool> t = std::make_tuple(2, false);
     IO::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,

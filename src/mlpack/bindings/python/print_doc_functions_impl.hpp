@@ -90,7 +90,7 @@ inline std::string PrintDefault(const std::string& paramName)
   if (IO::Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter " + paramName + "!");
 
-  const util::ParamData& d = IO::Parameters()[paramName];
+  util::ParamData& d = IO::Parameters()[paramName];
 
   std::string defaultValue;
   IO::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL,
@@ -116,7 +116,7 @@ std::string PrintInputOptions(const std::string& paramName,
   std::string result = "";
   if (IO::Parameters().count(paramName) > 0)
   {
-    const util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = IO::Parameters()[paramName];
     if (d.input)
     {
       // Print the input option.
@@ -159,7 +159,7 @@ std::string PrintOutputOptions(const std::string& paramName,
   std::string result = "";
   if (IO::Parameters().count(paramName) > 0)
   {
-    const util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = IO::Parameters()[paramName];
     if (!d.input)
     {
       // Print a new line for the output option.

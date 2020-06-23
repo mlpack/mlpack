@@ -27,7 +27,7 @@ namespace python {
  */
 template<typename T>
 void PrintOutputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const bool onlyOutput,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
@@ -83,7 +83,7 @@ void PrintOutputProcessing(
  */
 template<typename T>
 void PrintOutputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const bool onlyOutput,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
@@ -125,7 +125,7 @@ void PrintOutputProcessing(
  */
 template<typename T>
 void PrintOutputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const bool onlyOutput,
     const typename boost::enable_if<std::is_same<T,
@@ -167,7 +167,7 @@ void PrintOutputProcessing(
  */
 template<typename T>
 void PrintOutputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const bool onlyOutput,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
@@ -202,7 +202,7 @@ void PrintOutputProcessing(
     for (auto it = parameters.begin(); it != parameters.end(); ++it)
     {
       // Is it an input parameter of the same type?
-      const util::ParamData& data = it->second;
+      util::ParamData& data = it->second;
       if (data.input && data.cppType == d.cppType && data.required)
       {
         std::cout << prefix << "if (<" << strippedType
@@ -251,7 +251,7 @@ void PrintOutputProcessing(
     for (auto it = parameters.begin(); it != parameters.end(); ++it)
     {
       // Is it an input parameter of the same type?
-      const util::ParamData& data = it->second;
+      util::ParamData& data = it->second;
       if (data.input && data.cppType == d.cppType && data.required)
       {
         std::cout << prefix << "if (<" << strippedType << "Type> result['"
@@ -295,7 +295,7 @@ void PrintOutputProcessing(
  * @param * (output) Unused parameter.
  */
 template<typename T>
-void PrintOutputProcessing(const util::ParamData& d,
+void PrintOutputProcessing(util::ParamData& d,
                            const void* input,
                            void* /* output */)
 {
