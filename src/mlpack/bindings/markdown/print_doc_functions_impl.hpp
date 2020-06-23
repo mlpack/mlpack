@@ -407,7 +407,7 @@ inline std::string PrintDefault(const std::string& paramName)
   if (CLI::Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter" + paramName + "!");
 
-  const util::ParamData& d = CLI::Parameters()[paramName];
+  util::ParamData& d = CLI::Parameters()[paramName];
 
   std::ostringstream oss;
 
@@ -633,7 +633,7 @@ inline std::string ParamString(const std::string& paramName)
 /**
  * Print the user-encountered type of an option.
  */
-inline std::string ParamType(const util::ParamData& d)
+inline std::string ParamType(util::ParamData& d)
 {
   std::string output;
   CLI::GetSingleton().functionMap[d.tname]["GetPrintableType"](d, NULL,

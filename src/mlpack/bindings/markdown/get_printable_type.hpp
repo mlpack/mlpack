@@ -29,7 +29,7 @@ namespace markdown {
  * depends on the current setting of BindingInfo::Language().
  */
 template<typename T>
-void GetPrintableType(const util::ParamData& data,
+void GetPrintableType(util::ParamData& data,
                       const void* /* input */,
                       void* output)
 {
@@ -65,7 +65,7 @@ void GetPrintableType(const util::ParamData& data,
  * setting of BindingInfo::Language().
  */
 template<typename T>
-std::string GetPrintableType(const util::ParamData& data)
+std::string GetPrintableType(util::ParamData& data)
 {
   std::string output;
   GetPrintableType<T>(data, (void*) NULL, (void*) &output);
