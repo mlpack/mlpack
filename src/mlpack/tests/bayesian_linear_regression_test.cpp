@@ -191,5 +191,4 @@ BOOST_AUTO_TEST_CASE(EqualtoRidge)
   }
 }
 
-
 BOOST_AUTO_TEST_SUITE_END();
