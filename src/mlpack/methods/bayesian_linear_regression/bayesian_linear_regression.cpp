@@ -161,7 +161,7 @@ void BayesianLinearRegression::CenterScaleDataPred(
     arma::mat& dataProc) const
 {
   if (!centerData && !scaleData)
-  dataProc = data;
+    dataProc = data;
 
   else if (centerData && !scaleData)
     dataProc = data.each_col() - dataOffset;
