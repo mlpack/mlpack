@@ -10,6 +10,12 @@ else()
   set(OLD_FILE_CONTENTS "")
 endif()
 
+if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+  set(ARMA_HAS_64BIT_WORD 0)
+else()
+  set(ARMA_HAS_64BIT_WORD 1)
+endif()
+
 # Now use the value we gathered to generate the new file contents.
 if(ARMA_HAS_64BIT_WORD EQUAL 0)
   set(ARMA_64BIT_WORD_DEFINE "#define MLPACK_ARMA_NO64BIT_WORD")

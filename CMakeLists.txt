@@ -248,11 +248,6 @@ endif()
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
 find_package(Armadillo 8.400.0 REQUIRED)
-if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-  set(ARMA_HAS_64BIT_WORD 0)
-else()
-  set(ARMA_HAS_64BIT_WORD 1)
-endif()
 
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
