@@ -20,11 +20,9 @@
 #include "print_defn_input.hpp"
 #include "print_defn_output.hpp"
 #include "print_doc.hpp"
-#include "print_import_decl.hpp"
 #include "print_input_processing.hpp"
 #include "print_method_config.hpp"
 #include "print_method_init.hpp"
-#include "print_model_util.hpp"
 #include "print_output_processing.hpp"
 
 namespace mlpack {
@@ -103,13 +101,6 @@ class GoOption
 
     CLI::GetSingleton().functionMap[data.tname]["DefaultParam"] =
         &DefaultParam<T>;
-
-    CLI::GetSingleton().functionMap[data.tname]["PrintModelUtilCPP"] =
-        &PrintModelUtilCPP<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintModelUtilH"] =
-        &PrintModelUtilH<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintModelUtilGo"] =
-        &PrintModelUtilGo<T>;
     CLI::GetSingleton().functionMap[data.tname]["PrintDefnInput"] =
         &PrintDefnInput<T>;
     CLI::GetSingleton().functionMap[data.tname]["PrintDefnOutput"] =
@@ -121,8 +112,6 @@ class GoOption
         &PrintMethodConfig<T>;
     CLI::GetSingleton().functionMap[data.tname]["PrintMethodInit"] =
         &PrintMethodInit<T>;
-    CLI::GetSingleton().functionMap[data.tname]["ImportDecl"] =
-        &ImportDecl<T>;
     CLI::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
         &PrintInputProcessing<T>;
     CLI::GetSingleton().functionMap[data.tname]["GetType"] = &GetType<T>;

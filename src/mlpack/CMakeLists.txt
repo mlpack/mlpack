@@ -156,6 +156,29 @@ if (BUILD_JULIA_BINDINGS)
       "\nend\ninclude(\"functions.jl\")\ninclude(\"serialization.jl\")\nend\n")
 endif ()
 
+
+# If we are building Go bindings, we have to end the 'module' declaration in
+# models.go
+if (BUILD_GO_BINDINGS)
+  file(APPEND
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/models.go"
+      "*/\n"
+      "import \"C\"\n\n"
+      "import (\n"
+      "  \"runtime\"\n"
+      "  \"unsafe\"\n"
+      ")\n\n")
+
+  include("${CMAKE_SOURCE_DIR}/CMake/go/AppendModel.cmake")
+  # Read list content.
+  get_property(MODELS GLOBAL PROPERTY GO_MODELS)
+  foreach (models IN LISTS MODELS)
+    append_model(
+        "${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/models.go"
+         ${models})
+  endforeach()
+endif()
+
 # If we are building Markdown documentation, we have to run some setup after we
 # recurse into methods/.  If not, this function is empty.
 post_markdown_setup()
