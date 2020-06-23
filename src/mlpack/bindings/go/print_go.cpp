@@ -36,8 +36,8 @@ void PrintGo(const util::ProgramDoc& programInfo,
   // Restore parameters.
   IO::RestoreSettings(programInfo.programName);
 
-  const std::map<std::string, util::ParamData>& parameters = IO::Parameters();
-  typedef std::map<std::string, util::ParamData>::const_iterator ParamIter;
+  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  typedef std::map<std::string, util::ParamData>::iterator ParamIter;
 
   // Split into input and output parameters.  Take two passes on the input
   // parameters, so that we get the required ones first.

@@ -269,7 +269,8 @@ std::string PrintOutputOptions(Args... args)
 {
   // Get the list of output options for the binding.
   std::vector<std::string> outputOptions;
-  for (auto it = IO::Parameters().begin(); it != IO::Parameters().end(); ++it)
+  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
     util::ParamData& d = it->second;
     if (!d.input)
@@ -402,7 +403,7 @@ inline std::string ProgramCall(const std::string& programName)
 
   std::ostringstream ossInital;
   // Determine if we have any output options.
-  const std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
   ossInital << "// Initialize optional parameters for " << goProgramName
             << "()." << "\n";
   oss << util::HyphenateString(ossInital.str(), 4);
@@ -410,7 +411,7 @@ inline std::string ProgramCall(const std::string& programName)
   ossOptions << "param := mlpack." << goProgramName << "Options()\n";
   oss << util::HyphenateString(ossOptions.str(), 4);
   std::vector<std::string> outputOptions;
-  for (auto it = IO::Parameters().begin(); it != IO::Parameters().end(); ++it)
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
     util::ParamData& d = it->second;
     if (!d.input)
