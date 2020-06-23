@@ -30,9 +30,9 @@ void PrintJL(const util::ProgramDoc& programInfo,
              const std::string& mlpackJuliaLibSuffix)
 {
   // Restore parameters.
-  CLI::RestoreSettings(programInfo.programName);
+  IO::RestoreSettings(programInfo.programName);
 
-  const map<string, util::ParamData>& parameters = CLI::Parameters();
+  const map<string, util::ParamData>& parameters = IO::Parameters();
   typedef map<string, util::ParamData>::const_iterator ParamIter;
 
   // First, let's get a list of input and output options.  We'll take two passes
@@ -74,7 +74,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
     const util::ParamData& d = it->second;
     if (classNames.count(d.cppType) == 0)
     {
-      CLI::GetSingleton().functionMap[d.tname]["PrintModelTypeImport"](d, NULL,
+      IO::GetSingleton().functionMap[d.tname]["PrintModelTypeImport"](d, NULL,
           NULL);
 
       // Avoid adding this import again.
@@ -109,7 +109,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   cout << endl;
 
   // If we have any model types, we need to define functions to set and get
-  // their values from the CLI object.  We do this with the PrintParamDefn()
+  // their values from the IO object.  We do this with the PrintParamDefn()
   // function.  We'll gather all names of classes we've done this with, so that
   // we don't print any duplicates.  This should all be done inside of an
   // internal module.
@@ -124,7 +124,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
     const util::ParamData& d = it->second;
     if (classNames.count(d.cppType) == 0)
     {
-      CLI::GetSingleton().functionMap[d.tname]["PrintParamDefn"](d, (void*)
+      IO::GetSingleton().functionMap[d.tname]["PrintParamDefn"](d, (void*)
           &functionName, NULL);
 
       // Avoid adding this definition again.
@@ -181,7 +181,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
     std::ostringstream oss;
     oss << " - ";
 
-    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &oss);
+    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &oss);
 
     cout << util::HyphenateString(oss.str(), 6) << endl;
   }
@@ -198,7 +198,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
     std::ostringstream oss;
     oss << " - ";
 
-    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &oss);
+    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &oss);
 
     cout << util::HyphenateString(oss.str(), 6) << endl;
   }
@@ -228,7 +228,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
       cout << "," << endl << string(indent, ' ');
     }
 
-    CLI::GetSingleton().functionMap[d.tname]["PrintInputParam"](d, NULL,
+    IO::GetSingleton().functionMap[d.tname]["PrintInputParam"](d, NULL,
         NULL);
   }
 
@@ -245,8 +245,8 @@ void PrintJL(const util::ProgramDoc& programInfo,
       << endl;
   cout << endl;
 
-  // Restore CLI settings.
-  cout << "  CLIRestoreSettings(\"" << programName << "\")" << endl;
+  // Restore IO settings.
+  cout << "  IORestoreSettings(\"" << programName << "\")" << endl;
   cout << endl;
 
   // Handle each input argument's processing before calling mlpackMain().
@@ -257,16 +257,16 @@ void PrintJL(const util::ProgramDoc& programInfo,
     if (opt != "verbose")
     {
       const util::ParamData& d = parameters.at(opt);
-      CLI::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
+      IO::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
           &functionName, NULL);
     }
   }
 
   // Special handling for verbose output.
   cout << "  if verbose !== nothing && verbose === true" << endl;
-  cout << "    CLIEnableVerbose()" << endl;
+  cout << "    IOEnableVerbose()" << endl;
   cout << "  else" << endl;
-  cout << "    CLIDisableVerbose()" << endl;
+  cout << "    IODisableVerbose()" << endl;
   cout << "  end" << endl;
   cout << endl;
 
@@ -274,7 +274,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   for (const string& opt : outputOptions)
   {
     const util::ParamData& d = parameters.at(opt);
-    cout << "  CLISetPassed(\"" << d.name << "\")" << endl;
+    cout << "  IOSetPassed(\"" << d.name << "\")" << endl;
   }
 
   // Call the program.
@@ -288,7 +288,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     const util::ParamData& d = parameters.at(outputOptions[i]);
-    CLI::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
+    IO::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
         &functionName, NULL);
 
     // Print newlines if we are returning multiple output options.
