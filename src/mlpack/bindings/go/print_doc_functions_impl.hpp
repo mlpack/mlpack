@@ -99,7 +99,7 @@ inline std::string PrintDefault(const std::string& paramName)
   if (IO::Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter " + paramName + "!");
 
-  const util::ParamData& d = IO::Parameters()[paramName];
+  util::ParamData& d = IO::Parameters()[paramName];
 
   std::string defaultValue;
   IO::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL,
@@ -124,7 +124,7 @@ std::string PrintOptionalInputs(const std::string& paramName,
   std::string result = "";
   if (IO::Parameters().count(paramName) > 0)
   {
-    const util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = IO::Parameters()[paramName];
     if (d.input && !d.required)
     {
       std::string goParamName = CamelCase(paramName, false);
@@ -185,7 +185,7 @@ std::string PrintInputOptions(const std::string& paramName,
 
   if (IO::Parameters().count(paramName) > 0)
   {
-    const util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = IO::Parameters()[paramName];
     if (d.input && d.required)
     {
       // Print the input option.
@@ -271,7 +271,7 @@ std::string PrintOutputOptions(Args... args)
   std::vector<std::string> outputOptions;
   for (auto it = IO::Parameters().begin(); it != IO::Parameters().end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (!d.input)
       outputOptions.push_back(it->first);
   }
@@ -412,7 +412,7 @@ inline std::string ProgramCall(const std::string& programName)
   std::vector<std::string> outputOptions;
   for (auto it = IO::Parameters().begin(); it != IO::Parameters().end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (!d.input)
       outputOptions.push_back(it->first);
   }
@@ -508,7 +508,7 @@ inline std::string ParamString(const std::string& paramName)
 template<typename T>
 inline std::string ParamString(const std::string& paramName, const T& value)
 {
-  const util::ParamData& d = IO::Parameters()[paramName];
+  util::ParamData& d = IO::Parameters()[paramName];
   std::ostringstream oss;
   oss << paramName << "="
       << PrintValue(value, d.tname == TYPENAME(std::string));
