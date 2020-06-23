@@ -38,7 +38,7 @@ T& GetParam(util::ParamData& d)
  * @param output Place to store pointer to value.
  */
 template<typename T>
-void GetParam(const util::ParamData& d, const void* /* input */, void* output)
+void GetParam(util::ParamData& d, const void* /* input */, void* output)
 {
   // Cast to the correct type.
   *((T**) output) = &GetParam<T>(const_cast<util::ParamData&>(d));
