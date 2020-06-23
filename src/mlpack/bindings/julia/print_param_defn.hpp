@@ -24,7 +24,7 @@ namespace julia {
  */
 template<typename T>
 void PrintParamDefn(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const std::string& /* programName */,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0)
@@ -37,7 +37,7 @@ void PrintParamDefn(
  */
 template<typename T>
 void PrintParamDefn(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const std::string& /* programName */,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
@@ -49,7 +49,7 @@ void PrintParamDefn(
  */
 template<typename T>
 void PrintParamDefn(
-    const util::ParamData& d,
+    util::ParamData& d,
     const std::string& programName,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
@@ -140,7 +140,7 @@ void PrintParamDefn(
  * function to set a IO parameter of that type to stdout.
  */
 template<typename T>
-void PrintParamDefn(const util::ParamData& d,
+void PrintParamDefn(util::ParamData& d,
                     const void* input,
                     void* /* output */)
 {

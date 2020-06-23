@@ -24,7 +24,7 @@ namespace julia {
  */
 template<typename T>
 void PrintModelTypeImport(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0)
 {
@@ -36,7 +36,7 @@ void PrintModelTypeImport(
  */
 template<typename T>
 void PrintModelTypeImport(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   // Do nothing.
@@ -47,7 +47,7 @@ void PrintModelTypeImport(
  */
 template<typename T>
 void PrintModelTypeImport(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
@@ -63,7 +63,7 @@ void PrintModelTypeImport(
  * function to set a IO parameter of that type to stdout.
  */
 template<typename T>
-void PrintModelTypeImport(const util::ParamData& d,
+void PrintModelTypeImport(util::ParamData& d,
                           const void* /* input */,
                           void* /* output */)
 {

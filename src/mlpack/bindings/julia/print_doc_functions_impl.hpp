@@ -90,7 +90,7 @@ inline std::string PrintDefault(const std::string& paramName)
   if (IO::Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter " + paramName + "!");
 
-  const util::ParamData& d = IO::Parameters()[paramName];
+  util::ParamData& d = IO::Parameters()[paramName];
 
   std::string defaultValue;
   IO::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL, (void*)
@@ -114,7 +114,7 @@ inline std::string CreateInputArguments(const std::string& paramName,
   // We only need to do anything if it is an input option.
   if (IO::Parameters().count(paramName) > 0)
   {
-    const util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = IO::Parameters()[paramName];
     std::ostringstream oss;
 
     if (d.input)
@@ -201,7 +201,7 @@ inline void GetOptions(
   // Determine whether or not the value is required.
   if (IO::Parameters().count(paramName) > 0)
   {
-    const util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = IO::Parameters()[paramName];
 
     if (d.input && input)
     {
@@ -240,7 +240,7 @@ inline std::string PrintInputOptions(Args... args)
   std::vector<std::string> inputOptions;
   for (auto it = IO::Parameters().begin(); it != IO::Parameters().end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (d.input && d.required)
     {
       // Ignore some parameters.
@@ -252,7 +252,7 @@ inline std::string PrintInputOptions(Args... args)
 
   for (auto it = IO::Parameters().begin(); it != IO::Parameters().end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (d.input && !d.required &&
         d.name != "help" && d.name != "info" &&
         d.name != "version")
@@ -270,7 +270,7 @@ inline std::string PrintInputOptions(Args... args)
   bool printedAny = false;
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    const util::ParamData& d = IO::Parameters()[inputOptions[i]];
+    util::ParamData& d = IO::Parameters()[inputOptions[i]];
     // Does this option exist?
     bool found = false;
     size_t index = printedParameters.size();
@@ -329,7 +329,7 @@ inline std::string PrintOutputOptions(Args... args)
   std::vector<std::string> outputOptions;
   for (auto it = IO::Parameters().begin(); it != IO::Parameters().end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (!d.input)
       outputOptions.push_back(it->first);
   }

@@ -73,7 +73,7 @@ inline std::string PrintModel(const std::string& model);
 /**
  * Print the type of a parameter that a user would specify from Julia.
  */
-inline std::string PrintType(const util::ParamData& param);
+inline std::string PrintType(util::ParamData& param);
 
 // Recursion base case.
 inline std::string PrintInputOptions();

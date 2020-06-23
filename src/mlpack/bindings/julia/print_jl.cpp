@@ -40,7 +40,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   vector<string> inputOptions, outputOptions;
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (d.input && d.required)
     {
       // Ignore some parameters.
@@ -56,7 +56,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
 
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (d.input && !d.required &&
         d.name != "help" && d.name != "info" &&
         d.name != "version")
@@ -71,7 +71,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   set<string> classNames;
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (classNames.count(d.cppType) == 0)
     {
       IO::GetSingleton().functionMap[d.tname]["PrintModelTypeImport"](d, NULL,
@@ -121,7 +121,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   classNames.clear();
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (classNames.count(d.cppType) == 0)
     {
       IO::GetSingleton().functionMap[d.tname]["PrintParamDefn"](d, (void*)
@@ -145,7 +145,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
     const string& opt = inputOptions[i];
-    const util::ParamData& d = parameters.at(opt);
+    util::ParamData& d = parameters.at(opt);
 
     if (!defaults && !d.required)
     {
@@ -176,7 +176,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
     const string& opt = inputOptions[i];
-    const util::ParamData& d = parameters.at(opt);
+    util::ParamData& d = parameters.at(opt);
 
     std::ostringstream oss;
     oss << " - ";
@@ -193,7 +193,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     const string& opt = outputOptions[i];
-    const util::ParamData& d = parameters.at(opt);
+    util::ParamData& d = parameters.at(opt);
 
     std::ostringstream oss;
     oss << " - ";
@@ -216,7 +216,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
     const string& opt = inputOptions[i];
-    const util::ParamData& d = parameters.at(opt);
+    util::ParamData& d = parameters.at(opt);
 
     if (!defaults && !d.required)
     {
@@ -256,7 +256,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   {
     if (opt != "verbose")
     {
-      const util::ParamData& d = parameters.at(opt);
+      util::ParamData& d = parameters.at(opt);
       IO::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
           &functionName, NULL);
     }
@@ -273,7 +273,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   // Mark output parameters as passed.
   for (const string& opt : outputOptions)
   {
-    const util::ParamData& d = parameters.at(opt);
+    util::ParamData& d = parameters.at(opt);
     cout << "  IOSetPassed(\"" << d.name << "\")" << endl;
   }
 
@@ -287,7 +287,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   string indentStr(9, ' ');
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(outputOptions[i]);
+    util::ParamData& d = parameters.at(outputOptions[i]);
     IO::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
         &functionName, NULL);
 

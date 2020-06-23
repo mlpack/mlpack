@@ -22,7 +22,7 @@ namespace julia {
  */
 template<typename T>
 void PrintInputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const std::string& functionName,
     const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
     const typename std::enable_if<!std::is_same<T,
@@ -33,7 +33,7 @@ void PrintInputProcessing(
  */
 template<typename T>
 void PrintInputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const std::string& functionName,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<!std::is_same<T,
@@ -44,7 +44,7 @@ void PrintInputProcessing(
  */
 template<typename T>
 void PrintInputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const std::string& functionName,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0,
@@ -57,7 +57,7 @@ void PrintInputProcessing(
  */
 template<typename T>
 void PrintInputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const std::string& functionName,
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
@@ -66,7 +66,7 @@ void PrintInputProcessing(
  * Print the input processing (basically calling IO::GetParam<>()) for a type.
  */
 template<typename T>
-void PrintInputProcessing(const util::ParamData& d,
+void PrintInputProcessing(util::ParamData& d,
                           const void* input,
                           void* /* output */)
 {
