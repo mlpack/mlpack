@@ -106,7 +106,7 @@ void BayesianLinearRegression::Predict(const arma::mat& points,
   arma::mat matX;
   CenterScaleDataPred(points, matX);
   predictions = omega.t() * matX + responsesOffset;
-  // Compute the standard deviation dor each points.
+  // Compute the standard deviation for each point.
   std = sqrt(Variance() + sum((matX % (matCovariance * matX)), 0));
 }
 
