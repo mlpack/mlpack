@@ -23,16 +23,14 @@ using namespace mlpack::util;
 
 PROGRAM_INFO("BayesianLinearRegression",
     // Short description.
-    "An implementation of the bayesian linear regression. This can train a "
-    "Bayesian linear regression model and use that model or a pre-trained "
-    "model to output regression predictions for a test set.",
+    "An implementation of the bayesian linear regression.",
     // Long description.
-    "An implementation of the bayesian linear regression, also known"
-    "as the Bayesian linear regression.\n "
-    "This is a probabilistic view and implementation of the linear regression. "
-    "The final solution is obtained by computing a posterior distribution from "
-    "gaussian likelihood and a zero mean gaussian isotropic prior distribution "
-    "on the solution. "
+    "An implementation of the bayesian linear regression."
+    "\n"
+    "This model is a probabilistic view and implementation of the linear "
+    "regression. The final solution is obtained by computing a posterior "
+    "distribution from gaussian likelihood and a zero mean gaussian isotropic "
+    " prior distribution on the solution. "
     "\n"
     "Optimization is AUTOMATIC and does not require cross validation. "
     "The optimization is performed by maximization of the evidence function. "
@@ -82,8 +80,7 @@ PROGRAM_INFO("BayesianLinearRegression",
     "\n\n"
     "Because the estimator computes a predictive distribution instead of "
     "simple point estimate, the " + PRINT_PARAM_STRING("stds") + " parameter "
-    "allows to save the prediction uncertainties with one standard deviation "
-    "from the mean :"
+    "allows to save the prediction uncertainties: "
     "\n\n" +
     PRINT_CALL("bayesian_linear_regression", "input_model",
                "bayesian_linear_regression_model", "test", "test",
@@ -119,19 +116,19 @@ static void mlpackMain()
   bool scale = CLI::GetParam<bool>("scale");
 
   // Check parameters -- make sure everything given makes sense.
-  RequireOnlyOnePassed({ "input", "input_model" }, true);
+  RequireOnlyOnePassed({"input", "input_model"}, true);
   if (CLI::HasParam("input"))
   {
-    RequireOnlyOnePassed({ "responses" }, true, "if input data is specified, "
+    RequireOnlyOnePassed({"responses"}, true, "if input data is specified, "
         "responses must also be specified");
   }
-  ReportIgnoredParam({{ "input", false }}, "responses");
+  ReportIgnoredParam({{"input", false }}, "responses");
 
-  RequireAtLeastOnePassed({ "predictions", "output_model", "stds" }, false,
+  RequireAtLeastOnePassed({"predictions", "output_model", "stds"}, false,
       "no results will be saved");
 
   // Ignore out_predictions unless test is specified.
-  ReportIgnoredParam({{ "test", false }}, "predictions");
+  ReportIgnoredParam({{"test", false}}, "predictions");
 
   BayesianLinearRegression* bayesLinReg;
   if (CLI::HasParam("input"))
