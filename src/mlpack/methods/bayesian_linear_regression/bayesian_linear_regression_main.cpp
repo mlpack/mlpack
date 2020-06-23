@@ -105,9 +105,8 @@ PARAM_MATRIX_IN("test", "Matrix containing points to regress on (test "
 PARAM_MATRIX_OUT("predictions", "If --test_file is specified, this "
                   "file is where the predicted responses will be saved.", "o");
 
-PARAM_MATRIX_OUT("stds", "If --std_file is specified, this file is where "
-                 "the standard deviations of the predictive distribution will "
-                 "be saved.", "u");
+PARAM_MATRIX_OUT("stds", "If specified, this is where the standard deviations "
+    "of the predictive distribution will be saved.", "u");
 
 PARAM_FLAG("center", "Center the data and fit the intercept if enabled.", "c");
 
