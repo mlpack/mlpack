@@ -107,7 +107,7 @@ class CLIOption
     const std::string cliName = MapParameterName<
         typename std::remove_pointer<N>::type>(identifier);
     std::string progOptId = (alias[0] != '\0') ?
-     "-" + std::string(1, alias[0]) + ",--" + cliName : "--" + cliName;
+        "-" + std::string(1, alias[0]) + ",--" + cliName : "--" + cliName;
 
     // Do a check to ensure that the boost name isn't already in use.
     const std::map<std::string, util::ParamData>& parameters =
