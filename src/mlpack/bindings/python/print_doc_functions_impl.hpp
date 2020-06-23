@@ -228,7 +228,7 @@ inline std::string ProgramCall(const std::string& programName)
   oss << ">>> ";
 
   // Determine if we have any output options.
-  const std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
   bool hasOutput = false;
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
