@@ -444,7 +444,7 @@ inline std::string ProgramCall(const std::string& programName)
   result << "julia> ";
 
   // First, print all output options.
-  const std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
   size_t outputs = 0;
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
