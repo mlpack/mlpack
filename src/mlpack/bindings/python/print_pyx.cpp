@@ -75,10 +75,10 @@ void PrintPYX(const ProgramDoc& programInfo,
   // Now import all the necessary packages.
   cout << "cimport arma" << endl;
   cout << "cimport arma_numpy" << endl;
-  cout << "from cli cimport IO" << endl;
-  cout << "from cli cimport SetParam, SetParamPtr, SetParamWithInfo, "
+  cout << "from io cimport IO" << endl;
+  cout << "from io cimport SetParam, SetParamPtr, SetParamWithInfo, "
       << "GetParamPtr" << endl;
-  cout << "from cli cimport EnableVerbose, DisableVerbose, DisableBacktrace, "
+  cout << "from io cimport EnableVerbose, DisableVerbose, DisableBacktrace, "
       << "ResetTimers, EnableTimers" << endl;
   cout << "from matrix_utils import to_matrix, to_matrix_with_info" << endl;
   cout << "from serialization cimport SerializeIn, SerializeOut" << endl;

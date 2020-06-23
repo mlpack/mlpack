@@ -1,5 +1,5 @@
 /**
- * @file bindings/python/mlpack/cli_util.hpp
+ * @file bindings/python/mlpack/io_util.hpp
  * @author Ryan Curtin
  *
  * Simple function to work around Cython's lack of support for lvalue
