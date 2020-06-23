@@ -18,6 +18,8 @@
 
 #include <mlpack/third_party/CLI/CLI11.hpp>
 
+using namespace CLI;
+
 namespace mlpack {
 namespace bindings {
 namespace cli {
@@ -36,7 +38,7 @@ PARAM_FLAG("version", "Display the version of mlpack.", "V");
 void ParseCommandLine(int argc, char** argv)
 {
   // First, we need to build the CLI11 variables for parsing.
-  CLI::App app;
+  App app;
   app.set_help_flag();
 
   // Go through list of options in order to add them.
@@ -58,7 +60,7 @@ void ParseCommandLine(int argc, char** argv)
   {
     app.parse(argc, argv);
   }
-  catch (const IO::ParseError& pe)
+  catch (const ParseError& pe)
   {
     app.exit(pe);
   }

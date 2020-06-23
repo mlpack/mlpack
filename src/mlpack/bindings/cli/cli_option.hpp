@@ -136,7 +136,7 @@ class CLIOption
              << std::endl;
     }
 
-    CLI::Add(std::move(data));
+    IO::Add(std::move(data));
 
     // Set some function pointers that we need.
     IO::GetSingleton().functionMap[tname]["DefaultParam"] =

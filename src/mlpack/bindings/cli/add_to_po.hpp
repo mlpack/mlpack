@@ -18,11 +18,12 @@
 
 #include <mlpack/third_party/CLI/CLI11.hpp>
 
+using namespace CLI;
+
 namespace mlpack {
 namespace bindings {
 namespace cli {
 
-using namespace CLI;
 /**
  * Add a vector option to CLI11.
  * 
@@ -33,7 +34,7 @@ using namespace CLI;
 template<typename T>
 void AddToPO(const std::string& cliName,
              util::ParamData& param,
-             CLI::App& app,
+             App& app,
              const typename boost::enable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
@@ -56,7 +57,7 @@ void AddToPO(const std::string& cliName,
 template<typename T>
 void AddToPO(const std::string& cliName,
              util::ParamData& param,
-             CLI::App& app,
+             App& app,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
 {
@@ -83,7 +84,7 @@ void AddToPO(util::ParamData& param,
              void* output)
 {
   // Cast CLI::App object.
-  CLI::App* app = (CLI::App*) output;
+  App* app = (App*) output;
 
   // Generate the name to be given to CLI11.
   const std::string mappedName =
