@@ -37,10 +37,7 @@ double BayesianLinearRegression::Train(const arma::mat& data,
   arma::mat eigVec;
 
   // Preprocess the data. Center and scale.
-  responsesOffset = CenterScaleData(data,
-                                    responses,
-                                    phi,
-                                    t);
+  responsesOffset = CenterScaleData(data, responses, phi, t);
 
   if (!arma::eig_sym(eigVal, eigVec, arma::symmatu(phi * phi.t())))
   {
