@@ -12,7 +12,7 @@
  */
 #include "print_go.hpp"
 #include "camel_case.hpp"
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/hyphenate_string.hpp>
 #include <set>
 

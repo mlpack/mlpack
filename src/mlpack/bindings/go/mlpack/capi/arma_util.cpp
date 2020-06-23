@@ -14,7 +14,7 @@
 #include <mlpack/bindings/go/mlpack/capi/arma_util.h>
 #include "arma_util.hpp"
 #include "cli_util.hpp"
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 
 namespace mlpack {
 namespace util {

@@ -12,7 +12,7 @@
  */
 #include <mlpack/bindings/go/mlpack/capi/cli_util.h>
 #include "cli_util.hpp"
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 
 namespace mlpack {
 

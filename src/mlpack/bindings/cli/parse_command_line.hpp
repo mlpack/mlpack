@@ -40,25 +40,25 @@ void ParseCommandLine(int argc, char** argv)
   app.set_help_flag();
 
   // Go through list of options in order to add them.
-  std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
   using ItType = std::map<std::string, util::ParamData>::iterator;
 
   for (ItType it = parameters.begin(); it != parameters.end(); ++it)
   {
     // Add the parameter to desc.
     util::ParamData& d = it->second;
-    CLI::GetSingleton().functionMap[d.tname]["AddToPO"](d, NULL, (void*) &app);
+    IO::GetSingleton().functionMap[d.tname]["AddToPO"](d, NULL, (void*) &app);
   }
 
   // Mark that we did parsing.
-  CLI::GetSingleton().didParse = true;
+  IO::GetSingleton().didParse = true;
 
   // Parse the command line, then place the values in the right place.
   try
   {
     app.parse(argc, argv);
   }
-  catch (const CLI::ParseError& pe)
+  catch (const IO::ParseError& pe)
   {
     app.exit(pe);
   }
@@ -67,15 +67,15 @@ void ParseCommandLine(int argc, char** argv)
   // --info), handle those.
 
   // --version is prioritized over --help.
-  if (CLI::HasParam("version"))
+  if (IO::HasParam("version"))
   {
-    std::cout << CLI::GetSingleton().ProgramName() << ": part of "
+    std::cout << IO::GetSingleton().ProgramName() << ": part of "
         << util::GetVersion() << "." << std::endl;
     exit(0); // Don't do anything else.
   }
 
   // Default help message.
-  if (CLI::HasParam("help"))
+  if (IO::HasParam("help"))
   {
     Log::Info.ignoreInput = false;
     PrintHelp();
@@ -83,10 +83,10 @@ void ParseCommandLine(int argc, char** argv)
   }
 
   // Info on a specific parameter.
-  if (CLI::HasParam("info"))
+  if (IO::HasParam("info"))
   {
     Log::Info.ignoreInput = false;
-    std::string str = CLI::GetParam<std::string>("info");
+    std::string str = IO::GetParam<std::string>("info");
 
     // The info node should always be there, but the user may not have specified
     // anything.
@@ -105,7 +105,7 @@ void ParseCommandLine(int argc, char** argv)
   // if we have not compiled in debugging mode.
   Log::Debug << "Compiled with debugging symbols." << std::endl;
 
-  if (CLI::HasParam("verbose"))
+  if (IO::HasParam("verbose"))
   {
     // Give [INFO ] output.
     Log::Info.ignoreInput = false;
@@ -119,7 +119,7 @@ void ParseCommandLine(int argc, char** argv)
     if (d.required)
     {
       const std::string cliName;
-      CLI::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
+      IO::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
           (void*) &cliName);
 
       if (!app.count(cliName))

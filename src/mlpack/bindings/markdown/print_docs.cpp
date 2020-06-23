@@ -11,7 +11,7 @@
  */
 #include "print_docs.hpp"
 
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/program_doc.hpp>
 #include "binding_info.hpp"
 #include "print_doc_functions.hpp"

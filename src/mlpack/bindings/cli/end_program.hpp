@@ -13,7 +13,7 @@
 #ifndef MLPACK_BINDINGS_CLI_END_PROGRAM_HPP
 #define MLPACK_BINDINGS_CLI_END_PROGRAM_HPP
 
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -26,18 +26,18 @@ namespace cli {
 inline void EndProgram()
 {
   // Stop the CLI timers.
-  CLI::GetSingleton().timer.StopAllTimers();
+  IO::GetSingleton().timer.StopAllTimers();
 
   // Print any output.
-  std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
   for (auto it : parameters)
   {
     util::ParamData& d = it.second;
     if (!d.input)
-      CLI::GetSingleton().functionMap[d.tname]["OutputParam"](d, NULL, NULL);
+      IO::GetSingleton().functionMap[d.tname]["OutputParam"](d, NULL, NULL);
   }
 
-  if (CLI::HasParam("verbose"))
+  if (IO::HasParam("verbose"))
   {
     Log::Info << std::endl << "Execution parameters:" << std::endl;
 
@@ -48,21 +48,21 @@ inline void EndProgram()
       // We can handle strings, ints, bools, doubles.
       util::ParamData& data = it.second;
       std::string cliName;
-      CLI::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
+      IO::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
           NULL, (void*) &cliName);
       Log::Info << "  " << cliName << ": ";
 
       std::string printableParam;
-      CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"](data,
+      IO::GetSingleton().functionMap[data.tname]["GetPrintableParam"](data,
           NULL, (void*) &printableParam);
       Log::Info << printableParam << std::endl;
     }
 
     Log::Info << "Program timers:" << std::endl;
-    for (auto it2 : CLI::GetSingleton().timer.GetAllTimers())
+    for (auto it2 : IO::GetSingleton().timer.GetAllTimers())
     {
       Log::Info << "  " << it2.first << ": ";
-      CLI::GetSingleton().timer.PrintTimer(it2.first);
+      IO::GetSingleton().timer.PrintTimer(it2.first);
     }
   }
 
@@ -75,7 +75,7 @@ inline void EndProgram()
     util::ParamData& data = it.second;
 
     void* result;
-    CLI::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
+    IO::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
         NULL, (void*) &result);
     if (result != NULL && memoryAddresses.count(result) == 0)
       memoryAddresses[result] = &data;
@@ -88,7 +88,7 @@ inline void EndProgram()
   {
     util::ParamData& data = *(it2->second);
 
-    CLI::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
+    IO::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
         NULL, NULL);
 
     ++it2;

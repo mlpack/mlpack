@@ -11,7 +11,7 @@
  */
 #include <mlpack/bindings/julia/julia_util.h>
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <stdint.h>
 
 using namespace mlpack;

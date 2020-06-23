@@ -15,7 +15,7 @@
 
 #include <string>
 
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include "parameter_type.hpp"
 #include "add_to_po.hpp"
 #include "default_param.hpp"
@@ -37,12 +37,12 @@ namespace bindings {
 namespace cli {
 
 /**
- * A static object whose constructor registers a parameter with the CLI class.
- * This should not be used outside of CLI itself, and you should use the
+ * A static object whose constructor registers a parameter with the IO class.
+ * This should not be used outside of IO itself, and you should use the
  * PARAM_FLAG(), PARAM_DOUBLE(), PARAM_INT(), PARAM_STRING(), or other similar
  * macros to declare these objects instead of declaring them directly.
  *
- * @see core/util/cli.hpp, mlpack::CLI
+ * @see core/util/io.hpp, mlpack::IO
  */
 template<typename N>
 class CLIOption
@@ -111,7 +111,7 @@ class CLIOption
 
     // Do a check to ensure that the boost name isn't already in use.
     const std::map<std::string, util::ParamData>& parameters =
-        CLI::Parameters();
+        IO::Parameters();
     if (parameters.count(cliName) > 0)
     {
       // Create a fake Log::Fatal since it may not yet be initialized.
@@ -139,28 +139,28 @@ class CLIOption
     CLI::Add(std::move(data));
 
     // Set some function pointers that we need.
-    CLI::GetSingleton().functionMap[tname]["DefaultParam"] =
+    IO::GetSingleton().functionMap[tname]["DefaultParam"] =
         &DefaultParam<N>;
-    CLI::GetSingleton().functionMap[tname]["OutputParam"] =
+    IO::GetSingleton().functionMap[tname]["OutputParam"] =
         &OutputParam<N>;
-    CLI::GetSingleton().functionMap[tname]["GetPrintableParam"] =
+    IO::GetSingleton().functionMap[tname]["GetPrintableParam"] =
         &GetPrintableParam<N>;
-    CLI::GetSingleton().functionMap[tname]["StringTypeParam"] =
+    IO::GetSingleton().functionMap[tname]["StringTypeParam"] =
         &StringTypeParam<N>;
-    CLI::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
-    CLI::GetSingleton().functionMap[tname]["GetRawParam"] = &GetRawParam<N>;
-    CLI::GetSingleton().functionMap[tname]["AddToPO"] = &AddToPO<N>;
-    CLI::GetSingleton().functionMap[tname]["MapParameterName"] =
+    IO::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
+    IO::GetSingleton().functionMap[tname]["GetRawParam"] = &GetRawParam<N>;
+    IO::GetSingleton().functionMap[tname]["AddToPO"] = &AddToPO<N>;
+    IO::GetSingleton().functionMap[tname]["MapParameterName"] =
         &MapParameterName<N>;
-    CLI::GetSingleton().functionMap[tname]["GetPrintableParamName"] =
+    IO::GetSingleton().functionMap[tname]["GetPrintableParamName"] =
         &GetPrintableParamName<N>;
-    CLI::GetSingleton().functionMap[tname]["GetPrintableParamValue"] =
+    IO::GetSingleton().functionMap[tname]["GetPrintableParamValue"] =
         &GetPrintableParamValue<N>;
-    CLI::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
+    IO::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
         &GetAllocatedMemory<N>;
-    CLI::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
+    IO::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
         &DeleteAllocatedMemory<N>;
-    CLI::GetSingleton().functionMap[tname]["InPlaceCopy"] = &InPlaceCopy<N>;
+    IO::GetSingleton().functionMap[tname]["InPlaceCopy"] = &InPlaceCopy<N>;
   }
 };
 
@@ -170,19 +170,19 @@ class CLIOption
  * the PROGRAM_INFO() macro to declare these objects.  Only one ProgramDoc
  * object should ever exist.
  *
- * @see core/util/cli.hpp, mlpack::CLI
+ * @see core/util/io.hpp, mlpack::IO
  */
 class ProgramDoc
 {
  public:
   /**
    * Construct a ProgramDoc object.  When constructed, it will register itself
-   * with CLI.
+   * with IO.
    *
    * @param programName Short string representing the name of the program.
    * @param documentation Long string containing documentation on how to use the
    *     program and what it is.  No newline characters are necessary; this is
-   *     taken care of by CLI later.
+   *     taken care of by IO later.
    */
   ProgramDoc(const std::string& programName,
              const std::string& documentation);

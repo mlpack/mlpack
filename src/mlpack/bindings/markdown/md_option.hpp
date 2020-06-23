@@ -13,7 +13,7 @@
 #define MLPACK_BINDINGS_MARKDOWN_MD_OPTION_HPP
 
 #include <mlpack/core/util/param_data.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include "default_param.hpp"
 #include "get_param.hpp"
 #include "get_printable_param.hpp"
