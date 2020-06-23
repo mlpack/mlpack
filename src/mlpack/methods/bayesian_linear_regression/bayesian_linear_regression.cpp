@@ -45,7 +45,7 @@ double BayesianLinearRegression::Train(const arma::mat& data,
   if (!arma::eig_sym(eigVal, eigVec, arma::symmatu(phi * phi.t())))
   {
     Log::Fatal << "BayesianLinearRegression::Train(): Eigendecomposition "
-               << "of covariance failed!";
+               << "of covariance failed!" << std::endl;
   }
 
   // Compute this quantities once and for all.
