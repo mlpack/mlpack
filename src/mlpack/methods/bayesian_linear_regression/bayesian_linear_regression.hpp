@@ -52,6 +52,7 @@ namespace regression {
  * }
  * @endcode
  *
+ * @code
  * @book{Bishop:2006:PRM:1162264,
  *   author = {Bishop, Christopher M.},
  *   title = {Pattern Recognition and Machine Learning (Information Science 
@@ -62,7 +63,7 @@ namespace regression {
  *   publisher = {Springer-Verlag},
  *   address = {Berlin, Heidelberg},
  * } 
- * @encode
+ * @endcode
  *   
  * Example of use:
  *
