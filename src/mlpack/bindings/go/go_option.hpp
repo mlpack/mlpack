@@ -101,7 +101,7 @@ class GoOption
 
     IO::GetSingleton().functionMap[data.tname]["DefaultParam"] =
         &DefaultParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintDefnInput"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintDefnInput"] =
         &PrintDefnInput<T>;
     IO::GetSingleton().functionMap[data.tname]["PrintDefnOutput"] =
         &PrintDefnOutput<T>;
@@ -112,7 +112,7 @@ class GoOption
         &PrintMethodConfig<T>;
     IO::GetSingleton().functionMap[data.tname]["PrintMethodInit"] =
         &PrintMethodInit<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
         &PrintInputProcessing<T>;
     IO::GetSingleton().functionMap[data.tname]["GetType"] = &GetType<T>;
 
