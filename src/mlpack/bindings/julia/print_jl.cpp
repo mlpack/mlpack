@@ -32,8 +32,8 @@ void PrintJL(const util::ProgramDoc& programInfo,
   // Restore parameters.
   IO::RestoreSettings(programInfo.programName);
 
-  const map<string, util::ParamData>& parameters = IO::Parameters();
-  typedef map<string, util::ParamData>::const_iterator ParamIter;
+  map<string, util::ParamData>& parameters = IO::Parameters();
+  typedef map<string, util::ParamData>::iterator ParamIter;
 
   // First, let's get a list of input and output options.  We'll take two passes
   // so that the required input options are the first in the list.
