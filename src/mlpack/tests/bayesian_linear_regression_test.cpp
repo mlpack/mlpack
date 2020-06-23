@@ -160,10 +160,10 @@ BOOST_AUTO_TEST_CASE(PredictiveUncertainties)
 // Check the solution is equal to the classical ridge.
 BOOST_AUTO_TEST_CASE(EqualtoRidge)
 {
- arma::mat matX;
- arma::rowvec y, blrPred, ridgePred;
+  arma::mat matX;
+  arma::rowvec y, blrPred, ridgePred;
 
- for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 3; ++trial)
   {
     GenerateProblem(matX, y, 100, 10, 1);
 
