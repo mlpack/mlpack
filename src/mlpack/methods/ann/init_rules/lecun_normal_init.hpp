@@ -95,7 +95,7 @@ class LecunNormalInitialization
     // He initialization rule says to initialize weights with random
     // values taken from a gaussian distribution with mean = 0 and
     // standard deviation = sqrt(1 / rows), i.e. variance = (1 / rows).
-    const double variance = 1.0 / ((double) W.n_rows);
+    const double variance = 1.0 / (double) W.n_rows;
 
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty matrix." << std::endl;

@@ -129,7 +129,7 @@ inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W)
   if (W.is_empty())
     Log::Fatal << "Cannot initialize and empty matrix." << std::endl;
 
-  double var = 2.0/double(W.n_rows + W.n_cols);
+  double var = 2.0 / double(W.n_rows + W.n_cols);
   GaussianInitialization normalInit(0.0, var);
   normalInit.Initialize(W, W.n_rows, W.n_cols);
 }
