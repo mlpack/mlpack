@@ -85,8 +85,16 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidKTest)
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["k"].wasPassed = false;
 
-  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("reference", referenceData);
   SetInputParam("k", (int) -1); // Invalid.
+
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+    
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["k"].wasPassed = false;
+  
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("k", (int) 6); // Invalid.
 
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   
@@ -124,7 +132,7 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidKQueryDataTest)
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["k"].wasPassed = false;
 
-  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("reference",  referenceData);
   SetInputParam("k", (int) -1); // Invalid.
 
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -132,9 +140,17 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidKQueryDataTest)
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["k"].wasPassed = false;
   
-  // Testing on empty matrix since referenceData was already moved.
   SetInputParam("reference", std::move(referenceData));
-  SetInputParam("k", (int) 5); // Invalid.
+  SetInputParam("k", (int) 6); // Invalid.
+
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+    
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["k"].wasPassed = false;
+  
+  // Test on empty reference marix since referenceData has been moved.
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("k", (int)  5);
 
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
@@ -294,7 +310,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentLeafSizes)
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
-  // Random input, some k <= number of  top tau %ile reference points.
+  // Random input, some k <= number of top tau %ile reference points.
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 5);
   SetInputParam("leaf_size", (int) 1);
@@ -322,6 +338,117 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentLeafSizes)
   BOOST_CHECK_EQUAL(CLI::GetParam<RANNModel*>("output_model")->LeafSize(),
       (int) 10);
   delete output_model;
+}
+
+/**
+ * Ensure that different tau give different results.
+ */
+BOOST_AUTO_TEST_CASE(KRANNDifferentTau)
+{
+  arma::mat referenceData;
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+
+  // Random input, some k <= number of top tau %ile reference points.
+  SetInputParam("reference", referenceData);
+  SetInputParam("k", (int) 5);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+  
+  RANNModel* output_model;
+  output_model = std::move(CLI::GetParam<RANNModel*>("output_model"));
+  
+  // Reset the passed  parameters.
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+
+  // Changing value of tau and keeping everything else unchanged.
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("k", (int) 5);
+  SetInputParam("tau", (double) 10);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  // Check that initial output matrices and the output matrices using
+  // saved model are equal
+  BOOST_CHECK_EQUAL(output_model->Tau(), (double) 5);
+  BOOST_CHECK_EQUAL(CLI::GetParam<RANNModel*>("output_model")->Tau(),
+        (double) 10);
+  delete output_model;      
+}
+
+/**
+ * Ensure that different alpha give different results.
+ */
+BOOST_AUTO_TEST_CASE(KRANNDifferentAlpha)
+{
+  arma::mat referenceData;
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+
+  // Random input, some k <= number of top tau %ile reference points.
+  SetInputParam("reference", referenceData);
+  SetInputParam("k", (int) 5);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+  
+  RANNModel* output_model;
+  output_model = std::move(CLI::GetParam<RANNModel*>("output_model"));
+  
+  // Reset the passed  parameters.
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+
+  // Changing value of tau and keeping everything else unchanged.
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("k", (int) 5);
+  SetInputParam("alpha", (double) 0.80);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  // Check that initial output matrices and the output matrices using
+  // saved model are equal
+  BOOST_CHECK_EQUAL(output_model->Alpha(), (double) 0.95);
+  BOOST_CHECK_EQUAL(CLI::GetParam<RANNModel*>("output_model")->Alpha(),
+        (double) 0.80);
+  delete output_model;      
+}
+
+/**
+ * Ensure that different tree-type give different results.
+ */
+BOOST_AUTO_TEST_CASE(KRANNDifferentTreeType)
+{
+  arma::mat referenceData;
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+
+  // Random input, some k <= number of top tau %ile reference points.
+  SetInputParam("reference", referenceData);
+  SetInputParam("k", (int) 5);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+  
+  RANNModel* output_model;
+  output_model = std::move(CLI::GetParam<RANNModel*>("output_model"));
+  
+  // Reset the passed  parameters.
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+
+  // Changing value of tau and keeping everything else unchanged.
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("k", (int) 5);
+  SetInputParam("tree_type", (string) "ub");
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  // Check that initial output matrices and the output matrices using
+  // saved model are equal
+  BOOST_CHECK_EQUAL(output_model->TreeType(), 0);
+  BOOST_CHECK_EQUAL(CLI::GetParam<RANNModel*>("output_model")->TreeType(),
+      8);
+  delete output_model;      
 }
 
 /**
