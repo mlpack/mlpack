@@ -59,7 +59,7 @@ bool testAgent(AgentType& agent,
       continue;
     else
       returnList.erase(returnList.begin());
-    
+
     double averageReturn = std::accumulate(returnList.begin(),
         returnList.end(), 0.0) / returnList.size();
 

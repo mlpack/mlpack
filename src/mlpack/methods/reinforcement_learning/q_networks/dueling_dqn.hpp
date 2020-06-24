@@ -80,8 +80,7 @@ class DuelingDQN
              const int h1,
              const int h2,
              const int outputDim,
-             const bool isNoisy = false):
-      completeNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001)),
+             const bool isNoisy = false) :
       isNoisy(isNoisy)
   {
     featureNetwork = new Sequential<>();

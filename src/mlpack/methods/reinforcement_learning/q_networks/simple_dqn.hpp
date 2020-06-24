@@ -50,8 +50,7 @@ class SimpleDQN
             const int h1,
             const int h2,
             const int outputDim,
-            const bool isNoisy = false):
-      network(MeanSquaredError<>(), GaussianInitialization(0, 0.001)),
+            const bool isNoisy = false) :
       isNoisy(isNoisy)
   {
     network.Add(new Linear<>(inputDim, h1));
