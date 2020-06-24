@@ -32,7 +32,7 @@ arma::rowvec SilhouetteScore::SamplesScore(const DataType& distances,
 {
   AssertSizes(distances, labels, "SilhouetteScore::SamplesScore()");
 
-  // Stores the silhouette scores of individual samples
+  // Stores the silhouette scores of individual samples.
   arma::rowvec sampleScores(distances.n_rows);
   // Finds one index per cluster.
   arma::ucolvec clusterLabels = arma::find_unique(labels, false);
