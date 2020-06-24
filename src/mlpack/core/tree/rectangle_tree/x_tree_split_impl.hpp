@@ -1,5 +1,5 @@
 /**
- * @file x_tree_split_impl.hpp
+ * @file core/tree/rectangle_tree/x_tree_split_impl.hpp
  * @author Andrew Wells
  *
  * Implementation of class (XTreeSplit) to split a RectangleTree.

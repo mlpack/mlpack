@@ -1,5 +1,5 @@
 /**
- * @file rectangle_tree_impl.hpp
+ * @file core/tree/rectangle_tree/rectangle_tree_impl.hpp
  * @author Andrew Wells
  *
  * Implementation of generalized rectangle tree.

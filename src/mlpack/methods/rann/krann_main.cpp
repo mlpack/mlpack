@@ -1,5 +1,5 @@
 /**
- * @file allkrann_main.cpp
+ * @file methods/rann/krann_main.cpp
  * @author Parikshit Ram
  *
  * Implementation of the kRANN executable.  Allows some number of standard
@@ -203,7 +203,7 @@ static void mlpackMain()
     rann = CLI::GetParam<RANNModel*>("input_model");
 
     Log::Info << "Using rank-approximate kNN model from '"
-        << CLI::GetPrintableParam<RANNModel>("input_model") << "' (trained on "
+        << CLI::GetPrintableParam<RANNModel*>("input_model") << "' (trained on "
         << rann->Dataset().n_rows << "x" << rann->Dataset().n_cols
         << " dataset)." << endl;
 

@@ -1,5 +1,5 @@
 /**
- * @file init_rules_test.cpp
+ * @file tests/init_rules_test.cpp
  * @author Marcus Edel
  *
  * Tests for the various weight initialize methods.

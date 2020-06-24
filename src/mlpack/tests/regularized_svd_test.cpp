@@ -1,5 +1,5 @@
 /**
- * @file regularized_svd_test.cpp
+ * @file tests/regularized_svd_test.cpp
  * @author Siddharth Agrawal
  *
  * Test the RegularizedSVDFunction class.

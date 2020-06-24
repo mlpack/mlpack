@@ -1,5 +1,5 @@
 /**
- * @file ra_util.cpp
+ * @file methods/rann/ra_util.cpp
  * @author Parikshit Ram
  * @author Ryan Curtin
  *

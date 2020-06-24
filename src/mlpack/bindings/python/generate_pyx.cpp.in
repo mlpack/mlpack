@@ -1,5 +1,5 @@
 /**
- * @file generate_pyx_${PROGRAM_NAME}.cpp
+ * @file python/generate_pyx_${PROGRAM_NAME}.cpp
  * @author Ryan Curtin
  *
  * This is an automatically-generated file that is used to generate the .pyx

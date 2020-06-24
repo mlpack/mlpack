@@ -1,5 +1,5 @@
 /**
- * @file svd_wrapper.hpp
+ * @file methods/cf/svd_wrapper.hpp
  * @author Sumedh Ghaisas
  *
  * Wrapper class for SVD factorizers used for Collaborative Filtering.
@@ -67,6 +67,7 @@ class SVDWrapper
    * CF module.
    *
    * @param V input matrix
+   * @param r rank
    * @param W first unitary matrix
    * @param H second unitary matrix
    *
@@ -85,10 +86,10 @@ class SVDWrapper
 //! add simple typedefs
 typedef SVDWrapper<DummyClass> ArmaSVDFactorizer;
 
-//! include the implementation
-#include "svd_wrapper_impl.hpp"
-
 } // namespace cf
 } // namespace mlpack
+
+//! include the implementation
+#include "svd_wrapper_impl.hpp"
 
 #endif

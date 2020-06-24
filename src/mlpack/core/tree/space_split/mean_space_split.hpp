@@ -1,5 +1,5 @@
 /**
- * @file mean_space_split.hpp
+ * @file core/tree/space_split/mean_space_split.hpp
  * @author Marcos Pividori
  *
  * Definition of MeanSpaceSplit, to create a splitting hyperplane considering

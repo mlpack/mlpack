@@ -1,5 +1,5 @@
 /**
- * @file randomized_svd_test.cpp
+ * @file tests/randomized_svd_test.cpp
  * @author Marcus Edel
  *
  * Test file for the Randomized SVD class.

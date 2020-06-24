@@ -1,5 +1,5 @@
 /**
- * @file rnn.hpp
+ * @file methods/ann/rnn.hpp
  * @author Marcus Edel
  *
  * Definition of the RNN class, which implements recurrent neural networks.

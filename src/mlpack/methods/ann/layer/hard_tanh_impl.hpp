@@ -1,5 +1,5 @@
 /**
- * @file hard_tanh_impl.hpp
+ * @file methods/ann/layer/hard_tanh_impl.hpp
  * @author Dhawal Arora
  *
  * Implementation and implementation of the HardTanH layer.

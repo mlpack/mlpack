@@ -1,5 +1,5 @@
 /**
- * @file arma_traits.hpp
+ * @file core/util/arma_traits.hpp
  * @author Ryan Curtin
  *
  * Some traits used for template metaprogramming (SFINAE) with Armadillo types.

@@ -1,5 +1,5 @@
 /**
- * @file combined_normalization.hpp
+ * @file methods/cf/normalization/combined_normalization.hpp
  * @author Wenhao Huang
  *
  * CombinedNormalization is a class template for performing a sequence of data

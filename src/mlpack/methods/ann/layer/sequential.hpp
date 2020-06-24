@@ -1,5 +1,5 @@
 /**
- * @file sequential.hpp
+ * @file methods/ann/layer/sequential.hpp
  * @author Marcus Edel
  *
  * Definition of the Sequential class, which acts as a feed-forward fully
@@ -18,6 +18,7 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 
 #include "../visitor/delete_visitor.hpp"
+#include "../visitor/copy_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_height_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
@@ -87,6 +88,12 @@ class Sequential
    */
   Sequential(const bool model, const bool ownsLayers);
 
+  //! Copy constructor.
+  Sequential(const Sequential& layer);
+
+  //! Copy assignment operator.
+  Sequential& operator = (const Sequential& layer);
+
   //! Destroy the Sequential object.
   ~Sequential();
 
@@ -105,7 +112,7 @@ class Sequential
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -225,6 +232,9 @@ class Sequential
 
   //! Locally-stored output height visitor.
   OutputHeightVisitor outputHeightVisitor;
+
+  //! Locally-stored copy visitor
+  CopyVisitor<CustomLayers...> copyVisitor;
 
   //! The input width.
   size_t width;

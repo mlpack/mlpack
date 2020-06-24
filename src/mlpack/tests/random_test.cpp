@@ -1,5 +1,5 @@
 /**
- * @file random_test.cpp
+ * @file tests/random_test.cpp
  * @author Konstantin Sidorov
  *
  * Tests for generators of random numbers from math:: namespace.

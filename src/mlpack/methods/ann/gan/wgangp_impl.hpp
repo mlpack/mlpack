@@ -1,5 +1,5 @@
 /**
- * @file wgangp_impl.hpp
+ * @file methods/ann/gan/wgangp_impl.hpp
  * @author Shikhar Jaiswal
  *
  * mlpack is free software; you may redistribute it and/or modify it under the

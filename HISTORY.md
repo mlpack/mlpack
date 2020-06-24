@@ -1,6 +1,46 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Add Silhoutte Score metric and Pairwise Distances (#2406).
+
+  * Add Go bindings for some missed models (#2460).
+
+### mlpack 3.3.2
+###### 2020-06-18
+  * Added Noisy DQN to q_networks (#2446).
+
+  * Add Go bindings (#1884).
+
+  * Added Dueling DQN to q_networks, Noisy linear layer to ann/layer
+    and Empty loss to ann/loss_functions (#2414).
+
+  * Storing and adding accessor method for action in q_learning (#2413).
+
+  * Added accessor methods for ANN layers (#2321).
+
+  * Addition of `Elliot` activation function (#2268).
+
   * Add adaptive max pooling and adaptive mean pooling layers (#2195).
+
+  * Add parameter to avoid shuffling of data in preprocess_split (#2293).
+
+  * Add `MatType` parameter to `LSHSearch`, allowing sparse matrices to be used
+    for search (#2395).
+
+  * Documentation fixes to resolve Doxygen warnings and issues (#2400).
+
+  * Add Load and Save of Sparse Matrix (#2344).
+
+  * Add Intersection over Union (IoU) metric for bounding boxes (#2402).
+
+  * Add Non Maximal Supression (NMS) metric for bounding boxes (#2410).
+
+  * Fix `no_intercept` and probability computation for linear SVM bindings
+    (#2419).
+
+  * Fix incorrect neighbors for `k > 1` searches in `approx_kfn` binding, for
+    the `QDAFN` algorithm (#2448).
+
+  * Add `RBF` layer in ann module to make `RBFN` architecture (#2261).
 
 ### mlpack 3.3.1
 ###### 2020-04-29
@@ -24,6 +64,8 @@
 
 ### mlpack 3.3.0
 ###### 2020-04-07
+  * Added `Normal Distribution` to `ann/dists` (#2382).
+
   * Templated return type of `Forward function` of loss functions (#2339).
 
   * Added `R2 Score` regression metric (#2323).

@@ -131,6 +131,7 @@ Copyright:
   Copyright 2020, Gaurav Singh <gs8763076@gmail.com>
   Copyright 2020, Lakshya Ojha <ojhalakshya@gmail.com>
   Copyright 2020, Bisakh Mondal <bisakhmondal00@gmail.com>
+  Copyright 2020, Benson Muite <benson_muite@emailplus.org>
 
 License: BSD-3-clause
   All rights reserved.

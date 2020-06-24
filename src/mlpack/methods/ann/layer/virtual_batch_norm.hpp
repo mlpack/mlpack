@@ -1,5 +1,5 @@
 /**
- * @file virtual_batch_norm.hpp
+ * @file methods/ann/layer/virtual_batch_norm.hpp
  * @author Saksham Bansal
  *
  * Definition of the VirtualBatchNorm layer class.
@@ -54,7 +54,7 @@ class VirtualBatchNorm
    *
    * @param referenceBatch The data from which the normalization
    *        statistics are computed.
-   * @param size The number of input units.
+   * @param size The number of input units / channels.
    * @param eps The epsilon added to variance to ensure numerical stability.
    */
   template<typename eT>
@@ -81,7 +81,7 @@ class VirtualBatchNorm
   /**
    * Backward pass through the layer.
    *
-   * @param input The input activations.
+   * @param * (input) The input activations.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -93,7 +93,7 @@ class VirtualBatchNorm
   /**
    * Calculate the gradient using the output delta and the input activations.
    *
-   * @param input The input activations.
+   * @param * (input) The input activations.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
@@ -121,6 +121,12 @@ class VirtualBatchNorm
   OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
+
+  //! Get the number of input units.
+  size_t InSize() const { return size; }
+
+  //! Get the epsilon value.
+  double Epsilon() const { return eps; }
 
   /**
    * Serialize the layer.

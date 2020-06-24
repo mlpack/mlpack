@@ -1,5 +1,5 @@
 /**
- * @file nearest_neighbor_sort.hpp
+ * @file methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp
  * @author Ryan Curtin
  *
  * Implementation of the SortPolicy class for NeighborSearch; in this case, the

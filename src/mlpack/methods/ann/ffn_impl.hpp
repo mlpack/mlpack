@@ -1,5 +1,5 @@
 /**
- * @file ffn_impl.hpp
+ * @file methods/ann/ffn_impl.hpp
  * @author Marcus Edel
  *
  * Definition of the FFN class, which implements feed forward neural networks.

@@ -1,5 +1,5 @@
 /**
- * @file akfn_test.cpp
+ * @file tests/akfn_test.cpp
  *
  * Tests for KFN (k-furthest-neighbors) with different values of epsilon.
  *

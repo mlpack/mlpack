@@ -1,5 +1,5 @@
 /**
- * @file one_hot_encoding_impl.hpp
+ * @file core/data/one_hot_encoding_impl.hpp
  * @author Jeffin Sam
  *
  * Implementation of one hot encoding functions; categorical variables as binary

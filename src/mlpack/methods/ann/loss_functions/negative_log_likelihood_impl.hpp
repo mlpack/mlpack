@@ -1,5 +1,5 @@
 /**
- * @file negative_log_likelihood_impl.hpp
+ * @file methods/ann/loss_functions/negative_log_likelihood_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the NegativeLogLikelihood class.

@@ -1,5 +1,5 @@
 /**
- * @file pendulum.hpp
+ * @file methods/reinforcement_learning/environment/pendulum.hpp
  * @author Shashank Shekhar
  *
  * This file is an implementation of Pendulum task:

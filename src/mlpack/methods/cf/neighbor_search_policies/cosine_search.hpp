@@ -1,5 +1,5 @@
 /**
- * @file cosine_search.hpp
+ * @file methods/cf/neighbor_search_policies/cosine_search.hpp
  * @author Wenhao Huang
  *
  * Nearest neighbor search with cosine distance.
@@ -48,7 +48,7 @@ class CosineSearch
    * Constructor with reference set.
    * All vectors in reference set are normalized to unit length.
    *
-   * @param Set of reference points.
+   * @param referenceSet Set of reference points.
    */
   CosineSearch(const arma::mat& referenceSet)
   {
@@ -65,7 +65,7 @@ class CosineSearch
    * @param query A set of query points.
    * @param k Number of neighbors to search.
    * @param neighbors Nearest neighbors.
-   * @param similarites Similarities between query point and its neighbors.
+   * @param similarities Similarities between query point and its neighbors.
    */
   void Search(const arma::mat& query, const size_t k,
               arma::Mat<size_t>& neighbors, arma::mat& similarities)

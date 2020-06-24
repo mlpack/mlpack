@@ -1,5 +1,5 @@
 /**
- * @file vr_class_reward.hpp
+ * @file methods/ann/layer/vr_class_reward.hpp
  * @author Marcus Edel
  *
  * Definition of the VRClassReward class, which implements the variance
@@ -102,6 +102,15 @@ class VRClassReward
    * @param layer The Layer to be added to the model.
    */
   void Add(LayerTypes<> layer) { network.push_back(layer); }
+
+  //! Get the network modules.
+  std::vector<LayerTypes<> >& Model() { return network; }
+
+  //! Get the value of parameter sizeAverage.
+  bool SizeAverage() const { return sizeAverage; }
+
+  //! Get the value of scale parameter.
+  double Scale() const { return scale; }
 
   /**
    * Serialize the layer

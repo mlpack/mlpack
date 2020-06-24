@@ -1,5 +1,5 @@
 /**
- * @file ann_regularizer_test.cpp
+ * @file tests/ann_regularizer_test.cpp
  * @author Saksham Bansal
  *
  * Tests the ANN regularizer modules.

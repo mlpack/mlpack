@@ -1,5 +1,5 @@
 /**
- * @file weight_norm.hpp
+ * @file methods/ann/layer/weight_norm.hpp
  * @author Toshal Agrawal
  *
  * Definition of the WeightNorm layer class.

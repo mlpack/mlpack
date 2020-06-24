@@ -1,5 +1,5 @@
 /**
- * @file rbm_network_test.cpp
+ * @file tests/rbm_network_test.cpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *

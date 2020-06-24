@@ -1,5 +1,5 @@
 /**
- * @file single_tree_traverser.hpp
+ * @file core/tree/rectangle_tree/single_tree_traverser.hpp
  * @author Andrew Wells
  *
  * A nested class of Rectangle Tree for traversing rectangle type trees

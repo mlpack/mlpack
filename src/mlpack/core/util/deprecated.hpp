@@ -1,5 +1,5 @@
 /**
- * @file deprecated.hpp
+ * @file core/util/deprecated.hpp
  * @author Marcos Pividori.
  *
  * Definition of the mlpack_deprecated macro.

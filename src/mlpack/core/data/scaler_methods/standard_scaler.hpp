@@ -1,5 +1,5 @@
 /**
- * @file standard_scaler.hpp
+ * @file core/data/scaler_methods/standard_scaler.hpp
  * @author Jeffin Sam
  *
  * StandardScaler class to scale features.

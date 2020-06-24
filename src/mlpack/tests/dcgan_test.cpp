@@ -1,5 +1,5 @@
 /**
- * @file dcgan_test.cpp
+ * @file tests/dcgan_test.cpp
  * @author Shikhar Jaiswal
  *
  * Tests the DCGAN network.

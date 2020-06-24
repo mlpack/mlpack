@@ -1,5 +1,5 @@
 /**
- * @file knn_main.cpp
+ * @file methods/neighbor_search/knn_main.cpp
  * @author Ryan Curtin
  *
  * Implementation of the kNN executable.  Allows some number of standard

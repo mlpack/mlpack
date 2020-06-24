@@ -1,5 +1,5 @@
 /**
- * @file print_output_processing.hpp
+ * @file bindings/julia/print_output_processing.hpp
  * @author Ryan Curtin
  *
  * Print Julia code to handle output arguments.

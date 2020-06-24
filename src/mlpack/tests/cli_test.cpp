@@ -1,5 +1,5 @@
 /**
- * @file cli_test.cpp
+ * @file tests/cli_test.cpp
  * @author Matthew Amidon, Ryan Curtin
  *
  * Test for the CLI input parameter system.

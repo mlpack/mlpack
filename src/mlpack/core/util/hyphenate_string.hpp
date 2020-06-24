@@ -1,5 +1,5 @@
 /**
- * @file hyphenate_string.hpp
+ * @file core/util/hyphenate_string.hpp
  * @author Ryan Curtin
  *
  * Hyphenate a string.

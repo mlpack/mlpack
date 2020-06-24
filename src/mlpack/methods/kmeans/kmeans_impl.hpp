@@ -1,5 +1,5 @@
 /**
- * @file kmeans_impl.hpp
+ * @file methods/kmeans/kmeans_impl.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Ryan Curtin
  *

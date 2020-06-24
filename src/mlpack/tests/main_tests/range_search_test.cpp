@@ -1,5 +1,5 @@
 /**
- * @file range_search_test.cpp
+ * @file tests/main_tests/range_search_test.cpp
  * @author Niteya Shah
  *
  * Test mlpackMain() of range_search_main.cpp.

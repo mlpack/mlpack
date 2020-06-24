@@ -1,5 +1,5 @@
 /**
- * @file one_hot_encoding.hpp
+ * @file core/data/one_hot_encoding.hpp
  * @author Jeffin Sam
  *
  * One hot encoding functions. The purpose of this function is to convert

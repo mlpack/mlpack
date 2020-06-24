@@ -1,5 +1,5 @@
 /**
- * @file in_place_copy.hpp
+ * @file bindings/cli/in_place_copy.hpp
  * @author Ryan Curtin
  *
  * Use template metaprogramming to set filenames correctly for in-place copy
@@ -23,8 +23,8 @@ namespace cli {
  * This overload is called when nothing special needs to happen to make
  * something an in-place copy.
  *
- * @param d ParamData object to get parameter value from. (Unused.)
- * @param input ParamData object that represents the option we are making a copy
+ * @param * (d) ParamData object to get parameter value from. (Unused.)
+ * @param * (input) ParamData object that represents the option we are making a copy
  *     of. (Unused.)
  */
 template<typename T>
@@ -71,7 +71,7 @@ void InPlaceCopyInternal(
  * @param d Parameter information.
  * @param input Input ParamData we would like be the source of the in-place
  *      copy.
- * @param output Unused parameter.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void InPlaceCopy(const util::ParamData& d,

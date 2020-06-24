@@ -1,5 +1,5 @@
 /**
- * @file mean_squared_logarithmic_error.hpp
+ * @file methods/ann/loss_functions/mean_squared_logarithmic_error.hpp
  * @author Saksham Rastogi
  *
  * Definition of the mean squared logarithmic error function.

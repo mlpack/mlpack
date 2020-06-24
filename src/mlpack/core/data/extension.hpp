@@ -1,5 +1,5 @@
 /**
- * @file extension.hpp
+ * @file core/data/extension.hpp
  * @author Ryan Curtin
  *
  * Given a filename, extract its extension.  This is used by data::Load() and

@@ -1,5 +1,5 @@
 /**
- * @file fastmks_model_impl.hpp
+ * @file methods/fastmks/fastmks_model_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of templated functions of FastMKSModel.

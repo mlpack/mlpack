@@ -1,5 +1,5 @@
 /**
- * @file ann_layer_test.cpp
+ * @file tests/ann_layer_test.cpp
  * @author Marcus Edel
  * @author Praveen Ch
  *
@@ -17,6 +17,7 @@
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 
@@ -122,6 +123,19 @@ BOOST_AUTO_TEST_CASE(GradientAddLayerTest)
 }
 
 /**
+ * Test that the function that can access the outSize parameter of
+ * the Add layer works.
+ */
+BOOST_AUTO_TEST_CASE(AddLayerParametersTest)
+{
+  // Parameter : outSize.
+  Add<> layer(7);
+
+  // Make sure we can get the parameter successfully.
+  BOOST_REQUIRE_EQUAL(layer.OutputSize(), 7);
+}
+
+/**
  * Simple constant module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleConstantLayerTest)
@@ -164,6 +178,19 @@ BOOST_AUTO_TEST_CASE(JacobianConstantLayerTest)
     double error = JacobianTest(module, input);
     BOOST_REQUIRE_LE(error, 1e-5);
   }
+}
+
+/**
+ * Test that the function that can access the outSize parameter of the
+ * Constant layer works.
+ */
+BOOST_AUTO_TEST_CASE(ConstantLayerParametersTest)
+{
+  // Parameter : outSize.
+  Constant<> layer(7);
+
+  // Make sure we can get the parameter successfully.
+  BOOST_REQUIRE_EQUAL(layer.OutSize(), 7);
 }
 
 /**
@@ -403,6 +430,82 @@ BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(10, 10);
       model->Add<Linear<> >(10, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * Simple noisy linear module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleNoisyLinearLayerTest)
+{
+  arma::mat output, input, delta;
+  NoisyLinear<> module(10, 10);
+  module.Parameters().randu();
+  module.Reset();
+
+  // Test the Backward function.
+  module.Backward(input, input, delta);
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+}
+
+/**
+ * Jacobian noisy linear module test.
+ */
+BOOST_AUTO_TEST_CASE(JacobianNoisyLinearLayerTest)
+{
+  const size_t inputElements = math::RandInt(2, 1000);
+  const size_t outputElements = math::RandInt(2, 1000);
+
+  arma::mat input;
+  input.set_size(inputElements, 1);
+
+  NoisyLinear<> module(inputElements, outputElements);
+  module.Parameters().randu();
+
+  double error = JacobianTest(module, input);
+  BOOST_REQUIRE_LE(error, 1e-5);
+}
+
+/**
+ * Noisy Linear layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientNoisyLinearLayerTest)
+{
+  // Noisy linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<NoisyLinear<> >(10, 10);
+      model->Add<NoisyLinear<> >(10, 2);
       model->Add<LogSoftMax<> >();
     }
 
@@ -706,6 +809,20 @@ BOOST_AUTO_TEST_CASE(SimpleSelectLayerTest)
 }
 
 /**
+ * Test that the functions that can access the parameters of the
+ * Select layer work.
+ */
+BOOST_AUTO_TEST_CASE(SelectLayerParametersTest)
+{
+  // Parameter order : index, elements.
+  Select<> layer(3, 5);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer.Index(), 3);
+  BOOST_REQUIRE_EQUAL(layer.NumElements(), 5);
+}
+
+/**
  * Simple join module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleJoinLayerTest)
@@ -841,6 +958,30 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
 }
 
 /**
+ * Test that the functions that can modify and access the parameters of the
+ * LSTM layer work.
+ */
+BOOST_AUTO_TEST_CASE(LSTMLayerParametersTest)
+{
+  // Parameter order : inSize, outSize, rho.
+  LSTM<> layer1(1, 2, 3);
+  LSTM<> layer2(1, 2, 4);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), 1);
+  BOOST_REQUIRE_EQUAL(layer1.OutSize(), 2);
+  BOOST_REQUIRE_EQUAL(layer1.Rho(), 3);
+
+  // Now modify the parameters to match the second layer.
+  layer1.Rho() = 4;
+
+  // Now ensure all the results are the same.
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), layer2.InSize());
+  BOOST_REQUIRE_EQUAL(layer2.OutSize(), layer2.OutSize());
+  BOOST_REQUIRE_EQUAL(layer1.Rho(), layer2.Rho());
+}
+
+/**
  * Test the FastLSTM layer with a user defined rho parameter and without.
  */
 BOOST_AUTO_TEST_CASE(FastLSTMRrhoTest)
@@ -922,6 +1063,30 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
   // approximation of the sigmoid function the estimated gradient is not
   // correct.
   BOOST_REQUIRE_LE(CheckGradient(function), 0.2);
+}
+
+/**
+ * Test that the functions that can modify and access the parameters of the
+ * Fast LSTM layer work.
+ */
+BOOST_AUTO_TEST_CASE(FastLSTMLayerParametersTest)
+{
+  // Parameter order : inSize, outSize, rho.
+  FastLSTM<> layer1(1, 2, 3);
+  FastLSTM<> layer2(1, 2, 4);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), 1);
+  BOOST_REQUIRE_EQUAL(layer1.OutSize(), 2);
+  BOOST_REQUIRE_EQUAL(layer1.Rho(), 3);
+
+  // Now modify the parameters to match the second layer.
+  layer1.Rho() = 4;
+
+  // Now ensure all the results are the same.
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), layer2.InSize());
+  BOOST_REQUIRE_EQUAL(layer2.OutSize(), layer2.OutSize());
+  BOOST_REQUIRE_EQUAL(layer1.Rho(), layer2.Rho());
 }
 
 /**
@@ -1098,6 +1263,30 @@ BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
 }
 
 /**
+ * Test that the functions that can modify and access the parameters of the
+ * GRU layer work.
+ */
+BOOST_AUTO_TEST_CASE(GRULayerParametersTest)
+{
+  // Parameter order : inSize, outSize, rho.
+  GRU<> layer1(1, 2, 3);
+  GRU<> layer2(1, 2, 4);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), 1);
+  BOOST_REQUIRE_EQUAL(layer1.OutSize(), 2);
+  BOOST_REQUIRE_EQUAL(layer1.Rho(), 3);
+
+  // Now modify the parameters to match the second layer.
+  layer1.Rho() = 4;
+
+  // Now ensure all the results are the same.
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), layer2.InSize());
+  BOOST_REQUIRE_EQUAL(layer2.OutSize(), layer2.OutSize());
+  BOOST_REQUIRE_EQUAL(layer1.Rho(), layer2.Rho());
+}
+
+/**
  * Check if the gradients computed by GRU cell are close enough to the
  * approximation of the gradients.
  */
@@ -1208,13 +1397,13 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
 {
   arma::mat output, input, delta, error;
 
-  Linear<> moduleA(10, 10);
-  moduleA.Parameters().randu();
-  moduleA.Reset();
+  Linear<>* moduleA = new Linear<>(10, 10);
+  moduleA->Parameters().randu();
+  moduleA->Reset();
 
-  Linear<> moduleB(10, 10);
-  moduleB.Parameters().randu();
-  moduleB.Reset();
+  Linear<>* moduleB = new Linear<>(10, 10);
+  moduleB->Parameters().randu();
+  moduleB->Reset();
 
   Concat<> module;
   module.Add(moduleA);
@@ -1223,11 +1412,14 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
   // Test the Forward function.
   input = arma::zeros(10, 1);
   module.Forward(input, output);
-  BOOST_REQUIRE_CLOSE(arma::accu(
-      moduleA.Parameters().submat(100, 0, moduleA.Parameters().n_elem - 1, 0)) +
-      arma::accu(moduleB.Parameters().submat(100, 0,
-      moduleB.Parameters().n_elem - 1, 0)),
-      arma::accu(output.col(0)), 1e-3);
+
+  const double sumModuleA = arma::accu(
+      moduleA->Parameters().submat(
+      100, 0, moduleA->Parameters().n_elem - 1, 0));
+  const double sumModuleB = arma::accu(
+      moduleB->Parameters().submat(
+      100, 0, moduleB->Parameters().n_elem - 1, 0));
+  BOOST_REQUIRE_CLOSE(sumModuleA + sumModuleB, arma::accu(output.col(0)), 1e-3);
 
   // Test the Backward function.
   error = arma::zeros(20, 1);
@@ -1253,19 +1445,19 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
 
   input = arma::ones(inputWidth * inputHeight * inputChannel, batch);
 
-  Convolution<> moduleA(inputChannel, outputChannel, kW, kH, 1, 1, 0, 0,
-      inputWidth, inputHeight);
-  Convolution<> moduleB(inputChannel, outputChannel, kW, kH, 1, 1, 0, 0,
-      inputWidth, inputHeight);
+  Convolution<>* moduleA = new Convolution<>(inputChannel, outputChannel,
+      kW, kH, 1, 1, 0, 0, inputWidth, inputHeight);
+  Convolution<>* moduleB = new Convolution<>(inputChannel, outputChannel,
+      kW, kH, 1, 1, 0, 0, inputWidth, inputHeight);
 
-  moduleA.Reset();
-  moduleA.Parameters().randu();
-  moduleB.Reset();
-  moduleB.Parameters().randu();
+  moduleA->Reset();
+  moduleA->Parameters().randu();
+  moduleB->Reset();
+  moduleB->Parameters().randu();
 
   // Compute output of each layer.
-  moduleA.Forward(input, outputA);
-  moduleB.Forward(input, outputB);
+  moduleA->Forward(input, outputA);
+  moduleB->Forward(input, outputB);
 
   arma::cube A(outputA.memptr(), outputWidth, outputHeight, outputChannel);
   arma::cube B(outputB.memptr(), outputWidth, outputHeight, outputChannel);
@@ -1306,7 +1498,7 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
 
     // Compute output of Concat<> layer.
     arma::Row<size_t> inputSize{outputWidth, outputHeight, outputChannel};
-    Concat<> module(inputSize, axis);
+    Concat<> module(inputSize, axis, true);
     module.Add(moduleA);
     module.Add(moduleB);
     module.Forward(input, output);
@@ -1316,6 +1508,22 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
     // Verify if the output reshaped to cubes are similar.
     CheckMatrices(concatOut, calculatedOut, 1e-12);
   }
+  delete moduleA;
+  delete moduleB;
+}
+
+/**
+ * Test that the function that can access the axis parameter of the
+ * Concat layer works.
+ */
+BOOST_AUTO_TEST_CASE(ConcatLayerParametersTest)
+{
+  // Parameter order : inputSize{width, height, channels}, axis, model, run.
+  arma::Row<size_t> inputSize{128, 128, 3};
+  Concat<> layer(inputSize, 2, false, true);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer.ConcatAxis(), 2);
 }
 
 /**
@@ -1479,6 +1687,20 @@ BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
 }
 
 /**
+ * Test that the functions that can access the parameters of the
+ * Lookup layer work.
+ */
+BOOST_AUTO_TEST_CASE(LookupLayerParametersTest)
+{
+  // Parameter order : inSize, outSize.
+  Lookup<> layer(5, 7);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer.InSize(), 5);
+  BOOST_REQUIRE_EQUAL(layer.OutSize(), 7);
+}
+
+/**
  * Simple LogSoftMax module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
@@ -1499,6 +1721,71 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
   module.Backward(input, error, delta);
   BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
       arma::mat("1.6487; 0.6487") - delta)), 1e-3);
+}
+
+/**
+ * Simple Softmax module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleSoftmaxLayerTest)
+{
+  arma::mat input, output, gy, g;
+  Softmax<> module;
+
+  // Test the forward function.
+  input = arma::mat("1.7; 3.6");
+  module.Forward(input, output);
+  BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
+    arma::mat("0.130108; 0.869892") - output)), 1e-4);
+
+  // Test the backward function.
+  gy = arma::zeros(input.n_rows, input.n_cols);
+  gy(0) = 1;
+  module.Backward(output, gy, g);
+  BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
+    arma::mat("0.11318; -0.11318") - g)), 1e-04);
+}
+
+/**
+ * Softmax layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientSoftmaxTest)
+{
+  // Softmax function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::mat("1; 0");
+
+      model = new FFN<MeanSquaredError<>, RandomInitialization>;
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<Linear<> >(10, 10);
+      model->Add<ReLULayer<> >();
+      model->Add<Linear<> >(10, 2);
+      model->Add<Softmax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<MeanSquaredError<> >* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 /*
@@ -1533,6 +1820,38 @@ BOOST_AUTO_TEST_CASE(SimpleBilinearInterpolationLayerTest)
   layer.Backward(output, output, unzoomedOutput);
   CheckMatrices(unzoomedOutput - expectedOutput,
       arma::zeros(input.n_rows), 1e-12);
+}
+
+/**
+ * Test that the functions that can modify and access the parameters of the
+ * Bilinear Interpolation layer work.
+ */
+BOOST_AUTO_TEST_CASE(BilinearInterpolationLayerParametersTest)
+{
+  // Parameter order : inRowSize, inColSize, outRowSize, outColSize, depth.
+  BilinearInterpolation<> layer1(1, 2, 3, 4, 5);
+  BilinearInterpolation<> layer2(2, 3, 4, 5, 6);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer1.InRowSize(), 1);
+  BOOST_REQUIRE_EQUAL(layer1.InColSize(), 2);
+  BOOST_REQUIRE_EQUAL(layer1.OutRowSize(), 3);
+  BOOST_REQUIRE_EQUAL(layer1.OutColSize(), 4);
+  BOOST_REQUIRE_EQUAL(layer1.InDepth(), 5);
+
+  // Now modify the parameters to match the second layer.
+  layer1.InRowSize() = 2;
+  layer1.InColSize() = 3;
+  layer1.OutRowSize() = 4;
+  layer1.OutColSize() = 5;
+  layer1.InDepth() = 6;
+
+  // Now ensure all results are the same.
+  BOOST_REQUIRE_EQUAL(layer1.InRowSize(), layer2.InRowSize());
+  BOOST_REQUIRE_EQUAL(layer1.InColSize(), layer2.InColSize());
+  BOOST_REQUIRE_EQUAL(layer1.OutRowSize(), layer2.OutRowSize());
+  BOOST_REQUIRE_EQUAL(layer1.OutColSize(), layer2.OutColSize());
+  BOOST_REQUIRE_EQUAL(layer1.InDepth(), layer2.InDepth());
 }
 
 /**
@@ -1634,6 +1953,20 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormTest)
 }
 
 /**
+ * Test that the functions that can access the parameters of the
+ * Batch Norm layer work.
+ */
+BOOST_AUTO_TEST_CASE(BatchNormLayerParametersTest)
+{
+  // Parameter order : size, eps.
+  BatchNorm<> layer(7, 1e-3);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer.InputSize(), 7);
+  BOOST_REQUIRE_EQUAL(layer.Epsilon(), 1e-3);
+}
+
+/**
  * VirtualBatchNorm layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientVirtualBatchNormTest)
@@ -1677,6 +2010,23 @@ BOOST_AUTO_TEST_CASE(GradientVirtualBatchNormTest)
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * Test that the functions that can modify and access the parameters of the
+ * Virtual Batch Norm layer work.
+ */
+BOOST_AUTO_TEST_CASE(VirtualBatchNormLayerParametersTest)
+{
+  arma::mat input = arma::randn(5, 256);
+  arma::mat referenceBatch = arma::mat(input.memptr(), input.n_rows, 16);
+
+  // Parameter order : referenceBatch, size, eps.
+  VirtualBatchNorm<> layer(referenceBatch, 5, 1e-3);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer.InSize(), 5);
+  BOOST_REQUIRE_EQUAL(layer.Epsilon(), 1e-3);
 }
 
 /**
@@ -2204,6 +2554,20 @@ BOOST_AUTO_TEST_CASE(GradientLayerNormTest)
 }
 
 /**
+ * Test that the functions that can access the parameters of the
+ * Layer Norm layer work.
+ */
+BOOST_AUTO_TEST_CASE(LayerNormLayerParametersTest)
+{
+  // Parameter order : size, eps.
+  LayerNorm<> layer(5, 1e-3);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer.InSize(), 5);
+  BOOST_REQUIRE_EQUAL(layer.Epsilon(), 1e-3);
+}
+
+/**
  * Test if the AddMerge layer is able to forward the
  * Forward/Backward/Gradient calls.
  */
@@ -2354,6 +2718,37 @@ BOOST_AUTO_TEST_CASE(SubviewBatchTest)
   moduleDef.Forward(input, outputDef);
   output = arma::ones(24, 2);
   CheckMatrices(outputDef, output);
+}
+
+/**
+ * Test that the functions that can modify and access the parameters of the
+ * Subview layer work.
+ */
+BOOST_AUTO_TEST_CASE(SubviewLayerParametersTest)
+{
+  // Parameter order : inSize, beginRow, endRow, beginCol, endCol.
+  Subview<> layer1(1, 2, 3, 4, 5);
+  Subview<> layer2(1, 3, 4, 5, 6);
+
+  // Make sure we can get the parameters correctly.
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), 1);
+  BOOST_REQUIRE_EQUAL(layer1.BeginRow(), 2);
+  BOOST_REQUIRE_EQUAL(layer1.EndRow(), 3);
+  BOOST_REQUIRE_EQUAL(layer1.BeginCol(), 4);
+  BOOST_REQUIRE_EQUAL(layer1.EndCol(), 5);
+
+  // Now modify the parameters to match the second layer.
+  layer1.BeginRow() = 3;
+  layer1.EndRow() = 4;
+  layer1.BeginCol() = 5;
+  layer1.EndCol() = 6;
+
+  // Now ensure all results are the same.
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), layer2.InSize());
+  BOOST_REQUIRE_EQUAL(layer1.BeginRow(), layer2.BeginRow());
+  BOOST_REQUIRE_EQUAL(layer1.EndRow(), layer2.EndRow());
+  BOOST_REQUIRE_EQUAL(layer1.BeginCol(), layer2.BeginCol());
+  BOOST_REQUIRE_EQUAL(layer1.EndCol(), layer2.EndCol());
 }
 
 /*
@@ -2525,6 +2920,22 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerBetaTest)
 }
 
 /**
+ * Test that the functions that can access the parameters of the
+ * Reparametrization layer work.
+ */
+BOOST_AUTO_TEST_CASE(ReparametrizationLayerParametersTest)
+{
+  // Parameter order : latentSize, stochastic, includeKL, beta.
+  Reparametrization<> layer(5, false, false, 2);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer.OutputSize(), 5);
+  BOOST_REQUIRE_EQUAL(layer.Stochastic(), false);
+  BOOST_REQUIRE_EQUAL(layer.IncludeKL(), false);
+  BOOST_REQUIRE_EQUAL(layer.Beta(), 2);
+}
+
+/**
  * Simple residual module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleResidualLayerTest)
@@ -2604,6 +3015,19 @@ BOOST_AUTO_TEST_CASE(SimpleHighwayLayerTest)
   delete highway;
   delete linearA;
   delete linearB;
+}
+
+/**
+ * Test that the function that can access the inSize parameter of the
+ * Highway layer works.
+ */
+BOOST_AUTO_TEST_CASE(HighwayLayerParametersTest)
+{
+  // Parameter order : inSize, model.
+  Highway<> layer(1, true);
+
+  // Make sure we can get the parameter successfully.
+  BOOST_REQUIRE_EQUAL(layer.InSize(), 1);
 }
 
 /**
@@ -3119,6 +3543,64 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
 }
 
 /**
+ * Test that the functions that can modify and access the parameters of the
+ * Glimpse layer work.
+ */
+BOOST_AUTO_TEST_CASE(GlimpseLayerParametersTest)
+{
+  // Parameter order : inSize, size, depth, scale, inputWidth, inputHeight.
+  Glimpse<> layer1(1, 2, 3, 4, 5, 6);
+  Glimpse<> layer2(1, 2, 3, 4, 6, 7);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), 6);
+  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), 5);
+  BOOST_REQUIRE_EQUAL(layer1.Scale(), 4);
+  BOOST_REQUIRE_EQUAL(layer1.Depth(), 3);
+  BOOST_REQUIRE_EQUAL(layer1.GlimpseSize(), 2);
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), 1);
+
+  // Now modify the parameters to match the second layer.
+  layer1.InputHeight() = 7;
+  layer1.InputWidth() = 6;
+
+  // Now ensure that all the results are the same.
+  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), layer2.InputHeight());
+  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), layer2.InputWidth());
+  BOOST_REQUIRE_EQUAL(layer1.Scale(), layer2.Scale());
+  BOOST_REQUIRE_EQUAL(layer1.Depth(), layer2.Depth());
+  BOOST_REQUIRE_EQUAL(layer1.GlimpseSize(), layer2.GlimpseSize());
+  BOOST_REQUIRE_EQUAL(layer1.InSize(), layer2.InSize());
+}
+
+/**
+ * Test that the function that can access the stdev parameter of the
+ * Reinforce Normal layer works.
+ */
+BOOST_AUTO_TEST_CASE(ReinforceNormalLayerParametersTest)
+{
+  // Parameter : stdev.
+  ReinforceNormal<> layer(4.0);
+
+  // Make sure we can get the parameter successfully.
+  BOOST_REQUIRE_EQUAL(layer.StandardDeviation(), 4.0);
+}
+
+/**
+ * Test that the function that can access the parameters of the
+ * VR Class Reward layer works.
+ */
+BOOST_AUTO_TEST_CASE(VRClassRewardLayerParametersTest)
+{
+  // Parameter order : scale, sizeAverage.
+  VRClassReward<> layer(2, false);
+
+  // Make sure we can get the parameters successfully.
+  BOOST_REQUIRE_EQUAL(layer.Scale(), 2);
+  BOOST_REQUIRE_EQUAL(layer.SizeAverage(), false);
+}
+
+/**
  * Simple test for Adaptive pooling for Max Pooling layer.
  */
 BOOST_AUTO_TEST_CASE(AdaptiveMaxPoolingTestCase)
@@ -3312,6 +3794,20 @@ BOOST_AUTO_TEST_CASE(AdaptiveMeanPoolingTestCase)
   // Test the Backward Function.
   module4.Backward(input, output, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 1.5);
+}
+
+BOOST_AUTO_TEST_CASE(TransposedConvolutionalLayerOptionalParameterTest)
+{
+  Sequential<>* decoder = new Sequential<>();
+
+  // Check if we can create an object without specifying output.
+  BOOST_REQUIRE_NO_THROW(decoder->Add<TransposedConvolution<>>(24, 16,
+      5, 5, 1, 1, 0, 0, 10, 10));
+
+  BOOST_REQUIRE_NO_THROW(decoder->Add<TransposedConvolution<>>(16, 1,
+      15, 15, 1, 1, 1, 1, 14, 14));
+
+    delete decoder;
 }
 
 BOOST_AUTO_TEST_SUITE_END();

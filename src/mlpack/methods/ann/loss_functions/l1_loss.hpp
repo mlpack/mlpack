@@ -1,5 +1,5 @@
 /**
- * @file l1_loss.hpp
+ * @file methods/ann/loss_functions/l1_loss.hpp
  * @author Himanshu Pathak
  *
  * Definition of the L1 Loss function.

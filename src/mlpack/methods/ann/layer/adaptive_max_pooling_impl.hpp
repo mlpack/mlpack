@@ -1,5 +1,5 @@
 /**
- * @file adaptive_max_pooling_impl.hpp
+ * @file methods/ann/layer/adaptive_max_pooling_impl.hpp
  * @author Kartik Dutt
  *
  * Implementation of the Adaptive Max Pooling layer class.

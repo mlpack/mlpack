@@ -1,5 +1,5 @@
 /**
- * @file union_find.hpp
+ * @file methods/emst/union_find.hpp
  * @author Bill March (march@gatech.edu)
  *
  * Implements a union-find data structure.  This structure tracks the components

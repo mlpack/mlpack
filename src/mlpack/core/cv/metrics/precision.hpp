@@ -1,5 +1,5 @@
 /**
- * @file precision.hpp
+ * @file core/cv/metrics/precision.hpp
  * @author Kirill Mishchenko
  *
  * The precision metric.

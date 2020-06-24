@@ -1,5 +1,5 @@
 /**
- * @file log_test.cpp
+ * @file tests/log_test.cpp
  * @author Marcus Edel
  *
  * Test of the mlpack log class.

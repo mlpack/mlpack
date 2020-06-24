@@ -1,5 +1,5 @@
 /**
- * @file fastmks_test.cpp
+ * @file tests/fastmks_test.cpp
  * @author Ryan Curtin
  *
  * Ensure that fast max-kernel search is correct.
