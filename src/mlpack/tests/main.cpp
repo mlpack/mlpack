@@ -23,8 +23,7 @@ int main(int argc, char** argv)
    * across many different runs.
    */
   //size_t seed = std::time(NULL);
-  //srand((unsigned int) seed);
-  //arma::arma_rng::set_seed(seed);
+  //math::RandomSeed(seed);
   #ifndef TEST_VERBOSE
     #ifdef DEBUG
     mlpack::Log::Debug.ignoreInput = true;
@@ -33,7 +32,9 @@ int main(int argc, char** argv)
     mlpack::Log::Info.ignoreInput = true;
     mlpack::Log::Warn.ignoreInput = true;
   #endif
-  std::cout << "run test using Catch2"  << std::endl;
+
+  std::cout << "mlpack version: " << mlpack::util::GetVersion() << std::endl;
+  std::cout << "armadillo version: " << arma::arma_version::as_string() << std::endl;
 
 
   return Catch::Session().run(argc, argv);
