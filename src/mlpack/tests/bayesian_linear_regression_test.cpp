@@ -163,7 +163,8 @@ BOOST_AUTO_TEST_CASE(EqualtoRidge)
   arma::mat matX;
   arma::rowvec y, blrPred, ridgePred;
 
-  for (size_t trial = 0; trial < 3; ++trial)
+  size_t trial = 0;
+  for ( ; trial < 3; ++trial)
   {
     GenerateProblem(matX, y, 100, 10, 1);
 
@@ -186,6 +187,8 @@ BOOST_AUTO_TEST_CASE(EqualtoRidge)
     // Exit once a test case has completed.
     break;
   }
+  
+  BOOST_REQUIRE_LT(trial, 3);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
