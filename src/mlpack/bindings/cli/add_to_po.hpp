@@ -25,7 +25,7 @@ namespace bindings {
 namespace cli {
 
 /**
- * Add a vector option to CLI11.
+ * Add an option to CLI11.
  * 
  * @param cliName The name of the option to add to CLI11.
  * @param descr Description string for parameter.
@@ -35,39 +35,9 @@ template<typename T>
 void AddToPO(const std::string& cliName,
              util::ParamData& param,
              App& app,
-             const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
-  app.add_option_function<T>(cliName.c_str(),
-      [&param](const T& value)
-      {
-       param.value = value;
-       param.wasPassed = true;
-      },
-      param.desc.c_str());
-}
 
-/**
- * Add a vector option to CLI11.
- * 
- * @param cliName The name of the option to add to CLI11.
- * @param descr Description string for parameter.
- * @param desc Options description to add parameter to.
- */
-template<typename T>
-void AddToPO(const std::string& cliName,
-             util::ParamData& param,
-             App& app,
-             const typename boost::enable_if<util::IsStdVector<T>>::type* = 0,
-             const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
-{
-  app.add_option_function<T>(cliName.c_str(),
-      [&param](const T& value)
-      {
-       param.value = value;
-       param.wasPassed = true;
-      },
-      param.desc.c_str());
 }
 
 /**
@@ -81,16 +51,9 @@ template<typename T>
 void AddToPO(const std::string& cliName,
              util::ParamData& param,
              App& app,
-             const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
 {
-  app.add_flag_function(cliName.c_str(),
-      [&param](const T& value)
-      {
-        param.value = value;
-        param.wasPassed = true;
-      },
-      param.desc.c_str());
+
 }
 
 /**
@@ -115,10 +78,36 @@ void AddToPO(util::ParamData& param,
   std::string cliName = (param.alias != '\0') ?
       "-" + std::string(1, param.alias) + ",--" + mappedName : "--" + mappedName;
 
+  if constexpr (std::is_same<typename ParameterType<
+                             typename std::remove_pointer<T>::type>::type, 
+                bool>())
+  {
+    app->add_flag_function(cliName.c_str(),
+        [&param](const typename ParameterType<
+                       typename std::remove_pointer<T>::type>::type& value)
+        {
+          param.value = value;
+          param.wasPassed = true;
+        },
+        param.desc.c_str());
+  }
+  else
+  {
+    app->add_option_function<typename ParameterType<
+                             typename std::remove_pointer<T>::type>::type>(cliName.c_str(),
+          [&param](const typename ParameterType<
+                         typename std::remove_pointer<T>::type>::type& value)
+          {
+           param.value = value;
+           param.wasPassed = true;
+          },
+          param.desc.c_str());
+  }
+
   // Note that we have to add the option as type equal to the mapped type, not
-  // the true type of the option.
-  AddToPO<typename ParameterType<typename std::remove_pointer<T>::type>::type>(
-      cliName, param, *app);
+  // the true type of the option.  
+  // AddToPO<typename ParameterType<typename std::remove_pointer<T>::type>::type>(
+  //     cliName, param, *app);
 }
 
 } // namespace cli
