@@ -3810,4 +3810,13 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionalLayerOptionalParameterTest)
     delete decoder;
 }
 
+BOOST_AUTO_TEST_CASE(BatchNormColTest)
+{
+  arma::mat input, output;
+  // 6 Images of size 4 x 4 x 3.
+  input = arma::mat(48, 6);
+  input.zeros();
+  BatchNorm<> layer(6);
+  layer.Forward(input, output);
+}
 BOOST_AUTO_TEST_SUITE_END();
