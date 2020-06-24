@@ -249,6 +249,8 @@ class KernelSVM
   MatType b;
   //! Locally saved support vectors.
   MatType support_vectors;
+  //! Locally saved alpha values.
+  arma::vec alpha;
 };
 
 } // namespace svm
