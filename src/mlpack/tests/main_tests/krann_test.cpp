@@ -1,3 +1,15 @@
+/**
+ * @file krann_test.cpp
+ * @author Ryan Curtin
+ * @author Utkarsh Rai
+ *
+ * Test mlpackMain() of krann_main.cpp.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #include <string>
 
 #define BINDING_TYPE BINDING_TYPE_TEST
@@ -13,7 +25,7 @@ static const std::string testName = "K-RankApproximateNearestNeighborsSearch";
 
 using namespace mlpack;
 
-struct  KRANNTestFixture
+struct KRANNTestFixture
 {
   KRANNTestFixture()
   {
@@ -78,12 +90,12 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidKTest)
 
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   
-  
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["k"].wasPassed = false;
-  
+
+  // Test on empty reference matrix since referenceData has been moved.
   SetInputParam("reference", std::move(referenceData));
-  SetInputParam("k", (int) 6); // Invalid.
+  SetInputParam("k", (int) 5);
 
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
@@ -117,12 +129,12 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidKQueryDataTest)
 
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   
-  
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["k"].wasPassed = false;
   
+  // Testing on empty matrix since referenceData was already moved.
   SetInputParam("reference", std::move(referenceData));
-  SetInputParam("k", (int) 6); // Invalid.
+  SetInputParam("k", (int) 5); // Invalid.
 
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
@@ -217,13 +229,14 @@ BOOST_AUTO_TEST_CASE(KRANNOutputDimensionTest)
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 5);
 
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Check the neighbors matrix has 5 points for each input point.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
-      ("neighbors").n_rows, 5);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
-      ("neighbors").n_cols, 100);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_rows,
+      5);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_cols,
+      100);
 
   // Check the distances matrix has 10 points for each input point.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("distances").n_rows, 5);
@@ -246,6 +259,7 @@ BOOST_AUTO_TEST_CASE(KRANNModelReuseTest)
   SetInputParam("query", queryData);
   SetInputParam("k", (int) 5);
 
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   arma::Mat<size_t> neighbors;
@@ -263,6 +277,7 @@ BOOST_AUTO_TEST_CASE(KRANNModelReuseTest)
   SetInputParam("input_model", output_model);
   SetInputParam("query", queryData);
 
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Check that initial output matrices and the output matrices using
@@ -284,6 +299,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentLeafSizes)
   SetInputParam("k", (int) 5);
   SetInputParam("leaf_size", (int) 1);
 
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   RANNModel* output_model;
@@ -297,13 +313,14 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentLeafSizes)
   SetInputParam("k", (int) 5);
   SetInputParam("leaf_size", (int) 10);
 
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
   BOOST_CHECK_EQUAL(output_model->LeafSize(), (int) 1);
   BOOST_CHECK_EQUAL(CLI::GetParam<RANNModel*>("output_model")->LeafSize(),
-    (int) 10);
+      (int) 10);
   delete output_model;
 }
 
