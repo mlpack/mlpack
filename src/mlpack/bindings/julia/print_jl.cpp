@@ -13,6 +13,8 @@
 #include "strip_type.hpp"
 #include <mlpack/core/util/hyphenate_string.hpp>
 
+#include <set>
+
 using namespace mlpack;
 using namespace std;
 
