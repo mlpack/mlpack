@@ -42,7 +42,7 @@ using namespace mlpack;
 using namespace std;
 using namespace arma;
 using namespace mlpack::adaboost;
-using namespace mlpack::decision_stump;
+using namespace mlpack::tree;
 using namespace mlpack::perceptron;
 using namespace mlpack::util;
 
@@ -121,6 +121,8 @@ PARAM_MATRIX_IN("test", "Test dataset.", "T");
 // PARAM_UROW_OUT("output") is deprecated and will be removed in mlpack 4.0.0.
 PARAM_UROW_OUT("output", "Predicted labels for the test set.", "o");
 PARAM_UROW_OUT("predictions", "Predicted labels for the test set.", "P");
+PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each "
+    "point in the test set.", "p");
 
 // Training options.
 PARAM_INT_IN("iterations", "The maximum number of boosting iterations to be run"
@@ -233,9 +235,20 @@ static void mlpackMain()
           << m->Dimensionality() << ")!" << endl;
 
     Row<size_t> predictedLabels(testingData.n_cols);
-    Timer::Start("adaboost_classification");
-    m->Classify(testingData, predictedLabels);
-    Timer::Stop("adaboost_classification");
+    mat probabilities;
+
+    if (CLI::HasParam("probabilities"))
+    {
+      Timer::Start("adaboost_classification");
+      m->Classify(testingData, predictedLabels, probabilities);
+      Timer::Stop("adaboost_classification");
+    }
+    else
+    {
+      Timer::Start("adaboost_classification");
+      m->Classify(testingData, predictedLabels);
+      Timer::Stop("adaboost_classification");
+    }
 
     Row<size_t> results;
     data::RevertLabels(predictedLabels, m->Mappings(), results);
@@ -245,6 +258,8 @@ static void mlpackMain()
       CLI::GetParam<arma::Row<size_t>>("output") = results;
     if (CLI::HasParam("predictions"))
       CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(results);
+    if (CLI::HasParam("probabilities"))
+      CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
   }
 
   CLI::GetParam<AdaBoostModel*>("output_model") = m;

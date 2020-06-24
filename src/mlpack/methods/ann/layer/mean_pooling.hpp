@@ -39,15 +39,15 @@ class MeanPooling
   /**
    * Create the MeanPooling object using the specified number of units.
    *
-   * @param kW Width of the pooling window.
-   * @param kH Height of the pooling window.
-   * @param dW Width of the stride operation.
-   * @param dH Width of the stride operation.
+   * @param kernelWidth Width of the pooling window.
+   * @param kernelHeight Height of the pooling window.
+   * @param strideWidth Width of the stride operation.
+   * @param strideHeight Width of the stride operation.
    */
-  MeanPooling(const size_t kW,
-              const size_t kH,
-              const size_t dW = 1,
-              const size_t dH = 1,
+  MeanPooling(const size_t kernelWidth,
+              const size_t kernelHeight,
+              const size_t strideWidth = 1,
+              const size_t strideHeight = 1,
               const bool floor = true);
 
   /**
@@ -58,7 +58,7 @@ class MeanPooling
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -70,9 +70,9 @@ class MeanPooling
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -104,6 +104,37 @@ class MeanPooling
   //! Modify the height.
   size_t& OutputHeight() { return outputHeight; }
 
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
+
+  //! Get the output size.
+  size_t OutputSize() const { return outSize; }
+
+  //! Get the kernel width.
+  size_t KernelWidth() const { return kernelWidth; }
+  //! Modify the kernel width.
+  size_t& KernelWidth() { return kernelWidth; }
+
+  //! Get the kernel height.
+  size_t KernelHeight() const { return kernelHeight; }
+  //! Modify the kernel height.
+  size_t& KernelHeight() { return kernelHeight; }
+
+  //! Get the stride width.
+  size_t StrideWidth() const { return strideWidth; }
+  //! Modify the stride width.
+  size_t& StrideWidth() { return strideWidth; }
+
+  //! Get the stride height.
+  size_t StrideHeight() const { return strideHeight; }
+  //! Modify the stride height.
+  size_t& StrideHeight() { return strideHeight; }
+
+  //! Get the value of the rounding operation
+  bool const& Floor() const { return floor; }
+  //! Modify the value of the rounding operation
+  bool& Floor() { return floor; }
+
   //! Get the value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.
@@ -125,16 +156,15 @@ class MeanPooling
   template<typename eT>
   void Pooling(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
-    const size_t rStep = kW;
-    const size_t cStep = kH;
-
-    for (size_t j = 0, colidx = 0; j < output.n_cols; ++j, colidx += dH)
+    for (size_t j = 0, colidx = 0; j < output.n_cols;
+         ++j, colidx += strideHeight)
     {
-      for (size_t i = 0, rowidx = 0; i < output.n_rows; ++i, rowidx += dW)
+      for (size_t i = 0, rowidx = 0; i < output.n_rows;
+           ++i, rowidx += strideWidth)
       {
         arma::mat subInput = input(
-            arma::span(rowidx, rowidx + rStep - 1 - offset),
-            arma::span(colidx, colidx + cStep - 1 - offset));
+            arma::span(rowidx, rowidx + kernelWidth - 1 - offset),
+            arma::span(colidx, colidx + kernelHeight - 1 - offset));
 
         output(i, j) = arma::mean(arma::mean(subInput));
       }
@@ -173,16 +203,16 @@ class MeanPooling
   }
 
   //! Locally-stored width of the pooling window.
-  size_t kW;
+  size_t kernelWidth;
 
   //! Locally-stored height of the pooling window.
-  size_t kH;
+  size_t kernelHeight;
 
   //! Locally-stored width of the stride operation.
-  size_t dW;
+  size_t strideWidth;
 
   //! Locally-stored height of the stride operation.
-  size_t dH;
+  size_t strideHeight;
 
   //! Rounding operation used.
   bool floor;

@@ -1,6 +1,7 @@
 /**
  * @file cf_model.hpp
  * @author Wenhao Huang
+ * @author Khizir Siddiqui
  *
  * A serializable CF model, used by the main program.
  *
@@ -24,6 +25,12 @@
 #include <mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp>
 
+#include <mlpack/methods/cf/normalization/no_normalization.hpp>
+#include <mlpack/methods/cf/normalization/overall_mean_normalization.hpp>
+#include <mlpack/methods/cf/normalization/user_mean_normalization.hpp>
+#include <mlpack/methods/cf/normalization/item_mean_normalization.hpp>
+#include <mlpack/methods/cf/normalization/z_score_normalization.hpp>
+
 namespace mlpack {
 namespace cf {
 
@@ -35,8 +42,9 @@ class DeleteVisitor : public boost::static_visitor<void>
 {
  public:
   //! Delete CFType object.
-  template<typename DecompositionPolicy>
-  void operator()(CFType<DecompositionPolicy>* c) const;
+  template <typename DecompositionPolicy,
+            typename NormalizationType = NoNormalization>
+  void operator()(CFType<DecompositionPolicy, NormalizationType>* c) const;
 };
 
 /**
@@ -46,8 +54,9 @@ class GetValueVisitor : public boost::static_visitor<void*>
 {
  public:
   //! Return stored pointer as void* type.
-  template<typename DecompositionPolicy>
-  void* operator()(CFType<DecompositionPolicy>* c) const;
+  template <typename DecompositionPolicy,
+            typename NormalizationType = NoNormalization>
+  void* operator()(CFType<DecompositionPolicy, NormalizationType>* c) const;
 };
 
 /**
@@ -66,8 +75,9 @@ class PredictVisitor : public boost::static_visitor<void>
 
  public:
   //! Predict ratings for each user-item combination.
-  template<typename DecompositionPolicy>
-  void operator()(CFType<DecompositionPolicy>* c) const;
+  template <typename DecompositionPolicy,
+            typename NormalizationType = NoNormalization>
+  void operator()(CFType<DecompositionPolicy, NormalizationType>* c) const;
 
   //! Visitor constructor.
   PredictVisitor(const arma::Mat<size_t>& combinations,
@@ -100,8 +110,9 @@ class RecommendationVisitor : public boost::static_visitor<void>
                         const bool usersGiven);
 
   //! Generates the given number of recommendations.
-  template<typename DecompositionPolicy>
-  void operator()(CFType<DecompositionPolicy>* c) const;
+  template <typename DecompositionPolicy,
+            typename NormalizationType = NoNormalization>
+  void operator()(CFType<DecompositionPolicy, NormalizationType>* c) const;
 };
 
 /**
@@ -112,17 +123,54 @@ class CFModel
  private:
   /**
    * cf holds an instance of the CFType class for the current
-   * decompositionPolicy. It is initialized every time Train() is executed.
-   * We access to the contained value through the visitor classes defined above.
+   * decompositionPolicy and normalizationType. It is initialized every time
+   * Train() is executed. We access to the contained value through the visitor
+   * classes defined above.
    */
-  boost::variant<CFType<NMFPolicy>*,
-                 CFType<BatchSVDPolicy>*,
-                 CFType<RandomizedSVDPolicy>*,
-                 CFType<RegSVDPolicy>*,
-                 CFType<SVDCompletePolicy>*,
-                 CFType<SVDIncompletePolicy>*,
-                 CFType<BiasSVDPolicy>*,
-                 CFType<SVDPlusPlusPolicy>*> cf;
+  boost::variant<CFType<NMFPolicy, NoNormalization>*,
+                 CFType<BatchSVDPolicy, NoNormalization>*,
+                 CFType<RandomizedSVDPolicy, NoNormalization>*,
+                 CFType<RegSVDPolicy, NoNormalization>*,
+                 CFType<SVDCompletePolicy, NoNormalization>*,
+                 CFType<SVDIncompletePolicy, NoNormalization>*,
+                 CFType<BiasSVDPolicy, NoNormalization>*,
+                 CFType<SVDPlusPlusPolicy, NoNormalization>*,
+
+                 CFType<NMFPolicy, ItemMeanNormalization>*,
+                 CFType<BatchSVDPolicy, ItemMeanNormalization>*,
+                 CFType<RandomizedSVDPolicy, ItemMeanNormalization>*,
+                 CFType<RegSVDPolicy, ItemMeanNormalization>*,
+                 CFType<SVDCompletePolicy, ItemMeanNormalization>*,
+                 CFType<SVDIncompletePolicy, ItemMeanNormalization>*,
+                 CFType<BiasSVDPolicy, ItemMeanNormalization>*,
+                 CFType<SVDPlusPlusPolicy, ItemMeanNormalization>*,
+
+                 CFType<NMFPolicy, UserMeanNormalization>*,
+                 CFType<BatchSVDPolicy, UserMeanNormalization>*,
+                 CFType<RandomizedSVDPolicy, UserMeanNormalization>*,
+                 CFType<RegSVDPolicy, UserMeanNormalization>*,
+                 CFType<SVDCompletePolicy, UserMeanNormalization>*,
+                 CFType<SVDIncompletePolicy, UserMeanNormalization>*,
+                 CFType<BiasSVDPolicy, UserMeanNormalization>*,
+                 CFType<SVDPlusPlusPolicy, UserMeanNormalization>*,
+
+                 CFType<NMFPolicy, OverallMeanNormalization>*,
+                 CFType<BatchSVDPolicy, OverallMeanNormalization>*,
+                 CFType<RandomizedSVDPolicy, OverallMeanNormalization>*,
+                 CFType<RegSVDPolicy, OverallMeanNormalization>*,
+                 CFType<SVDCompletePolicy, OverallMeanNormalization>*,
+                 CFType<SVDIncompletePolicy, OverallMeanNormalization>*,
+                 CFType<BiasSVDPolicy, OverallMeanNormalization>*,
+                 CFType<SVDPlusPlusPolicy, OverallMeanNormalization>*,
+
+                 CFType<NMFPolicy, ZScoreNormalization>*,
+                 CFType<BatchSVDPolicy, ZScoreNormalization>*,
+                 CFType<RandomizedSVDPolicy, ZScoreNormalization>*,
+                 CFType<RegSVDPolicy, ZScoreNormalization>*,
+                 CFType<SVDCompletePolicy, ZScoreNormalization>*,
+                 CFType<SVDIncompletePolicy, ZScoreNormalization>*,
+                 CFType<BiasSVDPolicy, ZScoreNormalization>*,
+                 CFType<SVDPlusPlusPolicy, ZScoreNormalization>*> cf;
 
  public:
   //! Create an empty CF model.
@@ -132,8 +180,9 @@ class CFModel
   ~CFModel();
 
   //! Get the pointer to CFType<> object.
-  template<typename DecompositionPolicy>
-  const CFType<DecompositionPolicy>* CFPtr() const;
+  template <typename DecompositionPolicy,
+            typename NormalizationType = NoNormalization>
+  const CFType<DecompositionPolicy, NormalizationType>* CFPtr() const;
 
   //! Train the model.
   template<typename DecompositionPolicy,
@@ -143,7 +192,8 @@ class CFModel
              const size_t rank,
              const size_t maxIterations,
              const double minResidue,
-             const bool mit);
+             const bool mit,
+             const std::string& normalizationType = "none");
 
   //! Make predictions.
   template <typename NeighborSearchPolicy,

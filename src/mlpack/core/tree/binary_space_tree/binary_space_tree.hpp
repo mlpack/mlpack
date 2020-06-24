@@ -273,7 +273,7 @@ class BinarySpaceTree
    * Create a binary space tree by copying the other tree.  Be careful!  This
    * can take a long time and use a lot of memory.
    *
-   * @param other Tree to be replicated.
+   * @param other Tree to be copied.
    */
   BinarySpaceTree(const BinarySpaceTree& other);
 
@@ -282,6 +282,20 @@ class BinarySpaceTree
    * given tree.
    */
   BinarySpaceTree(BinarySpaceTree&& other);
+
+  /**
+   * Copy the given BinarySaceTree.
+   *
+   * @param other The tree to be copied.
+   */
+  BinarySpaceTree& operator=(const BinarySpaceTree& other);
+
+  /**
+   * Take ownership of the given BinarySpaceTree.
+   *
+   * @param other The tree to take ownership of.
+   */
+  BinarySpaceTree& operator=(BinarySpaceTree&& other);
 
   /**
    * Initialize the tree from a boost::serialization archive.

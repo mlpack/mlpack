@@ -320,7 +320,7 @@ void LinearSVMFunction<MatType>::Gradient(
   {
     scores = parameters.rows(0, dataset.n_rows - 1).t()
         * dataset.cols(firstId, lastId)
-        + arma::repmat(parameters.row(dataset.n_rows).t(), 1, dataset.n_cols);
+        + arma::repmat(parameters.row(dataset.n_rows).t(), 1, batchSize);
   }
 
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()

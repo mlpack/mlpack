@@ -17,6 +17,7 @@
 #define MLPACK_METHODS_RL_ENVIRONMENT_PENDULUM_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/clamp.hpp>
 
 namespace mlpack {
 namespace rl {
@@ -140,8 +141,7 @@ class Pendulum
     const double length = 1.0;
 
     // Get action and clip the values between max and min limits.
-    double torque = std::min(
-        std::max(action.action[0], -maxTorque), maxTorque);
+    double torque = math::ClampRange(action.action[0], -maxTorque, maxTorque);
 
     // Calculate costs of taking this action in the current state.
     double costs = std::pow(AngleNormalize(theta), 2) + 0.1 *
@@ -151,8 +151,8 @@ class Pendulum
     double newAngularVelocity = angularVelocity + (-3.0 * gravity / (2 *
         length) * std::sin(theta + M_PI) + 3.0 / std::pow(mass * length, 2) *
         torque) * dt;
-    nextState.AngularVelocity() = std::min(std::max(newAngularVelocity,
-        -maxAngularVelocity), maxAngularVelocity);
+    nextState.AngularVelocity() = math::ClampRange(newAngularVelocity,
+        -maxAngularVelocity, maxAngularVelocity);
     nextState.Theta() = theta + newAngularVelocity * dt;
 
     // Check if the episode has terminated
