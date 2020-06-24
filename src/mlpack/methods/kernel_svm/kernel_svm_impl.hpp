@@ -70,7 +70,7 @@ double KernelSVM<MatType, KernelType>::Train(
     const arma::Row<size_t>& labels,
     const size_t numClasses)
 {
-  arma::vec alpha = arma::zeros(data.n_cols);
+  alpha = arma::zeros(data.n_cols);
   size_t count = 0;
 
   while(true)
@@ -130,10 +130,7 @@ double KernelSVM<MatType, KernelType>::Train(
   {
     support_vectors.push_back(data.col(alpha_idx(i)));
   }
-  return count
-    }
-
-  }
+  return count;
 }
 
 template <typename MatType, typename KernelType>
