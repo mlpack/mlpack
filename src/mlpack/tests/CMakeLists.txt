@@ -33,6 +33,7 @@ add_executable(mlpack_test
   drusilla_select_test.cpp
   emst_test.cpp
   fastmks_test.cpp
+  facilities_test.cpp
   feedforward_network_test.cpp
   gan_test.cpp
   gmm_test.cpp
@@ -137,6 +138,7 @@ add_executable(mlpack_test
   main_tests/kfn_test.cpp
   main_tests/knn_test.cpp
   main_tests/linear_regression_test.cpp
+  main_tests/image_converter_test.cpp
   main_tests/linear_svm_test.cpp
   main_tests/logistic_regression_test.cpp
   main_tests/local_coordinate_coding_test.cpp

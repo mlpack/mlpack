@@ -1,5 +1,5 @@
 /**
- * @file import_decl.hpp
+ * @file bindings/python/import_decl.hpp
  * @author Ryan Curtin
  *
  * For a serializable model, print the class import.
@@ -76,8 +76,8 @@ void ImportDecl(
  * non-serializable type.
  *
  * @param d Parameter info struct.
- * @param input Pointer to size_t indicating indent.
- * @param output Unused parameter.
+ * @param indent Pointer to size_t indicating indent.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
 void ImportDecl(const util::ParamData& d,

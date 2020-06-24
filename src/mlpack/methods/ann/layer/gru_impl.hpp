@@ -1,5 +1,5 @@
 /**
- * @file gru_impl.hpp
+ * @file methods/ann/layer/gru_impl.hpp
  * @author Sumedh Ghaisas
  *
  * Implementation of the GRU class, which implements a gru network
@@ -74,17 +74,6 @@ GRU<InputDataType, OutputDataType>::GRU(
   prevOutput = outParameter.begin();
   backIterator = outParameter.end();
   gradIterator = outParameter.end();
-}
-
-template<typename InputDataType, typename OutputDataType>
-GRU<InputDataType, OutputDataType>::~GRU()
-{
-  boost::apply_visitor(deleteVisitor, input2GateModule);
-  boost::apply_visitor(deleteVisitor, output2GateModule);
-  boost::apply_visitor(deleteVisitor, outputHidden2GateModule);
-  boost::apply_visitor(deleteVisitor, inputGateModule);
-  boost::apply_visitor(deleteVisitor, forgetGateModule);
-  boost::apply_visitor(deleteVisitor, hiddenStateModule);
 }
 
 template<typename InputDataType, typename OutputDataType>

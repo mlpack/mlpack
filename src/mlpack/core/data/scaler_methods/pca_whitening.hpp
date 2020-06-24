@@ -1,5 +1,5 @@
 /**
- * @file pca_whitening.hpp
+ * @file core/data/scaler_methods/pca_whitening.hpp
  * @author Jeffin Sam
  *
  * Whitening scaling to scale features, Using PCA Whitening.
@@ -14,6 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/lin_alg.hpp>
+#include <mlpack/core/math/ccov.hpp>
 
 namespace mlpack {
 namespace data {

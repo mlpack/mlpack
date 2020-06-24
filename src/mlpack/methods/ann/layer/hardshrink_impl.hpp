@@ -1,5 +1,5 @@
 /**
- * @file hardshrink.hpp
+ * @file methods/ann/layer/hardshrink_impl.hpp
  * @author Lakshya Ojha
  *
  * Implementation of Hard Shrink activation function.

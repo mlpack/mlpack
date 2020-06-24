@@ -1,5 +1,5 @@
 /**
- * @file gru.hpp
+ * @file methods/ann/layer/gru.hpp
  * @author Sumedh Ghaisas
  *
  * Definition of the GRU layer.
@@ -73,11 +73,6 @@ class GRU
       const size_t rho = std::numeric_limits<size_t>::max());
 
   /**
-   * Delete the GRU and the layers it holds.
-   */
-  ~GRU();
-
-  /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
@@ -92,7 +87,7 @@ class GRU
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -153,6 +148,12 @@ class GRU
 
   //! Get the model modules.
   std::vector<LayerTypes<> >& Model() { return network; }
+
+  //! Get the number of input units.
+  size_t InSize() const { return inSize; }
+
+  //! Get the number of output units.
+  size_t OutSize() const { return outSize; }
 
   /**
    * Serialize the layer

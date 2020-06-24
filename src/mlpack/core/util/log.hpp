@@ -1,5 +1,5 @@
 /**
- * @file log.hpp
+ * @file core/util/log.hpp
  * @author Matthew Amidon
  *
  * Definition of the Log class.

@@ -1,5 +1,5 @@
 /**
- * @file lmnn_test.cpp
+ * @file tests/main_tests/lmnn_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of lmnn_main.cpp.

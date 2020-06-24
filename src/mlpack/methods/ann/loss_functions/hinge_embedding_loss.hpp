@@ -1,5 +1,5 @@
 /**
- * @file hinge_embedding_loss.hpp
+ * @file methods/ann/loss_functions/hinge_embedding_loss.hpp
  * @author Lakshya Ojha
  *
  * Definition of the Hinge Embedding Loss Function.
@@ -48,7 +48,8 @@ class HingeEmbeddingLoss
    * @param target Target data to compare with.
    */
   template<typename InputType, typename TargetType>
-  double Forward(const InputType& input, const TargetType& target);
+  typename InputType::elem_type Forward(const InputType& input,
+                                        const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.

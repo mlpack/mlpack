@@ -1,5 +1,5 @@
 /**
- * @file greedy_policy.hpp
+ * @file methods/reinforcement_learning/policy/greedy_policy.hpp
  * @author Shangtong Zhang
  * @author Abhinav Sagar
  *
@@ -59,14 +59,17 @@ class GreedyPolicy
    *
    * @param actionValue Values for each action.
    * @param deterministic Always select the action greedily.
+   * @param isNoisy Specifies whether the network used is noisy.
    * @return Sampled action.
    */
-  ActionType Sample(const arma::colvec& actionValue, bool deterministic = false)
+  ActionType Sample(const arma::colvec& actionValue,
+                    bool deterministic = false,
+                    const bool isNoisy = false)
   {
     double exploration = math::Random();
 
     // Select the action randomly.
-    if (!deterministic && exploration < epsilon)
+    if (!deterministic && exploration < epsilon && isNoisy == false)
       return static_cast<ActionType>(math::RandInt(ActionType::size));
 
     // Select the action greedily.

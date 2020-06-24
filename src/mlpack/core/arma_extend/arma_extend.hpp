@@ -1,5 +1,5 @@
 /***
- * @file arma_extend.hpp
+ * @file core/arma_extend/arma_extend.hpp
  * @author Ryan Curtin
  *
  * Include Armadillo extensions which currently are not part of the main
@@ -34,6 +34,12 @@
             #undef ARMA_64BIT_WORD
         #endif
     #endif
+#endif
+
+// Force definition of old HDF5 API.  Thanks to Mike Roberts for helping find
+// this workaround.
+#if !defined(H5_USE_110_API)
+  #define H5_USE_110_API
 #endif
 
 // Include everything we'll need for serialize().

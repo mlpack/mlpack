@@ -1,5 +1,5 @@
 /**
- * @file oivs_init.hpp
+ * @file methods/ann/init_rules/oivs_init.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the Optimal Initial Value Setting method

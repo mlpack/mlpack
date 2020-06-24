@@ -1,5 +1,5 @@
 /**
- * @file linear_svm_test.cpp
+ * @file tests/linear_svm_test.cpp
  * @author Ayush Chamoli
  *
  * Test the Linear SVM class.

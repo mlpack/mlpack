@@ -1,5 +1,5 @@
 /**
- * @file print_doc_functions_impl.hpp
+ * @file bindings/cli/print_doc_functions_impl.hpp
  * @author Ryan Curtin
  *
  * This will generate a string representing what a user should type to invoke a
@@ -37,6 +37,13 @@ inline std::string PrintImport(const std::string& /* bindingName */)
   return "";
 }
 
+/**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo()
+{
+  return "";
+}
 /**
  * Print any special information about output options.
  */

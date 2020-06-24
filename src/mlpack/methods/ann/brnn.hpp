@@ -1,5 +1,5 @@
 /**
- * @file brnn.hpp
+ * @file methods/ann/brnn.hpp
  * @author Saksham Bansal
  *
  * Definition of the BRNN class, which implements bidirectional recurrent
@@ -66,16 +66,20 @@ class BRNN
    *
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    * @param single Predict only the last element of the input sequence.
+   * @param mergeLayer Merge layer to be used to evaluate the network.
    * @param outputLayer Output layer used to evaluate the network.
+   * @param mergeOutput Output Merge layer to be used.
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
   BRNN(const size_t rho,
        const bool single = false,
        OutputLayerType outputLayer = OutputLayerType(),
-       MergeLayerType mergeLayer = MergeLayerType(),
-       MergeOutputType mergeOutput = MergeOutputType(),
+       MergeLayerType* mergeLayer = new MergeLayerType(),
+       MergeOutputType* mergeOutput = new MergeOutputType(),
        InitializationRuleType initializeRule = InitializationRuleType());
+
+  ~BRNN();
 
   /**
    * Check if the optimizer has MaxIterations() parameter, if it does

@@ -1,5 +1,5 @@
 /**
- * @file highway_impl.hpp
+ * @file methods/ann/layer/highway_impl.hpp
  * @author Konstantin Sidorov
  * @author Saksham Bansal
  *
@@ -57,23 +57,10 @@ Highway<InputDataType, OutputDataType, CustomLayers...>::~Highway()
 {
   if (!model)
   {
-    for (LayerTypes<CustomLayers...>& layer : network)
+    for (size_t i = 0; i < network.size(); ++i)
     {
-      boost::apply_visitor(deleteVisitor, layer);
-    }
-  }
-}
-
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-void Highway<
-    InputDataType, OutputDataType, CustomLayers...>::DeleteModules()
-{
-  if (model)
-  {
-    for (LayerTypes<CustomLayers...>& layer : network)
-    {
-      boost::apply_visitor(deleteVisitor, layer);
+      if (networkOwnerships[i])
+        boost::apply_visitor(deleteVisitor, network[i]);
     }
   }
 }

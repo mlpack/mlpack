@@ -1,5 +1,5 @@
 /**
- * @file z_score_normalization.hpp
+ * @file methods/cf/normalization/z_score_normalization.hpp
  * @author Wenhao Huang
  *
  * This class performs z-score normalization on raw ratings.
@@ -108,8 +108,8 @@ class ZScoreNormalization
   /**
    * Denormalize computed rating by adding mean and multiplying stddev.
    *
-   * @param user User ID.
-   * @param item Item ID.
+   * @param * (user) User ID.
+   * @param * (item) Item ID.
    * @param rating Computed rating before denormalization.
    */
   double Denormalize(const size_t /* user */,
@@ -122,7 +122,7 @@ class ZScoreNormalization
   /**
    * Denormalize computed rating by adding mean and multiplying stddev.
    *
-   * @param combinations User/Item combinations.
+   * @param * (combinations) User/Item combinations.
    * @param predictions Predicted ratings for each user/item combination.
    */
   void Denormalize(const arma::Mat<size_t>& /* combinations */,

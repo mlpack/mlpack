@@ -1,5 +1,5 @@
 /**
- * @file get_printable_param_name.hpp
+ * @file bindings/markdown/get_printable_param_name.hpp
  * @author Ryan Curtin
  *
  * Return the parameter name that the user would specify on the command line,

@@ -1,5 +1,5 @@
 /**
- * @file prefixedoutstream.hpp
+ * @file core/util/prefixedoutstream.hpp
  * @author Ryan Curtin
  * @author Matthew Amidon
  *
@@ -124,7 +124,7 @@ class PrefixedOutStream
  private:
   /**
    * Conducts the base logic required in all the operator << overloads.  Mostly
-   * just a good idea to reduce copy-pasta.
+   * just a good idea to reduce copy-paste.
    *
    * This overload is for non-Armadillo objects, which need special handling
    * during printing.
@@ -138,7 +138,7 @@ class PrefixedOutStream
 
   /**
    * Conducts the base logic required in all the operator << overloads.  Mostly
-   * just a good idea to reduce copy-pasta.
+   * just a good idea to reduce copy-paste.
    *
    * This overload is for Armadillo objects, which need special handling during
    * printing.

@@ -1,5 +1,5 @@
 /**
- * @file average_init.hpp
+ * @file methods/amf/init_rules/average_init.hpp
  * @author Sumedh Ghaisas
  *
  * Initialization rule for Alternating Matrix Factorization.

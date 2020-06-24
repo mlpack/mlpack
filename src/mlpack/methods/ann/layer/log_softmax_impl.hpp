@@ -1,5 +1,5 @@
 /**
- * @file log_softmax_impl.hpp
+ * @file methods/ann/layer/log_softmax_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the LogSoftmax class.

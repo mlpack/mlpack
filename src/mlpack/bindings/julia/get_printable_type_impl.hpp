@@ -1,14 +1,20 @@
 /**
- * @file get_printable_type_impl.hpp
+ * @file bindings/julia/get_printable_type_impl.hpp
  * @author Ryan Curtin
  *
  * Get the printable type of a parameter.  This type is not the C++ type but
  * instead the Julia type that a user would use.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_BINDINGS_JULIA_GET_PRINTABLE_TYPE_IMPL_HPP
 #define MLPACK_BINDINGS_JULIA_GET_PRINTABLE_TYPE_IMPL_HPP
 
 #include "get_printable_type.hpp"
+#include "strip_type.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -95,11 +101,21 @@ std::string GetPrintableType(
  */
 template<typename T>
 std::string GetPrintableType(
-    const util::ParamData& /* data */,
+    const util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::enable_if<data::HasSerialize<T>>::type*)
 {
-  return "Ptr{Nothing} (mlpack model)";
+  std::string type = StripType(data.cppType);
+  if (type == "mlpackModel")
+  {
+    // If this is true, then we are being called from the Markdown bindings.
+    // This will be printed as the general documentation for model types.
+    return "<Model> (mlpack model)";
+  }
+  else
+  {
+    return type;
+  }
 }
 
 } // namespace julia

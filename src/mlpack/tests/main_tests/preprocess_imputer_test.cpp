@@ -1,5 +1,5 @@
 /**
- * @file preprocess_imputer_test.cpp
+ * @file tests/main_tests/preprocess_imputer_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of preprocess_imputer_main.cpp.

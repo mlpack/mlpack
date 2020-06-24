@@ -1,5 +1,5 @@
 /**
- * @file sequential.hpp
+ * @file methods/ann/layer/sequential.hpp
  * @author Marcus Edel
  *
  * Definition of the Sequential class, which acts as a feed-forward fully
@@ -18,6 +18,7 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 
 #include "../visitor/delete_visitor.hpp"
+#include "../visitor/copy_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_height_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
@@ -78,6 +79,21 @@ class Sequential
    */
   Sequential(const bool model = true);
 
+  /**
+   * Create the Sequential object using the specified parameters.
+   *
+   * @param model Expose all the network modules.
+   * @param ownsLayers If true, then this module will delete its layers when
+   *      deallocated.
+   */
+  Sequential(const bool model, const bool ownsLayers);
+
+  //! Copy constructor.
+  Sequential(const Sequential& layer);
+
+  //! Copy assignment operator.
+  Sequential& operator = (const Sequential& layer);
+
   //! Destroy the Sequential object.
   ~Sequential();
 
@@ -96,7 +112,7 @@ class Sequential
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -131,11 +147,6 @@ class Sequential
    * @param layer The Layer to be added to the model.
    */
   void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
-
-  /*
-   * Destroy all the modules added to the Sequential object.
-   */
-  void DeleteModules();
 
   //! Return the model modules.
   std::vector<LayerTypes<CustomLayers...> >& Model()
@@ -222,11 +233,17 @@ class Sequential
   //! Locally-stored output height visitor.
   OutputHeightVisitor outputHeightVisitor;
 
+  //! Locally-stored copy visitor
+  CopyVisitor<CustomLayers...> copyVisitor;
+
   //! The input width.
   size_t width;
 
   //! The input height.
   size_t height;
+
+  //! Whether we are responsible for deleting the layers held in this module.
+  bool ownsLayers;
 }; // class Sequential
 
 /*
@@ -242,6 +259,25 @@ using Residual = Sequential<
 
 } // namespace ann
 } // namespace mlpack
+
+//! Set the serialization version of the Sequential class.
+namespace boost {
+namespace serialization {
+
+template <
+    typename InputDataType,
+    typename OutputDataType,
+    bool Residual,
+    typename... CustomLayers
+>
+struct version<mlpack::ann::Sequential<
+    InputDataType, OutputDataType, Residual, CustomLayers...>>
+{
+  BOOST_STATIC_CONSTANT(int, value = 1);
+};
+
+} // namespace serialization
+} // namespace boost
 
 // Include implementation.
 #include "sequential_impl.hpp"

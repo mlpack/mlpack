@@ -1,5 +1,5 @@
 /**
- * @file nca_impl.hpp
+ * @file methods/nca/nca_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of templated NCA class.

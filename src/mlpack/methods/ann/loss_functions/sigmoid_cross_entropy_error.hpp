@@ -1,5 +1,5 @@
 /**
- * @file sigmoid_cross_entropy_error.hpp
+ * @file methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *
@@ -64,8 +64,8 @@ class SigmoidCrossEntropyError
    * @param target The target vector.
    */
   template<typename InputType, typename TargetType>
-  inline double Forward(const InputType& input,
-                        const TargetType& target);
+  inline typename InputType::elem_type Forward(const InputType& input,
+                                               const TargetType& target);
   /**
    * Ordinary feed backward pass of a neural network.
    *

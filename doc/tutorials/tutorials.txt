@@ -14,6 +14,7 @@ get started with mlpack in different languages.
   - \ref python_quickstart
   - \ref cli_quickstart
   - \ref julia_quickstart
+  - \ref go_quickstart
 
 @section introd_tut Introductory Tutorials
 
@@ -55,7 +56,7 @@ mlpack.
 
  - \ref bindings
  - \ref cv
- - \ref hpt
+ - \ref hpt_guide
 
 @section policy_tut Policy Class Documentation
 

@@ -1,5 +1,5 @@
 /**
- * @file matrix_completion.hpp
+ * @file methods/matrix_completion/matrix_completion.hpp
  * @author Stephen Tu
  *
  * A thin wrapper around nuclear norm minimization to solve

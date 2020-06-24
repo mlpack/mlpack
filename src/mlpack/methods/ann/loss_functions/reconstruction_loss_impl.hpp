@@ -1,5 +1,5 @@
 /**
- * @file reconstruction_loss_impl.hpp
+ * @file methods/ann/loss_functions/reconstruction_loss_impl.hpp
  * @author Atharva Khandait
  *
  * Implementation of the reconstruction loss performance function.
@@ -30,7 +30,8 @@ ReconstructionLoss<
 
 template<typename InputDataType, typename OutputDataType, typename DistType>
 template<typename InputType, typename TargetType>
-double ReconstructionLoss<InputDataType, OutputDataType, DistType>::Forward(
+typename InputType::elem_type
+ReconstructionLoss<InputDataType, OutputDataType, DistType>::Forward(
     const InputType& input, const TargetType& target)
 {
   dist = DistType(input);

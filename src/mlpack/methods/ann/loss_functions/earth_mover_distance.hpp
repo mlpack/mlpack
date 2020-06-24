@@ -1,5 +1,5 @@
 /**
- * @file earth_mover_distance.hpp
+ * @file methods/ann/loss_functions/earth_mover_distance.hpp
  * @author Shikhar Jaiswal
  *
  * Definition of the earth mover distance function.
@@ -45,7 +45,8 @@ class EarthMoverDistance
    * @param target The target vector.
    */
   template<typename InputType, typename TargetType>
-  double Forward(const InputType& input, const TargetType& target);
+  typename InputType::elem_type Forward(const InputType& input,
+                                        const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.

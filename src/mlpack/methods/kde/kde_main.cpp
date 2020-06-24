@@ -1,5 +1,5 @@
 /**
- * @file kde_main.cpp
+ * @file methods/kde/kde_main.cpp
  * @author Roberto Hueso
  *
  * Executable for running Kernel Density Estimation.
@@ -9,8 +9,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core.hpp>
 
 #include "kde.hpp"
 #include "kde_model.hpp"
@@ -314,6 +316,5 @@ static void mlpackMain()
     CLI::GetParam<arma::vec>("predictions") = std::move(estimations);
 
   // Save model.
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<KDEModel*>("output_model") = kde;
+  CLI::GetParam<KDEModel*>("output_model") = kde;
 }

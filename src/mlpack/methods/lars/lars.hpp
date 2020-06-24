@@ -1,5 +1,5 @@
 /**
- * @file lars.hpp
+ * @file methods/lars/lars.hpp
  * @author Nishant Mehta (niche)
  *
  * Definition of the LARS class, which performs Least Angle Regression and the
@@ -171,6 +171,34 @@ class LARS
        const double tolerance = 1e-16);
 
   /**
+   * Construct the LARS object by copying the given LARS object.
+   *
+   * @param other LARS object to copy.
+   */
+  LARS(const LARS& other);
+
+  /**
+   * Construct the LARS object by taking ownership of the given LARS object.
+   *
+   * @param other LARS object to take ownership of.
+   */
+  LARS(LARS&& other);
+
+  /**
+   * Copy the given LARS object.
+   *
+   * @param other LARS object to copy.
+   */
+  LARS& operator=(const LARS& other);
+
+  /**
+   * Take ownership of the given LARS object.
+   *
+   * @param other LARS object to take ownership of.
+   */
+  LARS& operator=(LARS&& other);
+
+  /**
    * Run LARS.  The input matrix (like all mlpack matrices) should be
    * column-major -- each column is an observation and each row is a dimension.
    * However, because LARS is more efficient on a row-major matrix, this method
@@ -249,9 +277,9 @@ class LARS
    * currently-trained LARS model. Only ||y-beta*X||2 is used to calculate
    * cost error.
    *
-   * @param data Column-major input data (or row-major input data if rowMajor =
+   * @param matX Column-major input data (or row-major input data if rowMajor =
    *     true).
-   * @param responses A vector of targets.
+   * @param y responses A vector of targets.
    * @param rowMajor Should be true if the data points matrix is row-major and
    *   false otherwise.
    * @return The minimum cost error.

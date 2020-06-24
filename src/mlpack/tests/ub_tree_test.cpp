@@ -1,5 +1,5 @@
 /**
- * @file ub_tree_test.cpp
+ * @file tests/ub_tree_test.cpp
  * @author Mikhail Lozhnikov
  *
  * Tests for the UB tree.

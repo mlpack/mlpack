@@ -1,5 +1,5 @@
 /**
- * @file pendulum.hpp
+ * @file methods/reinforcement_learning/environment/pendulum.hpp
  * @author Shashank Shekhar
  *
  * This file is an implementation of Pendulum task:
@@ -94,22 +94,18 @@ class Pendulum
    * @param maxAngularVelocity Maximum angular velocity.
    * @param maxTorque Maximum torque.
    * @param dt The differential value.
-   * @param angleThreshold The region about the upright position where the
-   *    state is considered terminal.
    * @param doneReward The reward recieved by the agent on success.
    * @param maxSteps The number of steps after which the episode
-   *    terminates. If the value is 0, there is no limit.
+   *    terminates. If the value is 0, there is no limit (Default: 200 steps). 
    */
   Pendulum(const double maxAngularVelocity = 8,
            const double maxTorque = 2.0,
            const double dt = 0.05,
-           const double angleThreshold = M_PI / 12,
            const double doneReward = 0.0,
-           const size_t maxSteps = 0) :
+           const size_t maxSteps = 200) :
       maxAngularVelocity(maxAngularVelocity),
       maxTorque(maxTorque),
       dt(dt),
-      angleThreshold(angleThreshold),
       doneReward(doneReward),
       maxSteps(maxSteps),
       stepsPerformed(0)
@@ -149,20 +145,11 @@ class Pendulum
 
     // Calculate new state values and assign to the next state.
     double newAngularVelocity = angularVelocity + (-3.0 * gravity / (2 *
-        length) * std::sin(theta + M_PI) + 3.0 / std::pow(mass * length, 2) *
+        length) * std::sin(theta + M_PI) + 3.0 / (mass * std::pow(length, 2)) *
         torque) * dt;
+    nextState.Theta() = theta + newAngularVelocity * dt;
     nextState.AngularVelocity() = math::ClampRange(newAngularVelocity,
         -maxAngularVelocity, maxAngularVelocity);
-    nextState.Theta() = theta + newAngularVelocity * dt;
-
-    // Check if the episode has terminated
-    bool done = IsTerminal(nextState);
-
-    // Do not reward the agent if time ran out.
-    if (done && maxSteps != 0 && stepsPerformed >= maxSteps)
-      return 0;
-    else if (done)
-      return doneReward;
 
     // Return the reward of taking the action in current state.
     // The reward is simply the negative of cost incurred for the action.
@@ -191,7 +178,7 @@ class Pendulum
   State InitialSample()
   {
     State state;
-    state.Theta() = math::Random(-M_PI + angleThreshold, M_PI - angleThreshold);
+    state.Theta() = math::Random(-M_PI, M_PI);
     state.AngularVelocity() = math::Random(-1.0, 1.0);
     stepsPerformed = 0;
     return state;
@@ -205,7 +192,10 @@ class Pendulum
   double AngleNormalize(double theta) const
   {
     // Scale angle within [-pi, pi).
-    return double(fmod(theta + M_PI, 2 * M_PI) - M_PI);
+    double x = fmod(theta + M_PI, 2 * M_PI);
+    if (x < 0)
+      x += 2 * M_PI;
+    return x - M_PI;
   }
 
   /**
@@ -220,12 +210,6 @@ class Pendulum
     {
       Log::Info << "Episode terminated due to the maximum number of steps"
           "being taken.";
-      return true;
-    }
-    else if (state.Theta() > M_PI - angleThreshold ||
-        state.Theta() < -M_PI + angleThreshold)
-    {
-      Log::Info << "Episode terminated due to agent succeeding.";
       return true;
     }
     return false;
@@ -248,9 +232,6 @@ class Pendulum
 
   //! Locally-stored dt.
   double dt;
-
-  //! Locally-stored angle threshold.
-  double angleThreshold;
 
   //! Locally-stored done reward.
   double doneReward;

@@ -1,5 +1,5 @@
 /**
- * @file allkrann_search_test.cpp
+ * @file tests/krann_search_test.cpp
  *
  * Unit tests for the 'RASearch' class and consequently the
  * 'RASearchRules' class

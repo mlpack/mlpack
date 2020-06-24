@@ -1,5 +1,5 @@
 /**
- * @file logistic_regression_function.hpp
+ * @file methods/logistic_regression/logistic_regression_function.hpp
  * @author Sumedh Ghaisas
  *
  * Implementation of the logistic regression function, which is meant to be
@@ -15,6 +15,8 @@
 #define MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/make_alias.hpp>
+#include <mlpack/core/math/shuffle_data.hpp>
 
 namespace mlpack {
 namespace regression {

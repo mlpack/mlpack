@@ -1,5 +1,5 @@
 /**
- * @file softmax_regression_impl.hpp
+ * @file methods/softmax_regression/softmax_regression_impl.hpp
  * @author Siddharth Agrawal
  *
  * Implementation of softmax regression.
@@ -65,7 +65,7 @@ double SoftmaxRegression::Train(const arma::mat& data,
 {
   SoftmaxRegressionFunction regressor(data, labels, numClasses, lambda,
                                       fitIntercept);
-  if (parameters.is_empty())
+  if (parameters.n_elem != regressor.GetInitialPoint().n_elem)
     parameters = regressor.GetInitialPoint();
 
   // Train the model.
@@ -88,7 +88,7 @@ double SoftmaxRegression::Train(const arma::mat& data,
 {
   SoftmaxRegressionFunction regressor(data, labels, numClasses, lambda,
                                       fitIntercept);
-  if (parameters.is_empty())
+  if (parameters.n_elem != regressor.GetInitialPoint().n_elem)
     parameters = regressor.GetInitialPoint();
 
   // Train the model.

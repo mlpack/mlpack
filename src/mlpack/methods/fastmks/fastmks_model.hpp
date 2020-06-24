@@ -1,5 +1,5 @@
 /**
- * @file fastmks_model.hpp
+ * @file methods/fastmks/fastmks_model.hpp
  * @author Ryan Curtin
  *
  * A utility struct to contain all the possible FastMKS models.

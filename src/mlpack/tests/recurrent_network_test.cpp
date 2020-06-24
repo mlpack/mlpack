@@ -1,5 +1,5 @@
 /**
- * @file recurrent_network_test.cpp
+ * @file tests/recurrent_network_test.cpp
  * @author Marcus Edel
  *
  * Tests the recurrent network.
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationBRNNTest)
     BOOST_TEST_CHECKPOINT("Training over");
     arma::cube prediction;
     model.Predict(input, prediction);
-    BOOST_TEST_CHECKPOINT("Predicion over");
+    BOOST_TEST_CHECKPOINT("Prediction over");
 
     size_t error = 0;
     for (size_t i = 0; i < prediction.n_cols; ++i)
@@ -825,7 +825,7 @@ void DistractedSequenceRecallTestNetwork(
         inputTemp = arma::cube(trainInput.at(0, j).memptr(), inputSize, 1,
             trainInput.at(0, j).n_elem / inputSize, false, true);
         labelsTemp = arma::cube(trainLabels.at(0, j).memptr(), outputSize, 1,
-            trainInput.at(0, j).n_elem / outputSize, false, true);
+            trainLabels.at(0, j).n_elem / outputSize, false, true);
 
         model.Train(inputTemp, labelsTemp, opt);
       }

@@ -1,5 +1,5 @@
 /**
- * @file mean_squared_logarithmic_error.hpp
+ * @file methods/ann/loss_functions/mean_squared_logarithmic_error.hpp
  * @author Saksham Rastogi
  *
  * Definition of the mean squared logarithmic error function.
@@ -45,7 +45,8 @@ class MeanSquaredLogarithmicError
    * @param target The target vector.
    */
   template<typename InputType, typename TargetType>
-  double Forward(const InputType& input, const TargetType& target);
+  typename InputType::elem_type Forward(const InputType& input,
+                                        const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.

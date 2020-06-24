@@ -1,5 +1,5 @@
 /**
- * @file lars_main.cpp
+ * @file methods/lars/lars_main.cpp
  * @author Nishant Mehta
  *
  * Executable for LARS.

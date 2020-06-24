@@ -1,5 +1,5 @@
 /**
- * @file r_plus_tree_split_impl.hpp
+ * @file core/tree/rectangle_tree/r_plus_tree_split_impl.hpp
  * @author Mikhail Lozhnikov
  *
  * Implementation of class (RPlusTreeSplit) to split a RectangleTree.

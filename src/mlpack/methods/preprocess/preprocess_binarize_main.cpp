@@ -1,5 +1,5 @@
 /**
- * @file preprocess_binarize_main.cpp
+ * @file methods/preprocess/preprocess_binarize_main.cpp
  * @author Keon Kim
  *
  * binarize CLI executable
