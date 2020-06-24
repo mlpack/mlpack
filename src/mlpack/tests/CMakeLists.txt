@@ -120,28 +120,36 @@ add_executable(mlpack_test
   union_find_test.cpp
   vantage_point_tree_test.cpp
   wgan_test.cpp
-  main_tests/test_helper.hpp
-  main_tests/emst_test.cpp
   main_tests/adaboost_test.cpp
   main_tests/approx_kfn_test.cpp
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
-  main_tests/det_test.cpp
-  main_tests/decision_tree_test.cpp
   main_tests/decision_stump_test.cpp
+  main_tests/decision_tree_test.cpp
+  main_tests/det_test.cpp
+  main_tests/emst_test.cpp
+  main_tests/fastmks_test.cpp
   main_tests/gmm_generate_test.cpp
   main_tests/gmm_probability_test.cpp
   main_tests/gmm_train_test.cpp
-  main_tests/fastmks_test.cpp
-  main_tests/kde_test.cpp
-  main_tests/kfn_test.cpp
-  main_tests/knn_test.cpp
-  main_tests/linear_regression_test.cpp
+  main_tests/hmm_generate_test.cpp
+  main_tests/hmm_loglik_test.cpp
+  main_tests/hmm_test_utils.hpp
+  main_tests/hmm_train_test.cpp
+  main_tests/hmm_viterbi_test.cpp
+  main_tests/hoeffding_tree_test.cpp
   main_tests/image_converter_test.cpp
+  main_tests/kde_test.cpp
+  main_tests/kernel_pca_test.cpp
+  main_tests/kfn_test.cpp
+  main_tests/kmeans_test.cpp
+  main_tests/knn_test.cpp
+  main_tests/krann_test.cpp
+  main_tests/linear_regression_test.cpp
   main_tests/linear_svm_test.cpp
-  main_tests/logistic_regression_test.cpp
-  main_tests/local_coordinate_coding_test.cpp
   main_tests/lmnn_test.cpp
+  main_tests/local_coordinate_coding_test.cpp
+  main_tests/logistic_regression_test.cpp
   main_tests/lsh_test.cpp
   main_tests/mean_shift_test.cpp
   main_tests/nbc_test.cpp
@@ -150,22 +158,16 @@ add_executable(mlpack_test
   main_tests/pca_test.cpp
   main_tests/perceptron_test.cpp
   main_tests/preprocess_binarize_test.cpp
-  main_tests/preprocess_scale_test.cpp
   main_tests/preprocess_imputer_test.cpp
+  main_tests/preprocess_scale_test.cpp
   main_tests/preprocess_split_test.cpp
+  main_tests/radical_test.cpp
   main_tests/random_forest_test.cpp
+  main_tests/range_search_test.cpp
   main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
-  main_tests/kmeans_test.cpp
-  main_tests/hoeffding_tree_test.cpp
-  main_tests/hmm_viterbi_test.cpp
-  main_tests/hmm_train_test.cpp
-  main_tests/hmm_loglik_test.cpp
-  main_tests/hmm_generate_test.cpp
-  main_tests/radical_test.cpp
-  main_tests/hmm_test_utils.hpp
-  main_tests/kernel_pca_test.cpp
-  main_tests/range_search_test.cpp
+  main_tests/test_helper.hpp
+
 )
 
 # Link dependencies of test executable.
