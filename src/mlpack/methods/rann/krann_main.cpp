@@ -243,9 +243,19 @@ static void mlpackMain()
     arma::mat queryData;
     if (CLI::HasParam("query"))
     {
-      Log::Info << "Using query data from "
-          << CLI::GetPrintableParam<arma::mat>("query") << "." << endl;
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
+      Log::Info << "Using query data from '"
+          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
+          << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
+      if (queryData.n_rows != rann->Dataset().n_rows)
+      {
+        // Clean memory if needed before crashing.
+        const size_t dimensions = rann->Dataset().n_rows;
+        if (CLI::HasParam("reference"))
+          delete rann;
+        Log::Fatal << "Query has invalid dimensions(" << queryData.n_rows <<
+            "); should be " << dimensions << "!" << endl;
+      }
     }
 
     // Sanity check on k value: must be greater than 0, must be less than the
