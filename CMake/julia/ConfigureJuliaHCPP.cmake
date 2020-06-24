@@ -59,9 +59,9 @@ if (${NUM_MODEL_TYPES} GREATER 0)
     # Generate the definition.
     set(MODEL_PTR_DEFNS "${MODEL_PTR_DEFNS}
 // Get the pointer to a ${MODEL_TYPE} parameter.
-void* CLI_GetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName);
+void* IO_GetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName);
 // Set the pointer to a ${MODEL_TYPE} parameter.
-void CLI_SetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName, void* ptr);
+void IO_SetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName, void* ptr);
 // Serialize a ${MODEL_TYPE} pointer.
 char* Serialize${MODEL_SAFE_TYPE}Ptr(void* ptr, size_t* length);
 // Deserialize a ${MODEL_TYPE} pointer.
@@ -71,16 +71,16 @@ void* Deserialize${MODEL_SAFE_TYPE}Ptr(const char* buffer, const size_t length);
     # Generate the implementation.
     set(MODEL_PTR_IMPLS "${MODEL_PTR_IMPLS}
 // Get the pointer to a ${MODEL_TYPE} parameter.
-void* CLI_GetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName)
+void* IO_GetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName)
 {
-  return (void*) CLI::GetParam<${MODEL_TYPE}*>(paramName);
+  return (void*) IO::GetParam<${MODEL_TYPE}*>(paramName);
 }
 
 // Set the pointer to a ${MODEL_TYPE} parameter.
-void CLI_SetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName, void* ptr)
+void IO_SetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName, void* ptr)
 {
-  CLI::GetParam<${MODEL_TYPE}*>(paramName) = (${MODEL_TYPE}*) ptr;
-  CLI::SetPassed(paramName);
+  IO::GetParam<${MODEL_TYPE}*>(paramName) = (${MODEL_TYPE}*) ptr;
+  IO::SetPassed(paramName);
 }
 
 // Serialize a ${MODEL_TYPE} pointer.
