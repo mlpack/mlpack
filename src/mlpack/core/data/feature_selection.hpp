@@ -1,5 +1,5 @@
 /**
- * @file feature_selection.hpp
+ * @file fcore/data/feature_selection.hpp
  * @author Jeffin Sam
  *
  * Feature selction based on variance thresholding.
@@ -39,7 +39,16 @@ namespace fs {
  *   year   = {2009}
  * }
  * @endcode
+ * 
+ * @code
+ * arma::Mat<double> input = loadData();
+ * arma::Mat<double> output;
+ * double threshold = 0.009;
  *
+ * // removes all low-variance features.
+ * data::fs::VarianceSelection(input, threshold, output);
+ * @endcode
+ * 
  * @param input Input dataset with actual number of features.
  * @param threshold Threshold for variance.
  * @param output Output matrix with lesser number of features.

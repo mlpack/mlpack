@@ -1,5 +1,5 @@
 /**
- * @file chi2_feature_selection_impl.hpp
+ * @file core/data/chi2_feature_selection_impl.hpp
  * @author Jeffin Sam
  *
  * Feature selction based on Chi-Square Test.
@@ -52,8 +52,7 @@ void Chi2Selection(const arma::Mat<T>& input,
   for (size_t i = 0; i < input.n_rows; i++)
   {
     std::unordered_map<size_t, std::unordered_map<size_t,size_t >> chiTable;
-    std::unordered_map<size_t, size_t>labels;
-    std::unordered_map<size_t, size_t>expected;
+    std::unordered_map<size_t, size_t>labels, expected;
     for (size_t j = 0; j < input.n_cols; j++)
     {
      chiTable[input.at(i,j)][target(j)]++;
@@ -61,19 +60,20 @@ void Chi2Selection(const arma::Mat<T>& input,
      expected[input.at(i,j)]++;
     }
 
-    // For safety, Lets add a padding 
+    // For safety, Lets add a padding .
     for (auto it = chiTable.begin(); it != chiTable.end(); it++)
       for (size_t i = 0; i < outputLabels.n_rows; i++)
         if(it->second.find(outputLabels(i)) == it->second.end())
           chiTable[it->first][outputLabels(i)] = 0;
 
-    // Calculate chi square values
+    // Calculate chi square values.
     double chiValue = 0.0;
     for(auto it = chiTable.begin(); it != chiTable.end(); it++)
       for (auto jt = it->second.begin(); jt != it->second.end(); jt++)
         chiValue +=
-            (pow(( jt->second - ((double)(expected[it->first] * labels[jt->first]) /
-            (double)(input.n_cols))), 2) / ((double)(expected[it->first] * labels[jt->first]) /
+            (pow(( jt->second - ((double)(expected[it->first] *
+            labels[jt->first]) / (double)(input.n_cols))), 2) /
+            ((double)(expected[it->first] * labels[jt->first]) /
             (double)(input.n_cols)));
 
     outputIndex[i][0]=chiValue;

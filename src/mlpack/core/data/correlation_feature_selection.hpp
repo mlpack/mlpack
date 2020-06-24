@@ -1,5 +1,5 @@
 /**
- * @file correlation_feature_selection.hpp
+ * @file core/data/correlation_feature_selection.hpp
  * @author Jeffin Sam
  *
  * Feature selction based on T-Test.
@@ -22,6 +22,16 @@ namespace fs {
 
 /**
  *
+ * @code
+ * arma::Mat<double> input = loadData();
+ * arma::Mat<double> target = loadData();
+ * arma::Mat<double> output;
+ * size_t outputSize = 1;
+ *
+ * // removes all low-variance features.
+ * data::fs::CorrelationSelection(input, target, output, outputSize);
+ * @endcode
+ * 
  * @param input Input dataset with actual number of features.
  * @param target Ouput labels for the respective Input. 
  * @param output Output matrix with lesser number of features.
