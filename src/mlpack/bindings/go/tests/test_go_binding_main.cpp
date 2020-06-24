@@ -22,7 +22,7 @@ PROGRAM_INFO("Golang binding test",
     "A simple program to test Golang binding functionality.",
     "A simple program to test Golang binding functionality.  You can build "
     "mlpack with the BUILD_TESTS option set to off, and this binding will "
-    "no longer be built.");
+    "no longer be built.", "");
 
 PARAM_STRING_IN_REQ("string_in", "Input string, must be 'hello'.", "s");
 PARAM_INT_IN_REQ("int_in", "Input int, must be 12.", "i");

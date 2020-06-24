@@ -39,12 +39,14 @@ PROGRAM_INFO("Image Converter",
     + ".\n\n" +
     "You can also provide a dataset and save them as images using " +
     PRINT_PARAM_STRING("dataset") + " and " + PRINT_PARAM_STRING("save") +
-    " as an parameter. An example to load an image : "  +
+    " as an parameter.",
+    // Example.
+    "An example to load an image : "
     "\n\n" +
     PRINT_CALL("image_converter", "input", "X", "height", 256, "width", 256,
         "channels", 3, "output", "Y") +
-    "\n\n" +
-    " An example to save an image is :" +
+    "\n\n"
+    "An example to save an image is :" +
     "\n\n" +
     PRINT_CALL("image_converter", "input", "X", "height", 256, "width", 256,
         "channels", 3, "dataset", "Y", "save", true),

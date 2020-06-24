@@ -41,8 +41,8 @@ PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
     "set of points. You may specify a separate set of reference points and "
     "query points, or just a reference set which will be used as both the "
     "reference and query set. You must specify the rank approximation (in %) "
-    "(and optionally the success probability)."
-    "\n\n"
+    "(and optionally the success probability).",
+    // Example.
     "For example, the following will return 5 neighbors from the top 0.1% of "
     "the data (with probability 0.95) for each point in " +
     PRINT_DATASET("input") + " and store the distances in " +
@@ -225,9 +225,9 @@ static void mlpackMain()
 
   // Apply the parameters for search.
   if (IO::HasParam("tau"))
-    rann->Tau() = IO::GetParam<double>("tau");
+    rann->Tau() = tau;
   if (IO::HasParam("alpha"))
-    rann->Alpha() = IO::GetParam<double>("alpha");
+    rann->Alpha() = alpha;
   if (IO::HasParam("single_sample_limit"))
     rann->SingleSampleLimit() = IO::GetParam<int>("single_sample_limit");
   rann->SampleAtLeaves() = IO::HasParam("sample_at_leaves");

@@ -51,7 +51,9 @@ PROGRAM_INFO("Local Coordinate Coding",
     "may also be specified with the " +
     PRINT_PARAM_STRING("initial_dictionary") + " parameter.  The l1-norm "
     "regularization parameter is specified with the " +
-    PRINT_PARAM_STRING("lambda") + " parameter.  For example, to run LCC on "
+    PRINT_PARAM_STRING("lambda") + " parameter.",
+    // Example.
+    "For example, to run LCC on "
     "the dataset " + PRINT_DATASET("data") + " using 200 atoms and an "
     "l1-regularization parameter of 0.1, saving the dictionary " +
     PRINT_PARAM_STRING("dictionary") + " and the codes into " +

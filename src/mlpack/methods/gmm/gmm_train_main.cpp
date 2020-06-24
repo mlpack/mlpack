@@ -77,8 +77,8 @@ PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
     "will avoid the checks after each iteration of the EM algorithm which "
     "ensure that the covariance matrices are positive definite.  Specifying "
     "the flag can cause faster runtime, but may also cause non-positive "
-    "definite covariance matrices, which will cause the program to crash."
-    "\n\n"
+    "definite covariance matrices, which will cause the program to crash.",
+    // Example.
     "As an example, to train a 6-Gaussian GMM on the data in " +
     PRINT_DATASET("data") + " with a maximum of 100 iterations of EM and 3 "
     "trials, saving the trained GMM to " + PRINT_MODEL("gmm") + ", the "

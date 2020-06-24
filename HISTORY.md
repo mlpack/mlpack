@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Rename InformationGain to HoeffdingInformationGain in
+    methods/hoeffding_trees/information_gain.hpp (#____).
+
   * Added Categorical DQN to q_networks (#2454).
 
   * Added N-step DQN to q_networks (#2461).

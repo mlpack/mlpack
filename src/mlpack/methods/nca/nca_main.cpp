@@ -89,6 +89,8 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "literature on L-BFGS."
     "\n\n"
     "By default, the SGD optimizer is used.",
+    // Example.
+    "",
     SEE_ALSO("@lmnn", "#lmnn"),
     SEE_ALSO("Neighbourhood components analysis on Wikipedia",
         "https://en.wikipedia.org/wiki/Neighbourhood_components_analysis"),

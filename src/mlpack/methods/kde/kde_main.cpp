@@ -68,8 +68,8 @@ PROGRAM_INFO("Kernel Density Estimation",
     "computations an exact approach would take, this program recurses the tree "
     "whenever a fraction of the amount of the node's descendant points have "
     "already been computed. This fraction is set using " +
-    PRINT_PARAM_STRING("mc_break_coef") + "."
-    "\n\n"
+    PRINT_PARAM_STRING("mc_break_coef") + ".",
+    // Example.
     "For example, the following will run KDE using the data in " +
     PRINT_DATASET("ref_data") + " for training and the data in " +
     PRINT_DATASET("qu_data") + " as query data. It will apply an Epanechnikov "
@@ -108,8 +108,7 @@ PROGRAM_INFO("Kernel Density Estimation",
         0.2, "kernel", "gaussian", "tree", "kd-tree", "rel_error",
         0.05, "predictions", "out_data", "monte_carlo", "", "mc_probability",
         0.95, "initial_sample_size", 200, "mc_entry_coef", 3.5, "mc_break_coef",
-        0.6) +
-    "\n\n",
+        0.6),
     SEE_ALSO("@knn", "#knn"),
     SEE_ALSO("Kernel density estimation on Wikipedia",
         "https://en.wikipedia.org/wiki/Kernel_density_estimation"),

@@ -29,6 +29,7 @@ using namespace std;
  * @param documentation Long string containing documentation on how to use the
  *     program and what it is.  No newline characters are necessary; this is
  *     taken care of by IO later.
+ * @param example Documentation on how to use the program.
  * @param seeAlso A set of pairs of strings with useful "see also"
  *     information; each pair is <description, url>.
  */
@@ -36,10 +37,12 @@ ProgramDoc::ProgramDoc(
     const std::string programName,
     const std::string shortDocumentation,
     const std::function<std::string()> documentation,
+    const std::function<std::string()> example,
     const std::vector<std::pair<std::string, std::string>> seeAlso) :
     programName(std::move(programName)),
     shortDocumentation(std::move(shortDocumentation)),
     documentation(std::move(documentation)),
+    example(std::move(example)),
     seeAlso(std::move(seeAlso))
 {
   // Register this with IO.

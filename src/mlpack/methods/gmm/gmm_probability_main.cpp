@@ -30,8 +30,8 @@ PROGRAM_INFO("GMM Probability Calculator",
     PRINT_PARAM_STRING("input_model") + " parameter, and the points are "
     "specified with the " + PRINT_PARAM_STRING("input") + " parameter.  The "
     "output probabilities may be saved via the " +
-    PRINT_PARAM_STRING("output") + " output parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("output") + " output parameter.",
+    // Example.
     "So, for example, to calculate the probabilities of each point in " +
     PRINT_DATASET("points") + " coming from the pre-trained GMM " +
     PRINT_MODEL("gmm") + ", while storing those probabilities in " +

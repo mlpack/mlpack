@@ -33,8 +33,8 @@ PROGRAM_INFO("RADICAL",
     PRINT_PARAM_STRING("input") + " parameter.  The output matrix Y may be "
     "saved with the " + PRINT_PARAM_STRING("output_ic") + " output parameter, "
     "and the output unmixing matrix W may be saved with the " +
-    PRINT_PARAM_STRING("output_unmixing") + " output parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("output_unmixing") + " output parameter.",
+    // Example.
     "For example, to perform ICA on the matrix " + PRINT_DATASET("X") + " with "
     "40 replicates, saving the independent components to " +
     PRINT_DATASET("ic") + ", the following command may be used: "

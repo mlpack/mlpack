@@ -35,8 +35,8 @@ PROGRAM_INFO("K-Approximate-Nearest-Neighbor Search with LSH",
     "This program will calculate the k approximate-nearest-neighbors of a set "
     "of points using locality-sensitive hashing. You may specify a separate set"
     " of reference points and query points, or just a reference set which will "
-    "be used as both the reference and query set. "
-    "\n\n"
+    "be used as both the reference and query set. ",
+    // Example.
     "For example, the following will return 5 neighbors from the data for each "
     "point in " + PRINT_DATASET("input") + " and store the distances in " +
     PRINT_DATASET("distances") + " and the neighbors in " +

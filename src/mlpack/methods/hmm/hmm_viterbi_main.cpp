@@ -40,8 +40,8 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Viterbi State Prediction",
     "hidden state sequence of a given sequence of observations (specified as "
     "'" + PRINT_PARAM_STRING("input") + ", using the Viterbi algorithm.  The "
     "computed state sequence may be saved using the " +
-    PRINT_PARAM_STRING("output") + " output parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("output") + " output parameter.",
+    // Example.
     "For example, to predict the state sequence of the observations " +
     PRINT_DATASET("obs") + " using the HMM " + PRINT_MODEL("hmm") + ", "
     "storing the predicted state sequence to " + PRINT_DATASET("states") +

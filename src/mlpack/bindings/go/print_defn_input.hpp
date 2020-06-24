@@ -14,8 +14,8 @@
 #define MLPACK_BINDINGS_GO_PRINT_DEFN_INPUT_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/bindings/util/camel_case.hpp>
 #include "get_go_type.hpp"
-#include "camel_case.hpp"
 #include "strip_type.hpp"
 
 namespace mlpack {
@@ -36,7 +36,7 @@ void PrintDefnInput(
   if (d.required)
   {
     std::string name = d.name;
-    std::cout << CamelCase(name, true) << " " << GetGoType<T>(d);
+    std::cout << util::CamelCase(name, true) << " " << GetGoType<T>(d);
   }
 }
 
@@ -52,7 +52,7 @@ void PrintDefnInput(
   if (d.required)
   {
     std::string name = d.name;
-    std::cout << CamelCase(name, true) << " *" << GetGoType<T>(d);
+    std::cout << util::CamelCase(name, true) << " *" << GetGoType<T>(d);
   }
 }
 
@@ -69,7 +69,7 @@ void PrintDefnInput(
   if (d.required)
   {
     std::string name = d.name;
-    std::cout << CamelCase(name, true) << " *" << GetGoType<T>(d);
+    std::cout << util::CamelCase(name, true) << " *" << GetGoType<T>(d);
   }
 }
 
@@ -90,7 +90,7 @@ void PrintDefnInput(
   if (d.required)
   {
     std::string name = d.name;
-    std::cout << CamelCase(name, true) << " *" << goStrippedType;
+    std::cout << util::CamelCase(name, true) << " *" << goStrippedType;
   }
 }
 

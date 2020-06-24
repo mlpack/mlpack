@@ -30,8 +30,8 @@ PROGRAM_INFO("Binarize Data",
     "0.0."
     "\n\n"
     "The binarized matrix may be saved with the " +
-    PRINT_PARAM_STRING("output") + " output parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("output") + " output parameter.",
+    // Example.
     "For example, if we want to set all variables greater than 5 in the "
     "dataset " + PRINT_DATASET("X") + " to 1 and variables less than or equal "
     "to 5.0 to 0, and save the result to " + PRINT_DATASET("Y") + ", we could "

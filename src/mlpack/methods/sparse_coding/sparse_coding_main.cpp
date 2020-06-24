@@ -56,8 +56,8 @@ PROGRAM_INFO("Sparse Coding",
     " an initial dictionary for the optimization, with the " +
     PRINT_PARAM_STRING("initial_dictionary") + " parameter.  An input model may"
     " be specified with the " + PRINT_PARAM_STRING("input_model") +
-    " parameter."
-    "\n\n"
+    " parameter.",
+    // Example.
     "As an example, to build a sparse coding model on the dataset " +
     PRINT_DATASET("data") + " using 200 atoms and an l1-regularization "
     "parameter of 0.1, saving the model into " + PRINT_MODEL("model") + ", use "

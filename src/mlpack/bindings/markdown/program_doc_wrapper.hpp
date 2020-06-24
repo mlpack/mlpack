@@ -30,11 +30,12 @@ class ProgramDocWrapper
                     const std::string& programName,
                     const std::string& shortDocumentation,
                     const std::function<std::string()>& documentation,
+                    const std::function<std::string()>& example,
                     const std::vector<std::pair<std::string, std::string>>&
                         seeAlso)
   {
     util::ProgramDoc pd(programName, shortDocumentation, documentation,
-        seeAlso);
+        example, seeAlso);
     BindingInfo::RegisterProgramDoc(bindingName, pd);
   }
 };

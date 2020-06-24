@@ -50,8 +50,8 @@ PROGRAM_INFO("Principal Components Analysis",
     "Multiple different decomposition techniques can be used.  The method to "
     "use can be specified with the " +
     PRINT_PARAM_STRING("decomposition_method") + " parameter, and it may take "
-    "the values 'exact', 'randomized', or 'quic'."
-    "\n\n"
+    "the values 'exact', 'randomized', or 'quic'.",
+    // Example.
     "For example, to reduce the dimensionality of the matrix " +
     PRINT_DATASET("data") + " to 5 dimensions using randomized SVD for the "
     "decomposition, storing the output matrix to " +

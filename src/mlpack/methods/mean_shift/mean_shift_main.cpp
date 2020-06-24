@@ -42,8 +42,8 @@ PROGRAM_INFO("Mean Shift Clustering",
     "\n\n"
     "The output labels may be saved with the " + PRINT_PARAM_STRING("output") +
     " output parameter and the centroids of each cluster may be saved with the"
-    " " + PRINT_PARAM_STRING("centroid") + " output parameter."
-    "\n\n"
+    " " + PRINT_PARAM_STRING("centroid") + " output parameter.",
+    // Example.
     "For example, to run mean shift clustering on the dataset " +
     PRINT_DATASET("data") + " and store the centroids to " +
     PRINT_DATASET("centroids") + ", the following command may be used: "

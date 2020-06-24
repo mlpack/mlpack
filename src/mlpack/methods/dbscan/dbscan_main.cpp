@@ -58,8 +58,8 @@ PROGRAM_INFO("DBSCAN clustering",
     " 'hilbert-r', 'r-plus', 'r-plus-plus', 'cover', 'ball'. The " +
     PRINT_PARAM_STRING("single_mode") + " parameter will force single-tree "
     "search (as opposed to the default dual-tree search), and '" +
-    PRINT_PARAM_STRING("naive") + " will force brute-force range search."
-    "\n\n"
+    PRINT_PARAM_STRING("naive") + " will force brute-force range search.",
+    // Example.
     "An example usage to run DBSCAN on the dataset in " +
     PRINT_DATASET("input") + " with a radius of 0.5 and a minimum cluster size"
     " of 5 is given below:"

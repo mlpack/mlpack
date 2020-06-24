@@ -111,8 +111,8 @@ PROGRAM_INFO("Collaborative Filtering",
     " - 'z_score'  -- Z-Score Normalization\n"
     "\n"
     "A trained model may be saved to with the " +
-    PRINT_PARAM_STRING("output_model") + " output parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("output_model") + " output parameter.",
+    // Example.
     "To train a CF model on a dataset " + PRINT_DATASET("training_set") + " "
     "using NMF for decomposition and saving the trained model to " +
     PRINT_MODEL("model") + ", one could call: "

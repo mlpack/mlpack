@@ -45,8 +45,8 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Generator",
     " parameter."
     "\n\n"
     "The state to start the sequence in may be specified with the " +
-    PRINT_PARAM_STRING("start_state") + " parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("start_state") + " parameter.",
+    // Example.
     "For example, to generate a sequence of length 150 from the HMM " +
     PRINT_MODEL("hmm") + " and save the observation sequence to " +
     PRINT_DATASET("observations") + " and the hidden state sequence to " +

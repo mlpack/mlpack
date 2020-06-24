@@ -36,8 +36,8 @@ PROGRAM_INFO("FastMKS (Fast Max-Kernel Search)",
     "set). More specifically, for each point in the query set, the k points in"
     " the reference set with maximum kernel evaluations are found.  The kernel "
     "function used is specified with the " + PRINT_PARAM_STRING("kernel") +
-    " parameter."
-    "\n\n"
+    " parameter.",
+    // Example.
     "For example, the following command will calculate, for each point in the "
     "query set " + PRINT_DATASET("query") + ", the five points in the "
     "reference set " + PRINT_DATASET("reference") + " with maximum kernel "

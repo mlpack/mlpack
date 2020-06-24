@@ -55,6 +55,8 @@ PROGRAM_INFO("Density Estimation With Density Estimation Trees",
     PRINT_PARAM_STRING("input_model") + ".  The density estimates for the test"
     " points may be saved using the " +
     PRINT_PARAM_STRING("test_set_estimates") + " output parameter.",
+    // Example.
+    "",
     SEE_ALSO("Density estimation tree (DET) tutorial",
         "@doxygen/dettutorial.html"),
     SEE_ALSO("Density estimation on Wikipedia",

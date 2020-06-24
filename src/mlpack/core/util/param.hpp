@@ -68,10 +68,11 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *     documentation.  See the SEE_ALSO() macro.  This is a varargs argument, so
  *     you can add as many SEE_ALSO()s as you like.
  */
-#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, EXAMPLE, ...) \
     static mlpack::util::ProgramDoc \
     io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
-    []() { return DESC; }, { __VA_ARGS__ } )
+    []() { return std::string(DESC) + std::string(EXAMPLE); }, []() \
+    { return ""; }, { __VA_ARGS__ })
 
 /**
  * Define a flag parameter.

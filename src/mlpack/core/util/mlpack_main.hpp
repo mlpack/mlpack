@@ -23,6 +23,7 @@
 #define BINDING_TYPE_PYX 2
 #define BINDING_TYPE_JL 3
 #define BINDING_TYPE_GO 4
+#define BINDING_TYPE_R 5
 #define BINDING_TYPE_MARKDOWN 128
 #define BINDING_TYPE_UNKNOWN -1
 
@@ -153,10 +154,11 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 #include <mlpack/core/util/param.hpp>
 
 #undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
-    static mlpack::util::ProgramDoc \
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, EXAMPLE, ...) static \
+    mlpack::util::ProgramDoc \
     io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
-    []() { return DESC; }, { __VA_ARGS__ })
+    []() { return std::string(DESC) + "\n\n" + std::string(EXAMPLE); }, []() \
+    { return ""; }, { __VA_ARGS__ })
 
 #elif(BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
 
@@ -218,10 +220,11 @@ static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
 #undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
-    static mlpack::util::ProgramDoc \
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, EXAMPLE, ...) static \
+    mlpack::util::ProgramDoc \
     io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
-    []() { return DESC; }, { __VA_ARGS__ }); \
+    []() { return std::string(DESC) + "\n\n" + std::string(EXAMPLE); }, []() \
+    { return ""; }, { __VA_ARGS__ }); \
     namespace mlpack { \
     namespace bindings { \
     namespace python { \
@@ -267,10 +270,11 @@ static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
 #undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) static \
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, EXAMPLE, ...) static \
     mlpack::util::ProgramDoc \
     io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
-    []() { return DESC; }, { __VA_ARGS__ }); \
+    []() { return std::string(DESC) + "\n\n" + std::string(EXAMPLE); }, []() \
+    { return ""; }, { __VA_ARGS__ }); \
     namespace mlpack { \
     namespace bindings { \
     namespace julia { \
@@ -312,10 +316,11 @@ static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
 #undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
-    static mlpack::util::ProgramDoc \
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, EXAMPLE, ...) static \
+    mlpack::util::ProgramDoc \
     io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
-    []() { return DESC; }, { __VA_ARGS__ }); \
+    []() { return std::string(DESC) + "\n\n" + std::string(EXAMPLE); }, []() \
+    { return ""; }, { __VA_ARGS__ }); \
     namespace mlpack { \
     namespace bindings { \
     namespace go { \
@@ -323,6 +328,44 @@ static const std::string testName = "";
     } \
     } \
     }
+
+PARAM_FLAG("verbose", "Display informational messages and the full list of "
+    "parameters and timers at the end of execution.", "v");
+
+// Nothing else needs to be defined---the binding will use mlpackMain() as-is.
+
+#elif(BINDING_TYPE == BINDING_TYPE_R) // This is a R binding.
+
+// This doesn't actually matter for this binding type.
+#define BINDING_MATRIX_TRANSPOSED true
+
+#include <mlpack/bindings/R/R_option.hpp>
+#include <mlpack/bindings/R/print_doc_functions.hpp>
+
+#define PRINT_PARAM_STRING mlpack::bindings::r::ParamString
+#define PRINT_PARAM_VALUE mlpack::bindings::r::PrintValue
+#define PRINT_DATASET mlpack::bindings::r::PrintDataset
+#define PRINT_MODEL mlpack::bindings::r::PrintModel
+#define PRINT_CALL mlpack::bindings::r::ProgramCall
+#define BINDING_IGNORE_CHECK mlpack::bindings::r::IgnoreCheck
+
+namespace mlpack {
+namespace util {
+
+template<typename T>
+using Option = mlpack::bindings::r::ROption<T>;
+
+}
+}
+
+static const std::string testName = "";
+#include <mlpack/core/util/param.hpp>
+
+#undef PROGRAM_INFO
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, EXAMPLE, ...) static \
+    mlpack::util::ProgramDoc \
+    io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
+    []() { return DESC; }, []() { return EXAMPLE; }, { __VA_ARGS__ })
 
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
@@ -397,11 +440,12 @@ using Option = mlpack::bindings::markdown::MDOption<T>;
 #include <mlpack/bindings/markdown/program_doc_wrapper.hpp>
 
 #undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) static \
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, EXAMPLE, ...) static \
     mlpack::bindings::markdown::ProgramDocWrapper \
     io_programdoc_dummy_object = \
     mlpack::bindings::markdown::ProgramDocWrapper(BINDING_NAME, NAME, \
-    SHORT_DESC, []() { return DESC; }, { __VA_ARGS__ }); \
+    SHORT_DESC, []() { return std::string(DESC) + "\n\n" + std::string( \
+    EXAMPLE); }, []() { return ""; }, { __VA_ARGS__ }); \
 
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");

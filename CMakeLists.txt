@@ -48,11 +48,19 @@ else()
 endif()
 option(BUILD_GO_BINDINGS "Build Go bindings." ON)
 
-# If building Go bindings then build go shared libraries.    
+# If building Go bindings then build go shared libraries.
 if (BUILD_GO_BINDINGS)
   set(BUILD_GO_SHLIB ON)
 endif()
 
+# Detect whether the user passed BUILD_R_BINDINGS in order to determine if
+# we should fail if R isn't found.
+if (BUILD_R_BINDINGS)
+  set(FORCE_BUILD_R_BINDINGS ON)
+else()
+  set(FORCE_BUILD_R_BINDINGS OFF)
+endif()
+option(BUILD_R_BINDINGS "Build R bindings." ON)
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.
 option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)

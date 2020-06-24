@@ -38,8 +38,8 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Log-Likelihood",
     PRINT_PARAM_STRING("input_model") + " parameter, and evaluates the "
     "log-likelihood of a sequence of observations, given with the " +
     PRINT_PARAM_STRING("input") + " parameter.  The computed log-likelihood is"
-    " given as output."
-    "\n\n"
+    " given as output.",
+    // Example.
     "For example, to compute the log-likelihood of the sequence " +
     PRINT_DATASET("seq") + " with the pre-trained HMM " + PRINT_MODEL("hmm") +
     ", the following command may be used: "

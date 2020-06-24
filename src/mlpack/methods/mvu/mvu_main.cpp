@@ -19,7 +19,7 @@ PROGRAM_INFO("Maximum Variance Unfolding (MVU)", "This program implements "
     "Maximum Variance Unfolding, a nonlinear dimensionality reduction "
     "technique.  The method minimizes dimensionality by unfolding a manifold "
     "such that the distances to the nearest neighbors of each point are held "
-    "constant.");
+    "constant.", "");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset.", "i");
 PARAM_INT_IN_REQ("new_dim", "New dimensionality of dataset.", "d");
