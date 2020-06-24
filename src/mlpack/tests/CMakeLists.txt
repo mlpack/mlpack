@@ -167,7 +167,6 @@ add_executable(mlpack_test
   main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
   main_tests/test_helper.hpp
-
 )
 
 # Link dependencies of test executable.
