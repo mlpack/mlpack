@@ -32,10 +32,6 @@ add_cli_executable(preprocess_imputer)
 #add_python_binding(preprocess_imputer)
 add_markdown_docs(preprocess_imputer "cli" "preprocessing")
 
-add_cli_executable(feature_selection)
-add_python_binding(feature_selection)
-add_markdown_docs(feature_selection "cli;python" "preprocessing")
-
 add_cli_executable(preprocess_scale)
 add_python_binding(preprocess_scale)
 add_markdown_docs(preprocess_scale "cli;python" "preprocessing")
