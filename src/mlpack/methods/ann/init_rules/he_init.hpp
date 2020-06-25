@@ -67,12 +67,13 @@ class HeInitialization
     // He initialization rule says to initialize weights with random
     // values taken from a gaussian distribution with mean = 0 and
     // standard deviation = sqrt(2/rows), i.e. variance = (2/rows).
-    const double variance = 2.0 / (double)rows;
+    const double variance = 2.0 / (double) rows;
 
-    if (W.is_empty())
-    {
-      W = arma::Mat<eT>(rows, cols);
-    }
+    // if (W.is_empty())
+    // {
+    //   W = arma::Mat<eT>(rows, cols);
+    // }
+    W = arma::Mat<eT>(rows, cols);
 
     // Multipling a random variable X with variance V(X) by some factor c,
     // then the variance V(cX) = (c^2) * V(X).
@@ -111,13 +112,16 @@ class HeInitialization
    * @param cols Number of columns.
    * @param slices Number of slices.
    */
-  void Initialize(arma::cube & W,
+  template <typename eT>
+  void Initialize(arma::Cube<eT> & W,
                   const size_t rows,
                   const size_t cols,
                   const size_t slices)
   {
-    if (W.is_empty())
-      W.set_size(rows, cols, slices);
+    // if (W.is_empty())
+    //   W.set_size(rows, cols, slices);
+
+    W = arma::Cube<eT>(rows, cols, slices);
 
     for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
@@ -129,7 +133,8 @@ class HeInitialization
    *
    * @param W Weight matrix to initialize.
    */
-  void Initialize(arma::cube & W)
+  template <typename eT>
+  void Initialize(arma::Cube<eT> & W)
   {
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty matrix" << std::endl;

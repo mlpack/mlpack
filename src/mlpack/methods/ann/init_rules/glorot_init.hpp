@@ -140,7 +140,7 @@ inline void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W,
                                                        const size_t rows,
                                                        const size_t cols)
 {
-  if (W.is_empty())
+  // if (W.is_empty())
   W = arma::mat(rows, cols);
 
   // Limit of distribution.
@@ -169,10 +169,11 @@ inline void GlorotInitializationType<Uniform>::Initialize(arma::Cube<eT>& W,
                                                           const size_t cols,
                                                           const size_t slices)
 {
-  if (W.is_empty())
-  {
-    W = arma::cube(rows, cols, slices);
-  }
+  // if (W.is_empty())
+  // {
+  //   W = arma::cube(rows, cols, slices);
+  // }
+  W = arma::cube(rows, cols, slices);
   for (size_t i = 0; i < slices; ++i)
     Initialize(W.slice(i), rows, cols);
 }

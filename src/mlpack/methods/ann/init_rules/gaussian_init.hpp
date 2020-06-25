@@ -52,10 +52,11 @@ class GaussianInitialization
                   const size_t rows,
                   const size_t cols)
   {
-    if (W.is_empty())
-    {
-      W = arma::Mat<eT>(rows, cols);
-    }
+    // if (W.is_empty())
+    // {
+    //   W = arma::Mat<eT>(rows, cols);
+    // }
+    W = arma::Mat<eT>(rows, cols);
     W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
   }
 

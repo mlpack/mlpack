@@ -75,10 +75,11 @@ class LecunNormalInitialization
     // standard deviation = sqrt(1 / rows), i.e. variance = (1 / rows).
     const double variance = 1.0 / ((double) rows);
 
-    if (W.is_empty())
-    {
-      W = arma::Mat<eT>(rows, cols);
-    }
+    // if (W.is_empty())
+    // {
+    //   W = arma::Mat<eT>(rows, cols);
+    // }
+    W = arma::Mat<eT>(rows, cols);
 
     // Multipling a random variable X with variance V(X) by some factor c,
     // then the variance V(cX) = (c ^ 2) * V(X).
@@ -121,8 +122,9 @@ class LecunNormalInitialization
                   const size_t cols,
                   const size_t slices)
   {
-    if (W.is_empty())
-      W = arma::Cube<eT>(rows, cols, slices);
+    // if (W.is_empty())
+    //   W = arma::Cube<eT>(rows, cols, slices);
+    W = arma::Cube<eT>(rows, cols, slices);
 
     for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);

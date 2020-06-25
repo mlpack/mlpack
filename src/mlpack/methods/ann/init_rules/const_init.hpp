@@ -53,6 +53,9 @@ class ConstInitialization
   template<typename eT>
   void Initialize(arma::Mat<eT>& W)
   {
+    if (W.is_empty())
+      Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
+
     W.fill(initVal);
   }
 
@@ -82,6 +85,9 @@ class ConstInitialization
   template<typename eT>
   void Initialize(arma::Cube<eT>& W)
   {
+    if (W.is_empty())
+      Log::Fatal << "Cannot initialize an empty cube." << std::endl;
+
     W.fill(initVal);
   }
 
