@@ -61,7 +61,8 @@ class HeInitialization
    * @param rows Number of rows.
    * @param cols Number of columns.
    */
-  void Initialize(arma::mat& W, const size_t rows, const size_t cols)
+  template <typename eT>
+  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
     // He initialization rule says to initialize weights with random
     // values taken from a gaussian distribution with mean = 0 and
@@ -70,7 +71,7 @@ class HeInitialization
 
     if (W.is_empty())
     {
-      W.set_size(rows, cols);
+      W = arma::Mat<eT>(rows, cols);
     }
 
     // Multipling a random variable X with variance V(X) by some factor c,
@@ -89,7 +90,7 @@ class HeInitialization
     // He initialization rule says to initialize weights with random
     // values taken from a gaussian distribution with mean = 0 and
     // standard deviation = sqrt(2 / rows), i.e. variance = (2 / rows).
-    const double variance = 2.0 / (double)W.n_rows;
+    const double variance = 2.0 / (double) W.n_rows;
 
     if (W.is_empty())
     {

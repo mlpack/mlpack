@@ -67,8 +67,11 @@ class RandomInitialization
   template<typename eT>
   void Initialize(arma::Mat<eT>& W)
   {
-    W = lowerBound + arma::randu<arma::Mat<eT>>(W.n_rows, W.n_cols) *
-        (upperBound - lowerBound);
+    // W = lowerBound + arma::randu<arma::Mat<eT>>(W.n_rows, W.n_cols) *
+    //     (upperBound - lowerBound);
+    W.randu();
+    W *= (upperBound - lowerBound);
+    W += lowerBound;
   }
 
   /**

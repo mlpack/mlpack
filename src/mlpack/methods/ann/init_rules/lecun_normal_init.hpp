@@ -65,7 +65,8 @@ class LecunNormalInitialization
    * @param rows Number of rows.
    * @param cols Number of columns.
    */
-  void Initialize(arma::mat& W,
+  template <typename eT>
+  void Initialize(arma::Mat<eT>& W,
                   const size_t rows,
                   const size_t cols)
   {
@@ -76,7 +77,7 @@ class LecunNormalInitialization
 
     if (W.is_empty())
     {
-      W.set_size(rows, cols);
+      W = arma::Mat<eT>(rows, cols);
     }
 
     // Multipling a random variable X with variance V(X) by some factor c,
@@ -114,13 +115,14 @@ class LecunNormalInitialization
    * @param cols Number of columns.
    * @param slices Number of slices.
    */
-  void Initialize(arma::cube & W,
+  template <typename eT>
+  void Initialize(arma::Cube<eT> & W,
                   const size_t rows,
                   const size_t cols,
                   const size_t slices)
   {
     if (W.is_empty())
-      W.set_size(rows, cols, slices);
+      W = arma::Cube<eT>(rows, cols, slices);
 
     for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);

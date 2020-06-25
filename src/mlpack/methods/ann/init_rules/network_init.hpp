@@ -76,7 +76,7 @@ class NetworkInitialization
             network[i]);
         arma::mat tmp = arma::mat(parameter.memptr() + offset,
             weight, 1, false, false);
-        initializeRule.Initialize(tmp, tmp.n_elem, 1);
+        initializeRule.Initialize(tmp);
 
         // Increase the parameter/weight offset for the next layer.
         offset += weight;
@@ -84,7 +84,7 @@ class NetworkInitialization
     }
     else
     {
-      initializeRule.Initialize(parameter, parameter.n_elem, 1);
+      initializeRule.Initialize(parameter);
     }
 
     // Note: We can't merge the for loop into the for loop above because

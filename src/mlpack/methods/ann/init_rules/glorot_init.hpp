@@ -115,7 +115,7 @@ inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W,
                                                        const size_t cols)
 {
   if (W.is_empty())
-  W = arma::mat(rows, cols);
+    W = arma::Mat<eT>(rows, cols);
 
   double var = 2.0/double(rows + cols);
   GaussianInitialization normalInit(0.0, var);
@@ -131,7 +131,7 @@ inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W)
 
   double var = 2.0 / double(W.n_rows + W.n_cols);
   GaussianInitialization normalInit(0.0, var);
-  normalInit.Initialize(W, W.n_rows, W.n_cols);
+  normalInit.Initialize(W);
 }
 
 template <>
@@ -159,7 +159,7 @@ inline void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W)
   // Limit of distribution.
   double a = sqrt(6) / sqrt(W.n_rows + W.n_cols);
   RandomInitialization randomInit(-a, a);
-  randomInit.Initialize(W, W.n_rows, W.n_cols);
+  randomInit.Initialize(W);
 }
 
 template <bool Uniform>
@@ -186,7 +186,7 @@ inline void GlorotInitializationType<Uniform>::Initialize(arma::Cube<eT>& W)
     Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
   }
   for (size_t i = 0; i < W.n_slices; ++i)
-    Initialize(W.slice(i), W.n_rows, W.n_cols);
+    Initialize(W.slice(i));
 }
 
 // Convenience typedefs.
