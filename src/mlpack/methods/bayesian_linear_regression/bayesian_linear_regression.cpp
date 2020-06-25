@@ -126,8 +126,8 @@ double BayesianLinearRegression::CenterScaleData(const arma::mat& data,
   {
     dataProc = arma::mat(const_cast<double*>(data.memptr()), data.n_rows, 
                                              data.n_cols, false, true);
-    responsesProc = arma::rowvec(const_cast<double*>(responses.memptr()), 
-                                                     responses.n_elem, false, 
+    responsesProc = arma::rowvec(const_cast<double*>(responses.memptr()),
+                                                     responses.n_elem, false,
                                                      true);
   }
 
@@ -143,6 +143,9 @@ double BayesianLinearRegression::CenterScaleData(const arma::mat& data,
   {
     dataScale = stddev(data, 0, 1);
     dataProc = data.each_col() / dataScale;
+    responsesProc = arma::rowvec(const_cast<double*>(responses.memptr()),
+                                                     responses.n_elem, false,
+                                                     true);
   }
 
   else
