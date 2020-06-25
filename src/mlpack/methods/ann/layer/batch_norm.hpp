@@ -64,8 +64,14 @@ class BatchNorm
    *
    * @param size The number of input units / channels.
    * @param eps The epsilon added to variance to ensure numerical stability.
+   * @param average Boolean to determine whether counting average is used for
+   *                updating the parameters or momentum is used.
+   * @param momentum Parameter used to to update the running mean and variance.
    */
-  BatchNorm(const size_t size, const double eps = 1e-8);
+  BatchNorm(const size_t size,
+            const double eps = 1e-8,
+            const bool average = true,
+            const double momentum = 0.1);
 
   /**
    * Reset the layer parameters
@@ -133,10 +139,23 @@ class BatchNorm
   bool& Deterministic() { return deterministic; }
 
   //! Get the mean over the training data.
-  OutputDataType TrainingMean() { return runningMean; }
+  OutputDataType const& TrainingMean() const { return runningMean; }
+  //! Modify the mean over the training data.
+  OutputDataType& TrainingMean() { return runningMean; }
 
   //! Get the variance over the training data.
-  OutputDataType TrainingVariance() { return runningVariance / count; }
+  OutputDataType TrainingVariance() const
+  {
+    if (average)
+      return count ? runningVariance / count : runningVariance;
+
+    return runningVariance;
+  }
+
+  //! Get the runnning variance.
+  OutputDataType& RunningVariance() { return runningVariance; }
+  //! Modify the runnning variance.
+  OutputDataType const& RunningVariance() const { return runningVariance; }
 
   //! Get the number of input units.
   size_t InputSize() const { return size; }
@@ -157,6 +176,12 @@ class BatchNorm
   //! Locally-stored epsilon value.
   double eps;
 
+  //! Locally-stored value for average.
+  bool average;
+
+  //! Locally-stored value for momentum.
+  double momentum;
+
   //! Variable to keep track of whether we are in loading or saving mode.
   bool loading;
 
@@ -165,6 +190,12 @@ class BatchNorm
 
   //! Locally-stored shift parameter.
   OutputDataType beta;
+
+  //! Locally-stored mean object.
+  OutputDataType mean;
+
+  //! Locally-stored variance object.
+  OutputDataType variance;
 
   //! Locally-stored parameters.
   OutputDataType weights;
@@ -177,12 +208,6 @@ class BatchNorm
 
   //! Locally-stored running mean/variance counter.
   size_t count;
-
-  //! Locally-stored mean object.
-  OutputDataType mean;
-
-  //! Locally-stored variance object.
-  OutputDataType variance;
 
   //! Locally-stored mean object.
   OutputDataType runningMean;

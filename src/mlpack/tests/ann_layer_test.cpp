@@ -1964,6 +1964,14 @@ BOOST_AUTO_TEST_CASE(BatchNormLayerParametersTest)
   // Make sure we can get the parameters successfully.
   BOOST_REQUIRE_EQUAL(layer.InputSize(), 7);
   BOOST_REQUIRE_EQUAL(layer.Epsilon(), 1e-3);
+
+  arma::mat runningMean(7, 1, arma::fill::randn);
+  arma::mat runningVariance(7, 1, arma::fill::randn);
+
+  layer.RunningVariance() = runningVariance;
+  layer.TrainingMean() = runningMean;
+  CheckMatrices(layer.TrainingVariance(), runningVariance);
+  CheckMatrices(layer.TrainingMean(), runningMean);
 }
 
 /**
@@ -3810,13 +3818,181 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionalLayerOptionalParameterTest)
     delete decoder;
 }
 
-BOOST_AUTO_TEST_CASE(BatchNormColTest)
+BOOST_AUTO_TEST_CASE(BatchNormWithMinBatchesTest)
 {
-  arma::mat input, output;
-  // 6 Images of size 4 x 4 x 3.
-  input = arma::mat(48, 6);
-  input.zeros();
-  BatchNorm<> layer(6);
-  layer.Forward(input, output);
+  arma::mat input, output, result, runningMean, runningVar, delta;
+
+  // Input consists of 3 images / outputs with 2 feature maps of size
+  // 4 x 1.
+  input = arma::mat(8, 3);
+  input << 1 << 446 << 42 << arma::endr
+      << 2 << 16 << 63 << arma::endr
+      << 3 << 13 << 63 << arma::endr
+      << 4 << 21 << 21 << arma::endr
+      << 1 << 13 << 11 << arma::endr
+      << 32 << 45 << 42 << arma::endr
+      << 22 << 16 << 63 << arma::endr
+      << 32 << 13 << 42 << arma::endr;
+
+  // Output calculated using torch.nn.BatchNorm2d().
+  result = arma::mat(8, 3);
+  result << -0.4786 << 3.2634 << -0.1338 << arma::endr
+      << -0.4702 << -0.3525 << 0.0427 << arma::endr
+      << -0.4618 << -0.3777 << 0.0427 << arma::endr
+      << -0.4534 << -0.3104 << -0.3104 << arma::endr
+      << -1.5429 << -0.8486 << -0.9643 << arma::endr
+      << 0.2507 << 1.0029 << 0.8293 << arma::endr
+      << -0.3279 << -0.675 << 2.0443 << arma::endr
+      << 0.2507 << -0.8486 << 0.8293 << arma::endr;
+
+  // Check correctness of batch normalization.
+  BatchNorm<> module1(2, 1e-5, false, 0.1);
+  module1.Reset();
+  module1.Forward(input, output);
+  CheckMatrices(output, result, 1e-1);
+
+  // Check backward function.
+  module1.Backward(input, output, delta);
+  BOOST_REQUIRE_CLOSE(arma::accu(delta), 0.0102676, 1e-3);
+
+  // Check values for running mean and running variance.
+  // Calculated using numpy / python interpreter.
+  runningMean = arma::mat(2, 1);
+  runningVar = arma::mat(2, 1);
+  runningMean(0) = 5.7917;
+  runningMean(1) = 2.76667;
+  runningVar(0) = 1542.8545;
+  runningVar(1) = 32.588;
+
+  CheckMatrices(runningMean, module1.TrainingMean(), 1e-3);
+  CheckMatrices(runningVar, module1.TrainingVariance(), 1e-2);
+
+  // Check correctness when model is testing.
+  arma::mat deterministicOutput;
+  module1.Deterministic() = true;
+  module1.Forward(input, deterministicOutput);
+
+  result.clear();
+  result = arma::mat(8, 3);
+  result << -0.1219939 << 11.207531 << 0.9218499 << arma::endr
+      << -0.096534341 << 0.25990 << 1.456501663 << arma::endr
+      << -0.07107473 << 0.18352133 << 1.456501663 << arma::endr
+      << -0.045615128 << 0.38719818 << 0.38719818 << arma::endr
+      << -0.30947571 << 1.7926234 << 1.442273594 << arma::endr
+      << 5.120947134 << 7.39822123 << 6.8726964 << arma::endr
+      << 3.36919782 << 2.31814824 << 10.55136998 << arma::endr
+      << 5.120947134 << 1.79262345 << 6.872696439 << arma::endr;
+
+  CheckMatrices(result, deterministicOutput, 1e-3);
+
+  // Check correctness by updating the running mean and variance again.
+  module1.Deterministic() = false;
+
+  // Clean up.
+  output.clear();
+  input.clear();
+
+  // Input consists of a single output of 2 feature maps with size 3 x 2.
+  input = arma::mat(6, 2);
+  input << 12 << 443 << arma::endr
+      << 134 << 45 << arma::endr
+      << 11 << 13 << arma::endr
+      << 14 << 55 << arma::endr
+      << 110 << 4 << arma::endr
+      << 1 << 45 << arma::endr;
+
+  result << -0.629337 << 2.14791 << arma::endr
+      << 0.156797 << -0.416694 << arma::endr
+      << -0.63578 << -0.622893 << arma::endr
+      << -0.637481 << 0.4440386 << arma::endr
+      << 1.894857 << -0.901267 << arma::endr
+      << -0.980402 << 0.180253 << arma::endr;
+
+  module1.Forward(input, output);
+  CheckMatrices(result, output, 1e-3);
+
+  // Calculated using numpy / python interpreter.
+  runningMean(0) = 16.1792;
+  runningMean(1) = 6.30667;
+  runningVar(0) = 4278.545;
+  runningVar(1) = 201.78576;
+
+  CheckMatrices(runningMean, module1.TrainingMean(), 1e-3);
+  CheckMatrices(runningVar, module1.TrainingVariance(), 1e-1);
+
+  // Check backward function.
+  module1.Backward(input, output, delta);
+
+  deterministicOutput.clear();
+  module1.Deterministic() = true;
+  module1.Forward(input, deterministicOutput);
+
+  result.clear();
+  result << -0.06389128 << 6.525255983 << arma::endr
+      << 1.80125016 << 0.440614188 << arma::endr
+      << -0.07917933155 << -0.0486032421 << arma::endr
+      << 0.5415883265 << 3.427869269 << arma::endr
+      << 7.299709599 << -0.16238263 << arma::endr
+      << -0.3735739237 << 2.723898308 << arma::endr;
+
+  CheckMatrices(result, deterministicOutput, 1e-3);
 }
+
+/**
+ * Batch Normalization layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientBatchNormWithMiniBatchesTest)
+{
+  // Add function gradient instantiation.
+  // To make this test robust, check it five times.
+  bool pass = false;
+  for (size_t trial = 0; trial < 10; trial++)
+  {
+    struct GradientFunction
+    {
+      GradientFunction()
+      {
+        input = arma::randn(16, 1024);
+        arma::mat target;
+        target.ones(1, 1024);
+
+        model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+        model->Predictors() = input;
+        model->Responses() = target;
+        model->Add<IdentityLayer<>>();
+        model->Add<Convolution<>>(1, 2, 3, 3, 1, 1, 0, 0, 4, 4);
+        model->Add<BatchNorm<>>(2);
+        model->Add<Linear<>>(2 * 2 * 2, 2);
+        model->Add<LogSoftMax<>>();
+      }
+
+      ~GradientFunction()
+      {
+        delete model;
+      }
+
+      double Gradient(arma::mat& gradient) const
+      {
+        double error = model->Evaluate(model->Parameters(), 0, 1024, false);
+        model->Gradient(model->Parameters(), 0, gradient, 1024);
+        return error;
+      }
+
+      arma::mat& Parameters() { return model->Parameters(); }
+
+      FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+      arma::mat input, target;
+    } function;
+
+    double gradient = CheckGradient(function);
+    if (gradient < 1e-1)
+    {
+      pass = true;
+      break;
+    }
+  }
+
+  BOOST_REQUIRE(pass);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
