@@ -4,6 +4,7 @@ set(SOURCES
   random_replay.hpp
   sumtree.hpp
   prioritized_replay.hpp
+  episodic_replay.hpp
 )
 
 # Add directory name to sources.
