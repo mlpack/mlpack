@@ -1,5 +1,5 @@
 /**
- * @file fcore/data/feature_selection.hpp
+ * @file core/data/feature_selection.hpp
  * @author Jeffin Sam
  *
  * Feature selction based on variance thresholding.

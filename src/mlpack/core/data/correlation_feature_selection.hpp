@@ -39,8 +39,8 @@ namespace fs {
  */
 template<typename T>
 void CorrelationSelection(const arma::Mat<T>& input,
-				   		  const arma::rowvec target,
-                   		  arma::Mat<T>& output,
+                          const arma::rowvec target,
+                          arma::Mat<T>& output,
                           const size_t outputSize);
 
 } // namespace fs

@@ -34,13 +34,13 @@ namespace fs {
  * @endcode
  *
  * @param input Input dataset with actual number of features.
- * @param target Ouput labels for the respective Input. 
+ * @param target Ouput labels for the respective Input.
  * @param output Output matrix with lesser number of features.
  * @param outputSize No of features you want in output matrix.
  */
 template<typename T>
 void Chi2Selection(const arma::Mat<T>& input,
-				   const arma::rowvec target,
+                   const arma::rowvec target,
                    arma::Mat<T>& output,
                    const size_t outputSize);
 

@@ -51,38 +51,38 @@ void Chi2Selection(const arma::Mat<T>& input,
       std::vector<double> (2));
   for (size_t i = 0; i < input.n_rows; i++)
   {
-    std::unordered_map<size_t, std::unordered_map<size_t,size_t >> chiTable;
+    std::unordered_map<size_t, std::unordered_map<size_t, size_t >> chiTable;
     std::unordered_map<size_t, size_t>labels, expected;
     for (size_t j = 0; j < input.n_cols; j++)
     {
-     chiTable[input.at(i,j)][target(j)]++;
+     chiTable[input.at(i, j)][target(j)]++;
      labels[target(j)]++;
-     expected[input.at(i,j)]++;
+     expected[input.at(i, j)]++;
     }
 
     // For safety, Lets add a padding .
     for (auto it = chiTable.begin(); it != chiTable.end(); it++)
       for (size_t i = 0; i < outputLabels.n_rows; i++)
-        if(it->second.find(outputLabels(i)) == it->second.end())
+        if (it->second.find(outputLabels(i)) == it->second.end())
           chiTable[it->first][outputLabels(i)] = 0;
 
     // Calculate chi square values.
     double chiValue = 0.0;
-    for(auto it = chiTable.begin(); it != chiTable.end(); it++)
+    for (auto it = chiTable.begin(); it != chiTable.end(); it++)
       for (auto jt = it->second.begin(); jt != it->second.end(); jt++)
         chiValue +=
-            (pow(( jt->second - ((double)(expected[it->first] *
+            (pow((jt->second - ((double)(expected[it->first] *
             labels[jt->first]) / (double)(input.n_cols))), 2) /
             ((double)(expected[it->first] * labels[jt->first]) /
             (double)(input.n_cols)));
 
-    outputIndex[i][0]=chiValue;
-    outputIndex[i][1]=i;
+    outputIndex[i][0] = chiValue;
+    outputIndex[i][1] = i;
   }
   sort(outputIndex.rbegin(), outputIndex.rend());
   std::vector<long long unsigned int> indices;
 
-  for(size_t i = 0; i < std::min(outputSize, outputIndex.size()); i++)
+  for (size_t i = 0; i < std::min(outputSize, outputIndex.size()); i++)
     indices.push_back((long long unsigned int)outputIndex[i][1]);
 
   output = input.rows(arma::uvec(indices));

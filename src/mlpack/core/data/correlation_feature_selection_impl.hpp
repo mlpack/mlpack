@@ -38,15 +38,15 @@ void CorrelationSelection(const arma::Mat<T>& input,
   std::vector<std::vector<double>> outputIndex(input.n_rows,
       std::vector<double> (2));
 
-  for(size_t i = 0 ;i < input.n_rows; i++)
+  for (size_t i = 0; i < input.n_rows; i++)
   {
-    double rValue= arma::mat(arma::cor(input.row(i), target)).at(0);
-    if(std::isfinite(rValue))
+    double rValue = arma::mat(arma::cor(input.row(i), target)).at(0);
+    if (std::isfinite(rValue))
     {
-      double tValue = rValue * (pow( (input.n_cols - 2) / (1 - pow(rValue,
+      double tValue = rValue * (pow((input.n_cols - 2) / (1 - pow(rValue,
           2)), 0.5));
-      outputIndex[i][0]=tValue;
-      outputIndex[i][1]=i;
+      outputIndex[i][0] = tValue;
+      outputIndex[i][1] = i;
     }
     else
     {
@@ -57,7 +57,7 @@ void CorrelationSelection(const arma::Mat<T>& input,
   sort(outputIndex.rbegin(), outputIndex.rend());
   std::vector<long long unsigned int> indices;
 
-  for(size_t i = 0; i < std::min(outputSize, outputIndex.size()); i++)
+  for (size_t i = 0; i < std::min(outputSize, outputIndex.size()); i++)
     indices.push_back((long long unsigned int)outputIndex[i][1]);
 
   output = input.rows(arma::uvec(indices));
