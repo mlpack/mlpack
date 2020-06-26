@@ -451,7 +451,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
     // If two additional vectors are passed, take their projections.
     if (addBasisVector1 && addBasisVector2)
     {
-      projection(++k) = arma::dot(dataset.col(sampledIndices[i]),
+      projection(k++) = arma::dot(dataset.col(sampledIndices[i]),
                                   *addBasisVector1);
       projection(k) = arma::dot(dataset.col(sampledIndices[i]),
                                 *addBasisVector2);
