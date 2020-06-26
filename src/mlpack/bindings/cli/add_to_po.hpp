@@ -18,8 +18,6 @@
 
 #include "third_party/CLI/CLI11.hpp"
 
-using namespace CLI;
-
 namespace mlpack {
 namespace bindings {
 namespace cli {
@@ -34,7 +32,7 @@ namespace cli {
 template<typename T>
 void AddToPO(const std::string& cliName,
              util::ParamData& param,
-             App& app,
+             CLI::App& app,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
   app.add_option_function<T>(cliName.c_str(),
@@ -56,7 +54,7 @@ void AddToPO(const std::string& cliName,
 template<typename T>
 void AddToPO(const std::string& cliName,
              util::ParamData& param,
-             App& app,
+             CLI::App& app,
              const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
 {
   app.add_flag_function(cliName.c_str(),
@@ -82,7 +80,7 @@ void AddToPO(util::ParamData& param,
              void* output)
 {
   // Cast CLI::App object.
-  App* app = (App*) output;
+  CLI::App* app = (App*) output;
 
   // Generate the name to be given to CLI11.
   const std::string mappedName =
