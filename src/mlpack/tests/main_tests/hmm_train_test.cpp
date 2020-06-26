@@ -64,7 +64,7 @@ inline void CheckMatricesDiffer(arma::mat& a, arma::mat& b, double tolerance)
   bool valsEqual = true;
   if (dimsEqual)
   {
-    for (size_t i=0; i<a.n_elem; ++i)
+    for (size_t i = 0; i < a.n_elem; ++i)
     {
       if (std::abs(a[i]) < tolerance / 2)
         valsEqual = valsEqual && (std::abs(b[i]) < tolerance / 2);
