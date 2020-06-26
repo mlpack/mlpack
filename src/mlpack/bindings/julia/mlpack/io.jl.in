@@ -357,4 +357,4 @@ function IOSetPassed(paramName::String)
   ccall((:IO_SetPassed, library), Nothing, (Cstring,), paramName);
 end
 
-end # module cli
+end # module io
