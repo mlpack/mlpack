@@ -201,10 +201,10 @@ class Pendulum
   /**
    * This function checks if the pendulum has reaches a terminal state
    * 
-   * @param state desired state.
+   * @param * (state) desired state.
    * @return true if state is a terminal state, otherwise false.
    */
-  bool IsTerminal(const State& state) const
+  bool IsTerminal(const State& /* state */) const
   {
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {

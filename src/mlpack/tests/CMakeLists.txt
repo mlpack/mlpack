@@ -33,6 +33,7 @@ add_executable(mlpack_test
   drusilla_select_test.cpp
   emst_test.cpp
   fastmks_test.cpp
+  facilities_test.cpp
   feedforward_network_test.cpp
   gan_test.cpp
   gmm_test.cpp
