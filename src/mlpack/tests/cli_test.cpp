@@ -1,8 +1,8 @@
 /**
- * @file tests/cli_test.cpp
+ * @file tests/io_test.cpp
  * @author Matthew Amidon, Ryan Curtin
  *
- * Test for the CLI input parameter system.
+ * Test for the IO input parameter system.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -40,12 +40,12 @@ using namespace std;
 
 // When we run these tests, we have to nuke the existing CLI object that's
 // created by default.
-struct CLITestDestroyer
+struct IOTestDestroyer
 {
-  CLITestDestroyer() { IO::ClearSettings(); }
+  IOTestDestroyer() { IO::ClearSettings(); }
 };
 
-BOOST_FIXTURE_TEST_SUITE(CLITest, CLITestDestroyer);
+BOOST_FIXTURE_TEST_SUITE(IOTest, IOTestDestroyer);
 
 /**
  * Before running a test that uses the CLI options, we have to add the default
