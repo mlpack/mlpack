@@ -57,7 +57,7 @@ class SimpleDQN
     network.Add(new Linear<>(inputDim, h1));
     network.Add(new ReLULayer<>());
     if (isNoisy)
-    { 
+    {
       noisyLayerIndex.push_back(network.Model().size());
       network.Add(new NoisyLinear<>(h1, h2));
       network.Add(new ReLULayer<>());
