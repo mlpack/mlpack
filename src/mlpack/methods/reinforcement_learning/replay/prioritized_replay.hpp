@@ -138,7 +138,7 @@ class PrioritizedReplay
 
     // Before moving ahead, lets confirm if our fixed size buffer works.
     assert(nStepBuffer.size() == nSteps);
-    
+
     // Make a n-step transition.
     GetNStepInfo(reward, nextState, isEnd, discount);
 
