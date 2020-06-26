@@ -24,13 +24,13 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const double lambda,
     const double delta,
-    const bool fitIntercept,
-    OptimizerType optimizer) :
+    const double C;
+    const bool fitIntercept) :
     numClasses(numClasses),
     lambda(lambda),
     delta(delta),
+    C(C),
     fitIntercept(fitIntercept)
 {
   Train(data, labels, numClasses);
@@ -40,14 +40,15 @@ template <typename MatType, typename KernelType>
 KernelSVM<MatType, KernelType>::KernelSVM(
     const size_t inputSize,
     const size_t numClasses,
-    const double lambda,
     const double delta,
+    const double C,
     const bool fitIntercept) :
     numClasses(numClasses),
-    lambda(lambda),
     delta(delta),
+    C(C),
     fitIntercept(fitIntercept)
 {
+  // No training to do here.
 }
 
 template <typename MatType, typename KernelType>
@@ -72,119 +73,104 @@ double KernelSVM<MatType, KernelType>::Train(
 {
   alpha = arma::zeros(data.n_cols);
   size_t count = 0;
+  double b = 0;
+  arma::vec E = arma::zeros(data.n_rows, 1);
+  double eta = 0;
+  double L = 0;
+  double H = 0;
 
-  while(true)
+  if strcmp(kernelFunction, 'linear')
   {
-    arma::vec alpha_prev = arma::vec(alpha);
-
-    for(size_t j = 0; j < data.n_cols; j++)
-    {
-      size_t i = rand()%((data.n_cols - 1) + 1);
-      double k_ij = KernelType::Evaluate(data.col(i), data.col(i)) +
-                    KernelType::Evaluate(data.col(j), data.col(j)) -
-                    2 * KernelType::Evaluate(data.col(i), data.col(j));
-      if (k_ij == 0)
-        continue;
-      double alpha_prime_j = alpha(j);
-      double alpha_prime_i = alpha(i);
-      double L = ComputeL(alpha_prime_j, alpha_prime_i, labels(j), labels(i));
-      double H = ComputeH(alpha_prime_j, alpha_prime_i, labels(j), labels(i));
-      // Compute model parameters
-      w = calc_w(alpha, labels, data)
-      b = calc_b(data, labels, w)
-
-      // Compute E_i, E_j
-      E_i = E(data.col(i), labels(i), w, b);
-      E_j = E(data.col(j), labels(j), w, b);
-
-      // Set new alpha values
-      alpha(j) = alpha_prime_j + float(labels(j) * (E_i - E_j))/k_ij;
-      alpha(j) = max(alpha(j), L);
-      alpha(j) = min(alpha(j), H);
-
-      alpha(i) = alpha_prime_i + labels(i)*labels(j) * (alpha_prime_j - alpha(j));
-    }
-
-    // Check convergence
-    arma::mat diff = arma::norm(alpha - alpha_prev);
-    if (diff < epsilon)
-      break;
-
-    if (count >= max_iter)
-    {
-      std::LOG<<"Iteration number exceeded the max iterations" <<max_iter;
-      return;
-    }
-  // Compute final model parameters
-  b = calc_b(data, labels, w)
-  if (kernel_type == 'linear')
-    w = calc_w(alpha, labels, data);
-  // Get support vectors
-  arma::vec alpha_idx;
-  for (size_t i = 0; i < alpha.n_elem; i++)
-  {
-    if (alpha(i)>0)
-      alpha_idx.push_back(i);
+    MatType k = data * data.t();
   }
-  for (size_t i = 0; i < alpha_idx.n_elem; i++)
+
+  else if strcmp(kernelFunction, 'gaussian')
   {
-    support_vectors.push_back(data.col(alpha_idx(i)));
+    MatType X2 = arma::sum(arma::pow(data, 2), 2);
+    MatType K = X2 + (X2.t() - 2 * data * data.t());
+    K = arma::pow(KernelType::Evaluate(1,0), K);
   }
-  return count;
-}
-
-template <typename MatType, typename KernelType>
-double KernelSVM<MatType, KernelType>::ComputeL(
-    const double prime_i,
-    const double prime_j,
-    const size_t label1,
-    const size_t label2) const
-{
-  if(label1 != label2)
-    return max(0, alpha_prime_j - alpha_prime_i);
   else
-    return max(0, alpha_prime_i + alpha_prime_j - C);
-}
+  {
+    MatType K = arma::zeros(data);
+    for ()
+  }
 
-template <typename MatType, typename KernelType>
-double KernelSVM<MatType, KernelType>::ComputeH(
-    const double prime_i,
-    const double prime_j,
-    const size_t label1,
-    const size_t label2) const
-{
-  if(y_i != y_j)
-    return min(C, C - alpha_prime_i + alpha_prime_j);
-  else
-    return min(C, alpha_prime_i + alpha_prime_j);
-}
+  while(count < max_iter)
+  {
+    size_t num_changes_alphas = 0;
+    for(size_t i = 0; i < data.n_rows; j++)
+    {
+      E(i) = b + arma::sum(alpha % (labels % k.col(i))) - labels(i);
+      if ((labels(i) * E(i) < -tol && alpha(i) < C) 
+            || (labels(i) * E(i) > tol && alpha(i) > 0))
+      {
+        size_t j = ceil(m * randu());
+        while (j == i)
+        {
+          j = ceil(m * randu());
+        }
 
-template <typename MatType, typename KernelType>
-arma::mat KernelSVM<MatType, KernelType>::calc_b(
-  const MatType& data,
-  const arma::Row<size_t>& labels,
-  const MatType& w)
-{
-  arma::mat temp = y - arma::dot(data, w);
-  return temp;
-}
+        E(j) = b + arma::sum(alpha % (labels % k.col(j))) - labels(j);
+        double alpha_j_old = alpha(j);
+        double alpha_i_old = alpha(i);
+        if(labels(i)==labels(j))
+        {
+          L = std::max(0, alpha(i) + alpha(j) - C);
+          H = std::min(C, alpha(i) + alpha(j));
+        }
+        else
+        {
+          L = std::max(0, alpha(j) - alpha(i));
+          H = std::min(C, C + alpha(j) - alpha(i)); 
+        }
+        if(L==H)
+          continue;
+        eta = 2 * K(i, j) - K(i, i) - K(j, j);
+        if(eta >= 0)
+          continue;
+        alpha(j) = alpha(j) - (labels(i) * (E(i) - E(j))) / eta;
 
-template <typename MatType, typename KernelType>
-double KernelSVM<MatType, KernelType>::ComputeH(
-    const arma::vec& sample,
-    const size_t label,
-    const arma::mat& w,
-    const arma::mat& b) const
-{
+        alpha(j) = min(H, alpha(j));
+        alpha(j) = max(L, alpha(j));
 
-}
-template <typename MatType, typename KernelType>
-arma::mat KernelSVM<MatType, KernelType>::calc_w(
-  const arma::vec& alpha,
-  const arma::Row<size_t>& labels,
-  const MatType& data)
-{
-  return arma::dot(data, labels * alpha);
+        if(abs(alpha(j) - alpha_j_old) < tol)
+        {
+          alpha(j) = alpha_j_old;
+          continue;
+        }
+
+        alpha(i) = alpha(i) + labels(i) * labels(j) * (alpha_j_old - alpha(j));
+
+        double b1 = b - E(i)
+                    - labels(i) * (alpha(i) - alpha_i_old) * K(i, j).t()
+                    - labels(j) * (alpha(j) - alpha_i_old) * K(i, j).t();
+
+        double b2 = b - E(j)
+                    - labels(i) * (alpha(i) - alpha_i_old) * K(i, j).t()
+                    - labels(j) * (alpha(j) - alpha_i_old) * K(j, j).t();
+
+        if (0 < alpha(i) && alpha(j) < C)
+        {
+          b = b1;
+        }
+        else if (0 < alpha(j) && alpha(j)< C)
+        {
+          b = b2;
+        }
+        else
+        {
+          b = (b1 + b2) / 2;
+        }
+        num_changes_alphas = num_changes_alphas + 1;
+      }
+    }
+    if (num_changes_alphas == 0)
+      count = count + 1;
+    else
+      count = 0;
+
+    w = ((alpha % Y).t() * data).t();
 }
 
 template <typename MatType, typename KernelType>
