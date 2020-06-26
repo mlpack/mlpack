@@ -87,6 +87,7 @@ bool testAgent(AgentType& agent,
       break;
     }
   }
+
   return converged;
 }
 
@@ -406,6 +407,61 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDoubleNoisyDQN)
     if (converged)
       break;
   }
+  BOOST_REQUIRE(converged);
+}
+
+//! Test N-step DQN in Cart Pole task.
+BOOST_AUTO_TEST_CASE(CartPoleWithNStepDQN)
+{
+  // Set up the network.
+  SimpleDQN<> network(4, 128, 128, 2);
+
+  // Set up the policy.
+  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
+  /**
+   * For N-step learning, we need to specify n as the last parameter in
+   * the replay method. Here we use n = 3.
+   */
+  RandomReplay<CartPole> replayMethod(10, 10000, 3);
+
+  // Setting all training hyperparameters.
+  TrainingConfig config;
+  config.ExplorationSteps() = 50;
+  config.StepLimit() = 200;
+
+  // Set up DQN agent.
+  QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
+      agent(config, network, policy, replayMethod);
+
+  bool converged = testAgent<decltype(agent)>(agent, 50, 1000);
+  BOOST_REQUIRE(converged);
+}
+
+//! Test N-step Prioritized DQN in Cart Pole task.
+BOOST_AUTO_TEST_CASE(CartPoleWithNStepPrioritizedDQN)
+{
+  // Set up the network.
+  SimpleDQN<> network(4, 128, 128, 2);
+
+  // Set up the policy.
+  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
+  /**
+   * For N-step learning, we need to specify n as the last parameter in
+   * the replay method. Here we use n = 3.
+   */
+  PrioritizedReplay<CartPole> replayMethod(10, 10000, 0.6, 3);
+
+  // Setting all training hyperparameters.
+  TrainingConfig config;
+  config.ExplorationSteps() = 50;
+  config.StepLimit() = 200;
+
+  // Set up DQN agent.
+  QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy),
+      decltype(replayMethod)>
+      agent(config, network, policy, replayMethod);
+
+  bool converged = testAgent<decltype(agent)>(agent, 50, 1000);
   BOOST_REQUIRE(converged);
 }
 

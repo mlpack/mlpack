@@ -48,8 +48,7 @@ RBF<InputDataType, OutputDataType, Activation>::RBF(
       double max_dis = 0;
       arma::mat temp = centres.each_col() - centres.col(i);
       max_dis = arma::accu(arma::max(arma::pow(arma::sum(
-                                        arma::pow((temp),
-                                        2), 0), 0.5).t()));
+          arma::pow((temp), 2), 0), 0.5).t()));
       if (max_dis > sigmas)
         sigmas = max_dis;
     }
@@ -70,11 +69,10 @@ void RBF<InputDataType, OutputDataType, Activation>::Forward(
   {
     arma::mat temp = centres.each_col() - input.col(i);
     distances.col(i) = arma::pow(arma::sum(
-                                 arma::pow((temp),
-                                 2), 0), 0.5).t();
+      arma::pow((temp), 2), 0), 0.5).t();
   }
   Activation::Fn(distances * std::pow(betas, 0.5),
-                                  output);
+      output);
 }
 
 
@@ -86,6 +84,7 @@ void RBF<InputDataType, OutputDataType, Activation>::Backward(
     const arma::Mat<eT>& /* gy */,
     arma::Mat<eT>& /* g */)
 {
+  // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -101,4 +100,5 @@ void RBF<InputDataType, OutputDataType, Activation>::serialize(
 
 } // namespace ann
 } // namespace mlpack
+
 #endif
