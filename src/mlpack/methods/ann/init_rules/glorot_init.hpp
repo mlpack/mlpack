@@ -114,8 +114,7 @@ inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W,
                                                        const size_t rows,
                                                        const size_t cols)
 {
-  if (W.is_empty())
-    W = arma::Mat<eT>(rows, cols);
+  W.set_size(rows, cols);
 
   double var = 2.0/double(rows + cols);
   GaussianInitialization normalInit(0.0, var);
@@ -140,8 +139,7 @@ inline void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W,
                                                        const size_t rows,
                                                        const size_t cols)
 {
-  // if (W.is_empty())
-  W = arma::mat(rows, cols);
+  W.set_size(rows, cols);
 
   // Limit of distribution.
   double a = sqrt(6) / sqrt(rows + cols);
@@ -169,11 +167,7 @@ inline void GlorotInitializationType<Uniform>::Initialize(arma::Cube<eT>& W,
                                                           const size_t cols,
                                                           const size_t slices)
 {
-  // if (W.is_empty())
-  // {
-  //   W = arma::cube(rows, cols, slices);
-  // }
-  W = arma::cube(rows, cols, slices);
+  W.set_size(rows, cols, slices);
   for (size_t i = 0; i < slices; ++i)
     Initialize(W.slice(i), rows, cols);
 }
