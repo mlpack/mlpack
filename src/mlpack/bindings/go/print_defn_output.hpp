@@ -91,8 +91,8 @@ void PrintDefnOutput(
  */
 template<typename T>
 void PrintDefnOutput(util::ParamData& d,
-                           const void* /* input */,
-                           void* /* output */)
+                     const void* /* input */,
+                     void* /* output */)
 {
   PrintDefnOutput<typename std::remove_pointer<T>::type>(d);
 }
