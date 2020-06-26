@@ -25,15 +25,20 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const double delta,
-    const double C;
-    const bool fitIntercept) :
+    const double C,
+    const string kernelFunction,
+    const bool fitIntercept,
+    const size_t max_iter) :
     numClasses(numClasses),
     lambda(lambda),
     delta(delta),
     C(C),
-    fitIntercept(fitIntercept)
+    kernelFunction(kernelFunction),
+    fitIntercept(fitIntercept),
+    max_iter(max_iter),
+
 {
-  Train(data, labels, numClasses);
+  Train(data, labels, numClasses, max_iter);
 }
 
 template <typename MatType, typename KernelType>
@@ -42,24 +47,12 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     const size_t numClasses,
     const double delta,
     const double C,
+    const string kernelFunction,
     const bool fitIntercept) :
     numClasses(numClasses),
     delta(delta),
     C(C),
-    fitIntercept(fitIntercept)
-{
-  // No training to do here.
-}
-
-template <typename MatType, typename KernelType>
-KernelSVM<MatType, KernelType>::KernelSVM(
-    const size_t numClasses,
-    const double lambda,
-    const double delta,
-    const bool fitIntercept) :
-    numClasses(numClasses),
-    lambda(lambda),
-    delta(delta),
+    kernelFunction(kernelFunction),
     fitIntercept(fitIntercept)
 {
   // No training to do here.
@@ -69,30 +62,32 @@ template <typename MatType, typename KernelType>
 double KernelSVM<MatType, KernelType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
-    const size_t numClasses)
+    const size_t numClasses,
+    const size_t max_iter)
 {
   alpha = arma::zeros(data.n_cols);
   size_t count = 0;
-  double b = 0;
+  b = 0;
   arma::vec E = arma::zeros(data.n_rows, 1);
   double eta = 0;
   double L = 0;
   double H = 0;
+   MatType k;
 
   if strcmp(kernelFunction, 'linear')
   {
-    MatType k = data * data.t();
+    k = data * data.t();
   }
 
   else if strcmp(kernelFunction, 'gaussian')
   {
     MatType X2 = arma::sum(arma::pow(data, 2), 2);
-    MatType K = X2 + (X2.t() - 2 * data * data.t());
+    K = X2 + (X2.t() - 2 * data * data.t());
     K = arma::pow(KernelType::Evaluate(1,0), K);
   }
   else
   {
-    MatType K = arma::zeros(data);
+    K = arma::zeros(data);
     for ()
   }
 
@@ -202,7 +197,18 @@ void KernelSVM<MatType, KernelType>::Classify(
     const MatType& data,
     arma::mat& scores) const
 {
-  scores = arma::sign(arma::dot(w, data) + b);
+  if (strcmp(kernelFunction, 'linear'))
+    scores = data * w + b;
+  else if (strcmp(kernelFunction, 'gaussian'))
+  {
+    MatType X2 = arma::sum(arma::pow(data, 2), 2);
+    MatType K = X2 + (X2.t() - 2 * data * data.t());
+    K = arma::pow(KernelType::Evaluate(1,0), K);
+    K = alpha.t() * K;
+    scores = arma::sum(K, 2);
+  }
+  else
+  {}
 }
 
 template <typename MatType, typename KernelType>

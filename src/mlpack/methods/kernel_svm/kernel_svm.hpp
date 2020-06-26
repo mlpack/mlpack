@@ -14,6 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <ensmallen.hpp>
+#include <string>
 
 
 namespace mlpack {
@@ -29,29 +30,6 @@ template <typename MatType = arma::mat, typename KernelType = kernel::GaussianKe
 class KernelSVM
 {
  public:
-  /**
-   * Construct the KernelSVM class with the provided data and labels.
-   *
-   * @tparam OptimizerType Desired differentiable separable optimizer
-   * @tparam CallbackTypes Types of callback functions.
-   * @param data Input training features. Each column associate with one sample
-   * @param labels Labels associated with the feature data.
-   * @param numClasses Number of classes for classification.
-   * @param delta Margin of difference between correct class and other classes.
-   * @param fitIntercept add intercept term or not.
-   * @param optimizer Desired optimizer.
-   * @param callbacks Callback functions.
-   *      See https://www.ensmallen.org/docs.html#callback-documentation.
-   */
-  template <typename OptimizerType, typename... CallbackTypes>
-  KernelSVM(const MatType& data,
-            const arma::Row<size_t>& labels,
-            const size_t numClasses,
-            const double delta,
-            const bool fitIntercept,
-            OptimizerType optimizer,
-            CallbackTypes&&... callbacks);
-
   /**
    * Construct the Kernel SVM class with the provided data and labels.
    *
@@ -69,7 +47,8 @@ class KernelSVM
             const size_t numClasses = 2,
             const double delta = 1.0,
             const bool fitIntercept = false,
-            OptimizerType optimizer = OptimizerType());
+            const string kernelFunction = 'linear',
+            const double max_iter = 10);
 
   /**
    * Initialize the Kernel SVM without performing training.  Default  Be sure 
@@ -84,19 +63,8 @@ class KernelSVM
   KernelSVM(const size_t inputSize,
             const size_t numClasses = 0,
             const double delta = 1.0,
-            const bool fitIntercept = false);
-  /**
-   * Initialize the Kernel SVM without performing training.  Default
-   * Be sure to use Train() before calling
-   * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
-   *
-   * @param numClasses Number of classes for classification.
-   * @param delta Margin of difference between correct class and other classes.
-   * @param fitIntercept add intercept term or not.
-   */
-  KernelSVM(const size_t numClasses = 0,
-            const double delta = 1.0,
-            const bool fitIntercept = false);
+            const bool fitIntercept = false,
+            const string kernelFunction = 'linear');
 
   /**
    * Classify the given points, returning the predicted labels for each point.
@@ -210,20 +178,24 @@ class KernelSVM
  private:
   //! Parameters after optimization.
   arma::mat parameters;
+  //! Locally saved maximum iterations.
+  const double max_iter;
   //! Number of classes.
   size_t numClasses;
   //! L2-Regularization constant.
   double lambda;
   //! The margin between the correct class and all other classes.
   double delta;
-
+  //! Locally saved kernelFunction.
+  string kernelFunction;
+  //! Locally saved W parameter.
   double C;
   //! Intercept term flag.
   bool fitIntercept;
   //! Locally saved W parameter.
   MatType w;
   //! Locally saved b parameter.
-  MatType b;
+  double b;
   //! Locally saved alpha values.
   arma::vec alpha;
 };
