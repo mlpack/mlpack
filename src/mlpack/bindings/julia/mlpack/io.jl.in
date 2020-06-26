@@ -1,4 +1,4 @@
-module cli
+module io
 
 export IORestoreSettings
 export IOSetParam
