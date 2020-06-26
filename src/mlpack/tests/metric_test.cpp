@@ -13,7 +13,7 @@
 #include <boost/test/unit_test.hpp>
 #include <mlpack/core/metrics/iou_metric.hpp>
 #include <mlpack/core/metrics/non_maximal_supression.hpp>
-#include <mlpack/core/metrics/bleu_score.hpp>
+#include <mlpack/core/metrics/bleu.hpp>
 #include "test_tools.hpp"
 
 using namespace std;
