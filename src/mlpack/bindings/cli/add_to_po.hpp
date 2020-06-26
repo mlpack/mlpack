@@ -80,7 +80,7 @@ void AddToPO(util::ParamData& param,
              void* output)
 {
   // Cast CLI::App object.
-  CLI::App* app = (App*) output;
+  CLI::App* app = (CLI::App*) output;
 
   // Generate the name to be given to CLI11.
   const std::string mappedName =
