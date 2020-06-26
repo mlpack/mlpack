@@ -5,6 +5,7 @@
   * Add Silhoutte Score metric and Pairwise Distances (#2406).
 
   * Add Go bindings for some missed models (#2460).
+  * Replace boost program_options by CLI11
 
 ### mlpack 3.3.2
 ###### 2020-06-18
