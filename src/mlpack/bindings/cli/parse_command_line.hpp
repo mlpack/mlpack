@@ -16,7 +16,7 @@
 #include <mlpack/core.hpp>
 #include "print_help.hpp"
 
-#include <mlpack/third_party/CLI/CLI11.hpp>
+#include "third_party/CLI/CLI11.hpp"
 
 using namespace CLI;
 
