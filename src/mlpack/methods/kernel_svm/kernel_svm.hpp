@@ -41,13 +41,13 @@ class KernelSVM
    * @param fitIntercept add intercept term or not.
    * @param optimizer Desired optimizer.
    */
-  template <typename OptimizerType = ens::L_BFGS>
   KernelSVM(const MatType& data,
             const arma::Row<size_t>& labels,
             const size_t numClasses = 2,
             const double delta = 1.0,
+            const double C = 1.0,
+            const std::string& kernelFunction = "linear",
             const bool fitIntercept = false,
-            const string kernelFunction = 'linear',
             const double max_iter = 10);
 
   /**
@@ -63,8 +63,9 @@ class KernelSVM
   KernelSVM(const size_t inputSize,
             const size_t numClasses = 0,
             const double delta = 1.0,
-            const bool fitIntercept = false,
-            const string kernelFunction = 'linear');
+            const double C = 1.0,
+            const std::string& kernelFunction = "linear",
+            const bool fitIntercept = false);
 
   /**
    * Classify the given points, returning the predicted labels for each point.
@@ -135,7 +136,6 @@ class KernelSVM
    * @param optimizer Desired optimizer.
    * @return Objective value of the final point.
    */
-  template <typename OptimizerType = ens::L_BFGS>
   double Train(const MatType& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses = 2);
@@ -176,6 +176,7 @@ class KernelSVM
   }
 
  private:
+  size_t inputSize;
   //! Parameters after optimization.
   arma::mat parameters;
   //! Locally saved maximum iterations.
@@ -187,7 +188,7 @@ class KernelSVM
   //! The margin between the correct class and all other classes.
   double delta;
   //! Locally saved kernelFunction.
-  string kernelFunction;
+  std::string kernelFunction;
   //! Locally saved W parameter.
   double C;
   //! Intercept term flag.

@@ -20,6 +20,7 @@ add_executable(mlpack_test
   hyperplane_test.cpp
   init_rules_test.cpp
   kde_test.cpp
+  kernel_svm_test.cpp
   krann_search_test.cpp
   ksinit_test.cpp
   lars_test.cpp
