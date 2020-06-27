@@ -35,25 +35,25 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
   // Shape of the predicted probabilities.
   double predictedProb = predsprob.size();
   // Top 'k' label prediction probabilities.
-  if (k < predsprob[1])
+  if (k < predsprob.n_cols)
   {
-    size_t idx = predictedProb[1] - k - 1;
+    size_t idx = predictedProb.n_cols - k - 1;
   else
   {
     std::ostringstream fs;
     fs << "Less number of class for Top K Accuracy score" << std::endl;
   }
   float count = 0;
-  double srt = arma::sort_index(predictionProbs);
-  for (size_t i = 1; i < predictedProb[0]; i++)
+  size_t srt = arma::sort_index(predsprob);
+  for (size_t i = 1; i < predictedProb.n_rows; i++)
   {
-    if (labels[i] != srt[i, idx + 1:])
+    if (labels[i] != srt.in_range(arma::span(i, idx + 1), arma::span::all))
     {
       count = count + 1;
     }
   }
   // Accuracy Score of top k predicted class labels.
-  return (double) count / predictedProb[0];
+  return (double) count / predictedProb.n_rows;
 }
 } // namespace cv
 } // namespace mlpack
