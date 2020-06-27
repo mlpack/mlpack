@@ -123,7 +123,7 @@ void NoisyLinear<InputDataType, OutputDataType>::Gradient(
   gradient.rows(weight.n_elem + bias.n_elem, gradient.n_elem - bias.n_elem - 1)
       = arma::vectorise(weightGrad % weightEpsilon);
   gradient.rows(gradient.n_elem - bias.n_elem, gradient.n_elem - 1)
-      = arma::sum(error % biasEpsilon, 1);
+      = arma::sum(error, 1) % biasEpsilon;
 }
 
 template<typename InputDataType, typename OutputDataType>

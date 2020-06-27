@@ -4,6 +4,7 @@ set(DIRS
   julia
   markdown
   python
+  go
   tests
 )
 
