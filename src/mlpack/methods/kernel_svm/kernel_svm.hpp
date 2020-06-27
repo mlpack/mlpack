@@ -26,7 +26,7 @@ namespace svm {
  *
  * @tparam MatType Type of data matrix.
  */
-template <typename MatType = arma::mat, typename KernelType = kernel::GaussianKernel>
+template <typename MatType = arma::mat, typename KernelType = kernel::LinearKernel>
 class KernelSVM
 {
  public:
@@ -48,7 +48,8 @@ class KernelSVM
             const double C = 1.0,
             const std::string& kernelFunction = "linear",
             const bool fitIntercept = false,
-            const double max_iter = 10);
+            const size_t max_iter = 10,
+            const double tol = 1e-3);
 
   /**
    * Initialize the Kernel SVM without performing training.  Default  Be sure 
@@ -138,7 +139,9 @@ class KernelSVM
    */
   double Train(const MatType& data,
                const arma::Row<size_t>& labels,
-               const size_t numClasses = 2);
+               const size_t numClasses = 2,
+               const size_t max_iter = 5,
+               const double tol = 1e-3);
 
 
   //! Sets the number of classes.
@@ -203,5 +206,8 @@ class KernelSVM
 
 } // namespace svm
 } // namespace mlpack
+
+// Include implementation.
+#include "kernel_svm_impl.hpp"
 
 #endif // MLPACK_METHODS_KERNEL_SVM_KERNEL_SVM_HPP

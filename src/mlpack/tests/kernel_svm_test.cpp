@@ -1,8 +1,8 @@
 /**
  * @file tests/kernel_svm_test.cpp
- * @author Ayush Chamoli
+ * @author Himanshu Pathak
  *
- * Test the Linear SVM class.
+ * Test the Kernel SVM class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
