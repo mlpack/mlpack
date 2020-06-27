@@ -373,7 +373,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentTau)
   // saved model are equal
   BOOST_CHECK_EQUAL(output_model->Tau(), (double) 5);
   BOOST_CHECK_EQUAL(CLI::GetParam<RANNModel*>("output_model")->Tau(),
-        (double) 10);
+      (double) 10);
   delete output_model;      
 }
 
