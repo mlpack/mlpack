@@ -44,16 +44,16 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
     fs << "Less number of class for Top K Accuracy score" << std::endl;
   }
   float count = 0;
-  size_t srt = arma::sort_index(predsprob);
-  for (size_t i = 1; i < predictedProb.n_rows; i++)
+  uvec srt = arma::sort_index(predsprob);
+  for (size_t i = 1; i < predictedProb.n_elem; i++)
   {
-    if (labels[i] != srt.in_range(arma::span(i, idx + 1), arma::span::all))
+    if (labels[i] != srt.rows(i, idx + 1))
     {
       count = count + 1;
     }
   }
   // Accuracy Score of top k predicted class labels.
-  return (double) count / predictedProb.n_rows;
+  return (double) count / predictedProb.n_elem;
 }
 } // namespace cv
 } // namespace mlpack
