@@ -57,7 +57,7 @@ KernelSVM<MatType, KernelType>::KernelSVM(
   // No training to do here.
 }
 
-template <typename MatType, typename KernelType>
+template<typename MatType, typename KernelType>
 double KernelSVM<MatType, KernelType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
@@ -76,18 +76,17 @@ double KernelSVM<MatType, KernelType>::Train(
 
   if (kernelFunction == "linear")
   {
-    K = data * data.t();
+    K = data.t() * data;
   }
 
   else if (kernelFunction == "gaussian")
   {
     arma::vec X2 = arma::sum(arma::pow(data, 2), 2);
     K = X2 + (X2.t() - 2 * data * data.t());
-    K = arma::pow(KernelType::Evaluate(1,0), K);
   }
   else
   {
-    K = arma::zeros(data);
+    K = arma::zeros(data.n_rows, data.n_cols);
   }
 
   while(count < max_iter)
@@ -95,10 +94,11 @@ double KernelSVM<MatType, KernelType>::Train(
     size_t num_changes_alphas = 0;
     for(size_t i = 0; i < data.n_rows; i++)
     {
-      E(i) = b + arma::sum(alpha % (labels % K.col(i))) - labels(i);
+      E(i) = b + arma::sum(alpha % (labels.t() % K.col(i))) - labels(i);
       if ((labels(i) * E(i) < -tol && alpha(i) < C) 
             || (labels(i) * E(i) > tol && alpha(i) > 0))
       {
+        std::cout<<"Yes"<<std::endl;
         size_t j = ceil(data.n_rows * rand());
         while (j == i)
         {
@@ -166,8 +166,8 @@ double KernelSVM<MatType, KernelType>::Train(
       count = count + 1;
     else
       count = 0;
-
-    w = ((alpha % Y).t() * data).t();
+  }
+  w = ((alpha.t() % labels) * data.t());
 }
 
 template <typename MatType, typename KernelType>
@@ -200,12 +200,14 @@ void KernelSVM<MatType, KernelType>::Classify(
     arma::mat& scores) const
 {
   if (kernelFunction == "linear")
-    scores = data * w + b;
+  {
+    scores = data.t() * w.t() + b;
+    scores = scores.t();
+  }
   else if (kernelFunction == "gaussian")
   {
     MatType X2 = arma::sum(arma::pow(data, 2), 2);
     MatType K = X2 + (X2.t() - 2 * data * data.t());
-    K = arma::pow(KernelType::Evaluate(1,0), K);
     K = alpha.t() * K;
     scores = arma::sum(K, 2);
   }
