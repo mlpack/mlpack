@@ -58,12 +58,13 @@ class MeanPooling
               const size_t strideWidth = 1,
               const size_t strideHeight = 1,
               const bool floor = true,
-              const size_t inputWidth = 0,
-              const size_t inputHeight = 0,
               const size_t padW = 0,
               const size_t padH = 0,
+              const size_t inputWidth = 0,
+              const size_t inputHeight = 0,
               const std::string paddingType = "None");
-  /**
+ 
+ /**
    * Create the MeanPooling object using the specified number of units and padding.
    *
    * @param kernelWidth Width of the pooling window.
