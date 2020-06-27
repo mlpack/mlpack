@@ -32,10 +32,10 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling(
     const size_t strideWidth,
     const size_t strideHeight,
     const bool floor,
-    const size_t inputWidth,
-    const size_t inputHeight,
     const size_t padW,
     const size_t padH,
+    const size_t inputWidth,
+    const size_t inputHeight,
     const std::string paddingType) :
     MaxPooling(
       kernelWidth,
