@@ -105,10 +105,10 @@ class MaxPooling
              const size_t strideWidth,
              const size_t strideHeight,
              const bool floor,
-             const size_t inputWidth,
-             const size_t inputHeight,
              const std::tuple<size_t, size_t> padW,
              const std::tuple<size_t, size_t> padH,
+             const size_t inputWidth = 0,
+             const size_t inputHeight = 0,
              const std::string paddingType = "None");
 
   /**
