@@ -43,10 +43,10 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
       strideWidth,
       strideHeight,
       floor,
-      inputWidth,
-      inputHeight,
       std::tuple<size_t, size_t>(padW, padW),
       std::tuple<size_t, size_t>(padH, padH),
+      inputWidth,
+      inputHeight,
       paddingType)
 {
   // Nothing to do here.
