@@ -19,18 +19,16 @@ namespace mlpack {
 namespace svm {
 
 template <typename MatType, typename KernelType>
-template <typename OptimizerType>
 KernelSVM<MatType, KernelType>::KernelSVM(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const double delta,
     const double C,
-    const string kernelFunction,
+    const std::string& kernelFunction,
     const bool fitIntercept,
     const size_t max_iter) :
     numClasses(numClasses),
-    lambda(lambda),
     delta(delta),
     C(C),
     kernelFunction(kernelFunction),
@@ -47,8 +45,9 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     const size_t numClasses,
     const double delta,
     const double C,
-    const string kernelFunction,
+    const std::string& kernelFunction,
     const bool fitIntercept) :
+    inputSize(inputSize),
     numClasses(numClasses),
     delta(delta),
     C(C),

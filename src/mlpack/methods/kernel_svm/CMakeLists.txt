@@ -14,8 +14,3 @@ endforeach()
 # append sources (with directory name) to list of all mlpack sources (used at
 # the parent scope)
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-add_cli_executable(kernel_svm)
-add_python_binding(kernel_svm)
-add_julia_binding(kernel_svm)
-add_markdown_docs(kernel_svm "cli;python;julia" "classification")
