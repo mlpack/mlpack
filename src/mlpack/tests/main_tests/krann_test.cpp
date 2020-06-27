@@ -410,7 +410,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentAlpha)
   // saved model are equal
   BOOST_CHECK_EQUAL(output_model->Alpha(), (double) 0.95);
   BOOST_CHECK_EQUAL(CLI::GetParam<RANNModel*>("output_model")->Alpha(),
-        (double) 0.80);
+      (double) 0.80);
   delete output_model;      
 }
 
