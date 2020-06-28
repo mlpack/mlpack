@@ -65,6 +65,9 @@ inline HRectBound<
     ElemType>& HRectBound<MetricType,
     ElemType>::operator=(const HRectBound<MetricType, ElemType>& other)
 {
+  if (this == &other)
+    return *this;
+
   if (dim != other.Dim())
   {
     // Reallocation is necessary.
