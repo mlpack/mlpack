@@ -185,7 +185,7 @@ bool Save(const std::string& filename,
         matrix.quiet_save(filename, saveType) :
         matrix.quiet_save(stream, saveType);
 #else
-    const bool success = tmp.quiet_save(stream, saveType);
+    const bool success = matrix.quiet_save(stream, saveType);
 #endif
     if (!success)
     {
