@@ -158,10 +158,14 @@ bool Save(const std::string& filename,
   {
     arma::Mat<eT> tmp = trans(matrix);
 
+#ifdef ARMA_USE_HDF5
     // We can't save with streams for HDF5.
     const bool success = (saveType == arma::hdf5_binary) ?
         tmp.quiet_save(filename, saveType) :
         tmp.quiet_save(stream, saveType);
+#else
+    const bool success = tmp.quiet_save(stream, saveType);
+#endif
     if (!success)
     {
       Timer::Stop("saving_data");
@@ -175,10 +179,14 @@ bool Save(const std::string& filename,
   }
   else
   {
+#ifdef ARMA_USE_HDF5
     // We can't save with streams for HDF5.
     const bool success = (saveType == arma::hdf5_binary) ?
         matrix.quiet_save(filename, saveType) :
         matrix.quiet_save(stream, saveType);
+#else
+    const bool success = tmp.quiet_save(stream, saveType);
+#endif
     if (!success)
     {
       Timer::Stop("saving_data");
