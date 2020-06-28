@@ -436,6 +436,9 @@ template<typename TreeElemType>
 DiscreteHilbertValue<TreeElemType>& DiscreteHilbertValue<TreeElemType>::
 operator=(const DiscreteHilbertValue& val)
 {
+  if (ownsLocalHilbertValues)
+    delete localHilbertValues;
+
   localHilbertValues = const_cast<arma::Mat<HilbertElemType>* >
       (val.LocalHilbertValues());
   ownsLocalHilbertValues = false;
