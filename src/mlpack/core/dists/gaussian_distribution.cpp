@@ -19,7 +19,7 @@ using namespace mlpack::distribution;
 
 GaussianDistribution::GaussianDistribution(const arma::vec& mean,
                                            const arma::mat& covariance)
-  : mean(mean)
+  : mean(mean), logDetCov(0.0)
 {
   Covariance(covariance);
 }
