@@ -90,6 +90,7 @@ inline CellBound<
   if (dim != other.Dim())
   {
     // Reallocation is necessary.
+    delete[] bounds;
 
     dim = other.Dim();
     bounds = new math::RangeType<ElemType>[dim];
