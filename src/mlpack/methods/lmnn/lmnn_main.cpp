@@ -418,7 +418,7 @@ static void mlpackMain()
   if (CLI::HasParam("output"))
     CLI::GetParam<arma::mat>("output") = distance;
   if (CLI::HasParam("transformed_data"))
-    CLI::GetParam<arma::mat>("transformed_data") = std::move(distance * data);
+    CLI::GetParam<arma::mat>("transformed_data") = distance * data;
   if (CLI::HasParam("centered_data"))
   {
     if (center)

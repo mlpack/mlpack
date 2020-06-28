@@ -250,7 +250,7 @@ static void mlpackMain()
       {
         gmm->Component(i).Mean() = dgmm.Component(i).Mean();
         gmm->Component(i).Covariance(
-            std::move(arma::diagmat(dgmm.Component(i).Covariance())));
+            arma::diagmat(dgmm.Component(i).Covariance()));
       }
       gmm->Weights() = dgmm.Weights();
     }
@@ -308,7 +308,7 @@ static void mlpackMain()
       {
         gmm->Component(i).Mean() = dgmm.Component(i).Mean();
         gmm->Component(i).Covariance(
-            std::move(arma::diagmat(dgmm.Component(i).Covariance())));
+            arma::diagmat(dgmm.Component(i).Covariance()));
       }
       gmm->Weights() = dgmm.Weights();
     }

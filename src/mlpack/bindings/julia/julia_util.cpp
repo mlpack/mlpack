@@ -203,7 +203,7 @@ void CLI_SetParamMatWithInfo(const char* paramName,
   std::get<0>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
       paramName)) = std::move(d);
   std::get<1>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
-      paramName)) = pointsAreRows ? std::move(m.t()) : std::move(m);
+      paramName)) = pointsAreRows ? m.t() : std::move(m);
   CLI::SetPassed(paramName);
 }
 

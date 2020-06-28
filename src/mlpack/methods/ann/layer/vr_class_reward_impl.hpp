@@ -40,7 +40,7 @@ double VRClassReward<InputDataType, OutputDataType>::Forward(
   for (size_t i = 0; i < input.n_cols - 1; ++i)
   {
     size_t currentTarget = target(i) - 1;
-    Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
+    Log::Assert(currentTarget < input.n_rows,
         "Target class out of range.");
 
     output -= input(currentTarget, i);
@@ -74,7 +74,7 @@ void VRClassReward<InputDataType, OutputDataType>::Backward(
   for (size_t i = 0; i < (input.n_cols - 1); ++i)
   {
     size_t currentTarget = target(i) - 1;
-    Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
+    Log::Assert(currentTarget < input.n_rows,
         "Target class out of range.");
 
     output(currentTarget, i) = -1;

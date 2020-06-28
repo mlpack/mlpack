@@ -238,11 +238,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelReuseTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
@@ -260,7 +260,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelReuseTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input trained model.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
   SetInputParam("input_model",
       CLI::GetParam<HoeffdingTreeModel*>("output_model"));
 
@@ -327,7 +327,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelCategoricalReuseTest)
     BOOST_FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   // Input trained model.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
   SetInputParam("input_model",
       CLI::GetParam<HoeffdingTreeModel*>("output_model"));
 

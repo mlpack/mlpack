@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeMinimumLeafSizeTest)
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeNonNegativeMaximumDepthTest)
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
@@ -220,7 +220,7 @@ BOOST_AUTO_TEST_CASE(DecisionMinimumGainSplitTest)
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
@@ -271,7 +271,7 @@ BOOST_AUTO_TEST_CASE(DecisionRegularisationTest)
   SetInputParam("minimum_gain_split", 0.01);
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("test", std::make_tuple(info, inputData));
   arma::Row<size_t> predRegularised;
   mlpackMain();
   predRegularised = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
