@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_POISSON_NLL_LOSS_HPP
-#define MLPACK_METHODS_ANN_LAYER_POISSON_NLL_LOSS_HPP
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTIONS_POISSON_NLL_LOSS_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTIONS_POISSON_NLL_LOSS_HPP
 
 #include <mlpack/prereqs.hpp>
 
