@@ -118,9 +118,7 @@ BOOST_AUTO_TEST_CASE(LMNNOptimizerTest)
   // Input random data points.
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
-  // TODO: set back to bbsgd---this was done for #1490 and should be reverted
-  // when that is fixed.
-  SetInputParam("optimizer",  std::string("amsgrad"));
+  SetInputParam("optimizer",  std::string("bbsgd"));
 
   mlpackMain();
 
