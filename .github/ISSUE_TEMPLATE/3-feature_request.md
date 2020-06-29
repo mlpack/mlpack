@@ -5,17 +5,16 @@ about: Use this issue for suggesting new features
 
 <!--
 
-Welcome!  If you have a feature you like us to implement you can suggest here
+Welcome!  If you have a feature you would like us to implement you can suggest it with this template.
 -->
 
-### Feature request
+### What is the desired addition or change?
 
 
-### What is motivation or use case for adding/changing the behavior?
+### What is the motivation for this feature?
 
 
-### How should this be implemented in your opinion?
+### If applicable, describe how this feature would be implemented.
 
 
-### Would you be willing to work on adding this support? 
 
