@@ -53,7 +53,7 @@ class DuelingDQN
 {
  public:
   //! Default constructor.
-  DuelingDQN()
+  DuelingDQN() : isNoisy(false)
   {
     featureNetwork = new Sequential<>();
     valueNetwork = new Sequential<>();
@@ -74,26 +74,46 @@ class DuelingDQN
    * @param h1 Number of neurons in hiddenlayer-1.
    * @param h2 Number of neurons in hiddenlayer-2.
    * @param outputDim Number of neurons in output layer.
+   * @param isNoisy Specifies whether the network needs to be of type noisy.
    */
   DuelingDQN(const int inputDim,
              const int h1,
              const int h2,
-             const int outputDim):
-      completeNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001))
+             const int outputDim,
+             const bool isNoisy = false):
+      completeNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001)),
+      isNoisy(isNoisy)
   {
     featureNetwork = new Sequential<>();
     featureNetwork->Add(new Linear<>(inputDim, h1));
     featureNetwork->Add(new ReLULayer<>());
 
     valueNetwork = new Sequential<>();
-    valueNetwork->Add(new Linear<>(h1, h2));
-    valueNetwork->Add(new ReLULayer<>());
-    valueNetwork->Add(new Linear<>(h2, 1));
-
     advantageNetwork = new Sequential<>();
-    advantageNetwork->Add(new Linear<>(h1, h2));
-    advantageNetwork->Add(new ReLULayer<>());
-    advantageNetwork->Add(new Linear<>(h2, outputDim));
+
+    if (isNoisy)
+    {
+      noisyLayerIndex.push_back(valueNetwork->Model().size());
+      valueNetwork->Add(new NoisyLinear<>(h1, h2));
+      advantageNetwork->Add(new NoisyLinear<>(h1, h2));
+
+      valueNetwork->Add(new ReLULayer<>());
+      advantageNetwork->Add(new ReLULayer<>());
+
+      noisyLayerIndex.push_back(valueNetwork->Model().size());
+      valueNetwork->Add(new NoisyLinear<>(h2, 1));
+      advantageNetwork->Add(new NoisyLinear<>(h2, outputDim));
+    }
+    else
+    {
+      valueNetwork->Add(new Linear<>(h1, h2));
+      valueNetwork->Add(new ReLULayer<>());
+      valueNetwork->Add(new Linear<>(h2, 1));
+
+      advantageNetwork->Add(new Linear<>(h1, h2));
+      advantageNetwork->Add(new ReLULayer<>());
+      advantageNetwork->Add(new Linear<>(h2, outputDim));
+    }
 
     concat = new Concat<>(true);
     concat->Add(valueNetwork);
@@ -107,10 +127,12 @@ class DuelingDQN
 
   DuelingDQN(FeatureNetworkType featureNetwork,
              AdvantageNetworkType advantageNetwork,
-             ValueNetworkType valueNetwork):
+             ValueNetworkType valueNetwork,
+             const bool isNoisy = false):
       featureNetwork(std::move(featureNetwork)),
       advantageNetwork(std::move(advantageNetwork)),
-      valueNetwork(std::move(valueNetwork))
+      valueNetwork(std::move(valueNetwork)),
+      isNoisy(isNoisy)
   {
     concat = new Concat<>(true);
     concat->Add(valueNetwork);
@@ -122,7 +144,7 @@ class DuelingDQN
   }
 
   //! Copy constructor.
-  DuelingDQN(const DuelingDQN& model)
+  DuelingDQN(const DuelingDQN& model) : isNoisy(false)
   { /* Nothing to do here. */ }
 
   //! Copy assignment operator.
@@ -131,6 +153,8 @@ class DuelingDQN
     *valueNetwork = *model.valueNetwork;
     *advantageNetwork = *model.advantageNetwork;
     *featureNetwork = *model.featureNetwork;
+    isNoisy = model.isNoisy;
+    noisyLayerIndex = model.noisyLayerIndex;
   }
 
   /**
@@ -198,6 +222,20 @@ class DuelingDQN
     completeNetwork.ResetParameters();
   }
 
+  /**
+   * Resets noise of the network, if the network is of type noisy.
+   */
+  void ResetNoise()
+  {
+    for (size_t i = 0; i < noisyLayerIndex.size(); i++)
+    {
+      boost::get<NoisyLinear<>*>
+          (valueNetwork->Model()[noisyLayerIndex[i]])->ResetNoise();
+      boost::get<NoisyLinear<>*>
+          (advantageNetwork->Model()[noisyLayerIndex[i]])->ResetNoise();
+    }
+  }
+
   //! Return the Parameters.
   const arma::mat& Parameters() const { return completeNetwork.Parameters(); }
   //! Modify the Parameters.
@@ -218,6 +256,12 @@ class DuelingDQN
 
   //! Locally-stored value network.
   ValueNetworkType* valueNetwork;
+
+  //! Locally-stored check for noisy network.
+  bool isNoisy;
+
+  //! Locally-stored indexes of noisy layers in the network.
+  std::vector<size_t> noisyLayerIndex;
 
   //! Locally-stored actionValues of the network.
   arma::mat actionValues;

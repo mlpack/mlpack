@@ -1,5 +1,17 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added N-step DQN to q_networks (#2461).
+
+  * Add Silhoutte Score metric and Pairwise Distances (#2406).
+
+  * Add Go bindings for some missed models (#2460).
+
+### mlpack 3.3.2
+###### 2020-06-18
+  * Added Noisy DQN to q_networks (#2446).
+
+  * Add Go bindings (#1884).
+
   * Added Dueling DQN to q_networks, Noisy linear layer to ann/layer
     and Empty loss to ann/loss_functions (#2414).
 
@@ -26,6 +38,11 @@
 
   * Fix `no_intercept` and probability computation for linear SVM bindings
     (#2419).
+
+  * Fix incorrect neighbors for `k > 1` searches in `approx_kfn` binding, for
+    the `QDAFN` algorithm (#2448).
+
+  * Add `RBF` layer in ann module to make `RBFN` architecture (#2261).
 
 ### mlpack 3.3.1
 ###### 2020-04-29
