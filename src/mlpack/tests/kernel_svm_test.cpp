@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(KernelSVMGaussianTest)
   for (size_t i = 0; i < 500; ++i)
   {
     data.col(i) = g1.Random();
-    responses[i] = 0;
+    responses[i] = -1;
   }
   for (size_t i = 500; i < 1000; ++i)
   {
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(KernelSVMGaussianTest)
   }
   const std::string l = "linear";
   // Now train a logistic regression object on it.
-  KernelSVM<> svm(data, responses, 2, 1.0, 1.0, l,false, 3);
+  KernelSVM<> svm(data, responses, 2, 1.0, 10.0, l,false, 10);
 
   // Ensure that the error is close to zero.
   const double acc = svm.ComputeAccuracy(data, responses);
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(KernelSVMGaussianTest)
   for (size_t i = 0; i < 500; ++i)
   {
     data.col(i) = g1.Random();
-    responses[i] = 0;
+    responses[i] = -1;
   }
   for (size_t i = 500; i < 1000; ++i)
   {

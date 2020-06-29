@@ -68,7 +68,7 @@ double KernelSVM<MatType, KernelType>::Train(
   alpha = arma::zeros(data.n_cols);
   size_t count = 0;
   b = 0;
-  arma::vec E = arma::zeros(data.n_rows, 1);
+  arma::vec E = arma::zeros(data.n_cols, 1);
   double eta = 0;
   double L = 0;
   double H = 0;
@@ -92,23 +92,22 @@ double KernelSVM<MatType, KernelType>::Train(
   while(count < max_iter)
   {
     size_t num_changes_alphas = 0;
-    for(size_t i = 0; i < data.n_rows; i++)
+    for(size_t i = 0; i < data.n_cols; i++)
     {
       E(i) = b + arma::sum(alpha % (labels.t() % K.col(i))) - labels(i);
       if ((labels(i) * E(i) < -tol && alpha(i) < C) 
             || (labels(i) * E(i) > tol && alpha(i) > 0))
       {
-        std::cout<<"Yes"<<std::endl;
-        size_t j = ceil(data.n_rows * rand());
+        size_t j = rand() % data.n_cols;
         while (j == i)
         {
-          j = ceil(data.n_rows * rand());
+          j = rand() % data.n_cols;
         }
 
-        E(j) = b + arma::sum(alpha % (labels % K.col(j))) - labels(j);
+        E(j) = b + arma::sum(alpha % (labels.t() % K.col(j))) - labels(j);
         double alpha_j_old = alpha(j);
         double alpha_i_old = alpha(i);
-        if(labels(i) ==labels(j))
+        if(labels(i) == labels(j))
         {
           L = std::max(0.0, alpha(i) + alpha(j) - C);
           H = std::min(C, alpha(i) + alpha(j));
@@ -118,6 +117,7 @@ double KernelSVM<MatType, KernelType>::Train(
           L = std::max(0.0, alpha(j) - alpha(i));
           H = std::min(C, C + alpha(j) - alpha(i)); 
         }
+
         if(L == H)
           continue;
 
