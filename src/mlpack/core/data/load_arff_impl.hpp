@@ -79,10 +79,11 @@ void LoadARFF(const std::string& filename,
         ++dimensionality;
         // We need to mark this dimension with its according type.
         ++it; // Ignore the dimension name.
+        ++it;
         // Collect all of the remaining tokens, which represent the dimension.
-        std::string dimType = *(++it);
+        std::string dimType = "";
         while (it != tok.end())
-          dimType += *(++it);
+          dimType += *(it++);
         std::transform(dimType.begin(), dimType.end(), dimType.begin(),
             ::tolower);
 
