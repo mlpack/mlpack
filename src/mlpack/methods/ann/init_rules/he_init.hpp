@@ -69,7 +69,8 @@ class HeInitialization
     // standard deviation = sqrt(2/rows), i.e. variance = (2/rows).
     const double variance = 2.0 / (double) rows;
 
-    W.set_size(rows, cols);
+    if (W.is_empty())
+      W.set_size(rows, cols);
 
     // Multipling a random variable X with variance V(X) by some factor c,
     // then the variance V(cX) = (c^2) * V(X).
@@ -114,7 +115,8 @@ class HeInitialization
                   const size_t cols,
                   const size_t slices)
   {
-    W.set_size(rows, cols, slices);
+    if (W.is_empty())
+      W.set_size(rows, cols, slices);
 
     for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);

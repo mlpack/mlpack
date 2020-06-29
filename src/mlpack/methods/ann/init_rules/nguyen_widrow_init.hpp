@@ -113,7 +113,8 @@ class NguyenWidrowInitialization
                   const size_t cols,
                   const size_t slices)
   {
-    W.set_size(rows, cols, slices);
+    if (W.is_empty())
+      W.set_size(rows, cols, slices);
 
     for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);

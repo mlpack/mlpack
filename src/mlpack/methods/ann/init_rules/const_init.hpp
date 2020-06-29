@@ -41,7 +41,9 @@ class ConstInitialization
   template<typename eT>
   void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
-    W.set_size(rows, cols);
+    if (W.is_empty())
+      W.set_size(rows, cols);
+
     W.fill(initVal);
   }
 
@@ -73,7 +75,9 @@ class ConstInitialization
                   const size_t cols,
                   const size_t slices)
   {
-    W.set_size(rows, cols, slices);
+    if (W.is_empty())
+      W.set_size(rows, cols, slices);
+
     W.fill(initVal);
   }
 
