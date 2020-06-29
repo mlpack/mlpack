@@ -65,6 +65,9 @@ BOOST_AUTO_TEST_CASE(HuberLossTest)
   // Sum of Expected Output = -0.07125.
   double expectedOutputSum = arma::accu(output);
   BOOST_REQUIRE_CLOSE_FRACTION(expectedOutputSum, -0.07125, 0.00001);
+
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 }
 
 /**
