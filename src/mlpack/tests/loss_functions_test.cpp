@@ -75,28 +75,37 @@ BOOST_AUTO_TEST_CASE(HuberLossTest)
  */
 BOOST_AUTO_TEST_CASE(PoissonNLLLossTest)
 {
-  arma::mat input, target;
-  arma::mat output1, output2, output3;
-  arma::mat expOutput1, expOutput2, expOutput3;
+  arma::mat input, target, input4, target4;
+  arma::mat output1, output2, output3, output4;
+  arma::mat expOutput1, expOutput2, expOutput3, expOutput4;
   PoissonNLLLoss<> module1;
   PoissonNLLLoss<> module2(true, true, 1e-08, false);
   PoissonNLLLoss<> module3(true, true, 1e-08, true);
+  PoissonNLLLoss<> module4(false, true, 1e-08, true);
 
   // Test the Forward function on a user generated input.
   input = arma::mat("1.0 1.0 1.9 1.6 -1.9 3.7 -1.0 0.5");
   target = arma::mat("1.0 3.0 1.0 2.0 1.0 4.0 2.0 1.0");
 
+  // Input required for module 4. Probs are in range [0, 1].
+  input4 = arma::mat("0.658502 0.445627 0.667651 0.310549 \
+                      0.589540 0.052568 0.549769 0.381504 ");
+  target4 = arma::mat("1.0 3.0 1.0 2.0 1.0 4.0 2.0 1.0");
+
   double loss1 = module1.Forward(input, target);
   double loss2 = module2.Forward(input, target);
   double loss3 = module3.Forward(input, target);
+  double loss4 = module4.Forward(input4, target4);
   BOOST_REQUIRE_CLOSE_FRACTION(loss1, 4.8986, 0.0001);
   BOOST_REQUIRE_CLOSE_FRACTION(loss2, 45.4139, 0.0001);
   BOOST_REQUIRE_CLOSE_FRACTION(loss3, 5.6767, 0.0001);
+  BOOST_REQUIRE_CLOSE_FRACTION(loss4, 3.742157, 0.0001);
 
   // Test the Backward function.
   module1.Backward(input, target, output1);
   module2.Backward(input, target, output2);
   module3.Backward(input, target, output3);
+  module4.Backward(input4, target4, output4);
 
   expOutput1 = arma::mat("0.214785 -0.0352148 0.710737 0.369129 \
                          -0.106304 4.55591 -0.204015 0.0810902");
@@ -104,7 +113,8 @@ BOOST_AUTO_TEST_CASE(PoissonNLLLossTest)
                          -0.850431 36.4473 -1.63212 0.648721");
   expOutput3 = arma::mat("0.214785 -0.035215 0.710737 0.369129 \
                          -0.106304 4.555913 -0.204015 0.081090");
-
+  expOutput4 = arma::mat("-0.064825 -0.716511 -0.062224 -0.680027 \
+                          -0.087030 -9.386517 -0.329736 -0.202650");
 
   BOOST_REQUIRE_EQUAL(output1.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output1.n_cols, input.n_cols);
@@ -115,11 +125,15 @@ BOOST_AUTO_TEST_CASE(PoissonNLLLossTest)
   BOOST_REQUIRE_EQUAL(output3.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output3.n_cols, input.n_cols);
 
+  BOOST_REQUIRE_EQUAL(output4.n_rows, input4.n_rows);
+  BOOST_REQUIRE_EQUAL(output4.n_cols, input4.n_cols);
+
   for (size_t i = 0; i < expOutput1.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE_FRACTION(output1[i], expOutput1[i], 0.0001);
     BOOST_REQUIRE_CLOSE_FRACTION(output2[i], expOutput2[i], 0.0001);
     BOOST_REQUIRE_CLOSE_FRACTION(output3[i], expOutput3[i], 0.0001);
+    BOOST_REQUIRE_CLOSE_FRACTION(output4[i], expOutput4[i], 0.0001);
   }
 }
 
