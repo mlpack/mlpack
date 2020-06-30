@@ -249,10 +249,7 @@ static void mlpackMain()
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
       if (queryData.n_rows != rann->Dataset().n_rows)
       {
-        // Clean memory if needed before crashing.
         const size_t dimensions = rann->Dataset().n_rows;
-        if (CLI::HasParam("reference"))
-          delete rann;
         Log::Fatal << "Query has invalid dimensions(" << queryData.n_rows <<
             "); should be " << dimensions << "!" << endl;
       }
