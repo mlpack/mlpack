@@ -50,7 +50,7 @@ class CLIOption
  public:
   /**
    * Construct an Option object.  When constructed, it will register
-   * itself with CLI.
+   * itself with IO.
    *
    * @param defaultValue Default value this parameter will be initialized to
    *      (for flags, this should be false, for instance).
