@@ -436,6 +436,9 @@ template<typename TreeElemType>
 DiscreteHilbertValue<TreeElemType>& DiscreteHilbertValue<TreeElemType>::
 operator=(const DiscreteHilbertValue& val)
 {
+  if (this == &val)
+    return *this;
+
   if (ownsLocalHilbertValues)
     delete localHilbertValues;
 
