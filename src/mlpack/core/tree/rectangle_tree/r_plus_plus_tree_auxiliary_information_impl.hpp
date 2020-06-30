@@ -35,7 +35,7 @@ RPlusPlusTreeAuxiliaryInformation(const TreeType* tree) :
   // Initialize the maximum bounding rectangle if the node is the root
   if (!tree->Parent())
   {
-    for (size_t k = 0; k < outerBound.Dim(); k++)
+    for (size_t k = 0; k < outerBound.Dim(); ++k)
     {
       outerBound[k].Lo() = std::numeric_limits<ElemType>::lowest();
       outerBound[k].Hi() = std::numeric_limits<ElemType>::max();

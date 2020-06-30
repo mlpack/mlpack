@@ -198,12 +198,12 @@ double KNNAccuracy(const arma::mat& dataset,
   // Keep count.
   size_t count = 0;
 
-  for (size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     arma::vec Map;
     Map.zeros(uniqueLabels.n_cols);
 
-    for (size_t j = 0; j < k; j++)
+    for (size_t j = 0; j < k; ++j)
     {
       Map(labels(neighbors(j, i))) +=
           1 / std::pow(distances(j, i) + 1, 2);
@@ -295,7 +295,7 @@ static void mlpackMain()
   // Carry out mean-centering on the dataset, if necessary.
   if (center)
   {
-    for (size_t i = 0; i < data.n_rows; i++)
+    for (size_t i = 0; i < data.n_rows; ++i)
     {
       data.row(i) -= arma::mean(data.row(i));
     }
@@ -310,7 +310,7 @@ static void mlpackMain()
   else
   {
     Log::Info << "Using last column of input dataset as labels." << endl;
-    for (size_t i = 0; i < data.n_cols; i++)
+    for (size_t i = 0; i < data.n_cols; ++i)
       rawLabels[i] = (size_t) data(data.n_rows - 1, i);
 
     data.shed_row(data.n_rows - 1);

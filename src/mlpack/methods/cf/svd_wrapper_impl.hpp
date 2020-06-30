@@ -32,7 +32,7 @@ double SVDWrapper<Factorizer>::Apply(const arma::mat& V,
   // construct sigma matrix
   sigma.zeros(V.n_rows, V.n_cols);
 
-  for (size_t i = 0; i < sigma.n_rows && i < sigma.n_cols; i++)
+  for (size_t i = 0; i < sigma.n_rows && i < sigma.n_cols; ++i)
     sigma(i, i) = E(i, 0);
 
   arma::mat V_rec = W * sigma * arma::trans(H);
@@ -54,7 +54,7 @@ double SVDWrapper<DummyClass>::Apply(const arma::mat& V,
   // construct sigma matrix
   sigma.zeros(V.n_rows, V.n_cols);
 
-  for (size_t i = 0; i < sigma.n_rows && i < sigma.n_cols; i++)
+  for (size_t i = 0; i < sigma.n_rows && i < sigma.n_cols; ++i)
     sigma(i, i) = E(i, 0);
 
   arma::mat V_rec = W * sigma * arma::trans(H);

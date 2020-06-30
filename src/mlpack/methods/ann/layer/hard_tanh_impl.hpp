@@ -34,7 +34,7 @@ void HardTanH<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)
 {
   output = input;
-  for (size_t i = 0; i < input.n_elem; i++)
+  for (size_t i = 0; i < input.n_elem; ++i)
   {
     output(i) = (output(i) > maxValue ? maxValue :
         (output(i) < minValue ? minValue : output(i)));
@@ -47,7 +47,7 @@ void HardTanH<InputDataType, OutputDataType>::Backward(
     const DataType& input, const DataType& gy, DataType& g)
 {
   g = gy;
-  for (size_t i = 0; i < input.n_elem; i++)
+  for (size_t i = 0; i < input.n_elem; ++i)
   {
     if (input(i) < minValue || input(i) > maxValue)
     {
