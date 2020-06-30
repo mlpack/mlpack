@@ -35,8 +35,14 @@ class MeanBiasError
  public:
   /**
    * Create the MeanBiasError object.
+   *
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If
+   *                  true, 'sum' reduction is used and the output will be
+   *                  summed. It is set to true by default.
    */
-  MeanBiasError();
+  MeanBiasError(const bool reduction = true);
 
   /**
    * Computes the mean bias error function.
@@ -65,6 +71,11 @@ class MeanBiasError
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
+  //! Get the type of reduction used.
+  bool Reduction() const { return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() { return reduction; }
+
   /**
    * Serialize the layer.
    */
@@ -74,6 +85,9 @@ class MeanBiasError
  private:
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! The boolean value that tells if reduction is sum or mean.
+  bool reduction;
 }; // class MeanBiasError
 
 } // namespace ann
