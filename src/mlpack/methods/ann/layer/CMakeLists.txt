@@ -94,6 +94,8 @@ set(SOURCES
   subview.hpp
   transposed_convolution.hpp
   transposed_convolution_impl.hpp
+  unpooling.hpp
+  unpooling_impl.hpp
   vr_class_reward.hpp
   vr_class_reward_impl.hpp
   c_relu.hpp
