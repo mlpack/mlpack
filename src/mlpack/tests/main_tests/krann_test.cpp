@@ -452,6 +452,80 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentTreeType)
 }
 
 /**
+  * Ensure that different single_sample_limit gives different results.
+ */
+BOOST_AUTO_TEST_CASE(KRANNDifferentSingleSampleLimit)
+{
+  arma::mat referenceData;
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+
+  // Random input, some k <= number of top tau %ile reference points.
+  SetInputParam("reference", referenceData);
+  SetInputParam("k", (int) 5);
+  
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  RANNModel* output_model;
+  output_model = std::move(CLI::GetParam<RANNModel*>("output_model"));
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+
+  // Input saved model, pass the same query and keep k unchanged.
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("k", (int) 5);
+  SetInputParam("single_sample_limit", (int)15);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  // Check that initial output matrices and the output matrices using
+  // saved model are equal.
+  BOOST_CHECK_EQUAL(CLI::GetParam<RANNModel*>("output_model")->SingleSampleLimit(),
+      (int) 15);
+  BOOST_CHECK_EQUAL(output_model->SingleSampleLimit(), (int) 20);
+  delete output_model;
+}
+
+/**
+  * Ensure that toggling sample_at_leaves gives different results.
+ */
+BOOST_AUTO_TEST_CASE(KRANNDifferentSampleAtLeaves)
+{
+  arma::mat referenceData;
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+
+  // Random input, some k <= number of top tau %ile reference points.
+  SetInputParam("reference", referenceData);
+  SetInputParam("k", (int) 5);
+  
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  RANNModel* output_model;
+  output_model = std::move(CLI::GetParam<RANNModel*>("output_model"));
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+
+  // Input saved model, pass the same query and keep k unchanged.
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("k", (int) 5);
+  SetInputParam("sample_at_leaves", (bool) true);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  // Check that initial output matrices and the output matrices using
+  // saved model are equal.
+  BOOST_CHECK_EQUAL(CLI::GetParam<RANNModel*>("output_model")->SampleAtLeaves(),
+      (bool) true);
+  BOOST_CHECK_EQUAL(output_model->SampleAtLeaves(),(bool) false);
+  delete output_model;
+}
+
+/**
   * Ensure that alpha out of range throws an error.
  */
 BOOST_AUTO_TEST_CASE(KRANNInvalidAlphaTest)
