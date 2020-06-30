@@ -110,7 +110,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "k", false }}, "kernels");
   ReportIgnoredParam({{ "k", false }}, "query");
 
-  if (CLI::HasParam("k"))
+  if (CMD::HasParam("k"))
   {
     RequireAtLeastOnePassed({ "indices", "kernels" }, false,
         "no output will be saved");
@@ -122,13 +122,13 @@ static void mlpackMain()
       "unknown kernel type");
 
   // Make sure number of maximum kernels is greater than 0.
-  if (CLI::HasParam("k"))
+  if (CMD::HasParam("k"))
   {
     RequireParamValue<int>("k", [](int x) { return x > 0; }, true,
         "number of maximum kernels must be greater than 0");
   }
 
-  if (CLI::HasParam("base"))
+  if (CMD::HasParam("base"))
   {
     RequireParamValue<double>("base", [](double x) { return x > 1.0; }, true,
         "base must be greater than or equal to 1!");
@@ -139,27 +139,27 @@ static void mlpackMain()
 
   FastMKSModel* model;
   arma::mat referenceData;
-  if (CLI::HasParam("reference"))
+  if (CMD::HasParam("reference"))
   {
     model = new FastMKSModel();
-    referenceData = std::move(CLI::GetParam<arma::mat>("reference"));
+    referenceData = std::move(CMD::GetParam<arma::mat>("reference"));
 
     Log::Info << "Loaded reference data (" << referenceData.n_rows << " x "
         << referenceData.n_cols << ")." << endl;
 
     // For cover tree construction.
-    const double base = CLI::GetParam<double>("base");
+    const double base = CMD::GetParam<double>("base");
 
     // Kernel parameters.
-    const string kernelType = CLI::GetParam<string>("kernel");
-    const double degree = CLI::GetParam<double>("degree");
-    const double offset = CLI::GetParam<double>("offset");
-    const double bandwidth = CLI::GetParam<double>("bandwidth");
-    const double scale = CLI::GetParam<double>("scale");
+    const string kernelType = CMD::GetParam<string>("kernel");
+    const double degree = CMD::GetParam<double>("degree");
+    const double offset = CMD::GetParam<double>("offset");
+    const double bandwidth = CMD::GetParam<double>("bandwidth");
+    const double scale = CMD::GetParam<double>("scale");
 
     // Search preferences.
-    const bool naive = CLI::HasParam("naive");
-    const bool single = CLI::HasParam("single");
+    const bool naive = CMD::HasParam("naive");
+    const bool single = CMD::HasParam("single");
 
     if (kernelType == "linear")
     {
@@ -207,37 +207,37 @@ static void mlpackMain()
   else
   {
     // Load model from file, then do whatever is necessary.
-    model = CLI::GetParam<FastMKSModel*>("input_model");
+    model = CMD::GetParam<FastMKSModel*>("input_model");
   }
 
   // Set search preferences.
-  model->Naive() = CLI::HasParam("naive");
-  model->SingleMode() = CLI::HasParam("single");
+  model->Naive() = CMD::HasParam("naive");
+  model->SingleMode() = CMD::HasParam("single");
 
   // Should we do search?
-  if (CLI::HasParam("k"))
+  if (CMD::HasParam("k"))
   {
     arma::mat kernels;
     arma::Mat<size_t> indices;
 
-    if (CLI::HasParam("query"))
+    if (CMD::HasParam("query"))
     {
-      const double base = CLI::GetParam<double>("base");
+      const double base = CMD::GetParam<double>("base");
 
-      arma::mat queryData = std::move(CLI::GetParam<arma::mat>("query"));
+      arma::mat queryData = std::move(CMD::GetParam<arma::mat>("query"));
 
       Log::Info << "Loaded query data (" << queryData.n_rows << " x "
           << queryData.n_cols << ")." << endl;
 
       try
       {
-        model->Search(queryData, (size_t) CLI::GetParam<int>("k"), indices,
+        model->Search(queryData, (size_t) CMD::GetParam<int>("k"), indices,
             kernels, base);
       }
       catch (std::invalid_argument& e)
       {
         // Delete the memory, if needed.
-        if (CLI::HasParam("reference"))
+        if (CMD::HasParam("reference"))
           delete model;
         throw;
       }
@@ -246,22 +246,22 @@ static void mlpackMain()
     {
       try
       {
-        model->Search((size_t) CLI::GetParam<int>("k"), indices, kernels);
+        model->Search((size_t) CMD::GetParam<int>("k"), indices, kernels);
       }
       catch (std::invalid_argument& e)
       {
         // Delete the memory, if needed.
-        if (CLI::HasParam("reference"))
+        if (CMD::HasParam("reference"))
           delete model;
         throw e;
       }
     }
 
     // Save output.
-    CLI::GetParam<arma::mat>("kernels") = std::move(kernels);
-    CLI::GetParam<arma::Mat<size_t>>("indices") = std::move(indices);
+    CMD::GetParam<arma::mat>("kernels") = std::move(kernels);
+    CMD::GetParam<arma::Mat<size_t>>("indices") = std::move(indices);
   }
 
   // Save the model.
-  CLI::GetParam<FastMKSModel*>("output_model") = model;
+  CMD::GetParam<FastMKSModel*>("output_model") = model;
 }

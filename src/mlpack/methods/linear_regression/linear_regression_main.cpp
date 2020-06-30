@@ -99,7 +99,7 @@ PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
 
 static void mlpackMain()
 {
-  const double lambda = CLI::GetParam<double>("lambda");
+  const double lambda = CMD::GetParam<double>("lambda");
 
   RequireOnlyOnePassed({ "training", "input_model" }, true);
 
@@ -110,8 +110,8 @@ static void mlpackMain()
 
   LinearRegression* lr;
 
-  const bool computeModel = !CLI::HasParam("input_model");
-  const bool computePrediction = CLI::HasParam("test");
+  const bool computeModel = !CMD::HasParam("input_model");
+  const bool computePrediction = CMD::HasParam("test");
 
   // If they specified a model file, we also need a test file or we
   // have nothing to do.
@@ -130,11 +130,11 @@ static void mlpackMain()
   if (computeModel)
   {
     Timer::Start("load_regressors");
-    regressors = std::move(CLI::GetParam<mat>("training"));
+    regressors = std::move(CMD::GetParam<mat>("training"));
     Timer::Stop("load_regressors");
 
     // Are the responses in a separate file?
-    if (!CLI::HasParam("training_responses"))
+    if (!CMD::HasParam("training_responses"))
     {
       // The initial predictors for y, Nx1.
       if (regressors.n_rows < 2)
@@ -149,7 +149,7 @@ static void mlpackMain()
     {
       // The initial predictors for y, Nx1.
       Timer::Start("load_responses");
-      responses = CLI::GetParam<rowvec>("training_responses");
+      responses = CMD::GetParam<rowvec>("training_responses");
       Timer::Stop("load_responses");
 
       if (responses.n_cols != regressors.n_cols)
@@ -167,7 +167,7 @@ static void mlpackMain()
   {
     // A model file was passed in, so load it.
     Timer::Start("load_model");
-    lr = CLI::GetParam<LinearRegression*>("input_model");
+    lr = CMD::GetParam<LinearRegression*>("input_model");
     Timer::Stop("load_model");
   }
 
@@ -179,11 +179,11 @@ static void mlpackMain()
     // that needs to load to print the size.
     Timer::Start("load_test_points");
     std::ostringstream oss;
-    oss << CLI::GetPrintableParam<mat>("test");
+    oss << CMD::GetPrintableParam<mat>("test");
     std::string testOutput = oss.str();
     Timer::Stop("load_test_points");
 
-    mat points = std::move(CLI::GetParam<mat>("test"));
+    mat points = std::move(CMD::GetParam<mat>("test"));
 
     // Ensure that test file data has the right number of features.
     if ((lr->Parameters().n_elem - 1) != points.n_rows)
@@ -205,9 +205,9 @@ static void mlpackMain()
     Timer::Stop("prediction");
 
     // Save predictions.
-    CLI::GetParam<rowvec>("output_predictions") = std::move(predictions);
+    CMD::GetParam<rowvec>("output_predictions") = std::move(predictions);
   }
 
   // Save the model if needed.
-  CLI::GetParam<LinearRegression*>("output_model") = lr;
+  CMD::GetParam<LinearRegression*>("output_model") = lr;
 }

@@ -63,7 +63,7 @@ inline std::string PrintLanguage(const std::string& language)
 {
   if (language == "cli")
   {
-    return "CLI";
+    return "CMD";
   }
   else if (language == "python")
   {
@@ -404,10 +404,10 @@ inline std::string PrintValue(const T& value, bool quotes)
  */
 inline std::string PrintDefault(const std::string& paramName)
 {
-  if (CLI::Parameters().count(paramName) == 0)
+  if (CMD::Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter" + paramName + "!");
 
-  const util::ParamData& d = CLI::Parameters()[paramName];
+  const util::ParamData& d = CMD::Parameters()[paramName];
 
   std::ostringstream oss;
 
@@ -595,7 +595,7 @@ inline std::string ProgramCall(const std::string& programName)
 
 /**
  * Print what a user would type to invoke the given option name.  Note that the
- * name *must* exist in the CLI module.  (Note that because of the way
+ * name *must* exist in the CMD module.  (Note that because of the way
  * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()
  * declarataions need to come before the PROGRAM_INFO() declaration.)
  */
@@ -606,7 +606,7 @@ inline std::string ParamString(const std::string& paramName)
   std::string s;
   if (BindingInfo::Language() == "cli")
   {
-    // The CLI bindings put a '' around the parameter, so skip that...
+    // The CMD bindings put a '' around the parameter, so skip that...
     s = cli::ParamString(paramName);
   }
   else if (BindingInfo::Language() == "python")
@@ -636,12 +636,12 @@ inline std::string ParamString(const std::string& paramName)
 inline std::string ParamType(const util::ParamData& d)
 {
   std::string output;
-  CLI::GetSingleton().functionMap[d.tname]["GetPrintableType"](d, NULL,
+  CMD::GetSingleton().functionMap[d.tname]["GetPrintableType"](d, NULL,
       &output);
   // We want to make this a link to the type documentation.
   std::string anchorType = output;
   bool result;
-  CLI::GetSingleton().functionMap[d.tname]["IsSerializable"](d, NULL, &result);
+  CMD::GetSingleton().functionMap[d.tname]["IsSerializable"](d, NULL, &result);
   if (result)
     anchorType = "model";
 

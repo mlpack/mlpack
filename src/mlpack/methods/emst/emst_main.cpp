@@ -87,10 +87,10 @@ static void mlpackMain()
 {
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
-  arma::mat dataPoints = std::move(CLI::GetParam<arma::mat>("input"));
+  arma::mat dataPoints = std::move(CMD::GetParam<arma::mat>("input"));
 
   // Do naive computation if necessary.
-  if (CLI::GetParam<bool>("naive"))
+  if (CMD::GetParam<bool>("naive"))
   {
     Log::Info << "Running naive algorithm." << endl;
 
@@ -99,8 +99,8 @@ static void mlpackMain()
     arma::mat naiveResults;
     naive.ComputeMST(naiveResults);
 
-    if (CLI::HasParam("output"))
-      CLI::GetParam<arma::mat>("output") = std::move(naiveResults);
+    if (CMD::HasParam("output"))
+      CMD::GetParam<arma::mat>("output") = std::move(naiveResults);
   }
   else
   {
@@ -112,7 +112,7 @@ static void mlpackMain()
 
     // Initialize the tree and get ready to compute the MST.  Compute the tree
     // by hand.
-    const size_t leafSize = (size_t) CLI::GetParam<int>("leaf_size");
+    const size_t leafSize = (size_t) CMD::GetParam<int>("leaf_size");
 
     Timer::Start("tree_building");
     std::vector<size_t> oldFromNew;
@@ -149,7 +149,7 @@ static void mlpackMain()
       unmappedResults(2, i) = results(2, i);
     }
 
-    if (CLI::HasParam("output"))
-      CLI::GetParam<arma::mat>("output") = std::move(unmappedResults);
+    if (CMD::HasParam("output"))
+      CMD::GetParam<arma::mat>("output") = std::move(unmappedResults);
   }
 }

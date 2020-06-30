@@ -26,7 +26,7 @@ namespace python {
  * Given a list of parameter definition and program documentation, print a
  * generated .pyx file to stdout.
  *
- * @param parameters List of parameters the program will use (from CLI).
+ * @param parameters List of parameters the program will use (from CMD).
  * @param programInfo Documentation for the program.
  * @param mainFilename Filename of the main program (i.e.
  *      "/path/to/pca_main.cpp").
@@ -37,9 +37,9 @@ void PrintPYX(const ProgramDoc& programInfo,
               const string& functionName)
 {
   // Restore parameters.
-  CLI::RestoreSettings(programInfo.programName);
+  CMD::RestoreSettings(programInfo.programName);
 
-  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+  const std::map<std::string, util::ParamData>& parameters = CMD::Parameters();
   typedef std::map<std::string, util::ParamData>::const_iterator ParamIter;
 
   // Split into input and output parameters.  Take two passes on the input
@@ -75,7 +75,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   // Now import all the necessary packages.
   cout << "cimport arma" << endl;
   cout << "cimport arma_numpy" << endl;
-  cout << "from cli cimport CLI" << endl;
+  cout << "from cli cimport CMD" << endl;
   cout << "from cli cimport SetParam, SetParamPtr, SetParamWithInfo, "
       << "GetParamPtr" << endl;
   cout << "from cli cimport EnableVerbose, DisableVerbose, DisableBacktrace, "
@@ -107,7 +107,7 @@ void PrintPYX(const ProgramDoc& programInfo,
     if (classes.count(d.cppType) == 0)
     {
       const size_t indent = 2;
-      CLI::GetSingleton().functionMap[d.tname]["ImportDecl"](d, (void*) &indent,
+      CMD::GetSingleton().functionMap[d.tname]["ImportDecl"](d, (void*) &indent,
           NULL);
 
       // Make sure we don't double-print the definition.
@@ -122,7 +122,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   {
     const util::ParamData& d = it->second;
     if (d.input)
-      CLI::GetSingleton().functionMap[d.tname]["PrintClassDefn"](d, NULL, NULL);
+      CMD::GetSingleton().functionMap[d.tname]["PrintClassDefn"](d, NULL, NULL);
   }
 
   // Print the definition.
@@ -135,7 +135,7 @@ void PrintPYX(const ProgramDoc& programInfo,
     if (i != 0)
       cout << "," << endl << std::string(indent, ' ');
 
-    CLI::GetSingleton().functionMap[d.tname]["PrintDefn"](d, NULL, NULL);
+    CMD::GetSingleton().functionMap[d.tname]["PrintDefn"](d, NULL, NULL);
   }
 
   // Print closing brace for function definition.
@@ -155,7 +155,7 @@ void PrintPYX(const ProgramDoc& programInfo,
 
     cout << "  ";
     size_t indent = 4;
-    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+    CMD::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
         NULL);
     cout << endl;
   }
@@ -168,7 +168,7 @@ void PrintPYX(const ProgramDoc& programInfo,
 
     cout << "  ";
     size_t indent = 4;
-    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+    CMD::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
         NULL);
     cout << endl;
   }
@@ -184,7 +184,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "  DisableVerbose()" << endl;
 
   // Restore the parameters.
-  cout << "  CLI.RestoreSettings(\"" << programInfo.programName << "\")"
+  cout << "  CMD.RestoreSettings(\"" << programInfo.programName << "\")"
       << endl;
 
   // Determine whether or not we need to copy parameters.
@@ -192,7 +192,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "    if copy_all_inputs:" << endl;
   cout << "      SetParam[cbool](<const string> 'copy_all_inputs', "
       << "copy_all_inputs)" << endl;
-  cout << "      CLI.SetPassed(<const string> 'copy_all_inputs')" << endl;
+  cout << "      CMD.SetPassed(<const string> 'copy_all_inputs')" << endl;
   cout << "  else:" << endl;
   cout << "    raise TypeError(" <<"\"'copy_all_inputs\' must have type "
       << "\'bool'!\")" << endl;
@@ -204,7 +204,7 @@ void PrintPYX(const ProgramDoc& programInfo,
     const util::ParamData& d = parameters.at(inputOptions[i]);
 
     size_t indent = 2;
-    CLI::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
+    CMD::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
         (void*) &indent, NULL);
   }
 
@@ -213,7 +213,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     const util::ParamData& d = parameters.at(outputOptions[i]);
-    cout << "  CLI.SetPassed(<const string> '" << d.name << "')" << endl;
+    cout << "  CMD.SetPassed(<const string> '" << d.name << "')" << endl;
   }
 
   // Call the method.
@@ -230,13 +230,13 @@ void PrintPYX(const ProgramDoc& programInfo,
     const util::ParamData& d = parameters.at(outputOptions[i]);
 
     std::tuple<size_t, bool> t = std::make_tuple(2, false);
-    CLI::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
+    CMD::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
         (void*) &t, NULL);
   }
 
   // Clear the parameters.
   cout << endl;
-  cout << "  CLI.ClearSettings()" << endl;
+  cout << "  CMD.ClearSettings()" << endl;
   cout << endl;
 
   cout << "  return result" << endl;

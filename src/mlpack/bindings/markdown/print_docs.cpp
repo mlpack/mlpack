@@ -47,7 +47,7 @@ void PrintDocs(const std::string& bindingName,
 {
   ProgramDoc& programDoc = BindingInfo::GetProgramDoc(bindingName);
 
-  CLI::RestoreSettings(bindingName);
+  CMD::RestoreSettings(bindingName);
 
   // First, for this section, print each of the names.
   for (size_t i = 0; i < languages.size(); ++i)
@@ -110,7 +110,7 @@ void PrintDocs(const std::string& bindingName,
         << endl;
     cout << "|------------|------------|-------------------|---------------|"
         << endl;
-    map<string, ParamData>& parameters = CLI::Parameters();
+    map<string, ParamData>& parameters = CMD::Parameters();
     for (map<string, ParamData>::const_iterator it = parameters.begin();
          it != parameters.end(); ++it)
     {
@@ -254,5 +254,5 @@ void PrintDocs(const std::string& bindingName,
     cout << endl;
   }
 
-  CLI::ClearSettings();
+  CMD::ClearSettings();
 }

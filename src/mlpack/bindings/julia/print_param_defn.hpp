@@ -3,7 +3,7 @@
  * @author Ryan Curtin
  *
  * If the type is serializable, we need to define a special utility function to
- * set a CLI parameter of that type.
+ * set a CMD parameter of that type.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -58,13 +58,13 @@ void PrintParamDefn(
   //
   // import ...<Type>
   //
-  // function CLIGetParam<Type>(paramName::String)
-  //   <Type>(ccall((:CLIGetParam<Type>Ptr, <programName>Library),
+  // function CMDGetParam<Type>(paramName::String)
+  //   <Type>(ccall((:CMDGetParam<Type>Ptr, <programName>Library),
   //       Ptr{Nothing}, (Cstring,), paramName))
   // end
   //
-  // function CLISetParam<Type>(paramName::String, model::<Type>)
-  //   ccall((:CLISetParam<Type>Ptr, <programName>Library), Nothing,
+  // function CMDSetParam<Type>(paramName::String, model::<Type>)
+  //   ccall((:CMDSetParam<Type>Ptr, <programName>Library), Nothing,
   //       (Cstring, Ptr{Nothing}), paramName, model.ptr)
   // end
   //
@@ -89,23 +89,23 @@ void PrintParamDefn(
   std::cout << "import ..." << type << std::endl;
   std::cout << std::endl;
 
-  // Now, CLIGetParam<Type>().
+  // Now, CMDGetParam<Type>().
   std::cout << "# Get the value of a model pointer parameter of type " << type
       << "." << std::endl;
-  std::cout << "function CLIGetParam" << type << "(paramName::String)::"
+  std::cout << "function CMDGetParam" << type << "(paramName::String)::"
       << type << std::endl;
-  std::cout << "  " << type << "(ccall((:CLI_GetParam" << type
+  std::cout << "  " << type << "(ccall((:CMD_GetParam" << type
       << "Ptr, " << programName << "Library), Ptr{Nothing}, (Cstring,), "
       << "paramName))" << std::endl;
   std::cout << "end" << std::endl;
   std::cout << std::endl;
 
-  // Next, CLISetParam<Type>().
+  // Next, CMDSetParam<Type>().
   std::cout << "# Set the value of a model pointer parameter of type " << type
       << "." << std::endl;
-  std::cout << "function CLISetParam" << type << "(paramName::String, "
+  std::cout << "function CMDSetParam" << type << "(paramName::String, "
       << "model::" << type << ")" << std::endl;
-  std::cout << "  ccall((:CLI_SetParam" << type << "Ptr, "
+  std::cout << "  ccall((:CMD_SetParam" << type << "Ptr, "
       << programName << "Library), Nothing, (Cstring, "
       << "Ptr{Nothing}), paramName, model.ptr)" << std::endl;
   std::cout << "end" << std::endl;
@@ -137,7 +137,7 @@ void PrintParamDefn(
 
 /**
  * If the type is serializable, print the definition of a special utility
- * function to set a CLI parameter of that type to stdout.
+ * function to set a CMD parameter of that type to stdout.
  */
 template<typename T>
 void PrintParamDefn(const util::ParamData& d,

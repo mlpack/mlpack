@@ -31,14 +31,14 @@ struct DETTestFixture
   DETTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    CMD::RestoreSettings(testName);
   }
 
   ~DETTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    CMD::ClearSettings();
   }
 };
 
@@ -65,14 +65,14 @@ BOOST_AUTO_TEST_CASE(DETOutputDimensionTest)
   mlpackMain();
 
   // Check the training_set_estimates has 100 points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("training_set_estimates").n_rows,
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("training_set_estimates").n_rows,
                       1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("training_set_estimates").n_cols,
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("training_set_estimates").n_cols,
                       trainingData.n_cols);
 
   // Check the test_set_estimates has 40 points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("test_set_estimates").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("test_set_estimates").n_cols,
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("test_set_estimates").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("test_set_estimates").n_cols,
                       testData.n_cols);
 }
 
@@ -138,21 +138,21 @@ BOOST_AUTO_TEST_CASE(DETModelReuseTest)
   mlpackMain();
 
   arma::mat trainingSetEstimates =
-      CLI::GetParam<arma::mat>("training_set_estimates");
-  arma::mat testSetEstimates = CLI::GetParam<arma::mat>("test_set_estimates");
+      CMD::GetParam<arma::mat>("training_set_estimates");
+  arma::mat testSetEstimates = CMD::GetParam<arma::mat>("test_set_estimates");
 
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["training"].wasPassed = false;
 
-  SetInputParam("input_model", CLI::GetParam<DTree<>*>("output_model"));
+  SetInputParam("input_model", CMD::GetParam<DTree<>*>("output_model"));
   SetInputParam("test", std::move(testData));
 
   mlpackMain();
 
   // Check that initial estimates and final estimate using saved model are same.
   CheckMatrices(trainingSetEstimates,
-                CLI::GetParam<arma::mat>("training_set_estimates"));
+                CMD::GetParam<arma::mat>("training_set_estimates"));
   CheckMatrices(testSetEstimates,
-                CLI::GetParam<arma::mat>("test_set_estimates"));
+                CMD::GetParam<arma::mat>("test_set_estimates"));
 }
 
 /**
@@ -178,8 +178,8 @@ BOOST_AUTO_TEST_CASE(DETViDimensionTest)
   mlpackMain();
 
   // Check the number of output points equals number of input features.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("vi").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("vi").n_cols, testRows);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("vi").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("vi").n_cols, testRows);
 }
 
 /**
@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE(DETModelValidityTest)
 
   mlpackMain();
 
-  SetInputParam("input_model", CLI::GetParam<DTree<>*>("output_model"));
+  SetInputParam("input_model", CMD::GetParam<DTree<>*>("output_model"));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -222,8 +222,8 @@ BOOST_AUTO_TEST_CASE(DETDiffMinLeafTest)
   mlpackMain();
 
   arma::mat trainingSetEstimates =
-      CLI::GetParam<arma::mat>("training_set_estimates");
-  arma::mat testSetEstimates = CLI::GetParam<arma::mat>("test_set_estimates");
+      CMD::GetParam<arma::mat>("training_set_estimates");
+  arma::mat testSetEstimates = CMD::GetParam<arma::mat>("test_set_estimates");
 
   bindings::tests::CleanMemory();
 
@@ -238,11 +238,11 @@ BOOST_AUTO_TEST_CASE(DETDiffMinLeafTest)
   // Check that initial estimates and final estimates using two models are
   // different.
   BOOST_REQUIRE_LT(arma::accu(trainingSetEstimates ==
-      CLI::GetParam<arma::mat>("training_set_estimates")),
+      CMD::GetParam<arma::mat>("training_set_estimates")),
       trainingSetEstimates.n_elem);
 
   BOOST_REQUIRE_LT(arma::accu(testSetEstimates ==
-      CLI::GetParam<arma::mat>("test_set_estimates")),
+      CMD::GetParam<arma::mat>("test_set_estimates")),
       testSetEstimates.n_elem);
 }
 
@@ -266,8 +266,8 @@ BOOST_AUTO_TEST_CASE(DETDiffMaxLeafTest)
   mlpackMain();
 
   arma::mat trainingSetEstimates =
-      CLI::GetParam<arma::mat>("training_set_estimates");
-  arma::mat testSetEstimates = CLI::GetParam<arma::mat>("test_set_estimates");
+      CMD::GetParam<arma::mat>("training_set_estimates");
+  arma::mat testSetEstimates = CMD::GetParam<arma::mat>("test_set_estimates");
 
   bindings::tests::CleanMemory();
 
@@ -282,11 +282,11 @@ BOOST_AUTO_TEST_CASE(DETDiffMaxLeafTest)
   // Check that initial estimates and final estimates using two models are
   // different.
   BOOST_REQUIRE_LT(arma::accu(trainingSetEstimates ==
-      CLI::GetParam<arma::mat>("training_set_estimates")),
+      CMD::GetParam<arma::mat>("training_set_estimates")),
       trainingSetEstimates.n_elem);
 
   BOOST_REQUIRE_LT(arma::accu(testSetEstimates ==
-      CLI::GetParam<arma::mat>("test_set_estimates")),
+      CMD::GetParam<arma::mat>("test_set_estimates")),
       testSetEstimates.n_elem);
 }
 
@@ -310,8 +310,8 @@ BOOST_AUTO_TEST_CASE(DETDiffFoldsTest)
   mlpackMain();
 
   arma::mat trainingSetEstimates =
-      CLI::GetParam<arma::mat>("training_set_estimates");
-  arma::mat testSetEstimates = CLI::GetParam<arma::mat>("test_set_estimates");
+      CMD::GetParam<arma::mat>("training_set_estimates");
+  arma::mat testSetEstimates = CMD::GetParam<arma::mat>("test_set_estimates");
 
   bindings::tests::CleanMemory();
 
@@ -326,11 +326,11 @@ BOOST_AUTO_TEST_CASE(DETDiffFoldsTest)
   // Check that initial estimates and final estimates using two models are
   // different.
   BOOST_REQUIRE_LT(arma::accu(trainingSetEstimates ==
-      CLI::GetParam<arma::mat>("training_set_estimates")),
+      CMD::GetParam<arma::mat>("training_set_estimates")),
       trainingSetEstimates.n_elem);
 
   BOOST_REQUIRE_LT(arma::accu(testSetEstimates ==
-      CLI::GetParam<arma::mat>("test_set_estimates")),
+      CMD::GetParam<arma::mat>("test_set_estimates")),
       testSetEstimates.n_elem);
 }
 
@@ -354,8 +354,8 @@ BOOST_AUTO_TEST_CASE(DETSkipPruningTest)
   mlpackMain();
 
   arma::mat trainingSetEstimates =
-      CLI::GetParam<arma::mat>("training_set_estimates");
-  arma::mat testSetEstimates = CLI::GetParam<arma::mat>("test_set_estimates");
+      CMD::GetParam<arma::mat>("training_set_estimates");
+  arma::mat testSetEstimates = CMD::GetParam<arma::mat>("test_set_estimates");
 
   bindings::tests::CleanMemory();
 
@@ -370,11 +370,11 @@ BOOST_AUTO_TEST_CASE(DETSkipPruningTest)
   // Check that initial estimates and final estimates using two models are
   // different.
   BOOST_REQUIRE_LT(arma::accu(trainingSetEstimates ==
-      CLI::GetParam<arma::mat>("training_set_estimates")),
+      CMD::GetParam<arma::mat>("training_set_estimates")),
       trainingSetEstimates.n_elem);
 
   BOOST_REQUIRE_LT(arma::accu(testSetEstimates ==
-      CLI::GetParam<arma::mat>("test_set_estimates")),
+      CMD::GetParam<arma::mat>("test_set_estimates")),
       testSetEstimates.n_elem);
 }
 

@@ -30,21 +30,21 @@ struct DecisionTreeTestFixture
   DecisionTreeTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    CMD::RestoreSettings(testName);
   }
 
   ~DecisionTreeTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    CMD::ClearSettings();
   }
 };
 
 void ResetDTSettings()
 {
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  CMD::ClearSettings();
+  CMD::RestoreSettings(testName);
 }
 
 BOOST_FIXTURE_TEST_SUITE(DecisionTreeMainTest,
@@ -85,16 +85,16 @@ BOOST_AUTO_TEST_CASE(DecisionTreeOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("predictions").n_cols,
       testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("probabilities").n_cols,
       testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
+      CMD::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("probabilities").n_rows, 3);
 }
 
 /**
@@ -132,16 +132,16 @@ BOOST_AUTO_TEST_CASE(DecisionTreeCategoricalOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("predictions").n_cols,
       testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("probabilities").n_cols,
       testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 6);
+      CMD::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("probabilities").n_rows, 6);
 }
 
 /**
@@ -259,7 +259,7 @@ BOOST_AUTO_TEST_CASE(DecisionRegularisationTest)
   SetInputParam("test", std::make_tuple(info, inputData));
   arma::Row<size_t> pred;
   mlpackMain();
-  pred = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+  pred = std::move(CMD::GetParam<arma::Row<size_t>>("predictions"));
 
   bindings::tests::CleanMemory();
 
@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(DecisionRegularisationTest)
   SetInputParam("test", std::move(std::make_tuple(info, inputData)));
   arma::Row<size_t> predRegularised;
   mlpackMain();
-  predRegularised = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+  predRegularised = std::move(CMD::GetParam<arma::Row<size_t>>("predictions"));
 
   size_t count = 0;
   BOOST_REQUIRE_EQUAL(pred.n_elem, predRegularised.n_elem);
@@ -322,37 +322,37 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;
-  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
-  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
+  predictions = std::move(CMD::GetParam<arma::Row<size_t>>("predictions"));
+  probabilities = std::move(CMD::GetParam<arma::mat>("probabilities"));
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["weights"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["training"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["weights"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
   SetInputParam("test", std::make_tuple(info, testData));
   SetInputParam("input_model",
-      std::move(CLI::GetParam<DecisionTreeModel*>("output_model")));
+      std::move(CMD::GetParam<DecisionTreeModel*>("output_model")));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("predictions").n_cols,
       testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("probabilities").n_cols,
       testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predicitions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
+      CMD::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("probabilities").n_rows, 3);
 
   // Check that initial predictions and predictions using saved model are same.
-  CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
-  CheckMatrices(probabilities, CLI::GetParam<arma::mat>("probabilities"));
+  CheckMatrices(predictions, CMD::GetParam<arma::Row<size_t>>("predictions"));
+  CheckMatrices(probabilities, CMD::GetParam<arma::mat>("probabilities"));
 }
 
 /**
@@ -379,8 +379,8 @@ BOOST_AUTO_TEST_CASE(DecisionTreeTrainingVerTest)
 
   mlpackMain();
 
-  DecisionTreeModel* model = CLI::GetParam<DecisionTreeModel*>("output_model");
-  CLI::GetParam<DecisionTreeModel*>("output_model") = NULL;
+  DecisionTreeModel* model = CMD::GetParam<DecisionTreeModel*>("output_model");
+  CMD::GetParam<DecisionTreeModel*>("output_model") = NULL;
 
   bindings::tests::CleanMemory();
 
@@ -427,19 +427,19 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;
-  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
-  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
+  predictions = std::move(CMD::GetParam<arma::Row<size_t>>("predictions"));
+  probabilities = std::move(CMD::GetParam<arma::mat>("probabilities"));
 
-  DecisionTreeModel* model = CLI::GetParam<DecisionTreeModel*>("output_model");
-  CLI::GetParam<DecisionTreeModel*>("output_model") = NULL;
+  DecisionTreeModel* model = CMD::GetParam<DecisionTreeModel*>("output_model");
+  CMD::GetParam<DecisionTreeModel*>("output_model") = NULL;
 
   bindings::tests::CleanMemory();
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["weights"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["training"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["weights"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
   SetInputParam("test", std::make_tuple(info, testData));
@@ -448,20 +448,20 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("predictions").n_cols,
       testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("probabilities").n_cols,
       testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predicitions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 6);
+      CMD::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("probabilities").n_rows, 6);
 
   // Check that initial predictions and predictions using saved model are same.
-  CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
-  CheckMatrices(probabilities, CLI::GetParam<arma::mat>("probabilities"));
+  CheckMatrices(predictions, CMD::GetParam<arma::Row<size_t>>("predictions"));
+  CheckMatrices(probabilities, CMD::GetParam<arma::mat>("probabilities"));
 }
 
 /**
@@ -498,7 +498,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeMaximumDepthTest)
 
   // Check that number of output points are equal to number of input points.
   arma::Row<size_t> predictions;
-  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+  predictions = std::move(CMD::GetParam<arma::Row<size_t>>("predictions"));
 
   bindings::tests::CleanMemory();
 
@@ -514,7 +514,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeMaximumDepthTest)
   mlpackMain();
 
   CheckMatricesNotEqual(predictions,
-                        CLI::GetParam<arma::Row<size_t>>("predictions"));
+                        CMD::GetParam<arma::Row<size_t>>("predictions"));
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -29,14 +29,14 @@ struct PerceptronTestFixture
   PerceptronTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    CMD::RestoreSettings(testName);
   }
 
   ~PerceptronTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    CMD::ClearSettings();
   }
 };
 
@@ -80,11 +80,11 @@ BOOST_AUTO_TEST_CASE(PerceptronOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_cols,
                       testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_rows, 1);
 }
 
 /**
@@ -122,21 +122,21 @@ BOOST_AUTO_TEST_CASE(PerceptronLabelsLessDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_cols,
                       testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_rows, 1);
 
   // Reset data passed.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["training"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["test"].wasPassed = false;
 
   inputData.shed_row(inputData.n_rows - 1);
 
   // Store outputs.
   arma::Row<size_t> output;
-  output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
+  output = std::move(CMD::GetParam<arma::Row<size_t>>("output"));
 
   bindings::tests::CleanMemory();
 
@@ -151,15 +151,15 @@ BOOST_AUTO_TEST_CASE(PerceptronLabelsLessDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_cols,
                       testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_rows, 1);
 
   // Check that initial output and final output matrix
   // from two models are same.
-  CheckMatrices(output, CLI::GetParam<arma::Row<size_t>>("output"));
+  CheckMatrices(output, CMD::GetParam<arma::Row<size_t>>("output"));
 }
 
 /**
@@ -191,8 +191,8 @@ BOOST_AUTO_TEST_CASE(PerceptronOutputPredictionsCheck)
   mlpackMain();
 
   // Check that the outputs are the same.
-  CheckMatrices(CLI::GetParam<arma::Row<size_t>>("output"),
-                CLI::GetParam<arma::Row<size_t>>("predictions"));
+  CheckMatrices(CMD::GetParam<arma::Row<size_t>>("output"),
+                CMD::GetParam<arma::Row<size_t>>("predictions"));
 }
 
 /**
@@ -222,29 +222,29 @@ BOOST_AUTO_TEST_CASE(PerceptronModelReuseTest)
   mlpackMain();
 
   arma::Row<size_t> output;
-  output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
+  output = std::move(CMD::GetParam<arma::Row<size_t>>("output"));
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["training"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                CLI::GetParam<PerceptronModel*>("output_model"));
+                CMD::GetParam<PerceptronModel*>("output_model"));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_cols,
                       testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_rows, 1);
 
   // Check that initial output and final output matrix
   // using saved model are same.
-  CheckMatrices(output, CLI::GetParam<arma::Row<size_t>>("output"));
+  CheckMatrices(output, CMD::GetParam<arma::Row<size_t>>("output"));
 }
 
 /**
@@ -295,11 +295,11 @@ BOOST_AUTO_TEST_CASE(PerceptronReTrainWithWrongClasses)
 
   // Get the output model obtained after training.
   PerceptronModel* model =
-      CLI::GetParam<PerceptronModel*>("output_model");
+      CMD::GetParam<PerceptronModel*>("output_model");
 
   // Reset the data passed.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["training"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["labels"].wasPassed = false;
 
   // Creating training data with five classes.
   constexpr int D = 3;
@@ -428,11 +428,11 @@ BOOST_AUTO_TEST_CASE(PerceptronWrongDimOfTestData2)
 
   // Get the output model obtained after the training.
   PerceptronModel* model =
-      CLI::GetParam<PerceptronModel*>("output_model");
+      CMD::GetParam<PerceptronModel*>("output_model");
 
   // Reset the data passed.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["training"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["labels"].wasPassed = false;
 
   // Test data with Wrong dimensionality.
   arma::mat testX = arma::randu<arma::mat>(D - 1, M);

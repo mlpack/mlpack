@@ -30,14 +30,14 @@ struct LCCTestFixture
   LCCTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    CMD::RestoreSettings(testName);
   }
 
   ~LCCTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    CMD::ClearSettings();
   }
 };
 
@@ -63,10 +63,10 @@ BOOST_AUTO_TEST_CASE(LCCDimensionsTest)
   mlpackMain();
 
   // Check that the output has correct dimensions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("codes").n_rows, atoms);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("codes").n_cols, cols);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("dictionary").n_rows, rows);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("dictionary").n_cols, atoms);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("codes").n_rows, atoms);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("codes").n_cols, cols);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("dictionary").n_rows, rows);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("dictionary").n_cols, atoms);
 }
 
 /**
@@ -86,12 +86,12 @@ BOOST_AUTO_TEST_CASE(LCCOutputModelTest)
   mlpackMain();
 
   // Get the encoded output and dictionary after training.
-  arma::mat initCodes = std::move(CLI::GetParam<arma::mat>("codes"));
-  arma::mat initDict = std::move(CLI::GetParam<arma::mat>("dictionary"));
+  arma::mat initCodes = std::move(CMD::GetParam<arma::mat>("codes"));
+  arma::mat initDict = std::move(CMD::GetParam<arma::mat>("dictionary"));
   LocalCoordinateCoding* outputModel =
-      std::move(CLI::GetParam<LocalCoordinateCoding*>("output_model"));
+      std::move(CMD::GetParam<LocalCoordinateCoding*>("output_model"));
 
-  CLI::Parameters()["training"].wasPassed = false;
+  CMD::Parameters()["training"].wasPassed = false;
 
   SetInputParam("input_model", std::move(outputModel));
   SetInputParam("test", std::move(t));
@@ -100,8 +100,8 @@ BOOST_AUTO_TEST_CASE(LCCOutputModelTest)
 
   // Compare the output after reusing the trained model
   // to the original matrices.
-  CheckMatrices(initCodes, CLI::GetParam<arma::mat>("codes"));
-  CheckMatrices(initDict, CLI::GetParam<arma::mat>("dictionary"));
+  CheckMatrices(initCodes, CMD::GetParam<arma::mat>("codes"));
+  CheckMatrices(initDict, CMD::GetParam<arma::mat>("dictionary"));
 }
 
 /**
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(LCCTrainAndInputModelTest)
   mlpackMain();
 
   LocalCoordinateCoding* outputModel =
-      std::move(CLI::GetParam<LocalCoordinateCoding*>("output_model"));
+      std::move(CMD::GetParam<LocalCoordinateCoding*>("output_model"));
 
   // No need to input training data again.
   SetInputParam("input_model", std::move(outputModel));
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(LCCTrainedModelDimTest)
   mlpackMain();
 
   LocalCoordinateCoding* outputModel =
-      std::move(CLI::GetParam<LocalCoordinateCoding*>("output_model"));
+      std::move(CMD::GetParam<LocalCoordinateCoding*>("output_model"));
 
   SetInputParam("input_model", std::move(outputModel));
   SetInputParam("test", std::move(t));
@@ -284,7 +284,7 @@ BOOST_AUTO_TEST_CASE(LCCNormalizationTest)
 
   mlpackMain();
 
-  arma::mat codes = std::move(CLI::GetParam<arma::mat>("codes"));
+  arma::mat codes = std::move(CMD::GetParam<arma::mat>("codes"));
 
   bindings::tests::CleanMemory();
 
@@ -298,7 +298,7 @@ BOOST_AUTO_TEST_CASE(LCCNormalizationTest)
   mlpackMain();
 
   double normDiff =
-      arma::norm(CLI::GetParam<arma::mat>("codes") - codes, "fro");
+      arma::norm(CMD::GetParam<arma::mat>("codes") - codes, "fro");
 
   BOOST_REQUIRE_GT(normDiff, delta);
 }
@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE(LCCMaxIterTest)
   SetInputParam("test", t);
 
   mlpackMain();
-  arma::mat codes = std::move(CLI::GetParam<arma::mat>("codes"));
+  arma::mat codes = std::move(CMD::GetParam<arma::mat>("codes"));
 
   bindings::tests::CleanMemory();
 
@@ -336,7 +336,7 @@ BOOST_AUTO_TEST_CASE(LCCMaxIterTest)
   mlpackMain();
 
   double normDiff =
-      arma::norm(CLI::GetParam<arma::mat>("codes") - codes, "fro");
+      arma::norm(CMD::GetParam<arma::mat>("codes") - codes, "fro");
 
   BOOST_REQUIRE_GT(normDiff, delta);
 }
@@ -360,7 +360,7 @@ BOOST_AUTO_TEST_CASE(LCCToleranceTest)
   SetInputParam("tolerance", (double) 0.01);
 
   mlpackMain();
-  arma::mat codes = std::move(CLI::GetParam<arma::mat>("codes"));
+  arma::mat codes = std::move(CMD::GetParam<arma::mat>("codes"));
 
   bindings::tests::CleanMemory();
 
@@ -373,7 +373,7 @@ BOOST_AUTO_TEST_CASE(LCCToleranceTest)
   mlpackMain();
 
   double normDiff =
-      arma::norm(CLI::GetParam<arma::mat>("codes") - codes, "fro");
+      arma::norm(CMD::GetParam<arma::mat>("codes") - codes, "fro");
 
   BOOST_REQUIRE_GT(normDiff, delta);
 }
@@ -397,7 +397,7 @@ BOOST_AUTO_TEST_CASE(LCCLambdaTest)
   SetInputParam("lambda", (double) 0.0);
 
   mlpackMain();
-  arma::mat codes = std::move(CLI::GetParam<arma::mat>("codes"));
+  arma::mat codes = std::move(CMD::GetParam<arma::mat>("codes"));
 
   bindings::tests::CleanMemory();
 
@@ -410,7 +410,7 @@ BOOST_AUTO_TEST_CASE(LCCLambdaTest)
   mlpackMain();
 
   double normDiff =
-      arma::norm(CLI::GetParam<arma::mat>("codes") - codes, "fro");
+      arma::norm(CMD::GetParam<arma::mat>("codes") - codes, "fro");
 
   BOOST_REQUIRE_GT(normDiff, delta);
 }

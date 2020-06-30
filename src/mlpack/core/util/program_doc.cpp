@@ -2,7 +2,7 @@
  * @file core/util/program_doc.cpp
  * @author Ryan Curtin
  *
- * Implementation of the ProgramDoc class.  The class registers itself with CLI
+ * Implementation of the ProgramDoc class.  The class registers itself with CMD
  * when constructed.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -21,14 +21,14 @@ using namespace std;
 
 /**
  * Construct a ProgramDoc object.  When constructed, it will register itself
- * with CLI.  A fatal error will be thrown if more than one is constructed.
+ * with CMD.  A fatal error will be thrown if more than one is constructed.
  *
  * @param defaultModule Name of the default module.
  * @param shortDocumentation A short two-sentence description of the program,
  *     what it does, and what it is useful for.
  * @param documentation Long string containing documentation on how to use the
  *     program and what it is.  No newline characters are necessary; this is
- *     taken care of by CLI later.
+ *     taken care of by CMD later.
  * @param seeAlso A set of pairs of strings with useful "see also"
  *     information; each pair is <description, url>.
  */
@@ -42,8 +42,8 @@ ProgramDoc::ProgramDoc(
     documentation(std::move(documentation)),
     seeAlso(std::move(seeAlso))
 {
-  // Register this with CLI.
-  CLI::RegisterProgramDoc(this);
+  // Register this with CMD.
+  CMD::RegisterProgramDoc(this);
 }
 
 /**
@@ -51,5 +51,5 @@ ProgramDoc::ProgramDoc(
  */
 ProgramDoc::ProgramDoc()
 {
-  CLI::RegisterProgramDoc(this);
+  CMD::RegisterProgramDoc(this);
 }

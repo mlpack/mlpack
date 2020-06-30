@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CLI_END_PROGRAM_HPP
-#define MLPACK_BINDINGS_CLI_END_PROGRAM_HPP
+#ifndef MLPACK_BINDINGS_CMD_END_PROGRAM_HPP
+#define MLPACK_BINDINGS_CMD_END_PROGRAM_HPP
 
 #include <mlpack/core/util/cli.hpp>
 
@@ -25,23 +25,23 @@ namespace cmd {
  */
 inline void EndProgram()
 {
-  // Stop the CLI timers.
-  CLI::GetSingleton().timer.StopAllTimers();
+  // Stop the CMD timers.
+  CMD::GetSingleton().timer.StopAllTimers();
 
   // Print any output.
-  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+  const std::map<std::string, util::ParamData>& parameters = CMD::Parameters();
   std::map<std::string, util::ParamData>::const_iterator it =
       parameters.begin();
   while (it != parameters.end())
   {
     const util::ParamData& d = it->second;
     if (!d.input)
-      CLI::GetSingleton().functionMap[d.tname]["OutputParam"](d, NULL, NULL);
+      CMD::GetSingleton().functionMap[d.tname]["OutputParam"](d, NULL, NULL);
 
     ++it;
   }
 
-  if (CLI::HasParam("verbose"))
+  if (CMD::HasParam("verbose"))
   {
     Log::Info << std::endl << "Execution parameters:" << std::endl;
 
@@ -53,12 +53,12 @@ inline void EndProgram()
       // We can handle strings, ints, bools, doubles.
       const util::ParamData& data = it->second;
       std::string boostName;
-      CLI::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
+      CMD::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
           NULL, (void*) &boostName);
       Log::Info << "  " << boostName << ": ";
 
       std::string printableParam;
-      CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"](data,
+      CMD::GetSingleton().functionMap[data.tname]["GetPrintableParam"](data,
           NULL, (void*) &printableParam);
       Log::Info << printableParam << std::endl;
 
@@ -66,10 +66,10 @@ inline void EndProgram()
     }
 
     Log::Info << "Program timers:" << std::endl;
-    for (auto it2 : CLI::GetSingleton().timer.GetAllTimers())
+    for (auto it2 : CMD::GetSingleton().timer.GetAllTimers())
     {
       Log::Info << "  " << it2.first << ": ";
-      CLI::GetSingleton().timer.PrintTimer(it2.first);
+      CMD::GetSingleton().timer.PrintTimer(it2.first);
     }
   }
 
@@ -83,7 +83,7 @@ inline void EndProgram()
     const util::ParamData& data = it->second;
 
     void* result;
-    CLI::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
+    CMD::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
         NULL, (void*) &result);
     if (result != NULL && memoryAddresses.count(result) == 0)
       memoryAddresses[result] = &data;
@@ -98,7 +98,7 @@ inline void EndProgram()
   {
     const util::ParamData& data = *(it2->second);
 
-    CLI::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
+    CMD::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
         NULL, NULL);
 
     ++it2;

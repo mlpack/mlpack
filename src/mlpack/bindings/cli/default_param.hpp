@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CLI_DEFAULT_PARAM_HPP
-#define MLPACK_BINDINGS_CLI_DEFAULT_PARAM_HPP
+#ifndef MLPACK_BINDINGS_CMD_DEFAULT_PARAM_HPP
+#define MLPACK_BINDINGS_CMD_DEFAULT_PARAM_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/param_data.hpp>
@@ -74,7 +74,7 @@ std::string DefaultParamImpl(
 
 /**
  * Return the default value of an option.  This is the function that will be
- * placed into the CLI functionMap.
+ * placed into the CMD functionMap.
  */
 template<typename T>
 void DefaultParam(const util::ParamData& data,

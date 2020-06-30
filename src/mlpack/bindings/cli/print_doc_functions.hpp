@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CLI_PRINT_DOC_FUNCTIONS_HPP
-#define MLPACK_BINDINGS_CLI_PRINT_DOC_FUNCTIONS_HPP
+#ifndef MLPACK_BINDINGS_CMD_PRINT_DOC_FUNCTIONS_HPP
+#define MLPACK_BINDINGS_CMD_PRINT_DOC_FUNCTIONS_HPP
 
 #include <mlpack/core/util/hyphenate_string.hpp>
 
@@ -27,7 +27,7 @@ namespace cmd {
 inline std::string GetBindingName(const std::string& bindingName);
 
 /**
- * Print any imports for CLI (there are none, so this returns an empty string).
+ * Print any imports for CMD (there are none, so this returns an empty string).
  */
 inline std::string PrintImport(const std::string& bindingName);
 
@@ -101,7 +101,7 @@ inline std::string ProgramCall(const std::string& programName);
 
 /**
  * Print what a user would type to invoke the given option name.  Note that the
- * name *must* exist in the CLI module.  (Note that because of the way
+ * name *must* exist in the CMD module.  (Note that because of the way
  * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()
  * declarataions need to come before the PROGRAM_INFO() declaration.)
  */
@@ -109,7 +109,7 @@ inline std::string ParamString(const std::string& paramName);
 
 /**
  * Return whether or not a runtime check on parameters should be ignored.  We
- * don't ignore any runtime checks for CLI bindings, so this always returns
+ * don't ignore any runtime checks for CMD bindings, so this always returns
  * false.
  */
 template<typename T>

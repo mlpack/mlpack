@@ -43,8 +43,8 @@ int main(int /* argc */, char** /* argv */)
 {
   // All the parameters are registered, but stored, so restore them.
   // programName is defined in mlpack_main.hpp.
-  CLI::RestoreSettings(programName);
+  CMD::RestoreSettings(programName);
 
-  PrintPYX(*CLI::GetSingleton().doc, "${PROGRAM_MAIN_FILE}",
+  PrintPYX(*CMD::GetSingleton().doc, "${PROGRAM_MAIN_FILE}",
       "${PROGRAM_NAME}");
 }

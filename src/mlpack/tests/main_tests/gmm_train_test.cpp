@@ -31,21 +31,21 @@ struct GmmTrainTestFixture
   GmmTrainTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    CMD::RestoreSettings(testName);
   }
 
   ~GmmTrainTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    CMD::ClearSettings();
   }
 };
 
 void ResetGmmTrainSetting()
 {
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  CMD::ClearSettings();
+  CMD::RestoreSettings(testName);
 }
 
 inline bool CheckDifferent(GMM* gmm1, GMM* gmm2)
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainOutputModelGaussianTest)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = CMD::GetParam<GMM*>("output_model");
   BOOST_REQUIRE_EQUAL(gmm->Gaussians(), (int) 2);
 }
 
@@ -178,17 +178,17 @@ BOOST_AUTO_TEST_CASE(GmmTrainNumberOfGaussian)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = CMD::GetParam<GMM*>("output_model");
 
   SetInputParam("input_model", gmm);
 
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
 
   SetInputParam("input", std::move(inputData));
 
   mlpackMain();
 
-  GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm1 = CMD::GetParam<GMM*>("output_model");
 
   BOOST_REQUIRE_EQUAL(gmm1->Gaussians(), (int) 2);
 }
@@ -204,17 +204,17 @@ BOOST_AUTO_TEST_CASE(GmmTrainNoForcePositiveTest)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = CMD::GetParam<GMM*>("output_model");
 
   SetInputParam("input_model", gmm);
 
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
 
   SetInputParam("input", std::move(inputData));
 
   mlpackMain();
 
-  GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm1 = CMD::GetParam<GMM*>("output_model");
 
   BOOST_REQUIRE_EQUAL(gmm1->Gaussians(), (int) 1);
 }
@@ -234,7 +234,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainNoiseTest)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = CMD::GetParam<GMM*>("output_model");
 
   ResetGmmTrainSetting();
 
@@ -246,7 +246,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainNoiseTest)
 
   mlpackMain();
 
-  GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm1 = CMD::GetParam<GMM*>("output_model");
 
   BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
 
@@ -275,7 +275,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
 
     mlpackMain();
 
-    GMM* gmm = CLI::GetParam<GMM*>("output_model");
+    GMM* gmm = CMD::GetParam<GMM*>("output_model");
 
     ResetGmmTrainSetting();
 
@@ -289,7 +289,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
 
     mlpackMain();
 
-    GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+    GMM* gmm1 = CMD::GetParam<GMM*>("output_model");
 
     success = CheckDifferent(gmm, gmm1);
 
@@ -319,7 +319,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiffMaxIterationsTest)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = CMD::GetParam<GMM*>("output_model");
 
   ResetGmmTrainSetting();
 
@@ -333,7 +333,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiffMaxIterationsTest)
 
   mlpackMain();
 
-  GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm1 = CMD::GetParam<GMM*>("output_model");
 
   BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
 
@@ -362,7 +362,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiffKmeansMaxIterationsTest)
 
     mlpackMain();
 
-    GMM* gmm = CLI::GetParam<GMM*>("output_model");
+    GMM* gmm = CMD::GetParam<GMM*>("output_model");
 
     ResetGmmTrainSetting();
 
@@ -376,7 +376,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiffKmeansMaxIterationsTest)
 
     mlpackMain();
 
-    GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+    GMM* gmm1 = CMD::GetParam<GMM*>("output_model");
 
     ResetGmmTrainSetting();
 
@@ -411,7 +411,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainPercentageTest)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = CMD::GetParam<GMM*>("output_model");
 
   ResetGmmTrainSetting();
 
@@ -425,7 +425,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainPercentageTest)
 
   mlpackMain();
 
-  GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm1 = CMD::GetParam<GMM*>("output_model");
 
   BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
 
@@ -449,7 +449,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainSamplingsTest)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = CMD::GetParam<GMM*>("output_model");
 
   ResetGmmTrainSetting();
 
@@ -463,7 +463,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainSamplingsTest)
 
   mlpackMain();
 
-  GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm1 = CMD::GetParam<GMM*>("output_model");
 
   BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
 
@@ -485,7 +485,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainToleranceTest)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = CMD::GetParam<GMM*>("output_model");
 
   ResetGmmTrainSetting();
 
@@ -497,7 +497,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainToleranceTest)
 
   mlpackMain();
 
-  GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm1 = CMD::GetParam<GMM*>("output_model");
 
   BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
 
@@ -514,27 +514,27 @@ BOOST_AUTO_TEST_CASE(GmmTrainModelReuseTest)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = CMD::GetParam<GMM*>("output_model");
 
   SetInputParam("input_model", gmm);
 
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
 
   SetInputParam("input", inputData);
 
   mlpackMain();
 
-  GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm1 = CMD::GetParam<GMM*>("output_model");
 
   SetInputParam("input_model", gmm1);
 
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
+  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
 
   SetInputParam("input", std::move(inputData));
 
   mlpackMain();
 
-  GMM* gmm2 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm2 = CMD::GetParam<GMM*>("output_model");
 
   BOOST_REQUIRE_EQUAL(gmm1, gmm2);
 }
@@ -550,7 +550,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiagCovariance)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = CMD::GetParam<GMM*>("output_model");
 
   arma::uvec sortedIndices = sort_index(gmm->Weights());
 

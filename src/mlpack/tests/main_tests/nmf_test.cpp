@@ -32,22 +32,22 @@ struct NMFTestFixture
   NMFTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    CMD::RestoreSettings(testName);
   }
 
   ~NMFTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    CMD::ClearSettings();
   }
 };
 
 static void ResetSettings()
 {
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  CMD::ClearSettings();
+  CMD::RestoreSettings(testName);
 }
 
 BOOST_FIXTURE_TEST_SUITE(NMFMainTest, NMFTestFixture);
@@ -69,8 +69,8 @@ BOOST_AUTO_TEST_CASE(NMFMultdistShapeTest)
   mlpackMain();
 
   // Get resulting matrices.
-  const mat& w = CLI::GetParam<mat>("w");
-  const mat& h = CLI::GetParam<mat>("h");
+  const mat& w = CMD::GetParam<mat>("w");
+  const mat& h = CMD::GetParam<mat>("h");
 
   // Check the shapes of W and H.
   BOOST_REQUIRE_EQUAL(w.n_rows, 8);
@@ -96,8 +96,8 @@ BOOST_AUTO_TEST_CASE(NMFMultdivShapeTest)
   mlpackMain();
 
   // Get resulting matrices.
-  const mat& w = CLI::GetParam<mat>("w");
-  const mat& h = CLI::GetParam<mat>("h");
+  const mat& w = CMD::GetParam<mat>("w");
+  const mat& h = CMD::GetParam<mat>("h");
 
   // Check the shapes of W and H.
   BOOST_REQUIRE_EQUAL(w.n_rows, 8);
@@ -123,8 +123,8 @@ BOOST_AUTO_TEST_CASE(NMFAlsShapeTest)
   mlpackMain();
 
   // Get resulting matrices.
-  const mat& w = CLI::GetParam<mat>("w");
-  const mat& h = CLI::GetParam<mat>("h");
+  const mat& w = CMD::GetParam<mat>("w");
+  const mat& h = CMD::GetParam<mat>("h");
 
   // Check the shapes of W and H.
   BOOST_REQUIRE_EQUAL(w.n_rows, 8);
@@ -216,8 +216,8 @@ BOOST_AUTO_TEST_CASE(NMFMinResidueTest)
 
   mlpackMain();
 
-  const mat w1 = CLI::GetParam<mat>("w");
-  const mat h1 = CLI::GetParam<mat>("h");
+  const mat w1 = CMD::GetParam<mat>("w");
+  const mat h1 = CMD::GetParam<mat>("h");
 
   ResetSettings();
 
@@ -230,8 +230,8 @@ BOOST_AUTO_TEST_CASE(NMFMinResidueTest)
 
   mlpackMain();
 
-  const mat w2 = CLI::GetParam<mat>("w");
-  const mat h2 = CLI::GetParam<mat>("h");
+  const mat w2 = CMD::GetParam<mat>("w");
+  const mat h2 = CMD::GetParam<mat>("h");
 
   // The resulting matrices should be different.
   BOOST_REQUIRE_GT(arma::norm(w1 - w2), 1e-5);
@@ -260,8 +260,8 @@ BOOST_AUTO_TEST_CASE(NMFMaxIterationTest)
 
   mlpackMain();
 
-  const mat w1 = CLI::GetParam<mat>("w");
-  const mat h1 = CLI::GetParam<mat>("h");
+  const mat w1 = CMD::GetParam<mat>("w");
+  const mat h1 = CMD::GetParam<mat>("h");
 
   ResetSettings();
 
@@ -276,8 +276,8 @@ BOOST_AUTO_TEST_CASE(NMFMaxIterationTest)
 
   mlpackMain();
 
-  const mat w2 = CLI::GetParam<mat>("w");
-  const mat h2 = CLI::GetParam<mat>("h");
+  const mat w2 = CMD::GetParam<mat>("w");
+  const mat h2 = CMD::GetParam<mat>("h");
 
   // The resulting matrices should be different.
   BOOST_REQUIRE_GT(arma::norm(w1 - w2), 1e-5);
@@ -301,8 +301,8 @@ BOOST_AUTO_TEST_CASE(NMFWHGivenInitTest)
 
   mlpackMain();
 
-  const mat w = CLI::GetParam<mat>("w");
-  const mat h = CLI::GetParam<mat>("h");
+  const mat w = CMD::GetParam<mat>("w");
+  const mat h = CMD::GetParam<mat>("h");
 
   // Check the shapes of W and H.
   BOOST_REQUIRE_EQUAL(w.n_rows, 10);
@@ -326,8 +326,8 @@ BOOST_AUTO_TEST_CASE(NMFWGivenInitTest)
 
   mlpackMain();
 
-  const mat w = CLI::GetParam<mat>("w");
-  const mat h = CLI::GetParam<mat>("h");
+  const mat w = CMD::GetParam<mat>("w");
+  const mat h = CMD::GetParam<mat>("h");
 
   // Check the shapes of W and H.
   BOOST_REQUIRE_EQUAL(w.n_rows, 10);
@@ -351,8 +351,8 @@ BOOST_AUTO_TEST_CASE(NMFHGivenInitTest)
 
   mlpackMain();
 
-  const mat w = CLI::GetParam<mat>("w");
-  const mat h = CLI::GetParam<mat>("h");
+  const mat w = CMD::GetParam<mat>("w");
+  const mat h = CMD::GetParam<mat>("h");
 
   // Check the shapes of W and H.
   BOOST_REQUIRE_EQUAL(w.n_rows, 10);

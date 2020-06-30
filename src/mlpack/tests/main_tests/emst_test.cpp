@@ -32,14 +32,14 @@ struct EMSTTestFixture
   EMSTTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    CMD::RestoreSettings(testName);
   }
 
   ~EMSTTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    CMD::ClearSettings();
   }
 };
 
@@ -62,9 +62,9 @@ BOOST_AUTO_TEST_CASE(EMSTOutputDimensionTest)
   mlpackMain();
 
   // Now check that the output has 3 dimensions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output").n_rows, 3);
   // Check number of output points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 999);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output").n_cols, 999);
 }
 
 /**
@@ -84,9 +84,9 @@ BOOST_AUTO_TEST_CASE(EMSTNaiveOutputDimensionTest)
   mlpackMain();
 
   // Now check that the output has 3 dimensions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output").n_rows, 3);
   // Check number of output points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 999);
+  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output").n_cols, 999);
 }
 
 /**
@@ -122,10 +122,10 @@ BOOST_AUTO_TEST_CASE(EMSTFirstTwoOutputRowsIntegerTest)
 
   for (size_t i = 0; i < CLI::GetParam<arma::mat>("output").n_cols; ++i)
   {
-    BOOST_REQUIRE_CLOSE(CLI::GetParam<arma::mat>("output")(0, i),
-        boost::math::iround(CLI::GetParam<arma::mat>("output")(0, i)), 1e-5);
-    BOOST_REQUIRE_CLOSE(CLI::GetParam<arma::mat>("output")(1, i),
-        boost::math::iround(CLI::GetParam<arma::mat>("output")(1, i)), 1e-5);
+    BOOST_REQUIRE_CLOSE(CMD::GetParam<arma::mat>("output")(0, i),
+        boost::math::iround(CMD::GetParam<arma::mat>("output")(0, i)), 1e-5);
+    BOOST_REQUIRE_CLOSE(CMD::GetParam<arma::mat>("output")(1, i),
+        boost::math::iround(CMD::GetParam<arma::mat>("output")(1, i)), 1e-5);
   }
 }
 

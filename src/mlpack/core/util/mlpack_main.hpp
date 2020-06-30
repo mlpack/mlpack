@@ -18,7 +18,7 @@
 #ifndef MLPACK_CORE_UTIL_MLPACK_MAIN_HPP
 #define MLPACK_CORE_UTIL_MLPACK_MAIN_HPP
 
-#define BINDING_TYPE_CLI 0
+#define BINDING_TYPE_CMD 0
 #define BINDING_TYPE_TEST 1
 #define BINDING_TYPE_PYX 2
 #define BINDING_TYPE_JL 3
@@ -30,7 +30,7 @@
 #define BINDING_TYPE BINDING_TYPE_UNKNOWN
 #endif
 
-#if (BINDING_TYPE == BINDING_TYPE_CLI) // This is a command-line executable.
+#if (BINDING_TYPE == BINDING_TYPE_CMD) // This is a command-line executable.
 
 // Matrices are transposed on load/save.
 #define BINDING_MATRIX_TRANSPOSED true
@@ -81,7 +81,7 @@ namespace mlpack {
 namespace util {
 
 template<typename T>
-using Option = mlpack::bindings::cli::CLIOption<T>;
+using Option = mlpack::bindings::cli::CMDOption<T>;
 
 }
 }
@@ -95,7 +95,7 @@ static void mlpackMain(); // This is typically defined after this include.
 
 int main(int argc, char** argv)
 {
-  // Parse the command-line options; put them into CLI.
+  // Parse the command-line options; put them into CMD.
   mlpack::bindings::cli::ParseCommandLine(argc, argv);
   // Enable timing.
   mlpack::Timer::EnableTiming();
@@ -406,7 +406,7 @@ using Option = mlpack::bindings::markdown::MDOption<T>;
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
 
-// CLI-specific parameters.
+// CMD-specific parameters.
 PARAM_FLAG("help", "Default help info.", "h");
 PARAM_STRING_IN("info", "Print help on a specific option.", "", "");
 PARAM_FLAG("version", "Display the version of mlpack.", "V");

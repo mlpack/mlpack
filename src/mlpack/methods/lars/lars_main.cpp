@@ -114,13 +114,13 @@ PARAM_FLAG("use_cholesky", "Use Cholesky decomposition during computation "
 
 static void mlpackMain()
 {
-  double lambda1 = CLI::GetParam<double>("lambda1");
-  double lambda2 = CLI::GetParam<double>("lambda2");
-  bool useCholesky = CLI::HasParam("use_cholesky");
+  double lambda1 = CMD::GetParam<double>("lambda1");
+  double lambda2 = CMD::GetParam<double>("lambda2");
+  bool useCholesky = CMD::HasParam("use_cholesky");
 
   // Check parameters -- make sure everything given makes sense.
   RequireOnlyOnePassed({ "input", "input_model" }, true);
-  if (CLI::HasParam("input"))
+  if (CMD::HasParam("input"))
   {
     RequireOnlyOnePassed({ "responses" }, true, "if input data is specified, "
         "responses must also be specified");
@@ -132,19 +132,19 @@ static void mlpackMain()
   ReportIgnoredParam({{ "test", true }}, "output_predictions");
 
   LARS* lars;
-  if (CLI::HasParam("input"))
+  if (CMD::HasParam("input"))
   {
     // Initialize the object.
     lars = new LARS(useCholesky, lambda1, lambda2);
 
     // Load covariates.  We can avoid LARS transposing our data by choosing to
     // not transpose this data (that's why we used PARAM_TMATRIX_IN).
-    mat matX = std::move(CLI::GetParam<arma::mat>("input"));
+    mat matX = std::move(CMD::GetParam<arma::mat>("input"));
 
     // Load responses.  The responses should be a one-dimensional vector, and it
     // seems more likely that these will be stored with one response per line
     // (one per row).  So we should not transpose upon loading.
-    mat matY = std::move(CLI::GetParam<arma::mat>("responses"));
+    mat matY = std::move(CMD::GetParam<arma::mat>("responses"));
 
     // Make sure y is oriented the right way.
     if (matY.n_cols == 1)
@@ -162,15 +162,15 @@ static void mlpackMain()
   }
   else // We must have --input_model_file.
   {
-    lars = CLI::GetParam<LARS*>("input_model");
+    lars = CMD::GetParam<LARS*>("input_model");
   }
 
-  if (CLI::HasParam("test"))
+  if (CMD::HasParam("test"))
   {
     Log::Info << "Regressing on test points." << endl;
 
     // Load test points.
-    mat testPoints = std::move(CLI::GetParam<arma::mat>("test"));
+    mat testPoints = std::move(CMD::GetParam<arma::mat>("test"));
 
     // Make sure the dimensionality is right.  We haven't transposed, so, we
     // check n_cols not n_rows.
@@ -183,8 +183,8 @@ static void mlpackMain()
     lars->Predict(testPoints.t(), predictions, false);
 
     // Save test predictions (one per line).
-    CLI::GetParam<arma::mat>("output_predictions") = predictions.t();
+    CMD::GetParam<arma::mat>("output_predictions") = predictions.t();
   }
 
-  CLI::GetParam<LARS*>("output_model") = lars;
+  CMD::GetParam<LARS*>("output_model") = lars;
 }

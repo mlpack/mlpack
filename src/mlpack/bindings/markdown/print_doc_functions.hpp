@@ -87,7 +87,7 @@ inline std::string ProgramCall(const std::string& programName);
 
 /**
  * Print what a user would type to invoke the given option name.  Note that the
- * name *must* exist in the CLI module.  (Note that because of the way
+ * name *must* exist in the CMD module.  (Note that because of the way
  * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()
  * declarataions need to come before the PROGRAM_INFO() declaration.)
  */
