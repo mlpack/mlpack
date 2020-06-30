@@ -35,8 +35,8 @@ namespace rl {
  */
 template <
   typename EnvironmentType,
-  typename ActorNetworkType,
-  typename CriticNetworkType,
+  typename QNetworkType,
+  typename PolicyNetworkType,
   typename UpdaterType,
   typename PolicyType,
   typename ReplayType = RandomReplay<EnvironmentType>
@@ -63,12 +63,12 @@ class SAC
    * @param updater How to apply gradients when training.
    * @param environment Reinforcement learning task.
    */
-  SAC(TrainingConfig config,
-      QNetworkType learningQ1Network,
-      QNetworkType learningQ2Network,
-      PolicyNetworkType policyNetwork,
-      PolicyType policy,
-      ReplayType replayMethod,
+  SAC(TrainingConfig& config,
+      QNetworkType& learningQ1Network,
+      QNetworkType& learningQ2Network,
+      PolicyNetworkType& policyNetwork,
+      PolicyType& policy,
+      ReplayType& replayMethod,
       UpdaterType qNetworkUpdater = UpdaterType(),
       UpdaterType policyNetworkUpdater = UpdaterType(),
       EnvironmentType environment = EnvironmentType());
@@ -110,17 +110,17 @@ class SAC
   QNetworkType& learningQ2Network;
 
   //! Locally-stored target Q1 and Q2 network.
-  QNetworkType& targetQ1Network;
-  QNetworkType& targetQ2Network;
+  QNetworkType targetQ1Network;
+  QNetworkType targetQ2Network;
 
   //! Locally-stored policy network.
   PolicyNetworkType& policyNetwork;
 
   //! Locally-stored behavior policy.
-  PolicyType policy;
+  PolicyType& policy;
 
   //! Locally-stored experience method.
-  ReplayType replayMethod;
+  ReplayType& replayMethod;
 
   //! Locally-stored updater.
   UpdaterType qNetworkUpdater;
