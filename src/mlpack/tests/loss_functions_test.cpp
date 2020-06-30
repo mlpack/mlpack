@@ -372,7 +372,10 @@ BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyErrorTest)
 BOOST_AUTO_TEST_CASE(SimpleEarthMoverDistanceLayerTest)
 {
   arma::mat input1, input2, output, target1, target2, expectedOutput;
+  arma::mat input3, target3;
+  double loss;
   EarthMoverDistance<> module;
+  EarthMoverDistance<> module2(false);
 
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
@@ -402,6 +405,29 @@ BOOST_AUTO_TEST_CASE(SimpleEarthMoverDistanceLayerTest)
     BOOST_REQUIRE_SMALL(output(i) - expectedOutput(i), 1e-5);
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
+
+  // Test for mean reduction.
+  input3 = arma::mat("-0.0494 -1.1958 -1.0486 -0.2121 1.6028 0.0737 -0.7091 "
+      "0.8612 0.9639 0.9648 0.0745 0.5924");
+  target3 = arma::mat("0.4316 0.0164 -0.4478 1.1452 0.5106 0.9255 0.5571 "
+      "0.0864 0.7059 -0.8288 -0.0231 -1.0526");
+  expectedOutput = arma::mat("-0.0360 -0.0014 0.0373 -0.0954 -0.0426 -0.0771 "
+      "-0.0464 -0.0072 -0.0588 0.0691 0.0019 0.0877");
+  input3.reshape(4, 3);
+  target3.reshape(4, 3);
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be -0.00060089.
+  // Value calculated manually.
+  loss = module2.Forward(input3, target3);
+  BOOST_REQUIRE_CLOSE(loss, -0.00060089, 1e-3);
+
+  // Test the Backward function.
+  module2.Backward(input3, target3, output);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), -0.168867, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input3.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input3.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
 }
 
 /*
