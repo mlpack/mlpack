@@ -62,6 +62,7 @@ void CrossEntropyError<InputDataType, OutputDataType>::serialize(
     const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(eps);
+  ar & BOOST_SERIALIZATION_NVP(reduction);
 }
 
 } // namespace ann
