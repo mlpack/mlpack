@@ -167,6 +167,7 @@ double KernelSVM<MatType, KernelType>::Train(
     else
       count = 0;
   }
+  std::cout<<alpha<<std::endl;
   w = (data * (alpha.t() % labels).t()).t();
 }
 
