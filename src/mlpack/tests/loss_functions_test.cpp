@@ -76,12 +76,11 @@ BOOST_AUTO_TEST_CASE(HuberLossTest)
 BOOST_AUTO_TEST_CASE(PoissonNLLLossTest)
 {
   arma::mat input, target;
-  arma::mat output1, output2;
-  arma::mat expOutput1, expOutput2;
+  arma::mat output1, output2, output3;
+  arma::mat expOutput1, expOutput2, expOutput3;
   PoissonNLLLoss<> module1;
-  PoissonNLLLoss<> module2;
-  module2.Full() = true;
-  module2.Reduction() = false;
+  PoissonNLLLoss<> module2(true, true, 1e-08, false);
+  PoissonNLLLoss<> module3(true, true, 1e-08, true);
 
   // Test the Forward function on a user generated input.
   input = arma::mat("1.0 1.0 1.9 1.6 -1.9 3.7 -1.0 0.5");
@@ -89,17 +88,22 @@ BOOST_AUTO_TEST_CASE(PoissonNLLLossTest)
 
   double loss1 = module1.Forward(input, target);
   double loss2 = module2.Forward(input, target);
+  double loss3 = module3.Forward(input, target);
   BOOST_REQUIRE_CLOSE_FRACTION(loss1, 4.8986, 0.0001);
   BOOST_REQUIRE_CLOSE_FRACTION(loss2, 45.4139, 0.0001);
+  BOOST_REQUIRE_CLOSE_FRACTION(loss3, 5.6767, 0.0001);
 
   // Test the Backward function.
   module1.Backward(input, target, output1);
   module2.Backward(input, target, output2);
+  module3.Backward(input, target, output3);
 
   expOutput1 = arma::mat("0.214785 -0.0352148 0.710737 0.369129 \
                          -0.106304 4.55591 -0.204015 0.0810902");
   expOutput2 = arma::mat("1.71828 -0.281718 5.68589 2.95303\
                          -0.850431 36.4473 -1.63212 0.648721");
+  expOutput3 = arma::mat("0.214785 -0.035215 0.710737 0.369129 \
+                         -0.106304 4.555913 -0.204015 0.081090");
 
 
   BOOST_REQUIRE_EQUAL(output1.n_rows, input.n_rows);
@@ -108,10 +112,14 @@ BOOST_AUTO_TEST_CASE(PoissonNLLLossTest)
   BOOST_REQUIRE_EQUAL(output2.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output2.n_cols, input.n_cols);
 
+  BOOST_REQUIRE_EQUAL(output3.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output3.n_cols, input.n_cols);
+
   for (size_t i = 0; i < expOutput1.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE_FRACTION(output1[i], expOutput1[i], 0.0001);
     BOOST_REQUIRE_CLOSE_FRACTION(output2[i], expOutput2[i], 0.0001);
+    BOOST_REQUIRE_CLOSE_FRACTION(output3[i], expOutput3[i], 0.0001);
   }
 }
 
