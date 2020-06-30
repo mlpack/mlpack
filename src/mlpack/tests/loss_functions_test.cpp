@@ -200,9 +200,9 @@ BOOST_AUTO_TEST_CASE(KLDivergenceTest)
 BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorTest)
 {
   arma::mat input, output, target;
-  MeanSquaredError<> module;
+  MeanSquaredError<> module(false);
 
-  // Test the Forward function on a user generator input and compare it against
+  // Test the Forward function on a user generated input and compare it against
   // the manually calculated result.
   input = arma::mat("1.0 0.0 1.0 0.0 -1.0 0.0 -1.0 0.0");
   target = arma::zeros(1, 8);
@@ -221,6 +221,19 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorTest)
   // Test the error function on a single input.
   input = arma::mat("2");
   target = arma::mat("3");
+  error = module.Forward(input, target);
+  BOOST_REQUIRE_EQUAL(error, 1.0);
+
+  // Test the Backward function on a single input.
+  module.Backward(input, target, output);
+  // Test whether the output is negative.
+  BOOST_REQUIRE_EQUAL(arma::accu(output), -2);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 1);
+
+  // Test for sum reduction
+  module.Reduction() = true;
+
+  // Test the Forward function
   error = module.Forward(input, target);
   BOOST_REQUIRE_EQUAL(error, 1.0);
 
