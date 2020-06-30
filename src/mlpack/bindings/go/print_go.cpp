@@ -34,9 +34,9 @@ void PrintGo(const util::ProgramDoc& programInfo,
               const std::string& functionName)
 {
   // Restore parameters.
-  CLI::RestoreSettings(programInfo.programName);
+  IO::RestoreSettings(programInfo.programName);
 
-  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+  const std::map<std::string, util::ParamData>& parameters = IO::Parameters();
   typedef std::map<std::string, util::ParamData>::const_iterator ParamIter;
 
   // Split into input and output parameters.  Take two passes on the input
@@ -100,7 +100,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
   {
     const util::ParamData& d = parameters.at(inputOptions[i]);
     size_t indent = 4;
-    CLI::GetSingleton().functionMap[d.tname]["PrintMethodConfig"](d,
+    IO::GetSingleton().functionMap[d.tname]["PrintMethodConfig"](d,
         (void*) &indent, NULL);
   }
   cout << "}" << endl;
@@ -115,7 +115,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
   {
     const util::ParamData& d = parameters.at(inputOptions[i]);
     size_t indent = 4;
-    CLI::GetSingleton().functionMap[d.tname]["PrintMethodInit"](d,
+    IO::GetSingleton().functionMap[d.tname]["PrintMethodInit"](d,
         (void*) &indent, NULL);
   }
   cout << "  " << "}" << endl;
@@ -137,13 +137,13 @@ void PrintGo(const util::ProgramDoc& programInfo,
     if (!d.required)
     {
       bool isLower = false;
-      CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+      IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
            &isLower);
     }
     else
     {
       bool isLower = true;
-      CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+      IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
           &isLower);
     }
     cout << endl;
@@ -158,7 +158,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
     cout << "  ";
     size_t indent = 4;
     bool isLower = true;
-    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
         &isLower);
     cout << endl;
   }
@@ -178,7 +178,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
       if (i != 0)
         cout << ", ";
 
-      CLI::GetSingleton().functionMap[d.tname]["PrintDefnInput"](d, NULL, NULL);
+      IO::GetSingleton().functionMap[d.tname]["PrintDefnInput"](d, NULL, NULL);
       counter++;
     }
   }
@@ -202,7 +202,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
       cout << ", ";
 
     std::tuple<size_t, bool> t = std::make_tuple(2, false);
-    CLI::GetSingleton().functionMap[d.tname]["PrintDefnOutput"](d,
+    IO::GetSingleton().functionMap[d.tname]["PrintDefnOutput"](d,
       (void*) &t, NULL);
   }
 
@@ -226,7 +226,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
     const util::ParamData& d = parameters.at(inputOptions[i]);
 
     size_t indent = 2;
-    CLI::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
+    IO::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
         (void*) &indent, NULL);
   }
 
@@ -251,7 +251,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
   {
     const util::ParamData& d = parameters.at(outputOptions[i]);
 
-    CLI::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
+    IO::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
         NULL, NULL);
   }
 

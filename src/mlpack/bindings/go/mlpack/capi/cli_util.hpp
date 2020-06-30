@@ -28,7 +28,7 @@ namespace util {
 template<typename T>
 inline void SetParam(const std::string& identifier, T& value)
 {
-  CLI::GetParam<T>(identifier) = std::move(value);
+  IO::GetParam<T>(identifier) = std::move(value);
 }
 
 /**
@@ -41,7 +41,7 @@ template<typename T>
 inline void SetParamPtr(const std::string& identifier,
                         T* value)
 {
-  CLI::GetParam<T*>(identifier) = value;
+  IO::GetParam<T*>(identifier) = value;
 }
 
 /**
@@ -51,7 +51,7 @@ inline void SetParamPtr(const std::string& identifier,
 template<typename T>
 T* GetParamPtr(const std::string& paramName)
 {
-  return CLI::GetParam<T*>(paramName);
+  return IO::GetParam<T*>(paramName);
 }
 
 /**
@@ -84,7 +84,7 @@ inline void DisableBacktrace()
 inline void ResetTimers()
 {
   // Just get a new object---removes all old timers.
-  CLI::GetSingleton().timer.Reset();
+  IO::GetSingleton().timer.Reset();
 }
 
 /**

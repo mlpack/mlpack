@@ -66,7 +66,7 @@ void mlpackSetParamVectorStr(const char* identifier,
                              const size_t element);
 
 /**
- * Call CLI::SetParam<std::vector<std::string>>() to set the length.
+ * Call IO::SetParam<std::vector<std::string>>() to set the length.
  */
 void mlpackSetParamVectorStrLen(const char* identifier,
                                 const size_t length);
