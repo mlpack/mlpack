@@ -73,18 +73,18 @@ static void mlpackMain()
 {
   Timer::Start("Loading/Saving Image");
   // Parse command line options.
-  const vector<string> fileNames = CMD::GetParam<vector<string> >("input");
+  const vector<string> fileNames = IO::GetParam<vector<string> >("input");
   arma::mat out;
 
-  if (!CMD::HasParam("save"))
+  if (!IO::HasParam("save"))
   {
     ReportIgnoredParam("width", "Width of image is determined from file.");
     ReportIgnoredParam("height", "Height of image is determined from file.");
     ReportIgnoredParam("channels", "Number of channels determined from file.");
     data::ImageInfo info;
     Load(fileNames, out, info, true);
-    if (CMD::HasParam("output"))
-      CMD::GetParam<arma::mat>("output") = std::move(out);
+    if (IO::HasParam("output"))
+      IO::GetParam<arma::mat>("output") = std::move(out);
   }
   else
   {
@@ -103,11 +103,11 @@ static void mlpackMain()
     RequireParamValue<int>("quality", [](int x) { return x >= 0;}, true,
         "quality must be positive");
 
-    const size_t height = CMD::GetParam<int>("height");
-    const size_t width = CMD::GetParam<int>("width");
-    const size_t channels = CMD::GetParam<int>("channels");
-    const size_t quality = CMD::GetParam<int>("quality");
+    const size_t height = IO::GetParam<int>("height");
+    const size_t width = IO::GetParam<int>("width");
+    const size_t channels = IO::GetParam<int>("channels");
+    const size_t quality = IO::GetParam<int>("quality");
     data::ImageInfo info(width, height, channels, quality);
-    Save(fileNames, CMD::GetParam<arma::mat>("dataset"), info, true);
+    Save(fileNames, IO::GetParam<arma::mat>("dataset"), info, true);
   }
 }

@@ -30,14 +30,14 @@ struct DBSCANTestFixture
   DBSCANTestFixture()
   {
     // Cache in the options for this program.
-    CMD::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~DBSCANTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CMD::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -60,12 +60,12 @@ BOOST_AUTO_TEST_CASE(DBSCANOutputDimensionTest)
   mlpackMain();
 
   // Check that number of predicted labels is equal to the input test points.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("assignments").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("assignments").n_cols,
                       inputSize);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("assignments").n_rows,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("assignments").n_rows,
                       1);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("centroids").n_rows, 4);
-  BOOST_REQUIRE_GE(CMD::GetParam<arma::mat>("centroids").n_cols, 1);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("centroids").n_rows, 4);
+  BOOST_REQUIRE_GE(IO::GetParam<arma::mat>("centroids").n_cols, 1);
 }
 
 /**
@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(DBSCANClusterNumberTest)
   mlpackMain();
 
   arma::Row<size_t> output;
-  output = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  output = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   for (size_t i = 0; i < output.n_elem; ++i)
     BOOST_REQUIRE_LT(output[i], inputData.n_cols);
@@ -141,12 +141,12 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffEpsilonTest)
   mlpackMain();
 
   arma::Row<size_t> output1;
-  output1 = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  output1 = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   bindings::tests::CleanMemory();
 
-  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["epsilon"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["epsilon"].wasPassed = false;
 
   SetInputParam("input", inputData);
   SetInputParam("epsilon", (double) 0.5);
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffEpsilonTest)
   mlpackMain();
 
   arma::Row<size_t> output2;
-  output2 = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  output2 = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   BOOST_REQUIRE_GT(arma::accu(output1 != output2), 1);
 }
@@ -176,13 +176,13 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffMinSizeTest)
   mlpackMain();
 
   arma::Row<size_t> output1;
-  output1 = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  output1 = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   bindings::tests::CleanMemory();
 
-  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["epsilon"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["min_size"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["epsilon"].wasPassed = false;
+  IO::GetSingleton().Parameters()["min_size"].wasPassed = false;
 
   SetInputParam("input", inputData);
   SetInputParam("epsilon", (double) 0.5);
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffMinSizeTest)
   mlpackMain();
 
   arma::Row<size_t> output2;
-  output2 = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  output2 = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   BOOST_REQUIRE_GT(arma::accu(output1 != output2), 1);
 }
@@ -233,12 +233,12 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
   mlpackMain();
 
   arma::Row<size_t> kdOutput;
-  kdOutput = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  kdOutput = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   bindings::tests::CleanMemory();
 
-  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["tree_type"].wasPassed = false;
 
   // Tree Type = r tree.
 
@@ -248,12 +248,12 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
   mlpackMain();
 
   arma::Row<size_t> rOutput;
-  rOutput = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  rOutput = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   bindings::tests::CleanMemory();
 
-  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["tree_type"].wasPassed = false;
 
   // Tree type = r-star tree.
 
@@ -263,12 +263,12 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
   mlpackMain();
 
   arma::Row<size_t> rStarOutput;
-  rStarOutput = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  rStarOutput = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   bindings::tests::CleanMemory();
 
-  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["tree_type"].wasPassed = false;
 
   // Tree Type = x tree.
 
@@ -278,12 +278,12 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
   mlpackMain();
 
   arma::Row<size_t> xOutput;
-  xOutput = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  xOutput = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   bindings::tests::CleanMemory();
 
-  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["tree_type"].wasPassed = false;
 
   // Tree Type = hilbert-r tree.
 
@@ -293,12 +293,12 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
   mlpackMain();
 
   arma::Row<size_t> hilbertROutput;
-  hilbertROutput = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  hilbertROutput = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   bindings::tests::CleanMemory();
 
-  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["tree_type"].wasPassed = false;
 
   // Tree Type = r-plus tree.
 
@@ -308,12 +308,12 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
   mlpackMain();
 
   arma::Row<size_t> rPlusOutput;
-  rPlusOutput = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  rPlusOutput = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   bindings::tests::CleanMemory();
 
-  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["tree_type"].wasPassed = false;
 
   // Tree Type = r-plus-plus tree.
 
@@ -323,12 +323,12 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
   mlpackMain();
 
   arma::Row<size_t> rPlusPlusOutput;
-  rPlusPlusOutput = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  rPlusPlusOutput = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   bindings::tests::CleanMemory();
 
-  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["tree_type"].wasPassed = false;
 
   // Tree Type = cover tree.
 
@@ -338,12 +338,12 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
   mlpackMain();
 
   arma::Row<size_t> coverOutput;
-  coverOutput = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  coverOutput = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   bindings::tests::CleanMemory();
 
-  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["tree_type"].wasPassed = false;
 
   // Tree Type = ball tree.
 
@@ -353,7 +353,7 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
   mlpackMain();
 
   arma::Row<size_t> ballOutput;
-  ballOutput = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  ballOutput = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   CheckMatrices(kdOutput, rOutput);
   CheckMatrices(kdOutput, rStarOutput);
@@ -380,11 +380,11 @@ BOOST_AUTO_TEST_CASE(DBSCANSingleTreeTest)
   mlpackMain();
 
   arma::Row<size_t> output;
-  output = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  output = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   bindings::tests::CleanMemory();
 
-  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
 
   SetInputParam("input", inputData);
   SetInputParam("single_mode", true);
@@ -392,7 +392,7 @@ BOOST_AUTO_TEST_CASE(DBSCANSingleTreeTest)
   mlpackMain();
 
   arma::Row<size_t> singleModeOutput;
-  singleModeOutput = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  singleModeOutput = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   CheckMatrices(output, singleModeOutput);
 }
@@ -412,11 +412,11 @@ BOOST_AUTO_TEST_CASE(DBSCANNaiveSearchTest)
   mlpackMain();
 
   arma::Row<size_t> output;
-  output = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  output = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   bindings::tests::CleanMemory();
 
-  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
 
   SetInputParam("input", inputData);
   SetInputParam("naive", true);
@@ -424,7 +424,7 @@ BOOST_AUTO_TEST_CASE(DBSCANNaiveSearchTest)
   mlpackMain();
 
   arma::Row<size_t> naiveOutput;
-  naiveOutput = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  naiveOutput = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   CheckMatrices(output, naiveOutput);
 }
@@ -447,14 +447,14 @@ BOOST_AUTO_TEST_CASE(DBSCANRandomSelectionFlagTest)
   mlpackMain();
 
   arma::Row<size_t> orderedOutput;
-  orderedOutput = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  orderedOutput = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   bindings::tests::CleanMemory();
 
-  CMD::GetSingleton().Parameters()["input"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["epsilon"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["min_size"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["selection_type"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["epsilon"].wasPassed = false;
+  IO::GetSingleton().Parameters()["min_size"].wasPassed = false;
+  IO::GetSingleton().Parameters()["selection_type"].wasPassed = false;
 
   SetInputParam("input", inputData);
   SetInputParam("epsilon", (double) 0.358);
@@ -464,7 +464,7 @@ BOOST_AUTO_TEST_CASE(DBSCANRandomSelectionFlagTest)
   mlpackMain();
 
   arma::Row<size_t> randomOutput;
-  randomOutput = std::move(CMD::GetParam<arma::Row<size_t>>("assignments"));
+  randomOutput = std::move(IO::GetParam<arma::Row<size_t>>("assignments"));
 
   BOOST_REQUIRE_GT(arma::accu(orderedOutput != randomOutput), 0);
 }

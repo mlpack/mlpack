@@ -3,15 +3,15 @@
  * @author Matthew Amidon
  *
  * Definition of the Option class, which is used to define parameters which are
- * used by CMD.  The ProgramDoc class also resides here.
+ * used by IO.  The ProgramDoc class also resides here.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_BINDINGS_CMD_CMD_OPTION_HPP
-#define MLPACK_CORE_BINDINGS_CMD_CMD_OPTION_HPP
+#ifndef MLPACK_CORE_BINDINGS_IO_IO_OPTION_HPP
+#define MLPACK_CORE_BINDINGS_IO_IO_OPTION_HPP
 
 #include <string>
 
@@ -37,20 +37,20 @@ namespace bindings {
 namespace cmd {
 
 /**
- * A static object whose constructor registers a parameter with the CMD class.
- * This should not be used outside of CMD itself, and you should use the
+ * A static object whose constructor registers a parameter with the IO class.
+ * This should not be used outside of IO itself, and you should use the
  * PARAM_FLAG(), PARAM_DOUBLE(), PARAM_INT(), PARAM_STRING(), or other similar
  * macros to declare these objects instead of declaring them directly.
  *
- * @see core/util/cli.hpp, mlpack::CMD
+ * @see core/util/cli.hpp, mlpack::IO
  */
 template<typename N>
-class CMDOption
+class IOOption
 {
  public:
   /**
    * Construct an Option object.  When constructed, it will register
-   * itself with CMD.
+   * itself with IO.
    *
    * @param defaultValue Default value this parameter will be initialized to
    *      (for flags, this should be false, for instance).
@@ -65,7 +65,7 @@ class CMDOption
    *      matrix will not be transposed on loading.
    * @param * (testName) Is not used and added for compatibility reasons.
    */
-  CMDOption(const N defaultValue,
+  IOOption(const N defaultValue,
             const std::string& identifier,
             const std::string& description,
             const std::string& alias,
@@ -75,7 +75,7 @@ class CMDOption
             const bool noTranspose = false,
             const std::string& /*testName*/ = "")
   {
-    // Create the ParamData object to give to CMD.
+    // Create the ParamData object to give to IO.
     util::ParamData data;
 
     data.desc = description;
@@ -87,7 +87,7 @@ class CMDOption
     data.required = required;
     data.input = input;
     data.loaded = false;
-    data.persistent = false; // All CMD parameters are not persistent.
+    data.persistent = false; // All IO parameters are not persistent.
     data.cppType = cppName;
 
     // Apply default value.
@@ -111,7 +111,7 @@ class CMDOption
 
     // Do a check to ensure that the boost name isn't already in use.
     const std::map<std::string, util::ParamData>& parameters =
-        CMD::Parameters();
+        IO::Parameters();
     if (parameters.count(cliName) > 0)
     {
       // Create a fake Log::Fatal since it may not yet be initialized.
@@ -136,54 +136,54 @@ class CMDOption
              << std::endl;
     }
 
-    CMD::Add(std::move(data));
+    IO::Add(std::move(data));
 
     // Set some function pointers that we need.
-    CMD::GetSingleton().functionMap[tname]["DefaultParam"] =
+    IO::GetSingleton().functionMap[tname]["DefaultParam"] =
         &DefaultParam<N>;
-    CMD::GetSingleton().functionMap[tname]["OutputParam"] =
+    IO::GetSingleton().functionMap[tname]["OutputParam"] =
         &OutputParam<N>;
-    CMD::GetSingleton().functionMap[tname]["GetPrintableParam"] =
+    IO::GetSingleton().functionMap[tname]["GetPrintableParam"] =
         &GetPrintableParam<N>;
-    CMD::GetSingleton().functionMap[tname]["StringTypeParam"] =
+    IO::GetSingleton().functionMap[tname]["StringTypeParam"] =
         &StringTypeParam<N>;
-    CMD::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
-    CMD::GetSingleton().functionMap[tname]["GetRawParam"] = &GetRawParam<N>;
-    CMD::GetSingleton().functionMap[tname]["AddToPO"] = &AddToPO<N>;
-    CMD::GetSingleton().functionMap[tname]["MapParameterName"] =
+    IO::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
+    IO::GetSingleton().functionMap[tname]["GetRawParam"] = &GetRawParam<N>;
+    IO::GetSingleton().functionMap[tname]["AddToPO"] = &AddToPO<N>;
+    IO::GetSingleton().functionMap[tname]["MapParameterName"] =
         &MapParameterName<N>;
-    CMD::GetSingleton().functionMap[tname]["SetParam"] = &SetParam<N>;
-    CMD::GetSingleton().functionMap[tname]["GetPrintableParamName"] =
+    IO::GetSingleton().functionMap[tname]["SetParam"] = &SetParam<N>;
+    IO::GetSingleton().functionMap[tname]["GetPrintableParamName"] =
         &GetPrintableParamName<N>;
-    CMD::GetSingleton().functionMap[tname]["GetPrintableParamValue"] =
+    IO::GetSingleton().functionMap[tname]["GetPrintableParamValue"] =
         &GetPrintableParamValue<N>;
-    CMD::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
+    IO::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
         &GetAllocatedMemory<N>;
-    CMD::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
+    IO::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
         &DeleteAllocatedMemory<N>;
-    CMD::GetSingleton().functionMap[tname]["InPlaceCopy"] = &InPlaceCopy<N>;
+    IO::GetSingleton().functionMap[tname]["InPlaceCopy"] = &InPlaceCopy<N>;
   }
 };
 
 /**
  * A static object whose constructor registers program documentation with the
- * CMD class.  This should not be used outside of CMD itself, and you should use
+ * IO class.  This should not be used outside of IO itself, and you should use
  * the PROGRAM_INFO() macro to declare these objects.  Only one ProgramDoc
  * object should ever exist.
  *
- * @see core/util/cli.hpp, mlpack::CMD
+ * @see core/util/cli.hpp, mlpack::IO
  */
 class ProgramDoc
 {
  public:
   /**
    * Construct a ProgramDoc object.  When constructed, it will register itself
-   * with CMD.
+   * with IO.
    *
    * @param programName Short string representing the name of the program.
    * @param documentation Long string containing documentation on how to use the
    *     program and what it is.  No newline characters are necessary; this is
-   *     taken care of by CMD later.
+   *     taken care of by IO later.
    */
   ProgramDoc(const std::string& programName,
              const std::string& documentation);

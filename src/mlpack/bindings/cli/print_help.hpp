@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CMD_PRINT_HELP_HPP
-#define MLPACK_BINDINGS_CMD_PRINT_HELP_HPP
+#ifndef MLPACK_BINDINGS_IO_PRINT_HELP_HPP
+#define MLPACK_BINDINGS_IO_PRINT_HELP_HPP
 
 #include <mlpack/core.hpp>
 

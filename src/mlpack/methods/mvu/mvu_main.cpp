@@ -38,13 +38,13 @@ using namespace std;
 int main(int argc, char **argv)
 {
   // Read from command line.
-  CMD::ParseCommandLine(argc, argv);
-  const string inputFile = CMD::GetParam<string>("input_file");
-  const string outputFile = CMD::GetParam<string>("output_file");
-  const int newDim = CMD::GetParam<int>("new_dim");
-  const int numNeighbors = CMD::GetParam<int>("num_neighbors");
+  IO::ParseCommandLine(argc, argv);
+  const string inputFile = IO::GetParam<string>("input_file");
+  const string outputFile = IO::GetParam<string>("output_file");
+  const int newDim = IO::GetParam<int>("new_dim");
+  const int numNeighbors = IO::GetParam<int>("num_neighbors");
 
-  if (!CMD::HasParam("output"))
+  if (!IO::HasParam("output"))
   {
     Log::Warn << "--output_file (-o) is not specified; no results will be "
         << "saved!" << endl;
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
   RandomSeed(time(NULL));
 
   // Load input dataset.
-  mat data = std::move(CMD::GetParam<arma::mat>("input"));
+  mat data = std::move(IO::GetParam<arma::mat>("input"));
 
   // Verify that the requested dimensionality is valid.
   if (newDim <= 0 || newDim > (int) data.n_rows)
@@ -78,6 +78,6 @@ int main(int argc, char **argv)
   mvu.Unfold(newDim, numNeighbors, output);
 
   // Save results to file.
-  if (CMD::HasParam("output"))
-    CMD::GetParam<arma::mat>("output") = std::move(output);
+  if (IO::HasParam("output"))
+    IO::GetParam<arma::mat>("output") = std::move(output);
 }

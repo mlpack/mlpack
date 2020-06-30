@@ -60,108 +60,108 @@ PARAM_DOUBLE_OUT("model_bw_out", "The bandwidth of the model.");
 
 static void mlpackMain()
 {
-  const string s = CMD::GetParam<string>("string_in");
-  const int i = CMD::GetParam<int>("int_in");
-  const double d = CMD::GetParam<double>("double_in");
+  const string s = IO::GetParam<string>("string_in");
+  const int i = IO::GetParam<int>("int_in");
+  const double d = IO::GetParam<double>("double_in");
 
-  CMD::GetParam<string>("string_out") = "wrong";
-  CMD::GetParam<int>("int_out") = 11;
-  CMD::GetParam<double>("double_out") = 3.0;
+  IO::GetParam<string>("string_out") = "wrong";
+  IO::GetParam<int>("int_out") = 11;
+  IO::GetParam<double>("double_out") = 3.0;
 
   // Check that everything is right on the input, and then set output
   // accordingly.
-  if (!CMD::HasParam("flag2") && CMD::HasParam("flag1"))
+  if (!IO::HasParam("flag2") && IO::HasParam("flag1"))
   {
     if (s == "hello")
-      CMD::GetParam<string>("string_out") = "hello2";
+      IO::GetParam<string>("string_out") = "hello2";
 
     if (i == 12)
-      CMD::GetParam<int>("int_out") = 13;
+      IO::GetParam<int>("int_out") = 13;
 
     if (d == 4.0)
-      CMD::GetParam<double>("double_out") = 5.0;
+      IO::GetParam<double>("double_out") = 5.0;
   }
 
   // Input matrices should be at least 5 rows; the 5th row will be dropped and
   // the 3rd row will be multiplied by two.
-  if (CMD::HasParam("matrix_in"))
+  if (IO::HasParam("matrix_in"))
   {
-    arma::mat out = move(CMD::GetParam<arma::mat>("matrix_in"));
+    arma::mat out = move(IO::GetParam<arma::mat>("matrix_in"));
     out.shed_row(4);
     out.row(2) *= 2.0;
 
-    CMD::GetParam<arma::mat>("matrix_out") = move(out);
+    IO::GetParam<arma::mat>("matrix_out") = move(out);
   }
 
   // Input matrices should be at least 5 rows; the 5th row will be dropped and
   // the 3rd row will be multiplied by two.
-  if (CMD::HasParam("umatrix_in"))
+  if (IO::HasParam("umatrix_in"))
   {
     arma::Mat<size_t> out =
-        move(CMD::GetParam<arma::Mat<size_t>>("umatrix_in"));
+        move(IO::GetParam<arma::Mat<size_t>>("umatrix_in"));
     out.shed_row(4);
     out.row(2) *= 2;
 
-    CMD::GetParam<arma::Mat<size_t>>("umatrix_out") = move(out);
+    IO::GetParam<arma::Mat<size_t>>("umatrix_out") = move(out);
   }
 
   // An input column or row should have all elements multiplied by two.
-  if (CMD::HasParam("col_in"))
+  if (IO::HasParam("col_in"))
   {
-    arma::vec out = move(CMD::GetParam<arma::vec>("col_in"));
+    arma::vec out = move(IO::GetParam<arma::vec>("col_in"));
     out *= 2.0;
 
-    CMD::GetParam<arma::vec>("col_out") = move(out);
+    IO::GetParam<arma::vec>("col_out") = move(out);
   }
 
-  if (CMD::HasParam("ucol_in"))
+  if (IO::HasParam("ucol_in"))
   {
     arma::Col<size_t> out =
-        move(CMD::GetParam<arma::Col<size_t>>("ucol_in"));
+        move(IO::GetParam<arma::Col<size_t>>("ucol_in"));
     out *= 2;
 
-    CMD::GetParam<arma::Col<size_t>>("ucol_out") = move(out);
+    IO::GetParam<arma::Col<size_t>>("ucol_out") = move(out);
   }
 
-  if (CMD::HasParam("row_in"))
+  if (IO::HasParam("row_in"))
   {
-    arma::rowvec out = move(CMD::GetParam<arma::rowvec>("row_in"));
+    arma::rowvec out = move(IO::GetParam<arma::rowvec>("row_in"));
     out *= 2.0;
 
-    CMD::GetParam<arma::rowvec>("row_out") = move(out);
+    IO::GetParam<arma::rowvec>("row_out") = move(out);
   }
 
-  if (CMD::HasParam("urow_in"))
+  if (IO::HasParam("urow_in"))
   {
     arma::Row<size_t> out =
-        move(CMD::GetParam<arma::Row<size_t>>("urow_in"));
+        move(IO::GetParam<arma::Row<size_t>>("urow_in"));
     out *= 2;
 
-    CMD::GetParam<arma::Row<size_t>>("urow_out") = move(out);
+    IO::GetParam<arma::Row<size_t>>("urow_out") = move(out);
   }
 
   // Vector arguments should have the last element removed.
-  if (CMD::HasParam("vector_in"))
+  if (IO::HasParam("vector_in"))
   {
-    vector<int> out = move(CMD::GetParam<vector<int>>("vector_in"));
+    vector<int> out = move(IO::GetParam<vector<int>>("vector_in"));
     out.pop_back();
 
-    CMD::GetParam<vector<int>>("vector_out") = move(out);
+    IO::GetParam<vector<int>>("vector_out") = move(out);
   }
 
-  if (CMD::HasParam("str_vector_in"))
+  if (IO::HasParam("str_vector_in"))
   {
-    vector<string> out = move(CMD::GetParam<vector<string>>("str_vector_in"));
+    vector<string> out = move(IO::GetParam<vector<string>>("str_vector_in"));
     out.pop_back();
 
-    CMD::GetParam<vector<string>>("str_vector_out") = move(out);
+    IO::GetParam<vector<string>>("str_vector_out") = move(out);
   }
 
   // All numeric elements should be multiplied by 3.
-  if (CMD::HasParam("matrix_and_info_in"))
+  if (IO::HasParam("matrix_and_info_in"))
   {
     typedef tuple<data::DatasetInfo, arma::mat> TupleType;
-    TupleType tuple = move(CMD::GetParam<TupleType>("matrix_and_info_in"));
+    TupleType tuple = move(IO::GetParam<TupleType>("matrix_and_info_in"));
 
     const data::DatasetInfo& di = std::get<0>(tuple);
     arma::mat& m = std::get<1>(tuple);
@@ -172,19 +172,19 @@ static void mlpackMain()
         m.row(i) *= 2.0;
     }
 
-    CMD::GetParam<arma::mat>("matrix_and_info_out") = move(m);
+    IO::GetParam<arma::mat>("matrix_and_info_out") = move(m);
   }
 
   // If we got a request to build a model, then build it.
-  if (CMD::HasParam("build_model"))
+  if (IO::HasParam("build_model"))
   {
-    CMD::GetParam<GaussianKernel*>("model_out") = new GaussianKernel(10.0);
+    IO::GetParam<GaussianKernel*>("model_out") = new GaussianKernel(10.0);
   }
 
   // If we got an input model, double the bandwidth and output that.
-  if (CMD::HasParam("model_in"))
+  if (IO::HasParam("model_in"))
   {
-    CMD::GetParam<double>("model_bw_out") =
-        CMD::GetParam<GaussianKernel*>("model_in")->Bandwidth() * 2.0;
+    IO::GetParam<double>("model_bw_out") =
+        IO::GetParam<GaussianKernel*>("model_in")->Bandwidth() * 2.0;
   }
 }

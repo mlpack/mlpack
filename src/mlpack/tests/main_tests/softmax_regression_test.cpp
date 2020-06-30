@@ -29,14 +29,14 @@ struct SoftmaxRegressionTestFixture
   SoftmaxRegressionTestFixture()
   {
     // Cache in the options for this program.
-    CMD::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~SoftmaxRegressionTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CMD::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -80,11 +80,11 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("predictions").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_cols,
                       testSize);
 
   // Check prediction have only single row.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("predictions").n_rows,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_rows,
                       1);
 }
 
@@ -141,31 +141,31 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionModelReuseTest)
   mlpackMain();
 
   arma::Row<size_t> predictions;
-  predictions = std::move(CMD::GetParam<arma::Row<size_t>>("predictions"));
+  predictions = std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
 
   // Reset passed parameters.
-  CMD::GetSingleton().Parameters()["training"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                CMD::GetParam<SoftmaxRegression*>("output_model"));
+                IO::GetParam<SoftmaxRegression*>("output_model"));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("predictions").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_cols,
                       testSize);
 
   // Check predictions have only single row.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("predictions").n_rows,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_rows,
                       1);
 
   // Check that initial predictions and final predicitons matrix
   // using saved model are same.
-  CheckMatrices(predictions, CMD::GetParam<arma::Row<size_t>>("predictions"));
+  CheckMatrices(predictions, IO::GetParam<arma::Row<size_t>>("predictions"));
 }
 
 /**
@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainingVerTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                CMD::GetParam<SoftmaxRegression*>("output_model"));
+                IO::GetParam<SoftmaxRegression*>("output_model"));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -319,14 +319,14 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffLambdaTest)
 
   // Store output parameters.
   arma::mat modelParam;
-  modelParam = CMD::GetParam<SoftmaxRegression*>("output_model")->Parameters();
+  modelParam = IO::GetParam<SoftmaxRegression*>("output_model")->Parameters();
 
   bindings::tests::CleanMemory();
 
   // Reset passed parameters.
-  CMD::GetSingleton().Parameters()["training"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Train SR for lamda 0.9.
 
@@ -343,7 +343,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffLambdaTest)
   for (size_t i = 0; i < modelParam.n_elem; ++i)
   {
     BOOST_REQUIRE_NE(modelParam[i],
-        CMD::GetParam<SoftmaxRegression*>("output_model")->Parameters()[i]);
+        IO::GetParam<SoftmaxRegression*>("output_model")->Parameters()[i]);
   }
 }
 
@@ -385,14 +385,14 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffMaxItrTest)
 
   // Store output parameters.
   arma::mat modelParam;
-  modelParam = CMD::GetParam<SoftmaxRegression*>("output_model")->Parameters();
+  modelParam = IO::GetParam<SoftmaxRegression*>("output_model")->Parameters();
 
   bindings::tests::CleanMemory();
 
   // Reset passed parameters.
-  CMD::GetSingleton().Parameters()["training"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Train SR for lamda 0.9.
 
@@ -409,7 +409,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffMaxItrTest)
   for (size_t i = 0; i < modelParam.n_elem; ++i)
   {
     BOOST_REQUIRE_NE(modelParam[i],
-        CMD::GetParam<SoftmaxRegression*>("output_model")->Parameters()[i]);
+        IO::GetParam<SoftmaxRegression*>("output_model")->Parameters()[i]);
   }
 }
 
@@ -451,15 +451,15 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffInterceptTest)
 
   // Store output parameters.
   arma::mat modelParam;
-  modelParam = CMD::GetParam<SoftmaxRegression*>("output_model")->Parameters();
+  modelParam = IO::GetParam<SoftmaxRegression*>("output_model")->Parameters();
 
   bindings::tests::CleanMemory();
 
   // Reset passed parameters.
-  CMD::GetSingleton().Parameters()["training"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["no_intercept"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["no_intercept"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Train SR for no_intercept.
 
@@ -473,7 +473,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffInterceptTest)
   // Check that initial parameters has 1 more parameter than
   // final parameters matrix.
   BOOST_REQUIRE_EQUAL(
-      CMD::GetParam<SoftmaxRegression*>("output_model")->Parameters().n_cols,
+      IO::GetParam<SoftmaxRegression*>("output_model")->Parameters().n_cols,
       modelParam.n_cols + 1);
 }
 

@@ -2,7 +2,7 @@
  * @file core/util/cli.cpp
  * @author Matthew Amidon
  *
- * Implementation of the CMD module for parsing parameters.
+ * Implementation of the IO module for parsing parameters.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -23,21 +23,21 @@ static ProgramDoc emptyProgramDoc = ProgramDoc("", "", []() { return ""; },
 
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
-CMD::CMD() : didParse(false), doc(&emptyProgramDoc)
+IO::IO() : didParse(false), doc(&emptyProgramDoc)
 {
   return;
 }
 
 // Private copy constructor; don't want copies floating around.
-CMD::CMD(const CMD& /* other */) : didParse(false), doc(&emptyProgramDoc)
+IO::IO(const IO& /* other */) : didParse(false), doc(&emptyProgramDoc)
 {
   return;
 }
 
 // Private copy operator; don't want copies floating around.
-CMD& CMD::operator=(const CMD& /* other */) { return *this; }
+IO& IO::operator=(const IO& /* other */) { return *this; }
 
-void CMD::Add(ParamData&& data)
+void IO::Add(ParamData&& data)
 {
   // Temporarily define color code escape sequences.
   #ifndef _WIN32
@@ -86,7 +86,7 @@ void CMD::Add(ParamData&& data)
  *
  * @param identifier The name of the parameter in question.
  */
-bool CMD::HasParam(const std::string& key)
+bool IO::HasParam(const std::string& key)
 {
   std::string usedKey = key;
   const std::map<std::string, util::ParamData>& parameters =
@@ -119,7 +119,7 @@ bool CMD::HasParam(const std::string& key)
  * @param outputParamName Name of output (matrix) parameter.
  * @param inputParamName Name of input (matrix) parameter.
  */
-void CMD::MakeInPlaceCopy(const std::string& outputParamName,
+void IO::MakeInPlaceCopy(const std::string& outputParamName,
                           const std::string& inputParamName)
 {
   std::map<std::string, util::ParamData>& parameters =
@@ -140,17 +140,17 @@ void CMD::MakeInPlaceCopy(const std::string& outputParamName,
   }
 
   // Is there a function to do this?
-  if (CMD::GetSingleton().functionMap[output.tname].count("InPlaceCopy") != 0)
+  if (IO::GetSingleton().functionMap[output.tname].count("InPlaceCopy") != 0)
   {
-    CMD::GetSingleton().functionMap[output.tname]["InPlaceCopy"](output, (void*)
+    IO::GetSingleton().functionMap[output.tname]["InPlaceCopy"](output, (void*)
         &input, NULL);
   }
 }
 
 // Returns the sole instance of this class.
-CMD& CMD::GetSingleton()
+IO& IO::GetSingleton()
 {
-  static CMD singleton;
+  static IO singleton;
   return singleton;
 }
 
@@ -160,7 +160,7 @@ CMD& CMD::GetSingleton()
  *
  * @param doc Pointer to the ProgramDoc object.
  */
-void CMD::RegisterProgramDoc(ProgramDoc* doc)
+void IO::RegisterProgramDoc(ProgramDoc* doc)
 {
   // Only register the doc if it is not the dummy object we created at the
   // beginning of the file (as a default value in case this is never called).
@@ -168,30 +168,30 @@ void CMD::RegisterProgramDoc(ProgramDoc* doc)
     GetSingleton().doc = doc;
 }
 
-// Get the parameters that the CMD object knows about.
-std::map<std::string, ParamData>& CMD::Parameters()
+// Get the parameters that the IO object knows about.
+std::map<std::string, ParamData>& IO::Parameters()
 {
   return GetSingleton().parameters;
 }
 
-// Get the parameters that the CMD object knows about.
-std::map<char, std::string>& CMD::Aliases()
+// Get the parameters that the IO object knows about.
+std::map<char, std::string>& IO::Aliases()
 {
   return GetSingleton().aliases;
 }
 
 // Get the program name as set by PROGRAM_INFO().
-std::string CMD::ProgramName()
+std::string IO::ProgramName()
 {
   return GetSingleton().doc->programName;
 }
 
 // Set a particular parameter as passed.
-void CMD::SetPassed(const std::string& name)
+void IO::SetPassed(const std::string& name)
 {
   if (GetSingleton().parameters.count(name) == 0)
   {
-    throw std::invalid_argument("CMD::SetPassed(): parameter " + name +
+    throw std::invalid_argument("IO::SetPassed(): parameter " + name +
         " not known!");
   }
 
@@ -200,7 +200,7 @@ void CMD::SetPassed(const std::string& name)
 }
 
 // Store settings.
-void CMD::StoreSettings(const std::string& name)
+void IO::StoreSettings(const std::string& name)
 {
   // Take all of the parameters and put them in the map.  Clear anything old
   // first.
@@ -212,7 +212,7 @@ void CMD::StoreSettings(const std::string& name)
 }
 
 // Restore settings.
-void CMD::RestoreSettings(const std::string& name, const bool fatal)
+void IO::RestoreSettings(const std::string& name, const bool fatal)
 {
   if (GetSingleton().storageMap.count(name) == 0 && fatal)
   {
@@ -233,7 +233,7 @@ void CMD::RestoreSettings(const std::string& name, const bool fatal)
 }
 
 // Clear settings.
-void CMD::ClearSettings()
+void IO::ClearSettings()
 {
   // Check for any parameters we need to keep.
   std::map<std::string, util::ParamData> persistent;

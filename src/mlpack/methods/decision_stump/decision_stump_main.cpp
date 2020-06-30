@@ -132,16 +132,16 @@ static void mlpackMain()
 
   // We must either load a model, or train a new stump.
   DSModel* model;
-  if (CMD::HasParam("training"))
+  if (IO::HasParam("training"))
   {
     model = new DSModel();
-    mat trainingData = std::move(CMD::GetParam<mat>("training"));
+    mat trainingData = std::move(IO::GetParam<mat>("training"));
 
     // Load labels, if necessary.
     Row<size_t> labelsIn;
-    if (CMD::HasParam("labels"))
+    if (IO::HasParam("labels"))
     {
-      labelsIn = std::move(CMD::GetParam<Row<size_t>>("labels"));
+      labelsIn = std::move(IO::GetParam<Row<size_t>>("labels"));
     }
     else
     {
@@ -158,7 +158,7 @@ static void mlpackMain()
     Row<size_t> labels;
     data::NormalizeLabels(labelsIn, labels, model->mappings);
 
-    const size_t bucketSize = CMD::GetParam<int>("bucket_size");
+    const size_t bucketSize = IO::GetParam<int>("bucket_size");
     const size_t classes = labels.max() + 1;
 
     Timer::Start("training");
@@ -167,14 +167,14 @@ static void mlpackMain()
   }
   else
   {
-    model = CMD::GetParam<DSModel*>("input_model");
+    model = IO::GetParam<DSModel*>("input_model");
   }
 
   // Now, do we need to do any testing?
-  if (CMD::HasParam("test"))
+  if (IO::HasParam("test"))
   {
     // Load the test file.
-    mat testingData = std::move(CMD::GetParam<arma::mat>("test"));
+    mat testingData = std::move(IO::GetParam<arma::mat>("test"));
 
     if (testingData.n_rows <= model->stump.SplitDimension())
       Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
@@ -187,16 +187,16 @@ static void mlpackMain()
     Timer::Stop("testing");
 
     // Denormalize predicted labels, if we want to save them.
-    if (CMD::HasParam("predictions"))
+    if (IO::HasParam("predictions"))
     {
       Row<size_t> actualLabels;
       data::RevertLabels(predictedLabels, model->mappings, actualLabels);
 
       // Save the predicted labels as output.
-      CMD::GetParam<Row<size_t>>("predictions") = std::move(actualLabels);
+      IO::GetParam<Row<size_t>>("predictions") = std::move(actualLabels);
     }
   }
 
   // Save the model, if desired.
-  CMD::GetParam<DSModel*>("output_model") = model;
+  IO::GetParam<DSModel*>("output_model") = model;
 }

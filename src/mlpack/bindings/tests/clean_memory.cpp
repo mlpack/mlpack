@@ -2,7 +2,7 @@
  * @file bindings/tests/clean_memory.cpp
  * @author Ryan Curtin
  *
- * Delete any pointers held by the CMD object.
+ * Delete any pointers held by the IO object.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,7 +18,7 @@ namespace bindings {
 namespace tests {
 
 /**
- * Delete any pointers held by the CMD object.
+ * Delete any pointers held by the IO object.
  */
 void CleanMemory()
 {
@@ -26,13 +26,13 @@ void CleanMemory()
   // same pointer twice, so we have to be careful to not delete it multiple
   // times.
   std::unordered_map<void*, const util::ParamData*> memoryAddresses;
-  auto it = CMD::Parameters().begin();
-  while (it != CMD::Parameters().end())
+  auto it = IO::Parameters().begin();
+  while (it != IO::Parameters().end())
   {
     const util::ParamData& data = it->second;
 
     void* result;
-    CMD::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
+    IO::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
         NULL, (void*) &result);
     if (result != NULL && memoryAddresses.count(result) == 0)
       memoryAddresses[result] = &data;
@@ -47,7 +47,7 @@ void CleanMemory()
   {
     const util::ParamData& data = *(it2->second);
 
-    CMD::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
+    IO::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
         NULL, NULL);
 
     ++it2;

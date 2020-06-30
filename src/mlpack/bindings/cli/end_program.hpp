@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CMD_END_PROGRAM_HPP
-#define MLPACK_BINDINGS_CMD_END_PROGRAM_HPP
+#ifndef MLPACK_BINDINGS_IO_END_PROGRAM_HPP
+#define MLPACK_BINDINGS_IO_END_PROGRAM_HPP
 
 #include <mlpack/core/util/cli.hpp>
 
@@ -25,19 +25,19 @@ namespace cmd {
  */
 inline void EndProgram()
 {
-  // Stop the CMD timers.
-  CMD::GetSingleton().timer.StopAllTimers();
+  // Stop the IO timers.
+  IO::GetSingleton().timer.StopAllTimers();
 
   // Print any output.
-  std::map<std::string, util::ParamData>& parameters = CMD::Parameters();
+  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
   for (auto it : parameters)
   {
     util::ParamData& d = it.second;
     if (!d.input)
-      CMD::GetSingleton().functionMap[d.tname]["OutputParam"](d, NULL, NULL);
+      IO::GetSingleton().functionMap[d.tname]["OutputParam"](d, NULL, NULL);
   }
 
-  if (CMD::HasParam("verbose"))
+  if (IO::HasParam("verbose"))
   {
     Log::Info << std::endl << "Execution parameters:" << std::endl;
 
@@ -48,21 +48,21 @@ inline void EndProgram()
       // We can handle strings, ints, bools, doubles.
       util::ParamData& data = it.second;
       std::string cliName;
-      CMD::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
+      IO::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
           NULL, (void*) &cliName);
       Log::Info << "  " << cliName << ": ";
 
       std::string printableParam;
-      CMD::GetSingleton().functionMap[data.tname]["GetPrintableParam"](data,
+      IO::GetSingleton().functionMap[data.tname]["GetPrintableParam"](data,
           NULL, (void*) &printableParam);
       Log::Info << printableParam << std::endl;
     }
 
     Log::Info << "Program timers:" << std::endl;
-    for (auto it2 : CMD::GetSingleton().timer.GetAllTimers())
+    for (auto it2 : IO::GetSingleton().timer.GetAllTimers())
     {
       Log::Info << "  " << it2.first << ": ";
-      CMD::GetSingleton().timer.PrintTimer(it2.first);
+      IO::GetSingleton().timer.PrintTimer(it2.first);
     }
   }
 
@@ -75,7 +75,7 @@ inline void EndProgram()
     util::ParamData& data = it.second;
 
     void* result;
-    CMD::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
+    IO::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
         NULL, (void*) &result);
     if (result != NULL && memoryAddresses.count(result) == 0)
       memoryAddresses[result] = &data;
@@ -88,7 +88,7 @@ inline void EndProgram()
   {
     util::ParamData& data = *(it2->second);
 
-    CMD::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
+    IO::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
         NULL, NULL);
 
     ++it2;

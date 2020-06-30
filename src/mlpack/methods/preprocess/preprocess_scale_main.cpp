@@ -104,12 +104,12 @@ PARAM_MODEL_OUT(ScalingModel, "output_model", "Output scaling model.", "M");
 static void mlpackMain()
 {
   // Parse command line options.
-  const std::string scalerMethod = CMD::GetParam<string>("scaler_method");
+  const std::string scalerMethod = IO::GetParam<string>("scaler_method");
 
-  if (CMD::GetParam<int>("seed") == 0)
+  if (IO::GetParam<int>("seed") == 0)
     mlpack::math::RandomSeed(std::time(NULL));
   else
-    mlpack::math::RandomSeed((size_t) CMD::GetParam<int>("seed"));
+    mlpack::math::RandomSeed((size_t) IO::GetParam<int>("seed"));
 
   // Make sure the user specified output filenames.
   RequireAtLeastOnePassed({ "output", "output_model"}, false,
@@ -120,18 +120,18 @@ static void mlpackMain()
     "zca_whitening" }, true, "unknown scaler type");
 
   // Load the data.
-  arma::mat& input = CMD::GetParam<arma::mat>("input");
+  arma::mat& input = IO::GetParam<arma::mat>("input");
   arma::mat output;
   ScalingModel* m;
   Timer::Start("feature_scaling");
-  if (CMD::HasParam("input_model"))
+  if (IO::HasParam("input_model"))
   {
-    m = CMD::GetParam<ScalingModel*>("input_model");
+    m = IO::GetParam<ScalingModel*>("input_model");
   }
   else
   {
-    m = new ScalingModel(CMD::GetParam<int>("min_value"),
-        CMD::GetParam<int>("max_value"), CMD::GetParam<double>("epsilon"));
+    m = new ScalingModel(IO::GetParam<int>("min_value"),
+        IO::GetParam<int>("max_value"), IO::GetParam<double>("epsilon"));
 
     if (scalerMethod == "standard_scaler")
     {
@@ -171,13 +171,13 @@ static void mlpackMain()
     }
   }
 
-  if (!CMD::HasParam("inverse_scaling"))
+  if (!IO::HasParam("inverse_scaling"))
   {
     m->Transform(input, output);
   }
   else
   {
-    if (!CMD::HasParam("input_model"))
+    if (!IO::HasParam("input_model"))
     {
       delete m;
       throw std::runtime_error("Please provide a saved model.");
@@ -186,9 +186,9 @@ static void mlpackMain()
   }
 
   // Save the output.
-  if (CMD::HasParam("output"))
-    CMD::GetParam<arma::mat>("output") = std::move(output);
+  if (IO::HasParam("output"))
+    IO::GetParam<arma::mat>("output") = std::move(output);
   Timer::Stop("feature_scaling");
 
-  CMD::GetParam<ScalingModel*>("output_model") = m;
+  IO::GetParam<ScalingModel*>("output_model") = m;
 }

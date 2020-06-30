@@ -31,20 +31,20 @@ struct GmmProbabilityTestFixture
   GmmProbabilityTestFixture()
   {
     // Cache in the options for this program.
-    CMD::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~GmmProbabilityTestFixture()
   {
     // Clear the settings.
-    CMD::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
 void ResetGmmProbabilitySetting()
 {
-  CMD::ClearSettings();
-  CMD::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 }
 
 BOOST_FIXTURE_TEST_SUITE(GmmProbabilityMainTest, GmmProbabilityTestFixture);
@@ -64,8 +64,8 @@ BOOST_AUTO_TEST_CASE(GmmProbabilityDimensionality)
 
   mlpackMain();
 
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output").n_cols, 5);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 5);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

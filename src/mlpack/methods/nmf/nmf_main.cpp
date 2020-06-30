@@ -105,13 +105,13 @@ void LoadInitialWH(const bool bindingTransposed, arma::mat& w, arma::mat& h)
   // from amf.Apply() as H, and vice versa.
   if (bindingTransposed)
   {
-    w = CMD::GetParam<arma::mat>("initial_h");
-    h = CMD::GetParam<arma::mat>("initial_w");
+    w = IO::GetParam<arma::mat>("initial_h");
+    h = IO::GetParam<arma::mat>("initial_w");
   }
   else
   {
-    h = CMD::GetParam<arma::mat>("initial_h");
-    w = CMD::GetParam<arma::mat>("initial_w");
+    h = IO::GetParam<arma::mat>("initial_h");
+    w = IO::GetParam<arma::mat>("initial_w");
   }
 }
 
@@ -120,13 +120,13 @@ void SaveWH(const bool bindingTransposed, arma::mat&& w, arma::mat&& h)
   // The same transposition applies when saving.
   if (bindingTransposed)
   {
-    CMD::GetParam<arma::mat>("w") = std::move(h);
-    CMD::GetParam<arma::mat>("h") = std::move(w);
+    IO::GetParam<arma::mat>("w") = std::move(h);
+    IO::GetParam<arma::mat>("h") = std::move(w);
   }
   else
   {
-    CMD::GetParam<arma::mat>("h") = std::move(h);
-    CMD::GetParam<arma::mat>("w") = std::move(w);
+    IO::GetParam<arma::mat>("h") = std::move(h);
+    IO::GetParam<arma::mat>("w") = std::move(w);
   }
 }
 
@@ -136,8 +136,8 @@ void ApplyFactorization(const arma::mat& V,
                         arma::mat& W,
                         arma::mat& H)
 {
-  const size_t maxIterations = CMD::GetParam<int>("max_iterations");
-  const double minResidue = CMD::GetParam<double>("min_residue");
+  const size_t maxIterations = IO::GetParam<int>("max_iterations");
+  const double minResidue = IO::GetParam<double>("min_residue");
 
   SimpleResidueTermination srt(minResidue, maxIterations);
 
@@ -145,7 +145,7 @@ void ApplyFactorization(const arma::mat& V,
   // BINDING_MATRIX_TRANSPOSED macro, which will be 'true' or 'false'.
   arma::mat initialW, initialH;
   LoadInitialWH(BINDING_MATRIX_TRANSPOSED, initialW, initialH);
-  if (CMD::HasParam("initial_w") && CMD::HasParam("initial_h"))
+  if (IO::HasParam("initial_w") && IO::HasParam("initial_h"))
   {
     // Initialize W and H with given matrices
     GivenInitialization ginit = GivenInitialization(initialW, initialH);
@@ -154,7 +154,7 @@ void ApplyFactorization(const arma::mat& V,
         UpdateRuleType> amf(srt, ginit);
     amf.Apply(V, r, W, H);
   }
-  else if (CMD::HasParam("initial_w"))
+  else if (IO::HasParam("initial_w"))
   {
     // Merge GivenInitialization and RandomInitialization rules
     // to initialize W with the given matrix, and H with random noise
@@ -168,7 +168,7 @@ void ApplyFactorization(const arma::mat& V,
         UpdateRuleType> amf(srt, minit);
     amf.Apply(V, r, W, H);
   }
-  else if (CMD::HasParam("initial_h"))
+  else if (IO::HasParam("initial_h"))
   {
     // Merge GivenInitialization and RandomInitialization rules
     // to initialize H with the given matrix, and W with random noise
@@ -195,14 +195,14 @@ void ApplyFactorization(const arma::mat& V,
 static void mlpackMain()
 {
   // Initialize random seed.
-  if (CMD::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CMD::GetParam<int>("seed"));
+  if (IO::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) IO::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
   // Gather parameters.
-  const size_t r = CMD::GetParam<int>("rank");
-  const string updateRules = CMD::GetParam<string>("update_rules");
+  const size_t r = IO::GetParam<int>("rank");
+  const string updateRules = IO::GetParam<string>("update_rules");
 
   // Validate parameters.
   RequireParamValue<int>("rank", [](int x) { return x > 0; }, true,
@@ -214,7 +214,7 @@ static void mlpackMain()
 
   RequireAtLeastOnePassed({ "h", "w" }, false, "no output will be saved");
 
-  arma::mat V = std::move(CMD::GetParam<arma::mat>("input"));
+  arma::mat V = std::move(IO::GetParam<arma::mat>("input"));
 
   arma::mat W;
   arma::mat H;

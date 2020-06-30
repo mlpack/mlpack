@@ -34,14 +34,14 @@ struct HMMLoglikTestFixture
   HMMLoglikTestFixture()
   {
     // Cache in the options for this program.
-    CMD::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~HMMLoglikTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CMD::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(HMMLoglikOutputNegativeTest)
 
   mlpackMain();
 
-  double loglik = CMD::GetParam<double>("log_likelihood");
+  double loglik = IO::GetParam<double>("log_likelihood");
 
   // Since the log of a probability <= 0 ...
   BOOST_REQUIRE(loglik <= 0);

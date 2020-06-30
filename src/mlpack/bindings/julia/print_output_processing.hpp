@@ -19,7 +19,7 @@ namespace bindings {
 namespace julia {
 
 /**
- * Print the output processing (basically calling CMD::GetParam<>()) for a
+ * Print the output processing (basically calling IO::GetParam<>()) for a
  * non-serializable type.
  */
 template<typename T>
@@ -64,7 +64,7 @@ void PrintOutputProcessing(
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
 
 /**
- * Print the output processing (basically calling CMD::GetParam<>()) for a type.
+ * Print the output processing (basically calling IO::GetParam<>()) for a type.
  */
 template<typename T>
 void PrintOutputProcessing(const util::ParamData& d,

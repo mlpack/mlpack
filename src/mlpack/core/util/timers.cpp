@@ -27,7 +27,7 @@ using namespace chrono;
  */
 void Timer::Start(const string& name)
 {
-  CMD::GetSingleton().timer.StartTimer(name, this_thread::get_id());
+  IO::GetSingleton().timer.StartTimer(name, this_thread::get_id());
 }
 
 /**
@@ -35,7 +35,7 @@ void Timer::Start(const string& name)
  */
 void Timer::Stop(const string& name)
 {
-  CMD::GetSingleton().timer.StopTimer(name, this_thread::get_id());
+  IO::GetSingleton().timer.StopTimer(name, this_thread::get_id());
 }
 
 /**
@@ -43,25 +43,25 @@ void Timer::Stop(const string& name)
  */
 microseconds Timer::Get(const string& name)
 {
-  return CMD::GetSingleton().timer.GetTimer(name);
+  return IO::GetSingleton().timer.GetTimer(name);
 }
 
 // Enable timing.
 void Timer::EnableTiming()
 {
-  CMD::GetSingleton().timer.Enabled() = true;
+  IO::GetSingleton().timer.Enabled() = true;
 }
 
 // Disable timing.
 void Timer::DisableTiming()
 {
-  CMD::GetSingleton().timer.Enabled() = false;
+  IO::GetSingleton().timer.Enabled() = false;
 }
 
 // Reset all timers.  Save state of enabled.
 void Timer::ResetAll()
 {
-  CMD::GetSingleton().timer.Reset();
+  IO::GetSingleton().timer.Reset();
 }
 
 // Reset a Timers object.

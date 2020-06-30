@@ -15,7 +15,7 @@
 #include <mlpack/prereqs.hpp>
 
 /**
- * Given the current settings of CMD, print the header (which will be the
+ * Given the current settings of IO, print the header (which will be the
  * navigation tab) for the binding types that are registered for these options.
  *
  * Output is printed to stdout.
@@ -24,7 +24,7 @@ void PrintHeaders(const std::string& bindingName,
                   const std::vector<std::string>& languages);
 
 /**
- * Given the current settings of CMD, print Markdown documentation for the
+ * Given the current settings of IO, print Markdown documentation for the
  * binding types that are registered for these options.
  *
  * Output is printed to stdout.

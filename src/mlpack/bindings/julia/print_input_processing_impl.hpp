@@ -20,7 +20,7 @@ namespace bindings {
 namespace julia {
 
 /**
- * Print the input processing (basically calling CMD::GetParam<>()) for a
+ * Print the input processing (basically calling IO::GetParam<>()) for a
  * non-serializable type.
  */
 template<typename T>
@@ -34,14 +34,14 @@ void PrintInputProcessing(
   // "type" is a reserved keyword or function.
   const std::string juliaName = (d.name == "type") ? "type_" : d.name;
 
-  // Here we can just call CMDSetParam() directly; we don't need a separate
+  // Here we can just call IOSetParam() directly; we don't need a separate
   // overload.
   if (d.required)
   {
     // This gives us code like the following:
     //
-    // CMDSetParam("<param_name>", <paramName>)
-    std::cout << "  CMDSetParam(\"" << d.name << "\", " << juliaName << ")"
+    // IOSetParam("<param_name>", <paramName>)
+    std::cout << "  IOSetParam(\"" << d.name << "\", " << juliaName << ")"
         << std::endl;
   }
   else
@@ -49,10 +49,10 @@ void PrintInputProcessing(
     // This gives us code like the following:
     //
     // if !ismissing(<param_name>)
-    //   CMDSetParam("<param_name>", convert(<type>, <param_name>))
+    //   IOSetParam("<param_name>", convert(<type>, <param_name>))
     // end
     std::cout << "  if !ismissing(" << juliaName << ")" << std::endl;
-    std::cout << "    CMDSetParam(\"" << d.name << "\", convert("
+    std::cout << "    IOSetParam(\"" << d.name << "\", convert("
         << GetJuliaType<T>(d) << ", " << juliaName << "))" << std::endl;
     std::cout << "  end" << std::endl;
   }
@@ -101,8 +101,8 @@ void PrintInputProcessing(
     extra = ", points_are_rows";
   }
 
-  // Now print the CMDSetParam call.
-  std::cout << indent << "CMDSetParam" << uChar << matTypeModifier << "(\""
+  // Now print the IOSetParam call.
+  std::cout << indent << "IOSetParam" << uChar << matTypeModifier << "(\""
       << d.name << "\", " << juliaName << extra << ")" << std::endl;
 
   if (!d.required)
@@ -136,7 +136,7 @@ void PrintInputProcessing(
 
   std::string indent(extraIndent + 2, ' ');
   std::string type = StripType(d.cppType);
-  std::cout << indent << functionName << "_internal.CMDSetParam" << type
+  std::cout << indent << functionName << "_internal.IOSetParam" << type
       << "(\"" << d.name << "\", convert("
       << GetJuliaType<typename std::remove_pointer<T>::type>(d) << ", "
       << juliaName << "))" << std::endl;
@@ -148,7 +148,7 @@ void PrintInputProcessing(
 }
 
 /**
- * Print the input processing (basically calling CMD::GetParam<>()) for a
+ * Print the input processing (basically calling IO::GetParam<>()) for a
  * matrix with DatasetInfo type.
  */
 template<typename T>
@@ -161,14 +161,14 @@ void PrintInputProcessing(
   // "type" is a reserved keyword or function.
   const std::string juliaName = (d.name == "type") ? "type_" : d.name;
 
-  // Here we can just call CMDSetParam() directly; we don't need a separate
+  // Here we can just call IOSetParam() directly; we don't need a separate
   // overload.  But we do have to pass in points_are_rows.
   if (d.required)
   {
     // This gives us code like the following:
     //
-    // CMDSetParam("<param_name>", convert(<type>, <paramName>))
-    std::cout << "  CMDSetParam(\"" << d.name << "\", convert("
+    // IOSetParam("<param_name>", convert(<type>, <paramName>))
+    std::cout << "  IOSetParam(\"" << d.name << "\", convert("
         << GetJuliaType<T>(d) << ", " << juliaName << "), points_are_rows)"
         << std::endl;
   }
@@ -177,10 +177,10 @@ void PrintInputProcessing(
     // This gives us code like the following:
     //
     // if !ismissing(<param_name>)
-    //   CMDSetParam("<param_name>", convert(<type>, <param_name>))
+    //   IOSetParam("<param_name>", convert(<type>, <param_name>))
     // end
     std::cout << "  if !ismissing(" << juliaName << ")" << std::endl;
-    std::cout << "    CMDSetParam(\"" << d.name << "\", convert("
+    std::cout << "    IOSetParam(\"" << d.name << "\", convert("
         << GetJuliaType<T>(d) << ", " << juliaName << "), points_are_rows)"
         << std::endl;
     std::cout << "  end" << std::endl;

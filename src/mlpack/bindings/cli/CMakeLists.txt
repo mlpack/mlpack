@@ -59,7 +59,7 @@ if (BUILD_CLI_EXECUTABLES)
   # Make sure that we set BINDING_TYPE to cli so the command-line program is
   # compiled with the correct int main() call.
   set_target_properties(mlpack_${name} PROPERTIES COMPILE_FLAGS
-      -DBINDING_TYPE=BINDING_TYPE_CMD)
+      -DBINDING_TYPE=BINDING_TYPE_IO)
   install(TARGETS mlpack_${name} RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
   # If man documentation is being generated, make sure this is a dependency.

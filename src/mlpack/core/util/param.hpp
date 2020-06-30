@@ -49,7 +49,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * present in your program!  Therefore, use it in the main.cpp
  * (or corresponding executable) in your program.
  *
- * @see mlpack::CMD, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
+ * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
  * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
  * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),
  * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
@@ -61,7 +61,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *     how it can be used and what it should be used for.
  * @param DESC Long string describing what the program does and possibly a
  *     simple usage example.  Newlines should not be used here; this is taken
- *     care of by CMD (however, you can explicitly specify newlines to denote
+ *     care of by IO (however, you can explicitly specify newlines to denote
  *     new paragraphs).  You can also use printing macros like
  *     PRINT_PARAM_STRING(), PRINT_DATASET(), and others.
  * @param ... A set of SEE_ALSO() macros that are used for generating
@@ -82,7 +82,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::CMD, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -108,7 +108,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::CMD, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
 // Use a forward declaration of the class.
@@ -139,7 +139,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  *
- * @see mlpack::CMD, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -165,7 +165,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::CMD, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -195,7 +195,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  *
- * @see mlpack::CMD, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -222,7 +222,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::CMD, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -253,7 +253,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::CMD, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -324,7 +324,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 
 /**
  * Define a matrix output parameter.  When the program terminates, the matrix
- * will be saved to whatever it was set to by CMD::GetParam<arma::mat>(ID)
+ * will be saved to whatever it was set to by IO::GetParam<arma::mat>(ID)
  * during the program.  From the command-line, the user may specify the file in
  * which to save the output matrix using a string option that is the name of the
  * matrix parameter with "_file" appended.  So, for instance, if the name of the
@@ -418,7 +418,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * Define a transposed matrix output parameter.  This is useful when data is
  * stored in a row-major form instead of the usual column-major form.  When the
  * program terminates, the matrix will be saved to whatever it was set to by
- * CMD::GetParam<arma::mat>(ID) during the program.  From the command-line, the
+ * IO::GetParam<arma::mat>(ID) during the program.  From the command-line, the
  * user may specify the file in which to save the output matrix using a string
  * option that is the name of the matrix parameter with "_file" appended.  So,
  * for instance, if the name of the output matrix parameter was "mat", the user
@@ -509,7 +509,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 /**
  * Define an unsigned matrix output parameter (arma::Mat<size_t>).  When the
  * program terminates, the matrix will be saved to whatever it was set to by
- * CMD::GetParam<arma::Mat<size_t>>(ID) during the program.  From the
+ * IO::GetParam<arma::Mat<size_t>>(ID) during the program.  From the
  * command-line, the user may specify the file in which to save the output
  * matrix using a string option that is the name of the matrix parameter with
  * "_file" appended.  So, for instance, if the name of the output matrix
@@ -827,7 +827,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::CMD, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -860,7 +860,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::CMD, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -888,9 +888,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *
  * @code
  * DatasetInfo d = std::move(
- *     CMD::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<0>());
+ *     IO::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<0>());
  * arma::mat m = std::move(
- *     CMD::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<1>());
+ *     IO::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<1>());
  * @endcode
  *
  * @param ID Name of the parameter.
@@ -899,7 +899,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS One-character string representing the alias of the parameter.
  *
- * @see mlpack::CMD, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -987,7 +987,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * The model will be saved at the termination of the program.  If you use a
- * parameter of this type, you must call CMD::Destroy() at the end of your
+ * parameter of this type, you must call IO::Destroy() at the end of your
  * program.
  *
  * @param TYPE Type of the model to be saved.
@@ -1011,7 +1011,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::CMD, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1035,7 +1035,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::CMD, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1059,7 +1059,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::CMD, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1085,7 +1085,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::CMD, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global

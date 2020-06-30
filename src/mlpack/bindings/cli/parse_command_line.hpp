@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CMD_PARSE_COMMAND_LINE_HPP
-#define MLPACK_BINDINGS_CMD_PARSE_COMMAND_LINE_HPP
+#ifndef MLPACK_BINDINGS_IO_PARSE_COMMAND_LINE_HPP
+#define MLPACK_BINDINGS_IO_PARSE_COMMAND_LINE_HPP
 
 #include <mlpack/core.hpp>
 #include "print_help.hpp"
@@ -30,7 +30,7 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 PARAM_FLAG("version", "Display the version of mlpack.", "V");
 
 /**
- * Parse the command line, setting all of the options inside of the CMD object
+ * Parse the command line, setting all of the options inside of the IO object
  * to their appropriate given values.
  */
 void ParseCommandLine(int argc, char** argv)
@@ -40,18 +40,18 @@ void ParseCommandLine(int argc, char** argv)
   app.set_help_flag();
 
   // Go through list of options in order to add them.
-  std::map<std::string, util::ParamData>& parameters = CMD::Parameters();
+  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
   using ItType = std::map<std::string, util::ParamData>::iterator;
 
   for (ItType it = parameters.begin(); it != parameters.end(); ++it)
   {
     // Add the parameter to desc.
     util::ParamData& d = it->second;
-    CMD::GetSingleton().functionMap[d.tname]["AddToPO"](d, NULL, (void*) &app);
+    IO::GetSingleton().functionMap[d.tname]["AddToPO"](d, NULL, (void*) &app);
   }
 
   // Mark that we did parsing.
-  CMD::GetSingleton().didParse = true;
+  IO::GetSingleton().didParse = true;
 
   // Parse the command line, then place the values in the right place.
   try
@@ -67,15 +67,15 @@ void ParseCommandLine(int argc, char** argv)
   // --info), handle those.
 
   // --version is prioritized over --help.
-  if (CMD::HasParam("version"))
+  if (IO::HasParam("version"))
   {
-    std::cout << CMD::GetSingleton().ProgramName() << ": part of "
+    std::cout << IO::GetSingleton().ProgramName() << ": part of "
         << util::GetVersion() << "." << std::endl;
     exit(0); // Don't do anything else.
   }
 
   // Default help message.
-  if (CMD::HasParam("help"))
+  if (IO::HasParam("help"))
   {
     Log::Info.ignoreInput = false;
     PrintHelp();
@@ -83,10 +83,10 @@ void ParseCommandLine(int argc, char** argv)
   }
 
   // Info on a specific parameter.
-  if (CMD::HasParam("info"))
+  if (IO::HasParam("info"))
   {
     Log::Info.ignoreInput = false;
-    std::string str = CMD::GetParam<std::string>("info");
+    std::string str = IO::GetParam<std::string>("info");
 
     // The info node should always be there, but the user may not have specified
     // anything.
@@ -105,7 +105,7 @@ void ParseCommandLine(int argc, char** argv)
   // if we have not compiled in debugging mode.
   Log::Debug << "Compiled with debugging symbols." << std::endl;
 
-  if (CMD::HasParam("verbose"))
+  if (IO::HasParam("verbose"))
   {
     // Give [INFO ] output.
     Log::Info.ignoreInput = false;
@@ -119,7 +119,7 @@ void ParseCommandLine(int argc, char** argv)
     if (d.required)
     {
       const std::string cliName;
-      CMD::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
+      IO::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
           (void*) &cliName);
 
       if (!app.count(cliName))

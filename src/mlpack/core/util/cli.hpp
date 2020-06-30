@@ -2,7 +2,7 @@
  * @file core/util/cli.hpp
  * @author Matthew Amidon
  *
- * This file implements the CMD subsystem which is a global singleton
+ * This file implements the IO subsystem which is a global singleton
  * intended to handle parameter passing for different binding types.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_UTIL_CMD_HPP
-#define MLPACK_CORE_UTIL_CMD_HPP
+#ifndef MLPACK_CORE_UTIL_IO_HPP
+#define MLPACK_CORE_UTIL_IO_HPP
 
 #include <iostream>
 #include <list>
@@ -44,12 +44,12 @@ class ProgramDoc;
  * @brief Parses the command line for parameters and holds user-specified
  *     parameters.
  *
- * The CMD class is a subsystem by which parameters for machine learning methods
+ * The IO class is a subsystem by which parameters for machine learning methods
  * can be specified and accessed.  In conjunction with the macros PARAM_DOUBLE,
  * PARAM_INT, PARAM_STRING, PARAM_FLAG, and others, this class aims to make user
  * configurability of mlpack methods very easy.  There are only three methods in
- * CMD that a user should need:  CMD::ParseCommandLine(), CMD::GetParam(), and
- * CMD::HasParam() (in addition to the PARAM_*() macros).
+ * IO that a user should need:  IO::ParseCommandLine(), IO::GetParam(), and
+ * IO::HasParam() (in addition to the PARAM_*() macros).
  *
  * @section addparam Adding parameters to a program
  *
@@ -113,32 +113,32 @@ class ProgramDoc;
  * program does and how to use it.  If relevant, paper citations should be
  * included.
  *
- * @section parsecli Parsing the command line with CMD
+ * @section parsecli Parsing the command line with IO
  *
- * To have CMD parse the command line at the beginning of code execution, only a
+ * To have IO parse the command line at the beginning of code execution, only a
  * call to ParseCommandLine() is necessary:
  *
  * @code
  * int main(int argc, char** argv)
  * {
- *   CMD::ParseCommandLine(argc, argv);
+ *   IO::ParseCommandLine(argc, argv);
  *
  *   ...
  * }
  * @endcode
  *
- * CMD provides --help and --info options which give nicely formatted
+ * IO provides --help and --info options which give nicely formatted
  * documentation of each option; the documentation is generated from the DESC
  * arguments in the PARAM_*() macros.
  *
- * @section getparam Getting parameters with CMD
+ * @section getparam Getting parameters with IO
  *
  * When the parameters have been defined, the next important thing is how to
  * access them.  For this, the HasParam() and GetParam() methods are
  * used.  For instance, to see if the user passed the flag (boolean) "naive":
  *
  * @code
- * if (CMD::HasParam("naive"))
+ * if (IO::HasParam("naive"))
  * {
  *   Log::Info << "Naive has been passed!" << std::endl;
  * }
@@ -147,7 +147,7 @@ class ProgramDoc;
  * To get the value of a parameter, such as a string, use GetParam:
  *
  * @code
- * const std::string filename = CMD::GetParam<std::string>("filename");
+ * const std::string filename = IO::GetParam<std::string>("filename");
  * @endcode
  *
  * @note
@@ -165,7 +165,7 @@ class ProgramDoc;
  * collisions are still possible, and they produce bizarre error messages. See
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
-class CMD
+class IO
 {
  public:
   /**
@@ -228,7 +228,7 @@ class CMD
                               const std::string& inputParamName);
 
   /**
-   * Retrieve the singleton.  As an end user, if you are just using the CMD
+   * Retrieve the singleton.  As an end user, if you are just using the IO
    * object, you should not need to use this function---the other static
    * functions should be sufficient.
    *
@@ -238,7 +238,7 @@ class CMD
    *
    * @return The singleton instance for use in the static methods.
    */
-  static CMD& GetSingleton();
+  static IO& GetSingleton();
 
   /**
    * Registers a ProgramDoc object, which contains documentation about the
@@ -249,9 +249,9 @@ class CMD
    */
   static void RegisterProgramDoc(util::ProgramDoc* doc);
 
-  //! Return a modifiable list of parameters that CMD knows about.
+  //! Return a modifiable list of parameters that IO knows about.
   static std::map<std::string, util::ParamData>& Parameters();
-  //! Return a modifiable list of aliases that CMD knows about.
+  //! Return a modifiable list of aliases that IO knows about.
   static std::map<char, std::string>& Aliases();
 
   //! Get the program name as set by the PROGRAM_INFO() macro.
@@ -309,7 +309,7 @@ class CMD
       std::map<char, std::string>, FunctionMapType>> storageMap;
 
  public:
-  //! True, if CMD was used to parse command line options.
+  //! True, if IO was used to parse command line options.
   bool didParse;
 
   //! Holds the name of the program for --version.  This is the true program
@@ -329,12 +329,12 @@ class CMD
   /**
    * Make the constructor private, to preclude unauthorized instances.
    */
-  CMD();
+  IO();
 
   //! Private copy constructor; we don't want copies floating around.
-  CMD(const CMD& other);
+  IO(const IO& other);
   //! Private copy operator; we don't want copies floating around.
-  CMD& operator=(const CMD& other);
+  IO& operator=(const IO& other);
 };
 
 } // namespace mlpack

@@ -1,29 +1,29 @@
 module cli
 
-export CMDRestoreSettings
-export CMDSetParam
-export CMDSetParamMat
-export CMDSetParamUMat
-export CMDSetParamRow
-export CMDSetParamCol
-export CMDSetParamURow
-export CMDSetParamUCol
-export CMDGetParamBool
-export CMDGetParamInt
-export CMDGetParamDouble
-export CMDGetParamString
-export CMDGetParamVectorStr
-export CMDGetParamVectorInt
-export CMDGetParamMat
-export CMDGetParamUMat
-export CMDGetParamCol
-export CMDGetParamRow
-export CMDGetParamUCol
-export CMDGetParamURow
-export CMDGetParamMatWithInfo
-export CMDEnableVerbose
-export CMDDisableVerbose
-export CMDSetPassed
+export IORestoreSettings
+export IOSetParam
+export IOSetParamMat
+export IOSetParamUMat
+export IOSetParamRow
+export IOSetParamCol
+export IOSetParamURow
+export IOSetParamUCol
+export IOGetParamBool
+export IOGetParamInt
+export IOGetParamDouble
+export IOGetParamString
+export IOGetParamVectorStr
+export IOGetParamVectorInt
+export IOGetParamMat
+export IOGetParamUMat
+export IOGetParamCol
+export IOGetParamRow
+export IOGetParamUCol
+export IOGetParamURow
+export IOGetParamMatWithInfo
+export IOEnableVerbose
+export IODisableVerbose
+export IOSetPassed
 
 const library = joinpath(@__DIR__, "libmlpack_julia_util${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
@@ -61,40 +61,40 @@ function to_vector(input, T::Type)
   end
 end
 
-function CMDRestoreSettings(programName::String)
-  ccall((:CMD_RestoreSettings, library), Nothing, (Cstring,), programName);
+function IORestoreSettings(programName::String)
+  ccall((:IO_RestoreSettings, library), Nothing, (Cstring,), programName);
 end
 
-function CMDSetParam(paramName::String, paramValue::Int)
-  ccall((:CMD_SetParamInt, library), Nothing, (Cstring, Cint), paramName,
+function IOSetParam(paramName::String, paramValue::Int)
+  ccall((:IO_SetParamInt, library), Nothing, (Cstring, Cint), paramName,
       Cint(paramValue));
 end
 
-function CMDSetParam(paramName::String, paramValue::Float64)
-  ccall((:CMD_SetParamDouble, library), Nothing, (Cstring, Float64), paramName,
+function IOSetParam(paramName::String, paramValue::Float64)
+  ccall((:IO_SetParamDouble, library), Nothing, (Cstring, Float64), paramName,
       paramValue);
 end
 
-function CMDSetParam(paramName::String, paramValue::Bool)
-  ccall((:CMD_SetParamBool, library), Nothing, (Cstring, Bool), paramName,
+function IOSetParam(paramName::String, paramValue::Bool)
+  ccall((:IO_SetParamBool, library), Nothing, (Cstring, Bool), paramName,
       paramValue);
 end
 
-function CMDSetParam(paramName::String, paramValue::String)
-  ccall((:CMD_SetParamString, library), Nothing, (Cstring, Cstring), paramName,
+function IOSetParam(paramName::String, paramValue::String)
+  ccall((:IO_SetParamString, library), Nothing, (Cstring, Cstring), paramName,
       paramValue);
 end
 
-function CMDSetParamMat(paramName::String,
+function IOSetParamMat(paramName::String,
                         paramValue,
                         pointsAsRows::Bool)
   paramMat = to_matrix(paramValue, Float64)
-  ccall((:CMD_SetParamMat, library), Nothing, (Cstring, Ptr{Float64}, Csize_t,
+  ccall((:IO_SetParamMat, library), Nothing, (Cstring, Ptr{Float64}, Csize_t,
       Csize_t, Bool), paramName, Base.pointer(paramMat), size(paramMat, 1),
       size(paramMat, 2), pointsAsRows);
 end
 
-function CMDSetParamUMat(paramName::String,
+function IOSetParamUMat(paramName::String,
                          paramValue,
                          pointsAsRows::Bool)
   paramMat = to_matrix(paramValue, Int)
@@ -106,56 +106,56 @@ function CMDSetParamUMat(paramName::String,
   end
 
   m = convert(Array{Csize_t, 2}, paramMat .- 1)
-  ccall((:CMD_SetParamUMat, library), Nothing, (Cstring, Ptr{Csize_t}, Csize_t,
+  ccall((:IO_SetParamUMat, library), Nothing, (Cstring, Ptr{Csize_t}, Csize_t,
       Csize_t, Bool), paramName, Base.pointer(m), size(paramValue, 1),
       size(paramValue, 2), pointsAsRows);
 end
 
-function CMDSetParam(paramName::String,
+function IOSetParam(paramName::String,
                      vector::Vector{String})
   # For this we have to set the size of the vector then each string
   # sequentially.  I am not sure if this is fully necessary but I have some
   # reservations about Julia's support for passing arrays of strings correctly
   # as a const char**.
-  ccall((:CMD_SetParamVectorStrLen, library), Nothing, (Cstring, Csize_t),
+  ccall((:IO_SetParamVectorStrLen, library), Nothing, (Cstring, Csize_t),
       paramName, size(vector, 1));
   for i in 1:size(vector, 1)
-    ccall((:CMD_SetParamVectorStrStr, library), Nothing, (Cstring, Cstring,
+    ccall((:IO_SetParamVectorStrStr, library), Nothing, (Cstring, Cstring,
         Csize_t), paramName, vector[i], i .- 1);
   end
 end
 
-function CMDSetParam(paramName::String,
+function IOSetParam(paramName::String,
                      vector::Vector{Int})
   cint_vec = convert(Vector{Cint}, vector)
-  ccall((:CMD_SetParamVectorInt, library), Nothing, (Cstring, Ptr{Cint},
+  ccall((:IO_SetParamVectorInt, library), Nothing, (Cstring, Ptr{Cint},
       Csize_t), paramName, Base.pointer(cint_vec), size(cint_vec, 1));
 end
 
-function CMDSetParam(paramName::String,
+function IOSetParam(paramName::String,
                      matWithInfo::Tuple{Array{Bool, 1}, Array{Float64, 2}},
                      pointsAsRows::Bool)
-  ccall((:CMD_SetParamMatWithInfo, library), Nothing, (Cstring, Ptr{Bool},
+  ccall((:IO_SetParamMatWithInfo, library), Nothing, (Cstring, Ptr{Bool},
       Ptr{Float64}, Int, Int, Bool), paramName,
       Base.pointer(matWithInfo[1]), Base.pointer(matWithInfo[2]),
       size(matWithInfo[2], 1), size(matWithInfo[2], 2), pointsAsRows);
 end
 
-function CMDSetParamRow(paramName::String,
+function IOSetParamRow(paramName::String,
                         paramValue)
   paramVec = to_vector(paramValue, Float64)
-  ccall((:CMD_SetParamRow, library), Nothing, (Cstring, Ptr{Float64}, Csize_t),
+  ccall((:IO_SetParamRow, library), Nothing, (Cstring, Ptr{Float64}, Csize_t),
       paramName, Base.pointer(paramVec), size(paramVec, 1));
 end
 
-function CMDSetParamCol(paramName::String,
+function IOSetParamCol(paramName::String,
                         paramValue)
   paramVec = to_vector(paramValue, Float64)
-  ccall((:CMD_SetParamCol, library), Nothing, (Cstring, Ptr{Float64}, Csize_t),
+  ccall((:IO_SetParamCol, library), Nothing, (Cstring, Ptr{Float64}, Csize_t),
       paramName, Base.pointer(paramVec), size(paramVec, 1));
 end
 
-function CMDSetParamURow(paramName::String,
+function IOSetParamURow(paramName::String,
                          paramValue)
   paramVec = to_vector(paramValue, Int)
 
@@ -166,11 +166,11 @@ function CMDSetParamURow(paramName::String,
   end
   m = convert(Array{Csize_t, 1}, paramVec .- 1)
 
-  ccall((:CMD_SetParamURow, library), Nothing, (Cstring, Ptr{Csize_t}, Csize_t),
+  ccall((:IO_SetParamURow, library), Nothing, (Cstring, Ptr{Csize_t}, Csize_t),
       paramName, Base.pointer(m), size(paramValue, 1));
 end
 
-function CMDSetParamUCol(paramName::String,
+function IOSetParamUCol(paramName::String,
                          paramValue)
   paramVec = to_vector(paramValue, Int)
 
@@ -181,36 +181,36 @@ function CMDSetParamUCol(paramName::String,
   end
   m = convert(Array{Csize_t, 1}, paramValue .- 1)
 
-  ccall((:CMD_SetParamUCol, library), Nothing, (Cstring, Ptr{Csize_t}, Csize_t),
+  ccall((:IO_SetParamUCol, library), Nothing, (Cstring, Ptr{Csize_t}, Csize_t),
       paramName, Base.pointer(m), size(paramValue, 1));
 end
 
-function CMDGetParamBool(paramName::String)
-  return ccall((:CMD_GetParamBool, library), Bool, (Cstring,), paramName)
+function IOGetParamBool(paramName::String)
+  return ccall((:IO_GetParamBool, library), Bool, (Cstring,), paramName)
 end
 
-function CMDGetParamInt(paramName::String)
-  return Int(ccall((:CMD_GetParamInt, library), Cint, (Cstring,), paramName))
+function IOGetParamInt(paramName::String)
+  return Int(ccall((:IO_GetParamInt, library), Cint, (Cstring,), paramName))
 end
 
-function CMDGetParamDouble(paramName::String)
-  return ccall((:CMD_GetParamDouble, library), Float64, (Cstring,), paramName)
+function IOGetParamDouble(paramName::String)
+  return ccall((:IO_GetParamDouble, library), Float64, (Cstring,), paramName)
 end
 
-function CMDGetParamString(paramName::String)
-  return ccall((:CMD_GetParamString, library), Cstring, (Cstring,), paramName)
+function IOGetParamString(paramName::String)
+  return ccall((:IO_GetParamString, library), Cstring, (Cstring,), paramName)
 end
 
-function CMDGetParamVectorStr(paramName::String)
+function IOGetParamVectorStr(paramName::String)
   local size::Csize_t
   local ptr::Ptr{String}
 
   # Get the size of the vector, then each element.
-  size = ccall((:CMD_GetParamVectorStrLen, library), Csize_t, (Cstring,),
+  size = ccall((:IO_GetParamVectorStrLen, library), Csize_t, (Cstring,),
       paramName);
   out = Array{String, 1}()
   for i = 1:size
-    s = ccall((:CMD_GetParamVectorStrStr, library), Cstring, (Cstring, Csize_t),
+    s = ccall((:IO_GetParamVectorStrStr, library), Cstring, (Cstring, Csize_t),
         paramName, i .- 1)
     push!(out, Base.unsafe_string(s))
   end
@@ -218,31 +218,31 @@ function CMDGetParamVectorStr(paramName::String)
   return out
 end
 
-function CMDGetParamVectorInt(paramName::String)
+function IOGetParamVectorInt(paramName::String)
   local size::Csize_t
   local ptr::Ptr{Cint}
 
   # Get the size of the vector, then the pointer to it.  We will own the
   # pointer.
-  size = ccall((:CMD_GetParamVectorIntLen, library), Csize_t, (Cstring,),
+  size = ccall((:IO_GetParamVectorIntLen, library), Csize_t, (Cstring,),
       paramName);
-  ptr = ccall((:CMD_GetParamVectorIntPtr, library), Ptr{Cint}, (Cstring,),
+  ptr = ccall((:IO_GetParamVectorIntPtr, library), Ptr{Cint}, (Cstring,),
       paramName);
 
   return convert(Array{Int, 1}, Base.unsafe_wrap(Array{Cint, 1}, ptr, (size),
       own=true))
 end
 
-function CMDGetParamMat(paramName::String, pointsAsRows::Bool)
+function IOGetParamMat(paramName::String, pointsAsRows::Bool)
   # Can we return different return types?  For now let's restrict to a matrix to
   # make it easy...
   local ptr::Ptr{Float64}
   local rows::Csize_t, cols::Csize_t;
   # I suppose it would be possible to do this all in one call, but this seems
   # easy enough.
-  rows = ccall((:CMD_GetParamMatRows, library), Csize_t, (Cstring,), paramName);
-  cols = ccall((:CMD_GetParamMatCols, library), Csize_t, (Cstring,), paramName);
-  ptr = ccall((:CMD_GetParamMat, library), Ptr{Float64}, (Cstring,), paramName);
+  rows = ccall((:IO_GetParamMatRows, library), Csize_t, (Cstring,), paramName);
+  cols = ccall((:IO_GetParamMatCols, library), Csize_t, (Cstring,), paramName);
+  ptr = ccall((:IO_GetParamMat, library), Ptr{Float64}, (Cstring,), paramName);
 
   if pointsAsRows
     # In this case we have to transpose, unfortunately.
@@ -254,16 +254,16 @@ function CMDGetParamMat(paramName::String, pointsAsRows::Bool)
   end
 end
 
-function CMDGetParamUMat(paramName::String, pointsAsRows::Bool)
+function IOGetParamUMat(paramName::String, pointsAsRows::Bool)
   # Can we return different return types?  For now let's restrict to a matrix to
   # make it easy...
   local ptr::Ptr{Csize_t}
   local rows::Csize_t, cols::Csize_t;
   # I suppose it would be possible to do this all in one call, but this seems
   # easy enough.
-  rows = ccall((:CMD_GetParamUMatRows, library), Csize_t, (Cstring,), paramName);
-  cols = ccall((:CMD_GetParamUMatCols, library), Csize_t, (Cstring,), paramName);
-  ptr = ccall((:CMD_GetParamUMat, library), Ptr{Csize_t}, (Cstring,), paramName);
+  rows = ccall((:IO_GetParamUMatRows, library), Csize_t, (Cstring,), paramName);
+  cols = ccall((:IO_GetParamUMatCols, library), Csize_t, (Cstring,), paramName);
+  ptr = ccall((:IO_GetParamUMat, library), Ptr{Csize_t}, (Cstring,), paramName);
 
   if pointsAsRows
     # In this case we have to transpose, unfortunately.
@@ -276,61 +276,61 @@ function CMDGetParamUMat(paramName::String, pointsAsRows::Bool)
   end
 end
 
-function CMDGetParamCol(paramName::String)
+function IOGetParamCol(paramName::String)
   local ptr::Ptr{Float64};
   local rows::Csize_t;
 
-  rows = ccall((:CMD_GetParamColRows, library), Csize_t, (Cstring,), paramName);
-  ptr = ccall((:CMD_GetParamCol, library), Ptr{Float64}, (Cstring,), paramName);
+  rows = ccall((:IO_GetParamColRows, library), Csize_t, (Cstring,), paramName);
+  ptr = ccall((:IO_GetParamCol, library), Ptr{Float64}, (Cstring,), paramName);
 
   return Base.unsafe_wrap(Array{Float64, 1}, ptr, rows, own=true);
 end
 
-function CMDGetParamRow(paramName::String)
+function IOGetParamRow(paramName::String)
   local ptr::Ptr{Float64};
   local cols::Csize_t;
 
-  cols = ccall((:CMD_GetParamRowCols, library), Csize_t, (Cstring,), paramName);
-  ptr = ccall((:CMD_GetParamRow, library), Ptr{Float64}, (Cstring,), paramName);
+  cols = ccall((:IO_GetParamRowCols, library), Csize_t, (Cstring,), paramName);
+  ptr = ccall((:IO_GetParamRow, library), Ptr{Float64}, (Cstring,), paramName);
 
   return Base.unsafe_wrap(Array{Float64, 1}, ptr, cols, own=true);
 end
 
-function CMDGetParamUCol(paramName::String)
+function IOGetParamUCol(paramName::String)
   local ptr::Ptr{Csize_t};
   local rows::Csize_t;
 
-  rows = ccall((:CMD_GetParamUColRows, library), Csize_t, (Cstring,), paramName);
-  ptr = ccall((:CMD_GetParamUCol, library), Ptr{Csize_t}, (Cstring,), paramName);
+  rows = ccall((:IO_GetParamUColRows, library), Csize_t, (Cstring,), paramName);
+  ptr = ccall((:IO_GetParamUCol, library), Ptr{Csize_t}, (Cstring,), paramName);
 
   m = Base.unsafe_wrap(Array{Csize_t, 1}, ptr, rows, own=true);
   return convert(Array{Int, 1}, m .+ 1)
 end
 
-function CMDGetParamURow(paramName::String)
+function IOGetParamURow(paramName::String)
   local ptr::Ptr{Csize_t};
   local cols::Csize_t;
 
-  cols = ccall((:CMD_GetParamURowCols, library), Csize_t, (Cstring,), paramName);
-  ptr = ccall((:CMD_GetParamURow, library), Ptr{Csize_t}, (Cstring,), paramName);
+  cols = ccall((:IO_GetParamURowCols, library), Csize_t, (Cstring,), paramName);
+  ptr = ccall((:IO_GetParamURow, library), Ptr{Csize_t}, (Cstring,), paramName);
 
   m = Base.unsafe_wrap(Array{Csize_t, 1}, ptr, cols, own=true);
   return convert(Array{Int, 1}, m .+ 1)
 end
 
-function CMDGetParamMatWithInfo(paramName::String, pointsAsRows::Bool)
+function IOGetParamMatWithInfo(paramName::String, pointsAsRows::Bool)
   local ptrBool::Ptr{Bool};
   local ptrData::Ptr{Float64};
   local rows::Csize_t;
   local cols::Csize_t;
 
-  rows = ccall((:CMD_GetParamMatWithInfoRows, library), Csize_t, (Cstring,),
+  rows = ccall((:IO_GetParamMatWithInfoRows, library), Csize_t, (Cstring,),
       paramName);
-  cols = ccall((:CMD_GetParamMatWithInfoCols, library), Csize_t, (Cstring,),
+  cols = ccall((:IO_GetParamMatWithInfoCols, library), Csize_t, (Cstring,),
       paramName);
-  ptrBool = ccall((:CMD_GetParamMatWithInfoBoolPtr, library), Ptr{Bool},
+  ptrBool = ccall((:IO_GetParamMatWithInfoBoolPtr, library), Ptr{Bool},
       (Cstring,), paramName);
-  ptrMem = ccall((:CMD_GetParamMatWithInfoPtr, library), Ptr{Float64},
+  ptrMem = ccall((:IO_GetParamMatWithInfoPtr, library), Ptr{Float64},
       (Cstring,), paramName);
 
   types = Base.unsafe_wrap(Array{Bool, 1}, ptrBool, (rows), own=true)
@@ -345,16 +345,16 @@ function CMDGetParamMatWithInfo(paramName::String, pointsAsRows::Bool)
   end
 end
 
-function CMDEnableVerbose()
-  ccall((:CMD_EnableVerbose, library), Nothing, ());
+function IOEnableVerbose()
+  ccall((:IO_EnableVerbose, library), Nothing, ());
 end
 
-function CMDDisableVerbose()
-  ccall((:CMD_DisableVerbose, library), Nothing, ());
+function IODisableVerbose()
+  ccall((:IO_DisableVerbose, library), Nothing, ());
 end
 
-function CMDSetPassed(paramName::String)
-  ccall((:CMD_SetPassed, library), Nothing, (Cstring,), paramName);
+function IOSetPassed(paramName::String)
+  ccall((:IO_SetPassed, library), Nothing, (Cstring,), paramName);
 end
 
 end # module cli

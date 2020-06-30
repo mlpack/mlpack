@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CMD_GET_RAW_PARAM_HPP
-#define MLPACK_BINDINGS_CMD_GET_RAW_PARAM_HPP
+#ifndef MLPACK_BINDINGS_IO_GET_RAW_PARAM_HPP
+#define MLPACK_BINDINGS_IO_GET_RAW_PARAM_HPP
 
 #include <mlpack/prereqs.hpp>
 #include "parameter_type.hpp"

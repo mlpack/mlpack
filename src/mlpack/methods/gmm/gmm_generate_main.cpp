@@ -57,22 +57,22 @@ static void mlpackMain()
   // Parameter sanity checks.
   RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
 
-  if (CMD::GetParam<int>("seed") == 0)
+  if (IO::GetParam<int>("seed") == 0)
     mlpack::math::RandomSeed(time(NULL));
   else
-    mlpack::math::RandomSeed((size_t) CMD::GetParam<int>("seed"));
+    mlpack::math::RandomSeed((size_t) IO::GetParam<int>("seed"));
 
   RequireParamValue<int>("samples", [](int x) { return x > 0; }, true,
       "number of samples must be greater than 0");
 
-  GMM* gmm = CMD::GetParam<GMM*>("input_model");
+  GMM* gmm = IO::GetParam<GMM*>("input_model");
 
-  size_t length = (size_t) CMD::GetParam<int>("samples");
+  size_t length = (size_t) IO::GetParam<int>("samples");
   Log::Info << "Generating " << length << " samples..." << endl;
   arma::mat samples(gmm->Dimensionality(), length);
   for (size_t i = 0; i < length; ++i)
     samples.col(i) = gmm->Random();
 
   // Save, if the user asked for it.
-  CMD::GetParam<arma::mat>("output") = std::move(samples);
+  IO::GetParam<arma::mat>("output") = std::move(samples);
 }

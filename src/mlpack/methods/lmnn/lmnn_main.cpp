@@ -223,14 +223,14 @@ double KNNAccuracy(const arma::mat& dataset,
 
 static void mlpackMain()
 {
-  if (CMD::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CMD::GetParam<int>("seed"));
+  if (IO::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) IO::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
-  const string optimizerType = CMD::GetParam<string>("optimizer");
+  const string optimizerType = IO::GetParam<string>("optimizer");
   RequireParamInSet<string>("optimizer", { "amsgrad", "bbsgd", "sgd",
        "lbfgs" }, true, "unknown optimizer type");
 
@@ -275,22 +275,22 @@ static void mlpackMain()
   RequireParamValue<int>("rank", [](int x)
       { return x >= 0; }, true, "rank must be nonnegative");
 
-  const size_t k = (size_t) CMD::GetParam<int>("k");
-  const double regularization = CMD::GetParam<double>("regularization");
-  const double stepSize = CMD::GetParam<double>("step_size");
-  const size_t passes = (size_t) CMD::GetParam<int>("passes");
-  const size_t maxIterations = (size_t) CMD::GetParam<int>("max_iterations");
-  const double tolerance = CMD::GetParam<double>("tolerance");
-  const bool normalize = CMD::HasParam("normalize");
-  const bool center = CMD::HasParam("center");
-  const bool printAccuracy = CMD::HasParam("print_accuracy");
-  const bool shuffle = !CMD::HasParam("linear_scan");
-  const size_t batchSize = (size_t) CMD::GetParam<int>("batch_size");
-  const size_t range = (size_t) CMD::GetParam<int>("range");
-  const size_t rank = (size_t) CMD::GetParam<int>("rank");
+  const size_t k = (size_t) IO::GetParam<int>("k");
+  const double regularization = IO::GetParam<double>("regularization");
+  const double stepSize = IO::GetParam<double>("step_size");
+  const size_t passes = (size_t) IO::GetParam<int>("passes");
+  const size_t maxIterations = (size_t) IO::GetParam<int>("max_iterations");
+  const double tolerance = IO::GetParam<double>("tolerance");
+  const bool normalize = IO::HasParam("normalize");
+  const bool center = IO::HasParam("center");
+  const bool printAccuracy = IO::HasParam("print_accuracy");
+  const bool shuffle = !IO::HasParam("linear_scan");
+  const size_t batchSize = (size_t) IO::GetParam<int>("batch_size");
+  const size_t range = (size_t) IO::GetParam<int>("range");
+  const size_t rank = (size_t) IO::GetParam<int>("rank");
 
   // Load data.
-  arma::mat data = std::move(CMD::GetParam<arma::mat>("input"));
+  arma::mat data = std::move(IO::GetParam<arma::mat>("input"));
 
   // Carry out mean-centering on the dataset, if necessary.
   if (center)
@@ -303,9 +303,9 @@ static void mlpackMain()
 
   // Do we want to load labels separately?
   arma::Row<size_t> rawLabels(data.n_cols);
-  if (CMD::HasParam("labels"))
+  if (IO::HasParam("labels"))
   {
-    rawLabels = std::move(CMD::GetParam<arma::Row<size_t>>("labels"));
+    rawLabels = std::move(IO::GetParam<arma::Row<size_t>>("labels"));
   }
   else
   {
@@ -323,9 +323,9 @@ static void mlpackMain()
 
   arma::mat distance;
 
-  if (CMD::HasParam("distance"))
+  if (IO::HasParam("distance"))
   {
-    distance = std::move(CMD::GetParam<arma::mat>("distance"));
+    distance = std::move(IO::GetParam<arma::mat>("distance"));
   }
   else if (rank)
   {
@@ -415,14 +415,14 @@ static void mlpackMain()
   }
 
   // Save the output.
-  if (CMD::HasParam("output"))
-    CMD::GetParam<arma::mat>("output") = distance;
-  if (CMD::HasParam("transformed_data"))
-    CMD::GetParam<arma::mat>("transformed_data") = std::move(distance * data);
-  if (CMD::HasParam("centered_data"))
+  if (IO::HasParam("output"))
+    IO::GetParam<arma::mat>("output") = distance;
+  if (IO::HasParam("transformed_data"))
+    IO::GetParam<arma::mat>("transformed_data") = std::move(distance * data);
+  if (IO::HasParam("centered_data"))
   {
     if (center)
-      CMD::GetParam<arma::mat>("centered_data") = std::move(data);
+      IO::GetParam<arma::mat>("centered_data") = std::move(data);
     else
       Log::Info << "Mean-centering was not performed. Centered dataset "
           "will not be saved." << endl;

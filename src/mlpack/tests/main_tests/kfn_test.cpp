@@ -31,14 +31,14 @@ struct KFNTestFixture
   KFNTestFixture()
   {
     // Cache in the options for this program.
-    CMD::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~KFNTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CMD::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -85,19 +85,19 @@ BOOST_AUTO_TEST_CASE(KFNInvalidKTest)
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
-  delete CMD::GetParam<KFNModel*>("output_model");
-  CMD::GetParam<KFNModel*>("output_model") = NULL;
+  delete IO::GetParam<KFNModel*>("output_model");
+  IO::GetParam<KFNModel*>("output_model") = NULL;
 
-  CMD::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["k"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["k"].wasPassed = false;
 
   // SetInputParam("reference", referenceData);
   // SetInputParam("k", (int) 0); // Invalid.
 
   // BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
-  // CMD::GetSingleton().Parameters()["reference"].wasPassed = false;
-  // CMD::GetSingleton().Parameters()["k"].wasPassed = false;
+  // IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  // IO::GetSingleton().Parameters()["k"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) -1); // Invalid.
@@ -161,7 +161,7 @@ BOOST_AUTO_TEST_CASE(KFNRefModelTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-      std::move(CMD::GetParam<KFNModel*>("output_model")));
+      std::move(IO::GetParam<KFNModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -220,16 +220,16 @@ BOOST_AUTO_TEST_CASE(KFNInvalidEpsilonTest)
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
-  CMD::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["epsilon"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["epsilon"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("epsilon", (double) 2); // Invalid.
 
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
-  CMD::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["epsilon"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["epsilon"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("epsilon", (double) 1); // Invalid.
@@ -254,16 +254,16 @@ BOOST_AUTO_TEST_CASE(KFNInvalidPercentageTest)
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
-  CMD::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["percentage"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["percentage"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("percentage", (double) 0); // Invalid.
 
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
-  CMD::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["epsilon"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["epsilon"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("percentage", (double) 2); // Invalid.
@@ -288,14 +288,14 @@ BOOST_AUTO_TEST_CASE(KFNOutputDimensionTest)
   mlpackMain();
 
   // Check the neighbors matrix has 4 points for each input point.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Mat<size_t>>
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>
       ("neighbors").n_rows, 10);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Mat<size_t>>
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>
       ("neighbors").n_cols, 100);
 
   // Check the distances matrix has 4 points for each input point.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("distances").n_rows, 10);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("distances").n_cols, 100);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("distances").n_rows, 10);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("distances").n_cols, 100);
 }
 
 /**
@@ -318,26 +318,26 @@ BOOST_AUTO_TEST_CASE(KFNModelReuseTest)
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
-  neighbors = std::move(CMD::GetParam<arma::Mat<size_t>>("neighbors"));
-  distances = std::move(CMD::GetParam<arma::mat>("distances"));
+  neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(IO::GetParam<arma::mat>("distances"));
 
   // bindings::tests::CleanMemory();
 
   // Reset passed parameters.
-  CMD::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["query"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["query"].wasPassed = false;
 
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("input_model",
-      std::move(CMD::GetParam<KFNModel*>("output_model")));
+      std::move(IO::GetParam<KFNModel*>("output_model")));
   SetInputParam("query", queryData);
 
   mlpackMain();
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  CheckMatrices(neighbors, CMD::GetParam<arma::Mat<size_t>>("neighbors"));
-  CheckMatrices(distances, CMD::GetParam<arma::mat>("distances"));
+  CheckMatrices(neighbors, IO::GetParam<arma::Mat<size_t>>("neighbors"));
+  CheckMatrices(distances, IO::GetParam<arma::mat>("distances"));
 }
 
 /*
@@ -358,13 +358,13 @@ BOOST_AUTO_TEST_CASE(KFNDifferentEpsilonTest)
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
-  neighbors = std::move(CMD::GetParam<arma::Mat<size_t>>("neighbors"));
-  distances = std::move(CMD::GetParam<arma::mat>("distances"));
+  neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(IO::GetParam<arma::mat>("distances"));
 
   bindings::tests::CleanMemory();
 
-  CMD::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["epsilon"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["epsilon"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("epsilon", (double) 0.8);
@@ -372,9 +372,9 @@ BOOST_AUTO_TEST_CASE(KFNDifferentEpsilonTest)
   mlpackMain();
 
   CheckMatricesNotEqual(neighbors,
-      CMD::GetParam<arma::Mat<size_t>>("neighbors"));
+      IO::GetParam<arma::Mat<size_t>>("neighbors"));
   CheckMatricesNotEqual(distances,
-      CMD::GetParam<arma::mat>("distances"));
+      IO::GetParam<arma::mat>("distances"));
 }
 
 /*
@@ -395,13 +395,13 @@ BOOST_AUTO_TEST_CASE(KFNDifferentPercentageTest)
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
-  neighbors = std::move(CMD::GetParam<arma::Mat<size_t>>("neighbors"));
-  distances = std::move(CMD::GetParam<arma::mat>("distances"));
+  neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(IO::GetParam<arma::mat>("distances"));
 
   bindings::tests::CleanMemory();
 
-  CMD::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["percentage"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["percentage"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("percentage", (double) 0.8);
@@ -409,9 +409,9 @@ BOOST_AUTO_TEST_CASE(KFNDifferentPercentageTest)
   mlpackMain();
 
   CheckMatricesNotEqual(neighbors,
-      CMD::GetParam<arma::Mat<size_t>>("neighbors"));
+      IO::GetParam<arma::Mat<size_t>>("neighbors"));
   CheckMatricesNotEqual(distances,
-      CMD::GetParam<arma::mat>("distances"));
+      IO::GetParam<arma::mat>("distances"));
 }
 
 /*
@@ -426,29 +426,29 @@ BOOST_AUTO_TEST_CASE(KFNRandomBasisTest)
   // Random input, some k <= number of reference points.
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 10);
-  CMD::SetPassed("random_basis");
+  IO::SetPassed("random_basis");
 
   mlpackMain();
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
-  neighbors = std::move(CMD::GetParam<arma::Mat<size_t>>("neighbors"));
-  distances = std::move(CMD::GetParam<arma::mat>("distances"));
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<KFNModel*>("output_model")->RandomBasis(),
+  neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(IO::GetParam<arma::mat>("distances"));
+  BOOST_REQUIRE_EQUAL(IO::GetParam<KFNModel*>("output_model")->RandomBasis(),
       true);
 
   bindings::tests::CleanMemory();
 
-  CMD::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["random_basis"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["random_basis"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
 
   mlpackMain();
 
-  CheckMatrices(neighbors, CMD::GetParam<arma::Mat<size_t>>("neighbors"));
-  CheckMatrices(distances, CMD::GetParam<arma::mat>("distances"));
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<KFNModel*>("output_model")->RandomBasis(),
+  CheckMatrices(neighbors, IO::GetParam<arma::Mat<size_t>>("neighbors"));
+  CheckMatrices(distances, IO::GetParam<arma::mat>("distances"));
+  BOOST_REQUIRE_EQUAL(IO::GetParam<KFNModel*>("output_model")->RandomBasis(),
       false);
 }
 
@@ -469,11 +469,11 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
-  neighbors = std::move(CMD::GetParam<arma::Mat<size_t>>("neighbors"));
-  distances = std::move(CMD::GetParam<arma::mat>("distances"));
+  neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(IO::GetParam<arma::mat>("distances"));
 
-  delete CMD::GetParam<KFNModel*>("output_model");
-  CMD::GetParam<KFNModel*>("output_model") = NULL;
+  delete IO::GetParam<KFNModel*>("output_model");
+  IO::GetParam<KFNModel*>("output_model") = NULL;
 
   SetInputParam("reference", referenceData);
   SetInputParam("true_neighbors", neighbors);
@@ -488,12 +488,12 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
   dummyNeighbors.randu(20, 100);
   dummyDistances.randu(20, 100);
 
-  delete CMD::GetParam<KFNModel*>("output_model");
-  CMD::GetParam<KFNModel*>("output_model") = NULL;
+  delete IO::GetParam<KFNModel*>("output_model");
+  IO::GetParam<KFNModel*>("output_model") = NULL;
 
-  CMD::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["true_neighbors"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["true_distances"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["true_neighbors"].wasPassed = false;
+  IO::GetSingleton().Parameters()["true_distances"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("true_neighbors", std::move(dummyNeighbors));
@@ -541,25 +541,25 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
     if (i == 0)
     {
       neighborsCompare = std::move
-          (CMD::GetParam<arma::Mat<size_t>>("neighbors"));
-      distancesCompare = std::move(CMD::GetParam<arma::mat>("distances"));
+          (IO::GetParam<arma::Mat<size_t>>("neighbors"));
+      distancesCompare = std::move(IO::GetParam<arma::mat>("distances"));
     }
     else
     {
-      neighbors = std::move(CMD::GetParam<arma::Mat<size_t>>("neighbors"));
-      distances = std::move(CMD::GetParam<arma::mat>("distances"));
+      neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
+      distances = std::move(IO::GetParam<arma::mat>("distances"));
 
       CheckMatrices(neighborsCompare, neighbors);
       CheckMatrices(distancesCompare, distances);
     }
 
-    delete CMD::GetParam<KFNModel*>("output_model");
-    CMD::GetParam<KFNModel*>("output_model") = NULL;
+    delete IO::GetParam<KFNModel*>("output_model");
+    IO::GetParam<KFNModel*>("output_model") = NULL;
 
     // Reset passed parameters.
-    CMD::GetSingleton().Parameters()["reference"].wasPassed = false;
-    CMD::GetSingleton().Parameters()["query"].wasPassed = false;
-    CMD::GetSingleton().Parameters()["algorithm"].wasPassed = false;
+    IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+    IO::GetSingleton().Parameters()["query"].wasPassed = false;
+    IO::GetSingleton().Parameters()["algorithm"].wasPassed = false;
   }
 }
 
@@ -601,25 +601,25 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
     if (i == 0)
     {
       neighborsCompare = std::move(
-          CMD::GetParam<arma::Mat<size_t>>("neighbors"));
-      distancesCompare = std::move(CMD::GetParam<arma::mat>("distances"));
+          IO::GetParam<arma::Mat<size_t>>("neighbors"));
+      distancesCompare = std::move(IO::GetParam<arma::mat>("distances"));
     }
     else
     {
-      neighbors = std::move(CMD::GetParam<arma::Mat<size_t>>("neighbors"));
-      distances = std::move(CMD::GetParam<arma::mat>("distances"));
+      neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
+      distances = std::move(IO::GetParam<arma::mat>("distances"));
 
       CheckMatrices(neighborsCompare, neighbors);
       CheckMatrices(distancesCompare, distances);
     }
 
-    delete CMD::GetParam<KFNModel*>("output_model");
-    CMD::GetParam<KFNModel*>("output_model") = NULL;
+    delete IO::GetParam<KFNModel*>("output_model");
+    IO::GetParam<KFNModel*>("output_model") = NULL;
 
     // Reset passed parameters.
-    CMD::GetSingleton().Parameters()["reference"].wasPassed = false;
-    CMD::GetSingleton().Parameters()["query"].wasPassed = false;
-    CMD::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+    IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+    IO::GetSingleton().Parameters()["query"].wasPassed = false;
+    IO::GetSingleton().Parameters()["tree_type"].wasPassed = false;
   }
 }
 
@@ -638,13 +638,13 @@ BOOST_AUTO_TEST_CASE(KFNDifferentLeafSizes)
 
   mlpackMain();
 
-  BOOST_CHECK_EQUAL(CMD::GetParam<KFNModel*>("output_model")->LeafSize(),
+  BOOST_CHECK_EQUAL(IO::GetParam<KFNModel*>("output_model")->LeafSize(),
       (int) 1);
 
   bindings::tests::CleanMemory();
 
   // Reset passed parameters.
-  CMD::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
 
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("reference", std::move(referenceData));
@@ -655,7 +655,7 @@ BOOST_AUTO_TEST_CASE(KFNDifferentLeafSizes)
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  BOOST_CHECK_EQUAL(CMD::GetParam<KFNModel*>("output_model")->LeafSize(),
+  BOOST_CHECK_EQUAL(IO::GetParam<KFNModel*>("output_model")->LeafSize(),
       (int) 10);
 }
 

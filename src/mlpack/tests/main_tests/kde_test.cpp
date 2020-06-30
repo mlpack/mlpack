@@ -31,21 +31,21 @@ struct KDETestFixture
   KDETestFixture()
   {
     // Cache in the options for this program.
-    CMD::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~KDETestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CMD::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
 void ResetKDESettings()
 {
-  CMD::ClearSettings();
-  CMD::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 }
 
 BOOST_FIXTURE_TEST_SUITE(KDEMainTest, KDETestFixture);
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(KDEGaussianRTreeResultsMain)
 
   mlpackMain();
 
-  mainEstimations = std::move(CMD::GetParam<arma::vec>("predictions"));
+  mainEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(KDETriangularBallTreeResultsMain)
 
   mlpackMain();
 
-  mainEstimations = std::move(CMD::GetParam<arma::vec>("predictions"));
+  mainEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(KDEMonoResultsMain)
 
   mlpackMain();
 
-  mainEstimations = std::move(CMD::GetParam<arma::vec>("predictions"));
+  mainEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
 
   // Check whether results are equal.
   for (size_t i = 0; i < reference.n_cols; ++i)
@@ -200,7 +200,7 @@ BOOST_AUTO_TEST_CASE(KDEOutputSize)
 
   mlpackMain();
   // Check number of output elements.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::vec>("predictions").size(), samples);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::vec>("predictions").size(), samples);
 }
 
 /**
@@ -222,17 +222,17 @@ BOOST_AUTO_TEST_CASE(KDEModelReuse)
 
   mlpackMain();
 
-  arma::vec oldEstimations = std::move(CMD::GetParam<arma::vec>("predictions"));
+  arma::vec oldEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
 
   // Change parameters and load model.
-  CMD::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
   SetInputParam("query", query);
   SetInputParam("input_model",
-      std::move(CMD::GetParam<KDEModel*>("output_model")));
+      std::move(IO::GetParam<KDEModel*>("output_model")));
 
   mlpackMain();
 
-  arma::vec newEstimations = std::move(CMD::GetParam<arma::vec>("predictions"));
+  arma::vec newEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
 
   // Check estimations are the same.
   for (size_t i = 0; i < samples; ++i)
@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(KDEGaussianSingleKDTreeResultsMain)
 
   mlpackMain();
 
-  mainEstimations = std::move(CMD::GetParam<arma::vec>("predictions"));
+  mainEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
@@ -544,15 +544,15 @@ BOOST_AUTO_TEST_CASE(KDEMainMonteCarloFlag)
 
   // Compute estimations 1.
   mlpackMain();
-  estimations1 = std::move(CMD::GetParam<arma::vec>("predictions"));
+  estimations1 = std::move(IO::GetParam<arma::vec>("predictions"));
 
-  delete CMD::GetParam<KDEModel*>("output_model");
+  delete IO::GetParam<KDEModel*>("output_model");
 
   // Compute estimations 2.
   SetInputParam("reference", reference);
   SetInputParam("query", query);
   mlpackMain();
-  estimations2 = std::move(CMD::GetParam<arma::vec>("predictions"));
+  estimations2 = std::move(IO::GetParam<arma::vec>("predictions"));
 
   // Check whether results are equal.
   differences = arma::abs(estimations1 - estimations2);

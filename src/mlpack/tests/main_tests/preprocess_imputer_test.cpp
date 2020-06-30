@@ -31,14 +31,14 @@ struct PreprocessImputerTestFixture
   PreprocessImputerTestFixture()
   {
     // Cache in the options for this program.
-    CMD::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~PreprocessImputerTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CMD::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -72,12 +72,12 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerDimensionTest)
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  data::Load(CMD::GetParam<std::string>("output_file"), outputData);
+  data::Load(IO::GetParam<std::string>("output_file"), outputData);
   BOOST_REQUIRE_EQUAL(outputData.n_cols, inputSize);
   BOOST_REQUIRE_EQUAL(outputData.n_rows, 3); // Input Dimension.
 
   // Reset passed strategy.
-  CMD::GetSingleton().Parameters()["strategy"].wasPassed = false;
+  IO::GetSingleton().Parameters()["strategy"].wasPassed = false;
 
   // Check for median strategy.
   SetInputParam("strategy", (std::string) "median");
@@ -85,12 +85,12 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerDimensionTest)
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  data::Load(CMD::GetParam<std::string>("output_file"), outputData);
+  data::Load(IO::GetParam<std::string>("output_file"), outputData);
   BOOST_REQUIRE_EQUAL(outputData.n_cols, inputSize);
   BOOST_REQUIRE_EQUAL(outputData.n_rows, 3); // Input Dimension.
 
   // Reset passed strategy.
-  CMD::GetSingleton().Parameters()["strategy"].wasPassed = false;
+  IO::GetSingleton().Parameters()["strategy"].wasPassed = false;
 
   // Check for custom strategy.
   SetInputParam("strategy", (std::string) "custom");
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerDimensionTest)
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  data::Load(CMD::GetParam<std::string>("output_file"), outputData);
+  data::Load(IO::GetParam<std::string>("output_file"), outputData);
   BOOST_REQUIRE_EQUAL(outputData.n_cols, inputSize);
   BOOST_REQUIRE_EQUAL(outputData.n_rows, 3); // Input Dimension.
 }
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
 
   // Now check that the output has desired dimensions.
   arma::mat outputData;
-  data::Load(CMD::GetParam<std::string>("output_file"), outputData);
+  data::Load(IO::GetParam<std::string>("output_file"), outputData);
   BOOST_REQUIRE_EQUAL(outputData.n_cols + countNaN, inputSize);
   BOOST_REQUIRE_EQUAL(outputData.n_rows, 3); // Input Dimension.
 }

@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CMD_ADD_TO_PO_HPP
-#define MLPACK_BINDINGS_CMD_ADD_TO_PO_HPP
+#ifndef MLPACK_BINDINGS_IO_ADD_TO_PO_HPP
+#define MLPACK_BINDINGS_IO_ADD_TO_PO_HPP
 
 #include <mlpack/core/util/param_data.hpp>
 #include <mlpack/core/util/is_std_vector.hpp>
@@ -70,7 +70,7 @@ void AddToPO(const std::string& cliName,
 
 /**
  * Add an option to CLI11.  This is the function meant to be
- * used in the CMD function map.
+ * used in the IO function map.
  *
  * @param d Parameter data.
  * @param * (input) Unused void pointer.
@@ -81,7 +81,7 @@ void AddToPO(util::ParamData& param,
              const void* /* input */,
              void* output)
 {
-  // Cast CMD::App object.
+  // Cast IO::App object.
   CLI::App* app = (CLI::App*) output;
 
   // Generate the name to be given to CLI11.

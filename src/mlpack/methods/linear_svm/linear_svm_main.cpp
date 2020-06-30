@@ -162,8 +162,8 @@ PARAM_MATRIX_OUT("probabilities", "If test data is specified, this "
 
 static void mlpackMain()
 {
-  if (CMD::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CMD::GetParam<int>("seed"));
+  if (IO::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) IO::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
@@ -206,17 +206,17 @@ static void mlpackMain()
 
   if (optimizerType != "psgd")
   {
-    if (CMD::HasParam("step_size"))
+    if (IO::HasParam("step_size"))
     {
       Log::Warn << PRINT_PARAM_STRING("step_size") << " ignored because "
           << "optimizer type is not 'psgd'." << std::endl;
     }
-    if (CMD::HasParam("shuffle"))
+    if (IO::HasParam("shuffle"))
     {
       Log::Warn << PRINT_PARAM_STRING("shuffle") << " ignored because "
           << "optimizer type is not 'psgd'." << std::endl;
     }
-    if (CMD::HasParam("epochs"))
+    if (IO::HasParam("epochs"))
     {
       Log::Warn << PRINT_PARAM_STRING("epochs") << " ignored because "
           << "optimizer type is not 'psgd'." << std::endl;
@@ -225,7 +225,7 @@ static void mlpackMain()
 
   if (optimizerType != "lbfgs")
   {
-    if (CMD::HasParam("max_iterations"))
+    if (IO::HasParam("max_iterations"))
     {
       Log::Warn << PRINT_PARAM_STRING("max_iterations") << " ignored because "
           << "optimizer type is not 'lbfgs'." << std::endl;
@@ -262,20 +262,20 @@ static void mlpackMain()
   size_t numClasses;
 
   // Load data matrix.
-  if (CMD::HasParam("training"))
-    trainingSet = std::move(CMD::GetParam<arma::mat>("training"));
+  if (IO::HasParam("training"))
+    trainingSet = std::move(IO::GetParam<arma::mat>("training"));
 
   // Check if the labels are in a separate file.
-  if (CMD::HasParam("training") && CMD::HasParam("labels"))
+  if (IO::HasParam("training") && IO::HasParam("labels"))
   {
-    rawLabels = std::move(CMD::GetParam<arma::Row<size_t>>("labels"));
+    rawLabels = std::move(IO::GetParam<arma::Row<size_t>>("labels"));
     if (trainingSet.n_cols != rawLabels.n_cols)
     {
       Log::Fatal << "The labels must have the same number of points as the "
           << "training dataset." << endl;
     }
   }
-  else if (CMD::HasParam("training"))
+  else if (IO::HasParam("training"))
   {
     // Checking the size of training data if no labels are passed.
     if (trainingSet.n_rows < 2)
@@ -292,9 +292,9 @@ static void mlpackMain()
 
   // Load the model, if necessary.
   LinearSVMModel* model;
-  if (CMD::HasParam("input_model"))
+  if (IO::HasParam("input_model"))
   {
-    model = CMD::GetParam<LinearSVMModel*>("input_model");
+    model = IO::GetParam<LinearSVMModel*>("input_model");
   }
   else
   {
@@ -302,11 +302,11 @@ static void mlpackMain()
   }
 
   // Now, do the training.
-  if (CMD::HasParam("training"))
+  if (IO::HasParam("training"))
   {
     data::NormalizeLabels(rawLabels, labels, model->mappings);
-    numClasses = CMD::GetParam<int>("num_classes") == 0 ?
-        model->mappings.n_elem : CMD::GetParam<int>("num_classes");
+    numClasses = IO::GetParam<int>("num_classes") == 0 ?
+        model->mappings.n_elem : IO::GetParam<int>("num_classes");
     model->svm.Lambda() = lambda;
     model->svm.Delta() = delta;
     model->svm.NumClasses() = numClasses;
@@ -314,7 +314,7 @@ static void mlpackMain()
 
     if (numClasses <= 1)
     {
-      if (!CMD::HasParam("input_model"))
+      if (!IO::HasParam("input_model"))
         delete model;
       throw std::invalid_argument("Given input data has only 1 class!");
     }
@@ -332,8 +332,8 @@ static void mlpackMain()
     }
     else if (optimizerType == "psgd")
     {
-      const double stepSize = CMD::GetParam<double>("step_size");
-      const bool shuffle = !CMD::HasParam("shuffle");
+      const double stepSize = IO::GetParam<double>("step_size");
+      const bool shuffle = !IO::HasParam("shuffle");
       const size_t maxIt = epochs * trainingSet.n_cols;
 
       ens::ConstantStep decayPolicy(stepSize);
@@ -356,20 +356,20 @@ static void mlpackMain()
       model->svm.Train(trainingSet, labels, numClasses, psgdOpt);
     }
   }
-  if (CMD::HasParam("test"))
+  if (IO::HasParam("test"))
   {
     // Cache the value of GetPrintableParam for the test matrix before we
     // std::move() it.
     std::ostringstream oss;
-    oss << CMD::GetPrintableParam<arma::mat>("test");
+    oss << IO::GetPrintableParam<arma::mat>("test");
     std::string testOutput = oss.str();
 
-    if (!CMD::HasParam("training"))
+    if (!IO::HasParam("training"))
     {
       numClasses = model->svm.NumClasses();
     }
     // Get the test dataset, and get predictions.
-    testSet = std::move(CMD::GetParam<arma::mat>("test"));
+    testSet = std::move(IO::GetParam<arma::mat>("test"));
     arma::Row<size_t> predictions;
     size_t trainingDimensionality;
 
@@ -383,7 +383,7 @@ static void mlpackMain()
     if (testSet.n_rows != trainingDimensionality)
     {
       // Clean memory if needed.
-      if (!CMD::HasParam("input_model"))
+      if (!IO::HasParam("input_model"))
         delete model;
       Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must "
           << "be the same as the dimensionality of the training data ("
@@ -391,30 +391,30 @@ static void mlpackMain()
     }
 
     // Save class probabilities, if desired.
-    if (CMD::HasParam("probabilities"))
+    if (IO::HasParam("probabilities"))
     {
       Log::Info << "Calculating class probabilities of points in " << testOutput
           << "." << endl;
       arma::mat probabilities;
       model->svm.Classify(testSet, probabilities);
-      CMD::GetParam<arma::mat>("probabilities") = std::move(probabilities);
+      IO::GetParam<arma::mat>("probabilities") = std::move(probabilities);
     }
 
     model->svm.Classify(testSet, predictedLabels);
     data::RevertLabels(predictedLabels, model->mappings, predictions);
 
     // Calculate accuracy, if desired.
-    if (CMD::HasParam("test_labels"))
+    if (IO::HasParam("test_labels"))
     {
       arma::Row<size_t> testLabels;
       arma::Row<size_t> testRawLabels =
-          std::move(CMD::GetParam<arma::Row<size_t>>("test_labels"));
+          std::move(IO::GetParam<arma::Row<size_t>>("test_labels"));
 
       data::NormalizeLabels(testRawLabels, testLabels, model->mappings);
 
       if (testSet.n_cols != testLabels.n_elem)
       {
-        if (!CMD::HasParam("input_model"))
+        if (!IO::HasParam("input_model"))
           delete model;
         Log::Fatal << "Test data given with " << PRINT_PARAM_STRING("test")
             << " has " << testSet.n_cols << " points, but labels in "
@@ -422,8 +422,8 @@ static void mlpackMain()
             << testLabels.n_elem << " labels!" << endl;
       }
 
-      numClasses = CMD::GetParam<int>("num_classes") == 0 ?
-          model->mappings.n_elem : CMD::GetParam<int>("num_classes");
+      numClasses = IO::GetParam<int>("num_classes") == 0 ?
+          model->mappings.n_elem : IO::GetParam<int>("num_classes");
       arma::Col<size_t> correctClassCounts;
       arma::Col<size_t> labelSize;
       correctClassCounts.zeros(numClasses);
@@ -455,13 +455,13 @@ static void mlpackMain()
     }
 
     // Save predictions, if desired.
-    if (CMD::HasParam("predictions"))
+    if (IO::HasParam("predictions"))
     {
       Log::Info << "Predicting classes of points in '" << testOutput << "'."
           << endl;
-      CMD::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
+      IO::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
     }
   }
 
-  CMD::GetParam<LinearSVMModel*>("output_model") = model;
+  IO::GetParam<LinearSVMModel*>("output_model") = model;
 }

@@ -34,14 +34,14 @@ struct NCATestFixture
   NCATestFixture()
   {
     // Cache in the options for this program.
-    CMD::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~NCATestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CMD::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -64,12 +64,12 @@ BOOST_AUTO_TEST_CASE(NCAExplicitImplicitLabelsTest)
 
   // Check that last row was treated as label by checking that
   // the output has 1 less row.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output").n_rows, 2);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output").n_cols, 2);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 2);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 2);
 
   // Reset Settings.
-  CMD::ClearSettings();
-  CMD::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   // Now check that when labels are explicitely given, the last column
   // of input is not treated as labels.
@@ -83,8 +83,8 @@ BOOST_AUTO_TEST_CASE(NCAExplicitImplicitLabelsTest)
   mlpackMain();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output").n_rows, 2);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output").n_cols, 2);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 2);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 2);
 }
 
 /**
@@ -106,8 +106,8 @@ BOOST_AUTO_TEST_CASE(NCALBFGSTest)
   mlpackMain();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output").n_rows, 3);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output").n_cols, 3);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 3);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 3);
 }
 
 /**
@@ -152,11 +152,11 @@ BOOST_AUTO_TEST_CASE(NCANormalizationTest)
 
   mlpackMain();
 
-  arma::mat output = CMD::GetParam<arma::mat>("output");
+  arma::mat output = IO::GetParam<arma::mat>("output");
 
   // Reset rettings.
-  CMD::ClearSettings();
-  CMD::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   arma::mat inputData2;
   if (!data::Load("vc2.csv", inputData2))
@@ -176,7 +176,7 @@ BOOST_AUTO_TEST_CASE(NCANormalizationTest)
   mlpackMain();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(arma::accu(CMD::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(IO::GetParam<arma::mat>("output") != output), 0);
 }
 
 /**
@@ -197,11 +197,11 @@ BOOST_AUTO_TEST_CASE(NCADifferentStepSizeTest)
 
   mlpackMain();
 
-  arma::mat output = CMD::GetParam<arma::mat>("output");
+  arma::mat output = IO::GetParam<arma::mat>("output");
 
   // Reset settings.
-  CMD::ClearSettings();
-  CMD::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   // Same dataset.
   arma::mat y               = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -217,7 +217,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentStepSizeTest)
   mlpackMain();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(arma::accu(CMD::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(IO::GetParam<arma::mat>("output") != output), 0);
 }
 
 /**
@@ -294,11 +294,11 @@ BOOST_AUTO_TEST_CASE(NCADifferentBatchSizeTest)
 
   mlpackMain();
 
-  arma::mat output = CMD::GetParam<arma::mat>("output");
+  arma::mat output = IO::GetParam<arma::mat>("output");
 
   // Reset settings.
-  CMD::ClearSettings();
-  CMD::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   // Input the same dataset.
   arma::mat y               = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -315,7 +315,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentBatchSizeTest)
   mlpackMain();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(arma::accu(CMD::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(IO::GetParam<arma::mat>("output") != output), 0);
 }
 
 /**
@@ -335,11 +335,11 @@ BOOST_AUTO_TEST_CASE(NCALinearScanTest)
 
   mlpackMain();
 
-  arma::mat output = CMD::GetParam<arma::mat>("output");
+  arma::mat output = IO::GetParam<arma::mat>("output");
 
   // Reset settings.
-  CMD::ClearSettings();
-  CMD::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   // Input the same dataset.
   arma::mat y               = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -355,7 +355,7 @@ BOOST_AUTO_TEST_CASE(NCALinearScanTest)
   mlpackMain();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(arma::accu(CMD::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(IO::GetParam<arma::mat>("output") != output), 0);
 }
 
 /**
@@ -375,11 +375,11 @@ BOOST_AUTO_TEST_CASE(NCALinearScanTest2)
 
   mlpackMain();
 
-  arma::mat output = CMD::GetParam<arma::mat>("output");
+  arma::mat output = IO::GetParam<arma::mat>("output");
 
   // Reset Settings.
-  CMD::ClearSettings();
-  CMD::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   // Set same parameter using the same data.
   arma::mat y               = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -392,7 +392,7 @@ BOOST_AUTO_TEST_CASE(NCALinearScanTest2)
   mlpackMain();
 
   // Check that the output matrices are equal.
-  CheckMatrices(output, CMD::GetParam<arma::mat>("output"));
+  CheckMatrices(output, IO::GetParam<arma::mat>("output"));
 }
 
 /**

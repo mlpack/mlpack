@@ -29,14 +29,14 @@ struct NBCTestFixture
   NBCTestFixture()
   {
     // Cache in the options for this program.
-    CMD::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~NBCTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CMD::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -79,14 +79,14 @@ BOOST_AUTO_TEST_CASE(NBCOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
                       testSize);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output_probs").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_cols,
                       testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output_probs").n_rows, 2);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_rows, 2);
 }
 
 /**
@@ -124,24 +124,24 @@ BOOST_AUTO_TEST_CASE(NBCLabelsLessDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
                       testSize);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output_probs").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_cols,
                       testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output_probs").n_rows, 2);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_rows, 2);
 
   // Reset data passed.
-  CMD::GetSingleton().Parameters()["training"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Store outputs.
   arma::Row<size_t> output;
   arma::mat output_probs;
-  output = std::move(CMD::GetParam<arma::Row<size_t>>("output"));
-  output_probs = std::move(CMD::GetParam<arma::mat>("output_probs"));
+  output = std::move(IO::GetParam<arma::Row<size_t>>("output"));
+  output_probs = std::move(IO::GetParam<arma::mat>("output_probs"));
 
   bindings::tests::CleanMemory();
 
@@ -158,19 +158,19 @@ BOOST_AUTO_TEST_CASE(NBCLabelsLessDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
                       testSize);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output_probs").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_cols,
                       testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output_probs").n_rows, 2);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_rows, 2);
 
   // Check that initial output and final output matrix
   // from two models are same.
-  CheckMatrices(output, CMD::GetParam<arma::Row<size_t>>("output"));
-  CheckMatrices(output_probs, CMD::GetParam<arma::mat>("output_probs"));
+  CheckMatrices(output, IO::GetParam<arma::Row<size_t>>("output"));
+  CheckMatrices(output_probs, IO::GetParam<arma::mat>("output_probs"));
 }
 
 /**
@@ -201,34 +201,34 @@ BOOST_AUTO_TEST_CASE(NBCModelReuseTest)
 
   arma::Row<size_t> output;
   arma::mat output_probs;
-  output = std::move(CMD::GetParam<arma::Row<size_t>>("output"));
-  output_probs = std::move(CMD::GetParam<arma::mat>("output_probs"));
+  output = std::move(IO::GetParam<arma::Row<size_t>>("output"));
+  output_probs = std::move(IO::GetParam<arma::mat>("output_probs"));
 
   // Reset passed parameters.
-  CMD::GetSingleton().Parameters()["training"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                std::move(CMD::GetParam<NBCModel*>("output_model")));
+                std::move(IO::GetParam<NBCModel*>("output_model")));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
                       testSize);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output_probs").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_cols,
                       testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output_probs").n_rows, 2);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_rows, 2);
 
   // Check that initial output and final output
   // matrix using saved model are same.
-  CheckMatrices(output, CMD::GetParam<arma::Row<size_t>>("output"));
-  CheckMatrices(output_probs, CMD::GetParam<arma::mat>("output_probs"));
+  CheckMatrices(output, IO::GetParam<arma::Row<size_t>>("output"));
+  CheckMatrices(output_probs, IO::GetParam<arma::mat>("output_probs"));
 }
 
 /**
@@ -247,7 +247,7 @@ BOOST_AUTO_TEST_CASE(NBCTrainingVerTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                std::move(CMD::GetParam<NBCModel*>("output_model")));
+                std::move(IO::GetParam<NBCModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -284,27 +284,27 @@ BOOST_AUTO_TEST_CASE(NBCIncrementalVarianceTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
                       testSize);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output_probs").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_cols,
                       testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output_probs").n_rows, 2);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_rows, 2);
 
   bindings::tests::CleanMemory();
 
   // Reset data passed.
-  CMD::GetSingleton().Parameters()["training"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["incremental_variance"].wasPassed = false;
-  CMD::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["incremental_variance"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Store outputs.
   arma::Row<size_t> output;
   arma::mat output_probs;
-  output = std::move(CMD::GetParam<arma::Row<size_t>>("output"));
-  output_probs = std::move(CMD::GetParam<arma::mat>("output_probs"));
+  output = std::move(IO::GetParam<arma::Row<size_t>>("output"));
+  output_probs = std::move(IO::GetParam<arma::mat>("output_probs"));
 
   // Now train NBC without incremental_variance.
 
@@ -316,19 +316,19 @@ BOOST_AUTO_TEST_CASE(NBCIncrementalVarianceTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
                       testSize);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output_probs").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_cols,
                       testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::Row<size_t>>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CMD::GetParam<arma::mat>("output_probs").n_rows, 2);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_rows, 2);
 
   // Check that initial output and final output matrix
   // from two models are same.
-  CheckMatrices(output, CMD::GetParam<arma::Row<size_t>>("output"));
-  CheckMatrices(output_probs, CMD::GetParam<arma::mat>("output_probs"));
+  CheckMatrices(output, IO::GetParam<arma::Row<size_t>>("output"));
+  CheckMatrices(output_probs, IO::GetParam<arma::mat>("output_probs"));
 }
 
 /**
@@ -368,11 +368,11 @@ BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest)
 
   // Get the output from the 'output' parameter.
   const arma::Row<size_t> testY1 =
-      std::move(CMD::GetParam<arma::Row<size_t>>("output"));
+      std::move(IO::GetParam<arma::Row<size_t>>("output"));
 
   // Get output from 'predictions' parameter.
   const arma::Row<size_t> testY2 =
-      CMD::GetParam<arma::Row<size_t>>("predictions");
+      IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Both solutions must be equal.
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
@@ -417,11 +417,11 @@ BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest2)
 
   // Get the output probabilites which is a deprecated parameter.
   const arma::mat testY1 =
-      std::move(CMD::GetParam<arma::mat>("output_probs"));
+      std::move(IO::GetParam<arma::mat>("output_probs"));
 
   // Get probabilities from 'predictions' parameter.
   const arma::mat testY2 =
-      CMD::GetParam<arma::mat>("probabilities");
+      IO::GetParam<arma::mat>("probabilities");
 
   // Both solutions must be equal.
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
