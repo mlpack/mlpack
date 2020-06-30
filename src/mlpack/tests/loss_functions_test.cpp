@@ -640,37 +640,48 @@ BOOST_AUTO_TEST_CASE(LogCoshLossTest)
 BOOST_AUTO_TEST_CASE(HingeEmbeddingLossTest)
 {
   arma::mat input, target, output;
+  arma::mat expectedOutput;
   double loss;
   HingeEmbeddingLoss<> module;
 
-  // Test the Forward function. Loss should be 0 if input = target.
-  input = arma::ones(10, 1);
-  target = arma::ones(10, 1);
+  // Test for sum reduction.
+  input = arma::mat("0.1778 0.0957 0.1397 0.2256 0.1203 0.2403 0.1925 0.3144 "
+      "-0.2264 -0.3400 -0.3336 -0.8695");
+  target = arma::mat("1 1 -1 1 1 -1 1 1 -1 1 1 1");
+  expectedOutput = arma::mat("1 1 -1 1 1 -1 1 1 -1 1 1 1");
+  input.reshape(4, 3);
+  target.reshape(4, 3);
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be 2.4296.
+  // Value calculated using torch.nn.HingeEmbeddingLoss(reduction='sum').
   loss = module.Forward(input, target);
-  BOOST_REQUIRE_EQUAL(loss, 0);
-
-  // Test the Backward function for input = target.
-  module.Backward(input, target, output);
-  for (double el : output)
-  {
-    // For input = target we should get 0.0 everywhere.
-    BOOST_REQUIRE_CLOSE(el, 0.0, 1e-5);
-  }
-
-  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
-
-  // Test the Forward function. Loss should be 0.84.
-  input = arma::mat("0.1 0.8 0.6 0.0 0.5");
-  target = arma::mat("0 1.0 1.0 0 0");
-  loss = module.Forward(input, target);
-  BOOST_REQUIRE_CLOSE(loss, 0.84, 1e-3);
+  BOOST_REQUIRE_CLOSE(loss, 2.4296, 1e-3);
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  BOOST_REQUIRE_CLOSE(arma::accu(output), -2, 1e-3);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 6, 1e-3);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
+
+  // Test for mean reduction by modifying reduction parameter using accessor.
+  module.Reduction() = false;
+  expectedOutput = arma::mat("0.0833 0.0833 -0.0833 0.0833 0.0833 -0.0833 "
+      "0.0833 0.0833 -0.0833 0.0833 0.0833 0.0833");
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be 0.202467.
+  // Value calculated using torch.nn.HingeEmbeddingLoss(reduction='mean').
+  loss = module.Forward(input, target);
+  BOOST_REQUIRE_CLOSE(loss, 0.202467, 1e-3);
+
+  // Test the Backward function.
+  module.Backward(input, target, output);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 0.5, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
 }
 
 /**

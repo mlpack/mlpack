@@ -20,7 +20,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-HingeEmbeddingLoss<InputDataType, OutputDataType>::HingeEmbeddingLoss()
+HingeEmbeddingLoss<InputDataType, OutputDataType>::HingeEmbeddingLoss(
+    const bool reduction) : reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -32,8 +33,13 @@ HingeEmbeddingLoss<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     const TargetType& target)
 {
-  TargetType temp = target - (target == 0);
-  return (arma::accu(arma::max(1-input % temp, 0.))) / target.n_elem;
+  InputType loss = (1 - target) / 2 + input % (target);
+  typename InputType::elem_type lossSum = arma::accu(loss);
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / input.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -43,8 +49,10 @@ void HingeEmbeddingLoss<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     OutputType& output)
 {
-  TargetType temp = target - (target == 0);
-  output = (input < 1 / temp) % -temp;
+  output = target;
+
+  if (!reduction)
+    output = output / input.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
