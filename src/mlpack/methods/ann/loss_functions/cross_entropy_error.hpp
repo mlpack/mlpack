@@ -19,8 +19,10 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The cross-entropy performance function measures the network's
- * performance according to the cross-entropy
- * between the input and target distributions.
+ * performance according to the cross-entropy between the input and target
+ * distributions. This function calculates the Binary Cross Entropy between
+ * input and target, and expects the target to be one-hot encoded and the input
+ * matrix to only have values between 0 and 1, both inclusive.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -39,8 +41,13 @@ class CrossEntropyError
    *
    * @param eps The minimum value used for computing logarithms
    *            and denominators in a numerically stable way.
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If
+   *                  true, 'sum' reduction is used and the output will be
+   *                  summed. It is set to true by default.
    */
-  CrossEntropyError(const double eps = 1e-10);
+  CrossEntropyError(const double eps = 1e-10, const bool reduction = true);
 
   /**
    * Computes the cross-entropy function.
@@ -74,6 +81,11 @@ class CrossEntropyError
   //! Modify the epsilon.
   double& Eps() { return eps; }
 
+  //! Get the type of reduction used.
+  bool Reduction() const { return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() { return reduction; }
+
   /**
    * Serialize the layer.
    */
@@ -86,6 +98,9 @@ class CrossEntropyError
 
   //! The minimum value used for computing logarithms and denominators
   double eps;
+
+  //! The boolean value that tells if reduction is sum or mean.
+  bool reduction;
 }; // class CrossEntropyError
 
 } // namespace ann

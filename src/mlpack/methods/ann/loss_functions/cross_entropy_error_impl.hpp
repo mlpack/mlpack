@@ -20,7 +20,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 CrossEntropyError<InputDataType, OutputDataType>::CrossEntropyError(
-    const double eps) : eps(eps)
+    const double eps, const bool reduction) : eps(eps), reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -32,8 +32,14 @@ CrossEntropyError<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     const TargetType& target)
 {
-  return -arma::accu(target % arma::log(input + eps) +
+  InputType loss =  -(target % arma::log(input + eps) +
       (1. - target) % arma::log(1. - input + eps));
+  typename InputType::elem_type lossSum = arma::accu(loss);
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / input.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -44,6 +50,9 @@ void CrossEntropyError<InputDataType, OutputDataType>::Backward(
     OutputType& output)
 {
   output = (1. - target) / (1. - input + eps) - target / (input + eps);
+
+  if (!reduction)
+    output = output / input.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>

@@ -204,7 +204,11 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorTest)
 BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorTest)
 {
   arma::mat input1, input2, output, target1, target2;
+  arma::mat input3, input4, target3, target4, expectedOutput;
+  double loss;
   CrossEntropyError<> module(1e-6);
+  CrossEntropyError<> module1;
+  CrossEntropyError<> module2(1e-10, false);
 
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
@@ -239,6 +243,67 @@ BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorTest)
   }
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
+
+  // Example for Binary Classification with sum reduction.
+  input3 = arma::mat("0.1778 0.0957 0.1397 0.2256 0.1203 0.2403 0.1925 0.3144");
+  target3 = arma::mat("0 1 0 1 1 0 0 0");
+  expectedOutput = arma::mat("1.2162 -10.4493 1.1624 -4.4326 -8.3126 1.3163 "
+      "1.2384 1.4586");
+  input3.reshape(4, 2);
+  target3.reshape(4, 2);
+  expectedOutput.reshape(4, 2);
+
+  // Test the Forward function. Loss should be 7.16565.
+  // Value calculated using torch.nn.BCELoss(reduction='sum').
+  loss = module1.Forward(input3, target3);
+  BOOST_REQUIRE_CLOSE(loss, 7.16565, 1e-3);
+
+  // Test the Backward function.
+  module1.Backward(input3, target3, output);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), -16.8026, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input3.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input3.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
+
+  // Test mean reduction by modifying reduction using accessor method.
+  module1.Reduction() = false;
+  expectedOutput = arma::mat("0.1520 -1.3062 0.1453 -0.5541 -1.0391 0.1645 "
+      "0.1548 0.1823");
+  expectedOutput.reshape(4, 2);
+
+  // Test the Forward function. Loss should be 0.895706.
+  // Value calculated using torch.nn.BCELoss(reduction='mean').
+  loss = module1.Forward(input3, target3);
+  BOOST_REQUIRE_CLOSE(loss, 0.895706, 1e-3);
+
+  // Test the Backward function.
+  module1.Backward(input3, target3, output);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), -2.10032, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input3.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input3.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
+
+  // Example for Multi Class Classification with 3 classes , mean reduction.
+  input4 = arma::mat("0.1778 0.0957 0.1397 0.2256 0.1203 0.2403 0.1925 0.3144 "
+      "0.2264 0.3400 0.3336 0.8695");
+  target4 = arma::mat("0 1 0 1 1 0 0 0 0 0 1 0");
+  expectedOutput = arma::mat("0.1014 -0.8708 0.0969 -0.3694 -0.6927 0.1097 "
+      "0.1032 0.1215 0.1077 0.1263 -0.2498 0.6386");
+  input4.reshape(4, 3);
+  target4.reshape(4, 3);
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be 0.914338.
+  // Value calculated using torch.nn.BCELoss(reduction='mean').
+  loss = module2.Forward(input4, target4);
+  BOOST_REQUIRE_CLOSE(loss, 0.914338, 1e-3);
+
+  // Test the Backward function.
+  module2.Backward(input4, target4, output);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), -0.777462, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input4.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input4.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
 }
 
 /**
