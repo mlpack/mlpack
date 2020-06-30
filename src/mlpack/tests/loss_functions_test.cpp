@@ -94,22 +94,6 @@ BOOST_AUTO_TEST_CASE(HuberLossTest)
   CheckMatrices(output, expectedOutput, 0.1);
 }
 
-/**
- * Simple KL Divergence test.  The loss should be zero if input = target.
- */
-BOOST_AUTO_TEST_CASE(SimpleKLDivergenceTest)
-{
-  arma::mat input, target, output;
-  double loss;
-  KLDivergence<> module(true);
-
-  // Test the Forward function.  Loss should be 0 if input = target.
-  input = arma::ones(10, 1);
-  target = arma::ones(10, 1);
-  loss = module.Forward(input, target);
-  BOOST_REQUIRE_SMALL(loss, 0.00001);
-}
-
 /*
  * Simple test for the mean squared logarithmic error function.
  */
@@ -145,47 +129,56 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredLogarithmicErrorTest)
 }
 
 /**
- * Test to check KL Divergence loss function when we take mean.
+ * Simple KL Divergence test.
  */
-BOOST_AUTO_TEST_CASE(KLDivergenceMeanTest)
+BOOST_AUTO_TEST_CASE(KLDivergenceTest)
 {
   arma::mat input, target, output;
+  arma::mat expectedOutput;
   double loss;
-  KLDivergence<> module(true);
+  KLDivergence<> module;
 
-  // Test the Forward function.
-  input = arma::mat("1 1 1 1 1 1 1 1 1 1");
-  target = arma::exp(arma::mat("2 1 1 1 1 1 1 1 1 1"));
+  // Test for sum reduction.
+  input = arma::mat("-0.7007 -2.0247 -0.7132 -0.4584 -0.2637 -1.1795 -0.1093 "
+      "-1.0530 -2.4250 -0.4556 -0.7861 -0.9120");
+  target = arma::mat("0.0223 0.5185 0.1610 0.9152 0.1689 0.6977 0.2823 0.3971 "
+      "0.2939 0.8000 0.6816 0.8742");
+  expectedOutput = arma::mat("-0.0223 -0.5185 -0.1610 -0.9152 -0.1689 -0.6977 "
+      "-0.2823 -0.3971 -0.2939 -0.8000 -0.6816 -0.8742");
+  input.reshape(4, 3);
+  target.reshape(4, 3);
+  expectedOutput.reshape(4, 3);
 
+  // Test the Forward function. Loss should be 2.33349.
+  // Value calculated using torch.nn.KLDivLoss(reduction='sum').
   loss = module.Forward(input, target);
-  BOOST_REQUIRE_CLOSE_FRACTION(loss, -1.1 , 0.00001);
+  BOOST_REQUIRE_CLOSE(loss, 2.33349, 1e-3);
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  BOOST_REQUIRE_CLOSE_FRACTION(arma::as_scalar(output), -0.1, 0.00001);
-}
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), -5.8127, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
 
-/**
- * Test to check KL Divergence loss function when we do not take mean.
- */
-BOOST_AUTO_TEST_CASE(KLDivergenceNoMeanTest)
-{
-  arma::mat input, target, output;
-  double loss;
-  KLDivergence<> module(false);
+  // Test for mean reduction by modifying reduction parameter using accessor.
+  module.Reduction() = false;
+  expectedOutput = arma::mat("-0.0019 -0.0432 -0.0134 -0.0763 -0.0141 -0.0581 "
+      "-0.0235 -0.0331 -0.0245 -0.0667 -0.0568 -0.0728");
+  expectedOutput.reshape(4, 3);
 
-  // Test the Forward function.
-  input = arma::mat("1 1 1 1 1 1 1 1 1 1");
-  target = arma::exp(arma::mat("2 1 1 1 1 1 1 1 1 1"));
-
+  // Test the Forward function. Loss should be 0.194458.
+  // Value calculated using torch.nn.KLDivLoss(reduction='mean').
   loss = module.Forward(input, target);
-  BOOST_REQUIRE_CLOSE_FRACTION(loss, -11, 0.00001);
+  BOOST_REQUIRE_CLOSE(loss, 0.194458, 1e-3);
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  BOOST_REQUIRE_CLOSE_FRACTION(arma::as_scalar(output), -1, 0.00001);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), -0.484392, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
 }
-
 /*
  * Simple test for the mean squared error performance function.
  */

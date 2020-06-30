@@ -49,9 +49,13 @@ class KLDivergence
    * Create the Kullback–Leibler Divergence object with the specified
    * parameters.
    *
-   * @param takeMean Boolean variable to specify whether to take mean or not.
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If
+   *                  true, 'sum' reduction is used and the output will be
+   *                  summed. It is set to true by default.
    */
-  KLDivergence(const bool takeMean = false);
+  KLDivergence(const bool reduction = true);
 
   /**
    * Computes the Kullback–Leibler divergence error function.
@@ -80,10 +84,10 @@ class KLDivergence
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //! Get the value of takeMean.
-  bool TakeMean() const { return takeMean; }
-  //! Modify the value of takeMean.
-  bool& TakeMean() { return takeMean; }
+  //! Get the type of reduction used.
+  bool Reduction() const { return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() { return reduction; }
 
   /**
    * Serialize the loss function
@@ -95,8 +99,8 @@ class KLDivergence
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Boolean variable for taking mean or not.
-  bool takeMean;
+  //! The boolean value that tells if reduction is sum or mean.
+  bool reduction;
 }; // class KLDivergence
 
 } // namespace ann
