@@ -22,7 +22,7 @@ namespace bindings {
 namespace julia {
 
 /**
- * Print the output processing (basically calling IO::GetParam<>()) for a
+ * Print the output processing (basically calling CLI::GetParam<>()) for a
  * non-serializable type.
  */
 template<typename T>

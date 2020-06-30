@@ -30,14 +30,14 @@ struct LSHTestFixture
   LSHTestFixture()
   {
     // Cache in the options for this program.
-    IO::RestoreSettings(testName);
+    CLI::RestoreSettings(testName);
   }
 
   ~LSHTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    IO::ClearSettings();
+    CLI::ClearSettings();
   }
 };
 
@@ -56,13 +56,13 @@ BOOST_AUTO_TEST_CASE(LSHOutputDimensionTest)
   mlpackMain();
 
   // Check the neighbors matrix has 6 points for each of the 100 input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>("neighbors").n_rows, 6);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>("neighbors").n_cols,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_rows, 6);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_cols,
                       100);
 
   // Check the distances matrix has 6 points for each of the 100 input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("distances").n_rows, 6);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("distances").n_cols, 100);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("distances").n_rows, 6);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("distances").n_cols, 100);
 }
 
 /**
@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(LSHModelValidityTest)
 
   mlpackMain();
 
-  SetInputParam("input_model", IO::GetParam<LSHSearch<>*>("output_model"));
+  SetInputParam("input_model", CLI::GetParam<LSHSearch<>*>("output_model"));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -139,8 +139,8 @@ BOOST_AUTO_TEST_CASE(LSHDiffTablesTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  arma::Mat<size_t> neighbors = IO::GetParam<arma::Mat<size_t>>("neighbors");
-  arma::mat distances = IO::GetParam<arma::mat>("distances");
+  arma::Mat<size_t> neighbors = CLI::GetParam<arma::Mat<size_t>>("neighbors");
+  arma::mat distances = CLI::GetParam<arma::mat>("distances");
 
   bindings::tests::CleanMemory();
 
@@ -156,9 +156,9 @@ BOOST_AUTO_TEST_CASE(LSHDiffTablesTest)
   // Check that initial outputs and final outputs using two models are
   // different.
   BOOST_REQUIRE_LT(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
+      CLI::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
   BOOST_REQUIRE_LT(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")), distances.n_elem);
+      CLI::GetParam<arma::mat>("distances")), distances.n_elem);
 }
 
 /**
@@ -174,8 +174,8 @@ BOOST_AUTO_TEST_CASE(LSHDiffProjectionsTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  arma::Mat<size_t> neighbors = IO::GetParam<arma::Mat<size_t>>("neighbors");
-  arma::mat distances = IO::GetParam<arma::mat>("distances");
+  arma::Mat<size_t> neighbors = CLI::GetParam<arma::Mat<size_t>>("neighbors");
+  arma::mat distances = CLI::GetParam<arma::mat>("distances");
 
   bindings::tests::CleanMemory();
 
@@ -191,9 +191,9 @@ BOOST_AUTO_TEST_CASE(LSHDiffProjectionsTest)
   // Check that initial outputs and final outputs using two models are
   // different.
   BOOST_REQUIRE_LT(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
+      CLI::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
   BOOST_REQUIRE_LT(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")), distances.n_elem);
+      CLI::GetParam<arma::mat>("distances")), distances.n_elem);
 }
 
 /**
@@ -209,8 +209,8 @@ BOOST_AUTO_TEST_CASE(LSHDiffHashWidthTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  arma::Mat<size_t> neighbors = IO::GetParam<arma::Mat<size_t>>("neighbors");
-  arma::mat distances = IO::GetParam<arma::mat>("distances");
+  arma::Mat<size_t> neighbors = CLI::GetParam<arma::Mat<size_t>>("neighbors");
+  arma::mat distances = CLI::GetParam<arma::mat>("distances");
 
   bindings::tests::CleanMemory();
 
@@ -226,9 +226,9 @@ BOOST_AUTO_TEST_CASE(LSHDiffHashWidthTest)
   // Check that initial outputs and final outputs using two models are
   // different.
   BOOST_REQUIRE_LT(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
+      CLI::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
   BOOST_REQUIRE_LT(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")), distances.n_elem);
+      CLI::GetParam<arma::mat>("distances")), distances.n_elem);
 }
 
 /**
@@ -245,14 +245,14 @@ BOOST_AUTO_TEST_CASE(LSHDiffNumProbesTest)
 
   mlpackMain();
 
-  arma::Mat<size_t> neighbors = IO::GetParam<arma::Mat<size_t>>("neighbors");
-  arma::mat distances = IO::GetParam<arma::mat>("distances");
+  arma::Mat<size_t> neighbors = CLI::GetParam<arma::Mat<size_t>>("neighbors");
+  arma::mat distances = CLI::GetParam<arma::mat>("distances");
 
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
 
   // Train model using num_probes equals to 5.
 
-  SetInputParam("input_model", IO::GetParam<LSHSearch<>*>("output_model"));
+  SetInputParam("input_model", CLI::GetParam<LSHSearch<>*>("output_model"));
   SetInputParam("query", std::move(query));
   SetInputParam("num_probes", (int) 5);
 
@@ -261,9 +261,9 @@ BOOST_AUTO_TEST_CASE(LSHDiffNumProbesTest)
   // Check that initial outputs and final outputs using two models are
   // different.
   BOOST_REQUIRE_LT(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
+      CLI::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
   BOOST_REQUIRE_LT(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")), distances.n_elem);
+      CLI::GetParam<arma::mat>("distances")), distances.n_elem);
 }
 
 /**
@@ -279,8 +279,8 @@ BOOST_AUTO_TEST_CASE(LSHDiffSecondHashSizeTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  arma::Mat<size_t> neighbors = IO::GetParam<arma::Mat<size_t>>("neighbors");
-  arma::mat distances = IO::GetParam<arma::mat>("distances");
+  arma::Mat<size_t> neighbors = CLI::GetParam<arma::Mat<size_t>>("neighbors");
+  arma::mat distances = CLI::GetParam<arma::mat>("distances");
 
   bindings::tests::CleanMemory();
 
@@ -296,9 +296,9 @@ BOOST_AUTO_TEST_CASE(LSHDiffSecondHashSizeTest)
   // Check that initial outputs and final outputs using two models are
   // different.
   BOOST_REQUIRE_LT(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
+      CLI::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
   BOOST_REQUIRE_LT(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")), distances.n_elem);
+      CLI::GetParam<arma::mat>("distances")), distances.n_elem);
 }
 
 /**
@@ -314,8 +314,8 @@ BOOST_AUTO_TEST_CASE(LSHDiffBucketSizeTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  arma::Mat<size_t> neighbors = IO::GetParam<arma::Mat<size_t>>("neighbors");
-  arma::mat distances = IO::GetParam<arma::mat>("distances");
+  arma::Mat<size_t> neighbors = CLI::GetParam<arma::Mat<size_t>>("neighbors");
+  arma::mat distances = CLI::GetParam<arma::mat>("distances");
 
   bindings::tests::CleanMemory();
 
@@ -331,9 +331,9 @@ BOOST_AUTO_TEST_CASE(LSHDiffBucketSizeTest)
   // Check that initial outputs and final outputs using the two models are
   // different.
   BOOST_REQUIRE_LT(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
+      CLI::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
   BOOST_REQUIRE_LT(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")), distances.n_elem);
+      CLI::GetParam<arma::mat>("distances")), distances.n_elem);
 }
 
 /**
@@ -350,20 +350,20 @@ BOOST_AUTO_TEST_CASE(LSHModelReuseTest)
 
   mlpackMain();
 
-  arma::Mat<size_t> neighbors = IO::GetParam<arma::Mat<size_t>>("neighbors");
-  arma::mat distances = IO::GetParam<arma::mat>("distances");
+  arma::Mat<size_t> neighbors = CLI::GetParam<arma::Mat<size_t>>("neighbors");
+  arma::mat distances = CLI::GetParam<arma::mat>("distances");
 
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
 
-  SetInputParam("input_model", IO::GetParam<LSHSearch<>*>("output_model"));
+  SetInputParam("input_model", CLI::GetParam<LSHSearch<>*>("output_model"));
   SetInputParam("query", std::move(query));
 
   mlpackMain();
 
   // Check that initial query outputs and final outputs using saved model are
   // same.
-  CheckMatrices(neighbors, IO::GetParam<arma::Mat<size_t>>("neighbors"));
-  CheckMatrices(distances, IO::GetParam<arma::mat>("distances"));
+  CheckMatrices(neighbors, CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  CheckMatrices(distances, CLI::GetParam<arma::mat>("distances"));
 }
 
 /**

@@ -17,15 +17,15 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cmd {
+namespace cli {
 
 /* Prints the descriptions of the current hierarchy. */
 void PrintHelp(const std::string& param)
 {
   std::string usedParam = param;
-  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
-  const std::map<char, std::string>& aliases = IO::Aliases();
-  util::ProgramDoc& docs = *IO::GetSingleton().doc;
+  std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+  const std::map<char, std::string>& aliases = CLI::Aliases();
+  util::ProgramDoc& docs = *CLI::GetSingleton().doc;
 
   // If we pass a single param, alias it if necessary.
   if (usedParam.length() == 1 && aliases.count(usedParam[0]))
@@ -40,7 +40,7 @@ void PrintHelp(const std::string& param)
 
     // Figure out the name of the type.
     std::string printableType;
-    IO::GetSingleton().functionMap[data.tname]["StringTypeParam"](data, NULL,
+    CLI::GetSingleton().functionMap[data.tname]["StringTypeParam"](data, NULL,
         (void*) &printableType);
     std::string type = " [" + printableType + "]";
 
@@ -81,7 +81,7 @@ void PrintHelp(const std::string& param)
     {
       util::ParamData& data = iter.second;
       const std::string key;
-      IO::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
+      CLI::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
           NULL, (void*) &key);
 
       std::string desc = data.desc;
@@ -121,14 +121,14 @@ void PrintHelp(const std::string& param)
                         data.cppType == "std::vector<std::string>"))
       {
         std::string defaultValue;
-        IO::GetSingleton().functionMap[data.tname]["DefaultParam"](data,
+        CLI::GetSingleton().functionMap[data.tname]["DefaultParam"](data,
             NULL, (void*) &defaultValue);
         desc += "  Default value " + defaultValue + ".";
       }
 
       // Now, print the descriptions.
       std::string printableType;
-      IO::GetSingleton().functionMap[data.tname]["StringTypeParam"](data,
+      CLI::GetSingleton().functionMap[data.tname]["StringTypeParam"](data,
           NULL, (void*) &printableType);
       std::string type = " [" + printableType + "]";
       std::string fullDesc = "  --" + key + alias + type + "  ";
@@ -154,6 +154,6 @@ void PrintHelp(const std::string& param)
 }
 
 
-} // namespace cmd
+} // namespace cli
 } // namespace bindings
 } // namespace mlpack

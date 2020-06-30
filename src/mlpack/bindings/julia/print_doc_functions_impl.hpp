@@ -87,13 +87,13 @@ inline std::string PrintValue(const bool& value, bool quotes)
  */
 inline std::string PrintDefault(const std::string& paramName)
 {
-  if (IO::Parameters().count(paramName) == 0)
+  if (CLI::Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter " + paramName + "!");
 
-  const util::ParamData& d = IO::Parameters()[paramName];
+  const util::ParamData& d = CLI::Parameters()[paramName];
 
   std::string defaultValue;
-  IO::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL, (void*)
+  CLI::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL, (void*)
       &defaultValue);
 
   return defaultValue;
@@ -112,9 +112,9 @@ inline std::string CreateInputArguments(const std::string& paramName,
                                         Args... args)
 {
   // We only need to do anything if it is an input option.
-  if (IO::Parameters().count(paramName) > 0)
+  if (CLI::Parameters().count(paramName) > 0)
   {
-    const util::ParamData& d = IO::Parameters()[paramName];
+    const util::ParamData& d = CLI::Parameters()[paramName];
     std::ostringstream oss;
 
     if (d.input)
@@ -199,9 +199,9 @@ inline void GetOptions(
     Args... args)
 {
   // Determine whether or not the value is required.
-  if (IO::Parameters().count(paramName) > 0)
+  if (CLI::Parameters().count(paramName) > 0)
   {
-    const util::ParamData& d = IO::Parameters()[paramName];
+    const util::ParamData& d = CLI::Parameters()[paramName];
 
     if (d.input && input)
     {
@@ -238,7 +238,7 @@ inline std::string PrintInputOptions(Args... args)
 {
   // Gather list of required and non-required options.
   std::vector<std::string> inputOptions;
-  for (auto it = IO::Parameters().begin(); it != IO::Parameters().end(); ++it)
+  for (auto it = CLI::Parameters().begin(); it != CLI::Parameters().end(); ++it)
   {
     const util::ParamData& d = it->second;
     if (d.input && d.required)
@@ -250,7 +250,7 @@ inline std::string PrintInputOptions(Args... args)
     }
   }
 
-  for (auto it = IO::Parameters().begin(); it != IO::Parameters().end(); ++it)
+  for (auto it = CLI::Parameters().begin(); it != CLI::Parameters().end(); ++it)
   {
     const util::ParamData& d = it->second;
     if (d.input && !d.required &&
@@ -270,7 +270,7 @@ inline std::string PrintInputOptions(Args... args)
   bool printedAny = false;
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    const util::ParamData& d = IO::Parameters()[inputOptions[i]];
+    const util::ParamData& d = CLI::Parameters()[inputOptions[i]];
     // Does this option exist?
     bool found = false;
     size_t index = printedParameters.size();
@@ -327,7 +327,7 @@ inline std::string PrintOutputOptions(Args... args)
 {
   // Get the list of output options for the binding.
   std::vector<std::string> outputOptions;
-  for (auto it = IO::Parameters().begin(); it != IO::Parameters().end(); ++it)
+  for (auto it = CLI::Parameters().begin(); it != CLI::Parameters().end(); ++it)
   {
     const util::ParamData& d = it->second;
     if (!d.input)
@@ -444,7 +444,7 @@ inline std::string ProgramCall(const std::string& programName)
   result << "julia> ";
 
   // First, print all output options.
-  const std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
   size_t outputs = 0;
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
@@ -496,7 +496,7 @@ inline std::string ProgramCall(const std::string& programName)
       result << it->second.name;
       result << "=";
       std::string value;
-      IO::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
+      CLI::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
           it->second, NULL, (void*) &value);
       result << value;
       ++nonreqInputs;
@@ -541,14 +541,14 @@ inline std::string ParamString(const std::string& paramName, const T& value)
 
 inline bool IgnoreCheck(const std::string& paramName)
 {
-  return !IO::Parameters()[paramName].input;
+  return !CLI::Parameters()[paramName].input;
 }
 
 inline bool IgnoreCheck(const std::vector<std::string>& constraints)
 {
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (!IO::Parameters()[constraints[i]].input)
+    if (!CLI::Parameters()[constraints[i]].input)
       return true;
   }
 
@@ -561,11 +561,11 @@ inline bool IgnoreCheck(
 {
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (!IO::Parameters()[constraints[i].first].input)
+    if (!CLI::Parameters()[constraints[i].first].input)
       return true;
   }
 
-  return !IO::Parameters()[paramName].input;
+  return !CLI::Parameters()[paramName].input;
 }
 
 } // namespace julia

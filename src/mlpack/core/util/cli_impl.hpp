@@ -26,11 +26,11 @@ namespace mlpack {
  * @tparam T The type of the parameter.
  * @param identifier The full name of the parameter.
  *
- * @return The value of the parameter.  Use IO::CheckValue to determine if it's
+ * @return The value of the parameter.  Use CLI::CheckValue to determine if it's
  *     valid.
  */
 template<typename T>
-T& IO::GetParam(const std::string& identifier)
+T& CLI::GetParam(const std::string& identifier)
 {
   // Only use the alias if the parameter does not exist as given.
   std::string key =
@@ -51,10 +51,10 @@ T& IO::GetParam(const std::string& identifier)
         << std::endl;
 
   // Do we have a special mapped function?
-  if (IO::GetSingleton().functionMap[d.tname].count("GetParam") != 0)
+  if (CLI::GetSingleton().functionMap[d.tname].count("GetParam") != 0)
   {
     T* output = NULL;
-    IO::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL,
+    CLI::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL,
         (void*) &output);
     return *output;
   }
@@ -72,7 +72,7 @@ T& IO::GetParam(const std::string& identifier)
  * @param identifier The name of the parameter in question.
  */
 template<typename T>
-std::string IO::GetPrintableParam(const std::string& identifier)
+std::string CLI::GetPrintableParam(const std::string& identifier)
 {
   // Only use the alias if the parameter does not exist as given.
   std::string key = ((GetSingleton().parameters.count(identifier) == 0) &&
@@ -93,10 +93,10 @@ std::string IO::GetPrintableParam(const std::string& identifier)
         << std::endl;
 
   // Do we have a special mapped function?
-  if (IO::GetSingleton().functionMap[d.tname].count("GetPrintableParam") != 0)
+  if (CLI::GetSingleton().functionMap[d.tname].count("GetPrintableParam") != 0)
   {
     std::string output;
-    IO::GetSingleton().functionMap[d.tname]["GetPrintableParam"](d, NULL,
+    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParam"](d, NULL,
         (void*) &output);
     return output;
   }
@@ -110,7 +110,7 @@ std::string IO::GetPrintableParam(const std::string& identifier)
 }
 
 template<typename T>
-T& IO::GetRawParam(const std::string& identifier)
+T& CLI::GetRawParam(const std::string& identifier)
 {
   // Only use the alias if the parameter does not exist as given.
   std::string key =
@@ -131,10 +131,10 @@ T& IO::GetRawParam(const std::string& identifier)
         << std::endl;
 
   // Do we have a special mapped function?
-  if (IO::GetSingleton().functionMap[d.tname].count("GetRawParam") != 0)
+  if (CLI::GetSingleton().functionMap[d.tname].count("GetRawParam") != 0)
   {
     T* output = NULL;
-    IO::GetSingleton().functionMap[d.tname]["GetRawParam"](d, NULL,
+    CLI::GetSingleton().functionMap[d.tname]["GetRawParam"](d, NULL,
         (void*) &output);
     return *output;
   }

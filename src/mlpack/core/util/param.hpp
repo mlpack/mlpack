@@ -324,7 +324,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 
 /**
  * Define a matrix output parameter.  When the program terminates, the matrix
- * will be saved to whatever it was set to by IO::GetParam<arma::mat>(ID)
+ * will be saved to whatever it was set to by CLI::GetParam<arma::mat>(ID)
  * during the program.  From the command-line, the user may specify the file in
  * which to save the output matrix using a string option that is the name of the
  * matrix parameter with "_file" appended.  So, for instance, if the name of the
@@ -418,7 +418,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * Define a transposed matrix output parameter.  This is useful when data is
  * stored in a row-major form instead of the usual column-major form.  When the
  * program terminates, the matrix will be saved to whatever it was set to by
- * IO::GetParam<arma::mat>(ID) during the program.  From the command-line, the
+ * CLI::GetParam<arma::mat>(ID) during the program.  From the command-line, the
  * user may specify the file in which to save the output matrix using a string
  * option that is the name of the matrix parameter with "_file" appended.  So,
  * for instance, if the name of the output matrix parameter was "mat", the user
@@ -509,7 +509,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 /**
  * Define an unsigned matrix output parameter (arma::Mat<size_t>).  When the
  * program terminates, the matrix will be saved to whatever it was set to by
- * IO::GetParam<arma::Mat<size_t>>(ID) during the program.  From the
+ * CLI::GetParam<arma::Mat<size_t>>(ID) during the program.  From the
  * command-line, the user may specify the file in which to save the output
  * matrix using a string option that is the name of the matrix parameter with
  * "_file" appended.  So, for instance, if the name of the output matrix
@@ -888,9 +888,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *
  * @code
  * DatasetInfo d = std::move(
- *     IO::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<0>());
+ *     CLI::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<0>());
  * arma::mat m = std::move(
- *     IO::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<1>());
+ *     CLI::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<1>());
  * @endcode
  *
  * @param ID Name of the parameter.
@@ -987,7 +987,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * The model will be saved at the termination of the program.  If you use a
- * parameter of this type, you must call IO::Destroy() at the end of your
+ * parameter of this type, you must call CLI::Destroy() at the end of your
  * program.
  *
  * @param TYPE Type of the model to be saved.

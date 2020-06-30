@@ -20,7 +20,7 @@ namespace bindings {
 namespace julia {
 
 /**
- * Print the input processing (basically calling IO::GetParam<>()) for a
+ * Print the input processing (basically calling CLI::GetParam<>()) for a
  * non-serializable type.
  */
 template<typename T>
@@ -148,7 +148,7 @@ void PrintInputProcessing(
 }
 
 /**
- * Print the input processing (basically calling IO::GetParam<>()) for a
+ * Print the input processing (basically calling CLI::GetParam<>()) for a
  * matrix with DatasetInfo type.
  */
 template<typename T>

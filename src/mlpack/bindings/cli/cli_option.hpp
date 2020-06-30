@@ -34,7 +34,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cmd {
+namespace cli {
 
 /**
  * A static object whose constructor registers a parameter with the IO class.
@@ -111,7 +111,7 @@ class CLIOption
 
     // Do a check to ensure that the boost name isn't already in use.
     const std::map<std::string, util::ParamData>& parameters =
-        IO::Parameters();
+        CLI::Parameters();
     if (parameters.count(cliName) > 0)
     {
       // Create a fake Log::Fatal since it may not yet be initialized.
@@ -136,31 +136,31 @@ class CLIOption
              << std::endl;
     }
 
-    IO::Add(std::move(data));
+    CLI::Add(std::move(data));
 
     // Set some function pointers that we need.
-    IO::GetSingleton().functionMap[tname]["DefaultParam"] =
+    CLI::GetSingleton().functionMap[tname]["DefaultParam"] =
         &DefaultParam<N>;
-    IO::GetSingleton().functionMap[tname]["OutputParam"] =
+    CLI::GetSingleton().functionMap[tname]["OutputParam"] =
         &OutputParam<N>;
-    IO::GetSingleton().functionMap[tname]["GetPrintableParam"] =
+    CLI::GetSingleton().functionMap[tname]["GetPrintableParam"] =
         &GetPrintableParam<N>;
-    IO::GetSingleton().functionMap[tname]["StringTypeParam"] =
+    CLI::GetSingleton().functionMap[tname]["StringTypeParam"] =
         &StringTypeParam<N>;
-    IO::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
-    IO::GetSingleton().functionMap[tname]["GetRawParam"] = &GetRawParam<N>;
-    IO::GetSingleton().functionMap[tname]["AddToPO"] = &AddToPO<N>;
-    IO::GetSingleton().functionMap[tname]["MapParameterName"] =
+    CLI::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
+    CLI::GetSingleton().functionMap[tname]["GetRawParam"] = &GetRawParam<N>;
+    CLI::GetSingleton().functionMap[tname]["AddToPO"] = &AddToPO<N>;
+    CLI::GetSingleton().functionMap[tname]["MapParameterName"] =
         &MapParameterName<N>;
-    IO::GetSingleton().functionMap[tname]["GetPrintableParamName"] =
+    CLI::GetSingleton().functionMap[tname]["GetPrintableParamName"] =
         &GetPrintableParamName<N>;
-    IO::GetSingleton().functionMap[tname]["GetPrintableParamValue"] =
+    CLI::GetSingleton().functionMap[tname]["GetPrintableParamValue"] =
         &GetPrintableParamValue<N>;
-    IO::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
+    CLI::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
         &GetAllocatedMemory<N>;
-    IO::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
+    CLI::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
         &DeleteAllocatedMemory<N>;
-    IO::GetSingleton().functionMap[tname]["InPlaceCopy"] = &InPlaceCopy<N>;
+    CLI::GetSingleton().functionMap[tname]["InPlaceCopy"] = &InPlaceCopy<N>;
   }
 };
 
@@ -193,7 +193,7 @@ class ProgramDoc
   std::string documentation;
 };
 
-} // namespace cmd
+} // namespace cli
 } // namespace bindings
 } // namespace mlpack
 

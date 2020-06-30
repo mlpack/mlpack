@@ -29,14 +29,14 @@ struct PreprocessBinarizeTestFixture
   PreprocessBinarizeTestFixture()
   {
     // Cache in the options for this program.
-    IO::RestoreSettings(testName);
+    CLI::RestoreSettings(testName);
   }
 
   ~PreprocessBinarizeTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    IO::ClearSettings();
+    CLI::ClearSettings();
   }
 };
 
@@ -62,8 +62,8 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizeDimensionTest)
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 2);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, inputSize);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 2);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, inputSize);
 }
 
 /**
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizeVerificationTest)
   mlpackMain();
 
   arma::mat output;
-  output = std::move(IO::GetParam<arma::mat>("output"));
+  output = std::move(CLI::GetParam<arma::mat>("output"));
 
   // All values dimension should remain unchanged.
   BOOST_REQUIRE_CLOSE(output(0, 0), 7.0, 1e-5);
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizeDimensionLessVerTest)
   mlpackMain();
 
   arma::mat output;
-  output = std::move(IO::GetParam<arma::mat>("output"));
+  output = std::move(CLI::GetParam<arma::mat>("output"));
 
   // All values should be binarized according to the threshold.
   BOOST_REQUIRE_CLOSE(output(0, 0), 1.0, 1e-5);

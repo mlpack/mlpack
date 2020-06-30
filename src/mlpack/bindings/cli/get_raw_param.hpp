@@ -18,7 +18,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cmd {
+namespace cli {
 
 /**
  * This overload is called when nothing special needs to happen to the name of
@@ -86,7 +86,7 @@ void GetRawParam(util::ParamData& d,
       const_cast<util::ParamData&>(d));
 }
 
-} // namespace cmd
+} // namespace cli
 } // namespace bindings
 } // namespace mlpack
 

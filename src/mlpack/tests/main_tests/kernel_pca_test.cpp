@@ -29,22 +29,22 @@ struct KernelPCATestFixture
   KernelPCATestFixture()
   {
     // Cache in the options for this program.
-    IO::RestoreSettings(testName);
+    CLI::RestoreSettings(testName);
   }
 
   ~KernelPCATestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    IO::ClearSettings();
+    CLI::ClearSettings();
   }
 };
 
 static void ResetSettings()
 {
   bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
 }
 
 BOOST_FIXTURE_TEST_SUITE(KernelPCAMainTest, KernelPCATestFixture);
@@ -70,8 +70,8 @@ BOOST_AUTO_TEST_CASE(KernelPCADimensionTest)
     mlpackMain();
 
     // Now check that the output has 3 dimensions.
-    BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 3);
-    BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 5);
+    BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3);
+    BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 5);
   }
 }
 
@@ -120,8 +120,8 @@ BOOST_AUTO_TEST_CASE(KernelPCA0DimensionalityTest)
   mlpackMain();
 
   // Now check that the output has same dimensions as input.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 5);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 5);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 5);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 5);
 }
 
 /**
@@ -136,13 +136,13 @@ BOOST_AUTO_TEST_CASE(KernelPCACenterTest)
   SetInputParam("new_dimensionality", (int) 3);
   SetInputParam("kernel", (std::string) "linear");
   mlpackMain();
-  arma::mat output1 = IO::GetParam<arma::mat>("output");
+  arma::mat output1 = CLI::GetParam<arma::mat>("output");
 
   // Get output after centering the dataset.
   SetInputParam("input", std::move(x));
   SetInputParam("center", true);
   mlpackMain();
-  arma::mat output2 = IO::GetParam<arma::mat>("output");
+  arma::mat output2 = CLI::GetParam<arma::mat>("output");
 
   // The resulting matrices should be different.
   BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
@@ -219,14 +219,14 @@ BOOST_AUTO_TEST_CASE(KernelPCABandWidthTest)
     SetInputParam("bandwidth", (double) 1);
 
     mlpackMain();
-    arma::mat output1 = IO::GetParam<arma::mat>("output");
+    arma::mat output1 = CLI::GetParam<arma::mat>("output");
 
     // Get output using bandwidth 2.
     SetInputParam("input", std::move(x));
     SetInputParam("bandwidth", (double) 2);
 
     mlpackMain();
-    arma::mat output2 = IO::GetParam<arma::mat>("output");
+    arma::mat output2 = CLI::GetParam<arma::mat>("output");
 
     // The resulting matrices should be different.
     BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
@@ -253,13 +253,13 @@ BOOST_AUTO_TEST_CASE(KernelPCAOffsetTest)
     SetInputParam("offset", (double) 0.01);
 
     mlpackMain();
-    arma::mat output1 = IO::GetParam<arma::mat>("output");
+    arma::mat output1 = CLI::GetParam<arma::mat>("output");
 
     SetInputParam("input", std::move(x));
     SetInputParam("offset", (double) 0.1);
 
     mlpackMain();
-    arma::mat output2 = IO::GetParam<arma::mat>("output");
+    arma::mat output2 = CLI::GetParam<arma::mat>("output");
 
     // The resulting matrices should be different.
     BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
@@ -279,13 +279,13 @@ BOOST_AUTO_TEST_CASE(KernelPCADegreeTest)
   SetInputParam("degree", (double) 2);
 
   mlpackMain();
-  arma::mat output1 = IO::GetParam<arma::mat>("output");
+  arma::mat output1 = CLI::GetParam<arma::mat>("output");
 
   SetInputParam("input", std::move(x));
   SetInputParam("degree", (double) 3);
 
   mlpackMain();
-  arma::mat output2 = IO::GetParam<arma::mat>("output");
+  arma::mat output2 = CLI::GetParam<arma::mat>("output");
 
   // The resulting matrices should be different.
   BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
@@ -304,13 +304,13 @@ BOOST_AUTO_TEST_CASE(KernelPCAKernelScaleTest)
   SetInputParam("kernel_scale", (double) 2);
 
   mlpackMain();
-  arma::mat output1 = IO::GetParam<arma::mat>("output");
+  arma::mat output1 = CLI::GetParam<arma::mat>("output");
 
   SetInputParam("input", std::move(x));
   SetInputParam("kernel_scale", (double) 3);
 
   mlpackMain();
-  arma::mat output2 = IO::GetParam<arma::mat>("output");
+  arma::mat output2 = CLI::GetParam<arma::mat>("output");
 
   // The resulting matrices should be different.
   BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
@@ -333,19 +333,19 @@ BOOST_AUTO_TEST_CASE(KernelPCASamplingSchemeTest)
 
   mlpackMain();
 
-  arma::mat output1 = IO::GetParam<arma::mat>("output");
+  arma::mat output1 = CLI::GetParam<arma::mat>("output");
 
   SetInputParam("input", x);
   SetInputParam("sampling", (std::string) "random");
 
   mlpackMain();
-  arma::mat output2 = IO::GetParam<arma::mat>("output");
+  arma::mat output2 = CLI::GetParam<arma::mat>("output");
 
   SetInputParam("input", x);
   SetInputParam("sampling", (std::string) "ordered");
 
   mlpackMain();
-  arma::mat output3 = IO::GetParam<arma::mat>("output");
+  arma::mat output3 = CLI::GetParam<arma::mat>("output");
 
   // The resulting matrices should be different.
   BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));

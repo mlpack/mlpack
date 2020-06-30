@@ -20,7 +20,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cmd {
+namespace cli {
 
 // Add default parameters that are included in every program.
 PARAM_FLAG("help", "Default help info.", "h");
@@ -40,18 +40,18 @@ void ParseCommandLine(int argc, char** argv)
   app.set_help_flag();
 
   // Go through list of options in order to add them.
-  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
   using ItType = std::map<std::string, util::ParamData>::iterator;
 
   for (ItType it = parameters.begin(); it != parameters.end(); ++it)
   {
     // Add the parameter to desc.
     util::ParamData& d = it->second;
-    IO::GetSingleton().functionMap[d.tname]["AddToPO"](d, NULL, (void*) &app);
+    CLI::GetSingleton().functionMap[d.tname]["AddToPO"](d, NULL, (void*) &app);
   }
 
   // Mark that we did parsing.
-  IO::GetSingleton().didParse = true;
+  CLI::GetSingleton().didParse = true;
 
   // Parse the command line, then place the values in the right place.
   try
@@ -67,15 +67,15 @@ void ParseCommandLine(int argc, char** argv)
   // --info), handle those.
 
   // --version is prioritized over --help.
-  if (IO::HasParam("version"))
+  if (CLI::HasParam("version"))
   {
-    std::cout << IO::GetSingleton().ProgramName() << ": part of "
+    std::cout << CLI::GetSingleton().ProgramName() << ": part of "
         << util::GetVersion() << "." << std::endl;
     exit(0); // Don't do anything else.
   }
 
   // Default help message.
-  if (IO::HasParam("help"))
+  if (CLI::HasParam("help"))
   {
     Log::Info.ignoreInput = false;
     PrintHelp();
@@ -83,10 +83,10 @@ void ParseCommandLine(int argc, char** argv)
   }
 
   // Info on a specific parameter.
-  if (IO::HasParam("info"))
+  if (CLI::HasParam("info"))
   {
     Log::Info.ignoreInput = false;
-    std::string str = IO::GetParam<std::string>("info");
+    std::string str = CLI::GetParam<std::string>("info");
 
     // The info node should always be there, but the user may not have specified
     // anything.
@@ -105,7 +105,7 @@ void ParseCommandLine(int argc, char** argv)
   // if we have not compiled in debugging mode.
   Log::Debug << "Compiled with debugging symbols." << std::endl;
 
-  if (IO::HasParam("verbose"))
+  if (CLI::HasParam("verbose"))
   {
     // Give [INFO ] output.
     Log::Info.ignoreInput = false;
@@ -119,7 +119,7 @@ void ParseCommandLine(int argc, char** argv)
     if (d.required)
     {
       const std::string cliName;
-      IO::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
+      CLI::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
           (void*) &cliName);
 
       if (!app.count(cliName))
@@ -131,7 +131,7 @@ void ParseCommandLine(int argc, char** argv)
   }
 }
 
-} // namespace cmd
+} // namespace cli
 } // namespace bindings
 } // namespace mlpack
 

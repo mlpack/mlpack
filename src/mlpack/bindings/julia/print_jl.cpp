@@ -30,9 +30,9 @@ void PrintJL(const util::ProgramDoc& programInfo,
              const std::string& mlpackJuliaLibSuffix)
 {
   // Restore parameters.
-  IO::RestoreSettings(programInfo.programName);
+  CLI::RestoreSettings(programInfo.programName);
 
-  const map<string, util::ParamData>& parameters = IO::Parameters();
+  const map<string, util::ParamData>& parameters = CLI::Parameters();
   typedef map<string, util::ParamData>::const_iterator ParamIter;
 
   // First, let's get a list of input and output options.  We'll take two passes
@@ -74,7 +74,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
     const util::ParamData& d = it->second;
     if (classNames.count(d.cppType) == 0)
     {
-      IO::GetSingleton().functionMap[d.tname]["PrintModelTypeImport"](d, NULL,
+      CLI::GetSingleton().functionMap[d.tname]["PrintModelTypeImport"](d, NULL,
           NULL);
 
       // Avoid adding this import again.
@@ -124,7 +124,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
     const util::ParamData& d = it->second;
     if (classNames.count(d.cppType) == 0)
     {
-      IO::GetSingleton().functionMap[d.tname]["PrintParamDefn"](d, (void*)
+      CLI::GetSingleton().functionMap[d.tname]["PrintParamDefn"](d, (void*)
           &functionName, NULL);
 
       // Avoid adding this definition again.
@@ -181,7 +181,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
     std::ostringstream oss;
     oss << " - ";
 
-    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &oss);
+    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &oss);
 
     cout << util::HyphenateString(oss.str(), 6) << endl;
   }
@@ -198,7 +198,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
     std::ostringstream oss;
     oss << " - ";
 
-    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &oss);
+    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &oss);
 
     cout << util::HyphenateString(oss.str(), 6) << endl;
   }
@@ -228,7 +228,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
       cout << "," << endl << string(indent, ' ');
     }
 
-    IO::GetSingleton().functionMap[d.tname]["PrintInputParam"](d, NULL,
+    CLI::GetSingleton().functionMap[d.tname]["PrintInputParam"](d, NULL,
         NULL);
   }
 
@@ -257,7 +257,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
     if (opt != "verbose")
     {
       const util::ParamData& d = parameters.at(opt);
-      IO::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
+      CLI::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
           &functionName, NULL);
     }
   }
@@ -288,7 +288,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     const util::ParamData& d = parameters.at(outputOptions[i]);
-    IO::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
+    CLI::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
         &functionName, NULL);
 
     // Print newlines if we are returning multiple output options.

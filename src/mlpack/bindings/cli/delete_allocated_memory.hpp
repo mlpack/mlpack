@@ -16,7 +16,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cmd {
+namespace cli {
 
 template<typename T>
 void DeleteAllocatedMemoryImpl(
@@ -55,7 +55,7 @@ void DeleteAllocatedMemory(
   DeleteAllocatedMemoryImpl<typename std::remove_pointer<T>::type>(d);
 }
 
-} // namespace cmd
+} // namespace cli
 } // namespace bindings
 } // namespace mlpack
 

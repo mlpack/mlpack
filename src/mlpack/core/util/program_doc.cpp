@@ -43,7 +43,7 @@ ProgramDoc::ProgramDoc(
     seeAlso(std::move(seeAlso))
 {
   // Register this with IO.
-  IO::RegisterProgramDoc(this);
+  CLI::RegisterProgramDoc(this);
 }
 
 /**
@@ -51,5 +51,5 @@ ProgramDoc::ProgramDoc(
  */
 ProgramDoc::ProgramDoc()
 {
-  IO::RegisterProgramDoc(this);
+  CLI::RegisterProgramDoc(this);
 }

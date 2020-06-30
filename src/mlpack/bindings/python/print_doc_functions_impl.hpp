@@ -87,13 +87,13 @@ inline std::string PrintValue(const bool& value, bool quotes)
  */
 inline std::string PrintDefault(const std::string& paramName)
 {
-  if (IO::Parameters().count(paramName) == 0)
+  if (CLI::Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter " + paramName + "!");
 
-  const util::ParamData& d = IO::Parameters()[paramName];
+  const util::ParamData& d = CLI::Parameters()[paramName];
 
   std::string defaultValue;
-  IO::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL,
+  CLI::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL,
       (void*) &defaultValue);
 
   return defaultValue;
@@ -114,9 +114,9 @@ std::string PrintInputOptions(const std::string& paramName,
 {
   // See if this is part of the program.
   std::string result = "";
-  if (IO::Parameters().count(paramName) > 0)
+  if (CLI::Parameters().count(paramName) > 0)
   {
-    const util::ParamData& d = IO::Parameters()[paramName];
+    const util::ParamData& d = CLI::Parameters()[paramName];
     if (d.input)
     {
       // Print the input option.
@@ -157,9 +157,9 @@ std::string PrintOutputOptions(const std::string& paramName,
 {
   // See if this is part of the program.
   std::string result = "";
-  if (IO::Parameters().count(paramName) > 0)
+  if (CLI::Parameters().count(paramName) > 0)
   {
-    const util::ParamData& d = IO::Parameters()[paramName];
+    const util::ParamData& d = CLI::Parameters()[paramName];
     if (!d.input)
     {
       // Print a new line for the output option.
@@ -228,7 +228,7 @@ inline std::string ProgramCall(const std::string& programName)
   oss << ">>> ";
 
   // Determine if we have any output options.
-  const std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
   bool hasOutput = false;
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
@@ -264,7 +264,7 @@ inline std::string ProgramCall(const std::string& programName)
       oss << it->second.name << "_=";
 
     std::string value;
-    IO::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
+    CLI::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
         it->second, NULL, (void*) &value);
     oss << value;
   }
@@ -347,14 +347,14 @@ inline std::string ParamString(const std::string& paramName, const T& value)
 
 inline bool IgnoreCheck(const std::string& paramName)
 {
-  return !IO::Parameters()[paramName].input;
+  return !CLI::Parameters()[paramName].input;
 }
 
 inline bool IgnoreCheck(const std::vector<std::string>& constraints)
 {
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (!IO::Parameters()[constraints[i]].input)
+    if (!CLI::Parameters()[constraints[i]].input)
       return true;
   }
 
@@ -367,11 +367,11 @@ inline bool IgnoreCheck(
 {
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (!IO::Parameters()[constraints[i].first].input)
+    if (!CLI::Parameters()[constraints[i].first].input)
       return true;
   }
 
-  return !IO::Parameters()[paramName].input;
+  return !CLI::Parameters()[paramName].input;
 }
 
 } // namespace python

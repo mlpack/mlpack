@@ -86,25 +86,25 @@ class TestOption
 
     const std::string tname = data.tname;
 
-    IO::RestoreSettings(testName, false);
+    CLI::RestoreSettings(testName, false);
 
     // Set some function pointers that we need.
-    IO::GetSingleton().functionMap[tname]["GetPrintableParam"] =
+    CLI::GetSingleton().functionMap[tname]["GetPrintableParam"] =
         &GetPrintableParam<N>;
-    IO::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
-    IO::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
+    CLI::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
+    CLI::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
         &GetAllocatedMemory<N>;
-    IO::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
+    CLI::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
         &DeleteAllocatedMemory<N>;
 
-    IO::Add(std::move(data));
+    CLI::Add(std::move(data));
 
     // If this is an output option, set it as passed.
     if (!input)
-      IO::SetPassed(identifier);
+      CLI::SetPassed(identifier);
 
-    IO::StoreSettings(testName);
-    IO::ClearSettings();
+    CLI::StoreSettings(testName);
+    CLI::ClearSettings();
   }
 };
 

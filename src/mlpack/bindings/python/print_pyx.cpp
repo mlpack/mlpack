@@ -37,9 +37,9 @@ void PrintPYX(const ProgramDoc& programInfo,
               const string& functionName)
 {
   // Restore parameters.
-  IO::RestoreSettings(programInfo.programName);
+  CLI::RestoreSettings(programInfo.programName);
 
-  const std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
   typedef std::map<std::string, util::ParamData>::const_iterator ParamIter;
 
   // Split into input and output parameters.  Take two passes on the input
@@ -107,7 +107,7 @@ void PrintPYX(const ProgramDoc& programInfo,
     if (classes.count(d.cppType) == 0)
     {
       const size_t indent = 2;
-      IO::GetSingleton().functionMap[d.tname]["ImportDecl"](d, (void*) &indent,
+      CLI::GetSingleton().functionMap[d.tname]["ImportDecl"](d, (void*) &indent,
           NULL);
 
       // Make sure we don't double-print the definition.
@@ -122,7 +122,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   {
     const util::ParamData& d = it->second;
     if (d.input)
-      IO::GetSingleton().functionMap[d.tname]["PrintClassDefn"](d, NULL, NULL);
+      CLI::GetSingleton().functionMap[d.tname]["PrintClassDefn"](d, NULL, NULL);
   }
 
   // Print the definition.
@@ -135,7 +135,7 @@ void PrintPYX(const ProgramDoc& programInfo,
     if (i != 0)
       cout << "," << endl << std::string(indent, ' ');
 
-    IO::GetSingleton().functionMap[d.tname]["PrintDefn"](d, NULL, NULL);
+    CLI::GetSingleton().functionMap[d.tname]["PrintDefn"](d, NULL, NULL);
   }
 
   // Print closing brace for function definition.
@@ -155,7 +155,7 @@ void PrintPYX(const ProgramDoc& programInfo,
 
     cout << "  ";
     size_t indent = 4;
-    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
         NULL);
     cout << endl;
   }
@@ -168,7 +168,7 @@ void PrintPYX(const ProgramDoc& programInfo,
 
     cout << "  ";
     size_t indent = 4;
-    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
         NULL);
     cout << endl;
   }
@@ -204,7 +204,7 @@ void PrintPYX(const ProgramDoc& programInfo,
     const util::ParamData& d = parameters.at(inputOptions[i]);
 
     size_t indent = 2;
-    IO::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
+    CLI::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
         (void*) &indent, NULL);
   }
 
@@ -230,7 +230,7 @@ void PrintPYX(const ProgramDoc& programInfo,
     const util::ParamData& d = parameters.at(outputOptions[i]);
 
     std::tuple<size_t, bool> t = std::make_tuple(2, false);
-    IO::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
+    CLI::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
         (void*) &t, NULL);
   }
 

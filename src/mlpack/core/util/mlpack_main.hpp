@@ -42,13 +42,13 @@
  * PRINT_PARAM_STRING() returns a string that contains the correct
  * language-specific representation of a parameter's name.
  */
-#define PRINT_PARAM_STRING mlpack::bindings::cmd::ParamString
+#define PRINT_PARAM_STRING mlpack::bindings::cli::ParamString
 
 /**
  * PRINT_PARAM_VALUE() returns a string that contains a correct
  * language-specific representation of a parameter's value.
  */
-#define PRINT_PARAM_VALUE mlpack::bindings::cmd::PrintValue
+#define PRINT_PARAM_VALUE mlpack::bindings::cli::PrintValue
 
 /**
  * PRINT_CALL() returns a string that contains the full language-specific
@@ -57,31 +57,31 @@
  * parameters followed by values (in the case where the preceding parameter is
  * not a flag).
  */
-#define PRINT_CALL mlpack::bindings::cmd::ProgramCall
+#define PRINT_CALL mlpack::bindings::cli::ProgramCall
 
 /**
  * PRINT_DATASET() returns a string that contains a correct language-specific
  * representation of a dataset name.
  */
-#define PRINT_DATASET mlpack::bindings::cmd::PrintDataset
+#define PRINT_DATASET mlpack::bindings::cli::PrintDataset
 
 /**
  * PRINT_MODEL() returns a string that contains a correct language-specific
  * representation of an mlpack model name.
  */
-#define PRINT_MODEL mlpack::bindings::cmd::PrintModel
+#define PRINT_MODEL mlpack::bindings::cli::PrintModel
 
 /**
  * BINDING_IGNORE_CHECK() is an internally-used macro to determine whether or
  * not a specific parameter check should be ignored.
  */
-#define BINDING_IGNORE_CHECK mlpack::bindings::cmd::IgnoreCheck
+#define BINDING_IGNORE_CHECK mlpack::bindings::cli::IgnoreCheck
 
 namespace mlpack {
 namespace util {
 
 template<typename T>
-using Option = mlpack::bindings::cmd::IOOption<T>;
+using Option = mlpack::bindings::cli::IOOption<T>;
 
 }
 }
@@ -96,7 +96,7 @@ static void mlpackMain(); // This is typically defined after this include.
 int main(int argc, char** argv)
 {
   // Parse the command-line options; put them into IO.
-  mlpack::bindings::cmd::ParseCommandLine(argc, argv);
+  mlpack::bindings::cli::ParseCommandLine(argc, argv);
   // Enable timing.
   mlpack::Timer::EnableTiming();
 
@@ -107,7 +107,7 @@ int main(int argc, char** argv)
 
   // Print output options, print verbose information, save model parameters,
   // clean up, and so forth.
-  mlpack::bindings::cmd::EndProgram();
+  mlpack::bindings::cli::EndProgram();
 }
 
 #elif(BINDING_TYPE == BINDING_TYPE_TEST) // This is a unit test.

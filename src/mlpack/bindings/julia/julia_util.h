@@ -20,52 +20,52 @@ extern "C"
 #endif
 
 /**
- * Call IO::RestoreSettings() for a given program name.
+ * Call CLI::RestoreSettings() for a given program name.
  */
 void IO_RestoreSettings(const char* programName);
 
 /**
- * Call IO::SetParam<int>().
+ * Call CLI::SetParam<int>().
  */
 void IO_SetParamInt(const char* paramName, int paramValue);
 
 /**
- * Call IO::SetParam<double>().
+ * Call CLI::SetParam<double>().
  */
 void IO_SetParamDouble(const char* paramName, double paramValue);
 
 /**
- * Call IO::SetParam<std::string>().
+ * Call CLI::SetParam<std::string>().
  */
 void IO_SetParamString(const char* paramName, const char* paramValue);
 
 /**
- * Call IO::SetParam<bool>().
+ * Call CLI::SetParam<bool>().
  */
 void IO_SetParamBool(const char* paramName, bool paramValue);
 
 /**
- * Call IO::SetParam<std::vector<std::string>>() to set the length.
+ * Call CLI::SetParam<std::vector<std::string>>() to set the length.
  */
 void IO_SetParamVectorStrLen(const char* paramName,
                               const size_t length);
 
 /**
- * Call IO::SetParam<std::vector<std::string>>() to set an individual element.
+ * Call CLI::SetParam<std::vector<std::string>>() to set an individual element.
  */
 void IO_SetParamVectorStrStr(const char* paramName,
                               const char* str,
                               const size_t element);
 
 /**
- * Call IO::SetParam<std::vector<int>>().
+ * Call CLI::SetParam<std::vector<int>>().
  */
 void IO_SetParamVectorInt(const char* paramName,
                            int* ints,
                            const size_t length);
 
 /**
- * Call IO::SetParam<arma::mat>().
+ * Call CLI::SetParam<arma::mat>().
  */
 void IO_SetParamMat(const char* paramName,
                      double* memptr,
@@ -74,7 +74,7 @@ void IO_SetParamMat(const char* paramName,
                      const bool pointsAsRows);
 
 /**
- * Call IO::SetParam<arma::Mat<size_t>>().
+ * Call CLI::SetParam<arma::Mat<size_t>>().
  */
 void IO_SetParamUMat(const char* paramName,
                       size_t* memptr,
@@ -83,35 +83,35 @@ void IO_SetParamUMat(const char* paramName,
                       const bool pointsAsRows);
 
 /**
- * Call IO::SetParam<arma::rowvec>().
+ * Call CLI::SetParam<arma::rowvec>().
  */
 void IO_SetParamRow(const char* paramName,
                      double* memptr,
                      const size_t cols);
 
 /**
- * Call IO::SetParam<arma::Row<size_t>>().
+ * Call CLI::SetParam<arma::Row<size_t>>().
  */
 void IO_SetParamURow(const char* paramName,
                       size_t* memptr,
                       const size_t cols);
 
 /**
- * Call IO::SetParam<arma::vec>().
+ * Call CLI::SetParam<arma::vec>().
  */
 void IO_SetParamCol(const char* paramName,
                      double* memptr,
                      const size_t rows);
 
 /**
- * Call IO::SetParam<arma::Col<size_t>>().
+ * Call CLI::SetParam<arma::Col<size_t>>().
  */
 void IO_SetParamUCol(const char* paramName,
                       size_t* memptr,
                       const size_t rows);
 
 /**
- * Call IO::SetParam<std::tuple<data::DatasetInfo, arma::mat>>().
+ * Call CLI::SetParam<std::tuple<data::DatasetInfo, arma::mat>>().
  */
 void IO_SetParamMatWithInfo(const char* paramName,
                              bool* dimensions,
@@ -121,43 +121,43 @@ void IO_SetParamMatWithInfo(const char* paramName,
                              const bool pointsAreRows);
 
 /**
- * Call IO::GetParam<int>().
+ * Call CLI::GetParam<int>().
  */
 int IO_GetParamInt(const char* paramName);
 
 /**
- * Call IO::GetParam<double>().
+ * Call CLI::GetParam<double>().
  */
 double IO_GetParamDouble(const char* paramName);
 
 /**
- * Call IO::GetParam<std::string>().
+ * Call CLI::GetParam<std::string>().
  */
 const char* IO_GetParamString(const char* paramName);
 
 /**
- * Call IO::GetParam<bool>().
+ * Call CLI::GetParam<bool>().
  */
 bool IO_GetParamBool(const char* paramName);
 
 /**
- * Call IO::GetParam<std::vector<std::string>>() and get the length of the
+ * Call CLI::GetParam<std::vector<std::string>>() and get the length of the
  * vector.
  */
 size_t IO_GetParamVectorStrLen(const char* paramName);
 
 /**
- * Call IO::GetParam<std::vector<std::string>>() and get the i'th string.
+ * Call CLI::GetParam<std::vector<std::string>>() and get the i'th string.
  */
 const char* IO_GetParamVectorStrStr(const char* paramName, const size_t i);
 
 /**
- * Call IO::GetParam<std::vector<int>>() and get the length of the vector.
+ * Call CLI::GetParam<std::vector<int>>() and get the length of the vector.
  */
 size_t IO_GetParamVectorIntLen(const char* paramName);
 
 /**
- * Call IO::GetParam<std::vector<int>>() and return a pointer to the vector.
+ * Call CLI::GetParam<std::vector<int>>() and return a pointer to the vector.
  * The vector will be created in-place and it is expected that the calling
  * function will take ownership.
  */

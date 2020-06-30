@@ -18,7 +18,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cmd {
+namespace cli {
 
 /**
  * Get the parameter name for a type that has no special handling.
@@ -72,7 +72,7 @@ std::string GetPrintableParamName(
   return "--" + data.name + "_file";
 }
 
-} // namespace cmd
+} // namespace cli
 } // namespace bindings
 } // namespace mlpack
 

@@ -34,14 +34,14 @@ struct HMMViterbiTestFixture
   HMMViterbiTestFixture()
   {
     // Cache in the options for this program.
-    IO::RestoreSettings(testName);
+    CLI::RestoreSettings(testName);
   }
 
   ~HMMViterbiTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    IO::ClearSettings();
+    CLI::ClearSettings();
   }
 };
 
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(HMMViterbiDiscreteHMMCheckDimensionsTest)
   mlpackMain();
 
   // Get the output of viterbi inference.
-  arma::Mat<size_t> out = IO::GetParam<arma::Mat<size_t> >("output");
+  arma::Mat<size_t> out = CLI::GetParam<arma::Mat<size_t> >("output");
 
   // Output sequence length must be the same as input sequence length and
   // there should only be one row (since states are single dimensional values).
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(HMMViterbiGaussianHMMCheckDimensionsTest)
   mlpackMain();
 
   // Get the output of viterbi inference.
-  arma::Mat<size_t> out = IO::GetParam<arma::Mat<size_t> >("output");
+  arma::Mat<size_t> out = CLI::GetParam<arma::Mat<size_t> >("output");
 
   // Output sequence length must be the same as input sequence length and
   // there should only be one row (since states are single dimensional values).
@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(HMMViterbiGMMHMMCheckDimensionsTest)
   mlpackMain();
 
   // Get the output of viterbi inference.
-  arma::Mat<size_t> out = IO::GetParam<arma::Mat<size_t> >("output");
+  arma::Mat<size_t> out = CLI::GetParam<arma::Mat<size_t> >("output");
 
   // Output sequence length must be the same as input sequence length and
   // there should only be one row (since states are single dimensional values).
@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE(HMMViterbiDiagonalGMMHMMCheckDimensionsTest)
   mlpackMain();
 
   // Get the output of viterbi inference.
-  arma::Mat<size_t> out = IO::GetParam<arma::Mat<size_t> >("output");
+  arma::Mat<size_t> out = CLI::GetParam<arma::Mat<size_t> >("output");
 
   // Output sequence length must be the same as input sequence length and
   // there should only be one row (since states are single dimensional values).

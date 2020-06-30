@@ -16,7 +16,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cmd {
+namespace cli {
 
 /**
  * Print the help for the given parameter.  If no parameter is specified, then
@@ -26,7 +26,7 @@ namespace cmd {
  */
 void PrintHelp(const std::string& param = "");
 
-} // namespace cmd
+} // namespace cli
 } // namespace bindings
 } // namespace mlpack
 

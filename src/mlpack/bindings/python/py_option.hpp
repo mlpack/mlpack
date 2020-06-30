@@ -76,37 +76,37 @@ class PyOption
 
     // Restore the parameters for this program.
     if (identifier != "verbose" && identifier != "copy_all_inputs")
-      IO::RestoreSettings(programName, false);
+      CLI::RestoreSettings(programName, false);
 
     // Set the function pointers that we'll need.  All of these function
     // pointers will be used by both the program that generates the pyx, and
     // also the binding itself.  (The binding itself will only use GetParam,
     // GetPrintableParam, and GetRawParam.)
-    IO::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
-    IO::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
+    CLI::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
+    CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
         &GetPrintableParam<T>;
 
-    IO::GetSingleton().functionMap[data.tname]["DefaultParam"] =
+    CLI::GetSingleton().functionMap[data.tname]["DefaultParam"] =
         &DefaultParam<T>;
 
     // These are used by the pyx generator.
-    IO::GetSingleton().functionMap[data.tname]["PrintClassDefn"] =
+    CLI::GetSingleton().functionMap[data.tname]["PrintClassDefn"] =
         &PrintClassDefn<T>;
-    IO::GetSingleton().functionMap[data.tname]["PrintDefn"] = &PrintDefn<T>;
-    IO::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
-    IO::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
+    CLI::GetSingleton().functionMap[data.tname]["PrintDefn"] = &PrintDefn<T>;
+    CLI::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
+    CLI::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
         &PrintOutputProcessing<T>;
-    IO::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
+    CLI::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
         &PrintInputProcessing<T>;
-    IO::GetSingleton().functionMap[data.tname]["ImportDecl"] = &ImportDecl<T>;
+    CLI::GetSingleton().functionMap[data.tname]["ImportDecl"] = &ImportDecl<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
     // import more than one .so that uses IO, so we have to keep the options
     // separate.  programName is a global variable from mlpack_main.hpp.
-    IO::Add(std::move(data));
+    CLI::Add(std::move(data));
     if (identifier != "verbose" && identifier != "copy_all_inputs")
-      IO::StoreSettings(programName);
-    IO::ClearSettings();
+      CLI::StoreSettings(programName);
+    CLI::ClearSettings();
   }
 };
 

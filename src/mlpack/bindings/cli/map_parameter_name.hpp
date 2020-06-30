@@ -17,7 +17,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cmd {
+namespace cli {
 
 /**
  * If needed, map the parameter name to the name that is used by
@@ -72,7 +72,7 @@ void MapParameterName(util::ParamData& d,
       MapParameterName<typename std::remove_pointer<T>::type>(d.name);
 }
 
-} // namespace cmd
+} // namespace cli
 } // namespace bindings
 } // namespace mlpack
 

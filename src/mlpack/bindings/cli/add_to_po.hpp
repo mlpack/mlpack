@@ -20,8 +20,9 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cmd {
+namespace cli {
 
+using namespace CLI;
 /**
  * Add a vector option to CLI11.
  * 
@@ -81,7 +82,7 @@ void AddToPO(util::ParamData& param,
              const void* /* input */,
              void* output)
 {
-  // Cast IO::App object.
+  // Cast CLI::App object.
   CLI::App* app = (CLI::App*) output;
 
   // Generate the name to be given to CLI11.
@@ -96,7 +97,7 @@ void AddToPO(util::ParamData& param,
       cliName, param, *app);
 }
 
-} // namespace cmd
+} // namespace cli
 } // namespace bindings
 } // namespace mlpack
 

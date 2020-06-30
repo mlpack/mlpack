@@ -198,7 +198,7 @@ void PrintOutputProcessing(
      * So we need to loop through all input parameters that have the same type,
      * and double-check.
      */
-    std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+    std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
     for (auto it = parameters.begin(); it != parameters.end(); ++it)
     {
       // Is it an input parameter of the same type?
@@ -247,7 +247,7 @@ void PrintOutputProcessing(
      * So we need to loop through all input parameters that have the same type,
      * and double-check.
      */
-    std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+    std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
     for (auto it = parameters.begin(); it != parameters.end(); ++it)
     {
       // Is it an input parameter of the same type?

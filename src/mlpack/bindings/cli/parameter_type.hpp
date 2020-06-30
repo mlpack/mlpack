@@ -17,7 +17,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cmd {
+namespace cli {
 
 // Default: HasSerialize = false.
 template<bool HasSerialize, typename T>
@@ -89,7 +89,7 @@ struct ParameterType<std::tuple<mlpack::data::DatasetMapper<PolicyType,
   typedef std::string type;
 };
 
-} // namespace cmd
+} // namespace cli
 } // namespace bindings
 } // namespace mlpack
 

@@ -30,21 +30,21 @@ struct LRTestFixture
   LRTestFixture()
   {
     // Cache in the options for this program.
-    IO::RestoreSettings(testName);
+    CLI::RestoreSettings(testName);
   }
 
   ~LRTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    IO::ClearSettings();
+    CLI::ClearSettings();
   }
 };
 
 void ResetSettings()
 {
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
 }
 
 BOOST_FIXTURE_TEST_SUITE(LinearRegressionMainTest, LRTestFixture);
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(LRDifferentLambdas)
 
   // The first solution.
   mlpackMain();
-  const double testY1 = IO::GetParam<arma::rowvec>("output_predictions")(0);
+  const double testY1 = CLI::GetParam<arma::rowvec>("output_predictions")(0);
 
   bindings::tests::CleanMemory();
   ResetSettings();
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(LRDifferentLambdas)
 
   // The second solution.
   mlpackMain();
-  const double testY2 = IO::GetParam<arma::rowvec>("output_predictions")(0);
+  const double testY2 = CLI::GetParam<arma::rowvec>("output_predictions")(0);
 
   // Second solution has stronger regularization,
   // so the predicted value should be smaller.
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentation)
 
   // The first solution.
   mlpackMain();
-  const double testY1 = IO::GetParam<arma::rowvec>("output_predictions")(0);
+  const double testY1 = CLI::GetParam<arma::rowvec>("output_predictions")(0);
 
   bindings::tests::CleanMemory();
   ResetSettings();
@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentation)
 
   // The second solution.
   mlpackMain();
-  const double testY2 = IO::GetParam<arma::rowvec>("output_predictions")(0);
+  const double testY2 = CLI::GetParam<arma::rowvec>("output_predictions")(0);
 
   BOOST_REQUIRE(fabs(testY1 - testY2) < delta);
 }
@@ -142,8 +142,8 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
 
   mlpackMain();
 
-  LinearRegression* model = IO::GetParam<LinearRegression*>("output_model");
-  const arma::rowvec testY1 = IO::GetParam<arma::rowvec>("output_predictions");
+  LinearRegression* model = CLI::GetParam<LinearRegression*>("output_model");
+  const arma::rowvec testY1 = CLI::GetParam<arma::rowvec>("output_predictions");
 
   ResetSettings();
 
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
 
   mlpackMain();
 
-  const arma::rowvec testY2 = IO::GetParam<arma::rowvec>("output_predictions");
+  const arma::rowvec testY2 = CLI::GetParam<arma::rowvec>("output_predictions");
 
   double norm = arma::norm(testY1 - testY2, 2);
   BOOST_REQUIRE(norm < delta);
@@ -216,7 +216,7 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest2)
 
   mlpackMain();
 
-  LinearRegression* model = IO::GetParam<LinearRegression*>("output_model");
+  LinearRegression* model = CLI::GetParam<LinearRegression*>("output_model");
 
   ResetSettings();
 
@@ -248,7 +248,7 @@ BOOST_AUTO_TEST_CASE(LRPredictionSizeCheck)
 
   mlpackMain();
 
-  const arma::rowvec testY = IO::GetParam<arma::rowvec>("output_predictions");
+  const arma::rowvec testY = CLI::GetParam<arma::rowvec>("output_predictions");
 
   BOOST_REQUIRE_EQUAL(testY.n_rows, 1);
   BOOST_REQUIRE_EQUAL(testY.n_cols, M);

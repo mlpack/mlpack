@@ -26,13 +26,13 @@ void CleanMemory()
   // same pointer twice, so we have to be careful to not delete it multiple
   // times.
   std::unordered_map<void*, const util::ParamData*> memoryAddresses;
-  auto it = IO::Parameters().begin();
-  while (it != IO::Parameters().end())
+  auto it = CLI::Parameters().begin();
+  while (it != CLI::Parameters().end())
   {
     const util::ParamData& data = it->second;
 
     void* result;
-    IO::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
+    CLI::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
         NULL, (void*) &result);
     if (result != NULL && memoryAddresses.count(result) == 0)
       memoryAddresses[result] = &data;
@@ -47,7 +47,7 @@ void CleanMemory()
   {
     const util::ParamData& data = *(it2->second);
 
-    IO::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
+    CLI::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
         NULL, NULL);
 
     ++it2;

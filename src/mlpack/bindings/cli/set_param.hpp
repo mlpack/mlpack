@@ -17,7 +17,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cmd {
+namespace cli {
 
 /**
  * This overload is called when nothing special needs to happen to the name of
@@ -100,7 +100,7 @@ void SetParam(util::ParamData& d, const void* input, void* /* output */)
       const_cast<util::ParamData&>(d), *((boost::any*) input));
 }
 
-} // namespace cmd
+} // namespace cli
 } // namespace bindings
 } // namespace mlpack
 

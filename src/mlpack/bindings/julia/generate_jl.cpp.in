@@ -33,7 +33,7 @@ int main(int /* argc */, char** /* argv */)
 {
   // All the parameters are registered, but stored, so restore them.
   // programName is defined in mlpack_main.hpp.
-  IO::RestoreSettings(programName);
+  CLI::RestoreSettings(programName);
 
-  PrintJL(*IO::GetSingleton().doc, "${NAME}", "${MLPACK_JL_LIB_SUFFIX}");
+  PrintJL(*CLI::GetSingleton().doc, "${NAME}", "${MLPACK_JL_LIB_SUFFIX}");
 }

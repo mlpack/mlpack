@@ -16,7 +16,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cmd {
+namespace cli {
 
 /**
  * Return the default value of an option.
@@ -122,7 +122,7 @@ std::string DefaultParamImpl(
 }
 
 
-} // namespace cmd
+} // namespace cli
 } // namespace bindings
 } // namespace mlpack
 

@@ -28,9 +28,9 @@ namespace util {
 template<typename T>
 void SetInputParam(const std::string& name, T&& value)
 {
-  IO::GetParam<typename std::remove_reference<T>::type>(name) =
+  CLI::GetParam<typename std::remove_reference<T>::type>(name) =
     std::forward<T>(value);
-  IO::SetPassed(name);
+  CLI::SetPassed(name);
 }
 
 } // namespace util

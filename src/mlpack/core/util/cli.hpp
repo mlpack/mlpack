@@ -2,7 +2,7 @@
  * @file core/util/cli.hpp
  * @author Matthew Amidon
  *
- * This file implements the IO subsystem which is a global singleton
+ * This file implements the CLI subsystem which is a global singleton
  * intended to handle parameter passing for different binding types.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_UTIL_IO_HPP
-#define MLPACK_CORE_UTIL_IO_HPP
+#ifndef MLPACK_CORE_UTIL_CLI_HPP
+#define MLPACK_CORE_UTIL_CLI_HPP
 
 #include <iostream>
 #include <list>
@@ -44,12 +44,12 @@ class ProgramDoc;
  * @brief Parses the command line for parameters and holds user-specified
  *     parameters.
  *
- * The IO class is a subsystem by which parameters for machine learning methods
+ * The CLI class is a subsystem by which parameters for machine learning methods
  * can be specified and accessed.  In conjunction with the macros PARAM_DOUBLE,
  * PARAM_INT, PARAM_STRING, PARAM_FLAG, and others, this class aims to make user
  * configurability of mlpack methods very easy.  There are only three methods in
- * IO that a user should need:  IO::ParseCommandLine(), IO::GetParam(), and
- * IO::HasParam() (in addition to the PARAM_*() macros).
+ * CLI that a user should need:  CLI::ParseCommandLine(), CLI::GetParam(), and
+ * CLI::HasParam() (in addition to the PARAM_*() macros).
  *
  * @section addparam Adding parameters to a program
  *
@@ -113,32 +113,32 @@ class ProgramDoc;
  * program does and how to use it.  If relevant, paper citations should be
  * included.
  *
- * @section parsecli Parsing the command line with IO
+ * @section parsecli Parsing the command line with CLI
  *
- * To have IO parse the command line at the beginning of code execution, only a
+ * To have CLI parse the command line at the beginning of code execution, only a
  * call to ParseCommandLine() is necessary:
  *
  * @code
  * int main(int argc, char** argv)
  * {
- *   IO::ParseCommandLine(argc, argv);
+ *   CLI::ParseCommandLine(argc, argv);
  *
  *   ...
  * }
  * @endcode
  *
- * IO provides --help and --info options which give nicely formatted
+ * CLI provides --help and --info options which give nicely formatted
  * documentation of each option; the documentation is generated from the DESC
  * arguments in the PARAM_*() macros.
  *
- * @section getparam Getting parameters with IO
+ * @section getparam Getting parameters with CLI
  *
  * When the parameters have been defined, the next important thing is how to
  * access them.  For this, the HasParam() and GetParam() methods are
  * used.  For instance, to see if the user passed the flag (boolean) "naive":
  *
  * @code
- * if (IO::HasParam("naive"))
+ * if (CLI::HasParam("naive"))
  * {
  *   Log::Info << "Naive has been passed!" << std::endl;
  * }
@@ -147,7 +147,7 @@ class ProgramDoc;
  * To get the value of a parameter, such as a string, use GetParam:
  *
  * @code
- * const std::string filename = IO::GetParam<std::string>("filename");
+ * const std::string filename = CLI::GetParam<std::string>("filename");
  * @endcode
  *
  * @note
@@ -165,7 +165,7 @@ class ProgramDoc;
  * collisions are still possible, and they produce bizarre error messages. See
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
-class IO
+class CLI
 {
  public:
   /**
@@ -228,7 +228,7 @@ class IO
                               const std::string& inputParamName);
 
   /**
-   * Retrieve the singleton.  As an end user, if you are just using the IO
+   * Retrieve the singleton.  As an end user, if you are just using the CLI
    * object, you should not need to use this function---the other static
    * functions should be sufficient.
    *
@@ -238,7 +238,7 @@ class IO
    *
    * @return The singleton instance for use in the static methods.
    */
-  static IO& GetSingleton();
+  static CLI& GetSingleton();
 
   /**
    * Registers a ProgramDoc object, which contains documentation about the
@@ -249,9 +249,9 @@ class IO
    */
   static void RegisterProgramDoc(util::ProgramDoc* doc);
 
-  //! Return a modifiable list of parameters that IO knows about.
+  //! Return a modifiable list of parameters that CLI knows about.
   static std::map<std::string, util::ParamData>& Parameters();
-  //! Return a modifiable list of aliases that IO knows about.
+  //! Return a modifiable list of aliases that CLI knows about.
   static std::map<char, std::string>& Aliases();
 
   //! Get the program name as set by the PROGRAM_INFO() macro.
@@ -309,7 +309,7 @@ class IO
       std::map<char, std::string>, FunctionMapType>> storageMap;
 
  public:
-  //! True, if IO was used to parse command line options.
+  //! True, if CLI was used to parse command line options.
   bool didParse;
 
   //! Holds the name of the program for --version.  This is the true program
@@ -329,12 +329,12 @@ class IO
   /**
    * Make the constructor private, to preclude unauthorized instances.
    */
-  IO();
+  CLI();
 
   //! Private copy constructor; we don't want copies floating around.
-  IO(const IO& other);
+  CLI(const CLI& other);
   //! Private copy operator; we don't want copies floating around.
-  IO& operator=(const IO& other);
+  CLI& operator=(const CLI& other);
 };
 
 } // namespace mlpack

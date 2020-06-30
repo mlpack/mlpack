@@ -33,22 +33,22 @@ struct CFTestFixture
   CFTestFixture()
   {
     // Cache in the options for this program.
-    IO::RestoreSettings(testName);
+    CLI::RestoreSettings(testName);
   }
 
   ~CFTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    IO::ClearSettings();
+    CLI::ClearSettings();
   }
 };
 
 static void ResetSettings()
 {
   bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
 }
 
 BOOST_FIXTURE_TEST_SUITE(CFMainTest, CFTestFixture);
@@ -203,9 +203,9 @@ BOOST_AUTO_TEST_CASE(CFModelReuseTest)
     mlpackMain();
 
     // Reset passed parameters.
-    IO::GetSingleton().Parameters()["training"].wasPassed = false;
-    IO::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
-    IO::GetSingleton().Parameters()["algorithm"].wasPassed = false;
+    CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+    CLI::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
+    CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
 
     // Reuse the model to get recommendations.
     int recommendations = 3;
@@ -216,11 +216,11 @@ BOOST_AUTO_TEST_CASE(CFModelReuseTest)
     SetInputParam("query", std::move(query));
     SetInputParam("recommendations", recommendations);
     SetInputParam("input_model",
-        std::move(IO::GetParam<CFModel*>("output_model")));
+        std::move(CLI::GetParam<CFModel*>("output_model")));
 
     mlpackMain();
 
-    const Mat<size_t>& output = IO::GetParam<Mat<size_t>>("output");
+    const Mat<size_t>& output = CLI::GetParam<Mat<size_t>>("output");
 
     BOOST_REQUIRE_EQUAL(output.n_rows, recommendations);
     BOOST_REQUIRE_EQUAL(output.n_cols, querySize);
@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_CASE(CFAllUserRecommendationsTest)
 
   mlpackMain();
 
-  const Mat<size_t>& output = IO::GetParam<Mat<size_t>>("output");
+  const Mat<size_t>& output = CLI::GetParam<Mat<size_t>>("output");
 
   BOOST_REQUIRE_EQUAL(output.n_cols, userNum);
 }
@@ -263,7 +263,7 @@ BOOST_AUTO_TEST_CASE(CFRankTest)
 
   mlpackMain();
 
-  const CFModel* outputModel = IO::GetParam<CFModel*>("output_model");
+  const CFModel* outputModel = CLI::GetParam<CFModel*>("output_model");
 
   BOOST_REQUIRE_EQUAL(outputModel->template CFPtr<NMFPolicy>()->Rank(), rank);
 }
@@ -287,7 +287,7 @@ BOOST_AUTO_TEST_CASE(CFMinResidueTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel =  IO::GetParam<CFModel*>("output_model");
+  outputModel =  CLI::GetParam<CFModel*>("output_model");
   // By default the main program use NMFPolicy.
   const mat w1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
   const mat h1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
@@ -304,7 +304,7 @@ BOOST_AUTO_TEST_CASE(CFMinResidueTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel = IO::GetParam<CFModel*>("output_model");
+  outputModel = CLI::GetParam<CFModel*>("output_model");
   // By default the main program use NMFPolicy.
   const mat w2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
   const mat h2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
@@ -332,7 +332,7 @@ BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel =  IO::GetParam<CFModel*>("output_model");
+  outputModel =  CLI::GetParam<CFModel*>("output_model");
   // By default, the main program use NMFPolicy.
   const mat w1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
   const mat h1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
@@ -348,7 +348,7 @@ BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel = IO::GetParam<CFModel*>("output_model");
+  outputModel = CLI::GetParam<CFModel*>("output_model");
   // By default, the main program use NMFPolicy.
   const mat w2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
   const mat h2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
@@ -375,7 +375,7 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel =  IO::GetParam<CFModel*>("output_model");
+  outputModel =  CLI::GetParam<CFModel*>("output_model");
   // By default, the main program use NMFPolicy.
   const mat w1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
   const mat h1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
@@ -391,7 +391,7 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel = IO::GetParam<CFModel*>("output_model");
+  outputModel = CLI::GetParam<CFModel*>("output_model");
   // By default the main program use NMFPolicy.
   const mat w2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
   const mat h2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
@@ -420,7 +420,7 @@ BOOST_AUTO_TEST_CASE(CFNeighborhoodTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  const arma::Mat<size_t> output1 = IO::GetParam<arma::Mat<size_t>>("output");
+  const arma::Mat<size_t> output1 = CLI::GetParam<arma::Mat<size_t>>("output");
 
   ResetSettings();
 
@@ -434,7 +434,7 @@ BOOST_AUTO_TEST_CASE(CFNeighborhoodTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  const arma::Mat<size_t> output2 = IO::GetParam<arma::Mat<size_t>>("output");
+  const arma::Mat<size_t> output2 = CLI::GetParam<arma::Mat<size_t>>("output");
 
   // The resulting matrices should be different.
   BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
@@ -485,40 +485,40 @@ BOOST_AUTO_TEST_CASE(CFInterpolationTest)
 
   mlpackMain();
 
-  const arma::Mat<size_t> output1 = IO::GetParam<arma::Mat<size_t>>("output");
+  const arma::Mat<size_t> output1 = CLI::GetParam<arma::Mat<size_t>>("output");
 
   BOOST_REQUIRE_EQUAL(output1.n_rows, 5);
   BOOST_REQUIRE_EQUAL(output1.n_cols, 7);
 
   // Reset passed parameters.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
-  IO::GetSingleton().Parameters()["algorithm"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
 
   // Using regression interpolation algorithm.
   SetInputParam("input_model",
-      std::move(IO::GetParam<CFModel*>("output_model")));
+      std::move(CLI::GetParam<CFModel*>("output_model")));
   SetInputParam("query", query);
   SetInputParam("interpolation", std::string("regression"));
   SetInputParam("recommendations", 5);
 
   mlpackMain();
 
-  const arma::Mat<size_t> output2 = IO::GetParam<arma::Mat<size_t>>("output");
+  const arma::Mat<size_t> output2 = CLI::GetParam<arma::Mat<size_t>>("output");
 
   BOOST_REQUIRE_EQUAL(output2.n_rows, 5);
   BOOST_REQUIRE_EQUAL(output2.n_cols, 7);
 
   // Using similarity interpolation algorithm.
   SetInputParam("input_model",
-      std::move(IO::GetParam<CFModel*>("output_model")));
+      std::move(CLI::GetParam<CFModel*>("output_model")));
   SetInputParam("query", query);
   SetInputParam("interpolation", std::string("similarity"));
   SetInputParam("recommendations", 5);
 
   mlpackMain();
 
-  const arma::Mat<size_t> output3 = IO::GetParam<arma::Mat<size_t>>("output");
+  const arma::Mat<size_t> output3 = CLI::GetParam<arma::Mat<size_t>>("output");
 
   BOOST_REQUIRE_EQUAL(output3.n_rows, 5);
   BOOST_REQUIRE_EQUAL(output3.n_cols, 7);
@@ -573,40 +573,40 @@ BOOST_AUTO_TEST_CASE(CFNeighborSearchTest)
 
   mlpackMain();
 
-  const arma::Mat<size_t> output1 = IO::GetParam<arma::Mat<size_t>>("output");
+  const arma::Mat<size_t> output1 = CLI::GetParam<arma::Mat<size_t>>("output");
 
   BOOST_REQUIRE_EQUAL(output1.n_rows, 5);
   BOOST_REQUIRE_EQUAL(output1.n_cols, 7);
 
   // Reset passed parameters.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
-  IO::GetSingleton().Parameters()["algorithm"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
 
   // Using cosine neighbor search algorithm.
   SetInputParam("input_model",
-      std::move(IO::GetParam<CFModel*>("output_model")));
+      std::move(CLI::GetParam<CFModel*>("output_model")));
   SetInputParam("query", query);
   SetInputParam("neighbor_search", std::string("cosine"));
   SetInputParam("recommendations", 5);
 
   mlpackMain();
 
-  const arma::Mat<size_t> output2 = IO::GetParam<arma::Mat<size_t>>("output");
+  const arma::Mat<size_t> output2 = CLI::GetParam<arma::Mat<size_t>>("output");
 
   BOOST_REQUIRE_EQUAL(output2.n_rows, 5);
   BOOST_REQUIRE_EQUAL(output2.n_cols, 7);
 
   // Using pearson neighbor search algorithm.
   SetInputParam("input_model",
-      std::move(IO::GetParam<CFModel*>("output_model")));
+      std::move(CLI::GetParam<CFModel*>("output_model")));
   SetInputParam("query", query);
   SetInputParam("neighbor_search", std::string("pearson"));
   SetInputParam("recommendations", 5);
 
   mlpackMain();
 
-  const arma::Mat<size_t> output3 = IO::GetParam<arma::Mat<size_t>>("output");
+  const arma::Mat<size_t> output3 = CLI::GetParam<arma::Mat<size_t>>("output");
 
   BOOST_REQUIRE_EQUAL(output3.n_rows, 5);
   BOOST_REQUIRE_EQUAL(output3.n_cols, 7);
@@ -666,7 +666,7 @@ BOOST_AUTO_TEST_CASE(CFNormalizationTest)
 
   mlpackMain();
 
-  const arma::Mat<size_t> output1 = IO::GetParam<arma::Mat<size_t>>("output");
+  const arma::Mat<size_t> output1 = CLI::GetParam<arma::Mat<size_t>>("output");
 
   BOOST_REQUIRE_EQUAL(output1.n_rows, 5);
   BOOST_REQUIRE_EQUAL(output1.n_cols, 7);
@@ -685,7 +685,7 @@ BOOST_AUTO_TEST_CASE(CFNormalizationTest)
 
   mlpackMain();
 
-  const arma::Mat<size_t> output2 = IO::GetParam<arma::Mat<size_t>>("output");
+  const arma::Mat<size_t> output2 = CLI::GetParam<arma::Mat<size_t>>("output");
 
   BOOST_REQUIRE_EQUAL(output2.n_rows, 5);
   BOOST_REQUIRE_EQUAL(output2.n_cols, 7);
@@ -704,7 +704,7 @@ BOOST_AUTO_TEST_CASE(CFNormalizationTest)
 
   mlpackMain();
 
-  const arma::Mat<size_t> output3 = IO::GetParam<arma::Mat<size_t>>("output");
+  const arma::Mat<size_t> output3 = CLI::GetParam<arma::Mat<size_t>>("output");
 
   BOOST_REQUIRE_EQUAL(output3.n_rows, 5);
   BOOST_REQUIRE_EQUAL(output3.n_cols, 7);

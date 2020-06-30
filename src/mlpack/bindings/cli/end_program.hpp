@@ -17,7 +17,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cmd {
+namespace cli {
 
 /**
  * Handle command-line program termination.  If --help or --info was passed, we
@@ -26,18 +26,18 @@ namespace cmd {
 inline void EndProgram()
 {
   // Stop the IO timers.
-  IO::GetSingleton().timer.StopAllTimers();
+  CLI::GetSingleton().timer.StopAllTimers();
 
   // Print any output.
-  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
   for (auto it : parameters)
   {
     util::ParamData& d = it.second;
     if (!d.input)
-      IO::GetSingleton().functionMap[d.tname]["OutputParam"](d, NULL, NULL);
+      CLI::GetSingleton().functionMap[d.tname]["OutputParam"](d, NULL, NULL);
   }
 
-  if (IO::HasParam("verbose"))
+  if (CLI::HasParam("verbose"))
   {
     Log::Info << std::endl << "Execution parameters:" << std::endl;
 
@@ -48,21 +48,21 @@ inline void EndProgram()
       // We can handle strings, ints, bools, doubles.
       util::ParamData& data = it.second;
       std::string cliName;
-      IO::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
+      CLI::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
           NULL, (void*) &cliName);
       Log::Info << "  " << cliName << ": ";
 
       std::string printableParam;
-      IO::GetSingleton().functionMap[data.tname]["GetPrintableParam"](data,
+      CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"](data,
           NULL, (void*) &printableParam);
       Log::Info << printableParam << std::endl;
     }
 
     Log::Info << "Program timers:" << std::endl;
-    for (auto it2 : IO::GetSingleton().timer.GetAllTimers())
+    for (auto it2 : CLI::GetSingleton().timer.GetAllTimers())
     {
       Log::Info << "  " << it2.first << ": ";
-      IO::GetSingleton().timer.PrintTimer(it2.first);
+      CLI::GetSingleton().timer.PrintTimer(it2.first);
     }
   }
 
@@ -75,7 +75,7 @@ inline void EndProgram()
     util::ParamData& data = it.second;
 
     void* result;
-    IO::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
+    CLI::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
         NULL, (void*) &result);
     if (result != NULL && memoryAddresses.count(result) == 0)
       memoryAddresses[result] = &data;
@@ -88,14 +88,14 @@ inline void EndProgram()
   {
     util::ParamData& data = *(it2->second);
 
-    IO::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
+    CLI::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
         NULL, NULL);
 
     ++it2;
   }
 }
 
-} // namespace cmd
+} // namespace cli
 } // namespace bindings
 } // namespace mlpack
 

@@ -18,7 +18,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cmd {
+namespace cli {
 
 /**
  * Given the name of a binding, print its command-line name (this returns
@@ -72,13 +72,13 @@ inline std::string PrintValue(const T& value, bool quotes)
  */
 inline std::string PrintDefault(const std::string& paramName)
 {
-  if (IO::Parameters().count(paramName) == 0)
+  if (CLI::Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter " + paramName + "!");
 
-  util::ParamData& d = IO::Parameters()[paramName];
+  util::ParamData& d = CLI::Parameters()[paramName];
 
   std::string defaultValue;
-  IO::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL,
+  CLI::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL,
       (void*) &defaultValue);
 
   return defaultValue;
@@ -113,19 +113,19 @@ std::string ProcessOptions(const std::string& paramName,
 {
   // See if it is part of the program.
   std::string result = "";
-  if (IO::Parameters().count(paramName) > 0)
+  if (CLI::Parameters().count(paramName) > 0)
   {
-    util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = CLI::Parameters()[paramName];
 
     std::string name;
-    IO::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](d, NULL,
+    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](d, NULL,
         (void*) &name);
 
     std::ostringstream ossValue;
     ossValue << value;
     std::string rawValue = ossValue.str();
     std::string fullValue;
-    IO::GetSingleton().functionMap[d.tname]["GetPrintableParamValue"](d,
+    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParamValue"](d,
         (void*) &rawValue, (void*) &fullValue);
 
     std::ostringstream oss;
@@ -170,7 +170,7 @@ inline std::string ProgramCall(const std::string& programName)
   oss << "$ " << GetBindingName(programName);
 
   // Handle all options---first input options, then output options.
-  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
 
   for (auto it : parameters)
   {
@@ -179,11 +179,11 @@ inline std::string ProgramCall(const std::string& programName)
 
     // Otherwise, print the name and the default value.
     std::string name;
-    IO::GetSingleton().functionMap[it.second.tname]["GetPrintableParamName"](
+    CLI::GetSingleton().functionMap[it.second.tname]["GetPrintableParamName"](
         it.second, NULL, (void*) &name);
 
     std::string value;
-    IO::GetSingleton().functionMap[it.second.tname]["DefaultParam"](
+    CLI::GetSingleton().functionMap[it.second.tname]["DefaultParam"](
         it.second, NULL, (void*) &value);
     if (value == "''")
       value = "<string>";
@@ -208,11 +208,11 @@ inline std::string ProgramCall(const std::string& programName)
 
     // Otherwise, print the name and the default value.
     std::string name;
-    IO::GetSingleton().functionMap[it.second.tname]["GetPrintableParamName"](
+    CLI::GetSingleton().functionMap[it.second.tname]["GetPrintableParamName"](
         it.second, NULL, (void*) &name);
 
     std::string value;
-    IO::GetSingleton().functionMap[it.second.tname]["DefaultParam"](
+    CLI::GetSingleton().functionMap[it.second.tname]["DefaultParam"](
         it.second, NULL, (void*) &value);
     if (value == "''")
       value = "<string>";
@@ -235,12 +235,12 @@ inline std::string ProgramCall(const std::string& programName)
 inline std::string ParamString(const std::string& paramName)
 {
   // Return the correct parameter name.
-  if (IO::Parameters().count(paramName) > 0)
+  if (CLI::Parameters().count(paramName) > 0)
   {
-    util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = CLI::Parameters()[paramName];
 
     std::string output;
-    IO::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](d, NULL,
+    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](d, NULL,
         (void*) &output);
     // Is there an alias?
     std::string alias = "";
@@ -256,7 +256,7 @@ inline std::string ParamString(const std::string& paramName)
   }
 }
 
-} // namespace cmd
+} // namespace cli
 } // namespace bindings
 } // namespace mlpack
 

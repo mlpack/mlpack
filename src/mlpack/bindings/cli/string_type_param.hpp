@@ -19,7 +19,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cmd {
+namespace cli {
 
 /**
  * Return a string containing the type of the parameter.
@@ -87,7 +87,7 @@ inline void StringTypeParam<std::tuple<mlpack::data::DatasetInfo, arma::mat>>(
     const void* /* input */,
     void* output);
 
-} // namespace cmd
+} // namespace cli
 } // namespace bindings
 } // namespace mlpack
 

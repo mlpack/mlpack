@@ -15,7 +15,7 @@
 
 namespace mlpack {
 namespace bindings {
-namespace cmd {
+namespace cli {
 
 /**
  * Return a string representing the command-line type of an option.
@@ -75,7 +75,7 @@ void GetPrintableType(util::ParamData& data,
       GetPrintableType<typename std::remove_pointer<T>::type>(data);
 }
 
-} // namespace cmd
+} // namespace cli
 } // namespace bindings
 } // namespace mlpack
 
