@@ -19,7 +19,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-NegativeLogLikelihood<InputDataType, OutputDataType>::NegativeLogLikelihood()
+NegativeLogLikelihood<InputDataType, OutputDataType>::NegativeLogLikelihood(
+    const bool reduction) : reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -31,18 +32,21 @@ NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     const TargetType& target)
 {
-  typedef typename InputType::elem_type ElemType;
-  ElemType output = 0;
-  for (size_t i = 0; i < input.n_cols; ++i)
+  InputType loss;
+  loss.zeros(size(target));
+  for(size_t i = 0; i < target.n_cols; ++i)
   {
-    size_t currentTarget = target(i) - 1;
-    Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
+    size_t currentTarget = target(i);
+    Log::Assert(currentTarget >= 0 && currentTarget < input.n_cols,
         "Target class out of range.");
-
-    output -= input(currentTarget, i);
+    loss(i) = -input(i, currentTarget);
   }
+  typename InputType::elem_type lossSum = arma::accu(loss);
 
-  return output;
+  if (reduction)
+    return lossSum;
+
+  return lossSum / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -52,24 +56,26 @@ void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
       const TargetType& target,
       OutputType& output)
 {
-  output = arma::zeros<OutputType>(input.n_rows, input.n_cols);
-  for (size_t i = 0; i < input.n_cols; ++i)
+  output.zeros(size(input));
+  for(size_t i = 0; i < target.n_cols; ++i)
   {
-    size_t currentTarget = target(i) - 1;
-    Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
+    size_t currentTarget = target(i);
+    Log::Assert(currentTarget >= 0 && currentTarget < input.n_cols,
         "Target class out of range.");
-
-    output(currentTarget, i) = -1;
+    output(i, currentTarget) = -1;
   }
+
+  if (!reduction)
+    output = output / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void NegativeLogLikelihood<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
+    Archive& ar,
     const unsigned int /* version */)
 {
-  // Nothing to do here.
+  ar & BOOST_SERIALIZATION_NVP(reduction);
 }
 
 } // namespace ann

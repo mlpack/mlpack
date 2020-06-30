@@ -21,6 +21,7 @@
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
+#include <mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp>
 #include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp>
@@ -89,6 +90,54 @@ BOOST_AUTO_TEST_CASE(HuberLossTest)
   // Test the Backward function.
   module.Backward(input, target, output);
   BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), -0.0669333, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
+}
+
+/**
+ * Simple Negative Log Likelihood Loss test.
+ */
+BOOST_AUTO_TEST_CASE(NegativeLogLikelihoodLossTest)
+{
+  arma::mat input, target, output;
+  arma::mat expectedOutput;
+  double loss;
+  NegativeLogLikelihood<> module;
+
+  // Test for sum reduction.
+  input = arma::mat("-0.1689 -0.2862 -1.0543 -1.2865 -2.0033 -1.9392 -0.6196 "
+      "-1.4797 -3.8886 -2.2532 -2.1769 -0.7011");
+  target = arma::mat("2 2 1 2");
+  expectedOutput = arma::mat("0 0 0 0 0 0 -1.0000 0 -1.0000 -1.0000 0 -1.0000");
+  input.reshape(4, 3);
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be 7.4625.
+  // Value calculated using torch.nn.NLLLoss(reduction='sum').
+  loss = module.Forward(input, target);
+  BOOST_REQUIRE_CLOSE(loss, 7.4625, 1e-3);
+
+  // Test the Backward function.
+  module.Backward(input, target, output);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), -4, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
+
+  // Test for mean reduction by modifying reduction parameter using accessor.
+  module.Reduction() = false;
+  expectedOutput = arma::mat("0 0 0 0 0 0 -0.2500 0 -0.2500 -0.2500 0 -0.2500");
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be 1.86562.
+  // Value calculated using torch.nn.NLLLoss(reduction='mean').
+  loss = module.Forward(input, target);
+  BOOST_REQUIRE_CLOSE(loss, 1.86562, 1e-3);
+
+  // Test the Backward function.
+  module.Backward(input, target, output);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), -1, 1e-3);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
