@@ -18,8 +18,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The L1 loss is a loss function that measures the mean absolute error (MAE) 
- * between each element in the input x and target y 
+ * The L1 loss is a loss function that measures the mean absolute error (MAE)
+ * between each element in the input x and target y.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -36,10 +36,13 @@ class L1Loss
   /**
    * Create the L1Loss object.
    *
-   * @param mean Reduction type. If true, it returns the mean of 
-   * the loss. Else, it returns the sum.
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If
+   *                  true, 'sum' reduction is used and the output will be
+   *                  summed. It is set to true by default.
    */
-  L1Loss(const bool mean = true);
+  L1Loss(const bool reduction = true);
 
   /**
    * Computes the L1 Loss function.
@@ -68,10 +71,10 @@ class L1Loss
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //! Get the value of reduction type.
-  bool Mean() const { return mean; }
-  //! Set the value of reduction type.
-  bool& Mean() { return mean; }
+  //! Get the type of reduction used.
+  bool Reduction() const { return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() { return reduction; }
 
   /**
    * Serialize the layer.
@@ -83,8 +86,8 @@ class L1Loss
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Reduction type. If true, performs mean of loss else sum.
-  bool mean;
+  //! The boolean value that tells if reduction is sum or mean.
+  bool reduction;
 }; // class L1Loss
 
 } // namespace ann

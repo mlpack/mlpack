@@ -703,39 +703,47 @@ BOOST_AUTO_TEST_CASE(HingeEmbeddingLossTest)
 }
 
 /**
- * Simple test for the l1 loss function.
+ * Simple test for the L1 loss function.
  */
 BOOST_AUTO_TEST_CASE(SimpleL1LossTest)
 {
-  arma::mat input1, input2, output, target1, target2;
-  L1Loss<> module(false);
+  arma::mat input, output, target, expectedOutput;
+  double loss;
+  L1Loss<> module;
 
-  // Test the Forward function on a user generator input and compare it against
-  // the manually calculated result.
-  input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5");
-  target1 = arma::zeros(1, 7);
-  double error1 = module.Forward(input1, target1);
-  BOOST_REQUIRE_EQUAL(error1, 3.5);
+  // Test for sum reduction.
+  input = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5");
+  target = arma::zeros(1, 7);
+  expectedOutput = arma::mat("1 1 1 1 1 1 1");
 
-  input2 = arma::mat("0 1 1 0 1 0 0 1");
-  target2 = arma::mat("0 1 1 0 1 0 0 1");
-  double error2 = module.Forward(input2, target2);
-  BOOST_REQUIRE_CLOSE(error2, 0.0, 0.00001);
+  // Test the Forward function. Loss should be 3.5.
+  // Value calculated using torch.nn.L1Loss(reduction='sum').
+  loss = module.Forward(input, target);
+  BOOST_REQUIRE_EQUAL(loss, 3.5);
 
   // Test the Backward function.
-  module.Backward(input1, target1, output);
-  for (double el : output)
-    BOOST_REQUIRE_EQUAL(el , 1);
+  module.Backward(input, target, output);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 7, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
 
-  BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
+  // Test for mean reduction by modifying reduction parameter using accessor.
+  module.Reduction() = false;
+  expectedOutput = arma::mat("0.1428 0.1428 0.1428 0.1428 0.1428 0.1428 "
+      "0.1428");
 
-  module.Backward(input2, target2, output);
-  for (double el : output)
-    BOOST_REQUIRE_EQUAL(el, 0);
+  // Test the Forward function. Loss should be 0.5.
+  // Value calculated using torch.nn.L1Loss(reduction='mean').
+  loss = module.Forward(input, target);
+  BOOST_REQUIRE_EQUAL(loss, 0.5);
 
-  BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
+  // Test the Backward function.
+  module.Backward(input, target, output);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 1, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
 }
 
 /**
