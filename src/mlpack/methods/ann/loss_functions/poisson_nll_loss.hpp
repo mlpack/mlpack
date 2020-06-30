@@ -124,6 +124,18 @@ class PoissonNLLLoss
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+  //! Check if the probabilities lie in the range [0, 1].
+  template<typename eT>
+  void CheckProbs(const arma::Mat<eT>& probs)
+  {
+    for (size_t i = 0; i < probs.size(); ++i)
+    {
+      if (probs[i] > 1.0 || probs[i] < 0.0)
+        Log::Fatal << "Probabilities cannot be greater than 1 "
+                   << "or smaller than 0." << std::endl;
+    }
+  }
+
   //! Locally-stored input parameter object.
   InputDataType inputParameter;
 

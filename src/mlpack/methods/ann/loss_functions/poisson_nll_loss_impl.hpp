@@ -45,7 +45,10 @@ PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
   if (logInput)
     loss = arma::exp(input) - target % input;
   else
+  {
+    CheckProbs(input);
     loss = input - target % arma::log(input + eps);
+  }
 
   if (full)
   {
@@ -70,7 +73,10 @@ void PoissonNLLLoss<InputDataType, OutputDataType>::Backward(
   if (logInput)
     output = (arma::exp(input) - target);
   else
+  {
+    CheckProbs(input);
     output = (1 - target / (input + eps));
+  }
 
   if (reduction)
     output = output / output.n_elem;
