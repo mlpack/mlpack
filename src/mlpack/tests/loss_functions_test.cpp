@@ -99,33 +99,48 @@ BOOST_AUTO_TEST_CASE(HuberLossTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleMeanSquaredLogarithmicErrorTest)
 {
-  arma::mat input, output, target;
+  arma::mat input, target, output, expectedOutput;
+  double loss;
   MeanSquaredLogarithmicError<> module;
 
-  // Test the Forward function on a user generator input and compare it against
-  // the manually calculated result.
-  input = arma::zeros(1, 8);
-  target = arma::zeros(1, 8);
-  double error = module.Forward(input, target);
-  BOOST_REQUIRE_SMALL(error, 0.00001);
+  // Test for sum reduction.
+  input = arma::mat("-0.0494 1.1958 1.0486 -0.2121 1.6028 0.0737 -0.7091 "
+      "0.8612 0.9639 0.9648 0.0745 0.5924");
+  target = arma::mat("0.4316 0.0164 -0.4478 1.1452 0.5106 0.9255 0.5571 0.0864 "
+      "0.7059 -0.8288 -0.0231 1.0526");
+  expectedOutput = arma::mat("-0.8615 0.7016 1.2799 -2.5425 0.4181 -1.0880 "
+      "-11.5339 0.5785 0.1434 2.4840 0.1772 -0.3188");
+  input.reshape(4, 3);
+  target.reshape(4, 3);
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be 13.2728.
+  loss = module.Forward(input, target);
+  BOOST_REQUIRE_CLOSE(loss, 13.2728, 1e-3);
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  // The output should be equal to 0.
-  CheckMatrices(input, output);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), -10.5619, 1e-3);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
 
-  // Test the error function on a single input.
-  input = arma::mat("2");
-  target = arma::mat("3");
-  error = module.Forward(input, target);
-  BOOST_REQUIRE_CLOSE(error, 0.082760974810151655, 0.001);
+  // Test for mean reduction by modifying reduction parameter using accessor.
+  module.Reduction() = false;
+  expectedOutput = arma::mat("-0.0718 0.0585 0.1067 -0.2119 0.0348 -0.0907 "
+      "-0.9612 0.0482 0.0120 0.2070 0.0148 -0.0266");
+  expectedOutput.reshape(4, 3);
 
-  // Test the Backward function on a single input.
+  // Test the Forward function. Loss should be 1.10606.
+  loss = module.Forward(input, target);
+  BOOST_REQUIRE_CLOSE(loss, 1.10606, 1e-3);
+
+  // Test the Backward function.
   module.Backward(input, target, output);
-  BOOST_REQUIRE_CLOSE(arma::accu(output), -0.1917880483011872, 0.001);
-  BOOST_REQUIRE_EQUAL(output.n_elem, 1);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), -0.880156, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
 }
 
 /**
