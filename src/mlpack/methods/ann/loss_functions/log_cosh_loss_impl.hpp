@@ -20,8 +20,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-LogCoshLoss<InputDataType, OutputDataType>::LogCoshLoss(const double a) :
-    a(a)
+LogCoshLoss<InputDataType, OutputDataType>::LogCoshLoss(
+    const double a, const bool reduction) : a(a), reduction(reduction)
 {
   Log::Assert(a > 0, "Hyper-Parameter \'a\' must be positive");
 }
@@ -32,7 +32,13 @@ typename InputType::elem_type
 LogCoshLoss<InputDataType, OutputDataType>::Forward(const InputType& input,
                                                     const TargetType& target)
 {
-  return arma::accu(arma::log(arma::cosh(a * (target - input)))) / a;
+  InputType loss = arma::log(arma::cosh(a * (target - input))) / a;
+  typename InputType::elem_type lossSum = arma::accu(loss);
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / input.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -43,6 +49,9 @@ void LogCoshLoss<InputDataType, OutputDataType>::Backward(
     OutputType& output)
 {
   output = arma::tanh(a * (target - input));
+
+  if (!reduction)
+    output = output / input.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -52,6 +61,7 @@ void LogCoshLoss<InputDataType, OutputDataType>::serialize(
     const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(a);
+  ar & BOOST_SERIALIZATION_NVP(reduction);
 }
 
 } // namespace ann

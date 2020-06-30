@@ -45,8 +45,13 @@ class LogCoshLoss
    *          act as a scaling factor hence making the loss
    *          function more sensitive to small losses around the
    *          origin. Default value = 1.0.
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If
+   *                  true, 'sum' reduction is used and the output will be
+   *                  summed. It is set to true by default.
    */
-  LogCoshLoss(const double a = 1.0);
+  LogCoshLoss(const double a = 1.0, const bool reduction = true);
 
   /**
    * Computes the Log-Hyperbolic-Cosine loss function.
@@ -80,6 +85,11 @@ class LogCoshLoss
   //! Modify the value of hyperparameter a.
   double& A() { return a; }
 
+  //! Get the type of reduction used.
+  bool Reduction() const { return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() { return reduction; }
+
   /**
    * Serialize the loss function.
    */
@@ -92,6 +102,9 @@ class LogCoshLoss
 
   //! Hyperparameter a for smoothening function curve.
   double a;
+
+  //! The boolean value that tells if reduction is sum or mean.
+  bool reduction;
 }; // class LogCoshLoss
 
 } // namespace ann
