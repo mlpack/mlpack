@@ -31,6 +31,8 @@ set(SOURCES
   reconstruction_loss_impl.hpp
   sigmoid_cross_entropy_error.hpp
   sigmoid_cross_entropy_error_impl.hpp
+  soft_margin_loss.hpp
+  soft_margin_loss_impl.hpp
   hinge_embedding_loss.hpp
   hinge_embedding_loss_impl.hpp
 )
