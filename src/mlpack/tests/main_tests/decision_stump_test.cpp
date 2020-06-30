@@ -29,14 +29,14 @@ struct DecisionStumpTestFixture
   DecisionStumpTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~DecisionStumpTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -79,11 +79,11 @@ BOOST_AUTO_TEST_CASE(DecisionStumpOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_cols,
                       testSize);
 
   // Check prediction have only single row.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_rows,
                       1);
 }
 
@@ -122,20 +122,20 @@ BOOST_AUTO_TEST_CASE(DecisionStumpLabelsLessDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_cols,
                       testSize);
 
   // Check prediction have only single row.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_rows,
                       1);
 
   // Reset data passed.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Store outputs.
   arma::Row<size_t> predictions;
-  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+  predictions = std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
 
   // Delete the previous model.
   bindings::tests::CleanMemory();
@@ -154,16 +154,16 @@ BOOST_AUTO_TEST_CASE(DecisionStumpLabelsLessDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_cols,
                       testSize);
 
   // Check prediction have only single row.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_rows,
                       1);
 
   // Check that initial output and final output matrix
   // from two models are same.
-  CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+  CheckMatrices(predictions, IO::GetParam<arma::Row<size_t>>("predictions"));
 }
 
 /**
@@ -193,30 +193,30 @@ BOOST_AUTO_TEST_CASE(DecisionStumpModelReuseTest)
   mlpackMain();
 
   arma::Row<size_t> predictions;
-  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+  predictions = std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                std::move(CLI::GetParam<DSModel*>("output_model")));
+                std::move(IO::GetParam<DSModel*>("output_model")));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_cols,
                       testSize);
 
   // Check predictions have only single row.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_rows,
                       1);
 
   // Check that initial predictions and final predicitons matrix
   // using saved model are same.
-  CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+  CheckMatrices(predictions, IO::GetParam<arma::Row<size_t>>("predictions"));
 }
 
 /**
@@ -253,7 +253,7 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTrainingVerTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                std::move(CLI::GetParam<DSModel*>("output_model")));
+                std::move(IO::GetParam<DSModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);

@@ -30,36 +30,36 @@ BOOST_AUTO_TEST_SUITE(CLIBindingTest);
  */
 BOOST_AUTO_TEST_CASE(CLIOptionTest)
 {
-  CLI::ClearSettings();
+  IO::ClearSettings();
   CLIOption<double> co1(0.0, "test", "test2", "t", "double", false, true,
       false);
 
   // Now check that it's in CLI.
-  BOOST_REQUIRE_GT(CLI::Parameters().count("test"), 0);
-  BOOST_REQUIRE_GT(CLI::Aliases().count('t'), 0);
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].desc, "test2");
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].name, "test");
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].alias, 't');
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].noTranspose, false);
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].required, false);
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].input, true);
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].cppType, "double");
+  BOOST_REQUIRE_GT(IO::Parameters().count("test"), 0);
+  BOOST_REQUIRE_GT(IO::Aliases().count('t'), 0);
+  BOOST_REQUIRE_EQUAL(IO::Parameters()["test"].desc, "test2");
+  BOOST_REQUIRE_EQUAL(IO::Parameters()["test"].name, "test");
+  BOOST_REQUIRE_EQUAL(IO::Parameters()["test"].alias, 't');
+  BOOST_REQUIRE_EQUAL(IO::Parameters()["test"].noTranspose, false);
+  BOOST_REQUIRE_EQUAL(IO::Parameters()["test"].required, false);
+  BOOST_REQUIRE_EQUAL(IO::Parameters()["test"].input, true);
+  BOOST_REQUIRE_EQUAL(IO::Parameters()["test"].cppType, "double");
 
   CLIOption<arma::mat> co2(arma::mat(), "mat", "mat2", "m", "arma::mat", true,
       true, true);
 
   // Now check that it's in CLI.
-  BOOST_REQUIRE_GT(CLI::Parameters().count("mat"), 0);
-  BOOST_REQUIRE_GT(CLI::Aliases().count('m'), 0);
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["mat"].desc, "mat2");
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["mat"].name, "mat");
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["mat"].alias, 'm');
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["mat"].noTranspose, true);
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["mat"].required, true);
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["mat"].input, true);
-  BOOST_REQUIRE_EQUAL(CLI::Parameters()["mat"].cppType, "arma::mat");
+  BOOST_REQUIRE_GT(IO::Parameters().count("mat"), 0);
+  BOOST_REQUIRE_GT(IO::Aliases().count('m'), 0);
+  BOOST_REQUIRE_EQUAL(IO::Parameters()["mat"].desc, "mat2");
+  BOOST_REQUIRE_EQUAL(IO::Parameters()["mat"].name, "mat");
+  BOOST_REQUIRE_EQUAL(IO::Parameters()["mat"].alias, 'm');
+  BOOST_REQUIRE_EQUAL(IO::Parameters()["mat"].noTranspose, true);
+  BOOST_REQUIRE_EQUAL(IO::Parameters()["mat"].required, true);
+  BOOST_REQUIRE_EQUAL(IO::Parameters()["mat"].input, true);
+  BOOST_REQUIRE_EQUAL(IO::Parameters()["mat"].cppType, "arma::mat");
 
-  CLI::ClearSettings();
+  IO::ClearSettings();
 }
 
 /**
