@@ -25,14 +25,12 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     const size_t numClasses,
     const double delta,
     const double C,
-    const std::string& kernelFunction,
     const bool fitIntercept,
     const size_t max_iter,
     const double tol) :
     numClasses(numClasses),
     delta(delta),
     C(C),
-    kernelFunction(kernelFunction),
     fitIntercept(fitIntercept),
     max_iter(max_iter)
 {
@@ -45,13 +43,11 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     const size_t numClasses,
     const double delta,
     const double C,
-    const std::string& kernelFunction,
     const bool fitIntercept) :
     inputSize(inputSize),
     numClasses(numClasses),
     delta(delta),
     C(C),
-    kernelFunction(kernelFunction),
     fitIntercept(fitIntercept)
 {
   // No training to do here.
@@ -72,21 +68,14 @@ double KernelSVM<MatType, KernelType>::Train(
   double eta = 0;
   double L = 0;
   double H = 0;
-  arma::mat K;
+  arma::mat K = arma::mat(data.n_cols, data.n_cols);
 
-  if (kernelFunction == "linear")
+  for(size_t i = 0; i < data.n_cols; i++)
   {
-    K = data.t() * data;
-  }
-
-  else if (kernelFunction == "gaussian")
-  {
-    arma::vec X2 = arma::sum(arma::pow(data, 2), 2);
-    K = X2 + (X2.t() - 2 * data * data.t());
-  }
-  else
-  {
-    K = arma::zeros(data.n_rows, data.n_cols);
+    for (size_t j = 0; j < data.n_cols; j++)
+    {
+      K(i, j) = KernelType::Evaluate(data.col(i), data.col(j));
+    }
   }
 
   while(count < max_iter)
@@ -167,7 +156,6 @@ double KernelSVM<MatType, KernelType>::Train(
     else
       count = 0;
   }
-  std::cout<<alpha<<std::endl;
   w = (data * (alpha.t() % labels).t()).t();
 }
 
@@ -206,6 +194,8 @@ void KernelSVM<MatType, KernelType>::Classify(
     const MatType& data,
     arma::mat& scores) const
 {
+  std::cout<<w<<" = w"<<std::endl;
+  std::cout<<b<<" = b"<<std::endl;
   scores = (data.t() * w.t() + b).t();
 }
 
