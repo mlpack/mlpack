@@ -46,7 +46,6 @@ class KernelSVM
             const size_t numClasses = 2,
             const double delta = 1.0,
             const double C = 1.0,
-            const std::string& kernelFunction = "linear",
             const bool fitIntercept = false,
             const size_t max_iter = 10,
             const double tol = 1e-3);
@@ -65,7 +64,6 @@ class KernelSVM
             const size_t numClasses = 0,
             const double delta = 1.0,
             const double C = 1.0,
-            const std::string& kernelFunction = "linear",
             const bool fitIntercept = false);
 
   /**
@@ -190,8 +188,6 @@ class KernelSVM
   double lambda;
   //! The margin between the correct class and all other classes.
   double delta;
-  //! Locally saved kernelFunction.
-  std::string kernelFunction;
   //! Locally saved W parameter.
   double C;
   //! Intercept term flag.

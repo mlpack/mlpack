@@ -55,8 +55,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
     }
 
     // Now train a svm object on it.
-    const std::string l = "linear";
-    KernelSVM<> svm(data, labels, 2, 1.0, 10.0, l, false, 10);
+    KernelSVM<> svm(data, labels, 2, 1.0, 10.0, false, 10);
 
     // Ensure that the error is close to zero.
     const double acc = svm.ComputeAccuracy(data, labels);
