@@ -132,8 +132,7 @@ template<typename T>
 void GetParam(util::ParamData& d, const void* /* input */, void* output)
 {
   // Cast to the correct type.
-  *((T**) output) = &GetParam<typename std::remove_pointer<T>::type>(
-      const_cast<util::ParamData&>(d));
+  *((T**) output) = &GetParam<typename std::remove_pointer<T>::type>(d);
 }
 
 } // namespace cli
