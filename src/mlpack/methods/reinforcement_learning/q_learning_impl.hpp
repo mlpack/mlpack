@@ -30,20 +30,20 @@ QLearning<
   UpdaterType,
   PolicyType,
   ReplayType
->::QLearning(TrainingConfig config,
-             NetworkType network,
-             PolicyType policy,
-             ReplayType replayMethod,
+>::QLearning(TrainingConfig& config,
+             NetworkType& network,
+             PolicyType& policy,
+             ReplayType& replayMethod,
              UpdaterType updater,
              EnvironmentType environment):
-    config(std::move(config)),
-    learningNetwork(std::move(network)),
+    config(config),
+    learningNetwork(network),
+    policy(policy),
+    replayMethod(replayMethod),
     updater(std::move(updater)),
     #if ENS_VERSION_MAJOR >= 2
     updatePolicy(NULL),
     #endif
-    policy(std::move(policy)),
-    replayMethod(std::move(replayMethod)),
     environment(std::move(environment)),
     totalSteps(0),
     deterministic(false)
@@ -118,35 +118,14 @@ template <
   typename BehaviorPolicyType,
   typename ReplayType
 >
-double QLearning<
+void QLearning<
   EnvironmentType,
   NetworkType,
   UpdaterType,
   BehaviorPolicyType,
   ReplayType
->::Step()
+>::TrainAgent()
 {
-  // Get the action value for each action at current state.
-  arma::colvec actionValue;
-  learningNetwork.Predict(state.Encode(), actionValue);
-
-  // Select an action according to the behavior policy.
-  action = policy.Sample(actionValue, deterministic);
-
-  // Interact with the environment to advance to next state.
-  StateType nextState;
-  double reward = environment.Sample(state, action, nextState);
-
-  // Store the transition for replay.
-  replayMethod.Store(state, action, reward,
-      nextState, environment.IsTerminal(nextState));
-
-  // Update current state.
-  state = nextState;
-
-  if (deterministic || totalSteps < config.ExplorationSteps())
-    return reward;
-
   // Start experience replay.
 
   // Sample from previous experience.
@@ -180,6 +159,8 @@ double QLearning<
   arma::mat target;
   learningNetwork.Forward(sampledStates, target);
 
+  double discount = std::pow(config.Discount(), replayMethod.NSteps());
+
   /**
    * If the agent is at a terminal state, then we don't need to add the
    * discounted reward. At terminal state, the agent wont perform any
@@ -187,15 +168,8 @@ double QLearning<
    */
   for (size_t i = 0; i < sampledNextStates.n_cols; ++i)
   {
-    if (isTerminal[i])
-    {
-      target(sampledActions(i), i) = sampledRewards(i);
-    }
-    else
-    {
-      target(sampledActions(i), i) = sampledRewards(i) + config.Discount() *
-          nextActionValues(bestActions(i), i);
-    }
+    target(sampledActions(i), i) = sampledRewards(i) + discount *
+        nextActionValues(bestActions(i), i) * (1 - isTerminal[i]);
   }
 
   // Learn from experience.
@@ -210,7 +184,51 @@ double QLearning<
   updatePolicy->Update(learningNetwork.Parameters(), config.StepSize(),
       gradients);
   #endif
+}
 
+template <
+  typename EnvironmentType,
+  typename NetworkType,
+  typename UpdaterType,
+  typename BehaviorPolicyType,
+  typename ReplayType
+>
+double QLearning<
+  EnvironmentType,
+  NetworkType,
+  UpdaterType,
+  BehaviorPolicyType,
+  ReplayType
+>::Step()
+{
+  // Get the action value for each action at current state.
+  arma::colvec actionValue;
+  learningNetwork.Predict(state.Encode(), actionValue);
+
+  // Select an action according to the behavior policy.
+  action = policy.Sample(actionValue, deterministic, config.NoisyQLearning());
+
+  // Interact with the environment to advance to next state.
+  StateType nextState;
+  double reward = environment.Sample(state, action, nextState);
+
+  // Store the transition for replay.
+  replayMethod.Store(state, action, reward,
+      nextState, environment.IsTerminal(nextState), config.Discount());
+
+  // Update current state.
+  state = nextState;
+
+  if (deterministic || totalSteps < config.ExplorationSteps())
+    return reward;
+
+  TrainAgent();
+
+  if (config.NoisyQLearning() == true)
+  {
+    learningNetwork.ResetNoise();
+    targetNetwork.ResetNoise();
+  }
   return reward;
 }
 
@@ -267,4 +285,3 @@ double QLearning<
 } // namespace mlpack
 
 #endif
-

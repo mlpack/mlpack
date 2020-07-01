@@ -427,7 +427,7 @@ BOOST_AUTO_TEST_CASE(FastMKSKernelTest)
   arma::mat kernels;
 
   // Looping over all the kernels
-  for (size_t i = 0; i < nofkerneltypes; i++)
+  for (size_t i = 0; i < nofkerneltypes; ++i)
   {
     if (kerneltypes[i] == "hyptan")
     {

@@ -75,6 +75,8 @@ set(SOURCES
   multiply_constant_impl.hpp
   multiply_merge.hpp
   multiply_merge_impl.hpp
+  noisylinear.hpp
+  noisylinear_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
   recurrent.hpp
@@ -85,6 +87,8 @@ set(SOURCES
   reinforce_normal_impl.hpp
   reparametrization.hpp
   reparametrization_impl.hpp
+  radial_basis_function.hpp
+  radial_basis_function_impl.hpp
   select.hpp
   select_impl.hpp
   sequential.hpp

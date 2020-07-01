@@ -217,7 +217,7 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
   // means.n_cols.
 
   // Loop over every class.
-  for (size_t i = 0; i < means.n_cols; i++)
+  for (size_t i = 0; i < means.n_cols; ++i)
   {
     // This is an adaptation of gmm::phi() for the case where the covariance is
     // a diagonal matrix.

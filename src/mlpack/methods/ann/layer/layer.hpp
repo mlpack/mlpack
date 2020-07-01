@@ -52,6 +52,7 @@
 #include "minibatch_discrimination.hpp"
 #include "multiply_constant.hpp"
 #include "multiply_merge.hpp"
+#include "noisylinear.hpp"
 #include "padding.hpp"
 #include "parametric_relu.hpp"
 #include "recurrent_attention.hpp"

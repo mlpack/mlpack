@@ -139,7 +139,9 @@ class BiasSVDFunction
 } // namespace svd
 } // namespace mlpack
 
-// \cond NO_DOXYGEN
+/**
+ * @cond NO_DOXYGEN
+ */
 
 namespace ens {
 
@@ -163,7 +165,9 @@ namespace ens {
 
 } // namespace ens
 
-// \endcond
+/**
+ * @endcond
+ */
 
 #include "bias_svd_function_impl.hpp"
 
