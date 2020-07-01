@@ -29,9 +29,9 @@ void OrthogonalRegularizer::Evaluate(const MatType& weight, MatType& gradient)
 {
   arma::mat grad = arma::zeros(arma::size(weight));
 
-  for (size_t i = 0; i < weight.n_rows; i++)
+  for (size_t i = 0; i < weight.n_rows; ++i)
   {
-    for (size_t j = 0; j < weight.n_rows; j++)
+    for (size_t j = 0; j < weight.n_rows; ++j)
     {
       if (i == j)
       {

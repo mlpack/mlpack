@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(SimpleAddLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianAddLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t elements = math::RandInt(2, 1000);
     arma::mat input;
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(SimpleConstantLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianConstantLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t elements = math::RandInt(2, 1000);
     arma::mat input;
@@ -395,7 +395,7 @@ BOOST_AUTO_TEST_CASE(SimpleLinearLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianLinearLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
     const size_t outputElements = math::RandInt(2, 1000);
@@ -430,6 +430,82 @@ BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(10, 10);
       model->Add<Linear<> >(10, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * Simple noisy linear module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleNoisyLinearLayerTest)
+{
+  arma::mat output, input, delta;
+  NoisyLinear<> module(10, 10);
+  module.Parameters().randu();
+  module.Reset();
+
+  // Test the Backward function.
+  module.Backward(input, input, delta);
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+}
+
+/**
+ * Jacobian noisy linear module test.
+ */
+BOOST_AUTO_TEST_CASE(JacobianNoisyLinearLayerTest)
+{
+  const size_t inputElements = math::RandInt(2, 1000);
+  const size_t outputElements = math::RandInt(2, 1000);
+
+  arma::mat input;
+  input.set_size(inputElements, 1);
+
+  NoisyLinear<> module(inputElements, outputElements);
+  module.Parameters().randu();
+
+  double error = JacobianTest(module, input);
+  BOOST_REQUIRE_LE(error, 1e-5);
+}
+
+/**
+ * Noisy Linear layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientNoisyLinearLayerTest)
+{
+  // Noisy linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<NoisyLinear<> >(10, 10);
+      model->Add<NoisyLinear<> >(10, 2);
       model->Add<LogSoftMax<> >();
     }
 
@@ -499,7 +575,7 @@ BOOST_AUTO_TEST_CASE(SimplePaddingLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianLinearNoBiasLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
     const size_t outputElements = math::RandInt(2, 1000);
@@ -563,7 +639,7 @@ BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianNegativeLogLikelihoodLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     NegativeLogLikelihood<> module;
     const size_t inputElements = math::RandInt(5, 100);
@@ -584,7 +660,7 @@ BOOST_AUTO_TEST_CASE(JacobianNegativeLogLikelihoodLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianLeakyReLULayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
 
@@ -603,7 +679,7 @@ BOOST_AUTO_TEST_CASE(JacobianLeakyReLULayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianFlexibleReLULayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
 
@@ -667,7 +743,7 @@ BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianMultiplyConstantLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
 
@@ -686,7 +762,7 @@ BOOST_AUTO_TEST_CASE(JacobianMultiplyConstantLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianHardTanHLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
 
@@ -1321,13 +1397,13 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
 {
   arma::mat output, input, delta, error;
 
-  Linear<> moduleA(10, 10);
-  moduleA.Parameters().randu();
-  moduleA.Reset();
+  Linear<>* moduleA = new Linear<>(10, 10);
+  moduleA->Parameters().randu();
+  moduleA->Reset();
 
-  Linear<> moduleB(10, 10);
-  moduleB.Parameters().randu();
-  moduleB.Reset();
+  Linear<>* moduleB = new Linear<>(10, 10);
+  moduleB->Parameters().randu();
+  moduleB->Reset();
 
   Concat<> module;
   module.Add(moduleA);
@@ -1336,11 +1412,14 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
   // Test the Forward function.
   input = arma::zeros(10, 1);
   module.Forward(input, output);
-  BOOST_REQUIRE_CLOSE(arma::accu(
-      moduleA.Parameters().submat(100, 0, moduleA.Parameters().n_elem - 1, 0)) +
-      arma::accu(moduleB.Parameters().submat(100, 0,
-      moduleB.Parameters().n_elem - 1, 0)),
-      arma::accu(output.col(0)), 1e-3);
+
+  const double sumModuleA = arma::accu(
+      moduleA->Parameters().submat(
+      100, 0, moduleA->Parameters().n_elem - 1, 0));
+  const double sumModuleB = arma::accu(
+      moduleB->Parameters().submat(
+      100, 0, moduleB->Parameters().n_elem - 1, 0));
+  BOOST_REQUIRE_CLOSE(sumModuleA + sumModuleB, arma::accu(output.col(0)), 1e-3);
 
   // Test the Backward function.
   error = arma::zeros(20, 1);
@@ -1366,19 +1445,19 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
 
   input = arma::ones(inputWidth * inputHeight * inputChannel, batch);
 
-  Convolution<> moduleA(inputChannel, outputChannel, kW, kH, 1, 1, 0, 0,
-      inputWidth, inputHeight);
-  Convolution<> moduleB(inputChannel, outputChannel, kW, kH, 1, 1, 0, 0,
-      inputWidth, inputHeight);
+  Convolution<>* moduleA = new Convolution<>(inputChannel, outputChannel,
+      kW, kH, 1, 1, 0, 0, inputWidth, inputHeight);
+  Convolution<>* moduleB = new Convolution<>(inputChannel, outputChannel,
+      kW, kH, 1, 1, 0, 0, inputWidth, inputHeight);
 
-  moduleA.Reset();
-  moduleA.Parameters().randu();
-  moduleB.Reset();
-  moduleB.Parameters().randu();
+  moduleA->Reset();
+  moduleA->Parameters().randu();
+  moduleB->Reset();
+  moduleB->Parameters().randu();
 
   // Compute output of each layer.
-  moduleA.Forward(input, outputA);
-  moduleB.Forward(input, outputB);
+  moduleA->Forward(input, outputA);
+  moduleB->Forward(input, outputB);
 
   arma::cube A(outputA.memptr(), outputWidth, outputHeight, outputChannel);
   arma::cube B(outputB.memptr(), outputWidth, outputHeight, outputChannel);
@@ -1419,7 +1498,7 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
 
     // Compute output of Concat<> layer.
     arma::Row<size_t> inputSize{outputWidth, outputHeight, outputChannel};
-    Concat<> module(inputSize, axis);
+    Concat<> module(inputSize, axis, true);
     module.Add(moduleA);
     module.Add(moduleB);
     module.Forward(input, output);
@@ -1429,6 +1508,8 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
     // Verify if the output reshaped to cubes are similar.
     CheckMatrices(concatOut, calculatedOut, 1e-12);
   }
+  delete moduleA;
+  delete moduleB;
 }
 
 /**
@@ -2735,7 +2816,7 @@ BOOST_AUTO_TEST_CASE(ReparametrizationLayerIncludeKlTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianReparametrizationLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElementsHalf = math::RandInt(2, 1000);
 
@@ -3713,6 +3794,20 @@ BOOST_AUTO_TEST_CASE(AdaptiveMeanPoolingTestCase)
   // Test the Backward Function.
   module4.Backward(input, output, delta);
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 1.5);
+}
+
+BOOST_AUTO_TEST_CASE(TransposedConvolutionalLayerOptionalParameterTest)
+{
+  Sequential<>* decoder = new Sequential<>();
+
+  // Check if we can create an object without specifying output.
+  BOOST_REQUIRE_NO_THROW(decoder->Add<TransposedConvolution<>>(24, 16,
+      5, 5, 1, 1, 0, 0, 10, 10));
+
+  BOOST_REQUIRE_NO_THROW(decoder->Add<TransposedConvolution<>>(16, 1,
+      15, 15, 1, 1, 1, 1, 14, 14));
+
+    delete decoder;
 }
 
 BOOST_AUTO_TEST_SUITE_END();

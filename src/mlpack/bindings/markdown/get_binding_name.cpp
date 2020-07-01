@@ -37,6 +37,11 @@ std::string GetBindingName(const std::string& language,
     // For Julia bindings, the name is unchanged.
     return name;
   }
+  else if (language == "go")
+  {
+    // For Go bindings, the name is unchanged.
+    return name;
+  }
   else
   {
     throw std::invalid_argument("Don't know how to compute binding name for "
