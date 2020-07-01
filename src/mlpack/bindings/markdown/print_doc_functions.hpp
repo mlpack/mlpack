@@ -37,6 +37,11 @@ inline std::string PrintLanguage(const std::string& language);
 inline std::string PrintImport(const std::string& bindingName);
 
 /**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo(const std::string& language);
+
+/**
  * Print any special information about output options.
  */
 inline std::string PrintOutputOptionInfo(const std::string& language);

@@ -1087,7 +1087,7 @@ BOOST_AUTO_TEST_CASE(ConfidenceChangeTest)
   while ((tree.NumChildren() == 0) && (i < 9000))
   {
     tree.Train(dataset.col(i), labels[i]);
-    i++;
+    ++i;
   }
 
   BOOST_REQUIRE_LT(i, 9000);
@@ -1102,7 +1102,7 @@ BOOST_AUTO_TEST_CASE(ConfidenceChangeTest)
   while ((tree.NumChildren() == 0) && (i < 90000))
   {
     tree.Train(dataset.col(i % 9000), labels[i % 9000]);
-    i++;
+    ++i;
   }
 
   for (size_t c = 0; c < tree.NumChildren(); ++c)
