@@ -104,10 +104,10 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
       cosines.zeros(currentNode->NumColumns());
 
       size_t i, j, k;
-      for (i = 0; i < leftIndices.size(); i++)
+      for (i = 0; i < leftIndices.size(); ++i)
         cosines(i) = arma::norm_dot(data.col(leftIndices[i]), splitPoint);
 
-      for (j = 0, k = i; j < rightIndices.size(); j++, k++)
+      for (j = 0, k = i; j < rightIndices.size(); ++j, ++k)
         cosines(k) = arma::norm_dot(data.col(rightIndices[j]), splitPoint);
 
       // Check if the columns assigned to the children agree with the splitting
@@ -124,11 +124,11 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
       if (std::fabs(cosineMax - cosineMax2) < precision)
       {
         // Check with some precision.
-        for (i = 0; i < leftIndices.size(); i++)
+        for (i = 0; i < leftIndices.size(); ++i)
           BOOST_REQUIRE_LT(cosineMax - cosines(i),
                            cosines(i) - cosineMin + precision);
 
-        for (j = 0, k = i; j < rightIndices.size(); j++, k++)
+        for (j = 0, k = i; j < rightIndices.size(); ++j, ++k)
           BOOST_REQUIRE_GT(cosineMax - cosines(k),
                            cosines(k) - cosineMin - precision);
       }
@@ -138,20 +138,20 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
         size_t numMax2Errors = 0;
 
         // Find errors for cosineMax.
-        for (i = 0; i < leftIndices.size(); i++)
+        for (i = 0; i < leftIndices.size(); ++i)
           if (cosineMax - cosines(i) >= cosines(i) - cosineMin + precision)
             numMax1Errors++;
 
-        for (j = 0, k = i; j < rightIndices.size(); j++, k++)
+        for (j = 0, k = i; j < rightIndices.size(); ++j, ++k)
           if (cosineMax - cosines(k) <= cosines(k) - cosineMin - precision)
             numMax1Errors++;
 
         // Find errors for cosineMax2.
-        for (i = 0; i < leftIndices.size(); i++)
+        for (i = 0; i < leftIndices.size(); ++i)
           if (cosineMax2 - cosines(i) >= cosines(i) - cosineMin + precision)
             numMax2Errors++;
 
-        for (j = 0, k = i; j < rightIndices.size(); j++, k++)
+        for (j = 0, k = i; j < rightIndices.size(); ++j, ++k)
           if (cosineMax2 - cosines(k) <= cosines(k) - cosineMin - precision)
             numMax2Errors++;
 
@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE(CosineTreeModifiedGramSchmidt)
   CosineNodeQueue basisQueue;
   CosineTree dummyTree(data, epsilon, delta);
 
-  for (size_t i = 0; i < numCols; i++)
+  for (size_t i = 0; i < numCols; ++i)
   {
     // Make a new CosineNode object.
     CosineTree* basisNode;
@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(CosineTreeModifiedGramSchmidt)
     CosineNodeQueue::const_iterator j = basisQueue.begin();
     CosineTree* currentNode;
 
-    for (; j != basisQueue.end(); j++)
+    for (; j != basisQueue.end(); ++j)
     {
       currentNode = *j;
       BOOST_REQUIRE_SMALL(arma::dot(currentNode->BasisVector(), newBasisVector),
@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(CosineTreeModifiedGramSchmidt)
   }
 
   // Deallocate memory given to the objects.
-  for (size_t i = 0; i < numCols; i++)
+  for (size_t i = 0; i < numCols; ++i)
   {
     CosineTree* currentNode;
     currentNode = basisQueue.top();
@@ -316,7 +316,7 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorCosineTreeTest)
     }
   }
 
-  for (size_t i = 0; i < v1.size(); i++)
+  for (size_t i = 0; i < v1.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(v1.at(i), v2.at(i));
     BOOST_REQUIRE_EQUAL(v1.at(i), v3.at(i));
@@ -429,7 +429,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorAndOperatorCosineTreeTest)
     }
   }
 
-  for (size_t i = 0; i < v1.size(); i++)
+  for (size_t i = 0; i < v1.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(v1.at(i), v2.at(i));
     BOOST_REQUIRE_EQUAL(v1.at(i), v3.at(i));

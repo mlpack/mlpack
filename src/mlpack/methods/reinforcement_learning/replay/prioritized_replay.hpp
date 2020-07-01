@@ -238,7 +238,7 @@ class PrioritizedReplay
     size_t numSample = full ? capacity : position;
     weights = arma::rowvec(sampledIndices.n_rows);
 
-    for (size_t i = 0; i < sampledIndices.n_rows; i++)
+    for (size_t i = 0; i < sampledIndices.n_rows; ++i)
     {
       double p_sample = idxSum.Get(sampledIndices(i)) / idxSum.Sum();
       weights(i) = pow(numSample * p_sample, -beta);

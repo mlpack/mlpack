@@ -107,7 +107,7 @@ class KathirvalavakumarSubavathiInitialization
   {
     W = arma::Cube<eT>(rows, cols, slices);
 
-    for (size_t i = 0; i < slices; i++)
+    for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
   }
 
