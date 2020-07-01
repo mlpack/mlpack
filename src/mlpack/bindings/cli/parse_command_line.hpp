@@ -58,11 +58,14 @@ void ParseCommandLine(int argc, char** argv)
   {
     app.parse(argc, argv);
   }
+  catch (const CLI::OptionNotFound& e)
+  {
+    throw std::runtime_error("Duplicate options are not allowed");
+  }
   catch (const CLI::ParseError& pe)
   {
-    app.exit(pe);
-  }
-  
+   app.exit(pe);
+  }  
   // If the user specified any of the default options (--help, --version, or
   // --info), handle those.
 
