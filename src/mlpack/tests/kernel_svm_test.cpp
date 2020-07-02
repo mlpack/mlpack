@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
     for (size_t i = 0; i < points / 2; ++i)
     {
       data.col(i) = g1.Random();
-      labels[i] = 2;
+      labels[i] = 0;
     }
     for (size_t i = points / 2; i < points; ++i)
     {
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
     for (size_t i = 0; i < points / 2; ++i)
     {
       data.col(i) = g1.Random();
-      labels[i] = 2;
+      labels[i] = 0;
     }
     for (size_t i = points / 2; i < points; ++i)
     {
