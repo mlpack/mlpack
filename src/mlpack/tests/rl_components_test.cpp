@@ -181,14 +181,6 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartTest)
   DoublePoleCart::State state = task.InitialSample();
   DoublePoleCart::Action action = DoublePoleCart::Action::backward;
   double reward = task.Sample(state, action);
-
-  BOOST_REQUIRE_EQUAL(reward, 1.0);
-  BOOST_REQUIRE(!task.IsTerminal(state));
-
-  while (!task.IsTerminal(state))
-    task.Sample(state, action, state);
-
-  // Check if the number of steps performed is the same as the maximum allowed.
   BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
   BOOST_REQUIRE_EQUAL(2, DoublePoleCart::Action::size);
 }
