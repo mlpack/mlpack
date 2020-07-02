@@ -6,6 +6,8 @@
 
   * Add Go bindings for some missed models (#2460).
 
+  * Additional functionality for the ARFF loader (#2486).
+
 ### mlpack 3.3.2
 ###### 2020-06-18
   * Added Noisy DQN to q_networks (#2446).
