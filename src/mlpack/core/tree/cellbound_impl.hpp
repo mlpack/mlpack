@@ -87,10 +87,10 @@ inline CellBound<
     ElemType>& CellBound<MetricType, ElemType>::operator=(
     const CellBound<MetricType, ElemType>& other)
 {
- if (this == &other)
-    return *this;  
+  if (this == &other)
+    return *this;
 
- if (dim != other.Dim())
+  if (dim != other.Dim())
   {
     // Reallocation is necessary.
     delete[] bounds;
