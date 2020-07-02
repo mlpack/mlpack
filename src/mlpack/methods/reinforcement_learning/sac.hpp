@@ -30,7 +30,6 @@ namespace rl {
  * @tparam EnvironmentType The environment of the reinforcement learning task.
  * @tparam NetworkType The network to compute action value.
  * @tparam UpdaterType How to apply gradients when training.
- * @tparam PolicyType Behavior policy of the agent.
  * @tparam ReplayType Experience replay method.
  */
 template <
@@ -38,7 +37,6 @@ template <
   typename QNetworkType,
   typename PolicyNetworkType,
   typename UpdaterType,
-  typename PolicyType,
   typename ReplayType = RandomReplay<EnvironmentType>
 >
 class SAC
@@ -58,16 +56,13 @@ class SAC
    *
    * @param config Hyper-parameters for training.
    * @param network The network to compute action value.
-   * @param policy Behavior policy of the agent.
    * @param replayMethod Experience replay method.
    * @param updater How to apply gradients when training.
    * @param environment Reinforcement learning task.
    */
   SAC(TrainingConfig& config,
       QNetworkType& learningQ1Network,
-      QNetworkType& learningQ2Network,
       PolicyNetworkType& policyNetwork,
-      PolicyType& policy,
       ReplayType& replayMethod,
       UpdaterType qNetworkUpdater = UpdaterType(),
       UpdaterType policyNetworkUpdater = UpdaterType(),
@@ -77,6 +72,17 @@ class SAC
     * Clean memory.
     */
   ~SAC();
+
+  /**
+   * Softly update the learning Q_network parameters to the target Q_network
+   * parameters.
+   * */
+  void SoftUpdate();
+
+  /**
+   * Update the Q and policy networks.
+   * */
+  void Update();
 
   /**
     * Execute a step in an episode.
@@ -90,11 +96,6 @@ class SAC
     */
   double Episode();
 
-  /**
-   * Update the Q and policy networks.
-   * */
-  void Update();
-
   //! Modify the training mode / test mode indicator.
   bool& Deterministic() { return deterministic; }
   //! Get the indicator of training mode / test mode.
@@ -107,7 +108,7 @@ class SAC
 
   //! Locally-stored learning Q1 and Q2 network.
   QNetworkType& learningQ1Network;
-  QNetworkType& learningQ2Network;
+  QNetworkType learningQ2Network;
 
   //! Locally-stored target Q1 and Q2 network.
   QNetworkType targetQ1Network;
@@ -116,24 +117,21 @@ class SAC
   //! Locally-stored policy network.
   PolicyNetworkType& policyNetwork;
 
-  //! Locally-stored behavior policy.
-  PolicyType& policy;
-
   //! Locally-stored experience method.
   ReplayType& replayMethod;
 
   //! Locally-stored updater.
   UpdaterType qNetworkUpdater;
   #if ENS_VERSION_MAJOR >= 2
-    typename UpdaterType::template
-      Policy<arma::mat, arma::mat>* criticUpdatePolicy;
+  typename UpdaterType::template Policy<arma::mat, arma::mat>*
+      qNetworkUpdatePolicy;
   #endif
 
   //! Locally-stored updater.
   UpdaterType policyNetworkUpdater;
   #if ENS_VERSION_MAJOR >= 2
-    typename UpdaterType::template
-    Policy<arma::mat, arma::mat>* actorUpdatePolicy;
+  typename UpdaterType::template Policy<arma::mat, arma::mat>*
+      policyNetworkUpdatePolicy;
   #endif
 
   //! Locally-stored reinforcement learning task.
@@ -144,9 +142,6 @@ class SAC
 
   //! Locally-stored current state of the agent.
   StateType state;
-
-  //! Locally-stored action of the agent.
-  ActionType action;
 
   //! Locally-stored flag indicating training mode or test mode.
   bool deterministic;

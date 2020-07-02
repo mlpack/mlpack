@@ -25,7 +25,6 @@ template <
   typename QNetworkType,
   typename PolicyNetworkType,
   typename UpdaterType,
-  typename PolicyType,
   typename ReplayType
 >
 SAC<
@@ -33,22 +32,17 @@ SAC<
   QNetworkType,
   PolicyNetworkType,
   UpdaterType,
-  PolicyType,
   ReplayType
 >::SAC(TrainingConfig& config,
        QNetworkType& learningQ1Network,
-       QNetworkType& learningQ2Network,
        PolicyNetworkType& policyNetwork,
-       PolicyType& policy,
        ReplayType& replayMethod,
        UpdaterType qNetworkUpdater,
        UpdaterType policyNetworkUpdater,
        EnvironmentType environment):
   config(config),
   learningQ1Network(learningQ1Network),
-  learningQ2Network(learningQ2Network),
   policyNetwork(policyNetwork),
-  policy(policy),
   replayMethod(replayMethod),
   qNetworkUpdater(std::move(qNetworkUpdater)),
   #if ENS_VERSION_MAJOR >= 2
@@ -65,8 +59,8 @@ SAC<
   // Set up q-learning and policy networks.
   if (learningQ1Network.Parameters().is_empty())
     learningQ1Network.ResetParameters();
-  if (learningQ2Network.Parameters().is_empty())
-    learningQ2Network.ResetParameters();
+  learningQ2Network = learningQ1Network;
+  learningQ2Network.ResetParameters();
   if (policyNetwork.Parameters().is_empty())
     policyNetwork.ResetParameters();
 
@@ -99,7 +93,6 @@ template <
   typename QNetworkType,
   typename PolicyNetworkType,
   typename UpdaterType,
-  typename PolicyType,
   typename ReplayType
 >
 SAC<
@@ -107,7 +100,6 @@ SAC<
   QNetworkType,
   PolicyNetworkType,
   UpdaterType,
-  PolicyType,
   ReplayType
 >::~SAC()
 {
@@ -122,7 +114,6 @@ template <
   typename QNetworkType,
   typename PolicyNetworkType,
   typename UpdaterType,
-  typename PolicyType,
   typename ReplayType
 >
 void SAC<
@@ -130,10 +121,29 @@ void SAC<
   QNetworkType,
   PolicyNetworkType,
   UpdaterType,
-  PolicyType,
+  ReplayType
+>::SoftUpdate()
+{
+}
+
+template <
+  typename EnvironmentType,
+  typename QNetworkType,
+  typename PolicyNetworkType,
+  typename UpdaterType,
+  typename ReplayType
+>
+void SAC<
+  EnvironmentType,
+  QNetworkType,
+  PolicyNetworkType,
+  UpdaterType,
   ReplayType
 >::Update()
 {
+  // Update target network
+  if (totalSteps % config.TargetNetworkSyncInterval() == 0)
+    SoftUpdate();
 }
 
 template <
@@ -141,7 +151,6 @@ template <
   typename QNetworkType,
   typename PolicyNetworkType,
   typename UpdaterType,
-  typename PolicyType,
   typename ReplayType
 >
 double SAC<
@@ -149,10 +158,34 @@ double SAC<
   QNetworkType,
   PolicyNetworkType,
   UpdaterType,
-  PolicyType,
   ReplayType
 >::Step()
 {
+  // Get the action at current state, from policy.
+  arma::colvec outputAction;
+  policyNetwork.Predict(state.Encode(), outputAction);
+
+  if (!deterministic)
+  {
+    arma::colvec noise = arma::randu<arma::colvec>(outputAction.n_rows) * 0.1;
+    noise = arma::clamp(noise, -0.25, 0.25);
+    outputAction = outputAction + noise;
+  }
+
+  ActionType action = static_cast<ActionType>(outputAction);
+
+  // Interact with the environment to advance to next state.
+  StateType nextState;
+  double reward = environment.Sample(state, action, nextState);
+
+  // Store the transition for replay.
+  replayMethod.Store(state, action, reward, nextState,
+      environment.IsTerminal(nextState), config.Discount());
+
+  // Update current state.
+  state = nextState;
+
+  return reward;
 }
 
 template <
@@ -160,7 +193,6 @@ template <
   typename QNetworkType,
   typename PolicyNetworkType,
   typename UpdaterType,
-  typename PolicyType,
   typename ReplayType
 >
 double SAC<
@@ -168,7 +200,6 @@ double SAC<
   QNetworkType,
   PolicyNetworkType,
   UpdaterType,
-  PolicyType,
   ReplayType
 >::Episode()
 {
@@ -188,18 +219,13 @@ double SAC<
       break;
 
     totalReturn += Step();
-
     steps++;
-    totalSteps++;
 
     if (deterministic)
       continue;
 
-    if (steps > 0 && totalSteps % config.UpdateInterval() == 0)
-    {
-      Update();
-      replayMethod.Clear();
-    }
+    totalSteps++;
+    Update();
   }
 
   return totalReturn;
