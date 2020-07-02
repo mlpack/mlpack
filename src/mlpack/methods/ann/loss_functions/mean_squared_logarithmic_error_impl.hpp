@@ -49,7 +49,7 @@ void MeanSquaredLogarithmicError<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     OutputType& output)
 {
-  output = 2 * (arma::log(1. + input) - arma::log(1. + target)) / (1. + input) ;
+  output = 2 * (arma::log(1. + input) - arma::log(1. + target)) / (1. + input);
 
   if (!reduction)
     output = output / input.n_elem;

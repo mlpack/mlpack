@@ -34,7 +34,7 @@ NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
 {
   InputType loss;
   loss.zeros(size(target));
-  for(size_t i = 0; i < target.n_cols; ++i)
+  for (size_t i = 0; i < target.n_cols; ++i)
   {
     size_t currentTarget = target(i);
     Log::Assert(currentTarget >= 0 && currentTarget < input.n_cols,
@@ -57,7 +57,7 @@ void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
       OutputType& output)
 {
   output.zeros(size(input));
-  for(size_t i = 0; i < target.n_cols; ++i)
+  for (size_t i = 0; i < target.n_cols; ++i)
   {
     size_t currentTarget = target(i);
     Log::Assert(currentTarget >= 0 && currentTarget < input.n_cols,
