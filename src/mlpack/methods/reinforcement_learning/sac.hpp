@@ -143,6 +143,9 @@ class SAC
   //! Locally-stored current state of the agent.
   StateType state;
 
+  //! Locally-stored action of the agent.
+  ActionType action;
+
   //! Locally-stored flag indicating training mode or test mode.
   bool deterministic;
 };

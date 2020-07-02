@@ -83,9 +83,9 @@ class Pendulum
    */
   struct Action
   {
-    double action[1];
-    // Storing degree of freedom
-    const int size = 1;
+    arma::colvec action[1];
+    // Storing degree of freedom.
+    int size = 1;
   };
 
   /**
@@ -137,7 +137,8 @@ class Pendulum
     const double length = 1.0;
 
     // Get action and clip the values between max and min limits.
-    double torque = math::ClampRange(action.action[0], -maxTorque, maxTorque);
+    double torque = arma::as_scalar(arma::clamp(action.action[0],
+        -maxTorque, maxTorque));
 
     // Calculate costs of taking this action in the current state.
     double costs = std::pow(AngleNormalize(theta), 2) + 0.1 *

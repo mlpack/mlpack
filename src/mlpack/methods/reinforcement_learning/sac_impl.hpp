@@ -171,8 +171,7 @@ double SAC<
     noise = arma::clamp(noise, -0.25, 0.25);
     outputAction = outputAction + noise;
   }
-
-  ActionType action = static_cast<ActionType>(outputAction);
+  action.action[0] = outputAction[0];
 
   // Interact with the environment to advance to next state.
   StateType nextState;
