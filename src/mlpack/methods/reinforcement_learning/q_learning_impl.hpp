@@ -130,7 +130,7 @@ void QLearning<
 
   // Sample from previous experience.
   arma::mat sampledStates;
-  arma::icolvec sampledActions;
+  std::vector<ActionType> sampledActions;
   arma::colvec sampledRewards;
   arma::mat sampledNextStates;
   arma::icolvec isTerminal;
@@ -168,7 +168,7 @@ void QLearning<
    */
   for (size_t i = 0; i < sampledNextStates.n_cols; ++i)
   {
-    target(sampledActions(i), i) = sampledRewards(i) + discount *
+    target(sampledActions[i], i) = sampledRewards(i) + discount *
         nextActionValues(bestActions(i), i) * (1 - isTerminal[i]);
   }
 

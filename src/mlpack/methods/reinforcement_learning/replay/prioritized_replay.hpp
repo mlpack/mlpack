@@ -145,7 +145,7 @@ class PrioritizedReplay
     state = nStepBuffer.front().state;
     action = nStepBuffer.front().action;
     states.col(position) = state.Encode();
-    actions(position) = action;
+    actions[position] = action;
     rewards(position) = reward;
     nextStates.col(position) = nextState.Encode();
     isTerminal(position) = isEnd;
@@ -219,7 +219,7 @@ class PrioritizedReplay
    *        state.
    */
   void Sample(arma::mat& sampledStates,
-              arma::icolvec& sampledActions,
+              std::vector<ActionType>& sampledActions,
               arma::colvec& sampledRewards,
               arma::mat& sampledNextStates,
               arma::icolvec& isTerminal)
@@ -228,7 +228,8 @@ class PrioritizedReplay
     BetaAnneal();
 
     sampledStates = states.cols(sampledIndices);
-    sampledActions = actions.elem(sampledIndices);
+    for (size_t t = 0; t < sampledIndices.n_rows; t ++)
+      sampledActions.push_back(actions[sampledIndices[t]]);
     sampledRewards = rewards.elem(sampledIndices);
     sampledNextStates = nextStates.cols(sampledIndices);
     isTerminal = this->isTerminal.elem(sampledIndices);
@@ -286,15 +287,15 @@ class PrioritizedReplay
    * @param gradients The model's gradients.
    */
   void Update(arma::mat target,
-              arma::icolvec sampledActions,
+              std::vector<ActionType> sampledActions,
               arma::mat nextActionValues,
               arma::mat& gradients)
   {
     arma::colvec tdError(target.n_cols);
     for (size_t i = 0; i < target.n_cols; i ++)
     {
-      tdError(i) = nextActionValues(sampledActions(i), i) -
-          target(sampledActions(i), i);
+      tdError(i) = nextActionValues(sampledActions[i], i) -
+          target(sampledActions[i], i);
     }
     tdError = arma::abs(tdError);
     UpdatePriorities(sampledIndices, tdError);
@@ -354,7 +355,7 @@ class PrioritizedReplay
   arma::mat states;
 
   //! Locally-stored previous actions.
-  arma::icolvec actions;
+  std::vector<ActionType> actions;
 
   //! Locally-stored previous rewards.
   arma::colvec rewards;
