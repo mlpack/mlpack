@@ -61,6 +61,14 @@ double KernelSVM<MatType, KernelType>::Train(
     const size_t max_iter,
     const double tol)
 {
+  arma::Row<int> label(data.n_cols);
+  for (size_t i = 0; i< data.n_cols; i++)
+  {
+    if(labels(i) == 0)
+      label(i) = -1;
+    else
+      label(i) = 1;
+  }
   alpha = arma::zeros(data.n_cols);
   size_t count = 0;
   b = 0;
@@ -77,86 +85,80 @@ double KernelSVM<MatType, KernelType>::Train(
       K(i, j) = KernelType::Evaluate(data.col(i), data.col(j));
     }
   }
-
-  while(count < max_iter)
+  while (count < max_iter)
   {
-    size_t num_changes_alphas = 0;
-    for(size_t i = 0; i < data.n_cols; i++)
+    size_t num_changed_alphas = 0;
+    for (size_t i = 0; i < data.n_cols; i++)
     {
-      E(i) = b + arma::sum(alpha % (labels.t() % K.col(i))) - labels(i);
-      if ((labels(i) * E(i) < -tol && alpha(i) < C) 
-            || (labels(i) * E(i) > tol && alpha(i) > 0))
+      E(i) = b + sum (alpha.t() % label % K.col(i).t()) - label(i);
+      if ((label(i) * E(i) < -tol && alpha(i) < C) ||
+        (label(i) * E(i) > tol && alpha(i) > 0))
       {
         size_t j = rand() % data.n_cols;
         while (j == i)
         {
           j = rand() % data.n_cols;
         }
+        E(j) = b + sum (alpha.t() % label % K.col(j).t()) - label(j);
 
-        E(j) = b + arma::sum(alpha % (labels.t() % K.col(j))) - labels(j);
-        double alpha_j_old = alpha(j);
         double alpha_i_old = alpha(i);
-        if(labels(i) == labels(j))
+        double alpha_j_old = alpha(j);
+ 
+        if (label(i) == label(j))
         {
-          L = std::max(0.0, alpha(i) + alpha(j) - C);
-          H = std::min(C, alpha(i) + alpha(j));
+          L = std::max(0.0, alpha(j) + alpha(i) - C);
+          H = std::min(C, alpha(j) + alpha(i));
         }
         else
         {
           L = std::max(0.0, alpha(j) - alpha(i));
-          H = std::min(C, C + alpha(j) - alpha(i)); 
+          H = std::min(C, C + alpha(j) - alpha(i));
         }
 
-        if(L == H)
+        if (L == H) 
           continue;
 
-        eta = 2 * K(i, j) - K(i, i) - K(j, j);
-
-        if(eta >= 0)
+        eta = 2 * K(i,j) - K(i,i) - K(j,j);
+        if (eta >= 0)
           continue;
 
-        alpha(j) = alpha(j) - (labels(i) * (E(i) - E(j))) / eta;
+        alpha(j) = alpha(j) - (label(j) * (E(i) - E(j))) / eta;
 
-        alpha(j) = std::min(H, alpha(j));
-        alpha(j) = std::max(L, alpha(j));
+        alpha(j) = std::min (H, alpha(j));
+        alpha(j) = std::max (L, alpha(j));
 
-        if(abs(alpha(j) - alpha_j_old) < tol)
+        if (abs(alpha(j) - alpha_j_old) < tol) 
         {
           alpha(j) = alpha_j_old;
           continue;
         }
 
-        alpha(i) = alpha(i) + labels(i) * labels(j) * (alpha_j_old - alpha(j));
-
+        alpha(i) = alpha(i) + label(i) * label(j) * (alpha_j_old - alpha(j));
+ 
         double b1 = b - E(i)
-                    - labels(i) * (alpha(i) - alpha_i_old) * K(i, j)
-                    - labels(j) * (alpha(j) - alpha_i_old) * K(i, j);
-
+                    - label(i) * (alpha(i) - alpha_i_old) *  K(i,j)
+                    - label(j) * (alpha(j) - alpha_j_old) *  K(i,j);
         double b2 = b - E(j)
-                    - labels(i) * (alpha(i) - alpha_i_old) * K(i, j)
-                    - labels(j) * (alpha(j) - alpha_i_old) * K(j, j);
+                    - label(i) * (alpha(i) - alpha_i_old) *  K(i,j)
+                    - label(j) * (alpha(j) - alpha_j_old) *  K(j,j);
 
-        if (0 < alpha(i) && alpha(j) < C)
-        {
+        if (0 < alpha(i) && alpha(i) < C)
           b = b1;
-        }
-        else if (0 < alpha(j) && alpha(j)< C)
-        {
+        else if (0 < alpha(j) && alpha(j) < C)
           b = b2;
-        }
         else
-        {
           b = (b1 + b2) / 2;
-        }
-        num_changes_alphas = num_changes_alphas + 1;
+
+        num_changed_alphas = num_changed_alphas + 1;
       }
     }
-    if (num_changes_alphas == 0)
+
+    if (num_changed_alphas == 0)
       count = count + 1;
     else
       count = 0;
-  }
-  w = (data * (alpha.t() % labels).t()).t();
+}
+  w = (data * (alpha.t() % label).t()).t();
 }
 
 template <typename MatType, typename KernelType>
@@ -182,10 +184,10 @@ void KernelSVM<MatType, KernelType>::Classify(
 
   for (size_t i = 0; i< scores.n_elem; i++)
   {
-    if(scores(i) >= mean)
-      labels(i) = 2;
-    if(scores(i) < mean)
+    if(scores(i) >= 0)
       labels(i) = 1;
+    if(scores(i) < 0)
+      labels(i) = 0;
   }
 }
 
