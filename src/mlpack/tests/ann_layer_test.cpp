@@ -3811,26 +3811,16 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionalLayerOptionalParameterTest)
 }
 
 /**
- * Simple Scalar Dot Product Attention test.
+ * Simple Scalar Dot Product Attention with no mask test.
  */
-BOOST_AUTO_TEST_CASE(ScalarDotProductAttentionTest)
+BOOST_AUTO_TEST_CASE(ScalarDotProductAttentionWithNoMaskTest)
 {
   size_t tLen = 4;
   size_t sLen = 4;
   size_t embedDim = 4;
   size_t batchSize = 2;
   double dropoutRate = 0.2;
-  // double INF = arma::datum::inf;
-  // arma::mat attnMask(sLen, tLen);
-  // attnMask.fill(-INF);
-  // attnMask = arma::trimatu(attnMask);
-  // attnMask.diag() = arma::zeros(4, 1);
-  // attnMask.print("attnMask:");
-  // arma::mat keyPaddingMask(sLen, 1);
-  // keyPaddingMask[6] = -INF;
   ScalarDotProductAttention<> module(tLen, sLen, embedDim, dropoutRate, false);
-  // module.AttentionMask() = attnMask;
-  // module.KeyPaddingMask() = keyPaddingMask;
 
   // Test the Forward function.
   arma::mat input = arma::randu(embedDim * (tLen + 2 * sLen), batchSize);
@@ -3846,12 +3836,6 @@ BOOST_AUTO_TEST_CASE(ScalarDotProductAttentionTest)
   arma::mat gy = 0.1 * arma::randu(embedDim * tLen, batchSize);
   arma::mat g;
   module.Backward(input, gy, g);
-  // arma::cube gQuery(g.memptr(), embedDim, tLen, batchSize, 0, 0);
-  // arma::cube gKey(g.memptr() + gQuery.n_elem, embedDim, sLen, batchSize, 0, 0);
-  // arma::cube gValue(g.memptr() + gQuery.n_elem + gKey.n_elem, embedDim, sLen, batchSize, 0, 0);
-  // gQuery.print("Backward gQuery:");
-  // gKey.print("Backward gKey:");
-  // gValue.print("Backward gValue:");
 
   BOOST_REQUIRE_EQUAL(g.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(g.n_cols, input.n_cols);

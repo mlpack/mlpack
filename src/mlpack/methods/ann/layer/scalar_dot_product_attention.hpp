@@ -54,7 +54,7 @@ class ScalarDotProductAttention
   ScalarDotProductAttention();
 
   /**
-   * Create the MultiheadAttention object using the specified modules.
+   * Create the ScalarDotProductAttention object using the specified parameters.
    *
    * @param tLen The length of target sequence.
    * @param sLen The length of the source sequence.
