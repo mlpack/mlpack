@@ -126,7 +126,6 @@ class UnPooling
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   /**
    * Apply unpooling to the input and store the results.
    *
