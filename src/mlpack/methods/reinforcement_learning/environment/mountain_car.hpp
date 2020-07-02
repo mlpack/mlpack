@@ -89,29 +89,29 @@ class MountainCar
   /**
    * Construct a Mountain Car instance using the given constant.
    *
+   * @param maxSteps The number of steps after which the episode
+   *    terminates. If the value is 0, there is no limit.
    * @param positionMin Minimum legal position.
    * @param positionMax Maximum legal position.
    * @param positionGoal Final target position.
    * @param velocityMin Minimum legal velocity.
    * @param velocityMax Maximum legal velocity.
    * @param doneReward The reward recieved by the agent on success.
-   * @param maxSteps The number of steps after which the episode
-   *    terminates. If the value is 0, there is no limit.
    */
-  MountainCar(const double positionMin = -1.2,
+  MountainCar(const size_t maxSteps = 200,
+              const double positionMin = -1.2,
               const double positionMax = 0.6,
               const double positionGoal = 0.5,
               const double velocityMin = -0.07,
               const double velocityMax = 0.07,
-              const double doneReward = 0,
-              const size_t maxSteps = 0) :
+              const double doneReward = 0) :
+      maxSteps(maxSteps),
       positionMin(positionMin),
       positionMax(positionMax),
       positionGoal(positionGoal),
       velocityMin(velocityMin),
       velocityMax(velocityMax),
       doneReward(doneReward),
-      maxSteps(maxSteps),
       stepsPerformed(0)
   { /* Nothing to do here */ }
 

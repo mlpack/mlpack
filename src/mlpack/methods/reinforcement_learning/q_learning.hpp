@@ -95,10 +95,9 @@ class QLearning
   void TrainAgent();
 
   /**
-   * Execute a step in an episode.
-   * @return Reward for the step.
+   * Select an action, given an agent.
    */
-  double Step();
+  void SelectAction();
 
   /**
    * Execute an episode.

@@ -98,6 +98,8 @@ class Acrobot
   /**
    * Construct a Acrobot instance using the given constants.
    *
+   * @param maxSteps The number of steps after which the episode
+   *    terminates. If the value is 0, there is no limit.
    * @param gravity The gravity parameter.
    * @param linkLength1 The length of link 1.
    * @param linkLength2 The length of link 2.
@@ -110,10 +112,9 @@ class Acrobot
    * @param maxVel2 The max angular velocity of link2.
    * @param dt The differential value.
    * @param doneReward The reward recieved by the agent on success.
-   * @param maxSteps The number of steps after which the episode
-   *    terminates. If the value is 0, there is no limit.
    */
-  Acrobot(const double gravity = 9.81,
+  Acrobot(const size_t maxSteps = 500,
+          const double gravity = 9.81,
           const double linkLength1 = 1.0,
           const double linkLength2 = 1.0,
           const double linkMass1 = 1.0,
@@ -124,8 +125,8 @@ class Acrobot
           const double maxVel1 = 4 * M_PI,
           const double maxVel2 = 9 * M_PI,
           const double dt = 0.2,
-          const double doneReward = 0,
-          const size_t maxSteps = 0) :
+          const double doneReward = 0) :
+      maxSteps(maxSteps),
       gravity(gravity),
       linkLength1(linkLength1),
       linkLength2(linkLength2),
@@ -138,7 +139,6 @@ class Acrobot
       maxVel2(maxVel2),
       dt(dt),
       doneReward(doneReward),
-      maxSteps(maxSteps),
       stepsPerformed(0)
   { /* Nothing to do here */ }
 
