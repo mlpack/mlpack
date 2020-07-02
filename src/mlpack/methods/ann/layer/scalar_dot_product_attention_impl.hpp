@@ -91,15 +91,17 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
     scores.each_slice() += arma::repmat(keyPaddingMask, 1, tLen);
   }
 
-  MatType Wt2d(scores.memptr(), sLen * tLen, bsz, 0, 0);
+  attnOut.set_size(sLen, tLen, bsz);
+  softmaxOutput.set_size(sLen, tLen, bsz);
 
-  softmax.Forward(Wt2d, softmax.OutputParameter());
-  dropout.Forward(softmax.OutputParameter(), dropout.OutputParameter());
-  Wt2d = dropout.OutputParameter();
+  for (size_t i = 0; i < bsz; ++i)
+  {
+    softmax.Forward(scores.slice(i), softmax.OutputParameter());
+    softmaxOutput.slice(i) = softmax.OutputParameter();
+    dropout.Forward(softmax.OutputParameter(), attnOut.slice(i));
+  }
 
-  attnOut = CubeType(Wt2d.memptr(), sLen, tLen, bsz, 0, 0);
   scores = CubeMultiply(value, attnOut, 0, 0);
-  // attnOut = CubeType(attnOut.memptr(), embedDim, tLen, bsz, 0, 0);
   for (size_t i = 0; i < bsz; ++i)
   {
     output.col(i) = arma::vectorise(scores.slice(i));
@@ -129,11 +131,11 @@ Backward(const arma::Mat<eT>& input,
   CubeType gy3d(const_cast<MatType&>(gy).memptr(), embedDim, tLen, bsz, 0, 0);
   CubeType gyTemp = CubeMultiply(value, gy3d, true, false);
 
-  dropout.Backward(MatType(), MatType(gyTemp.memptr(),
-      sLen * tLen, bsz, 0, 0),  dropout.Delta());
-  softmax.Backward(softmax.OutputParameter(), dropout.Delta(), softmax.Delta());
-
-  gyTemp = CubeType(softmax.Delta().memptr(), sLen, tLen, bsz, 0, 0);
+  for (size_t i = 0; i < bsz; ++i)
+  {
+    dropout.Backward(MatType(), gyTemp.slice(i), dropout.Delta());
+    softmax.Backward(softmaxOutput.slice(i), dropout.Delta(), gyTemp.slice(i));
+  }
 
   if (!attnMask.is_empty())
     gyTemp.each_slice() += attnMask;

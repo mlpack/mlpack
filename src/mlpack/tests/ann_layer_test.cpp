@@ -3827,7 +3827,6 @@ BOOST_AUTO_TEST_CASE(ScalarDotProductAttentionWithNoMaskTest)
   arma::mat output;
   module.Forward(input, output);
   arma::cube output3d(input.memptr(), embedDim, tLen, batchSize, 1, 0);
-  output3d.print("Forward:");
 
   BOOST_REQUIRE_EQUAL(output.n_rows, embedDim * tLen);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);

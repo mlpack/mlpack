@@ -191,6 +191,9 @@ class ScalarDotProductAttention
   //! Softmax layer to represent the probabilities of next sequence.
   Softmax<InputDataType, OutputDataType> softmax;
 
+  //! Locally-stored output of the softmax layer.
+  arma::Cube<ElemType> softmaxOutput;
+
   //! Dropout layer (optional).
   Dropout<InputDataType, OutputDataType> dropout;
 
