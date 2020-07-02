@@ -33,7 +33,7 @@ PARAM_FLAG("version", "Display the version of mlpack.", "V");
  * Parse the command line, setting all of the options inside of the CLI object
  * to their appropriate given values.
  */
-void ParseCommandLine(int argc, char** argv)
+int ParseCommandLine(int argc, char** argv)
 {
   // First, we need to build the CLI11 variables for parsing.
   CLI::App app;
@@ -58,14 +58,11 @@ void ParseCommandLine(int argc, char** argv)
   {
     app.parse(argc, argv);
   }
-  catch (const CLI::OptionNotFound& e)
-  {
-    throw std::runtime_error("Duplicate options are not allowed");
-  }
   catch (const CLI::ParseError& pe)
   {
-   app.exit(pe);
-  }  
+    app.exit(pe);
+    throw std::runtime_error("");
+  }
   // If the user specified any of the default options (--help, --version, or
   // --info), handle those.
 

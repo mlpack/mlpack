@@ -12,6 +12,7 @@
 #include <mlpack/core.hpp>
 // We'll use CLIOptions.
 #include <mlpack/bindings/cli/cli_option.hpp>
+#include <mlpack/bindings/cli/third_party/CLI/CLI11.hpp>
 
 namespace mlpack {
 namespace util {
@@ -141,7 +142,7 @@ BOOST_AUTO_TEST_CASE(TestDuplicateParam)
   // This should throw an exception.
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(ParseCommandLine(argc, const_cast<char**>(argv)),
-      runtime_error);
+      std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
