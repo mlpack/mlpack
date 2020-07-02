@@ -20,8 +20,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-KLDivergence<InputDataType, OutputDataType>::KLDivergence(const bool takeMean) :
-    takeMean(takeMean)
+KLDivergence<InputDataType, OutputDataType>::KLDivergence(
+    const bool reduction) : reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -32,15 +32,13 @@ typename InputType::elem_type
 KLDivergence<InputDataType, OutputDataType>::Forward(const InputType& input,
                                                      const TargetType& target)
 {
-  if (takeMean)
-  {
-    return arma::as_scalar(arma::mean(
-        arma::mean(input % (arma::log(input) - arma::log(target)))));
-  }
-  else
-  {
-    return arma::accu(input % (arma::log(input) - arma::log(target)));
-  }
+  InputType loss = target % (arma::log(target) - input);
+  typename InputType::elem_type lossSum = arma::accu(loss);
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / input.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -50,14 +48,10 @@ void KLDivergence<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     OutputType& output)
 {
-  if (takeMean)
-  {
-    output = arma::mean(arma::mean(arma::log(input) - arma::log(target) + 1));
-  }
-  else
-  {
-    output = arma::accu(arma::log(input) - arma::log(target) + 1);
-  }
+  output = -target;
+
+  if (!reduction)
+    output = output / input.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -66,7 +60,7 @@ void KLDivergence<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(takeMean);
+  ar & BOOST_SERIALIZATION_NVP(reduction);
 }
 
 } // namespace ann

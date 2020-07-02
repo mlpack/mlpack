@@ -20,7 +20,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-MeanBiasError<InputDataType, OutputDataType>::MeanBiasError()
+MeanBiasError<InputDataType, OutputDataType>::MeanBiasError(
+    const bool reduction) : reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -31,7 +32,13 @@ typename InputType::elem_type
 MeanBiasError<InputDataType, OutputDataType>::Forward(const InputType& input,
                                                       const TargetType& target)
 {
-  return arma::accu(target - input) / target.n_cols;
+  InputType loss = target - input;
+  typename InputType::elem_type lossSum = arma::accu(loss);
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / input.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -43,15 +50,18 @@ void MeanBiasError<InputDataType, OutputDataType>::Backward(
 {
   output.set_size(arma::size(input));
   output.fill(-1.0);
+
+  if (!reduction)
+    output = output / input.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MeanBiasError<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
+    Archive& ar,
     const unsigned int /* version */)
 {
-  // Nothing to do here.
+  ar & BOOST_SERIALIZATION_NVP(reduction);
 }
 
 } // namespace ann

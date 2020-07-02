@@ -19,7 +19,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the negative log likelihood layer. The negative log
- * likelihood layer expectes that the input contains log-probabilities for each
+ * likelihood layer expects that the input contains log-probabilities for each
  * class. The layer also expects a class index, in the range between 1 and the
  * number of classes, as target when calling the Forward function.
  *
@@ -37,8 +37,14 @@ class NegativeLogLikelihood
  public:
   /**
    * Create the NegativeLogLikelihoodLayer object.
+   *
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If
+   *                  true, 'sum' reduction is used and the output will be
+   *                  summed. It is set to true by default.
    */
-  NegativeLogLikelihood();
+  NegativeLogLikelihood(const bool reduction = true);
 
   /**
    * Computes the Negative log likelihood.
@@ -82,6 +88,11 @@ class NegativeLogLikelihood
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the type of reduction used.
+  bool Reduction() const { return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() { return reduction; }
+
   /**
    * Serialize the layer
    */
@@ -97,6 +108,9 @@ class NegativeLogLikelihood
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! The boolean value that tells if reduction is sum or mean.
+  bool reduction;
 }; // class NegativeLogLikelihood
 
 } // namespace ann

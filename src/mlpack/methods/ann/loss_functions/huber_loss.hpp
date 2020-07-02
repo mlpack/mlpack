@@ -41,9 +41,13 @@ class HuberLoss
    *
    * @param delta The threshold value upto which squared error is followed and
    *              after which absolute error is considered.
-   * @param mean If true then mean loss is computed otherwise sum.
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If
+   *                  true, 'sum' reduction is used and the output will be
+   *                  summed. It is set to true by default.
    */
-  HuberLoss(const double delta = 1.0, const bool mean = true);
+  HuberLoss(const double delta = 1.0, const bool reduction = true);
 
   /**
    * Computes the Huber Loss function.
@@ -77,10 +81,10 @@ class HuberLoss
   //! Set the value of delta.
   double& Delta() { return delta; }
 
-  //! Get the value of reduction type.
-  bool Mean() const { return mean; }
-  //! Set the value of reduction type.
-  bool& Mean() { return mean; }
+  //! Get the type of reduction used.
+  bool Reduction() const { return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() { return reduction; }
 
   /**
    * Serialize the layer.
@@ -95,8 +99,8 @@ class HuberLoss
   //! Hyperparameter `delta` defines the point upto which MSE is considered.
   double delta;
 
-  //! Reduction type. If true, performs mean of loss else sum.
-  bool mean;
+  //! The boolean value that tells if reduction is sum or mean.
+  bool reduction;
 }; // class HuberLoss
 
 } // namespace ann

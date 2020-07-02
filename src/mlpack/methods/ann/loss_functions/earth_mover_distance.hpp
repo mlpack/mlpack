@@ -35,14 +35,20 @@ class EarthMoverDistance
  public:
   /**
    * Create the EarthMoverDistance object.
+   *
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If
+   *                  true, 'sum' reduction is used and the output will be
+   *                  summed. It is set to true by default.
    */
-  EarthMoverDistance();
+  EarthMoverDistance(const bool reduction = true);
 
   /**
    * Ordinary feed forward pass of a neural network.
    *
    * @param input Input data used for evaluating the specified function.
-   * @param target The target vector.
+   * @param target The target vector, having same shape as input.
    */
   template<typename InputType, typename TargetType>
   typename InputType::elem_type Forward(const InputType& input,
@@ -65,6 +71,11 @@ class EarthMoverDistance
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
+  //! Get the type of reduction used.
+  bool Reduction() const { return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() { return reduction; }
+
   /**
    * Serialize the layer.
    */
@@ -74,6 +85,9 @@ class EarthMoverDistance
  private:
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+    //! The boolean value that tells if reduction is sum or mean.
+  bool reduction;
 }; // class EarthMoverDistance
 
 } // namespace ann

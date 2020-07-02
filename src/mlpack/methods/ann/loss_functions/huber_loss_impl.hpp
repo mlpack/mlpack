@@ -21,9 +21,9 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputDataType, typename OutputDataType>
 HuberLoss<InputDataType, OutputDataType>::HuberLoss(
   const double delta,
-  const bool mean):
+  const bool reduction):
   delta(delta),
-  mean(mean)
+  reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -34,15 +34,22 @@ typename InputType::elem_type
 HuberLoss<InputDataType, OutputDataType>::Forward(const InputType& input,
                                                   const TargetType& target)
 {
+  InputType loss;
+  loss.zeros(size(input));
   typedef typename InputType::elem_type ElemType;
-  ElemType loss = 0;
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-      const ElemType absError = std::abs(target[i] - input[i]);
-      loss += absError > delta
-          ? delta * (absError - 0.5 * delta) : 0.5 * std::pow(absError, 2);
+    const ElemType absError = std::abs(target[i] - input[i]);
+    loss[i] = absError > delta
+        ? delta * (absError - 0.5 * delta) : 0.5 * std::pow(absError, 2);
   }
-  return mean ? loss / input.n_elem : loss;
+
+  ElemType lossSum = arma::accu(loss);
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / input.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -60,9 +67,10 @@ void HuberLoss<InputDataType, OutputDataType>::Backward(
     const ElemType absError = std::abs(target[i] - input[i]);
     output[i] = absError > delta
         ? - delta * (target[i] - input[i]) / absError : input[i] - target[i];
-    if (mean)
-      output[i] /= output.n_elem;
   }
+
+  if (!reduction)
+    output = output / input.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -72,7 +80,7 @@ void HuberLoss<InputDataType, OutputDataType>::serialize(
     const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(delta);
-  ar & BOOST_SERIALIZATION_NVP(mean);
+  ar & BOOST_SERIALIZATION_NVP(reduction);
 }
 
 } // namespace ann
