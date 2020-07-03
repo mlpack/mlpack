@@ -50,15 +50,19 @@ class DiscreteActionEnv
     //! Locally-stored state data.
     arma::colvec data;
   };
+
   /**
    * Implementation of discrete action.
    */
-  struct Action
+  class Action
   {
+   public:
+    // To store the action.
     size_t action = 0;
     // Track the size of the action space.
     static size_t size;
   };
+
   double Sample(const State& state,
                 const Action& action,
                 State& nextState)

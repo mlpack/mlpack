@@ -84,13 +84,19 @@ class CartPole
   /**
    * Implementation of action of Cart Pole.
    */
-  enum Action
+  class Action
   {
-    backward,
-    forward,
+   public:
+    enum _action
+    {
+      backward,
+      forward
+    };
+    // To store the action.
+    Action::_action action;
 
     // Track the size of the action space.
-    size
+    static const size_t size = 2;
   };
 
   /**
@@ -150,7 +156,7 @@ class CartPole
     stepsPerformed++;
 
     // Calculate acceleration.
-    double force = action ? forceMag : -forceMag;
+    double force = action.action ? forceMag : -forceMag;
     double cosTheta = std::cos(state.Angle());
     double sinTheta = std::sin(state.Angle());
     double temp = (force + poleMassLength * state.AngularVelocity() *

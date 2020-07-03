@@ -81,11 +81,12 @@ class Pendulum
    * In Pendulum, the action represents the torque to be applied.
    * This value is bounded in range -2.0 to 2.0 by default.
    */
-  struct Action
+  class Action
   {
+   public:
     double action[1];
-    // Storing degree of freedom
-    const int size = 1;
+    // Storing degree of freedom.
+    static const size_t size = 1;
   };
 
   /**
