@@ -63,28 +63,16 @@ class DiscreteActionEnv
     static size_t size;
   };
 
-  double Sample(const State& state,
-                const Action& action,
-                State& nextState)
-  {
-    return 1.0;
-  }
+  double Sample(const State& /* state */,
+                const Action& /* action */,
+                State& /* nextState*/)
+  { return 1.0; }
 
   State InitialSample()
-  {
-    return State();
-  }
+  { return State(); }
 
-  /**
-   * This function checks if the cart has reached the terminal state.
-   *
-   * @param state The desired state.
-   * @return true if state is a terminal state, otherwise false.
-   */
-  bool IsTerminal(const State& state) const
-  {
-    return false;
-  }
+  bool IsTerminal(const State& /* state */) const
+  { return false; }
 };
 size_t DiscreteActionEnv::State::dimension = 0;
 size_t DiscreteActionEnv::Action::size = 0;

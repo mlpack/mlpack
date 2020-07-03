@@ -294,8 +294,8 @@ class PrioritizedReplay
     arma::colvec tdError(target.n_cols);
     for (size_t i = 0; i < target.n_cols; i ++)
     {
-      tdError(i) = nextActionValues(sampledActions[i], i) -
-          target(sampledActions[i], i);
+      tdError(i) = nextActionValues(sampledActions[i].action, i) -
+          target(sampledActions[i].action, i);
     }
     tdError = arma::abs(tdError);
     UpdatePriorities(sampledIndices, tdError);

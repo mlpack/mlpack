@@ -76,14 +76,20 @@ class MountainCar
   /**
    * Implementation of action of Mountain Car.
    */
-  enum Action
+  class Action
   {
-    backward,
-    stop,
-    forward,
+   public:
+    enum _action
+    {
+      backward,
+      stop,
+      forward
+    };
+    // To store the action.
+    Action::_action action;
 
-    //! Track the size of the action space.
-    size
+    // Track the size of the action space.
+    static const size_t size = 3;
   };
 
   /**
@@ -132,7 +138,7 @@ class MountainCar
     stepsPerformed++;
 
     // Calculate acceleration.
-    int direction = action - 1;
+    int direction = action.action - 1;
     nextState.Velocity() = state.Velocity() + 0.001 * direction - 0.0025 *
         std::cos(3 * state.Position());
     nextState.Velocity() = math::ClampRange(nextState.Velocity(),
@@ -218,6 +224,9 @@ class MountainCar
   size_t& MaxSteps() { return maxSteps; }
 
  private:
+  //! Locally-stored maximum number of steps.
+  size_t maxSteps;
+
   //! Locally-stored minimum legal position.
   double positionMin;
 
@@ -235,9 +244,6 @@ class MountainCar
 
   //! Locally-stored done reward.
   double doneReward;
-
-  //! Locally-stored maximum number of steps.
-  size_t maxSteps;
 
   //! Locally-stored number of steps performed.
   size_t stepsPerformed;

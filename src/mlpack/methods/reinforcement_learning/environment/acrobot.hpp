@@ -85,14 +85,20 @@ class Acrobot
   /*
    * Implementation of action for Acrobot
    */
-  enum Action
+  class Action
   {
-    negativeTorque,
-    zeroTorque,
-    positiveTorque,
+   public:
+    enum _action
+    {
+      negativeTorque,
+      zeroTorque,
+      positiveTorque,
+    };
+    // To store the action.
+    Action::_action action;
 
     // Track the size of the action space.
-    size
+    static const size_t size = 3;
   };
 
   /**
@@ -316,7 +322,7 @@ class Acrobot
   double Torque(const Action& action) const
   {
     // Add noise to the Torque Torque is action number - 1. {0,1,2} -> {-1,0,1}.
-    return double(action - 1) + mlpack::math::Random(-0.1, 0.1);
+    return double(action.action - 1) + mlpack::math::Random(-0.1, 0.1);
   }
 
   /**
@@ -346,6 +352,9 @@ class Acrobot
   size_t& MaxSteps() { return maxSteps; }
 
  private:
+  //! Locally-stored maximum number of steps.
+  size_t maxSteps;
+
   //! Locally-stored gravity.
   double gravity;
 
@@ -381,9 +390,6 @@ class Acrobot
 
   //! Locally-stored done reward.
   double doneReward;
-
-  //! Locally-stored maximum number of steps.
-  size_t maxSteps;
 
   //! Locally-stored number of steps performed.
   size_t stepsPerformed;
