@@ -26,7 +26,8 @@ namespace svm {
  *
  * @tparam MatType Type of data matrix.
  */
-template <typename MatType = arma::mat, typename KernelType = kernel::LinearKernel>
+template <typename MatType = arma::mat,
+          typename KernelType = kernel::LinearKernel>
 class KernelSVM
 {
  public:
@@ -43,8 +44,6 @@ class KernelSVM
    */
   KernelSVM(const MatType& data,
             const arma::Row<size_t>& labels,
-            const size_t numClasses = 2,
-            const double delta = 1.0,
             const double C = 1.0,
             const bool fitIntercept = false,
             const size_t max_iter = 10,
@@ -61,8 +60,6 @@ class KernelSVM
    * @param fitIntercept add intercept term or not.
    */
   KernelSVM(const size_t inputSize,
-            const size_t numClasses = 0,
-            const double delta = 1.0,
             const double C = 1.0,
             const bool fitIntercept = false);
 
@@ -137,20 +134,8 @@ class KernelSVM
    */
   double Train(const MatType& data,
                const arma::Row<size_t>& labels,
-               const size_t numClasses = 2,
                const size_t max_iter = 5,
                const double tol = 1e-3);
-
-
-  //! Sets the number of classes.
-  size_t& NumClasses() { return numClasses; }
-  //! Gets the number of classes.
-  size_t NumClasses() const { return numClasses; }
-
-  //! Sets the margin between the correct class and all other classes.
-  double& Delta() { return delta; }
-  //! Gets the margin between the correct class and all other classes.
-  double Delta() const { return delta; }
 
   //! Sets the intercept term flag.
   bool& FitIntercept() { return fitIntercept; }
@@ -172,7 +157,6 @@ class KernelSVM
   void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & BOOST_SERIALIZATION_NVP(parameters);
-    ar & BOOST_SERIALIZATION_NVP(numClasses);
     ar & BOOST_SERIALIZATION_NVP(fitIntercept);
   }
 
@@ -180,20 +164,10 @@ class KernelSVM
   size_t inputSize;
   //! Parameters after optimization.
   arma::mat parameters;
-  //! Locally saved maximum iterations.
-  const double max_iter;
-  //! Number of classes.
-  size_t numClasses;
-  //! L2-Regularization constant.
-  double lambda;
-  //! The margin between the correct class and all other classes.
-  double delta;
-  //! Locally saved W parameter.
+  //! Locally saved C parameter.
   double C;
   //! Intercept term flag.
   bool fitIntercept;
-  //! Locally saved W parameter.
-  MatType w;
   //! Locally saved b parameter.
   double b;
   //! Locally saved alpha values.

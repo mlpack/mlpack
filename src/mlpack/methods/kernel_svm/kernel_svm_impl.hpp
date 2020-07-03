@@ -22,31 +22,22 @@ template <typename MatType, typename KernelType>
 KernelSVM<MatType, KernelType>::KernelSVM(
     const MatType& data,
     const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    const double delta,
     const double C,
     const bool fitIntercept,
     const size_t max_iter,
     const double tol) :
-    numClasses(numClasses),
-    delta(delta),
     C(C),
-    fitIntercept(fitIntercept),
-    max_iter(max_iter)
+    fitIntercept(fitIntercept)
 {
-  Train(data, labels, numClasses, max_iter, tol);
+  Train(data, labels, max_iter, tol);
 }
 
 template <typename MatType, typename KernelType>
 KernelSVM<MatType, KernelType>::KernelSVM(
     const size_t inputSize,
-    const size_t numClasses,
-    const double delta,
     const double C,
     const bool fitIntercept) :
     inputSize(inputSize),
-    numClasses(numClasses),
-    delta(delta),
     C(C),
     fitIntercept(fitIntercept)
 {
@@ -57,18 +48,19 @@ template<typename MatType, typename KernelType>
 double KernelSVM<MatType, KernelType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
-    const size_t numClasses,
     const size_t max_iter,
     const double tol)
 {
   arma::Row<int> label(data.n_cols);
+
   for (size_t i = 0; i< data.n_cols; i++)
   {
-    if(labels(i) == 0)
+    if (labels(i) == 0)
       label(i) = -1;
     else
       label(i) = 1;
   }
+
   alpha = arma::zeros(data.n_cols);
   size_t count = 0;
   b = 0;
@@ -78,7 +70,7 @@ double KernelSVM<MatType, KernelType>::Train(
   double H = 0;
   arma::mat K = arma::mat(data.n_cols, data.n_cols);
 
-  for(size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; i++)
   {
     for (size_t j = 0; j < data.n_cols; j++)
     {
@@ -90,7 +82,7 @@ double KernelSVM<MatType, KernelType>::Train(
     size_t num_changed_alphas = 0;
     for (size_t i = 0; i < data.n_cols; i++)
     {
-      E(i) = b + sum (alpha.t() % label % K.col(i).t()) - label(i);
+      E(i) = b + arma::sum(alpha.t() % label % K.col(i).t()) - label(i);
       if ((label(i) * E(i) < -tol && alpha(i) < C) ||
         (label(i) * E(i) > tol && alpha(i) > 0))
       {
@@ -99,11 +91,11 @@ double KernelSVM<MatType, KernelType>::Train(
         {
           j = rand() % data.n_cols;
         }
-        E(j) = b + sum (alpha.t() % label % K.col(j).t()) - label(j);
+        E(j) = b + arma::sum(alpha.t() % label % K.col(j).t()) - label(j);
 
         double alpha_i_old = alpha(i);
         double alpha_j_old = alpha(j);
- 
+
         if (label(i) == label(j))
         {
           L = std::max(0.0, alpha(j) + alpha(i) - C);
@@ -115,32 +107,32 @@ double KernelSVM<MatType, KernelType>::Train(
           H = std::min(C, C + alpha(j) - alpha(i));
         }
 
-        if (L == H) 
+        if (L == H)
           continue;
 
-        eta = 2 * K(i,j) - K(i,i) - K(j,j);
+        eta = 2 * K(i, j) - K(i, i) - K(j, j);
         if (eta >= 0)
           continue;
 
         alpha(j) = alpha(j) - (label(j) * (E(i) - E(j))) / eta;
 
-        alpha(j) = std::min (H, alpha(j));
-        alpha(j) = std::max (L, alpha(j));
+        alpha(j) = std::min(H, alpha(j));
+        alpha(j) = std::max(L, alpha(j));
 
-        if (std::abs(alpha(j) - alpha_j_old) < tol) 
+        if (std::abs(alpha(j) - alpha_j_old) < tol)
         {
           alpha(j) = alpha_j_old;
           continue;
         }
 
         alpha(i) = alpha(i) + label(i) * label(j) * (alpha_j_old - alpha(j));
- 
+
         double b1 = b - E(i)
-                    - label(i) * (alpha(i) - alpha_i_old) *  K(i,j)
-                    - label(j) * (alpha(j) - alpha_j_old) *  K(i,j);
+                    - label(i) * (alpha(i) - alpha_i_old) *  K(i, j)
+                    - label(j) * (alpha(j) - alpha_j_old) *  K(i, j);
         double b2 = b - E(j)
-                    - label(i) * (alpha(i) - alpha_i_old) *  K(i,j)
-                    - label(j) * (alpha(j) - alpha_j_old) *  K(j,j);
+                    - label(i) * (alpha(i) - alpha_i_old) *  K(i, j)
+                    - label(j) * (alpha(j) - alpha_j_old) *  K(j, j);
 
         if (0 < alpha(i) && alpha(i) < C)
           b = b1;
@@ -157,8 +149,8 @@ double KernelSVM<MatType, KernelType>::Train(
       count = count + 1;
     else
       count = 0;
-}
-  w = (data * (alpha.t() % label).t()).t();
+  }
+  parameters = (data * (alpha.t() % label).t()).t();
 }
 
 template <typename MatType, typename KernelType>
@@ -177,16 +169,16 @@ void KernelSVM<MatType, KernelType>::Classify(
     arma::mat& scores) const
 {
   Classify(data, scores);
-  double mean = arma::as_scalar(arma::mean(scores,1));
+  double threshold = arma::as_scalar(arma::mean(scores, 1));
 
   // Prepare necessary data.
   labels.zeros(data.n_cols);
 
   for (size_t i = 0; i< scores.n_elem; i++)
   {
-    if(scores(i) >= 0)
+    if (scores(i) >= threshold)
       labels(i) = 1;
-    if(scores(i) < 0)
+    if (scores(i) < threshold)
       labels(i) = 0;
   }
 }
@@ -196,7 +188,7 @@ void KernelSVM<MatType, KernelType>::Classify(
     const MatType& data,
     arma::mat& scores) const
 {
-  scores = (data.t() * w.t() + b).t();
+  scores = (data.t() * parameters.t() + b).t();
 }
 
 template <typename MatType, typename KernelType>

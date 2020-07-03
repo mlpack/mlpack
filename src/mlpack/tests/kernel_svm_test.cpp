@@ -30,9 +30,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
 {
   const size_t points = 1000;
   const size_t inputSize = 3;
-  const size_t numClasses = 2;
-  const double lambda = 0.5;
-  const double delta = 1.0;
 
   // Generate a two-Gaussian dataset,
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
@@ -55,7 +52,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
     }
 
     // Now train a svm object on it.
-    KernelSVM<> svm(data, labels, 2, 1.0, 10.0, false, 10);
+    KernelSVM<> svm(data, labels, 1.0, false, 10);
 
     // Ensure that the error is close to zero.
     const double acc = svm.ComputeAccuracy(data, labels);
