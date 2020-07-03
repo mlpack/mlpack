@@ -45,12 +45,12 @@ class PoissonNLLLoss
    * @param full Boolean value that determines whether to include Stirling's
    *        approximation term.
    * @param eps A small value to prevent 0 in denominators and logarithms.
-   * @param reduction When true, mean loss is computed otherwise total loss.
+   * @param mean When true, mean loss is computed otherwise total loss.
    */
   PoissonNLLLoss(const bool logInput = true,
                  const bool full = false,
                  const typename InputDataType::elem_type eps = 1e-08,
-                 const bool reduction = true);
+                 const bool mean = true);
 
   /**
    * Computes the Poisson negative log likelihood Loss.
@@ -110,12 +110,12 @@ class PoissonNLLLoss
   //! logarithms and denominators.
   typename InputDataType::elem_type& Eps() { return eps; }
 
-  //! Get the value of reduction. reduction is a boolean value that tells if
+  //! Get the value of mean. It's a boolean value that tells if
   //! mean of the total loss has to be taken.
-  bool Reduction() const { return reduction; }
-  //! Modify the value of reduction. reduction is a boolean value that tells if
+  bool Mean() const { return mean; }
+  //! Modify the value of mean. It's a boolean value that tells if
   //! mean of the total loss has to be taken.
-  bool& Reduction() { return reduction; }
+  bool& Mean() { return mean; }
 
   /**
    * Serialize the layer.
@@ -153,7 +153,7 @@ class PoissonNLLLoss
   typename InputDataType::elem_type eps;
 
   //! Boolean value that tells if mean of the total loss has to be taken.
-  bool reduction;
+  bool mean;
 }; // class PoissonNLLLoss
 
 } // namespace ann

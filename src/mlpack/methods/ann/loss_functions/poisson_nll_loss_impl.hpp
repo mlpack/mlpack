@@ -24,11 +24,11 @@ PoissonNLLLoss<InputDataType, OutputDataType>::PoissonNLLLoss(
     const bool logInput,
     const bool full,
     const typename InputDataType::elem_type eps,
-    const bool reduction):
+    const bool mean):
     logInput(logInput),
     full(full),
     eps(eps),
-    reduction(reduction)
+    mean(mean)
 {
   Log::Assert(eps >= 0, "Epsilon (eps) must be greater than or equal to zero.");
 }
@@ -58,7 +58,7 @@ PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
     loss.elem(arma::find(mask)) += approx.elem(arma::find(mask));
   }
 
-  return reduction ? arma::accu(loss) / loss.n_elem : arma::accu(loss);
+  return mean ? arma::accu(loss) / loss.n_elem : arma::accu(loss);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -75,7 +75,7 @@ void PoissonNLLLoss<InputDataType, OutputDataType>::Backward(
   else
     output = (1 - target / (input + eps));
 
-  if (reduction)
+  if (mean)
     output = output / output.n_elem;
 }
 
@@ -88,7 +88,7 @@ void PoissonNLLLoss<InputDataType, OutputDataType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(logInput);
   ar & BOOST_SERIALIZATION_NVP(full);
   ar & BOOST_SERIALIZATION_NVP(eps);
-  ar & BOOST_SERIALIZATION_NVP(reduction);
+  ar & BOOST_SERIALIZATION_NVP(mean);
 }
 
 } // namespace ann
