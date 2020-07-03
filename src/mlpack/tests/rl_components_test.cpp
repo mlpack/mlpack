@@ -129,7 +129,8 @@ BOOST_AUTO_TEST_CASE(SimpleMountainCarTest)
   task.MaxSteps() = 5;
 
   MountainCar::State state = task.InitialSample();
-  MountainCar::Action action = MountainCar::Action::_action::backward;
+  MountainCar::Action action;
+  action.action = MountainCar::Action::_action::backward;
   double reward = task.Sample(state, action);
 
   BOOST_REQUIRE_EQUAL(reward, -1.0);
@@ -237,7 +238,7 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
   replay.Store(state, action, reward, nextState, env.IsTerminal(nextState),
       0.9);
   arma::mat sampledState;
-  std::vector<ActionType> sampledAction;
+  std::vector<MountainCar::Action> sampledAction;
   arma::colvec sampledReward;
   arma::mat sampledNextState;
   arma::icolvec sampledTerminal;
@@ -247,7 +248,8 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
       sampledTerminal);
 
   CheckMatrices(state.Encode(), sampledState);
-  BOOST_REQUIRE_EQUAL(action.action, arma::as_scalar(sampledAction[0].action));
+  BOOST_REQUIRE_EQUAL(sampledAction.size(), 1);
+  BOOST_REQUIRE_EQUAL(action.action, sampledAction[0].action);
   BOOST_REQUIRE_CLOSE(reward, arma::as_scalar(sampledReward), 1e-5);
   CheckMatrices(nextState.Encode(), sampledNextState);
   BOOST_REQUIRE_EQUAL(false, arma::as_scalar(sampledTerminal));
@@ -283,7 +285,7 @@ BOOST_AUTO_TEST_CASE(GreedyPolicyTest)
   BOOST_REQUIRE_CLOSE(0.0, policy.Epsilon(), 1e-5);
   arma::colvec actionValue = arma::randn<arma::colvec>(CartPole::Action::size);
   CartPole::Action action = policy.Sample(actionValue);
-  BOOST_REQUIRE_CLOSE(actionValue[action], actionValue.max(), 1e-5);
+  BOOST_REQUIRE_CLOSE(actionValue[action.action], actionValue.max(), 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
