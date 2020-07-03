@@ -51,15 +51,13 @@ class DiscreteActionEnv
     arma::colvec data;
   };
   /**
-   * Implementation of action of Cart Pole.
+   * Implementation of discrete action.
    */
-  enum Action
+  struct Action
   {
-    backward,
-    forward,
-
+    size_t action = 0;
     // Track the size of the action space.
-    size
+    static size_t size;
   };
   double Sample(const State& state,
                 const Action& action,
@@ -85,6 +83,7 @@ class DiscreteActionEnv
   }
 };
 size_t DiscreteActionEnv::State::dimension = 0;
+size_t DiscreteActionEnv::Action::size = 0;
 
 } // namespace rl
 } // namespace mlpack

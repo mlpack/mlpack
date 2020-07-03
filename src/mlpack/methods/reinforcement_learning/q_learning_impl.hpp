@@ -168,7 +168,7 @@ void QLearning<
    */
   for (size_t i = 0; i < sampledNextStates.n_cols; ++i)
   {
-    target(sampledActions[i], i) = sampledRewards(i) + discount *
+    target(sampledActions[i].action, i) = sampledRewards(i) + discount *
         nextActionValues(bestActions(i), i) * (1 - isTerminal[i]);
   }
 

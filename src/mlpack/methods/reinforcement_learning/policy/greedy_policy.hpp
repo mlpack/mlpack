@@ -67,14 +67,19 @@ class GreedyPolicy
                     const bool isNoisy = false)
   {
     double exploration = math::Random();
+    ActionType action;
 
     // Select the action randomly.
     if (!deterministic && exploration < epsilon && isNoisy == false)
-      return static_cast<ActionType>(math::RandInt(ActionType::size));
+      action.action = static_cast<decltype(ActionType::action)>
+          (math::RandInt(ActionType::size));
 
     // Select the action greedily.
-    return static_cast<ActionType>(
-        arma::as_scalar(arma::find(actionValue == actionValue.max(), 1)));
+    else
+      action.action = static_cast<decltype(ActionType::action)>(
+          arma::as_scalar(arma::find(actionValue == actionValue.max(), 1)));
+
+    return action;
   }
 
   /**
