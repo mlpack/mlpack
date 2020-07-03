@@ -127,7 +127,7 @@ double KernelSVM<MatType, KernelType>::Train(
         alpha(j) = std::min (H, alpha(j));
         alpha(j) = std::max (L, alpha(j));
 
-        if (abs(alpha(j) - alpha_j_old) < tol) 
+        if (std::abs(alpha(j) - alpha_j_old) < tol) 
         {
           alpha(j) = alpha_j_old;
           continue;
@@ -196,8 +196,6 @@ void KernelSVM<MatType, KernelType>::Classify(
     const MatType& data,
     arma::mat& scores) const
 {
-  std::cout<<w<<" = w"<<std::endl;
-  std::cout<<b<<" = b"<<std::endl;
   scores = (data.t() * w.t() + b).t();
 }
 
