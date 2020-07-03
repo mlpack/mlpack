@@ -59,17 +59,32 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   Log::Assert(input.n_rows == embedDim * (tLen + 2 * sLen));
 
   const size_t bsz = input.n_cols;
+  const size_t qStart = 0, qEnd = embedDim * tLen - 1;
+  const size_t kStart = qEnd + 1, kEnd = kStart + embedDim * sLen - 1;
+  const size_t vStart = kEnd + 1, vEnd = vStart + embedDim * sLen - 1;
   output.set_size(embedDim * tLen, bsz);
 
-  CubeType query(const_cast<MatType&>(input).memptr(),
-      embedDim, tLen, bsz, true, false);
-  CubeType key(const_cast<MatType&>(input).memptr()
-      + query.n_elem, embedDim, sLen, bsz, true, false);
-  CubeType value(const_cast<MatType&>(input).memptr()
-      + query.n_elem + key.n_elem, embedDim, sLen, bsz, true, false);
+  MatType q = input.submat(qStart, 0, qEnd, bsz - 1);
+  MatType k = input.submat(kStart, 0, kEnd, bsz - 1);
+  MatType v = input.submat(vStart, 0, vEnd, bsz - 1);
+
+  CubeType query(q.memptr(), embedDim, tLen, bsz);
+  CubeType key(k.memptr(), embedDim, sLen, bsz);
+  CubeType value(v.memptr(), embedDim, sLen, bsz);
+
+  // for (size_t i = 0; i < bsz; ++i)
+  // {
+  //   query.slice(i) = MatType(q.colptr(i), embedDim, tLen);
+  //   key.slice(i) = MatType(k.colptr(i), embedDim, sLen);
+  //   value.slice(i) = MatType(v.colptr(i), embedDim, sLen);
+  // }
+  query.print("query:");
+  key.print("key:");
+  value.print("value:");
 
   query /= std::sqrt(embedDim);
   CubeType scores = CubeMultiply(key, value, 1, 0);
+  scores.print("scores:");
 
   if (!attnMask.is_empty())
   {
@@ -100,6 +115,8 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
     softmaxOutput.slice(i) = softmax.OutputParameter();
     dropout.Forward(softmax.OutputParameter(), attnOut.slice(i));
   }
+  softmaxOutput.print("softmax output:");
+  attnOut.print("attnOut:");
 
   scores = CubeMultiply(value, attnOut, 0, 0);
   for (size_t i = 0; i < bsz; ++i)
@@ -119,14 +136,25 @@ Backward(const arma::Mat<eT>& input,
   typedef typename arma::Mat<eT> MatType;
 
   const size_t bsz = gy.n_cols;
+  const size_t qStart = 0, qEnd = embedDim * tLen - 1;
+  const size_t kStart = qEnd + 1, kEnd = kStart + embedDim * sLen - 1;
+  const size_t vStart = kEnd + 1, vEnd = vStart + embedDim * sLen - 1;
   g.set_size(embedDim * (tLen + 2 * sLen), bsz);
 
-  CubeType query(const_cast<MatType&>(input).memptr(),
-      embedDim, tLen, bsz, true, false);
-  CubeType key(const_cast<MatType&>(input).memptr()
-      + query.n_elem, embedDim, sLen, bsz, true, false);
-  CubeType value(const_cast<MatType&>(input).memptr()
-      + query.n_elem + key.n_elem, embedDim, sLen, bsz, true, false);
+  MatType q = input.submat(qStart, 0, qEnd, bsz - 1);
+  MatType k = input.submat(kStart, 0, kEnd, bsz - 1);
+  MatType v = input.submat(vStart, 0, vEnd, bsz - 1);
+
+  CubeType query(q.memptr(), embedDim, tLen, bsz);
+  CubeType key(k.memptr(), embedDim, sLen, bsz);
+  CubeType value(v.memptr(), embedDim, sLen, bsz);
+
+  // for (size_t i = 0; i < bsz; ++i)
+  // {
+  //   query.slice(i) = MatType(q.colptr(i), embedDim, tLen);
+  //   key.slice(i) = MatType(k.colptr(i), embedDim, sLen);
+  //   value.slice(i) = MatType(v.colptr(i), embedDim, sLen);
+  // }
 
   CubeType gy3d(const_cast<MatType&>(gy).memptr(), embedDim, tLen, bsz, 0, 0);
   CubeType gyTemp = CubeMultiply(value, gy3d, true, false);

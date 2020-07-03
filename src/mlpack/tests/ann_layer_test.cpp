@@ -3819,20 +3819,68 @@ BOOST_AUTO_TEST_CASE(ScalarDotProductAttentionWithNoMaskTest)
   size_t sLen = 4;
   size_t embedDim = 4;
   size_t batchSize = 2;
-  double dropoutRate = 0.2;
+  double dropoutRate = 0.0;
   ScalarDotProductAttention<> module(tLen, sLen, embedDim, dropoutRate, false);
 
   // Test the Forward function.
-  arma::mat input = arma::randu(embedDim * (tLen + 2 * sLen), batchSize);
+  arma::mat input = arma::mat("0.7868 0.2988;\
+                               0.2505 0.3613;\
+                               0.7107 0.4810;\
+                               0.9467 0.2978;\
+                               0.0193 0.2852;\
+                               0.4049 0.9242;\
+                               0.2513 0.6289;\
+                               0.0227 0.7550;\
+                               0.5206 0.7139;\
+                               0.3447 0.7228;\
+                               0.2742 0.0698;\
+                               0.5610 0.4868;\
+                               0.1400 0.0889;\
+                               0.5439 0.7596;\
+                               0.5219 0.4238;\
+                               0.8571 0.5970;\
+                               0.4998 0.0864;\
+                               0.4194 0.2730;\
+                               0.7443 0.6238;\
+                               0.2492 0.2221;\
+                               0.2393 0.2254;\
+                               0.3201 0.4341;\
+                               0.9105 0.9873;\
+                               0.1648 0.2110;\
+                               0.2455 0.8532;\
+                               0.1983 0.2841;\
+                               0.7159 0.8364;\
+                               0.9678 0.3667;\
+                               0.7694 0.9351;\
+                               0.0807 0.8599;\
+                               0.4599 0.4909;\
+                               0.2573 0.0221;\
+                               0.7770 0.3621;\
+                               0.5839 0.7364;\
+                               0.9503 0.5194;\
+                               0.4381 0.4230;\
+                               0.3223 0.0290;\
+                               0.5324 0.9092;\
+                               0.2564 0.1122;\
+                               0.0455 0.9802;\
+                               0.5050 0.6878;\
+                               0.6962 0.4873;\
+                               0.0912 0.7359;\
+                               0.9071 0.5887;\
+                               0.0309 0.5285;\
+                               0.1520 0.4556;\
+                               0.9815 0.8283;\
+                               0.6204 0.8704");
   arma::mat output;
   module.Forward(input, output);
-  arma::cube output3d(input.memptr(), embedDim, tLen, batchSize, 1, 0);
+  arma::cube output3d(output.memptr(), embedDim, tLen, batchSize, 1, 0);
+  output3d.print("Forward:");
 
   BOOST_REQUIRE_EQUAL(output.n_rows, embedDim * tLen);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 
   // Test the Backward function.
-  arma::mat gy = 0.1 * arma::randu(embedDim * tLen, batchSize);
+  arma::mat gy = 0.1 * arma::ones(embedDim * tLen, batchSize);
   arma::mat g;
   module.Backward(input, gy, g);
 
