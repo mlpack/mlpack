@@ -105,9 +105,9 @@ class QLearning
    */
   double Episode();
 
-  /**
-   * @return Total steps from beginning.
-   */
+  //! Modify total steps from beginning.
+  size_t& TotalSteps() { return totalSteps; }
+  //! Get total steps from beginning.
   const size_t& TotalSteps() const { return totalSteps; }
 
   //! Modify the state of the agent.
