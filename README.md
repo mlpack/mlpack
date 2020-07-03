@@ -187,6 +187,9 @@ Options are specified with the -D flag.  The allowed options include:
     PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
     BUILD_JULIA_BINDINGS=(ON/OFF): whether or not to build Julia bindings
     JULIA_EXECUTABLE=(/path/to/julia): Path to specific Julia executable
+    BUILD_GO_BINDINGS=(ON/OFF): whether or not to build Go bindings
+    GO_EXECUTABLE=(/path/to/go): Path to specific Go executable
+    BUILD_GO_SHLIB=(ON/OFF): whether or not to build shared libraries required by Go bindings
     BUILD_TESTS=(ON/OFF): whether or not to build tests
     BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
        static libraries

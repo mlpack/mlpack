@@ -138,9 +138,9 @@ void Glimpse<InputDataType, OutputDataType>::Backward(
   location = locationParameter.back();
   locationParameter.pop_back();
 
-  for (size_t s = 0, j = 0; s < mappedError.n_slices; s+= gy.n_cols, j++)
+  for (size_t s = 0, j = 0; s < mappedError.n_slices; s+= gy.n_cols, ++j)
   {
-    for (size_t i = 0; i < gy.n_cols; i++)
+    for (size_t i = 0; i < gy.n_cols; ++i)
     {
       mappedError.slice(s + i) = arma::Mat<eT>(gy.memptr(),
           outputWidth, outputHeight);

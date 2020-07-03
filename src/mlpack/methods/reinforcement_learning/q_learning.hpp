@@ -91,6 +91,11 @@ class QLearning
   ~QLearning();
 
   /**
+   * Trains the DQN agent(non-categorical).
+   */
+  void TrainAgent();
+
+  /**
    * Execute a step in an episode.
    * @return Reward for the step.
    */

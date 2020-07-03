@@ -171,7 +171,7 @@ class RBM
    * mean given by:
    * @f$ h_i*\alpha^{-1}*W_i^T*v @f$
    * and variance:
-   * @f$ \alpha&{-1} @f$
+   * @f$ \alpha^{-1} @f$
    *
    * @param input Consists of both visible and spike variables.
    * @param output Sampled slab neurons.
@@ -196,7 +196,7 @@ class RBM
    * distribution with mean given by:
    * @f$ h_i*\alpha^{-1}*W_i^T*v @f$
    * and variance:
-   * @f$ \alpha&{-1} @f$
+   * @f$ \alpha^{-1} @f$
    *
    * @param input Hidden layer of the network.
    * @param output The sampled visible layer.

@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyErrorTest)
   // Test the Backward function.
   module.Backward(input1, target1, output);
   expected = 0.62245929;
-  for (size_t i = 0; i < output.n_elem; i++)
+  for (size_t i = 0; i < output.n_elem; ++i)
     BOOST_REQUIRE_SMALL(output(i) - expected, 1e-5);
   BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
@@ -282,7 +282,7 @@ BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyErrorTest)
   expectedOutput = arma::mat(
       "0.7310586 0.88079709 -0.04742587 0.98201376 -0.00669285");
   module.Backward(input2, target2, output);
-  for (size_t i = 0; i < output.n_elem; i++)
+  for (size_t i = 0; i < output.n_elem; ++i)
     BOOST_REQUIRE_SMALL(output(i) - expectedOutput(i), 1e-5);
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
@@ -326,14 +326,14 @@ BOOST_AUTO_TEST_CASE(SimpleEarthMoverDistanceLayerTest)
   // Test the Backward function.
   module.Backward(input1, target1, output);
   expected = 0.0;
-  for (size_t i = 0; i < output.n_elem; i++)
+  for (size_t i = 0; i < output.n_elem; ++i)
     BOOST_REQUIRE_SMALL(output(i) - expected, 1e-5);
   BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
 
   expectedOutput = arma::mat("-1 0 -1 0 -1");
   module.Backward(input2, target2, output);
-  for (size_t i = 0; i < output.n_elem; i++)
+  for (size_t i = 0; i < output.n_elem; ++i)
     BOOST_REQUIRE_SMALL(output(i) - expectedOutput(i), 1e-5);
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);

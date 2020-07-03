@@ -86,13 +86,13 @@ BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
   // Test that objective value returned by RBM::Train() is finite.
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
-  for (size_t i = 0; i < trainData.n_cols; i++)
+  for (size_t i = 0; i < trainData.n_cols; ++i)
   {
     model.HiddenMean(std::move(trainData.col(i)), std::move(output));
     XRbm.col(i) = output;
   }
 
-  for (size_t i = 0; i < testData.n_cols; i++)
+  for (size_t i = 0; i < testData.n_cols; ++i)
   {
     model.HiddenMean(std::move(testData.col(i)),
       std::move(output));
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   for (size_t i = 0; i < testLabelsTemp.n_cols; ++i)
     testLabels(i) = arma::as_scalar(testLabelsTemp.col(i));
 
-  for (size_t i = 0; i < trainData.n_cols; i++)
+  for (size_t i = 0; i < trainData.n_cols; ++i)
   {
     tempRadius = arma::norm(trainData.col(i));
     if (radius < tempRadius)
@@ -187,14 +187,14 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   // Test that objective value returned by RBM::Train() is finite.
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
-  for (size_t i = 0; i < trainData.n_cols; i++)
+  for (size_t i = 0; i < trainData.n_cols; ++i)
   {
     modelssRBM.HiddenMean(std::move(trainData.col(i)),
         std::move(output));
     XRbm.col(i) = output;
   }
 
-  for (size_t i = 0; i < testData.n_cols; i++)
+  for (size_t i = 0; i < testData.n_cols; ++i)
   {
     modelssRBM.HiddenMean(std::move(testData.col(i)),
       std::move(output));
@@ -236,12 +236,12 @@ void BuildVanillaNetwork(MatType& trainData,
   arma::Mat<float> freeEnergy = MatType(
       "-0.87523715, 0.50615066, 0.46923476, 1.21509084;");
   arma::vec calculatedFreeEnergy(4, arma::fill::zeros);
-  for (size_t i = 0; i < trainData.n_cols; i++)
+  for (size_t i = 0; i < trainData.n_cols; ++i)
   {
     calculatedFreeEnergy(i) = model.FreeEnergy(std::move(trainData.col(i)));
   }
 
-  for (size_t i = 0; i < freeEnergy.n_elem; i++)
+  for (size_t i = 0; i < freeEnergy.n_elem; ++i)
     BOOST_REQUIRE_CLOSE(calculatedFreeEnergy(i), freeEnergy(i), 1e-3);
 }
 

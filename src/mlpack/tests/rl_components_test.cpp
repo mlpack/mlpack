@@ -231,7 +231,8 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
   MountainCar::Action action = MountainCar::Action::forward;
   MountainCar::State nextState;
   double reward = env.Sample(state, action, nextState);
-  replay.Store(state, action, reward, nextState, env.IsTerminal(nextState));
+  replay.Store(state, action, reward, nextState, env.IsTerminal(nextState),
+      0.9);
   arma::mat sampledState;
   arma::icolvec sampledAction;
   arma::colvec sampledReward;
@@ -251,7 +252,7 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
 
   //! Overwrite the memory with a nonsense record
   for (size_t i = 0; i < 5; ++i)
-    replay.Store(nextState, action, reward, state, true);
+    replay.Store(nextState, action, reward, state, true, 0.9);
 
   BOOST_REQUIRE_EQUAL(3, replay.Size());
 
