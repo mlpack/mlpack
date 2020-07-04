@@ -74,6 +74,10 @@
 
   * Added `R2 Score` regression metric (#2323).
 
+  * Added `poisson negative log likelihood` loss function (#2196).
+
+  * Added `huber` loss function (#2199).
+
   * Added `mean squared logarithmic error` loss function for neural networks
     (#2210).
 
