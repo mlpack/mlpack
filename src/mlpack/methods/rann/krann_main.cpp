@@ -150,19 +150,19 @@ static void mlpackMain()
   const int lsInt = CLI::GetParam<int>("leaf_size");
   RequireParamValue<int>("leaf_size", [](int x) { return x > 0; }, true,
       "leaf size must be greater than 0");
-    
+
   // Sanity check on tau.
   RequireParamValue<double>("tau", [](double x) {
       return (x >= 0.0 && x <=100.0); }, true,
       "tau must be in range [0.0, 100.0]");
   const double tau = CLI::GetParam<double>("tau");
-    
-   // Sanity check on alpha.
+
+  // Sanity check on alpha.
   RequireParamValue<double>("alpha", [](double x) {
       return (x >= 0.0 && x <=1.0); }, true,
       "alpha must be in range [0.0, 1.0]");
   const double alpha = CLI::GetParam<double>("alpha");
-    
+
   // We either have to load the reference data, or we have to load the model.
   RANNModel* rann;
   const bool naive = CLI::HasParam("naive");
