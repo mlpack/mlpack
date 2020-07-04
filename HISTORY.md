@@ -8,6 +8,8 @@
 
   * Replace boost program_options dependency with CLI11 (#2459).
 
+  * Additional functionality for the ARFF loader (#2486).
+
 ### mlpack 3.3.2
 ###### 2020-06-18
   * Added Noisy DQN to q_networks (#2446).
@@ -73,6 +75,10 @@
   * Templated return type of `Forward function` of loss functions (#2339).
 
   * Added `R2 Score` regression metric (#2323).
+
+  * Added `poisson negative log likelihood` loss function (#2196).
+
+  * Added `huber` loss function (#2199).
 
   * Added `mean squared logarithmic error` loss function for neural networks
     (#2210).
