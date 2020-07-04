@@ -1,8 +1,8 @@
 /**
- * @file methods/ann/layer/scalar_dot_product_attention_impl.hpp
+ * @file methods/ann/layer/scaled_dot_product_attention_impl.hpp
  * @author Mrityunjay Tripathi
  *
- * Implementation of the ScalarDotProductAttention class.
+ * Implementation of the ScaledDotProductAttention class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,18 +10,18 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_ANN_LAYER_SCALAR_DOT_PRODUCT_ATTENTION_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_SCALAR_DOT_PRODUCT_ATTENTION_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_SCALED_DOT_PRODUCT_ATTENTION_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_SCALED_DOT_PRODUCT_ATTENTION_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "scalar_dot_product_attention.hpp"
+#include "scaled_dot_product_attention.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputDataType, typename OutputDataType>
-ScalarDotProductAttention<InputDataType, OutputDataType>::
-ScalarDotProductAttention() :
+ScaledDotProductAttention<InputDataType, OutputDataType>::
+ScaledDotProductAttention() :
     tLen(0),
     sLen(0),
     embedDim(0),
@@ -32,8 +32,8 @@ ScalarDotProductAttention() :
 }
 
 template <typename InputDataType, typename OutputDataType>
-ScalarDotProductAttention<InputDataType, OutputDataType>::
-ScalarDotProductAttention(const size_t tLen,
+ScaledDotProductAttention<InputDataType, OutputDataType>::
+ScaledDotProductAttention(const size_t tLen,
     const size_t sLen,
     const size_t embedDim,
     const ElemType dropoutRate,
@@ -50,7 +50,7 @@ ScalarDotProductAttention(const size_t tLen,
 
 template <typename InputDataType, typename OutputDataType>
 template <typename eT>
-void ScalarDotProductAttention<InputDataType, OutputDataType>::
+void ScaledDotProductAttention<InputDataType, OutputDataType>::
 Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   typedef typename arma::Cube<eT> CubeType;
@@ -72,19 +72,8 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   CubeType key(k.memptr(), embedDim, sLen, bsz);
   CubeType value(v.memptr(), embedDim, sLen, bsz);
 
-  // for (size_t i = 0; i < bsz; ++i)
-  // {
-  //   query.slice(i) = MatType(q.colptr(i), embedDim, tLen);
-  //   key.slice(i) = MatType(k.colptr(i), embedDim, sLen);
-  //   value.slice(i) = MatType(v.colptr(i), embedDim, sLen);
-  // }
-  query.print("query:");
-  key.print("key:");
-  value.print("value:");
-
   query /= std::sqrt(embedDim);
-  CubeType scores = CubeMultiply(key, value, 1, 0);
-  scores.print("scores:");
+  CubeType scores = CubeMultiply(key, query, 1, 0);
 
   if (!attnMask.is_empty())
   {
@@ -95,7 +84,6 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
     }
     scores.each_slice() += attnMask;
   }
-
   if (!keyPaddingMask.is_empty())
   {
     if (keyPaddingMask.n_rows != sLen || keyPaddingMask.n_cols != 1)
@@ -108,16 +96,12 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
 
   attnOut.set_size(sLen, tLen, bsz);
   softmaxOutput.set_size(sLen, tLen, bsz);
-
   for (size_t i = 0; i < bsz; ++i)
   {
     softmax.Forward(scores.slice(i), softmax.OutputParameter());
     softmaxOutput.slice(i) = softmax.OutputParameter();
     dropout.Forward(softmax.OutputParameter(), attnOut.slice(i));
   }
-  softmaxOutput.print("softmax output:");
-  attnOut.print("attnOut:");
-
   scores = CubeMultiply(value, attnOut, 0, 0);
   for (size_t i = 0; i < bsz; ++i)
   {
@@ -127,7 +111,7 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
 
 template <typename InputDataType, typename OutputDataType>
 template <typename eT>
-void ScalarDotProductAttention<InputDataType, OutputDataType>::
+void ScaledDotProductAttention<InputDataType, OutputDataType>::
 Backward(const arma::Mat<eT>& input,
          const arma::Mat<eT>& gy,
          arma::Mat<eT>& g)
@@ -148,13 +132,6 @@ Backward(const arma::Mat<eT>& input,
   CubeType query(q.memptr(), embedDim, tLen, bsz);
   CubeType key(k.memptr(), embedDim, sLen, bsz);
   CubeType value(v.memptr(), embedDim, sLen, bsz);
-
-  // for (size_t i = 0; i < bsz; ++i)
-  // {
-  //   query.slice(i) = MatType(q.colptr(i), embedDim, tLen);
-  //   key.slice(i) = MatType(k.colptr(i), embedDim, sLen);
-  //   value.slice(i) = MatType(v.colptr(i), embedDim, sLen);
-  // }
 
   CubeType gy3d(const_cast<MatType&>(gy).memptr(), embedDim, tLen, bsz, 0, 0);
   CubeType gyTemp = CubeMultiply(value, gy3d, true, false);
@@ -186,7 +163,7 @@ Backward(const arma::Mat<eT>& input,
 
 template <typename InputDataType, typename OutputDataType>
 template <typename Archive>
-void ScalarDotProductAttention<InputDataType, OutputDataType>::
+void ScaledDotProductAttention<InputDataType, OutputDataType>::
 serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(tLen);

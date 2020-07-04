@@ -59,7 +59,7 @@
 #include "recurrent.hpp"
 #include "reinforce_normal.hpp"
 #include "reparametrization.hpp"
-#include "scalar_dot_product_attention.hpp"
+#include "scaled_dot_product_attention.hpp"
 #include "select.hpp"
 #include "sequential.hpp"
 #include "softshrink.hpp"

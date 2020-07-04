@@ -1,8 +1,8 @@
 /**
- * @file methods/ann/layer/scalar_dot_product_attention.hpp
+ * @file methods/ann/layer/scaled_dot_product_attention.hpp
  * @author Mrityunjay Tripathi
  *
- * Definition of the ScalarDotProductAttention class.
+ * Definition of the ScaledDotProductAttention class.
  *
  * @code
  * @article{NIPS'17,
@@ -21,8 +21,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_ANN_LAYER_SCALAR_DOT_PRODUCT_ATTENTION_HPP
-#define MLPACK_METHODS_ANN_LAYER_SCALAR_DOT_PRODUCT_ATTENTION_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_SCALED_DOT_PRODUCT_ATTENTION_HPP
+#define MLPACK_METHODS_ANN_LAYER_SCALED_DOT_PRODUCT_ATTENTION_HPP
 
 #include <mlpack/prereqs.hpp>
 #include "layer_types.hpp"
@@ -42,7 +42,7 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class ScalarDotProductAttention
+class ScaledDotProductAttention
 {
  public:
   //! Element Type of the input.
@@ -51,10 +51,10 @@ class ScalarDotProductAttention
   /**
    * Default constructor.
    */
-  ScalarDotProductAttention();
+  ScaledDotProductAttention();
 
   /**
-   * Create the ScalarDotProductAttention object using the specified parameters.
+   * Create the ScaledDotProductAttention object using the specified parameters.
    *
    * @param tLen The length of target sequence.
    * @param sLen The length of the source sequence.
@@ -63,7 +63,7 @@ class ScalarDotProductAttention
    * @param deterministic If false, dropout layer is omitted else dropout layer
    *        is applied with dropout rate `dropout`.
    */
-  ScalarDotProductAttention(const size_t tLen,
+  ScaledDotProductAttention(const size_t tLen,
     const size_t sLen,
     const size_t embedDim,
     const ElemType dropoutRate = 0.1,
@@ -207,6 +207,6 @@ class ScalarDotProductAttention
 } // namespace mlpack
 
 // Include implementation.
-#include "scalar_dot_product_attention_impl.hpp"
+#include "scaled_dot_product_attention_impl.hpp"
 
 #endif

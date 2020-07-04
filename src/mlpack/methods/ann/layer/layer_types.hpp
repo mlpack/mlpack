@@ -42,7 +42,7 @@
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
 #include <mlpack/methods/ann/layer/reparametrization.hpp>
-#include <mlpack/methods/ann/layer/scalar_dot_product_attention.hpp>
+#include <mlpack/methods/ann/layer/scaled_dot_product_attention.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
 #include <mlpack/methods/ann/layer/subview.hpp>
@@ -219,7 +219,7 @@ using MoreTypes = boost::variant<
         VirtualBatchNorm<arma::mat, arma::mat>*,
         RBF<arma::mat, arma::mat, GaussianFunction>*,
         BaseLayer<GaussianFunction, arma::mat, arma::mat>*,
-        ScalarDotProductAttention<arma::mat, arma::mat>*
+        ScaledDotProductAttention<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
