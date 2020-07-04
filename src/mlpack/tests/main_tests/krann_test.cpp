@@ -391,10 +391,10 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentAlpha)
 
   mlpack::math::FixedRandomSeed();
   mlpackMain();
-  
+
   RANNModel* output_model;
   output_model = std::move(CLI::GetParam<RANNModel*>("output_model"));
-  
+
   // Reset the passed parameters.
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
 
@@ -482,8 +482,8 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentSingleSampleLimit)
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  BOOST_CHECK_EQUAL(CLI::GetParam<RANNModel*>("output_model")->SingleSampleLimit(),
-      (int) 15);
+  BOOST_CHECK_EQUAL(
+    CLI::GetParam<RANNModel*>("output_model")->SingleSampleLimit(), (int) 15);
   BOOST_CHECK_EQUAL(output_model->SingleSampleLimit(), (int) 20);
   delete output_model;
 }
