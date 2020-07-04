@@ -1,5 +1,5 @@
 /**
- * @file bindings/cli/add_to_po.hpp
+ * @file bindings/cli/add_to_cli11.hpp
  * @author Ryan Curtin
  *
  * Utility functions to add options to CLI11 based on their type.

@@ -17,7 +17,7 @@
 
 #include <mlpack/core/util/io.hpp>
 #include "parameter_type.hpp"
-#include "add_to_po.hpp"
+#include "add_to_cli11.hpp"
 #include "default_param.hpp"
 #include "output_param.hpp"
 #include "get_printable_param.hpp"
