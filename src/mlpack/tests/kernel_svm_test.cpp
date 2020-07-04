@@ -153,4 +153,48 @@ BOOST_AUTO_TEST_CASE(GaussianKernelSVMFitIntercept)
   BOOST_REQUIRE_EQUAL(success, true);
 }
 
+/**
+ * Test training of kernel svm for two classes on a mnist 4
+ * and 9 dataset.
+ */
+BOOST_AUTO_TEST_CASE(GaussianKernelSVMMnistDataset)
+{
+  arma::mat dataset;
+  dataset.load("mnist_first250_training_4s_and_9s.arm");
+
+  // Normalize each point since these are images.
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+    dataset.col(i) /= norm(dataset.col(i), 2);
+
+  arma::Row<size_t> labels(dataset.n_cols);
+  for (size_t i = 0; i < dataset.n_cols / 2; ++i)
+  {
+      labels[i] = 0;
+  }
+
+  for (size_t i = dataset.n_cols / 2; i < dataset.n_cols; ++i)
+  {
+    labels[i] = 1;
+  }
+
+  bool success = false;
+  for (size_t trial = 0; trial < 5; ++trial)
+  {
+    // Now train a svm object on it.
+    KernelSVM<arma::mat,
+              kernel::GaussianKernel> svm(dataset,
+                                labels, 1.0, false, 10);
+
+    // Ensure that the error is close to zero.
+    const double testAcc = svm.ComputeAccuracy(dataset, labels);
+    if (testAcc >= 0.95)
+    {
+      success = true;
+      break;
+    }
+  }
+
+  BOOST_REQUIRE_EQUAL(success, true);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
