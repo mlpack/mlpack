@@ -47,7 +47,8 @@ class KernelSVM
             const double C = 1.0,
             const bool fitIntercept = false,
             const size_t max_iter = 10,
-            const double tol = 1e-3);
+            const double tol = 1e-3,
+            const KernelType& kernel = KernelType());
 
   /**
    * Initialize the Kernel SVM without performing training.  Default  Be sure 
@@ -61,7 +62,8 @@ class KernelSVM
    */
   KernelSVM(const size_t inputSize,
             const double C = 1.0,
-            const bool fitIntercept = false);
+            const bool fitIntercept = false,
+            const KernelType& kernel = KernelType());
 
   /**
    * Classify the given points, returning the predicted labels for each point.
@@ -172,6 +174,8 @@ class KernelSVM
   double b;
   //! Locally saved alpha values.
   arma::vec alpha;
+  //! Locally saved KernelType values.
+  const KernelType& kernel;
 };
 
 } // namespace svm

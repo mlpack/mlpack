@@ -25,9 +25,11 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     const double C,
     const bool fitIntercept,
     const size_t max_iter,
-    const double tol) :
+    const double tol,
+    const KernelType& kernel) :
     C(C),
-    fitIntercept(fitIntercept)
+    fitIntercept(fitIntercept),
+    kernel(kernel)
 {
   Train(data, labels, max_iter, tol);
 }
@@ -36,10 +38,12 @@ template <typename MatType, typename KernelType>
 KernelSVM<MatType, KernelType>::KernelSVM(
     const size_t inputSize,
     const double C,
-    const bool fitIntercept) :
+    const bool fitIntercept,
+    const KernelType& kernel) :
     inputSize(inputSize),
     C(C),
-    fitIntercept(fitIntercept)
+    fitIntercept(fitIntercept),
+    kernel(kernel)
 {
   // No training to do here.
 }
@@ -74,7 +78,7 @@ double KernelSVM<MatType, KernelType>::Train(
   {
     for (size_t j = 0; j < data.n_cols; j++)
     {
-      K(i, j) = KernelType::Evaluate(data.col(i), data.col(j));
+      K(i, j) = kernel.Evaluate(data.col(i), data.col(j));
     }
   }
   while (count < max_iter)
