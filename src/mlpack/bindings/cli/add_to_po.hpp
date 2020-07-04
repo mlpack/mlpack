@@ -42,7 +42,9 @@ void AddToPO(const std::string& cliName,
   app.add_option_function<T>(cliName.c_str(),
       [&param](const T& value)
       {
-        param.value = value;
+        typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
+        TupleType& tuple = *boost::any_cast<TupleType>(&param.value);
+        std::get<1>(tuple) = boost::any_cast<std::string>(value);
         param.wasPassed = true;
       },
       param.desc.c_str());
@@ -68,8 +70,9 @@ void AddToPO(const std::string& cliName,
   app.add_option_function<T>(cliName.c_str(),
       [&param](const T& value)
       {
-        param.value = value;
-        param.wasPassed = true;
+        using TupleType = std::tuple<T*, typename ParameterType<T>::type>;
+        TupleType& tuple = boost::any_cast<TupleType>(&param.value);
+        std::get<1>(tuple) = boost::any_cast<std::string>(value);
       },
       param.desc.c_str());
 }
@@ -93,8 +96,10 @@ void AddToPO(const std::string& cliName,
 {
   app.add_option_function<T>(cliName.c_str(),
       [&param](const T& value)
-      {
-        param.value = value;
+      { 
+        typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
+        TupleType& tuple = *boost::any_cast<TupleType>(&param.value);
+        std::get<1>(tuple) = boost::any_cast<std::string>(value);
         param.wasPassed = true;
       },
       param.desc.c_str());
