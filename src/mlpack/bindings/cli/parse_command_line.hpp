@@ -33,7 +33,7 @@ PARAM_FLAG("version", "Display the version of mlpack.", "V");
  * Parse the command line, setting all of the options inside of the CLI object
  * to their appropriate given values.
  */
-int ParseCommandLine(int argc, char** argv)
+void ParseCommandLine(int argc, char** argv)
 {
   // First, we need to build the CLI11 variables for parsing.
   CLI::App app;
