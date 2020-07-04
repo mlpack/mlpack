@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(SimpleAcrobotTest)
 
   Acrobot::State state = task.InitialSample();
   Acrobot::Action action;
-  action.action = Acrobot::Action::_action::negativeTorque;
+  action.action = Acrobot::Action::actions::negativeTorque;
   double reward = task.Sample(state, action);
 
   BOOST_REQUIRE_EQUAL(reward, -1.0);
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(SimpleMountainCarTest)
 
   MountainCar::State state = task.InitialSample();
   MountainCar::Action action;
-  action.action = MountainCar::Action::_action::backward;
+  action.action = MountainCar::Action::actions::backward;
   double reward = task.Sample(state, action);
 
   BOOST_REQUIRE_EQUAL(reward, -1.0);
@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
 
   CartPole::State state = task.InitialSample();
   CartPole::Action action;
-  action.action = CartPole::Action::_action::backward;
+  action.action = CartPole::Action::actions::backward;
   double reward = task.Sample(state, action);
 
   BOOST_REQUIRE_EQUAL(reward, 1.0);
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartTest)
 
   DoublePoleCart::State state = task.InitialSample();
   DoublePoleCart::Action action;
-  action.action = DoublePoleCart::Action::_action::backward;
+  action.action = DoublePoleCart::Action::actions::backward;
   double reward = task.Sample(state, action);
 
   BOOST_REQUIRE_EQUAL(reward, 1.0);
@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
   MountainCar env;
   MountainCar::State state = env.InitialSample();
   MountainCar::Action action;
-  action.action = MountainCar::Action::_action::forward;
+  action.action = MountainCar::Action::actions::forward;
   MountainCar::State nextState;
   double reward = env.Sample(state, action, nextState);
   replay.Store(state, action, reward, nextState, env.IsTerminal(nextState),

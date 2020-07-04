@@ -88,14 +88,14 @@ class Acrobot
   class Action
   {
    public:
-    enum _action
+    enum actions
     {
       negativeTorque,
       zeroTorque,
       positiveTorque,
     };
     // To store the action.
-    Action::_action action;
+    Action::actions action;
 
     // Track the size of the action space.
     static const size_t size = 3;

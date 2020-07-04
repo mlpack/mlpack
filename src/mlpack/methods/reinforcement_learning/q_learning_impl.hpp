@@ -253,7 +253,7 @@ double QLearning<
 
     totalReturn += reward;
     totalSteps++;
-  
+
     // Store the transition for replay.
     replayMethod.Store(state, action, reward, nextState,
         environment.IsTerminal(nextState), config.Discount());
