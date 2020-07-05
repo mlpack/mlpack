@@ -44,7 +44,7 @@ target_link_libraries(mlpack ${MLPACK_LIBRARIES})
 
 set_target_properties(mlpack
   PROPERTIES
-  VERSION 3.2
+  VERSION 3.3
   SOVERSION 3
 )
 
