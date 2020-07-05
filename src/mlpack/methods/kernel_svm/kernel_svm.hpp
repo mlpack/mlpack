@@ -176,6 +176,8 @@ class KernelSVM
   arma::vec alpha;
   //! Locally saved KernelType values.
   const KernelType& kernel;
+  arma::rowvec y;
+  arma::mat x;
 };
 
 } // namespace svm
