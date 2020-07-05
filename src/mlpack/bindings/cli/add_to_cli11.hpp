@@ -81,6 +81,7 @@ void AddToCLI11(const std::string& cliName,
         using TupleType = std::tuple<T*, typename ParameterType<T>::type>;
         TupleType& tuple = *boost::any_cast<TupleType>(&param.value);
         std::get<1>(tuple) = boost::any_cast<std::string>(value);
+        param.wasPassed = true;
       },
       param.desc.c_str());
 }
