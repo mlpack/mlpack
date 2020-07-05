@@ -48,6 +48,7 @@ progress to complex, extensible uses.
  - \ref cftutorial
  - \ref akfntutorial
  - \ref anntutorial
+ - \ref rltutorial
 
 @section adv_tut Advanced Tutorials
 

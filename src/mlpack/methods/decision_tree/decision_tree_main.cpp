@@ -241,7 +241,8 @@ static void mlpackMain()
     }
 
     // Do we need to print training error?
-    if (CLI::HasParam("print_training_error"))
+    if (CLI::HasParam("print_training_error") ||
+        CLI::HasParam("print_training_accuracy"))
     {
       arma::Row<size_t> predictions;
       arma::mat probabilities;
