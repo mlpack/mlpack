@@ -73,7 +73,7 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   CubeType value(v.memptr(), embedDim, sLen, bsz);
 
   query /= std::sqrt(embedDim);
-  CubeType scores = CubeMultiply(key, query, 1, 0);
+  CubeType scores = CubeMultiply(key, query, true, false);
 
   if (!attnMask.is_empty())
   {
@@ -102,7 +102,7 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
     softmaxOutput.slice(i) = softmax.OutputParameter();
     dropout.Forward(softmax.OutputParameter(), attnOut.slice(i));
   }
-  scores = CubeMultiply(value, attnOut, 0, 0);
+  scores = CubeMultiply(value, attnOut, false, false);
   for (size_t i = 0; i < bsz; ++i)
   {
     output.col(i) = arma::vectorise(scores.slice(i));
@@ -149,8 +149,8 @@ Backward(const arma::Mat<eT>& input,
 
   gyTemp /= std::sqrt(embedDim);
   CubeType gQuery = CubeMultiply(key, gyTemp);
-  CubeType gKey = CubeMultiply(gyTemp, query, 0, 1);
-  CubeType gValue = CubeMultiply(gy3d, attnOut, 0, 1);
+  CubeType gKey = CubeMultiply(gyTemp, query, false, ture);
+  CubeType gValue = CubeMultiply(gy3d, attnOut, false, true);
   for (size_t i = 0; i < bsz; ++i)
   {
     g.submat(0, i, embedDim * tLen - 1, i) = arma::vectorise(gQuery.slice(i));
