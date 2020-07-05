@@ -56,15 +56,15 @@ class ScaledDotProductAttention
   /**
    * Create the ScaledDotProductAttention object using the specified parameters.
    *
-   * @param tLen The length of target sequence.
-   * @param sLen The length of the source sequence.
+   * @param targetLength The length of target sequence.
+   * @param sourceLength The length of the source sequence.
    * @param embedDim Total dimension of the model.
    * @param dropoutRate The dropout rate for attention output weights.
    * @param deterministic If false, dropout layer is omitted else dropout layer
    *        is applied with dropout rate `dropout`.
    */
-  ScaledDotProductAttention(const size_t tLen,
-    const size_t sLen,
+  ScaledDotProductAttention(const size_t targetLength,
+    const size_t sourceLength,
     const size_t embedDim,
     const ElemType dropoutRate = 0.1,
     const bool deterministic = false);
@@ -166,10 +166,10 @@ class ScaledDotProductAttention
   }
 
   //! Locally-stored value of target sequence length.
-  size_t tLen;
+  size_t targetLength;
 
   //! Locally-stored value of source sequence length.
-  size_t sLen;
+  size_t sourceLength;
 
   //! Locally-stored module output size.
   size_t embedDim;

@@ -22,8 +22,8 @@ namespace ann /** Artificial Neural Network. */ {
 template <typename InputDataType, typename OutputDataType>
 ScaledDotProductAttention<InputDataType, OutputDataType>::
 ScaledDotProductAttention() :
-    tLen(0),
-    sLen(0),
+    targetLength(0),
+    sourceLength(0),
     embedDim(0),
     dropoutRate(0.0),
     deterministic(false)
@@ -33,13 +33,13 @@ ScaledDotProductAttention() :
 
 template <typename InputDataType, typename OutputDataType>
 ScaledDotProductAttention<InputDataType, OutputDataType>::
-ScaledDotProductAttention(const size_t tLen,
-    const size_t sLen,
+ScaledDotProductAttention(const size_t targetLength,
+    const size_t sourceLength,
     const size_t embedDim,
     const ElemType dropoutRate,
     const bool deterministic) :
-    tLen(tLen),
-    sLen(sLen),
+    targetLength(targetLength),
+    sourceLength(sourceLength),
     embedDim(embedDim),
     dropoutRate(dropoutRate),
     deterministic(deterministic)
@@ -56,28 +56,28 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   typedef typename arma::Cube<eT> CubeType;
   typedef typename arma::Mat<eT> MatType;
 
-  Log::Assert(input.n_rows == embedDim * (tLen + 2 * sLen));
+  Log::Assert(input.n_rows == embedDim * (targetLength + 2 * sourceLength));
 
-  const size_t bsz = input.n_cols;
-  const size_t qStart = 0, qEnd = embedDim * tLen - 1;
-  const size_t kStart = qEnd + 1, kEnd = kStart + embedDim * sLen - 1;
-  const size_t vStart = kEnd + 1, vEnd = vStart + embedDim * sLen - 1;
-  output.set_size(embedDim * tLen, bsz);
+  const size_t batchSize = input.n_cols;
+  const size_t qStart = 0, qEnd = embedDim * targetLength - 1;
+  const size_t kStart = qEnd + 1, kEnd = kStart + embedDim * sourceLength - 1;
+  const size_t vStart = kEnd + 1, vEnd = vStart + embedDim * sourceLength - 1;
+  output.set_size(embedDim * targetLength, batchSize);
 
-  MatType q = input.submat(qStart, 0, qEnd, bsz - 1);
-  MatType k = input.submat(kStart, 0, kEnd, bsz - 1);
-  MatType v = input.submat(vStart, 0, vEnd, bsz - 1);
+  MatType q = input.submat(qStart, 0, qEnd, batchSize - 1);
+  MatType k = input.submat(kStart, 0, kEnd, batchSize - 1);
+  MatType v = input.submat(vStart, 0, vEnd, batchSize - 1);
 
-  CubeType query(q.memptr(), embedDim, tLen, bsz);
-  CubeType key(k.memptr(), embedDim, sLen, bsz);
-  CubeType value(v.memptr(), embedDim, sLen, bsz);
+  CubeType query(q.memptr(), embedDim, targetLength, batchSize, false, false);
+  CubeType key(k.memptr(), embedDim, sourceLength, batchSize, false, false);
+  CubeType value(v.memptr(), embedDim, sourceLength, batchSize, false, false);
 
   query /= std::sqrt(embedDim);
   CubeType scores = CubeMultiply(key, query, true, false);
 
   if (!attnMask.is_empty())
   {
-    if (attnMask.n_rows != sLen || attnMask.n_cols != tLen)
+    if (attnMask.n_rows != sourceLength || attnMask.n_cols != targetLength)
     {
       Log::Fatal << "The size of the 2D `attn_mask` is not correct."
                  << std::endl;
@@ -86,24 +86,24 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   }
   if (!keyPaddingMask.is_empty())
   {
-    if (keyPaddingMask.n_rows != sLen || keyPaddingMask.n_cols != 1)
+    if (keyPaddingMask.n_rows != sourceLength || keyPaddingMask.n_cols != 1)
     {
       Log::Fatal << "The size of the `keyPaddingMask` is not correct."
                  << std::endl;
     }
-    scores.each_slice() += arma::repmat(keyPaddingMask, 1, tLen);
+    scores.each_slice() += arma::repmat(keyPaddingMask, 1, targetLength);
   }
 
-  attnOut.set_size(sLen, tLen, bsz);
-  softmaxOutput.set_size(sLen, tLen, bsz);
-  for (size_t i = 0; i < bsz; ++i)
+  attnOut.set_size(sourceLength, targetLength, batchSize);
+  softmaxOutput.set_size(sourceLength, targetLength, batchSize);
+  for (size_t i = 0; i < batchSize; ++i)
   {
     softmax.Forward(scores.slice(i), softmax.OutputParameter());
     softmaxOutput.slice(i) = softmax.OutputParameter();
     dropout.Forward(softmax.OutputParameter(), attnOut.slice(i));
   }
   scores = CubeMultiply(value, attnOut, false, false);
-  for (size_t i = 0; i < bsz; ++i)
+  for (size_t i = 0; i < batchSize; ++i)
   {
     output.col(i) = arma::vectorise(scores.slice(i));
   }
@@ -119,24 +119,25 @@ Backward(const arma::Mat<eT>& input,
   typedef typename arma::Cube<eT> CubeType;
   typedef typename arma::Mat<eT> MatType;
 
-  const size_t bsz = gy.n_cols;
-  const size_t qStart = 0, qEnd = embedDim * tLen - 1;
-  const size_t kStart = qEnd + 1, kEnd = kStart + embedDim * sLen - 1;
-  const size_t vStart = kEnd + 1, vEnd = vStart + embedDim * sLen - 1;
-  g.set_size(embedDim * (tLen + 2 * sLen), bsz);
+  const size_t batchSize = gy.n_cols;
+  const size_t qStart = 0, qEnd = embedDim * targetLength - 1;
+  const size_t kStart = qEnd + 1, kEnd = kStart + embedDim * sourceLength - 1;
+  const size_t vStart = kEnd + 1, vEnd = vStart + embedDim * sourceLength - 1;
+  g.set_size(embedDim * (targetLength + 2 * sourceLength), batchSize);
 
-  MatType q = input.submat(qStart, 0, qEnd, bsz - 1);
-  MatType k = input.submat(kStart, 0, kEnd, bsz - 1);
-  MatType v = input.submat(vStart, 0, vEnd, bsz - 1);
+  MatType q = input.submat(qStart, 0, qEnd, batchSize - 1);
+  MatType k = input.submat(kStart, 0, kEnd, batchSize - 1);
+  MatType v = input.submat(vStart, 0, vEnd, batchSize - 1);
 
-  CubeType query(q.memptr(), embedDim, tLen, bsz);
-  CubeType key(k.memptr(), embedDim, sLen, bsz);
-  CubeType value(v.memptr(), embedDim, sLen, bsz);
+  CubeType query(q.memptr(), embedDim, targetLength, batchSize, false, false);
+  CubeType key(k.memptr(), embedDim, sourceLength, batchSize, false, false);
+  CubeType value(v.memptr(), embedDim, sourceLength, batchSize, false, false);
 
-  CubeType gy3d(const_cast<MatType&>(gy).memptr(), embedDim, tLen, bsz, 0, 0);
+  CubeType gy3d(const_cast<MatType&>(gy).memptr(),
+      embedDim, targetLength, batchSize, false, false);
   CubeType gyTemp = CubeMultiply(value, gy3d, true, false);
 
-  for (size_t i = 0; i < bsz; ++i)
+  for (size_t i = 0; i < batchSize; ++i)
   {
     dropout.Backward(MatType(), gyTemp.slice(i), dropout.Delta());
     softmax.Backward(softmaxOutput.slice(i), dropout.Delta(), gyTemp.slice(i));
@@ -145,19 +146,17 @@ Backward(const arma::Mat<eT>& input,
   if (!attnMask.is_empty())
     gyTemp.each_slice() += attnMask;
   if (!keyPaddingMask.is_empty())
-    gyTemp.each_slice() += arma::repmat(keyPaddingMask, 1, tLen);
+    gyTemp.each_slice() += arma::repmat(keyPaddingMask, 1, targetLength);
 
   gyTemp /= std::sqrt(embedDim);
   CubeType gQuery = CubeMultiply(key, gyTemp);
-  CubeType gKey = CubeMultiply(gyTemp, query, false, ture);
+  CubeType gKey = CubeMultiply(gyTemp, query, false, true);
   CubeType gValue = CubeMultiply(gy3d, attnOut, false, true);
-  for (size_t i = 0; i < bsz; ++i)
+  for (size_t i = 0; i < batchSize; ++i)
   {
-    g.submat(0, i, embedDim * tLen - 1, i) = arma::vectorise(gQuery.slice(i));
-    g.submat(embedDim * tLen, i, embedDim * (tLen + sLen) - 1, i)
-        = arma::vectorise(gKey.slice(i));
-    g.submat(embedDim * (tLen + sLen), i, embedDim * (tLen + 2 * sLen) - 1, i)
-        = arma::vectorise(gValue.slice(i));
+    g.submat(qStart, i, qEnd, i) = arma::vectorise(gQuery.slice(i));
+    g.submat(kStart, i, kEnd, i) = arma::vectorise(gKey.slice(i));
+    g.submat(vStart, i, vEnd, i) = arma::vectorise(gValue.slice(i));
   }
 }
 
@@ -166,8 +165,8 @@ template <typename Archive>
 void ScaledDotProductAttention<InputDataType, OutputDataType>::
 serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(tLen);
-  ar & BOOST_SERIALIZATION_NVP(sLen);
+  ar & BOOST_SERIALIZATION_NVP(targetLength);
+  ar & BOOST_SERIALIZATION_NVP(sourceLength);
   ar & BOOST_SERIALIZATION_NVP(embedDim);
   ar & BOOST_SERIALIZATION_NVP(dropout);
   ar & BOOST_SERIALIZATION_NVP(deterministic);
