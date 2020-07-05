@@ -33,14 +33,14 @@ template<typename T>
 void AddToCLI11(const std::string& cliName,
                 util::ParamData& param,
                 CLI::App& app,
-                const typename boost::disable_if<std::is_same<T, 
+                const typename boost::disable_if<std::is_same<T,
                     bool>>::type* = 0,
                 const typename boost::disable_if<
                     arma::is_arma_type<T>>::type* = 0,
                 const typename boost::disable_if<
                     data::HasSerialize<T>>::type* = 0,
                 const typename boost::enable_if<std::is_same<T,
-                    std::tuple<mlpack::data::DatasetInfo, 
+                    std::tuple<mlpack::data::DatasetInfo,
                     arma::mat>>>::type* = 0)
 {
   app.add_option_function<std::string>(cliName.c_str(),
@@ -65,14 +65,14 @@ template<typename T>
 void AddToCLI11(const std::string& cliName,
                 util::ParamData& param,
                 CLI::App& app,
-                const typename boost::disable_if<std::is_same<T, 
+                const typename boost::disable_if<std::is_same<T,
                     bool>>::type* = 0,
                 const typename boost::disable_if<
                     arma::is_arma_type<T>>::type* = 0,
                 const typename boost::enable_if<
                     data::HasSerialize<T>>::type* = 0,
                 const typename boost::disable_if<std::is_same<T,
-                    std::tuple<mlpack::data::DatasetInfo, 
+                    std::tuple<mlpack::data::DatasetInfo,
                     arma::mat>>>::type* = 0)
 {
   app.add_option_function<std::string>(cliName.c_str(),
@@ -101,7 +101,7 @@ void AddToCLI11(const std::string& cliName,
                 const typename boost::enable_if<
                     arma::is_arma_type<T>>::type* = 0,
                 const typename boost::disable_if<std::is_same<T,
-                  std::tuple<mlpack::data::DatasetInfo, 
+                  std::tuple<mlpack::data::DatasetInfo,
                     arma::mat>>>::type* = 0)
 {
   app.add_option_function<std::string>(cliName.c_str(),
@@ -133,7 +133,7 @@ void AddToCLI11(const std::string& cliName,
                 const typename boost::disable_if<
                     data::HasSerialize<T>>::type* = 0,
                 const typename boost::disable_if<std::is_same<T,
-                    std::tuple<mlpack::data::DatasetInfo, 
+                    std::tuple<mlpack::data::DatasetInfo,
                     arma::mat>>>::type* = 0)
 {
   app.add_option_function<T>(cliName.c_str(),
@@ -163,7 +163,7 @@ void AddToCLI11(const std::string& cliName,
                 const typename boost::disable_if<
                     data::HasSerialize<T>>::type* = 0,
                 const typename boost::disable_if<std::is_same<T,
-                    std::tuple<mlpack::data::DatasetInfo, 
+                    std::tuple<mlpack::data::DatasetInfo,
                     arma::mat>>>::type* = 0)
 {
   app.add_flag_function(cliName.c_str(),
@@ -195,7 +195,7 @@ void AddToCLI11(util::ParamData& param,
   const std::string mappedName =
       MapParameterName<typename std::remove_pointer<T>::type>(param.name);
   std::string cliName = (param.alias != '\0') ?
-      "-" + std::string(1, param.alias) + ",--" + mappedName : 
+      "-" + std::string(1, param.alias) + ",--" + mappedName :
       "--" + mappedName;
 
   // Note that we have to add the option as type equal to the mapped type, not
