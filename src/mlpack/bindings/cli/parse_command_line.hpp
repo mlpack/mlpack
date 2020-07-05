@@ -57,13 +57,26 @@ void ParseCommandLine(int argc, char** argv)
   // Parse the command line, then place the values in the right place.
   try
   {
-    app.parse(argc, argv);
+    try
+    {
+      app.parse(argc, argv);
+    }
+    catch (const CLI::ArgumentMismatch& err)
+    {
+      Log::Fatal << "An option is defined multiple times." 
+                 << app.exit(err) << std::endl; 
+    }
+    catch (const CLI::ParseError& pe)
+    {
+      Log::Fatal << app.exit(pe) << std::endl;
+    }
   }
-  catch (const CLI::ParseError& pe)
+  catch(std::exception& ex) 
   {
-    app.exit(pe);
-    throw std::runtime_error("");
+    Log::Fatal << "Caught exception from parsing command line: " 
+      << ex.what() << std::endl;
   }
+  
   // If the user specified any of the default options (--help, --version, or
   // --info), handle those.
 
