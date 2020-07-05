@@ -189,9 +189,7 @@ BOOST_AUTO_TEST_CASE(TestVectorOption)
   argv[3] = "2";
   argv[4] = "4";
 
-  Log::Fatal.ignoreInput = true;
   ParseCommandLine(argc, const_cast<char**>(argv));
-  Log::Fatal.ignoreInput = false;
 
   BOOST_REQUIRE(IO::HasParam("test_vec"));
 
@@ -222,9 +220,7 @@ BOOST_AUTO_TEST_CASE(TestVectorOption2)
   argv[5] = "--test2_vec";
   argv[6] = "4";
 
-//  Log::Fatal.ignoreInput = true;
   ParseCommandLine(argc, const_cast<char**>(argv));
-//  Log::Fatal.ignoreInput = false;
 
   BOOST_REQUIRE(IO::HasParam("test2_vec"));
 
@@ -251,9 +247,7 @@ BOOST_AUTO_TEST_CASE(InputColVectorParamTest)
   int argc = 3;
 
   // The const-cast is a little hacky but should be fine...
-  Log::Fatal.ignoreInput = true;
   ParseCommandLine(argc, const_cast<char**>(argv));
-  Log::Fatal.ignoreInput = false;
 
   // The --vector parameter should exist.
   BOOST_REQUIRE(IO::HasParam("vector"));
@@ -288,9 +282,7 @@ BOOST_AUTO_TEST_CASE(InputUnsignedColVectorParamTest)
   int argc = 3;
 
   // The const-cast is a little hacky but should be fine...
-  Log::Fatal.ignoreInput = true;
   ParseCommandLine(argc, const_cast<char**>(argv));
-  Log::Fatal.ignoreInput = false;
 
   // The --vector parameter should exist.
   BOOST_REQUIRE(IO::HasParam("vector"));
@@ -325,9 +317,7 @@ BOOST_AUTO_TEST_CASE(InputRowVectorParamTest)
   int argc = 3;
 
   // The const-cast is a little hacky but should be fine...
-  Log::Fatal.ignoreInput = true;
   ParseCommandLine(argc, const_cast<char**>(argv));
-  Log::Fatal.ignoreInput = false;
 
   // The --vector parameter should exist.
   BOOST_REQUIRE(IO::HasParam("row"));
@@ -362,9 +352,7 @@ BOOST_AUTO_TEST_CASE(InputUnsignedRowVectorParamTest)
   int argc = 3;
 
   // The const-cast is a little hacky but should be fine...
-  Log::Fatal.ignoreInput = true;
   ParseCommandLine(argc, const_cast<char**>(argv));
-  Log::Fatal.ignoreInput = false;
 
   // The --vector parameter should exist.
   BOOST_REQUIRE(IO::HasParam("row"));
@@ -588,9 +576,7 @@ BOOST_AUTO_TEST_CASE(InputMatrixParamTest)
   int argc = 3;
 
   // The const-cast is a little hacky but should be fine...
-  Log::Fatal.ignoreInput = true;
   ParseCommandLine(argc, const_cast<char**>(argv));
-  Log::Fatal.ignoreInput = false;
 
   // The --matrix parameter should exist.
   BOOST_REQUIRE(IO::HasParam("matrix"));
