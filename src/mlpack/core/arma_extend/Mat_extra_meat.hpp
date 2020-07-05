@@ -16,7 +16,7 @@ void Mat<eT>::serialize(Archive& ar, const unsigned int /* version */)
   const uword old_n_elem = n_elem;
 
   // This is accurate from Armadillo 3.6.0 onwards.
-  // We can't use BOOST_SERIALIZATION_NVP() because of the access::rw() call.
+  // We can't use CEREAL_NVP() because of the access::rw() call.
   ar(cereal::make_nvp("n_rows", access::rw(n_rows)));
   ar(cereal::make_nvp("n_cols", access::rw(n_cols)));
   ar(cereal::make_nvp("n_elem", access::rw(n_elem)));

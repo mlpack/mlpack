@@ -85,10 +85,10 @@ void PoissonNLLLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(logInput);
-  ar & BOOST_SERIALIZATION_NVP(full);
-  ar & BOOST_SERIALIZATION_NVP(eps);
-  ar & BOOST_SERIALIZATION_NVP(mean);
+  ar & CEREAL_NVP(logInput);
+  ar & CEREAL_NVP(full);
+  ar & CEREAL_NVP(eps);
+  ar & CEREAL_NVP(mean);
 }
 
 } // namespace ann

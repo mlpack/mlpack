@@ -17,7 +17,7 @@ template<typename Archive>
 void SpMat<eT>::serialize(Archive& ar, const unsigned int /* version */)
 {
   // This is accurate from Armadillo 3.6.0 onwards.
-  // We can't use BOOST_SERIALIZATION_NVP() because of the access::rw() call.
+  // We can't use CEREAL_NVP() because of the access::rw() call.
   // We need to check on this access::rw
   ar(cereal::make_nvp("n_rows", access::rw(n_rows)));
   ar(cereal::make_nvp("n_cols", access::rw(n_cols)));
