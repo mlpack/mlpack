@@ -89,6 +89,7 @@ class ScaledDotProductAttention
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
+   * @param input The actual input to the layer.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
