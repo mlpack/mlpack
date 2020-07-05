@@ -3811,9 +3811,9 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionalLayerOptionalParameterTest)
 }
 
 /**
- * Simple Scaled Dot Product Attention with no mask test.
+ * Simple Scaled Dot Product Attention test.
  */
-BOOST_AUTO_TEST_CASE(ScaledDotProductAttentionWithNoMaskTest)
+BOOST_AUTO_TEST_CASE(ScaledDotProductAttentionTest)
 {
   size_t tLen = 4;
   size_t sLen = 4;
@@ -3925,7 +3925,83 @@ BOOST_AUTO_TEST_CASE(ScaledDotProductAttentionWithNoMaskTest)
   for (size_t i = 0; i < batchSize; ++i)
   {
     for (size_t j = 0; j < expGQuery.n_rows; ++j)
-    BOOST_REQUIRE_CLOSE_FRACTION(g(j, i), expGQuery(j, i), 1e-04);
+    {
+      BOOST_REQUIRE_CLOSE_FRACTION(g(j, i), expGQuery(j, i), 1e-04);
+    }
+  }
+
+  BOOST_REQUIRE_EQUAL(g.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(g.n_cols, input.n_cols);
+
+  //! Scaled Dot Product Attention test with attention and key padding mask.
+  double INF = 1e+09;
+  arma::mat attnMask = arma::zeros(sLen, tLen);
+  for (size_t i = 0; i < sLen; ++i)
+  {
+    for (size_t j = 0; j < tLen; ++j)
+    {
+      if (i > j)
+        attnMask(i, j) = -INF;
+    }
+  }
+
+  arma::mat keyPaddingMask = arma::zeros(sLen, 1);
+  keyPaddingMask(sLen - 2) = -INF;
+
+  module.AttentionMask() = attnMask;
+  module.KeyPaddingMask() = keyPaddingMask;
+
+  //! Test Forward function with mask.
+  module.Forward(input, output);
+  expOutput = arma::mat("0.777000 0.362100;\
+                         0.583900 0.736400;\
+                         0.950300 0.519400;\
+                         0.438100 0.423000;\
+                         0.549956 0.178589;\
+                         0.558185 0.831599;\
+                         0.603817 0.295066;\
+                         0.242064 0.729971;\
+                         0.559399 0.185750;\
+                         0.559254 0.827884;\
+                         0.618227 0.303820;\
+                         0.250217 0.717994;\
+                         0.393847 0.306477;\
+                         0.434156 0.696050;\
+                         0.723690 0.488940;\
+                         0.360290 0.774306");
+
+  for (size_t i = 0; i < output.n_cols; ++i)
+  {
+    for (size_t j = 0; j < output.n_rows; ++j)
+      BOOST_REQUIRE_CLOSE_FRACTION(output(j, i), expOutput(j, i), 1e-04);
+  }
+
+  BOOST_REQUIRE_EQUAL(output.n_rows, embedDim * tLen);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+
+  //! Test Backward function with mask.
+  module.Backward(input, gy, g);
+  expGQuery = arma::mat("0.00000000 0.00000000;\
+                         0.00000000 0.00000000;\
+                         0.00000000 0.00000000;\
+                         0.00000000 0.00000000;\
+                         0.05186222 -0.0001771282;\
+                         0.01976936 -0.0002053147;\
+                         -0.03308824 -0.0004632656;\
+                         0.01680296 0.0000141430451;\
+                         0.05176695 -0.0001783326;\
+                         0.01973305 -0.0002066767;\
+                         -0.03302749 -0.0004663370;\
+                         0.01677210 0.00001425363;\
+                         0.02823716 0.05733928;\
+                         0.01935784 0.03701767;\
+                         -0.01582737 -0.02459686;\
+                         0.01069136 -0.01439014;");
+
+  for (size_t i = 0; i < batchSize; ++i)
+  {
+    for (size_t j = 0; j < expGQuery.n_rows; ++j)
+      BOOST_REQUIRE_CLOSE_FRACTION(g(j, i), expGQuery(j, i), 1e-03);
   }
 
   BOOST_REQUIRE_EQUAL(g.n_rows, input.n_rows);

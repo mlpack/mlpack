@@ -143,11 +143,6 @@ Backward(const arma::Mat<eT>& input,
     softmax.Backward(softmaxOutput.slice(i), dropout.Delta(), gyTemp.slice(i));
   }
 
-  if (!attnMask.is_empty())
-    gyTemp.each_slice() += attnMask;
-  if (!keyPaddingMask.is_empty())
-    gyTemp.each_slice() += arma::repmat(keyPaddingMask, 1, targetLength);
-
   gyTemp /= std::sqrt(embedDim);
   CubeType gQuery = CubeMultiply(key, gyTemp);
   CubeType gKey = CubeMultiply(gyTemp, query, false, true);
