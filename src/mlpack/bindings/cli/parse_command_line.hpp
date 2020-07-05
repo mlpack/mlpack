@@ -47,7 +47,8 @@ void ParseCommandLine(int argc, char** argv)
   {
     // Add the parameter to desc.
     util::ParamData& d = it->second;
-    IO::GetSingleton().functionMap[d.tname]["AddToCLI11"](d, NULL, (void*) &app);
+    IO::GetSingleton().functionMap[d.tname]["AddToCLI11"]
+      (d, NULL, (void*) &app);
   }
 
   // Mark that we did parsing.
