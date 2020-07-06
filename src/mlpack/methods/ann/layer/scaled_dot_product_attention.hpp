@@ -56,16 +56,16 @@ class ScaledDotProductAttention
   /**
    * Create the ScaledDotProductAttention object using the specified parameters.
    *
-   * @param targetLength The length of target sequence.
-   * @param sourceLength The length of the source sequence.
    * @param embedDim Total dimension of the model.
+   * @param key The key matrix.
+   * @param value The value matrix.
    * @param dropoutRate The dropout rate for attention output weights.
    * @param deterministic If false, dropout layer is omitted else dropout layer
    *        is applied with dropout rate `dropout`.
    */
-  ScaledDotProductAttention(const size_t targetLength,
-    const size_t sourceLength,
-    const size_t embedDim,
+  ScaledDotProductAttention(const size_t embedDim,
+    const InputDataType& key = InputDataType(),
+    const InputDataType& value = InputDataType(),
     const ElemType dropoutRate = 0.1,
     const bool deterministic = false);
 
@@ -89,12 +89,11 @@ class ScaledDotProductAttention
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The actual input to the layer.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>& input,
+  void Backward(const arma::Mat<eT>& /* input */,
                 const arma::Mat<eT>& gy,
                 arma::Mat<eT>& g);
 
@@ -103,6 +102,16 @@ class ScaledDotProductAttention
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
+
+  //! Get the key matrix.
+  InputDataType const& Key() const { return key; }
+  //! Modify the key matrix.
+  InputDataType& Key() { return key; }
+
+  //! Get the value matrix.
+  InputDataType const& Value() const { return value; }
+  //! Modify the value matrix.
+  InputDataType& Value() { return value; }
 
   //! Get the two dimensional Attention Mask.
   InputDataType const& AttentionMask() const { return attnMask; }
@@ -173,6 +182,12 @@ class ScaledDotProductAttention
 
   //! Locally-stored module output size.
   size_t embedDim;
+
+  //! Locally-stored key matrix.
+  InputDataType key;
+
+  //! Locally-stored value matrix.
+  InputDataType value;
 
   //! Locally-stored dropout rate used on output weights.
   ElemType dropoutRate;
