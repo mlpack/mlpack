@@ -25,6 +25,7 @@ namespace svm {
  *
  *
  * @tparam MatType Type of data matrix.
+ * @tparam KernelType Type of kernel used with svm.
  */
 template <typename MatType = arma::mat,
           typename KernelType = kernel::LinearKernel>
@@ -34,13 +35,13 @@ class KernelSVM
   /**
    * Construct the Kernel SVM class with the provided data and labels.
    *
-   * @tparam OptimizerType Desired differentiable separable optimizer
    * @param data Input training features. Each column associate with one sample
    * @param labels Labels associated with the feature data.
-   * @param numClasses Number of classes for classification.
-   * @param delta Margin of difference between correct class and other classes.
-   * @param fitIntercept add intercept term or not.
-   * @param optimizer Desired optimizer.
+   * @param C standard svm regularization parameter.
+   * @param fitIntercept true when not using linear kernel.
+   * @param max_iter maximum number of iteration for training.
+   * @param tol tolerance value.
+   * @param kernel kernel type of kernel used with svm.
    */
   KernelSVM(const MatType& data,
             const arma::Row<size_t>& labels,
@@ -56,9 +57,9 @@ class KernelSVM
    * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
    *
    * @param inputSize Size of the input feature vector.
-   * @param numClasses Number of classes for classification.
-   * @param delta Margin of difference between correct class and other classes.
-   * @param fitIntercept add intercept term or not.
+   * @param C standard svm regularization parameter.
+   * @param fitIntercept true when not using linear kernel.
+   * @param kernel kernel type of kernel used with svm.
    */
   KernelSVM(const size_t inputSize,
             const double C = 1.0,
@@ -176,7 +177,9 @@ class KernelSVM
   arma::vec alpha;
   //! Locally saved KernelType values.
   const KernelType& kernel;
+  //! Locally saved choosen input labels.
   arma::rowvec y;
+  //! Locally saved choosen input data.
   arma::mat x;
 };
 

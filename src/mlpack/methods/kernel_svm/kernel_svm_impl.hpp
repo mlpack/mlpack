@@ -31,6 +31,7 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     fitIntercept(fitIntercept),
     kernel(kernel)
 {
+  b = 0;
   Train(data, labels, max_iter, tol);
 }
 
@@ -45,7 +46,7 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     fitIntercept(fitIntercept),
     kernel(kernel)
 {
-  // No training to do here.
+  b = 0;
 }
 
 template<typename MatType, typename KernelType>
@@ -66,7 +67,6 @@ double KernelSVM<MatType, KernelType>::Train(
 
   alpha = arma::zeros(data.n_cols);
   size_t count = 0;
-  b = 0;
   arma::vec E = arma::zeros(data.n_cols, 1);
   double eta = 0;
   double L = 0;
@@ -155,11 +155,11 @@ double KernelSVM<MatType, KernelType>::Train(
   }
   parameters = (data * (alpha.t() % label).t()).t();
 
-  y = arma::zeros(1 ,data.n_cols);
+  y = arma::zeros(1 , data.n_cols);
   x = arma::zeros(data.n_rows, data.n_cols);
-  for(size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; i++)
   {
-    if(alpha(i) > 0)
+    if (alpha(i) > 0)
     {
       y(i) = 1;
       x.col(i) = data.col(i);
