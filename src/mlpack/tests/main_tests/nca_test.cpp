@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentToleranceTest)
   // multiple times.
   bool success = false;
   size_t trial = 0;
-  while (trial < 3)
+  while (trial < 5)
   {
     // Random dataset.
     arma::mat x;
@@ -245,7 +245,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentToleranceTest)
     SetInputParam("labels", std::move(labels));
     SetInputParam("optimizer", std::string("lbfgs"));
     SetInputParam("max_iterations", (int) 0);
-    SetInputParam("tolerance", (double) 0.00005);
+    SetInputParam("tolerance", (double) 1e-8);
 
     mlpackMain();
 
@@ -260,7 +260,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentToleranceTest)
     SetInputParam("labels", std::move(labels2));
     SetInputParam("optimizer", std::string("lbfgs"));
     SetInputParam("max_iterations", (int) 0);
-    SetInputParam("tolerance", (double) 1.0);
+    SetInputParam("tolerance", (double) 100.0);
 
     mlpackMain();
 
