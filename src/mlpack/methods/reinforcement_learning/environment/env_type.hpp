@@ -17,9 +17,23 @@
 namespace mlpack {
 namespace rl {
 
+/**
+ * To use the dummy environment, one may start by specifying the state and
+ * action dimensions.
+ * Eg:
+ *  DiscreteActionEnv::State::dimension = 4;
+ *  DiscreteActionEnv::Action::size = 2;
+ * 
+ * Now the DiscreteActionEnv class can be used as an EnvironmentType in RL
+ * methods as usual. 
+ */
+
 class DiscreteActionEnv
 {
  public:
+  /**
+   * Implementation of state of the dummy environment.
+   */
   class State
   {
    public:
@@ -63,14 +77,32 @@ class DiscreteActionEnv
     static size_t size;
   };
 
+  /**
+   * Dummy function to mimic sampling in an environment.
+   *
+   * @param * (state) The current state.
+   * @param * (action) The current action.
+   * @param * (nextState) The next state.
+   * @return It's of no use but so lets keep it 0.
+   */
   double Sample(const State& /* state */,
                 const Action& /* action */,
                 State& /* nextState*/)
-  { return 1.0; }
+  { return 0; }
 
+  /**
+   * Dummy function to mimic initial sampling in an environment.
+   *
+   * @return the dummy state.
+   */
   State InitialSample()
   { return State(); }
-
+  /**
+   * Dummy function to find terminal state.
+   *
+   * @param * (state) The current state.
+   * @return It's of no use but so lets keep it false.
+   */
   bool IsTerminal(const State& /* state */) const
   { return false; }
 };
