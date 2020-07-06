@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(KRANNEqualDimensionTest)
   arma::mat queryData;
   queryData.randu(2, 90); // 90 points in 2 dimensions.
 
-  // Random input, some k <= number of top tau %ile reference points.
+  // Random input, some k <= number of top tau percentile reference points.
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("query", std::move(queryData));
   SetInputParam("k", (int) 5);
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidKQueryDataTest)
   arma::mat queryData;
   queryData.randu(3, 90); // 90 points in 3 dimensions.
 
-  // Random input, some k > number of  top tau %ile reference points.
+  // Random input, some k > number of  top tau percentile reference points.
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("query", std::move(queryData));
   SetInputParam("k", (int) 101);
@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE(KRANNRefModelTest)
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
-  // Random input, some k <= number of  top tau %ile reference points.
+  // Random input, some k <= number of  top tau percentile reference points.
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 5);
 
@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidTreeTypeTest)
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
-  // Random input, some k <= number of  top tau %ile reference points.
+  // Random input, some k <= number of  top tau percentile reference points.
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 5);
   SetInputParam("tree_type", (string) "min-rp"); // Invalid.
@@ -222,7 +222,7 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidTauTest)
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
-  // Random input, some k <= number of  top tau %ile reference points.
+  // Random input, some k <= number of  top tau percentile reference points.
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 5);
   SetInputParam("tau", (double) -1); // Invalid.
@@ -241,7 +241,7 @@ BOOST_AUTO_TEST_CASE(KRANNOutputDimensionTest)
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
-  // Random input, some k <= number of  top tau %ile reference points.
+  // Random input, some k <= number of  top tau percentile reference points.
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 5);
 
@@ -270,7 +270,7 @@ BOOST_AUTO_TEST_CASE(KRANNModelReuseTest)
   arma::mat queryData;
   queryData.randu(3, 90); // 90 points in 3 dimensions.
 
-  // Random input, some k <= number of  top tau %ile reference points.
+  // Random input, some k <= number of  top tau percentile reference points.
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("query", queryData);
   SetInputParam("k", (int) 5);
@@ -310,7 +310,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentLeafSizes)
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
-  // Random input, some k <= number of top tau %ile reference points.
+  // Random input, some k <= number of top tau percentile reference points.
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 5);
   SetInputParam("leaf_size", (int) 1);
@@ -348,7 +348,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentTau)
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
-  // Random input, some k <= number of top tau %ile reference points.
+  // Random input, some k <= number of top tau percentile reference points.
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 5);
 
@@ -385,7 +385,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentAlpha)
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
-  // Random input, some k <= number of top tau %ile reference points.
+  // Random input, some k <= number of top tau percentile reference points.
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 5);
 
@@ -422,7 +422,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentTreeType)
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
-  // Random input, some k <= number of top tau %ile reference points.
+  // Random input, some k <= number of top tau percentile reference points.
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 5);
 
@@ -459,7 +459,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentSingleSampleLimit)
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
-  // Random input, some k <= number of top tau %ile reference points.
+  // Random input, some k <= number of top tau percentile reference points.
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 5);
 
@@ -496,7 +496,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentSampleAtLeaves)
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
-  // Random input, some k <= number of top tau %ile reference points.
+  // Random input, some k <= number of top tau percentile reference points.
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 5);
 
