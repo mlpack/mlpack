@@ -183,7 +183,6 @@ void KernelSVM<MatType, KernelType>::Classify(
     arma::mat& scores) const
 {
   Classify(data, scores);
-  std::cout<<scores<<std::endl;
   double threshold = arma::as_scalar(arma::mean(scores, 1));
 
   // Prepare necessary data.
@@ -205,19 +204,7 @@ void KernelSVM<MatType, KernelType>::Classify(
 {
   if (fitIntercept)
   {
-    scores = arma::zeros(1, data.n_cols);
-
-    for (size_t i = 0; i < data.n_cols; i++)
-    {
-        double prediction = 0.0;
-        for (size_t j = 0; j < x.n_cols; j++)
-        {
-          prediction = prediction +
-                       alpha(j) * y(j) *
-                       kernel.Evaluate(data.col(i), x.col(j));
-        }
-        scores(i) = prediction;
-    }
+    scores = (data.t() * parameters.t()).t();
   }
   else
   {
