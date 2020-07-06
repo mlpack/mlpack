@@ -70,6 +70,7 @@ inline void EndProgram()
   // them.  But we may hold the same pointer twice, so we have to be careful to
   // not delete it multiple times.
   std::unordered_map<void*, util::ParamData*> memoryAddresses;
+  std::cout << "deleting used memory\n";
   for (auto it : parameters)
   {
     util::ParamData& data = it.second;
@@ -77,8 +78,14 @@ inline void EndProgram()
     void* result;
     IO::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
         NULL, (void*) &result);
+    if (result != NULL)
+      std::cout << "got memory address " << result << " for param " << data.name
+<< "\n";
     if (result != NULL && memoryAddresses.count(result) == 0)
+    {
+      std::cout << "pushed to results!\n";
       memoryAddresses[result] = &data;
+    }
   }
 
   // Now we have all the unique addresses that need to be deleted.
@@ -87,6 +94,7 @@ inline void EndProgram()
   while (it2 != memoryAddresses.end())
   {
     util::ParamData& data = *(it2->second);
+    std::cout << "delete allocated memory, param " << data.name << "\n";
 
     IO::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
         NULL, NULL);

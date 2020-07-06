@@ -881,28 +881,35 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
 
   int argc = 3;
 
+  std::cout << "parse command line\n";
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // Create the kernel we'll save.
   GaussianKernel* gk = new GaussianKernel(0.5);
+  std::cout << "gk is " << gk << "\n";
 
   IO::GetParam<GaussianKernel*>("kernel") = gk;
 
   // Save it.
   EndProgram();
+  std::cout << "program ended\n";
   IO::ClearSettings();
+  std::cout << "cleared settings\n";
 
   // Now create a new CLI object and load it.
   AddRequiredCLIOptions();
 
   PARAM_MODEL_IN(GaussianKernel, "kernel", "Test kernel", "k");
 
+  std::cout << "parse command line 2\n";
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // Load the kernel from file.
   GaussianKernel* gk2 = IO::GetParam<GaussianKernel*>("kernel");
+  std::cout << "gk2 is " << gk2 << "\n";
 
   BOOST_REQUIRE_CLOSE(gk2->Bandwidth(), 0.5, 1e-5);
+  std::cout << "check passed\n";
 
   // Clean up the memory...
   delete gk2;

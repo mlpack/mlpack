@@ -43,6 +43,7 @@ void DeleteAllocatedMemoryImpl(
 {
   // Delete the allocated memory (hopefully we actually own it).
   typedef std::tuple<T*, std::string> TupleType;
+  std::cout << "deleting memory pointer " << std::get<0>(*boost::any_cast<TupleType>(&d.value)) << "\n";
   delete std::get<0>(*boost::any_cast<TupleType>(&d.value));
 }
 
