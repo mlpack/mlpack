@@ -526,8 +526,8 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentSampleAtLeaves)
 }
 
 /**
-  * Ensure that alpha out of range throws an error.
- */
+ * Ensure that alpha out of range throws an error.
+*/
 BOOST_AUTO_TEST_CASE(KRANNInvalidAlphaTest)
 {
   arma::mat referenceData;
