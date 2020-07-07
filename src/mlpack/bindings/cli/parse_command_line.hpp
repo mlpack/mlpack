@@ -63,7 +63,7 @@ void ParseCommandLine(int argc, char** argv)
     }
     catch (const CLI::ArgumentMismatch& err)
     {
-      Log::Fatal << "An option is defined multiple times." 
+      Log::Fatal << "An option is defined multiple times: " 
                  << app.exit(err) << std::endl; 
     }
     catch (const CLI::ParseError& pe)
