@@ -42,7 +42,7 @@ inline void EndProgram()
     Log::Info << std::endl << "Execution parameters:" << std::endl;
 
     // Print out all the values.
-    for (auto it : parameters)
+    for (auto& it : parameters)
     {
       // Now, figure out what type it is, and print it.
       // We can handle strings, ints, bools, doubles.
