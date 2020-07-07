@@ -489,7 +489,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentSingleSampleLimit)
 }
 
 /**
-  * Ensure that toggling sample_at_leaves gives different results.
+ * Ensure that toggling sample_at_leaves gives different results.
  */
 BOOST_AUTO_TEST_CASE(KRANNDifferentSampleAtLeaves)
 {
