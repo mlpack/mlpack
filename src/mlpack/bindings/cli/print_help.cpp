@@ -77,7 +77,7 @@ void PrintHelp(const std::string& param)
   {
     bool printedHeader = false;
     // Print out the descriptions of everything else.
-    for (auto iter : parameters)
+    for (auto& iter : parameters)
     {
       util::ParamData& data = iter.second;
       const std::string key;
