@@ -141,6 +141,53 @@ void SAC<
   ReplayType
 >::Update()
 {
+  // Sample from previous experience.
+  arma::mat sampledStates;
+  arma::colvec sampledActions;
+  arma::colvec sampledRewards;
+  arma::mat sampledNextStates;
+  arma::icolvec isTerminal;
+
+  replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
+      sampledNextStates, isTerminal);
+
+  // Critic network update.
+
+  // Get the actions for sampled next states, from policy.
+  arma::colvec nextStateActions;
+  policyNetwork.Predict(sampledNextStates, nextStateActions);
+
+  arma::mat targetQInput = arma::join_horiz(sampledNextStates,
+      nextStateActions);
+  arma::colvec Q1, Q2;
+  targetQ1Network.Predict(targetQInput, Q1);
+  targetQ2Network.Predict(targetQInput, Q2);
+  arma::colvec nextQ = sampledRewards + (1 - isTerminal) * config.Discount()
+      * arma::min(Q1, Q2);
+
+  arma::mat learningQInput = arma::join_horiz(sampledStates, sampledActions);
+  learningQ1Network.Forward(learningQInput, Q1);
+  learningQ2Network.Forward(learningQInput, Q2);
+
+  // Update the critic networks.
+  arma::mat gradientQ1, gradientQ2;
+  learningQ1Network.Backward(learningQInput, nextQ, gradientQ1);
+  #if ENS_VERSION_MAJOR == 1
+  qNetworkUpdater.Update(learningQ1Network.Parameters(), config.StepSize(),
+      gradientQ1);
+  #else
+  qNetworkUpdatePolicy->Update(learningQ1Network.Parameters(),
+      config.StepSize(), gradientQ1);
+  #endif
+  learningQ2Network.Backward(learningQInput, nextQ, gradientQ2);
+  #if ENS_VERSION_MAJOR == 1
+  qNetworkUpdater.Update(learningQ2Network.Parameters(), config.StepSize(),
+      gradientQ1);
+  #else
+  qNetworkUpdatePolicy->Update(learningQ2Network.Parameters(),
+      config.StepSize(), gradientQ2);
+  #endif
+
   // Update target network
   if (totalSteps % config.TargetNetworkSyncInterval() == 0)
     SoftUpdate();
