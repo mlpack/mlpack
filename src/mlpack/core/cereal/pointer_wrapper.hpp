@@ -47,7 +47,7 @@ private:
 
 template<class T>
 inline pointer_wrapper<T>
-make_pointer(T* t)
+make_pointer(T*& t)
 {
   return pointer_wrapper<T>(t);
 }
