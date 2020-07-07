@@ -153,13 +153,13 @@ template <
   typename UpdaterType,
   typename ReplayType
 >
-double SAC<
+void SAC<
   EnvironmentType,
   QNetworkType,
   PolicyNetworkType,
   UpdaterType,
   ReplayType
->::Step()
+>::SelectAction()
 {
   // Get the action at current state, from policy.
   arma::colvec outputAction;
@@ -172,19 +172,6 @@ double SAC<
     outputAction = outputAction + noise;
   }
   action.action[0] = outputAction[0];
-
-  // Interact with the environment to advance to next state.
-  StateType nextState;
-  double reward = environment.Sample(state, action, nextState);
-
-  // Store the transition for replay.
-  replayMethod.Store(state, action, reward, nextState,
-      environment.IsTerminal(nextState), config.Discount());
-
-  // Update current state.
-  state = nextState;
-
-  return reward;
 }
 
 template <
@@ -205,25 +192,30 @@ double SAC<
   // Get the initial state from environment.
   state = environment.InitialSample();
 
-  // Track the steps in this episode.
-  size_t steps = 0;
-
   // Track the return of this episode.
   double totalReturn = 0.0;
 
   // Running until get to the terminal state.
   while (!environment.IsTerminal(state))
   {
-    if (config.StepLimit() && steps >= config.StepLimit())
-      break;
+    SelectAction();
 
-    totalReturn += Step();
-    steps++;
+    // Interact with the environment to advance to next state.
+    StateType nextState;
+    double reward = environment.Sample(state, action, nextState);
 
-    if (deterministic)
-      continue;
-
+    totalReturn += reward;
     totalSteps++;
+
+    // Store the transition for replay.
+    replayMethod.Store(state, action, reward, nextState,
+        environment.IsTerminal(nextState), config.Discount());
+
+    // Update current state.
+    state = nextState;
+
+    if (deterministic || totalSteps < config.ExplorationSteps())
+      continue;
     Update();
   }
 

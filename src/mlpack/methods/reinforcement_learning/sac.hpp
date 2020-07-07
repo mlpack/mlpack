@@ -85,16 +85,20 @@ class SAC
   void Update();
 
   /**
-    * Execute a step in an episode.
-    * @return Reward for the step.
-    */
-  double Step();
+   * Select an action, given an agent.
+   */
+  void SelectAction();
 
   /**
-    * Execute an episode.
-    * @return Return of the episode.
-    */
+   * Execute an episode.
+   * @return Return of the episode.
+   */
   double Episode();
+
+  //! Modify total steps from beginning.
+  size_t& TotalSteps() { return totalSteps; }
+  //! Get total steps from beginning.
+  const size_t& TotalSteps() const { return totalSteps; }
 
   //! Modify the training mode / test mode indicator.
   bool& Deterministic() { return deterministic; }
