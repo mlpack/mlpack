@@ -65,8 +65,8 @@ SpillSingleTreeTraverser<RuleType, Defeatist>::Traverse(
       // basecases to be run, recurse into other node as well.
       if (referenceNode.Child(bestChild).NumPoints() <= rule.MinBaseCases())
       {
-        Traverse(queryIndex, referenceNode.Child(bestChild));
-        Traverse(queryIndex, referenceNode.Child(!bestChild));
+        for (size_t i = 0; i < referenceNode.NumDescendants(); ++i)
+          rule.BaseCase(queryIndex, referenceNode.Descendant(i));
       }
       else
       {

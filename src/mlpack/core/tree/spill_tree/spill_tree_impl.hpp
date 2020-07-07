@@ -34,7 +34,7 @@ SpillTree(
     left(NULL),
     right(NULL),
     parent(NULL),
-    count(0),
+    count(data.n_cols),
     pointsIndex(NULL),
     overlappingNode(false),
     hyperplane(),
@@ -71,7 +71,7 @@ SpillTree(
     left(NULL),
     right(NULL),
     parent(NULL),
-    count(0),
+    count(data.n_cols),
     pointsIndex(NULL),
     overlappingNode(false),
     hyperplane(),
@@ -109,7 +109,7 @@ SpillTree(
     left(NULL),
     right(NULL),
     parent(parent),
-    count(0),
+    count(points.n_elem),
     pointsIndex(NULL),
     overlappingNode(false),
     hyperplane(),
@@ -682,11 +682,20 @@ inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
 {
   if (IsLeaf())
     return (*pointsIndex)[index];
-  size_t num = left->NumDescendants();
+
+  // Compute the number of points that are in both the left and right children.
+  const size_t overlap = (left->NumDescendants() + right->NumDescendants()) -
+      count;
+
+  const size_t num = left->NumDescendants();
   if (index < num)
     return left->Descendant(index);
+
+  // Since points on the right may overlap, we have to start our count on the
+  // right ignoring any overlapped points.
   if (right)
-    return right->Descendant(index - num);
+    return right->Descendant(index - num + overlap);
+
   // This should never happen.
   return (size_t() - 1);
 }
@@ -733,7 +742,6 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   {
     pointsIndex = new arma::Col<size_t>();
     pointsIndex->swap(points);
-    count = pointsIndex->n_elem;
     return; // We can't split this.
   }
 
@@ -745,7 +753,6 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   {
     pointsIndex = new arma::Col<size_t>();
     pointsIndex->swap(points);
-    count = pointsIndex->n_elem;
     return; // We can't split this.
   }
 
@@ -760,9 +767,6 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   // (which perform this splitting process).
   left = new SpillTree(this, leftPoints, tau, maxLeafSize, rho);
   right = new SpillTree(this, rightPoints, tau, maxLeafSize, rho);
-
-  // Update count number, to represent the number of descendant points.
-  count = left->NumDescendants() + right->NumDescendants();
 
   // Calculate parent distances for those two nodes.
   arma::vec center, leftCenter, rightCenter;
@@ -822,14 +826,25 @@ bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     // Perform the actual splitting considering the overlapping buffer.  Points
     // with projection value in the range (-tau, tau) are included in both,
     // leftPoints and rightPoints.
+    const size_t leftUnique = points.n_elem - right - leftFrontier;
+    const size_t overlap = leftFrontier + rightFrontier;
+
     leftPoints.resize(left + rightFrontier);
     rightPoints.resize(right + leftFrontier);
-    for (size_t i = 0, rc = 0, lc = 0; i < points.n_elem; i++)
+    for (size_t i = 0, rc = overlap, lc = 0, rf = 0, lf = leftUnique;
+        i < points.n_elem; ++i)
     {
-      if (projections[i] < tau || projections[i] <= 0)
+      // We need to carefully consider ordering---any points in the frontier
+      // should come last in the left node, and first in the right node.
+      if (projections[i] < -tau)
         leftPoints[lc++] = points[i];
-      if (projections[i] > -tau)
+      else if (projections[i] < tau)
+        leftPoints[lf++] = points[i];
+
+      if (projections[i] > tau)
         rightPoints[rc++] = points[i];
+      else if (projections[i] > -tau)
+        rightPoints[rf++] = points[i];
     }
     // Return true, because it is a overlapping node.
     return true;
