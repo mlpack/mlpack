@@ -26,8 +26,8 @@ namespace cli {
  * Add a tuple option to CLI11.
  * 
  * @param cliName The name of the option to add to CLI11.
- * @param descr Description string for parameter.
- * @param desc Options description to add parameter to.
+ * @param param an object of util::ParamData.
+ * @param app a CLI11 object to add parameter to.
  */
 template<typename T>
 void AddToCLI11(const std::string& cliName,
@@ -58,8 +58,8 @@ void AddToCLI11(const std::string& cliName,
  * Add a serializable option to CLI11.
  * 
  * @param cliName The name of the option to add to CLI11.
- * @param descr Description string for parameter.
- * @param desc Options description to add parameter to.
+ * @param param an object of util::ParamData.
+ * @param app a CLI11 object to add parameter to.
  */
 template<typename T>
 void AddToCLI11(const std::string& cliName,
@@ -88,10 +88,10 @@ void AddToCLI11(const std::string& cliName,
 
 /**
  * Add an arma matrix to CLI11.
- * 
+ *
  * @param cliName The name of the option to add to CLI11.
- * @param descr Description string for parameter.
- * @param desc Options description to add parameter to.
+ * @param param an object of util::ParamData.
+ * @param app a CLI11 object to add parameter to.
  */
 template<typename T>
 void AddToCLI11(const std::string& cliName,
@@ -120,8 +120,8 @@ void AddToCLI11(const std::string& cliName,
  * Add an option to CLI11.
  * 
  * @param cliName The name of the option to add to CLI11.
- * @param descr Description string for parameter.
- * @param desc Options description to add parameter to.
+ * @param param an object of util::ParamData.
+ * @param app a CLI11 object to add parameter to.
  */
 template<typename T>
 void AddToCLI11(const std::string& cliName,
@@ -150,8 +150,8 @@ void AddToCLI11(const std::string& cliName,
  * Add a boolean option to CLI11.
  *
  * @param cliName The name of the option to add to CLI11.
- * @param descr Description string for parameter.
- * @param desc Options description to add parameter to.
+ * @param param an object of util::ParamData.
+ * @param app a CLI11 object to add parameter to.
  */
 template<typename T>
 void AddToCLI11(const std::string& cliName,
