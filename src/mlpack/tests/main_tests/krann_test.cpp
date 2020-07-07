@@ -303,7 +303,7 @@ BOOST_AUTO_TEST_CASE(KRANNModelReuseTest)
 }
 
 /**
-  * Ensure that different leaf sizes give different results.
+ * Ensure that different leaf sizes give different results.
  */
 BOOST_AUTO_TEST_CASE(KRANNDifferentLeafSizes)
 {
