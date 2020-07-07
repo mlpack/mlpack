@@ -12,14 +12,14 @@
 #ifndef MLPACK_TESTS_SERIALIZATION_HPP
 #define MLPACK_TESTS_SERIALIZATION_HPP
 
-#include <boost/serialization/serialization.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
+#include <cereal/archives/json.hpp>
+#include <cereal/archives/portable_binary.hpp>
+#include <cereal/archives/xml.hpp>
+#include <cereal/archives/binary.hpp>
 #include <mlpack/core.hpp>
+
+#include <mlpack/core/cereal/array_wrapper.hpp>
+#include <mlpack/core/cereal/pointer_wrapper.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -259,7 +259,7 @@ void SerializePointerObject(T* t, T*& newT)
     OArchiveType o(ofs);
     try
     {
-      o << CEREAL_NVP(t);
+      o << CEREAL_POINTER(t);
     }
     catch (boost::archive::archive_exception& e)
     {
@@ -278,7 +278,7 @@ void SerializePointerObject(T* t, T*& newT)
 
     try
     {
-      i >> CEREAL_NVP(newT);
+      i >> CEREAL_POINTER(newT);
     }
     catch (std::exception& e)
     {
