@@ -30,7 +30,7 @@ inline void EndProgram()
 
   // Print any output.
   std::map<std::string, util::ParamData>& parameters = IO::Parameters();
-  for (auto it : parameters)
+  for (auto& it : parameters)
   {
     util::ParamData& d = it.second;
     if (!d.input)
