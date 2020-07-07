@@ -14,6 +14,18 @@
 #include <cereal/archives/xml.hpp>
 #include <cereal/types/memory.hpp>
 
+#include <memory>
+
+namespace std {
+
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args&&... args)
+
+{
+      return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
+} //end of std namepace
+
 namespace cereal {
 
 template<class T>
