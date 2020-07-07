@@ -318,6 +318,36 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   CheckMatrices(kernels, xmlKernels, textKernels, binaryKernels);
 }
 
+// Test serialization with a polynomial kernel.
+BOOST_AUTO_TEST_CASE(PolynomialSerializationTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 200);
+  PolynomialKernel* pk = new PolynomialKernel(3.0, 2.0);
+
+  FastMKS<PolynomialKernel> f(dataset, *pk);
+
+  arma::mat kernels, xmlKernels, textKernels, binaryKernels;
+  arma::Mat<size_t> indices, xmlIndices, textIndices, binaryIndices;
+
+  arma::mat querySet = arma::randu<arma::mat>(5, 100);
+  f.Search(querySet, 5, indices, kernels);
+
+  delete pk;
+
+  FastMKS<PolynomialKernel> fXml, fText, fBinary;
+  arma::mat otherDataset = arma::randu<arma::mat>(3, 10);
+  fBinary.Train(otherDataset);
+
+  SerializeObjectAll(f, fXml, fText, fBinary);
+
+  fXml.Search(querySet, 5, xmlIndices, xmlKernels);
+  fText.Search(querySet, 5, textIndices, textKernels);
+  fBinary.Search(querySet, 5, binaryIndices, binaryKernels);
+
+  CheckMatrices(indices, xmlIndices, textIndices, binaryIndices);
+  CheckMatrices(kernels, xmlKernels, textKernels, binaryKernels);
+}
+
 // Make sure that we get an exception if we try to build the wrong FastMKSModel.
 BOOST_AUTO_TEST_CASE(FastMKSModelWrongModelTest)
 {
