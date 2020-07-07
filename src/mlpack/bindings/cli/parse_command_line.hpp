@@ -66,6 +66,10 @@ void ParseCommandLine(int argc, char** argv)
       Log::Fatal << "An option is defined multiple times: " 
                  << app.exit(err) << std::endl; 
     }
+    catch (const CLI::OptionNotFound& onf)
+    {
+      Log::Fatal << "Required option --" << app.exit(onf) << "!" << std::endl;
+    }
     catch (const CLI::ParseError& pe)
     {
       Log::Fatal << app.exit(pe) << std::endl;
