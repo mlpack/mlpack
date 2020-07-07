@@ -53,6 +53,9 @@ make_pointer(T* t)
   return a;
 }
 
+#define CEREAL_POINTER(T) ::pointer_wrapper<T> d = ::make_pointer() \
+
+
 } // end namespace cereal
 
 #endif // CEREAL_POINTER_WRAPPER_HPP
