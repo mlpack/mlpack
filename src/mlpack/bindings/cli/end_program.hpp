@@ -30,7 +30,7 @@ inline void EndProgram()
 
   // Print any output.
   std::map<std::string, util::ParamData>& parameters = IO::Parameters();
-  for (auto it : parameters)
+  for (auto& it : parameters)
   {
     util::ParamData& d = it.second;
     if (!d.input)
@@ -42,7 +42,7 @@ inline void EndProgram()
     Log::Info << std::endl << "Execution parameters:" << std::endl;
 
     // Print out all the values.
-    for (auto it : parameters)
+    for (auto& it : parameters)
     {
       // Now, figure out what type it is, and print it.
       // We can handle strings, ints, bools, doubles.
@@ -59,7 +59,7 @@ inline void EndProgram()
     }
 
     Log::Info << "Program timers:" << std::endl;
-    for (auto it2 : IO::GetSingleton().timer.GetAllTimers())
+    for (auto& it2 : IO::GetSingleton().timer.GetAllTimers())
     {
       Log::Info << "  " << it2.first << ": ";
       IO::GetSingleton().timer.PrintTimer(it2.first);
@@ -70,7 +70,7 @@ inline void EndProgram()
   // them.  But we may hold the same pointer twice, so we have to be careful to
   // not delete it multiple times.
   std::unordered_map<void*, util::ParamData*> memoryAddresses;
-  for (auto it : parameters)
+  for (auto& it : parameters)
   {
     util::ParamData& data = it.second;
 
