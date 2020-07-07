@@ -74,6 +74,7 @@ using enable_if_t = typename enable_if<B, T>::type;
 #include <cereal/types/boost_variant.hpp>
 
 #include <mlpack/core/cereal/array_wrapper.hpp>
+#include <mlpack/core/cereal/pointer_wrapper.hpp>
 
 #include <mlpack/core/data/has_serialize.hpp>
 #include <mlpack/core/data/serialization_template_version.hpp>
