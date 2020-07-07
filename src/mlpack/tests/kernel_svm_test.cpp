@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(GaussianKernelSVMMnistDataset)
     // Now train a svm object on it.
     KernelSVM<arma::mat,
               kernel::GaussianKernel> svm(dataset,
-                                labels, 1.0, false, 10);
+                                labels, 1.0, true, 10);
 
     // Ensure that the error is close to zero.
     const double testAcc = svm.ComputeAccuracy(dataset, labels);
@@ -200,7 +200,7 @@ BOOST_AUTO_TEST_CASE(GaussianKernelSVMMnistDataset)
 /**
  * Test training of kernel svm on concentric circle dataset.
  */
-BOOST_AUTO_TEST_CASE(GaussianKernelSVMMnistDataset)
+BOOST_AUTO_TEST_CASE(ConcentricCircleDataset)
 {
   // The dataset, which will have three concentric rings in three dimensions.
   arma::mat dataset;
@@ -237,7 +237,6 @@ BOOST_AUTO_TEST_CASE(GaussianKernelSVMMnistDataset)
 
     // Ensure that the error is close to zero.
     const double testAcc = svm.ComputeAccuracy(dataset, labels);
-    std::cout<<testAcc<<std::endl;
     if (testAcc >= 0.95)
     {
       success = true;
