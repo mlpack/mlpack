@@ -190,7 +190,7 @@ void QLearning<
     learningNetwork.ResetNoise();
     targetNetwork.ResetNoise();
   }
-  // Update target network
+  // Update target network.
   if (totalSteps % config.TargetNetworkSyncInterval() == 0)
     targetNetwork = learningNetwork;
 

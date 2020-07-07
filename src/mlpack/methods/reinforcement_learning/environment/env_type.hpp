@@ -2,7 +2,7 @@
  * @file methods/reinforcement_learning/environment/env_type.hpp
  * @author Nishant Kumar
  *
- * This file defines a dummy environment to be use with gym_tcp_api.
+ * This file defines a dummy environment to be used with gym_tcp_api.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -27,7 +27,6 @@ namespace rl {
  * Now the DiscreteActionEnv class can be used as an EnvironmentType in RL
  * methods as usual. 
  */
-
 class DiscreteActionEnv
 {
  public:
@@ -95,16 +94,14 @@ class DiscreteActionEnv
    *
    * @return the dummy state.
    */
-  State InitialSample()
-  { return State(); }
+  State InitialSample() { return State(); }
   /**
    * Dummy function to find terminal state.
    *
    * @param * (state) The current state.
    * @return It's of no use but so lets keep it false.
    */
-  bool IsTerminal(const State& /* state */) const
-  { return false; }
+  bool IsTerminal(const State& /* state */) const { return false; }
 };
 size_t DiscreteActionEnv::State::dimension = 0;
 size_t DiscreteActionEnv::Action::size = 0;

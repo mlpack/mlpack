@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
   BOOST_REQUIRE_LE(task.StepsPerformed(), 20);
 
   // The action is simply the torque. Check if dimension is 1.
-  BOOST_REQUIRE_EQUAL(1, static_cast<int>(Pendulum::Action::size));
+  BOOST_REQUIRE_EQUAL(1, static_cast<size_t>(Pendulum::Action::size));
 }
 
 /**
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(SimpleAcrobotTest)
   BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
 
   // Check if the size of the action space is 3.
-  BOOST_REQUIRE_EQUAL(3, static_cast<int>(Acrobot::Action::size));
+  BOOST_REQUIRE_EQUAL(3, static_cast<size_t>(Acrobot::Action::size));
 }
 
 /**
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(SimpleMountainCarTest)
   BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
 
   // Check if the size of the action space is 3.
-  BOOST_REQUIRE_EQUAL(3, static_cast<int>(MountainCar::Action::size));
+  BOOST_REQUIRE_EQUAL(3, static_cast<size_t>(MountainCar::Action::size));
 }
 
 /**
@@ -169,7 +169,7 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
   // Check if the number of steps performed is the same as the maximum allowed.
   BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
 
-  BOOST_REQUIRE_EQUAL(2, static_cast<int>(CartPole::Action::size));
+  BOOST_REQUIRE_EQUAL(2, static_cast<size_t>(CartPole::Action::size));
 }
 
 /**
@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartTest)
 
   // Check if the number of steps performed is the same as the maximum allowed.
   BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
-  BOOST_REQUIRE_EQUAL(2, static_cast<int>(DoublePoleCart::Action::size));
+  BOOST_REQUIRE_EQUAL(2, static_cast<size_t>(DoublePoleCart::Action::size));
 }
 
 /**

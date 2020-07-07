@@ -71,14 +71,16 @@ class GreedyPolicy
 
     // Select the action randomly.
     if (!deterministic && exploration < epsilon && isNoisy == false)
+    {
       action.action = static_cast<decltype(action.action)>
           (math::RandInt(ActionType::size));
-
+    }
     // Select the action greedily.
     else
+    {
       action.action = static_cast<decltype(action.action)>(
           arma::as_scalar(arma::find(actionValue == actionValue.max(), 1)));
-
+    }
     return action;
   }
 
