@@ -49,8 +49,7 @@ template<class T>
 inline pointer_wrapper<T>
 make_pointer(T* t)
 {
-  pointer_wrapper<T> a(t);
-  return a;
+  return pointer_wrapper<T>(t);
 }
 
 } // end namespace cereal
