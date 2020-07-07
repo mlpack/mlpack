@@ -180,7 +180,7 @@ void AddToCLI11(const std::string& cliName,
  * Add an option to CLI11.  This is the function meant to be
  * used in the CLI function map.
  *
- * @param d Parameter data.
+ * @param param Parameter data.
  * @param * (input) Unused void pointer.
  * @param output Void pointer to options_description object.
  */
