@@ -70,7 +70,7 @@ inline void EndProgram()
   // them.  But we may hold the same pointer twice, so we have to be careful to
   // not delete it multiple times.
   std::unordered_map<void*, util::ParamData*> memoryAddresses;
-  for (auto it : parameters)
+  for (auto& it : parameters)
   {
     util::ParamData& data = it.second;
 
