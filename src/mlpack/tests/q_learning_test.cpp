@@ -492,7 +492,6 @@ BOOST_AUTO_TEST_CASE(FeedForwardSACCartPole)
   qNetwork.Add(new Linear<>(128, 128));
   qNetwork.Add(new ReLULayer<>());
   qNetwork.Add(new Linear<>(128, 1));
-  qNetwork.Add(new TanHLayer<>());
 
   // Set up Soft actor-critic agent.
   SAC<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>

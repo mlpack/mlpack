@@ -143,10 +143,10 @@ void SAC<
 {
   // Sample from previous experience.
   arma::mat sampledStates;
-  arma::colvec sampledActions;
-  arma::colvec sampledRewards;
+  std::vector<ActionType> sampledActions;
+  arma::rowvec sampledRewards;
   arma::mat sampledNextStates;
-  arma::icolvec isTerminal;
+  arma::irowvec isTerminal;
 
   replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
       sampledNextStates, isTerminal);
@@ -154,18 +154,22 @@ void SAC<
   // Critic network update.
 
   // Get the actions for sampled next states, from policy.
-  arma::colvec nextStateActions;
+  arma::mat nextStateActions;
   policyNetwork.Predict(sampledNextStates, nextStateActions);
 
-  arma::mat targetQInput = arma::join_horiz(sampledNextStates,
+  arma::mat targetQInput = arma::join_vert(sampledNextStates,
       nextStateActions);
-  arma::colvec Q1, Q2;
+  arma::rowvec Q1, Q2;
   targetQ1Network.Predict(targetQInput, Q1);
   targetQ2Network.Predict(targetQInput, Q2);
-  arma::colvec nextQ = sampledRewards + (1 - isTerminal) * config.Discount()
-      * arma::min(Q1, Q2);
+  arma::rowvec nextQ = sampledRewards +  config.Discount() * (1 - isTerminal)
+      % arma::min(Q1, Q2);
 
-  arma::mat learningQInput = arma::join_horiz(sampledStates, sampledActions);
+  arma::mat sampledActionValues(action.size, sampledActions.size());
+  for (size_t i = 0; i < sampledActions.size(); i++)
+    sampledActionValues.col(i) = sampledActions[i].action[0];
+  arma::mat learningQInput = arma::join_vert(sampledStates,
+      sampledActionValues);
   learningQ1Network.Forward(learningQInput, Q1);
   learningQ2Network.Forward(learningQInput, Q2);
 
@@ -209,12 +213,12 @@ void SAC<
 >::SelectAction()
 {
   // Get the action at current state, from policy.
-  arma::colvec outputAction;
+  arma::rowvec outputAction;
   policyNetwork.Predict(state.Encode(), outputAction);
 
   if (!deterministic)
   {
-    arma::colvec noise = arma::randu<arma::colvec>(outputAction.n_rows) * 0.1;
+    arma::rowvec noise = arma::randu<arma::rowvec>(outputAction.n_rows) * 0.1;
     noise = arma::clamp(noise, -0.25, 0.25);
     outputAction = outputAction + noise;
   }
