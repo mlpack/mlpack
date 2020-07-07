@@ -1,5 +1,5 @@
 /**
- * @file sac.hpp
+ * @file methods/reinforcement_learning/sac.hpp
  * @author Nishant Kumar
  *
  * This file is the definition of SAC class, which implements the

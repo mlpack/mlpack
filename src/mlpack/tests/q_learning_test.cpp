@@ -18,8 +18,10 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/reinforcement_learning/q_learning.hpp>
+#include <mlpack/methods/reinforcement_learning/sac.hpp>
 #include <mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp>
 #include <mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
@@ -462,6 +464,41 @@ BOOST_AUTO_TEST_CASE(CartPoleWithNStepPrioritizedDQN)
       agent(config, network, policy, replayMethod);
 
   bool converged = testAgent<decltype(agent)>(agent, 50, 1000);
+  BOOST_REQUIRE(converged);
+}
+
+//! Simple test for prediction of action in SAC.
+BOOST_AUTO_TEST_CASE(FeedForwardSACCartPole)
+{
+  // Set up the policy and replay method.
+  RandomReplay<Pendulum> replayMethod(32, 2000);
+
+  TrainingConfig config;
+  config.StepLimit() = 200;
+
+  FFN<MeanSquaredError<>, GaussianInitialization>
+      policyNetwork(MeanSquaredError<>(), GaussianInitialization(0, 0.001));
+  policyNetwork.Add(new Linear<>(2, 128));
+  policyNetwork.Add(new ReLULayer<>());
+  policyNetwork.Add(new Linear<>(128, 128));
+  policyNetwork.Add(new ReLULayer<>());
+  policyNetwork.Add(new Linear<>(128, 1));
+  policyNetwork.Add(new TanHLayer<>());
+
+  FFN<MeanSquaredError<>, GaussianInitialization>
+      qNetwork(MeanSquaredError<>(), GaussianInitialization(0, 0.001));
+  qNetwork.Add(new Linear<>(2+1, 128));
+  qNetwork.Add(new ReLULayer<>());
+  qNetwork.Add(new Linear<>(128, 128));
+  qNetwork.Add(new ReLULayer<>());
+  qNetwork.Add(new Linear<>(128, 1));
+  qNetwork.Add(new TanHLayer<>());
+
+  // Set up Soft actor-critic agent.
+  SAC<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
+      agent(config, qNetwork, policyNetwork, replayMethod);
+
+  bool converged = testAgent<decltype(agent)>(agent, -1250, 50);
   BOOST_REQUIRE(converged);
 }
 

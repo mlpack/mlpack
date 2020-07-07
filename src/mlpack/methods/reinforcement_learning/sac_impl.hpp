@@ -1,5 +1,5 @@
 /**
- * @file sac_impl.hpp
+ * @file methods/reinforcement_learning/sac_impl.hpp
  * @author Nishant Kumar
  *
  * This file is the implementation of SAC class, which implements the
@@ -192,12 +192,17 @@ double SAC<
   // Get the initial state from environment.
   state = environment.InitialSample();
 
+  // Track the steps in this episode.
+  size_t steps = 0;
+
   // Track the return of this episode.
   double totalReturn = 0.0;
 
   // Running until get to the terminal state.
   while (!environment.IsTerminal(state))
   {
+    if (config.StepLimit() && steps >= config.StepLimit())
+      break;
     SelectAction();
 
     // Interact with the environment to advance to next state.
@@ -205,6 +210,7 @@ double SAC<
     double reward = environment.Sample(state, action, nextState);
 
     totalReturn += reward;
+    steps++;
     totalSteps++;
 
     // Store the transition for replay.
