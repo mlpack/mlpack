@@ -452,7 +452,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentTreeType)
 }
 
 /**
-  * Ensure that different single_sample_limit gives different results.
+ * Ensure that different single_sample_limit gives different results.
  */
 BOOST_AUTO_TEST_CASE(KRANNDifferentSingleSampleLimit)
 {
