@@ -154,15 +154,18 @@ double KernelSVM<MatType, KernelType>::Train(
       count = 0;
   }
   parameters = (data * (alpha.t() % label).t()).t();
+  double threshold = arma::as_scalar(arma::mean(alpha));
 
-  y = arma::zeros(1 , data.n_cols);
+  size_t number = 0;
+  y = arma::zeros(1, data.n_cols);
   x = arma::zeros(data.n_rows, data.n_cols);
   for (size_t i = 0; i < data.n_cols; i++)
   {
-    if (alpha(i) > 0)
+    if (alpha(i) > threshold)
     {
-      y(i) = 1;
+      y(i) = label(i);
       x.col(i) = data.col(i);
+      number += 1;
     }
   }
 }
@@ -204,7 +207,17 @@ void KernelSVM<MatType, KernelType>::Classify(
 {
   if (fitIntercept)
   {
-    scores = (data.t() * parameters.t()).t();
+    scores = arma::zeros(1, data.n_cols);
+    for (size_t i = 0; i < data.n_cols; i++)
+    {
+      double  prediction = 0;
+      for (size_t j = 0; j < x.n_cols; j++)
+      {
+        prediction = prediction + alpha(j) * 
+                     y(j) * kernel.Evaluate(data.col(i), x.col(j));
+      }
+      scores(i) = prediction + b;
+    }
   }
   else
   {
