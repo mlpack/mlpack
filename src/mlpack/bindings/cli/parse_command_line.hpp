@@ -63,8 +63,8 @@ void ParseCommandLine(int argc, char** argv)
     }
     catch (const CLI::ArgumentMismatch& err)
     {
-      Log::Fatal << "An option is defined multiple times: " 
-                 << app.exit(err) << std::endl; 
+      Log::Fatal << "An option is defined multiple times: "
+                 << app.exit(err) << std::endl;
     }
     catch (const CLI::OptionNotFound& onf)
     {
@@ -75,12 +75,12 @@ void ParseCommandLine(int argc, char** argv)
       Log::Fatal << app.exit(pe) << std::endl;
     }
   }
-  catch(std::exception& ex) 
+  catch(std::exception& ex)
   {
-    Log::Fatal << "Caught exception from parsing command line: " 
+    Log::Fatal << "Caught exception from parsing command line: "
       << ex.what() << std::endl;
   }
-  
+
   // If the user specified any of the default options (--help, --version, or
   // --info), handle those.
 
