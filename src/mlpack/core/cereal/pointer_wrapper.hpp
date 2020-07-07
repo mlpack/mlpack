@@ -29,6 +29,7 @@ public:
   {
     std::unique_ptr<T> smartPointer = std::make_unique<T>(*this->localPointer);
     ar(CEREAL_NVP(smartPointer));
+    localPointer = smartPointer.release();
   }
 
   template<class Archive>
@@ -52,8 +53,7 @@ make_pointer(T*& t)
   return pointer_wrapper<T>(t);
 }
 
-#define CEREAL_POINTER(T) ::pointer_wrapper<T> d = ::make_pointer() \
-
+#define CEREAL_POINTER(T) cereal::make_pointer(T) \
 
 } // end namespace cereal
 
