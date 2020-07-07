@@ -172,7 +172,7 @@ inline std::string ProgramCall(const std::string& programName)
   // Handle all options---first input options, then output options.
   std::map<std::string, util::ParamData>& parameters = IO::Parameters();
 
-  for (auto it : parameters)
+  for (auto& it : parameters)
   {
     if (!it.second.input || it.second.persistent)
       continue;
