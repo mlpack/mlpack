@@ -105,7 +105,7 @@ EXCLUDE_PATTERNS       = */build/* \
                          *.cpp \
                          *.cc \
                          *_test.cc \
-                         src/mlpack/bindings/cli/third_party/CLI/CLI11.hpp
+                         *CLI11.hpp
 EXAMPLE_PATH           =
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
