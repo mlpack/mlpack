@@ -201,7 +201,7 @@ inline std::string ProgramCall(const std::string& programName)
   }
 
   // Now get the output options.
-  for (auto it : parameters)
+  for (auto& it : parameters)
   {
     if (it.second.input)
       continue;
