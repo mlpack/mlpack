@@ -59,7 +59,7 @@ inline void EndProgram()
     }
 
     Log::Info << "Program timers:" << std::endl;
-    for (auto it2 : IO::GetSingleton().timer.GetAllTimers())
+    for (auto& it2 : IO::GetSingleton().timer.GetAllTimers())
     {
       Log::Info << "  " << it2.first << ": ";
       IO::GetSingleton().timer.PrintTimer(it2.first);
