@@ -82,7 +82,7 @@ class DiscreteActionEnv
    * @param * (state) The current state.
    * @param * (action) The current action.
    * @param * (nextState) The next state.
-   * @return It's of no use but so lets keep it 0.
+   * @return It's of no use so lets keep it 0.
    */
   double Sample(const State& /* state */,
                 const Action& /* action */,
