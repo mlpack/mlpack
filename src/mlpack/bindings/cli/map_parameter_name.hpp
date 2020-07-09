@@ -53,10 +53,8 @@ std::string MapParameterName(
 }
 
 /**
- * Map the parameter name to the name seen by CLI instead of boost.
+ * Map the parameter name to the name seen by CLI.
  *  
- * Not sure if we will keep this funtion since there is not boost 
- * 
  * @param d Parameter data.
  * @param * (input) Unused parameter.
  * @param output Pointer to std::string that will hold the mapped name.
