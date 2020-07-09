@@ -25,9 +25,9 @@
 #define MLPACK_METHODS_ANN_LAYER_SCALED_DOT_PRODUCT_ATTENTION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include "layer_types.hpp"
-#include "softmax.hpp"
-#include "../init_rules/glorot_init.hpp"
+#include <mlpack/methods/ann/layer/softmax.hpp>
+#include <mlpack/methods/ann/layer/dropout.hpp>
+#include <mlpack/methods/ann/init_rules/glorot_init.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
