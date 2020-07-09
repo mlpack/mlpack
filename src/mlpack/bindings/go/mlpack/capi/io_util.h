@@ -1,5 +1,5 @@
 /**
- * @file bindings/go/mlpack/capi/cli_util.h
+ * @file bindings/go/mlpack/capi/io_util.h
  * @author Yasmine Dumouchel
  * @author Yashwant Singh
  *
@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_GO_MLPACK_CLI_UTIL_H
-#define MLPACK_BINDINGS_GO_MLPACK_CLI_UTIL_H
+#ifndef MLPACK_BINDINGS_GO_MLPACK_IO_UTIL_H
+#define MLPACK_BINDINGS_GO_MLPACK_IO_UTIL_H
 
 #include <stdint.h>
 #include <stddef.h>
@@ -72,7 +72,7 @@ void mlpackSetParamVectorStrLen(const char* identifier,
                                 const size_t length);
 
 /**
- * Check if CLI has a specified parameter.
+ * Check if IO has a specified parameter.
  */
 bool mlpackHasParam(const char* identifier);
 

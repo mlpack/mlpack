@@ -1,17 +1,17 @@
 /**
- * @file bindings/go/mlpack/capi/cli_util.cpp
+ * @file bindings/go/mlpack/capi/io_util.cpp
  * @author Yasmine Dumouchel
  * @author Yashwant Singh
  *
- * Utility function for Go to set and get parameters to and from the CLI.
+ * Utility function for Go to set and get parameters to and from the IO.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/bindings/go/mlpack/capi/cli_util.h>
-#include "cli_util.hpp"
+#include <mlpack/bindings/go/mlpack/capi/io_util.h>
+#include "io_util.hpp"
 #include <mlpack/core/util/io.hpp>
 
 namespace mlpack {
@@ -107,7 +107,7 @@ void mlpackSetParamPtr(const char* identifier,
 }
 
 /**
- * Check if CLI has a specified parameter.
+ * Check if IO has a specified parameter.
  */
 bool mlpackHasParam(const char* identifier)
 {
