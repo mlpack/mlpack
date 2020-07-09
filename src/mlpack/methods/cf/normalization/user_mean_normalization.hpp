@@ -65,7 +65,7 @@ class UserMeanNormalization
 
     // Calculate user mean and subtract user mean from ratings.
     // Set user mean to 0 if the user has no rating.
-    for (size_t i = 0; i < userNum; i++)
+    for (size_t i = 0; i < userNum; ++i)
     {
       if (ratingNum(i) != 0)
         userMean(i) /= ratingNum(i);
@@ -99,7 +99,7 @@ class UserMeanNormalization
       userMean(it.col()) += *it;
       ratingNum(it.col()) += 1;
     }
-    for (size_t i = 0; i < userMean.n_elem; i++)
+    for (size_t i = 0; i < userMean.n_elem; ++i)
     {
       if (ratingNum(i) != 0)
         userMean(i) /= ratingNum(i);
@@ -143,7 +143,7 @@ class UserMeanNormalization
   void Denormalize(const arma::Mat<size_t>& combinations,
                    arma::vec& predictions) const
   {
-    for (size_t i = 0; i < predictions.n_elem; i++)
+    for (size_t i = 0; i < predictions.n_elem; ++i)
     {
       const size_t user = combinations(0, i);
       predictions(i) += userMean(user);
