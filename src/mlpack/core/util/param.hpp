@@ -61,7 +61,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *     how it can be used and what it should be used for.
  * @param DESC Long string describing what the program does and possibly a
  *     simple usage example.  Newlines should not be used here; this is taken
- *     care of by CLI (however, you can explicitly specify newlines to denote
+ *     care of by IO (however, you can explicitly specify newlines to denote
  *     new paragraphs).  You can also use printing macros like
  *     PRINT_PARAM_STRING(), PRINT_DATASET(), and others.
  * @param ... A set of SEE_ALSO() macros that are used for generating
