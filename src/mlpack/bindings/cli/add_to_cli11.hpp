@@ -27,7 +27,7 @@ namespace cli {
  * 
  * @param cliName The name of the option to add to CLI11.
  * @param param an object of util::ParamData.
- * @param app a CLI11 object to add parameter to.
+ * @param app A CLI11 object to add parameter to.
  */
 template<typename T>
 void AddToCLI11(const std::string& cliName,
