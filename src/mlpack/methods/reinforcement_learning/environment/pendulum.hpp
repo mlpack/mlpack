@@ -138,8 +138,7 @@ class Pendulum
     const double length = 1.0;
 
     // Get action and clip the values between max and min limits.
-    double torque = arma::as_scalar(arma::clamp(action.action[0],
-        -maxTorque, maxTorque));
+    double torque = math::ClampRange(action.action[0], -maxTorque, maxTorque);
 
     // Calculate costs of taking this action in the current state.
     double costs = std::pow(AngleNormalize(theta), 2) + 0.1 *

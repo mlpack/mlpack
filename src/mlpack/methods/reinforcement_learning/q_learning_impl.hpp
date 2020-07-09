@@ -131,9 +131,9 @@ void QLearning<
   // Sample from previous experience.
   arma::mat sampledStates;
   std::vector<ActionType> sampledActions;
-  arma::colvec sampledRewards;
+  arma::rowvec sampledRewards;
   arma::mat sampledNextStates;
-  arma::icolvec isTerminal;
+  arma::irowvec isTerminal;
 
   replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
       sampledNextStates, isTerminal);
