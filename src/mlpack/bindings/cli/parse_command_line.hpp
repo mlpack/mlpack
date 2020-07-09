@@ -75,7 +75,7 @@ void ParseCommandLine(int argc, char** argv)
       Log::Fatal << app.exit(pe) << std::endl;
     }
   }
-  catch(std::exception& ex)
+  catch (std::exception& ex)
   {
     Log::Fatal << "Caught exception from parsing command line: "
       << ex.what() << std::endl;
