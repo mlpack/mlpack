@@ -471,25 +471,21 @@ BOOST_AUTO_TEST_CASE(CartPoleWithNStepPrioritizedDQN)
 BOOST_AUTO_TEST_CASE(FeedForwardSACCartPole)
 {
   // Set up the policy and replay method.
-  RandomReplay<Pendulum> replayMethod(32, 2000);
+  RandomReplay<Pendulum> replayMethod(32, 10000);
 
   TrainingConfig config;
-  config.StepLimit() = 200;
+  config.StepSize() = 0.001;
 
-  FFN<MeanSquaredError<>, GaussianInitialization>
-      policyNetwork(MeanSquaredError<>(), GaussianInitialization(0, 0.001));
+  FFN<EmptyLoss<>, GaussianInitialization>
+      policyNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
   policyNetwork.Add(new Linear<>(2, 128));
-  policyNetwork.Add(new ReLULayer<>());
-  policyNetwork.Add(new Linear<>(128, 128));
   policyNetwork.Add(new ReLULayer<>());
   policyNetwork.Add(new Linear<>(128, 1));
   policyNetwork.Add(new TanHLayer<>());
 
-  FFN<MeanSquaredError<>, GaussianInitialization>
-      qNetwork(MeanSquaredError<>(), GaussianInitialization(0, 0.001));
+  FFN<EmptyLoss<>, GaussianInitialization>
+      qNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001));
   qNetwork.Add(new Linear<>(2+1, 128));
-  qNetwork.Add(new ReLULayer<>());
-  qNetwork.Add(new Linear<>(128, 128));
   qNetwork.Add(new ReLULayer<>());
   qNetwork.Add(new Linear<>(128, 1));
 
@@ -497,7 +493,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardSACCartPole)
   SAC<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
       agent(config, qNetwork, policyNetwork, replayMethod);
 
-  bool converged = testAgent<decltype(agent)>(agent, -1250, 50);
+  bool converged = testAgent<decltype(agent)>(agent, -1250, 1000);
   BOOST_REQUIRE(converged);
 }
 
