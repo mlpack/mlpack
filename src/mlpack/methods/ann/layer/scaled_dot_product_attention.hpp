@@ -33,6 +33,23 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
+ * In Scaled Dot-Product Attention, the input consists of <i>query</i>,
+ * <i> key</i> and <i>value</i>. <i>key</i> and <i>value</i> are constructor
+ * parameters both of shape <i>(embedDim * srcSeqLen, batchSize)</i>. Here,
+ * <i> embedDim</i> is the length of embedding vector of each token, and
+ * <i> srcSeqLen</i> is the length of each sequence in the <i>key</i> or the
+ * <i> value</i>. We compute the dot products of the query with all keys, divide
+ * each by <i>√embedDim</i>, and apply a softmax function to obtain the
+ * weights on the values. We compute the matrix of outputs as:
+ *
+ * \f{eqnarray*}{ \\
+ * Attention(Q, K, V ) = softmax(\frac{QK^{T}}{\sqrt{embedDim}})V
+ * \f}
+ *
+ * The dot-product attention is much faster and more space-efficient in
+ * practice than additive attention, since it can be implemented using highly
+ * optimized matrix multiplication code.
+ *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
@@ -57,13 +74,14 @@ class ScaledDotProductAttention
    * Create the ScaledDotProductAttention object using the specified parameters.
    *
    * @param embedDim Total dimension of the model.
-   * @param key The key matrix.
-   * @param value The value matrix.
+   * @param key The key matrix. The default is empty matrix.
+   * @param value The value matrix. The default is empty matrix.
    * @param dropoutRate The dropout rate for attention output weights.
    * @param deterministic If false, dropout layer is omitted else dropout layer
    *        is applied with dropout rate `dropout`.
    */
-  ScaledDotProductAttention(const size_t embedDim,
+  ScaledDotProductAttention(
+    const size_t embedDim,
     const InputDataType& key = InputDataType(),
     const InputDataType& value = InputDataType(),
     const ElemType dropoutRate = 0.1,
@@ -162,13 +180,20 @@ class ScaledDotProductAttention
       Log::Assert(a.n_cols == b.n_rows);
 
     arma::Cube<eT> z(rows, cols, slices);
-    for (size_t i = 0; i < slices; ++i)
+
+    if (bTranspose)
     {
-      if (bTranspose)
+      for (size_t i = 0; i < slices; ++i)
         z.slice(i) = a.slice(i) * b.slice(i).t();
-      else if (aTranspose)
+    }
+    else if (aTranspose)
+    {
+      for (size_t i = 0; i < slices; ++i)
         z.slice(i) = a.slice(i).t() * b.slice(i);
-      else
+    }
+    else
+    {
+      for (size_t i = 0; i < slices; ++i)
         z.slice(i) = a.slice(i) * b.slice(i);
     }
     return z;
