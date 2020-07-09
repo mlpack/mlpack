@@ -16,18 +16,17 @@ template<class T>
 class array_wrapper
 {
 private:
-    array_wrapper & operator=(array_wrapper & rhs);
+    array_wrapper& operator=(array_wrapper rhs);
     // note: I would like to make the copy constructor private but this breaks
     // make_array.  So I make make_array a friend
     template<class Tx, class S>
     friend const cereal::array_wrapper<Tx> make_array(Tx * t, S s);
 public:
 
-    array_wrapper(array_wrapper & rhs) :
-        m_t(rhs.m_t),
-        m_element_count(rhs.m_element_count)
-    {}
-public:
+    // array_wrapper(array_wrapper& rhs) :
+    //     m_t(rhs.m_t),
+    //     m_element_count(rhs.m_element_count)
+    // {}
     array_wrapper(T * t, std::size_t s) :
         m_t(t),
         m_element_count(s)
