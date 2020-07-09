@@ -4011,9 +4011,4 @@ BOOST_AUTO_TEST_CASE(ScaledDotProductAttentionTest)
   BOOST_REQUIRE_EQUAL(g.n_cols, input.n_cols);
 }
 
-/**
- *
- */
-BOOST_AUTO_TEST_CASE()
-
 BOOST_AUTO_TEST_SUITE_END();
