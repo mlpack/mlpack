@@ -157,7 +157,7 @@ The full list of options mlpack allows:
  - ARMA_EXTRA_DEBUG=(ON/OFF): compile with extra Armadillo debugging symbols
        (default OFF)
  - BUILD_TESTS=(ON/OFF): compile the \c mlpack_test program (default ON)
- - BUILD_CLI_EXECUTABLES=(ON/OFF): compile the mlpack command-line executables
+ - BUILD_IO_EXECUTABLES=(ON/OFF): compile the mlpack command-line executables
        (i.e. \c mlpack_knn, \c mlpack_kfn, \c mlpack_logistic_regression, etc.)
        (default ON)
  - BUILD_PYTHON_BINDINGS=(ON/OFF): compile the bindings for Python, if the

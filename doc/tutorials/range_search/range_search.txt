@@ -249,7 +249,7 @@ and then calling the 'Search()' method to perform the actual range search.
 The 'Search()' method stores the results in two vector-of-vector objects.  This
 is necessary because each query point may have a different number of neighbors
 in the specified distance range.  The structure of those two objects is very
-similar to the output files --neighbors_file and --distances_file for the CLI
+similar to the output files --neighbors_file and --distances_file for the IO
 interface (see above).  A handful of examples of simple usage of the RangeSearch
 class are given below.
 
