@@ -241,7 +241,7 @@ void SerializeObjectAll(T& t, T& xmlT, T& jsonT, T& binaryT)
 {
   SerializeObject<T, cereal::XMLInputArchive,
       cereal::XMLOutputArchive>(t, xmlT);
-  SerializeObject<T, cereal::XMLInputArchive,
+  SerializeObject<T, cereal::JSONInputArchive,
       cereal::JSONOutputArchive>(t, jsonT);
   SerializeObject<T, cereal::BinaryInputArchive,
       cereal::BinaryOutputArchive>(t, binaryT);
