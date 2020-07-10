@@ -34,7 +34,21 @@ template<typename eT>
 void Lookup<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
-  output = weights.cols(arma::conv_to<arma::uvec>::from(input) - 1);
+  Log::Assert((size_t) input.n_rows % inSize == 0);
+
+  const size_t seqLength = input.n_rows / inSize;
+  const size_t batchSize = input.n_cols;
+
+  arma::Cube<eT> inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(), inSize,
+      inSize, seqLength, batchSize, true, false);
+
+  output.set_size(outSize * seqLength, batchSize);
+
+  for (size_t i = 0; i < batchSize; ++i)
+  {
+    output.col(i) = arma::vectorise(weights.cols(
+        arma::conv_to<arma::uvec>::from(inputTemp.slice(i)) - 1));
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -54,8 +68,25 @@ void Lookup<InputDataType, OutputDataType>::Gradient(
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
 {
-  gradient = arma::zeros<arma::Mat<eT> >(weights.n_rows, weights.n_cols);
-  gradient.cols(arma::conv_to<arma::uvec>::from(input) - 1) = error;
+  Log::Assert((size_t) input.n_rows % inSize == 0);
+
+  const size_t seqLength = input.n_rows / inSize;
+  const size_t batchSize = input.n_cols;
+
+  arma::Cube<eT> inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(), inSize,
+      seqLength, batchSize, true, false);
+  arma::Cube<eT> errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(), outSize,
+      seqLength, batchSize, true, false);
+
+  arma::Cube<eT> dW(weights.n_rows, weights.n_cols, batchSize);
+
+  for (size_t i = 0; i < batchSize; ++i)
+  {
+  dW.slice(i).cols(arma::conv_to<arma::uvec>::from(inputTemp.slice(i)) - 1)
+      = errorTemp.slice(i);
+  }
+
+  gradient = arma::mean(dW, 2);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -65,6 +96,11 @@ void Lookup<InputDataType, OutputDataType>::serialize(
 {
   ar & BOOST_SERIALIZATION_NVP(inSize);
   ar & BOOST_SERIALIZATION_NVP(outSize);
+
+  // This is inefficient, but we have to allocate this memory so that
+  // WeightSetVisitor gets the right size.
+  if (Archive::is_loading::value)
+    weights.set_size(outSize, inSize);
 }
 
 } // namespace ann
