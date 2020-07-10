@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(LoadCSVTest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
-  for (size_t i = 0; i < 8; i++)
+  for (size_t i = 0; i < 8; ++i)
     BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
 
   // Remove the file.
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(LoadTSVTest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
-  for (size_t i = 0; i < 8; i++)
+  for (size_t i = 0; i < 8; ++i)
     BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
 
   // Remove the file.
@@ -200,7 +200,7 @@ BOOST_AUTO_TEST_CASE(LoadTSVExtensionTest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
-  for (size_t i = 0; i < 8; i++)
+  for (size_t i = 0; i < 8; ++i)
     BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
 
   // Remove the file.
@@ -226,7 +226,7 @@ BOOST_AUTO_TEST_CASE(SaveCSVTest)
   BOOST_REQUIRE_EQUAL(test2.n_rows, 4);
   BOOST_REQUIRE_EQUAL(test2.n_cols, 2);
 
-  for (size_t i = 0; i < 8; i++)
+  for (size_t i = 0; i < 8; ++i)
     BOOST_REQUIRE_CLOSE(test2[i], (double) (i + 1), 1e-5);
 
   // Remove the file.
@@ -759,7 +759,7 @@ BOOST_AUTO_TEST_CASE(LoadArmaASCIITest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
-  for (size_t i = 0; i < 8; i++)
+  for (size_t i = 0; i < 8; ++i)
     BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
 
   // Remove the file.
@@ -784,7 +784,7 @@ BOOST_AUTO_TEST_CASE(SaveArmaASCIITest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
-  for (size_t i = 0; i < 8; i++)
+  for (size_t i = 0; i < 8; ++i)
     BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
 
   // Remove the file.
@@ -810,7 +810,7 @@ BOOST_AUTO_TEST_CASE(LoadRawASCIITest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
-  for (size_t i = 0; i < 8; i++)
+  for (size_t i = 0; i < 8; ++i)
     BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
 
   // Remove the file.
@@ -836,7 +836,7 @@ BOOST_AUTO_TEST_CASE(LoadCSVTxtTest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
-  for (size_t i = 0; i < 8; i++)
+  for (size_t i = 0; i < 8; ++i)
     BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
 
   // Remove the file.
@@ -863,7 +863,7 @@ BOOST_AUTO_TEST_CASE(LoadArmaBinaryTest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
-  for (size_t i = 0; i < 8; i++)
+  for (size_t i = 0; i < 8; ++i)
     BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
 
   // Remove the file.
@@ -887,7 +887,7 @@ BOOST_AUTO_TEST_CASE(SaveArmaBinaryTest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
-  for (size_t i = 0; i < 8; i++)
+  for (size_t i = 0; i < 8; ++i)
     BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
 
   // Remove the file.
@@ -914,7 +914,7 @@ BOOST_AUTO_TEST_CASE(LoadRawBinaryTest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 1);
   BOOST_REQUIRE_EQUAL(test.n_cols, 8);
 
-  for (size_t i = 0; i < 8; i++)
+  for (size_t i = 0; i < 8; ++i)
     BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
 
   // Remove the file.
@@ -941,7 +941,7 @@ BOOST_AUTO_TEST_CASE(LoadPGMBinaryTest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
-  for (size_t i = 0; i < 8; i++)
+  for (size_t i = 0; i < 8; ++i)
     BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
 
   // Remove the file.
@@ -966,7 +966,7 @@ BOOST_AUTO_TEST_CASE(SavePGMBinaryTest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
-  for (size_t i = 0; i < 8; i++)
+  for (size_t i = 0; i < 8; ++i)
     BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
 
   // Remove the file.

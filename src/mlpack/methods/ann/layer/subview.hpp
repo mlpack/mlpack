@@ -86,7 +86,7 @@ class Subview
     if ((input.n_rows != ((endRow - beginRow + 1) *
         (endCol - beginCol + 1))) || (input.n_cols != batchSize))
     {
-      for (size_t i = 0; i < batchSize; i++)
+      for (size_t i = 0; i < batchSize; ++i)
       {
         output.col(i) = arma::vectorise(
             input.submat(beginRow, batchBegin, endRow, batchEnd));
