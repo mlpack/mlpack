@@ -231,7 +231,7 @@ static void mlpackMain()
   if (IO::HasParam("alpha"))
     rann->Alpha() = IO::GetParam<double>("alpha");
   if (IO::HasParam("single_sample_limit"))
-    rann->SingleSampleLimit() = IO::GetParam<double>("single_sample_limit");
+    rann->SingleSampleLimit() = IO::GetParam<int>("single_sample_limit");
   rann->SampleAtLeaves() = IO::HasParam("sample_at_leaves");
   rann->FirstLeafExact() = IO::HasParam("sample_at_leaves");
 
