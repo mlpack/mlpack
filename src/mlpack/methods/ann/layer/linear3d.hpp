@@ -9,6 +9,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+
 #ifndef MLPACK_METHODS_ANN_LAYER_LINEAR3D_HPP
 #define MLPACK_METHODS_ANN_LAYER_LINEAR3D_HPP
 
@@ -47,8 +48,8 @@ class Linear3D
    * @param regularizer The regularizer to use, optional.
    */
   Linear3D(const size_t inSize,
-         const size_t outSize,
-         RegularizerType regularizer = RegularizerType());
+           const size_t outSize,
+           RegularizerType regularizer = RegularizerType());
 
   /*
    * Reset the layer parameter.
