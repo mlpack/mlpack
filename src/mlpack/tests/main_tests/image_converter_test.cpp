@@ -42,7 +42,8 @@ struct ImageConverterTestFixture
   }
 };
 
-TEST_CASE_METHOD(ImageConverterTestFixture, "LoadImageTest", "ImageConverterMainTest")
+TEST_CASE_METHOD(ImageConverterTestFixture, "LoadImageTest",
+                 "ImageConverterMainTest")
 {
   SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
 
@@ -53,7 +54,8 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "LoadImageTest", "ImageConverterMain
   REQUIRE(output.n_cols == 2);
 }
 
-TEST_CASE_METHOD(ImageConverterTestFixture, "SaveImageTest", "ImageConverterMainTest")
+TEST_CASE_METHOD(ImageConverterTestFixture, "SaveImageTest",
+                 "ImageConverterMainTest")
 {
   arma::mat testimage = arma::conv_to<arma::mat>::from(
       arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
@@ -81,14 +83,14 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "SaveImageTest", "ImageConverterMain
   REQUIRE(output.n_cols == 2);
   for (size_t i = 0; i < output.n_elem; ++i)
     REQUIRE(testimage[i] == Approx(output[i]).epsilon(1e-5 / 100));
-
 }
 
 /**
  * Check whether binding throws error if height, width or channel are not
  * specified.
  */
-TEST_CASE_METHOD(ImageConverterTestFixture, "IncompleteTest", "ImageConverterMainTest")
+TEST_CASE_METHOD(ImageConverterTestFixture, "IncompleteTest",
+                 "ImageConverterMainTest")
 {
   arma::mat testimage = arma::conv_to<arma::mat>::from(
       arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
@@ -107,7 +109,8 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "IncompleteTest", "ImageConverterMai
 /**
  * Check for invalid height values.
  */
-TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidInputTest", "ImageConverterMainTest")
+TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidInputTest",
+                 "ImageConverterMainTest")
 {
   arma::mat testimage = arma::conv_to<arma::mat>::from(
       arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
@@ -128,7 +131,8 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidInputTest", "ImageConverterM
 /**
  * Check for invalid width values.
  */
-TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidWidthTest", "ImageConverterMainTest")
+TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidWidthTest",
+                 "ImageConverterMainTest")
 {
   arma::mat testimage = arma::conv_to<arma::mat>::from(
       arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
@@ -148,7 +152,8 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidWidthTest", "ImageConverterM
 /**
  * Check for invalid channel values.
  */
-TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidChannelTest", "ImageConverterMainTest")
+TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidChannelTest",
+                 "ImageConverterMainTest")
 {
   arma::mat testimage = arma::conv_to<arma::mat>::from(
       arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
@@ -168,7 +173,8 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidChannelTest", "ImageConverte
 /**
  * Check for invalid input values.
  */
-TEST_CASE_METHOD(ImageConverterTestFixture, "EmptyInputTest", "ImageConverterMainTest")
+TEST_CASE_METHOD(ImageConverterTestFixture, "EmptyInputTest",
+                 "ImageConverterMainTest")
 {
   SetInputParam<vector<string>>("input", {});
   SetInputParam("height", 50);
