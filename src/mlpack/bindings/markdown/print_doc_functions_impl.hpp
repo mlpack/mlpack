@@ -266,15 +266,6 @@ inline std::string PrintTypeDocs()
       << ToUnderscores(type) << " }: " << PrintTypeDoc<std::vector<int>>(data)
       << std::endl;
 
-  data.tname = std::string(typeid(std::vector<size_t>).name());
-  data.cppType = "std::vector<size_t>";
-  data.value = boost::any(std::vector<size_t>());
-
-  type = GetPrintableType<std::vector<size_t>>(data);
-  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
-      << ToUnderscores(type) << " }: " << PrintTypeDoc<std::vector<size_t>>(data)
-      << std::endl;
-
   data.tname = std::string(typeid(std::vector<std::string>).name());
   data.cppType = "std::vector<std::string>";
   data.value = boost::any(std::vector<std::string>());
