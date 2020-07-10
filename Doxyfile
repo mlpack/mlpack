@@ -104,7 +104,7 @@ EXCLUDE_PATTERNS       = */build/* \
                          *_impl.hpp \
                          *.cpp \
                          *.cc \
-                         *_test.cc \
+                         *_test.cpp \
                          */tests/catch.hpp
 EXAMPLE_PATH           =
 EXAMPLE_PATTERNS       = *
