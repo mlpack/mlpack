@@ -21,8 +21,36 @@ namespace mlpack {
 namespace svm {
 
 /**
- * The KernelSVM class.
+ * The KernelSVM class implements an smo algorithm for support vector machine
+ * model, and supports training with multiple non-linear and linear kenel.
+ * The class supports different observation types via the MatType template
+ * parameter; for instance, support vector classification can be performed
+ * on sparse datasets by specifying arma::sp_mat as the MatType parameter.
  *
+ *
+ * @code
+ * @inproceedings{CS 229, Autumn 2009,
+ * title        = {The Simplified SMO Algorithm.},
+ * year         = {2009}
+ * }
+ * @endcode
+ *
+ *
+ * An example on how to use the interface is shown below:
+ *
+ * @code
+ * arma::mat train_data; // Training data matrix.
+ * arma::Row<size_t> labels; // Labels associated with the data.
+ * const size_t inputSize = 1000; // Size of input feature vector.
+ *
+ * // Train the model using default options.
+ * KernelSVM<> svm(train_data, C, kernel_flag, max_iter, tol,
+ *     kernel::Gaussian());
+ *
+ * arma::mat test_data;
+ * arma::Row<size_t> predictions;
+ * lsvm.Classify(test_data, predictions);
+ * @endcode
  *
  * @tparam MatType Type of data matrix.
  * @tparam KernelType Type of kernel used with svm.
@@ -167,19 +195,19 @@ class KernelSVM
   size_t inputSize;
   //! Parameters after optimization.
   arma::mat parameters;
-  //! Locally saved C parameter.
+  //! Locally saved standard svm regularization parameter.
   double C;
   //! Intercept term flag.
   bool fitIntercept;
-  //! Locally saved b parameter.
+  //! Locally saved constant value of kernel.
   double b;
   //! Locally saved alpha values.
   arma::vec alpha;
   //! Locally saved KernelType values.
   const KernelType& kernel;
-  //! Locally saved choosen input labels.
+  //! Locally saved labels of classes to give prediction for non-linear kernel.
   arma::rowvec y;
-  //! Locally saved choosen input data.
+  //! Locally saved input data of classes for non-linear kernel.
   arma::mat x;
 };
 
