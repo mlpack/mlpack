@@ -1,5 +1,5 @@
 /**
- * @file reparametrization.hpp
+ * @file methods/ann/layer/reparametrization.hpp
  * @author Atharva Khandait
  *
  * Definition of the Reparametrization layer class which samples from a gaussian
@@ -120,6 +120,15 @@ class Reparametrization
     return -0.5 * beta * arma::accu(2 * arma::log(stdDev) - arma::pow(stdDev, 2)
         - arma::pow(mean, 2) + 1) / mean.n_cols;
   }
+
+  //! Get the value of the stochastic parameter.
+  bool Stochastic() const { return stochastic; }
+
+  //! Get the value of the includeKl parameter.
+  bool IncludeKL() const { return includeKl; }
+
+  //! Get the value of the beta hyperparameter.
+  double Beta() const { return beta; }
 
   /**
    * Serialize the layer

@@ -1,5 +1,5 @@
 /**
- * @file get_printable_param_impl.hpp
+ * @file bindings/cli/get_printable_param_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of parameter printing functions.

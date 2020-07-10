@@ -1,5 +1,5 @@
 /**
- * @file mock_categorical_data.hpp
+ * @file tests/mock_categorical_data.hpp
  *
  * Generate categorical dataset for tests.
  *

@@ -1,5 +1,5 @@
 /**
- * @file lars_test.cpp
+ * @file tests/lars_test.cpp
  * @author Nishant Mehta
  *
  * Test for LARS.
@@ -35,7 +35,7 @@ void LARSVerifyCorrectness(arma::vec beta, arma::vec errCorr, double lambda)
 {
   size_t nDims = beta.n_elem;
   const double tol = 1e-10;
-  for (size_t j = 0; j < nDims; j++)
+  for (size_t j = 0; j < nDims; ++j)
   {
     if (beta(j) == 0)
     {
@@ -60,7 +60,7 @@ void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky)
   arma::mat X;
   arma::rowvec y;
 
-  for (size_t i = 0; i < 100; i++)
+  for (size_t i = 0; i < 100; ++i)
   {
     GenerateProblem(X, y, nPoints, nDims);
 

@@ -1,5 +1,5 @@
 /**
- * @file gru_impl.hpp
+ * @file methods/ann/layer/gru_impl.hpp
  * @author Sumedh Ghaisas
  *
  * Implementation of the GRU class, which implements a gru network

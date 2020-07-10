@@ -1,5 +1,5 @@
 /**
- * @file linear_regression_test.cpp
+ * @file tests/main_tests/linear_regression_test.cpp
  * @author Eugene Freyman
  *
  * Test mlpackMain() of linear_regression_main.cpp.

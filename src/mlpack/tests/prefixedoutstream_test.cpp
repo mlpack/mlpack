@@ -1,5 +1,5 @@
 /**
- * @file prefixedoutstream_test.cpp
+ * @file tests/prefixedoutstream_test.cpp
  * @author Matthew Amidon, Ryan Curtin
  *
  * Tests for the PrefixedOutStream class

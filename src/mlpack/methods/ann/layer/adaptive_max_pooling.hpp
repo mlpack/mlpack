@@ -1,5 +1,5 @@
 /**
- * @file adaptive_max_pooling.hpp
+ * @file methods/ann/layer/adaptive_max_pooling.hpp
  * @author Kartik Dutt
  *
  * Definition of the AdaptiveMaxPooling class.

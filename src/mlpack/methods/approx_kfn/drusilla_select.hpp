@@ -1,5 +1,5 @@
 /**
- * @file drusilla_select.hpp
+ * @file methods/approx_kfn/drusilla_select.hpp
  * @author Ryan Curtin
  *
  * An implementation of the approximate furthest neighbor algorithm specified in

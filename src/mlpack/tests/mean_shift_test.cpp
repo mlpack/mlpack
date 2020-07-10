@@ -1,5 +1,5 @@
 /**
- * @file mean_shift_test.cpp
+ * @file tests/mean_shift_test.cpp
  * @author Shangtong Zhang
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftSimpleTest)
   // clusters are ordered, so we have to be careful about that.
   size_t firstClass = assignments(0);
 
-  for (size_t i = 1; i < 13; i++)
+  for (size_t i = 1; i < 13; ++i)
     BOOST_REQUIRE_EQUAL(assignments(i), firstClass);
 
   size_t secondClass = assignments(13);
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftSimpleTest)
   // To ensure that class 1 != class 2.
   BOOST_REQUIRE_NE(firstClass, secondClass);
 
-  for (size_t i = 13; i < 20; i++)
+  for (size_t i = 13; i < 20; ++i)
     BOOST_REQUIRE_EQUAL(assignments(i), secondClass);
 
   size_t thirdClass = assignments(20);
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftSimpleTest)
   BOOST_REQUIRE_NE(firstClass, thirdClass);
   BOOST_REQUIRE_NE(secondClass, thirdClass);
 
-  for (size_t i = 20; i < 30; i++)
+  for (size_t i = 20; i < 30; ++i)
     BOOST_REQUIRE_EQUAL(assignments(i), thirdClass);
 }
 

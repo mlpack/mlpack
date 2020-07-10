@@ -1,5 +1,5 @@
 /**
- * @file dtb.hpp
+ * @file methods/emst/dtb_stat.hpp
  * @author Bill March (march@gatech.edu)
  *
  * DTBStat is the StatisticType used by trees when performing EMST.

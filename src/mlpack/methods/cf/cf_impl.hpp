@@ -1,5 +1,5 @@
 /**
- * @file cf_impl.hpp
+ * @file methods/cf/cf_impl.hpp
  * @author Mudit Raj Gupta
  * @author Sumedh Ghaisas
  *
@@ -210,7 +210,7 @@ GetRecommendations(const size_t numRecs,
   // time and we don't want to repeat the initialization process in each loop.
   InterpolationPolicy interpolation(cleanedData);
 
-  for (size_t i = 0; i < users.n_elem; i++)
+  for (size_t i = 0; i < users.n_elem; ++i)
   {
     // First, calculate the weighted sum of neighborhood values.
     arma::vec ratings;
@@ -355,7 +355,7 @@ Predict(const arma::Mat<size_t>& combinations,
 
   // Calculate interpolation weights.
   InterpolationPolicy interpolation(cleanedData);
-  for (size_t i = 0; i < users.n_elem; i++)
+  for (size_t i = 0; i < users.n_elem; ++i)
   {
     interpolation.GetWeights(weights.col(i), decomposition, users[i],
         neighborhood.col(i), similarities.col(i), cleanedData);

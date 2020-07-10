@@ -1,5 +1,5 @@
 /**
- * @file virtual_batch_norm_impl.hpp
+ * @file methods/ann/layer/virtual_batch_norm_impl.hpp
  * @author Saksham Bansal
  *
  * Implementation of the VirtualBatchNorm layer.

@@ -1,5 +1,5 @@
 /**
- * @file binary_space_tree.hpp
+ * @file core/tree/binary_space_tree.hpp
  * @author Ryan Curtin
  *
  * Include all the necessary files to use the BinarySpaceTree class.

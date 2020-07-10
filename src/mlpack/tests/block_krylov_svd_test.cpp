@@ -1,5 +1,5 @@
 /**
- * @file block_krylov_svd_test.cpp
+ * @file tests/block_krylov_svd_test.cpp
  * @author Marcus Edel
  *
  * Test file for the Randomized Block Krylov SVD class.

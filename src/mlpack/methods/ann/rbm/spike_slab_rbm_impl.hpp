@@ -1,5 +1,5 @@
 /**
- * @file spike_slab_rbm_impl.hpp
+ * @file methods/ann/rbm/spike_slab_rbm_impl.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *
@@ -75,7 +75,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::FreeEnergy(
   freeEnergy -= 0.5 * hiddenSize * poolSize *
       std::log((2.0 * M_PI) / slabPenalty);
 
-  for (size_t i = 0; i < hiddenSize; i++)
+  for (size_t i = 0; i < hiddenSize; ++i)
   {
     ElemType sum = arma::accu(arma::square(input.t() * weight.slice(i))) /
         (2.0 * slabPenalty);
@@ -109,7 +109,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::Phase(
   SampleSpike(std::move(spikeMean), std::move(spikeSamples));
   SlabMean(std::move(input), std::move(spikeSamples), std::move(slabMean));
 
-  for (size_t i = 0 ; i < hiddenSize; i++)
+  for (size_t i = 0 ; i < hiddenSize; ++i)
   {
     weightGrad.slice(i) = input * arma::repmat(slabMean.col(i).t(),
         input.n_cols, 1) * spikeMean(i);
@@ -161,9 +161,9 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
   VisibleMean(std::move(input), std::move(visibleMean));
   output.set_size(visibleSize, 1);
 
-  for (k = 0; k < numMaxTrials; k++)
+  for (k = 0; k < numMaxTrials; ++k)
   {
-    for (size_t i = 0; i < visibleSize; i++)
+    for (size_t i = 0; i < visibleSize; ++i)
     {
       output(i) = math::RandNormal(visibleMean(i), 1.0 / visiblePenalty(0));
     }
@@ -199,7 +199,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::VisibleMean(
   DataType slab(input.memptr() + hiddenSize, poolSize, hiddenSize, false,
       false);
 
-  for (size_t i = 0; i < hiddenSize; i++)
+  for (size_t i = 0; i < hiddenSize; ++i)
   {
     output += weight.slice(i) * slab.col(i) * spike(i);
   }
@@ -240,7 +240,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SpikeMean(
     DataType&& visible,
     DataType&& spikeMean)
 {
-  for (size_t i = 0; i < hiddenSize; i++)
+  for (size_t i = 0; i < hiddenSize; ++i)
   {
     spikeMean(i) = LogisticFunction::Fn(0.5 * (1.0 / slabPenalty) * arma::accu(
         visible.t() * (weight.slice(i) * weight.slice(i).t()) * visible)
@@ -259,7 +259,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleSpike(
     DataType&& spikeMean,
     DataType&& spike)
 {
-  for (size_t i = 0; i < hiddenSize; i++)
+  for (size_t i = 0; i < hiddenSize; ++i)
   {
     spike(i) = math::RandBernoulli(spikeMean(i));
   }
@@ -277,7 +277,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SlabMean(
     DataType&& spike,
     DataType&& slabMean)
 {
-  for (size_t i = 0; i < hiddenSize; i++)
+  for (size_t i = 0; i < hiddenSize; ++i)
   {
     slabMean.col(i) = arma::mean((1.0 / slabPenalty) * spike(i) *
         weight.slice(i).t() * visible, 1);
@@ -295,9 +295,9 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleSlab(
     DataType&& slabMean,
     DataType&& slab)
 {
-  for (size_t i = 0; i < hiddenSize; i++)
+  for (size_t i = 0; i < hiddenSize; ++i)
   {
-    for (size_t j = 0; j < poolSize; j++)
+    for (size_t j = 0; j < poolSize; ++j)
     {
       slab(j, i) = math::RandNormal(slabMean(j, i), 1.0 / slabPenalty);
     }

@@ -1,5 +1,5 @@
 /**
- * @file margin_ranking_loss.hpp
+ * @file methods/ann/loss_functions/margin_ranking_loss.hpp
  * @author Andrei Mihalea
  *
  * Definition of the Margin Ranking Loss function.

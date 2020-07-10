@@ -1,5 +1,5 @@
 /**
- * @file bernoulli_distribution_impl.hpp
+ * @file methods/ann/dists/bernoulli_distribution_impl.hpp
  * @author Atharva Khandait
  *
  * Implementation of the Bernoulli distribution class.
@@ -52,7 +52,7 @@ DataType BernoulliDistribution<DataType>::Sample() const
   DataType sample = arma::randu<DataType>
       (probability.n_rows, probability.n_cols);
 
-  for (size_t i = 0; i < sample.n_elem; i++)
+  for (size_t i = 0; i < sample.n_elem; ++i)
       sample(i) = sample(i) < probability(i);
 
   return sample;

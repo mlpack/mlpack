@@ -1,5 +1,5 @@
 /**
- * @file radical_main.cpp
+ * @file methods/radical/radical_main.cpp
  * @author Nishant Mehta
  *
  * Executable for RADICAL. RADICAL is Robust, Accurate, Direct ICA
@@ -126,7 +126,7 @@ static void mlpackMain()
     // Compute and print objective.
     mat matYT = trans(matY);
     double valEst = 0;
-    for (size_t i = 0; i < matYT.n_cols; i++)
+    for (size_t i = 0; i < matYT.n_cols; ++i)
     {
       vec y = vec(matYT.col(i));
       valEst += rad.Vasicek(y);

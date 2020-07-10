@@ -1,5 +1,5 @@
 /**
- * @file reward_clipping_test.hpp
+ * @file tests/reward_clipping_test.cpp
  * @author Shashank Shekhar
  *
  * Test for the reward clipping wrapper for reinforcement learning environments.
@@ -88,8 +88,8 @@ BOOST_AUTO_TEST_CASE(RewardClippedAcrobotWithDQN)
     // Set up DQN agent.
     QLearning<decltype(rewardClipping), decltype(model), AdamUpdate,
               decltype(policy)>
-        agent(std::move(config), std::move(model), std::move(policy),
-        std::move(replayMethod), std::move(update), std::move(rewardClipping));
+        agent(config, model, policy, replayMethod, std::move(update),
+        std::move(rewardClipping));
 
     arma::running_stat<double> averageReturn;
     size_t episodes = 0;

@@ -1,5 +1,5 @@
 /**
- * @file positive_definite_constraint.hpp
+ * @file methods/gmm/positive_definite_constraint.hpp
  * @author Ryan Curtin
  *
  * Restricts a covariance matrix to being positive definite.

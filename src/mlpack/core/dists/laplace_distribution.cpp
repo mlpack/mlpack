@@ -1,5 +1,5 @@
 /*
- * @file laplace_distribution.cpp
+ * @file core/dists/laplace_distribution.cpp
  * @author Zhihao Lou
  * @author Rohan Raj
  *
@@ -37,7 +37,7 @@ void LaplaceDistribution::Probability(const arma::mat& x,
                                       arma::vec& probabilities) const
 {
   probabilities.set_size(x.n_cols);
-  for (size_t i = 0; i < x.n_cols; i++)
+  for (size_t i = 0; i < x.n_cols; ++i)
   {
     probabilities(i) = Probability(x.unsafe_col(i));
   }

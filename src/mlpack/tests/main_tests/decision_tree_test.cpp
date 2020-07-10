@@ -1,5 +1,5 @@
 /**
- * @file decision_tree_test.cpp
+ * @file tests/main_tests/decision_tree_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of decision_tree_main.cpp.
@@ -268,7 +268,7 @@ BOOST_AUTO_TEST_CASE(DecisionRegularisationTest)
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
-  SetInputParam("minimum_gain_split", 0.01);
+  SetInputParam("minimum_gain_split", 0.5);
 
   // Input test data.
   SetInputParam("test", std::move(std::make_tuple(info, inputData)));

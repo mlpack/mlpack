@@ -1,5 +1,5 @@
 /**
- * @file nca_main.cpp
+ * @file methods/nca/nca_main.cpp
  * @author Ryan Curtin
  *
  * Executable for Neighborhood Components Analysis.
@@ -200,7 +200,7 @@ static void mlpackMain()
   else
   {
     Log::Info << "Using last column of input dataset as labels." << endl;
-    for (size_t i = 0; i < data.n_cols; i++)
+    for (size_t i = 0; i < data.n_cols; ++i)
       rawLabels[i] = (size_t) data(data.n_rows - 1, i);
 
     data.shed_row(data.n_rows - 1);

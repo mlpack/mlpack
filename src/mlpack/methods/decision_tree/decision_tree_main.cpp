@@ -1,5 +1,5 @@
 /**
- * @file decision_tree_main.cpp
+ * @file methods/decision_tree/decision_tree_main.cpp
  * @author Ryan Curtin
  *
  * A command-line program to build a decision tree.
@@ -241,7 +241,8 @@ static void mlpackMain()
     }
 
     // Do we need to print training error?
-    if (CLI::HasParam("print_training_error"))
+    if (CLI::HasParam("print_training_error") ||
+        CLI::HasParam("print_training_accuracy"))
     {
       arma::Row<size_t> predictions;
       arma::mat probabilities;

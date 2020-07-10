@@ -1,5 +1,5 @@
 /**
- * @file serialization_template_version.hpp
+ * @file core/data/serialization_template_version.hpp
  * @author Ryan Curtin
  *
  * A better version of the BOOST_CLASS_VERSION() macro that supports templated

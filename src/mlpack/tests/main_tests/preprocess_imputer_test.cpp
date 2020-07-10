@@ -1,5 +1,5 @@
 /**
- * @file preprocess_imputer_test.cpp
+ * @file tests/main_tests/preprocess_imputer_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of preprocess_imputer_main.cpp.
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
   size_t countNaN = 0;
 
   // Count number of unavailable entries in all dimensions.
-  for (size_t i = 0; i < inputSize; i++)
+  for (size_t i = 0; i < inputSize; ++i)
   {
     if (std::to_string(inputData(0, i)) == "nan" ||
         std::to_string(inputData(1, i)) == "nan" ||

@@ -1,5 +1,5 @@
 /**
- * @file mlpack_test.cpp
+ * @file tests/mlpack_test.cpp
  *
  * Simple file defining the name of the overall test for mlpack, and set up
  * global test fixture for each test. Each individual test is contained in
@@ -107,7 +107,7 @@ struct GlobalFixture
     #endif
 
     for (int i = 0; i < boost::unit_test::framework::master_test_suite().argc;
-        i++)
+        ++i)
     {
       std::string argument(
           boost::unit_test::framework::master_test_suite().argv[i]);

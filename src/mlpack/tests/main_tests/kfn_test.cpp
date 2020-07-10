@@ -1,5 +1,5 @@
 /**
- * @file kfn_test.cpp
+ * @file tests/main_tests/kfn_test.cpp
  * @author Atharva Khandait
  * @author Heet Sankesara
  *
@@ -529,7 +529,7 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
   arma::mat distances;
 
   // Looping over all the algorithms and storing their outputs.
-  for (int i = 0; i < nofalgorithms; i++)
+  for (int i = 0; i < nofalgorithms; ++i)
   {
     // Same random inputs, different algorithms.
     SetInputParam("reference", referenceData);
@@ -589,7 +589,7 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
   arma::mat distances;
 
   // Looping over all the algorithms and storing their outputs.
-  for (int i = 0; i < noftreetypes; i++)
+  for (int i = 0; i < noftreetypes; ++i)
   {
     // Same random inputs, different algorithms.
     SetInputParam("reference", referenceData);

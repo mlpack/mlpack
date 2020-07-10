@@ -37,7 +37,7 @@ print the accuracy of the random forest on the test dataset.
 
 You can copy-paste this code directly into Julia to run it.  You may need to add
 some extra packages with, e.g., `using Pkg; Pkg.add("CSV");
-Pkg.add("DataFrames"); Pkg.add("Zlib")`.
+Pkg.add("DataFrames"); Pkg.add("Libz")`.
 
 @code{.julia}
 using CSV
@@ -54,10 +54,9 @@ df = CSV.read(ZlibInflateInputStream(open(download(
 labels = df[!, :label][:]
 dataset = select!(df, Not(:label))
 
-# Split the dataset using mlpack.  The output comes back as a dictionary,
-# which we'll unpack for clarity of code.
+# Split the dataset using mlpack.
 test, test_labels, train, train_labels = mlpack.preprocess_split(
-    input=dataset,
+    dataset,
     input_labels=labels,
     test_ratio=0.3)
 

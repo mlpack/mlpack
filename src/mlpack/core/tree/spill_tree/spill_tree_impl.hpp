@@ -1,5 +1,5 @@
 /**
- * @file spill_tree_impl.hpp
+ * @file core/tree/spill_tree/spill_tree_impl.hpp
  *
  * Implementation of generalized hybrid spill tree (SpillTree).
  *
@@ -722,7 +722,7 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
               const double rho)
 {
   // We need to expand the bounds of this node properly.
-  for (size_t i = 0; i < points.n_elem; i++)
+  for (size_t i = 0; i < points.n_elem; ++i)
     bound |= dataset->col(points[i]);
 
   // Calculate the furthest descendant distance.
@@ -795,7 +795,7 @@ bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   size_t left = 0, right = 0, leftFrontier = 0, rightFrontier = 0;
 
   // Count the number of points to the left/right of the splitting hyperplane.
-  for (size_t i = 0; i < points.n_elem; i++)
+  for (size_t i = 0; i < points.n_elem; ++i)
   {
     // Store projection value for future use.
     projections[i] = hyperplane.Project(dataset->col(points[i]));
@@ -824,7 +824,7 @@ bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     // leftPoints and rightPoints.
     leftPoints.resize(left + rightFrontier);
     rightPoints.resize(right + leftFrontier);
-    for (size_t i = 0, rc = 0, lc = 0; i < points.n_elem; i++)
+    for (size_t i = 0, rc = 0, lc = 0; i < points.n_elem; ++i)
     {
       if (projections[i] < tau || projections[i] <= 0)
         leftPoints[lc++] = points[i];
@@ -841,7 +841,7 @@ bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   // rightPoints.
   leftPoints.resize(left);
   rightPoints.resize(right);
-  for (size_t i = 0, rc = 0, lc = 0; i < points.n_elem; i++)
+  for (size_t i = 0, rc = 0, lc = 0; i < points.n_elem; ++i)
   {
     if (projections[i] <= 0)
       leftPoints[lc++] = points[i];

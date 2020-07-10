@@ -1,5 +1,5 @@
 /**
- * @file padding.hpp
+ * @file methods/ann/layer/padding.hpp
  * @author Saksham Bansal
  *
  * Definition of the Padding class that pads the incoming data.
@@ -62,7 +62,7 @@ class Padding
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */

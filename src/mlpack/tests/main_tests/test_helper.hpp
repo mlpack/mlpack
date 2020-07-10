@@ -1,5 +1,5 @@
 /**
- * @file test_helper.hpp
+ * @file tests/main_tests/test_helper.hpp
  * @author Eugene Freyman
  *
  * Helper functions for testing.

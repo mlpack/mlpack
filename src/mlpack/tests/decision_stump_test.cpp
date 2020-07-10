@@ -1,5 +1,5 @@
 /**
- * @file decision_stump_test.cpp
+ * @file tests/decision_stump_test.cpp
  * @author Udit Saxena
  *
  * Tests for DecisionStump class.
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(OneClass)
   Row<size_t> predictedLabels;
   ds.Classify(testingData, predictedLabels);
 
-  for (size_t i = 0; i < predictedLabels.size(); i++)
+  for (size_t i = 0; i < predictedLabels.size(); ++i)
     BOOST_CHECK_EQUAL(predictedLabels(i), 1);
 }
 

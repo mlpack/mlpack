@@ -1,5 +1,5 @@
 /**
- * @file julia_binding_test.cpp
+ * @file bindings/julia/tests/test_julia_binding_main.cpp
  * @author Ryan Curtin
  *
  * A binding test for Julia.

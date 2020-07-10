@@ -1,5 +1,5 @@
 /**
- * @file kfn_main.cpp
+ * @file methods/neighbor_search/kfn_main.cpp
  * @author Ryan Curtin
  *
  * Implementation of the KFN executable.  Allows some number of standard

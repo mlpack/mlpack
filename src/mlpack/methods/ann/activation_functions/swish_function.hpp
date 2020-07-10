@@ -1,5 +1,5 @@
 /**
- * @file swish_function.hpp
+ * @file methods/ann/activation_functions/swish_function.hpp
  * @author Vivek Pal
  *
  * Definition and implementation of the Swish function as described by
@@ -64,7 +64,7 @@ class SwishFunction
   {
     y.set_size(arma::size(x));
 
-    for (size_t i = 0; i < x.n_elem; i++)
+    for (size_t i = 0; i < x.n_elem; ++i)
       y(i) = Fn(x(i));
   }
 

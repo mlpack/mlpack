@@ -1,5 +1,5 @@
 /**
- * @file print_doc_functions_impl.hpp
+ * @file bindings/python/print_doc_functions_impl.hpp
  * @author Ryan Curtin
  *
  * This file contains functions useful for printing documentation strings
@@ -34,6 +34,14 @@ inline std::string GetBindingName(const std::string& bindingName)
 inline std::string PrintImport(const std::string& bindingName)
 {
   return "from mlpack import " + bindingName;
+}
+
+/**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo()
+{
+  return "";
 }
 
 /**

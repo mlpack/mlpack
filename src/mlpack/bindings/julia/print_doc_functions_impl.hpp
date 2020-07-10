@@ -1,5 +1,5 @@
 /**
- * @file print_doc_functions_impl.hpp
+ * @file bindings/julia/print_doc_functions_impl.hpp
  * @author Ryan Curtin
  *
  * This file contains functions useful for printing documentation strings
@@ -43,6 +43,14 @@ inline std::string PrintOutputOptionInfo()
   return "Results are returned as a tuple, and can be unpacked directly into "
       "return values or stored directly as a tuple; undesired results can be "
       "ignored with the _ keyword.";
+}
+
+/**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo()
+{
+  return "";
 }
 
 /**

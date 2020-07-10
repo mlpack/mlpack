@@ -1,5 +1,5 @@
 /**
- * @file kernel_traits_test.cpp
+ * @file tests/kernel_traits_test.cpp
  * @author Ryan Curtin
  *
  * Test the KernelTraits class.  Because all of the values are known at compile

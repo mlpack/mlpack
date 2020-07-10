@@ -1,5 +1,5 @@
 /**
- * @file gmm_train_test.cpp
+ * @file tests/main_tests/gmm_train_test.cpp
  * @author Yashwant Singh
  *
  * Test mlpackMain() of gmm_train_main.cpp.
@@ -554,11 +554,11 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiagCovariance)
 
   arma::uvec sortedIndices = sort_index(gmm->Weights());
 
-  for (size_t k = 0; k < sortedIndices.n_elem; k++)
+  for (size_t k = 0; k < sortedIndices.n_elem; ++k)
   {
     arma::mat diagCov(gmm->Component(sortedIndices[k]).Covariance());
-      for (size_t i = 0; i < diagCov.n_rows; i++)
-        for (size_t j = 0; j < diagCov.n_cols; j++)
+      for (size_t i = 0; i < diagCov.n_rows; ++i)
+        for (size_t j = 0; j < diagCov.n_cols; ++j)
           if (i != j && diagCov(i, j) != (double) 0)
             BOOST_FAIL("Covariance is not diagonal");
   }

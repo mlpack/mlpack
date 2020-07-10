@@ -1,5 +1,5 @@
 /**
- * @file concat_performance_impl.hpp
+ * @file methods/ann/layer/concat_performance_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the ConcatPerformance class.
@@ -83,7 +83,7 @@ void ConcatPerformance<
   output = arma::zeros(subOutput.n_elem, inSize);
   output.col(0) = subOutput;
 
-  for (size_t i = elements, j = 0; i < input.n_elem; i+= elements, j++)
+  for (size_t i = elements, j = 0; i < input.n_elem; i+= elements, ++j)
   {
     subInput = input.submat(i, 0, i + elements - 1, 0);
     outputLayer.Backward(subInput, target, subOutput);

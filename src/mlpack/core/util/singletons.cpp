@@ -1,5 +1,5 @@
 /**
- * @file singletons.cpp
+ * @file core/util/singletons.cpp
  * @author Ryan Curtin
  *
  * Declaration of singletons in libmlpack.so.

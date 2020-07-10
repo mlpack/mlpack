@@ -1,5 +1,5 @@
 /**
- * @file information_gain.hpp
+ * @file methods/decision_tree/information_gain.hpp
  * @author Ryan Curtin
  *
  * An implementation of information gain, which can be used in place of Gini
@@ -54,6 +54,7 @@ class InformationGain
    *
    * @param labels Labels of the dataset.
    * @param numClasses Number of classes in the dataset.
+   * @param weights Weights associated with labels.
    */
   template<bool UseWeights>
   static double Evaluate(const arma::Row<size_t>& labels,

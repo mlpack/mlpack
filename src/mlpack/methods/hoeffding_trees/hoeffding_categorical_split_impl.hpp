@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_categorical_split_impl.hpp
+ * @file methods/hoeffding_trees/hoeffding_categorical_split_impl.hpp
  * @author Ryan Curtin
  *
  * Implemental of the HoeffdingCategoricalSplit class.

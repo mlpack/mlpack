@@ -1,5 +1,5 @@
 /**
- * @file image_converter_test.cpp
+ * @file tests/main_tests/image_converter_test.cpp
  * @author Jeffin Sam
  *
  * Test mlpackMain() of load_save_image_main.cpp.

@@ -1,5 +1,5 @@
 /**
- * @file ann_test_tools.hpp
+ * @file tests/ann_test_tools.hpp
  * @author Marcus Edel
  *
  * This file includes some useful functions for ann tests.

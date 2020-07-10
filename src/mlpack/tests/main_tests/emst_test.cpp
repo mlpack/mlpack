@@ -1,5 +1,5 @@
 /**
- * @file emst_test.cpp
+ * @file tests/main_tests/emst_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of emst_main.cpp.
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(EMSTFirstTwoOutputRowsIntegerTest)
   SetInputParam("input", std::move(x));
   SetInputParam("leaf_size", (int) 2);
 
-  for (size_t i = 0; i < CLI::GetParam<arma::mat>("output").n_cols; i++)
+  for (size_t i = 0; i < CLI::GetParam<arma::mat>("output").n_cols; ++i)
   {
     BOOST_REQUIRE_CLOSE(CLI::GetParam<arma::mat>("output")(0, i),
         boost::math::iround(CLI::GetParam<arma::mat>("output")(0, i)), 1e-5);

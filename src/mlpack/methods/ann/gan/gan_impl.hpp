@@ -1,5 +1,5 @@
 /**
- * @file gan_impl.hpp
+ * @file methods/ann/gan/gan_impl.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *

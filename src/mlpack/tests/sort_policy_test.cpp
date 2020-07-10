@@ -1,5 +1,5 @@
 /**
- * @file sort_policy_test.cpp
+ * @file tests/sort_policy_test.cpp
  * @author Ryan Curtin
  *
  * Tests for each of the implementations of the SortPolicy class.

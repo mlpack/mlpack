@@ -1,5 +1,5 @@
 /**
- * @file mean_shift_main.cpp
+ * @file methods/mean_shift/mean_shift_main.cpp
  * @author Shangtong Zhang
  *
  * Executable for running Mean Shift.
@@ -120,7 +120,7 @@ static void mlpackMain()
     // Add the column of assignments to the dataset; but we have to convert them
     // to type double first.
     arma::vec converted(assignments.n_elem);
-    for (size_t i = 0; i < assignments.n_elem; i++)
+    for (size_t i = 0; i < assignments.n_elem; ++i)
       converted(i) = (double) assignments(i);
 
     dataset.insert_rows(dataset.n_rows, trans(converted));
@@ -135,7 +135,7 @@ static void mlpackMain()
     {
       // Convert the assignments to doubles.
       arma::vec converted(assignments.n_elem);
-      for (size_t i = 0; i < assignments.n_elem; i++)
+      for (size_t i = 0; i < assignments.n_elem; ++i)
         converted(i) = (double) assignments(i);
 
       dataset.insert_rows(dataset.n_rows, trans(converted));

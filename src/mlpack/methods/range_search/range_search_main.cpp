@@ -1,5 +1,5 @@
 /**
- * @file range_search_main.cpp
+ * @file methods/range_search/range_search_main.cpp
  * @author Ryan Curtin
  * @author Matthew Amidon
  *

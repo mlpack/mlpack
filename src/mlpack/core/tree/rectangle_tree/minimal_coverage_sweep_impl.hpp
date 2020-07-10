@@ -1,5 +1,5 @@
 /**
- * @file minimal_coverage_sweep_impl.hpp
+ * @file core/tree/rectangle_tree/minimal_coverage_sweep_impl.hpp
  * @author Mikhail Lozhnikov
  *
  * Implementation of the MinimalCoverageSweep class, a class that finds a
@@ -30,7 +30,7 @@ SweepNonLeafNode(const size_t axis,
 
   std::vector<std::pair<ElemType, size_t>> sorted(node->NumChildren());
 
-  for (size_t i = 0; i < node->NumChildren(); i++)
+  for (size_t i = 0; i < node->NumChildren(); ++i)
   {
     sorted[i].first = SplitPolicy::Bound(node->Child(i))[axis].Hi();
     sorted[i].second = i;
@@ -66,10 +66,10 @@ SweepNonLeafNode(const size_t axis,
   BoundType bound2(node->Bound().Dim());
 
   // Find bounds of two resulting nodes.
-  for (size_t i = 0; i < splitPointer; i++)
+  for (size_t i = 0; i < splitPointer; ++i)
     bound1 |= node->Child(sorted[i].second).Bound();
 
-  for (size_t i = splitPointer; i < node->NumChildren(); i++)
+  for (size_t i = splitPointer; i < node->NumChildren(); ++i)
     bound2 |= node->Child(sorted[i].second).Bound();
 
 
@@ -96,7 +96,7 @@ SweepLeafNode(const size_t axis,
 
   sorted.resize(node->Count());
 
-  for (size_t i = 0; i < node->NumPoints(); i++)
+  for (size_t i = 0; i < node->NumPoints(); ++i)
   {
     sorted[i].first = node->Dataset().col(node->Point(i))[axis];
     sorted[i].second = i;
@@ -122,10 +122,10 @@ SweepLeafNode(const size_t axis,
   BoundType bound2(node->Bound().Dim());
 
   // Find bounds of two resulting nodes.
-  for (size_t i = 0; i < splitPointer; i++)
+  for (size_t i = 0; i < splitPointer; ++i)
     bound1 |= node->Dataset().col(node->Point(sorted[i].second));
 
-  for (size_t i = splitPointer; i < node->NumChildren(); i++)
+  for (size_t i = splitPointer; i < node->NumChildren(); ++i)
     bound2 |= node->Dataset().col(node->Point(sorted[i].second));
 
   // Evaluate the cost of the split i.e. calculate the total coverage
@@ -145,7 +145,7 @@ CheckNonLeafSweep(const TreeType* node,
   size_t numTreeTwoChildren = 0;
 
   // Calculate the number of children in the resulting nodes.
-  for (size_t i = 0; i < node->NumChildren(); i++)
+  for (size_t i = 0; i < node->NumChildren(); ++i)
   {
     const TreeType& child = node->Child(i);
     int policy = SplitPolicy::GetSplitPolicy(child, cutAxis, cut);
@@ -178,7 +178,7 @@ CheckLeafSweep(const TreeType* node,
   size_t numTreeTwoPoints = 0;
 
   // Calculate the number of points in the resulting nodes.
-  for (size_t i = 0; i < node->NumPoints(); i++)
+  for (size_t i = 0; i < node->NumPoints(); ++i)
   {
     if (node->Dataset().col(node->Point(i))[cutAxis] <= cut)
       numTreeOnePoints++;

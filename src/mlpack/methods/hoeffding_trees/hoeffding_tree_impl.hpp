@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_split_impl.hpp
+ * @file methods/hoeffding_trees/hoeffding_tree_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the HoeffdingTree class.

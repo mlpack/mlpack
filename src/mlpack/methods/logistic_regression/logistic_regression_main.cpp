@@ -1,5 +1,5 @@
 /**
- * @file logistic_regression_main.cpp
+ * @file methods/logistic_regression/logistic_regression_main.cpp
  * @author Ryan Curtin
  *
  * Main executable for logistic regression.

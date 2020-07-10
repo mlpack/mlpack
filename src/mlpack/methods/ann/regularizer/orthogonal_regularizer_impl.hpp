@@ -1,5 +1,5 @@
 /**
- * @file orthogonal_regularizer_impl.hpp
+ * @file methods/ann/regularizer/orthogonal_regularizer_impl.hpp
  * @author Saksham Bansal
  *
  * Implementation of OrthogonalRegularizer class.
@@ -29,9 +29,9 @@ void OrthogonalRegularizer::Evaluate(const MatType& weight, MatType& gradient)
 {
   arma::mat grad = arma::zeros(arma::size(weight));
 
-  for (size_t i = 0; i < weight.n_rows; i++)
+  for (size_t i = 0; i < weight.n_rows; ++i)
   {
-    for (size_t j = 0; j < weight.n_rows; j++)
+    for (size_t j = 0; j < weight.n_rows; ++j)
     {
       if (i == j)
       {

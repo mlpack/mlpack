@@ -1,6 +1,6 @@
 /**
  * @author Parikshit Ram
- * @file gmm_train_main.cpp
+ * @file methods/gmm/gmm_train_main.cpp
  *
  * This program trains a mixture of Gaussians on a given data matrix.
  *
@@ -227,7 +227,7 @@ static void mlpackMain()
     {
       // Convert GMMs into DiagonalGMMs.
       DiagonalGMM dgmm(gmm->Gaussians(), gmm->Dimensionality());
-      for (size_t i = 0; i < size_t(gaussians); i++)
+      for (size_t i = 0; i < size_t(gaussians); ++i)
       {
         dgmm.Component(i).Mean() = gmm->Component(i).Mean();
         dgmm.Component(i).Covariance(
@@ -246,7 +246,7 @@ static void mlpackMain()
       Timer::Stop("em");
 
       // Convert DiagonalGMMs into GMMs.
-      for (size_t i = 0; i < size_t(gaussians); i++)
+      for (size_t i = 0; i < size_t(gaussians); ++i)
       {
         gmm->Component(i).Mean() = dgmm.Component(i).Mean();
         gmm->Component(i).Covariance(
@@ -285,7 +285,7 @@ static void mlpackMain()
     {
       // Convert GMMs into DiagonalGMMs.
       DiagonalGMM dgmm(gmm->Gaussians(), gmm->Dimensionality());
-      for (size_t i = 0; i < size_t(gaussians); i++)
+      for (size_t i = 0; i < size_t(gaussians); ++i)
       {
         dgmm.Component(i).Mean() = gmm->Component(i).Mean();
         dgmm.Component(i).Covariance(
@@ -304,7 +304,7 @@ static void mlpackMain()
       Timer::Stop("em");
 
       // Convert DiagonalGMMs into GMMs.
-      for (size_t i = 0; i < size_t(gaussians); i++)
+      for (size_t i = 0; i < size_t(gaussians); ++i)
       {
         gmm->Component(i).Mean() = dgmm.Component(i).Mean();
         gmm->Component(i).Covariance(

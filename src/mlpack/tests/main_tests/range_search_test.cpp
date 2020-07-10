@@ -1,5 +1,5 @@
 /**
- * @file range_search_test.cpp
+ * @file tests/main_tests/range_search_test.cpp
  * @author Niteya Shah
  *
  * Test mlpackMain() of range_search_main.cpp.
@@ -332,7 +332,7 @@ BOOST_AUTO_TEST_CASE(LeafValueTesting)
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
 
-  for (size_t i = 1; i < leafSizes.size(); i++)
+  for (size_t i = 1; i < leafSizes.size(); ++i)
   {
     SetInputParam("leaf_size", leafSizes[i]);
     SetInputParam("reference", inputData);
@@ -400,7 +400,7 @@ BOOST_AUTO_TEST_CASE(TreeTypeTesting)
   distances = ReadData<double>(distanceFile);
   RSModel* outputModel1 = CLI::GetParam<RSModel*>("output_model");
 
-  for (size_t i = 1; i < trees.size(); i++)
+  for (size_t i = 1; i < trees.size(); ++i)
   {
     if (!data::Load("iris.csv", inputData))
       BOOST_FAIL("Unable to load dataset iris.csv!");

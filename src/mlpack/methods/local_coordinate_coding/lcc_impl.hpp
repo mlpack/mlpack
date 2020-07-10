@@ -1,5 +1,5 @@
 /**
- * @file lcc_impl.hpp
+ * @file methods/local_coordinate_coding/lcc_impl.hpp
  * @author Nishant Mehta
  *
  * Implementation of Local Coordinate Coding

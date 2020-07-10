@@ -1,5 +1,5 @@
 /**
- * @file load_arff_impl.hpp
+ * @file core/data/load_arff_impl.hpp
  * @author Ryan Curtin
  *
  * Load an ARFF dataset.
@@ -38,6 +38,9 @@ void LoadARFF(const std::string& filename,
 
   std::string line;
   size_t dimensionality = 0;
+  // We'll store a vector of strings representing categories to be mapped, if
+  // needed.
+  std::map<size_t, std::vector<std::string>> categoryStrings;
   std::vector<bool> types;
   size_t headerLines = 0;
   while (ifs.good())
@@ -57,7 +60,7 @@ void LoadARFF(const std::string& filename,
     {
       typedef boost::tokenizer<boost::escaped_list_separator<char>> Tokenizer;
       std::string separators = " \t%"; // Split on comments too.
-      boost::escaped_list_separator<char> sep("\\", separators, "{\"");
+      boost::escaped_list_separator<char> sep("\\", separators, "\"'");
       Tokenizer tok(line, sep);
       Tokenizer::iterator it = tok.begin();
 
@@ -76,7 +79,11 @@ void LoadARFF(const std::string& filename,
         ++dimensionality;
         // We need to mark this dimension with its according type.
         ++it; // Ignore the dimension name.
-        std::string dimType = *(++it);
+        ++it;
+        // Collect all of the remaining tokens, which represent the dimension.
+        std::string dimType = "";
+        while (it != tok.end())
+          dimType += *(it++);
         std::transform(dimType.begin(), dimType.end(), dimType.begin(),
             ::tolower);
 
@@ -90,7 +97,29 @@ void LoadARFF(const std::string& filename,
         }
         else if (dimType[0] == '{')
         {
-          throw std::logic_error("list of ARFF values not yet supported");
+          // The feature is categorical, and we have all the types right here.
+          types.push_back(true);
+          boost::trim_if(dimType,
+              [](char c)
+              {
+                  return c == '{' || c == '}' || c == ' ' || c == '\t';
+              });
+
+          boost::escaped_list_separator<char> sep("\\", ",", "\"'");
+          Tokenizer dimTok(dimType, sep);
+          Tokenizer::iterator it = dimTok.begin();
+          std::vector<std::string> categories;
+
+          while (it != dimTok.end())
+          {
+            std::string category = (*it);
+            boost::trim(category);
+            categories.push_back(category);
+
+            ++it;
+          }
+
+          categoryStrings[dimensionality - 1] = std::move(categories);
         }
       }
       else if (annotation == "@data")
@@ -129,6 +158,18 @@ void LoadARFF(const std::string& filename,
       info.Type(i) = Datatype::categorical;
     else
       info.Type(i) = Datatype::numeric;
+  }
+
+  // Make sure all strings are mapped, if we have any.
+  typedef std::map<size_t, std::vector<std::string>>::const_iterator
+      IteratorType;
+  for (IteratorType it = categoryStrings.begin(); it != categoryStrings.end();
+      ++it)
+  {
+    for (const std::string& str : (*it).second)
+    {
+      info.template MapString<eT>(str, (*it).first);
+    }
   }
 
   // We need to find out how many lines of data are in the file.

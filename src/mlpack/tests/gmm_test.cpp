@@ -1,5 +1,5 @@
 /**
- * @file gmm_test.cpp
+ * @file tests/gmm_test.cpp
  * @author Ryan Curtin
  * @author Michael Fox
  *
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
             minDiff = std::abs(weights[i] - weights[j]);
     } while (minDiff < 0.02);
 
-    for (size_t i = 0; i < gaussians; i++)
+    for (size_t i = 0; i < gaussians; ++i)
       counts[i] = round(weights[i] * (data.n_cols - gaussians));
     // Ensure one point minimum in each.
     counts += 1;
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
 
     // Build each Gaussian individually.
     size_t point = 0;
-    for (size_t i = 0; i < gaussians; i++)
+    for (size_t i = 0; i < gaussians; ++i)
     {
       arma::mat gaussian;
       gaussian.randn(dims, counts[i]);
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
     }
 
     // Calculate actual weights.
-    for (size_t i = 0; i < gaussians; i++)
+    for (size_t i = 0; i < gaussians; ++i)
       weights[i] = (double) counts[i] / data.n_cols;
 
     // Now train the model.
@@ -228,7 +228,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
       continue;
 
     // Check the model to see that it is correct.
-    for (size_t i = 0; i < gaussians; i++)
+    for (size_t i = 0; i < gaussians; ++i)
     {
       // Check the mean.
       BOOST_REQUIRE_LT(
@@ -261,7 +261,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMSingleGaussianWithProbability)
 
   // 10000 observations, each with random probability.
   arma::mat observations(2, 20000);
-  for (size_t i = 0; i < 20000; i++)
+  for (size_t i = 0; i < 20000; ++i)
     observations.col(i) = d.Random();
   arma::vec probabilities;
   probabilities.randu(20000); // Random probabilities.
@@ -310,7 +310,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   arma::mat points(3, 2000);
   arma::vec probabilities(2000);
 
-  for (size_t i = 0; i < 2000; i++)
+  for (size_t i = 0; i < 2000; ++i)
   {
     double randValue = math::Random();
 
@@ -354,7 +354,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   // First Gaussian (d1).
   BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[0]] - 0.2, 0.1);
 
-  for (size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
     BOOST_REQUIRE_SMALL((g.Component(sortedIndices[0]).Mean()[i]
         - d1.Mean()[i]), 0.4);
 
@@ -366,7 +366,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   // Second Gaussian (d2).
   BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[1]] - 0.3, 0.1);
 
-  for (size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
     BOOST_REQUIRE_SMALL((g.Component(sortedIndices[1]).Mean()[i]
         - d2.Mean()[i]), 0.4);
 
@@ -410,7 +410,7 @@ BOOST_AUTO_TEST_CASE(GMMRandomTest)
 
   // Now generate a bunch of observations.
   arma::mat observations(2, 4000);
-  for (size_t i = 0; i < 4000; i++)
+  for (size_t i = 0; i < 4000; ++i)
     observations.col(i) = gmm.Random();
 
   // A new one which we'll train.
@@ -664,7 +664,7 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
     weights /= accu(weights);
   }
 
-  for (size_t i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; ++i)
     counts[i] = round(weights[i] * (data.n_cols - gaussians));
   // Ensure one point minimum in each.
   counts += 1;
@@ -674,7 +674,7 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
 
   // Build each Gaussian individually.
   size_t point = 0;
-  for (size_t i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; ++i)
   {
     arma::mat gaussian;
     gaussian.randn(dims, counts[i]);
@@ -703,7 +703,7 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
   }
 
   // Calculate actual weights.
-  for (size_t i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; ++i)
     weights[i] = (double) counts[i] / data.n_cols;
 
   // Now train the model.
@@ -881,7 +881,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMOneGaussianWithProbability)
 
   // Generate 20000 observations, each with random probabilities.
   arma::mat observations(2, 20000);
-  for (size_t i = 0; i < 20000; i++)
+  for (size_t i = 0; i < 20000; ++i)
     observations.col(i) = d.Random();
 
   // Random probabilities.
@@ -925,7 +925,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussians)
   // Now we'll generate points and probabilities.
   arma::mat observations(3, 5000);
 
-  for (size_t i = 0; i < 5000; i++)
+  for (size_t i = 0; i < 5000; ++i)
   {
     double randValue = math::Random();
 
@@ -949,11 +949,11 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussians)
   // First Gaussian (d1).
   BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[0]] - 0.2, 0.1);
 
-  for (size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
     BOOST_REQUIRE_SMALL((g.Component(sortedIndices[0]).Mean()[i]
         - d1.Mean()[i]), 0.4);
 
-  for (size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
   {
     const double v = g.Component(sortedIndices[0]).Covariance()(i);
     BOOST_REQUIRE_SMALL(v - d1.Covariance()(i), 0.5);
@@ -962,11 +962,11 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussians)
   // Second Gaussian (d2).
   BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[1]] - 0.3, 0.1);
 
-  for (size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
     BOOST_REQUIRE_SMALL((g.Component(sortedIndices[1]).Mean()[i]
         - d2.Mean()[i]), 0.4);
 
-  for (size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
   {
     const double v = g.Component(sortedIndices[1]).Covariance()(i);
     BOOST_REQUIRE_SMALL(v - d2.Covariance()(i), 0.5);
@@ -979,7 +979,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussians)
     BOOST_REQUIRE_SMALL((g.Component(sortedIndices[2]).Mean()[i]
         - d3.Mean()[i]), 0.4);
 
-  for (size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
   {
     const double v = g.Component(sortedIndices[2]).Covariance()(i);
     BOOST_REQUIRE_SMALL(v - d3.Covariance()(i), 0.5);
@@ -1005,7 +1005,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussiansWithProbability)
   // Now we'll generate observations and probabilities.
   arma::mat observations(3, 10000);
 
-  for (size_t i = 0; i < 10000; i++)
+  for (size_t i = 0; i < 10000; ++i)
   {
     double randValue = math::Random();
 
@@ -1032,11 +1032,11 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussiansWithProbability)
   // First Gaussian (d1).
   BOOST_REQUIRE_CLOSE(g.Weights()[sortedIndices[0]], 0.2, 10.0);
 
-  for (size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
     BOOST_REQUIRE_CLOSE(g.Component(sortedIndices[0]).Mean()[i],
         d1.Mean()[i], 13.0);
 
-  for (size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
   {
     const double v = g.Component(sortedIndices[0]).Covariance()(i);
     BOOST_REQUIRE_CLOSE(v, d1.Covariance()(i), 17.0);
@@ -1045,11 +1045,11 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussiansWithProbability)
   // Second Gaussian (d2).
   BOOST_REQUIRE_CLOSE(g.Weights()[sortedIndices[1]], 0.3, 10.0);
 
-  for (size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
     BOOST_REQUIRE_CLOSE(g.Component(sortedIndices[1]).Mean()[i],
         d2.Mean()[i], 13.0);
 
-  for (size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
   {
     const double v = g.Component(sortedIndices[1]).Covariance()(i);
     BOOST_REQUIRE_CLOSE(v, d2.Covariance()(i), 17.0);
@@ -1062,7 +1062,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussiansWithProbability)
     BOOST_REQUIRE_CLOSE(g.Component(sortedIndices[2]).Mean()[i],
         d3.Mean()[i], 13.0);
 
-  for (size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
   {
     const double v = g.Component(sortedIndices[2]).Covariance()(i);
     BOOST_REQUIRE_CLOSE(v, d3.Covariance()(i), 17.0);
@@ -1088,7 +1088,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMRandomTest)
 
   // Now generate a bunch of observations.
   arma::mat observations(2, 4000);
-  for (size_t i = 0; i < 4000; i++)
+  for (size_t i = 0; i < 4000; ++i)
     observations.col(i) = gmm.Random();
 
   // A new one which we'll train.
@@ -1165,12 +1165,12 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMLoadSaveTest)
   BOOST_REQUIRE_EQUAL(gmm.Gaussians(), gmm2.Gaussians());
   BOOST_REQUIRE_EQUAL(gmm.Dimensionality(), gmm2.Dimensionality());
 
-  for (size_t i = 0; i < gmm.Dimensionality(); i++)
+  for (size_t i = 0; i < gmm.Dimensionality(); ++i)
     BOOST_REQUIRE_CLOSE(gmm.Weights()[i], gmm2.Weights()[i], 1e-3);
 
-  for (size_t i = 0; i < gmm.Gaussians(); i++)
+  for (size_t i = 0; i < gmm.Gaussians(); ++i)
   {
-    for (size_t j = 0; j < gmm.Dimensionality(); j++)
+    for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
       BOOST_REQUIRE_CLOSE(gmm.Component(i).Mean()[j],
           gmm2.Component(i).Mean()[j], 1e-3);

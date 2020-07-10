@@ -1,5 +1,5 @@
 /**
- * @file random_forest_impl.hpp
+ * @file methods/random_forest/random_forest_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of random forest.

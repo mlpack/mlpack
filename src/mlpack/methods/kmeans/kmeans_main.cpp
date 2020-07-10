@@ -1,5 +1,5 @@
 /**
- * @file kmeans_main.cpp
+ * @file methods/kmeans/kmeans_main.cpp
  * @author Ryan Curtin
  *
  * Executable for running K-Means.
@@ -303,7 +303,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
       // Add the column of assignments to the dataset; but we have to convert
       // them to type double first.
       arma::rowvec converted(assignments.n_elem);
-      for (size_t i = 0; i < assignments.n_elem; i++)
+      for (size_t i = 0; i < assignments.n_elem; ++i)
         converted(i) = (double) assignments(i);
 
       dataset.insert_rows(dataset.n_rows, converted);
@@ -325,7 +325,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
       {
         // Convert the assignments to doubles.
         arma::rowvec converted(assignments.n_elem);
-        for (size_t i = 0; i < assignments.n_elem; i++)
+        for (size_t i = 0; i < assignments.n_elem; ++i)
           converted(i) = (double) assignments(i);
 
         dataset.insert_rows(dataset.n_rows, converted);

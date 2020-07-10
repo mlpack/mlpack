@@ -1,5 +1,5 @@
 /**
- * @file nca_test.cpp
+ * @file tests/main_tests/nca_test.cpp
  * @author Yasmine Dumouchel
  *
  * Test mlpackMain() of nca_main.cpp.
@@ -225,36 +225,54 @@ BOOST_AUTO_TEST_CASE(NCADifferentStepSizeTest)
  */
 BOOST_AUTO_TEST_CASE(NCADifferentToleranceTest)
 {
-  // Random dataset.
-  arma::mat x;
-  x.randu(3, 600);
+  // We aren't guaranteed that the test will be successful, so we run it
+  // multiple times.
+  bool success = false;
+  size_t trial = 0;
+  while (trial < 5)
+  {
+    // Random dataset.
+    arma::mat x;
+    x.randu(3, 600);
+    arma::Row<size_t> labels = arma::randi<arma::Row<size_t>>(600,
+        arma::distr_param(0, 1));
 
-  arma::mat y = x;
+    arma::mat y = x;
+    arma::Row<size_t> labels2 = labels;
 
-  // Set parameters with a small tolerance.
-  SetInputParam("input", std::move(x));
-  SetInputParam("optimizer", std::string("lbfgs"));
-  SetInputParam("max_iterations", (int) 0);
-  SetInputParam("tolerance", (double) 0.00005);
+    // Set parameters with a small tolerance.
+    SetInputParam("input", std::move(x));
+    SetInputParam("labels", std::move(labels));
+    SetInputParam("optimizer", std::string("lbfgs"));
+    SetInputParam("max_iterations", (int) 0);
+    SetInputParam("tolerance", (double) 1e-8);
 
-  mlpackMain();
+    mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+    arma::mat output = CLI::GetParam<arma::mat>("output");
 
-  // Reset settings.
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+    // Reset settings.
+    CLI::ClearSettings();
+    CLI::RestoreSettings(testName);
 
-  // Set parameters using the same input but with a larger tolerance.
-  SetInputParam("input", std::move(y));
-  SetInputParam("optimizer", std::string("lbfgs"));
-  SetInputParam("max_iterations", (int) 0);
-  SetInputParam("tolerance", (double) 0.003);
+    // Set parameters using the same input but with a larger tolerance.
+    SetInputParam("input", std::move(y));
+    SetInputParam("labels", std::move(labels2));
+    SetInputParam("optimizer", std::string("lbfgs"));
+    SetInputParam("max_iterations", (int) 0);
+    SetInputParam("tolerance", (double) 100.0);
 
-  mlpackMain();
+    mlpackMain();
 
-  // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+    // Check that the output matrices are different.
+    success = (arma::accu(CLI::GetParam<arma::mat>("output") != output) > 0);
+    if (success)
+      break;
+
+    ++trial;
+  }
+
+  BOOST_REQUIRE_EQUAL(success, true);
 }
 
 /**
@@ -383,34 +401,52 @@ BOOST_AUTO_TEST_CASE(NCALinearScanTest2)
  */
 BOOST_AUTO_TEST_CASE(NCADifferentNumBasisTest)
 {
-  // Simple dataset.
-  arma::mat x;
-  x.randu(3, 600);
+  // This test can randomly fail and it can be okay, so we run multiple times if
+  // necessary.
+  bool success = false;
+  size_t trial = 0;
+  while (trial < 5)
+  {
+    // Simple dataset.
+    arma::mat x;
+    x.randu(8, 600);
+    arma::Row<size_t> labels = arma::randi<arma::Row<size_t>>(600,
+        arma::distr_param(0, 1));
 
-  arma::mat y = x;
+    arma::mat y = x;
+    arma::Row<size_t> labels2 = labels;
 
-  // Set parameters and use a larger num_basis.
-  SetInputParam("input", std::move(x));
-  SetInputParam("optimizer",  std::string("lbfgs"));
-  SetInputParam("num_basis", (int) 50);
+    // Set parameters and use a larger num_basis.
+    SetInputParam("input", std::move(x));
+    SetInputParam("labels", std::move(labels));
+    SetInputParam("optimizer",  std::string("lbfgs"));
+    SetInputParam("num_basis", (int) 5);
 
-  mlpackMain();
+    mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+    arma::mat output = CLI::GetParam<arma::mat>("output");
 
-  // Reset Settings.
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+    // Reset Settings.
+    CLI::ClearSettings();
+    CLI::RestoreSettings(testName);
 
-  // Set parameters with a smaller num_basis.
-  SetInputParam("input", std::move(y));
-  SetInputParam("optimizer",  std::string("lbfgs"));
-  SetInputParam("num_basis", (int) 10);
+    // Set parameters with a smaller num_basis.
+    SetInputParam("input", std::move(y));
+    SetInputParam("labels", std::move(labels2));
+    SetInputParam("optimizer",  std::string("lbfgs"));
+    SetInputParam("num_basis", (int) 1);
 
-  mlpackMain();
+    mlpackMain();
 
-  // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+    // Check that the output matrices are different.
+    success = (arma::accu(CLI::GetParam<arma::mat>("output") != output) > 0);
+    if (success)
+      break;
+
+    ++trial;
+  }
+
+  BOOST_REQUIRE_EQUAL(success, true);
 }
 
 /**
@@ -419,34 +455,52 @@ BOOST_AUTO_TEST_CASE(NCADifferentNumBasisTest)
  */
 BOOST_AUTO_TEST_CASE(NCADifferentMaxIterationTest)
 {
-  // Random dataset.
-  arma::mat x;
-  x.randu(3, 600);
+  // This test can randomly fail and it can be okay, so we run multiple times if
+  // necessary.
+  bool success = false;
+  size_t trial = 0;
+  while (trial < 5)
+  {
+    // Random dataset.
+    arma::mat x;
+    x.randu(3, 600);
+    arma::Row<size_t> labels = arma::randi<arma::Row<size_t>>(600,
+        arma::distr_param(0, 1));
 
-  arma::mat y = x;
+    arma::mat y = x;
+    arma::Row<size_t> labels2 = labels;
 
-  // Set parameters with a small max_iterations.
-  SetInputParam("input", std::move(x));
-  SetInputParam("optimizer",  std::string("lbfgs"));
-  SetInputParam("max_iterations", (int) 20);
+    // Set parameters with a small max_iterations.
+    SetInputParam("input", std::move(x));
+    SetInputParam("labels", std::move(labels));
+    SetInputParam("optimizer",  std::string("lbfgs"));
+    SetInputParam("max_iterations", (int) 3);
 
-  mlpackMain();
+    mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+    arma::mat output = CLI::GetParam<arma::mat>("output");
 
-  // Reset settings.
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+    // Reset settings.
+    CLI::ClearSettings();
+    CLI::RestoreSettings(testName);
 
-  // Set parameters using the same input but with a larger max_iterations.
-  SetInputParam("input", std::move(y));
-  SetInputParam("optimizer",  std::string("lbfgs"));
-  SetInputParam("max_iterations", (int) 500);
+    // Set parameters using the same input but with a larger max_iterations.
+    SetInputParam("input", std::move(y));
+    SetInputParam("labels", std::move(labels2));
+    SetInputParam("optimizer",  std::string("lbfgs"));
+    SetInputParam("max_iterations", (int) 500);
 
-  mlpackMain();
+    mlpackMain();
 
-  // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+    // Check that the output matrices are different.
+    success = (arma::accu(CLI::GetParam<arma::mat>("output") != output) > 0);
+    if (success)
+      break;
+
+    ++trial;
+  }
+
+  BOOST_REQUIRE_EQUAL(success, true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

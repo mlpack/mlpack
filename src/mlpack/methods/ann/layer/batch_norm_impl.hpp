@@ -1,5 +1,5 @@
 /**
- * @file batch_norm_impl.hpp
+ * @file methods/ann/layer/batch_norm_impl.hpp
  * @author Praveen Ch
  * @author Manthan-R-Sheth
  *
@@ -85,7 +85,7 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
     output.each_col() /= arma::sqrt(variance + eps);
 
     // Use Welford method to compute the sample variance and mean.
-    for (size_t i = 0; i < input.n_cols; i++)
+    for (size_t i = 0; i < input.n_cols; ++i)
     {
       count += 1;
 

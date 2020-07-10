@@ -1,5 +1,5 @@
 /**
- * @file dtree.hpp
+ * @file methods/det/dtree.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  *
  * Density Estimation Tree class
@@ -118,7 +118,7 @@ class DTree
    * @param minVals Lower bound of bounding box.
    * @param start Start of points represented by this node in the data matrix.
    * @param end End of points represented by this node in the data matrix.
-   * @param error log-negative error of this node.
+   * @param logNegError log-negative error of this node.
    */
   DTree(const StatType& maxVals,
         const StatType& minVals,
@@ -134,6 +134,7 @@ class DTree
    *
    * @param maxVals Upper bound of bounding box.
    * @param minVals Lower bound of bounding box.
+   * @param totalPoints Total number of points.
    * @param start Start of points represented by this node in the data matrix.
    * @param end End of points represented by this node in the data matrix.
    */
@@ -188,7 +189,7 @@ class DTree
    * `operator++()`, so any `TagType` overriding it will do.
    *
    * @param tag Tag for the next leaf; leave at 0 for the initial call.
-   * @param everyNodde Whether to increment on every node, not just leaves.
+   * @param everyNode Whether to increment on every node, not just leaves.
    */
   TagType TagTree(const TagType& tag = 0, bool everyNode = false);
 

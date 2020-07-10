@@ -1,5 +1,5 @@
 /**
- * @file cart_pole.hpp
+ * @file methods/reinforcement_learning/environment/cart_pole.hpp
  * @author Shangtong Zhang
  *
  * This file is an implementation of Cart Pole task:
@@ -84,18 +84,26 @@ class CartPole
   /**
    * Implementation of action of Cart Pole.
    */
-  enum Action
+  class Action
   {
-    backward,
-    forward,
+   public:
+    enum actions
+    {
+      backward,
+      forward
+    };
+    // To store the action.
+    Action::actions action;
 
     // Track the size of the action space.
-    size
+    static const size_t size = 2;
   };
 
   /**
    * Construct a Cart Pole instance using the given constants.
    *
+   * @param maxSteps The number of steps after which the episode
+   *    terminates. If the value is 0, there is no limit.
    * @param gravity The gravity constant.
    * @param massCart The mass of the cart.
    * @param massPole The mass of the pole.
@@ -105,10 +113,9 @@ class CartPole
    * @param thetaThresholdRadians The maximum angle.
    * @param xThreshold The maximum position.
    * @param doneReward Reward recieved by agent on success.
-   * @param maxSteps The number of steps after which the episode
-   *    terminates. If the value is 0, there is no limit.
    */
-  CartPole(const double gravity = 9.8,
+  CartPole(const size_t maxSteps = 200,
+           const double gravity = 9.8,
            const double massCart = 1.0,
            const double massPole = 0.1,
            const double length = 0.5,
@@ -116,8 +123,8 @@ class CartPole
            const double tau = 0.02,
            const double thetaThresholdRadians = 12 * 2 * 3.1416 / 360,
            const double xThreshold = 2.4,
-           const double doneReward = 0.0,
-           const size_t maxSteps = 0) :
+           const double doneReward = 0.0) :
+      maxSteps(maxSteps),
       gravity(gravity),
       massCart(massCart),
       massPole(massPole),
@@ -129,7 +136,6 @@ class CartPole
       thetaThresholdRadians(thetaThresholdRadians),
       xThreshold(xThreshold),
       doneReward(doneReward),
-      maxSteps(maxSteps),
       stepsPerformed(0)
   { /* Nothing to do here */ }
 
@@ -150,7 +156,7 @@ class CartPole
     stepsPerformed++;
 
     // Calculate acceleration.
-    double force = action ? forceMag : -forceMag;
+    double force = action.action ? forceMag : -forceMag;
     double cosTheta = std::cos(state.Angle());
     double sinTheta = std::sin(state.Angle());
     double temp = (force + poleMassLength * state.AngularVelocity() *
@@ -238,6 +244,9 @@ class CartPole
   size_t& MaxSteps() { return maxSteps; }
 
  private:
+  //! Locally-stored maximum number of steps.
+  size_t maxSteps;
+
   //! Locally-stored gravity.
   double gravity;
 
@@ -270,9 +279,6 @@ class CartPole
 
   //! Locally-stored done reward.
   double doneReward;
-
-  //! Locally-stored maximum number of steps.
-  size_t maxSteps;
 
   //! Locally-stored number of steps performed.
   size_t stepsPerformed;

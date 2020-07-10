@@ -1,5 +1,5 @@
 /**
- * @file hinge_embedding_loss_impl.hpp
+ * @file methods/ann/loss_functions/hinge_embedding_loss_impl.hpp
  * @author Lakshya Ojha
  *
  * Implementation of the Hinge Embedding loss function.

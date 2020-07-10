@@ -1,5 +1,5 @@
 /**
- * @file convolutional_network_test.cpp
+ * @file tests/convolutional_network_test.cpp
  * @author Marcus Edel
  * @author Abhinav Moudgil
  *
@@ -36,14 +36,14 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 
   // Normalize each point since these are images.
   arma::uword nPoints = X.n_cols;
-  for (arma::uword i = 0; i < nPoints; i++)
+  for (arma::uword i = 0; i < nPoints; ++i)
   {
     X.col(i) /= norm(X.col(i), 2);
   }
 
   // Build the target matrix.
   arma::mat Y = arma::zeros<arma::mat>(1, nPoints);
-  for (size_t i = 0; i < nPoints; i++)
+  for (size_t i = 0; i < nPoints; ++i)
   {
     if (i < nPoints / 2)
     {

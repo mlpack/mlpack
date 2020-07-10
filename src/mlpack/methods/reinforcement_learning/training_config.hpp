@@ -1,5 +1,5 @@
 /**
- * @file training_config.hpp
+ * @file methods/reinforcement_learning/training_config.hpp
  * @author Shangtong Zhang
  *
  * This file is the implementation of TrainingConfig class,
@@ -22,10 +22,14 @@ class TrainingConfig
   TrainingConfig() :
       numWorkers(1),
       updateInterval(1),
-      stepLimit(0),
+      targetNetworkSyncInterval(100),
+      stepLimit(200),
       explorationSteps(1),
+      stepSize(0.01),
+      discount(0.99),
       gradientLimit(40),
-      doubleQLearning(false)
+      doubleQLearning(false),
+      noisyQLearning(false)
   { /* Nothing to do here. */ }
 
   TrainingConfig(
@@ -37,7 +41,8 @@ class TrainingConfig
       double stepSize,
       double discount,
       double gradientLimit,
-      bool doubleQLearning) :
+      bool doubleQLearning,
+      bool noisyQLearning) :
       numWorkers(numWorkers),
       updateInterval(updateInterval),
       targetNetworkSyncInterval(targetNetworkSyncInterval),
@@ -46,7 +51,8 @@ class TrainingConfig
       stepSize(stepSize),
       discount(discount),
       gradientLimit(gradientLimit),
-      doubleQLearning(doubleQLearning)
+      doubleQLearning(doubleQLearning),
+      noisyQLearning(noisyQLearning)
   { /* Nothing to do here. */ }
 
   //! Get the amount of workers.
@@ -97,6 +103,11 @@ class TrainingConfig
   bool DoubleQLearning() const { return doubleQLearning; }
   //! Modify the indicator of double q-learning.
   bool& DoubleQLearning() { return doubleQLearning; }
+
+  //! Get the indicator of noisy q-learning.
+  bool NoisyQLearning() const { return noisyQLearning; }
+  //! Modify the indicator of double q-learning.
+  bool& NoisyQLearning() { return noisyQLearning; }
 
  private:
   /**
@@ -155,6 +166,12 @@ class TrainingConfig
    * This is valid only for q-learning agent.
    */
   bool doubleQLearning;
+
+  /**
+   * Locally-stored indicator for noisy q-learning.
+   * This is valid only for q-learning agent.
+   */
+  bool noisyQLearning;
 };
 
 } // namespace rl

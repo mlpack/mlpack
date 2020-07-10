@@ -1,5 +1,5 @@
 /**
- * @file program_doc.hpp
+ * @file core/util/program_doc.hpp
  * @author Matthew Amidon
  *
  * The structure used to store a program's name and documentation.

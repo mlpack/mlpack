@@ -1,5 +1,5 @@
 /**
- * @file print_doc_functions.hpp
+ * @file bindings/markdown/print_doc_functions.hpp
  * @author Ryan Curtin
  *
  * This file wraps the different printing functionality of different binding
@@ -35,6 +35,11 @@ inline std::string PrintLanguage(const std::string& language);
  * Print any imports that need to be done before using the binding.
  */
 inline std::string PrintImport(const std::string& bindingName);
+
+/**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo(const std::string& language);
 
 /**
  * Print any special information about output options.

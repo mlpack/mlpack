@@ -1,5 +1,5 @@
 /**
- * @file pendulum.hpp
+ * @file methods/reinforcement_learning/environment/pendulum.hpp
  * @author Shashank Shekhar
  *
  * This file is an implementation of Pendulum task:
@@ -81,33 +81,34 @@ class Pendulum
    * In Pendulum, the action represents the torque to be applied.
    * This value is bounded in range -2.0 to 2.0 by default.
    */
-  struct Action
+  class Action
   {
+   public:
     double action[1];
-    // Storing degree of freedom
-    const int size = 1;
+    // Storing degree of freedom.
+    static const size_t size = 1;
   };
 
   /**
    * Construct a Pendulum instance using the given values.
    *
+   * @param maxSteps The number of steps after which the episode
+   *    terminates. If the value is 0, there is no limit (Default: 200 steps). 
    * @param maxAngularVelocity Maximum angular velocity.
    * @param maxTorque Maximum torque.
    * @param dt The differential value.
    * @param doneReward The reward recieved by the agent on success.
-   * @param maxSteps The number of steps after which the episode
-   *    terminates. If the value is 0, there is no limit (Default: 200 steps). 
    */
-  Pendulum(const double maxAngularVelocity = 8,
+  Pendulum(const size_t maxSteps = 200,
+           const double maxAngularVelocity = 8,
            const double maxTorque = 2.0,
            const double dt = 0.05,
-           const double doneReward = 0.0,
-           const size_t maxSteps = 200) :
+           const double doneReward = 0.0) :
+      maxSteps(maxSteps),
       maxAngularVelocity(maxAngularVelocity),
       maxTorque(maxTorque),
       dt(dt),
       doneReward(doneReward),
-      maxSteps(maxSteps),
       stepsPerformed(0)
   { /* Nothing to do here */ }
 
@@ -201,10 +202,10 @@ class Pendulum
   /**
    * This function checks if the pendulum has reaches a terminal state
    * 
-   * @param state desired state.
+   * @param * (state) desired state.
    * @return true if state is a terminal state, otherwise false.
    */
-  bool IsTerminal(const State& state) const
+  bool IsTerminal(const State& /* state */) const
   {
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
@@ -224,6 +225,9 @@ class Pendulum
   size_t& MaxSteps() { return maxSteps; }
 
  private:
+  //! Locally-stored maximum number of steps.
+  size_t maxSteps;
+
   //! Locally-stored maximum legal angular velocity.
   double maxAngularVelocity;
 
@@ -235,9 +239,6 @@ class Pendulum
 
   //! Locally-stored done reward.
   double doneReward;
-
-  //! Locally-stored maximum number of steps.
-  size_t maxSteps;
 
   //! Locally-stored number of steps performed.
   size_t stepsPerformed;
