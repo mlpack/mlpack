@@ -57,7 +57,7 @@ void CheckActivationCorrect(const arma::colvec input,
                             const arma::colvec target)
 {
   // Test the activation function using a single value as input.
-  for (size_t i = 0; i < target.n_elem; i++)
+  for (size_t i = 0; i < target.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(ActivationFunction::Fn(input.at(i)),
         target.at(i), 1e-3);
@@ -66,7 +66,7 @@ void CheckActivationCorrect(const arma::colvec input,
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
   ActivationFunction::Fn(input, activations);
-  for (size_t i = 0; i < activations.n_elem; i++)
+  for (size_t i = 0; i < activations.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
   }
@@ -85,7 +85,7 @@ void CheckDerivativeCorrect(const arma::colvec input,
                             const arma::colvec target)
 {
   // Test the calculation of the derivatives using a single value as input.
-  for (size_t i = 0; i < target.n_elem; i++)
+  for (size_t i = 0; i < target.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(ActivationFunction::Deriv(input.at(i)),
         target.at(i), 1e-3);
@@ -94,7 +94,7 @@ void CheckDerivativeCorrect(const arma::colvec input,
   // Test the calculation of the derivatives using the entire vector as input.
   arma::colvec derivatives;
   ActivationFunction::Deriv(input, derivatives);
-  for (size_t i = 0; i < derivatives.n_elem; i++)
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
   }
@@ -112,7 +112,7 @@ template<class ActivationFunction>
 void CheckInverseCorrect(const arma::colvec input)
 {
     // Test the calculation of the inverse using a single value as input.
-  for (size_t i = 0; i < input.n_elem; i++)
+  for (size_t i = 0; i < input.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(ActivationFunction::Inv(ActivationFunction::Fn(
         input.at(i))), input.at(i), 1e-3);
@@ -123,7 +123,7 @@ void CheckInverseCorrect(const arma::colvec input)
   ActivationFunction::Fn(input, activations);
   ActivationFunction::Inv(activations, activations);
 
-  for (size_t i = 0; i < input.n_elem; i++)
+  for (size_t i = 0; i < input.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), input.at(i), 1e-3);
   }
@@ -144,7 +144,7 @@ void CheckHardTanHActivationCorrect(const arma::colvec input,
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
   htf.Forward(input, activations);
-  for (size_t i = 0; i < activations.n_elem; i++)
+  for (size_t i = 0; i < activations.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
   }
@@ -170,7 +170,7 @@ void CheckHardTanHDerivativeCorrect(const arma::colvec input,
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
   htf.Backward(input, error, derivatives);
 
-  for (size_t i = 0; i < derivatives.n_elem; i++)
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
   }
@@ -192,7 +192,7 @@ void CheckLeakyReLUActivationCorrect(const arma::colvec input,
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
   lrf.Forward(input, activations);
-  for (size_t i = 0; i < activations.n_elem; i++)
+  for (size_t i = 0; i < activations.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
   }
@@ -218,7 +218,7 @@ void CheckLeakyReLUDerivativeCorrect(const arma::colvec input,
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
   lrf.Backward(input, error, derivatives);
-  for (size_t i = 0; i < derivatives.n_elem; i++)
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
   }
@@ -240,7 +240,7 @@ void CheckELUActivationCorrect(const arma::colvec input,
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
   lrf.Forward(input, activations);
-  for (size_t i = 0; i < activations.n_elem; i++)
+  for (size_t i = 0; i < activations.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
   }
@@ -266,7 +266,7 @@ void CheckELUDerivativeCorrect(const arma::colvec input,
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
   lrf.Forward(input, activations);
   lrf.Backward(activations, error, derivatives);
-  for (size_t i = 0; i < derivatives.n_elem; i++)
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
   }
@@ -288,7 +288,7 @@ void CheckPReLUActivationCorrect(const arma::colvec input,
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
   prelu.Forward(input, activations);
-  for (size_t i = 0; i < activations.n_elem; i++)
+  for (size_t i = 0; i < activations.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
   }
@@ -314,7 +314,7 @@ void CheckPReLUDerivativeCorrect(const arma::colvec input,
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
   prelu.Backward(input, error, derivatives);
-  for (size_t i = 0; i < derivatives.n_elem; i++)
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
   }
@@ -360,7 +360,7 @@ void CheckHardShrinkActivationCorrect(const arma::colvec input,
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
   hardshrink.Forward(input, activations);
-  for (size_t i = 0; i < activations.n_elem; i++)
+  for (size_t i = 0; i < activations.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
   }
@@ -386,7 +386,7 @@ void CheckHardShrinkDerivativeCorrect(const arma::colvec input,
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
   hardshrink.Backward(input, error, derivatives);
-  for (size_t i = 0; i < derivatives.n_elem; i++)
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
   }
@@ -408,7 +408,7 @@ void CheckSoftShrinkActivationCorrect(const arma::colvec input,
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
   softshrink.Forward(input, activations);
-  for (size_t i = 0; i < activations.n_elem; i++)
+  for (size_t i = 0; i < activations.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
   }
@@ -434,7 +434,7 @@ void CheckSoftShrinkDerivativeCorrect(const arma::colvec input,
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
   softshrink.Backward(input, error, derivatives);
-  for (size_t i = 0; i < derivatives.n_elem; i++)
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
   }
@@ -529,7 +529,7 @@ void CheckCELUActivationCorrect(const arma::colvec input,
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
   lrf.Forward(input, activations);
-  for (size_t i = 0; i < activations.n_elem; i++)
+  for (size_t i = 0; i < activations.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
   }
@@ -555,7 +555,7 @@ void CheckCELUDerivativeCorrect(const arma::colvec input,
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
   lrf.Forward(input, activations);
   lrf.Backward(activations, error, derivatives);
-  for (size_t i = 0; i < derivatives.n_elem; i++)
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
   }
@@ -742,11 +742,11 @@ BOOST_AUTO_TEST_CASE(CReLUFunctionTest)
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(desiredActivations.n_elem);
   crelu.Backward(desiredActivations, error, derivatives);
-  for (size_t i = 0; i < activations.n_elem; i++)
+  for (size_t i = 0; i < activations.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), desiredActivations.at(i), 1e-3);
   }
-  for (size_t i = 0; i < derivatives.n_elem; i++)
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), desiredDerivatives.at(i), 1e-3);
   }

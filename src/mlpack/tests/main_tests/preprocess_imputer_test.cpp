@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
   size_t countNaN = 0;
 
   // Count number of unavailable entries in all dimensions.
-  for (size_t i = 0; i < inputSize; i++)
+  for (size_t i = 0; i < inputSize; ++i)
   {
     if (std::to_string(inputData(0, i)) == "nan" ||
         std::to_string(inputData(1, i)) == "nan" ||

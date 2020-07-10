@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
   BOOST_REQUIRE_LE(task.StepsPerformed(), 20);
 
   // The action is simply the torque. Check if dimension is 1.
-  BOOST_REQUIRE_EQUAL(1, action.size);
+  BOOST_REQUIRE_EQUAL(1, static_cast<size_t>(Pendulum::Action::size));
 }
 
 /**
@@ -102,7 +102,8 @@ BOOST_AUTO_TEST_CASE(SimpleAcrobotTest)
   task.MaxSteps() = 5;
 
   Acrobot::State state = task.InitialSample();
-  Acrobot::Action action = Acrobot::Action::negativeTorque;
+  Acrobot::Action action;
+  action.action = Acrobot::Action::actions::negativeTorque;
   double reward = task.Sample(state, action);
 
   BOOST_REQUIRE_EQUAL(reward, -1.0);
@@ -115,7 +116,7 @@ BOOST_AUTO_TEST_CASE(SimpleAcrobotTest)
   BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
 
   // Check if the size of the action space is 3.
-  BOOST_REQUIRE_EQUAL(3, Acrobot::Action::size);
+  BOOST_REQUIRE_EQUAL(3, static_cast<size_t>(Acrobot::Action::size));
 }
 
 /**
@@ -128,7 +129,8 @@ BOOST_AUTO_TEST_CASE(SimpleMountainCarTest)
   task.MaxSteps() = 5;
 
   MountainCar::State state = task.InitialSample();
-  MountainCar::Action action = MountainCar::Action::backward;
+  MountainCar::Action action;
+  action.action = MountainCar::Action::actions::backward;
   double reward = task.Sample(state, action);
 
   BOOST_REQUIRE_EQUAL(reward, -1.0);
@@ -141,7 +143,7 @@ BOOST_AUTO_TEST_CASE(SimpleMountainCarTest)
   BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
 
   // Check if the size of the action space is 3.
-  BOOST_REQUIRE_EQUAL(3, MountainCar::Action::size);
+  BOOST_REQUIRE_EQUAL(3, static_cast<size_t>(MountainCar::Action::size));
 }
 
 /**
@@ -154,7 +156,8 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
   task.MaxSteps() = 5;
 
   CartPole::State state = task.InitialSample();
-  CartPole::Action action = CartPole::Action::backward;
+  CartPole::Action action;
+  action.action = CartPole::Action::actions::backward;
   double reward = task.Sample(state, action);
 
   BOOST_REQUIRE_EQUAL(reward, 1.0);
@@ -166,7 +169,7 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
   // Check if the number of steps performed is the same as the maximum allowed.
   BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
 
-  BOOST_REQUIRE_EQUAL(2, CartPole::Action::size);
+  BOOST_REQUIRE_EQUAL(2, static_cast<size_t>(CartPole::Action::size));
 }
 
 /**
@@ -179,7 +182,8 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartTest)
   task.MaxSteps() = 5;
 
   DoublePoleCart::State state = task.InitialSample();
-  DoublePoleCart::Action action = DoublePoleCart::Action::backward;
+  DoublePoleCart::Action action;
+  action.action = DoublePoleCart::Action::actions::backward;
   double reward = task.Sample(state, action);
 
   BOOST_REQUIRE_EQUAL(reward, 1.0);
@@ -190,7 +194,7 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartTest)
 
   // Check if the number of steps performed is the same as the maximum allowed.
   BOOST_REQUIRE_EQUAL(task.StepsPerformed(), 5);
-  BOOST_REQUIRE_EQUAL(2, DoublePoleCart::Action::size);
+  BOOST_REQUIRE_EQUAL(2, static_cast<size_t>(DoublePoleCart::Action::size));
 }
 
 /**
@@ -227,12 +231,14 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
   RandomReplay<MountainCar> replay(1, 3);
   MountainCar env;
   MountainCar::State state = env.InitialSample();
-  MountainCar::Action action = MountainCar::Action::forward;
+  MountainCar::Action action;
+  action.action = MountainCar::Action::actions::forward;
   MountainCar::State nextState;
   double reward = env.Sample(state, action, nextState);
-  replay.Store(state, action, reward, nextState, env.IsTerminal(nextState));
+  replay.Store(state, action, reward, nextState, env.IsTerminal(nextState),
+      0.9);
   arma::mat sampledState;
-  arma::icolvec sampledAction;
+  std::vector<MountainCar::Action> sampledAction;
   arma::colvec sampledReward;
   arma::mat sampledNextState;
   arma::icolvec sampledTerminal;
@@ -242,7 +248,8 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
       sampledTerminal);
 
   CheckMatrices(state.Encode(), sampledState);
-  BOOST_REQUIRE_EQUAL(action, arma::as_scalar(sampledAction));
+  BOOST_REQUIRE_EQUAL(sampledAction.size(), 1);
+  BOOST_REQUIRE_EQUAL(action.action, sampledAction[0].action);
   BOOST_REQUIRE_CLOSE(reward, arma::as_scalar(sampledReward), 1e-5);
   CheckMatrices(nextState.Encode(), sampledNextState);
   BOOST_REQUIRE_EQUAL(false, arma::as_scalar(sampledTerminal));
@@ -250,7 +257,7 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
 
   //! Overwrite the memory with a nonsense record
   for (size_t i = 0; i < 5; ++i)
-    replay.Store(nextState, action, reward, state, true);
+    replay.Store(nextState, action, reward, state, true, 0.9);
 
   BOOST_REQUIRE_EQUAL(3, replay.Size());
 
@@ -278,7 +285,7 @@ BOOST_AUTO_TEST_CASE(GreedyPolicyTest)
   BOOST_REQUIRE_CLOSE(0.0, policy.Epsilon(), 1e-5);
   arma::colvec actionValue = arma::randn<arma::colvec>(CartPole::Action::size);
   CartPole::Action action = policy.Sample(actionValue);
-  BOOST_REQUIRE_CLOSE(actionValue[action], actionValue.max(), 1e-5);
+  BOOST_REQUIRE_CLOSE(actionValue[action.action], actionValue.max(), 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
