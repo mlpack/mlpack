@@ -266,6 +266,8 @@ foreach(test_file ${test_sources})
   endif()
 endforeach()
 
+add_test(NAME "catch_test" COMMAND mlpack_catch_test WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
 # Use RUN_SERIAL for long running parallel tests
 set_tests_properties(${parallel_tests} PROPERTIES RUN_SERIAL TRUE)
 
