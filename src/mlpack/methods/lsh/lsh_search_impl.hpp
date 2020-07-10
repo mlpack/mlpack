@@ -193,7 +193,7 @@ void LSHSearch<SortPolicy, MatType>::Train(MatType referenceSet,
   {
     const size_t numSamples = 25;
     // Compute a heuristic hash width from the data.
-    for (size_t i = 0; i < numSamples; i++)
+    for (size_t i = 0; i < numSamples; ++i)
     {
       size_t p1 = (size_t) math::RandInt(this->referenceSet.n_cols);
       size_t p2 = (size_t) math::RandInt(this->referenceSet.n_cols);
@@ -258,7 +258,7 @@ void LSHSearch<SortPolicy, MatType>::Train(MatType referenceSet,
   // size_t, otherwise negative numbers are cast to 0.
   arma::Mat<size_t> secondHashVectors(numTables, this->referenceSet.n_cols);
 
-  for (size_t i = 0; i < numTables; i++)
+  for (size_t i = 0; i < numTables; ++i)
   {
     // Step IV: create the 'numProj'-dimensional key for each point in each
     // table.
@@ -320,7 +320,7 @@ void LSHSearch<SortPolicy, MatType>::Train(MatType referenceSet,
   {
     // Insert the point in the corresponding row to its bucket in the
     // 'secondHashTable'.
-    for (size_t j = 0; j < secondHashVectors.n_cols; j++)
+    for (size_t j = 0; j < secondHashVectors.n_cols; ++j)
     {
       // This is the bucket number.
       size_t hashInd = (size_t) secondHashVectors(i, j);
@@ -388,7 +388,7 @@ void LSHSearch<SortPolicy, MatType>::BaseCase(
     }
   }
 
-  for (size_t j = 1; j <= k; j++)
+  for (size_t j = 1; j <= k; ++j)
   {
     neighbors(k - j, queryIndex) = pqueue.top().second;
     distances(k - j, queryIndex) = pqueue.top().first;
@@ -431,7 +431,7 @@ void LSHSearch<SortPolicy, MatType>::BaseCase(
     }
   }
 
-  for (size_t j = 1; j <= k; j++)
+  for (size_t j = 1; j <= k; ++j)
   {
     neighbors(k - j, queryIndex) = pqueue.top().second;
     distances(k - j, queryIndex) = pqueue.top().first;
@@ -727,7 +727,7 @@ void LSHSearch<SortPolicy, MatType>::ReturnIndicesFromTable(
   // Compute the projection of the query in each table.
   arma::mat allProjInTables(numProj, numTablesToSearch);
   arma::mat queryCodesNotFloored(numProj, numTablesToSearch);
-  for (size_t i = 0; i < numTablesToSearch; i++)
+  for (size_t i = 0; i < numTablesToSearch; ++i)
     queryCodesNotFloored.unsafe_col(i) = projections.slice(i).t() * queryPoint;
 
   queryCodesNotFloored += offsets.cols(0, numTablesToSearch - 1);
@@ -743,7 +743,7 @@ void LSHSearch<SortPolicy, MatType>::ReturnIndicesFromTable(
   hashMat.row(0) = arma::conv_to<arma::Row<size_t>> // Floor by typecasting
       ::from(secondHashWeights.t() * allProjInTables);
   // Mod to compute 2nd-level codes.
-  for (size_t i = 0; i < numTablesToSearch; i++)
+  for (size_t i = 0; i < numTablesToSearch; ++i)
     hashMat(0, i) = (hashMat(0, i) % secondHashSize);
 
   // Compute hash codes of additional probing bins.

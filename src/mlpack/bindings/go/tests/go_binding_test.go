@@ -1,7 +1,7 @@
 package main
 
 import (
-	"mlpack/bindings/go/mlpack"
+	"mlpack.org/v1/mlpack"
 	"testing"
 	"os"
 

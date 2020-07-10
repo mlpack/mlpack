@@ -55,9 +55,7 @@ void mlpackSetParamBool(const char* identifier, bool value)
  */
 void mlpackSetParamString(const char* identifier, const char* value)
 {
-  std::string val;
-  val.assign(value);
-  util::SetParam(identifier, val);
+  CLI::GetParam<std::string>(identifier) = value;
 }
 
 /**
@@ -121,8 +119,7 @@ bool mlpackHasParam(const char* identifier)
  */
 const char* mlpackGetParamString(const char* identifier)
 {
-  std::string val = CLI::GetParam<std::string>(identifier);
-  return val.c_str();;
+  return CLI::GetParam<std::string>(identifier).c_str();
 }
 
 /**

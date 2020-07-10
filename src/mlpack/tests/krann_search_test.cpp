@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(NaiveGuaranteeTest)
   {
     rsRann.Search(queryData, 1, neighbors, distances);
 
-    for (size_t i = 0; i < queryData.n_cols; i++)
+    for (size_t i = 0; i < queryData.n_cols; ++i)
       if (qrRanks(i, neighbors(0, i)) < expectedRankErrorUB)
         numSuccessRounds[i]++;
 
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(NaiveGuaranteeTest)
   size_t threshold = floor(numRounds *
       (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
   size_t numQueriesFail = 0;
-  for (size_t i = 0; i < queryData.n_cols; i++)
+  for (size_t i = 0; i < queryData.n_cols; ++i)
     if (numSuccessRounds[i] < threshold)
       numQueriesFail++;
 
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeSearch)
   {
     tssRann.Search(queryData, 1, neighbors, distances);
 
-    for (size_t i = 0; i < queryData.n_cols; i++)
+    for (size_t i = 0; i < queryData.n_cols; ++i)
       if (qrRanks(i, neighbors(0, i)) < expectedRankErrorUB)
         numSuccessRounds[i]++;
 
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeSearch)
   size_t threshold = floor(numRounds *
       (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
   size_t numQueriesFail = 0;
-  for (size_t i = 0; i < queryData.n_cols; i++)
+  for (size_t i = 0; i < queryData.n_cols; ++i)
     if (numSuccessRounds[i] < threshold)
       numQueriesFail++;
 
@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_CASE(DualTreeSearch)
   {
     tsdRann.Search(&queryTree, 1, neighbors, distances);
 
-    for (size_t i = 0; i < queryData.n_cols; i++)
+    for (size_t i = 0; i < queryData.n_cols; ++i)
     {
       const size_t oldIndex = oldFromNewQueries[i];
       if (qrRanks(oldIndex, neighbors(0, i)) < expectedRankErrorUB)
@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(DualTreeSearch)
   size_t threshold = floor(numRounds *
       (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
   size_t numQueriesFail = 0;
-  for (size_t i = 0; i < queryData.n_cols; i++)
+  for (size_t i = 0; i < queryData.n_cols; ++i)
     if (numSuccessRounds[i] < threshold)
       numQueriesFail++;
 
@@ -305,7 +305,7 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
   {
     tssRann.Search(queryData, 1, neighbors, distances);
 
-    for (size_t i = 0; i < queryData.n_cols; i++)
+    for (size_t i = 0; i < queryData.n_cols; ++i)
       if (qrRanks(i, neighbors(0, i)) < expectedRankErrorUB)
         numSuccessRounds[i]++;
 
@@ -318,7 +318,7 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
   size_t threshold = floor(numRounds *
       (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
   size_t numQueriesFail = 0;
-  for (size_t i = 0; i < queryData.n_cols; i++)
+  for (size_t i = 0; i < queryData.n_cols; ++i)
     if (numSuccessRounds[i] < threshold)
       numQueriesFail++;
 
@@ -370,7 +370,7 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   {
     tsdRann.Search(&queryTree, 1, neighbors, distances);
 
-    for (size_t i = 0; i < queryData.n_cols; i++)
+    for (size_t i = 0; i < queryData.n_cols; ++i)
       if (qrRanks(i, neighbors(0, i)) < expectedRankErrorUB)
         numSuccessRounds[i]++;
 
@@ -385,7 +385,7 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   size_t threshold = floor(numRounds *
       (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
   size_t numQueriesFail = 0;
-  for (size_t i = 0; i < queryData.n_cols; i++)
+  for (size_t i = 0; i < queryData.n_cols; ++i)
     if (numSuccessRounds[i] < threshold)
       numQueriesFail++;
 
@@ -437,7 +437,7 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
   {
     tssRann.Search(1, neighbors, distances, 1.0, 0.95, false, false, 5);
 
-    for (size_t i = 0; i < queryData.n_cols; i++)
+    for (size_t i = 0; i < queryData.n_cols; ++i)
       if (qrRanks(i, neighbors(0, i)) < expectedRankErrorUB)
         numSuccessRounds[i]++;
 
@@ -450,7 +450,7 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
   size_t threshold = floor(numRounds *
       (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
   size_t numQueriesFail = 0;
-  for (size_t i = 0; i < queryData.n_cols; i++)
+  for (size_t i = 0; i < queryData.n_cols; ++i)
     if (numSuccessRounds[i] < threshold)
       numQueriesFail++;
 
@@ -502,7 +502,7 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
   {
     tsdRann.Search(1, neighbors, distances, 1.0, 0.95, false, false, 5);
 
-    for (size_t i = 0; i < queryData.n_cols; i++)
+    for (size_t i = 0; i < queryData.n_cols; ++i)
       if (qrRanks(i, neighbors(0, i)) < expectedRankErrorUB)
         numSuccessRounds[i]++;
 
@@ -517,7 +517,7 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
   size_t threshold = floor(numRounds *
       (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
   size_t numQueriesFail = 0;
-  for (size_t i = 0; i < queryData.n_cols; i++)
+  for (size_t i = 0; i < queryData.n_cols; ++i)
     if (numSuccessRounds[i] < threshold)
       numQueriesFail++;
 
@@ -689,7 +689,7 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
       {
         arma::mat queryCopy(queryData);
         models[i].Search(std::move(queryCopy), 1, neighbors, distances);
-        for (size_t k = 0; k < queryData.n_cols; k++)
+        for (size_t k = 0; k < queryData.n_cols; ++k)
           if (qrRanks(k, neighbors(0, k)) < expectedRankErrorUB)
             numSuccessRounds[k]++;
 
@@ -702,7 +702,7 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
       size_t threshold = floor(numRounds *
           (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
       size_t numQueriesFail = 0;
-      for (size_t k = 0; k < queryData.n_cols; k++)
+      for (size_t k = 0; k < queryData.n_cols; ++k)
         if (numSuccessRounds[k] < threshold)
           numQueriesFail++;
 

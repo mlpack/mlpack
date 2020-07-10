@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(SimpleAddLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianAddLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t elements = math::RandInt(2, 1000);
     arma::mat input;
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(SimpleConstantLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianConstantLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t elements = math::RandInt(2, 1000);
     arma::mat input;
@@ -395,7 +395,7 @@ BOOST_AUTO_TEST_CASE(SimpleLinearLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianLinearLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
     const size_t outputElements = math::RandInt(2, 1000);
@@ -575,7 +575,7 @@ BOOST_AUTO_TEST_CASE(SimplePaddingLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianLinearNoBiasLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
     const size_t outputElements = math::RandInt(2, 1000);
@@ -639,7 +639,7 @@ BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianNegativeLogLikelihoodLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     NegativeLogLikelihood<> module;
     const size_t inputElements = math::RandInt(5, 100);
@@ -660,7 +660,7 @@ BOOST_AUTO_TEST_CASE(JacobianNegativeLogLikelihoodLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianLeakyReLULayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
 
@@ -679,7 +679,7 @@ BOOST_AUTO_TEST_CASE(JacobianLeakyReLULayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianFlexibleReLULayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
 
@@ -743,7 +743,7 @@ BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianMultiplyConstantLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
 
@@ -762,7 +762,7 @@ BOOST_AUTO_TEST_CASE(JacobianMultiplyConstantLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianHardTanHLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
 
@@ -2816,7 +2816,7 @@ BOOST_AUTO_TEST_CASE(ReparametrizationLayerIncludeKlTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianReparametrizationLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElementsHalf = math::RandInt(2, 1000);
 

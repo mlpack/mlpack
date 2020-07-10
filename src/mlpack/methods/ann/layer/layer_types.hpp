@@ -49,6 +49,7 @@
 #include <mlpack/methods/ann/layer/hardshrink.hpp>
 #include <mlpack/methods/ann/layer/celu.hpp>
 #include <mlpack/methods/ann/layer/softshrink.hpp>
+#include <mlpack/methods/ann/layer/radial_basis_function.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
@@ -79,6 +80,11 @@ template<typename InputDataType,
          typename OutputDataType,
          typename RegularizerType>
 class Linear;
+
+template<typename InputDataType,
+         typename OutputDataType,
+         typename Activation>
+class RBF;
 
 template<typename InputDataType,
          typename OutputDataType,
@@ -209,7 +215,9 @@ using MoreTypes = boost::variant<
         Sequential<arma::mat, arma::mat, true>*,
         Subview<arma::mat, arma::mat>*,
         VRClassReward<arma::mat, arma::mat>*,
-        VirtualBatchNorm<arma::mat, arma::mat>*
+        VirtualBatchNorm<arma::mat, arma::mat>*,
+        RBF<arma::mat, arma::mat, GaussianFunction>*,
+        BaseLayer<GaussianFunction, arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
@@ -226,8 +234,8 @@ using LayerTypes = boost::variant<
     BaseLayer<LogisticFunction, arma::mat, arma::mat>*,
     BaseLayer<IdentityFunction, arma::mat, arma::mat>*,
     BaseLayer<TanhFunction, arma::mat, arma::mat>*,
-    BaseLayer<RectifierFunction, arma::mat, arma::mat>*,
     BaseLayer<SoftplusFunction, arma::mat, arma::mat>*,
+    BaseLayer<RectifierFunction, arma::mat, arma::mat>*,
     BatchNorm<arma::mat, arma::mat>*,
     BilinearInterpolation<arma::mat, arma::mat>*,
     CELU<arma::mat, arma::mat>*,

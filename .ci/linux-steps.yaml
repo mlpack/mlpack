@@ -43,7 +43,7 @@ steps:
 - script: |
     unset BOOST_ROOT
     mkdir build && cd build
-    export GOPATH=$PWD
+    export GOPATH=$PWD/src/mlpack/bindings/go
     go get -u -t gonum.org/v1/gonum/...
     cmake $(CMakeArgs) ..
   displayName: 'CMake'
