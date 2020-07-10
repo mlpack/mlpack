@@ -189,6 +189,10 @@ class KernelSVM
   {
     ar & BOOST_SERIALIZATION_NVP(parameters);
     ar & BOOST_SERIALIZATION_NVP(fitIntercept);
+    ar & BOOST_SERIALIZATION_NVP(x);
+    ar & BOOST_SERIALIZATION_NVP(y);
+    ar & BOOST_SERIALIZATION_NVP(alpha);
+    ar & BOOST_SERIALIZATION_NVP(b);
   }
 
  private:
@@ -204,7 +208,7 @@ class KernelSVM
   //! Locally saved alpha values.
   arma::vec alpha;
   //! Locally saved KernelType values.
-  const KernelType& kernel;
+  const KernelType kernel;
   //! Locally saved labels of classes to give prediction for non-linear kernel.
   arma::rowvec y;
   //! Locally saved input data of classes for non-linear kernel.
