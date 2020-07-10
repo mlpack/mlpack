@@ -48,6 +48,21 @@ inline void CheckMatrices(const arma::Mat<size_t>& a,
     BOOST_REQUIRE_EQUAL(a[i], b[i]);
 }
 
+template <class fieldType,
+          class = std::enable_if_t<
+              arma::is_Col<typename fieldType::object_type>::value ||
+              arma::is_Mat_only<typename fieldType::object_type>::value>>
+// Check the values of two unsigned matrices.
+inline void CheckFields(const fieldType& a,
+                          const fieldType& b)
+{
+  BOOST_REQUIRE_EQUAL(a.n_rows, b.n_rows);
+  BOOST_REQUIRE_EQUAL(a.n_cols, b.n_cols);
+
+  for (size_t i = 0; i < a.n_elem; ++i)
+    BOOST_REQUIRE_EQUAL(a[i], b[i]);
+}
+
 // Check the values of two cubes.
 inline void CheckMatrices(const arma::cube& a,
                           const arma::cube& b,

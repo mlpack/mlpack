@@ -47,13 +47,15 @@ namespace data {
  * @param shuffleData If true, the sample order is shuffled; otherwise, each
  *       sample is visited in linear order. (Default true.)
  */
-template<typename T, typename U>
+template <typename T, class LabelType,
+          class = std::enable_if_t<arma::is_Row<LabelType>::value ||
+                           arma::is_Mat_only<LabelType>::value>>
 void Split(const arma::Mat<T>& input,
-           const arma::Row<U>& inputLabel,
+           const LabelType& inputLabel,
            arma::Mat<T>& trainData,
            arma::Mat<T>& testData,
-           arma::Row<U>& trainLabel,
-           arma::Row<U>& testLabel,
+           LabelType& trainLabel,
+           LabelType& testLabel,
            const double testRatio,
            const bool shuffleData = true)
 {
@@ -84,12 +86,12 @@ void Split(const arma::Mat<T>& input,
     if (trainSize > 0)
     {
       trainData = input.cols(0, trainSize - 1);
-      trainLabel = inputLabel.subvec(0, trainSize - 1);
+      trainLabel = inputLabel.cols(0, trainSize - 1);
     }
     if (trainSize < input.n_cols)
     {
       testData = input.cols(trainSize , input.n_cols - 1);
-      testLabel = inputLabel.subvec(trainSize , input.n_cols - 1);
+      testLabel = inputLabel.cols(trainSize , input.n_cols - 1);
     }
   }
 }
@@ -171,17 +173,19 @@ void Split(const arma::Mat<T>& input,
  * @return std::tuple containing trainData (arma::Mat<T>), testData
  *      (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>).
  */
-template<typename T, typename U>
-std::tuple<arma::Mat<T>, arma::Mat<T>, arma::Row<U>, arma::Row<U>>
+template <typename T, class LabelType,
+          class = std::enable_if_t<arma::is_Row<LabelType>::value ||
+                           arma::is_Mat_only<LabelType>::value>>
+std::tuple<arma::Mat<T>, arma::Mat<T>, LabelType, LabelType>
 Split(const arma::Mat<T>& input,
-      const arma::Row<U>& inputLabel,
+      const LabelType& inputLabel,
       const double testRatio,
       const bool shuffleData = true)
 {
   arma::Mat<T> trainData;
   arma::Mat<T> testData;
-  arma::Row<U> trainLabel;
-  arma::Row<U> testLabel;
+  LabelType trainLabel;
+  LabelType testLabel;
 
   Split(input, inputLabel, trainData, testData, trainLabel, testLabel,
       testRatio, shuffleData);
@@ -224,6 +228,122 @@ Split(const arma::Mat<T>& input,
                          std::move(testData));
 }
 
+template <class fieldType,
+          class = std::enable_if_t<
+              arma::is_Col<typename fieldType::object_type>::value ||
+              arma::is_Mat_only<typename fieldType::object_type>::value>>
+void Split(fieldType& input, 
+           fieldType& inputLabel,
+           fieldType& trainData,
+           fieldType& trainLabels,
+           fieldType& testData, 
+           fieldType& testLabels,
+           const double testRatio, 
+           const bool shuffleData = true) 
+{
+  const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
+  const size_t trainSize = input.n_cols - testSize;
+
+  arma::uvec order = arma::linspace<arma::uvec>(0, input.n_cols - 1,
+      input.n_cols);
+  if (shuffleData)
+    order = arma::shuffle(order);
+
+  if (trainSize > 0)
+  {
+    trainLabels.set_size(1, trainSize);
+
+    for (size_t i = 0; i < trainSize; i++)
+       trainData[i] = input(0, order(i));
+
+    // Field type has fixed size so we can't use span and assignment
+    // operator.
+    for (size_t i = 0; i < trainSize; i++)
+      trainLabels(0, i) = inputLabel[i];
+  }
+
+  if (testSize <= input.n_cols)
+  {
+    for (size_t i = trainSize; i < input.n_cols - 1; i++)
+       testData[i - trainSize] = input(0,order(i));
+    
+    testLabels.set_size(1, testSize);
+    for (size_t i = trainSize; i < input.n_cols; i++)
+      testLabels(0, i - trainSize) = inputLabel[i];
+  }
+}
+
+template <class fieldType,
+          class = std::enable_if_t<
+              arma::is_Col<typename fieldType::object_type>::value ||
+              arma::is_Mat_only<typename fieldType::object_type>::value>>
+void Split(fieldType& input, 
+           fieldType& trainData,
+           fieldType& testData, 
+           const double testRatio, 
+           const bool shuffleData = true) 
+{
+  const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
+  const size_t trainSize = input.n_cols - testSize;
+
+  arma::uvec order = arma::linspace<arma::uvec>(0, input.n_cols - 1,
+      input.n_cols);
+  if (shuffleData)
+    order = arma::shuffle(order);
+
+  if (trainSize > 0)
+  {
+    for (size_t i = 0; i < trainSize; i++)
+       trainData[i] = input(0, order(i));
+  }
+
+  if (testSize <= input.n_cols)
+  {
+    for (size_t i = trainSize; i < input.n_cols - 1; i++)
+       testData[i - trainSize] = input(0,order(i));
+  }
+}
+
+template <class fieldType,
+          class = std::enable_if_t<
+              arma::is_Col<typename fieldType::object_type>::value ||
+              arma::is_Mat_only<typename fieldType::object_type>::value>>
+std::tuple<fieldType, fieldType, fieldType, fieldType>
+Split(fieldType& input, 
+      fieldType& inputLabel,
+      const double testRatio,
+      const bool shuffleData = true)
+{
+  fieldType trainData;
+  fieldType testData;
+  fieldType trainLabel;
+  fieldType testLabel;
+
+  Split(input, inputLabel, trainData, testData, trainLabel, testLabel,
+    testRatio, shuffleData);
+
+  return std::make_tuple(std::move(trainData),
+                         std::move(testData),
+                         std::move(trainLabel),
+                         std::move(testLabel));
+}
+
+template <class fieldType,
+          class = std::enable_if_t<
+              arma::is_Col<typename fieldType::object_type>::value ||
+              arma::is_Mat_only<typename fieldType::object_type>::value>>
+std::tuple<fieldType, fieldType>
+Split(const fieldType& input,
+      const double testRatio,
+      const bool shuffleData = true)
+{
+  fieldType trainData;
+  fieldType testData;
+  Split(input, trainData, testData, testRatio, shuffleData);
+
+  return std::make_tuple(std::move(trainData),
+                         std::move(testData));
+}
 } // namespace data
 } // namespace mlpack
 

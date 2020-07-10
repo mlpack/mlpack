@@ -123,6 +123,29 @@ BOOST_AUTO_TEST_CASE(SplitDataResultMat)
   CheckMatrices(input, concat);
 }
 
+BOOST_AUTO_TEST_CASE(SplitDataResultField)
+{
+  field<mat> input(1, 2);
+
+  mat matA(2, 10);
+  mat matB(2, 10);
+
+  size_t count = 0; // Counter for unique sequential values.
+  matA.imbue([&count]() { return ++count; });
+  matB.imbue([&count]() { return ++count; });
+
+  input(0, 0) = matA;
+  input(0, 1) = matB;
+
+  const auto value = Split(input, 0.5, false);
+  BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 1); // Train data.
+  BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, 1); // Test data.
+
+  field<mat> concat = arma::join_rows(std::get<0>(value)(0), std::get<1>(value)(0));
+  // Order matters here.
+  CheckFields(input, concat);
+}
+
 BOOST_AUTO_TEST_CASE(ZeroRatioSplitData)
 {
   mat input(2, 10);
