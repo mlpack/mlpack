@@ -416,58 +416,58 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
   delete binaryTree;
 }
 
-// BOOST_AUTO_TEST_CASE(CoverTreeOverwriteTest)
-// {
-//   arma::mat data;
-//   data.randu(3, 100);
-//   typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
-//       TreeType;
-//   TreeType tree(data);
+BOOST_AUTO_TEST_CASE(CoverTreeOverwriteTest)
+{
+  arma::mat data;
+  data.randu(3, 100);
+  typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
+      TreeType;
+  TreeType tree(data);
 
-//   arma::mat otherData;
-//   otherData.randu(5, 50);
-//   TreeType xmlTree(otherData);
-//   TreeType textTree(xmlTree);
-//   TreeType binaryTree(xmlTree);
+  arma::mat otherData;
+  otherData.randu(5, 50);
+  TreeType xmlTree(otherData);
+  TreeType textTree(xmlTree);
+  TreeType binaryTree(xmlTree);
 
-//   SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
+  SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
 
-//   CheckTrees(tree, xmlTree, textTree, binaryTree);
+  CheckTrees(tree, xmlTree, textTree, binaryTree);
 
-//   // Also check a few other things.
-//   std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
-//   stack.push(&tree);
-//   xmlStack.push(&xmlTree);
-//   textStack.push(&textTree);
-//   binaryStack.push(&binaryTree);
-//   while (!stack.empty())
-//   {
-//     TreeType* node = stack.top();
-//     TreeType* xmlNode = xmlStack.top();
-//     TreeType* textNode = textStack.top();
-//     TreeType* binaryNode = binaryStack.top();
-//     stack.pop();
-//     xmlStack.pop();
-//     textStack.pop();
-//     binaryStack.pop();
+  // Also check a few other things.
+  std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
+  stack.push(&tree);
+  xmlStack.push(&xmlTree);
+  textStack.push(&textTree);
+  binaryStack.push(&binaryTree);
+  while (!stack.empty())
+  {
+    TreeType* node = stack.top();
+    TreeType* xmlNode = xmlStack.top();
+    TreeType* textNode = textStack.top();
+    TreeType* binaryNode = binaryStack.top();
+    stack.pop();
+    xmlStack.pop();
+    textStack.pop();
+    binaryStack.pop();
 
-//     BOOST_REQUIRE_EQUAL(node->Scale(), xmlNode->Scale());
-//     BOOST_REQUIRE_EQUAL(node->Scale(), textNode->Scale());
-//     BOOST_REQUIRE_EQUAL(node->Scale(), binaryNode->Scale());
+    BOOST_REQUIRE_EQUAL(node->Scale(), xmlNode->Scale());
+    BOOST_REQUIRE_EQUAL(node->Scale(), textNode->Scale());
+    BOOST_REQUIRE_EQUAL(node->Scale(), binaryNode->Scale());
 
-//     BOOST_REQUIRE_CLOSE(node->Base(), xmlNode->Base(), 1e-5);
-//     BOOST_REQUIRE_CLOSE(node->Base(), textNode->Base(), 1e-5);
-//     BOOST_REQUIRE_CLOSE(node->Base(), binaryNode->Base(), 1e-5);
+    BOOST_REQUIRE_CLOSE(node->Base(), xmlNode->Base(), 1e-5);
+    BOOST_REQUIRE_CLOSE(node->Base(), textNode->Base(), 1e-5);
+    BOOST_REQUIRE_CLOSE(node->Base(), binaryNode->Base(), 1e-5);
 
-//     for (size_t i = 0; i < node->NumChildren(); ++i)
-//     {
-//       stack.push(&node->Child(i));
-//       xmlStack.push(&xmlNode->Child(i));
-//       textStack.push(&textNode->Child(i));
-//       binaryStack.push(&binaryNode->Child(i));
-//     }
-//   }
-// }
+    for (size_t i = 0; i < node->NumChildren(); ++i)
+    {
+      stack.push(&node->Child(i));
+      xmlStack.push(&xmlNode->Child(i));
+      textStack.push(&textNode->Child(i));
+      binaryStack.push(&binaryNode->Child(i));
+    }
+  }
+}
 
 // BOOST_AUTO_TEST_CASE(RectangleTreeTest)
 // {
@@ -577,58 +577,58 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
 //   }
 // }
 
-// BOOST_AUTO_TEST_CASE(PerceptronTest)
-// {
-//   // Create a perceptron.  Train it randomly.  Then check that it hasn't
-//   // changed.
-//   arma::mat data;
-//   data.randu(3, 100);
-//   arma::Row<size_t> labels(100);
-//   for (size_t i = 0; i < labels.n_elem; ++i)
-//   {
-//     if (data(1, i) > 0.5)
-//       labels[i] = 0;
-//     else
-//       labels[i] = 1;
-//   }
+BOOST_AUTO_TEST_CASE(PerceptronTest)
+{
+  // Create a perceptron.  Train it randomly.  Then check that it hasn't
+  // changed.
+  arma::mat data;
+  data.randu(3, 100);
+  arma::Row<size_t> labels(100);
+  for (size_t i = 0; i < labels.n_elem; ++i)
+  {
+    if (data(1, i) > 0.5)
+      labels[i] = 0;
+    else
+      labels[i] = 1;
+  }
 
-//   Perceptron<> p(data, labels, 2, 15);
+  Perceptron<> p(data, labels, 2, 15);
 
-//   Perceptron<> pXml(2, 3), pText(2, 3), pBinary(2, 3);
-//   SerializeObjectAll(p, pXml, pText, pBinary);
+  Perceptron<> pXml(2, 3), pText(2, 3), pBinary(2, 3);
+  SerializeObjectAll(p, pXml, pText, pBinary);
 
-//   // Now check that things are the same.
-//   CheckMatrices(p.Weights(), pXml.Weights(), pText.Weights(),
-//       pBinary.Weights());
-//   CheckMatrices(p.Biases(), pXml.Biases(), pText.Biases(), pBinary.Biases());
+  // Now check that things are the same.
+  CheckMatrices(p.Weights(), pXml.Weights(), pText.Weights(),
+      pBinary.Weights());
+  CheckMatrices(p.Biases(), pXml.Biases(), pText.Biases(), pBinary.Biases());
 
-//   BOOST_REQUIRE_EQUAL(p.MaxIterations(), pXml.MaxIterations());
-//   BOOST_REQUIRE_EQUAL(p.MaxIterations(), pText.MaxIterations());
-//   BOOST_REQUIRE_EQUAL(p.MaxIterations(), pBinary.MaxIterations());
-// }
+  BOOST_REQUIRE_EQUAL(p.MaxIterations(), pXml.MaxIterations());
+  BOOST_REQUIRE_EQUAL(p.MaxIterations(), pText.MaxIterations());
+  BOOST_REQUIRE_EQUAL(p.MaxIterations(), pBinary.MaxIterations());
+}
 
-// BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
-// {
-//   arma::mat data;
-//   data.randu(3, 100);
-//   arma::Row<size_t> responses;
-//   responses.randu(100);
+BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
+{
+  arma::mat data;
+  data.randu(3, 100);
+  arma::Row<size_t> responses;
+  responses.randu(100);
 
-//   LogisticRegression<> lr(data, responses, 0.5);
+  LogisticRegression<> lr(data, responses, 0.5);
 
-//   LogisticRegression<> lrXml(data, responses + 3, 0.3);
-//   LogisticRegression<> lrText(data, responses + 1);
-//   LogisticRegression<> lrBinary(3, 0.0);
+  LogisticRegression<> lrXml(data, responses + 3, 0.3);
+  LogisticRegression<> lrText(data, responses + 1);
+  LogisticRegression<> lrBinary(3, 0.0);
 
-//   SerializeObjectAll(lr, lrXml, lrText, lrBinary);
+  SerializeObjectAll(lr, lrXml, lrText, lrBinary);
 
-//   CheckMatrices(lr.Parameters(), lrXml.Parameters(), lrText.Parameters(),
-//       lrBinary.Parameters());
+  CheckMatrices(lr.Parameters(), lrXml.Parameters(), lrText.Parameters(),
+      lrBinary.Parameters());
 
-//   BOOST_REQUIRE_CLOSE(lr.Lambda(), lrXml.Lambda(), 1e-5);
-//   BOOST_REQUIRE_CLOSE(lr.Lambda(), lrText.Lambda(), 1e-5);
-//   BOOST_REQUIRE_CLOSE(lr.Lambda(), lrBinary.Lambda(), 1e-5);
-// }
+  BOOST_REQUIRE_CLOSE(lr.Lambda(), lrXml.Lambda(), 1e-5);
+  BOOST_REQUIRE_CLOSE(lr.Lambda(), lrText.Lambda(), 1e-5);
+  BOOST_REQUIRE_CLOSE(lr.Lambda(), lrBinary.Lambda(), 1e-5);
+}
 
 // BOOST_AUTO_TEST_CASE(KNNTest)
 // {
@@ -656,26 +656,26 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
 //   CheckMatrices(neighbors, xmlNeighbors, textNeighbors, binaryNeighbors);
 // }
 
-// BOOST_AUTO_TEST_CASE(SoftmaxRegressionTest)
-// {
-//   using regression::SoftmaxRegression;
+BOOST_AUTO_TEST_CASE(SoftmaxRegressionTest)
+{
+  using regression::SoftmaxRegression;
 
-//   arma::mat dataset = arma::randu<arma::mat>(5, 1000);
-//   arma::Row<size_t> labels(1000);
-//   for (size_t i = 0; i < 500; ++i)
-//     labels[i] = 0;
-//   for (size_t i = 500; i < 1000; ++i)
-//     labels[i] = 1;
-//   SoftmaxRegression sr(dataset, labels, 2);
-//   SoftmaxRegression srXml(dataset.n_rows, 2);
-//   SoftmaxRegression srText(dataset.n_rows, 2);
-//   SoftmaxRegression srBinary(dataset.n_rows, 2);
+  arma::mat dataset = arma::randu<arma::mat>(5, 1000);
+  arma::Row<size_t> labels(1000);
+  for (size_t i = 0; i < 500; ++i)
+    labels[i] = 0;
+  for (size_t i = 500; i < 1000; ++i)
+    labels[i] = 1;
+  SoftmaxRegression sr(dataset, labels, 2);
+  SoftmaxRegression srXml(dataset.n_rows, 2);
+  SoftmaxRegression srText(dataset.n_rows, 2);
+  SoftmaxRegression srBinary(dataset.n_rows, 2);
 
-//   SerializeObjectAll(sr, srXml, srText, srBinary);
+  SerializeObjectAll(sr, srXml, srText, srBinary);
 
-//   CheckMatrices(sr.Parameters(), srXml.Parameters(), srText.Parameters(),
-//       srBinary.Parameters());
-// }
+  CheckMatrices(sr.Parameters(), srXml.Parameters(), srText.Parameters(),
+      srBinary.Parameters());
+}
 
 // BOOST_AUTO_TEST_CASE(DETTest)
 // {
