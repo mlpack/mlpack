@@ -181,29 +181,29 @@ BOOST_AUTO_TEST_CASE(BallBoundTest)
   CheckMatrices(b.Center(), xmlB.Center(), textB.Center(), binaryB.Center());
 }
 
-// BOOST_AUTO_TEST_CASE(MahalanobisBallBoundTest)
-// {
-//   BallBound<MahalanobisDistance<>, arma::vec> b(100);
-//   b.Center().randu();
-//   b.Radius() = 14.0;
-//   b.Metric().Covariance().randu(100, 100);
+BOOST_AUTO_TEST_CASE(MahalanobisBallBoundTest)
+{
+  BallBound<MahalanobisDistance<>, arma::vec> b(100);
+  b.Center().randu();
+  b.Radius() = 14.0;
+  b.Metric().Covariance().randu(100, 100);
 
-//   BallBound<MahalanobisDistance<>, arma::vec> xmlB, textB, binaryB;
+  BallBound<MahalanobisDistance<>, arma::vec> xmlB, textB, binaryB;
 
-//   SerializeObjectAll(b, xmlB, textB, binaryB);
+  SerializeObjectAll(b, xmlB, textB, binaryB);
 
-//   // Check the radius.
-//   BOOST_REQUIRE_CLOSE(b.Radius(), xmlB.Radius(), 1e-8);
-//   BOOST_REQUIRE_CLOSE(b.Radius(), textB.Radius(), 1e-8);
-//   BOOST_REQUIRE_CLOSE(b.Radius(), binaryB.Radius(), 1e-8);
+  // Check the radius.
+  BOOST_REQUIRE_CLOSE(b.Radius(), xmlB.Radius(), 1e-8);
+  BOOST_REQUIRE_CLOSE(b.Radius(), textB.Radius(), 1e-8);
+  BOOST_REQUIRE_CLOSE(b.Radius(), binaryB.Radius(), 1e-8);
 
-//   // Check the vectors.
-//   CheckMatrices(b.Center(), xmlB.Center(), textB.Center(), binaryB.Center());
-//   CheckMatrices(b.Metric().Covariance(),
-//                 xmlB.Metric().Covariance(),
-//                 textB.Metric().Covariance(),
-//                 binaryB.Metric().Covariance());
-// }
+  // Check the vectors.
+  CheckMatrices(b.Center(), xmlB.Center(), textB.Center(), binaryB.Center());
+  CheckMatrices(b.Metric().Covariance(),
+                xmlB.Metric().Covariance(),
+                textB.Metric().Covariance(),
+                binaryB.Metric().Covariance());
+}
 
 // BOOST_AUTO_TEST_CASE(HRectBoundTest)
 // {
