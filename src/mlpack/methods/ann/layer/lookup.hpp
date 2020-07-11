@@ -39,10 +39,10 @@ class Lookup
    * Create the Lookup object using the specified number of input and output
    * units.
    *
-   * @param inSize The number of input units.
-   * @param outSize The number of output units.
+   * @param vocabSize The number of input units.
+   * @param embeddingSize The number of output units.
    */
-  Lookup(const size_t inSize = 0, const size_t outSize = 0);
+  Lookup(const size_t vocabSize = 0, const size_t embeddingSize = 0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -101,10 +101,10 @@ class Lookup
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the number of input units.
-  size_t InSize() const { return inSize; }
+  size_t VocabSize() const { return vocabSize; }
 
   //! Get the number of output units.
-  size_t OutSize() const { return outSize; }
+  size_t EmbeddingSize() const { return embeddingSize; }
 
   /**
    * Serialize the layer
@@ -114,10 +114,10 @@ class Lookup
 
  private:
   //! Locally-stored number of input units.
-  size_t inSize;
+  size_t vocabSize;
 
   //! Locally-stored number of output units.
-  size_t outSize;
+  size_t embeddingSize;
 
   //! Locally-stored weight object.
   OutputDataType weights;

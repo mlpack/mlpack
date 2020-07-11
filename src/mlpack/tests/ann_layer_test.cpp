@@ -1650,48 +1650,42 @@ BOOST_AUTO_TEST_CASE(GradientConcatenateLayerTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
 {
-  const size_t inSize = 4;
-  const size_t outSize = 2;
+  const size_t vocabSize = 10;
+  const size_t embeddingSize = 2;
   const size_t seqLength = 3;
+  const size_t batchSize = 4;
 
-  arma::mat output, input, delta, gradient;
+  arma::mat output, input, gy, g, gradient;
 
-  Lookup<> module(inSize, outSize);
+  Lookup<> module(vocabSize, embeddingSize);
   module.Parameters().randu();
 
   // Test the Forward function.
-  input = arma::zeros(inSize * seqLength, 1);
-  for (size_t i = 0; i < input.n_rows; ++i)
+  input = arma::zeros(seqLength, batchSize);
+  for (size_t i = 0; i < input.n_elem; ++i)
   {
-    int token = math::RandInt(1, inSize);
+    int token = math::RandInt(1, vocabSize);
     input(i) = token;
   }
 
   module.Forward(input, output);
-  output.print("Forward:");
+  for (size_t i = 0; i < batchSize; ++i)
+  {
+    // The Lookup module uses index - 1 for the cols.
+    const double outputSum = arma::accu(module.Parameters().cols(
+      arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
 
-  // // The Lookup module uses index - 1 for the cols.
-  // const double outputSum = arma::accu(module.Parameters().cols());
+    BOOST_REQUIRE_CLOSE(outputSum, arma::accu(output.col(i)), 1e-3);
+  }
 
-  // BOOST_REQUIRE_CLOSE(outputSum, arma::accu(output), 1e-3);
+  // Test the Backward function.
+  gy = 0.3 * arma::randu(embeddingSize * seqLength, batchSize);
+  module.Backward(input, gy, g);
+  BOOST_REQUIRE_EQUAL(arma::accu(gy), arma::accu(g));
 
-  // // Test the Backward function.
-  // module.Backward(input, input, delta);
-  // BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(input));
-
-  // // Test the Gradient function.
-  // arma::mat error = arma::ones(2, 5);
-  // error = error.t();
-  // error.col(1) *= 0.5;
-
-  // module.Gradient(input, error, gradient);
-
-  // // The Lookup module uses index - 1 for the cols.
-  // const double gradientSum = arma::accu(gradient.col(0)) +
-  //     arma::accu(gradient.col(2));
-
-  // BOOST_REQUIRE_CLOSE(gradientSum, arma::accu(error), 1e-3);
-  // BOOST_REQUIRE_CLOSE(arma::accu(gradient), arma::accu(error), 1e-3);
+  // Test the Gradient function.
+  arma::mat error = 0.01 * arma::randu(embeddingSize * seqLength, batchSize);
+  module.Gradient(input, error, gradient);
 }
 
 /**
@@ -1701,11 +1695,11 @@ BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
 BOOST_AUTO_TEST_CASE(LookupLayerParametersTest)
 {
   // Parameter order : inSize, outSize.
-  Lookup<> layer(5, 7);
+  Lookup<> layer(100, 8);
 
   // Make sure we can get the parameters successfully.
-  BOOST_REQUIRE_EQUAL(layer.InSize(), 5);
-  BOOST_REQUIRE_EQUAL(layer.OutSize(), 7);
+  BOOST_REQUIRE_EQUAL(layer.VocabSize(), 100);
+  BOOST_REQUIRE_EQUAL(layer.EmbeddingSize(), 8);
 }
 
 /**

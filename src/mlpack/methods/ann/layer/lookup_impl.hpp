@@ -21,12 +21,12 @@ namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputDataType, typename OutputDataType>
 Lookup<InputDataType, OutputDataType>::Lookup(
-    const size_t inSize,
-    const size_t outSize) :
-    inSize(inSize),
-    outSize(outSize)
+    const size_t vocabSize,
+    const size_t embeddingSize) :
+    vocabSize(vocabSize),
+    embeddingSize(embeddingSize)
 {
-  weights.set_size(outSize, inSize);
+  weights.set_size(embeddingSize, vocabSize);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -34,20 +34,15 @@ template<typename eT>
 void Lookup<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
-  Log::Assert((size_t) input.n_rows % inSize == 0);
-
-  const size_t seqLength = input.n_rows / inSize;
+  const size_t seqLength = input.n_rows;
   const size_t batchSize = input.n_cols;
 
-  arma::Cube<eT> inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(), inSize,
-      inSize, seqLength, batchSize, true, false);
-
-  output.set_size(outSize * seqLength, batchSize);
+  output.set_size(embeddingSize * seqLength, batchSize);
 
   for (size_t i = 0; i < batchSize; ++i)
   {
     output.col(i) = arma::vectorise(weights.cols(
-        arma::conv_to<arma::uvec>::from(inputTemp.slice(i)) - 1));
+        arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
   }
 }
 
@@ -68,25 +63,20 @@ void Lookup<InputDataType, OutputDataType>::Gradient(
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
 {
-  Log::Assert((size_t) input.n_rows % inSize == 0);
-
-  const size_t seqLength = input.n_rows / inSize;
+  const size_t seqLength = input.n_rows;
   const size_t batchSize = input.n_cols;
 
-  arma::Cube<eT> inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(), inSize,
-      seqLength, batchSize, true, false);
-  arma::Cube<eT> errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(), outSize,
-      seqLength, batchSize, true, false);
+  arma::Cube<eT> errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(),
+      embeddingSize, seqLength, batchSize, true, false);
 
-  arma::Cube<eT> dW(weights.n_rows, weights.n_cols, batchSize);
+  gradient.set_size(arma::size(weights));
+  gradient.zeros();
 
   for (size_t i = 0; i < batchSize; ++i)
   {
-  dW.slice(i).cols(arma::conv_to<arma::uvec>::from(inputTemp.slice(i)) - 1)
-      = errorTemp.slice(i);
+    gradient.cols(arma::conv_to<arma::uvec>::from(input.col(i)) - 1)
+        += errorTemp.slice(i);
   }
-
-  gradient = arma::mean(dW, 2);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -94,13 +84,13 @@ template<typename Archive>
 void Lookup<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar & BOOST_SERIALIZATION_NVP(vocabSize);
+  ar & BOOST_SERIALIZATION_NVP(embeddingSize);
 
   // This is inefficient, but we have to allocate this memory so that
   // WeightSetVisitor gets the right size.
   if (Archive::is_loading::value)
-    weights.set_size(outSize, inSize);
+    weights.set_size(embeddingSize, vocabSize);
 }
 
 } // namespace ann
