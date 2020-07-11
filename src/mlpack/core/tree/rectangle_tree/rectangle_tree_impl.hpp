@@ -1424,7 +1424,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   ar & CEREAL_NVP(bound);
   ar & CEREAL_NVP(stat);
   ar & CEREAL_NVP(parentDistance);
-  ar & CEREAL_NVP(dataset);
+  ar & CEREAL_POINTER(dataset);
   ar & CEREAL_NVP(ownsDataset);
 
   ar & CEREAL_NVP(points);
@@ -1436,7 +1436,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   {
     std::ostringstream oss;
     oss << "children" << i;
-    ar & cereal::make_nvp(oss.str().c_str(), children[i]);
+    ar & CEREAL_POINTER(children[i]);
 
     if (Archive::is_loading::value)
       children[i]->parent = this;

@@ -524,10 +524,10 @@ void DiscreteHilbertValue<TreeElemType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & CEREAL_NVP(localHilbertValues);
+  ar & CEREAL_POINTER(localHilbertValues);
   ar & CEREAL_NVP(ownsLocalHilbertValues);
   ar & CEREAL_NVP(numValues);
-  ar & CEREAL_NVP(valueToInsert);
+  ar & CEREAL_POINTER(valueToInsert);
   ar & CEREAL_NVP(ownsValueToInsert);
 }
 

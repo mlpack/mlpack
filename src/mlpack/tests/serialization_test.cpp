@@ -469,113 +469,113 @@ BOOST_AUTO_TEST_CASE(CoverTreeOverwriteTest)
   }
 }
 
-// BOOST_AUTO_TEST_CASE(RectangleTreeTest)
-// {
-//   arma::mat data;
-//   data.randu(3, 1000);
-//   typedef RTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
-//   TreeType tree(data);
+BOOST_AUTO_TEST_CASE(RectangleTreeTest)
+{
+  arma::mat data;
+  data.randu(3, 1000);
+  typedef RTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  TreeType tree(data);
 
-//   TreeType* xmlTree;
-//   TreeType* textTree;
-//   TreeType* binaryTree;
+  TreeType* xmlTree;
+  TreeType* textTree;
+  TreeType* binaryTree;
 
-//   SerializePointerObjectAll(&tree, xmlTree, textTree, binaryTree);
+  SerializePointerObjectAll(&tree, xmlTree, textTree, binaryTree);
 
-//   CheckTrees(tree, *xmlTree, *textTree, *binaryTree);
+  CheckTrees(tree, *xmlTree, *textTree, *binaryTree);
 
-//   // Check a few other things too.
-//   std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
-//   stack.push(&tree);
-//   xmlStack.push(xmlTree);
-//   textStack.push(textTree);
-//   binaryStack.push(binaryTree);
-//   while (!stack.empty())
-//   {
-//     // Check more things...
-//     TreeType* node = stack.top();
-//     TreeType* xmlNode = xmlStack.top();
-//     TreeType* textNode = textStack.top();
-//     TreeType* binaryNode = binaryStack.top();
-//     stack.pop();
-//     xmlStack.pop();
-//     textStack.pop();
-//     binaryStack.pop();
+  // Check a few other things too.
+  std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
+  stack.push(&tree);
+  xmlStack.push(xmlTree);
+  textStack.push(textTree);
+  binaryStack.push(binaryTree);
+  while (!stack.empty())
+  {
+    // Check more things...
+    TreeType* node = stack.top();
+    TreeType* xmlNode = xmlStack.top();
+    TreeType* textNode = textStack.top();
+    TreeType* binaryNode = binaryStack.top();
+    stack.pop();
+    xmlStack.pop();
+    textStack.pop();
+    binaryStack.pop();
 
-//     BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), xmlNode->MaxLeafSize());
-//     BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), textNode->MaxLeafSize());
-//     BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), binaryNode->MaxLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), xmlNode->MaxLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), textNode->MaxLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), binaryNode->MaxLeafSize());
 
-//     BOOST_REQUIRE_EQUAL(node->MinLeafSize(), xmlNode->MinLeafSize());
-//     BOOST_REQUIRE_EQUAL(node->MinLeafSize(), textNode->MinLeafSize());
-//     BOOST_REQUIRE_EQUAL(node->MinLeafSize(), binaryNode->MinLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), xmlNode->MinLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), textNode->MinLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), binaryNode->MinLeafSize());
 
-//     BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), xmlNode->MaxNumChildren());
-//     BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), textNode->MaxNumChildren());
-//     BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), binaryNode->MaxNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), xmlNode->MaxNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), textNode->MaxNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), binaryNode->MaxNumChildren());
 
-//     BOOST_REQUIRE_EQUAL(node->MinNumChildren(), xmlNode->MinNumChildren());
-//     BOOST_REQUIRE_EQUAL(node->MinNumChildren(), textNode->MinNumChildren());
-//     BOOST_REQUIRE_EQUAL(node->MinNumChildren(), binaryNode->MinNumChildren());
-//   }
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), xmlNode->MinNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), textNode->MinNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), binaryNode->MinNumChildren());
+  }
 
-//   delete xmlTree;
-//   delete textTree;
-//   delete binaryTree;
-// }
+  delete xmlTree;
+  delete textTree;
+  delete binaryTree;
+}
 
-// BOOST_AUTO_TEST_CASE(RectangleTreeOverwriteTest)
-// {
-//   arma::mat data;
-//   data.randu(3, 1000);
-//   typedef RTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
-//   TreeType tree(data);
+BOOST_AUTO_TEST_CASE(RectangleTreeOverwriteTest)
+{
+  arma::mat data;
+  data.randu(3, 1000);
+  typedef RTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  TreeType tree(data);
 
-//   arma::mat otherData;
-//   otherData.randu(5, 50);
-//   TreeType xmlTree(otherData);
-//   TreeType textTree(otherData);
-//   TreeType binaryTree(textTree);
+  arma::mat otherData;
+  otherData.randu(5, 50);
+  TreeType xmlTree(otherData);
+  TreeType textTree(otherData);
+  TreeType binaryTree(textTree);
 
-//   SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
+  SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
 
-//   CheckTrees(tree, xmlTree, textTree, binaryTree);
+  CheckTrees(tree, xmlTree, textTree, binaryTree);
 
-//   // Check a few other things too.
-//   std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
-//   stack.push(&tree);
-//   xmlStack.push(&xmlTree);
-//   textStack.push(&textTree);
-//   binaryStack.push(&binaryTree);
-//   while (!stack.empty())
-//   {
-//     // Check more things...
-//     TreeType* node = stack.top();
-//     TreeType* xmlNode = xmlStack.top();
-//     TreeType* textNode = textStack.top();
-//     TreeType* binaryNode = binaryStack.top();
-//     stack.pop();
-//     xmlStack.pop();
-//     textStack.pop();
-//     binaryStack.pop();
+  // Check a few other things too.
+  std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
+  stack.push(&tree);
+  xmlStack.push(&xmlTree);
+  textStack.push(&textTree);
+  binaryStack.push(&binaryTree);
+  while (!stack.empty())
+  {
+    // Check more things...
+    TreeType* node = stack.top();
+    TreeType* xmlNode = xmlStack.top();
+    TreeType* textNode = textStack.top();
+    TreeType* binaryNode = binaryStack.top();
+    stack.pop();
+    xmlStack.pop();
+    textStack.pop();
+    binaryStack.pop();
 
-//     BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), xmlNode->MaxLeafSize());
-//     BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), textNode->MaxLeafSize());
-//     BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), binaryNode->MaxLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), xmlNode->MaxLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), textNode->MaxLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), binaryNode->MaxLeafSize());
 
-//     BOOST_REQUIRE_EQUAL(node->MinLeafSize(), xmlNode->MinLeafSize());
-//     BOOST_REQUIRE_EQUAL(node->MinLeafSize(), textNode->MinLeafSize());
-//     BOOST_REQUIRE_EQUAL(node->MinLeafSize(), binaryNode->MinLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), xmlNode->MinLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), textNode->MinLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), binaryNode->MinLeafSize());
 
-//     BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), xmlNode->MaxNumChildren());
-//     BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), textNode->MaxNumChildren());
-//     BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), binaryNode->MaxNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), xmlNode->MaxNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), textNode->MaxNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), binaryNode->MaxNumChildren());
 
-//     BOOST_REQUIRE_EQUAL(node->MinNumChildren(), xmlNode->MinNumChildren());
-//     BOOST_REQUIRE_EQUAL(node->MinNumChildren(), textNode->MinNumChildren());
-//     BOOST_REQUIRE_EQUAL(node->MinNumChildren(), binaryNode->MinNumChildren());
-//   }
-// }
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), xmlNode->MinNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), textNode->MinNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), binaryNode->MinNumChildren());
+  }
+}
 
 BOOST_AUTO_TEST_CASE(PerceptronTest)
 {
