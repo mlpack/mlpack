@@ -492,6 +492,8 @@ BOOST_AUTO_TEST_CASE(FastMKSOffsetTest)
 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["offset"].wasPassed = false;
+  CLI::GetParam<FastMKSModel*>("input_model") = NULL;
+  CLI::GetParam<FastMKSModel*>("output_model") = NULL;
 
   SetInputParam("reference", referenceData);
   SetInputParam("offset", 4.0);
@@ -510,6 +512,8 @@ BOOST_AUTO_TEST_CASE(FastMKSOffsetTest)
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["kernel"].wasPassed = false;
   CLI::GetSingleton().Parameters()["offset"].wasPassed = false;
+  CLI::GetParam<FastMKSModel*>("input_model") = NULL;
+  CLI::GetParam<FastMKSModel*>("output_model") = NULL;
 
   SetInputParam("reference", inputData);
   SetInputParam("kernel", (std::string)"hyptan");
@@ -524,6 +528,8 @@ BOOST_AUTO_TEST_CASE(FastMKSOffsetTest)
 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["offset"].wasPassed = false;
+  CLI::GetParam<FastMKSModel*>("input_model") = NULL;
+  CLI::GetParam<FastMKSModel*>("output_model") = NULL;
 
   SetInputParam("reference", inputData);
   SetInputParam("offset", 4.0);

@@ -151,6 +151,18 @@ static void mlpackMain()
   RequireParamValue<int>("leaf_size", [](int x) { return x > 0; }, true,
       "leaf size must be greater than 0");
 
+  // Sanity check on tau.
+  RequireParamValue<double>("tau", [](double x) {
+      return (x >= 0.0 && x <=100.0); }, true,
+      "tau must be in range [0.0, 100.0]");
+  const double tau = CLI::GetParam<double>("tau");
+
+  // Sanity check on alpha.
+  RequireParamValue<double>("alpha", [](double x) {
+      return (x >= 0.0 && x <=1.0); }, true,
+      "alpha must be in range [0.0, 1.0]");
+  const double alpha = CLI::GetParam<double>("alpha");
+
   // We either have to load the reference data, or we have to load the model.
   RANNModel* rann;
   const bool naive = CLI::HasParam("naive");
@@ -219,7 +231,7 @@ static void mlpackMain()
   if (CLI::HasParam("alpha"))
     rann->Alpha() = CLI::GetParam<double>("alpha");
   if (CLI::HasParam("single_sample_limit"))
-    rann->SingleSampleLimit() = CLI::GetParam<double>("single_sample_limit");
+    rann->SingleSampleLimit() = CLI::GetParam<int>("single_sample_limit");
   rann->SampleAtLeaves() = CLI::HasParam("sample_at_leaves");
   rann->FirstLeafExact() = CLI::HasParam("sample_at_leaves");
 
@@ -231,9 +243,16 @@ static void mlpackMain()
     arma::mat queryData;
     if (CLI::HasParam("query"))
     {
-      Log::Info << "Using query data from "
-          << CLI::GetPrintableParam<arma::mat>("query") << "." << endl;
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
+      Log::Info << "Using query data from '"
+          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
+          << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
+      if (queryData.n_rows != rann->Dataset().n_rows)
+      {
+        const size_t dimensions = rann->Dataset().n_rows;
+        Log::Fatal << "Query has invalid dimensions(" << queryData.n_rows <<
+            "); should be " << dimensions << "!" << endl;
+      }
     }
 
     // Sanity check on k value: must be greater than 0, must be less than the

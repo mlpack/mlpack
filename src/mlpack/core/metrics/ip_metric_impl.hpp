@@ -49,8 +49,8 @@ IPMetric<KernelType>::~IPMetric()
 
 template<typename KernelType>
 IPMetric<KernelType>::IPMetric(const IPMetric& other) :
-  kernel(!other.kernelOwner ? other.kernel : new KernelType(*other.kernel)),
-  kernelOwner(other.kernelOwner)
+  kernel(new KernelType(*other.kernel)),
+  kernelOwner(true)
 {
   // Nothing to do.
 }

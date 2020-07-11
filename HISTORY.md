@@ -44,13 +44,16 @@
   * Fix incorrect neighbors for `k > 1` searches in `approx_kfn` binding, for
     the `QDAFN` algorithm (#2448).
 
+  * Fix serialization of kernels with state for FastMKS (#2452).
+
   * Add `RBF` layer in ann module to make `RBFN` architecture (#2261).
 
 ### mlpack 3.3.1
 ###### 2020-04-29
   * Minor Julia and Python documentation fixes (#2373).
 
-  * Updated terminal state and fixed bugs for Pendulum environment (#2354, #2369).
+  * Updated terminal state and fixed bugs for Pendulum environment (#2354,
+    #2369).
 
   * Added `EliSH` activation function (#2323).
 
