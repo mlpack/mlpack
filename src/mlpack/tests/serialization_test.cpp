@@ -63,123 +63,123 @@ using namespace std;
 
 BOOST_AUTO_TEST_SUITE(SerializationTest);
 
-// /**
-//  * Serialize a random cube.
-//  */
-// BOOST_AUTO_TEST_CASE(CubeSerializeTest)
-// {
-//   arma::cube m;
-//   m.randu(2, 50, 50);
-//   TestAllArmadilloSerialization(m);
-// }
+/**
+ * Serialize a random cube.
+ */
+BOOST_AUTO_TEST_CASE(CubeSerializeTest)
+{
+  arma::cube m;
+  m.randu(2, 50, 50);
+  TestAllArmadilloSerialization(m);
+}
 
-// /**
-//  * Serialize an empty cube.
-//  */
-// BOOST_AUTO_TEST_CASE(EmptyCubeSerializeTest)
-// {
-//   arma::cube c;
-//   TestAllArmadilloSerialization(c);
-// }
+/**
+ * Serialize an empty cube.
+ */
+BOOST_AUTO_TEST_CASE(EmptyCubeSerializeTest)
+{
+  arma::cube c;
+  TestAllArmadilloSerialization(c);
+}
 
 
-// /**
-//  * Can we load and save an Armadillo matrix?
-//  */
-// BOOST_AUTO_TEST_CASE(MatrixSerializeXMLTest)
-// {
-//   arma::mat m;
-//   m.randu(50, 50);
-//   TestAllArmadilloSerialization(m);
-// }
+/**
+ * Can we load and save an Armadillo matrix?
+ */
+BOOST_AUTO_TEST_CASE(MatrixSerializeXMLTest)
+{
+  arma::mat m;
+  m.randu(50, 50);
+  TestAllArmadilloSerialization(m);
+}
 
-// /**
-//  * How about columns?
-//  */
-// BOOST_AUTO_TEST_CASE(ColSerializeTest)
-// {
-//   arma::vec m;
-//   m.randu(50, 1);
-//   TestAllArmadilloSerialization(m);
-// }
+/**
+ * How about columns?
+ */
+BOOST_AUTO_TEST_CASE(ColSerializeTest)
+{
+  arma::vec m;
+  m.randu(50, 1);
+  TestAllArmadilloSerialization(m);
+}
 
-// /**
-//  * How about rows?
-//  */
-// BOOST_AUTO_TEST_CASE(RowSerializeTest)
-// {
-//   arma::rowvec m;
-//   m.randu(1, 50);
-//   TestAllArmadilloSerialization(m);
-// }
+/**
+ * How about rows?
+ */
+BOOST_AUTO_TEST_CASE(RowSerializeTest)
+{
+  arma::rowvec m;
+  m.randu(1, 50);
+  TestAllArmadilloSerialization(m);
+}
 
-// // A quick test with an empty matrix.
-// BOOST_AUTO_TEST_CASE(EmptyMatrixSerializeTest)
-// {
-//   arma::mat m;
-//   TestAllArmadilloSerialization(m);
-// }
+// A quick test with an empty matrix.
+BOOST_AUTO_TEST_CASE(EmptyMatrixSerializeTest)
+{
+  arma::mat m;
+  TestAllArmadilloSerialization(m);
+}
 
-// /**
-//  * Can we load and save a sparse Armadillo matrix?
-//  */
-// BOOST_AUTO_TEST_CASE(SparseMatrixSerializeTest)
-// {
-//   arma::sp_mat m;
-//   m.sprandu(50, 50, 0.3);
-//   TestAllArmadilloSerialization(m);
-// }
+/**
+ * Can we load and save a sparse Armadillo matrix?
+ */
+BOOST_AUTO_TEST_CASE(SparseMatrixSerializeTest)
+{
+  arma::sp_mat m;
+  m.sprandu(50, 50, 0.3);
+  TestAllArmadilloSerialization(m);
+}
 
-// /**
-//  * How about columns?
-//  */
-// BOOST_AUTO_TEST_CASE(SparseColSerializeTest)
-// {
-//   arma::sp_vec m;
-//   m.sprandu(50, 1, 0.3);
-//   TestAllArmadilloSerialization(m);
-// }
+/**
+ * How about columns?
+ */
+BOOST_AUTO_TEST_CASE(SparseColSerializeTest)
+{
+  arma::sp_vec m;
+  m.sprandu(50, 1, 0.3);
+  TestAllArmadilloSerialization(m);
+}
 
-// /**
-//  * How about rows?
-//  */
-// BOOST_AUTO_TEST_CASE(SparseRowSerializeTest)
-// {
-//   arma::sp_rowvec m;
-//   m.sprandu(1, 50, 0.3);
-//   TestAllArmadilloSerialization(m);
-// }
+/**
+ * How about rows?
+ */
+BOOST_AUTO_TEST_CASE(SparseRowSerializeTest)
+{
+  arma::sp_rowvec m;
+  m.sprandu(1, 50, 0.3);
+  TestAllArmadilloSerialization(m);
+}
 
-// // A quick test with an empty matrix.
-// BOOST_AUTO_TEST_CASE(EmptySparseMatrixSerializeTest)
-// {
-//   arma::sp_mat m;
-//   TestAllArmadilloSerialization(m);
-// }
+// A quick test with an empty matrix.
+BOOST_AUTO_TEST_CASE(EmptySparseMatrixSerializeTest)
+{
+  arma::sp_mat m;
+  TestAllArmadilloSerialization(m);
+}
 
-// BOOST_AUTO_TEST_CASE(BallBoundTest)
-// {
-//   BallBound<> b(100);
-//   b.Center().randu();
-//   b.Radius() = 14.0;
+BOOST_AUTO_TEST_CASE(BallBoundTest)
+{
+  BallBound<> b(100);
+  b.Center().randu();
+  b.Radius() = 14.0;
 
-//   BallBound<> xmlB, textB, binaryB;
+  BallBound<> xmlB, textB, binaryB;
 
-//   SerializeObjectAll(b, xmlB, textB, binaryB);
+  SerializeObjectAll(b, xmlB, textB, binaryB);
 
-//   // Check the dimensionality.
-//   BOOST_REQUIRE_EQUAL(b.Dim(), xmlB.Dim());
-//   BOOST_REQUIRE_EQUAL(b.Dim(), textB.Dim());
-//   BOOST_REQUIRE_EQUAL(b.Dim(), binaryB.Dim());
+  // Check the dimensionality.
+  BOOST_REQUIRE_EQUAL(b.Dim(), xmlB.Dim());
+  BOOST_REQUIRE_EQUAL(b.Dim(), textB.Dim());
+  BOOST_REQUIRE_EQUAL(b.Dim(), binaryB.Dim());
 
-//   // Check the radius.
-//   BOOST_REQUIRE_CLOSE(b.Radius(), xmlB.Radius(), 1e-8);
-//   BOOST_REQUIRE_CLOSE(b.Radius(), textB.Radius(), 1e-8);
-//   BOOST_REQUIRE_CLOSE(b.Radius(), binaryB.Radius(), 1e-8);
+  // Check the radius.
+  BOOST_REQUIRE_CLOSE(b.Radius(), xmlB.Radius(), 1e-8);
+  BOOST_REQUIRE_CLOSE(b.Radius(), textB.Radius(), 1e-8);
+  BOOST_REQUIRE_CLOSE(b.Radius(), binaryB.Radius(), 1e-8);
 
-//   // Now check the vectors.
-//   CheckMatrices(b.Center(), xmlB.Center(), textB.Center(), binaryB.Center());
-// }
+  // Now check the vectors.
+  CheckMatrices(b.Center(), xmlB.Center(), textB.Center(), binaryB.Center());
+}
 
 // BOOST_AUTO_TEST_CASE(MahalanobisBallBoundTest)
 // {

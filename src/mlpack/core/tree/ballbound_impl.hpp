@@ -297,7 +297,7 @@ void BallBound<MetricType, VecType>::serialize(
       delete metric;
   }
 
-  ar & CEREAL_NVP(metric);
+  ar & CEREAL_POINTER(metric);
   ar & CEREAL_NVP(ownsMetric);
 }
 
