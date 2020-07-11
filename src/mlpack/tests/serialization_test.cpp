@@ -343,23 +343,23 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeTest)
   delete binaryTree;
 }
 
-BOOST_AUTO_TEST_CASE(BinarySpaceTreeOverwriteTest)
-{
-  arma::mat data;
-  data.randu(3, 100);
-  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
-  TreeType tree(data);
+// BOOST_AUTO_TEST_CASE(BinarySpaceTreeOverwriteTest)
+// {
+//   arma::mat data;
+//   data.randu(3, 100);
+//   typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+//   TreeType tree(data);
 
-  arma::mat otherData;
-  otherData.randu(5, 50);
-  TreeType xmlTree(otherData);
-  TreeType textTree(xmlTree);
-  TreeType binaryTree(xmlTree);
+//   arma::mat otherData;
+//   otherData.randu(5, 50);
+//   TreeType xmlTree(otherData);
+//   TreeType textTree(xmlTree);
+//   TreeType binaryTree(xmlTree);
 
-  SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
+//   SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
 
-  CheckTrees(tree, xmlTree, textTree, binaryTree);
-}
+//   CheckTrees(tree, xmlTree, textTree, binaryTree);
+// }
 
 // BOOST_AUTO_TEST_CASE(CoverTreeTest)
 // {
