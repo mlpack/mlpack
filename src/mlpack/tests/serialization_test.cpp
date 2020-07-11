@@ -205,39 +205,39 @@ BOOST_AUTO_TEST_CASE(MahalanobisBallBoundTest)
                 binaryB.Metric().Covariance());
 }
 
-// BOOST_AUTO_TEST_CASE(HRectBoundTest)
-// {
-//   HRectBound<> b(2);
+BOOST_AUTO_TEST_CASE(HRectBoundTest)
+{
+  HRectBound<> b(2);
 
-//   arma::mat points("0.0, 1.1; 5.0, 2.2");
-//   points = points.t();
-//   b |= points; // [0.0, 5.0]; [1.1, 2.2];
+  arma::mat points("0.0, 1.1; 5.0, 2.2");
+  points = points.t();
+  b |= points; // [0.0, 5.0]; [1.1, 2.2];
 
-//   HRectBound<> xmlB, textB, binaryB;
+  HRectBound<> xmlB, textB, binaryB;
 
-//   SerializeObjectAll(b, xmlB, textB, binaryB);
+  SerializeObjectAll(b, xmlB, textB, binaryB);
 
-//   // Check the dimensionality.
-//   BOOST_REQUIRE_EQUAL(b.Dim(), xmlB.Dim());
-//   BOOST_REQUIRE_EQUAL(b.Dim(), textB.Dim());
-//   BOOST_REQUIRE_EQUAL(b.Dim(), binaryB.Dim());
+  // Check the dimensionality.
+  BOOST_REQUIRE_EQUAL(b.Dim(), xmlB.Dim());
+  BOOST_REQUIRE_EQUAL(b.Dim(), textB.Dim());
+  BOOST_REQUIRE_EQUAL(b.Dim(), binaryB.Dim());
 
-//   // Check the bounds.
-//   for (size_t i = 0; i < b.Dim(); ++i)
-//   {
-//     BOOST_REQUIRE_CLOSE(b[i].Lo(), xmlB[i].Lo(), 1e-8);
-//     BOOST_REQUIRE_CLOSE(b[i].Hi(), xmlB[i].Hi(), 1e-8);
-//     BOOST_REQUIRE_CLOSE(b[i].Lo(), textB[i].Lo(), 1e-8);
-//     BOOST_REQUIRE_CLOSE(b[i].Hi(), textB[i].Hi(), 1e-8);
-//     BOOST_REQUIRE_CLOSE(b[i].Lo(), binaryB[i].Lo(), 1e-8);
-//     BOOST_REQUIRE_CLOSE(b[i].Hi(), binaryB[i].Hi(), 1e-8);
-//   }
+  // Check the bounds.
+  for (size_t i = 0; i < b.Dim(); ++i)
+  {
+    BOOST_REQUIRE_CLOSE(b[i].Lo(), xmlB[i].Lo(), 1e-8);
+    BOOST_REQUIRE_CLOSE(b[i].Hi(), xmlB[i].Hi(), 1e-8);
+    BOOST_REQUIRE_CLOSE(b[i].Lo(), textB[i].Lo(), 1e-8);
+    BOOST_REQUIRE_CLOSE(b[i].Hi(), textB[i].Hi(), 1e-8);
+    BOOST_REQUIRE_CLOSE(b[i].Lo(), binaryB[i].Lo(), 1e-8);
+    BOOST_REQUIRE_CLOSE(b[i].Hi(), binaryB[i].Hi(), 1e-8);
+  }
 
-//   // Check the minimum width.
-//   BOOST_REQUIRE_CLOSE(b.MinWidth(), xmlB.MinWidth(), 1e-8);
-//   BOOST_REQUIRE_CLOSE(b.MinWidth(), textB.MinWidth(), 1e-8);
-//   BOOST_REQUIRE_CLOSE(b.MinWidth(), binaryB.MinWidth(), 1e-8);
-// }
+  // Check the minimum width.
+  BOOST_REQUIRE_CLOSE(b.MinWidth(), xmlB.MinWidth(), 1e-8);
+  BOOST_REQUIRE_CLOSE(b.MinWidth(), textB.MinWidth(), 1e-8);
+  BOOST_REQUIRE_CLOSE(b.MinWidth(), binaryB.MinWidth(), 1e-8);
+}
 
 template<typename TreeType>
 void CheckTrees(TreeType& tree,
