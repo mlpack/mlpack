@@ -73,7 +73,7 @@ class KernelSVM
    */
   KernelSVM(const MatType& data,
             const arma::Row<size_t>& labels,
-            const double C = 1.0,
+            const double regularization = 1.0,
             const bool fitIntercept = false,
             const size_t max_iter = 10,
             const double tol = 1e-3,
@@ -90,7 +90,7 @@ class KernelSVM
    * @param kernel kernel type of kernel used with svm.
    */
   KernelSVM(const size_t inputSize,
-            const double C = 1.0,
+            const double regularization = 1.0,
             const bool fitIntercept = false,
             const KernelType& kernel = KernelType());
 
@@ -189,10 +189,10 @@ class KernelSVM
   {
     ar & BOOST_SERIALIZATION_NVP(parameters);
     ar & BOOST_SERIALIZATION_NVP(fitIntercept);
-    ar & BOOST_SERIALIZATION_NVP(x);
-    ar & BOOST_SERIALIZATION_NVP(y);
+    ar & BOOST_SERIALIZATION_NVP(saved_data);
+    ar & BOOST_SERIALIZATION_NVP(saved_labels);
     ar & BOOST_SERIALIZATION_NVP(alpha);
-    ar & BOOST_SERIALIZATION_NVP(b);
+    ar & BOOST_SERIALIZATION_NVP(intercept);
   }
 
  private:
@@ -200,19 +200,19 @@ class KernelSVM
   //! Parameters after optimization.
   arma::mat parameters;
   //! Locally saved standard svm regularization parameter.
-  double C;
+  double regularization;
   //! Intercept term flag.
   bool fitIntercept;
-  //! Locally saved constant value of kernel.
-  double b;
+  //! Locally saved interce value of kernel.
+  double intercept;
   //! Locally saved alpha values.
   arma::vec alpha;
   //! Locally saved KernelType values.
   const KernelType kernel;
   //! Locally saved labels of classes to give prediction for non-linear kernel.
-  arma::rowvec y;
+  arma::rowvec saved_labels;
   //! Locally saved input data of classes for non-linear kernel.
-  arma::mat x;
+  arma::mat saved_data;
 };
 
 } // namespace svm

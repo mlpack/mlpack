@@ -22,31 +22,31 @@ template <typename MatType, typename KernelType>
 KernelSVM<MatType, KernelType>::KernelSVM(
     const MatType& data,
     const arma::Row<size_t>& labels,
-    const double C,
+    const double regularization,
     const bool fitIntercept,
     const size_t max_iter,
     const double tol,
     const KernelType& kernel) :
-    C(C),
+    regularization(regularization),
     fitIntercept(fitIntercept),
     kernel(kernel)
 {
-  b = 0;
+  intercept = 0;
   Train(data, labels, max_iter, tol);
 }
 
 template <typename MatType, typename KernelType>
 KernelSVM<MatType, KernelType>::KernelSVM(
     const size_t inputSize,
-    const double C,
+    const double regularization,
     const bool fitIntercept,
     const KernelType& kernel) :
     inputSize(inputSize),
-    C(C),
+    regularization(regularization),
     fitIntercept(fitIntercept),
     kernel(kernel)
 {
-  b = 0;
+  intercept = 0;
 }
 
 template<typename MatType, typename KernelType>
@@ -94,8 +94,9 @@ double KernelSVM<MatType, KernelType>::Train(
     {
       // Calculate Ei = f(x(i)) - y(i) using (2).
       // E(i) = b + sum (X(i, :) * (repmat(alphas.*Y,1,n).*X)') - Y(i);
-      E(i) = b + arma::sum(alpha.t() % label % K.col(i).t()) - label(i);
-      if ((label(i) * E(i) < -tol && alpha(i) < C) ||
+      E(i) = intercept + arma::sum(alpha.t() % label % K.col(i).t())
+             - label(i);
+      if ((label(i) * E(i) < -tol && alpha(i) < regularization) ||
         (label(i) * E(i) > tol && alpha(i) > 0))
       {
         // In practice, there are many ways one can use to select
@@ -107,7 +108,8 @@ double KernelSVM<MatType, KernelType>::Train(
         }
 
         // Calculate Ej = f(x(j)) - y(j) using (2).
-        E(j) = b + arma::sum(alpha.t() % label % K.col(j).t()) - label(j);
+        E(j) = intercept + arma::sum(alpha.t() % label % K.col(j).t())
+               - label(j);
 
         // Saving old alpha values.
         double alpha_i_old = alpha(i);
@@ -116,13 +118,14 @@ double KernelSVM<MatType, KernelType>::Train(
         // Compute L and H to find max and min values of alphas.
         if (label(i) == label(j))
         {
-          L = std::max(0.0, alpha(j) + alpha(i) - C);
-          H = std::min(C, alpha(j) + alpha(i));
+          L = std::max(0.0, alpha(j) + alpha(i) - regularization);
+          H = std::min(regularization, alpha(j) + alpha(i));
         }
         else
         {
           L = std::max(0.0, alpha(j) - alpha(i));
-          H = std::min(C, C + alpha(j) - alpha(i));
+          H = std::min(regularization, regularization +
+                       alpha(j) - alpha(i));
         }
 
         if (L == H)
@@ -150,20 +153,20 @@ double KernelSVM<MatType, KernelType>::Train(
         alpha(i) = alpha(i) + label(i) * label(j) * (alpha_j_old - alpha(j));
 
         // Compute b1 and b2 using (17) and (18) respectively.
-        double b1 = b - E(i)
+        double b1 = intercept - E(i)
                     - label(i) * (alpha(i) - alpha_i_old) *  K(i, j)
                     - label(j) * (alpha(j) - alpha_j_old) *  K(i, j);
-        double b2 = b - E(j)
+        double b2 = intercept - E(j)
                     - label(i) * (alpha(i) - alpha_i_old) *  K(i, j)
                     - label(j) * (alpha(j) - alpha_j_old) *  K(j, j);
 
         // Compute b by (19).
-        if (0 < alpha(i) && alpha(i) < C)
-          b = b1;
-        else if (0 < alpha(j) && alpha(j) < C)
-          b = b2;
+        if (0 < alpha(i) && alpha(i) < regularization)
+          intercept = b1;
+        else if (0 < alpha(j) && alpha(j) < regularization)
+          intercept = b2;
         else
-          b = (b1 + b2) / 2;
+          intercept = (b1 + b2) / 2;
 
         num_changed_alphas = num_changed_alphas + 1;
       }
@@ -182,19 +185,19 @@ double KernelSVM<MatType, KernelType>::Train(
 
   // Saving values of labels and sample data to be used
   // with kernel function.
-  y = arma::zeros(1, data.n_cols);
-  x = arma::mat(data);
+  saved_labels = arma::zeros(1, data.n_cols);
+  saved_data = arma::mat(data);
   for (size_t i = 0; i < data.n_cols; i++)
   {
     if (alpha(i) > threshold)
     {
-      y(i) = label(i);
+      saved_labels(i) = label(i);
       number += 1;
     }
 
     else
     {
-      x.col(i) = arma::zeros(data.n_rows);
+      saved_data.col(i) = arma::zeros(data.n_rows);
     }
   }
 }
@@ -241,18 +244,19 @@ void KernelSVM<MatType, KernelType>::Classify(
     for (size_t i = 0; i < data.n_cols; i++)
     {
       double  prediction = 0;
-      for (size_t j = 0; j < x.n_cols; j++)
+      for (size_t j = 0; j < saved_data.n_cols; j++)
       {
         prediction = prediction + alpha(j) *
-                     y(j) * kernel.Evaluate(data.col(i), x.col(j));
+                     saved_labels(j) * kernel.Evaluate(data.col(i),
+                     saved_data.col(j));
       }
-      scores(i) = prediction + b;
+      scores(i) = prediction + intercept;
     }
   }
   else
   {
     // Giving predictions for linear kernel.
-    scores = (data.t() * parameters.t() + b).t();
+    scores = (data.t() * parameters.t() + intercept).t();
   }
 }
 
