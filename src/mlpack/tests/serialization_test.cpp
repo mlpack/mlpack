@@ -343,78 +343,78 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeTest)
   delete binaryTree;
 }
 
-// BOOST_AUTO_TEST_CASE(BinarySpaceTreeOverwriteTest)
-// {
-//   arma::mat data;
-//   data.randu(3, 100);
-//   typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
-//   TreeType tree(data);
+BOOST_AUTO_TEST_CASE(BinarySpaceTreeOverwriteTest)
+{
+  arma::mat data;
+  data.randu(3, 100);
+  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  TreeType tree(data);
 
-//   arma::mat otherData;
-//   otherData.randu(5, 50);
-//   TreeType xmlTree(otherData);
-//   TreeType textTree(xmlTree);
-//   TreeType binaryTree(xmlTree);
+  arma::mat otherData;
+  otherData.randu(5, 50);
+  TreeType xmlTree(otherData);
+  TreeType textTree(xmlTree);
+  TreeType binaryTree(xmlTree);
 
-//   SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
+  SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
 
-//   CheckTrees(tree, xmlTree, textTree, binaryTree);
-// }
+  CheckTrees(tree, xmlTree, textTree, binaryTree);
+}
 
-// BOOST_AUTO_TEST_CASE(CoverTreeTest)
-// {
-//   arma::mat data;
-//   data.randu(3, 100);
-//   typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
-//       TreeType;
-//   TreeType tree(data);
+BOOST_AUTO_TEST_CASE(CoverTreeTest)
+{
+  arma::mat data;
+  data.randu(3, 100);
+  typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
+      TreeType;
+  TreeType tree(data);
 
-//   TreeType* xmlTree;
-//   TreeType* textTree;
-//   TreeType* binaryTree;
+  TreeType* xmlTree;
+  TreeType* textTree;
+  TreeType* binaryTree;
 
-//   SerializePointerObjectAll(&tree, xmlTree, textTree, binaryTree);
+  SerializePointerObjectAll(&tree, xmlTree, textTree, binaryTree);
 
-//   CheckTrees(tree, *xmlTree, *textTree, *binaryTree);
+  CheckTrees(tree, *xmlTree, *textTree, *binaryTree);
 
-//   // Also check a few other things.
-//   std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
-//   stack.push(&tree);
-//   xmlStack.push(xmlTree);
-//   textStack.push(textTree);
-//   binaryStack.push(binaryTree);
-//   while (!stack.empty())
-//   {
-//     TreeType* node = stack.top();
-//     TreeType* xmlNode = xmlStack.top();
-//     TreeType* textNode = textStack.top();
-//     TreeType* binaryNode = binaryStack.top();
-//     stack.pop();
-//     xmlStack.pop();
-//     textStack.pop();
-//     binaryStack.pop();
+  // Also check a few other things.
+  std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
+  stack.push(&tree);
+  xmlStack.push(xmlTree);
+  textStack.push(textTree);
+  binaryStack.push(binaryTree);
+  while (!stack.empty())
+  {
+    TreeType* node = stack.top();
+    TreeType* xmlNode = xmlStack.top();
+    TreeType* textNode = textStack.top();
+    TreeType* binaryNode = binaryStack.top();
+    stack.pop();
+    xmlStack.pop();
+    textStack.pop();
+    binaryStack.pop();
 
-//     BOOST_REQUIRE_EQUAL(node->Scale(), xmlNode->Scale());
-//     BOOST_REQUIRE_EQUAL(node->Scale(), textNode->Scale());
-//     BOOST_REQUIRE_EQUAL(node->Scale(), binaryNode->Scale());
+    BOOST_REQUIRE_EQUAL(node->Scale(), xmlNode->Scale());
+    BOOST_REQUIRE_EQUAL(node->Scale(), textNode->Scale());
+    BOOST_REQUIRE_EQUAL(node->Scale(), binaryNode->Scale());
 
-//     BOOST_REQUIRE_CLOSE(node->Base(), xmlNode->Base(), 1e-5);
-//     BOOST_REQUIRE_CLOSE(node->Base(), textNode->Base(), 1e-5);
-//     BOOST_REQUIRE_CLOSE(node->Base(), binaryNode->Base(), 1e-5);
+    BOOST_REQUIRE_CLOSE(node->Base(), xmlNode->Base(), 1e-5);
+    BOOST_REQUIRE_CLOSE(node->Base(), textNode->Base(), 1e-5);
+    BOOST_REQUIRE_CLOSE(node->Base(), binaryNode->Base(), 1e-5);
 
-//     for (size_t i = 0; i < node->NumChildren(); ++i)
-//     {
-//       stack.push(&node->Child(i));
-//       xmlStack.push(&xmlNode->Child(i));
-//       textStack.push(&textNode->Child(i));
-//       binaryStack.push(&binaryNode->Child(i));
-//     }
-//   }
+    for (size_t i = 0; i < node->NumChildren(); ++i)
+    {
+      stack.push(&node->Child(i));
+      xmlStack.push(&xmlNode->Child(i));
+      textStack.push(&textNode->Child(i));
+      binaryStack.push(&binaryNode->Child(i));
+    }
+  }
 
-//   delete xmlTree;
-//   delete textTree;
-//   delete binaryTree;
-// }
+  delete xmlTree;
+  delete textTree;
+  delete binaryTree;
+}
 
 // BOOST_AUTO_TEST_CASE(CoverTreeOverwriteTest)
 // {
