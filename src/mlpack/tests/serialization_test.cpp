@@ -949,68 +949,68 @@ BOOST_AUTO_TEST_CASE(NaiveBayesSerializationTest)
   }
 }
 
-// BOOST_AUTO_TEST_CASE(RASearchTest)
-// {
-//   using neighbor::KRANN;
-//   using neighbor::KNN;
-//   arma::mat dataset = arma::randu<arma::mat>(5, 200);
-//   arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
+BOOST_AUTO_TEST_CASE(RASearchTest)
+{
+  using neighbor::KRANN;
+  using neighbor::KNN;
+  arma::mat dataset = arma::randu<arma::mat>(5, 200);
+  arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
 
-//   // Find nearest neighbors in the top 10, with accuracy 0.95.  So 95% of the
-//   // results we get (at least) should fall into the top 10 of the true nearest
-//   // neighbors.
-//   KRANN allkrann(dataset, false, false, 5, 0.95);
+  // Find nearest neighbors in the top 10, with accuracy 0.95.  So 95% of the
+  // results we get (at least) should fall into the top 10 of the true nearest
+  // neighbors.
+  KRANN allkrann(dataset, false, false, 5, 0.95);
 
-//   KRANN krannXml(otherDataset, false, false);
-//   KRANN krannText(otherDataset, true, false);
-//   KRANN krannBinary(otherDataset, true, true);
+  KRANN krannXml(otherDataset, false, false);
+  KRANN krannText(otherDataset, true, false);
+  KRANN krannBinary(otherDataset, true, true);
 
-//   SerializeObjectAll(allkrann, krannXml, krannText, krannBinary);
+  SerializeObjectAll(allkrann, krannXml, krannText, krannBinary);
 
-//   // Now run nearest neighbor and make sure the results are the same.
-//   arma::mat querySet = arma::randu<arma::mat>(5, 100);
+  // Now run nearest neighbor and make sure the results are the same.
+  arma::mat querySet = arma::randu<arma::mat>(5, 100);
 
-//   arma::mat distances, xmlDistances, textDistances, binaryDistances;
-//   arma::Mat<size_t> neighbors, xmlNeighbors, textNeighbors, binaryNeighbors;
+  arma::mat distances, xmlDistances, textDistances, binaryDistances;
+  arma::Mat<size_t> neighbors, xmlNeighbors, textNeighbors, binaryNeighbors;
 
-//   KNN knn(dataset); // Exact search.
-//   knn.Search(querySet, 10, neighbors, distances);
-//   krannXml.Search(querySet, 5, xmlNeighbors, xmlDistances);
-//   krannText.Search(querySet, 5, textNeighbors, textDistances);
-//   krannBinary.Search(querySet, 5, binaryNeighbors, binaryDistances);
+  KNN knn(dataset); // Exact search.
+  knn.Search(querySet, 10, neighbors, distances);
+  krannXml.Search(querySet, 5, xmlNeighbors, xmlDistances);
+  krannText.Search(querySet, 5, textNeighbors, textDistances);
+  krannBinary.Search(querySet, 5, binaryNeighbors, binaryDistances);
 
-//   BOOST_REQUIRE_EQUAL(xmlNeighbors.n_rows, 5);
-//   BOOST_REQUIRE_EQUAL(xmlNeighbors.n_cols, 100);
-//   BOOST_REQUIRE_EQUAL(textNeighbors.n_rows, 5);
-//   BOOST_REQUIRE_EQUAL(textNeighbors.n_cols, 100);
-//   BOOST_REQUIRE_EQUAL(binaryNeighbors.n_rows, 5);
-//   BOOST_REQUIRE_EQUAL(binaryNeighbors.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(xmlNeighbors.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(xmlNeighbors.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(textNeighbors.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(textNeighbors.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(binaryNeighbors.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(binaryNeighbors.n_cols, 100);
 
-//   size_t xmlCorrect = 0;
-//   size_t textCorrect = 0;
-//   size_t binaryCorrect = 0;
-//   for (size_t i = 0; i < xmlNeighbors.n_cols; ++i)
-//   {
-//     // See how many are in the top 10.
-//     for (size_t j = 0; j < xmlNeighbors.n_rows; ++j)
-//     {
-//       for (size_t k = 0; k < neighbors.n_rows; ++k)
-//       {
-//         if (neighbors(k, i) == xmlNeighbors(j, i))
-//           xmlCorrect++;
-//         if (neighbors(k, i) == textNeighbors(j, i))
-//           textCorrect++;
-//         if (neighbors(k, i) == binaryNeighbors(j, i))
-//           binaryCorrect++;
-//       }
-//     }
-//   }
+  size_t xmlCorrect = 0;
+  size_t textCorrect = 0;
+  size_t binaryCorrect = 0;
+  for (size_t i = 0; i < xmlNeighbors.n_cols; ++i)
+  {
+    // See how many are in the top 10.
+    for (size_t j = 0; j < xmlNeighbors.n_rows; ++j)
+    {
+      for (size_t k = 0; k < neighbors.n_rows; ++k)
+      {
+        if (neighbors(k, i) == xmlNeighbors(j, i))
+          xmlCorrect++;
+        if (neighbors(k, i) == textNeighbors(j, i))
+          textCorrect++;
+        if (neighbors(k, i) == binaryNeighbors(j, i))
+          binaryCorrect++;
+      }
+    }
+  }
 
-//   // We need 95% of these to be correct.
-//   BOOST_REQUIRE_GT(xmlCorrect, 95 * 5);
-//   BOOST_REQUIRE_GT(binaryCorrect, 95 * 5);
-//   BOOST_REQUIRE_GT(textCorrect, 95 * 5);
-// }
+  // We need 95% of these to be correct.
+  BOOST_REQUIRE_GT(xmlCorrect, 95 * 5);
+  BOOST_REQUIRE_GT(binaryCorrect, 95 * 5);
+  BOOST_REQUIRE_GT(textCorrect, 95 * 5);
+}
 
 // /**
 //  * Test that an LSH model can be serialized and deserialized.
