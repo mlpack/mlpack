@@ -1012,58 +1012,58 @@ BOOST_AUTO_TEST_CASE(RASearchTest)
   BOOST_REQUIRE_GT(textCorrect, 95 * 5);
 }
 
-// /**
-//  * Test that an LSH model can be serialized and deserialized.
-//  */
-// BOOST_AUTO_TEST_CASE(LSHTest)
-// {
-//   // Since we still don't have good tests for LSH, basically what we're going to
-//   // do is serialize an LSH model, and make sure we can deserialize it and that
-//   // we still get results when we call Search().
-//   arma::mat referenceData = arma::randu<arma::mat>(10, 100);
+/**
+ * Test that an LSH model can be serialized and deserialized.
+ */
+BOOST_AUTO_TEST_CASE(LSHTest)
+{
+  // Since we still don't have good tests for LSH, basically what we're going to
+  // do is serialize an LSH model, and make sure we can deserialize it and that
+  // we still get results when we call Search().
+  arma::mat referenceData = arma::randu<arma::mat>(10, 100);
 
-//   LSHSearch<> lsh(referenceData, 5, 10); // Arbitrary chosen parameters.
+  LSHSearch<> lsh(referenceData, 5, 10); // Arbitrary chosen parameters.
 
-//   LSHSearch<> xmlLsh;
-//   arma::mat textData = arma::randu<arma::mat>(5, 50);
-//   LSHSearch<> textLsh(textData, 4, 5);
-//   LSHSearch<> binaryLsh(referenceData, 15, 2);
+  LSHSearch<> xmlLsh;
+  arma::mat textData = arma::randu<arma::mat>(5, 50);
+  LSHSearch<> textLsh(textData, 4, 5);
+  LSHSearch<> binaryLsh(referenceData, 15, 2);
 
-//   // Now serialize.
-//   SerializeObjectAll(lsh, xmlLsh, textLsh, binaryLsh);
+  // Now serialize.
+  SerializeObjectAll(lsh, xmlLsh, textLsh, binaryLsh);
 
-//   // Check what we can about the serialized objects.
-//   BOOST_REQUIRE_EQUAL(lsh.NumProjections(), xmlLsh.NumProjections());
-//   BOOST_REQUIRE_EQUAL(lsh.NumProjections(), textLsh.NumProjections());
-//   BOOST_REQUIRE_EQUAL(lsh.NumProjections(), binaryLsh.NumProjections());
-//   for (size_t i = 0; i < lsh.NumProjections(); ++i)
-//   {
-//     CheckMatrices(lsh.Projections().slice(i), xmlLsh.Projections().slice(i),
-//         textLsh.Projections().slice(i), binaryLsh.Projections().slice(i));
-//   }
+  // Check what we can about the serialized objects.
+  BOOST_REQUIRE_EQUAL(lsh.NumProjections(), xmlLsh.NumProjections());
+  BOOST_REQUIRE_EQUAL(lsh.NumProjections(), textLsh.NumProjections());
+  BOOST_REQUIRE_EQUAL(lsh.NumProjections(), binaryLsh.NumProjections());
+  for (size_t i = 0; i < lsh.NumProjections(); ++i)
+  {
+    CheckMatrices(lsh.Projections().slice(i), xmlLsh.Projections().slice(i),
+        textLsh.Projections().slice(i), binaryLsh.Projections().slice(i));
+  }
 
-//   CheckMatrices(lsh.ReferenceSet(), xmlLsh.ReferenceSet(),
-//       textLsh.ReferenceSet(), binaryLsh.ReferenceSet());
-//   CheckMatrices(lsh.Offsets(), xmlLsh.Offsets(), textLsh.Offsets(),
-//       binaryLsh.Offsets());
-//   CheckMatrices(lsh.SecondHashWeights(), xmlLsh.SecondHashWeights(),
-//       textLsh.SecondHashWeights(), binaryLsh.SecondHashWeights());
+  CheckMatrices(lsh.ReferenceSet(), xmlLsh.ReferenceSet(),
+      textLsh.ReferenceSet(), binaryLsh.ReferenceSet());
+  CheckMatrices(lsh.Offsets(), xmlLsh.Offsets(), textLsh.Offsets(),
+      binaryLsh.Offsets());
+  CheckMatrices(lsh.SecondHashWeights(), xmlLsh.SecondHashWeights(),
+      textLsh.SecondHashWeights(), binaryLsh.SecondHashWeights());
 
-//   BOOST_REQUIRE_EQUAL(lsh.BucketSize(), xmlLsh.BucketSize());
-//   BOOST_REQUIRE_EQUAL(lsh.BucketSize(), textLsh.BucketSize());
-//   BOOST_REQUIRE_EQUAL(lsh.BucketSize(), binaryLsh.BucketSize());
+  BOOST_REQUIRE_EQUAL(lsh.BucketSize(), xmlLsh.BucketSize());
+  BOOST_REQUIRE_EQUAL(lsh.BucketSize(), textLsh.BucketSize());
+  BOOST_REQUIRE_EQUAL(lsh.BucketSize(), binaryLsh.BucketSize());
 
-//   BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
-//       xmlLsh.SecondHashTable().size());
-//   BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
-//       textLsh.SecondHashTable().size());
-//   BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
-//       binaryLsh.SecondHashTable().size());
+  BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
+      xmlLsh.SecondHashTable().size());
+  BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
+      textLsh.SecondHashTable().size());
+  BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
+      binaryLsh.SecondHashTable().size());
 
-//   for (size_t i = 0; i < lsh.SecondHashTable().size(); ++i)
-//   CheckMatrices(lsh.SecondHashTable()[i], xmlLsh.SecondHashTable()[i],
-//       textLsh.SecondHashTable()[i], binaryLsh.SecondHashTable()[i]);
-// }
+  for (size_t i = 0; i < lsh.SecondHashTable().size(); ++i)
+  CheckMatrices(lsh.SecondHashTable()[i], xmlLsh.SecondHashTable()[i],
+      textLsh.SecondHashTable()[i], binaryLsh.SecondHashTable()[i]);
+}
 
 // Make sure serialization works for the decision stump.
 BOOST_AUTO_TEST_CASE(DecisionStumpTest)
