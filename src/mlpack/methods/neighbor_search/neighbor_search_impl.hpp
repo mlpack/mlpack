@@ -963,7 +963,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
       delete referenceSet;
     }
 
-    ar(CEREAL_NVP(referenceSet));
+    ar(CEREAL_POINTER(referenceSet));
     ar(CEREAL_NVP(metric));
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
@@ -984,7 +984,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
       delete referenceTree;
     }
 
-    ar(CEREAL_NVP(referenceTree));
+    ar(CEREAL_POINTER(referenceTree));
     ar(CEREAL_NVP(oldFromNewReferences));
 
     // If we are loading, set the dataset accordingly and clean up memory if

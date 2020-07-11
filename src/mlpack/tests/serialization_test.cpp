@@ -630,31 +630,31 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   BOOST_REQUIRE_CLOSE(lr.Lambda(), lrBinary.Lambda(), 1e-5);
 }
 
-// BOOST_AUTO_TEST_CASE(KNNTest)
-// {
-//   using neighbor::KNN;
-//   arma::mat dataset = arma::randu<arma::mat>(5, 2000);
+BOOST_AUTO_TEST_CASE(KNNTest)
+{
+  using neighbor::KNN;
+  arma::mat dataset = arma::randu<arma::mat>(5, 2000);
 
-//   KNN knn(dataset, DUAL_TREE_MODE);
+  KNN knn(dataset, DUAL_TREE_MODE);
 
-//   KNN knnXml, knnText, knnBinary;
+  KNN knnXml, knnText, knnBinary;
 
-//   SerializeObjectAll(knn, knnXml, knnText, knnBinary);
+  SerializeObjectAll(knn, knnXml, knnText, knnBinary);
 
-//   // Now run nearest neighbor and make sure the results are the same.
-//   arma::mat querySet = arma::randu<arma::mat>(5, 1000);
+  // Now run nearest neighbor and make sure the results are the same.
+  arma::mat querySet = arma::randu<arma::mat>(5, 1000);
 
-//   arma::mat distances, xmlDistances, textDistances, binaryDistances;
-//   arma::Mat<size_t> neighbors, xmlNeighbors, textNeighbors, binaryNeighbors;
+  arma::mat distances, xmlDistances, textDistances, binaryDistances;
+  arma::Mat<size_t> neighbors, xmlNeighbors, textNeighbors, binaryNeighbors;
 
-//   knn.Search(querySet, 5, neighbors, distances);
-//   knnXml.Search(querySet, 5, xmlNeighbors, xmlDistances);
-//   knnText.Search(querySet, 5, textNeighbors, textDistances);
-//   knnBinary.Search(querySet, 5, binaryNeighbors, binaryDistances);
+  knn.Search(querySet, 5, neighbors, distances);
+  knnXml.Search(querySet, 5, xmlNeighbors, xmlDistances);
+  knnText.Search(querySet, 5, textNeighbors, textDistances);
+  knnBinary.Search(querySet, 5, binaryNeighbors, binaryDistances);
 
-//   CheckMatrices(distances, xmlDistances, textDistances, binaryDistances);
-//   CheckMatrices(neighbors, xmlNeighbors, textNeighbors, binaryNeighbors);
-// }
+  CheckMatrices(distances, xmlDistances, textDistances, binaryDistances);
+  CheckMatrices(neighbors, xmlNeighbors, textNeighbors, binaryNeighbors);
+}
 
 BOOST_AUTO_TEST_CASE(SoftmaxRegressionTest)
 {
