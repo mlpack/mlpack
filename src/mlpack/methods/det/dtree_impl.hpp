@@ -1028,9 +1028,9 @@ void DTree<MatType, TagType>::serialize(Archive& ar,
   ar & CEREAL_NVP(hasRight);
 
   if (hasLeft)
-    ar & CEREAL_NVP(left);
+    ar & CEREAL_POINTER(left);
   if (hasRight)
-    ar & CEREAL_NVP(right);
+    ar & CEREAL_POINTER(right);
 
   if (root)
   {
