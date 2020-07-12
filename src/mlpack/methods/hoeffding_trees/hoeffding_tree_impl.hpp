@@ -801,13 +801,13 @@ void HoeffdingTree<
   if (Archive::is_loading::value && ownsMappings && dimensionMappings)
     delete dimensionMappings;
 
-  ar & CEREAL_NVP(dimensionMappings);
+  ar & CEREAL_POINTER(dimensionMappings);
 
   // Special handling for const object.
   data::DatasetInfo* d = NULL;
   if (Archive::is_saving::value)
     d = const_cast<data::DatasetInfo*>(datasetInfo);
-  ar & CEREAL_NVP(d);
+   ar & CEREAL_POINTER(d);
   if (Archive::is_loading::value)
   {
     if (datasetInfo && ownsInfo)
@@ -873,13 +873,16 @@ void HoeffdingTree<
   else
   {
     // We have split, so we only need to save the split and the children.
-    if (datasetInfo->Type(splitDimension) == data::Datatype::categorical)
-      ar & CEREAL_NVP(categoricalSplit);
-    else
-      ar & CEREAL_NVP(numericSplit);
+   if (datasetInfo->Type(splitDimension) == data::Datatype::categorical)
+     ar & CEREAL_NVP(categoricalSplit);
+   else
+     ar & CEREAL_NVP(numericSplit);
 
     // Serialize the children, because we have split.
-    ar & CEREAL_NVP(children);
+    for (size_t i = 0; i < children.size(); ++i)
+    {    
+      ar & CEREAL_POINTER(children.at(i));
+    }
 
     if (Archive::is_loading::value)
     {

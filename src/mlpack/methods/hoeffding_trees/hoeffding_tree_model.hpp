@@ -187,13 +187,13 @@ class HoeffdingTreeModel
     // Fake dataset info may be needed to create fake trees.
     data::DatasetInfo info;
     if (type == GINI_HOEFFDING)
-      ar & CEREAL_NVP(giniHoeffdingTree);
+      ar & CEREAL_POINTER(giniHoeffdingTree);
     else if (type == GINI_BINARY)
-      ar & CEREAL_NVP(giniBinaryTree);
+      ar & CEREAL_POINTER(giniBinaryTree);
     else if (type == INFO_HOEFFDING)
-      ar & CEREAL_NVP(infoHoeffdingTree);
+      ar & CEREAL_POINTER(infoHoeffdingTree);
     else if (type == INFO_BINARY)
-      ar & CEREAL_NVP(infoBinaryTree);
+      ar & CEREAL_POINTER(infoBinaryTree);
   }
 
  private:

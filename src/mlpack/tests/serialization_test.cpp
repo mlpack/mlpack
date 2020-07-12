@@ -1428,23 +1428,23 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitTest)
 //       textSplit.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")));
 // }
 
-// BOOST_AUTO_TEST_CASE(EmptyHoeffdingTreeTest)
-// {
-//   using namespace mlpack::tree;
+BOOST_AUTO_TEST_CASE(EmptyHoeffdingTreeTest)
+{
+  using namespace mlpack::tree;
 
-//   data::DatasetInfo info(6);
-//   HoeffdingTree<> tree(info, 2);
-//   HoeffdingTree<> xmlTree(info, 3);
-//   HoeffdingTree<> binaryTree(info, 4);
-//   HoeffdingTree<> textTree(info, 5);
+  data::DatasetInfo info(6);
+  HoeffdingTree<> tree(info, 2);
+  HoeffdingTree<> xmlTree(info, 3);
+  HoeffdingTree<> binaryTree(info, 4);
+  HoeffdingTree<> textTree(info, 5);
 
-//   SerializeObjectAll(tree, xmlTree, binaryTree, textTree);
+  SerializeObjectAll(tree, xmlTree, binaryTree, textTree);
 
-//   BOOST_REQUIRE_EQUAL(tree.NumChildren(), 0);
-//   BOOST_REQUIRE_EQUAL(xmlTree.NumChildren(), 0);
-//   BOOST_REQUIRE_EQUAL(binaryTree.NumChildren(), 0);
-//   BOOST_REQUIRE_EQUAL(textTree.NumChildren(), 0);
-// }
+  BOOST_REQUIRE_EQUAL(tree.NumChildren(), 0);
+  BOOST_REQUIRE_EQUAL(xmlTree.NumChildren(), 0);
+  BOOST_REQUIRE_EQUAL(binaryTree.NumChildren(), 0);
+  BOOST_REQUIRE_EQUAL(textTree.NumChildren(), 0);
+}
 
 // /**
 //  * Build a Hoeffding tree, then save it and make sure other trees can classify
