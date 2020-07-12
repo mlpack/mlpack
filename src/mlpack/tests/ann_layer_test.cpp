@@ -1686,6 +1686,8 @@ BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
   // Test the Gradient function.
   arma::mat error = 0.01 * arma::randu(embeddingSize * seqLength, batchSize);
   module.Gradient(input, error, gradient);
+
+  BOOST_CHECK_CLOSE_FRACTION(arma::accu(error), arma::accu(gradient), 1e-05);
 }
 
 /**
