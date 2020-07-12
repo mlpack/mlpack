@@ -181,8 +181,6 @@ double KernelSVM<MatType, KernelType>::Train(
   parameters = (data * (alpha.t() % label).t()).t();
   double threshold = arma::as_scalar(arma::mean(alpha));
 
-  size_t number = 0;
-
   // Saving values of labels and sample data to be used
   // with kernel function.
   saved_labels = arma::zeros(1, data.n_cols);
@@ -192,7 +190,6 @@ double KernelSVM<MatType, KernelType>::Train(
     if (alpha(i) > threshold)
     {
       saved_labels(i) = label(i);
-      number += 1;
     }
 
     else
