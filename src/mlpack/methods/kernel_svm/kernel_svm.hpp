@@ -65,7 +65,7 @@ class KernelSVM
    *
    * @param data Input training features. Each column associate with one sample
    * @param labels Labels associated with the feature data.
-   * @param C standard svm regularization parameter.
+   * @param regularization standard svm regularization parameter.
    * @param fitIntercept true when not using linear kernel.
    * @param max_iter maximum number of iteration for training.
    * @param tol tolerance value.
@@ -85,7 +85,7 @@ class KernelSVM
    * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
    *
    * @param inputSize Size of the input feature vector.
-   * @param C standard svm regularization parameter.
+   * @param regularization standard svm regularization parameter.
    * @param fitIntercept true when not using linear kernel.
    * @param kernel kernel type of kernel used with svm.
    */
@@ -159,8 +159,8 @@ class KernelSVM
    * @tparam OptimizerType Desired optimizer.
    * @param data Input training features. Each column associate with one sample.
    * @param labels Labels associated with the feature data.
-   * @param numClasses Number of classes for classification.
-   * @param optimizer Desired optimizer.
+   * @param max_iter maximum number of iteration for training.
+   * @param tol tolerance value.
    * @return Objective value of the final point.
    */
   double Train(const MatType& data,
