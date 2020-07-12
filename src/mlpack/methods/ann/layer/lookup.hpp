@@ -39,8 +39,8 @@ class Lookup
    * Create the Lookup object using the specified number of input and output
    * units.
    *
-   * @param vocabSize The number of input units.
-   * @param embeddingSize The number of output units.
+   * @param vocabSize The size of the vocabulary.
+   * @param embeddingSize The length of each embedding vector.
    */
   Lookup(const size_t vocabSize = 0, const size_t embeddingSize = 0);
 
@@ -100,10 +100,10 @@ class Lookup
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
-  //! Get the number of input units.
+  //! Get the size of the vocabulary.
   size_t VocabSize() const { return vocabSize; }
 
-  //! Get the number of output units.
+  //! Get the length of each embedding vector.
   size_t EmbeddingSize() const { return embeddingSize; }
 
   /**
@@ -113,10 +113,10 @@ class Lookup
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! Locally-stored number of input units.
+  //! Locally-stored size of the vocabulary.
   size_t vocabSize;
 
-  //! Locally-stored number of output units.
+  //! Locally-stored length of each embedding vector.
   size_t embeddingSize;
 
   //! Locally-stored weight object.
