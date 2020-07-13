@@ -95,7 +95,7 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
     if (batchSize == 1 && inputSize == 1)
     {
       Log::Warn << "Variance for single element isn't defined and" <<
-          " will be set to  0.0 for training. Use a batch-size" << 
+          " will be set to  0.0 for training. Use a batch-size" <<
           " greater than 1 to fix the warning." << std::endl;
     }
 
