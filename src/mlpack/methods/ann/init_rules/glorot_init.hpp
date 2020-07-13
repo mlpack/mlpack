@@ -180,6 +180,7 @@ inline void GlorotInitializationType<Uniform>::Initialize(arma::Cube<eT>& W)
   {
     Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
   }
+
   for (size_t i = 0; i < W.n_slices; ++i)
     Initialize(W.slice(i));
 }

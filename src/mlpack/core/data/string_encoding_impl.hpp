@@ -110,7 +110,7 @@ EncodeHelper(const std::vector<std::string>& input,
   policy.Reset();
 
   // The first pass adds the extracted tokens to the dictionary.
-  for (size_t i = 0; i < input.size(); i++)
+  for (size_t i = 0; i < input.size(); ++i)
   {
     boost::string_view strView(input[i]);
     auto token = tokenizer(strView);
@@ -141,7 +141,7 @@ EncodeHelper(const std::vector<std::string>& input,
   policy.InitMatrix(output, input.size(), numColumns, dictionary.Size());
 
   // The second pass writes the encoded values to the output.
-  for (size_t i = 0; i < input.size(); i++)
+  for (size_t i = 0; i < input.size(); ++i)
   {
     boost::string_view strView(input[i]);
     auto token = tokenizer(strView);
@@ -170,7 +170,7 @@ EncodeHelper(const std::vector<std::string>& input,
 
   // The loop below extracts the tokens and writes the encoded values
   // at once.
-  for (size_t i = 0; i < input.size(); i++)
+  for (size_t i = 0; i < input.size(); ++i)
   {
     boost::string_view strView(input[i]);
     auto token = tokenizer(strView);

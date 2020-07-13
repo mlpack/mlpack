@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(Random3)
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
-  for (size_t i = 0; i < predictedLabels.n_cols; i++)
+  for (size_t i = 0; i < predictedLabels.n_cols; ++i)
     BOOST_CHECK_EQUAL(predictedLabels(0, i), 0);
 }
 

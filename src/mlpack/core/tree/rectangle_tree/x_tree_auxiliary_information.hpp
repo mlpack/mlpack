@@ -173,7 +173,7 @@ class XTreeAuxiliaryInformation
 
     SplitHistoryStruct(int dim) : lastDimension(0), history(dim)
     {
-      for (int i = 0; i < dim; i++)
+      for (int i = 0; i < dim; ++i)
         history[i] = false;
     }
 
