@@ -865,7 +865,7 @@ The code for the command-line bindings is found in @c src/mlpack/bindings/cli.
 @subsection bindings_cli_mlpack_main mlpackMain() definition
 
 Any command-line program must be compiled with the @c BINDING_TYPE macro
-set to the value @c BINDING_TYPE_IO.  This is handled by the CMake macro
+set to the value @c BINDING_TYPE_CLI.  This is handled by the CMake macro
 @c add_cli_executable().
 
 When @c BINDING_TYPE is set to @c BINDING_TYPE_IO, the following is set in
