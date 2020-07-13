@@ -64,7 +64,7 @@ class BatchNorm
    *
    * @param size The number of input units / channels.
    * @param eps The epsilon added to variance to ensure numerical stability.
-   * @param average Boolean to determine whether counting average is used for
+   * @param average Boolean to determine whether cumulative average is used for
    *                updating the parameters or momentum is used.
    * @param momentum Parameter used to to update the running mean and variance.
    */

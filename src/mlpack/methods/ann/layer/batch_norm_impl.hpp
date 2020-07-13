@@ -91,6 +91,14 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
   // We will calculate minibatch norm on each channel / feature map.
   if (!deterministic)
   {
+    // Check only during training, batch-size can be one during inference.
+    if (batchSize == 1 && inputSize == 1)
+    {
+      Log::Warn << "Variance for single element isn't defined and" <<
+          " will be set to  0.0 for training. Use a batch-size" << 
+          " greater than 1 to fix the warning." << std::endl;
+    }
+
     // Input corresponds to output from convolution layer.
     // Use a cube for simplicity.
     arma::cube inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(),
@@ -129,11 +137,15 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
     count += 1;
     averageFactor = average ? 1.0 / count : momentum;
 
+    double nElements = 0.0;
+    if (input.n_elem - size != 0)
+      nElements = 1.0 / (input.n_elem - size + eps);
+
     // Update running mean and running variance.
     runningMean = (1 - averageFactor) * runningMean + averageFactor *
         mean.t();
     runningVariance = (1 - averageFactor) * runningVariance +
-       input.n_elem * (1.0 / (input.n_elem - size + eps)) *
+       input.n_elem * nElements *
        averageFactor * variance.t();
   }
   else
