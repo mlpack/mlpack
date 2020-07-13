@@ -170,6 +170,8 @@ add_executable(mlpack_test
 
 add_executable(mlpack_catch_test
   main.cpp
+  serialization.cpp
+  serialization.hpp
   image_load_test.cpp
   main_tests/image_converter_test.cpp
 )
