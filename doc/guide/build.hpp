@@ -78,7 +78,7 @@ mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
 
  - Armadillo >= 8.400.0 (with LAPACK support)
- - Boost (math_c99, program_options, serialization, unit_test_framework, heap,
+ - Boost (math_c99, serialization, unit_test_framework, heap,
           spirit) >= 1.58
  - ensmallen >= 2.10.0 (will be downloaded if not found)
 

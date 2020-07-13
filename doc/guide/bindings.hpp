@@ -941,16 +941,16 @@ details---the special handling is enforced via SFINAE.
 
 @subsection bindings_cli_parsing Parsing the command line
 
-The @c ParseCommandLine() function uses <tt>boost::program_options</tt> to read
+The @c ParseCommandLine() function uses <tt>CLI11</tt> to read
 the values from the command line into the @c ParamData structs held by the IO
 singleton.
 
-In order to set up <tt>boost::program_options</tt>---and to keep its headers
+In order to set up <tt>CLI11</tt>---and to keep its headers
 from needing to be included by the rest of the library---the code loops over
 each parameter known by the IO singleton and calls the @c "AddToPO" function
 from the function map.  This in turn calls the necessary functions to register a
-given parameter with <tt>boost::program_options</tt>, and once all parameters
-have been registered, the facilities provided by <tt>boost::program_options</tt>
+given parameter with <tt>CLI11</tt>, and once all parameters
+have been registered, the facilities provided by <tt>CLI11</tt>
 are used to parse the command line input properly.
 
 @section bindings_python Python bindings
