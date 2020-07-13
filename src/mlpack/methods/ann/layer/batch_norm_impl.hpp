@@ -173,35 +173,30 @@ void BatchNorm<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
 {
-  const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
+  const arma::mat invVariance = 1.0 / (variance + eps);
+  const size_t batchSize = input.n_cols;
+  const size_t inputSize = input.n_rows / size;
 
   g.set_size(arma::size(input));
-  arma::cube gyTemp(const_cast<arma::Mat<eT>&>(gy).memptr(),
-      input.n_rows / size, size, input.n_cols, false, false);
-  arma::cube gTemp(const_cast<arma::Mat<eT>&>(g).memptr(),
-      input.n_rows / size, size, input.n_cols, false, false);
+  arma::cube inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(),
+      inputSize, size, batchSize, false, false);
+  arma::cube gyTemp(const_cast<arma::Mat<eT> &>(gy).memptr(),
+      inputSize, size, batchSize, false, false);
+  arma::cube gTemp(const_cast<arma::Mat<eT> &>(g).memptr(),
+      inputSize, size, batchSize, false, false);
 
-  // Step 1: dl / dxhat.
-  arma::cube norm = gyTemp.each_slice() % arma::repmat(gamma.t(),
-      input.n_rows / size, 1);
-
-  // Step 2: sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
-  arma::mat temp = arma::sum(norm % inputMean, 2);
-  arma::mat vars = temp % arma::repmat(arma::pow(stdInv, 3),
-      input.n_rows / size, 1) * -0.5;
-
-  // Step 3: dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
-  // dl / dmu * 1 / m.
-  gTemp = (norm.each_slice() % arma::repmat(stdInv,
-      input.n_rows / size, 1) +
-      (inputMean.each_slice() % vars * 2)) / input.n_cols;
-
-  // Step 4: sum (dl / dxhat * -1 / stdInv) + variance *
-  // (sum -2 * (x - mu)) / m.
-  arma::mat normTemp = arma::sum(norm.each_slice() %
-      arma::repmat(-stdInv, input.n_rows / size, 1) , 2) /
-      input.n_cols;
-  gTemp.each_slice() += normTemp;
+  gTemp = batchSize * gyTemp;
+  arma::mat sumOfBatches = arma::sum(gyTemp, 2);
+  gTemp = gTemp.each_slice() - sumOfBatches;
+  arma::mat repInvVariance = arma::repmat(invVariance, inputSize, 1);
+  arma::cube norm = inputMean.each_slice() % repInvVariance;
+  arma::mat outputNorm = arma::sum(gyTemp % inputMean, 2);
+  norm = norm.each_slice() % outputNorm;
+  gTemp = gTemp - norm;
+  gTemp /= batchSize;
+  arma::mat repGamma = arma::repmat(gamma.t(), inputSize, 1);
+  gTemp = gTemp.each_slice() % repGamma;
+  gTemp = gTemp.each_slice() % arma::pow(repInvVariance, 0.5);
 }
 
 template<typename InputDataType, typename OutputDataType>
