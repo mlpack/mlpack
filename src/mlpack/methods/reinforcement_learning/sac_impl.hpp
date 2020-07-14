@@ -124,10 +124,10 @@ void SAC<
   ReplayType
 >::SoftUpdate(double rho)
 {
-  targetQ1Network.Parameters() = (1 - rho) * targetQ1Network.Parameters() + rho *
-      learningQ1Network.Parameters();
-  targetQ2Network.Parameters() = (1 - rho) * targetQ2Network.Parameters() + rho *
-      learningQ2Network.Parameters();
+  targetQ1Network.Parameters() = (1 - rho) * targetQ1Network.Parameters() +
+      rho * learningQ1Network.Parameters();
+  targetQ2Network.Parameters() = (1 - rho) * targetQ2Network.Parameters() +
+      rho * learningQ2Network.Parameters();
 }
 
 template <
@@ -243,8 +243,8 @@ void SAC<
   #if ENS_VERSION_MAJOR == 1
   policyUpdater.Update(policyNetwork.Parameters(), config.StepSize(), gradient);
   #else
-  policyNetworkUpdatePolicy->Update(policyNetwork.Parameters(), config.StepSize(),
-      gradient);
+  policyNetworkUpdatePolicy->Update(policyNetwork.Parameters(),
+      config.StepSize(), gradient);
   #endif
 
   // Update target network
