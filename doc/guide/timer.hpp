@@ -42,7 +42,7 @@ Below is a very simple example of timer usage in code.
 @code
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/cli.hpp>
-#define BINDING_TYPE BINDING_TYPE_IO
+#define BINDING_TYPE BINDING_TYPE_CLI
 #include <mlpack/core/util/mlpack_main.hpp>
 
 using namespace mlpack;
