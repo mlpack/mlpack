@@ -1143,7 +1143,10 @@ void DecisionTree<FitnessFunction,
   }
 
   // Serialize the children first.
-  ar & CEREAL_NVP(children);
+  for (size_t i = 0; i < children.size(); ++i)
+  {
+    ar & CEREAL_POINTER(children.at(i));
+  }
 
   // Now serialize the rest of the object.
   ar & CEREAL_NVP(splitDimension);

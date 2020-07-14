@@ -113,9 +113,9 @@ class AdaBoostModel
     ar & CEREAL_NVP(mappings);
     ar & CEREAL_NVP(weakLearnerType);
     if (weakLearnerType == WeakLearnerTypes::DECISION_STUMP)
-      ar & CEREAL_NVP(dsBoost);
+      ar & CEREAL_POINTER(dsBoost);
     else if (weakLearnerType == WeakLearnerTypes::PERCEPTRON)
-      ar & CEREAL_NVP(pBoost);
+      ar & CEREAL_POINTER(pBoost);
     ar & CEREAL_NVP(dimensionality);
   }
 };
