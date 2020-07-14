@@ -873,7 +873,7 @@ When @c BINDING_TYPE is set to @c BINDING_TYPE_IO, the following is set in
 binding:
 
  - The options defined by @c PARAM_*() macros are of type
-   mlpack::bindings::cli::IOOption.
+   mlpack::bindings::cli::CLIOption.
 
  - The parameter and value printing macros for @c PROGRAM_INFO() are set:
    * The @c PRINT_PARAM_STRING() macro is defined as
