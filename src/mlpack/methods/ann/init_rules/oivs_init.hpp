@@ -123,7 +123,7 @@ class OivsInitialization
     if (W.is_empty())
       W.set_size(rows, cols, slices);
 
-    for (size_t i = 0; i < slices; i++)
+    for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
   }
 

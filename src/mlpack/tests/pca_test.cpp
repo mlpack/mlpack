@@ -47,7 +47,7 @@ void ArmaComparisonPCA(
   princomp(coeff, score, eigVal, trans(data));
 
   // Verify the PCA results based on the eigenvalues.
-  for (size_t i = 0; i < eigVal.n_elem; i++)
+  for (size_t i = 0; i < eigVal.n_elem; ++i)
   {
     if (eigVal[i] == 0.0)
       BOOST_REQUIRE_SMALL(eigVal1[i], 1e-15);
@@ -99,7 +99,7 @@ void PCADimensionalityReduction(
 
   // If the eigenvectors are pointed opposite directions, they will cancel
   // each other out in this summation.
-  for (size_t i = 0; i < data.n_rows; i++)
+  for (size_t i = 0; i < data.n_rows; ++i)
   {
     if (accu(abs(correct.row(i) + data.row(i))) < 0.001 /* arbitrary */)
     {

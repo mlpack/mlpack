@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(SimpleAddLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianAddLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t elements = math::RandInt(2, 1000);
     arma::mat input;
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(SimpleConstantLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianConstantLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t elements = math::RandInt(2, 1000);
     arma::mat input;
@@ -521,7 +521,7 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerWeightInitializationTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianLinearLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
     const size_t outputElements = math::RandInt(2, 1000);
@@ -701,7 +701,7 @@ BOOST_AUTO_TEST_CASE(SimplePaddingLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianLinearNoBiasLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
     const size_t outputElements = math::RandInt(2, 1000);
@@ -765,7 +765,7 @@ BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianNegativeLogLikelihoodLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     NegativeLogLikelihood<> module;
     const size_t inputElements = math::RandInt(5, 100);
@@ -786,7 +786,7 @@ BOOST_AUTO_TEST_CASE(JacobianNegativeLogLikelihoodLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianLeakyReLULayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
 
@@ -805,7 +805,7 @@ BOOST_AUTO_TEST_CASE(JacobianLeakyReLULayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianFlexibleReLULayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
 
@@ -869,7 +869,7 @@ BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianMultiplyConstantLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
 
@@ -888,7 +888,7 @@ BOOST_AUTO_TEST_CASE(JacobianMultiplyConstantLayerTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianHardTanHLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElements = math::RandInt(2, 1000);
 
@@ -1992,44 +1992,83 @@ BOOST_AUTO_TEST_CASE(BatchNormTest)
         << 4.9 << 3.0 << 1.4 << arma::endr
         << 4.7 << 3.2 << 1.3 << arma::endr;
 
+  // BatchNorm layer with average parameter set to true.
   BatchNorm<> model(input.n_rows);
   model.Reset();
+
+  // BatchNorm layer with average parameter set to false.
+  BatchNorm<> model2(input.n_rows, 1e-5, false);
+  model2.Reset();
 
   // Non-Deteministic Forward Pass Test.
   model.Deterministic() = false;
   model.Forward(input, output);
+
+  // Value calculates using torch.nn.BatchNorm2d(momentum = None).
   arma::mat result;
   result << 1.1658 << 0.1100 << -1.2758 << arma::endr
          << 1.2579 << -0.0699 << -1.1880 << arma::endr
          << 1.1737 << 0.0958 << -1.2695 << arma::endr;
 
   CheckMatrices(output, result, 1e-1);
+
+  model2.Forward(input, output);
+  CheckMatrices(output, result, 1e-1);
   result.clear();
 
-  // Deterministic Forward Pass test.
+  // Values calculated using torch.nn.BatchNorm2d(momentum = None).
   output = model.TrainingMean();
   result << 3.33333333 << arma::endr
          << 3.1 << arma::endr
          << 3.06666666 << arma::endr;
 
   CheckMatrices(output, result, 1e-1);
-  result.clear();
 
-  output = model.TrainingVariance();
-  result << 2.2956 << arma::endr
-         << 2.0467 << arma::endr
-         << 1.9356 << arma::endr;
+  // Values calculated using torch.nn.BatchNorm2d().
+  output = model2.TrainingMean();
+  result << 0.3333 << arma::endr
+         << 0.3100 << arma::endr
+         << 0.3067 << arma::endr;
 
   CheckMatrices(output, result, 1e-1);
   result.clear();
 
+  // Values calculated using torch.nn.BatchNorm2d(momentum = None).
+  output = model.TrainingVariance();
+  result << 3.4433 << arma::endr
+         << 3.0700 << arma::endr
+         << 2.9033 << arma::endr;
+
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
+
+  // Values calculated using torch.nn.BatchNorm2d().
+  output = model2.TrainingVariance();
+  result << 1.2443 << arma::endr
+         << 1.2070 << arma::endr
+         << 1.1903 << arma::endr;
+
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
+
+  // Deterministic Forward Pass test.
   model.Deterministic() = true;
   model.Forward(input, output);
 
-  result << 1.1658 << 0.1100 << -1.2757 << arma::endr
-         << 1.2579 << -0.0699 << -1.1880 << arma::endr
-         << 1.1737 << 0.0958 << -1.2695 << arma::endr;
+  // Values calculated using torch.nn.BatchNorm2d(momentum = None).
+  result << 0.9521 << 0.0898 << -1.0419 << arma::endr
+         << 1.0273 << -0.0571 << -0.9702 << arma::endr
+         << 0.9586 << 0.0783 << -1.0368 << arma::endr;
 
+  CheckMatrices(output, result, 1e-1);
+
+  // Values calculated using torch.nn.BatchNorm2d().
+  model2.Deterministic() = true;
+  model2.Forward(input, output);
+
+  result << 4.2731 << 2.8388 << 0.9562 << arma::endr
+         << 4.1779 << 2.4485 << 0.9921 << arma::endr
+         << 4.0268 << 2.6519 << 0.9105 << arma::endr;
   CheckMatrices(output, result, 1e-1);
 }
 
@@ -2038,44 +2077,55 @@ BOOST_AUTO_TEST_CASE(BatchNormTest)
  */
 BOOST_AUTO_TEST_CASE(GradientBatchNormTest)
 {
-  // Add function gradient instantiation.
-  struct GradientFunction
+  bool pass = false;
+  for (size_t trial = 0; trial < 10; trial++)
   {
-    GradientFunction()
+    // Add function gradient instantiation.
+    struct GradientFunction
     {
-      input = arma::randn(10, 256);
-      arma::mat target;
-      target.ones(1, 256);
+      GradientFunction()
+      {
+        input = arma::randn(32, 2048);
+        arma::mat target;
+        target.ones(1, 2048);
 
-      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-      model->Predictors() = input;
-      model->Responses() = target;
-      model->Add<IdentityLayer<> >();
-      model->Add<Linear<> >(10, 10);
-      model->Add<BatchNorm<> >(10);
-      model->Add<Linear<> >(10, 2);
-      model->Add<LogSoftMax<> >();
-    }
+        model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+        model->Predictors() = input;
+        model->Responses() = target;
+        model->Add<IdentityLayer<> >();
+        model->Add<Linear<> >(32, 4);
+        model->Add<BatchNorm<> >(4);
+        model->Add<Linear<>>(4, 2);
+        model->Add<LogSoftMax<> >();
+      }
 
-    ~GradientFunction()
+      ~GradientFunction()
+      {
+        delete model;
+      }
+
+      double Gradient(arma::mat& gradient) const
+      {
+        double error = model->Evaluate(model->Parameters(), 0, 2048, false);
+        model->Gradient(model->Parameters(), 0, gradient, 2048);
+        return error;
+      }
+
+      arma::mat& Parameters() { return model->Parameters(); }
+
+      FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+      arma::mat input, target;
+    } function;
+
+    double gradient = CheckGradient(function);
+    if (gradient < 2e-1)
     {
-      delete model;
+      pass = true;
+      break;
     }
+  }
 
-    double Gradient(arma::mat& gradient) const
-    {
-      double error = model->Evaluate(model->Parameters(), 0, 256, false);
-      model->Gradient(model->Parameters(), 0, gradient, 256);
-      return error;
-    }
-
-    arma::mat& Parameters() { return model->Parameters(); }
-
-    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
-    arma::mat input, target;
-  } function;
-
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  BOOST_REQUIRE(pass);
 }
 
 /**
@@ -2090,6 +2140,14 @@ BOOST_AUTO_TEST_CASE(BatchNormLayerParametersTest)
   // Make sure we can get the parameters successfully.
   BOOST_REQUIRE_EQUAL(layer.InputSize(), 7);
   BOOST_REQUIRE_EQUAL(layer.Epsilon(), 1e-3);
+
+  arma::mat runningMean(7, 1, arma::fill::randn);
+  arma::mat runningVariance(7, 1, arma::fill::randn);
+
+  layer.TrainingVariance() = runningVariance;
+  layer.TrainingMean() = runningMean;
+  CheckMatrices(layer.TrainingVariance(), runningVariance);
+  CheckMatrices(layer.TrainingMean(), runningMean);
 }
 
 /**
@@ -2942,7 +3000,7 @@ BOOST_AUTO_TEST_CASE(ReparametrizationLayerIncludeKlTest)
  */
 BOOST_AUTO_TEST_CASE(JacobianReparametrizationLayerTest)
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t inputElementsHalf = math::RandInt(2, 1000);
 
@@ -3934,6 +3992,216 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionalLayerOptionalParameterTest)
       15, 15, 1, 1, 1, 1, 14, 14));
 
     delete decoder;
+}
+
+BOOST_AUTO_TEST_CASE(BatchNormWithMinBatchesTest)
+{
+  arma::mat input, output, result, runningMean, runningVar, delta;
+
+  // The input test matrix is of the form 3 x 2 x 4 x 1 where
+  // number of images are 3 and number of feature maps are 2.
+  input = arma::mat(8, 3);
+  input << 1 << 446 << 42 << arma::endr
+      << 2 << 16 << 63 << arma::endr
+      << 3 << 13 << 63 << arma::endr
+      << 4 << 21 << 21 << arma::endr
+      << 1 << 13 << 11 << arma::endr
+      << 32 << 45 << 42 << arma::endr
+      << 22 << 16 << 63 << arma::endr
+      << 32 << 13 << 42 << arma::endr;
+
+  // Output calculated using torch.nn.BatchNorm2d().
+  result = arma::mat(8, 3);
+  result << -0.4786 << 3.2634 << -0.1338 << arma::endr
+      << -0.4702 << -0.3525 << 0.0427 << arma::endr
+      << -0.4618 << -0.3777 << 0.0427 << arma::endr
+      << -0.4534 << -0.3104 << -0.3104 << arma::endr
+      << -1.5429 << -0.8486 << -0.9643 << arma::endr
+      << 0.2507 << 1.0029 << 0.8293 << arma::endr
+      << -0.3279 << -0.675 << 2.0443 << arma::endr
+      << 0.2507 << -0.8486 << 0.8293 << arma::endr;
+
+  // Check correctness of batch normalization.
+  BatchNorm<> module1(2, 1e-5, false, 0.1);
+  module1.Reset();
+  module1.Forward(input, output);
+  CheckMatrices(output, result, 1e-1);
+
+  // Check backward function.
+  module1.Backward(input, output, delta);
+  BOOST_REQUIRE_CLOSE(arma::accu(delta), 0.0102676, 1e-3);
+
+  // Check values for running mean and running variance.
+  // Calculated using torch.nn.BatchNorm2d().
+  runningMean = arma::mat(2, 1);
+  runningVar = arma::mat(2, 1);
+  runningMean(0) = 5.7917;
+  runningMean(1) = 2.76667;
+  runningVar(0) = 1543.6545;
+  runningVar(1) = 33.488;
+
+  CheckMatrices(runningMean, module1.TrainingMean(), 1e-3);
+  CheckMatrices(runningVar, module1.TrainingVariance(), 1e-2);
+
+  // Check correctness of layer when running mean and variance
+  // are updated using cumulative average.
+  BatchNorm<> module2(2);
+  module2.Reset();
+  module2.Forward(input, output);
+  CheckMatrices(output, result, 1e-1);
+
+  // Check values for running mean and running variance.
+  // Calculated using torch.nn.BatchNorm2d().
+  runningMean(0) = 57.9167;
+  runningMean(1) = 27.6667;
+  runningVar(0) = 15427.5380;
+  runningVar(1) = 325.8787;
+
+  CheckMatrices(runningMean, module2.TrainingMean(), 1e-2);
+  CheckMatrices(runningVar, module2.TrainingVariance(), 1e-2);
+
+  // Check correctness when model is testing.
+  arma::mat deterministicOutput;
+  module1.Deterministic() = true;
+  module1.Forward(input, deterministicOutput);
+
+  result.clear();
+  result = arma::mat(8, 3);
+  result << -0.12195 << 11.20426 << 0.92158 << arma::endr
+      << -0.0965 << 0.259824 << 1.4560 << arma::endr
+      << -0.071054 << 0.183567 << 1.45607 << arma::endr
+      << -0.045601<< 0.3870852 << 0.38708 << arma::endr
+      << -0.305288 << 1.7683 << 1.4227 << arma::endr
+      << 5.05166 << 7.29812<< 6.7797 << arma::endr
+      << 3.323614 << 2.2867 << 10.4086 << arma::endr
+      << 5.05166 << 1.7683 << 6.7797 << arma::endr;
+
+  CheckMatrices(result, deterministicOutput, 1e-1);
+
+  // Check correctness by updating the running mean and variance again.
+  module1.Deterministic() = false;
+
+  // Clean up.
+  output.clear();
+  input.clear();
+
+  // The input test matrix is of the form 2 x 2 x 3 x 1 where
+  // number of images are 2 and number of feature maps are 2.
+  input = arma::mat(6, 2);
+  input << 12 << 443 << arma::endr
+      << 134 << 45 << arma::endr
+      << 11 << 13 << arma::endr
+      << 14 << 55 << arma::endr
+      << 110 << 4 << arma::endr
+      << 1 << 45 << arma::endr;
+
+  result << -0.629337 << 2.14791 << arma::endr
+      << 0.156797 << -0.416694 << arma::endr
+      << -0.63578 << -0.622893 << arma::endr
+      << -0.637481 << 0.4440386 << arma::endr
+      << 1.894857 << -0.901267 << arma::endr
+      << -0.980402 << 0.180253 << arma::endr;
+
+  module1.Forward(input, output);
+  CheckMatrices(result, output, 1e-3);
+
+  // Check correctness for the second module as well.
+  module2.Forward(input, output);
+  CheckMatrices(result, output, 1e-3);
+
+  // Calculated using torch.nn.BatchNorm2d().
+  runningMean(0) = 16.1792;
+  runningMean(1) = 6.30667;
+  runningVar(0) = 4276.5849;
+  runningVar(1) = 202.595;
+
+  CheckMatrices(runningMean, module1.TrainingMean(), 1e-3);
+  CheckMatrices(runningVar, module1.TrainingVariance(), 1e-1);
+
+  // Check correctness of running mean and variance when their
+  // values are updated using cumulative average.
+  runningMean(0) = 83.79166;
+  runningMean(1) = 32.9166;
+  runningVar(0) = 22164.1035;
+  runningVar(1) = 1025.2227;
+
+  CheckMatrices(runningMean, module2.TrainingMean(), 1e-3);
+  CheckMatrices(runningVar, module2.TrainingVariance(), 1e-3);
+
+  // Check backward function.
+  module1.Backward(input, output, delta);
+
+  deterministicOutput.clear();
+  module1.Deterministic() = true;
+  module1.Forward(input, deterministicOutput);
+
+  result.clear();
+  result << -0.06388436 << 6.524754114 << arma::endr
+      << 1.799655281 << 0.44047968 << arma::endr
+      << -0.07913291 << -0.04784981 << arma::endr
+      << 0.5405045 << 3.4210097 << arma::endr
+      << 7.2851023 << -0.1620577 << arma::endr
+      << -0.37282639 << 2.7184474 << arma::endr;
+
+  // Calculated using torch.nn.BatchNorm2d().
+  CheckMatrices(result, deterministicOutput, 1e-1);
+}
+
+/**
+ * Batch Normalization layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientBatchNormWithMiniBatchesTest)
+{
+  // Add function gradient instantiation.
+  // To make this test robust, check it ten times.
+  bool pass = false;
+  for (size_t trial = 0; trial < 10; trial++)
+  {
+    struct GradientFunction
+    {
+      GradientFunction()
+      {
+        input = arma::randn(16, 1024);
+        arma::mat target;
+        target.ones(1, 1024);
+
+        model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+        model->Predictors() = input;
+        model->Responses() = target;
+        model->Add<IdentityLayer<>>();
+        model->Add<Convolution<>>(1, 2, 3, 3, 1, 1, 0, 0, 4, 4);
+        model->Add<BatchNorm<>>(2);
+        model->Add<Linear<>>(2 * 2 * 2, 2);
+        model->Add<LogSoftMax<>>();
+      }
+
+      ~GradientFunction()
+      {
+        delete model;
+      }
+
+      double Gradient(arma::mat& gradient) const
+      {
+        double error = model->Evaluate(model->Parameters(), 0, 1024, false);
+        model->Gradient(model->Parameters(), 0, gradient, 1024);
+        return error;
+      }
+
+      arma::mat& Parameters() { return model->Parameters(); }
+
+      FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+      arma::mat input, target;
+    } function;
+
+    double gradient = CheckGradient(function);
+    if (gradient < 1e-1)
+    {
+      pass = true;
+      break;
+    }
+  }
+
+  BOOST_REQUIRE(pass);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

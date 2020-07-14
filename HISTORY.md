@@ -6,6 +6,8 @@
 
   * Add Go bindings for some missed models (#2460).
 
+  * Additional functionality for the ARFF loader (#2486).
+
 ### mlpack 3.3.2
 ###### 2020-06-18
   * Added Noisy DQN to q_networks (#2446).
@@ -42,13 +44,16 @@
   * Fix incorrect neighbors for `k > 1` searches in `approx_kfn` binding, for
     the `QDAFN` algorithm (#2448).
 
+  * Fix serialization of kernels with state for FastMKS (#2452).
+
   * Add `RBF` layer in ann module to make `RBFN` architecture (#2261).
 
 ### mlpack 3.3.1
 ###### 2020-04-29
   * Minor Julia and Python documentation fixes (#2373).
 
-  * Updated terminal state and fixed bugs for Pendulum environment (#2354, #2369).
+  * Updated terminal state and fixed bugs for Pendulum environment (#2354,
+    #2369).
 
   * Added `EliSH` activation function (#2323).
 
@@ -71,6 +76,10 @@
   * Templated return type of `Forward function` of loss functions (#2339).
 
   * Added `R2 Score` regression metric (#2323).
+
+  * Added `poisson negative log likelihood` loss function (#2196).
+
+  * Added `huber` loss function (#2199).
 
   * Added `mean squared logarithmic error` loss function for neural networks
     (#2210).
