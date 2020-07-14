@@ -868,7 +868,7 @@ Any command-line program must be compiled with the @c BINDING_TYPE macro
 set to the value @c BINDING_TYPE_CLI.  This is handled by the CMake macro
 @c add_cli_executable().
 
-When @c BINDING_TYPE is set to @c BINDING_TYPE_IO, the following is set in
+When @c BINDING_TYPE is set to @c BINDING_TYPE_CLI, the following is set in
 @c src/mlpack/core/util/mlpack_main.hpp, which must be included by every mlpack
 binding:
 
