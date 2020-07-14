@@ -16,9 +16,8 @@
 #include <mlpack/prereqs.hpp>
 
 #include "replay/random_replay.hpp"
-#include "mlpack/methods/ann/activation_functions/tanh_function.hpp"
-#include "mlpack/core/dists/gaussian_distribution.hpp"
-#include "mlpack/methods/ann/dists/normal_distribution.hpp"
+#include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include "training_config.hpp"
 
 namespace mlpack {
@@ -76,8 +75,10 @@ class SAC
   /**
    * Softly update the learning Q_network parameters to the target Q_network
    * parameters.
+   * 
+   * @param rho How "softly" should the parameters be copied.
    * */
-  void SoftUpdate();
+  void SoftUpdate(double rho);
 
   /**
    * Update the Q and policy networks.
@@ -152,6 +153,9 @@ class SAC
 
   //! Locally-stored flag indicating training mode or test mode.
   bool deterministic;
+
+  //! Locally-stored loss function.
+  mlpack::ann::MeanSquaredError<> lossFunction;
 };
 
 } // namespace rl

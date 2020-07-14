@@ -122,7 +122,7 @@ void SAC<
   PolicyNetworkType,
   UpdaterType,
   ReplayType
->::SoftUpdate()
+>::SoftUpdate(double rho)
 {
 }
 
@@ -157,8 +157,8 @@ void SAC<
   arma::mat nextStateActions;
   policyNetwork.Predict(sampledNextStates, nextStateActions);
 
-  arma::mat targetQInput = arma::join_vert(sampledNextStates,
-      nextStateActions);
+  arma::mat targetQInput = arma::join_vert(nextStateActions,
+      sampledNextStates);
   arma::rowvec Q1, Q2;
   targetQ1Network.Predict(targetQInput, Q1);
   targetQ2Network.Predict(targetQInput, Q2);
@@ -168,14 +168,18 @@ void SAC<
   arma::mat sampledActionValues(action.size, sampledActions.size());
   for (size_t i = 0; i < sampledActions.size(); i++)
     sampledActionValues.col(i) = sampledActions[i].action[0];
-  arma::mat learningQInput = arma::join_vert(sampledStates,
-      sampledActionValues);
+  arma::mat learningQInput = arma::join_vert(sampledActionValues,
+      sampledStates);
   learningQ1Network.Forward(learningQInput, Q1);
   learningQ2Network.Forward(learningQInput, Q2);
 
+  arma::mat gradQ1Loss, gradQ2Loss;
+  lossFunction.Backward(Q1, nextQ, gradQ1Loss);
+  lossFunction.Backward(Q2, nextQ, gradQ2Loss);
+
   // Update the critic networks.
   arma::mat gradientQ1, gradientQ2;
-  learningQ1Network.Backward(learningQInput, nextQ, gradientQ1);
+  learningQ1Network.Backward(learningQInput, gradQ1Loss, gradientQ1);
   #if ENS_VERSION_MAJOR == 1
   qNetworkUpdater.Update(learningQ1Network.Parameters(), config.StepSize(),
       gradientQ1);
@@ -183,18 +187,65 @@ void SAC<
   qNetworkUpdatePolicy->Update(learningQ1Network.Parameters(),
       config.StepSize(), gradientQ1);
   #endif
-  learningQ2Network.Backward(learningQInput, nextQ, gradientQ2);
+  learningQ2Network.Backward(learningQInput, gradQ2Loss, gradientQ2);
   #if ENS_VERSION_MAJOR == 1
   qNetworkUpdater.Update(learningQ2Network.Parameters(), config.StepSize(),
-      gradientQ1);
+      gradientQ2);
   #else
   qNetworkUpdatePolicy->Update(learningQ2Network.Parameters(),
       config.StepSize(), gradientQ2);
   #endif
 
+  // Actor network update.
+
+  arma::rowvec pi;
+  policyNetwork.Predict(sampledStates, pi);
+
+  arma::mat qInput = arma::join_vert(pi, sampledStates);
+  learningQ1Network.Predict(qInput, Q1);
+  learningQ2Network.Predict(qInput, Q2);
+
+  arma::mat gradient;
+  for (size_t i = 0; i < sampledStates.n_cols; i++)
+  {
+    arma::mat grad, gradQ;
+    arma::mat q;
+    arma::colvec singleState = sampledStates.col(i);
+    arma::colvec singlePi = pi.col(i);
+    policyNetwork.Forward(singleState, singlePi);
+    arma::colvec input = arma::join_vert(singlePi, singleState);
+    if (Q1(i) < Q2(i))
+    {
+      learningQ1Network.Forward(input, q);
+      learningQ1Network.Backward(input, -q, gradQ);
+    }
+    else
+    {
+      learningQ2Network.Forward(input, q);
+      learningQ2Network.Backward(input, -q, gradQ);
+    }
+    //! TODO: Check for the correct location of pi grad.
+    arma::mat gradPolicy = gradQ.rows(0, singlePi.n_rows - 1);
+    policyNetwork.Backward(singleState, gradPolicy, grad);
+    if (i == 0)
+    {
+      gradient.copy_size(grad);
+      gradient.fill(0.0);
+    }
+    gradient += grad;
+  }
+  // gradient /= sampledStates.n_cols;
+
+  #if ENS_VERSION_MAJOR == 1
+  policyUpdater.Update(policyNetwork.Parameters(), config.StepSize(), gradient);
+  #else
+  policyNetworkUpdatePolicy->Update(policyNetwork.Parameters(), config.StepSize(),
+      gradient);
+  #endif
+
   // Update target network
   if (totalSteps % config.TargetNetworkSyncInterval() == 0)
-    SoftUpdate();
+    SoftUpdate(0.005);
 }
 
 template <
