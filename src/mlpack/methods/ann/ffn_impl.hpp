@@ -23,8 +23,6 @@
 #include "visitor/set_input_height_visitor.hpp"
 #include "visitor/set_input_width_visitor.hpp"
 
-#include <boost/serialization/variant.hpp>
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
