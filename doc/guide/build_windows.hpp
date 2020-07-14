@@ -151,6 +151,7 @@ If you prefer to use cmake GUI, follow these instructions:
       reconfigure:
       - Name: `Boost_INCLUDE_DIR`; type `PATH`; value `C:/boost/`
       - Name: `Boost_SERIALIZATION_LIBRARY_DEBUG`; type `FILEPATH`; value should be `C:/boost/lib64-msvc-14.2/boost_serialization-vc142-mt-gd-x64-1_71.lib`
+      - Name: `Boost_SERIALIZATION_LIBRARY_RELEASE`; type `FILEPATH`; value should be `C:/boost/lib64-msvc-14.2/boost_program_options-vc142-mt-x64-1_71.lib`
       - Name: `Boost_UNIT_TEST_FRAMEWORK_LIBRARY_DEBUG`; type `FILEPATH`; value should be `C:/boost/lib64-msvc-14.2/boost_unit_test_framework-vc142-mt-gd-x64-1_71.lib`
       - Name: `Boost_UNIT_TEST_FRAMEWORK_LIBRARY_RELEASE`; type `FILEPATH`; value should be `C:/boost/lib64-msvc-14.2/boost_unit_test_framework-vc142-mt-x64-1_71.lib`
     - Once CMake has configured successfully, hit "Generate" to create the `.sln` file.
