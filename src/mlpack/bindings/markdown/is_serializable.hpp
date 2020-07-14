@@ -54,7 +54,7 @@ bool IsSerializable(
  * Return whether or not the type is serializable.
  */
 template<typename T>
-void IsSerializable(const util::ParamData& /* data */,
+void IsSerializable(util::ParamData& /* data */,
                     const void* /* input */,
                     void* output)
 {

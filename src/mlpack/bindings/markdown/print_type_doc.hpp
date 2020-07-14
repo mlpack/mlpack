@@ -29,7 +29,7 @@ namespace markdown {
  * depends on the current setting of BindingInfo::Language().
  */
 template<typename T>
-std::string PrintTypeDoc(const util::ParamData& data)
+std::string PrintTypeDoc(util::ParamData& data)
 {
   if (BindingInfo::Language() == "cli")
   {
