@@ -41,8 +41,8 @@ once that is done, it will call \c mlpackMain().
 @code
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/cli.hpp>
-// This definition below means we will only compile for the IO.
-#define BINDING_TYPE BINDING_TYPE_IO
+// This definition below means we will only compile for the command line.
+#define BINDING_TYPE BINDING_TYPE_CLI
 #include <mlpack/core/util/mlpack_main.hpp>
 
 using namespace mlpack;
