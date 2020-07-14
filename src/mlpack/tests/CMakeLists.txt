@@ -170,10 +170,12 @@ add_executable(mlpack_test
 
 add_executable(mlpack_catch_test
   main.cpp
-  serialization.cpp
-  serialization.hpp
+  serialization_catch.cpp
+  serialization_catch.hpp
+  test_catch_tools.hpp
   image_load_test.cpp
   main_tests/image_converter_test.cpp
+  main_tests/test_helper.hpp
 )
 
 # Link dependencies of test executable.

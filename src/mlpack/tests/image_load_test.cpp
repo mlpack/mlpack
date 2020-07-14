@@ -11,7 +11,7 @@
  */
 
 #include <mlpack/core.hpp>
-#include "serialization.hpp"
+#include "serialization_catch.hpp"
 #include "catch.hpp"
 
 using namespace mlpack;
