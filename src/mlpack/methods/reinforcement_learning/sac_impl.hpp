@@ -124,6 +124,10 @@ void SAC<
   ReplayType
 >::SoftUpdate(double rho)
 {
+  targetQ1Network.Parameters() = (1 - rho) * targetQ1Network.Parameters() + rho *
+      learningQ1Network.Parameters();
+  targetQ2Network.Parameters() = (1 - rho) * targetQ2Network.Parameters() + rho *
+      learningQ2Network.Parameters();
 }
 
 template <
