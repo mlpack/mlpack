@@ -208,7 +208,7 @@ class KernelSVM
   //! Locally saved alpha values.
   arma::vec alpha;
   //! Locally saved KernelType values.
-  const KernelType kernel;
+  KernelType kernel;
   //! Locally saved labels of classes to give prediction for non-linear kernel.
   arma::rowvec saved_labels;
   //! Locally saved input data of classes for non-linear kernel.
