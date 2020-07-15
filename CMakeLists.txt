@@ -471,18 +471,13 @@ set(Boost_ADDITIONAL_VERSIONS
 #
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
-#set(Boost_NO_BOOST_CMAKE 1)
-if (CMAKE_CROSSCOMPILING)
-  # Here we will set paths as we have done for armadillo.
-  set(Boost_INCLUDE_DIRS ${BOOST_INCLUDE_DIR})
-# Otherwise just find Boost in the system
-else()
-  find_package(Boost 1.58
-        COMPONENTS
-        unit_test_framework
-        REQUIRED
-  )
-endif()
+set(Boost_NO_BOOST_CMAKE 1)
+find_package(Boost 1.58
+    COMPONENTS
+      unit_test_framework
+      serialization
+    REQUIRED
+)
 
 link_directories(${Boost_LIBRARY_DIRS})
 

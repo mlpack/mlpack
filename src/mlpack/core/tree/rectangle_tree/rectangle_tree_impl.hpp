@@ -15,7 +15,6 @@
 // In case it wasn't included already for some reason.
 #include "rectangle_tree.hpp"
 
-#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/log.hpp>
 
 namespace mlpack {

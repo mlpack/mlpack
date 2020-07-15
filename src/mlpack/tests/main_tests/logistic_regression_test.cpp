@@ -31,14 +31,14 @@ struct LogisticRegressionTestFixture
   LogisticRegressionTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~LogisticRegressionTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(LRPridictionSizeCheck)
 
   // Get the output predictions of the test data.
   const arma::Row<size_t> &testY =
-      CLI::GetParam<arma::Row<size_t>>("predictions");
+      IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Output predictions size must match the test data set size.
   BOOST_REQUIRE_EQUAL(testY.n_rows, 1);
@@ -151,12 +151,12 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentationTest)
 
   // Get the output.
   const arma::Row<size_t> testY1 =
-      std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+      std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   // Now train by providing labels as extra parameter.
   arma::mat trainX2({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}});
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentationTest)
 
   // get the output
   const arma::Row<size_t> &testY2 =
-      CLI::GetParam<arma::Row<size_t>>("predictions");
+      IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Both solutions should be equal.
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
@@ -205,15 +205,15 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
 
   // Get the output model obtained from training.
   LogisticRegression<>* model =
-      CLI::GetParam<LogisticRegression<>*>("output_model");
+      IO::GetParam<LogisticRegression<>*>("output_model");
   // Get the output.
   const arma::Row<size_t> testY1 =
-      std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+      std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
 
   // Reset the data passed.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   SetInputParam("input_model", model);
   SetInputParam("test", std::move(testX));
@@ -223,7 +223,7 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
 
   // Get the output.
   const arma::Row<size_t> &testY2 =
-      CLI::GetParam<arma::Row<size_t>>("predictions");
+      IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Both solutions must be equal.
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
@@ -279,11 +279,11 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfTestData2)
 
   // Get the output model obtained from training.
   LogisticRegression<>* model =
-      CLI::GetParam<LogisticRegression<>*>("output_model");
+      IO::GetParam<LogisticRegression<>*>("output_model");
 
   // Reset the data passed.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
 
   // Test data with Wrong dimensionality.
   arma::mat testX = arma::randu<arma::mat>(D - 1, M);
@@ -416,13 +416,13 @@ BOOST_AUTO_TEST_CASE(LRMaxIterationsChangeTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::rowvec parameters1 =
-      std::move(CLI::GetParam<LogisticRegression<>*>("output_model")
+      std::move(IO::GetParam<LogisticRegression<>*>("output_model")
                 ->Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -433,7 +433,7 @@ BOOST_AUTO_TEST_CASE(LRMaxIterationsChangeTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::rowvec &parameters2 =
-      CLI::GetParam<LogisticRegression<>*>("output_model")->Parameters();
+      IO::GetParam<LogisticRegression<>*>("output_model")->Parameters();
 
   // Check that the parameters (parameters1 and parameters2) are not equal
   // which ensures Max Iteration changes the output model.
@@ -465,13 +465,13 @@ BOOST_AUTO_TEST_CASE(LRLambdaChangeTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::rowvec parameters1 =
-      std::move(CLI::GetParam<LogisticRegression<>*>("output_model")
+      std::move(IO::GetParam<LogisticRegression<>*>("output_model")
                 ->Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -482,7 +482,7 @@ BOOST_AUTO_TEST_CASE(LRLambdaChangeTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::rowvec &parameters2 =
-      CLI::GetParam<LogisticRegression<>*>("output_model")->Parameters();
+      IO::GetParam<LogisticRegression<>*>("output_model")->Parameters();
 
   // Check that the parameters (parameters1 and parameters2) are not equal
   // which ensures lambda changes the output model.
@@ -515,13 +515,13 @@ BOOST_AUTO_TEST_CASE(LRStepSizeChangeTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::rowvec parameters1 =
-      std::move(CLI::GetParam<LogisticRegression<>*>("output_model")
+      std::move(IO::GetParam<LogisticRegression<>*>("output_model")
                 ->Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -533,7 +533,7 @@ BOOST_AUTO_TEST_CASE(LRStepSizeChangeTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::rowvec &parameters2 =
-      CLI::GetParam<LogisticRegression<>*>("output_model")->Parameters();
+      IO::GetParam<LogisticRegression<>*>("output_model")->Parameters();
 
   // Check that the parameters (parameters1 and parameters2) are not equal
   // which ensures Step Size changes the output model.
@@ -566,13 +566,13 @@ BOOST_AUTO_TEST_CASE(LROptimizerChangeTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::rowvec parameters1 =
-      std::move(CLI::GetParam<LogisticRegression<>*>("output_model")
+      std::move(IO::GetParam<LogisticRegression<>*>("output_model")
                 ->Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -584,7 +584,7 @@ BOOST_AUTO_TEST_CASE(LROptimizerChangeTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::rowvec &parameters2 =
-      CLI::GetParam<LogisticRegression<>*>("output_model")->Parameters();
+      IO::GetParam<LogisticRegression<>*>("output_model")->Parameters();
 
   // Check that the parameters (parameters1 and parameters2) are not equal which
   // ensures that different optimizer converge to different results.
@@ -620,12 +620,12 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
 
   // Get the output after first training.
   const arma::Row<size_t> output1 =
-      CLI::GetParam<arma::Row<size_t>>("predictions");
+      IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", trainX);
   SetInputParam("labels", trainY);
@@ -637,7 +637,7 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
 
   // Get the output after second training.
   const arma::Row<size_t> &output2 =
-      CLI::GetParam<arma::Row<size_t>>("predictions");
+      IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Check that the output changed when the decision boundary moved.
   BOOST_REQUIRE_GT(arma::accu(output1 != output2), 0);
@@ -664,11 +664,11 @@ BOOST_AUTO_TEST_CASE(LROPtionConsistencyTest){
 
   // Get the output from 'predictions' parameter
   const arma::Row<size_t> testY1 =
-      CLI::GetParam<arma::Row<size_t>>("predictions");
+      IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Get output from 'output' parameter
   const arma::Row<size_t> testY2 =
-      std::move(CLI::GetParam<arma::Row<size_t>>("output"));
+      std::move(IO::GetParam<arma::Row<size_t>>("output"));
 
   // Both solutions must be equal.
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
@@ -696,11 +696,11 @@ BOOST_AUTO_TEST_CASE(LROPtionConsistencyTest2){
 
   // Get the output from 'predictions' parameter
   const arma::mat testY1 =
-      CLI::GetParam<arma::mat>("output_probabilities");
+      IO::GetParam<arma::mat>("output_probabilities");
 
   // Get output from 'output' parameter
   const arma::mat testY2 =
-      std::move(CLI::GetParam<arma::mat>("probabilities"));
+      std::move(IO::GetParam<arma::mat>("probabilities"));
 
   // Both solutions must be equal.
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),

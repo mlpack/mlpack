@@ -3,7 +3,7 @@
  * @author Ryan Curtin
  *
  * If the type is serializable, we need to define a special utility function to
- * set a CLI parameter of that type.
+ * set a IO parameter of that type.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -24,7 +24,7 @@ namespace julia {
  */
 template<typename T>
 void PrintModelTypeImport(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0)
 {
@@ -36,7 +36,7 @@ void PrintModelTypeImport(
  */
 template<typename T>
 void PrintModelTypeImport(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   // Do nothing.
@@ -47,7 +47,7 @@ void PrintModelTypeImport(
  */
 template<typename T>
 void PrintModelTypeImport(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
@@ -60,10 +60,10 @@ void PrintModelTypeImport(
 
 /**
  * If the type is serializable, print the definition of a special utility
- * function to set a CLI parameter of that type to stdout.
+ * function to set a IO parameter of that type to stdout.
  */
 template<typename T>
-void PrintModelTypeImport(const util::ParamData& d,
+void PrintModelTypeImport(util::ParamData& d,
                           const void* /* input */,
                           void* /* output */)
 {

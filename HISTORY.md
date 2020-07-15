@@ -6,6 +6,8 @@
 
   * Add Go bindings for some missed models (#2460).
 
+  * Replace boost program_options dependency with CLI11 (#2459).
+
   * Additional functionality for the ARFF loader (#2486).
 
 ### mlpack 3.3.2

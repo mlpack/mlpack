@@ -67,8 +67,8 @@ if (BUILD_GO_SHLIB)
     go_option.hpp
     mlpack/arma_util.h
     mlpack/arma_util.hpp
-    mlpack/cli_util.h
-    mlpack/cli_util.hpp
+    mlpack/io_util.h
+    mlpack/io_util.hpp
     print_class_defn.hpp
     print_defn_input.hpp
     print_defn_output.hpp
@@ -89,7 +89,7 @@ if (BUILD_GO_SHLIB)
   # not a part of mlpack itself.
   set(CGO_SOURCES
     mlpack/arma_util.go
-    mlpack/cli_util.go
+    mlpack/io_util.go
     mlpack/doc.go
     mlpack/numcsv.go
     mlpack/go.mod
@@ -100,7 +100,7 @@ if (BUILD_GO_SHLIB)
   # not a part of mlpack itself.
   set(CAPI_SOURCES
     mlpack/capi/arma_util.h
-    mlpack/capi/cli_util.h
+    mlpack/capi/io_util.h
   )
 
   set(TEST_SOURCES
@@ -148,7 +148,7 @@ if (BUILD_GO_SHLIB)
 
   add_library(go_util SHARED
           ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/mlpack/capi/arma_util.cpp
-          ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/mlpack/capi/cli_util.cpp)
+          ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/mlpack/capi/io_util.cpp)
   target_link_libraries(go_util mlpack ${MLPACK_LIBRARIES})
   target_compile_definitions(go_util PUBLIC "BINDING_TYPE=BINDING_TYPE_GO")
   set_target_properties(go_util PROPERTIES

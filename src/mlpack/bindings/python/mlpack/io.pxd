@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """
-cli.pyx: Cython functionality for mlpack::CLI.
+io.pyx: Cython functionality for mlpack::IO.
 
-This file imports the GetParam() function from mlpack::CLI, plus a utility
+This file imports the GetParam() function from mlpack::IO, plus a utility
 SetParam() function because Cython can't seem to support lvalue references.
 
 mlpack is free software; you may redistribute it and/or modify it under the
@@ -15,8 +15,8 @@ cimport cython
 from libcpp.string cimport string
 from libcpp cimport bool
 
-cdef extern from "<mlpack/core/util/cli.hpp>" namespace "mlpack" nogil:
-  cdef cppclass CLI:
+cdef extern from "<mlpack/core/util/io.hpp>" namespace "mlpack" nogil:
+  cdef cppclass IO:
     @staticmethod
     (T&) GetParam[T](string) nogil except +
 
@@ -38,7 +38,7 @@ cdef extern from "<mlpack/core/util/cli.hpp>" namespace "mlpack" nogil:
     @staticmethod
     void ClearSettings() nogil except +
 
-cdef extern from "<mlpack/bindings/python/mlpack/cli_util.hpp>" \
+cdef extern from "<mlpack/bindings/python/mlpack/io_util.hpp>" \
     namespace "mlpack::util" nogil:
   void SetParam[T](string, T&) nogil except +
   void SetParamPtr[T](string, T*, bool) nogil except +

@@ -15,7 +15,7 @@
 
 #include <string>
 
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include "get_printable_param.hpp"
 #include "get_param.hpp"
 #include "get_allocated_memory.hpp"
@@ -34,7 +34,7 @@ extern std::string programName;
  * PARAM_FLAG(), PARAM_DOUBLE(), PARAM_INT(), PARAM_STRING(), or other similar
  * macros to declare these objects instead of declaring them directly.
  *
- * @see core/util/cli.hpp, mlpack::CLI
+ * @see core/util/io.hpp, mlpack::CLI
  */
 template<typename N>
 class TestOption
@@ -86,25 +86,25 @@ class TestOption
 
     const std::string tname = data.tname;
 
-    CLI::RestoreSettings(testName, false);
+    IO::RestoreSettings(testName, false);
 
     // Set some function pointers that we need.
-    CLI::GetSingleton().functionMap[tname]["GetPrintableParam"] =
+    IO::GetSingleton().functionMap[tname]["GetPrintableParam"] =
         &GetPrintableParam<N>;
-    CLI::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
-    CLI::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
+    IO::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
+    IO::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
         &GetAllocatedMemory<N>;
-    CLI::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
+    IO::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
         &DeleteAllocatedMemory<N>;
 
-    CLI::Add(std::move(data));
+    IO::Add(std::move(data));
 
     // If this is an output option, set it as passed.
     if (!input)
-      CLI::SetPassed(identifier);
+      IO::SetPassed(identifier);
 
-    CLI::StoreSettings(testName);
-    CLI::ClearSettings();
+    IO::StoreSettings(testName);
+    IO::ClearSettings();
   }
 };
 
@@ -114,7 +114,7 @@ class TestOption
  * the PROGRAM_INFO() macro to declare these objects.  Only one ProgramDoc
  * object should ever exist.
  *
- * @see core/util/cli.hpp, mlpack::CLI
+ * @see core/util/io.hpp, mlpack::CLI
  */
 class ProgramDoc
 {
