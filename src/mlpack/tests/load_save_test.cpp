@@ -1171,7 +1171,7 @@ BOOST_AUTO_TEST_CASE(NormalizeLabelTest)
 class TestInner
 {
  public:
-  TestInner(char c, string s) : c(c), s(s) { }
+  TestInner(char c, const string& s) : c(c), s(s) { }
 
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
