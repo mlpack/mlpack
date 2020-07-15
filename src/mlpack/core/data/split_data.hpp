@@ -228,7 +228,7 @@ Split(const arma::Mat<T>& input,
                          std::move(testData));
 }
 
-template <class fieldType,
+template <typename FieldType,
           class = std::enable_if_t<
               arma::is_Col<typename fieldType::object_type>::value ||
               arma::is_Mat_only<typename fieldType::object_type>::value>>
