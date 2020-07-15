@@ -96,8 +96,7 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
           REQUIRE(double(xSlice(j, i)) == Approx(0.0).margin(1e-8 / 100));
         else
           REQUIRE(double(origSlice(j, i)) ==
-              Approx(double(xSlice(j, i))).epsilon(1e-8 / 100));    
-
+              Approx(double(xSlice(j, i))).epsilon(1e-8 / 100));
       }
     }
   }
@@ -175,7 +174,7 @@ void TestArmadilloSerialization(MatType& x)
         REQUIRE(double(x(j, i)) == Approx(0.0).margin(1e-8 / 100));
       else
           REQUIRE(double(orig(j, i)) ==
-              Approx(double(x(j, i))).epsilon(1e-8 / 100));    
+              Approx(double(x(j, i))).epsilon(1e-8 / 100));
 }
 
 // Test all serialization strategies.
