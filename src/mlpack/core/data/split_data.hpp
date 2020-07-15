@@ -265,7 +265,7 @@ void Split(fieldType& input,
   if (testSize <= input.n_cols)
   {
     for (size_t i = trainSize; i < input.n_cols - 1; i++)
-       testData[i - trainSize] = input(0,order(i));
+     testData[i - trainSize] = input(0, order(i));
     
     testLabels.set_size(1, testSize);
     for (size_t i = trainSize; i < input.n_cols; i++)
