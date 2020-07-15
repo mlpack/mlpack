@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(ConcentricCircleDataset)
   arma::mat dataset;
 
   // Now, there are 500 points centered at the origin with unit variance.
-  dataset = arma::randu(3, 500);
+  dataset = arma::randn(3, 500);
   dataset *= 0.05;
   arma::Row<size_t> labels(dataset.n_cols);
   for (size_t i = 0; i < dataset.n_cols / 2; ++i)
