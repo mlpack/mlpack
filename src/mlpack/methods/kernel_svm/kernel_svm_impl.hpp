@@ -191,11 +191,6 @@ double KernelSVM<MatType, KernelType>::Train(
     {
       saved_labels(i) = label(i);
     }
-
-    else
-    {
-      saved_data.col(i) = arma::zeros(data.n_rows);
-    }
   }
 }
 
@@ -243,9 +238,12 @@ void KernelSVM<MatType, KernelType>::Classify(
       double  prediction = 0;
       for (size_t j = 0; j < saved_data.n_cols; j++)
       {
-        prediction = prediction + alpha(j) *
+        if(saved_labels(j) != 0)
+        {
+          prediction = prediction + alpha(j) *
                      saved_labels(j) * kernel.Evaluate(data.col(i),
                      saved_data.col(j));
+        }
       }
       scores(i) = prediction + intercept;
     }
