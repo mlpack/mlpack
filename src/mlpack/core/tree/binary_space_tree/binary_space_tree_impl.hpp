@@ -14,7 +14,6 @@
 // In case it wasn't included already for some reason.
 #include "binary_space_tree.hpp"
 
-#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <queue>
 

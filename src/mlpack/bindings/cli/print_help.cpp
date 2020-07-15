@@ -23,12 +23,9 @@ namespace cli {
 void PrintHelp(const std::string& param)
 {
   std::string usedParam = param;
-  const std::map<std::string, util::ParamData>& parameters =
-      CLI::Parameters();
-  const std::map<char, std::string>& aliases = CLI::Aliases();
-
-  std::map<std::string, util::ParamData>::const_iterator iter;
-  const util::ProgramDoc& docs = *CLI::GetSingleton().doc;
+  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  const std::map<char, std::string>& aliases = IO::Aliases();
+  util::ProgramDoc& docs = *IO::GetSingleton().doc;
 
   // If we pass a single param, alias it if necessary.
   if (usedParam.length() == 1 && aliases.count(usedParam[0]))
@@ -37,13 +34,13 @@ void PrintHelp(const std::string& param)
   // Do we only want to print out one value?
   if (usedParam != "" && parameters.count(usedParam))
   {
-    const util::ParamData& data = parameters.at(usedParam);
+    util::ParamData& data = parameters.at(usedParam);
     std::string alias = (data.alias != '\0') ? " (-"
         + std::string(1, data.alias) + ")" : "";
 
     // Figure out the name of the type.
     std::string printableType;
-    CLI::GetSingleton().functionMap[data.tname]["StringTypeParam"](data, NULL,
+    IO::GetSingleton().functionMap[data.tname]["StringTypeParam"](data, NULL,
         (void*) &printableType);
     std::string type = " [" + printableType + "]";
 
@@ -79,18 +76,17 @@ void PrintHelp(const std::string& param)
   for (size_t pass = 0; pass < 3; ++pass)
   {
     bool printedHeader = false;
-
     // Print out the descriptions of everything else.
-    for (iter = parameters.begin(); iter != parameters.end(); ++iter)
+    for (auto& iter : parameters)
     {
-      const util::ParamData& data = iter->second;
+      util::ParamData& data = iter.second;
       const std::string key;
-      CLI::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
+      IO::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
           NULL, (void*) &key);
 
       std::string desc = data.desc;
-      std::string alias = (iter->second.alias != '\0') ?
-          std::string(1, iter->second.alias) : "";
+      std::string alias = (iter.second.alias != '\0') ?
+          std::string(1, iter.second.alias) : "";
       alias = alias.length() ? " (-" + alias + ")" : alias;
 
       // Filter un-printed options.
@@ -125,14 +121,14 @@ void PrintHelp(const std::string& param)
                         data.cppType == "std::vector<std::string>"))
       {
         std::string defaultValue;
-        CLI::GetSingleton().functionMap[data.tname]["DefaultParam"](data,
+        IO::GetSingleton().functionMap[data.tname]["DefaultParam"](data,
             NULL, (void*) &defaultValue);
         desc += "  Default value " + defaultValue + ".";
       }
 
       // Now, print the descriptions.
       std::string printableType;
-      CLI::GetSingleton().functionMap[data.tname]["StringTypeParam"](data,
+      IO::GetSingleton().functionMap[data.tname]["StringTypeParam"](data,
           NULL, (void*) &printableType);
       std::string type = " [" + printableType + "]";
       std::string fullDesc = "  --" + key + alias + type + "  ";

@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "gmm.hpp"
 
@@ -57,9 +57,9 @@ static void mlpackMain()
   RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
 
   // Get the GMM and the points.
-  GMM* gmm = CLI::GetParam<GMM*>("input_model");
+  GMM* gmm = IO::GetParam<GMM*>("input_model");
 
-  arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
+  arma::mat dataset = std::move(IO::GetParam<arma::mat>("input"));
 
   // Now calculate the probabilities.
   arma::rowvec probabilities(dataset.n_cols);
@@ -67,5 +67,5 @@ static void mlpackMain()
     probabilities[i] = gmm->Probability(dataset.unsafe_col(i));
 
   // And save the result.
-  CLI::GetParam<arma::mat>("output") = std::move(probabilities);
+  IO::GetParam<arma::mat>("output") = std::move(probabilities);
 }

@@ -27,7 +27,7 @@ namespace go {
  */
 template<typename T>
 void PrintInputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
@@ -127,7 +127,7 @@ void PrintInputProcessing(
  */
 template<typename T>
 void PrintInputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
@@ -187,7 +187,7 @@ void PrintInputProcessing(
  */
 template<typename T>
 void PrintInputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
@@ -248,7 +248,7 @@ void PrintInputProcessing(
  */
 template<typename T>
 void PrintInputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
@@ -317,7 +317,7 @@ void PrintInputProcessing(
  * @param * (output) Unused parameter.
  */
 template<typename T>
-void PrintInputProcessing(const util::ParamData& d,
+void PrintInputProcessing(util::ParamData& d,
                           const void* input,
                           void* /* output */)
 {

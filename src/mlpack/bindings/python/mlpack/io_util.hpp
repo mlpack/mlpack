@@ -1,5 +1,5 @@
 /**
- * @file bindings/python/mlpack/cli_util.hpp
+ * @file bindings/python/mlpack/io_util.hpp
  * @author Ryan Curtin
  *
  * Simple function to work around Cython's lack of support for lvalue
@@ -10,10 +10,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_PYTHON_CYTHON_CLI_UTIL_HPP
-#define MLPACK_BINDINGS_PYTHON_CYTHON_CLI_UTIL_HPP
+#ifndef MLPACK_BINDINGS_PYTHON_CYTHON_IO_UTIL_HPP
+#define MLPACK_BINDINGS_PYTHON_CYTHON_IO_UTIL_HPP
 
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/data/dataset_mapper.hpp>
 
 namespace mlpack {
@@ -31,7 +31,7 @@ namespace util {
 template<typename T>
 inline void SetParam(const std::string& identifier, T& value)
 {
-  CLI::GetParam<T>(identifier) = std::move(value);
+  IO::GetParam<T>(identifier) = std::move(value);
 }
 
 /**
@@ -49,7 +49,7 @@ inline void SetParamPtr(const std::string& identifier,
                         T* value,
                         const bool copy)
 {
-  CLI::GetParam<T*>(identifier) = copy ? new T(*value) : value;
+  IO::GetParam<T*>(identifier) = copy ? new T(*value) : value;
 }
 
 /**
@@ -65,8 +65,8 @@ inline void SetParamWithInfo(const std::string& identifier,
 
   // The true type of the parameter is std::tuple<T, DatasetInfo>.
   const size_t dimensions = matrix.n_rows;
-  std::get<1>(CLI::GetParam<TupleType>(identifier)) = std::move(matrix);
-  data::DatasetInfo& di = std::get<0>(CLI::GetParam<TupleType>(identifier));
+  std::get<1>(IO::GetParam<TupleType>(identifier)) = std::move(matrix);
+  data::DatasetInfo& di = std::get<0>(IO::GetParam<TupleType>(identifier));
   di = data::DatasetInfo(dimensions);
 
   bool hasCategoricals = false;
@@ -83,7 +83,7 @@ inline void SetParamWithInfo(const std::string& identifier,
   if (hasCategoricals)
   {
     arma::vec maxs = arma::max(
-        std::get<1>(CLI::GetParam<TupleType>(identifier)), 1);
+        std::get<1>(IO::GetParam<TupleType>(identifier)), 1);
 
     for (size_t i = 0; i < dimensions; ++i)
     {
@@ -108,7 +108,7 @@ inline void SetParamWithInfo(const std::string& identifier,
 template<typename T>
 T* GetParamPtr(const std::string& paramName)
 {
-  return CLI::GetParam<T*>(paramName);
+  return IO::GetParam<T*>(paramName);
 }
 
 /**
@@ -119,7 +119,7 @@ T& GetParamWithInfo(const std::string& paramName)
 {
   // T will be the Armadillo type.
   typedef std::tuple<data::DatasetInfo, T> TupleType;
-  return std::get<1>(CLI::GetParam<TupleType>(paramName));
+  return std::get<1>(IO::GetParam<TupleType>(paramName));
 }
 
 /**
@@ -152,7 +152,7 @@ inline void DisableBacktrace()
 inline void ResetTimers()
 {
   // Just get a new object---removes all old timers.
-  CLI::GetSingleton().timer.Reset();
+  IO::GetSingleton().timer.Reset();
 }
 
 /**
