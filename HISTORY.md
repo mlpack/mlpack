@@ -8,7 +8,8 @@
 
   * Replace boost program_options dependency with CLI11 (#2459).
 
-  * Additional functionality for the ARFF loader (#2486).
+  * Additional functionality for the ARFF loader (#2486); use case sensitive
+    categories (#2516).
 
 ### mlpack 3.3.2
 ###### 2020-06-18
