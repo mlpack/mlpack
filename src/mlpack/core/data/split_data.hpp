@@ -344,6 +344,7 @@ Split(const fieldType& input,
   return std::make_tuple(std::move(trainData),
                          std::move(testData));
 }
+
 } // namespace data
 } // namespace mlpack
 
