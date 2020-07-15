@@ -1,28 +1,28 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  # activation_functions_test.cpp
-  # adaboost_test.cpp
-  # akfn_test.cpp
-  # aknn_test.cpp
-  # ann_dist_test.cpp
-  # ann_layer_test.cpp
-  # ann_regularizer_test.cpp
-  # ann_test_tools.hpp
-  # ann_visitor_test.cpp
-  # arma_extend_test.cpp
-  # armadillo_svd_test.cpp
-  # async_learning_test.cpp
-  # augmented_rnns_tasks_test.cpp
-  # bias_svd_test.cpp
-  # binarize_test.cpp
-  # block_krylov_svd_test.cpp
-  # callback_test.cpp
-  # cf_test.cpp
-  # cli_binding_test.cpp
-  # cli_test.cpp
-  # convolution_test.cpp
-  # convolutional_network_test.cpp
-  # cosine_tree_test.cpp
+  activation_functions_test.cpp
+  adaboost_test.cpp
+  akfn_test.cpp
+  aknn_test.cpp
+  ann_dist_test.cpp
+  ann_layer_test.cpp
+#   ann_regularizer_test.cpp
+#   ann_test_tools.hpp
+#   ann_visitor_test.cpp
+#   arma_extend_test.cpp
+#   armadillo_svd_test.cpp
+#   async_learning_test.cpp
+#   augmented_rnns_tasks_test.cpp
+#   bias_svd_test.cpp
+#   binarize_test.cpp
+#   block_krylov_svd_test.cpp
+#   callback_test.cpp
+# #  cf_test.cpp
+#   cli_binding_test.cpp
+#   cli_test.cpp
+#   convolution_test.cpp
+#   convolutional_network_test.cpp
+#   cosine_tree_test.cpp
   # cv_test.cpp
   # dbscan_test.cpp
   # dcgan_test.cpp
@@ -96,9 +96,9 @@ add_executable(mlpack_test
   # reward_clipping_test.cpp
   # rl_components_test.cpp
   # scaling_test.cpp
-   serialization.cpp
-   serialization.hpp
-   serialization_test.cpp
+  serialization.cpp
+  serialization.hpp
+  serialization_test.cpp
   # sfinae_test.cpp
   # softmax_regression_test.cpp
   # sort_policy_test.cpp
