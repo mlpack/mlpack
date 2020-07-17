@@ -659,7 +659,7 @@ void FastMKS<KernelType, MatType, TreeType>::serialize(
       setOwner = true;
     }
 
-    ar & CEREAL_NVP(referenceSet);
+    ar & CEREAL_POINTER(referenceSet);
     ar & CEREAL_NVP(metric);
   }
   else
@@ -673,7 +673,7 @@ void FastMKS<KernelType, MatType, TreeType>::serialize(
       treeOwner = true;
     }
 
-    ar & CEREAL_NVP(referenceTree);
+    ar & CEREAL_POINTER(referenceTree);
 
     if (Archive::is_loading::value)
     {

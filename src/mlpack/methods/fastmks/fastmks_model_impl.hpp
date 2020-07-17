@@ -167,31 +167,31 @@ void FastMKSModel::serialize(Archive& ar, const unsigned int /* version */)
   switch (kernelType)
   {
     case LINEAR_KERNEL:
-      ar & CEREAL_NVP(linear);
+      ar & CEREAL_POINTER(linear);
       break;
 
     case POLYNOMIAL_KERNEL:
-      ar & CEREAL_NVP(polynomial);
+      ar & CEREAL_POINTER(polynomial);
       break;
 
     case COSINE_DISTANCE:
-      ar & CEREAL_NVP(cosine);
+      ar & CEREAL_POINTER(cosine);
       break;
 
     case GAUSSIAN_KERNEL:
-      ar & CEREAL_NVP(gaussian);
+      ar & CEREAL_POINTER(gaussian);
       break;
 
     case EPANECHNIKOV_KERNEL:
-      ar & CEREAL_NVP(epan);
+      ar & CEREAL_POINTER(epan);
       break;
 
     case TRIANGULAR_KERNEL:
-      ar & CEREAL_NVP(triangular);
+      ar & CEREAL_POINTER(triangular);
       break;
 
     case HYPTAN_KERNEL:
-      ar & CEREAL_NVP(hyptan);
+      ar & CEREAL_POINTER(hyptan);
       break;
   }
 }
