@@ -67,7 +67,7 @@ void Lookup<InputDataType, OutputDataType>::Gradient(
   const size_t batchSize = input.n_cols;
 
   arma::Cube<eT> errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(),
-      embeddingSize, seqLength, batchSize, true, false);
+      embeddingSize, seqLength, batchSize, false, false);
 
   gradient.set_size(arma::size(weights));
   gradient.zeros();
