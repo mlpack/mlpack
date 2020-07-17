@@ -8,3 +8,6 @@ src/mlpack/core/util/arma_config.hpp
 cmake-build-*
 *.pyc
 Testing/
+*.swp
+*.swo
+*~

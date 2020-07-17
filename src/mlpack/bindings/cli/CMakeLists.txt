@@ -1,7 +1,7 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  add_to_po.hpp
+  add_to_cli11.hpp
   cli_option.hpp
   default_param.hpp
   default_param_impl.hpp

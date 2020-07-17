@@ -1171,7 +1171,7 @@ BOOST_AUTO_TEST_CASE(NormalizeLabelTest)
 class TestInner
 {
  public:
-  TestInner(char c, string s) : c(c), s(s) { }
+  TestInner(char c, const string& s) : c(c), s(s) { }
 
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
@@ -2176,6 +2176,44 @@ BOOST_AUTO_TEST_CASE(CaseTest)
 
   BOOST_CHECK_EQUAL(dataset.n_rows, 2);
   BOOST_CHECK_EQUAL(dataset.n_cols, 3);
+}
+
+/**
+ * Ensure that a failure happens if we set a category to use capital letters but
+ * it receives them in lowercase.
+ */
+BOOST_AUTO_TEST_CASE(CategoryCaseTest)
+{
+  fstream f;
+  f.open("test.arff", fstream::out);
+  f << "@relation    \t test" << endl;
+  f << endl;
+  f << endl;
+  f << "@attribute @@@@flfl {A, B, C, D}" << endl;
+  f << endl;
+  f << "% comment" << endl;
+  f << "@attribute \"hello world\" string" << endl;
+  f << "@attribute 12345 integer" << endl;
+  f << "@attribute real real" << endl;
+  f << "@attribute \"blah blah blah     \t \" numeric % comment" << endl;
+  f << "% comment" << endl;
+  f << "@data" << endl;
+  f << "A, one, 3, 4.5, 6" << endl;
+  f << "B, two, 4, 5.5, 7 % comment" << endl;
+  f << "c, \"three five, six\", 5, 6.5, 8" << endl;
+  f.close();
+
+  arma::mat dataset;
+  data::DatasetInfo info;
+
+  // Make sure to parse with fatal errors (that's what the `true` parameter
+  // means).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(data::Load("test.arff", dataset, info, true),
+      std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  remove("test.arff");
 }
 
 /**

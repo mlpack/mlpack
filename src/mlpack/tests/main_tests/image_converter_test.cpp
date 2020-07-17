@@ -29,7 +29,7 @@ struct ImageConverterTestFixture
   ImageConverterTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~ImageConverterTestFixture()
@@ -38,7 +38,7 @@ struct ImageConverterTestFixture
     remove("test_image777.png");
     remove("test_image999.png");
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(LoadImageTest)
   SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
 
   mlpackMain();
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = IO::GetParam<arma::mat>("output");
   // width * height * channels.
   BOOST_REQUIRE_EQUAL(output.n_rows, 50 * 50 * 3);
   BOOST_REQUIRE_EQUAL(output.n_cols, 2);
@@ -69,8 +69,8 @@ BOOST_AUTO_TEST_CASE(SaveImageTest)
   SetInputParam("dataset", testimage);
   mlpackMain();
 
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam<vector<string>>("input", {"test_image777.png",
     "test_image999.png"});
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(SaveImageTest)
   SetInputParam("channels", 3);
 
   mlpackMain();
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = IO::GetParam<arma::mat>("output");
   BOOST_REQUIRE_EQUAL(output.n_rows, 5 * 5 * 3);
   BOOST_REQUIRE_EQUAL(output.n_cols, 2);
   for (size_t i = 0; i < output.n_elem; ++i)

@@ -9,7 +9,7 @@ most users will interact with mlpack.
 mlpack provides the following:
 
  - mlpack::Log, for debugging / informational / warning / fatal output
- - mlpack::CLI, for parsing command line options or other option
+ - mlpack::IO, for parsing command line options or other option
 
 Each of those classes are well-documented, and that documentation should be
 consulted for further reference.
@@ -41,7 +41,7 @@ once that is done, it will call \c mlpackMain().
 @code
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/cli.hpp>
-// This definition below means we will only compile for the CLI.
+// This definition below means we will only compile for the command line.
 #define BINDING_TYPE BINDING_TYPE_CLI
 #include <mlpack/core/util/mlpack_main.hpp>
 
@@ -117,9 +117,9 @@ Aborted
 These four outputs can be very useful for both providing informational output
 and debugging output for your mlpack program.
 
-@section simplecli Simple CLI Example
+@section simplecli Simple IO Example
 
-Through the mlpack::CLI object, command-line parameters can be easily added
+Through the mlpack::IO object, command-line parameters can be easily added
 with the PROGRAM_INFO, PARAM_INT, PARAM_DOUBLE, PARAM_STRING, and PARAM_FLAG
 macros.
 
@@ -161,15 +161,15 @@ using namespace mlpack;
 static void mlpackMain()
 {
   // Load input dataset.
-  arma::mat& dataset = CLI::GetParam<arma::mat>("input");
+  arma::mat& dataset = IO::GetParam<arma::mat>("input");
 
-  size_t newDimension = CLI::GetParam<int>("new_dimensionality");
+  size_t newDimension = IO::GetParam<int>("new_dimensionality");
 
   ...
 
   // Now save the results.
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(dataset);
+  if (IO::HasParam("output"))
+    IO::GetParam<arma::mat>("output") = std::move(dataset);
 }
 @endcode
 
@@ -202,7 +202,7 @@ Options:
                                 execution.
 @endcode
 
-The mlpack::CLI documentation can be consulted for further and complete
+The mlpack::IO documentation can be consulted for further and complete
 documentation.  Also useful is to look at other example bindings, found in
 \c src/mlpack/methods/.
 

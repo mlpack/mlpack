@@ -78,7 +78,7 @@ extern \"C\"  void mlpackSet${MODEL_SAFE_TYPE}Ptr(
 // Get the pointer to a ${MODEL_TYPE} parameter.
 extern \"C\" void *mlpackGet${MODEL_SAFE_TYPE}Ptr(const char* identifier)
 {
-  ${MODEL_TYPE} *modelptr = CLI::GetParam<${MODEL_TYPE}*>(identifier);
+  ${MODEL_TYPE} *modelptr = IO::GetParam<${MODEL_TYPE}*>(identifier);
   return modelptr;
 }
 ")

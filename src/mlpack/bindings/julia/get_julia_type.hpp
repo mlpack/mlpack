@@ -20,7 +20,7 @@ namespace julia {
 
 template<typename T>
 inline std::string GetJuliaType(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<!std::is_same<T,
@@ -32,7 +32,7 @@ inline std::string GetJuliaType(
 
 template<>
 inline std::string GetJuliaType<bool>(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename std::enable_if<!util::IsStdVector<bool>::value>::type*,
     const typename std::enable_if<!arma::is_arma_type<bool>::value>::type*,
     const typename std::enable_if<!std::is_same<bool,
@@ -44,7 +44,7 @@ inline std::string GetJuliaType<bool>(
 
 template<>
 inline std::string GetJuliaType<int>(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename std::enable_if<!util::IsStdVector<int>::value>::type*,
     const typename std::enable_if<!arma::is_arma_type<int>::value>::type*,
     const typename std::enable_if<!std::is_same<int,
@@ -56,7 +56,7 @@ inline std::string GetJuliaType<int>(
 
 template<>
 inline std::string GetJuliaType<size_t>(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename std::enable_if<!util::IsStdVector<size_t>::value>::type*,
     const typename std::enable_if<!arma::is_arma_type<size_t>::value>::type*,
     const typename std::enable_if<!std::is_same<size_t,
@@ -68,7 +68,7 @@ inline std::string GetJuliaType<size_t>(
 
 template<>
 inline std::string GetJuliaType<double>(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename std::enable_if<!util::IsStdVector<double>::value>::type*,
     const typename std::enable_if<!arma::is_arma_type<double>::value>::type*,
     const typename std::enable_if<!std::is_same<double,
@@ -81,7 +81,7 @@ inline std::string GetJuliaType<double>(
 
 template<>
 inline std::string GetJuliaType<std::string>(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename std::enable_if<
         !util::IsStdVector<std::string>::value>::type*,
     const typename std::enable_if<
@@ -96,7 +96,7 @@ inline std::string GetJuliaType<std::string>(
 
 template<typename T>
 inline std::string GetJuliaType(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0,
@@ -107,7 +107,7 @@ inline std::string GetJuliaType(
 
 template<typename T>
 inline std::string GetJuliaType(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0,
@@ -125,7 +125,7 @@ inline std::string GetJuliaType(
 
 template<typename T>
 inline std::string GetJuliaType(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
@@ -135,7 +135,7 @@ inline std::string GetJuliaType(
 // for serializable types
 template<typename T>
 inline std::string GetJuliaType(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
