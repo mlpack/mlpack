@@ -26,7 +26,8 @@ VRClassReward<InputDataType, OutputDataType>::VRClassReward(
     const double scale,
     const bool sizeAverage) :
     scale(scale),
-    sizeAverage(sizeAverage)
+    sizeAverage(sizeAverage),
+    reward(0)
 {
   // Nothing to do here.
 }
