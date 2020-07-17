@@ -230,20 +230,23 @@ Split(const arma::Mat<T>& input,
 
 template <typename FieldType,
           class = std::enable_if_t<
-              arma::is_Col<typename fieldType::object_type>::value ||
-              arma::is_Mat_only<typename fieldType::object_type>::value>>
-void Split(fieldType& input, 
-           fieldType& inputLabel,
-           fieldType& trainData,
-           fieldType& trainLabels,
-           fieldType& testData, 
-           fieldType& testLabels,
+              arma::is_Col<typename FieldType::object_type>::value ||
+              arma::is_Mat_only<typename FieldType::object_type>::value>>
+void Split(FieldType& input, 
+           arma::field<arma::vec>& inputLabel,
+           FieldType& trainData,
+           arma::field<arma::vec>& trainLabels,
+           FieldType& testData, 
+           arma::field<arma::vec>& testLabels,
            const double testRatio, 
            const bool shuffleData = true) 
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
 
+  trainData.set_size(1, trainSize);
+  testData.set_size(1, testSize);
+  
   arma::uvec order = arma::linspace<arma::uvec>(0, input.n_cols - 1,
       input.n_cols);
   if (shuffleData)
@@ -254,7 +257,7 @@ void Split(fieldType& input,
     trainLabels.set_size(1, trainSize);
 
     for (size_t i = 0; i < trainSize; i++)
-       trainData[i] = input(0, order(i));
+      trainData[i] = input(0, order(i));
 
     // Field type has fixed size so we can't use span and assignment
     // operator.
@@ -273,18 +276,21 @@ void Split(fieldType& input,
   }
 }
 
-template <class fieldType,
+template <class FieldType,
           class = std::enable_if_t<
-              arma::is_Col<typename fieldType::object_type>::value ||
-              arma::is_Mat_only<typename fieldType::object_type>::value>>
-void Split(fieldType& input, 
-           fieldType& trainData,
-           fieldType& testData, 
+              arma::is_Col<typename FieldType::object_type>::value ||
+              arma::is_Mat_only<typename FieldType::object_type>::value>>
+void Split(const FieldType& input, 
+           FieldType& trainData,
+           FieldType& testData, 
            const double testRatio, 
            const bool shuffleData = true) 
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
+
+  trainData.set_size(1, trainSize);
+  testData.set_size(1, testSize);
 
   arma::uvec order = arma::linspace<arma::uvec>(0, input.n_cols - 1,
       input.n_cols);
@@ -304,20 +310,20 @@ void Split(fieldType& input,
   }
 }
 
-template <class fieldType,
+template <class FieldType,
           class = std::enable_if_t<
-              arma::is_Col<typename fieldType::object_type>::value ||
-              arma::is_Mat_only<typename fieldType::object_type>::value>>
-std::tuple<fieldType, fieldType, fieldType, fieldType>
-Split(fieldType& input, 
-      fieldType& inputLabel,
+              arma::is_Col<typename FieldType::object_type>::value ||
+              arma::is_Mat_only<typename FieldType::object_type>::value>>
+std::tuple<FieldType, FieldType, FieldType, FieldType>
+Split(FieldType& input, 
+      FieldType& inputLabel,
       const double testRatio,
       const bool shuffleData = true)
 {
-  fieldType trainData;
-  fieldType testData;
-  fieldType trainLabel;
-  fieldType testLabel;
+  FieldType trainData;
+  FieldType testData;
+  arma::field<arma::vec> trainLabel;
+  arma::field<arma::vec> testLabel;
 
   Split(input, inputLabel, trainData, testData, trainLabel, testLabel,
     testRatio, shuffleData);
@@ -328,17 +334,17 @@ Split(fieldType& input,
                          std::move(testLabel));
 }
 
-template <class fieldType,
+template <class FieldType,
           class = std::enable_if_t<
-              arma::is_Col<typename fieldType::object_type>::value ||
-              arma::is_Mat_only<typename fieldType::object_type>::value>>
-std::tuple<fieldType, fieldType>
-Split(const fieldType& input,
+              arma::is_Col<typename FieldType::object_type>::value ||
+              arma::is_Mat_only<typename FieldType::object_type>::value>>
+std::tuple<FieldType, FieldType>
+Split(const FieldType& input,
       const double testRatio,
       const bool shuffleData = true)
 {
-  fieldType trainData;
-  fieldType testData;
+  FieldType trainData;
+  FieldType testData;
   Split(input, trainData, testData, testRatio, shuffleData);
 
   return std::make_tuple(std::move(trainData),
