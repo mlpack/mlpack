@@ -365,9 +365,6 @@ class HMM
   template<typename Archive>
   void save(Archive& ar, const unsigned int version) const;
 
-  CEREAL_SPLIT_MEMBER();
-
-
  protected:
   // Helper functions.
   /**

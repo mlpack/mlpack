@@ -1080,7 +1080,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
   // Save the HMM.
   {
     std::ofstream ofs("test-hmm-save.xml");
-    boost::archive::xml_oarchive ar(ofs);
+    cereal::XMLOutputArchive ar(ofs);
     ar << CEREAL_NVP(hmm);
   }
 
@@ -1088,7 +1088,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
   HMM<GMM> hmm2(3, GMM(4, 3));
   {
     std::ifstream ifs("test-hmm-save.xml");
-    boost::archive::xml_iarchive ar(ifs);
+    cereal::XMLInputArchive ar(ifs);
     ar >> CEREAL_NVP(hmm2);
   }
 
@@ -1145,7 +1145,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
   // Save the HMM.
   {
     std::ofstream ofs("test-hmm-save.xml");
-    boost::archive::xml_oarchive ar(ofs);
+    cereal::XMLOutputArchive ar(ofs);
     ar << CEREAL_NVP(hmm);
   }
 
@@ -1153,7 +1153,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
   HMM<GaussianDistribution> hmm2(3, GaussianDistribution(2));
   {
     std::ifstream ifs("test-hmm-save.xml");
-    boost::archive::xml_iarchive ar(ifs);
+    cereal::XMLInputArchive ar(ifs);
     ar >> CEREAL_NVP(hmm2);
   }
 
@@ -1208,7 +1208,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
   // Save the HMM.
   {
     std::ofstream ofs("test-hmm-save.xml");
-    boost::archive::xml_oarchive ar(ofs);
+    cereal::XMLOutputArchive ar(ofs);
     ar << CEREAL_NVP(hmm);
   }
 
@@ -1216,7 +1216,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
   HMM<DiscreteDistribution> hmm2(3, DiscreteDistribution(3));
   {
     std::ifstream ifs("test-hmm-save.xml");
-    boost::archive::xml_iarchive ar(ifs);
+    cereal::XMLInputArchive ar(ifs);
     ar >> CEREAL_NVP(hmm2);
   }
 
@@ -1809,7 +1809,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLoadSaveTest)
   // Save the HMM.
   {
     std::ofstream ofs("test-hmm-save.xml");
-    boost::archive::xml_oarchive ar(ofs);
+    cereal::XMLOutputArchive ar(ofs);
     ar << CEREAL_NVP(hmm);
   }
 
@@ -1817,7 +1817,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLoadSaveTest)
   HMM<DiagonalGMM> hmm2(3, DiagonalGMM(4, 3));
   {
     std::ifstream ifs("test-hmm-save.xml");
-    boost::archive::xml_iarchive ar(ifs);
+    cereal::XMLInputArchive ar(ifs);
     ar >> CEREAL_NVP(hmm2);
   }
 

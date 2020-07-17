@@ -36,8 +36,8 @@ add_executable(mlpack_test
   facilities_test.cpp
 # feedforward_network_test.cpp
 # gan_test.cpp
-### gmm_test.cpp recompile alone
-### hmm_test.cpp
+  gmm_test.cpp
+  hmm_test.cpp
 ### hoeffding_tree_test.cpp
   hpt_test.cpp
   hyperplane_test.cpp
