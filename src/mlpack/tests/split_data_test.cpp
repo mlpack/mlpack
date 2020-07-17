@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(SplitDataResultField)
   BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 1); // Train data.
   BOOST_REQUIRE_EQUAL(std::get<1>(value).n_cols, 1); // Test data.
 
-  field<mat> concat = arma::join_rows(std::get<0>(value)(0), std::get<1>(value)(0));
+  field<mat> concat = {std::get<0>(value)(0), std::get<1>(value)(0)};
   // Order matters here.
   CheckFields(input, concat);
 }
