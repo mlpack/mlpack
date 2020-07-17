@@ -37,6 +37,7 @@ inline void CheckMatrices(const arma::mat& a,
   }
 }
 
+
 // Check the values of two unsigned matrices.
 inline void CheckMatrices(const arma::Mat<size_t>& a,
                           const arma::Mat<size_t>& b)
@@ -59,11 +60,8 @@ inline void CheckFields(const FieldType& a,
   BOOST_REQUIRE_EQUAL(a.n_rows, b.n_rows);
   BOOST_REQUIRE_EQUAL(a.n_cols, b.n_cols);
 
-  for (size_t i = 0; i < a.n_elem; ++i) {
-    for (size_t j = 0; j < a[i].n_elem; ++j) {
-      BOOST_REQUIRE_EQUAL(a(0, i).at(j), b(0, i).at(j));
-    }
-  }
+  for (size_t i = 0; i< a.n_slices; ++i)
+    CheckMatrices(a(i), b(i));
 }
 
 // Check the values of two cubes.
