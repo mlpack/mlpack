@@ -259,8 +259,6 @@ void Split(FieldType& input,
     for (size_t i = 0; i < trainSize; i++)
       trainData[i] = input(0, order(i));
 
-    // Field type has fixed size so we can't use span and assignment
-    // operator.
     for (size_t i = 0; i < trainSize; i++)
       trainLabels(0, i) = inputLabel[i];
   }
