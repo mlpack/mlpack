@@ -23,11 +23,21 @@ add_library(mlpack ${MLPACK_SRCS})
 
 # If we are not forcing C++11 support, check that the compiler supports C++11
 # and enable it.
-if ((NOT FORCE_CXX11) AND
-    (NOT (${CMAKE_MAJOR_VERSION} LESS 3 OR
-         (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMAKE_MINOR_VERSION} LESS 1))))
-  # Use the newer C++11 checks.
-  include(../../CMake/NewCXX11.cmake)
+if (NOT FORCE_CXX11)
+  target_compile_features(mlpack PUBLIC
+      cxx_decltype
+      cxx_alias_templates
+      cxx_auto_type
+      cxx_lambdas
+      cxx_constexpr
+      cxx_rvalue_references
+      cxx_static_assert
+      cxx_template_template_parameters
+      cxx_delegating_constructors
+      cxx_variadic_templates
+      cxx_nullptr
+      cxx_noexcept
+  )
 endif ()
 
 # Generate export symbols for Windows, instead of adding __declspec(dllimport)
@@ -44,7 +54,7 @@ target_link_libraries(mlpack ${MLPACK_LIBRARIES})
 
 set_target_properties(mlpack
   PROPERTIES
-  VERSION 3.2
+  VERSION 3.3
   SOVERSION 3
 )
 
@@ -206,7 +216,7 @@ set_verbose(MLPACK_INCS_DIR ${CMAKE_INSTALL_INCLUDEDIR} CACHE STRING
           "Installation directory for include files, relative to "
           "${CMAKE_INSTALL_PREFIX}.")
 
-# Getting the absolute path, for some reason CMAKE gets confused, 
+# Getting the absolute path, for some reason CMAKE gets confused,
 # even with CMAKE_INSTALL_INCLUDEDIR
 if (UNIX)
   GNUInstallDirs_get_absolute_install_dir(MLPACK_LIBS_DIR CMAKE_INSTALL_LIBDIR)
@@ -230,7 +240,7 @@ export(TARGETS ${INSTALL_TARGETS} NAMESPACE mlpack::
     FILE ${PROJECT_BINARY_DIR}/${TARGETS_EXPORT_NAME}.cmake)
 
 # Install version, config and target files.
-install(FILES ${PROJECT_CONFIG} ${VERSION_CONFIG} 
+install(FILES ${PROJECT_CONFIG} ${VERSION_CONFIG}
     DESTINATION ${MLPACK_CMAKE_DIR})
 
 install(EXPORT ${TARGETS_EXPORT_NAME}

@@ -130,7 +130,7 @@ void QLearning<
 
   // Sample from previous experience.
   arma::mat sampledStates;
-  arma::icolvec sampledActions;
+  std::vector<ActionType> sampledActions;
   arma::colvec sampledRewards;
   arma::mat sampledNextStates;
   arma::icolvec isTerminal;
@@ -168,7 +168,7 @@ void QLearning<
    */
   for (size_t i = 0; i < sampledNextStates.n_cols; ++i)
   {
-    target(sampledActions(i), i) = sampledRewards(i) + discount *
+    target(sampledActions[i].action, i) = sampledRewards(i) + discount *
         nextActionValues(bestActions(i), i) * (1 - isTerminal[i]);
   }
 
@@ -184,6 +184,18 @@ void QLearning<
   updatePolicy->Update(learningNetwork.Parameters(), config.StepSize(),
       gradients);
   #endif
+
+  if (config.NoisyQLearning() == true)
+  {
+    learningNetwork.ResetNoise();
+    targetNetwork.ResetNoise();
+  }
+  // Update target network.
+  if (totalSteps % config.TargetNetworkSyncInterval() == 0)
+    targetNetwork = learningNetwork;
+
+  if (totalSteps > config.ExplorationSteps())
+    policy.Anneal();
 }
 
 template <
@@ -193,13 +205,13 @@ template <
   typename BehaviorPolicyType,
   typename ReplayType
 >
-double QLearning<
+void QLearning<
   EnvironmentType,
   NetworkType,
   UpdaterType,
   BehaviorPolicyType,
   ReplayType
->::Step()
+>::SelectAction()
 {
   // Get the action value for each action at current state.
   arma::colvec actionValue;
@@ -207,29 +219,6 @@ double QLearning<
 
   // Select an action according to the behavior policy.
   action = policy.Sample(actionValue, deterministic, config.NoisyQLearning());
-
-  // Interact with the environment to advance to next state.
-  StateType nextState;
-  double reward = environment.Sample(state, action, nextState);
-
-  // Store the transition for replay.
-  replayMethod.Store(state, action, reward,
-      nextState, environment.IsTerminal(nextState), config.Discount());
-
-  // Update current state.
-  state = nextState;
-
-  if (deterministic || totalSteps < config.ExplorationSteps())
-    return reward;
-
-  TrainAgent();
-
-  if (config.NoisyQLearning() == true)
-  {
-    learningNetwork.ResetNoise();
-    targetNetwork.ResetNoise();
-  }
-  return reward;
 }
 
 template <
@@ -250,34 +239,31 @@ double QLearning<
   // Get the initial state from environment.
   state = environment.InitialSample();
 
-  // Track the steps in this episode.
-  size_t steps = 0;
-
   // Track the return of this episode.
   double totalReturn = 0.0;
 
   // Running until get to the terminal state.
   while (!environment.IsTerminal(state))
   {
-    if (config.StepLimit() && steps >= config.StepLimit())
-      break;
+    SelectAction();
 
-    totalReturn += Step();
-    steps++;
+    // Interact with the environment to advance to next state.
+    StateType nextState;
+    double reward = environment.Sample(state, action, nextState);
 
-    if (deterministic)
-      continue;
-
+    totalReturn += reward;
     totalSteps++;
 
-    // Update target network
-    if (totalSteps % config.TargetNetworkSyncInterval() == 0)
-      targetNetwork = learningNetwork;
+    // Store the transition for replay.
+    replayMethod.Store(state, action, reward, nextState,
+        environment.IsTerminal(nextState), config.Discount());
+    // Update current state.
+    state = nextState;
 
-    if (totalSteps > config.ExplorationSteps())
-      policy.Anneal();
+    if (deterministic || totalSteps < config.ExplorationSteps())
+      continue;
+    TrainAgent();
   }
-
   return totalReturn;
 }
 

@@ -215,7 +215,7 @@ RedistributeNodesEvenly(const TreeType *parent,
   size_t numChildren = 0;
   size_t numChildrenPerNode, numRestChildren;
 
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
     numChildren += parent->Child(i).NumChildren();
 
   numChildrenPerNode = numChildren / (lastSibling - firstSibling + 1);
@@ -225,9 +225,9 @@ RedistributeNodesEvenly(const TreeType *parent,
 
   // Copy children's children in order to redistribute them.
   size_t iChild = 0;
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
   {
-    for (size_t j = 0; j < parent->Child(i).NumChildren(); j++)
+    for (size_t j = 0; j < parent->Child(i).NumChildren(); ++j)
     {
       children[iChild] = parent->Child(i).children[j];
       iChild++;
@@ -235,14 +235,14 @@ RedistributeNodesEvenly(const TreeType *parent,
   }
 
   iChild = 0;
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
   {
     // Since we redistribute children of a sibling we should recalculate the
     // bound.
     parent->Child(i).Bound().Clear();
     parent->Child(i).numDescendants = 0;
 
-    for (size_t j = 0; j < numChildrenPerNode; j++)
+    for (size_t j = 0; j < numChildrenPerNode; ++j)
     {
       parent->Child(i).Bound() |= children[iChild]->Bound();
       parent->Child(i).numDescendants += children[iChild]->numDescendants;
@@ -283,7 +283,7 @@ RedistributePointsEvenly(TreeType* parent,
   size_t numPoints = 0;
   size_t numPointsPerNode, numRestPoints;
 
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
     numPoints += parent->Child(i).NumPoints();
 
   numPointsPerNode = numPoints / (lastSibling - firstSibling + 1);
@@ -293,21 +293,21 @@ RedistributePointsEvenly(TreeType* parent,
 
   // Copy children's points in order to redistribute them.
   size_t iPoint = 0;
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
   {
-    for (size_t j = 0; j < parent->Child(i).NumPoints(); j++)
+    for (size_t j = 0; j < parent->Child(i).NumPoints(); ++j)
       points[iPoint++] = parent->Child(i).Point(j);
   }
 
   iPoint = 0;
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
   {
     // Since we redistribute points of a sibling we should recalculate the
     // bound.
     parent->Child(i).Bound().Clear();
 
     size_t j;
-    for (j = 0; j < numPointsPerNode; j++)
+    for (j = 0; j < numPointsPerNode; ++j)
     {
       parent->Child(i).Bound() |= parent->Dataset().col(points[iPoint]);
       parent->Child(i).Point(j) = points[iPoint];

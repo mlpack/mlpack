@@ -29,14 +29,14 @@ struct RandomForestTestFixture
   RandomForestTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~RandomForestTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -72,16 +72,16 @@ BOOST_AUTO_TEST_CASE(RandomForestOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_cols,
                       testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("probabilities").n_cols,
                       testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_rows,
                       1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("probabilities").n_rows, 3);
 }
 
 /**
@@ -114,36 +114,36 @@ BOOST_AUTO_TEST_CASE(RandomForestModelReuseTest)
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;
-  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
-  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
+  predictions = std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
+  probabilities = std::move(IO::GetParam<arma::mat>("probabilities"));
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                CLI::GetParam<RandomForestModel*>("output_model"));
+                IO::GetParam<RandomForestModel*>("output_model"));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_cols,
                       testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("probabilities").n_cols,
                       testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predicitions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_rows,
                       1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("probabilities").n_rows, 3);
 
   // Check that initial predictions and predictions using saved model are same.
-  CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
-  CheckMatrices(probabilities, CLI::GetParam<arma::mat>("probabilities"));
+  CheckMatrices(predictions, IO::GetParam<arma::Row<size_t>>("predictions"));
+  CheckMatrices(probabilities, IO::GetParam<arma::mat>("probabilities"));
 }
 
 /**
@@ -227,7 +227,7 @@ BOOST_AUTO_TEST_CASE(RandomForestTrainingVerTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                CLI::GetParam<RandomForestModel*>("output_model"));
+                IO::GetParam<RandomForestModel*>("output_model"));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -274,8 +274,8 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
 
   // Calculate training accuracy.
   RandomForestModel* rf1 =
-      std::move(CLI::GetParam<RandomForestModel*>("output_model"));
-  CLI::GetParam<RandomForestModel*>("output_model") = NULL;
+      std::move(IO::GetParam<RandomForestModel*>("output_model"));
+  IO::GetParam<RandomForestModel*>("output_model") = NULL;
 
   bindings::tests::CleanMemory();
 
@@ -289,8 +289,8 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
   mlpackMain();
 
   RandomForestModel* rf2 =
-      std::move(CLI::GetParam<RandomForestModel*>("output_model"));
-  CLI::GetParam<RandomForestModel*>("output_model") = NULL;
+      std::move(IO::GetParam<RandomForestModel*>("output_model"));
+  IO::GetParam<RandomForestModel*>("output_model") = NULL;
 
   bindings::tests::CleanMemory();
 
@@ -304,8 +304,8 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
   mlpackMain();
 
   RandomForestModel* rf3 =
-      std::move(CLI::GetParam<RandomForestModel*>("output_model"));
-  CLI::GetParam<RandomForestModel*>("output_model") = NULL;
+      std::move(IO::GetParam<RandomForestModel*>("output_model"));
+  IO::GetParam<RandomForestModel*>("output_model") = NULL;
 
   // Check that each tree is different.
   for (size_t i = 0; i < rf1->rf.NumTrees(); ++i)
@@ -351,7 +351,7 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
   mlpackMain();
 
   const size_t numTrees1 =
-      CLI::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
+      IO::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
 
   bindings::tests::CleanMemory();
 
@@ -366,7 +366,7 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
   mlpackMain();
 
   const size_t numTrees2 =
-      CLI::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
+      IO::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
 
   bindings::tests::CleanMemory();
 
@@ -381,7 +381,7 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
   mlpackMain();
 
   const size_t numTrees3 =
-      CLI::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
+      IO::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
 
   BOOST_REQUIRE_NE(numTrees1, numTrees2);
   BOOST_REQUIRE_NE(numTrees2, numTrees3);
@@ -410,8 +410,8 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMaxDepthTest)
 
   // Calculate training accuracy.
   RandomForestModel* rf1 =
-      std::move(CLI::GetParam<RandomForestModel*>("output_model"));
-  CLI::GetParam<RandomForestModel*>("output_model") = NULL;
+      std::move(IO::GetParam<RandomForestModel*>("output_model"));
+  IO::GetParam<RandomForestModel*>("output_model") = NULL;
 
   bindings::tests::CleanMemory();
 
@@ -423,8 +423,8 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMaxDepthTest)
   mlpackMain();
 
   RandomForestModel* rf2 =
-      std::move(CLI::GetParam<RandomForestModel*>("output_model"));
-  CLI::GetParam<RandomForestModel*>("output_model") = NULL;
+      std::move(IO::GetParam<RandomForestModel*>("output_model"));
+  IO::GetParam<RandomForestModel*>("output_model") = NULL;
 
   bindings::tests::CleanMemory();
 
@@ -438,8 +438,8 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMaxDepthTest)
   mlpackMain();
 
   RandomForestModel* rf3 =
-      std::move(CLI::GetParam<RandomForestModel*>("output_model"));
-  CLI::GetParam<RandomForestModel*>("output_model") = NULL;
+      std::move(IO::GetParam<RandomForestModel*>("output_model"));
+  IO::GetParam<RandomForestModel*>("output_model") = NULL;
 
   // Check that each tree is different.
   for (size_t i = 0; i < rf1->rf.NumTrees(); ++i)

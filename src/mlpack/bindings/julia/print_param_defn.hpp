@@ -3,7 +3,7 @@
  * @author Ryan Curtin
  *
  * If the type is serializable, we need to define a special utility function to
- * set a CLI parameter of that type.
+ * set a IO parameter of that type.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -24,7 +24,7 @@ namespace julia {
  */
 template<typename T>
 void PrintParamDefn(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const std::string& /* programName */,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0)
@@ -37,7 +37,7 @@ void PrintParamDefn(
  */
 template<typename T>
 void PrintParamDefn(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const std::string& /* programName */,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
@@ -49,7 +49,7 @@ void PrintParamDefn(
  */
 template<typename T>
 void PrintParamDefn(
-    const util::ParamData& d,
+    util::ParamData& d,
     const std::string& programName,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
@@ -58,13 +58,13 @@ void PrintParamDefn(
   //
   // import ...<Type>
   //
-  // function CLIGetParam<Type>(paramName::String)
-  //   <Type>(ccall((:CLIGetParam<Type>Ptr, <programName>Library),
+  // function IOGetParam<Type>(paramName::String)
+  //   <Type>(ccall((:IOGetParam<Type>Ptr, <programName>Library),
   //       Ptr{Nothing}, (Cstring,), paramName))
   // end
   //
-  // function CLISetParam<Type>(paramName::String, model::<Type>)
-  //   ccall((:CLISetParam<Type>Ptr, <programName>Library), Nothing,
+  // function IOSetParam<Type>(paramName::String, model::<Type>)
+  //   ccall((:IOSetParam<Type>Ptr, <programName>Library), Nothing,
   //       (Cstring, Ptr{Nothing}), paramName, model.ptr)
   // end
   //
@@ -89,23 +89,23 @@ void PrintParamDefn(
   std::cout << "import ..." << type << std::endl;
   std::cout << std::endl;
 
-  // Now, CLIGetParam<Type>().
+  // Now, IOGetParam<Type>().
   std::cout << "# Get the value of a model pointer parameter of type " << type
       << "." << std::endl;
-  std::cout << "function CLIGetParam" << type << "(paramName::String)::"
+  std::cout << "function IOGetParam" << type << "(paramName::String)::"
       << type << std::endl;
-  std::cout << "  " << type << "(ccall((:CLI_GetParam" << type
+  std::cout << "  " << type << "(ccall((:IO_GetParam" << type
       << "Ptr, " << programName << "Library), Ptr{Nothing}, (Cstring,), "
       << "paramName))" << std::endl;
   std::cout << "end" << std::endl;
   std::cout << std::endl;
 
-  // Next, CLISetParam<Type>().
+  // Next, IOSetParam<Type>().
   std::cout << "# Set the value of a model pointer parameter of type " << type
       << "." << std::endl;
-  std::cout << "function CLISetParam" << type << "(paramName::String, "
+  std::cout << "function IOSetParam" << type << "(paramName::String, "
       << "model::" << type << ")" << std::endl;
-  std::cout << "  ccall((:CLI_SetParam" << type << "Ptr, "
+  std::cout << "  ccall((:IO_SetParam" << type << "Ptr, "
       << programName << "Library), Nothing, (Cstring, "
       << "Ptr{Nothing}), paramName, model.ptr)" << std::endl;
   std::cout << "end" << std::endl;
@@ -137,10 +137,10 @@ void PrintParamDefn(
 
 /**
  * If the type is serializable, print the definition of a special utility
- * function to set a CLI parameter of that type to stdout.
+ * function to set a IO parameter of that type to stdout.
  */
 template<typename T>
-void PrintParamDefn(const util::ParamData& d,
+void PrintParamDefn(util::ParamData& d,
                     const void* input,
                     void* /* output */)
 {

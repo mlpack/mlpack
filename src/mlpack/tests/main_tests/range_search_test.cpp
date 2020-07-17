@@ -27,13 +27,13 @@ struct RangeSearchTestFixture
   RangeSearchTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
   ~RangeSearchTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -82,8 +82,8 @@ BOOST_AUTO_TEST_CASE(RangeSearchInputModelNoQuery)
 
   mlpackMain();
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  SetInputParam("input_model", move(CLI::GetParam<RSModel*>("output_model")));
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  SetInputParam("input_model", move(IO::GetParam<RSModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(RangeSearchBothReferenceAndModel)
 
   mlpackMain();
 
-  SetInputParam("input_model", move(CLI::GetParam<RSModel*>("output_model")));
+  SetInputParam("input_model", move(IO::GetParam<RSModel*>("output_model")));
   SetInputParam("query", move(queryData));
 
   Log::Fatal.ignoreInput = true;
@@ -278,8 +278,8 @@ BOOST_AUTO_TEST_CASE(ModelCheck)
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
 
-  RSModel* outputModel = CLI::GetParam<RSModel*>("output_model");
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  RSModel* outputModel = IO::GetParam<RSModel*>("output_model");
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
 
   SetInputParam("input_model", outputModel);
   SetInputParam("query", move(queryData));
@@ -293,7 +293,7 @@ BOOST_AUTO_TEST_CASE(ModelCheck)
   CheckMatrices(distances, distancetemp);
 
   BOOST_REQUIRE_EQUAL(ModelToString(outputModel),
-                      ModelToString(CLI::GetParam<RSModel*>("output_model")));
+                      ModelToString(IO::GetParam<RSModel*>("output_model")));
 
   remove(neighborsFile.c_str());
   remove(distanceFile.c_str());
@@ -328,11 +328,11 @@ BOOST_AUTO_TEST_CASE(LeafValueTesting)
 
   mlpackMain();
 
-  RSModel* outputModel1 = CLI::GetParam<RSModel*>("output_model");
+  RSModel* outputModel1 = IO::GetParam<RSModel*>("output_model");
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
 
-  for (size_t i = 1; i < leafSizes.size(); i++)
+  for (size_t i = 1; i < leafSizes.size(); ++i)
   {
     SetInputParam("leaf_size", leafSizes[i]);
     SetInputParam("reference", inputData);
@@ -350,10 +350,10 @@ BOOST_AUTO_TEST_CASE(LeafValueTesting)
     CheckMatrices(distances, distancestemp);
 
     BOOST_REQUIRE_NE(ModelToString(outputModel1),
-                     ModelToString(CLI::GetParam<RSModel*>("output_model")));
+                     ModelToString(IO::GetParam<RSModel*>("output_model")));
 
     if (i != leafSizes.size() - 1)
-      delete CLI::GetParam<RSModel*>("output_model");
+      delete IO::GetParam<RSModel*>("output_model");
   }
 
   delete outputModel1;
@@ -398,9 +398,9 @@ BOOST_AUTO_TEST_CASE(TreeTypeTesting)
 
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
-  RSModel* outputModel1 = CLI::GetParam<RSModel*>("output_model");
+  RSModel* outputModel1 = IO::GetParam<RSModel*>("output_model");
 
-  for (size_t i = 1; i < trees.size(); i++)
+  for (size_t i = 1; i < trees.size(); ++i)
   {
     if (!data::Load("iris.csv", inputData))
       BOOST_FAIL("Unable to load dataset iris.csv!");
@@ -423,10 +423,10 @@ BOOST_AUTO_TEST_CASE(TreeTypeTesting)
     CheckMatrices(neighbors, neighborsTemp);
     CheckMatrices(distances, distancestemp);
     BOOST_REQUIRE_NE(ModelToString(outputModel1),
-                     ModelToString(CLI::GetParam<RSModel*>("output_model")));
+                     ModelToString(IO::GetParam<RSModel*>("output_model")));
 
     if (i != trees.size() - 1)
-      delete CLI::GetParam<RSModel*>("output_model");
+      delete IO::GetParam<RSModel*>("output_model");
   }
 
   delete outputModel1;
@@ -459,7 +459,7 @@ BOOST_AUTO_TEST_CASE(RandomBasisTesting)
 
   mlpackMain();
 
-  RSModel* outputModel = move(CLI::GetParam<RSModel*>("output_model"));
+  RSModel* outputModel = move(IO::GetParam<RSModel*>("output_model"));
 
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
@@ -471,7 +471,7 @@ BOOST_AUTO_TEST_CASE(RandomBasisTesting)
   mlpackMain();
 
   BOOST_REQUIRE_NE(ModelToString(outputModel),
-                   ModelToString(CLI::GetParam<RSModel*>("output_model")));
+                   ModelToString(IO::GetParam<RSModel*>("output_model")));
 
   delete outputModel;
 
@@ -507,7 +507,7 @@ BOOST_AUTO_TEST_CASE(NaiveModeTest)
 
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
-  RSModel* outputModel = move(CLI::GetParam<RSModel*>("output_model"));
+  RSModel* outputModel = move(IO::GetParam<RSModel*>("output_model"));
 
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
@@ -525,7 +525,7 @@ BOOST_AUTO_TEST_CASE(NaiveModeTest)
   CheckMatrices(distances, distancestemp);
 
   BOOST_REQUIRE_NE(ModelToString(outputModel),
-                   ModelToString(CLI::GetParam<RSModel*>("output_model")));
+                   ModelToString(IO::GetParam<RSModel*>("output_model")));
 
   delete outputModel;
 
@@ -561,7 +561,7 @@ BOOST_AUTO_TEST_CASE(SingleModeTest)
 
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
-  RSModel* outputModel = move(CLI::GetParam<RSModel*>("output_model"));
+  RSModel* outputModel = move(IO::GetParam<RSModel*>("output_model"));
 
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
@@ -578,7 +578,7 @@ BOOST_AUTO_TEST_CASE(SingleModeTest)
   CheckMatrices(neighbors, neighborsTemp);
   CheckMatrices(distances, distancestemp);
   BOOST_REQUIRE_NE(ModelToString(outputModel),
-                   ModelToString(CLI::GetParam<RSModel*>("output_model")));
+                   ModelToString(IO::GetParam<RSModel*>("output_model")));
 
   delete outputModel;
 

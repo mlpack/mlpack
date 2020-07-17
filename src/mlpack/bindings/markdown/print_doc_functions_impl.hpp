@@ -404,10 +404,10 @@ inline std::string PrintValue(const T& value, bool quotes)
  */
 inline std::string PrintDefault(const std::string& paramName)
 {
-  if (CLI::Parameters().count(paramName) == 0)
+  if (IO::Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter" + paramName + "!");
 
-  const util::ParamData& d = CLI::Parameters()[paramName];
+  util::ParamData& d = IO::Parameters()[paramName];
 
   std::ostringstream oss;
 
@@ -633,15 +633,15 @@ inline std::string ParamString(const std::string& paramName)
 /**
  * Print the user-encountered type of an option.
  */
-inline std::string ParamType(const util::ParamData& d)
+inline std::string ParamType(util::ParamData& d)
 {
   std::string output;
-  CLI::GetSingleton().functionMap[d.tname]["GetPrintableType"](d, NULL,
+  IO::GetSingleton().functionMap[d.tname]["GetPrintableType"](d, NULL,
       &output);
   // We want to make this a link to the type documentation.
   std::string anchorType = output;
   bool result;
-  CLI::GetSingleton().functionMap[d.tname]["IsSerializable"](d, NULL, &result);
+  IO::GetSingleton().functionMap[d.tname]["IsSerializable"](d, NULL, &result);
   if (result)
     anchorType = "model";
 
