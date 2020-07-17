@@ -228,6 +228,38 @@ Split(const arma::Mat<T>& input,
                          std::move(testData));
 }
 
+/**
+ * Given an input dataset and labels, split into a training set and test set.
+ * Example usage below.  This overload places the split dataset into the four
+ * output parameters given (trainData, testData, trainLabel, and testLabel).
+ * 
+ * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
+ *
+ * @code
+ * arma::field<arma::mat> input = loadData();
+ * arma::field<arma::vec> label = loadLabel();
+ * arma::field<arma::mat> trainData;
+ * arma::field<arma::mat> testData;
+ * arma::field<arma::vec> trainLabel;
+ * arma::field<arma::vec> testLabel;
+ * math::RandomSeed(100); // Set the seed if you like.
+ *
+ * // Split the dataset into a training and test set, with 30% of the data being
+ * // held out for the test set.
+ * Split(input, label, trainData,
+ *                testData, trainLabel, testLabel, 0.3);
+ * @endcode
+ *
+ * @param input Input dataset to split.
+ * @param inputLabel Input labels to split.
+ * @param trainData FieldType to store training data into.
+ * @param testData FieldType test data into.
+ * @param trainLabel Field vector to store training labels into.
+ * @param testLabel Field vector to store test labels into.
+ * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
+ * @param shuffleData If true, the sample order is shuffled; otherwise, each
+ *       sample is visited in linear order. (Default true.)
+ */
 template <typename FieldType,
           typename = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
@@ -274,6 +306,31 @@ void Split(FieldType& input,
   }
 }
 
+/**
+ * Given an input dataset, split into a training set and test set.
+ * Example usage below. This overload places the split dataset into the two
+ * output parameters given (trainData, testData).
+ * 
+ * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
+ *
+ * @code
+ * arma::field<arma::mat> input = loadData();
+ * arma::field<arma::mat> trainData;
+ * arma::field<arma::mat> testData;
+ * math::RandomSeed(100); // Set the seed if you like.
+ *
+ * // Split the dataset into a training and test set, with 30% of the data being
+ * // held out for the test set.
+ * Split(input, trainData, testData, 0.3);
+ * @endcode
+ *
+ * @param input Input dataset to split.
+ * @param trainData FieldType to store training data into.
+ * @param testData FieldType test data into.
+ * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
+ * @param shuffleData If true, the sample order is shuffled; otherwise, each
+ *       sample is visited in linear order. (Default true).
+ */
 template <class FieldType,
           class = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
@@ -308,13 +365,37 @@ void Split(const FieldType& input,
   }
 }
 
+/**
+ * Given an input dataset and labels, split into a training set and test set.
+ * Example usage below.  This overload returns the split dataset as a std::tuple
+ * with four elements: an FieldType containing the training data, an
+ * FieldType containing the test data, an arma::field<arma::vec> containing the
+ * training labels, and an arma::field<arma::vec> containing the test labels.
+ * 
+ * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
+ *
+ * @code
+ * arma::field<arma::mat> input = loadData();
+ * arma::field<arma::vec> label = loadLabel();
+ * auto splitResult = Split(input, label, 0.2);
+ * @endcode
+ *
+ * @param input Input dataset to split.
+ * @param inputLabel Input labels to split.
+ * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
+ * @param shuffleData If true, the sample order is shuffled; otherwise, each
+ *       sample is visited in linear order. (Default true).
+ * @return std::tuple containing trainData (FieldType), testData
+ *      (FieldType), trainLabel (arma::field<arma::vec>), and 
+ *                   testLabel (arma::field<arma::vec>).
+ */
 template <class FieldType,
           class = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
 std::tuple<FieldType, FieldType, FieldType, FieldType>
 Split(FieldType& input, 
-      FieldType& inputLabel,
+      arma::field<arma::vec>& inputLabel,
       const double testRatio,
       const bool shuffleData = true)
 {
@@ -332,6 +413,26 @@ Split(FieldType& input,
                          std::move(testLabel));
 }
 
+/**
+ * Given an input dataset, split into a training set and test set.
+ * Example usage below.  This overload returns the split dataset as a std::tuple
+ * with two elements: an FieldType containing the training data and an
+ * FieldType containing the test data.
+ * 
+ * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
+ *
+ * @code
+ * arma::field<arma::mat> input = loadData();
+ * auto splitResult = Split(input, 0.2);
+ * @endcode
+ *
+ * @param input Input dataset to split.
+ * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
+ * @param shuffleData If true, the sample order is shuffled; otherwise, each
+ *       sample is visited in linear order. (Default true).
+ * @return std::tuple containing trainData (FieldType)
+ *      and testData (FieldType).
+ */
 template <class FieldType,
           class = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
