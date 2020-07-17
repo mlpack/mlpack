@@ -180,10 +180,6 @@ class BatchNorm
   //! Locally-stored value for momentum.
   double momentum;
 
-  //! Locally-stored value for average factor which used to update running
-  //! mean and variance.
-  double averageFactor;
-
   //! Variable to keep track of whether we are in loading or saving mode.
   bool loading;
 
@@ -210,6 +206,10 @@ class BatchNorm
 
   //! Locally-stored running mean/variance counter.
   size_t count;
+
+  //! Locally-stored value for average factor which used to update running
+  //! mean and variance.
+  double averageFactor;
 
   //! Locally-stored mean object.
   OutputDataType runningMean;
