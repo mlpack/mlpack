@@ -1199,13 +1199,13 @@ BOOST_AUTO_TEST_CASE(MultipleSerializationTest)
   // Now serialize the shallow tree into the deep tree.
   std::ostringstream oss;
   {
-    boost::archive::binary_oarchive boa(oss);
+    cereal::BinaryOutputArchive boa(oss);
     boa << CEREAL_NVP(shallowTree);
   }
 
   std::istringstream iss(oss.str());
   {
-    boost::archive::binary_iarchive bia(iss);
+    cereal::BinaryInputArchive bia(iss);
     bia >> CEREAL_NVP(deepTree);
   }
 

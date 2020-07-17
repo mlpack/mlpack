@@ -38,7 +38,7 @@ add_executable(mlpack_test
 # gan_test.cpp
   gmm_test.cpp
   hmm_test.cpp
-### hoeffding_tree_test.cpp
+  hoeffding_tree_test.cpp
   hpt_test.cpp
   hyperplane_test.cpp
   image_load_test.cpp
