@@ -50,7 +50,7 @@ inline void CheckMatrices(const arma::Mat<size_t>& a,
 }
 
 template <typename FieldType,
-          class = std::enable_if_t<
+          typename = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
 // Check the values of two field types

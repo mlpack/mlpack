@@ -48,7 +48,7 @@ namespace data {
  *       sample is visited in linear order. (Default true.)
  */
 template <typename T, class LabelType,
-          class = std::enable_if_t<arma::is_Row<LabelType>::value ||
+          typename = std::enable_if_t<arma::is_Row<LabelType>::value ||
                            arma::is_Mat_only<LabelType>::value>>
 void Split(const arma::Mat<T>& input,
            const LabelType& inputLabel,
@@ -174,7 +174,7 @@ void Split(const arma::Mat<T>& input,
  *      (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>).
  */
 template <typename T, class LabelType,
-          class = std::enable_if_t<arma::is_Row<LabelType>::value ||
+          typename = std::enable_if_t<arma::is_Row<LabelType>::value ||
                            arma::is_Mat_only<LabelType>::value>>
 std::tuple<arma::Mat<T>, arma::Mat<T>, LabelType, LabelType>
 Split(const arma::Mat<T>& input,
@@ -229,7 +229,7 @@ Split(const arma::Mat<T>& input,
 }
 
 template <typename FieldType,
-          class = std::enable_if_t<
+          typename = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
 void Split(FieldType& input, 
