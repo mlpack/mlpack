@@ -466,10 +466,10 @@ void TransposedConvolution<
     ar & CEREAL_NVP(padWidth);
     ar & CEREAL_NVP(padHeight);
   }
-  ar &CEREAL_NVP(padWLeft);
-  ar &CEREAL_NVP(padWRight);
-  ar &CEREAL_NVP(padHBottom);
-  ar &CEREAL_NVP(padHTop);
+  ar & CEREAL_NVP(padWLeft);
+  ar & CEREAL_NVP(padWRight);
+  ar & CEREAL_NVP(padHBottom);
+  ar & CEREAL_NVP(padHTop);
   ar & CEREAL_NVP(inputWidth);
   ar & CEREAL_NVP(inputHeight);
   ar & CEREAL_NVP(outputWidth);
