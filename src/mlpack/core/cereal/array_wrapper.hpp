@@ -59,7 +59,7 @@ public:
     }
 
 private:
-    T * const m_t;
+    const T* m_t;
     const size_t m_element_count;
 };
 
