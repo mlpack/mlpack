@@ -1,5 +1,5 @@
-#ifndef CEREAL_PONTER_WRAPPER_HPP
-#define CEREAL_PONTER_WRAPPER_HPP
+#ifndef MLPACK_CORE_CEREAL_PONTER_WRAPPER_HPP
+#define MLPACK_CORE_CEREAL_PONTER_WRAPPER_HPP
 
 /*
  * The objective of this class is to create a wrapper for
