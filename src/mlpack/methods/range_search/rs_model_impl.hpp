@@ -452,13 +452,13 @@ bool& NaiveVisitor::operator()(RSType* rs) const
 template<typename Archive>
 void RSModel::serialize(Archive& ar, const unsigned int /* version */)
 {
- // ar(CEREAL_NVP(treeType));
+  ar(CEREAL_NVP(treeType));
   ar(CEREAL_NVP(randomBasis));
- // ar(CEREAL_NVP(q));
+  ar(CEREAL_NVP(q));
 
   // This should never happen, but just in case...
-  // if (Archive::is_loading::value)
-  //   boost::apply_visitor(DeleteVisitor(), rSearch);
+  if (Archive::is_loading::value)
+    boost::apply_visitor(DeleteVisitor(), rSearch);
 
   // We'll only need to serialize one of the model objects, based on the type.
  // ar(CEREAL_NVP(rSearch));
