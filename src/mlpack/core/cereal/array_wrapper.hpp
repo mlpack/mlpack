@@ -60,7 +60,7 @@ public:
 
 private:
     T * const m_t;
-    const std::size_t m_element_count;
+    const size_t m_element_count;
 };
 
 template<class T, class S>
