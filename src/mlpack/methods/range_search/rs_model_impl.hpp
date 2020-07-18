@@ -16,7 +16,6 @@
 #include "rs_model.hpp"
 
 #include <mlpack/core/math/random_basis.hpp>
-//#include <boost/serialization/variant.hpp>
 
 namespace mlpack {
 namespace range {
