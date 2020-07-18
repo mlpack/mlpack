@@ -557,7 +557,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
   // Earlier versions of the RNN code did not serialize the 'reset' variable.
   if (version > 0)
   {
-    ar & CEREAL_NVP(reset);   
+    ar & CEREAL_NVP(reset);
   }
 
   if (Archive::is_loading::value)
