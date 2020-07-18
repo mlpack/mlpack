@@ -28,10 +28,16 @@ namespace svm {
  * on sparse datasets by specifying arma::sp_mat as the MatType parameter.
  *
  *
+
  * @code
- * @inproceedings{CS 229, Autumn 2009,
- * title        = {The Simplified SMO Algorithm.},
- * year         = {2009}
+ * @article{Microsoft Research,
+ *   author    = {John C. Platt},
+ *   title     = {Sequential Minimal Optimization:A Fast 
+                  Algorithm for Training Support Vector Machines},
+ *   journal   = {Technical Report MSR-TR-98-14},
+ *   year      = {1998},
+ *   url       = {https://www.microsoft.com/en-us/research
+                  /wp-content/uploads/2016/02/tr-98-14.pdf},
  * }
  * @endcode
  *
@@ -189,8 +195,8 @@ class KernelSVM
   {
     ar & BOOST_SERIALIZATION_NVP(parameters);
     ar & BOOST_SERIALIZATION_NVP(fitIntercept);
-    ar & BOOST_SERIALIZATION_NVP(saved_data);
-    ar & BOOST_SERIALIZATION_NVP(saved_labels);
+    ar & BOOST_SERIALIZATION_NVP(trainingData);
+    ar & BOOST_SERIALIZATION_NVP(savedLabels);
     ar & BOOST_SERIALIZATION_NVP(alpha);
     ar & BOOST_SERIALIZATION_NVP(intercept);
   }
@@ -210,9 +216,9 @@ class KernelSVM
   //! Locally saved KernelType values.
   KernelType kernel;
   //! Locally saved labels of classes to give prediction for non-linear kernel.
-  arma::rowvec saved_labels;
+  arma::rowvec savedLabels;
   //! Locally saved input data of classes for non-linear kernel.
-  arma::mat saved_data;
+  arma::mat trainingData;
 };
 
 } // namespace svm
