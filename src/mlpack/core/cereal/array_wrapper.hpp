@@ -1,5 +1,5 @@
-#ifndef CEREAL_ARRAY_WRAPPER_HPP
-#define CEREAL_ARRAY_WRAPPER_HPP
+#ifndef MLPACK_CORE_CEREAL_ARRAY_WRAPPER_HPP
+#define MLPACK_CORE_CEREAL_ARRAY_WRAPPER_HPP
 
 // This file add make_array functionality to cereal
 // This functionality exist only in boost::serialization.
