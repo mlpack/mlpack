@@ -264,13 +264,13 @@ template <typename FieldType,
           typename = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
-void Split(FieldType& input, 
+void Split(FieldType& input,
            arma::field<arma::vec>& inputLabel,
            FieldType& trainData,
            arma::field<arma::vec>& trainLabels,
-           FieldType& testData, 
+           FieldType& testData,
            arma::field<arma::vec>& testLabels,
-           const double testRatio, 
+           const double testRatio,
            const bool shuffleData = true) 
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
@@ -278,7 +278,7 @@ void Split(FieldType& input,
 
   trainData.set_size(1, trainSize);
   testData.set_size(1, testSize);
-  
+
   arma::uvec order = arma::linspace<arma::uvec>(0, input.n_cols - 1,
       input.n_cols);
   if (shuffleData)
@@ -299,7 +299,7 @@ void Split(FieldType& input,
   {
     for (size_t i = trainSize; i < input.n_cols - 1; i++)
      testData[i - trainSize] = input(0, order(i));
-    
+
     testLabels.set_size(1, testSize);
     for (size_t i = trainSize; i < input.n_cols; i++)
       testLabels(0, i - trainSize) = inputLabel[i];
@@ -335,11 +335,11 @@ template <class FieldType,
           class = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
-void Split(const FieldType& input, 
+void Split(const FieldType& input,
            FieldType& trainData,
-           FieldType& testData, 
-           const double testRatio, 
-           const bool shuffleData = true) 
+           FieldType& testData,
+           const double testRatio,
+           const bool shuffleData = true)
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
@@ -361,7 +361,7 @@ void Split(const FieldType& input,
   if (testSize <= input.n_cols)
   {
     for (size_t i = trainSize; i < input.n_cols - 1; i++)
-       testData[i - trainSize] = input(0,order(i));
+       testData[i - trainSize] = input(0, order(i));
   }
 }
 
@@ -394,7 +394,7 @@ template <class FieldType,
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
 std::tuple<FieldType, FieldType, FieldType, FieldType>
-Split(FieldType& input, 
+Split(FieldType& input,
       arma::field<arma::vec>& inputLabel,
       const double testRatio,
       const bool shuffleData = true)
