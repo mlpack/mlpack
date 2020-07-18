@@ -807,7 +807,7 @@ void HoeffdingTree<
   data::DatasetInfo* d = NULL;
   if (Archive::is_saving::value)
     d = const_cast<data::DatasetInfo*>(datasetInfo);
-   ar & CEREAL_POINTER(d);
+  ar & CEREAL_POINTER(d);
   if (Archive::is_loading::value)
   {
     if (datasetInfo && ownsInfo)
