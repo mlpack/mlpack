@@ -56,7 +56,7 @@ double KernelSVM<MatType, KernelType>::Train(
     const size_t max_iter,
     const double tol)
 {
- trainLabels = arma::ones(1, data.n_cols);
+  trainLabels = arma::Row<int> (data.n_cols);
 
   // Changing labels values to 1, -1 values provided
   // by user should 0 and 1.
@@ -64,6 +64,8 @@ double KernelSVM<MatType, KernelType>::Train(
   {
     if (labels(i) == 0)
       trainLabels(i) = -1;
+    else
+      trainLabels(i) = 1;
   }
 
   // Intializing variable to calculate alphas.
