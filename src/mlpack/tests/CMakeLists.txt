@@ -41,7 +41,6 @@ add_executable(mlpack_test
   hoeffding_tree_test.cpp
   hpt_test.cpp
   hyperplane_test.cpp
-  image_load_test.cpp
   imputation_test.cpp
   init_rules_test.cpp
   kde_test.cpp
@@ -139,7 +138,6 @@ add_executable(mlpack_test
   main_tests/hmm_train_test.cpp
   main_tests/hmm_viterbi_test.cpp
   main_tests/hoeffding_tree_test.cpp
-  main_tests/image_converter_test.cpp
   main_tests/kde_test.cpp
   main_tests/kernel_pca_test.cpp
   main_tests/kfn_test.cpp
@@ -170,6 +168,16 @@ add_executable(mlpack_test
   main_tests/test_helper.hpp
 )
 
+add_executable(mlpack_catch_test
+  main.cpp
+  serialization_catch.cpp
+  serialization_catch.hpp
+  test_catch_tools.hpp
+  image_load_test.cpp
+  main_tests/image_converter_test.cpp
+  main_tests/test_helper.hpp
+)
+
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test
   mlpack
@@ -178,8 +186,17 @@ target_link_libraries(mlpack_test
   ${COMPILER_SUPPORT_LIBRARIES}
 )
 
+target_link_libraries(mlpack_catch_test
+  mlpack
+  ${ARMADILLO_LIBRARIES}
+  ${BOOST_LIBRARIES}
+  ${COMPILER_SUPPORT_LIBRARIES}
+)
+
 set_target_properties(mlpack_test PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "../core.hpp")
+set_target_properties(mlpack_catch_test PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "../core.hpp")
 cotire(mlpack_test)
+cotire(mlpack_catch_test)
 
 # Copy test data into right place.
 add_custom_command(TARGET mlpack_test
@@ -187,6 +204,13 @@ add_custom_command(TARGET mlpack_test
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/
       ${PROJECT_BINARY_DIR}
 )
+
+add_custom_command(TARGET mlpack_catch_test
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/
+      ${PROJECT_BINARY_DIR}
+)
+
 add_custom_command(TARGET mlpack_test
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E tar xjf mnist_first250_training_4s_and_9s.tar.bz2
@@ -248,5 +272,8 @@ foreach(test_file ${test_sources})
   endif()
 endforeach()
 
+add_test(NAME "catch_test" COMMAND mlpack_catch_test WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
 # Use RUN_SERIAL for long running parallel tests
 set_tests_properties(${parallel_tests} PROPERTIES RUN_SERIAL TRUE)
+
