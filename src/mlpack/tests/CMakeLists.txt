@@ -79,6 +79,7 @@ add_executable(mlpack_test
   octree_test.cpp
   pca_test.cpp
   perceptron_test.cpp
+  ppo_test.cpp
   prefixedoutstream_test.cpp
   python_binding_test.cpp
   q_learning_test.cpp

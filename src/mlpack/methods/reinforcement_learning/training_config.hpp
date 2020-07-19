@@ -29,7 +29,9 @@ class TrainingConfig
       discount(0.99),
       gradientLimit(40),
       doubleQLearning(false),
-      noisyQLearning(false)
+      noisyQLearning(false),
+      epsilon(0.2),
+      actorUpdateStep(1)
   { /* Nothing to do here. */ }
 
   TrainingConfig(
@@ -52,7 +54,9 @@ class TrainingConfig
       discount(discount),
       gradientLimit(gradientLimit),
       doubleQLearning(doubleQLearning),
-      noisyQLearning(noisyQLearning)
+      noisyQLearning(noisyQLearning),
+      epsilon(0.2),
+      actorUpdateStep(1)
   { /* Nothing to do here. */ }
 
   //! Get the amount of workers.
@@ -108,6 +112,16 @@ class TrainingConfig
   bool NoisyQLearning() const { return noisyQLearning; }
   //! Modify the indicator of double q-learning.
   bool& NoisyQLearning() { return noisyQLearning; }
+
+  //! Get the discount rate for future reward.
+  double Epsilon() const { return epsilon; }
+  //! Modify the discount rate for future reward.
+  double& Epsilon() { return epsilon; }
+
+  //! Get the Actor Network Update Step.
+  size_t ActorUpdateStep() const { return actorUpdateStep; }
+  //! Modify the Actor Network Update Step.
+  size_t& ActorUpdateStep() { return actorUpdateStep; }
 
  private:
   /**
@@ -172,6 +186,16 @@ class TrainingConfig
    * This is valid only for q-learning agent.
    */
   bool noisyQLearning;
+
+  /**
+   * the discount rate for future reward.
+   */
+  double epsilon;
+
+  /**
+   * the number step of updating the actor network.
+   */
+  size_t actorUpdateStep;
 };
 
 } // namespace rl
