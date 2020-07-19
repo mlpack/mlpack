@@ -75,9 +75,9 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
     value = const_cast<arma::Mat<eT>&>(input);
   }
   arma::Cube<eT> q(const_cast<arma::Mat<eT>&>(input).memptr(),
-      embedDim, targetLength, input.n_cols, 1, 0);
-  arma::Cube<eT> k(key.memptr(), embedDim, sourceLength, input.n_cols, 0, 0);
-  arma::Cube<eT> v(value.memptr(), embedDim, sourceLength, input.n_cols, 0, 0);
+      embedDim, targetLength, input.n_cols, true, false);
+  arma::Cube<eT> k(key.memptr(), embedDim, sourceLength, input.n_cols, false, false);
+  arma::Cube<eT> v(value.memptr(), embedDim, sourceLength, input.n_cols, false, false);
 
   q /= std::sqrt(embedDim);
   arma::Cube<eT> scores = CubeMultiply(k, q, true, false);
@@ -125,8 +125,8 @@ Backward(const arma::Mat<eT>& /* input */,
          arma::Mat<eT>& g)
 {
   g.set_size(arma::size(gy));
-  arma::Cube<eT> k(key.memptr(), embedDim, sourceLength, gy.n_cols, 0, 0);
-  arma::Cube<eT> v(value.memptr(), embedDim, sourceLength, gy.n_cols, 0, 0);
+  arma::Cube<eT> k(key.memptr(), embedDim, sourceLength, gy.n_cols, false, false);
+  arma::Cube<eT> v(value.memptr(), embedDim, sourceLength, gy.n_cols, false, false);
 
   arma::Cube<eT> gyTemp(const_cast<arma::Mat<eT>&>(gy).memptr(), embedDim,
       targetLength, gy.n_cols, true, false);

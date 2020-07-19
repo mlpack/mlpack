@@ -39,11 +39,11 @@ namespace ann /** Artificial Neural Network. */ {
  * <i> embedDim</i> is the length of embedding vector of each token, and
  * <i> srcSeqLen</i> is the length of each sequence in the <i>key</i> or the
  * <i> value</i>. We compute the dot products of the query with all keys, divide
- * each by <i>√embedDim</i>, and apply a softmax function to obtain the
+ * each by @f$ \sqrt{embedDim} @f$, and apply a softmax function to obtain the
  * weights on the values. We compute the matrix of outputs as:
  *
  * \f{eqnarray*}{ \\
- * Attention(Q, K, V ) = softmax(\frac{QK^{T}}{\sqrt{embedDim}})V
+ * Attention(Q, K, V ) = softmax \left( \frac{Q K^T}{\sqrt{embedDim}} \right) V
  * \f}
  *
  * The dot-product attention is much faster and more space-efficient in
@@ -77,7 +77,7 @@ class ScaledDotProductAttention
    * @param key The key matrix. The default is empty matrix.
    * @param value The value matrix. The default is empty matrix.
    * @param dropoutRate The dropout rate for attention output weights.
-   * @param deterministic If false, dropout layer is omitted else dropout layer
+   * @param deterministic If false, dropout layer is omitted otherwise dropout layer
    *        is applied with dropout rate `dropout`.
    */
   ScaledDotProductAttention(
