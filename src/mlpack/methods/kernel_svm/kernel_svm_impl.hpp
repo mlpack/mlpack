@@ -192,7 +192,7 @@ double KernelSVM<MatType, KernelType>::Train(
   // Saving values of labels and sample data to be used
   // with kernel function.
   savedLabels = arma::zeros(1, data.n_cols);
-  trainingData = arma::mat(data);
+  trainingData = data;
   for (size_t i = 0; i < data.n_cols; i++)
   {
     if (alpha(i) > threshold)
