@@ -23,12 +23,12 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const double regularization,
-    const bool fitIntercept,
+    const bool fitKernel,
     const size_t max_iter,
     const double tol,
     const KernelType kernel) :
     regularization(regularization),
-    fitIntercept(fitIntercept),
+    fitKernel(fitKernel),
     kernel(kernel)
 {
   intercept = 0;
@@ -39,11 +39,11 @@ template <typename MatType, typename KernelType>
 KernelSVM<MatType, KernelType>::KernelSVM(
     const size_t inputSize,
     const double regularization,
-    const bool fitIntercept,
+    const bool fitKernel,
     const KernelType kernel) :
     inputSize(inputSize),
     regularization(regularization),
-    fitIntercept(fitIntercept),
+    fitKernel(fitKernel),
     kernel(kernel)
 {
   intercept = 0;
@@ -226,7 +226,7 @@ void KernelSVM<MatType, KernelType>::Classify(
     const MatType& data,
     arma::mat& scores) const
 {
-  if (fitIntercept)
+  if (fitKernel)
   {
     // Giving prediction when non-linear kernel is used.
     scores = arma::zeros(1, data.n_cols);
