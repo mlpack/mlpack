@@ -18,8 +18,8 @@ static const std::string testName = "SoftmaxRegression";
 #include <mlpack/methods/softmax_regression/softmax_regression_main.cpp>
 #include "test_helper.hpp"
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../test_catch_tools.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 
@@ -40,18 +40,17 @@ struct SoftmaxRegressionTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(SoftmaxRegressionMainTest,
-                         SoftmaxRegressionTestFixture);
-
 /**
  * Ensure that we get desired dimensions when both training
  * data and labels are passed.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionOutputDimensionTest)
+TEST_CASE_METHOD(
+    SoftmaxRegressionTestFixture,
+    "SoftmaxRegressionOutputDimensionTest", "SoftmaxRegressionMainTest")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -63,7 +62,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOutputDimensionTest)
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -80,39 +79,41 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_cols,
-                      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
 
   // Check prediction have only single row.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_rows,
-                      1);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
 }
 
 /**
  * Ensure that labels are necessarily passed when training.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionLabelsLessDimensionTest)
+TEST_CASE_METHOD(
+    SoftmaxRegressionTestFixture,
+    "SoftmaxRegressionLabelsLessDimensionTest", "SoftmaxRegressionMainTest")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Input training data.
   SetInputParam("training", std::move(inputData));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensure that saved model can be used again.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionModelReuseTest)
+TEST_CASE_METHOD(
+    SoftmaxRegressionTestFixture,
+    "SoftmaxRegressionModelReuseTest", "SoftmaxRegressionMainTest")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -124,7 +125,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionModelReuseTest)
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -156,12 +157,10 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionModelReuseTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_cols,
-                      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
 
   // Check predictions have only single row.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("predictions").n_rows,
-                      1);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
 
   // Check that initial predictions and final predicitons matrix
   // using saved model are same.
@@ -171,11 +170,13 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionModelReuseTest)
 /**
  * Ensure that max_iterations is always non-negative.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionMaxItrTest)
+TEST_CASE_METHOD(
+    SoftmaxRegressionTestFixture,
+    "SoftmaxRegressionMaxItrTest", "SoftmaxRegressionMainTest")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -191,18 +192,20 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionMaxItrTest)
   SetInputParam("max_iterations", (int) -1);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensure that lambda is always non-negative.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionLambdaTest)
+TEST_CASE_METHOD(
+    SoftmaxRegressionTestFixture,
+    "SoftmaxRegressionLambdaTest", "SoftmaxRegressionMainTest")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -218,18 +221,20 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionLambdaTest)
   SetInputParam("lambda", (double) -0.1);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensure that number_of_classes is always positive.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionNumClassesTest)
+TEST_CASE_METHOD(
+    SoftmaxRegressionTestFixture,
+    "SoftmaxRegressionNumClassesTest", "SoftmaxRegressionMainTest")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -245,18 +250,20 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionNumClassesTest)
   SetInputParam("number_of_classes", (int) -1);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Make sure only one of training data or pre-trained model is passed.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainingVerTest)
+TEST_CASE_METHOD(
+    SoftmaxRegressionTestFixture,
+    "SoftmaxRegressionTrainingVerTest", "SoftmaxRegressionMainTest")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -277,7 +284,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainingVerTest)
                 IO::GetParam<SoftmaxRegression*>("output_model"));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -285,12 +292,14 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainingVerTest)
  * Check that output object parameters are
  * different for different lambda values.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffLambdaTest)
+TEST_CASE_METHOD(
+    SoftmaxRegressionTestFixture,
+    "SoftmaxRegressionDiffLambdaTest", "SoftmaxRegressionMainTest")
 {
   // Train SR for lambda 0.1.
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -302,7 +311,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffLambdaTest)
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -342,7 +351,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffLambdaTest)
   // using saved model are different.
   for (size_t i = 0; i < modelParam.n_elem; ++i)
   {
-    BOOST_REQUIRE_NE(modelParam[i],
+    REQUIRE(modelParam[i] !=
         IO::GetParam<SoftmaxRegression*>("output_model")->Parameters()[i]);
   }
 }
@@ -351,12 +360,14 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffLambdaTest)
  * Check that output object parameters are different for different numbers of
  * max_iterations.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffMaxItrTest)
+TEST_CASE_METHOD(
+    SoftmaxRegressionTestFixture,
+    "SoftmaxRegressionDiffMaxItrTest", "SoftmaxRegressionMainTest")
 {
   // Train SR for lambda 0.1.
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -368,7 +379,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffMaxItrTest)
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -408,7 +419,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffMaxItrTest)
   // using saved model are different.
   for (size_t i = 0; i < modelParam.n_elem; ++i)
   {
-    BOOST_REQUIRE_NE(modelParam[i],
+    REQUIRE(modelParam[i] !=
         IO::GetParam<SoftmaxRegression*>("output_model")->Parameters()[i]);
   }
 }
@@ -417,12 +428,14 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffMaxItrTest)
  * Check that output object parameter for no_intercept
  * term is one less than with intercept term.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffInterceptTest)
+TEST_CASE_METHOD(
+    SoftmaxRegressionTestFixture,
+    "SoftmaxRegressionDiffInterceptTest", "SoftmaxRegressionMainTest")
 {
   // Train SR with intercept.
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -434,7 +447,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffInterceptTest)
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -472,9 +485,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffInterceptTest)
 
   // Check that initial parameters has 1 more parameter than
   // final parameters matrix.
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<SoftmaxRegression*>("output_model")->Parameters().n_cols,
+  REQUIRE(
+      IO::GetParam<SoftmaxRegression*>("output_model")->Parameters().n_cols ==
       modelParam.n_cols + 1);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
