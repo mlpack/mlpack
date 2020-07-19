@@ -18,6 +18,7 @@ static const std::string testName = "ImageConverter";
 #include <mlpack/methods/preprocess/image_converter_main.cpp>
 
 #include "test_helper.hpp"
+#include "../test_catch_tools.hpp"
 #include "../catch.hpp"
 
 
