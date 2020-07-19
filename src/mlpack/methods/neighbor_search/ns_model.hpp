@@ -315,21 +315,21 @@ class NSModel
    * @param randomBasis Whether or not to project the points onto a random basis
    *      before searching.
    */
-  explicit NSModel(TreeTypes treeType = TreeTypes::KD_TREE, bool randomBasis = false);
+  NSModel(TreeTypes treeType = TreeTypes::KD_TREE, bool randomBasis = false);
 
   /**
    * Copy the given NSModel.
    *
    * @param other Model to copy.
    */
-  explicit NSModel(const NSModel& other);
+  NSModel(const NSModel& other);
 
   /**
    * Take ownership of the given NSModel.
    *
    * @param other Model to take ownership of.
    */
- explicit NSModel(NSModel&& other);
+ NSModel(NSModel&& other);
 
   /**
    * Copy the given NSModel.
