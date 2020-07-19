@@ -303,7 +303,7 @@ class OneStepQLearningWorker
         // Compute the training target for current state.
         arma::mat input = std::get<0>(transition).Encode();
         network.Forward(input, actionValue);
-        actionValue[std::get<1>(transition)] = targetActionValue;
+        actionValue[std::get<1>(transition).action] = targetActionValue;
 
         // Compute gradient.
         arma::mat gradients;

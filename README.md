@@ -101,7 +101,7 @@ Citations are beneficial for the growth and improvement of mlpack.
 mlpack has the following dependencies:
 
       Armadillo      >= 8.400.0
-      Boost (program_options, math_c99, unit_test_framework, serialization,
+      Boost (math_c99, unit_test_framework, serialization,
              spirit) >= 1.58.0
       CMake          >= 3.2.2
       ensmallen      >= 2.10.0
@@ -118,7 +118,7 @@ following Python packages are installed:
       numpy
       pandas >= 0.15.0
 
-If you would like to build the Julia bindings, make sure that Julia >= 3.2.2 is
+If you would like to build the Julia bindings, make sure that Julia >= 1.3.0 is
 installed.
 
 If the STB library headers are available, image loading support will be

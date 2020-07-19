@@ -90,39 +90,39 @@ class GoOption
 
     // Restore the parameters for this program.
     if (identifier != "verbose" /*&& identifier != "copy_all_inputs"*/)
-      CLI::RestoreSettings(programName, false);
+      IO::RestoreSettings(programName, false);
 
     // Set the function pointers that we'll need.  All of these function
     // pointers will be used by both the program that generates the .cpp,
     // the .h, and the .go binding files.
-    CLI::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
+    IO::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
+    IO::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
         &GetPrintableParam<T>;
 
-    CLI::GetSingleton().functionMap[data.tname]["DefaultParam"] =
+    IO::GetSingleton().functionMap[data.tname]["DefaultParam"] =
         &DefaultParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintDefnInput"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintDefnInput"] =
         &PrintDefnInput<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintDefnOutput"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintDefnOutput"] =
         &PrintDefnOutput<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
+    IO::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
         &PrintOutputProcessing<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintMethodConfig"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintMethodConfig"] =
         &PrintMethodConfig<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintMethodInit"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintMethodInit"] =
         &PrintMethodInit<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
         &PrintInputProcessing<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetType"] = &GetType<T>;
+    IO::GetSingleton().functionMap[data.tname]["GetType"] = &GetType<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
     // import more than one .so that uses CLI, so we have to keep the options
     // separate.  programName is a global variable from mlpack_main.hpp.
-    CLI::Add(std::move(data));
+    IO::Add(std::move(data));
     if (identifier != "verbose" /*&& identifier != "copy_all_inputs"*/)
-      CLI::StoreSettings(programName);
-    CLI::ClearSettings();
+      IO::StoreSettings(programName);
+    IO::ClearSettings();
   }
 };
 

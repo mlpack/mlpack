@@ -96,7 +96,7 @@ inline std::string ParamString(const std::string& paramName);
 /**
  * Print the user-encountered type of an option.
  */
-inline std::string ParamType(const util::ParamData& d);
+inline std::string ParamType(util::ParamData& d);
 
 /**
  * Return whether or not a runtime check on parameters should be ignored.

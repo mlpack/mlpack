@@ -87,10 +87,10 @@ inline CellBound<
     ElemType>& CellBound<MetricType, ElemType>::operator=(
     const CellBound<MetricType, ElemType>& other)
 {
- if (this == &other)
-    return *this;  
+  if (this == &other)
+    return *this;
 
- if (dim != other.Dim())
+  if (dim != other.Dim())
   {
     // Reallocation is necessary.
     delete[] bounds;
@@ -650,8 +650,8 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
     else
       return (ElemType) pow((double) maxSum, 1.0 / (double) MetricType::Power);
   }
-  else
-    return maxSum;
+
+  return maxSum;
 }
 
 /**
@@ -699,8 +699,8 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
     else
       return (ElemType) pow((double) maxSum, 1.0 / (double) MetricType::Power);
   }
-  else
-    return maxSum;
+
+  return maxSum;
 }
 
 /**
@@ -777,8 +777,8 @@ CellBound<MetricType, ElemType>::RangeDistance(
           (ElemType) pow((double) maxHiSum, 1.0 / (double) MetricType::Power));
     }
   }
-  else
-    return math::RangeType<ElemType>(minLoSum, maxHiSum);
+
+  return math::RangeType<ElemType>(minLoSum, maxHiSum);
 }
 
 /**
@@ -805,6 +805,7 @@ CellBound<MetricType, ElemType>::RangeDistance(
     {
       v1 = loBound(d, i) - point[d]; // Negative if point[d] > lo.
       v2 = point[d] - hiBound(d, i); // Negative if point[d] < hi.
+
       // One of v1 or v2 (or both) is negative.
       if (v1 >= 0) // point[d] <= bounds_[d].Lo().
       {
@@ -862,8 +863,8 @@ CellBound<MetricType, ElemType>::RangeDistance(
           (ElemType) pow((double) maxHiSum, 1.0 / (double) MetricType::Power));
     }
   }
-  else
-    return math::RangeType<ElemType>(minLoSum, maxHiSum);
+
+  return math::RangeType<ElemType>(minLoSum, maxHiSum);
 }
 
 /**
@@ -927,8 +928,10 @@ CellBound<MetricType, ElemType>::operator|=(const CellBound& other)
       loBound(i, 0) = bounds[i].Lo();
       hiBound(i, 0) = bounds[i].Hi();
     }
+
     numBounds = 1;
   }
+
   return *this;
 }
 
@@ -970,8 +973,8 @@ inline ElemType CellBound<MetricType, ElemType>::Diameter() const
 
   if (MetricType::TakeRoot)
     return (ElemType) std::pow((double) d, 1.0 / (double) MetricType::Power);
-  else
-    return d;
+
+  return d;
 }
 
 //! Serialize the bound object.

@@ -12,7 +12,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
@@ -107,8 +107,8 @@ PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
 
 static void mlpackMain()
 {
-  if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (IO::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) IO::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
@@ -125,42 +125,42 @@ static void mlpackMain()
       "will be saved");
 
   // If the user specifies a range but not output files, they should be warned.
-  if (CLI::HasParam("min") || CLI::HasParam("max"))
+  if (IO::HasParam("min") || IO::HasParam("max"))
   {
     RequireAtLeastOnePassed({ "neighbors_file", "distances_file" }, false,
         "no range search results will be saved");
   }
 
-  if (!CLI::HasParam("min") && !CLI::HasParam("max"))
+  if (!IO::HasParam("min") && !IO::HasParam("max"))
   {
     ReportIgnoredParam("neighbors_file", "no range is specified for searching");
     ReportIgnoredParam("distances_file", "no range is specified for searching");
   }
 
-  if (CLI::HasParam("input_model") &&
-      (CLI::HasParam("min") || CLI::HasParam("max")))
+  if (IO::HasParam("input_model") &&
+      (IO::HasParam("min") || IO::HasParam("max")))
   {
     RequireAtLeastOnePassed({ "query" }, true, "query set must be passed if "
         "searching is to be done");
   }
 
   // Sanity check on leaf size.
-  int lsInt = CLI::GetParam<int>("leaf_size");
+  int lsInt = IO::GetParam<int>("leaf_size");
   RequireParamValue<int>("leaf_size", [](int x) { return x > 0; }, true,
       "leaf size must be greater than 0");
 
   // We either have to load the reference data, or we have to load the model.
   RSModel* rs;
-  const bool naive = CLI::HasParam("naive");
-  const bool singleMode = CLI::HasParam("single_mode");
-  if (CLI::HasParam("reference"))
+  const bool naive = IO::HasParam("naive");
+  const bool singleMode = IO::HasParam("single_mode");
+  if (IO::HasParam("reference"))
   {
     // Get all the parameters.
-    const string treeType = CLI::GetParam<string>("tree_type");
+    const string treeType = IO::GetParam<string>("tree_type");
     RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star",
         "ball", "x", "hilbert-r", "r-plus", "r-plus-plus", "vp", "rp", "max-rp",
         "ub", "oct" }, true, "unknown tree type");
-    const bool randomBasis = CLI::HasParam("random_basis");
+    const bool randomBasis = IO::HasParam("random_basis");
 
     rs = new RSModel();
 
@@ -198,9 +198,9 @@ static void mlpackMain()
     rs->RandomBasis() = randomBasis;
 
     Log::Info << "Using reference data from "
-        << CLI::GetPrintableParam<arma::mat>("reference") << "." << endl;
+        << IO::GetPrintableParam<arma::mat>("reference") << "." << endl;
 
-    arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
+    arma::mat referenceSet = std::move(IO::GetParam<arma::mat>("reference"));
 
     const size_t leafSize = size_t(lsInt);
 
@@ -209,34 +209,34 @@ static void mlpackMain()
   else
   {
     // Load the model from file.
-    rs = CLI::GetParam<RSModel*>("input_model");
+    rs = IO::GetParam<RSModel*>("input_model");
 
     Log::Info << "Using range search model from '"
-        << CLI::GetPrintableParam<RSModel*>("input_model") << "' ("
+        << IO::GetPrintableParam<RSModel*>("input_model") << "' ("
         << "trained on " << rs->Dataset().n_rows << "x" << rs->Dataset().n_cols
         << " dataset)." << endl;
 
     // Adjust singleMode and naive if necessary.
-    rs->SingleMode() = CLI::HasParam("single_mode");
-    rs->Naive() = CLI::HasParam("naive");
+    rs->SingleMode() = IO::HasParam("single_mode");
+    rs->Naive() = IO::HasParam("naive");
     rs->LeafSize() = size_t(lsInt);
   }
 
   // Perform search, if desired.
-  if (CLI::HasParam("min") || CLI::HasParam("max"))
+  if (IO::HasParam("min") || IO::HasParam("max"))
   {
-    const double min = CLI::GetParam<double>("min");
-    const double max = CLI::HasParam("max") ? CLI::GetParam<double>("max") :
+    const double min = IO::GetParam<double>("min");
+    const double max = IO::HasParam("max") ? IO::GetParam<double>("max") :
         DBL_MAX;
 
     math::Range r(min, max);
 
     arma::mat queryData;
-    if (CLI::HasParam("query"))
+    if (IO::HasParam("query"))
     {
       Log::Info << "Using query data from "
-          << CLI::GetPrintableParam<arma::mat>("query") << "." << endl;
-      queryData = std::move(CLI::GetParam<arma::mat>("query"));
+          << IO::GetPrintableParam<arma::mat>("query") << "." << endl;
+      queryData = std::move(IO::GetParam<arma::mat>("query"));
     }
 
     // Naive mode overrides single mode.
@@ -248,7 +248,7 @@ static void mlpackMain()
     vector<vector<size_t>> neighbors;
     vector<vector<double>> distances;
 
-    if (CLI::HasParam("query"))
+    if (IO::HasParam("query"))
       rs->Search(std::move(queryData), r, neighbors, distances);
     else
       rs->Search(r, neighbors, distances);
@@ -256,9 +256,9 @@ static void mlpackMain()
     Log::Info << "Search complete." << endl;
 
     // Save output, if desired.  We have to do this by hand.
-    if (CLI::HasParam("distances_file"))
+    if (IO::HasParam("distances_file"))
     {
-      const string distancesFile = CLI::GetParam<string>("distances_file");
+      const string distancesFile = IO::GetParam<string>("distances_file");
       fstream distancesStr(distancesFile.c_str(), fstream::out);
       if (!distancesStr.is_open())
       {
@@ -285,9 +285,9 @@ static void mlpackMain()
       }
     }
 
-    if (CLI::HasParam("neighbors_file"))
+    if (IO::HasParam("neighbors_file"))
     {
-      const string neighborsFile = CLI::GetParam<string>("neighbors_file");
+      const string neighborsFile = IO::GetParam<string>("neighbors_file");
       fstream neighborsStr(neighborsFile.c_str(), fstream::out);
       if (!neighborsStr.is_open())
       {
@@ -316,5 +316,5 @@ static void mlpackMain()
   }
 
   // Save the output model.
-  CLI::GetParam<RSModel*>("output_model") = rs;
+  IO::GetParam<RSModel*>("output_model") = rs;
 }
