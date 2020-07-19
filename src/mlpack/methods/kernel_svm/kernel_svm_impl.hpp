@@ -56,7 +56,7 @@ double KernelSVM<MatType, KernelType>::Train(
     const size_t max_iter,
     const double tol)
 {
-  arma::Row<int> trainLabels(data.n_cols);
+ trainLabels = arma::ones(1, data.n_cols);
 
   // Changing labels values to 1, -1 values provided
   // by user should 0 and 1.
@@ -64,8 +64,6 @@ double KernelSVM<MatType, KernelType>::Train(
   {
     if (labels(i) == 0)
       trainLabels(i) = -1;
-    else
-      trainLabels(i) = 1;
   }
 
   // Intializing variable to calculate alphas.
@@ -187,19 +185,8 @@ double KernelSVM<MatType, KernelType>::Train(
   }
   // Calculating paramter values for linear kernel.
   parameters = (data * (alpha.t() % trainLabels).t()).t();
-  double threshold = arma::as_scalar(arma::mean(alpha));
 
-  // Saving values of labels and sample data to be used
-  // with kernel function.
-  savedLabels = arma::zeros(1, data.n_cols);
   trainingData = data;
-  for (size_t i = 0; i < data.n_cols; i++)
-  {
-    if (alpha(i) > threshold)
-    {
-      savedLabels(i) = trainLabels(i);
-    }
-  }
 }
 
 template <typename MatType, typename KernelType>
@@ -241,15 +228,16 @@ void KernelSVM<MatType, KernelType>::Classify(
   {
     // Giving prediction when non-linear kernel is used.
     scores = arma::zeros(1, data.n_cols);
+    double threshold = arma::as_scalar(arma::mean(alpha));
     for (size_t i = 0; i < data.n_cols; i++)
     {
       double  prediction = 0;
       for (size_t j = 0; j < trainingData.n_cols; j++)
       {
-        if (savedLabels(j) == 0)
+        if (alpha(j) <= threshold)
           continue;
         prediction = prediction + alpha(j) *
-                     savedLabels(j) * kernel.Evaluate(data.col(i),
+                     trainLabels(j) * kernel.Evaluate(data.col(i),
                      trainingData.col(j));
       }
       scores(i) = prediction + intercept;
