@@ -60,7 +60,7 @@ double KernelSVM<MatType, KernelType>::Train(
 
   // Changing labels values to 1, -1 values provided
   // by user should 0 and 1.
-  for (size_t i = 0; i< data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; i++)
   {
     if (labels(i) == 0)
       trainLabels(i) = -1;
@@ -109,10 +109,11 @@ double KernelSVM<MatType, KernelType>::Train(
         // In practice, there are many ways one can use to select
         // the i and j. In this simplified code, we select them randomly.
         size_t j = rand() % data.n_cols;
-        while (j == i)
+        while (j == i || j >= data.n_cols)
         {
           j = rand() % data.n_cols;
         }
+        std::cout<<j<<" <= "<<data.n_cols<<std::endl;
 
         // Calculate Ej = f(x(j)) - y(j) using (2).
         E(j) = intercept + arma::sum(alpha.t() % trainLabels % K.col(j).t())
