@@ -26,7 +26,7 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     const bool fitIntercept,
     const size_t max_iter,
     const double tol,
-    const KernelType& kernel) :
+    const KernelType kernel) :
     regularization(regularization),
     fitIntercept(fitIntercept),
     kernel(kernel)
@@ -40,7 +40,7 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     const size_t inputSize,
     const double regularization,
     const bool fitIntercept,
-    const KernelType& kernel) :
+    const KernelType kernel) :
     inputSize(inputSize),
     regularization(regularization),
     fitIntercept(fitIntercept),
